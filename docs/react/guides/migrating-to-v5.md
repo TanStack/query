@@ -1,5 +1,5 @@
 ---
-id: migrating-to-v5
+id: migrating-to-react-query-5
 title: Migrating to TanStack Query v5
 ---
 
@@ -150,17 +150,59 @@ If you want to throw something that isn't an Error, you'll now have to set the g
 useQuery<number, string>({
   queryKey: ['some-query'],
   queryFn: async () => {
-      if (Math.random() > 0.5) {
-        throw 'some error'
-      }
-      return 42
-  }
+    if (Math.random() > 0.5) {
+      throw 'some error'
+    }
+    return 42
+  },
 })
 ```
 
 ### eslint `prefer-query-object-syntax` rule is removed
 
 Since the only supported syntax now is the object syntax, this rule is no longer needed
+
+### Removed `keepPreviousData` in favor of `placeholderData` identity function
+
+We have removed the `keepPreviousData` option and `isPreviousData` flag as they were doing mostly the same thing as `placeholderData` and `isPlaceholderData` flag.
+
+To achieve the same functionality as `keepPreviousData`, we have added previous query `data` as an argument to `placeholderData` function.
+Therefore you just need to provide an identity function to `placeholderData` or use `keepPreviousData` function returned from Tanstack Query.
+
+> A note here is that `useQueries` would not receive `previousData` in the `placeholderData` function as argument. This is due to a dynamic nature of queries passed in the array, which may lead to a different shape of result from placeholder and queryFn.
+
+```diff
+const {
+   data,
+-  isPreviousData,
++  isPlaceholderData,
+} = useQuery({
+  queryKey,
+  queryFn,
+- keepPreviousData: true,
++ placeholderData: keepPreviousData
+});
+```
+
+There are some caveats to this change however, which you must be aware of:
+
+- `placeholderData` will always put you into `success` state, while `keepPreviousData` gave you the status of the previous query. That status could be `error` if we have data fetched successfully and then got a background refetch error. However, the error itself was not shared, so we decided to stick with behavior of `placeholderData`.
+- `keepPreviousData` gave you the `dataUpdatedAt` timestamp of the previous data, while with `placeholderData`, `dataUpdatedAt` will stay at `0`. This might be annoying if you want to show that timestamp continuously on screen. However you might get around it with `useEffect`.
+
+  ```ts
+  const [updatedAt, setUpdatedAt] = useState(0)
+
+  const { data, dataUpdatedAt } = useQuery({
+    queryKey: ['projects', page],
+    queryFn: () => fetchProjects(page),
+  })
+
+  useEffect(() => {
+    if (dataUpdatedAt > updatedAt) {
+      setUpdatedAt(dataUpdatedAt)
+    }
+  }, [dataUpdatedAt])
+  ```
 
 ### Window focus refetching no longer listens to the `focus` event
 

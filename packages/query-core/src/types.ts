@@ -27,7 +27,15 @@ export interface QueryFunctionContext<
 
 export type InitialDataFunction<T> = () => T | undefined
 
-export type PlaceholderDataFunction<TResult> = () => TResult | undefined
+type NonFunctionGuard<T> = T extends Function ? never : T
+
+export type PlaceholderDataFunction<TQueryData> = (
+  previousData: TQueryData | undefined,
+) => TQueryData | undefined
+
+export type QueriesPlaceholderDataFunction<TQueryData> = () =>
+  | TQueryData
+  | undefined
 
 export type QueryKeyHashFunction<TQueryKey extends QueryKey> = (
   queryKey: TQueryKey,
@@ -232,14 +240,11 @@ export interface QueryObserverOptions<
    */
   suspense?: boolean
   /**
-   * Set this to `true` to keep the previous `data` when fetching based on a new query key.
-   * Defaults to `false`.
-   */
-  keepPreviousData?: boolean
-  /**
    * If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `loading` data and no initialData has been provided.
    */
-  placeholderData?: TQueryData | PlaceholderDataFunction<TQueryData>
+  placeholderData?:
+    | NonFunctionGuard<TQueryData>
+    | PlaceholderDataFunction<NonFunctionGuard<TQueryData>>
 
   _optimisticResults?: 'optimistic' | 'isRestoring'
 }
@@ -379,7 +384,6 @@ export interface QueryObserverBaseResult<TData = unknown, TError = Error> {
   isInitialLoading: boolean
   isPaused: boolean
   isPlaceholderData: boolean
-  isPreviousData: boolean
   isRefetchError: boolean
   isRefetching: boolean
   isStale: boolean

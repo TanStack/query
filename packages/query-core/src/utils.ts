@@ -357,3 +357,9 @@ export function replaceData<
   }
   return data
 }
+
+export function keepPreviousData<T>(
+  previousData: T | undefined,
+): T | undefined {
+  return previousData
+}

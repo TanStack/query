@@ -17,7 +17,12 @@ import type {
   DefinedCreateQueryResult,
   QueryFunction,
 } from '..'
-import { createQuery, QueryCache, QueryClientProvider } from '..'
+import {
+  createQuery,
+  QueryCache,
+  QueryClientProvider,
+  keepPreviousData,
+} from '..'
 import {
   Blink,
   createQueryClient,
@@ -289,7 +294,6 @@ describe('createQuery', () => {
       isInitialLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
-      isPreviousData: false,
       isRefetchError: false,
       isRefetching: false,
       isStale: true,
@@ -316,7 +320,6 @@ describe('createQuery', () => {
       isInitialLoading: false,
       isLoadingError: false,
       isPlaceholderData: false,
-      isPreviousData: false,
       isRefetchError: false,
       isRefetching: false,
       isStale: true,
@@ -378,7 +381,6 @@ describe('createQuery', () => {
       isInitialLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
-      isPreviousData: false,
       isRefetchError: false,
       isRefetching: false,
       isStale: true,
@@ -405,7 +407,6 @@ describe('createQuery', () => {
       isInitialLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
-      isPreviousData: false,
       isRefetchError: false,
       isRefetching: false,
       isStale: true,
@@ -432,7 +433,6 @@ describe('createQuery', () => {
       isInitialLoading: false,
       isLoadingError: true,
       isPlaceholderData: false,
-      isPreviousData: false,
       isRefetchError: false,
       isRefetching: false,
       isStale: true,
@@ -1597,7 +1597,7 @@ describe('createQuery', () => {
     })
   })
 
-  it('should keep the previous data when keepPreviousData is set', async () => {
+  it('should keep the previous data when placeholderData is set', async () => {
     const key = queryKey()
     const states: CreateQueryResult<number>[] = []
 
@@ -1610,7 +1610,7 @@ describe('createQuery', () => {
           await sleep(10)
           return count()
         },
-        keepPreviousData: true,
+        placeholderData: keepPreviousData,
       }))
 
       createRenderEffect(() => {
@@ -1639,32 +1639,32 @@ describe('createQuery', () => {
       data: undefined,
       isFetching: true,
       isSuccess: false,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Fetched
     expect(states[1]).toMatchObject({
       data: 0,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Set state
     expect(states[2]).toMatchObject({
       data: 0,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // New data
     expect(states[3]).toMatchObject({
       data: 1,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
   })
 
-  it('should not show initial data from next query if keepPreviousData is set', async () => {
+  it('should not show initial data from next query if placeholderData is set', async () => {
     const key = queryKey()
     const states: DefinedCreateQueryResult<number>[] = []
 
@@ -1678,7 +1678,7 @@ describe('createQuery', () => {
           return count()
         },
         initialData: 99,
-        keepPreviousData: true,
+        placeholderData: keepPreviousData,
       }))
 
       createRenderEffect(() => {
@@ -1719,32 +1719,32 @@ describe('createQuery', () => {
       data: 99,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Fetched
     expect(states[1]).toMatchObject({
       data: 0,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Set state
     expect(states[2]).toMatchObject({
       data: 99,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // New data
     expect(states[3]).toMatchObject({
       data: 1,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
   })
 
-  it('should keep the previous data on disabled query when keepPreviousData is set', async () => {
+  it('should keep the previous data on disabled query when placeholderData is set to identity function', async () => {
     const key = queryKey()
     const states: CreateQueryResult<number>[] = []
 
@@ -1758,7 +1758,7 @@ describe('createQuery', () => {
           return count()
         },
         enabled: false,
-        keepPreviousData: true,
+        placeholderData: keepPreviousData,
         notifyOnChangeProps: 'all',
       }))
 
@@ -1797,46 +1797,46 @@ describe('createQuery', () => {
       data: undefined,
       isFetching: false,
       isSuccess: false,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Fetching query
     expect(states[1]).toMatchObject({
       data: undefined,
       isFetching: true,
       isSuccess: false,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Fetched query
     expect(states[2]).toMatchObject({
       data: 0,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Set state
     expect(states[3]).toMatchObject({
       data: 0,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // Fetching new query
     expect(states[4]).toMatchObject({
       data: 0,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // Fetched new query
     expect(states[5]).toMatchObject({
       data: 1,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
   })
 
-  it('should keep the previous data on disabled query when keepPreviousData is set and switching query key multiple times', async () => {
+  it('should keep the previous data on disabled query when placeholderData is set and switching query key multiple times', async () => {
     const key = queryKey()
     const states: CreateQueryResult<number>[] = []
 
@@ -1854,7 +1854,7 @@ describe('createQuery', () => {
           return count()
         },
         enabled: false,
-        keepPreviousData: true,
+        placeholderData: keepPreviousData,
         notifyOnChangeProps: 'all',
       }))
 
@@ -1893,28 +1893,28 @@ describe('createQuery', () => {
       data: 10,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Set state
     expect(states[1]).toMatchObject({
       data: 10,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // Refetch
     expect(states[2]).toMatchObject({
       data: 10,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // Refetch done
     expect(states[3]).toMatchObject({
       data: 12,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
   })
 

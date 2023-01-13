@@ -155,11 +155,6 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
         !matchedQueryHashes.includes(defaultedOptions.queryHash),
     )
 
-    const unmatchedObservers = prevObservers.filter(
-      (prevObserver) =>
-        !matchingObservers.some((match) => match.observer === prevObserver),
-    )
-
     const getObserver = (options: QueryObserverOptions): QueryObserver => {
       const defaultedOptions = this.client.defaultQueryOptions(options)
       const currentObserver = this.observersMap[defaultedOptions.queryHash!]
@@ -167,17 +162,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
     }
 
     const newOrReusedObservers: QueryObserverMatch[] = unmatchedQueries.map(
-      (options, index) => {
-        if (options.keepPreviousData) {
-          // return previous data from one of the observers that no longer match
-          const previouslyUsedObserver = unmatchedObservers[index]
-          if (previouslyUsedObserver !== undefined) {
-            return {
-              defaultedQueryOptions: options,
-              observer: previouslyUsedObserver,
-            }
-          }
-        }
+      (options) => {
         return {
           defaultedQueryOptions: options,
           observer: getObserver(options),
