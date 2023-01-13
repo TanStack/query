@@ -1,6 +1,10 @@
 import * as React from 'react'
 
-import type { QueryKey, QueryFunction } from '@tanstack/query-core'
+import type {
+  QueryKey,
+  QueryFunction,
+  QueriesPlaceholderDataFunction,
+} from '@tanstack/query-core'
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type { UseQueryOptions, UseQueryResult } from './types'
@@ -25,7 +29,12 @@ type UseQueryOptionsForUseQueries<
   TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'context'>
+> = Omit<
+  UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'context' | 'placeholderData'
+> & {
+  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+}
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
