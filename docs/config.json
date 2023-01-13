@@ -721,6 +721,10 @@
               "to": "svelte/examples/svelte/auto-refetching"
             },
             {
+              "label": "SSR",
+              "to": "svelte/examples/svelte/ssr"
+            },
+            {
               "label": "Optimistic Updates in TypeScript",
               "to": "svelte/examples/svelte/optimistic-updates-typescript"
             },
@@ -735,10 +739,6 @@
             {
               "label": "Infinite Queries",
               "to": "svelte/examples/svelte/load-more-infinite-scroll"
-            },
-            {
-              "label": "Hydration",
-              "to": "svelte/examples/svelte/hydration"
             }
           ]
         }
