@@ -6,7 +6,7 @@ export const getPosts = async (limit: number) => {
   return data.filter((x) => x.id <= limit)
 }
 
-export const getPostById = async (id: string): Promise<Post> => {
+export const getPostById = async (id: number): Promise<Post> => {
   const response = await fetch(
     `https://jsonplaceholder.typicode.com/posts/${id}`,
   )

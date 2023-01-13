@@ -7,5 +7,7 @@
 </script>
 
 <QueryClientProvider client={data.queryClient}>
-  <slot />
+  <main>
+    <slot />
+  </main>
 </QueryClientProvider>

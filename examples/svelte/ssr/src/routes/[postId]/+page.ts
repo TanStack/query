@@ -4,7 +4,7 @@ import type { PageLoad } from './$types'
 export const load: PageLoad = async ({ parent, params }) => {
   const { queryClient } = await parent()
 
-  const { postId } = params
+  const postId = parseInt(params.postId)
 
   await queryClient.prefetchQuery({
     queryKey: ['post', postId],
