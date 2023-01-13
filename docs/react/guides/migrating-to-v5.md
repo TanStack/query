@@ -203,3 +203,22 @@ There are some caveats to this change however, which you must be aware of:
     }
   }, [dataUpdatedAt])
   ```
+
+### Window focus refetching no longer listens to the `focus` event
+
+The `visibilitychange` event is used exclusively now. This is possible because we only support browsers that support the `visibilitychange` event. This fixes a bunch of issues [as listed here](https://github.com/TanStack/query/pull/4805).
+
+### No longer using `unstable_batchedUpdates` as the batching function in React and React Native
+
+Since the function `unstable_batchedUpdates` is noop in React 18, it will no longer be automatically set as the batching function in `react-query`.
+
+If your framework supports a custom batching function, you can let TanStack Query know about it by calling `notifyManager.setBatchNotifyFunction`.
+
+For example, this is how the batch function is set in `solid-query`:
+
+```ts
+import { notifyManager } from '@tanstack/query-core'
+import { batch } from 'solid-js'
+
+notifyManager.setBatchNotifyFunction(batch)
+```

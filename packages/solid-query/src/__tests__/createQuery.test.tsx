@@ -2474,7 +2474,7 @@ describe('createQuery', () => {
 
     await waitFor(() => screen.getByText('default'))
 
-    window.dispatchEvent(new FocusEvent('focus'))
+    window.dispatchEvent(new Event('visibilitychange'))
 
     expect(queryFn).not.toHaveBeenCalled()
   })
@@ -2505,7 +2505,7 @@ describe('createQuery', () => {
 
     await sleep(10)
 
-    window.dispatchEvent(new FocusEvent('focus'))
+    window.dispatchEvent(new Event('visibilitychange'))
 
     await sleep(10)
 
@@ -2540,7 +2540,7 @@ describe('createQuery', () => {
 
     await sleep(10)
 
-    window.dispatchEvent(new FocusEvent('focus'))
+    window.dispatchEvent(new Event('visibilitychange'))
 
     await sleep(10)
 
@@ -2575,7 +2575,7 @@ describe('createQuery', () => {
 
     await sleep(10)
 
-    window.dispatchEvent(new FocusEvent('focus'))
+    window.dispatchEvent(new Event('visibilitychange'))
 
     await sleep(10)
 
@@ -2613,7 +2613,7 @@ describe('createQuery', () => {
 
     await sleep(20)
 
-    window.dispatchEvent(new FocusEvent('focus'))
+    window.dispatchEvent(new Event('visibilitychange'))
 
     await sleep(20)
 
@@ -2658,7 +2658,7 @@ describe('createQuery', () => {
     expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
     expect(states[1]).toMatchObject({ data: 0, isFetching: false })
 
-    window.dispatchEvent(new FocusEvent('focus'))
+    window.dispatchEvent(new Event('visibilitychange'))
 
     await screen.findByText('data: 1')
 
@@ -3469,7 +3469,7 @@ describe('createQuery', () => {
     await waitFor(() => screen.getByText('failureReason fetching error 1'))
 
     visibilityMock.mockRestore()
-    window.dispatchEvent(new FocusEvent('focus'))
+    window.dispatchEvent(new Event('visibilitychange'))
 
     // Wait for the final result
     await waitFor(() => screen.getByText('failureCount 4'))
@@ -3564,7 +3564,7 @@ describe('createQuery', () => {
 
     // reset visibilityState to original value
     visibilityMock.mockRestore()
-    window.dispatchEvent(new FocusEvent('focus'))
+    window.dispatchEvent(new Event('visibilitychange'))
 
     await waitFor(() => expect(states.length).toBe(4))
 
@@ -5367,7 +5367,7 @@ describe('createQuery', () => {
         screen.getByText('status: success, fetchStatus: paused'),
       )
 
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
       await sleep(15)
 
       await waitFor(() =>
@@ -5544,7 +5544,7 @@ describe('createQuery', () => {
       )
 
       // triggers a second pause
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
 
       onlineMock.mockReturnValue(true)
       window.dispatchEvent(new Event('online'))

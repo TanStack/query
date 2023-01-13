@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { useSyncExternalStore } from './useSyncExternalStore'
 
 import type {
   QueryKey,
@@ -185,7 +184,7 @@ export function useQueries<T extends any[]>({
 
   const optimisticResult = observer.getOptimisticResult(defaultedQueries)
 
-  useSyncExternalStore(
+  React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
         isRestoring

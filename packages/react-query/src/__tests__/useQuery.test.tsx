@@ -668,26 +668,29 @@ describe('useQuery', () => {
 
   it('should call onSettled after a query has been fetched with an error', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
     const onSettled = jest.fn()
+    const error = new Error('error')
 
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: () => Promise.reject<unknown>('error'),
+        queryFn: async () => {
+          await sleep(10)
+          return Promise.reject(error)
+        },
         retry: false,
         onSettled,
       })
-      states.push(state)
-      return null
+      return <div>status: {state.status}</div>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
-    expect(states.length).toBe(2)
+    await waitFor(() => {
+      rendered.getByText('status: error')
+    })
     expect(onSettled).toHaveBeenCalledTimes(1)
-    expect(onSettled).toHaveBeenCalledWith(undefined, 'error')
+    expect(onSettled).toHaveBeenCalledWith(undefined, error)
   })
 
   it('should not cancel an ongoing fetch when refetch is called with cancelRefetch=false if we have data already', async () => {
@@ -2466,8 +2469,8 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('count: 2'))
 
-    // Should be 2 / 3 instead of 5, uSES batches differently
-    expect(renders).toBe(process.env.REACTJS_VERSION === '17' ? 2 : 3)
+    // Should be 3 instead of 5
+    expect(renders).toBe(3)
 
     // Both callbacks should have been executed
     expect(callbackCount).toBe(2)
@@ -2599,7 +2602,7 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('default'))
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     expect(queryFn).not.toHaveBeenCalled()
@@ -2626,7 +2629,7 @@ describe('useQuery', () => {
     await sleep(10)
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await sleep(10)
@@ -2657,7 +2660,7 @@ describe('useQuery', () => {
     await sleep(10)
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await sleep(10)
@@ -2688,7 +2691,7 @@ describe('useQuery', () => {
     await sleep(10)
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await sleep(10)
@@ -2723,7 +2726,7 @@ describe('useQuery', () => {
     await sleep(20)
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await sleep(20)
@@ -2765,7 +2768,7 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 0, isFetching: false })
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await rendered.findByText('data: 1')
@@ -2777,7 +2780,7 @@ describe('useQuery', () => {
     expect(states[3]).toMatchObject({ data: 1, isFetching: false })
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await sleep(20)
@@ -3510,7 +3513,7 @@ describe('useQuery', () => {
     act(() => {
       // reset visibilityState to original value
       visibilityMock.mockRestore()
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     // Wait for the final result
@@ -3592,7 +3595,7 @@ describe('useQuery', () => {
     act(() => {
       // reset visibilityState to original value
       visibilityMock.mockRestore()
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await waitFor(() => expect(states.length).toBe(4))
@@ -5318,7 +5321,7 @@ describe('useQuery', () => {
         rendered.getByText('status: success, fetchStatus: paused'),
       )
 
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
       await sleep(15)
 
       await waitFor(() =>
@@ -5484,7 +5487,7 @@ describe('useQuery', () => {
 
       // triggers a second pause
       act(() => {
-        window.dispatchEvent(new FocusEvent('focus'))
+        window.dispatchEvent(new Event('visibilitychange'))
       })
 
       onlineMock.mockReturnValue(true)

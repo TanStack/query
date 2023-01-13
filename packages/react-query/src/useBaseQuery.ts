@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { useSyncExternalStore } from './useSyncExternalStore'
 
 import type { QueryKey, QueryObserver } from '@tanstack/query-core'
 import { notifyManager } from '@tanstack/query-core'
@@ -74,7 +73,7 @@ export function useBaseQuery<
 
   const result = observer.getOptimisticResult(defaultedOptions)
 
-  useSyncExternalStore(
+  React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
         isRestoring

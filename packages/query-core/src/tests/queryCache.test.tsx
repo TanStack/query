@@ -1,5 +1,5 @@
 import { sleep, queryKey, createQueryClient } from './utils'
-import type { QueryClient } from '..'
+import { QueryClient } from '..'
 import { QueryCache, QueryObserver } from '..'
 import type { Query } from '.././query'
 import { waitFor } from '@testing-library/react'
@@ -93,6 +93,46 @@ describe('queryCache', () => {
       })
       await sleep(100)
       expect(callback).toHaveBeenCalled()
+    })
+
+    test('should be able to limit cache size', async () => {
+      const testCache = new QueryCache()
+
+      const unsubscribe = testCache.subscribe((event) => {
+        if (event.type === 'added') {
+          if (testCache.getAll().length > 2) {
+            testCache
+              .findAll({
+                type: 'inactive',
+                predicate: (q) => q !== event.query,
+              })
+              .forEach((query) => {
+                testCache.remove(query)
+              })
+          }
+        }
+      })
+
+      const testClient = new QueryClient({ queryCache: testCache })
+
+      await testClient.prefetchQuery({
+        queryKey: ['key1'],
+        queryFn: () => 'data1',
+      })
+      expect(testCache.findAll().length).toBe(1)
+      await testClient.prefetchQuery({
+        queryKey: ['key2'],
+        queryFn: () => 'data2',
+      })
+      expect(testCache.findAll().length).toBe(2)
+      await testClient.prefetchQuery({
+        queryKey: ['key3'],
+        queryFn: () => 'data3',
+      })
+      expect(testCache.findAll().length).toBe(1)
+      expect(testCache.findAll()[0]!.state.data).toBe('data3')
+
+      unsubscribe()
     })
   })
 
@@ -286,15 +326,15 @@ describe('queryCache', () => {
 
       // Directly add the query from the cache
       // to simulate a race condition
-      const query = queryCache['queriesMap'][hash] as Query
+      const query = queryCache['queries'].get(hash) as Query
       const queryClone = Object.assign({}, query)
 
       // No error should be thrown when trying to add the query
       queryCache.add(queryClone)
-      expect(queryCache['queries'].length).toEqual(1)
+      expect(queryCache.getAll().length).toEqual(1)
 
       // Clean-up to avoid an error when queryClient.clear()
-      delete queryCache['queriesMap'][hash]
+      queryCache['queries'].delete(hash)
     })
 
     describe('QueryCache.remove', () => {
@@ -309,9 +349,9 @@ describe('queryCache', () => {
 
         // Directly remove the query from the cache
         // to simulate a race condition
-        const query = queryCache['queriesMap'][hash] as Query
+        const query = queryCache['queries'].get(hash) as Query
         const queryClone = Object.assign({}, query)
-        delete queryCache['queriesMap'][hash]
+        queryCache['queries'].delete(hash)
 
         // No error should be thrown when trying to remove the query
         expect(() => queryCache.remove(queryClone)).not.toThrow()
