@@ -245,10 +245,7 @@ export class Mutation<
         )
         throw error
       } finally {
-        this.#dispatch({
-          type: 'error',
-          error: error as TError,
-        })
+        this.#dispatch({ type: 'error', error: error as TError })
       }
     }
   }
