@@ -9,6 +9,7 @@ module.exports = {
       '@babel/preset-env',
       {
         loose,
+        bugfixes: true,
         modules: false,
         exclude: [
           '@babel/plugin-transform-regenerator',

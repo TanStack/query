@@ -1239,9 +1239,7 @@ describe('queryClient', () => {
           return new Promise((resolve) => {
             fetchCount++
             setTimeout(() => resolve(5), 10)
-            if (signal) {
-              signal.addEventListener('abort', abortFn)
-            }
+            signal.addEventListener('abort', abortFn)
           })
         },
         initialData: 1,
@@ -1264,9 +1262,7 @@ describe('queryClient', () => {
           return new Promise((resolve) => {
             fetchCount++
             setTimeout(() => resolve(5), 10)
-            if (signal) {
-              signal.addEventListener('abort', abortFn)
-            }
+            signal.addEventListener('abort', abortFn)
           })
         },
         initialData: 1,

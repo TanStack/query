@@ -30,10 +30,10 @@ export function infiniteQueryBehavior<
           Object.defineProperty(object, 'signal', {
             enumerable: true,
             get: () => {
-              if (context.signal?.aborted) {
+              if (context.signal.aborted) {
                 cancelled = true
               } else {
-                context.signal?.addEventListener('abort', () => {
+                context.signal.addEventListener('abort', () => {
                   cancelled = true
                 })
               }
@@ -73,7 +73,7 @@ export function infiniteQueryBehavior<
             return Promise.resolve(pages)
           }
 
-          const queryFnContext: QueryFunctionContext = {
+          const queryFnContext: Omit<QueryFunctionContext, 'signal'> = {
             queryKey: context.queryKey,
             pageParam: param,
             meta: context.options.meta,
@@ -81,7 +81,7 @@ export function infiniteQueryBehavior<
 
           addSignalProperty(queryFnContext)
 
-          const queryFnResult = queryFn(queryFnContext)
+          const queryFnResult = queryFn(queryFnContext as QueryFunctionContext)
 
           const promise = Promise.resolve(queryFnResult).then((page) =>
             buildNewPages(pages, param, page, previous),

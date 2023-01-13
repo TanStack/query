@@ -79,16 +79,6 @@ export function isValidTimeout(value: unknown): value is number {
   return typeof value === 'number' && value >= 0 && value !== Infinity
 }
 
-export function difference<T>(array1: T[], array2: T[]): T[] {
-  return array1.filter((x) => array2.indexOf(x) === -1)
-}
-
-export function replaceAt<T>(array: T[], index: number, value: T): T[] {
-  const copy = array.slice(0)
-  copy[index] = value
-  return copy
-}
-
 export function timeUntilStale(updatedAt: number, staleTime?: number): number {
   return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0)
 }
@@ -106,7 +96,7 @@ export function matchQuery(
     stale,
   } = filters
 
-  if (isQueryKey(queryKey)) {
+  if (queryKey) {
     if (exact) {
       if (query.queryHash !== hashQueryKeyByOptions(queryKey, query.options)) {
         return false
@@ -149,14 +139,12 @@ export function matchMutation(
   mutation: Mutation<any, any>,
 ): boolean {
   const { exact, fetching, predicate, mutationKey } = filters
-  if (isQueryKey(mutationKey)) {
+  if (mutationKey) {
     if (!mutation.options.mutationKey) {
       return false
     }
     if (exact) {
-      if (
-        hashQueryKey(mutation.options.mutationKey) !== hashQueryKey(mutationKey)
-      ) {
+      if (hashKey(mutation.options.mutationKey) !== hashKey(mutationKey)) {
         return false
       }
     } else if (!partialMatchKey(mutation.options.mutationKey, mutationKey)) {
@@ -182,15 +170,15 @@ export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
   queryKey: TQueryKey,
   options?: QueryOptions<any, any, any, TQueryKey>,
 ): string {
-  const hashFn = options?.queryKeyHashFn || hashQueryKey
+  const hashFn = options?.queryKeyHashFn || hashKey
   return hashFn(queryKey)
 }
 
 /**
- * Default query keys hash function.
+ * Default query & mutation keys hash function.
  * Hashes the value into a stable hash.
  */
-export function hashQueryKey(queryKey: QueryKey): string {
+export function hashKey(queryKey: QueryKey | MutationKey): string {
   return JSON.stringify(queryKey, (_, val) =>
     isPlainObject(val)
       ? Object.keys(val)
@@ -206,14 +194,8 @@ export function hashQueryKey(queryKey: QueryKey): string {
 /**
  * Checks if key `b` partially matches with key `a`.
  */
-export function partialMatchKey(a: QueryKey, b: QueryKey): boolean {
-  return partialDeepEqual(a, b)
-}
-
-/**
- * Checks if `b` partially matches with `a`.
- */
-export function partialDeepEqual(a: any, b: any): boolean {
+export function partialMatchKey(a: QueryKey, b: QueryKey): boolean
+export function partialMatchKey(a: any, b: any): boolean {
   if (a === b) {
     return true
   }
@@ -223,7 +205,7 @@ export function partialDeepEqual(a: any, b: any): boolean {
   }
 
   if (a && b && typeof a === 'object' && typeof b === 'object') {
-    return !Object.keys(b).some((key) => !partialDeepEqual(a[key], b[key]))
+    return !Object.keys(b).some((key) => !partialMatchKey(a[key], b[key]))
   }
 
   return false
@@ -316,14 +298,6 @@ function hasObjectPrototype(o: any): boolean {
   return Object.prototype.toString.call(o) === '[object Object]'
 }
 
-export function isQueryKey(value: unknown): value is QueryKey {
-  return Array.isArray(value)
-}
-
-export function isError(value: any): value is Error {
-  return value instanceof Error
-}
-
 export function sleep(timeout: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, timeout)
@@ -336,13 +310,6 @@ export function sleep(timeout: number): Promise<void> {
  */
 export function scheduleMicrotask(callback: () => void) {
   sleep(0).then(callback)
-}
-
-export function getAbortController(): AbortController | undefined {
-  if (typeof AbortController === 'function') {
-    return new AbortController()
-  }
-  return
 }
 
 export function replaceData<
