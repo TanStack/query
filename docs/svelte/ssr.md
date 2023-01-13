@@ -5,6 +5,14 @@ title: SSR and SvelteKit
 
 Svelte Query supports two ways of prefetching data on the server and passing that to the client with SvelteKit.
 
+## Caveat
+
+SvelteKit defaults to rendering routes with SSR. Unless you are using one of the below solutions, you need to disable the query on the server. Otherwise, your query will continue executing on the server asynchronously, even after the HTML has been sent to the client.
+
+One way to achieve this is to `import { browser } from '$app/environment'` and add `enabled: browser` to the options of `createQuery`. This will set the query to disabled on the server, but enabled on the client.
+
+Another way to achieve this is using page options. For that page or layout, you should set `export const ssr = false` in either `+page.ts` or `+layout.ts`. You can read more about using this option [here](https://kit.svelte.dev/docs/page-options#ssr).
+
 ## Using `initialData`
 
 Together with SvelteKit's [`load`](https://kit.svelte.dev/docs/load), you can pass the data loaded server-side into `createQuery`'s' `initialData` option:
@@ -38,6 +46,7 @@ export const load: PageLoad = async () => {
 Pros:
 
 - This setup is minimal and this can be a quick solution for some cases
+- Works with both `+page.ts`/`+layout.ts` and `+page.server.ts`/`+layout.server.ts` load functions
 
 Cons:
 
@@ -108,3 +117,4 @@ Pros:
 Cons:
 
 - Requires more files for initial setup
+- Works with only `+page.ts`/`+layout.ts` load functions
