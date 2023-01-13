@@ -423,8 +423,7 @@ export class QueryObserver<
       : this.#previousQueryResult
 
     const { state } = query
-    let { dataUpdatedAt, error, errorUpdatedAt, fetchStatus, status } = state
-    let isPreviousData = false
+    let { error, errorUpdatedAt, fetchStatus, status } = state
     let isPlaceholderData = false
     let data: TData | undefined
 
@@ -441,7 +440,7 @@ export class QueryObserver<
         fetchStatus = canFetch(query.options.networkMode)
           ? 'fetching'
           : 'paused'
-        if (!dataUpdatedAt) {
+        if (!state.dataUpdatedAt) {
           status = 'loading'
         }
       }
@@ -450,20 +449,8 @@ export class QueryObserver<
       }
     }
 
-    // Keep previous data if needed
-    if (
-      options.keepPreviousData &&
-      !state.dataUpdatedAt &&
-      prevQueryResult?.isSuccess &&
-      status !== 'error'
-    ) {
-      data = prevQueryResult.data
-      dataUpdatedAt = prevQueryResult.dataUpdatedAt
-      status = prevQueryResult.status
-      isPreviousData = true
-    }
     // Select data if needed
-    else if (options.select && typeof state.data !== 'undefined') {
+    if (options.select && typeof state.data !== 'undefined') {
       // Memoize select result
       if (
         prevResult &&
@@ -508,7 +495,9 @@ export class QueryObserver<
       } else {
         placeholderData =
           typeof options.placeholderData === 'function'
-            ? (options.placeholderData as PlaceholderDataFunction<TQueryData>)()
+            ? (
+                options.placeholderData as unknown as PlaceholderDataFunction<TQueryData>
+              )(prevQueryResult?.data as TQueryData | undefined)
             : options.placeholderData
         if (options.select && typeof placeholderData !== 'undefined') {
           try {
@@ -549,7 +538,7 @@ export class QueryObserver<
       isError,
       isInitialLoading: isLoading && isFetching,
       data,
-      dataUpdatedAt,
+      dataUpdatedAt: state.dataUpdatedAt,
       error,
       errorUpdatedAt,
       failureCount: state.fetchFailureCount,
@@ -564,7 +553,6 @@ export class QueryObserver<
       isLoadingError: isError && state.dataUpdatedAt === 0,
       isPaused: fetchStatus === 'paused',
       isPlaceholderData,
-      isPreviousData,
       isRefetchError: isError && state.dataUpdatedAt !== 0,
       isStale: isStale(query, options),
       refetch: this.refetch,
