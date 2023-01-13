@@ -6,7 +6,7 @@
     return await res.json()
   }
 
-  query = createQuery({
+  const query = createQuery({
     queryKey: ['films'],
     queryFn: getFilms,
   })
