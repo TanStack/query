@@ -79,5 +79,5 @@ Visit https://tanstack.com/query/v4/docs/adapters/vue-query
    const id = ref(1);
    const enabled = ref(false);
 
-   const query = useQuery({ queyKey: ["todos", id], queryFn: () => getTodos(id), enabled });
+   const query = useQuery({ queryKey: ["todos", id], queryFn: () => getTodos(id), enabled });
    ```
