@@ -149,17 +149,18 @@ export class Mutation<
       this.#retryer.continue()
       return this.#retryer.promise
     }
-    return this.execute()
+    // continuing a mutation assumes that variables are set, mutation must have been dehydrated before
+    return this.execute(this.state.variables!)
   }
 
-  async execute(input?: TVariables): Promise<TData> {
+  async execute(variables: TVariables): Promise<TData> {
     const executeMutation = () => {
       this.#retryer = createRetryer({
         fn: () => {
           if (!this.options.mutationFn) {
             return Promise.reject('No mutationFn found')
           }
-          return this.options.mutationFn(this.state.variables!)
+          return this.options.mutationFn(variables)
         },
         onFail: (failureCount, error) => {
           this.#dispatch({ type: 'failed', failureCount, error })
@@ -179,7 +180,6 @@ export class Mutation<
     }
 
     const restored = this.state.status === 'loading'
-    let variables: TVariables | undefined = input
 
     try {
       if (!restored) {
@@ -189,7 +189,7 @@ export class Mutation<
           variables,
           this as Mutation<unknown, unknown, unknown, unknown>,
         )
-        const context = await this.options.onMutate?.(variables!)
+        const context = await this.options.onMutate?.(variables)
         if (context !== this.state.context) {
           this.#dispatch({
             type: 'loading',
@@ -198,9 +198,6 @@ export class Mutation<
           })
         }
       }
-      // this makes sure variables are set even if the mutation is restored
-      // in which case we call execute without input
-      variables = this.state.variables
       const data = await executeMutation()
 
       // Notify cache callback
@@ -211,9 +208,9 @@ export class Mutation<
         this as Mutation<unknown, unknown, unknown, unknown>,
       )
 
-      await this.options.onSuccess?.(data, variables!, this.state.context!)
+      await this.options.onSuccess?.(data, variables, this.state.context!)
 
-      await this.options.onSettled?.(data, null, variables!, this.state.context)
+      await this.options.onSettled?.(data, null, variables, this.state.context)
 
       this.#dispatch({ type: 'success', data })
       return data
@@ -233,14 +230,14 @@ export class Mutation<
 
         await this.options.onError?.(
           error as TError,
-          variables!,
+          variables,
           this.state.context,
         )
 
         await this.options.onSettled?.(
           undefined,
           error as TError,
-          variables!,
+          variables,
           this.state.context,
         )
         throw error

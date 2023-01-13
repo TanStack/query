@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { act, render } from '@testing-library/react'
-import type { ContextOptions, QueryClientConfig, MutationOptions } from '..'
+import type { ContextOptions, QueryClientConfig } from '..'
 import { QueryClient, QueryClientProvider } from '..'
 import * as utils from '@tanstack/query-core'
 
@@ -96,13 +96,6 @@ export function expectType<T>(_: T): void {
  */
 export function expectTypeNotAny<T>(_: 0 extends 1 & T ? never : T): void {
   return undefined
-}
-
-export function executeMutation(
-  queryClient: QueryClient,
-  options: MutationOptions<any, any, any, any>,
-): Promise<unknown> {
-  return queryClient.getMutationCache().build(queryClient, options).execute()
 }
 
 // This monkey-patches the isServer-value from utils,

@@ -93,7 +93,7 @@ export class MutationObserver<
   }
 
   mutate(
-    variables?: TVariables,
+    variables: TVariables,
     options?: MutateOptions<TData, TError, TVariables, TContext>,
   ): Promise<TData> {
     this.#mutateOptions = options
