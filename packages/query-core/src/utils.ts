@@ -68,7 +68,7 @@ export type QueryTypeFilter = 'all' | 'active' | 'inactive'
 
 // UTILS
 
-export const isServer = typeof window === 'undefined'
+export const isServer = typeof window === 'undefined' || 'Deno' in window
 
 export function noop(): undefined {
   return undefined
@@ -418,6 +418,7 @@ export function getAbortController(): AbortController | undefined {
   if (typeof AbortController === 'function') {
     return new AbortController()
   }
+  return
 }
 
 export function replaceData<

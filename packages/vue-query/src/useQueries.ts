@@ -135,8 +135,10 @@ type UseQueriesOptionsArg<T extends any[]> = readonly [...UseQueriesOptions<T>]
 
 export function useQueries<T extends any[]>({
   queries,
+  queryClient: queryClientInjected,
 }: {
   queries: Ref<UseQueriesOptionsArg<T>> | UseQueriesOptionsArg<T>
+  queryClient?: QueryClient
 }): Readonly<UseQueriesResults<T>> {
   const unreffedQueries = computed(
     () => cloneDeepUnref(queries) as UseQueriesOptionsArg<T>,
@@ -146,7 +148,19 @@ export function useQueries<T extends any[]>({
   const optionsQueryClient = unreffedQueries.value[0]?.queryClient as
     | QueryClient
     | undefined
-  const queryClient = optionsQueryClient ?? useQueryClient(queryClientKey)
+  const queryClient =
+    queryClientInjected ?? optionsQueryClient ?? useQueryClient(queryClientKey)
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    (queryClientKey || optionsQueryClient)
+  ) {
+    queryClient
+      .getLogger()
+      .error(
+        `Providing queryClient to individual queries in useQueries has been deprecated and will be removed in the next major version. You can still pass queryClient as an option directly to useQueries hook.`,
+      )
+  }
+
   const defaultedQueries = computed(() =>
     unreffedQueries.value.map((options) => {
       const defaulted = queryClient.defaultQueryOptions(options)

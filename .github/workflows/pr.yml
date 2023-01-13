@@ -15,7 +15,7 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:jest
+      - run: pnpm run test:lib
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
   lint:
@@ -47,7 +47,7 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run typecheck
+      - run: pnpm run test:types
   format:
     name: 'Format'
     runs-on: ubuntu-latest

@@ -28,6 +28,7 @@ import type {
   ResetOptions,
   ResetQueryFilters,
   SetDataOptions,
+  WithRequired,
 } from './types'
 import type { QueryState } from './query'
 import { QueryCache } from './queryCache'
@@ -61,6 +62,7 @@ export class QueryClient {
   private defaultOptions: DefaultOptions
   private queryDefaults: QueryDefaults[]
   private mutationDefaults: MutationDefaults[]
+  private mountCount: number
   private unsubscribeFocus?: () => void
   private unsubscribeOnline?: () => void
 
@@ -71,6 +73,7 @@ export class QueryClient {
     this.defaultOptions = config.defaultOptions || {}
     this.queryDefaults = []
     this.mutationDefaults = []
+    this.mountCount = 0
 
     if (process.env.NODE_ENV !== 'production' && config.logger) {
       this.logger.error(
@@ -80,6 +83,9 @@ export class QueryClient {
   }
 
   mount(): void {
+    this.mountCount++
+    if (this.mountCount !== 1) return
+
     this.unsubscribeFocus = focusManager.subscribe(() => {
       if (focusManager.isFocused()) {
         this.resumePausedMutations()
@@ -95,8 +101,14 @@ export class QueryClient {
   }
 
   unmount(): void {
+    this.mountCount--
+    if (this.mountCount !== 0) return
+
     this.unsubscribeFocus?.()
+    this.unsubscribeFocus = undefined
+
     this.unsubscribeOnline?.()
+    this.unsubscribeOnline = undefined
   }
 
   isFetching(filters?: QueryFilters): number
@@ -116,6 +128,67 @@ export class QueryClient {
     filters?: QueryFilters,
   ): TQueryFnData | undefined {
     return this.queryCache.find<TQueryFnData>(queryKey, filters)?.state.data
+  }
+
+  ensureQueryData<
+    TQueryFnData = unknown,
+    TError = unknown,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    options: WithRequired<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'queryKey'
+    >,
+  ): Promise<TData>
+  ensureQueryData<
+    TQueryFnData = unknown,
+    TError = unknown,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    queryKey: TQueryKey,
+    options?: Omit<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'queryKey'
+    >,
+  ): Promise<TData>
+  ensureQueryData<
+    TQueryFnData = unknown,
+    TError = unknown,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    queryKey: TQueryKey,
+    queryFn: QueryFunction<TQueryFnData, TQueryKey>,
+    options?: Omit<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'queryKey' | 'queryFn'
+    >,
+  ): Promise<TData>
+  ensureQueryData<
+    TQueryFnData,
+    TError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    arg1:
+      | TQueryKey
+      | WithRequired<
+          FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+          'queryKey'
+        >,
+    arg2?:
+      | QueryFunction<TQueryFnData, TQueryKey>
+      | FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    arg3?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  ): Promise<TData> {
+    const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
+    const cachedData = this.getQueryData<TData>(parsedOptions.queryKey!)
+
+    return cachedData
+      ? Promise.resolve(cachedData)
+      : this.fetchQuery(parsedOptions)
   }
 
   getQueriesData<TQueryFnData = unknown>(
