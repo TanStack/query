@@ -1,16 +1,11 @@
-import { dehydrate, QueryClient } from '@tanstack/svelte-query'
-import { getPosts, limit } from '$lib/data.js'
+import { getPosts } from '$lib/data'
 import type { PageLoad } from './$types'
 
-export const load: PageLoad = async () => {
-  const queryClient = new QueryClient()
+export const load: PageLoad = async ({parent}) => {
+  const { queryClient } = await parent()
 
   await queryClient.prefetchQuery({
-    queryKey: ['posts', limit],
-    queryFn: () => getPosts(limit),
+    queryKey: ['posts', 10],
+    queryFn: () => getPosts(10),
   })
-
-  return {
-    dehydratedState: dehydrate(queryClient),
-  }
 }

@@ -1,19 +1,11 @@
 <script lang="ts">
   import '../app.css'
-  import {
-    QueryClient,
-    QueryClientProvider,
-    Hydrate,
-  } from '@tanstack/svelte-query'
-  import { dehydratedState } from '$lib/store'
+  import { QueryClientProvider } from '@tanstack/svelte-query'
+  import type { PageData } from './$types'
 
-  const queryClient = new QueryClient()
+  export let data: PageData
 </script>
 
-<QueryClientProvider client={queryClient}>
-  <Hydrate state={$dehydratedState}>
-    <main>
-      <slot />
-    </main>
-  </Hydrate>
+<QueryClientProvider client={data.queryClient}>
+  <slot />
 </QueryClientProvider>

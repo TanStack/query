@@ -1,16 +1,13 @@
-export type Post = { id: number; title: string; body: string }
-
-export const limit = 10
+import type { Post } from "./types"
 
 export const getPosts = async (limit: number) => {
-  const parsed = await fetch('https://jsonplaceholder.typicode.com/posts').then(
-    (r) => r.json(),
-  )
-  const result = parsed.filter((x: Post) => x.id <= limit)
-  return result
+  const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+  const data = await response.json() as Post[]
+  return data.filter((x) => x.id <= limit)
 }
 
-export const getPostById = async (id: number) =>
-  await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then((r) =>
-    r.json(),
-  )
+export const getPostById = async (id: string): Promise<Post> => {
+  const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`)
+  const data = await response.json() as Post
+  return data
+}
