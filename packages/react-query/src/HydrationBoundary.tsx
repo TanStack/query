@@ -7,11 +7,15 @@ import type { ContextOptions } from './types'
 
 export interface HydrationBoundaryProps {
   state?: unknown
-  options?: HydrateOptions & ContextOptions,
+  options?: HydrateOptions & ContextOptions
   children?: React.ReactNode
 }
 
-export const HydrationBoundary = ({ children, options = {}, state }: HydrationBoundaryProps) => {
+export const HydrationBoundary = ({
+  children,
+  options = {},
+  state,
+}: HydrationBoundaryProps) => {
   const queryClient = useQueryClient({ context: options.context })
 
   const optionsRef = React.useRef(options)
