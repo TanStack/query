@@ -696,12 +696,12 @@
               "to": "svelte/installation"
             },
             {
-              "label": "Reactivity",
-              "to": "svelte/reactivity"
-            },
-            {
               "label": "SSR & SvelteKit",
               "to": "svelte/ssr"
+            },
+            {
+              "label": "Reactivity",
+              "to": "svelte/reactivity"
             }
           ]
         },
