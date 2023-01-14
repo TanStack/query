@@ -9,10 +9,12 @@ SvelteKit defaults to rendering routes with SSR. Because of this, you need to di
 
 The recommended way to achieve this is to use the `browser` module from SvelteKit in your `QueryClient` object. This will not disable `queryClient.prefetchQuery()`, which is used in one of the solutions below.
 
+**src/routes/+layout.svelte**
+
 ```markdown
 <script lang="ts">
   import { browser } from '$app/environment'
-  import { QueryClient } from '@tanstack/svelte-query'
+  import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query'
 
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -83,11 +85,19 @@ Svelte Query supports prefetching queries on the server. Using this setup below,
 **src/routes/+layout.ts**
 
 ```ts
+import { browser } from '$app/environment'
 import { QueryClient } from '@tanstack/svelte-query'
 import type { LayoutLoad } from './$types'
 
 export const load: LayoutLoad = async () => {
-  const queryClient = new QueryClient()
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        enabled: browser,
+      },
+    },
+  })
+
   return { queryClient }
 }
 ```
