@@ -11,7 +11,7 @@ Include the QueryClientProvider near the root of your project:
 
 ```markdown
 <script lang="ts">
-  import { QueryClientProvider, QueryClient } from '@tanstack/svelte-query'
+  import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query'
   import Example from './lib/Example.svelte'
 
   const queryClient = new QueryClient()
