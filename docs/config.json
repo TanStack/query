@@ -688,8 +688,57 @@
           "label": "Getting Started",
           "children": [
             {
-              "label": "Coming Soon",
+              "label": "Overview",
               "to": "svelte/overview"
+            },
+            {
+              "label": "Installation",
+              "to": "svelte/installation"
+            },
+            {
+              "label": "SSR & SvelteKit",
+              "to": "svelte/ssr"
+            },
+            {
+              "label": "Reactivity",
+              "to": "svelte/reactivity"
+            }
+          ]
+        },
+        {
+          "label": "Examples",
+          "children": [
+            {
+              "label": "Simple",
+              "to": "svelte/examples/svelte/simple"
+            },
+            {
+              "label": "Basic",
+              "to": "svelte/examples/svelte/basic"
+            },
+            {
+              "label": "Auto Refetching / Polling / Realtime",
+              "to": "svelte/examples/svelte/auto-refetching"
+            },
+            {
+              "label": "SSR",
+              "to": "svelte/examples/svelte/ssr"
+            },
+            {
+              "label": "Optimistic Updates in TypeScript",
+              "to": "svelte/examples/svelte/optimistic-updates-typescript"
+            },
+            {
+              "label": "Playground",
+              "to": "svelte/examples/svelte/playground"
+            },
+            {
+              "label": "Star Wars",
+              "to": "svelte/examples/svelte/star-wars"
+            },
+            {
+              "label": "Infinite Queries",
+              "to": "svelte/examples/svelte/load-more-infinite-scroll"
             }
           ]
         }
