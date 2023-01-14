@@ -2,13 +2,7 @@ import * as React from 'react'
 import { render, waitFor } from '@testing-library/react'
 
 import { sleep, queryKey, createQueryClient } from './utils'
-import {
-  QueryClient,
-  QueryClientProvider,
-  QueryCache,
-  useQuery,
-  useQueryClient,
-} from '..'
+import { QueryClientProvider, QueryCache, useQuery, useQueryClient } from '..'
 
 describe('QueryClientProvider', () => {
   test('sets a specific cache for all queries to use', async () => {
@@ -144,69 +138,6 @@ describe('QueryClientProvider', () => {
 
     expect(queryCache.find({ queryKey: key })).toBeDefined()
     expect(queryCache.find({ queryKey: key })?.options.cacheTime).toBe(Infinity)
-  })
-
-  describe('with custom context', () => {
-    it('uses the correct context', async () => {
-      const key = queryKey()
-
-      const contextOuter = React.createContext<QueryClient | undefined>(
-        undefined,
-      )
-      const contextInner = React.createContext<QueryClient | undefined>(
-        undefined,
-      )
-
-      const queryCacheOuter = new QueryCache()
-      const queryClientOuter = new QueryClient({ queryCache: queryCacheOuter })
-
-      const queryCacheInner = new QueryCache()
-      const queryClientInner = new QueryClient({ queryCache: queryCacheInner })
-
-      const queryCacheInnerInner = new QueryCache()
-      const queryClientInnerInner = new QueryClient({
-        queryCache: queryCacheInnerInner,
-      })
-
-      function Page() {
-        const { data: testOuter } = useQuery({
-          queryKey: key,
-          queryFn: async () => 'testOuter',
-          context: contextOuter,
-        })
-        const { data: testInner } = useQuery({
-          queryKey: key,
-          queryFn: async () => 'testInner',
-          context: contextInner,
-        })
-        const { data: testInnerInner } = useQuery({
-          queryKey: key,
-          queryFn: async () => 'testInnerInner',
-        })
-
-        return (
-          <div>
-            <h1>
-              {testOuter} {testInner} {testInnerInner}
-            </h1>
-          </div>
-        )
-      }
-
-      const rendered = render(
-        <QueryClientProvider client={queryClientOuter} context={contextOuter}>
-          <QueryClientProvider client={queryClientInner} context={contextInner}>
-            <QueryClientProvider client={queryClientInnerInner}>
-              <Page />
-            </QueryClientProvider>
-          </QueryClientProvider>
-        </QueryClientProvider>,
-      )
-
-      await waitFor(() =>
-        rendered.getByText('testOuter testInner testInnerInner'),
-      )
-    })
   })
 
   describe('useQueryClient', () => {

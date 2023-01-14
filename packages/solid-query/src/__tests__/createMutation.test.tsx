@@ -1,13 +1,11 @@
 import '@testing-library/jest-dom'
 import {
-  createContext,
   createEffect,
   createRenderEffect,
   createSignal,
   ErrorBoundary,
 } from 'solid-js'
 import { fireEvent, render, screen, waitFor } from 'solid-testing-library'
-import type { QueryClient } from '..'
 import {
   createMutation,
   MutationCache,
@@ -1003,74 +1001,6 @@ describe('useMutation', () => {
     expect(onSettled).toHaveBeenCalledTimes(1)
     expect(onSuccessMutate).toHaveBeenCalledTimes(0)
     expect(onSettledMutate).toHaveBeenCalledTimes(0)
-  })
-
-  describe('with custom context', () => {
-    it('should be able to reset `data`', async () => {
-      const context = createContext<QueryClient | undefined>(undefined)
-
-      function Page() {
-        const mutation = createMutation(() => ({
-          mutationFn: () => Promise.resolve('mutation'),
-          context,
-        }))
-
-        return (
-          <div>
-            <h1>{mutation.data ?? 'empty'}</h1>
-            <button onClick={() => mutation.reset()}>reset</button>
-            <button onClick={() => mutation.mutate()}>mutate</button>
-          </div>
-        )
-      }
-
-      render(() => (
-        <QueryClientProvider client={queryClient} context={context}>
-          <Page />
-        </QueryClientProvider>
-      ))
-
-      expect(screen.getByRole('heading').textContent).toBe('empty')
-
-      fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
-
-      await waitFor(() => {
-        expect(screen.getByRole('heading').textContent).toBe('mutation')
-      })
-
-      fireEvent.click(screen.getByRole('button', { name: /reset/i }))
-
-      await waitFor(() => {
-        expect(screen.getByRole('heading').textContent).toBe('empty')
-      })
-    })
-
-    it('should throw if the context is not passed to useMutation', async () => {
-      const context = createContext<QueryClient | undefined>(undefined)
-
-      function Page() {
-        const { data = '' } = createMutation(() => ({
-          mutationFn: () => Promise.resolve('mutation'),
-        }))
-
-        return (
-          <div>
-            <h1 data-testid="title">{data}</h1>
-          </div>
-        )
-      }
-
-      render(() => (
-        <QueryClientProvider client={queryClient} context={context}>
-          <ErrorBoundary fallback={() => <div>error boundary</div>}>
-            <Page />
-          </ErrorBoundary>
-          ,
-        </QueryClientProvider>
-      ))
-
-      await waitFor(() => screen.getByText('error boundary'))
-    })
   })
 
   it('should call mutate callbacks only for the last observer', async () => {

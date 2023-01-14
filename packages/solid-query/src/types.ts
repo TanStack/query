@@ -1,8 +1,6 @@
 /* istanbul ignore file */
 
-import type { Context } from 'solid-js'
 import type {
-  QueryClient,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
@@ -15,13 +13,6 @@ import type {
   WithRequired,
 } from '@tanstack/query-core'
 
-export interface ContextOptions {
-  /**
-   * Use this to pass your Solid Query context. Otherwise, `defaultContext` will be used.
-   */
-  context?: Context<QueryClient | undefined>
-}
-
 export type FunctionedParams<T> = () => T
 
 export interface CreateBaseQueryOptions<
@@ -30,11 +21,10 @@ export interface CreateBaseQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends ContextOptions,
-    WithRequired<
-      QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
-      'queryKey'
-    > {}
+> extends WithRequired<
+    QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+    'queryKey'
+  > {}
 
 export interface SolidQueryOptions<
   TQueryFnData = unknown,
@@ -88,17 +78,16 @@ export interface SolidInfiniteQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends ContextOptions,
-    Omit<
-      InfiniteQueryObserverOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryData,
-        TQueryKey
-      >,
-      'queryKey'
-    > {
+> extends Omit<
+    InfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >,
+    'queryKey'
+  > {
   queryKey: TQueryKey
 }
 
@@ -128,11 +117,10 @@ export interface SolidMutationOptions<
   TError = Error,
   TVariables = void,
   TContext = unknown,
-> extends ContextOptions,
-    Omit<
-      MutationObserverOptions<TData, TError, TVariables, TContext>,
-      '_defaulted' | 'variables'
-    > {}
+> extends Omit<
+    MutationObserverOptions<TData, TError, TVariables, TContext>,
+    '_defaulted' | 'variables'
+  > {}
 
 export type CreateMutationOptions<
   TData = unknown,

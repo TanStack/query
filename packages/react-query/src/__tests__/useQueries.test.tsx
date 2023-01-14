@@ -13,7 +13,6 @@ import {
   sleep,
 } from './utils'
 import type {
-  QueryClient,
   QueryFunction,
   QueryKey,
   QueryObserverResult,
@@ -774,88 +773,6 @@ describe('useQueries', () => {
 
     await sleep(20)
     QueriesObserverSpy.mockRestore()
-  })
-
-  describe('with custom context', () => {
-    it('should return the correct states', async () => {
-      const context = React.createContext<QueryClient | undefined>(undefined)
-
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const results: UseQueryResult[][] = []
-
-      function Page() {
-        const result = useQueries({
-          context,
-          queries: [
-            {
-              queryKey: key1,
-              queryFn: async () => {
-                await sleep(5)
-                return 1
-              },
-            },
-            {
-              queryKey: key2,
-              queryFn: async () => {
-                await sleep(10)
-                return 2
-              },
-            },
-          ],
-        })
-        results.push(result)
-        return null
-      }
-
-      renderWithClient(queryClient, <Page />, { context })
-
-      await sleep(30)
-
-      expect(results[0]).toMatchObject([
-        { data: undefined },
-        { data: undefined },
-      ])
-      expect(results[results.length - 1]).toMatchObject([
-        { data: 1 },
-        { data: 2 },
-      ])
-    })
-
-    it('should throw if the context is necessary and is not passed to useQueries', async () => {
-      const context = React.createContext<QueryClient | undefined>(undefined)
-
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const results: UseQueryResult[][] = []
-
-      function Page() {
-        const result = useQueries({
-          queries: [
-            {
-              queryKey: key1,
-              queryFn: async () => 1,
-            },
-            {
-              queryKey: key2,
-              queryFn: async () => 2,
-            },
-          ],
-        })
-        results.push(result)
-        return null
-      }
-
-      const rendered = renderWithClient(
-        queryClient,
-        <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
-          <Page />
-        </ErrorBoundary>,
-        { context },
-      )
-
-      await waitFor(() => rendered.getByText('error boundary'))
-    })
   })
 
   it("should throw error if in one of queries' queryFn throws and throwErrors is in use", async () => {

@@ -1,17 +1,16 @@
-import type { MutationFilters } from '@tanstack/query-core'
-import type { ContextOptions } from './types'
+import type { MutationFilters, QueryClient } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type { Accessor } from 'solid-js'
 import { createSignal, onCleanup, createMemo } from 'solid-js'
 
 type Options = () => {
   filters?: MutationFilters
-  options?: ContextOptions
+  queryClient?: QueryClient
 }
 
 export function useIsMutating(options: Options = () => ({})): Accessor<number> {
   const queryClient = createMemo(() =>
-    useQueryClient({ context: options().options?.context }),
+    useQueryClient(options().queryClient),
   )
   const mutationCache = createMemo(() => queryClient().getMutationCache())
 
