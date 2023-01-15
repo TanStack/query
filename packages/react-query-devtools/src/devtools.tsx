@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { useSyncExternalStore } from './useSyncExternalStore'
 import type {
   QueryCache,
   QueryClient,
@@ -402,7 +401,7 @@ const useSubscribeToQueryCache = <T,>(
   getSnapshot: () => T,
   skip: boolean = false,
 ): T => {
-  return useSyncExternalStore(
+  return React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) => {
         if (!skip)

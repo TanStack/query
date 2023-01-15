@@ -41,10 +41,6 @@ function getAppMock(withUnmountHook = false): TestApp {
 }
 
 describe('VueQueryPlugin', () => {
-  beforeEach(() => {
-    window.__VUE_QUERY_CONTEXT__ = undefined
-  })
-
   describe('devtools', () => {
     test('should NOT setup devtools', () => {
       const setupDevtoolsMock = setupDevtools as jest.Mock
@@ -123,7 +119,7 @@ describe('VueQueryPlugin', () => {
       appMock._mixin.beforeCreate?.call(appMock)
 
       expect(appMock._provided).toMatchObject({
-        VUE_QUERY_CLIENT: expect.objectContaining({ defaultOptions: {} }),
+        VUE_QUERY_CLIENT: expect.any(QueryClient),
       })
     })
 
@@ -133,7 +129,7 @@ describe('VueQueryPlugin', () => {
 
       expect(appMock.provide).toHaveBeenCalledWith(
         VUE_QUERY_CLIENT,
-        expect.objectContaining({ defaultOptions: {} }),
+        expect.any(QueryClient),
       )
     })
   })
@@ -146,9 +142,7 @@ describe('VueQueryPlugin', () => {
       appMock._mixin.beforeCreate?.call(appMock)
 
       expect(appMock._provided).toMatchObject({
-        [VUE_QUERY_CLIENT + ':CUSTOM']: expect.objectContaining({
-          defaultOptions: {},
-        }),
+        [VUE_QUERY_CLIENT + ':CUSTOM']: expect.any(QueryClient),
       })
     })
 
@@ -158,7 +152,7 @@ describe('VueQueryPlugin', () => {
 
       expect(appMock.provide).toHaveBeenCalledWith(
         VUE_QUERY_CLIENT + ':CUSTOM',
-        expect.objectContaining({ defaultOptions: {} }),
+        expect.any(QueryClient),
       )
     })
   })
@@ -221,44 +215,12 @@ describe('VueQueryPlugin', () => {
           queryClientConfig: config,
         })
 
-        expect(appMock.provide).toHaveBeenCalledWith(
-          VUE_QUERY_CLIENT,
-          expect.objectContaining(config),
-        )
+        const client = (appMock.provide as jest.Mock).mock.calls[0][1]
+        const defaultOptions = client.getDefaultOptions()
+
+        expect(defaultOptions).toEqual(config.defaultOptions)
       },
     )
-  })
-
-  describe('when context sharing is enabled', () => {
-    test('should create context if it does not exist', () => {
-      const appMock = getAppMock()
-      VueQueryPlugin.install(appMock, { contextSharing: true })
-
-      expect(window.__VUE_QUERY_CONTEXT__).toBeTruthy()
-    })
-
-    test('should create context with options if it does not exist', () => {
-      const appMock = getAppMock()
-      VueQueryPlugin.install(appMock, {
-        contextSharing: true,
-        queryClientConfig: { defaultOptions: { queries: { staleTime: 5000 } } },
-      })
-
-      expect(
-        window.__VUE_QUERY_CONTEXT__?.getDefaultOptions().queries?.staleTime,
-      ).toEqual(5000)
-    })
-
-    test('should use existing context', () => {
-      const customClient = {
-        mount: jest.fn(),
-      } as unknown as QueryClient
-      window.__VUE_QUERY_CONTEXT__ = customClient
-      const appMock = getAppMock()
-      VueQueryPlugin.install(appMock, { contextSharing: true })
-
-      expect(customClient.mount).toHaveBeenCalledTimes(1)
-    })
   })
 
   describe('when persister is provided', () => {

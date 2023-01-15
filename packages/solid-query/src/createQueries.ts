@@ -1,4 +1,8 @@
-import type { QueryFunction, QueryKey } from '@tanstack/query-core'
+import type {
+  QueriesPlaceholderDataFunction,
+  QueryFunction,
+  QueryKey,
+} from '@tanstack/query-core'
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
 import { createComputed, onCleanup, onMount } from 'solid-js'
 import { createStore, unwrap } from 'solid-js/store'
@@ -9,10 +13,15 @@ import type { CreateQueryResult, SolidQueryOptions } from './types'
 // - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
 type CreateQueryOptionsForCreateQueries<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = Omit<SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'context'>
+> = Omit<
+  SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'context' | 'placeholderData'
+> & {
+  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+}
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
@@ -41,16 +50,11 @@ type GetOptions<T> =
         queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
         select: (data: any) => infer TData
       }
-    ? CreateQueryOptionsForCreateQueries<
-        TQueryFnData,
-        unknown,
-        TData,
-        TQueryKey
-      >
+    ? CreateQueryOptionsForCreateQueries<TQueryFnData, Error, TData, TQueryKey>
     : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
     ? CreateQueryOptionsForCreateQueries<
         TQueryFnData,
-        unknown,
+        Error,
         TQueryFnData,
         TQueryKey
       >
@@ -134,7 +138,10 @@ export type QueriesResults<
       any
     >[]
   ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-    CreateQueryResult<unknown extends TData ? TQueryFnData : TData, TError>[]
+    CreateQueryResult<
+      unknown extends TData ? TQueryFnData : TData,
+      unknown extends TError ? Error : TError
+    >[]
   : // Fallback
     CreateQueryResult[]
 

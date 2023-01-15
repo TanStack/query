@@ -19,7 +19,7 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from '..'
-import { QueryCache, useQuery } from '..'
+import { QueryCache, useQuery, keepPreviousData } from '..'
 import { ErrorBoundary } from 'react-error-boundary'
 
 describe('useQuery', () => {
@@ -264,7 +264,6 @@ describe('useQuery', () => {
       isInitialLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
-      isPreviousData: false,
       isRefetchError: false,
       isRefetching: false,
       isStale: true,
@@ -291,7 +290,6 @@ describe('useQuery', () => {
       isInitialLoading: false,
       isLoadingError: false,
       isPlaceholderData: false,
-      isPreviousData: false,
       isRefetchError: false,
       isRefetching: false,
       isStale: true,
@@ -348,7 +346,6 @@ describe('useQuery', () => {
       isInitialLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
-      isPreviousData: false,
       isRefetchError: false,
       isRefetching: false,
       isStale: true,
@@ -375,7 +372,6 @@ describe('useQuery', () => {
       isInitialLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
-      isPreviousData: false,
       isRefetchError: false,
       isRefetching: false,
       isStale: true,
@@ -402,7 +398,6 @@ describe('useQuery', () => {
       isInitialLoading: false,
       isLoadingError: true,
       isPlaceholderData: false,
-      isPreviousData: false,
       isRefetchError: false,
       isRefetching: false,
       isStale: true,
@@ -672,26 +667,29 @@ describe('useQuery', () => {
 
   it('should call onSettled after a query has been fetched with an error', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
     const onSettled = jest.fn()
+    const error = new Error('error')
 
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: () => Promise.reject<unknown>('error'),
+        queryFn: async () => {
+          await sleep(10)
+          return Promise.reject(error)
+        },
         retry: false,
         onSettled,
       })
-      states.push(state)
-      return null
+      return <div>status: {state.status}</div>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
-    expect(states.length).toBe(2)
+    await waitFor(() => {
+      rendered.getByText('status: error')
+    })
     expect(onSettled).toHaveBeenCalledTimes(1)
-    expect(onSettled).toHaveBeenCalledWith(undefined, 'error')
+    expect(onSettled).toHaveBeenCalledWith(undefined, error)
   })
 
   it('should not cancel an ongoing fetch when refetch is called with cancelRefetch=false if we have data already', async () => {
@@ -1663,7 +1661,7 @@ describe('useQuery', () => {
     })
   })
 
-  it('should keep the previous data when keepPreviousData is set', async () => {
+  it('should keep the previous data when placeholderData is set', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
 
@@ -1676,7 +1674,7 @@ describe('useQuery', () => {
           await sleep(10)
           return count
         },
-        keepPreviousData: true,
+        placeholderData: keepPreviousData,
       })
 
       states.push(state)
@@ -1702,32 +1700,32 @@ describe('useQuery', () => {
       data: undefined,
       isFetching: true,
       isSuccess: false,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Fetched
     expect(states[1]).toMatchObject({
       data: 0,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Set state
     expect(states[2]).toMatchObject({
       data: 0,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // New data
     expect(states[3]).toMatchObject({
       data: 1,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
   })
 
-  it('should transition to error state when keepPreviousData is set', async () => {
+  it('should transition to error state when placeholderData is set', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
 
@@ -1741,9 +1739,8 @@ describe('useQuery', () => {
           }
           return Promise.resolve(count)
         },
-
         retry: false,
-        keepPreviousData: true,
+        placeholderData: keepPreviousData,
       })
 
       states.push(state)
@@ -1752,7 +1749,7 @@ describe('useQuery', () => {
         <div>
           <h1>data: {state.data}</h1>
           <h2>error: {state.error?.message}</h2>
-          <p>previous data: {state.isPreviousData}</p>
+          <p>placeholder data: {state.isPlaceholderData}</p>
         </div>
       )
     }
@@ -1771,7 +1768,7 @@ describe('useQuery', () => {
       isFetching: true,
       status: 'loading',
       error: null,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Fetched
     expect(states[1]).toMatchObject({
@@ -1779,7 +1776,7 @@ describe('useQuery', () => {
       isFetching: false,
       status: 'success',
       error: null,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // rerender Page 1
     expect(states[2]).toMatchObject({
@@ -1787,7 +1784,7 @@ describe('useQuery', () => {
       isFetching: true,
       status: 'success',
       error: null,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // Hook state update
     expect(states[3]).toMatchObject({
@@ -1795,7 +1792,7 @@ describe('useQuery', () => {
       isFetching: true,
       status: 'success',
       error: null,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // New data
     expect(states[4]).toMatchObject({
@@ -1803,7 +1800,7 @@ describe('useQuery', () => {
       isFetching: false,
       status: 'success',
       error: null,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // rerender Page 2
     expect(states[5]).toMatchObject({
@@ -1811,7 +1808,7 @@ describe('useQuery', () => {
       isFetching: true,
       status: 'success',
       error: null,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // Hook state update again
     expect(states[6]).toMatchObject({
@@ -1819,19 +1816,19 @@ describe('useQuery', () => {
       isFetching: true,
       status: 'success',
       error: null,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // Error
     expect(states[7]).toMatchObject({
       data: undefined,
       isFetching: false,
       status: 'error',
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     expect(states[7]?.error).toHaveProperty('message', 'Error test')
   })
 
-  it('should not show initial data from next query if keepPreviousData is set', async () => {
+  it('should not show initial data from next query if placeholderData is set', async () => {
     const key = queryKey()
     const states: DefinedUseQueryResult<number>[] = []
 
@@ -1845,7 +1842,7 @@ describe('useQuery', () => {
           return count
         },
         initialData: 99,
-        keepPreviousData: true,
+        placeholderData: keepPreviousData,
       })
 
       states.push(state)
@@ -1880,39 +1877,39 @@ describe('useQuery', () => {
       data: 99,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Fetched
     expect(states[1]).toMatchObject({
       data: 0,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Set state
     expect(states[2]).toMatchObject({
       data: 99,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Hook state update
     expect(states[3]).toMatchObject({
       data: 99,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // New data
     expect(states[4]).toMatchObject({
       data: 1,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
   })
 
-  it('should keep the previous data on disabled query when keepPreviousData is set', async () => {
+  it('should keep the previous data on disabled query when placeholderData is set', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
 
@@ -1926,7 +1923,7 @@ describe('useQuery', () => {
           return count
         },
         enabled: false,
-        keepPreviousData: true,
+        placeholderData: keepPreviousData,
         notifyOnChangeProps: 'all',
       })
 
@@ -1975,46 +1972,46 @@ describe('useQuery', () => {
       data: undefined,
       isFetching: false,
       isSuccess: false,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Fetching query
     expect(states[1]).toMatchObject({
       data: undefined,
       isFetching: true,
       isSuccess: false,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Fetched query
     expect(states[2]).toMatchObject({
       data: 0,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Set state
     expect(states[3]).toMatchObject({
       data: 0,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // Fetching new query
     expect(states[4]).toMatchObject({
       data: 0,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // Fetched new query
     expect(states[5]).toMatchObject({
       data: 1,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
   })
 
-  it('should keep the previous data on disabled query when keepPreviousData is set and switching query key multiple times', async () => {
+  it('should keep the previous data on disabled query when placeholderData is set and switching query key multiple times', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
 
@@ -2032,7 +2029,7 @@ describe('useQuery', () => {
           return count
         },
         enabled: false,
-        keepPreviousData: true,
+        placeholderData: keepPreviousData,
         notifyOnChangeProps: 'all',
       })
 
@@ -2066,35 +2063,35 @@ describe('useQuery', () => {
       data: 10,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Set state
     expect(states[1]).toMatchObject({
       data: 10,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // State update
     expect(states[2]).toMatchObject({
       data: 10,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // Refetch
     expect(states[3]).toMatchObject({
       data: 10,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // Refetch done
     expect(states[4]).toMatchObject({
       data: 12,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
   })
 
@@ -2474,8 +2471,8 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('count: 2'))
 
-    // Should be 2 / 3 instead of 5, uSES batches differently
-    expect(renders).toBe(process.env.REACTJS_VERSION === '17' ? 2 : 3)
+    // Should be 3 instead of 5
+    expect(renders).toBe(3)
 
     // Both callbacks should have been executed
     expect(callbackCount).toBe(2)
@@ -2607,7 +2604,7 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('default'))
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     expect(queryFn).not.toHaveBeenCalled()
@@ -2634,7 +2631,7 @@ describe('useQuery', () => {
     await sleep(10)
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await sleep(10)
@@ -2665,7 +2662,7 @@ describe('useQuery', () => {
     await sleep(10)
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await sleep(10)
@@ -2696,7 +2693,7 @@ describe('useQuery', () => {
     await sleep(10)
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await sleep(10)
@@ -2731,7 +2728,7 @@ describe('useQuery', () => {
     await sleep(20)
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await sleep(20)
@@ -2773,7 +2770,7 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 0, isFetching: false })
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await rendered.findByText('data: 1')
@@ -2785,7 +2782,7 @@ describe('useQuery', () => {
     expect(states[3]).toMatchObject({ data: 1, isFetching: false })
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await sleep(20)
@@ -2957,18 +2954,18 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const { status, error } = useQuery<unknown, string>({
+      const { status, error } = useQuery({
         queryKey: key,
-        queryFn: () => Promise.reject('Local Error'),
+        queryFn: () => Promise.reject(new Error('Local Error')),
 
         retry: false,
-        throwErrors: (err) => err !== 'Local Error',
+        throwErrors: (err) => err.message !== 'Local Error',
       })
 
       return (
         <div>
           <h1>{status}</h1>
-          <h2>{error}</h2>
+          <h2>{error?.message}</h2>
         </div>
       )
     }
@@ -3520,7 +3517,7 @@ describe('useQuery', () => {
     act(() => {
       // reset visibilityState to original value
       visibilityMock.mockRestore()
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     // Wait for the final result
@@ -3603,7 +3600,7 @@ describe('useQuery', () => {
     act(() => {
       // reset visibilityState to original value
       visibilityMock.mockRestore()
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await waitFor(() => expect(states.length).toBe(4))
@@ -3866,7 +3863,7 @@ describe('useQuery', () => {
     expect(results[1]).toMatchObject({ data: 1, isFetching: false })
   })
 
-  it('should show the correct data when switching keys with initialData, keepPreviousData & staleTime', async () => {
+  it('should show the correct data when switching keys with initialData, placeholderData & staleTime', async () => {
     const key = queryKey()
 
     const ALL_TODOS = [
@@ -3888,7 +3885,7 @@ describe('useQuery', () => {
         initialData() {
           return filter === '' ? initialTodos : undefined
         },
-        keepPreviousData: true,
+        placeholderData: keepPreviousData,
         staleTime: 5000,
       })
 
@@ -5329,7 +5326,7 @@ describe('useQuery', () => {
         rendered.getByText('status: success, fetchStatus: paused'),
       )
 
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
       await sleep(15)
 
       await waitFor(() =>
@@ -5495,7 +5492,7 @@ describe('useQuery', () => {
 
       // triggers a second pause
       act(() => {
-        window.dispatchEvent(new FocusEvent('focus'))
+        window.dispatchEvent(new Event('visibilitychange'))
       })
 
       onlineMock.mockReturnValue(true)

@@ -12,7 +12,7 @@ import type {
 
 type UndefinedInitialDataOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = FunctionedParams<
@@ -23,7 +23,7 @@ type UndefinedInitialDataOptions<
 
 type DefinedInitialDataOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = FunctionedParams<
@@ -34,7 +34,7 @@ type DefinedInitialDataOptions<
 
 export function createQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -43,16 +43,15 @@ export function createQuery<
 
 export function createQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): DefinedCreateQueryResult<TData, TError>
-
 export function createQuery<
   TQueryFnData,
-  TError,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(options: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>) {

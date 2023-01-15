@@ -4,7 +4,7 @@ import type { MaybeRefDeep } from './types'
 import { cloneDeepUnref } from './utils'
 
 export class MutationCache extends MC {
-  find<TData = unknown, TError = unknown, TVariables = any, TContext = unknown>(
+  find<TData = unknown, TError = Error, TVariables = any, TContext = unknown>(
     filters: MaybeRefDeep<MutationFilters>,
   ): Mutation<TData, TError, TVariables, TContext> | undefined {
     return super.find(cloneDeepUnref(filters) as MutationFilters)

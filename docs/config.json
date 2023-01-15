@@ -177,16 +177,16 @@
               "to": "react/guides/does-this-replace-client-state"
             },
             {
-              "label": "Migrating to React Query 3",
+              "label": "Migrating to v3",
               "to": "react/guides/migrating-to-react-query-3"
             },
             {
-              "label": "Migrating to React Query 4",
+              "label": "Migrating to v4",
               "to": "react/guides/migrating-to-react-query-4"
             },
             {
-              "label": "Migrating to React Query 5",
-              "to": "react/guides/migrating-to-react-query-5"
+              "label": "Migrating to v5",
+              "to": "react/guides/migrating-v5"
             }
           ]
         },
@@ -294,10 +294,6 @@
             {
               "label": "Exhaustive Deps",
               "to": "react/eslint/exhaustive-deps"
-            },
-            {
-              "label": "Prefer object syntax",
-              "to": "react/eslint/prefer-query-object-syntax"
             }
           ]
         },

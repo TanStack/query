@@ -1,7 +1,10 @@
 import * as React from 'react'
-import { useSyncExternalStore } from './useSyncExternalStore'
 
-import type { QueryKey, QueryFunction } from '@tanstack/query-core'
+import type {
+  QueryKey,
+  QueryFunction,
+  QueriesPlaceholderDataFunction,
+} from '@tanstack/query-core'
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type { UseQueryOptions, UseQueryResult } from './types'
@@ -23,10 +26,15 @@ import {
 // - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
 type UseQueryOptionsForUseQueries<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'context'>
+> = Omit<
+  UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'context' | 'placeholderData'
+> & {
+  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+}
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
@@ -55,14 +63,9 @@ type GetOptions<T> =
         queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
         select: (data: any) => infer TData
       }
-    ? UseQueryOptionsForUseQueries<TQueryFnData, unknown, TData, TQueryKey>
+    ? UseQueryOptionsForUseQueries<TQueryFnData, Error, TData, TQueryKey>
     : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
-    ? UseQueryOptionsForUseQueries<
-        TQueryFnData,
-        unknown,
-        TQueryFnData,
-        TQueryKey
-      >
+    ? UseQueryOptionsForUseQueries<TQueryFnData, Error, TQueryFnData, TQueryKey>
     : // Fallback
       UseQueryOptionsForUseQueries
 
@@ -143,7 +146,10 @@ export type QueriesResults<
       any
     >[]
   ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-    UseQueryResult<unknown extends TData ? TQueryFnData : TData, TError>[]
+    UseQueryResult<
+      unknown extends TData ? TQueryFnData : TData,
+      unknown extends TError ? Error : TError
+    >[]
   : // Fallback
     UseQueryResult[]
 
@@ -178,7 +184,7 @@ export function useQueries<T extends any[]>({
 
   const optimisticResult = observer.getOptimisticResult(defaultedQueries)
 
-  useSyncExternalStore(
+  React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
         isRestoring

@@ -17,7 +17,7 @@ import type {
 
 export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = WithRequired<
@@ -52,7 +52,7 @@ export type UseInfiniteQueryReturnType<TData, TError> = DistributiveOmit<
 
 export function useInfiniteQuery<
   TQueryFnData,
-  TError,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(

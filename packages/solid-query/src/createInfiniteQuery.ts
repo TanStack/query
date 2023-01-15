@@ -9,7 +9,7 @@ import { createMemo } from 'solid-js'
 
 export function createInfiniteQuery<
   TQueryFnData,
-  TError,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(

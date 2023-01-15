@@ -38,12 +38,12 @@ Once you've added this you will have access to the `window.ReactQuery` object an
 React Query is optimized for modern browsers. It is compatible with the following browsers config
 
 ```
-Chrome >= 73
-Firefox >= 78
-Edge >= 79
-Safari >= 12.0
-iOS >= 12.0
-opera >= 53
+Chrome >= 84
+Firefox >= 90
+Edge >= 84
+Safari >= 15
+iOS >= 15
+opera >= 70
 ```
 
 > Depending on your environment, you might need to add polyfills. If you want to support older browsers, you need to transpile the library from `node_modules` yourselves.

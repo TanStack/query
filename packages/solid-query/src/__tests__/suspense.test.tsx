@@ -526,11 +526,6 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(screen.getByText('switch'))
     await waitFor(() => screen.getByText('Loading...'))
     await waitFor(() => screen.getByText(`data: ${key2}`))
-    expect(
-      // @ts-expect-error
-      queryClient.getQueryCache().find({ queryKey: key2 })!.observers[0]
-        .listeners.length,
-    ).toBe(1)
   })
 
   it('should throw errors to the error boundary by default', async () => {
@@ -631,7 +626,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => screen.getByText('rendered'))
   })
 
-  it('should not throw errors to the error boundary when a throwErrors function returns true', async () => {
+  it('should throw errors to the error boundary when a throwErrors function returns true', async () => {
     const key = queryKey()
 
     function Page() {
@@ -639,10 +634,10 @@ describe("useQuery's in Suspense mode", () => {
         queryKey: key,
         queryFn: async (): Promise<unknown> => {
           await sleep(10)
-          return Promise.reject('Remote Error')
+          return Promise.reject(new Error('Remote Error'))
         },
         retry: false,
-        throwErrors: (err) => err !== 'Local Error',
+        throwErrors: (err) => err.message !== 'Local Error',
       }))
 
       // read state.data to trigger suspense.
@@ -688,12 +683,12 @@ describe("useQuery's in Suspense mode", () => {
         queryKey: key,
         queryFn: async (): Promise<unknown> => {
           await sleep(10)
-          return Promise.reject('Local Error')
+          return Promise.reject(new Error('Local Error'))
         },
 
         retry: false,
         suspense: true,
-        throwErrors: (err) => err !== 'Local Error',
+        throwErrors: (err) => err.message !== 'Local Error',
       }))
 
       // read state.data to trigger suspense.

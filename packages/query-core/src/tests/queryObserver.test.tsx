@@ -454,22 +454,26 @@ describe('queryObserver', () => {
 
   test('should clear interval when unsubscribing to a refetchInterval query', async () => {
     const key = queryKey()
+    let count = 0
 
-    const fetchData = () => Promise.resolve('data')
+    const fetchData = () => {
+      count++
+      Promise.resolve('data')
+    }
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: fetchData,
       cacheTime: 0,
-      refetchInterval: 1,
+      refetchInterval: 10,
     })
     const unsubscribe = observer.subscribe(() => undefined)
-    // @ts-expect-error
-    expect(observer.refetchIntervalId).not.toBeUndefined()
+    expect(count).toBe(1)
+    await sleep(15)
+    expect(count).toBe(2)
     unsubscribe()
-    // @ts-expect-error
-    expect(observer.refetchIntervalId).toBeUndefined()
     await sleep(10)
     expect(queryClient.getQueryCache().find({ queryKey: key })).toBeUndefined()
+    expect(count).toBe(2)
   })
 
   test('uses placeholderData as non-cache data when loading a query with no data', async () => {
@@ -646,35 +650,6 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  test('should prefer isDataEqual to structuralSharing', async () => {
-    const key = queryKey()
-
-    const data = { value: 'data' }
-    const newData = { value: 'data' }
-
-    const observer = new QueryObserver(queryClient, {
-      queryKey: key,
-      queryFn: () => data,
-    })
-
-    const unsubscribe = observer.subscribe(() => undefined)
-
-    await sleep(10)
-    expect(observer.getCurrentResult().data).toBe(data)
-
-    observer.setOptions({
-      queryKey: key,
-      queryFn: () => newData,
-      isDataEqual: () => true,
-      structuralSharing: false,
-    })
-
-    await observer.refetch()
-    expect(observer.getCurrentResult().data).toBe(data)
-
-    unsubscribe()
-  })
-
   test('select function error using placeholderdata should log an error', () => {
     const consoleMock = jest.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
@@ -764,54 +739,6 @@ describe('queryObserver', () => {
     })
 
     expect(observer.getCurrentResult().isPlaceholderData).toBe(false)
-  })
-
-  test('updateResult should not notify cache listeners if cache option is false', async () => {
-    const key = queryKey()
-
-    const data1 = { value: 'data 1' }
-    const data2 = { value: 'data 2' }
-
-    await queryClient.prefetchQuery({ queryKey: key, queryFn: () => data1 })
-    const observer = new QueryObserver(queryClient, {
-      queryKey: key,
-    })
-    await queryClient.prefetchQuery({ queryKey: key, queryFn: () => data2 })
-
-    const spy = jest.fn()
-    const unsubscribe = queryClient.getQueryCache().subscribe(spy)
-    observer.updateResult({ cache: false })
-
-    expect(spy).toHaveBeenCalledTimes(0)
-
-    unsubscribe()
-  })
-
-  test('should not notify observer when the stale timeout expires and the current result is stale', async () => {
-    const key = queryKey()
-    const queryFn = () => 'data'
-
-    await queryClient.prefetchQuery({ queryKey: key, queryFn })
-    const observer = new QueryObserver(queryClient, {
-      queryKey: key,
-      queryFn,
-      staleTime: 20,
-    })
-
-    const spy = jest.fn()
-    const unsubscribe = observer.subscribe(spy)
-    await queryClient.refetchQueries({ queryKey: key })
-    await sleep(10)
-
-    // Force isStale to true
-    // because no use case has been found to reproduce this condition
-    // @ts-ignore
-    observer['currentResult'].isStale = true
-    spy.mockReset()
-    await sleep(30)
-    expect(spy).not.toHaveBeenCalled()
-
-    unsubscribe()
   })
 
   test('setOptions should notify cache listeners', async () => {

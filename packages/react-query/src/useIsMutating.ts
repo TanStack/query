@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { useSyncExternalStore } from './useSyncExternalStore'
 
 import type { MutationFilters } from '@tanstack/query-core'
 import { notifyManager } from '@tanstack/query-core'
@@ -15,7 +14,7 @@ export function useIsMutating(
   const queryClient = useQueryClient({ context: options.context })
   const mutationCache = queryClient.getMutationCache()
 
-  return useSyncExternalStore(
+  return React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
         mutationCache.subscribe(notifyManager.batchCalls(onStoreChange)),

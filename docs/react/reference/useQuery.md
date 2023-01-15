@@ -19,7 +19,6 @@ const {
   isLoading,
   isLoadingError,
   isPlaceholderData,
-  isPreviousData,
   isRefetchError,
   isRefetching,
   isStale,
@@ -35,7 +34,6 @@ const {
   networkMode,
   initialData,
   initialDataUpdatedAt,
-  keepPreviousData,
   meta,
   notifyOnChangeProps,
   onError,
@@ -160,19 +158,11 @@ const {
 - `initialDataUpdatedAt: number | (() => number | undefined)`
   - Optional
   - If set, this value will be used as the time (in milliseconds) of when the `initialData` itself was last updated.
-- `placeholderData: TData | () => TData`
+- `placeholderData: TData | (previousValue: TData) => TData`
   - Optional
   - If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `loading` data and no initialData has been provided.
   - `placeholderData` is **not persisted** to the cache
-- `keepPreviousData: boolean`
-  - Optional
-  - Defaults to `false`
-  - If set, any previous `data` will be kept when fetching new data because the query key changed.
-- `isDataEqual: (oldData: TData | undefined, newData: TData) => boolean`
-  - **Deprecated**. You can achieve the same functionality by passing a function to `structuralSharing` instead:
-    - structuralSharing: (oldData, newData) => isDataEqual(oldData, newData) ? oldData : replaceEqualDeep(oldData, newData)
-  - Optional
-  - This function should return boolean indicating whether to use previous `data` (`true`) or new data (`false`) as a resolved data for the query.
+  - If you provide a function for `placeholderData`, as a first argument you will receive previously watched query data if available
 - `structuralSharing: boolean | ((oldData: TData | undefined, newData: TData) => TData)`
   - Optional
   - Defaults to `true`
@@ -220,8 +210,6 @@ const {
   - Will be `true` if the data in the cache is invalidated or if the data is older than the given `staleTime`.
 - `isPlaceholderData: boolean`
   - Will be `true` if the data shown is the placeholder data.
-- `isPreviousData: boolean`
-  - Will be `true` when `keepPreviousData` is set and data from the previous query is returned.
 - `isFetched: boolean`
   - Will be `true` if the query has been fetched.
 - `isFetchedAfterMount: boolean`

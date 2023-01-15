@@ -1,13 +1,7 @@
-import { isQueryKey, updateState, cloneDeep, cloneDeepUnref } from '../utils'
+import { updateState, cloneDeep, cloneDeepUnref } from '../utils'
 import { reactive, ref } from 'vue-demi'
 
 describe('utils', () => {
-  describe('isQueryKey', () => {
-    test('should detect an array as query key', () => {
-      expect(isQueryKey(['string', 'array'])).toEqual(true)
-    })
-  })
-
   describe('updateState', () => {
     test('should update first object with values from the second one', () => {
       const origin = { option1: 'a', option2: 'b', option3: 'c' }

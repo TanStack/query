@@ -1,6 +1,6 @@
 import type { QueryFilters, Updater, MutationFilters } from './utils'
 import {
-  hashQueryKey,
+  hashKey,
   noop,
   partialMatchKey,
   hashQueryKeyByOptions,
@@ -50,55 +50,66 @@ interface MutationDefaults {
 // CLASS
 
 export class QueryClient {
-  private queryCache: QueryCache
-  private mutationCache: MutationCache
-  private defaultOptions: DefaultOptions
-  private queryDefaults: QueryDefaults[]
-  private mutationDefaults: MutationDefaults[]
-  private unsubscribeFocus?: () => void
-  private unsubscribeOnline?: () => void
+  #queryCache: QueryCache
+  #mutationCache: MutationCache
+  #defaultOptions: DefaultOptions
+  #queryDefaults: QueryDefaults[]
+  #mutationDefaults: MutationDefaults[]
+  #mountCount: number
+  #unsubscribeFocus?: () => void
+  #unsubscribeOnline?: () => void
 
   constructor(config: QueryClientConfig = {}) {
-    this.queryCache = config.queryCache || new QueryCache()
-    this.mutationCache = config.mutationCache || new MutationCache()
-    this.defaultOptions = config.defaultOptions || {}
-    this.queryDefaults = []
-    this.mutationDefaults = []
+    this.#queryCache = config.queryCache || new QueryCache()
+    this.#mutationCache = config.mutationCache || new MutationCache()
+    this.#defaultOptions = config.defaultOptions || {}
+    this.#queryDefaults = []
+    this.#mutationDefaults = []
+    this.#mountCount = 0
   }
 
   mount(): void {
-    this.unsubscribeFocus = focusManager.subscribe(() => {
+    this.#mountCount++
+    if (this.#mountCount !== 1) return
+
+    this.#unsubscribeFocus = focusManager.subscribe(() => {
       if (focusManager.isFocused()) {
         this.resumePausedMutations()
-        this.queryCache.onFocus()
+        this.#queryCache.onFocus()
       }
     })
-    this.unsubscribeOnline = onlineManager.subscribe(() => {
+    this.#unsubscribeOnline = onlineManager.subscribe(() => {
       if (onlineManager.isOnline()) {
         this.resumePausedMutations()
-        this.queryCache.onOnline()
+        this.#queryCache.onOnline()
       }
     })
   }
 
   unmount(): void {
-    this.unsubscribeFocus?.()
-    this.unsubscribeOnline?.()
+    this.#mountCount--
+    if (this.#mountCount !== 0) return
+
+    this.#unsubscribeFocus?.()
+    this.#unsubscribeFocus = undefined
+
+    this.#unsubscribeOnline?.()
+    this.#unsubscribeOnline = undefined
   }
 
   isFetching(filters: QueryFilters = {}): number {
     filters.fetchStatus = 'fetching'
-    return this.queryCache.findAll(filters).length
+    return this.#queryCache.findAll(filters).length
   }
 
   isMutating(filters?: MutationFilters): number {
-    return this.mutationCache.findAll({ ...filters, fetching: true }).length
+    return this.#mutationCache.findAll({ ...filters, fetching: true }).length
   }
 
   getQueryData<TQueryFnData = unknown>(
     queryKey: QueryKey,
   ): TQueryFnData | undefined {
-    return this.queryCache.find<TQueryFnData>({ queryKey })?.state.data
+    return this.#queryCache.find<TQueryFnData>({ queryKey })?.state.data
   }
 
   ensureQueryData<
@@ -130,7 +141,7 @@ export class QueryClient {
     updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
     options?: SetDataOptions,
   ): TQueryFnData | undefined {
-    const query = this.queryCache.find<TQueryFnData>({ queryKey })
+    const query = this.#queryCache.find<TQueryFnData>({ queryKey })
     const prevData = query?.state.data
     const data = functionalUpdate(updater, prevData)
 
@@ -146,7 +157,7 @@ export class QueryClient {
       QueryKey
     >({ queryKey })
 
-    return this.queryCache
+    return this.#queryCache
       .build(this, defaultedOptions)
       .setData(data, { ...options, manual: true })
   }
@@ -166,14 +177,14 @@ export class QueryClient {
     )
   }
 
-  getQueryState<TQueryFnData = unknown, TError = undefined>(
+  getQueryState<TQueryFnData = unknown, TError = Error>(
     queryKey: QueryKey,
   ): QueryState<TQueryFnData, TError> | undefined {
-    return this.queryCache.find<TQueryFnData, TError>({ queryKey })?.state
+    return this.#queryCache.find<TQueryFnData, TError>({ queryKey })?.state
   }
 
   removeQueries(filters?: QueryFilters): void {
-    const queryCache = this.queryCache
+    const queryCache = this.#queryCache
     notifyManager.batch(() => {
       queryCache.findAll(filters).forEach((query) => {
         queryCache.remove(query)
@@ -185,7 +196,7 @@ export class QueryClient {
     filters?: ResetQueryFilters<TPageData>,
     options?: ResetOptions,
   ): Promise<void> {
-    const queryCache = this.queryCache
+    const queryCache = this.#queryCache
 
     const refetchFilters: RefetchQueryFilters<TPageData> = {
       type: 'active',
@@ -209,7 +220,7 @@ export class QueryClient {
     }
 
     const promises = notifyManager.batch(() =>
-      this.queryCache
+      this.#queryCache
         .findAll(filters)
         .map((query) => query.cancel(cancelOptions)),
     )
@@ -222,7 +233,7 @@ export class QueryClient {
     options: InvalidateOptions = {},
   ): Promise<void> {
     return notifyManager.batch(() => {
-      this.queryCache.findAll(filters).forEach((query) => {
+      this.#queryCache.findAll(filters).forEach((query) => {
         query.invalidate()
       })
 
@@ -242,7 +253,7 @@ export class QueryClient {
     options?: RefetchOptions,
   ): Promise<void> {
     const promises = notifyManager.batch(() =>
-      this.queryCache
+      this.#queryCache
         .findAll(filters)
         .filter((query) => !query.isDisabled())
         .map((query) =>
@@ -265,7 +276,7 @@ export class QueryClient {
 
   fetchQuery<
     TQueryFnData,
-    TError,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -278,7 +289,7 @@ export class QueryClient {
       defaultedOptions.retry = false
     }
 
-    const query = this.queryCache.build(this, defaultedOptions)
+    const query = this.#queryCache.build(this, defaultedOptions)
 
     return query.isStaleByTime(defaultedOptions.staleTime)
       ? query.fetch(defaultedOptions)
@@ -287,7 +298,7 @@ export class QueryClient {
 
   prefetchQuery<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -298,7 +309,7 @@ export class QueryClient {
 
   fetchInfiniteQuery<
     TQueryFnData,
-    TError,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -310,7 +321,7 @@ export class QueryClient {
 
   prefetchInfiniteQuery<
     TQueryFnData,
-    TError,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -320,36 +331,36 @@ export class QueryClient {
   }
 
   resumePausedMutations(): Promise<void> {
-    return this.mutationCache.resumePausedMutations()
+    return this.#mutationCache.resumePausedMutations()
   }
 
   getQueryCache(): QueryCache {
-    return this.queryCache
+    return this.#queryCache
   }
 
   getMutationCache(): MutationCache {
-    return this.mutationCache
+    return this.#mutationCache
   }
 
   getDefaultOptions(): DefaultOptions {
-    return this.defaultOptions
+    return this.#defaultOptions
   }
 
   setDefaultOptions(options: DefaultOptions): void {
-    this.defaultOptions = options
+    this.#defaultOptions = options
   }
 
   setQueryDefaults(
     queryKey: QueryKey,
     options: Omit<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>,
   ): void {
-    const result = this.queryDefaults.find(
-      (x) => hashQueryKey(queryKey) === hashQueryKey(x.queryKey),
+    const result = this.#queryDefaults.find(
+      (x) => hashKey(queryKey) === hashKey(x.queryKey),
     )
     if (result) {
       result.defaultOptions = options
     } else {
-      this.queryDefaults.push({ queryKey, defaultOptions: options })
+      this.#queryDefaults.push({ queryKey, defaultOptions: options })
     }
   }
 
@@ -361,14 +372,14 @@ export class QueryClient {
     }
 
     // Get the first matching defaults
-    const firstMatchingDefaults = this.queryDefaults.find((x) =>
+    const firstMatchingDefaults = this.#queryDefaults.find((x) =>
       partialMatchKey(queryKey, x.queryKey),
     )
 
     // Additional checks and error in dev mode
     if (process.env.NODE_ENV !== 'production') {
       // Retrieve all matching defaults for the given key
-      const matchingDefaults = this.queryDefaults.filter((x) =>
+      const matchingDefaults = this.#queryDefaults.filter((x) =>
         partialMatchKey(queryKey, x.queryKey),
       )
       // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
@@ -388,13 +399,13 @@ export class QueryClient {
     mutationKey: MutationKey,
     options: MutationObserverOptions<any, any, any, any>,
   ): void {
-    const result = this.mutationDefaults.find(
-      (x) => hashQueryKey(mutationKey) === hashQueryKey(x.mutationKey),
+    const result = this.#mutationDefaults.find(
+      (x) => hashKey(mutationKey) === hashKey(x.mutationKey),
     )
     if (result) {
       result.defaultOptions = options
     } else {
-      this.mutationDefaults.push({ mutationKey, defaultOptions: options })
+      this.#mutationDefaults.push({ mutationKey, defaultOptions: options })
     }
   }
 
@@ -406,14 +417,14 @@ export class QueryClient {
     }
 
     // Get the first matching defaults
-    const firstMatchingDefaults = this.mutationDefaults.find((x) =>
+    const firstMatchingDefaults = this.#mutationDefaults.find((x) =>
       partialMatchKey(mutationKey, x.mutationKey),
     )
 
     // Additional checks and error in dev mode
     if (process.env.NODE_ENV !== 'production') {
       // Retrieve all matching defaults for the given key
-      const matchingDefaults = this.mutationDefaults.filter((x) =>
+      const matchingDefaults = this.#mutationDefaults.filter((x) =>
         partialMatchKey(mutationKey, x.mutationKey),
       )
       // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
@@ -430,11 +441,11 @@ export class QueryClient {
   }
 
   defaultQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey extends QueryKey,
+    TQueryFnData = unknown,
+    TError = Error,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
   >(
     options?:
       | QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
@@ -463,7 +474,7 @@ export class QueryClient {
     }
 
     const defaultedOptions = {
-      ...this.defaultOptions.queries,
+      ...this.#defaultOptions.queries,
       ...this.getQueryDefaults(options?.queryKey),
       ...options,
       _defaulted: true,
@@ -501,7 +512,7 @@ export class QueryClient {
       return options
     }
     return {
-      ...this.defaultOptions.mutations,
+      ...this.#defaultOptions.mutations,
       ...this.getMutationDefaults(options?.mutationKey),
       ...options,
       _defaulted: true,
@@ -509,7 +520,7 @@ export class QueryClient {
   }
 
   clear(): void {
-    this.queryCache.clear()
-    this.mutationCache.clear()
+    this.#queryCache.clear()
+    this.#mutationCache.clear()
   }
 }

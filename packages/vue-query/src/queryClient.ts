@@ -86,7 +86,7 @@ export class QueryClient extends QC {
     return super.setQueriesData(filtersUnreffed, updater, optionsUnreffed)
   }
 
-  getQueryState<TData = unknown, TError = undefined>(
+  getQueryState<TData = unknown, TError = Error>(
     queryKey: MaybeRefDeep<QueryKey>,
   ): QueryState<TData, TError> | undefined {
     return super.getQueryState(cloneDeepUnref(queryKey) as QueryKey)
@@ -142,7 +142,7 @@ export class QueryClient extends QC {
 
   fetchQuery<
     TQueryFnData,
-    TError,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -170,7 +170,7 @@ export class QueryClient extends QC {
 
   prefetchQuery<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -178,7 +178,7 @@ export class QueryClient extends QC {
   ): Promise<void>
   prefetchQuery<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -197,7 +197,7 @@ export class QueryClient extends QC {
 
   fetchInfiniteQuery<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -205,7 +205,7 @@ export class QueryClient extends QC {
   ): Promise<InfiniteData<TData>>
   fetchInfiniteQuery<
     TQueryFnData,
-    TError,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -222,7 +222,7 @@ export class QueryClient extends QC {
 
   prefetchInfiniteQuery<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -230,7 +230,7 @@ export class QueryClient extends QC {
   ): Promise<void>
   prefetchInfiniteQuery<
     TQueryFnData,
-    TError,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(

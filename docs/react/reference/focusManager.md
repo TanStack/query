@@ -20,17 +20,15 @@ Its available methods are:
 ```tsx
 import { focusManager } from '@tanstack/react-query'
 
-focusManager.setEventListener(handleFocus => {
-  // Listen to visibilitychange and focus
+focusManager.setEventListener((handleFocus) => {
+  // Listen to visibilitychange
   if (typeof window !== 'undefined' && window.addEventListener) {
     window.addEventListener('visibilitychange', handleFocus, false)
-    window.addEventListener('focus', handleFocus, false)
   }
 
   return () => {
     // Be sure to unsubscribe if a new handler is set
     window.removeEventListener('visibilitychange', handleFocus)
-    window.removeEventListener('focus', handleFocus)
   }
 })
 ```
