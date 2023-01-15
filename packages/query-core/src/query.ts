@@ -433,10 +433,6 @@ export class Query<
       if (!isCancelledError(error)) {
         // Notify cache callback
         this.#cache.config.onError?.(error, this as Query<any, any, any, any>)
-
-        if (process.env.NODE_ENV !== 'production') {
-          console.error(error)
-        }
       }
 
       if (!this.isFetchingOptimistic) {

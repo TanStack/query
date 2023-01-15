@@ -231,10 +231,6 @@ export class Mutation<
           this as Mutation<unknown, unknown, unknown, unknown>,
         )
 
-        if (process.env.NODE_ENV !== 'production') {
-          console.error(error)
-        }
-
         await this.options.onError?.(
           error as TError,
           this.state.variables!,
