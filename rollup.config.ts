@@ -40,8 +40,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       packageDir: 'packages/query-core',
       jsName: 'QueryCore',
       outputFile: 'index',
-      entryFile: ['src/index.ts',
-    ],
+      entryFile: ['src/index.ts'],
       globals: {},
     }),
     ...buildConfigs({
@@ -90,18 +89,14 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       packageDir: 'packages/react-query',
       jsName: 'ReactQuery',
       outputFile: 'index',
-      entryFile: [
-        'src/index.ts',
-      ],
+      entryFile: ['src/index.ts'],
       globals: {
         react: 'React',
         'react-dom': 'ReactDOM',
         '@tanstack/query-core': 'QueryCore',
         'react-native': 'ReactNative',
       },
-      bundleUMDGlobals: [
-        '@tanstack/query-core',
-      ],
+      bundleUMDGlobals: ['@tanstack/query-core'],
     }),
     ...buildConfigs({
       name: 'react-query-devtools',
@@ -116,10 +111,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
         '@tanstack/match-sorter-utils': 'MatchSorterUtils',
         superjson: 'SuperJson',
       },
-      bundleUMDGlobals: [
-        '@tanstack/match-sorter-utils',
-        'superjson',
-      ],
+      bundleUMDGlobals: ['@tanstack/match-sorter-utils', 'superjson'],
     }),
     ...buildConfigs({
       name: 'react-query-devtools-prod',
@@ -357,11 +349,6 @@ function cjs({
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
-      replace({
-        // TODO: figure out a better way to produce extensionless cjs imports
-        preventAssignment: true,
-        delimiters: ['', ''],
-      }),
     ],
   }
 }
