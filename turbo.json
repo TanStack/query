@@ -23,12 +23,12 @@
      "dependsOn": [],
      "outputs": []
    },
-    "//#build:turbo": {
+    "//#build": {
       "dependsOn": ["test:types"],
       "outputs": ["packages/*/build/**"]
     },
     "//#test:size": {
-      "dependsOn": ["build:turbo"],
+      "dependsOn": ["build"],
       "outputs": []
     }
   }
