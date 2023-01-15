@@ -650,24 +650,6 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  test('select function error using placeholderdata should log an error', () => {
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
-    const key = queryKey()
-
-    new QueryObserver(queryClient, {
-      queryKey: key,
-      queryFn: () => 'data',
-      placeholderData: 'placeholderdata',
-      select: () => {
-        throw new Error('error')
-      },
-    })
-
-    expect(consoleMock).toHaveBeenNthCalledWith(1, new Error('error'))
-    consoleMock.mockRestore()
-  })
-
   test('should not use replaceEqualDeep for select value when structuralSharing option is true and placeholderdata is defined', () => {
     const key = queryKey()
 

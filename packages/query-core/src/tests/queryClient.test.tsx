@@ -165,7 +165,7 @@ describe('queryClient', () => {
       // No defaults, no warning
       const noDefaults = queryClient.getQueryDefaults(keyABCD)
       expect(noDefaults).toBeUndefined()
-      expect(consoleMock).toHaveBeenCalledTimes(1)
+      expect(consoleMock).toHaveBeenCalledTimes(0)
 
       // If defaults for key ABCD are registered **before** the ones of key ABC (more generic)…
       queryClient.setQueryDefaults(keyABCD, defaultsOfABCD)
@@ -174,7 +174,7 @@ describe('queryClient', () => {
       const goodDefaults = queryClient.getQueryDefaults(keyABCD)
       expect(goodDefaults).toBe(defaultsOfABCD)
       // The warning is still raised since several defaults are matching
-      expect(consoleMock).toHaveBeenCalledTimes(2)
+      expect(consoleMock).toHaveBeenCalledTimes(1)
 
       // Let's create another queryClient and change the order of registration
       const newQueryClient = createQueryClient()
@@ -185,7 +185,7 @@ describe('queryClient', () => {
       const badDefaults = newQueryClient.getQueryDefaults(keyABCD)
       expect(badDefaults).not.toBe(defaultsOfABCD)
       expect(badDefaults).toBe(defaultsOfABC)
-      expect(consoleMock).toHaveBeenCalledTimes(4)
+      expect(consoleMock).toHaveBeenCalledTimes(2)
       consoleMock.mockRestore()
     })
 
@@ -224,10 +224,7 @@ describe('queryClient', () => {
       // No defaults, no warning
       const noDefaults = queryClient.getMutationDefaults(keyABCD)
       expect(noDefaults).toBeUndefined()
-      // expect(consoleMock).toHaveBeenNthCalledWith(
-      //   1,
-      //   'Passing a custom logger has been deprecated and will be removed in the next major version.',
-      // )
+      expect(consoleMock).toHaveBeenCalledTimes(0)
 
       // If defaults for key ABCD are registered **before** the ones of key ABC (more generic)…
       queryClient.setMutationDefaults(keyABCD, defaultsOfABCD)
@@ -236,7 +233,7 @@ describe('queryClient', () => {
       const goodDefaults = queryClient.getMutationDefaults(keyABCD)
       expect(goodDefaults).toBe(defaultsOfABCD)
       // The warning is still raised since several defaults are matching
-      expect(consoleMock).toHaveBeenCalledTimes(2)
+      expect(consoleMock).toHaveBeenCalledTimes(1)
 
       // Let's create another queryClient and change the order of registration
       const newQueryClient = createQueryClient()
@@ -247,7 +244,7 @@ describe('queryClient', () => {
       const badDefaults = newQueryClient.getMutationDefaults(keyABCD)
       expect(badDefaults).not.toBe(defaultsOfABCD)
       expect(badDefaults).toBe(defaultsOfABC)
-      expect(consoleMock).toHaveBeenCalledTimes(4)
+      expect(consoleMock).toHaveBeenCalledTimes(2)
       consoleMock.mockRestore()
     })
   })
@@ -770,8 +767,6 @@ describe('queryClient', () => {
     })
 
     test('should return undefined when an error is thrown', async () => {
-      const consoleMock = jest.spyOn(console, 'error')
-      consoleMock.mockImplementation(() => undefined)
       const key = queryKey()
 
       const result = await queryClient.prefetchQuery({
@@ -783,8 +778,6 @@ describe('queryClient', () => {
       })
 
       expect(result).toBeUndefined()
-      expect(consoleMock).toHaveBeenCalled()
-      consoleMock.mockRestore()
     })
 
     test('should be garbage collected after cacheTime if unused', async () => {
