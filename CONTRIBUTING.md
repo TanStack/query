@@ -28,7 +28,7 @@ If you have been assigned to fix an issue or develop a new feature, please follo
 
 ### Running examples
 - Make sure you've installed the dependencies by running `$ pnpm install` in the repo's root directory.
-- If you want to run the example against your local changes, run `pnpm run build` in the repo's root directory. Otherwise, it will be run against the latest TanStack Query release.
+- If you want to run the example against your local changes, run `pnpm run watch` in the repo's root directory. Otherwise, it will be run against the latest TanStack Query release.
 - Run `pnpm run dev` in the selected examples' directory.
 
 #### Note on `examples/react-native`
