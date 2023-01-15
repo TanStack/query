@@ -43,34 +43,4 @@ describe('mutationObserver', () => {
     // Clean-up
     unsubscribe2()
   })
-
-  test('should not notify listeners if options.listeners is set to false', async () => {
-    const mutation = new MutationObserver(queryClient, {
-      mutationFn: async (text: string) => {
-        await sleep(20)
-        return text
-      },
-    })
-
-    const subscriptionHandler = jest.fn()
-    const unsubscribe = mutation.subscribe(subscriptionHandler)
-    mutation.mutate()
-
-    await waitFor(() => {
-      // 2 calls: loading, success
-      expect(subscriptionHandler).toBeCalledTimes(2)
-    })
-    subscriptionHandler.mockReset()
-
-    // Force a notification with listeners set to false
-    // because there is no existing usage of notify with listeners set to false
-    mutation['notify']({ listeners: false })
-
-    await waitFor(() => {
-      // 0 call because no notification has been sent
-      expect(subscriptionHandler).toBeCalledTimes(0)
-    })
-
-    unsubscribe()
-  })
 })

@@ -119,7 +119,7 @@ describe('VueQueryPlugin', () => {
       appMock._mixin.beforeCreate?.call(appMock)
 
       expect(appMock._provided).toMatchObject({
-        VUE_QUERY_CLIENT: expect.objectContaining({ defaultOptions: {} }),
+        VUE_QUERY_CLIENT: expect.any(QueryClient),
       })
     })
 
@@ -129,7 +129,7 @@ describe('VueQueryPlugin', () => {
 
       expect(appMock.provide).toHaveBeenCalledWith(
         VUE_QUERY_CLIENT,
-        expect.objectContaining({ defaultOptions: {} }),
+        expect.any(QueryClient),
       )
     })
   })
@@ -142,9 +142,7 @@ describe('VueQueryPlugin', () => {
       appMock._mixin.beforeCreate?.call(appMock)
 
       expect(appMock._provided).toMatchObject({
-        [VUE_QUERY_CLIENT + ':CUSTOM']: expect.objectContaining({
-          defaultOptions: {},
-        }),
+        [VUE_QUERY_CLIENT + ':CUSTOM']: expect.any(QueryClient),
       })
     })
 
@@ -154,7 +152,7 @@ describe('VueQueryPlugin', () => {
 
       expect(appMock.provide).toHaveBeenCalledWith(
         VUE_QUERY_CLIENT + ':CUSTOM',
-        expect.objectContaining({ defaultOptions: {} }),
+        expect.any(QueryClient),
       )
     })
   })
@@ -217,10 +215,10 @@ describe('VueQueryPlugin', () => {
           queryClientConfig: config,
         })
 
-        expect(appMock.provide).toHaveBeenCalledWith(
-          VUE_QUERY_CLIENT,
-          expect.objectContaining(config),
-        )
+        const client = (appMock.provide as jest.Mock).mock.calls[0][1]
+        const defaultOptions = client.getDefaultOptions()
+
+        expect(defaultOptions).toEqual(config.defaultOptions)
       },
     )
   })

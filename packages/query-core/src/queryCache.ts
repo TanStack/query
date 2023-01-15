@@ -68,7 +68,7 @@ type QueryCacheListener = (event: QueryCacheNotifyEvent) => void
 // CLASS
 
 export class QueryCache extends Subscribable<QueryCacheListener> {
-  private queries = new Map<string, Query>()
+  #queries = new Map<string, Query>()
 
   constructor(public config: QueryCacheConfig = {}) {
     super()
@@ -101,8 +101,8 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   }
 
   add(query: Query<any, any, any, any>): void {
-    if (!this.queries.has(query.queryHash)) {
-      this.queries.set(query.queryHash, query)
+    if (!this.#queries.has(query.queryHash)) {
+      this.#queries.set(query.queryHash, query)
 
       this.notify({
         type: 'added',
@@ -112,13 +112,13 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   }
 
   remove(query: Query<any, any, any, any>): void {
-    const queryInMap = this.queries.get(query.queryHash)
+    const queryInMap = this.#queries.get(query.queryHash)
 
     if (queryInMap) {
       query.destroy()
 
       if (queryInMap === query) {
-        this.queries.delete(query.queryHash)
+        this.#queries.delete(query.queryHash)
       }
 
       this.notify({ type: 'removed', query })
@@ -141,13 +141,13 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   >(
     queryHash: string,
   ): Query<TQueryFnData, TError, TData, TQueryKey> | undefined {
-    return this.queries.get(queryHash) as
+    return this.#queries.get(queryHash) as
       | Query<TQueryFnData, TError, TData, TQueryKey>
       | undefined
   }
 
   getAll(): Query[] {
-    return [...this.queries.values()]
+    return [...this.#queries.values()]
   }
 
   find<TQueryFnData = unknown, TError = Error, TData = TQueryFnData>(
