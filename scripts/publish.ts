@@ -373,7 +373,7 @@ async function run() {
   console.info('')
 
   console.info('Building packages...')
-  execSync(`pnpm run build`, { encoding: 'utf8', stdio: 'inherit' })
+  execSync(`pnpm run build:withoutTurbo`, { encoding: 'utf8', stdio: 'inherit' })
   console.info('')
 
   console.info('Validating packages...')
