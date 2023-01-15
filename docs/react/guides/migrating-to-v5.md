@@ -230,3 +230,22 @@ import { batch } from 'solid-js'
 
 notifyManager.setBatchNotifyFunction(batch)
 ```
+
+### `Hydrate` has been renamed to `HydrationBoundary` and the `useHydrate` hook has been removed
+
+The `Hydrate` component has been renamed to `HydrationBoundary`. The `Hydrate` component was also a wrapper over `useHydrate` hook, which has been removed.
+
+```diff
+- import { Hydrate } from '@tanstack/react-query'
++ import { HydrationBoundary } from '@tanstack/react-query'
+
+
+- <Hydrate state={dehydratedState}>
++ <HydrationBoundary state={dehydratedState}>
+  <App />
+- </Hydrate>
++ </HydrationBoundary>
+```
+```
+
+
