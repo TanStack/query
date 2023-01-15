@@ -16,6 +16,7 @@
     "test:size": "pnpm run build && bundlewatch",
     "test:types": "pnpm --filter \"./packages/**\" run test:types",
     "build": "rollup --config rollup.config.js && pnpm --filter \"./packages/**\" run build && pnpm run build:types",
+    "build:turbo": "rollup --config rollup.config.js",
     "build:types": "pnpm --filter \"./packages/**\" run build:types",
     "watch": "concurrently --kill-others \"rollup --config rollup.config.js -w\" \"pnpm run build:types --watch\"",
     "dev": "pnpm run watch",
@@ -90,7 +91,7 @@
     "stream-to-array": "^2.3.0",
     "ts-jest": "^27.1.1",
     "ts-node": "^10.7.0",
-    "turbo": "^1.6.3",
+    "turbo": "^1.7.0",
     "typescript": "^4.7.4",
     "vue": "^3.2.33"
   },

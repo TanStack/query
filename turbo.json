@@ -4,7 +4,7 @@
     "tree": {
       "dependsOn": ["^tree"]
     },
-   "test:jest": {
+   "test:lib": {
      "dependsOn": ["^tree"],
      "outputs": []
    },
@@ -12,7 +12,7 @@
      "dependsOn": [],
      "outputs": []
    },
-    "//#typecheck": {
+    "//#test:types": {
       "outputs": []
     },
    "//#test:format": {
@@ -23,12 +23,12 @@
      "dependsOn": [],
      "outputs": []
    },
-    "//#build": {
-      "dependsOn": ["typecheck"],
+    "//#build:turbo": {
+      "dependsOn": ["test:types"],
       "outputs": ["packages/*/build/**"]
     },
     "//#test:size": {
-      "dependsOn": ["build"],
+      "dependsOn": ["build:turbo"],
       "outputs": []
     }
   }
