@@ -161,8 +161,8 @@ import Providers from './providers'
 
 export default function RootLayout({children}) {
   return (
-    <html>
-      <head></head>
+    <html lang="en">
+      <head />
       <body>
         <Providers>{children}</Providers>
       </body>
