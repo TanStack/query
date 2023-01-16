@@ -823,6 +823,9 @@ describe('useQueries', () => {
     })
 
     it('should throw if the context is necessary and is not passed to useQueries', async () => {
+      const consoleMock = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {})
       const context = React.createContext<QueryClient | undefined>(undefined)
 
       const key1 = queryKey()
@@ -855,10 +858,14 @@ describe('useQueries', () => {
       )
 
       await waitFor(() => rendered.getByText('error boundary'))
+      consoleMock.mockRestore()
     })
   })
 
   it("should throw error if in one of queries' queryFn throws and throwErrors is in use", async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -917,9 +924,13 @@ describe('useQueries', () => {
 
     await waitFor(() => rendered.getByText('error boundary'))
     await waitFor(() => rendered.getByText('single query error'))
+    consoleMock.mockRestore()
   })
 
   it("should throw error if in one of queries' queryFn throws and throwErrors function resolves to true", async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -980,5 +991,6 @@ describe('useQueries', () => {
 
     await waitFor(() => rendered.getByText('error boundary'))
     await waitFor(() => rendered.getByText('single query error'))
+    consoleMock.mockRestore()
   })
 })

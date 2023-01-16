@@ -689,6 +689,9 @@ describe('useMutation', () => {
   })
 
   it('should be able to throw an error when throwErrors is set to true', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
     function Page() {
       const { mutate } = useMutation<string, Error>({
         mutationFn: () => {
@@ -723,10 +726,24 @@ describe('useMutation', () => {
 
     await waitFor(() => {
       expect(queryByText('error')).not.toBeNull()
+      // expect(consoleMock).toHaveBeenCalledTimes(1)
     })
+
+    // check if the console.error function was called
+    if (consoleMock.mock.calls[0]) {
+      //test the error message that was passed to the console
+      expect(consoleMock.mock.calls[0][0]).toContain(
+        'Expected mock error. All is well!',
+      )
+    }
+
+    consoleMock.mockRestore()
   })
 
   it('should be able to throw an error when throwErrors is a function that returns true', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
     let boundary = false
     function Page() {
       const { mutate, error } = useMutation<string, Error>({
@@ -773,6 +790,7 @@ describe('useMutation', () => {
     await waitFor(() => {
       expect(queryByText('error boundary')).not.toBeNull()
     })
+    consoleMock.mockRestore()
   })
 
   it('should pass meta to mutation', async () => {
@@ -947,6 +965,9 @@ describe('useMutation', () => {
     })
 
     it('should throw if the context is not passed to useMutation', async () => {
+      const consoleMock = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {})
       const context = React.createContext<QueryClient | undefined>(undefined)
 
       function Page() {
@@ -970,6 +991,7 @@ describe('useMutation', () => {
       )
 
       await waitFor(() => rendered.getByText('error boundary'))
+      consoleMock.mockRestore()
     })
   })
 

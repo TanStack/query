@@ -220,6 +220,9 @@ describe('useIsFetching', () => {
     })
 
     it('should throw if the context is not passed to useIsFetching', async () => {
+      const consoleMock = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {})
       const context = React.createContext<QueryClient | undefined>(undefined)
 
       const queryCache = new QueryCache()
@@ -255,6 +258,7 @@ describe('useIsFetching', () => {
       )
 
       await waitFor(() => rendered.getByText('error boundary'))
+      consoleMock.mockRestore()
     })
   })
 

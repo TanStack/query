@@ -458,7 +458,7 @@ describe('queryObserver', () => {
 
     const fetchData = () => {
       count++
-      Promise.resolve('data')
+      return Promise.resolve('data')
     }
     const observer = new QueryObserver(queryClient, {
       queryKey: key,

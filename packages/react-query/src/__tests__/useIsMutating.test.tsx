@@ -242,6 +242,9 @@ describe('useIsMutating', () => {
     })
 
     it('should throw if the context is not passed to useIsMutating', async () => {
+      const consoleMock = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {})
       const context = React.createContext<QueryClient | undefined>(undefined)
 
       const isMutatings: number[] = []
@@ -277,6 +280,7 @@ describe('useIsMutating', () => {
       )
 
       await waitFor(() => rendered.getByText('error boundary'))
+      consoleMock.mockRestore()
     })
   })
 })

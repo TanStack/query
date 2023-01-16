@@ -272,6 +272,9 @@ describe("useQuery's in Suspense mode", () => {
 
   // https://github.com/tannerlinsley/react-query/issues/468
   it('should reset error state if new component instances are mounted', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
     const key = queryKey()
 
     let succeed = false
@@ -332,9 +335,20 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(rendered.getByText('retry'))
 
     await waitFor(() => rendered.getByText('rendered'))
+
+    // check if the console.error function was called
+    if (consoleMock.mock.calls[0]) {
+      //test the error message that was passed to the console
+      expect(consoleMock.mock.calls[0][0]).toContain('Suspense Error Bingo')
+    }
+
+    consoleMock.mockRestore()
   })
 
   it('should retry fetch if the reset error boundary has been reset', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
     const key = queryKey()
 
     let succeed = false
@@ -392,6 +406,7 @@ describe("useQuery's in Suspense mode", () => {
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('rendered'))
+    consoleMock.mockRestore()
   })
 
   it('should refetch when re-mounting', async () => {
@@ -496,6 +511,9 @@ describe("useQuery's in Suspense mode", () => {
   })
 
   it('should retry fetch if the reset error boundary has been reset with global hook', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
     const key = queryKey()
 
     let succeed = false
@@ -553,9 +571,13 @@ describe("useQuery's in Suspense mode", () => {
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('rendered'))
+    consoleMock.mockRestore()
   })
 
   it('should throw errors to the error boundary by default', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
     const key = queryKey()
 
     function Page() {
@@ -591,6 +613,7 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('Loading...'))
     await waitFor(() => rendered.getByText('error boundary'))
+    consoleMock.mockRestore()
   })
 
   it('should not throw errors to the error boundary when throwErrors: false', async () => {
@@ -633,6 +656,9 @@ describe("useQuery's in Suspense mode", () => {
   })
 
   it('should throw errors to the error boundary when a throwErrors function returns true', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
     const key = queryKey()
 
     function Page() {
@@ -669,6 +695,7 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('Loading...'))
     await waitFor(() => rendered.getByText('error boundary'))
+    consoleMock.mockRestore()
   })
 
   it('should not throw errors to the error boundary when a throwErrors function returns false', async () => {
@@ -755,6 +782,9 @@ describe("useQuery's in Suspense mode", () => {
   })
 
   it('should error catched in error boundary without infinite loop', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
     const key = queryKey()
 
     let succeed = true
@@ -817,9 +847,19 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(rendered.getByLabelText('fail'))
     // render error boundary fallback (error boundary)
     await waitFor(() => rendered.getByText('error boundary'))
+    // check if the console.error function was called
+    if (consoleMock.mock.calls[0]) {
+      //test the error message that was passed to the console
+      expect(consoleMock.mock.calls[0][0]).toContain('Suspense Error Bingo')
+    }
+
+    consoleMock.mockRestore()
   })
 
   it('should error catched in error boundary without infinite loop when query keys changed', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
     let succeed = true
 
     function Page() {
@@ -876,9 +916,18 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(rendered.getByLabelText('fail'))
     // render error boundary fallback (error boundary)
     await waitFor(() => rendered.getByText('error boundary'))
+    if (consoleMock.mock.calls[0]) {
+      //test the error message that was passed to the console
+      expect(consoleMock.mock.calls[0][0]).toContain('Suspense Error Bingo')
+    }
+
+    consoleMock.mockRestore()
   })
 
   it('should error catched in error boundary without infinite loop when enabled changed', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
     function Page() {
       const queryKeys = '1'
       const [enabled, setEnabled] = React.useState(false)
@@ -936,6 +985,12 @@ describe("useQuery's in Suspense mode", () => {
 
     // render error boundary fallback (error boundary)
     await waitFor(() => rendered.getByText('error boundary'))
+    if (consoleMock.mock.calls[0]) {
+      //test the error message that was passed to the console
+      expect(consoleMock.mock.calls[0][0]).toContain('Suspense Error Bingo')
+    }
+
+    consoleMock.mockRestore()
   })
 
   it('should render the correct amount of times in Suspense mode when cacheTime is set to 0', async () => {

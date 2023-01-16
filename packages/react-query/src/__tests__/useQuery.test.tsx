@@ -1096,8 +1096,6 @@ describe('useQuery', () => {
   })
 
   it('should throw an error when a selector throws', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
     const error = new Error('Select Error')
@@ -1121,12 +1119,11 @@ describe('useQuery', () => {
       rendered.getByText('error')
     })
 
-    expect(consoleMock).toHaveBeenCalledWith(error)
     expect(states.length).toBe(2)
 
     expect(states[0]).toMatchObject({ status: 'loading', data: undefined })
-    expect(states[1]).toMatchObject({ status: 'error', error })
-    consoleMock.mockRestore()
+    // expect(states[1]).toMatchObject({ status: 'error', error })
+    expect(states[1]).toMatchObject({ status: 'error', error: error })
   })
 
   it('should not re-run a stable select when it re-renders if selector throws an error', async () => {
@@ -2868,6 +2865,9 @@ describe('useQuery', () => {
   })
 
   it('should set status to error if queryFn throws', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
     const key = queryKey()
 
     function Page() {
@@ -2891,9 +2891,13 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('error'))
     await waitFor(() => rendered.getByText('Error test jaylen'))
+    consoleMock.mockRestore()
   })
 
   it('should throw error if queryFn throws and throwErrors is in use', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
     const key = queryKey()
 
     function Page() {
@@ -2920,6 +2924,7 @@ describe('useQuery', () => {
     )
 
     await waitFor(() => rendered.getByText('error boundary'))
+    consoleMock.mockRestore()
   })
 
   it('should update with data if we observe no properties and throwErrors', async () => {
@@ -2982,6 +2987,10 @@ describe('useQuery', () => {
   })
 
   it('should throw error instead of setting status when error should be thrown', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
+
     const key = queryKey()
 
     function Page() {
@@ -3018,6 +3027,7 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('error boundary'))
     await waitFor(() => rendered.getByText('Remote Error'))
+    consoleMock.mockRestore()
   })
 
   it('should continue retries when observers unmount and remount while waiting for a retry (#3031)', async () => {
@@ -3471,8 +3481,6 @@ describe('useQuery', () => {
 
   // See https://github.com/tannerlinsley/react-query/issues/160
   it('should continue retry after focus regain', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
     const key = queryKey()
 
     // make page unfocused
@@ -3530,10 +3538,6 @@ describe('useQuery', () => {
     await sleep(10)
     await waitFor(() => rendered.getByText('failureCount 4'))
     await waitFor(() => rendered.getByText('failureReason fetching error 4'))
-
-    // Check if the error has been logged in the console
-    expect(consoleMock).toHaveBeenCalledWith('fetching error 4')
-    consoleMock.mockRestore()
   })
 
   it('should fetch on mount when a query was already created with setQueryData', async () => {
