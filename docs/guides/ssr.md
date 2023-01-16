@@ -206,6 +206,8 @@ export function Posts(props) {
 
 Create a request-scoped singleton instance of `QueryClient`. **This ensures that data is not shared between different users and requests, while still only creating the QueryClient once per request.**
 
+> NOTE: Use the `query-core` module when importing TanStack dependencies within server-side modules (e.g. in getQueryClient.jsx and the hydratedPosts.jsx example Server Component). The `react-query` module only works within Client Components.
+
 ```tsx
 // app/getQueryClient.jsx
 import { QueryClient } from '@tanstack/query-core'
