@@ -243,10 +243,7 @@ import HydrateOnClient from './hydrateOnClient'
 export default async function HydratedPosts() {
   const queryClient = getQueryClient()
   await queryClient.prefetchQuery(['posts'], getPosts)
-  const dehydratedState = dehydrate(queryClient, {
-    dehydrateMutations: false,
-    shouldDehydrateQuery: query => true // TODO: matchQuery or extend dehydrate
-  })
+  const dehydratedState = dehydrate(queryClient)
 
   return (
     <HydrateOnClient state={dehydratedState}>
