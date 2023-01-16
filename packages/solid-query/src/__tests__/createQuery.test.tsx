@@ -862,7 +862,7 @@ describe('createQuery', () => {
     expect(states[1]).toMatchObject({ data: 'data' })
   })
 
-  it('should pick up a query when re-mounting with cacheTime 0', async () => {
+  it('should pick up a query when re-mounting with gcTime 0', async () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
 
@@ -891,7 +891,7 @@ describe('createQuery', () => {
           await sleep(10)
           return 'data: ' + value
         },
-        cacheTime: 0,
+        gcTime: 0,
       }))
       createRenderEffect(() => {
         states.push({ ...state })
@@ -3959,14 +3959,14 @@ describe('createQuery', () => {
     await waitFor(() => screen.getByText('status: loading, idle'))
   })
 
-  it('should not schedule garbage collection, if cacheTimeout is set to `Infinity`', async () => {
+  it('should not schedule garbage collection, if gcTimeout is set to `Infinity`', async () => {
     const key = queryKey()
 
     function Page() {
       const query = createQuery(() => ({
         queryKey: key,
         queryFn: () => 'fetched data',
-        cacheTime: Infinity,
+        gcTime: Infinity,
       }))
       return <div>{query.data}</div>
     }
@@ -3983,7 +3983,7 @@ describe('createQuery', () => {
 
     const query = queryCache.find({ queryKey: key })
     // @ts-expect-error
-    expect(query!.cacheTimeout).toBe(undefined)
+    expect(query!.gcTimeout).toBe(undefined)
   })
 
   it('should not cause memo churn when data does not change', async () => {

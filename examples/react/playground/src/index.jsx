@@ -31,7 +31,7 @@ const queryClient = new QueryClient();
 
 function Root() {
   const [staleTime, setStaleTime] = React.useState(1000);
-  const [cacheTime, setCacheTime] = React.useState(3000);
+  const [gcTime, setgcTime] = React.useState(3000);
   const [localErrorRate, setErrorRate] = React.useState(errorRate);
   const [localFetchTimeMin, setLocalFetchTimeMin] =
     React.useState(queryTimeMin);
@@ -48,17 +48,16 @@ function Root() {
     queryClient.setDefaultOptions({
       queries: {
         staleTime,
-        cacheTime,
+        gcTime,
       },
     });
-  }, [cacheTime, staleTime]);
+  }, [gcTime, staleTime]);
 
   return (
     <QueryClientProvider client={queryClient}>
       <p>
-        The "staleTime" and "cacheTime" durations have been altered in this
-        example to show how query stale-ness and query caching work on a
-        granular level
+        The "staleTime" and "gcTime" durations have been altered in this example
+        to show how query stale-ness and query caching work on a granular level
       </p>
       <div>
         Stale Time:{" "}
@@ -72,13 +71,13 @@ function Root() {
         />
       </div>
       <div>
-        Cache Time:{" "}
+        Garbage collector Time:{" "}
         <input
           type="number"
           min="0"
           step="1000"
-          value={cacheTime}
-          onChange={(e) => setCacheTime(parseFloat(e.target.value, 10))}
+          value={gcTime}
+          onChange={(e) => setgcTime(parseFloat(e.target.value, 10))}
           style={{ width: "100px" }}
         />
       </div>

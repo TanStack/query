@@ -28,25 +28,25 @@ describe('query', () => {
     queryClient.clear()
   })
 
-  test('should use the longest cache time it has seen', async () => {
+  test('should use the longest garbage collector time it has seen', async () => {
     const key = queryKey()
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn: () => 'data',
-      cacheTime: 100,
+      gcTime: 100,
     })
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn: () => 'data',
-      cacheTime: 200,
+      gcTime: 200,
     })
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn: () => 'data',
-      cacheTime: 10,
+      gcTime: 10,
     })
     const query = queryCache.find({ queryKey: key })!
-    expect(query.cacheTime).toBe(200)
+    expect(query.gcTime).toBe(200)
   })
 
   it('should continue retry after focus regain and resolve all promises', async () => {
@@ -461,7 +461,7 @@ describe('query', () => {
     expect(query.state.status).toBe('error')
   })
 
-  test('queries with cacheTime 0 should be removed immediately after unsubscribing', async () => {
+  test('queries with gcTime 0 should be removed immediately after unsubscribing', async () => {
     const key = queryKey()
     let count = 0
     const observer = new QueryObserver(queryClient, {
@@ -470,7 +470,7 @@ describe('query', () => {
         count++
         return 'data'
       },
-      cacheTime: 0,
+      gcTime: 0,
       staleTime: Infinity,
     })
     const unsubscribe1 = observer.subscribe(() => undefined)
@@ -492,7 +492,7 @@ describe('query', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: async () => 'data',
-      cacheTime: 0,
+      gcTime: 0,
     })
     expect(queryCache.find({ queryKey: key })).toBeDefined()
     const unsubscribe = observer.subscribe(() => undefined)
@@ -511,7 +511,7 @@ describe('query', () => {
         await sleep(20)
         return 'data'
       },
-      cacheTime: 10,
+      gcTime: 10,
     })
     const unsubscribe = observer.subscribe(() => undefined)
     await sleep(20)
@@ -519,7 +519,7 @@ describe('query', () => {
     observer.refetch()
     unsubscribe()
     await sleep(10)
-    // unsubscribe should not remove even though cacheTime has elapsed b/c query is still fetching
+    // unsubscribe should not remove even though gcTime has elapsed b/c query is still fetching
     expect(queryCache.find({ queryKey: key })).toBeDefined()
     await sleep(10)
     // should be removed after an additional staleTime wait
@@ -533,7 +533,7 @@ describe('query', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: async () => 'data',
-      cacheTime: 0,
+      gcTime: 0,
     })
     expect(queryCache.find({ queryKey: key })).toBeDefined()
     const unsubscribe = observer.subscribe(() => undefined)

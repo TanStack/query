@@ -818,7 +818,7 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 'data' })
   })
 
-  it('should pick up a query when re-mounting with cacheTime 0', async () => {
+  it('should pick up a query when re-mounting with gcTime 0', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 
@@ -845,7 +845,7 @@ describe('useQuery', () => {
           return 'data: ' + value
         },
 
-        cacheTime: 0,
+        gcTime: 0,
         notifyOnChangeProps: 'all',
       })
       states.push(state)
@@ -891,7 +891,7 @@ describe('useQuery', () => {
     })
   })
 
-  it('should not get into an infinite loop when removing a query with cacheTime 0 and rerendering', async () => {
+  it('should not get into an infinite loop when removing a query with gcTime 0 and rerendering', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 
@@ -905,7 +905,7 @@ describe('useQuery', () => {
           return 'data'
         },
 
-        cacheTime: 0,
+        gcTime: 0,
         notifyOnChangeProps: 'all',
       })
 
@@ -4009,14 +4009,14 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('status: loading, idle'))
   })
 
-  test('should not schedule garbage collection, if cacheTimeout is set to `Infinity`', async () => {
+  test('should not schedule garbage collection, if gcTimeout is set to `Infinity`', async () => {
     const key = queryKey()
 
     function Page() {
       const query = useQuery({
         queryKey: key,
         queryFn: () => 'fetched data',
-        cacheTime: Infinity,
+        gcTime: Infinity,
       })
       return <div>{query.data}</div>
     }
@@ -4029,7 +4029,7 @@ describe('useQuery', () => {
 
     const query = queryCache.find({ queryKey: key })
     // @ts-expect-error
-    expect(query!.cacheTimeout).toBe(undefined)
+    expect(query!.gcTimeout).toBe(undefined)
   })
 
   it('should not cause memo churn when data does not change', async () => {
