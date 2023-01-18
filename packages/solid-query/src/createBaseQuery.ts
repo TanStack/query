@@ -43,10 +43,6 @@ export function createBaseQuery<
     useQueryClient({ context: options().context }),
   )
 
-  const defaultedOptions = queryClient().defaultQueryOptions(options())
-  defaultedOptions._optimisticResults = 'optimistic'
-  const observer = new Observer(queryClient(), defaultedOptions)
-
   const emptyData = Symbol('empty')
 
   let resolver: (value: TData | undefined) => void
@@ -72,6 +68,13 @@ export function createBaseQuery<
   if (!isServer && queryResource()) {
     hydrate(queryClient(), queryResource())
   }
+
+  const defaultedOptions = queryClient().defaultQueryOptions(options())
+  defaultedOptions._optimisticResults = 'optimistic'
+  if (!isServer && queryResource()) {
+    defaultedOptions.refetchOnMount = false
+  }
+  const observer = new Observer(queryClient(), defaultedOptions)
 
   const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
     observer.getOptimisticResult(defaultedOptions),
