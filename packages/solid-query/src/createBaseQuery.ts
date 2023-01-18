@@ -69,7 +69,7 @@ export function createBaseQuery<
   // This means that the query was fetched on the server!
   // We need to hydrate the queryClient with the query from
   // the server before we set up the observer and its results.
-  if (queryResource()) {
+  if (!isServer && queryResource()) {
     hydrate(queryClient(), queryResource())
   }
 
@@ -81,9 +81,9 @@ export function createBaseQuery<
     () => {
       return new Promise((resolve) => {
         if (isServer) {
-          if (!(state.isFetching && state.isLoading)) {
+          if (!state.isInitialLoading) {
             const dehydratedClient = dehydrate(queryClient())
-            queryResolver(dehydratedClient)
+            queryResolver?.(dehydratedClient)
             resolve(unwrap(state.data))
           }
           // We only resolve the data resource
@@ -92,7 +92,7 @@ export function createBaseQuery<
           // subscription function.
           resolver = resolve
         } else {
-          if (!(state.isFetching && state.isLoading)) {
+          if (!state.isInitialLoading) {
             if (
               (unwrap(state.data) as TData | typeof emptyData) === emptyData
             ) {
@@ -102,6 +102,11 @@ export function createBaseQuery<
           }
         }
       })
+    },
+    {
+      get deferStream() {
+        return options().deferStream
+      },
     },
   )
 
@@ -119,10 +124,10 @@ export function createBaseQuery<
         setState(unwrappedResult)
         // If on the server, we dehydrate the queryclient resource
         // So that it is available to be hydrated on the client
-        if (!(result.isFetching && result.isLoading)) {
+        if (!result.isInitialLoading) {
           const dehydratedClient = dehydrate(queryClient())
-          queryResolver(dehydratedClient)
-          resolver(unwrap(unwrappedResult.data))
+          queryResolver?.(dehydratedClient)
+          resolver?.(unwrap(unwrappedResult.data))
         }
       } else {
         if (unwrappedResult.data === undefined) {
