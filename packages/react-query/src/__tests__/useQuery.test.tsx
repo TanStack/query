@@ -4024,11 +4024,13 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('fetched data'))
+    jest.useFakeTimers('legacy')
     const setTimeoutSpy = jest.spyOn(globalThis.window, 'setTimeout')
 
     rendered.unmount()
 
     expect(setTimeoutSpy).not.toHaveBeenCalled()
+    jest.useRealTimers()
   })
 
   test('should schedule garbage collection, if gcTimeout is not set to infinity', async () => {
@@ -4047,6 +4049,7 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('fetched data'))
 
+    jest.useFakeTimers('legacy')
     const setTimeoutSpy = jest.spyOn(globalThis.window, 'setTimeout')
 
     rendered.unmount()
@@ -4055,6 +4058,7 @@ describe('useQuery', () => {
       expect.any(Function),
       1000 * 60 * 10,
     )
+    jest.useRealTimers()
   })
 
   it('should not cause memo churn when data does not change', async () => {
