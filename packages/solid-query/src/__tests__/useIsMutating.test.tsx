@@ -221,4 +221,36 @@ describe('useIsMutating', () => {
     await sleep(20)
     MutationCacheSpy.mockRestore()
   })
+
+  it('should use provided custom queryClient', async () => {
+    const queryClient = createQueryClient()
+
+    function Page() {
+      const isMutating = useIsMutating(() => ({ queryClient }))
+      const { mutate } = createMutation(
+        () => ({
+          mutationKey: ['mutation1'],
+          mutationFn: async () => {
+            await sleep(10)
+            return 'data'
+          },
+        }),
+        () => queryClient,
+      )
+
+      createEffect(() => {
+        mutate()
+      })
+
+      return (
+        <div>
+          <div>mutating: {isMutating}</div>
+        </div>
+      )
+    }
+
+    render(() => <Page></Page>)
+
+    await waitFor(() => screen.findByText('mutating: 1'))
+  })
 })

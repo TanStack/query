@@ -1,4 +1,4 @@
-import { fireEvent, waitFor } from '@testing-library/react'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
 import {
@@ -198,5 +198,35 @@ describe('useIsFetching', () => {
 
     await rendered.findByText('isFetching: 1')
     await rendered.findByText('isFetching: 0')
+  })
+
+  it('should use provided custom queryClient', async () => {
+    const queryClient = createQueryClient()
+    const key = queryKey()
+
+    function Page() {
+      useQuery(
+        {
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(10)
+            return 'test'
+          },
+        },
+        queryClient,
+      )
+
+      const isFetching = useIsFetching({}, queryClient)
+
+      return (
+        <div>
+          <div>isFetching: {isFetching}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page></Page>)
+
+    await waitFor(() => rendered.getByText('isFetching: 1'))
   })
 })

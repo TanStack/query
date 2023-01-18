@@ -1,4 +1,4 @@
-import { fireEvent, waitFor } from '@testing-library/react'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -1069,5 +1069,37 @@ describe('useMutation', () => {
     await rendered.findByText('error: mutateFnError, status: error')
 
     expect(onError).toHaveBeenCalledWith(mutateFnError, 'todo', undefined)
+  })
+
+  it('should use provided custom queryClient', async () => {
+    function Page() {
+      const mutation = useMutation(
+        {
+          mutationFn: async (text: string) => {
+            return Promise.resolve(text)
+          },
+        },
+        queryClient,
+      )
+
+      return (
+        <div>
+          <button onClick={() => mutation.mutate('custom client')}>
+            mutate
+          </button>
+          <div>
+            data: {mutation.data ?? 'null'}, status: {mutation.status}
+          </div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page></Page>)
+
+    await rendered.findByText('data: null, status: idle')
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+
+    await rendered.findByText('data: custom client, status: success')
   })
 })

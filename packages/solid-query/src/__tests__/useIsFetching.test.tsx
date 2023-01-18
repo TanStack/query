@@ -220,4 +220,34 @@ describe('useIsFetching', () => {
     await screen.findByText('isFetching: 1')
     await screen.findByText('isFetching: 0')
   })
+
+  it('should use provided custom queryClient', async () => {
+    const queryClient = createQueryClient()
+    const key = queryKey()
+
+    function Page() {
+      createQuery(
+        () => ({
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(10)
+            return 'test'
+          },
+        }),
+        () => queryClient,
+      )
+
+      const isFetching = useIsFetching(() => ({ queryClient }))
+
+      return (
+        <div>
+          <div>isFetching: {isFetching}</div>
+        </div>
+      )
+    }
+
+    render(() => <Page></Page>)
+
+    await screen.findByText('isFetching: 1')
+  })
 })

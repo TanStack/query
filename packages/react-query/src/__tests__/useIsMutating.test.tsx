@@ -1,4 +1,4 @@
-import { fireEvent, waitFor } from '@testing-library/react'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { useIsMutating } from '../useIsMutating'
 import { useMutation } from '../useMutation'
@@ -192,5 +192,37 @@ describe('useIsMutating', () => {
 
     await sleep(20)
     MutationCacheSpy.mockRestore()
+  })
+
+  it('should use provided custom queryClient', async () => {
+    const queryClient = createQueryClient()
+
+    function Page() {
+      const isMutating = useIsMutating({}, queryClient)
+      const { mutate } = useMutation(
+        {
+          mutationKey: ['mutation1'],
+          mutationFn: async () => {
+            await sleep(10)
+            return 'data'
+          },
+        },
+        queryClient,
+      )
+
+      React.useEffect(() => {
+        mutate()
+      }, [mutate])
+
+      return (
+        <div>
+          <div>mutating: {isMutating}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page></Page>)
+
+    await waitFor(() => rendered.getByText('mutating: 1'))
   })
 })

@@ -1184,4 +1184,36 @@ describe('useMutation', () => {
 
     expect(onError).toHaveBeenCalledWith(mutateFnError, 'todo', undefined)
   })
+
+  it('should use provided custom queryClient', async () => {
+    function Page() {
+      const mutation = createMutation(
+        () => ({
+          mutationFn: async (text: string) => {
+            return Promise.resolve(text)
+          },
+        }),
+        () => queryClient,
+      )
+
+      return (
+        <div>
+          <button onClick={() => mutation.mutate('custom client')}>
+            mutate
+          </button>
+          <div>
+            data: {mutation.data ?? 'null'}, status: {mutation.status}
+          </div>
+        </div>
+      )
+    }
+
+    render(() => <Page></Page>)
+
+    await screen.findByText('data: null, status: idle')
+
+    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
+
+    await screen.findByText('data: custom client, status: success')
+  })
 })
