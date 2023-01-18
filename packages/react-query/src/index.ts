@@ -15,8 +15,8 @@ export {
 } from './QueryClientProvider'
 export type { QueryClientProviderProps } from './QueryClientProvider'
 export type { QueryErrorResetBoundaryProps } from './QueryErrorResetBoundary'
-export { useHydrate, Hydrate } from './Hydrate'
-export type { HydrateProps } from './Hydrate'
+export { HydrationBoundary } from './HydrationBoundary'
+export type { HydrationBoundaryProps } from './HydrationBoundary'
 export {
   QueryErrorResetBoundary,
   useQueryErrorResetBoundary,

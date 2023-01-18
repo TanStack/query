@@ -5,7 +5,7 @@ title: hydration
 
 ## `dehydrate`
 
-`dehydrate` creates a frozen representation of a `cache` that can later be hydrated with `Hydrate`, `useHydrate`, or `hydrate`. This is useful for passing prefetched queries from server to client or persisting queries to localStorage or other persistent locations. It only includes currently successful queries by default.
+`dehydrate` creates a frozen representation of a `cache` that can later be hydrated with `HydrationBoundary` or `hydrate`. This is useful for passing prefetched queries from server to client or persisting queries to localStorage or other persistent locations. It only includes currently successful queries by default.
 
 ```tsx
 import { dehydrate } from '@tanstack/react-query'
@@ -91,42 +91,17 @@ hydrate(queryClient, dehydratedState, options)
 
 If the queries included in dehydration already exist in the queryCache, `hydrate` does not overwrite them and they will be **silently** discarded.
 
-[//]: # 'useHydrate'
 
-## `useHydrate`
+[//]: # 'HydrationBoundary'
+## `HydrationBoundary`
 
-`useHydrate` adds a previously dehydrated state into the `queryClient` that would be returned by `useQueryClient()`. If the client already contains data, the new queries will be intelligently merged based on update timestamp.
-
-```tsx
-import { useHydrate } from '@tanstack/react-query'
-
-useHydrate(dehydratedState, options)
-```
-
-**Options**
-
-- `dehydratedState: DehydratedState`
-  - **Required**
-  - The state to hydrate
-- `options: HydrateOptions`
-  - Optional
-  - `defaultOptions: QueryOptions`
-    - The default query options to use for the hydrated queries.
-  - `context?: React.Context<QueryClient | undefined>`
-    - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.
-
-[//]: # 'useHydrate'
-[//]: # 'Hydrate'
-
-## `Hydrate`
-
-`Hydrate` wraps `useHydrate` into component. Can be useful when you need hydrate in class component or need hydrate on same level where `QueryClientProvider` rendered.
+`HydrationBoundary` adds a previously dehydrated state into the `queryClient` that would be returned by `useQueryClient()`. If the client already contains data, the new queries will be intelligently merged based on update timestamp.
 
 ```tsx
-import { Hydrate } from '@tanstack/react-query'
+import { HydrationBoundary } from '@tanstack/react-query'
 
 function App() {
-  return <Hydrate state={dehydratedState}>...</Hydrate>
+  return <HydrationBoundary state={dehydratedState}>...</HydrationBoundary>
 }
 ```
 
@@ -141,4 +116,4 @@ function App() {
   - `context?: React.Context<QueryClient | undefined>`
     - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.
 
-[//]: # 'Hydrate'
+[//]: # 'HydrationBoundary'

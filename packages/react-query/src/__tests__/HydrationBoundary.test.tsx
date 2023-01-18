@@ -7,8 +7,7 @@ import {
   QueryCache,
   useQuery,
   dehydrate,
-  useHydrate,
-  Hydrate,
+  HydrationBoundary,
 } from '@tanstack/react-query'
 import { createQueryClient, sleep } from './utils'
 import * as coreModule from '@tanstack/query-core'
@@ -32,75 +31,75 @@ describe('React hydration', () => {
     queryClient.clear()
   })
 
-  describe('useHydrate', () => {
-    test('should hydrate queries to the cache on context', async () => {
-      const dehydratedState = JSON.parse(stringifiedState)
-      const queryCache = new QueryCache()
-      const queryClient = createQueryClient({ queryCache })
+  test('should hydrate queries to the cache on context', async () => {
+    const dehydratedState = JSON.parse(stringifiedState)
+    const queryCache = new QueryCache()
+    const queryClient = createQueryClient({ queryCache })
 
-      function Page() {
-        useHydrate(dehydratedState)
-        const { data } = useQuery({
-          queryKey: ['string'],
-          queryFn: () => dataQuery(['string']),
-        })
-        return (
-          <div>
-            <h1>{data}</h1>
-          </div>
-        )
-      }
+    function Page() {
+      const { data } = useQuery({
+        queryKey: ['string'],
+        queryFn: () => dataQuery(['string']),
+      })
+      return (
+        <div>
+          <h1>{data}</h1>
+        </div>
+      )
+    }
 
-      const rendered = render(
-        <QueryClientProvider client={queryClient}>
+    const rendered = render(
+      <QueryClientProvider client={queryClient}>
+        <HydrationBoundary state={dehydratedState}>
           <Page />
-        </QueryClientProvider>,
+        </HydrationBoundary>
+      </QueryClientProvider>,
+    )
+
+    await rendered.findByText('stringCached')
+    await rendered.findByText('string')
+    queryClient.clear()
+  })
+
+  test('should hydrate queries to the cache on custom context', async () => {
+    const context = React.createContext<QueryClient | undefined>(undefined)
+
+    const queryCacheOuter = new QueryCache()
+    const queryCacheInner = new QueryCache()
+
+    const queryClientInner = new QueryClient({ queryCache: queryCacheInner })
+    const queryClientOuter = new QueryClient({ queryCache: queryCacheOuter })
+
+    const dehydratedState = JSON.parse(stringifiedState)
+
+    function Page() {
+      const { data } = useQuery({
+        queryKey: ['string'],
+        queryFn: () => dataQuery(['string']),
+        context,
+      })
+      return (
+        <div>
+          <h1>{data}</h1>
+        </div>
       )
+    }
 
-      await rendered.findByText('stringCached')
-      await rendered.findByText('string')
-      queryClient.clear()
-    })
-
-    test('should hydrate queries to the cache on custom context', async () => {
-      const context = React.createContext<QueryClient | undefined>(undefined)
-
-      const queryCacheOuter = new QueryCache()
-      const queryCacheInner = new QueryCache()
-
-      const queryClientInner = new QueryClient({ queryCache: queryCacheInner })
-      const queryClientOuter = new QueryClient({ queryCache: queryCacheOuter })
-
-      const dehydratedState = JSON.parse(stringifiedState)
-
-      function Page() {
-        useHydrate(dehydratedState, { context })
-        const { data } = useQuery({
-          queryKey: ['string'],
-          queryFn: () => dataQuery(['string']),
-          context,
-        })
-        return (
-          <div>
-            <h1>{data}</h1>
-          </div>
-        )
-      }
-
-      const rendered = render(
-        <QueryClientProvider client={queryClientOuter} context={context}>
-          <QueryClientProvider client={queryClientInner}>
+    const rendered = render(
+      <QueryClientProvider client={queryClientOuter} context={context}>
+        <QueryClientProvider client={queryClientInner}>
+          <HydrationBoundary state={dehydratedState} options={{ context }}>
             <Page />
-          </QueryClientProvider>
-        </QueryClientProvider>,
-      )
+          </HydrationBoundary>
+        </QueryClientProvider>
+      </QueryClientProvider>,
+    )
 
-      await rendered.findByText('stringCached')
-      await rendered.findByText('string')
+    await rendered.findByText('stringCached')
+    await rendered.findByText('string')
 
-      queryClientInner.clear()
-      queryClientOuter.clear()
-    })
+    queryClientInner.clear()
+    queryClientOuter.clear()
   })
 
   describe('ReactQueryCacheProvider with hydration support', () => {
@@ -123,9 +122,9 @@ describe('React hydration', () => {
 
       const rendered = render(
         <QueryClientProvider client={queryClient}>
-          <Hydrate state={dehydratedState}>
+          <HydrationBoundary state={dehydratedState}>
             <Page queryKey={['string']} />
-          </Hydrate>
+          </HydrationBoundary>
         </QueryClientProvider>,
       )
 
@@ -148,10 +147,10 @@ describe('React hydration', () => {
 
       rendered.rerender(
         <QueryClientProvider client={queryClient}>
-          <Hydrate state={dehydrated}>
+          <HydrationBoundary state={dehydrated}>
             <Page queryKey={['string']} />
             <Page queryKey={['added string']} />
-          </Hydrate>
+          </HydrationBoundary>
         </QueryClientProvider>,
       )
 
@@ -184,9 +183,9 @@ describe('React hydration', () => {
 
       const rendered = render(
         <QueryClientProvider client={queryClient}>
-          <Hydrate state={dehydratedState}>
+          <HydrationBoundary state={dehydratedState}>
             <Page />
-          </Hydrate>
+          </HydrationBoundary>
         </QueryClientProvider>,
       )
 
@@ -199,9 +198,9 @@ describe('React hydration', () => {
 
       rendered.rerender(
         <QueryClientProvider client={newClientQueryClient}>
-          <Hydrate state={dehydratedState}>
+          <HydrationBoundary state={dehydratedState}>
             <Page />
-          </Hydrate>
+          </HydrationBoundary>
         </QueryClientProvider>,
       )
 
@@ -220,13 +219,14 @@ describe('React hydration', () => {
     const hydrateSpy = jest.spyOn(coreModule, 'hydrate')
 
     function Page() {
-      useHydrate(null)
       return null
     }
 
     render(
       <QueryClientProvider client={queryClient}>
-        <Page />
+        <HydrationBoundary state={null}>
+          <Page />
+        </HydrationBoundary>
       </QueryClientProvider>,
     )
 
@@ -243,13 +243,14 @@ describe('React hydration', () => {
     const hydrateSpy = jest.spyOn(coreModule, 'hydrate')
 
     function Page() {
-      useHydrate(undefined)
       return null
     }
 
     render(
       <QueryClientProvider client={queryClient}>
-        <Page />
+        <HydrationBoundary state={undefined}>
+          <Page />
+        </HydrationBoundary>
       </QueryClientProvider>,
     )
 

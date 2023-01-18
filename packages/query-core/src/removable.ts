@@ -2,7 +2,7 @@ import { isServer, isValidTimeout } from './utils'
 
 export abstract class Removable {
   cacheTime!: number
-  private gcTimeout?: ReturnType<typeof setTimeout>
+  #gcTimeout?: ReturnType<typeof setTimeout>
 
   destroy(): void {
     this.clearGcTimeout()
@@ -12,7 +12,7 @@ export abstract class Removable {
     this.clearGcTimeout()
 
     if (isValidTimeout(this.cacheTime)) {
-      this.gcTimeout = setTimeout(() => {
+      this.#gcTimeout = setTimeout(() => {
         this.optionalRemove()
       }, this.cacheTime)
     }
@@ -27,9 +27,9 @@ export abstract class Removable {
   }
 
   protected clearGcTimeout() {
-    if (this.gcTimeout) {
-      clearTimeout(this.gcTimeout)
-      this.gcTimeout = undefined
+    if (this.#gcTimeout) {
+      clearTimeout(this.#gcTimeout)
+      this.#gcTimeout = undefined
     }
   }
 

@@ -1,7 +1,6 @@
 import { sleep, queryKey, createQueryClient } from './utils'
 import { QueryClient } from '..'
 import { QueryCache, QueryObserver } from '..'
-import type { Query } from '.././query'
 import { waitFor } from '@testing-library/react'
 
 describe('queryCache', () => {
@@ -320,42 +319,14 @@ describe('queryCache', () => {
   describe('QueryCache.add', () => {
     test('should not try to add a query already added to the cache', async () => {
       const key = queryKey()
-      const hash = `["${key}"]`
 
       await queryClient.prefetchQuery({ queryKey: key, queryFn: () => 'data1' })
 
-      // Directly add the query from the cache
-      // to simulate a race condition
-      const query = queryCache['queries'].get(hash) as Query
+      const query = queryCache.findAll()[0]!
       const queryClone = Object.assign({}, query)
 
-      // No error should be thrown when trying to add the query
       queryCache.add(queryClone)
       expect(queryCache.getAll().length).toEqual(1)
-
-      // Clean-up to avoid an error when queryClient.clear()
-      queryCache['queries'].delete(hash)
-    })
-
-    describe('QueryCache.remove', () => {
-      test('should not try to remove a query already removed from the cache', async () => {
-        const key = queryKey()
-        const hash = `["${key}"]`
-
-        await queryClient.prefetchQuery({
-          queryKey: key,
-          queryFn: () => 'data1',
-        })
-
-        // Directly remove the query from the cache
-        // to simulate a race condition
-        const query = queryCache['queries'].get(hash) as Query
-        const queryClone = Object.assign({}, query)
-        queryCache['queries'].delete(hash)
-
-        // No error should be thrown when trying to remove the query
-        expect(() => queryCache.remove(queryClone)).not.toThrow()
-      })
     })
   })
 })

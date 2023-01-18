@@ -11,7 +11,7 @@ import type {
   QueryFunctionContext,
   QueryObserverResult,
 } from '..'
-import { QueryObserver, isCancelledError, isError, onlineManager } from '..'
+import { QueryObserver, isCancelledError, onlineManager } from '..'
 import { waitFor } from '@testing-library/react'
 
 describe('query', () => {
@@ -86,7 +86,7 @@ describe('query', () => {
 
     // Reset visibilityState to original value
     visibilityMock.mockRestore()
-    window.dispatchEvent(new FocusEvent('focus'))
+    window.dispatchEvent(new Event('visibilitychange'))
 
     // There should not be a result yet
     expect(result).toBeUndefined()
@@ -181,7 +181,6 @@ describe('query', () => {
     } finally {
       // Reset visibilityState to original value
       visibilityMock.mockRestore()
-      window.dispatchEvent(new FocusEvent('focus'))
     }
   })
 
@@ -246,7 +245,7 @@ describe('query', () => {
       queryKey: key,
       queryFn: async ({ signal }) => {
         await sleep(100)
-        return signal?.aborted ? 'aborted' : 'data'
+        return signal.aborted ? 'aborted' : 'data'
       },
     })
 
@@ -283,15 +282,11 @@ describe('query', () => {
     let error
 
     queryFn.mockImplementation(async ({ signal }) => {
-      if (signal) {
-        signal.onabort = onAbort
-        signal.addEventListener('abort', abortListener)
-      }
+      signal.onabort = onAbort
+      signal.addEventListener('abort', abortListener)
       await sleep(10)
-      if (signal) {
-        signal.onabort = null
-        signal.removeEventListener('abort', abortListener)
-      }
+      signal.onabort = null
+      signal.removeEventListener('abort', abortListener)
       throw new Error()
     })
 
@@ -311,7 +306,7 @@ describe('query', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     const signal = queryFn.mock.calls[0]![0].signal
-    expect(signal?.aborted).toBe(false)
+    expect(signal.aborted).toBe(false)
     expect(onAbort).not.toHaveBeenCalled()
     expect(abortListener).not.toHaveBeenCalled()
 
@@ -319,7 +314,7 @@ describe('query', () => {
 
     await sleep(100)
 
-    expect(signal?.aborted).toBe(true)
+    expect(signal.aborted).toBe(true)
     expect(onAbort).toHaveBeenCalledTimes(1)
     expect(abortListener).toHaveBeenCalledTimes(1)
     expect(isCancelledError(error)).toBe(true)
@@ -422,18 +417,19 @@ describe('query', () => {
 
   test('cancelling a rejected query should not have any effect', async () => {
     const key = queryKey()
+    const error = new Error('error')
 
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn: async (): Promise<unknown> => {
-        throw new Error('error')
+        throw error
       },
     })
     const query = queryCache.find({ queryKey: key })!
     query.cancel()
     await sleep(10)
 
-    expect(isError(query.state.error)).toBe(true)
+    expect(query.state.error).toBe(error)
     expect(isCancelledError(query.state.error)).toBe(false)
   })
 
@@ -703,7 +699,7 @@ describe('query', () => {
     notifySpy.mockRestore()
   })
 
-  test('should not dispatch "invalidate" on invalidate() if already invalidated', async () => {
+  test('should not change state on invalidate() if already invalidated', async () => {
     const key = queryKey()
 
     await queryClient.prefetchQuery({ queryKey: key, queryFn: () => 'data' })
@@ -712,19 +708,14 @@ describe('query', () => {
     query.invalidate()
     expect(query.state.isInvalidated).toBeTruthy()
 
-    const dispatchOriginal = query['dispatch']
-    const dispatchSpy = jest.fn()
-    query['dispatch'] = dispatchSpy
+    const previousState = query.state
 
     query.invalidate()
 
-    expect(query.state.isInvalidated).toBeTruthy()
-    expect(dispatchSpy).not.toHaveBeenCalled()
-
-    query['dispatch'] = dispatchOriginal
+    expect(query.state).toBe(previousState)
   })
 
-  test('fetch should not dispatch "fetch" if state meta and fetchOptions meta are the same object', async () => {
+  test('fetch should not dispatch "fetch" query is already fetching', async () => {
     const key = queryKey()
 
     const queryFn = async () => {
@@ -732,74 +723,31 @@ describe('query', () => {
       return 'data'
     }
 
+    const updates: Array<string> = []
+
     await queryClient.prefetchQuery({ queryKey: key, queryFn })
     const query = queryCache.find({ queryKey: key })!
 
-    const meta = { meta1: '1' }
-
-    // This first fetch will set the state.meta value
-    query.fetch(
-      {
-        queryKey: key,
-        queryFn,
-      },
-      {
-        meta,
-      },
-    )
-
-    // Spy on private dispatch method
-    const dispatchOriginal = query['dispatch']
-    const dispatchSpy = jest.fn()
-    query['dispatch'] = dispatchSpy
-
-    // Second fetch in parallel with the same meta
-    query.fetch(
-      {
-        queryKey: key,
-        queryFn,
-      },
-      {
-        meta,
-        // cancelRefetch must be set to true to enter in the case to test
-        // where isFetching is true
-        cancelRefetch: true,
-      },
-    )
-
-    // Should not call dispatch with type set to fetch
-    expect(dispatchSpy).not.toHaveBeenCalledWith({
-      meta,
-      type: 'fetch',
+    const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
+      updates.push(event.type)
     })
 
-    // Clean-up
-    await sleep(20)
-    query['dispatch'] = dispatchOriginal
-  })
-
-  test('fetch should not set the signal in the queryFnContext if AbortController is undefined', async () => {
-    const key = queryKey()
-
-    // Mock the AbortController to be undefined
-    const AbortControllerOriginal = globalThis['AbortController']
-    //@ts-expect-error
-    globalThis['AbortController'] = undefined
-
-    let signalTest: any
-    await queryClient.prefetchQuery({
+    void query.fetch({
       queryKey: key,
-      queryFn: ({ signal }) => {
-        signalTest = signal
-        return 'data'
-      },
+      queryFn,
     })
 
-    expect(signalTest).toBeUndefined()
+    await query.fetch({
+      queryKey: key,
+      queryFn,
+    })
 
-    // Clean-up
-    //@ts-ignore
-    globalThis['AbortController'] = AbortControllerOriginal
+    expect(updates).toEqual([
+      'updated', // type: 'fetch'
+      'updated', // type: 'success'
+    ])
+
+    unsubscribe()
   })
 
   test('fetch should throw an error if the queryFn is not defined', async () => {
@@ -844,47 +792,6 @@ describe('query', () => {
 
     expect(mockLogger.error).toHaveBeenCalledWith(error)
     unsubscribe()
-  })
-
-  test('fetch should dispatch fetch if is fetching and current promise is undefined', async () => {
-    const key = queryKey()
-
-    const queryFn = async () => {
-      await sleep(10)
-      return 'data'
-    }
-
-    await queryClient.prefetchQuery({ queryKey: key, queryFn })
-    const query = queryCache.find({ queryKey: key })!
-
-    query.fetch({
-      queryKey: key,
-      queryFn,
-    })
-
-    // Force promise to undefined
-    // because no use case have been identified
-    query['promise'] = undefined
-
-    // Spy on private dispatch method
-    const dispatchOriginal = query['dispatch']
-    const dispatchSpy = jest.fn()
-    query['dispatch'] = dispatchSpy
-
-    query.fetch({
-      queryKey: key,
-      queryFn,
-    })
-
-    // Should call dispatch with type set to fetch
-    expect(dispatchSpy).toHaveBeenCalledWith({
-      meta: undefined,
-      type: 'fetch',
-    })
-
-    // Clean-up
-    await sleep(20)
-    query['dispatch'] = dispatchOriginal
   })
 
   test('constructor should call initialDataUpdatedAt if defined as a function', async () => {
