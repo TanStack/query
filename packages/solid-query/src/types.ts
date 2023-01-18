@@ -91,12 +91,15 @@ export interface SolidInfiniteQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends ContextOptions,
-    InfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
+    WithRequired<
+      InfiniteQueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey
+      >,
+      'queryKey'
     > {
   deferStream?: boolean
 }
