@@ -1,5 +1,5 @@
 ---
-id: migrating-to-react-query-5
+id: migrating-to-tanstack-query-5
 title: Migrating to TanStack Query v5
 ---
 
@@ -117,12 +117,6 @@ if you still need to remove a query, you can use `queryClient.removeQueries({que
 
 Mainly because an important fix was shipped around type inference. Please see this [TypeScript issue](https://github.com/microsoft/TypeScript/issues/43371) for more information.
 
-### The `contextSharing` prop has been removed from QueryClientProvider
-
-You could previously use the `contextSharing` property to share the first (and at least one) instance of the query client context across the window. This ensured that if TanStack Query was used across different bundles or microfrontends then they will all use the same instance of the context, regardless of module scoping.
-
-However, isolation is often preferred for microfrontends. In v4 the option to pass a custom context to the `QueryClientProvider` was added, which allows exactly this. If you wish to use the same query client across multiple packages of an application, you can create a `QueryClient` in your application and then let the bundles share this through the `context` property of the `QueryClientProvider`.
-
 ### The `isDataEqual` options has been removed from useQuery
 
 Previously, This function was used to indicate whether to use previous `data` (`true`) or new data (`false`) as a resolved data for the query.
@@ -216,6 +210,36 @@ There are some caveats to this change however, which you must be aware of:
 
 The `visibilitychange` event is used exclusively now. This is possible because we only support browsers that support the `visibilitychange` event. This fixes a bunch of issues [as listed here](https://github.com/TanStack/query/pull/4805).
 
+### Removed custom `context` prop in favor of custom `queryClient` instance
+
+In v4, we introduced the possibility to pass a custom `context` to all react-query hooks. This allowed for proper isolation when using MicroFrontends.
+
+However, `context` is a react-only feature. All that `context` does is give us access to the `queryClient`. We could achieve the same isolation by allowing to pass in a custom `queryClient` directly.
+This in turn will enable other frameworks to have the same functionality in a framework-agnostic way.
+
+```diff
+import { queryClient } from './my-client'
+
+const { data } = useQuery(
+   {
+    queryKey: ['users', id],
+    queryFn: () => fetch(...),
+-   context: customContext
+  },
++  queryClient,
+)
+```
+
+[//]: # 'FrameworkBreakingChanges'
+
+## React Query Breaking Changes
+
+### The `contextSharing` prop has been removed from QueryClientProvider
+
+You could previously use the `contextSharing` property to share the first (and at least one) instance of the query client context across the window. This ensured that if TanStack Query was used across different bundles or microfrontends then they will all use the same instance of the context, regardless of module scoping.
+
+However, isolation is often preferred for microfrontends. In v4 the option to pass a custom context to the `QueryClientProvider` was added, which allows exactly this. If you wish to use the same query client across multiple packages of an application, you can create a `QueryClient` in your application and then let the bundles share this through the `context` property of the `QueryClientProvider`.
+
 ### No longer using `unstable_batchedUpdates` as the batching function in React and React Native
 
 Since the function `unstable_batchedUpdates` is noop in React 18, it will no longer be automatically set as the batching function in `react-query`.
@@ -246,6 +270,5 @@ The `Hydrate` component has been renamed to `HydrationBoundary`. The `Hydrate` c
 - </Hydrate>
 + </HydrationBoundary>
 ```
-```
 
-
+[//]: # 'FrameworkBreakingChanges'
