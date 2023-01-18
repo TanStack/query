@@ -20,7 +20,7 @@ export default function Root() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        refetchOnMount: false,
+        retry: 0,
       },
     },
   })
@@ -35,8 +35,15 @@ export default function Root() {
       <Body>
         <QueryClientProvider client={queryClient}>
           <ErrorBoundary>
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense
+              fallback={<div>loading... [root.tsx suspense boundary]</div>}
+            >
               <A href="/">Index</A>
+              <A href="/streamed">Streamed</A>
+              <A href="/deferred">Deferred</A>
+              <A href="/mixed">Mixed</A>
+              <A href="/with-error">With Error</A>
+
               <Routes>
                 <FileRoutes />
               </Routes>
