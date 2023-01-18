@@ -578,7 +578,7 @@ describe('queryClient', () => {
       expect(second).toBe(first)
     })
 
-    test('should be able to fetch when garbage collector time is set to 0 and then be removed', async () => {
+    test('should be able to fetch when garbage collection time is set to 0 and then be removed', async () => {
       const key1 = queryKey()
       const result = await queryClient.fetchQuery({
         queryKey: key1,
@@ -594,7 +594,7 @@ describe('queryClient', () => {
       )
     })
 
-    test('should keep a query in cache if garbage collector time is Infinity', async () => {
+    test('should keep a query in cache if garbage collection time is Infinity', async () => {
       const key1 = queryKey()
       const result = await queryClient.fetchQuery({
         queryKey: key1,

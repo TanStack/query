@@ -28,7 +28,7 @@ describe('query', () => {
     queryClient.clear()
   })
 
-  test('should use the longest garbage collector time it has seen', async () => {
+  test('should use the longest garbage collection time it has seen', async () => {
     const key = queryKey()
     await queryClient.prefetchQuery({
       queryKey: key,

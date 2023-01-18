@@ -71,7 +71,7 @@ function Root() {
         />
       </div>
       <div>
-        Garbage collector Time:{" "}
+        Garbage collection Time:{" "}
         <input
           type="number"
           min="0"

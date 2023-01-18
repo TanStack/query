@@ -119,7 +119,7 @@ describe('dehydration and rehydration', () => {
     queryClient.clear()
   })
 
-  test('should use the garbage collector time from the client', async () => {
+  test('should use the garbage collection time from the client', async () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
     await queryClient.prefetchQuery({

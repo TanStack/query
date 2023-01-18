@@ -26,7 +26,7 @@ Let's assume we are using the default `gcTime` of **5 minutes** and the default 
     - Note that regardless of whether both `fetchTodos` query functions are identical or not, both queries' [`status`](../reference/useQuery) are updated (including `isFetching`, `isLoading`, and other related values) because they have the same query key.
   - When the request completes successfully, the cache's data under the `['todos']` key is updated with the new data, and both instances are updated with the new data.
 - Both instances of the `useQuery({ queryKey: ['todos'], queryFn: fetchTodos })` query are unmounted and no longer in use.
-  - Since there are no more active instances of this query, a cache timeout is set using `gcTime` to delete and garbage collect the query (defaults to **5 minutes**).
+  - Since there are no more active instances of this query, a garbage collection timeout is set using `gcTime` to delete and garbage collect the query (defaults to **5 minutes**).
 - Before the cache timeout has completed, another instance of `useQuery({ queryKey: ['todos'], queyFn: fetchTodos })` mounts. The query immediately returns the available cached data while the `fetchTodos` function is being run in the background. When it completes successfully, it will populate the cache with fresh data.
 - The final instance of `useQuery({ queryKey: ['todos'], queryFn: fetchTodos })` unmounts.
 - No more instances of `useQuery({ queyKey: ['todos'], queryFn: fetchTodos })` appear within **5 minutes**.
