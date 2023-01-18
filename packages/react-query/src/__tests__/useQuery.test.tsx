@@ -4024,12 +4024,11 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('fetched data'))
+    const setTimeoutSpy = jest.spyOn(globalThis.window, 'setTimeout')
 
     rendered.unmount()
 
-    const query = queryCache.find({ queryKey: key })
-    // @ts-expect-error
-    expect(query!.gcTimeout).toBe(undefined)
+    expect(setTimeoutSpy).not.toHaveBeenCalled()
   })
 
   it('should not cause memo churn when data does not change', async () => {

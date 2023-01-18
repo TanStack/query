@@ -3978,12 +3978,11 @@ describe('createQuery', () => {
     ))
 
     await waitFor(() => screen.getByText('fetched data'))
+    const setTimeoutSpy = jest.spyOn(window, 'setTimeout')
 
     result.unmount()
 
-    const query = queryCache.find({ queryKey: key })
-    // @ts-expect-error
-    expect(query!.gcTimeout).toBe(undefined)
+    expect(setTimeoutSpy).not.toHaveBeenCalled()
   })
 
   it('should not cause memo churn when data does not change', async () => {
