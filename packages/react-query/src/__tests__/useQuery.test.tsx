@@ -4031,6 +4031,32 @@ describe('useQuery', () => {
     expect(setTimeoutSpy).not.toHaveBeenCalled()
   })
 
+  test('should schedule garbage collection, if gcTimeout is not set to infinity', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const query = useQuery({
+        queryKey: key,
+        queryFn: () => 'fetched data',
+        gcTime: 1000 * 60 * 10, //10 Minutes
+      })
+      return <div>{query.data}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('fetched data'))
+
+    const setTimeoutSpy = jest.spyOn(globalThis.window, 'setTimeout')
+
+    rendered.unmount()
+
+    expect(setTimeoutSpy).toHaveBeenLastCalledWith(
+      expect.any(Function),
+      1000 * 60 * 10,
+    )
+  })
+
   it('should not cause memo churn when data does not change', async () => {
     const key = queryKey()
     const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
