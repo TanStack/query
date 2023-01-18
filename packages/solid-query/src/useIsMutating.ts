@@ -9,9 +9,7 @@ type Options = () => {
 }
 
 export function useIsMutating(options: Options = () => ({})): Accessor<number> {
-  const queryClient = createMemo(() =>
-    useQueryClient(options().queryClient),
-  )
+  const queryClient = createMemo(() => useQueryClient(options().queryClient))
   const mutationCache = createMemo(() => queryClient().getMutationCache())
 
   const [mutations, setMutations] = createSignal(
