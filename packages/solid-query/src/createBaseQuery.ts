@@ -9,8 +9,7 @@ import type {
 } from '@tanstack/query-core'
 import { hydrate } from '@tanstack/query-core'
 import { notifyManager } from '@tanstack/query-core'
-import type { Accessor, Setter } from 'solid-js'
-import { batch } from 'solid-js'
+import type { Accessor } from 'solid-js'
 import { isServer } from 'solid-js/web'
 import {
   createComputed,
@@ -61,26 +60,18 @@ export function createBaseQuery<
     return observer.subscribe((result) => {
       notifyManager.batchCalls(() => {
         const unwrappedResult = { ...unwrap(result) }
-
         setState(unwrappedResult)
         resolve(unwrappedResult)
       })()
     })
   }
 
-  const createClientSubscriber = (
-    mutate: () => Setter<QueryObserverResult<TData, TError> | undefined>,
-    refetch: () => void,
-  ) => {
+  const createClientSubscriber = (refetch: (info?: unknown) => void) => {
     return observer.subscribe((result) => {
       notifyManager.batchCalls(() => {
         const unwrappedResult = { ...unwrap(result) }
-
-        batch(() => {
-          setState(unwrappedResult)
-          mutate()(() => unwrappedResult)
-          refetch()
-        })
+        setState(unwrappedResult)
+        refetch()
       })()
     })
   }
@@ -90,7 +81,7 @@ export function createBaseQuery<
    */
   let unsubscribe: (() => void) | null = null
 
-  const [queryResource, { refetch, mutate }] = createResource<
+  const [queryResource, { refetch }] = createResource<
     QueryObserverResult<TData, TError> | undefined
   >(
     () => {
@@ -99,9 +90,8 @@ export function createBaseQuery<
           unsubscribe = createServerSubscriber(resolve)
         } else {
           if (!unsubscribe) {
-            unsubscribe = createClientSubscriber(
-              () => mutate,
-              () => refetch(),
+            unsubscribe = createClientSubscriber((info?: unknown) =>
+              refetch(info),
             )
           }
 
@@ -112,6 +102,8 @@ export function createBaseQuery<
       })
     },
     {
+      initialValue: state,
+
       get deferStream() {
         return options().deferStream
       },
@@ -126,6 +118,7 @@ export function createBaseQuery<
        */
       onHydrated(_k, info) {
         if (info.value) {
+          setState(info.value)
           hydrate(queryClient(), {
             queries: [
               {
@@ -138,10 +131,7 @@ export function createBaseQuery<
         }
 
         if (!unsubscribe) {
-          unsubscribe = createClientSubscriber(
-            () => mutate,
-            () => refetch(),
-          )
+          unsubscribe = createClientSubscriber((i?: unknown) => refetch(i))
         }
       },
     },

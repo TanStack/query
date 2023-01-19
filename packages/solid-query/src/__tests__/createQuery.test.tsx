@@ -1579,7 +1579,6 @@ describe('createQuery', () => {
 
     // Fetch query
     expect(states[0]).toMatchObject({
-      data: undefined,
       isFetching: true,
       isSuccess: false,
     })
@@ -1591,7 +1590,6 @@ describe('createQuery', () => {
     })
     // Switch to disabled query
     expect(states[2]).toMatchObject({
-      data: undefined,
       isFetching: false,
       isSuccess: false,
     })
@@ -4779,7 +4777,6 @@ describe('createQuery', () => {
     expect(count).toBe(2)
 
     expect(states[0]).toMatchObject({
-      data: undefined,
       isLoading: true,
       isFetching: true,
       isSuccess: false,
@@ -4793,7 +4790,6 @@ describe('createQuery', () => {
       isStale: false,
     })
     expect(states[2]).toMatchObject({
-      data: undefined,
       isLoading: true,
       isFetching: true,
       isSuccess: false,
@@ -4861,14 +4857,12 @@ describe('createQuery', () => {
     expect(count).toBe(1)
 
     expect(states[0]).toMatchObject({
-      data: undefined,
       isLoading: true,
       isFetching: false,
       isSuccess: false,
       isStale: true,
     })
     expect(states[1]).toMatchObject({
-      data: undefined,
       isLoading: true,
       isFetching: true,
       isSuccess: false,
@@ -4882,7 +4876,6 @@ describe('createQuery', () => {
       isStale: false,
     })
     expect(states[3]).toMatchObject({
-      data: undefined,
       isLoading: true,
       isFetching: false,
       isSuccess: false,
