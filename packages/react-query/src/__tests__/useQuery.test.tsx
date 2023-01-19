@@ -4642,6 +4642,7 @@ describe('useQuery', () => {
       ctx,
     ) => {
       const [, limit] = ctx.queryKey
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       const value = limit % 2 && ctx.signal ? 'abort' : `data ${limit}`
       await sleep(25)
       return value
@@ -5700,6 +5701,7 @@ describe('useQuery', () => {
           queryFn: async ({ signal }) => {
             count++
             await sleep(10)
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             return `${signal ? 'signal' : 'data'}${count}`
           },
         })
