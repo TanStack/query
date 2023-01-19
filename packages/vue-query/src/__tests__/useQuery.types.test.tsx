@@ -1,6 +1,7 @@
 import { reactive } from 'vue'
 import { useQuery } from '../useQuery'
-import { doNotExecute, Equal, Expect, simpleFetcher } from './test-utils'
+import { doNotExecute, simpleFetcher } from './test-utils'
+import type { Equal, Expect } from './test-utils'
 
 describe('Discriminated union return type', () => {
   it('data should be possibly undefined by default', () => {

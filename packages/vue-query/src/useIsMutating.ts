@@ -1,4 +1,4 @@
-import { computed, unref, onScopeDispose, ref, watch } from 'vue-demi'
+import { computed, onScopeDispose, ref, watch } from 'vue-demi'
 import type { Ref } from 'vue-demi'
 import type { MutationFilters as MF } from '@tanstack/query-core'
 
@@ -10,10 +10,10 @@ import type { QueryClient } from './queryClient'
 export type MutationFilters = MaybeRefDeep<MF>
 
 export function useIsMutating(
-  mutationFilters: MutationFilters = {},
+  mutationFilters: MaybeRefDeep<MF> = {},
   queryClient?: QueryClient,
 ): Ref<number> {
-  const filters = computed(() => unrefFilterArgs(mutationFilters))
+  const filters = computed(() => cloneDeepUnref(mutationFilters))
   const client = queryClient || useQueryClient()
 
   const isMutating = ref(client.isMutating(filters))
@@ -35,9 +35,4 @@ export function useIsMutating(
   })
 
   return isMutating
-}
-
-export function unrefFilterArgs(arg: MutationFilters) {
-  const options = unref(arg)
-  return cloneDeepUnref(options) as MF
 }

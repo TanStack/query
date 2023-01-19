@@ -33,7 +33,7 @@ export function cloneDeep<T>(
   }
 
   if (Array.isArray(value)) {
-    return value.map((val) => cloneDeep(val, customizer)) as T
+    return value.map((val) => cloneDeep(val, customizer)) as unknown as T
   }
 
   if (typeof value === 'object' && isPlainObject(value)) {
@@ -53,7 +53,7 @@ export function cloneDeepUnref<T>(obj: MaybeRefDeep<T>): T {
       return cloneDeepUnref(unref(val))
     }
 
-    return undefined;
+    return undefined
   })
 }
 
