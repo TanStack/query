@@ -1,8 +1,8 @@
 import { createQuery } from '@tanstack/solid-query'
 import type { Component } from 'solid-js'
+import { Switch, Match } from 'solid-js'
 import { createSignal } from 'solid-js'
 import { Suspense } from 'solid-js'
-import { ErrorBoundary } from 'solid-start'
 import { fetchUser } from '~/utils/api'
 import { Example } from './example'
 
@@ -29,30 +29,29 @@ export const UserInfo: Component<UserInfoProps> = (props) => {
       deferStream={props.deferStream}
       sleep={props.sleep}
     >
-      <ErrorBoundary
-        fallback={(err, resetErrorBoundary) => {
-          return (
+      <Suspense fallback={<div class="loader">loading user...</div>}>
+        <Switch>
+          <Match when={query.isError}>
             <div>
-              <div class="error">{err.message}</div>
+              <div class="error">{query.error?.message}</div>
               <button
                 onClick={() => {
                   setSimulateError(false)
-                  resetErrorBoundary()
                   query.refetch()
                 }}
               >
                 retry
               </button>
             </div>
-          )
-        }}
-      >
-        <Suspense fallback={<div class="loader">loading user...</div>}>
-          <div>id: {query.data?.id}</div>
-          <div>name: {query.data?.name}</div>
-          <div>queryTime: {query.data?.queryTime}</div>
-        </Suspense>
-      </ErrorBoundary>
+          </Match>
+
+          <Match when={query.data}>
+            <div>id: {query.data?.id}</div>
+            <div>name: {query.data?.name}</div>
+            <div>queryTime: {query.data?.queryTime}</div>
+          </Match>
+        </Switch>
+      </Suspense>
     </Example>
   )
 }

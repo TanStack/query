@@ -1,7 +1,7 @@
 import { createQuery } from '@tanstack/solid-query'
 import type { Component } from 'solid-js'
-import { onCleanup, onMount, resetErrorBoundaries } from 'solid-js'
-import { ErrorBoundary } from 'solid-start'
+import { Switch, Match } from 'solid-js'
+import { resetErrorBoundaries } from 'solid-js'
 import { createSignal } from 'solid-js'
 import { For, Suspense } from 'solid-js'
 import { fetchPost } from '~/utils/api'
@@ -55,37 +55,41 @@ export const PostViewer: Component<PostViewerProps> = (props) => {
         </button>
       </div>
 
-      <ErrorBoundary
-        fallback={(err, resetErrorBoundary) => {
-          return (
-            <div>
-              <div class="error">{err.message}</div>
-              <button
-                onClick={() => {
-                  setSimulateError(false)
-                  resetErrorBoundary()
-                  query.refetch()
-                }}
-              >
-                retry
-              </button>
-            </div>
-          )
-        }}
-      >
+      {/* NOTE: without this extra wrapping div, for some reason solid ends up printing two errors... feels like a bug in solid. */}
+      <div>
         <Suspense fallback={<div class="loader">loading post...</div>}>
-          <For each={query.data}>
-            {(post) => (
-              <div style={{ 'margin-top': '20px' }}>
-                <b>
-                  [post {postId()}] {post.title}
-                </b>
-                <p>{post.body}</p>
+          <Switch>
+            <Match when={query.isError}>
+              <div>
+                <div class="error">{query.error?.message}</div>
+                <button
+                  onClick={() => {
+                    setSimulateError(false)
+                    query.refetch()
+                  }}
+                >
+                  retry
+                </button>
               </div>
-            )}
-          </For>
+            </Match>
+
+            <Match when={query.data}>
+              <div>
+                <For each={query.data}>
+                  {(post) => (
+                    <div style={{ 'margin-top': '20px' }}>
+                      <b>
+                        [post {postId()}] {post.title}
+                      </b>
+                      <p>{post.body}</p>
+                    </div>
+                  )}
+                </For>
+              </div>
+            </Match>
+          </Switch>
         </Suspense>
-      </ErrorBoundary>
+      </div>
     </Example>
   )
 }
