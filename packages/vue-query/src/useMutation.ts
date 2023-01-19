@@ -5,7 +5,6 @@ import {
   toRefs,
   watch,
   computed,
-  unref,
 } from 'vue-demi'
 import type { ToRefs } from 'vue-demi'
 import type {
@@ -14,7 +13,7 @@ import type {
   MutationObserverResult,
   MutationObserverOptions,
 } from '@tanstack/query-core'
-import type { MaybeRef, MaybeRefDeep, DistributiveOmit } from './types'
+import type { MaybeRefDeep, DistributiveOmit } from './types'
 import { MutationObserver } from '@tanstack/query-core'
 import { cloneDeepUnref, updateState } from './utils'
 import { useQueryClient } from './useQueryClient'
@@ -25,24 +24,12 @@ type MutationResult<TData, TError, TVariables, TContext> = DistributiveOmit<
   'mutate' | 'reset'
 >
 
-export type UseMutationOptions<TData, TError, TVariables, TContext> =
-  MutationObserverOptions<TData, TError, TVariables, TContext>
-
-export type VueMutationObserverOptions<
+export type UseMutationOptions<
   TData = unknown,
   TError = Error,
   TVariables = void,
   TContext = unknown,
-> = {
-  [Property in keyof UseMutationOptions<
-    TData,
-    TError,
-    TVariables,
-    TContext
-  >]: MaybeRefDeep<
-    UseMutationOptions<TData, TError, TVariables, TContext>[Property]
-  >
-}
+> = MaybeRefDeep<MutationObserverOptions<TData, TError, TVariables, TContext>>
 
 type MutateSyncFunction<
   TData = unknown,
@@ -71,19 +58,16 @@ export function useMutation<
   TVariables = void,
   TContext = unknown,
 >(
-  mutationOptions: MaybeRef<
-    VueMutationObserverOptions<TData, TError, TVariables, TContext>
+  mutationOptions: MaybeRefDeep<
+    MutationObserverOptions<TData, TError, TVariables, TContext>
   >,
   queryClient?: QueryClient,
 ): UseMutationReturnType<TData, TError, TVariables, TContext> {
-  const options = computed(() => {
-    return unrefMutationArgs(mutationOptions)
-  })
   const client = queryClient || useQueryClient()
-  const observer = new MutationObserver(
-    client,
-    client.defaultMutationOptions(options.value),
-  )
+  const options = computed(() => {
+    return client.defaultMutationOptions(cloneDeepUnref(mutationOptions))
+  })
+  const observer = new MutationObserver(client, options.value)
   const state = reactive(observer.getCurrentResult())
 
   const unsubscribe = observer.subscribe((result) => {
@@ -102,7 +86,7 @@ export function useMutation<
   watch(
     options,
     () => {
-      observer.setOptions(client.defaultMutationOptions(options.value))
+      observer.setOptions(options.value)
     },
     { deep: true },
   )
@@ -121,24 +105,4 @@ export function useMutation<
     mutateAsync: state.mutate,
     reset: state.reset,
   }
-}
-
-export function unrefMutationArgs<
-  TData = unknown,
-  TError = Error,
-  TVariables = void,
-  TContext = unknown,
->(
-  arg: MaybeRef<
-    VueMutationObserverOptions<TData, TError, TVariables, TContext>
-  >,
-): MutationObserverOptions<TData, TError, TVariables, TContext> {
-  const options = unref(arg)
-
-  return cloneDeepUnref(options) as UseMutationOptions<
-    TData,
-    TError,
-    TVariables,
-    TContext
-  >
 }

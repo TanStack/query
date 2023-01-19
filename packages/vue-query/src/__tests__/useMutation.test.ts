@@ -1,6 +1,6 @@
 import { reactive, ref } from 'vue-demi'
 import { errorMutator, flushPromises, successMutator } from './test-utils'
-import { unrefMutationArgs, useMutation } from '../useMutation'
+import { useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
 
 jest.mock('../useQueryClient')
@@ -329,62 +329,6 @@ describe('useMutation', () => {
         data: { value: undefined },
         error: { value: Error('Some error') },
       })
-    })
-  })
-
-  describe('parseMutationArgs', () => {
-    test('should return the same instance of options', () => {
-      const options = { retry: false }
-      const result = unrefMutationArgs(options)
-
-      expect(result).toEqual(options)
-    })
-
-    test('should merge query key with options', () => {
-      const options = { mutationKey: ['key'], retry: false }
-      const result = unrefMutationArgs(options)
-      const expected = { ...options, mutationKey: ['key'] }
-
-      expect(result).toEqual(expected)
-    })
-
-    test('should merge query fn with options', () => {
-      const options = { mutationFn: successMutator, retry: false }
-      const result = unrefMutationArgs(options)
-      const expected = { ...options, mutationFn: successMutator }
-
-      expect(result).toEqual(expected)
-    })
-
-    test('should merge query key and fn with options', () => {
-      const options = {
-        mutationKey: ['key'],
-        mutationFn: successMutator,
-        retry: false,
-      }
-      const result = unrefMutationArgs(options)
-      const expected = {
-        ...options,
-        mutationKey: ['key'],
-        mutationFn: successMutator,
-      }
-
-      expect(result).toEqual(expected)
-    })
-
-    test('should unwrap refs arguments', () => {
-      const key = ref(['key'])
-      const mutationFn = ref(successMutator)
-      const options = ref({ mutationKey: key, mutationFn, retry: ref(12) })
-
-      const result = unrefMutationArgs(options)
-      const expected = {
-        mutationKey: ['key'],
-        mutationFn: successMutator,
-        retry: 12,
-      }
-
-      expect(result).toEqual(expected)
     })
   })
 })
