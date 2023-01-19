@@ -15,11 +15,11 @@
     "vite": "^3.1.8"
   },
   "dependencies": {
-    "@tanstack/solid-query": "workspace:*",
-    "@solidjs/meta": "^0.28.0",
+    "@tanstack/solid-query": "^4.3.9",
+    "@solidjs/meta": "^0.28.2",
     "@solidjs/router": "^0.6.0",
-    "solid-js": "^1.6.2",
-    "solid-start": "^0.2.0",
+    "solid-js": "^1.6.9",
+    "solid-start": "^0.2.15",
     "undici": "^5.11.0"
   },
   "engines": {
