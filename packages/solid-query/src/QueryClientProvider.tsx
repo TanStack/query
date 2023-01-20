@@ -1,34 +1,29 @@
 import type { QueryClient } from '@tanstack/query-core'
-import type { Context, JSX } from 'solid-js'
+import type { JSX } from 'solid-js'
 import { createContext, useContext, onMount, onCleanup } from 'solid-js'
-import type { ContextOptions } from './types'
 
-export const defaultContext = createContext<QueryClient | undefined>(undefined)
+export const QueryClientContext = createContext<QueryClient | undefined>(
+  undefined,
+)
 
-function getQueryClientContext(
-  context: Context<QueryClient | undefined> | undefined,
-) {
-  if (context) {
-    return context
+export const useQueryClient = (queryClient?: QueryClient) => {
+  const client = useContext(QueryClientContext)
+
+  if (queryClient) {
+    return queryClient
   }
 
-  return defaultContext
-}
-
-export const useQueryClient = ({ context }: ContextOptions = {}) => {
-  const queryClient = useContext(getQueryClientContext(context))
-
-  if (!queryClient) {
+  if (!client) {
     throw new Error('No QueryClient set, use QueryClientProvider to set one')
   }
 
-  return queryClient
+  return client
 }
 
 export type QueryClientProviderProps = {
   client: QueryClient
   children?: JSX.Element
-} & ContextOptions
+}
 
 export const QueryClientProvider = (
   props: QueryClientProviderProps,
@@ -37,8 +32,6 @@ export const QueryClientProvider = (
     props.client.mount()
   })
   onCleanup(() => props.client.unmount())
-
-  const QueryClientContext = getQueryClientContext(props.context)
 
   return (
     <QueryClientContext.Provider value={props.client}>

@@ -1,18 +1,15 @@
-import type { QueryFilters } from '@tanstack/query-core'
+import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 import type { Accessor } from 'solid-js'
 import { createMemo, createSignal, onCleanup } from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
-import type { ContextOptions } from './types'
 
 type Options = () => {
   filters?: QueryFilters
-  options?: ContextOptions
+  queryClient?: QueryClient
 }
 
 export function useIsFetching(options: Options = () => ({})): Accessor<number> {
-  const queryClient = createMemo(() =>
-    useQueryClient({ context: options().options?.context }),
-  )
+  const queryClient = createMemo(() => useQueryClient(options().queryClient))
   const queryCache = createMemo(() => queryClient().getQueryCache())
 
   const [fetches, setFetches] = createSignal(

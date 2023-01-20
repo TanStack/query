@@ -1,9 +1,8 @@
-import { fireEvent, waitFor } from '@testing-library/react'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
-import type { QueryClient } from '..'
 import { MutationCache, QueryCache, useMutation } from '..'
 import type { UseMutationResult } from '../types'
 import {
@@ -906,73 +905,6 @@ describe('useMutation', () => {
     expect(onSettledMutate).toHaveBeenCalledTimes(0)
   })
 
-  describe('with custom context', () => {
-    it('should be able to reset `data`', async () => {
-      const context = React.createContext<QueryClient | undefined>(undefined)
-
-      function Page() {
-        const {
-          mutate,
-          data = 'empty',
-          reset,
-        } = useMutation({
-          mutationFn: () => Promise.resolve('mutation'),
-          context,
-        })
-
-        return (
-          <div>
-            <h1>{data}</h1>
-            <button onClick={() => reset()}>reset</button>
-            <button onClick={() => mutate()}>mutate</button>
-          </div>
-        )
-      }
-
-      const { getByRole } = renderWithClient(queryClient, <Page />, { context })
-
-      expect(getByRole('heading').textContent).toBe('empty')
-
-      fireEvent.click(getByRole('button', { name: /mutate/i }))
-
-      await waitFor(() => {
-        expect(getByRole('heading').textContent).toBe('mutation')
-      })
-
-      fireEvent.click(getByRole('button', { name: /reset/i }))
-
-      await waitFor(() => {
-        expect(getByRole('heading').textContent).toBe('empty')
-      })
-    })
-
-    it('should throw if the context is not passed to useMutation', async () => {
-      const context = React.createContext<QueryClient | undefined>(undefined)
-
-      function Page() {
-        const { data = '' } = useMutation({
-          mutationFn: () => Promise.resolve('mutation'),
-        })
-
-        return (
-          <div>
-            <h1 data-testid="title">{data}</h1>
-          </div>
-        )
-      }
-
-      const rendered = renderWithClient(
-        queryClient,
-        <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
-          <Page />
-        </ErrorBoundary>,
-        { context },
-      )
-
-      await waitFor(() => rendered.getByText('error boundary'))
-    })
-  })
-
   it('should call mutate callbacks only for the last observer', async () => {
     const onSuccess = jest.fn()
     const onSuccessMutate = jest.fn()
@@ -1137,5 +1069,37 @@ describe('useMutation', () => {
     await rendered.findByText('error: mutateFnError, status: error')
 
     expect(onError).toHaveBeenCalledWith(mutateFnError, 'todo', undefined)
+  })
+
+  it('should use provided custom queryClient', async () => {
+    function Page() {
+      const mutation = useMutation(
+        {
+          mutationFn: async (text: string) => {
+            return Promise.resolve(text)
+          },
+        },
+        queryClient,
+      )
+
+      return (
+        <div>
+          <button onClick={() => mutation.mutate('custom client')}>
+            mutate
+          </button>
+          <div>
+            data: {mutation.data ?? 'null'}, status: {mutation.status}
+          </div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page></Page>)
+
+    await rendered.findByText('data: null, status: idle')
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+
+    await rendered.findByText('data: custom client, status: success')
   })
 })

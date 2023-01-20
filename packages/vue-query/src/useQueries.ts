@@ -22,7 +22,7 @@ import type { UseQueryOptions } from './useQuery'
 import type { QueryClient } from './queryClient'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
-// - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
+// `placeholderData` function does not have a parameter
 type UseQueryOptionsForUseQueries<
   TQueryFnData = unknown,
   TError = unknown,
@@ -30,7 +30,7 @@ type UseQueryOptionsForUseQueries<
   TQueryKey extends QueryKey = QueryKey,
 > = Omit<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'context' | 'placeholderData'
+  'placeholderData'
 > & {
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
 }
@@ -153,7 +153,7 @@ type UseQueriesOptionsArg<T extends any[]> = readonly [...UseQueriesOptions<T>]
 
 export function useQueries<T extends any[]>({
   queries,
-  queryClient: queryClientInjected,
+  queryClient,
 }: {
   queries: Ref<UseQueriesOptionsArg<T>> | UseQueriesOptionsArg<T>
   queryClient?: QueryClient
@@ -162,27 +162,12 @@ export function useQueries<T extends any[]>({
     () => cloneDeepUnref(queries) as UseQueriesOptionsArg<T>,
   )
 
-  const queryClientKey = unreffedQueries.value[0]?.queryClientKey
-  const optionsQueryClient = unreffedQueries.value[0]?.queryClient as
-    | QueryClient
-    | undefined
-  const queryClient =
-    queryClientInjected ?? optionsQueryClient ?? useQueryClient(queryClientKey)
-  if (
-    process.env.NODE_ENV !== 'production' &&
-    (queryClientKey || optionsQueryClient)
-  ) {
-    queryClient
-      .getLogger()
-      .error(
-        `Providing queryClient to individual queries in useQueries has been deprecated and will be removed in the next major version. You can still pass queryClient as an option directly to useQueries hook.`,
-      )
-  }
+  const client = queryClient || useQueryClient()
 
   const defaultedQueries = computed(() =>
     unreffedQueries.value.map((options) => {
-      const defaulted = queryClient.defaultQueryOptions(options)
-      defaulted._optimisticResults = queryClient.isRestoring.value
+      const defaulted = client.defaultQueryOptions(options)
+      defaulted._optimisticResults = client.isRestoring.value
         ? 'isRestoring'
         : 'optimistic'
 
@@ -190,7 +175,7 @@ export function useQueries<T extends any[]>({
     }),
   )
 
-  const observer = new QueriesObserver(queryClient, defaultedQueries.value)
+  const observer = new QueriesObserver(client, defaultedQueries.value)
   const state = reactive(observer.getCurrentResult())
 
   const unsubscribe = ref(() => {
@@ -198,7 +183,7 @@ export function useQueries<T extends any[]>({
   })
 
   watch(
-    queryClient.isRestoring,
+    client.isRestoring,
     (isRestoring) => {
       if (!isRestoring) {
         unsubscribe.value()

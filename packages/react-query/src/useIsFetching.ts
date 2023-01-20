@@ -1,18 +1,15 @@
 import * as React from 'react'
-import type { QueryFilters } from '@tanstack/query-core'
+import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 import { notifyManager } from '@tanstack/query-core'
 
-import type { ContextOptions } from './types'
 import { useQueryClient } from './QueryClientProvider'
-
-interface Options extends ContextOptions {}
 
 export function useIsFetching(
   filters?: QueryFilters,
-  options: Options = {},
+  queryClient?: QueryClient,
 ): number {
-  const queryClient = useQueryClient({ context: options.context })
-  const queryCache = queryClient.getQueryCache()
+  const client = useQueryClient(queryClient)
+  const queryCache = client.getQueryCache()
 
   return React.useSyncExternalStore(
     React.useCallback(
@@ -20,7 +17,7 @@ export function useIsFetching(
         queryCache.subscribe(notifyManager.batchCalls(onStoreChange)),
       [queryCache],
     ),
-    () => queryClient.isFetching(filters),
-    () => queryClient.isFetching(filters),
+    () => client.isFetching(filters),
+    () => client.isFetching(filters),
   )
 }
