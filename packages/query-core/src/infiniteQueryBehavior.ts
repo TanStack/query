@@ -67,7 +67,7 @@ export function infiniteQueryBehavior<
           previous?: boolean,
         ): Promise<unknown[]> => {
           if (cancelled) {
-            return Promise.reject('Cancelled')
+            return Promise.reject()
           }
 
           if (typeof param === 'undefined' && !manual && pages.length) {
