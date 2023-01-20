@@ -396,7 +396,7 @@ describe('createQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 1,
-      failureReason: 'rejected',
+      failureReason: new Error('rejected'),
       errorUpdateCount: 0,
       isError: false,
       isFetched: false,
@@ -419,7 +419,7 @@ describe('createQuery', () => {
     expect(states[2]).toEqual({
       data: undefined,
       dataUpdatedAt: 0,
-      error: 'rejected',
+      error: new Error('rejected'),
       errorUpdatedAt: expect.any(Number),
       failureCount: 2,
       failureReason: 'rejected',
