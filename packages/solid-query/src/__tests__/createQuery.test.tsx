@@ -2798,7 +2798,7 @@ describe('createQuery', () => {
     function Page() {
       const state = createQuery(() => ({
         queryKey: key,
-        queryFn: () => Promise.reject('Error test jaylen'),
+        queryFn: () => Promise.reject(new Error('Error test jaylen')),
         retry: false,
         throwErrors: true,
       }))
