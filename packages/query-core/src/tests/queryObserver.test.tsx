@@ -469,7 +469,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: fetchData,
-      cacheTime: 0,
+      gcTime: 0,
       refetchInterval: 10,
     })
     const unsubscribe = observer.subscribe(() => undefined)

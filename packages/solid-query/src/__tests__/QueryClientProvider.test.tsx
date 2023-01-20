@@ -110,7 +110,7 @@ describe('QueryClientProvider', () => {
       queryCache,
       defaultOptions: {
         queries: {
-          cacheTime: Infinity,
+          gcTime: Infinity,
         },
       },
     })
@@ -140,7 +140,7 @@ describe('QueryClientProvider', () => {
     await waitFor(() => screen.getByText('test'))
 
     expect(queryCache.find({ queryKey: key })).toBeDefined()
-    expect(queryCache.find({ queryKey: key })?.options.cacheTime).toBe(Infinity)
+    expect(queryCache.find({ queryKey: key })?.options.gcTime).toBe(Infinity)
   })
 
   describe('useQueryClient', () => {

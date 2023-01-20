@@ -138,9 +138,30 @@ We have updated our browserslist to produce a more modern, performant and smalle
 
 TanStack Query has always had private fields and methods on classes, but they weren't really private - they were just private in `TypeScript`. We now use [ECMAScript Private class features](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_class_fields), which means those fields are now truly private and can't be accessed from the outside at runtime.
 
-### The `useErrorBoundary` prop has been renamed to `throwErrors`
+### Rename `cacheTime` to `gcTime`
 
-To make the `useErrorBoundary` prop more framework-agnostic and avoid confusion with the established React function prefix "`use`" for hooks and the "ErrorBoundary" component name, it has been renamed to `throwErrors` to more accurately reflect its functionality.
+Almost everyone gets `cacheTime` wrong. It sounds like "the amount of time that data is cached for", but that is not correct.
+
+`cacheTime` does nothing as long as a query is still in used. It only kicks in as soon as the query becomes unused. After the time has passed, data will be "garbage collected" to avoid the cache from growing.
+
+`gc` is referring to "garbage collect" time. It's a bit more technical, but also a quite [well known abbreviation](https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)) in computer science.
+
+```diff
+const MINUTE = 1000 * 60;
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+-      cacheTime: 10 * MINUTE,
++      gcTime: 10 * MINUTE,
+    },
+  },
+})
+```
+
+### The `useErrorBoundary` option has been renamed to `throwErrors`
+
+To make the `useErrorBoundary` option more framework-agnostic and avoid confusion with the established React function prefix "`use`" for hooks and the "ErrorBoundary" component name, it has been renamed to `throwErrors` to more accurately reflect its functionality.
 
 ### `Error` is now the default type for errors instead of `unknown`
 

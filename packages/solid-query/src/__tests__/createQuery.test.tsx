@@ -862,7 +862,7 @@ describe('createQuery', () => {
     expect(states[1]).toMatchObject({ data: 'data' })
   })
 
-  it('should pick up a query when re-mounting with cacheTime 0', async () => {
+  it('should pick up a query when re-mounting with gcTime 0', async () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
 
@@ -891,7 +891,7 @@ describe('createQuery', () => {
           await sleep(10)
           return 'data: ' + value
         },
-        cacheTime: 0,
+        gcTime: 0,
       }))
       createRenderEffect(() => {
         states.push({ ...state })
@@ -3959,14 +3959,14 @@ describe('createQuery', () => {
     await waitFor(() => screen.getByText('status: loading, idle'))
   })
 
-  it('should not schedule garbage collection, if cacheTimeout is set to `Infinity`', async () => {
+  it('should not schedule garbage collection, if gcTimeout is set to `Infinity`', async () => {
     const key = queryKey()
 
     function Page() {
       const query = createQuery(() => ({
         queryKey: key,
         queryFn: () => 'fetched data',
-        cacheTime: Infinity,
+        gcTime: Infinity,
       }))
       return <div>{query.data}</div>
     }
@@ -3978,12 +3978,40 @@ describe('createQuery', () => {
     ))
 
     await waitFor(() => screen.getByText('fetched data'))
+    const setTimeoutSpy = jest.spyOn(window, 'setTimeout')
 
     result.unmount()
 
-    const query = queryCache.find({ queryKey: key })
-    // @ts-expect-error
-    expect(query!.cacheTimeout).toBe(undefined)
+    expect(setTimeoutSpy).not.toHaveBeenCalled()
+  })
+
+  it('should schedule garbage collection, if gcTimeout is not set to `Infinity`', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const query = createQuery(() => ({
+        queryKey: key,
+        queryFn: () => 'fetched data',
+        gcTime: 1000 * 60 * 10, //10 Minutes
+      }))
+      return <div>{query.data}</div>
+    }
+
+    const result = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await waitFor(() => screen.getByText('fetched data'))
+    const setTimeoutSpy = jest.spyOn(window, 'setTimeout')
+
+    result.unmount()
+
+    expect(setTimeoutSpy).toHaveBeenLastCalledWith(
+      expect.any(Function),
+      1000 * 60 * 10,
+    )
   })
 
   it('should not cause memo churn when data does not change', async () => {

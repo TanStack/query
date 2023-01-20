@@ -818,7 +818,7 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 'data' })
   })
 
-  it('should pick up a query when re-mounting with cacheTime 0', async () => {
+  it('should pick up a query when re-mounting with gcTime 0', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 
@@ -845,7 +845,7 @@ describe('useQuery', () => {
           return 'data: ' + value
         },
 
-        cacheTime: 0,
+        gcTime: 0,
         notifyOnChangeProps: 'all',
       })
       states.push(state)
@@ -891,7 +891,7 @@ describe('useQuery', () => {
     })
   })
 
-  it('should not get into an infinite loop when removing a query with cacheTime 0 and rerendering', async () => {
+  it('should not get into an infinite loop when removing a query with gcTime 0 and rerendering', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 
@@ -905,7 +905,7 @@ describe('useQuery', () => {
           return 'data'
         },
 
-        cacheTime: 0,
+        gcTime: 0,
         notifyOnChangeProps: 'all',
       })
 
@@ -4009,14 +4009,38 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('status: loading, idle'))
   })
 
-  test('should not schedule garbage collection, if cacheTimeout is set to `Infinity`', async () => {
+  test('should not schedule garbage collection, if gcTimeout is set to `Infinity`', async () => {
     const key = queryKey()
 
     function Page() {
       const query = useQuery({
         queryKey: key,
         queryFn: () => 'fetched data',
-        cacheTime: Infinity,
+        gcTime: Infinity,
+      })
+      return <div>{query.data}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('fetched data'))
+    jest.useFakeTimers('legacy')
+    const setTimeoutSpy = jest.spyOn(globalThis.window, 'setTimeout')
+
+    rendered.unmount()
+
+    expect(setTimeoutSpy).not.toHaveBeenCalled()
+    jest.useRealTimers()
+  })
+
+  test('should schedule garbage collection, if gcTimeout is not set to infinity', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const query = useQuery({
+        queryKey: key,
+        queryFn: () => 'fetched data',
+        gcTime: 1000 * 60 * 10, //10 Minutes
       })
       return <div>{query.data}</div>
     }
@@ -4025,11 +4049,16 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('fetched data'))
 
+    jest.useFakeTimers('legacy')
+    const setTimeoutSpy = jest.spyOn(globalThis.window, 'setTimeout')
+
     rendered.unmount()
 
-    const query = queryCache.find({ queryKey: key })
-    // @ts-expect-error
-    expect(query!.cacheTimeout).toBe(undefined)
+    expect(setTimeoutSpy).toHaveBeenLastCalledWith(
+      expect.any(Function),
+      1000 * 60 * 10,
+    )
+    jest.useRealTimers()
   })
 
   it('should not cause memo churn when data does not change', async () => {
