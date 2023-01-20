@@ -113,7 +113,6 @@ export function createBaseQuery<
        */
       onHydrated(_k, info) {
         if (info.value) {
-          setState(info.value)
           hydrate(queryClient(), {
             queries: [
               {
