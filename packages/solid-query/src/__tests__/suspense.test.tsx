@@ -954,7 +954,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => screen.getByText('error boundary'))
   })
 
-  it('should render the correct amount of times in Suspense mode when cacheTime is set to 0', async () => {
+  it('should render the correct amount of times in Suspense mode when gcTime is set to 0', async () => {
     const key = queryKey()
     let state: CreateQueryResult<number> | null = null
 
@@ -969,7 +969,7 @@ describe("useQuery's in Suspense mode", () => {
           await sleep(10)
           return count
         },
-        cacheTime: 0,
+        gcTime: 0,
       }))
 
       createRenderEffect(

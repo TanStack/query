@@ -119,13 +119,13 @@ describe('dehydration and rehydration', () => {
     queryClient.clear()
   })
 
-  test('should use the cache time from the client', async () => {
+  test('should use the garbage collection time from the client', async () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
     await queryClient.prefetchQuery({
       queryKey: ['string'],
       queryFn: () => fetchData('string'),
-      cacheTime: 50,
+      gcTime: 50,
     })
     const dehydrated = dehydrate(queryClient)
     const stringified = JSON.stringify(dehydrated)
