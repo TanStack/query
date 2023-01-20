@@ -422,7 +422,7 @@ describe('createQuery', () => {
       error: new Error('rejected'),
       errorUpdatedAt: expect.any(Number),
       failureCount: 2,
-      failureReason: 'rejected',
+      failureReason: new Error('rejected'),
       errorUpdateCount: 1,
       isError: true,
       isFetched: true,
@@ -2766,7 +2766,7 @@ describe('createQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const state = createQuery<unknown, string>(() => ({
+      const state = createQuery(() => ({
         queryKey: key,
         queryFn: () => {
           return Promise.reject(new Error('Error test jaylen'))
@@ -2777,7 +2777,7 @@ describe('createQuery', () => {
       return (
         <div>
           <h1>{state.status}</h1>
-          <h2>{state.error}</h2>
+          <h2>{state.error?.message}</h2>
         </div>
       )
     }
@@ -2982,7 +2982,7 @@ describe('createQuery', () => {
     let count = 0
 
     function Page() {
-      const result = createQuery<number, string>(() => ({
+      const result = createQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           count++
@@ -2995,9 +2995,9 @@ describe('createQuery', () => {
 
       return (
         <div>
-          <div>error: {result.error ?? 'null'}</div>
+          <div>error: {result.error?.message ?? 'null'}</div>
           <div>failureCount: {result.failureCount}</div>
-          <div>failureReason: {result.failureReason}</div>
+          <div>failureReason: {result.failureReason?.message}</div>
         </div>
       )
     }
