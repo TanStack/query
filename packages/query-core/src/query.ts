@@ -183,7 +183,7 @@ export class Query<
   ): void {
     this.options = { ...this.#defaultOptions, ...options }
 
-    this.updateCacheTime(this.options.cacheTime)
+    this.updateGcTime(this.options.gcTime)
   }
 
   protected optionalRemove() {

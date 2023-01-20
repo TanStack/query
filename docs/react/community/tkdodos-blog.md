@@ -8,7 +8,7 @@ React Query maintainer [TkDodo](https://twitter.com/tkdodo) has a series of blog
 
 ## [#1: Practical React Query](https://tkdodo.eu/blog/practical-react-query)
 
-> An advanced introduction to React Query, showing practical tips that go beyond the docs. It covers explaining the defaults (`staleTime` vs. `cacheTime`), concepts like keeping server and client state separate, handling dependencies and creating custom hooks, as well as outlining why the `enabled` option is very powerful. [Read more...](https://tkdodo.eu/blog/practical-react-query)
+> An advanced introduction to React Query, showing practical tips that go beyond the docs. It covers explaining the defaults (`staleTime` vs. `gcTime`), concepts like keeping server and client state separate, handling dependencies and creating custom hooks, as well as outlining why the `enabled` option is very powerful. [Read more...](https://tkdodo.eu/blog/practical-react-query)
 
 ## [#2: React Query Data Transformations](https://tkdodo.eu/blog/react-query-data-transformations)
 

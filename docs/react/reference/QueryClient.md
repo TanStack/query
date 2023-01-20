@@ -221,7 +221,7 @@ This distinction is more a "convenience" for ts devs that know which structure w
 
 ## `queryClient.setQueryData`
 
-`setQueryData` is a synchronous function that can be used to immediately update a query's cached data. If the query does not exist, it will be created. **If the query is not utilized by a query hook in the default `cacheTime` of 5 minutes, the query will be garbage collected**. To update multiple queries at once and match query keys partially, you need to use [`queryClient.setQueriesData`](#queryclientsetqueriesdata) instead.
+`setQueryData` is a synchronous function that can be used to immediately update a query's cached data. If the query does not exist, it will be created. **If the query is not utilized by a query hook in the default `gcTime` of 5 minutes, the query will be garbage collected**. To update multiple queries at once and match query keys partially, you need to use [`queryClient.setQueriesData`](#queryclientsetqueriesdata) instead.
 
 > The difference between using `setQueryData` and `fetchQuery` is that `setQueryData` is sync and assumes that you already synchronously have the data available. If you need to fetch the data asynchronously, it's suggested that you either refetch the query key or use `fetchQuery` to handle the asynchronous fetch.
 
