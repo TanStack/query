@@ -277,6 +277,5 @@ describe('useMutationVariables', () => {
     await waitFor(() => rendered.getByText('data: data1'))
 
     expect(variables).toEqual([[], [1], []])
-    console.log(variables)
   })
 })
