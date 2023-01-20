@@ -34,7 +34,9 @@ export interface CreateBaseQueryOptions<
     WithRequired<
       QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
       'queryKey'
-    > {}
+    > {
+  deferStream?: boolean
+}
 
 export interface SolidQueryOptions<
   TQueryFnData = unknown,
@@ -89,7 +91,7 @@ export interface SolidInfiniteQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends ContextOptions,
-    Omit<
+    WithRequired<
       InfiniteQueryObserverOptions<
         TQueryFnData,
         TError,
@@ -99,7 +101,7 @@ export interface SolidInfiniteQueryOptions<
       >,
       'queryKey'
     > {
-  queryKey: TQueryKey
+  deferStream?: boolean
 }
 
 export type CreateInfiniteQueryOptions<
