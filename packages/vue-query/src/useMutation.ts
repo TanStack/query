@@ -14,15 +14,11 @@ import type {
   MutationObserverResult,
   MutationObserverOptions,
 } from '@tanstack/query-core'
-import type {
-  WithQueryClientKey,
-  MaybeRef,
-  MaybeRefDeep,
-  DistributiveOmit,
-} from './types'
+import type { MaybeRef, MaybeRefDeep, DistributiveOmit } from './types'
 import { MutationObserver } from '@tanstack/query-core'
 import { cloneDeepUnref, updateState } from './utils'
 import { useQueryClient } from './useQueryClient'
+import type { QueryClient } from './queryClient'
 
 type MutationResult<TData, TError, TVariables, TContext> = DistributiveOmit<
   MutationObserverResult<TData, TError, TVariables, TContext>,
@@ -30,9 +26,7 @@ type MutationResult<TData, TError, TVariables, TContext> = DistributiveOmit<
 >
 
 export type UseMutationOptions<TData, TError, TVariables, TContext> =
-  WithQueryClientKey<
-    MutationObserverOptions<TData, TError, TVariables, TContext>
-  >
+  MutationObserverOptions<TData, TError, TVariables, TContext>
 
 export type VueMutationObserverOptions<
   TData = unknown,
@@ -80,15 +74,15 @@ export function useMutation<
   mutationOptions: MaybeRef<
     VueMutationObserverOptions<TData, TError, TVariables, TContext>
   >,
+  queryClient?: QueryClient,
 ): UseMutationReturnType<TData, TError, TVariables, TContext> {
   const options = computed(() => {
     return unrefMutationArgs(mutationOptions)
   })
-  const queryClient =
-    options.value.queryClient ?? useQueryClient(options.value.queryClientKey)
+  const client = queryClient || useQueryClient()
   const observer = new MutationObserver(
-    queryClient,
-    queryClient.defaultMutationOptions(options.value),
+    client,
+    client.defaultMutationOptions(options.value),
   )
   const state = reactive(observer.getCurrentResult())
 
@@ -108,7 +102,7 @@ export function useMutation<
   watch(
     options,
     () => {
-      observer.setOptions(queryClient.defaultMutationOptions(options.value))
+      observer.setOptions(client.defaultMutationOptions(options.value))
     },
     { deep: true },
   )
@@ -138,9 +132,7 @@ export function unrefMutationArgs<
   arg: MaybeRef<
     VueMutationObserverOptions<TData, TError, TVariables, TContext>
   >,
-): WithQueryClientKey<
-  MutationObserverOptions<TData, TError, TVariables, TContext>
-> {
+): MutationObserverOptions<TData, TError, TVariables, TContext> {
   const options = unref(arg)
 
   return cloneDeepUnref(options) as UseMutationOptions<

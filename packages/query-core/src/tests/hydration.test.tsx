@@ -347,7 +347,7 @@ describe('dehydration and rehydration', () => {
 
     const serverAddTodo = jest
       .fn()
-      .mockImplementation(() => Promise.reject('offline'))
+      .mockImplementation(() => Promise.reject(new Error('offline')))
     const serverOnMutate = jest.fn().mockImplementation((variables) => {
       const optimisticTodo = { id: 1, text: variables.text }
       return { optimisticTodo }
@@ -424,7 +424,7 @@ describe('dehydration and rehydration', () => {
 
     const serverAddTodo = jest
       .fn()
-      .mockImplementation(() => Promise.reject('offline'))
+      .mockImplementation(() => Promise.reject(new Error('offline')))
 
     const queryClient = createQueryClient()
 
@@ -453,7 +453,7 @@ describe('dehydration and rehydration', () => {
 
     const serverAddTodo = jest
       .fn()
-      .mockImplementation(() => Promise.reject('offline'))
+      .mockImplementation(() => Promise.reject(new Error('offline')))
 
     const queryClient = createQueryClient()
 

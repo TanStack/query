@@ -37,7 +37,7 @@ describe('InfiniteQueryBehavior', () => {
     await waitFor(() => {
       return expect(observerResult).toMatchObject({
         isError: true,
-        error: 'Missing queryFn',
+        error: new Error('Missing queryFn'),
       })
     })
 

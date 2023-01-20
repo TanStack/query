@@ -3,6 +3,7 @@
 // in solid-js/web package. I'll create a GitHub issue with them to see
 // why that happens.
 import type {
+  QueryClient,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
@@ -36,14 +37,13 @@ export function createBaseQuery<
     CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
   >,
   Observer: typeof QueryObserver,
+  queryClient?: () => QueryClient,
 ) {
-  const queryClient = createMemo(() =>
-    useQueryClient({ context: options().context }),
-  )
+  const client = createMemo(() => useQueryClient(queryClient?.()))
 
-  const defaultedOptions = queryClient().defaultQueryOptions(options())
+  const defaultedOptions = client().defaultQueryOptions(options())
   defaultedOptions._optimisticResults = 'optimistic'
-  const observer = new Observer(queryClient(), defaultedOptions)
+  const observer = new Observer(client(), defaultedOptions)
 
   const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
     observer.getOptimisticResult(defaultedOptions),
@@ -113,7 +113,7 @@ export function createBaseQuery<
        */
       onHydrated(_k, info) {
         if (info.value) {
-          hydrate(queryClient(), {
+          hydrate(client(), {
             queries: [
               {
                 queryKey: defaultedOptions.queryKey,
@@ -149,7 +149,7 @@ export function createBaseQuery<
   })
 
   createComputed(() => {
-    observer.setOptions(queryClient().defaultQueryOptions(options()))
+    observer.setOptions(client().defaultQueryOptions(options()))
   })
 
   createComputed(

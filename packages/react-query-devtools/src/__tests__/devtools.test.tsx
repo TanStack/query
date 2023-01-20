@@ -1,8 +1,6 @@
 import * as React from 'react'
 import { fireEvent, screen, waitFor, act } from '@testing-library/react'
-import { ErrorBoundary } from 'react-error-boundary'
 import '@testing-library/jest-dom'
-import type { QueryClient } from '@tanstack/react-query'
 import { useQuery } from '@tanstack/react-query'
 import { defaultPanelSize, sortFns } from '../utils'
 import {
@@ -11,13 +9,6 @@ import {
   sleep,
   createQueryClient,
 } from './utils'
-
-// TODO: This should be removed with the types for react-error-boundary get updated.
-declare module 'react-error-boundary' {
-  interface ErrorBoundaryPropsWithFallback {
-    children: any
-  }
-}
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -707,108 +698,6 @@ describe('ReactQueryDevtools', () => {
     expect(styleTag).toHaveAttribute('nonce', 'test-nonce')
 
     await screen.findByRole('button', { name: /react query devtools/i })
-  })
-
-  describe('with custom context', () => {
-    it('should render without error when the custom context aligns', async () => {
-      const context = React.createContext<QueryClient | undefined>(undefined)
-      const { queryClient } = createQueryClient()
-
-      function Page() {
-        const { data = 'default' } = useQuery({
-          queryKey: ['check'],
-          queryFn: async () => 'test',
-          context,
-        })
-
-        return (
-          <div>
-            <h1>{data}</h1>
-          </div>
-        )
-      }
-
-      renderWithClient(queryClient, <Page />, {
-        initialIsOpen: false,
-        context,
-      })
-
-      await screen.findByRole('button', { name: /open react query devtools/i })
-    })
-
-    it('should render with error when the custom context is not passed to useQuery', async () => {
-      const consoleErrorMock = jest.spyOn(console, 'error')
-      consoleErrorMock.mockImplementation(() => undefined)
-
-      const context = React.createContext<QueryClient | undefined>(undefined)
-      const { queryClient } = createQueryClient()
-
-      function Page() {
-        const { data = 'default' } = useQuery({
-          queryKey: ['check'],
-          queryFn: async () => 'test',
-          throwErrors: true,
-        })
-
-        return (
-          <div>
-            <h1>{data}</h1>
-          </div>
-        )
-      }
-
-      const rendered = renderWithClient(
-        queryClient,
-        <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
-          <Page />
-        </ErrorBoundary>,
-        {
-          initialIsOpen: false,
-          context,
-        },
-      )
-
-      await waitFor(() => rendered.getByText('error boundary'))
-
-      consoleErrorMock.mockRestore()
-    })
-
-    it('should render with error when the custom context is not passed to ReactQueryDevtools', async () => {
-      const consoleErrorMock = jest.spyOn(console, 'error')
-      consoleErrorMock.mockImplementation(() => undefined)
-
-      const context = React.createContext<QueryClient | undefined>(undefined)
-      const { queryClient } = createQueryClient()
-
-      function Page() {
-        const { data = 'default' } = useQuery({
-          queryKey: ['check'],
-          queryFn: async () => 'test',
-          throwErrors: true,
-          context,
-        })
-
-        return (
-          <div>
-            <h1>{data}</h1>
-          </div>
-        )
-      }
-
-      const rendered = renderWithClient(
-        queryClient,
-        <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
-          <Page />
-        </ErrorBoundary>,
-        {
-          initialIsOpen: false,
-        },
-      )
-
-      await waitFor(() => rendered.getByText('error boundary'))
-
-      consoleErrorMock.mockRestore()
-    })
   })
 
   it('should render a menu to select panel position', async () => {

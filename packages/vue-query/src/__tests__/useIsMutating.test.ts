@@ -3,7 +3,6 @@ import { onScopeDispose, reactive, ref } from 'vue-demi'
 import { flushPromises, successMutator } from './test-utils'
 import { useMutation } from '../useMutation'
 import { unrefFilterArgs, useIsMutating } from '../useIsMutating'
-import { useQueryClient } from '../useQueryClient'
 
 jest.mock('../useQueryClient')
 
@@ -59,13 +58,6 @@ describe('useIsMutating', () => {
     expect(isMutating.value).toStrictEqual(0)
 
     onScopeDisposeMock.mockReset()
-  })
-
-  test('should call `useQueryClient` with a proper `queryClientKey`', async () => {
-    const queryClientKey = 'foo'
-    useIsMutating({ queryClientKey })
-
-    expect(useQueryClient).toHaveBeenCalledWith(queryClientKey)
   })
 
   test('should properly update filters', async () => {

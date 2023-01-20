@@ -1,6 +1,5 @@
 /* istanbul ignore file */
 
-import type * as React from 'react'
 import type {
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
@@ -13,14 +12,6 @@ import type {
   DefinedQueryObserverResult,
   WithRequired,
 } from '@tanstack/query-core'
-import type { QueryClient } from '@tanstack/query-core'
-
-export interface ContextOptions {
-  /**
-   * Use this to pass your React Query context. Otherwise, `defaultContext` will be used.
-   */
-  context?: React.Context<QueryClient | undefined>
-}
 
 export interface UseBaseQueryOptions<
   TQueryFnData = unknown,
@@ -28,11 +19,10 @@ export interface UseBaseQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends ContextOptions,
-    WithRequired<
-      QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
-      'queryKey'
-    > {}
+> extends WithRequired<
+    QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+    'queryKey'
+  > {}
 
 export interface UseQueryOptions<
   TQueryFnData = unknown,
@@ -50,17 +40,16 @@ export interface UseInfiniteQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends ContextOptions,
-    WithRequired<
-      InfiniteQueryObserverOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryData,
-        TQueryKey
-      >,
-      'queryKey'
-    > {}
+> extends WithRequired<
+    InfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >,
+    'queryKey'
+  > {}
 
 export type UseBaseQueryResult<
   TData = unknown,
@@ -92,11 +81,10 @@ export interface UseMutationOptions<
   TError = Error,
   TVariables = void,
   TContext = unknown,
-> extends ContextOptions,
-    Omit<
-      MutationObserverOptions<TData, TError, TVariables, TContext>,
-      '_defaulted' | 'variables'
-    > {}
+> extends Omit<
+    MutationObserverOptions<TData, TError, TVariables, TContext>,
+    '_defaulted' | 'variables'
+  > {}
 
 export type UseMutateFunction<
   TData = unknown,

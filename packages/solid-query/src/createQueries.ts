@@ -1,5 +1,6 @@
 import type {
   QueriesPlaceholderDataFunction,
+  QueryClient,
   QueryFunction,
   QueryKey,
 } from '@tanstack/query-core'
@@ -10,7 +11,7 @@ import { useQueryClient } from './QueryClientProvider'
 import type { CreateQueryResult, SolidQueryOptions } from './types'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
-// - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
+// `placeholderData` function does not have a parameter
 type CreateQueryOptionsForCreateQueries<
   TQueryFnData = unknown,
   TError = Error,
@@ -18,7 +19,7 @@ type CreateQueryOptionsForCreateQueries<
   TQueryKey extends QueryKey = QueryKey,
 > = Omit<
   SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'context' | 'placeholderData'
+  'placeholderData'
 > & {
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
 }
@@ -148,10 +149,10 @@ export type QueriesResults<
 export function createQueries<T extends any[]>(
   queriesOptions: () => {
     queries: readonly [...QueriesOptions<T>]
-    context?: SolidQueryOptions['context']
+    queryClient?: QueryClient
   },
 ): QueriesResults<T> {
-  const queryClient = useQueryClient({ context: queriesOptions().context })
+  const queryClient = useQueryClient(queriesOptions().queryClient)
 
   const defaultedQueries = queriesOptions().queries.map((options) => {
     const defaultedOptions = queryClient.defaultQueryOptions(options)
