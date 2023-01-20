@@ -43,7 +43,7 @@ mutate(variables, {
 **Options**
 
 - `mutationFn: (variables: TVariables) => Promise<TData>`
-  - **Required**
+  - **Required, but only if no default mutation function has been defined**
   - A function that performs an asynchronous task and returns a promise.
   - `variables` is an object that `mutate` will pass to your `mutationFn`
 - `cacheTime: number | Infinity`
