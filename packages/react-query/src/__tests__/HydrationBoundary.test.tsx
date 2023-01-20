@@ -62,8 +62,6 @@ describe('React hydration', () => {
   })
 
   test('should hydrate queries to the cache on custom context', async () => {
-    const context = React.createContext<QueryClient | undefined>(undefined)
-
     const queryCacheOuter = new QueryCache()
     const queryCacheInner = new QueryCache()
 
@@ -76,7 +74,6 @@ describe('React hydration', () => {
       const { data } = useQuery({
         queryKey: ['string'],
         queryFn: () => dataQuery(['string']),
-        context,
       })
       return (
         <div>
@@ -86,9 +83,9 @@ describe('React hydration', () => {
     }
 
     const rendered = render(
-      <QueryClientProvider client={queryClientOuter} context={context}>
+      <QueryClientProvider client={queryClientOuter}>
         <QueryClientProvider client={queryClientInner}>
-          <HydrationBoundary state={dehydratedState} options={{ context }}>
+          <HydrationBoundary state={dehydratedState}>
             <Page />
           </HydrationBoundary>
         </QueryClientProvider>

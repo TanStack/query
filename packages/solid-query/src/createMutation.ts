@@ -1,3 +1,4 @@
+import type { QueryClient } from '@tanstack/query-core'
 import { MutationObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {
@@ -17,11 +18,12 @@ export function createMutation<
   TContext = unknown,
 >(
   options: CreateMutationOptions<TData, TError, TVariables, TContext>,
+  queryClient?: () => QueryClient,
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
-  const queryClient = useQueryClient({ context: options().context })
+  const client = useQueryClient(queryClient?.())
 
   const observer = new MutationObserver<TData, TError, TVariables, TContext>(
-    queryClient,
+    client,
     options(),
   )
 

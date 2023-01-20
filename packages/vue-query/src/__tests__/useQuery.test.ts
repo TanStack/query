@@ -23,11 +23,15 @@ describe('useQuery', () => {
   test('should properly execute query', () => {
     useQuery({ queryKey: ['key0'], queryFn: simpleFetcher, staleTime: 1000 })
 
-    expect(useBaseQuery).toBeCalledWith(QueryObserver, {
-      queryKey: ['key0'],
-      queryFn: simpleFetcher,
-      staleTime: 1000,
-    })
+    expect(useBaseQuery).toBeCalledWith(
+      QueryObserver,
+      {
+        queryKey: ['key0'],
+        queryFn: simpleFetcher,
+        staleTime: 1000,
+      },
+      undefined,
+    )
   })
 
   test('should return loading status initially', () => {

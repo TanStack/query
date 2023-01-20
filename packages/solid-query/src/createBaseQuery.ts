@@ -1,4 +1,5 @@
 import type {
+  QueryClient,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
@@ -31,15 +32,14 @@ export function createBaseQuery<
     CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
   >,
   Observer: typeof QueryObserver,
+  queryClient?: () => QueryClient,
 ) {
-  const queryClient = createMemo(() =>
-    useQueryClient({ context: options().context }),
-  )
+  const client = createMemo(() => useQueryClient(queryClient?.()))
   const emptyData = Symbol('empty')
 
-  const defaultedOptions = queryClient().defaultQueryOptions(options())
+  const defaultedOptions = client().defaultQueryOptions(options())
   defaultedOptions._optimisticResults = 'optimistic'
-  const observer = new Observer(queryClient(), defaultedOptions)
+  const observer = new Observer(client(), defaultedOptions)
 
   const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
     observer.getOptimisticResult(defaultedOptions),
@@ -85,7 +85,7 @@ export function createBaseQuery<
   })
 
   createComputed(() => {
-    observer.setOptions(queryClient().defaultQueryOptions(options()))
+    observer.setOptions(client().defaultQueryOptions(options()))
   })
 
   createComputed(

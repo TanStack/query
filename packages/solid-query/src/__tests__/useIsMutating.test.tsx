@@ -1,20 +1,8 @@
 import { fireEvent, screen, waitFor } from 'solid-testing-library'
-import {
-  createMutation,
-  QueryClient,
-  QueryClientProvider,
-  useIsMutating,
-} from '..'
+import { createMutation, QueryClientProvider, useIsMutating } from '..'
 import { createQueryClient, sleep } from './utils'
 
-import {
-  createContext,
-  createEffect,
-  createRenderEffect,
-  createSignal,
-  ErrorBoundary,
-  Show,
-} from 'solid-js'
+import { createEffect, createRenderEffect, createSignal, Show } from 'solid-js'
 import { render } from 'solid-testing-library'
 import * as MutationCacheModule from '../../../query-core/src/mutationCache'
 import { setActTimeout } from './utils'
@@ -234,99 +222,35 @@ describe('useIsMutating', () => {
     MutationCacheSpy.mockRestore()
   })
 
-  describe('with custom context', () => {
-    it('should return the number of fetching mutations', async () => {
-      const context = createContext<QueryClient | undefined>(undefined)
+  it('should use provided custom queryClient', async () => {
+    const queryClient = createQueryClient()
 
-      const isMutatings: number[] = []
-      const queryClient = new QueryClient()
-
-      function IsMutating() {
-        const isMutating = useIsMutating(() => ({
-          options: {
-            context,
-          },
-        }))
-
-        createRenderEffect(() => {
-          isMutatings.push(isMutating())
-        })
-
-        return null
-      }
-
-      function Page() {
-        const { mutate: mutate1 } = createMutation(() => ({
+    function Page() {
+      const isMutating = useIsMutating(() => ({ queryClient }))
+      const { mutate } = createMutation(
+        () => ({
           mutationKey: ['mutation1'],
           mutationFn: async () => {
-            await sleep(150)
+            await sleep(10)
             return 'data'
           },
-          context,
-        }))
-        const { mutate: mutate2 } = createMutation(() => ({
-          mutationKey: ['mutation2'],
-          mutationFn: async () => {
-            await sleep(50)
-            return 'data'
-          },
-          context,
-        }))
+        }),
+        () => queryClient,
+      )
 
-        createEffect(() => {
-          mutate1()
-          setActTimeout(() => {
-            mutate2()
-          }, 50)
-        })
+      createEffect(() => {
+        mutate()
+      })
 
-        return <IsMutating />
-      }
+      return (
+        <div>
+          <div>mutating: {isMutating}</div>
+        </div>
+      )
+    }
 
-      render(() => (
-        <QueryClientProvider client={queryClient} context={context}>
-          <Page />
-        </QueryClientProvider>
-      ))
-      await waitFor(() => expect(isMutatings).toEqual([0, 1, 2, 1, 0]))
-    })
+    render(() => <Page></Page>)
 
-    it('should throw if the context is not passed to useIsMutating', async () => {
-      const context = createContext<QueryClient | undefined>(undefined)
-
-      const isMutatings: number[] = []
-      const queryClient = new QueryClient()
-
-      function IsMutating() {
-        const isMutating = useIsMutating(undefined)
-        isMutatings.push(isMutating())
-        return null
-      }
-
-      function Page() {
-        const { mutate } = createMutation(() => ({
-          mutationKey: ['mutation'],
-          mutationFn: async () => 'data',
-          throwErrors: true,
-          context,
-        }))
-
-        createEffect(() => {
-          mutate()
-        })
-
-        return <IsMutating />
-      }
-
-      render(() => (
-        <QueryClientProvider client={queryClient} context={context}>
-          <ErrorBoundary fallback={() => <div>error boundary</div>}>
-            <Page />
-          </ErrorBoundary>
-        </QueryClientProvider>
-      ))
-
-      await waitFor(() => screen.getByText('error boundary'))
-    })
+    await waitFor(() => screen.findByText('mutating: 1'))
   })
 })

@@ -1,4 +1,5 @@
 import * as React from 'react'
+import type { QueryClient } from '@tanstack/query-core'
 import { notifyManager, MutationObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {
@@ -17,13 +18,14 @@ export function useMutation<
   TContext = unknown,
 >(
   options: UseMutationOptions<TData, TError, TVariables, TContext>,
+  queryClient?: QueryClient,
 ): UseMutationResult<TData, TError, TVariables, TContext> {
-  const queryClient = useQueryClient({ context: options.context })
+  const client = useQueryClient(queryClient)
 
   const [observer] = React.useState(
     () =>
       new MutationObserver<TData, TError, TVariables, TContext>(
-        queryClient,
+        client,
         options,
       ),
   )

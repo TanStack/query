@@ -9,11 +9,8 @@ import type {
 import { useBaseQuery } from './useBaseQuery'
 import type { UseQueryReturnType } from './useBaseQuery'
 
-import type {
-  WithQueryClientKey,
-  VueInfiniteQueryObserverOptions,
-  DistributiveOmit,
-} from './types'
+import type { VueInfiniteQueryObserverOptions, DistributiveOmit } from './types'
+import type { QueryClient } from './queryClient'
 
 export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
@@ -21,14 +18,12 @@ export type UseInfiniteQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = WithRequired<
-  WithQueryClientKey<
-    VueInfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryFnData,
-      TQueryKey
-    >
+  VueInfiniteQueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryFnData,
+    TQueryKey
   >,
   'queryKey'
 >
@@ -57,10 +52,12 @@ export function useInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  queryClient?: QueryClient,
 ): UseInfiniteQueryReturnType<TData, TError> {
   const result = useBaseQuery(
     InfiniteQueryObserver as typeof QueryObserver,
     options,
+    queryClient,
   ) as InfiniteQueryReturnType<TData, TError>
   return {
     ...result,

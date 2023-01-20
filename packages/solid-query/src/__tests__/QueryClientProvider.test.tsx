@@ -1,8 +1,7 @@
 import { render, screen, waitFor } from 'solid-testing-library'
 import { queryKey } from './utils'
 
-import { QueryCache, QueryClient } from '@tanstack/query-core'
-import { createContext } from 'solid-js'
+import { QueryCache } from '@tanstack/query-core'
 import { createQuery, QueryClientProvider, useQueryClient } from '..'
 import { createQueryClient, sleep } from './utils'
 
@@ -142,65 +141,6 @@ describe('QueryClientProvider', () => {
 
     expect(queryCache.find({ queryKey: key })).toBeDefined()
     expect(queryCache.find({ queryKey: key })?.options.gcTime).toBe(Infinity)
-  })
-
-  describe('with custom context', () => {
-    it('uses the correct context', async () => {
-      const key = queryKey()
-
-      const contextOuter = createContext<QueryClient | undefined>(undefined)
-      const contextInner = createContext<QueryClient | undefined>(undefined)
-
-      const queryCacheOuter = new QueryCache()
-      const queryClientOuter = new QueryClient({ queryCache: queryCacheOuter })
-
-      const queryCacheInner = new QueryCache()
-      const queryClientInner = new QueryClient({ queryCache: queryCacheInner })
-
-      const queryCacheInnerInner = new QueryCache()
-      const queryClientInnerInner = new QueryClient({
-        queryCache: queryCacheInnerInner,
-      })
-
-      function Page() {
-        const queryOuter = createQuery(() => ({
-          queryKey: key,
-          queryFn: async () => 'testOuter',
-          context: contextOuter,
-        }))
-        const queryInner = createQuery(() => ({
-          queryKey: key,
-          queryFn: async () => 'testInner',
-          context: contextInner,
-        }))
-        const queryInnerInner = createQuery(() => ({
-          queryKey: key,
-          queryFn: async () => 'testInnerInner',
-        }))
-
-        return (
-          <div>
-            <h1>
-              {queryOuter.data} {queryInner.data} {queryInnerInner.data}
-            </h1>
-          </div>
-        )
-      }
-
-      render(() => (
-        <QueryClientProvider client={queryClientOuter} context={contextOuter}>
-          <QueryClientProvider client={queryClientInner} context={contextInner}>
-            <QueryClientProvider client={queryClientInnerInner}>
-              <Page />
-            </QueryClientProvider>
-          </QueryClientProvider>
-        </QueryClientProvider>
-      ))
-
-      await waitFor(() =>
-        screen.getByText('testOuter testInner testInnerInner'),
-      )
-    })
   })
 
   describe('useQueryClient', () => {

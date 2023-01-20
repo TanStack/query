@@ -6155,4 +6155,27 @@ describe('createQuery', () => {
     fireEvent.click(fetchBtn)
     await waitFor(() => screen.getByText('data: 3'))
   })
+
+  it('should use provided custom queryClient', async () => {
+    const key = queryKey()
+    const queryFn = () => {
+      return Promise.resolve('custom client')
+    }
+
+    function Page() {
+      const state = createQuery(
+        () => ({ queryKey: key, queryFn }),
+        () => queryClient,
+      )
+      return (
+        <div>
+          <h1>Status: {state.data}</h1>
+        </div>
+      )
+    }
+
+    render(() => <Page />)
+
+    await waitFor(() => screen.getByText('Status: custom client'))
+  })
 })

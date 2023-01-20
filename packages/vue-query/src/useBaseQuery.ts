@@ -17,9 +17,10 @@ import type {
 } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
 import { updateState, cloneDeepUnref } from './utils'
-import type { MaybeRef, WithQueryClientKey } from './types'
+import type { MaybeRef } from './types'
 import type { UseQueryOptions } from './useQuery'
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
+import type { QueryClient } from './queryClient'
 
 export type UseQueryReturnType<
   TData,
@@ -51,22 +52,22 @@ export function useBaseQuery<
     TData,
     TQueryKey
   >,
+  queryClient?: QueryClient,
 ): UseQueryReturnType<TData, TError> {
   const options = computed(() => unrefQueryArgs(genericOptions))
 
-  const queryClient =
-    options.value.queryClient ?? useQueryClient(options.value.queryClientKey)
+  const client = queryClient || useQueryClient()
 
   const defaultedOptions = computed(() => {
-    const defaulted = queryClient.defaultQueryOptions(options.value)
-    defaulted._optimisticResults = queryClient.isRestoring.value
+    const defaulted = client.defaultQueryOptions(options.value)
+    defaulted._optimisticResults = client.isRestoring.value
       ? 'isRestoring'
       : 'optimistic'
 
     return defaulted
   })
 
-  const observer = new Observer(queryClient, defaultedOptions.value)
+  const observer = new Observer(client, defaultedOptions.value)
   const state = reactive(observer.getCurrentResult())
 
   const unsubscribe = ref(() => {
@@ -74,7 +75,7 @@ export function useBaseQuery<
   })
 
   watch(
-    queryClient.isRestoring,
+    client.isRestoring,
     (isRestoring) => {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (!isRestoring) {
@@ -144,11 +145,13 @@ export function unrefQueryArgs<
   arg1: MaybeRef<
     UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>
   >,
-): WithQueryClientKey<
-  QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
-> {
+): QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {
   const options = unref(arg1)
-  return cloneDeepUnref(options) as WithQueryClientKey<
-    QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+  return cloneDeepUnref(options) as QueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
   >
 }
