@@ -155,7 +155,7 @@ describe('useMutation', () => {
     const mutateFn = jest.fn<Promise<Value>, [value: Value]>()
 
     mutateFn.mockImplementationOnce(() => {
-      return Promise.reject('Error test Jonas')
+      return Promise.reject(new Error('Error test Jonas'))
     })
 
     mutateFn.mockImplementation(async (value) => {
@@ -164,18 +164,16 @@ describe('useMutation', () => {
     })
 
     function Page() {
-      const { mutate, failureCount, failureReason, data, status } = useMutation<
-        Value,
-        string,
-        Value
-      >({ mutationFn: mutateFn })
+      const { mutate, failureCount, failureReason, data, status } = useMutation(
+        { mutationFn: mutateFn },
+      )
 
       return (
         <div>
           <h1>Data {data?.count}</h1>
           <h2>Status {status}</h2>
           <h2>Failed {failureCount} times</h2>
-          <h2>Failed because {failureReason ?? 'null'}</h2>
+          <h2>Failed because {failureReason?.message ?? 'null'}</h2>
           <button onClick={() => mutate({ count: ++count })}>mutate</button>
         </div>
       )
@@ -319,7 +317,7 @@ describe('useMutation', () => {
 
     function Page() {
       const { mutateAsync } = useMutation({
-        mutationFn: async (_text: string) => Promise.reject('oops'),
+        mutationFn: async (_text: string) => Promise.reject(new Error('oops')),
         onError: async () => {
           callbacks.push('useMutation.onError')
         },
@@ -340,7 +338,7 @@ describe('useMutation', () => {
               },
             })
           } catch (error) {
-            callbacks.push(`mutateAsync.error:${error}`)
+            callbacks.push(`mutateAsync.error:${(error as Error).message}`)
           }
         }, 10)
       }, [mutateAsync])
@@ -406,7 +404,7 @@ describe('useMutation', () => {
       const { mutate } = useMutation({
         mutationFn: (_text: string) => {
           count++
-          return Promise.reject('oops')
+          return Promise.reject(new Error('oops'))
         },
         retry: 1,
         retryDelay: 5,
@@ -595,7 +593,9 @@ describe('useMutation', () => {
         mutationFn: async (_text: string) => {
           await sleep(1)
           count++
-          return count > 1 ? Promise.resolve('data') : Promise.reject('oops')
+          return count > 1
+            ? Promise.resolve('data')
+            : Promise.reject(new Error('oops'))
         },
         retry: 1,
         retryDelay: 5,
@@ -636,13 +636,13 @@ describe('useMutation', () => {
       isLoading: true,
       isPaused: false,
       failureCount: 1,
-      failureReason: 'oops',
+      failureReason: new Error('oops'),
     })
     expect(states[3]).toMatchObject({
       isLoading: true,
       isPaused: true,
       failureCount: 1,
-      failureReason: 'oops',
+      failureReason: new Error('oops'),
     })
 
     onlineMock.mockReturnValue(true)
@@ -655,7 +655,7 @@ describe('useMutation', () => {
       isLoading: true,
       isPaused: false,
       failureCount: 1,
-      failureReason: 'oops',
+      failureReason: new Error('oops'),
     })
     expect(states[5]).toMatchObject({
       isLoading: false,
