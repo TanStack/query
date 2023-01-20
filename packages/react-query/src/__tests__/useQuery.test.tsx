@@ -304,7 +304,7 @@ describe('useQuery', () => {
   it('should return the correct states for an unsuccessful query', async () => {
     const key = queryKey()
 
-    const states: UseQueryResult<undefined, string>[] = []
+    const states: UseQueryResult[] = []
 
     function Page() {
       const state = useQuery({
