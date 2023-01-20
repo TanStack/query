@@ -49,6 +49,18 @@ export function createBaseQuery<
     observer.getOptimisticResult(defaultedOptions),
   )
 
+  const createSubscriber = (
+    cb: (result: QueryObserverResult<TData, TError>) => void,
+  ) => {
+    return observer.subscribe((result) => {
+      notifyManager.batchCalls(() => {
+        const unwrappedResult = { ...unwrap(result) }
+        setState(unwrappedResult)
+        cb(unwrappedResult)
+      })()
+    })
+  }
+
   const createServerSubscriber = (
     resolve: (
       data:
@@ -56,25 +68,10 @@ export function createBaseQuery<
         | PromiseLike<QueryObserverResult<TData, TError> | undefined>
         | undefined,
     ) => void,
-  ) => {
-    return observer.subscribe((result) => {
-      notifyManager.batchCalls(() => {
-        const unwrappedResult = { ...unwrap(result) }
-        setState(unwrappedResult)
-        resolve(unwrappedResult)
-      })()
-    })
-  }
+  ) => createSubscriber(resolve)
 
-  const createClientSubscriber = (refetch: (info?: unknown) => void) => {
-    return observer.subscribe((result) => {
-      notifyManager.batchCalls(() => {
-        const unwrappedResult = { ...unwrap(result) }
-        setState(unwrappedResult)
-        refetch()
-      })()
-    })
-  }
+  const createClientSubscriber = (refetch: () => void) =>
+    createSubscriber(refetch)
 
   /**
    * Unsubscribe is set lazily, so that we can subscribe after hydration when needed.
@@ -90,9 +87,7 @@ export function createBaseQuery<
           unsubscribe = createServerSubscriber(resolve)
         } else {
           if (!unsubscribe) {
-            unsubscribe = createClientSubscriber((info?: unknown) =>
-              refetch(info),
-            )
+            unsubscribe = createClientSubscriber(() => refetch())
           }
 
           if (!state.isInitialLoading) {
@@ -131,7 +126,13 @@ export function createBaseQuery<
         }
 
         if (!unsubscribe) {
-          unsubscribe = createClientSubscriber((i?: unknown) => refetch(i))
+          /**
+           * Do not refetch query on mount if query was fetched on server,
+           * even if `staleTime` is not set.
+           */
+          defaultedOptions.refetchOnMount = false
+
+          unsubscribe = createClientSubscriber(() => refetch())
         }
       },
     },

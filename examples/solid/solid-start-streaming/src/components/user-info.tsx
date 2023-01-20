@@ -16,7 +16,6 @@ export const UserInfo: Component<UserInfoProps> = (props) => {
 
   const query = createQuery(() => ({
     queryKey: ['user'],
-    staleTime: 1000 * 10,
     queryFn: () =>
       fetchUser({ sleep: props.sleep, simulateError: simulateError() }),
     deferStream: props.deferStream,

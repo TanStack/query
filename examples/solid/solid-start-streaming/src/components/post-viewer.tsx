@@ -19,7 +19,6 @@ export const PostViewer: Component<PostViewerProps> = (props) => {
 
   const query = createQuery(() => ({
     queryKey: ['posts', postId()],
-    staleTime: 1000 * 10,
     queryFn: () =>
       fetchPost({
         postId: postId(),
