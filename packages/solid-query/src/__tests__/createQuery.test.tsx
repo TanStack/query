@@ -5790,11 +5790,10 @@ describe('createQuery', () => {
       function Component() {
         const state = createQuery(() => ({
           queryKey: key,
-          queryFn: async ({ signal }) => {
+          queryFn: async ({ signal: _signal }) => {
             count++
             await sleep(10)
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            return `${signal ? 'signal' : 'data'}${count}`
+            return `signal${count}`
           },
         }))
 
