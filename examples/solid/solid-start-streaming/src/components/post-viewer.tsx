@@ -55,36 +55,38 @@ export const PostViewer: Component<PostViewerProps> = (props) => {
       </div>
 
       {/* NOTE: without this extra wrapping div, for some reason solid ends up printing two errors... feels like a bug in solid. */}
-      <QueryBoundary
-        query={query}
-        loadingFallback={<div class="loader">loading post...</div>}
-        errorFallback={
-          <div>
-            <div class="error">{query.error?.message}</div>
-            <button
-              onClick={() => {
-                setSimulateError(false)
-                query.refetch()
-              }}
-            >
-              retry
-            </button>
-          </div>
-        }
-      >
-        {(posts) => (
-          <For each={posts}>
-            {(post) => (
-              <div style={{ 'margin-top': '20px' }}>
-                <b>
-                  [post {postId()}] {post.title}
-                </b>
-                <p>{post.body}</p>
-              </div>
-            )}
-          </For>
-        )}
-      </QueryBoundary>
+      <div>
+        <QueryBoundary
+          query={query}
+          loadingFallback={<div class="loader">loading post...</div>}
+          errorFallback={
+            <div>
+              <div class="error">{query.error?.message}</div>
+              <button
+                onClick={() => {
+                  setSimulateError(false)
+                  query.refetch()
+                }}
+              >
+                retry
+              </button>
+            </div>
+          }
+        >
+          {(posts) => (
+            <For each={posts}>
+              {(post) => (
+                <div style={{ 'margin-top': '20px' }}>
+                  <b>
+                    [post {postId()}] {post.title}
+                  </b>
+                  <p>{post.body}</p>
+                </div>
+              )}
+            </For>
+          )}
+        </QueryBoundary>
+      </div>
     </Example>
   )
 }
