@@ -9,7 +9,7 @@ export function useIsMutating(
   queryClient?: QueryClient,
 ): number {
   const client = useQueryClient(queryClient)
-  return useMutationState(() => client.isMutating(filters))
+  return useMutationState(() => client.isMutating(filters), client)
 }
 
 export function useMutationVariables<TVariables = unknown>(
@@ -17,7 +17,7 @@ export function useMutationVariables<TVariables = unknown>(
   queryClient?: QueryClient,
 ): Array<TVariables> {
   const client = useQueryClient(queryClient)
-  return useMutationState(() => client.getMutationVariables(filters))
+  return useMutationState(() => client.getMutationVariables(filters), client)
 }
 
 function useMutationState<T>(selector: () => T, queryClient?: QueryClient): T {
