@@ -104,7 +104,7 @@ export class Mutation<
     this.#observers = []
     this.state = config.state || getDefaultState()
 
-    this.updateCacheTime(this.options.cacheTime)
+    this.updateGcTime(this.options.gcTime)
     this.scheduleGc()
   }
 

@@ -213,10 +213,10 @@ This refetching of stale queries is a perfect match when caching markup in a CDN
 
 ### High memory consumption on server
 
-In case you are creating the `QueryClient` for every request, Vue Query creates the isolated cache for this client, which is preserved in memory for the `cacheTime` period. That may lead to high memory consumption on server in case of high number of requests during that period.
+In case you are creating the `QueryClient` for every request, Vue Query creates the isolated cache for this client, which is preserved in memory for the `gcTime` period. That may lead to high memory consumption on server in case of high number of requests during that period.
 
-On the server, `cacheTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `cacheTime` then you will be responsible for clearing the cache early.
+On the server, `gcTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `gcTime` then you will be responsible for clearing the cache early.
 
 To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../reference/QueryClient#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
 
-Alternatively, you can set a smaller `cacheTime`.
+Alternatively, you can set a smaller `gcTime`.

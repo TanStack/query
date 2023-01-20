@@ -43,14 +43,14 @@ describe('queryClient', () => {
 
       const testClient = createQueryClient({
         defaultOptions: {
-          queries: { cacheTime: Infinity },
+          queries: { gcTime: Infinity },
         },
       })
 
       const fetchData = () => Promise.resolve('data')
       await testClient.prefetchQuery({ queryKey: key, queryFn: fetchData })
       const newQuery = testClient.getQueryCache().find({ queryKey: key })
-      expect(newQuery?.options.cacheTime).toBe(Infinity)
+      expect(newQuery?.options.gcTime).toBe(Infinity)
     })
 
     test('should get defaultOptions', async () => {
@@ -578,7 +578,7 @@ describe('queryClient', () => {
       expect(second).toBe(first)
     })
 
-    test('should be able to fetch when cache time is set to 0 and then be removed', async () => {
+    test('should be able to fetch when garbage collection time is set to 0 and then be removed', async () => {
       const key1 = queryKey()
       const result = await queryClient.fetchQuery({
         queryKey: key1,
@@ -586,7 +586,7 @@ describe('queryClient', () => {
           await sleep(10)
           return 1
         },
-        cacheTime: 0,
+        gcTime: 0,
       })
       expect(result).toEqual(1)
       await waitFor(() =>
@@ -594,7 +594,7 @@ describe('queryClient', () => {
       )
     })
 
-    test('should keep a query in cache if cache time is Infinity', async () => {
+    test('should keep a query in cache if garbage collection time is Infinity', async () => {
       const key1 = queryKey()
       const result = await queryClient.fetchQuery({
         queryKey: key1,
@@ -602,7 +602,7 @@ describe('queryClient', () => {
           await sleep(10)
           return 1
         },
-        cacheTime: Infinity,
+        gcTime: Infinity,
       })
       const result2 = queryClient.getQueryData(key1)
       expect(result).toEqual(1)
@@ -778,7 +778,7 @@ describe('queryClient', () => {
       expect(mockLogger.error).toHaveBeenCalled()
     })
 
-    test('should be garbage collected after cacheTime if unused', async () => {
+    test('should be garbage collected after gcTime if unused', async () => {
       const key = queryKey()
 
       await queryClient.prefetchQuery({
@@ -786,7 +786,7 @@ describe('queryClient', () => {
         queryFn: async () => {
           return 'data'
         },
-        cacheTime: 10,
+        gcTime: 10,
       })
       expect(queryCache.find({ queryKey: key })).toBeDefined()
       await sleep(15)
