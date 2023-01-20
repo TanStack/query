@@ -2,7 +2,7 @@ import { QueryClient } from '../queryClient'
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: { retry: false, cacheTime: Infinity },
+    queries: { retry: false, gcTime: Infinity },
   },
 })
 

@@ -246,6 +246,24 @@ The `Hydrate` component has been renamed to `HydrationBoundary`. The `Hydrate` c
 - </Hydrate>
 + </HydrationBoundary>
 ```
+
+### Rename `cacheTime` to `gcTime`
+
+Almost everyone gets `cacheTime` wrong. It sounds like "the amount of time that data is cached for", but that is not correct.
+
+`cacheTime` does nothing as long as a query is still in used. It only kicks in as soon as the query becomes unused. After the time has passed, data will be "garbage collected" to avoid the cache from growing.
+
+`gc` is referring to "garbage collect" time. It's a bit more technical, but also a quite [well known abbreviation](https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)) in computer science.
+
+```diff
+const MINUTE = 1000 * 60;
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+-      cacheTime: 10 * MINUTE,
++      gcTime: 10 * MINUTE,
+    },
+  },
+})
 ```
-
-

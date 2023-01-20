@@ -76,7 +76,7 @@ export interface QueryOptions<
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   networkMode?: NetworkMode
-  cacheTime?: number
+  gcTime?: number
   queryFn?: QueryFunction<TQueryFnData, TQueryKey>
   queryHash?: string
   queryKey?: TQueryKey
@@ -576,7 +576,7 @@ export interface MutationOptions<
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   networkMode?: NetworkMode
-  cacheTime?: number
+  gcTime?: number
   _defaulted?: boolean
   meta?: MutationMeta
 }

@@ -993,7 +993,7 @@ describe("useQuery's in Suspense mode", () => {
     consoleMock.mockRestore()
   })
 
-  it('should render the correct amount of times in Suspense mode when cacheTime is set to 0', async () => {
+  it('should render the correct amount of times in Suspense mode when gcTime is set to 0', async () => {
     const key = queryKey()
     let state: UseQueryResult<number> | null = null
 
@@ -1011,7 +1011,7 @@ describe("useQuery's in Suspense mode", () => {
           return count
         },
         suspense: true,
-        cacheTime: 0,
+        gcTime: 0,
       })
 
       return (

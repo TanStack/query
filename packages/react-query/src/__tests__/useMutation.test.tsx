@@ -878,7 +878,7 @@ describe('useMutation', () => {
           return count
         },
         mutationKey,
-        cacheTime: 0,
+        gcTime: 0,
         onSuccess,
         onSettled,
       })
