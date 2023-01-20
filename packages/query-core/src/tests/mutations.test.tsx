@@ -146,7 +146,7 @@ describe('mutations', () => {
     const mutation = new MutationObserver(queryClient, {
       mutationFn: async (_: string) => {
         await sleep(20)
-        return Promise.reject('err')
+        return Promise.reject(new Error('err'))
       },
       onMutate: (text) => text,
       retry: 1,
@@ -206,7 +206,7 @@ describe('mutations', () => {
       data: undefined,
       error: null,
       failureCount: 1,
-      failureReason: 'err',
+      failureReason: new Error('err'),
       isError: false,
       isIdle: false,
       isLoading: true,
@@ -223,9 +223,9 @@ describe('mutations', () => {
     expect(states[3]).toEqual({
       context: 'todo',
       data: undefined,
-      error: 'err',
+      error: new Error('err'),
       failureCount: 2,
-      failureReason: 'err',
+      failureReason: new Error('err'),
       isError: true,
       isIdle: false,
       isLoading: false,
@@ -332,6 +332,6 @@ describe('mutations', () => {
     } catch (err) {
       error = err
     }
-    expect(error).toEqual('No mutationFn found')
+    expect(error).toEqual(new Error('No mutationFn found'))
   })
 })

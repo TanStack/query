@@ -1,26 +1,21 @@
 import * as React from 'react'
 import { act, render } from '@testing-library/react'
-import type { ContextOptions, QueryClientConfig } from '..'
+import type { QueryClientConfig, MutationOptions } from '..'
 import { QueryClient, QueryClientProvider } from '..'
 import * as utils from '@tanstack/query-core'
 
 export function renderWithClient(
   client: QueryClient,
   ui: React.ReactElement,
-  options: ContextOptions = {},
 ): ReturnType<typeof render> {
   const { rerender, ...result } = render(
-    <QueryClientProvider client={client} context={options.context}>
-      {ui}
-    </QueryClientProvider>,
+    <QueryClientProvider client={client}>{ui}</QueryClientProvider>,
   )
   return {
     ...result,
     rerender: (rerenderUi: React.ReactElement) =>
       rerender(
-        <QueryClientProvider client={client} context={options.context}>
-          {rerenderUi}
-        </QueryClientProvider>,
+        <QueryClientProvider client={client}>{rerenderUi}</QueryClientProvider>,
       ),
   } as any
 }

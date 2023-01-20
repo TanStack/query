@@ -1877,4 +1877,27 @@ describe('useInfiniteQuery', () => {
 
     expect(cancelFn).toHaveBeenCalled()
   })
+
+  it('should use provided custom queryClient', async () => {
+    const key = queryKey()
+    const queryFn = () => {
+      return Promise.resolve('custom client')
+    }
+
+    function Page() {
+      const state = createInfiniteQuery(
+        () => ({ queryKey: key, queryFn }),
+        () => queryClient,
+      )
+      return (
+        <div>
+          <h1>Status: {state.data?.pages[0]}</h1>
+        </div>
+      )
+    }
+
+    render(() => <Page />)
+
+    await waitFor(() => screen.getByText('Status: custom client'))
+  })
 })

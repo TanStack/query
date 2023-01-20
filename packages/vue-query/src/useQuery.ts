@@ -8,11 +8,8 @@ import type {
 } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type { UseQueryReturnType as UQRT } from './useBaseQuery'
-import type {
-  WithQueryClientKey,
-  VueQueryObserverOptions,
-  DistributiveOmit,
-} from './types'
+import type { VueQueryObserverOptions, DistributiveOmit } from './types'
+import type { QueryClient } from './queryClient'
 
 export type UseQueryReturnType<TData, TError> = DistributiveOmit<
   UQRT<TData, TError>,
@@ -35,15 +32,7 @@ export type UseQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = WithRequired<
-  WithQueryClientKey<
-    VueQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryFnData,
-      TQueryKey
-    >
-  >,
+  VueQueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
   'queryKey'
 >
 
@@ -72,6 +61,7 @@ export function useQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  queryClient?: QueryClient,
 ): UseQueryReturnType<TData, TError>
 
 export function useQuery<
@@ -81,6 +71,7 @@ export function useQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  queryClient?: QueryClient,
 ): UseQueryDefinedReturnType<TData, TError>
 
 export function useQuery<
@@ -90,10 +81,11 @@ export function useQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  queryClient?: QueryClient,
 ):
   | UseQueryReturnType<TData, TError>
   | UseQueryDefinedReturnType<TData, TError> {
-  const result = useBaseQuery(QueryObserver, options)
+  const result = useBaseQuery(QueryObserver, options, queryClient)
 
   return {
     ...result,

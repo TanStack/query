@@ -1,34 +1,27 @@
 import * as React from 'react'
 
-import type { MutationFilters } from '@tanstack/query-core'
+import type { MutationFilters, QueryClient } from '@tanstack/query-core'
 import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
-import type { ContextOptions } from './types'
 import { useQueryClient } from './QueryClientProvider'
-
-interface Options extends ContextOptions {}
 
 export function useIsMutating(
   filters?: MutationFilters,
-  options: Options = {},
+  queryClient?: QueryClient,
 ): number {
-  const queryClient = useQueryClient({ context: options.context })
-  return useMutationState(() => queryClient.isMutating(filters), options)
+  const client = useQueryClient(queryClient)
+  return useMutationState(() => client.isMutating(filters))
 }
 
 export function useMutationVariables<TVariables = unknown>(
   filters?: MutationFilters,
-  options: Options = {},
+  queryClient?: QueryClient,
 ): Array<TVariables> {
-  const queryClient = useQueryClient({ context: options.context })
-  return useMutationState(
-    () => queryClient.getMutationVariables(filters),
-    options,
-  )
+  const client = useQueryClient(queryClient)
+  return useMutationState(() => client.getMutationVariables(filters))
 }
 
-function useMutationState<T>(selector: () => T, options: Options = {}): T {
-  const queryClient = useQueryClient({ context: options.context })
-  const mutationCache = queryClient.getMutationCache()
+function useMutationState<T>(selector: () => T, queryClient?: QueryClient): T {
+  const mutationCache = useQueryClient(queryClient).getMutationCache()
   const selectorRef = React.useRef(selector)
   const result = React.useRef<T>()
   if (!result.current) {

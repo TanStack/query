@@ -9,7 +9,7 @@ export { useQueries } from './useQueries'
 export type { QueriesResults, QueriesOptions } from './useQueries'
 export { useQuery } from './useQuery'
 export {
-  defaultContext,
+  QueryClientContext,
   QueryClientProvider,
   useQueryClient,
 } from './QueryClientProvider'

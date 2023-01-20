@@ -1,22 +1,23 @@
 import * as React from 'react'
 
-import type { HydrateOptions } from '@tanstack/query-core'
+import type { HydrateOptions, QueryClient } from '@tanstack/query-core'
 import { hydrate } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
-import type { ContextOptions } from './types'
 
 export interface HydrationBoundaryProps {
   state?: unknown
-  options?: HydrateOptions & ContextOptions
+  options?: HydrateOptions
   children?: React.ReactNode
+  queryClient?: QueryClient
 }
 
 export const HydrationBoundary = ({
   children,
   options = {},
   state,
+  queryClient,
 }: HydrationBoundaryProps) => {
-  const queryClient = useQueryClient({ context: options.context })
+  const client = useQueryClient(queryClient)
 
   const optionsRef = React.useRef(options)
   optionsRef.current = options
@@ -27,9 +28,9 @@ export const HydrationBoundary = ({
   // hydrate can and should be run *during* render here for SSR to work properly
   React.useMemo(() => {
     if (state) {
-      hydrate(queryClient, state, optionsRef.current)
+      hydrate(client, state, optionsRef.current)
     }
-  }, [queryClient, state])
+  }, [client, state])
 
   return children as React.ReactElement
 }

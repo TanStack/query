@@ -1,4 +1,4 @@
-import type { QueryKey } from '@tanstack/query-core'
+import type { QueryClient, QueryKey } from '@tanstack/query-core'
 import { QueryObserver } from '@tanstack/query-core'
 import { createMemo } from 'solid-js'
 import { createBaseQuery } from './createBaseQuery'
@@ -39,6 +39,7 @@ export function createQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  queryClient?: () => QueryClient,
 ): CreateQueryResult<TData, TError>
 
 export function createQuery<
@@ -48,15 +49,20 @@ export function createQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  queryClient?: () => QueryClient,
 ): DefinedCreateQueryResult<TData, TError>
 export function createQuery<
   TQueryFnData,
   TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
->(options: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>) {
+>(
+  options: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  queryClient?: () => QueryClient,
+) {
   return createBaseQuery(
     createMemo(() => options()),
     QueryObserver,
+    queryClient,
   )
 }

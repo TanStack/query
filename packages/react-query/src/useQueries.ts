@@ -4,6 +4,7 @@ import type {
   QueryKey,
   QueryFunction,
   QueriesPlaceholderDataFunction,
+  QueryClient,
 } from '@tanstack/query-core'
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
@@ -23,7 +24,7 @@ import {
 } from './suspense'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
-// - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
+// `placeholderData` function does not have a parameter
 type UseQueryOptionsForUseQueries<
   TQueryFnData = unknown,
   TError = Error,
@@ -31,7 +32,7 @@ type UseQueryOptionsForUseQueries<
   TQueryKey extends QueryKey = QueryKey,
 > = Omit<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'context' | 'placeholderData'
+  'placeholderData'
 > & {
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
 }
@@ -155,18 +156,18 @@ export type QueriesResults<
 
 export function useQueries<T extends any[]>({
   queries,
-  context,
+  queryClient,
 }: {
   queries: readonly [...QueriesOptions<T>]
-  context?: UseQueryOptions['context']
+  queryClient?: QueryClient
 }): QueriesResults<T> {
-  const queryClient = useQueryClient({ context })
+  const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
 
   const defaultedQueries = React.useMemo(
     () =>
       queries.map((options) => {
-        const defaultedOptions = queryClient.defaultQueryOptions(options)
+        const defaultedOptions = client.defaultQueryOptions(options)
 
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = isRestoring
@@ -175,11 +176,11 @@ export function useQueries<T extends any[]>({
 
         return defaultedOptions
       }),
-    [queries, queryClient, isRestoring],
+    [queries, client, isRestoring],
   )
 
   const [observer] = React.useState(
-    () => new QueriesObserver(queryClient, defaultedQueries),
+    () => new QueriesObserver(client, defaultedQueries),
   )
 
   const optimisticResult = observer.getOptimisticResult(defaultedQueries)

@@ -15,7 +15,7 @@ describe('mutationCache', () => {
           testClient,
           {
             mutationKey: key,
-            mutationFn: () => Promise.reject('error'),
+            mutationFn: () => Promise.reject(new Error('error')),
             onMutate: () => 'context',
           },
           'vars',
@@ -23,7 +23,12 @@ describe('mutationCache', () => {
       } catch {}
 
       const mutation = testCache.getAll()[0]
-      expect(onError).toHaveBeenCalledWith('error', 'vars', 'context', mutation)
+      expect(onError).toHaveBeenCalledWith(
+        new Error('error'),
+        'vars',
+        'context',
+        mutation,
+      )
     })
 
     test('should be awaited', async () => {
@@ -42,7 +47,7 @@ describe('mutationCache', () => {
           testClient,
           {
             mutationKey: key,
-            mutationFn: () => Promise.reject('error'),
+            mutationFn: () => Promise.reject(new Error('error')),
             onError: async () => {
               states.push(3)
               await sleep(1)

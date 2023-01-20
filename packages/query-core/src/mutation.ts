@@ -158,7 +158,7 @@ export class Mutation<
       this.#retryer = createRetryer({
         fn: () => {
           if (!this.options.mutationFn) {
-            return Promise.reject('No mutationFn found')
+            return Promise.reject(new Error('No mutationFn found'))
           }
           return this.options.mutationFn(variables)
         },

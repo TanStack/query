@@ -4,27 +4,28 @@ import type { MutationFilters as MF } from '@tanstack/query-core'
 
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
-import type { MaybeRefDeep, WithQueryClientKey } from './types'
+import type { MaybeRefDeep } from './types'
+import type { QueryClient } from './queryClient'
 
-export type MutationFilters = MaybeRefDeep<WithQueryClientKey<MF>>
+export type MutationFilters = MaybeRefDeep<MF>
 
 export function useIsMutating(
   mutationFilters: MutationFilters = {},
+  queryClient?: QueryClient,
 ): Ref<number> {
   const filters = computed(() => unrefFilterArgs(mutationFilters))
-  const queryClient =
-    filters.value.queryClient ?? useQueryClient(filters.value.queryClientKey)
+  const client = queryClient || useQueryClient()
 
-  const isMutating = ref(queryClient.isMutating(filters))
+  const isMutating = ref(client.isMutating(filters))
 
-  const unsubscribe = queryClient.getMutationCache().subscribe(() => {
-    isMutating.value = queryClient.isMutating(filters)
+  const unsubscribe = client.getMutationCache().subscribe(() => {
+    isMutating.value = client.isMutating(filters)
   })
 
   watch(
     filters,
     () => {
-      isMutating.value = queryClient.isMutating(filters)
+      isMutating.value = client.isMutating(filters)
     },
     { deep: true },
   )
@@ -38,5 +39,5 @@ export function useIsMutating(
 
 export function unrefFilterArgs(arg: MutationFilters) {
   const options = unref(arg)
-  return cloneDeepUnref(options) as WithQueryClientKey<MF>
+  return cloneDeepUnref(options) as MF
 }
