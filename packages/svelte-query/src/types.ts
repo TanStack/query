@@ -111,7 +111,9 @@ export type CreateBaseMutationResult<
 > = Override<
   MutationObserverResult<TData, TError, TVariables, TContext>,
   { mutate: CreateMutateFunction<TData, TError, TVariables, TContext> }
-> & { mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext> }
+> & {
+  mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext>
+}
 
 export interface CreateMutationResult<
   TData = unknown,
