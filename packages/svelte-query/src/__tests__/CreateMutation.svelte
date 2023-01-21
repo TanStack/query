@@ -12,4 +12,4 @@
   })
 </script>
 
-<button on:click={$mutation.mutate}>Click</button>
+<button on:click={() => $mutation.mutate()}>Click</button>
