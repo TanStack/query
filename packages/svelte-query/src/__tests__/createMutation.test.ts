@@ -5,11 +5,11 @@ import { sleep } from './utils'
 
 describe('createMutation', () => {
   it('Call mutate and check function runs', async () => {
-    const queryFn = vi.fn()
+    const mutationFn = vi.fn()
 
     render(CreateMutation, {
       props: {
-        queryFn,
+        mutationFn,
       },
     })
 
@@ -17,6 +17,6 @@ describe('createMutation', () => {
 
     await sleep(200)
 
-    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(mutationFn).toHaveBeenCalledTimes(1)
   })
 })
