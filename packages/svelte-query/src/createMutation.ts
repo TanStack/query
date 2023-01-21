@@ -7,7 +7,7 @@ import {
   parseMutationArgs,
 } from '@tanstack/query-core'
 import type {
-  UseMutateFunction,
+  CreateMutateFunction,
   CreateMutationOptions,
   CreateMutationResult,
 } from './types'
@@ -16,7 +16,7 @@ import { useQueryClient } from './useQueryClient'
 export function createMutation<
   TData = unknown,
   TError = unknown,
-  TVariables = unknown,
+  TVariables = void,
   TContext = unknown,
 >(
   options: CreateMutationOptions<TData, TError, TVariables, TContext>,
@@ -25,7 +25,7 @@ export function createMutation<
 export function createMutation<
   TData = unknown,
   TError = unknown,
-  TVariables = unknown,
+  TVariables = void,
   TContext = unknown,
 >(
   mutationFn: MutationFunction<TData, TVariables>,
@@ -38,7 +38,7 @@ export function createMutation<
 export function createMutation<
   TData = unknown,
   TError = unknown,
-  TVariables = unknown,
+  TVariables = void,
   TContext = unknown,
 >(
   mutationKey: MutationKey,
@@ -51,7 +51,7 @@ export function createMutation<
 export function createMutation<
   TData = unknown,
   TError = unknown,
-  TVariables = unknown,
+  TVariables = void,
   TContext = unknown,
 >(
   mutationKey: MutationKey,
@@ -65,7 +65,7 @@ export function createMutation<
 export function createMutation<
   TData = unknown,
   TError = unknown,
-  TVariables = unknown,
+  TVariables = void,
   TContext = unknown,
 >(
   arg1:
@@ -83,7 +83,7 @@ export function createMutation<
     queryClient,
     options,
   )
-  let mutate: UseMutateFunction<TData, TError, TVariables, TContext>
+  let mutate: CreateMutateFunction<TData, TError, TVariables, TContext>
 
   readable(observer).subscribe(($observer) => {
     observer = $observer

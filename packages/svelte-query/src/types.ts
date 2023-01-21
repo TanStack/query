@@ -87,7 +87,7 @@ export interface CreateMutationOptions<
       '_defaulted' | 'variables'
     > {}
 
-export type UseMutateFunction<
+export type CreateMutateFunction<
   TData = unknown,
   TError = unknown,
   TVariables = void,
@@ -96,22 +96,24 @@ export type UseMutateFunction<
   ...args: Parameters<MutateFunction<TData, TError, TVariables, TContext>>
 ) => void
 
-export type UseMutateAsyncFunction<
+export type CreateMutateAsyncFunction<
   TData = unknown,
   TError = unknown,
   TVariables = void,
   TContext = unknown,
 > = MutateFunction<TData, TError, TVariables, TContext>
 
-export type UseBaseMutationResult<
+export type CreateBaseMutationResult<
   TData = unknown,
   TError = unknown,
   TVariables = unknown,
   TContext = unknown,
 > = Override<
   MutationObserverResult<TData, TError, TVariables, TContext>,
-  { mutate: UseMutateFunction<TData, TError, TVariables, TContext> }
-> & { mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext> }
+  { mutate: CreateMutateFunction<TData, TError, TVariables, TContext> }
+> & {
+  mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext>
+}
 
 export interface CreateMutationResult<
   TData = unknown,
@@ -119,7 +121,7 @@ export interface CreateMutationResult<
   TVariables = unknown,
   TContext = unknown,
 > extends Readable<
-    UseBaseMutationResult<TData, TError, TVariables, TContext>
+    CreateBaseMutationResult<TData, TError, TVariables, TContext>
   > {}
 
 type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }
