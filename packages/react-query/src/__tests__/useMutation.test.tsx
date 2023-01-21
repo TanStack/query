@@ -1044,7 +1044,7 @@ describe('useMutation', () => {
     )
   })
 
-  test('should go to error state if onSuccess callback errors', async () => {
+  it('should go to error state if onSuccess callback errors', async () => {
     const error = new Error('error from onSuccess')
     const onError = jest.fn()
 
@@ -1079,7 +1079,7 @@ describe('useMutation', () => {
     expect(onError).toHaveBeenCalledWith(error, 'todo', undefined)
   })
 
-  test('should go to error state if onError callback errors', async () => {
+  it('should go to error state if onError callback errors', async () => {
     const error = new Error('error from onError')
     const mutateFnError = new Error('mutateFnError')
 
@@ -1115,7 +1115,7 @@ describe('useMutation', () => {
     await rendered.findByText('error: mutateFnError, status: error')
   })
 
-  test('should go to error state if onSettled callback errors', async () => {
+  it('should go to error state if onSettled callback errors', async () => {
     const error = new Error('error from onSettled')
     const mutateFnError = new Error('mutateFnError')
     const onError = jest.fn()
@@ -1153,5 +1153,54 @@ describe('useMutation', () => {
     await rendered.findByText('error: mutateFnError, status: error')
 
     expect(onError).toHaveBeenCalledWith(mutateFnError, 'todo', undefined)
+  })
+
+  it('should not call mutate callbacks for mutations started after unmount', async () => {
+    const onSuccessMutate = jest.fn()
+    const onSettledMutate = jest.fn()
+
+    function Page() {
+      const [show, setShow] = React.useState(true)
+      return (
+        <div>
+          <button onClick={() => setShow(false)}>hide</button>
+          {show && <Component />}
+        </div>
+      )
+    }
+
+    function Component() {
+      const mutation = useMutation(async (text: string) => {
+        await sleep(10)
+        return text
+      })
+
+      return (
+        <div>
+          <button
+            onClick={() => {
+              setActTimeout(() => {
+                mutation.mutate('todo', {
+                  onSuccess: onSuccessMutate,
+                  onSettled: onSettledMutate,
+                })
+              }, 10)
+            }}
+          >
+            mutate
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
+
+    await sleep(25)
+
+    expect(onSuccessMutate).toHaveBeenCalledTimes(0)
+    expect(onSettledMutate).toHaveBeenCalledTimes(0)
   })
 })
