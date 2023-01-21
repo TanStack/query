@@ -280,7 +280,7 @@ export class QueryClient extends QC {
   }
 
   getMutationDefaults(
-    mutationKey?: MaybeRefDeep<MutationKey>,
+    mutationKey: MaybeRefDeep<MutationKey>,
   ): MutationObserverOptions<any, any, any, any> | undefined {
     return super.getMutationDefaults(cloneDeepUnref(mutationKey))
   }

@@ -366,15 +366,19 @@ export class QueryClient {
 
   setQueryDefaults(
     queryKey: QueryKey,
-    options: Partial<Omit<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>>,
+    options: Partial<
+      Omit<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>
+    >,
   ): void {
-    this.#queryDefaults.set(hashKey(queryKey), { queryKey, defaultOptions: options  })
+    this.#queryDefaults.set(hashKey(queryKey), {
+      queryKey,
+      defaultOptions: options,
+    })
   }
 
   getQueryDefaults(
     queryKey: QueryKey,
   ): QueryObserverOptions<any, any, any, any, any> | undefined {
-
     const defaults = [...this.#queryDefaults.values()]
 
     const matchingDefaults = defaults.filter((x) =>
@@ -390,13 +394,15 @@ export class QueryClient {
     mutationKey: MutationKey,
     options: Omit<MutationObserverOptions<any, any, any, any>, 'mutationKey'>,
   ): void {
-    this.#mutationDefaults.set(hashKey(mutationKey), { mutationKey, defaultOptions: options  })
+    this.#mutationDefaults.set(hashKey(mutationKey), {
+      mutationKey,
+      defaultOptions: options,
+    })
   }
 
   getMutationDefaults(
     mutationKey: MutationKey,
   ): MutationObserverOptions<any, any, any, any> | undefined {
-
     const defaults = [...this.#mutationDefaults.values()]
 
     const matchingDefaults = defaults.filter((x) =>
@@ -481,7 +487,8 @@ export class QueryClient {
     }
     return {
       ...this.#defaultOptions.mutations,
-      ...(options?.mutationKey && this.getMutationDefaults(options.mutationKey)),
+      ...(options?.mutationKey &&
+        this.getMutationDefaults(options.mutationKey)),
       ...options,
       _defaulted: true,
     } as T
