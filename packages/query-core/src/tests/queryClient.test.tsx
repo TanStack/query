@@ -126,7 +126,7 @@ describe('queryClient', () => {
       expect(queryClient.getQueryDefaults(key)).toMatchObject(queryOptions2)
     })
 
-    test.skip('should merge defaultOptions', async () => {
+    test('should merge defaultOptions', async () => {
       const key = queryKey()
 
       queryClient.setQueryDefaults([...key, 'todo'], { suspense: true })

@@ -376,12 +376,14 @@ export class QueryClient {
   ): QueryObserverOptions<any, any, any, any, any> | undefined {
 
     const defaults = [...this.#queryDefaults.values()]
-    // Get the first matching defaults
-    const firstMatchingDefaults = defaults.find((x) =>
+
+    const matchingDefaults = defaults.filter((x) =>
       partialMatchKey(queryKey, x.queryKey),
     )
 
-    return firstMatchingDefaults?.defaultOptions
+    return matchingDefaults.reduce((accumulator, matchingDefault) => {
+      return { ...accumulator, ...matchingDefault.defaultOptions }
+    }, {})
   }
 
   setMutationDefaults(
@@ -397,12 +399,13 @@ export class QueryClient {
 
     const defaults = [...this.#mutationDefaults.values()]
 
-    // Get the first matching defaults
-    const firstMatchingDefaults = defaults.find((x) =>
+    const matchingDefaults = defaults.filter((x) =>
       partialMatchKey(mutationKey, x.mutationKey),
     )
 
-    return firstMatchingDefaults?.defaultOptions
+    return matchingDefaults.reduce((accumulator, matchingDefault) => {
+      return { ...accumulator, ...matchingDefault.defaultOptions }
+    }, {})
   }
 
   defaultQueryOptions<
