@@ -378,7 +378,7 @@ export class QueryClient {
 
   getQueryDefaults(
     queryKey: QueryKey,
-  ): QueryObserverOptions<any, any, any, any, any> | undefined {
+  ): QueryObserverOptions<any, any, any, any, any> {
     const defaults = [...this.#queryDefaults.values()]
 
     const matchingDefaults = defaults.filter((x) =>
@@ -402,7 +402,7 @@ export class QueryClient {
 
   getMutationDefaults(
     mutationKey: MutationKey,
-  ): MutationObserverOptions<any, any, any, any> | undefined {
+  ): MutationObserverOptions<any, any, any, any> {
     const defaults = [...this.#mutationDefaults.values()]
 
     const matchingDefaults = defaults.filter((x) =>
