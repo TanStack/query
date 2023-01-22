@@ -123,7 +123,6 @@ function App() {
   const [showDevtools, setShowDevtools] = React.useState(false)
 
   React.useEffect(() => {
-    // @ts-ignore
     window.toggleDevtools = () => setShowDevtools((old) => !old)
   }, [])
 
