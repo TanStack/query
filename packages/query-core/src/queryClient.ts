@@ -56,8 +56,8 @@ export class QueryClient {
   #mutationCache: MutationCache
   #logger: Logger
   #defaultOptions: DefaultOptions
-  #queryDefaults: QueryDefaults[]
-  #mutationDefaults: MutationDefaults[]
+  #queryDefaults: Map<string, QueryDefaults>
+  #mutationDefaults: Map<string, MutationDefaults>
   #mountCount: number
   #unsubscribeFocus?: () => void
   #unsubscribeOnline?: () => void
@@ -67,8 +67,8 @@ export class QueryClient {
     this.#mutationCache = config.mutationCache || new MutationCache()
     this.#logger = config.logger || defaultLogger
     this.#defaultOptions = config.defaultOptions || {}
-    this.#queryDefaults = []
-    this.#mutationDefaults = []
+    this.#queryDefaults = new Map()
+    this.#mutationDefaults = new Map()
     this.#mountCount = 0
 
     if (process.env.NODE_ENV !== 'production' && config.logger) {
@@ -366,92 +366,55 @@ export class QueryClient {
 
   setQueryDefaults(
     queryKey: QueryKey,
-    options: Omit<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>,
+    options: Partial<
+      Omit<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>
+    >,
   ): void {
-    const result = this.#queryDefaults.find(
-      (x) => hashKey(queryKey) === hashKey(x.queryKey),
-    )
-    if (result) {
-      result.defaultOptions = options
-    } else {
-      this.#queryDefaults.push({ queryKey, defaultOptions: options })
-    }
+    this.#queryDefaults.set(hashKey(queryKey), {
+      queryKey,
+      defaultOptions: options,
+    })
   }
 
   getQueryDefaults(
-    queryKey?: QueryKey,
-  ): QueryObserverOptions<any, any, any, any, any> | undefined {
-    if (!queryKey) {
-      return undefined
-    }
+    queryKey: QueryKey,
+  ): QueryObserverOptions<any, any, any, any, any> {
+    const defaults = [...this.#queryDefaults.values()]
 
-    // Get the first matching defaults
-    const firstMatchingDefaults = this.#queryDefaults.find((x) =>
-      partialMatchKey(queryKey, x.queryKey),
-    )
+    let result: QueryObserverOptions<any, any, any, any, any> = {}
 
-    // Additional checks and error in dev mode
-    if (process.env.NODE_ENV !== 'production') {
-      // Retrieve all matching defaults for the given key
-      const matchingDefaults = this.#queryDefaults.filter((x) =>
-        partialMatchKey(queryKey, x.queryKey),
-      )
-      // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
-      if (matchingDefaults.length > 1) {
-        this.#logger.error(
-          `[QueryClient] Several query defaults match with key '${JSON.stringify(
-            queryKey,
-          )}'. The first matching query defaults are used. Please check how query defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetquerydefaults.`,
-        )
+    defaults.forEach((queryDefault) => {
+      if (partialMatchKey(queryKey, queryDefault.queryKey)) {
+        result = { ...result, ...queryDefault.defaultOptions }
       }
-    }
-
-    return firstMatchingDefaults?.defaultOptions
+    })
+    return result
   }
 
   setMutationDefaults(
     mutationKey: MutationKey,
-    options: MutationObserverOptions<any, any, any, any>,
+    options: Omit<MutationObserverOptions<any, any, any, any>, 'mutationKey'>,
   ): void {
-    const result = this.#mutationDefaults.find(
-      (x) => hashKey(mutationKey) === hashKey(x.mutationKey),
-    )
-    if (result) {
-      result.defaultOptions = options
-    } else {
-      this.#mutationDefaults.push({ mutationKey, defaultOptions: options })
-    }
+    this.#mutationDefaults.set(hashKey(mutationKey), {
+      mutationKey,
+      defaultOptions: options,
+    })
   }
 
   getMutationDefaults(
-    mutationKey?: MutationKey,
-  ): MutationObserverOptions<any, any, any, any> | undefined {
-    if (!mutationKey) {
-      return undefined
-    }
+    mutationKey: MutationKey,
+  ): MutationObserverOptions<any, any, any, any> {
+    const defaults = [...this.#mutationDefaults.values()]
 
-    // Get the first matching defaults
-    const firstMatchingDefaults = this.#mutationDefaults.find((x) =>
-      partialMatchKey(mutationKey, x.mutationKey),
-    )
+    let result: MutationObserverOptions<any, any, any, any> = {}
 
-    // Additional checks and error in dev mode
-    if (process.env.NODE_ENV !== 'production') {
-      // Retrieve all matching defaults for the given key
-      const matchingDefaults = this.#mutationDefaults.filter((x) =>
-        partialMatchKey(mutationKey, x.mutationKey),
-      )
-      // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
-      if (matchingDefaults.length > 1) {
-        this.#logger.error(
-          `[QueryClient] Several mutation defaults match with key '${JSON.stringify(
-            mutationKey,
-          )}'. The first matching mutation defaults are used. Please check how mutation defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetmutationdefaults.`,
-        )
+    defaults.forEach((queryDefault) => {
+      if (partialMatchKey(mutationKey, queryDefault.mutationKey)) {
+        result = { ...result, ...queryDefault.defaultOptions }
       }
-    }
+    })
 
-    return firstMatchingDefaults?.defaultOptions
+    return result
   }
 
   defaultQueryOptions<
@@ -489,12 +452,12 @@ export class QueryClient {
 
     const defaultedOptions = {
       ...this.#defaultOptions.queries,
-      ...this.getQueryDefaults(options?.queryKey),
+      ...(options?.queryKey && this.getQueryDefaults(options.queryKey)),
       ...options,
       _defaulted: true,
     }
 
-    if (!defaultedOptions.queryHash && defaultedOptions.queryKey) {
+    if (!defaultedOptions.queryHash) {
       defaultedOptions.queryHash = hashQueryKeyByOptions(
         defaultedOptions.queryKey,
         defaultedOptions,
@@ -527,7 +490,8 @@ export class QueryClient {
     }
     return {
       ...this.#defaultOptions.mutations,
-      ...this.getMutationDefaults(options?.mutationKey),
+      ...(options?.mutationKey &&
+        this.getMutationDefaults(options.mutationKey)),
       ...options,
       _defaulted: true,
     } as T
