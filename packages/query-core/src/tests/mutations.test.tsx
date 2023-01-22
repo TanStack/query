@@ -350,10 +350,10 @@ describe('mutations', () => {
     const mutation = new MutationObserver(queryClient, {
       mutationFn: async () => {
         return 'update'
-      }
+      },
     })
 
-    await mutation.mutate(undefined, { onSuccess, onSettled})
+    await mutation.mutate(undefined, { onSuccess, onSettled })
     expect(mutation.getCurrentResult().data).toEqual('update')
     expect(onSuccess).not.toHaveBeenCalled()
     expect(onSettled).not.toHaveBeenCalled()
