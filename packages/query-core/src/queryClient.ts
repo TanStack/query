@@ -383,7 +383,7 @@ export class QueryClient {
 
     let result: QueryObserverOptions<any, any, any, any, any> = {}
 
-    defaults.forEach(queryDefault => {
+    defaults.forEach((queryDefault) => {
       if (partialMatchKey(queryKey, queryDefault.queryKey)) {
         result = { ...result, ...queryDefault.defaultOptions }
       }
@@ -408,7 +408,7 @@ export class QueryClient {
 
     let result: MutationObserverOptions<any, any, any, any> = {}
 
-    defaults.forEach(queryDefault => {
+    defaults.forEach((queryDefault) => {
       if (partialMatchKey(mutationKey, queryDefault.mutationKey)) {
         result = { ...result, ...queryDefault.defaultOptions }
       }
