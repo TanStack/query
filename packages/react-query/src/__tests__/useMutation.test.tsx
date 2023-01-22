@@ -1157,7 +1157,9 @@ describe('useMutation', () => {
 
   it('should not call mutate callbacks for mutations started after unmount', async () => {
     const onSuccessMutate = jest.fn()
+    const onSuccessUseMutation = jest.fn()
     const onSettledMutate = jest.fn()
+    const onSettledUseMutation = jest.fn()
 
     function Page() {
       const [show, setShow] = React.useState(true)
@@ -1170,9 +1172,13 @@ describe('useMutation', () => {
     }
 
     function Component() {
-      const mutation = useMutation(async (text: string) => {
-        await sleep(10)
-        return text
+      const mutation = useMutation({
+        mutationFn: async (text: string) => {
+          await sleep(10)
+          return text
+        },
+        onSuccess: onSuccessUseMutation,
+        onSettled: onSettledUseMutation,
       })
 
       return (
@@ -1198,7 +1204,8 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
 
-    await sleep(25)
+    await waitFor(() => expect(onSuccessUseMutation).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(onSettledUseMutation).toHaveBeenCalledTimes(1))
 
     expect(onSuccessMutate).toHaveBeenCalledTimes(0)
     expect(onSettledMutate).toHaveBeenCalledTimes(0)
