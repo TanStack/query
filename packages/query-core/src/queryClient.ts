@@ -381,13 +381,14 @@ export class QueryClient {
   ): QueryObserverOptions<any, any, any, any, any> {
     const defaults = [...this.#queryDefaults.values()]
 
-    const matchingDefaults = defaults.filter((x) =>
-      partialMatchKey(queryKey, x.queryKey),
-    )
+    let result: QueryObserverOptions<any, any, any, any, any> = {}
 
-    return matchingDefaults.reduce((accumulator, matchingDefault) => {
-      return { ...accumulator, ...matchingDefault.defaultOptions }
-    }, {})
+    defaults.forEach(queryDefault => {
+      if (partialMatchKey(queryKey, queryDefault.queryKey)) {
+        result = { ...result, ...queryDefault.defaultOptions }
+      }
+    })
+    return result
   }
 
   setMutationDefaults(
@@ -405,13 +406,15 @@ export class QueryClient {
   ): MutationObserverOptions<any, any, any, any> {
     const defaults = [...this.#mutationDefaults.values()]
 
-    const matchingDefaults = defaults.filter((x) =>
-      partialMatchKey(mutationKey, x.mutationKey),
-    )
+    let result: MutationObserverOptions<any, any, any, any> = {}
 
-    return matchingDefaults.reduce((accumulator, matchingDefault) => {
-      return { ...accumulator, ...matchingDefault.defaultOptions }
-    }, {})
+    defaults.forEach(queryDefault => {
+      if (partialMatchKey(mutationKey, queryDefault.mutationKey)) {
+        result = { ...result, ...queryDefault.defaultOptions }
+      }
+    })
+
+    return result
   }
 
   defaultQueryOptions<
