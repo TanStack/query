@@ -1,7 +1,8 @@
-import { InfiniteData } from '@tanstack/query-core'
+import type { InfiniteData } from '@tanstack/query-core'
 import { reactive } from 'vue'
 import { useInfiniteQuery } from '../useInfiniteQuery'
-import { doNotExecute, Equal, Expect, simpleFetcher } from './test-utils'
+import type { Equal, Expect } from './test-utils'
+import { doNotExecute, simpleFetcher } from './test-utils'
 
 describe('Discriminated union return type', () => {
   it('data should be possibly undefined by default', () => {
