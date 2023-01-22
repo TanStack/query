@@ -130,9 +130,7 @@ export class MutationObserver<
         typeof variables !== 'undefined' ? variables : this.options.variables,
     })
 
-    if (this.listeners.length) {
-      this.currentMutation.addObserver(this)
-    }
+    this.currentMutation.addObserver(this)
 
     return this.currentMutation.execute()
   }
@@ -168,7 +166,7 @@ export class MutationObserver<
   private notify(options: NotifyOptions) {
     notifyManager.batch(() => {
       // First trigger the mutate callbacks
-      if (this.mutateOptions) {
+      if (this.mutateOptions && this.hasListeners()) {
         if (options.onSuccess) {
           this.mutateOptions.onSuccess?.(
             this.currentResult.data!,
