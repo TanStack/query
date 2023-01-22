@@ -130,7 +130,9 @@ export class MutationObserver<
         typeof variables !== 'undefined' ? variables : this.options.variables,
     })
 
-    this.currentMutation.addObserver(this)
+    if (this.listeners.length) {
+      this.currentMutation.addObserver(this)
+    }
 
     return this.currentMutation.execute()
   }
