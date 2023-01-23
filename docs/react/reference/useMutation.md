@@ -96,7 +96,7 @@ mutate(variables, {
 **Returns**
 
 - `mutate: (variables: TVariables, { onSuccess, onSettled, onError }) => void`
-  - The mutation function you can call with variables to trigger the mutation and optionally override options passed to `useMutation`.
+  - The mutation function you can call with variables to trigger the mutation and optionally hooks on additional callback options.
   - `variables: TVariables`
     - Optional
     - The variables object to pass to the `mutationFn`.
