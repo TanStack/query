@@ -852,10 +852,7 @@ const ActiveQuery = ({
     if (!activeQuery) {
       return
     }
-    const qCache = queryClient.getQueryCache()
-    const q = qCache.find(activeQuery.queryKey, { exact: true })
-    q?.setState({
-      ...q.state,
+    activeQuery.setState({
       status: 'error',
       error:
         errorType?.initializer(activeQuery) ??
@@ -1022,11 +1019,7 @@ const ActiveQuery = ({
         <Button
           type="button"
           onClick={() => {
-            const qCache = queryClient.getQueryCache()
-            const q = qCache.find(activeQuery.queryKey, { exact: true })
-
-            q?.setState({
-              ...q.state,
+            activeQuery.setState({
               data: undefined,
               status: 'loading',
             })
