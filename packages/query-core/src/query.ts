@@ -521,7 +521,7 @@ export class Query<
               : 'paused',
             ...(!state.dataUpdatedAt && {
               error: null,
-              status: 'loading',
+              status: 'pending',
             }),
           }
         case 'success':
@@ -613,7 +613,7 @@ function getDefaultState<
     fetchFailureReason: null,
     fetchMeta: null,
     isInvalidated: false,
-    status: hasData ? 'success' : 'loading',
+    status: hasData ? 'success' : 'pending',
     fetchStatus: 'idle',
   }
 }

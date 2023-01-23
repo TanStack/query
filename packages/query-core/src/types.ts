@@ -363,7 +363,7 @@ export interface FetchPreviousPageOptions extends ResultOptions {
   pageParam?: unknown
 }
 
-export type QueryStatus = 'loading' | 'error' | 'success'
+export type QueryStatus = 'pending' | 'error' | 'success'
 export type FetchStatus = 'fetching' | 'paused' | 'idle'
 
 export interface QueryObserverBaseResult<TData = unknown, TError = Error> {
@@ -379,6 +379,7 @@ export interface QueryObserverBaseResult<TData = unknown, TError = Error> {
   isFetchedAfterMount: boolean
   isFetching: boolean
   isLoading: boolean
+  isPending: boolean
   isLoadingError: boolean
   isInitialLoading: boolean
   isPaused: boolean
@@ -403,7 +404,7 @@ export interface QueryObserverLoadingResult<TData = unknown, TError = Error>
   isLoadingError: false
   isRefetchError: false
   isSuccess: false
-  status: 'loading'
+  status: 'pending'
 }
 
 export interface QueryObserverLoadingErrorResult<
@@ -482,7 +483,7 @@ export interface InfiniteQueryObserverLoadingResult<
   isLoadingError: false
   isRefetchError: false
   isSuccess: false
-  status: 'loading'
+  status: 'pending'
 }
 
 export interface InfiniteQueryObserverLoadingErrorResult<
