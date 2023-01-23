@@ -111,3 +111,11 @@ The `clear` method can be used to clear the cache entirely and start fresh.
 ```tsx
 queryCache.clear()
 ```
+[//]: # 'Materials'
+
+## Further reading
+
+To get a better understanding how the QueryCache works internally, have a look at [#18: Inside React Query
+](../community/tkdodos-blog#18-inside-react-query) from the Community Resources.
+
+[//]: # 'Materials'
