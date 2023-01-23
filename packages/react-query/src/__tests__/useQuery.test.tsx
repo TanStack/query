@@ -2865,9 +2865,6 @@ describe('useQuery', () => {
   })
 
   it('should set status to error if queryFn throws', async () => {
-    const consoleMock = jest
-      .spyOn(console, 'error')
-      .mockImplementation(() => {})
     const key = queryKey()
 
     function Page() {
@@ -2891,7 +2888,6 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('error'))
     await waitFor(() => rendered.getByText('Error test jaylen'))
-    consoleMock.mockRestore()
   })
 
   it('should throw error if queryFn throws and throwErrors is in use', async () => {

@@ -294,6 +294,8 @@ describe('VueQueryPlugin', () => {
     })
 
     test('should delay useQueries subscription and not call fetcher if data is not stale', async () => {
+      const consoleMock = jest.spyOn(console, 'error')
+      consoleMock.mockImplementation(() => undefined)
       const appMock = getAppMock()
       const customClient = new QueryClient({
         defaultOptions: {
@@ -340,6 +342,7 @@ describe('VueQueryPlugin', () => {
       expect(customClient.isRestoring.value).toBeFalsy()
       expect(queries[0].data).toStrictEqual({ foo: 'bar' })
       expect(fnSpy).toHaveBeenCalledTimes(0)
+      consoleMock.mockRestore()
     })
   })
 })
