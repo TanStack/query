@@ -1019,28 +1019,37 @@ const ActiveQuery = ({
         <Button
           type="button"
           onClick={() => {
-            activeQuery.setState({
-              data: undefined,
-              status: 'loading',
-            })
+            if (activeQuery.state.data === undefined) {
+              queryClient.resetQueries(activeQuery)
+            } else {
+              activeQuery.setState({
+                data: undefined,
+                status: 'loading',
+              })
+            }
           }}
           style={{
             background: theme.paused,
           }}
         >
-          Trigger loading
+          {activeQuery.state.status === "loading" ? "Restore" : "Trigger"} loading
         </Button>{' '}
-        {errorTypes.length === 0 ? (
+        {errorTypes.length === 0 || activeQuery.state.status === "error" ? (
           <Button
             type="button"
             onClick={() => {
-              triggerError()
+              console.log(activeQuery.state)
+              if (!activeQuery.state.error) {
+                triggerError()
+              } else {
+                queryClient.resetQueries(activeQuery)
+              }
             }}
             style={{
               background: theme.danger,
             }}
           >
-            Trigger error
+            {activeQuery.state.status === "error" ? "Restore" : "Trigger"} error
           </Button>
         ) : (
           <label>
