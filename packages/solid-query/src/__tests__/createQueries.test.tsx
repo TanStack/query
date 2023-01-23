@@ -3,15 +3,9 @@ import { fireEvent, render, screen, waitFor } from 'solid-testing-library'
 import * as QueriesObserverModule from '../../../query-core/src/queriesObserver'
 
 import type { QueryFunctionContext, QueryKey } from '@tanstack/query-core'
-import {
-  createContext,
-  createRenderEffect,
-  createSignal,
-  ErrorBoundary,
-} from 'solid-js'
+import { createRenderEffect, createSignal } from 'solid-js'
 import type {
   CreateQueryResult,
-  QueryClient,
   QueryFunction,
   QueryObserverResult,
   SolidQueryOptions,
@@ -796,91 +790,26 @@ describe('useQueries', () => {
     QueriesObserverSpy.mockRestore()
   })
 
-  describe('with custom context', () => {
-    it('should return the correct states', async () => {
-      const context = createContext<QueryClient | undefined>(undefined)
+  it('should use provided custom queryClient', async () => {
+    const key = queryKey()
+    const queryFn = () => {
+      return Promise.resolve('custom client')
+    }
 
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const results: CreateQueryResult[][] = []
+    function Page() {
+      const state = createQueries(() => ({
+        queries: [{ queryKey: key, queryFn }],
+        queryClient,
+      }))
+      return (
+        <div>
+          <h1>Status: {state[0].data}</h1>
+        </div>
+      )
+    }
 
-      function Page() {
-        const result = createQueries(() => ({
-          context,
-          queries: [
-            {
-              queryKey: key1,
-              queryFn: async () => {
-                await sleep(5)
-                return 1
-              },
-            },
-            {
-              queryKey: key2,
-              queryFn: async () => {
-                await sleep(10)
-                return 2
-              },
-            },
-          ],
-        }))
-        createRenderEffect(() => {
-          results.push([...result])
-        })
-        return null
-      }
+    render(() => <Page />)
 
-      render(() => (
-        <QueryClientProvider client={queryClient} context={context}>
-          <Page />
-        </QueryClientProvider>
-      ))
-
-      await sleep(30)
-
-      expect(results[0]).toMatchObject([
-        { data: undefined },
-        { data: undefined },
-      ])
-      expect(results[results.length - 1]).toMatchObject([
-        { data: 1 },
-        { data: 2 },
-      ])
-    })
-
-    it('should throw if the context is necessary and is not passed to useQueries', async () => {
-      const context = createContext<QueryClient | undefined>(undefined)
-
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const results: CreateQueryResult[][] = []
-
-      function Page() {
-        const result = createQueries(() => ({
-          queries: [
-            {
-              queryKey: key1,
-              queryFn: async () => 1,
-            },
-            {
-              queryKey: key2,
-              queryFn: async () => 2,
-            },
-          ],
-        }))
-        results.push(result)
-        return null
-      }
-
-      render(() => (
-        <QueryClientProvider client={queryClient} context={context}>
-          <ErrorBoundary fallback={() => <div>error boundary</div>}>
-            <Page />
-          </ErrorBoundary>
-        </QueryClientProvider>
-      ))
-
-      await waitFor(() => screen.getByText('error boundary'))
-    })
+    await waitFor(() => screen.getByText('Status: custom client'))
   })
 })

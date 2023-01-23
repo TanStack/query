@@ -14,7 +14,7 @@ import {
   getSimpleFetcherWithReturnData,
 } from './test-utils'
 import { useQuery } from '../useQuery'
-import { unrefQueryArgs, useBaseQuery } from '../useBaseQuery'
+import { useBaseQuery } from '../useBaseQuery'
 
 jest.mock('../useQueryClient')
 jest.mock('../useBaseQuery')
@@ -23,11 +23,15 @@ describe('useQuery', () => {
   test('should properly execute query', () => {
     useQuery({ queryKey: ['key0'], queryFn: simpleFetcher, staleTime: 1000 })
 
-    expect(useBaseQuery).toBeCalledWith(QueryObserver, {
-      queryKey: ['key0'],
-      queryFn: simpleFetcher,
-      staleTime: 1000,
-    })
+    expect(useBaseQuery).toBeCalledWith(
+      QueryObserver,
+      {
+        queryKey: ['key0'],
+        queryFn: simpleFetcher,
+        staleTime: 1000,
+      },
+      undefined,
+    )
   })
 
   test('should return loading status initially', () => {
@@ -248,23 +252,6 @@ describe('useQuery', () => {
     await flushPromises()
 
     expect(status.value).toStrictEqual('loading')
-  })
-
-  describe('parseQueryArgs', () => {
-    test('should unwrap refs in options', () => {
-      const key = ref(['key'])
-      const fn = ref(simpleFetcher)
-      const options = ref({ queryKey: key, queryFn: fn, enabled: ref(true) })
-
-      const result = unrefQueryArgs(options)
-      const expected = {
-        queryKey: ['key'],
-        queryFn: simpleFetcher,
-        enabled: true,
-      }
-
-      expect(result).toEqual(expected)
-    })
   })
 
   describe('suspense', () => {

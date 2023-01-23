@@ -1,6 +1,7 @@
 import { reactive } from 'vue'
 import { useMutation } from '../useMutation'
-import { doNotExecute, Equal, Expect, successMutator } from './test-utils'
+import { doNotExecute, successMutator } from './test-utils'
+import type { Equal, Expect } from './test-utils'
 
 describe('Discriminated union return type', () => {
   it('data should be possibly undefined by default', () => {

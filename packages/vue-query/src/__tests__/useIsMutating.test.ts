@@ -1,9 +1,8 @@
-import { onScopeDispose, reactive, ref } from 'vue-demi'
+import { onScopeDispose, reactive } from 'vue-demi'
 
 import { flushPromises, successMutator } from './test-utils'
 import { useMutation } from '../useMutation'
-import { unrefFilterArgs, useIsMutating } from '../useIsMutating'
-import { useQueryClient } from '../useQueryClient'
+import { useIsMutating } from '../useIsMutating'
 
 jest.mock('../useQueryClient')
 
@@ -61,13 +60,6 @@ describe('useIsMutating', () => {
     onScopeDisposeMock.mockReset()
   })
 
-  test('should call `useQueryClient` with a proper `queryClientKey`', async () => {
-    const queryClientKey = 'foo'
-    useIsMutating({ queryClientKey })
-
-    expect(useQueryClient).toHaveBeenCalledWith(queryClientKey)
-  })
-
   test('should properly update filters', async () => {
     const filter = reactive({ mutationKey: ['foo'] })
     const { mutate } = useMutation({
@@ -85,26 +77,5 @@ describe('useIsMutating', () => {
     await flushPromises()
 
     expect(isMutating.value).toStrictEqual(1)
-  })
-
-  describe('parseMutationFilterArgs', () => {
-    test('should merge mutation key with filters', () => {
-      const filters = { mutationKey: ['key'], fetching: true }
-
-      const result = unrefFilterArgs(filters)
-      const expected = { ...filters, mutationKey: ['key'] }
-
-      expect(result).toEqual(expected)
-    })
-
-    test('should unwrap refs arguments', () => {
-      const key = ref(['key'])
-      const filters = ref({ mutationKey: key, fetching: ref(true) })
-
-      const result = unrefFilterArgs(filters)
-      const expected = { mutationKey: ['key'], fetching: true }
-
-      expect(result).toEqual(expected)
-    })
   })
 })

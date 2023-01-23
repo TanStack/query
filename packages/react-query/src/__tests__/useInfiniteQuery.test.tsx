@@ -1,4 +1,4 @@
-import { fireEvent, waitFor } from '@testing-library/react'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
 import {
@@ -846,14 +846,12 @@ describe('useInfiniteQuery', () => {
       Promise<number>,
       [QueryFunctionContext<typeof key, number>]
     >(async ({ pageParam = start, signal }) => {
-      if (signal) {
-        const onAbort = jest.fn()
-        const abortListener = jest.fn()
-        onAborts.push(onAbort)
-        abortListeners.push(abortListener)
-        signal.onabort = onAbort
-        signal.addEventListener('abort', abortListener)
-      }
+      const onAbort = jest.fn()
+      const abortListener = jest.fn()
+      onAborts.push(onAbort)
+      abortListeners.push(abortListener)
+      signal.onabort = onAbort
+      signal.addEventListener('abort', abortListener)
       await sleep(50)
       return Number(pageParam)
     })
@@ -891,7 +889,7 @@ describe('useInfiniteQuery', () => {
     expect(firstCtx.pageParam).toBeUndefined()
     expect(firstCtx.queryKey).toEqual(key)
     expect(firstCtx.signal).toBeInstanceOf(AbortSignal)
-    expect(firstCtx.signal?.aborted).toBe(false)
+    expect(firstCtx.signal.aborted).toBe(false)
     expect(onAborts[callIndex]).not.toHaveBeenCalled()
     expect(abortListeners[callIndex]).not.toHaveBeenCalled()
 
@@ -900,7 +898,7 @@ describe('useInfiniteQuery', () => {
     expect(secondCtx.pageParam).toBe(11)
     expect(secondCtx.queryKey).toEqual(key)
     expect(secondCtx.signal).toBeInstanceOf(AbortSignal)
-    expect(secondCtx.signal?.aborted).toBe(true)
+    expect(secondCtx.signal.aborted).toBe(true)
     expect(onAborts[callIndex]).toHaveBeenCalledTimes(1)
     expect(abortListeners[callIndex]).toHaveBeenCalledTimes(1)
 
@@ -909,7 +907,7 @@ describe('useInfiniteQuery', () => {
     expect(thirdCtx.pageParam).toBe(11)
     expect(thirdCtx.queryKey).toEqual(key)
     expect(thirdCtx.signal).toBeInstanceOf(AbortSignal)
-    expect(thirdCtx.signal?.aborted).toBe(false)
+    expect(thirdCtx.signal.aborted).toBe(false)
     expect(onAborts[callIndex]).not.toHaveBeenCalled()
     expect(abortListeners[callIndex]).not.toHaveBeenCalled()
   })
@@ -923,14 +921,13 @@ describe('useInfiniteQuery', () => {
       Promise<number>,
       [QueryFunctionContext<typeof key, number>]
     >(async ({ pageParam = start, signal }) => {
-      if (signal) {
-        const onAbort = jest.fn()
-        const abortListener = jest.fn()
-        onAborts.push(onAbort)
-        abortListeners.push(abortListener)
-        signal.onabort = onAbort
-        signal.addEventListener('abort', abortListener)
-      }
+      const onAbort = jest.fn()
+      const abortListener = jest.fn()
+      onAborts.push(onAbort)
+      abortListeners.push(abortListener)
+      signal.onabort = onAbort
+      signal.addEventListener('abort', abortListener)
+
       await sleep(50)
       return Number(pageParam)
     })
@@ -968,7 +965,7 @@ describe('useInfiniteQuery', () => {
     expect(firstCtx.pageParam).toBeUndefined()
     expect(firstCtx.queryKey).toEqual(key)
     expect(firstCtx.signal).toBeInstanceOf(AbortSignal)
-    expect(firstCtx.signal?.aborted).toBe(false)
+    expect(firstCtx.signal.aborted).toBe(false)
     expect(onAborts[callIndex]).not.toHaveBeenCalled()
     expect(abortListeners[callIndex]).not.toHaveBeenCalled()
 
@@ -977,7 +974,7 @@ describe('useInfiniteQuery', () => {
     expect(secondCtx.pageParam).toBe(11)
     expect(secondCtx.queryKey).toEqual(key)
     expect(secondCtx.signal).toBeInstanceOf(AbortSignal)
-    expect(secondCtx.signal?.aborted).toBe(false)
+    expect(secondCtx.signal.aborted).toBe(false)
     expect(onAborts[callIndex]).not.toHaveBeenCalled()
     expect(abortListeners[callIndex]).not.toHaveBeenCalled()
   })
@@ -1760,5 +1757,28 @@ describe('useInfiniteQuery', () => {
     await waitFor(() => rendered.getByText('hidden'))
 
     expect(cancelFn).toHaveBeenCalled()
+  })
+
+  it('should use provided custom queryClient', async () => {
+    const key = queryKey()
+    const queryFn = async () => {
+      return Promise.resolve('custom client')
+    }
+
+    function Page() {
+      const { data } = useInfiniteQuery(
+        {
+          queryKey: key,
+          queryFn,
+        },
+        queryClient,
+      )
+
+      return <div>data: {data?.pages[0]}</div>
+    }
+
+    const rendered = render(<Page></Page>)
+
+    await waitFor(() => rendered.getByText('data: custom client'))
   })
 })

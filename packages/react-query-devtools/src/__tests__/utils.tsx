@@ -15,7 +15,7 @@ export function renderWithClient(
   renderOptions?: RenderOptions,
 ): ReturnType<typeof render> {
   const { rerender, ...result } = render(
-    <QueryClientProvider client={client} context={devtoolsOptions.context}>
+    <QueryClientProvider client={client}>
       <ReactQueryDevtools {...devtoolsOptions} />
       {ui}
     </QueryClientProvider>,
@@ -25,7 +25,7 @@ export function renderWithClient(
     ...result,
     rerender: (rerenderUi: React.ReactElement) =>
       rerender(
-        <QueryClientProvider client={client} context={devtoolsOptions.context}>
+        <QueryClientProvider client={client}>
           <ReactQueryDevtools {...devtoolsOptions} />
           {rerenderUi}
         </QueryClientProvider>,

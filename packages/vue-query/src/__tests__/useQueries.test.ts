@@ -214,27 +214,4 @@ describe('useQueries', () => {
 
     expect(useQueryClient).toHaveBeenCalledTimes(0)
   })
-
-  test('should use queryClient provided via query options', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
-    const queryClient = new QueryClient()
-    const queries = [
-      {
-        queryKey: ['key41'],
-        queryFn: simpleFetcher,
-        queryClient,
-      },
-      {
-        queryKey: ['key42'],
-        queryFn: simpleFetcher,
-      },
-    ]
-
-    useQueries({ queries })
-    await flushPromises()
-
-    expect(useQueryClient).toHaveBeenCalledTimes(0)
-    consoleMock.mockRestore()
-  })
 })

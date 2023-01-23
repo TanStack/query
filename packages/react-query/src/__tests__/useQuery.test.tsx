@@ -1,4 +1,4 @@
-import { act, fireEvent, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import * as React from 'react'
 import {
@@ -303,12 +303,12 @@ describe('useQuery', () => {
   it('should return the correct states for an unsuccessful query', async () => {
     const key = queryKey()
 
-    const states: UseQueryResult<undefined, string>[] = []
+    const states: UseQueryResult[] = []
 
     function Page() {
-      const state = useQuery<string[], string, undefined>({
+      const state = useQuery({
         queryKey: key,
-        queryFn: () => Promise.reject('rejected'),
+        queryFn: () => Promise.reject(new Error('rejected')),
 
         retry: 1,
         retryDelay: 1,
@@ -320,7 +320,7 @@ describe('useQuery', () => {
         <div>
           <h1>Status: {state.status}</h1>
           <div>Failure Count: {state.failureCount}</div>
-          <div>Failure Reason: {state.failureReason}</div>
+          <div>Failure Reason: {state.failureReason?.message}</div>
         </div>
       )
     }
@@ -361,7 +361,7 @@ describe('useQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 1,
-      failureReason: 'rejected',
+      failureReason: new Error('rejected'),
       errorUpdateCount: 0,
       isError: false,
       isFetched: false,
@@ -384,10 +384,10 @@ describe('useQuery', () => {
     expect(states[2]).toEqual({
       data: undefined,
       dataUpdatedAt: 0,
-      error: 'rejected',
+      error: new Error('rejected'),
       errorUpdatedAt: expect.any(Number),
       failureCount: 2,
-      failureReason: 'rejected',
+      failureReason: new Error('rejected'),
       errorUpdateCount: 1,
       isError: true,
       isFetched: true,
@@ -589,7 +589,7 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery<unknown>({
         queryKey: key,
-        queryFn: () => Promise.reject('error'),
+        queryFn: () => Promise.reject(new Error('error')),
         retry: false,
         onError,
       })
@@ -602,7 +602,7 @@ describe('useQuery', () => {
     await sleep(10)
     expect(states.length).toBe(2)
     expect(onError).toHaveBeenCalledTimes(1)
-    expect(onError).toHaveBeenCalledWith('error')
+    expect(onError).toHaveBeenCalledWith(new Error('error'))
   })
 
   it('should not call onError when receiving a CancelledError', async () => {
@@ -2868,10 +2868,10 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const { status, error } = useQuery<unknown, string>({
+      const { status, error } = useQuery({
         queryKey: key,
         queryFn: () => {
-          return Promise.reject('Error test jaylen')
+          return Promise.reject(new Error('Error test jaylen'))
         },
         retry: false,
       })
@@ -2879,7 +2879,7 @@ describe('useQuery', () => {
       return (
         <div>
           <h1>{status}</h1>
-          <h2>{error}</h2>
+          <h2>{error?.message}</h2>
         </div>
       )
     }
@@ -2899,7 +2899,7 @@ describe('useQuery', () => {
     function Page() {
       const { status, error } = useQuery<unknown, string>({
         queryKey: key,
-        queryFn: () => Promise.reject('Error test jaylen'),
+        queryFn: () => Promise.reject(new Error('Error test jaylen')),
         retry: false,
         throwErrors: true,
       })
@@ -3031,12 +3031,12 @@ describe('useQuery', () => {
     let count = 0
 
     function Page() {
-      const result = useQuery<number, string>({
+      const result = useQuery({
         queryKey: key,
         queryFn: async () => {
           count++
           await sleep(10)
-          return Promise.reject('some error')
+          return Promise.reject(new Error('some error'))
         },
 
         retry: 2,
@@ -3045,9 +3045,9 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <div>error: {result.error ?? 'null'}</div>
+          <div>error: {result.error?.message ?? 'null'}</div>
           <div>failureCount: {result.failureCount}</div>
-          <div>failureReason: {result.failureReason}</div>
+          <div>failureReason: {result.failureReason?.message}</div>
         </div>
       )
     }
@@ -3080,12 +3080,12 @@ describe('useQuery', () => {
     let count = 0
 
     function Page() {
-      const result = useQuery<number, string>({
+      const result = useQuery({
         queryKey: key,
         queryFn: async () => {
           count++
           await sleep(10)
-          return Promise.reject('some error')
+          return Promise.reject(new Error('some error'))
         },
 
         retry: 2,
@@ -3094,9 +3094,9 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <div>error: {result.error ?? 'null'}</div>
+          <div>error: {result.error?.message ?? 'null'}</div>
           <div>failureCount: {result.failureCount}</div>
-          <div>failureReason: {result.failureReason}</div>
+          <div>failureReason: {result.failureReason?.message}</div>
         </div>
       )
     }
@@ -3353,25 +3353,22 @@ describe('useQuery', () => {
 
     const queryFn = jest.fn<unknown, unknown[]>()
     queryFn.mockImplementation(() => {
-      return Promise.reject('Error test Barrett')
+      return Promise.reject(new Error('Error test Barrett'))
     })
 
     function Page() {
-      const { status, failureCount, failureReason } = useQuery<unknown, string>(
-        {
-          queryKey: key,
-          queryFn,
-
-          retry: 1,
-          retryDelay: 1,
-        },
-      )
+      const { status, failureCount, failureReason } = useQuery({
+        queryKey: key,
+        queryFn,
+        retry: 1,
+        retryDelay: 1,
+      })
 
       return (
         <div>
           <h1>{status}</h1>
           <h2>Failed {failureCount} times</h2>
-          <h2>Failed because {failureReason}</h2>
+          <h2>Failed because {failureReason?.message}</h2>
         </div>
       )
     }
@@ -3394,31 +3391,27 @@ describe('useQuery', () => {
     const queryFn = jest.fn<unknown, unknown[]>()
 
     queryFn.mockImplementationOnce(() => {
-      return Promise.reject('Error test Tanner')
+      return Promise.reject(new Error('Error test Tanner'))
     })
 
     queryFn.mockImplementation(() => {
-      return Promise.reject('NoRetry')
+      return Promise.reject(new Error('NoRetry'))
     })
 
     function Page() {
-      const { status, failureCount, failureReason, error } = useQuery<
-        unknown,
-        string,
-        [string]
-      >({
+      const { status, failureCount, failureReason, error } = useQuery({
         queryKey: key,
         queryFn,
         retryDelay: 1,
-        retry: (_failureCount, err) => err !== 'NoRetry',
+        retry: (_failureCount, err) => err.message !== 'NoRetry',
       })
 
       return (
         <div>
           <h1>{status}</h1>
           <h2>Failed {failureCount} times</h2>
-          <h2>Failed because {failureReason}</h2>
-          <h2>{error}</h2>
+          <h2>Failed because {failureReason?.message}</h2>
+          <h2>{error?.message}</h2>
         </div>
       )
     }
@@ -4676,6 +4669,7 @@ describe('useQuery', () => {
       ctx,
     ) => {
       const [, limit] = ctx.queryKey
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       const value = limit % 2 && ctx.signal ? 'abort' : `data ${limit}`
       await sleep(25)
       return value
@@ -5731,10 +5725,10 @@ describe('useQuery', () => {
       function Component() {
         const state = useQuery({
           queryKey: key,
-          queryFn: async ({ signal }) => {
+          queryFn: async ({ signal: _signal }) => {
             count++
             await sleep(10)
-            return `${signal ? 'signal' : 'data'}${count}`
+            return `signal${count}`
           },
         })
 
@@ -6061,5 +6055,28 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('data: 2'))
     fireEvent.click(fetchBtn)
     await waitFor(() => rendered.getByText('data: 3'))
+  })
+
+  it('should use provided custom queryClient', async () => {
+    const key = queryKey()
+    const queryFn = async () => {
+      return Promise.resolve('custom client')
+    }
+
+    function Page() {
+      const { data } = useQuery(
+        {
+          queryKey: key,
+          queryFn,
+        },
+        queryClient,
+      )
+
+      return <div>data: {data}</div>
+    }
+
+    const rendered = render(<Page></Page>)
+
+    await waitFor(() => rendered.getByText('data: custom client'))
   })
 })

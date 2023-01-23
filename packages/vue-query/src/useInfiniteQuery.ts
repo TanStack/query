@@ -4,36 +4,52 @@ import type {
   WithRequired,
   QueryKey,
   InfiniteQueryObserverResult,
+  InfiniteQueryObserverOptions,
 } from '@tanstack/query-core'
 
 import { useBaseQuery } from './useBaseQuery'
-import type { UseQueryReturnType } from './useBaseQuery'
+import type { UseBaseQueryReturnType } from './useBaseQuery'
 
-import type {
-  WithQueryClientKey,
-  VueInfiniteQueryObserverOptions,
-  DistributiveOmit,
-} from './types'
+import type { DistributiveOmit, MaybeRefDeep } from './types'
+import type { QueryClient } from './queryClient'
+import type { UnwrapRef } from 'vue-demi'
 
 export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = Error,
-  TData = TQueryFnData,
+  TData = unknown,
+  TQueryData = unknown,
   TQueryKey extends QueryKey = QueryKey,
-> = WithRequired<
-  WithQueryClientKey<
-    VueInfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryFnData,
-      TQueryKey
-    >
-  >,
-  'queryKey'
->
+> = {
+  [Property in keyof InfiniteQueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  >]: Property extends 'queryFn'
+    ? InfiniteQueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        UnwrapRef<TQueryKey>
+      >[Property]
+    : MaybeRefDeep<
+        WithRequired<
+          InfiniteQueryObserverOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryData,
+            TQueryKey
+          >,
+          'queryKey'
+        >[Property]
+      >
+}
 
-type InfiniteQueryReturnType<TData, TError> = UseQueryReturnType<
+type InfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<
   TData,
   TError,
   InfiniteQueryObserverResult<TData, TError>
@@ -57,10 +73,12 @@ export function useInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  queryClient?: QueryClient,
 ): UseInfiniteQueryReturnType<TData, TError> {
   const result = useBaseQuery(
     InfiniteQueryObserver as typeof QueryObserver,
     options,
+    queryClient,
   ) as InfiniteQueryReturnType<TData, TError>
   return {
     ...result,

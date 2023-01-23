@@ -10,7 +10,7 @@ export * from '@tanstack/query-core'
 export * from './types'
 export { createQuery } from './createQuery'
 export {
-  defaultContext,
+  QueryClientContext,
   QueryClientProvider,
   useQueryClient,
 } from './QueryClientProvider'
