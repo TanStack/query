@@ -1020,11 +1020,26 @@ const ActiveQuery = ({
           type="button"
           onClick={() => {
             if (activeQuery.state.data === undefined) {
-              queryClient.resetQueries(activeQuery)
+              activeQuery.fetch(activeQuery.state.fetchMeta.__previousQueryOptions, {
+                // Make sure this fetch will cancel the previous one
+                cancelRefetch: true
+              });
             } else {
+              const __previousQueryOptions = activeQuery.options;
+              // Trigger a fetch in order to trigger suspense as well.
+              activeQuery.fetch({
+                queryFn: () => {
+                  return new Promise(() => {})
+                },
+                cacheTime: -1,
+              })
               activeQuery.setState({
                 data: undefined,
                 status: 'loading',
+                fetchMeta: {
+                  ...activeQuery.state.fetchMeta,
+                  __previousQueryOptions,
+                }
               })
             }
           }}
