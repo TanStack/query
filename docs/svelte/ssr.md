@@ -62,7 +62,7 @@ export const load: PageLoad = async () => {
   const query = createQuery({
     queryKey: ['posts'],
     queryFn: getPosts,
-    initialData: posts
+    initialData: data.posts
   })
 </script>
 ```
