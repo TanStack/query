@@ -629,6 +629,8 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                   style={{
                     display: 'flex',
                     alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: '0.5em',
                   }}
                 >
                   <Input
@@ -641,7 +643,6 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                     }}
                     style={{
                       flex: '1',
-                      marginRight: '.5em',
                       width: '100%',
                     }}
                   />
@@ -654,7 +655,6 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                         style={{
                           flex: '1',
                           minWidth: 75,
-                          marginRight: '.5em',
                         }}
                       >
                         {Object.keys(sortFns).map((key) => (
@@ -668,7 +668,6 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                         onClick={() => setBaseSort((old) => old * -1)}
                         style={{
                           padding: '.3em .4em',
-                          marginRight: '.5em',
                         }}
                       >
                         {baseSort === 1 ? '⬆ Asc' : '⬇ Desc'}
@@ -868,7 +867,7 @@ const ActiveQuery = ({
     if (activeQuery && activeQueryState?.error) {
       const errorType = errorTypes.find(
         (type) =>
-          type.initializer(activeQuery)?.toString() ===
+          type.initializer(activeQuery).toString() ===
           activeQueryState.error?.toString(),
       )
       return errorType?.name
@@ -976,6 +975,9 @@ const ActiveQuery = ({
       <div
         style={{
           padding: '0.5em',
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '0.5em',
         }}
       >
         <Button
@@ -1058,14 +1060,13 @@ const ActiveQuery = ({
                 )
                 if (errorType) {
                   triggerError(errorType)
-                }
-                else {
+                } else {
                   // Reset query when selecting no error
                   queryClient.resetQueries(activeQuery)
                 }
               }}
             >
-              <option key="" value=""/>
+              <option key="" value="" />
               {errorTypes.map((errorType) => (
                 <option key={errorType.name} value={errorType.name}>
                   {errorType.name}
