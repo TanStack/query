@@ -1,5 +1,5 @@
 import { QueryObserver } from '@tanstack/query-core'
-import type { QueryKey , QueryClient} from '@tanstack/query-core'
+import type { QueryKey, QueryClient } from '@tanstack/query-core'
 import { createBaseQuery } from './createBaseQuery'
 import type {
   DefinedCreateQueryResult,

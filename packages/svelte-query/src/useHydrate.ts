@@ -5,7 +5,11 @@ import {
 } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
 
-export function useHydrate(state?: unknown, options?: HydrateOptions, queryClient?: QueryClient) {
+export function useHydrate(
+  state?: unknown,
+  options?: HydrateOptions,
+  queryClient?: QueryClient,
+) {
   const client = useQueryClient(queryClient)
 
   if (state) {

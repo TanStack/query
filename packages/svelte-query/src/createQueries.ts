@@ -1,4 +1,9 @@
-import type { QueryKey, QueryFunction, QueryClient, QueriesPlaceholderDataFunction } from '@tanstack/query-core'
+import type {
+  QueryKey,
+  QueryFunction,
+  QueryClient,
+  QueriesPlaceholderDataFunction,
+} from '@tanstack/query-core'
 
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
 import { readable, type Readable } from 'svelte/store'
@@ -14,10 +19,10 @@ type CreateQueryOptionsForCreateQueries<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = Omit<
-CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-'placeholderData'
+  CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'placeholderData'
 > & {
-placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
 }
 
 // Avoid TS depth-limit error in case of large array literal
@@ -49,7 +54,12 @@ type GetOptions<T> =
       }
     ? CreateQueryOptionsForCreateQueries<TQueryFnData, Error, TData, TQueryKey>
     : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
-    ? CreateQueryOptionsForCreateQueries<TQueryFnData, Error, TQueryFnData, TQueryKey>
+    ? CreateQueryOptionsForCreateQueries<
+        TQueryFnData,
+        Error,
+        TQueryFnData,
+        TQueryKey
+      >
     : // Fallback
       CreateQueryOptionsForCreateQueries
 

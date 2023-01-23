@@ -1,5 +1,9 @@
 <script lang="ts">
-  import type { DehydratedState, HydrateOptions, QueryClient } from '@tanstack/query-core'
+  import type {
+    DehydratedState,
+    HydrateOptions,
+    QueryClient,
+  } from '@tanstack/query-core'
   import { useHydrate } from './useHydrate'
 
   export let state: DehydratedState
