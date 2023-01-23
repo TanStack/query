@@ -44,7 +44,10 @@ function Example() {
         onClick={() => {
           setShowProjects((old) => {
             if (!old) {
-              queryClient.prefetchQuery(["projects"], fetchProjects);
+              queryClient.prefetchQuery({
+                queryKey: ["projects"],
+                queryFn: fetchProjects,
+              });
             }
             return !old;
           });

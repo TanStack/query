@@ -8,7 +8,10 @@ import { fetchProjects, fetchProject } from "../queries";
 
 export default function Projects({ setActiveProject }) {
   const queryClient = useQueryClient();
-  const { data, isFetching } = useQuery(["projects"], fetchProjects);
+  const { data, isFetching } = useQuery({
+    queryKey: ["projects"],
+    queryFn: fetchProjects,
+  });
 
   return (
     <div>
@@ -18,9 +21,10 @@ export default function Projects({ setActiveProject }) {
           <Button
             onClick={() => {
               // Prefetch the project query
-              queryClient.prefetchQuery(["project", project.name], () =>
-                fetchProject(project.name)
-              );
+              queryClient.prefetchQuery({
+                queryKey: ["project", project.name],
+                queryFn: () => fetchProject(project.name),
+              });
               setActiveProject(project.name);
             }}
           >

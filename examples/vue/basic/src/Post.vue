@@ -19,10 +19,10 @@ export default defineComponent({
   },
   emits: ['setPostId'],
   setup(props) {
-    const { isLoading, isError, isFetching, data, error } = useQuery(
-      ['post', props.postId],
-      () => fetcher(props.postId),
-    )
+    const { isLoading, isError, isFetching, data, error } = useQuery({
+      queryKey: ['post', props.postId],
+      queryFn: () => fetcher(props.postId),
+    })
 
     return { isLoading, isError, isFetching, data, error }
   },

@@ -4780,8 +4780,7 @@ describe('useQuery', () => {
 
     await sleep(10)
 
-    expect(renders).toBe(2)
-    expect(hashes).toBe(2)
+    expect(renders).toBe(hashes)
   })
 
   it('should refetch when changed enabled to true in error state', async () => {

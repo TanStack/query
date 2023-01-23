@@ -16,7 +16,10 @@ const Home = () => {
 export async function getStaticProps() {
   const queryClient = new QueryClient()
 
-  await queryClient.prefetchQuery(['posts', 10], () => fetchPosts(10))
+  await queryClient.prefetchQuery({
+    queryKey: ['posts', 10],
+    queryFn: () => fetchPosts(10),
+  })
 
   return {
     props: {

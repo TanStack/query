@@ -7,7 +7,7 @@ import { asyncThrottle } from './asyncThrottle'
 
 interface AsyncStorage {
   getItem: (key: string) => Promise<string | null>
-  setItem: (key: string, value: string) => Promise<void>
+  setItem: (key: string, value: string) => Promise<unknown>
   removeItem: (key: string) => Promise<void>
 }
 
@@ -55,6 +55,7 @@ export const createAsyncStoragePersister = ({
     ): Promise<Error | undefined> => {
       try {
         await storage.setItem(key, serialize(persistedClient))
+        return
       } catch (error) {
         return error as Error
       }

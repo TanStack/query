@@ -5,9 +5,10 @@ import { useQuery } from "@tanstack/react-query";
 import fetch from "./fetch";
 
 export default function Films(props) {
-  const { data, status, error } = useQuery(["films"], () =>
-    fetch("https://swapi.dev/api/films/")
-  );
+  const { data, status, error } = useQuery({
+    queryKey: ["films"],
+    queryFn: () => fetch("https://swapi.dev/api/films/"),
+  });
 
   if (status === "loading") {
     return <p>Loading...</p>;
