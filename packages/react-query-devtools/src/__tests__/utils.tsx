@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { render, type RenderOptions } from '@testing-library/react'
 import * as React from 'react'
 import { ReactQueryDevtools } from '../devtools'
 
@@ -12,12 +12,14 @@ export function renderWithClient(
   client: QueryClient,
   ui: React.ReactElement,
   devtoolsOptions: Parameters<typeof ReactQueryDevtools>[number] = {},
+  renderOptions?: RenderOptions,
 ): ReturnType<typeof render> {
   const { rerender, ...result } = render(
     <QueryClientProvider client={client} context={devtoolsOptions.context}>
       <ReactQueryDevtools {...devtoolsOptions} />
       {ui}
     </QueryClientProvider>,
+    renderOptions,
   )
   return {
     ...result,

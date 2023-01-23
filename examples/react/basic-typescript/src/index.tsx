@@ -26,11 +26,14 @@ type Post = {
 };
 
 function usePosts() {
-  return useQuery(["posts"], async (): Promise<Array<Post>> => {
-    const { data } = await axios.get(
-      "https://jsonplaceholder.typicode.com/posts"
-    );
-    return data;
+  return useQuery({
+    queryKey: ["posts"],
+    queryFn: async (): Promise<Array<Post>> => {
+      const { data } = await axios.get(
+        "https://jsonplaceholder.typicode.com/posts"
+      );
+      return data;
+    },
   });
 }
 
@@ -90,7 +93,9 @@ const getPostById = async (id: number): Promise<Post> => {
 };
 
 function usePost(postId: number) {
-  return useQuery(["post", postId], () => getPostById(postId), {
+  return useQuery({
+    queryKey: ["post", postId],
+    queryFn: () => getPostById(postId),
     enabled: !!postId,
   });
 }

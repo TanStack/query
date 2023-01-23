@@ -1,16 +1,16 @@
 import { fireEvent, waitFor } from '@testing-library/react'
-import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
-
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import { ErrorBoundary } from 'react-error-boundary'
 import type { UseInfiniteQueryResult, UseQueryResult } from '..'
 import {
   QueryCache,
   QueryErrorResetBoundary,
   useInfiniteQuery,
+  useQueries,
   useQuery,
   useQueryErrorResetBoundary,
 } from '..'
+import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 
 describe("useQuery's in Suspense mode", () => {
   const queryCache = new QueryCache()
@@ -151,7 +151,7 @@ describe("useQuery's in Suspense mode", () => {
       useQuery(
         key,
         () => {
-          sleep(10)
+          sleep(50)
           return 'data'
         },
         { suspense: true },
@@ -1009,5 +1009,232 @@ describe("useQuery's in Suspense mode", () => {
 
     expect(renders).toBe(2)
     expect(rendered.queryByText('rendered')).not.toBeNull()
+  })
+})
+
+describe('useQueries with suspense', () => {
+  const queryClient = createQueryClient()
+  it('should suspend all queries in parallel', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const results: string[] = []
+
+    function Fallback() {
+      results.push('loading')
+      return <div>loading</div>
+    }
+
+    function Page() {
+      const result = useQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: async () => {
+              results.push('1')
+              await sleep(10)
+              return '1'
+            },
+            suspense: true,
+          },
+          {
+            queryKey: key2,
+            queryFn: async () => {
+              results.push('2')
+              await sleep(20)
+              return '2'
+            },
+            suspense: true,
+          },
+        ],
+      })
+      return (
+        <div>
+          <h1>data: {result.map((it) => it.data ?? 'null').join(',')}</h1>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback={<Fallback />}>
+        <Page />
+      </React.Suspense>,
+    )
+
+    await waitFor(() => rendered.getByText('loading'))
+    await waitFor(() => rendered.getByText('data: 1,2'))
+
+    expect(results).toEqual(['1', '2', 'loading'])
+  })
+
+  it('should allow to mix suspense with non-suspense', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const results: string[] = []
+
+    function Fallback() {
+      results.push('loading')
+      return <div>loading</div>
+    }
+
+    function Page() {
+      const result = useQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: async () => {
+              results.push('1')
+              await sleep(50)
+              return '1'
+            },
+            suspense: true,
+          },
+          {
+            queryKey: key2,
+            queryFn: async () => {
+              results.push('2')
+              await sleep(200)
+              return '2'
+            },
+            staleTime: 1000,
+            suspense: false,
+          },
+        ],
+      })
+
+      return (
+        <div>
+          <h1>data: {result.map((it) => it.data ?? 'null').join(',')}</h1>
+          <h2>status: {result.map((it) => it.status).join(',')}</h2>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback={<Fallback />}>
+        <Page />
+      </React.Suspense>,
+    )
+    await waitFor(() => rendered.getByText('loading'))
+    await waitFor(() => rendered.getByText('status: success,loading'))
+    await waitFor(() => rendered.getByText('data: 1,null'))
+    await waitFor(() => rendered.getByText('data: 1,2'))
+
+    expect(results).toEqual(['1', '2', 'loading'])
+  })
+
+  it("shouldn't unmount before all promises fetched", async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const results: string[] = []
+    const refs: number[] = []
+
+    function Fallback() {
+      results.push('loading')
+      return <div>loading</div>
+    }
+
+    function Page() {
+      const ref = React.useRef(Math.random())
+      const result = useQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: async () => {
+              refs.push(ref.current)
+              results.push('1')
+              await sleep(10)
+              return '1'
+            },
+            suspense: true,
+          },
+          {
+            queryKey: key2,
+            queryFn: async () => {
+              refs.push(ref.current)
+              results.push('2')
+              await sleep(20)
+              return '2'
+            },
+            suspense: true,
+          },
+        ],
+      })
+      return (
+        <div>
+          <h1>data: {result.map((it) => it.data ?? 'null').join(',')}</h1>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback={<Fallback />}>
+        <Page />
+      </React.Suspense>,
+    )
+    await waitFor(() => rendered.getByText('loading'))
+    expect(refs.length).toBe(2)
+    await waitFor(() => rendered.getByText('data: 1,2'))
+    expect(refs[0]).toBe(refs[1])
+  })
+
+  it('should suspend all queries in parallel - global configuration', async () => {
+    const queryClientSuspenseMode = createQueryClient({
+      defaultOptions: {
+        queries: {
+          suspense: true,
+        },
+      },
+    })
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const results: string[] = []
+
+    function Fallback() {
+      results.push('loading')
+      return <div>loading</div>
+    }
+
+    function Page() {
+      const result = useQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: async () => {
+              results.push('1')
+              await sleep(10)
+              return '1'
+            },
+          },
+          {
+            queryKey: key2,
+            queryFn: async () => {
+              results.push('2')
+              await sleep(20)
+              return '2'
+            },
+          },
+        ],
+      })
+      return (
+        <div>
+          <h1>data: {result.map((it) => it.data ?? 'null').join(',')}</h1>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClientSuspenseMode,
+      <React.Suspense fallback={<Fallback />}>
+        <Page />
+      </React.Suspense>,
+    )
+
+    await waitFor(() => rendered.getByText('loading'))
+    await waitFor(() => rendered.getByText('data: 1,2'))
+
+    expect(results).toEqual(['1', '2', 'loading'])
   })
 })

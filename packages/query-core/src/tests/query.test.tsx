@@ -134,8 +134,8 @@ describe('query', () => {
     // There should not be a result yet
     expect(result).toBeUndefined()
 
-    // By now we should have a value
-    await sleep(50)
+    // Promise should eventually be resolved
+    await promise
     expect(result).toBe('data3')
   })
 
@@ -174,12 +174,15 @@ describe('query', () => {
     query.cancel()
 
     // Check if the error is set to the cancelled error
-    await sleep(0)
-    expect(isCancelledError(result)).toBe(true)
-
-    // Reset visibilityState to original value
-    visibilityMock.mockRestore()
-    window.dispatchEvent(new FocusEvent('focus'))
+    try {
+      await promise
+    } catch {
+      expect(isCancelledError(result)).toBe(true)
+    } finally {
+      // Reset visibilityState to original value
+      visibilityMock.mockRestore()
+      window.dispatchEvent(new FocusEvent('focus'))
+    }
   })
 
   test('should provide context to queryFn', async () => {
@@ -591,6 +594,23 @@ describe('query', () => {
 
     expect(query.meta).toBeUndefined()
     expect(query.options.meta).toBeUndefined()
+  })
+
+  test('can use default meta', async () => {
+    const meta = {
+      it: 'works',
+    }
+
+    const key = queryKey()
+    const queryFn = () => 'data'
+
+    queryClient.setQueryDefaults(key, { meta })
+
+    await queryClient.prefetchQuery(key, queryFn)
+
+    const query = queryCache.find(key)!
+
+    expect(query.meta).toBe(meta)
   })
 
   test('provides meta object inside query function', async () => {

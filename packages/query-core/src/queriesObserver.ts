@@ -117,6 +117,10 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
     return this.observers.map((observer) => observer.getCurrentQuery())
   }
 
+  getObservers() {
+    return this.observers
+  }
+
   getOptimisticResult(queries: QueryObserverOptions[]): QueryObserverResult[] {
     return this.findMatchingObservers(queries).map((match) =>
       match.observer.getOptimisticResult(match.defaultedQueryOptions),

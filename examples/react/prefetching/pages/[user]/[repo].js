@@ -8,9 +8,10 @@ export default () => {
   const id =
     typeof window !== 'undefined' ? window.location.pathname.slice(1) : ''
 
-  const { status, data, error, isFetching } = useQuery(['team', id], () =>
-    fetch('/api/data?id=' + id),
-  )
+  const { status, data, error, isFetching } = useQuery({
+    queryKey: ['team', id],
+    queryFn: () => fetch('/api/data?id=' + id),
+  })
 
   return (
     <div style={{ textAlign: 'center' }}>

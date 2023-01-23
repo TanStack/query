@@ -23,6 +23,7 @@ describe('queryClient', () => {
 
   afterEach(() => {
     queryClient.clear()
+    queryClient.unmount()
   })
 
   describe('defaultOptions', () => {
@@ -160,7 +161,7 @@ describe('queryClient', () => {
       // No defaults, no warning
       const noDefaults = queryClient.getQueryDefaults(keyABCD)
       expect(noDefaults).toBeUndefined()
-      expect(mockLogger.error).not.toHaveBeenCalled()
+      expect(mockLogger.error).toHaveBeenCalledTimes(1)
 
       // If defaults for key ABCD are registered **before** the ones of key ABC (more generic)…
       queryClient.setQueryDefaults(keyABCD, defaultsOfABCD)
@@ -169,7 +170,7 @@ describe('queryClient', () => {
       const goodDefaults = queryClient.getQueryDefaults(keyABCD)
       expect(goodDefaults).toBe(defaultsOfABCD)
       // The warning is still raised since several defaults are matching
-      expect(mockLogger.error).toHaveBeenCalledTimes(1)
+      expect(mockLogger.error).toHaveBeenCalledTimes(2)
 
       // Let's create another queryClient and change the order of registration
       const newQueryClient = createQueryClient()
@@ -180,7 +181,7 @@ describe('queryClient', () => {
       const badDefaults = newQueryClient.getQueryDefaults(keyABCD)
       expect(badDefaults).not.toBe(defaultsOfABCD)
       expect(badDefaults).toBe(defaultsOfABC)
-      expect(mockLogger.error).toHaveBeenCalledTimes(2)
+      expect(mockLogger.error).toHaveBeenCalledTimes(4)
     })
 
     test('should warn in dev if several mutation defaults match a given key', () => {
@@ -216,7 +217,10 @@ describe('queryClient', () => {
       // No defaults, no warning
       const noDefaults = queryClient.getMutationDefaults(keyABCD)
       expect(noDefaults).toBeUndefined()
-      expect(mockLogger.error).not.toHaveBeenCalled()
+      expect(mockLogger.error).toHaveBeenNthCalledWith(
+        1,
+        'Passing a custom logger has been deprecated and will be removed in the next major version.',
+      )
 
       // If defaults for key ABCD are registered **before** the ones of key ABC (more generic)…
       queryClient.setMutationDefaults(keyABCD, defaultsOfABCD)
@@ -225,7 +229,7 @@ describe('queryClient', () => {
       const goodDefaults = queryClient.getMutationDefaults(keyABCD)
       expect(goodDefaults).toBe(defaultsOfABCD)
       // The warning is still raised since several defaults are matching
-      expect(mockLogger.error).toHaveBeenCalledTimes(1)
+      expect(mockLogger.error).toHaveBeenCalledTimes(2)
 
       // Let's create another queryClient and change the order of registration
       const newQueryClient = createQueryClient()
@@ -236,7 +240,7 @@ describe('queryClient', () => {
       const badDefaults = newQueryClient.getMutationDefaults(keyABCD)
       expect(badDefaults).not.toBe(defaultsOfABCD)
       expect(badDefaults).toBe(defaultsOfABC)
-      expect(mockLogger.error).toHaveBeenCalledTimes(2)
+      expect(mockLogger.error).toHaveBeenCalledTimes(4)
     })
   })
 
@@ -464,6 +468,28 @@ describe('queryClient', () => {
       const key = queryKey()
       queryClient.setQueryData([key, 'id'], 'bar')
       expect(queryClient.getQueryData([key])).toBeUndefined()
+    })
+  })
+
+  describe('ensureQueryData', () => {
+    test('should return the cached query data if the query is found', async () => {
+      const key = queryKey()
+      const queryFn = () => Promise.resolve('data')
+
+      queryClient.setQueryData([key, 'id'], 'bar')
+
+      await expect(
+        queryClient.ensureQueryData({ queryKey: [key, 'id'], queryFn }),
+      ).resolves.toEqual('bar')
+    })
+
+    test('should call fetchQuery and return its results if the query is not found', async () => {
+      const key = queryKey()
+      const queryFn = () => Promise.resolve('data')
+
+      await expect(
+        queryClient.ensureQueryData({ queryKey: [key], queryFn }),
+      ).resolves.toEqual('data')
     })
   })
 
@@ -1439,6 +1465,75 @@ describe('queryClient', () => {
       queryCacheOnFocusSpy.mockRestore()
       queryCacheOnOnlineSpy.mockRestore()
       mutationCacheResumePausedMutationsSpy.mockRestore()
+      onlineManager.setOnline(undefined)
+    })
+
+    test('should notify queryCache and mutationCache after multiple mounts and single unmount', async () => {
+      const testClient = createQueryClient()
+      testClient.mount()
+      testClient.mount()
+      testClient.unmount()
+
+      const queryCacheOnFocusSpy = jest.spyOn(
+        testClient.getQueryCache(),
+        'onFocus',
+      )
+      const queryCacheOnOnlineSpy = jest.spyOn(
+        testClient.getQueryCache(),
+        'onOnline',
+      )
+      const mutationCacheResumePausedMutationsSpy = jest.spyOn(
+        testClient.getMutationCache(),
+        'resumePausedMutations',
+      )
+
+      onlineManager.setOnline(true)
+      expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1)
+      expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(1)
+
+      focusManager.setFocused(true)
+      expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1)
+      expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(2)
+
+      queryCacheOnFocusSpy.mockRestore()
+      queryCacheOnOnlineSpy.mockRestore()
+      mutationCacheResumePausedMutationsSpy.mockRestore()
+      focusManager.setFocused(undefined)
+      onlineManager.setOnline(undefined)
+    })
+
+    test('should not notify queryCache and mutationCache after multiple mounts/unmounts', async () => {
+      const testClient = createQueryClient()
+      testClient.mount()
+      testClient.mount()
+      testClient.unmount()
+      testClient.unmount()
+
+      const queryCacheOnFocusSpy = jest.spyOn(
+        testClient.getQueryCache(),
+        'onFocus',
+      )
+      const queryCacheOnOnlineSpy = jest.spyOn(
+        testClient.getQueryCache(),
+        'onOnline',
+      )
+      const mutationCacheResumePausedMutationsSpy = jest.spyOn(
+        testClient.getMutationCache(),
+        'resumePausedMutations',
+      )
+
+      onlineManager.setOnline(true)
+      expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
+      expect(mutationCacheResumePausedMutationsSpy).not.toHaveBeenCalled()
+
+      focusManager.setFocused(true)
+      expect(queryCacheOnFocusSpy).not.toHaveBeenCalled()
+      expect(mutationCacheResumePausedMutationsSpy).not.toHaveBeenCalled()
+
+      queryCacheOnFocusSpy.mockRestore()
+      queryCacheOnOnlineSpy.mockRestore()
+      mutationCacheResumePausedMutationsSpy.mockRestore()
+      focusManager.setFocused(undefined)
       onlineManager.setOnline(undefined)
     })
   })

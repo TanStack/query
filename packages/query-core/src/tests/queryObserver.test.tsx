@@ -505,6 +505,24 @@ describe('queryObserver', () => {
     expect(results[1]).toMatchObject({ status: 'success', data: 'data' })
   })
 
+  test('should structurally share placeholder data', async () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      enabled: false,
+      queryFn: () => 'data',
+      placeholderData: {},
+    })
+
+    const firstData = observer.getCurrentResult().data
+
+    observer.setOptions({ placeholderData: {} })
+
+    const secondData = observer.getCurrentResult().data
+
+    expect(firstData).toBe(secondData)
+  })
+
   test('the retrier should not throw an error when reject if the retrier is already resolved', async () => {
     const key = queryKey()
     let count = 0
@@ -672,7 +690,7 @@ describe('queryObserver', () => {
       },
     })
 
-    expect(mockLogger.error).toHaveBeenNthCalledWith(1, new Error('error'))
+    expect(mockLogger.error).toHaveBeenNthCalledWith(2, new Error('error'))
   })
 
   test('should not use replaceEqualDeep for select value when structuralSharing option is true and placeholderdata is defined', () => {

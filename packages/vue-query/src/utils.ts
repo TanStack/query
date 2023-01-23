@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { QueryKey } from '@tanstack/query-core'
+import type { QueryKey, MutationKey } from '@tanstack/query-core'
 import { isRef, unref } from 'vue-demi'
 import type { UnwrapRef } from 'vue-demi'
 
@@ -11,6 +11,10 @@ export function getClientKey(key?: string) {
 }
 
 export function isQueryKey(value: unknown): value is QueryKey {
+  return Array.isArray(value)
+}
+
+export function isMutationKey(value: unknown): value is MutationKey {
   return Array.isArray(value)
 }
 

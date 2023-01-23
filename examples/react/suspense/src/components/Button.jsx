@@ -2,12 +2,10 @@ import React from "react";
 
 import Spinner from "./Spinner";
 
-export default function Button({ children, timeoutMs = 3000, onClick }) {
-  const [isPending, startTransition] = React.useTransition({
-    timeoutMs: timeoutMs,
-  });
+export default function Button({ children, onClick }) {
+  const [isPending, startTransition] = React.useTransition();
 
-  const handleClick = e => {
+  const handleClick = (e) => {
     startTransition(() => {
       onClick(e);
     });

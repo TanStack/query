@@ -369,7 +369,7 @@ async function run() {
   }
 
   console.info('Testing packages...')
-  execSync(`pnpm run test:ci`, { encoding: 'utf8' })
+  execSync(`pnpm run test:ci`, { encoding: 'utf8', stdio: 'inherit' })
   console.info('')
 
   console.info('Building packages...')
@@ -385,8 +385,15 @@ async function run() {
         path.resolve(rootDir, 'packages', pkg.packageDir, 'package.json'),
       )
 
+      const entries =
+        pkg.name === '@tanstack/eslint-plugin-query'
+          ? (['main'] as const)
+          : pkg.name === '@tanstack/svelte-query'
+          ? (['types', 'module'] as const)
+          : (['main', 'types', 'module'] as const)
+
       await Promise.all(
-        (['main', 'types', 'module'] as const).map(async (entryKey) => {
+        entries.map(async (entryKey) => {
           const entry = pkgJson[entryKey] as string
 
           if (!entry) {
