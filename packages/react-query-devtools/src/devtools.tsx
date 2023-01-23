@@ -873,7 +873,7 @@ const ActiveQuery = ({
       return errorType?.name
     }
     return undefined
-  }, [activeQueryState?.error])
+  }, [activeQuery, activeQueryState?.error, errorTypes])
 
   if (!activeQuery || !activeQueryState) {
     return null
@@ -978,6 +978,7 @@ const ActiveQuery = ({
           display: 'flex',
           flexWrap: 'wrap',
           gap: '0.5em',
+          alignItems: 'flex-end',
         }}
       >
         <Button
@@ -1052,7 +1053,7 @@ const ActiveQuery = ({
           <label>
             Trigger error:
             <Select
-              value={currentErrorTypeName}
+              value={currentErrorTypeName ?? ''}
               style={{ marginInlineStart: '.5em' }}
               onChange={(e) => {
                 const errorType = errorTypes.find(
