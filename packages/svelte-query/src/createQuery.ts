@@ -1,5 +1,5 @@
 import { QueryObserver } from '@tanstack/query-core'
-import type { QueryKey } from '@tanstack/query-core'
+import type { QueryKey , QueryClient} from '@tanstack/query-core'
 import { createBaseQuery } from './createBaseQuery'
 import type {
   DefinedCreateQueryResult,
@@ -32,6 +32,7 @@ export function createQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  queryClient?: QueryClient,
 ): CreateQueryResult<TData, TError>
 
 export function createQuery<
@@ -41,6 +42,7 @@ export function createQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  queryClient?: QueryClient,
 ): DefinedCreateQueryResult<TData, TError>
 
 export function createQuery<
@@ -48,7 +50,9 @@ export function createQuery<
   TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
->(options: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>) {
-  const result = createBaseQuery(options, QueryObserver)
-  return result
+>(
+  options: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  queryClient?: QueryClient,
+) {
+  return createBaseQuery(options, QueryObserver, queryClient)
 }

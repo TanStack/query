@@ -1,4 +1,4 @@
-import type { QueryKey, QueryFunction, QueryClient } from '@tanstack/query-core'
+import type { QueryKey, QueryFunction, QueryClient, QueriesPlaceholderDataFunction } from '@tanstack/query-core'
 
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
 import { readable, type Readable } from 'svelte/store'
@@ -7,13 +7,18 @@ import type { CreateQueryOptions, CreateQueryResult } from './types'
 import { useQueryClient } from './useQueryClient'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
-// - `context` is omitted as it is passed as a root-level option to `createQueries` instead.
+// `placeholderData` function does not have a parameter
 type CreateQueryOptionsForCreateQueries<
   TQueryFnData = unknown,
   TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = Omit<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'context'>
+> = Omit<
+CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+'placeholderData'
+> & {
+placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+}
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
@@ -42,19 +47,9 @@ type GetOptions<T> =
         queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
         select: (data: any) => infer TData
       }
-    ? CreateQueryOptionsForCreateQueries<
-        TQueryFnData,
-        unknown,
-        TData,
-        TQueryKey
-      >
+    ? CreateQueryOptionsForCreateQueries<TQueryFnData, Error, TData, TQueryKey>
     : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
-    ? CreateQueryOptionsForCreateQueries<
-        TQueryFnData,
-        unknown,
-        TQueryFnData,
-        TQueryKey
-      >
+    ? CreateQueryOptionsForCreateQueries<TQueryFnData, Error, TQueryFnData, TQueryKey>
     : // Fallback
       CreateQueryOptionsForCreateQueries
 
@@ -135,16 +130,23 @@ export type QueriesResults<
       any
     >[]
   ? // Dynamic-size (homogenous) CreateQueryOptions array: map directly to array of results
-    CreateQueryResult<unknown extends TData ? TQueryFnData : TData, TError>[]
+    CreateQueryResult<
+      unknown extends TData ? TQueryFnData : TData,
+      unknown extends TError ? Error : TError
+    >[]
   : // Fallback
     CreateQueryResult[]
 
 export type CreateQueriesResult<T extends any[]> = Readable<QueriesResults<T>>
 
-export function createQueries<T extends any[]>(
-  queries: readonly [...QueriesOptions<T>],
-): CreateQueriesResult<T> {
-  const client: QueryClient = useQueryClient()
+export function createQueries<T extends any[]>({
+  queries,
+  queryClient,
+}: {
+  queries: readonly [...QueriesOptions<T>]
+  queryClient?: QueryClient
+}): CreateQueriesResult<T> {
+  const client = useQueryClient(queryClient)
   // const isRestoring = useIsRestoring()
 
   function getDefaultQuery(newQueries: readonly [...QueriesOptions<T>]) {
