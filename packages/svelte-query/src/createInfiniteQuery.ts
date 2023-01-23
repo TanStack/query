@@ -13,7 +13,7 @@ import { createBaseQuery } from './createBaseQuery'
 
 export function createInfiniteQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -27,7 +27,7 @@ export function createInfiniteQuery<
 ): CreateInfiniteQueryResult<TData, TError>
 export function createInfiniteQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -45,7 +45,7 @@ export function createInfiniteQuery<
 ): CreateInfiniteQueryResult<TData, TError>
 export function createInfiniteQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
