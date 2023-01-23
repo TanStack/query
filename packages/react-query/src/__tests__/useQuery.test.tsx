@@ -2893,7 +2893,7 @@ describe('useQuery', () => {
   it('should throw error if queryFn throws and throwErrors is in use', async () => {
     const consoleMock = jest
       .spyOn(console, 'error')
-      .mockImplementation(() => {})
+      .mockImplementation(() => undefined)
     const key = queryKey()
 
     function Page() {
@@ -2985,7 +2985,7 @@ describe('useQuery', () => {
   it('should throw error instead of setting status when error should be thrown', async () => {
     const consoleMock = jest
       .spyOn(console, 'error')
-      .mockImplementation(() => {})
+      .mockImplementation(() => undefined)
 
     const key = queryKey()
 

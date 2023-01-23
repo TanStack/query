@@ -762,7 +762,7 @@ describe('query', () => {
     await sleep(10)
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'error',
-      error: new Error("Missing queryFn"),
+      error: new Error('Missing queryFn'),
     })
     unsubscribe()
   })

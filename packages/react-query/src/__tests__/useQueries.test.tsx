@@ -778,7 +778,7 @@ describe('useQueries', () => {
   it("should throw error if in one of queries' queryFn throws and throwErrors is in use", async () => {
     const consoleMock = jest
       .spyOn(console, 'error')
-      .mockImplementation(() => {})
+      .mockImplementation(() => undefined)
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -843,7 +843,7 @@ describe('useQueries', () => {
   it("should throw error if in one of queries' queryFn throws and throwErrors function resolves to true", async () => {
     const consoleMock = jest
       .spyOn(console, 'error')
-      .mockImplementation(() => {})
+      .mockImplementation(() => undefined)
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()

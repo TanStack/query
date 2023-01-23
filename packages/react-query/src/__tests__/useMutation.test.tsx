@@ -690,7 +690,7 @@ describe('useMutation', () => {
   it('should be able to throw an error when throwErrors is set to true', async () => {
     const consoleMock = jest
       .spyOn(console, 'error')
-      .mockImplementation(() => {})
+      .mockImplementation(() => undefined)
     function Page() {
       const { mutate } = useMutation<string, Error>({
         mutationFn: () => {
@@ -742,7 +742,7 @@ describe('useMutation', () => {
   it('should be able to throw an error when throwErrors is a function that returns true', async () => {
     const consoleMock = jest
       .spyOn(console, 'error')
-      .mockImplementation(() => {})
+      .mockImplementation(() => undefined)
     let boundary = false
     function Page() {
       const { mutate, error } = useMutation<string, Error>({

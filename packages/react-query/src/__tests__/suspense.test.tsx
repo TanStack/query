@@ -274,7 +274,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should reset error state if new component instances are mounted', async () => {
     const consoleMock = jest
       .spyOn(console, 'error')
-      .mockImplementation(() => {})
+      .mockImplementation(() => undefined)
     const key = queryKey()
 
     let succeed = false
@@ -348,7 +348,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should retry fetch if the reset error boundary has been reset', async () => {
     const consoleMock = jest
       .spyOn(console, 'error')
-      .mockImplementation(() => {})
+      .mockImplementation(() => undefined)
     const key = queryKey()
 
     let succeed = false
@@ -513,7 +513,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should retry fetch if the reset error boundary has been reset with global hook', async () => {
     const consoleMock = jest
       .spyOn(console, 'error')
-      .mockImplementation(() => {})
+      .mockImplementation(() => undefined)
     const key = queryKey()
 
     let succeed = false
@@ -577,7 +577,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should throw errors to the error boundary by default', async () => {
     const consoleMock = jest
       .spyOn(console, 'error')
-      .mockImplementation(() => {})
+      .mockImplementation(() => undefined)
     const key = queryKey()
 
     function Page() {
@@ -658,7 +658,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should throw errors to the error boundary when a throwErrors function returns true', async () => {
     const consoleMock = jest
       .spyOn(console, 'error')
-      .mockImplementation(() => {})
+      .mockImplementation(() => undefined)
     const key = queryKey()
 
     function Page() {
@@ -784,7 +784,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should error catched in error boundary without infinite loop', async () => {
     const consoleMock = jest
       .spyOn(console, 'error')
-      .mockImplementation(() => {})
+      .mockImplementation(() => undefined)
     const key = queryKey()
 
     let succeed = true
@@ -859,7 +859,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should error catched in error boundary without infinite loop when query keys changed', async () => {
     const consoleMock = jest
       .spyOn(console, 'error')
-      .mockImplementation(() => {})
+      .mockImplementation(() => undefined)
     let succeed = true
 
     function Page() {
@@ -927,7 +927,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should error catched in error boundary without infinite loop when enabled changed', async () => {
     const consoleMock = jest
       .spyOn(console, 'error')
-      .mockImplementation(() => {})
+      .mockImplementation(() => undefined)
     function Page() {
       const queryKeys = '1'
       const [enabled, setEnabled] = React.useState(false)

@@ -402,8 +402,10 @@ describe('PersistQueryClientProvider', () => {
 
   test('should remove cache after non-successful restoring', async () => {
     const key = queryKey()
-    const consoleMock = jest.spyOn(console, 'error',)
-    const consoleWarn = jest.spyOn(console, 'warn',).mockImplementation(() => undefined)
+    const consoleMock = jest.spyOn(console, 'error')
+    const consoleWarn = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined)
     consoleMock.mockImplementation(() => undefined)
 
     const queryClient = createQueryClient()
