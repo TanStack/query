@@ -4650,6 +4650,7 @@ describe('createQuery', () => {
       readonly [typeof key, number]
     > = async (ctx) => {
       const [, limit] = ctx.queryKey
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       const value = limit % 2 && ctx.signal ? 'abort' : `data ${limit}`
       await sleep(25)
       return value
@@ -5789,10 +5790,10 @@ describe('createQuery', () => {
       function Component() {
         const state = createQuery(() => ({
           queryKey: key,
-          queryFn: async ({ signal }) => {
+          queryFn: async ({ signal: _signal }) => {
             count++
             await sleep(10)
-            return `${signal ? 'signal' : 'data'}${count}`
+            return `signal${count}`
           },
         }))
 

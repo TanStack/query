@@ -927,6 +927,7 @@ describe('useInfiniteQuery', () => {
       abortListeners.push(abortListener)
       signal.onabort = onAbort
       signal.addEventListener('abort', abortListener)
+
       await sleep(50)
       return Number(pageParam)
     })
