@@ -59,7 +59,11 @@ To support caching queries on the server and set up hydration:
 
 ```tsx
 // _app.jsx
-import { Hydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import {
+  Hydrate,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 
 export default function MyApp({ Component, pageProps }) {
   const [queryClient] = React.useState(() => new QueryClient())
@@ -82,7 +86,7 @@ Now you are ready to prefetch some data in your pages with either [`getStaticPro
 
 ```tsx
 // pages/posts.jsx
-import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
+import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query'
 
 export async function getStaticProps() {
   const queryClient = new QueryClient()
@@ -103,7 +107,10 @@ function Posts() {
 
   // This query was not prefetched on the server and will not start
   // fetching until on the client, both patterns are fine to mix
-  const { data: otherData } = useQuery({ queryKey: ['posts-2'], queryFn: getPosts })
+  const { data: otherData } = useQuery({
+    queryKey: ['posts-2'],
+    queryFn: getPosts,
+  })
 
   // ...
 }
@@ -135,7 +142,6 @@ Both prefetching approaches, using `initialData` or `<Hydrate>`, are available w
   - No need to prop drill
   - Query refetching is based on when the query was prefetched on the server
 
-
 ### `<QueryClientProvider>` is required by both the `initialData` and `<Hydrate>` prefetching approaches
 
 The hooks provided by the `react-query` package need to retrieve a `QueryClient` from their context. Wrap your component tree with `<QueryClientProvider>` and pass it an instance of `QueryClient`.
@@ -146,13 +152,11 @@ The hooks provided by the `react-query` package need to retrieve a `QueryClient`
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-export default function Providers({children}) {
+export default function Providers({ children }) {
   const [queryClient] = React.useState(() => new QueryClient())
-  
+
   return (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   )
 }
 ```
@@ -161,7 +165,7 @@ export default function Providers({children}) {
 // app/layout.jsx
 import Providers from './providers'
 
-export default function RootLayout({children}) {
+export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head />
@@ -181,7 +185,7 @@ Fetch your initial data in a Server Component higher up in the component tree, a
 // app/page.jsx
 export default async function Home() {
   const initialData = await getPosts()
-  
+
   return <Posts posts={initialData} />
 }
 ```
@@ -193,16 +197,15 @@ export default async function Home() {
 import { useQuery } from '@tanstack/react-query'
 
 export function Posts(props) {
-  const {data} = useQuery({
+  const { data } = useQuery({
     queryKey: ['posts'],
     queryFn: getPosts,
     initialData: props.posts,
   })
-  
+
   // ...
 }
 ```
-
 
 ### Using `<Hydrate>`
 
@@ -219,9 +222,9 @@ export default getQueryClient
 
 Fetch your data in a Server Component higher up in the component tree than the Client Components that use the prefetched queries. Your prefetched queries will be available to all components deeper down the component tree.
 
-  - Retrieve the `QueryClient` singleton instance
-  - Prefetch the data using the client's prefetchQuery method and wait for it to complete
-  - Use `dehydrate` to obtain the dehydrated state of the prefetched queries from the query cache
+- Retrieve the `QueryClient` singleton instance
+- Prefetch the data using the client's prefetchQuery method and wait for it to complete
+- Use `dehydrate` to obtain the dehydrated state of the prefetched queries from the query cache
 - Wrap the component tree that needs the prefetched queries inside `<Hydrate>`, and provide it with the dehydrated state
 - You can fetch inside multiple Server Components and use `<Hydrate>` in multiple places
 
@@ -261,7 +264,10 @@ export default function Posts() {
 
   // This query was not prefetched on the server and will not start
   // fetching until on the client, both patterns are fine to mix
-  const { data: otherData } = useQuery({ queryKey: ['posts-2'], queryFn: getPosts })
+  const { data: otherData } = useQuery({
+    queryKey: ['posts-2'],
+    queryFn: getPosts,
+  })
 
   // ...
 }
@@ -293,9 +299,14 @@ This guide is at-best, a high level overview of how SSR with React Query should 
 > SECURITY NOTE: Serializing data with `JSON.stringify` can put you at risk for XSS-vulnerabilities, [this blog post explains why and how to solve it](https://medium.com/node-security/the-most-common-xss-vulnerability-in-react-js-applications-2bdffbcc1fa0)
 
 ```tsx
-import { dehydrate, Hydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  dehydrate,
+  Hydrate,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 
-async function handleRequest (req, res) {
+async function handleRequest(req, res) {
   const queryClient = new QueryClient()
   await queryClient.prefetchQuery(['key'], fn)
   const dehydratedState = dehydrate(queryClient)
@@ -305,7 +316,7 @@ async function handleRequest (req, res) {
       <Hydrate state={dehydratedState}>
         <App />
       </Hydrate>
-    </QueryClientProvider>
+    </QueryClientProvider>,
   )
 
   res.send(`
@@ -330,7 +341,11 @@ async function handleRequest (req, res) {
 - Render your app with the client provider and also **using the dehydrated state. This is extremely important! You must render both server and client using the same dehydrated state to ensure hydration on the client produces the exact same markup as the server.**
 
 ```tsx
-import { Hydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import {
+  Hydrate,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 
 const dehydratedState = window.__REACT_QUERY_STATE__
 
@@ -342,7 +357,7 @@ ReactDOM.hydrate(
       <App />
     </Hydrate>
   </QueryClientProvider>,
-  document.getElementById('root')
+  document.getElementById('root'),
 )
 ```
 
@@ -353,29 +368,33 @@ If you do not want to provide `prefetchQuery()` for all your queries in the SSR 
 ### Server
 
 ```tsx
-import { dehydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  dehydrate,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 import ssrPrepass from 'react-ssr-prepass'
 
-async function handleRequest (req, res) {
+async function handleRequest(req, res) {
   const queryClient = new QueryClient()
 
   // React SSR does not support ErrorBoundary
   try {
     // Traverse the tree and fetch all Suspense data (thrown promises)
-    await ssrPrepass(<App />);
+    await ssrPrepass(<App />)
   } catch (e) {
-    console.error(e);
+    console.error(e)
     // Send the index.html (without SSR) on error, so user can try to recover and see something
-    return res.sendFile('path/to/dist/index.html');
+    return res.sendFile('path/to/dist/index.html')
   }
 
   const html = ReactDOM.renderToString(
     <QueryClientProvider client={queryClient}>
       <App />
-    </QueryClientProvider>
+    </QueryClientProvider>,
   )
 
-  const dehydratedState = dehydrate(queryClient);
+  const dehydratedState = dehydrate(queryClient)
 
   res.send(`
     <html>
