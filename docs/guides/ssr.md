@@ -119,7 +119,9 @@ The result is missing referential equality for all the hydration data, which for
 
 ## Using Experimental `app` Directory in Next.js 13
 
-> **WARNING:** The `app` directory introduced in Next.js 13 is currently in beta, and it is not recommended for use in production. The API is not stable, and the guidelines provided here may become obsolete in a future update. This guide is provided as is to supply a quick start for early exploration of Next.js 13's experimental features.
+> **WARNING:** The `app` directory introduced in Next.js 13 is currently in beta, and it is not recommended for use in production. The API is not stable.
+>
+> This guide is provided as is to supply a quick start for early exploration of Next.js 13's experimental features and does not represent the final APIs.
 
 Both prefetching approaches, using `initialData` or `<Hydrate>`, are available within the `app` directory.
 
@@ -206,8 +208,6 @@ export function Posts(props) {
 
 Create a request-scoped singleton instance of `QueryClient`. **This ensures that data is not shared between different users and requests, while still only creating the QueryClient once per request.**
 
-> NOTE: Use the `query-core` module when importing TanStack dependencies within server-side modules (e.g. in getQueryClient.jsx and the hydratedPosts.jsx example Server Component). The `react-query` module only works within Client Components.
-
 ```tsx
 // app/getQueryClient.jsx
 import { QueryClient } from '@tanstack/query-core'
@@ -223,6 +223,7 @@ Fetch your data in a Server Component higher up in the component tree than the C
   - Prefetch the data using the client's prefetchQuery method and wait for it to complete
   - Use `dehydrate` to obtain the dehydrated state of the prefetched queries from the query cache
 - Wrap the component tree that needs the prefetched queries inside `<Hydrate>`, and provide it with the dehydrated state
+- You can fetch inside multiple Server Components and use `<Hydrate>` in multiple places
 
 > NOTE: TypeScript currently complains of a type error when using async Server Components. As a temporary workaround, use `{/* @ts-expect-error Server Component */}` when calling this component inside another. For more information, see [End-to-End Type Safety](https://beta.nextjs.org/docs/configuring/typescript#end-to-end-type-safety) in the Next.js 13 beta docs.
 
@@ -266,7 +267,7 @@ export default function Posts() {
 }
 ```
 
-As demonstrated, it's fine to prefetch some queries and let others fetch on the client. This means you can control what content server renders or not by adding or removing prefetchQuery for a specific query.
+As demonstrated, it's fine to prefetch some queries and let others fetch on the client. This means you can control what content server renders or not by adding or removing `prefetchQuery` for a specific query.
 
 ### Streaming, Suspense and server-side fetching
 
