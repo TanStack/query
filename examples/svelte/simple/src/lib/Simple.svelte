@@ -9,7 +9,7 @@
     forks_count: number
   }
 
-  const query = createQuery<Repo, Error>({
+  const query = createQuery<Repo>({
     queryKey: ['repoData'],
     queryFn: async () =>
       await fetch('https://api.github.com/repos/SvelteStack/svelte-query').then(

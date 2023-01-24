@@ -36,13 +36,13 @@
       }),
     }).then((res) => res.json())
 
-  const todos = createQuery<Todos, Error>({
+  const todos = createQuery<Todos>({
     queryKey: ['optimistic'],
     queryFn: fetchTodos,
   })
 
-  const addTodoMutation = createMutation(createTodo, {
-    // When mutate is called:
+  const addTodoMutation = createMutation({
+    mutationFn: createTodo,
     onMutate: async (newTodo: string) => {
       text = ''
       // Cancel any outgoing refetches (so they don't overwrite our optimistic update)

@@ -27,7 +27,7 @@
     })
   }
 
-  const query = createQuery<any, Error>({
+  const query = createQuery<any>({
     queryKey: ['todos', { filter }],
     queryFn: () => fetchTodos({ filter }),
   })
