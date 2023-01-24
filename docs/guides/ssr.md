@@ -217,30 +217,20 @@ const getQueryClient = cache(() => new QueryClient())
 export default getQueryClient
 ```
 
-Re-export the `<Hydrate>` component as a Client Component. This allows `<Hydrate>` to execute on the client and make use of client-only features. **TODO: Plans to add 'use client' to react-query modules?**
-
-```tsx
-// app/hydrateOnClient.jsx
-'use client'
-
-import { Hydrate as HydrateOnClient } from '@tanstack/react-query'
-export default HydrateOnClient
-```
-
 Fetch your data in a Server Component higher up in the component tree than the Client Components that use the prefetched queries. Your prefetched queries will be available to all components deeper down the component tree.
 
   - Retrieve the `QueryClient` singleton instance
   - Prefetch the data using the client's prefetchQuery method and wait for it to complete
   - Use `dehydrate` to obtain the dehydrated state of the prefetched queries from the query cache
-  - Wrap the component tree that needs the prefetched queries inside your `<Hydrate>` Client Component, and provide it with the dehydrated state
+- Wrap the component tree that needs the prefetched queries inside `<Hydrate>`, and provide it with the dehydrated state
 
 > NOTE: TypeScript currently complains of a type error when using async Server Components. As a temporary workaround, use `{/* @ts-expect-error Server Component */}` when calling this component inside another. For more information, see [End-to-End Type Safety](https://beta.nextjs.org/docs/configuring/typescript#end-to-end-type-safety) in the Next.js 13 beta docs.
 
 ```tsx
 // app/hydratedPosts.jsx
 import { dehydrate } from '@tanstack/query-core'
+import { Hydrate } from '@tanstack/react-query'
 import getQueryClient from './getQueryClient'
-import HydrateOnClient from './hydrateOnClient'
 
 export default async function HydratedPosts() {
   const queryClient = getQueryClient()
@@ -248,9 +238,9 @@ export default async function HydratedPosts() {
   const dehydratedState = dehydrate(queryClient)
 
   return (
-    <HydrateOnClient state={dehydratedState}>
+    <Hydrate state={dehydratedState}>
       <Posts />
-    </HydrateOnClient>
+    </Hydrate>
   )
 }
 ```
