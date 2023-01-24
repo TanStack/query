@@ -20,8 +20,9 @@
   })
 
   const addMutation = createMutation({
-    mutationFn: (value: string) => fetch(`${endpoint}?add=${value}`).then((r) => r.json()),
-    onSuccess: () => client.invalidateQueries(['refetch'])
+    mutationFn: (value: string) =>
+      fetch(`${endpoint}?add=${value}`).then((r) => r.json()),
+    onSuccess: () => client.invalidateQueries(['refetch']),
   })
 
   const clearMutation = createMutation({
