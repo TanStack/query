@@ -9,7 +9,7 @@ export const action =
     const formData = await request.formData();
     const updates = Object.fromEntries(formData);
     await updateContact(params.contactId, updates);
-    queryClient.invalidateQueries(["contacts"]);
+    queryClient.invalidateQueries({ queryKey: ["contacts"] });
     return redirect(`/contacts/${params.contactId}`);
   };
 

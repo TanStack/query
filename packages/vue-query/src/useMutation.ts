@@ -5,7 +5,7 @@ import {
   toRefs,
   watch,
   computed,
-  isRef,
+  unref,
 } from 'vue-demi'
 import type { ToRefs } from 'vue-demi'
 import type {
@@ -210,12 +210,12 @@ export function parseMutationArgs<
 ): WithQueryClientKey<
   MutationObserverOptions<TData, TError, TVariables, TContext>
 > {
-  const plainArg1 = isRef(arg1) ? arg1.value : arg1
-  const plainArg2 = isRef(arg2) ? arg2.value : arg2
+  const plainArg1 = unref(arg1)
+  const plainArg2 = unref(arg2)
   let options = plainArg1
   if (isMutationKey(plainArg1)) {
     if (typeof plainArg2 === 'function') {
-      const plainArg3 = isRef(arg3) ? arg3.value : arg3
+      const plainArg3 = unref(arg3)
       options = { ...plainArg3, mutationKey: plainArg1, mutationFn: plainArg2 }
     } else {
       options = { ...plainArg2, mutationKey: plainArg1 }

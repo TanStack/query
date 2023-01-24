@@ -22,11 +22,20 @@ If you have been assigned to fix an issue or develop a new feature, please follo
   - We use [nvm](https://github.com/nvm-sh/nvm) to manage node versions - please make sure to use the version mentioned in `.nvmrc`.
 - Run development server using `pnpm run watch`.
 - Implement your changes and tests to files in the `src/` directory and corresponding test files.
-- To run examples, follow their individual directions.
-- To run examples using your local build, be sure to have development server (`pnpm run watch`) running.
 - Document your changes in the appropriate doc page.
 - Git stage your required changes and commit (see below commit guidelines).
 - Submit PR for review.
+
+### Running examples
+- Make sure you've installed the dependencies by running `$ pnpm install` in the repo's root directory.
+- If you want to run the example against your local changes, run `pnpm run watch` in the repo's root directory. Otherwise, it will be run against the latest TanStack Query release.
+- Run `pnpm run dev` in the selected examples' directory.
+
+#### Note on `examples/react-native`
+React Native example requires Expo to work. Please follow the instructions from example's README.md file to learn more.
+
+#### Note on standalone execution
+If you want to run an example without installing dependencies for the whole repo, just follow instructions from the example's README.md file. It will be then run against the latest TanStack Query release.
 
 ## Online one-click setup
 

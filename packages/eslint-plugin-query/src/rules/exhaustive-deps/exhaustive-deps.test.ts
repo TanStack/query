@@ -93,6 +93,39 @@ ruleTester.run('exhaustive-deps', rule, {
         }
       `,
     },
+    {
+      name: 'should add "...args" to deps',
+      code: `
+        function foo(...args) {}
+        function useData(arg, ...args) {
+          return useQuery({
+            queryKey: ['foo', arg, ...args],
+            queryFn: async () => foo([arg, ...args])
+          });
+        }
+      `,
+    },
+    {
+      name: 'should not add class to deps',
+      code: `
+        class Foo {}
+        useQuery({ queryKey: ['foo'], queryFn: async () => new Foo() });
+      `,
+    },
+    {
+      name: 'should not add `undefined` to deps',
+      code: `
+        useQuery({
+          queryKey: [],
+          queryFn: async () => {
+            if (undefined) {
+              return null;
+            }
+            return 1
+          },
+        });
+      `,
+    },
   ],
   invalid: [
     {

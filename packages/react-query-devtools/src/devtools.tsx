@@ -244,6 +244,7 @@ export function ReactQueryDevtools({
         ref.removeEventListener('transitionend', handlePanelTransitionEnd)
       }
     }
+    return
   }, [isResolvedOpen])
 
   React.useEffect(() => {
@@ -296,6 +297,7 @@ export function ReactQueryDevtools({
         }
       }
     }
+    return
   }, [isResolvedOpen, panelPosition, devtoolsHeight, devtoolsWidth])
 
   const { style: panelStyle = {}, ...otherPanelProps } = panelProps

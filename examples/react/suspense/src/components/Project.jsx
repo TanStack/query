@@ -7,9 +7,10 @@ import Spinner from "./Spinner";
 import { fetchProject } from "../queries";
 
 export default function Project({ activeProject, setActiveProject }) {
-  const { data, isFetching } = useQuery(["project", activeProject], () =>
-    fetchProject(activeProject)
-  );
+  const { data, isFetching } = useQuery({
+    queryKey: ["project", activeProject],
+    queryFn: () => fetchProject(activeProject),
+  });
 
   return (
     <div>

@@ -5,9 +5,10 @@ import { useQuery } from "@tanstack/react-query";
 import fetch from "./fetch";
 
 export default function Episodes() {
-  const { data, status } = useQuery(["episodes"], () =>
-    fetch("https://rickandmortyapi.com/api/episode")
-  );
+  const { data, status } = useQuery({
+    queryKey: ["episodes"],
+    queryFn: () => fetch("https://rickandmortyapi.com/api/episode"),
+  });
 
   if (status === "loading") {
     return <p>Loading...</p>;

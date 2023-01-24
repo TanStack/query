@@ -46,7 +46,10 @@ export const rule: TSESLint.RuleModule<MessageKey, readonly unknown[]> =
             return
           }
 
-          if (firstArgument.type === AST_NODE_TYPES.CallExpression) {
+          if (
+            node.arguments.length === 1 &&
+            firstArgument.type === AST_NODE_TYPES.CallExpression
+          ) {
             const referencedCallExpression =
               ASTUtils.getReferencedExpressionByIdentifier({
                 context,
@@ -185,7 +188,6 @@ function runCheckOnNode(params: {
     node: callNode,
     messageId: 'preferObjectSyntax',
     fix(fixer) {
-      const ruleFixes: TSESLint.RuleFix[] = []
       const optionsObjectProperties: string[] = []
 
       // queryKey
@@ -216,20 +218,10 @@ function runCheckOnNode(params: {
         optionsObjectProperties.push(...existingObjectProperties)
       }
 
-      const argumentsRange = ASTUtils.getRangeOfArguments(callNode)
+      const calleeText = sourceCode.getText(callNode).split('(')[0]
+      const argsText = `{ ${optionsObjectProperties.join(', ')} }`
 
-      if (argumentsRange) {
-        ruleFixes.push(fixer.removeRange(argumentsRange))
-      }
-
-      ruleFixes.push(
-        fixer.insertTextAfterRange(
-          [callNode.range[0], callNode.range[1] - 1],
-          `{ ${optionsObjectProperties.join(', ')} }`,
-        ),
-      )
-
-      return ruleFixes
+      return fixer.replaceText(callNode, `${calleeText}(${argsText})`)
     },
   })
 }

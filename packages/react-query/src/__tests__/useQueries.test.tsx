@@ -45,7 +45,7 @@ describe('useQueries', () => {
           {
             queryKey: key2,
             queryFn: async () => {
-              await sleep(100)
+              await sleep(200)
               return 2
             },
           },
@@ -1050,12 +1050,21 @@ describe('useQueries', () => {
           ],
         })
         results.push(result)
-        return null
+
+        return (
+          <div>
+            <div>data1: {result[0].data}</div>
+            <div>data2: {result[1].data}</div>
+          </div>
+        )
       }
 
-      renderWithClient(queryClient, <Page />, { context })
+      const rendered = renderWithClient(queryClient, <Page />, { context })
 
-      await sleep(30)
+      await waitFor(() => {
+        rendered.getByText('data1: 1')
+        rendered.getByText('data2: 2')
+      })
 
       expect(results[0]).toMatchObject([
         { data: undefined },
