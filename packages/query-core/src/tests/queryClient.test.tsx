@@ -114,7 +114,7 @@ describe('queryClient', () => {
       const observer = new QueryObserver(queryClient, {
         queryKey: [key],
       })
-      expect(observer.getCurrentResult().status).toBe('loading')
+      expect(observer.getCurrentResult().status).toBe('pending')
       expect(observer.getCurrentResult().fetchStatus).toBe('idle')
     })
 
@@ -766,7 +766,7 @@ describe('queryClient', () => {
       })
       expect(state3).toMatchObject({
         data: undefined,
-        status: 'loading',
+        status: 'pending',
         fetchStatus: 'idle',
       })
     })
@@ -1200,7 +1200,7 @@ describe('queryClient', () => {
 
       expect(state).toBeTruthy()
       expect(state?.data).toBeUndefined()
-      expect(state?.status).toEqual('loading')
+      expect(state?.status).toEqual('pending')
       expect(state?.fetchStatus).toEqual('idle')
     })
 

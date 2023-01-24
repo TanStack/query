@@ -264,7 +264,7 @@ describe('query', () => {
 
     expect(query.state).toMatchObject({
       data: undefined,
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'idle',
     })
   })
@@ -351,7 +351,7 @@ describe('query', () => {
     expect(isCancelledError(error)).toBe(true)
   })
 
-  test('should not error if reset while loading', async () => {
+  test('should not error if reset while pending', async () => {
     const key = queryKey()
 
     const queryFn = jest.fn<unknown, unknown[]>()
@@ -363,11 +363,11 @@ describe('query', () => {
 
     queryClient.fetchQuery({ queryKey: key, queryFn, retry: 3, retryDelay: 10 })
 
-    // Ensure the query is loading
+    // Ensure the query is pending
     const query = queryCache.find({ queryKey: key })!
-    expect(query.state.status).toBe('loading')
+    expect(query.state.status).toBe('pending')
 
-    // Reset the query while it is loading
+    // Reset the query while it is pending
     query.reset()
 
     await sleep(100)
