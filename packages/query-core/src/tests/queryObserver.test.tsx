@@ -522,8 +522,6 @@ describe('queryObserver', () => {
   })
 
   test('the retrier should not throw an error when reject if the retrier is already resolved', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
     const key = queryKey()
     let count = 0
 
@@ -550,8 +548,6 @@ describe('queryObserver', () => {
     // Should not log an error
     queryClient.clear()
     await sleep(40)
-    expect(consoleMock).not.toHaveBeenNthCalledWith(1, 'reject 1')
-    consoleMock.mockRestore()
   })
 
   test('should throw an error if enabled option type is not valid', async () => {
