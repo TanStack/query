@@ -1,4 +1,3 @@
-'use client'
 import * as React from 'react'
 
 export default function useMediaQuery(query: string): boolean | undefined {
