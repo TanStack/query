@@ -268,12 +268,11 @@ export default function Posts() {
 
 As demonstrated, it's fine to prefetch some queries and let others fetch on the client. This means you can control what content server renders or not by adding or removing prefetchQuery for a specific query.
 
-### Suspense and server-side fetching
+### Streaming, Suspense and server-side fetching
 
-Suspense for components that rely on data prefetched on the server is best addressed by adding suspense boundaries around the Server Components that fetch your data. This instructs the server not to wait on prefetching, instead returning an initial response rendered with a fallback and streaming your rendered component to be substituted for the fallback once prefetching completes. For more information, see [Streaming and Suspense](https://beta.nextjs.org/docs/data-fetching/streaming-and-suspense) in the Next.js 13 beta docs.
+Right now, you always have to `await` the data in the Server Component. In the future, the goal is to be able to _start_ prefetching in a Server Component but not block rendering, instead streaming markup and data to the client incrementally as it gets available. This is currently lacking support in both React and Query.
 
-In this case, the `suspense` option in the `QueryClient` and `useQuery` hook is unnecessary as the Client Component will not render until the the data has already been fetched.
-
+Similarily, you _must_ currently prefetch the data in a Server Component if you want it to be server rendered. A `useQuery()` call even with the `suspense` option enabled will not fetch data on the server, only on the client. We hope to support this in the future, but exact details are still unknown.
 
 ## Using Other Frameworks or Custom SSR Frameworks
 
