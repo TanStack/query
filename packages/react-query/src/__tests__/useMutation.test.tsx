@@ -725,16 +725,11 @@ describe('useMutation', () => {
 
     await waitFor(() => {
       expect(queryByText('error')).not.toBeNull()
-      // expect(consoleMock).toHaveBeenCalledTimes(1)
     })
 
-    // check if the console.error function was called
-    if (consoleMock.mock.calls[0]) {
-      //test the error message that was passed to the console
-      expect(consoleMock.mock.calls[0][0]).toContain(
-        'Expected mock error. All is well!',
-      )
-    }
+    expect(consoleMock).toHaveBeenCalledWith(
+      expect.objectContaining(new Error('Expected mock error. All is well!')),
+    )
 
     consoleMock.mockRestore()
   })

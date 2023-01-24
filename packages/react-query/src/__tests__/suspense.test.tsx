@@ -336,11 +336,9 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('rendered'))
 
-    // check if the console.error function was called
-    if (consoleMock.mock.calls[0]) {
-      //test the error message that was passed to the console
-      expect(consoleMock.mock.calls[0][0]).toContain('Suspense Error Bingo')
-    }
+    expect(consoleMock).toHaveBeenCalledWith(
+      expect.objectContaining(new Error('Suspense Error Bingo')),
+    )
 
     consoleMock.mockRestore()
   })
@@ -847,11 +845,9 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(rendered.getByLabelText('fail'))
     // render error boundary fallback (error boundary)
     await waitFor(() => rendered.getByText('error boundary'))
-    // check if the console.error function was called
-    if (consoleMock.mock.calls[0]) {
-      //test the error message that was passed to the console
-      expect(consoleMock.mock.calls[0][0]).toContain('Suspense Error Bingo')
-    }
+    expect(consoleMock).toHaveBeenCalledWith(
+      expect.objectContaining(new Error('Suspense Error Bingo')),
+    )
 
     consoleMock.mockRestore()
   })
@@ -916,10 +912,9 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(rendered.getByLabelText('fail'))
     // render error boundary fallback (error boundary)
     await waitFor(() => rendered.getByText('error boundary'))
-    if (consoleMock.mock.calls[0]) {
-      //test the error message that was passed to the console
-      expect(consoleMock.mock.calls[0][0]).toContain('Suspense Error Bingo')
-    }
+    expect(consoleMock).toHaveBeenCalledWith(
+      expect.objectContaining(new Error('Suspense Error Bingo')),
+    )
 
     consoleMock.mockRestore()
   })
@@ -985,10 +980,9 @@ describe("useQuery's in Suspense mode", () => {
 
     // render error boundary fallback (error boundary)
     await waitFor(() => rendered.getByText('error boundary'))
-    if (consoleMock.mock.calls[0]) {
-      //test the error message that was passed to the console
-      expect(consoleMock.mock.calls[0][0]).toContain('Suspense Error Bingo')
-    }
+    expect(consoleMock).toHaveBeenCalledWith(
+      expect.objectContaining(new Error('Suspense Error Bingo')),
+    )
 
     consoleMock.mockRestore()
   })

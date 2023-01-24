@@ -159,8 +159,6 @@ describe('useQueries', () => {
   })
 
   test('should stop listening to changes on onScopeDispose', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
     const onScopeDisposeMock = onScopeDispose as jest.MockedFunction<
       typeof onScopeDispose
     >
@@ -193,7 +191,6 @@ describe('useQueries', () => {
         isStale: true,
       },
     ])
-    consoleMock.mockRestore()
   })
 
   test('should use queryClient provided via options', async () => {
