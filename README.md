@@ -7,3 +7,5 @@
 You're looking at the v3 version of react-query. Starting with v4, react-query is now available as [@tanstack/react-query](https://www.npmjs.com/package/@tanstack/react-query)
 
 Find the docs at https://tanstack.com/query/latest
+
+<!-- Use the force, Luke! -->
