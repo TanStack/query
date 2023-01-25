@@ -43,7 +43,7 @@ mutate(variables, {
 **Options**
 
 - `mutationFn: (variables: TVariables) => Promise<TData>`
-  - **Required**
+  - **Required, but only if no default mutation function has been defined**
   - A function that performs an asynchronous task and returns a promise.
   - `variables` is an object that `mutate` will pass to your `mutationFn`
 - `gcTime: number | Infinity`
@@ -96,7 +96,7 @@ mutate(variables, {
 **Returns**
 
 - `mutate: (variables: TVariables, { onSuccess, onSettled, onError }) => void`
-  - The mutation function you can call with variables to trigger the mutation and optionally override options passed to `useMutation`.
+  - The mutation function you can call with variables to trigger the mutation and optionally hooks on additional callback options.
   - `variables: TVariables`
     - Optional
     - The variables object to pass to the `mutationFn`.
