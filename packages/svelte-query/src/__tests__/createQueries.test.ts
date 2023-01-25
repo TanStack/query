@@ -21,7 +21,7 @@ describe('createQueries', () => {
               await sleep(10)
               return 'Success 2'
             },
-          }
+          },
         ],
       },
     })

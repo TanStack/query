@@ -1,5 +1,9 @@
 <script lang="ts">
-  import { createMutation, QueryClient, type CreateMutationOptions } from '../index'
+  import {
+    createMutation,
+    QueryClient,
+    type CreateMutationOptions,
+  } from '../index'
   import { setQueryClientContext } from '../context'
 
   export let options: CreateMutationOptions

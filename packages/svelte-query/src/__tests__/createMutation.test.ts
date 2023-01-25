@@ -10,7 +10,7 @@ describe('createMutation', () => {
     render(CreateMutation, {
       props: {
         options: {
-          mutationFn
+          mutationFn,
         },
       },
     })

@@ -1,4 +1,9 @@
-import type { QueryKey, QueryFunction, QueryClient, QueryObserverResult } from '@tanstack/query-core'
+import type {
+  QueryKey,
+  QueryFunction,
+  QueryClient,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
 import { readable, type Readable } from 'svelte/store'

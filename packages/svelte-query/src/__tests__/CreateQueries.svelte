@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createQueries, QueryClient } from '../index'
   import { setQueryClientContext } from '../context'
-  import type { QueriesOptions } from "../createQueries"
+  import type { QueriesOptions } from '../createQueries'
 
   export let options: readonly [...QueriesOptions<any>]
 
