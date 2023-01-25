@@ -82,24 +82,6 @@ const wrapper = ({ children }) => (
 
 This will set the defaults for all queries in the component tree to "no retries". It is important to know that this will only work if your actual useQuery has no explicit retries set. If you have a query that wants 5 retries, this will still take precedence, because defaults are only taken as a fallback.
 
-## Turn off network error logging
-
-When testing we want to suppress network errors being logged to the console.
-To do this, we can pass a custom logger to `QueryClient`:
-
-```tsx
-import { QueryClient } from '@tanstack/react-query'
-
-const queryClient = new QueryClient({
-  logger: {
-    log: console.log,
-    warn: console.warn,
-    // ✅ no more errors on the console for tests
-    error: process.env.NODE_ENV === 'test' ? () => {} : console.error,
-  },
-})
-```
-
 ## Set cacheTime to Infinity with Jest
 
 If you use Jest, you can set the `cacheTime` to `Infinity` to prevent "Jest did not exit one second after the test run completed" error message. This is the default behavior on the server, and is only necessary to set if you are explicitly setting a `cacheTime`.

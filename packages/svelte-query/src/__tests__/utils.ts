@@ -14,12 +14,6 @@ export function mockNavigatorOnLine(value: boolean) {
   return vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
 }
 
-export const mockLogger = {
-  log: vi.fn(),
-  warn: vi.fn(),
-  error: vi.fn(),
-}
-
 let queryKeyCount = 0
 export function queryKey(): Array<string> {
   queryKeyCount++
