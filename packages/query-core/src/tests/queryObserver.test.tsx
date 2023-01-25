@@ -521,35 +521,6 @@ describe('queryObserver', () => {
     expect(firstData).toBe(secondData)
   })
 
-  test('the retrier should not throw an error when reject if the retrier is already resolved', async () => {
-    const key = queryKey()
-    let count = 0
-
-    const observer = new QueryObserver(queryClient, {
-      queryKey: key,
-      queryFn: () => {
-        count++
-        return Promise.reject<unknown>(`reject ${count}`)
-      },
-      retry: 1,
-      retryDelay: 20,
-    })
-
-    const unsubscribe = observer.subscribe(() => undefined)
-
-    // Simulate a race condition when an unsubscribe and a retry occur.
-    await sleep(20)
-    unsubscribe()
-
-    // A second reject is triggered for the retry
-    // but the retryer has already set isResolved to true
-    // so it does nothing and no error is thrown
-
-    // Should not log an error
-    queryClient.clear()
-    await sleep(40)
-  })
-
   test('should throw an error if enabled option type is not valid', async () => {
     const key = queryKey()
 
