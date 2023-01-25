@@ -8,4 +8,4 @@ You're looking at the v3 version of react-query. Starting with v4, react-query i
 
 Find the docs at https://tanstack.com/query/latest
 
-<!-- Use the force, Luke! -->
+<!-- Use the force, Luke -->
