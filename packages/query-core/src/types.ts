@@ -536,7 +536,7 @@ export type InfiniteQueryObserverResult<TData = unknown, TError = Error> =
 
 export type MutationKey = readonly unknown[]
 
-export type MutationStatus = 'idle' | 'loading' | 'success' | 'error'
+export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
 
 export interface MutationMeta {
   [index: string]: unknown
@@ -662,7 +662,7 @@ export interface MutationObserverLoadingResult<
   isIdle: false
   isPending: true
   isSuccess: false
-  status: 'loading'
+  status: 'pending'
 }
 
 export interface MutationObserverErrorResult<

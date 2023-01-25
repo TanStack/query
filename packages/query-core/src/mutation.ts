@@ -39,8 +39,8 @@ interface FailedAction<TError> {
   error: TError | null
 }
 
-interface LoadingAction<TVariables, TContext> {
-  type: 'loading'
+interface PendingAction<TVariables, TContext> {
+  type: 'pending'
   variables?: TVariables
   context?: TContext
 }
@@ -67,7 +67,7 @@ export type Action<TData, TError, TVariables, TContext> =
   | ContinueAction
   | ErrorAction<TError>
   | FailedAction<TError>
-  | LoadingAction<TVariables, TContext>
+  | PendingAction<TVariables, TContext>
   | PauseAction
   | SuccessAction<TData>
 
@@ -136,7 +136,7 @@ export class Mutation<
 
   protected optionalRemove() {
     if (!this.#observers.length) {
-      if (this.state.status === 'loading') {
+      if (this.state.status === 'pending') {
         this.scheduleGc()
       } else {
         this.#mutationCache.remove(this)
@@ -178,10 +178,10 @@ export class Mutation<
       return this.#retryer.promise
     }
 
-    const restored = this.state.status === 'loading'
+    const restored = this.state.status === 'pending'
     try {
       if (!restored) {
-        this.#dispatch({ type: 'loading', variables: this.options.variables! })
+        this.#dispatch({ type: 'pending', variables: this.options.variables! })
         // Notify cache callback
         await this.#mutationCache.config.onMutate?.(
           this.state.variables,
@@ -190,7 +190,7 @@ export class Mutation<
         const context = await this.options.onMutate?.(this.state.variables!)
         if (context !== this.state.context) {
           this.#dispatch({
-            type: 'loading',
+            type: 'pending',
             context,
             variables: this.state.variables,
           })
@@ -271,7 +271,7 @@ export class Mutation<
             ...state,
             isPaused: false,
           }
-        case 'loading':
+        case 'pending':
           return {
             ...state,
             context: action.context,
@@ -280,7 +280,7 @@ export class Mutation<
             failureReason: null,
             error: null,
             isPaused: !canFetch(this.options.networkMode),
-            status: 'loading',
+            status: 'pending',
             variables: action.variables,
           }
         case 'success':
