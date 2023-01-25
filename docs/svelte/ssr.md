@@ -62,7 +62,7 @@ export const load: PageLoad = async () => {
   const query = createQuery({
     queryKey: ['posts'],
     queryFn: getPosts,
-    initialData: posts
+    initialData: data.posts
   })
 </script>
 ```
@@ -107,9 +107,9 @@ export const load: LayoutLoad = async () => {
 ```markdown
 <script lang="ts">
   import { QueryClientProvider } from '@tanstack/svelte-query'
-  import type { PageData } from './$types'
+  import type { LayoutData } from './$types'
 
-  export let data: PageData
+  export let data: LayoutData
 </script>
 
 <QueryClientProvider client={data.queryClient}>
