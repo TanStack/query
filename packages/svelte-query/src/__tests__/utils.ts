@@ -3,8 +3,7 @@ import { act } from '@testing-library/svelte'
 import { QueryClient, type QueryClientConfig } from '../index'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
-  vi.spyOn(console, 'error').mockImplementation(() => undefined)
-  return new QueryClient({ logger: mockLogger, ...config })
+  return new QueryClient(config)
 }
 
 export function mockVisibilityState(value: DocumentVisibilityState) {
