@@ -44,7 +44,7 @@ If the process for accessing a query's placeholder data is intensive or just not
 function Todos() {
   const placeholderData = useMemo(() => generateFakeTodos(), [])
   const result = useQuery({
-    queyKey: ['todos'],
+    queryKey: ['todos'],
     queryFn: () => fetch('/todos'),
     placeholderData,
   })

@@ -3,8 +3,7 @@ id: tkdodos-blog
 title: TkDodo's Blog
 ---
 
-React Query maintainer [TkDodo](https://twitter.com/tkdodo) has a series of blog posts about using and working with the library. Some articles show general best practices, but most have an _opinionated_ point of view.
-
+TanStack Query maintainer [TkDodo](https://twitter.com/tkdodo) has a series of blog posts about using and working with the library. Some articles show general best practices, but most have an _opinionated_ point of view.
 
 ## [#1: Practical React Query](https://tkdodo.eu/blog/practical-react-query)
 
@@ -38,6 +37,10 @@ React Query maintainer [TkDodo](https://twitter.com/tkdodo) has a series of blog
 
 > Most examples just use a simple String or Array Query Key, but how do you organize your keys effectively once your app grows past a todo list? This article shows how co-location and Query Key Factories can make life easier. [Read more...](https://tkdodo.eu/blog/effective-react-query-keys)
 
+## [#8a: Leveraging the Query Function Context](https://tkdodo.eu/blog/leveraging-the-query-function-context)
+
+> In this amendment to the previous blog post, we look at how we can leverage the Query Function Context and Object Query Keys for maximum safety as our app grows. [Read more...](https://tkdodo.eu/blog/leveraging-the-query-function-context)
+
 ## [#9: Placeholder and Initial Data in React Query](https://tkdodo.eu/blog/placeholder-and-initial-data-in-react-query)
 
 > Placeholder and Initial Data are two similar yet different concepts for synchronously showing data instead of a loading spinner to improve an application's UX. This blog post compares the two and outlines the scenarios where each one shines. [Read more...](https://tkdodo.eu/blog/placeholder-and-initial-data-in-react-query)
@@ -54,7 +57,6 @@ React Query maintainer [TkDodo](https://twitter.com/tkdodo) has a series of blog
 
 > Mutations are the important, second part necessary to work with server data - for situations where you need to update it. This blog post covers what mutations are and how they are different from queries. You'll learn the difference between `mutate` and `mutateAsync` as well as how you can tie queries and mutations together. [Read more...](https://tkdodo.eu/blog/mastering-mutations-in-react-query)
 
-
 ## [#13: Offline React Query](https://tkdodo.eu/blog/offline-react-query)
 
 > There are many ways to produce promises - which is everything React Query needs - but by far the biggest use-case is data fetching. Very often, that requires an active network connection. But sometimes, especially on mobile devices where, the network connection can be unreliable, you need your app to also work without it. In this article, you'll learn about the different offline strategies React Query offers. [Read more...](https://tkdodo.eu/blog/offline-react-query)
@@ -66,3 +68,19 @@ React Query maintainer [TkDodo](https://twitter.com/tkdodo) has a series of blog
 ## [#15: React Query FAQs](https://tkdodo.eu/blog/react-query-fa-qs)
 
 > This article tries to answer the most frequently asked questions about React Query. [Read more...](https://tkdodo.eu/blog/react-query-fa-qs)
+
+## [#16: React Query meets React Router](https://tkdodo.eu/blog/react-query-meets-react-router)
+
+> Remix and React Router are changing the game when thinking about _when_ to fetch data. This article goes into why React Query and Routers that support data loading are a match made in heaven. [Read more...](https://tkdodo.eu/blog/react-query-meets-react-router)
+
+## [#17: Seeding the Query Cache](https://tkdodo.eu/blog/seeding-the-query-cache)
+
+> This blog post shows multiple ways how to get data into your Query Cache _before_ you start rendering to minimize the amount of loading spinners displayed in your app. The options range from prefetching on the server or in your router to seeding cache entries via `setQueryData`. [Read more...](https://tkdodo.eu/blog/seeding-the-query-cache)
+
+## [#18: Inside React Query](https://tkdodo.eu/blog/inside-react-query)
+
+> If you've ever wondered how React Query works under the hood - this post is for you. It explains the architecture (including visuals), starting with the agnostic Query Core and how it communicates with the framework specific adapters. [Read more...](https://tkdodo.eu/blog/inside-react-query)
+
+## [#19: Type-safe React Query](https://tkdodo.eu/blog/type-safe-react-query)
+
+> There's a big difference between "having types" and "being type-safe". This article tries to outline those differences and shows how you can get the best possible type-safety when using React Query together with TypeScript [Read more...](https://tkdodo.eu/blog/inside-react-query)

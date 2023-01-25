@@ -161,7 +161,7 @@ export class MutationObserver<
   #notify(options: NotifyOptions) {
     notifyManager.batch(() => {
       // First trigger the mutate callbacks
-      if (this.#mutateOptions) {
+      if (this.#mutateOptions && this.hasListeners()) {
         if (options.onSuccess) {
           this.#mutateOptions.onSuccess?.(
             this.#currentResult.data!,

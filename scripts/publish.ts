@@ -388,6 +388,8 @@ async function run() {
       const entries =
         pkg.name === '@tanstack/eslint-plugin-query'
           ? (['main'] as const)
+          : pkg.name === '@tanstack/svelte-query'
+          ? (['types', 'module'] as const)
           : (['main', 'types', 'module'] as const)
 
       await Promise.all(
