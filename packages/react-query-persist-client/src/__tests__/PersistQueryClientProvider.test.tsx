@@ -12,7 +12,7 @@ import type {
 } from '@tanstack/query-persist-client-core'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 
-import { createQueryClient, mockLogger, queryKey, sleep } from './utils'
+import { createQueryClient, queryKey, sleep } from './utils'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
 
 const createMockPersister = (): Persister => {
@@ -402,8 +402,11 @@ describe('PersistQueryClientProvider', () => {
 
   test('should remove cache after non-successful restoring', async () => {
     const key = queryKey()
-    jest.spyOn(console, 'warn').mockImplementation(() => undefined)
-    jest.spyOn(console, 'error').mockImplementation(() => undefined)
+    const consoleMock = jest.spyOn(console, 'error')
+    const consoleWarn = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined)
+    consoleMock.mockImplementation(() => undefined)
 
     const queryClient = createQueryClient()
     const removeClient = jest.fn()
@@ -438,8 +441,10 @@ describe('PersistQueryClientProvider', () => {
 
     await waitFor(() => rendered.getByText('fetched'))
     expect(removeClient).toHaveBeenCalledTimes(1)
-    expect(mockLogger.error).toHaveBeenCalledTimes(2)
-    expect(mockLogger.error).toHaveBeenNthCalledWith(2, error)
+    expect(consoleMock).toHaveBeenCalledTimes(1)
+    expect(consoleMock).toHaveBeenNthCalledWith(1, error)
+    consoleMock.mockRestore()
+    consoleWarn.mockRestore()
   })
 
   test('should be able to persist into multiple clients', async () => {

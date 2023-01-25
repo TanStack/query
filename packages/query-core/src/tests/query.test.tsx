@@ -2,7 +2,6 @@ import {
   sleep,
   queryKey,
   mockVisibilityState,
-  mockLogger,
   createQueryClient,
 } from './utils'
 import type {
@@ -761,12 +760,16 @@ describe('query', () => {
 
     const unsubscribe = observer.subscribe(() => undefined)
     await sleep(10)
-    expect(mockLogger.error).toHaveBeenCalledWith(new Error('Missing queryFn'))
-
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'error',
+      error: new Error('Missing queryFn'),
+    })
     unsubscribe()
   })
 
   test('fetch should dispatch an error if the queryFn returns undefined', async () => {
+    const consoleMock = jest.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -790,8 +793,11 @@ describe('query', () => {
       error,
     })
 
-    expect(mockLogger.error).toHaveBeenCalledWith(error)
+    expect(consoleMock).toHaveBeenCalledWith(
+      `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ["${key}"]`,
+    )
     unsubscribe()
+    consoleMock.mockRestore()
   })
 
   test('constructor should call initialDataUpdatedAt if defined as a function', async () => {

@@ -1,10 +1,4 @@
-import {
-  sleep,
-  queryKey,
-  expectType,
-  mockLogger,
-  createQueryClient,
-} from './utils'
+import { sleep, queryKey, expectType, createQueryClient } from './utils'
 import type { QueryClient, QueryObserverResult } from '..'
 import { QueryObserver, focusManager } from '..'
 
@@ -464,7 +458,7 @@ describe('queryObserver', () => {
 
     const fetchData = () => {
       count++
-      Promise.resolve('data')
+      return Promise.resolve('data')
     }
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -525,36 +519,6 @@ describe('queryObserver', () => {
     const secondData = observer.getCurrentResult().data
 
     expect(firstData).toBe(secondData)
-  })
-
-  test('the retrier should not throw an error when reject if the retrier is already resolved', async () => {
-    const key = queryKey()
-    let count = 0
-
-    const observer = new QueryObserver(queryClient, {
-      queryKey: key,
-      queryFn: () => {
-        count++
-        return Promise.reject<unknown>(`reject ${count}`)
-      },
-      retry: 1,
-      retryDelay: 20,
-    })
-
-    const unsubscribe = observer.subscribe(() => undefined)
-
-    // Simulate a race condition when an unsubscribe and a retry occur.
-    await sleep(20)
-    unsubscribe()
-
-    // A second reject is triggered for the retry
-    // but the retryer has already set isResolved to true
-    // so it does nothing and no error is thrown
-
-    // Should not log an error
-    queryClient.clear()
-    await sleep(40)
-    expect(mockLogger.error).not.toHaveBeenNthCalledWith(1, 'reject 1')
   })
 
   test('should throw an error if enabled option type is not valid', async () => {
@@ -651,21 +615,6 @@ describe('queryObserver', () => {
     expect(observer.getCurrentResult().data).toBe(selectedData)
 
     unsubscribe()
-  })
-
-  test('select function error using placeholderdata should log an error', () => {
-    const key = queryKey()
-
-    new QueryObserver(queryClient, {
-      queryKey: key,
-      queryFn: () => 'data',
-      placeholderData: 'placeholderdata',
-      select: () => {
-        throw new Error('error')
-      },
-    })
-
-    expect(mockLogger.error).toHaveBeenNthCalledWith(2, new Error('error'))
   })
 
   test('should not use replaceEqualDeep for select value when structuralSharing option is true and placeholderdata is defined', () => {

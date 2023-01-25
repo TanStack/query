@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
-import { sleep, queryKey, mockLogger, createQueryClient } from './utils'
+import { sleep, queryKey, createQueryClient } from './utils'
 import type {
   QueryCache,
   QueryClient,
@@ -669,7 +669,6 @@ describe('queryClient', () => {
       })
 
       expect(result).toBeUndefined()
-      expect(mockLogger.error).toHaveBeenCalled()
     })
 
     test('should be garbage collected after gcTime if unused', async () => {

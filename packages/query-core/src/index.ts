@@ -25,7 +25,6 @@ export {
 export * from './types'
 export type { Query, QueryState } from './query'
 export type { Mutation } from './mutation'
-export type { Logger } from './logger'
 export type {
   DehydrateOptions,
   DehydratedState,

@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/react'
-import { sleep, queryKey, createQueryClient, mockLogger } from './utils'
+import { sleep, queryKey, createQueryClient } from './utils'
 import type { QueryClient, QueryObserverResult } from '..'
 import { QueriesObserver } from '..'
 
@@ -34,6 +34,8 @@ describe('queriesObserver', () => {
   })
 
   test('should still return value for undefined query key', async () => {
+    const consoleMock = jest.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
     const key1 = queryKey()
     const queryFn1 = jest.fn().mockReturnValue(1)
     const queryFn2 = jest.fn().mockReturnValue(2)
@@ -49,13 +51,11 @@ describe('queriesObserver', () => {
     unsubscribe()
     expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
 
-    expect(mockLogger.error).toHaveBeenCalledTimes(2)
-    expect(mockLogger.error).toHaveBeenCalledWith(
-      'Passing a custom logger has been deprecated and will be removed in the next major version.',
+    expect(consoleMock).toHaveBeenCalledTimes(1)
+    expect(consoleMock).toHaveBeenCalledWith(
+      "As of v4, queryKey needs to be an Array. If you are using a string like 'repoData', please change it to an Array, e.g. ['repoData']",
     )
-    expect(mockLogger.error).toHaveBeenCalledWith(
-      'Passing a custom logger has been deprecated and will be removed in the next major version.',
-    )
+    consoleMock.mockRestore()
   })
 
   test('should update when a query updates', async () => {

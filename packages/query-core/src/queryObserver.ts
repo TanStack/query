@@ -466,9 +466,6 @@ export class QueryObserver<
           this.#selectResult = data
           this.#selectError = null
         } catch (selectError) {
-          if (process.env.NODE_ENV !== 'production') {
-            this.#client.getLogger().error(selectError)
-          }
           this.#selectError = selectError as TError
         }
       }
@@ -504,9 +501,6 @@ export class QueryObserver<
             placeholderData = options.select(placeholderData)
             this.#selectError = null
           } catch (selectError) {
-            if (process.env.NODE_ENV !== 'production') {
-              this.#client.getLogger().error(selectError)
-            }
             this.#selectError = selectError as TError
           }
         }
