@@ -5,6 +5,7 @@ import type {
   DefinedCreateQueryResult,
   CreateQueryOptions,
   CreateQueryResult,
+  WritableOrVal,
 } from './types'
 
 export function createQuery<
@@ -14,7 +15,7 @@ export function createQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: Omit<
-    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    WritableOrVal<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
     'initialData'
   > & {
     initialData?: () => undefined
@@ -28,7 +29,7 @@ export function createQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: Omit<
-    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    WritableOrVal<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
     'initialData'
   > & {
     initialData: TQueryFnData | (() => TQueryFnData)
@@ -41,7 +42,9 @@ export function createQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: WritableOrVal<
+    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+  >,
 ): CreateQueryResult<TData, TError>
 
 export function createQuery<
@@ -52,7 +55,7 @@ export function createQuery<
 >(
   queryKey: TQueryKey,
   options?: Omit<
-    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    WritableOrVal<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
     'queryKey' | 'initialData'
   > & { initialData?: () => undefined },
 ): CreateQueryResult<TData, TError>
@@ -65,7 +68,7 @@ export function createQuery<
 >(
   queryKey: TQueryKey,
   options?: Omit<
-    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    WritableOrVal<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
     'queryKey' | 'initialData'
   > & { initialData: TQueryFnData | (() => TQueryFnData) },
 ): DefinedCreateQueryResult<TData, TError>
@@ -78,7 +81,7 @@ export function createQuery<
 >(
   queryKey: TQueryKey,
   options?: Omit<
-    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    WritableOrVal<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
     'queryKey'
   >,
 ): CreateQueryResult<TData, TError>
@@ -92,7 +95,7 @@ export function createQuery<
   queryKey: TQueryKey,
   queryFn: QueryFunction<TQueryFnData, TQueryKey>,
   options?: Omit<
-    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    WritableOrVal<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
     'queryKey' | 'queryFn' | 'initialData'
   > & { initialData?: () => undefined },
 ): CreateQueryResult<TData, TError>
@@ -106,7 +109,7 @@ export function createQuery<
   queryKey: TQueryKey,
   queryFn: QueryFunction<TQueryFnData, TQueryKey>,
   options?: Omit<
-    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    WritableOrVal<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
     'queryKey' | 'queryFn' | 'initialData'
   > & { initialData: TQueryFnData | (() => TQueryFnData) },
 ): DefinedCreateQueryResult<TData, TError>
@@ -120,7 +123,7 @@ export function createQuery<
   queryKey: TQueryKey,
   queryFn: QueryFunction<TQueryFnData, TQueryKey>,
   options?: Omit<
-    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    WritableOrVal<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
     'queryKey' | 'queryFn'
   >,
 ): CreateQueryResult<TData, TError>
@@ -131,13 +134,25 @@ export function createQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  arg1: TQueryKey | CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  arg1:
+    | TQueryKey
+    | WritableOrVal<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
   arg2?:
     | QueryFunction<TQueryFnData, TQueryKey>
-    | CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  arg3?: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    | WritableOrVal<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
+  arg3?: WritableOrVal<
+    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+  >,
 ): CreateQueryResult<TData, TError> {
-  const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
+  const parsedOptions = parseQueryArgs(
+    arg1 as
+      | TQueryKey
+      | CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    arg2 as
+      | QueryFunction<TQueryFnData, TQueryKey>
+      | CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    arg3 as CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  )
   const result = createBaseQuery(parsedOptions, QueryObserver)
   return result
 }

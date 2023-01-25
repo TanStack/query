@@ -3,9 +3,19 @@ import {
   type QueryKey,
   type QueryObserver,
 } from '@tanstack/query-core'
-import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
+import { derived, readable, writable, get, type Writable } from 'svelte/store'
+import type {
+  CreateBaseQueryOptions,
+  CreateBaseQueryResult,
+  WritableOrVal,
+} from './types'
 import { useQueryClient } from './useQueryClient'
-import { derived, readable } from 'svelte/store'
+
+function isWritable<T extends object>(
+  obj: WritableOrVal<T>,
+): obj is Writable<T> {
+  return 'subscribe' in obj
+}
 
 export function createBaseQuery<
   TQueryFnData,
@@ -14,51 +24,60 @@ export function createBaseQuery<
   TQueryData,
   TQueryKey extends QueryKey,
 >(
-  options: CreateBaseQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
+  options: WritableOrVal<
+    CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
   >,
   Observer: typeof QueryObserver,
 ): CreateBaseQueryResult<TData, TError> {
   const queryClient = useQueryClient()
-  const defaultedOptions = queryClient.defaultQueryOptions(options)
-  defaultedOptions._optimisticResults = 'optimistic'
 
-  let observer = new Observer<
+  let optionsStore: Writable<
+    CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+  >
+  if (isWritable(options)) {
+    optionsStore = options
+  } else {
+    optionsStore = writable(options)
+  }
+
+  const defaultedOptionsStore = derived(optionsStore, ($options) => {
+    const defaultedOptions = queryClient.defaultQueryOptions($options)
+    defaultedOptions._optimisticResults = 'optimistic'
+
+    // Include callbacks in batch renders
+    if (defaultedOptions.onError) {
+      defaultedOptions.onError = notifyManager.batchCalls(
+        defaultedOptions.onError,
+      )
+    }
+
+    if (defaultedOptions.onSuccess) {
+      defaultedOptions.onSuccess = notifyManager.batchCalls(
+        defaultedOptions.onSuccess,
+      )
+    }
+
+    if (defaultedOptions.onSettled) {
+      defaultedOptions.onSettled = notifyManager.batchCalls(
+        defaultedOptions.onSettled,
+      )
+    }
+
+    return defaultedOptions
+  })
+
+  const observer = new Observer<
     TQueryFnData,
     TError,
     TData,
     TQueryData,
     TQueryKey
-  >(queryClient, defaultedOptions)
+  >(queryClient, get(defaultedOptionsStore))
 
-  // Include callbacks in batch renders
-  if (defaultedOptions.onError) {
-    defaultedOptions.onError = notifyManager.batchCalls(
-      defaultedOptions.onError,
-    )
-  }
-
-  if (defaultedOptions.onSuccess) {
-    defaultedOptions.onSuccess = notifyManager.batchCalls(
-      defaultedOptions.onSuccess,
-    )
-  }
-
-  if (defaultedOptions.onSettled) {
-    defaultedOptions.onSettled = notifyManager.batchCalls(
-      defaultedOptions.onSettled,
-    )
-  }
-
-  readable(observer).subscribe(($observer) => {
-    observer = $observer
+  defaultedOptionsStore.subscribe(($defaultedOptions) => {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
-    observer.setOptions(defaultedOptions, { listeners: false })
+    observer.setOptions($defaultedOptions, { listeners: false })
   })
 
   const result = readable(observer.getCurrentResult(), (set) => {
@@ -66,8 +85,8 @@ export function createBaseQuery<
   })
 
   const { subscribe } = derived(result, ($result) => {
-    $result = observer.getOptimisticResult(defaultedOptions)
-    return !defaultedOptions.notifyOnChangeProps
+    $result = observer.getOptimisticResult(get(defaultedOptionsStore))
+    return !get(defaultedOptionsStore).notifyOnChangeProps
       ? observer.trackResult($result)
       : $result
   })

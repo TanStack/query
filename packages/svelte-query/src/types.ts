@@ -10,7 +10,9 @@ import type {
   DefinedQueryObserverResult,
 } from '@tanstack/query-core'
 import type { QueryClient } from '@tanstack/query-core'
-import type { Readable } from 'svelte/store'
+import type { Readable, Writable } from 'svelte/store'
+
+export type WritableOrVal<T> = T | Writable<T>
 
 export interface ContextOptions {
   /**
