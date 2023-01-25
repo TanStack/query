@@ -44,7 +44,7 @@ describe('useQueries', () => {
           {
             queryKey: key2,
             queryFn: async () => {
-              await sleep(100)
+              await sleep(200)
               return 2
             },
           },
