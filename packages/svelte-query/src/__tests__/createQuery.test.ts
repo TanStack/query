@@ -7,10 +7,12 @@ describe('createQuery', () => {
   it('Render and wait for success', async () => {
     render(CreateQuery, {
       props: {
-        queryKey: ['test'],
-        queryFn: async () => {
-          await sleep(100)
-          return 'Success'
+        options: {
+          queryKey: ['test'],
+          queryFn: async () => {
+            await sleep(10)
+            return 'Success'
+          },
         },
       },
     })
@@ -19,7 +21,7 @@ describe('createQuery', () => {
     expect(screen.queryByText('Error')).not.toBeInTheDocument()
     expect(screen.queryByText('Success')).not.toBeInTheDocument()
 
-    await sleep(200)
+    await sleep(20)
 
     expect(screen.queryByText('Success')).toBeInTheDocument()
     expect(screen.queryByText('Loading')).not.toBeInTheDocument()
