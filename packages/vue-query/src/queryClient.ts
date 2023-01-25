@@ -30,10 +30,10 @@ import { MutationCache } from './mutationCache'
 
 export class QueryClient extends QC {
   constructor(config: MaybeRefDeep<QueryClientConfig> = {}) {
-    const unreffedConfig = cloneDeepUnref(config) as QueryClientConfig
+    const unreffedConfig = cloneDeepUnref(config)
     const vueQueryConfig: QueryClientConfig = {
-      logger: cloneDeepUnref(unreffedConfig.logger),
-      defaultOptions: cloneDeepUnref(unreffedConfig.defaultOptions),
+      logger: unreffedConfig.logger,
+      defaultOptions: unreffedConfig.defaultOptions,
       queryCache: unreffedConfig.queryCache || new QueryCache(),
       mutationCache: unreffedConfig.mutationCache || new MutationCache(),
     }
@@ -42,103 +42,92 @@ export class QueryClient extends QC {
 
   isRestoring = ref(false)
 
-  isFetching(filters?: MaybeRefDeep<QueryFilters>): number {
-    const filtersUnreffed = cloneDeepUnref(filters) as QueryFilters
-    return super.isFetching(filtersUnreffed)
+  isFetching(filters: MaybeRefDeep<QueryFilters> = {}): number {
+    return super.isFetching(cloneDeepUnref(filters))
   }
 
-  isMutating(filters?: MaybeRefDeep<MutationFilters>): number {
-    return super.isMutating(cloneDeepUnref(filters) as MutationFilters)
+  isMutating(filters: MaybeRefDeep<MutationFilters> = {}): number {
+    return super.isMutating(cloneDeepUnref(filters))
   }
 
   getQueryData<TData = unknown>(
     queryKey: MaybeRefDeep<QueryKey>,
   ): TData | undefined {
-    return super.getQueryData(cloneDeepUnref(queryKey) as QueryKey)
+    return super.getQueryData(cloneDeepUnref(queryKey))
   }
 
   getQueriesData<TData = unknown>(
     filters: MaybeRefDeep<QueryFilters>,
   ): [QueryKey, TData | undefined][] {
-    const unreffed = cloneDeepUnref(filters) as QueryFilters
-    return super.getQueriesData(unreffed)
+    return super.getQueriesData(cloneDeepUnref(filters))
   }
 
   setQueryData<TData>(
     queryKey: MaybeRefDeep<QueryKey>,
     updater: Updater<TData | undefined, TData | undefined>,
-    options?: MaybeRefDeep<SetDataOptions>,
+    options: MaybeRefDeep<SetDataOptions> = {},
   ): TData | undefined {
     return super.setQueryData(
-      cloneDeepUnref(queryKey) as QueryKey,
+      cloneDeepUnref(queryKey),
       updater,
-      cloneDeepUnref(options) as SetDataOptions,
+      cloneDeepUnref(options),
     )
   }
 
   setQueriesData<TData>(
     filters: MaybeRefDeep<QueryFilters>,
     updater: Updater<TData | undefined, TData | undefined>,
-    options?: MaybeRefDeep<SetDataOptions>,
+    options: MaybeRefDeep<SetDataOptions> = {},
   ): [QueryKey, TData | undefined][] {
-    const filtersUnreffed = cloneDeepUnref(filters) as QueryFilters
-    const optionsUnreffed = cloneDeepUnref(options) as SetDataOptions
-
-    return super.setQueriesData(filtersUnreffed, updater, optionsUnreffed)
+    return super.setQueriesData(
+      cloneDeepUnref(filters),
+      updater,
+      cloneDeepUnref(options),
+    )
   }
 
   getQueryState<TData = unknown, TError = Error>(
     queryKey: MaybeRefDeep<QueryKey>,
   ): QueryState<TData, TError> | undefined {
-    return super.getQueryState(cloneDeepUnref(queryKey) as QueryKey)
+    return super.getQueryState(cloneDeepUnref(queryKey))
   }
 
-  removeQueries(filters?: MaybeRefDeep<QueryFilters>): void {
-    const filtersUnreffed = cloneDeepUnref(filters) as QueryFilters
-    return super.removeQueries(filtersUnreffed)
+  removeQueries(filters: MaybeRefDeep<QueryFilters> = {}): void {
+    return super.removeQueries(cloneDeepUnref(filters))
   }
 
   resetQueries<TPageData = unknown>(
-    filters?: MaybeRefDeep<ResetQueryFilters<TPageData>>,
-    options?: MaybeRefDeep<ResetOptions>,
+    filters: MaybeRefDeep<ResetQueryFilters<TPageData>> = {},
+    options: MaybeRefDeep<ResetOptions> = {},
   ): Promise<void> {
-    const filtersUnreffed = cloneDeepUnref(filters) as ResetQueryFilters
-    const optionsUnreffed = cloneDeepUnref(options) as ResetOptions
-
-    return super.resetQueries(filtersUnreffed, optionsUnreffed)
+    return super.resetQueries(cloneDeepUnref(filters), cloneDeepUnref(options))
   }
 
   cancelQueries(
-    filters?: MaybeRefDeep<QueryFilters>,
-    options?: MaybeRefDeep<CancelOptions>,
+    filters: MaybeRefDeep<QueryFilters> = {},
+    options: MaybeRefDeep<CancelOptions> = {},
   ): Promise<void> {
-    const filtersUnreffed = cloneDeepUnref(filters) as QueryFilters
-    const optionsUnreffed = cloneDeepUnref(options) as CancelOptions
-    return super.cancelQueries(filtersUnreffed, optionsUnreffed)
+    return super.cancelQueries(cloneDeepUnref(filters), cloneDeepUnref(options))
   }
 
   invalidateQueries<TPageData = unknown>(
-    filters?: MaybeRefDeep<InvalidateQueryFilters<TPageData>>,
-    options?: MaybeRefDeep<InvalidateOptions>,
+    filters: MaybeRefDeep<InvalidateQueryFilters<TPageData>> = {},
+    options: MaybeRefDeep<InvalidateOptions> = {},
   ): Promise<void> {
-    const filtersUnreffed = cloneDeepUnref(
-      filters,
-    ) as InvalidateQueryFilters<TPageData>
-    const optionsUnreffed = cloneDeepUnref(options) as InvalidateOptions
-
-    return super.invalidateQueries(filtersUnreffed, optionsUnreffed)
+    return super.invalidateQueries(
+      cloneDeepUnref(filters),
+      cloneDeepUnref(options),
+    )
   }
 
   refetchQueries<TPageData = unknown>(
-    filters?: MaybeRefDeep<RefetchQueryFilters<TPageData>>,
-    options?: MaybeRefDeep<RefetchOptions>,
+    filters: MaybeRefDeep<RefetchQueryFilters<TPageData>> = {},
+    options: MaybeRefDeep<RefetchOptions> = {},
   ): Promise<void> {
-    const filtersUnreffed = cloneDeepUnref(
-      filters,
-    ) as RefetchQueryFilters<TPageData>
-    const optionsUnreffed = cloneDeepUnref(options) as RefetchOptions
-
-    return super.refetchQueries(filtersUnreffed, optionsUnreffed)
+    return super.refetchQueries(
+      cloneDeepUnref(filters),
+      cloneDeepUnref(options),
+    )
   }
 
   fetchQuery<
@@ -151,7 +140,7 @@ export class QueryClient extends QC {
   ): Promise<TData>
   fetchQuery<
     TQueryFnData,
-    TError,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -159,14 +148,7 @@ export class QueryClient extends QC {
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<TData> {
-    const optionsUnreffed = cloneDeepUnref(options) as FetchQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey
-    >
-
-    return super.fetchQuery(optionsUnreffed)
+    return super.fetchQuery(cloneDeepUnref(options))
   }
 
   prefetchQuery<
@@ -187,13 +169,7 @@ export class QueryClient extends QC {
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<void> {
-    const optionsUnreffed = cloneDeepUnref(options) as FetchQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey
-    >
-    return super.prefetchQuery(optionsUnreffed)
+    return super.prefetchQuery(cloneDeepUnref(options))
   }
 
   fetchInfiniteQuery<
@@ -214,11 +190,7 @@ export class QueryClient extends QC {
       FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<InfiniteData<TData>> {
-    const optionsUnreffed = cloneDeepUnref(
-      options,
-    ) as FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>
-
-    return super.fetchInfiniteQuery(optionsUnreffed)
+    return super.fetchInfiniteQuery(cloneDeepUnref(options))
   }
 
   prefetchInfiniteQuery<
@@ -239,14 +211,11 @@ export class QueryClient extends QC {
       FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<void> {
-    const optionsUnreffed = cloneDeepUnref(
-      options,
-    ) as FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>
-    return super.prefetchInfiniteQuery(optionsUnreffed)
+    return super.prefetchInfiniteQuery(cloneDeepUnref(options))
   }
 
   setDefaultOptions(options: MaybeRefDeep<DefaultOptions>): void {
-    super.setDefaultOptions(cloneDeepUnref(options) as DefaultOptions)
+    super.setDefaultOptions(cloneDeepUnref(options))
   }
 
   setQueryDefaults(
@@ -255,17 +224,12 @@ export class QueryClient extends QC {
       Omit<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>
     >,
   ): void {
-    const queryKeyUnreffed = cloneDeepUnref(queryKey) as QueryKey
-    const optionsUnreffed = cloneDeepUnref(options) as Omit<
-      QueryObserverOptions<unknown, any, any, any>,
-      'queryKey'
-    >
-    super.setQueryDefaults(queryKeyUnreffed, optionsUnreffed)
+    super.setQueryDefaults(cloneDeepUnref(queryKey), cloneDeepUnref(options))
   }
 
   getQueryDefaults(
-    queryKey?: MaybeRefDeep<QueryKey>,
-  ): QueryObserverOptions<any, any, any, any, any> | undefined {
+    queryKey: MaybeRefDeep<QueryKey>,
+  ): QueryObserverOptions<any, any, any, any, any> {
     return super.getQueryDefaults(cloneDeepUnref(queryKey))
   }
 
@@ -275,13 +239,13 @@ export class QueryClient extends QC {
   ): void {
     super.setMutationDefaults(
       cloneDeepUnref(mutationKey),
-      cloneDeepUnref(options) as any,
+      cloneDeepUnref(options),
     )
   }
 
   getMutationDefaults(
-    mutationKey?: MaybeRefDeep<MutationKey>,
-  ): MutationObserverOptions<any, any, any, any> | undefined {
+    mutationKey: MaybeRefDeep<MutationKey>,
+  ): MutationObserverOptions<any, any, any, any> {
     return super.getMutationDefaults(cloneDeepUnref(mutationKey))
   }
 }

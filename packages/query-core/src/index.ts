@@ -14,7 +14,12 @@ export { onlineManager } from './onlineManager'
 export { hashKey, replaceEqualDeep, isServer, keepPreviousData } from './utils'
 export type { MutationFilters, QueryFilters, Updater } from './utils'
 export { isCancelledError } from './retryer'
-export { dehydrate, hydrate } from './hydration'
+export {
+  dehydrate,
+  hydrate,
+  defaultShouldDehydrateMutation,
+  defaultShouldDehydrateQuery,
+} from './hydration'
 
 // Types
 export * from './types'

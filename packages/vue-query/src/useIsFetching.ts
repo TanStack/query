@@ -1,4 +1,4 @@
-import { computed, unref, onScopeDispose, ref, watch } from 'vue-demi'
+import { computed, onScopeDispose, ref, watch } from 'vue-demi'
 import type { Ref } from 'vue-demi'
 import type { QueryFilters as QF } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
@@ -9,10 +9,10 @@ import type { QueryClient } from './queryClient'
 export type QueryFilters = MaybeRefDeep<QF>
 
 export function useIsFetching(
-  fetchingFilters: QueryFilters = {},
+  fetchingFilters: MaybeRefDeep<QF> = {},
   queryClient?: QueryClient,
 ): Ref<number> {
-  const filters = computed(() => unrefFilterArgs(fetchingFilters))
+  const filters = computed(() => cloneDeepUnref(fetchingFilters))
   const client = queryClient || useQueryClient()
 
   const isFetching = ref(client.isFetching(filters))
@@ -34,9 +34,4 @@ export function useIsFetching(
   })
 
   return isFetching
-}
-
-export function unrefFilterArgs(arg: QueryFilters) {
-  const options = unref(arg)
-  return cloneDeepUnref(options) as QF
 }

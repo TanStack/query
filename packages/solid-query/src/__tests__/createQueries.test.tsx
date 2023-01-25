@@ -803,7 +803,7 @@ describe('useQueries', () => {
       }))
       return (
         <div>
-          <h1>Status: {state[0]?.data}</h1>
+          <h1>Status: {state[0].data}</h1>
         </div>
       )
     }

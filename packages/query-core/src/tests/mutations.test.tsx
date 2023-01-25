@@ -342,4 +342,36 @@ describe('mutations', () => {
     }
     expect(error).toEqual(new Error('No mutationFn found'))
   })
+
+  test('mutate update the mutation state even without an active subscription', async () => {
+    const onSuccess = jest.fn()
+    const onSettled = jest.fn()
+
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: async () => {
+        return 'update'
+      },
+    })
+
+    await mutation.mutate(undefined, { onSuccess, onSettled })
+    expect(mutation.getCurrentResult().data).toEqual('update')
+    expect(onSuccess).not.toHaveBeenCalled()
+    expect(onSettled).not.toHaveBeenCalled()
+  })
+
+  test('mutate update the mutation state even without an active subscription', async () => {
+    const onSuccess = jest.fn()
+    const onSettled = jest.fn()
+
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: async () => {
+        return 'update'
+      },
+    })
+
+    await mutation.mutate(undefined, { onSuccess, onSettled })
+    expect(mutation.getCurrentResult().data).toEqual('update')
+    expect(onSuccess).not.toHaveBeenCalled()
+    expect(onSettled).not.toHaveBeenCalled()
+  })
 })

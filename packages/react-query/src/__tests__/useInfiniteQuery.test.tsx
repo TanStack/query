@@ -275,12 +275,15 @@ describe('useInfiniteQuery', () => {
         }),
       })
       states.push(state)
-      return null
+
+      return <div>{state.data?.pages.join(',')}</div>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
+    await waitFor(() => {
+      rendered.getByText('count: 1')
+    })
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
@@ -311,12 +314,21 @@ describe('useInfiniteQuery', () => {
         }, []),
       })
       states.push(state)
-      return null
+
+      return (
+        <div>
+          {state.data?.pages.map((page) => (
+            <div key={page.id}>count: {page.count}</div>
+          ))}
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(20)
+    await waitFor(() => {
+      rendered.getByText('count: 1')
+    })
 
     expect(states.length).toBe(2)
     expect(selectCalled).toBe(1)
@@ -405,20 +417,29 @@ describe('useInfiniteQuery', () => {
 
       states.push(state)
 
-      const { fetchPreviousPage } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          fetchPreviousPage()
-        }, 20)
-      }, [fetchPreviousPage])
-
-      return null
+      return (
+        <div>
+          <div>data: {state.data?.pages.join(',') ?? null}</div>
+          <button onClick={() => state.fetchPreviousPage()}>
+            fetch previous page
+          </button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await waitFor(() => {
+      rendered.getByText('data: 10')
+    })
+
+    fireEvent.click(
+      rendered.getByRole('button', { name: /fetch previous page/i }),
+    )
+
+    await waitFor(() => {
+      rendered.getByText('data: 9,10')
+    })
 
     expect(states.length).toBe(4)
     expect(states[0]).toMatchObject({
@@ -846,14 +867,12 @@ describe('useInfiniteQuery', () => {
       Promise<number>,
       [QueryFunctionContext<typeof key, number>]
     >(async ({ pageParam = start, signal }) => {
-      if (signal) {
-        const onAbort = jest.fn()
-        const abortListener = jest.fn()
-        onAborts.push(onAbort)
-        abortListeners.push(abortListener)
-        signal.onabort = onAbort
-        signal.addEventListener('abort', abortListener)
-      }
+      const onAbort = jest.fn()
+      const abortListener = jest.fn()
+      onAborts.push(onAbort)
+      abortListeners.push(abortListener)
+      signal.onabort = onAbort
+      signal.addEventListener('abort', abortListener)
       await sleep(50)
       return Number(pageParam)
     })
@@ -891,7 +910,7 @@ describe('useInfiniteQuery', () => {
     expect(firstCtx.pageParam).toBeUndefined()
     expect(firstCtx.queryKey).toEqual(key)
     expect(firstCtx.signal).toBeInstanceOf(AbortSignal)
-    expect(firstCtx.signal?.aborted).toBe(false)
+    expect(firstCtx.signal.aborted).toBe(false)
     expect(onAborts[callIndex]).not.toHaveBeenCalled()
     expect(abortListeners[callIndex]).not.toHaveBeenCalled()
 
@@ -900,7 +919,7 @@ describe('useInfiniteQuery', () => {
     expect(secondCtx.pageParam).toBe(11)
     expect(secondCtx.queryKey).toEqual(key)
     expect(secondCtx.signal).toBeInstanceOf(AbortSignal)
-    expect(secondCtx.signal?.aborted).toBe(true)
+    expect(secondCtx.signal.aborted).toBe(true)
     expect(onAborts[callIndex]).toHaveBeenCalledTimes(1)
     expect(abortListeners[callIndex]).toHaveBeenCalledTimes(1)
 
@@ -909,7 +928,7 @@ describe('useInfiniteQuery', () => {
     expect(thirdCtx.pageParam).toBe(11)
     expect(thirdCtx.queryKey).toEqual(key)
     expect(thirdCtx.signal).toBeInstanceOf(AbortSignal)
-    expect(thirdCtx.signal?.aborted).toBe(false)
+    expect(thirdCtx.signal.aborted).toBe(false)
     expect(onAborts[callIndex]).not.toHaveBeenCalled()
     expect(abortListeners[callIndex]).not.toHaveBeenCalled()
   })
@@ -923,14 +942,13 @@ describe('useInfiniteQuery', () => {
       Promise<number>,
       [QueryFunctionContext<typeof key, number>]
     >(async ({ pageParam = start, signal }) => {
-      if (signal) {
-        const onAbort = jest.fn()
-        const abortListener = jest.fn()
-        onAborts.push(onAbort)
-        abortListeners.push(abortListener)
-        signal.onabort = onAbort
-        signal.addEventListener('abort', abortListener)
-      }
+      const onAbort = jest.fn()
+      const abortListener = jest.fn()
+      onAborts.push(onAbort)
+      abortListeners.push(abortListener)
+      signal.onabort = onAbort
+      signal.addEventListener('abort', abortListener)
+
       await sleep(50)
       return Number(pageParam)
     })
@@ -968,7 +986,7 @@ describe('useInfiniteQuery', () => {
     expect(firstCtx.pageParam).toBeUndefined()
     expect(firstCtx.queryKey).toEqual(key)
     expect(firstCtx.signal).toBeInstanceOf(AbortSignal)
-    expect(firstCtx.signal?.aborted).toBe(false)
+    expect(firstCtx.signal.aborted).toBe(false)
     expect(onAborts[callIndex]).not.toHaveBeenCalled()
     expect(abortListeners[callIndex]).not.toHaveBeenCalled()
 
@@ -977,7 +995,7 @@ describe('useInfiniteQuery', () => {
     expect(secondCtx.pageParam).toBe(11)
     expect(secondCtx.queryKey).toEqual(key)
     expect(secondCtx.signal).toBeInstanceOf(AbortSignal)
-    expect(secondCtx.signal?.aborted).toBe(false)
+    expect(secondCtx.signal.aborted).toBe(false)
     expect(onAborts[callIndex]).not.toHaveBeenCalled()
     expect(abortListeners[callIndex]).not.toHaveBeenCalled()
   })

@@ -34,3 +34,11 @@ queryClient.setQueryData(['todos'], todos)
 ```
 
 [//]: # 'Example2'
+
+[//]: # 'Materials'
+
+## Further reading
+
+For a deep-dive on how to get data into your Query Cache before you fetch, have a look at [#17: Seeding the Query Cache](../community/tkdodos-blog#17-seeding-the-query-cache) from the Community Resources.
+
+[//]: # 'Materials'

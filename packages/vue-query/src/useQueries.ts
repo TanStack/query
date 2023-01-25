@@ -12,7 +12,6 @@ import {
   ref,
   watch,
 } from 'vue-demi'
-import type { Ref } from 'vue-demi'
 
 import type { QueryFunction, QueryObserverResult } from '@tanstack/query-core'
 
@@ -20,6 +19,7 @@ import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
 import type { UseQueryOptions } from './useQuery'
 import type { QueryClient } from './queryClient'
+import type { DistributiveOmit, MaybeRefDeep } from './types'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter
@@ -28,7 +28,7 @@ type UseQueryOptionsForUseQueries<
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = Omit<
+> = DistributiveOmit<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'placeholderData'
 > & {
@@ -155,17 +155,13 @@ export function useQueries<T extends any[]>({
   queries,
   queryClient,
 }: {
-  queries: Ref<UseQueriesOptionsArg<T>> | UseQueriesOptionsArg<T>
+  queries: MaybeRefDeep<UseQueriesOptionsArg<T>>
   queryClient?: QueryClient
 }): Readonly<UseQueriesResults<T>> {
-  const unreffedQueries = computed(
-    () => cloneDeepUnref(queries) as UseQueriesOptionsArg<T>,
-  )
-
   const client = queryClient || useQueryClient()
 
   const defaultedQueries = computed(() =>
-    unreffedQueries.value.map((options) => {
+    cloneDeepUnref(queries).map((options) => {
       const defaulted = client.defaultQueryOptions(options)
       defaulted._optimisticResults = client.isRestoring.value
         ? 'isRestoring'
@@ -202,7 +198,7 @@ export function useQueries<T extends any[]>({
   )
 
   watch(
-    unreffedQueries,
+    defaultedQueries,
     () => {
       observer.setQueries(defaultedQueries.value)
       state.splice(0, state.length, ...observer.getCurrentResult())
