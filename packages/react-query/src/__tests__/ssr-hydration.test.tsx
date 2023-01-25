@@ -172,7 +172,7 @@ describe('Server side rendering with de/rehydration', () => {
     setIsServer(false)
 
     const expectedMarkup =
-      'ErrorComponent - status:loading fetching:true data:undefined'
+      'ErrorComponent - status:pending fetching:true data:undefined'
 
     expect(markup).toBe(expectedMarkup)
 
@@ -243,7 +243,7 @@ describe('Server side rendering with de/rehydration', () => {
     setIsServer(false)
 
     const expectedMarkup =
-      'SuccessComponent - status:loading fetching:true data:undefined'
+      'SuccessComponent - status:pending fetching:true data:undefined'
 
     expect(markup).toBe(expectedMarkup)
 

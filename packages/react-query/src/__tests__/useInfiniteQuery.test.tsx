@@ -82,6 +82,7 @@ describe('useInfiniteQuery', () => {
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
       isLoading: true,
+      isPending: true,
       isInitialLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
@@ -90,7 +91,7 @@ describe('useInfiniteQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'fetching',
     })
 
@@ -114,6 +115,7 @@ describe('useInfiniteQuery', () => {
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
       isLoading: false,
+      isPending: false,
       isInitialLoading: false,
       isLoadingError: false,
       isPlaceholderData: false,
@@ -1509,7 +1511,7 @@ describe('useInfiniteQuery', () => {
       return (
         <div>
           <h1>Pagination</h1>
-          {status === 'loading' ? (
+          {status === 'pending' ? (
             'Loading...'
           ) : status === 'error' ? (
             <span>Error: {error.message}</span>
@@ -1637,7 +1639,7 @@ describe('useInfiniteQuery', () => {
       return (
         <div>
           <h1>Pagination</h1>
-          {status === 'loading' ? (
+          {status === 'pending' ? (
             'Loading...'
           ) : status === 'error' ? (
             <span>Error: {error.message}</span>
