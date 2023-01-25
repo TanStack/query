@@ -3,9 +3,7 @@ name: react-query tests
 on:
   push:
     branches:
-      - '1.x'
-      - '2.x'
-      - '3.x'
+      - 'v3'
 jobs:
   test:
     name: 'Node ${{ matrix.node }}, React ${{ matrix.react }}'
