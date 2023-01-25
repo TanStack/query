@@ -381,6 +381,10 @@ export interface QueryObserverBaseResult<TData = unknown, TError = Error> {
   isLoading: boolean
   isPending: boolean
   isLoadingError: boolean
+  /**
+   * @deprecated isInitialLoading is being deprecated in favor of isLoading
+   * and will be removed in the next major version.
+   */
   isInitialLoading: boolean
   isPaused: boolean
   isPlaceholderData: boolean
