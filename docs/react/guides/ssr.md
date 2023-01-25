@@ -406,7 +406,7 @@ Create a request-scoped singleton instance of `QueryClient`. **This ensures that
 
 ```tsx
 // app/getQueryClient.jsx
-import { QueryClient } from '@tanstack/query-core'
+import { QueryClient } from '@tanstack/react-query'
 import { cache } from 'react'
 
 const getQueryClient = cache(() => new QueryClient())
@@ -425,8 +425,7 @@ Fetch your data in a Server Component higher up in the component tree than the C
 
 ```tsx
 // app/hydratedPosts.jsx
-import { dehydrate } from '@tanstack/query-core'
-import { Hydrate } from '@tanstack/react-query'
+import { dehydrate, Hydrate } from '@tanstack/react-query'
 import getQueryClient from './getQueryClient'
 
 export default async function HydratedPosts() {
