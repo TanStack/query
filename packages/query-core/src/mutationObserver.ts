@@ -130,7 +130,7 @@ export class MutationObserver<
   #notify(action?: Action<TData, TError, TVariables, TContext>): void {
     notifyManager.batch(() => {
       // First trigger the mutate callbacks
-      if (this.#mutateOptions) {
+      if (this.#mutateOptions && this.hasListeners()) {
         if (action?.type === 'success') {
           this.#mutateOptions.onSuccess?.(
             action.data,

@@ -1057,7 +1057,7 @@ describe('useQueries with suspense', () => {
             queryKey: key1,
             queryFn: async () => {
               results.push('1')
-              await sleep(10)
+              await sleep(50)
               return '1'
             },
             suspense: true,
@@ -1066,7 +1066,7 @@ describe('useQueries with suspense', () => {
             queryKey: key2,
             queryFn: async () => {
               results.push('2')
-              await sleep(50)
+              await sleep(200)
               return '2'
             },
             staleTime: 2000,
@@ -1074,6 +1074,7 @@ describe('useQueries with suspense', () => {
           },
         ],
       })
+
       return (
         <div>
           <h1>data: {result.map((it) => it.data ?? 'null').join(',')}</h1>

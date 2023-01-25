@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-sync-storage-persister",
-  "version": "4.20.9",
+  "version": "4.22.4",
   "description": "A persister for synchronous storages, to be used with TanStack/Query",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -28,10 +28,13 @@
     "src"
   ],
   "scripts": {
-    "clean": "rm -rf ./build",
-    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
-    "test:jest": "../../node_modules/.bin/jest --config ./jest.config.ts",
-    "test:dev": "pnpm run test:jest --watch"
+    "clean": "rimraf ./build",
+    "test:eslint": "eslint --ext .ts,.tsx ./src",
+    "test:types": "tsc",
+    "test:lib": "jest --config ./jest.config.ts",
+    "test:lib:dev": "pnpm run test:lib --watch",
+    "test:lib:publish": "pnpm run test:lib --collectCoverage false",
+    "build:types": "tsc --build"
   },
   "dependencies": {
     "@tanstack/query-persist-client-core": "workspace:*"

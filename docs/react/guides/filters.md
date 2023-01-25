@@ -41,7 +41,7 @@ A query filter object supports the following properties:
   - When set to `paused` it will match queries that wanted to fetch, but have been `paused`.
   - When set to `idle` it will match queries that are not fetching.
 - `predicate?: (query: Query) => boolean`
-  - This predicate function will be called for every single query in the cache and be expected to return truthy for queries that are `found`.
+  - This predicate function will be used as a final filter on all matching queries. If no other filters are specified, this function will be evaluated against every query in the cache.
 
 ## `Mutation Filters`
 
@@ -62,12 +62,12 @@ await queryClient.isMutating({
 
 A mutation filter object supports the following properties:
 
+- `mutationKey?: MutationKey`
+  - Set this property to define a mutation key to match on.
 - `exact?: boolean`
   - If you don't want to search mutations inclusively by mutation key, you can pass the `exact: true` option to return only the mutation with the exact mutation key you have passed.
 - `fetching?: boolean`
   - When set to `true` it will match mutations that are currently fetching.
   - When set to `false` it will match mutations that are not fetching.
 - `predicate?: (mutation: Mutation) => boolean`
-  - This predicate function will be called for every single mutation in the cache and be expected to return truthy for mutations that are `found`.
-- `mutationKey?: MutationKey`
-  - Set this property to define a mutation key to match on.
+  - This predicate function will be used as a final filter on all matching mutations. If no other filters are specified, this function will be evaluated against every mutation in the cache.
