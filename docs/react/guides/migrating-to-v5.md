@@ -296,4 +296,16 @@ The `Hydrate` component has been renamed to `HydrationBoundary`. The `Hydrate` c
 + </HydrationBoundary>
 ```
 
+### `status: loading` has been changed to `status: pending` and `isLoading` has been changed to `isPending` and `isInitialLoading` has now been renamed to `isLoading`
+
+The `loading` status has been renamed to `pending`, and similarly the derived `isLoading` flag has been renamed to `isPending`.
+
+For mutations as well the `status` has been changed from `loading` to `pending` and the `isLoading` flag has been changed to `isPending`.
+
+Lastly the a new derived `isLoading` flag has been added to the queries that is implemented as `isPending && isFetching`. This means that `isLoading` and `isInitialLoading` have the same thing, but `isInitialLoading` is deprecated now and will be removed in the next major version.
+
+To understand the reasoning behing this change checkout the [v5 roadmap discussion](https://github.com/TanStack/query/discussions/4252).
+ 
+
+
 [//]: # 'FrameworkBreakingChanges'
