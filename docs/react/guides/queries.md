@@ -40,7 +40,7 @@ const result = useQuery({ queryKey: ['todos'], queryFn: fetchTodoList })
 
 The `result` object contains a few very important states you'll need to be aware of to be productive. A query can only be in one of the following states at any given moment:
 
-- `isLoading` or `status === 'loading'` - The query has no data yet
+- `isPending` or `status === 'pending'` - The query has no data yet
 - `isError` or `status === 'error'` - The query encountered an error
 - `isSuccess` or `status === 'success'` - The query was successful and data is available
 
