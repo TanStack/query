@@ -54,14 +54,28 @@ export const ASTUtils = {
       identifiers.push(node)
     }
 
-    if (node.type === AST_NODE_TYPES.ArrayExpression) {
-      node.elements.forEach((x) => {
+    if ('arguments' in node) {
+      node.arguments.forEach((x) => {
         identifiers.push(...ASTUtils.getNestedIdentifiers(x))
       })
     }
 
-    if (node.type === AST_NODE_TYPES.ObjectExpression) {
+    if ('elements' in node) {
+      node.elements.forEach((x) => {
+        if (x !== null) {
+          identifiers.push(...ASTUtils.getNestedIdentifiers(x))
+        }
+      })
+    }
+
+    if ('properties' in node) {
       node.properties.forEach((x) => {
+        identifiers.push(...ASTUtils.getNestedIdentifiers(x))
+      })
+    }
+
+    if ('expressions' in node) {
+      node.expressions.forEach((x) => {
         identifiers.push(...ASTUtils.getNestedIdentifiers(x))
       })
     }
@@ -70,10 +84,8 @@ export const ASTUtils = {
       identifiers.push(...ASTUtils.getNestedIdentifiers(node.value))
     }
 
-    if (node.type === AST_NODE_TYPES.TemplateLiteral) {
-      node.expressions.forEach((x) => {
-        identifiers.push(...ASTUtils.getNestedIdentifiers(x))
-      })
+    if (node.type === AST_NODE_TYPES.SpreadElement) {
+      identifiers.push(...ASTUtils.getNestedIdentifiers(node.argument))
     }
 
     if (node.type === AST_NODE_TYPES.MemberExpression) {

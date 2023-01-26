@@ -93,6 +93,129 @@ ruleTester.run('exhaustive-deps', rule, {
         }
       `,
     },
+    {
+      name: 'should add "...args" to deps',
+      code: `
+        function foo(...args) {}
+        function useData(arg, ...args) {
+          return useQuery({
+            queryKey: ['foo', arg, ...args],
+            queryFn: async () => foo([arg, ...args])
+          });
+        }
+      `,
+    },
+    {
+      name: 'should not add class to deps',
+      code: `
+        class Foo {}
+        useQuery({ queryKey: ['foo'], queryFn: async () => new Foo() });
+      `,
+    },
+    {
+      name: 'should not add `undefined` to deps',
+      code: `
+        useQuery({
+          queryKey: [],
+          queryFn: async () => {
+            if (undefined) {
+              return null;
+            }
+            return 1
+          },
+        });
+      `,
+    },
+    {
+      name: 'should not fail when queryKey is a queryKeyFactory while having a dep as first arg',
+      code: normalizeIndent`
+        const fooQueryKeyFactory = {
+          foo: () => ['foo'] as const,
+          num: (num: number) => [...fooQueryKeyFactory.foo(), num] as const,
+        }
+        
+        const useFoo = (num: number) =>
+          useQuery({
+            queryKey: fooQueryKeyFactory.foo(num),
+            queryFn: () => Promise.resolve(num),
+          })
+      `,
+    },
+    {
+      name: 'should not fail when queryKey is a queryKeyFactory while having a dep in object',
+      code: normalizeIndent`
+        const fooQueryKeyFactory = {
+          foo: () => ['foo'] as const,
+          num: (num: number) => [...fooQueryKeyFactory.foo(), num] as const,
+        }
+        
+        const useFoo = (num: number) =>
+          useQuery({
+            queryKey: fooQueryKeyFactory.foo({ x: num }),
+            queryFn: () => Promise.resolve(num),
+          })
+      `,
+    },
+    {
+      name: 'should not fail when queryKey is a queryKeyFactory while having a dep in object 2',
+      code: normalizeIndent`
+        const fooQueryKeyFactory = {
+          foo: () => ['foo'] as const,
+          num: (num: number) => [...fooQueryKeyFactory.foo(), num] as const,
+        }
+        
+        const useFoo = (num: number) =>
+          useQuery({
+            queryKey: fooQueryKeyFactory.foo({ num }),
+            queryFn: () => Promise.resolve(num),
+          })
+      `,
+    },
+    {
+      name: 'should not fail when queryKey is a queryKeyFactory while having a dep in array',
+      code: normalizeIndent`
+        const fooQueryKeyFactory = {
+          foo: () => ['foo'] as const,
+          num: (num: number) => [...fooQueryKeyFactory.foo(), num] as const,
+        }
+        
+        const useFoo = (num: number) =>
+          useQuery({
+              queryKey: fooQueryKeyFactory.foo([num]),
+              queryFn: () => Promise.resolve(num),
+          })
+      `,
+    },
+    {
+      name: 'should not fail when queryKey is a queryKeyFactory while having a dep in second arg',
+      code: normalizeIndent`
+        const fooQueryKeyFactory = {
+          foo: () => ['foo'] as const,
+          num: (num: number) => [...fooQueryKeyFactory.foo(), num] as const,
+        }
+        
+        const useFoo = (num: number) =>
+          useQuery({
+              queryKey: fooQueryKeyFactory.foo(1, num),
+              queryFn: () => Promise.resolve(num),
+          })
+      `,
+    },
+    {
+      name: 'should not fail when queryKey is a queryKeyFactory while having a dep is object prop',
+      code: normalizeIndent`
+        const fooQueryKeyFactory = {
+          foo: () => ['foo'] as const,
+          num: (num: number) => [...fooQueryKeyFactory.foo(), num] as const,
+        }
+        
+        const useFoo = (obj: { num: number }) =>
+          useQuery({
+              queryKey: fooQueryKeyFactory.foo(obj.num),
+              queryFn: () => Promise.resolve(obj.num),
+          })
+      `,
+    },
   ],
   invalid: [
     {
@@ -369,6 +492,24 @@ ruleTester.run('exhaustive-deps', rule, {
               `,
             },
           ],
+        },
+      ],
+    },
+    {
+      name: 'should fail when queryKey is a queryKeyFactory while having missing dep',
+      code: normalizeIndent`
+        const fooQueryKeyFactory = { foo: () => ['foo'] as const }
+
+        const useFoo = (num: number) =>
+          useQuery({
+              queryKey: fooQueryKeyFactory.foo(),
+              queryFn: () => Promise.resolve(num),
+          })
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'num' },
         },
       ],
     },

@@ -1,4 +1,4 @@
-import { AST_NODE_TYPES } from '@typescript-eslint/utils'
+import { AST_NODE_TYPES, TSESLint } from '@typescript-eslint/utils'
 import { ASTUtils } from '../../utils/ast-utils'
 import { createRule } from '../../utils/create-rule'
 import { uniqueBy } from '../../utils/unique-by'
@@ -69,11 +69,6 @@ export const rule = createRule({
           }
         }
 
-        if (queryKeyNode.type !== AST_NODE_TYPES.ArrayExpression) {
-          // TODO support query key factory
-          return
-        }
-
         const sourceCode = context.getSourceCode()
         const queryKeyValue = queryKeyNode
         const refs = ASTUtils.getExternalRefs({
@@ -113,21 +108,25 @@ export const rule = createRule({
             .getText(queryKeyValue)
             .replace(/\]$/, `, ${missingAsText}]`)
 
+          const suggestions: TSESLint.ReportSuggestionArray<string> = []
+
+          if (queryKeyNode.type === AST_NODE_TYPES.ArrayExpression) {
+            suggestions.push({
+              messageId: 'fixTo',
+              data: { result: existingWithMissing },
+              fix(fixer) {
+                return fixer.replaceText(queryKeyValue, existingWithMissing)
+              },
+            })
+          }
+
           context.report({
             node: node,
             messageId: 'missingDeps',
             data: {
               deps: uniqueMissingRefs.map((ref) => ref.text).join(', '),
             },
-            suggest: [
-              {
-                messageId: 'fixTo',
-                data: { result: existingWithMissing },
-                fix(fixer) {
-                  return fixer.replaceText(queryKeyValue, existingWithMissing)
-                },
-              },
-            ],
+            suggest: suggestions,
           })
         }
       },
