@@ -92,7 +92,7 @@ function Todos() {
     queryFn: fetchTodoList,
   })
 
-  if (status === 'loading') {
+  if (status === 'pending') {
     return <span>Loading...</span>
   }
 
@@ -113,7 +113,7 @@ function Todos() {
 
 [//]: # 'Example4'
 
-TypeScript will also narrow the type of `data` correctly if you've checked for `loading` and `error` before accessing it.
+TypeScript will also narrow the type of `data` correctly if you've checked for `pending` and `error` before accessing it.
 
 ### FetchStatus
 
@@ -128,9 +128,9 @@ In addition to the `status` field, the `result` object, you will also get an add
 Background refetches and stale-while-revalidate logic make all combinations for `status` and `fetchStatus` possible. For example:
 
 - a query in `success` status will usually be in `idle` fetchStatus, but it could also be in `fetching` if a background refetch is happening.
-- a query that mounts and has no data will usually be in `loading` status and `fetching` fetchStatus, but it could also be `paused` if there is no network connection.
+- a query that mounts and has no data will usually be in `pending` status and `fetching` fetchStatus, but it could also be `paused` if there is no network connection.
 
-So keep in mind that a query can be in `loading` state without actually fetching data. As a rule of thumb:
+So keep in mind that a query can be in `pending` state without actually fetching data. As a rule of thumb:
 
 - The `status` gives information about the `data`: Do we have any or not?
 - The `fetchStatus` gives information about the `queryFn`: Is it running or not?

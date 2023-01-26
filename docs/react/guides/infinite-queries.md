@@ -66,7 +66,7 @@ function Projects() {
     getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   })
 
-  return status === 'loading' ? (
+  return status === 'pending' ? (
     <p>Loading...</p>
   ) : status === 'error' ? (
     <p>Error: {error.message}</p>

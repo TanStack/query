@@ -49,7 +49,7 @@ const { status, data, error } = useQuery({
 </script>
 
 <template>
-  <span v-if="status === 'loading'">Loading...</span>
+  <span v-if="status === 'pending'">Loading...</span>
   <span v-else-if="status === 'error'">Error: {{ error.message }}</span>
   <!-- also status === 'success', but "else" logic works, too -->
   <ul v-else-if="data">
