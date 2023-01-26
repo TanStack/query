@@ -121,16 +121,24 @@ export async function persistQueryClientSave({
 export function persistQueryClientSubscribe(
   props: PersistedQueryClientSaveOptions,
 ) {
+  // List of events which should trigger persistQueryClientSave
+  // All events connected with observers can be ignored for performance reason
+  const cacheRelatedEvents = ['added', 'removed', 'updated']
+
   const unsubscribeQueryCache = props.queryClient
     .getQueryCache()
-    .subscribe(() => {
-      persistQueryClientSave(props)
+    .subscribe((event) => {
+      if (cacheRelatedEvents.includes(event.type)) {
+        persistQueryClientSave(props)
+      }
     })
 
   const unusbscribeMutationCache = props.queryClient
     .getMutationCache()
-    .subscribe(() => {
-      persistQueryClientSave(props)
+    .subscribe((event) => {
+      if (cacheRelatedEvents.includes(event.type)) {
+        persistQueryClientSave(props)
+      }
     })
 
   return () => {
