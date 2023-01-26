@@ -13,7 +13,7 @@ export const rule = createRule({
   meta: {
     type: 'problem',
     docs: {
-      description: 'Prefer object syntax for useQuery',
+      description: 'Exhaustive deps rule for useQuery',
       recommended: 'error',
     },
     messages: {
@@ -76,11 +76,18 @@ export const rule = createRule({
           node: queryFn.value,
         })
 
+        const relevantRefs = refs.filter((ref) => {
+          return (
+            ref.identifier.name !== 'undefined' &&
+            ref.resolved?.defs.every((def) => def.type !== 'ClassName')
+          )
+        })
+
         const existingKeys = ASTUtils.getNestedIdentifiers(queryKeyValue).map(
           (identifier) => ASTUtils.mapKeyNodeToText(identifier, sourceCode),
         )
 
-        const missingRefs = refs
+        const missingRefs = relevantRefs
           .map((ref) => ({
             ref: ref,
             text: ASTUtils.mapKeyNodeToText(ref.identifier, sourceCode),

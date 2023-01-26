@@ -33,11 +33,13 @@ const dehydratedState = dehydrate(queryClient, {
     - This function is called for each mutation in the cache
     - Return `true` to include this mutation in dehydration, or `false` otherwise
     - The default version only includes paused mutations
+    - If you would like to extend the function while retaining the previous behavior, import and execute `defaultShouldDehydrateMutation` as part of the return statement
   - `shouldDehydrateQuery: (query: Query) => boolean`
     - Optional
     - This function is called for each query in the cache
     - Return `true` to include this query in dehydration, or `false` otherwise
     - The default version only includes successful queries, do `shouldDehydrateQuery: () => true` to include all queries
+    - If you would like to extend the function while retaining the previous behavior, import and execute `defaultShouldDehydrateQuery` as part of the return statement
 
 **Returns**
 

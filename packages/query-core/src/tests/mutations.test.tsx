@@ -308,49 +308,24 @@ describe('mutations', () => {
     expect(onSettled).toHaveBeenCalled()
   })
 
-  test('setState should update the mutation state', async () => {
-    const mutation = new MutationObserver(queryClient, {
-      mutationFn: async () => {
-        return 'update'
-      },
-      onMutate: (text) => text,
-    })
-    await mutation.mutate()
-    expect(mutation.getCurrentResult().data).toEqual('update')
-
-    // Force setState usage
-    // because no use case has been found using mutation.setState
-    const currentMutation = mutation['currentMutation']
-    currentMutation?.setState({
-      context: undefined,
-      variables: undefined,
-      data: 'new',
-      error: undefined,
-      failureCount: 0,
-      failureReason: null,
-      isPaused: false,
-      status: 'success',
-    })
-
-    expect(mutation.getCurrentResult().data).toEqual('new')
-  })
-
   test('addObserver should not add an existing observer', async () => {
-    const mutation = new MutationObserver(queryClient, {
-      mutationFn: async () => {
-        return 'update'
-      },
-      onMutate: (text) => text,
+    const mutationCache = queryClient.getMutationCache()
+    const observer = new MutationObserver(queryClient, {})
+    const currentMutation = mutationCache.build(queryClient, {})
+
+    const fn = jest.fn()
+
+    const unsubscribe = mutationCache.subscribe((event) => {
+      fn(event.type)
     })
-    await mutation.mutate()
 
-    // Force addObserver usage to add an existing observer
-    // because no use case has been found
-    const currentMutation = mutation['currentMutation']!
-    expect(currentMutation['observers'].length).toEqual(1)
-    currentMutation.addObserver(mutation)
+    currentMutation.addObserver(observer)
+    currentMutation.addObserver(observer)
 
-    expect(currentMutation['observers'].length).toEqual(1)
+    expect(fn).toHaveBeenCalledTimes(1)
+    expect(fn).toHaveBeenCalledWith('observerAdded')
+
+    unsubscribe()
   })
 
   test('mutate should throw an error if no mutationFn found', async () => {
@@ -366,5 +341,21 @@ describe('mutations', () => {
       error = err
     }
     expect(error).toEqual('No mutationFn found')
+  })
+
+  test('mutate update the mutation state even without an active subscription', async () => {
+    const onSuccess = jest.fn()
+    const onSettled = jest.fn()
+
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: async () => {
+        return 'update'
+      },
+    })
+
+    await mutation.mutate(undefined, { onSuccess, onSettled })
+    expect(mutation.getCurrentResult().data).toEqual('update')
+    expect(onSuccess).not.toHaveBeenCalled()
+    expect(onSettled).not.toHaveBeenCalled()
   })
 })

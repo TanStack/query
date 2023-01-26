@@ -283,12 +283,15 @@ describe('useInfiniteQuery', () => {
         }),
       })
       states.push(state)
-      return null
+
+      return <div>{state.data?.pages.join(',')}</div>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
+    await waitFor(() => {
+      rendered.getByText('count: 1')
+    })
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
@@ -317,12 +320,21 @@ describe('useInfiniteQuery', () => {
         }, []),
       })
       states.push(state)
-      return null
+
+      return (
+        <div>
+          {state.data?.pages.map((page) => (
+            <div key={page.id}>count: {page.count}</div>
+          ))}
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(20)
+    await waitFor(() => {
+      rendered.getByText('count: 1')
+    })
 
     expect(states.length).toBe(2)
     expect(selectCalled).toBe(1)
@@ -415,20 +427,29 @@ describe('useInfiniteQuery', () => {
 
       states.push(state)
 
-      const { fetchPreviousPage } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          fetchPreviousPage()
-        }, 20)
-      }, [fetchPreviousPage])
-
-      return null
+      return (
+        <div>
+          <div>data: {state.data?.pages.join(',') ?? null}</div>
+          <button onClick={() => state.fetchPreviousPage()}>
+            fetch previous page
+          </button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await waitFor(() => {
+      rendered.getByText('data: 10')
+    })
+
+    fireEvent.click(
+      rendered.getByRole('button', { name: /fetch previous page/i }),
+    )
+
+    await waitFor(() => {
+      rendered.getByText('data: 9,10')
+    })
 
     expect(states.length).toBe(4)
     expect(states[0]).toMatchObject({

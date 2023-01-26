@@ -113,8 +113,13 @@ const { error } = useQuery<Group[], Error>(['groups'], fetchGroups)
 [typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAORToCGAxjALQCOO+VAsAFCiSw4dAB7AIqUuUpURY1Nx68YeMOjgBxcsjBwAvIjjAAJgC44AO2QgARriK9eDCOdTwS6GAwAWmiNon6ABQAlGYAClLAGAA8vtoA2gC6AHx6qbLiAHQA5h6BVAD02Vpg8sGZMF7o5oG0qJAuarqpdQ0YmUZ0MHTBDjxOLvBIuORQRHooGNi4eLElSQA0cACiUKPJgfFUxX6lVIlL7p4+Jai9PAUFcNc3AHoA-LxAA)
 
 [//]: # 'Playground6'
+[//]: # 'Materials'
 
 ## Further Reading
 
 For tips and tricks around type inference, have a look at [React Query and TypeScript](../community/tkdodos-blog#6-react-query-and-typescript) from
-the Community Resources.
+the Community Resources. To find out how to get the best possible type-safety, you can read [Type-safe React Query](../community/tkdodos-blog#19-type-safe-react-query).
+
+[//]: # 'Materials'
+
+[//]: # 'Materials'

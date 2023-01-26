@@ -31,7 +31,7 @@ And change your `setup` function in suspendable component to be `async`. Then yo
 ```vue
 <script>
 import { defineComponent } from 'vue'
-import { useQuery } from 'vue-query'
+import { useQuery } from '@tanstack/vue-query'
 
 const todoFetcher = async () =>
   await fetch('https://jsonplaceholder.cypress.io/todos').then((response) =>

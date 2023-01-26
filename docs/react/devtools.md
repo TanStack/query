@@ -9,6 +9,8 @@ When you begin your React Query journey, you'll want these devtools by your side
 
 > Please note that for now, the devtools **do not support React Native**. If you would like to help us make the devtools platform agnostic, please let us know!
 
+> Also note that you can use these devtools to observe queries, but **not mutations**
+
 ## Install and Import the Devtools
 
 The devtools are a separate package that you need to install:
