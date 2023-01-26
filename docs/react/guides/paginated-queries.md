@@ -36,7 +36,7 @@ function Todos() {
   const fetchProjects = (page = 0) => fetch('/api/projects?page=' + page).then((res) => res.json())
 
   const {
-    isLoading,
+    isPending,
     isError,
     error,
     data,
@@ -50,7 +50,7 @@ function Todos() {
 
   return (
     <div>
-      {isLoading ? (
+      {isPending ? (
         <div>Loading...</div>
       ) : isError ? (
         <div>Error: {error.message}</div>

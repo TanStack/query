@@ -9,7 +9,7 @@ const {
   error,
   isError,
   isIdle,
-  isLoading,
+  isPending,
   isPaused,
   isSuccess,
   failureCount,
@@ -121,7 +121,7 @@ mutate(variables, {
     - `pending` if the mutation is currently executing.
     - `error` if the last mutation attempt resulted in an error.
     - `success` if the last mutation attempt was successful.
-- `isIdle`, `isLoading`, `isSuccess`, `isError`: boolean variables derived from `status`
+- `isIdle`, `isPending`, `isSuccess`, `isError`: boolean variables derived from `status`
 - `isPaused: boolean`
   - will be `true` if the mutation has been `paused`
   - see [Network Mode](../guides/network-mode) for more information.

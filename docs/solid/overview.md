@@ -26,7 +26,7 @@ function Example() {
   return (
     <div>
       <Switch>
-        <Match when={query.isLoading}>
+        <Match when={query.isPending}>
           <p>Loading...</p>
         </Match>
         <Match when={query.isError}>
@@ -128,7 +128,7 @@ export default function App() {
 
 function Example() {
   // ❌ react version -- supports destructing outside reactive context
-  // const { isLoading, error, data } = useQuery({
+  // const { isPending, error, data } = useQuery({
   //  queryKey: ['repoData'], () =>
   //  queryFn:  fetch('https://api.github.com/repos/tannerlinsley/react-query').then(res =>
   //     res.json()
@@ -147,7 +147,7 @@ function Example() {
   // ✅ access query properties in JSX reactive context
   return (
     <Switch>
-      <Match when={query.isLoading}>Loading...</Match>
+      <Match when={query.isPending}>Loading...</Match>
       <Match when={query.isError}>Error: {query.error.message}</Match>
       <Match when={query.isSuccess}>
         <div>
@@ -196,7 +196,7 @@ function Example() {
   return (
     <div>
       <Switch>
-        <Match when={query.isLoading}>
+        <Match when={query.isPending}>
           <p>Loading...</p>
         </Match>
         <Match when={query.isError}>

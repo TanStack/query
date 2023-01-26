@@ -49,18 +49,18 @@ Beyond those primary states, more information is available depending on the stat
 - `error` - If the query is in an `isError` state, the error is available via the `error` property.
 - `data` - If the query is in a `success` state, the data is available via the `data` property.
 
-For **most** queries, it's usually sufficient to check for the `isLoading` state, then the `isError` state, then finally, assume that the data is available and render the successful state:
+For **most** queries, it's usually sufficient to check for the `isPending` state, then the `isError` state, then finally, assume that the data is available and render the successful state:
 
 [//]: # 'Example3'
 
 ```tsx
 function Todos() {
-  const { isLoading, isError, data, error } = useQuery({
+  const { isPending, isError, data, error } = useQuery({
     queryKey: ['todos'],
     queryFn: fetchTodoList,
   })
 
-  if (isLoading) {
+  if (isPending) {
     return <span>Loading...</span>
   }
 

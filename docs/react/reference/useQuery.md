@@ -18,6 +18,7 @@ const {
   isPaused,
   isLoading,
   isLoadingError,
+  isPending,
   isPlaceholderData,
   isRefetchError,
   isRefetching,
