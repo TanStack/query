@@ -26,6 +26,7 @@ module.exports = {
   coverageReporters: ['json', 'lcov', 'text', 'clover', 'text-summary'],
   testMatch: ['<rootDir>/**/src/**/*.test.[jt]s?(x)'],
   transform: { '^.+\\.(ts|tsx)$': 'ts-jest' },
+  setupFilesAfterEnv: ['<rootDir>../../jest.setup.js'],
   clearMocks: true,
   testEnvironment: 'jsdom',
   snapshotFormat: {
