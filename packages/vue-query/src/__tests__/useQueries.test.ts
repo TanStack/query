@@ -28,14 +28,14 @@ describe('useQueries', () => {
 
     expect(queriesState).toMatchObject([
       {
-        status: 'loading',
-        isLoading: true,
+        status: 'pending',
+        isPending: true,
         isFetching: true,
         isStale: true,
       },
       {
-        status: 'loading',
-        isLoading: true,
+        status: 'pending',
+        isPending: true,
         isFetching: true,
         isStale: true,
       },
@@ -60,13 +60,13 @@ describe('useQueries', () => {
     expect(queriesState).toMatchObject([
       {
         status: 'success',
-        isLoading: false,
+        isPending: false,
         isFetching: false,
         isStale: true,
       },
       {
         status: 'success',
-        isLoading: false,
+        isPending: false,
         isFetching: false,
         isStale: true,
       },
@@ -91,13 +91,13 @@ describe('useQueries', () => {
     expect(queriesState).toMatchObject([
       {
         status: 'error',
-        isLoading: false,
+        isPending: false,
         isFetching: false,
         isStale: true,
       },
       {
         status: 'success',
-        isLoading: false,
+        isPending: false,
         isFetching: false,
         isStale: true,
       },
@@ -144,14 +144,14 @@ describe('useQueries', () => {
       {
         data: 'value31',
         status: 'success',
-        isLoading: false,
+        isPending: false,
         isFetching: false,
         isStale: true,
       },
       {
         data: 'value34',
         status: 'success',
-        isLoading: false,
+        isPending: false,
         isFetching: false,
         isStale: true,
       },
@@ -179,14 +179,14 @@ describe('useQueries', () => {
 
     expect(queriesState).toMatchObject([
       {
-        status: 'loading',
-        isLoading: true,
+        status: 'pending',
+        isPending: true,
         isFetching: true,
         isStale: true,
       },
       {
-        status: 'loading',
-        isLoading: true,
+        status: 'pending',
+        isPending: true,
         isFetching: true,
         isStale: true,
       },
