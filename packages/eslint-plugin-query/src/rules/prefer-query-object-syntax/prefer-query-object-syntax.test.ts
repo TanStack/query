@@ -35,7 +35,7 @@ ruleTester.run(name, rule, {
     {
       code: normalizeIndent`
         import { createQuery } from "@tanstack/solid-query";
-        const result = useQuery({ queryKey, queryFn, enabled });
+        const result = createQuery({ queryKey, queryFn, enabled });
       `,
     },
     {
@@ -92,6 +92,49 @@ ruleTester.run(name, rule, {
           }
         }
         useQuery(getQuery())
+      `,
+    },
+    {
+      code: normalizeIndent`
+        useMutation()
+      `,
+    },
+    {
+      code: normalizeIndent`
+        import { useMutation } from "@tanstack/react-query";
+        useMutation();
+      `,
+    },
+    {
+      code: normalizeIndent`
+        import { useMutation } from "@tanstack/react-query";
+        useMutation({ mutationKey, mutationFn, enabled });
+      `,
+    },
+    {
+      code: normalizeIndent`
+        import { useMutation } from "@tanstack/react-query";
+        const result = useMutation({ mutationKey, mutationFn, enabled });
+      `,
+    },
+    {
+      code: normalizeIndent`
+        import { createMutation } from "@tanstack/solid-query";
+        const result = createMutation({ mutationKey, mutationFn, enabled });
+      `,
+    },
+    {
+      code: normalizeIndent`
+        import { useMutation } from "somewhere-else";
+        useMutation(mutationKey, mutationFn, { enabled });
+      `,
+    },
+    {
+      code: normalizeIndent`
+        import { useMutation } from "@tanstack/react-query";
+        const getPosts = async () => Promise.resolve([]);
+        const postsQuery = { mutationKey: ["posts"], mutationFn: () => getPosts() };
+        const usePosts = () => useMutation(postsQuery);
       `,
     },
   ],
@@ -358,6 +401,28 @@ ruleTester.run(name, rule, {
             const queryKeys = {  userById: (userId: string) => ["users", {userId}] }
             createQuery({ queryKey: queryKeys.userById(userId), queryFn: async () => await fetchUserById(userId) });
           `,
+    },
+    {
+      code: normalizeIndent`
+          import { useMutation } from "@tanstack/react-query";
+          useMutation(["mutation", "key"], async () => await fetchUserById(userId));
+        `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+          import { useMutation } from "@tanstack/react-query";
+          useMutation({ mutationKey: ["mutation", "key"], mutationFn: async () => await fetchUserById(userId) });
+        `,
+    },
+    {
+      code: normalizeIndent`
+          import { createMutation } from "@tanstack/solid-query";
+          createMutation(["mutation", "key"], async () => await fetchUserById(userId));
+        `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+          import { createMutation } from "@tanstack/solid-query";
+          createMutation({ mutationKey: ["mutation", "key"], mutationFn: async () => await fetchUserById(userId) });
+        `,
     },
   ],
 })
