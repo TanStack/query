@@ -108,32 +108,32 @@ ruleTester.run(name, rule, {
     {
       code: normalizeIndent`
         import { useMutation } from "@tanstack/react-query";
-        useMutation({ queryKey, queryFn, enabled });
+        useMutation({ mutationKey, mutationFn, enabled });
       `,
     },
     {
       code: normalizeIndent`
         import { useMutation } from "@tanstack/react-query";
-        const result = useMutation({ queryKey, queryFn, enabled });
+        const result = useMutation({ mutationKey, mutationFn, enabled });
       `,
     },
     {
       code: normalizeIndent`
         import { createMutation } from "@tanstack/solid-query";
-        const result = createMutation({ queryKey, queryFn, enabled });
+        const result = createMutation({ mutationKey, mutationFn, enabled });
       `,
     },
     {
       code: normalizeIndent`
         import { useMutation } from "somewhere-else";
-        useMutation(queryKey, queryFn, { enabled });
+        useMutation(mutationKey, mutationFn, { enabled });
       `,
     },
     {
       code: normalizeIndent`
         import { useMutation } from "@tanstack/react-query";
         const getPosts = async () => Promise.resolve([]);
-        const postsQuery = { queryKey: ["posts"], queryFn: () => getPosts() };
+        const postsQuery = { mutationKey: ["posts"], mutationFn: () => getPosts() };
         const usePosts = () => useMutation(postsQuery);
       `,
     },
