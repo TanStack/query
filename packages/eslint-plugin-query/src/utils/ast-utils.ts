@@ -54,6 +54,12 @@ export const ASTUtils = {
       identifiers.push(node)
     }
 
+    if ('arguments' in node) {
+      node.arguments.forEach((x) => {
+        identifiers.push(...ASTUtils.getNestedIdentifiers(x))
+      })
+    }
+
     if ('elements' in node) {
       node.elements.forEach((x) => {
         if (x !== null) {
