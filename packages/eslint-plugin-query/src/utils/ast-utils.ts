@@ -19,10 +19,10 @@ export const ASTUtils = {
   ): node is TSESTree.Identifier {
     return ASTUtils.isIdentifier(node) && node.name === name
   },
-  isIdentifierWithOneOfNames(
+  isIdentifierWithOneOfNames<T extends string[]>(
     node: TSESTree.Node,
-    name: string[],
-  ): node is TSESTree.Identifier {
+    name: T,
+  ): node is TSESTree.Identifier & { name: T[number] } {
     return ASTUtils.isIdentifier(node) && name.includes(node.name)
   },
   isProperty(node: TSESTree.Node): node is TSESTree.Property {
@@ -52,6 +52,12 @@ export const ASTUtils = {
 
     if (ASTUtils.isIdentifier(node)) {
       identifiers.push(node)
+    }
+
+    if ('arguments' in node) {
+      node.arguments.forEach((x) => {
+        identifiers.push(...ASTUtils.getNestedIdentifiers(x))
+      })
     }
 
     if ('elements' in node) {
