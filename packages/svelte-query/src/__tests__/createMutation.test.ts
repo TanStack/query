@@ -9,13 +9,15 @@ describe('createMutation', () => {
 
     render(CreateMutation, {
       props: {
-        mutationFn,
+        options: {
+          mutationFn,
+        },
       },
     })
 
     fireEvent.click(screen.getByRole('button'))
 
-    await sleep(200)
+    await sleep(20)
 
     expect(mutationFn).toHaveBeenCalledTimes(1)
   })

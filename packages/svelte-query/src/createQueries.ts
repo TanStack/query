@@ -1,9 +1,14 @@
-import type { QueryKey, QueryFunction, QueryClient } from '@tanstack/query-core'
+import type {
+  QueryKey,
+  QueryFunction,
+  QueryClient,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
 import { readable, type Readable } from 'svelte/store'
 
-import type { CreateQueryOptions, CreateQueryResult } from './types'
+import type { CreateQueryOptions } from './types'
 import { useQueryClient } from './useQueryClient'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
@@ -61,28 +66,28 @@ type GetOptions<T> =
 type GetResults<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
   T extends { queryFnData: any; error?: infer TError; data: infer TData }
-    ? CreateQueryResult<TData, TError>
+    ? QueryObserverResult<TData, TError>
     : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
-    ? CreateQueryResult<TQueryFnData, TError>
+    ? QueryObserverResult<TQueryFnData, TError>
     : T extends { data: infer TData; error?: infer TError }
-    ? CreateQueryResult<TData, TError>
+    ? QueryObserverResult<TData, TError>
     : // Part 2: responsible for mapping explicit type parameter to function result, if tuple
     T extends [any, infer TError, infer TData]
-    ? CreateQueryResult<TData, TError>
+    ? QueryObserverResult<TData, TError>
     : T extends [infer TQueryFnData, infer TError]
-    ? CreateQueryResult<TQueryFnData, TError>
+    ? QueryObserverResult<TQueryFnData, TError>
     : T extends [infer TQueryFnData]
-    ? CreateQueryResult<TQueryFnData>
+    ? QueryObserverResult<TQueryFnData>
     : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
     T extends {
         queryFn?: QueryFunction<unknown, any>
         select: (data: any) => infer TData
       }
-    ? CreateQueryResult<TData>
+    ? QueryObserverResult<TData>
     : T extends { queryFn?: QueryFunction<infer TQueryFnData, any> }
-    ? CreateQueryResult<TQueryFnData>
+    ? QueryObserverResult<TQueryFnData>
     : // Fallback
-      CreateQueryResult
+      QueryObserverResult
 
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
@@ -121,7 +126,7 @@ export type QueriesResults<
   Result extends any[] = [],
   Depth extends ReadonlyArray<number> = [],
 > = Depth['length'] extends MAXIMUM_DEPTH
-  ? CreateQueryResult[]
+  ? QueryObserverResult[]
   : T extends []
   ? []
   : T extends [infer Head]
@@ -135,9 +140,9 @@ export type QueriesResults<
       any
     >[]
   ? // Dynamic-size (homogenous) CreateQueryOptions array: map directly to array of results
-    CreateQueryResult<unknown extends TData ? TQueryFnData : TData, TError>[]
+    QueryObserverResult<unknown extends TData ? TQueryFnData : TData, TError>[]
   : // Fallback
-    CreateQueryResult[]
+    QueryObserverResult[]
 
 export type CreateQueriesResult<T extends any[]> = Readable<QueriesResults<T>>
 
