@@ -2,8 +2,14 @@ import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
 import { AST_NODE_TYPES } from '@typescript-eslint/utils'
 import { createRule } from '../../utils/create-rule'
 import { ASTUtils } from '../../utils/ast-utils'
+import { objectKeys } from '../../utils/object-utils'
 
-const QUERY_CALLS = ['useQuery', 'createQuery']
+const QUERY_CALLS = {
+  useQuery: { key: 'queryKey', fn: 'queryFn' },
+  createQuery: { key: 'queryKey', fn: 'queryFn' },
+  useMutation: { key: 'mutationKey', fn: 'mutationFn' },
+  createMutation: { key: 'mutationKey', fn: 'mutationFn' },
+}
 
 const messages = {
   preferObjectSyntax: `Objects syntax for query is preferred`,
@@ -32,11 +38,13 @@ export const rule: TSESLint.RuleModule<MessageKey, readonly unknown[]> =
     create(context, _, helpers) {
       return {
         CallExpression(node) {
-          const isTanstackQueryCall =
-            ASTUtils.isIdentifierWithOneOfNames(node.callee, QUERY_CALLS) &&
-            helpers.isTanstackQueryImport(node.callee)
-
-          if (!isTanstackQueryCall) {
+          if (
+            !ASTUtils.isIdentifierWithOneOfNames(
+              node.callee,
+              objectKeys(QUERY_CALLS),
+            ) ||
+            !helpers.isTanstackQueryImport(node.callee)
+          ) {
             return
           }
 
@@ -101,6 +109,7 @@ export const rule: TSESLint.RuleModule<MessageKey, readonly unknown[]> =
               runCheckOnNode({
                 context: context,
                 callNode: node,
+                callString: node.callee.name,
                 expression: stmt.argument,
                 messageId: 'returnTypeAreNotObjectSyntax',
               })
@@ -121,6 +130,7 @@ export const rule: TSESLint.RuleModule<MessageKey, readonly unknown[]> =
               return runCheckOnNode({
                 context: context,
                 callNode: node,
+                callString: node.callee.name,
                 expression: referencedNode,
                 messageId: 'preferObjectSyntax',
               })
@@ -130,6 +140,7 @@ export const rule: TSESLint.RuleModule<MessageKey, readonly unknown[]> =
           runCheckOnNode({
             context: context,
             callNode: node,
+            callString: node.callee.name,
             expression: firstArgument,
             messageId: 'preferObjectSyntax',
           })
@@ -141,10 +152,11 @@ export const rule: TSESLint.RuleModule<MessageKey, readonly unknown[]> =
 function runCheckOnNode(params: {
   context: Readonly<TSESLint.RuleContext<MessageKey, readonly unknown[]>>
   callNode: TSESTree.CallExpression
+  callString: keyof typeof QUERY_CALLS
   expression: TSESTree.Node
   messageId: MessageKey
 }) {
-  const { context, expression, messageId, callNode } = params
+  const { context, expression, messageId, callNode, callString } = params
   const sourceCode = context.getSourceCode()
 
   if (expression.type === AST_NODE_TYPES.ObjectExpression) {
@@ -184,6 +196,8 @@ function runCheckOnNode(params: {
     return
   }
 
+  const callProps = QUERY_CALLS[callString]
+
   context.report({
     node: callNode,
     messageId: 'preferObjectSyntax',
@@ -194,7 +208,9 @@ function runCheckOnNode(params: {
       const firstArgument = callNode.arguments[0]
       const queryKey = sourceCode.getText(firstArgument)
       const queryKeyProperty =
-        queryKey === 'queryKey' ? 'queryKey' : `queryKey: ${queryKey}`
+        queryKey === callProps.key
+          ? callProps.key
+          : `${callProps.key}: ${queryKey}`
 
       optionsObjectProperties.push(queryKeyProperty)
 
@@ -202,7 +218,9 @@ function runCheckOnNode(params: {
       if (secondArgument && secondArgument !== optionsObject) {
         const queryFn = sourceCode.getText(secondArgument)
         const queryFnProperty =
-          queryFn === 'queryFn' ? 'queryFn' : `queryFn: ${queryFn}`
+          queryFn === callProps.fn
+            ? callProps.fn
+            : `${callProps.fn}: ${queryFn}`
 
         optionsObjectProperties.push(queryFnProperty)
       }
