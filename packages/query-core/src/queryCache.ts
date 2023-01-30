@@ -2,7 +2,12 @@ import type { QueryFilters } from './utils'
 import { hashQueryKeyByOptions, matchQuery } from './utils'
 import type { Action, QueryState } from './query'
 import { Query } from './query'
-import type { QueryKey, QueryOptions, WithRequired } from './types'
+import type {
+  QueryKey,
+  QueryOptions,
+  RegisteredError,
+  WithRequired,
+} from './types'
 import { notifyManager } from './notifyManager'
 import type { QueryClient } from './queryClient'
 import { Subscribable } from './subscribable'
@@ -134,7 +139,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
   get<
     TQueryFnData = unknown,
-    TError = Error,
+    TError = RegisteredError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -149,7 +154,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     return [...this.#queries.values()]
   }
 
-  find<TQueryFnData = unknown, TError = Error, TData = TQueryFnData>(
+  find<TQueryFnData = unknown, TError = RegisteredError, TData = TQueryFnData>(
     filters: WithRequired<QueryFilters, 'queryKey'>,
   ): Query<TQueryFnData, TError, TData> | undefined {
     if (typeof filters.exact === 'undefined') {
