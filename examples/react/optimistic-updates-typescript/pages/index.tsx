@@ -82,6 +82,21 @@ function Example() {
                 {addTodoMutation.variables}
               </li>
             )}
+            {addTodoMutation.isError && (
+              <li
+                key={String(addTodoMutation.submittedAt)}
+                style={{ color: 'red' }}
+              >
+                {addTodoMutation.variables}
+                <button
+                  onClick={() =>
+                    addTodoMutation.mutate(addTodoMutation.variables)
+                  }
+                >
+                  Retry
+                </button>
+              </li>
+            )}
           </ul>
           {isFetching && <div>Updating in background...</div>}
         </>
