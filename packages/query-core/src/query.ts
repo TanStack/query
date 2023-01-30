@@ -12,8 +12,6 @@ import type {
 } from './types'
 import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
-import type { Logger } from './logger'
-import { defaultLogger } from './logger'
 import { notifyManager } from './notifyManager'
 import type { Retryer } from './retryer'
 import { isCancelledError, canFetch, createRetryer } from './retryer'
@@ -30,7 +28,6 @@ interface QueryConfig<
   cache: QueryCache
   queryKey: TQueryKey
   queryHash: string
-  logger?: Logger
   options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state?: QueryState<TData, TError>
@@ -153,7 +150,6 @@ export class Query<
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
   #cache: QueryCache
-  #logger: Logger
   #promise?: Promise<TData>
   #retryer?: Retryer<TData>
   #observers: QueryObserver<any, any, any, any, any>[]
@@ -168,7 +164,6 @@ export class Query<
     this.#setOptions(config.options)
     this.#observers = []
     this.#cache = config.cache
-    this.#logger = config.logger || defaultLogger
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
     this.#initialState = config.state || getDefaultState(this.options)
@@ -350,9 +345,9 @@ export class Query<
       }
     }
 
-    if (!Array.isArray(this.options.queryKey)) {
-      if (process.env.NODE_ENV !== 'production') {
-        this.#logger.error(
+    if (process.env.NODE_ENV !== 'production') {
+      if (!Array.isArray(this.options.queryKey)) {
+        console.error(
           `As of v4, queryKey needs to be an Array. If you are using a string like 'repoData', please change it to an Array, e.g. ['repoData']`,
         )
       }
@@ -434,10 +429,6 @@ export class Query<
       if (!isCancelledError(error)) {
         // Notify cache callback
         this.#cache.config.onError?.(error, this as Query<any, any, any, any>)
-
-        if (process.env.NODE_ENV !== 'production') {
-          this.#logger.error(error)
-        }
       }
 
       if (!this.isFetchingOptimistic) {
@@ -454,7 +445,7 @@ export class Query<
       onSuccess: (data) => {
         if (typeof data === 'undefined') {
           if (process.env.NODE_ENV !== 'production') {
-            this.#logger.error(
+            console.error(
               `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ${this.queryHash}`,
             )
           }

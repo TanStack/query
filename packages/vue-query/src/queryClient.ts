@@ -32,7 +32,6 @@ export class QueryClient extends QC {
   constructor(config: MaybeRefDeep<QueryClientConfig> = {}) {
     const unreffedConfig = cloneDeepUnref(config)
     const vueQueryConfig: QueryClientConfig = {
-      logger: unreffedConfig.logger,
       defaultOptions: unreffedConfig.defaultOptions,
       queryCache: unreffedConfig.queryCache || new QueryCache(),
       mutationCache: unreffedConfig.mutationCache || new MutationCache(),

@@ -165,10 +165,6 @@
               "to": "react/guides/suspense"
             },
             {
-              "label": "Custom Logger",
-              "to": "react/guides/custom-logger"
-            },
-            {
               "label": "Testing",
               "to": "react/guides/testing"
             },
@@ -561,10 +557,6 @@
             {
               "label": "Suspense",
               "to": "vue/guides/suspense"
-            },
-            {
-              "label": "Custom Logger",
-              "to": "vue/guides/custom-logger"
             },
             {
               "label": "Testing",

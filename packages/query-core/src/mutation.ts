@@ -1,8 +1,6 @@
 import type { MutationOptions, MutationStatus, MutationMeta } from './types'
 import type { MutationCache } from './mutationCache'
 import type { MutationObserver } from './mutationObserver'
-import type { Logger } from './logger'
-import { defaultLogger } from './logger'
 import { notifyManager } from './notifyManager'
 import { Removable } from './removable'
 import type { Retryer } from './retryer'
@@ -14,7 +12,7 @@ interface MutationConfig<TData, TError, TVariables, TContext> {
   mutationId: number
   mutationCache: MutationCache
   options: MutationOptions<TData, TError, TVariables, TContext>
-  logger?: Logger
+  defaultOptions?: MutationOptions<TData, TError, TVariables, TContext>
   state?: MutationState<TData, TError, TVariables, TContext>
 }
 
@@ -86,7 +84,6 @@ export class Mutation<
 
   #observers: MutationObserver<TData, TError, TVariables, TContext>[]
   #mutationCache: MutationCache
-  #logger: Logger
   #retryer?: Retryer<TData>
 
   constructor(config: MutationConfig<TData, TError, TVariables, TContext>) {
@@ -95,7 +92,6 @@ export class Mutation<
     this.options = config.options
     this.mutationId = config.mutationId
     this.#mutationCache = config.mutationCache
-    this.#logger = config.logger || defaultLogger
     this.#observers = []
     this.state = config.state || getDefaultState()
 
@@ -223,10 +219,6 @@ export class Mutation<
           this.state.context,
           this as Mutation<unknown, unknown, unknown, unknown>,
         )
-
-        if (process.env.NODE_ENV !== 'production') {
-          this.#logger.error(error)
-        }
 
         await this.options.onError?.(
           error as TError,

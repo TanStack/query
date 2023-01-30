@@ -34,8 +34,6 @@ import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import type { CancelOptions, DefaultedQueryObserverOptions } from './types'
-import type { Logger } from './logger'
-import { defaultLogger } from './logger'
 
 // TYPES
 
@@ -54,7 +52,6 @@ interface MutationDefaults {
 export class QueryClient {
   #queryCache: QueryCache
   #mutationCache: MutationCache
-  #logger: Logger
   #defaultOptions: DefaultOptions
   #queryDefaults: Map<string, QueryDefaults>
   #mutationDefaults: Map<string, MutationDefaults>
@@ -65,17 +62,10 @@ export class QueryClient {
   constructor(config: QueryClientConfig = {}) {
     this.#queryCache = config.queryCache || new QueryCache()
     this.#mutationCache = config.mutationCache || new MutationCache()
-    this.#logger = config.logger || defaultLogger
     this.#defaultOptions = config.defaultOptions || {}
     this.#queryDefaults = new Map()
     this.#mutationDefaults = new Map()
     this.#mountCount = 0
-
-    if (process.env.NODE_ENV !== 'production' && config.logger) {
-      this.#logger.error(
-        `Passing a custom logger has been deprecated and will be removed in the next major version.`,
-      )
-    }
   }
 
   mount(): void {
@@ -357,10 +347,6 @@ export class QueryClient {
 
   getMutationCache(): MutationCache {
     return this.#mutationCache
-  }
-
-  getLogger(): Logger {
-    return this.#logger
   }
 
   getDefaultOptions(): DefaultOptions {
