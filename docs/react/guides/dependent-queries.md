@@ -35,6 +35,7 @@ The `projects` query will start in:
 
 ```tsx
 status: 'pending'
+isLoading: false
 fetchStatus: 'idle'
 ```
 
@@ -42,6 +43,7 @@ As soon as the `user` is available, the `projects` query will be `enabled` and w
 
 ```tsx
 status: 'pending'
+isLoading: true
 fetchStatus: 'fetching'
 ```
 
@@ -49,5 +51,6 @@ Once we have the projects, it will go to:
 
 ```tsx
 status: 'success'
+isLoading: false
 fetchStatus: 'idle'
 ```

@@ -10,7 +10,7 @@
   const query = createQuery(options)
 </script>
 
-{#if $query.isLoading}
+{#if $query.isPending}
   <p>Loading</p>
 {:else if $query.isError}
   <p>Error</p>

@@ -305,7 +305,5 @@ For mutations as well the `status` has been changed from `loading` to `pending` 
 Lastly the a new derived `isLoading` flag has been added to the queries that is implemented as `isPending && isFetching`. This means that `isLoading` and `isInitialLoading` have the same thing, but `isInitialLoading` is deprecated now and will be removed in the next major version.
 
 To understand the reasoning behing this change checkout the [v5 roadmap discussion](https://github.com/TanStack/query/discussions/4252).
- 
-
 
 [//]: # 'FrameworkBreakingChanges'
