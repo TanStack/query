@@ -26,8 +26,12 @@ jobs:
           node-version: 16.14.2
           registry-url: https://registry.npmjs.org/
           cache: 'pnpm'
-      - run: |
-          pnpm --filter "./packages/**" --filter query --prefer-offline install
+      - name: Install dependencies
+        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+      - name: Run Tests
+        run: pnpm run test:ci
+      - name: Publish
+        run: |
           git config --global user.name 'Tanner Linsley'
           git config --global user.email 'tannerlinsley@users.noreply.github.com'
           npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
@@ -38,3 +42,5 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           TAG: ${{ inputs.tag }}
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2

@@ -19,7 +19,6 @@
     "test:eslint": "eslint --ext .svelte,.ts ./src",
     "test:lib": "vitest run --coverage true",
     "test:lib:dev": "vitest watch",
-    "test:lib:publish": "vitest run --coverage false",
     "build": "svelte-package && rimraf ./build/lib/package.json"
   },
   "devDependencies": {
