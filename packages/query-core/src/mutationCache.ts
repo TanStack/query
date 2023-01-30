@@ -77,6 +77,7 @@ type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
 export class MutationCache extends Subscribable<MutationCacheListener> {
   #mutations: Mutation<any, any, any, any>[]
   #mutationId: number
+  #resuming: Promise<void> | undefined
 
   constructor(public config: MutationCacheConfig = {}) {
     super()
@@ -156,13 +157,21 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   resumePausedMutations(): Promise<void> {
-    const pausedMutations = this.#mutations.filter((x) => x.state.isPaused)
-    return notifyManager.batch(() =>
-      pausedMutations.reduce(
-        (promise, mutation) =>
-          promise.then(() => mutation.continue().catch(noop)),
-        Promise.resolve(),
-      ),
-    )
+    if (!this.#resuming) {
+      const pausedMutations = this.#mutations.filter((x) => x.state.isPaused)
+      this.#resuming = notifyManager
+        .batch(() =>
+          pausedMutations.reduce(
+            (promise, mutation) =>
+              promise.then(() => mutation.continue().catch(noop)),
+            Promise.resolve(),
+          ),
+        )
+        .then(() => {
+          this.#resuming = undefined
+        })
+    }
+
+    return this.#resuming
   }
 }
