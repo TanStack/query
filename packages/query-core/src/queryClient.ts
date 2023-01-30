@@ -97,9 +97,9 @@ export class QueryClient {
     this.#unsubscribeOnline = undefined
   }
 
-  isFetching(filters: QueryFilters = {}): number {
-    filters.fetchStatus = 'fetching'
-    return this.#queryCache.findAll(filters).length
+  isFetching(filters?: QueryFilters): number {
+    return this.#queryCache.findAll({ ...filters, fetchStatus: 'fetching' })
+      .length
   }
 
   isMutating(filters?: MutationFilters): number {
