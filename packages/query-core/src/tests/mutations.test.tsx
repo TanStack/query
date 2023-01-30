@@ -74,6 +74,7 @@ describe('mutations', () => {
       reset: expect.any(Function),
       status: 'idle',
       variables: undefined,
+      submittedAt: 0,
     })
 
     const states: MutationState<string, unknown, string, string>[] = []
@@ -101,6 +102,7 @@ describe('mutations', () => {
       reset: expect.any(Function),
       status: 'loading',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
 
     await sleep(5)
@@ -120,6 +122,7 @@ describe('mutations', () => {
       reset: expect.any(Function),
       status: 'loading',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
 
     await sleep(20)
@@ -139,6 +142,7 @@ describe('mutations', () => {
       reset: expect.any(Function),
       status: 'success',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
   })
 
@@ -178,6 +182,7 @@ describe('mutations', () => {
       reset: expect.any(Function),
       status: 'loading',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
 
     await sleep(10)
@@ -197,6 +202,7 @@ describe('mutations', () => {
       reset: expect.any(Function),
       status: 'loading',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
 
     await sleep(20)
@@ -216,6 +222,7 @@ describe('mutations', () => {
       reset: expect.any(Function),
       status: 'loading',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
 
     await sleep(30)
@@ -235,6 +242,7 @@ describe('mutations', () => {
       reset: expect.any(Function),
       status: 'error',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
   })
 
