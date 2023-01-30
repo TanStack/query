@@ -18,6 +18,7 @@ const {
   mutateAsync,
   reset,
   status,
+  submittedAt
 } = useMutation({
   mutationFn,
   gcTime,
@@ -139,4 +140,7 @@ mutate(variables, {
 - `failureReason: null | TError`
   - The failure reason for the mutation retry.
   - Reset to `null` when the mutation succeeds.
+- `submittedAt: number`
+  - The timestamp for when the mutation was submitted.
+  - Defaults to `0`.
 

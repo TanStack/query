@@ -75,7 +75,10 @@ function Example() {
               <li key={todo.id}>{todo.text}</li>
             ))}
             {addTodoMutation.isLoading && (
-              <li key={addTodoMutation.variables} style={{ opacity: 0.5 }}>
+              <li
+                key={String(addTodoMutation.submittedAt)}
+                style={{ opacity: 0.5 }}
+              >
                 {addTodoMutation.variables}
               </li>
             )}

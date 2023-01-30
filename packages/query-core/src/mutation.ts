@@ -30,6 +30,7 @@ export interface MutationState<
   isPaused: boolean
   status: MutationStatus
   variables: TVariables | undefined
+  submittedAt: number
 }
 
 interface FailedAction<TError> {
@@ -271,6 +272,7 @@ export class Mutation<
             isPaused: !canFetch(this.options.networkMode),
             status: 'loading',
             variables: action.variables,
+            submittedAt: Date.now(),
           }
         case 'success':
           return {
@@ -324,5 +326,6 @@ export function getDefaultState<
     isPaused: false,
     status: 'idle',
     variables: undefined,
+    submittedAt: 0,
   }
 }
