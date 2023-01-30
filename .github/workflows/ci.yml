@@ -9,9 +9,11 @@ on:
         description: override release tag
         required: false
   push:
+    branches:
+      - 'main'
 jobs:
   test-and-publish:
-    if: github.repository == 'TanStack/query' && github.event_name != 'pull_request'
+    if: github.repository == 'TanStack/query' && github.ref == 'refs/heads/main'
     name: 'Test & Publish'
     runs-on: ubuntu-latest
     steps:
