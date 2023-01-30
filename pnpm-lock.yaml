@@ -897,7 +897,7 @@ importers:
   packages/query-persist-client-core:
     specifiers:
       '@tanstack/query-core': workspace:*
-    devDependencies:
+    dependencies:
       '@tanstack/query-core': link:../query-core
 
   packages/query-sync-storage-persister:
