@@ -89,9 +89,9 @@ interface CreateAsyncStoragePersisterOptions {
 }
 
 interface AsyncStorage {
-  getItem: (key: string) => Promise<string>
-  setItem: (key: string, value: string) => Promise<unknown>
-  removeItem: (key: string) => Promise<unknown>
+   getItem: (key: string) => Promise<string | null>
+   setItem: (key: string, value: string) => Promise<unknown>
+   removeItem: (key: string) => Promise<void>
 }
 ```
 
