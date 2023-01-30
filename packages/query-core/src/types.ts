@@ -673,7 +673,7 @@ export interface MutationObserverErrorResult<
 > extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
   data: undefined
   error: TError
-  variables: undefined
+  variables: TVariables
   isError: true
   isIdle: false
   isLoading: false
@@ -689,7 +689,7 @@ export interface MutationObserverSuccessResult<
 > extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
   data: TData
   error: null
-  variables: undefined
+  variables: TVariables
   isError: false
   isIdle: false
   isLoading: false
