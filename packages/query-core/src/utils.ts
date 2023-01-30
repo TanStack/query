@@ -1,6 +1,12 @@
 import type { Mutation } from './mutation'
 import type { Query } from './query'
-import type { FetchStatus, MutationKey, QueryKey, QueryOptions } from './types'
+import type {
+  FetchStatus,
+  MutationKey,
+  MutationStatus,
+  QueryKey,
+  QueryOptions,
+} from './types'
 
 // TYPES
 
@@ -45,9 +51,9 @@ export interface MutationFilters {
    */
   mutationKey?: MutationKey
   /**
-   * Include or exclude fetching mutations
+   * Filter by mutation status
    */
-  fetching?: boolean
+  status?: MutationStatus
 }
 
 export type DataUpdateFunction<TInput, TOutput> = (input: TInput) => TOutput
@@ -138,7 +144,7 @@ export function matchMutation(
   filters: MutationFilters,
   mutation: Mutation<any, any>,
 ): boolean {
-  const { exact, fetching, predicate, mutationKey } = filters
+  const { exact, status, predicate, mutationKey } = filters
   if (mutationKey) {
     if (!mutation.options.mutationKey) {
       return false
@@ -152,10 +158,7 @@ export function matchMutation(
     }
   }
 
-  if (
-    typeof fetching === 'boolean' &&
-    (mutation.state.status === 'loading') !== fetching
-  ) {
+  if (status && mutation.state.status !== status) {
     return false
   }
 

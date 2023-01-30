@@ -236,7 +236,7 @@ describe('useMutationVariables', () => {
 
     function Variables() {
       variables.push(
-        useMutationVariables<number>({ mutationKey, fetching: true }),
+        useMutationVariables<number>({ mutationKey, status: 'loading' }),
       )
 
       return null

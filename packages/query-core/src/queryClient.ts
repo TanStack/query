@@ -103,7 +103,7 @@ export class QueryClient {
   }
 
   isMutating(filters?: MutationFilters): number {
-    return this.#mutationCache.findAll({ ...filters, fetching: true }).length
+    return this.#mutationCache.findAll({ ...filters, status: 'loading' }).length
   }
 
   getMutationVariables<TVariables = unknown>(
