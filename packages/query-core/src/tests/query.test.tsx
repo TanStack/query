@@ -818,7 +818,7 @@ describe('query', () => {
   test('queries should be garbage collected even if they never fetched', async () => {
     const key = queryKey()
 
-    queryClient.setQueryDefaults(key, { cacheTime: 10 })
+    queryClient.setQueryDefaults(key, { gcTime: 10 })
 
     const fn = jest.fn()
 
