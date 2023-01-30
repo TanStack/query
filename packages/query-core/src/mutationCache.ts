@@ -79,6 +79,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 
   private mutations: Mutation<any, any, any, any>[]
   private mutationId: number
+  private isResuming = false
 
   constructor(config?: MutationCacheConfig) {
     super()
@@ -153,13 +154,23 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   resumePausedMutations(): Promise<void> {
+    const emptyPromise = Promise.resolve()
+    if (this.isResuming) {
+      return emptyPromise
+    }
     const pausedMutations = this.mutations.filter((x) => x.state.isPaused)
-    return notifyManager.batch(() =>
+    const result = notifyManager.batch(() =>
       pausedMutations.reduce(
         (promise, mutation) =>
           promise.then(() => mutation.continue().catch(noop)),
-        Promise.resolve(),
+        emptyPromise,
       ),
     )
+
+    this.isResuming = true
+
+    return result.then(() => {
+      this.isResuming = false
+    })
   }
 }
