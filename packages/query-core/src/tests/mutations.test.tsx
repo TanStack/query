@@ -268,6 +268,7 @@ describe('mutations', () => {
           isPaused: true,
           status: 'loading',
           variables: 'todo',
+          submittedAt: 1,
         },
       )
 
@@ -280,6 +281,7 @@ describe('mutations', () => {
       isPaused: true,
       status: 'loading',
       variables: 'todo',
+      submittedAt: 1,
     })
 
     await queryClient.resumePausedMutations()
@@ -293,6 +295,7 @@ describe('mutations', () => {
       isPaused: false,
       status: 'success',
       variables: 'todo',
+      submittedAt: 1,
     })
 
     expect(onMutate).not.toHaveBeenCalled()
