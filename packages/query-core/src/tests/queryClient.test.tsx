@@ -1541,8 +1541,6 @@ describe('queryClient', () => {
         expect(observer2.getCurrentResult().status).toBe('success')
       })
 
-      console.log('orders', orders)
-
       expect(orders).toEqual(['1start', '1end', '2start', '2end'])
     })
 
