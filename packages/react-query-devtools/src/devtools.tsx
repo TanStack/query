@@ -1042,7 +1042,9 @@ const ActiveQuery = ({
               activeQuery.fetch({
                 ...__previousQueryOptions,
                 queryFn: () => {
-                  return new Promise(() => {})
+                  return new Promise(() => {
+                    // Never resolve
+                  })
                 },
                 cacheTime: -1,
               })
