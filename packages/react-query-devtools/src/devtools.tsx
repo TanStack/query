@@ -849,8 +849,6 @@ const ActiveQuery = ({
     promise?.catch(noop)
   }
 
-
-
   const currentErrorTypeName = useMemo(() => {
     if (activeQuery && activeQueryState?.error) {
       const errorType = errorTypes.find(
@@ -868,11 +866,11 @@ const ActiveQuery = ({
   }
 
   const triggerError = (errorType?: DevToolsErrorType) => {
+    const error =
+      errorType?.initializer(activeQuery) ??
+      new Error('Unknown error from devtools')
 
-    const error = errorType?.initializer(activeQuery) ??
-      new Error('Unknown error from devtools');
-
-    const __previousQueryOptions = activeQuery.options;
+    const __previousQueryOptions = activeQuery.options
 
     activeQuery.setState({
       status: 'error',
@@ -880,15 +878,15 @@ const ActiveQuery = ({
       fetchMeta: {
         ...activeQuery.state.fetchMeta,
         __previousQueryOptions,
-      }
+      },
     })
   }
 
   const restoreQueryAfterLoadingOrError = () => {
     activeQuery.fetch(activeQuery.state.fetchMeta.__previousQueryOptions, {
       // Make sure this fetch will cancel the previous one
-      cancelRefetch: true
-    });
+      cancelRefetch: true,
+    })
   }
 
   return (
@@ -1035,9 +1033,9 @@ const ActiveQuery = ({
           type="button"
           onClick={() => {
             if (activeQuery.state.data === undefined) {
-              restoreQueryAfterLoadingOrError();
+              restoreQueryAfterLoadingOrError()
             } else {
-              const __previousQueryOptions = activeQuery.options;
+              const __previousQueryOptions = activeQuery.options
               // Trigger a fetch in order to trigger suspense as well.
               activeQuery.fetch({
                 ...__previousQueryOptions,
@@ -1054,7 +1052,7 @@ const ActiveQuery = ({
                 fetchMeta: {
                   ...activeQuery.state.fetchMeta,
                   __previousQueryOptions,
-                }
+                },
               })
             }
           }}
@@ -1062,9 +1060,10 @@ const ActiveQuery = ({
             background: theme.paused,
           }}
         >
-          {activeQuery.state.status === "loading" ? "Restore" : "Trigger"} loading
+          {activeQuery.state.status === 'loading' ? 'Restore' : 'Trigger'}{' '}
+          loading
         </Button>{' '}
-        {errorTypes.length === 0 || activeQuery.state.status === "error" ? (
+        {errorTypes.length === 0 || activeQuery.state.status === 'error' ? (
           <Button
             type="button"
             onClick={() => {
@@ -1078,7 +1077,7 @@ const ActiveQuery = ({
               background: theme.danger,
             }}
           >
-            {activeQuery.state.status === "error" ? "Restore" : "Trigger"} error
+            {activeQuery.state.status === 'error' ? 'Restore' : 'Trigger'} error
           </Button>
         ) : (
           <label>
@@ -1094,7 +1093,7 @@ const ActiveQuery = ({
                 triggerError(errorType)
               }}
             >
-              <option key="" value=""/>
+              <option key="" value="" />
               {errorTypes.map((errorType) => (
                 <option key={errorType.name} value={errorType.name}>
                   {errorType.name}

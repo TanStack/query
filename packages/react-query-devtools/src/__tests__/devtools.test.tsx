@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { fireEvent, screen, waitFor, act  } from '@testing-library/react'
+import { fireEvent, screen, waitFor, act } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import '@testing-library/jest-dom'
 import type { QueryClient } from '@tanstack/react-query'
@@ -11,7 +11,7 @@ import {
   sleep,
   createQueryClient,
 } from './utils'
-import UserEvent from "@testing-library/user-event";
+import UserEvent from '@testing-library/user-event'
 
 // TODO: This should be removed with the types for react-error-boundary get updated.
 declare module 'react-error-boundary' {
@@ -926,17 +926,17 @@ describe('ReactQueryDevtools', () => {
 
   it('should simulate loading state', async () => {
     const { queryClient } = createQueryClient()
-    let count = 0;
+    let count = 0
     function App() {
       const { data, fetchStatus } = useQuery(['key'], () => {
-        count++;
+        count++
         return Promise.resolve('test')
       })
 
       return (
         <div>
           <h1>
-            {data ?? "No data"}, {fetchStatus}
+            {data ?? 'No data'}, {fetchStatus}
           </h1>
         </div>
       )
@@ -948,12 +948,10 @@ describe('ReactQueryDevtools', () => {
 
     await screen.findByRole('heading', { name: /test/i })
 
-
     const loadingButton = await screen.findByRole('button', {
       name: 'Trigger loading',
     })
     fireEvent.click(loadingButton)
-
 
     await waitFor(() => {
       expect(screen.getByText('Restore loading')).toBeInTheDocument()
@@ -963,10 +961,7 @@ describe('ReactQueryDevtools', () => {
       expect(screen.getByText('No data, fetching')).toBeInTheDocument()
     })
 
-
-    fireEvent.click(
-      screen.getByRole('button', { name: /restore loading/i }),
-    )
+    fireEvent.click(screen.getByRole('button', { name: /restore loading/i }))
 
     await waitFor(() => {
       expect(screen.getByText('test, idle')).toBeInTheDocument()
@@ -985,7 +980,7 @@ describe('ReactQueryDevtools', () => {
       return (
         <div>
           <h1>
-            {!!error ? "Some error" : "No error"}, {status}
+            {!!error ? 'Some error' : 'No error'}, {status}
           </h1>
         </div>
       )
@@ -995,12 +990,10 @@ describe('ReactQueryDevtools', () => {
       initialIsOpen: true,
     })
 
-
     const errorButton = await screen.findByRole('button', {
       name: 'Trigger error',
     })
     fireEvent.click(errorButton)
-
 
     await waitFor(() => {
       expect(screen.getByText('Restore error')).toBeInTheDocument()
@@ -1010,10 +1003,7 @@ describe('ReactQueryDevtools', () => {
       expect(screen.getByText('Some error, error')).toBeInTheDocument()
     })
 
-
-    fireEvent.click(
-      screen.getByRole('button', { name: /Restore error/i }),
-    )
+    fireEvent.click(screen.getByRole('button', { name: /Restore error/i }))
 
     await waitFor(() => {
       expect(screen.getByText('No error, success')).toBeInTheDocument()
@@ -1023,8 +1013,6 @@ describe('ReactQueryDevtools', () => {
   it('should can simulate a specific error', async () => {
     const { queryClient } = createQueryClient()
 
-
-
     function App() {
       const { status, error } = useQuery(['key'], () => {
         return Promise.resolve('test')
@@ -1033,7 +1021,10 @@ describe('ReactQueryDevtools', () => {
       return (
         <div data-testid="test">
           <h1>
-            {error instanceof CustomError ? error.message.toString() : "No error"}, {status}
+            {error instanceof CustomError
+              ? error.message.toString()
+              : 'No error'}
+            , {status}
           </h1>
         </div>
       )
@@ -1041,14 +1032,15 @@ describe('ReactQueryDevtools', () => {
 
     renderWithClient(queryClient, <App />, {
       initialIsOpen: true,
-      errorTypes: [{
-        name: 'error1',
-        initializer: () => new CustomError('error1'),
-      }]
+      errorTypes: [
+        {
+          name: 'error1',
+          initializer: () => new CustomError('error1'),
+        },
+      ],
     })
 
-
-    const errorOption = await screen.findByLabelText("Trigger error:")
+    const errorOption = await screen.findByLabelText('Trigger error:')
 
     UserEvent.selectOptions(errorOption, 'error1')
 
@@ -1056,12 +1048,10 @@ describe('ReactQueryDevtools', () => {
       expect(screen.getByText('error1, error')).toBeInTheDocument()
     })
 
-    fireEvent.click(
-      screen.getByRole('button', { name: /Restore error/i }),
-    )
+    fireEvent.click(screen.getByRole('button', { name: /Restore error/i }))
 
     await waitFor(() => {
       expect(screen.getByText('No error, success')).toBeInTheDocument()
     })
-  });
+  })
 })
