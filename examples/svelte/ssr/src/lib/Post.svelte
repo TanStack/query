@@ -15,7 +15,7 @@
   <div>
     <a class="button" href="/"> Back </a>
   </div>
-  {#if !postId || $post.isLoading}
+  {#if !postId || $post.isPending}
     <span>Loading...</span>
   {/if}
   {#if $post.error}

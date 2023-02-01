@@ -95,11 +95,11 @@
 >
   <div>
     <input type="text" bind:value={text} />
-    <button disabled={$addTodoMutation.isLoading}>Create</button>
+    <button disabled={$addTodoMutation.isPending}>Create</button>
   </div>
 </form>
 
-{#if $todos.isLoading}
+{#if $todos.isPending}
   Loading...
 {/if}
 {#if $todos.error}
