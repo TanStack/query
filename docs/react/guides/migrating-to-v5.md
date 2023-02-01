@@ -117,7 +117,7 @@ if you still need to remove a query, you can use `queryClient.removeQueries({que
 
 Mainly because an important fix was shipped around type inference. Please see this [TypeScript issue](https://github.com/microsoft/TypeScript/issues/43371) for more information.
 
-### The `isDataEqual` options has been removed from useQuery
+### The `isDataEqual` option has been removed from useQuery
 
 Previously, This function was used to indicate whether to use previous `data` (`true`) or new data (`false`) as a resolved data for the query.
 
@@ -129,6 +129,10 @@ You can achieve the same functionality by passing a function to `structuralShari
 - isDataEqual: (oldData, newData) => customCheck(oldData, newData)
 + structuralSharing: (oldData, newData) => customCheck(oldData, newData) ? oldData : replaceEqualDeep(oldData, newData)
 ```
+
+### The deprecated custom logger has been removed
+
+Custom loggers were already deprecated in 4 and have been removed in this version. Logging only had an effect in development mode, where passing a custom logger is not necessary.
 
 ### Supported Browsers
 

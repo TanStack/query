@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-persist-client",
-  "version": "4.22.4",
+  "version": "4.24.3",
   "description": "React bindings to work with persisters in TanStack/react-query",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -33,7 +33,6 @@
     "test:types": "tsc",
     "test:lib": "jest --config ./jest.config.ts",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:lib:publish": "pnpm run test:lib --collectCoverage false",
     "build:types": "tsc --build"
   },
   "devDependencies": {

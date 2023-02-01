@@ -40,7 +40,6 @@ Its available methods are:
 - [`queryClient.resetQueries`](#queryclientresetqueries)
 - [`queryClient.isFetching`](#queryclientisfetching)
 - [`queryClient.isMutating`](#queryclientismutating)
-- [`queryClient.getLogger`](#queryclientgetlogger)
 - [`queryClient.getDefaultOptions`](#queryclientgetdefaultoptions)
 - [`queryClient.setDefaultOptions`](#queryclientsetdefaultoptions)
 - [`queryClient.getQueryDefaults`](#queryclientgetquerydefaults)
@@ -60,9 +59,6 @@ Its available methods are:
 - `mutationCache?: MutationCache`
   - Optional
   - The mutation cache this client is connected to.
-- `logger?: Logger`
-  - Optional
-  - The logger this client uses to log debugging information, warnings and errors. If not set, `console` is the default logger.
 - `defaultOptions?: DefaultOptions`
   - Optional
   - Define defaults for all queries and mutations using this queryClient.
@@ -466,13 +462,6 @@ TanStack Query also exports a handy [`useIsMutating`](../reference/useIsMutating
 **Returns**
 
 This method returns the number of fetching mutations.
-## `queryClient.getLogger`
-
-The `getLogger` method returns the logger which have been set when creating the client.
-
-```tsx
-const logger = queryClient.getLogger()
-```
 
 ## `queryClient.getDefaultOptions`
 
