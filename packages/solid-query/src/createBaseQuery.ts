@@ -89,10 +89,9 @@ export function createBaseQuery<
           if (!unsubscribe) {
             unsubscribe = createClientSubscriber(() => refetch())
           }
-
-          if (!state.isInitialLoading) {
-            resolve(state)
-          }
+        }
+        if (!state.isInitialLoading) {
+          resolve(state)
         }
       })
     },
@@ -129,8 +128,10 @@ export function createBaseQuery<
            * Do not refetch query on mount if query was fetched on server,
            * even if `staleTime` is not set.
            */
-          defaultedOptions.refetchOnMount = false
-
+          if (defaultedOptions.staleTime || !defaultedOptions.initialData) {
+            defaultedOptions.refetchOnMount = false
+          }
+          setState(observer.getOptimisticResult(defaultedOptions))
           unsubscribe = createClientSubscriber(() => refetch())
         }
       },
@@ -138,7 +139,7 @@ export function createBaseQuery<
   )
 
   onCleanup(() => {
-    if (!isServer && unsubscribe) {
+    if (unsubscribe) {
       unsubscribe()
       unsubscribe = null
     }
