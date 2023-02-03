@@ -424,5 +424,18 @@ ruleTester.run(name, rule, {
           createMutation({ mutationKey: ["mutation", "key"], mutationFn: async () => await fetchUserById(userId) });
         `,
     },
+    {
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/vue-query';
+        const options = { enabled: true };
+        useQuery(['foo'], () => undefined, options);
+      `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+        import { useQuery } from '@tanstack/vue-query';
+        const options = { enabled: true };
+        useQuery({ queryKey: ['foo'], queryFn: () => undefined, ...options });
+      `,
+    },
   ],
 })
