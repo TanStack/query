@@ -4,7 +4,8 @@ import type {
   QueriesPlaceholderDataFunction,
   QueryKey,
 } from '@tanstack/query-core'
-import { computed, onScopeDispose, readonly, Ref, ref, watch } from 'vue-demi'
+import type { Ref } from 'vue-demi'
+import { computed, onScopeDispose, readonly, ref, watch } from 'vue-demi'
 
 import type { QueryFunction, QueryObserverResult } from '@tanstack/query-core'
 
