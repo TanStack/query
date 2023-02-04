@@ -37,16 +37,12 @@ describe('QueryCache', () => {
       })
     })
 
-    test('should properly unwrap one parameter', async () => {
+    test('should default to empty filters', async () => {
       const queryCache = new QueryCache()
 
-      queryCache.findAll({
-        queryKey: ref(['baz']),
-      })
+      queryCache.findAll()
 
-      expect(QueryCacheOrigin.prototype.findAll).toBeCalledWith({
-        queryKey: ['baz'],
-      })
+      expect(QueryCacheOrigin.prototype.findAll).toBeCalledWith({})
     })
   })
 })

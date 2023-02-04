@@ -1,4 +1,4 @@
-import { onScopeDispose, reactive } from 'vue-demi'
+import { onScopeDispose, ref } from 'vue-demi'
 
 import {
   flushPromises,
@@ -26,7 +26,7 @@ describe('useQueries', () => {
     ]
     const queriesState = useQueries({ queries })
 
-    expect(queriesState).toMatchObject([
+    expect(queriesState.value).toMatchObject([
       {
         status: 'loading',
         isLoading: true,
@@ -57,7 +57,7 @@ describe('useQueries', () => {
 
     await flushPromises()
 
-    expect(queriesState).toMatchObject([
+    expect(queriesState.value).toMatchObject([
       {
         status: 'success',
         isLoading: false,
@@ -88,7 +88,7 @@ describe('useQueries', () => {
 
     await flushPromises()
 
-    expect(queriesState).toMatchObject([
+    expect(queriesState.value).toMatchObject([
       {
         status: 'error',
         isLoading: false,
@@ -105,7 +105,7 @@ describe('useQueries', () => {
   })
 
   test('should return state for new queries', async () => {
-    const queries = reactive([
+    const queries = ref([
       {
         queryKey: ['key31'],
         queryFn: getSimpleFetcherWithReturnData('value31'),
@@ -123,9 +123,9 @@ describe('useQueries', () => {
 
     await flushPromises()
 
-    queries.splice(
+    queries.value.splice(
       0,
-      queries.length,
+      queries.value.length,
       {
         queryKey: ['key31'],
         queryFn: getSimpleFetcherWithReturnData('value31'),
@@ -139,8 +139,8 @@ describe('useQueries', () => {
     await flushPromises()
     await flushPromises()
 
-    expect(queriesState.length).toEqual(2)
-    expect(queriesState).toMatchObject([
+    expect(queriesState.value.length).toEqual(2)
+    expect(queriesState.value).toMatchObject([
       {
         data: 'value31',
         status: 'success',
@@ -177,7 +177,7 @@ describe('useQueries', () => {
     const queriesState = useQueries({ queries })
     await flushPromises()
 
-    expect(queriesState).toMatchObject([
+    expect(queriesState.value).toMatchObject([
       {
         status: 'loading',
         isLoading: true,
