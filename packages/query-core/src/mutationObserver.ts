@@ -180,11 +180,15 @@ export class MutationObserver<
             this.currentResult.context,
           )
         } else if (options.onError) {
-          this.mutateOptions.onError?.(
-            this.currentResult.error!,
-            this.currentResult.variables!,
-            this.currentResult.context,
-          )
+          try {
+            this.mutateOptions.onError?.(
+              this.currentResult.error!,
+              this.currentResult.variables!,
+              this.currentResult.context,
+            )
+          } catch (e) {
+              console.error('React Query: Mutation onError threw an exception:', e);
+          }
           this.mutateOptions.onSettled?.(
             undefined,
             this.currentResult.error,

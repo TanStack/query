@@ -268,6 +268,57 @@ describe('useMutation', () => {
       'Expected mock error. All is well! 3',
     )
   })
+  it('should be able to call `onSettled` after a onError of a failed mutate throws an exception', async () => {
+    const onErrorMock = jest.fn((_message) => {
+      throw new Error()
+    });
+    const onSettledMock = jest.fn()
+
+
+    function Page() {
+      const { mutate } = useMutation(
+        () => {
+          const error = new Error(
+            `Expected mock error. All is well!`,
+          )
+          error.stack = ''
+          return Promise.reject(error)
+        },
+        {
+          onError: (error: Error) => {
+            onErrorMock(error.message)
+          },
+          onSettled: (_data, error) => {
+            onSettledMock(error?.message)
+          },
+        },
+      )
+
+      return (
+        <div>
+          <button onClick={() => mutate()}>mutate</button>
+        </div>
+      )
+    }
+
+    const { getByRole } = renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(getByRole('button', { name: /mutate/i }))
+
+    await waitFor(() => {
+      expect(onErrorMock).toHaveBeenCalledTimes(1)
+    })
+    expect(onErrorMock).toHaveBeenCalledWith(
+      'Expected mock error. All is well!',
+    );
+
+    await waitFor(() => {
+      expect(onSettledMock).toHaveBeenCalledTimes(1)
+    })
+    expect(onSettledMock).toHaveBeenCalledWith(
+      'Expected mock error. All is well!',
+    )
+  })
 
   it('should be able to override the useMutation success callbacks', async () => {
     const callbacks: string[] = []

@@ -255,16 +255,18 @@ export class Mutation<
           this.state.variables!,
           this.state.context,
         )
-
-        await this.options.onSettled?.(
-          undefined,
-          error as TError,
-          this.state.variables!,
-          this.state.context,
-        )
         throw error
       } finally {
-        this.dispatch({ type: 'error', error: error as TError })
+        try {
+          await this.options.onSettled?.(
+            undefined,
+            error as TError,
+            this.state.variables!,
+            this.state.context,
+          )
+        } finally {
+          this.dispatch({ type: 'error', error: error as TError })
+        }
       }
     }
   }

@@ -73,4 +73,32 @@ describe('mutationObserver', () => {
 
     unsubscribe()
   })
+  test('should still execute onSettled if onError throws', async () => {
+    const mockOnError = jest.fn()
+    const mockOnSetled = jest.fn()
+    const mockOnSuccess = jest.fn()
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: async () => {
+        await sleep(20)
+        return await Promise.reject(new Error('Failed'));
+      },
+    })
+
+    const subscriptionHandler = jest.fn()
+    const unsubscribe = mutation.subscribe(subscriptionHandler)
+    mutation.mutate(undefined, {onError: mockOnError, onSettled: mockOnSetled, onSuccess: mockOnSuccess}).catch(() => {})
+
+    await waitFor(() => {
+      // 2 calls: loading, error
+      expect(subscriptionHandler).toBeCalledTimes(2)
+    });
+
+    expect(mockOnError).toHaveBeenCalled();
+    expect(mockOnSetled).toHaveBeenCalled();
+    expect(mockOnSuccess).not.toHaveBeenCalled();
+
+    subscriptionHandler.mockReset()
+
+    unsubscribe()
+  })
 })
