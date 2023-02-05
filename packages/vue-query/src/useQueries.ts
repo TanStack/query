@@ -4,14 +4,8 @@ import type {
   QueriesPlaceholderDataFunction,
   QueryKey,
 } from '@tanstack/query-core'
-import {
-  computed,
-  onScopeDispose,
-  reactive,
-  readonly,
-  ref,
-  watch,
-} from 'vue-demi'
+import type { Ref } from 'vue-demi'
+import { computed, onScopeDispose, readonly, ref, watch } from 'vue-demi'
 
 import type { QueryFunction, QueryObserverResult } from '@tanstack/query-core'
 
@@ -157,7 +151,7 @@ export function useQueries<T extends any[]>({
 }: {
   queries: MaybeRefDeep<UseQueriesOptionsArg<T>>
   queryClient?: QueryClient
-}): Readonly<UseQueriesResults<T>> {
+}): Readonly<Ref<UseQueriesResults<T>>> {
   const client = queryClient || useQueryClient()
 
   const defaultedQueries = computed(() =>
@@ -172,7 +166,7 @@ export function useQueries<T extends any[]>({
   )
 
   const observer = new QueriesObserver(client, defaultedQueries.value)
-  const state = reactive(observer.getCurrentResult())
+  const state = ref(observer.getCurrentResult())
 
   const unsubscribe = ref(() => {
     // noop
@@ -184,12 +178,12 @@ export function useQueries<T extends any[]>({
       if (!isRestoring) {
         unsubscribe.value()
         unsubscribe.value = observer.subscribe((result) => {
-          state.splice(0, result.length, ...result)
+          state.value.splice(0, result.length, ...result)
         })
         // Subscription would not fire for persisted results
-        state.splice(
+        state.value.splice(
           0,
-          state.length,
+          state.value.length,
           ...observer.getOptimisticResult(defaultedQueries.value),
         )
       }
@@ -201,7 +195,7 @@ export function useQueries<T extends any[]>({
     defaultedQueries,
     () => {
       observer.setQueries(defaultedQueries.value)
-      state.splice(0, state.length, ...observer.getCurrentResult())
+      state.value.splice(0, state.value.length, ...observer.getCurrentResult())
     },
     { deep: true },
   )
@@ -210,5 +204,5 @@ export function useQueries<T extends any[]>({
     unsubscribe.value()
   })
 
-  return readonly(state) as UseQueriesResults<T>
+  return readonly(state) as Readonly<Ref<UseQueriesResults<T>>>
 }
