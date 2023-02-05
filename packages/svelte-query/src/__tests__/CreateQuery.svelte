@@ -2,7 +2,7 @@
   import { createQuery, QueryClient, type CreateQueryOptions } from '../index'
   import { setQueryClientContext } from '../context'
 
-  export let options: CreateQueryOptions
+  export let options: CreateQueryOptions<any>
 
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
