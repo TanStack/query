@@ -169,7 +169,11 @@ function runCheckOnNode(params: {
   const optionsObject =
     secondArgument?.type === AST_NODE_TYPES.ObjectExpression
       ? secondArgument
-      : thirdArgument?.type === AST_NODE_TYPES.ObjectExpression
+      : thirdArgument !== undefined &&
+        ASTUtils.isNodeOfOneOf(thirdArgument, [
+          AST_NODE_TYPES.ObjectExpression,
+          AST_NODE_TYPES.Identifier,
+        ])
       ? thirdArgument
       : undefined
 
@@ -226,7 +230,7 @@ function runCheckOnNode(params: {
       }
 
       // options
-      if (optionsObject) {
+      if (optionsObject?.type === AST_NODE_TYPES.ObjectExpression) {
         const existingObjectProperties = optionsObject.properties.map(
           (objectLiteral) => {
             return sourceCode.getText(objectLiteral)
@@ -234,6 +238,10 @@ function runCheckOnNode(params: {
         )
 
         optionsObjectProperties.push(...existingObjectProperties)
+      }
+
+      if (optionsObject?.type === AST_NODE_TYPES.Identifier) {
+        optionsObjectProperties.push(`...${sourceCode.getText(optionsObject)}`)
       }
 
       const calleeText = sourceCode.getText(callNode).split('(')[0]
