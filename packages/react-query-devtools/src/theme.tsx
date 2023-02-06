@@ -14,7 +14,7 @@ export const defaultTheme = {
   active: '#006bff',
   paused: '#8c49eb',
   warning: '#ffb200',
-} as const
+}
 
 export type Theme = typeof defaultTheme
 interface ProviderProps {
@@ -29,5 +29,7 @@ export function ThemeProvider({ theme, ...rest }: ProviderProps) {
 }
 
 export function useTheme() {
-  return React.useContext(ThemeContext)
+  const contextTheme = React.useContext(ThemeContext)
+  if (!contextTheme) return defaultTheme
+  return contextTheme
 }

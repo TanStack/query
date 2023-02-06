@@ -1,5 +1,7 @@
 import * as devtools from './devtools'
 
+export { defaultTheme, ThemeProvider } from './theme'
+
 export const ReactQueryDevtools: typeof devtools['ReactQueryDevtools'] =
   process.env.NODE_ENV !== 'development'
     ? function () {

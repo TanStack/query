@@ -37,7 +37,7 @@ import {
   ActiveQueryPanel,
 } from './styledComponents'
 import ScreenReader from './screenreader'
-import { ThemeProvider, defaultTheme as theme } from './theme'
+import { ThemeProvider, defaultTheme, useTheme } from './theme'
 import { getQueryStatusLabel, getQueryStatusColor } from './utils'
 import Explorer from './Explorer'
 import Logo from './Logo'
@@ -79,6 +79,10 @@ export interface DevtoolsOptions extends ContextOptions {
    * nonce for style element for CSP
    */
   styleNonce?: string
+  /**
+   * Use this to customize the devtools theme
+   */
+  theme?: typeof defaultTheme
 }
 
 interface DevtoolsPanelOptions extends ContextOptions {
@@ -135,6 +139,7 @@ export function ReactQueryDevtools({
   context,
   styleNonce,
   panelPosition: initialPanelPosition = 'bottom',
+  theme = defaultTheme,
 }: DevtoolsOptions): React.ReactElement | null {
   const rootRef = React.useRef<HTMLDivElement>(null)
   const panelRef = React.useRef<HTMLDivElement>(null)
@@ -436,6 +441,8 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     ...panelProps
   } = props
 
+  const theme = useTheme()
+
   const { onClick: onCloseClick, ...otherCloseButtonProps } = closeButtonProps
 
   const queryClient = useQueryClient({ context })
@@ -489,295 +496,285 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
   const [isMockOffline, setMockOffline] = React.useState(false)
 
   return (
-    <ThemeProvider theme={theme}>
-      <Panel
-        ref={ref}
-        className="ReactQueryDevtoolsPanel"
-        aria-label="React Query Devtools Panel"
-        id="ReactQueryDevtoolsPanel"
-        {...panelProps}
-        style={{
-          height: defaultPanelSize,
-          position: 'relative',
-          ...panelProps.style,
+    <Panel
+      ref={ref}
+      className="ReactQueryDevtoolsPanel"
+      aria-label="React Query Devtools Panel"
+      id="ReactQueryDevtoolsPanel"
+      {...panelProps}
+      style={{
+        height: defaultPanelSize,
+        position: 'relative',
+        ...panelProps.style,
+      }}
+    >
+      <style
+        nonce={styleNonce}
+        dangerouslySetInnerHTML={{
+          __html: `
+          .ReactQueryDevtoolsPanel * {
+            scrollbar-color: ${theme.backgroundAlt} ${theme.gray};
+          }
+
+          .ReactQueryDevtoolsPanel *::-webkit-scrollbar, .ReactQueryDevtoolsPanel scrollbar {
+            width: 1em;
+            height: 1em;
+          }
+
+          .ReactQueryDevtoolsPanel *::-webkit-scrollbar-track, .ReactQueryDevtoolsPanel scrollbar-track {
+            background: ${theme.backgroundAlt};
+          }
+
+          .ReactQueryDevtoolsPanel *::-webkit-scrollbar-thumb, .ReactQueryDevtoolsPanel scrollbar-thumb {
+            background: ${theme.gray};
+            border-radius: .5em;
+            border: 3px solid ${theme.backgroundAlt};
+          }
+        `,
         }}
-      >
-        <style
-          nonce={styleNonce}
-          dangerouslySetInnerHTML={{
-            __html: `
-            .ReactQueryDevtoolsPanel * {
-              scrollbar-color: ${theme.backgroundAlt} ${theme.gray};
-            }
+      />
+      <div
+        style={getResizeHandleStyle(position)}
+        onMouseDown={onDragStart}
+      ></div>
 
-            .ReactQueryDevtoolsPanel *::-webkit-scrollbar, .ReactQueryDevtoolsPanel scrollbar {
-              width: 1em;
-              height: 1em;
-            }
-
-            .ReactQueryDevtoolsPanel *::-webkit-scrollbar-track, .ReactQueryDevtoolsPanel scrollbar-track {
-              background: ${theme.backgroundAlt};
-            }
-
-            .ReactQueryDevtoolsPanel *::-webkit-scrollbar-thumb, .ReactQueryDevtoolsPanel scrollbar-thumb {
-              background: ${theme.gray};
-              border-radius: .5em;
-              border: 3px solid ${theme.backgroundAlt};
-            }
-          `,
-          }}
-        />
+      {isOpen && (
         <div
-          style={getResizeHandleStyle(position)}
-          onMouseDown={onDragStart}
-        ></div>
-
-        {isOpen && (
+          style={{
+            flex: '1 1 500px',
+            minHeight: '40%',
+            maxHeight: '100%',
+            overflow: 'auto',
+            borderRight: `1px solid ${theme.grayAlt}`,
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
           <div
             style={{
-              flex: '1 1 500px',
-              minHeight: '40%',
-              maxHeight: '100%',
-              overflow: 'auto',
-              borderRight: `1px solid ${theme.grayAlt}`,
+              padding: '.5em',
+              background: theme.backgroundAlt,
               display: 'flex',
-              flexDirection: 'column',
+              justifyContent: 'space-between',
+              alignItems: 'center',
             }}
           >
-            <div
+            <button
+              type="button"
+              aria-label="Close React Query Devtools"
+              aria-controls="ReactQueryDevtoolsPanel"
+              aria-haspopup="true"
+              aria-expanded="true"
+              onClick={() => setIsOpen(false)}
               style={{
-                padding: '.5em',
-                background: theme.backgroundAlt,
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
+                display: 'inline-flex',
+                background: 'none',
+                border: 0,
+                padding: 0,
+                marginRight: '.5em',
+                cursor: 'pointer',
               }}
             >
-              <button
-                type="button"
-                aria-label="Close React Query Devtools"
-                aria-controls="ReactQueryDevtoolsPanel"
-                aria-haspopup="true"
-                aria-expanded="true"
-                onClick={() => setIsOpen(false)}
-                style={{
-                  display: 'inline-flex',
-                  background: 'none',
-                  border: 0,
-                  padding: 0,
-                  marginRight: '.5em',
-                  cursor: 'pointer',
-                }}
-              >
-                <Logo aria-hidden />
-                <ScreenReader text="Close React Query Devtools" />
-              </button>
+              <Logo aria-hidden />
+              <ScreenReader text="Close React Query Devtools" />
+            </button>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
               <div
                 style={{
                   display: 'flex',
-                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '.5em',
                 }}
               >
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '.5em',
+                <QueryStatusCount queryCache={queryCache} />
+                {position && onPositionChange ? (
+                  <Select
+                    aria-label="Panel position"
+                    value={position}
+                    style={{ marginInlineStart: '.5em' }}
+                    onChange={(e) => onPositionChange(e.target.value as Side)}
+                  >
+                    <option value="left">Left</option>
+                    <option value="right">Right</option>
+                    <option value="top">Top</option>
+                    <option value="bottom">Bottom</option>
+                  </Select>
+                ) : null}
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <Input
+                  placeholder="Filter"
+                  aria-label="Filter by queryhash"
+                  value={filter ?? ''}
+                  onChange={(e) => setFilter(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Escape') setFilter('')
                   }}
-                >
-                  <QueryStatusCount queryCache={queryCache} />
-                  {position && onPositionChange ? (
+                  style={{
+                    flex: '1',
+                    marginRight: '.5em',
+                    width: '100%',
+                  }}
+                />
+                {!filter ? (
+                  <>
                     <Select
-                      aria-label="Panel position"
-                      value={position}
-                      style={{ marginInlineStart: '.5em' }}
-                      onChange={(e) => onPositionChange(e.target.value as Side)}
+                      aria-label="Sort queries"
+                      value={sort}
+                      onChange={(e) => setSort(e.target.value)}
+                      style={{
+                        flex: '1',
+                        minWidth: 75,
+                        marginRight: '.5em',
+                      }}
                     >
-                      <option value="left">Left</option>
-                      <option value="right">Right</option>
-                      <option value="top">Top</option>
-                      <option value="bottom">Bottom</option>
+                      {Object.keys(sortFns).map((key) => (
+                        <option key={key} value={key}>
+                          Sort by {key}
+                        </option>
+                      ))}
                     </Select>
-                  ) : null}
-                </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Input
-                    placeholder="Filter"
-                    aria-label="Filter by queryhash"
-                    value={filter ?? ''}
-                    onChange={(e) => setFilter(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Escape') setFilter('')
-                    }}
-                    style={{
-                      flex: '1',
-                      marginRight: '.5em',
-                      width: '100%',
-                    }}
-                  />
-                  {!filter ? (
-                    <>
-                      <Select
-                        aria-label="Sort queries"
-                        value={sort}
-                        onChange={(e) => setSort(e.target.value)}
-                        style={{
-                          flex: '1',
-                          minWidth: 75,
-                          marginRight: '.5em',
-                        }}
+                    <Button
+                      type="button"
+                      onClick={() => setBaseSort((old) => old * -1)}
+                      style={{
+                        padding: '.3em .4em',
+                        marginRight: '.5em',
+                      }}
+                    >
+                      {baseSort === 1 ? '⬆ Asc' : '⬇ Desc'}
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        if (isMockOffline) {
+                          onlineManager.setOnline(undefined)
+                          setMockOffline(false)
+                          window.dispatchEvent(new Event('online'))
+                        } else {
+                          onlineManager.setOnline(false)
+                          setMockOffline(true)
+                        }
+                      }}
+                      aria-label={
+                        isMockOffline
+                          ? 'Restore offline mock'
+                          : 'Mock offline behavior'
+                      }
+                      title={
+                        isMockOffline
+                          ? 'Restore offline mock'
+                          : 'Mock offline behavior'
+                      }
+                      style={{
+                        padding: '0',
+                        height: '2em',
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="2em"
+                        height="2em"
+                        viewBox="0 0 24 24"
+                        stroke={isMockOffline ? theme.danger : 'currentColor'}
+                        fill="none"
                       >
-                        {Object.keys(sortFns).map((key) => (
-                          <option key={key} value={key}>
-                            Sort by {key}
-                          </option>
-                        ))}
-                      </Select>
-                      <Button
-                        type="button"
-                        onClick={() => setBaseSort((old) => old * -1)}
-                        style={{
-                          padding: '.3em .4em',
-                          marginRight: '.5em',
-                        }}
-                      >
-                        {baseSort === 1 ? '⬆ Asc' : '⬇ Desc'}
-                      </Button>
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          if (isMockOffline) {
-                            onlineManager.setOnline(undefined)
-                            setMockOffline(false)
-                            window.dispatchEvent(new Event('online'))
-                          } else {
-                            onlineManager.setOnline(false)
-                            setMockOffline(true)
-                          }
-                        }}
-                        aria-label={
+                        {isMockOffline ? (
+                          <>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <line x1="12" y1="18" x2="12.01" y2="18" />
+                            <path d="M9.172 15.172a4 4 0 0 1 5.656 0" />
+                            <path d="M6.343 12.343a7.963 7.963 0 0 1 3.864 -2.14m4.163 .155a7.965 7.965 0 0 1 3.287 2" />
+                            <path d="M3.515 9.515a12 12 0 0 1 3.544 -2.455m3.101 -.92a12 12 0 0 1 10.325 3.374" />
+                            <line x1="3" y1="3" x2="21" y2="21" />
+                          </>
+                        ) : (
+                          <>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <line x1="12" y1="18" x2="12.01" y2="18" />
+                            <path d="M9.172 15.172a4 4 0 0 1 5.656 0" />
+                            <path d="M6.343 12.343a8 8 0 0 1 11.314 0" />
+                            <path d="M3.515 9.515c4.686 -4.687 12.284 -4.687 17 0" />
+                          </>
+                        )}
+                      </svg>
+                      <ScreenReader
+                        text={
                           isMockOffline
                             ? 'Restore offline mock'
                             : 'Mock offline behavior'
                         }
-                        title={
-                          isMockOffline
-                            ? 'Restore offline mock'
-                            : 'Mock offline behavior'
-                        }
-                        style={{
-                          padding: '0',
-                          height: '2em',
-                        }}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="2em"
-                          height="2em"
-                          viewBox="0 0 24 24"
-                          stroke={isMockOffline ? theme.danger : 'currentColor'}
-                          fill="none"
-                        >
-                          {isMockOffline ? (
-                            <>
-                              <path
-                                stroke="none"
-                                d="M0 0h24v24H0z"
-                                fill="none"
-                              />
-                              <line x1="12" y1="18" x2="12.01" y2="18" />
-                              <path d="M9.172 15.172a4 4 0 0 1 5.656 0" />
-                              <path d="M6.343 12.343a7.963 7.963 0 0 1 3.864 -2.14m4.163 .155a7.965 7.965 0 0 1 3.287 2" />
-                              <path d="M3.515 9.515a12 12 0 0 1 3.544 -2.455m3.101 -.92a12 12 0 0 1 10.325 3.374" />
-                              <line x1="3" y1="3" x2="21" y2="21" />
-                            </>
-                          ) : (
-                            <>
-                              <path
-                                stroke="none"
-                                d="M0 0h24v24H0z"
-                                fill="none"
-                              />
-                              <line x1="12" y1="18" x2="12.01" y2="18" />
-                              <path d="M9.172 15.172a4 4 0 0 1 5.656 0" />
-                              <path d="M6.343 12.343a8 8 0 0 1 11.314 0" />
-                              <path d="M3.515 9.515c4.686 -4.687 12.284 -4.687 17 0" />
-                            </>
-                          )}
-                        </svg>
-                        <ScreenReader
-                          text={
-                            isMockOffline
-                              ? 'Restore offline mock'
-                              : 'Mock offline behavior'
-                          }
-                        />
-                      </Button>
-                    </>
-                  ) : null}
-                </div>
+                      />
+                    </Button>
+                  </>
+                ) : null}
               </div>
             </div>
-            <div
-              style={{
-                overflowY: 'auto',
-                flex: '1',
-              }}
-            >
-              {queries.map((query) => {
-                return (
-                  <QueryRow
-                    queryKey={query.queryKey}
-                    activeQueryHash={activeQueryHash}
-                    setActiveQueryHash={setActiveQueryHash}
-                    key={query.queryHash}
-                    queryCache={queryCache}
-                  />
-                )
-              })}
-            </div>
           </div>
-        )}
-
-        {activeQueryHash && isOpen ? (
-          <ActiveQuery
-            activeQueryHash={activeQueryHash}
-            queryCache={queryCache}
-            queryClient={queryClient}
-          />
-        ) : null}
-
-        {showCloseButton ? (
-          <Button
-            type="button"
-            aria-controls="ReactQueryDevtoolsPanel"
-            aria-haspopup="true"
-            aria-expanded="true"
-            {...(otherCloseButtonProps as Record<string, unknown>)}
+          <div
             style={{
-              position: 'absolute',
-              zIndex: 99999,
-              margin: '.5em',
-              bottom: 0,
-              left: 0,
-              ...otherCloseButtonProps.style,
-            }}
-            onClick={(e) => {
-              setIsOpen(false)
-              onCloseClick?.(e)
+              overflowY: 'auto',
+              flex: '1',
             }}
           >
-            Close
-          </Button>
-        ) : null}
-      </Panel>
-    </ThemeProvider>
+            {queries.map((query) => {
+              return (
+                <QueryRow
+                  queryKey={query.queryKey}
+                  activeQueryHash={activeQueryHash}
+                  setActiveQueryHash={setActiveQueryHash}
+                  key={query.queryHash}
+                  queryCache={queryCache}
+                />
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {activeQueryHash && isOpen ? (
+        <ActiveQuery
+          activeQueryHash={activeQueryHash}
+          queryCache={queryCache}
+          queryClient={queryClient}
+        />
+      ) : null}
+
+      {showCloseButton ? (
+        <Button
+          type="button"
+          aria-controls="ReactQueryDevtoolsPanel"
+          aria-haspopup="true"
+          aria-expanded="true"
+          {...(otherCloseButtonProps as Record<string, unknown>)}
+          style={{
+            position: 'absolute',
+            zIndex: 99999,
+            margin: '.5em',
+            bottom: 0,
+            left: 0,
+            ...otherCloseButtonProps.style,
+          }}
+          onClick={(e) => {
+            setIsOpen(false)
+            onCloseClick?.(e)
+          }}
+        >
+          Close
+        </Button>
+      ) : null}
+    </Panel>
   )
 })
 
@@ -793,6 +790,8 @@ const ActiveQuery = ({
   const activeQuery = useSubscribeToQueryCache(queryCache, () =>
     queryCache.getAll().find((query) => query.queryHash === activeQueryHash),
   )
+
+  const theme = useTheme()
 
   const activeQueryState = useSubscribeToQueryCache(
     queryCache,
@@ -1015,6 +1014,8 @@ const ActiveQuery = ({
 }
 
 const QueryStatusCount = ({ queryCache }: { queryCache: QueryCache }) => {
+  const theme = useTheme()
+
   const hasFresh = useSubscribeToQueryCache(
     queryCache,
     () =>
@@ -1107,6 +1108,8 @@ const QueryRow = React.memo(
     activeQueryHash,
     queryCache,
   }: QueryRowProps) => {
+    const theme = useTheme()
+
     const queryHash =
       useSubscribeToQueryCache(
         queryCache,
