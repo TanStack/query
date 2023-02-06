@@ -37,7 +37,7 @@ const transformQueryClientUsages = ({ jscodeshift, utils, root, filePath }) => {
       'removeQueries',
       'resetQueries',
     ],
-    replacer
+    replacer,
   )
 }
 
@@ -61,7 +61,7 @@ const transformUseQueriesUsages = ({ jscodeshift, utils, root }) => {
         jscodeshift.property(
           'init',
           jscodeshift.identifier('queries'),
-          node.original.arguments[0]
+          node.original.arguments[0],
         ),
       ]),
     ])
@@ -96,7 +96,7 @@ const transformUseQueryLikeUsages = ({
       root,
       filePath,
       keyName: 'queryKey',
-    })
+    }),
   )
   transformer.execute(
     ['useMutation'],
@@ -105,7 +105,7 @@ const transformUseQueryLikeUsages = ({
       root,
       filePath,
       keyName: 'mutationKey',
-    })
+    }),
   )
 }
 

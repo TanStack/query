@@ -26,7 +26,7 @@ defineTest(
   'parameter-is-object-expression',
   {
     parser: 'tsx',
-  }
+  },
 )
 
 defineTest(__dirname, 'key-transformation', null, 'type-arguments', {
