@@ -1,16 +1,25 @@
 import { BroadcastChannel } from 'broadcast-channel'
 import type { QueryClient } from '@tanstack/query-core'
+import { dehydrate, hydrate } from '@tanstack/query-core'
 
 interface BroadcastQueryClientOptions {
   queryClient: QueryClient
   broadcastChannel?: string
 }
 
+const EventType = {
+  updated: 'updated',
+  removed: 'removed',
+  cacheSnapshotRequested: 'cacheSnapshotRequested',
+  cacheSnapshotCreated: 'cacheSnapshotCreated',
+} as const
+
 export function broadcastQueryClient({
   queryClient,
   broadcastChannel = 'tanstack-query',
 }: BroadcastQueryClientOptions) {
   let transaction = false
+  let hasBeenHydrated = false
   const tx = (cb: () => void) => {
     transaction = true
     cb()
@@ -23,6 +32,10 @@ export function broadcastQueryClient({
 
   const queryCache = queryClient.getQueryCache()
 
+  channel.postMessage({
+    type: EventType.cacheSnapshotRequested,
+  })
+
   queryClient.getQueryCache().subscribe((queryEvent) => {
     if (transaction) {
       return
@@ -34,7 +47,7 @@ export function broadcastQueryClient({
 
     if (queryEvent.type === 'updated' && queryEvent.action.type === 'success') {
       channel.postMessage({
-        type: 'updated',
+        type: EventType.updated,
         queryHash,
         queryKey,
         state,
@@ -43,7 +56,7 @@ export function broadcastQueryClient({
 
     if (queryEvent.type === 'removed') {
       channel.postMessage({
-        type: 'removed',
+        type: EventType.removed,
         queryHash,
         queryKey,
       })
@@ -56,9 +69,13 @@ export function broadcastQueryClient({
     }
 
     tx(() => {
-      const { type, queryHash, queryKey, state } = action
+      const { type, queryHash, queryKey, state, cacheSnapshot } = action
+      const shouldHydrateCache =
+        type === EventType.cacheSnapshotCreated &&
+        !hasBeenHydrated &&
+        cacheSnapshot
 
-      if (type === 'updated') {
+      if (type === EventType.updated) {
         const query = queryCache.get(queryHash)
 
         if (query) {
@@ -74,12 +91,20 @@ export function broadcastQueryClient({
           },
           state,
         )
-      } else if (type === 'removed') {
+      } else if (type === EventType.removed) {
         const query = queryCache.get(queryHash)
 
         if (query) {
           queryCache.remove(query)
         }
+      } else if (type === EventType.cacheSnapshotRequested) {
+        channel.postMessage({
+          type: EventType.cacheSnapshotCreated,
+          cacheSnapshot: dehydrate(queryClient),
+        })
+      } else if (shouldHydrateCache) {
+        hydrate(queryClient, cacheSnapshot)
+        hasBeenHydrated = true
       }
     })
   }
