@@ -187,7 +187,7 @@ export class MutationObserver<
               this.currentResult.context,
             )
           } catch (e) {
-              console.error('React Query: Mutation onError threw an exception:', e);
+              console.error('TanStack: Mutation onError threw an exception:', e);
           }
           this.mutateOptions.onSettled?.(
             undefined,
