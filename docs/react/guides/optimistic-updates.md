@@ -68,7 +68,7 @@ useMutation({
     return { previousTodo, newTodo }
   },
   // If the mutation fails, use the context we returned above
-  onError: (err, newTodo, context) => {
+  onError: (err, variables, context) => {
     queryClient.setQueryData(
       ['todos', context.newTodo.id],
       context.previousTodo,
