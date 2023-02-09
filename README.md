@@ -1,20 +1,28 @@
 
+<div align = center>
+
 [![Banner]][#]
+
+[![Badge Hashtag]][Hashtag]  
+[![Badge Downloads]][NPM]  
+[![Badge Stars]][#]  
+[![Badge BestOfJS]][BestOfJS]  
+[![Badge Twitter]][Twitter]
+
+[![Badge Discussions]][Discussions]  
+[![Badge Semantic]][#]  
+[![Badge Gitpod]][Gitpod]  
+[![Badge Discord]][Discord]
+
+[![Badge Workflow]][Workflow]  
+[![Badge Minified]][BundlePhobia]
+
+<br>
 
 Hooks for fetching, caching and updating asynchronous data in React, Solid, Svelte and Vue
 
-[![Badge Hashtag]][Hashtag]
-[![Badge Discord]][Discord]
-[![Badge Workflow]][Workflow]
-[![Badge Downloads]][NPM]
-[![Badge BundlePhobia]][BundlePhobia]
-[![Badge Semantic]][#]
-[![Badge Discussions]][Discussions]
-[![Badge BestOfJS]][BestOfJS]
-[![Badge Stars]][#]
-[![Badge Twitter]][Twitter]
-[![Badge Gitpod]][Gitpod]
 
+</div>
 
 Enjoy this library? Try the entire [TanStack]! [TanStack Table], [TanStack Router], [TanStack Virtual], [React Charts], [React Ranger]
 
@@ -50,8 +58,6 @@ Still on **React Query v3**? No problem! Check out the v3 docs here: https://rea
 
 [#]: #
 
-[BundlePhobia]: https://bundlephobia.com/package/@tanstack/react-query@latest
-[BestOfJS]: https://bestofjs.org/projects/tanstack-query
 [tanstack.com/query]: https://tanstack.com/query
 [Become a Sponsor!]: https://github.com/sponsors/tannerlinsley/
 [TanStack Virtual]: https://github.com/tanstack/virtual
@@ -60,13 +66,15 @@ Still on **React Query v3**? No problem! Check out the v3 docs here: https://rea
 [TanStack Table]: https://github.com/TanStack/table
 [React Charts]: https://github.com/TanStack/react-charts
 [React Ranger]: https://github.com/TanStack/ranger
+[BundlePhobia]: https://bundlephobia.com/package/@tanstack/react-query@latest
 [Discussions]: https://github.com/TanStack/query/discussions
-[TanStack]: https://tanstack.com
+[BestOfJS]: https://bestofjs.org/projects/tanstack-query
 [Workflow]: https://github.com/TanStack/query/actions?query=workflow%3A%22react-query+tests%22
+[TanStack]: https://tanstack.com
 [Tracker]: https://static.scarf.sh/a.png?x-pxid=be2d8a11-9712-4c1d-9963-580b2d4fb133
 [Hashtag]: https://twitter.com/intent/tweet?button_hashtag=TanStack
 [Discord]: https://discord.com/invite/WrRKjPJ
-[Twitter]: https://twitter.com/tannerlinsley
+[Twitter]: https://twitter.com/TannerLinsley
 [Banner]: https://github.com/TanStack/query/raw/beta/media/repo-header.png
 [Gitpod]: https://gitpod.io/from-referrer/
 [NPM]: https://www.npmjs.com/package/@tanstack/query-core
@@ -74,14 +82,14 @@ Still on **React Query v3**? No problem! Check out the v3 docs here: https://rea
 
 <!---------------------------------[ Badges ]---------------------------------->
 
-[Badge Hashtag]: https://img.shields.io/twitter/url?color=%2308a0e9&label=%23TanStack&style=social&url=https%3A%2F%2Ftwitter.com%2Fintent%2Ftweet%3Fbutton_hashtag%3DTanStack
-[Badge Discord]: https://img.shields.io/badge/Discord-TanStack-%235865F2
+[Badge Discussions]: https://img.shields.io/badge/Discussions-222222?style=for-the-badge&logoColor=white&logo=GitHub
+[Badge Downloads]: https://img.shields.io/npm/dm/@tanstack/query-core.svg?style=for-the-badge&logo=DocuSign&logoColor=white&label=&color=428813
+[Badge BestOfJS]: https://img.shields.io/endpoint?style=for-the-badge&label=&color=c45b23&url=https://bestofjs-serverless.now.sh/api/project-badge?fullName=TanStack%2Fquery%26since=daily
+[Badge Minified]: https://badgen.net/bundlephobia/minzip/@tanstack/react-query?style=for-the-badge
 [Badge Workflow]: https://github.com/TanStack/query/workflows/react-query%20tests/badge.svg
-[Badge Downloads]: https://img.shields.io/npm/dm/@tanstack/query-core.svg
-[Badge Semantic]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
-[Badge BundlePhobia]: https://badgen.net/bundlephobia/minzip/@tanstack/react-query
-[Badge Discussions]: https://img.shields.io/badge/Github%20Discussions%20%26%20Support-Chat%20now!-blue
-[Badge BestOfJS]: https://img.shields.io/endpoint?url=https://bestofjs-serverless.now.sh/api/project-badge?fullName=TanStack%2Fquery%26since=daily
-[Badge Stars]: https://img.shields.io/github/stars/TanStack/query.svg?style=social&label=Star
-[Badge Twitter]: https://img.shields.io/twitter/follow/tannerlinsley.svg?style=social&label=Follow
-[Badge Gitpod]: https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod
+[Badge Semantic]: https://img.shields.io/badge/-%F0%9F%93%A6%F0%9F%9A%80%20semantic%20release-e10079.svg?style=for-the-badge&labelColor=e10079
+[Badge Hashtag]: https://img.shields.io/badge/%23TanStack-08a0e9?style=for-the-badge&logoColor=white&logo=Twitter
+[Badge Twitter]: https://img.shields.io/badge/@Tanner-08a0e9?style=for-the-badge&logoColor=white&logo=Twitter
+[Badge Discord]: https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=Discord&logoColor=white
+[Badge Gitpod]: https://img.shields.io/badge/Gitpod-00A98F?logo=Gitpod&logoColor=white&style=for-the-badge
+[Badge Stars]: https://img.shields.io/github/stars/TanStack/query.svg?style=for-the-badge&label=&logoColor=white&logo=Trustpilot&labelColor=E89313&color=E89313
