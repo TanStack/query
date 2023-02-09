@@ -1,13 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const createUtilsObject = require('./utils')
+const createUtilsObject = require('../utils')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const createKeyReplacer = require('./utils/replacers/key-replacer')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const createUseQueryLikeTransformer = require('./utils/transformers/use-query-like-transformer')
+const createUseQueryLikeTransformer = require('../utils/transformers/use-query-like-transformer')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const createQueryClientTransformer = require('./utils/transformers/query-client-transformer')
+const createQueryClientTransformer = require('../utils/transformers/query-client-transformer')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const createQueryCacheTransformer = require('./utils/transformers/query-cache-transformer')
+const createQueryCacheTransformer = require('../utils/transformers/query-cache-transformer')
 
 const transformQueryClientUsages = ({ jscodeshift, utils, root, filePath }) => {
   const transformer = createQueryClientTransformer({ jscodeshift, utils, root })
