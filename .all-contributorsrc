@@ -1,6 +1,6 @@
 {
-  "projectName": "react-query",
-  "projectOwner": "tannerlinsley",
+  "projectName": "query",
+  "projectOwner": "TanStack",
   "repoType": "github",
   "repoHost": "https://github.com",
   "files": [
@@ -132,6 +132,8 @@
       "avatar_url": "https://avatars0.githubusercontent.com/u/5398733?v=4",
       "profile": "https://github.com/zorzysty",
       "contributions": [
+        "bug",
+        "code",
         "doc"
       ]
     },
@@ -211,6 +213,107 @@
       "profile": "https://github.com/zrwsk",
       "contributions": [
         "doc"
+      ]
+    },
+    {
+      "login": "ardeora",
+      "name": "Aryan Deora",
+      "avatar_url": "https://avatars.githubusercontent.com/u/45807386?v=4",
+      "profile": "http://www.aryandeora.com",
+      "contributions": [
+        "code",
+        "maintenance"
+      ]
+    },
+    {
+      "login": "jennyckaplan",
+      "name": "Jen Kaplan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25395806?v=4",
+      "profile": "https://github.com/jennyckaplan",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "lukesmurray",
+      "name": "Luke Murray",
+      "avatar_url": "https://avatars.githubusercontent.com/u/34020210?v=4",
+      "profile": "https://lukesmurray.com/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "oscartbeaumont",
+      "name": "Oscar Beaumont",
+      "avatar_url": "https://avatars.githubusercontent.com/u/21004798?v=4",
+      "profile": "https://otbeaumont.me",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "DamianOsipiuk",
+      "name": "Damian Osipiuk",
+      "avatar_url": "https://avatars.githubusercontent.com/u/28151934?v=4",
+      "profile": "https://github.com/DamianOsipiuk",
+      "contributions": [
+        "code",
+        "maintenance"
+      ]
+    },
+    {
+      "login": "matthewhausman",
+      "name": "Matthew Hausman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25216513?v=4",
+      "profile": "https://www.linkedin.com/in/matthew-hausman/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Newbie012",
+      "name": "Eliya Cohen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10504365?v=4",
+      "profile": "https://github.com/Newbie012",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "KubaJastrz",
+      "name": "Jakub Jastrzębski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6443113?v=4",
+      "profile": "https://kubajastrz.com",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "balazsmatepetro",
+      "name": "Balázs Máté Petró",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1608725?v=4",
+      "profile": "https://github.com/balazsmatepetro",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Mamoanwar97",
+      "name": "Mahmoud M. Anwar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36894846?v=4",
+      "profile": "http://linkedin.com/in/mamoanwar97/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Moshyfawn",
+      "name": "moshyfawn",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16290753?v=4",
+      "profile": "http://moshyfawn.dev",
+      "contributions": [
+        "code"
       ]
     }
   ],

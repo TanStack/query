@@ -1,0 +1,41 @@
+{
+  "name": "@tanstack/query-persist-client-core",
+  "version": "4.24.4",
+  "description": "Set of utilities for interacting with persisters, which can save your queryClient for later use",
+  "author": "tannerlinsley",
+  "license": "MIT",
+  "repository": "tanstack/query",
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "types": "build/lib/index.d.ts",
+  "main": "build/lib/index.js",
+  "module": "build/lib/index.esm.js",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.mjs",
+      "default": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "build/lib/*",
+    "build/umd/*",
+    "src"
+  ],
+  "scripts": {
+    "clean": "rimraf ./build",
+    "test:eslint": "eslint --ext .ts,.tsx ./src",
+    "test:types": "tsc",
+    "test:lib": "jest --config ./jest.config.ts",
+    "test:lib:dev": "pnpm run test:lib --watch",
+    "build:types": "tsc --build"
+  },
+  "dependencies": {
+    "@tanstack/query-core": "workspace:*"
+  }
+}

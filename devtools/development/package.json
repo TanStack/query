@@ -1,6 +1,0 @@
-{
-  "internal": true,
-  "main": "../../lib/devtools/index.js",
-  "module": "../../es/devtools/index.js",
-  "types": "../../types/devtools/index.d.ts"
-}

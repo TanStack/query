@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "./src",
+    "outDir": "./build/lib",
+    "tsBuildInfoFile": "./build/.tsbuildinfo"
+  },
+  "include": ["src"],
+  "references": [
+    { "path": "../query-core" },
+    { "path": "../react-query-persist-client" }
+  ]
+}

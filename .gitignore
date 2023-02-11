@@ -3,10 +3,13 @@
 
 # dependencies
 node_modules
+package-lock.json
+yarn.lock
 
 # builds
 types
 build
+*/build
 dist
 lib
 es
@@ -30,7 +33,13 @@ yarn-error.log*
 .history
 size-plugin.json
 stats-hydration.json
-stats-react.json
+stats.json
 stats.html
 .vscode/settings.json
-.idea/
+
+*.log
+.DS_Store
+node_modules
+.cache
+dist
+.idea

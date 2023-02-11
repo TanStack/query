@@ -2,11 +2,11 @@
 
 ## Questions
 
-If you have questions about implementation details, help or support, then please use our dedicated community forum at [GitHub Discussions](https://github.com/tannerlinsley/react-query/discussions) **PLEASE NOTE:** If you choose to instead open an issue for your question, your issue will be immediately closed and redirected to the forum.
+If you have questions about implementation details, help or support, then please use our dedicated community forum at [GitHub Discussions](https://github.com/TanStack/query/discussions) **PLEASE NOTE:** If you choose to instead open an issue for your question, your issue will be immediately closed and redirected to the forum.
 
 ## Reporting Issues
 
-If you have found what you think is a bug, please [file an issue](https://github.com/tannerlinsley/react-query/issues/new). **PLEASE NOTE:** Issues that are identified as implementation questions or non-issues will be immediately closed and redirected to [GitHub Discussions](https://github.com/tannerlinsley/react-query/discussions)
+If you have found what you think is a bug, please [file an issue](https://github.com/TanStack/query/issues/new/choose). **PLEASE NOTE:** Issues that are identified as implementation questions or non-issues will be immediately closed and redirected to [GitHub Discussions](https://github.com/TanStack/query/discussions)
 
 ## Suggesting new features
 
@@ -16,31 +16,41 @@ If you are here to suggest a feature, first create an issue if it does not alrea
 
 If you have been assigned to fix an issue or develop a new feature, please follow these steps to get started:
 
-- Fork this repository
-- Install dependencies by running `$ yarn`
-- Link `react-query` locally by running `$ yarn link`
-- Auto-build files as you edit by running `$ yarn start`
-- Implement your changes and tests to files in the `src/` directory and corresponding test files
-- To run examples, follow their individual directions. Usually this is just `$ yarn && yarn start`.
-- To run examples using your local build, link to the local `react-query` by running `$ yarn link react-query` from the example's directory
-- Document your changes in the appropriate doc page
-- Git stage your required changes and commit (see below commit guidelines)
-- Submit PR for review
+- Fork this repository.
+- Install dependencies by running `$ pnpm install`.
+  - We use [pnpm](https://pnpm.io/) v7 for package management.
+  - We use [nvm](https://github.com/nvm-sh/nvm) to manage node versions - please make sure to use the version mentioned in `.nvmrc`.
+- Run development server using `pnpm run watch`.
+- Implement your changes and tests to files in the `src/` directory and corresponding test files.
+- Document your changes in the appropriate doc page.
+- Git stage your required changes and commit (see below commit guidelines).
+- Submit PR for review.
+
+### Running examples
+- Make sure you've installed the dependencies by running `$ pnpm install` in the repo's root directory.
+- If you want to run the example against your local changes, run `pnpm run watch` in the repo's root directory. Otherwise, it will be run against the latest TanStack Query release.
+- Run `pnpm run dev` in the selected examples' directory.
+
+#### Note on `examples/react-native`
+React Native example requires Expo to work. Please follow the instructions from example's README.md file to learn more.
+
+#### Note on standalone execution
+If you want to run an example without installing dependencies for the whole repo, just follow instructions from the example's README.md file. It will be then run against the latest TanStack Query release.
 
 ## Online one-click setup
 
-You can use Gitpod(An Online Open Source VS Code like IDE which is free for Open Source) for developing online. With a single click it will start a workspace and automatically:
+You can use Gitpod (An Online Open Source VS Code like IDE which is free for Open Source) for developing online. With a single click it will start a workspace and automatically:
 
-- clone the `react-query` repo.
+- clone the `TanStack/query` repo.
 - install all the dependencies in `/` and `/docs`.
-- run `yarn start` in the root(`/`) to Auto-build files.
-- run `yarn dev` in `/docs`.
+- run `npm start` in the root(`/`) to Auto-build files.
+- run `npm run dev` in `/docs`.
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/from-referrer/)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/TanStack/query)
 
 ## Commit message conventions
 
-`react-query` is using [Angular Commit Message Conventions](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines).
+`TanStack/query` is using [Angular Commit Message Conventions](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines).
 
 We have very precise rules over how our git commit messages can be formatted. This leads to **more readable messages** that are easy to follow when looking through the **project history**.
 
@@ -122,4 +132,4 @@ Use an appropriate commit type. Be especially careful with breaking changes.
 
 ## Releases
 
-For each new commit added to `master` with `git push` or by merging a pull request or merging from another branch, a GitHub action is triggered and runs the `semantic-release` command to make a release if there are codebase changes since the last release that affect the package functionalities.
+For each new commit added to `main` with `git push` or by merging a pull request or merging from another branch, a GitHub action is triggered and runs the `semantic-release` command to make a release if there are codebase changes since the last release that affect the package functionalities.
