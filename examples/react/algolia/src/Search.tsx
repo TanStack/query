@@ -1,14 +1,15 @@
-import { useState } from 'react'
+import { useState } from "react";
 
-import SearchResults from './SearchResults'
+import SearchResults from "./SearchResults";
 
 export default function Search() {
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState("");
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault()
-    setQuery(event.target.value)
-  }
+    event.preventDefault();
+    // It is recommended to debounce this event in prod
+    setQuery(event.target.value);
+  };
 
   return (
     <div>
@@ -19,5 +20,5 @@ export default function Search() {
       />
       <SearchResults query={query} />
     </div>
-  )
+  );
 }

@@ -1,33 +1,36 @@
-import useAlgolia from './useAlgolia'
+import useAlgolia from "./useAlgolia";
 
 type Product = {
-  name: string
-  shortDescription: string
-  salePrice: number
-}
+  name: string;
+  shortDescription: string;
+  salePrice: number;
+};
 
 type SearchResultsProps = {
-  query: string
-}
+  query: string;
+};
 
-export default function SearchResults({ query = '' }: SearchResultsProps) {
+export default function SearchResults({ query = "" }: SearchResultsProps) {
   const {
     hits,
     isLoading,
     isFetching,
     status,
-    fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    fetchNextPage,
   } = useAlgolia<Product>({
-    indexName: 'bestbuy',
+    indexName: "bestbuy",
     query,
     hitsPerPage: 5,
     staleTime: 1000 * 30, // 30s
     cacheTime: 1000 * 60 * 15, // 15m
-  })
+    enabled: !!query,
+  });
 
-  if (isLoading) return <div className="loading">Loading...</div>
+  if (!query) return null;
+
+  if (isLoading) return <div className="loading">Loading...</div>;
 
   return (
     <div>
@@ -37,7 +40,7 @@ export default function SearchResults({ query = '' }: SearchResultsProps) {
       <div>
         <div className="search-result">
           {hits && hits.length > 0 ? (
-            hits.map(product => (
+            hits.map((product) => (
               <li key={product.objectID} className="product">
                 <span className="product-name">{product.name}</span>
                 {product.shortDescription && (
@@ -66,5 +69,5 @@ export default function SearchResults({ query = '' }: SearchResultsProps) {
         )}
       </div>
     </div>
-  )
+  );
 }
