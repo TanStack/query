@@ -197,10 +197,10 @@ describe('VueQueryPlugin', () => {
         })
 
         appMock._mixin.beforeCreate?.call(appMock)
+        const client = appMock._provided.VUE_QUERY_CLIENT as QueryClient
+        const defaultOptions = client.getDefaultOptions()
 
-        expect(appMock._provided).toMatchObject({
-          VUE_QUERY_CLIENT: expect.objectContaining(config),
-        })
+        expect(defaultOptions).toEqual(config.defaultOptions)
       },
     )
 
@@ -333,14 +333,14 @@ describe('VueQueryPlugin', () => {
       })
 
       expect(customClient.isRestoring.value).toBeTruthy()
-      expect(queries[0].isFetching).toBeFalsy()
-      expect(queries[0].data).toStrictEqual(undefined)
+      expect(queries.value[0].isFetching).toBeFalsy()
+      expect(queries.value[0].data).toStrictEqual(undefined)
       expect(fnSpy).toHaveBeenCalledTimes(0)
 
       await flushPromises()
 
       expect(customClient.isRestoring.value).toBeFalsy()
-      expect(queries[0].data).toStrictEqual({ foo: 'bar' })
+      expect(queries.value[0].data).toStrictEqual({ foo: 'bar' })
       expect(fnSpy).toHaveBeenCalledTimes(0)
     })
   })

@@ -3,7 +3,7 @@
   import { setQueryClientContext } from '../context'
   import type { QueriesOptions } from '../createQueries'
 
-  export let options: readonly [...QueriesOptions<any>]
+  export let options: { queries: readonly [...QueriesOptions<any>] }
 
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
