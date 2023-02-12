@@ -3803,15 +3803,18 @@ describe('createQuery', () => {
     function Page() {
       const result = createQuery(() => ({
         queryKey: key,
-        queryFn: () => 'serverData',
-        initialData: 'data',
+        queryFn: async () => {
+          await sleep(10)
+          return 'serverData'
+        },
+        initialData: 'initialData',
       }))
 
       createRenderEffect(() => {
         results.push({ ...result })
       })
 
-      return null
+      return <div>data: {result.data}</div>
     }
 
     render(() => (
@@ -3820,10 +3823,11 @@ describe('createQuery', () => {
       </QueryClientProvider>
     ))
 
-    await sleep(10)
+    await waitFor(() => screen.getByText('data: initialData'))
+    await waitFor(() => screen.getByText('data: serverData'))
 
     expect(results.length).toBe(2)
-    expect(results[0]).toMatchObject({ data: 'data', isFetching: true })
+    expect(results[0]).toMatchObject({ data: 'initialData', isFetching: true })
     expect(results[1]).toMatchObject({ data: 'serverData', isFetching: false })
   })
 

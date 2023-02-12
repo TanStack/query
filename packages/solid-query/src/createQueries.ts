@@ -3,6 +3,7 @@ import type {
   QueryClient,
   QueryFunction,
   QueryKey,
+  RegisteredError,
 } from '@tanstack/query-core'
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
 import { createComputed, onCleanup, onMount } from 'solid-js'
@@ -14,7 +15,7 @@ import type { CreateQueryResult, SolidQueryOptions } from './types'
 // `placeholderData` function does not have a parameter
 type CreateQueryOptionsForCreateQueries<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = Omit<
@@ -141,7 +142,7 @@ export type QueriesResults<
   ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
     CreateQueryResult<
       unknown extends TData ? TQueryFnData : TData,
-      unknown extends TError ? Error : TError
+      unknown extends TError ? RegisteredError : TError
     >[]
   : // Fallback
     CreateQueryResult[]
