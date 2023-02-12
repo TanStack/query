@@ -8,6 +8,7 @@ import type {
   MutationObserverOptions,
   MutateFunction,
   DefinedQueryObserverResult,
+  RegisteredError,
 } from '@tanstack/query-core'
 import type { QueryClient } from '@tanstack/query-core'
 import type { Readable } from 'svelte/store'
@@ -21,19 +22,21 @@ export interface ContextOptions {
 
 export interface CreateBaseQueryOptions<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends ContextOptions,
     QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {}
 
-export interface CreateBaseQueryResult<TData = unknown, TError = Error>
-  extends Readable<QueryObserverResult<TData, TError>> {}
+export interface CreateBaseQueryResult<
+  TData = unknown,
+  TError = RegisteredError,
+> extends Readable<QueryObserverResult<TData, TError>> {}
 
 export interface CreateQueryOptions<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends CreateBaseQueryOptions<
@@ -44,12 +47,12 @@ export interface CreateQueryOptions<
     TQueryKey
   > {}
 
-export interface CreateQueryResult<TData = unknown, TError = Error>
+export interface CreateQueryResult<TData = unknown, TError = RegisteredError>
   extends CreateBaseQueryResult<TData, TError> {}
 
 export interface CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
@@ -63,22 +66,22 @@ export interface CreateInfiniteQueryOptions<
 
 export type CreateInfiniteQueryResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
 > = Readable<InfiniteQueryObserverResult<TData, TError>>
 
 export type DefinedCreateBaseQueryResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
 > = Readable<DefinedQueryObserverResult<TData, TError>>
 
 export type DefinedCreateQueryResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
 > = DefinedCreateBaseQueryResult<TData, TError>
 
 export interface CreateMutationOptions<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > extends ContextOptions,
@@ -89,7 +92,7 @@ export interface CreateMutationOptions<
 
 export type CreateMutateFunction<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > = (
@@ -98,14 +101,14 @@ export type CreateMutateFunction<
 
 export type CreateMutateAsyncFunction<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > = MutateFunction<TData, TError, TVariables, TContext>
 
 export type CreateBaseMutationResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = unknown,
   TContext = unknown,
 > = Override<
@@ -117,7 +120,7 @@ export type CreateBaseMutationResult<
 
 export interface CreateMutationResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = unknown,
   TContext = unknown,
 > extends Readable<

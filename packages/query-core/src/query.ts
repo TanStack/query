@@ -9,6 +9,7 @@ import type {
   CancelOptions,
   SetDataOptions,
   FetchStatus,
+  RegisteredError,
 } from './types'
 import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
@@ -33,7 +34,7 @@ interface QueryConfig<
   state?: QueryState<TData, TError>
 }
 
-export interface QueryState<TData = unknown, TError = Error> {
+export interface QueryState<TData = unknown, TError = RegisteredError> {
   data: TData | undefined
   dataUpdateCount: number
   dataUpdatedAt: number
@@ -64,7 +65,7 @@ export interface FetchContext<
 
 export interface QueryBehavior<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > {
@@ -137,7 +138,7 @@ export interface SetStateOptions {
 
 export class Query<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends Removable {

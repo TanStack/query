@@ -6,6 +6,7 @@ import type {
   DefinedQueryObserverResult,
   WithRequired,
   QueryObserverOptions,
+  RegisteredError,
 } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type { UseBaseQueryReturnType } from './useBaseQuery'
@@ -14,7 +15,7 @@ import type { QueryClient } from './queryClient'
 
 export type UseQueryOptions<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
@@ -64,7 +65,7 @@ export type UseQueryDefinedReturnType<TData, TError> = DistributiveOmit<
 
 export function useQuery<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -82,7 +83,7 @@ export function useQuery<
 
 export function useQuery<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -100,7 +101,7 @@ export function useQuery<
 
 export function useQuery<
   TQueryFnData,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(

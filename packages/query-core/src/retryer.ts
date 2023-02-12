@@ -1,11 +1,11 @@
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { sleep } from './utils'
-import type { CancelOptions, NetworkMode } from './types'
+import type { CancelOptions, NetworkMode, RegisteredError } from './types'
 
 // TYPES
 
-interface RetryerConfig<TData = unknown, TError = Error> {
+interface RetryerConfig<TData = unknown, TError = RegisteredError> {
   fn: () => TData | Promise<TData>
   abort?: () => void
   onError?: (error: TError) => void
@@ -21,21 +21,21 @@ interface RetryerConfig<TData = unknown, TError = Error> {
 export interface Retryer<TData = unknown> {
   promise: Promise<TData>
   cancel: (cancelOptions?: CancelOptions) => void
-  continue: () => void
+  continue: () => Promise<unknown>
   cancelRetry: () => void
   continueRetry: () => void
 }
 
 export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
 
-type ShouldRetryFunction<TError = Error> = (
+type ShouldRetryFunction<TError = RegisteredError> = (
   failureCount: number,
   error: TError,
 ) => boolean
 
 export type RetryDelayValue<TError> = number | RetryDelayFunction<TError>
 
-type RetryDelayFunction<TError = Error> = (
+type RetryDelayFunction<TError = RegisteredError> = (
   failureCount: number,
   error: TError,
 ) => number
@@ -63,13 +63,13 @@ export function isCancelledError(value: any): value is CancelledError {
   return value instanceof CancelledError
 }
 
-export function createRetryer<TData = unknown, TError = Error>(
+export function createRetryer<TData = unknown, TError = RegisteredError>(
   config: RetryerConfig<TData, TError>,
 ): Retryer<TData> {
   let isRetryCancelled = false
   let failureCount = 0
   let isResolved = false
-  let continueFn: ((value?: unknown) => void) | undefined
+  let continueFn: ((value?: unknown) => boolean) | undefined
   let promiseResolve: (data: TData) => void
   let promiseReject: (error: TError) => void
 
@@ -118,9 +118,11 @@ export function createRetryer<TData = unknown, TError = Error>(
   const pause = () => {
     return new Promise((continueResolve) => {
       continueFn = (value) => {
-        if (isResolved || !shouldPause()) {
-          return continueResolve(value)
+        const canContinue = isResolved || !shouldPause()
+        if (canContinue) {
+          continueResolve(value)
         }
+        return canContinue
       }
       config.onPause?.()
     }).then(() => {
@@ -208,7 +210,8 @@ export function createRetryer<TData = unknown, TError = Error>(
     promise,
     cancel,
     continue: () => {
-      continueFn?.()
+      const didContinue = continueFn?.()
+      return didContinue ? promise : Promise.resolve()
     },
     cancelRetry,
     continueRetry,

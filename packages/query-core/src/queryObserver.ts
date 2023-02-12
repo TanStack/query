@@ -1,4 +1,8 @@
-import type { DefaultedQueryObserverOptions, RefetchPageFilters } from './types'
+import type {
+  DefaultedQueryObserverOptions,
+  RefetchPageFilters,
+  RegisteredError,
+} from './types'
 import {
   isServer,
   isValidTimeout,
@@ -39,7 +43,7 @@ export interface ObserverFetchOptions extends FetchOptions {
 
 export class QueryObserver<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,

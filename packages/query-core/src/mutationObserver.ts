@@ -8,6 +8,7 @@ import type {
   MutationObserverBaseResult,
   MutationObserverResult,
   MutationObserverOptions,
+  RegisteredError,
 } from './types'
 import { shallowEqualObjects } from './utils'
 
@@ -26,7 +27,7 @@ interface NotifyOptions {
 
 export class MutationObserver<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > extends Subscribable<
