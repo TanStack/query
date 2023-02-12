@@ -277,6 +277,10 @@
             {
               "label": "Offline Queries and Mutations",
               "to": "react/examples/react/offline"
+            },
+            {
+              "label": "Algolia",
+              "to": "react/examples/react/algolia"
             }
           ]
         },
