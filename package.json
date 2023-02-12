@@ -79,7 +79,7 @@
     "react-dom": "^18.2.0",
     "rimraf": "^4.1.2",
     "rollup": "^3.15.0",
-    "rollup-plugin-size": "^0.3.1",
+    "rollup-plugin-size": "^0.2.2",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-visualizer": "^5.9.0",
     "solid-js": "^1.5.7",
@@ -87,7 +87,7 @@
     "stream-to-array": "^2.3.0",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
-    "typescript": "4.9.5",
+    "typescript": "4.7.4",
     "vue": "^3.2.47"
   },
   "bundlewatch": {
