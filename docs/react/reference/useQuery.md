@@ -177,8 +177,8 @@ const {
 - `meta: Record<string, unknown>`
   - Optional
   - If set, stores additional information on the query cache entry that can be used as needed. It will be accessible wherever the `query` is available, and is also part of the `QueryFunctionContext` provided to the `queryFn`.
-- `context?: React.Context<QueryClient | undefined>`
-  - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.
+- `queryClient?: QueryClient`,
+  - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
 **Returns**
 

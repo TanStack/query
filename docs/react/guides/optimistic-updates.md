@@ -62,7 +62,7 @@ If the mutation errors, the item will also disappear. But we could continue to s
 
 ### If the mutation and the query don't live in the same component
 
-This approach works very will if the mutation and the query live in the same component, However, you also get access to running mutations in other components via the dedicated `useMutationVariables` hook. It is best combined with a `mutationKey`:
+This approach works very will if the mutation and the query live in the same component, However, you also get access to all mutations in other components via the dedicated `useMurationState` hook. It is best combined with a `mutationKey`:
 
 [//]: # 'ExampleUI4'
 ```tsx
@@ -74,7 +74,10 @@ const { mutate } = useMutation({
 })
 
 // access variables somewhere else
-const { variables } = useMutationVariables<string>({ mutationKey: ['addTodo'], status: 'pending' })
+const variables = useMutationState<string>({
+  filters: { mutationKey: ['addTodo'], status: 'pending' },
+  select: (mutation) => mutation.state.variables
+})
 ```
 [//]: # 'ExampleUI4'
 

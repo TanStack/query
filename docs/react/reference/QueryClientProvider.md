@@ -20,5 +20,3 @@ function App() {
 - `client: QueryClient`
   - **Required**
   - the QueryClient instance to provide
-- `context?: React.Context<QueryClient | undefined>`
-  - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.

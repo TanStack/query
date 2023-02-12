@@ -228,7 +228,7 @@ describe('useIsMutating', () => {
   })
 })
 
-describe('useMutationVariables', () => {
+describe('useMutationState', () => {
   it('should return variables after calling mutate', async () => {
     const queryClient = createQueryClient()
     const variables: unknown[][] = []

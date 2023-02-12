@@ -342,6 +342,10 @@
               "to": "react/reference/useIsMutating"
             },
             {
+              "label": "useMutationState",
+              "to": "react/reference/useMutationState"
+            },
+            {
               "label": "QueryClient",
               "to": "react/reference/QueryClient"
             },
