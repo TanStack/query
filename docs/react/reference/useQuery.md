@@ -234,7 +234,8 @@ const {
   - Is `true` whenever the first fetch for a query is in-flight
   - Is the same as `isFetching && isPending`
 - `isInitialLoading: boolean`
-  - An alias for `isLoading`, will be deprecated in the next major version.
+  - **deprecated**
+  - An alias for `isLoading`, will be removed in the next major version.
 - `failureCount: number`
   - The failure count for the query.
   - Incremented every time the query fails.
