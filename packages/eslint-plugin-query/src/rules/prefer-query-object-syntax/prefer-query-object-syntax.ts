@@ -5,10 +5,10 @@ import { ASTUtils } from '../../utils/ast-utils'
 import { objectKeys } from '../../utils/object-utils'
 
 const QUERY_CALLS = {
-  useQuery: { key: 'queryKey', fn: 'queryFn' },
-  createQuery: { key: 'queryKey', fn: 'queryFn' },
-  useMutation: { key: 'mutationKey', fn: 'mutationFn' },
-  createMutation: { key: 'mutationKey', fn: 'mutationFn' },
+  useQuery: { key: 'queryKey', fn: 'queryFn', type: 'query' },
+  createQuery: { key: 'queryKey', fn: 'queryFn', type: 'query' },
+  useMutation: { key: 'mutationKey', fn: 'mutationFn', type: 'mutation' },
+  createMutation: { key: 'mutationKey', fn: 'mutationFn', type: 'mutation' },
 }
 
 const messages = {
@@ -208,25 +208,38 @@ function runCheckOnNode(params: {
     fix(fixer) {
       const optionsObjectProperties: string[] = []
 
-      // queryKey
-      const firstArgument = callNode.arguments[0]
-      const queryKey = sourceCode.getText(firstArgument)
-      const queryKeyProperty =
-        queryKey === callProps.key
-          ? callProps.key
-          : `${callProps.key}: ${queryKey}`
+      if (callProps.type === 'query' || callNode.arguments.length > 1) {
+        // queryKey
+        const firstArgument = callNode.arguments[0]
+        const queryKey = sourceCode.getText(firstArgument)
+        const queryKeyProperty =
+          queryKey === callProps.key
+            ? callProps.key
+            : `${callProps.key}: ${queryKey}`
 
-      optionsObjectProperties.push(queryKeyProperty)
+        optionsObjectProperties.push(queryKeyProperty)
 
-      // queryFn
-      if (secondArgument && secondArgument !== optionsObject) {
-        const queryFn = sourceCode.getText(secondArgument)
-        const queryFnProperty =
-          queryFn === callProps.fn
+        // queryFn
+        if (secondArgument && secondArgument !== optionsObject) {
+          const queryFn = sourceCode.getText(secondArgument)
+          const queryFnProperty =
+            queryFn === callProps.fn
+              ? callProps.fn
+              : `${callProps.fn}: ${queryFn}`
+
+          optionsObjectProperties.push(queryFnProperty)
+        }
+      }
+
+      if (callProps.type === 'mutation' && callNode.arguments.length === 1) {
+        const firstArgument = callNode.arguments[0]
+        const mutationFn = sourceCode.getText(firstArgument)
+        const mutationFnProperty =
+          mutationFn === callProps.fn
             ? callProps.fn
-            : `${callProps.fn}: ${queryFn}`
+            : `${callProps.fn}: ${mutationFn}`
 
-        optionsObjectProperties.push(queryFnProperty)
+        optionsObjectProperties.push(mutationFnProperty)
       }
 
       // options
