@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query",
-  "version": "4.22.4",
+  "version": "4.24.6",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Solid",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -31,9 +31,7 @@
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
     "test:lib": "jest --config ./jest.config.ts",
-    "test:lib:dev": "pnpm run test:lib --watch",
-    "test:lib:publish": "pnpm run test:lib --collectCoverage false",
-    "build:types": "tsc --build"
+    "test:lib:dev": "pnpm run test:lib --watch"
   },
   "files": [
     "build/lib/*",
