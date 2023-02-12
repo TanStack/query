@@ -4,6 +4,7 @@ import type {
   QueryClient,
   QueriesPlaceholderDataFunction,
   QueryObserverResult,
+  RegisteredError,
 } from '@tanstack/query-core'
 
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
@@ -16,7 +17,7 @@ import { useQueryClient } from './useQueryClient'
 // `placeholderData` function does not have a parameter
 type CreateQueryOptionsForCreateQueries<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = Omit<
@@ -143,7 +144,7 @@ export type QueriesResults<
   ? // Dynamic-size (homogenous) CreateQueryOptions array: map directly to array of results
     QueryObserverResult<
       unknown extends TData ? TQueryFnData : TData,
-      unknown extends TError ? Error : TError
+      unknown extends TError ? RegisteredError : TError
     >[]
   : // Fallback
     QueryObserverResult[]

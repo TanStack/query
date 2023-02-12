@@ -167,7 +167,7 @@ const queryClient = new QueryClient({
 
 To make the `useErrorBoundary` option more framework-agnostic and avoid confusion with the established React function prefix "`use`" for hooks and the "ErrorBoundary" component name, it has been renamed to `throwErrors` to more accurately reflect its functionality.
 
-### `Error` is now the default type for errors instead of `unknown`
+### TypeScript: `Error` is now the default type for errors instead of `unknown`
 
 Even though in JavaScript, you can `throw` anything (which makes `unknown` the most correct type), almost always, `Errors` (or subclasses of `Error`) are thrown. This change makes it easier to work with the `error` field in TypeScript for most cases.
 
@@ -184,6 +184,8 @@ useQuery<number, string>({
   },
 })
 ```
+
+For a way to set a different kind of Error globally, see [the TypeScript Guide](../typescript#registering-a-global-error).
 
 ### eslint `prefer-query-object-syntax` rule is removed
 

@@ -1,4 +1,9 @@
-import type { MutationOptions, MutationStatus, MutationMeta } from './types'
+import type {
+  MutationOptions,
+  MutationStatus,
+  MutationMeta,
+  RegisteredError,
+} from './types'
 import type { MutationCache } from './mutationCache'
 import type { MutationObserver } from './mutationObserver'
 import { notifyManager } from './notifyManager'
@@ -18,7 +23,7 @@ interface MutationConfig<TData, TError, TVariables, TContext> {
 
 export interface MutationState<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > {
@@ -75,7 +80,7 @@ export type Action<TData, TError, TVariables, TContext> =
 
 export class Mutation<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > extends Removable {
@@ -141,13 +146,9 @@ export class Mutation<
     }
   }
 
-  continue(): Promise<TData> {
-    if (this.#retryer) {
-      this.#retryer.continue()
-      return this.#retryer.promise
-    }
+  continue(): Promise<unknown> {
     // continuing a mutation assumes that variables are set, mutation must have been dehydrated before
-    return this.execute(this.state.variables!)
+    return this.#retryer?.continue() ?? this.execute(this.state.variables!)
   }
 
   async execute(variables: TVariables): Promise<TData> {

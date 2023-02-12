@@ -11,11 +11,12 @@ import type {
   MutateFunction,
   DefinedQueryObserverResult,
   WithRequired,
+  RegisteredError,
 } from '@tanstack/query-core'
 
 export interface UseBaseQueryOptions<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
@@ -26,7 +27,7 @@ export interface UseBaseQueryOptions<
 
 export interface UseQueryOptions<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends WithRequired<
@@ -36,7 +37,7 @@ export interface UseQueryOptions<
 
 export interface UseInfiniteQueryOptions<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
@@ -53,32 +54,32 @@ export interface UseInfiniteQueryOptions<
 
 export type UseBaseQueryResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
 > = QueryObserverResult<TData, TError>
 
 export type UseQueryResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
 > = UseBaseQueryResult<TData, TError>
 
 export type DefinedUseBaseQueryResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
 > = DefinedQueryObserverResult<TData, TError>
 
 export type DefinedUseQueryResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
 > = DefinedUseBaseQueryResult<TData, TError>
 
 export type UseInfiniteQueryResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
 > = InfiniteQueryObserverResult<TData, TError>
 
 export interface UseMutationOptions<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > extends Omit<
@@ -88,7 +89,7 @@ export interface UseMutationOptions<
 
 export type UseMutateFunction<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > = (
@@ -97,14 +98,14 @@ export type UseMutateFunction<
 
 export type UseMutateAsyncFunction<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > = MutateFunction<TData, TError, TVariables, TContext>
 
 export type UseBaseMutationResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = unknown,
   TContext = unknown,
 > = Override<
@@ -114,7 +115,7 @@ export type UseBaseMutationResult<
 
 export type UseMutationResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = unknown,
   TContext = unknown,
 > = UseBaseMutationResult<TData, TError, TVariables, TContext>

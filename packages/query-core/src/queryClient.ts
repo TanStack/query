@@ -25,6 +25,7 @@ import type {
   ResetOptions,
   ResetQueryFilters,
   SetDataOptions,
+  RegisteredError,
 } from './types'
 import type { QueryState } from './query'
 import { QueryCache } from './queryCache'
@@ -184,7 +185,7 @@ export class QueryClient {
     )
   }
 
-  getQueryState<TQueryFnData = unknown, TError = Error>(
+  getQueryState<TQueryFnData = unknown, TError = RegisteredError>(
     queryKey: QueryKey,
   ): QueryState<TQueryFnData, TError> | undefined {
     return this.#queryCache.find<TQueryFnData, TError>({ queryKey })?.state
@@ -283,7 +284,7 @@ export class QueryClient {
 
   fetchQuery<
     TQueryFnData,
-    TError = Error,
+    TError = RegisteredError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -305,7 +306,7 @@ export class QueryClient {
 
   prefetchQuery<
     TQueryFnData = unknown,
-    TError = Error,
+    TError = RegisteredError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -316,7 +317,7 @@ export class QueryClient {
 
   fetchInfiniteQuery<
     TQueryFnData,
-    TError = Error,
+    TError = RegisteredError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -328,7 +329,7 @@ export class QueryClient {
 
   prefetchInfiniteQuery<
     TQueryFnData,
-    TError = Error,
+    TError = RegisteredError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -337,7 +338,7 @@ export class QueryClient {
     return this.fetchInfiniteQuery(options).then(noop).catch(noop)
   }
 
-  resumePausedMutations(): Promise<void> {
+  resumePausedMutations(): Promise<unknown> {
     return this.#mutationCache.resumePausedMutations()
   }
 
@@ -412,7 +413,7 @@ export class QueryClient {
 
   defaultQueryOptions<
     TQueryFnData = unknown,
-    TError = Error,
+    TError = RegisteredError,
     TData = TQueryFnData,
     TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,

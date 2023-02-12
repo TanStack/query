@@ -7,22 +7,24 @@ describe('createQueries', () => {
   it('Render and wait for success', async () => {
     render(CreateQueries, {
       props: {
-        options: [
-          {
-            queryKey: ['key-1'],
-            queryFn: async () => {
-              await sleep(10)
-              return 'Success 1'
+        options: {
+          queries: [
+            {
+              queryKey: ['key-1'],
+              queryFn: async () => {
+                await sleep(10)
+                return 'Success 1'
+              },
             },
-          },
-          {
-            queryKey: ['key-2'],
-            queryFn: async () => {
-              await sleep(10)
-              return 'Success 2'
+            {
+              queryKey: ['key-2'],
+              queryFn: async () => {
+                await sleep(10)
+                return 'Success 2'
+              },
             },
-          },
-        ],
+          ],
+        },
       },
     })
 
