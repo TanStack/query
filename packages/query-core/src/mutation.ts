@@ -147,8 +147,11 @@ export class Mutation<
   }
 
   continue(): Promise<unknown> {
-    // continuing a mutation assumes that variables are set, mutation must have been dehydrated before
-    return this.#retryer?.continue() ?? this.execute(this.state.variables!)
+    return (
+      this.#retryer?.continue() ??
+      // continuing a mutation assumes that variables are set, mutation must have been dehydrated before
+      this.execute(this.state.variables!)
+    )
   }
 
   async execute(variables: TVariables): Promise<TData> {
