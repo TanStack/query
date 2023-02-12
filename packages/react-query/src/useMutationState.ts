@@ -1,35 +1,63 @@
 import * as React from 'react'
 
-import type { MutationFilters, QueryClient } from '@tanstack/query-core'
+import type {
+  MutationFilters,
+  QueryClient,
+  Mutation,
+  MutationCache,
+  RegisteredError,
+} from '@tanstack/query-core'
 import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
+import type { MutationState } from '@tanstack/query-core/build/lib/mutation'
 
 export function useIsMutating(
   filters?: MutationFilters,
   queryClient?: QueryClient,
 ): number {
   const client = useQueryClient(queryClient)
-  return useMutationState(() => client.isMutating(filters), client)
+  return useMutationState(
+    { filters: { ...filters, status: 'loading' } },
+    client,
+  ).length
 }
 
-export function useMutationVariables<TVariables = unknown>(
-  filters?: MutationFilters,
+type MutationStateOptions<TResult> = {
+  filters?: MutationFilters
+  select?: (
+    mutation: Mutation<unknown, RegisteredError, unknown, unknown>,
+  ) => TResult
+}
+
+function getResult<TResult = MutationState>(
+  mutationCache: MutationCache,
+  options: MutationStateOptions<TResult>,
+): Array<TResult> {
+  return mutationCache
+    .findAll(options.filters)
+    .map(
+      (mutation): TResult =>
+        (options.select
+          ? options.select(
+              mutation as Mutation<unknown, RegisteredError, unknown, unknown>,
+            )
+          : mutation.state) as TResult,
+    )
+}
+
+export function useMutationState<TResult = unknown>(
+  options: MutationStateOptions<TResult> = {},
   queryClient?: QueryClient,
-): Array<TVariables> {
-  const client = useQueryClient(queryClient)
-  return useMutationState(() => client.getMutationVariables(filters), client)
-}
-
-function useMutationState<T>(selector: () => T, queryClient?: QueryClient): T {
+): Array<TResult> {
   const mutationCache = useQueryClient(queryClient).getMutationCache()
-  const selectorRef = React.useRef(selector)
-  const result = React.useRef<T>()
+  const optionsRef = React.useRef(options)
+  const result = React.useRef<Array<TResult>>()
   if (!result.current) {
-    result.current = selector()
+    result.current = getResult(mutationCache, options)
   }
 
   React.useEffect(() => {
-    selectorRef.current = selector
+    optionsRef.current = options
   })
 
   return React.useSyncExternalStore(
@@ -38,7 +66,7 @@ function useMutationState<T>(selector: () => T, queryClient?: QueryClient): T {
         mutationCache.subscribe(() => {
           const nextResult = replaceEqualDeep(
             result.current,
-            selectorRef.current(),
+            getResult(mutationCache, optionsRef.current),
           )
           if (result.current !== nextResult) {
             result.current = nextResult

@@ -107,13 +107,6 @@ export class QueryClient {
     return this.#mutationCache.findAll({ ...filters, status: 'loading' }).length
   }
 
-  getMutationVariables<TVariables = unknown>(
-    filters?: MutationFilters,
-  ): TVariables[] {
-    return this.#mutationCache
-      .findAll(filters)
-      .map((mutation) => mutation.state.variables as unknown as TVariables)
-  }
   getQueryData<TQueryFnData = unknown>(
     queryKey: QueryKey,
   ): TQueryFnData | undefined {

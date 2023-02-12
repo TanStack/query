@@ -1,6 +1,6 @@
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
-import { useIsMutating, useMutationVariables } from '../useMutationState'
+import { useIsMutating, useMutationState } from '../useMutationState'
 import { useMutation } from '../useMutation'
 import {
   createQueryClient,
@@ -231,12 +231,15 @@ describe('useIsMutating', () => {
 describe('useMutationVariables', () => {
   it('should return variables after calling mutate', async () => {
     const queryClient = createQueryClient()
-    const variables: number[][] = []
+    const variables: unknown[][] = []
     const mutationKey = ['mutation']
 
     function Variables() {
       variables.push(
-        useMutationVariables<number>({ mutationKey, status: 'loading' }),
+        useMutationState({
+          filters: { mutationKey, status: 'loading' },
+          select: (mutation) => mutation.state.variables,
+        }),
       )
 
       return null
