@@ -1,5 +1,5 @@
 import { readable, derived } from 'svelte/store'
-import type { QueryClient } from '@tanstack/query-core'
+import type { QueryClient, RegisteredError } from '@tanstack/query-core'
 import { MutationObserver, notifyManager } from '@tanstack/query-core'
 import type {
   CreateMutateFunction,
@@ -10,7 +10,7 @@ import { useQueryClient } from './useQueryClient'
 
 export function createMutation<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 >(

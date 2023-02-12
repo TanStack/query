@@ -7,6 +7,16 @@ import type { QueryFilters, QueryTypeFilter } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
 
+export interface Register {
+  // defaultError: Error
+}
+
+export type RegisteredError = Register extends {
+  defaultError: infer TError
+}
+  ? TError
+  : Error
+
 export type QueryKey = readonly unknown[]
 
 export type QueryFunction<
@@ -63,7 +73,7 @@ export type NetworkMode = 'online' | 'always' | 'offlineFirst'
 
 export interface QueryOptions<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > {
@@ -124,7 +134,7 @@ export type ThrowErrors<
 
 export interface QueryObserverOptions<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
@@ -252,7 +262,7 @@ export type WithRequired<T, K extends keyof T> = Omit<T, K> &
   Required<Pick<T, K>>
 export type DefaultedQueryObserverOptions<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
@@ -263,7 +273,7 @@ export type DefaultedQueryObserverOptions<
 
 export interface InfiniteQueryObserverOptions<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
@@ -277,7 +287,7 @@ export interface InfiniteQueryObserverOptions<
 
 export type DefaultedInfiniteQueryObserverOptions<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
@@ -294,7 +304,7 @@ export type DefaultedInfiniteQueryObserverOptions<
 
 export interface FetchQueryOptions<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends WithRequired<
@@ -310,7 +320,7 @@ export interface FetchQueryOptions<
 
 export interface FetchInfiniteQueryOptions<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends FetchQueryOptions<
@@ -366,7 +376,10 @@ export interface FetchPreviousPageOptions extends ResultOptions {
 export type QueryStatus = 'loading' | 'error' | 'success'
 export type FetchStatus = 'fetching' | 'paused' | 'idle'
 
-export interface QueryObserverBaseResult<TData = unknown, TError = Error> {
+export interface QueryObserverBaseResult<
+  TData = unknown,
+  TError = RegisteredError,
+> {
   data: TData | undefined
   dataUpdatedAt: number
   error: TError | null
@@ -394,8 +407,10 @@ export interface QueryObserverBaseResult<TData = unknown, TError = Error> {
   fetchStatus: FetchStatus
 }
 
-export interface QueryObserverLoadingResult<TData = unknown, TError = Error>
-  extends QueryObserverBaseResult<TData, TError> {
+export interface QueryObserverLoadingResult<
+  TData = unknown,
+  TError = RegisteredError,
+> extends QueryObserverBaseResult<TData, TError> {
   data: undefined
   error: null
   isError: false
@@ -408,7 +423,7 @@ export interface QueryObserverLoadingResult<TData = unknown, TError = Error>
 
 export interface QueryObserverLoadingErrorResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
 > extends QueryObserverBaseResult<TData, TError> {
   data: undefined
   error: TError
@@ -422,7 +437,7 @@ export interface QueryObserverLoadingErrorResult<
 
 export interface QueryObserverRefetchErrorResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
 > extends QueryObserverBaseResult<TData, TError> {
   data: TData
   error: TError
@@ -434,8 +449,10 @@ export interface QueryObserverRefetchErrorResult<
   status: 'error'
 }
 
-export interface QueryObserverSuccessResult<TData = unknown, TError = Error>
-  extends QueryObserverBaseResult<TData, TError> {
+export interface QueryObserverSuccessResult<
+  TData = unknown,
+  TError = RegisteredError,
+> extends QueryObserverBaseResult<TData, TError> {
   data: TData
   error: null
   isError: false
@@ -446,18 +463,21 @@ export interface QueryObserverSuccessResult<TData = unknown, TError = Error>
   status: 'success'
 }
 
-export type DefinedQueryObserverResult<TData = unknown, TError = Error> =
+export type DefinedQueryObserverResult<
+  TData = unknown,
+  TError = RegisteredError,
+> =
   | QueryObserverRefetchErrorResult<TData, TError>
   | QueryObserverSuccessResult<TData, TError>
 
-export type QueryObserverResult<TData = unknown, TError = Error> =
+export type QueryObserverResult<TData = unknown, TError = RegisteredError> =
   | DefinedQueryObserverResult<TData, TError>
   | QueryObserverLoadingErrorResult<TData, TError>
   | QueryObserverLoadingResult<TData, TError>
 
 export interface InfiniteQueryObserverBaseResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
 > extends QueryObserverBaseResult<InfiniteData<TData>, TError> {
   fetchNextPage: (
     options?: FetchNextPageOptions,
@@ -473,7 +493,7 @@ export interface InfiniteQueryObserverBaseResult<
 
 export interface InfiniteQueryObserverLoadingResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
 > extends InfiniteQueryObserverBaseResult<TData, TError> {
   data: undefined
   error: null
@@ -487,7 +507,7 @@ export interface InfiniteQueryObserverLoadingResult<
 
 export interface InfiniteQueryObserverLoadingErrorResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
 > extends InfiniteQueryObserverBaseResult<TData, TError> {
   data: undefined
   error: TError
@@ -501,7 +521,7 @@ export interface InfiniteQueryObserverLoadingErrorResult<
 
 export interface InfiniteQueryObserverRefetchErrorResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
 > extends InfiniteQueryObserverBaseResult<TData, TError> {
   data: InfiniteData<TData>
   error: TError
@@ -515,7 +535,7 @@ export interface InfiniteQueryObserverRefetchErrorResult<
 
 export interface InfiniteQueryObserverSuccessResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
 > extends InfiniteQueryObserverBaseResult<TData, TError> {
   data: InfiniteData<TData>
   error: null
@@ -527,7 +547,10 @@ export interface InfiniteQueryObserverSuccessResult<
   status: 'success'
 }
 
-export type InfiniteQueryObserverResult<TData = unknown, TError = Error> =
+export type InfiniteQueryObserverResult<
+  TData = unknown,
+  TError = RegisteredError,
+> =
   | InfiniteQueryObserverLoadingErrorResult<TData, TError>
   | InfiniteQueryObserverLoadingResult<TData, TError>
   | InfiniteQueryObserverRefetchErrorResult<TData, TError>
@@ -547,7 +570,7 @@ export type MutationFunction<TData = unknown, TVariables = unknown> = (
 
 export interface MutationOptions<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > {
@@ -583,7 +606,7 @@ export interface MutationOptions<
 
 export interface MutationObserverOptions<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > extends MutationOptions<TData, TError, TVariables, TContext> {
@@ -592,7 +615,7 @@ export interface MutationObserverOptions<
 
 export interface MutateOptions<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > {
@@ -612,7 +635,7 @@ export interface MutateOptions<
 
 export type MutateFunction<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > = (
@@ -622,7 +645,7 @@ export type MutateFunction<
 
 export interface MutationObserverBaseResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > extends MutationState<TData, TError, TVariables, TContext> {
@@ -636,7 +659,7 @@ export interface MutationObserverBaseResult<
 
 export interface MutationObserverIdleResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
@@ -651,7 +674,7 @@ export interface MutationObserverIdleResult<
 
 export interface MutationObserverLoadingResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
@@ -666,7 +689,7 @@ export interface MutationObserverLoadingResult<
 
 export interface MutationObserverErrorResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
@@ -681,7 +704,7 @@ export interface MutationObserverErrorResult<
 
 export interface MutationObserverSuccessResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
@@ -696,7 +719,7 @@ export interface MutationObserverSuccessResult<
 
 export type MutationObserverResult<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > =
@@ -711,7 +734,7 @@ export interface QueryClientConfig {
   defaultOptions?: DefaultOptions
 }
 
-export interface DefaultOptions<TError = Error> {
+export interface DefaultOptions<TError = RegisteredError> {
   queries?: QueryObserverOptions<unknown, TError>
   mutations?: MutationObserverOptions<unknown, TError, unknown, unknown>
 }

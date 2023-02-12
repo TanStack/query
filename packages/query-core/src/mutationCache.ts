@@ -1,5 +1,5 @@
 import type { MutationObserver } from './mutationObserver'
-import type { MutationOptions } from './types'
+import type { MutationOptions, RegisteredError } from './types'
 import type { QueryClient } from './queryClient'
 import { notifyManager } from './notifyManager'
 import type { Action, MutationState } from './mutation'
@@ -77,7 +77,7 @@ type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
 export class MutationCache extends Subscribable<MutationCacheListener> {
   #mutations: Mutation<any, any, any, any>[]
   #mutationId: number
-  #resuming: Promise<void> | undefined
+  #resuming: Promise<unknown> | undefined
 
   constructor(public config: MutationCacheConfig = {}) {
     super()
@@ -127,7 +127,12 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     return this.#mutations
   }
 
-  find<TData = unknown, TError = Error, TVariables = any, TContext = unknown>(
+  find<
+    TData = unknown,
+    TError = RegisteredError,
+    TVariables = any,
+    TContext = unknown,
+  >(
     filters: MutationFilters,
   ): Mutation<TData, TError, TVariables, TContext> | undefined {
     if (typeof filters.exact === 'undefined') {
@@ -151,21 +156,21 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     })
   }
 
-  resumePausedMutations(): Promise<void> {
-    if (!this.#resuming) {
-      const pausedMutations = this.#mutations.filter((x) => x.state.isPaused)
-      this.#resuming = notifyManager
-        .batch(() =>
+  resumePausedMutations(): Promise<unknown> {
+    this.#resuming = (this.#resuming ?? Promise.resolve())
+      .then(() => {
+        const pausedMutations = this.#mutations.filter((x) => x.state.isPaused)
+        return notifyManager.batch(() =>
           pausedMutations.reduce(
             (promise, mutation) =>
               promise.then(() => mutation.continue().catch(noop)),
-            Promise.resolve(),
+            Promise.resolve() as Promise<unknown>,
           ),
         )
-        .then(() => {
-          this.#resuming = undefined
-        })
-    }
+      })
+      .then(() => {
+        this.#resuming = undefined
+      })
 
     return this.#resuming
   }
