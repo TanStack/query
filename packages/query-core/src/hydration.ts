@@ -59,7 +59,7 @@ function dehydrateMutation(mutation: Mutation): DehydratedMutation {
 // in the html-payload, but not consume it on the initial render.
 function dehydrateQuery(query: Query): DehydratedQuery {
   return {
-    state: query.state,
+    state: { ...query.state, fetchStatus: 'idle' },
     queryKey: query.queryKey,
     queryHash: query.queryHash,
   }
