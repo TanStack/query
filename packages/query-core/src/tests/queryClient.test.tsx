@@ -8,8 +8,9 @@ import type {
   QueryFunction,
   QueryObserverOptions,
 } from '..'
-import { InfiniteQueryObserver, QueryObserver } from '..'
+import { InfiniteQueryObserver, MutationObserver, QueryObserver } from '..'
 import { focusManager, onlineManager } from '..'
+import { noop } from '../utils'
 
 describe('queryClient', () => {
   let queryClient: QueryClient
@@ -1466,6 +1467,81 @@ describe('queryClient', () => {
       queryCacheOnOnlineSpy.mockRestore()
       mutationCacheResumePausedMutationsSpy.mockRestore()
       onlineManager.setOnline(undefined)
+    })
+
+    test('should resume paused mutations when coming online', async () => {
+      const consoleMock = jest.spyOn(console, 'error')
+      consoleMock.mockImplementation(() => undefined)
+      onlineManager.setOnline(false)
+
+      const observer1 = new MutationObserver(queryClient, {
+        mutationFn: async () => 1,
+      })
+
+      const observer2 = new MutationObserver(queryClient, {
+        mutationFn: async () => 2,
+      })
+      void observer1.mutate().catch(noop)
+      void observer2.mutate().catch(noop)
+
+      await waitFor(() => {
+        expect(observer1.getCurrentResult().isPaused).toBeTruthy()
+        expect(observer2.getCurrentResult().isPaused).toBeTruthy()
+      })
+
+      onlineManager.setOnline(true)
+
+      await waitFor(() => {
+        expect(observer1.getCurrentResult().status).toBe('success')
+        expect(observer1.getCurrentResult().status).toBe('success')
+      })
+
+      onlineManager.setOnline(undefined)
+    })
+
+    test('should resume paused mutations one after the other when invoked manually at the same time', async () => {
+      const consoleMock = jest.spyOn(console, 'error')
+      consoleMock.mockImplementation(() => undefined)
+      onlineManager.setOnline(false)
+
+      const orders: Array<string> = []
+
+      const observer1 = new MutationObserver(queryClient, {
+        mutationFn: async () => {
+          orders.push('1start')
+          await sleep(50)
+          orders.push('1end')
+          return 1
+        },
+      })
+
+      const observer2 = new MutationObserver(queryClient, {
+        mutationFn: async () => {
+          orders.push('2start')
+          await sleep(20)
+          orders.push('2end')
+          return 2
+        },
+      })
+      void observer1.mutate().catch(noop)
+      void observer2.mutate().catch(noop)
+
+      await waitFor(() => {
+        expect(observer1.getCurrentResult().isPaused).toBeTruthy()
+        expect(observer2.getCurrentResult().isPaused).toBeTruthy()
+      })
+
+      onlineManager.setOnline(undefined)
+      void queryClient.resumePausedMutations()
+      await sleep(5)
+      await queryClient.resumePausedMutations()
+
+      await waitFor(() => {
+        expect(observer1.getCurrentResult().status).toBe('success')
+        expect(observer2.getCurrentResult().status).toBe('success')
+      })
+
+      expect(orders).toEqual(['1start', '1end', '2start', '2end'])
     })
 
     test('should notify queryCache and mutationCache after multiple mounts and single unmount', async () => {

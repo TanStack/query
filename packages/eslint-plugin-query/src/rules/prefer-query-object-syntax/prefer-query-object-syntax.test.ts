@@ -415,6 +415,17 @@ ruleTester.run(name, rule, {
     },
     {
       code: normalizeIndent`
+          import { useMutation } from "@tanstack/react-query";
+          useMutation(async () => await fetchUserById(userId));
+        `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+          import { useMutation } from "@tanstack/react-query";
+          useMutation({ mutationFn: async () => await fetchUserById(userId) });
+        `,
+    },
+    {
+      code: normalizeIndent`
           import { createMutation } from "@tanstack/solid-query";
           createMutation(["mutation", "key"], async () => await fetchUserById(userId));
         `,
