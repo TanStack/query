@@ -44,13 +44,13 @@ describe('Discriminated union return type', () => {
     })
   })
 
-  it('data should be undefined when mutation is loading', () => {
+  it('data should be undefined when mutation is pending', () => {
     doNotExecute(() => {
       const mutation = reactive(
         useMutation({ mutationFn: successMutator<string> }),
       )
 
-      if (mutation.isLoading) {
+      if (mutation.isPending) {
         const result: Expect<Equal<undefined, typeof mutation.data>> = true
         return result
       }

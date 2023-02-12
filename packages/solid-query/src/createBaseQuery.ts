@@ -48,7 +48,7 @@ export function createBaseQuery<
   const [dataResource, { refetch, mutate }] = createResource<TData | undefined>(
     () => {
       return new Promise((resolve) => {
-        if (!(state.isFetching && state.isLoading)) {
+        if (!(state.isFetching && state.isPending)) {
           if ((unwrap(state.data) as TData | typeof emptyData) === emptyData) {
             resolve(undefined)
           }

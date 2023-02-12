@@ -69,7 +69,7 @@
   <input placeholder="enter something" bind:value />
 </form>
 
-{#if $todos.isLoading}
+{#if $todos.isPending}
   Loading...
 {/if}
 {#if $todos.error}

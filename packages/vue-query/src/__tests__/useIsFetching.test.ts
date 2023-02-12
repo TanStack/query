@@ -36,17 +36,17 @@ describe('useIsFetching', () => {
     })
     const isFetching = useIsFetching()
 
-    expect(status.value).toStrictEqual('loading')
+    expect(status.value).toStrictEqual('pending')
     expect(isFetching.value).toStrictEqual(1)
 
     await flushPromises()
 
-    expect(status.value).toStrictEqual('loading')
+    expect(status.value).toStrictEqual('pending')
     expect(isFetching.value).toStrictEqual(1)
 
     await flushPromises()
 
-    expect(status.value).toStrictEqual('loading')
+    expect(status.value).toStrictEqual('pending')
     expect(isFetching.value).toStrictEqual(1)
 
     onScopeDisposeMock.mockReset()

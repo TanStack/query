@@ -154,7 +154,7 @@ export function matchMutation(
 
   if (
     typeof fetching === 'boolean' &&
-    (mutation.state.status === 'loading') !== fetching
+    (mutation.state.status === 'pending') !== fetching
   ) {
     return false
   }

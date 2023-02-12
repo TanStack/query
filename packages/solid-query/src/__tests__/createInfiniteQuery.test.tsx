@@ -96,6 +96,7 @@ describe('useInfiniteQuery', () => {
       isPaused: false,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
+      isPending: true,
       isLoading: true,
       isInitialLoading: true,
       isLoadingError: false,
@@ -105,7 +106,7 @@ describe('useInfiniteQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'fetching',
     })
 
@@ -128,6 +129,7 @@ describe('useInfiniteQuery', () => {
       isPaused: false,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
+      isPending: false,
       isLoading: false,
       isInitialLoading: false,
       isLoadingError: false,
@@ -1649,7 +1651,7 @@ describe('useInfiniteQuery', () => {
               </>
             }
           >
-            <Match when={state.status === 'loading'}>Loading...</Match>
+            <Match when={state.status === 'pending'}>Loading...</Match>
             <Match when={state.status === 'error'}>
               <span>Error: {state.error!.message}</span>
             </Match>
@@ -1776,7 +1778,7 @@ describe('useInfiniteQuery', () => {
               </>
             }
           >
-            <Match when={state.status === 'loading'}>Loading...</Match>
+            <Match when={state.status === 'pending'}>Loading...</Match>
             <Match when={state.status === 'error'}>
               <span>Error: {state.error!.message}</span>
             </Match>

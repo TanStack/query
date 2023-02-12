@@ -25,7 +25,7 @@ export default defineComponent({
   emits: ['setPostId'],
   setup(props) {
     const {
-      isLoading,
+      isPending,
       isError,
       isFetching,
       data: post,
@@ -43,7 +43,7 @@ export default defineComponent({
       enabled: computed(() => !!post.value?.userId),
     })
 
-    return { isLoading, isError, isFetching, post, error, author }
+    return { isPending, isError, isFetching, post, error, author }
   },
 })
 </script>
@@ -51,7 +51,7 @@ export default defineComponent({
 <template>
   <h1>Post {{ postId }}</h1>
   <a @click="$emit('setPostId', -1)" href="#"> Back </a>
-  <div v-if="isLoading" class="update">Loading...</div>
+  <div v-if="isPending" class="update">Loading...</div>
   <div v-else-if="isError">An error has occurred: {{ error }}</div>
   <div v-else-if="post">
     <h1>

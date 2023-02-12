@@ -43,7 +43,7 @@ If you are not a fan of `<script setup>` syntax, you can easily translate all th
 <script setup>
 import { useQuery } from "@tanstack/vue-query";
 
-const { isLoading, isFetching, isError, data, error } = useQuery({
+const { isPending, isFetching, isError, data, error } = useQuery({
   queryKey: ['todos'],
   queryFn: getTodos,
 })

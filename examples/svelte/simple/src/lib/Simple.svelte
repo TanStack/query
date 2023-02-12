@@ -21,7 +21,7 @@
 <h1>Simple</h1>
 <div class="my-4">
   <div>
-    {#if $query.isLoading}
+    {#if $query.isPending}
       Loading...
     {/if}
     {#if $query.error}

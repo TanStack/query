@@ -1139,7 +1139,7 @@ describe('useQueries with suspense', () => {
       </React.Suspense>,
     )
     await waitFor(() => rendered.getByText('loading'))
-    await waitFor(() => rendered.getByText('status: success,loading'))
+    await waitFor(() => rendered.getByText('status: success,pending'))
     await waitFor(() => rendered.getByText('data: 1,null'))
     await waitFor(() => rendered.getByText('data: 1,2'))
 

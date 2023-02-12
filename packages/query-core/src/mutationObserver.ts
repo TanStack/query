@@ -143,7 +143,7 @@ export class MutationObserver<
       TContext
     > = {
       ...state,
-      isLoading: state.status === 'loading',
+      isPending: state.status === 'pending',
       isSuccess: state.status === 'success',
       isError: state.status === 'error',
       isIdle: state.status === 'idle',
