@@ -1,1 +1,2 @@
 /packages/svelte-query/.svelte-kit
+/packages/codemods/**/__testfixtures__
