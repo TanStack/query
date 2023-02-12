@@ -331,7 +331,7 @@ export class QueryClient {
     return this.fetchInfiniteQuery(options).then(noop).catch(noop)
   }
 
-  resumePausedMutations(): Promise<void> {
+  resumePausedMutations(): Promise<unknown> {
     return this.#mutationCache.resumePausedMutations()
   }
 
