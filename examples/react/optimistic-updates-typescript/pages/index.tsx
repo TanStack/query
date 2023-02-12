@@ -61,7 +61,7 @@ function Example() {
           onChange={(event) => setText(event.target.value)}
           value={text}
         />
-        <button disabled={addTodoMutation.isLoading}>Create</button>
+        <button disabled={addTodoMutation.isPending}>Create</button>
       </form>
       <br />
       {queryInfo.isSuccess && (
@@ -101,7 +101,7 @@ function Example() {
           {isFetching && <div>Updating in background...</div>}
         </>
       )}
-      {queryInfo.isLoading && 'Loading'}
+      {queryInfo.isPending && 'Loading'}
       {queryInfo.error instanceof Error && queryInfo.error.message}
     </div>
   )

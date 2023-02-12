@@ -78,20 +78,20 @@ describe('queriesObserver', () => {
     unsubscribe()
     expect(results.length).toBe(6)
     expect(results[0]).toMatchObject([
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[1]).toMatchObject([
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[2]).toMatchObject([
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[3]).toMatchObject([
       { status: 'success', data: 1 },
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[4]).toMatchObject([
       { status: 'success', data: 1 },
@@ -128,20 +128,20 @@ describe('queriesObserver', () => {
     expect(queryCache.find({ queryKey: key2, type: 'active' })).toBeUndefined()
     expect(results.length).toBe(6)
     expect(results[0]).toMatchObject([
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[1]).toMatchObject([
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[2]).toMatchObject([
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[3]).toMatchObject([
       { status: 'success', data: 1 },
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[4]).toMatchObject([
       { status: 'success', data: 1 },
@@ -173,20 +173,20 @@ describe('queriesObserver', () => {
     unsubscribe()
     expect(results.length).toBe(6)
     expect(results[0]).toMatchObject([
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[1]).toMatchObject([
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[2]).toMatchObject([
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[3]).toMatchObject([
       { status: 'success', data: 1 },
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[4]).toMatchObject([
       { status: 'success', data: 1 },
@@ -221,20 +221,20 @@ describe('queriesObserver', () => {
     unsubscribe()
     expect(results.length).toBe(5)
     expect(results[0]).toMatchObject([
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[1]).toMatchObject([
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[2]).toMatchObject([
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[3]).toMatchObject([
       { status: 'success', data: 1 },
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[4]).toMatchObject([
       { status: 'success', data: 1 },
@@ -279,7 +279,7 @@ describe('queriesObserver', () => {
     unsubscribe1()
 
     await waitFor(() => {
-      // 1 call: loading
+      // 1 call: pending
       expect(subscription1Handler).toBeCalledTimes(1)
       // 1 call: success
       expect(subscription2Handler).toBeCalledTimes(1)

@@ -11,7 +11,7 @@ describe('useQuery', () => {
     })
 
     expect(data.value).toStrictEqual(undefined)
-    expect(status.value).toStrictEqual('loading')
+    expect(status.value).toStrictEqual('pending')
 
     await flushPromises()
 

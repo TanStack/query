@@ -10,7 +10,7 @@ ref: docs/react/guides/disabling-queries.md
 <script setup>
 import { useQuery } from '@tanstack/vue-query'
 
-const { isInitialLoading, isError, data, error, refetch, isFetching } =
+const { isLoading, isError, data, error, refetch, isFetching } =
   useQuery({
     queryKey: ['todos'],
     queryFn: fetchTodoList,

@@ -22,7 +22,7 @@ type Props = {
 };
 
 export function MoviesListScreen({ navigation }: Props) {
-  const { isLoading, error, data, refetch } = useQuery<Movie[], Error>({
+  const { isPending, error, data, refetch } = useQuery<Movie[], Error>({
     queryKey: ['movies'],
     queryFn: fetchMovies,
   });
@@ -45,7 +45,7 @@ export function MoviesListScreen({ navigation }: Props) {
     [onListItemPress]
   );
 
-  if (isLoading) return <LoadingIndicator />;
+  if (isPending) return <LoadingIndicator />;
 
   if (error) return <ErrorMessage message={error.message}></ErrorMessage>;
 

@@ -17,7 +17,9 @@ const {
   isFetching,
   isPaused,
   isLoading,
+  isInitialLoading,
   isLoadingError,
+  isPending,
   isPlaceholderData,
   isRefetchError,
   isRefetching,
@@ -148,7 +150,7 @@ const {
 - `suspense: boolean`
   - Optional
   - Set this to `true` to enable suspense mode.
-  - When `true`, `useQuery` will suspend when `status === 'loading'`
+  - When `true`, `useQuery` will suspend when `status === 'pending'`
   - When `true`, `useQuery` will throw runtime errors when `status === 'error'`
 - `initialData: TData | () => TData`
   - Optional
@@ -161,7 +163,7 @@ const {
   - If set, this value will be used as the time (in milliseconds) of when the `initialData` itself was last updated.
 - `placeholderData: TData | (previousValue: TData) => TData`
   - Optional
-  - If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `loading` data and no initialData has been provided.
+  - If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `pending` data and no initialData has been provided.
   - `placeholderData` is **not persisted** to the cache
   - If you provide a function for `placeholderData`, as a first argument you will receive previously watched query data if available
 - `structuralSharing: boolean | ((oldData: TData | undefined, newData: TData) => TData)`
@@ -184,10 +186,10 @@ const {
 
 - `status: String`
   - Will be:
-    - `loading` if there's no cached data and no query attempt was finished yet.
+    - `pending` if there's no cached data and no query attempt was finished yet.
     - `error` if the query attempt resulted in an error. The corresponding `error` property has the error received from the attempted fetch
     - `success` if the query has received a response with no errors and is ready to display its data. The corresponding `data` property on the query is the data received from the successful fetch or if the query's `enabled` property is set to `false` and has not been fetched yet `data` is the first `initialData` supplied to the query on initialization.
-- `isLoading: boolean`
+- `isPending: boolean`
   - A derived boolean from the `status` variable above, provided for convenience.
 - `isSuccess: boolean`
   - A derived boolean from the `status` variable above, provided for convenience.
@@ -217,7 +219,7 @@ const {
   - Will be `true` if the query has been fetched after the component mounted.
   - This property can be used to not show any previously cached data.
 - `fetchStatus: FetchStatus`
-  - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `loading` as well as background refetches.
+  - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `pending` as well as background refetches.
   - `paused`: The query wanted to fetch, but has been `paused`.
   - `idle`: The query is not fetching.
   - see [Network Mode](../guides/network-mode) for more information.
@@ -226,11 +228,14 @@ const {
 - `isPaused: boolean`
   - A derived boolean from the `fetchStatus` variable above, provided for convenience.
 - `isRefetching: boolean`
-  - Is `true` whenever a background refetch is in-flight, which _does not_ include initial `loading`
-  - Is the same as `isFetching && !isLoading`
-- `isInitialLoading: boolean`
+  - Is `true` whenever a background refetch is in-flight, which _does not_ include initial `pending`
+  - Is the same as `isFetching && !isPending`
+- `isLoading: boolean`
   - Is `true` whenever the first fetch for a query is in-flight
-  - Is the same as `isFetching && isLoading`
+  - Is the same as `isFetching && isPending`
+- `isInitialLoading: boolean`
+  - **deprecated**
+  - An alias for `isLoading`, will be removed in the next major version.
 - `failureCount: number`
   - The failure count for the query.
   - Incremented every time the query fails.

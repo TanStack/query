@@ -33,7 +33,7 @@ function Example() {
 
   return (
     <Switch>
-      <Match when={state.isLoading}>Loading...</Match>
+      <Match when={state.isPending}>Loading...</Match>
       <Match when={state.error}>
         {'An error has occurred: ' + (state.error as Error).message}
       </Match>

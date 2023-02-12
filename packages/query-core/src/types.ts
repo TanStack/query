@@ -373,7 +373,7 @@ export interface FetchPreviousPageOptions extends ResultOptions {
   pageParam?: unknown
 }
 
-export type QueryStatus = 'loading' | 'error' | 'success'
+export type QueryStatus = 'pending' | 'error' | 'success'
 export type FetchStatus = 'fetching' | 'paused' | 'idle'
 
 export interface QueryObserverBaseResult<
@@ -392,7 +392,12 @@ export interface QueryObserverBaseResult<
   isFetchedAfterMount: boolean
   isFetching: boolean
   isLoading: boolean
+  isPending: boolean
   isLoadingError: boolean
+  /**
+   * @deprecated isInitialLoading is being deprecated in favor of isLoading
+   * and will be removed in the next major version.
+   */
   isInitialLoading: boolean
   isPaused: boolean
   isPlaceholderData: boolean
@@ -414,11 +419,11 @@ export interface QueryObserverLoadingResult<
   data: undefined
   error: null
   isError: false
-  isLoading: true
+  isPending: true
   isLoadingError: false
   isRefetchError: false
   isSuccess: false
-  status: 'loading'
+  status: 'pending'
 }
 
 export interface QueryObserverLoadingErrorResult<
@@ -428,7 +433,7 @@ export interface QueryObserverLoadingErrorResult<
   data: undefined
   error: TError
   isError: true
-  isLoading: false
+  isPending: false
   isLoadingError: true
   isRefetchError: false
   isSuccess: false
@@ -442,7 +447,7 @@ export interface QueryObserverRefetchErrorResult<
   data: TData
   error: TError
   isError: true
-  isLoading: false
+  isPending: false
   isLoadingError: false
   isRefetchError: true
   isSuccess: false
@@ -456,7 +461,7 @@ export interface QueryObserverSuccessResult<
   data: TData
   error: null
   isError: false
-  isLoading: false
+  isPending: false
   isLoadingError: false
   isRefetchError: false
   isSuccess: true
@@ -498,11 +503,11 @@ export interface InfiniteQueryObserverLoadingResult<
   data: undefined
   error: null
   isError: false
-  isLoading: true
+  isPending: true
   isLoadingError: false
   isRefetchError: false
   isSuccess: false
-  status: 'loading'
+  status: 'pending'
 }
 
 export interface InfiniteQueryObserverLoadingErrorResult<
@@ -512,7 +517,7 @@ export interface InfiniteQueryObserverLoadingErrorResult<
   data: undefined
   error: TError
   isError: true
-  isLoading: false
+  isPending: false
   isLoadingError: true
   isRefetchError: false
   isSuccess: false
@@ -526,7 +531,7 @@ export interface InfiniteQueryObserverRefetchErrorResult<
   data: InfiniteData<TData>
   error: TError
   isError: true
-  isLoading: false
+  isPending: false
   isLoadingError: false
   isRefetchError: true
   isSuccess: false
@@ -540,7 +545,7 @@ export interface InfiniteQueryObserverSuccessResult<
   data: InfiniteData<TData>
   error: null
   isError: false
-  isLoading: false
+  isPending: false
   isLoadingError: false
   isRefetchError: false
   isSuccess: true
@@ -558,7 +563,7 @@ export type InfiniteQueryObserverResult<
 
 export type MutationKey = readonly unknown[]
 
-export type MutationStatus = 'idle' | 'loading' | 'success' | 'error'
+export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
 
 export interface MutationMeta {
   [index: string]: unknown
@@ -650,7 +655,7 @@ export interface MutationObserverBaseResult<
 > extends MutationState<TData, TError, TVariables, TContext> {
   isError: boolean
   isIdle: boolean
-  isLoading: boolean
+  isPending: boolean
   isSuccess: boolean
   mutate: MutateFunction<TData, TError, TVariables, TContext>
   reset: () => void
@@ -667,7 +672,7 @@ export interface MutationObserverIdleResult<
   error: null
   isError: false
   isIdle: true
-  isLoading: false
+  isPending: false
   isSuccess: false
   status: 'idle'
 }
@@ -683,9 +688,9 @@ export interface MutationObserverLoadingResult<
   error: null
   isError: false
   isIdle: false
-  isLoading: true
+  isPending: true
   isSuccess: false
-  status: 'loading'
+  status: 'pending'
 }
 
 export interface MutationObserverErrorResult<
@@ -699,7 +704,7 @@ export interface MutationObserverErrorResult<
   variables: TVariables
   isError: true
   isIdle: false
-  isLoading: false
+  isPending: false
   isSuccess: false
   status: 'error'
 }
@@ -715,7 +720,7 @@ export interface MutationObserverSuccessResult<
   variables: TVariables
   isError: false
   isIdle: false
-  isLoading: false
+  isPending: false
   isSuccess: true
   status: 'success'
 }

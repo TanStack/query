@@ -67,5 +67,5 @@ The returned properties for `useInfiniteQuery` are identical to the [`useQuery` 
 - `hasPreviousPage: boolean`
   - This will be `true` if there is a previous page to be fetched (known via the `getPreviousPageParam` option).
 - `isRefetching: boolean`
-  - Is `true` whenever a background refetch is in-flight, which _does not_ include initial `loading` or fetching of next or previous page
-  - Is the same as `isFetching && !isLoading && !isFetchingNextPage && !isFetchingPreviousPage`
+  - Is `true` whenever a background refetch is in-flight, which _does not_ include initial `pending` or fetching of next or previous page
+  - Is the same as `isFetching && !isPending && !isFetchingNextPage && !isFetchingPreviousPage`
