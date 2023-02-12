@@ -5,6 +5,7 @@ import {
   sleep,
 } from './utils'
 import { QueryCache } from '../queryCache'
+import type { DehydratedState } from '../hydration'
 import { dehydrate, hydrate } from '../hydration'
 
 async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
@@ -425,5 +426,19 @@ describe('dehydration and rehydration', () => {
     expect(() => hydrate(queryClient, {})).not.toThrow()
 
     queryClient.clear()
+  })
+
+  test('should set the fetchStatus to idle in all cases when dehydrating', async () => {
+    const queryCache = new QueryCache()
+    const queryClient = createQueryClient({ queryCache })
+    await queryClient.prefetchQuery(['string'], () => fetchData('string', 10))
+
+    queryClient.refetchQueries(['string'])
+
+    const dehydrated = dehydrate(queryClient)
+    const stringified = JSON.stringify(dehydrated)
+
+    const parsed = JSON.parse(stringified) as DehydratedState
+    expect(parsed.queries[0]?.state.fetchStatus).toBe('idle')
   })
 })
