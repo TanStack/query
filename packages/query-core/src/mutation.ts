@@ -159,12 +159,8 @@ export class Mutation<
     }
   }
 
-  continue(): Promise<TData> {
-    if (this.retryer) {
-      this.retryer.continue()
-      return this.retryer.promise
-    }
-    return this.execute()
+  continue(): Promise<unknown> {
+    return this.retryer?.continue() ?? this.execute()
   }
 
   async execute(): Promise<TData> {
