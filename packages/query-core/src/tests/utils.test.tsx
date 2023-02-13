@@ -6,6 +6,7 @@ import {
   scheduleMicrotask,
   sleep,
   isPlainArray,
+  LimitedLengthArray,
 } from '../utils'
 import { Mutation } from '../mutation'
 import { createQueryClient } from './utils'
@@ -347,6 +348,71 @@ describe('core/utils', () => {
       expect(callback).not.toHaveBeenCalled()
       await sleep(0)
       expect(callback).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('LimitedLengthArray', () => {
+    it('should add an item to the end of the array', () => {
+      const array = new LimitedLengthArray<string>(3)
+      array.addItemToEnd('foo')
+      expect(array.getItems()).toEqual(['foo'])
+    })
+
+    it('should add an item to the start of the array', () => {
+      const array = new LimitedLengthArray<string>(3)
+      array.addItemToStart('foo')
+      expect(array.getItems()).toEqual(['foo'])
+    })
+
+    it('should truncate the array when it exceeds the length limit using addItemToEnd', () => {
+      const array = new LimitedLengthArray<string>(3)
+      array.addItemToEnd('foo')
+      array.addItemToEnd('bar')
+      array.addItemToEnd('baz')
+      array.addItemToEnd('qux')
+      expect(array.getItems()).toEqual(['bar', 'baz', 'qux'])
+    })
+
+    it('should truncate the array when it exceeds the length limit using addItemToStart', () => {
+      const array = new LimitedLengthArray<string>(3)
+      array.addItemToStart('foo')
+      array.addItemToStart('bar')
+      array.addItemToStart('baz')
+      array.addItemToStart('qux')
+      expect(array.getItems()).toEqual(['qux', 'baz', 'bar'])
+    })
+
+    it('should add an item to the end of the initial array', () => {
+      const array = new LimitedLengthArray<string>(3, ['bar'])
+      array.addItemToEnd('foo')
+      expect(array.getItems()).toEqual(['bar', 'foo'])
+    })
+
+    it('should not truncate the array when the length is undefined', () => {
+      const array = new LimitedLengthArray<string>(undefined)
+      array.addItemToEnd('foo')
+      array.addItemToEnd('bar')
+      array.addItemToEnd('baz')
+      array.addItemToEnd('qux')
+      expect(array.getItems()).toEqual(['foo', 'bar', 'baz', 'qux'])
+    })
+
+    it('should not truncate the array when the length equals 0', () => {
+      const array = new LimitedLengthArray<string>(0)
+      array.addItemToEnd('foo')
+      array.addItemToEnd('bar')
+      array.addItemToEnd('baz')
+      array.addItemToEnd('qux')
+      expect(array.getItems()).toEqual(['foo', 'bar', 'baz', 'qux'])
+    })
+
+    it('should not truncate the array when the length value is negative', () => {
+      const array = new LimitedLengthArray<string>(-1)
+      array.addItemToEnd('foo')
+      array.addItemToEnd('bar')
+      array.addItemToEnd('baz')
+      array.addItemToEnd('qux')
+      expect(array.getItems()).toEqual(['foo', 'bar', 'baz', 'qux'])
     })
   })
 })

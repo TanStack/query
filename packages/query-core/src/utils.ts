@@ -330,3 +330,31 @@ export function keepPreviousData<T>(
 ): T | undefined {
   return previousData
 }
+
+export class LimitedLengthArray<T> {
+  private items: T[]
+  private length: number | undefined
+
+  constructor(length?: number, initialArray?: T[]) {
+    this.length = length && length <= 0 ? undefined : length
+    this.items = initialArray || []
+  }
+
+  public addItemToEnd(item: T): void {
+    this.items.push(item)
+    if (this.length && this.items.length > this.length) {
+      this.items.shift()
+    }
+  }
+
+  public addItemToStart(item: T): void {
+    this.items.unshift(item)
+    if (this.length && this.items.length > this.length) {
+      this.items.pop()
+    }
+  }
+
+  public getItems(): T[] {
+    return this.items
+  }
+}
