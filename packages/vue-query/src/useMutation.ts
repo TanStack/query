@@ -59,7 +59,7 @@ type MutateSyncFunction<
   TContext = unknown,
 > = (
   ...options: Parameters<MutateFunction<TData, TError, TVariables, TContext>>
-) => void
+) => Promise<TData>
 
 export type UseMutationReturnType<
   TData,
