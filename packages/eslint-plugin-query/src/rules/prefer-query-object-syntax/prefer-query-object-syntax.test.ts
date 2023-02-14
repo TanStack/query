@@ -456,7 +456,7 @@ ruleTester.run(name, rule, {
         import { useMutation } from "@tanstack/vue-query";
         useMutation({ mutationFn: () => Promise.resolve(3), onSuccess: () => {}, mutationKey: ["foo"] });
       `,
-  },
+    },
     {
       code: normalizeIndent`
         import { useQuery } from '@tanstack/vue-query';
