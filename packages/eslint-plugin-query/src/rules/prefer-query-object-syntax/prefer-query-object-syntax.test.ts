@@ -437,6 +437,28 @@ ruleTester.run(name, rule, {
     },
     {
       code: normalizeIndent`
+        import { useMutation } from "@tanstack/vue-query";
+        useMutation(() => Promise.resolve(3), { onSuccess: () => {} });
+      `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+        import { useMutation } from "@tanstack/vue-query";
+        useMutation({ mutationFn: () => Promise.resolve(3), onSuccess: () => {} });
+      `,
+    },
+    {
+      code: normalizeIndent`
+        import { useMutation } from "@tanstack/vue-query";
+        useMutation(() => Promise.resolve(3), { onSuccess: () => {}, mutationKey: ["foo"] });
+      `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+        import { useMutation } from "@tanstack/vue-query";
+        useMutation({ mutationFn: () => Promise.resolve(3), onSuccess: () => {}, mutationKey: ["foo"] });
+      `,
+    },
+    {
+      code: normalizeIndent`
         import { useQuery } from '@tanstack/vue-query';
         const options = { enabled: true };
         useQuery(['foo'], () => undefined, options);
