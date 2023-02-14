@@ -208,7 +208,7 @@ function runCheckOnNode(params: {
     fix(fixer) {
       const optionsObjectProperties: string[] = []
 
-      if (callProps.type === 'query' || callNode.arguments.length > 1) {
+      if (callProps.type === 'query') {
         // queryKey
         const firstArgument = callNode.arguments[0]
         const queryKey = sourceCode.getText(firstArgument)
@@ -231,13 +231,28 @@ function runCheckOnNode(params: {
         }
       }
 
-      if (callProps.type === 'mutation' && callNode.arguments.length === 1) {
-        const firstArgument = callNode.arguments[0]
-        const mutationFn = sourceCode.getText(firstArgument)
+      if (callProps.type === 'mutation') {
+        const isMutationKeyPresent =
+          callNode.arguments.length === 3 ||
+          callNode.arguments[1]?.type === 'ArrowFunctionExpression'
+
+        if (isMutationKeyPresent) {
+          const mutationKeyNode = callNode.arguments[0]
+          const mutationKeyText = sourceCode.getText(mutationKeyNode)
+          const mutationKeyProperty =
+            mutationKeyText === callProps.key
+              ? callProps.key
+              : `${callProps.key}: ${mutationKeyText}`
+
+          optionsObjectProperties.push(mutationKeyProperty)
+        }
+
+        const mutationFnNode = callNode.arguments[isMutationKeyPresent ? 1 : 0]
+        const mutationFnText = sourceCode.getText(mutationFnNode)
         const mutationFnProperty =
-          mutationFn === callProps.fn
+          mutationFnText === callProps.fn
             ? callProps.fn
-            : `${callProps.fn}: ${mutationFn}`
+            : `${callProps.fn}: ${mutationFnText}`
 
         optionsObjectProperties.push(mutationFnProperty)
       }
