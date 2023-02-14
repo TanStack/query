@@ -431,11 +431,30 @@ describe('dehydration and rehydration', () => {
   test('should set the fetchStatus to idle in all cases when dehydrating', async () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
-    await queryClient.prefetchQuery(['string'], () => fetchData('string', 10))
+
+
+    let isInitialFetch = true
+    let resolvePromise: (value: unknown) => void = () => undefined
+
+    const customFetchData = () => {
+      const promise = new Promise((resolve) => {
+        resolvePromise = resolve
+      })
+      // Resolve the promise in initial fetch
+      // because we are awaiting the query first time
+      if (isInitialFetch) {
+        resolvePromise('string')
+      }
+      isInitialFetch = false
+      return promise
+    }
+
+    await queryClient.prefetchQuery(['string'], () => customFetchData())
 
     queryClient.refetchQueries(['string'])
 
     const dehydrated = dehydrate(queryClient)
+    resolvePromise('string')
     const stringified = JSON.stringify(dehydrated)
 
     const parsed = JSON.parse(stringified) as DehydratedState
