@@ -432,7 +432,6 @@ describe('dehydration and rehydration', () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
 
-
     let isInitialFetch = true
     let resolvePromise: (value: unknown) => void = () => undefined
 
