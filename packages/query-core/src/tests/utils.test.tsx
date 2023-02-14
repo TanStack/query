@@ -6,7 +6,8 @@ import {
   scheduleMicrotask,
   sleep,
   isPlainArray,
-  LimitedLengthArray,
+  addToEnd,
+  addToStart,
 } from '../utils'
 import { Mutation } from '../mutation'
 import { createQueryClient } from './utils'
@@ -351,68 +352,64 @@ describe('core/utils', () => {
     })
   })
 
-  describe('LimitedLengthArray', () => {
-    it('should add an item to the end of the array', () => {
-      const array = new LimitedLengthArray<string>(3)
-      array.addItemToEnd('foo')
-      expect(array.getItems()).toEqual(['foo'])
+  describe('addToEnd', () => {
+    it('should add item to the end of the array', () => {
+      const items = [1, 2, 3]
+      const newItems = addToEnd(items, 4)
+      expect(newItems).toEqual([1, 2, 3, 4])
     })
 
+    it('should not exceed max if provided', () => {
+      const items = [1, 2, 3]
+      const newItems = addToEnd(items, 4, 3)
+      expect(newItems).toEqual([2, 3, 4])
+    })
+
+    it('should add item to the end of the array when max = 0', () => {
+      const items = [1, 2, 3]
+      const item = 4
+      const max = 0
+      expect(addToEnd(items, item, max)).toEqual([1, 2, 3, 4])
+    })
+
+    it('should add item to the end of the array when max is undefined', () => {
+      const items = [1, 2, 3]
+      const item = 4
+      const max = undefined
+      expect(addToEnd(items, item, max)).toEqual([1, 2, 3, 4])
+    })
+  })
+
+  describe('addToStart', () => {
     it('should add an item to the start of the array', () => {
-      const array = new LimitedLengthArray<string>(3)
-      array.addItemToStart('foo')
-      expect(array.getItems()).toEqual(['foo'])
+      const items = [1, 2, 3]
+      const item = 4
+      const newItems = addToStart(items, item)
+      expect(newItems).toEqual([4, 1, 2, 3])
     })
 
-    it('should truncate the array when it exceeds the length limit using addItemToEnd', () => {
-      const array = new LimitedLengthArray<string>(3)
-      array.addItemToEnd('foo')
-      array.addItemToEnd('bar')
-      array.addItemToEnd('baz')
-      array.addItemToEnd('qux')
-      expect(array.getItems()).toEqual(['bar', 'baz', 'qux'])
+    it('should respect the max argument', () => {
+      const items = [1, 2, 3]
+      const item = 4
+      const max = 2
+      const newItems = addToStart(items, item, max)
+      expect(newItems).toEqual([4, 1, 2])
     })
 
-    it('should truncate the array when it exceeds the length limit using addItemToStart', () => {
-      const array = new LimitedLengthArray<string>(3)
-      array.addItemToStart('foo')
-      array.addItemToStart('bar')
-      array.addItemToStart('baz')
-      array.addItemToStart('qux')
-      expect(array.getItems()).toEqual(['qux', 'baz', 'bar'])
+    it('should not remove any items if max = 0', () => {
+      const items = [1, 2, 3]
+      const item = 4
+      const max = 0
+      const newItems = addToStart(items, item, max)
+      expect(newItems).toEqual([4, 1, 2, 3])
     })
 
-    it('should add an item to the end of the initial array', () => {
-      const array = new LimitedLengthArray<string>(3, ['bar'])
-      array.addItemToEnd('foo')
-      expect(array.getItems()).toEqual(['bar', 'foo'])
-    })
-
-    it('should not truncate the array when the length is undefined', () => {
-      const array = new LimitedLengthArray<string>(undefined)
-      array.addItemToEnd('foo')
-      array.addItemToEnd('bar')
-      array.addItemToEnd('baz')
-      array.addItemToEnd('qux')
-      expect(array.getItems()).toEqual(['foo', 'bar', 'baz', 'qux'])
-    })
-
-    it('should not truncate the array when the length equals 0', () => {
-      const array = new LimitedLengthArray<string>(0)
-      array.addItemToEnd('foo')
-      array.addItemToEnd('bar')
-      array.addItemToEnd('baz')
-      array.addItemToEnd('qux')
-      expect(array.getItems()).toEqual(['foo', 'bar', 'baz', 'qux'])
-    })
-
-    it('should not truncate the array when the length value is negative', () => {
-      const array = new LimitedLengthArray<string>(-1)
-      array.addItemToEnd('foo')
-      array.addItemToEnd('bar')
-      array.addItemToEnd('baz')
-      array.addItemToEnd('qux')
-      expect(array.getItems()).toEqual(['foo', 'bar', 'baz', 'qux'])
+    it('should not remove any items if max is undefined', () => {
+      const items = [1, 2, 3]
+      const item = 4
+      const max = 0
+      const newItems = addToStart(items, item, max)
+      expect(newItems).toEqual([4, 1, 2, 3])
     })
   })
 })

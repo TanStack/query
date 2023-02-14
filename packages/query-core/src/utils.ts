@@ -331,30 +331,12 @@ export function keepPreviousData<T>(
   return previousData
 }
 
-export class LimitedLengthArray<T> {
-  private items: T[]
-  private length: number | undefined
+export function addToEnd<T>(items: T[], item: T, max = 0): T[] {
+  const newItems = [...items, item]
+  return max && newItems.length > max ? newItems.slice(1) : newItems
+}
 
-  constructor(length?: number, initialArray?: T[]) {
-    this.length = length && length <= 0 ? undefined : length
-    this.items = initialArray || []
-  }
-
-  public addItemToEnd(item: T): void {
-    this.items.push(item)
-    if (this.length && this.items.length > this.length) {
-      this.items.shift()
-    }
-  }
-
-  public addItemToStart(item: T): void {
-    this.items.unshift(item)
-    if (this.length && this.items.length > this.length) {
-      this.items.pop()
-    }
-  }
-
-  public getItems(): T[] {
-    return this.items
-  }
+export function addToStart<T>(items: T[], item: T, max = 0): T[] {
+  const newItems = [item, ...items]
+  return max && newItems.length > max ? newItems.slice(0, -1) : newItems
 }

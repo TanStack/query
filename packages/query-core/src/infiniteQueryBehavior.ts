@@ -1,5 +1,5 @@
 import type { QueryBehavior } from './query'
-import { LimitedLengthArray } from './utils'
+import { addToEnd, addToStart } from './utils'
 import type {
   InfiniteData,
   QueryFunctionContext,
@@ -55,21 +55,13 @@ export function infiniteQueryBehavior<
         ) => {
           const { maxPages } = context.options
 
-          const limitedPages = new LimitedLengthArray(maxPages, [...pages])
-          const limitedNewPageParams = new LimitedLengthArray(
-            maxPages,
-            newPageParams,
-          )
-
           if (previous) {
-            limitedNewPageParams.addItemToStart(param)
-            limitedPages.addItemToStart(page)
-          } else {
-            limitedNewPageParams.addItemToEnd(param)
-            limitedPages.addItemToEnd(page)
+            newPageParams = addToStart(newPageParams, param, maxPages)
+            return addToStart(pages, page, maxPages)
           }
 
-          return limitedPages.getItems()
+          newPageParams = addToEnd(newPageParams, param, maxPages)
+          return addToEnd(pages, page, maxPages)
         }
 
         // Create function to fetch a page
