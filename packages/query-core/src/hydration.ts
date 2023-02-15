@@ -1,6 +1,7 @@
 import type { QueryClient } from './queryClient'
 import type { Query, QueryState } from './query'
 import type {
+  FetchStatus,
   MutationKey,
   MutationOptions,
   QueryKey,
@@ -59,7 +60,7 @@ function dehydrateMutation(mutation: Mutation): DehydratedMutation {
 // in the html-payload, but not consume it on the initial render.
 function dehydrateQuery(query: Query): DehydratedQuery {
   return {
-    state: { ...query.state, fetchStatus: 'idle' },
+    state: query.state,
     queryKey: query.queryKey,
     queryHash: query.queryHash,
   }
@@ -142,10 +143,17 @@ export function hydrate(
   queries.forEach((dehydratedQuery) => {
     const query = queryCache.get(dehydratedQuery.queryHash)
 
+    // Reset fetch status to idle in the dehydrated state to avoid
+    // query being stuck in fetching state upon hydration
+    const dehydratedQueryState = {
+      ...dehydratedQuery.state,
+      fetchStatus: 'idle' as FetchStatus,
+    }
+
     // Do not hydrate if an existing query exists with newer data
     if (query) {
       if (query.state.dataUpdatedAt < dehydratedQuery.state.dataUpdatedAt) {
-        query.setState(dehydratedQuery.state)
+        query.setState(dehydratedQueryState)
       }
       return
     }
@@ -158,7 +166,7 @@ export function hydrate(
         queryKey: dehydratedQuery.queryKey,
         queryHash: dehydratedQuery.queryHash,
       },
-      dehydratedQuery.state,
+      dehydratedQueryState,
     )
   })
 }

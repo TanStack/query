@@ -456,7 +456,17 @@ describe('dehydration and rehydration', () => {
     resolvePromise('string')
     const stringified = JSON.stringify(dehydrated)
 
+    // ---
     const parsed = JSON.parse(stringified) as DehydratedState
-    expect(parsed.queries[0]?.state.fetchStatus).toBe('idle')
+    expect(
+      parsed.queries.find((q) => q.queryHash === '["string"]')?.state
+        .fetchStatus,
+    ).toBe('fetching')
+
+    // ---
+    const hydrationCache = new QueryCache()
+    const hydrationClient = createQueryClient({ queryCache: hydrationCache })
+    hydrate(hydrationClient, parsed)
+    expect(hydrationCache.find(['string'])?.state.fetchStatus).toBe('idle')
   })
 })
