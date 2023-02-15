@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-react-infinite-scroll-with-max-pages",
+  "name": "@tanstack/query-example-react-infinite-query-with-max-pages",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",

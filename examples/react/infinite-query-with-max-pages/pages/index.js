@@ -42,7 +42,7 @@ function Example() {
 
   return (
     <div>
-      <h1>Infinite Loading with max pages</h1>
+      <h1>Infinite Query with max pages</h1>
       <h3>4 projects per page</h3>
       <h3>3 pages max</h3>
       {status === 'loading' ? (
