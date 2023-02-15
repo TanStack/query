@@ -330,3 +330,13 @@ export function keepPreviousData<T>(
 ): T | undefined {
   return previousData
 }
+
+export function addToEnd<T>(items: T[], item: T, max = 0): T[] {
+  const newItems = [...items, item]
+  return max && newItems.length > max ? newItems.slice(1) : newItems
+}
+
+export function addToStart<T>(items: T[], item: T, max = 0): T[] {
+  const newItems = [item, ...items]
+  return max && newItems.length > max ? newItems.slice(0, -1) : newItems
+}

@@ -118,6 +118,10 @@ export interface QueryOptions<
    * Use this property to pass information that can be used in other places.
    */
   meta?: QueryMeta
+  /**
+   * Maximum number of pages to store in the data of an infinite query.
+   */
+  maxPages?: number
 }
 
 export type ThrowErrors<

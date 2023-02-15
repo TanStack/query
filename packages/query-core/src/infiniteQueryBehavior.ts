@@ -1,5 +1,5 @@
 import type { QueryBehavior } from './query'
-
+import { addToEnd, addToStart } from './utils'
 import type {
   InfiniteData,
   QueryFunctionContext,
@@ -53,10 +53,15 @@ export function infiniteQueryBehavior<
           page: unknown,
           previous?: boolean,
         ) => {
-          newPageParams = previous
-            ? [param, ...newPageParams]
-            : [...newPageParams, param]
-          return previous ? [page, ...pages] : [...pages, page]
+          const { maxPages } = context.options
+
+          if (previous) {
+            newPageParams = addToStart(newPageParams, param, maxPages)
+            return addToStart(pages, page, maxPages)
+          }
+
+          newPageParams = addToEnd(newPageParams, param, maxPages)
+          return addToEnd(pages, page, maxPages)
         }
 
         // Create function to fetch a page
