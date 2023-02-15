@@ -39,6 +39,12 @@ The options for `useInfiniteQuery` are identical to the [`useQuery` hook](../ref
   - When new data is received for this query, this function receives both the first page of the infinite list of data and the full array of all pages.
   - It should return a **single variable** that will be passed as the last optional parameter to your query function.
   - Return `undefined` to indicate there is no previous page available.
+- `maxPages: number | undefined`
+  - The maximum number of pages to store in the infinite query data.
+  - When the maximum number of pages is reached, fetching a new page will result in the removal of either the first or last page from the pages array, depending on the specified direction.
+  - If `undefined` or equals `0`, the number of pages is unlimited
+  - Default value is `undefined`
+  - `getNextPageParam` and `getPreviousPageParam` must be properly defined if `maxPages` value is greater than `0` to allow fetching a page in both directions when needed.
 
 **Returns**
 
