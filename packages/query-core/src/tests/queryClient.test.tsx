@@ -8,7 +8,7 @@ import type {
   QueryFunction,
   QueryObserverOptions,
 } from '..'
-import { InfiniteQueryObserver, MutationObserver, QueryObserver } from '..'
+import { MutationObserver, QueryObserver } from '..'
 import { focusManager, onlineManager } from '..'
 import { noop } from '../utils'
 
