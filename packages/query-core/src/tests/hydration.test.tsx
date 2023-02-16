@@ -5,7 +5,6 @@ import {
   sleep,
 } from './utils'
 import { QueryCache } from '../queryCache'
-import type { DehydratedState } from '../hydration'
 import { dehydrate, hydrate } from '../hydration'
 
 async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
@@ -454,16 +453,14 @@ describe('dehydration and rehydration', () => {
 
     const dehydrated = dehydrate(queryClient)
     resolvePromise('string')
+    expect(
+      dehydrated.queries.find((q) => q.queryHash === '["string"]')?.state
+        .fetchStatus,
+    ).toBe('fetching')
     const stringified = JSON.stringify(dehydrated)
 
     // ---
-    const parsed = JSON.parse(stringified) as DehydratedState
-    expect(
-      parsed.queries.find((q) => q.queryHash === '["string"]')?.state
-        .fetchStatus,
-    ).toBe('fetching')
-
-    // ---
+    const parsed = JSON.parse(stringified)
     const hydrationCache = new QueryCache()
     const hydrationClient = createQueryClient({ queryCache: hydrationCache })
     hydrate(hydrationClient, parsed)

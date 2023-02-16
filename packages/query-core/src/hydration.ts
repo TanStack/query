@@ -1,7 +1,6 @@
 import type { QueryClient } from './queryClient'
 import type { Query, QueryState } from './query'
 import type {
-  FetchStatus,
   MutationKey,
   MutationOptions,
   QueryKey,
@@ -147,12 +146,12 @@ export function hydrate(
     // query being stuck in fetching state upon hydration
     const dehydratedQueryState = {
       ...dehydratedQuery.state,
-      fetchStatus: 'idle' as FetchStatus,
+      fetchStatus: 'idle' as const,
     }
 
     // Do not hydrate if an existing query exists with newer data
     if (query) {
-      if (query.state.dataUpdatedAt < dehydratedQuery.state.dataUpdatedAt) {
+      if (query.state.dataUpdatedAt < dehydratedQueryState.dataUpdatedAt) {
         query.setState(dehydratedQueryState)
       }
       return
