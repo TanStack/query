@@ -257,6 +257,14 @@ const { data } = useQuery(
 )
 ```
 
+### Removed `refetchPage` in favor of `maxPages`
+
+In v4, we introduced the possibility to define the pages to refetch for infinite queries with the `refetchPage` function.
+
+However, refetching all pages might lead to UI inconsistencies. Also, this option is available on e.g. `queryClient.refetchQueries`, but it only does something for infinite queries, not "normal" queries.
+
+The v5 includes a new `maxPages` option for infinite queries to limit the number of pages to store in the query data and to refetch. This new feature handles the use cases initially identified for the `refetchPage` page feature without the related issues.
+
 [//]: # 'FrameworkBreakingChanges'
 
 ## React Query Breaking Changes

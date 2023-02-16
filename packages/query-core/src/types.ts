@@ -338,31 +338,17 @@ export interface ResultOptions {
   throwOnError?: boolean
 }
 
-export interface RefetchPageFilters<TPageData = unknown> {
-  refetchPage?: (
-    lastPage: TPageData,
-    index: number,
-    allPages: TPageData[],
-  ) => boolean
-}
-
 export interface RefetchOptions extends ResultOptions {
   cancelRefetch?: boolean
 }
 
-export interface InvalidateQueryFilters<TPageData = unknown>
-  extends QueryFilters,
-    RefetchPageFilters<TPageData> {
+export interface InvalidateQueryFilters extends QueryFilters {
   refetchType?: QueryTypeFilter | 'none'
 }
 
-export interface RefetchQueryFilters<TPageData = unknown>
-  extends QueryFilters,
-    RefetchPageFilters<TPageData> {}
+export interface RefetchQueryFilters extends QueryFilters {}
 
-export interface ResetQueryFilters<TPageData = unknown>
-  extends QueryFilters,
-    RefetchPageFilters<TPageData> {}
+export interface ResetQueryFilters extends QueryFilters {}
 
 export interface InvalidateOptions extends RefetchOptions {}
 export interface ResetOptions extends RefetchOptions {}
@@ -409,8 +395,8 @@ export interface QueryObserverBaseResult<
   isRefetching: boolean
   isStale: boolean
   isSuccess: boolean
-  refetch: <TPageData>(
-    options?: RefetchOptions & RefetchQueryFilters<TPageData>,
+  refetch: (
+    options?: RefetchOptions,
   ) => Promise<QueryObserverResult<TData, TError>>
   status: QueryStatus
   fetchStatus: FetchStatus
