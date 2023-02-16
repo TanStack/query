@@ -40,9 +40,9 @@ describe('queryObserver', () => {
     await sleep(1)
     unsubscribe()
     expect(results.length).toBe(4)
-    expect(results[0]).toMatchObject({ data: undefined, status: 'loading' })
+    expect(results[0]).toMatchObject({ data: undefined, status: 'pending' })
     expect(results[1]).toMatchObject({ data: 1, status: 'success' })
-    expect(results[2]).toMatchObject({ data: undefined, status: 'loading' })
+    expect(results[2]).toMatchObject({ data: undefined, status: 'pending' })
     expect(results[3]).toMatchObject({ data: 2, status: 'success' })
   })
 
@@ -142,7 +142,7 @@ describe('queryObserver', () => {
     expect(count).toBe(2)
     expect(results.length).toBe(5)
     expect(results[0]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       isFetching: true,
       data: undefined,
     })
@@ -197,7 +197,7 @@ describe('queryObserver', () => {
     expect(count).toBe(1)
     expect(results.length).toBe(4)
     expect(results[0]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       isFetching: true,
       data: undefined,
     })
@@ -257,7 +257,7 @@ describe('queryObserver', () => {
     await observer.refetch()
     unsubscribe()
     expect(results[0]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       isFetching: true,
       data: undefined,
     })
@@ -307,7 +307,7 @@ describe('queryObserver', () => {
     unsubscribe()
 
     expect(results[0]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       isFetching: true,
       data: undefined,
       error: null,
@@ -476,7 +476,7 @@ describe('queryObserver', () => {
     expect(count).toBe(2)
   })
 
-  test('uses placeholderData as non-cache data when loading a query with no data', async () => {
+  test('uses placeholderData as non-cache data when pending a query with no data', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,

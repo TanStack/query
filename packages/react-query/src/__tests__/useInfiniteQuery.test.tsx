@@ -82,6 +82,7 @@ describe('useInfiniteQuery', () => {
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
       isLoading: true,
+      isPending: true,
       isInitialLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
@@ -90,7 +91,7 @@ describe('useInfiniteQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'fetching',
     })
 
@@ -114,6 +115,7 @@ describe('useInfiniteQuery', () => {
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
       isLoading: false,
+      isPending: false,
       isInitialLoading: false,
       isLoadingError: false,
       isPlaceholderData: false,
@@ -693,94 +695,6 @@ describe('useInfiniteQuery', () => {
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
       isRefetching: false,
-    })
-  })
-
-  it('should be able to refetch only specific pages when refetchPages is provided', async () => {
-    const key = queryKey()
-    const states: UseInfiniteQueryResult<number>[] = []
-
-    function Page() {
-      const multiplier = React.useRef(1)
-      const state = useInfiniteQuery({
-        queryKey: key,
-        queryFn: async ({ pageParam = 10 }) => {
-          await sleep(10)
-          return Number(pageParam) * multiplier.current
-        },
-
-        getNextPageParam: (lastPage) => lastPage + 1,
-        notifyOnChangeProps: 'all',
-      })
-
-      states.push(state)
-
-      return (
-        <div>
-          <button onClick={() => state.fetchNextPage()}>fetchNextPage</button>
-          <button
-            onClick={() => {
-              multiplier.current = 2
-              state.refetch({
-                refetchPage: (_, index) => index === 0,
-              })
-            }}
-          >
-            refetchPage
-          </button>
-          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
-          <div>isFetching: {String(state.isFetching)}</div>
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <Page />)
-
-    await waitFor(() => rendered.getByText('data: 10'))
-    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
-
-    await waitFor(() => rendered.getByText('data: 10,11'))
-    fireEvent.click(rendered.getByRole('button', { name: /refetchPage/i }))
-
-    await waitFor(() => rendered.getByText('data: 20,11'))
-    await waitFor(() => rendered.getByText('isFetching: false'))
-    await waitFor(() => expect(states.length).toBe(6))
-
-    // Initial fetch
-    expect(states[0]).toMatchObject({
-      data: undefined,
-      isFetching: true,
-      isFetchingNextPage: false,
-    })
-    // Initial fetch done
-    expect(states[1]).toMatchObject({
-      data: { pages: [10] },
-      isFetching: false,
-      isFetchingNextPage: false,
-    })
-    // Fetch next page
-    expect(states[2]).toMatchObject({
-      data: { pages: [10] },
-      isFetching: true,
-      isFetchingNextPage: true,
-    })
-    // Fetch next page done
-    expect(states[3]).toMatchObject({
-      data: { pages: [10, 11] },
-      isFetching: false,
-      isFetchingNextPage: false,
-    })
-    // Refetch
-    expect(states[4]).toMatchObject({
-      data: { pages: [10, 11] },
-      isFetching: true,
-      isFetchingNextPage: false,
-    })
-    // Refetch done, only page one has been refetched and multiplied
-    expect(states[5]).toMatchObject({
-      data: { pages: [20, 11] },
-      isFetching: false,
-      isFetchingNextPage: false,
     })
   })
 
@@ -1509,7 +1423,7 @@ describe('useInfiniteQuery', () => {
       return (
         <div>
           <h1>Pagination</h1>
-          {status === 'loading' ? (
+          {status === 'pending' ? (
             'Loading...'
           ) : status === 'error' ? (
             <span>Error: {error.message}</span>
@@ -1637,7 +1551,7 @@ describe('useInfiniteQuery', () => {
       return (
         <div>
           <h1>Pagination</h1>
-          {status === 'loading' ? (
+          {status === 'pending' ? (
             'Loading...'
           ) : status === 'error' ? (
             <span>Error: {error.message}</span>

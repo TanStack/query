@@ -1,7 +1,7 @@
 module.exports = ({ root, jscodeshift }) => {
   const findImportIdentifierOf = (importSpecifiers, identifier) => {
     const specifier = importSpecifiers
-      .filter(node => node.value.imported.name === identifier)
+      .filter((node) => node.value.imported.name === identifier)
       .paths()
 
     if (specifier.length > 0) {
@@ -20,7 +20,7 @@ module.exports = ({ root, jscodeshift }) => {
       })
       .find(jscodeshift.ImportSpecifier, {})
 
-  const locateImports = identifiers => {
+  const locateImports = (identifiers) => {
     const findNamespaceImportIdentifier = () => {
       const specifier = root
         .find(jscodeshift.ImportDeclaration, {
@@ -59,7 +59,7 @@ module.exports = ({ root, jscodeshift }) => {
     for (const identifier of identifiers) {
       identifierMap[identifier] = findImportIdentifierOf(
         importSpecifiers,
-        identifier
+        identifier,
       )
     }
 
@@ -81,21 +81,21 @@ module.exports = ({ root, jscodeshift }) => {
         },
       })
 
-  const findQueryClientIdentifiers = importIdentifiers =>
+  const findQueryClientIdentifiers = (importIdentifiers) =>
     root
       .find(jscodeshift.VariableDeclarator, {})
-      .filter(node => {
+      .filter((node) => {
         if (node.value.init) {
           const initializer = node.value.init
 
           return (
             isClassInstantiationOf(
               initializer,
-              getSelectorByImports(importIdentifiers, 'QueryClient')
+              getSelectorByImports(importIdentifiers, 'QueryClient'),
             ) ||
             isFunctionCallOf(
               initializer,
-              getSelectorByImports(importIdentifiers, 'useQueryClient')
+              getSelectorByImports(importIdentifiers, 'useQueryClient'),
             )
           )
         }
@@ -103,18 +103,18 @@ module.exports = ({ root, jscodeshift }) => {
         return false
       })
       .paths()
-      .map(node => node.value.id.name)
+      .map((node) => node.value.id.name)
 
-  const isCallExpression = node =>
+  const isCallExpression = (node) =>
     jscodeshift.match(node, { type: jscodeshift.CallExpression.name })
 
-  const isIdentifier = node =>
+  const isIdentifier = (node) =>
     jscodeshift.match(node, { type: jscodeshift.Identifier.name })
 
-  const isMemberExpression = node =>
+  const isMemberExpression = (node) =>
     jscodeshift.match(node, { type: jscodeshift.MemberExpression.name })
 
-  const isNewExpression = node =>
+  const isNewExpression = (node) =>
     jscodeshift.match(node, { type: jscodeshift.NewExpression.name })
 
   const isClassInstantiationOf = (node, selector) => {

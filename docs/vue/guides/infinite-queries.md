@@ -22,7 +22,7 @@ const {
   hasNextPage,
   isFetching,
   isFetchingNextPage,
-  isLoading,
+  isPending,
   isError,
 } = useInfiniteQuery({
   queryKey: ['projects'],
@@ -32,7 +32,7 @@ const {
 </script>
 
 <template>
-  <span v-if="isLoading">Loading...</span>
+  <span v-if="isPending">Loading...</span>
   <span v-else-if="isError">Error: {{ error.message }}</span>
   <div v-else-if="data">
     <span v-if="isFetching && !isFetchingNextPage">Fetching...</span>

@@ -90,7 +90,7 @@ export function createBaseQuery<
             unsubscribe = createClientSubscriber(() => refetch())
           }
         }
-        if (!state.isInitialLoading) {
+        if (!state.isLoading) {
           resolve(state)
         }
       })

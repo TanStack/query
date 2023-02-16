@@ -34,12 +34,12 @@ describe('useQuery', () => {
     )
   })
 
-  test('should return loading status initially', () => {
+  test('should return pending status initially', () => {
     const query = useQuery({ queryKey: ['key1'], queryFn: simpleFetcher })
 
     expect(query).toMatchObject({
-      status: { value: 'loading' },
-      isLoading: { value: true },
+      status: { value: 'pending' },
+      isPending: { value: true },
       isFetching: { value: true },
       isStale: { value: true },
     })
@@ -56,7 +56,7 @@ describe('useQuery', () => {
     expect(query).toMatchObject({
       status: { value: 'success' },
       data: { value: 'result2' },
-      isLoading: { value: false },
+      isPending: { value: false },
       isFetching: { value: false },
       isFetched: { value: true },
       isSuccess: { value: true },
@@ -75,7 +75,7 @@ describe('useQuery', () => {
     expect(query).toMatchObject({
       status: { value: 'success' },
       data: { value: 'result31' },
-      isLoading: { value: false },
+      isPending: { value: false },
       isFetching: { value: false },
       isFetched: { value: true },
       isSuccess: { value: true },
@@ -94,7 +94,7 @@ describe('useQuery', () => {
     expect(query).toMatchObject({
       status: { value: 'success' },
       data: { value: 'result32' },
-      isLoading: { value: false },
+      isPending: { value: false },
       isFetching: { value: false },
       isFetched: { value: true },
       isSuccess: { value: true },
@@ -113,7 +113,7 @@ describe('useQuery', () => {
       status: { value: 'error' },
       data: { value: undefined },
       error: { value: { message: 'Some error' } },
-      isLoading: { value: false },
+      isPending: { value: false },
       isFetching: { value: false },
       isFetched: { value: true },
       isError: { value: true },
@@ -160,7 +160,7 @@ describe('useQuery', () => {
     await flushPromises()
 
     expect(query).toMatchObject({
-      status: { value: 'loading' },
+      status: { value: 'pending' },
       data: { value: undefined },
     })
 
@@ -243,15 +243,15 @@ describe('useQuery', () => {
       queryFn: simpleFetcher,
     })
 
-    expect(status.value).toStrictEqual('loading')
+    expect(status.value).toStrictEqual('pending')
 
     await flushPromises()
 
-    expect(status.value).toStrictEqual('loading')
+    expect(status.value).toStrictEqual('pending')
 
     await flushPromises()
 
-    expect(status.value).toStrictEqual('loading')
+    expect(status.value).toStrictEqual('pending')
   })
 
   describe('suspense', () => {

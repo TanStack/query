@@ -56,7 +56,7 @@ describe('Discriminated union return type', () => {
     })
   })
 
-  it('data should be undefined when query is loading', () => {
+  it('data should be undefined when query is pending', () => {
     doNotExecute(() => {
       const query = reactive(
         useInfiniteQuery({
@@ -65,7 +65,7 @@ describe('Discriminated union return type', () => {
         }),
       )
 
-      if (query.isLoading) {
+      if (query.isPending) {
         const result: Expect<Equal<undefined, typeof query.data>> = true
         return result
       }

@@ -66,7 +66,7 @@ function Projects() {
     getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   })
 
-  return status === 'loading' ? (
+  return status === 'pending' ? (
     <p>Loading...</p>
   ) : status === 'error' ? (
     <p>Error: {error.message}</p>
@@ -102,33 +102,6 @@ function Projects() {
 ## What happens when an infinite query needs to be refetched?
 
 When an infinite query becomes `stale` and needs to be refetched, each group is fetched `sequentially`, starting from the first one. This ensures that even if the underlying data is mutated, we're not using stale cursors and potentially getting duplicates or skipping records. If an infinite query's results are ever removed from the queryCache, the pagination restarts at the initial state with only the initial group being requested.
-
-### refetchPage
-
-If you only want to actively refetch a subset of all pages, you can pass the `refetchPage` function to `refetch` returned from `useInfiniteQuery`.
-
-[//]: # 'Example2'
-
-```tsx
-const { refetch } = useInfiniteQuery({
-  queryKey: ['projects'],
-  queryFn: fetchProjects,
-  getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-})
-
-// only refetch the first page
-refetch({ refetchPage: (page, index) => index === 0 })
-```
-
-[//]: # 'Example2'
-
-You can also pass this function as part of the 2nd argument (`queryFilters`) to [queryClient.refetchQueries](../reference/QueryClient#queryclientrefetchqueries), [queryClient.invalidateQueries](../reference/QueryClient#queryclientinvalidatequeries) or [queryClient.resetQueries](../reference/QueryClient#queryclientresetqueries).
-
-**Signature**
-
-- `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
-
-The function is executed for each page, and only pages where this function returns `true` will be refetched.
 
 ## What if I need to pass custom information to my query function?
 
@@ -231,3 +204,29 @@ queryClient.setQueryData(['projects'], (data) => ({
 [//]: # 'Example7'
 
 Make sure to keep the same data structure of pages and pageParams!
+
+[//]: # 'Example8'
+
+## What if I want to limit the number of pages?
+
+In some use cases you may want to limit the number of pages stored in the query data to improve the performance and UX:
+
+- when the user can load a large number of pages (memory usage)
+- when you have to refetch an infinite query that contains dozens of pages (network usage: all the pages are sequentially fetched)
+
+The solution is to use an "Eternal Query": a scalable infinite query.
+This is made possible by using the `maxPages` option in conjunction with `getNextPageParam` and `getPreviousPageParam` to allow fetching pages when needed in both directions.
+
+In the following example only 3 pages are kept in the query data pages array. If a refetch is needed, only 3 pages will be refetched sequentially.
+
+[//]: # 'Example9'
+
+```tsx
+useInfiniteQuery({
+  queryKey: ['projects'],
+  queryFn: fetchProjects,
+  getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+  getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
+  maxPages: 3,
+})
+```

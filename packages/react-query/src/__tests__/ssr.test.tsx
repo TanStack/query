@@ -34,7 +34,7 @@ describe('Server Side Rendering', () => {
       </QueryClientProvider>,
     )
 
-    expect(markup).toContain('status loading')
+    expect(markup).toContain('status pending')
     expect(queryFn).toHaveBeenCalledTimes(0)
     queryCache.clear()
   })

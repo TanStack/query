@@ -1,4 +1,9 @@
-import type { MutationOptions, MutationStatus, MutationMeta } from './types'
+import type {
+  MutationOptions,
+  MutationStatus,
+  MutationMeta,
+  RegisteredError,
+} from './types'
 import type { MutationCache } from './mutationCache'
 import type { MutationObserver } from './mutationObserver'
 import { notifyManager } from './notifyManager'
@@ -19,7 +24,7 @@ interface MutationConfig<TData, TError, TVariables, TContext> {
 
 export interface MutationState<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > {
@@ -39,8 +44,8 @@ interface FailedAction<TError> {
   error: TError | null
 }
 
-interface LoadingAction<TVariables, TContext> {
-  type: 'loading'
+interface PendingAction<TVariables, TContext> {
+  type: 'pending'
   variables?: TVariables
   context?: TContext
 }
@@ -67,7 +72,7 @@ export type Action<TData, TError, TVariables, TContext> =
   | ContinueAction
   | ErrorAction<TError>
   | FailedAction<TError>
-  | LoadingAction<TVariables, TContext>
+  | PendingAction<TVariables, TContext>
   | PauseAction
   | SuccessAction<TData>
 
@@ -75,7 +80,7 @@ export type Action<TData, TError, TVariables, TContext> =
 
 export class Mutation<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > extends Removable {
@@ -136,7 +141,7 @@ export class Mutation<
 
   protected optionalRemove() {
     if (!this.#observers.length) {
-      if (this.state.status === 'loading') {
+      if (this.state.status === 'pending') {
         this.scheduleGc()
       } else {
         this.#mutationCache.remove(this)
@@ -144,12 +149,8 @@ export class Mutation<
     }
   }
 
-  continue(): Promise<TData> {
-    if (this.#retryer) {
-      this.#retryer.continue()
-      return this.#retryer.promise
-    }
-    return this.execute()
+  continue(): Promise<unknown> {
+    return this.#retryer?.continue() ?? this.execute()
   }
 
   async execute(): Promise<TData> {
@@ -178,10 +179,10 @@ export class Mutation<
       return this.#retryer.promise
     }
 
-    const restored = this.state.status === 'loading'
+    const restored = this.state.status === 'pending'
     try {
       if (!restored) {
-        this.#dispatch({ type: 'loading', variables: this.options.variables! })
+        this.#dispatch({ type: 'pending', variables: this.options.variables! })
         // Notify cache callback
         await this.#mutationCache.config.onMutate?.(
           this.state.variables,
@@ -190,7 +191,7 @@ export class Mutation<
         const context = await this.options.onMutate?.(this.state.variables!)
         if (context !== this.state.context) {
           this.#dispatch({
-            type: 'loading',
+            type: 'pending',
             context,
             variables: this.state.variables,
           })
@@ -271,7 +272,7 @@ export class Mutation<
             ...state,
             isPaused: false,
           }
-        case 'loading':
+        case 'pending':
           return {
             ...state,
             context: action.context,
@@ -280,7 +281,7 @@ export class Mutation<
             failureReason: null,
             error: null,
             isPaused: !canFetch(this.options.networkMode),
-            status: 'loading',
+            status: 'pending',
             variables: action.variables,
           }
         case 'success':

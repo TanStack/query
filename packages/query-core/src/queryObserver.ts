@@ -1,4 +1,4 @@
-import type { DefaultedQueryObserverOptions, RefetchPageFilters } from './types'
+import type { DefaultedQueryObserverOptions, RegisteredError } from './types'
 import {
   isServer,
   isValidTimeout,
@@ -39,7 +39,7 @@ export interface ObserverFetchOptions extends FetchOptions {
 
 export class QueryObserver<
   TQueryFnData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
@@ -256,15 +256,11 @@ export class QueryObserver<
     return this.#currentQuery
   }
 
-  refetch<TPageData>({
-    refetchPage,
-    ...options
-  }: RefetchOptions & RefetchPageFilters<TPageData> = {}): Promise<
+  refetch({ ...options }: RefetchOptions = {}): Promise<
     QueryObserverResult<TData, TError>
   > {
     return this.fetch({
       ...options,
-      meta: { refetchPage },
     })
   }
 
@@ -441,7 +437,7 @@ export class QueryObserver<
           ? 'fetching'
           : 'paused'
         if (!state.dataUpdatedAt) {
-          status = 'loading'
+          status = 'pending'
         }
       }
       if (options._optimisticResults === 'isRestoring') {
@@ -479,7 +475,7 @@ export class QueryObserver<
     if (
       typeof options.placeholderData !== 'undefined' &&
       typeof data === 'undefined' &&
-      status === 'loading'
+      status === 'pending'
     ) {
       let placeholderData
 
@@ -521,16 +517,19 @@ export class QueryObserver<
     }
 
     const isFetching = fetchStatus === 'fetching'
-    const isLoading = status === 'loading'
+    const isPending = status === 'pending'
     const isError = status === 'error'
+
+    const isLoading = isPending && isFetching
 
     const result: QueryObserverBaseResult<TData, TError> = {
       status,
       fetchStatus,
-      isLoading,
+      isPending,
       isSuccess: status === 'success',
       isError,
-      isInitialLoading: isLoading && isFetching,
+      isInitialLoading: isLoading,
+      isLoading,
       data,
       dataUpdatedAt: state.dataUpdatedAt,
       error,
@@ -543,7 +542,7 @@ export class QueryObserver<
         state.dataUpdateCount > queryInitialState.dataUpdateCount ||
         state.errorUpdateCount > queryInitialState.errorUpdateCount,
       isFetching,
-      isRefetching: isFetching && !isLoading,
+      isRefetching: isFetching && !isPending,
       isLoadingError: isError && state.dataUpdatedAt === 0,
       isPaused: fetchStatus === 'paused',
       isPlaceholderData,

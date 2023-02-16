@@ -224,10 +224,10 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      if (state.isLoading) {
+      if (state.isPending) {
         expectType<undefined>(state.data)
         expectType<null>(state.error)
-        return <span>loading</span>
+        return <span>pending</span>
       }
 
       if (state.isLoadingError) {
@@ -260,8 +260,9 @@ describe('useQuery', () => {
       isFetchedAfterMount: false,
       isFetching: true,
       isPaused: false,
-      isLoading: true,
+      isPending: true,
       isInitialLoading: true,
+      isLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
       isRefetchError: false,
@@ -269,7 +270,7 @@ describe('useQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'fetching',
     })
 
@@ -286,8 +287,9 @@ describe('useQuery', () => {
       isFetchedAfterMount: true,
       isFetching: false,
       isPaused: false,
-      isLoading: false,
+      isPending: false,
       isInitialLoading: false,
+      isLoading: false,
       isLoadingError: false,
       isPlaceholderData: false,
       isRefetchError: false,
@@ -342,8 +344,9 @@ describe('useQuery', () => {
       isFetchedAfterMount: false,
       isFetching: true,
       isPaused: false,
-      isLoading: true,
+      isPending: true,
       isInitialLoading: true,
+      isLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
       isRefetchError: false,
@@ -351,7 +354,7 @@ describe('useQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'fetching',
     })
 
@@ -368,8 +371,9 @@ describe('useQuery', () => {
       isFetchedAfterMount: false,
       isFetching: true,
       isPaused: false,
-      isLoading: true,
+      isPending: true,
       isInitialLoading: true,
+      isLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
       isRefetchError: false,
@@ -377,7 +381,7 @@ describe('useQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'fetching',
     })
 
@@ -394,8 +398,9 @@ describe('useQuery', () => {
       isFetchedAfterMount: true,
       isFetching: false,
       isPaused: false,
-      isLoading: false,
+      isPending: false,
       isInitialLoading: false,
+      isLoading: false,
       isLoadingError: true,
       isPlaceholderData: false,
       isRefetchError: false,
@@ -502,7 +507,7 @@ describe('useQuery', () => {
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     await rendered.findByText('data: data2')
 
-    expect(states.length).toBe(3) //loading, success, success after refetch
+    expect(states.length).toBe(3) //pending, success, success after refetch
     expect(count).toBe(2)
     expect(onSuccess).toHaveBeenCalledTimes(2)
   })
@@ -628,12 +633,12 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    rendered.getByText('status: loading, fetchStatus: fetching')
+    rendered.getByText('status: pending, fetchStatus: fetching')
 
     await queryClient.cancelQueries({ queryKey: key })
     // query cancellation will reset the query to it's initial state
     await waitFor(() =>
-      rendered.getByText('status: loading, fetchStatus: idle'),
+      rendered.getByText('status: pending, fetchStatus: idle'),
     )
     expect(onError).not.toHaveBeenCalled()
   })
@@ -866,25 +871,25 @@ describe('useQuery', () => {
     expect(states.length).toBe(4)
     // First load
     expect(states[0]).toMatchObject({
-      isLoading: true,
+      isPending: true,
       isSuccess: false,
       isFetching: true,
     })
     // First success
     expect(states[1]).toMatchObject({
-      isLoading: false,
+      isPending: false,
       isSuccess: true,
       isFetching: false,
     })
     // Switch, goes to fetching
     expect(states[2]).toMatchObject({
-      isLoading: false,
+      isPending: false,
       isSuccess: true,
       isFetching: true,
     })
     // Second success
     expect(states[3]).toMatchObject({
-      isLoading: false,
+      isPending: false,
       isSuccess: true,
       isFetching: false,
     })
@@ -943,15 +948,15 @@ describe('useQuery', () => {
 
     expect(states.length).toBe(5)
     // First load
-    expect(states[0]).toMatchObject({ isLoading: true, isSuccess: false })
+    expect(states[0]).toMatchObject({ isPending: true, isSuccess: false })
     // First success
-    expect(states[1]).toMatchObject({ isLoading: false, isSuccess: true })
+    expect(states[1]).toMatchObject({ isPending: false, isSuccess: true })
     // Remove
-    expect(states[2]).toMatchObject({ isLoading: true, isSuccess: false })
+    expect(states[2]).toMatchObject({ isPending: true, isSuccess: false })
     // Hook state update
-    expect(states[3]).toMatchObject({ isLoading: true, isSuccess: false })
+    expect(states[3]).toMatchObject({ isPending: true, isSuccess: false })
     // Second success
-    expect(states[4]).toMatchObject({ isLoading: false, isSuccess: true })
+    expect(states[4]).toMatchObject({ isPending: false, isSuccess: true })
   })
 
   it('should fetch when refetchOnMount is false and nothing has been fetched yet', async () => {
@@ -1121,9 +1126,8 @@ describe('useQuery', () => {
 
     expect(states.length).toBe(2)
 
-    expect(states[0]).toMatchObject({ status: 'loading', data: undefined })
-    // expect(states[1]).toMatchObject({ status: 'error', error })
-    expect(states[1]).toMatchObject({ status: 'error', error: error })
+    expect(states[0]).toMatchObject({ status: 'pending', data: undefined })
+    expect(states[1]).toMatchObject({ status: 'error', error })
   })
 
   it('should not re-run a stable select when it re-renders if selector throws an error', async () => {
@@ -1277,11 +1281,11 @@ describe('useQuery', () => {
 
     expect(states.length).toBe(4)
     // Initial
-    expect(states[0]).toMatchObject({ status: 'loading', data: undefined })
+    expect(states[0]).toMatchObject({ status: 'pending', data: undefined })
     // Fetched
     expect(states[1]).toMatchObject({ status: 'success', data: 1 })
     // Remove + Hook state update, batched
-    expect(states[2]).toMatchObject({ status: 'loading', data: undefined })
+    expect(states[2]).toMatchObject({ status: 'pending', data: undefined })
     // Fetched
     expect(states[3]).toMatchObject({ status: 'success', data: 2 })
   })
@@ -1763,7 +1767,7 @@ describe('useQuery', () => {
     expect(states[0]).toMatchObject({
       data: undefined,
       isFetching: true,
-      status: 'loading',
+      status: 'pending',
       error: null,
       isPlaceholderData: false,
     })
@@ -2324,7 +2328,7 @@ describe('useQuery', () => {
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
       data: undefined,
-      status: 'loading',
+      status: 'pending',
       isFetching: true,
     })
     expect(states[1]).toMatchObject({
@@ -2497,7 +2501,7 @@ describe('useQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/170
-  it('should start with status loading, fetchStatus idle if enabled is false', async () => {
+  it('should start with status pending, fetchStatus idle if enabled is false', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
 
@@ -2525,13 +2529,13 @@ describe('useQuery', () => {
 
     // use "act" to wait for state update and prevent console warning
 
-    rendered.getByText('First Status: loading, idle')
-    await waitFor(() => rendered.getByText('Second Status: loading, fetching'))
+    rendered.getByText('First Status: pending, idle')
+    await waitFor(() => rendered.getByText('Second Status: pending, fetching'))
     await waitFor(() => rendered.getByText('Second Status: success, idle'))
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/144
-  it('should be in "loading" state by default', async () => {
+  it('should be in "pending" state by default', async () => {
     const key = queryKey()
 
     function Page() {
@@ -2548,7 +2552,7 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    rendered.getByText('status: loading')
+    rendered.getByText('status: pending')
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/147
@@ -3375,7 +3379,7 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('loading'))
+    await waitFor(() => rendered.getByText('pending'))
     await waitFor(() => rendered.getByText('error'))
 
     // query should fail `retry + 1` times, since first time isn't a "retry"
@@ -3418,7 +3422,7 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('loading'))
+    await waitFor(() => rendered.getByText('pending'))
     await waitFor(() => rendered.getByText('error'))
 
     await waitFor(() => rendered.getByText('Failed 2 times'))
@@ -3503,7 +3507,7 @@ describe('useQuery', () => {
     // The query should display the first error result
     await waitFor(() => rendered.getByText('failureCount 1'))
     await waitFor(() => rendered.getByText('failureReason fetching error 1'))
-    await waitFor(() => rendered.getByText('status loading'))
+    await waitFor(() => rendered.getByText('status pending'))
     await waitFor(() => rendered.getByText('error null'))
 
     // Check if the query really paused
@@ -3817,19 +3821,23 @@ describe('useQuery', () => {
     function Page() {
       const result = useQuery({
         queryKey: key,
-        queryFn: () => 'serverData',
-        initialData: 'data',
+        queryFn: async () => {
+          await sleep(10)
+          return 'serverData'
+        },
+        initialData: 'initialData',
       })
       results.push(result)
-      return null
+      return <div>data: {result.data}</div>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
+    await waitFor(() => rendered.getByText('data: initialData'))
+    await waitFor(() => rendered.getByText('data: serverData'))
 
     expect(results.length).toBe(2)
-    expect(results[0]).toMatchObject({ data: 'data', isFetching: true })
+    expect(results[0]).toMatchObject({ data: 'initialData', isFetching: true })
     expect(results[1]).toMatchObject({ data: 'serverData', isFetching: false })
   })
 
@@ -3983,7 +3991,7 @@ describe('useQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/360
-  test('should init to status:loading, fetchStatus:idle when enabled is false', async () => {
+  test('should init to status:pending, fetchStatus:idle when enabled is false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -4004,7 +4012,7 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('status: loading, idle'))
+    await waitFor(() => rendered.getByText('status: pending, idle'))
   })
 
   test('should not schedule garbage collection, if gcTimeout is set to `Infinity`', async () => {
@@ -4095,7 +4103,7 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('status loading'))
+    await waitFor(() => rendered.getByText('status pending'))
     await waitFor(() => rendered.getByText('status success'))
     fireEvent.click(rendered.getByText('refetch'))
     await waitFor(() => rendered.getByText('isFetching true'))
@@ -4168,7 +4176,7 @@ describe('useQuery', () => {
 
     expect(states).toMatchObject([
       {
-        status: 'loading',
+        status: 'pending',
         isFetching: true,
         data: undefined,
       },
@@ -4226,7 +4234,7 @@ describe('useQuery', () => {
 
     expect(states).toMatchObject([
       {
-        status: 'loading',
+        status: 'pending',
         isFetching: true,
         data: undefined,
       },
@@ -4709,7 +4717,7 @@ describe('useQuery', () => {
 
     expect(queryCache.find({ queryKey: [key, 1] })?.state).toMatchObject({
       data: undefined,
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'idle',
     })
 
@@ -4721,7 +4729,7 @@ describe('useQuery', () => {
 
     expect(queryCache.find({ queryKey: [key, 3] })?.state).toMatchObject({
       data: undefined,
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'idle',
     })
   })
@@ -4757,17 +4765,17 @@ describe('useQuery', () => {
     expect(states.length).toBe(4)
     // Load query 1
     expect(states[0]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       error: null,
     })
     // Load query 2
     expect(states[1]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       error: null,
     })
     // Load query 1
     expect(states[2]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       error: null,
     })
     // Loaded query 1
@@ -4819,28 +4827,28 @@ describe('useQuery', () => {
 
     expect(states[0]).toMatchObject({
       data: undefined,
-      isLoading: true,
+      isPending: true,
       isFetching: true,
       isSuccess: false,
       isStale: true,
     })
     expect(states[1]).toMatchObject({
       data: 1,
-      isLoading: false,
+      isPending: false,
       isFetching: false,
       isSuccess: true,
       isStale: false,
     })
     expect(states[2]).toMatchObject({
       data: undefined,
-      isLoading: true,
+      isPending: true,
       isFetching: true,
       isSuccess: false,
       isStale: true,
     })
     expect(states[3]).toMatchObject({
       data: 2,
-      isLoading: false,
+      isPending: false,
       isFetching: false,
       isSuccess: true,
       isStale: false,
@@ -4895,28 +4903,28 @@ describe('useQuery', () => {
 
     expect(states[0]).toMatchObject({
       data: undefined,
-      isLoading: true,
+      isPending: true,
       isFetching: false,
       isSuccess: false,
       isStale: true,
     })
     expect(states[1]).toMatchObject({
       data: undefined,
-      isLoading: true,
+      isPending: true,
       isFetching: true,
       isSuccess: false,
       isStale: true,
     })
     expect(states[2]).toMatchObject({
       data: 1,
-      isLoading: false,
+      isPending: false,
       isFetching: false,
       isSuccess: true,
       isStale: false,
     })
     expect(states[3]).toMatchObject({
       data: undefined,
-      isLoading: true,
+      isPending: true,
       isFetching: false,
       isSuccess: false,
       isStale: true,
@@ -4958,7 +4966,7 @@ describe('useQuery', () => {
     })
 
     function Page({ enabled }: { enabled: boolean }) {
-      const { error, isLoading } = useQuery({
+      const { error, isPending } = useQuery({
         queryKey: ['key'],
         queryFn,
         enabled,
@@ -4968,8 +4976,8 @@ describe('useQuery', () => {
         refetchOnWindowFocus: false,
       })
 
-      if (isLoading) {
-        return <div>status: loading</div>
+      if (isPending) {
+        return <div>status: pending</div>
       }
       if (error instanceof Error) {
         return <div>error</div>
@@ -4993,7 +5001,7 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <App />)
 
     // initial state check
-    rendered.getByText('status: loading')
+    rendered.getByText('status: pending')
 
     // // render error state component
     await waitFor(() => rendered.getByText('error'))
@@ -5011,7 +5019,7 @@ describe('useQuery', () => {
 
   it('should refetch when query key changed when previous status is error', async () => {
     function Page({ id }: { id: number }) {
-      const { error, isLoading } = useQuery({
+      const { error, isPending } = useQuery({
         queryKey: [id],
         queryFn: async () => {
           await sleep(10)
@@ -5027,8 +5035,8 @@ describe('useQuery', () => {
         refetchOnWindowFocus: false,
       })
 
-      if (isLoading) {
-        return <div>status: loading</div>
+      if (isPending) {
+        return <div>status: pending</div>
       }
       if (error instanceof Error) {
         return <div>error</div>
@@ -5052,7 +5060,7 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <App />)
 
     // initial state check
-    rendered.getByText('status: loading')
+    rendered.getByText('status: pending')
 
     // render error state component
     await waitFor(() => rendered.getByText('error'))
@@ -5121,7 +5129,7 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('error'))
   })
 
-  it('should have no error in loading state when refetching after error occurred', async () => {
+  it('should have no error in pending state when refetching after error occurred', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
     const error = new Error('oops')
@@ -5144,8 +5152,8 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      if (state.isLoading) {
-        return <div>status: loading</div>
+      if (state.isPending) {
+        return <div>status: pending</div>
       }
       if (state.error instanceof Error) {
         return (
@@ -5168,7 +5176,7 @@ describe('useQuery', () => {
     await waitFor(() => expect(states.length).toBe(4))
 
     expect(states[0]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       data: undefined,
       error: null,
     })
@@ -5180,7 +5188,7 @@ describe('useQuery', () => {
     })
 
     expect(states[2]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       data: undefined,
       error: null,
     })
@@ -5224,7 +5232,7 @@ describe('useQuery', () => {
 
       const rendered = renderWithClient(queryClient, <Page />)
 
-      await waitFor(() => rendered.getByText('status: loading, isPaused: true'))
+      await waitFor(() => rendered.getByText('status: pending, isPaused: true'))
 
       onlineMock.mockReturnValue(true)
       window.dispatchEvent(new Event('online'))
@@ -5393,7 +5401,7 @@ describe('useQuery', () => {
       const rendered = renderWithClient(queryClient, <Page />)
 
       await waitFor(() =>
-        rendered.getByText('status: loading, fetchStatus: paused'),
+        rendered.getByText('status: pending, fetchStatus: paused'),
       )
 
       fireEvent.click(rendered.getByRole('button', { name: /invalidate/i }))
@@ -5402,7 +5410,7 @@ describe('useQuery', () => {
 
       // invalidation should not trigger a refetch
       await waitFor(() =>
-        rendered.getByText('status: loading, fetchStatus: paused'),
+        rendered.getByText('status: pending, fetchStatus: paused'),
       )
 
       expect(count).toBe(0)
@@ -5565,7 +5573,7 @@ describe('useQuery', () => {
 
       await waitFor(() =>
         rendered.getByText(
-          'status: loading, fetchStatus: fetching, failureCount: 1',
+          'status: pending, fetchStatus: fetching, failureCount: 1',
         ),
       )
       await waitFor(() => rendered.getByText('failureReason: failed1'))
@@ -5576,7 +5584,7 @@ describe('useQuery', () => {
 
       await waitFor(() =>
         rendered.getByText(
-          'status: loading, fetchStatus: paused, failureCount: 1',
+          'status: pending, fetchStatus: paused, failureCount: 1',
         ),
       )
       await waitFor(() => rendered.getByText('failureReason: failed1'))
@@ -5636,7 +5644,7 @@ describe('useQuery', () => {
       const rendered = renderWithClient(queryClient, <Page />)
 
       await waitFor(() =>
-        rendered.getByText('status: loading, fetchStatus: paused'),
+        rendered.getByText('status: pending, fetchStatus: paused'),
       )
 
       fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
@@ -5693,13 +5701,13 @@ describe('useQuery', () => {
       const rendered = renderWithClient(queryClient, <Page />)
 
       await waitFor(() =>
-        rendered.getByText('status: loading, fetchStatus: paused'),
+        rendered.getByText('status: pending, fetchStatus: paused'),
       )
 
       fireEvent.click(rendered.getByRole('button', { name: /cancel/i }))
 
       await waitFor(() =>
-        rendered.getByText('status: loading, fetchStatus: idle'),
+        rendered.getByText('status: pending, fetchStatus: idle'),
       )
 
       expect(count).toBe(0)
@@ -5710,7 +5718,7 @@ describe('useQuery', () => {
       await sleep(15)
 
       await waitFor(() =>
-        rendered.getByText('status: loading, fetchStatus: idle'),
+        rendered.getByText('status: pending, fetchStatus: idle'),
       )
 
       expect(count).toBe(0)
@@ -5913,7 +5921,7 @@ describe('useQuery', () => {
 
       await waitFor(() =>
         rendered.getByText(
-          'status: loading, fetchStatus: paused, failureCount: 1',
+          'status: pending, fetchStatus: paused, failureCount: 1',
         ),
       )
       await waitFor(() => rendered.getByText('failureReason: failed1'))

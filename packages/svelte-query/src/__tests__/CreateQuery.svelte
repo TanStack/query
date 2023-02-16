@@ -2,7 +2,7 @@
   import { createQuery, QueryClient, type CreateQueryOptions } from '../index'
   import { setQueryClientContext } from '../context'
 
-  export let options: CreateQueryOptions
+  export let options: CreateQueryOptions<any>
 
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
@@ -10,7 +10,7 @@
   const query = createQuery(options)
 </script>
 
-{#if $query.isLoading}
+{#if $query.isPending}
   <p>Loading</p>
 {:else if $query.isError}
   <p>Error</p>

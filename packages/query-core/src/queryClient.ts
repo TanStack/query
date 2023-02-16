@@ -23,8 +23,8 @@ import type {
   RefetchOptions,
   RefetchQueryFilters,
   ResetOptions,
-  ResetQueryFilters,
   SetDataOptions,
+  RegisteredError,
 } from './types'
 import type { QueryState } from './query'
 import { QueryCache } from './queryCache'
@@ -177,7 +177,7 @@ export class QueryClient {
     )
   }
 
-  getQueryState<TQueryFnData = unknown, TError = Error>(
+  getQueryState<TQueryFnData = unknown, TError = RegisteredError>(
     queryKey: QueryKey,
   ): QueryState<TQueryFnData, TError> | undefined {
     return this.#queryCache.find<TQueryFnData, TError>({ queryKey })?.state
@@ -192,13 +192,10 @@ export class QueryClient {
     })
   }
 
-  resetQueries<TPageData = unknown>(
-    filters?: ResetQueryFilters<TPageData>,
-    options?: ResetOptions,
-  ): Promise<void> {
+  resetQueries(filters?: QueryFilters, options?: ResetOptions): Promise<void> {
     const queryCache = this.#queryCache
 
-    const refetchFilters: RefetchQueryFilters<TPageData> = {
+    const refetchFilters: RefetchQueryFilters = {
       type: 'active',
       ...filters,
     }
@@ -228,8 +225,8 @@ export class QueryClient {
     return Promise.all(promises).then(noop).catch(noop)
   }
 
-  invalidateQueries<TPageData = unknown>(
-    filters: InvalidateQueryFilters<TPageData> = {},
+  invalidateQueries(
+    filters: InvalidateQueryFilters = {},
     options: InvalidateOptions = {},
   ): Promise<void> {
     return notifyManager.batch(() => {
@@ -240,7 +237,7 @@ export class QueryClient {
       if (filters.refetchType === 'none') {
         return Promise.resolve()
       }
-      const refetchFilters: RefetchQueryFilters<TPageData> = {
+      const refetchFilters: RefetchQueryFilters = {
         ...filters,
         type: filters.refetchType ?? filters.type ?? 'active',
       }
@@ -248,8 +245,8 @@ export class QueryClient {
     })
   }
 
-  refetchQueries<TPageData = unknown>(
-    filters: RefetchQueryFilters<TPageData> = {},
+  refetchQueries(
+    filters: RefetchQueryFilters = {},
     options?: RefetchOptions,
   ): Promise<void> {
     const promises = notifyManager.batch(() =>
@@ -260,7 +257,6 @@ export class QueryClient {
           query.fetch(undefined, {
             ...options,
             cancelRefetch: options?.cancelRefetch ?? true,
-            meta: { refetchPage: filters.refetchPage },
           }),
         ),
     )
@@ -276,7 +272,7 @@ export class QueryClient {
 
   fetchQuery<
     TQueryFnData,
-    TError = Error,
+    TError = RegisteredError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -298,7 +294,7 @@ export class QueryClient {
 
   prefetchQuery<
     TQueryFnData = unknown,
-    TError = Error,
+    TError = RegisteredError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -309,7 +305,7 @@ export class QueryClient {
 
   fetchInfiniteQuery<
     TQueryFnData,
-    TError = Error,
+    TError = RegisteredError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -321,7 +317,7 @@ export class QueryClient {
 
   prefetchInfiniteQuery<
     TQueryFnData,
-    TError = Error,
+    TError = RegisteredError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -330,7 +326,7 @@ export class QueryClient {
     return this.fetchInfiniteQuery(options).then(noop).catch(noop)
   }
 
-  resumePausedMutations(): Promise<void> {
+  resumePausedMutations(): Promise<unknown> {
     return this.#mutationCache.resumePausedMutations()
   }
 
@@ -405,7 +401,7 @@ export class QueryClient {
 
   defaultQueryOptions<
     TQueryFnData = unknown,
-    TError = Error,
+    TError = RegisteredError,
     TData = TQueryFnData,
     TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,

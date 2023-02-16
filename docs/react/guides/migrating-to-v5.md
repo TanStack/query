@@ -167,7 +167,7 @@ const queryClient = new QueryClient({
 
 To make the `useErrorBoundary` option more framework-agnostic and avoid confusion with the established React function prefix "`use`" for hooks and the "ErrorBoundary" component name, it has been renamed to `throwErrors` to more accurately reflect its functionality.
 
-### `Error` is now the default type for errors instead of `unknown`
+### TypeScript: `Error` is now the default type for errors instead of `unknown`
 
 Even though in JavaScript, you can `throw` anything (which makes `unknown` the most correct type), almost always, `Errors` (or subclasses of `Error`) are thrown. This change makes it easier to work with the `error` field in TypeScript for most cases.
 
@@ -184,6 +184,8 @@ useQuery<number, string>({
   },
 })
 ```
+
+For a way to set a different kind of Error globally, see [the TypeScript Guide](../typescript#registering-a-global-error).
 
 ### eslint `prefer-query-object-syntax` rule is removed
 
@@ -255,6 +257,14 @@ const { data } = useQuery(
 )
 ```
 
+### Removed `refetchPage` in favor of `maxPages`
+
+In v4, we introduced the possibility to define the pages to refetch for infinite queries with the `refetchPage` function.
+
+However, refetching all pages might lead to UI inconsistencies. Also, this option is available on e.g. `queryClient.refetchQueries`, but it only does something for infinite queries, not "normal" queries.
+
+The v5 includes a new `maxPages` option for infinite queries to limit the number of pages to store in the query data and to refetch. This new feature handles the use cases initially identified for the `refetchPage` page feature without the related issues.
+
 [//]: # 'FrameworkBreakingChanges'
 
 ## React Query Breaking Changes
@@ -296,4 +306,31 @@ The `Hydrate` component has been renamed to `HydrationBoundary`. The `Hydrate` c
 + </HydrationBoundary>
 ```
 
+### `status: loading` has been changed to `status: pending` and `isLoading` has been changed to `isPending` and `isInitialLoading` has now been renamed to `isLoading`
+
+The `loading` status has been renamed to `pending`, and similarly the derived `isLoading` flag has been renamed to `isPending`.
+
+For mutations as well the `status` has been changed from `loading` to `pending` and the `isLoading` flag has been changed to `isPending`.
+
+Lastly the a new derived `isLoading` flag has been added to the queries that is implemented as `isPending && isFetching`. This means that `isLoading` and `isInitialLoading` have the same thing, but `isInitialLoading` is deprecated now and will be removed in the next major version.
+
+To understand the reasoning behing this change checkout the [v5 roadmap discussion](https://github.com/TanStack/query/discussions/4252).
+
 [//]: # 'FrameworkBreakingChanges'
+
+
+[//]: # 'NewFeatures'
+
+## New Features 🚀
+
+### Eterneral list: scalable infinite query with new maxPages option
+
+Infinite queries are great when infinite scroll or pagination are needed.
+However, the more pages you fetch, the more memory you consume, and this also slows down the query refetching process as all the pages are sequentially refetched.
+
+Version 5 has a new `maxPages` option for infinite queries, which allows developers to limit the number of pages that are stored in the query data and subsequently refetched.
+You can adjust the `maxPages` value according to the UX and refetching performance you want to deliver.
+
+Note that the infinite list must be bi-directional, which requires both `getNextPageParam` and `getPreviousPageParam` to be defined.
+
+[//]: # 'NewFeatures'

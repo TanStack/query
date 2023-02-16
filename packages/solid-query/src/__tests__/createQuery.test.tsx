@@ -243,7 +243,7 @@ describe('createQuery', () => {
         states.push({ ...state })
       })
 
-      if (state.isLoading) {
+      if (state.isPending) {
         expectType<undefined>(state.data)
         expectType<null>(state.error)
       } else if (state.isLoadingError) {
@@ -256,8 +256,8 @@ describe('createQuery', () => {
 
       return (
         <Switch fallback={<span>{state.data}</span>}>
-          <Match when={state.isLoading}>
-            <span>loading</span>
+          <Match when={state.isPending}>
+            <span>pending</span>
           </Match>
           <Match when={state.isLoadingError}>
             <span>{state.error!.message}</span>
@@ -289,8 +289,9 @@ describe('createQuery', () => {
       isFetchedAfterMount: false,
       isFetching: true,
       isPaused: false,
-      isLoading: true,
+      isPending: true,
       isInitialLoading: true,
+      isLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
       isRefetchError: false,
@@ -298,7 +299,7 @@ describe('createQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'fetching',
     })
 
@@ -315,8 +316,9 @@ describe('createQuery', () => {
       isFetchedAfterMount: true,
       isFetching: false,
       isPaused: false,
-      isLoading: false,
+      isPending: false,
       isInitialLoading: false,
+      isLoading: false,
       isLoadingError: false,
       isPlaceholderData: false,
       isRefetchError: false,
@@ -376,8 +378,9 @@ describe('createQuery', () => {
       isFetchedAfterMount: false,
       isFetching: true,
       isPaused: false,
-      isLoading: true,
+      isPending: true,
       isInitialLoading: true,
+      isLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
       isRefetchError: false,
@@ -385,7 +388,7 @@ describe('createQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'fetching',
     })
 
@@ -402,8 +405,9 @@ describe('createQuery', () => {
       isFetchedAfterMount: false,
       isFetching: true,
       isPaused: false,
-      isLoading: true,
+      isPending: true,
       isInitialLoading: true,
+      isLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
       isRefetchError: false,
@@ -411,7 +415,7 @@ describe('createQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'fetching',
     })
 
@@ -428,8 +432,9 @@ describe('createQuery', () => {
       isFetchedAfterMount: true,
       isFetching: false,
       isPaused: false,
-      isLoading: false,
+      isPending: false,
       isInitialLoading: false,
+      isLoading: false,
       isLoadingError: true,
       isPlaceholderData: false,
       isRefetchError: false,
@@ -654,7 +659,7 @@ describe('createQuery', () => {
     await sleep(5)
     await queryClient.cancelQueries({ queryKey: key })
     // query cancellation will reset the query to it's initial state
-    await waitFor(() => screen.getByText('status: loading, fetchStatus: idle'))
+    await waitFor(() => screen.getByText('status: pending, fetchStatus: idle'))
     expect(onError).not.toHaveBeenCalled()
   })
 
@@ -917,25 +922,25 @@ describe('createQuery', () => {
     expect(states.length).toBe(4)
     // First load
     expect(states[0]).toMatchObject({
-      isLoading: true,
+      isPending: true,
       isSuccess: false,
       isFetching: true,
     })
     // First success
     expect(states[1]).toMatchObject({
-      isLoading: false,
+      isPending: false,
       isSuccess: true,
       isFetching: false,
     })
     // Switch, goes to fetching
     expect(states[2]).toMatchObject({
-      isLoading: false,
+      isPending: false,
       isSuccess: true,
       isFetching: true,
     })
     // Second success
     expect(states[3]).toMatchObject({
-      isLoading: false,
+      isPending: false,
       isSuccess: true,
       isFetching: false,
     })
@@ -1155,7 +1160,7 @@ describe('createQuery', () => {
 
     expect(states.length).toBe(2)
 
-    expect(states[0]).toMatchObject({ status: 'loading', data: undefined })
+    expect(states[0]).toMatchObject({ status: 'pending', data: undefined })
     expect(states[1]).toMatchObject({ status: 'error', error })
   })
 
@@ -2157,7 +2162,7 @@ describe('createQuery', () => {
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
       data: undefined,
-      status: 'loading',
+      status: 'pending',
       isFetching: true,
     })
     expect(states[1]).toMatchObject({
@@ -2346,7 +2351,7 @@ describe('createQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/170
-  it('should start with status loading, fetchStatus idle if enabled is false', async () => {
+  it('should start with status pending, fetchStatus idle if enabled is false', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
 
@@ -2381,13 +2386,13 @@ describe('createQuery', () => {
 
     // use "act" to wait for state update and prevent console warning
 
-    screen.getByText('First Status: loading, idle')
-    await waitFor(() => screen.getByText('Second Status: loading, fetching'))
+    screen.getByText('First Status: pending, idle')
+    await waitFor(() => screen.getByText('Second Status: pending, fetching'))
     await waitFor(() => screen.getByText('Second Status: success, idle'))
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/144
-  it('should be in "loading" state by default', async () => {
+  it('should be in "pending" state by default', async () => {
     const key = queryKey()
 
     function Page() {
@@ -2408,7 +2413,7 @@ describe('createQuery', () => {
       </QueryClientProvider>
     ))
 
-    screen.getByText('status: loading')
+    screen.getByText('status: pending')
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/147
@@ -3318,7 +3323,7 @@ describe('createQuery', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('loading'))
+    await waitFor(() => screen.getByText('pending'))
     await waitFor(() => screen.getByText('error'))
 
     // query should fail `retry + 1` times, since first time isn't a "retry"
@@ -3365,7 +3370,7 @@ describe('createQuery', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('loading'))
+    await waitFor(() => screen.getByText('pending'))
     await waitFor(() => screen.getByText('error'))
     await waitFor(() => screen.getByText('Failed 2 times'))
     await waitFor(() => screen.getByText('Failed because NoRetry'))
@@ -3456,7 +3461,7 @@ describe('createQuery', () => {
     // The query should display the first error result
     await waitFor(() => screen.getByText('failureCount 1'))
     await waitFor(() => screen.getByText('failureReason fetching error 1'))
-    await waitFor(() => screen.getByText('status loading'))
+    await waitFor(() => screen.getByText('status pending'))
     await waitFor(() => screen.getByText('error null'))
 
     // Check if the query really paused
@@ -3801,15 +3806,18 @@ describe('createQuery', () => {
     function Page() {
       const result = createQuery(() => ({
         queryKey: key,
-        queryFn: () => 'serverData',
-        initialData: 'data',
+        queryFn: async () => {
+          await sleep(10)
+          return 'serverData'
+        },
+        initialData: 'initialData',
       }))
 
       createRenderEffect(() => {
         results.push({ ...result })
       })
 
-      return null
+      return <div>data: {result.data}</div>
     }
 
     render(() => (
@@ -3818,10 +3826,11 @@ describe('createQuery', () => {
       </QueryClientProvider>
     ))
 
-    await sleep(10)
+    await waitFor(() => screen.getByText('data: initialData'))
+    await waitFor(() => screen.getByText('data: serverData'))
 
     expect(results.length).toBe(2)
-    expect(results[0]).toMatchObject({ data: 'data', isFetching: true })
+    expect(results[0]).toMatchObject({ data: 'initialData', isFetching: true })
     expect(results[1]).toMatchObject({ data: 'serverData', isFetching: false })
   })
 
@@ -3924,7 +3933,7 @@ describe('createQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/360
-  it('should init to status:loading, fetchStatus:idle when enabled is false', async () => {
+  it('should init to status:pending, fetchStatus:idle when enabled is false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -3949,7 +3958,7 @@ describe('createQuery', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('status: loading, idle'))
+    await waitFor(() => screen.getByText('status: pending, idle'))
   })
 
   it('should not schedule garbage collection, if gcTimeout is set to `Infinity`', async () => {
@@ -4047,7 +4056,7 @@ describe('createQuery', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('status loading'))
+    await waitFor(() => screen.getByText('status pending'))
     await waitFor(() => screen.getByText('status success'))
     fireEvent.click(screen.getByText('refetch'))
     await waitFor(() => screen.getByText('isFetching true'))
@@ -4130,7 +4139,7 @@ describe('createQuery', () => {
 
     expect(states).toMatchObject([
       {
-        status: 'loading',
+        status: 'pending',
         isFetching: true,
         data: undefined,
       },
@@ -4194,7 +4203,7 @@ describe('createQuery', () => {
 
     expect(states).toMatchObject([
       {
-        status: 'loading',
+        status: 'pending',
         isFetching: true,
         data: undefined,
       },
@@ -4687,7 +4696,7 @@ describe('createQuery', () => {
 
     expect(queryCache.find({ queryKey: [key, 1] })?.state).toMatchObject({
       data: undefined,
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'idle',
     })
 
@@ -4699,7 +4708,7 @@ describe('createQuery', () => {
 
     expect(queryCache.find({ queryKey: [key, 3] })?.state).toMatchObject({
       data: undefined,
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'idle',
     })
   })
@@ -4743,7 +4752,7 @@ describe('createQuery', () => {
     expect(states.length).toBe(2)
     // Load query 1
     expect(states[0]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       error: null,
     })
     // No rerenders - No state updates
@@ -4801,27 +4810,27 @@ describe('createQuery', () => {
     expect(count).toBe(2)
 
     expect(states[0]).toMatchObject({
-      isLoading: true,
+      isPending: true,
       isFetching: true,
       isSuccess: false,
       isStale: true,
     })
     expect(states[1]).toMatchObject({
       data: 1,
-      isLoading: false,
+      isPending: false,
       isFetching: false,
       isSuccess: true,
       isStale: false,
     })
     expect(states[2]).toMatchObject({
-      isLoading: true,
+      isPending: true,
       isFetching: true,
       isSuccess: false,
       isStale: true,
     })
     expect(states[3]).toMatchObject({
       data: 2,
-      isLoading: false,
+      isPending: false,
       isFetching: false,
       isSuccess: true,
       isStale: false,
@@ -4881,26 +4890,26 @@ describe('createQuery', () => {
     expect(count).toBe(1)
 
     expect(states[0]).toMatchObject({
-      isLoading: true,
+      isPending: true,
       isFetching: false,
       isSuccess: false,
       isStale: true,
     })
     expect(states[1]).toMatchObject({
-      isLoading: true,
+      isPending: true,
       isFetching: true,
       isSuccess: false,
       isStale: true,
     })
     expect(states[2]).toMatchObject({
       data: 1,
-      isLoading: false,
+      isPending: false,
       isFetching: false,
       isSuccess: true,
       isStale: false,
     })
     expect(states[3]).toMatchObject({
-      isLoading: true,
+      isPending: true,
       isFetching: false,
       isSuccess: false,
       isStale: true,
@@ -4967,8 +4976,8 @@ describe('createQuery', () => {
 
       return (
         <Switch fallback={<div>rendered</div>}>
-          <Match when={state.isLoading}>
-            <div>status: loading</div>
+          <Match when={state.isPending}>
+            <div>status: pending</div>
           </Match>
           <Match when={state.error instanceof Error}>
             <div>error</div>
@@ -4998,7 +5007,7 @@ describe('createQuery', () => {
     ))
 
     // initial state check
-    screen.getByText('status: loading')
+    screen.getByText('status: pending')
 
     // // render error state component
     await waitFor(() => screen.getByText('error'))
@@ -5034,8 +5043,8 @@ describe('createQuery', () => {
 
       return (
         <Switch fallback={<div>rendered</div>}>
-          <Match when={state.isLoading}>
-            <div>status: loading</div>
+          <Match when={state.isPending}>
+            <div>status: pending</div>
           </Match>
           <Match when={state.error instanceof Error}>
             <div>error</div>
@@ -5065,7 +5074,7 @@ describe('createQuery', () => {
     ))
 
     // initial state check
-    screen.getByText('status: loading')
+    screen.getByText('status: pending')
 
     // render error state component
     await waitFor(() => screen.getByText('error'))
@@ -5141,7 +5150,7 @@ describe('createQuery', () => {
     await waitFor(() => screen.getByText('error'))
   })
 
-  it('should have no error in loading state when refetching after error occurred', async () => {
+  it('should have no error in pending state when refetching after error occurred', async () => {
     const key = queryKey()
     const states: CreateQueryResult<number>[] = []
     const error = new Error('oops')
@@ -5168,8 +5177,8 @@ describe('createQuery', () => {
 
       return (
         <Switch fallback={<div>data: {state.data}</div>}>
-          <Match when={state.isLoading}>
-            <div>status: loading</div>
+          <Match when={state.isPending}>
+            <div>status: pending</div>
           </Match>
           <Match when={state.error instanceof Error}>
             <div>
@@ -5195,7 +5204,7 @@ describe('createQuery', () => {
     await waitFor(() => expect(states.length).toBe(4))
 
     expect(states[0]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       data: undefined,
       error: null,
     })
@@ -5207,7 +5216,7 @@ describe('createQuery', () => {
     })
 
     expect(states[2]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       data: undefined,
       error: null,
     })
@@ -5255,7 +5264,7 @@ describe('createQuery', () => {
         </QueryClientProvider>
       ))
 
-      await waitFor(() => screen.getByText('status: loading, isPaused: true'))
+      await waitFor(() => screen.getByText('status: pending, isPaused: true'))
 
       onlineMock.mockReturnValue(true)
       window.dispatchEvent(new Event('online'))
@@ -5432,7 +5441,7 @@ describe('createQuery', () => {
       ))
 
       await waitFor(() =>
-        screen.getByText('status: loading, fetchStatus: paused'),
+        screen.getByText('status: pending, fetchStatus: paused'),
       )
 
       fireEvent.click(screen.getByRole('button', { name: /invalidate/i }))
@@ -5441,7 +5450,7 @@ describe('createQuery', () => {
 
       // invalidation should not trigger a refetch
       await waitFor(() =>
-        screen.getByText('status: loading, fetchStatus: paused'),
+        screen.getByText('status: pending, fetchStatus: paused'),
       )
 
       expect(count).toBe(0)
@@ -5612,7 +5621,7 @@ describe('createQuery', () => {
 
       await waitFor(() =>
         screen.getByText(
-          'status: loading, fetchStatus: fetching, failureCount: 1',
+          'status: pending, fetchStatus: fetching, failureCount: 1',
         ),
       )
       await waitFor(() => screen.getByText('failureReason: failed1'))
@@ -5623,7 +5632,7 @@ describe('createQuery', () => {
 
       await waitFor(() =>
         screen.getByText(
-          'status: loading, fetchStatus: paused, failureCount: 1',
+          'status: pending, fetchStatus: paused, failureCount: 1',
         ),
       )
       await waitFor(() => screen.getByText('failureReason: failed1'))
@@ -5687,7 +5696,7 @@ describe('createQuery', () => {
       ))
 
       await waitFor(() =>
-        screen.getByText('status: loading, fetchStatus: paused'),
+        screen.getByText('status: pending, fetchStatus: paused'),
       )
 
       fireEvent.click(screen.getByRole('button', { name: /hide/i }))
@@ -5746,13 +5755,13 @@ describe('createQuery', () => {
       ))
 
       await waitFor(() =>
-        screen.getByText('status: loading, fetchStatus: paused'),
+        screen.getByText('status: pending, fetchStatus: paused'),
       )
 
       fireEvent.click(screen.getByRole('button', { name: /cancel/i }))
 
       await waitFor(() =>
-        screen.getByText('status: loading, fetchStatus: idle'),
+        screen.getByText('status: pending, fetchStatus: idle'),
       )
 
       expect(count).toBe(0)
@@ -5763,7 +5772,7 @@ describe('createQuery', () => {
       await sleep(15)
 
       await waitFor(() =>
-        screen.getByText('status: loading, fetchStatus: idle'),
+        screen.getByText('status: pending, fetchStatus: idle'),
       )
 
       expect(count).toBe(0)
@@ -5980,7 +5989,7 @@ describe('createQuery', () => {
 
       await waitFor(() =>
         screen.getByText(
-          'status: loading, fetchStatus: paused, failureCount: 1',
+          'status: pending, fetchStatus: paused, failureCount: 1',
         ),
       )
       await waitFor(() => screen.getByText('failureReason: failed1'))

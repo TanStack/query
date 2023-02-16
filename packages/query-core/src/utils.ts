@@ -154,7 +154,7 @@ export function matchMutation(
 
   if (
     typeof fetching === 'boolean' &&
-    (mutation.state.status === 'loading') !== fetching
+    (mutation.state.status === 'pending') !== fetching
   ) {
     return false
   }
@@ -329,4 +329,14 @@ export function keepPreviousData<T>(
   previousData: T | undefined,
 ): T | undefined {
   return previousData
+}
+
+export function addToEnd<T>(items: T[], item: T, max = 0): T[] {
+  const newItems = [...items, item]
+  return max && newItems.length > max ? newItems.slice(1) : newItems
+}
+
+export function addToStart<T>(items: T[], item: T, max = 0): T[] {
+  const newItems = [item, ...items]
+  return max && newItems.length > max ? newItems.slice(0, -1) : newItems
 }

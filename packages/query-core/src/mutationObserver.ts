@@ -8,6 +8,7 @@ import type {
   MutationObserverBaseResult,
   MutationObserverResult,
   MutationObserverOptions,
+  RegisteredError,
 } from './types'
 import { shallowEqualObjects } from './utils'
 
@@ -26,7 +27,7 @@ interface NotifyOptions {
 
 export class MutationObserver<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 > extends Subscribable<
@@ -142,7 +143,7 @@ export class MutationObserver<
       TContext
     > = {
       ...state,
-      isLoading: state.status === 'loading',
+      isPending: state.status === 'pending',
       isSuccess: state.status === 'success',
       isError: state.status === 'error',
       isIdle: state.status === 'idle',

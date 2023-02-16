@@ -103,7 +103,7 @@ describe('PersistQueryClientProvider', () => {
     expect(states).toHaveLength(4)
 
     expect(states[0]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
@@ -182,7 +182,7 @@ describe('PersistQueryClientProvider', () => {
     expect(states).toHaveLength(4)
 
     expect(states[0]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
@@ -338,7 +338,7 @@ describe('PersistQueryClientProvider', () => {
     expect(states).toHaveLength(2)
 
     expect(states[0]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
@@ -534,13 +534,13 @@ describe('PersistQueryClientProvider', () => {
     expect(states).toHaveLength(5)
 
     expect(states[0]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
 
     expect(states[1]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })

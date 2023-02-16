@@ -1,5 +1,5 @@
 import * as React from 'react'
-import type { QueryClient } from '@tanstack/query-core'
+import type { QueryClient, RegisteredError } from '@tanstack/query-core'
 import { notifyManager, MutationObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {
@@ -13,7 +13,7 @@ import { shouldThrowError } from './utils'
 
 export function useMutation<
   TData = unknown,
-  TError = Error,
+  TError = RegisteredError,
   TVariables = void,
   TContext = unknown,
 >(

@@ -25,7 +25,7 @@
   const { error }: { error: any } = $query
 </script>
 
-{#if $query.isLoading}
+{#if $query.isPending}
   Loading...
 {/if}
 {#if $query.error}
