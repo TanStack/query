@@ -8,7 +8,7 @@ import type {
   QueryFunction,
   QueryObserverOptions,
 } from '..'
-import { InfiniteQueryObserver, MutationObserver, QueryObserver } from '..'
+import { MutationObserver, QueryObserver } from '..'
 import { focusManager, onlineManager } from '..'
 import { noop } from '../utils'
 
@@ -1246,98 +1246,6 @@ describe('queryClient', () => {
       observer1.destroy()
       expect(queryFn1).toHaveBeenCalledTimes(2)
       expect(queryFn2).toHaveBeenCalledTimes(0)
-    })
-  })
-
-  describe('refetch only certain pages of an infinite query', () => {
-    test('refetchQueries', async () => {
-      const key = queryKey()
-      let multiplier = 1
-      const observer = new InfiniteQueryObserver<number>(queryClient, {
-        queryKey: key,
-        queryFn: ({ pageParam = 10 }) => Number(pageParam) * multiplier,
-        getNextPageParam: (lastPage) => lastPage + 1,
-      })
-
-      await observer.fetchNextPage()
-      await observer.fetchNextPage()
-
-      expect(queryClient.getQueryData(key)).toMatchObject({
-        pages: [10, 11],
-      })
-
-      multiplier = 2
-
-      await queryClient.refetchQueries({
-        queryKey: key,
-        refetchPage: (_, index) => index === 0,
-      })
-
-      expect(queryClient.getQueryData(key)).toMatchObject({
-        pages: [20, 11],
-      })
-    })
-    test('invalidateQueries', async () => {
-      const key = queryKey()
-      let multiplier = 1
-      const observer = new InfiniteQueryObserver<number>(queryClient, {
-        queryKey: key,
-        queryFn: ({ pageParam = 10 }) => Number(pageParam) * multiplier,
-        getNextPageParam: (lastPage) => lastPage + 1,
-      })
-
-      await observer.fetchNextPage()
-      await observer.fetchNextPage()
-
-      expect(queryClient.getQueryData(key)).toMatchObject({
-        pages: [10, 11],
-      })
-
-      multiplier = 2
-
-      await queryClient.invalidateQueries({
-        queryKey: key,
-        refetchType: 'all',
-        refetchPage: (page, _, allPages) => {
-          return page === allPages[0]
-        },
-      })
-
-      expect(queryClient.getQueryData(key)).toMatchObject({
-        pages: [20, 11],
-      })
-    })
-
-    test('resetQueries', async () => {
-      const key = queryKey()
-      let multiplier = 1
-      new InfiniteQueryObserver<number>(queryClient, {
-        queryKey: key,
-        queryFn: ({ pageParam = 10 }) => Number(pageParam) * multiplier,
-        getNextPageParam: (lastPage) => lastPage + 1,
-        initialData: () => ({
-          pages: [10, 11],
-          pageParams: [10, 11],
-        }),
-      })
-
-      expect(queryClient.getQueryData(key)).toMatchObject({
-        pages: [10, 11],
-      })
-
-      multiplier = 2
-
-      await queryClient.resetQueries({
-        queryKey: key,
-        type: 'inactive',
-        refetchPage: (page, _, allPages) => {
-          return page === allPages[0]
-        },
-      })
-
-      expect(queryClient.getQueryData(key)).toMatchObject({
-        pages: [20, 11],
-      })
     })
   })
 

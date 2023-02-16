@@ -23,7 +23,6 @@ import type {
   RefetchOptions,
   RefetchQueryFilters,
   ResetOptions,
-  ResetQueryFilters,
   SetDataOptions,
   RegisteredError,
 } from './types'
@@ -193,13 +192,10 @@ export class QueryClient {
     })
   }
 
-  resetQueries<TPageData = unknown>(
-    filters?: ResetQueryFilters<TPageData>,
-    options?: ResetOptions,
-  ): Promise<void> {
+  resetQueries(filters?: QueryFilters, options?: ResetOptions): Promise<void> {
     const queryCache = this.#queryCache
 
-    const refetchFilters: RefetchQueryFilters<TPageData> = {
+    const refetchFilters: RefetchQueryFilters = {
       type: 'active',
       ...filters,
     }
@@ -229,8 +225,8 @@ export class QueryClient {
     return Promise.all(promises).then(noop).catch(noop)
   }
 
-  invalidateQueries<TPageData = unknown>(
-    filters: InvalidateQueryFilters<TPageData> = {},
+  invalidateQueries(
+    filters: InvalidateQueryFilters = {},
     options: InvalidateOptions = {},
   ): Promise<void> {
     return notifyManager.batch(() => {
@@ -241,7 +237,7 @@ export class QueryClient {
       if (filters.refetchType === 'none') {
         return Promise.resolve()
       }
-      const refetchFilters: RefetchQueryFilters<TPageData> = {
+      const refetchFilters: RefetchQueryFilters = {
         ...filters,
         type: filters.refetchType ?? filters.type ?? 'active',
       }
@@ -249,8 +245,8 @@ export class QueryClient {
     })
   }
 
-  refetchQueries<TPageData = unknown>(
-    filters: RefetchQueryFilters<TPageData> = {},
+  refetchQueries(
+    filters: RefetchQueryFilters = {},
     options?: RefetchOptions,
   ): Promise<void> {
     const promises = notifyManager.batch(() =>
@@ -261,7 +257,6 @@ export class QueryClient {
           query.fetch(undefined, {
             ...options,
             cancelRefetch: options?.cancelRefetch ?? true,
-            meta: { refetchPage: filters.refetchPage },
           }),
         ),
     )

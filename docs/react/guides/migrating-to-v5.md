@@ -257,6 +257,14 @@ const { data } = useQuery(
 )
 ```
 
+### Removed `refetchPage` in favor of `maxPages`
+
+In v4, we introduced the possibility to define the pages to refetch for infinite queries with the `refetchPage` function.
+
+However, refetching all pages might lead to UI inconsistencies. Also, this option is available on e.g. `queryClient.refetchQueries`, but it only does something for infinite queries, not "normal" queries.
+
+The v5 includes a new `maxPages` option for infinite queries to limit the number of pages to store in the query data and to refetch. This new feature handles the use cases initially identified for the `refetchPage` page feature without the related issues.
+
 [//]: # 'FrameworkBreakingChanges'
 
 ## React Query Breaking Changes
@@ -309,3 +317,20 @@ Lastly the a new derived `isLoading` flag has been added to the queries that is 
 To understand the reasoning behing this change checkout the [v5 roadmap discussion](https://github.com/TanStack/query/discussions/4252).
 
 [//]: # 'FrameworkBreakingChanges'
+
+
+[//]: # 'NewFeatures'
+
+## New Features 🚀
+
+### Eterneral list: scalable infinite query with new maxPages option
+
+Infinite queries are great when infinite scroll or pagination are needed.
+However, the more pages you fetch, the more memory you consume, and this also slows down the query refetching process as all the pages are sequentially refetched.
+
+Version 5 has a new `maxPages` option for infinite queries, which allows developers to limit the number of pages that are stored in the query data and subsequently refetched.
+You can adjust the `maxPages` value according to the UX and refetching performance you want to deliver.
+
+Note that the infinite list must be bi-directional, which requires both `getNextPageParam` and `getPreviousPageParam` to be defined.
+
+[//]: # 'NewFeatures'

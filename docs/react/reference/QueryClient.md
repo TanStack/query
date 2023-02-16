@@ -307,9 +307,6 @@ await queryClient.invalidateQueries({
     - When set to `inactive`, only queries that match the refetch predicate and are NOT actively being rendered via `useQuery` and friends will be refetched in the background.
     - When set to `all`, all queries that match the refetch predicate will be refetched in the background.
     - When set to `none`, no queries will be refetched, and those that match the refetch predicate will be marked as invalid only.
-  - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
-    - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
-    - Use this function to specify which pages should be refetched
 - `options?: InvalidateOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
@@ -341,9 +338,6 @@ await queryClient.refetchQueries({ queryKey: ['posts', 1], type: 'active', exact
 **Options**
 
 - `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
-  - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
-    - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
-    - Use this function to specify which pages should be refetched
 - `options?: RefetchOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
@@ -408,9 +402,6 @@ queryClient.resetQueries({ queryKey, exact: true })
 **Options**
 
 - `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
-  - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
-    - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
-    - Use this function to specify which pages should be refetched
 - `options?: ResetOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
