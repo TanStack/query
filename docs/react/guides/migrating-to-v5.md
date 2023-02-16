@@ -323,7 +323,7 @@ To understand the reasoning behing this change checkout the [v5 roadmap discussi
 
 ## New Features 🚀
 
-### Eterneral list: scalabable infinite query with new maxPages option
+### Eterneral list: scalable infinite query with new maxPages option
 
 Infinite queries are great when infinite scroll or pagination are needed.
 However, the more pages you fetch, the more memory you consume, and this also slows down the query refetching process as all the pages are sequentially refetched.
