@@ -317,3 +317,20 @@ Lastly the a new derived `isLoading` flag has been added to the queries that is 
 To understand the reasoning behing this change checkout the [v5 roadmap discussion](https://github.com/TanStack/query/discussions/4252).
 
 [//]: # 'FrameworkBreakingChanges'
+
+
+[//]: # 'NewFeatures'
+
+## New Features 🚀
+
+### Eterneral list: scalabable infinite list with new maxPages option
+
+Infinite queries are great when infinite scroll or pagination are needed.
+However, the more pages you fetch, the more memory you consume, and this also slows down the query refetching process as all the pages are sequentially refetched.
+
+Version 5 has a new `maxPages` option for infinite queries, which allows developers to limit the number of pages that are stored in the query data and subsequently refetched.
+You can adjust the `maxPages` value according to the UX and refetching performance you want to deliver.
+
+Note that the infinite list must be bi-directional, which requires both `getNextPageParam` and `getPreviousPageParam` to be defined.
+
+[//]: # 'NewFeatures'
