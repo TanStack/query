@@ -96,8 +96,8 @@ export class QueryClient extends QC {
     return super.removeQueries(cloneDeepUnref(filters))
   }
 
-  resetQueries<TPageData = unknown>(
-    filters: MaybeRefDeep<ResetQueryFilters<TPageData>> = {},
+  resetQueries(
+    filters: MaybeRefDeep<ResetQueryFilters> = {},
     options: MaybeRefDeep<ResetOptions> = {},
   ): Promise<void> {
     return super.resetQueries(cloneDeepUnref(filters), cloneDeepUnref(options))
@@ -110,8 +110,8 @@ export class QueryClient extends QC {
     return super.cancelQueries(cloneDeepUnref(filters), cloneDeepUnref(options))
   }
 
-  invalidateQueries<TPageData = unknown>(
-    filters: MaybeRefDeep<InvalidateQueryFilters<TPageData>> = {},
+  invalidateQueries(
+    filters: MaybeRefDeep<InvalidateQueryFilters> = {},
     options: MaybeRefDeep<InvalidateOptions> = {},
   ): Promise<void> {
     return super.invalidateQueries(
@@ -120,8 +120,8 @@ export class QueryClient extends QC {
     )
   }
 
-  refetchQueries<TPageData = unknown>(
-    filters: MaybeRefDeep<RefetchQueryFilters<TPageData>> = {},
+  refetchQueries(
+    filters: MaybeRefDeep<RefetchQueryFilters> = {},
     options: MaybeRefDeep<RefetchOptions> = {},
   ): Promise<void> {
     return super.refetchQueries(
