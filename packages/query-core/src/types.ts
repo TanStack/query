@@ -348,8 +348,6 @@ export interface InvalidateQueryFilters extends QueryFilters {
 
 export interface RefetchQueryFilters extends QueryFilters {}
 
-export interface ResetQueryFilters extends QueryFilters {}
-
 export interface InvalidateOptions extends RefetchOptions {}
 export interface ResetOptions extends RefetchOptions {}
 

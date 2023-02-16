@@ -23,7 +23,6 @@ import type {
   RefetchOptions,
   RefetchQueryFilters,
   ResetOptions,
-  ResetQueryFilters,
   SetDataOptions,
   RegisteredError,
 } from './types'
@@ -193,10 +192,7 @@ export class QueryClient {
     })
   }
 
-  resetQueries(
-    filters?: ResetQueryFilters,
-    options?: ResetOptions,
-  ): Promise<void> {
+  resetQueries(filters?: QueryFilters, options?: ResetOptions): Promise<void> {
     const queryCache = this.#queryCache
 
     const refetchFilters: RefetchQueryFilters = {

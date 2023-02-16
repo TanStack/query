@@ -4,7 +4,6 @@ import type {
   QueryKey,
   QueryClientConfig,
   SetDataOptions,
-  ResetQueryFilters,
   ResetOptions,
   CancelOptions,
   InvalidateQueryFilters,
@@ -97,7 +96,7 @@ export class QueryClient extends QC {
   }
 
   resetQueries(
-    filters: MaybeRefDeep<ResetQueryFilters> = {},
+    filters: MaybeRefDeep<QueryFilters> = {},
     options: MaybeRefDeep<ResetOptions> = {},
   ): Promise<void> {
     return super.resetQueries(cloneDeepUnref(filters), cloneDeepUnref(options))
