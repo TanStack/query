@@ -3,12 +3,12 @@ id: reactivity
 title: Reactivity
 ---
 
-Svelte uses a compiler to build your code which optimises rendering. By default, variables will run once, unless they are referenced in your markup. To make a different variable or function reactive, you need to use [reactive declarations](https://svelte.dev/tutorial/reactive-declarations). This also applies to Svelte Query.
+Svelte uses a compiler to build your code which optimises rendering. By default, variables will run once, unless they are referenced in your markup. To be able to react to changes in options you need to use [stores](https://svelte.dev/tutorial/writable-stores).
 
 In the below example, the `refetchInterval` option is set from the variable `intervalMs`, which is edited by the input field. However, as the query is not told it should react to changes in `intervalMs`, `refetchInterval` will not change when the input value changes.
 
 ```markdown
-<script lang="ts">
+<script>
   import { createQuery } from '@tanstack/svelte-query'
 
   let intervalMs = 1000
@@ -25,22 +25,25 @@ In the below example, the `refetchInterval` option is set from the variable `int
 <input bind:value={intervalMs} type="number" />
 ```
 
-To solve this, you can prefix the query with `$: ` to tell the compiler it should be reactive.
+To solve this, create a store for the options and use it as input for the query. Update the options store when the value changes and the query will react to the change.
 
 ```markdown
-<script lang="ts">
+<script>
   import { createQuery } from '@tanstack/svelte-query'
-
-  let intervalMs = 1000
 
   const endpoint = 'http://localhost:5173/api/data'
 
-  $: query = createQuery({
+  const queryOptions = writable({
     queryKey: ['refetch'],
     queryFn: async () => await fetch(endpoint).then((r) => r.json()),
-    refetchInterval: intervalMs,
+    refetchInterval: 1000,
   })
+  const query = createQuery(queryOptions)
+
+  function updateRefetchInterval(event) {
+    $queryOptions.refetchInterval = event.target.valueAsNumber
+  }
 </script>
 
-<input bind:value={intervalMs} type="number" />
+<input type="number" on:input={updateRefetchInterval} />
 ```
