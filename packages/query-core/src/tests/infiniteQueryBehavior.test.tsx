@@ -290,6 +290,8 @@ describe('InfiniteQueryBehavior', () => {
     const observer = new InfiniteQueryObserver<number>(queryClient, {
       queryKey: key,
       queryFn: queryFnSpy,
+      getNextPageParam: (lastPage) => lastPage + 1,
+      getPreviousPageParam: (firstPage) => firstPage - 1,
     })
 
     let observerResult:
@@ -323,6 +325,89 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     queryFnSpy.mockClear()
+
+    unsubscribe()
+  })
+
+  test('InfiniteQueryBehavior should not refetch pages if the query is cancelled', async () => {
+    const key = queryKey()
+    let abortSignal: AbortSignal | null = null
+
+    let queryFnSpy = jest
+      .fn()
+      .mockImplementation(({ pageParam = 1, signal }) => {
+        abortSignal = signal
+        return pageParam
+      })
+
+    const observer = new InfiniteQueryObserver<number>(queryClient, {
+      queryKey: key,
+      queryFn: queryFnSpy,
+      getNextPageParam: (lastPage) => lastPage + 1,
+      getPreviousPageParam: (firstPage) => firstPage - 1,
+    })
+
+    let observerResult:
+      | InfiniteQueryObserverResult<unknown, unknown>
+      | undefined
+
+    const unsubscribe = observer.subscribe((result) => {
+      observerResult = result
+    })
+
+    // Wait for the first page to be fetched
+    await waitFor(() =>
+      expect(observerResult).toMatchObject({
+        isFetching: false,
+        data: { pages: [1], pageParams: [undefined] },
+      }),
+    )
+
+    queryFnSpy.mockClear()
+
+    // Fetch the second page
+    await observer.fetchNextPage()
+
+    expect(observerResult).toMatchObject({
+      isFetching: false,
+      data: { pages: [1, 2], pageParams: [undefined, 2] },
+    })
+
+    expect(queryFnSpy).toHaveBeenCalledTimes(1)
+
+    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+      queryKey: key,
+      pageParam: 2,
+      meta: undefined,
+      signal: abortSignal,
+    })
+
+    queryFnSpy = jest.fn().mockImplementation(({ pageParam = 1, signal }) => {
+      abortSignal = signal
+      sleep(10)
+      return pageParam
+    })
+
+    // Refetch the query
+    observer.refetch()
+    expect(observerResult).toMatchObject({
+      isFetching: true,
+      isError: false,
+    })
+
+    // Cancel the query
+    const query = observer.getCurrentQuery()
+    query.cancel()
+
+    expect(observerResult).toMatchObject({
+      isFetching: false,
+      isError: true,
+      error: new CancelledError(),
+      data: { pages: [1, 2], pageParams: [undefined, 2] },
+    })
+
+    // Pages should not have been fetched
+    expect(queryFnSpy).toHaveBeenCalledTimes(0)
 
     unsubscribe()
   })
