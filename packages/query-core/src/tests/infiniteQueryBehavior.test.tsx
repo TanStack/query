@@ -3,8 +3,8 @@ import type {
   QueryClient,
   InfiniteQueryObserverResult,
 } from '@tanstack/query-core'
-import { InfiniteQueryObserver } from '@tanstack/query-core'
-import { createQueryClient, queryKey } from './utils'
+import { InfiniteQueryObserver, CancelledError } from '@tanstack/query-core'
+import { createQueryClient, queryKey, sleep } from './utils'
 
 describe('InfiniteQueryBehavior', () => {
   let queryClient: QueryClient
@@ -271,6 +271,58 @@ describe('InfiniteQueryBehavior', () => {
       meta: undefined,
       signal: abortSignal,
     })
+
+    unsubscribe()
+  })
+
+  test('InfiniteQueryBehavior should support query cancellation', async () => {
+    const key = queryKey()
+    let abortSignal: AbortSignal | null = null
+
+    const queryFnSpy = jest
+      .fn()
+      .mockImplementation(({ pageParam = 1, signal }) => {
+        abortSignal = signal
+        sleep(10)
+        return pageParam
+      })
+
+    const observer = new InfiniteQueryObserver<number>(queryClient, {
+      queryKey: key,
+      queryFn: queryFnSpy,
+    })
+
+    let observerResult:
+      | InfiniteQueryObserverResult<unknown, unknown>
+      | undefined
+
+    const unsubscribe = observer.subscribe((result) => {
+      observerResult = result
+    })
+
+    const query = observer.getCurrentQuery()
+    query.cancel()
+
+    // Wait for the first page to be cancelled
+    await waitFor(() =>
+      expect(observerResult).toMatchObject({
+        isFetching: false,
+        isError: true,
+        error: new CancelledError(),
+        data: undefined,
+      }),
+    )
+
+    expect(queryFnSpy).toHaveBeenCalledTimes(1)
+
+    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+      queryKey: key,
+      pageParam: undefined,
+      meta: undefined,
+      signal: abortSignal,
+    })
+
+    queryFnSpy.mockClear()
 
     unsubscribe()
   })
