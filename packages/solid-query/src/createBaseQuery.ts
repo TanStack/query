@@ -1,13 +1,18 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
+// Had to disable the lint rule because isServer type is defined as false
+// in solid-js/web package. I'll create a GitHub issue with them to see
+// why that happens.
 import type {
   QueryClient,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
+import { hydrate } from '@tanstack/query-core'
 import { notifyManager } from '@tanstack/query-core'
 import type { Accessor } from 'solid-js'
+import { isServer } from 'solid-js/web'
 import {
-  batch,
   createComputed,
   createMemo,
   createResource,
@@ -35,7 +40,6 @@ export function createBaseQuery<
   queryClient?: () => QueryClient,
 ) {
   const client = createMemo(() => useQueryClient(queryClient?.()))
-  const emptyData = Symbol('empty')
 
   const defaultedOptions = client().defaultQueryOptions(options())
   defaultedOptions._optimisticResults = 'optimistic'
@@ -45,40 +49,101 @@ export function createBaseQuery<
     observer.getOptimisticResult(defaultedOptions),
   )
 
-  const [dataResource, { refetch, mutate }] = createResource<TData | undefined>(
+  const createSubscriber = (
+    cb: (result: QueryObserverResult<TData, TError>) => void,
+  ) => {
+    return observer.subscribe((result) => {
+      notifyManager.batchCalls(() => {
+        const unwrappedResult = { ...unwrap(result) }
+        setState(unwrappedResult)
+        cb(unwrappedResult)
+      })()
+    })
+  }
+
+  const createServerSubscriber = (
+    resolve: (
+      data:
+        | QueryObserverResult<TData, TError>
+        | PromiseLike<QueryObserverResult<TData, TError> | undefined>
+        | undefined,
+    ) => void,
+  ) => createSubscriber(resolve)
+
+  const createClientSubscriber = (refetch: () => void) =>
+    createSubscriber(refetch)
+
+  /**
+   * Unsubscribe is set lazily, so that we can subscribe after hydration when needed.
+   */
+  let unsubscribe: (() => void) | null = null
+
+  const [queryResource, { refetch }] = createResource<
+    QueryObserverResult<TData, TError> | undefined
+  >(
     () => {
       return new Promise((resolve) => {
-        if (!(state.isFetching && state.isPending)) {
-          if ((unwrap(state.data) as TData | typeof emptyData) === emptyData) {
-            resolve(undefined)
+        if (isServer) {
+          unsubscribe = createServerSubscriber(resolve)
+        } else {
+          if (!unsubscribe) {
+            unsubscribe = createClientSubscriber(() => refetch())
           }
-          resolve(unwrap(state.data))
+        }
+        if (!state.isLoading) {
+          resolve(state)
         }
       })
     },
+    {
+      initialValue: state,
+
+      get deferStream() {
+        return options().deferStream
+      },
+
+      /**
+       * If this resource was populated on the server (either sync render, or streamed in over time), onHydrated
+       * will be called. This is the point at which we can hydrate the query cache state, and setup the query subscriber.
+       *
+       * Leveraging onHydrated allows us to plug into the async and streaming support that solidjs resources already support.
+       *
+       * Note that this is only invoked on the client, for queries that were originally run on the server.
+       */
+      onHydrated(_k, info) {
+        if (info.value) {
+          hydrate(client(), {
+            queries: [
+              {
+                queryKey: defaultedOptions.queryKey,
+                queryHash: defaultedOptions.queryHash,
+                state: info.value,
+              },
+            ],
+          })
+        }
+
+        if (!unsubscribe) {
+          /**
+           * Do not refetch query on mount if query was fetched on server,
+           * even if `staleTime` is not set.
+           */
+          if (defaultedOptions.staleTime || !defaultedOptions.initialData) {
+            defaultedOptions.refetchOnMount = false
+          }
+          setState(observer.getOptimisticResult(defaultedOptions))
+          unsubscribe = createClientSubscriber(() => refetch())
+        }
+      },
+    },
   )
 
-  batch(() => {
-    mutate(() => unwrap(state.data))
-    refetch()
+  onCleanup(() => {
+    if (unsubscribe) {
+      unsubscribe()
+      unsubscribe = null
+    }
   })
-
-  const unsubscribe = observer.subscribe((result) => {
-    notifyManager.batchCalls(() => {
-      const unwrappedResult = { ...unwrap(result) }
-      if (unwrappedResult.data === undefined) {
-        // This is a hack to prevent Solid
-        // from deleting the data property when it is `undefined`
-        // ref: https://www.solidjs.com/docs/latest/api#updating-stores
-        unwrappedResult.data = emptyData as any as undefined
-      }
-      setState(unwrap(unwrappedResult))
-      mutate(() => unwrap(result.data))
-      refetch()
-    })()
-  })
-
-  onCleanup(() => unsubscribe())
 
   onMount(() => {
     observer.setOptions(defaultedOptions, { listeners: false })
@@ -112,7 +177,7 @@ export function createBaseQuery<
       prop: keyof QueryObserverResult<TData, TError>,
     ): any {
       if (prop === 'data') {
-        return dataResource()
+        return queryResource()?.data
       }
       return Reflect.get(target, prop)
     },
