@@ -323,7 +323,7 @@ To understand the reasoning behing this change checkout the [v5 roadmap discussi
 
 ## New Features 🚀
 
-### Eterneral list: scalable infinite query with new maxPages option
+### Eternal list: scalable infinite query with new maxPages option
 
 Infinite queries are great when infinite scroll or pagination are needed.
 However, the more pages you fetch, the more memory you consume, and this also slows down the query refetching process as all the pages are sequentially refetched.
@@ -332,5 +332,17 @@ Version 5 has a new `maxPages` option for infinite queries, which allows develop
 You can adjust the `maxPages` value according to the UX and refetching performance you want to deliver.
 
 Note that the infinite list must be bi-directional, which requires both `getNextPageParam` and `getPreviousPageParam` to be defined.
+
+### CreateStore
+
+We are now exposing a way to customize how queries are stored internally. Per default, a `Map` is used but, with the new `createStore` function, you can now use any data structure you want.
+
+```ts
+const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    createStore: () => new Map()
+  }),
+})
+```
 
 [//]: # 'NewFeatures'
