@@ -74,7 +74,7 @@ function Example() {
             {queryInfo.data.items.map((todo) => (
               <li key={todo.id}>{todo.text}</li>
             ))}
-            {addTodoMutation.isLoading && (
+            {addTodoMutation.isPending && (
               <li
                 key={String(addTodoMutation.submittedAt)}
                 style={{ opacity: 0.5 }}
