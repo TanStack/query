@@ -519,9 +519,12 @@ describe('dehydration and rehydration', () => {
       return promise
     }
 
-    await queryClient.prefetchQuery(['string'], () => customFetchData())
+    await queryClient.prefetchQuery({
+      queryKey: ['string'],
+      queryFn: () => customFetchData(),
+    })
 
-    queryClient.refetchQueries(['string'])
+    queryClient.refetchQueries({ queryKey: ['string'] })
 
     const dehydrated = dehydrate(queryClient)
     resolvePromise('string')
@@ -536,6 +539,8 @@ describe('dehydration and rehydration', () => {
     const hydrationCache = new QueryCache()
     const hydrationClient = createQueryClient({ queryCache: hydrationCache })
     hydrate(hydrationClient, parsed)
-    expect(hydrationCache.find(['string'])?.state.fetchStatus).toBe('idle')
+    expect(
+      hydrationCache.find({ queryKey: ['string'] })?.state.fetchStatus,
+    ).toBe('idle')
   })
 })
