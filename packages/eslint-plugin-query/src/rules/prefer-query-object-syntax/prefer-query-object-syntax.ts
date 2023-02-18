@@ -5,10 +5,10 @@ import { ASTUtils } from '../../utils/ast-utils'
 import { objectKeys } from '../../utils/object-utils'
 
 const QUERY_CALLS = {
-  useQuery: { key: 'queryKey', fn: 'queryFn' },
-  createQuery: { key: 'queryKey', fn: 'queryFn' },
-  useMutation: { key: 'mutationKey', fn: 'mutationFn' },
-  createMutation: { key: 'mutationKey', fn: 'mutationFn' },
+  useQuery: { key: 'queryKey', fn: 'queryFn', type: 'query' },
+  createQuery: { key: 'queryKey', fn: 'queryFn', type: 'query' },
+  useMutation: { key: 'mutationKey', fn: 'mutationFn', type: 'mutation' },
+  createMutation: { key: 'mutationKey', fn: 'mutationFn', type: 'mutation' },
 }
 
 const messages = {
@@ -169,7 +169,11 @@ function runCheckOnNode(params: {
   const optionsObject =
     secondArgument?.type === AST_NODE_TYPES.ObjectExpression
       ? secondArgument
-      : thirdArgument?.type === AST_NODE_TYPES.ObjectExpression
+      : thirdArgument !== undefined &&
+        ASTUtils.isNodeOfOneOf(thirdArgument, [
+          AST_NODE_TYPES.ObjectExpression,
+          AST_NODE_TYPES.Identifier,
+        ])
       ? thirdArgument
       : undefined
 
@@ -204,29 +208,57 @@ function runCheckOnNode(params: {
     fix(fixer) {
       const optionsObjectProperties: string[] = []
 
-      // queryKey
-      const firstArgument = callNode.arguments[0]
-      const queryKey = sourceCode.getText(firstArgument)
-      const queryKeyProperty =
-        queryKey === callProps.key
-          ? callProps.key
-          : `${callProps.key}: ${queryKey}`
+      if (callProps.type === 'query') {
+        // queryKey
+        const firstArgument = callNode.arguments[0]
+        const queryKey = sourceCode.getText(firstArgument)
+        const queryKeyProperty =
+          queryKey === callProps.key
+            ? callProps.key
+            : `${callProps.key}: ${queryKey}`
 
-      optionsObjectProperties.push(queryKeyProperty)
+        optionsObjectProperties.push(queryKeyProperty)
 
-      // queryFn
-      if (secondArgument && secondArgument !== optionsObject) {
-        const queryFn = sourceCode.getText(secondArgument)
-        const queryFnProperty =
-          queryFn === callProps.fn
+        // queryFn
+        if (secondArgument && secondArgument !== optionsObject) {
+          const queryFn = sourceCode.getText(secondArgument)
+          const queryFnProperty =
+            queryFn === callProps.fn
+              ? callProps.fn
+              : `${callProps.fn}: ${queryFn}`
+
+          optionsObjectProperties.push(queryFnProperty)
+        }
+      }
+
+      if (callProps.type === 'mutation') {
+        const isMutationKeyPresent =
+          callNode.arguments.length === 3 ||
+          callNode.arguments[1]?.type === 'ArrowFunctionExpression'
+
+        if (isMutationKeyPresent) {
+          const mutationKeyNode = callNode.arguments[0]
+          const mutationKeyText = sourceCode.getText(mutationKeyNode)
+          const mutationKeyProperty =
+            mutationKeyText === callProps.key
+              ? callProps.key
+              : `${callProps.key}: ${mutationKeyText}`
+
+          optionsObjectProperties.push(mutationKeyProperty)
+        }
+
+        const mutationFnNode = callNode.arguments[isMutationKeyPresent ? 1 : 0]
+        const mutationFnText = sourceCode.getText(mutationFnNode)
+        const mutationFnProperty =
+          mutationFnText === callProps.fn
             ? callProps.fn
-            : `${callProps.fn}: ${queryFn}`
+            : `${callProps.fn}: ${mutationFnText}`
 
-        optionsObjectProperties.push(queryFnProperty)
+        optionsObjectProperties.push(mutationFnProperty)
       }
 
       // options
-      if (optionsObject) {
+      if (optionsObject?.type === AST_NODE_TYPES.ObjectExpression) {
         const existingObjectProperties = optionsObject.properties.map(
           (objectLiteral) => {
             return sourceCode.getText(objectLiteral)
@@ -234,6 +266,10 @@ function runCheckOnNode(params: {
         )
 
         optionsObjectProperties.push(...existingObjectProperties)
+      }
+
+      if (optionsObject?.type === AST_NODE_TYPES.Identifier) {
+        optionsObjectProperties.push(`...${sourceCode.getText(optionsObject)}`)
       }
 
       const calleeText = sourceCode.getText(callNode).split('(')[0]

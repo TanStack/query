@@ -149,10 +149,10 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
-    TQueyKey extends QueryKey = QueryKey,
+    TQueryKey extends QueryKey = QueryKey,
   >(
     queryHash: string,
-  ): Query<TQueryFnData, TError, TData, TQueyKey> | undefined {
+  ): Query<TQueryFnData, TError, TData, TQueryKey> | undefined {
     return this.queriesMap[queryHash]
   }
 

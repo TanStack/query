@@ -415,6 +415,17 @@ ruleTester.run(name, rule, {
     },
     {
       code: normalizeIndent`
+          import { useMutation } from "@tanstack/react-query";
+          useMutation(async () => await fetchUserById(userId));
+        `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+          import { useMutation } from "@tanstack/react-query";
+          useMutation({ mutationFn: async () => await fetchUserById(userId) });
+        `,
+    },
+    {
+      code: normalizeIndent`
           import { createMutation } from "@tanstack/solid-query";
           createMutation(["mutation", "key"], async () => await fetchUserById(userId));
         `,
@@ -423,6 +434,41 @@ ruleTester.run(name, rule, {
           import { createMutation } from "@tanstack/solid-query";
           createMutation({ mutationKey: ["mutation", "key"], mutationFn: async () => await fetchUserById(userId) });
         `,
+    },
+    {
+      code: normalizeIndent`
+        import { useMutation } from "@tanstack/vue-query";
+        useMutation(() => Promise.resolve(3), { onSuccess: () => {} });
+      `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+        import { useMutation } from "@tanstack/vue-query";
+        useMutation({ mutationFn: () => Promise.resolve(3), onSuccess: () => {} });
+      `,
+    },
+    {
+      code: normalizeIndent`
+        import { useMutation } from "@tanstack/vue-query";
+        useMutation(() => Promise.resolve(3), { onSuccess: () => {}, mutationKey: ["foo"] });
+      `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+        import { useMutation } from "@tanstack/vue-query";
+        useMutation({ mutationFn: () => Promise.resolve(3), onSuccess: () => {}, mutationKey: ["foo"] });
+      `,
+    },
+    {
+      code: normalizeIndent`
+        import { useQuery } from '@tanstack/vue-query';
+        const options = { enabled: true };
+        useQuery(['foo'], () => undefined, options);
+      `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+        import { useQuery } from '@tanstack/vue-query';
+        const options = { enabled: true };
+        useQuery({ queryKey: ['foo'], queryFn: () => undefined, ...options });
+      `,
     },
   ],
 })
