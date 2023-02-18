@@ -37,6 +37,9 @@ Its available methods are:
 - `onSuccess?: (data: unknown, query: Query) => void`
   - Optional
   - This function will be called if some query is successful.
+- `createStore?: () => QueryStore`
+  - Optional
+  - This function will be called to create the store that will be used to store the queries. By default, a `Map` is used.
 
 ## Global callbacks
 
