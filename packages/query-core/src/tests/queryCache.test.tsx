@@ -316,6 +316,23 @@ describe('queryCache', () => {
     })
   })
 
+  describe('QueryCacheConfig.createStore', () => {
+    test('should call createStore', async () => {
+      const createStore = jest.fn().mockImplementation(() => new Map())
+      new QueryCache({ createStore })
+      expect(createStore).toHaveBeenCalledWith()
+    })
+
+    test('should use created store', async () => {
+      const store = new Map()
+      const spy = jest.spyOn(store, 'get')
+
+      new QueryCache({ createStore: () => store }).get('key')
+
+      expect(spy).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('QueryCache.add', () => {
     test('should not try to add a query already added to the cache', async () => {
       const key = queryKey()
