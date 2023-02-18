@@ -15,15 +15,6 @@ describe('mutations', () => {
     queryClient.clear()
   })
 
-  test('mutate should trigger a mutation', async () => {
-    const result = await executeMutation(queryClient, {
-      mutationFn: async (text: string) => text,
-      variables: 'todo',
-    })
-
-    expect(result).toBe(result)
-  })
-
   test('mutate should accept null values', async () => {
     let variables
 
@@ -34,26 +25,29 @@ describe('mutations', () => {
       },
     })
 
-    mutation.mutate(null)
-
-    await sleep(10)
+    await mutation.mutate(null)
 
     expect(variables).toBe(null)
   })
 
   test('setMutationDefaults should be able to set defaults', async () => {
     const key = queryKey()
+    const fn = jest.fn()
 
     queryClient.setMutationDefaults(key, {
-      mutationFn: async (text: string) => text,
+      mutationFn: fn,
     })
 
-    const result = await executeMutation(queryClient, {
-      mutationKey: key,
-      variables: 'todo',
-    })
+    await executeMutation(
+      queryClient,
+      {
+        mutationKey: key,
+      },
+      'vars',
+    )
 
-    expect(result).toBe(result)
+    expect(fn).toHaveBeenCalledTimes(1)
+    expect(fn).toHaveBeenCalledWith('vars')
   })
 
   test('mutation should set correct success states', async () => {
@@ -63,7 +57,6 @@ describe('mutations', () => {
         return text
       },
       onMutate: (text) => text,
-      variables: 'todo',
     })
 
     expect(mutation.getCurrentResult()).toEqual({
@@ -81,6 +74,7 @@ describe('mutations', () => {
       reset: expect.any(Function),
       status: 'idle',
       variables: undefined,
+      submittedAt: 0,
     })
 
     const states: MutationState<string, unknown, string, string>[] = []
@@ -89,7 +83,7 @@ describe('mutations', () => {
       states.push(state)
     })
 
-    mutation.mutate()
+    mutation.mutate('todo')
 
     await sleep(0)
 
@@ -108,6 +102,7 @@ describe('mutations', () => {
       reset: expect.any(Function),
       status: 'pending',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
 
     await sleep(5)
@@ -127,6 +122,7 @@ describe('mutations', () => {
       reset: expect.any(Function),
       status: 'pending',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
 
     await sleep(20)
@@ -146,17 +142,17 @@ describe('mutations', () => {
       reset: expect.any(Function),
       status: 'success',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
   })
 
   test('mutation should set correct error states', async () => {
     const mutation = new MutationObserver(queryClient, {
-      mutationFn: async () => {
+      mutationFn: async (_: string) => {
         await sleep(20)
         return Promise.reject(new Error('err'))
       },
       onMutate: (text) => text,
-      variables: 'todo',
       retry: 1,
       retryDelay: 1,
     })
@@ -167,7 +163,7 @@ describe('mutations', () => {
       states.push(state)
     })
 
-    mutation.mutate().catch(() => undefined)
+    mutation.mutate('todo').catch(() => undefined)
 
     await sleep(0)
 
@@ -186,6 +182,7 @@ describe('mutations', () => {
       reset: expect.any(Function),
       status: 'pending',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
 
     await sleep(10)
@@ -205,6 +202,7 @@ describe('mutations', () => {
       reset: expect.any(Function),
       status: 'pending',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
 
     await sleep(20)
@@ -224,6 +222,7 @@ describe('mutations', () => {
       reset: expect.any(Function),
       status: 'pending',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
 
     await sleep(30)
@@ -243,6 +242,7 @@ describe('mutations', () => {
       reset: expect.any(Function),
       status: 'error',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
   })
 
@@ -276,6 +276,7 @@ describe('mutations', () => {
           isPaused: true,
           status: 'pending',
           variables: 'todo',
+          submittedAt: 1,
         },
       )
 
@@ -288,6 +289,7 @@ describe('mutations', () => {
       isPaused: true,
       status: 'pending',
       variables: 'todo',
+      submittedAt: 1,
     })
 
     await queryClient.resumePausedMutations()
@@ -301,6 +303,7 @@ describe('mutations', () => {
       isPaused: false,
       status: 'success',
       variables: 'todo',
+      submittedAt: 1,
     })
 
     expect(onMutate).not.toHaveBeenCalled()

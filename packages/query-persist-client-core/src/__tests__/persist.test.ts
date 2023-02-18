@@ -20,7 +20,6 @@ describe('persistQueryClientSubscribe', () => {
 
     queryClient.getMutationCache().build(queryClient, {
       mutationFn: async (text: string) => text,
-      variables: 'todo',
     })
 
     const result = await persister.restoreClient()

@@ -18,7 +18,8 @@
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "incremental": true
   },
   "exclude": [
     "node_modules"

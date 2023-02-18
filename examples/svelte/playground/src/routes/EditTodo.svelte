@@ -70,7 +70,7 @@
   }
 
   $: disableEditSave =
-    $query.status === 'loading' || $saveMutation.status === 'loading'
+    $query.status === 'pending' || $saveMutation.status === 'pending'
 </script>
 
 <div>
@@ -80,7 +80,7 @@
       "{$query.data.name}" (#{$editingIndex})
     {/if}
   </div>
-  {#if $query.status === 'loading'}
+  {#if $query.status === 'pending'}
     <span>Loading... (Attempt: {$query.failureCount + 1})</span>
   {:else if $query.error}
     <span>
@@ -99,7 +99,7 @@
       <button on:click={onSave} disabled={disableEditSave}> Save </button>
     </div>
     <div>
-      {$saveMutation.status === 'loading'
+      {$saveMutation.status === 'pending'
         ? 'Saving...'
         : $saveMutation.status === 'error'
         ? $saveMutation.error.message

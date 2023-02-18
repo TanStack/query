@@ -364,10 +364,13 @@ describe('dehydration and rehydration', () => {
       retryDelay: 10,
     })
 
-    executeMutation(serverClient, {
-      mutationKey: ['addTodo'],
-      variables: { text: 'text' },
-    }).catch(() => undefined)
+    executeMutation(
+      serverClient,
+      {
+        mutationKey: ['addTodo'],
+      },
+      { text: 'text' },
+    ).catch(() => undefined)
 
     await sleep(50)
 
@@ -433,10 +436,13 @@ describe('dehydration and rehydration', () => {
       retry: false,
     })
 
-    executeMutation(queryClient, {
-      mutationKey: ['addTodo'],
-      variables: { text: 'text' },
-    }).catch(() => undefined)
+    executeMutation(
+      queryClient,
+      {
+        mutationKey: ['addTodo'],
+      },
+      { text: 'text' },
+    ).catch(() => undefined)
 
     await sleep(1)
     const dehydrated = dehydrate(queryClient, { dehydrateMutations: false })
@@ -463,10 +469,13 @@ describe('dehydration and rehydration', () => {
       retryDelay: 20,
     })
 
-    executeMutation(queryClient, {
-      mutationKey: ['addTodo'],
-      variables: { text: 'text' },
-    }).catch(() => undefined)
+    executeMutation(
+      queryClient,
+      {
+        mutationKey: ['addTodo'],
+      },
+      { text: 'text' },
+    ).catch(() => undefined)
 
     // Dehydrate mutation between retries
     await sleep(1)

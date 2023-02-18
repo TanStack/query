@@ -29,7 +29,7 @@ describe('mutationObserver', () => {
     const unsubscribe1 = mutation.subscribe(subscription1Handler)
     const unsubscribe2 = mutation.subscribe(subscription2Handler)
 
-    mutation.mutate()
+    mutation.mutate('input')
 
     unsubscribe1()
 

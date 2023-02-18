@@ -45,7 +45,7 @@ function Example() {
       <h1>Infinite Query with max pages</h1>
       <h3>4 projects per page</h3>
       <h3>3 pages max</h3>
-      {status === 'loading' ? (
+      {status === 'pending' ? (
         <p>Loading...</p>
       ) : status === 'error' ? (
         <span>Error: {error.message}</span>
@@ -63,7 +63,7 @@ function Example() {
                 : 'Nothing more to load'}
             </button>
           </div>
-          {data?.pages.map((page) => (
+          {data.pages.map((page) => (
             <React.Fragment key={page.nextId}>
               {page.data.map((project) => (
                 <p

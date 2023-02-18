@@ -247,7 +247,7 @@ export interface QueryObserverOptions<
    */
   select?: (data: TQueryData) => TData
   /**
-   * If set to `true`, the query will suspend when `status === 'loading'`
+   * If set to `true`, the query will suspend when `status === 'pending'`
    * and throw errors when `status === 'error'`.
    * Defaults to `false`.
    */
@@ -569,7 +569,6 @@ export interface MutationOptions<
 > {
   mutationFn?: MutationFunction<TData, TVariables>
   mutationKey?: MutationKey
-  variables?: TVariables
   onMutate?: (
     variables: TVariables,
   ) => Promise<TContext | undefined> | TContext | undefined
@@ -657,6 +656,7 @@ export interface MutationObserverIdleResult<
   TContext = unknown,
 > extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
   data: undefined
+  variables: undefined
   error: null
   isError: false
   isIdle: true
@@ -672,6 +672,7 @@ export interface MutationObserverLoadingResult<
   TContext = unknown,
 > extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
   data: undefined
+  variables: TVariables
   error: null
   isError: false
   isIdle: false
@@ -688,6 +689,7 @@ export interface MutationObserverErrorResult<
 > extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
   data: undefined
   error: TError
+  variables: TVariables
   isError: true
   isIdle: false
   isPending: false
@@ -703,6 +705,7 @@ export interface MutationObserverSuccessResult<
 > extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
   data: TData
   error: null
+  variables: TVariables
   isError: false
   isIdle: false
   isPending: false

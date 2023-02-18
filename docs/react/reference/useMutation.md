@@ -18,6 +18,7 @@ const {
   mutateAsync,
   reset,
   status,
+  submittedAt
 } = useMutation({
   mutationFn,
   gcTime,
@@ -90,8 +91,8 @@ mutate(variables, {
 - `meta: Record<string, unknown>`
   - Optional
   - If set, stores additional information on the mutation cache entry that can be used as needed. It will be accessible wherever the `mutation` is available (eg. `onError`, `onSuccess` functions of the `MutationCache`).
-- `context?: React.Context<QueryClient | undefined>`
-  - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.
+- `queryClient?: QueryClient`,
+  - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
 **Returns**
 
@@ -139,4 +140,7 @@ mutate(variables, {
 - `failureReason: null | TError`
   - The failure reason for the mutation retry.
   - Reset to `null` when the mutation succeeds.
+- `submittedAt: number`
+  - The timestamp for when the mutation was submitted.
+  - Defaults to `0`.
 

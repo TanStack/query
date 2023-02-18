@@ -95,9 +95,6 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
       mutationId: ++this.#mutationId,
       options: client.defaultMutationOptions(options),
       state,
-      defaultOptions: options.mutationKey
-        ? client.getMutationDefaults(options.mutationKey)
-        : undefined,
     })
 
     this.add(mutation)
@@ -142,7 +139,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     return this.#mutations.find((mutation) => matchMutation(filters, mutation))
   }
 
-  findAll(filters: MutationFilters): Mutation[] {
+  findAll(filters: MutationFilters = {}): Mutation[] {
     return this.#mutations.filter((mutation) =>
       matchMutation(filters, mutation),
     )

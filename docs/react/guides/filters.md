@@ -66,8 +66,7 @@ A mutation filter object supports the following properties:
   - Set this property to define a mutation key to match on.
 - `exact?: boolean`
   - If you don't want to search mutations inclusively by mutation key, you can pass the `exact: true` option to return only the mutation with the exact mutation key you have passed.
-- `fetching?: boolean`
-  - When set to `true` it will match mutations that are currently fetching.
-  - When set to `false` it will match mutations that are not fetching.
+- `status?: MutationStatus`
+  - Allows for filtering mutations according to their status.
 - `predicate?: (mutation: Mutation) => boolean`
   - This predicate function will be used as a final filter on all matching mutations. If no other filters are specified, this function will be evaluated against every mutation in the cache.

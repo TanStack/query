@@ -69,7 +69,7 @@ function Posts(props: { setPostId: Setter<number> }) {
       <h1>Posts</h1>
       <div>
         <Switch>
-          <Match when={state.status === 'loading'}>Loading...</Match>
+          <Match when={state.status === 'pending'}>Loading...</Match>
           <Match when={state.status === 'error'}>
             <span>Error: {(state.error as Error).message}</span>
           </Match>
@@ -142,7 +142,7 @@ function Post(props: { postId: number; setPostId: Setter<number> }) {
         </a>
       </div>
       <Switch>
-        <Match when={!props.postId || state.status === 'loading'}>
+        <Match when={!props.postId || state.status === 'pending'}>
           Loading...
         </Match>
         <Match when={state.status === 'error'}>
