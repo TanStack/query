@@ -239,6 +239,10 @@
               "to": "react/examples/react/load-more-infinite-scroll"
             },
             {
+              "label": "Infinite query with Max pages",
+              "to": "react/examples/react/infinite-query-with-max-pages"
+            },
+            {
               "label": "Suspense",
               "to": "react/examples/react/suspense"
             },
@@ -277,6 +281,10 @@
             {
               "label": "Offline Queries and Mutations",
               "to": "react/examples/react/offline"
+            },
+            {
+              "label": "Algolia",
+              "to": "react/examples/react/algolia"
             }
           ]
         },

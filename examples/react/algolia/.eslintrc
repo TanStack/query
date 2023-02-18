@@ -1,0 +1,7 @@
+{
+  "extends": ["react-app", "prettier", "plugin:@tanstack/eslint-plugin-query/recommended"],
+  "rules": {
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off"
+  }
+}

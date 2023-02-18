@@ -118,6 +118,10 @@ export interface QueryOptions<
    * Use this property to pass information that can be used in other places.
    */
   meta?: QueryMeta
+  /**
+   * Maximum number of pages to store in the data of an infinite query.
+   */
+  maxPages?: number
 }
 
 export type ThrowErrors<
@@ -334,31 +338,15 @@ export interface ResultOptions {
   throwOnError?: boolean
 }
 
-export interface RefetchPageFilters<TPageData = unknown> {
-  refetchPage?: (
-    lastPage: TPageData,
-    index: number,
-    allPages: TPageData[],
-  ) => boolean
-}
-
 export interface RefetchOptions extends ResultOptions {
   cancelRefetch?: boolean
 }
 
-export interface InvalidateQueryFilters<TPageData = unknown>
-  extends QueryFilters,
-    RefetchPageFilters<TPageData> {
+export interface InvalidateQueryFilters extends QueryFilters {
   refetchType?: QueryTypeFilter | 'none'
 }
 
-export interface RefetchQueryFilters<TPageData = unknown>
-  extends QueryFilters,
-    RefetchPageFilters<TPageData> {}
-
-export interface ResetQueryFilters<TPageData = unknown>
-  extends QueryFilters,
-    RefetchPageFilters<TPageData> {}
+export interface RefetchQueryFilters extends QueryFilters {}
 
 export interface InvalidateOptions extends RefetchOptions {}
 export interface ResetOptions extends RefetchOptions {}
@@ -405,8 +393,8 @@ export interface QueryObserverBaseResult<
   isRefetching: boolean
   isStale: boolean
   isSuccess: boolean
-  refetch: <TPageData>(
-    options?: RefetchOptions & RefetchQueryFilters<TPageData>,
+  refetch: (
+    options?: RefetchOptions,
   ) => Promise<QueryObserverResult<TData, TError>>
   status: QueryStatus
   fetchStatus: FetchStatus
@@ -754,4 +742,17 @@ export interface CancelOptions {
 
 export interface SetDataOptions {
   updatedAt?: number
+}
+
+export type NotifyEventType =
+  | 'added'
+  | 'removed'
+  | 'updated'
+  | 'observerAdded'
+  | 'observerRemoved'
+  | 'observerResultsUpdated'
+  | 'observerOptionsUpdated'
+
+export interface NotifyEvent {
+  type: NotifyEventType
 }

@@ -1,8 +1,4 @@
-import type {
-  DefaultedQueryObserverOptions,
-  RefetchPageFilters,
-  RegisteredError,
-} from './types'
+import type { DefaultedQueryObserverOptions, RegisteredError } from './types'
 import {
   isServer,
   isValidTimeout,
@@ -260,15 +256,11 @@ export class QueryObserver<
     return this.#currentQuery
   }
 
-  refetch<TPageData>({
-    refetchPage,
-    ...options
-  }: RefetchOptions & RefetchPageFilters<TPageData> = {}): Promise<
+  refetch({ ...options }: RefetchOptions = {}): Promise<
     QueryObserverResult<TData, TError>
   > {
     return this.fetch({
       ...options,
-      meta: { refetchPage },
     })
   }
 
