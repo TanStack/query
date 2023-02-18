@@ -740,3 +740,16 @@ export interface CancelOptions {
 export interface SetDataOptions {
   updatedAt?: number
 }
+
+export type NotifyEventType =
+  | 'added'
+  | 'removed'
+  | 'updated'
+  | 'observerAdded'
+  | 'observerRemoved'
+  | 'observerResultsUpdated'
+  | 'observerOptionsUpdated'
+
+export interface NotifyEvent {
+  type: NotifyEventType
+}

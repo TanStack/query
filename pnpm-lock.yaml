@@ -136,6 +136,37 @@ importers:
       typescript: 4.7.4
       vue: 3.2.37
 
+  examples/react/algolia:
+    specifiers:
+      '@algolia/client-search': 4.11.0
+      '@algolia/transporter': 4.11.0
+      '@tanstack/eslint-plugin-query': ^4.13.0
+      '@tanstack/react-query': ^4.7.1
+      '@tanstack/react-query-devtools': ^4.7.1
+      '@types/react': ^18.0.14
+      '@types/react-dom': ^18.0.5
+      '@vitejs/plugin-react': ^2.0.0
+      algoliasearch: 4.12.2
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      typescript: ^4.7.4
+      vite: ^3.0.0
+    dependencies:
+      '@algolia/client-search': 4.11.0
+      '@algolia/transporter': 4.11.0
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.24.9_bzphmdwvicyhtx5eo3azinrh54
+      algoliasearch: 4.12.2
+    devDependencies:
+      '@tanstack/eslint-plugin-query': link:../../../packages/eslint-plugin-query
+      '@types/react': 18.0.15
+      '@types/react-dom': 18.0.6
+      '@vitejs/plugin-react': 2.1.0_vite@3.2.2
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      typescript: 4.8.4
+      vite: 3.2.2
+
   examples/react/auto-refetching:
     specifiers:
       '@tanstack/react-query': ^4.7.1
@@ -146,8 +177,8 @@ importers:
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.24.9_bzphmdwvicyhtx5eo3azinrh54
       axios: 0.21.4
       isomorphic-unfetch: 3.0.0
       next: 12.2.2_biqbaboplfbrettd7655fr4n2y
@@ -165,8 +196,8 @@ importers:
       react-dom: ^18.0.0
       vite: ^3.0.0
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.24.9_bzphmdwvicyhtx5eo3azinrh54
       axios: 0.21.4
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -186,8 +217,8 @@ importers:
       react-dom: ^18.0.0
       vite: ^3.0.0
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.24.9_bzphmdwvicyhtx5eo3azinrh54
       graphql: 15.8.0
       graphql-request: 3.7.0_graphql@15.8.0
       react: 18.2.0
@@ -214,10 +245,10 @@ importers:
       typescript: 4.7.4
       vite: ^3.0.0
     dependencies:
-      '@tanstack/query-sync-storage-persister': link:../../../packages/query-sync-storage-persister
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
-      '@tanstack/react-query-persist-client': link:../../../packages/react-query-persist-client
+      '@tanstack/query-sync-storage-persister': 4.24.9
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.24.9_bzphmdwvicyhtx5eo3azinrh54
+      '@tanstack/react-query-persist-client': 4.24.9_edqnkd4k5jgewaytq5kyy7a3ra
       axios: 0.26.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -241,8 +272,8 @@ importers:
       react-dom: ^18.0.0
       vite: ^3.0.0
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.24.9_bzphmdwvicyhtx5eo3azinrh54
       axios: 0.26.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -261,8 +292,8 @@ importers:
       react-dom: ^18.2.0
       react-intersection-observer: ^8.33.1
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.24.9_bzphmdwvicyhtx5eo3azinrh54
       axios: 0.21.4
       isomorphic-unfetch: 3.0.0
       next: 12.2.2_biqbaboplfbrettd7655fr4n2y
@@ -281,8 +312,8 @@ importers:
       react-dom: ^18.2.0
       react-intersection-observer: ^8.33.1
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.24.9_bzphmdwvicyhtx5eo3azinrh54
       axios: 0.21.4
       isomorphic-unfetch: 3.0.0
       next: 12.2.2_biqbaboplfbrettd7655fr4n2y
@@ -302,8 +333,8 @@ importers:
       resolve-from: ^5.0.0
       web-streams-polyfill: ^3.0.3
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.24.9_bzphmdwvicyhtx5eo3azinrh54
       ky: 0.23.0
       ky-universal: 0.8.2_53xdiffegfcxt6522645rot5ue
       next: 12.2.2_biqbaboplfbrettd7655fr4n2y
@@ -327,11 +358,11 @@ importers:
       react-hot-toast: ^2.2.0
       vite: ^3.0.0
     dependencies:
-      '@tanstack/query-sync-storage-persister': link:../../../packages/query-sync-storage-persister
+      '@tanstack/query-sync-storage-persister': 4.24.9
       '@tanstack/react-location': 3.7.4_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
-      '@tanstack/react-query-persist-client': link:../../../packages/react-query-persist-client
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.24.9_bzphmdwvicyhtx5eo3azinrh54
+      '@tanstack/react-query-persist-client': 4.24.9_edqnkd4k5jgewaytq5kyy7a3ra
       ky: 0.30.0
       msw: 0.39.2
       react: 18.2.0
@@ -354,8 +385,8 @@ importers:
       react-dom: ^18.2.0
       typescript: 4.7.4
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.24.9_bzphmdwvicyhtx5eo3azinrh54
       '@types/node': 14.14.14
       '@types/react': 18.0.15
       axios: 0.21.4
@@ -375,8 +406,8 @@ importers:
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.24.9_bzphmdwvicyhtx5eo3azinrh54
       axios: 0.21.4
       isomorphic-unfetch: 3.0.0
       next: 12.2.2_biqbaboplfbrettd7655fr4n2y
@@ -392,8 +423,8 @@ importers:
       react-dom: ^18.0.0
       vite: ^3.0.0
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.24.9_bzphmdwvicyhtx5eo3azinrh54
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
     devDependencies:
@@ -410,8 +441,8 @@ importers:
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.24.9_bzphmdwvicyhtx5eo3azinrh54
       axios: 0.21.4
       isomorphic-unfetch: 3.0.0
       next: 12.2.2_biqbaboplfbrettd7655fr4n2y
@@ -451,8 +482,8 @@ importers:
       '@react-native-community/netinfo': 6.0.2_react-native@0.64.3
       '@react-navigation/native': 6.0.11_sbjh7r6wrxe2pvsvaqturwwxna
       '@react-navigation/stack': 6.2.2_dpltcvsy22isyfoj2zvicex7ry
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.24.9_6xi2cjj4jkvnn2q2msxp65enam
+      '@tanstack/react-query-devtools': 4.24.9_wbw6rstheiz66bag7jwb4yeysu
       expo: 43.0.5_@babel+core@7.19.1
       expo-constants: 12.1.3
       expo-status-bar: 1.1.0
@@ -491,8 +522,8 @@ importers:
       sort-by: ^1.2.0
       vite: ^3.0.0
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.24.9_bzphmdwvicyhtx5eo3azinrh54
       localforage: 1.10.0
       match-sorter: 6.3.1
       react: 18.2.0
@@ -517,8 +548,8 @@ importers:
       vite: ^3.0.0
     dependencies:
       '@material-ui/core': 4.12.4_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.24.9_bzphmdwvicyhtx5eo3azinrh54
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-router: 5.3.3_react@18.2.0
@@ -537,8 +568,8 @@ importers:
       react-dom: ^18.0.0
       vite: ^3.0.0
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.24.9_bzphmdwvicyhtx5eo3azinrh54
       axios: 0.26.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -559,8 +590,8 @@ importers:
       vite: ^3.0.0
     dependencies:
       '@material-ui/core': 4.12.4_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.24.9_bzphmdwvicyhtx5eo3azinrh54
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-router: 5.3.3_react@18.2.0
@@ -580,8 +611,8 @@ importers:
       react-error-boundary: ^2.2.3
       vite: ^3.0.0
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.24.9_bzphmdwvicyhtx5eo3azinrh54
       axios: 0.21.4
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -600,7 +631,7 @@ importers:
       vite: ^3.0.9
       vite-plugin-solid: ^2.3.9
     dependencies:
-      '@tanstack/solid-query': link:../../../packages/solid-query
+      '@tanstack/solid-query': 4.24.9_solid-js@1.6.11
       graphql: 16.6.0
       graphql-request: 5.0.0_graphql@16.6.0
       solid-js: 1.6.11
@@ -617,7 +648,7 @@ importers:
       vite: ^3.0.9
       vite-plugin-solid: ^2.3.9
     dependencies:
-      '@tanstack/solid-query': link:../../../packages/solid-query
+      '@tanstack/solid-query': 4.24.9_solid-js@1.6.11
       solid-js: 1.6.11
     devDependencies:
       typescript: 4.7.4
@@ -632,7 +663,7 @@ importers:
       vite: ^3.0.9
       vite-plugin-solid: ^2.3.9
     dependencies:
-      '@tanstack/solid-query': link:../../../packages/solid-query
+      '@tanstack/solid-query': 4.24.9_solid-js@1.6.11
       solid-js: 1.6.11
     devDependencies:
       typescript: 4.7.4
@@ -648,7 +679,7 @@ importers:
       vite: ^3.0.9
       vite-plugin-solid: ^2.3.9
     dependencies:
-      '@tanstack/solid-query': link:../../../packages/solid-query
+      '@tanstack/solid-query': 4.24.9_solid-js@1.6.11
       solid-js: 1.6.11
     devDependencies:
       '@tanstack/eslint-plugin-query': link:../../../packages/eslint-plugin-query
@@ -673,7 +704,7 @@ importers:
     dependencies:
       '@solidjs/meta': 0.28.2_solid-js@1.6.11
       '@solidjs/router': 0.6.0_solid-js@1.6.11
-      '@tanstack/solid-query': link:../../../packages/solid-query
+      '@tanstack/solid-query': 4.24.9_solid-js@1.6.11
       solid-js: 1.6.11
       solid-start: 0.2.21_hj77zfsbczccdokc5ewmqqrrvy
       undici: 5.14.0
@@ -696,7 +727,7 @@ importers:
       typescript: ^4.7.4
       vite: ^4.0.0
     dependencies:
-      '@tanstack/svelte-query': link:../../../packages/svelte-query
+      '@tanstack/svelte-query': 4.24.9_svelte@3.55.0
     devDependencies:
       '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.7
       '@sveltejs/kit': 1.0.7_svelte@3.55.0+vite@4.0.4
@@ -717,7 +748,7 @@ importers:
       typescript: ^4.7.4
       vite: ^4.0.0
     dependencies:
-      '@tanstack/svelte-query': link:../../../packages/svelte-query
+      '@tanstack/svelte-query': 4.24.9_svelte@3.55.0
     devDependencies:
       '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.7
       '@sveltejs/kit': 1.0.7_svelte@3.55.0+vite@4.0.4
@@ -738,7 +769,7 @@ importers:
       typescript: ^4.7.4
       vite: ^4.0.0
     dependencies:
-      '@tanstack/svelte-query': link:../../../packages/svelte-query
+      '@tanstack/svelte-query': 4.24.9_svelte@3.55.0
     devDependencies:
       '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.7
       '@sveltejs/kit': 1.0.7_svelte@3.55.0+vite@4.0.4
@@ -759,7 +790,7 @@ importers:
       typescript: ^4.7.4
       vite: ^4.0.0
     dependencies:
-      '@tanstack/svelte-query': link:../../../packages/svelte-query
+      '@tanstack/svelte-query': 4.24.9_svelte@3.55.0
     devDependencies:
       '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.7
       '@sveltejs/kit': 1.0.7_svelte@3.55.0+vite@4.0.4
@@ -780,7 +811,7 @@ importers:
       typescript: ^4.7.4
       vite: ^4.0.0
     dependencies:
-      '@tanstack/svelte-query': link:../../../packages/svelte-query
+      '@tanstack/svelte-query': 4.24.9_svelte@3.55.0
     devDependencies:
       '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.7
       '@sveltejs/kit': 1.0.7_svelte@3.55.0+vite@4.0.4
@@ -801,7 +832,7 @@ importers:
       typescript: ^4.7.4
       vite: ^4.0.0
     dependencies:
-      '@tanstack/svelte-query': link:../../../packages/svelte-query
+      '@tanstack/svelte-query': 4.24.9_svelte@3.55.0
     devDependencies:
       '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.0.4
       '@tsconfig/svelte': 3.0.0
@@ -822,7 +853,7 @@ importers:
       typescript: ^4.7.4
       vite: ^4.0.0
     dependencies:
-      '@tanstack/svelte-query': link:../../../packages/svelte-query
+      '@tanstack/svelte-query': 4.24.9_svelte@3.55.0
     devDependencies:
       '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.7
       '@sveltejs/kit': 1.0.7_svelte@3.55.0+vite@4.0.4
@@ -846,7 +877,7 @@ importers:
       typescript: ^4.7.4
       vite: ^4.0.0
     dependencies:
-      '@tanstack/svelte-query': link:../../../packages/svelte-query
+      '@tanstack/svelte-query': 4.24.9_svelte@3.55.0
     devDependencies:
       '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.7
       '@sveltejs/kit': 1.0.7_svelte@3.55.0+vite@4.0.4
@@ -867,7 +898,7 @@ importers:
       vite: ^3.1.8
       vue: ^3.2.41
     dependencies:
-      '@tanstack/vue-query': link:../../../packages/vue-query
+      '@tanstack/vue-query': 4.24.9_vue@3.2.41
       vue: 3.2.41
     devDependencies:
       '@vitejs/plugin-vue': 3.1.2_vite@3.1.8+vue@3.2.41
@@ -882,7 +913,7 @@ importers:
       vite: 3.1.4
       vue: 3.2.39
     dependencies:
-      '@tanstack/vue-query': link:../../../packages/vue-query
+      '@tanstack/vue-query': 4.24.9_vue@3.2.39
       vue: 3.2.39
     devDependencies:
       '@vitejs/plugin-vue': 3.1.0_vite@3.1.4+vue@3.2.39
@@ -899,9 +930,9 @@ importers:
       vite: 3.2.2
       vue: 3.2.41
     dependencies:
-      '@tanstack/query-persist-client-core': link:../../../packages/query-persist-client-core
-      '@tanstack/query-sync-storage-persister': link:../../../packages/query-sync-storage-persister
-      '@tanstack/vue-query': link:../../../packages/vue-query
+      '@tanstack/query-persist-client-core': 4.24.9
+      '@tanstack/query-sync-storage-persister': 4.24.9
+      '@tanstack/vue-query': 4.24.9_vue@3.2.41
       vue: 3.2.41
     devDependencies:
       '@vitejs/plugin-vue': 3.2.0_vite@3.2.2+vue@3.2.41
@@ -1076,6 +1107,131 @@ importers:
       vue2.7: /vue/2.7.14
 
 packages:
+
+  /@algolia/cache-browser-local-storage/4.12.2:
+    resolution: {integrity: sha512-z8LjFsQc0B6h6LEE3pkUGM4ErVktn6bkFbhnYbTccjmFVQ+wXFJd/D63e0WtaC+hwRB1xq8uKhkz9oojEKEsGA==}
+    dependencies:
+      '@algolia/cache-common': 4.12.2
+    dev: false
+
+  /@algolia/cache-common/4.11.0:
+    resolution: {integrity: sha512-lODcJRuPXqf+6mp0h6bOxPMlbNoyn3VfjBVcQh70EDP0/xExZbkpecgHyyZK4kWg+evu+mmgvTK3GVHnet/xKw==}
+    dev: false
+
+  /@algolia/cache-common/4.12.2:
+    resolution: {integrity: sha512-r//r7MF0Na0HxD2BHnjWsDKuI72Z5UEf/Rb/8MC08XKBsjCwBihGxWxycjRcNGjNEIxJBsvRMIEOipcd9qD54g==}
+    dev: false
+
+  /@algolia/cache-in-memory/4.12.2:
+    resolution: {integrity: sha512-opWpbBUloP1fcTG3wBDnAfcoyNXW5GFDgGtLXrSANdfnelPKkr3O8j01ZTkRlPIuBDR0izGZG8MVWMDlTf71Bw==}
+    dependencies:
+      '@algolia/cache-common': 4.12.2
+    dev: false
+
+  /@algolia/client-account/4.12.2:
+    resolution: {integrity: sha512-HZqEyeVVjzOlfoSUyc+7+ueEJmRgqSuC+hqQOGECYa5JVno4d8eRVuDAMOb87I2LOdg/WoFMcAtaaRq2gpfV/w==}
+    dependencies:
+      '@algolia/client-common': 4.12.2
+      '@algolia/client-search': 4.12.2
+      '@algolia/transporter': 4.12.2
+    dev: false
+
+  /@algolia/client-analytics/4.12.2:
+    resolution: {integrity: sha512-7ktimzesu+vk3l+eG9w/nQh6/9AoIieCKmoiRIguKh6okGsaSBrcTHvUwIQEIiliqPuAFBk2M8eXYFqOZzwCZw==}
+    dependencies:
+      '@algolia/client-common': 4.12.2
+      '@algolia/client-search': 4.12.2
+      '@algolia/requester-common': 4.12.2
+      '@algolia/transporter': 4.12.2
+    dev: false
+
+  /@algolia/client-common/4.11.0:
+    resolution: {integrity: sha512-Qy+F+TZq12kc7tgfC+FM3RvYH/Ati7sUiUv/LkvlxFwNwNPwWGoZO81AzVSareXT/ksDDrabD4mHbdTbBPTRmQ==}
+    dependencies:
+      '@algolia/requester-common': 4.11.0
+      '@algolia/transporter': 4.11.0
+    dev: false
+
+  /@algolia/client-common/4.12.2:
+    resolution: {integrity: sha512-+dTicT1lklwOpeoiDspUoRSQYHhrr2IzllrX89/WuTPEBm2eww1xurqrSTQYC0MuVeX1s9/i4k34Q0ZnspypWg==}
+    dependencies:
+      '@algolia/requester-common': 4.12.2
+      '@algolia/transporter': 4.12.2
+    dev: false
+
+  /@algolia/client-personalization/4.12.2:
+    resolution: {integrity: sha512-JBW3vYFGIm5sAAy3cLUdmUCpmSAdreo5S1fERg7xgF6KyxGrwyy5BViTNWrOKG+av2yusk1wKydOYJ1Fbpbaxw==}
+    dependencies:
+      '@algolia/client-common': 4.12.2
+      '@algolia/requester-common': 4.12.2
+      '@algolia/transporter': 4.12.2
+    dev: false
+
+  /@algolia/client-search/4.11.0:
+    resolution: {integrity: sha512-iovPLc5YgiXBdw2qMhU65sINgo9umWbHFzInxoNErWnYoTQWfXsW6P54/NlKx5uscoLVjSf+5RUWwFu5BX+lpw==}
+    dependencies:
+      '@algolia/client-common': 4.11.0
+      '@algolia/requester-common': 4.11.0
+      '@algolia/transporter': 4.11.0
+    dev: false
+
+  /@algolia/client-search/4.12.2:
+    resolution: {integrity: sha512-JIqi14TgfEqAooNbSPBC1ZCk3Pnviqlaz9KofAqWBxSRTpPUFnU/XQCU5ihR0PC68SFVDnU/Y9cak/XotXPUeg==}
+    dependencies:
+      '@algolia/client-common': 4.12.2
+      '@algolia/requester-common': 4.12.2
+      '@algolia/transporter': 4.12.2
+    dev: false
+
+  /@algolia/logger-common/4.11.0:
+    resolution: {integrity: sha512-pRMJFeOY8hoWKIxWuGHIrqnEKN/kqKh7UilDffG/+PeEGxBuku+Wq5CfdTFG0C9ewUvn8mAJn5BhYA5k8y0Jqg==}
+    dev: false
+
+  /@algolia/logger-common/4.12.2:
+    resolution: {integrity: sha512-iOiJAymLjq137G7+8EQuUEkrgta0cZGMg6scp8s4hJ+X6k+6By4nyptdkCWYwKLsW/Xy927QcIhGlkWV78vQIQ==}
+    dev: false
+
+  /@algolia/logger-console/4.12.2:
+    resolution: {integrity: sha512-veuQZyTSqHoHJtr9mLMnYeal9Mee6hCie4eqY+645VbeOrgT9p/kCMbKg5GLJGoLPlXGu7C0XpHyUj5k7/NQyw==}
+    dependencies:
+      '@algolia/logger-common': 4.12.2
+    dev: false
+
+  /@algolia/requester-browser-xhr/4.12.2:
+    resolution: {integrity: sha512-FpFdHNd81tS3zj6Glqd+lt+RV0ljPExKtx+QB+gani6HWZ9YlSCM+Zl82T4ibxN+hmkrMeAyT+TMzS0jiGhGyQ==}
+    dependencies:
+      '@algolia/requester-common': 4.12.2
+    dev: false
+
+  /@algolia/requester-common/4.11.0:
+    resolution: {integrity: sha512-+cZGe/9fuYgGuxjaBC+xTGBkK7OIYdfapxhfvEf03dviLMPmhmVYFJtJlzAjQ2YmGDJpHrGgAYj3i/fbs8yhiA==}
+    dev: false
+
+  /@algolia/requester-common/4.12.2:
+    resolution: {integrity: sha512-4szj/lvDQf/u8EyyRBBRZD1ZkKDyLBbckLj7meQDlnbfwnW1UpLwpB2l3XJ9wDmDSftGxUCeTl5oMFe4z9OEvQ==}
+    dev: false
+
+  /@algolia/requester-node-http/4.12.2:
+    resolution: {integrity: sha512-UXfJNZt2KMwjBjiOa3cJ/PyoXWZa/F1vy6rdyG4xQeZDcLbqKP3O2b+bOJcGPmFbmdwBhtAyMVLt+hvAvAVfOw==}
+    dependencies:
+      '@algolia/requester-common': 4.12.2
+    dev: false
+
+  /@algolia/transporter/4.11.0:
+    resolution: {integrity: sha512-k4dyxiaEfYpw4UqybK9q7lrFzehygo6KV3OCYJMMdX0IMWV0m4DXdU27c1zYRYtthaFYaBzGF4Kjcl8p8vxCKw==}
+    dependencies:
+      '@algolia/cache-common': 4.11.0
+      '@algolia/logger-common': 4.11.0
+      '@algolia/requester-common': 4.11.0
+    dev: false
+
+  /@algolia/transporter/4.12.2:
+    resolution: {integrity: sha512-PUq79if4CukXsm27ymTQ3eD3juSvMcyJmt6mxCkSFE0zQRL4ert61HBlNH6S9y/quUVe3g7oggfHq3d5pdpqZA==}
+    dependencies:
+      '@algolia/cache-common': 4.12.2
+      '@algolia/logger-common': 4.12.2
+      '@algolia/requester-common': 4.12.2
+    dev: false
 
   /@ampproject/remapping/2.2.0:
     resolution: {integrity: sha512-qRmjj8nj9qmLTQXXmaR1cck3UXSRMPrbsLJAasZpF+t3riI71BXed5ebIOYwQntykeZuhjsdweEc9BxH5Jc26w==}
@@ -7484,6 +7640,22 @@ packages:
       remove-accents: 0.4.2
     dev: false
 
+  /@tanstack/query-core/4.24.9:
+    resolution: {integrity: sha512-pZQ2NpdaHzx8gPPkAPh06d6zRkjfonUzILSYBXrdHDapP2eaBbGsx5L4/dMF+fyAglFzQZdDDzZgAykbM20QVw==}
+    dev: false
+
+  /@tanstack/query-persist-client-core/4.24.9:
+    resolution: {integrity: sha512-/pudjUvzemA5hyb0IQ6E6zMyoqci5izlKhtU5IwJyfjPikDIIcFUKbci6pSw01SJJQDX/+br8NRRmFzUNLi/pQ==}
+    dependencies:
+      '@tanstack/query-core': 4.24.9
+    dev: false
+
+  /@tanstack/query-sync-storage-persister/4.24.9:
+    resolution: {integrity: sha512-2Z/mestkEMl4W5J2Ip5pLdL3IjQ2G040MH4rnsXfAe76I0BTs/xjVzf32imRDvbjTsQhWbkwXr2Dug1PxfM+9A==}
+    dependencies:
+      '@tanstack/query-persist-client-core': 4.24.9
+    dev: false
+
   /@tanstack/react-location/3.7.4_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-6rH2vNHGr0uyeUz5ZHvWMYjeYKGgIKFzvs5749QtnS9f+FU7t7fQE0hKZAzltBZk82LT7iYbcHBRyUg2lW13VA==}
     engines: {node: '>=12'}
@@ -7495,6 +7667,132 @@ packages:
       history: 5.3.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+    dev: false
+
+  /@tanstack/react-query-devtools/4.24.9_bzphmdwvicyhtx5eo3azinrh54:
+    resolution: {integrity: sha512-NPsVf3pLMjH/XNTT5iP1q6isEBNE4kWF/IBSbxNUt0tDWK1nS1qgWr9ySTXwimsAHOWMjHkFuUF8VBRmz+axKg==}
+    peerDependencies:
+      '@tanstack/react-query': 4.24.9
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@tanstack/match-sorter-utils': 8.7.6
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      superjson: 1.10.0
+      use-sync-external-store: 1.2.0_react@18.2.0
+    dev: false
+
+  /@tanstack/react-query-devtools/4.24.9_wbw6rstheiz66bag7jwb4yeysu:
+    resolution: {integrity: sha512-NPsVf3pLMjH/XNTT5iP1q6isEBNE4kWF/IBSbxNUt0tDWK1nS1qgWr9ySTXwimsAHOWMjHkFuUF8VBRmz+axKg==}
+    peerDependencies:
+      '@tanstack/react-query': 4.24.9
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@tanstack/match-sorter-utils': 8.7.6
+      '@tanstack/react-query': 4.24.9_6xi2cjj4jkvnn2q2msxp65enam
+      react: 17.0.1
+      react-dom: 17.0.1_react@17.0.1
+      superjson: 1.10.0
+      use-sync-external-store: 1.2.0_react@17.0.1
+    dev: false
+
+  /@tanstack/react-query-persist-client/4.24.9_edqnkd4k5jgewaytq5kyy7a3ra:
+    resolution: {integrity: sha512-6PMhvN/QJZD/lxmTwFZi8pyuwbDi9Dib4S/bMTDHzHr+3iJEZi9/6ry/IwXSHa/ho3JlujWOm5Td7VJVv8MEyw==}
+    peerDependencies:
+      '@tanstack/react-query': 4.24.9
+    dependencies:
+      '@tanstack/query-persist-client-core': 4.24.9
+      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+    dev: false
+
+  /@tanstack/react-query/4.24.9_6xi2cjj4jkvnn2q2msxp65enam:
+    resolution: {integrity: sha512-6WLwUT9mrngIinRtcZjrWOUENOuLbWvQpKmU6DZCo2iPQVA+qvv3Ji90Amme4AkUyWQ8ZSSRTnAFq8V2tj2ACg==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-native: '*'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      '@tanstack/query-core': 4.24.9
+      react: 17.0.1
+      react-dom: 17.0.1_react@17.0.1
+      react-native: 0.64.3_gpe6tsd6gj6gjuc7hywxyjd2qm
+      use-sync-external-store: 1.2.0_react@17.0.1
+    dev: false
+
+  /@tanstack/react-query/4.24.9_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-6WLwUT9mrngIinRtcZjrWOUENOuLbWvQpKmU6DZCo2iPQVA+qvv3Ji90Amme4AkUyWQ8ZSSRTnAFq8V2tj2ACg==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-native: '*'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      '@tanstack/query-core': 4.24.9
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      use-sync-external-store: 1.2.0_react@18.2.0
+    dev: false
+
+  /@tanstack/solid-query/4.24.9_solid-js@1.6.11:
+    resolution: {integrity: sha512-pGeNCgAJZU4FNRRm74Mpihuq4KQSWMBlKwEhNCJEIg/9agprpxgfKhXDzVYRzk5pkUIxC7nUkOFqLQSZhAe7bA==}
+    peerDependencies:
+      solid-js: ^1.5.7
+    dependencies:
+      '@tanstack/query-core': 4.24.9
+      solid-js: 1.6.11
+    dev: false
+
+  /@tanstack/svelte-query/4.24.9_svelte@3.55.0:
+    resolution: {integrity: sha512-sKZgyrHbCVWxbGPNOwRG3py7b/si2lXCMP0jCLHIK6ncHrrxhZXhYDQgbIy75D44wKRDV7jjP2GJ7CIktWxNrA==}
+    peerDependencies:
+      svelte: ^3.54.0
+    dependencies:
+      '@tanstack/query-core': 4.24.9
+      svelte: 3.55.0
+    dev: false
+
+  /@tanstack/vue-query/4.24.9_vue@3.2.39:
+    resolution: {integrity: sha512-qN2SRu5DHrTYo4TgoQG59s7GEWjvP6kJ+pCe4g7ww5WYTIQz14DSXRd5Sr87SUpcp6M9RZx9R07zpf16hV+/5Q==}
+    peerDependencies:
+      '@vue/composition-api': ^1.1.2
+      vue: ^2.5.0 || ^3.0.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      '@tanstack/match-sorter-utils': 8.7.6
+      '@tanstack/query-core': 4.24.9
+      '@vue/devtools-api': 6.5.0
+      vue: 3.2.39
+      vue-demi: 0.13.11_vue@3.2.39
+    dev: false
+
+  /@tanstack/vue-query/4.24.9_vue@3.2.41:
+    resolution: {integrity: sha512-qN2SRu5DHrTYo4TgoQG59s7GEWjvP6kJ+pCe4g7ww5WYTIQz14DSXRd5Sr87SUpcp6M9RZx9R07zpf16hV+/5Q==}
+    peerDependencies:
+      '@vue/composition-api': ^1.1.2
+      vue: ^2.5.0 || ^3.0.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      '@tanstack/match-sorter-utils': 8.7.6
+      '@tanstack/query-core': 4.24.9
+      '@vue/devtools-api': 6.5.0
+      vue: 3.2.41
+      vue-demi: 0.13.11_vue@3.2.41
     dev: false
 
   /@testing-library/dom/7.31.2:
@@ -8271,6 +8569,24 @@ packages:
       - supports-color
     dev: true
 
+  /@vitejs/plugin-react/2.1.0_vite@3.2.2:
+    resolution: {integrity: sha512-am6rPyyU3LzUYne3Gd9oj9c4Rzbq5hQnuGXSMT6Gujq45Il/+bunwq3lrB7wghLkiF45ygMwft37vgJ/NE8IAA==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    peerDependencies:
+      vite: ^3.0.0
+    dependencies:
+      '@babel/core': 7.19.1
+      '@babel/plugin-transform-react-jsx': 7.19.0_@babel+core@7.19.1
+      '@babel/plugin-transform-react-jsx-development': 7.18.6_@babel+core@7.19.1
+      '@babel/plugin-transform-react-jsx-self': 7.18.6_@babel+core@7.19.1
+      '@babel/plugin-transform-react-jsx-source': 7.18.6_@babel+core@7.19.1
+      magic-string: 0.26.4
+      react-refresh: 0.14.0
+      vite: 3.2.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /@vitejs/plugin-vue/3.1.0_vite@3.1.4+vue@3.2.39:
     resolution: {integrity: sha512-fmxtHPjSOEIRg6vHYDaem+97iwCUg/uSIaTzp98lhELt2ISOQuDo2hbkBdXod0g15IhfPMQmAxh4heUks2zvDA==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -8389,7 +8705,7 @@ packages:
   /@vue/compiler-sfc/2.7.14:
     resolution: {integrity: sha512-aNmNHyLPsw+sVvlQFQ2/8sjNuLtK54TC6cuKnVzAY93ks4ZBrvwQSnkkIh7bsbNhum5hJBS00wSDipQ937f5DA==}
     dependencies:
-      '@babel/parser': 7.19.1
+      '@babel/parser': 7.20.15
       postcss: 8.4.21
       source-map: 0.6.1
     dev: true
@@ -8782,6 +9098,25 @@ packages:
       uri-js: 4.4.1
     dev: true
 
+  /algoliasearch/4.12.2:
+    resolution: {integrity: sha512-bn1P9+V415zeDQJtXn+1SwuwedEAv9/LJAxt8XwR6ygH/sMwaHSm2hpkz8wIbCBt/tKQ43TL672Kyxzv5PwGgQ==}
+    dependencies:
+      '@algolia/cache-browser-local-storage': 4.12.2
+      '@algolia/cache-common': 4.12.2
+      '@algolia/cache-in-memory': 4.12.2
+      '@algolia/client-account': 4.12.2
+      '@algolia/client-analytics': 4.12.2
+      '@algolia/client-common': 4.12.2
+      '@algolia/client-personalization': 4.12.2
+      '@algolia/client-search': 4.12.2
+      '@algolia/logger-common': 4.12.2
+      '@algolia/logger-console': 4.12.2
+      '@algolia/requester-browser-xhr': 4.12.2
+      '@algolia/requester-common': 4.12.2
+      '@algolia/requester-node-http': 4.12.2
+      '@algolia/transporter': 4.12.2
+    dev: false
+
   /anser/1.4.10:
     resolution: {integrity: sha512-hCv9AqTQ8ycjpSd3upOJd7vFwW1JaoYQ7tpham03GJ1ca8/65rqn0RpaWpItOAd6ylW9wAw6luXYPJIyPFVOww==}
     dev: false
@@ -9063,7 +9398,7 @@ packages:
   /axios/0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.1_debug@4.3.4
+      follow-redirects: 1.15.1
     transitivePeerDependencies:
       - debug
     dev: false
@@ -9071,7 +9406,7 @@ packages:
   /axios/0.24.0:
     resolution: {integrity: sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA==}
     dependencies:
-      follow-redirects: 1.15.1_debug@4.3.4
+      follow-redirects: 1.15.1
     transitivePeerDependencies:
       - debug
     dev: true
@@ -9079,14 +9414,14 @@ packages:
   /axios/0.25.0_debug@4.3.4:
     resolution: {integrity: sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==}
     dependencies:
-      follow-redirects: 1.15.1_debug@4.3.4
+      follow-redirects: 1.15.1
     transitivePeerDependencies:
       - debug
 
   /axios/0.26.1:
     resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
     dependencies:
-      follow-redirects: 1.15.1_debug@4.3.4
+      follow-redirects: 1.15.1
     transitivePeerDependencies:
       - debug
 
@@ -12400,7 +12735,7 @@ packages:
     resolution: {integrity: sha512-1gIBiWJNR0tKUNv8gZuk7l9rVX06OuLzY9AoGio7y/JT4V1IZErEMEq2TJS+PFcw/y0RshZ1J/27VfK1UQzYVg==}
     engines: {node: '>=0.4.0'}
 
-  /follow-redirects/1.15.1_debug@4.3.4:
+  /follow-redirects/1.15.1:
     resolution: {integrity: sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA==}
     engines: {node: '>=4.0'}
     peerDependencies:
@@ -12408,8 +12743,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-    dependencies:
-      debug: 4.3.4
 
   /follow-redirects/1.5.10:
     resolution: {integrity: sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==}
@@ -18245,7 +18578,6 @@ packages:
   /svelte/3.55.0:
     resolution: {integrity: sha512-uGu2FVMlOuey4JoKHKrpZFkoYyj0VLjJdz47zX5+gVK5odxHM40RVhar9/iK2YFRVxvfg9FkhfVlR0sjeIrOiA==}
     engines: {node: '>= 8'}
-    dev: true
 
   /svelte2tsx/0.6.0_glsdxddlaertg66rhhvanbinpy:
     resolution: {integrity: sha512-TrxfQkO7CKi8Pu2eC/FyteDCdk3OOeQV5u6z7OjYAsOhsd0ClzAKqxJdvp6xxNQLrbFzf/XvCi9Fy8MQ1MleFA==}
@@ -18970,6 +19302,22 @@ packages:
       react: 18.2.0
     dev: false
 
+  /use-sync-external-store/1.2.0_react@17.0.1:
+    resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 17.0.1
+    dev: false
+
+  /use-sync-external-store/1.2.0_react@18.2.0:
+    resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+    dev: false
+
   /use/3.1.1:
     resolution: {integrity: sha512-cwESVXlO3url9YWlFW/TA9cshCEhtu7IKJ/p5soJ/gGpj7vbvFrAY/eIioQ6Dw23KjZhYgiIo8HOs1nQ2vr/oQ==}
     engines: {node: '>=0.10.0'}
@@ -19039,7 +19387,7 @@ packages:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
 
-  /vite-node/0.27.1_@types+node@18.13.0:
+  /vite-node/0.27.1:
     resolution: {integrity: sha512-d6+ue/3NzsfndWaPbYh/bFkHbmAWfDXI4B874zRx+WREnG6CUHUbBC8lKaRYZjeR6gCPN5m1aVNNRXBYICA9XA==}
     engines: {node: '>=v14.16.0'}
     hasBin: true
@@ -19051,9 +19399,8 @@ packages:
       picocolors: 1.0.0
       source-map: 0.6.1
       source-map-support: 0.5.21
-      vite: 4.0.4_@types+node@18.13.0
+      vite: 3.2.2
     transitivePeerDependencies:
-      - '@types/node'
       - less
       - sass
       - stylus
@@ -19351,7 +19698,7 @@ packages:
       tinypool: 0.3.0
       tinyspy: 1.0.2
       vite: 4.0.4_@types+node@18.13.0
-      vite-node: 0.27.1_@types+node@18.13.0
+      vite-node: 0.27.1
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
       - less
@@ -19380,6 +19727,36 @@ packages:
     dependencies:
       '@vue/composition-api': 1.7.1_vue@3.2.47
       vue: 3.2.47
+    dev: false
+
+  /vue-demi/0.13.11_vue@3.2.39:
+    resolution: {integrity: sha512-IR8HoEEGM65YY3ZJYAjMlKygDQn25D5ajNFNoKh9RSDMQtlzCxtfQjdQgv9jjK+m3377SsJXY8ysq8kLCZL25A==}
+    engines: {node: '>=12'}
+    hasBin: true
+    requiresBuild: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      vue: 3.2.39
+    dev: false
+
+  /vue-demi/0.13.11_vue@3.2.41:
+    resolution: {integrity: sha512-IR8HoEEGM65YY3ZJYAjMlKygDQn25D5ajNFNoKh9RSDMQtlzCxtfQjdQgv9jjK+m3377SsJXY8ysq8kLCZL25A==}
+    engines: {node: '>=12'}
+    hasBin: true
+    requiresBuild: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      vue: 3.2.41
     dev: false
 
   /vue/2.6.14:
