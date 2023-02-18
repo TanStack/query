@@ -303,7 +303,7 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 
-const dehydratedState = window.__REACT_QUERY_STATE__
+const { dehydratedState } = window.__REACT_QUERY_STATE__
 
 const queryClient = new QueryClient()
 
