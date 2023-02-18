@@ -82,7 +82,7 @@ describe('Discriminated union return type', () => {
         const result: Expect<Equal<undefined, typeof mutation.variables>> = true
         return result
       }
-      if (mutation.isLoading) {
+      if (mutation.isPending) {
         const result: Expect<Equal<string, typeof mutation.variables>> = true
         return result
       }
