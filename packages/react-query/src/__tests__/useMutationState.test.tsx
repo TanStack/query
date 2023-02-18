@@ -237,7 +237,7 @@ describe('useMutationState', () => {
     function Variables() {
       variables.push(
         useMutationState({
-          filters: { mutationKey, status: 'loading' },
+          filters: { mutationKey, status: 'pending' },
           select: (mutation) => mutation.state.variables,
         }),
       )

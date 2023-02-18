@@ -247,7 +247,7 @@ export interface QueryObserverOptions<
    */
   select?: (data: TQueryData) => TData
   /**
-   * If set to `true`, the query will suspend when `status === 'loading'`
+   * If set to `true`, the query will suspend when `status === 'pending'`
    * and throw errors when `status === 'error'`.
    * Defaults to `false`.
    */

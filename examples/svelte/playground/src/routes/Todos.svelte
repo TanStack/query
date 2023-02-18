@@ -40,7 +40,7 @@
   </label>
 </div>
 
-{#if $query.status === 'loading'}
+{#if $query.status === 'pending'}
   <span>Loading... (Attempt: {$query.failureCount + 1})</span>
 {:else if $query.status === 'error'}
   <span>
