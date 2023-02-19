@@ -150,8 +150,8 @@ export function hasNextPage(
   options: QueryOptions<any, any, any, any>,
   pages?: unknown[],
 ): boolean {
-  if (!pages) return false
-  return typeof options.getNextPageParam?.(options, pages) !== 'undefined'
+  if (!pages || !options.getNextPageParam) return false
+  return typeof getNextPageParam(options, pages) !== 'undefined'
 }
 
 /**
@@ -161,6 +161,6 @@ export function hasPreviousPage(
   options: QueryOptions<any, any, any, any>,
   pages?: unknown[],
 ): boolean {
-  if (!pages) return false
-  return typeof options.getPreviousPageParam?.(options, pages) !== 'undefined'
+  if (!pages || !options.getPreviousPageParam) return false
+  return typeof getPreviousPageParam(options, pages) !== 'undefined'
 }

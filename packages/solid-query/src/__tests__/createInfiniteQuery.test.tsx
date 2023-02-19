@@ -87,8 +87,8 @@ describe('useInfiniteQuery', () => {
       errorUpdateCount: 0,
       fetchNextPage: expect.any(Function),
       fetchPreviousPage: expect.any(Function),
-      hasNextPage: undefined,
-      hasPreviousPage: undefined,
+      hasNextPage: false,
+      hasPreviousPage: false,
       isError: false,
       isFetched: false,
       isFetchedAfterMount: false,
@@ -121,7 +121,7 @@ describe('useInfiniteQuery', () => {
       fetchNextPage: expect.any(Function),
       fetchPreviousPage: expect.any(Function),
       hasNextPage: true,
-      hasPreviousPage: undefined,
+      hasPreviousPage: false,
       isError: false,
       isFetched: true,
       isFetchedAfterMount: true,
@@ -468,8 +468,8 @@ describe('useInfiniteQuery', () => {
     expect(states.length).toBe(4)
     expect(states[0]).toMatchObject({
       data: undefined,
-      hasNextPage: undefined,
-      hasPreviousPage: undefined,
+      hasNextPage: false,
+      hasPreviousPage: false,
       isFetching: true,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
@@ -477,7 +477,7 @@ describe('useInfiniteQuery', () => {
     })
     expect(states[1]).toMatchObject({
       data: { pages: [10] },
-      hasNextPage: undefined,
+      hasNextPage: false,
       hasPreviousPage: true,
       isFetching: false,
       isFetchingNextPage: false,
@@ -486,7 +486,7 @@ describe('useInfiniteQuery', () => {
     })
     expect(states[2]).toMatchObject({
       data: { pages: [10] },
-      hasNextPage: undefined,
+      hasNextPage: false,
       hasPreviousPage: true,
       isFetching: true,
       isFetchingNextPage: false,
@@ -495,7 +495,7 @@ describe('useInfiniteQuery', () => {
     })
     expect(states[3]).toMatchObject({
       data: { pages: [9, 10] },
-      hasNextPage: undefined,
+      hasNextPage: false,
       hasPreviousPage: true,
       isFetching: false,
       isFetchingNextPage: false,
@@ -661,7 +661,7 @@ describe('useInfiniteQuery', () => {
 
     expect(states.length).toBe(5)
     expect(states[0]).toMatchObject({
-      hasNextPage: undefined,
+      hasNextPage: false,
       data: undefined,
       isFetching: true,
       isFetchingNextPage: false,
@@ -891,7 +891,7 @@ describe('useInfiniteQuery', () => {
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
-      hasNextPage: undefined,
+      hasNextPage: false,
       data: undefined,
       isFetching: true,
       isFetchingNextPage: false,
@@ -1005,7 +1005,7 @@ describe('useInfiniteQuery', () => {
 
     expect(states.length).toBe(5)
     expect(states[0]).toMatchObject({
-      hasNextPage: undefined,
+      hasNextPage: false,
       data: undefined,
       isFetching: true,
       isFetchingNextPage: false,
@@ -1145,7 +1145,7 @@ describe('useInfiniteQuery', () => {
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
       data: undefined,
-      hasNextPage: undefined,
+      hasNextPage: false,
       isFetching: true,
       isFetchingNextPage: false,
       isSuccess: false,
@@ -1281,7 +1281,7 @@ describe('useInfiniteQuery', () => {
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
       data: undefined,
-      hasNextPage: undefined,
+      hasNextPage: false,
       isFetching: true,
       isFetchingNextPage: false,
       isSuccess: false,
