@@ -11,8 +11,7 @@ export function infiniteQueryBehavior<
     onFetch: (context) => {
       context.fetchFn = () => {
         const fetchMore = context.fetchOptions?.meta?.fetchMore
-        const isFetchingNextPage = fetchMore?.direction === 'forward'
-        const isFetchingPreviousPage = fetchMore?.direction === 'backward'
+        const direction = fetchMore?.direction
         const oldPages = context.state.data?.pages || []
         const oldPageParams = context.state.data?.pageParams || []
         let newPageParams = oldPageParams
@@ -94,16 +93,13 @@ export function infiniteQueryBehavior<
           promise = fetchPage([])
         }
 
-        // Fetch next page?
-        else if (isFetchingNextPage) {
-          const param = getNextPageParam(context.options, oldPages)
-          promise = fetchPage(oldPages, param)
-        }
-
-        // Fetch previous page?
-        else if (isFetchingPreviousPage) {
-          const param = getPreviousPageParam(context.options, oldPages)
-          promise = fetchPage(oldPages, param, true)
+        // fetch next / previous page?
+        else if (direction) {
+          const previous = direction === 'backward'
+          const param = previous
+            ? getPreviousPageParam(context.options, oldPages)
+            : getNextPageParam(context.options, oldPages)
+          promise = fetchPage(oldPages, param, previous)
         }
 
         // Refetch pages
