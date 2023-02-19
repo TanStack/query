@@ -22,18 +22,24 @@ export type QueryKey = readonly unknown[]
 export type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
+  TPageParam = never,
 > = (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>
 
-export interface QueryFunctionContext<
+export type QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,
-  TPageParam = any,
-> {
-  queryKey: TQueryKey
-  signal: AbortSignal
-  pageParam: TPageParam
-  meta: QueryMeta | undefined
-}
+  TPageParam = never,
+> = [TPageParam] extends [never]
+  ? {
+      queryKey: TQueryKey
+      signal: AbortSignal
+      meta: QueryMeta | undefined
+    }
+  : {
+      queryKey: TQueryKey
+      signal: AbortSignal
+      pageParam: TPageParam
+      meta: QueryMeta | undefined
+    }
 
 export type InitialDataFunction<T> = () => T | undefined
 
@@ -77,7 +83,7 @@ export interface QueryOptions<
   TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
+  TPageParam = never,
 > {
   /**
    * If `false`, failed queries will not retry by default.
@@ -116,13 +122,13 @@ export interface QueryOptions<
   maxPages?: number
 }
 
-export interface DefaultPageParam<TPageParam = unknown> {
+export interface DefaultPageParam<TPageParam = never> {
   defaultPageParam: TPageParam
 }
 
 export interface InfiniteQueryOptions<
   TQueryFnData = unknown,
-  TPageParam = unknown,
+  TPageParam = never,
 > extends DefaultPageParam<TPageParam> {
   /**
    * This function can be set to automatically get the previous cursor for infinite queries.
@@ -154,7 +160,7 @@ export interface QueryObserverOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
+  TPageParam = never,
 > extends QueryOptions<
     TQueryFnData,
     TError,
@@ -300,7 +306,7 @@ export interface InfiniteQueryObserverOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
+  TPageParam = never,
 > extends QueryObserverOptions<
       TQueryFnData,
       TError,
@@ -333,7 +339,7 @@ export interface FetchQueryOptions<
   TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
+  TPageParam = never,
 > extends WithRequired<
     QueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
     'queryKey'
@@ -350,7 +356,7 @@ export interface FetchInfiniteQueryOptions<
   TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
+  TPageParam = never,
 > extends FetchQueryOptions<
       TQueryFnData,
       TError,

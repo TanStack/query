@@ -14,7 +14,7 @@ export function useInfiniteQuery<
   TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
+  TPageParam = never,
 >(
   options: UseInfiniteQueryOptions<
     TQueryFnData,
