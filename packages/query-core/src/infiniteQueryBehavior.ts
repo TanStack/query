@@ -4,6 +4,7 @@ import type {
   InfiniteData,
   InfiniteQueryOptions,
   QueryFunctionContext,
+  QueryKey,
 } from './types'
 
 export function infiniteQueryBehavior<
@@ -74,7 +75,10 @@ export function infiniteQueryBehavior<
             return Promise.resolve(pages)
           }
 
-          const queryFnContext: Omit<QueryFunctionContext, 'signal'> = {
+          const queryFnContext: Omit<
+            QueryFunctionContext<QueryKey, unknown>,
+            'signal'
+          > = {
             queryKey: context.queryKey,
             pageParam: param,
             meta: context.options.meta,
@@ -82,7 +86,9 @@ export function infiniteQueryBehavior<
 
           addSignalProperty(queryFnContext)
 
-          const queryFnResult = queryFn(queryFnContext as QueryFunctionContext)
+          const queryFnResult = queryFn(
+            queryFnContext as QueryFunctionContext<QueryKey, unknown>,
+          )
 
           const promise = Promise.resolve(queryFnResult).then((page) =>
             buildNewPages(pages, param, page, previous),
