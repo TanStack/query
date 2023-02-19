@@ -11,7 +11,6 @@ export function infiniteQueryBehavior<
     onFetch: (context) => {
       context.fetchFn = () => {
         const fetchMore = context.fetchOptions?.meta?.fetchMore
-        const pageParam = fetchMore?.pageParam
         const isFetchingNextPage = fetchMore?.direction === 'forward'
         const isFetchingPreviousPage = fetchMore?.direction === 'backward'
         const oldPages = context.state.data?.pages || []
@@ -60,7 +59,6 @@ export function infiniteQueryBehavior<
         // Create function to fetch a page
         const fetchPage = (
           pages: unknown[],
-          manual?: boolean,
           param?: unknown,
           previous?: boolean,
         ): Promise<unknown[]> => {
@@ -68,7 +66,7 @@ export function infiniteQueryBehavior<
             return Promise.reject()
           }
 
-          if (typeof param === 'undefined' && !manual && pages.length) {
+          if (typeof param === 'undefined' && pages.length) {
             return Promise.resolve(pages)
           }
 
@@ -98,38 +96,28 @@ export function infiniteQueryBehavior<
 
         // Fetch next page?
         else if (isFetchingNextPage) {
-          const manual = typeof pageParam !== 'undefined'
-          const param = manual
-            ? pageParam
-            : getNextPageParam(context.options, oldPages)
-          promise = fetchPage(oldPages, manual, param)
+          const param = getNextPageParam(context.options, oldPages)
+          promise = fetchPage(oldPages, param)
         }
 
         // Fetch previous page?
         else if (isFetchingPreviousPage) {
-          const manual = typeof pageParam !== 'undefined'
-          const param = manual
-            ? pageParam
-            : getPreviousPageParam(context.options, oldPages)
-          promise = fetchPage(oldPages, manual, param, true)
+          const param = getPreviousPageParam(context.options, oldPages)
+          promise = fetchPage(oldPages, param, true)
         }
 
         // Refetch pages
         else {
           newPageParams = []
 
-          const manual = typeof context.options.getNextPageParam === 'undefined'
-
           // Fetch first page
-          promise = fetchPage([], manual, oldPageParams[0])
+          promise = fetchPage([], oldPageParams[0])
 
           // Fetch remaining pages
           for (let i = 1; i < oldPages.length; i++) {
             promise = promise.then((pages) => {
-              const param = manual
-                ? oldPageParams[i]
-                : getNextPageParam(context.options, pages)
-              return fetchPage(pages, manual, param)
+              const param = getNextPageParam(context.options, pages)
+              return fetchPage(pages, param)
             })
           }
         }

@@ -103,27 +103,24 @@ export class InfiniteQueryObserver<
     >
   }
 
-  fetchNextPage({ pageParam, ...options }: FetchNextPageOptions = {}): Promise<
-    InfiniteQueryObserverResult<TData, TError>
-  > {
+  fetchNextPage(
+    options: FetchNextPageOptions = {},
+  ): Promise<InfiniteQueryObserverResult<TData, TError>> {
     return this.fetch({
       ...options,
       meta: {
-        fetchMore: { direction: 'forward', pageParam },
+        fetchMore: { direction: 'forward' },
       },
     })
   }
 
-  fetchPreviousPage({
-    pageParam,
-    ...options
-  }: FetchPreviousPageOptions = {}): Promise<
+  fetchPreviousPage({ ...options }: FetchPreviousPageOptions = {}): Promise<
     InfiniteQueryObserverResult<TData, TError>
   > {
     return this.fetch({
       ...options,
       meta: {
-        fetchMore: { direction: 'backward', pageParam },
+        fetchMore: { direction: 'backward' },
       },
     })
   }

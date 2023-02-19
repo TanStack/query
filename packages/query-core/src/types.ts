@@ -353,12 +353,10 @@ export interface ResetOptions extends RefetchOptions {}
 
 export interface FetchNextPageOptions extends ResultOptions {
   cancelRefetch?: boolean
-  pageParam?: unknown
 }
 
 export interface FetchPreviousPageOptions extends ResultOptions {
   cancelRefetch?: boolean
-  pageParam?: unknown
 }
 
 export type QueryStatus = 'pending' | 'error' | 'success'

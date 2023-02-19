@@ -360,15 +360,14 @@ describe('useInfiniteQuery', () => {
           pageParams: [...data.pageParams].reverse(),
         }),
         notifyOnChangeProps: 'all',
+        getNextPageParam: () => 1,
       })
 
       states.push(state)
 
       return (
         <div>
-          <button onClick={() => state.fetchNextPage({ pageParam: 1 })}>
-            fetchNextPage
-          </button>
+          <button onClick={() => state.fetchNextPage()}>fetchNextPage</button>
           <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
           <div>isFetching: {state.isFetching}</div>
         </div>
@@ -479,113 +478,6 @@ describe('useInfiniteQuery', () => {
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
       isSuccess: true,
-    })
-  })
-
-  it('should be able to refetch when providing page params manually', async () => {
-    const key = queryKey()
-    const states: UseInfiniteQueryResult<number>[] = []
-
-    function Page() {
-      const state = useInfiniteQuery({
-        queryKey: key,
-        queryFn: async ({ pageParam = 10 }) => {
-          await sleep(10)
-          return Number(pageParam)
-        },
-      })
-
-      states.push(state)
-
-      return (
-        <div>
-          <button onClick={() => state.fetchNextPage({ pageParam: 11 })}>
-            fetchNextPage
-          </button>
-          <button onClick={() => state.fetchPreviousPage({ pageParam: 9 })}>
-            fetchPreviousPage
-          </button>
-          <button onClick={() => state.refetch()}>refetch</button>
-          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
-          <div>isFetching: {String(state.isFetching)}</div>
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <Page />)
-
-    await waitFor(() => rendered.getByText('data: 10'))
-    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
-
-    await waitFor(() => rendered.getByText('data: 10,11'))
-    fireEvent.click(
-      rendered.getByRole('button', { name: /fetchPreviousPage/i }),
-    )
-    await waitFor(() => rendered.getByText('data: 9,10,11'))
-    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
-
-    await waitFor(() => rendered.getByText('isFetching: false'))
-    await waitFor(() => expect(states.length).toBe(8))
-
-    // Initial fetch
-    expect(states[0]).toMatchObject({
-      data: undefined,
-      isFetching: true,
-      isFetchingNextPage: false,
-      isRefetching: false,
-    })
-    // Initial fetch done
-    expect(states[1]).toMatchObject({
-      data: { pages: [10] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isRefetching: false,
-    })
-    // Fetch next page
-    expect(states[2]).toMatchObject({
-      data: { pages: [10] },
-      isFetching: true,
-      isFetchingNextPage: true,
-      isRefetching: false,
-    })
-    // Fetch next page done
-    expect(states[3]).toMatchObject({
-      data: { pages: [10, 11] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isRefetching: false,
-    })
-    // Fetch previous page
-    expect(states[4]).toMatchObject({
-      data: { pages: [10, 11] },
-      isFetching: true,
-      isFetchingNextPage: false,
-      isFetchingPreviousPage: true,
-      isRefetching: false,
-    })
-    // Fetch previous page done
-    expect(states[5]).toMatchObject({
-      data: { pages: [9, 10, 11] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isFetchingPreviousPage: false,
-      isRefetching: false,
-    })
-    // Refetch
-    expect(states[6]).toMatchObject({
-      data: { pages: [9, 10, 11] },
-      isFetching: true,
-      isFetchingNextPage: false,
-      isFetchingPreviousPage: false,
-      isRefetching: true,
-    })
-    // Refetch done
-    expect(states[7]).toMatchObject({
-      data: { pages: [9, 10, 11] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isFetchingPreviousPage: false,
-      isRefetching: false,
     })
   })
 
@@ -1008,80 +900,6 @@ describe('useInfiniteQuery', () => {
       data: initialData,
       status: 'success',
       error: null,
-    })
-  })
-
-  it('should be able to override the cursor in the fetchNextPage callback', async () => {
-    const key = queryKey()
-    const states: UseInfiniteQueryResult<number>[] = []
-
-    function Page() {
-      const state = useInfiniteQuery({
-        queryKey: key,
-        queryFn: async ({ pageParam = 0 }) => {
-          await sleep(10)
-          return Number(pageParam)
-        },
-        getNextPageParam: (lastPage) => lastPage + 1,
-        notifyOnChangeProps: 'all',
-      })
-
-      states.push(state)
-
-      return (
-        <div>
-          <div>page0: {state.data?.pages[0]}</div>
-          <div>page1: {state.data?.pages[1]}</div>
-          <button onClick={() => state.fetchNextPage({ pageParam: 5 })}>
-            Fetch next page
-          </button>
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <Page />)
-
-    await waitFor(() => {
-      rendered.getByText('page0: 0')
-    })
-
-    fireEvent.click(rendered.getByRole('button', { name: 'Fetch next page' }))
-
-    await waitFor(() => {
-      rendered.getByText('page1: 5')
-    })
-
-    // make sure no additional renders are happening after fetching next page
-    await sleep(20)
-
-    expect(states.length).toBe(4)
-    expect(states[0]).toMatchObject({
-      hasNextPage: undefined,
-      data: undefined,
-      isFetching: true,
-      isFetchingNextPage: false,
-      isSuccess: false,
-    })
-    expect(states[1]).toMatchObject({
-      hasNextPage: true,
-      data: { pages: [0] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
-    expect(states[2]).toMatchObject({
-      hasNextPage: true,
-      data: { pages: [0] },
-      isFetching: true,
-      isFetchingNextPage: true,
-      isSuccess: true,
-    })
-    expect(states[3]).toMatchObject({
-      hasNextPage: true,
-      data: { pages: [0, 5] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
     })
   })
 

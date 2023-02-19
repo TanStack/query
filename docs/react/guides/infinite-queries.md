@@ -103,42 +103,11 @@ function Projects() {
 
 When an infinite query becomes `stale` and needs to be refetched, each group is fetched `sequentially`, starting from the first one. This ensures that even if the underlying data is mutated, we're not using stale cursors and potentially getting duplicates or skipping records. If an infinite query's results are ever removed from the queryCache, the pagination restarts at the initial state with only the initial group being requested.
 
-## What if I need to pass custom information to my query function?
-
-By default, the variable returned from `getNextPageParam` will be supplied to the query function, but in some cases, you may want to override this. You can pass custom variables to the `fetchNextPage` function which will override the default variable like so:
-
-[//]: # 'Example3'
-
-```tsx
-function Projects() {
-  const fetchProjects = ({ pageParam = 0 }) =>
-    fetch('/api/projects?cursor=' + pageParam)
-
-  const {
-    status,
-    data,
-    isFetching,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
-  } = useInfiniteQuery({
-    queryKey: ['projects'],
-    queryFn: fetchProjects,
-    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-  })
-
-  // Pass your own page param
-  const skipToCursor50 = () => fetchNextPage({ pageParam: 50 })
-}
-```
-
-[//]: # 'Example3'
-
 ## What if I want to implement a bi-directional infinite list?
 
 Bi-directional lists can be implemented by using the `getPreviousPageParam`, `fetchPreviousPage`, `hasPreviousPage` and `isFetchingPreviousPage` properties and functions.
 
-[//]: # 'Example4'
+[//]: # 'Example3'
 
 ```tsx
 useInfiniteQuery({
@@ -149,13 +118,13 @@ useInfiniteQuery({
 })
 ```
 
-[//]: # 'Example4'
+[//]: # 'Example3'
 
 ## What if I want to show the pages in reversed order?
 
 Sometimes you may want to show the pages in reversed order. If this is case, you can use the `select` option:
 
-[//]: # 'Example5'
+[//]: # 'Example4'
 
 ```tsx
 useInfiniteQuery({
@@ -168,13 +137,13 @@ useInfiniteQuery({
 })
 ```
 
-[//]: # 'Example5'
+[//]: # 'Example4'
 
 ## What if I want to manually update the infinite query?
 
 Manually removing first page:
 
-[//]: # 'Example6'
+[//]: # 'Example5'
 
 ```tsx
 queryClient.setQueryData(['projects'], (data) => ({
@@ -183,11 +152,11 @@ queryClient.setQueryData(['projects'], (data) => ({
 }))
 ```
 
-[//]: # 'Example6'
+[//]: # 'Example5'
 
 Manually removing a single value from an individual page:
 
-[//]: # 'Example7'
+[//]: # 'Example6'
 
 ```tsx
 const newPagesArray =
@@ -201,11 +170,11 @@ queryClient.setQueryData(['projects'], (data) => ({
 }))
 ```
 
-[//]: # 'Example7'
+[//]: # 'Example6'
 
 Make sure to keep the same data structure of pages and pageParams!
 
-[//]: # 'Example8'
+[//]: # 'Example7'
 
 ## What if I want to limit the number of pages?
 
@@ -219,7 +188,7 @@ This is made possible by using the `maxPages` option in conjunction with `getNex
 
 In the following example only 3 pages are kept in the query data pages array. If a refetch is needed, only 3 pages will be refetched sequentially.
 
-[//]: # 'Example9'
+[//]: # 'Example7'
 
 ```tsx
 useInfiniteQuery({

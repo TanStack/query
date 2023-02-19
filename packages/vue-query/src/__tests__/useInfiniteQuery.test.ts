@@ -8,6 +8,7 @@ describe('useQuery', () => {
     const { data, fetchNextPage, status } = useInfiniteQuery({
       queryKey: ['infiniteQuery'],
       queryFn: infiniteFetcher,
+      getNextPageParam: () => 12,
     })
 
     expect(data.value).toStrictEqual(undefined)
@@ -21,7 +22,7 @@ describe('useQuery', () => {
     })
     expect(status.value).toStrictEqual('success')
 
-    fetchNextPage({ pageParam: 12 })
+    fetchNextPage()
 
     await flushPromises()
 
