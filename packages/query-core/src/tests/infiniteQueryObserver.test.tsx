@@ -23,6 +23,8 @@ describe('InfiniteQueryObserver', () => {
         pages: data.pages.map((x) => `${x}`),
         pageParams: data.pageParams,
       }),
+      defaultPageParam: 1,
+      getNextPageParam: () => 2,
     })
     let observerResult
     const unsubscribe = observer.subscribe((result) => {
@@ -50,6 +52,8 @@ describe('InfiniteQueryObserver', () => {
         pages: data.pages.map((x) => `${x}`),
         pageParams: data.pageParams,
       }),
+      defaultPageParam: 1,
+      getNextPageParam: () => 2,
     })
     let observerResult
     const unsubscribe = observer.subscribe((result) => {

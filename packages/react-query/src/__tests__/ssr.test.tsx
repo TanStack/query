@@ -131,7 +131,11 @@ describe('Server Side Rendering', () => {
     })
 
     function Page() {
-      const query = useInfiniteQuery({ queryKey: key, queryFn })
+      const query = useInfiniteQuery({
+        queryKey: key,
+        queryFn,
+        getNextPageParam: () => undefined,
+      })
       return (
         <ul>
           {query.data?.pages.map((page) => (

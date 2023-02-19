@@ -24,6 +24,8 @@ describe('InfiniteQueryBehavior', () => {
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       retry: false,
+      defaultPageParam: 1,
+      getNextPageParam: () => 2,
     })
 
     let observerResult:
@@ -48,12 +50,10 @@ describe('InfiniteQueryBehavior', () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
 
-    const queryFnSpy = jest
-      .fn()
-      .mockImplementation(({ pageParam = 1, signal }) => {
-        abortSignal = signal
-        return pageParam
-      })
+    const queryFnSpy = jest.fn().mockImplementation(({ pageParam, signal }) => {
+      abortSignal = signal
+      return pageParam
+    })
 
     const observer = new InfiniteQueryObserver<number>(queryClient, {
       queryKey: key,
@@ -61,6 +61,7 @@ describe('InfiniteQueryBehavior', () => {
       getNextPageParam: (lastPage) => lastPage + 1,
       getPreviousPageParam: (firstPage) => firstPage - 1,
       maxPages: 2,
+      defaultPageParam: 1,
     })
 
     let observerResult:
@@ -184,19 +185,18 @@ describe('InfiniteQueryBehavior', () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
 
-    const queryFnSpy = jest
-      .fn()
-      .mockImplementation(({ pageParam = 1, signal }) => {
-        abortSignal = signal
-        sleep(10)
-        return pageParam
-      })
+    const queryFnSpy = jest.fn().mockImplementation(({ pageParam, signal }) => {
+      abortSignal = signal
+      sleep(10)
+      return pageParam
+    })
 
     const observer = new InfiniteQueryObserver<number>(queryClient, {
       queryKey: key,
       queryFn: queryFnSpy,
       getNextPageParam: (lastPage) => lastPage + 1,
       getPreviousPageParam: (firstPage) => firstPage - 1,
+      defaultPageParam: 1,
     })
 
     let observerResult:
@@ -236,18 +236,17 @@ describe('InfiniteQueryBehavior', () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
 
-    let queryFnSpy = jest
-      .fn()
-      .mockImplementation(({ pageParam = 1, signal }) => {
-        abortSignal = signal
-        return pageParam
-      })
+    let queryFnSpy = jest.fn().mockImplementation(({ pageParam, signal }) => {
+      abortSignal = signal
+      return pageParam
+    })
 
     const observer = new InfiniteQueryObserver<number>(queryClient, {
       queryKey: key,
       queryFn: queryFnSpy,
       getNextPageParam: (lastPage) => lastPage + 1,
       getPreviousPageParam: (firstPage) => firstPage - 1,
+      defaultPageParam: 1,
     })
 
     let observerResult:
@@ -311,62 +310,6 @@ describe('InfiniteQueryBehavior', () => {
 
     // Pages should not have been fetched
     expect(queryFnSpy).toHaveBeenCalledTimes(0)
-
-    unsubscribe()
-  })
-
-  test('InfiniteQueryBehavior should return the current pages if no page param can be determined', async () => {
-    const key = queryKey()
-    let abortSignal: AbortSignal | null = null
-
-    const queryFnSpy = jest
-      .fn()
-      .mockImplementation(({ pageParam = 1, signal }) => {
-        abortSignal = signal
-        return pageParam
-      })
-
-    const observer = new InfiniteQueryObserver<number>(queryClient, {
-      queryKey: key,
-      queryFn: queryFnSpy,
-    })
-
-    let observerResult:
-      | InfiniteQueryObserverResult<unknown, unknown>
-      | undefined
-
-    const unsubscribe = observer.subscribe((result) => {
-      observerResult = result
-    })
-
-    // Wait for the first page to be fetched
-    await waitFor(() =>
-      expect(observerResult).toMatchObject({
-        isFetching: false,
-        data: { pages: [1], pageParams: [undefined] },
-      }),
-    )
-
-    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
-      queryKey: key,
-      pageParam: undefined,
-      meta: undefined,
-      signal: abortSignal,
-    })
-
-    queryFnSpy.mockClear()
-
-    // Try to fetch a page without page param and getNextPageParam defined
-    await observer.fetchNextPage()
-
-    // Current pages should be returned
-    expect(observerResult).toMatchObject({
-      isFetching: false,
-      data: { pages: [1], pageParams: [undefined] },
-    })
-
-    // queryFnSpy should not be called
-    expect(queryFnSpy).toBeCalledTimes(0)
 
     unsubscribe()
   })

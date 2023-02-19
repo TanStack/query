@@ -293,6 +293,7 @@ describe('useInfiniteQuery', () => {
           pages: data.pages.map((x) => `count: ${x.count}`),
           pageParams: data.pageParams,
         }),
+        getNextPageParam: () => undefined,
       }))
       createRenderEffect(() => {
         states.push({ ...state })
@@ -336,6 +337,7 @@ describe('useInfiniteQuery', () => {
             pageParams: data.pageParams,
           }
         },
+        getNextPageParam: () => undefined,
       }))
       createRenderEffect(() => {
         states.push({ ...state })
@@ -438,7 +440,7 @@ describe('useInfiniteQuery', () => {
           await sleep(10)
           return Number(pageParam)
         },
-
+        getNextPageParam: (lastPage) => lastPage + 1,
         getPreviousPageParam: (firstPage) => firstPage - 1,
         notifyOnChangeProps: 'all',
       }))
@@ -1582,7 +1584,11 @@ describe('useInfiniteQuery', () => {
     }
 
     function Page() {
-      const state = createInfiniteQuery(() => ({ queryKey: key, queryFn }))
+      const state = createInfiniteQuery(() => ({
+        queryKey: key,
+        queryFn,
+        getNextPageParam: () => undefined,
+      }))
       return (
         <div>
           <h1>Status: {state.status}</h1>
@@ -1611,7 +1617,7 @@ describe('useInfiniteQuery', () => {
 
     function Page() {
       const state = createInfiniteQuery(
-        () => ({ queryKey: key, queryFn }),
+        () => ({ queryKey: key, queryFn, getNextPageParam: () => undefined }),
         () => queryClient,
       )
       return (

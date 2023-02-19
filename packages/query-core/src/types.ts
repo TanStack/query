@@ -93,7 +93,7 @@ export interface QueryOptions<
   queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>
   initialData?: TData | InitialDataFunction<TData>
   initialDataUpdatedAt?: number | (() => number | undefined)
-  behavior?: QueryBehavior<TQueryFnData, TError, TData>
+  behavior?: QueryBehavior<TQueryFnData, TError, TData, TQueryKey>
   /**
    * Set this to `false` to disable structural sharing between query results.
    * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic.
@@ -102,16 +102,6 @@ export interface QueryOptions<
   structuralSharing?:
     | boolean
     | ((oldData: TData | undefined, newData: TData) => TData)
-  /**
-   * This function can be set to automatically get the previous cursor for infinite queries.
-   * The result will also be used to determine the value of `hasPreviousPage`.
-   */
-  getPreviousPageParam?: GetPreviousPageParamFunction<TQueryFnData>
-  /**
-   * This function can be set to automatically get the next cursor for infinite queries.
-   * The result will also be used to determine the value of `hasNextPage`.
-   */
-  getNextPageParam?: GetNextPageParamFunction<TQueryFnData>
   _defaulted?: boolean
   /**
    * Additional payload to be stored on each query.
@@ -122,6 +112,21 @@ export interface QueryOptions<
    * Maximum number of pages to store in the data of an infinite query.
    */
   maxPages?: number
+}
+
+export interface InfiniteQueryOptions<TQueryFnData = unknown> {
+  /**
+   * This function can be set to automatically get the previous cursor for infinite queries.
+   * The result will also be used to determine the value of `hasPreviousPage`.
+   */
+  getPreviousPageParam?: GetPreviousPageParamFunction<TQueryFnData>
+  /**
+   * This function can be set to automatically get the next cursor for infinite queries.
+   * The result will also be used to determine the value of `hasNextPage`.
+   */
+  getNextPageParam: GetNextPageParamFunction<TQueryFnData>
+
+  defaultPageParam?: unknown
 }
 
 export type ThrowErrors<
@@ -282,12 +287,13 @@ export interface InfiniteQueryObserverOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends QueryObserverOptions<
-    TQueryFnData,
-    TError,
-    InfiniteData<TData>,
-    InfiniteData<TQueryData>,
-    TQueryKey
-  > {}
+      TQueryFnData,
+      TError,
+      InfiniteData<TData>,
+      InfiniteData<TQueryData>,
+      TQueryKey
+    >,
+    InfiniteQueryOptions<TQueryFnData> {}
 
 export type DefaultedInfiniteQueryObserverOptions<
   TQueryFnData = unknown,
