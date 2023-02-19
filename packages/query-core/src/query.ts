@@ -76,7 +76,9 @@ export interface QueryBehavior<
 
 export interface FetchOptions {
   cancelRefetch?: boolean
-  meta?: any
+  meta?: {
+    fetchMore?: { direction: 'forward' | 'backward' }
+  }
 }
 
 interface FailedAction<TError> {
