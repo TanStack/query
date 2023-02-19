@@ -22,7 +22,8 @@ export type QueryKey = readonly unknown[]
 export type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
-> = (context: QueryFunctionContext<TQueryKey>) => T | Promise<T>
+  TPageParam = unknown,
+> = (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>
 
 export interface QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,
@@ -30,7 +31,7 @@ export interface QueryFunctionContext<
 > {
   queryKey: TQueryKey
   signal: AbortSignal
-  pageParam?: TPageParam
+  pageParam: TPageParam
   meta: QueryMeta | undefined
 }
 
@@ -76,6 +77,7 @@ export interface QueryOptions<
   TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 > {
   /**
    * If `false`, failed queries will not retry by default.
@@ -87,7 +89,7 @@ export interface QueryOptions<
   retryDelay?: RetryDelayValue<TError>
   networkMode?: NetworkMode
   gcTime?: number
-  queryFn?: QueryFunction<TQueryFnData, TQueryKey>
+  queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam>
   queryHash?: string
   queryKey?: TQueryKey
   queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>
@@ -114,12 +116,14 @@ export interface QueryOptions<
   maxPages?: number
 }
 
-export interface DefaultPageParam {
-  defaultPageParam: unknown
+export interface DefaultPageParam<TPageParam = unknown> {
+  defaultPageParam: TPageParam
 }
 
-export interface InfiniteQueryOptions<TQueryFnData = unknown>
-  extends DefaultPageParam {
+export interface InfiniteQueryOptions<
+  TQueryFnData = unknown,
+  TPageParam = unknown,
+> extends DefaultPageParam<TPageParam> {
   /**
    * This function can be set to automatically get the previous cursor for infinite queries.
    * The result will also be used to determine the value of `hasPreviousPage`.
@@ -150,7 +154,14 @@ export interface QueryObserverOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey> {
+  TPageParam = unknown,
+> extends QueryOptions<
+    TQueryFnData,
+    TError,
+    TQueryData,
+    TQueryKey,
+    TPageParam
+  > {
   /**
    * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
@@ -289,14 +300,16 @@ export interface InfiniteQueryObserverOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 > extends QueryObserverOptions<
       TQueryFnData,
       TError,
       InfiniteData<TData>,
       InfiniteData<TQueryData>,
-      TQueryKey
+      TQueryKey,
+      TPageParam
     >,
-    InfiniteQueryOptions<TQueryFnData> {}
+    InfiniteQueryOptions<TQueryFnData, TPageParam> {}
 
 export type DefaultedInfiniteQueryObserverOptions<
   TQueryFnData = unknown,
