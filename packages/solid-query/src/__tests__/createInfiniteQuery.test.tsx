@@ -486,7 +486,7 @@ describe('useInfiniteQuery', () => {
     })
     expect(states[1]).toMatchObject({
       data: { pages: [10] },
-      hasNextPage: false,
+      hasNextPage: true,
       hasPreviousPage: true,
       isFetching: false,
       isFetchingNextPage: false,
@@ -495,7 +495,7 @@ describe('useInfiniteQuery', () => {
     })
     expect(states[2]).toMatchObject({
       data: { pages: [10] },
-      hasNextPage: false,
+      hasNextPage: true,
       hasPreviousPage: true,
       isFetching: true,
       isFetchingNextPage: false,
@@ -504,7 +504,7 @@ describe('useInfiniteQuery', () => {
     })
     expect(states[3]).toMatchObject({
       data: { pages: [9, 10] },
-      hasNextPage: false,
+      hasNextPage: true,
       hasPreviousPage: true,
       isFetching: false,
       isFetchingNextPage: false,
@@ -764,7 +764,7 @@ describe('useInfiniteQuery', () => {
 
     let callIndex = 0
     const firstCtx = fetchPage.mock.calls[callIndex]![0]
-    expect(firstCtx.pageParam).toBeUndefined()
+    expect(firstCtx.pageParam).toEqual(start)
     expect(firstCtx.queryKey).toEqual(key)
     expect(firstCtx.signal).toBeInstanceOf(AbortSignal)
     expect(firstCtx.signal.aborted).toBe(false)
@@ -846,7 +846,7 @@ describe('useInfiniteQuery', () => {
 
     let callIndex = 0
     const firstCtx = fetchPage.mock.calls[callIndex]![0]
-    expect(firstCtx.pageParam).toBeUndefined()
+    expect(firstCtx.pageParam).toEqual(start)
     expect(firstCtx.queryKey).toEqual(key)
     expect(firstCtx.signal).toBeInstanceOf(AbortSignal)
     expect(firstCtx.signal.aborted).toBe(false)
