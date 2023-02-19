@@ -565,7 +565,7 @@ describe('queryClient', () => {
         pageParams: [0],
       } as const
 
-      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey, number> = () =>
         Promise.resolve(data.pages[0])
 
       await expect(
@@ -573,7 +573,8 @@ describe('queryClient', () => {
           StrictData,
           any,
           StrictData,
-          StrictQueryKey
+          StrictQueryKey,
+          number
         >({ queryKey: key, queryFn: fetchFn, defaultPageParam: 0 }),
       ).resolves.toEqual(data)
     })
@@ -603,14 +604,15 @@ describe('queryClient', () => {
       type StrictQueryKey = ['strict', ...ReturnType<typeof queryKey>]
       const key: StrictQueryKey = ['strict', ...queryKey()]
 
-      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey, number> = () =>
         Promise.resolve('data')
 
       await queryClient.prefetchInfiniteQuery<
         StrictData,
         any,
         StrictData,
-        StrictQueryKey
+        StrictQueryKey,
+        number
       >({ queryKey: key, queryFn: fetchFn, defaultPageParam: 0 })
 
       const result = queryClient.getQueryData(key)

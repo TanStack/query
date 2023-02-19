@@ -362,7 +362,6 @@ export class Query<
     // Create query function context
     const queryFnContext: Omit<QueryFunctionContext<TQueryKey>, 'signal'> = {
       queryKey: this.queryKey,
-      pageParam: undefined,
       meta: this.meta,
     }
 
