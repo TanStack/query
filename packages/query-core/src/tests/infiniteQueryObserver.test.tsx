@@ -33,7 +33,7 @@ describe('InfiniteQueryObserver', () => {
     await sleep(1)
     unsubscribe()
     expect(observerResult).toMatchObject({
-      data: { pages: ['1'], pageParams: [undefined] },
+      data: { pages: ['1'], pageParams: [1] },
     })
   })
 
@@ -62,7 +62,7 @@ describe('InfiniteQueryObserver', () => {
     await sleep(1)
     unsubscribe()
     expect(observerResult).toMatchObject({
-      data: { pages: ['1'], pageParams: [undefined] },
+      data: { pages: ['1'], pageParams: [1] },
     })
     expect(queryFn).toBeCalledWith(expect.objectContaining({ meta }))
   })

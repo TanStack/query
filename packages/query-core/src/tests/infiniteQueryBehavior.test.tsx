@@ -76,13 +76,13 @@ describe('InfiniteQueryBehavior', () => {
     await waitFor(() =>
       expect(observerResult).toMatchObject({
         isFetching: false,
-        data: { pages: [1], pageParams: [undefined] },
+        data: { pages: [1], pageParams: [1] },
       }),
     )
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
-      pageParam: undefined,
+      pageParam: 1,
       meta: undefined,
       signal: abortSignal,
     })
@@ -101,7 +101,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(observerResult).toMatchObject({
       isFetching: false,
-      data: { pages: [1, 2], pageParams: [undefined, 2] },
+      data: { pages: [1, 2], pageParams: [1, 2] },
     })
 
     queryFnSpy.mockClear()
@@ -119,7 +119,7 @@ describe('InfiniteQueryBehavior', () => {
     // Only first two pages should be in the data
     expect(observerResult).toMatchObject({
       isFetching: false,
-      data: { pages: [0, 1], pageParams: [0, undefined] },
+      data: { pages: [0, 1], pageParams: [0, 1] },
     })
 
     queryFnSpy.mockClear()
@@ -224,7 +224,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
-      pageParam: undefined,
+      pageParam: 1,
       meta: undefined,
       signal: abortSignal,
     })
@@ -261,7 +261,7 @@ describe('InfiniteQueryBehavior', () => {
     await waitFor(() =>
       expect(observerResult).toMatchObject({
         isFetching: false,
-        data: { pages: [1], pageParams: [undefined] },
+        data: { pages: [1], pageParams: [1] },
       }),
     )
 
@@ -272,7 +272,7 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(observerResult).toMatchObject({
       isFetching: false,
-      data: { pages: [1, 2], pageParams: [undefined, 2] },
+      data: { pages: [1, 2], pageParams: [1, 2] },
     })
 
     expect(queryFnSpy).toHaveBeenCalledTimes(1)
@@ -305,7 +305,7 @@ describe('InfiniteQueryBehavior', () => {
       isFetching: false,
       isError: true,
       error: new CancelledError(),
-      data: { pages: [1, 2], pageParams: [undefined, 2] },
+      data: { pages: [1, 2], pageParams: [1, 2] },
     })
 
     // Pages should not have been fetched

@@ -120,7 +120,7 @@ describe("useQuery's in Suspense mode", () => {
     // occurs on read.
     expect(states.length).toBe(2)
     expect(states[1]).toMatchObject({
-      data: { pages: [1], pageParams: [undefined] },
+      data: { pages: [1], pageParams: [1] },
       status: 'success',
     })
 
@@ -130,7 +130,7 @@ describe("useQuery's in Suspense mode", () => {
     // TODO(lukemurray): in react this is 2 and in solid it is 4
     expect(states.length).toBe(4)
     expect(states[3]).toMatchObject({
-      data: { pages: [2], pageParams: [undefined] },
+      data: { pages: [2], pageParams: [1] },
       status: 'success',
     })
   })

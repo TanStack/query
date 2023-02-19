@@ -18,7 +18,7 @@ describe('useQuery', () => {
     await flushPromises()
 
     expect(data.value).toStrictEqual({
-      pageParams: [undefined],
+      pageParams: [0],
       pages: ['data on page 0'],
     })
     expect(status.value).toStrictEqual('success')
@@ -28,7 +28,7 @@ describe('useQuery', () => {
     await flushPromises()
 
     expect(data.value).toStrictEqual({
-      pageParams: [undefined, 12],
+      pageParams: [0, 12],
       pages: ['data on page 0', 'data on page 12'],
     })
     expect(status.value).toStrictEqual('success')

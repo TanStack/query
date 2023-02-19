@@ -114,7 +114,12 @@ export interface QueryOptions<
   maxPages?: number
 }
 
-export interface InfiniteQueryOptions<TQueryFnData = unknown> {
+export interface DefaultPageParam {
+  defaultPageParam: unknown
+}
+
+export interface InfiniteQueryOptions<TQueryFnData = unknown>
+  extends DefaultPageParam {
   /**
    * This function can be set to automatically get the previous cursor for infinite queries.
    * The result will also be used to determine the value of `hasPreviousPage`.
@@ -125,8 +130,6 @@ export interface InfiniteQueryOptions<TQueryFnData = unknown> {
    * The result will also be used to determine the value of `hasNextPage`.
    */
   getNextPageParam: GetNextPageParamFunction<TQueryFnData>
-
-  defaultPageParam: unknown
 }
 
 export type ThrowErrors<
@@ -334,11 +337,12 @@ export interface FetchInfiniteQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends FetchQueryOptions<
-    TQueryFnData,
-    TError,
-    InfiniteData<TData>,
-    TQueryKey
-  > {}
+      TQueryFnData,
+      TError,
+      InfiniteData<TData>,
+      TQueryKey
+    >,
+    DefaultPageParam {}
 
 export interface ResultOptions {
   throwOnError?: boolean

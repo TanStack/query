@@ -146,7 +146,11 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    await queryClient.prefetchInfiniteQuery({ queryKey: key, queryFn })
+    await queryClient.prefetchInfiniteQuery({
+      queryKey: key,
+      queryFn,
+      defaultPageParam: 0,
+    })
 
     const markup = renderToString(
       <QueryClientProvider client={queryClient}>

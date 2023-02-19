@@ -97,7 +97,7 @@ describe('useInfiniteQuery', () => {
     })
 
     expect(states[1]).toEqual({
-      data: { pages: [0], pageParams: [undefined] },
+      data: { pages: [0], pageParams: [0] },
       dataUpdatedAt: expect.any(Number),
       error: null,
       errorUpdatedAt: 0,
@@ -1111,7 +1111,7 @@ describe('useInfiniteQuery', () => {
       const state = useInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }): number => pageParam,
-        initialData: { pages: [10], pageParams: [undefined] },
+        initialData: { pages: [10], pageParams: [10] },
         getNextPageParam: (lastPage) => (lastPage === 10 ? 11 : undefined),
         defaultPageParam: 10,
       })
@@ -1151,7 +1151,7 @@ describe('useInfiniteQuery', () => {
         queryKey: key,
         queryFn: ({ pageParam }): number => pageParam,
         defaultPageParam: 10,
-        initialData: { pages: [10], pageParams: [undefined] },
+        initialData: { pages: [10], pageParams: [10] },
         getNextPageParam: () => undefined,
       })
 
