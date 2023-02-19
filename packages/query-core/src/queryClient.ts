@@ -315,7 +315,7 @@ export class QueryClient {
     TError = RegisteredError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
-    TPageParam = never,
+    TPageParam = unknown,
   >(
     options: FetchInfiniteQueryOptions<
       TQueryFnData,
@@ -334,7 +334,7 @@ export class QueryClient {
     TError = RegisteredError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
-    TPageParam = never,
+    TPageParam = unknown,
   >(
     options: FetchInfiniteQueryOptions<
       TQueryFnData,
