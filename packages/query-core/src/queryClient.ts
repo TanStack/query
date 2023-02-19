@@ -275,8 +275,15 @@ export class QueryClient {
     TError = RegisteredError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
   >(
-    options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options: FetchQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
   ): Promise<TData> {
     const defaultedOptions = this.defaultQueryOptions(options)
 
@@ -308,8 +315,15 @@ export class QueryClient {
     TError = RegisteredError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
   >(
-    options: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options: FetchInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
   ): Promise<InfiniteData<TData>> {
     options.behavior = infiniteQueryBehavior<TQueryFnData, TError, TData>()
     return this.fetchQuery(options)
@@ -320,8 +334,15 @@ export class QueryClient {
     TError = RegisteredError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
   >(
-    options: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options: FetchInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
   ): Promise<void> {
     return this.fetchInfiniteQuery(options).then(noop).catch(noop)
   }
@@ -405,9 +426,17 @@ export class QueryClient {
     TData = TQueryFnData,
     TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
   >(
     options?:
-      | QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+      | QueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          TQueryKey,
+          TPageParam
+        >
       | DefaultedQueryObserverOptions<
           TQueryFnData,
           TError,

@@ -333,8 +333,9 @@ export interface FetchQueryOptions<
   TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 > extends WithRequired<
-    QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    QueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
     'queryKey'
   > {
   /**
@@ -349,13 +350,15 @@ export interface FetchInfiniteQueryOptions<
   TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 > extends FetchQueryOptions<
       TQueryFnData,
       TError,
       InfiniteData<TData>,
-      TQueryKey
+      TQueryKey,
+      TPageParam
     >,
-    DefaultPageParam {}
+    DefaultPageParam<TPageParam> {}
 
 export interface ResultOptions {
   throwOnError?: boolean
