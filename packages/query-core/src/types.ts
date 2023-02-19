@@ -57,15 +57,15 @@ export type QueryKeyHashFunction<TQueryKey extends QueryKey> = (
   queryKey: TQueryKey,
 ) => string
 
-export type GetPreviousPageParamFunction<TQueryFnData = unknown> = (
+export type GetPreviousPageParamFunction<TPageParam, TQueryFnData = unknown> = (
   firstPage: TQueryFnData,
   allPages: TQueryFnData[],
-) => unknown
+) => TPageParam | undefined
 
-export type GetNextPageParamFunction<TQueryFnData = unknown> = (
+export type GetNextPageParamFunction<TPageParam, TQueryFnData = unknown> = (
   lastPage: TQueryFnData,
   allPages: TQueryFnData[],
-) => unknown
+) => TPageParam | undefined
 
 export interface InfiniteData<TData> {
   pages: TData[]
@@ -134,12 +134,12 @@ export interface InfiniteQueryOptions<
    * This function can be set to automatically get the previous cursor for infinite queries.
    * The result will also be used to determine the value of `hasPreviousPage`.
    */
-  getPreviousPageParam?: GetPreviousPageParamFunction<TQueryFnData>
+  getPreviousPageParam?: GetPreviousPageParamFunction<TPageParam, TQueryFnData>
   /**
    * This function can be set to automatically get the next cursor for infinite queries.
    * The result will also be used to determine the value of `hasNextPage`.
    */
-  getNextPageParam: GetNextPageParamFunction<TQueryFnData>
+  getNextPageParam: GetNextPageParamFunction<TPageParam, TQueryFnData>
 }
 
 export type ThrowErrors<
