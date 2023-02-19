@@ -17,8 +17,15 @@ export function createInfiniteQuery<
   TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 >(
-  options: CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: CreateInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
   queryClient?: () => QueryClient,
 ): CreateInfiniteQueryResult<TData, TError> {
   return createBaseQuery(

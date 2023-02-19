@@ -1189,7 +1189,7 @@ describe('useInfiniteQuery', () => {
       const state = useInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) => Number(pageParam),
-        getNextPageParam: (lastPage) => (lastPage === 1 ? 2 : false),
+        getNextPageParam: (lastPage) => (lastPage === 1 ? 2 : undefined),
         select: (data) => ({
           pages: data.pages.map((x) => x.toString()),
           pageParams: data.pageParams,
@@ -1250,7 +1250,7 @@ describe('useInfiniteQuery', () => {
         fetchNextPage,
         hasNextPage,
         refetch,
-      } = useInfiniteQuery<Result, Error>({
+      } = useInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) =>
           fetchItemsWithLimit(pageParam, fetchCountRef.current++),
@@ -1375,7 +1375,7 @@ describe('useInfiniteQuery', () => {
         fetchNextPage,
         hasNextPage,
         refetch,
-      } = useInfiniteQuery<Result, Error>({
+      } = useInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) =>
           fetchItems(
