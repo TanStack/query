@@ -79,6 +79,14 @@ export function expectType<T>(_: T): void {
   return undefined
 }
 
+export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
+  T,
+>() => T extends Y ? 1 : 2
+  ? true
+  : false
+
+export type Expect<T extends true> = T
+
 /**
  * Assert the parameter is not typed as `any`
  */
@@ -100,3 +108,5 @@ export function setIsServer(isServer: boolean) {
     })
   }
 }
+
+export const doNotExecute = (_func: () => void) => true
