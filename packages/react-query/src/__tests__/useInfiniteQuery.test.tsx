@@ -50,8 +50,9 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: ({ pageParam = 0 }) => Number(pageParam),
+        queryFn: ({ pageParam }) => Number(pageParam),
         getNextPageParam: (lastPage) => lastPage + 1,
+        defaultPageParam: 0,
       })
       states.push(state)
       return null
@@ -137,7 +138,7 @@ describe('useInfiniteQuery', () => {
       const start = 1
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam = start }) => {
+        queryFn: async ({ pageParam }) => {
           if (pageParam === 2) {
             throw new Error('error')
           }
@@ -146,6 +147,7 @@ describe('useInfiniteQuery', () => {
         retry: 1,
         retryDelay: 10,
         getNextPageParam: (lastPage) => lastPage + 1,
+        defaultPageParam: start,
       })
 
       const { fetchNextPage } = state
@@ -177,11 +179,12 @@ describe('useInfiniteQuery', () => {
 
       const state = useInfiniteQuery({
         queryKey: [key, order],
-        queryFn: async ({ pageParam = 0 }) => {
+        queryFn: async ({ pageParam }) => {
           await sleep(10)
           return `${pageParam}-${order}`
         },
         getNextPageParam: () => 1,
+        defaultPageParam: 0,
         placeholderData: keepPreviousData,
         notifyOnChangeProps: 'all',
       })
@@ -276,6 +279,7 @@ describe('useInfiniteQuery', () => {
           pageParams: data.pageParams,
         }),
         getNextPageParam: () => undefined,
+        defaultPageParam: 0,
       })
       states.push(state)
 
@@ -316,6 +320,7 @@ describe('useInfiniteQuery', () => {
           }
         }, []),
         getNextPageParam: () => undefined,
+        defaultPageParam: 0,
       })
       states.push(state)
 
@@ -353,7 +358,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam = 0 }) => {
+        queryFn: async ({ pageParam }) => {
           await sleep(10)
           return Number(pageParam)
         },
@@ -363,6 +368,7 @@ describe('useInfiniteQuery', () => {
         }),
         notifyOnChangeProps: 'all',
         getNextPageParam: () => 1,
+        defaultPageParam: 0,
       })
 
       states.push(state)
@@ -410,10 +416,11 @@ describe('useInfiniteQuery', () => {
       const start = 10
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam = start }) => {
+        queryFn: async ({ pageParam }) => {
           await sleep(10)
           return Number(pageParam)
         },
+        defaultPageParam: start,
         getNextPageParam: (lastPage) => lastPage + 1,
         getPreviousPageParam: (firstPage) => firstPage - 1,
         notifyOnChangeProps: 'all',
@@ -491,11 +498,11 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam = 10 }) => {
+        queryFn: async ({ pageParam }) => {
           await sleep(10)
           return Number(pageParam)
         },
-
+        defaultPageParam: 10,
         getPreviousPageParam: (firstPage) => firstPage - 1,
         getNextPageParam: (lastPage) => lastPage + 1,
         notifyOnChangeProps: 'all',
@@ -601,10 +608,11 @@ describe('useInfiniteQuery', () => {
       const start = 10
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam = start }) => {
+        queryFn: async ({ pageParam }) => {
           await sleep(50)
           return Number(pageParam)
         },
+        defaultPageParam: start,
         getNextPageParam: (lastPage) => lastPage + 1,
         notifyOnChangeProps: 'all',
       })
@@ -675,7 +683,7 @@ describe('useInfiniteQuery', () => {
     const fetchPage = jest.fn<
       Promise<number>,
       [QueryFunctionContext<typeof key, number>]
-    >(async ({ pageParam = start, signal }) => {
+    >(async ({ pageParam, signal }) => {
       const onAbort = jest.fn()
       const abortListener = jest.fn()
       onAborts.push(onAbort)
@@ -690,6 +698,7 @@ describe('useInfiniteQuery', () => {
       const { fetchNextPage } = useInfiniteQuery({
         queryKey: key,
         queryFn: fetchPage,
+        defaultPageParam: start,
         getNextPageParam: (lastPage) => lastPage + 1,
       })
 
@@ -750,7 +759,7 @@ describe('useInfiniteQuery', () => {
     const fetchPage = jest.fn<
       Promise<number>,
       [QueryFunctionContext<typeof key, number>]
-    >(async ({ pageParam = start, signal }) => {
+    >(async ({ pageParam, signal }) => {
       const onAbort = jest.fn()
       const abortListener = jest.fn()
       onAborts.push(onAbort)
@@ -766,6 +775,7 @@ describe('useInfiniteQuery', () => {
       const { fetchNextPage } = useInfiniteQuery({
         queryKey: key,
         queryFn: fetchPage,
+        defaultPageParam: start,
         getNextPageParam: (lastPage) => lastPage + 1,
       })
 
@@ -817,10 +827,11 @@ describe('useInfiniteQuery', () => {
       const start = 10
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam = start }) => {
+        queryFn: async ({ pageParam }) => {
           await sleep(50)
           return Number(pageParam)
         },
+        defaultPageParam: start,
         getNextPageParam: (lastPage) => lastPage + 1,
         notifyOnChangeProps: 'all',
       })
@@ -868,12 +879,13 @@ describe('useInfiniteQuery', () => {
     function List() {
       useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam = 0, signal: _ }) => {
+        queryFn: async ({ pageParam, signal: _ }) => {
           fetches++
           await sleep(50)
           return Number(pageParam) * 10
         },
         initialData,
+        defaultPageParam: 0,
         getNextPageParam: (_, allPages) => {
           return allPages.length === 4 ? undefined : allPages.length
         },
@@ -915,11 +927,12 @@ describe('useInfiniteQuery', () => {
 
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: async ({ pageParam = firstPage }) => {
+        queryFn: async ({ pageParam }) => {
           await sleep(10)
           return Number(pageParam)
         },
         getNextPageParam: (lastPage) => lastPage + 1,
+        defaultPageParam: firstPage,
         notifyOnChangeProps: 'all',
       })
 
@@ -1000,6 +1013,7 @@ describe('useInfiniteQuery', () => {
         },
         initialData: { pages: [1], pageParams: [1] },
         getNextPageParam: (lastPage) => lastPage + 1,
+        defaultPageParam: 0,
         notifyOnChangeProps: 'all',
       })
 
@@ -1058,8 +1072,9 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: ({ pageParam = 1 }) => Number(pageParam),
+        queryFn: ({ pageParam }) => Number(pageParam),
         getNextPageParam: () => undefined,
+        defaultPageParam: 1,
       })
 
       states.push(state)
@@ -1095,9 +1110,10 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: ({ pageParam = 10 }): number => pageParam,
+        queryFn: ({ pageParam }): number => pageParam,
         initialData: { pages: [10], pageParams: [undefined] },
         getNextPageParam: (lastPage) => (lastPage === 10 ? 11 : undefined),
+        defaultPageParam: 10,
       })
 
       states.push(state)
@@ -1133,8 +1149,8 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: ({ pageParam = 10 }): number => pageParam,
-
+        queryFn: ({ pageParam }): number => pageParam,
+        defaultPageParam: 10,
         initialData: { pages: [10], pageParams: [undefined] },
         getNextPageParam: () => undefined,
       })
@@ -1172,12 +1188,13 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery({
         queryKey: key,
-        queryFn: ({ pageParam = 1 }) => Number(pageParam),
+        queryFn: ({ pageParam }) => Number(pageParam),
         getNextPageParam: (lastPage) => (lastPage === 1 ? 2 : false),
         select: (data) => ({
           pages: data.pages.map((x) => x.toString()),
           pageParams: data.pageParams,
         }),
+        defaultPageParam: 1,
       })
 
       states.push(state)
@@ -1235,9 +1252,9 @@ describe('useInfiniteQuery', () => {
         refetch,
       } = useInfiniteQuery<Result, Error>({
         queryKey: key,
-        queryFn: ({ pageParam = 0 }) =>
+        queryFn: ({ pageParam }) =>
           fetchItemsWithLimit(pageParam, fetchCountRef.current++),
-
+        defaultPageParam: 0,
         getNextPageParam: (lastPage) => lastPage.nextId,
       })
 
@@ -1360,13 +1377,14 @@ describe('useInfiniteQuery', () => {
         refetch,
       } = useInfiniteQuery<Result, Error>({
         queryKey: key,
-        queryFn: ({ pageParam = 0 }) =>
+        queryFn: ({ pageParam }) =>
           fetchItems(
             pageParam,
             fetchCountRef.current++,
             pageParam === MAX || (pageParam === MAX - 1 && isRemovedLastPage),
           ),
         getNextPageParam: (lastPage) => lastPage.nextId,
+        defaultPageParam: 0,
       })
 
       return (
@@ -1488,6 +1506,7 @@ describe('useInfiniteQuery', () => {
         queryKey: key,
         queryFn,
         getNextPageParam: () => undefined,
+        defaultPageParam: 0,
       })
       return (
         <div>
@@ -1531,6 +1550,7 @@ describe('useInfiniteQuery', () => {
           queryKey: key,
           queryFn,
           getNextPageParam: () => undefined,
+          defaultPageParam: 0,
         },
         queryClient,
       )

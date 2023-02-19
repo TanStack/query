@@ -135,6 +135,7 @@ describe('Server Side Rendering', () => {
         queryKey: key,
         queryFn,
         getNextPageParam: () => undefined,
+        defaultPageParam: 0,
       })
       return (
         <ul>

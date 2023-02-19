@@ -85,11 +85,11 @@ describe("useQuery's in Suspense mode", () => {
       const [multiplier, setMultiplier] = createSignal(1)
       const state = createInfiniteQuery(() => ({
         queryKey: [`${key}_${multiplier()}`],
-        queryFn: async ({ pageParam = 1 }) => {
+        queryFn: async ({ pageParam }) => {
           await sleep(10)
           return Number(pageParam * multiplier())
         },
-
+        defaultPageParam: 1,
         suspense: true,
         getNextPageParam: (lastPage) => lastPage + 1,
       }))

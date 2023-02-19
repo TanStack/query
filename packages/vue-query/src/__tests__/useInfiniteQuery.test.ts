@@ -8,6 +8,7 @@ describe('useQuery', () => {
     const { data, fetchNextPage, status } = useInfiniteQuery({
       queryKey: ['infiniteQuery'],
       queryFn: infiniteFetcher,
+      defaultPageParam: 0,
       getNextPageParam: () => 12,
     })
 

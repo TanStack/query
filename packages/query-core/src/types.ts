@@ -126,7 +126,7 @@ export interface InfiniteQueryOptions<TQueryFnData = unknown> {
    */
   getNextPageParam: GetNextPageParamFunction<TQueryFnData>
 
-  defaultPageParam?: unknown
+  defaultPageParam: unknown
 }
 
 export type ThrowErrors<

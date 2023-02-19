@@ -12,6 +12,7 @@ describe('Discriminated union return type', () => {
           queryKey: ['infiniteQuery'],
           queryFn: simpleFetcher,
           getNextPageParam: () => undefined,
+          defaultPageParam: 0,
         }),
       )
 
@@ -29,6 +30,7 @@ describe('Discriminated union return type', () => {
           queryKey: ['infiniteQuery'],
           queryFn: simpleFetcher,
           getNextPageParam: () => undefined,
+          defaultPageParam: 0,
         }),
       )
 
@@ -48,6 +50,7 @@ describe('Discriminated union return type', () => {
           queryKey: ['infiniteQuery'],
           queryFn: simpleFetcher,
           getNextPageParam: () => undefined,
+          defaultPageParam: 0,
         }),
       )
 
@@ -66,6 +69,7 @@ describe('Discriminated union return type', () => {
           queryKey: ['infiniteQuery'],
           queryFn: simpleFetcher,
           getNextPageParam: () => undefined,
+          defaultPageParam: 0,
         }),
       )
 
@@ -84,6 +88,7 @@ describe('Discriminated union return type', () => {
           queryKey: ['infiniteQuery'],
           queryFn: simpleFetcher,
           getNextPageParam: () => undefined,
+          defaultPageParam: 0,
         }),
       )
 
