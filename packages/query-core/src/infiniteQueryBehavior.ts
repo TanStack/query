@@ -145,38 +145,22 @@ export function getPreviousPageParam(
 
 /**
  * Checks if there is a next page.
- * Returns `undefined` if it cannot be determined.
  */
 export function hasNextPage(
   options: QueryOptions<any, any, any, any>,
-  pages?: unknown,
-): boolean | undefined {
-  if (options.getNextPageParam && Array.isArray(pages)) {
-    const nextPageParam = getNextPageParam(options, pages)
-    return (
-      typeof nextPageParam !== 'undefined' &&
-      nextPageParam !== null &&
-      nextPageParam !== false
-    )
-  }
-  return
+  pages?: unknown[],
+): boolean {
+  if (!pages) return false
+  return typeof options.getNextPageParam?.(options, pages) !== 'undefined'
 }
 
 /**
  * Checks if there is a previous page.
- * Returns `undefined` if it cannot be determined.
  */
 export function hasPreviousPage(
   options: QueryOptions<any, any, any, any>,
-  pages?: unknown,
-): boolean | undefined {
-  if (options.getPreviousPageParam && Array.isArray(pages)) {
-    const previousPageParam = getPreviousPageParam(options, pages)
-    return (
-      typeof previousPageParam !== 'undefined' &&
-      previousPageParam !== null &&
-      previousPageParam !== false
-    )
-  }
-  return
+  pages?: unknown[],
+): boolean {
+  if (!pages) return false
+  return typeof options.getPreviousPageParam?.(options, pages) !== 'undefined'
 }

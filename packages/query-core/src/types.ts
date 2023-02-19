@@ -476,8 +476,8 @@ export interface InfiniteQueryObserverBaseResult<
   fetchPreviousPage: (
     options?: FetchPreviousPageOptions,
   ) => Promise<InfiniteQueryObserverResult<TData, TError>>
-  hasNextPage?: boolean
-  hasPreviousPage?: boolean
+  hasNextPage: boolean
+  hasPreviousPage: boolean
   isFetchingNextPage: boolean
   isFetchingPreviousPage: boolean
 }
