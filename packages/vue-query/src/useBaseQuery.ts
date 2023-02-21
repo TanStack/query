@@ -32,19 +32,37 @@ type UseQueryOptionsGeneric<
   TQueryFnData,
   TError,
   TData,
+  TQueryData,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 > =
-  | UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>
-  | UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+  | UseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+  | UseInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
+    >
 
 export function useBaseQuery<
   TQueryFnData,
   TError,
   TData,
+  TQueryData,
   TQueryKey extends QueryKey,
+  TPageParam,
 >(
   Observer: typeof QueryObserver,
-  options: UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>,
+  options: UseQueryOptionsGeneric<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey,
+    TPageParam
+  >,
   queryClient?: QueryClient,
 ): UseBaseQueryReturnType<TData, TError> {
   const client = queryClient || useQueryClient()
@@ -56,7 +74,7 @@ export function useBaseQuery<
       TQueryFnData,
       TError,
       TData,
-      TQueryFnData,
+      TQueryData,
       TQueryKey
     >
 

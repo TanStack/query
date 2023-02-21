@@ -90,7 +90,7 @@ export function useInfiniteQuery<
 ): UseInfiniteQueryReturnType<TData, TError> {
   const result = useBaseQuery(
     InfiniteQueryObserver as typeof QueryObserver,
-    options as any,
+    options,
     queryClient,
   ) as InfiniteQueryReturnType<TData, TError>
   return {
