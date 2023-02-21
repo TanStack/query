@@ -1087,37 +1087,6 @@ importers:
       vite: 4.0.4
       vitest: 0.27.1_jsdom@20.0.3
 
-  packages/svelte-query/build/lib:
-    specifiers:
-      '@sveltejs/package': ^1.0.0
-      '@sveltejs/vite-plugin-svelte': ^2.0.2
-      '@tanstack/query-core': workspace:*
-      '@testing-library/svelte': ^3.2.2
-      '@vitest/coverage-istanbul': ^0.27.1
-      eslint-plugin-svelte: ^2.14.1
-      jsdom: ^20.0.3
-      svelte: ^3.54.0
-      svelte-check: ^2.9.2
-      tslib: ^2.4.1
-      typescript: ^4.7.4
-      vite: ^4.0.0
-      vitest: ^0.27.1
-    dependencies:
-      '@tanstack/query-core': link:../../../query-core
-    devDependencies:
-      '@sveltejs/package': 1.0.2_glsdxddlaertg66rhhvanbinpy
-      '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.0.4
-      '@testing-library/svelte': 3.2.2_svelte@3.55.0
-      '@vitest/coverage-istanbul': 0.27.1_jsdom@20.0.3
-      eslint-plugin-svelte: 2.14.1_svelte@3.55.0
-      jsdom: 20.0.3
-      svelte: 3.55.0
-      svelte-check: 2.10.3_svelte@3.55.0
-      tslib: 2.4.1
-      typescript: 4.8.4
-      vite: 4.0.4
-      vitest: 0.27.1_jsdom@20.0.3
-
   packages/vue-query:
     specifiers:
       '@tanstack/match-sorter-utils': ^8.7.6
@@ -1391,7 +1360,7 @@ packages:
     resolution: {integrity: sha512-S1ahxf1gZ2dpoiFgA+ohK9DIpz50bJ0CWs7Zlzb54Z4sG8qmdIrGrVqmy1sAtTVRb+9CU6U8VqT9L0Zj7hxHVg==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/types': 7.19.0
+      '@babel/types': 7.20.7
       '@jridgewell/gen-mapping': 0.3.2
       jsesc: 2.5.2
 
@@ -1759,10 +1728,10 @@ packages:
       '@babel/helper-module-imports': 7.18.6
       '@babel/helper-simple-access': 7.18.6
       '@babel/helper-split-export-declaration': 7.18.6
-      '@babel/helper-validator-identifier': 7.18.6
+      '@babel/helper-validator-identifier': 7.19.1
       '@babel/template': 7.18.10
       '@babel/traverse': 7.19.1
-      '@babel/types': 7.19.0
+      '@babel/types': 7.20.7
     transitivePeerDependencies:
       - supports-color
 
@@ -1897,16 +1866,8 @@ packages:
     dependencies:
       '@babel/types': 7.20.7
 
-  /@babel/helper-string-parser/7.18.10:
-    resolution: {integrity: sha512-XtIfWmeNY3i4t7t4D2t02q50HvqHybPqW2ki1kosnvWCwuCMeo81Jf0gwr85jy/neUdg5XDdeFE/80DXiO+njw==}
-    engines: {node: '>=6.9.0'}
-
   /@babel/helper-string-parser/7.19.4:
     resolution: {integrity: sha512-nHtDoQcuqFmwYNYPz3Rah5ph2p8PFeFCsZk9A/48dPc/rGocJ5J3hAAZ7pb76VWX3fZKu+uEr/FhH5jLx7umrw==}
-    engines: {node: '>=6.9.0'}
-
-  /@babel/helper-validator-identifier/7.18.6:
-    resolution: {integrity: sha512-MmetCkz9ej86nJQV+sFCxoGGrUbU3q02kgLciwkrt9QqEB7cP39oKEY0PakknEO0Gu20SskMRi+AYZ3b1TpN9g==}
     engines: {node: '>=6.9.0'}
 
   /@babel/helper-validator-identifier/7.19.1:
@@ -1934,7 +1895,7 @@ packages:
     dependencies:
       '@babel/template': 7.18.10
       '@babel/traverse': 7.19.1
-      '@babel/types': 7.19.0
+      '@babel/types': 7.20.7
     transitivePeerDependencies:
       - supports-color
 
@@ -1961,7 +1922,7 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
     dependencies:
-      '@babel/types': 7.19.0
+      '@babel/types': 7.20.7
 
   /@babel/parser/7.20.15:
     resolution: {integrity: sha512-DI4a1oZuf8wC+oAJA9RW6ga3Zbe8RZFt7kD9i4qAspz3I/yHet1VvC3DiSy/fsUvv5pvJuNPh0LPOdCcqinDPg==}
@@ -5528,7 +5489,7 @@ packages:
     dependencies:
       '@babel/code-frame': 7.18.6
       '@babel/parser': 7.20.15
-      '@babel/types': 7.19.0
+      '@babel/types': 7.20.7
 
   /@babel/template/7.20.7:
     resolution: {integrity: sha512-8SegXApWe6VoNw0r9JHpSteLKTpTiLZ4rMlGIm9JQ18KiCtyQiAMEazujAHrUS5flrcqYZa75ukev3P6QmUwUw==}
@@ -5548,8 +5509,8 @@ packages:
       '@babel/helper-function-name': 7.19.0
       '@babel/helper-hoist-variables': 7.18.6
       '@babel/helper-split-export-declaration': 7.18.6
-      '@babel/parser': 7.19.1
-      '@babel/types': 7.19.0
+      '@babel/parser': 7.20.15
+      '@babel/types': 7.20.7
       debug: 4.3.4
       globals: 11.12.0
     transitivePeerDependencies:
@@ -5576,8 +5537,8 @@ packages:
     resolution: {integrity: sha512-YuGopBq3ke25BVSiS6fgF49Ul9gH1x70Bcr6bqRLjWCkcX8Hre1/5+z+IiWOIerRMSSEfGZVB9z9kyq7wVs9YA==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/helper-string-parser': 7.18.10
-      '@babel/helper-validator-identifier': 7.18.6
+      '@babel/helper-string-parser': 7.19.4
+      '@babel/helper-validator-identifier': 7.19.1
       to-fast-properties: 2.0.0
 
   /@babel/types/7.20.7:
