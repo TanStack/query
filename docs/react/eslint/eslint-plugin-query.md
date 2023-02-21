@@ -23,7 +23,7 @@ Add `@tanstack/eslint-plugin-query` to the plugins section of your `.eslintrc` c
 
 ```json
 {
-  "plugins": ["@tanstack/query"]
+  "plugins": ["@tanstack/eslint-plugin-query"]
 }
 ```
 
