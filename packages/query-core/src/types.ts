@@ -126,7 +126,7 @@ export interface DefaultPageParam<TPageParam = unknown> {
   defaultPageParam: TPageParam
 }
 
-export interface InfiniteQueryOptions<
+export interface InfiniteQueryPageParamsOptions<
   TQueryFnData = unknown,
   TPageParam = unknown,
 > extends DefaultPageParam<TPageParam> {
@@ -315,7 +315,7 @@ export interface InfiniteQueryObserverOptions<
       TQueryKey,
       TPageParam
     >,
-    InfiniteQueryOptions<TQueryFnData, TPageParam> {}
+    InfiniteQueryPageParamsOptions<TQueryFnData, TPageParam> {}
 
 export type DefaultedInfiniteQueryObserverOptions<
   TQueryFnData = unknown,

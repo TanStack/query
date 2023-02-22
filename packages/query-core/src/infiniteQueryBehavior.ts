@@ -2,7 +2,7 @@ import type { QueryBehavior } from './query'
 import { addToEnd, addToStart } from './utils'
 import type {
   InfiniteData,
-  InfiniteQueryOptions,
+  InfiniteQueryPageParamsOptions,
   QueryFunctionContext,
   QueryKey,
 } from './types'
@@ -15,7 +15,7 @@ export function infiniteQueryBehavior<
   return {
     onFetch: (context) => {
       context.fetchFn = () => {
-        const options = context.options as InfiniteQueryOptions<TData>
+        const options = context.options as InfiniteQueryPageParamsOptions<TData>
         const fetchMore = context.fetchOptions?.meta?.fetchMore
         const direction = fetchMore?.direction
         const oldPages = context.state.data?.pages || []
@@ -141,14 +141,14 @@ export function infiniteQueryBehavior<
 }
 
 function getNextPageParam(
-  options: InfiniteQueryOptions<any>,
+  options: InfiniteQueryPageParamsOptions<any>,
   pages: unknown[],
 ): unknown | undefined {
   return options.getNextPageParam(pages[pages.length - 1], pages)
 }
 
 function getPreviousPageParam(
-  options: InfiniteQueryOptions<any>,
+  options: InfiniteQueryPageParamsOptions<any>,
   pages: unknown[],
 ): unknown | undefined {
   return options.getPreviousPageParam?.(pages[0], pages)
@@ -158,7 +158,7 @@ function getPreviousPageParam(
  * Checks if there is a next page.
  */
 export function hasNextPage(
-  options: InfiniteQueryOptions<any>,
+  options: InfiniteQueryPageParamsOptions<any>,
   pages?: unknown[],
 ): boolean {
   if (!pages) return false
@@ -169,7 +169,7 @@ export function hasNextPage(
  * Checks if there is a previous page.
  */
 export function hasPreviousPage(
-  options: InfiniteQueryOptions<any>,
+  options: InfiniteQueryPageParamsOptions<any>,
   pages?: unknown[],
 ): boolean {
   if (!pages || !options.getPreviousPageParam) return false
