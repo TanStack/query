@@ -183,16 +183,16 @@ const CopiedCopier = () => (
   </span>
 )
 
-type Entry = {
+type EntryType = {
   label: string
 }
 
 type RendererProps = {
-  handleEntry: (entry: Entry) => JSX.Element
+  handleEntry: (entry: EntryType) => JSX.Element
   label?: string
   value: unknown
-  subEntries: Entry[]
-  subEntryPages: Entry[][]
+  subEntries: EntryType[]
+  subEntryPages: EntryType[][]
   type: string
   expanded: boolean
   copyable: boolean
