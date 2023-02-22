@@ -59,6 +59,13 @@ export const rule = createRule({
 
         let queryKeyNode = queryKey.value
 
+        if (
+          queryKeyNode.type === AST_NODE_TYPES.TSAsExpression &&
+          queryKeyNode.expression.type === AST_NODE_TYPES.ArrayExpression
+        ) {
+          queryKeyNode = queryKeyNode.expression
+        }
+
         if (queryKeyNode.type === AST_NODE_TYPES.Identifier) {
           const expression = ASTUtils.getReferencedExpressionByIdentifier({
             context,
@@ -80,7 +87,7 @@ export const rule = createRule({
         const relevantRefs = refs.filter((ref) => {
           return (
             ref.identifier.name !== 'undefined' &&
-            ref.resolved?.defs.every((def) => def.type !== 'ClassName')
+            ref.identifier.parent?.type !== AST_NODE_TYPES.NewExpression
           )
         })
 
