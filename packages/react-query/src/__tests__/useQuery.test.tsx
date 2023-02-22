@@ -5894,7 +5894,7 @@ describe('useQuery', () => {
     jest.useFakeTimers()
 
     function SomeComponent() {
-      const {data} = useQuery({
+      const {data}: { data: string | undefined } = useQuery({
         queryKey: ['some-query-key'],
         queryFn: () =>
           new Promise((r) => setTimeout(() => r('data'), 300)),
@@ -5909,7 +5909,7 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <SomeComponent/>)
 
     await waitFor(() => rendered.getByText('no data yet'))
-    act(() => jest.runAllTimers())
+    jest.runAllTimers()
     await waitFor(() => rendered.getByText('data'))
 
     jest.useRealTimers()
