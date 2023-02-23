@@ -154,7 +154,7 @@ export function createBaseQuery<
            * Do not refetch query on mount if query was fetched on server,
            * even if `staleTime` is not set.
            */
-          let newOptions = { ...defaultedOptions }
+          const newOptions = { ...defaultedOptions }
           if (defaultedOptions.staleTime || !defaultedOptions.initialData) {
             newOptions.refetchOnMount = false
           }
