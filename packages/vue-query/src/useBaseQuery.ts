@@ -47,12 +47,14 @@ export function useBaseQuery<
 >(
   Observer: typeof QueryObserver,
   arg1:
-    | TQueryKey
-    | UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>,
+    | MaybeRef<TQueryKey>
+    | MaybeRef<UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>>,
   arg2:
-    | QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>
-    | UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey> = {},
-  arg3: UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey> = {},
+    | MaybeRef<QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>>
+    | MaybeRef<UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>> = {},
+  arg3: MaybeRef<
+    UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>
+  > = {},
 ): UseQueryReturnType<TData, TError> {
   const options = computed(() => parseQueryArgs(arg1, arg2, arg3))
 
