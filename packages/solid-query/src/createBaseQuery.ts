@@ -43,23 +43,15 @@ export function createBaseQuery<
 
   const defaultedOptions = client().defaultQueryOptions(options())
   defaultedOptions._optimisticResults = 'optimistic'
+  if (isServer) {
+    defaultedOptions.retry = false
+    defaultedOptions.throwErrors = true
+  }
   const observer = new Observer(client(), defaultedOptions)
 
   const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
     observer.getOptimisticResult(defaultedOptions),
   )
-
-  const createSubscriber = (
-    cb: (result: QueryObserverResult<TData, TError>) => void,
-  ) => {
-    return observer.subscribe((result) => {
-      notifyManager.batchCalls(() => {
-        const unwrappedResult = { ...unwrap(result) }
-        setState(unwrappedResult)
-        cb(unwrappedResult)
-      })()
-    })
-  }
 
   const createServerSubscriber = (
     resolve: (
@@ -68,26 +60,60 @@ export function createBaseQuery<
         | PromiseLike<QueryObserverResult<TData, TError> | undefined>
         | undefined,
     ) => void,
-  ) => createSubscriber(resolve)
+    reject: (reason?: any) => void,
+  ) => {
+    return observer.subscribe((result) => {
+      notifyManager.batchCalls(() => {
+        const unwrappedResult = { ...unwrap(result) }
+        if (unwrappedResult.isError) {
+          if (process.env['NODE_ENV'] === 'development') {
+            console.error(unwrappedResult.error)
+          }
+          reject(unwrappedResult.error)
+        }
+        if (unwrappedResult.isSuccess) {
+          resolve(unwrappedResult)
+        }
+      })()
+    })
+  }
 
-  const createClientSubscriber = (refetch: () => void) =>
-    createSubscriber(refetch)
+  const createClientSubscriber = () => {
+    return observer.subscribe((result) => {
+      notifyManager.batchCalls(() => {
+        const unwrappedResult = { ...unwrap(result) }
+        // If the query has data we dont suspend but instead mutate the resource
+        // This could happen when placeholderData/initialData is defined
+        if (
+          queryResource()?.data &&
+          unwrappedResult.data &&
+          !queryResource.loading
+        ) {
+          setState(unwrappedResult)
+          mutate(state)
+        } else {
+          setState(unwrappedResult)
+          refetch()
+        }
+      })()
+    })
+  }
 
   /**
    * Unsubscribe is set lazily, so that we can subscribe after hydration when needed.
    */
   let unsubscribe: (() => void) | null = null
 
-  const [queryResource, { refetch }] = createResource<
+  const [queryResource, { refetch, mutate }] = createResource<
     QueryObserverResult<TData, TError> | undefined
   >(
     () => {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         if (isServer) {
-          unsubscribe = createServerSubscriber(resolve)
+          unsubscribe = createServerSubscriber(resolve, reject)
         } else {
           if (!unsubscribe) {
-            unsubscribe = createClientSubscriber(() => refetch())
+            unsubscribe = createClientSubscriber()
           }
         }
         if (!state.isLoading) {
@@ -128,11 +154,15 @@ export function createBaseQuery<
            * Do not refetch query on mount if query was fetched on server,
            * even if `staleTime` is not set.
            */
+          const newOptions = { ...defaultedOptions }
           if (defaultedOptions.staleTime || !defaultedOptions.initialData) {
-            defaultedOptions.refetchOnMount = false
+            newOptions.refetchOnMount = false
           }
-          setState(observer.getOptimisticResult(defaultedOptions))
-          unsubscribe = createClientSubscriber(() => refetch())
+          // Setting the options as an immutable object to prevent
+          // wonky behavior with observer subscriptions
+          observer.setOptions(newOptions)
+          setState(observer.getOptimisticResult(newOptions))
+          unsubscribe = createClientSubscriber()
         }
       },
     },
