@@ -216,6 +216,26 @@ ruleTester.run('exhaustive-deps', rule, {
           })
       `,
     },
+    {
+      name: 'should not treat new Error as missing dependency',
+      code: normalizeIndent`
+        useQuery({
+          queryKey: ['foo'],
+          queryFn: () => Promise.reject(new Error('1')),
+        })
+      `,
+    },
+    {
+      name: 'should see id when there is a const assertion',
+      code: normalizeIndent`
+        const useX = (id: number) => {
+          return useQuery({
+            queryKey: ['foo', id] as const,
+            queryFn: async () => id,
+          })
+        }
+      `,
+    },
   ],
   invalid: [
     {
