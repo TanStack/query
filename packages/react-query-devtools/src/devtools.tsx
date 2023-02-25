@@ -621,106 +621,94 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                       width: '100%',
                     }}
                   />
-                  {!filter ? (
-                    <>
-                      <Select
-                        aria-label="Sort queries"
-                        value={sort}
-                        onChange={(e) => setSort(e.target.value)}
-                        style={{
-                          flex: '1',
-                          minWidth: 75,
-                          marginRight: '.5em',
-                        }}
-                      >
-                        {Object.keys(sortFns).map((key) => (
-                          <option key={key} value={key}>
-                            Sort by {key}
-                          </option>
-                        ))}
-                      </Select>
-                      <Button
-                        type="button"
-                        onClick={() => setBaseSort((old) => old * -1)}
-                        style={{
-                          padding: '.3em .4em',
-                          marginRight: '.5em',
-                        }}
-                      >
-                        {baseSort === 1 ? '⬆ Asc' : '⬇ Desc'}
-                      </Button>
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          if (isMockOffline) {
-                            onlineManager.setOnline(undefined)
-                            setMockOffline(false)
-                            window.dispatchEvent(new Event('online'))
-                          } else {
-                            onlineManager.setOnline(false)
-                            setMockOffline(true)
-                          }
-                        }}
-                        aria-label={
-                          isMockOffline
-                            ? 'Restore offline mock'
-                            : 'Mock offline behavior'
-                        }
-                        title={
-                          isMockOffline
-                            ? 'Restore offline mock'
-                            : 'Mock offline behavior'
-                        }
-                        style={{
-                          padding: '0',
-                          height: '2em',
-                        }}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="2em"
-                          height="2em"
-                          viewBox="0 0 24 24"
-                          stroke={isMockOffline ? theme.danger : 'currentColor'}
-                          fill="none"
-                        >
-                          {isMockOffline ? (
-                            <>
-                              <path
-                                stroke="none"
-                                d="M0 0h24v24H0z"
-                                fill="none"
-                              />
-                              <line x1="12" y1="18" x2="12.01" y2="18" />
-                              <path d="M9.172 15.172a4 4 0 0 1 5.656 0" />
-                              <path d="M6.343 12.343a7.963 7.963 0 0 1 3.864 -2.14m4.163 .155a7.965 7.965 0 0 1 3.287 2" />
-                              <path d="M3.515 9.515a12 12 0 0 1 3.544 -2.455m3.101 -.92a12 12 0 0 1 10.325 3.374" />
-                              <line x1="3" y1="3" x2="21" y2="21" />
-                            </>
-                          ) : (
-                            <>
-                              <path
-                                stroke="none"
-                                d="M0 0h24v24H0z"
-                                fill="none"
-                              />
-                              <line x1="12" y1="18" x2="12.01" y2="18" />
-                              <path d="M9.172 15.172a4 4 0 0 1 5.656 0" />
-                              <path d="M6.343 12.343a8 8 0 0 1 11.314 0" />
-                              <path d="M3.515 9.515c4.686 -4.687 12.284 -4.687 17 0" />
-                            </>
-                          )}
-                        </svg>
-                        <ScreenReader
-                          text={
-                            isMockOffline
-                              ? 'Restore offline mock'
-                              : 'Mock offline behavior'
-                          }
-                        />
-                      </Button>
-                    </>
-                  ) : null}
+                  <Select
+                    aria-label="Sort queries"
+                    value={sort}
+                    onChange={(e) => setSort(e.target.value)}
+                    style={{
+                      flex: '1',
+                      minWidth: 75,
+                      marginRight: '.5em',
+                    }}
+                  >
+                    {Object.keys(sortFns).map((key) => (
+                      <option key={key} value={key}>
+                        Sort by {key}
+                      </option>
+                    ))}
+                  </Select>
+                  <Button
+                    type="button"
+                    onClick={() => setBaseSort((old) => old * -1)}
+                    style={{
+                      padding: '.3em .4em',
+                      marginRight: '.5em',
+                    }}
+                  >
+                    {baseSort === 1 ? '⬆ Asc' : '⬇ Desc'}
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      if (isMockOffline) {
+                        onlineManager.setOnline(undefined)
+                        setMockOffline(false)
+                        window.dispatchEvent(new Event('online'))
+                      } else {
+                        onlineManager.setOnline(false)
+                        setMockOffline(true)
+                      }
+                    }}
+                    aria-label={
+                      isMockOffline
+                        ? 'Restore offline mock'
+                        : 'Mock offline behavior'
+                    }
+                    title={
+                      isMockOffline
+                        ? 'Restore offline mock'
+                        : 'Mock offline behavior'
+                    }
+                    style={{
+                      padding: '0',
+                      height: '2em',
+                    }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="2em"
+                      height="2em"
+                      viewBox="0 0 24 24"
+                      stroke={isMockOffline ? theme.danger : 'currentColor'}
+                      fill="none"
+                    >
+                      {isMockOffline ? (
+                        <>
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <line x1="12" y1="18" x2="12.01" y2="18" />
+                          <path d="M9.172 15.172a4 4 0 0 1 5.656 0" />
+                          <path d="M6.343 12.343a7.963 7.963 0 0 1 3.864 -2.14m4.163 .155a7.965 7.965 0 0 1 3.287 2" />
+                          <path d="M3.515 9.515a12 12 0 0 1 3.544 -2.455m3.101 -.92a12 12 0 0 1 10.325 3.374" />
+                          <line x1="3" y1="3" x2="21" y2="21" />
+                        </>
+                      ) : (
+                        <>
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <line x1="12" y1="18" x2="12.01" y2="18" />
+                          <path d="M9.172 15.172a4 4 0 0 1 5.656 0" />
+                          <path d="M6.343 12.343a8 8 0 0 1 11.314 0" />
+                          <path d="M3.515 9.515c4.686 -4.687 12.284 -4.687 17 0" />
+                        </>
+                      )}
+                    </svg>
+                    <ScreenReader
+                      text={
+                        isMockOffline
+                          ? 'Restore offline mock'
+                          : 'Mock offline behavior'
+                      }
+                    />
+                  </Button>
                 </div>
               </div>
             </div>
