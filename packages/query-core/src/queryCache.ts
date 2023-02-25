@@ -2,7 +2,7 @@ import type { QueryFilters } from './utils'
 import { hashQueryKeyByOptions, matchQuery, parseFilterArgs } from './utils'
 import type { Action, QueryState } from './query'
 import { Query } from './query'
-import type { QueryKey, QueryOptions } from './types'
+import type { NotifyEvent, QueryKey, QueryOptions } from './types'
 import { notifyManager } from './notifyManager'
 import type { QueryClient } from './queryClient'
 import { Subscribable } from './subscribable'
@@ -19,40 +19,40 @@ interface QueryHashMap {
   [hash: string]: Query<any, any, any, any>
 }
 
-interface NotifyEventQueryAdded {
+interface NotifyEventQueryAdded extends NotifyEvent {
   type: 'added'
   query: Query<any, any, any, any>
 }
 
-interface NotifyEventQueryRemoved {
+interface NotifyEventQueryRemoved extends NotifyEvent {
   type: 'removed'
   query: Query<any, any, any, any>
 }
 
-interface NotifyEventQueryUpdated {
+interface NotifyEventQueryUpdated extends NotifyEvent {
   type: 'updated'
   query: Query<any, any, any, any>
   action: Action<any, any>
 }
 
-interface NotifyEventQueryObserverAdded {
+interface NotifyEventQueryObserverAdded extends NotifyEvent {
   type: 'observerAdded'
   query: Query<any, any, any, any>
   observer: QueryObserver<any, any, any, any, any>
 }
 
-interface NotifyEventQueryObserverRemoved {
+interface NotifyEventQueryObserverRemoved extends NotifyEvent {
   type: 'observerRemoved'
   query: Query<any, any, any, any>
   observer: QueryObserver<any, any, any, any, any>
 }
 
-interface NotifyEventQueryObserverResultsUpdated {
+interface NotifyEventQueryObserverResultsUpdated extends NotifyEvent {
   type: 'observerResultsUpdated'
   query: Query<any, any, any, any>
 }
 
-interface NotifyEventQueryObserverOptionsUpdated {
+interface NotifyEventQueryObserverOptionsUpdated extends NotifyEvent {
   type: 'observerOptionsUpdated'
   query: Query<any, any, any, any>
   observer: QueryObserver<any, any, any, any, any>
