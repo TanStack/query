@@ -124,6 +124,9 @@ export function createBaseQuery<
     {
       initialValue: state,
 
+      // If initialData is provided, we resolve the resource immediately
+      ssrLoadFrom: options().initialData ? 'initial' : 'server',
+
       get deferStream() {
         return options().deferStream
       },
