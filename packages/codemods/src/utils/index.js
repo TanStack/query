@@ -117,6 +117,21 @@ module.exports = ({ root, jscodeshift }) => {
   const isNewExpression = (node) =>
     jscodeshift.match(node, { type: jscodeshift.NewExpression.name })
 
+  const isArrayExpression = (node) =>
+    jscodeshift.match(node, { type: jscodeshift.ArrayExpression.name })
+
+  const isObjectExpression = (node) =>
+    jscodeshift.match(node, { type: jscodeshift.ObjectExpression.name })
+
+  const isObjectProperty = (node) =>
+    jscodeshift.match(node, { type: jscodeshift.ObjectProperty.name })
+
+  const warn = (message) => {
+    if (process.env.NODE_ENV !== 'test') {
+      console.warn(message)
+    }
+  }
+
   const isClassInstantiationOf = (node, selector) => {
     if (!isNewExpression(node)) {
       return false
@@ -158,7 +173,11 @@ module.exports = ({ root, jscodeshift }) => {
     isFunctionCallOf,
     isIdentifier,
     isMemberExpression,
+    isArrayExpression,
+    isObjectExpression,
+    isObjectProperty,
     locateImports,
+    warn,
     queryClient: {
       findQueryClientIdentifiers,
     },
