@@ -54,7 +54,7 @@ describe('useInfiniteQuery', () => {
 
   it('should return the correct states for a successful query', async () => {
     const key = queryKey()
-    const states: CreateInfiniteQueryResult<number>[] = []
+    const states: CreateInfiniteQueryResult<InfiniteData<number>>[] = []
 
     function Page() {
       const state = createInfiniteQuery(() => ({
@@ -191,7 +191,7 @@ describe('useInfiniteQuery', () => {
 
   it('should keep the previous data when placeholderData is set', async () => {
     const key = queryKey()
-    const states: CreateInfiniteQueryResult<string>[] = []
+    const states: CreateInfiniteQueryResult<InfiniteData<string>>[] = []
 
     function Page() {
       const [order, setOrder] = createSignal('desc')
@@ -286,7 +286,7 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to select a part of the data', async () => {
     const key = queryKey()
-    const states: CreateInfiniteQueryResult<string>[] = []
+    const states: CreateInfiniteQueryResult<InfiniteData<string>>[] = []
 
     function Page() {
       const state = createInfiniteQuery(() => ({
@@ -326,8 +326,9 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to select a new result and not cause infinite renders', async () => {
     const key = queryKey()
-    const states: CreateInfiniteQueryResult<{ count: number; id: number }>[] =
-      []
+    const states: CreateInfiniteQueryResult<
+      InfiniteData<{ count: number; id: number }>
+    >[] = []
     let selectCalled = 0
 
     function Page() {
@@ -372,7 +373,7 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to reverse the data', async () => {
     const key = queryKey()
-    const states: CreateInfiniteQueryResult<number>[] = []
+    const states: CreateInfiniteQueryResult<InfiniteData<number>>[] = []
 
     function Page() {
       const state = createInfiniteQuery(() => ({
@@ -436,7 +437,7 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to fetch a previous page', async () => {
     const key = queryKey()
-    const states: CreateInfiniteQueryResult<number>[] = []
+    const states: CreateInfiniteQueryResult<InfiniteData<number>>[] = []
 
     function Page() {
       const start = 10
@@ -515,7 +516,7 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to refetch when providing page params automatically', async () => {
     const key = queryKey()
-    const states: CreateInfiniteQueryResult<number>[] = []
+    const states: CreateInfiniteQueryResult<InfiniteData<number>>[] = []
 
     function Page() {
       const state = createInfiniteQuery(() => ({
@@ -629,7 +630,7 @@ describe('useInfiniteQuery', () => {
 
   it('should silently cancel any ongoing fetch when fetching more', async () => {
     const key = queryKey()
-    const states: CreateInfiniteQueryResult<number>[] = []
+    const states: CreateInfiniteQueryResult<InfiniteData<number>>[] = []
 
     function Page() {
       const start = 10
@@ -865,7 +866,7 @@ describe('useInfiniteQuery', () => {
 
   it('should keep fetching first page when not loaded yet and triggering fetch more', async () => {
     const key = queryKey()
-    const states: CreateInfiniteQueryResult<number>[] = []
+    const states: CreateInfiniteQueryResult<InfiniteData<number>>[] = []
 
     function Page() {
       const start = 10
@@ -975,7 +976,7 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to set new pages with the query client', async () => {
     const key = queryKey()
-    const states: CreateInfiniteQueryResult<number>[] = []
+    const states: CreateInfiniteQueryResult<InfiniteData<number>>[] = []
 
     function Page() {
       const [firstPage, setFirstPage] = createSignal(0)
@@ -1063,7 +1064,7 @@ describe('useInfiniteQuery', () => {
 
   it('should only refetch the first page when initialData is provided', async () => {
     const key = queryKey()
-    const states: CreateInfiniteQueryResult<number>[] = []
+    const states: CreateInfiniteQueryResult<InfiniteData<number>>[] = []
 
     function Page() {
       const state = createInfiniteQuery(() => ({
@@ -1134,7 +1135,7 @@ describe('useInfiniteQuery', () => {
 
   it('should set hasNextPage to false if getNextPageParam returns undefined', async () => {
     const key = queryKey()
-    const states: CreateInfiniteQueryResult<number>[] = []
+    const states: CreateInfiniteQueryResult<InfiniteData<number>>[] = []
 
     function Page() {
       const state = createInfiniteQuery(() => ({
@@ -1178,7 +1179,7 @@ describe('useInfiniteQuery', () => {
 
   it('should compute hasNextPage correctly using initialData', async () => {
     const key = queryKey()
-    const states: CreateInfiniteQueryResult<number>[] = []
+    const states: CreateInfiniteQueryResult<InfiniteData<number>>[] = []
 
     function Page() {
       const state = createInfiniteQuery(() => ({
@@ -1222,7 +1223,7 @@ describe('useInfiniteQuery', () => {
 
   it('should compute hasNextPage correctly for falsy getFetchMore return value using initialData', async () => {
     const key = queryKey()
-    const states: CreateInfiniteQueryResult<number>[] = []
+    const states: CreateInfiniteQueryResult<InfiniteData<number>>[] = []
 
     function Page() {
       const state = createInfiniteQuery(() => ({
@@ -1266,7 +1267,7 @@ describe('useInfiniteQuery', () => {
 
   it('should not use selected data when computing hasNextPage', async () => {
     const key = queryKey()
-    const states: CreateInfiniteQueryResult<string>[] = []
+    const states: CreateInfiniteQueryResult<InfiniteData<string>>[] = []
 
     function Page() {
       const state = createInfiniteQuery(() => ({
