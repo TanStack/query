@@ -1,15 +1,9 @@
-import {
-  branchConfigs,
-  examplesDirs,
-  latestBranch,
-  packages,
-  rootDir,
-} from './config'
+import { branchConfigs, latestBranch, packages, rootDir } from './config'
 import type { BranchConfig, Commit, Package } from './types'
 
 // Originally ported to TS from https://github.com/remix-run/react-router/tree/main/scripts/{version,publish}.js
 import path from 'path'
-import { exec, execSync } from 'child_process'
+import { execSync } from 'child_process'
 import fsp from 'fs/promises'
 import chalk from 'chalk'
 import jsonfile from 'jsonfile'
@@ -373,53 +367,7 @@ async function run() {
   console.info('')
 
   console.info('Validating packages...')
-  const failedValidations: string[] = []
-
-  await Promise.all(
-    packages.map(async (pkg) => {
-      const pkgJson = await readPackageJson(
-        path.resolve(rootDir, 'packages', pkg.packageDir, 'package.json'),
-      )
-
-      const entries =
-        pkg.name === '@tanstack/eslint-plugin-query'
-          ? (['main'] as const)
-          : pkg.name === '@tanstack/svelte-query'
-          ? (['types', 'module'] as const)
-          : (['main', 'types', 'module'] as const)
-
-      await Promise.all(
-        entries.map(async (entryKey) => {
-          const entry = pkgJson[entryKey] as string
-
-          if (!entry) {
-            throw new Error(
-              `Missing entry for "${entryKey}" in ${pkg.packageDir}/package.json!`,
-            )
-          }
-
-          const filePath = path.resolve(
-            rootDir,
-            'packages',
-            pkg.packageDir,
-            entry,
-          )
-
-          try {
-            await fsp.access(filePath)
-          } catch (err) {
-            failedValidations.push(`Missing build file: ${filePath}`)
-          }
-        }),
-      )
-    }),
-  )
-  console.info('')
-  if (failedValidations.length > 0) {
-    throw new Error(
-      'Some packages failed validation:\n\n' + failedValidations.join('\n'),
-    )
-  }
+  execSync(`pnpm run validatePackages`, { encoding: 'utf8', stdio: 'inherit' })
 
   console.info(`Updating all changed packages to version ${version}...`)
   // Update each package to the new version

@@ -80,8 +80,8 @@ jobs:
       - run: pnpm run test:react:17
         env:
           REACTJS_VERSION: 17
-  test-size:
-    name: 'Size'
+  test-build:
+    name: 'Test Build'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -94,6 +94,6 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:size
+      - run: pnpm run test:build
         env:
           BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
