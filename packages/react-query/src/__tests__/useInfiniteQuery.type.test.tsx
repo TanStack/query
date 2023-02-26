@@ -62,6 +62,24 @@ describe('pageParam', () => {
 })
 
 describe('select', () => {
+  it('should still return paginated data if no select result', () => {
+    doNotExecute(() => {
+      const infiniteQuery = useInfiniteQuery({
+        queryKey: ['key'],
+        queryFn: ({ pageParam }) => {
+          return pageParam * 5
+        },
+        defaultPageParam: 1,
+        getNextPageParam: () => undefined,
+      })
+
+      const result: Expect<
+        Equal<InfiniteData<number> | undefined, typeof infiniteQuery['data']>
+      > = true
+      return result
+    })
+  })
+
   it('should be able to transform data to arbitrary result', () => {
     doNotExecute(() => {
       const infiniteQuery = useInfiniteQuery({
@@ -77,9 +95,8 @@ describe('select', () => {
         },
       })
 
-      const result: Expect<
-        Equal<true | undefined, (typeof infiniteQuery)['data']>
-      > = true
+      type T0 = typeof infiniteQuery['data']
+      const result: Expect<Equal<true | undefined, T0>> = true
       return result
     })
   })
@@ -105,7 +122,7 @@ describe('select', () => {
       })
 
       const result: Expect<
-        Equal<InfiniteData<string> | undefined, (typeof infiniteQuery)['data']>
+        Equal<InfiniteData<string> | undefined, typeof infiniteQuery['data']>
       > = true
       return result
     })

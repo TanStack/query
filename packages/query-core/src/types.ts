@@ -310,7 +310,7 @@ export interface InfiniteQueryObserverOptions<
 > extends QueryObserverOptions<
       TQueryFnData,
       TError,
-      InfiniteData<TData>,
+      TData,
       InfiniteData<TQueryData>,
       TQueryKey,
       TPageParam
@@ -501,7 +501,7 @@ export type QueryObserverResult<TData = unknown, TError = RegisteredError> =
 export interface InfiniteQueryObserverBaseResult<
   TData = unknown,
   TError = RegisteredError,
-> extends QueryObserverBaseResult<InfiniteData<TData>, TError> {
+> extends QueryObserverBaseResult<TData, TError> {
   fetchNextPage: (
     options?: FetchNextPageOptions,
   ) => Promise<InfiniteQueryObserverResult<TData, TError>>
@@ -546,7 +546,7 @@ export interface InfiniteQueryObserverRefetchErrorResult<
   TData = unknown,
   TError = RegisteredError,
 > extends InfiniteQueryObserverBaseResult<TData, TError> {
-  data: InfiniteData<TData>
+  data: TData
   error: TError
   isError: true
   isPending: false
@@ -560,7 +560,7 @@ export interface InfiniteQueryObserverSuccessResult<
   TData = unknown,
   TError = RegisteredError,
 > extends InfiniteQueryObserverBaseResult<TData, TError> {
-  data: InfiniteData<TData>
+  data: TData
   error: null
   isError: false
   isPending: false
