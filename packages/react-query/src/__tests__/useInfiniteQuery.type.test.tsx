@@ -1,9 +1,9 @@
+import type { InfiniteData } from '@tanstack/query-core'
+import { QueryClient } from '@tanstack/query-core'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { useQuery } from '../useQuery'
 import type { Expect, Equal } from './utils'
 import { doNotExecute } from './utils'
-import type { InfiniteData } from '@tanstack/query-core'
-import { QueryClient } from '@tanstack/query-core'
 
 describe('pageParam', () => {
   it('defaultPageParam should define type of param passed to queryFunctionContext', () => {

@@ -1,5 +1,6 @@
-import { InfiniteData, InfiniteQueryObserver } from '@tanstack/query-core'
+import { InfiniteQueryObserver } from '@tanstack/query-core'
 import type {
+  InfiniteData,
   QueryObserver,
   WithRequired,
   QueryKey,
