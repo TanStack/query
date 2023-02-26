@@ -16,8 +16,7 @@ export function infiniteQueryBehavior<
     onFetch: (context) => {
       context.fetchFn = () => {
         const options = context.options as InfiniteQueryPageParamsOptions<TData>
-        const fetchMore = context.fetchOptions?.meta?.fetchMore
-        const direction = fetchMore?.direction
+        const direction = context.fetchOptions?.meta?.fetchMore?.direction
         const oldPages = context.state.data?.pages || []
         const oldPageParams = context.state.data?.pageParams || []
         let newPageParams = oldPageParams
