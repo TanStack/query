@@ -1,5 +1,5 @@
 import type { MutationObserver } from './mutationObserver'
-import type { MutationOptions, RegisteredError } from './types'
+import type { NotifyEvent, MutationOptions, RegisteredError } from './types'
 import type { QueryClient } from './queryClient'
 import { notifyManager } from './notifyManager'
 import type { Action, MutationState } from './mutation'
@@ -29,34 +29,34 @@ interface MutationCacheConfig {
   ) => Promise<unknown> | unknown
 }
 
-interface NotifyEventMutationAdded {
+interface NotifyEventMutationAdded extends NotifyEvent {
   type: 'added'
   mutation: Mutation<any, any, any, any>
 }
-interface NotifyEventMutationRemoved {
+interface NotifyEventMutationRemoved extends NotifyEvent {
   type: 'removed'
   mutation: Mutation<any, any, any, any>
 }
 
-interface NotifyEventMutationObserverAdded {
+interface NotifyEventMutationObserverAdded extends NotifyEvent {
   type: 'observerAdded'
   mutation: Mutation<any, any, any, any>
   observer: MutationObserver<any, any, any>
 }
 
-interface NotifyEventMutationObserverRemoved {
+interface NotifyEventMutationObserverRemoved extends NotifyEvent {
   type: 'observerRemoved'
   mutation: Mutation<any, any, any, any>
   observer: MutationObserver<any, any, any>
 }
 
-interface NotifyEventMutationObserverOptionsUpdated {
+interface NotifyEventMutationObserverOptionsUpdated extends NotifyEvent {
   type: 'observerOptionsUpdated'
   mutation?: Mutation<any, any, any, any>
   observer: MutationObserver<any, any, any, any>
 }
 
-interface NotifyEventMutationUpdated {
+interface NotifyEventMutationUpdated extends NotifyEvent {
   type: 'updated'
   mutation: Mutation<any, any, any, any>
   action: Action<any, any, any, any>
@@ -95,9 +95,6 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
       mutationId: ++this.#mutationId,
       options: client.defaultMutationOptions(options),
       state,
-      defaultOptions: options.mutationKey
-        ? client.getMutationDefaults(options.mutationKey)
-        : undefined,
     })
 
     this.add(mutation)
@@ -142,7 +139,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     return this.#mutations.find((mutation) => matchMutation(filters, mutation))
   }
 
-  findAll(filters: MutationFilters): Mutation[] {
+  findAll(filters: MutationFilters = {}): Mutation[] {
     return this.#mutations.filter((mutation) =>
       matchMutation(filters, mutation),
     )

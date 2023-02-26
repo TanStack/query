@@ -3,6 +3,7 @@ import { hashQueryKeyByOptions, matchQuery } from './utils'
 import type { Action, QueryState } from './query'
 import { Query } from './query'
 import type {
+  NotifyEvent,
   QueryKey,
   QueryOptions,
   RegisteredError,
@@ -18,42 +19,43 @@ import type { QueryObserver } from './queryObserver'
 interface QueryCacheConfig {
   onError?: (error: unknown, query: Query<unknown, unknown, unknown>) => void
   onSuccess?: (data: unknown, query: Query<unknown, unknown, unknown>) => void
+  createStore?: () => QueryStore
 }
 
-interface NotifyEventQueryAdded {
+interface NotifyEventQueryAdded extends NotifyEvent {
   type: 'added'
   query: Query<any, any, any, any>
 }
 
-interface NotifyEventQueryRemoved {
+interface NotifyEventQueryRemoved extends NotifyEvent {
   type: 'removed'
   query: Query<any, any, any, any>
 }
 
-interface NotifyEventQueryUpdated {
+interface NotifyEventQueryUpdated extends NotifyEvent {
   type: 'updated'
   query: Query<any, any, any, any>
   action: Action<any, any>
 }
 
-interface NotifyEventQueryObserverAdded {
+interface NotifyEventQueryObserverAdded extends NotifyEvent {
   type: 'observerAdded'
   query: Query<any, any, any, any>
   observer: QueryObserver<any, any, any, any, any>
 }
 
-interface NotifyEventQueryObserverRemoved {
+interface NotifyEventQueryObserverRemoved extends NotifyEvent {
   type: 'observerRemoved'
   query: Query<any, any, any, any>
   observer: QueryObserver<any, any, any, any, any>
 }
 
-interface NotifyEventQueryObserverResultsUpdated {
+interface NotifyEventQueryObserverResultsUpdated extends NotifyEvent {
   type: 'observerResultsUpdated'
   query: Query<any, any, any, any>
 }
 
-interface NotifyEventQueryObserverOptionsUpdated {
+interface NotifyEventQueryObserverOptionsUpdated extends NotifyEvent {
   type: 'observerOptionsUpdated'
   query: Query<any, any, any, any>
   observer: QueryObserver<any, any, any, any, any>
@@ -70,13 +72,22 @@ type QueryCacheNotifyEvent =
 
 type QueryCacheListener = (event: QueryCacheNotifyEvent) => void
 
+export interface QueryStore {
+  has: (queryKey: string) => boolean
+  set: (queryKey: string, query: Query) => void
+  get: (queryKey: string) => Query | undefined
+  delete: (queryKey: string) => void
+  values: () => IterableIterator<Query>
+}
+
 // CLASS
 
 export class QueryCache extends Subscribable<QueryCacheListener> {
-  #queries = new Map<string, Query>()
+  #queries: QueryStore
 
   constructor(public config: QueryCacheConfig = {}) {
     super()
+    this.#queries = config.createStore?.() ?? new Map<string, Query>()
   }
 
   build<TQueryFnData, TError, TData, TQueryKey extends QueryKey>(

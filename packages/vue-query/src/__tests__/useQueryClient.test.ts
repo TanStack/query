@@ -6,10 +6,6 @@ describe('useQueryClient', () => {
   const injectSpy = inject as jest.Mock
   const getCurrentInstanceSpy = getCurrentInstance as jest.Mock
 
-  beforeEach(() => {
-    jest.restoreAllMocks()
-  })
-
   test('should return queryClient when it is provided in the context', () => {
     const queryClientMock = { name: 'Mocked client' }
     injectSpy.mockReturnValueOnce(queryClientMock)

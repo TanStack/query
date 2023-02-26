@@ -281,6 +281,10 @@
             {
               "label": "Offline Queries and Mutations",
               "to": "react/examples/react/offline"
+            },
+            {
+              "label": "Algolia",
+              "to": "react/examples/react/algolia"
             }
           ]
         },
@@ -344,6 +348,10 @@
             {
               "label": "useIsMutating",
               "to": "react/reference/useIsMutating"
+            },
+            {
+              "label": "useMutationState",
+              "to": "react/reference/useMutationState"
             },
             {
               "label": "QueryClient",

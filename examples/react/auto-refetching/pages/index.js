@@ -47,7 +47,7 @@ function Example() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   })
 
-  if (status === 'loading') return <h1>Loading...</h1>
+  if (status === 'pending') return <h1>Loading...</h1>
   if (status === 'error') return <span>Error: {error.message}</span>
 
   return (

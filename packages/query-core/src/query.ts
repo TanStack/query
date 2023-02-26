@@ -259,9 +259,7 @@ export class Query<
   onFocus(): void {
     const observer = this.#observers.find((x) => x.shouldFetchOnWindowFocus())
 
-    if (observer) {
-      observer.refetch({ cancelRefetch: false })
-    }
+    observer?.refetch({ cancelRefetch: false })
 
     // Continue fetch if currently paused
     this.#retryer?.continue()
@@ -270,9 +268,7 @@ export class Query<
   onOnline(): void {
     const observer = this.#observers.find((x) => x.shouldFetchOnReconnect())
 
-    if (observer) {
-      observer.refetch({ cancelRefetch: false })
-    }
+    observer?.refetch({ cancelRefetch: false })
 
     // Continue fetch if currently paused
     this.#retryer?.continue()

@@ -1,6 +1,6 @@
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
-import { useIsMutating } from '../useIsMutating'
+import { useIsMutating, useMutationState } from '../useMutationState'
 import { useMutation } from '../useMutation'
 import {
   createQueryClient,
@@ -9,6 +9,7 @@ import {
   sleep,
 } from './utils'
 import * as MutationCacheModule from '../../../query-core/src/mutationCache'
+import { screen } from 'solid-testing-library'
 
 describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {
@@ -95,7 +96,7 @@ describe('useIsMutating', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isMutatings).toEqual([0, 1, 1, 0]))
+    await waitFor(() => expect(isMutatings).toEqual([0, 1, 0]))
   })
 
   it('should filter correctly by predicate', async () => {
@@ -136,7 +137,7 @@ describe('useIsMutating', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isMutatings).toEqual([0, 1, 1, 0]))
+    await waitFor(() => expect(isMutatings).toEqual([0, 1, 0]))
   })
 
   it('should not change state if unmounted', async () => {
@@ -224,5 +225,60 @@ describe('useIsMutating', () => {
     const rendered = render(<Page></Page>)
 
     await waitFor(() => rendered.getByText('mutating: 1'))
+  })
+})
+
+describe('useMutationState', () => {
+  it('should return variables after calling mutate', async () => {
+    const queryClient = createQueryClient()
+    const variables: unknown[][] = []
+    const mutationKey = ['mutation']
+
+    function Variables() {
+      variables.push(
+        useMutationState({
+          filters: { mutationKey, status: 'pending' },
+          select: (mutation) => mutation.state.variables,
+        }),
+      )
+
+      return null
+    }
+
+    function Mutate() {
+      const { mutate, data } = useMutation({
+        mutationKey,
+        mutationFn: async (input: number) => {
+          await sleep(150)
+          return 'data' + input
+        },
+      })
+
+      return (
+        <div>
+          data: {data ?? 'null'}
+          <button onClick={() => mutate(1)}>mutate</button>
+        </div>
+      )
+    }
+
+    function Page() {
+      return (
+        <div>
+          <Variables />
+          <Mutate />
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('data: null'))
+
+    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
+
+    await waitFor(() => rendered.getByText('data: data1'))
+
+    expect(variables).toEqual([[], [1], []])
   })
 })

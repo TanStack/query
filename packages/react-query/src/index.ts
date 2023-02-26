@@ -22,7 +22,7 @@ export {
   useQueryErrorResetBoundary,
 } from './QueryErrorResetBoundary'
 export { useIsFetching } from './useIsFetching'
-export { useIsMutating } from './useIsMutating'
+export { useIsMutating, useMutationState } from './useMutationState'
 export { useMutation } from './useMutation'
 export { useInfiniteQuery } from './useInfiniteQuery'
 export { useIsRestoring, IsRestoringProvider } from './isRestoring'

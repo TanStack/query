@@ -1099,7 +1099,10 @@ describe('createQuery', () => {
     function Page() {
       const state = createQuery(() => ({
         queryKey: key,
-        queryFn: () => ({ name: 'test' }),
+        queryFn: async () => {
+          await sleep(10)
+          return { name: 'test' }
+        },
         select: (data) => data.name,
         notifyOnChangeProps: ['data'],
       }))
@@ -1108,14 +1111,12 @@ describe('createQuery', () => {
         states.push({ ...state })
       })
 
-      createEffect(() => {
-        const refetch = state.refetch
-        setActTimeout(() => {
-          refetch()
-        }, 5)
-      })
-
-      return null
+      return (
+        <div>
+          data: {state.data}
+          <button onClick={() => state.refetch()}>refetch</button>
+        </div>
+      )
     }
 
     render(() => (
@@ -1124,7 +1125,7 @@ describe('createQuery', () => {
       </QueryClientProvider>
     ))
 
-    await sleep(10)
+    await waitFor(() => screen.getByText('data: test'))
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined })
@@ -1582,7 +1583,6 @@ describe('createQuery', () => {
 
     // Fetch query
     expect(states[0]).toMatchObject({
-      data: undefined,
       isFetching: true,
       isSuccess: false,
     })
@@ -1594,7 +1594,6 @@ describe('createQuery', () => {
     })
     // Switch to disabled query
     expect(states[2]).toMatchObject({
-      data: undefined,
       isFetching: false,
       isSuccess: false,
     })
@@ -4812,7 +4811,6 @@ describe('createQuery', () => {
     expect(count).toBe(2)
 
     expect(states[0]).toMatchObject({
-      data: undefined,
       isPending: true,
       isFetching: true,
       isSuccess: false,
@@ -4826,7 +4824,6 @@ describe('createQuery', () => {
       isStale: false,
     })
     expect(states[2]).toMatchObject({
-      data: undefined,
       isPending: true,
       isFetching: true,
       isSuccess: false,
@@ -4894,14 +4891,12 @@ describe('createQuery', () => {
     expect(count).toBe(1)
 
     expect(states[0]).toMatchObject({
-      data: undefined,
       isPending: true,
       isFetching: false,
       isSuccess: false,
       isStale: true,
     })
     expect(states[1]).toMatchObject({
-      data: undefined,
       isPending: true,
       isFetching: true,
       isSuccess: false,
@@ -4915,7 +4910,6 @@ describe('createQuery', () => {
       isStale: false,
     })
     expect(states[3]).toMatchObject({
-      data: undefined,
       isPending: true,
       isFetching: false,
       isSuccess: false,

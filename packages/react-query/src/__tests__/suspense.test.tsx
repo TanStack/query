@@ -1118,7 +1118,7 @@ describe('useQueries with suspense', () => {
               await sleep(200)
               return '2'
             },
-            staleTime: 1000,
+            staleTime: 2000,
             suspense: false,
           },
         ],

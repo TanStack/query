@@ -71,4 +71,31 @@ describe('Discriminated union return type', () => {
       return
     })
   })
+
+  it('should narrow variables', () => {
+    doNotExecute(() => {
+      const mutation = reactive(
+        useMutation({ mutationFn: successMutator<string> }),
+      )
+
+      if (mutation.isIdle) {
+        const result: Expect<Equal<undefined, typeof mutation.variables>> = true
+        return result
+      }
+      if (mutation.isPending) {
+        const result: Expect<Equal<string, typeof mutation.variables>> = true
+        return result
+      }
+      if (mutation.isSuccess) {
+        const result: Expect<Equal<string, typeof mutation.variables>> = true
+        return result
+      }
+      if (mutation.isError) {
+        const result: Expect<Equal<string, typeof mutation.variables>> = true
+        return result
+      }
+
+      return
+    })
+  })
 })

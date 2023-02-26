@@ -55,7 +55,7 @@ function Example() {
         instantaneously while they are also refetched invisibly in the
         background.
       </p>
-      {status === 'loading' ? (
+      {status === 'pending' ? (
         <div>Loading...</div>
       ) : status === 'error' ? (
         <div>Error: {error.message}</div>
@@ -86,7 +86,7 @@ function Example() {
       {
         // Since the last page's data potentially sticks around between page requests,
         // we can use `isFetching` to show a background loading
-        // indicator since our `status === 'loading'` state won't be triggered
+        // indicator since our `status === 'pending'` state won't be triggered
         isFetching ? <span> Loading...</span> : null
       }{' '}
       <ReactQueryDevtools initialIsOpen />
