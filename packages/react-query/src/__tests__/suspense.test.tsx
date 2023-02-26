@@ -1,7 +1,7 @@
 import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import type { UseInfiniteQueryResult, UseQueryResult } from '..'
+import type { InfiniteData, UseInfiniteQueryResult, UseQueryResult } from '..'
 import {
   QueryCache,
   QueryErrorResetBoundary,
@@ -68,7 +68,7 @@ describe("useQuery's in Suspense mode", () => {
 
   it('should return the correct states for a successful infinite query', async () => {
     const key = queryKey()
-    const states: UseInfiniteQueryResult<number>[] = []
+    const states: UseInfiniteQueryResult<InfiniteData<number>>[] = []
 
     function Page() {
       const [multiplier, setMultiplier] = React.useState(1)

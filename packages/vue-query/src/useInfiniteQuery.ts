@@ -1,5 +1,6 @@
 import { InfiniteQueryObserver } from '@tanstack/query-core'
 import type {
+  InfiniteData,
   QueryObserver,
   WithRequired,
   QueryKey,
@@ -74,7 +75,7 @@ export type UseInfiniteQueryReturnType<TData, TError> = DistributiveOmit<
 export function useInfiniteQuery<
   TQueryFnData,
   TError = RegisteredError,
-  TData = TQueryFnData,
+  TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(

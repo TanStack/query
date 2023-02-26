@@ -8,7 +8,11 @@ import {
   Show,
   Suspense,
 } from 'solid-js'
-import type { CreateInfiniteQueryResult, CreateQueryResult } from '..'
+import type {
+  CreateInfiniteQueryResult,
+  CreateQueryResult,
+  InfiniteData,
+} from '..'
 import {
   createInfiniteQuery,
   createQuery,
@@ -79,7 +83,7 @@ describe("useQuery's in Suspense mode", () => {
 
   it('should return the correct states for a successful infinite query', async () => {
     const key = queryKey()
-    const states: CreateInfiniteQueryResult<number>[] = []
+    const states: CreateInfiniteQueryResult<InfiniteData<number>>[] = []
 
     function Page() {
       const [multiplier, setMultiplier] = createSignal(1)

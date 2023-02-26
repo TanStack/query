@@ -1,9 +1,9 @@
+import type { InfiniteData } from '@tanstack/query-core'
+import { QueryClient } from '@tanstack/query-core'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { useQuery } from '../useQuery'
 import type { Expect, Equal } from './utils'
 import { doNotExecute } from './utils'
-import type { InfiniteData } from '@tanstack/query-core'
-import { QueryClient } from '@tanstack/query-core'
 
 describe('pageParam', () => {
   it('defaultPageParam should define type of param passed to queryFunctionContext', () => {
@@ -62,6 +62,24 @@ describe('pageParam', () => {
 })
 
 describe('select', () => {
+  it('should still return paginated data if no select result', () => {
+    doNotExecute(() => {
+      const infiniteQuery = useInfiniteQuery({
+        queryKey: ['key'],
+        queryFn: ({ pageParam }) => {
+          return pageParam * 5
+        },
+        defaultPageParam: 1,
+        getNextPageParam: () => undefined,
+      })
+
+      const result: Expect<
+        Equal<InfiniteData<number> | undefined, (typeof infiniteQuery)['data']>
+      > = true
+      return result
+    })
+  })
+
   it('should be able to transform data to arbitrary result', () => {
     doNotExecute(() => {
       const infiniteQuery = useInfiniteQuery({
