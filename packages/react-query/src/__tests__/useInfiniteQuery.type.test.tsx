@@ -95,8 +95,9 @@ describe('select', () => {
         },
       })
 
-      type T0 = typeof infiniteQuery['data']
-      const result: Expect<Equal<true | undefined, T0>> = true
+      const result: Expect<
+        Equal<true | undefined, typeof infiniteQuery['data']>
+      > = true
       return result
     })
   })
