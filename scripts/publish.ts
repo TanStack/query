@@ -88,7 +88,7 @@ async function run() {
 
       // Is it a major version?
       if (!semver.patch(process.env.TAG) && !semver.minor(process.env.TAG)) {
-        range = `main..HEAD`
+        range = `origin/main..HEAD`
         latestTag = process.env.TAG
       }
     } else {
