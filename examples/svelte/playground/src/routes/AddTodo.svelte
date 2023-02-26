@@ -38,17 +38,17 @@
 </script>
 
 <div>
-  <input bind:value={name} disabled={$addMutation.status === 'loading'} />
+  <input bind:value={name} disabled={$addMutation.status === 'pending'} />
 
   <button
     on:click={() => $addMutation.mutate({ name })}
-    disabled={$addMutation.status === 'loading' || !name}
+    disabled={$addMutation.status === 'pending' || !name}
   >
     Add Todo
   </button>
 
   <div>
-    {$addMutation.status === 'loading'
+    {$addMutation.status === 'pending'
       ? 'Saving...'
       : $addMutation.status === 'error'
       ? $addMutation.error.message

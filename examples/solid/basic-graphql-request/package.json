@@ -13,10 +13,10 @@
     "@tanstack/solid-query": "^4.3.9",
     "graphql": "^16.6.0",
     "graphql-request": "^5.0.0",
-    "solid-js": "^1.5.1"
+    "solid-js": "^1.6.2"
   },
   "devDependencies": {
-    "typescript": "^4.8.2",
+    "typescript": "4.7.4",
     "vite": "^3.0.9",
     "vite-plugin-solid": "^2.3.9"
   }

@@ -11,16 +11,24 @@ describe('mutationCache', () => {
       const testClient = createQueryClient({ mutationCache: testCache })
 
       try {
-        await executeMutation(testClient, {
-          mutationKey: key,
-          variables: 'vars',
-          mutationFn: () => Promise.reject('error'),
-          onMutate: () => 'context',
-        })
+        await executeMutation(
+          testClient,
+          {
+            mutationKey: key,
+            mutationFn: () => Promise.reject(new Error('error')),
+            onMutate: () => 'context',
+          },
+          'vars',
+        )
       } catch {}
 
       const mutation = testCache.getAll()[0]
-      expect(onError).toHaveBeenCalledWith('error', 'vars', 'context', mutation)
+      expect(onError).toHaveBeenCalledWith(
+        new Error('error'),
+        'vars',
+        'context',
+        mutation,
+      )
     })
 
     test('should be awaited', async () => {
@@ -35,16 +43,19 @@ describe('mutationCache', () => {
       const testClient = createQueryClient({ mutationCache: testCache })
 
       try {
-        await executeMutation(testClient, {
-          mutationKey: key,
-          variables: 'vars',
-          mutationFn: () => Promise.reject('error'),
-          onError: async () => {
-            states.push(3)
-            await sleep(1)
-            states.push(4)
+        await executeMutation(
+          testClient,
+          {
+            mutationKey: key,
+            mutationFn: () => Promise.reject(new Error('error')),
+            onError: async () => {
+              states.push(3)
+              await sleep(1)
+              states.push(4)
+            },
           },
-        })
+          'vars',
+        )
       } catch {}
 
       expect(states).toEqual([1, 2, 3, 4])
@@ -58,12 +69,15 @@ describe('mutationCache', () => {
       const testClient = createQueryClient({ mutationCache: testCache })
 
       try {
-        await executeMutation(testClient, {
-          mutationKey: key,
-          variables: 'vars',
-          mutationFn: () => Promise.resolve({ data: 5 }),
-          onMutate: () => 'context',
-        })
+        await executeMutation(
+          testClient,
+          {
+            mutationKey: key,
+            mutationFn: () => Promise.resolve({ data: 5 }),
+            onMutate: () => 'context',
+          },
+          'vars',
+        )
       } catch {}
 
       const mutation = testCache.getAll()[0]
@@ -85,16 +99,19 @@ describe('mutationCache', () => {
       const testCache = new MutationCache({ onSuccess })
       const testClient = createQueryClient({ mutationCache: testCache })
 
-      await executeMutation(testClient, {
-        mutationKey: key,
-        variables: 'vars',
-        mutationFn: () => Promise.resolve({ data: 5 }),
-        onSuccess: async () => {
-          states.push(3)
-          await sleep(1)
-          states.push(4)
+      await executeMutation(
+        testClient,
+        {
+          mutationKey: key,
+          mutationFn: () => Promise.resolve({ data: 5 }),
+          onSuccess: async () => {
+            states.push(3)
+            await sleep(1)
+            states.push(4)
+          },
         },
-      })
+        'vars',
+      )
 
       expect(states).toEqual([1, 2, 3, 4])
     })
@@ -107,12 +124,15 @@ describe('mutationCache', () => {
       const testClient = createQueryClient({ mutationCache: testCache })
 
       try {
-        await executeMutation(testClient, {
-          mutationKey: key,
-          variables: 'vars',
-          mutationFn: () => Promise.resolve({ data: 5 }),
-          onMutate: () => 'context',
-        })
+        await executeMutation(
+          testClient,
+          {
+            mutationKey: key,
+            mutationFn: () => Promise.resolve({ data: 5 }),
+            onMutate: () => 'context',
+          },
+          'vars',
+        )
       } catch {}
 
       const mutation = testCache.getAll()[0]
@@ -130,16 +150,19 @@ describe('mutationCache', () => {
       const testCache = new MutationCache({ onMutate })
       const testClient = createQueryClient({ mutationCache: testCache })
 
-      await executeMutation(testClient, {
-        mutationKey: key,
-        variables: 'vars',
-        mutationFn: () => Promise.resolve({ data: 5 }),
-        onMutate: async () => {
-          states.push(3)
-          await sleep(1)
-          states.push(4)
+      await executeMutation(
+        testClient,
+        {
+          mutationKey: key,
+          mutationFn: () => Promise.resolve({ data: 5 }),
+          onMutate: async () => {
+            states.push(3)
+            await sleep(1)
+            states.push(4)
+          },
         },
-      })
+        'vars',
+      )
 
       expect(states).toEqual([1, 2, 3, 4])
     })
@@ -150,11 +173,14 @@ describe('mutationCache', () => {
       const testCache = new MutationCache()
       const testClient = createQueryClient({ mutationCache: testCache })
       const key = ['mutation', 'vars']
-      await executeMutation(testClient, {
-        mutationKey: key,
-        variables: 'vars',
-        mutationFn: () => Promise.resolve(),
-      })
+      await executeMutation(
+        testClient,
+        {
+          mutationKey: key,
+          mutationFn: () => Promise.resolve(),
+        },
+        'vars',
+      )
       const [mutation] = testCache.getAll()
       expect(testCache.find({ mutationKey: key })).toEqual(mutation)
       expect(
@@ -162,7 +188,9 @@ describe('mutationCache', () => {
       ).toEqual(mutation)
       expect(testCache.find({ mutationKey: ['unknown'] })).toEqual(undefined)
       expect(
-        testCache.find({ predicate: (m) => m.options.variables === 'vars' }),
+        testCache.find({
+          predicate: (m) => m.options.mutationKey?.[0] === key[0],
+        }),
       ).toEqual(mutation)
     })
   })
@@ -171,45 +199,60 @@ describe('mutationCache', () => {
     test('should filter correctly', async () => {
       const testCache = new MutationCache()
       const testClient = createQueryClient({ mutationCache: testCache })
-      await executeMutation(testClient, {
-        mutationKey: ['a', 1],
-        variables: 1,
-        mutationFn: () => Promise.resolve(),
-      })
-      await executeMutation(testClient, {
-        mutationKey: ['a', 2],
-        variables: 2,
-        mutationFn: () => Promise.resolve(),
-      })
-      await executeMutation(testClient, {
-        mutationKey: ['b'],
-        mutationFn: () => Promise.resolve(),
-      })
+      await executeMutation(
+        testClient,
+        {
+          mutationKey: ['a', 1],
+          mutationFn: () => Promise.resolve(),
+        },
+        1,
+      )
+      await executeMutation(
+        testClient,
+        {
+          mutationKey: ['a', 2],
+          mutationFn: () => Promise.resolve(),
+        },
+        2,
+      )
+      await executeMutation(
+        testClient,
+        {
+          mutationKey: ['b'],
+          mutationFn: () => Promise.resolve(),
+        },
+        3,
+      )
 
       const [mutation1, mutation2] = testCache.getAll()
       expect(
         testCache.findAll({ mutationKey: ['a'], exact: false }),
       ).toHaveLength(2)
       expect(testCache.find({ mutationKey: ['a', 1] })).toEqual(mutation1)
-      expect(testCache.findAll({ mutationKey: ['unknown'] })).toEqual([])
       expect(
-        testCache.findAll({ predicate: (m) => m.options.variables === 2 }),
+        testCache.findAll({
+          predicate: (m) => m.options.mutationKey?.[1] === 2,
+        }),
       ).toEqual([mutation2])
+      expect(testCache.findAll({ mutationKey: ['unknown'] })).toEqual([])
     })
   })
 
   describe('garbage collection', () => {
-    test('should remove unused mutations after cacheTime has elapsed', async () => {
+    test('should remove unused mutations after gcTime has elapsed', async () => {
       const testCache = new MutationCache()
       const testClient = createQueryClient({ mutationCache: testCache })
       const onSuccess = jest.fn()
-      await executeMutation(testClient, {
-        mutationKey: ['a', 1],
-        variables: 1,
-        cacheTime: 10,
-        mutationFn: () => Promise.resolve(),
-        onSuccess,
-      })
+      await executeMutation(
+        testClient,
+        {
+          mutationKey: ['a', 1],
+          gcTime: 10,
+          mutationFn: () => Promise.resolve(),
+          onSuccess,
+        },
+        1,
+      )
 
       expect(testCache.getAll()).toHaveLength(1)
       await sleep(10)
@@ -222,9 +265,8 @@ describe('mutationCache', () => {
     test('should not remove mutations if there are active observers', async () => {
       const queryClient = createQueryClient()
       const observer = new MutationObserver(queryClient, {
-        variables: 1,
-        cacheTime: 10,
-        mutationFn: () => Promise.resolve(),
+        gcTime: 10,
+        mutationFn: (input: number) => Promise.resolve(input),
       })
       const unsubscribe = observer.subscribe(() => undefined)
 
@@ -241,52 +283,11 @@ describe('mutationCache', () => {
       })
     })
 
-    test('should only remove when the last observer unsubscribes', async () => {
-      const queryClient = createQueryClient()
-      const observer1 = new MutationObserver(queryClient, {
-        variables: 1,
-        cacheTime: 10,
-        mutationFn: async () => {
-          await sleep(10)
-          return 'update1'
-        },
-      })
-
-      const observer2 = new MutationObserver(queryClient, {
-        cacheTime: 10,
-        mutationFn: async () => {
-          await sleep(10)
-          return 'update2'
-        },
-      })
-
-      await observer1.mutate()
-
-      // we currently have no way to add multiple observers to the same mutation
-      const currentMutation = observer1['currentMutation']!
-      currentMutation.addObserver(observer1)
-      currentMutation.addObserver(observer2)
-
-      expect(currentMutation['observers'].length).toEqual(2)
-      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
-
-      currentMutation.removeObserver(observer1)
-      currentMutation.removeObserver(observer2)
-      expect(currentMutation['observers'].length).toEqual(0)
-      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
-      // wait for cacheTime to gc
-      await sleep(10)
-      await waitFor(() => {
-        expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
-      })
-    })
-
-    test('should be garbage collected later when unsubscribed and mutation is loading', async () => {
+    test('should be garbage collected later when unsubscribed and mutation is pending', async () => {
       const queryClient = createQueryClient()
       const onSuccess = jest.fn()
       const observer = new MutationObserver(queryClient, {
-        variables: 1,
-        cacheTime: 10,
+        gcTime: 10,
         mutationFn: async () => {
           await sleep(20)
           return 'data'
@@ -298,22 +299,21 @@ describe('mutationCache', () => {
       unsubscribe()
       expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
       await sleep(10)
-      // unsubscribe should not remove even though cacheTime has elapsed b/c mutation is still loading
+      // unsubscribe should not remove even though gcTime has elapsed b/c mutation is still pending
       expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
       await sleep(10)
-      // should be removed after an additional cacheTime wait
+      // should be removed after an additional gcTime wait
       await waitFor(() => {
         expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
       })
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
 
-    test('should call callbacks even with cacheTime 0 and mutation still loading', async () => {
+    test('should call callbacks even with gcTime 0 and mutation still pending', async () => {
       const queryClient = createQueryClient()
       const onSuccess = jest.fn()
       const observer = new MutationObserver(queryClient, {
-        variables: 1,
-        cacheTime: 0,
+        gcTime: 0,
         mutationFn: async () => {
           return 'data'
         },

@@ -29,24 +29,23 @@ describe("useQuery's in Suspense mode", () => {
     let renders = 0
 
     function Page() {
-      const [stateKey, setStateKey] = createSignal(key())
+      const [stateKey, setStateKey] = createSignal(key)
 
-      const state = createQuery(
-        stateKey,
-        async () => {
+      const state = createQuery(() => ({
+        queryKey: stateKey(),
+        queryFn: async () => {
           count++
           await sleep(10)
           return count
         },
-        { suspense: true },
-      )
+      }))
 
       createRenderEffect(() => {
         states.push({ ...state })
       })
 
       createRenderEffect(
-        on([() => ({ ...state }), key], () => {
+        on([() => ({ ...state }), () => key], () => {
           renders++
         }),
       )
@@ -73,9 +72,6 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => screen.getByText('data: 2'))
 
     expect(renders).toBe(4)
-    // TODO(lukemurray): verify that this expectation is valid. this is 2 in
-    // react, but 4 in solid, because in solid suspense is triggered on read and
-    // the component needs to render in order to trigger suspense.
     expect(states.length).toBe(4)
     expect(states[1]).toMatchObject({ data: 1, status: 'success' })
     expect(states[3]).toMatchObject({ data: 2, status: 'success' })
@@ -87,17 +83,16 @@ describe("useQuery's in Suspense mode", () => {
 
     function Page() {
       const [multiplier, setMultiplier] = createSignal(1)
-      const state = createInfiniteQuery(
-        () => [`${key()}_${multiplier()}`],
-        async ({ pageParam = 1 }) => {
+      const state = createInfiniteQuery(() => ({
+        queryKey: [`${key}_${multiplier()}`],
+        queryFn: async ({ pageParam = 1 }) => {
           await sleep(10)
           return Number(pageParam * multiplier())
         },
-        {
-          suspense: true,
-          getNextPageParam: (lastPage) => lastPage + 1,
-        },
-      )
+
+        suspense: true,
+        getNextPageParam: (lastPage) => lastPage + 1,
+      }))
 
       createRenderEffect(() => {
         states.push({ ...state })
@@ -150,7 +145,7 @@ describe("useQuery's in Suspense mode", () => {
     })
 
     function Page() {
-      createQuery(() => [key()], queryFn, { suspense: true })
+      createQuery(() => ({ queryKey: [key], queryFn, suspense: true }))
 
       return <>rendered</>
     }
@@ -172,14 +167,13 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     function Page() {
-      createQuery(
-        key,
-        () => {
+      createQuery(() => ({
+        queryKey: key,
+        queryFn: () => {
           sleep(10)
           return 'data'
         },
-        { suspense: true },
-      )
+      }))
 
       return <>rendered</>
     }
@@ -205,17 +199,17 @@ describe("useQuery's in Suspense mode", () => {
     ))
 
     expect(screen.queryByText('rendered')).toBeNull()
-    expect(queryCache.find(key())).toBeFalsy()
+    expect(queryCache.find({ queryKey: key })).toBeFalsy()
 
     fireEvent.click(screen.getByLabelText('toggle'))
     await waitFor(() => screen.getByText('rendered'))
 
-    expect(queryCache.find(key())?.getObserversCount()).toBe(1)
+    expect(queryCache.find({ queryKey: key })?.getObserversCount()).toBe(1)
 
     fireEvent.click(screen.getByLabelText('toggle'))
 
     expect(screen.queryByText('rendered')).toBeNull()
-    expect(queryCache.find(key())?.getObserversCount()).toBe(0)
+    expect(queryCache.find({ queryKey: key })?.getObserversCount()).toBe(0)
   })
 
   it('should call onSuccess on the first successful call', async () => {
@@ -224,18 +218,17 @@ describe("useQuery's in Suspense mode", () => {
     const successFn = jest.fn()
 
     function Page() {
-      createQuery(
-        () => [key()],
-        async () => {
+      createQuery(() => ({
+        queryKey: [key],
+        queryFn: async () => {
           await sleep(10)
-          return key()
+          return key
         },
-        {
-          suspense: true,
-          select: () => 'selected',
-          onSuccess: successFn,
-        },
-      )
+
+        suspense: true,
+        select: () => 'selected',
+        onSuccess: successFn,
+      }))
 
       return <>rendered</>
     }
@@ -261,33 +254,27 @@ describe("useQuery's in Suspense mode", () => {
     const successFn2 = jest.fn()
 
     function FirstComponent() {
-      createQuery(
-        key,
-        () => {
+      createQuery(() => ({
+        queryKey: key,
+        queryFn: () => {
           sleep(10)
           return 'data'
         },
-        {
-          suspense: true,
-          onSuccess: successFn1,
-        },
-      )
+        onSuccess: successFn1,
+      }))
 
       return <span>first</span>
     }
 
     function SecondComponent() {
-      createQuery(
-        key,
-        () => {
+      createQuery(() => ({
+        queryKey: key,
+        queryFn: () => {
           sleep(10)
           return 'data'
         },
-        {
-          suspense: true,
-          onSuccess: successFn2,
-        },
-      )
+        onSuccess: successFn2,
+      }))
 
       return <span>second</span>
     }
@@ -315,22 +302,19 @@ describe("useQuery's in Suspense mode", () => {
     let succeed = false
 
     function Page() {
-      const state = createQuery(
-        key,
-        async () => {
+      const state = createQuery(() => ({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(10)
-
           if (!succeed) {
             throw new Error('Suspense Error Bingo')
           } else {
             return 'data'
           }
         },
-        {
-          retryDelay: 10,
-          suspense: true,
-        },
-      )
+        retryDelay: 10,
+        suspense: true,
+      }))
 
       // Suspense only triggers if used in JSX
       return (
@@ -381,9 +365,9 @@ describe("useQuery's in Suspense mode", () => {
     let succeed = false
 
     function Page() {
-      const state = createQuery(
-        key,
-        async () => {
+      const state = createQuery(() => ({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(10)
           if (!succeed) {
             throw new Error('Suspense Error Bingo')
@@ -391,11 +375,9 @@ describe("useQuery's in Suspense mode", () => {
             return 'data'
           }
         },
-        {
-          retry: false,
-          suspense: true,
-        },
-      )
+        retry: false,
+        suspense: true,
+      }))
 
       // Suspense only triggers if used in JSX
       return (
@@ -444,19 +426,18 @@ describe("useQuery's in Suspense mode", () => {
     let count = 0
 
     function Component() {
-      const result = createQuery(
-        key,
-        async () => {
+      const result = createQuery(() => ({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(100)
           count++
           return count
         },
-        {
-          retry: false,
-          suspense: true,
-          staleTime: 0,
-        },
-      )
+
+        retry: false,
+        suspense: true,
+        staleTime: 0,
+      }))
       return (
         <div>
           <span>data: {result.data}</span>
@@ -504,27 +485,25 @@ describe("useQuery's in Suspense mode", () => {
     const key2 = queryKey()
 
     function Component(props: { queryKey: Array<string> }) {
-      const result = createQuery(
-        () => props.queryKey,
-        async () => {
+      const result = createQuery(() => ({
+        queryKey: props.queryKey,
+        queryFn: async () => {
           await sleep(100)
           return props.queryKey
         },
-        {
-          retry: false,
-          suspense: true,
-        },
-      )
+        retry: false,
+        suspense: true,
+      }))
       return <div>data: {result.data}</div>
     }
 
     function Page() {
-      const [key, setKey] = createSignal(key1())
+      const [key, setKey] = createSignal(key1)
       return (
         <div>
           <button
             onClick={() => {
-              setKey(key2())
+              setKey(key2)
             }}
           >
             switch
@@ -543,31 +522,25 @@ describe("useQuery's in Suspense mode", () => {
     ))
 
     await waitFor(() => screen.getByText('Loading...'))
-    await waitFor(() => screen.getByText(`data: ${key1()}`))
+    await waitFor(() => screen.getByText(`data: ${key1}`))
     fireEvent.click(screen.getByText('switch'))
     await waitFor(() => screen.getByText('Loading...'))
-    await waitFor(() => screen.getByText(`data: ${key2()}`))
-    expect(
-      // @ts-expect-error
-      queryClient.getQueryCache().find(key2())!.observers[0].listeners.length,
-    ).toBe(1)
+    await waitFor(() => screen.getByText(`data: ${key2}`))
   })
 
   it('should throw errors to the error boundary by default', async () => {
     const key = queryKey()
 
     function Page() {
-      const state = createQuery(
-        key,
-        async (): Promise<unknown> => {
+      const state = createQuery(() => ({
+        queryKey: key,
+        queryFn: async (): Promise<unknown> => {
           await sleep(10)
           throw new Error('Suspense Error a1x')
         },
-        {
-          retry: false,
-          suspense: true,
-        },
-      )
+        retry: false,
+        suspense: true,
+      }))
 
       // read state.data to trigger suspense.
       createRenderEffect(() => {
@@ -604,22 +577,19 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => screen.getByText('error boundary'))
   })
 
-  it('should not throw errors to the error boundary when useErrorBoundary: false', async () => {
+  it('should not throw errors to the error boundary when throwErrors: false', async () => {
     const key = queryKey()
 
     function Page() {
-      const state = createQuery(
-        key,
-        async (): Promise<unknown> => {
+      const state = createQuery(() => ({
+        queryKey: key,
+        queryFn: async (): Promise<unknown> => {
           await sleep(10)
           throw new Error('Suspense Error a2x')
         },
-        {
-          retry: false,
-          suspense: true,
-          useErrorBoundary: false,
-        },
-      )
+        retry: false,
+        throwErrors: false,
+      }))
 
       // read state.data to trigger suspense.
       createRenderEffect(() => {
@@ -656,22 +626,19 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => screen.getByText('rendered'))
   })
 
-  it('should not throw errors to the error boundary when a useErrorBoundary function returns true', async () => {
+  it('should throw errors to the error boundary when a throwErrors function returns true', async () => {
     const key = queryKey()
 
     function Page() {
-      const state = createQuery(
-        key,
-        async (): Promise<unknown> => {
+      const state = createQuery(() => ({
+        queryKey: key,
+        queryFn: async (): Promise<unknown> => {
           await sleep(10)
-          return Promise.reject('Remote Error')
+          return Promise.reject(new Error('Remote Error'))
         },
-        {
-          retry: false,
-          suspense: true,
-          useErrorBoundary: (err) => err !== 'Local Error',
-        },
-      )
+        retry: false,
+        throwErrors: (err) => err.message !== 'Local Error',
+      }))
 
       // read state.data to trigger suspense.
       createRenderEffect(() => {
@@ -708,22 +675,21 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => screen.getByText('error boundary'))
   })
 
-  it('should not throw errors to the error boundary when a useErrorBoundary function returns false', async () => {
+  it('should not throw errors to the error boundary when a throwErrors function returns false', async () => {
     const key = queryKey()
 
     function Page() {
-      const state = createQuery(
-        key,
-        async (): Promise<unknown> => {
+      const state = createQuery(() => ({
+        queryKey: key,
+        queryFn: async (): Promise<unknown> => {
           await sleep(10)
-          return Promise.reject('Local Error')
+          return Promise.reject(new Error('Local Error'))
         },
-        {
-          retry: false,
-          suspense: true,
-          useErrorBoundary: (err) => err !== 'Local Error',
-        },
-      )
+
+        retry: false,
+        suspense: true,
+        throwErrors: (err) => err.message !== 'Local Error',
+      }))
 
       // read state.data to trigger suspense.
       createRenderEffect(() => {
@@ -771,12 +737,12 @@ describe("useQuery's in Suspense mode", () => {
 
     function Page() {
       const [enabled, setEnabled] = createSignal(false)
-      const result = createQuery(() => [key()], queryFn, {
+      const result = createQuery(() => ({
+        queryKey: [key],
+        queryFn,
         suspense: true,
-        get enabled() {
-          return enabled()
-        },
-      })
+        enabled: enabled(),
+      }))
 
       return (
         <div>
@@ -812,10 +778,10 @@ describe("useQuery's in Suspense mode", () => {
 
     function Page() {
       const [nonce] = createSignal(0)
-      const queryKeys = () => [`${key()}-${succeed}`]
-      const result = createQuery(
-        queryKeys,
-        async () => {
+      const queryKeys = [`${key}-${succeed}`]
+      const result = createQuery(() => ({
+        queryKey: queryKeys,
+        queryFn: async () => {
           await sleep(10)
           if (!succeed) {
             throw new Error('Suspense Error Bingo')
@@ -823,11 +789,9 @@ describe("useQuery's in Suspense mode", () => {
             return nonce()
           }
         },
-        {
-          retry: false,
-          suspense: true,
-        },
-      )
+        retry: false,
+        suspense: true,
+      }))
       return (
         <div>
           <span>rendered</span> <span>{result.data}</span>
@@ -878,9 +842,9 @@ describe("useQuery's in Suspense mode", () => {
     function Page() {
       const [key, setKey] = createSignal(0)
 
-      const result = createQuery(
-        () => [`${key()}-${succeed}`],
-        async () => {
+      const result = createQuery(() => ({
+        queryKey: [`${key()}-${succeed}`],
+        queryFn: async () => {
           await sleep(10)
           if (!succeed) {
             throw new Error('Suspense Error Bingo')
@@ -888,11 +852,9 @@ describe("useQuery's in Suspense mode", () => {
             return 'data'
           }
         },
-        {
-          retry: false,
-          suspense: true,
-        },
-      )
+        retry: false,
+        suspense: true,
+      }))
       return (
         <div>
           <span>rendered</span> <span>{result.data}</span>
@@ -937,20 +899,17 @@ describe("useQuery's in Suspense mode", () => {
       const queryKeys = '1'
       const [enabled, setEnabled] = createSignal(false)
 
-      const result = createQuery<string>(
-        () => [queryKeys],
-        async () => {
+      const result = createQuery<string>(() => ({
+        queryKey: [queryKeys],
+        queryFn: async () => {
           await sleep(10)
           throw new Error('Suspense Error Bingo')
         },
-        {
-          retry: false,
-          suspense: true,
-          get enabled() {
-            return enabled()
-          },
-        },
-      )
+
+        retry: false,
+        suspense: true,
+        enabled: enabled(),
+      }))
       return (
         <div>
           <span>rendered</span> <span>{result.data}</span>
@@ -995,7 +954,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => screen.getByText('error boundary'))
   })
 
-  it('should render the correct amount of times in Suspense mode when cacheTime is set to 0', async () => {
+  it('should render the correct amount of times in Suspense mode when gcTime is set to 0', async () => {
     const key = queryKey()
     let state: CreateQueryResult<number> | null = null
 
@@ -1003,15 +962,15 @@ describe("useQuery's in Suspense mode", () => {
     let renders = 0
 
     function Page() {
-      state = createQuery(
-        key,
-        async () => {
+      state = createQuery(() => ({
+        queryKey: key,
+        queryFn: async () => {
           count++
           await sleep(10)
           return count
         },
-        { suspense: true, cacheTime: 0 },
-      )
+        gcTime: 0,
+      }))
 
       createRenderEffect(
         on([() => ({ ...state })], () => {

@@ -14,23 +14,14 @@ import {
 } from '..'
 import { createQueryClient, setIsServer, sleep } from './utils'
 
-const isReact18 = () => (process.env.REACTJS_VERSION || '18') === '18'
-
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
-  if (isReact18()) {
-    let root: any
-    ReactDOMTestUtils.act(() => {
-      // @ts-expect-error
-      root = ReactDOM.hydrateRoot(container, element)
-    })
-    return () => {
-      root.unmount()
-    }
-  }
-
-  ReactDOM.hydrate(element, container)
+  let root: any
+  ReactDOMTestUtils.act(() => {
+    // @ts-expect-error
+    root = ReactDOM.hydrateRoot(container, element)
+  })
   return () => {
-    ReactDOM.unmountComponentAtNode(container)
+    root.unmount()
   }
 }
 
@@ -58,9 +49,6 @@ describe('Server side rendering with de/rehydration', () => {
     const consoleMock = jest.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 
-    if (!isReact18()) {
-      return
-    }
     const fetchDataSuccess = jest.fn<
       ReturnType<typeof fetchData>,
       Parameters<typeof fetchData>
@@ -68,7 +56,10 @@ describe('Server side rendering with de/rehydration', () => {
 
     // -- Shared part --
     function SuccessComponent() {
-      const result = useQuery(['success'], () => fetchDataSuccess('success!'))
+      const result = useQuery({
+        queryKey: ['success'],
+        queryFn: () => fetchDataSuccess('success!'),
+      })
       return (
         <PrintStateComponent componentName="SuccessComponent" result={result} />
       )
@@ -81,9 +72,10 @@ describe('Server side rendering with de/rehydration', () => {
     const prefetchClient = createQueryClient({
       queryCache: prefetchCache,
     })
-    await prefetchClient.prefetchQuery(['success'], () =>
-      fetchDataSuccess('success'),
-    )
+    await prefetchClient.prefetchQuery({
+      queryKey: ['success'],
+      queryFn: () => fetchDataSuccess('success'),
+    })
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
     const renderClient = createQueryClient({
@@ -138,16 +130,15 @@ describe('Server side rendering with de/rehydration', () => {
     const consoleMock = jest.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 
-    if (!isReact18()) {
-      return
-    }
     const fetchDataError = jest.fn(() => {
       throw new Error('fetchDataError')
     })
 
     // -- Shared part --
     function ErrorComponent() {
-      const result = useQuery(['error'], () => fetchDataError(), {
+      const result = useQuery({
+        queryKey: ['error'],
+        queryFn: () => fetchDataError(),
         retry: false,
       })
       return (
@@ -161,7 +152,10 @@ describe('Server side rendering with de/rehydration', () => {
     const prefetchClient = createQueryClient({
       queryCache: prefetchCache,
     })
-    await prefetchClient.prefetchQuery(['error'], () => fetchDataError())
+    await prefetchClient.prefetchQuery({
+      queryKey: ['error'],
+      queryFn: () => fetchDataError(),
+    })
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
     const renderClient = createQueryClient({
@@ -178,7 +172,7 @@ describe('Server side rendering with de/rehydration', () => {
     setIsServer(false)
 
     const expectedMarkup =
-      'ErrorComponent - status:loading fetching:true data:undefined'
+      'ErrorComponent - status:pending fetching:true data:undefined'
 
     expect(markup).toBe(expectedMarkup)
 
@@ -216,9 +210,6 @@ describe('Server side rendering with de/rehydration', () => {
     const consoleMock = jest.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 
-    if (!isReact18()) {
-      return
-    }
     const fetchDataSuccess = jest.fn<
       ReturnType<typeof fetchData>,
       Parameters<typeof fetchData>
@@ -226,7 +217,10 @@ describe('Server side rendering with de/rehydration', () => {
 
     // -- Shared part --
     function SuccessComponent() {
-      const result = useQuery(['success'], () => fetchDataSuccess('success!'))
+      const result = useQuery({
+        queryKey: ['success'],
+        queryFn: () => fetchDataSuccess('success!'),
+      })
       return (
         <PrintStateComponent componentName="SuccessComponent" result={result} />
       )
@@ -249,7 +243,7 @@ describe('Server side rendering with de/rehydration', () => {
     setIsServer(false)
 
     const expectedMarkup =
-      'SuccessComponent - status:loading fetching:true data:undefined'
+      'SuccessComponent - status:pending fetching:true data:undefined'
 
     expect(markup).toBe(expectedMarkup)
 

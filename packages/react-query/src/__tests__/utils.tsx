@@ -1,26 +1,21 @@
 import * as React from 'react'
 import { act, render } from '@testing-library/react'
-import type { ContextOptions, QueryClientConfig, MutationOptions } from '..'
+import type { QueryClientConfig } from '..'
 import { QueryClient, QueryClientProvider } from '..'
 import * as utils from '@tanstack/query-core'
 
 export function renderWithClient(
   client: QueryClient,
   ui: React.ReactElement,
-  options: ContextOptions = {},
 ): ReturnType<typeof render> {
   const { rerender, ...result } = render(
-    <QueryClientProvider client={client} context={options.context}>
-      {ui}
-    </QueryClientProvider>,
+    <QueryClientProvider client={client}>{ui}</QueryClientProvider>,
   )
   return {
     ...result,
     rerender: (rerenderUi: React.ReactElement) =>
       rerender(
-        <QueryClientProvider client={client} context={options.context}>
-          {rerenderUi}
-        </QueryClientProvider>,
+        <QueryClientProvider client={client}>{rerenderUi}</QueryClientProvider>,
       ),
   } as any
 }
@@ -46,8 +41,7 @@ export const Blink = ({
 }
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
-  jest.spyOn(console, 'error').mockImplementation(() => undefined)
-  return new QueryClient({ logger: mockLogger, ...config })
+  return new QueryClient(config)
 }
 
 export function mockVisibilityState(value: DocumentVisibilityState) {
@@ -56,12 +50,6 @@ export function mockVisibilityState(value: DocumentVisibilityState) {
 
 export function mockNavigatorOnLine(value: boolean) {
   return jest.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
-}
-
-export const mockLogger = {
-  log: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
 }
 
 let queryKeyCount = 0
@@ -96,13 +84,6 @@ export function expectType<T>(_: T): void {
  */
 export function expectTypeNotAny<T>(_: 0 extends 1 & T ? never : T): void {
   return undefined
-}
-
-export function executeMutation(
-  queryClient: QueryClient,
-  options: MutationOptions<any, any, any, any>,
-): Promise<unknown> {
-  return queryClient.getMutationCache().build(queryClient, options).execute()
 }
 
 // This monkey-patches the isServer-value from utils,

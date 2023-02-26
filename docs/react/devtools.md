@@ -66,8 +66,8 @@ function App() {
 - `panelPosition?: "top" | "bottom" | "left" | "right"`
   - Defaults to `bottom`
   - The position of the React Query devtools panel
-- `context?: React.Context<QueryClient | undefined>`
-  - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.
+- `queryClient?: QueryClient`,
+  - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
 ## Embedded Mode
 

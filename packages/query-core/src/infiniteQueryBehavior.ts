@@ -1,11 +1,6 @@
 import type { QueryBehavior } from './query'
-
-import type {
-  InfiniteData,
-  QueryFunctionContext,
-  QueryOptions,
-  RefetchQueryFilters,
-} from './types'
+import { addToEnd, addToStart } from './utils'
+import type { InfiniteData, QueryFunctionContext, QueryOptions } from './types'
 
 export function infiniteQueryBehavior<
   TQueryFnData,
@@ -15,8 +10,6 @@ export function infiniteQueryBehavior<
   return {
     onFetch: (context) => {
       context.fetchFn = () => {
-        const refetchPage: RefetchQueryFilters['refetchPage'] | undefined =
-          context.fetchOptions?.meta?.refetchPage
         const fetchMore = context.fetchOptions?.meta?.fetchMore
         const pageParam = fetchMore?.pageParam
         const isFetchingNextPage = fetchMore?.direction === 'forward'
@@ -30,10 +23,10 @@ export function infiniteQueryBehavior<
           Object.defineProperty(object, 'signal', {
             enumerable: true,
             get: () => {
-              if (context.signal?.aborted) {
+              if (context.signal.aborted) {
                 cancelled = true
               } else {
-                context.signal?.addEventListener('abort', () => {
+                context.signal.addEventListener('abort', () => {
                   cancelled = true
                 })
               }
@@ -44,7 +37,8 @@ export function infiniteQueryBehavior<
 
         // Get query function
         const queryFn =
-          context.options.queryFn || (() => Promise.reject('Missing queryFn'))
+          context.options.queryFn ||
+          (() => Promise.reject(new Error('Missing queryFn')))
 
         const buildNewPages = (
           pages: unknown[],
@@ -52,10 +46,15 @@ export function infiniteQueryBehavior<
           page: unknown,
           previous?: boolean,
         ) => {
-          newPageParams = previous
-            ? [param, ...newPageParams]
-            : [...newPageParams, param]
-          return previous ? [page, ...pages] : [...pages, page]
+          const { maxPages } = context.options
+
+          if (previous) {
+            newPageParams = addToStart(newPageParams, param, maxPages)
+            return addToStart(pages, page, maxPages)
+          }
+
+          newPageParams = addToEnd(newPageParams, param, maxPages)
+          return addToEnd(pages, page, maxPages)
         }
 
         // Create function to fetch a page
@@ -66,14 +65,14 @@ export function infiniteQueryBehavior<
           previous?: boolean,
         ): Promise<unknown[]> => {
           if (cancelled) {
-            return Promise.reject('Cancelled')
+            return Promise.reject()
           }
 
           if (typeof param === 'undefined' && !manual && pages.length) {
             return Promise.resolve(pages)
           }
 
-          const queryFnContext: QueryFunctionContext = {
+          const queryFnContext: Omit<QueryFunctionContext, 'signal'> = {
             queryKey: context.queryKey,
             pageParam: param,
             meta: context.options.meta,
@@ -81,7 +80,7 @@ export function infiniteQueryBehavior<
 
           addSignalProperty(queryFnContext)
 
-          const queryFnResult = queryFn(queryFnContext)
+          const queryFnResult = queryFn(queryFnContext as QueryFunctionContext)
 
           const promise = Promise.resolve(queryFnResult).then((page) =>
             buildNewPages(pages, param, page, previous),
@@ -121,33 +120,16 @@ export function infiniteQueryBehavior<
 
           const manual = typeof context.options.getNextPageParam === 'undefined'
 
-          const shouldFetchFirstPage =
-            refetchPage && oldPages[0]
-              ? refetchPage(oldPages[0], 0, oldPages)
-              : true
-
           // Fetch first page
-          promise = shouldFetchFirstPage
-            ? fetchPage([], manual, oldPageParams[0])
-            : Promise.resolve(buildNewPages([], oldPageParams[0], oldPages[0]))
+          promise = fetchPage([], manual, oldPageParams[0])
 
           // Fetch remaining pages
           for (let i = 1; i < oldPages.length; i++) {
             promise = promise.then((pages) => {
-              const shouldFetchNextPage =
-                refetchPage && oldPages[i]
-                  ? refetchPage(oldPages[i], i, oldPages)
-                  : true
-
-              if (shouldFetchNextPage) {
-                const param = manual
-                  ? oldPageParams[i]
-                  : getNextPageParam(context.options, pages)
-                return fetchPage(pages, manual, param)
-              }
-              return Promise.resolve(
-                buildNewPages(pages, oldPageParams[i], oldPages[i]),
-              )
+              const param = manual
+                ? oldPageParams[i]
+                : getNextPageParam(context.options, pages)
+              return fetchPage(pages, manual, param)
             })
           }
         }

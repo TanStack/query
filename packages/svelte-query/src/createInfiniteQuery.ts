@@ -1,10 +1,10 @@
-import {
-  InfiniteQueryObserver,
-  parseQueryArgs,
-  type QueryObserver,
-  type QueryFunction,
-  type QueryKey,
+import type {
+  QueryObserver,
+  QueryKey,
+  QueryClient,
+  RegisteredError,
 } from '@tanstack/query-core'
+import { InfiniteQueryObserver } from '@tanstack/query-core'
 import type {
   CreateInfiniteQueryOptions,
   CreateInfiniteQueryResult,
@@ -12,8 +12,8 @@ import type {
 import { createBaseQuery } from './createBaseQuery'
 
 export function createInfiniteQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
+  TQueryFnData,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -24,80 +24,11 @@ export function createInfiniteQuery<
     TQueryFnData,
     TQueryKey
   >,
-): CreateInfiniteQueryResult<TData, TError>
-export function createInfiniteQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  queryKey: TQueryKey,
-  options?: Omit<
-    CreateInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryFnData,
-      TQueryKey
-    >,
-    'queryKey'
-  >,
-): CreateInfiniteQueryResult<TData, TError>
-export function createInfiniteQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  queryKey: TQueryKey,
-  queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-  options?: Omit<
-    CreateInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryFnData,
-      TQueryKey
-    >,
-    'queryKey' | 'queryFn'
-  >,
-): CreateInfiniteQueryResult<TData, TError>
-
-export function createInfiniteQuery<
-  TQueryFnData,
-  TError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  arg1:
-    | TQueryKey
-    | CreateInfiniteQueryOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryFnData,
-        TQueryKey
-      >,
-  arg2?:
-    | QueryFunction<TQueryFnData, TQueryKey>
-    | CreateInfiniteQueryOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryFnData,
-        TQueryKey
-      >,
-  arg3?: CreateInfiniteQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey
-  >,
+  queryClient?: QueryClient,
 ): CreateInfiniteQueryResult<TData, TError> {
-  const options = parseQueryArgs(arg1, arg2, arg3)
   return createBaseQuery(
     options,
     InfiniteQueryObserver as typeof QueryObserver,
+    queryClient,
   ) as CreateInfiniteQueryResult<TData, TError>
 }

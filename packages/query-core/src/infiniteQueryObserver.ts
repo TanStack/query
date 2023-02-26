@@ -6,6 +6,7 @@ import type {
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   QueryKey,
+  RegisteredError,
 } from './types'
 import type { QueryClient } from './queryClient'
 import type { NotifyOptions, ObserverFetchOptions } from './queryObserver'
@@ -23,7 +24,7 @@ type InfiniteQueryObserverListener<TData, TError> = (
 
 export class InfiniteQueryObserver<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,

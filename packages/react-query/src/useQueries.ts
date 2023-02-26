@@ -1,7 +1,12 @@
 import * as React from 'react'
-import { useSyncExternalStore } from './useSyncExternalStore'
 
-import type { QueryKey, QueryFunction } from '@tanstack/query-core'
+import type {
+  QueryKey,
+  QueryFunction,
+  QueriesPlaceholderDataFunction,
+  QueryClient,
+  RegisteredError,
+} from '@tanstack/query-core'
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type { UseQueryOptions, UseQueryResult } from './types'
@@ -20,13 +25,18 @@ import {
 } from './suspense'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
-// - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
+// `placeholderData` function does not have a parameter
 type UseQueryOptionsForUseQueries<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'context'>
+> = Omit<
+  UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'placeholderData'
+> & {
+  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+}
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
@@ -55,14 +65,9 @@ type GetOptions<T> =
         queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
         select: (data: any) => infer TData
       }
-    ? UseQueryOptionsForUseQueries<TQueryFnData, unknown, TData, TQueryKey>
+    ? UseQueryOptionsForUseQueries<TQueryFnData, Error, TData, TQueryKey>
     : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
-    ? UseQueryOptionsForUseQueries<
-        TQueryFnData,
-        unknown,
-        TQueryFnData,
-        TQueryKey
-      >
+    ? UseQueryOptionsForUseQueries<TQueryFnData, Error, TQueryFnData, TQueryKey>
     : // Fallback
       UseQueryOptionsForUseQueries
 
@@ -143,24 +148,27 @@ export type QueriesResults<
       any
     >[]
   ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-    UseQueryResult<unknown extends TData ? TQueryFnData : TData, TError>[]
+    UseQueryResult<
+      unknown extends TData ? TQueryFnData : TData,
+      unknown extends TError ? RegisteredError : TError
+    >[]
   : // Fallback
     UseQueryResult[]
 
 export function useQueries<T extends any[]>({
   queries,
-  context,
+  queryClient,
 }: {
   queries: readonly [...QueriesOptions<T>]
-  context?: UseQueryOptions['context']
+  queryClient?: QueryClient
 }): QueriesResults<T> {
-  const queryClient = useQueryClient({ context })
+  const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
 
   const defaultedQueries = React.useMemo(
     () =>
       queries.map((options) => {
-        const defaultedOptions = queryClient.defaultQueryOptions(options)
+        const defaultedOptions = client.defaultQueryOptions(options)
 
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = isRestoring
@@ -169,16 +177,16 @@ export function useQueries<T extends any[]>({
 
         return defaultedOptions
       }),
-    [queries, queryClient, isRestoring],
+    [queries, client, isRestoring],
   )
 
   const [observer] = React.useState(
-    () => new QueriesObserver(queryClient, defaultedQueries),
+    () => new QueriesObserver(client, defaultedQueries),
   )
 
   const optimisticResult = observer.getOptimisticResult(defaultedQueries)
 
-  useSyncExternalStore(
+  React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
         isRestoring
@@ -234,7 +242,7 @@ export function useQueries<T extends any[]>({
       getHasError({
         result,
         errorResetBoundary,
-        useErrorBoundary: defaultedQueries[index]?.useErrorBoundary ?? false,
+        throwErrors: defaultedQueries[index]?.throwErrors ?? false,
         query: observer.getQueries()[index]!,
       }),
   )

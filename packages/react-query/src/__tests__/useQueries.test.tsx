@@ -1,4 +1,4 @@
-import { fireEvent, waitFor } from '@testing-library/react'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
@@ -13,7 +13,6 @@ import {
   sleep,
 } from './utils'
 import type {
-  QueryClient,
   QueryFunction,
   QueryKey,
   QueryObserverResult,
@@ -71,251 +70,6 @@ describe('useQueries', () => {
     expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
     expect(results[1]).toMatchObject([{ data: 1 }, { data: undefined }])
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
-  })
-
-  it('should keep previous data if amount of queries is the same', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const states: UseQueryResult[][] = []
-
-    function Page() {
-      const [count, setCount] = React.useState(1)
-      const result = useQueries({
-        queries: [
-          {
-            queryKey: [key1, count],
-            keepPreviousData: true,
-            queryFn: async () => {
-              await sleep(10)
-              return count * 2
-            },
-          },
-          {
-            queryKey: [key2, count],
-            keepPreviousData: true,
-            queryFn: async () => {
-              await sleep(35)
-              return count * 5
-            },
-          },
-        ],
-      })
-      states.push(result)
-
-      const isFetching = result.some((r) => r.isFetching)
-
-      return (
-        <div>
-          <div>
-            data1: {String(result[0].data ?? 'null')}, data2:{' '}
-            {String(result[1].data ?? 'null')}
-          </div>
-          <div>isFetching: {String(isFetching)}</div>
-          <button onClick={() => setCount((prev) => prev + 1)}>inc</button>
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <Page />)
-
-    await waitFor(() => rendered.getByText('data1: 2, data2: 5'))
-    fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
-
-    await waitFor(() => rendered.getByText('data1: 4, data2: 10'))
-    await waitFor(() => rendered.getByText('isFetching: false'))
-
-    expect(states[states.length - 1]).toMatchObject([
-      { status: 'success', data: 4, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
-  })
-
-  it('should keep previous data for variable amounts of useQueries', async () => {
-    const key = queryKey()
-    const states: UseQueryResult[][] = []
-
-    function Page() {
-      const [count, setCount] = React.useState(2)
-      const result = useQueries({
-        queries: Array.from({ length: count }, (_, i) => ({
-          queryKey: [key, count, i + 1],
-          keepPreviousData: true,
-          queryFn: async () => {
-            await sleep(35 * (i + 1))
-            return (i + 1) * count * 2
-          },
-        })),
-      })
-
-      states.push(result)
-
-      const isFetching = result.some((r) => r.isFetching)
-
-      return (
-        <div>
-          <div>data: {result.map((it) => it.data).join(',')}</div>
-          <div>isFetching: {String(isFetching)}</div>
-          <button onClick={() => setCount((prev) => prev + 1)}>inc</button>
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <Page />)
-
-    await waitFor(() => rendered.getByText('data: 4,8'))
-    fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
-
-    await waitFor(() => rendered.getByText('data: 6,12,18'))
-    await waitFor(() => rendered.getByText('isFetching: false'))
-
-    expect(states[states.length - 1]).toMatchObject([
-      { status: 'success', data: 6, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 12, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 18, isPreviousData: false, isFetching: false },
-    ])
-  })
-
-  it('should keep previous data when switching between queries', async () => {
-    const key = queryKey()
-    const states: UseQueryResult[][] = []
-
-    function Page() {
-      const [series1, setSeries1] = React.useState(1)
-      const [series2, setSeries2] = React.useState(2)
-      const ids = [series1, series2]
-
-      const result = useQueries({
-        queries: ids.map((id) => {
-          return {
-            queryKey: [key, id],
-            queryFn: async () => {
-              await sleep(5)
-              return id * 5
-            },
-            keepPreviousData: true,
-          }
-        }),
-      })
-
-      states.push(result)
-
-      const isFetching = result.some((r) => r.isFetching)
-
-      return (
-        <div>
-          <div>
-            data1: {String(result[0]?.data ?? 'null')}, data2:{' '}
-            {String(result[1]?.data ?? 'null')}
-          </div>
-          <div>isFetching: {String(isFetching)}</div>
-          <button onClick={() => setSeries2(3)}>setSeries2</button>
-          <button onClick={() => setSeries1(2)}>setSeries1</button>
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <Page />)
-
-    await waitFor(() => rendered.getByText('data1: 5, data2: 10'))
-    fireEvent.click(rendered.getByRole('button', { name: /setSeries2/i }))
-
-    await waitFor(() => rendered.getByText('data1: 5, data2: 15'))
-    fireEvent.click(rendered.getByRole('button', { name: /setSeries1/i }))
-
-    await waitFor(() => rendered.getByText('data1: 10, data2: 15'))
-    await waitFor(() => rendered.getByText('isFetching: false'))
-
-    expect(states[states.length - 1]).toMatchObject([
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 15, isPreviousData: false, isFetching: false },
-    ])
-  })
-
-  it('should not go to infinite render loop with previous data when toggling queries', async () => {
-    const key = queryKey()
-    const states: UseQueryResult[][] = []
-
-    function Page() {
-      const [enableId1, setEnableId1] = React.useState(true)
-      const ids = enableId1 ? [1, 2] : [2]
-
-      const result = useQueries({
-        queries: ids.map((id) => {
-          return {
-            queryKey: [key, id],
-            queryFn: async () => {
-              await sleep(5)
-              return id * 5
-            },
-            keepPreviousData: true,
-          }
-        }),
-      })
-
-      states.push(result)
-
-      const isFetching = result.some((r) => r.isFetching)
-
-      return (
-        <div>
-          <div>
-            data1: {String(result[0]?.data ?? 'null')}, data2:{' '}
-            {String(result[1]?.data ?? 'null')}
-          </div>
-          <div>isFetching: {String(isFetching)}</div>
-          <button onClick={() => setEnableId1(false)}>set1Disabled</button>
-          <button onClick={() => setEnableId1(true)}>set2Enabled</button>
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <Page />)
-
-    await waitFor(() => rendered.getByText('data1: 5, data2: 10'))
-    fireEvent.click(rendered.getByRole('button', { name: /set1Disabled/i }))
-
-    await waitFor(() => rendered.getByText('data1: 10, data2: null'))
-    await waitFor(() => rendered.getByText('isFetching: false'))
-    fireEvent.click(rendered.getByRole('button', { name: /set2Enabled/i }))
-
-    await waitFor(() => rendered.getByText('data1: 5, data2: 10'))
-    await waitFor(() => rendered.getByText('isFetching: false'))
-
-    await waitFor(() => expect(states.length).toBe(6))
-
-    expect(states[0]).toMatchObject([
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[1]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[2]).toMatchObject([
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[3]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[4]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[5]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
   })
 
   it('handles type parameter - tuple of tuples', async () => {
@@ -1021,98 +775,10 @@ describe('useQueries', () => {
     QueriesObserverSpy.mockRestore()
   })
 
-  describe('with custom context', () => {
-    it('should return the correct states', async () => {
-      const context = React.createContext<QueryClient | undefined>(undefined)
-
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const results: UseQueryResult[][] = []
-
-      function Page() {
-        const result = useQueries({
-          context,
-          queries: [
-            {
-              queryKey: key1,
-              queryFn: async () => {
-                await sleep(5)
-                return 1
-              },
-            },
-            {
-              queryKey: key2,
-              queryFn: async () => {
-                await sleep(10)
-                return 2
-              },
-            },
-          ],
-        })
-        results.push(result)
-
-        return (
-          <div>
-            <div>data1: {result[0].data}</div>
-            <div>data2: {result[1].data}</div>
-          </div>
-        )
-      }
-
-      const rendered = renderWithClient(queryClient, <Page />, { context })
-
-      await waitFor(() => {
-        rendered.getByText('data1: 1')
-        rendered.getByText('data2: 2')
-      })
-
-      expect(results[0]).toMatchObject([
-        { data: undefined },
-        { data: undefined },
-      ])
-      expect(results[results.length - 1]).toMatchObject([
-        { data: 1 },
-        { data: 2 },
-      ])
-    })
-
-    it('should throw if the context is necessary and is not passed to useQueries', async () => {
-      const context = React.createContext<QueryClient | undefined>(undefined)
-
-      const key1 = queryKey()
-      const key2 = queryKey()
-      const results: UseQueryResult[][] = []
-
-      function Page() {
-        const result = useQueries({
-          queries: [
-            {
-              queryKey: key1,
-              queryFn: async () => 1,
-            },
-            {
-              queryKey: key2,
-              queryFn: async () => 2,
-            },
-          ],
-        })
-        results.push(result)
-        return null
-      }
-
-      const rendered = renderWithClient(
-        queryClient,
-        <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
-          <Page />
-        </ErrorBoundary>,
-        { context },
-      )
-
-      await waitFor(() => rendered.getByText('error boundary'))
-    })
-  })
-
-  it("should throw error if in one of queries' queryFn throws and useErrorBoundary is in use", async () => {
+  it("should throw error if in one of queries' queryFn throws and throwErrors is in use", async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -1126,14 +792,14 @@ describe('useQueries', () => {
             queryFn: () =>
               Promise.reject(
                 new Error(
-                  'this should not throw because useErrorBoundary is not set',
+                  'this should not throw because throwErrors is not set',
                 ),
               ),
           },
           {
             queryKey: key2,
             queryFn: () => Promise.reject(new Error('single query error')),
-            useErrorBoundary: true,
+            throwErrors: true,
             retry: false,
           },
           {
@@ -1146,7 +812,7 @@ describe('useQueries', () => {
               Promise.reject(
                 new Error('this should not throw because query#2 already did'),
               ),
-            useErrorBoundary: true,
+            throwErrors: true,
             retry: false,
           },
         ],
@@ -1171,9 +837,13 @@ describe('useQueries', () => {
 
     await waitFor(() => rendered.getByText('error boundary'))
     await waitFor(() => rendered.getByText('single query error'))
+    consoleMock.mockRestore()
   })
 
-  it("should throw error if in one of queries' queryFn throws and useErrorBoundary function resolves to true", async () => {
+  it("should throw error if in one of queries' queryFn throws and throwErrors function resolves to true", async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -1187,10 +857,10 @@ describe('useQueries', () => {
             queryFn: () =>
               Promise.reject(
                 new Error(
-                  'this should not throw because useErrorBoundary function resolves to false',
+                  'this should not throw because throwErrors function resolves to false',
                 ),
               ),
-            useErrorBoundary: () => false,
+            throwErrors: () => false,
             retry: false,
           },
           {
@@ -1200,7 +870,7 @@ describe('useQueries', () => {
           {
             queryKey: key3,
             queryFn: () => Promise.reject(new Error('single query error')),
-            useErrorBoundary: () => true,
+            throwErrors: () => true,
             retry: false,
           },
           {
@@ -1209,7 +879,7 @@ describe('useQueries', () => {
               Promise.reject(
                 new Error('this should not throw because query#3 already did'),
               ),
-            useErrorBoundary: true,
+            throwErrors: true,
             retry: false,
           },
         ],
@@ -1234,5 +904,31 @@ describe('useQueries', () => {
 
     await waitFor(() => rendered.getByText('error boundary'))
     await waitFor(() => rendered.getByText('single query error'))
+    consoleMock.mockRestore()
+  })
+
+  it('should use provided custom queryClient', async () => {
+    const key = queryKey()
+    const queryFn = async () => {
+      return Promise.resolve('custom client')
+    }
+
+    function Page() {
+      const queries = useQueries({
+        queries: [
+          {
+            queryKey: key,
+            queryFn,
+          },
+        ],
+        queryClient,
+      })
+
+      return <div>data: {queries[0].data}</div>
+    }
+
+    const rendered = render(<Page></Page>)
+
+    await waitFor(() => rendered.getByText('data: custom client'))
   })
 })

@@ -57,24 +57,20 @@ To support caching queries on the server and set up hydration:
 
 - Create a new `QueryClient` instance **inside of your app, and on an instance ref (or in React state). This ensures that data is not shared between different users and requests, while still only creating the QueryClient once per component lifecycle.**
 - Wrap your app component with `<QueryClientProvider>` and pass it the client instance
-- Wrap your app component with `<Hydrate>` and pass it the `dehydratedState` prop from `pageProps`
+- Wrap your app component with `<HydrationBoundary>` and pass it the `dehydratedState` prop from `pageProps`
 
 ```tsx
 // _app.jsx
-import {
-  Hydrate,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
+import { HydrationBoundary, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 export default function MyApp({ Component, pageProps }) {
   const [queryClient] = React.useState(() => new QueryClient())
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Hydrate state={pageProps.dehydratedState}>
+      <HydrationBoundary state={pageProps.dehydratedState}>
         <Component {...pageProps} />
-      </Hydrate>
+      </HydrationBoundary>
     </QueryClientProvider>
   )
 }
@@ -166,7 +162,7 @@ To support caching queries on the server and set up hydration:
 
 - Create a new `QueryClient` instance **inside of your app, and on an instance ref (or in React state). This ensures that data is not shared between different users and requests, while still only creating the QueryClient once per component lifecycle.**
 - Wrap your app component with `<QueryClientProvider>` and pass it the client instance
-- Wrap your app component with `<Hydrate>` and pass it the `dehydratedState` prop from `useDehydratedState()`
+- Wrap your app component with `<HydrationBoundary>` and pass it the `dehydratedState` prop from `useDehydratedState()`
 
 ```bash
 npm i use-dehydrated-state
@@ -178,11 +174,7 @@ yarn add use-dehydrated-state
 
 ```tsx
 // root.tsx
-import {
-  Hydrate,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
+import { HydrationBoundary, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import { useDehydratedState } from 'use-dehydrated-state'
 
@@ -193,9 +185,9 @@ export default function MyApp() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Hydrate state={dehydratedState}>
+      <HydrationBoundary state={dehydratedState}>
         <Outlet />
-      </Hydrate>
+      </HydrationBoundary>
     </QueryClientProvider>
   )
 }
@@ -255,12 +247,7 @@ This guide is at-best, a high level overview of how SSR with React Query should 
 > SECURITY NOTE: Serializing data with `JSON.stringify` can put you at risk for XSS-vulnerabilities, [this blog post explains why and how to solve it](https://medium.com/node-security/the-most-common-xss-vulnerability-in-react-js-applications-2bdffbcc1fa0)
 
 ```tsx
-import {
-  dehydrate,
-  Hydrate,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
+import { dehydrate, HydrationBoundary, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 async function handleRequest(req, res) {
   const queryClient = new QueryClient()
@@ -269,10 +256,10 @@ async function handleRequest(req, res) {
 
   const html = ReactDOM.renderToString(
     <QueryClientProvider client={queryClient}>
-      <Hydrate state={dehydratedState}>
+      <HydrationBoundary state={dehydratedState}>
         <App />
-      </Hydrate>
-    </QueryClientProvider>,
+      </HydrationBoundary>
+    </QueryClientProvider>
   )
 
   res.send(`
@@ -297,11 +284,7 @@ async function handleRequest(req, res) {
 - Render your app with the client provider and also **using the dehydrated state. This is extremely important! You must render both server and client using the same dehydrated state to ensure hydration on the client produces the exact same markup as the server.**
 
 ```tsx
-import {
-  Hydrate,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
+import { HydrationBoundary, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const dehydratedState = window.__REACT_QUERY_STATE__
 
@@ -309,9 +292,9 @@ const queryClient = new QueryClient()
 
 ReactDOM.hydrate(
   <QueryClientProvider client={queryClient}>
-    <Hydrate state={dehydratedState}>
+    <HydrationBoundary state={dehydratedState}>
       <App />
-    </Hydrate>
+    </HydrationBoundary>
   </QueryClientProvider>,
   document.getElementById('root'),
 )
@@ -545,10 +528,10 @@ This refetching of stale queries is a perfect match when caching markup in a CDN
 
 ### High memory consumption on server
 
-In case you are creating the `QueryClient` for every request, React Query creates the isolated cache for this client, which is preserved in memory for the `cacheTime` period. That may lead to high memory consumption on server in case of high number of requests during that period.
+In case you are creating the `QueryClient` for every request, React Query creates the isolated cache for this client, which is preserved in memory for the `gcTime` period. That may lead to high memory consumption on server in case of high number of requests during that period.
 
-On the server, `cacheTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `cacheTime` then you will be responsible for clearing the cache early.
+On the server, `gcTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `gcTime` then you will be responsible for clearing the cache early.
 
 To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../reference/QueryClient#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
 
-Alternatively, you can set a smaller `cacheTime`.
+Alternatively, you can set a smaller `gcTime`.

@@ -1,5 +1,8 @@
 /* istanbul ignore file */
 
+// Side Effects
+import './setBatchUpdatesFn'
+
 // Re-export core
 export * from '@tanstack/query-core'
 
@@ -7,13 +10,13 @@ export * from '@tanstack/query-core'
 export * from './types'
 export { createQuery } from './createQuery'
 export {
-  defaultContext,
+  QueryClientContext,
   QueryClientProvider,
   useQueryClient,
 } from './QueryClientProvider'
 export type { QueryClientProviderProps } from './QueryClientProvider'
 export { useIsFetching } from './useIsFetching'
-export { useIsMutating } from './useIsMutating'
-export { createMutation } from './createMutation'
 export { createInfiniteQuery } from './createInfiniteQuery'
+export { createMutation } from './createMutation'
+export { useIsMutating } from './useIsMutating'
 export { createQueries } from './createQueries'

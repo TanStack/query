@@ -1,16 +1,28 @@
-import type { QueryObserver } from '@tanstack/query-core'
-import type { QueryKey, QueryObserverResult } from '@tanstack/query-core'
-import type { CreateBaseQueryOptions } from './types'
-import { useQueryClient } from './QueryClientProvider'
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
+// Had to disable the lint rule because isServer type is defined as false
+// in solid-js/web package. I'll create a GitHub issue with them to see
+// why that happens.
+import type {
+  QueryClient,
+  QueryKey,
+  QueryObserver,
+  QueryObserverResult,
+} from '@tanstack/query-core'
+import { hydrate } from '@tanstack/query-core'
+import { notifyManager } from '@tanstack/query-core'
+import type { Accessor } from 'solid-js'
+import { isServer } from 'solid-js/web'
 import {
-  onMount,
-  onCleanup,
   createComputed,
+  createMemo,
   createResource,
   on,
-  batch,
+  onCleanup,
+  onMount,
 } from 'solid-js'
 import { createStore, unwrap } from 'solid-js/store'
+import { useQueryClient } from './QueryClientProvider'
+import type { CreateBaseQueryOptions } from './types'
 import { shouldThrowError } from './utils'
 
 // Base Query Function that is used to create the query.
@@ -21,81 +33,157 @@ export function createBaseQuery<
   TQueryData,
   TQueryKey extends QueryKey,
 >(
-  options: CreateBaseQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
+  options: Accessor<
+    CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
   >,
   Observer: typeof QueryObserver,
-): QueryObserverResult<TData, TError> {
-  const queryClient = useQueryClient({ context: options.context })
-  const emptyData = Symbol('empty')
-  const defaultedOptions = queryClient.defaultQueryOptions(options)
+  queryClient?: () => QueryClient,
+) {
+  const client = createMemo(() => useQueryClient(queryClient?.()))
+
+  const defaultedOptions = client().defaultQueryOptions(options())
   defaultedOptions._optimisticResults = 'optimistic'
-  const observer = new Observer(queryClient, defaultedOptions)
+  if (isServer) {
+    defaultedOptions.retry = false
+    defaultedOptions.throwErrors = true
+  }
+  const observer = new Observer(client(), defaultedOptions)
 
   const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
-    // @ts-ignore
     observer.getOptimisticResult(defaultedOptions),
   )
 
-  const [dataResource, { refetch, mutate }] = createResource<TData | undefined>(
-    () => {
-      return new Promise((resolve) => {
-        if (!(state.isFetching && state.isLoading)) {
-          if (unwrap(state.data) === emptyData) {
-            resolve(undefined)
+  const createServerSubscriber = (
+    resolve: (
+      data:
+        | QueryObserverResult<TData, TError>
+        | PromiseLike<QueryObserverResult<TData, TError> | undefined>
+        | undefined,
+    ) => void,
+    reject: (reason?: any) => void,
+  ) => {
+    return observer.subscribe((result) => {
+      notifyManager.batchCalls(() => {
+        const unwrappedResult = { ...unwrap(result) }
+        if (unwrappedResult.isError) {
+          if (process.env['NODE_ENV'] === 'development') {
+            console.error(unwrappedResult.error)
           }
-          resolve(unwrap(state.data))
+          reject(unwrappedResult.error)
+        }
+        if (unwrappedResult.isSuccess) {
+          resolve(unwrappedResult)
+        }
+      })()
+    })
+  }
+
+  const createClientSubscriber = () => {
+    return observer.subscribe((result) => {
+      notifyManager.batchCalls(() => {
+        const unwrappedResult = { ...unwrap(result) }
+        // If the query has data we dont suspend but instead mutate the resource
+        // This could happen when placeholderData/initialData is defined
+        if (
+          queryResource()?.data &&
+          unwrappedResult.data &&
+          !queryResource.loading
+        ) {
+          setState(unwrappedResult)
+          mutate(state)
+        } else {
+          setState(unwrappedResult)
+          refetch()
+        }
+      })()
+    })
+  }
+
+  /**
+   * Unsubscribe is set lazily, so that we can subscribe after hydration when needed.
+   */
+  let unsubscribe: (() => void) | null = null
+
+  const [queryResource, { refetch, mutate }] = createResource<
+    QueryObserverResult<TData, TError> | undefined
+  >(
+    () => {
+      return new Promise((resolve, reject) => {
+        if (isServer) {
+          unsubscribe = createServerSubscriber(resolve, reject)
+        } else {
+          if (!unsubscribe) {
+            unsubscribe = createClientSubscriber()
+          }
+        }
+        if (!state.isLoading) {
+          resolve(state)
         }
       })
     },
+    {
+      initialValue: state,
+
+      // If initialData is provided, we resolve the resource immediately
+      ssrLoadFrom: options().initialData ? 'initial' : 'server',
+
+      get deferStream() {
+        return options().deferStream
+      },
+
+      /**
+       * If this resource was populated on the server (either sync render, or streamed in over time), onHydrated
+       * will be called. This is the point at which we can hydrate the query cache state, and setup the query subscriber.
+       *
+       * Leveraging onHydrated allows us to plug into the async and streaming support that solidjs resources already support.
+       *
+       * Note that this is only invoked on the client, for queries that were originally run on the server.
+       */
+      onHydrated(_k, info) {
+        if (info.value) {
+          hydrate(client(), {
+            queries: [
+              {
+                queryKey: defaultedOptions.queryKey,
+                queryHash: defaultedOptions.queryHash,
+                state: info.value,
+              },
+            ],
+          })
+        }
+
+        if (!unsubscribe) {
+          /**
+           * Do not refetch query on mount if query was fetched on server,
+           * even if `staleTime` is not set.
+           */
+          const newOptions = { ...defaultedOptions }
+          if (defaultedOptions.staleTime || !defaultedOptions.initialData) {
+            newOptions.refetchOnMount = false
+          }
+          // Setting the options as an immutable object to prevent
+          // wonky behavior with observer subscriptions
+          observer.setOptions(newOptions)
+          setState(observer.getOptimisticResult(newOptions))
+          unsubscribe = createClientSubscriber()
+        }
+      },
+    },
   )
 
-  batch(() => {
-    mutate(() => unwrap(state.data))
-    refetch()
+  onCleanup(() => {
+    if (unsubscribe) {
+      unsubscribe()
+      unsubscribe = null
+    }
   })
-
-  let taskQueue: Array<() => void> = []
-
-  const unsubscribe = observer.subscribe((result) => {
-    taskQueue.push(() => {
-      batch(() => {
-        const unwrappedResult = { ...unwrap(result) }
-        if (unwrappedResult.data === undefined) {
-          // This is a hack to prevent Solid
-          // from deleting the data property when it is `undefined`
-          // ref: https://www.solidjs.com/docs/latest/api#updating-stores
-          // @ts-ignore
-          unwrappedResult.data = emptyData
-        }
-        setState(unwrap(unwrappedResult))
-        mutate(() => unwrap(result.data))
-        refetch()
-      })
-    })
-
-    queueMicrotask(() => {
-      const taskToRun = taskQueue.pop()
-      if (taskToRun) {
-        taskToRun()
-      }
-      taskQueue = []
-    })
-  })
-
-  onCleanup(() => unsubscribe())
 
   onMount(() => {
     observer.setOptions(defaultedOptions, { listeners: false })
   })
 
   createComputed(() => {
-    const newDefaultedOptions = queryClient.defaultQueryOptions(options)
-    observer.setOptions(newDefaultedOptions)
+    observer.setOptions(client().defaultQueryOptions(options()))
   })
 
   createComputed(
@@ -105,7 +193,7 @@ export function createBaseQuery<
         if (
           state.isError &&
           !state.isFetching &&
-          shouldThrowError(observer.options.useErrorBoundary, [
+          shouldThrowError(observer.options.throwErrors, [
             state.error,
             observer.getCurrentQuery(),
           ])
@@ -122,11 +210,11 @@ export function createBaseQuery<
       prop: keyof QueryObserverResult<TData, TError>,
     ): any {
       if (prop === 'data') {
-        return dataResource()
+        return queryResource()?.data
       }
       return Reflect.get(target, prop)
     },
   }
 
-  return new Proxy(state, handler) as QueryObserverResult<TData, TError>
+  return new Proxy(state, handler)
 }

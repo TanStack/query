@@ -1,5 +1,5 @@
 import type { MutationObserver } from './mutationObserver'
-import type { MutationOptions, NotifyEvent } from './types'
+import type { NotifyEvent, MutationOptions, RegisteredError } from './types'
 import type { QueryClient } from './queryClient'
 import { notifyManager } from './notifyManager'
 import type { Action, MutationState } from './mutation'
@@ -75,17 +75,14 @@ type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
 // CLASS
 
 export class MutationCache extends Subscribable<MutationCacheListener> {
-  config: MutationCacheConfig
+  #mutations: Mutation<any, any, any, any>[]
+  #mutationId: number
+  #resuming: Promise<unknown> | undefined
 
-  private mutations: Mutation<any, any, any, any>[]
-  private mutationId: number
-  private resuming: Promise<unknown> | undefined
-
-  constructor(config?: MutationCacheConfig) {
+  constructor(public config: MutationCacheConfig = {}) {
     super()
-    this.config = config || {}
-    this.mutations = []
-    this.mutationId = 0
+    this.#mutations = []
+    this.#mutationId = 0
   }
 
   build<TData, TError, TVariables, TContext>(
@@ -95,13 +92,9 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   ): Mutation<TData, TError, TVariables, TContext> {
     const mutation = new Mutation({
       mutationCache: this,
-      logger: client.getLogger(),
-      mutationId: ++this.mutationId,
+      mutationId: ++this.#mutationId,
       options: client.defaultMutationOptions(options),
       state,
-      defaultOptions: options.mutationKey
-        ? client.getMutationDefaults(options.mutationKey)
-        : undefined,
     })
 
     this.add(mutation)
@@ -110,39 +103,46 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   add(mutation: Mutation<any, any, any, any>): void {
-    this.mutations.push(mutation)
+    this.#mutations.push(mutation)
     this.notify({ type: 'added', mutation })
   }
 
   remove(mutation: Mutation<any, any, any, any>): void {
-    this.mutations = this.mutations.filter((x) => x !== mutation)
+    this.#mutations = this.#mutations.filter((x) => x !== mutation)
     this.notify({ type: 'removed', mutation })
   }
 
   clear(): void {
     notifyManager.batch(() => {
-      this.mutations.forEach((mutation) => {
+      this.#mutations.forEach((mutation) => {
         this.remove(mutation)
       })
     })
   }
 
   getAll(): Mutation[] {
-    return this.mutations
+    return this.#mutations
   }
 
-  find<TData = unknown, TError = unknown, TVariables = any, TContext = unknown>(
+  find<
+    TData = unknown,
+    TError = RegisteredError,
+    TVariables = any,
+    TContext = unknown,
+  >(
     filters: MutationFilters,
   ): Mutation<TData, TError, TVariables, TContext> | undefined {
     if (typeof filters.exact === 'undefined') {
       filters.exact = true
     }
 
-    return this.mutations.find((mutation) => matchMutation(filters, mutation))
+    return this.#mutations.find((mutation) => matchMutation(filters, mutation))
   }
 
-  findAll(filters: MutationFilters): Mutation[] {
-    return this.mutations.filter((mutation) => matchMutation(filters, mutation))
+  findAll(filters: MutationFilters = {}): Mutation[] {
+    return this.#mutations.filter((mutation) =>
+      matchMutation(filters, mutation),
+    )
   }
 
   notify(event: MutationCacheNotifyEvent) {
@@ -154,9 +154,9 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   resumePausedMutations(): Promise<unknown> {
-    this.resuming = (this.resuming ?? Promise.resolve())
+    this.#resuming = (this.#resuming ?? Promise.resolve())
       .then(() => {
-        const pausedMutations = this.mutations.filter((x) => x.state.isPaused)
+        const pausedMutations = this.#mutations.filter((x) => x.state.isPaused)
         return notifyManager.batch(() =>
           pausedMutations.reduce(
             (promise, mutation) =>
@@ -166,9 +166,9 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
         )
       })
       .then(() => {
-        this.resuming = undefined
+        this.#resuming = undefined
       })
 
-    return this.resuming
+    return this.#resuming
   }
 }

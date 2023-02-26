@@ -4,9 +4,9 @@ import type { ParentProps } from 'solid-js'
 import { createEffect, createSignal, onCleanup, Show } from 'solid-js'
 
 let queryKeyCount = 0
-export function queryKey(): () => Array<string> {
-  const localQueryKeyCount = queryKeyCount++
-  return () => [`query_${localQueryKeyCount}`]
+export function queryKey(): Array<string> {
+  queryKeyCount++
+  return [`query_${queryKeyCount}`]
 }
 
 export const Blink = (
@@ -30,8 +30,7 @@ export const Blink = (
 }
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
-  jest.spyOn(console, 'error').mockImplementation(() => undefined)
-  return new QueryClient({ logger: mockLogger, ...config })
+  return new QueryClient(config)
 }
 
 export function mockVisibilityState(value: DocumentVisibilityState) {
@@ -40,12 +39,6 @@ export function mockVisibilityState(value: DocumentVisibilityState) {
 
 export function mockNavigatorOnLine(value: boolean) {
   return jest.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
-}
-
-export const mockLogger = {
-  log: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
 }
 
 export function sleep(timeout: number): Promise<void> {

@@ -36,13 +36,11 @@
     "build:types": "tsc --build"
   },
   "devDependencies": {
+    "@tanstack/react-query": "workspace:*",
     "@types/react": "^18.0.14",
     "@types/react-dom": "^18.0.5",
     "react": "^18.2.0",
-    "react-17": "npm:react@^17.0.2",
-    "react-dom": "^18.2.0",
-    "react-dom-17": "npm:react-dom@^17.0.2",
-    "@tanstack/react-query": "workspace:*"
+    "react-dom": "^18.2.0"
   },
   "dependencies": {
     "@tanstack/query-persist-client-core": "workspace:*"

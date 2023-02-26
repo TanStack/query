@@ -1,14 +1,9 @@
 import { vi } from 'vitest'
 import { act } from '@testing-library/svelte'
-import {
-  QueryClient,
-  type QueryClientConfig,
-  type MutationOptions,
-} from '../index'
+import { QueryClient, type QueryClientConfig } from '../index'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
-  vi.spyOn(console, 'error').mockImplementation(() => undefined)
-  return new QueryClient({ logger: mockLogger, ...config })
+  return new QueryClient(config)
 }
 
 export function mockVisibilityState(value: DocumentVisibilityState) {
@@ -17,12 +12,6 @@ export function mockVisibilityState(value: DocumentVisibilityState) {
 
 export function mockNavigatorOnLine(value: boolean) {
   return vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
-}
-
-export const mockLogger = {
-  log: vi.fn(),
-  warn: vi.fn(),
-  error: vi.fn(),
 }
 
 let queryKeyCount = 0
@@ -48,25 +37,4 @@ export function setActTimeout(fn: () => void, ms?: number) {
       fn()
     })
   }, ms)
-}
-
-/**
- * Assert the parameter is of a specific type.
- */
-export function expectType<T>(_: T): void {
-  return undefined
-}
-
-/**
- * Assert the parameter is not typed as `any`
- */
-export function expectTypeNotAny<T>(_: 0 extends 1 & T ? never : T): void {
-  return undefined
-}
-
-export function executeMutation(
-  queryClient: QueryClient,
-  options: MutationOptions<any, any, any, any>,
-): Promise<unknown> {
-  return queryClient.getMutationCache().build(queryClient, options).execute()
 }

@@ -1,8 +1,5 @@
-import {
-  notifyManager,
-  type QueryKey,
-  type QueryObserver,
-} from '@tanstack/query-core'
+import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
+import { notifyManager } from '@tanstack/query-core'
 import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
 import { useQueryClient } from './useQueryClient'
 import { derived, readable } from 'svelte/store'
@@ -22,9 +19,10 @@ export function createBaseQuery<
     TQueryKey
   >,
   Observer: typeof QueryObserver,
+  queryClient?: QueryClient,
 ): CreateBaseQueryResult<TData, TError> {
-  const queryClient = useQueryClient()
-  const defaultedOptions = queryClient.defaultQueryOptions(options)
+  const client = useQueryClient(queryClient)
+  const defaultedOptions = client.defaultQueryOptions(options)
   defaultedOptions._optimisticResults = 'optimistic'
 
   let observer = new Observer<
@@ -33,7 +31,7 @@ export function createBaseQuery<
     TData,
     TQueryData,
     TQueryKey
-  >(queryClient, defaultedOptions)
+  >(client, defaultedOptions)
 
   // Include callbacks in batch renders
   if (defaultedOptions.onError) {

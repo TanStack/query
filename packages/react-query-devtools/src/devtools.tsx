@@ -1,11 +1,9 @@
 'use client'
 import * as React from 'react'
-import { useSyncExternalStore } from './useSyncExternalStore'
 import type {
   QueryCache,
   QueryClient,
   QueryKey as QueryKeyType,
-  ContextOptions,
 } from '@tanstack/react-query'
 import {
   useQueryClient,
@@ -42,7 +40,7 @@ import { getQueryStatusLabel, getQueryStatusColor } from './utils'
 import Explorer from './Explorer'
 import Logo from './Logo'
 
-export interface DevtoolsOptions extends ContextOptions {
+export interface DevtoolsOptions {
   /**
    * Set this true if you want the dev tools to default to being open
    */
@@ -79,9 +77,13 @@ export interface DevtoolsOptions extends ContextOptions {
    * nonce for style element for CSP
    */
   styleNonce?: string
+  /**
+   * Custom instance of QueryClient
+   */
+  queryClient?: QueryClient
 }
 
-interface DevtoolsPanelOptions extends ContextOptions {
+interface DevtoolsPanelOptions {
   /**
    * The standard React style object used to style a component with inline styles
    */
@@ -123,6 +125,10 @@ interface DevtoolsPanelOptions extends ContextOptions {
    * Use this to add props to the close button. For example, you can add className, style (merge and override default style), onClick (extend default handler), etc.
    */
   closeButtonProps?: React.ComponentPropsWithoutRef<'button'>
+  /**
+   * Custom instance of QueryClient
+   */
+  queryClient?: QueryClient
 }
 
 export function ReactQueryDevtools({
@@ -132,7 +138,7 @@ export function ReactQueryDevtools({
   toggleButtonProps = {},
   position = 'bottom-left',
   containerElement: Container = 'aside',
-  context,
+  queryClient,
   styleNonce,
   panelPosition: initialPanelPosition = 'bottom',
 }: DevtoolsOptions): React.ReactElement | null {
@@ -332,7 +338,7 @@ export function ReactQueryDevtools({
       <ThemeProvider theme={theme}>
         <ReactQueryDevtoolsPanel
           ref={panelRef as any}
-          context={context}
+          queryClient={queryClient}
           styleNonce={styleNonce}
           position={panelPosition}
           onPositionChange={setPanelPosition}
@@ -403,7 +409,7 @@ const useSubscribeToQueryCache = <T,>(
   getSnapshot: () => T,
   skip: boolean = false,
 ): T => {
-  return useSyncExternalStore(
+  return React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) => {
         if (!skip)
@@ -427,7 +433,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     isOpen = true,
     styleNonce,
     setIsOpen,
-    context,
+    queryClient,
     onDragStart,
     onPositionChange,
     showCloseButton,
@@ -438,8 +444,8 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
 
   const { onClick: onCloseClick, ...otherCloseButtonProps } = closeButtonProps
 
-  const queryClient = useQueryClient({ context })
-  const queryCache = queryClient.getQueryCache()
+  const client = useQueryClient(queryClient)
+  const queryCache = client.getQueryCache()
 
   const [sort, setSort] = useLocalStorage(
     'reactQueryDevtoolsSortFn',
@@ -737,7 +743,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
           <ActiveQuery
             activeQueryHash={activeQueryHash}
             queryCache={queryCache}
-            queryClient={queryClient}
+            queryClient={client}
           />
         ) : null}
 
@@ -1098,27 +1104,27 @@ const QueryRow = React.memo(
     const queryHash =
       useSubscribeToQueryCache(
         queryCache,
-        () => queryCache.find(queryKey)?.queryHash,
+        () => queryCache.find({ queryKey })?.queryHash,
       ) ?? ''
 
     const queryState = useSubscribeToQueryCache(
       queryCache,
-      () => queryCache.find(queryKey)?.state,
+      () => queryCache.find({ queryKey })?.state,
     )
 
     const isStale =
       useSubscribeToQueryCache(queryCache, () =>
-        queryCache.find(queryKey)?.isStale(),
+        queryCache.find({ queryKey })?.isStale(),
       ) ?? false
 
     const isDisabled =
       useSubscribeToQueryCache(queryCache, () =>
-        queryCache.find(queryKey)?.isDisabled(),
+        queryCache.find({ queryKey })?.isDisabled(),
       ) ?? false
 
     const observerCount =
       useSubscribeToQueryCache(queryCache, () =>
-        queryCache.find(queryKey)?.getObserversCount(),
+        queryCache.find({ queryKey })?.getObserversCount(),
       ) ?? 0
 
     if (!queryState) {

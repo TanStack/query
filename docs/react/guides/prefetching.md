@@ -21,7 +21,7 @@ const prefetchTodos = async () => {
 
 - If data for this query is already in the cache and **not invalidated**, the data will not be fetched
 - If a `staleTime` is passed eg. `prefetchQuery({queryKey: ['todos'], queryFn: fn, staleTime: 5000 })` and the data is older than the specified staleTime, the query will be fetched
-- If no instances of `useQuery` appear for a prefetched query, it will be deleted and garbage collected after the time specified in `cacheTime`.
+- If no instances of `useQuery` appear for a prefetched query, it will be deleted and garbage collected after the time specified in `gcTime`.
 
 ## Manually Priming a Query
 

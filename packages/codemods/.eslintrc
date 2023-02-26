@@ -1,0 +1,15 @@
+{
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "sourceType": "module"
+  },
+  "overrides": [
+    {
+      "files": ["**/__testfixtures__/*"],
+      "rules": {
+        "import/no-unresolved": "off",
+        "@typescript-eslint/no-unused-vars": "off"
+      }
+    }
+  ]
+}

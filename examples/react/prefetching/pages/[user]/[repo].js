@@ -16,7 +16,7 @@ export default () => {
   return (
     <div style={{ textAlign: 'center' }}>
       <h1>{id}</h1>
-      {status === 'loading' ? (
+      {status === 'pending' ? (
         'Loading...'
       ) : status === 'error' ? (
         <span>Error: {error.message}</span>

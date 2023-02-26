@@ -17,14 +17,17 @@ describe('QueryErrorResetBoundary', () => {
   const queryClient = createQueryClient({ queryCache })
 
   it('should retry fetch if the reset error boundary has been reset', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
     const key = queryKey()
 
     let succeed = false
 
     function Page() {
-      const { data } = useQuery(
-        key,
-        async () => {
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(10)
           if (!succeed) {
             throw new Error('Error')
@@ -32,11 +35,9 @@ describe('QueryErrorResetBoundary', () => {
             return 'data'
           }
         },
-        {
-          retry: false,
-          useErrorBoundary: true,
-        },
-      )
+        retry: false,
+        throwErrors: true,
+      })
       return <div>{data}</div>
     }
 
@@ -70,17 +71,21 @@ describe('QueryErrorResetBoundary', () => {
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('data'))
+    consoleMock.mockRestore()
   })
 
   it('should not throw error if query is disabled', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
     const key = queryKey()
 
     let succeed = false
 
     function Page() {
-      const { data, status } = useQuery(
-        key,
-        async () => {
+      const { data, status } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(10)
           if (!succeed) {
             throw new Error('Error')
@@ -88,12 +93,10 @@ describe('QueryErrorResetBoundary', () => {
             return 'data'
           }
         },
-        {
-          retry: false,
-          enabled: !succeed,
-          useErrorBoundary: true,
-        },
-      )
+        retry: false,
+        enabled: !succeed,
+        throwErrors: true,
+      })
       return (
         <div>
           <div>status: {status}</div>
@@ -132,18 +135,23 @@ describe('QueryErrorResetBoundary', () => {
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('status: error'))
+    consoleMock.mockRestore()
   })
 
   it('should not throw error if query is disabled, and refetch if query becomes enabled again', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
     const key = queryKey()
 
     let succeed = false
 
     function Page() {
       const [enabled, setEnabled] = React.useState(false)
-      const { data } = useQuery(
-        key,
-        async () => {
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(10)
           if (!succeed) {
             throw new Error('Error')
@@ -151,12 +159,10 @@ describe('QueryErrorResetBoundary', () => {
             return 'data'
           }
         },
-        {
-          retry: false,
-          enabled,
-          useErrorBoundary: true,
-        },
-      )
+        retry: false,
+        enabled,
+        throwErrors: true,
+      })
 
       React.useEffect(() => {
         setEnabled(true)
@@ -195,23 +201,26 @@ describe('QueryErrorResetBoundary', () => {
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('data'))
+    consoleMock.mockRestore()
   })
 
   it('should throw error if query is disabled and manually refetched', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
     const key = queryKey()
 
     function Page() {
-      const { data, refetch, status, fetchStatus } = useQuery<string>(
-        key,
-        async () => {
+      const { data, refetch, status, fetchStatus } = useQuery<string>({
+        queryKey: key,
+        queryFn: async () => {
           throw new Error('Error')
         },
-        {
-          retry: false,
-          enabled: false,
-          useErrorBoundary: true,
-        },
-      )
+        retry: false,
+        enabled: false,
+        throwErrors: true,
+      })
 
       return (
         <div>
@@ -250,21 +259,26 @@ describe('QueryErrorResetBoundary', () => {
     )
 
     await waitFor(() =>
-      rendered.getByText('status: loading, fetchStatus: idle'),
+      rendered.getByText('status: pending, fetchStatus: idle'),
     )
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     await waitFor(() => rendered.getByText('error boundary'))
+    consoleMock.mockRestore()
   })
 
   it('should not retry fetch if the reset error boundary has not been reset', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
     const key = queryKey()
 
     let succeed = false
 
     function Page() {
-      const { data } = useQuery(
-        key,
-        async () => {
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(10)
           if (!succeed) {
             throw new Error('Error')
@@ -272,11 +286,9 @@ describe('QueryErrorResetBoundary', () => {
             return 'data'
           }
         },
-        {
-          retry: false,
-          useErrorBoundary: true,
-        },
-      )
+        retry: false,
+        throwErrors: true,
+      })
       return <div>{data}</div>
     }
 
@@ -309,17 +321,22 @@ describe('QueryErrorResetBoundary', () => {
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('error boundary'))
+    consoleMock.mockRestore()
   })
 
   it('should retry fetch if the reset error boundary has been reset and the query contains data from a previous fetch', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
     const key = queryKey()
 
     let succeed = false
 
     function Page() {
-      const { data } = useQuery(
-        key,
-        async () => {
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(10)
           if (!succeed) {
             throw new Error('Error')
@@ -327,12 +344,10 @@ describe('QueryErrorResetBoundary', () => {
             return 'data'
           }
         },
-        {
-          retry: false,
-          useErrorBoundary: true,
-          initialData: 'initial',
-        },
-      )
+        retry: false,
+        throwErrors: true,
+        initialData: 'initial',
+      })
       return <div>{data}</div>
     }
 
@@ -366,18 +381,23 @@ describe('QueryErrorResetBoundary', () => {
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('data'))
+    consoleMock.mockRestore()
   })
 
   it('should not retry fetch if the reset error boundary has not been reset after a previous reset', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
     const key = queryKey()
 
     let succeed = false
     let shouldReset = true
 
     function Page() {
-      const { data } = useQuery(
-        key,
-        async () => {
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(10)
           if (!succeed) {
             throw new Error('Error')
@@ -385,11 +405,9 @@ describe('QueryErrorResetBoundary', () => {
             return 'data'
           }
         },
-        {
-          retry: false,
-          useErrorBoundary: true,
-        },
-      )
+        retry: false,
+        throwErrors: true,
+      })
       return <div>{data}</div>
     }
 
@@ -431,25 +449,28 @@ describe('QueryErrorResetBoundary', () => {
     shouldReset = false
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('error boundary'))
+    consoleMock.mockRestore()
   })
 
   it('should throw again on error after the reset error boundary has been reset', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
     const key = queryKey()
     let fetchCount = 0
 
     function Page() {
-      const { data } = useQuery<string>(
-        key,
-        async () => {
+      const { data } = useQuery<string>({
+        queryKey: key,
+        queryFn: async () => {
           fetchCount++
           await sleep(10)
           throw new Error('Error')
         },
-        {
-          retry: false,
-          useErrorBoundary: true,
-        },
-      )
+        retry: false,
+        throwErrors: true,
+      })
       return <div>{data}</div>
     }
 
@@ -486,17 +507,22 @@ describe('QueryErrorResetBoundary', () => {
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('error boundary'))
     expect(fetchCount).toBe(3)
+    consoleMock.mockRestore()
   })
 
   it('should never render the component while the query is in error state', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
     const key = queryKey()
     let fetchCount = 0
     let renders = 0
 
     function Page() {
-      const { data } = useQuery(
-        key,
-        async () => {
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
           fetchCount++
           await sleep(10)
           if (fetchCount > 2) {
@@ -505,11 +531,9 @@ describe('QueryErrorResetBoundary', () => {
             throw new Error('Error')
           }
         },
-        {
-          retry: false,
-          suspense: true,
-        },
-      )
+        retry: false,
+        suspense: true,
+      })
       renders++
       return <div>{data}</div>
     }
@@ -550,9 +574,14 @@ describe('QueryErrorResetBoundary', () => {
     await waitFor(() => rendered.getByText('data'))
     expect(fetchCount).toBe(3)
     expect(renders).toBe(1)
+    consoleMock.mockRestore()
   })
 
   it('should render children', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
     function Page() {
       return (
         <div>
@@ -569,17 +598,22 @@ describe('QueryErrorResetBoundary', () => {
     )
 
     expect(rendered.queryByText('page')).not.toBeNull()
+    consoleMock.mockRestore()
   })
 
   it('should show error boundary when using tracked queries even though we do not track the error field', async () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
     const key = queryKey()
 
     let succeed = false
 
     function Page() {
-      const { data } = useQuery(
-        key,
-        async () => {
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(10)
           if (!succeed) {
             throw new Error('Error')
@@ -587,11 +621,9 @@ describe('QueryErrorResetBoundary', () => {
             return 'data'
           }
         },
-        {
-          retry: false,
-          useErrorBoundary: true,
-        },
-      )
+        retry: false,
+        throwErrors: true,
+      })
       return <div>{data}</div>
     }
 
@@ -625,5 +657,6 @@ describe('QueryErrorResetBoundary', () => {
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('data'))
+    consoleMock.mockRestore()
   })
 })

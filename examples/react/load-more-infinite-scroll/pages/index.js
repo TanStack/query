@@ -6,8 +6,8 @@ import {
   useInfiniteQuery,
   QueryClient,
   QueryClientProvider,
-} from "@tanstack/react-query"
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
+} from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const queryClient = new QueryClient()
 
@@ -33,17 +33,15 @@ function Example() {
     fetchPreviousPage,
     hasNextPage,
     hasPreviousPage,
-  } = useInfiniteQuery(
-    ['projects'],
-    async ({ pageParam = 0 }) => {
+  } = useInfiniteQuery({
+    queryKey: ['projects'],
+    queryFn: async ({ pageParam = 0 }) => {
       const res = await axios.get('/api/projects?cursor=' + pageParam)
       return res.data
     },
-    {
-      getPreviousPageParam: (firstPage) => firstPage.previousId ?? undefined,
-      getNextPageParam: (lastPage) => lastPage.nextId ?? undefined,
-    },
-  )
+    getPreviousPageParam: (firstPage) => firstPage.previousId ?? undefined,
+    getNextPageParam: (lastPage) => lastPage.nextId ?? undefined,
+  })
 
   React.useEffect(() => {
     if (inView) {
@@ -54,7 +52,7 @@ function Example() {
   return (
     <div>
       <h1>Infinite Loading</h1>
-      {status === 'loading' ? (
+      {status === 'pending' ? (
         <p>Loading...</p>
       ) : status === 'error' ? (
         <span>Error: {error.message}</span>

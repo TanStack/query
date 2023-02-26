@@ -17,7 +17,7 @@ describe('Server Side Rendering', () => {
     const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
 
     function Page() {
-      const query = useQuery(key, queryFn)
+      const query = useQuery({ queryKey: key, queryFn })
 
       const content = `status ${query.status}`
 
@@ -34,7 +34,7 @@ describe('Server Side Rendering', () => {
       </QueryClientProvider>,
     )
 
-    expect(markup).toContain('status loading')
+    expect(markup).toContain('status pending')
     expect(queryFn).toHaveBeenCalledTimes(0)
     queryCache.clear()
   })
@@ -44,9 +44,12 @@ describe('Server Side Rendering', () => {
     const queryClient = createQueryClient({ queryCache })
     const key = queryKey()
     const fetchFn = () => Promise.resolve('data')
-    const data = await queryClient.fetchQuery(key, fetchFn)
+    const data = await queryClient.fetchQuery({
+      queryKey: key,
+      queryFn: fetchFn,
+    })
     expect(data).toBe('data')
-    expect(queryCache.find(key)?.state.data).toBe('data')
+    expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
     queryCache.clear()
   })
 
@@ -60,7 +63,7 @@ describe('Server Side Rendering', () => {
     })
 
     function Page() {
-      const query = useQuery(key, queryFn)
+      const query = useQuery({ queryKey: key, queryFn })
 
       const content = `status ${query.status}`
 
@@ -71,7 +74,7 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    await queryClient.prefetchQuery(key, queryFn)
+    await queryClient.prefetchQuery({ queryKey: key, queryFn })
 
     const markup = renderToString(
       <QueryClientProvider client={queryClient}>
@@ -92,7 +95,9 @@ describe('Server Side Rendering', () => {
 
     function Page() {
       const [page, setPage] = React.useState(1)
-      const { data } = useQuery([key, page], async () => page, {
+      const { data } = useQuery({
+        queryKey: [key, page],
+        queryFn: async () => page,
         initialData: 1,
       })
 
@@ -126,7 +131,7 @@ describe('Server Side Rendering', () => {
     })
 
     function Page() {
-      const query = useInfiniteQuery(key, queryFn)
+      const query = useInfiniteQuery({ queryKey: key, queryFn })
       return (
         <ul>
           {query.data?.pages.map((page) => (
@@ -136,7 +141,7 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    await queryClient.prefetchInfiniteQuery(key, queryFn)
+    await queryClient.prefetchInfiniteQuery({ queryKey: key, queryFn })
 
     const markup = renderToString(
       <QueryClientProvider client={queryClient}>

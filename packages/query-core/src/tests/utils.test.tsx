@@ -1,12 +1,13 @@
 import {
   replaceEqualDeep,
-  partialDeepEqual,
+  partialMatchKey,
   isPlainObject,
-  parseMutationArgs,
   matchMutation,
   scheduleMicrotask,
   sleep,
   isPlainArray,
+  addToEnd,
+  addToStart,
 } from '../utils'
 import { Mutation } from '../mutation'
 import { createQueryClient } from './utils'
@@ -67,47 +68,47 @@ describe('core/utils', () => {
     })
   })
 
-  describe('partialDeepEqual', () => {
+  describe('partialMatchKey', () => {
     it('should return `true` if a includes b', () => {
-      const a = { a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }
-      const b = { a: { b: 'b' }, c: 'c', d: [] }
-      expect(partialDeepEqual(a, b)).toEqual(true)
+      const a = [{ a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }]
+      const b = [{ a: { b: 'b' }, c: 'c', d: [] }]
+      expect(partialMatchKey(a, b)).toEqual(true)
     })
 
     it('should return `false` if a does not include b', () => {
-      const a = { a: { b: 'b' }, c: 'c', d: [] }
-      const b = { a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }
-      expect(partialDeepEqual(a, b)).toEqual(false)
+      const a = [{ a: { b: 'b' }, c: 'c', d: [] }]
+      const b = [{ a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }]
+      expect(partialMatchKey(a, b)).toEqual(false)
     })
 
     it('should return `true` if array a includes array b', () => {
       const a = [1, 2, 3]
       const b = [1, 2]
-      expect(partialDeepEqual(a, b)).toEqual(true)
+      expect(partialMatchKey(a, b)).toEqual(true)
     })
 
     it('should return `false` if a is null and b is not', () => {
-      const a = null
-      const b = { a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }
-      expect(partialDeepEqual(a, b)).toEqual(false)
+      const a = [null]
+      const b = [{ a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }]
+      expect(partialMatchKey(a, b)).toEqual(false)
     })
 
     it('should return `false` if a contains null and b is not', () => {
-      const a = { a: null, c: 'c', d: [] }
-      const b = { a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }
-      expect(partialDeepEqual(a, b)).toEqual(false)
+      const a = [{ a: null, c: 'c', d: [] }]
+      const b = [{ a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }]
+      expect(partialMatchKey(a, b)).toEqual(false)
     })
 
     it('should return `false` if b is null and a is not', () => {
-      const a = { a: { b: 'b' }, c: 'c', d: [] }
-      const b = null
-      expect(partialDeepEqual(a, b)).toEqual(false)
+      const a = [{ a: { b: 'b' }, c: 'c', d: [] }]
+      const b = [null]
+      expect(partialMatchKey(a, b)).toEqual(false)
     })
 
     it('should return `false` if b contains null and a is not', () => {
-      const a = { a: { b: 'b' }, c: 'c', d: [] }
-      const b = { a: null, c: 'c', d: [{ d: 'd ' }] }
-      expect(partialDeepEqual(a, b)).toEqual(false)
+      const a = [{ a: { b: 'b' }, c: 'c', d: [] }]
+      const b = [{ a: null, c: 'c', d: [{ d: 'd ' }] }]
+      expect(partialMatchKey(a, b)).toEqual(false)
     })
   })
 
@@ -327,13 +328,6 @@ describe('core/utils', () => {
     })
   })
 
-  describe('parseMutationArgs', () => {
-    it('should return mutation options', () => {
-      const options = { mutationKey: ['key'] }
-      expect(parseMutationArgs(options)).toMatchObject(options)
-    })
-  })
-
   describe('matchMutation', () => {
     it('should return false if mutationKey options is undefined', () => {
       const filters = { mutationKey: ['key1'] }
@@ -355,6 +349,67 @@ describe('core/utils', () => {
       expect(callback).not.toHaveBeenCalled()
       await sleep(0)
       expect(callback).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('addToEnd', () => {
+    it('should add item to the end of the array', () => {
+      const items = [1, 2, 3]
+      const newItems = addToEnd(items, 4)
+      expect(newItems).toEqual([1, 2, 3, 4])
+    })
+
+    it('should not exceed max if provided', () => {
+      const items = [1, 2, 3]
+      const newItems = addToEnd(items, 4, 3)
+      expect(newItems).toEqual([2, 3, 4])
+    })
+
+    it('should add item to the end of the array when max = 0', () => {
+      const items = [1, 2, 3]
+      const item = 4
+      const max = 0
+      expect(addToEnd(items, item, max)).toEqual([1, 2, 3, 4])
+    })
+
+    it('should add item to the end of the array when max is undefined', () => {
+      const items = [1, 2, 3]
+      const item = 4
+      const max = undefined
+      expect(addToEnd(items, item, max)).toEqual([1, 2, 3, 4])
+    })
+  })
+
+  describe('addToStart', () => {
+    it('should add an item to the start of the array', () => {
+      const items = [1, 2, 3]
+      const item = 4
+      const newItems = addToStart(items, item)
+      expect(newItems).toEqual([4, 1, 2, 3])
+    })
+
+    it('should respect the max argument', () => {
+      const items = [1, 2, 3]
+      const item = 4
+      const max = 2
+      const newItems = addToStart(items, item, max)
+      expect(newItems).toEqual([4, 1, 2])
+    })
+
+    it('should not remove any items if max = 0', () => {
+      const items = [1, 2, 3]
+      const item = 4
+      const max = 0
+      const newItems = addToStart(items, item, max)
+      expect(newItems).toEqual([4, 1, 2, 3])
+    })
+
+    it('should not remove any items if max is undefined', () => {
+      const items = [1, 2, 3]
+      const item = 4
+      const max = 0
+      const newItems = addToStart(items, item, max)
+      expect(newItems).toEqual([4, 1, 2, 3])
     })
   })
 })

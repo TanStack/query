@@ -11,16 +11,7 @@ export { MutationObserver } from './mutationObserver'
 export { notifyManager } from './notifyManager'
 export { focusManager } from './focusManager'
 export { onlineManager } from './onlineManager'
-export {
-  hashQueryKey,
-  replaceEqualDeep,
-  isError,
-  isServer,
-  parseQueryArgs,
-  parseFilterArgs,
-  parseMutationFilterArgs,
-  parseMutationArgs,
-} from './utils'
+export { hashKey, replaceEqualDeep, isServer, keepPreviousData } from './utils'
 export type { MutationFilters, QueryFilters, Updater } from './utils'
 export { isCancelledError } from './retryer'
 export {
@@ -34,7 +25,6 @@ export {
 export * from './types'
 export type { Query, QueryState } from './query'
 export type { Mutation } from './mutation'
-export type { Logger } from './logger'
 export type {
   DehydrateOptions,
   DehydratedState,
