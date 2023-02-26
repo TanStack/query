@@ -1,0 +1,66 @@
+import { packages, rootDir } from './config'
+import path from 'path'
+import fsp from 'fs/promises'
+import jsonfile from 'jsonfile'
+
+import type { PackageJson } from 'type-fest'
+
+async function run() {
+  console.info('Validating packages...')
+  const failedValidations: string[] = []
+
+  await Promise.all(
+    packages.map(async (pkg) => {
+      const pkgJson = await readPackageJson(
+        path.resolve(rootDir, 'packages', pkg.packageDir, 'package.json'),
+      )
+
+      const entries =
+        pkg.name === '@tanstack/eslint-plugin-query'
+          ? (['main'] as const)
+          : pkg.name === '@tanstack/svelte-query'
+          ? (['types', 'module'] as const)
+          : (['main', 'types', 'module'] as const)
+
+      await Promise.all(
+        entries.map(async (entryKey) => {
+          const entry = pkgJson[entryKey] as string
+
+          if (!entry) {
+            throw new Error(
+              `Missing entry for "${entryKey}" in ${pkg.packageDir}/package.json!`,
+            )
+          }
+
+          const filePath = path.resolve(
+            rootDir,
+            'packages',
+            pkg.packageDir,
+            entry,
+          )
+
+          try {
+            await fsp.access(filePath)
+          } catch (err) {
+            failedValidations.push(`Missing build file: ${filePath}`)
+          }
+        }),
+      )
+    }),
+  )
+  console.info('')
+  if (failedValidations.length > 0) {
+    throw new Error(
+      'Some packages failed validation:\n\n' + failedValidations.join('\n'),
+    )
+  }
+}
+
+run().catch((err) => {
+  console.info(err)
+  process.exit(1)
+})
+
+async function readPackageJson(pathName: string) {
+  return (await jsonfile.readFile(pathName)) as PackageJson
+}
