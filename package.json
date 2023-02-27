@@ -83,6 +83,7 @@
     "rollup-plugin-size": "^0.2.2",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-visualizer": "^5.9.0",
+    "rollup-preset-solid": "^1.4.0",
     "solid-js": "^1.5.7",
     "solid-testing-library": "^0.3.0",
     "stream-to-array": "^2.3.0",
