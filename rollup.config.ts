@@ -452,23 +452,6 @@ function createSolidQueryConfig() {
         'solid-js': 'Solid',
         '@tanstack/query-core': 'QueryCore',
       }
-      output.plugins = [
-        forceEnvPlugin('production'),
-        terser({
-          mangle: true,
-          compress: true,
-        }),
-        size({}),
-        visualizer({
-          filename: `${packageDir}/build/stats-html.html`,
-          gzipSize: true,
-        }),
-        visualizer({
-          filename: `${packageDir}/build/stats.json`,
-          json: true,
-          gzipSize: true,
-        }),
-      ]
     }
     output.dir = `${packageDir}/build/${format}`
   })
