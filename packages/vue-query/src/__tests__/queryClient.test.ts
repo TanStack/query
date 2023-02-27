@@ -263,9 +263,11 @@ describe('QueryCache', () => {
 
       queryClient.fetchInfiniteQuery({
         queryKey: queryKeyRef,
+        defaultPageParam: 0,
       })
 
       expect(QueryClientOrigin.prototype.fetchInfiniteQuery).toBeCalledWith({
+        defaultPageParam: 0,
         queryKey: queryKeyUnref,
       })
     })
@@ -278,9 +280,11 @@ describe('QueryCache', () => {
       queryClient.prefetchInfiniteQuery({
         queryKey: queryKeyRef,
         queryFn: fn,
+        defaultPageParam: 0,
       })
 
       expect(QueryClientOrigin.prototype.prefetchInfiniteQuery).toBeCalledWith({
+        defaultPageParam: 0,
         queryKey: queryKeyUnref,
         queryFn: fn,
       })

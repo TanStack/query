@@ -248,7 +248,7 @@ This in turn will enable other frameworks to have the same functionality in a fr
 import { queryClient } from './my-client'
 
 const { data } = useQuery(
-   {
+  {
     queryKey: ['users', id],
     queryFn: () => fetch(...),
 -   context: customContext
@@ -264,6 +264,26 @@ In v4, we introduced the possibility to define the pages to refetch for infinite
 However, refetching all pages might lead to UI inconsistencies. Also, this option is available on e.g. `queryClient.refetchQueries`, but it only does something for infinite queries, not "normal" queries.
 
 The v5 includes a new `maxPages` option for infinite queries to limit the number of pages to store in the query data and to refetch. This new feature handles the use cases initially identified for the `refetchPage` page feature without the related issues.
+
+### Infinite queries now need a `defaultPageParam`
+
+Previously, we've passed `undefined` to the `queryFn` as `pageParam`, and you could assign a default value to the `pageParam` parameter in the `queryFn` function signature. This had the drawback of storing `undefined` in the `queryCache`, which is not serializable.
+
+Instead, you now have to pass an explicit `defaultPageParam` to the infinite query options. This will be used as the `pageParam` for the first page:
+
+```diff
+useInfiniteQuery({
+   queryKey,
+-  queryFn: ({ pageParam = 0 }) => fetchSomething(pageParam),
++  queryFn: ({ pageParam }) => fetchSomething(pageParam),
++  defaultPageParam: 0,
+   getNextPageParam: (lastPage) => lastPage.next,
+})
+```
+
+### Manual mode for infinite queries has been removed
+
+Previously, we've allowed to overwrite the `pageParams` that would be returned from `getNextPageParam` or `getPreviousPageParam` by passing a `pageParam` value directly to `fetchNextPage` or `fetchPreviousPage`. This feature didn't work at all with refetches and wasn't widely known or used. This also means that `getNextPagParam` is now required for infinite queries.
 
 [//]: # 'FrameworkBreakingChanges'
 
