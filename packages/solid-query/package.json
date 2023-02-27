@@ -10,18 +10,21 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "types": "build/lib/index.d.ts",
-  "main": "build/lib/index.js",
-  "module": "build/lib/index.esm.js",
+  "types": "build/types/index.d.ts",
+  "main": "build/cjs/index.js",
+  "module": "build/esm/index.js",
   "exports": {
     ".": {
-      "types": "./build/lib/index.d.ts",
-      "solid": "./build/solid/index.js",
-      "import": "./build/lib/index.mjs",
-      "browser": "./build/lib/index.mjs",
-      "require": "./build/lib/index.js",
-      "node": "./build/lib/index.js",
-      "default": "./build/lib/index.js"
+      "types": "./build/types/index.d.ts",
+      "solid": "./build/source/index.js",
+      "import": "./build/esm/index.js",
+      "browser": {
+        "import": "./build/esm/index.js",
+        "require": "./build/cjs/index.js"
+      },
+      "require": "./build/cjs/index.js",
+      "node": "./build/cjs/index.js",
+      "default": "./build/cjs/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -37,9 +40,11 @@
     "build:types": "tsc --build"
   },
   "files": [
-    "build/lib/*",
+    "build/esm/*",
+    "build/cjs/*",
     "build/umd/*",
-    "build/solid/*",
+    "build/source/*",
+    "build/types/*",
     "src"
   ],
   "devDependencies": {
