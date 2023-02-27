@@ -31,10 +31,11 @@ function Example() {
     hasPreviousPage,
   } = useInfiniteQuery({
     queryKey: ['projects'],
-    queryFn: async ({ pageParam = 0 }) => {
+    queryFn: async ({ pageParam }) => {
       const res = await axios.get('/api/projects?cursor=' + pageParam)
       return res.data
     },
+    defaultPageParam: 0,
     getPreviousPageParam: (firstPage) => firstPage.previousId ?? undefined,
     getNextPageParam: (lastPage) => lastPage.nextId ?? undefined,
     maxPages: 3,
