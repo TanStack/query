@@ -4,5 +4,5 @@ import type { WritableOrVal } from './types'
 export function isWritable<T extends object>(
   obj: WritableOrVal<T>,
 ): obj is Writable<T> {
-  return 'subscribe' in obj
+  return 'subscribe' in obj && 'set' in obj && 'update' in obj
 }
