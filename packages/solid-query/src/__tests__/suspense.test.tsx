@@ -8,7 +8,11 @@ import {
   Show,
   Suspense,
 } from 'solid-js'
-import type { CreateInfiniteQueryResult, CreateQueryResult } from '..'
+import type {
+  CreateInfiniteQueryResult,
+  CreateQueryResult,
+  InfiniteData,
+} from '..'
 import {
   createInfiniteQuery,
   createQuery,
@@ -79,17 +83,17 @@ describe("useQuery's in Suspense mode", () => {
 
   it('should return the correct states for a successful infinite query', async () => {
     const key = queryKey()
-    const states: CreateInfiniteQueryResult<number>[] = []
+    const states: CreateInfiniteQueryResult<InfiniteData<number>>[] = []
 
     function Page() {
       const [multiplier, setMultiplier] = createSignal(1)
       const state = createInfiniteQuery(() => ({
         queryKey: [`${key}_${multiplier()}`],
-        queryFn: async ({ pageParam = 1 }) => {
+        queryFn: async ({ pageParam }) => {
           await sleep(10)
           return Number(pageParam * multiplier())
         },
-
+        defaultPageParam: 1,
         suspense: true,
         getNextPageParam: (lastPage) => lastPage + 1,
       }))
@@ -120,7 +124,7 @@ describe("useQuery's in Suspense mode", () => {
     // occurs on read.
     expect(states.length).toBe(2)
     expect(states[1]).toMatchObject({
-      data: { pages: [1], pageParams: [undefined] },
+      data: { pages: [1], pageParams: [1] },
       status: 'success',
     })
 
@@ -130,7 +134,7 @@ describe("useQuery's in Suspense mode", () => {
     // TODO(lukemurray): in react this is 2 and in solid it is 4
     expect(states.length).toBe(4)
     expect(states[3]).toMatchObject({
-      data: { pages: [2], pageParams: [undefined] },
+      data: { pages: [2], pageParams: [1] },
       status: 'success',
     })
   })

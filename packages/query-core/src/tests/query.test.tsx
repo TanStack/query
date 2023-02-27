@@ -200,6 +200,7 @@ describe('query', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
     const args = queryFn.mock.calls[0]![0]
     expect(args).toBeDefined()
+    // @ts-expect-error page param should be undefined
     expect(args.pageParam).toBeUndefined()
     expect(args.queryKey).toEqual(key)
     expect(args.signal).toBeInstanceOf(AbortSignal)

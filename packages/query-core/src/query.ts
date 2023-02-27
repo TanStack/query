@@ -43,7 +43,7 @@ export interface QueryState<TData = unknown, TError = RegisteredError> {
   errorUpdatedAt: number
   fetchFailureCount: number
   fetchFailureReason: TError | null
-  fetchMeta: any
+  fetchMeta: FetchMeta | null
   isInvalidated: boolean
   status: QueryStatus
   fetchStatus: FetchStatus
@@ -74,9 +74,13 @@ export interface QueryBehavior<
   ) => void
 }
 
+export interface FetchMeta {
+  fetchMore?: { direction: 'forward' | 'backward' }
+}
+
 export interface FetchOptions {
   cancelRefetch?: boolean
-  meta?: any
+  meta?: FetchMeta
 }
 
 interface FailedAction<TError> {
@@ -87,7 +91,7 @@ interface FailedAction<TError> {
 
 interface FetchAction {
   type: 'fetch'
-  meta?: any
+  meta?: FetchMeta
 }
 
 interface SuccessAction<TData> {
@@ -360,7 +364,6 @@ export class Query<
     // Create query function context
     const queryFnContext: Omit<QueryFunctionContext<TQueryKey>, 'signal'> = {
       queryKey: this.queryKey,
-      pageParam: undefined,
       meta: this.meta,
     }
 

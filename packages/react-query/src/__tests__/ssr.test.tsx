@@ -131,7 +131,12 @@ describe('Server Side Rendering', () => {
     })
 
     function Page() {
-      const query = useInfiniteQuery({ queryKey: key, queryFn })
+      const query = useInfiniteQuery({
+        queryKey: key,
+        queryFn,
+        getNextPageParam: () => undefined,
+        defaultPageParam: 0,
+      })
       return (
         <ul>
           {query.data?.pages.map((page) => (
@@ -141,7 +146,11 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    await queryClient.prefetchInfiniteQuery({ queryKey: key, queryFn })
+    await queryClient.prefetchInfiniteQuery({
+      queryKey: key,
+      queryFn,
+      defaultPageParam: 0,
+    })
 
     const markup = renderToString(
       <QueryClientProvider client={queryClient}>

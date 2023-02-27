@@ -1,7 +1,7 @@
 import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import type { UseInfiniteQueryResult, UseQueryResult } from '..'
+import type { InfiniteData, UseInfiniteQueryResult, UseQueryResult } from '..'
 import {
   QueryCache,
   QueryErrorResetBoundary,
@@ -68,17 +68,18 @@ describe("useQuery's in Suspense mode", () => {
 
   it('should return the correct states for a successful infinite query', async () => {
     const key = queryKey()
-    const states: UseInfiniteQueryResult<number>[] = []
+    const states: UseInfiniteQueryResult<InfiniteData<number>>[] = []
 
     function Page() {
       const [multiplier, setMultiplier] = React.useState(1)
       const state = useInfiniteQuery({
         queryKey: [`${key}_${multiplier}`],
-        queryFn: async ({ pageParam = 1 }) => {
+        queryFn: async ({ pageParam }) => {
           await sleep(10)
           return Number(pageParam * multiplier)
         },
         suspense: true,
+        defaultPageParam: 1,
         getNextPageParam: (lastPage) => lastPage + 1,
       })
       states.push(state)
@@ -101,7 +102,7 @@ describe("useQuery's in Suspense mode", () => {
 
     expect(states.length).toBe(1)
     expect(states[0]).toMatchObject({
-      data: { pages: [1], pageParams: [undefined] },
+      data: { pages: [1], pageParams: [1] },
       status: 'success',
     })
 
@@ -110,7 +111,7 @@ describe("useQuery's in Suspense mode", () => {
 
     expect(states.length).toBe(2)
     expect(states[1]).toMatchObject({
-      data: { pages: [2], pageParams: [undefined] },
+      data: { pages: [2], pageParams: [1] },
       status: 'success',
     })
   })
