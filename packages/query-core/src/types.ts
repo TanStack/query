@@ -9,6 +9,8 @@ import type { MutationCache } from './mutationCache'
 
 export interface Register {
   // defaultError: Error
+  // queryMeta: Record<string, unknown>
+  // mutationMeta: Record<string, unknown>
 }
 
 export type RegisteredError = Register extends {
@@ -72,9 +74,11 @@ export interface InfiniteData<TData> {
   pageParams: unknown[]
 }
 
-export interface QueryMeta {
-  [index: string]: unknown
+export type QueryMeta = Register extends {
+  queryMeta: infer TQueryMeta
 }
+  ? TQueryMeta
+  : Record<string, unknown>
 
 export type NetworkMode = 'online' | 'always' | 'offlineFirst'
 
@@ -583,9 +587,11 @@ export type MutationKey = readonly unknown[]
 
 export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
 
-export interface MutationMeta {
-  [index: string]: unknown
+export type MutationMeta = Register extends {
+  mutationMeta: infer TMutationMeta
 }
+  ? TMutationMeta
+  : Record<string, unknown>
 
 export type MutationFunction<TData = unknown, TVariables = unknown> = (
   variables: TVariables,
