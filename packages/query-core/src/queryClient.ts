@@ -24,7 +24,7 @@ import type {
   RefetchQueryFilters,
   ResetOptions,
   SetDataOptions,
-  RegisteredError,
+  DefaultError,
 } from './types'
 import type { QueryState } from './query'
 import { QueryCache } from './queryCache'
@@ -177,7 +177,7 @@ export class QueryClient {
     )
   }
 
-  getQueryState<TQueryFnData = unknown, TError = RegisteredError>(
+  getQueryState<TQueryFnData = unknown, TError = DefaultError>(
     queryKey: QueryKey,
   ): QueryState<TQueryFnData, TError> | undefined {
     return this.#queryCache.find<TQueryFnData, TError>({ queryKey })?.state
@@ -272,7 +272,7 @@ export class QueryClient {
 
   fetchQuery<
     TQueryFnData,
-    TError = RegisteredError,
+    TError = DefaultError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
@@ -301,7 +301,7 @@ export class QueryClient {
 
   prefetchQuery<
     TQueryFnData = unknown,
-    TError = RegisteredError,
+    TError = DefaultError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -312,7 +312,7 @@ export class QueryClient {
 
   fetchInfiniteQuery<
     TQueryFnData,
-    TError = RegisteredError,
+    TError = DefaultError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
@@ -331,7 +331,7 @@ export class QueryClient {
 
   prefetchInfiniteQuery<
     TQueryFnData,
-    TError = RegisteredError,
+    TError = DefaultError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
@@ -422,7 +422,7 @@ export class QueryClient {
 
   defaultQueryOptions<
     TQueryFnData = unknown,
-    TError = RegisteredError,
+    TError = DefaultError,
     TData = TQueryFnData,
     TQueryData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,

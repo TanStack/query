@@ -6,7 +6,7 @@ import type {
   QueryKey,
   InfiniteQueryObserverResult,
   InfiniteQueryObserverOptions,
-  RegisteredError,
+  DefaultError,
 } from '@tanstack/query-core'
 
 import { useBaseQuery } from './useBaseQuery'
@@ -18,7 +18,7 @@ import type { UnwrapRef } from 'vue-demi'
 
 export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
@@ -74,7 +74,7 @@ export type UseInfiniteQueryReturnType<TData, TError> = DistributiveOmit<
 
 export function useInfiniteQuery<
   TQueryFnData,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,

@@ -2,7 +2,7 @@ import type {
   QueryObserver,
   QueryKey,
   QueryClient,
-  RegisteredError,
+  DefaultError,
   InfiniteData,
 } from '@tanstack/query-core'
 import { InfiniteQueryObserver } from '@tanstack/query-core'
@@ -15,7 +15,7 @@ import { createMemo } from 'solid-js'
 
 export function createInfiniteQuery<
   TQueryFnData,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,

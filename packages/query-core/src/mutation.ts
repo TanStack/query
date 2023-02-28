@@ -2,7 +2,7 @@ import type {
   MutationOptions,
   MutationStatus,
   MutationMeta,
-  RegisteredError,
+  DefaultError,
 } from './types'
 import type { MutationCache } from './mutationCache'
 import type { MutationObserver } from './mutationObserver'
@@ -23,7 +23,7 @@ interface MutationConfig<TData, TError, TVariables, TContext> {
 
 export interface MutationState<
   TData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 > {
@@ -80,7 +80,7 @@ export type Action<TData, TError, TVariables, TContext> =
 
 export class Mutation<
   TData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 > extends Removable {

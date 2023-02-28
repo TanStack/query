@@ -1,8 +1,4 @@
-import type {
-  QueryClient,
-  QueryKey,
-  RegisteredError,
-} from '@tanstack/query-core'
+import type { QueryClient, QueryKey, DefaultError } from '@tanstack/query-core'
 import { QueryObserver } from '@tanstack/query-core'
 import type {
   DefinedUseQueryResult,
@@ -14,7 +10,7 @@ import { useBaseQuery } from './useBaseQuery'
 // HOOK
 type UndefinedInitialDataOptions<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
@@ -23,7 +19,7 @@ type UndefinedInitialDataOptions<
 
 type DefinedInitialDataOptions<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
@@ -32,7 +28,7 @@ type DefinedInitialDataOptions<
 
 export function useQuery<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -42,7 +38,7 @@ export function useQuery<
 
 export function useQuery<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -52,7 +48,7 @@ export function useQuery<
 
 export function useQuery<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(

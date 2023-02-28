@@ -5,7 +5,7 @@ import type {
   QueryClient,
   Mutation,
   MutationCache,
-  RegisteredError,
+  DefaultError,
 } from '@tanstack/query-core'
 import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
@@ -25,7 +25,7 @@ export function useIsMutating(
 type MutationStateOptions<TResult> = {
   filters?: MutationFilters
   select?: (
-    mutation: Mutation<unknown, RegisteredError, unknown, unknown>,
+    mutation: Mutation<unknown, DefaultError, unknown, unknown>,
   ) => TResult
 }
 
@@ -39,7 +39,7 @@ function getResult<TResult = MutationState>(
       (mutation): TResult =>
         (options.select
           ? options.select(
-              mutation as Mutation<unknown, RegisteredError, unknown, unknown>,
+              mutation as Mutation<unknown, DefaultError, unknown, unknown>,
             )
           : mutation.state) as TResult,
     )

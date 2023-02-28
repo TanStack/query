@@ -2,7 +2,7 @@ import type {
   QueryObserver,
   QueryKey,
   QueryClient,
-  RegisteredError,
+  DefaultError,
   InfiniteData,
 } from '@tanstack/query-core'
 import { InfiniteQueryObserver } from '@tanstack/query-core'
@@ -14,7 +14,7 @@ import { createBaseQuery } from './createBaseQuery'
 
 export function createInfiniteQuery<
   TQueryFnData,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,

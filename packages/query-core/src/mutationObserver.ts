@@ -7,7 +7,7 @@ import type {
   MutateOptions,
   MutationObserverResult,
   MutationObserverOptions,
-  RegisteredError,
+  DefaultError,
 } from './types'
 import { shallowEqualObjects } from './utils'
 
@@ -21,7 +21,7 @@ type MutationObserverListener<TData, TError, TVariables, TContext> = (
 
 export class MutationObserver<
   TData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 > extends Subscribable<
