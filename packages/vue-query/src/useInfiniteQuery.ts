@@ -1,5 +1,6 @@
 import { InfiniteQueryObserver } from '@tanstack/query-core'
 import type {
+  InfiniteData,
   QueryObserver,
   WithRequired,
   QueryKey,
@@ -18,23 +19,26 @@ import type { UnwrapRef } from 'vue-demi'
 export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = RegisteredError,
-  TData = unknown,
-  TQueryData = unknown,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 > = {
   [Property in keyof InfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryData,
-    TQueryKey
+    TQueryKey,
+    TPageParam
   >]: Property extends 'queryFn'
     ? InfiniteQueryObserverOptions<
         TQueryFnData,
         TError,
         TData,
         TQueryData,
-        UnwrapRef<TQueryKey>
+        UnwrapRef<TQueryKey>,
+        TPageParam
       >[Property]
     : MaybeRefDeep<
         WithRequired<
@@ -43,7 +47,8 @@ export type UseInfiniteQueryOptions<
             TError,
             TData,
             TQueryData,
-            TQueryKey
+            TQueryKey,
+            TPageParam
           >,
           'queryKey'
         >[Property]
@@ -70,10 +75,18 @@ export type UseInfiniteQueryReturnType<TData, TError> = DistributiveOmit<
 export function useInfiniteQuery<
   TQueryFnData,
   TError = RegisteredError,
-  TData = TQueryFnData,
+  TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 >(
-  options: UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: UseInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryFnData,
+    TQueryKey,
+    TPageParam
+  >,
   queryClient?: QueryClient,
 ): UseInfiniteQueryReturnType<TData, TError> {
   const result = useBaseQuery(

@@ -14,7 +14,8 @@ const {
   ...result
 } = useInfiniteQuery({
   queryKey,
-  queryFn: ({ pageParam = 1 }) => fetchPage(pageParam),
+  queryFn: ({ pageParam }) => fetchPage(pageParam),
+  defaultPageParam: 1,
   ...options,
   getNextPageParam: (lastPage, allPages) => lastPage.nextCursor,
   getPreviousPageParam: (firstPage, allPages) => firstPage.prevCursor,
@@ -30,12 +31,15 @@ The options for `useInfiniteQuery` are identical to the [`useQuery` hook](../ref
   - The function that the query will use to request data.
   - Receives a [QueryFunctionContext](../guides/query-functions#queryfunctioncontext)
   - Must return a promise that will either resolve data or throw an error.
-  - Make sure you return the data *and* the `pageParam` if needed for use in the props below.
-- `getNextPageParam: (lastPage, allPages) => unknown | undefined`
+- `defaultPageParam: TPageParam`
+  - **Required**
+  - The default page param to use when fetching the first page.
+- `getNextPageParam: (lastPage, allPages) => TPageParam | undefined`
+  - **Required**
   - When new data is received for this query, this function receives both the last page of the infinite list of data and the full array of all pages.
   - It should return a **single variable** that will be passed as the last optional parameter to your query function.
   - Return `undefined` to indicate there is no next page available.
-- `getPreviousPageParam: (firstPage, allPages) => unknown | undefined`
+- `getPreviousPageParam: (firstPage, allPages) => TPageParam | undefined`
   - When new data is received for this query, this function receives both the first page of the infinite list of data and the full array of all pages.
   - It should return a **single variable** that will be passed as the last optional parameter to your query function.
   - Return `undefined` to indicate there is no previous page available.

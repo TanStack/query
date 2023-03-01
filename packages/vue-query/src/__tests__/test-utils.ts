@@ -20,7 +20,7 @@ export function getSimpleFetcherWithReturnData(returnData: unknown) {
 }
 
 export function infiniteFetcher({
-  pageParam = 0,
+  pageParam,
 }: {
   pageParam?: number
 }): Promise<string> {

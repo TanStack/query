@@ -11,7 +11,7 @@
     "test:format": "pnpm run prettier --check",
     "test:lib": "pnpm --filter \"./packages/**\" run test:lib",
     "test:lib:dev": "pnpm --filter \"./packages/**\" run test:lib:dev",
-    "test:size": "pnpm run build && bundlewatch",
+    "test:build": "pnpm run build && bundlewatch && pnpm run validatePackages",
     "test:types": "pnpm --filter \"./packages/**\" run test:types",
     "build": "rollup --config rollup.config.js && pnpm --filter \"./packages/**\" run build && pnpm run build:types",
     "build:types": "pnpm --filter \"./packages/**\" run build:types",
@@ -19,7 +19,8 @@
     "dev": "pnpm run watch",
     "prettier": "prettier --plugin-search-dir . \"{packages,examples}/**/src/**/*.{md,js,jsx,ts,tsx,json,vue,svelte}\"",
     "prettier:write": "pnpm run prettier --write",
-    "cipublish": "ts-node scripts/publish.ts"
+    "cipublish": "ts-node scripts/publish.ts",
+    "validatePackages": "ts-node scripts/validate-packages.ts"
   },
   "namespace": "@tanstack",
   "devDependencies": {
@@ -82,6 +83,7 @@
     "rollup-plugin-size": "^0.2.2",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-visualizer": "^5.9.0",
+    "rollup-preset-solid": "^1.4.0",
     "solid-js": "^1.5.7",
     "solid-testing-library": "^0.3.0",
     "stream-to-array": "^2.3.0",

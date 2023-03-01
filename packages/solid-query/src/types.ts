@@ -81,13 +81,15 @@ export interface SolidInfiniteQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 > extends Omit<
     InfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
       TQueryData,
-      TQueryKey
+      TQueryKey,
+      TPageParam
     >,
     'queryKey'
   > {
@@ -100,13 +102,15 @@ export type CreateInfiniteQueryOptions<
   TError = RegisteredError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 > = FunctionedParams<
   SolidInfiniteQueryOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryFnData,
-    TQueryKey
+    TQueryKey,
+    TPageParam
   >
 >
 

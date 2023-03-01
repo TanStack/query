@@ -1,4 +1,4 @@
-import type { OutputOptions, RollupOptions } from 'rollup'
+import type { OutputOptions, Plugin, RollupOptions } from 'rollup'
 import babel from '@rollup/plugin-babel'
 import { terser } from 'rollup-plugin-terser'
 import size from 'rollup-plugin-size'
@@ -7,6 +7,7 @@ import replace from '@rollup/plugin-replace'
 import nodeResolve from '@rollup/plugin-node-resolve'
 import commonJS from '@rollup/plugin-commonjs'
 import path from 'path'
+import withSolid from 'rollup-preset-solid'
 
 type Options = {
   input: string | string[]
@@ -143,19 +144,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       },
       bundleUMDGlobals: ['@tanstack/query-persist-client-core'],
     }),
-    ...buildConfigs({
-      name: 'solid-query',
-      packageDir: 'packages/solid-query',
-      jsName: 'SolidQuery',
-      outputFile: 'index',
-      entryFile: 'src/index.ts',
-      globals: {
-        'solid-js/store': 'SolidStore',
-        'solid-js': 'Solid',
-        '@tanstack/query-core': 'QueryCore',
-      },
-      bundleUMDGlobals: ['@tanstack/query-core'],
-    }),
+    createSolidQueryConfig(),
     ...buildConfigs({
       name: 'vue-query',
       packageDir: 'packages/vue-query',
@@ -438,4 +427,41 @@ function createBanner(libraryName: string) {
  *
  * @license MIT
  */`
+}
+
+function createSolidQueryConfig() {
+  const packageDir = 'packages/solid-query'
+  const solidRollupOptions = withSolid({
+    input: `${packageDir}/src/index.ts`,
+    targets: ['esm', 'cjs', 'umd'],
+    external: ['@tanstack/query-core'],
+  }) as RollupOptions
+
+  const outputs = !solidRollupOptions.output
+    ? []
+    : Array.isArray(solidRollupOptions.output)
+    ? solidRollupOptions.output
+    : [solidRollupOptions.output]
+
+  outputs.forEach((output) => {
+    const format = output.format
+    if (format === 'umd') {
+      output.globals = {
+        'solid-js/store': 'SolidStore',
+        'solid-js/web': 'SolidWeb',
+        'solid-js': 'Solid',
+        '@tanstack/query-core': 'QueryCore',
+      }
+    }
+    output.dir = `${packageDir}/build/${format}`
+  })
+
+  const plugins = solidRollupOptions.plugins as Plugin[]
+  // Prevent types generation since it doesn't resolve the directory correctly
+  // Instead build:types will generate those types anyway
+  const filtered = plugins.filter((plugin) => plugin.name !== 'ts')
+
+  solidRollupOptions.plugins = filtered
+
+  return solidRollupOptions
 }

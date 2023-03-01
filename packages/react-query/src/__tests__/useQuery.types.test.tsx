@@ -1,14 +1,6 @@
 import { useQuery } from '../useQuery'
-
-export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
-  T,
->() => T extends Y ? 1 : 2
-  ? true
-  : false
-
-export type Expect<T extends true> = T
-
-const doNotExecute = (_func: () => void) => true
+import type { Expect, Equal } from './utils'
+import { doNotExecute } from './utils'
 
 describe('initialData', () => {
   describe('Config object overload', () => {

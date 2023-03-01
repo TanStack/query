@@ -54,24 +54,7 @@ const {
 ```
 
 [//]: # 'Example'
-[//]: # 'Example3'
-
-```tsx
-const fetchProjects = ({ pageParam = 0 }) =>
-  fetch('/api/projects?cursor=' + pageParam)
-
-const { fetchNextPage } = useInfiniteQuery({
-  queryKey: ['projects'],
-  queryFn: fetchProjects,
-  getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-})
-
-// Pass your own page param
-const skipToCursor50 = () => fetchNextPage({ pageParam: 50 })
-```
-
-[//]: # 'Example3'
-[//]: # 'Example7'
+[//]: # 'Example6'
 
 ```tsx
 const newPagesArray =
@@ -85,4 +68,4 @@ queryClient.setQueryData(['projects'], (data) => ({
 }))
 ```
 
-[//]: # 'Example7'
+[//]: # 'Example6'
