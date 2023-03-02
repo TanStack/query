@@ -3,6 +3,20 @@ const UnknownUsageError = require('./unknown-usage-error')
 
 module.exports = ({ jscodeshift, utils }) => {
   /**
+   *
+   * @param {import('jscodeshift').ObjectExpression} source
+   * @param {import('jscodeshift').ObjectExpression} target
+   * @param {(node: import('jscodeshift').Node) => boolean} predicate
+   */
+  const copyPropertiesFromSource = (source, target, predicate) => {
+    source.properties.forEach((property) => {
+      if (predicate(property)) {
+        target.properties.push(property)
+      }
+    })
+  }
+
+  /**
    * @param {import('jscodeshift').NodePath} path
    * @param {string} argumentName
    * @returns {*}
@@ -79,6 +93,8 @@ module.exports = ({ jscodeshift, utils }) => {
   }
 
   return {
+    copyPropertiesFromSource,
+    getBindingFromScope,
     transformArgumentToKey,
   }
 }

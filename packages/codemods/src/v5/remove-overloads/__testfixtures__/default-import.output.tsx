@@ -189,6 +189,30 @@ export const WithKnownParameters = () => {
   queryClient.setQueriesData({ queryKey: ['foo', 'bar'] }, null)
   queryClient.setQueriesData({ queryKey: ['foo', 'bar'] }, null, { updatedAt: 1000 })
 
+  queryClient.fetchQuery({
+    queryKey: ['foo', 'bar']
+  })
+  queryClient.fetchQuery({
+    queryKey: ['foo', 'bar'],
+    staleTime: 1000
+  })
+  queryClient.fetchQuery({
+    queryKey: ['foo', 'bar'],
+    queryFn: () => 'data',
+    staleTime: 1000
+  })
+  queryClient.fetchQuery({
+    queryKey: ['foo', 'bar'],
+    queryFn: () => 'data',
+    staleTime: 1000
+  })
+  queryClient.fetchQuery({
+    queryKey: ['foo', 'bar'],
+    queryFn: function myFn() { return 'data' },
+    staleTime: 1000
+  })
+  queryClient.fetchQuery({ queryKey: ['foo', 'bar'], queryFn: () => 'data', retry: true })
+
   const queryCache = queryClient.getQueryCache()
 
   queryCache.find({
@@ -235,6 +259,8 @@ export const WithIdentifiers = () => {
   const invalidateOptions = { cancelRefetch: true, throwOnError: true } as const
   const refetchOptions = { cancelRefetch: false, throwOnError: true } as const
   const resetOptions = { cancelRefetch: false, throwOnError: true } as const
+  const fetchOptions = { queryFn: () => 'data', retry: true } as const
+  const queryFn = () => 'data'
 
   useIsFetching({
     queryKey: queryKey
@@ -427,4 +453,32 @@ export const WithIdentifiers = () => {
   queryClient.resetQueries(queryKeysFromAnotherModule)
   queryClient.resetQueries(queryKeysFromAnotherModule, filters)
   queryClient.resetQueries(queryKeysFromAnotherModule, filters, resetOptions)
+
+  queryClient.fetchQuery({
+    queryKey: queryKey
+  })
+  queryClient.fetchQuery({
+    queryKey: queryKey,
+    ...fetchOptions
+  })
+  queryClient.fetchQuery({
+    queryKey: queryKey,
+    networkMode: 'always',
+    ...fetchOptions
+  })
+  queryClient.fetchQuery({
+    queryKey: queryKey,
+    queryFn: queryFn,
+    ...fetchOptions
+  })
+  queryClient.fetchQuery({
+    queryKey: queryKey,
+    queryFn: () => 'data',
+    networkMode: 'always',
+    ...fetchOptions
+  })
+  // Stays as it is because the code couldn't infer the type of the "queryKeysFromAnotherModule" identifier.
+  queryClient.fetchQuery(queryKeysFromAnotherModule)
+  queryClient.fetchQuery(queryKeysFromAnotherModule, fetchOptions)
+  queryClient.fetchQuery(queryKeysFromAnotherModule, queryFn, fetchOptions)
 }
