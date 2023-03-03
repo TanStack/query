@@ -76,7 +76,7 @@ export function createSyncStoragePersister({
           return
         }
 
-        return deserialize(cacheString) as PersistedClient
+        return deserialize(cacheString)
       },
       removeClient: () => {
         storage.removeItem(key)
