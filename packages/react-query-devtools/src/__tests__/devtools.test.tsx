@@ -720,9 +720,9 @@ describe('ReactQueryDevtools', () => {
       initialIsOpen: true,
     })
 
-    const positionSelect = (await screen.findByLabelText(
+    const positionSelect: HTMLSelectElement = await screen.findByLabelText(
       'Panel position',
-    )) as HTMLSelectElement
+    )
 
     expect(positionSelect.value).toBe('bottom')
   })
@@ -748,9 +748,9 @@ describe('ReactQueryDevtools', () => {
       panelPosition: 'left',
     })
 
-    const positionSelect = (await screen.findByLabelText(
+    const positionSelect: HTMLSelectElement = await screen.findByLabelText(
       'Panel position',
-    )) as HTMLSelectElement
+    )
 
     expect(positionSelect.value).toBe('left')
 
@@ -783,9 +783,9 @@ describe('ReactQueryDevtools', () => {
       initialIsOpen: true,
     })
 
-    const positionSelect = (await screen.findByLabelText(
+    const positionSelect: HTMLSelectElement = await screen.findByLabelText(
       'Panel position',
-    )) as HTMLSelectElement
+    )
 
     expect(positionSelect.value).toBe('bottom')
 

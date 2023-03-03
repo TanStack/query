@@ -31,6 +31,7 @@ export function createInfiniteQuery<
 ): CreateInfiniteQueryResult<TData, TError> {
   return createBaseQuery(
     createMemo(() => options()),
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     InfiniteQueryObserver as typeof QueryObserver,
     queryClient,
   ) as CreateInfiniteQueryResult<TData, TError>

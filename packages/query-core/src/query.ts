@@ -458,7 +458,7 @@ export class Query<
           return
         }
 
-        this.setData(data as TData)
+        this.setData(data)
 
         // Notify cache callback
         this.#cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
