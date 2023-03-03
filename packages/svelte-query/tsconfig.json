@@ -28,7 +28,7 @@
     "target": "esnext",
     "tsBuildInfoFile": "./build/.tsbuildinfo"
   },
-  "include": ["src"],
+  "include": ["src", "src/**/*.svelte"],
   "references": [
     { "path": "../query-core" }
   ]

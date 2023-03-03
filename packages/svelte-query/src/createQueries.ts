@@ -8,10 +8,11 @@ import type {
 } from '@tanstack/query-core'
 
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
-import { readable, type Readable } from 'svelte/store'
+import { derived, get, readable, writable, type Readable } from 'svelte/store'
 
-import type { CreateQueryOptions } from './types'
+import type { CreateQueryOptions, WritableOrVal } from './types'
 import { useQueryClient } from './useQueryClient'
+import { isWritable } from './utils'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter
@@ -155,34 +156,33 @@ export function createQueries<T extends any[]>({
   queries,
   queryClient,
 }: {
-  queries: readonly [...QueriesOptions<T>]
+  queries: WritableOrVal<[...QueriesOptions<T>]>
   queryClient?: QueryClient
 }): CreateQueriesResult<T> {
   const client = useQueryClient(queryClient)
   // const isRestoring = useIsRestoring()
 
-  function getDefaultQuery(newQueries: readonly [...QueriesOptions<T>]) {
-    return newQueries.map((options) => {
+  const queriesStore = isWritable(queries) ? queries : writable(queries)
+
+  const defaultedQueriesStore = derived(queriesStore, ($queries) => {
+    return $queries.map((options) => {
       const defaultedOptions = client.defaultQueryOptions(options)
       // Make sure the results are already in fetching state before subscribing or updating options
       defaultedOptions._optimisticResults = 'optimistic'
 
       return defaultedOptions
     })
-  }
+  })
+  const observer = new QueriesObserver(client, get(defaultedQueriesStore))
 
-  const defaultedQueries = getDefaultQuery(queries)
-  let observer = new QueriesObserver(client, defaultedQueries)
-
-  readable(observer).subscribe(($observer) => {
-    observer = $observer
+  defaultedQueriesStore.subscribe(($defaultedQueries) => {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
-    observer.setQueries(defaultedQueries, { listeners: false })
+    observer.setQueries($defaultedQueries, { listeners: false })
   })
 
   const { subscribe } = readable(
-    observer.getOptimisticResult(defaultedQueries) as any,
+    observer.getOptimisticResult(get(defaultedQueriesStore)) as any,
     (set) => {
       return observer.subscribe(notifyManager.batchCalls(set))
     },
