@@ -1,5 +1,10 @@
 <script lang="ts">
-  import { createQuery, QueryClient, type CreateQueryOptions, type WritableOrVal } from '../index'
+  import {
+    createQuery,
+    QueryClient,
+    type CreateQueryOptions,
+    type WritableOrVal,
+  } from '../index'
   import { setQueryClientContext } from '../context'
 
   export let options: WritableOrVal<CreateQueryOptions<any>>
