@@ -50,6 +50,20 @@ const transformFilterAwareUsages = ({
     )
   }
 
+  /**
+   * @param {import('jscodeshift').ObjectProperty} property
+   * @returns {boolean}
+   */
+  const predicate = (property) => {
+    const isSpreadElement = utils.isSpreadElement(property)
+    const isObjectProperty = utils.isObjectProperty(property)
+
+    return (
+      isSpreadElement ||
+      (isObjectProperty && property.key.name !== config.keyName)
+    )
+  }
+
   const replacer = (path) => {
     const node = path.node
 
@@ -74,22 +88,18 @@ const transformFilterAwareUsages = ({
       const secondParameter = node.arguments[1]
 
       if (secondParameter) {
+        const createdObjectExpression = parameters[0]
+
         // If it has a second argument, and it's an object, then we get the properties of it, because it will be part of the
         // first argument, otherwise we use an empty array, because we can spread it during the objectExpression creation.
         if (utils.isObjectExpression(secondParameter)) {
-          secondParameter.properties.forEach((property) => {
-            const isSpreadElement = utils.isSpreadElement(property)
-            const isObjectProperty = utils.isObjectProperty(property)
-
-            if (
-              isSpreadElement ||
-              (isObjectProperty && property.key.name !== config.keyName)
-            ) {
-              parameters[0].properties.push(property)
-            }
-          })
+          v5Utils.copyPropertiesFromSource(
+            secondParameter,
+            createdObjectExpression,
+            predicate,
+          )
         } else {
-          parameters[0].properties.push(
+          createdObjectExpression.properties.push(
             jscodeshift.spreadElement(secondParameter),
           )
         }

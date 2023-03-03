@@ -53,7 +53,14 @@ const transformQueryFnAwareUsages = ({
   }
 
   const transformArgumentToQueryFunction = (path, node) => {
-    if (utils.isFunctionDefinition(node)) {
+    const isIdentifier = utils.isIdentifier(node)
+    const isFunctionDefinition = utils.isFunctionDefinition(node)
+
+    if (!isIdentifier && !isFunctionDefinition) {
+      return undefined
+    }
+
+    if (isFunctionDefinition) {
       return jscodeshift.property(
         'init',
         jscodeshift.identifier('queryFn'),
@@ -61,61 +68,31 @@ const transformQueryFnAwareUsages = ({
       )
     }
 
-    if (utils.isIdentifier(node)) {
-      const binding = v5Utils.getBindingFromScope(path, node.name, filePath)
+    const binding = v5Utils.getBindingFromScope(path, node.name, filePath)
+    const initializer = v5Utils.getInitializerByDeclarator(binding)
 
-      const isVariableDeclaration = jscodeshift.match(binding, {
-        type: jscodeshift.VariableDeclarator.name,
-      })
-
-      if (!isVariableDeclaration) {
-        return undefined
-      }
-
-      const isTSAsExpression = jscodeshift.match(binding.init, {
-        type: jscodeshift.TSAsExpression.name,
-      })
-      const initializer = isTSAsExpression
-        ? binding.init.expression
-        : binding.init
-
-      if (utils.isFunctionDefinition(initializer)) {
-        return jscodeshift.property(
-          'init',
-          jscodeshift.identifier('queryFn'),
-          binding.id,
-        )
-      }
+    if (!utils.isFunctionDefinition(initializer)) {
+      return undefined
     }
 
-    return undefined
+    return jscodeshift.property(
+      'init',
+      jscodeshift.identifier('queryFn'),
+      binding.id,
+    )
   }
 
   const transformArgumentToOptionsObject = (path, node) => {
-    if (utils.isIdentifier(node)) {
-      const binding = v5Utils.getBindingFromScope(path, node.name, filePath)
-
-      const isVariableDeclaration = jscodeshift.match(binding, {
-        type: jscodeshift.VariableDeclarator.name,
-      })
-
-      if (!isVariableDeclaration) {
-        return undefined
-      }
-
-      const isTSAsExpression = jscodeshift.match(binding.init, {
-        type: jscodeshift.TSAsExpression.name,
-      })
-      const initializer = isTSAsExpression
-        ? binding.init.expression
-        : binding.init
-
-      if (utils.isObjectExpression(initializer)) {
-        return jscodeshift.spreadElement(binding.id)
-      }
+    if (!utils.isIdentifier(node)) {
+      return undefined
     }
 
-    return undefined
+    const binding = v5Utils.getBindingFromScope(path, node.name, filePath)
+    const initializer = v5Utils.getInitializerByDeclarator(binding)
+
+    if (utils.isObjectExpression(initializer)) {
+      return jscodeshift.spreadElement(binding.id)
+    }
   }
 
   const replacer = (path) => {
@@ -139,7 +116,7 @@ const transformQueryFnAwareUsages = ({
       }
 
       const parameters = [jscodeshift.objectExpression([keyProperty])]
-      const targetObject = parameters[0]
+      const createdObjectExpression = parameters[0]
       const secondParameter = node.arguments[1]
 
       if (secondParameter) {
@@ -149,18 +126,18 @@ const transformQueryFnAwareUsages = ({
         )
 
         if (queryFnProperty) {
-          targetObject.properties.push(queryFnProperty)
+          createdObjectExpression.properties.push(queryFnProperty)
 
           const thirdParameter = node.arguments[2]
 
           if (utils.isObjectExpression(thirdParameter)) {
             v5Utils.copyPropertiesFromSource(
               thirdParameter,
-              targetObject,
+              createdObjectExpression,
               predicate,
             )
           } else {
-            targetObject.properties.push(
+            createdObjectExpression.properties.push(
               jscodeshift.spreadElement(thirdParameter),
             )
           }
@@ -174,7 +151,7 @@ const transformQueryFnAwareUsages = ({
         )
 
         if (optionsProperty) {
-          targetObject.properties.push(optionsProperty)
+          createdObjectExpression.properties.push(optionsProperty)
 
           return jscodeshift.callExpression(node.original.callee, parameters)
         }
@@ -182,7 +159,7 @@ const transformQueryFnAwareUsages = ({
         if (utils.isObjectExpression(secondParameter)) {
           v5Utils.copyPropertiesFromSource(
             secondParameter,
-            targetObject,
+            createdObjectExpression,
             predicate,
           )
         }

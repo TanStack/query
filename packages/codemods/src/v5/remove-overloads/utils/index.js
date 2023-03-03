@@ -52,6 +52,26 @@ module.exports = ({ jscodeshift, utils }) => {
   }
 
   /**
+   * @param {import('jscodeshift').VariableDeclarator} binding
+   * @returns {import('jscodeshift').Node|undefined}
+   */
+  const getInitializerByDeclarator = (binding) => {
+    const isVariableDeclaration = jscodeshift.match(binding, {
+      type: jscodeshift.VariableDeclarator.name,
+    })
+
+    if (!isVariableDeclaration) {
+      return undefined
+    }
+
+    const isTSAsExpression = jscodeshift.match(binding.init, {
+      type: jscodeshift.TSAsExpression.name,
+    })
+
+    return isTSAsExpression ? binding.init.expression : binding.init
+  }
+
+  /**
    * @param {import('jscodeshift').Node} node
    * @returns {boolean}
    */
@@ -97,6 +117,7 @@ module.exports = ({ jscodeshift, utils }) => {
 
   return {
     copyPropertiesFromSource,
+    getInitializerByDeclarator,
     getBindingFromScope,
     transformArgumentToKey,
   }
