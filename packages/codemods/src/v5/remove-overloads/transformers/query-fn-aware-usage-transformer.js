@@ -42,25 +42,8 @@ const transformQueryFnAwareUsages = ({
     )
   }
 
-  /**
-   * @param {import('jscodeshift').Node} node
-   * @returns {boolean}
-   */
-  const isFunctionDefinition = (node) => {
-    const isArrowFunctionExpression = jscodeshift.match(node, {
-      type: jscodeshift.ArrowFunctionExpression.name,
-    })
-    const isFunctionExpression = jscodeshift.match(node, {
-      type: jscodeshift.FunctionExpression.name,
-    })
-
-    return isArrowFunctionExpression || isFunctionExpression
-  }
-
   const predicate = (property) => {
-    const isSpreadElement = jscodeshift.match(property, {
-      type: jscodeshift.SpreadElement.name,
-    })
+    const isSpreadElement = utils.isSpreadElement(property)
     const isObjectProperty = utils.isObjectProperty(property)
 
     return (
@@ -70,7 +53,7 @@ const transformQueryFnAwareUsages = ({
   }
 
   const transformArgumentToQueryFunction = (path, node) => {
-    if (isFunctionDefinition(node)) {
+    if (utils.isFunctionDefinition(node)) {
       return jscodeshift.property(
         'init',
         jscodeshift.identifier('queryFn'),
@@ -96,7 +79,7 @@ const transformQueryFnAwareUsages = ({
         ? binding.init.expression
         : binding.init
 
-      if (isFunctionDefinition(initializer)) {
+      if (utils.isFunctionDefinition(initializer)) {
         return jscodeshift.property(
           'init',
           jscodeshift.identifier('queryFn'),

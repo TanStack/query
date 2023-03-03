@@ -126,6 +126,24 @@ module.exports = ({ root, jscodeshift }) => {
   const isObjectProperty = (node) =>
     jscodeshift.match(node, { type: jscodeshift.ObjectProperty.name })
 
+  const isSpreadElement = (node) =>
+    jscodeshift.match(node, { type: jscodeshift.SpreadElement.name })
+
+  /**
+   * @param {import('jscodeshift').Node} node
+   * @returns {boolean}
+   */
+  const isFunctionDefinition = (node) => {
+    const isArrowFunctionExpression = jscodeshift.match(node, {
+      type: jscodeshift.ArrowFunctionExpression.name,
+    })
+    const isFunctionExpression = jscodeshift.match(node, {
+      type: jscodeshift.FunctionExpression.name,
+    })
+
+    return isArrowFunctionExpression || isFunctionExpression
+  }
+
   const warn = (message) => {
     if (process.env.NODE_ENV !== 'test') {
       console.warn(message)
@@ -176,6 +194,8 @@ module.exports = ({ root, jscodeshift }) => {
     isArrayExpression,
     isObjectExpression,
     isObjectProperty,
+    isSpreadElement,
+    isFunctionDefinition,
     locateImports,
     warn,
     queryClient: {

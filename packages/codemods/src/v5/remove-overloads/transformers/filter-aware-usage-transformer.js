@@ -78,9 +78,7 @@ const transformFilterAwareUsages = ({
         // first argument, otherwise we use an empty array, because we can spread it during the objectExpression creation.
         if (utils.isObjectExpression(secondParameter)) {
           secondParameter.properties.forEach((property) => {
-            const isSpreadElement = jscodeshift.match(property, {
-              type: jscodeshift.SpreadElement.name,
-            })
+            const isSpreadElement = utils.isSpreadElement(property)
             const isObjectProperty = utils.isObjectProperty(property)
 
             if (
