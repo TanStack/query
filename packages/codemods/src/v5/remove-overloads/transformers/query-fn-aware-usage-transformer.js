@@ -42,6 +42,10 @@ const transformQueryFnAwareUsages = ({
     )
   }
 
+  /**
+   * @param {import('jscodeshift').Node} node
+   * @returns {boolean}
+   */
   const isFunctionDefinition = (node) => {
     const isArrowFunctionExpression = jscodeshift.match(node, {
       type: jscodeshift.ArrowFunctionExpression.name,
@@ -65,7 +69,7 @@ const transformQueryFnAwareUsages = ({
     )
   }
 
-  const myFnQueryFn = (path, node) => {
+  const transformArgumentToQueryFunction = (path, node) => {
     if (isFunctionDefinition(node)) {
       return jscodeshift.property(
         'init',
@@ -75,11 +79,7 @@ const transformQueryFnAwareUsages = ({
     }
 
     if (utils.isIdentifier(node)) {
-      const binding = v5Utils.getBindingFromScope(path, node.name)
-
-      if (!binding) {
-        throw new UnknownUsageError(path.node, filePath)
-      }
+      const binding = v5Utils.getBindingFromScope(path, node.name, filePath)
 
       const isVariableDeclaration = jscodeshift.match(binding, {
         type: jscodeshift.VariableDeclarator.name,
@@ -102,6 +102,33 @@ const transformQueryFnAwareUsages = ({
           jscodeshift.identifier('queryFn'),
           binding.id,
         )
+      }
+    }
+
+    return undefined
+  }
+
+  const transformArgumentToOptionsObject = (path, node) => {
+    if (utils.isIdentifier(node)) {
+      const binding = v5Utils.getBindingFromScope(path, node.name, filePath)
+
+      const isVariableDeclaration = jscodeshift.match(binding, {
+        type: jscodeshift.VariableDeclarator.name,
+      })
+
+      if (!isVariableDeclaration) {
+        return undefined
+      }
+
+      const isTSAsExpression = jscodeshift.match(binding.init, {
+        type: jscodeshift.TSAsExpression.name,
+      })
+      const initializer = isTSAsExpression
+        ? binding.init.expression
+        : binding.init
+
+      if (utils.isObjectExpression(initializer)) {
+        return jscodeshift.spreadElement(binding.id)
       }
     }
 
@@ -133,7 +160,10 @@ const transformQueryFnAwareUsages = ({
       const secondParameter = node.arguments[1]
 
       if (secondParameter) {
-        const queryFnProperty = myFnQueryFn(path, secondParameter)
+        const queryFnProperty = transformArgumentToQueryFunction(
+          path,
+          secondParameter,
+        )
 
         if (queryFnProperty) {
           targetObject.properties.push(queryFnProperty)
@@ -151,6 +181,17 @@ const transformQueryFnAwareUsages = ({
               jscodeshift.spreadElement(thirdParameter),
             )
           }
+
+          return jscodeshift.callExpression(node.original.callee, parameters)
+        }
+
+        const optionsProperty = transformArgumentToOptionsObject(
+          path,
+          secondParameter,
+        )
+
+        if (optionsProperty) {
+          targetObject.properties.push(optionsProperty)
 
           return jscodeshift.callExpression(node.original.callee, parameters)
         }

@@ -19,9 +19,10 @@ module.exports = ({ jscodeshift, utils }) => {
   /**
    * @param {import('jscodeshift').NodePath} path
    * @param {string} argumentName
+   * @param {string} filePath
    * @returns {*}
    */
-  const getBindingFromScope = (path, argumentName) => {
+  const getBindingFromScope = (path, argumentName, filePath) => {
     /**
      * If the current scope contains the declaration then we can use the actual one else we attempt to find the
      * binding from above.
@@ -38,10 +39,16 @@ module.exports = ({ jscodeshift, utils }) => {
       return undefined
     }
 
-    return scope.bindings[argumentName]
+    const binding = scope.bindings[argumentName]
       .filter((item) => utils.isIdentifier(item.value))
       .map((item) => item.parentPath.value)
       .at(0)
+
+    if (!binding) {
+      throw new UnknownUsageError(path.node, filePath)
+    }
+
+    return binding
   }
 
   /**
@@ -66,11 +73,7 @@ module.exports = ({ jscodeshift, utils }) => {
   const transformArgumentToKey = (path, node, keyName, filePath) => {
     // If the first argument is an identifier we have to infer its type if possible.
     if (utils.isIdentifier(node)) {
-      const binding = getBindingFromScope(path, node.name)
-
-      if (!binding) {
-        throw new UnknownUsageError(path.node, filePath)
-      }
+      const binding = getBindingFromScope(path, node.name, filePath)
 
       if (isArrayExpressionVariable(binding)) {
         return jscodeshift.property(
