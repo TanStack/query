@@ -69,6 +69,7 @@ export function createRetryer<TData = unknown, TError = unknown>(
   let isRetryCancelled = false
   let failureCount = 0
   let isResolved = false
+  let isRunning = false
   let continueFn: ((value?: unknown) => boolean) | undefined
   let promiseResolve: (data: TData) => void
   let promiseReject: (error: TError) => void
@@ -136,11 +137,12 @@ export function createRetryer<TData = unknown, TError = unknown>(
   // Create loop function
   const run = () => {
     // Do nothing if already resolved
-    if (isResolved) {
+    if (isRunning || isResolved) {
       return
     }
 
     let promiseOrValue: any
+    isRunning = true
 
     // Execute query
     try {
@@ -196,6 +198,9 @@ export function createRetryer<TData = unknown, TError = unknown>(
               run()
             }
           })
+      })
+      .finally(() => {
+        isRunning = false
       })
   }
 
