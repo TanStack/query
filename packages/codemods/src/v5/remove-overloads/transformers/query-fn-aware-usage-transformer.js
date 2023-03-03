@@ -6,8 +6,7 @@ const UnknownUsageError = require('../utils/unknown-usage-error')
 const createQueryClientTransformer = require('../../../utils/transformers/query-client-transformer')
 
 /**
- *
- * @param {import('jscodeshift')} jscodeshift
+ * @param {import('jscodeshift').api} jscodeshift
  * @param {Object} utils
  * @param {import('jscodeshift').Collection} root
  * @param {string} filePath

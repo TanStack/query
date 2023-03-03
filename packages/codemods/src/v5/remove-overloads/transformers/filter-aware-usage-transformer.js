@@ -10,8 +10,7 @@ const createQueryCacheTransformer = require('../../../utils/transformers/query-c
 const createUseQueryLikeTransformer = require('../../../utils/transformers/use-query-like-transformer')
 
 /**
- *
- * @param {import('jscodeshift')} jscodeshift
+ * @param {import('jscodeshift').api} jscodeshift
  * @param {Object} utils
  * @param {import('jscodeshift').Collection} root
  * @param {string} filePath
