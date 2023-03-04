@@ -89,7 +89,7 @@ export const createAsyncStoragePersister = ({
           return
         }
 
-        return deserialize(cacheString) as PersistedClient
+        return deserialize(cacheString)
       },
       removeClient: () => storage.removeItem(key),
     }

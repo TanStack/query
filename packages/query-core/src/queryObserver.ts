@@ -648,10 +648,10 @@ export class QueryObserver<
       // First trigger the configuration callbacks
       if (notifyOptions.onSuccess) {
         this.options.onSuccess?.(this.#currentResult.data!)
-        this.options.onSettled?.(this.#currentResult.data!, null)
+        this.options.onSettled?.(this.#currentResult.data, null)
       } else if (notifyOptions.onError) {
         this.options.onError?.(this.#currentResult.error!)
-        this.options.onSettled?.(undefined, this.#currentResult.error!)
+        this.options.onSettled?.(undefined, this.#currentResult.error)
       }
 
       // Then trigger the listeners
