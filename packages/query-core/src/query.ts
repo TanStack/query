@@ -433,10 +433,10 @@ export class Query<
 
       if (!isCancelledError(error)) {
         // Notify cache callback
-        this.#cache.config.onError?.(error, this as Query<any, any, any, any>)
+        this.#cache.config.onError?.(error as any, this as Query<any, any, any, any>)
         this.#cache.config.onSettled?.(
           this.state.data,
-          error,
+          error as any,
           this as Query<any, any, any, any>,
         )
       }
@@ -469,7 +469,7 @@ export class Query<
         this.#cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
         this.#cache.config.onSettled?.(
           data,
-          this.state.error,
+          this.state.error as any,
           this as Query<any, any, any, any>,
         )
 
