@@ -434,6 +434,11 @@ export class Query<
       if (!isCancelledError(error)) {
         // Notify cache callback
         this.#cache.config.onError?.(error, this as Query<any, any, any, any>)
+        this.#cache.config.onSettled?.(
+          this.state.data,
+          error,
+          this as Query<any, any, any, any>,
+        )
       }
 
       if (!this.isFetchingOptimistic) {
@@ -462,6 +467,11 @@ export class Query<
 
         // Notify cache callback
         this.#cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
+        this.#cache.config.onSettled?.(
+          data,
+          this.state.error,
+          this as Query<any, any, any, any>,
+        )
 
         if (!this.isFetchingOptimistic) {
           // Schedule query gc after fetching

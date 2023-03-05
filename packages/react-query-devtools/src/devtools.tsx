@@ -842,7 +842,7 @@ const ActiveQuery = ({
           style={{
             marginBottom: '.5em',
             display: 'flex',
-            alignItems: 'stretch',
+            alignItems: 'flex-start',
             justifyContent: 'space-between',
           }}
         >
