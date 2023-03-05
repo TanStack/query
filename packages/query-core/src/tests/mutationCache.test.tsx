@@ -3,11 +3,13 @@ import { queryKey, sleep, executeMutation, createQueryClient } from './utils'
 import { MutationCache, MutationObserver } from '..'
 
 describe('mutationCache', () => {
-  describe('MutationCacheConfig.onError', () => {
-    test('should be called when a mutation errors', async () => {
+  describe('MutationCacheConfig error callbacks', () => {
+    test('should call onError and onSettled when a mutation errors', async () => {
       const key = queryKey()
       const onError = jest.fn()
-      const testCache = new MutationCache({ onError })
+      const onSuccess = jest.fn()
+      const onSettled = jest.fn()
+      const testCache = new MutationCache({ onError, onSuccess, onSettled })
       const testClient = createQueryClient({ mutationCache: testCache })
 
       try {
@@ -20,7 +22,17 @@ describe('mutationCache', () => {
       } catch {}
 
       const mutation = testCache.getAll()[0]
+      expect(onError).toHaveBeenCalledTimes(1)
       expect(onError).toHaveBeenCalledWith('error', 'vars', 'context', mutation)
+      expect(onSuccess).not.toHaveBeenCalled()
+      expect(onSettled).toHaveBeenCalledTimes(1)
+      expect(onSettled).toHaveBeenCalledWith(
+        undefined,
+        'error',
+        'vars',
+        'context',
+        mutation,
+      )
     })
 
     test('should be awaited', async () => {
@@ -31,7 +43,12 @@ describe('mutationCache', () => {
         await sleep(1)
         states.push(2)
       }
-      const testCache = new MutationCache({ onError })
+      const onSettled = async () => {
+        states.push(5)
+        await sleep(1)
+        states.push(6)
+      }
+      const testCache = new MutationCache({ onError, onSettled })
       const testClient = createQueryClient({ mutationCache: testCache })
 
       try {
@@ -44,17 +61,24 @@ describe('mutationCache', () => {
             await sleep(1)
             states.push(4)
           },
+          onSettled: async () => {
+            states.push(7)
+            await sleep(1)
+            states.push(8)
+          },
         })
       } catch {}
 
-      expect(states).toEqual([1, 2, 3, 4])
+      expect(states).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
     })
   })
-  describe('MutationCacheConfig.onSuccess', () => {
-    test('should be called when a mutation is successful', async () => {
+  describe('MutationCacheConfig success callbacks', () => {
+    test('should call onSuccess and onSettled when a mutation is successful', async () => {
       const key = queryKey()
+      const onError = jest.fn()
       const onSuccess = jest.fn()
-      const testCache = new MutationCache({ onSuccess })
+      const onSettled = jest.fn()
+      const testCache = new MutationCache({ onError, onSuccess, onSettled })
       const testClient = createQueryClient({ mutationCache: testCache })
 
       try {
@@ -67,8 +91,18 @@ describe('mutationCache', () => {
       } catch {}
 
       const mutation = testCache.getAll()[0]
+      expect(onSuccess).toHaveBeenCalledTimes(1)
       expect(onSuccess).toHaveBeenCalledWith(
         { data: 5 },
+        'vars',
+        'context',
+        mutation,
+      )
+      expect(onError).not.toHaveBeenCalled()
+      expect(onSettled).toHaveBeenCalledTimes(1)
+      expect(onSettled).toHaveBeenCalledWith(
+        { data: 5 },
+        null,
         'vars',
         'context',
         mutation,
@@ -82,7 +116,12 @@ describe('mutationCache', () => {
         await sleep(1)
         states.push(2)
       }
-      const testCache = new MutationCache({ onSuccess })
+      const onSettled = async () => {
+        states.push(5)
+        await sleep(1)
+        states.push(6)
+      }
+      const testCache = new MutationCache({ onSuccess, onSettled })
       const testClient = createQueryClient({ mutationCache: testCache })
 
       await executeMutation(testClient, {
@@ -94,9 +133,14 @@ describe('mutationCache', () => {
           await sleep(1)
           states.push(4)
         },
+        onSettled: async () => {
+          states.push(7)
+          await sleep(1)
+          states.push(8)
+        },
       })
 
-      expect(states).toEqual([1, 2, 3, 4])
+      expect(states).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
     })
   })
   describe('MutationCacheConfig.onMutate', () => {

@@ -16,7 +16,10 @@ const queryCache = new QueryCache({
   },
   onSuccess: data => {
     console.log(data)
-  }
+  },
+  onSettled: (data, error) => {
+    console.log(data, error)
+  },
 })
 
 const query = queryCache.find({ queryKey: ['posts'] })
@@ -37,10 +40,13 @@ Its available methods are:
 - `onSuccess?: (data: unknown, query: Query) => void`
   - Optional
   - This function will be called if some query is successful.
+- `onSettled?:` (data: unknown | undefined, error: unknown | null, query: Query) => void
+  - Optional
+  - This function will be called if some query is settled (either successful or errored).
 
 ## Global callbacks
 
-The `onError` and `onSuccess` callbacks on the QueryCache can be used to handle these events on a global level. They are different to `defaultOptions` provided to the QueryClient because:
+The `onError`, `onSuccess` and `onSettled` callbacks on the QueryCache can be used to handle these events on a global level. They are different to `defaultOptions` provided to the QueryClient because:
 - `defaultOptions` can be overridden by each Query - the global callbacks will **always** be called.
 - `defaultOptions` callbacks will be called once for each Observer, while the global callbacks will only be called once per Query.
 

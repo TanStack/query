@@ -13,6 +13,11 @@ import type { QueryObserver } from './queryObserver'
 interface QueryCacheConfig {
   onError?: (error: unknown, query: Query<unknown, unknown, unknown>) => void
   onSuccess?: (data: unknown, query: Query<unknown, unknown, unknown>) => void
+  onSettled?: (
+    data: unknown | undefined,
+    error: unknown | null,
+    query: Query<unknown, unknown, unknown>,
+  ) => void
 }
 
 interface QueryHashMap {
