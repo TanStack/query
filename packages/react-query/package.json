@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query",
-  "version": "4.23.0",
+  "version": "4.26.0",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -30,7 +30,6 @@
     "test:types": "tsc",
     "test:lib": "jest --config ./jest.config.ts",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:lib:publish": "pnpm run test:lib --collectCoverage false",
     "build:types": "tsc --build"
   },
   "files": [

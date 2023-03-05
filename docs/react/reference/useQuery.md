@@ -22,6 +22,7 @@ const {
   isPreviousData,
   isRefetchError,
   isRefetching,
+  isInitialLoading,
   isStale,
   isSuccess,
   refetch,

@@ -1,4 +1,5 @@
 import { isVue2 } from 'vue-demi'
+import { isServer } from '@tanstack/query-core'
 import type { QueryClientConfig } from '@tanstack/query-core'
 
 import { QueryClient } from './queryClient'
@@ -56,7 +57,10 @@ export const VueQueryPlugin = {
       }
     }
 
-    client.mount()
+    if (!isServer) {
+      client.mount()
+    }
+
     let persisterUnmount = () => {
       // noop
     }

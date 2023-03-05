@@ -6,14 +6,13 @@
     "preinstall": "node -e \"if(process.env.CI == 'true') {console.log('Skipping preinstall...'); process.exit(1)}\" || npx -y only-allow pnpm",
     "install:csb": "pnpm install --frozen-lockfile",
     "test": "pnpm run test:ci",
-    "test:ci": "pnpm run test:format && pnpm run test:eslint && pnpm run test:lib:publish && pnpm run test:types",
+    "test:ci": "pnpm run test:format && pnpm run test:eslint && pnpm run test:lib && pnpm run test:types",
     "test:react:17": "pnpm --filter \"./packages/react-*\" run test:lib",
     "test:eslint": "pnpm --filter \"./packages/**\" run test:eslint",
     "test:format": "pnpm run prettier --check",
     "test:lib": "pnpm --filter \"./packages/**\" run test:lib",
     "test:lib:dev": "pnpm --filter \"./packages/**\" run test:lib:dev",
-    "test:lib:publish": "pnpm --filter \"./packages/**\" run test:lib:publish",
-    "test:size": "pnpm run build && bundlewatch",
+    "test:build": "pnpm run build && bundlewatch && pnpm run validatePackages",
     "test:types": "pnpm --filter \"./packages/**\" run test:types",
     "build": "rollup --config rollup.config.js && pnpm --filter \"./packages/**\" run build && pnpm run build:types",
     "build:types": "pnpm --filter \"./packages/**\" run build:types",
@@ -21,7 +20,8 @@
     "dev": "pnpm run watch",
     "prettier": "prettier --plugin-search-dir . \"{packages,examples}/**/src/**/*.{md,js,jsx,ts,tsx,json,vue,svelte}\"",
     "prettier:write": "pnpm run prettier --write",
-    "cipublish": "ts-node scripts/publish.ts"
+    "cipublish": "ts-node scripts/publish.ts",
+    "validatePackages": "ts-node scripts/validate-packages.ts"
   },
   "namespace": "@tanstack",
   "devDependencies": {

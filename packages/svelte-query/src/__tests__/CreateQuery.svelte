@@ -1,17 +1,13 @@
 <script lang="ts">
-  import { createQuery, QueryClient } from '../index'
+  import { createQuery, QueryClient, type CreateQueryOptions } from '../index'
   import { setQueryClientContext } from '../context'
 
-  export let queryKey: Array<string>
-  export let queryFn: () => Promise<string>
+  export let options: CreateQueryOptions
 
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
 
-  const query = createQuery({
-    queryKey,
-    queryFn,
-  })
+  const query = createQuery(options)
 </script>
 
 {#if $query.isLoading}

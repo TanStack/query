@@ -594,7 +594,7 @@ export class QueryClient {
       .catch(noop)
   }
 
-  resumePausedMutations(): Promise<void> {
+  resumePausedMutations(): Promise<unknown> {
     return this.mutationCache.resumePausedMutations()
   }
 

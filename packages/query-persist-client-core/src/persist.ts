@@ -5,6 +5,7 @@ import type {
   HydrateOptions,
 } from '@tanstack/query-core'
 import { dehydrate, hydrate } from '@tanstack/query-core'
+import type { NotifyEventType } from '@tanstack/query-core'
 
 export type Promisable<T> = T | PromiseLike<T>
 
@@ -51,6 +52,20 @@ export interface PersistQueryClientOptions
   extends PersistedQueryClientRestoreOptions,
     PersistedQueryClientSaveOptions,
     PersistQueryClienRootOptions {}
+
+/**
+ * Checks if emitted event is about cache change and not about observers.
+ * Useful for persist, where we only want to trigger save when cache is changed.
+ */
+const cacheableEventTypes: Array<NotifyEventType> = [
+  'added',
+  'removed',
+  'updated',
+]
+
+function isCacheableEventType(eventType: NotifyEventType) {
+  return cacheableEventTypes.includes(eventType)
+}
 
 /**
  * Restores persisted data to the QueryCache
@@ -123,14 +138,18 @@ export function persistQueryClientSubscribe(
 ) {
   const unsubscribeQueryCache = props.queryClient
     .getQueryCache()
-    .subscribe(() => {
-      persistQueryClientSave(props)
+    .subscribe((event) => {
+      if (isCacheableEventType(event.type)) {
+        persistQueryClientSave(props)
+      }
     })
 
   const unusbscribeMutationCache = props.queryClient
     .getMutationCache()
-    .subscribe(() => {
-      persistQueryClientSave(props)
+    .subscribe((event) => {
+      if (isCacheableEventType(event.type)) {
+        persistQueryClientSave(props)
+      }
     })
 
   return () => {
