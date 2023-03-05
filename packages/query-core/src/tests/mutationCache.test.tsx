@@ -71,10 +71,10 @@ describe('mutationCache', () => {
               states.push(4)
             },
             onSettled: async () => {
-            	states.push(7)
-            	await sleep(1)
-            	states.push(8)
-          	},
+              states.push(7)
+              await sleep(1)
+              states.push(8)
+            },
           },
           'vars',
         )
@@ -149,9 +149,10 @@ describe('mutationCache', () => {
             states.push(4)
           },
           onSettled: async () => {
-          	states.push(7)
-          	await sleep(1)
-          	states.push(8)
+            states.push(7)
+            await sleep(1)
+            states.push(8)
+          },
         },
         'vars',
       )

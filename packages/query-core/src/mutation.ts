@@ -213,8 +213,8 @@ export class Mutation<
 
       // Notify cache callback
       await this.#mutationCache.config.onSettled?.(
-        undefined,
-        error,
+        data,
+        null,
         this.state.variables,
         this.state.context,
         this as Mutation<unknown, unknown, unknown, unknown>,
