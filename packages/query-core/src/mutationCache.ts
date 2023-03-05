@@ -25,7 +25,14 @@ interface MutationCacheConfig {
   ) => Promise<unknown> | unknown
   onMutate?: (
     variables: unknown,
-    mutation: Mutation<unknown, unknown, unknown, unknown>,
+    mutation: Mutation<unknown, unknown, unknown>,
+  ) => Promise<unknown> | unknown
+  onSettled?: (
+    data: unknown | undefined,
+    error: unknown | null,
+    variables: unknown,
+    context: unknown,
+    mutation: Mutation<unknown, unknown, unknown>,
   ) => Promise<unknown> | unknown
 }
 

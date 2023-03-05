@@ -223,6 +223,15 @@ export class Mutation<
         this.state.context!,
       )
 
+      // Notify cache callback
+      await this.mutationCache.config.onSettled?.(
+        data,
+        null,
+        this.state.variables,
+        this.state.context,
+        this as Mutation<unknown, unknown, unknown, unknown>,
+      )
+
       await this.options.onSettled?.(
         data,
         null,
@@ -250,6 +259,15 @@ export class Mutation<
           error as TError,
           this.state.variables!,
           this.state.context,
+        )
+
+        // Notify cache callback
+        await this.mutationCache.config.onSettled?.(
+          undefined,
+          error,
+          this.state.variables,
+          this.state.context,
+          this as Mutation<unknown, unknown, unknown, unknown>,
         )
 
         await this.options.onSettled?.(
