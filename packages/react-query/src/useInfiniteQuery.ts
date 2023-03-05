@@ -29,6 +29,7 @@ export function useInfiniteQuery<
 ): UseInfiniteQueryResult<TData, TError> {
   return useBaseQuery(
     options,
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     InfiniteQueryObserver as typeof QueryObserver,
     queryClient,
   ) as UseInfiniteQueryResult<TData, TError>

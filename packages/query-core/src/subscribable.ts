@@ -9,7 +9,7 @@ export class Subscribable<TListener extends Function = Listener> {
   }
 
   subscribe(listener: TListener): () => void {
-    this.listeners.push(listener as TListener)
+    this.listeners.push(listener)
 
     this.onSubscribe()
 

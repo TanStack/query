@@ -209,7 +209,7 @@ export class Mutation<
         this as Mutation<unknown, unknown, unknown, unknown>,
       )
 
-      await this.options.onSuccess?.(data, variables, this.state.context!)
+      await this.options.onSuccess?.(data, variables, this.state.context)
 
       await this.options.onSettled?.(data, null, variables, this.state.context)
 
