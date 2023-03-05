@@ -1,4 +1,5 @@
 import { ESLintUtils } from '@typescript-eslint/utils'
+import { describe, it } from 'vitest'
 import { normalizeIndent } from '../../utils/test-utils'
 import { rule } from './exhaustive-deps.rule'
 
@@ -6,6 +7,9 @@ const ruleTester = new ESLintUtils.RuleTester({
   parser: '@typescript-eslint/parser',
   settings: {},
 })
+
+ESLintUtils.RuleTester.describe = describe
+ESLintUtils.RuleTester.it = it
 
 ruleTester.run('exhaustive-deps', rule, {
   valid: [

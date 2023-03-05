@@ -1,4 +1,5 @@
 import { configs } from './index'
+import { describe, it, expect } from 'vitest'
 
 describe('configs', () => {
   it('should match snapshot', () => {
