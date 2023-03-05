@@ -17,11 +17,14 @@ import type { QueryObserver } from './queryObserver'
 // TYPES
 
 interface QueryCacheConfig {
-  onError?: (error: unknown, query: Query<unknown, unknown, unknown>) => void
+  onError?: (
+    error: DefaultError,
+    query: Query<unknown, unknown, unknown>,
+  ) => void
   onSuccess?: (data: unknown, query: Query<unknown, unknown, unknown>) => void
   onSettled?: (
     data: unknown | undefined,
-    error: unknown | null,
+    error: DefaultError | null,
     query: Query<unknown, unknown, unknown>,
   ) => void
   createStore?: () => QueryStore
