@@ -1,9 +1,5 @@
 import { QueryObserver } from '@tanstack/query-core'
-import type {
-  QueryKey,
-  QueryClient,
-  RegisteredError,
-} from '@tanstack/query-core'
+import type { QueryKey, QueryClient, DefaultError } from '@tanstack/query-core'
 import { createBaseQuery } from './createBaseQuery'
 import type {
   DefinedCreateQueryResult,
@@ -14,7 +10,7 @@ import type {
 
 type UndefinedInitialDataOptions<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
@@ -23,7 +19,7 @@ type UndefinedInitialDataOptions<
 
 type DefinedInitialDataOptions<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
@@ -32,7 +28,7 @@ type DefinedInitialDataOptions<
 
 export function createQuery<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -44,7 +40,7 @@ export function createQuery<
 
 export function createQuery<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -56,7 +52,7 @@ export function createQuery<
 
 export function createQuery<
   TQueryFnData,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(

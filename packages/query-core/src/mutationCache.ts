@@ -1,5 +1,5 @@
 import type { MutationObserver } from './mutationObserver'
-import type { NotifyEvent, MutationOptions, RegisteredError } from './types'
+import type { NotifyEvent, MutationOptions, DefaultError } from './types'
 import type { QueryClient } from './queryClient'
 import { notifyManager } from './notifyManager'
 import type { Action, MutationState } from './mutation'
@@ -126,7 +126,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 
   find<
     TData = unknown,
-    TError = RegisteredError,
+    TError = DefaultError,
     TVariables = any,
     TContext = unknown,
   >(

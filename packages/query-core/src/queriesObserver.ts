@@ -26,7 +26,6 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
   #result: QueryObserverResult[]
   #queries: QueryObserverOptions[]
   #observers: QueryObserver[]
-  #observersMap: Record<string, QueryObserver>
 
   constructor(client: QueryClient, queries?: QueryObserverOptions[]) {
     super()
@@ -35,7 +34,6 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
     this.#queries = []
     this.#result = []
     this.#observers = []
-    this.#observersMap = {}
 
     if (queries) {
       this.setQueries(queries)
@@ -82,9 +80,6 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
       )
 
       const newObservers = newObserverMatches.map((match) => match.observer)
-      const newObserversMap = Object.fromEntries(
-        newObservers.map((observer) => [observer.options.queryHash, observer]),
-      )
       const newResult = newObservers.map((observer) =>
         observer.getCurrentResult(),
       )
@@ -97,7 +92,6 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
       }
 
       this.#observers = newObservers
-      this.#observersMap = newObserversMap
       this.#result = newResult
 
       if (!this.hasListeners()) {
@@ -166,7 +160,9 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
 
     const getObserver = (options: QueryObserverOptions): QueryObserver => {
       const defaultedOptions = this.#client.defaultQueryOptions(options)
-      const currentObserver = this.#observersMap[defaultedOptions.queryHash!]
+      const currentObserver = this.#observers.find(
+        (o) => o.options.queryHash === defaultedOptions.queryHash,
+      )
       return (
         currentObserver ?? new QueryObserver(this.#client, defaultedOptions)
       )

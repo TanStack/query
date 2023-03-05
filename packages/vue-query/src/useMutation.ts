@@ -12,7 +12,7 @@ import type {
   MutateFunction,
   MutationObserverResult,
   MutationObserverOptions,
-  RegisteredError,
+  DefaultError,
 } from '@tanstack/query-core'
 import type { MaybeRefDeep, DistributiveOmit } from './types'
 import { MutationObserver } from '@tanstack/query-core'
@@ -27,14 +27,14 @@ type MutationResult<TData, TError, TVariables, TContext> = DistributiveOmit<
 
 export type UseMutationOptions<
   TData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 > = MaybeRefDeep<MutationObserverOptions<TData, TError, TVariables, TContext>>
 
 type MutateSyncFunction<
   TData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 > = (
@@ -55,7 +55,7 @@ export type UseMutationReturnType<
 
 export function useMutation<
   TData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 >(

@@ -6,7 +6,7 @@ import type {
   NotifyEvent,
   QueryKey,
   QueryOptions,
-  RegisteredError,
+  DefaultError,
   WithRequired,
 } from './types'
 import { notifyManager } from './notifyManager'
@@ -150,7 +150,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
   get<
     TQueryFnData = unknown,
-    TError = RegisteredError,
+    TError = DefaultError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -165,7 +165,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     return [...this.#queries.values()]
   }
 
-  find<TQueryFnData = unknown, TError = RegisteredError, TData = TQueryFnData>(
+  find<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData>(
     filters: WithRequired<QueryFilters, 'queryKey'>,
   ): Query<TQueryFnData, TError, TData> | undefined {
     if (typeof filters.exact === 'undefined') {

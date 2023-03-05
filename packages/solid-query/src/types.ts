@@ -11,14 +11,14 @@ import type {
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   WithRequired,
-  RegisteredError,
+  DefaultError,
 } from '@tanstack/query-core'
 
 export type FunctionedParams<T> = () => T
 
 export interface CreateBaseQueryOptions<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
@@ -31,7 +31,7 @@ export interface CreateBaseQueryOptions<
 
 export interface SolidQueryOptions<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends WithRequired<
@@ -47,7 +47,7 @@ export interface SolidQueryOptions<
 
 export type CreateQueryOptions<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = FunctionedParams<SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>>
@@ -56,28 +56,28 @@ export type CreateQueryOptions<
 
 export type CreateBaseQueryResult<
   TData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
 > = QueryObserverResult<TData, TError>
 
 export type CreateQueryResult<
   TData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
 > = CreateBaseQueryResult<TData, TError>
 
 export type DefinedCreateBaseQueryResult<
   TData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
 > = DefinedQueryObserverResult<TData, TError>
 
 export type DefinedCreateQueryResult<
   TData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
 > = DefinedCreateBaseQueryResult<TData, TError>
 
 /* --- Create Infinite Queries Types --- */
 export interface SolidInfiniteQueryOptions<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
@@ -99,7 +99,7 @@ export interface SolidInfiniteQueryOptions<
 
 export type CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
@@ -116,13 +116,13 @@ export type CreateInfiniteQueryOptions<
 
 export type CreateInfiniteQueryResult<
   TData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
 > = InfiniteQueryObserverResult<TData, TError>
 
 /* --- Create Mutation Types --- */
 export interface SolidMutationOptions<
   TData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 > extends Omit<
@@ -132,14 +132,14 @@ export interface SolidMutationOptions<
 
 export type CreateMutationOptions<
   TData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 > = FunctionedParams<SolidMutationOptions<TData, TError, TVariables, TContext>>
 
 export type CreateMutateFunction<
   TData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 > = (
@@ -148,14 +148,14 @@ export type CreateMutateFunction<
 
 export type CreateMutateAsyncFunction<
   TData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 > = MutateFunction<TData, TError, TVariables, TContext>
 
 export type CreateBaseMutationResult<
   TData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TVariables = unknown,
   TContext = unknown,
 > = Override<
@@ -167,7 +167,7 @@ export type CreateBaseMutationResult<
 
 export type CreateMutationResult<
   TData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TVariables = unknown,
   TContext = unknown,
 > = CreateBaseMutationResult<TData, TError, TVariables, TContext>
