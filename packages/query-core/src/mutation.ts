@@ -182,9 +182,6 @@ export class Mutation<
 
     const restored = this.state.status === 'pending'
 
-    let data: TData | undefined
-    let error: TError | null = null
-
     try {
       if (!restored) {
         this.#dispatch({ type: 'pending', variables })
@@ -202,7 +199,7 @@ export class Mutation<
           })
         }
       }
-      data = await executeMutation()
+      const data = await executeMutation()
 
       // Notify cache callback
       await this.#mutationCache.config.onSuccess?.(
@@ -214,35 +211,54 @@ export class Mutation<
 
       await this.options.onSuccess?.(data, variables, this.state.context)
 
-      return data
-    } catch (err) {
-      error = err as TError
-      // Notify cache callback
-      await this.#mutationCache.config.onError?.(
-        error as any,
-        variables,
-        this.state.context,
-        this as Mutation<unknown, unknown, unknown, unknown>,
-      )
-
-      await this.options.onError?.(error, variables, this.state.context)
-
-      throw error
-    } finally {
       // Notify cache callback
       await this.#mutationCache.config.onSettled?.(
         data,
-        error as any,
+        null,
         this.state.variables,
         this.state.context,
         this as Mutation<unknown, unknown, unknown, unknown>,
       )
 
-      await this.options.onSettled?.(data, error, variables, this.state.context)
+      await this.options.onSettled?.(data, null, variables, this.state.context)
 
-      this.#dispatch(
-        error ? { type: 'error', error } : { type: 'success', data: data! },
-      )
+      this.#dispatch({ type: 'success', data })
+      return data
+    } catch (error) {
+      try {
+        // Notify cache callback
+        await this.#mutationCache.config.onError?.(
+          error as any,
+          variables,
+          this.state.context,
+          this as Mutation<unknown, unknown, unknown, unknown>,
+        )
+
+        await this.options.onError?.(
+          error as TError,
+          variables,
+          this.state.context,
+        )
+
+        // Notify cache callback
+        await this.#mutationCache.config.onSettled?.(
+          undefined,
+          error as any,
+          this.state.variables,
+          this.state.context,
+          this as Mutation<unknown, unknown, unknown, unknown>,
+        )
+
+        await this.options.onSettled?.(
+          undefined,
+          error as TError,
+          variables,
+          this.state.context,
+        )
+        throw error
+      } finally {
+        this.#dispatch({ type: 'error', error: error as TError })
+      }
     }
   }
 
