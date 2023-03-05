@@ -12,7 +12,7 @@ import { Subscribable } from './subscribable'
 
 interface MutationCacheConfig {
   onError?: (
-    error: unknown,
+    error: DefaultError,
     variables: unknown,
     context: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
@@ -29,7 +29,7 @@ interface MutationCacheConfig {
   ) => Promise<unknown> | unknown
   onSettled?: (
     data: unknown | undefined,
-    error: unknown | null,
+    error: DefaultError | null,
     variables: unknown,
     context: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
