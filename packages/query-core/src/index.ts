@@ -16,6 +16,7 @@ export {
   replaceEqualDeep,
   isError,
   isServer,
+  matchQuery,
   parseQueryArgs,
   parseFilterArgs,
   parseMutationFilterArgs,
