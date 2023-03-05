@@ -214,25 +214,20 @@ export class Mutation<
 
       await this.options.onSuccess?.(data, variables, this.state.context)
 
-      this.#dispatch({ type: 'success', data })
       return data
     } catch (err) {
       error = err as TError
-      try {
-        // Notify cache callback
-        await this.#mutationCache.config.onError?.(
-          error as any,
-          variables,
-          this.state.context,
-          this as Mutation<unknown, unknown, unknown, unknown>,
-        )
+      // Notify cache callback
+      await this.#mutationCache.config.onError?.(
+        error as any,
+        variables,
+        this.state.context,
+        this as Mutation<unknown, unknown, unknown, unknown>,
+      )
 
-        await this.options.onError?.(error, variables, this.state.context)
+      await this.options.onError?.(error, variables, this.state.context)
 
-        throw error
-      } finally {
-        this.#dispatch({ type: 'error', error: error })
-      }
+      throw error
     } finally {
       // Notify cache callback
       await this.#mutationCache.config.onSettled?.(
@@ -244,6 +239,10 @@ export class Mutation<
       )
 
       await this.options.onSettled?.(data, error, variables, this.state.context)
+
+      this.#dispatch(
+        error ? { type: 'error', error } : { type: 'success', data: data! },
+      )
     }
   }
 
