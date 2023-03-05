@@ -31,13 +31,5 @@ module.exports = {
   snapshotFormat: {
     printBasicPrototype: false,
   },
-  globals: {
-    'ts-jest': {
-      isolatedModules: true,
-      diagnostics: {
-        exclude: ['**'],
-      },
-    },
-  },
   moduleNameMapper,
 }

@@ -1,11 +1,15 @@
-import { rule, name } from './prefer-query-object-syntax'
-import { normalizeIndent } from '../../utils/test-utils'
 import { ESLintUtils } from '@typescript-eslint/utils'
+import { describe, it } from 'vitest'
+import { normalizeIndent } from '../../utils/test-utils'
+import { name, rule } from './prefer-query-object-syntax'
 
 const ruleTester = new ESLintUtils.RuleTester({
   parser: '@typescript-eslint/parser',
   settings: {},
 })
+
+ESLintUtils.RuleTester.describe = describe
+ESLintUtils.RuleTester.it = it
 
 ruleTester.run(name, rule, {
   valid: [
