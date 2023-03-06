@@ -12,11 +12,6 @@ const queryKeyUnref = ['foo', 'bar']
 const fn = () => 'mock'
 
 describe('QueryCache', () => {
-  // beforeAll(() => {
-  //   jest.spyOn(QueryCacheOrigin.prototype, "find");
-  //   jest.spyOn(QueryCacheOrigin.prototype, "findAll");
-  // });
-
   describe('isFetching', () => {
     test('should properly unwrap 1 parameter', async () => {
       const queryClient = new QueryClient()

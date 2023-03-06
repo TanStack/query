@@ -139,7 +139,9 @@ In order to make bailing out of updates possible by returning `undefined`, we ha
 Further, it is an easy bug to produce `Promise<void>` by adding logging in the queryFn:
 
 ```tsx
-useQuery(['key'], () => axios.get(url).then(result => console.log(result.data)))
+useQuery(['key'], () =>
+  axios.get(url).then((result) => console.log(result.data)),
+)
 ```
 
 This is now disallowed on type level; at runtime, `undefined` will be transformed to a _failed Promise_, which means you will get an `error`, which will also be logged to the console in development mode.
@@ -377,7 +379,7 @@ Additionally, `query.setDefaultOptions` was removed because it was also unused. 
 
 ### The `src/react` directory was renamed to `src/reactjs`
 
-Previously, React Query had a directory named `react` which imported from the `react` module. This could cause problems with some Jest configurations, resulting in errors when running tests like:
+Previously, React Query had a directory named `react` which imported from the `react` module. This could cause problems with some test configurations, resulting in errors when running tests like:
 
 ```
 TypeError: Cannot read property 'createContext' of undefined
@@ -420,8 +422,8 @@ React Query defaults to "tracking" query properties, which should give you a nic
 When using the [functional updater form of setQueryData](../reference/QueryClient#queryclientsetquerydata), you can now bail out of the update by returning `undefined`. This is helpful if `undefined` is given to you as `previousValue`, which means that currently, no cached entry exists and you don't want to / cannot create one, like in the example of toggling a todo:
 
 ```tsx
-queryClient.setQueryData(['todo', id], previousTodo =>
-  previousTodo ? { ...previousTodo, done: true } : undefined
+queryClient.setQueryData(['todo', id], (previousTodo) =>
+  previousTodo ? { ...previousTodo, done: true } : undefined,
 )
 ```
 
