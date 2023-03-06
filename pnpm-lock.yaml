@@ -475,7 +475,7 @@ importers:
       expo-status-bar: 1.1.0
       react: 17.0.1
       react-dom: 17.0.1_react@17.0.1
-      react-native: 0.64.3_gpe6tsd6gj6gjuc7hywxyjd2qm
+      react-native: 0.64.3_react@17.0.1
       react-native-gesture-handler: 1.10.3
       react-native-paper: 4.9.2_sbjh7r6wrxe2pvsvaqturwwxna
       react-native-reanimated: 2.2.4_euatrkfywk4k5qvuxs5sao62oq
@@ -842,7 +842,7 @@ importers:
       postcss: 8.4.21
       svelte: 3.55.0
       svelte-check: 2.10.3_77wbasr76lhjripnylrva3hecy
-      tailwindcss: 3.2.4_postcss@8.4.21
+      tailwindcss: 3.2.4
       tslib: 2.4.1
       typescript: 4.8.4
       vite: 4.0.4
@@ -935,8 +935,10 @@ importers:
 
   packages/query-sync-storage-persister:
     specifiers:
+      '@tanstack/query-core': workspace:*
       '@tanstack/query-persist-client-core': workspace:*
     dependencies:
+      '@tanstack/query-core': link:../query-core
       '@tanstack/query-persist-client-core': link:../query-persist-client-core
 
   packages/react-query:
@@ -4765,15 +4767,14 @@ packages:
       write-file-atomic: 2.4.3
     dev: false
 
-  /@expo/metro-config/0.1.84_@babel+core@7.19.1:
+  /@expo/metro-config/0.1.84:
     resolution: {integrity: sha512-xWSfM0+AxcKw0H8mc1RuKs4Yy4JT4SJfn4yDnGLAlKkHlEC+D2seZvb/Tdd173e/LANmcarNd+OcDYu03AmVWA==}
     dependencies:
       '@expo/config': 5.0.9
       chalk: 4.1.2
       getenv: 1.0.0
-      metro-react-native-babel-transformer: 0.59.0_@babel+core@7.19.1
+      metro-react-native-babel-transformer: 0.59.0
     transitivePeerDependencies:
-      - '@babel/core'
       - supports-color
     dev: false
 
@@ -5879,7 +5880,7 @@ packages:
       ora: 3.4.0
     dev: false
 
-  /@react-native-community/cli/5.0.1_wkcrzi46eu62irrbbalfhjeu4u:
+  /@react-native-community/cli/5.0.1_react-native@0.64.3:
     resolution: {integrity: sha512-9VzSYUYSEqxEH5Ib2UNSdn2eyPiYZ4T7Y79o9DKtRBuSaUIwbCUdZtIm+UUjBpLS1XYBkW26FqL8/UdZDmQvXw==}
     engines: {node: '>=12'}
     hasBin: true
@@ -5909,7 +5910,7 @@ packages:
       metro: 0.64.0
       metro-config: 0.64.0
       metro-core: 0.64.0
-      metro-react-native-babel-transformer: 0.64.0_@babel+core@7.19.1
+      metro-react-native-babel-transformer: 0.64.0
       metro-resolver: 0.64.0
       metro-runtime: 0.64.0
       minimist: 1.2.6
@@ -5918,14 +5919,13 @@ packages:
       ora: 3.4.0
       pretty-format: 26.6.2
       prompts: 2.4.2
-      react-native: 0.64.3_gpe6tsd6gj6gjuc7hywxyjd2qm
+      react-native: 0.64.3_react@17.0.1
       semver: 6.3.0
       serve-static: 1.15.0
       strip-ansi: 5.2.0
       sudo-prompt: 9.2.1
       wcwidth: 1.0.1
     transitivePeerDependencies:
-      - '@babel/core'
       - bufferutil
       - encoding
       - supports-color
@@ -5937,7 +5937,7 @@ packages:
     peerDependencies:
       react-native: '>=0.59'
     dependencies:
-      react-native: 0.64.3_gpe6tsd6gj6gjuc7hywxyjd2qm
+      react-native: 0.64.3_react@17.0.1
     dev: false
 
   /@react-native/assets/1.0.0:
@@ -5979,7 +5979,7 @@ packages:
     dependencies:
       '@react-navigation/native': 6.0.11_sbjh7r6wrxe2pvsvaqturwwxna
       react: 17.0.1
-      react-native: 0.64.3_gpe6tsd6gj6gjuc7hywxyjd2qm
+      react-native: 0.64.3_react@17.0.1
       react-native-safe-area-context: 3.3.2_sbjh7r6wrxe2pvsvaqturwwxna
     dev: false
 
@@ -5994,7 +5994,7 @@ packages:
       fast-deep-equal: 3.1.3
       nanoid: 3.3.4
       react: 17.0.1
-      react-native: 0.64.3_gpe6tsd6gj6gjuc7hywxyjd2qm
+      react-native: 0.64.3_react@17.0.1
     dev: false
 
   /@react-navigation/routers/6.1.1:
@@ -6017,7 +6017,7 @@ packages:
       '@react-navigation/native': 6.0.11_sbjh7r6wrxe2pvsvaqturwwxna
       color: 4.2.3
       react: 17.0.1
-      react-native: 0.64.3_gpe6tsd6gj6gjuc7hywxyjd2qm
+      react-native: 0.64.3_react@17.0.1
       react-native-gesture-handler: 1.10.3
       react-native-safe-area-context: 3.3.2_sbjh7r6wrxe2pvsvaqturwwxna
       react-native-screens: 3.8.0_sbjh7r6wrxe2pvsvaqturwwxna
@@ -8114,7 +8114,7 @@ packages:
       '@babel/preset-env': 7.18.6_@babel+core@7.19.1
       babel-plugin-module-resolver: 4.1.0
       babel-plugin-react-native-web: 0.17.7
-      metro-react-native-babel-preset: 0.64.0_@babel+core@7.19.1
+      metro-react-native-babel-preset: 0.64.0
     transitivePeerDependencies:
       - '@babel/core'
       - supports-color
@@ -10590,7 +10590,7 @@ packages:
     hasBin: true
     dependencies:
       '@babel/runtime': 7.18.9
-      '@expo/metro-config': 0.1.84_@babel+core@7.19.1
+      '@expo/metro-config': 0.1.84
       '@expo/vector-icons': 12.0.5
       babel-preset-expo: 8.5.1_@babel+core@7.19.1
       cross-spawn: 6.0.5
@@ -13370,10 +13370,8 @@ packages:
       - supports-color
     dev: false
 
-  /metro-react-native-babel-preset/0.64.0_@babel+core@7.19.1:
+  /metro-react-native-babel-preset/0.64.0:
     resolution: {integrity: sha512-HcZ0RWQRuJfpPiaHyFQJzcym+/dDIVUPwUAXWoub/C4GkGu+mPjp8vqK6g0FxokCnnI2TK0gZTza2IDfiNNscQ==}
-    peerDependencies:
-      '@babel/core': '*'
     dependencies:
       '@babel/core': 7.19.1
       '@babel/plugin-proposal-class-properties': 7.18.6_@babel+core@7.19.1
@@ -13418,10 +13416,8 @@ packages:
       - supports-color
     dev: false
 
-  /metro-react-native-babel-transformer/0.59.0_@babel+core@7.19.1:
+  /metro-react-native-babel-transformer/0.59.0:
     resolution: {integrity: sha512-1O3wrnMq4NcPQ1asEcl9lRDn/t+F1Oef6S9WaYVIKEhg9m/EQRGVrrTVP+R6B5Eeaj3+zNKbzM8Dx/NWy1hUbQ==}
-    peerDependencies:
-      '@babel/core': '*'
     dependencies:
       '@babel/core': 7.19.1
       babel-preset-fbjs: 3.4.0_@babel+core@7.19.1
@@ -13432,15 +13428,13 @@ packages:
       - supports-color
     dev: false
 
-  /metro-react-native-babel-transformer/0.64.0_@babel+core@7.19.1:
+  /metro-react-native-babel-transformer/0.64.0:
     resolution: {integrity: sha512-K1sHO3ODBFCr7uEiCQ4RvVr+cQg0EHQF8ChVPnecGh/WDD8udrTq9ECwB0dRfMjAvlsHtRUlJm6ZSI8UPgum2w==}
-    peerDependencies:
-      '@babel/core': '*'
     dependencies:
       '@babel/core': 7.19.1
       babel-preset-fbjs: 3.4.0_@babel+core@7.19.1
       metro-babel-transformer: 0.64.0
-      metro-react-native-babel-preset: 0.64.0_@babel+core@7.19.1
+      metro-react-native-babel-preset: 0.64.0
       metro-source-map: 0.64.0
       nullthrows: 1.1.1
     transitivePeerDependencies:
@@ -13586,7 +13580,7 @@ packages:
       metro-hermes-compiler: 0.64.0
       metro-inspector-proxy: 0.64.0
       metro-minify-uglify: 0.64.0
-      metro-react-native-babel-preset: 0.64.0_@babel+core@7.19.1
+      metro-react-native-babel-preset: 0.64.0
       metro-resolver: 0.64.0
       metro-runtime: 0.64.0
       metro-source-map: 0.64.0
@@ -14930,7 +14924,7 @@ packages:
     peerDependencies:
       react-native: '>=0.42.0'
     dependencies:
-      react-native: 0.64.3_gpe6tsd6gj6gjuc7hywxyjd2qm
+      react-native: 0.64.3_react@17.0.1
     dev: false
 
   /react-native-paper/4.9.2_sbjh7r6wrxe2pvsvaqturwwxna:
@@ -14943,7 +14937,7 @@ packages:
       '@callstack/react-theme-provider': 3.0.7_react@17.0.1
       color: 3.2.1
       react: 17.0.1
-      react-native: 0.64.3_gpe6tsd6gj6gjuc7hywxyjd2qm
+      react-native: 0.64.3_react@17.0.1
       react-native-iphone-x-helper: 1.3.1_react-native@0.64.3
     dev: false
 
@@ -14958,7 +14952,7 @@ packages:
       fbjs: 3.0.4
       mockdate: 3.0.5
       react: 17.0.1
-      react-native: 0.64.3_gpe6tsd6gj6gjuc7hywxyjd2qm
+      react-native: 0.64.3_react@17.0.1
       react-native-gesture-handler: 1.10.3
       string-hash-64: 1.0.3
     transitivePeerDependencies:
@@ -14973,7 +14967,7 @@ packages:
       react-native: '*'
     dependencies:
       react: 17.0.1
-      react-native: 0.64.3_gpe6tsd6gj6gjuc7hywxyjd2qm
+      react-native: 0.64.3_react@17.0.1
     dev: false
 
   /react-native-screens/3.8.0_sbjh7r6wrxe2pvsvaqturwwxna:
@@ -14983,7 +14977,7 @@ packages:
       react-native: '*'
     dependencies:
       react: 17.0.1
-      react-native: 0.64.3_gpe6tsd6gj6gjuc7hywxyjd2qm
+      react-native: 0.64.3_react@17.0.1
       warn-once: 0.1.0
     dev: false
 
@@ -15006,7 +15000,7 @@ packages:
       - encoding
     dev: false
 
-  /react-native/0.64.3_gpe6tsd6gj6gjuc7hywxyjd2qm:
+  /react-native/0.64.3_react@17.0.1:
     resolution: {integrity: sha512-2OEU74U0Ek1/WeBzPbg6XDsCfjF/9fhrNX/5TFgEiBKd5mNc9LOZ/OlMmkb7iues/ZZ/oc51SbEfLRQdcW0fVw==}
     engines: {node: '>=12'}
     hasBin: true
@@ -15014,7 +15008,7 @@ packages:
       react: 17.0.1
     dependencies:
       '@jest/create-cache-key-function': 26.6.2
-      '@react-native-community/cli': 5.0.1_wkcrzi46eu62irrbbalfhjeu4u
+      '@react-native-community/cli': 5.0.1_react-native@0.64.3
       '@react-native-community/cli-platform-android': 5.0.1
       '@react-native-community/cli-platform-ios': 5.0.2
       '@react-native/assets': 1.0.0
@@ -15028,7 +15022,7 @@ packages:
       invariant: 2.2.4
       jsc-android: 245459.0.0
       metro-babel-register: 0.64.0
-      metro-react-native-babel-transformer: 0.64.0_@babel+core@7.19.1
+      metro-react-native-babel-transformer: 0.64.0
       metro-runtime: 0.64.0
       metro-source-map: 0.64.0
       nullthrows: 1.1.1
@@ -15047,7 +15041,6 @@ packages:
       whatwg-fetch: 3.0.0
       ws: 6.2.2
     transitivePeerDependencies:
-      - '@babel/core'
       - '@babel/preset-env'
       - bufferutil
       - encoding
@@ -16494,12 +16487,10 @@ packages:
       strip-ansi: 6.0.1
     dev: true
 
-  /tailwindcss/3.2.4_postcss@8.4.21:
+  /tailwindcss/3.2.4:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -17234,28 +17225,6 @@ packages:
     engines: {node: '>= 0.8'}
     dev: false
 
-  /vite-node/0.27.1:
-    resolution: {integrity: sha512-d6+ue/3NzsfndWaPbYh/bFkHbmAWfDXI4B874zRx+WREnG6CUHUbBC8lKaRYZjeR6gCPN5m1aVNNRXBYICA9XA==}
-    engines: {node: '>=v14.16.0'}
-    hasBin: true
-    dependencies:
-      cac: 6.7.14
-      debug: 4.3.4
-      mlly: 1.1.0
-      pathe: 0.2.0
-      picocolors: 1.0.0
-      source-map: 0.6.1
-      source-map-support: 0.5.21
-      vite: 3.2.2
-    transitivePeerDependencies:
-      - less
-      - sass
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-    dev: true
-
   /vite-node/0.27.1_@types+node@17.0.45:
     resolution: {integrity: sha512-d6+ue/3NzsfndWaPbYh/bFkHbmAWfDXI4B874zRx+WREnG6CUHUbBC8lKaRYZjeR6gCPN5m1aVNNRXBYICA9XA==}
     engines: {node: '>=v14.16.0'}
@@ -17572,8 +17541,8 @@ packages:
       tinybench: 2.3.1
       tinypool: 0.3.0
       tinyspy: 1.0.2
-      vite: 3.2.2
-      vite-node: 0.27.1
+      vite: 4.0.4_@types+node@17.0.45
+      vite-node: 0.27.1_@types+node@17.0.45
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
       - less
