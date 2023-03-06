@@ -41,7 +41,7 @@
     "clean": "rimraf ./build",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
-    "test:lib": "jest --config ./jest.config.ts",
+    "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "build:types": "tsc --build && cp build/lib/index.d.ts build/lib/index.prod.d.ts"
   },
@@ -54,7 +54,8 @@
     "react-dom": "^18.2.0",
     "react-dom-17": "npm:react-dom@^17.0.2",
     "react-error-boundary": "^3.1.4",
-    "@tanstack/react-query": "workspace:*"
+    "@tanstack/react-query": "workspace:*",
+    "@tanstack/query-core": "workspace:*"
   },
   "dependencies": {
     "@tanstack/match-sorter-utils": "^8.7.0",

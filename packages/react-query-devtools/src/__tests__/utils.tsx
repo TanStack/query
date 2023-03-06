@@ -1,6 +1,7 @@
 import { render, type RenderOptions } from '@testing-library/react'
 import * as React from 'react'
 import { ReactQueryDevtools } from '../devtools'
+import { beforeEach } from 'vitest'
 
 import {
   QueryClient,

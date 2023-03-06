@@ -17,8 +17,6 @@ import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest'
 
 const isReact18 = () => (process.env.REACTJS_VERSION || '18') === '18'
 
-console.log(isReact18())
-
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
   if (isReact18()) {
     let root: any

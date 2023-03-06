@@ -1,6 +1,7 @@
-import { fireEvent, render, screen, act } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import * as React from 'react'
 
+import { describe, expect, it, vi } from 'vitest'
 import { chunkArray, CopyButton, DefaultRenderer } from '../Explorer'
 import { displayValue } from '../utils'
 
@@ -30,7 +31,7 @@ describe('Explorer', () => {
 
   describe('DefaultRenderer', () => {
     it('when the entry label is clicked, toggle expanded', async () => {
-      const toggleExpanded = jest.fn()
+      const toggleExpanded = vi.fn()
 
       render(
         <DefaultRenderer

@@ -1,15 +1,15 @@
-import * as React from 'react'
-import { fireEvent, screen, waitFor, act } from '@testing-library/react'
-import { ErrorBoundary } from 'react-error-boundary'
-import '@testing-library/jest-dom'
 import type { QueryClient } from '@tanstack/react-query'
 import { useQuery } from '@tanstack/react-query'
+import { act, fireEvent, screen, waitFor } from '@testing-library/react'
+import * as React from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { defaultPanelSize, sortFns } from '../utils'
 import {
+  createQueryClient,
   getByTextContent,
   renderWithClient,
   sleep,
-  createQueryClient,
 } from './utils'
 
 // TODO: This should be removed with the types for react-error-boundary get updated.
@@ -21,15 +21,15 @@ declare module 'react-error-boundary' {
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation((query: string) => ({
+  value: vi.fn().mockImplementation((query: string) => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
   })),
 })
 
@@ -40,8 +40,8 @@ describe('ReactQueryDevtools', () => {
   })
   it('should be able to open and close devtools', async () => {
     const { queryClient } = createQueryClient()
-    const onCloseClick = jest.fn()
-    const onToggleClick = jest.fn()
+    const onCloseClick = vi.fn()
+    const onToggleClick = vi.fn()
 
     function Page() {
       const { data = 'default' } = useQuery(['check'], async () => {
@@ -696,7 +696,7 @@ describe('ReactQueryDevtools', () => {
     })
 
     it('should render with error when the custom context is not passed to useQuery', async () => {
-      const consoleErrorMock = jest.spyOn(console, 'error')
+      const consoleErrorMock = vi.spyOn(console, 'error')
       consoleErrorMock.mockImplementation(() => undefined)
 
       const context = React.createContext<QueryClient | undefined>(undefined)
@@ -731,7 +731,7 @@ describe('ReactQueryDevtools', () => {
     })
 
     it('should render with error when the custom context is not passed to ReactQueryDevtools', async () => {
-      const consoleErrorMock = jest.spyOn(console, 'error')
+      const consoleErrorMock = vi.spyOn(console, 'error')
       consoleErrorMock.mockImplementation(() => undefined)
 
       const context = React.createContext<QueryClient | undefined>(undefined)
