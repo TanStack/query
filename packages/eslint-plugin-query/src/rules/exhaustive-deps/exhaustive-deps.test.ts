@@ -87,7 +87,7 @@ ruleTester.run('exhaustive-deps', rule, {
         type Result = {};
         function MyComponent(props) {
             useQuery({
-              queryKey: ["foo", dep1],
+              queryKey: ["foo", dep],
               queryFn: () => api.get<Result>(dep),
             });
         }
@@ -234,6 +234,17 @@ ruleTester.run('exhaustive-deps', rule, {
             queryFn: async () => id,
           })
         }
+      `,
+    },
+    {
+      name: 'should not fail if queryKey is having the whole object while queryFn uses some props of it',
+      code: normalizeIndent`
+        const state = { foo: 'foo', bar: 'bar' }
+    
+        useQuery({
+            queryKey: ['state', state],
+            queryFn: () => Promise.resolve({ foo: state.foo, bar: state.bar })
+        })
       `,
     },
   ],
@@ -557,6 +568,23 @@ ruleTester.run('exhaustive-deps', rule, {
         {
           messageId: 'missingDeps',
           data: { deps: 'num' },
+        },
+      ],
+    },
+    {
+      name: 'should fail if queryFn is using multiple object props when only one of them is in the queryKey',
+      code: normalizeIndent`
+        const state = { foo: 'foo', bar: 'bar' }
+    
+        useQuery({
+            queryKey: ['state', state.foo],
+            queryFn: () => Promise.resolve({ foo: state.foo, bar: state.bar })
+        })
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'state.bar' },
         },
       ],
     },
