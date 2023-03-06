@@ -9,10 +9,15 @@ import {
 import { useQueries } from '../useQueries'
 import { useQueryClient } from '../useQueryClient'
 import { QueryClient } from '../queryClient'
+import { vi } from 'vitest'
+import type { MockedFunction } from 'vitest'
 
-jest.mock('../useQueryClient')
+vi.mock('../useQueryClient')
 
 describe('useQueries', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
   test('should return result for each query', () => {
     const queries = [
       {
@@ -159,7 +164,7 @@ describe('useQueries', () => {
   })
 
   test('should stop listening to changes on onScopeDispose', async () => {
-    const onScopeDisposeMock = onScopeDispose as jest.MockedFunction<
+    const onScopeDisposeMock = onScopeDispose as MockedFunction<
       typeof onScopeDispose
     >
     onScopeDisposeMock.mockImplementationOnce((fn) => fn())

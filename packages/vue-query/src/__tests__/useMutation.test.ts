@@ -2,8 +2,9 @@ import { reactive, ref } from 'vue-demi'
 import { errorMutator, flushPromises, successMutator } from './test-utils'
 import { parseMutationArgs, useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
+import { vi } from 'vitest'
 
-jest.mock('../useQueryClient')
+vi.mock('../useQueryClient')
 
 describe('useMutation', () => {
   test('should be in idle state initially', () => {
@@ -170,11 +171,11 @@ describe('useMutation', () => {
 
   describe('side effects', () => {
     beforeEach(() => {
-      jest.clearAllMocks()
+      vi.clearAllMocks()
     })
 
     test('should call onMutate when passed as an option', async () => {
-      const onMutate = jest.fn()
+      const onMutate = vi.fn()
       const mutation = useMutation((params: string) => successMutator(params), {
         onMutate,
       })
@@ -187,7 +188,7 @@ describe('useMutation', () => {
     })
 
     test('should call onError when passed as an option', async () => {
-      const onError = jest.fn()
+      const onError = vi.fn()
       const mutation = useMutation((params: string) => errorMutator(params), {
         onError,
       })
@@ -200,7 +201,7 @@ describe('useMutation', () => {
     })
 
     test('should call onSuccess when passed as an option', async () => {
-      const onSuccess = jest.fn()
+      const onSuccess = vi.fn()
       const mutation = useMutation((params: string) => successMutator(params), {
         onSuccess,
       })
@@ -213,7 +214,7 @@ describe('useMutation', () => {
     })
 
     test('should call onSettled when passed as an option', async () => {
-      const onSettled = jest.fn()
+      const onSettled = vi.fn()
       const mutation = useMutation((params: string) => successMutator(params), {
         onSettled,
       })
@@ -226,7 +227,7 @@ describe('useMutation', () => {
     })
 
     test('should call onError when passed as an argument of mutate function', async () => {
-      const onError = jest.fn()
+      const onError = vi.fn()
       const mutation = useMutation((params: string) => errorMutator(params))
 
       mutation.mutate('', { onError })
@@ -237,7 +238,7 @@ describe('useMutation', () => {
     })
 
     test('should call onSuccess when passed as an argument of mutate function', async () => {
-      const onSuccess = jest.fn()
+      const onSuccess = vi.fn()
       const mutation = useMutation((params: string) => successMutator(params))
 
       mutation.mutate('', { onSuccess })
@@ -248,7 +249,7 @@ describe('useMutation', () => {
     })
 
     test('should call onSettled when passed as an argument of mutate function', async () => {
-      const onSettled = jest.fn()
+      const onSettled = vi.fn()
       const mutation = useMutation((params: string) => successMutator(params))
 
       mutation.mutate('', { onSettled })
@@ -259,8 +260,8 @@ describe('useMutation', () => {
     })
 
     test('should fire both onSettled functions', async () => {
-      const onSettled = jest.fn()
-      const onSettledOnFunction = jest.fn()
+      const onSettled = vi.fn()
+      const onSettledOnFunction = vi.fn()
       const mutation = useMutation((params: string) => successMutator(params), {
         onSettled,
       })
@@ -276,7 +277,7 @@ describe('useMutation', () => {
 
   describe('async', () => {
     beforeEach(() => {
-      jest.clearAllMocks()
+      vi.clearAllMocks()
     })
 
     test('should resolve properly', async () => {

@@ -1,5 +1,7 @@
-const { useBaseQuery: originImpl, parseQueryArgs: originalParse } =
-  jest.requireActual('../useBaseQuery')
+import { vi } from 'vitest'
 
-export const useBaseQuery = jest.fn(originImpl)
+const { useBaseQuery: originImpl, parseQueryArgs: originalParse } =
+  (await vi.importActual('../useBaseQuery')) as any
+
+export const useBaseQuery = vi.fn(originImpl)
 export const parseQueryArgs = originalParse

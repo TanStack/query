@@ -2,8 +2,9 @@ import { ref } from 'vue-demi'
 import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
 
 import { QueryClient } from '../queryClient'
+import { vi } from 'vitest'
 
-jest.mock('@tanstack/query-core')
+vi.mock('@tanstack/query-core')
 
 const queryKeyRef = ['foo', ref('bar')]
 const queryKeyUnref = ['foo', 'bar']

@@ -11,8 +11,7 @@ const completedPackages = [
   'react-query-devtools',
   'react-query-persist-client',
   'solid-query',
-  //   'svelte-query',
-  //   'vue-query',
+  'vue-query',
 ]
 
 const cwd = join(__dirname, '..')

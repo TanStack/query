@@ -9,9 +9,12 @@ import { flushPromises } from './test-utils'
 import { useQuery } from '../useQuery'
 import { useQueries } from '../useQueries'
 
-jest.mock('../devtools/devtools')
-jest.mock('../useQueryClient')
-jest.mock('../useBaseQuery')
+import { vi } from 'vitest'
+import type { Mock } from 'vitest'
+
+vi.mock('../devtools/devtools')
+vi.mock('../useQueryClient')
+vi.mock('../useBaseQuery')
 
 interface TestApp extends App {
   onUnmount: Function
@@ -25,10 +28,10 @@ const testIf = (condition: boolean) => (condition ? test : test.skip)
 
 function getAppMock(withUnmountHook = false): TestApp {
   const mock = {
-    provide: jest.fn(),
-    unmount: jest.fn(),
+    provide: vi.fn(),
+    unmount: vi.fn(),
     onUnmount: withUnmountHook
-      ? jest.fn((u: Function) => {
+      ? vi.fn((u: Function) => {
           mock._unmount = u
         })
       : undefined,
@@ -47,7 +50,7 @@ describe('VueQueryPlugin', () => {
 
   describe('devtools', () => {
     test('should NOT setup devtools', () => {
-      const setupDevtoolsMock = setupDevtools as jest.Mock
+      const setupDevtoolsMock = setupDevtools as Mock
       const appMock = getAppMock()
       VueQueryPlugin.install(appMock)
 
@@ -57,7 +60,7 @@ describe('VueQueryPlugin', () => {
     testIf(isVue2)('should setup devtools', () => {
       const envCopy = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
-      const setupDevtoolsMock = setupDevtools as jest.Mock
+      const setupDevtoolsMock = setupDevtools as Mock
       const appMock = getAppMock()
       VueQueryPlugin.install(appMock)
 
@@ -71,7 +74,7 @@ describe('VueQueryPlugin', () => {
     testIf(isVue3)('should setup devtools', () => {
       const envCopy = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
-      const setupDevtoolsMock = setupDevtools as jest.Mock
+      const setupDevtoolsMock = setupDevtools as Mock
       const appMock = getAppMock()
       VueQueryPlugin.install(appMock)
       process.env.NODE_ENV = envCopy
@@ -84,8 +87,8 @@ describe('VueQueryPlugin', () => {
     test('should call unmount on each client when onUnmount is missing', () => {
       const appMock = getAppMock()
       const customClient = {
-        mount: jest.fn(),
-        unmount: jest.fn(),
+        mount: vi.fn(),
+        unmount: vi.fn(),
       } as unknown as QueryClient
       const originalUnmount = appMock.unmount
       VueQueryPlugin.install(appMock, {
@@ -102,8 +105,8 @@ describe('VueQueryPlugin', () => {
     test('should call onUnmount if present', () => {
       const appMock = getAppMock(true)
       const customClient = {
-        mount: jest.fn(),
-        unmount: jest.fn(),
+        mount: vi.fn(),
+        unmount: vi.fn(),
       } as unknown as QueryClient
       const originalUnmount = appMock.unmount
       VueQueryPlugin.install(appMock, { queryClient: customClient })
@@ -166,7 +169,7 @@ describe('VueQueryPlugin', () => {
   describe('when called with custom client', () => {
     testIf(isVue2)('should provide that custom client', () => {
       const appMock = getAppMock()
-      const customClient = { mount: jest.fn() } as unknown as QueryClient
+      const customClient = { mount: vi.fn() } as unknown as QueryClient
       VueQueryPlugin.install(appMock, { queryClient: customClient })
 
       appMock._mixin.beforeCreate?.call(appMock)
@@ -179,7 +182,7 @@ describe('VueQueryPlugin', () => {
 
     testIf(isVue3)('should provide that custom client', () => {
       const appMock = getAppMock()
-      const customClient = { mount: jest.fn() } as unknown as QueryClient
+      const customClient = { mount: vi.fn() } as unknown as QueryClient
       VueQueryPlugin.install(appMock, { queryClient: customClient })
 
       expect(customClient.mount).toHaveBeenCalled()
@@ -251,9 +254,9 @@ describe('VueQueryPlugin', () => {
 
     test('should use existing context', () => {
       const customClient = {
-        mount: jest.fn(),
+        mount: vi.fn(),
         getLogger: () => ({
-          error: jest.fn(),
+          error: vi.fn(),
         }),
       } as unknown as QueryClient
       window.__VUE_QUERY_CONTEXT__ = customClient
@@ -268,14 +271,14 @@ describe('VueQueryPlugin', () => {
     test('should properly modify isRestoring flag on queryClient', async () => {
       const appMock = getAppMock()
       const customClient = {
-        mount: jest.fn(),
+        mount: vi.fn(),
         isRestoring: ref(false),
       } as unknown as QueryClient
 
       VueQueryPlugin.install(appMock, {
         queryClient: customClient,
         clientPersister: () => [
-          jest.fn(),
+          vi.fn(),
           new Promise((resolve) => {
             resolve()
           }),
@@ -302,7 +305,7 @@ describe('VueQueryPlugin', () => {
       VueQueryPlugin.install(appMock, {
         queryClient: customClient,
         clientPersister: (client) => [
-          jest.fn(),
+          vi.fn(),
           new Promise((resolve) => {
             setTimeout(() => {
               client.setQueryData(['persist'], () => ({
@@ -314,7 +317,7 @@ describe('VueQueryPlugin', () => {
         ],
       })
 
-      const fnSpy = jest.fn()
+      const fnSpy = vi.fn()
 
       const query = useQuery(['persist'], fnSpy, {
         queryClient: customClient,
@@ -345,7 +348,7 @@ describe('VueQueryPlugin', () => {
       VueQueryPlugin.install(appMock, {
         queryClient: customClient,
         clientPersister: (client) => [
-          jest.fn(),
+          vi.fn(),
           new Promise((resolve) => {
             setTimeout(() => {
               client.setQueryData(['persist'], () => ({
@@ -357,7 +360,7 @@ describe('VueQueryPlugin', () => {
         ],
       })
 
-      const fnSpy = jest.fn()
+      const fnSpy = vi.fn()
 
       const queries = useQueries({
         queries: [
