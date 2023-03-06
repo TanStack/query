@@ -89,10 +89,11 @@ export class Mutation<
   TContext = unknown,
 > extends Removable {
   state: MutationState<TData, TError, TVariables, TContext>
-  options: MutationOptions<TData, TError, TVariables, TContext>
+  options!: MutationOptions<TData, TError, TVariables, TContext>
   mutationId: number
 
   private observers: MutationObserver<TData, TError, TVariables, TContext>[]
+  private defaultOptions?: MutationOptions<TData, TError, TVariables, TContext>
   private mutationCache: MutationCache
   private logger: Logger
   private retryer?: Retryer<TData>
@@ -100,18 +101,23 @@ export class Mutation<
   constructor(config: MutationConfig<TData, TError, TVariables, TContext>) {
     super()
 
-    this.options = {
-      ...config.defaultOptions,
-      ...config.options,
-    }
+    this.defaultOptions = config.defaultOptions
     this.mutationId = config.mutationId
     this.mutationCache = config.mutationCache
     this.logger = config.logger || defaultLogger
     this.observers = []
     this.state = config.state || getDefaultState()
 
-    this.updateCacheTime(this.options.cacheTime)
+    this.setOptions(config.options)
     this.scheduleGc()
+  }
+
+  setOptions(
+    options?: MutationOptions<TData, TError, TVariables, TContext>,
+  ): void {
+    this.options = { ...this.defaultOptions, ...options }
+
+    this.updateCacheTime(this.options.cacheTime)
   }
 
   get meta(): MutationMeta | undefined {
