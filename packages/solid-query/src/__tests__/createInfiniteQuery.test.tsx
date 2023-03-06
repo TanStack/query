@@ -11,11 +11,7 @@ import {
   Match,
   Switch,
 } from 'solid-js'
-import type {
-  CreateInfiniteQueryResult,
-  InfiniteData,
-  QueryFunctionContext,
-} from '..'
+import type { CreateInfiniteQueryResult, InfiniteData } from '..'
 import { createInfiniteQuery, QueryCache, QueryClientProvider } from '..'
 import { Blink, queryKey, setActTimeout } from './utils'
 import { vi } from 'vitest'

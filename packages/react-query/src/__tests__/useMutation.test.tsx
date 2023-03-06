@@ -2,6 +2,7 @@ import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
+import { describe, expect, it, vi } from 'vitest'
 import type { QueryClient } from '..'
 import { MutationCache, QueryCache, useMutation } from '..'
 import type { UseMutationResult } from '../types'
@@ -14,7 +15,6 @@ import {
   setActTimeout,
   sleep,
 } from './utils'
-import { describe, expect, it, vi, beforeEach } from 'vitest'
 
 describe('useMutation', () => {
   const queryCache = new QueryCache()

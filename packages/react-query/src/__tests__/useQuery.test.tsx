@@ -23,6 +23,7 @@ import type {
 import { QueryCache, useQuery } from '..'
 import { ErrorBoundary } from 'react-error-boundary'
 import { describe, it, expect, test, vi } from 'vitest'
+import type { Mock } from 'vitest'
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
@@ -2159,8 +2160,9 @@ describe('useQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(200)
-
+    // NOTE: Some flakiness on this next assertion when running all tests in parallel.
+    // Appear to get 5 occassionally instead of 4 on some runs...
+    await sleep(190)
     expect(states1.length).toBe(4)
     expect(states2.length).toBe(3)
 
@@ -4471,7 +4473,7 @@ describe('useQuery', () => {
 
   it('should cancel the query function when there are no more subscriptions', async () => {
     const key = queryKey()
-    let cancelFn: vi.Mock = vi.fn()
+    let cancelFn: Mock = vi.fn()
 
     const queryFn = ({ signal }: { signal?: AbortSignal }) => {
       const promise = new Promise<string>((resolve, reject) => {

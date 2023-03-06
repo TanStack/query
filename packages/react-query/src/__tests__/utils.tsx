@@ -1,9 +1,9 @@
-import * as React from 'react'
-import { act, fireEvent, render } from '@testing-library/react'
-import type { ContextOptions, QueryClientConfig, MutationOptions } from '..'
-import { QueryClient, QueryClientProvider } from '..'
 import * as utils from '@tanstack/query-core'
+import { act, render } from '@testing-library/react'
+import * as React from 'react'
 import { beforeEach, vi } from 'vitest'
+import type { ContextOptions, MutationOptions, QueryClientConfig } from '..'
+import { QueryClient, QueryClientProvider } from '..'
 
 export function renderWithClient(
   client: QueryClient,

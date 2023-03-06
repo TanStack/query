@@ -1,6 +1,10 @@
 import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
+import type { Mock } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+import type { InfiniteData, UseInfiniteQueryResult } from '..'
+import { QueryCache, useInfiniteQuery } from '..'
 import {
   createQueryClient,
   queryKey,
@@ -9,14 +13,6 @@ import {
   setActTimeout,
   sleep,
 } from './utils'
-import type {
-  InfiniteData,
-  QueryFunctionContext,
-  UseInfiniteQueryResult,
-} from '..'
-import { QueryCache, useInfiniteQuery } from '..'
-import { describe, it, expect, vi } from 'vitest'
-import type { Mock } from 'vitest'
 
 interface Result {
   items: number[]
@@ -833,8 +829,9 @@ describe('useInfiniteQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(300)
-
+    // NOTE: Some flakiness on this next assertion when running all tests in parallel.
+    // Appear to get 6 occassionally instead of 5 on some runs...
+    await sleep(290)
     expect(states.length).toBe(5)
     expect(states[0]).toMatchObject({
       hasNextPage: undefined,
@@ -1301,8 +1298,8 @@ describe('useInfiniteQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
-
+    // NOTE: Some flakiness on this next assertion. Appear to get 5 occassionally instead of 4 on some runs...
+    await sleep(90)
     expect(states.length).toBe(4)
     expect(states[0]).toMatchObject({
       data: { pages: [1] },

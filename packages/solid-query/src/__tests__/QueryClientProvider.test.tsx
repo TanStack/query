@@ -243,7 +243,7 @@ describe('QueryClientProvider', () => {
       // Mock a non web browser environment
       const windowSpy = vi
         .spyOn(window, 'window', 'get')
-        .mockImplementation(undefined)
+        .mockImplementation(undefined as any)
 
       let queryClientFromHook: QueryClient | undefined
 
