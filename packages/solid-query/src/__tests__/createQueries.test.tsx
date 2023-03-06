@@ -1011,69 +1011,6 @@ describe('useQueries', () => {
     }
   })
 
-  it('should not change state if unmounted', async () => {
-    const key1 = queryKey()
-
-    // We have to mock the QueriesObserver to not unsubscribe
-    // the listener when the component is unmounted
-    class QueriesObserverMock extends QueriesObserver {
-      subscribe(listener: any) {
-        super.subscribe(listener)
-        return () => void 0
-      }
-    }
-
-    const QueriesObserverSpy = vi
-      .spyOn(QueriesObserverModule, 'QueriesObserver')
-      .mockImplementation((fn) => {
-        return new QueriesObserverMock(fn)
-      })
-
-    function Queries() {
-      createQueries({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: async () => {
-              await sleep(10)
-              return 1
-            },
-          },
-        ],
-      })
-
-      return (
-        <div>
-          <span>queries</span>
-        </div>
-      )
-    }
-
-    function Page() {
-      const [mounted, setMounted] = createSignal(true)
-
-      return (
-        <div>
-          <button onClick={() => setMounted(false)}>unmount</button>
-          {mounted() && <Queries />}
-        </div>
-      )
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
-    fireEvent.click(screen.getByText('unmount'))
-
-    // Should not display the console error
-    // "Warning: Can't perform a React state update on an unmounted component"
-
-    await sleep(20)
-    QueriesObserverSpy.mockRestore()
-  })
-
   describe('with custom context', () => {
     it('should return the correct states', async () => {
       const context = createContext<QueryClient | undefined>(undefined)
@@ -1160,5 +1097,68 @@ describe('useQueries', () => {
 
       await waitFor(() => screen.getByText('error boundary'))
     })
+  })
+
+  it('should not change state if unmounted', async () => {
+    const key1 = queryKey()
+
+    // We have to mock the QueriesObserver to not unsubscribe
+    // the listener when the component is unmounted
+    class QueriesObserverMock extends QueriesObserver {
+      subscribe(listener: any) {
+        super.subscribe(listener)
+        return () => void 0
+      }
+    }
+
+    const QueriesObserverSpy = vi
+      .spyOn(QueriesObserverModule, 'QueriesObserver')
+      .mockImplementation((fn) => {
+        return new QueriesObserverMock(fn)
+      })
+
+    function Queries() {
+      createQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: async () => {
+              await sleep(10)
+              return 1
+            },
+          },
+        ],
+      })
+
+      return (
+        <div>
+          <span>queries</span>
+        </div>
+      )
+    }
+
+    function Page() {
+      const [mounted, setMounted] = createSignal(true)
+
+      return (
+        <div>
+          <button onClick={() => setMounted(false)}>unmount</button>
+          {mounted() && <Queries />}
+        </div>
+      )
+    }
+
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+    fireEvent.click(screen.getByText('unmount'))
+
+    // Should not display the console error
+    // "Warning: Can't perform a React state update on an unmounted component"
+
+    await sleep(20)
+    QueriesObserverSpy.mockRestore()
   })
 })

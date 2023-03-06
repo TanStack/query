@@ -1,3 +1,4 @@
+import { resolve } from 'path'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
@@ -8,5 +9,10 @@ export default defineConfig({
     globals: true,
     dir: 'src/__tests__',
     setupFiles: ['test-setup.ts'],
+  },
+  resolve: {
+    alias: {
+      '@tanstack/query-core': resolve(__dirname, '..', 'query-core', 'src'),
+    },
   },
 })

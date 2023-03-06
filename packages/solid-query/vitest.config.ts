@@ -1,5 +1,6 @@
-import { defineConfig } from 'vitest/config'
+import { resolve } from 'path'
 import solid from 'vite-plugin-solid'
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
@@ -10,5 +11,10 @@ export default defineConfig({
     globals: true,
     dir: 'src/__tests__',
   },
-  plugins: [solid() as any],
+  resolve: {
+    alias: {
+      '@tanstack/query-core': resolve(__dirname, '..', 'query-core', 'src'),
+    },
+  },
+  plugins: [solid()],
 })

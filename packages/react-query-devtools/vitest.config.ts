@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitest/config'
+import { join, resolve } from 'path'
 
 export default defineConfig({
   test: {
@@ -7,5 +8,11 @@ export default defineConfig({
     setupFiles: ['test-setup.ts'],
     environment: 'jsdom',
     globals: true,
+  },
+  resolve: {
+    alias: {
+      '@tanstack/query-core': resolve(__dirname, '..', 'query-core', 'src'),
+      '@tanstack/react-query': resolve(__dirname, '..', 'react-query', 'src'),
+    },
   },
 })

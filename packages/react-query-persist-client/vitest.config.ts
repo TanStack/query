@@ -1,3 +1,4 @@
+import { resolve } from 'path'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
@@ -7,5 +8,17 @@ export default defineConfig({
     setupFiles: ['test-setup.ts'],
     environment: 'jsdom',
     globals: true,
+  },
+  resolve: {
+    alias: {
+      '@tanstack/query-core': resolve(__dirname, '..', 'query-core', 'src'),
+      '@tanstack/react-query': resolve(__dirname, '..', 'react-query', 'src'),
+      '@tanstack/query-persist-client-core': resolve(
+        __dirname,
+        '..',
+        'query-persist-client-core',
+        'src',
+      ),
+    },
   },
 })

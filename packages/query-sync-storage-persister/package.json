@@ -36,7 +36,6 @@
     "build:types": "tsc --build"
   },
   "dependencies": {
-    "@tanstack/query-core": "workspace:*",
     "@tanstack/query-persist-client-core": "workspace:*"
   }
 }

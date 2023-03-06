@@ -937,10 +937,8 @@ importers:
 
   packages/query-sync-storage-persister:
     specifiers:
-      '@tanstack/query-core': workspace:*
       '@tanstack/query-persist-client-core': workspace:*
     dependencies:
-      '@tanstack/query-core': link:../query-core
       '@tanstack/query-persist-client-core': link:../query-persist-client-core
 
   packages/react-query:
@@ -975,7 +973,6 @@ importers:
   packages/react-query-devtools:
     specifiers:
       '@tanstack/match-sorter-utils': ^8.7.0
-      '@tanstack/query-core': workspace:*
       '@tanstack/react-query': workspace:*
       '@types/react': ^18.0.14
       '@types/react-dom': ^18.0.5
@@ -992,7 +989,6 @@ importers:
       superjson: 1.10.0
       use-sync-external-store: 1.2.0_react@18.2.0
     devDependencies:
-      '@tanstack/query-core': link:../query-core
       '@tanstack/react-query': link:../react-query
       '@types/react': 18.0.15
       '@types/react-dom': 18.0.6
@@ -1005,7 +1001,6 @@ importers:
 
   packages/react-query-persist-client:
     specifiers:
-      '@tanstack/query-core': workspace:*
       '@tanstack/query-persist-client-core': workspace:*
       '@tanstack/react-query': workspace:*
       '@types/react': ^18.0.14
@@ -1017,7 +1012,6 @@ importers:
     dependencies:
       '@tanstack/query-persist-client-core': link:../query-persist-client-core
     devDependencies:
-      '@tanstack/query-core': link:../query-core
       '@tanstack/react-query': link:../react-query
       '@types/react': 18.0.15
       '@types/react-dom': 18.0.6
