@@ -77,6 +77,12 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+      - name: install react 17 deps for react-query-devtools
+        run: pnpm add -D --dir=./packages/react-query-devtools react@^17.0.2 react-dom@^17.0.2 @testing-library/react@^12.1.4
+      - name: install react 17 deps for react-query
+        run: pnpm add -D --dir=./packages/react-query react@^17.0.2 react-dom@^17.0.2 @testing-library/react@^12.1.4
+      - name: install react 17 deps for react-query-persist-client
+        run: pnpm add -D --dir=./packages/react-query-persist-client react@^17.0.2 react-dom@^17.0.2 @testing-library/react@^12.1.4
       - run: pnpm run test:react:17
         env:
           REACTJS_VERSION: 17
