@@ -142,24 +142,40 @@ export const ASTUtils = {
   },
   getExternalRefs(params: {
     scopeManager: TSESLint.Scope.ScopeManager
+    sourceCode: Readonly<TSESLint.SourceCode>
     node: TSESTree.Node
   }): TSESLint.Scope.Reference[] {
-    const { scopeManager, node } = params
+    const { scopeManager, sourceCode, node } = params
     const scope = scopeManager.acquire(node)
 
     if (scope === null) {
       return []
     }
 
-    const readOnlyRefs = scope.references.filter((x) => x.isRead())
+    const references = scope.references
+      .filter((x) => x.isRead())
+      .map((x) => {
+        const referenceNode = ASTUtils.traverseUpOnly(x.identifier, [
+          AST_NODE_TYPES.MemberExpression,
+          AST_NODE_TYPES.Identifier,
+        ])
+
+        return {
+          variable: x,
+          node: referenceNode,
+          text: sourceCode.getText(referenceNode),
+        }
+      })
+
     const localRefIds = new Set(
-      [...scope.set.values()].map((x) => x.identifiers[0]),
-    )
-    const externalRefs = readOnlyRefs.filter(
-      (x) => x.resolved === null || !localRefIds.has(x.resolved.identifiers[0]),
+      [...scope.set.values()].map((x) => sourceCode.getText(x.identifiers[0])),
     )
 
-    return uniqueBy(externalRefs, (x) => x.resolved)
+    const externalRefs = references.filter(
+      (x) => x.variable.resolved === null || !localRefIds.has(x.text),
+    )
+
+    return uniqueBy(externalRefs, (x) => x.text).map((x) => x.variable)
   },
   mapKeyNodeToText(
     node: TSESTree.Node,
