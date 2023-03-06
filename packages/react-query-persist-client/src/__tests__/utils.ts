@@ -2,16 +2,17 @@ import { act } from '@testing-library/react'
 
 import type { QueryClientConfig } from '@tanstack/query-core'
 import { QueryClient } from '@tanstack/query-core'
+import { vi } from 'vitest'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
-  jest.spyOn(console, 'error').mockImplementation(() => undefined)
+  vi.spyOn(console, 'error').mockImplementation(() => undefined)
   return new QueryClient({ logger: mockLogger, ...config })
 }
 
 export const mockLogger = {
-  log: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
+  log: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
 }
 
 let queryKeyCount = 0

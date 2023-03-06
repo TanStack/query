@@ -9,7 +9,7 @@ const completedPackages = [
   'query-sync-storage-persister',
   'react-query',
   'react-query-devtools',
-  //   'react-query-persist-client',
+  'react-query-persist-client',
   //   'solid-query',
   //   'svelte-query',
   //   'vue-query',

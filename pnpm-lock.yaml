@@ -1003,6 +1003,7 @@ importers:
 
   packages/react-query-persist-client:
     specifiers:
+      '@tanstack/query-core': workspace:*
       '@tanstack/query-persist-client-core': workspace:*
       '@tanstack/react-query': workspace:*
       '@types/react': ^18.0.14
@@ -1014,6 +1015,7 @@ importers:
     dependencies:
       '@tanstack/query-persist-client-core': link:../query-persist-client-core
     devDependencies:
+      '@tanstack/query-core': link:../query-core
       '@tanstack/react-query': link:../react-query
       '@types/react': 18.0.15
       '@types/react-dom': 18.0.6
