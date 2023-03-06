@@ -156,7 +156,7 @@ describe('useQueries', () => {
 
       return (
         <div>
-          <div>data: {result.map((it) => it.data).join(',')}</div>
+          <div>data: {result.map((x) => x.data).join(',')}</div>
           <div>isFetching: {String(isFetching)}</div>
           <button onClick={() => setCount((prev) => prev + 1)}>inc</button>
         </div>

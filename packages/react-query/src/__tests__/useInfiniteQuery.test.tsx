@@ -830,8 +830,8 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, <Page />)
 
     // NOTE: Some flakiness on this next assertion when running all tests in parallel.
-    // Appear to get 6 occassionally instead of 5 on some runs...
-    await sleep(290)
+    // Appear to get 4 occassionally instead of 5 on some runs...
+    await sleep(310)
     expect(states.length).toBe(5)
     expect(states[0]).toMatchObject({
       hasNextPage: undefined,

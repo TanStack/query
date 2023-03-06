@@ -1058,7 +1058,7 @@ describe('useQueries with suspense', () => {
       })
       return (
         <div>
-          <h1>data: {result.map((it) => it.data ?? 'null').join(',')}</h1>
+          <h1>data: {result.map((x) => x.data ?? 'null').join(',')}</h1>
         </div>
       )
     }
@@ -1172,7 +1172,7 @@ describe('useQueries with suspense', () => {
       })
       return (
         <div>
-          <h1>data: {result.map((it) => it.data ?? 'null').join(',')}</h1>
+          <h1>data: {result.map((x) => x.data ?? 'null').join(',')}</h1>
         </div>
       )
     }

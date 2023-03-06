@@ -150,8 +150,8 @@ describe('useQuery', () => {
           'queryKey' | 'queryFn' | 'initialData'
         >,
       ) => useQuery(qk, () => fetcher(qk[1], 'token'), options)
-      const test = useWrappedQuery([''], async () => '1')
-      expectType<string | undefined>(test.data)
+      const query = useWrappedQuery([''], async () => '1')
+      expectType<string | undefined>(query.data)
 
       // handles wrapped queries with custom fetcher passed directly to useQuery
       const useWrappedFuncStyleQuery = <
