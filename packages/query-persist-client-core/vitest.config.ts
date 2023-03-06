@@ -1,10 +1,8 @@
-import { resolve } from 'path'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
-    name: 'query-core',
+    name: 'query-persist-client-core',
     watch: false,
-    environment: 'jsdom',
   },
 })
