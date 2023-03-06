@@ -10,7 +10,6 @@ import {
   expectTypeNotAny,
   queryKey,
   renderWithClient,
-  resetJsDomBeforeEachTest,
   sleep,
 } from './utils'
 import type {
@@ -23,12 +22,11 @@ import type {
 } from '..'
 import { QueriesObserver, QueryCache, useQueries } from '..'
 import type { QueryFunctionContext } from '@tanstack/query-core'
-import { describe, it, expect, vi } from 'vitest'
+import { vi } from 'vitest'
 
 describe('useQueries', () => {
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({ queryCache })
-  resetJsDomBeforeEachTest()
 
   it('should return the correct states', async () => {
     const key1 = queryKey()

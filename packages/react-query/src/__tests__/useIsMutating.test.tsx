@@ -11,7 +11,7 @@ import {
 import { ErrorBoundary } from 'react-error-boundary'
 import { QueryClient } from '@tanstack/query-core'
 import * as MutationCacheModule from '../../../query-core/src/mutationCache'
-import { describe, it, vi, expect } from 'vitest'
+import { vi } from 'vitest'
 
 describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {

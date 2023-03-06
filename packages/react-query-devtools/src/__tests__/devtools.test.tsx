@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { act, fireEvent, screen, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { vi } from 'vitest'
 import { defaultPanelSize, sortFns } from '../utils'
 import {
   createQueryClient,

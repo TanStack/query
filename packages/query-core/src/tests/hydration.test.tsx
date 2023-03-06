@@ -6,7 +6,7 @@ import {
 } from './utils'
 import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
-import { describe, vi, test, expect } from 'vitest'
+import { vi } from 'vitest'
 
 async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
   await sleep(ms || 0)

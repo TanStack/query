@@ -4,5 +4,6 @@ export default defineConfig({
   test: {
     name: 'query-async-storage-persister',
     watch: false,
+    globals: true,
   },
 })

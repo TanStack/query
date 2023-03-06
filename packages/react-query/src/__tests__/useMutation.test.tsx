@@ -2,7 +2,7 @@ import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
-import { describe, expect, it, vi } from 'vitest'
+import { vi } from 'vitest'
 import type { QueryClient } from '..'
 import { MutationCache, QueryCache, useMutation } from '..'
 import type { UseMutationResult } from '../types'
@@ -11,7 +11,6 @@ import {
   mockNavigatorOnLine,
   queryKey,
   renderWithClient,
-  resetJsDomBeforeEachTest,
   setActTimeout,
   sleep,
 } from './utils'
@@ -20,8 +19,6 @@ describe('useMutation', () => {
   const queryCache = new QueryCache()
   const mutationCache = new MutationCache()
   const queryClient = createQueryClient({ queryCache, mutationCache })
-
-  resetJsDomBeforeEachTest()
 
   it('should be able to reset `data`', async () => {
     function Page() {

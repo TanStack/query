@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { vi } from 'vitest'
 import type { QueryClient } from '..'
 import { InfiniteQueryObserver } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'

@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/react'
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { vi } from 'vitest'
 import type { QueryClient } from '..'
 import { QueryCache, QueryObserver } from '..'
 import type { Query } from '.././query'

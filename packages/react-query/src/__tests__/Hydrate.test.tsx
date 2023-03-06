@@ -10,12 +10,11 @@ import {
   useHydrate,
   Hydrate,
 } from '..'
-import { createQueryClient, resetJsDomBeforeEachTest, sleep } from './utils'
+import { createQueryClient, sleep } from './utils'
 import * as coreModule from '@tanstack/query-core'
-import { describe, expect, vi, test, beforeAll } from 'vitest'
+import { vi } from 'vitest'
 
 describe('React hydration', () => {
-  resetJsDomBeforeEachTest()
   const fetchData: (value: string) => Promise<string> = (value) =>
     new Promise((res) => setTimeout(() => res(value), 10))
   const dataQuery: (key: [string]) => Promise<string> = (key) =>

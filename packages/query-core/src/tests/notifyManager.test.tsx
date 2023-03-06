@@ -1,6 +1,6 @@
 import { createNotifyManager } from '../notifyManager'
 import { sleep } from './utils'
-import { describe, it, expect, vi } from 'vitest'
+import { vi } from 'vitest'
 
 describe('notifyManager', () => {
   it('should use default notifyFn', async () => {

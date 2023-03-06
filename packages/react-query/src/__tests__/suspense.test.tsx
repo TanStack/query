@@ -10,17 +10,10 @@ import {
   useQuery,
   useQueryErrorResetBoundary,
 } from '..'
-import {
-  createQueryClient,
-  queryKey,
-  renderWithClient,
-  resetJsDomBeforeEachTest,
-  sleep,
-} from './utils'
-import { describe, it, expect, vi } from 'vitest'
+import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import { vi } from 'vitest'
 
 describe("useQuery's in Suspense mode", () => {
-  resetJsDomBeforeEachTest()
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({ queryCache })
 
@@ -1021,7 +1014,6 @@ describe("useQuery's in Suspense mode", () => {
 })
 
 describe('useQueries with suspense', () => {
-  resetJsDomBeforeEachTest()
   const queryClient = createQueryClient()
   it('should suspend all queries in parallel', async () => {
     const key1 = queryKey()

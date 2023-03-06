@@ -4,5 +4,6 @@ export default defineConfig({
   test: {
     name: 'eslint-plugin-query',
     watch: false,
+    globals: true,
   },
 })

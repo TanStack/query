@@ -9,7 +9,6 @@ import {
   mockVisibilityState,
   queryKey,
   renderWithClient,
-  resetJsDomBeforeEachTest,
   setActTimeout,
   sleep,
 } from './utils'
@@ -22,14 +21,12 @@ import type {
 } from '..'
 import { QueryCache, useQuery } from '..'
 import { ErrorBoundary } from 'react-error-boundary'
-import { describe, it, expect, test, vi } from 'vitest'
+import { vi } from 'vitest'
 import type { Mock } from 'vitest'
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({ queryCache })
-
-  resetJsDomBeforeEachTest()
 
   it('should return the correct types', () => {
     const key = queryKey()

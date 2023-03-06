@@ -10,7 +10,7 @@ import {
 } from '../utils'
 import { Mutation } from '../mutation'
 import { createQueryClient } from './utils'
-import { describe, it, expect, vi } from 'vitest'
+import { vi } from 'vitest'
 
 describe('core/utils', () => {
   describe('isPlainObject', () => {

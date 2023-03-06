@@ -5,7 +5,7 @@ export default defineConfig({
   test: {
     name: 'solid-query',
     watch: false,
-    setupFiles: ['test-setup.tsx'],
+    setupFiles: [],
     environment: 'jsdom',
     globals: true,
     dir: 'src/__tests__',

@@ -1,6 +1,6 @@
 import { act } from '@testing-library/react'
 import { notifyManager } from '@tanstack/query-core'
-import { expect, vi } from 'vitest'
+import { vi } from 'vitest'
 import '@testing-library/jest-dom'
 
 // Wrap notifications with act to make sure React knows about React Query updates

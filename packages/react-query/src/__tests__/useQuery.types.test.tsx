@@ -1,5 +1,4 @@
 import { useQuery } from '../useQuery'
-import { describe, it } from 'vitest'
 
 export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
   T,

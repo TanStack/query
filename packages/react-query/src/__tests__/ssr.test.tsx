@@ -8,7 +8,7 @@ import { renderToString } from 'react-dom/server'
 
 import { sleep, queryKey, createQueryClient } from './utils'
 import { useQuery, QueryClientProvider, QueryCache, useInfiniteQuery } from '..'
-import { describe, it, expect, vi } from 'vitest'
+import { vi } from 'vitest'
 
 describe('Server Side Rendering', () => {
   it('should not trigger fetch', () => {

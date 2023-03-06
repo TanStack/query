@@ -10,7 +10,7 @@ import {
   useQuery,
   useQueryClient,
 } from '..'
-import { describe, it, expect, vi, test } from 'vitest'
+import { vi } from 'vitest'
 
 describe('QueryClientProvider', () => {
   test('sets a specific cache for all queries to use', async () => {

@@ -13,7 +13,7 @@ import {
   hydrate,
 } from '..'
 import { createQueryClient, setIsServer, sleep } from './utils'
-import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest'
+import { vi } from 'vitest'
 
 const isReact18 = () => (process.env.REACTJS_VERSION || '18') === '18'
 

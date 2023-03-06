@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/react'
 import { queryKey, sleep, executeMutation, createQueryClient } from './utils'
 import { MutationCache, MutationObserver } from '..'
-import { describe, test, vi, expect } from 'vitest'
+import { vi } from 'vitest'
 
 describe('mutationCache', () => {
   describe('MutationCacheConfig error callbacks', () => {

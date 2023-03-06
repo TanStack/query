@@ -5,7 +5,7 @@ import {
 } from './utils'
 import { persistQueryClientSubscribe } from '../persist'
 import { QueriesObserver } from '@tanstack/query-core'
-import { describe, test, expect, vi } from 'vitest'
+import { vi } from 'vitest'
 
 describe('persistQueryClientSubscribe', () => {
   test('should persist mutations', async () => {

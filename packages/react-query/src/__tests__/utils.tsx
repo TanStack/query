@@ -1,7 +1,7 @@
 import * as utils from '@tanstack/query-core'
 import { act, render } from '@testing-library/react'
 import * as React from 'react'
-import { beforeEach, vi } from 'vitest'
+import { vi } from 'vitest'
 import type { ContextOptions, MutationOptions, QueryClientConfig } from '..'
 import { QueryClient, QueryClientProvider } from '..'
 
@@ -119,13 +119,4 @@ export function setIsServer(isServer: boolean) {
       get: () => original,
     })
   }
-}
-
-export function resetJsDomBeforeEachTest() {
-  beforeEach(() => {
-    const htmlTag = document.getElementsByTagName('html')[0]
-    if (htmlTag) {
-      htmlTag.innerHTML = ''
-    }
-  })
 }

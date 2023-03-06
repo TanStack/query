@@ -1,4 +1,3 @@
-import { resolve } from 'path'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
@@ -6,5 +5,6 @@ export default defineConfig({
     name: 'query-core',
     watch: false,
     environment: 'jsdom',
+    globals: true,
   },
 })

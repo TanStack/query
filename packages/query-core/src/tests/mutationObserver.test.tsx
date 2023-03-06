@@ -2,7 +2,7 @@ import { waitFor } from '@testing-library/react'
 import { createQueryClient, sleep } from './utils'
 import type { QueryClient } from '..'
 import { MutationObserver } from '..'
-import { describe, beforeEach, afterEach, expect, test, vi } from 'vitest'
+import { vi } from 'vitest'
 
 describe('mutationObserver', () => {
   let queryClient: QueryClient

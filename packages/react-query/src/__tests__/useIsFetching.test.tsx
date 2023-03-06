@@ -6,17 +6,13 @@ import {
   createQueryClient,
   queryKey,
   renderWithClient,
-  resetJsDomBeforeEachTest,
   setActTimeout,
   sleep,
 } from './utils'
 import type { QueryClient } from '..'
 import { QueryCache, useIsFetching, useQuery } from '..'
-import { describe, it, expect } from 'vitest'
 
 describe('useIsFetching', () => {
-  resetJsDomBeforeEachTest()
-
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should update as queries start and stop fetching', async () => {
     const queryCache = new QueryCache()

@@ -4,8 +4,7 @@
     "composite": true,
     "rootDir": "./src",
     "outDir": "./build/lib",
-    "tsBuildInfoFile": "./build/.tsbuildinfo",
-    "module": "esnext"
+    "tsBuildInfoFile": "./build/.tsbuildinfo"
   },
   "include": ["src"],
   "references": [{ "path": "../query-core" }]

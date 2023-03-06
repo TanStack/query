@@ -2,14 +2,13 @@ import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
 import type { Mock } from 'vitest'
-import { describe, expect, it, vi } from 'vitest'
+import { vi } from 'vitest'
 import type { InfiniteData, UseInfiniteQueryResult } from '..'
 import { QueryCache, useInfiniteQuery } from '..'
 import {
   createQueryClient,
   queryKey,
   renderWithClient,
-  resetJsDomBeforeEachTest,
   setActTimeout,
   sleep,
 } from './utils'
@@ -39,7 +38,6 @@ const fetchItems = async (
 }
 
 describe('useInfiniteQuery', () => {
-  resetJsDomBeforeEachTest()
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({ queryCache })
 

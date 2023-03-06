@@ -2,7 +2,7 @@ import { waitFor } from '@testing-library/react'
 import type { QueryClient, InfiniteQueryObserverResult } from '..'
 import { InfiniteQueryObserver } from '..'
 import { createQueryClient, queryKey } from './utils'
-import { describe, beforeEach, afterEach, expect, test, vi } from 'vitest'
+import { vi } from 'vitest'
 
 describe('InfiniteQueryBehavior', () => {
   let queryClient: QueryClient
