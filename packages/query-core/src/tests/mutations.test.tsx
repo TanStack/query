@@ -1,7 +1,8 @@
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import type { QueryClient } from '..'
-import { createQueryClient, executeMutation, queryKey, sleep } from './utils'
 import type { MutationState } from '../mutation'
 import { MutationObserver } from '../mutationObserver'
+import { createQueryClient, executeMutation, queryKey, sleep } from './utils'
 
 describe('mutations', () => {
   let queryClient: QueryClient
@@ -249,9 +250,9 @@ describe('mutations', () => {
   test('should be able to restore a mutation', async () => {
     const key = queryKey()
 
-    const onMutate = jest.fn()
-    const onSuccess = jest.fn()
-    const onSettled = jest.fn()
+    const onMutate = vi.fn()
+    const onSuccess = vi.fn()
+    const onSettled = vi.fn()
 
     queryClient.setMutationDefaults(key, {
       mutationFn: async (text: string) => text,
@@ -313,7 +314,7 @@ describe('mutations', () => {
     const observer = new MutationObserver(queryClient, {})
     const currentMutation = mutationCache.build(queryClient, {})
 
-    const fn = jest.fn()
+    const fn = vi.fn()
 
     const unsubscribe = mutationCache.subscribe((event) => {
       fn(event.type)
@@ -344,8 +345,8 @@ describe('mutations', () => {
   })
 
   test('mutate update the mutation state even without an active subscription', async () => {
-    const onSuccess = jest.fn()
-    const onSettled = jest.fn()
+    const onSuccess = vi.fn()
+    const onSettled = vi.fn()
 
     const mutation = new MutationObserver(queryClient, {
       mutationFn: async () => {

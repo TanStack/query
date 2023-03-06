@@ -2,6 +2,7 @@ import { waitFor } from '@testing-library/react'
 import { createQueryClient, sleep } from './utils'
 import type { QueryClient } from '..'
 import { MutationObserver } from '..'
+import { describe, beforeEach, afterEach, expect, test, vi } from 'vitest'
 
 describe('mutationObserver', () => {
   let queryClient: QueryClient
@@ -23,8 +24,8 @@ describe('mutationObserver', () => {
       },
     })
 
-    const subscription1Handler = jest.fn()
-    const subscription2Handler = jest.fn()
+    const subscription1Handler = vi.fn()
+    const subscription2Handler = vi.fn()
 
     const unsubscribe1 = mutation.subscribe(subscription1Handler)
     const unsubscribe2 = mutation.subscribe(subscription2Handler)
@@ -52,7 +53,7 @@ describe('mutationObserver', () => {
       },
     })
 
-    const subscriptionHandler = jest.fn()
+    const subscriptionHandler = vi.fn()
     const unsubscribe = mutation.subscribe(subscriptionHandler)
     mutation.mutate()
 

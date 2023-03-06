@@ -10,6 +10,7 @@ import {
 } from '../utils'
 import { Mutation } from '../mutation'
 import { createQueryClient } from './utils'
+import { describe, it, expect, vi } from 'vitest'
 
 describe('core/utils', () => {
   describe('isPlainObject', () => {
@@ -349,7 +350,7 @@ describe('core/utils', () => {
 
   describe('scheduleMicrotask', () => {
     it('should defer execution of callback', async () => {
-      const callback = jest.fn()
+      const callback = vi.fn()
 
       scheduleMicrotask(callback)
       expect(callback).not.toHaveBeenCalled()

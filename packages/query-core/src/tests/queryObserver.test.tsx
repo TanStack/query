@@ -1,17 +1,19 @@
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import type { QueryClient, QueryObserverResult } from '..'
+import { focusManager, QueryObserver } from '..'
 import {
-  sleep,
-  queryKey,
+  createQueryClient,
   expectType,
   mockLogger,
-  createQueryClient,
+  queryKey,
+  sleep,
 } from './utils'
-import type { QueryClient, QueryObserverResult } from '..'
-import { QueryObserver, focusManager } from '..'
 
 describe('queryObserver', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
+    mockLogger.error.mockClear()
     queryClient = createQueryClient()
     queryClient.mount()
   })
@@ -22,7 +24,7 @@ describe('queryObserver', () => {
 
   test('should trigger a fetch when subscribed', async () => {
     const key = queryKey()
-    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
+    const queryFn = vi.fn().mockReturnValue('data')
     const observer = new QueryObserver(queryClient, { queryKey: key, queryFn })
     const unsubscribe = observer.subscribe(() => undefined)
     await sleep(1)
@@ -354,7 +356,7 @@ describe('queryObserver', () => {
 
   test('should not trigger a fetch when subscribed and disabled', async () => {
     const key = queryKey()
-    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
+    const queryFn = vi.fn().mockReturnValue('data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
@@ -368,7 +370,7 @@ describe('queryObserver', () => {
 
   test('should not trigger a fetch when not subscribed', async () => {
     const key = queryKey()
-    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
+    const queryFn = vi.fn().mockReturnValue('data')
     new QueryObserver(queryClient, { queryKey: key, queryFn })
     await sleep(1)
     expect(queryFn).toHaveBeenCalledTimes(0)
@@ -376,8 +378,8 @@ describe('queryObserver', () => {
 
   test('should be able to watch a query without defining a query function', async () => {
     const key = queryKey()
-    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
-    const callback = jest.fn()
+    const queryFn = vi.fn().mockReturnValue('data')
+    const callback = vi.fn()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       enabled: false,
@@ -391,7 +393,7 @@ describe('queryObserver', () => {
 
   test('should accept unresolved query config in update function', async () => {
     const key = queryKey()
-    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
+    const queryFn = vi.fn().mockReturnValue('data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       enabled: false,
@@ -413,7 +415,7 @@ describe('queryObserver', () => {
 
   test('should be able to handle multiple subscribers', async () => {
     const key = queryKey()
-    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
+    const queryFn = vi.fn().mockReturnValue('data')
     const observer = new QueryObserver<string>(queryClient, {
       queryKey: key,
       enabled: false,
@@ -599,7 +601,7 @@ describe('queryObserver', () => {
 
   test('should not refetch in background if refetchIntervalInBackground is false', async () => {
     const key = queryKey()
-    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
+    const queryFn = vi.fn().mockReturnValue('data')
 
     focusManager.setFocused(false)
     const observer = new QueryObserver(queryClient, {
@@ -778,7 +780,7 @@ describe('queryObserver', () => {
     })
     await queryClient.prefetchQuery(key, () => data2)
 
-    const spy = jest.fn()
+    const spy = vi.fn()
     const unsubscribe = queryClient.getQueryCache().subscribe(spy)
     observer.updateResult({ cache: false })
 
@@ -798,7 +800,7 @@ describe('queryObserver', () => {
       staleTime: 20,
     })
 
-    const spy = jest.fn()
+    const spy = vi.fn()
     const unsubscribe = observer.subscribe(spy)
     await queryClient.refetchQueries(key)
     await sleep(10)
@@ -821,7 +823,7 @@ describe('queryObserver', () => {
       queryKey: key,
     })
 
-    const spy = jest.fn()
+    const spy = vi.fn()
     const unsubscribe = queryClient.getQueryCache().subscribe(spy)
     observer.setOptions({ enabled: false })
 

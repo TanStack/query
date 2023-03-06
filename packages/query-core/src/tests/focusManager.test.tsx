@@ -1,17 +1,18 @@
 import { sleep } from '../utils'
 import { FocusManager } from '../focusManager'
 import { setIsServer } from './utils'
+import { describe, it, expect, beforeEach, test, vi } from 'vitest'
 
 describe('focusManager', () => {
   let focusManager: FocusManager
   beforeEach(() => {
-    jest.resetModules()
+    vi.resetModules()
     focusManager = new FocusManager()
   })
 
   it('should call previous remove handler when replacing an event listener', () => {
-    const remove1Spy = jest.fn()
-    const remove2Spy = jest.fn()
+    const remove1Spy = vi.fn()
+    const remove2Spy = vi.fn()
 
     focusManager.setEventListener(() => remove1Spy)
     focusManager.setEventListener(() => remove2Spy)
@@ -39,7 +40,7 @@ describe('focusManager', () => {
   })
 
   it('should not notify listeners on focus if already focused', async () => {
-    const subscriptionSpy = jest.fn()
+    const subscriptionSpy = vi.fn()
     const unsubscribe = focusManager.subscribe(subscriptionSpy)
 
     focusManager.setFocused(true)
@@ -87,12 +88,9 @@ describe('focusManager', () => {
   })
 
   it('should replace default window listener when a new event listener is set', async () => {
-    const addEventListenerSpy = jest.spyOn(
-      globalThis.window,
-      'addEventListener',
-    )
+    const addEventListenerSpy = vi.spyOn(globalThis.window, 'addEventListener')
 
-    const removeEventListenerSpy = jest.spyOn(
+    const removeEventListenerSpy = vi.spyOn(
       globalThis.window,
       'removeEventListener',
     )
@@ -115,12 +113,9 @@ describe('focusManager', () => {
   })
 
   test('should call removeEventListener when last listener unsubscribes', () => {
-    const addEventListenerSpy = jest.spyOn(
-      globalThis.window,
-      'addEventListener',
-    )
+    const addEventListenerSpy = vi.spyOn(globalThis.window, 'addEventListener')
 
-    const removeEventListenerSpy = jest.spyOn(
+    const removeEventListenerSpy = vi.spyOn(
       globalThis.window,
       'removeEventListener',
     )
@@ -136,7 +131,7 @@ describe('focusManager', () => {
   })
 
   test('should keep setup function even if last listener unsubscribes', () => {
-    const setupSpy = jest.fn().mockImplementation(() => () => undefined)
+    const setupSpy = vi.fn().mockImplementation(() => () => undefined)
 
     focusManager.setEventListener(setupSpy)
 

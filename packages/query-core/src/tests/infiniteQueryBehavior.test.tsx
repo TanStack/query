@@ -1,10 +1,8 @@
 import { waitFor } from '@testing-library/react'
-import type {
-  QueryClient,
-  InfiniteQueryObserverResult,
-} from '@tanstack/query-core'
-import { InfiniteQueryObserver } from '@tanstack/query-core'
+import type { QueryClient, InfiniteQueryObserverResult } from '..'
+import { InfiniteQueryObserver } from '..'
 import { createQueryClient, queryKey } from './utils'
+import { describe, beforeEach, afterEach, expect, test, vi } from 'vitest'
 
 describe('InfiniteQueryBehavior', () => {
   let queryClient: QueryClient
@@ -48,7 +46,7 @@ describe('InfiniteQueryBehavior', () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
 
-    const queryFnSpy = jest
+    const queryFnSpy = vi
       .fn()
       .mockImplementation(({ pageParam = 1, signal }) => {
         abortSignal = signal

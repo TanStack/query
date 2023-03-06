@@ -6,6 +6,7 @@ import {
 } from './utils'
 import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
+import { describe, vi, test, expect } from 'vitest'
 
 async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
   await sleep(ms || 0)
@@ -44,7 +45,7 @@ describe('dehydration and rehydration', () => {
       key: [{ nestedKey: 1 }],
     })
 
-    const fetchDataAfterHydration = jest.fn<unknown, unknown[]>()
+    const fetchDataAfterHydration = vi.fn()
     await hydrationClient.prefetchQuery(['string'], fetchDataAfterHydration, {
       staleTime: 1000,
     })
@@ -143,7 +144,7 @@ describe('dehydration and rehydration', () => {
       hydrationCache.find(['string', { key: ['string'], key2: 0 }])?.state.data,
     ).toBe('string')
 
-    const fetchDataAfterHydration = jest.fn<unknown, unknown[]>()
+    const fetchDataAfterHydration = vi.fn()
     await hydrationClient.prefetchQuery(
       ['string', { key: ['string'], key2: 0 }],
       fetchDataAfterHydration,
@@ -156,7 +157,7 @@ describe('dehydration and rehydration', () => {
   })
 
   test('should only hydrate successful queries by default', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
+    const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 
     const queryCache = new QueryCache()
@@ -269,18 +270,18 @@ describe('dehydration and rehydration', () => {
   })
 
   test('should be able to dehydrate mutations and continue on hydration', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
+    const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
     const onlineMock = mockNavigatorOnLine(false)
 
-    const serverAddTodo = jest
+    const serverAddTodo = vi
       .fn()
       .mockImplementation(() => Promise.reject('offline'))
-    const serverOnMutate = jest.fn().mockImplementation((variables) => {
+    const serverOnMutate = vi.fn().mockImplementation((variables) => {
       const optimisticTodo = { id: 1, text: variables.text }
       return { optimisticTodo }
     })
-    const serverOnSuccess = jest.fn()
+    const serverOnSuccess = vi.fn()
 
     const serverClient = createQueryClient()
 
@@ -311,14 +312,14 @@ describe('dehydration and rehydration', () => {
     const parsed = JSON.parse(stringified)
     const client = createQueryClient()
 
-    const clientAddTodo = jest.fn().mockImplementation((variables) => {
+    const clientAddTodo = vi.fn().mockImplementation((variables) => {
       return { id: 2, text: variables.text }
     })
-    const clientOnMutate = jest.fn().mockImplementation((variables) => {
+    const clientOnMutate = vi.fn().mockImplementation((variables) => {
       const optimisticTodo = { id: 1, text: variables.text }
       return { optimisticTodo }
     })
-    const clientOnSuccess = jest.fn()
+    const clientOnSuccess = vi.fn()
 
     client.setMutationDefaults(['addTodo'], {
       mutationFn: clientAddTodo,
@@ -347,10 +348,10 @@ describe('dehydration and rehydration', () => {
   })
 
   test('should not dehydrate mutations if dehydrateMutations is set to false', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
+    const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 
-    const serverAddTodo = jest
+    const serverAddTodo = vi
       .fn()
       .mockImplementation(() => Promise.reject('offline'))
 
@@ -376,10 +377,10 @@ describe('dehydration and rehydration', () => {
   })
 
   test('should not dehydrate mutation if mutation state is set to pause', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
+    const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 
-    const serverAddTodo = jest
+    const serverAddTodo = vi
       .fn()
       .mockImplementation(() => Promise.reject('offline'))
 
