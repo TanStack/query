@@ -74,6 +74,7 @@ export class MutationObserver<
         observer: this,
       })
     }
+    this.currentMutation?.setOptions(this.options)
   }
 
   protected onUnsubscribe(): void {

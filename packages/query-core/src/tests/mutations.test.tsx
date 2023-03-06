@@ -2,6 +2,7 @@ import type { QueryClient } from '..'
 import { createQueryClient, executeMutation, queryKey, sleep } from './utils'
 import type { MutationState } from '../mutation'
 import { MutationObserver } from '../mutationObserver'
+import { waitFor } from '@testing-library/react'
 
 describe('mutations', () => {
   let queryClient: QueryClient
@@ -357,5 +358,35 @@ describe('mutations', () => {
     expect(mutation.getCurrentResult().data).toEqual('update')
     expect(onSuccess).not.toHaveBeenCalled()
     expect(onSettled).not.toHaveBeenCalled()
+  })
+
+  test('mutation callbacks should see updated options', async () => {
+    const onSuccess = jest.fn()
+
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: async () => {
+        sleep(100)
+        return 'update'
+      },
+      onSuccess: () => {
+        onSuccess(1)
+      },
+    })
+
+    void mutation.mutate()
+
+    mutation.setOptions({
+      mutationFn: async () => {
+        sleep(100)
+        return 'update'
+      },
+      onSuccess: () => {
+        onSuccess(2)
+      },
+    })
+
+    await waitFor(() => expect(onSuccess).toHaveBeenCalledTimes(1))
+
+    expect(onSuccess).toHaveBeenCalledWith(2)
   })
 })
