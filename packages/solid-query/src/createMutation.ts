@@ -1,4 +1,4 @@
-import type { QueryClient, RegisteredError } from '@tanstack/query-core'
+import type { QueryClient, DefaultError } from '@tanstack/query-core'
 import { MutationObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {
@@ -13,7 +13,7 @@ import { shouldThrowError } from './utils'
 // HOOK
 export function createMutation<
   TData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 >(

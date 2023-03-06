@@ -11,7 +11,13 @@ export { MutationObserver } from './mutationObserver'
 export { notifyManager } from './notifyManager'
 export { focusManager } from './focusManager'
 export { onlineManager } from './onlineManager'
-export { hashKey, replaceEqualDeep, isServer, keepPreviousData } from './utils'
+export {
+  hashKey,
+  replaceEqualDeep,
+  isServer,
+  matchQuery,
+  keepPreviousData,
+} from './utils'
 export type { MutationFilters, QueryFilters, Updater } from './utils'
 export { isCancelledError } from './retryer'
 export {

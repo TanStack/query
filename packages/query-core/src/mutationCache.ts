@@ -1,5 +1,5 @@
 import type { MutationObserver } from './mutationObserver'
-import type { NotifyEvent, MutationOptions, RegisteredError } from './types'
+import type { NotifyEvent, MutationOptions, DefaultError } from './types'
 import type { QueryClient } from './queryClient'
 import { notifyManager } from './notifyManager'
 import type { Action, MutationState } from './mutation'
@@ -12,7 +12,7 @@ import { Subscribable } from './subscribable'
 
 interface MutationCacheConfig {
   onError?: (
-    error: unknown,
+    error: DefaultError,
     variables: unknown,
     context: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
@@ -25,7 +25,14 @@ interface MutationCacheConfig {
   ) => Promise<unknown> | unknown
   onMutate?: (
     variables: unknown,
-    mutation: Mutation<unknown, unknown, unknown, unknown>,
+    mutation: Mutation<unknown, unknown, unknown>,
+  ) => Promise<unknown> | unknown
+  onSettled?: (
+    data: unknown | undefined,
+    error: DefaultError | null,
+    variables: unknown,
+    context: unknown,
+    mutation: Mutation<unknown, unknown, unknown>,
   ) => Promise<unknown> | unknown
 }
 
@@ -126,7 +133,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 
   find<
     TData = unknown,
-    TError = RegisteredError,
+    TError = DefaultError,
     TVariables = any,
     TContext = unknown,
   >(

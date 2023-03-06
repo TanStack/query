@@ -2,7 +2,7 @@ import { MutationCache as MC } from '@tanstack/query-core'
 import type {
   Mutation,
   MutationFilters,
-  RegisteredError,
+  DefaultError,
 } from '@tanstack/query-core'
 import type { MaybeRefDeep } from './types'
 import { cloneDeepUnref } from './utils'
@@ -10,7 +10,7 @@ import { cloneDeepUnref } from './utils'
 export class MutationCache extends MC {
   find<
     TData = unknown,
-    TError = RegisteredError,
+    TError = DefaultError,
     TVariables = any,
     TContext = unknown,
   >(

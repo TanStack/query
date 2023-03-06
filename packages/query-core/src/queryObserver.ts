@@ -1,4 +1,4 @@
-import type { DefaultedQueryObserverOptions, RegisteredError } from './types'
+import type { DefaultedQueryObserverOptions, DefaultError } from './types'
 import {
   isServer,
   isValidTimeout,
@@ -39,7 +39,7 @@ export interface ObserverFetchOptions extends FetchOptions {
 
 export class QueryObserver<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,

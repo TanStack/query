@@ -1,8 +1,4 @@
-import type {
-  QueryClient,
-  QueryKey,
-  RegisteredError,
-} from '@tanstack/query-core'
+import type { QueryClient, QueryKey, DefaultError } from '@tanstack/query-core'
 import { QueryObserver } from '@tanstack/query-core'
 import { createMemo } from 'solid-js'
 import { createBaseQuery } from './createBaseQuery'
@@ -16,7 +12,7 @@ import type {
 
 type UndefinedInitialDataOptions<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = FunctionedParams<
@@ -27,7 +23,7 @@ type UndefinedInitialDataOptions<
 
 type DefinedInitialDataOptions<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = FunctionedParams<
@@ -38,7 +34,7 @@ type DefinedInitialDataOptions<
 
 export function createQuery<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -48,7 +44,7 @@ export function createQuery<
 
 export function createQuery<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -57,7 +53,7 @@ export function createQuery<
 ): DefinedCreateQueryResult<TData, TError>
 export function createQuery<
   TQueryFnData,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(

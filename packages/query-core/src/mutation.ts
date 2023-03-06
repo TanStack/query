@@ -2,7 +2,7 @@ import type {
   MutationOptions,
   MutationStatus,
   MutationMeta,
-  RegisteredError,
+  DefaultError,
 } from './types'
 import type { MutationCache } from './mutationCache'
 import type { MutationObserver } from './mutationObserver'
@@ -23,7 +23,7 @@ interface MutationConfig<TData, TError, TVariables, TContext> {
 
 export interface MutationState<
   TData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 > {
@@ -80,7 +80,7 @@ export type Action<TData, TError, TVariables, TContext> =
 
 export class Mutation<
   TData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 > extends Removable {
@@ -211,6 +211,15 @@ export class Mutation<
 
       await this.options.onSuccess?.(data, variables, this.state.context)
 
+      // Notify cache callback
+      await this.#mutationCache.config.onSettled?.(
+        data,
+        null,
+        this.state.variables,
+        this.state.context,
+        this as Mutation<unknown, unknown, unknown, unknown>,
+      )
+
       await this.options.onSettled?.(data, null, variables, this.state.context)
 
       this.#dispatch({ type: 'success', data })
@@ -219,7 +228,7 @@ export class Mutation<
       try {
         // Notify cache callback
         await this.#mutationCache.config.onError?.(
-          error,
+          error as any,
           variables,
           this.state.context,
           this as Mutation<unknown, unknown, unknown, unknown>,
@@ -229,6 +238,15 @@ export class Mutation<
           error as TError,
           variables,
           this.state.context,
+        )
+
+        // Notify cache callback
+        await this.#mutationCache.config.onSettled?.(
+          undefined,
+          error as any,
+          this.state.variables,
+          this.state.context,
+          this as Mutation<unknown, unknown, unknown, unknown>,
         )
 
         await this.options.onSettled?.(

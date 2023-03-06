@@ -6,7 +6,7 @@ import type {
   NotifyEvent,
   QueryKey,
   QueryOptions,
-  RegisteredError,
+  DefaultError,
   WithRequired,
 } from './types'
 import { notifyManager } from './notifyManager'
@@ -17,8 +17,16 @@ import type { QueryObserver } from './queryObserver'
 // TYPES
 
 interface QueryCacheConfig {
-  onError?: (error: unknown, query: Query<unknown, unknown, unknown>) => void
+  onError?: (
+    error: DefaultError,
+    query: Query<unknown, unknown, unknown>,
+  ) => void
   onSuccess?: (data: unknown, query: Query<unknown, unknown, unknown>) => void
+  onSettled?: (
+    data: unknown | undefined,
+    error: DefaultError | null,
+    query: Query<unknown, unknown, unknown>,
+  ) => void
   createStore?: () => QueryStore
 }
 
@@ -150,7 +158,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
   get<
     TQueryFnData = unknown,
-    TError = RegisteredError,
+    TError = DefaultError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -165,7 +173,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     return [...this.#queries.values()]
   }
 
-  find<TQueryFnData = unknown, TError = RegisteredError, TData = TQueryFnData>(
+  find<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData>(
     filters: WithRequired<QueryFilters, 'queryKey'>,
   ): Query<TQueryFnData, TError, TData> | undefined {
     if (typeof filters.exact === 'undefined') {

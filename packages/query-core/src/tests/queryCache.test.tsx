@@ -286,11 +286,13 @@ describe('queryCache', () => {
     })
   })
 
-  describe('QueryCacheConfig.onError', () => {
-    test('should be called when a query errors', async () => {
+  describe('QueryCacheConfig error callbacks', () => {
+    test('should call onError and onSettled when a query errors', async () => {
       const key = queryKey()
+      const onSuccess = jest.fn()
+      const onSettled = jest.fn()
       const onError = jest.fn()
-      const testCache = new QueryCache({ onError })
+      const testCache = new QueryCache({ onSuccess, onError, onSettled })
       const testClient = createQueryClient({ queryCache: testCache })
       await testClient.prefetchQuery({
         queryKey: key,
@@ -298,14 +300,20 @@ describe('queryCache', () => {
       })
       const query = testCache.find({ queryKey: key })
       expect(onError).toHaveBeenCalledWith('error', query)
+      expect(onError).toHaveBeenCalledTimes(1)
+      expect(onSuccess).not.toHaveBeenCalled()
+      expect(onSettled).toHaveBeenCalledTimes(1)
+      expect(onSettled).toHaveBeenCalledWith(undefined, 'error', query)
     })
   })
 
-  describe('QueryCacheConfig.onSuccess', () => {
-    test('should be called when a query is successful', async () => {
+  describe('QueryCacheConfig success callbacks', () => {
+    test('should call onSuccess and onSettled when a query is successful', async () => {
       const key = queryKey()
       const onSuccess = jest.fn()
-      const testCache = new QueryCache({ onSuccess })
+      const onSettled = jest.fn()
+      const onError = jest.fn()
+      const testCache = new QueryCache({ onSuccess, onError, onSettled })
       const testClient = createQueryClient({ queryCache: testCache })
       await testClient.prefetchQuery({
         queryKey: key,
@@ -313,6 +321,10 @@ describe('queryCache', () => {
       })
       const query = testCache.find({ queryKey: key })
       expect(onSuccess).toHaveBeenCalledWith({ data: 5 }, query)
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      expect(onError).not.toHaveBeenCalled()
+      expect(onSettled).toHaveBeenCalledTimes(1)
+      expect(onSettled).toHaveBeenCalledWith({ data: 5 }, null, query)
     })
   })
 

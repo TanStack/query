@@ -9,7 +9,7 @@ import type {
   CancelOptions,
   SetDataOptions,
   FetchStatus,
-  RegisteredError,
+  DefaultError,
 } from './types'
 import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
@@ -34,7 +34,7 @@ interface QueryConfig<
   state?: QueryState<TData, TError>
 }
 
-export interface QueryState<TData = unknown, TError = RegisteredError> {
+export interface QueryState<TData = unknown, TError = DefaultError> {
   data: TData | undefined
   dataUpdateCount: number
   dataUpdatedAt: number
@@ -65,7 +65,7 @@ export interface FetchContext<
 
 export interface QueryBehavior<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > {
@@ -142,7 +142,7 @@ export interface SetStateOptions {
 
 export class Query<
   TQueryFnData = unknown,
-  TError = RegisteredError,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends Removable {
@@ -433,7 +433,15 @@ export class Query<
 
       if (!isCancelledError(error)) {
         // Notify cache callback
-        this.#cache.config.onError?.(error, this as Query<any, any, any, any>)
+        this.#cache.config.onError?.(
+          error as any,
+          this as Query<any, any, any, any>,
+        )
+        this.#cache.config.onSettled?.(
+          this.state.data,
+          error as any,
+          this as Query<any, any, any, any>,
+        )
       }
 
       if (!this.isFetchingOptimistic) {
@@ -462,6 +470,11 @@ export class Query<
 
         // Notify cache callback
         this.#cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
+        this.#cache.config.onSettled?.(
+          data,
+          this.state.error as any,
+          this as Query<any, any, any, any>,
+        )
 
         if (!this.isFetchingOptimistic) {
           // Schedule query gc after fetching
