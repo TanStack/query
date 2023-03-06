@@ -85,7 +85,7 @@ export class Mutation<
   TContext = unknown,
 > extends Removable {
   state: MutationState<TData, TError, TVariables, TContext>
-  readonly options: MutationOptions<TData, TError, TVariables, TContext>
+  options!: MutationOptions<TData, TError, TVariables, TContext>
   readonly mutationId: number
 
   #observers: MutationObserver<TData, TError, TVariables, TContext>[]
@@ -109,9 +109,9 @@ export class Mutation<
   setOptions(
     options?: MutationOptions<TData, TError, TVariables, TContext>,
   ): void {
-    this.options = { ...this.defaultOptions, ...options }
+    this.options = { ...this.#defaultOptions, ...options }
 
-    this.updateCacheTime(this.options.cacheTime)
+    this.updateGcTime(this.options.gcTime)
   }
 
   get meta(): MutationMeta | undefined {
