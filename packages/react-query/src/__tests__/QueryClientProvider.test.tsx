@@ -10,6 +10,7 @@ import {
   useQuery,
   useQueryClient,
 } from '..'
+import { describe, it, expect, vi, test } from 'vitest'
 
 describe('QueryClientProvider', () => {
   test('sets a specific cache for all queries to use', async () => {
@@ -202,7 +203,7 @@ describe('QueryClientProvider', () => {
 
   describe('useQueryClient', () => {
     test('should throw an error if no query client has been set', () => {
-      const consoleMock = jest
+      const consoleMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
@@ -250,7 +251,7 @@ describe('QueryClientProvider', () => {
       const queryClient = createQueryClient({ queryCache })
 
       // Mock a non web browser environment
-      const windowSpy = jest
+      const windowSpy = vi
         .spyOn(window, 'window', 'get')
         .mockImplementation(undefined)
 

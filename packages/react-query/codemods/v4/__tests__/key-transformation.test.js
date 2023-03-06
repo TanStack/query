@@ -1,7 +1,10 @@
+import { describe, it, expect } from 'vitest'
+global.describe = describe
+global.it = it
+global.expect = expect
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const defineTest = require('jscodeshift/dist/testUtils').defineTest
-
-jest.autoMockOff()
 
 defineTest(__dirname, 'key-transformation', null, 'default-import', {
   parser: 'tsx',
@@ -26,7 +29,7 @@ defineTest(
   'parameter-is-object-expression',
   {
     parser: 'tsx',
-  }
+  },
 )
 
 defineTest(__dirname, 'key-transformation', null, 'type-arguments', {

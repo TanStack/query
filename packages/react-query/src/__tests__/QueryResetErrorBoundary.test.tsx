@@ -2,8 +2,15 @@ import { fireEvent, waitFor } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
 
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import {
+  createQueryClient,
+  queryKey,
+  renderWithClient,
+  resetJsDomBeforeEachTest,
+  sleep,
+} from './utils'
 import { QueryCache, QueryErrorResetBoundary, useQuery } from '..'
+import { describe, it, expect } from 'vitest'
 
 // TODO: This should be removed with the types for react-error-boundary get updated.
 declare module 'react-error-boundary' {
@@ -13,6 +20,7 @@ declare module 'react-error-boundary' {
 }
 
 describe('QueryErrorResetBoundary', () => {
+  resetJsDomBeforeEachTest()
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({ queryCache })
 

@@ -1,8 +1,9 @@
 import * as React from 'react'
-import { act, render } from '@testing-library/react'
+import { act, fireEvent, render } from '@testing-library/react'
 import type { ContextOptions, QueryClientConfig, MutationOptions } from '..'
 import { QueryClient, QueryClientProvider } from '..'
 import * as utils from '@tanstack/query-core'
+import { beforeEach, vi } from 'vitest'
 
 export function renderWithClient(
   client: QueryClient,
@@ -46,22 +47,22 @@ export const Blink = ({
 }
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
-  jest.spyOn(console, 'error').mockImplementation(() => undefined)
+  vi.spyOn(console, 'error').mockImplementation(() => undefined)
   return new QueryClient({ logger: mockLogger, ...config })
 }
 
 export function mockVisibilityState(value: DocumentVisibilityState) {
-  return jest.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
+  return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
 export function mockNavigatorOnLine(value: boolean) {
-  return jest.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
+  return vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
 }
 
 export const mockLogger = {
-  log: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
+  log: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
 }
 
 let queryKeyCount = 0
@@ -118,4 +119,13 @@ export function setIsServer(isServer: boolean) {
       get: () => original,
     })
   }
+}
+
+export function resetJsDomBeforeEachTest() {
+  beforeEach(() => {
+    const htmlTag = document.getElementsByTagName('html')[0]
+    if (htmlTag) {
+      htmlTag.innerHTML = ''
+    }
+  })
 }

@@ -9,11 +9,13 @@ import {
   dehydrate,
   useHydrate,
   Hydrate,
-} from '@tanstack/react-query'
-import { createQueryClient, sleep } from './utils'
+} from '..'
+import { createQueryClient, resetJsDomBeforeEachTest, sleep } from './utils'
 import * as coreModule from '@tanstack/query-core'
+import { describe, expect, vi, test, beforeAll } from 'vitest'
 
 describe('React hydration', () => {
+  resetJsDomBeforeEachTest()
   const fetchData: (value: string) => Promise<string> = (value) =>
     new Promise((res) => setTimeout(() => res(value), 10))
   const dataQuery: (key: [string]) => Promise<string> = (key) =>
@@ -203,7 +205,7 @@ describe('React hydration', () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
 
-    const hydrateSpy = jest.spyOn(coreModule, 'hydrate')
+    const hydrateSpy = vi.spyOn(coreModule, 'hydrate')
 
     function Page() {
       useHydrate(null)
@@ -226,7 +228,7 @@ describe('React hydration', () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
 
-    const hydrateSpy = jest.spyOn(coreModule, 'hydrate')
+    const hydrateSpy = vi.spyOn(coreModule, 'hydrate')
 
     function Page() {
       useHydrate(undefined)

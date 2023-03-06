@@ -1,5 +1,4 @@
 import { act, fireEvent, waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom'
 import * as React from 'react'
 import {
   Blink,
@@ -10,6 +9,7 @@ import {
   mockVisibilityState,
   queryKey,
   renderWithClient,
+  resetJsDomBeforeEachTest,
   setActTimeout,
   sleep,
 } from './utils'
@@ -22,10 +22,13 @@ import type {
 } from '..'
 import { QueryCache, useQuery } from '..'
 import { ErrorBoundary } from 'react-error-boundary'
+import { describe, it, expect, test, vi } from 'vitest'
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({ queryCache })
+
+  resetJsDomBeforeEachTest()
 
   it('should return the correct types', () => {
     const key = queryKey()
@@ -434,7 +437,7 @@ describe('useQuery', () => {
   it('should call onSuccess after a query has been fetched', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
-    const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
 
     function Page() {
       const state = useQuery(
@@ -460,7 +463,7 @@ describe('useQuery', () => {
   it('should call onSuccess after a query has been refetched', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
-    const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
     let count = 0
 
     function Page() {
@@ -498,7 +501,7 @@ describe('useQuery', () => {
   it('should call onSuccess after a disabled query has been fetched', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
-    const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
 
     function Page() {
       const state = useQuery(key, () => 'data', { enabled: false, onSuccess })
@@ -532,7 +535,7 @@ describe('useQuery', () => {
   it('should not call onSuccess if a component has unmounted', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
-    const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
 
     function Page() {
       const [show, setShow] = React.useState(true)
@@ -567,7 +570,7 @@ describe('useQuery', () => {
   it('should call onError after a query has been fetched with an error', async () => {
     const key = queryKey()
     const states: UseQueryResult<unknown>[] = []
-    const onError = jest.fn()
+    const onError = vi.fn()
 
     function Page() {
       const state = useQuery<unknown>(key, () => Promise.reject('error'), {
@@ -588,7 +591,7 @@ describe('useQuery', () => {
 
   it('should not call onError when receiving a CancelledError', async () => {
     const key = queryKey()
-    const onError = jest.fn()
+    const onError = vi.fn()
 
     function Page() {
       const { status, fetchStatus } = useQuery(
@@ -623,7 +626,7 @@ describe('useQuery', () => {
   it('should call onSettled after a query has been fetched', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
-    const onSettled = jest.fn()
+    const onSettled = vi.fn()
 
     function Page() {
       const state = useQuery(key, () => 'data', { onSettled })
@@ -646,7 +649,7 @@ describe('useQuery', () => {
   it('should call onSettled after a query has been fetched with an error', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
-    const onSettled = jest.fn()
+    const onSettled = vi.fn()
 
     function Page() {
       const state = useQuery(key, () => Promise.reject<unknown>('error'), {
@@ -2409,7 +2412,7 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('count: 2'))
 
     // Should be 2 / 3 instead of 5, uSES batches differently
-    expect(renders).toBe(process.env.REACTJS_VERSION === '17' ? 2 : 3)
+    expect(renders).toBe(process.env.REACTJS_VERSION === '18' ? 3 : 2)
 
     // Both callbacks should have been executed
     expect(callbackCount).toBe(2)
@@ -2515,7 +2518,7 @@ describe('useQuery', () => {
 
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {
     const key = queryKey()
-    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
+    const queryFn = vi.fn().mockReturnValue('data')
 
     function Page() {
       const { data = 'default' } = useQuery(key, queryFn, {
@@ -3247,7 +3250,7 @@ describe('useQuery', () => {
   it('should retry specified number of times', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn<unknown, unknown[]>()
+    const queryFn = vi.fn()
     queryFn.mockImplementation(() => {
       return Promise.reject('Error test Barrett')
     })
@@ -3286,7 +3289,7 @@ describe('useQuery', () => {
   it('should not retry if retry function `false`', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn<unknown, unknown[]>()
+    const queryFn = vi.fn()
 
     queryFn.mockImplementationOnce(() => {
       return Promise.reject('Error test Tanner')
@@ -3334,7 +3337,7 @@ describe('useQuery', () => {
 
     type DelayError = { delay: number }
 
-    const queryFn = jest.fn<unknown, unknown[]>()
+    const queryFn = vi.fn()
     queryFn.mockImplementation(() => {
       return Promise.reject({ delay: 50 })
     })
@@ -3527,10 +3530,10 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 
-    const queryFn = jest.fn<string, unknown[]>()
+    const queryFn = vi.fn()
     queryFn.mockImplementation(() => 'data')
 
-    const prefetchQueryFn = jest.fn<string, unknown[]>()
+    const prefetchQueryFn = vi.fn()
     prefetchQueryFn.mockImplementation(() => 'not yet...')
 
     await queryClient.prefetchQuery(key, prefetchQueryFn, {
@@ -3556,10 +3559,10 @@ describe('useQuery', () => {
   it('should not refetch if not stale after a prefetch', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn<string, unknown[]>()
+    const queryFn = vi.fn()
     queryFn.mockImplementation(() => 'data')
 
-    const prefetchQueryFn = jest.fn<Promise<string>, unknown[]>()
+    const prefetchQueryFn = vi.fn()
     prefetchQueryFn.mockImplementation(async () => {
       await sleep(10)
       return 'not yet...'
@@ -3851,7 +3854,7 @@ describe('useQuery', () => {
 
   it('it should support enabled:false in query object syntax', async () => {
     const key = queryKey()
-    const queryFn = jest.fn<string, unknown[]>()
+    const queryFn = vi.fn()
     queryFn.mockImplementation(() => 'data')
 
     function Page() {
@@ -3916,8 +3919,8 @@ describe('useQuery', () => {
 
   it('should not cause memo churn when data does not change', async () => {
     const key = queryKey()
-    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
-    const memoFn = jest.fn()
+    const queryFn = vi.fn().mockReturnValue('data')
+    const memoFn = vi.fn()
 
     function Page() {
       const result = useQuery(key, async () => {
@@ -4113,7 +4116,7 @@ describe('useQuery', () => {
   it('should refetch if any query instance becomes enabled', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
+    const queryFn = vi.fn().mockReturnValue('data')
 
     function Disabled() {
       useQuery(key, queryFn, { enabled: false })
@@ -4468,11 +4471,11 @@ describe('useQuery', () => {
 
   it('should cancel the query function when there are no more subscriptions', async () => {
     const key = queryKey()
-    let cancelFn: jest.Mock = jest.fn()
+    let cancelFn: vi.Mock = vi.fn()
 
     const queryFn = ({ signal }: { signal?: AbortSignal }) => {
       const promise = new Promise<string>((resolve, reject) => {
-        cancelFn = jest.fn(() => reject('Cancelled'))
+        cancelFn = vi.fn(() => reject('Cancelled'))
         signal?.addEventListener('abort', cancelFn)
         sleep(20).then(() => resolve('OK'))
       })
@@ -4784,7 +4787,7 @@ describe('useQuery', () => {
   })
 
   it('should refetch when changed enabled to true in error state', async () => {
-    const queryFn = jest.fn<unknown, unknown[]>()
+    const queryFn = vi.fn()
     queryFn.mockImplementation(async () => {
       await sleep(10)
       return Promise.reject(new Error('Suspense Error Bingo'))
@@ -5070,7 +5073,7 @@ describe('useQuery', () => {
         rendered.getByText('status: success, isPaused: false'),
       )
       await waitFor(() => {
-        expect(rendered.getByText('data: data')).toBeInTheDocument()
+        expect(rendered.getByText('data: data')).toBeTruthy()
       })
 
       expect(states).toEqual(['paused', 'fetching', 'idle'])
@@ -5140,7 +5143,7 @@ describe('useQuery', () => {
       await waitFor(() => rendered.getByText('failureReason: null'))
 
       await waitFor(() => {
-        expect(rendered.getByText('data: data2')).toBeInTheDocument()
+        expect(rendered.getByText('data: data2')).toBeTruthy()
       })
 
       onlineMock.mockRestore()
@@ -5190,7 +5193,7 @@ describe('useQuery', () => {
       await sleep(15)
 
       await waitFor(() =>
-        expect(rendered.queryByText('data: data2')).not.toBeInTheDocument(),
+        expect(rendered.queryByText('data: data2')).not.toBeTruthy(),
       )
       expect(count).toBe(1)
       onlineMock.mockRestore()
@@ -5284,7 +5287,7 @@ describe('useQuery', () => {
         rendered.getByText('status: success, fetchStatus: paused'),
       )
       await waitFor(() => {
-        expect(rendered.getByText('data: initial')).toBeInTheDocument()
+        expect(rendered.getByText('data: initial')).toBeTruthy()
       })
 
       fireEvent.click(rendered.getByRole('button', { name: /invalidate/i }))
@@ -5338,7 +5341,7 @@ describe('useQuery', () => {
         rendered.getByText('status: success, fetchStatus: paused'),
       )
       await waitFor(() => {
-        expect(rendered.getByText('data: initial')).toBeInTheDocument()
+        expect(rendered.getByText('data: initial')).toBeTruthy()
       })
 
       // triggers one pause
@@ -5364,7 +5367,7 @@ describe('useQuery', () => {
         rendered.getByText('status: success, fetchStatus: idle'),
       )
       await waitFor(() => {
-        expect(rendered.getByText('data: data1')).toBeInTheDocument()
+        expect(rendered.getByText('data: data1')).toBeTruthy()
       })
 
       expect(count).toBe(1)
@@ -5664,7 +5667,7 @@ describe('useQuery', () => {
       )
 
       await waitFor(() => {
-        expect(rendered.getByText('data: data 1')).toBeInTheDocument()
+        expect(rendered.getByText('data: data 1')).toBeTruthy()
       })
 
       onlineMock.mockRestore()
@@ -5706,7 +5709,7 @@ describe('useQuery', () => {
       await waitFor(() => rendered.getByText('status: error, isPaused: false'))
 
       await waitFor(() => {
-        expect(rendered.getByText('error: error 2')).toBeInTheDocument()
+        expect(rendered.getByText('error: error 2')).toBeTruthy()
       })
 
       expect(count).toBe(2)
@@ -5804,7 +5807,7 @@ describe('useQuery', () => {
 
   it('setQueryData - should not call onSuccess callback of active observers', async () => {
     const key = queryKey()
-    const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
 
     function Page() {
       const state = useQuery(key, () => 'data', { onSuccess })
@@ -5854,7 +5857,7 @@ describe('useQuery', () => {
     fireEvent.click(rendered.getByRole('button', { name: /setQueryData/i }))
     await waitFor(() => rendered.getByText('data: newData'))
     await waitFor(() => {
-      expect(rendered.getByText('dataUpdatedAt: 100')).toBeInTheDocument()
+      expect(rendered.getByText('dataUpdatedAt: 100')).toBeTruthy()
     })
   })
 

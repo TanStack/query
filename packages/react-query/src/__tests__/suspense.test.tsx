@@ -10,9 +10,17 @@ import {
   useQuery,
   useQueryErrorResetBoundary,
 } from '..'
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import {
+  createQueryClient,
+  queryKey,
+  renderWithClient,
+  resetJsDomBeforeEachTest,
+  sleep,
+} from './utils'
+import { describe, it, expect, vi } from 'vitest'
 
 describe("useQuery's in Suspense mode", () => {
+  resetJsDomBeforeEachTest()
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({ queryCache })
 
@@ -120,7 +128,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn twice when used in Suspense mode', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn<string, unknown[]>()
+    const queryFn = vi.fn()
     queryFn.mockImplementation(() => {
       sleep(10)
       return 'data'
@@ -193,7 +201,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should call onSuccess on the first successful call', async () => {
     const key = queryKey()
 
-    const successFn = jest.fn()
+    const successFn = vi.fn()
 
     function Page() {
       useQuery(
@@ -228,8 +236,8 @@ describe("useQuery's in Suspense mode", () => {
   it('should call every onSuccess handler within a suspense boundary', async () => {
     const key = queryKey()
 
-    const successFn1 = jest.fn()
-    const successFn2 = jest.fn()
+    const successFn1 = vi.fn()
+    const successFn2 = vi.fn()
 
     function FirstComponent() {
       useQuery(
@@ -741,7 +749,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn when not enabled', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn<Promise<string>, unknown[]>()
+    const queryFn = vi.fn()
     queryFn.mockImplementation(async () => {
       await sleep(10)
       return '23'
@@ -1013,6 +1021,7 @@ describe("useQuery's in Suspense mode", () => {
 })
 
 describe('useQueries with suspense', () => {
+  resetJsDomBeforeEachTest()
   const queryClient = createQueryClient()
   it('should suspend all queries in parallel', async () => {
     const key1 = queryKey()
@@ -1104,8 +1113,8 @@ describe('useQueries with suspense', () => {
 
       return (
         <div>
-          <h1>data: {result.map((it) => it.data ?? 'null').join(',')}</h1>
-          <h2>status: {result.map((it) => it.status).join(',')}</h2>
+          <h1>data: {result.map((x) => x.data ?? 'null').join(',')}</h1>
+          <h2>status: {result.map((x) => x.status).join(',')}</h2>
         </div>
       )
     }
@@ -1220,7 +1229,7 @@ describe('useQueries with suspense', () => {
       })
       return (
         <div>
-          <h1>data: {result.map((it) => it.data ?? 'null').join(',')}</h1>
+          <h1>data: {result.map((x) => x.data ?? 'null').join(',')}</h1>
         </div>
       )
     }
