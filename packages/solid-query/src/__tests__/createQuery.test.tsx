@@ -693,7 +693,10 @@ describe('createQuery', () => {
     await sleep(5)
     await queryClient.cancelQueries(key())
     // query cancellation will reset the query to it's initial state
-    await waitFor(() => screen.getByText('status: loading, fetchStatus: idle'))
+    await waitFor(
+      () => screen.getByText('status: loading, fetchStatus: idle'),
+      { timeout: 1000 },
+    )
     expect(onError).not.toHaveBeenCalled()
   })
 
