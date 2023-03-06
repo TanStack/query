@@ -89,20 +89,29 @@ export class Mutation<
   readonly mutationId: number
 
   #observers: MutationObserver<TData, TError, TVariables, TContext>[]
+  #defaultOptions?: MutationOptions<TData, TError, TVariables, TContext>
   #mutationCache: MutationCache
   #retryer?: Retryer<TData>
 
   constructor(config: MutationConfig<TData, TError, TVariables, TContext>) {
     super()
 
-    this.options = config.options
     this.mutationId = config.mutationId
+    this.#defaultOptions = config.defaultOptions
     this.#mutationCache = config.mutationCache
     this.#observers = []
     this.state = config.state || getDefaultState()
 
-    this.updateGcTime(this.options.gcTime)
+    this.setOptions(config.options)
     this.scheduleGc()
+  }
+
+  setOptions(
+    options?: MutationOptions<TData, TError, TVariables, TContext>,
+  ): void {
+    this.options = { ...this.defaultOptions, ...options }
+
+    this.updateCacheTime(this.options.cacheTime)
   }
 
   get meta(): MutationMeta | undefined {
