@@ -18,6 +18,7 @@ import {
 import { render } from 'solid-testing-library'
 import * as MutationCacheModule from '../../../query-core/src/mutationCache'
 import { setActTimeout } from './utils'
+import { vi } from 'vitest'
 
 describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {
@@ -161,7 +162,7 @@ describe('useIsMutating', () => {
       }
     }
 
-    const MutationCacheSpy = jest
+    const MutationCacheSpy = vi
       .spyOn(MutationCacheModule, 'MutationCache')
       .mockImplementation((fn) => {
         return new MutationCacheMock(fn)

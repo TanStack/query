@@ -7,6 +7,7 @@ import { createContext, useContext } from 'solid-js'
 import { renderToString } from 'solid-js/web'
 import { createQuery, QueryClientProvider, useQueryClient } from '..'
 import { createQueryClient, sleep } from './utils'
+import { vi } from 'vitest'
 
 describe('QueryClientProvider', () => {
   it('sets a specific cache for all queries to use', async () => {
@@ -194,7 +195,7 @@ describe('QueryClientProvider', () => {
 
   describe('useQueryClient', () => {
     it('should throw an error if no query client has been set', () => {
-      const consoleMock = jest
+      const consoleMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
@@ -240,7 +241,7 @@ describe('QueryClientProvider', () => {
       const queryClient = createQueryClient({ queryCache })
 
       // Mock a non web browser environment
-      const windowSpy = jest
+      const windowSpy = vi
         .spyOn(window, 'window', 'get')
         .mockImplementation(undefined)
 

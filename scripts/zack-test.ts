@@ -10,7 +10,7 @@ const completedPackages = [
   'react-query',
   'react-query-devtools',
   'react-query-persist-client',
-  //   'solid-query',
+  'solid-query',
   //   'svelte-query',
   //   'vue-query',
 ]

@@ -29,6 +29,8 @@ import {
   setActTimeout,
   sleep,
 } from './utils'
+import { vi } from 'vitest'
+import type { Mock } from 'vitest'
 
 describe('createQuery', () => {
   const queryCache = new QueryCache()
@@ -477,7 +479,7 @@ describe('createQuery', () => {
   it('should call onSuccess after a query has been fetched', async () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
-    const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
 
     function Page() {
       const state = createQuery(
@@ -509,7 +511,7 @@ describe('createQuery', () => {
   it('should call onSuccess after a query has been refetched', async () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
-    const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
     let count = 0
 
     function Page() {
@@ -558,7 +560,7 @@ describe('createQuery', () => {
   it('should call onSuccess after a disabled query has been fetched', async () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
-    const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
 
     function Page() {
       const state = createQuery(key, () => 'data', {
@@ -594,7 +596,7 @@ describe('createQuery', () => {
   it('should not call onSuccess if a component has unmounted', async () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
-    const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
 
     function Page() {
       const [show, setShow] = createSignal(true)
@@ -634,7 +636,7 @@ describe('createQuery', () => {
   it('should call onError after a query has been fetched with an error', async () => {
     const key = queryKey()
     const states: CreateQueryResult<unknown>[] = []
-    const onError = jest.fn()
+    const onError = vi.fn()
 
     function Page() {
       const state = createQuery<unknown>(key, () => Promise.reject('error'), {
@@ -662,7 +664,7 @@ describe('createQuery', () => {
 
   it('should not call onError when receiving a CancelledError', async () => {
     const key = queryKey()
-    const onError = jest.fn()
+    const onError = vi.fn()
 
     function Page() {
       const state = createQuery(
@@ -698,7 +700,7 @@ describe('createQuery', () => {
   it('should call onSettled after a query has been fetched', async () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
-    const onSettled = jest.fn()
+    const onSettled = vi.fn()
 
     function Page() {
       const state = createQuery(key, () => 'data', { onSettled })
@@ -723,7 +725,7 @@ describe('createQuery', () => {
   it('should call onSettled after a query has been fetched with an error', async () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
-    const onSettled = jest.fn()
+    const onSettled = vi.fn()
 
     function Page() {
       const state = createQuery(key, () => Promise.reject<unknown>('error'), {
@@ -2735,7 +2737,7 @@ describe('createQuery', () => {
 
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {
     const key = queryKey()
-    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
+    const queryFn = vi.fn().mockReturnValue('data')
 
     function Page() {
       const { data = 'default' } = createQuery(key, queryFn, {
@@ -3560,7 +3562,7 @@ describe('createQuery', () => {
   it('should retry specified number of times', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn<unknown, unknown[]>()
+    const queryFn = vi.fn()
     queryFn.mockImplementation(() => {
       return Promise.reject('Error test Barrett')
     })
@@ -3599,7 +3601,7 @@ describe('createQuery', () => {
   it('should not retry if retry function `false`', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn<unknown, unknown[]>()
+    const queryFn = vi.fn()
 
     queryFn.mockImplementationOnce(() => {
       return Promise.reject('Error test Tanner')
@@ -3645,7 +3647,7 @@ describe('createQuery', () => {
 
     type DelayError = { delay: number }
 
-    const queryFn = jest.fn<unknown, unknown[]>()
+    const queryFn = vi.fn()
     queryFn.mockImplementation(() => {
       return Promise.reject({ delay: 50 })
     })
@@ -3853,10 +3855,10 @@ describe('createQuery', () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
 
-    const queryFn = jest.fn<string, unknown[]>()
+    const queryFn = vi.fn()
     queryFn.mockImplementation(() => 'data')
 
-    const prefetchQueryFn = jest.fn<string, unknown[]>()
+    const prefetchQueryFn = vi.fn()
     prefetchQueryFn.mockImplementation(() => 'not yet...')
 
     await queryClient.prefetchQuery(key(), prefetchQueryFn, {
@@ -3888,10 +3890,10 @@ describe('createQuery', () => {
   it('should not refetch if not stale after a prefetch', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn<string, unknown[]>()
+    const queryFn = vi.fn()
     queryFn.mockImplementation(() => 'data')
 
-    const prefetchQueryFn = jest.fn<Promise<string>, unknown[]>()
+    const prefetchQueryFn = vi.fn()
     prefetchQueryFn.mockImplementation(async () => {
       await sleep(10)
       return 'not yet...'
@@ -4159,7 +4161,7 @@ describe('createQuery', () => {
 
   it('it should support enabled:false in query object syntax', async () => {
     const key = queryKey()
-    const queryFn = jest.fn<string, unknown[]>()
+    const queryFn = vi.fn()
     queryFn.mockImplementation(() => 'data')
 
     function Page() {
@@ -4236,8 +4238,8 @@ describe('createQuery', () => {
 
   it('should not cause memo churn when data does not change', async () => {
     const key = queryKey()
-    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
-    const memoFn = jest.fn()
+    const queryFn = vi.fn().mockReturnValue('data')
+    const memoFn = vi.fn()
 
     function Page() {
       const result = createQuery(key, async () => {
@@ -4469,7 +4471,7 @@ describe('createQuery', () => {
   it('should refetch if any query instance becomes enabled', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
+    const queryFn = vi.fn().mockReturnValue('data')
 
     function Disabled() {
       createQuery(key, queryFn, { enabled: false })
@@ -4876,11 +4878,11 @@ describe('createQuery', () => {
 
   it('should cancel the query function when there are no more subscriptions', async () => {
     const key = queryKey()
-    let cancelFn: jest.Mock = jest.fn()
+    let cancelFn: Mock = vi.fn()
 
     const queryFn = ({ signal }: { signal?: AbortSignal }) => {
       const promise = new Promise<string>((resolve, reject) => {
-        cancelFn = jest.fn(() => reject('Cancelled'))
+        cancelFn = vi.fn(() => reject('Cancelled'))
         signal?.addEventListener('abort', cancelFn)
         sleep(20).then(() => resolve('OK'))
       })
@@ -5214,7 +5216,7 @@ describe('createQuery', () => {
   })
 
   it('should refetch when changed enabled to true in error state', async () => {
-    const queryFn = jest.fn<unknown, unknown[]>()
+    const queryFn = vi.fn()
     queryFn.mockImplementation(async () => {
       await sleep(10)
       return Promise.reject(new Error('Suspense Error Bingo'))
@@ -6312,7 +6314,7 @@ describe('createQuery', () => {
 
   it('setQueryData - should not call onSuccess callback of active observers', async () => {
     const key = queryKey()
-    const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
 
     function Page() {
       const state = createQuery(key, () => 'data', { onSuccess })

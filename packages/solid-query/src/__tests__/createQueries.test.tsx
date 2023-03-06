@@ -31,6 +31,7 @@ import {
   queryKey,
   sleep,
 } from './utils'
+import { vi } from 'vitest'
 
 describe('useQueries', () => {
   const queryCache = new QueryCache()
@@ -1022,7 +1023,7 @@ describe('useQueries', () => {
       }
     }
 
-    const QueriesObserverSpy = jest
+    const QueriesObserverSpy = vi
       .spyOn(QueriesObserverModule, 'QueriesObserver')
       .mockImplementation((fn) => {
         return new QueriesObserverMock(fn)

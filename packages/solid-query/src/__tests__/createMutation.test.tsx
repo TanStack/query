@@ -22,6 +22,7 @@ import {
   setActTimeout,
   sleep,
 } from './utils'
+import { vi } from 'vitest'
 
 describe('useMutation', () => {
   const queryCache = new QueryCache()
@@ -106,8 +107,8 @@ describe('useMutation', () => {
 
   it('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
     const [count, setCount] = createSignal(0)
-    const onSuccessMock = jest.fn()
-    const onSettledMock = jest.fn()
+    const onSuccessMock = vi.fn()
+    const onSettledMock = vi.fn()
 
     function Page() {
       const mutation = createMutation(
@@ -174,7 +175,7 @@ describe('useMutation', () => {
     const [count, setCount] = createSignal(0)
     type Value = { count: number }
 
-    const mutateFn = jest.fn<Promise<Value>, [value: Value]>()
+    const mutateFn = vi.fn()
 
     mutateFn.mockImplementationOnce(() => {
       return Promise.reject('Error test Jonas')
@@ -229,8 +230,8 @@ describe('useMutation', () => {
   })
 
   it('should be able to call `onError` and `onSettled` after each failed mutate', async () => {
-    const onErrorMock = jest.fn()
-    const onSettledMock = jest.fn()
+    const onErrorMock = vi.fn()
+    const onSettledMock = vi.fn()
     const [count, setCount] = createSignal(0)
 
     function Page() {
@@ -564,7 +565,7 @@ describe('useMutation', () => {
 
   it('should call onMutate even if paused', async () => {
     const onlineMock = mockNavigatorOnLine(false)
-    const onMutate = jest.fn()
+    const onMutate = vi.fn()
     let count = 0
 
     function Page() {
@@ -874,8 +875,8 @@ describe('useMutation', () => {
   })
 
   it('should pass meta to mutation', async () => {
-    const errorMock = jest.fn()
-    const successMock = jest.fn()
+    const errorMock = vi.fn()
+    const successMock = vi.fn()
 
     const queryClientMutationMeta = createQueryClient({
       mutationCache: new MutationCache({
@@ -935,10 +936,10 @@ describe('useMutation', () => {
   })
 
   it('should call cache callbacks when unmounted', async () => {
-    const onSuccess = jest.fn()
-    const onSuccessMutate = jest.fn()
-    const onSettled = jest.fn()
-    const onSettledMutate = jest.fn()
+    const onSuccess = vi.fn()
+    const onSuccessMutate = vi.fn()
+    const onSettled = vi.fn()
+    const onSettledMutate = vi.fn()
     const mutationKey = queryKey()
     let count = 0
 
@@ -1078,10 +1079,10 @@ describe('useMutation', () => {
   })
 
   it('should call mutate callbacks only for the last observer', async () => {
-    const onSuccess = jest.fn()
-    const onSuccessMutate = jest.fn()
-    const onSettled = jest.fn()
-    const onSettledMutate = jest.fn()
+    const onSuccess = vi.fn()
+    const onSuccessMutate = vi.fn()
+    const onSettled = vi.fn()
+    const onSettledMutate = vi.fn()
     let count = 0
 
     function Page() {
@@ -1146,7 +1147,7 @@ describe('useMutation', () => {
 
   it('should go to error state if onSuccess callback errors', async () => {
     const error = new Error('error from onSuccess')
-    const onError = jest.fn()
+    const onError = vi.fn()
 
     function Page() {
       const mutation = createMutation(
@@ -1226,7 +1227,7 @@ describe('useMutation', () => {
   it('should go to error state if onSettled callback errors', async () => {
     const error = new Error('error from onSettled')
     const mutateFnError = new Error('mutateFnError')
-    const onError = jest.fn()
+    const onError = vi.fn()
 
     function Page() {
       const mutation = createMutation(
