@@ -14,7 +14,7 @@ export function infiniteQueryBehavior<
 >(): QueryBehavior<TQueryFnData, TError, InfiniteData<TData>> {
   return {
     onFetch: (context) => {
-      context.fetchFn = () => {
+      context.fetchFn = async () => {
         const options = context.options as InfiniteQueryPageParamsOptions<TData>
         const direction = context.fetchOptions?.meta?.fetchMore?.direction
         const oldPages = context.state.data?.pages || []
@@ -44,7 +44,7 @@ export function infiniteQueryBehavior<
           (() => Promise.reject(new Error('Missing queryFn')))
 
         // Create function to fetch a page
-        const fetchPage = (
+        const fetchPage = async (
           data: InfiniteData<unknown>,
           param: unknown,
           previous?: boolean,
@@ -68,26 +68,24 @@ export function infiniteQueryBehavior<
 
           addSignalProperty(queryFnContext)
 
-          const queryFnResult = queryFn(
+          const page = await queryFn(
             queryFnContext as QueryFunctionContext<QueryKey, unknown>,
           )
 
-          return Promise.resolve(queryFnResult).then((page) => {
-            const { maxPages } = context.options
-            const addTo = previous ? addToStart : addToEnd
+          const { maxPages } = context.options
+          const addTo = previous ? addToStart : addToEnd
 
-            return {
-              pages: addTo(data.pages, page, maxPages),
-              pageParams: addTo(data.pageParams, param, maxPages),
-            }
-          })
+          return {
+            pages: addTo(data.pages, page, maxPages),
+            pageParams: addTo(data.pageParams, param, maxPages),
+          }
         }
 
-        let promise: Promise<InfiniteData<unknown>>
+        let result: InfiniteData<unknown>
 
         // Fetch first page?
         if (!oldPages.length) {
-          promise = fetchPage(empty, options.defaultPageParam)
+          result = await fetchPage(empty, options.defaultPageParam)
         }
 
         // fetch next / previous page?
@@ -100,24 +98,22 @@ export function infiniteQueryBehavior<
           }
           const param = pageParamFn(options, oldData)
 
-          promise = fetchPage(oldData, param, previous)
+          result = await fetchPage(oldData, param, previous)
         }
 
         // Refetch pages
         else {
           // Fetch first page
-          promise = fetchPage(empty, oldPageParams[0])
+          result = await fetchPage(empty, oldPageParams[0])
 
           // Fetch remaining pages
           for (let i = 1; i < oldPages.length; i++) {
-            promise = promise.then((data) => {
-              const param = getNextPageParam(options, data)
-              return fetchPage(data, param)
-            })
+            const param = getNextPageParam(options, result)
+            result = await fetchPage(result, param)
           }
         }
 
-        return promise
+        return result
       }
     },
   }

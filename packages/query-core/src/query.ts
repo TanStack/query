@@ -453,7 +453,7 @@ export class Query<
 
     // Try to fetch the data
     this.#retryer = createRetryer({
-      fn: context.fetchFn as () => TData,
+      fn: context.fetchFn as () => Promise<TData>,
       abort: abortController.abort.bind(abortController),
       onSuccess: (data) => {
         if (typeof data === 'undefined') {
