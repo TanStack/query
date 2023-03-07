@@ -12,7 +12,7 @@ function Film(props) {
     queryFn: () => fetch(`https://swapi.dev/api/films/${filmId}/`),
   });
 
-  if (status === "loading") return <p>Loading...</p>;
+  if (status === "pending") return <p>Loading...</p>;
   // this will not be necessary when v1 is released.
   if (data == null) {
     console.info("this shouldn't happen but it does 2");

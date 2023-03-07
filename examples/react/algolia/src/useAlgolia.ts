@@ -6,7 +6,7 @@ export type UseAlgoliaOptions = {
   query: string;
   hitsPerPage?: number;
   staleTime?: number;
-  cacheTime?: number;
+  gcTime?: number;
   enabled?: boolean;
 };
 
@@ -15,7 +15,7 @@ export default function useAlgolia<TData>({
   query,
   hitsPerPage = 10,
   staleTime,
-  cacheTime,
+  gcTime,
   enabled,
 }: UseAlgoliaOptions) {
   const queryInfo = useInfiniteQuery({
@@ -25,7 +25,7 @@ export default function useAlgolia<TData>({
     defaultPageParam: 0,
     getNextPageParam: (lastPage) => lastPage?.nextPage,
     staleTime,
-    cacheTime,
+    gcTime,
     enabled,
   });
 

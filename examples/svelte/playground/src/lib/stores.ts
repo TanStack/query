@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store'
 
 export const staleTime = writable(1000)
-export const cacheTime = writable(3000)
+export const gcTime = writable(3000)
 export const errorRate = writable(0.05)
 export const queryTimeMin = writable(1000)
 export const queryTimeMax = writable(2000)

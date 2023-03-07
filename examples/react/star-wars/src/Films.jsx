@@ -10,7 +10,7 @@ export default function Films(props) {
     queryFn: () => fetch("https://swapi.dev/api/films/"),
   });
 
-  if (status === "loading") {
+  if (status === "pending") {
     return <p>Loading...</p>;
   }
   if (status === "error") {

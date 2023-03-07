@@ -189,7 +189,7 @@ function Todos({ initialFilter = "", setEditingIndex }) {
           <input value={filter} onChange={(e) => setFilter(e.target.value)} />
         </label>
       </div>
-      {status === "loading" ? (
+      {status === "pending" ? (
         <span>Loading... (Attempt: {failureCount + 1})</span>
       ) : status === "error" ? (
         <span>
@@ -260,7 +260,7 @@ function EditTodo({ editingIndex, setEditingIndex }) {
   };
 
   const disableEditSave =
-    status === "loading" || saveMutation.status === "loading";
+    status === "pending" || saveMutation.status === "pending";
 
   return (
     <div>
@@ -273,7 +273,7 @@ function EditTodo({ editingIndex, setEditingIndex }) {
           </>
         ) : null}
       </div>
-      {status === "loading" ? (
+      {status === "pending" ? (
         <span>Loading... (Attempt: {failureCount + 1})</span>
       ) : error ? (
         <span>
@@ -309,7 +309,7 @@ function EditTodo({ editingIndex, setEditingIndex }) {
             </button>
           </div>
           <div>
-            {saveMutation.status === "loading"
+            {saveMutation.status === "pending"
               ? "Saving..."
               : saveMutation.status === "error"
               ? saveMutation.error.message
@@ -346,18 +346,18 @@ function AddTodo() {
       <input
         value={name}
         onChange={(e) => setName(e.target.value)}
-        disabled={addMutation.status === "loading"}
+        disabled={addMutation.status === "pending"}
       />
       <button
         onClick={() => {
           addMutation.mutate({ name });
         }}
-        disabled={addMutation.status === "loading" || !name}
+        disabled={addMutation.status === "pending" || !name}
       >
         Add Todo
       </button>
       <div>
-        {addMutation.status === "loading"
+        {addMutation.status === "pending"
           ? "Saving..."
           : addMutation.status === "error"
           ? addMutation.error.message

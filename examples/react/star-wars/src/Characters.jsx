@@ -10,7 +10,7 @@ export default function Characters(props) {
     queryFn: () => fetch(`https://swapi.dev/api/people/`),
   });
 
-  if (status === "loading") return <p>Loading...</p>;
+  if (status === "pending") return <p>Loading...</p>;
   if (status === "error") return <p>Error :(</p>;
 
   return (

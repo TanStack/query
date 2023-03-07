@@ -10,7 +10,7 @@ export default function Episodes() {
     queryFn: () => fetch("https://rickandmortyapi.com/api/episode"),
   });
 
-  if (status === "loading") {
+  if (status === "pending") {
     return <p>Loading...</p>;
   }
   if (status === "error") {
