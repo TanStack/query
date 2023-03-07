@@ -12,9 +12,10 @@ interface Storage {
 
 interface CreateSyncStoragePersisterOptions {
   /** The storage client used for setting and retrieving items from cache.
-   * For SSR pass in `undefined`.
+   * For SSR pass in `undefined`. Note that window.localStorage can be
+   * `null` in Android WebViews depending on how they are configured.
    */
-  storage: Storage | undefined
+  storage: Storage | undefined | null
   /** The key to use when storing the cache */
   key?: string
   /** To avoid spamming,
@@ -42,7 +43,7 @@ export function createSyncStoragePersister({
   deserialize = JSON.parse,
   retry,
 }: CreateSyncStoragePersisterOptions): Persister {
-  if (typeof storage !== 'undefined') {
+  if (storage) {
     const trySave = (persistedClient: PersistedClient): Error | undefined => {
       try {
         storage.setItem(key, serialize(persistedClient))
