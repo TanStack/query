@@ -209,10 +209,8 @@ export function createBaseQuery<
       target: QueryObserverResult<TData, TError>,
       prop: keyof QueryObserverResult<TData, TError>,
     ): any {
-      if (prop === 'data') {
-        return queryResource()?.data
-      }
-      return Reflect.get(target, prop)
+      const val = queryResource()?.[prop]
+      return val !== void 0 ? val : Reflect.get(target, prop)
     },
   }
 
