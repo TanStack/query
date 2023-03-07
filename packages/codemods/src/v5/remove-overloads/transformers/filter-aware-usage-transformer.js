@@ -40,8 +40,8 @@ const transformFilterAwareUsages = ({
       )
 
     /**
-     * This call has only one argument, which is an object expression. According to the new signature, this is a
-     * valid use case, so code changes are not needed.
+     * This call has at least one argument. If it's an object expression and contains the "queryKey" or "mutationKey"
+     * field, the transformation can be skipped, because it's already matching the expected signature.
      */
     return (
       callArguments.length > 0 &&
@@ -51,6 +51,9 @@ const transformFilterAwareUsages = ({
   }
 
   /**
+   * This function checks whether the given object property is a spread element or a property that's not named
+   * "queryKey" or "mutationKey".
+   *
    * @param {import('jscodeshift').ObjectProperty} property
    * @returns {boolean}
    */
@@ -73,6 +76,12 @@ const transformFilterAwareUsages = ({
         return node
       }
 
+      /**
+       * Here we attempt to determine the first parameter of the function call. If it's an array expression or an
+       * identifier that references an array expression then we create an object property from it.
+       *
+       * @type {import('jscodeshift').Property|undefined}
+       */
       const keyProperty = v5Utils.transformArgumentToKey(
         path,
         node.arguments[0],
@@ -80,6 +89,10 @@ const transformFilterAwareUsages = ({
         filePath,
       )
 
+      /**
+       * The first parameter couldn't be transformed into an object property, so it's time to throw an exception,
+       * it will notify the consumers that they need to rewrite this usage manually.
+       */
       if (!keyProperty) {
         throw new UnknownUsageError(node, filePath)
       }
@@ -90,8 +103,11 @@ const transformFilterAwareUsages = ({
       if (secondParameter) {
         const createdObjectExpression = parameters[0]
 
-        // If it has a second argument, and it's an object, then we get the properties of it, because it will be part of the
-        // first argument, otherwise we use an empty array, because we can spread it during the objectExpression creation.
+        /**
+         * If it has a second argument, and it's an object expression, then we get the properties from it
+         * (except the "queryKey" or "mutationKey" properties), because these arguments will also be moved to the
+         * newly created object expression.
+         */
         if (utils.isObjectExpression(secondParameter)) {
           v5Utils.copyPropertiesFromSource(
             secondParameter,
@@ -99,6 +115,7 @@ const transformFilterAwareUsages = ({
             predicate,
           )
         } else {
+          // Otherwise, we simply spread the second parameter in the newly created object expression.
           createdObjectExpression.properties.push(
             jscodeshift.spreadElement(secondParameter),
           )

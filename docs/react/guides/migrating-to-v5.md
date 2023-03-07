@@ -97,6 +97,41 @@ now we only support the object format.
 + queryClient.getQueryState(queryKey)
 ```
 
+#### Codemod
+
+To make the remove overloads migration easier, v5 comes with a codemod.
+
+> The codemod is a best efforts attempt to help you migrate the breaking change. Please review the generated code thoroughly! Also, there are edge cases that cannot be found by the code mod, so please keep an eye on the log output.
+
+If you want to run it against `.js` or `.jsx` files, please use the command below:
+
+```
+npx jscodeshift ./path/to/src/ \
+  --extensions=js,jsx \
+  --transform=./node_modules/@tanstack/react-query/codemods/v5/remove-overloads/remove-overloads.js
+```
+
+If you want to run it against `.ts` or `.tsx` files, please use the command below:
+
+```
+npx jscodeshift ./path/to/src/ \
+  --extensions=ts,tsx \
+  --parser=tsx \
+  --transform=./node_modules/@tanstack/react-query/codemods/v5/remove-overloads/remove-overloads.js
+```
+
+Please note in the case of `TypeScript` you need to use `tsx` as the parser; otherwise, the codemod won't be applied properly!
+
+**Note:** Applying the codemod might break your code formatting, so please don't forget to run `prettier` and/or `eslint` after you've applied the codemod!
+
+A few notes about how codemod works:
+
+- Generally, we're looking for the lucky case, when the first parameter is an object expression and contains the "queryKey" or "mutationKey" property (depending on which hook/method call is being transformed). If this is the case, your code already matches the new signature, so the codemod won't touch it. 🎉
+- If the condition above is not fulfilled, then the codemod will check whether the first parameter is an array expression or an identifier that references an array expression. If this is the case, the codemod will put it into an object expression, then it will be the first parameter.
+- If object parameters can be inferred, the codemod will attempt to copy the already existing properties to the newly created one.
+- If the codemod cannot infer the usage, then it will leave a message on the console. The message contains the file name and the line number of the usage. In this case, you need to do the migration manually.
+- If the transformation results in an error, you will also see a message on the console. This message will notify you something unexpected happened, please do the migration manually.
+
 ### The `remove` method has been removed from useQuery
 
 Previously, remove method used to remove the query from the queryCache without informing observers about it. It was best used to remove data imperatively that is no longer needed, e.g. when logging a user out.
