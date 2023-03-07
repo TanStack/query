@@ -68,9 +68,7 @@ describe('useIsMutating', () => {
     const queryClient = createQueryClient()
 
     function IsMutating() {
-      const isMutating = useIsMutating(() => ({
-        filters: { mutationKey: ['mutation1'] },
-      }))
+      const isMutating = useIsMutating(() => ({ mutationKey: ['mutation1'] }))
       createRenderEffect(() => {
         isMutatings.push(isMutating())
       })
@@ -116,10 +114,8 @@ describe('useIsMutating', () => {
 
     function IsMutating() {
       const isMutating = useIsMutating(() => ({
-        filters: {
-          predicate: (mutation) =>
-            mutation.options.mutationKey?.[0] === 'mutation1',
-        },
+        predicate: (mutation) =>
+          mutation.options.mutationKey?.[0] === 'mutation1',
       }))
       createRenderEffect(() => {
         isMutatings.push(isMutating())
@@ -226,7 +222,7 @@ describe('useIsMutating', () => {
     const queryClient = createQueryClient()
 
     function Page() {
-      const isMutating = useIsMutating(() => ({ queryClient }))
+      const isMutating = useIsMutating(undefined, () => queryClient)
       const { mutate } = createMutation(
         () => ({
           mutationKey: ['mutation1'],

@@ -155,13 +155,14 @@ export type QueriesResults<
   : // Fallback
     UseQueryResult[]
 
-export function useQueries<T extends any[]>({
-  queries,
-  queryClient,
-}: {
-  queries: readonly [...QueriesOptions<T>]
-  queryClient?: QueryClient
-}): QueriesResults<T> {
+export function useQueries<T extends any[]>(
+  {
+    queries,
+  }: {
+    queries: readonly [...QueriesOptions<T>]
+  },
+  queryClient?: QueryClient,
+): QueriesResults<T> {
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
 

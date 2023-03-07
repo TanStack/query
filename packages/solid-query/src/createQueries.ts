@@ -150,18 +150,18 @@ export type QueriesResults<
 export function createQueries<T extends any[]>(
   queriesOptions: () => {
     queries: readonly [...QueriesOptions<T>]
-    queryClient?: QueryClient
   },
+  queryClient?: () => QueryClient,
 ): QueriesResults<T> {
-  const queryClient = useQueryClient(queriesOptions().queryClient)
+  const client = useQueryClient(queryClient?.())
 
   const defaultedQueries = queriesOptions().queries.map((options) => {
-    const defaultedOptions = queryClient.defaultQueryOptions(options)
+    const defaultedOptions = client.defaultQueryOptions(options)
     defaultedOptions._optimisticResults = 'optimistic'
     return defaultedOptions
   })
 
-  const observer = new QueriesObserver(queryClient, defaultedQueries)
+  const observer = new QueriesObserver(client, defaultedQueries)
 
   const [state, setState] = createStore(
     observer.getOptimisticResult(defaultedQueries),
@@ -181,7 +181,7 @@ export function createQueries<T extends any[]>(
 
   createComputed(() => {
     const updatedQueries = queriesOptions().queries.map((options) => {
-      const defaultedOptions = queryClient.defaultQueryOptions(options)
+      const defaultedOptions = client.defaultQueryOptions(options)
       defaultedOptions._optimisticResults = 'optimistic'
       return defaultedOptions
     })

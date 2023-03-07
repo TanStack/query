@@ -145,13 +145,14 @@ export type UseQueriesResults<
 
 type UseQueriesOptionsArg<T extends any[]> = readonly [...UseQueriesOptions<T>]
 
-export function useQueries<T extends any[]>({
-  queries,
-  queryClient,
-}: {
-  queries: MaybeRefDeep<UseQueriesOptionsArg<T>>
-  queryClient?: QueryClient
-}): Readonly<Ref<UseQueriesResults<T>>> {
+export function useQueries<T extends any[]>(
+  {
+    queries,
+  }: {
+    queries: MaybeRefDeep<UseQueriesOptionsArg<T>>
+  },
+  queryClient?: QueryClient,
+): Readonly<Ref<UseQueriesResults<T>>> {
   const client = queryClient || useQueryClient()
 
   const defaultedQueries = computed(() =>

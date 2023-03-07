@@ -322,15 +322,17 @@ describe('VueQueryPlugin', () => {
 
       const fnSpy = jest.fn()
 
-      const queries = useQueries({
-        queries: [
-          {
-            queryKey: ['persist'],
-            queryFn: fnSpy,
-          },
-        ],
-        queryClient: customClient,
-      })
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: ['persist'],
+              queryFn: fnSpy,
+            },
+          ],
+        },
+        customClient,
+      )
 
       expect(customClient.isRestoring.value).toBeTruthy()
       expect(queries.value[0].isFetching).toBeFalsy()

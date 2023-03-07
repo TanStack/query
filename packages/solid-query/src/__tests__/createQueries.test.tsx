@@ -797,10 +797,12 @@ describe('useQueries', () => {
     }
 
     function Page() {
-      const state = createQueries(() => ({
-        queries: [{ queryKey: key, queryFn }],
-        queryClient,
-      }))
+      const state = createQueries(
+        () => ({
+          queries: [{ queryKey: key, queryFn }],
+        }),
+        () => queryClient,
+      )
       return (
         <div>
           <h1>Status: {state[0].data}</h1>
