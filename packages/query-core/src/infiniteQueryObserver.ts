@@ -104,7 +104,7 @@ export class InfiniteQueryObserver<
   }
 
   fetchNextPage(
-    options: FetchNextPageOptions = {},
+    options?: FetchNextPageOptions,
   ): Promise<InfiniteQueryObserverResult<TData, TError>> {
     return this.fetch({
       ...options,
@@ -114,9 +114,9 @@ export class InfiniteQueryObserver<
     })
   }
 
-  fetchPreviousPage({ ...options }: FetchPreviousPageOptions = {}): Promise<
-    InfiniteQueryObserverResult<TData, TError>
-  > {
+  fetchPreviousPage(
+    options?: FetchPreviousPageOptions,
+  ): Promise<InfiniteQueryObserverResult<TData, TError>> {
     return this.fetch({
       ...options,
       meta: {
