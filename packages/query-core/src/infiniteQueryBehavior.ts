@@ -19,7 +19,7 @@ export function infiniteQueryBehavior<
         const direction = context.fetchOptions?.meta?.fetchMore?.direction
         const oldPages = context.state.data?.pages || []
         const oldPageParams = context.state.data?.pageParams || []
-        let newPageParams = oldPageParams
+        const empty = { pages: [], pageParams: [] }
         let cancelled = false
 
         const addSignalProperty = (object: unknown) => {
@@ -43,35 +43,18 @@ export function infiniteQueryBehavior<
           context.options.queryFn ||
           (() => Promise.reject(new Error('Missing queryFn')))
 
-        const buildNewPages = (
-          pages: unknown[],
-          param: unknown,
-          page: unknown,
-          previous?: boolean,
-        ) => {
-          const { maxPages } = context.options
-
-          if (previous) {
-            newPageParams = addToStart(newPageParams, param, maxPages)
-            return addToStart(pages, page, maxPages)
-          }
-
-          newPageParams = addToEnd(newPageParams, param, maxPages)
-          return addToEnd(pages, page, maxPages)
-        }
-
         // Create function to fetch a page
         const fetchPage = (
-          pages: unknown[],
+          data: InfiniteData<unknown>,
           param: unknown,
           previous?: boolean,
-        ): Promise<unknown[]> => {
+        ): Promise<InfiniteData<unknown>> => {
           if (cancelled) {
             return Promise.reject()
           }
 
-          if (typeof param === 'undefined' && pages.length) {
-            return Promise.resolve(pages)
+          if (typeof param === 'undefined' && data.pages.length) {
+            return Promise.resolve(data)
           }
 
           const queryFnContext: Omit<
@@ -89,51 +72,52 @@ export function infiniteQueryBehavior<
             queryFnContext as QueryFunctionContext<QueryKey, unknown>,
           )
 
-          const promise = Promise.resolve(queryFnResult).then((page) =>
-            buildNewPages(pages, param, page, previous),
-          )
+          return Promise.resolve(queryFnResult).then((page) => {
+            const { maxPages } = context.options
+            const addTo = previous ? addToStart : addToEnd
 
-          return promise
+            return {
+              pages: addTo(data.pages, page, maxPages),
+              pageParams: addTo(data.pageParams, param, maxPages),
+            }
+          })
         }
 
-        let promise: Promise<unknown[]>
+        let promise: Promise<InfiniteData<unknown>>
 
         // Fetch first page?
         if (!oldPages.length) {
-          promise = fetchPage([], options.defaultPageParam)
+          promise = fetchPage(empty, options.defaultPageParam)
         }
 
         // fetch next / previous page?
         else if (direction) {
           const previous = direction === 'backward'
-          const param = previous
-            ? getPreviousPageParam(options, oldPages)
-            : getNextPageParam(options, oldPages)
-          promise = fetchPage(oldPages, param, previous)
+          const pageParamFn = previous ? getPreviousPageParam : getNextPageParam
+          const oldData = {
+            pages: oldPages,
+            pageParams: oldPageParams,
+          }
+          const param = pageParamFn(options, oldData)
+
+          promise = fetchPage(oldData, param, previous)
         }
 
         // Refetch pages
         else {
-          newPageParams = []
-
           // Fetch first page
-          promise = fetchPage([], oldPageParams[0])
+          promise = fetchPage(empty, oldPageParams[0])
 
           // Fetch remaining pages
           for (let i = 1; i < oldPages.length; i++) {
-            promise = promise.then((pages) => {
-              const param = getNextPageParam(options, pages)
-              return fetchPage(pages, param)
+            promise = promise.then((data) => {
+              const param = getNextPageParam(options, data)
+              return fetchPage(data, param)
             })
           }
         }
 
-        const finalPromise = promise.then((pages) => ({
-          pages,
-          pageParams: newPageParams,
-        }))
-
-        return finalPromise
+        return promise
       }
     },
   }
@@ -141,16 +125,27 @@ export function infiniteQueryBehavior<
 
 function getNextPageParam(
   options: InfiniteQueryPageParamsOptions<any>,
-  pages: unknown[],
+  { pages, pageParams }: InfiniteData<unknown>,
 ): unknown | undefined {
-  return options.getNextPageParam(pages[pages.length - 1], pages)
+  const lastIndex = pages.length - 1
+  return options.getNextPageParam(
+    pages[lastIndex],
+    pages,
+    pageParams[lastIndex],
+    pageParams,
+  )
 }
 
 function getPreviousPageParam(
   options: InfiniteQueryPageParamsOptions<any>,
-  pages: unknown[],
+  { pages, pageParams }: InfiniteData<unknown>,
 ): unknown | undefined {
-  return options.getPreviousPageParam?.(pages[0], pages)
+  return options.getPreviousPageParam?.(
+    pages[0],
+    pages,
+    pageParams[0],
+    pageParams,
+  )
 }
 
 /**
@@ -158,10 +153,10 @@ function getPreviousPageParam(
  */
 export function hasNextPage(
   options: InfiniteQueryPageParamsOptions<any>,
-  pages?: unknown[],
+  data?: InfiniteData<unknown>,
 ): boolean {
-  if (!pages) return false
-  return typeof getNextPageParam(options, pages) !== 'undefined'
+  if (!data) return false
+  return typeof getNextPageParam(options, data) !== 'undefined'
 }
 
 /**
@@ -169,8 +164,8 @@ export function hasNextPage(
  */
 export function hasPreviousPage(
   options: InfiniteQueryPageParamsOptions<any>,
-  pages?: unknown[],
+  data?: InfiniteData<unknown>,
 ): boolean {
-  if (!pages || !options.getPreviousPageParam) return false
-  return typeof getPreviousPageParam(options, pages) !== 'undefined'
+  if (!data || !options.getPreviousPageParam) return false
+  return typeof getPreviousPageParam(options, data) !== 'undefined'
 }
