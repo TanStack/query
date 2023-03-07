@@ -49,7 +49,7 @@ function Posts({
     <div>
       <h1>Posts</h1>
       <div>
-        {status === "loading" ? (
+        {status === "pending" ? (
           "Loading..."
         ) : error instanceof Error ? (
           <span>Error: {error.message}</span>
@@ -116,7 +116,7 @@ function Post({
           Back
         </a>
       </div>
-      {!postId || status === "loading" ? (
+      {!postId || status === "pending" ? (
         "Loading..."
       ) : error instanceof Error ? (
         <span>Error: {error.message}</span>

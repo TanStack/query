@@ -22,7 +22,7 @@ function Character(props) {
     queryFn: () => fetch(`https://swapi.dev/api/people/${characterId}/`),
   });
 
-  if (status === "loading") return <p>Loading...</p>;
+  if (status === "pending") return <p>Loading...</p>;
   if (status === "error") return <p>Error :(</p>;
 
   console.info({ data, status, error });

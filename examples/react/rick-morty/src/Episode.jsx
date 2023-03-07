@@ -13,7 +13,7 @@ function Episode() {
       fetch(`https://rickandmortyapi.com/api/episode/${episodeId}`),
   });
 
-  if (status === "loading") return <p>Loading...</p>;
+  if (status === "pending") return <p>Loading...</p>;
   if (status === "error") return <p>Error :(</p>;
 
   return (
@@ -37,7 +37,7 @@ function Character({ id }) {
     queryFn: () => fetch(`https://rickandmortyapi.com/api/character/${id}`),
   });
 
-  if (status === "loading") return <p>Loading...</p>;
+  if (status === "pending") return <p>Loading...</p>;
   if (status === "error") return <p>Error :(</p>;
 
   return (

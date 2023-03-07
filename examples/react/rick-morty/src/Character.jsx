@@ -23,7 +23,7 @@ function Character() {
       fetch(`https://rickandmortyapi.com/api/character/${characterId}`),
   });
 
-  if (status === "loading") return <p>Loading...</p>;
+  if (status === "pending") return <p>Loading...</p>;
   if (status === "error") return <p>Error :(</p>;
 
   const locationUrlPars = data.location.url.split("/").filter(Boolean);
@@ -105,7 +105,7 @@ function Location({ id }) {
     queryFn: () => fetch(`https://rickandmortyapi.com/api/location/${id}`),
   });
 
-  if (status === "loading") return <p>Loading...</p>;
+  if (status === "pending") return <p>Loading...</p>;
   if (status === "error") return <p>Error :(</p>;
 
   return (
