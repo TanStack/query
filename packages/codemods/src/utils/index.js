@@ -117,6 +117,39 @@ module.exports = ({ root, jscodeshift }) => {
   const isNewExpression = (node) =>
     jscodeshift.match(node, { type: jscodeshift.NewExpression.name })
 
+  const isArrayExpression = (node) =>
+    jscodeshift.match(node, { type: jscodeshift.ArrayExpression.name })
+
+  const isObjectExpression = (node) =>
+    jscodeshift.match(node, { type: jscodeshift.ObjectExpression.name })
+
+  const isObjectProperty = (node) =>
+    jscodeshift.match(node, { type: jscodeshift.ObjectProperty.name })
+
+  const isSpreadElement = (node) =>
+    jscodeshift.match(node, { type: jscodeshift.SpreadElement.name })
+
+  /**
+   * @param {import('jscodeshift').Node} node
+   * @returns {boolean}
+   */
+  const isFunctionDefinition = (node) => {
+    const isArrowFunctionExpression = jscodeshift.match(node, {
+      type: jscodeshift.ArrowFunctionExpression.name,
+    })
+    const isFunctionExpression = jscodeshift.match(node, {
+      type: jscodeshift.FunctionExpression.name,
+    })
+
+    return isArrowFunctionExpression || isFunctionExpression
+  }
+
+  const warn = (message) => {
+    if (process.env.NODE_ENV !== 'test') {
+      console.warn(message)
+    }
+  }
+
   const isClassInstantiationOf = (node, selector) => {
     if (!isNewExpression(node)) {
       return false
@@ -158,7 +191,13 @@ module.exports = ({ root, jscodeshift }) => {
     isFunctionCallOf,
     isIdentifier,
     isMemberExpression,
+    isArrayExpression,
+    isObjectExpression,
+    isObjectProperty,
+    isSpreadElement,
+    isFunctionDefinition,
     locateImports,
+    warn,
     queryClient: {
       findQueryClientIdentifiers,
     },

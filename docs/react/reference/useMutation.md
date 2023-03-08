@@ -18,7 +18,8 @@ const {
   mutateAsync,
   reset,
   status,
-  submittedAt
+  submittedAt,
+  variables,
 } = useMutation({
   mutationFn,
   gcTime,
@@ -31,7 +32,7 @@ const {
   retry,
   retryDelay,
   throwErrors,
-  meta
+  meta,
 })
 
 mutate(variables, {
@@ -143,4 +144,6 @@ mutate(variables, {
 - `submittedAt: number`
   - The timestamp for when the mutation was submitted.
   - Defaults to `0`.
-
+- `variables: undefined | TVariables`
+  - The `variables` object passed to the `mutationFn`.
+  - Defaults to `undefined`.
