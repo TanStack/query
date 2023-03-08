@@ -4,14 +4,10 @@ import {
   mockVisibilityState,
   createQueryClient,
 } from './utils'
-import type {
-  QueryCache,
-  QueryClient,
-  QueryFunctionContext,
-  QueryObserverResult,
-} from '..'
+import type { QueryCache, QueryClient, QueryObserverResult } from '..'
 import { QueryObserver, isCancelledError, onlineManager } from '..'
 import { waitFor } from '@testing-library/react'
+import { vi } from 'vitest'
 
 describe('query', () => {
   let queryClient: QueryClient
@@ -186,12 +182,7 @@ describe('query', () => {
   test('should provide context to queryFn', async () => {
     const key = queryKey()
 
-    const queryFn = jest
-      .fn<
-        Promise<'data'>,
-        [QueryFunctionContext<ReturnType<typeof queryKey>>]
-      >()
-      .mockResolvedValue('data')
+    const queryFn = vi.fn().mockResolvedValue('data')
 
     queryClient.prefetchQuery({ queryKey: key, queryFn })
 
@@ -200,7 +191,6 @@ describe('query', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
     const args = queryFn.mock.calls[0]![0]
     expect(args).toBeDefined()
-    // @ts-expect-error page param should be undefined
     expect(args.pageParam).toBeUndefined()
     expect(args.queryKey).toEqual(key)
     expect(args.signal).toBeInstanceOf(AbortSignal)
@@ -273,12 +263,9 @@ describe('query', () => {
   test('should provide an AbortSignal to the queryFn that provides info about the cancellation state', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn<
-      Promise<unknown>,
-      [QueryFunctionContext<ReturnType<typeof queryKey>>]
-    >()
-    const onAbort = jest.fn()
-    const abortListener = jest.fn()
+    const queryFn = vi.fn()
+    const onAbort = vi.fn()
+    const abortListener = vi.fn()
     let error
 
     queryFn.mockImplementation(async ({ signal }) => {
@@ -323,7 +310,7 @@ describe('query', () => {
   test('should not continue if explicitly cancelled', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn<unknown, unknown[]>()
+    const queryFn = vi.fn()
 
     queryFn.mockImplementation(async () => {
       await sleep(10)
@@ -355,7 +342,7 @@ describe('query', () => {
   test('should not error if reset while pending', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn<unknown, unknown[]>()
+    const queryFn = vi.fn()
 
     queryFn.mockImplementation(async () => {
       await sleep(10)
@@ -382,7 +369,7 @@ describe('query', () => {
   test('should be able to refetch a cancelled query', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn<unknown, unknown[]>()
+    const queryFn = vi.fn()
 
     queryFn.mockImplementation(async () => {
       await sleep(50)
@@ -631,7 +618,7 @@ describe('query', () => {
       it: 'works',
     }
 
-    const queryFn = jest.fn(() => 'data')
+    const queryFn = vi.fn(() => 'data')
 
     const key = queryKey()
 
@@ -652,7 +639,7 @@ describe('query', () => {
       queryFn: () => 'data',
     })
 
-    const refetchSpy = jest.spyOn(observer, 'refetch')
+    const refetchSpy = vi.spyOn(observer, 'refetch')
     const unsubscribe = observer.subscribe(() => undefined)
     queryCache.onOnline()
 
@@ -692,7 +679,7 @@ describe('query', () => {
     })
     expect(query.getObserversCount()).toEqual(0)
 
-    const notifySpy = jest.spyOn(queryCache, 'notify')
+    const notifySpy = vi.spyOn(queryCache, 'notify')
     expect(() => query.removeObserver(observer)).not.toThrow()
     expect(notifySpy).not.toHaveBeenCalled()
 
@@ -769,7 +756,7 @@ describe('query', () => {
   })
 
   test('fetch should dispatch an error if the queryFn returns undefined', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
+    const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
     const key = queryKey()
 
@@ -804,7 +791,7 @@ describe('query', () => {
   test('constructor should call initialDataUpdatedAt if defined as a function', async () => {
     const key = queryKey()
 
-    const initialDataUpdatedAtSpy = jest.fn()
+    const initialDataUpdatedAtSpy = vi.fn()
 
     await queryClient.prefetchQuery({
       queryKey: key,
@@ -821,7 +808,7 @@ describe('query', () => {
 
     queryClient.setQueryDefaults(key, { gcTime: 10 })
 
-    const fn = jest.fn()
+    const fn = vi.fn()
 
     const unsubscribe = queryClient.getQueryCache().subscribe(fn)
 

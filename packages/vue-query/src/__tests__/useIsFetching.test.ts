@@ -3,8 +3,10 @@ import { onScopeDispose, reactive } from 'vue-demi'
 import { flushPromises, simpleFetcher } from './test-utils'
 import { useQuery } from '../useQuery'
 import { useIsFetching } from '../useIsFetching'
+import { vi } from 'vitest'
+import type { MockedFunction } from 'vitest'
 
-jest.mock('../useQueryClient')
+vi.mock('../useQueryClient')
 
 describe('useIsFetching', () => {
   test('should properly return isFetching state', async () => {
@@ -25,7 +27,7 @@ describe('useIsFetching', () => {
   })
 
   test('should stop listening to changes on onScopeDispose', async () => {
-    const onScopeDisposeMock = onScopeDispose as jest.MockedFunction<
+    const onScopeDisposeMock = onScopeDispose as MockedFunction<
       typeof onScopeDispose
     >
     onScopeDisposeMock.mockImplementation((fn) => fn())

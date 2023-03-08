@@ -2,8 +2,9 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
-    name: 'eslint-plugin-query',
+    name: 'query-core',
     watch: false,
+    environment: 'jsdom',
     globals: true,
   },
 })

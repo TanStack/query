@@ -2,7 +2,7 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
-    name: 'eslint-plugin-query',
+    name: 'codemods',
     watch: false,
     globals: true,
   },

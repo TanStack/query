@@ -1,10 +1,8 @@
 import { waitFor } from '@testing-library/react'
-import type {
-  QueryClient,
-  InfiniteQueryObserverResult,
-} from '@tanstack/query-core'
-import { InfiniteQueryObserver, CancelledError } from '@tanstack/query-core'
+import type { QueryClient, InfiniteQueryObserverResult } from '..'
+import { InfiniteQueryObserver, CancelledError } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
+import { vi } from 'vitest'
 
 describe('InfiniteQueryBehavior', () => {
   let queryClient: QueryClient
@@ -50,7 +48,7 @@ describe('InfiniteQueryBehavior', () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
 
-    const queryFnSpy = jest.fn().mockImplementation(({ pageParam, signal }) => {
+    const queryFnSpy = vi.fn().mockImplementation(({ pageParam, signal }) => {
       abortSignal = signal
       return pageParam
     })
@@ -185,7 +183,7 @@ describe('InfiniteQueryBehavior', () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
 
-    const queryFnSpy = jest.fn().mockImplementation(({ pageParam, signal }) => {
+    const queryFnSpy = vi.fn().mockImplementation(({ pageParam, signal }) => {
       abortSignal = signal
       sleep(10)
       return pageParam
@@ -236,7 +234,7 @@ describe('InfiniteQueryBehavior', () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
 
-    let queryFnSpy = jest.fn().mockImplementation(({ pageParam, signal }) => {
+    let queryFnSpy = vi.fn().mockImplementation(({ pageParam, signal }) => {
       abortSignal = signal
       return pageParam
     })
@@ -284,7 +282,7 @@ describe('InfiniteQueryBehavior', () => {
       signal: abortSignal,
     })
 
-    queryFnSpy = jest.fn().mockImplementation(({ pageParam = 1, signal }) => {
+    queryFnSpy = vi.fn().mockImplementation(({ pageParam = 1, signal }) => {
       abortSignal = signal
       sleep(10)
       return pageParam

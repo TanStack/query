@@ -20,6 +20,7 @@ import {
   QueryClientProvider,
 } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
+import { vi } from 'vitest'
 
 describe("useQuery's in Suspense mode", () => {
   const queryCache = new QueryCache()
@@ -142,7 +143,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn twice when used in Suspense mode', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn<string, unknown[]>()
+    const queryFn = vi.fn()
     queryFn.mockImplementation(() => {
       sleep(10)
       return 'data'
@@ -219,7 +220,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should call onSuccess on the first successful call', async () => {
     const key = queryKey()
 
-    const successFn = jest.fn()
+    const successFn = vi.fn()
 
     function Page() {
       createQuery(() => ({
@@ -254,8 +255,8 @@ describe("useQuery's in Suspense mode", () => {
   it('should call every onSuccess handler within a suspense boundary', async () => {
     const key = queryKey()
 
-    const successFn1 = jest.fn()
-    const successFn2 = jest.fn()
+    const successFn1 = vi.fn()
+    const successFn2 = vi.fn()
 
     function FirstComponent() {
       createQuery(() => ({
@@ -733,7 +734,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn when not enabled', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn<Promise<string>, unknown[]>()
+    const queryFn = vi.fn()
     queryFn.mockImplementation(async () => {
       await sleep(10)
       return '23'

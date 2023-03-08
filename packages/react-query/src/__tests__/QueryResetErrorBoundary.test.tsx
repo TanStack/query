@@ -4,6 +4,7 @@ import * as React from 'react'
 
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 import { QueryCache, QueryErrorResetBoundary, useQuery } from '..'
+import { vi } from 'vitest'
 
 // TODO: This should be removed with the types for react-error-boundary get updated.
 declare module 'react-error-boundary' {
@@ -17,7 +18,7 @@ describe('QueryErrorResetBoundary', () => {
   const queryClient = createQueryClient({ queryCache })
 
   it('should retry fetch if the reset error boundary has been reset', async () => {
-    const consoleMock = jest
+    const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -75,7 +76,7 @@ describe('QueryErrorResetBoundary', () => {
   })
 
   it('should not throw error if query is disabled', async () => {
-    const consoleMock = jest
+    const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     const key = queryKey()
@@ -139,7 +140,7 @@ describe('QueryErrorResetBoundary', () => {
   })
 
   it('should not throw error if query is disabled, and refetch if query becomes enabled again', async () => {
-    const consoleMock = jest
+    const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -205,7 +206,7 @@ describe('QueryErrorResetBoundary', () => {
   })
 
   it('should throw error if query is disabled and manually refetched', async () => {
-    const consoleMock = jest
+    const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -267,7 +268,7 @@ describe('QueryErrorResetBoundary', () => {
   })
 
   it('should not retry fetch if the reset error boundary has not been reset', async () => {
-    const consoleMock = jest
+    const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -325,7 +326,7 @@ describe('QueryErrorResetBoundary', () => {
   })
 
   it('should retry fetch if the reset error boundary has been reset and the query contains data from a previous fetch', async () => {
-    const consoleMock = jest
+    const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -385,7 +386,7 @@ describe('QueryErrorResetBoundary', () => {
   })
 
   it('should not retry fetch if the reset error boundary has not been reset after a previous reset', async () => {
-    const consoleMock = jest
+    const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -453,7 +454,7 @@ describe('QueryErrorResetBoundary', () => {
   })
 
   it('should throw again on error after the reset error boundary has been reset', async () => {
-    const consoleMock = jest
+    const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -511,7 +512,7 @@ describe('QueryErrorResetBoundary', () => {
   })
 
   it('should never render the component while the query is in error state', async () => {
-    const consoleMock = jest
+    const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -578,7 +579,7 @@ describe('QueryErrorResetBoundary', () => {
   })
 
   it('should render children', async () => {
-    const consoleMock = jest
+    const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 
@@ -602,7 +603,7 @@ describe('QueryErrorResetBoundary', () => {
   })
 
   it('should show error boundary when using tracked queries even though we do not track the error field', async () => {
-    const consoleMock = jest
+    const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
 

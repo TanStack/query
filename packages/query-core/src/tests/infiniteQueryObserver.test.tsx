@@ -1,6 +1,7 @@
 import { createQueryClient, queryKey, sleep } from './utils'
 import type { QueryClient } from '..'
 import { InfiniteQueryObserver } from '..'
+import { vi } from 'vitest'
 
 describe('InfiniteQueryObserver', () => {
   let queryClient: QueryClient
@@ -43,7 +44,7 @@ describe('InfiniteQueryObserver', () => {
     }
 
     const key = queryKey()
-    const queryFn = jest.fn(() => 1)
+    const queryFn = vi.fn(() => 1)
     const observer = new InfiniteQueryObserver(queryClient, {
       meta,
       queryKey: key,

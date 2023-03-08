@@ -2,11 +2,12 @@ import { ref } from 'vue-demi'
 import { QueryCache as QueryCacheOrigin } from '@tanstack/query-core'
 
 import { QueryCache } from '../queryCache'
+import { vi } from 'vitest'
 
 describe('QueryCache', () => {
   beforeAll(() => {
-    jest.spyOn(QueryCacheOrigin.prototype, 'find')
-    jest.spyOn(QueryCacheOrigin.prototype, 'findAll')
+    vi.spyOn(QueryCacheOrigin.prototype, 'find')
+    vi.spyOn(QueryCacheOrigin.prototype, 'findAll')
   })
 
   describe('find', () => {

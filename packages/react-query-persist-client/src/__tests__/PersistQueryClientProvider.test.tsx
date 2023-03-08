@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { render, waitFor } from '@testing-library/react'
+import { vi } from 'vitest'
 
 import type {
   UseQueryResult,
@@ -382,7 +383,7 @@ describe('PersistQueryClientProvider', () => {
       )
     }
 
-    const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
 
     const rendered = render(
       <PersistQueryClientProvider
@@ -402,14 +403,14 @@ describe('PersistQueryClientProvider', () => {
 
   test('should remove cache after non-successful restoring', async () => {
     const key = queryKey()
-    const consoleMock = jest.spyOn(console, 'error')
-    const consoleWarn = jest
+    const consoleMock = vi.spyOn(console, 'error')
+    const consoleWarn = vi
       .spyOn(console, 'warn')
       .mockImplementation(() => undefined)
     consoleMock.mockImplementation(() => undefined)
 
     const queryClient = createQueryClient()
-    const removeClient = jest.fn()
+    const removeClient = vi.fn()
 
     const [error, persister] = createMockErrorPersister(removeClient)
 
@@ -463,13 +464,13 @@ describe('PersistQueryClientProvider', () => {
 
     queryClient.clear()
 
-    const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
 
-    const queryFn1 = jest.fn().mockImplementation(async () => {
+    const queryFn1 = vi.fn().mockImplementation(async () => {
       await sleep(10)
       return 'queryFn1'
     })
-    const queryFn2 = jest.fn().mockImplementation(async () => {
+    const queryFn2 = vi.fn().mockImplementation(async () => {
       await sleep(10)
       return 'queryFn2'
     })

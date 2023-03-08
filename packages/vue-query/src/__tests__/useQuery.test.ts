@@ -15,9 +15,11 @@ import {
 } from './test-utils'
 import { useQuery } from '../useQuery'
 import { useBaseQuery } from '../useBaseQuery'
+import { vi } from 'vitest'
+import type { Mock, MockedFunction } from 'vitest'
 
-jest.mock('../useQueryClient')
-jest.mock('../useBaseQuery')
+vi.mock('../useQueryClient')
+vi.mock('../useBaseQuery')
 
 describe('useQuery', () => {
   test('should properly execute query', () => {
@@ -123,7 +125,7 @@ describe('useQuery', () => {
   })
 
   test('should update query on reactive options object change', async () => {
-    const spy = jest.fn()
+    const spy = vi.fn()
     const onSuccess = ref(() => {
       // Noop
     })
@@ -233,7 +235,7 @@ describe('useQuery', () => {
   })
 
   test('should stop listening to changes on onScopeDispose', async () => {
-    const onScopeDisposeMock = onScopeDispose as jest.MockedFunction<
+    const onScopeDisposeMock = onScopeDispose as MockedFunction<
       typeof onScopeDispose
     >
     onScopeDisposeMock.mockImplementationOnce((fn) => fn())
@@ -256,7 +258,7 @@ describe('useQuery', () => {
 
   describe('suspense', () => {
     test('should return a Promise', () => {
-      const getCurrentInstanceSpy = getCurrentInstance as jest.Mock
+      const getCurrentInstanceSpy = getCurrentInstance as Mock
       getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
 
       const query = useQuery({ queryKey: ['suspense'], queryFn: simpleFetcher })
@@ -266,7 +268,7 @@ describe('useQuery', () => {
     })
 
     test('should resolve after being enabled', () => {
-      const getCurrentInstanceSpy = getCurrentInstance as jest.Mock
+      const getCurrentInstanceSpy = getCurrentInstance as Mock
       getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
 
       let afterTimeout = false
@@ -288,10 +290,10 @@ describe('useQuery', () => {
     })
 
     test('should resolve immidiately when stale without refetching', () => {
-      const getCurrentInstanceSpy = getCurrentInstance as jest.Mock
+      const getCurrentInstanceSpy = getCurrentInstance as Mock
       getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
 
-      const fetcherSpy = jest.fn(() => simpleFetcher())
+      const fetcherSpy = vi.fn(() => simpleFetcher())
 
       // let afterTimeout = false;
       const query = useQuery({

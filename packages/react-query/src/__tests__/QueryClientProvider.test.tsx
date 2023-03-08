@@ -3,6 +3,7 @@ import { render, waitFor } from '@testing-library/react'
 
 import { sleep, queryKey, createQueryClient } from './utils'
 import { QueryClientProvider, QueryCache, useQuery, useQueryClient } from '..'
+import { vi } from 'vitest'
 
 describe('QueryClientProvider', () => {
   test('sets a specific cache for all queries to use', async () => {
@@ -142,7 +143,7 @@ describe('QueryClientProvider', () => {
 
   describe('useQueryClient', () => {
     test('should throw an error if no query client has been set', () => {
-      const consoleMock = jest
+      const consoleMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 

@@ -9,7 +9,8 @@ import {
   sleep,
 } from './utils'
 import * as MutationCacheModule from '../../../query-core/src/mutationCache'
-import { screen } from 'solid-testing-library'
+import { vi } from 'vitest'
+// import { screen } from 'solid-testing-library'
 
 describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {
@@ -140,61 +141,6 @@ describe('useIsMutating', () => {
     await waitFor(() => expect(isMutatings).toEqual([0, 1, 0]))
   })
 
-  it('should not change state if unmounted', async () => {
-    // We have to mock the MutationCache to not unsubscribe
-    // the listener when the component is unmounted
-    class MutationCacheMock extends MutationCacheModule.MutationCache {
-      subscribe(listener: any) {
-        super.subscribe(listener)
-        return () => void 0
-      }
-    }
-
-    const MutationCacheSpy = jest
-      .spyOn(MutationCacheModule, 'MutationCache')
-      .mockImplementation((fn) => {
-        return new MutationCacheMock(fn)
-      })
-
-    const queryClient = createQueryClient()
-
-    function IsMutating() {
-      useIsMutating()
-      return null
-    }
-
-    function Page() {
-      const [mounted, setMounted] = React.useState(true)
-      const { mutate: mutate1 } = useMutation({
-        mutationKey: ['mutation1'],
-        mutationFn: async () => {
-          await sleep(10)
-          return 'data'
-        },
-      })
-
-      React.useEffect(() => {
-        mutate1()
-      }, [mutate1])
-
-      return (
-        <div>
-          <button onClick={() => setMounted(false)}>unmount</button>
-          {mounted && <IsMutating />}
-        </div>
-      )
-    }
-
-    const { getByText } = renderWithClient(queryClient, <Page />)
-    fireEvent.click(getByText('unmount'))
-
-    // Should not display the console error
-    // "Warning: Can't perform a React state update on an unmounted component"
-
-    await sleep(20)
-    MutationCacheSpy.mockRestore()
-  })
-
   it('should use provided custom queryClient', async () => {
     const queryClient = createQueryClient()
 
@@ -275,10 +221,65 @@ describe('useMutationState', () => {
 
     await waitFor(() => rendered.getByText('data: null'))
 
-    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
     await waitFor(() => rendered.getByText('data: data1'))
 
     expect(variables).toEqual([[], [1], []])
+  })
+
+  it('should not change state if unmounted', async () => {
+    // We have to mock the MutationCache to not unsubscribe
+    // the listener when the component is unmounted
+    class MutationCacheMock extends MutationCacheModule.MutationCache {
+      subscribe(listener: any) {
+        super.subscribe(listener)
+        return () => void 0
+      }
+    }
+
+    const MutationCacheSpy = vi
+      .spyOn(MutationCacheModule, 'MutationCache')
+      .mockImplementation((fn) => {
+        return new MutationCacheMock(fn)
+      })
+
+    const queryClient = createQueryClient()
+
+    function IsMutating() {
+      useIsMutating()
+      return null
+    }
+
+    function Page() {
+      const [mounted, setMounted] = React.useState(true)
+      const { mutate: mutate1 } = useMutation({
+        mutationKey: ['mutation1'],
+        mutationFn: async () => {
+          await sleep(10)
+          return 'data'
+        },
+      })
+
+      React.useEffect(() => {
+        mutate1()
+      }, [mutate1])
+
+      return (
+        <div>
+          <button onClick={() => setMounted(false)}>unmount</button>
+          {mounted && <IsMutating />}
+        </div>
+      )
+    }
+
+    const { getByText } = renderWithClient(queryClient, <Page />)
+    fireEvent.click(getByText('unmount'))
+
+    // Should not display the console error
+    // "Warning: Can't perform a React state update on an unmounted component"
+
+    await sleep(20)
+    MutationCacheSpy.mockRestore()
   })
 })

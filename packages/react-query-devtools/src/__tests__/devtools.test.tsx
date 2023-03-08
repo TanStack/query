@@ -9,18 +9,19 @@ import {
   sleep,
   createQueryClient,
 } from './utils'
+import { vi } from 'vitest'
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation((query: string) => ({
+  value: vi.fn().mockImplementation((query: string) => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
   })),
 })
 
@@ -31,8 +32,8 @@ describe('ReactQueryDevtools', () => {
   })
   it('should be able to open and close devtools', async () => {
     const { queryClient } = createQueryClient()
-    const onCloseClick = jest.fn()
-    const onToggleClick = jest.fn()
+    const onCloseClick = vi.fn()
+    const onToggleClick = vi.fn()
 
     function Page() {
       const { data = 'default' } = useQuery({

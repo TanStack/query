@@ -2,7 +2,7 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
-    name: 'eslint-plugin-query',
+    name: 'query-async-storage-persister',
     watch: false,
     globals: true,
   },
