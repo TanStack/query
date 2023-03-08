@@ -381,7 +381,7 @@ describe('mutations', () => {
   })
 
   test('mutation callbacks should see updated options', async () => {
-    const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
 
     const mutation = new MutationObserver(queryClient, {
       mutationFn: async () => {
