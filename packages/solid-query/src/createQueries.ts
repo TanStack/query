@@ -6,6 +6,7 @@ import type {
   DefaultError,
 } from '@tanstack/query-core'
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
+import type { Accessor } from 'solid-js'
 import { createComputed, onCleanup, onMount } from 'solid-js'
 import { createStore, unwrap } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
@@ -148,10 +149,10 @@ export type QueriesResults<
     CreateQueryResult[]
 
 export function createQueries<T extends any[]>(
-  queriesOptions: () => {
+  queriesOptions: Accessor<{
     queries: readonly [...QueriesOptions<T>]
-  },
-  queryClient?: () => QueryClient,
+  }>,
+  queryClient?: Accessor<QueryClient>,
 ): QueriesResults<T> {
   const client = useQueryClient(queryClient?.())
 

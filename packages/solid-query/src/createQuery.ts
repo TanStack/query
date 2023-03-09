@@ -1,5 +1,6 @@
 import type { QueryClient, QueryKey, DefaultError } from '@tanstack/query-core'
 import { QueryObserver } from '@tanstack/query-core'
+import type { Accessor } from 'solid-js'
 import { createMemo } from 'solid-js'
 import { createBaseQuery } from './createBaseQuery'
 import type {
@@ -58,7 +59,7 @@ export function createQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  queryClient?: () => QueryClient,
+  queryClient?: Accessor<QueryClient>,
 ) {
   return createBaseQuery(
     createMemo(() => options()),

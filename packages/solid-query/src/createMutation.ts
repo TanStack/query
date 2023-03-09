@@ -6,6 +6,7 @@ import type {
   CreateMutationOptions,
   CreateMutationResult,
 } from './types'
+import type { Accessor } from 'solid-js';
 import { createComputed, onCleanup, on } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { shouldThrowError } from './utils'
@@ -18,7 +19,7 @@ export function createMutation<
   TContext = unknown,
 >(
   options: CreateMutationOptions<TData, TError, TVariables, TContext>,
-  queryClient?: () => QueryClient,
+  queryClient?: Accessor<QueryClient>,
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
   const client = useQueryClient(queryClient?.())
 
