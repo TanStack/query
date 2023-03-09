@@ -12,7 +12,7 @@ import type {
 } from './types'
 import { createBaseQuery } from './createBaseQuery'
 import { createMemo } from 'solid-js'
-import type { Accessor} from 'solid-js';
+import type { Accessor } from 'solid-js'
 
 export function createInfiniteQuery<
   TQueryFnData,

@@ -6,7 +6,7 @@ import type {
   CreateMutationOptions,
   CreateMutationResult,
 } from './types'
-import type { Accessor } from 'solid-js';
+import type { Accessor } from 'solid-js'
 import { createComputed, onCleanup, on } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { shouldThrowError } from './utils'
