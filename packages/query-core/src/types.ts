@@ -34,12 +34,12 @@ export type QueryKeyHashFunction<TQueryKey extends QueryKey> = (
 ) => string
 
 export type GetPreviousPageParamFunction<TQueryFnData = unknown> = (
-  firstPage: TQueryFnData,
+  firstPage: TQueryFnData | undefined,
   allPages: TQueryFnData[],
 ) => unknown
 
 export type GetNextPageParamFunction<TQueryFnData = unknown> = (
-  lastPage: TQueryFnData,
+  lastPage: TQueryFnData | undefined,
   allPages: TQueryFnData[],
 ) => unknown
 
