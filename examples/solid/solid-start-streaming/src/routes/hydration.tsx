@@ -43,6 +43,8 @@ export default function Hydration() {
             <th>isLoading</th>
             <th>isStale</th>
             <th>isSuccess</th>
+            <th>isError</th>
+            <th>error</th>
             <th>fetchStatus</th>
             <th>dataUpdatedAt</th>
           </tr>
@@ -88,6 +90,8 @@ const QueryStateRow = (props: { context: string; query: QueryState }) => {
       <td>{String(props.query.isLoading)}</td>
       <td>{String(props.query.isStale)}</td>
       <td>{String(props.query.isSuccess)}</td>
+      <td>{String(props.query.isError)}</td>
+      <td>{String(props.query.error)}</td>
       <td>{String(props.query.fetchStatus)}</td>
       <td>{String(props.query.dataUpdatedAt)}</td>
     </tr>

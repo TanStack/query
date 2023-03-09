@@ -172,7 +172,7 @@ export function createBaseQuery<
   )
 
   onCleanup(() => {
-    if (!isServer && unsubscribe) {
+    if (unsubscribe) {
       unsubscribe()
       unsubscribe = null
     }
