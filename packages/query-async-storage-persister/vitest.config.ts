@@ -5,5 +5,6 @@ export default defineConfig({
     name: 'query-async-storage-persister',
     watch: false,
     globals: true,
+    coverage: { provider: 'istanbul' },
   },
 })

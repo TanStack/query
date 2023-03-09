@@ -5,5 +5,6 @@ export default defineConfig({
     name: 'codemods',
     watch: false,
     globals: true,
+    coverage: { provider: 'istanbul' },
   },
 })

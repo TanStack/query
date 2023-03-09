@@ -6,6 +6,7 @@ export default defineConfig({
     name: 'query-persist-client-core',
     watch: false,
     globals: true,
+    coverage: { provider: 'istanbul' },
   },
   resolve: {
     alias: {

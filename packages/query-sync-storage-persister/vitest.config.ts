@@ -6,6 +6,7 @@ export default defineConfig({
     name: 'query-sync-storage-persister',
     watch: false,
     globals: true,
+    coverage: { provider: 'istanbul' },
   },
   resolve: {
     alias: {

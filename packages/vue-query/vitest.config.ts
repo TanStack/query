@@ -9,6 +9,7 @@ export default defineConfig({
     globals: true,
     dir: 'src/__tests__',
     setupFiles: ['test-setup.ts'],
+    coverage: { provider: 'istanbul' },
   },
   resolve: {
     alias: {

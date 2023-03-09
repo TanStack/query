@@ -6,5 +6,6 @@ export default defineConfig({
     watch: false,
     environment: 'jsdom',
     globals: true,
+    coverage: { provider: 'istanbul' },
   },
 })
