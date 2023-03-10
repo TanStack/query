@@ -17,7 +17,7 @@ describe('queryObserver', () => {
 
   test('should trigger a fetch when subscribed', async () => {
     const key = queryKey()
-    const queryFn = vi.fn().mockReturnValue('data')
+    const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
     const observer = new QueryObserver(queryClient, { queryKey: key, queryFn })
     const unsubscribe = observer.subscribe(() => undefined)
     await sleep(1)
@@ -349,7 +349,7 @@ describe('queryObserver', () => {
 
   test('should not trigger a fetch when subscribed and disabled', async () => {
     const key = queryKey()
-    const queryFn = vi.fn().mockReturnValue('data')
+    const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
@@ -363,7 +363,7 @@ describe('queryObserver', () => {
 
   test('should not trigger a fetch when not subscribed', async () => {
     const key = queryKey()
-    const queryFn = vi.fn().mockReturnValue('data')
+    const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
     new QueryObserver(queryClient, { queryKey: key, queryFn })
     await sleep(1)
     expect(queryFn).toHaveBeenCalledTimes(0)
@@ -371,7 +371,7 @@ describe('queryObserver', () => {
 
   test('should be able to watch a query without defining a query function', async () => {
     const key = queryKey()
-    const queryFn = vi.fn().mockReturnValue('data')
+    const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
     const callback = vi.fn()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -386,7 +386,7 @@ describe('queryObserver', () => {
 
   test('should accept unresolved query config in update function', async () => {
     const key = queryKey()
-    const queryFn = vi.fn().mockReturnValue('data')
+    const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       enabled: false,
@@ -408,7 +408,7 @@ describe('queryObserver', () => {
 
   test('should be able to handle multiple subscribers', async () => {
     const key = queryKey()
-    const queryFn = vi.fn().mockReturnValue('data')
+    const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
     const observer = new QueryObserver<string>(queryClient, {
       queryKey: key,
       enabled: false,
@@ -568,7 +568,7 @@ describe('queryObserver', () => {
 
   test('should not refetch in background if refetchIntervalInBackground is false', async () => {
     const key = queryKey()
-    const queryFn = vi.fn().mockReturnValue('data')
+    const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
 
     focusManager.setFocused(false)
     const observer = new QueryObserver(queryClient, {

@@ -4,7 +4,12 @@ import {
   mockVisibilityState,
   createQueryClient,
 } from './utils'
-import type { QueryCache, QueryClient, QueryObserverResult } from '..'
+import type {
+  QueryCache,
+  QueryClient,
+  QueryFunctionContext,
+  QueryObserverResult,
+} from '..'
 import { QueryObserver, isCancelledError, onlineManager } from '..'
 import { waitFor } from '@testing-library/react'
 import { vi } from 'vitest'
@@ -182,7 +187,12 @@ describe('query', () => {
   test('should provide context to queryFn', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn().mockResolvedValue('data')
+    const queryFn = vi
+      .fn<
+        [QueryFunctionContext<ReturnType<typeof queryKey>>],
+        Promise<'data'>
+      >()
+      .mockResolvedValue('data')
 
     queryClient.prefetchQuery({ queryKey: key, queryFn })
 
@@ -191,6 +201,7 @@ describe('query', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
     const args = queryFn.mock.calls[0]![0]
     expect(args).toBeDefined()
+    // @ts-expect-error page param should be undefined
     expect(args.pageParam).toBeUndefined()
     expect(args.queryKey).toEqual(key)
     expect(args.signal).toBeInstanceOf(AbortSignal)
@@ -263,7 +274,10 @@ describe('query', () => {
   test('should provide an AbortSignal to the queryFn that provides info about the cancellation state', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn()
+    const queryFn = vi.fn<
+      [QueryFunctionContext<ReturnType<typeof queryKey>>],
+      Promise<unknown>
+    >()
     const onAbort = vi.fn()
     const abortListener = vi.fn()
     let error
@@ -310,7 +324,7 @@ describe('query', () => {
   test('should not continue if explicitly cancelled', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn()
+    const queryFn = vi.fn<unknown[], unknown>()
 
     queryFn.mockImplementation(async () => {
       await sleep(10)
@@ -342,7 +356,7 @@ describe('query', () => {
   test('should not error if reset while pending', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn()
+    const queryFn = vi.fn<unknown[], unknown>()
 
     queryFn.mockImplementation(async () => {
       await sleep(10)
@@ -369,7 +383,7 @@ describe('query', () => {
   test('should be able to refetch a cancelled query', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn()
+    const queryFn = vi.fn<unknown[], unknown>()
 
     queryFn.mockImplementation(async () => {
       await sleep(50)

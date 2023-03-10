@@ -11,7 +11,11 @@ import {
   Match,
   Switch,
 } from 'solid-js'
-import type { CreateInfiniteQueryResult, InfiniteData } from '..'
+import type {
+  CreateInfiniteQueryResult,
+  InfiniteData,
+  QueryFunctionContext,
+} from '..'
 import {
   createInfiniteQuery,
   QueryCache,
@@ -712,7 +716,10 @@ describe('useInfiniteQuery', () => {
     const start = 10
     const onAborts: Mock<any, any>[] = []
     const abortListeners: Mock<any, any>[] = []
-    const fetchPage = vi.fn(async ({ pageParam, signal }) => {
+    const fetchPage = vi.fn<
+      [QueryFunctionContext<typeof key, number>],
+      Promise<number>
+    >(async ({ pageParam, signal }) => {
       const onAbort = vi.fn()
       const abortListener = vi.fn()
       onAborts.push(onAbort)
@@ -791,7 +798,10 @@ describe('useInfiniteQuery', () => {
     const start = 10
     const onAborts: Mock<any, any>[] = []
     const abortListeners: Mock<any, any>[] = []
-    const fetchPage = vi.fn(async ({ pageParam, signal }) => {
+    const fetchPage = vi.fn<
+      [QueryFunctionContext<typeof key, number>],
+      Promise<number>
+    >(async ({ pageParam, signal }) => {
       const onAbort = vi.fn()
       const abortListener = vi.fn()
       onAborts.push(onAbort)

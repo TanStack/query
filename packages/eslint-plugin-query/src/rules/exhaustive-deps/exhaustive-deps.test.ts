@@ -1,5 +1,4 @@
 import { ESLintUtils } from '@typescript-eslint/utils'
-import { describe, it } from 'vitest'
 import { normalizeIndent } from '../../utils/test-utils'
 import { rule } from './exhaustive-deps.rule'
 

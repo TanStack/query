@@ -50,7 +50,10 @@ describe('Server side rendering with de/rehydration', () => {
     const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 
-    const fetchDataSuccess = vi.fn(fetchData)
+    const fetchDataSuccess = vi.fn<
+      Parameters<typeof fetchData>,
+      ReturnType<typeof fetchData>
+    >(fetchData)
 
     // -- Shared part --
     function SuccessComponent() {

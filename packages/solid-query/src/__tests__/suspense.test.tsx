@@ -143,7 +143,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn twice when used in Suspense mode', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn()
+    const queryFn = vi.fn<unknown[], string>()
     queryFn.mockImplementation(() => {
       sleep(10)
       return 'data'
@@ -734,7 +734,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn when not enabled', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn()
+    const queryFn = vi.fn<unknown[], Promise<string>>()
     queryFn.mockImplementation(async () => {
       await sleep(10)
       return '23'

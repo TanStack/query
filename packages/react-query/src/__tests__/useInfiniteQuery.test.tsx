@@ -8,7 +8,11 @@ import {
   setActTimeout,
   sleep,
 } from './utils'
-import type { InfiniteData, UseInfiniteQueryResult } from '..'
+import type {
+  InfiniteData,
+  QueryFunctionContext,
+  UseInfiniteQueryResult,
+} from '..'
 import { QueryCache, useInfiniteQuery, keepPreviousData } from '..'
 import { vi } from 'vitest'
 import type { Mock } from 'vitest'
@@ -680,7 +684,10 @@ describe('useInfiniteQuery', () => {
     const start = 10
     const onAborts: Mock<any, any>[] = []
     const abortListeners: Mock<any, any>[] = []
-    const fetchPage = vi.fn(async ({ pageParam, signal }) => {
+    const fetchPage = vi.fn<
+      [QueryFunctionContext<typeof key, number>],
+      Promise<number>
+    >(async ({ pageParam, signal }) => {
       const onAbort = vi.fn()
       const abortListener = vi.fn()
       onAborts.push(onAbort)
@@ -753,7 +760,10 @@ describe('useInfiniteQuery', () => {
     const start = 10
     const onAborts: Mock<any, any>[] = []
     const abortListeners: Mock<any, any>[] = []
-    const fetchPage = vi.fn(async ({ pageParam, signal }) => {
+    const fetchPage = vi.fn<
+      [QueryFunctionContext<typeof key, number>],
+      Promise<number>
+    >(async ({ pageParam, signal }) => {
       const onAbort = vi.fn()
       const abortListener = vi.fn()
       onAborts.push(onAbort)

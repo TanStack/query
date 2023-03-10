@@ -48,11 +48,11 @@
     "src"
   ],
   "devDependencies": {
-    "solid-jest": "^0.2.0"
+    "solid-jest": "^0.2.0",
+    "vite-plugin-solid": "^2.3.9"
   },
   "dependencies": {
-    "@tanstack/query-core": "workspace:*",
-    "vite-plugin-solid": "^2.3.9"
+    "@tanstack/query-core": "workspace:*"
   },
   "peerDependencies": {
     "solid-js": "^1.6.2"

@@ -12,6 +12,7 @@ import type {
   QueryObserver,
   QueryKey,
   QueryObserverResult,
+  DefaultedQueryObserverOptions,
 } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
 import { updateState, cloneDeepUnref } from './utils'
@@ -67,7 +68,13 @@ export function useBaseQuery<
   const client = queryClient || useQueryClient()
 
   const defaultedOptions = computed(() => {
-    const defaulted = client.defaultQueryOptions(cloneDeepUnref(options as any))
+    const defaulted: DefaultedQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    > = client.defaultQueryOptions(cloneDeepUnref(options as any))
 
     defaulted._optimisticResults = client.isRestoring.value
       ? 'isRestoring'
@@ -122,10 +129,10 @@ export function useBaseQuery<
           )
           if (optimisticResult.isStale) {
             stopWatch()
-            resolve(observer.fetchOptimistic(defaultedOptions.value) as any)
+            resolve(observer.fetchOptimistic(defaultedOptions.value))
           } else {
             stopWatch()
-            resolve(optimisticResult as any)
+            resolve(optimisticResult)
           }
         }
       }
