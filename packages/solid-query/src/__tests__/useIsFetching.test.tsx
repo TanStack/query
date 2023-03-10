@@ -152,9 +152,7 @@ describe('useIsFetching', () => {
     function Page() {
       const [started, setStarted] = createSignal(false)
       const isFetching = useIsFetching(() => ({
-        filters: {
-          queryKey: key1,
-        },
+        queryKey: key1,
       }))
 
       createRenderEffect(() => {
@@ -237,7 +235,7 @@ describe('useIsFetching', () => {
         () => queryClient,
       )
 
-      const isFetching = useIsFetching(() => ({ queryClient }))
+      const isFetching = useIsFetching(undefined, () => queryClient)
 
       return (
         <div>

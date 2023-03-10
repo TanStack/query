@@ -6,6 +6,7 @@ import type {
   DefaultError,
 } from '@tanstack/query-core'
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
+import type { Accessor } from 'solid-js'
 import { createComputed, onCleanup, onMount } from 'solid-js'
 import { createStore, unwrap } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
@@ -148,20 +149,20 @@ export type QueriesResults<
     CreateQueryResult[]
 
 export function createQueries<T extends any[]>(
-  queriesOptions: () => {
+  queriesOptions: Accessor<{
     queries: readonly [...QueriesOptions<T>]
-    queryClient?: QueryClient
-  },
+  }>,
+  queryClient?: Accessor<QueryClient>,
 ): QueriesResults<T> {
-  const queryClient = useQueryClient(queriesOptions().queryClient)
+  const client = useQueryClient(queryClient?.())
 
   const defaultedQueries = queriesOptions().queries.map((options) => {
-    const defaultedOptions = queryClient.defaultQueryOptions(options)
+    const defaultedOptions = client.defaultQueryOptions(options)
     defaultedOptions._optimisticResults = 'optimistic'
     return defaultedOptions
   })
 
-  const observer = new QueriesObserver(queryClient, defaultedQueries)
+  const observer = new QueriesObserver(client, defaultedQueries)
 
   const [state, setState] = createStore(
     observer.getOptimisticResult(defaultedQueries),
@@ -181,7 +182,7 @@ export function createQueries<T extends any[]>(
 
   createComputed(() => {
     const updatedQueries = queriesOptions().queries.map((options) => {
-      const defaultedOptions = queryClient.defaultQueryOptions(options)
+      const defaultedOptions = client.defaultQueryOptions(options)
       defaultedOptions._optimisticResults = 'optimistic'
       return defaultedOptions
     })

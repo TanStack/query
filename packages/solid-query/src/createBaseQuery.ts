@@ -37,7 +37,7 @@ export function createBaseQuery<
     CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
   >,
   Observer: typeof QueryObserver,
-  queryClient?: () => QueryClient,
+  queryClient?: Accessor<QueryClient>,
 ) {
   const client = createMemo(() => useQueryClient(queryClient?.()))
 
