@@ -914,15 +914,17 @@ describe('useQueries', () => {
     }
 
     function Page() {
-      const queries = useQueries({
-        queries: [
-          {
-            queryKey: key,
-            queryFn,
-          },
-        ],
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: key,
+              queryFn,
+            },
+          ],
+        },
         queryClient,
-      })
+      )
 
       return <div>data: {queries[0].data}</div>
     }

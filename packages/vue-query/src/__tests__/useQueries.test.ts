@@ -206,7 +206,7 @@ describe('useQueries', () => {
       },
     ]
 
-    useQueries({ queries, queryClient })
+    useQueries({ queries }, queryClient)
     await flushPromises()
 
     expect(useQueryClient).toHaveBeenCalledTimes(0)

@@ -152,13 +152,14 @@ export type QueriesResults<
 
 export type CreateQueriesResult<T extends any[]> = Readable<QueriesResults<T>>
 
-export function createQueries<T extends any[]>({
-  queries,
-  queryClient,
-}: {
-  queries: WritableOrVal<[...QueriesOptions<T>]>
-  queryClient?: QueryClient
-}): CreateQueriesResult<T> {
+export function createQueries<T extends any[]>(
+  {
+    queries,
+  }: {
+    queries: WritableOrVal<[...QueriesOptions<T>]>
+  },
+  queryClient?: QueryClient,
+): CreateQueriesResult<T> {
   const client = useQueryClient(queryClient)
   // const isRestoring = useIsRestoring()
 
