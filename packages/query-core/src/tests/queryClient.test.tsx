@@ -11,6 +11,7 @@ import type {
 import { MutationObserver, QueryObserver } from '..'
 import { focusManager, onlineManager } from '..'
 import { noop } from '../utils'
+import { vi } from 'vitest'
 
 describe('queryClient', () => {
   let queryClient: QueryClient
@@ -223,7 +224,7 @@ describe('queryClient', () => {
     test('should accept an update function', () => {
       const key = queryKey()
 
-      const updater = jest.fn((oldData) => `new data + ${oldData}`)
+      const updater = vi.fn((oldData) => `new data + ${oldData}`)
 
       queryClient.setQueryData(key, 'test data')
       queryClient.setQueryData(key, updater)
@@ -802,7 +803,7 @@ describe('queryClient', () => {
   describe('refetchQueries', () => {
     test('should not refetch if all observers are disabled', async () => {
       const key = queryKey()
-      const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
+      const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
       await queryClient.fetchQuery({ queryKey: key, queryFn })
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key,
@@ -816,7 +817,7 @@ describe('queryClient', () => {
     })
     test('should refetch if at least one observer is enabled', async () => {
       const key = queryKey()
-      const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
+      const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
       await queryClient.fetchQuery({ queryKey: key, queryFn })
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key,
@@ -838,8 +839,8 @@ describe('queryClient', () => {
     test('should refetch all queries when no arguments are given', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
-      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer1 = new QueryObserver(queryClient, {
@@ -864,8 +865,8 @@ describe('queryClient', () => {
     test('should be able to refetch all fresh queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
-      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -883,8 +884,8 @@ describe('queryClient', () => {
     test('should be able to refetch all stale queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
-      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -903,8 +904,8 @@ describe('queryClient', () => {
     test('should be able to refetch all stale and active queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
-      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       queryClient.invalidateQueries({ queryKey: key1 })
@@ -925,8 +926,8 @@ describe('queryClient', () => {
     test('should be able to refetch all active and inactive queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
-      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -944,8 +945,8 @@ describe('queryClient', () => {
     test('should be able to refetch all active and inactive queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
-      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -963,8 +964,8 @@ describe('queryClient', () => {
     test('should be able to refetch only active queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
-      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -982,8 +983,8 @@ describe('queryClient', () => {
     test('should be able to refetch only inactive queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
-      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -1025,8 +1026,8 @@ describe('queryClient', () => {
     test('should refetch active queries by default', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
-      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -1044,8 +1045,8 @@ describe('queryClient', () => {
     test('should not refetch inactive queries by default', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
-      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -1063,8 +1064,8 @@ describe('queryClient', () => {
     test('should not refetch active queries when "refetch" is "none"', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
-      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -1085,8 +1086,8 @@ describe('queryClient', () => {
     test('should refetch inactive queries when "refetch" is "inactive"', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
-      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -1109,8 +1110,8 @@ describe('queryClient', () => {
     test('should refetch active and inactive queries when "refetch" is "all"', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
-      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -1129,7 +1130,7 @@ describe('queryClient', () => {
 
     test('should cancel ongoing fetches if cancelRefetch option is set (default value)', async () => {
       const key = queryKey()
-      const abortFn = jest.fn()
+      const abortFn = vi.fn()
       let fetchCount = 0
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
@@ -1152,7 +1153,7 @@ describe('queryClient', () => {
 
     test('should not cancel ongoing fetches if cancelRefetch option is set to false', async () => {
       const key = queryKey()
-      const abortFn = jest.fn()
+      const abortFn = vi.fn()
       let fetchCount = 0
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
@@ -1178,7 +1179,7 @@ describe('queryClient', () => {
     test('should notify listeners when a query is reset', async () => {
       const key = queryKey()
 
-      const callback = jest.fn()
+      const callback = vi.fn()
 
       await queryClient.prefetchQuery({ queryKey: key, queryFn: () => 'data' })
 
@@ -1231,8 +1232,8 @@ describe('queryClient', () => {
     test('should refetch all active queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
-      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
@@ -1258,15 +1259,15 @@ describe('queryClient', () => {
       const testClient = createQueryClient()
       testClient.mount()
 
-      const queryCacheOnFocusSpy = jest.spyOn(
+      const queryCacheOnFocusSpy = vi.spyOn(
         testClient.getQueryCache(),
         'onFocus',
       )
-      const queryCacheOnOnlineSpy = jest.spyOn(
+      const queryCacheOnOnlineSpy = vi.spyOn(
         testClient.getQueryCache(),
         'onOnline',
       )
-      const mutationCacheResumePausedMutationsSpy = jest.spyOn(
+      const mutationCacheResumePausedMutationsSpy = vi.spyOn(
         testClient.getMutationCache(),
         'resumePausedMutations',
       )
@@ -1291,15 +1292,15 @@ describe('queryClient', () => {
       const testClient = createQueryClient()
       testClient.mount()
 
-      const queryCacheOnFocusSpy = jest.spyOn(
+      const queryCacheOnFocusSpy = vi.spyOn(
         testClient.getQueryCache(),
         'onFocus',
       )
-      const queryCacheOnOnlineSpy = jest.spyOn(
+      const queryCacheOnOnlineSpy = vi.spyOn(
         testClient.getQueryCache(),
         'onOnline',
       )
-      const mutationCacheResumePausedMutationsSpy = jest.spyOn(
+      const mutationCacheResumePausedMutationsSpy = vi.spyOn(
         testClient.getMutationCache(),
         'resumePausedMutations',
       )
@@ -1321,7 +1322,7 @@ describe('queryClient', () => {
     })
 
     test('should resume paused mutations when coming online', async () => {
-      const consoleMock = jest.spyOn(console, 'error')
+      const consoleMock = vi.spyOn(console, 'error')
       consoleMock.mockImplementation(() => undefined)
       onlineManager.setOnline(false)
 
@@ -1351,7 +1352,7 @@ describe('queryClient', () => {
     })
 
     test('should resume paused mutations one after the other when invoked manually at the same time', async () => {
-      const consoleMock = jest.spyOn(console, 'error')
+      const consoleMock = vi.spyOn(console, 'error')
       consoleMock.mockImplementation(() => undefined)
       onlineManager.setOnline(false)
 
@@ -1401,15 +1402,15 @@ describe('queryClient', () => {
       testClient.mount()
       testClient.unmount()
 
-      const queryCacheOnFocusSpy = jest.spyOn(
+      const queryCacheOnFocusSpy = vi.spyOn(
         testClient.getQueryCache(),
         'onFocus',
       )
-      const queryCacheOnOnlineSpy = jest.spyOn(
+      const queryCacheOnOnlineSpy = vi.spyOn(
         testClient.getQueryCache(),
         'onOnline',
       )
-      const mutationCacheResumePausedMutationsSpy = jest.spyOn(
+      const mutationCacheResumePausedMutationsSpy = vi.spyOn(
         testClient.getMutationCache(),
         'resumePausedMutations',
       )
@@ -1436,15 +1437,15 @@ describe('queryClient', () => {
       testClient.unmount()
       testClient.unmount()
 
-      const queryCacheOnFocusSpy = jest.spyOn(
+      const queryCacheOnFocusSpy = vi.spyOn(
         testClient.getQueryCache(),
         'onFocus',
       )
-      const queryCacheOnOnlineSpy = jest.spyOn(
+      const queryCacheOnOnlineSpy = vi.spyOn(
         testClient.getQueryCache(),
         'onOnline',
       )
-      const mutationCacheResumePausedMutationsSpy = jest.spyOn(
+      const mutationCacheResumePausedMutationsSpy = vi.spyOn(
         testClient.getMutationCache(),
         'resumePausedMutations',
       )

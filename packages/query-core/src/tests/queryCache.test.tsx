@@ -2,6 +2,7 @@ import { sleep, queryKey, createQueryClient } from './utils'
 import { QueryClient } from '..'
 import { QueryCache, QueryObserver } from '..'
 import { waitFor } from '@testing-library/react'
+import { vi } from 'vitest'
 
 describe('queryCache', () => {
   let queryClient: QueryClient
@@ -19,7 +20,7 @@ describe('queryCache', () => {
   describe('subscribe', () => {
     test('should pass the correct query', async () => {
       const key = queryKey()
-      const subscriber = jest.fn()
+      const subscriber = vi.fn()
       const unsubscribe = queryCache.subscribe(subscriber)
       queryClient.setQueryData(key, 'foo')
       const query = queryCache.find({ queryKey: key })
@@ -30,7 +31,7 @@ describe('queryCache', () => {
 
     test('should notify listeners when new query is added', async () => {
       const key = queryKey()
-      const callback = jest.fn()
+      const callback = vi.fn()
       queryCache.subscribe(callback)
       queryClient.prefetchQuery({ queryKey: key, queryFn: () => 'data' })
       await sleep(100)
@@ -50,7 +51,7 @@ describe('queryCache', () => {
         staleTime: 10,
       })
 
-      const unsubScribeObserver = observer.subscribe(jest.fn)
+      const unsubScribeObserver = observer.subscribe(vi.fn())
 
       await waitFor(() => {
         expect(events.length).toBe(8)
@@ -73,7 +74,7 @@ describe('queryCache', () => {
 
     test('should include the queryCache and query when notifying listeners', async () => {
       const key = queryKey()
-      const callback = jest.fn()
+      const callback = vi.fn()
       queryCache.subscribe(callback)
       queryClient.prefetchQuery({ queryKey: key, queryFn: () => 'data' })
       const query = queryCache.find({ queryKey: key })
@@ -83,7 +84,7 @@ describe('queryCache', () => {
 
     test('should notify subscribers when new query with initialData is added', async () => {
       const key = queryKey()
-      const callback = jest.fn()
+      const callback = vi.fn()
       queryCache.subscribe(callback)
       queryClient.prefetchQuery({
         queryKey: key,
@@ -289,9 +290,9 @@ describe('queryCache', () => {
   describe('QueryCacheConfig error callbacks', () => {
     test('should call onError and onSettled when a query errors', async () => {
       const key = queryKey()
-      const onSuccess = jest.fn()
-      const onSettled = jest.fn()
-      const onError = jest.fn()
+      const onSuccess = vi.fn()
+      const onSettled = vi.fn()
+      const onError = vi.fn()
       const testCache = new QueryCache({ onSuccess, onError, onSettled })
       const testClient = createQueryClient({ queryCache: testCache })
       await testClient.prefetchQuery({
@@ -310,9 +311,9 @@ describe('queryCache', () => {
   describe('QueryCacheConfig success callbacks', () => {
     test('should call onSuccess and onSettled when a query is successful', async () => {
       const key = queryKey()
-      const onSuccess = jest.fn()
-      const onSettled = jest.fn()
-      const onError = jest.fn()
+      const onSuccess = vi.fn()
+      const onSettled = vi.fn()
+      const onError = vi.fn()
       const testCache = new QueryCache({ onSuccess, onError, onSettled })
       const testClient = createQueryClient({ queryCache: testCache })
       await testClient.prefetchQuery({
@@ -330,14 +331,14 @@ describe('queryCache', () => {
 
   describe('QueryCacheConfig.createStore', () => {
     test('should call createStore', async () => {
-      const createStore = jest.fn().mockImplementation(() => new Map())
+      const createStore = vi.fn().mockImplementation(() => new Map())
       new QueryCache({ createStore })
       expect(createStore).toHaveBeenCalledWith()
     })
 
     test('should use created store', async () => {
       const store = new Map()
-      const spy = jest.spyOn(store, 'get')
+      const spy = vi.spyOn(store, 'get')
 
       new QueryCache({ createStore: () => store }).get('key')
 

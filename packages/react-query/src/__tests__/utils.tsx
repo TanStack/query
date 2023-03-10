@@ -3,6 +3,7 @@ import { act, render } from '@testing-library/react'
 import type { QueryClientConfig } from '..'
 import { QueryClient, QueryClientProvider } from '..'
 import * as utils from '@tanstack/query-core'
+import { vi } from 'vitest'
 
 export function renderWithClient(
   client: QueryClient,
@@ -45,11 +46,11 @@ export function createQueryClient(config?: QueryClientConfig): QueryClient {
 }
 
 export function mockVisibilityState(value: DocumentVisibilityState) {
-  return jest.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
+  return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
 export function mockNavigatorOnLine(value: boolean) {
-  return jest.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
+  return vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
 }
 
 let queryKeyCount = 0

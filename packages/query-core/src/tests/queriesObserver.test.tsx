@@ -2,6 +2,7 @@ import { waitFor } from '@testing-library/react'
 import { sleep, queryKey, createQueryClient } from './utils'
 import type { QueryClient, QueryObserverResult } from '..'
 import { QueriesObserver } from '..'
+import { vi } from 'vitest'
 
 describe('queriesObserver', () => {
   let queryClient: QueryClient
@@ -18,8 +19,8 @@ describe('queriesObserver', () => {
   test('should return an array with all query results', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const queryFn1 = jest.fn().mockReturnValue(1)
-    const queryFn2 = jest.fn().mockReturnValue(2)
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
@@ -34,11 +35,11 @@ describe('queriesObserver', () => {
   })
 
   test('should still return value for undefined query key', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
+    const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
     const key1 = queryKey()
-    const queryFn1 = jest.fn().mockReturnValue(1)
-    const queryFn2 = jest.fn().mockReturnValue(2)
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: undefined, queryFn: queryFn2 },
@@ -61,8 +62,8 @@ describe('queriesObserver', () => {
   test('should update when a query updates', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const queryFn1 = jest.fn().mockReturnValue(1)
-    const queryFn2 = jest.fn().mockReturnValue(2)
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
@@ -106,8 +107,8 @@ describe('queriesObserver', () => {
   test('should update when a query is removed', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const queryFn1 = jest.fn().mockReturnValue(1)
-    const queryFn2 = jest.fn().mockReturnValue(2)
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
@@ -153,8 +154,8 @@ describe('queriesObserver', () => {
   test('should update when a query changed position', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const queryFn1 = jest.fn().mockReturnValue(1)
-    const queryFn2 = jest.fn().mockReturnValue(2)
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
@@ -201,8 +202,8 @@ describe('queriesObserver', () => {
   test('should not update when nothing has changed', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const queryFn1 = jest.fn().mockReturnValue(1)
-    const queryFn2 = jest.fn().mockReturnValue(2)
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
@@ -245,8 +246,8 @@ describe('queriesObserver', () => {
   test('should trigger all fetches when subscribed', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const queryFn1 = jest.fn().mockReturnValue(1)
-    const queryFn2 = jest.fn().mockReturnValue(2)
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
@@ -270,8 +271,8 @@ describe('queriesObserver', () => {
       },
     ])
 
-    const subscription1Handler = jest.fn()
-    const subscription2Handler = jest.fn()
+    const subscription1Handler = vi.fn()
+    const subscription2Handler = vi.fn()
 
     const unsubscribe1 = observer.subscribe(subscription1Handler)
     const unsubscribe2 = observer.subscribe(subscription2Handler)

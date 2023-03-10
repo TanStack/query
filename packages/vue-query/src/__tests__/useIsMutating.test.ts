@@ -3,8 +3,9 @@ import { onScopeDispose, reactive } from 'vue-demi'
 import { flushPromises, successMutator } from './test-utils'
 import { useMutation } from '../useMutation'
 import { useIsMutating } from '../useIsMutating'
+import { vi } from 'vitest'
 
-jest.mock('../useQueryClient')
+vi.mock('../useQueryClient')
 
 describe('useIsMutating', () => {
   test('should properly return isMutating state', async () => {

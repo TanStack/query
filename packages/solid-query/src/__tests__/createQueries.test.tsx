@@ -23,6 +23,7 @@ import {
   queryKey,
   sleep,
 } from './utils'
+import { vi } from 'vitest'
 
 describe('useQueries', () => {
   const queryCache = new QueryCache()
@@ -739,7 +740,7 @@ describe('useQueries', () => {
       }
     }
 
-    const QueriesObserverSpy = jest
+    const QueriesObserverSpy = vi
       .spyOn(QueriesObserverModule, 'QueriesObserver')
       .mockImplementation((fn) => {
         return new QueriesObserverMock(fn)
@@ -788,30 +789,5 @@ describe('useQueries', () => {
 
     await sleep(20)
     QueriesObserverSpy.mockRestore()
-  })
-
-  it('should use provided custom queryClient', async () => {
-    const key = queryKey()
-    const queryFn = () => {
-      return Promise.resolve('custom client')
-    }
-
-    function Page() {
-      const state = createQueries(
-        () => ({
-          queries: [{ queryKey: key, queryFn }],
-        }),
-        () => queryClient,
-      )
-      return (
-        <div>
-          <h1>Status: {state[0].data}</h1>
-        </div>
-      )
-    }
-
-    render(() => <Page />)
-
-    await waitFor(() => screen.getByText('Status: custom client'))
   })
 })

@@ -2,6 +2,7 @@ import type { QueryClientConfig } from '@tanstack/query-core'
 import { QueryClient } from '@tanstack/query-core'
 import type { ParentProps } from 'solid-js'
 import { createEffect, createSignal, onCleanup, Show } from 'solid-js'
+import { vi } from 'vitest'
 
 let queryKeyCount = 0
 export function queryKey(): Array<string> {
@@ -34,11 +35,11 @@ export function createQueryClient(config?: QueryClientConfig): QueryClient {
 }
 
 export function mockVisibilityState(value: DocumentVisibilityState) {
-  return jest.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
+  return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
 export function mockNavigatorOnLine(value: boolean) {
-  return jest.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
+  return vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
 }
 
 export function sleep(timeout: number): Promise<void> {

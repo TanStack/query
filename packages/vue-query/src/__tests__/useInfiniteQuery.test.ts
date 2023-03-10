@@ -1,7 +1,8 @@
 import { infiniteFetcher, flushPromises } from './test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
+import { vi } from 'vitest'
 
-jest.mock('../useQueryClient')
+vi.mock('../useQueryClient')
 
 describe('useQuery', () => {
   test('should properly execute infinite query', async () => {
