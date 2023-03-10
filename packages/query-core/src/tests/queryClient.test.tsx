@@ -817,7 +817,7 @@ describe('queryClient', () => {
     })
     test('should refetch if at least one observer is enabled', async () => {
       const key = queryKey()
-      const queryFn = vi.fn().mockReturnValue('data')
+      const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
       await queryClient.fetchQuery({ queryKey: key, queryFn })
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key,
@@ -1064,8 +1064,8 @@ describe('queryClient', () => {
     test('should not refetch active queries when "refetch" is "none"', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = vi.fn().mockReturnValue('data1')
-      const queryFn2 = vi.fn().mockReturnValue('data2')
+      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {

@@ -7,9 +7,6 @@ const ruleTester = new ESLintUtils.RuleTester({
   settings: {},
 })
 
-ESLintUtils.RuleTester.describe = describe
-ESLintUtils.RuleTester.it = it
-
 ruleTester.run('exhaustive-deps', rule, {
   valid: [
     {
