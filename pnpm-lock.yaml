@@ -1058,9 +1058,9 @@ importers:
       vite-plugin-solid: ^2.3.9
     dependencies:
       '@tanstack/query-core': link:../query-core
-      vite-plugin-solid: 2.5.0
     devDependencies:
       solid-jest: 0.2.0
+      vite-plugin-solid: 2.5.0
 
   packages/svelte-query:
     specifiers:
@@ -18115,7 +18115,7 @@ packages:
       '@babel/generator': 7.20.14
       '@babel/helper-module-imports': 7.18.6
       '@babel/types': 7.20.7
-    dev: false
+    dev: true
 
   /solid-refresh/0.4.1_solid-js@1.6.11:
     resolution: {integrity: sha512-v3tD/OXQcUyXLrWjPW1dXZyeWwP7/+GQNs8YTL09GBq+5FguA6IejJWUvJDrLIA4M0ho9/5zK2e9n+uy+4488g==}
@@ -19680,7 +19680,7 @@ packages:
       vitefu: 0.2.4
     transitivePeerDependencies:
       - supports-color
-    dev: false
+    dev: true
 
   /vite-plugin-solid/2.5.0_solid-js@1.6.11+vite@3.2.2:
     resolution: {integrity: sha512-VneGd3RyFJvwaiffsqgymeMaofn0IzQLPwDzafTV2f1agoWeeJlk5VrI5WqT9BTtLe69vNNbCJWqLhHr9fOdDw==}
@@ -19883,7 +19883,7 @@ packages:
     peerDependenciesMeta:
       vite:
         optional: true
-    dev: false
+    dev: true
 
   /vitefu/0.2.4_vite@3.2.2:
     resolution: {integrity: sha512-fanAXjSaf9xXtOOeno8wZXIhgia+CZury481LsDaV++lSvcU2R9Ch2bPh3PYFyoHW+w9LqAeYRISVQjUIew14g==}
