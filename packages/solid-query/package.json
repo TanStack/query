@@ -48,7 +48,6 @@
     "src"
   ],
   "devDependencies": {
-    "solid-jest": "^0.2.0",
     "vite-plugin-solid": "^2.3.9"
   },
   "dependencies": {

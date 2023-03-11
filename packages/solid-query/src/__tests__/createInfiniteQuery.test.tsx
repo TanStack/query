@@ -1398,7 +1398,7 @@ describe('useInfiniteQuery', () => {
           >
             <Match when={state.status === 'pending'}>Loading...</Match>
             <Match when={state.status === 'error'}>
-              <span>Error: {state.error!.message}</span>
+              <span>Error: {state.error?.message}</span>
             </Match>
           </Switch>
         </div>
@@ -1525,7 +1525,7 @@ describe('useInfiniteQuery', () => {
           >
             <Match when={state.status === 'pending'}>Loading...</Match>
             <Match when={state.status === 'error'}>
-              <span>Error: {state.error!.message}</span>
+              <span>Error: {state.error?.message}</span>
             </Match>
           </Switch>
         </div>
