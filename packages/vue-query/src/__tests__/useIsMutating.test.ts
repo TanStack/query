@@ -4,6 +4,7 @@ import { flushPromises, successMutator } from './test-utils'
 import { useMutation } from '../useMutation'
 import { useIsMutating } from '../useIsMutating'
 import { vi } from 'vitest'
+import type { MockedFunction } from 'vitest'
 
 vi.mock('../useQueryClient')
 
@@ -32,7 +33,7 @@ describe('useIsMutating', () => {
   })
 
   test('should stop listening to changes on onScopeDispose', async () => {
-    const onScopeDisposeMock = onScopeDispose as jest.MockedFunction<
+    const onScopeDisposeMock = onScopeDispose as MockedFunction<
       typeof onScopeDispose
     >
     onScopeDisposeMock.mockImplementation((fn) => fn())
