@@ -67,4 +67,39 @@ describe('InfiniteQueryObserver', () => {
     })
     expect(queryFn).toBeCalledWith(expect.objectContaining({ meta }))
   })
+
+  test('getNextPagParam and getPreviousPageParam should receive current pageParams', async () => {
+    const key = queryKey()
+    let single: string[] = []
+    let all: string[] = []
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: ({ pageParam }) => String(pageParam),
+      defaultPageParam: 1,
+      getNextPageParam: (_, __, lastPageParam, allPageParams) => {
+        single.push('next' + lastPageParam)
+        all.push('next' + allPageParams.join(','))
+        return lastPageParam + 1
+      },
+      getPreviousPageParam: (_, __, firstPageParam, allPageParams) => {
+        single.push('prev' + firstPageParam)
+        all.push('prev' + allPageParams.join(','))
+        return firstPageParam - 1
+      },
+    })
+
+    await observer.fetchNextPage()
+    await observer.fetchPreviousPage()
+
+    expect(single).toEqual(['next1', 'prev1', 'prev1', 'next1', 'prev0'])
+    expect(all).toEqual(['next1', 'prev1', 'prev1', 'next0,1', 'prev0,1'])
+
+    single = []
+    all = []
+
+    await observer.refetch()
+
+    expect(single).toEqual(['next0', 'next1', 'prev0'])
+    expect(all).toEqual(['next0', 'next0,1', 'prev0,1'])
+  })
 })

@@ -60,7 +60,6 @@ describe('pageParam', () => {
     })
   })
 })
-
 describe('select', () => {
   it('should still return paginated data if no select result', () => {
     doNotExecute(() => {
@@ -74,7 +73,7 @@ describe('select', () => {
       })
 
       const result: Expect<
-        Equal<InfiniteData<number> | undefined, (typeof infiniteQuery)['data']>
+        Equal<InfiniteData<number> | undefined, typeof infiniteQuery['data']>
       > = true
       return result
     })
@@ -96,7 +95,7 @@ describe('select', () => {
       })
 
       const result: Expect<
-        Equal<true | undefined, (typeof infiniteQuery)['data']>
+        Equal<true | undefined, typeof infiniteQuery['data']>
       > = true
       return result
     })
@@ -123,7 +122,88 @@ describe('select', () => {
       })
 
       const result: Expect<
-        Equal<InfiniteData<string> | undefined, (typeof infiniteQuery)['data']>
+        Equal<InfiniteData<string> | undefined, typeof infiniteQuery['data']>
+      > = true
+      return result
+    })
+  })
+})
+describe('getNextPageParam / getPreviousPageParam', () => {
+  it('should get typed params', () => {
+    doNotExecute(() => {
+      const infiniteQuery = useInfiniteQuery({
+        queryKey: ['key'],
+        queryFn: ({ pageParam }) => {
+          return String(pageParam)
+        },
+        defaultPageParam: 1,
+        getNextPageParam: (
+          lastPage,
+          allPages,
+          lastPageParam,
+          allPageParams,
+        ) => {
+          doNotExecute(() => {
+            const lastPageResult: Expect<Equal<string, typeof lastPage>> = true
+            return lastPageResult
+          })
+          doNotExecute(() => {
+            const allPagesResult: Expect<
+              Equal<Array<string>, typeof allPages>
+            > = true
+            return allPagesResult
+          })
+          doNotExecute(() => {
+            const lastPageParamResult: Expect<
+              Equal<number, typeof lastPageParam>
+            > = true
+            return lastPageParamResult
+          })
+          doNotExecute(() => {
+            const allPageParamsResult: Expect<
+              Equal<Array<number>, typeof allPageParams>
+            > = true
+            return allPageParamsResult
+          })
+
+          return undefined
+        },
+        getPreviousPageParam: (
+          firstPage,
+          allPages,
+          firstPageParam,
+          allPageParams,
+        ) => {
+          doNotExecute(() => {
+            const firstPageResult: Expect<Equal<string, typeof firstPage>> =
+              true
+            return firstPageResult
+          })
+          doNotExecute(() => {
+            const allPagesResult: Expect<
+              Equal<Array<string>, typeof allPages>
+            > = true
+            return allPagesResult
+          })
+          doNotExecute(() => {
+            const firstPageParamResult: Expect<
+              Equal<number, typeof firstPageParam>
+            > = true
+            return firstPageParamResult
+          })
+          doNotExecute(() => {
+            const allPageParamsResult: Expect<
+              Equal<Array<number>, typeof allPageParams>
+            > = true
+            return allPageParamsResult
+          })
+
+          return undefined
+        },
+      })
+
+      const result: Expect<
+        Equal<InfiniteData<string> | undefined, typeof infiniteQuery['data']>
       > = true
       return result
     })
