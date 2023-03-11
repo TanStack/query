@@ -1,14 +1,15 @@
 import { waitFor } from '@testing-library/react'
 import { queryKey, sleep, executeMutation, createQueryClient } from './utils'
 import { MutationCache, MutationObserver } from '..'
+import { vi } from 'vitest'
 
 describe('mutationCache', () => {
   describe('MutationCacheConfig error callbacks', () => {
     test('should call onError and onSettled when a mutation errors', async () => {
       const key = queryKey()
-      const onError = jest.fn()
-      const onSuccess = jest.fn()
-      const onSettled = jest.fn()
+      const onError = vi.fn()
+      const onSuccess = vi.fn()
+      const onSettled = vi.fn()
       const testCache = new MutationCache({ onError, onSuccess, onSettled })
       const testClient = createQueryClient({ mutationCache: testCache })
 
@@ -86,9 +87,9 @@ describe('mutationCache', () => {
   describe('MutationCacheConfig success callbacks', () => {
     test('should call onSuccess and onSettled when a mutation is successful', async () => {
       const key = queryKey()
-      const onError = jest.fn()
-      const onSuccess = jest.fn()
-      const onSettled = jest.fn()
+      const onError = vi.fn()
+      const onSuccess = vi.fn()
+      const onSettled = vi.fn()
       const testCache = new MutationCache({ onError, onSuccess, onSettled })
       const testClient = createQueryClient({ mutationCache: testCache })
 
@@ -163,7 +164,7 @@ describe('mutationCache', () => {
   describe('MutationCacheConfig.onMutate', () => {
     test('should be called before a mutation executes', async () => {
       const key = queryKey()
-      const onMutate = jest.fn()
+      const onMutate = vi.fn()
       const testCache = new MutationCache({ onMutate })
       const testClient = createQueryClient({ mutationCache: testCache })
 
@@ -286,7 +287,7 @@ describe('mutationCache', () => {
     test('should remove unused mutations after gcTime has elapsed', async () => {
       const testCache = new MutationCache()
       const testClient = createQueryClient({ mutationCache: testCache })
-      const onSuccess = jest.fn()
+      const onSuccess = vi.fn()
       await executeMutation(
         testClient,
         {
@@ -329,7 +330,7 @@ describe('mutationCache', () => {
 
     test('should be garbage collected later when unsubscribed and mutation is pending', async () => {
       const queryClient = createQueryClient()
-      const onSuccess = jest.fn()
+      const onSuccess = vi.fn()
       const observer = new MutationObserver(queryClient, {
         gcTime: 10,
         mutationFn: async () => {
@@ -355,7 +356,7 @@ describe('mutationCache', () => {
 
     test('should call callbacks even with gcTime 0 and mutation still pending', async () => {
       const queryClient = createQueryClient()
-      const onSuccess = jest.fn()
+      const onSuccess = vi.fn()
       const observer = new MutationObserver(queryClient, {
         gcTime: 0,
         mutationFn: async () => {

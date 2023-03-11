@@ -1,5 +1,6 @@
 import { OnlineManager } from '../onlineManager'
 import { setIsServer, sleep } from './utils'
+import { vi } from 'vitest'
 
 describe('onlineManager', () => {
   let onlineManager: OnlineManager
@@ -8,7 +9,7 @@ describe('onlineManager', () => {
   })
 
   test('isOnline should return true if navigator is undefined', () => {
-    const navigatorSpy = jest.spyOn(globalThis, 'navigator', 'get')
+    const navigatorSpy = vi.spyOn(globalThis, 'navigator', 'get')
 
     // Force navigator to be undefined
     //@ts-expect-error
@@ -19,7 +20,7 @@ describe('onlineManager', () => {
   })
 
   test('isOnline should return true if navigator.onLine is true', () => {
-    const navigatorSpy = jest.spyOn(navigator, 'onLine', 'get')
+    const navigatorSpy = vi.spyOn(navigator, 'onLine', 'get')
     navigatorSpy.mockImplementation(() => true)
 
     expect(onlineManager.isOnline()).toBeTruthy()
@@ -46,8 +47,8 @@ describe('onlineManager', () => {
   })
 
   test('setEventListener should call previous remove handler when replacing an event listener', () => {
-    const remove1Spy = jest.fn()
-    const remove2Spy = jest.fn()
+    const remove1Spy = vi.fn()
+    const remove2Spy = vi.fn()
 
     onlineManager.setEventListener(() => remove1Spy)
     onlineManager.setEventListener(() => remove2Spy)
@@ -59,7 +60,7 @@ describe('onlineManager', () => {
   test('cleanup (removeEventListener) should not be called if window is not defined', async () => {
     const restoreIsServer = setIsServer(true)
 
-    const removeEventListenerSpy = jest.spyOn(globalThis, 'removeEventListener')
+    const removeEventListenerSpy = vi.spyOn(globalThis, 'removeEventListener')
 
     const unsubscribe = onlineManager.subscribe(() => undefined)
 
@@ -76,7 +77,7 @@ describe('onlineManager', () => {
     // @ts-expect-error
     globalThis.window.addEventListener = undefined
 
-    const removeEventListenerSpy = jest.spyOn(globalThis, 'removeEventListener')
+    const removeEventListenerSpy = vi.spyOn(globalThis, 'removeEventListener')
 
     const unsubscribe = onlineManager.subscribe(() => undefined)
 
@@ -88,12 +89,9 @@ describe('onlineManager', () => {
   })
 
   test('it should replace default window listener when a new event listener is set', async () => {
-    const addEventListenerSpy = jest.spyOn(
-      globalThis.window,
-      'addEventListener',
-    )
+    const addEventListenerSpy = vi.spyOn(globalThis.window, 'addEventListener')
 
-    const removeEventListenerSpy = jest.spyOn(
+    const removeEventListenerSpy = vi.spyOn(
       globalThis.window,
       'removeEventListener',
     )
@@ -116,12 +114,9 @@ describe('onlineManager', () => {
   })
 
   test('should call removeEventListener when last listener unsubscribes', () => {
-    const addEventListenerSpy = jest.spyOn(
-      globalThis.window,
-      'addEventListener',
-    )
+    const addEventListenerSpy = vi.spyOn(globalThis.window, 'addEventListener')
 
-    const removeEventListenerSpy = jest.spyOn(
+    const removeEventListenerSpy = vi.spyOn(
       globalThis.window,
       'removeEventListener',
     )
@@ -137,7 +132,7 @@ describe('onlineManager', () => {
   })
 
   test('should keep setup function even if last listener unsubscribes', () => {
-    const setupSpy = jest.fn().mockImplementation(() => () => undefined)
+    const setupSpy = vi.fn().mockImplementation(() => () => undefined)
 
     onlineManager.setEventListener(setupSpy)
 

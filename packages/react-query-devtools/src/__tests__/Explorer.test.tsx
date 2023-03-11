@@ -3,6 +3,7 @@ import * as React from 'react'
 
 import { chunkArray, CopyButton, DefaultRenderer } from '../Explorer'
 import { displayValue } from '../utils'
+import { vi } from 'vitest'
 
 describe('Explorer', () => {
   describe('chunkArray', () => {
@@ -30,7 +31,7 @@ describe('Explorer', () => {
 
   describe('DefaultRenderer', () => {
     it('when the entry label is clicked, toggle expanded', async () => {
-      const toggleExpanded = jest.fn()
+      const toggleExpanded = vi.fn()
 
       render(
         <DefaultRenderer
@@ -90,7 +91,7 @@ describe('Explorer', () => {
     })
 
     it('when the copy button is clicked but there is an error, show error state', async () => {
-      const consoleMock = jest.spyOn(console, 'error')
+      const consoleMock = vi.spyOn(console, 'error')
       consoleMock.mockImplementation(() => undefined)
 
       // Mock clipboard with error state

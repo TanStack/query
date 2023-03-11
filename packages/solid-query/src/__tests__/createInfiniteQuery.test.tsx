@@ -23,6 +23,8 @@ import {
   keepPreviousData,
 } from '..'
 import { Blink, queryKey, setActTimeout } from './utils'
+import { vi } from 'vitest'
+import type { Mock } from 'vitest'
 
 interface Result {
   items: number[]
@@ -712,14 +714,14 @@ describe('useInfiniteQuery', () => {
   it('should silently cancel an ongoing fetchNextPage request when another fetchNextPage is invoked', async () => {
     const key = queryKey()
     const start = 10
-    const onAborts: jest.Mock<any, any>[] = []
-    const abortListeners: jest.Mock<any, any>[] = []
-    const fetchPage = jest.fn<
-      Promise<number>,
-      [QueryFunctionContext<typeof key, number>]
+    const onAborts: Mock<any, any>[] = []
+    const abortListeners: Mock<any, any>[] = []
+    const fetchPage = vi.fn<
+      [QueryFunctionContext<typeof key, number>],
+      Promise<number>
     >(async ({ pageParam, signal }) => {
-      const onAbort = jest.fn()
-      const abortListener = jest.fn()
+      const onAbort = vi.fn()
+      const abortListener = vi.fn()
       onAborts.push(onAbort)
       abortListeners.push(abortListener)
       signal.onabort = onAbort
@@ -794,14 +796,14 @@ describe('useInfiniteQuery', () => {
   it('should not cancel an ongoing fetchNextPage request when another fetchNextPage is invoked if `cancelRefetch: false` is used ', async () => {
     const key = queryKey()
     const start = 10
-    const onAborts: jest.Mock<any, any>[] = []
-    const abortListeners: jest.Mock<any, any>[] = []
-    const fetchPage = jest.fn<
-      Promise<number>,
-      [QueryFunctionContext<typeof key, number>]
+    const onAborts: Mock<any, any>[] = []
+    const abortListeners: Mock<any, any>[] = []
+    const fetchPage = vi.fn<
+      [QueryFunctionContext<typeof key, number>],
+      Promise<number>
     >(async ({ pageParam, signal }) => {
-      const onAbort = jest.fn()
-      const abortListener = jest.fn()
+      const onAbort = vi.fn()
+      const abortListener = vi.fn()
       onAborts.push(onAbort)
       abortListeners.push(abortListener)
       signal.onabort = onAbort
@@ -1587,11 +1589,11 @@ describe('useInfiniteQuery', () => {
 
   it('should cancel the query function when there are no more subscriptions', async () => {
     const key = queryKey()
-    let cancelFn: jest.Mock = jest.fn()
+    let cancelFn: Mock = vi.fn()
 
     const queryFn = ({ signal }: { signal?: AbortSignal }) => {
       const promise = new Promise<string>((resolve, reject) => {
-        cancelFn = jest.fn(() => reject('Cancelled'))
+        cancelFn = vi.fn(() => reject('Cancelled'))
         signal?.addEventListener('abort', cancelFn)
         sleep(20).then(() => resolve('OK'))
       })

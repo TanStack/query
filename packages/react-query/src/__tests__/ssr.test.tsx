@@ -1,20 +1,17 @@
-/**
- * @jest-environment node
- */
-
 import * as React from 'react'
 // @ts-ignore
 import { renderToString } from 'react-dom/server'
 
 import { sleep, queryKey, createQueryClient } from './utils'
 import { useQuery, QueryClientProvider, QueryCache, useInfiniteQuery } from '..'
+import { vi } from 'vitest'
 
 describe('Server Side Rendering', () => {
   it('should not trigger fetch', () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
     const key = queryKey()
-    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
+    const queryFn = vi.fn().mockReturnValue('data')
 
     function Page() {
       const query = useQuery({ queryKey: key, queryFn })
@@ -57,7 +54,7 @@ describe('Server Side Rendering', () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
     const key = queryKey()
-    const queryFn = jest.fn(() => {
+    const queryFn = vi.fn(() => {
       sleep(10)
       return 'data'
     })
@@ -125,7 +122,7 @@ describe('Server Side Rendering', () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
     const key = queryKey()
-    const queryFn = jest.fn(async () => {
+    const queryFn = vi.fn(async () => {
       await sleep(5)
       return 'page 1'
     })

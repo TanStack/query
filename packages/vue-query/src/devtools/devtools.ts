@@ -169,7 +169,7 @@ export function setupDevtools(app: any, queryClient: QueryClient) {
             ' Query Details': [
               {
                 key: 'Query key',
-                value: query.queryHash as string,
+                value: query.queryHash,
               },
               {
                 key: 'Query status',

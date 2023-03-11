@@ -4,6 +4,7 @@ import { queryKey } from './utils'
 import { QueryCache } from '@tanstack/query-core'
 import { createQuery, QueryClientProvider, useQueryClient } from '..'
 import { createQueryClient, sleep } from './utils'
+import { vi } from 'vitest'
 
 describe('QueryClientProvider', () => {
   it('sets a specific cache for all queries to use', async () => {
@@ -145,7 +146,7 @@ describe('QueryClientProvider', () => {
 
   describe('useQueryClient', () => {
     it('should throw an error if no query client has been set', () => {
-      const consoleMock = jest
+      const consoleMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 

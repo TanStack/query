@@ -6,6 +6,7 @@ import { createEffect, createRenderEffect, createSignal, Show } from 'solid-js'
 import { render } from 'solid-testing-library'
 import * as MutationCacheModule from '../../../query-core/src/mutationCache'
 import { setActTimeout } from './utils'
+import { vi } from 'vitest'
 
 describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {
@@ -68,9 +69,7 @@ describe('useIsMutating', () => {
     const queryClient = createQueryClient()
 
     function IsMutating() {
-      const isMutating = useIsMutating(() => ({
-        filters: { mutationKey: ['mutation1'] },
-      }))
+      const isMutating = useIsMutating(() => ({ mutationKey: ['mutation1'] }))
       createRenderEffect(() => {
         isMutatings.push(isMutating())
       })
@@ -116,10 +115,8 @@ describe('useIsMutating', () => {
 
     function IsMutating() {
       const isMutating = useIsMutating(() => ({
-        filters: {
-          predicate: (mutation) =>
-            mutation.options.mutationKey?.[0] === 'mutation1',
-        },
+        predicate: (mutation) =>
+          mutation.options.mutationKey?.[0] === 'mutation1',
       }))
       createRenderEffect(() => {
         isMutatings.push(isMutating())
@@ -161,6 +158,33 @@ describe('useIsMutating', () => {
     await waitFor(() => expect(isMutatings).toEqual([0, 1, 0]))
   })
 
+  it('should use provided custom queryClient', async () => {
+    const queryClient = createQueryClient()
+    function Page() {
+      const isMutating = useIsMutating(undefined, () => queryClient)
+      const { mutate } = createMutation(
+        () => ({
+          mutationKey: ['mutation1'],
+          mutationFn: async () => {
+            await sleep(10)
+            return 'data'
+          },
+        }),
+        () => queryClient,
+      )
+      createEffect(() => {
+        mutate()
+      })
+      return (
+        <div>
+          <div>mutating: {isMutating}</div>
+        </div>
+      )
+    }
+    render(() => <Page></Page>)
+    await waitFor(() => screen.findByText('mutating: 1'))
+  })
+
   it('should not change state if unmounted', async () => {
     // We have to mock the MutationCache to not unsubscribe
     // the listener when the component is unmounted
@@ -171,7 +195,7 @@ describe('useIsMutating', () => {
       }
     }
 
-    const MutationCacheSpy = jest
+    const MutationCacheSpy = vi
       .spyOn(MutationCacheModule, 'MutationCache')
       .mockImplementation((fn) => {
         return new MutationCacheMock(fn)
@@ -220,37 +244,5 @@ describe('useIsMutating', () => {
 
     await sleep(20)
     MutationCacheSpy.mockRestore()
-  })
-
-  it('should use provided custom queryClient', async () => {
-    const queryClient = createQueryClient()
-
-    function Page() {
-      const isMutating = useIsMutating(() => ({ queryClient }))
-      const { mutate } = createMutation(
-        () => ({
-          mutationKey: ['mutation1'],
-          mutationFn: async () => {
-            await sleep(10)
-            return 'data'
-          },
-        }),
-        () => queryClient,
-      )
-
-      createEffect(() => {
-        mutate()
-      })
-
-      return (
-        <div>
-          <div>mutating: {isMutating}</div>
-        </div>
-      )
-    }
-
-    render(() => <Page></Page>)
-
-    await waitFor(() => screen.findByText('mutating: 1'))
   })
 })

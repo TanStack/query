@@ -4,6 +4,7 @@ import ReactDOMTestUtils from 'react-dom/test-utils'
 import ReactDOMServer from 'react-dom/server'
 // eslint-disable-next-line import/no-unresolved -- types only for module augmentation
 import type {} from 'react-dom/next'
+import { vi } from 'vitest'
 
 import {
   useQuery,
@@ -46,12 +47,12 @@ describe('Server side rendering with de/rehydration', () => {
     globalThis.IS_REACT_ACT_ENVIRONMENT = previousIsReactActEnvironment
   })
   it('should not mismatch on success', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
+    const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 
-    const fetchDataSuccess = jest.fn<
-      ReturnType<typeof fetchData>,
-      Parameters<typeof fetchData>
+    const fetchDataSuccess = vi.fn<
+      Parameters<typeof fetchData>,
+      ReturnType<typeof fetchData>
     >(fetchData)
 
     // -- Shared part --
@@ -127,10 +128,10 @@ describe('Server side rendering with de/rehydration', () => {
   })
 
   it('should not mismatch on error', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
+    const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 
-    const fetchDataError = jest.fn(() => {
+    const fetchDataError = vi.fn(() => {
       throw new Error('fetchDataError')
     })
 
@@ -207,12 +208,12 @@ describe('Server side rendering with de/rehydration', () => {
   })
 
   it('should not mismatch on queries that were not prefetched', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
+    const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 
-    const fetchDataSuccess = jest.fn<
-      ReturnType<typeof fetchData>,
-      Parameters<typeof fetchData>
+    const fetchDataSuccess = vi.fn<
+      Parameters<typeof fetchData>,
+      ReturnType<typeof fetchData>
     >(fetchData)
 
     // -- Shared part --
