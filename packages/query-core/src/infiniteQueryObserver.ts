@@ -28,6 +28,7 @@ export class InfiniteQueryObserver<
   TData = InfiniteData<TQueryFnData>,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 > extends QueryObserver<
   TQueryFnData,
   TError,
@@ -56,7 +57,8 @@ export class InfiniteQueryObserver<
       TError,
       TData,
       TQueryData,
-      TQueryKey
+      TQueryKey,
+      TPageParam
     >,
   ) {
     super(client, options)
@@ -74,7 +76,8 @@ export class InfiniteQueryObserver<
       TError,
       TData,
       TQueryData,
-      TQueryKey
+      TQueryKey,
+      TPageParam
     >,
     notifyOptions?: NotifyOptions,
   ): void {
@@ -93,7 +96,8 @@ export class InfiniteQueryObserver<
       TError,
       TData,
       TQueryData,
-      TQueryKey
+      TQueryKey,
+      TPageParam
     >,
   ): InfiniteQueryObserverResult<TData, TError> {
     options.behavior = infiniteQueryBehavior()
@@ -132,7 +136,8 @@ export class InfiniteQueryObserver<
       TError,
       TData,
       TQueryData,
-      TQueryKey
+      TQueryKey,
+      TPageParam
     >,
   ): InfiniteQueryObserverResult<TData, TError> {
     const { state } = query

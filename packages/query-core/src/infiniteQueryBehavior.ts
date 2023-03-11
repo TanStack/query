@@ -148,7 +148,7 @@ function getPreviousPageParam(
  * Checks if there is a next page.
  */
 export function hasNextPage(
-  options: InfiniteQueryPageParamsOptions<any>,
+  options: InfiniteQueryPageParamsOptions<any, any>,
   data?: InfiniteData<unknown>,
 ): boolean {
   if (!data) return false
@@ -159,7 +159,7 @@ export function hasNextPage(
  * Checks if there is a previous page.
  */
 export function hasPreviousPage(
-  options: InfiniteQueryPageParamsOptions<any>,
+  options: InfiniteQueryPageParamsOptions<any, any>,
   data?: InfiniteData<unknown>,
 ): boolean {
   if (!data || !options.getPreviousPageParam) return false
