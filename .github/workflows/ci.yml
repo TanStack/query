@@ -13,7 +13,6 @@ on:
       - 'main'
       - 'alpha'
       - 'beta'
-
 jobs:
   test-and-publish:
     if: github.repository == 'TanStack/query' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/beta')
