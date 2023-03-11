@@ -102,4 +102,29 @@ describe('InfiniteQueryObserver', () => {
     expect(single).toEqual(['next0', 'next1', 'prev0'])
     expect(all).toEqual(['next0', 'next0,1', 'prev0,1'])
   })
+
+  test('should stop refetching if undefined is returned from getNextPageParam', async () => {
+    const key = queryKey()
+    let next: number | undefined = 2
+    const queryFn = vi.fn<any, any>(({ pageParam }) => String(pageParam))
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      defaultPageParam: 1,
+      getNextPageParam: () => next,
+    })
+
+    await observer.fetchNextPage()
+    await observer.fetchNextPage()
+
+    expect(observer.getCurrentResult().data?.pages).toEqual(['1', '2'])
+    expect(queryFn).toBeCalledTimes(2)
+
+    next = undefined
+
+    await observer.refetch()
+
+    expect(observer.getCurrentResult().data?.pages).toEqual(['1'])
+    expect(queryFn).toBeCalledTimes(3)
+  })
 })
