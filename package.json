@@ -91,7 +91,8 @@
     "ts-jest": "^27.1.1",
     "ts-node": "^10.7.0",
     "typescript": "^4.7.4",
-    "vue": "^3.2.33"
+    "vue": "^3.2.33",
+    "nx": "15.8.6"
   },
   "bundlewatch": {
     "files": [
