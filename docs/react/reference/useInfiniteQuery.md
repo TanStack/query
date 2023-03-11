@@ -17,8 +17,10 @@ const {
   queryFn: ({ pageParam }) => fetchPage(pageParam),
   defaultPageParam: 1,
   ...options,
-  getNextPageParam: (lastPage, allPages) => lastPage.nextCursor,
-  getPreviousPageParam: (firstPage, allPages) => firstPage.prevCursor,
+  getNextPageParam: (lastPage, allPages, lastPageParam, allPageParams) =>
+    lastPage.nextCursor,
+  getPreviousPageParam: (firstPage, allPages, firstPageParam, allPageParams) =>
+    firstPage.prevCursor,
 })
 ```
 
@@ -34,13 +36,13 @@ The options for `useInfiniteQuery` are identical to the [`useQuery` hook](../ref
 - `defaultPageParam: TPageParam`
   - **Required**
   - The default page param to use when fetching the first page.
-- `getNextPageParam: (lastPage, allPages) => TPageParam | undefined`
+- `getNextPageParam: (lastPage, allPages, lastPageParam, allPageParams) => TPageParam | undefined`
   - **Required**
-  - When new data is received for this query, this function receives both the last page of the infinite list of data and the full array of all pages.
+  - When new data is received for this query, this function receives both the last page of the infinite list of data and the full array of all pages, as well as pageParam information.
   - It should return a **single variable** that will be passed as the last optional parameter to your query function.
   - Return `undefined` to indicate there is no next page available.
-- `getPreviousPageParam: (firstPage, allPages) => TPageParam | undefined`
-  - When new data is received for this query, this function receives both the first page of the infinite list of data and the full array of all pages.
+- `getPreviousPageParam: (firstPage, allPages, firstPageParam, allPageParams) => TPageParam | undefined`
+  - When new data is received for this query, this function receives both the first page of the infinite list of data and the full array of all pages, as well as pageParam information.
   - It should return a **single variable** that will be passed as the last optional parameter to your query function.
   - Return `undefined` to indicate there is no previous page available.
 - `maxPages: number | undefined`
@@ -64,13 +66,12 @@ The returned properties for `useInfiniteQuery` are identical to the [`useQuery` 
   - Will be `true` while fetching the previous page with `fetchPreviousPage`.
 - `fetchNextPage: (options?: FetchNextPageOptions) => Promise<UseInfiniteQueryResult>`
   - This function allows you to fetch the next "page" of results.
-  - `options.pageParam: unknown` allows you to manually specify a page param instead of using `getNextPageParam`.
+`getNextPageParam`.
   - `options.cancelRefetch: boolean` if set to `true`, calling `fetchNextPage` repeatedly will invoke `fetchPage` every time, whether the previous
   invocation has resolved or not. Also, the result from previous invocations will be ignored. If set to `false`, calling `fetchNextPage`
   repeatedly won't have any effect until the first invocation has resolved. Default is `true`.
 - `fetchPreviousPage: (options?: FetchPreviousPageOptions) => Promise<UseInfiniteQueryResult>`
   - This function allows you to fetch the previous "page" of results.
-  - `options.pageParam: unknown` allows you to manually specify a page param instead of using `getPreviousPageParam`.
   - `options.cancelRefetch: boolean` same as for `fetchNextPage`.
 - `hasNextPage: boolean`
   - This will be `true` if there is a next page to be fetched (known via the `getNextPageParam` option).

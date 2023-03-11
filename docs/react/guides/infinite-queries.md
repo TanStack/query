@@ -10,13 +10,14 @@ When using `useInfiniteQuery`, you'll notice a few things are different:
 - `data` is now an object containing infinite query data:
 - `data.pages` array containing the fetched pages
 - `data.pageParams` array containing the page params used to fetch the pages
-- The `fetchNextPage` and `fetchPreviousPage` functions are now available
-- The `getNextPageParam` and `getPreviousPageParam` options are available for both determining if there is more data to load and the information to fetch it. This information is supplied as an additional parameter in the query function (which can optionally be overridden when calling the `fetchNextPage` or `fetchPreviousPage` functions)
+- The `fetchNextPage` and `fetchPreviousPage` functions are now available (`fetchNextPage` is required)
+- The `defaultPageParam` option is now available (and required) to specify the initial page param
+- The `getNextPageParam` and `getPreviousPageParam` options are available for both determining if there is more data to load and the information to fetch it. This information is supplied as an additional parameter in the query function
 - A `hasNextPage` boolean is now available and is `true` if `getNextPageParam` returns a value other than `undefined`
 - A `hasPreviousPage` boolean is now available and is `true` if `getPreviousPageParam` returns a value other than `undefined`
 - The `isFetchingNextPage` and `isFetchingPreviousPage` booleans are now available to distinguish between a background refresh state and a loading more state
 
-> Note: When using options like `initialData` or `select` in your query, make sure that when you restructure your data that it still includes `data.pages` and `data.pageParams` properties, otherwise your changes will be overwritten by the query in its return!
+> Note: Options `initialData` or `placeholderData` need to conform to the same structure of an object with `data.pages` and `data.pageParams` properties.
 
 ## Example
 
@@ -39,15 +40,13 @@ With this information, we can create a "Load More" UI by:
 - Returning the information for the next query in `getNextPageParam`
 - Calling `fetchNextPage` function
 
-> Note: It's very important you do not call `fetchNextPage` with arguments unless you want them to override the `pageParam` data returned from the `getNextPageParam` function. e.g. Do not do this: `<button onClick={fetchNextPage} />` as this would send the onClick event to the `fetchNextPage` function.
-
 [//]: # 'Example'
 
 ```tsx
 import { useInfiniteQuery } from '@tanstack/react-query'
 
 function Projects() {
-  const fetchProjects = async ({ pageParam = 0 }) => {
+  const fetchProjects = async ({ pageParam }) => {
     const res = await fetch('/api/projects?cursor=' + pageParam)
     return res.json()
   }
@@ -63,6 +62,7 @@ function Projects() {
   } = useInfiniteQuery({
     queryKey: ['projects'],
     queryFn: fetchProjects,
+    defaultPageParam: 0,
     getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   })
 
@@ -113,6 +113,7 @@ Bi-directional lists can be implemented by using the `getPreviousPageParam`, `fe
 useInfiniteQuery({
   queryKey: ['projects'],
   queryFn: fetchProjects,
+  defaultPageParam: 0,
   getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
 })
@@ -183,8 +184,7 @@ In some use cases you may want to limit the number of pages stored in the query 
 - when the user can load a large number of pages (memory usage)
 - when you have to refetch an infinite query that contains dozens of pages (network usage: all the pages are sequentially fetched)
 
-The solution is to use an "Eternal Query": a scalable infinite query.
-This is made possible by using the `maxPages` option in conjunction with `getNextPageParam` and `getPreviousPageParam` to allow fetching pages when needed in both directions.
+The solution is to use a "Limited Infinite Query". This is made possible by using the `maxPages` option in conjunction with `getNextPageParam` and `getPreviousPageParam` to allow fetching pages when needed in both directions.
 
 In the following example only 3 pages are kept in the query data pages array. If a refetch is needed, only 3 pages will be refetched sequentially.
 
@@ -194,8 +194,37 @@ In the following example only 3 pages are kept in the query data pages array. If
 useInfiniteQuery({
   queryKey: ['projects'],
   queryFn: fetchProjects,
+  defaultPageParam: 0,
   getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
   maxPages: 3,
 })
 ```
+
+## What if my API doesn't return a cursor?
+
+If your API doesn't return a cursor, you can use the `pageParam` as a cursor. Because  `getNextPageParam` and `getPreviousPageParam` also get the `pageParam`of the current page, you can use it to calculate the next / previous page param.
+
+[//]: # 'Example8'
+
+```tsx
+return useInfiniteQuery({
+  queryKey: ['projects'],
+  queryFn: fetchProjects,
+  defaultPageParam: 0,
+  getNextPageParam: (lastPage, allPages, lastPageParam) => {
+    if (lastPage.length === 0) {
+        return undefined
+    }
+    return lastPageParam + 1
+  },
+  getPreviousPageParam: (firstPage, allPages, firstPageParam) => {
+    if (firstPageParam <= 1) {
+        return undefined
+    }
+    return firstPageParam - 1
+  },
+})
+```
+
+[//]: # 'Example8'
