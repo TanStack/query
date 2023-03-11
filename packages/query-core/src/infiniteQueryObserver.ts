@@ -28,6 +28,7 @@ export class InfiniteQueryObserver<
   TData = InfiniteData<TQueryFnData>,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 > extends QueryObserver<
   TQueryFnData,
   TError,
@@ -56,7 +57,8 @@ export class InfiniteQueryObserver<
       TError,
       TData,
       TQueryData,
-      TQueryKey
+      TQueryKey,
+      TPageParam
     >,
   ) {
     super(client, options)
@@ -74,7 +76,8 @@ export class InfiniteQueryObserver<
       TError,
       TData,
       TQueryData,
-      TQueryKey
+      TQueryKey,
+      TPageParam
     >,
     notifyOptions?: NotifyOptions,
   ): void {
@@ -93,7 +96,8 @@ export class InfiniteQueryObserver<
       TError,
       TData,
       TQueryData,
-      TQueryKey
+      TQueryKey,
+      TPageParam
     >,
   ): InfiniteQueryObserverResult<TData, TError> {
     options.behavior = infiniteQueryBehavior()
@@ -104,7 +108,7 @@ export class InfiniteQueryObserver<
   }
 
   fetchNextPage(
-    options: FetchNextPageOptions = {},
+    options?: FetchNextPageOptions,
   ): Promise<InfiniteQueryObserverResult<TData, TError>> {
     return this.fetch({
       ...options,
@@ -114,9 +118,9 @@ export class InfiniteQueryObserver<
     })
   }
 
-  fetchPreviousPage({ ...options }: FetchPreviousPageOptions = {}): Promise<
-    InfiniteQueryObserverResult<TData, TError>
-  > {
+  fetchPreviousPage(
+    options?: FetchPreviousPageOptions,
+  ): Promise<InfiniteQueryObserverResult<TData, TError>> {
     return this.fetch({
       ...options,
       meta: {
@@ -132,7 +136,8 @@ export class InfiniteQueryObserver<
       TError,
       TData,
       TQueryData,
-      TQueryKey
+      TQueryKey,
+      TPageParam
     >,
   ): InfiniteQueryObserverResult<TData, TError> {
     const { state } = query
@@ -150,8 +155,8 @@ export class InfiniteQueryObserver<
       ...result,
       fetchNextPage: this.fetchNextPage,
       fetchPreviousPage: this.fetchPreviousPage,
-      hasNextPage: hasNextPage(options, state.data?.pages),
-      hasPreviousPage: hasPreviousPage(options, state.data?.pages),
+      hasNextPage: hasNextPage(options, state.data),
+      hasPreviousPage: hasPreviousPage(options, state.data),
       isFetchingNextPage,
       isFetchingPreviousPage,
       isRefetching:

@@ -62,11 +62,15 @@ export type QueryKeyHashFunction<TQueryKey extends QueryKey> = (
 export type GetPreviousPageParamFunction<TPageParam, TQueryFnData = unknown> = (
   firstPage: TQueryFnData,
   allPages: TQueryFnData[],
+  firstPageParam: TPageParam,
+  allPageParams: TPageParam[],
 ) => TPageParam | undefined
 
 export type GetNextPageParamFunction<TPageParam, TQueryFnData = unknown> = (
   lastPage: TQueryFnData,
   allPages: TQueryFnData[],
+  lastPageParam: TPageParam,
+  allPageParams: TPageParam[],
 ) => TPageParam | undefined
 
 export interface InfiniteData<TData> {
@@ -329,13 +333,15 @@ export type DefaultedInfiniteQueryObserverOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 > = WithRequired<
   InfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryData,
-    TQueryKey
+    TQueryKey,
+    TPageParam
   >,
   'throwErrors' | 'refetchOnReconnect'
 >
