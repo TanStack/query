@@ -10,17 +10,17 @@ const vueQueryOptions: VueQueryPluginOptions = {
   queryClientConfig: {
     defaultOptions: {
       queries: {
-        gcTime: 1000 * 60 * 60 * 24,
-        staleTime: 1000 * 60 * 60 * 24,
+        cacheTime: 1000 * 60 * 60 * 24,
+        staleTime: 1000 * 10,
       },
     },
   },
-  clientPersister: (queryClient) => {
-    return persistQueryClient({
-      queryClient,
-      persister: createSyncStoragePersister({ storage: localStorage }),
-    })
-  },
+  // clientPersister: (queryClient) => {
+  //   return persistQueryClient({
+  //     queryClient,
+  //     persister: createSyncStoragePersister({ storage: localStorage }),
+  //   })
+  // },
 }
 
 createApp(App).use(VueQueryPlugin, vueQueryOptions).mount('#app')

@@ -1,8 +1,10 @@
 <script lang="ts">
+import { get, set, del } from 'idb-keyval'
 import { defineComponent } from 'vue'
-import { useQuery } from '@tanstack/vue-query'
+import { useQuery, useQueryClient } from '@tanstack/vue-query'
 
 import { Post } from './types'
+import { createPersister } from './persister'
 
 const fetcher = async (id: number): Promise<Post> =>
   await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then(
@@ -19,9 +21,18 @@ export default defineComponent({
   },
   emits: ['setPostId'],
   setup(props) {
+    const queryClient = useQueryClient()
+    
     const { isPending, isError, isFetching, data, error } = useQuery({
       queryKey: ['post', props.postId],
-      queryFn: () => fetcher(props.postId),
+      queryFn: createPersister(() => fetcher(props.postId), {
+        storage: {
+          getItem: (key: string) => get(key),
+          setItem: (key: string, value: string) => set(key, value),
+          removeItem: (key: string) => del(key),
+        },
+        queryClient,
+      }),
     })
 
     return { isPending, isError, isFetching, data, error }

@@ -1,8 +1,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { useQuery } from '@tanstack/vue-query'
+import { useQuery, useQueryClient } from '@tanstack/vue-query'
 
 import { Post } from './types'
+import { createPersister } from './persister'
 
 const fetcher = async (): Promise<Post[]> =>
   await fetch('https://jsonplaceholder.typicode.com/posts').then((response) =>
@@ -19,9 +20,14 @@ export default defineComponent({
   },
   emits: ['setPostId'],
   setup() {
+    const queryClient = useQueryClient()
+
     const { isPending, isError, isFetching, data, error, refetch } = useQuery({
       queryKey: ['posts'],
-      queryFn: fetcher,
+      queryFn: createPersister(fetcher, {
+        storage: localStorage,
+        queryClient,
+      }),
     })
 
     return { isPending, isError, isFetching, data, error, refetch }
