@@ -7,13 +7,12 @@ import type {
   QueryOptions,
 } from './types'
 import type { Mutation, MutationState } from './mutation'
-import { functionalUpdate } from './utils'
 
 // TYPES
 
 export interface DehydrateOptions {
-  dehydrateMutation?: boolean | ((mutation: Mutation) => boolean)
-  dehydrateQuery?: boolean | ((query: Query) => boolean)
+  dehydrateMutation?: (mutation: Mutation) => boolean
+  dehydrateQuery?: (query: Query) => boolean
 }
 
 export interface HydrateOptions {
@@ -72,31 +71,24 @@ export function dehydrate(
   client: QueryClient,
   options: DehydrateOptions = {},
 ): DehydratedState {
-  const mutations: DehydratedMutation[] = []
-  const queries: DehydratedQuery[] = []
-
-  const dehydrateMutations =
+  const shouldDehydrateMutation =
     options.dehydrateMutation ?? defaultDehydrateMutation
 
-  client
+  const mutations = client
     .getMutationCache()
     .getAll()
-    .forEach((mutation) => {
-      if (functionalUpdate(dehydrateMutations, mutation)) {
-        mutations.push(dehydrateMutation(mutation))
-      }
-    })
+    .flatMap((mutation) =>
+      shouldDehydrateMutation(mutation) ? [dehydrateMutation(mutation)] : [],
+    )
 
-  const dehydrateQueries = options.dehydrateQuery ?? defaultDehydrateQuery
+  const shouldDehydrateQuery = options.dehydrateQuery ?? defaultDehydrateQuery
 
-  client
+  const queries = client
     .getQueryCache()
     .getAll()
-    .forEach((query) => {
-      if (functionalUpdate(dehydrateQueries, query)) {
-        queries.push(dehydrateQuery(query))
-      }
-    })
+    .flatMap((query) =>
+      shouldDehydrateQuery(query) ? [dehydrateQuery(query)] : [],
+    )
 
   return { mutations, queries }
 }

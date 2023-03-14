@@ -113,7 +113,7 @@ describe('dehydration and rehydration', () => {
       queryFn: () => fetchData('string'),
     })
 
-    const dehydrated = dehydrate(queryClient, { dehydrateQuery: false })
+    const dehydrated = dehydrate(queryClient, { dehydrateQuery: () => false })
 
     expect(dehydrated.queries.length).toBe(0)
 
@@ -446,7 +446,9 @@ describe('dehydration and rehydration', () => {
     ).catch(() => undefined)
 
     await sleep(1)
-    const dehydrated = dehydrate(queryClient, { dehydrateMutation: false })
+    const dehydrated = dehydrate(queryClient, {
+      dehydrateMutation: () => false,
+    })
 
     expect(dehydrated.mutations.length).toBe(0)
 
