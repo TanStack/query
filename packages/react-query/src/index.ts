@@ -27,5 +27,7 @@ export {
 export { useIsFetching } from './useIsFetching'
 export { useIsMutating } from './useIsMutating'
 export { useMutation } from './useMutation'
+export { useQueryOptions } from './useQueryOptions'
 export { useInfiniteQuery } from './useInfiniteQuery'
+export { useInfiniteQueryOptions } from './useInfiniteQueryOptions'
 export { useIsRestoring, IsRestoringProvider } from './isRestoring'

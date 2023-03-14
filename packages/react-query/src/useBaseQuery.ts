@@ -72,9 +72,7 @@ export function useBaseQuery<
       ),
   )
 
-  const result = observer.getOptimisticResult(defaultedOptions)
-
-  useSyncExternalStore(
+  const result = useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
         isRestoring
@@ -110,7 +108,9 @@ export function useBaseQuery<
   }
 
   // Handle result property usage tracking
-  return !defaultedOptions.notifyOnChangeProps
-    ? observer.trackResult(result)
-    : result
+  return React.useMemo(() => {
+    return !defaultedOptions.notifyOnChangeProps
+      ? observer.trackResult(result)
+      : result
+  }, [defaultedOptions.notifyOnChangeProps, observer, result])
 }
