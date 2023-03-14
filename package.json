@@ -54,7 +54,7 @@
     "babel-plugin-transform-async-to-promises": "^0.8.18",
     "babel-preset-solid": "^1.5.4",
     "bundlewatch": "^0.3.2",
-    "chalk": "^5.2.0",
+    "chalk": "^4.1.2",
     "concurrently": "^7.1.0",
     "current-git-branch": "^1.1.0",
     "eslint": "7.x",
