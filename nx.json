@@ -16,15 +16,15 @@
       "{workspaceRoot}/tsconfig.json",
       "{workspaceRoot}/tsconfig.base.json"
     ],
-    "globalNonBuildAffectingConfig": [
-      "{workspaceRoot}/.eslintrc",
-      "{workspaceRoot}/vitest.config.ts"
+    "globalNonBuildAffectingConfig": ["{workspaceRoot}/.eslintrc"],
+    "default": [
+      "{projectRoot}/**/*",
+      "globalBuildAffectingConfig",
+      "globalNonBuildAffectingConfig"
     ],
-    "default": ["{projectRoot}/**/*", "globalBuildAffectingConfig", "globalNonBuildAffectingConfig"],
     "public": [
       "default",
       "!{workspaceRoot}/.eslintrc",
-      "!{workspaceRoot}/vitest.config.ts",
       "!{workspaceRoot}/test-setup.ts",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
       "!{projectRoot}/.eslintrc"
