@@ -20,12 +20,7 @@ export {
 } from './utils'
 export type { MutationFilters, QueryFilters, Updater } from './utils'
 export { isCancelledError } from './retryer'
-export {
-  dehydrate,
-  hydrate,
-  defaultShouldDehydrateMutation,
-  defaultShouldDehydrateQuery,
-} from './hydration'
+export { dehydrate, hydrate } from './hydration'
 
 // Types
 export * from './types'
@@ -35,6 +30,4 @@ export type {
   DehydrateOptions,
   DehydratedState,
   HydrateOptions,
-  ShouldDehydrateMutationFunction,
-  ShouldDehydrateQueryFunction,
 } from './hydration'

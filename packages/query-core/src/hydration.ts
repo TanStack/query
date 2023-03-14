@@ -7,14 +7,13 @@ import type {
   QueryOptions,
 } from './types'
 import type { Mutation, MutationState } from './mutation'
+import { functionalUpdate } from './utils'
 
 // TYPES
 
 export interface DehydrateOptions {
-  dehydrateMutations?: boolean
-  dehydrateQueries?: boolean
-  shouldDehydrateMutation?: ShouldDehydrateMutationFunction
-  shouldDehydrateQuery?: ShouldDehydrateQueryFunction
+  dehydrateMutation?: boolean | ((mutation: Mutation) => boolean)
+  dehydrateQuery?: boolean | ((query: Query) => boolean)
 }
 
 export interface HydrateOptions {
@@ -40,10 +39,6 @@ export interface DehydratedState {
   queries: DehydratedQuery[]
 }
 
-export type ShouldDehydrateQueryFunction = (query: Query) => boolean
-
-export type ShouldDehydrateMutationFunction = (mutation: Mutation) => boolean
-
 // FUNCTIONS
 
 function dehydrateMutation(mutation: Mutation): DehydratedMutation {
@@ -65,11 +60,11 @@ function dehydrateQuery(query: Query): DehydratedQuery {
   }
 }
 
-export function defaultShouldDehydrateMutation(mutation: Mutation) {
+export function defaultDehydrateMutation(mutation: Mutation) {
   return mutation.state.isPaused
 }
 
-export function defaultShouldDehydrateQuery(query: Query) {
+export function defaultDehydrateQuery(query: Query) {
   return query.state.status === 'success'
 }
 
@@ -80,33 +75,28 @@ export function dehydrate(
   const mutations: DehydratedMutation[] = []
   const queries: DehydratedQuery[] = []
 
-  if (options.dehydrateMutations !== false) {
-    const shouldDehydrateMutation =
-      options.shouldDehydrateMutation || defaultShouldDehydrateMutation
+  const dehydrateMutations =
+    options.dehydrateMutation ?? defaultDehydrateMutation
 
-    client
-      .getMutationCache()
-      .getAll()
-      .forEach((mutation) => {
-        if (shouldDehydrateMutation(mutation)) {
-          mutations.push(dehydrateMutation(mutation))
-        }
-      })
-  }
+  client
+    .getMutationCache()
+    .getAll()
+    .forEach((mutation) => {
+      if (functionalUpdate(dehydrateMutations, mutation)) {
+        mutations.push(dehydrateMutation(mutation))
+      }
+    })
 
-  if (options.dehydrateQueries !== false) {
-    const shouldDehydrateQuery =
-      options.shouldDehydrateQuery || defaultShouldDehydrateQuery
+  const dehydrateQueries = options.dehydrateQuery ?? defaultDehydrateQuery
 
-    client
-      .getQueryCache()
-      .getAll()
-      .forEach((query) => {
-        if (shouldDehydrateQuery(query)) {
-          queries.push(dehydrateQuery(query))
-        }
-      })
-  }
+  client
+    .getQueryCache()
+    .getAll()
+    .forEach((query) => {
+      if (functionalUpdate(dehydrateQueries, query)) {
+        queries.push(dehydrateQuery(query))
+      }
+    })
 
   return { mutations, queries }
 }
