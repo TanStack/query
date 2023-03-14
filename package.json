@@ -8,7 +8,7 @@
     "test": "pnpm run test:ci",
     "test:ci": "pnpm run test:format && pnpm run test:eslint && pnpm run test:lib && pnpm run test:types",
     "test:react:17": "pnpm --filter \"./packages/react-*\" run test:lib",
-    "test:eslint": "pnpm --filter \"./packages/**\" run test:eslint",
+    "test:eslint": "eslint ./scripts && pnpm --filter \"./packages/**\" run test:eslint",
     "test:format": "pnpm run prettier --check",
     "test:lib": "nx run-many --target=test:lib --parallel=5",
     "test:lib:dev": "pnpm --filter \"./packages/**\" run test:lib:dev",
