@@ -30,7 +30,7 @@ importers:
       babel-plugin-transform-async-to-promises: ^0.8.18
       babel-preset-solid: ^1.6.10
       bundlewatch: ^0.3.3
-      chalk: ^5.2.0
+      chalk: ^4.1.2
       concurrently: ^7.6.0
       current-git-branch: ^1.1.0
       eslint: 8.34.0
@@ -97,7 +97,7 @@ importers:
       babel-plugin-transform-async-to-promises: 0.8.18
       babel-preset-solid: 1.6.10_@babel+core@7.20.12
       bundlewatch: 0.3.3
-      chalk: 5.2.0
+      chalk: 4.1.2
       concurrently: 7.6.0
       current-git-branch: 1.1.0
       eslint: 8.34.0
@@ -9124,11 +9124,6 @@ packages:
     dependencies:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
-
-  /chalk/5.2.0:
-    resolution: {integrity: sha512-ree3Gqw/nazQAPuJJEy+avdl7QfZMcUvmHIKgEZkGL+xOBzRvup5Hxo6LHuMceSxOabuJLJm5Yp/92R9eMmMvA==}
-    engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
-    dev: true
 
   /chardet/0.7.0:
     resolution: {integrity: sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==}
