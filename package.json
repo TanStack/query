@@ -10,7 +10,7 @@
     "test:react:17": "pnpm --filter \"./packages/react-*\" run test:lib",
     "test:eslint": "pnpm --filter \"./packages/**\" run test:eslint",
     "test:format": "pnpm run prettier --check",
-    "test:lib": "pnpm --filter \"./packages/**\" run test:lib",
+    "test:lib": "nx run-many --target=test:lib --parallel=5",
     "test:lib:dev": "pnpm --filter \"./packages/**\" run test:lib:dev",
     "test:build": "pnpm run build && bundlewatch && pnpm run validatePackages",
     "test:types": "pnpm --filter \"./packages/**\" run test:types",
@@ -91,7 +91,8 @@
     "ts-jest": "^27.1.1",
     "ts-node": "^10.7.0",
     "typescript": "^4.7.4",
-    "vue": "^3.2.33"
+    "vue": "^3.2.33",
+    "nx": "^15.8.6"
   },
   "bundlewatch": {
     "files": [
