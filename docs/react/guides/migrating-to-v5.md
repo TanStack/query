@@ -300,6 +300,26 @@ However, refetching all pages might lead to UI inconsistencies. Also, this optio
 
 The v5 includes a new `maxPages` option for infinite queries to limit the number of pages to store in the query data and to refetch. This new feature handles the use cases initially identified for the `refetchPage` page feature without the related issues.
 
+### new hydration API
+
+The options you can pass to dehydrate have been simplified:
+
+```diff
+- dehydrateMutations?: boolean
+- dehydrateQueries?: boolean
+- shouldDehydrateMutation?: ShouldDehydrateMutationFunction
+- shouldDehydrateQuery?: ShouldDehydrateQueryFunction
++ dehydrateMutation?: (mutation: Mutation) => boolean
++ dehydrateQuery?: (query: Query) => boolean
+```
+
+Also, the export default functions have been renamed:
+
+```diff
+- import { shouldDehydrateMutation, shouldDehydrateQuery } from '@tanstack/query-core'
++ import { dehydrateMutation, dehydrateQuery } from '@tanstack/query-core'
+```
+
 ### Infinite queries now need a `defaultPageParam`
 
 Previously, we've passed `undefined` to the `queryFn` as `pageParam`, and you could assign a default value to the `pageParam` parameter in the `queryFn` function signature. This had the drawback of storing `undefined` in the `queryCache`, which is not serializable.
@@ -410,7 +430,7 @@ We have a new, simplified way to perform optimistic updates by leveraging the re
 
 Here, we are only changing how the UI looks when the mutation is running instead of writing data directly to the cache. This works best if we only have one place where we need to show the optimistic update. For more details, have a look at the [optimistic updates documentation](../guides/optimistic-updates.md).
 
-### Eternal list: scalable infinite query with new maxPages option
+### Limited, Infinite Queries with new maxPages option
 
 Infinite queries are great when infinite scroll or pagination are needed.
 However, the more pages you fetch, the more memory you consume, and this also slows down the query refetching process as all the pages are sequentially refetched.
