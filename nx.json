@@ -1,0 +1,39 @@
+{
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["test:lib"]
+      }
+    }
+  },
+  "defaultBase": "main",
+  "namedInputs": {
+    "globalBuildAffectingConfig": [
+      "{workspaceRoot}/babel.config.js",
+      "{workspaceRoot}/rollup.config.js",
+      "{workspaceRoot}/rollup.config.ts",
+      "{workspaceRoot}/tsconfig.json",
+      "{workspaceRoot}/tsconfig.base.json"
+    ],
+    "globalNonBuildAffectingConfig": [
+      "{workspaceRoot}/.eslintrc",
+      "{workspaceRoot}/jest-preset.js"
+    ],
+    "default": ["{projectRoot}/**/*", "globalBuildAffectingConfig", "globalNonBuildAffectingConfig"],
+    "public": [
+      "default",
+      "!{workspaceRoot}/.eslintrc",
+      "!{workspaceRoot}/jest-preset.js",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/.eslintrc",
+      "!{projectRoot}/jest.config.js"
+    ]
+  },
+  "targetDefaults": {
+    "test:lib": {
+      "outputs": ["{projectRoot}/coverage"],
+      "inputs": ["default", "^public"]
+    }
+  }
+}

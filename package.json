@@ -9,7 +9,7 @@
     "test:ci": "pnpm run test:format && pnpm run test:eslint && pnpm run test:lib && pnpm run test:types",
     "test:eslint": "pnpm --filter \"./packages/**\" run test:eslint",
     "test:format": "pnpm run prettier --check",
-    "test:lib": "pnpm --filter \"./packages/**\" run test:lib",
+    "test:lib": "nx run-many --target=test:lib --parallel=5",
     "test:lib:dev": "pnpm --filter \"./packages/**\" run test:lib:dev",
     "test:build": "pnpm run build && bundlewatch && pnpm run validatePackages",
     "test:types": "pnpm --filter \"./packages/**\" run test:types",
@@ -85,7 +85,8 @@
     "ts-node": "^10.9.1",
     "typescript": "4.7.4",
     "vitest": "^0.27.1",
-    "vue": "^3.2.47"
+    "vue": "^3.2.47",
+    "nx": "^15.8.6"
   },
   "bundlewatch": {
     "files": [

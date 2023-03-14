@@ -1,5 +1,6 @@
 name: pr
 on: [pull_request]
+
 jobs:
   test:
     name: 'Test'
@@ -15,7 +16,7 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:lib
+      - run: pnpm nx run-many --target=test:lib --parallel=5
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
   lint:
