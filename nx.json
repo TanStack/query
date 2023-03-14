@@ -18,16 +18,16 @@
     ],
     "globalNonBuildAffectingConfig": [
       "{workspaceRoot}/.eslintrc",
-      "{workspaceRoot}/jest-preset.js"
+      "{workspaceRoot}/vitest.config.ts"
     ],
     "default": ["{projectRoot}/**/*", "globalBuildAffectingConfig", "globalNonBuildAffectingConfig"],
     "public": [
       "default",
       "!{workspaceRoot}/.eslintrc",
-      "!{workspaceRoot}/jest-preset.js",
+      "!{workspaceRoot}/vitest.config.ts",
+      "!{workspaceRoot}/test-setup.ts",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
-      "!{projectRoot}/.eslintrc",
-      "!{projectRoot}/jest.config.js"
+      "!{projectRoot}/.eslintrc"
     ]
   },
   "targetDefaults": {
