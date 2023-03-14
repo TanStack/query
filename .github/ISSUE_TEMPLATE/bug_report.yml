@@ -95,6 +95,18 @@ body:
         - Version: [e.g. 91.1]
     validations:
       required: true
+  - type: dropdown
+    id: adapter
+    attributes:
+      label: Tanstack Query adapter
+      description: |
+        Please let us know which adapter of TanStack Query you were using when the issue occurred.
+      options:
+        - react-query
+        - solid-query
+        - svelte-query
+        - vue-query
+        - vanilla
   - type: input
     id: rq-version
     attributes:

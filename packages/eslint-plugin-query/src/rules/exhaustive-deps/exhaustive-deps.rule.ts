@@ -81,6 +81,7 @@ export const rule = createRule({
         const queryKeyValue = queryKeyNode
         const refs = ASTUtils.getExternalRefs({
           scopeManager,
+          sourceCode,
           node: queryFn.value,
         })
 
@@ -104,7 +105,8 @@ export const rule = createRule({
             return (
               !ref.isTypeReference &&
               !ASTUtils.isAncestorIsCallee(ref.identifier) &&
-              !existingKeys.some((existingKey) => existingKey === text)
+              !existingKeys.some((existingKey) => existingKey === text) &&
+              !existingKeys.includes(text.split('.')[0] ?? '')
             )
           })
           .map(({ ref, text }) => ({
