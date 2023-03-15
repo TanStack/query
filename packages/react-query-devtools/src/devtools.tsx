@@ -654,6 +654,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                     style={{
                       flex: '1',
                       minWidth: 75,
+                      marginRight: '.5em',
                     }}
                   >
                     {Object.keys(sortFns).map((key) => (
@@ -667,6 +668,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                     onClick={() => setBaseSort((old) => old * -1)}
                     style={{
                       padding: '.3em .4em',
+                      marginRight: '.5em',
                     }}
                   >
                     {baseSort === 1 ? '⬆ Asc' : '⬇ Desc'}
