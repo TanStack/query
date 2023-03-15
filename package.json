@@ -6,7 +6,7 @@
     "preinstall": "node -e \"if(process.env.CI == 'true') {console.log('Skipping preinstall...'); process.exit(1)}\" || npx -y only-allow pnpm",
     "install:csb": "pnpm install --frozen-lockfile",
     "test": "pnpm run test:ci",
-    "test:ci": "pnpm run test:format && pnpm run test:eslint && pnpm run test:lib && pnpm run test:types",
+    "test:ci": "pnpm run test:format && nx run-many --targets=test:lib,test:types,test:eslint --parallel=5",
     "test:react:17": "nx run-many --target=test:lib --projects=@tanstack/react-*",
     "test:eslint": "nx run-many --target=test:eslint --parallel=5",
     "test:format": "pnpm run prettier --check",
