@@ -4,8 +4,19 @@
   "sourceRoot": "./",
   "targets": {
     "test:format": { "command": "pnpm run prettier --check" },
-    "test:eslint": { "command": "echo \"Skipping root test:eslint\"" },
-    "test:lib": { "command": "echo \"Skipping root test:lib\"" },
-    "test:types": { "command": "echo \"Skipping root test:types\"" }
-  }
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "rollup --config rollup.config.js",
+          "nx run-many --target=build:types"
+        ],
+        "parallel": true
+      }
+    },
+    "test:build": {
+      "command": "bundlewatch && pnpm run validatePackages"
+    }
+  },
+  "implicitDependencies": ["*"]
 }

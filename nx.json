@@ -8,12 +8,19 @@
           "test:eslint",
           "test:types",
           "build:types",
-          "test:format"
+          "test:format",
+          "test:build",
+          "build"
         ]
       }
     }
   },
   "defaultBase": "main",
+  "pluginsConfig": {
+    "@nrwl/js": {
+      "analyzeSourceFiles": false
+    }
+  },
   "namedInputs": {
     "globalBuildAffectingConfig": [
       "{workspaceRoot}/babel.config.js",
@@ -66,6 +73,14 @@
     },
     "test:format": {
       "inputs": ["default"]
+    },
+    "test:build": {
+      "dependsOn": ["build"],
+      "inputs": ["^public"]
+    },
+    "build": {
+      "outputs": ["{workspaceRoot}/packages/**/build/**/*"],
+      "inputs": ["^public"]
     }
   }
 }
