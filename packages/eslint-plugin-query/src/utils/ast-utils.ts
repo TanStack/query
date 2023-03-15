@@ -153,7 +153,7 @@ export const ASTUtils = {
     }
 
     const references = scope.references
-      .filter((x) => x.isRead())
+      .filter((x) => x.isRead() && !scope.set.has(x.identifier.name))
       .map((x) => {
         const referenceNode = ASTUtils.traverseUpOnly(x.identifier, [
           AST_NODE_TYPES.MemberExpression,
