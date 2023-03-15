@@ -3,7 +3,7 @@
     "default": {
       "runner": "nx/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["test:lib"]
+        "cacheableOperations": ["test:lib", "test:eslint"]
       }
     }
   },
@@ -33,6 +33,9 @@
   "targetDefaults": {
     "test:lib": {
       "outputs": ["{projectRoot}/coverage"],
+      "inputs": ["default", "^public"]
+    },
+    "test:eslint": {
       "inputs": ["default", "^public"]
     }
   }
