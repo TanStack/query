@@ -43,7 +43,9 @@
       "inputs": ["default", "^public"]
     },
     "test:types": {
-      "inputs": ["default", "^public"]
+      "outputs": ["{projectRoot}/build/lib/**/*.d.ts"],
+      "inputs": ["default", "^public"],
+      "dependsOn": ["^test:types"]
     }
   }
 }
