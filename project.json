@@ -17,7 +17,11 @@
       }
     },
     "test:build": {
-      "command": "bundlewatch && pnpm run validatePackages"
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["bundlewatch", "pnpm run validatePackages"],
+        "parallel": true
+      }
     }
   },
   "implicitDependencies": ["*"]
