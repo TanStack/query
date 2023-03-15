@@ -13,7 +13,7 @@
     "test:lib": "nx run-many --target=test:lib --parallel=5",
     "test:lib:dev": "pnpm --filter \"./packages/**\" run test:lib:dev",
     "test:build": "pnpm run build && bundlewatch && pnpm run validatePackages",
-    "test:types": "pnpm --filter \"./packages/**\" run test:types",
+    "test:types": "npx nx run-many --target=test:types --parallel=5",
     "build": "rollup --config rollup.config.js && pnpm --filter \"./packages/**\" run build && pnpm run build:types",
     "build:types": "pnpm --filter \"./packages/**\" run build:types",
     "watch": "concurrently --kill-others \"rollup --config rollup.config.js -w\" \"pnpm run build:types --watch\"",

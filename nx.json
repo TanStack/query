@@ -3,7 +3,7 @@
     "default": {
       "runner": "nx/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["test:lib", "test:eslint"]
+        "cacheableOperations": ["test:lib", "test:eslint", "test:types"]
       }
     }
   },
@@ -20,7 +20,11 @@
       "{workspaceRoot}/.eslintrc",
       "{workspaceRoot}/jest-preset.js"
     ],
-    "default": ["{projectRoot}/**/*", "globalBuildAffectingConfig", "globalNonBuildAffectingConfig"],
+    "default": [
+      "{projectRoot}/**/*",
+      "globalBuildAffectingConfig",
+      "globalNonBuildAffectingConfig"
+    ],
     "public": [
       "default",
       "!{workspaceRoot}/.eslintrc",
@@ -36,6 +40,9 @@
       "inputs": ["default", "^public"]
     },
     "test:eslint": {
+      "inputs": ["default", "^public"]
+    },
+    "test:types": {
       "inputs": ["default", "^public"]
     }
   }
