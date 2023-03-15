@@ -43,7 +43,10 @@
       "inputs": ["default", "^public"]
     },
     "test:types": {
-      "outputs": ["{projectRoot}/build/lib/**/*.d.ts"],
+      "outputs": [
+        "{projectRoot}/build/lib/**/*.d.ts",
+        "{projectRoot}/build/.tsbuildinfo"
+      ],
       "inputs": ["default", "^public"],
       "dependsOn": ["^test:types"]
     }
