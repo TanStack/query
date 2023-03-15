@@ -1,0 +1,11 @@
+{
+  "name": "root",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "./",
+  "targets": {
+    "test:format": { "command": "pnpm run prettier --check" },
+    "test:eslint": { "command": "echo \"Skipping root test:eslint\"" },
+    "test:lib": { "command": "echo \"Skipping root test:lib\"" },
+    "test:types": { "command": "echo \"Skipping root test:types\"" }
+  }
+}

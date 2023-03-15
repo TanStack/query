@@ -3,7 +3,13 @@
     "default": {
       "runner": "nx/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["test:lib", "test:eslint", "test:types"]
+        "cacheableOperations": [
+          "test:lib",
+          "test:eslint",
+          "test:types",
+          "build:types",
+          "test:format"
+        ]
       }
     }
   },
@@ -49,6 +55,17 @@
       ],
       "inputs": ["default", "^public"],
       "dependsOn": ["^test:types"]
+    },
+    "build:types": {
+      "outputs": [
+        "{projectRoot}/build/lib/**/*.d.ts",
+        "{projectRoot}/build/.tsbuildinfo"
+      ],
+      "inputs": ["default", "^public"],
+      "dependsOn": ["^build:types"]
+    },
+    "test:format": {
+      "inputs": ["default"]
     }
   }
 }
