@@ -64,10 +64,7 @@
       "dependsOn": ["^test:types"]
     },
     "build:types": {
-      "outputs": [
-        "{projectRoot}/build/lib/**/*.d.ts",
-        "{projectRoot}/build/.tsbuildinfo"
-      ],
+      "outputs": ["{projectRoot}/build"],
       "inputs": ["default", "^public"],
       "dependsOn": ["^build:types"]
     },
@@ -79,7 +76,7 @@
       "inputs": ["^public"]
     },
     "build": {
-      "outputs": ["{workspaceRoot}/packages/**/build/**/*"],
+      "outputs": ["{workspaceRoot}/packages/**/build"],
       "inputs": ["^public"]
     }
   }
