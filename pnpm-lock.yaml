@@ -18,6 +18,7 @@ importers:
       '@testing-library/react': ^13.0.0
       '@testing-library/react-17': npm:@testing-library/react@12.1.4
       '@testing-library/react-hooks': ^7.0.2
+      '@testing-library/user-event': 14.4.3
       '@types/jest': ^26.0.4
       '@types/luxon': ^2.3.1
       '@types/node': ^17.0.25
@@ -90,6 +91,7 @@ importers:
       '@testing-library/react': 13.3.0_biqbaboplfbrettd7655fr4n2y
       '@testing-library/react-17': /@testing-library/react/12.1.4_biqbaboplfbrettd7655fr4n2y
       '@testing-library/react-hooks': 7.0.2_biqbaboplfbrettd7655fr4n2y
+      '@testing-library/user-event': 14.4.3
       '@types/jest': 26.0.24
       '@types/luxon': 2.3.2
       '@types/node': 17.0.45
@@ -6462,6 +6464,13 @@ packages:
     dependencies:
       '@testing-library/dom': 8.18.1
       svelte: 3.55.0
+    dev: true
+
+  /@testing-library/user-event/14.4.3:
+    resolution: {integrity: sha512-kCUc5MEwaEMakkO5x7aoD+DLi02ehmEM2QCGWvNqAS1dV/fAvORWEjnjsEIvml59M7Y5kCkWN6fCCyPOe8OL6Q==}
+    engines: {node: '>=12', npm: '>=6'}
+    peerDependencies:
+      '@testing-library/dom': '>=7.21.4'
     dev: true
 
   /@tootallnate/once/1.1.2:

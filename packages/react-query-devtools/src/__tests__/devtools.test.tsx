@@ -11,11 +11,19 @@ import {
   sleep,
   createQueryClient,
 } from './utils'
+import UserEvent from '@testing-library/user-event'
 
 // TODO: This should be removed with the types for react-error-boundary get updated.
 declare module 'react-error-boundary' {
   interface ErrorBoundaryPropsWithFallback {
     children: any
+  }
+}
+
+class CustomError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'CustomError'
   }
 }
 
@@ -914,5 +922,136 @@ describe('ReactQueryDevtools', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /^close$/i }))
     expect(parentElement).toHaveStyle(parentPaddings)
+  })
+
+  it('should simulate loading state', async () => {
+    const { queryClient } = createQueryClient()
+    let count = 0
+    function App() {
+      const { data, fetchStatus } = useQuery(['key'], () => {
+        count++
+        return Promise.resolve('test')
+      })
+
+      return (
+        <div>
+          <h1>
+            {data ?? 'No data'}, {fetchStatus}
+          </h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <App />, {
+      initialIsOpen: true,
+    })
+
+    await screen.findByRole('heading', { name: /test/i })
+
+    const loadingButton = await screen.findByRole('button', {
+      name: 'Trigger loading',
+    })
+    fireEvent.click(loadingButton)
+
+    await waitFor(() => {
+      expect(screen.getByText('Restore loading')).toBeInTheDocument()
+    })
+
+    await waitFor(() => {
+      expect(screen.getByText('No data, fetching')).toBeInTheDocument()
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: /restore loading/i }))
+
+    await waitFor(() => {
+      expect(screen.getByText('test, idle')).toBeInTheDocument()
+    })
+
+    expect(count).toBe(2)
+  })
+
+  it('should simulate error state', async () => {
+    const { queryClient } = createQueryClient()
+    function App() {
+      const { status, error } = useQuery(['key'], () => {
+        return Promise.resolve('test')
+      })
+
+      return (
+        <div>
+          <h1>
+            {!!error ? 'Some error' : 'No error'}, {status}
+          </h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <App />, {
+      initialIsOpen: true,
+    })
+
+    const errorButton = await screen.findByRole('button', {
+      name: 'Trigger error',
+    })
+    fireEvent.click(errorButton)
+
+    await waitFor(() => {
+      expect(screen.getByText('Restore error')).toBeInTheDocument()
+    })
+
+    await waitFor(() => {
+      expect(screen.getByText('Some error, error')).toBeInTheDocument()
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: /Restore error/i }))
+
+    await waitFor(() => {
+      expect(screen.getByText('No error, success')).toBeInTheDocument()
+    })
+  })
+
+  it('should can simulate a specific error', async () => {
+    const { queryClient } = createQueryClient()
+
+    function App() {
+      const { status, error } = useQuery(['key'], () => {
+        return Promise.resolve('test')
+      })
+
+      return (
+        <div data-testid="test">
+          <h1>
+            {error instanceof CustomError
+              ? error.message.toString()
+              : 'No error'}
+            , {status}
+          </h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <App />, {
+      initialIsOpen: true,
+      errorTypes: [
+        {
+          name: 'error1',
+          initializer: () => new CustomError('error1'),
+        },
+      ],
+    })
+
+    const errorOption = await screen.findByLabelText('Trigger error:')
+
+    UserEvent.selectOptions(errorOption, 'error1')
+
+    await waitFor(() => {
+      expect(screen.getByText('error1, error')).toBeInTheDocument()
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: /Restore error/i }))
+
+    await waitFor(() => {
+      expect(screen.getByText('No error, success')).toBeInTheDocument()
+    })
   })
 })

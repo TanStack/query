@@ -39,6 +39,7 @@
     "@testing-library/react": "^13.0.0",
     "@testing-library/react-17": "npm:@testing-library/react@12.1.4",
     "@testing-library/react-hooks": "^7.0.2",
+    "@testing-library/user-event": "14.4.3",
     "@types/jest": "^26.0.4",
     "@types/luxon": "^2.3.1",
     "@types/node": "^17.0.25",
