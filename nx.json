@@ -71,10 +71,6 @@
     "test:build": {
       "dependsOn": ["build"],
       "inputs": ["^public"]
-    },
-    "build": {
-      "outputs": ["{workspaceRoot}/packages/**/build"],
-      "inputs": ["^public"]
     }
   }
 }

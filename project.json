@@ -14,7 +14,8 @@
           "nx build @tanstack/svelte-query"
         ],
         "parallel": true
-      }
+      },
+      "outputs": ["{workspaceRoot}/packages/**/build"]
     },
     "test:build": {
       "executor": "nx:run-commands",
