@@ -31,6 +31,7 @@
     "@babel/preset-typescript": "^7.16.7",
     "@commitlint/parse": "^16.2.1",
     "@faker-js/faker": "^6.3.1",
+    "@nrwl/nx-cloud": "^15.2.1",
     "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-commonjs": "22.0.1",
     "@rollup/plugin-node-resolve": "^13.2.1",
@@ -77,6 +78,7 @@
     "jest": "^27.5.1",
     "jsonfile": "^6.1.0",
     "luxon": "^2.3.2",
+    "nx": "^15.8.6",
     "prettier": "^2.6.2",
     "prettier-plugin-svelte": "^2.9.0",
     "react": "^18.2.0",
@@ -95,8 +97,7 @@
     "ts-jest": "^27.1.1",
     "ts-node": "^10.7.0",
     "typescript": "^4.7.4",
-    "vue": "^3.2.33",
-    "nx": "^15.8.6"
+    "vue": "^3.2.33"
   },
   "bundlewatch": {
     "files": [

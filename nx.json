@@ -1,9 +1,12 @@
 {
   "tasksRunnerOptions": {
     "default": {
-      "runner": "nx/tasks-runners/default",
+      "runner": "@nrwl/nx-cloud",
       "options": {
-        "cacheableOperations": ["test:lib"]
+        "cacheableOperations": [
+          "test:lib"
+        ],
+        "accessToken": "OTgzYjM0YmUtNzlmNi00MWFhLWIyZmEtODA0NTgwODNiZjY4fHJlYWQtd3JpdGU="
       }
     }
   },
@@ -20,7 +23,11 @@
       "{workspaceRoot}/.eslintrc",
       "{workspaceRoot}/jest-preset.js"
     ],
-    "default": ["{projectRoot}/**/*", "globalBuildAffectingConfig", "globalNonBuildAffectingConfig"],
+    "default": [
+      "{projectRoot}/**/*",
+      "globalBuildAffectingConfig",
+      "globalNonBuildAffectingConfig"
+    ],
     "public": [
       "default",
       "!{workspaceRoot}/.eslintrc",
@@ -32,8 +39,13 @@
   },
   "targetDefaults": {
     "test:lib": {
-      "outputs": ["{projectRoot}/coverage"],
-      "inputs": ["default", "^public"]
+      "outputs": [
+        "{projectRoot}/coverage"
+      ],
+      "inputs": [
+        "default",
+        "^public"
+      ]
     }
   }
 }
