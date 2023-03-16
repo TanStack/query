@@ -16,7 +16,7 @@ When you begin your React Query journey, you'll want these devtools by your side
 You can import the devtools like this:
 
 ```tsx
-import { ReactQueryDevtools } from 'react-query/devtools';
+import { ReactQueryDevtools } from 'react-query/devtools'
 ```
 
 By default, React Query Devtools are only included in bundles when `process.env.NODE_ENV === 'development'`, so you don't need to worry about excluding them during a production build.
