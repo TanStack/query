@@ -6,7 +6,7 @@ import type { RetryValue, RetryDelayValue } from './retryer'
 import type { QueryFilters, QueryTypeFilter } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
-import { FetchDirection } from './query'
+import type { FetchDirection } from './query'
 
 export interface Register {
   // defaultError: Error
