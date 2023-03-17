@@ -50,7 +50,9 @@ export const Button = styled('button', (props, theme) => ({
 }))
 
 export const QueryKeys = styled('span', {
-  display: 'inline-block',
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '0.5em',
   fontSize: '0.9em',
 })
 

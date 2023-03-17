@@ -1,0 +1,73 @@
+{
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": [
+          "test:lib",
+          "test:eslint",
+          "test:types",
+          "build:types",
+          "test:format",
+          "test:build",
+          "build"
+        ]
+      }
+    }
+  },
+  "defaultBase": "main",
+  "pluginsConfig": {
+    "@nrwl/js": {
+      "analyzeSourceFiles": false
+    }
+  },
+  "namedInputs": {
+    "globalBuildAffectingConfig": [
+      "{workspaceRoot}/babel.config.js",
+      "{workspaceRoot}/rollup.config.js",
+      "{workspaceRoot}/rollup.config.ts",
+      "{workspaceRoot}/tsconfig.json",
+      "{workspaceRoot}/tsconfig.base.json"
+    ],
+    "globalNonBuildAffectingConfig": [
+      "{workspaceRoot}/.eslintrc",
+      "{workspaceRoot}/jest-preset.js"
+    ],
+    "default": [
+      "{projectRoot}/**/*",
+      "globalBuildAffectingConfig",
+      "globalNonBuildAffectingConfig"
+    ],
+    "public": [
+      "default",
+      "!{workspaceRoot}/.eslintrc",
+      "!{workspaceRoot}/jest-preset.js",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/.eslintrc",
+      "!{projectRoot}/jest.config.js"
+    ]
+  },
+  "targetDefaults": {
+    "test:lib": {
+      "outputs": ["{projectRoot}/coverage"],
+      "inputs": ["default", "^public"]
+    },
+    "test:eslint": {
+      "inputs": ["default", "^public"]
+    },
+    "test:types": {
+      "outputs": ["{projectRoot}/build"],
+      "inputs": ["default", "^public"],
+      "dependsOn": ["^test:types"]
+    },
+    "build:types": {
+      "outputs": ["{projectRoot}/build"],
+      "inputs": ["default", "^public"],
+      "dependsOn": ["^build:types"]
+    },
+    "test:build": {
+      "dependsOn": ["build"],
+      "inputs": ["^public"]
+    }
+  }
+}

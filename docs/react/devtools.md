@@ -68,6 +68,8 @@ function App() {
   - The position of the React Query devtools panel
 - `context?: React.Context<QueryClient | undefined>`
   - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.
+- `errorTypes?: { name: string; initializer: (query: Query) => { toString(): string }}`
+  - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an item that can be stringified so we can check for it's presence on any given query.
 
 ## Embedded Mode
 

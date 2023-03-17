@@ -1,0 +1,8 @@
+{
+  "name": "scripts",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "scripts",
+  "targets": {
+    "test:eslint": { "command": "eslint ./scripts" }
+  }
+}
