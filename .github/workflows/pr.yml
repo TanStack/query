@@ -17,7 +17,7 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm nx run-many --target=test:lib --parallel=5
+      - run: pnpm test:lib
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
   lint:

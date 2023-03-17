@@ -68,6 +68,8 @@ function App() {
   - The position of the React Query devtools panel
 - `queryClient?: QueryClient`,
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
+- `errorTypes?: { name: string; initializer: (query: Query) => TError}`
+  - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
 
 ## Embedded Mode
 
