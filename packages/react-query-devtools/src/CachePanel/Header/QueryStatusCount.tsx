@@ -7,7 +7,7 @@ import useSubscribeToQueryCache from '../../useSubscribeToQueryCache'
 import { defaultTheme as theme } from '../../theme'
 
 /**
- * Displays the number of queries in each status in the header
+ * Displays the number of queries for each status
  */
 export default function QueryStatusCount({
   queryCache,
