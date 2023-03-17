@@ -4,6 +4,8 @@ import type {
   QueryCache,
   QueryClient,
   QueryKey as QueryKeyType,
+  Query,
+  DefaultError,
 } from '@tanstack/react-query'
 import {
   useQueryClient,
@@ -39,6 +41,18 @@ import { ThemeProvider, defaultTheme as theme } from './theme'
 import { getQueryStatusLabel, getQueryStatusColor } from './utils'
 import Explorer from './Explorer'
 import Logo from './Logo'
+import { useMemo } from 'react'
+
+export interface DevToolsErrorType {
+  /**
+   * The name of the error.
+   */
+  name: string
+  /**
+   * How the error is initialized.
+   */
+  initializer: (query: Query) => DefaultError
+}
 
 export interface DevtoolsOptions {
   /**
@@ -81,6 +95,10 @@ export interface DevtoolsOptions {
    * Custom instance of QueryClient
    */
   queryClient?: QueryClient
+  /**
+   * Use this so you can define custom errors that can be shown in the devtools.
+   */
+  errorTypes?: DevToolsErrorType[]
 }
 
 interface DevtoolsPanelOptions {
@@ -129,6 +147,10 @@ interface DevtoolsPanelOptions {
    * Custom instance of QueryClient
    */
   queryClient?: QueryClient
+  /**
+   * Use this so you can define custom errors that can be shown in the devtools.
+   */
+  errorTypes?: DevToolsErrorType[]
 }
 
 export function ReactQueryDevtools({
@@ -141,6 +163,7 @@ export function ReactQueryDevtools({
   queryClient,
   styleNonce,
   panelPosition: initialPanelPosition = 'bottom',
+  errorTypes = [],
 }: DevtoolsOptions): React.ReactElement | null {
   const rootRef = React.useRef<HTMLDivElement>(null)
   const panelRef = React.useRef<HTMLDivElement>(null)
@@ -349,6 +372,7 @@ export function ReactQueryDevtools({
           isOpen={isResolvedOpen}
           setIsOpen={setIsOpen}
           onDragStart={(e) => handleDragStart(panelRef.current, e)}
+          errorTypes={errorTypes}
         />
       </ThemeProvider>
       {!isResolvedOpen ? (
@@ -439,6 +463,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     showCloseButton,
     position,
     closeButtonProps = {},
+    errorTypes = [],
     ...panelProps
   } = props
 
@@ -611,6 +636,8 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                   style={{
                     display: 'flex',
                     alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: '0.5em',
                   }}
                 >
                   <Input
@@ -623,7 +650,6 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                     }}
                     style={{
                       flex: '1',
-                      marginRight: '.5em',
                       width: '100%',
                     }}
                   />
@@ -744,6 +770,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
             activeQueryHash={activeQueryHash}
             queryCache={queryCache}
             queryClient={client}
+            errorTypes={errorTypes}
           />
         ) : null}
 
@@ -779,10 +806,12 @@ const ActiveQuery = ({
   queryCache,
   activeQueryHash,
   queryClient,
+  errorTypes,
 }: {
   queryCache: QueryCache
   activeQueryHash: string
   queryClient: QueryClient
+  errorTypes: DevToolsErrorType[]
 }) => {
   const activeQuery = useSubscribeToQueryCache(queryCache, () =>
     queryCache.getAll().find((query) => query.queryHash === activeQueryHash),
@@ -816,8 +845,47 @@ const ActiveQuery = ({
     promise?.catch(noop)
   }
 
+  const currentErrorTypeName = useMemo(() => {
+    if (activeQuery && activeQueryState?.error) {
+      const errorType = errorTypes.find(
+        (type) =>
+          type.initializer(activeQuery).toString() ===
+          activeQueryState.error?.toString(),
+      )
+      return errorType?.name
+    }
+    return undefined
+  }, [activeQuery, activeQueryState?.error, errorTypes])
+
   if (!activeQuery || !activeQueryState) {
     return null
+  }
+
+  const triggerError = (errorType?: DevToolsErrorType) => {
+    const error =
+      errorType?.initializer(activeQuery) ??
+      new Error('Unknown error from devtools')
+
+    const __previousQueryOptions = activeQuery.options
+
+    activeQuery.setState({
+      status: 'error',
+      error,
+      fetchMeta: {
+        ...activeQuery.state.fetchMeta,
+        __previousQueryOptions,
+      } as any,
+    })
+  }
+
+  const restoreQueryAfterLoadingOrError = () => {
+    activeQuery.fetch(
+      (activeQuery.state.fetchMeta as any).__previousQueryOptions,
+      {
+        // Make sure this fetch will cancel the previous one
+        cancelRefetch: true,
+      },
+    )
   }
 
   return (
@@ -916,6 +984,10 @@ const ActiveQuery = ({
       <div
         style={{
           padding: '0.5em',
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '0.5em',
+          alignItems: 'flex-end',
         }}
       >
         <Button
@@ -955,7 +1027,80 @@ const ActiveQuery = ({
           }}
         >
           Remove
-        </Button>
+        </Button>{' '}
+        <Button
+          type="button"
+          onClick={() => {
+            if (activeQuery.state.data === undefined) {
+              restoreQueryAfterLoadingOrError()
+            } else {
+              const __previousQueryOptions = activeQuery.options
+              // Trigger a fetch in order to trigger suspense as well.
+              activeQuery.fetch({
+                ...__previousQueryOptions,
+                queryFn: () => {
+                  return new Promise(() => {
+                    // Never resolve
+                  })
+                },
+                gcTime: -1,
+              })
+              activeQuery.setState({
+                data: undefined,
+                status: 'pending',
+                fetchMeta: {
+                  ...activeQuery.state.fetchMeta,
+                  __previousQueryOptions,
+                } as any,
+              })
+            }
+          }}
+          style={{
+            background: theme.paused,
+          }}
+        >
+          {activeQuery.state.status === 'pending' ? 'Restore' : 'Trigger'}{' '}
+          loading
+        </Button>{' '}
+        {errorTypes.length === 0 || activeQuery.state.status === 'error' ? (
+          <Button
+            type="button"
+            onClick={() => {
+              if (!activeQuery.state.error) {
+                triggerError()
+              } else {
+                queryClient.resetQueries(activeQuery)
+              }
+            }}
+            style={{
+              background: theme.danger,
+            }}
+          >
+            {activeQuery.state.status === 'error' ? 'Restore' : 'Trigger'} error
+          </Button>
+        ) : (
+          <label>
+            Trigger error:
+            <Select
+              value={currentErrorTypeName ?? ''}
+              style={{ marginInlineStart: '.5em' }}
+              onChange={(e) => {
+                const errorType = errorTypes.find(
+                  (t) => t.name === e.target.value,
+                )
+
+                triggerError(errorType)
+              }}
+            >
+              <option key="" value="" />
+              {errorTypes.map((errorType) => (
+                <option key={errorType.name} value={errorType.name}>
+                  {errorType.name}
+                </option>
+              ))}
+            </Select>
+          </label>
+        )}
       </div>
       <div
         style={{

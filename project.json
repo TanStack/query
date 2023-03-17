@@ -1,0 +1,29 @@
+{
+  "name": "root",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "./",
+  "targets": {
+    "test:format": { "command": "pnpm run prettier --check" },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "rollup --config rollup.config.js",
+          "nx run-many --target=build:types",
+          "nx build @tanstack/eslint-plugin-query",
+          "nx build @tanstack/svelte-query"
+        ],
+        "parallel": true
+      },
+      "outputs": ["{workspaceRoot}/packages/**/build"]
+    },
+    "test:build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["bundlewatch", "pnpm run validatePackages"],
+        "parallel": true
+      }
+    }
+  },
+  "implicitDependencies": ["**/*"]
+}
