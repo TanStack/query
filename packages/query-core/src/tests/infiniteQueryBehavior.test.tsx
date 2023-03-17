@@ -82,6 +82,7 @@ describe('InfiniteQueryBehavior', () => {
       queryKey: key,
       pageParam: 1,
       meta: undefined,
+      direction: 'forward',
       signal: abortSignal,
     })
 
@@ -93,6 +94,7 @@ describe('InfiniteQueryBehavior', () => {
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
       pageParam: 2,
+      direction: 'forward',
       meta: undefined,
       signal: abortSignal,
     })
@@ -110,6 +112,7 @@ describe('InfiniteQueryBehavior', () => {
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
       queryKey: key,
       pageParam: 0,
+      direction: 'backward',
       meta: undefined,
       signal: abortSignal,
     })
@@ -129,6 +132,7 @@ describe('InfiniteQueryBehavior', () => {
       queryKey: key,
       pageParam: -1,
       meta: undefined,
+      direction: 'backward',
       signal: abortSignal,
     })
 
@@ -146,6 +150,7 @@ describe('InfiniteQueryBehavior', () => {
       queryKey: key,
       pageParam: 1,
       meta: undefined,
+      direction: 'forward',
       signal: abortSignal,
     })
 
@@ -166,6 +171,7 @@ describe('InfiniteQueryBehavior', () => {
       queryKey: key,
       pageParam: 0,
       meta: undefined,
+      direction: 'forward',
       signal: abortSignal,
     })
 
@@ -173,6 +179,7 @@ describe('InfiniteQueryBehavior', () => {
       queryKey: key,
       pageParam: 1,
       meta: undefined,
+      direction: 'forward',
       signal: abortSignal,
     })
 
@@ -224,6 +231,7 @@ describe('InfiniteQueryBehavior', () => {
       queryKey: key,
       pageParam: 1,
       meta: undefined,
+      direction: 'forward',
       signal: abortSignal,
     })
 
@@ -279,6 +287,7 @@ describe('InfiniteQueryBehavior', () => {
       queryKey: key,
       pageParam: 2,
       meta: undefined,
+      direction: 'forward',
       signal: abortSignal,
     })
 
