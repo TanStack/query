@@ -123,6 +123,20 @@ if (axios.isAxiosError(error)) {
 [typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPRTr2swBaAI458VALAAoUJFhx6AD2ARUpcpSqLlqCZKkw8YdHADi5ZGDgBeRHGAATAFxxGyEACNcRKVNYRm8CToMKwAFmYQFqo2ABQAlM4ACurAGAA8ERYA2gC6AHzWBVoqAHQA5sExVJxl5mA6cSUwoeiMMTyokMzGVgUdXRgl9vQMcT6SfgG2uORQRNYoGNi4eDFIIisA0uh4zllUtZH1VDkANHAb+ABijM5BIeF1qoRjkpyccJ9fAHoA-OPAEhwGLFVAlVIAQSUKgAolBZjEZtA4nFEFJPkioOi4O84H8pIQgA)
 [//]: # 'Playground6'
 
+A neat trick that also works is specifying an empty `onError` handler just to get type inference for the error field:
+
+```tsx
+import axios, { AxiosError } from 'axios'
+
+const { error } = useQuery({
+  queryKey: ['groups'],
+  queryFn: fetchGroups,
+  onError: (_error: AxiosError) => {},
+})
+error
+// ^? const error: AxiosError | null
+```
+
 ### Registering a global Error
 
 TanStack Query v5 allows for a way to set a global Error type for everything, without having to specify generics on call-sides, by amending the `Register` interface. This will make sure inference still works, but the error field will be of the specified type:
@@ -139,6 +153,25 @@ const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 ```
 
 [//]: # 'Materials'
+
+## Typing Query Options
+
+If you inline query options into `useQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `useQuery` and e.g. `prefetchQuery`. In that case, you'd lose type inference. To get it back, you can use `queryOptions` helper:
+
+```ts
+import { queryOptions } from '@tanstack/react-query'
+
+function groupOptions() {
+  return queryOptions({
+    queryKey: ['groups'],
+    queryFn: fetchGroups,
+    staleTime: 5 * 1000,
+  })
+}
+
+useQuery(groupOptions())
+queryClient.prefetchQuery(groupOptions())
+```
 
 ## Further Reading
 
