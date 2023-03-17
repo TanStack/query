@@ -871,6 +871,7 @@ const ActiveQuery = ({
     activeQuery.setState({
       status: 'error',
       error,
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       fetchMeta: {
         ...activeQuery.state.fetchMeta,
         __previousQueryOptions,
@@ -1048,6 +1049,7 @@ const ActiveQuery = ({
               activeQuery.setState({
                 data: undefined,
                 status: 'pending',
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
                 fetchMeta: {
                   ...activeQuery.state.fetchMeta,
                   __previousQueryOptions,

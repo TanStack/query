@@ -74,8 +74,10 @@ export interface QueryBehavior<
   ) => void
 }
 
+export type FetchDirection = 'forward' | 'backward'
+
 export interface FetchMeta {
-  fetchMore?: { direction: 'forward' | 'backward' }
+  fetchMore?: { direction: FetchDirection }
 }
 
 export interface FetchOptions {
