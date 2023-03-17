@@ -6,6 +6,7 @@ import type { RetryValue, RetryDelayValue } from './retryer'
 import type { QueryFilters, QueryTypeFilter } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
+import { FetchDirection } from './query'
 
 export interface Register {
   // defaultError: Error
@@ -40,6 +41,7 @@ export type QueryFunctionContext<
       queryKey: TQueryKey
       signal: AbortSignal
       pageParam: TPageParam
+      direction: FetchDirection
       meta: QueryMeta | undefined
     }
 
