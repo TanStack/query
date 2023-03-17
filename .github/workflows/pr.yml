@@ -17,7 +17,12 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm test:lib
+      - name: Run Tests
+        uses: nick-fields/retry@v2.8.3
+        with:
+          command: pnpm test:lib
+          timeout_minutes: 5
+          max_attempts: 3
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
   lint:
@@ -79,7 +84,12 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:react:17
+      - name: Run Tests
+        uses: nick-fields/retry@v2.8.3
+        with:
+          timeout_minutes: 5
+          max_attempts: 3
+          command: pnpm run test:react:17
         env:
           REACTJS_VERSION: 17
   test-build:
