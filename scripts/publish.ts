@@ -158,7 +158,7 @@ async function run() {
         const pkg = packages.find((p) =>
           file.startsWith(path.join('packages', p.packageDir, p.srcDir)),
         )
-        if (pkg && !changedPackages.find((d) => d.name === pkg.name)) {
+        if (pkg && !acc.find((d) => d.name === pkg.name)) {
           acc.push(pkg)
         }
         return acc

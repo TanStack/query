@@ -88,7 +88,7 @@ createSyncStoragePersister(options: CreateSyncStoragePersisterOptions)
 ```tsx
 interface CreateSyncStoragePersisterOptions {
   /** The storage client used for setting an retrieving items from cache (window.localStorage or window.sessionStorage) */
-  storage: Storage
+  storage: Storage | undefined | null
   /** The key to use when storing the cache */
   key?: string
   /** To avoid spamming,

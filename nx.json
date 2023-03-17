@@ -4,13 +4,24 @@
       "runner": "@nrwl/nx-cloud",
       "options": {
         "cacheableOperations": [
-          "test:lib"
-        ],
+          "test:lib",
+          "test:eslint",
+          "test:types",
+          "build:types",
+          "test:format",
+          "test:build",
+          "build"
+        ]
         "accessToken": "OTgzYjM0YmUtNzlmNi00MWFhLWIyZmEtODA0NTgwODNiZjY4fHJlYWQtd3JpdGU="
       }
     }
   },
   "defaultBase": "main",
+  "pluginsConfig": {
+    "@nrwl/js": {
+      "analyzeSourceFiles": false
+    }
+  },
   "namedInputs": {
     "globalBuildAffectingConfig": [
       "{workspaceRoot}/babel.config.js",
@@ -39,13 +50,25 @@
   },
   "targetDefaults": {
     "test:lib": {
-      "outputs": [
-        "{projectRoot}/coverage"
-      ],
-      "inputs": [
-        "default",
-        "^public"
-      ]
+      "outputs": ["{projectRoot}/coverage"],
+      "inputs": ["default", "^public"]
+    },
+    "test:eslint": {
+      "inputs": ["default", "^public"]
+    },
+    "test:types": {
+      "outputs": ["{projectRoot}/build"],
+      "inputs": ["default", "^public"],
+      "dependsOn": ["^test:types"]
+    },
+    "build:types": {
+      "outputs": ["{projectRoot}/build"],
+      "inputs": ["default", "^public"],
+      "dependsOn": ["^build:types"]
+    },
+    "test:build": {
+      "dependsOn": ["build"],
+      "inputs": ["^public"]
     }
   }
 }
