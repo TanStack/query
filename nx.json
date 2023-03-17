@@ -3,11 +3,24 @@
     "default": {
       "runner": "nx/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["test:lib"]
+        "cacheableOperations": [
+          "test:lib",
+          "test:eslint",
+          "test:types",
+          "build:types",
+          "test:format",
+          "test:build",
+          "build"
+        ]
       }
     }
   },
   "defaultBase": "main",
+  "pluginsConfig": {
+    "@nrwl/js": {
+      "analyzeSourceFiles": false
+    }
+  },
   "namedInputs": {
     "globalBuildAffectingConfig": [
       "{workspaceRoot}/babel.config.js",
@@ -20,7 +33,11 @@
       "{workspaceRoot}/.eslintrc",
       "{workspaceRoot}/jest-preset.js"
     ],
-    "default": ["{projectRoot}/**/*", "globalBuildAffectingConfig", "globalNonBuildAffectingConfig"],
+    "default": [
+      "{projectRoot}/**/*",
+      "globalBuildAffectingConfig",
+      "globalNonBuildAffectingConfig"
+    ],
     "public": [
       "default",
       "!{workspaceRoot}/.eslintrc",
@@ -34,6 +51,26 @@
     "test:lib": {
       "outputs": ["{projectRoot}/coverage"],
       "inputs": ["default", "^public"]
+    },
+    "test:eslint": {
+      "inputs": ["default", "^public"]
+    },
+    "test:types": {
+      "outputs": ["{projectRoot}/build"],
+      "inputs": ["default", "^public"],
+      "dependsOn": ["^test:types"]
+    },
+    "build:types": {
+      "outputs": ["{projectRoot}/build"],
+      "inputs": ["default", "^public"],
+      "dependsOn": ["^build:types"]
+    },
+    "test:format": {
+      "inputs": ["default"]
+    },
+    "test:build": {
+      "dependsOn": ["build"],
+      "inputs": ["^public"]
     }
   }
 }
