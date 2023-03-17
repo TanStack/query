@@ -3,7 +3,10 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "./",
   "targets": {
-    "test:format": { "command": "pnpm run prettier --check" },
+    "test:format": {
+      "command": "pnpm run prettier --check",
+      "inputs": ["{workspaceRoot}/**/*"]
+    },
     "build": {
       "executor": "nx:run-commands",
       "options": {

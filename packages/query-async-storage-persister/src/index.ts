@@ -19,9 +19,10 @@ export type AsyncPersistRetryer = (props: {
 
 interface CreateAsyncStoragePersisterOptions {
   /** The storage client used for setting and retrieving items from cache.
-   * For SSR pass in `undefined`.
+   * For SSR pass in `undefined`. Note that window.localStorage can be
+   * `null` in Android WebViews depending on how they are configured.
    */
-  storage: AsyncStorage | undefined
+  storage: AsyncStorage | undefined | null
   /** The key to use when storing the cache */
   key?: string
   /** To avoid spamming,
@@ -49,7 +50,7 @@ export const createAsyncStoragePersister = ({
   deserialize = JSON.parse,
   retry,
 }: CreateAsyncStoragePersisterOptions): Persister => {
-  if (typeof storage !== 'undefined') {
+  if (storage) {
     const trySave = async (
       persistedClient: PersistedClient,
     ): Promise<Error | undefined> => {

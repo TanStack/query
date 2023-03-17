@@ -61,9 +61,6 @@
       "inputs": ["default", "^public"],
       "dependsOn": ["^build:types"]
     },
-    "test:format": {
-      "inputs": ["default"]
-    },
     "test:build": {
       "dependsOn": ["build"],
       "inputs": ["^public"]
