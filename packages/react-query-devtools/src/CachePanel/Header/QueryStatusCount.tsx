@@ -6,6 +6,9 @@ import { getQueryStatusLabel } from '../../utils'
 import useSubscribeToQueryCache from '../../useSubscribeToQueryCache'
 import { defaultTheme as theme } from '../../theme'
 
+/**
+ * Displays the number of queries in each status in the header
+ */
 export default function QueryStatusCount({
   queryCache,
 }: {

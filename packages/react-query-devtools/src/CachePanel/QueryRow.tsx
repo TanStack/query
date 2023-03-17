@@ -17,6 +17,9 @@ interface QueryRowProps {
   queryCache: QueryCache
 }
 
+/**
+ * Row for a query in the query list
+ */
 const QueryRow = React.memo(
   ({
     queryKey,
