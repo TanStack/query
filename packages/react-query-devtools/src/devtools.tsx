@@ -7,11 +7,7 @@ import type {
   Query,
   DefaultError,
 } from '@tanstack/react-query'
-import {
-  useQueryClient,
-  onlineManager,
-  notifyManager,
-} from '@tanstack/react-query'
+import { useQueryClient, onlineManager } from '@tanstack/react-query'
 import { rankItem } from '@tanstack/match-sorter-utils'
 import useLocalStorage from './useLocalStorage'
 import {
@@ -28,8 +24,6 @@ import {
 import type { Corner, Side } from './utils'
 import {
   Panel,
-  QueryKeys,
-  QueryKey,
   Button,
   Code,
   Input,
@@ -42,6 +36,8 @@ import { getQueryStatusLabel, getQueryStatusColor } from './utils'
 import Explorer from './Explorer'
 import Logo from './Logo'
 import { useMemo } from 'react'
+import useSubscribeToQueryCache from './useSubscribeToQueryCache'
+import QueryStatusCount from './CachePanel/Header/QueryStatusCount'
 
 export interface DevToolsErrorType {
   /**
@@ -425,27 +421,6 @@ export function ReactQueryDevtools({
         </button>
       ) : null}
     </Container>
-  )
-}
-
-const useSubscribeToQueryCache = <T,>(
-  queryCache: QueryCache,
-  getSnapshot: () => T,
-  skip: boolean = false,
-): T => {
-  return React.useSyncExternalStore(
-    React.useCallback(
-      (onStoreChange) => {
-        if (!skip)
-          return queryCache.subscribe(notifyManager.batchCalls(onStoreChange))
-        return () => {
-          return
-        }
-      },
-      [queryCache, skip],
-    ),
-    getSnapshot,
-    getSnapshot,
   )
 }
 
@@ -1152,85 +1127,6 @@ const ActiveQuery = ({
         />
       </div>
     </ActiveQueryPanel>
-  )
-}
-
-const QueryStatusCount = ({ queryCache }: { queryCache: QueryCache }) => {
-  const hasFresh = useSubscribeToQueryCache(
-    queryCache,
-    () =>
-      queryCache.getAll().filter((q) => getQueryStatusLabel(q) === 'fresh')
-        .length,
-  )
-  const hasFetching = useSubscribeToQueryCache(
-    queryCache,
-    () =>
-      queryCache.getAll().filter((q) => getQueryStatusLabel(q) === 'fetching')
-        .length,
-  )
-  const hasPaused = useSubscribeToQueryCache(
-    queryCache,
-    () =>
-      queryCache.getAll().filter((q) => getQueryStatusLabel(q) === 'paused')
-        .length,
-  )
-  const hasStale = useSubscribeToQueryCache(
-    queryCache,
-    () =>
-      queryCache.getAll().filter((q) => getQueryStatusLabel(q) === 'stale')
-        .length,
-  )
-  const hasInactive = useSubscribeToQueryCache(
-    queryCache,
-    () =>
-      queryCache.getAll().filter((q) => getQueryStatusLabel(q) === 'inactive')
-        .length,
-  )
-  return (
-    <QueryKeys>
-      <QueryKey
-        style={{
-          background: theme.success,
-          opacity: hasFresh ? 1 : 0.3,
-        }}
-      >
-        fresh <Code>({hasFresh})</Code>
-      </QueryKey>{' '}
-      <QueryKey
-        style={{
-          background: theme.active,
-          opacity: hasFetching ? 1 : 0.3,
-        }}
-      >
-        fetching <Code>({hasFetching})</Code>
-      </QueryKey>{' '}
-      <QueryKey
-        style={{
-          background: theme.paused,
-          opacity: hasPaused ? 1 : 0.3,
-        }}
-      >
-        paused <Code>({hasPaused})</Code>
-      </QueryKey>{' '}
-      <QueryKey
-        style={{
-          background: theme.warning,
-          color: 'black',
-          textShadow: '0',
-          opacity: hasStale ? 1 : 0.3,
-        }}
-      >
-        stale <Code>({hasStale})</Code>
-      </QueryKey>{' '}
-      <QueryKey
-        style={{
-          background: theme.gray,
-          opacity: hasInactive ? 1 : 0.3,
-        }}
-      >
-        inactive <Code>({hasInactive})</Code>
-      </QueryKey>
-    </QueryKeys>
   )
 }
 
