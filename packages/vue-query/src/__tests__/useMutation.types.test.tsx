@@ -90,12 +90,8 @@ describe('Discriminated union return type', () => {
         const result: Expect<Equal<string, typeof mutation.variables>> = true
         return result
       }
-      if (mutation.isError) {
-        const result: Expect<Equal<string, typeof mutation.variables>> = true
-        return result
-      }
-
-      return
+      const result: Expect<Equal<string, typeof mutation.variables>> = true
+      return result
     })
   })
 })
