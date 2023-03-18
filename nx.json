@@ -38,9 +38,9 @@
     "public": [
       "default",
       "!{workspaceRoot}/.eslintrc",
-      "!{workspaceRoot}/test-setup.ts",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
-      "!{projectRoot}/.eslintrc"
+      "!{projectRoot}/.eslintrc*",
+      "!{projectRoot}/tsconfig.eslint.json"
     ]
   },
   "targetDefaults": {
