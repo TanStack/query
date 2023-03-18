@@ -44,6 +44,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/react-hooks": "^8.0.1",
     "@testing-library/user-event": "^14.4.3",
+    "@types/eslint": "^8.21.2",
     "@types/luxon": "^3.2.0",
     "@types/node": "^18.13.0",
     "@types/react": "^18.0.27",
