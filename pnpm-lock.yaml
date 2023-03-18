@@ -1,5 +1,10 @@
 lockfileVersion: 5.4
 
+patchedDependencies:
+  '@types/testing-library__jest-dom@5.14.5':
+    hash: d573maxasnl5kxwdyzebcnmhpm
+    path: patches/@types__testing-library__jest-dom@5.14.5.patch
+
 importers:
 
   .:
