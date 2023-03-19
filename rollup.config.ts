@@ -7,6 +7,7 @@ import replace from '@rollup/plugin-replace'
 import nodeResolve from '@rollup/plugin-node-resolve'
 import commonJS from '@rollup/plugin-commonjs'
 import path from 'path'
+import preserveDirectives from 'rollup-plugin-preserve-directives'
 
 type Options = {
   input: string | string[]
@@ -285,6 +286,7 @@ function mjs({
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
+      preserveDirectives(),
     ],
   }
 }
@@ -324,6 +326,7 @@ function esm({
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
+      preserveDirectives(),
     ],
   }
 }
@@ -375,6 +378,7 @@ function cjs({
         preventAssignment: true,
         delimiters: ['', ''],
       }),
+      preserveDirectives(),
     ],
   }
 }
