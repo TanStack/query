@@ -1,6 +1,7 @@
 import { setupDevtoolsPlugin } from '@vue/devtools-api'
 import type { CustomInspectorNode } from '@vue/devtools-api'
 import { rankItem } from '@tanstack/match-sorter-utils'
+import { onlineManager } from '@tanstack/query-core'
 import type { Query } from '@tanstack/query-core'
 import type { QueryClient } from '../queryClient'
 import {
@@ -19,8 +20,8 @@ export function setupDevtools(app: any, queryClient: QueryClient) {
       id: pluginId,
       label: pluginName,
       packageName: 'vue-query',
-      homepage: 'https://tanstack.com/query/v4',
-      logo: 'https://vue-query.vercel.app/vue-query.svg',
+      homepage: 'https://tanstack.com/query/latest',
+      logo: 'https://raw.githubusercontent.com/TanStack/query/main/packages/vue-query/media/vue-query.svg',
       app,
       settings: {
         baseSort: {
@@ -48,9 +49,28 @@ export function setupDevtools(app: any, queryClient: QueryClient) {
           })),
           defaultValue: Object.keys(sortFns)[0]!,
         },
+        onlineMode: {
+          type: 'choice',
+          component: 'button-group',
+          label: 'Online mode',
+          options: [
+            {
+              label: 'Online',
+              value: 1,
+            },
+            {
+              label: 'Offline',
+              value: 0,
+            },
+          ],
+          defaultValue: 1,
+        },
       },
     },
     (api) => {
+      const initialSettings = api.getSettings()
+      onlineManager.setOnline(Boolean(initialSettings.onlineMode.valueOf()))
+
       const queryCache = queryClient.getQueryCache()
 
       api.addInspector({
@@ -59,7 +79,7 @@ export function setupDevtools(app: any, queryClient: QueryClient) {
         icon: 'api',
         nodeActions: [
           {
-            icon: 'cloud_download',
+            icon: 'file_download',
             tooltip: 'Refetch',
             action: (queryHash: string) => {
               queryCache.get(queryHash)?.fetch()
@@ -88,6 +108,31 @@ export function setupDevtools(app: any, queryClient: QueryClient) {
               queryCache.remove(query)
             },
           },
+          {
+            icon: 'hourglass_empty',
+            tooltip: 'Force loading',
+            action: (queryHash: string) => {
+              const query = queryCache.get(queryHash) as Query
+
+              query.setState({
+                data: undefined,
+                status: 'pending',
+              })
+            },
+          },
+          {
+            icon: 'error_outline',
+            tooltip: 'Force error',
+            action: (queryHash: string) => {
+              const query = queryCache.get(queryHash) as Query
+
+              query.setState({
+                data: undefined,
+                status: 'error',
+                error: new Error('Unknown error from devtools'),
+              })
+            },
+          },
         ],
       })
 
@@ -101,11 +146,7 @@ export function setupDevtools(app: any, queryClient: QueryClient) {
         api.sendInspectorTree(pluginId)
         api.sendInspectorState(pluginId)
 
-        if (
-          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-          event &&
-          ['queryAdded', 'queryRemoved', 'queryUpdated'].includes(event.type)
-        ) {
+        if (['added', 'removed', 'updated'].includes(event.type)) {
           api.addTimelineEvent({
             layerId: pluginId,
             event: {
@@ -118,6 +159,12 @@ export function setupDevtools(app: any, queryClient: QueryClient) {
               },
             },
           })
+        }
+      })
+
+      api.on.setPluginSettings((payload) => {
+        if (payload.key === 'onlineMode') {
+          onlineManager.setOnline(Boolean(payload.newValue))
         }
       })
 
