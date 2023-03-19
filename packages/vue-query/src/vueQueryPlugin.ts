@@ -69,7 +69,6 @@ export const VueQueryPlugin = {
       }
     }
 
-    /* istanbul ignore next */
     if (isVue2) {
       app.mixin({
         beforeCreate() {
