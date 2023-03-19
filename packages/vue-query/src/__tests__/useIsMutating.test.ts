@@ -104,8 +104,8 @@ describe('useMutationState', () => {
   })
 
   it('should return variables after calling mutate', async () => {
-    const queryClient = useQueryClient();
-    queryClient.clear();
+    const queryClient = useQueryClient()
+    queryClient.clear()
     const mutationKey = ['mutation']
     const variables = 'bar234'
 
@@ -118,6 +118,6 @@ describe('useMutationState', () => {
 
     const mutationState = useMutationState()
 
-    expect(mutationState.value[0]).toContain({variables: variables})
+    expect(mutationState.value[0]).toContain({ variables: variables })
   })
 })
