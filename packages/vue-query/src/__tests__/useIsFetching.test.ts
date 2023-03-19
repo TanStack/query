@@ -73,7 +73,5 @@ describe('useIsFetching', () => {
     await flushPromises()
 
     expect(isFetching.value).toStrictEqual(1)
-
-    await flushPromises(100)
   })
 })

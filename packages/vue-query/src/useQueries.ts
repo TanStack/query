@@ -182,11 +182,7 @@ export function useQueries<T extends any[]>(
           state.value.splice(0, result.length, ...result)
         })
         // Subscription would not fire for persisted results
-        state.value.splice(
-          0,
-          state.value.length,
-          ...observer.getOptimisticResult(defaultedQueries.value),
-        )
+        state.value = observer.getOptimisticResult(defaultedQueries.value)
       }
     },
     { immediate: true },
@@ -196,7 +192,7 @@ export function useQueries<T extends any[]>(
     defaultedQueries,
     () => {
       observer.setQueries(defaultedQueries.value)
-      state.value.splice(0, state.value.length, ...observer.getCurrentResult())
+      state.value = observer.getCurrentResult()
     },
     { deep: true },
   )
