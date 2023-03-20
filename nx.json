@@ -10,7 +10,8 @@
           "build:types",
           "test:format",
           "test:build",
-          "build"
+          "build",
+          "rollup"
         ]
       }
     }
