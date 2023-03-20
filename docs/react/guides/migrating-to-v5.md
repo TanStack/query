@@ -300,7 +300,7 @@ However, refetching all pages might lead to UI inconsistencies. Also, this optio
 
 The v5 includes a new `maxPages` option for infinite queries to limit the number of pages to store in the query data and to refetch. This new feature handles the use cases initially identified for the `refetchPage` page feature without the related issues.
 
-### new hydration API
+### New hydration API
 
 The options you can pass to dehydrate have been simplified. Queries and Mutations are always dehydrated (according to the default function implementation). To change this behaviour, you can implement `shouldDehydrateQuery` or `shouldDehydrateMutation`.
 
