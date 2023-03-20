@@ -65,6 +65,7 @@ importers:
       react-dom-17: npm:react-dom@^17.0.2
       rimraf: ^3.0.2
       rollup: ^2.70.2
+      rollup-plugin-preserve-directives: 0.1.0
       rollup-plugin-size: ^0.2.2
       rollup-plugin-terser: ^7.0.2
       rollup-plugin-visualizer: ^5.6.0
@@ -138,6 +139,7 @@ importers:
       react-dom-17: /react-dom/17.0.2_react@18.2.0
       rimraf: 3.0.2
       rollup: 2.78.1
+      rollup-plugin-preserve-directives: 0.1.0_rollup@2.78.1
       rollup-plugin-size: 0.2.2
       rollup-plugin-terser: 7.0.2_rollup@2.78.1
       rollup-plugin-visualizer: 5.6.0_rollup@2.78.1
@@ -15699,6 +15701,14 @@ packages:
     hasBin: true
     dependencies:
       glob: 7.2.3
+
+  /rollup-plugin-preserve-directives/0.1.0_rollup@2.78.1:
+    resolution: {integrity: sha512-fgzIK3hwF/afa6L1Qdsvshn0JlCHZRx0Sh9l0jjUgz3VK0unMFuEB4uqL3Vdae4OXkn+MBYCeNEN9vm81IteiA==}
+    peerDependencies:
+      rollup: 2.x || 3.x
+    dependencies:
+      rollup: 2.78.1
+    dev: true
 
   /rollup-plugin-size/0.2.2:
     resolution: {integrity: sha512-XIQpfwp1dLXzr4qCopY5ZSEEPB3bgZLkGw2BB3+TXmfH2jxGSmuN/+sRxnA5MvJe+Z4atW0x0qTQz5EuTQy01Q==}
