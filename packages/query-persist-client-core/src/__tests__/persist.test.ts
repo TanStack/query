@@ -16,7 +16,7 @@ describe('persistQueryClientSubscribe', () => {
     const unsubscribe = persistQueryClientSubscribe({
       queryClient,
       persister,
-      dehydrateOptions: { dehydrateMutation: () => true },
+      dehydrateOptions: { shouldDehydrateMutation: () => true },
     })
 
     queryClient.getMutationCache().build(queryClient, {
