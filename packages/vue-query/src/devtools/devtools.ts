@@ -1,5 +1,3 @@
-/* istanbul ignore file */
-
 import { setupDevtoolsPlugin } from '@vue/devtools-api'
 import type { CustomInspectorNode } from '@vue/devtools-api'
 import { rankItem } from '@tanstack/match-sorter-utils'
