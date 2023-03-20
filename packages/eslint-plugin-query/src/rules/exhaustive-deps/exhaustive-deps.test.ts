@@ -247,6 +247,19 @@ ruleTester.run('exhaustive-deps', rule, {
         })
       `,
     },
+    {
+      name: 'should not fail if queryKey does not include an internal dependency',
+      code: normalizeIndent`
+        useQuery({
+          queryKey: ["api"],
+          queryFn: async () => {
+            const response = Promise.resolve([]);
+            const data = await response.json();
+            return data[0].name;
+          },
+        });
+      `,
+    },
   ],
   invalid: [
     {

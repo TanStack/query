@@ -63,6 +63,7 @@ export function infiniteQueryBehavior<
           > = {
             queryKey: context.queryKey,
             pageParam: param,
+            direction: previous ? 'backward' : 'forward',
             meta: context.options.meta,
           }
 

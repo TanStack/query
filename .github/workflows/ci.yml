@@ -35,7 +35,11 @@ jobs:
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - name: Run Tests
-        run: pnpm run test:ci
+        uses: nick-fields/retry@v2.8.3
+        with:
+          command: pnpm run test:ci
+          timeout_minutes: 10
+          max_attempts: 3
       - name: Publish
         run: |
           git config --global user.name 'Tanner Linsley'

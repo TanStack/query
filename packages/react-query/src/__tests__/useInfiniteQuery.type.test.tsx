@@ -20,13 +20,41 @@ describe('pageParam', () => {
     })
   })
 
-  it('there should be no pageParam passed to queryFn of useQuery', () => {
+  it('direction should be passed to queryFn of useInfiniteQuery', () => {
+    doNotExecute(() => {
+      useInfiniteQuery({
+        queryKey: ['key'],
+        queryFn: ({ direction }) => {
+          const result: Expect<
+            Equal<'forward' | 'backward', typeof direction>
+          > = true
+          return result
+        },
+        defaultPageParam: 1,
+        getNextPageParam: () => undefined,
+      })
+    })
+  })
+
+  it('there should be no pageParam passed to the queryFn of useQuery', () => {
     doNotExecute(() => {
       useQuery({
         queryKey: ['key'],
         // @ts-expect-error there should be no pageParam passed to queryFn of useQuery
         queryFn: ({ pageParam }) => {
           return String(pageParam)
+        },
+      })
+    })
+  })
+
+  it('there should be no direction passed to the queryFn of useQuery', () => {
+    doNotExecute(() => {
+      useQuery({
+        queryKey: ['key'],
+        // @ts-expect-error there should be no pageParam passed to queryFn of useQuery
+        queryFn: ({ direction }) => {
+          return String(direction)
         },
       })
     })

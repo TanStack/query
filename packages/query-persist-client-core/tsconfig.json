@@ -4,10 +4,9 @@
     "composite": true,
     "rootDir": "./src",
     "outDir": "./build/lib",
-    "tsBuildInfoFile": "./build/.tsbuildinfo"
+    "tsBuildInfoFile": "./build/.tsbuildinfo",
+    "types": ["vitest/globals"]
   },
   "include": ["src"],
-  "references": [
-    { "path": "../query-core" }
-  ]
+  "references": [{ "path": "../query-core" }]
 }

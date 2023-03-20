@@ -6,21 +6,27 @@
     "preinstall": "node -e \"if(process.env.CI == 'true') {console.log('Skipping preinstall...'); process.exit(1)}\" || npx -y only-allow pnpm",
     "install:csb": "pnpm install --frozen-lockfile",
     "test": "pnpm run test:ci",
-    "test:ci": "pnpm run test:format && pnpm run test:eslint && pnpm run test:lib && pnpm run test:types",
-    "test:eslint": "eslint ./scripts && pnpm --filter \"./packages/**\" run test:eslint",
-    "test:format": "pnpm run prettier --check",
+    "test:ci": "nx run-many --targets=test:lib,test:types,test:eslint,test:format --parallel=5",
+    "test:eslint": "nx run-many --target=test:eslint --parallel=5",
+    "test:format": "nx test:format root",
     "test:lib": "nx run-many --target=test:lib --parallel=5",
     "test:lib:dev": "pnpm --filter \"./packages/**\" run test:lib:dev",
-    "test:build": "pnpm run build && bundlewatch && pnpm run validatePackages",
-    "test:types": "pnpm --filter \"./packages/**\" run test:types",
-    "build": "rollup --config rollup.config.js && pnpm --filter \"./packages/**\" run build && pnpm run build:types",
-    "build:types": "pnpm --filter \"./packages/**\" run build:types",
+    "test:build": "nx test:build root",
+    "test:types": "nx run-many --target=test:types --parallel=5",
+    "build": "nx build root",
+    "build:types": "nx run-many --target=build:types --parallel=5",
     "watch": "concurrently --kill-others \"rollup --config rollup.config.js -w\" \"pnpm run build:types --watch\"",
     "dev": "pnpm run watch",
     "prettier": "prettier --plugin-search-dir . \"{packages,examples}/**/src/**/*.{md,js,jsx,ts,tsx,json,vue,svelte}\"",
     "prettier:write": "pnpm run prettier --write",
     "cipublish": "ts-node scripts/publish.ts",
     "validatePackages": "ts-node scripts/validate-packages.ts"
+  },
+  "nx": {
+    "includedScripts": [
+      "test:format",
+      "test:build"
+    ]
   },
   "namespace": "@tanstack",
   "devDependencies": {
@@ -37,6 +43,8 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/react-hooks": "^8.0.1",
+    "@testing-library/user-event": "^14.4.3",
+    "@types/eslint": "^8.21.2",
     "@types/luxon": "^3.2.0",
     "@types/node": "^18.13.0",
     "@types/react": "^18.0.27",
@@ -45,6 +53,7 @@
     "@types/testing-library__jest-dom": "^5.14.5",
     "@typescript-eslint/eslint-plugin": "^5.51.0",
     "@typescript-eslint/parser": "^5.51.0",
+    "@vitest/coverage-istanbul": "^0.27.1",
     "axios": "^1.3.2",
     "babel-eslint": "^10.1.0",
     "babel-plugin-transform-async-to-promises": "^0.8.18",
@@ -71,6 +80,7 @@
     "git-log-parser": "^1.2.0",
     "jsonfile": "^6.1.0",
     "luxon": "^3.2.1",
+    "nx": "^15.8.6",
     "prettier": "^2.8.4",
     "prettier-plugin-svelte": "^2.9.0",
     "react": "^18.2.0",
@@ -88,8 +98,7 @@
     "ts-node": "^10.9.1",
     "typescript": "4.7.4",
     "vitest": "^0.27.1",
-    "vue": "^3.2.47",
-    "nx": "^15.8.6"
+    "vue": "^3.2.47"
   },
   "bundlewatch": {
     "files": [
@@ -97,5 +106,10 @@
         "path": "packages/*/build/umd/*.production.js"
       }
     ]
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@types/testing-library__jest-dom@5.14.5": "patches/@types__testing-library__jest-dom@5.14.5.patch"
+    }
   }
 }

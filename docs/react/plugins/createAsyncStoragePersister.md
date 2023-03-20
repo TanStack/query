@@ -74,7 +74,7 @@ createAsyncStoragePersister(options: CreateAsyncStoragePersisterOptions)
 ```tsx
 interface CreateAsyncStoragePersisterOptions {
   /** The storage client used for setting an retrieving items from cache */
-  storage: AsyncStorage
+  storage: AsyncStorage | undefined | null
   /** The key to use when storing the cache to localStorage */
   key?: string
   /** To avoid localStorage spamming,

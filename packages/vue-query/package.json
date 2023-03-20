@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/vue-query",
-  "version": "5.0.0-alpha.5",
+  "version": "5.0.0-alpha.7",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in Vue",
   "author": "Damian Osipiuk",
   "license": "MIT",
@@ -28,7 +28,7 @@
   "sideEffects": false,
   "scripts": {
     "clean": "rimraf ./build",
-    "test:eslint": "eslint --ext .ts ./src",
+    "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
     "test:lib": "pnpm run test:2 && pnpm run test:2.7 && pnpm run test:3",
     "test:2": "vue-demi-switch 2 vue2 && vitest",
