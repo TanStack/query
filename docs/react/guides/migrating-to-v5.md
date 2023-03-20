@@ -302,22 +302,11 @@ The v5 includes a new `maxPages` option for infinite queries to limit the number
 
 ### new hydration API
 
-The options you can pass to dehydrate have been simplified:
+The options you can pass to dehydrate have been simplified. Queries and Mutations are always dehydrated (according to the default function implementation). To change this behaviour, you can implement `shouldDehydrateQuery` or `shouldDehydrateMutation`.
 
 ```diff
 - dehydrateMutations?: boolean
 - dehydrateQueries?: boolean
-- shouldDehydrateMutation?: ShouldDehydrateMutationFunction
-- shouldDehydrateQuery?: ShouldDehydrateQueryFunction
-+ dehydrateMutation?: (mutation: Mutation) => boolean
-+ dehydrateQuery?: (query: Query) => boolean
-```
-
-Also, the export default functions have been renamed:
-
-```diff
-- import { shouldDehydrateMutation, shouldDehydrateQuery } from '@tanstack/query-core'
-+ import { dehydrateMutation, dehydrateQuery } from '@tanstack/query-core'
 ```
 
 ### Infinite queries now need a `defaultPageParam`

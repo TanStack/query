@@ -23,8 +23,8 @@ export { isCancelledError } from './retryer'
 export {
   dehydrate,
   hydrate,
-  defaultDehydrateQuery,
-  defaultDehydrateMutation,
+  defaultShouldDehydrateQuery,
+  defaultShouldDehydrateMutation,
 } from './hydration'
 
 // Types
