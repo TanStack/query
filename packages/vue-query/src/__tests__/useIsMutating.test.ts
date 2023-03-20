@@ -2,9 +2,10 @@ import { onScopeDispose, reactive } from 'vue-demi'
 
 import { flushPromises, successMutator } from './test-utils'
 import { useMutation } from '../useMutation'
-import { useIsMutating } from '../useIsMutating'
+import { useIsMutating, useMutationState } from '../useMutationState'
 import { vi } from 'vitest'
 import type { MockedFunction } from 'vitest'
+import { useQueryClient } from '../useQueryClient'
 
 vi.mock('../useQueryClient')
 
@@ -79,5 +80,44 @@ describe('useIsMutating', () => {
     await flushPromises()
 
     expect(isMutating.value).toStrictEqual(1)
+  })
+})
+
+describe('useMutationState', () => {
+  it('should return variables after calling mutate', async () => {
+    const mutationKey = ['mutation']
+    const variables = 'foo123'
+
+    const { mutate } = useMutation({
+      mutationKey: mutationKey,
+      mutationFn: (params: string) => successMutator(params),
+    })
+
+    mutate(variables)
+
+    const mutationState = useMutationState({
+      filters: { mutationKey, status: 'pending' },
+      select: (mutation) => mutation.state.variables,
+    })
+
+    expect(mutationState.value).toEqual([variables])
+  })
+
+  it('should return variables after calling mutate', async () => {
+    const queryClient = useQueryClient()
+    queryClient.clear()
+    const mutationKey = ['mutation']
+    const variables = 'bar234'
+
+    const { mutate } = useMutation({
+      mutationKey: mutationKey,
+      mutationFn: (params: string) => successMutator(params),
+    })
+
+    mutate(variables)
+
+    const mutationState = useMutationState()
+
+    expect(mutationState.value[0]).toContain({ variables: variables })
   })
 })
