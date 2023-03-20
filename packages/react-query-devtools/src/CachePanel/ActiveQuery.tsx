@@ -65,7 +65,7 @@ const ActiveQuery = ({
     promise?.catch(noop)
   }
 
-  const currentErrorTypeName = useMemo(() => {
+  const currentErrorTypeName = React.useMemo(() => {
     if (activeQuery && activeQueryState?.error) {
       const errorType = errorTypes.find(
         (type) =>
