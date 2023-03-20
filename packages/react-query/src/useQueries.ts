@@ -172,13 +172,17 @@ export function useQueries<T extends any[]>({
     [queries, queryClient, isRestoring],
   )
 
+  const atLeastOneOptimistic = React.useMemo(() => {
+    return defaultedQueries.some((result) =>
+      result.optimistic !== false
+    )
+  }, [defaultedQueries]);
+
   const [observer] = React.useState(
     () => new QueriesObserver(queryClient, defaultedQueries),
   )
 
-  const optimisticResult = observer.getOptimisticResult(defaultedQueries)
-
-  useSyncExternalStore(
+  let results = useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
         isRestoring
@@ -189,6 +193,10 @@ export function useQueries<T extends any[]>({
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult(),
   )
+
+  if (atLeastOneOptimistic) {
+    results = observer.getOptimisticResult(defaultedQueries)
+  }
 
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because
@@ -205,12 +213,12 @@ export function useQueries<T extends any[]>({
 
   useClearResetErrorBoundary(errorResetBoundary)
 
-  const shouldAtLeastOneSuspend = optimisticResult.some((result, index) =>
+  const shouldAtLeastOneSuspend = results.some((result, index) =>
     shouldSuspend(defaultedQueries[index], result, isRestoring),
   )
 
   const suspensePromises = shouldAtLeastOneSuspend
-    ? optimisticResult.flatMap((result, index) => {
+    ? results.flatMap((result, index) => {
         const options = defaultedQueries[index]
         const queryObserver = observer.getObservers()[index]
 
@@ -229,7 +237,7 @@ export function useQueries<T extends any[]>({
     throw Promise.all(suspensePromises)
   }
 
-  const firstSingleResultWhichShouldThrow = optimisticResult.find(
+  const firstSingleResultWhichShouldThrow = results.find(
     (result, index) =>
       getHasError({
         result,
@@ -243,5 +251,5 @@ export function useQueries<T extends any[]>({
     throw firstSingleResultWhichShouldThrow.error
   }
 
-  return optimisticResult as QueriesResults<T>
+  return results as QueriesResults<T>
 }
