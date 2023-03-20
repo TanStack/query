@@ -118,7 +118,7 @@ interface ContinueAction {
 
 interface SetStateAction<TData, TError> {
   type: 'setState'
-  state: QueryState<TData, TError>
+  state: Partial<QueryState<TData, TError>>
   setStateOptions?: SetStateOptions
 }
 
@@ -212,7 +212,7 @@ export class Query<
   }
 
   setState(
-    state: QueryState<TData, TError>,
+    state: Partial<QueryState<TData, TError>>,
     setStateOptions?: SetStateOptions,
   ): void {
     this.dispatch({ type: 'setState', state, setStateOptions })
