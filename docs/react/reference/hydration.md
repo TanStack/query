@@ -47,11 +47,11 @@ const dehydratedState = dehydrate(queryClient, {
 
 ### limitations
 
-Some storage systems (such as browser [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API)) require values to be JSON serializable. If you need to dehydrate values that are not automatically serializable to JSON (like `Error` or `undefined`), you have to serialize them for yourself. Since only successful queries are included per default, to also include `Errors`, you have to provide `dehydrateQuery`, e.g.:
+Some storage systems (such as browser [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API)) require values to be JSON serializable. If you need to dehydrate values that are not automatically serializable to JSON (like `Error` or `undefined`), you have to serialize them for yourself. Since only successful queries are included per default, to also include `Errors`, you have to provide `shouldDehydrateQuery `, e.g.:
 
 ```tsx
 // server
-const state = dehydrate(client, { dehydrateQuery: () => true }) // to also include Errors
+const state = dehydrate(client, { shouldDehydrateQuery: () => true }) // to also include Errors
 const serializedState = mySerialize(state) // transform Error instances to objects
 
 // client
