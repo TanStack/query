@@ -8,7 +8,8 @@
     "tsBuildInfoFile": "./build/.tsbuildinfo",
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "emitDeclarationOnly": false
+    "emitDeclarationOnly": false,
+    "types": ["vitest/globals"]
   },
   "include": ["src"],
   "exclude": ["node_modules", "build"],

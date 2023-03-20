@@ -26,10 +26,9 @@
     "strict": true,
     "strictNullChecks": true,
     "target": "esnext",
-    "tsBuildInfoFile": "./build/.tsbuildinfo"
+    "tsBuildInfoFile": "./build/.tsbuildinfo",
+    "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
   "include": ["src", "src/**/*.svelte"],
-  "references": [
-    { "path": "../query-core" }
-  ]
+  "references": [{ "path": "../query-core" }]
 }

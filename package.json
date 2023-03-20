@@ -106,5 +106,10 @@
         "path": "packages/*/build/umd/*.production.js"
       }
     ]
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@types/testing-library__jest-dom@5.14.5": "patches/@types__testing-library__jest-dom@5.14.5.patch"
+    }
   }
 }
