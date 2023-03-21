@@ -84,7 +84,7 @@ const CreateTodo = () => {
 
 ## Resetting Mutation State
 
-It's sometimes the case that you need to clear the `error` or `data` of a mutation request. To do this, you can use the `reset` function to handle this:
+It's sometimes the case that you need to clear the `error` or `data` of a mutation request. To do this, you can use the `reset` function:
 
 ```js
 const CreateTodo = () => {
