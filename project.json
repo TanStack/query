@@ -3,21 +3,16 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "./",
   "targets": {
-    "test:format": {
-      "command": "pnpm run prettier --check",
-      "inputs": ["{workspaceRoot}/**/*"]
-    },
     "rollup": {
       "command": "rollup --config rollup.config.js",
       "outputs": [
-        "{workspaceRoot}/packages/**/build/**/*(.cjs|.mjs|.js)*",
-        "{workspaceRoot}/packages/**/build/stats*",
-        "{workspaceRoot}/packages/**/build/**/*.svelte"
+        "{workspaceRoot}/packages/*/build/**/*(.cjs|.mjs|.js)*",
+        "{workspaceRoot}/packages/*/build/stats*",
+        "{workspaceRoot}/packages/*/build/**/*.svelte"
       ]
     },
     "build": {
-      "command": "echo \"  @tanstack/query > All pacakges built! 📦\"",
-      "outputs": ["{workspaceRoot}/packages/**/build"],
+      "command": "echo \"  @tanstack/query > All packages built! 📦\"",
       "dependsOn": ["rollup", "^build:types", "^build"]
     },
     "test:build": {
