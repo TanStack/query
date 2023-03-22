@@ -10,14 +10,13 @@
     "rollup": {
       "command": "rollup --config rollup.config.js",
       "outputs": [
-        "{workspaceRoot}/packages/**/build/**/*(.cjs|.mjs|.js)*",
-        "{workspaceRoot}/packages/**/build/stats*",
-        "{workspaceRoot}/packages/**/build/**/*.svelte"
+        "{workspaceRoot}/packages/*/build/**/*(.cjs|.mjs|.js)*",
+        "{workspaceRoot}/packages/*/build/stats*",
+        "{workspaceRoot}/packages/*/build/**/*.svelte"
       ]
     },
     "build": {
       "command": "echo \"  @tanstack/query > All pacakges built! 📦\"",
-      "outputs": ["{workspaceRoot}/packages/**/build"],
       "dependsOn": ["rollup", "^build:types", "^build"]
     },
     "test:build": {
