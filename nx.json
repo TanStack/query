@@ -8,8 +8,6 @@
           "test:eslint",
           "test:types",
           "build:types",
-          "test:format",
-          "test:build",
           "build",
           "rollup"
         ],
