@@ -37,7 +37,7 @@
     "@babel/preset-typescript": "^7.16.7",
     "@commitlint/parse": "^16.2.1",
     "@faker-js/faker": "^6.3.1",
-    "@nrwl/nx-cloud": "^15.2.3",
+    "@nrwl/nx-cloud": "^15.3.1",
     "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-commonjs": "22.0.1",
     "@rollup/plugin-node-resolve": "^13.2.1",
