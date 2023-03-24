@@ -75,9 +75,7 @@ export function useQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: MaybeRef<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>
-  >,
+  options: MaybeRef<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
 ): UseQueryReturnType<TData, TError>
 
 export function useQuery<
@@ -118,10 +116,7 @@ export function useQuery<
 >(
   queryKey: MaybeRef<TQueryKey>,
   options?: MaybeRef<
-    Omit<
-      UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-      'queryKey'
-    >
+    Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'queryKey'>
   >,
 ): UseQueryReturnType<TData, TError>
 
@@ -185,9 +180,7 @@ export function useQuery<
   arg2?:
     | MaybeRef<QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>>
     | MaybeRef<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
-  arg3?: MaybeRef<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>
-  >,
+  arg3?: MaybeRef<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
 ):
   | UseQueryReturnType<TData, TError>
   | UseQueryDefinedReturnType<TData, TError> {
