@@ -597,6 +597,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                 <Logo aria-hidden />
                 <ScreenReader text="Close React Query Devtools" />
               </button>
+
               <div
                 style={{
                   display: 'flex',
@@ -672,6 +673,18 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                     }}
                   >
                     {baseSort === 1 ? '⬆ Asc' : '⬇ Desc'}
+                  </Button>
+                  <Button
+                    title="Clear cache"
+                    aria-label="Clear cache"
+                    type="button"
+                    onClick={() => queryCache.clear()}
+                    style={{
+                      padding: '.3em .4em',
+                      marginRight: '.5em',
+                    }}
+                  >
+                    Clear
                   </Button>
                   <Button
                     type="button"
@@ -1329,6 +1342,8 @@ const QueryRow = React.memo(
     )
   },
 )
+
+QueryRow.displayName = 'QueryRow'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 function noop() {}
