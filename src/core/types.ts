@@ -48,7 +48,9 @@ export interface InfiniteData<TData> {
   pageParams: unknown[]
 }
 
-export type QueryMeta = Record<string, unknown>
+export interface QueryMeta {
+  [index: string]: unknown
+}
 
 export interface QueryOptions<
   TQueryFnData = unknown,
@@ -527,7 +529,9 @@ export type MutationKey = string | readonly unknown[]
 
 export type MutationStatus = 'idle' | 'loading' | 'success' | 'error'
 
-export type MutationMeta = Record<string, unknown>
+export interface MutationMeta {
+  [index: string]: unknown
+}
 
 export type MutationFunction<TData = unknown, TVariables = unknown> = (
   variables: TVariables
