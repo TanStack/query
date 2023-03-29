@@ -63,7 +63,20 @@ export function createBaseQuery<
   ) => {
     return observer.subscribe((result) => {
       notifyManager.batchCalls(() => {
-        const unwrappedResult = { ...unwrap(result) }
+        const query = observer.getCurrentQuery()
+        const unwrappedResult = {
+          ...unwrap(result),
+
+          // hydrate() expects a QueryState object, which is similar but not
+          // quite the same as a QueryObserverResult object. Thus, for now, we're
+          // copying over the missing properties from state in order to support hydration
+          dataUpdateCount: query.state.dataUpdateCount,
+          fetchFailureCount: query.state.fetchFailureCount,
+          fetchFailureReason: query.state.fetchFailureReason,
+          fetchMeta: query.state.fetchMeta,
+          isInvalidated: query.state.isInvalidated,
+        }
+
         if (unwrappedResult.isError) {
           if (process.env['NODE_ENV'] === 'development') {
             console.error(unwrappedResult.error)
