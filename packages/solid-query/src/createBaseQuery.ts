@@ -18,7 +18,6 @@ import {
   createResource,
   on,
   onCleanup,
-  onMount,
 } from 'solid-js'
 import { createStore, unwrap } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
@@ -176,10 +175,6 @@ export function createBaseQuery<
       unsubscribe()
       unsubscribe = null
     }
-  })
-
-  onMount(() => {
-    observer.setOptions(defaultedOptions, { listeners: false })
   })
 
   createComputed(() => {
