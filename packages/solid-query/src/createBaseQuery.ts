@@ -210,7 +210,7 @@ export function createBaseQuery<
       prop: keyof QueryObserverResult<TData, TError>,
     ): any {
       const val = queryResource()?.[prop]
-      return val !== void 0 ? val : Reflect.get(target, prop)
+      return val !== undefined ? val : Reflect.get(target, prop)
     },
   }
 
