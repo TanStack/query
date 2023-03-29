@@ -177,9 +177,17 @@ export function createBaseQuery<
     }
   })
 
-  createComputed(() => {
-    observer.setOptions(client().defaultQueryOptions(options()))
-  })
+  createComputed(
+    on(
+      () => client().defaultQueryOptions(options()),
+      () => observer.setOptions(client().defaultQueryOptions(options())),
+      {
+        // Defer because we don't need to trigger on first render
+        // This only cares about changes to options after the observer is created
+        defer: true,
+      },
+    ),
+  )
 
   createComputed(
     on(
