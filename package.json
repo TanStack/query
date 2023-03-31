@@ -87,6 +87,7 @@
     "react-dom": "^18.2.0",
     "rimraf": "^4.1.2",
     "rollup": "^3.15.0",
+    "rollup-plugin-preserve-directives": "0.1.0",
     "rollup-plugin-size": "^0.2.2",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-visualizer": "^5.9.0",
