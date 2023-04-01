@@ -30,11 +30,11 @@ jobs:
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - name: you kay git?
-        run: git log -10
+        run: git log -50
       - name: Run Tests
         uses: nick-fields/retry@v2.8.3
         with:
-          command: pnpm test:lib --base=${{ github.base_ref }}
+          command: pnpm test:lib --base=${{ github.event.pull_request.base.sha }}
           timeout_minutes: 5
           max_attempts: 3
       - name: Upload coverage to Codecov
