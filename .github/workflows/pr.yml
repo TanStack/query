@@ -14,6 +14,10 @@ jobs:
           fetch-depth: 0
       - name: Checking Github_ref
         run: echo "${GITHUB_REF}"
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
