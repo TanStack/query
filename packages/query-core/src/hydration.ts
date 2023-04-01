@@ -169,3 +169,5 @@ export function hydrate(
     )
   })
 }
+
+console.log('foo')
