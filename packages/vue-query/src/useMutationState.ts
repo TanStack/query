@@ -31,7 +31,7 @@ export function useIsMutating(
   return length
 }
 
-export type MutationStateOptions<TResult> = {
+export type MutationStateOptions<TResult = MutationState> = {
   filters?: MutationFilters
   select?: (
     mutation: Mutation<unknown, DefaultError, unknown, unknown>,
@@ -54,7 +54,7 @@ function getResult<TResult = MutationState>(
     )
 }
 
-export function useMutationState<TResult = unknown>(
+export function useMutationState<TResult = MutationState>(
   options: MutationStateOptions<TResult> = {},
   queryClient?: QueryClient,
 ): DeepReadonly<Ref<Array<TResult>>> {

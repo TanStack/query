@@ -4,10 +4,12 @@ import { useIsMutating, useMutationState } from '../useMutationState'
 import { useMutation } from '../useMutation'
 import {
   createQueryClient,
+  doNotExecute,
   renderWithClient,
   setActTimeout,
   sleep,
 } from './utils'
+import type { MutationState, MutationStatus } from '@tanstack/query-core'
 
 describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {
@@ -172,6 +174,27 @@ describe('useIsMutating', () => {
 })
 
 describe('useMutationState', () => {
+  describe('types', () => {
+    it('should default to QueryState', () => {
+      doNotExecute(() => {
+        const result = useMutationState({
+          filters: { status: 'pending' },
+        })
+
+        expectTypeOf(result).toEqualTypeOf<Array<MutationState>>()
+      })
+    })
+    it('should infer with select', () => {
+      doNotExecute(() => {
+        const result = useMutationState({
+          filters: { status: 'pending' },
+          select: (mutation) => mutation.state.status,
+        })
+
+        expectTypeOf(result).toEqualTypeOf<Array<MutationStatus>>()
+      })
+    })
+  })
   it('should return variables after calling mutate', async () => {
     const queryClient = createQueryClient()
     const variables: unknown[][] = []
