@@ -19,6 +19,8 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+      - name: checking git log
+        run: git log -10
       - name: Run Tests
         uses: nick-fields/retry@v2.8.3
         with:
