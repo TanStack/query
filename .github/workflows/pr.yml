@@ -1,7 +1,9 @@
 name: pr
 on: [pull_request]
 env:
-  NX_DAEMON: 'false'
+  NX_DAEMON: false
+  NX_VERBOSE_LOGGING: true
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 jobs:
   test:
     name: 'Test'

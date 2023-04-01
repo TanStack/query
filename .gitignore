@@ -43,3 +43,5 @@ node_modules
 .cache
 dist
 .idea
+
+nx-cloud.env
