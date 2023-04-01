@@ -23,7 +23,7 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
-      - run: yarn test:ci --base=${{ github.event.before }}
+      - run: yarn test:ci
         env:
           REACTJS_VERSION: ${{ matrix.react }}
       - run: yarn test:size
