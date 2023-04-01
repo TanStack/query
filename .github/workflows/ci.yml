@@ -14,7 +14,9 @@ on:
       - 'alpha'
       - 'beta'
 env:
-  NX_DAEMON: 'false'
+  NX_DAEMON: false
+  NX_VERBOSE_LOGGING: true
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 jobs:
   test-and-publish:
     if: github.repository == 'TanStack/query' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/beta')
