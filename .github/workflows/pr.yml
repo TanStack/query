@@ -12,9 +12,8 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha }}
       - name: Get out of detatched head state
-        run: git switch -c temp
+        run: git checkout ${{ github.event.pull_request.head.sha }}
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
