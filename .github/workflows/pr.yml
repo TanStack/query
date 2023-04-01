@@ -41,7 +41,7 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:eslint
+      - run: pnpm run test:eslint --base=${{ github.base_ref }}
   typecheck:
     name: 'Typecheck'
     runs-on: ubuntu-latest
@@ -56,7 +56,7 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:types
+      - run: pnpm run test:types --base=${{ github.base_ref }}
   format:
     name: 'Format'
     runs-on: ubuntu-latest
@@ -71,7 +71,7 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:format
+      - run: pnpm run test:format --base=${{ github.base_ref }}
   test-react-17:
     name: 'Test React 17'
     runs-on: ubuntu-latest
@@ -91,7 +91,7 @@ jobs:
         with:
           timeout_minutes: 5
           max_attempts: 3
-          command: pnpm run test:react:17
+          command: pnpm run test:react:17 --base=${{ github.base_ref }}
         env:
           REACTJS_VERSION: 17
   test-build:
@@ -108,6 +108,6 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:build
+      - run: pnpm run test:build --base=${{ github.base_ref }}
         env:
           BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
