@@ -170,4 +170,4 @@ export function hydrate(
   })
 }
 
-console.log('foo')
+console.log('foo2')
