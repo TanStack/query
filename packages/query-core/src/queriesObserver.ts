@@ -21,13 +21,26 @@ function replaceAt<T>(array: T[], index: number, value: T): T[] {
 
 type QueriesObserverListener = (result: QueryObserverResult[]) => void
 
-export class QueriesObserver extends Subscribable<QueriesObserverListener> {
+export interface QueriesObserverOptions<
+  TCombinedResult = QueryObserverResult[],
+> {
+  combine?: (result: QueryObserverResult[]) => TCombinedResult
+}
+
+export class QueriesObserver<
+  TCombinedResult = QueryObserverResult[],
+> extends Subscribable<QueriesObserverListener> {
   #client: QueryClient
   #result: QueryObserverResult[]
   #queries: QueryObserverOptions[]
   #observers: QueryObserver[]
+  #options?: QueriesObserverOptions<TCombinedResult>
 
-  constructor(client: QueryClient, queries?: QueryObserverOptions[]) {
+  constructor(
+    client: QueryClient,
+    queries: QueryObserverOptions[],
+    options?: QueriesObserverOptions<TCombinedResult>,
+  ) {
     super()
 
     this.#client = client
@@ -35,9 +48,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
     this.#result = []
     this.#observers = []
 
-    if (queries) {
-      this.setQueries(queries)
-    }
+    this.setQueries(queries, options)
   }
 
   protected onSubscribe(): void {
@@ -65,9 +76,11 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
 
   setQueries(
     queries: QueryObserverOptions[],
+    options?: QueriesObserverOptions<TCombinedResult>,
     notifyOptions?: NotifyOptions,
   ): void {
     this.#queries = queries
+    this.#options = options
 
     notifyManager.batch(() => {
       const prevObservers = this.#observers
@@ -124,10 +137,16 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
     return this.#observers
   }
 
-  getOptimisticResult(queries: QueryObserverOptions[]): QueryObserverResult[] {
-    return this.#findMatchingObservers(queries).map((match) =>
-      match.observer.getOptimisticResult(match.defaultedQueryOptions),
+  getOptimisticResult(queries: QueryObserverOptions[]): TCombinedResult {
+    return this.#combineResult(
+      this.#findMatchingObservers(queries).map((match) =>
+        match.observer.getOptimisticResult(match.defaultedQueryOptions),
+      ),
     )
+  }
+
+  #combineResult(input: QueryObserverResult[]): TCombinedResult {
+    return (this.#options?.combine?.(input) ?? input) as TCombinedResult
   }
 
   #findMatchingObservers(
