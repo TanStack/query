@@ -25,4 +25,4 @@ The `useQueries` hook accepts an options object with a **queries** key whose val
 
 **Returns**
 
-The `useQueries` hook returns an array with all the query results.
+The `useQueries` hook returns an array with all the query results. The order returned is the same as the input order.
