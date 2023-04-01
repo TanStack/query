@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { fireEvent, screen, waitFor, act } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, onlineManager } from '@tanstack/react-query'
 import { defaultPanelSize, sortFns } from '../utils'
 import {
   getByTextContent,
@@ -476,6 +476,31 @@ describe('ReactQueryDevtools', () => {
     })
 
     expect(count).toBe(2)
+  })
+
+  it('should inform onlineManager when offline mode is simulated', () => {
+    const { queryClient } = createQueryClient()
+    const online: Array<boolean> = []
+
+    const unsubscribe = onlineManager.subscribe(() => {
+      online.push(onlineManager.isOnline())
+    })
+
+    renderWithClient(queryClient, <div />, {
+      initialIsOpen: true,
+    })
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /mock offline behavior/i }),
+    )
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /restore offline mock/i }),
+    )
+
+    expect(online).toStrictEqual([false, true])
+
+    unsubscribe()
   })
 
   it('should sort the queries according to the sorting filter', async () => {
