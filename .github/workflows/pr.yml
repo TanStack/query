@@ -13,6 +13,8 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
+      - name: Get out of detatched head state
+        run: git switch -c temp
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
