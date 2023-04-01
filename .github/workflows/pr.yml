@@ -13,7 +13,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Checking Github_ref
-        run: echo "${GITHUB_REF:11}"
+        run: echo "${GITHUB_REF}"
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
