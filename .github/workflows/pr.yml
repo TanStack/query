@@ -12,8 +12,9 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Checking Github_ref
-        run: echo "${GITHUB_REF}"
+          ref: ${{ github.head_ref }}
+      # - name: Checking Github_ref
+      #   run: echo "${GITHUB_REF}"
       - name: Dump GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
