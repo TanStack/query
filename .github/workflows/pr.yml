@@ -10,15 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
-      - name: Echo pnpm version
-        run: pnpm --version
       - uses: actions/setup-node@v3
         with:
           node-version: 16.14.2
@@ -28,7 +22,7 @@ jobs:
       - name: Run Tests
         uses: nick-fields/retry@v2.8.3
         with:
-          command: pnpm test:lib
+          command: pnpm test:lib --base=${{ github.base_ref }}
           timeout_minutes: 5
           max_attempts: 3
       - name: Upload coverage to Codecov
