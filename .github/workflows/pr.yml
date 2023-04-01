@@ -13,6 +13,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
       # - name: Checking Github_ref
       #   run: echo "${GITHUB_REF}"
       - name: Dump GitHub context
