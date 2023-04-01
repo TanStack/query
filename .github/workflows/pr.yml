@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
@@ -24,7 +26,7 @@ jobs:
       - name: Run Tests
         uses: nick-fields/retry@v2.8.3
         with:
-          command: pnpm test:lib --base=${{ github.event.pull_request.base.sha }}
+          command: pnpm test:lib --base=${{ github.base_ref }}
           timeout_minutes: 5
           max_attempts: 3
       - name: Upload coverage to Codecov
@@ -34,6 +36,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
@@ -43,12 +47,14 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:eslint --base=${{ github.event.pull_reques }}
+      - run: pnpm run test:eslint --base=${{ github.base_ref }}
   typecheck:
     name: 'Typecheck'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
@@ -58,12 +64,14 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:types --base=${{ github.event.pull_reques }}
+      - run: pnpm run test:types --base=${{ github.base_ref }}
   format:
     name: 'Format'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
@@ -73,12 +81,14 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:format --base=${{ github.event.pull_reques }}
+      - run: pnpm run test:format --base=${{ github.base_ref }}
   test-react-17:
     name: 'Test React 17'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
@@ -93,7 +103,7 @@ jobs:
         with:
           timeout_minutes: 5
           max_attempts: 3
-          command: pnpm run test:react:17 --base=${{ github.event.pull_reques }}
+          command: pnpm run test:react:17 --base=${{ github.base_ref }}
         env:
           REACTJS_VERSION: 17
   test-build:
@@ -101,6 +111,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
@@ -110,6 +122,6 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:build --base=${{ github.event.pull_reques }}
+      - run: pnpm run test:build --base=${{ github.base_ref }}
         env:
           BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
