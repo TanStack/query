@@ -631,3 +631,5 @@ function getDefaultState<
     fetchStatus: 'idle',
   }
 }
+
+console.log('making sure affected things run')
