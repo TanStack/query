@@ -36,7 +36,8 @@
     "default": [
       "{projectRoot}/**/*",
       "globalBuildAffectingConfig",
-      "globalNonBuildAffectingConfig"
+      "globalNonBuildAffectingConfig",
+      "!{workspaceRoot}/**/*"
     ],
     "public": [
       "default",
