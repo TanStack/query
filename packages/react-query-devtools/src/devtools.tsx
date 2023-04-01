@@ -689,6 +689,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                       } else {
                         onlineManager.setOnline(false)
                         setMockOffline(true)
+                        window.dispatchEvent(new Event('offline'))
                       }
                     }}
                     aria-label={
