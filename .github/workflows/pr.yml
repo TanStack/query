@@ -14,12 +14,6 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
-      # - name: Checking Github_ref
-      #   run: echo "${GITHUB_REF}"
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
@@ -29,8 +23,6 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - name: you kay git?
-        run: git log -50
       - name: Run Tests
         uses: nick-fields/retry@v2.8.3
         with:
@@ -46,7 +38,8 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.head_ref }}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
@@ -64,7 +57,8 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.head_ref }}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
@@ -82,7 +76,8 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.head_ref }}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
@@ -100,7 +95,8 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.head_ref }}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
@@ -125,7 +121,8 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.head_ref }}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
