@@ -11,10 +11,8 @@ import type { Mutation, MutationState } from './mutation'
 // TYPES
 
 export interface DehydrateOptions {
-  dehydrateMutations?: boolean
-  dehydrateQueries?: boolean
-  shouldDehydrateMutation?: ShouldDehydrateMutationFunction
-  shouldDehydrateQuery?: ShouldDehydrateQueryFunction
+  shouldDehydrateMutation?: (mutation: Mutation) => boolean
+  shouldDehydrateQuery?: (query: Query) => boolean
 }
 
 export interface HydrateOptions {
@@ -39,10 +37,6 @@ export interface DehydratedState {
   mutations: DehydratedMutation[]
   queries: DehydratedQuery[]
 }
-
-export type ShouldDehydrateQueryFunction = (query: Query) => boolean
-
-export type ShouldDehydrateMutationFunction = (mutation: Mutation) => boolean
 
 // FUNCTIONS
 
@@ -77,36 +71,23 @@ export function dehydrate(
   client: QueryClient,
   options: DehydrateOptions = {},
 ): DehydratedState {
-  const mutations: DehydratedMutation[] = []
-  const queries: DehydratedQuery[] = []
+  const filterMutation =
+    options.shouldDehydrateMutation ?? defaultShouldDehydrateMutation
 
-  if (options.dehydrateMutations !== false) {
-    const shouldDehydrateMutation =
-      options.shouldDehydrateMutation || defaultShouldDehydrateMutation
+  const mutations = client
+    .getMutationCache()
+    .getAll()
+    .flatMap((mutation) =>
+      filterMutation(mutation) ? [dehydrateMutation(mutation)] : [],
+    )
 
-    client
-      .getMutationCache()
-      .getAll()
-      .forEach((mutation) => {
-        if (shouldDehydrateMutation(mutation)) {
-          mutations.push(dehydrateMutation(mutation))
-        }
-      })
-  }
+  const filterQuery =
+    options.shouldDehydrateQuery ?? defaultShouldDehydrateQuery
 
-  if (options.dehydrateQueries !== false) {
-    const shouldDehydrateQuery =
-      options.shouldDehydrateQuery || defaultShouldDehydrateQuery
-
-    client
-      .getQueryCache()
-      .getAll()
-      .forEach((query) => {
-        if (shouldDehydrateQuery(query)) {
-          queries.push(dehydrateQuery(query))
-        }
-      })
-  }
+  const queries = client
+    .getQueryCache()
+    .getAll()
+    .flatMap((query) => (filterQuery(query) ? [dehydrateQuery(query)] : []))
 
   return { mutations, queries }
 }
