@@ -260,6 +260,30 @@ ruleTester.run('exhaustive-deps', rule, {
         });
       `,
     },
+    {
+      name: 'should ignore constants defined out of scope (react component)',
+      code: `
+        const CONST_VAL = 1
+        function MyComponent() {
+          useQuery({
+            queryKey: ["foo"],
+            queryFn: () => CONST_VAL
+          });
+        }
+      `,
+    },
+    {
+      name: 'should ignore constants defined out of scope (react hook)',
+      code: `
+        const CONST_VAL = 1
+        function useHook() {
+          useQuery({
+            queryKey: ["foo"],
+            queryFn: () => CONST_VAL
+          });
+        }
+      `,
+    },
   ],
   invalid: [
     {

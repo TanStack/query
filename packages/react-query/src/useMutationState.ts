@@ -1,3 +1,4 @@
+'use client'
 import * as React from 'react'
 
 import type {
@@ -6,10 +7,10 @@ import type {
   Mutation,
   MutationCache,
   DefaultError,
+  MutationState,
 } from '@tanstack/query-core'
 import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
-import type { MutationState } from '@tanstack/query-core/build/lib/mutation'
 
 export function useIsMutating(
   filters?: MutationFilters,
@@ -22,7 +23,7 @@ export function useIsMutating(
   ).length
 }
 
-type MutationStateOptions<TResult> = {
+type MutationStateOptions<TResult = MutationState> = {
   filters?: MutationFilters
   select?: (
     mutation: Mutation<unknown, DefaultError, unknown, unknown>,
@@ -45,7 +46,7 @@ function getResult<TResult = MutationState>(
     )
 }
 
-export function useMutationState<TResult = unknown>(
+export function useMutationState<TResult = MutationState>(
   options: MutationStateOptions<TResult> = {},
   queryClient?: QueryClient,
 ): Array<TResult> {
