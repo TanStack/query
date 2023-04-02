@@ -7,7 +7,7 @@
     "install:csb": "pnpm install --frozen-lockfile",
     "test": "pnpm run test:ci",
     "test:ci": "nx affected --targets=test:lib,test:types,test:eslint,test:format --parallel=5",
-    "test:react:17": "nx affected --target=test:lib --projects=@tanstack/react-*",
+    "test:react:17": "nx affected --target=test:lib --parallel=5",
     "test:eslint": "nx affected --target=test:eslint --parallel=5",
     "test:format": "pnpm run prettier --check",
     "test:lib": "nx affected --target=test:lib --parallel=5",
