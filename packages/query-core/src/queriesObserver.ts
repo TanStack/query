@@ -8,6 +8,7 @@ import type { QueryClient } from './queryClient'
 import type { NotifyOptions } from './queryObserver'
 import { QueryObserver } from './queryObserver'
 import { Subscribable } from './subscribable'
+import { replaceEqualDeep } from './utils'
 
 function difference<T>(array1: T[], array2: T[]): T[] {
   return array1.filter((x) => array2.indexOf(x) === -1)
@@ -35,6 +36,7 @@ export class QueriesObserver<
   #queries: QueryObserverOptions[]
   #observers: QueryObserver[]
   #options?: QueriesObserverOptions<TCombinedResult>
+  #combinedResult?: TCombinedResult
 
   constructor(
     client: QueryClient,
@@ -125,8 +127,8 @@ export class QueriesObserver<
     })
   }
 
-  getCurrentResult(): QueryObserverResult[] {
-    return this.#result
+  getCurrentResult(): TCombinedResult | undefined {
+    return this.#combinedResult
   }
 
   getQueries() {
@@ -137,16 +139,23 @@ export class QueriesObserver<
     return this.#observers
   }
 
-  getOptimisticResult(queries: QueryObserverOptions[]): TCombinedResult {
-    return this.#combineResult(
-      this.#findMatchingObservers(queries).map((match) =>
-        match.observer.getOptimisticResult(match.defaultedQueryOptions),
-      ),
+  getOptimisticResult(
+    queries: QueryObserverOptions[],
+  ): [QueryObserverResult[], () => TCombinedResult] {
+    const result = this.#findMatchingObservers(queries).map((match) =>
+      match.observer.getOptimisticResult(match.defaultedQueryOptions),
     )
+
+    return [result, () => this.#combineResult(result)]
   }
 
   #combineResult(input: QueryObserverResult[]): TCombinedResult {
-    return (this.#options?.combine?.(input) ?? input) as TCombinedResult
+    const newResult = (this.#options?.combine?.(input) ??
+      input) as TCombinedResult
+
+    this.#combinedResult = replaceEqualDeep(this.#combinedResult, newResult)
+
+    return this.#combinedResult
   }
 
   #findMatchingObservers(

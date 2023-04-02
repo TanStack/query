@@ -197,7 +197,8 @@ export function useQueries<
       ),
   )
 
-  const optimisticResult = observer.getOptimisticResult(defaultedQueries)
+  const [optimisticResult, getCombinedResult] =
+    observer.getOptimisticResult(defaultedQueries)
 
   React.useSyncExternalStore(
     React.useCallback(
@@ -270,5 +271,5 @@ export function useQueries<
     throw firstSingleResultWhichShouldThrow.error
   }
 
-  return optimisticResult
+  return getCombinedResult()
 }
