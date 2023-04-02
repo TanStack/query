@@ -1,4 +1,5 @@
 import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
+import type TSESLintScopeManager from '@typescript-eslint/scope-manager'
 import { AST_NODE_TYPES } from '@typescript-eslint/utils'
 import type { RuleContext } from '@typescript-eslint/utils/dist/ts-eslint'
 import { uniqueBy } from './unique-by'
@@ -140,6 +141,20 @@ export const ASTUtils = {
 
     return identifier
   },
+  isDeclaredInNode(params: {
+    functionNode: TSESTree.Node
+    reference: TSESLintScopeManager.Reference
+    scopeManager: TSESLint.Scope.ScopeManager
+  }) {
+    const { functionNode, reference, scopeManager } = params
+    const scope = scopeManager.acquire(functionNode)
+
+    if (scope === null) {
+      return false
+    }
+
+    return scope.set.has(reference.identifier.name)
+  },
   getExternalRefs(params: {
     scopeManager: TSESLint.Scope.ScopeManager
     sourceCode: Readonly<TSESLint.SourceCode>
@@ -187,6 +202,25 @@ export const ASTUtils = {
         AST_NODE_TYPES.Identifier,
       ]),
     )
+  },
+  getReactComponentOrHookAncestor(
+    context: Readonly<RuleContext<string, readonly unknown[]>>,
+  ) {
+    return context.getAncestors().find((x) => {
+      return (
+        ASTUtils.isNodeOfOneOf(x, [
+          AST_NODE_TYPES.FunctionDeclaration,
+          AST_NODE_TYPES.FunctionExpression,
+          AST_NODE_TYPES.ArrowFunctionExpression,
+        ]) &&
+        x.id !== null &&
+        /^(use|[A-Z])/.test(x.id.name)
+      )
+    }) as
+      | TSESTree.FunctionDeclaration
+      | TSESTree.FunctionExpression
+      | TSESTree.ArrowFunctionExpression
+      | undefined
   },
   getReferencedExpressionByIdentifier(params: {
     node: TSESTree.Node
