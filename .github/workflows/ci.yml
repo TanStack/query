@@ -39,7 +39,7 @@ jobs:
       - name: Run Tests
         uses: nick-fields/retry@v2.8.3
         with:
-          command: pnpm run test:ci
+          command: pnpm run test:ci --base=${{ github.event.before }}
           timeout_minutes: 10
           max_attempts: 3
       - name: Publish
