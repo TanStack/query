@@ -79,10 +79,20 @@ export const rule = createRule({
 
         const sourceCode = context.getSourceCode()
         const queryKeyValue = queryKeyNode
+        const reactComponent = ASTUtils.getReactComponentOrHookAncestor(context)
         const refs = ASTUtils.getExternalRefs({
           scopeManager,
           sourceCode,
           node: queryFn.value,
+        }).filter((ref) => {
+          return (
+            reactComponent === undefined ||
+            ASTUtils.isDeclaredInNode({
+              scopeManager,
+              functionNode: reactComponent,
+              reference: ref,
+            })
+          )
         })
 
         const relevantRefs = refs.filter((ref) => {

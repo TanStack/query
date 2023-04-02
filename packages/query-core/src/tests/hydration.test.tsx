@@ -113,7 +113,9 @@ describe('dehydration and rehydration', () => {
       queryFn: () => fetchData('string'),
     })
 
-    const dehydrated = dehydrate(queryClient, { dehydrateQueries: false })
+    const dehydrated = dehydrate(queryClient, {
+      shouldDehydrateQuery: () => false,
+    })
 
     expect(dehydrated.queries.length).toBe(0)
 
@@ -244,7 +246,7 @@ describe('dehydration and rehydration', () => {
     consoleMock.mockRestore()
   })
 
-  test('should filter queries via shouldDehydrateQuery', async () => {
+  test('should filter queries via dehydrateQuery', async () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
     await queryClient.prefetchQuery({
@@ -446,7 +448,9 @@ describe('dehydration and rehydration', () => {
     ).catch(() => undefined)
 
     await sleep(1)
-    const dehydrated = dehydrate(queryClient, { dehydrateMutations: false })
+    const dehydrated = dehydrate(queryClient, {
+      shouldDehydrateMutation: () => false,
+    })
 
     expect(dehydrated.mutations.length).toBe(0)
 
