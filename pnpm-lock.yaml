@@ -14,7 +14,6 @@ importers:
       '@babel/preset-react': ^7.18.6
       '@babel/preset-typescript': ^7.18.6
       '@commitlint/parse': ^17.4.2
-      '@faker-js/faker': ^7.6.0
       '@nrwl/nx-cloud': ^15.3.1
       '@rollup/plugin-babel': ^6.0.3
       '@rollup/plugin-commonjs': 24.0.1
@@ -36,7 +35,6 @@ importers:
       '@vitest/coverage-istanbul': ^0.27.1
       axios: ^1.3.2
       babel-eslint: ^10.1.0
-      babel-plugin-transform-async-to-promises: ^0.8.18
       babel-preset-solid: ^1.6.10
       bundlewatch: ^0.3.3
       chalk: ^4.1.2
@@ -86,7 +84,6 @@ importers:
       '@babel/preset-react': 7.18.6_@babel+core@7.20.12
       '@babel/preset-typescript': 7.18.6_@babel+core@7.20.12
       '@commitlint/parse': 17.4.4
-      '@faker-js/faker': 7.6.0
       '@nrwl/nx-cloud': 15.3.1
       '@rollup/plugin-babel': 6.0.3_kr63qssm7gqzntdkv6nc73jyxi
       '@rollup/plugin-commonjs': 24.0.1_rollup@3.15.0
@@ -108,7 +105,6 @@ importers:
       '@vitest/coverage-istanbul': 0.27.1
       axios: 1.3.3
       babel-eslint: 10.1.0_eslint@8.34.0
-      babel-plugin-transform-async-to-promises: 0.8.18
       babel-preset-solid: 1.6.10_@babel+core@7.20.12
       bundlewatch: 0.3.3
       chalk: 4.1.2
@@ -5287,11 +5283,6 @@ packages:
       lodash.template: 4.5.0
     dev: false
 
-  /@faker-js/faker/7.6.0:
-    resolution: {integrity: sha512-XK6BTq1NDMo9Xqw/YkYyGjSsg44fbNwYRx7QK2CuoQgyy+f1rrTDHoExVM5PsyXCtfl2vs2vVJ0MN0yN6LppRw==}
-    engines: {node: '>=14.0.0', npm: '>=6.0.0'}
-    dev: true
-
   /@graphql-typed-document-node/core/3.1.1_graphql@16.6.0:
     resolution: {integrity: sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==}
     peerDependencies:
@@ -8697,10 +8688,6 @@ packages:
   /babel-plugin-syntax-trailing-function-commas/7.0.0-beta.0:
     resolution: {integrity: sha512-Xj9XuRuz3nTSbaTXWv3itLOcxyF4oPD8douBBmj7U9BBC6nEBYfyOJYQMf/8PJAFotC62UY5dFfIGEPr7WswzQ==}
     dev: false
-
-  /babel-plugin-transform-async-to-promises/0.8.18:
-    resolution: {integrity: sha512-WpOrF76nUHijnNn10eBGOHZmXQC8JYRME9rOLxStOga7Av2VO53ehVFvVNImMksVtQuL2/7ZNxEgxnx7oo/3Hw==}
-    dev: true
 
   /babel-plugin-transform-react-remove-prop-types/0.4.24:
     resolution: {integrity: sha512-eqj0hVcJUR57/Ug2zE1Yswsw4LhuqqHhD+8v120T1cl3kjg76QwtyBrdIk4WVwK+lAhBJVYCd/v+4nc4y+8JsA==}
