@@ -32,11 +32,11 @@ export class QueriesObserver<
   TCombinedResult = QueryObserverResult[],
 > extends Subscribable<QueriesObserverListener> {
   #client: QueryClient
-  #result: QueryObserverResult[]
+  #result!: QueryObserverResult[]
   #queries: QueryObserverOptions[]
   #observers: QueryObserver[]
   #options?: QueriesObserverOptions<TCombinedResult>
-  #combinedResult?: TCombinedResult
+  #combinedResult!: TCombinedResult
 
   constructor(
     client: QueryClient,
@@ -47,10 +47,15 @@ export class QueriesObserver<
 
     this.#client = client
     this.#queries = []
-    this.#result = []
     this.#observers = []
 
+    this.#setResult([])
     this.setQueries(queries, options)
+  }
+
+  #setResult(value: QueryObserverResult[]) {
+    this.#result = value
+    this.#combinedResult = this.#combineResult(value)
   }
 
   protected onSubscribe(): void {
@@ -107,7 +112,7 @@ export class QueriesObserver<
       }
 
       this.#observers = newObservers
-      this.#result = newResult
+      this.#setResult(newResult)
 
       if (!this.hasListeners()) {
         return
@@ -127,7 +132,7 @@ export class QueriesObserver<
     })
   }
 
-  getCurrentResult(): TCombinedResult | undefined {
+  getCurrentResult(): TCombinedResult {
     return this.#combinedResult
   }
 
@@ -153,9 +158,7 @@ export class QueriesObserver<
     const newResult = (this.#options?.combine?.(input) ??
       input) as TCombinedResult
 
-    this.#combinedResult = replaceEqualDeep(this.#combinedResult, newResult)
-
-    return this.#combinedResult
+    return replaceEqualDeep(this.#combinedResult, newResult)
   }
 
   #findMatchingObservers(
@@ -220,7 +223,7 @@ export class QueriesObserver<
   #onUpdate(observer: QueryObserver, result: QueryObserverResult): void {
     const index = this.#observers.indexOf(observer)
     if (index !== -1) {
-      this.#result = replaceAt(this.#result, index, result)
+      this.#setResult(replaceAt(this.#result, index, result))
       this.#notify()
     }
   }
