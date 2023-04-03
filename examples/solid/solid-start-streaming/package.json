@@ -11,15 +11,15 @@
     "esbuild": "^0.14.54",
     "postcss": "^8.4.18",
     "solid-start-node": "^0.2.0",
-    "typescript": "^4.8.4",
-    "vite": "^3.1.8"
+    "typescript": "^4.9.4",
+    "vite": "^4.1.4"
   },
   "dependencies": {
-    "@tanstack/solid-query": "^4.3.9",
+    "@tanstack/solid-query": "^5.0.0-alpha.3",
     "@solidjs/meta": "^0.28.2",
-    "@solidjs/router": "^0.6.0",
-    "solid-js": "^1.6.9",
-    "solid-start": "^0.2.15",
+    "@solidjs/router": "^0.7.0",
+    "solid-js": "^1.6.13",
+    "solid-start": "^0.2.23",
     "undici": "^5.11.0"
   },
   "engines": {

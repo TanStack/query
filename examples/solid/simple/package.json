@@ -11,7 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "@tanstack/solid-query": "^4.3.9",
-    "solid-js": "^1.6.2"
+    "solid-js": "^1.6.13"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^4.13.0",
