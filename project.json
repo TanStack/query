@@ -3,22 +3,17 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "./",
   "targets": {
-    "test:format": {
-      "command": "pnpm run prettier --check",
-      "inputs": ["{workspaceRoot}/**/*"]
+    "rollup": {
+      "command": "rollup --config rollup.config.js",
+      "outputs": [
+        "{workspaceRoot}/packages/*/build/**/*(.cjs|.mjs|.js)*",
+        "{workspaceRoot}/packages/*/build/stats*",
+        "{workspaceRoot}/packages/*/build/**/*.svelte"
+      ]
     },
     "build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "rollup --config rollup.config.js",
-          "nx run-many --target=build:types",
-          "nx build @tanstack/eslint-plugin-query",
-          "nx build @tanstack/svelte-query"
-        ],
-        "parallel": true
-      },
-      "outputs": ["{workspaceRoot}/packages/**/build"]
+      "command": "echo \"  @tanstack/query > All packages built! 📦\"",
+      "dependsOn": ["rollup", "^build:types", "^build"]
     },
     "test:build": {
       "executor": "nx:run-commands",
@@ -28,5 +23,18 @@
       }
     }
   },
-  "implicitDependencies": ["**/*"]
+  "implicitDependencies": [
+    "@tanstack/eslint-plugin-query",
+    "@tanstack/query-async-storage-persister",
+    "@tanstack/query-broadcast-client-experimental",
+    "@tanstack/query-core",
+    "@tanstack/query-persist-client-core",
+    "@tanstack/query-sync-storage-persister",
+    "@tanstack/react-query",
+    "@tanstack/react-query-devtools",
+    "@tanstack/react-query-persist-client",
+    "@tanstack/solid-query",
+    "@tanstack/svelte-query",
+    "@tanstack/vue-query"
+  ]
 }

@@ -14,7 +14,9 @@ on:
       - 'alpha'
       - 'beta'
 env:
-  NX_DAEMON: 'false'
+  NX_DAEMON: false
+  NX_VERBOSE_LOGGING: true
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 jobs:
   test-and-publish:
     if: github.repository == 'TanStack/query' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/beta')
@@ -37,7 +39,7 @@ jobs:
       - name: Run Tests
         uses: nick-fields/retry@v2.8.3
         with:
-          command: pnpm run test:ci
+          command: pnpm run test:ci --base=${{ github.event.before }}
           timeout_minutes: 10
           max_attempts: 3
       - name: Publish

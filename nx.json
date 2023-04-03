@@ -1,17 +1,17 @@
 {
   "tasksRunnerOptions": {
     "default": {
-      "runner": "nx/tasks-runners/default",
+      "runner": "@nrwl/nx-cloud",
       "options": {
         "cacheableOperations": [
           "test:lib",
           "test:eslint",
           "test:types",
           "build:types",
-          "test:format",
-          "test:build",
-          "build"
-        ]
+          "build",
+          "rollup"
+        ],
+        "accessToken": "ZDdkNDA4MGEtYjNmYi00MWI4LWE1N2QtYTdlNmYxMGJlZWM2fHJlYWQ="
       }
     }
   },
@@ -56,12 +56,18 @@
       "inputs": ["default", "^public"]
     },
     "test:types": {
-      "outputs": ["{projectRoot}/build"],
+      "outputs": [
+        "{projectRoot}/build/**/*.d.ts",
+        "{projectRoot}/build/.tsbuildinfo"
+      ],
       "inputs": ["default", "^public"],
       "dependsOn": ["^test:types"]
     },
     "build:types": {
-      "outputs": ["{projectRoot}/build"],
+      "outputs": [
+        "{projectRoot}/build/**/*.d.ts",
+        "{projectRoot}/build/.tsbuildinfo"
+      ],
       "inputs": ["default", "^public"],
       "dependsOn": ["^build:types"]
     },
