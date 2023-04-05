@@ -64,8 +64,9 @@ export function createBaseQuery<
     return observer.subscribe((result) => {
       notifyManager.batchCalls(() => {
         const query = observer.getCurrentQuery()
+        const { refetch, ...rest } = unwrap(result)
         const unwrappedResult = {
-          ...unwrap(result),
+          ...rest,
 
           // hydrate() expects a QueryState object, which is similar but not
           // quite the same as a QueryObserverResult object. Thus, for now, we're
@@ -84,7 +85,9 @@ export function createBaseQuery<
           reject(unwrappedResult.error)
         }
         if (unwrappedResult.isSuccess) {
-          resolve(unwrappedResult)
+          // Use of any here is fine
+          // We cannot include refetch since it is not serializable
+          resolve(unwrappedResult as any)
         }
       })()
     })
