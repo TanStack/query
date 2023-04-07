@@ -299,6 +299,18 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                     {baseSort === 1 ? '⬆ Asc' : '⬇ Desc'}
                   </Button>
                   <Button
+                    title="Clear cache"
+                    aria-label="Clear cache"
+                    type="button"
+                    onClick={() => queryCache.clear()}
+                    style={{
+                      padding: '.3em .4em',
+                      marginRight: '.5em',
+                    }}
+                  >
+                    Clear
+                  </Button>
+                  <Button
                     type="button"
                     onClick={() => {
                       if (isMockOffline) {
