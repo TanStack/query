@@ -794,7 +794,7 @@ importers:
     specifiers:
       '@sveltejs/vite-plugin-svelte': ^2.0.4
       '@tanstack/svelte-query': ^4.20.0
-      '@tsconfig/svelte': ^4.0.0
+      '@tsconfig/svelte': ^3.0.0
       svelte: ^3.54.0
       svelte-check: ^2.9.2
       tslib: ^2.4.1
@@ -804,7 +804,7 @@ importers:
       '@tanstack/svelte-query': link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/vite-plugin-svelte': 2.0.4_svelte@3.55.0+vite@4.0.4
-      '@tsconfig/svelte': 4.0.1
+      '@tsconfig/svelte': 3.0.0
       svelte: 3.55.0
       svelte-check: 2.10.3_svelte@3.55.0
       tslib: 2.4.1
@@ -6523,8 +6523,8 @@ packages:
     resolution: {integrity: sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==}
     dev: true
 
-  /@tsconfig/svelte/4.0.1:
-    resolution: {integrity: sha512-B+XlGpmuAQzJqDoBATNCvEPqQg0HkO7S8pM14QDI5NsmtymzRexQ1N+nX2H6RTtFbuFgaZD4I8AAi8voGg0GLg==}
+  /@tsconfig/svelte/3.0.0:
+    resolution: {integrity: sha512-pYrtLtOwku/7r1i9AMONsJMVYAtk3hzOfiGNekhtq5tYBGA7unMve8RvUclKLMT3PrihvJqUmzsRGh0RP84hKg==}
     dev: true
 
   /@types/aria-query/4.2.2:
