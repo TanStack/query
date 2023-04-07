@@ -139,11 +139,11 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   >(
     filters: MutationFilters,
   ): Mutation<TData, TError, TVariables, TContext> | undefined {
-    if (typeof filters.exact === 'undefined') {
-      filters.exact = true
-    }
+    const defaultedFilters = { exact: true, ...filters }
 
-    return this.#mutations.find((mutation) => matchMutation(filters, mutation))
+    return this.#mutations.find((mutation) =>
+      matchMutation(defaultedFilters, mutation),
+    )
   }
 
   findAll(filters: MutationFilters = {}): Mutation[] {
