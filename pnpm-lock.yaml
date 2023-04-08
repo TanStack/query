@@ -792,7 +792,7 @@ importers:
 
   examples/svelte/simple:
     specifiers:
-      '@sveltejs/vite-plugin-svelte': ^2.0.4
+      '@sveltejs/vite-plugin-svelte': ^2.0.2
       '@tanstack/svelte-query': ^4.20.0
       '@tsconfig/svelte': ^3.0.0
       svelte: ^3.54.0
@@ -1058,7 +1058,7 @@ importers:
       '@tanstack/query-core': link:../query-core
     devDependencies:
       '@sveltejs/package': 1.0.2_glsdxddlaertg66rhhvanbinpy
-      '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.0.4
+      '@sveltejs/vite-plugin-svelte': 2.0.4_svelte@3.55.0+vite@4.0.4
       '@testing-library/svelte': 3.2.2_svelte@3.55.0
       '@vitest/coverage-istanbul': 0.27.1_jsdom@20.0.3
       eslint-plugin-svelte: 2.14.1_svelte@3.55.0
@@ -9324,6 +9324,11 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
+  /deepmerge/4.3.1:
+    resolution: {integrity: sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==}
+    engines: {node: '>=0.10.0'}
+    dev: true
+
   /defaults/1.0.3:
     resolution: {integrity: sha512-s82itHOnYrN0Ib8r+z7laQz3sdE+4FP3d9Q7VLO7U+KRT+CR0GsWuyHxzdAY82I7cXv0G/twrqomTJLOssO5HA==}
     dependencies:
@@ -12242,7 +12247,7 @@ packages:
       babel-jest: 27.5.1_@babel+core@7.19.1
       chalk: 4.1.2
       ci-info: 3.3.2
-      deepmerge: 4.2.2
+      deepmerge: 4.3.1
       glob: 7.2.3
       graceful-fs: 4.2.10
       jest-circus: 27.5.1

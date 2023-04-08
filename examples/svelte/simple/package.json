@@ -13,7 +13,7 @@
     "@tanstack/svelte-query": "^4.20.0"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^2.0.4",
+    "@sveltejs/vite-plugin-svelte": "^2.0.2",
     "@tsconfig/svelte": "^3.0.0",
     "svelte": "^3.54.0",
     "svelte-check": "^2.9.2",
