@@ -803,7 +803,7 @@ importers:
     dependencies:
       '@tanstack/svelte-query': link:../../../packages/svelte-query
     devDependencies:
-      '@sveltejs/vite-plugin-svelte': 2.0.4_svelte@3.55.0+vite@4.0.4
+      '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.0.4
       '@tsconfig/svelte': 3.0.0
       svelte: 3.55.0
       svelte-check: 2.10.3_svelte@3.55.0
@@ -1058,7 +1058,7 @@ importers:
       '@tanstack/query-core': link:../query-core
     devDependencies:
       '@sveltejs/package': 1.0.2_glsdxddlaertg66rhhvanbinpy
-      '@sveltejs/vite-plugin-svelte': 2.0.4_svelte@3.55.0+vite@4.0.4
+      '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.0.4
       '@testing-library/svelte': 3.2.2_svelte@3.55.0
       '@vitest/coverage-istanbul': 0.27.1_jsdom@20.0.3
       eslint-plugin-svelte: 2.14.1_svelte@3.55.0
@@ -6286,7 +6286,7 @@ packages:
       svelte: ^3.54.0
       vite: ^4.0.0
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 2.0.4_svelte@3.55.0+vite@4.0.4
+      '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.0.4
       '@types/cookie': 0.5.1
       cookie: 0.5.0
       devalue: 4.3.0
@@ -6321,17 +6321,17 @@ packages:
       - typescript
     dev: true
 
-  /@sveltejs/vite-plugin-svelte/2.0.4_svelte@3.55.0+vite@4.0.4:
-    resolution: {integrity: sha512-pjqhW00KwK2uzDGEr+yJBwut+D+4XfJO/+bHHdHzPRXn9+1Jeq5JcFHyrUiYaXgHtyhX0RsllCTm4ssAx4ZY7Q==}
+  /@sveltejs/vite-plugin-svelte/2.0.2_svelte@3.55.0+vite@4.0.4:
+    resolution: {integrity: sha512-xCEan0/NNpQuL0l5aS42FjwQ6wwskdxC3pW1OeFtEKNZwRg7Evro9lac9HesGP6TdFsTv2xMes5ASQVKbCacxg==}
     engines: {node: ^14.18.0 || >= 16}
     peerDependencies:
       svelte: ^3.54.0
       vite: ^4.0.0
     dependencies:
       debug: 4.3.4
-      deepmerge: 4.3.1
+      deepmerge: 4.2.2
       kleur: 4.1.5
-      magic-string: 0.30.0
+      magic-string: 0.27.0
       svelte: 3.55.0
       svelte-hmr: 0.15.1_svelte@3.55.0
       vite: 4.0.4
@@ -9324,11 +9324,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /deepmerge/4.3.1:
-    resolution: {integrity: sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==}
-    engines: {node: '>=0.10.0'}
-    dev: true
-
   /defaults/1.0.3:
     resolution: {integrity: sha512-s82itHOnYrN0Ib8r+z7laQz3sdE+4FP3d9Q7VLO7U+KRT+CR0GsWuyHxzdAY82I7cXv0G/twrqomTJLOssO5HA==}
     dependencies:
@@ -12247,7 +12242,7 @@ packages:
       babel-jest: 27.5.1_@babel+core@7.19.1
       chalk: 4.1.2
       ci-info: 3.3.2
-      deepmerge: 4.3.1
+      deepmerge: 4.2.2
       glob: 7.2.3
       graceful-fs: 4.2.10
       jest-circus: 27.5.1
@@ -13393,6 +13388,13 @@ packages:
     engines: {node: '>=12'}
     dependencies:
       sourcemap-codec: 1.4.8
+    dev: true
+
+  /magic-string/0.27.0:
+    resolution: {integrity: sha512-8UnnX2PeRAPZuN12svgR9j7M1uWMovg/CEnIwIG0LFkXSJJe4PdfUGiTGl8V9bsBHFUtfVINcSyYxd7q+kx9fA==}
+    engines: {node: '>=12'}
+    dependencies:
+      '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
   /magic-string/0.30.0:
