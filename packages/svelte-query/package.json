@@ -19,10 +19,10 @@
     "test:eslint": "eslint --ext .svelte,.ts ./src",
     "test:lib": "vitest run --coverage true",
     "test:lib:dev": "vitest watch",
-    "build": "svelte-package && rimraf ./build/lib/package.json"
+    "build": "svelte-package --input ./src --output ./build/lib && rimraf ./build/lib/__tests__"
   },
   "devDependencies": {
-    "@sveltejs/package": "^1.0.0",
+    "@sveltejs/package": "^2.0.2",
     "@sveltejs/vite-plugin-svelte": "^2.0.2",
     "@testing-library/svelte": "^3.2.2",
     "@vitest/coverage-istanbul": "^0.27.1",
