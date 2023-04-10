@@ -249,28 +249,26 @@ export class QueryClient {
     filters: RefetchQueryFilters = {},
     options?: RefetchOptions,
   ): Promise<void> {
+    const fetchOptions = {
+      ...options,
+      cancelRefetch: options?.cancelRefetch ?? true,
+    }
     const promises = notifyManager.batch(() =>
       this.#queryCache
         .findAll(filters)
         .filter((query) => !query.isDisabled())
         .map((query) => {
-          const promise = query.fetch(undefined, {
-            ...options,
-            cancelRefetch: options?.cancelRefetch ?? true,
-          })
+          let promise = query.fetch(undefined, fetchOptions)
+          if (!fetchOptions.throwOnError) {
+            promise = promise.catch(noop)
+          }
           return query.state.fetchStatus === 'paused'
             ? Promise.resolve()
             : promise
         }),
     )
 
-    let promise = Promise.all(promises).then(noop)
-
-    if (!options?.throwOnError) {
-      promise = promise.catch(noop)
-    }
-
-    return promise
+    return Promise.all(promises).then(noop)
   }
 
   fetchQuery<
