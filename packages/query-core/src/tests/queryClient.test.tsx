@@ -1,7 +1,12 @@
 import { waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
-import { sleep, queryKey, createQueryClient } from './utils'
+import {
+  sleep,
+  queryKey,
+  createQueryClient,
+  mockNavigatorOnLine,
+} from './utils'
 import type {
   QueryCache,
   QueryClient,
@@ -1019,6 +1024,19 @@ describe('queryClient', () => {
         error = err
       }
       expect(error).toEqual('error')
+    })
+
+    test('should resolve Promise immediately if query is paused', async () => {
+      const key1 = queryKey()
+      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
+      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
+      const onlineMock = mockNavigatorOnLine(false)
+
+      await queryClient.refetchQueries({ queryKey: key1 })
+
+      // if we reach this point, the test succeeds because the Promise was resolved immediately
+      expect(queryFn1).toHaveBeenCalledTimes(1)
+      onlineMock.mockRestore()
     })
   })
 

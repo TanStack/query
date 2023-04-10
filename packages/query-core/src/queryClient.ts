@@ -253,12 +253,15 @@ export class QueryClient {
       this.#queryCache
         .findAll(filters)
         .filter((query) => !query.isDisabled())
-        .map((query) =>
-          query.fetch(undefined, {
+        .map((query) => {
+          const promise = query.fetch(undefined, {
             ...options,
             cancelRefetch: options?.cancelRefetch ?? true,
-          }),
-        ),
+          })
+          return query.state.fetchStatus === 'paused'
+            ? Promise.resolve()
+            : promise
+        }),
     )
 
     let promise = Promise.all(promises).then(noop)
