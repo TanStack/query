@@ -1038,6 +1038,20 @@ describe('queryClient', () => {
       expect(queryFn1).toHaveBeenCalledTimes(1)
       onlineMock.mockRestore()
     })
+
+    test('should refetch if query we are offline but query networkMode is always', async () => {
+      const key1 = queryKey()
+      queryClient.setQueryDefaults(key1, { networkMode: 'always' })
+      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
+      await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
+      const onlineMock = mockNavigatorOnLine(false)
+
+      await queryClient.refetchQueries({ queryKey: key1 })
+
+      // initial fetch + refetch (even though we are offline)
+      expect(queryFn1).toHaveBeenCalledTimes(2)
+      onlineMock.mockRestore()
+    })
   })
 
   describe('invalidateQueries', () => {
