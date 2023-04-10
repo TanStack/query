@@ -131,7 +131,9 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
     queries: QueryObserverOptions[],
   ): QueryObserverMatch[] {
     const prevObservers = this.observers
-    const prevObserversMap = new Map(prevObservers.map(observer => [observer.options.queryHash, observer]));
+    const prevObserversMap = new Map(
+      prevObservers.map((observer) => [observer.options.queryHash, observer]),
+    )
 
     const defaultedQueryOptions = queries.map((options) =>
       this.client.defaultQueryOptions(options),
@@ -146,17 +148,18 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
         return []
       })
 
-    const matchedQueryHashes = new Set(matchingObservers.map(
-      (match) => match.defaultedQueryOptions.queryHash,
-    ))
+    const matchedQueryHashes = new Set(
+      matchingObservers.map((match) => match.defaultedQueryOptions.queryHash),
+    )
     const unmatchedQueries = defaultedQueryOptions.filter(
-      (defaultedOptions) =>
-        !matchedQueryHashes.has(defaultedOptions.queryHash),
+      (defaultedOptions) => !matchedQueryHashes.has(defaultedOptions.queryHash),
     )
 
+    const matchingObserversSet = new Set(
+      matchingObservers.map((match) => match.observer),
+    )
     const unmatchedObservers = prevObservers.filter(
-      (prevObserver) =>
-        !matchingObservers.some((match) => match.observer === prevObserver),
+      (prevObserver) => !matchingObserversSet.has(prevObserver),
     )
 
     const getObserver = (options: QueryObserverOptions): QueryObserver => {
