@@ -11,10 +11,10 @@ The `QueryCache` is the storage mechanism for TanStack Query. It stores all the 
 import { QueryCache } from '@tanstack/react-query'
 
 const queryCache = new QueryCache({
-  onError: error => {
+  onError: (error) => {
     console.log(error)
   },
-  onSuccess: data => {
+  onSuccess: (data) => {
     console.log(data)
   },
   onSettled: (data, error) => {
@@ -22,7 +22,7 @@ const queryCache = new QueryCache({
   },
 })
 
-const query = queryCache.find({ queryKey: ['posts'] })
+const query = queryCache.find(['posts'])
 ```
 
 Its available methods are:
@@ -47,6 +47,7 @@ Its available methods are:
 ## Global callbacks
 
 The `onError`, `onSuccess` and `onSettled` callbacks on the QueryCache can be used to handle these events on a global level. They are different to `defaultOptions` provided to the QueryClient because:
+
 - `defaultOptions` can be overridden by each Query - the global callbacks will **always** be called.
 - `defaultOptions` callbacks will be called once for each Observer, while the global callbacks will only be called once per Query.
 
@@ -57,11 +58,12 @@ The `onError`, `onSuccess` and `onSettled` callbacks on the QueryCache can be us
 > Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios (eg. Looking at the query.state.dataUpdatedAt timestamp to decide whether a query is fresh enough to be used as an initial value)
 
 ```tsx
-const query = queryCache.find({ queryKey })
+const query = queryCache.find(queryKey)
 ```
 
 **Options**
 
+- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
 - `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
 
 **Returns**
@@ -76,11 +78,12 @@ const query = queryCache.find({ queryKey })
 > Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios
 
 ```tsx
-const queries = queryCache.findAll({ queryKey })
+const queries = queryCache.findAll(queryKey)
 ```
 
 **Options**
 
+- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
 - `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
 
 **Returns**
@@ -93,7 +96,7 @@ const queries = queryCache.findAll({ queryKey })
 The `subscribe` method can be used to subscribe to the query cache as a whole and be informed of safe/known updates to the cache like query states changing or queries being updated, added or removed
 
 ```tsx
-const callback = event => {
+const callback = (event) => {
   console.log(event.type, event.query)
 }
 
@@ -117,6 +120,7 @@ The `clear` method can be used to clear the cache entirely and start fresh.
 ```tsx
 queryCache.clear()
 ```
+
 [//]: # 'Materials'
 
 ## Further reading

@@ -10,6 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
@@ -22,7 +26,7 @@ jobs:
       - name: Run Tests
         uses: nick-fields/retry@v2.8.3
         with:
-          command: pnpm test:lib
+          command: pnpm test:lib --base=${{ github.event.pull_request.base.sha }}
           timeout_minutes: 5
           max_attempts: 3
       - name: Upload coverage to Codecov
@@ -32,6 +36,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
@@ -41,12 +49,16 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:eslint
+      - run: pnpm run test:eslint --base=${{ github.event.pull_request.base.sha }}
   typecheck:
     name: 'Typecheck'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
@@ -56,12 +68,16 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:types
+      - run: pnpm run test:types --base=${{ github.event.pull_request.base.sha }}
   format:
     name: 'Format'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
@@ -71,12 +87,16 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:format
+      - run: pnpm run test:format --base=${{ github.event.pull_request.base.sha }}
   test-react-17:
     name: 'Test React 17'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
@@ -91,7 +111,7 @@ jobs:
         with:
           timeout_minutes: 5
           max_attempts: 3
-          command: pnpm run test:react:17
+          command: pnpm run test:react:17 --base=${{ github.event.pull_request.base.sha }}
         env:
           REACTJS_VERSION: 17
   test-build:
