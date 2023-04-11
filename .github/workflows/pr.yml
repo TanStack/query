@@ -56,6 +56,8 @@ jobs:
           echo "HEAD: ${{ env.NX_HEAD }}"
       - name: Run All Checks
         uses: nick-fields/retry@v2.8.3
+        env:
+          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
         with:
           timeout_minutes: 5
           max_attempts: 3
@@ -83,22 +85,6 @@ jobs:
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - run: pnpm run test:format
-    name: 'Test Build'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2.2.4
-        with:
-          version: 7
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.14.2
-          cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:build
-        env:
-          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
   test-react-17:
     name: 'Test React 17'
     runs-on: ubuntu-latest
