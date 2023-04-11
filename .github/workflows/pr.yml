@@ -52,6 +52,8 @@ jobs:
       - run: |
           echo "BASE: ${{ env.NX_BASE }}"
           echo "HEAD: ${{ env.NX_HEAD }}"
+      - name: Start CI Orchestrator
+        run: npx nx-cloud start-ci-run
       - name: Run All Checks
         uses: nick-fields/retry@v2.8.3
         env:
@@ -108,6 +110,6 @@ jobs:
         with:
           timeout_minutes: 5
           max_attempts: 3
-          command: npx nx affected --exclude=*,!@tanstack/react-* --targets=test:lib
+          command: npx nx affected --targets=test:lib
         env:
           REACTJS_VERSION: 17
