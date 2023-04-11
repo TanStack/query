@@ -5,9 +5,13 @@ env:
   NX_VERBOSE_LOGGING: true
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 jobs:
-  test:
-    name: 'Test'
+  agent:
+    name: 'Nx Cloud Agents'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        agent: [1, 2, 3, 4, 5, 6]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -23,16 +27,12 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - name: Run Tests
-        uses: nick-fields/retry@v2.8.3
-        with:
-          command: pnpm test:lib --base=${{ github.event.pull_request.base.sha }}
-          timeout_minutes: 5
-          max_attempts: 3
+      - name: Start Nx Agent ${{ matrix.agent }}
+        run: npx nx-cloud start-agent
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
-  lint:
-    name: 'Lint'
+  orchestrator:
+    name: 'Nx Cloud Orchestrator'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -49,26 +49,21 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:eslint --base=${{ github.event.pull_request.base.sha }}
-  typecheck:
-    name: 'Typecheck'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          ref: ${{ github.head_ref }}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
-      - uses: pnpm/action-setup@v2.2.4
-        with:
-          version: 7
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.14.2
-          cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:types --base=${{ github.event.pull_request.base.sha }}
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v2
+      - run: |
+          echo "BASE: ${{ env.NX_BASE }}"
+          echo "HEAD: ${{ env.NX_HEAD }}"
+      - name: Run All Checks
+        uses: nick-fields/retry@v2.8.3
+          with:
+            timeout_minutes: 5
+            max_attempts: 3
+            command: nx affected --targets=test:eslint,test:types,test:build,test:lib --parallel=5
+      - name: Stop Agents
+        run: npx nx-cloud stop-all-agents
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
   format:
     name: 'Format'
     runs-on: ubuntu-latest
@@ -87,7 +82,23 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:format --base=${{ github.event.pull_request.base.sha }}
+      - run: pnpm run test:format
+    name: 'Test Build'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 7
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.2
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+      - run: pnpm run test:build
+        env:
+          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
   test-react-17:
     name: 'Test React 17'
     runs-on: ubuntu-latest
@@ -106,28 +117,13 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v2
       - name: Run Tests
         uses: nick-fields/retry@v2.8.3
         with:
           timeout_minutes: 5
           max_attempts: 3
-          command: pnpm run test:react:17 --base=${{ github.event.pull_request.base.sha }}
+          command: nx affected --exclude=*,!@tanstack/react-* --targets=test:lib
         env:
           REACTJS_VERSION: 17
-  test-build:
-    name: 'Test Build'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2.2.4
-        with:
-          version: 7
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.14.2
-          cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:build
-        env:
-          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
