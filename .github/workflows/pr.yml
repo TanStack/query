@@ -29,8 +29,6 @@ jobs:
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - name: Start Nx Agent ${{ matrix.agent }}
         run: npx nx-cloud start-agent
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
   orchestrator:
     name: 'Nx Cloud Orchestrator'
     runs-on: ubuntu-latest
