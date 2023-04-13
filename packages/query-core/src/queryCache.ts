@@ -176,13 +176,11 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   find<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData>(
     filters: WithRequired<QueryFilters, 'queryKey'>,
   ): Query<TQueryFnData, TError, TData> | undefined {
-    if (typeof filters.exact === 'undefined') {
-      filters.exact = true
-    }
+    const defaultedFilters = { exact: true, ...filters }
 
-    return this.getAll().find((query) => matchQuery(filters, query)) as
-      | Query<TQueryFnData, TError, TData>
-      | undefined
+    return this.getAll().find((query) =>
+      matchQuery(defaultedFilters, query),
+    ) as Query<TQueryFnData, TError, TData> | undefined
   }
 
   findAll(filters: QueryFilters = {}): Query[] {

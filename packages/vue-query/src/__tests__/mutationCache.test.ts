@@ -19,7 +19,6 @@ describe('MutationCache', () => {
       })
 
       expect(MutationCacheOrigin.prototype.find).toBeCalledWith({
-        exact: true,
         mutationKey: ['baz'],
       })
     })

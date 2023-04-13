@@ -20,7 +20,6 @@ describe('QueryCache', () => {
 
       expect(QueryCacheOrigin.prototype.find).toBeCalledWith({
         queryKey: ['foo', 'bar'],
-        exact: true, //Exact is true, as `find` in QueryCacheOrigin sets exact to true in the passed filters if exact is undefined
       })
     })
   })
