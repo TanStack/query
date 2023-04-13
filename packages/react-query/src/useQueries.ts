@@ -157,6 +157,7 @@ export function useQueries<T extends any[]>({
 }): QueriesResults<T> {
   const queryClient = useQueryClient({ context })
   const isRestoring = useIsRestoring()
+  const errorResetBoundary = useQueryErrorResetBoundary()
 
   const defaultedQueries = React.useMemo(
     () =>
@@ -172,6 +173,13 @@ export function useQueries<T extends any[]>({
       }),
     [queries, queryClient, isRestoring],
   )
+
+  defaultedQueries.forEach((query) => {
+    ensureStaleTime(query)
+    ensurePreventErrorBoundaryRetry(query, errorResetBoundary)
+  })
+
+  useClearResetErrorBoundary(errorResetBoundary)
 
   const [observer] = React.useState(
     () => new QueriesObserver(queryClient, defaultedQueries),
@@ -196,15 +204,6 @@ export function useQueries<T extends any[]>({
     // these changes should already be reflected in the optimistic result.
     observer.setQueries(defaultedQueries, { listeners: false })
   }, [defaultedQueries, observer])
-
-  const errorResetBoundary = useQueryErrorResetBoundary()
-
-  defaultedQueries.forEach((query) => {
-    ensurePreventErrorBoundaryRetry(query, errorResetBoundary)
-    ensureStaleTime(query)
-  })
-
-  useClearResetErrorBoundary(errorResetBoundary)
 
   const shouldAtLeastOneSuspend = optimisticResult.some((result, index) =>
     shouldSuspend(defaultedQueries[index], result, isRestoring),
