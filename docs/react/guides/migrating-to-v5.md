@@ -327,7 +327,7 @@ useInfiniteQuery({
 
 ### Manual mode for infinite queries has been removed
 
-Previously, we've allowed to overwrite the `pageParams` that would be returned from `getNextPageParam` or `getPreviousPageParam` by passing a `pageParam` value directly to `fetchNextPage` or `fetchPreviousPage`. This feature didn't work at all with refetches and wasn't widely known or used. This also means that `getNextPagParam` is now required for infinite queries.
+Previously, we've allowed to overwrite the `pageParams` that would be returned from `getNextPageParam` or `getPreviousPageParam` by passing a `pageParam` value directly to `fetchNextPage` or `fetchPreviousPage`. This feature didn't work at all with refetches and wasn't widely known or used. This also means that `getNextPageParam` is now required for infinite queries.
 
 [//]: # 'FrameworkBreakingChanges'
 
@@ -417,7 +417,7 @@ We have a new, simplified way to perform optimistic updates by leveraging the re
   }
 ```
 
-Here, we are only changing how the UI looks when the mutation is running instead of writing data directly to the cache. This works best if we only have one place where we need to show the optimistic update. For more details, have a look at the [optimistic updates documentation](../guides/optimistic-updates.md).
+Here, we are only changing how the UI looks when the mutation is running instead of writing data directly to the cache. This works best if we only have one place where we need to show the optimistic update. For more details, have a look at the [optimistic updates documentation](../guides/optimistic-updates).
 
 ### Limited, Infinite Queries with new maxPages option
 
