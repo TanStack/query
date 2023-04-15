@@ -9,7 +9,8 @@
         "{workspaceRoot}/packages/*/build/**/*(.cjs|.mjs|.js)*",
         "{workspaceRoot}/packages/*/build/stats*",
         "{workspaceRoot}/packages/*/build/**/*.svelte"
-      ]
+      ],
+      "inputs": ["default"]
     },
     "build": {
       "command": "echo \"  @tanstack/query > All packages built! 📦\"",
