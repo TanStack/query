@@ -17,3 +17,5 @@ export { useIsMutating } from './useIsMutating'
 export { createMutation } from './createMutation'
 export { createInfiniteQuery } from './createInfiniteQuery'
 export { createQueries } from './createQueries'
+export { useHydrate } from "./useHydrate";
+export { Hydrate } from "./Hydrate"
