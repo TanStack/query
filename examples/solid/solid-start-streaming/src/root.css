@@ -85,3 +85,13 @@ p {
   font-weight: bold;
   flex-grow: 1;
 }
+
+.example--table {
+  padding: 0.5rem;
+}
+
+.example--table th,
+.example--table td {
+  padding: 4px 12px;
+  white-space: nowrap;
+}

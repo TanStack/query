@@ -39,6 +39,20 @@ ruleTester.run('exhaustive-deps', rule, {
       code: 'useQuery({ queryKey: ["entity", id], queryFn: () => api.entity.get(id) });',
     },
     {
+      name: 'should not pass api when is being used for calling a function',
+      code: `
+        import useApi from './useApi'
+
+        const useFoo = () => {
+          const api = useApi();
+          return useQuery({
+            queryKey: ['foo'],
+            queryFn: () => api.fetchFoo(),
+          })
+        }
+      `,
+    },
+    {
       name: 'should pass props.src',
       code: `
         function MyComponent(props) {

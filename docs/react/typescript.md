@@ -98,14 +98,14 @@ const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 
 [//]: # 'Playground5'
 
-If you want to throw a custom error, or something that isn't an Error at all, you can specify the type of the error field:
+If you want to throw a custom error, or something that isn't an `Error` at all, you can specify the type of the error field:
 
 ```tsx
 const { error } = useQuery<Group[], string>(['groups'], fetchGroups)
 //      ^? const error: string | null
 ```
 
-However, this has the drawback that type inference for all other generics of `useQuery` will not work anymore. It is generally not considered a good practice to throw something that isn't and `Error`, so if you have a subclass like `AxisError` you can use _type narrowing_ to make the error field more specific:
+However, this has the drawback that type inference for all other generics of `useQuery` will not work anymore. It is generally not considered a good practice to throw something that isn't an `Error`, so if you have a subclass like `AxiosError` you can use _type narrowing_ to make the error field more specific:
 
 ```tsx
 import axios from 'axios'

@@ -92,7 +92,7 @@
     "rollup-plugin-visualizer": "^5.9.0",
     "rollup-preset-solid": "^1.4.0",
     "semver": "^7.3.8",
-    "solid-js": "^1.5.7",
+    "solid-js": "^1.6.13",
     "solid-testing-library": "^0.3.0",
     "stream-to-array": "^2.3.0",
     "ts-node": "^10.9.1",

@@ -18,7 +18,6 @@ import {
   createResource,
   on,
   onCleanup,
-  onMount,
 } from 'solid-js'
 import { createStore, unwrap } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
@@ -64,7 +63,21 @@ export function createBaseQuery<
   ) => {
     return observer.subscribe((result) => {
       notifyManager.batchCalls(() => {
-        const unwrappedResult = { ...unwrap(result) }
+        const query = observer.getCurrentQuery()
+        const { refetch, ...rest } = unwrap(result)
+        const unwrappedResult = {
+          ...rest,
+
+          // hydrate() expects a QueryState object, which is similar but not
+          // quite the same as a QueryObserverResult object. Thus, for now, we're
+          // copying over the missing properties from state in order to support hydration
+          dataUpdateCount: query.state.dataUpdateCount,
+          fetchFailureCount: query.state.fetchFailureCount,
+          fetchFailureReason: query.state.fetchFailureReason,
+          fetchMeta: query.state.fetchMeta,
+          isInvalidated: query.state.isInvalidated,
+        }
+
         if (unwrappedResult.isError) {
           if (process.env['NODE_ENV'] === 'development') {
             console.error(unwrappedResult.error)
@@ -72,7 +85,9 @@ export function createBaseQuery<
           reject(unwrappedResult.error)
         }
         if (unwrappedResult.isSuccess) {
-          resolve(unwrappedResult)
+          // Use of any here is fine
+          // We cannot include refetch since it is not serializable
+          resolve(unwrappedResult as any)
         }
       })()
     })
@@ -178,13 +193,17 @@ export function createBaseQuery<
     }
   })
 
-  onMount(() => {
-    observer.setOptions(defaultedOptions, { listeners: false })
-  })
-
-  createComputed(() => {
-    observer.setOptions(client().defaultQueryOptions(options()))
-  })
+  createComputed(
+    on(
+      () => client().defaultQueryOptions(options()),
+      () => observer.setOptions(client().defaultQueryOptions(options())),
+      {
+        // Defer because we don't need to trigger on first render
+        // This only cares about changes to options after the observer is created
+        defer: true,
+      },
+    ),
+  )
 
   createComputed(
     on(
@@ -209,10 +228,8 @@ export function createBaseQuery<
       target: QueryObserverResult<TData, TError>,
       prop: keyof QueryObserverResult<TData, TError>,
     ): any {
-      if (prop === 'data') {
-        return queryResource()?.data
-      }
-      return Reflect.get(target, prop)
+      const val = queryResource()?.[prop]
+      return val !== undefined ? val : Reflect.get(target, prop)
     },
   }
 

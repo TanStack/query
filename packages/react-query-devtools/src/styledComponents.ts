@@ -20,6 +20,8 @@ export const Panel = styled(
   },
 )
 
+Panel.displayName = 'Panel'
+
 export const ActiveQueryPanel = styled(
   'div',
   () => ({
@@ -36,6 +38,8 @@ export const ActiveQueryPanel = styled(
   },
 )
 
+ActiveQueryPanel.displayName = 'ActiveQueryPanel'
+
 export const Button = styled('button', (props, theme) => ({
   appearance: 'none',
   fontSize: '.9em',
@@ -49,12 +53,16 @@ export const Button = styled('button', (props, theme) => ({
   cursor: 'pointer',
 }))
 
+Button.displayName = 'Button'
+
 export const QueryKeys = styled('span', {
   display: 'flex',
   flexWrap: 'wrap',
   gap: '0.5em',
   fontSize: '0.9em',
 })
+
+QueryKeys.displayName = 'QueryKeys'
 
 export const QueryKey = styled('span', {
   display: 'inline-flex',
@@ -65,11 +73,15 @@ export const QueryKey = styled('span', {
   borderRadius: '.2em',
 })
 
+QueryKey.displayName = 'QueryKey'
+
 export const Code = styled('code', {
   fontSize: '.9em',
   color: 'inherit',
   background: 'inherit',
 })
+
+Code.displayName = 'Code'
 
 export const Input = styled('input', (_props, theme) => ({
   backgroundColor: theme.inputBackgroundColor,
@@ -80,6 +92,8 @@ export const Input = styled('input', (_props, theme) => ({
   lineHeight: `1.3`,
   padding: '.3em .4em',
 }))
+
+Input.displayName = 'Input'
 
 export const Select = styled(
   'select',
@@ -108,3 +122,5 @@ export const Select = styled(
     },
   },
 )
+
+Select.displayName = 'Select'
