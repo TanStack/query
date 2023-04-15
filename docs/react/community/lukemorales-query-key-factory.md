@@ -28,9 +28,11 @@ import { createQueryKeyStore } from '@lukemorales/query-key-factory'
 export const queryKeys = createQueryKeyStore({
   users: null,
   todos: {
-    completed: null,
-    search: (query: string, limit = 15) => [query, limit],
-    byId: (todoId: string) => ({ todoId }),
+    detail: (todoId: string) => [todoId],
+    list: (filters: TodoFilters) => ({
+      queryKey: [{ filters }],
+      queryFn: (ctx) => api.getTodos({ filters, page: ctx.pageParam }),
+    }),
   },
 })
 ```
@@ -44,9 +46,11 @@ export const usersKeys = createQueryKeys('users')
 
 // my-api/todos.ts
 export const todosKeys = createQueryKeys('todos', {
-  completed: null,
-  search: (query: string, limit = 15) => [query, limit],
-  byId: (todoId: string) => ({ todoId }),
+  detail: (todoId: string) => [todoId],
+  list: (filters: TodoFilters) => ({
+    queryKey: [{ filters }],
+    queryFn: (ctx) => api.getTodos({ filters, page: ctx.pageParam }),
+  }),
 })
 
 // my-api/index.ts
@@ -60,13 +64,13 @@ import { queryKeys, completeTodo, fetchSingleTodo } from '../my-api'
 export function Todo({ todoId }) {
   const queryClient = useQueryClient()
 
-  const query = useQuery({ queryKey: queryKeys.todos.byId(todoId), queryFn: fetchSingleTodo })
+  const query = useQuery(queryKeys.todos.detail(todoId))
 
   const mutation = useMutation({
     mutationFn: () => completeTodo,
     onSuccess: () => {
       // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: queryKeys.todos.completed })
+      queryClient.invalidateQueries({ queryKey: queryKeys.todos.list.queryKey })
     },
   })
 
