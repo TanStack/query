@@ -13,8 +13,8 @@
     "@tanstack/svelte-query": "^4.20.0"
   },
   "devDependencies": {
-    "@sveltejs/adapter-auto": "^1.0.0",
-    "@sveltejs/kit": "^1.0.0",
+    "@sveltejs/adapter-auto": "^2.0.0",
+    "@sveltejs/kit": "^1.15.0",
     "autoprefixer": "^10.4.13",
     "postcss": "^8.4.20",
     "svelte": "^3.54.0",
