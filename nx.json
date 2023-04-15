@@ -36,7 +36,9 @@
     "default": [
       "{projectRoot}/**/*",
       "globalBuildAffectingConfig",
-      "globalNonBuildAffectingConfig"
+      "globalNonBuildAffectingConfig",
+      "!{projectRoot}/**/*.md",
+      "!{projectRoot}/**/build/**/*"
     ],
     "public": [
       "default",
