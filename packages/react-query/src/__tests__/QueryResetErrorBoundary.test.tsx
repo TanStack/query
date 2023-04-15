@@ -14,7 +14,7 @@ declare module 'react-error-boundary' {
 
 describe('QueryErrorResetBoundary', () => {
   const queryCache = new QueryCache()
-  const queryClient = createQueryClient({ queryCache });
+  const queryClient = createQueryClient({ queryCache })
 
   describe('useQuery', () => {
     it('should retry fetch if the reset error boundary has been reset', async () => {
@@ -172,7 +172,7 @@ describe('QueryErrorResetBoundary', () => {
           {({ reset }) => (
             <ErrorBoundary
               onReset={reset}
-              fallbackRender={({resetErrorBoundary}) => (
+              fallbackRender={({ resetErrorBoundary }) => (
                 <div>
                   <div>error boundary</div>
                   <button
@@ -629,7 +629,7 @@ describe('QueryErrorResetBoundary', () => {
     })
   })
 
-  describe('useQueries',  () => {
+  describe('useQueries', () => {
     it('should retry fetch if the reset error boundary has been reset', async () => {
       const key = queryKey()
 
@@ -648,10 +648,10 @@ describe('QueryErrorResetBoundary', () => {
         retry: false,
         useErrorBoundary: true,
         retryOnMount: true,
-      };
+      }
 
       function Page() {
-        const [{ data }] = useQueries({ queries: [queryOptions] });
+        const [{ data }] = useQueries({ queries: [queryOptions] })
         return <div>{data}</div>
       }
 
@@ -705,11 +705,11 @@ describe('QueryErrorResetBoundary', () => {
         retry: false,
         useErrorBoundary: true,
         retryOnMount: true,
-        suspense: true
-      };
+        suspense: true,
+      }
 
       function Page() {
-        const [{data}] = useQueries({ queries: [queryOptions] });
+        const [{ data }] = useQueries({ queries: [queryOptions] })
         return <div>{data}</div>
       }
 
