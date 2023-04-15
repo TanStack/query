@@ -1,9 +1,8 @@
 import type { Post } from './types'
-import type { RequestEvent } from '@sveltejs/kit'
 
 export const getPosts = async (
   limit: number,
-  customFetch: RequestEvent['fetch'] = fetch,
+  customFetch: typeof fetch = fetch,
 ) => {
   const response = await customFetch(
     'https://jsonplaceholder.typicode.com/posts',
@@ -14,7 +13,7 @@ export const getPosts = async (
 
 export const getPostById = async (
   id: number,
-  customFetch: RequestEvent['fetch'] = fetch,
+  customFetch: typeof fetch = fetch,
 ): Promise<Post> => {
   const response = await customFetch(
     `https://jsonplaceholder.typicode.com/posts/${id}`,
