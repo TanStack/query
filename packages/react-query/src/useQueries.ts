@@ -228,14 +228,14 @@ export function useQueries<T extends any[]>({
   if (suspensePromises.length > 0) {
     throw Promise.all(suspensePromises)
   }
-
+  const observerQueries = observer.getQueries()
   const firstSingleResultWhichShouldThrow = optimisticResult.find(
     (result, index) =>
       getHasError({
         result,
         errorResetBoundary,
         useErrorBoundary: defaultedQueries[index]?.useErrorBoundary ?? false,
-        query: observer.getQueries()[index]!,
+        query: observerQueries[index]!,
       }),
   )
 
