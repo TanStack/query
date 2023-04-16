@@ -8,6 +8,7 @@ import type {
   CreateQueryResult,
   DefinedCreateQueryResult,
   FunctionedParams,
+  Narrow,
   SolidQueryOptions,
 } from './types'
 
@@ -17,7 +18,7 @@ type UndefinedInitialDataOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = FunctionedParams<
-  SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  SolidQueryOptions<TQueryFnData, TError, TData, Narrow<TQueryKey>> & {
     initialData?: undefined
   }
 >
@@ -28,7 +29,7 @@ type DefinedInitialDataOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = FunctionedParams<
-  SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  SolidQueryOptions<TQueryFnData, TError, TData, Narrow<TQueryKey>> & {
     initialData: TQueryFnData | (() => TQueryFnData)
   }
 >
@@ -58,7 +59,7 @@ export function createQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: CreateQueryOptions<TQueryFnData, TError, TData, Narrow<TQueryKey>>,
   queryClient?: Accessor<QueryClient>,
 ) {
   return createBaseQuery(

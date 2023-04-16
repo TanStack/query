@@ -121,7 +121,7 @@ describe('createQuery', () => {
       expectType<unknown>(fromGenericOptionsQueryFn.error)
 
       type MyData = number
-      type MyQueryKey = readonly ['my-data', number]
+      type MyQueryKey = ['my-data', number]
 
       const getMyDataArrayKey: QueryFunction<MyData, MyQueryKey> = async ({
         queryKey: [, n],
@@ -130,7 +130,7 @@ describe('createQuery', () => {
       }
 
       createQuery(() => ({
-        queryKey: ['my-data', 100] as const,
+        queryKey: ['my-data', 100],
         queryFn: getMyDataArrayKey,
       }))
 
@@ -2423,12 +2423,12 @@ describe('createQuery', () => {
   it('should not pass stringified variables to query function', async () => {
     const key = queryKey()
     const variables = { number: 5, boolean: false, object: {}, array: [] }
-    type CustomQueryKey = readonly [typeof key, typeof variables]
+    type CustomQueryKey = [typeof key, typeof variables]
     const states: CreateQueryResult<CustomQueryKey, unknown>[] = []
 
     function Page() {
       const state = createQuery(() => ({
-        queryKey: [key, variables] as const,
+        queryKey: [key, variables],
         queryFn: async (ctx) => {
           await sleep(10)
           return ctx.queryKey
@@ -4650,10 +4650,9 @@ describe('createQuery', () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
 
-    const queryFn: QueryFunction<
-      string,
-      readonly [typeof key, number]
-    > = async (ctx) => {
+    const queryFn: QueryFunction<string, [typeof key, number]> = async (
+      ctx,
+    ) => {
       const [, limit] = ctx.queryKey
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       const value = limit % 2 && ctx.signal ? 'abort' : `data ${limit}`
@@ -4663,7 +4662,7 @@ describe('createQuery', () => {
 
     function Page(props: { limit: number }) {
       const state = createQuery(() => ({
-        queryKey: [key, props.limit] as const,
+        queryKey: [key, props.limit],
         queryFn,
       }))
       states[props.limit] = state

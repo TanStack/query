@@ -173,3 +173,24 @@ export type CreateMutationResult<
 > = CreateBaseMutationResult<TData, TError, TVariables, TContext>
 
 type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }
+
+/* 
+  Copyright 2019 Pierre-Antoine Mills
+  Credits to the 'ts-toolbelt' NPM package for inspiring the 
+  implementation of the Narrow utility type below. 
+  This package offers a range of TypeScript utility types, and we acknowledge their contributions to this code. 
+  For more information, please see the 'ts-toolbelt' package documentation.
+  https://github.com/millsp/ts-toolbelt
+*/
+type Try<A1, A2, Catch = never> = A1 extends A2 ? A1 : Catch
+
+type Narrowable = string | number | bigint | boolean
+
+type NarrowRaw<A> =
+  | (A extends [] ? [] : never)
+  | (A extends Narrowable ? A : never)
+  | {
+      [K in keyof A]: A[K] extends Function ? A[K] : NarrowRaw<A[K]>
+    }
+
+export type Narrow<A> = Try<A, [], NarrowRaw<A>>
