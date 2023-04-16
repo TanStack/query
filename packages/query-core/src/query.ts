@@ -588,7 +588,7 @@ export class Query<
 
     notifyManager.batch(() => {
       this.#observers.forEach((observer) => {
-        observer.onQueryUpdate(action)
+        observer.onQueryUpdate()
       })
 
       this.#cache.notify({ query: this, type: 'updated', action })
