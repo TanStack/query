@@ -3,7 +3,7 @@
   import { getPostById } from './data'
   import type { Post } from './types'
 
-  export let postId: string
+  export let postId: number
 
   const post = createQuery<Post, Error>({
     queryKey: ['post', postId],
