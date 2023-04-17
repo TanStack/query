@@ -36,12 +36,12 @@ const babelPlugin = (type: 'legacy' | 'modern') =>
       type === 'modern'
         ? ''
         : {
-            chrome: 73,
-            firefox: 78,
-            edge: 79,
-            safari: 12,
-            ios: 12,
-            opera: 53,
+            chrome: '73',
+            firefox: '78',
+            edge: '79',
+            safari: '12',
+            ios: '12',
+            opera: '53',
           },
     babelHelpers: 'bundled',
     exclude: /node_modules/,

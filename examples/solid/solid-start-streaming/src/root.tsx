@@ -20,7 +20,7 @@ export default function Root() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        retry: 0,
+        retry: false,
       },
     },
   })
@@ -43,6 +43,7 @@ export default function Root() {
               <A href="/deferred">Deferred</A>
               <A href="/mixed">Mixed</A>
               <A href="/with-error">With Error</A>
+              <A href="/hydration">Hydration</A>
 
               <Routes>
                 <FileRoutes />

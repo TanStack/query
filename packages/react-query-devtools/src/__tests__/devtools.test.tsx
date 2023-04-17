@@ -717,6 +717,52 @@ describe('ReactQueryDevtools', () => {
     expect(filterInput.value).toEqual('posts')
   })
 
+  it('should not show queries after clear', async () => {
+    const { queryClient, queryCache } = createQueryClient()
+
+    function Page() {
+      const query1Result = useQuery({
+        queryKey: ['query-1'],
+        queryFn: async () => {
+          return 'query-1-result'
+        },
+      })
+      const query2Result = useQuery({
+        queryKey: ['query-2'],
+        queryFn: async () => {
+          return 'query-2-result'
+        },
+      })
+      const query3Result = useQuery({
+        queryKey: ['query-3'],
+        queryFn: async () => {
+          return 'query-3-result'
+        },
+      })
+
+      return (
+        <div>
+          <h1>
+            {query1Result.data} {query2Result.data} {query3Result.data}{' '}
+          </h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /open react query devtools/i }),
+    )
+
+    expect(queryCache.getAll()).toHaveLength(3)
+
+    const clearButton = screen.getByLabelText(/clear/i)
+    fireEvent.click(clearButton)
+
+    expect(queryCache.getAll()).toHaveLength(0)
+  })
+
   it('style should have a nonce', async () => {
     const { queryClient } = createQueryClient()
 

@@ -12,6 +12,7 @@ import { dehydrate } from '@tanstack/react-query'
 
 const dehydratedState = dehydrate(queryClient, {
   shouldDehydrateQuery,
+  shouldDehydrateMutation,
 })
 ```
 
@@ -22,24 +23,20 @@ const dehydratedState = dehydrate(queryClient, {
   - The `queryClient` that should be dehydrated
 - `options: DehydrateOptions`
   - Optional
-  - `dehydrateMutations: boolean`
-    - Optional
-    - Whether or not to dehydrate mutations.
-  - `dehydrateQueries: boolean`
-    - Optional
-    - Whether or not to dehydrate queries.
   - `shouldDehydrateMutation: (mutation: Mutation) => boolean`
     - Optional
-    - This function is called for each mutation in the cache
-    - Return `true` to include this mutation in dehydration, or `false` otherwise
-    - The default version only includes paused mutations
-    - If you would like to extend the function while retaining the previous behavior, import and execute `defaultShouldDehydrateMutation` as part of the return statement
-  - `shouldDehydrateQuery: (query: Query) => boolean`
+    - Whether to dehydrate mutations.
+    - The function is called for each mutation in the cache
+      - Return `true` to include this mutation in dehydration, or `false` otherwise
+    - Defaults to only including paused mutations
+    - If you would like to extend the function while retaining the default behavior, import and execute `defaultShouldDehydrateMutation` as part of the return statement
+  - `shouldDehydrateQuery: boolean | (query: Query) => boolean`
     - Optional
-    - This function is called for each query in the cache
-    - Return `true` to include this query in dehydration, or `false` otherwise
-    - The default version only includes successful queries, do `shouldDehydrateQuery: () => true` to include all queries
-    - If you would like to extend the function while retaining the previous behavior, import and execute `defaultShouldDehydrateQuery` as part of the return statement
+    - Whether to dehydrate queries.
+    - The function, it is called for each query in the cache
+      - Return `true` to include this query in dehydration, or `false` otherwise
+    - Defaults to only including successful queries
+    - If you would like to extend the function while retaining the default behavior, import and execute `defaultShouldDehydrateQuery` as part of the return statement
 
 **Returns**
 
