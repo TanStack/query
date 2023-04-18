@@ -483,7 +483,6 @@ export class QueryObserver<
         prevResult?.isPlaceholderData &&
         options.placeholderData === prevResultOptions?.placeholderData
       ) {
-        console.log('memoized placeholder data')
         placeholderData = prevResult.data
       } else {
         placeholderData =
