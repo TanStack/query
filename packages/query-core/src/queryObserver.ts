@@ -64,10 +64,12 @@ export class QueryObserver<
     TQueryData,
     TQueryKey
   >
-  #previousQueryResult?: QueryObserverResult<TData, TError>
   #selectError: TError | null
   #selectFn?: (data: TQueryData) => TData
   #selectResult?: TData
+  // This property keeps track of the last defined query data.
+  // It will be used to pass the previous data to the placeholder function between renders.
+  #lastDefinedQueryData?: TQueryData
   #staleTimeoutId?: ReturnType<typeof setTimeout>
   #refetchIntervalId?: ReturnType<typeof setInterval>
   #currentRefetchInterval?: number | false
@@ -414,9 +416,6 @@ export class QueryObserver<
     const queryInitialState = queryChange
       ? query.state
       : this.#currentQueryInitialState
-    const prevQueryResult = queryChange
-      ? prevResultState
-      : this.#previousQueryResult
 
     const { state } = query
     let { error, errorUpdatedAt, fetchStatus, status } = state
@@ -484,13 +483,14 @@ export class QueryObserver<
         prevResult?.isPlaceholderData &&
         options.placeholderData === prevResultOptions?.placeholderData
       ) {
+        console.log('memoized placeholder data')
         placeholderData = prevResult.data
       } else {
         placeholderData =
           typeof options.placeholderData === 'function'
             ? (
                 options.placeholderData as unknown as PlaceholderDataFunction<TQueryData>
-              )(prevQueryResult?.data as TQueryData | undefined)
+              )(this.#lastDefinedQueryData)
             : options.placeholderData
         if (options.select && typeof placeholderData !== 'undefined') {
           try {
@@ -504,7 +504,11 @@ export class QueryObserver<
 
       if (typeof placeholderData !== 'undefined') {
         status = 'success'
-        data = replaceData(prevResult?.data, placeholderData, options) as TData
+        data = replaceData(
+          prevResult?.data,
+          placeholderData as unknown,
+          options,
+        ) as TData
         isPlaceholderData = true
       }
     }
@@ -568,6 +572,9 @@ export class QueryObserver<
       return
     }
 
+    if (this.#currentResultState.data !== undefined) {
+      this.#lastDefinedQueryData = this.#currentResultState.data
+    }
     this.#currentResult = nextResult
 
     // Determine which callbacks to trigger
@@ -619,8 +626,6 @@ export class QueryObserver<
       | undefined
     this.#currentQuery = query
     this.#currentQueryInitialState = query.state
-    this.#previousQueryResult = this
-      .#currentResultState as unknown as QueryObserverResult<TData, TError>
 
     if (this.hasListeners()) {
       prevQuery?.removeObserver(this)
