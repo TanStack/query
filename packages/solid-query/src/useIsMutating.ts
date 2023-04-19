@@ -1,4 +1,5 @@
-import type { MutationFilters, QueryClient } from '@tanstack/query-core'
+import type { MutationFilters } from '@tanstack/query-core'
+import type { QueryClient } from './QueryClient'
 import { useQueryClient } from './QueryClientProvider'
 import type { Accessor } from 'solid-js'
 import { createSignal, onCleanup, createMemo } from 'solid-js'

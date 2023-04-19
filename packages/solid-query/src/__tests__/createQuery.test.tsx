@@ -1282,7 +1282,6 @@ describe('createQuery', () => {
           count++
           return count === 1 ? result1 : result2
         },
-        notifyOnChangeProps: 'all',
       }))
 
       createRenderEffect(() => {
@@ -1322,9 +1321,8 @@ describe('createQuery', () => {
 
     expect(todos).toEqual(result1)
     expect(newTodos).toEqual(result2)
-    expect(newTodos).not.toBe(todos)
     expect(newTodo1).toBe(todo1)
-    expect(newTodo2).not.toBe(todo2)
+    expect(newTodo2).toBe(todo2)
 
     return null
   })
@@ -3257,7 +3255,7 @@ describe('createQuery', () => {
 
   it('should keep initial data when the query key changes', async () => {
     const key = queryKey()
-    const states: DefinedCreateQueryResult<{ count: number }>[] = []
+    const states: Partial<DefinedCreateQueryResult<{ count: number }>>[] = []
 
     function Page() {
       const [count, setCount] = createSignal(0)
@@ -3266,6 +3264,7 @@ describe('createQuery', () => {
         queryFn: () => ({ count: 10 }),
         staleTime: Infinity,
         initialData: () => ({ count: count() }),
+        reconcile: false,
       }))
       createRenderEffect(() => {
         states.push({ ...state })
