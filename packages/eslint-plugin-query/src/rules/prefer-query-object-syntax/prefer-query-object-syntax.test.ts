@@ -137,6 +137,12 @@ ruleTester.run(name, rule, {
         const usePosts = () => useMutation(postsQuery);
       `,
     },
+    {
+      code: normalizeIndent`
+        import { fetchQuery } from "@tanstack/react-query";
+        const result = fetchQuery({ queryKey, queryFn });
+      `,
+    },
   ],
 
   invalid: [
@@ -469,6 +475,72 @@ ruleTester.run(name, rule, {
         const options = { enabled: true };
         useQuery({ queryKey: ['foo'], queryFn: () => undefined, ...options });
       `,
+    },
+    {
+      code: normalizeIndent`
+        import { fetchQuery } from "@tanstack/react-query";
+        fetchQuery(['key'], { queryFn: () => Promise.resolve('data'), enabled: false });
+      `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+        import { fetchQuery } from "@tanstack/react-query";
+        fetchQuery({ queryKey: ['key'], queryFn: () => Promise.resolve('data'), enabled: false });
+      `,
+    },
+    {
+      code: normalizeIndent`
+        import { fetchQuery } from "@tanstack/react-query";
+        fetchQuery(
+          ['key'],
+          () => Promise.resolve('data')
+        );
+      `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+        import { fetchQuery } from "@tanstack/react-query";
+        fetchQuery({ queryKey: ['key'], queryFn: () => Promise.resolve('data') });
+      `,
+    },
+    {
+      code: normalizeIndent`
+        import { fetchQuery } from "@tanstack/react-query";
+        fetchQuery(
+          ['key'], () => Promise.resolve('data')
+        );
+      `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+        import { fetchQuery } from "@tanstack/react-query";
+        fetchQuery({ queryKey: ['key'], queryFn: () => Promise.resolve('data') });
+      `,
+    },
+    {
+      code: normalizeIndent`
+          import { fetchQuery } from "@tanstack/react-query";
+          fetchQuery<string>(['key'], () => Promise.resolve('data'));
+        `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+          import { fetchQuery } from "@tanstack/react-query";
+          fetchQuery<string>({ queryKey: ['key'], queryFn: () => Promise.resolve('data') });
+        `,
+    },
+    {
+      code: normalizeIndent`
+          import { fetchQuery } from "@tanstack/react-query";
+          fetchQuery<
+            A,
+            B
+          >(['key'], () => Promise.resolve('data'));
+        `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+          import { fetchQuery } from "@tanstack/react-query";
+          fetchQuery<
+            A,
+            B
+          >({ queryKey: ['key'], queryFn: () => Promise.resolve('data') });
+        `,
     },
   ],
 })

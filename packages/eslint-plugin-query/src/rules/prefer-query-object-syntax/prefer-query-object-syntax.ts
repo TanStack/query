@@ -7,6 +7,7 @@ import { objectKeys } from '../../utils/object-utils'
 const QUERY_CALLS = {
   useQuery: { key: 'queryKey', fn: 'queryFn', type: 'query' },
   createQuery: { key: 'queryKey', fn: 'queryFn', type: 'query' },
+  fetchQuery: { key: 'queryKey', fn: 'queryFn', type: 'query' },
   useMutation: { key: 'mutationKey', fn: 'mutationFn', type: 'mutation' },
   createMutation: { key: 'mutationKey', fn: 'mutationFn', type: 'mutation' },
 }
