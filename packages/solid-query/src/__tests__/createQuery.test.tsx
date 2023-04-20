@@ -35,6 +35,7 @@ import {
 } from './utils'
 import { vi } from 'vitest'
 import type { Mock } from 'vitest'
+import { reconcile } from 'solid-js/store'
 
 describe('createQuery', () => {
   const queryCache = new QueryCache()
@@ -4571,6 +4572,61 @@ describe('createQuery', () => {
           return [1, 2]
         },
         select: (res) => res.map((x) => x + 1),
+      }))
+
+      createEffect(() => {
+        if (state.data) {
+          states.push(state.data)
+        }
+      })
+
+      const forceUpdate = () => {
+        setForceValue((prev) => prev + 1)
+      }
+
+      return (
+        <div>
+          <h2>Data: {JSON.stringify(state.data)}</h2>
+          <h2>forceValue: {forceValue}</h2>
+          <button onClick={forceUpdate}>forceUpdate</button>
+        </div>
+      )
+    }
+
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+    await waitFor(() => screen.getByText('Data: [2,3]'))
+    expect(states).toHaveLength(1)
+
+    fireEvent.click(screen.getByRole('button', { name: /forceUpdate/i }))
+
+    await waitFor(() => screen.getByText('forceValue: 2'))
+    await waitFor(() => screen.getByText('Data: [2,3]'))
+
+    // effect should not be triggered again due to structural sharing
+    expect(states).toHaveLength(1)
+  })
+
+  it('The reconcile fn callback should correctly maintain referential equality', async () => {
+    const key1 = queryKey()
+    const states: Array<Array<number>> = []
+
+    function Page() {
+      const [forceValue, setForceValue] = createSignal(1)
+
+      const state = createQuery(() => ({
+        queryKey: key1,
+        queryFn: async () => {
+          await sleep(10)
+          return [1, 2]
+        },
+        select: (res) => res.map((x) => x + 1),
+        reconcile(oldData, newData) {
+          return reconcile(newData)(oldData)
+        },
       }))
 
       createEffect(() => {
