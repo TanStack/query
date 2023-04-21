@@ -309,6 +309,7 @@ ruleTester.run('exhaustive-deps', rule, {
             queryKey: ["foo"],
             queryFn: () => {
                 doSomething(queryClient)
+                queryClient.invalidateQueries()
                 doSomethingSus(kueryKlient)
             }
           });
