@@ -302,18 +302,18 @@ function esm({
 }: Options): RollupOptions {
   const bundleOutput: OutputOptions = {
     format: 'esm',
-    file: `${packageDir}/build/lib/${outputFile}.esm.js`,
+    file: `${packageDir}/build/esm/${outputFile}.js`,
     sourcemap: true,
     banner,
   }
 
   const normalOutput: OutputOptions = {
     format: 'esm',
-    dir: `${packageDir}/build/lib`,
+    dir: `${packageDir}/build/esm`,
     sourcemap: true,
     banner,
     preserveModules: true,
-    entryFileNames: '[name].esm.js',
+    entryFileNames: '[name].js',
   }
 
   return {
@@ -326,6 +326,16 @@ function esm({
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
+      replace({
+        // TODO: figure out a better way to produce extensionless esm imports
+        "from './logger.js'": "from './logger'",
+        "from './reactBatchedUpdates.js'":
+          "from './reactBatchedUpdates'",
+        "from './useSyncExternalStore.js'":
+          "from './useSyncExternalStore'",
+        preventAssignment: true,
+        delimiters: ['', ''],
+      }),
       preserveDirectives(),
     ],
   }

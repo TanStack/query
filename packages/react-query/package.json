@@ -12,11 +12,11 @@
   },
   "types": "build/lib/index.d.ts",
   "main": "build/lib/index.js",
-  "module": "build/lib/index.esm.js",
+  "module": "build/esm/index.js",
   "exports": {
     ".": {
       "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.mjs",
+      "import": "./build/esm/index.js",
       "default": "./build/lib/index.js"
     },
     "./package.json": "./package.json"
