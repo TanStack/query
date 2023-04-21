@@ -1,4 +1,5 @@
-import type { QueryClient, DefaultError } from '@tanstack/query-core'
+import type { DefaultError } from '@tanstack/query-core'
+import type { QueryClient } from './QueryClient'
 import { MutationObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {

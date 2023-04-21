@@ -1,10 +1,10 @@
 import type {
   QueryObserver,
   QueryKey,
-  QueryClient,
   DefaultError,
   InfiniteData,
 } from '@tanstack/query-core'
+import type { QueryClient } from './QueryClient'
 import { InfiniteQueryObserver } from '@tanstack/query-core'
 import type {
   CreateInfiniteQueryOptions,

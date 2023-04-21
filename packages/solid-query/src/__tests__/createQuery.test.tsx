@@ -35,6 +35,7 @@ import {
 } from './utils'
 import { vi } from 'vitest'
 import type { Mock } from 'vitest'
+import { reconcile } from 'solid-js/store'
 
 describe('createQuery', () => {
   const queryCache = new QueryCache()
@@ -1282,7 +1283,6 @@ describe('createQuery', () => {
           count++
           return count === 1 ? result1 : result2
         },
-        notifyOnChangeProps: 'all',
       }))
 
       createRenderEffect(() => {
@@ -1322,9 +1322,8 @@ describe('createQuery', () => {
 
     expect(todos).toEqual(result1)
     expect(newTodos).toEqual(result2)
-    expect(newTodos).not.toBe(todos)
     expect(newTodo1).toBe(todo1)
-    expect(newTodo2).not.toBe(todo2)
+    expect(newTodo2).toBe(todo2)
 
     return null
   })
@@ -3257,7 +3256,7 @@ describe('createQuery', () => {
 
   it('should keep initial data when the query key changes', async () => {
     const key = queryKey()
-    const states: DefinedCreateQueryResult<{ count: number }>[] = []
+    const states: Partial<DefinedCreateQueryResult<{ count: number }>>[] = []
 
     function Page() {
       const [count, setCount] = createSignal(0)
@@ -3266,6 +3265,7 @@ describe('createQuery', () => {
         queryFn: () => ({ count: 10 }),
         staleTime: Infinity,
         initialData: () => ({ count: count() }),
+        reconcile: false,
       }))
       createRenderEffect(() => {
         states.push({ ...state })
@@ -4572,6 +4572,61 @@ describe('createQuery', () => {
           return [1, 2]
         },
         select: (res) => res.map((x) => x + 1),
+      }))
+
+      createEffect(() => {
+        if (state.data) {
+          states.push(state.data)
+        }
+      })
+
+      const forceUpdate = () => {
+        setForceValue((prev) => prev + 1)
+      }
+
+      return (
+        <div>
+          <h2>Data: {JSON.stringify(state.data)}</h2>
+          <h2>forceValue: {forceValue}</h2>
+          <button onClick={forceUpdate}>forceUpdate</button>
+        </div>
+      )
+    }
+
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+    await waitFor(() => screen.getByText('Data: [2,3]'))
+    expect(states).toHaveLength(1)
+
+    fireEvent.click(screen.getByRole('button', { name: /forceUpdate/i }))
+
+    await waitFor(() => screen.getByText('forceValue: 2'))
+    await waitFor(() => screen.getByText('Data: [2,3]'))
+
+    // effect should not be triggered again due to structural sharing
+    expect(states).toHaveLength(1)
+  })
+
+  it('The reconcile fn callback should correctly maintain referential equality', async () => {
+    const key1 = queryKey()
+    const states: Array<Array<number>> = []
+
+    function Page() {
+      const [forceValue, setForceValue] = createSignal(1)
+
+      const state = createQuery(() => ({
+        queryKey: key1,
+        queryFn: async () => {
+          await sleep(10)
+          return [1, 2]
+        },
+        select: (res) => res.map((x) => x + 1),
+        reconcile(oldData, newData) {
+          return reconcile(newData)(oldData)
+        },
       }))
 
       createEffect(() => {
