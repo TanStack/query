@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/eslint-plugin-query",
-  "version": "4.29.0",
+  "version": "4.29.4",
   "description": "ESLint plugin for TanStack Query",
   "author": "Eliya Cohen",
   "license": "MIT",
