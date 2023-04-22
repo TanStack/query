@@ -5892,11 +5892,11 @@ describe('useQuery', () => {
     function Page() {
       useQuery(
         ['my-query'],
-        function (ctx) {
+        function () {
           return { foo: 1 }
         },
         {
-          refetchInterval(data, query) {
+          refetchInterval(data) {
             // ^ should not produce a type error
             return 10000
           },
@@ -5907,10 +5907,10 @@ describe('useQuery', () => {
       )
       useQuery({
         queryKey: ['my-query'],
-        queryFn(ctx) {
+        queryFn() {
           return { foo: 1 }
         },
-        refetchInterval(data, query) {
+        refetchInterval(data) {
           // ^ should not produce a type error
           return 10000
         },
