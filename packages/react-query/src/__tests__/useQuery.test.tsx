@@ -5887,4 +5887,41 @@ describe('useQuery', () => {
     fireEvent.click(fetchBtn)
     await waitFor(() => rendered.getByText('data: 3'))
   })
+
+  it('combines refetchInterval with select', async () => {
+    function Page() {
+      useQuery(
+        ['my-query'],
+        function (ctx) {
+          return { foo: 1 }
+        },
+        {
+          refetchInterval(data, query) {
+            // ^ should not produce a type error
+            return 10000
+          },
+          select(data) {
+            return data.foo
+          },
+        },
+      )
+      useQuery({
+        queryKey: ['my-query'],
+        queryFn(ctx) {
+          return { foo: 1 }
+        },
+        refetchInterval(data, query) {
+          // ^ should not produce a type error
+          return 10000
+        },
+        select(data) {
+          return data.foo
+        },
+      })
+
+      return <div />
+    }
+
+    renderWithClient(queryClient, <Page />)
+  })
 })
