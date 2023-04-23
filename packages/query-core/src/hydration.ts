@@ -1,7 +1,6 @@
 import type { QueryClient } from './queryClient'
 import type { Query, QueryState } from './query'
 import type {
-  MutationKey,
   MutationOptions,
   QueryOptions,
 } from './types'
@@ -24,7 +23,7 @@ export interface HydrateOptions {
 }
 
 interface DehydratedMutation {
-  mutationKey?: MutationKey
+  mutationKey?: string
   state: MutationState
 }
 

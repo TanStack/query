@@ -14,7 +14,6 @@ import type {
   InfiniteData,
   InvalidateOptions,
   InvalidateQueryFilters,
-  MutationKey,
   MutationObserverOptions,
   MutationOptions,
   QueryFunction,
@@ -46,7 +45,7 @@ interface QueryDefaults {
 }
 
 interface MutationDefaults {
-  mutationKey: MutationKey
+  mutationKey: string
   defaultOptions: MutationOptions<any, any, any, any>
 }
 
@@ -639,7 +638,7 @@ export class QueryClient {
   }
 
   setMutationDefaults(
-    mutationKey: MutationKey,
+    mutationKey: string,
     options: MutationObserverOptions<any, any, any, any>,
   ): void {
     const result = this.mutationDefaults.find((x) => mutationKey === x.mutationKey)
@@ -651,7 +650,7 @@ export class QueryClient {
   }
 
   getMutationDefaults(
-    mutationKey?: MutationKey,
+    mutationKey?: string,
   ): MutationObserverOptions<any, any, any, any> | undefined {
     if (!mutationKey) {
       return undefined
@@ -671,9 +670,9 @@ export class QueryClient {
       // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
       if (matchingDefaults.length > 1) {
         this.logger.error(
-          `[QueryClient] Several mutation defaults match with key '${JSON.stringify(
-            mutationKey,
-          )}'. The first matching mutation defaults are used. Please check how mutation defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetmutationdefaults.`,
+          `[QueryClient] Several mutation defaults match with key '${
+            mutationKey
+          }'. The first matching mutation defaults are used. Please check how mutation defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetmutationdefaults.`,
         )
       }
     }

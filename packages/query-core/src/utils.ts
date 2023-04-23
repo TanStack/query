@@ -3,7 +3,6 @@ import type { Query } from './query'
 import type {
   FetchStatus,
   MutationFunction,
-  MutationKey,
   MutationOptions,
   QueryFunction,
   QueryOptions,
@@ -50,7 +49,7 @@ export interface MutationFilters {
   /**
    * Include mutations matching this mutation key
    */
-  mutationKey?: MutationKey
+  mutationKey?: string
   /**
    * Include or exclude fetching mutations
    */
@@ -121,7 +120,7 @@ export function parseQueryArgs<
 export function parseMutationArgs<
   TOptions extends MutationOptions<any, any, any, any>,
 >(
-  arg1: MutationKey | MutationFunction<any, any> | TOptions,
+  arg1: string | MutationFunction<any, any> | TOptions,
   arg2?: MutationFunction<any, any> | TOptions,
   arg3?: TOptions,
 ): TOptions {
