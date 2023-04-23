@@ -253,7 +253,7 @@ export function matchMutation(
  * Checks if key `b` partially matches with key `a`.
  */
 export function partialMatchKey(a: string, b: string): boolean {
-  return partialDeepEqual(a, b)
+  return a.startsWith(b)
 }
 
 /**
