@@ -34,5 +34,8 @@
     "test:lib": "jest --config ./jest.config.ts",
     "test:lib:dev": "pnpm run test:lib --watch",
     "build:types": "tsc --build"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.4"
   }
 }
