@@ -1,11 +1,9 @@
 import type { QueryFilters, Updater, MutationFilters } from './utils'
 import {
-  hashQueryKey,
   noop,
   parseFilterArgs,
   parseQueryArgs,
   partialMatchKey,
-  hashQueryKeyByOptions,
   functionalUpdate,
 } from './utils'
 import type {
@@ -16,11 +14,9 @@ import type {
   InfiniteData,
   InvalidateOptions,
   InvalidateQueryFilters,
-  MutationKey,
   MutationObserverOptions,
   MutationOptions,
   QueryFunction,
-  QueryKey,
   QueryObserverOptions,
   QueryOptions,
   RefetchOptions,
@@ -44,12 +40,12 @@ import { defaultLogger } from './logger'
 // TYPES
 
 interface QueryDefaults {
-  queryKey: QueryKey
+  queryKey: string
   defaultOptions: QueryOptions<any, any, any>
 }
 
 interface MutationDefaults {
-  mutationKey: MutationKey
+  mutationKey: string
   defaultOptions: MutationOptions<any, any, any, any>
 }
 
@@ -112,8 +108,8 @@ export class QueryClient {
   }
 
   isFetching(filters?: QueryFilters): number
-  isFetching(queryKey?: QueryKey, filters?: QueryFilters): number
-  isFetching(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): number {
+  isFetching(queryKey?: string, filters?: QueryFilters): number
+  isFetching(arg1?: string | QueryFilters, arg2?: QueryFilters): number {
     const [filters] = parseFilterArgs(arg1, arg2)
     filters.fetchStatus = 'fetching'
     return this.queryCache.findAll(filters).length
@@ -124,7 +120,7 @@ export class QueryClient {
   }
 
   getQueryData<TQueryFnData = unknown>(
-    queryKey: QueryKey,
+    queryKey: string,
     filters?: QueryFilters,
   ): TQueryFnData | undefined {
     return this.queryCache.find<TQueryFnData>(queryKey, filters)?.state.data
@@ -134,10 +130,20 @@ export class QueryClient {
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
   >(
     options: WithRequired<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      FetchQueryOptions<TQueryFnData, TError, TData>,
+      'queryKey'
+    >,
+  ): Promise<TData>
+  ensureQueryData<
+    TQueryFnData = unknown,
+    TError = unknown,
+    TData = TQueryFnData
+  >(
+    queryKey: string,
+    options?: Omit<
+      FetchQueryOptions<TQueryFnData, TError, TData>,
       'queryKey'
     >,
   ): Promise<TData>
@@ -145,24 +151,11 @@ export class QueryClient {
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
   >(
-    queryKey: TQueryKey,
+    queryKey: string,
+    queryFn: QueryFunction<TQueryFnData>,
     options?: Omit<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-      'queryKey'
-    >,
-  ): Promise<TData>
-  ensureQueryData<
-    TQueryFnData = unknown,
-    TError = unknown,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
-  >(
-    queryKey: TQueryKey,
-    queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-    options?: Omit<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      FetchQueryOptions<TQueryFnData, TError, TData>,
       'queryKey' | 'queryFn'
     >,
   ): Promise<TData>
@@ -170,18 +163,17 @@ export class QueryClient {
     TQueryFnData,
     TError,
     TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
   >(
     arg1:
-      | TQueryKey
+      | string
       | WithRequired<
-          FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+          FetchQueryOptions<TQueryFnData, TError, TData>,
           'queryKey'
         >,
     arg2?:
-      | QueryFunction<TQueryFnData, TQueryKey>
-      | FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    arg3?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      | QueryFunction<TQueryFnData>
+      | FetchQueryOptions<TQueryFnData, TError, TData>,
+    arg3?: FetchQueryOptions<TQueryFnData, TError, TData>,
   ): Promise<TData> {
     const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
     const cachedData = this.getQueryData<TData>(parsedOptions.queryKey!)
@@ -192,14 +184,14 @@ export class QueryClient {
   }
 
   getQueriesData<TQueryFnData = unknown>(
-    queryKey: QueryKey,
-  ): [QueryKey, TQueryFnData | undefined][]
+    queryKey: string,
+  ): [string, TQueryFnData | undefined][]
   getQueriesData<TQueryFnData = unknown>(
     filters: QueryFilters,
-  ): [QueryKey, TQueryFnData | undefined][]
+  ): [string, TQueryFnData | undefined][]
   getQueriesData<TQueryFnData = unknown>(
-    queryKeyOrFilters: QueryKey | QueryFilters,
-  ): [QueryKey, TQueryFnData | undefined][] {
+    queryKeyOrFilters: string | QueryFilters,
+  ): [string, TQueryFnData | undefined][] {
     return this.getQueryCache()
       .findAll(queryKeyOrFilters)
       .map(({ queryKey, state }) => {
@@ -209,7 +201,7 @@ export class QueryClient {
   }
 
   setQueryData<TQueryFnData>(
-    queryKey: QueryKey,
+    queryKey: string,
     updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
     options?: SetDataOptions,
   ): TQueryFnData | undefined {
@@ -229,22 +221,22 @@ export class QueryClient {
   }
 
   setQueriesData<TQueryFnData>(
-    queryKey: QueryKey,
+    queryKey: string,
     updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
     options?: SetDataOptions,
-  ): [QueryKey, TQueryFnData | undefined][]
+  ): [string, TQueryFnData | undefined][]
 
   setQueriesData<TQueryFnData>(
     filters: QueryFilters,
     updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
     options?: SetDataOptions,
-  ): [QueryKey, TQueryFnData | undefined][]
+  ): [string, TQueryFnData | undefined][]
 
   setQueriesData<TQueryFnData>(
-    queryKeyOrFilters: QueryKey | QueryFilters,
+    queryKeyOrFilters: string | QueryFilters,
     updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
     options?: SetDataOptions,
-  ): [QueryKey, TQueryFnData | undefined][] {
+  ): [string, TQueryFnData | undefined][] {
     return notifyManager.batch(() =>
       this.getQueryCache()
         .findAll(queryKeyOrFilters)
@@ -256,15 +248,15 @@ export class QueryClient {
   }
 
   getQueryState<TQueryFnData = unknown, TError = undefined>(
-    queryKey: QueryKey,
+    queryKey: string,
     filters?: QueryFilters,
   ): QueryState<TQueryFnData, TError> | undefined {
     return this.queryCache.find<TQueryFnData, TError>(queryKey, filters)?.state
   }
 
   removeQueries(filters?: QueryFilters): void
-  removeQueries(queryKey?: QueryKey, filters?: QueryFilters): void
-  removeQueries(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): void {
+  removeQueries(queryKey?: string, filters?: QueryFilters): void
+  removeQueries(arg1?: string | QueryFilters, arg2?: QueryFilters): void {
     const [filters] = parseFilterArgs(arg1, arg2)
     const queryCache = this.queryCache
     notifyManager.batch(() => {
@@ -279,12 +271,12 @@ export class QueryClient {
     options?: ResetOptions,
   ): Promise<void>
   resetQueries<TPageData = unknown>(
-    queryKey?: QueryKey,
+    queryKey?: string,
     filters?: ResetQueryFilters<TPageData>,
     options?: ResetOptions,
   ): Promise<void>
   resetQueries(
-    arg1?: QueryKey | ResetQueryFilters,
+    arg1?: string | ResetQueryFilters,
     arg2?: ResetQueryFilters | ResetOptions,
     arg3?: ResetOptions,
   ): Promise<void> {
@@ -306,12 +298,12 @@ export class QueryClient {
 
   cancelQueries(filters?: QueryFilters, options?: CancelOptions): Promise<void>
   cancelQueries(
-    queryKey?: QueryKey,
+    queryKey?: string,
     filters?: QueryFilters,
     options?: CancelOptions,
   ): Promise<void>
   cancelQueries(
-    arg1?: QueryKey | QueryFilters,
+    arg1?: string | QueryFilters,
     arg2?: QueryFilters | CancelOptions,
     arg3?: CancelOptions,
   ): Promise<void> {
@@ -335,12 +327,12 @@ export class QueryClient {
     options?: InvalidateOptions,
   ): Promise<void>
   invalidateQueries<TPageData = unknown>(
-    queryKey?: QueryKey,
+    queryKey?: string,
     filters?: InvalidateQueryFilters<TPageData>,
     options?: InvalidateOptions,
   ): Promise<void>
   invalidateQueries(
-    arg1?: QueryKey | InvalidateQueryFilters,
+    arg1?: string | InvalidateQueryFilters,
     arg2?: InvalidateQueryFilters | InvalidateOptions,
     arg3?: InvalidateOptions,
   ): Promise<void> {
@@ -367,12 +359,12 @@ export class QueryClient {
     options?: RefetchOptions,
   ): Promise<void>
   refetchQueries<TPageData = unknown>(
-    queryKey?: QueryKey,
+    queryKey?: string,
     filters?: RefetchQueryFilters<TPageData>,
     options?: RefetchOptions,
   ): Promise<void>
   refetchQueries(
-    arg1?: QueryKey | RefetchQueryFilters,
+    arg1?: string | RefetchQueryFilters,
     arg2?: RefetchQueryFilters | RefetchOptions,
     arg3?: RefetchOptions,
   ): Promise<void> {
@@ -404,40 +396,36 @@ export class QueryClient {
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
   >(
-    options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options: FetchQueryOptions<TQueryFnData, TError, TData>,
   ): Promise<TData>
   fetchQuery<
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
   >(
-    queryKey: TQueryKey,
-    options?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    queryKey: string,
+    options?: FetchQueryOptions<TQueryFnData, TError, TData>,
   ): Promise<TData>
   fetchQuery<
     TQueryFnData = unknown,
     TError = unknown,
-    TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
+    TData = TQueryFnData
   >(
-    queryKey: TQueryKey,
-    queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-    options?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    queryKey: string,
+    queryFn: QueryFunction<TQueryFnData>,
+    options?: FetchQueryOptions<TQueryFnData, TError, TData>,
   ): Promise<TData>
   fetchQuery<
     TQueryFnData,
     TError,
     TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
   >(
-    arg1: TQueryKey | FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    arg1: string | FetchQueryOptions<TQueryFnData, TError, TData>,
     arg2?:
-      | QueryFunction<TQueryFnData, TQueryKey>
-      | FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    arg3?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      | QueryFunction<TQueryFnData>
+      | FetchQueryOptions<TQueryFnData, TError, TData>,
+    arg3?: FetchQueryOptions<TQueryFnData, TError, TData>,
   ): Promise<TData> {
     const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
     const defaultedOptions = this.defaultQueryOptions(parsedOptions)
@@ -458,40 +446,36 @@ export class QueryClient {
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
   >(
-    options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options: FetchQueryOptions<TQueryFnData, TError, TData>,
   ): Promise<void>
   prefetchQuery<
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
   >(
-    queryKey: TQueryKey,
-    options?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    queryKey: string,
+    options?: FetchQueryOptions<TQueryFnData, TError, TData>,
   ): Promise<void>
   prefetchQuery<
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
   >(
-    queryKey: TQueryKey,
-    queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-    options?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    queryKey: string,
+    queryFn: QueryFunction<TQueryFnData>,
+    options?: FetchQueryOptions<TQueryFnData, TError, TData>,
   ): Promise<void>
   prefetchQuery<
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
   >(
-    arg1: TQueryKey | FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    arg1: string | FetchQueryOptions<TQueryFnData, TError, TData>,
     arg2?:
-      | QueryFunction<TQueryFnData, TQueryKey>
-      | FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    arg3?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      | QueryFunction<TQueryFnData>
+      | FetchQueryOptions<TQueryFnData, TError, TData>,
+    arg3?: FetchQueryOptions<TQueryFnData, TError, TData>,
   ): Promise<void> {
     return this.fetchQuery(arg1 as any, arg2 as any, arg3)
       .then(noop)
@@ -502,42 +486,38 @@ export class QueryClient {
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
   >(
-    options: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options: FetchInfiniteQueryOptions<TQueryFnData, TError, TData>,
   ): Promise<InfiniteData<TData>>
   fetchInfiniteQuery<
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
   >(
-    queryKey: TQueryKey,
-    options?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    queryKey: string,
+    options?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData>,
   ): Promise<InfiniteData<TData>>
   fetchInfiniteQuery<
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
   >(
-    queryKey: TQueryKey,
-    queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-    options?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    queryKey: string,
+    queryFn: QueryFunction<TQueryFnData>,
+    options?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData>,
   ): Promise<InfiniteData<TData>>
   fetchInfiniteQuery<
     TQueryFnData,
     TError,
     TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
   >(
     arg1:
-      | TQueryKey
-      | FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      | string
+      | FetchInfiniteQueryOptions<TQueryFnData, TError, TData>,
     arg2?:
-      | QueryFunction<TQueryFnData, TQueryKey>
-      | FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    arg3?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      | QueryFunction<TQueryFnData>
+      | FetchInfiniteQueryOptions<TQueryFnData, TError, TData>,
+    arg3?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData>,
   ): Promise<InfiniteData<TData>> {
     const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
     parsedOptions.behavior = infiniteQueryBehavior<
@@ -552,42 +532,38 @@ export class QueryClient {
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
   >(
-    options: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options: FetchInfiniteQueryOptions<TQueryFnData, TError, TData>,
   ): Promise<void>
   prefetchInfiniteQuery<
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
   >(
-    queryKey: TQueryKey,
-    options?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    queryKey: string,
+    options?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData>,
   ): Promise<void>
   prefetchInfiniteQuery<
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
   >(
-    queryKey: TQueryKey,
-    queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-    options?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    queryKey: string,
+    queryFn: QueryFunction<TQueryFnData>,
+    options?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData>,
   ): Promise<void>
   prefetchInfiniteQuery<
     TQueryFnData,
     TError,
     TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
   >(
     arg1:
-      | TQueryKey
-      | FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      | string
+      | FetchInfiniteQueryOptions<TQueryFnData, TError, TData>,
     arg2?:
-      | QueryFunction<TQueryFnData, TQueryKey>
-      | FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    arg3?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      | QueryFunction<TQueryFnData>
+      | FetchInfiniteQueryOptions<TQueryFnData, TError, TData>,
+    arg3?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData>,
   ): Promise<void> {
     return this.fetchInfiniteQuery(arg1 as any, arg2 as any, arg3)
       .then(noop)
@@ -619,12 +595,10 @@ export class QueryClient {
   }
 
   setQueryDefaults(
-    queryKey: QueryKey,
+    queryKey: string,
     options: QueryObserverOptions<unknown, any, any, any>,
   ): void {
-    const result = this.queryDefaults.find(
-      (x) => hashQueryKey(queryKey) === hashQueryKey(x.queryKey),
-    )
+    const result = this.queryDefaults.find((x) => queryKey === x.queryKey)
     if (result) {
       result.defaultOptions = options
     } else {
@@ -633,8 +607,8 @@ export class QueryClient {
   }
 
   getQueryDefaults(
-    queryKey?: QueryKey,
-  ): QueryObserverOptions<any, any, any, any, any> | undefined {
+    queryKey?: string,
+  ): QueryObserverOptions<any, any, any, any> | undefined {
     if (!queryKey) {
       return undefined
     }
@@ -664,12 +638,10 @@ export class QueryClient {
   }
 
   setMutationDefaults(
-    mutationKey: MutationKey,
+    mutationKey: string,
     options: MutationObserverOptions<any, any, any, any>,
   ): void {
-    const result = this.mutationDefaults.find(
-      (x) => hashQueryKey(mutationKey) === hashQueryKey(x.mutationKey),
-    )
+    const result = this.mutationDefaults.find((x) => mutationKey === x.mutationKey)
     if (result) {
       result.defaultOptions = options
     } else {
@@ -678,7 +650,7 @@ export class QueryClient {
   }
 
   getMutationDefaults(
-    mutationKey?: MutationKey,
+    mutationKey?: string,
   ): MutationObserverOptions<any, any, any, any> | undefined {
     if (!mutationKey) {
       return undefined
@@ -698,9 +670,9 @@ export class QueryClient {
       // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
       if (matchingDefaults.length > 1) {
         this.logger.error(
-          `[QueryClient] Several mutation defaults match with key '${JSON.stringify(
-            mutationKey,
-          )}'. The first matching mutation defaults are used. Please check how mutation defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetmutationdefaults.`,
+          `[QueryClient] Several mutation defaults match with key '${
+            mutationKey
+          }'. The first matching mutation defaults are used. Please check how mutation defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetmutationdefaults.`,
         )
       }
     }
@@ -713,31 +685,27 @@ export class QueryClient {
     TError,
     TData,
     TQueryData,
-    TQueryKey extends QueryKey,
   >(
     options?:
-      | QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+      | QueryObserverOptions<TQueryFnData, TError, TData, TQueryData>
       | DefaultedQueryObserverOptions<
           TQueryFnData,
           TError,
           TData,
-          TQueryData,
-          TQueryKey
+          TQueryData
         >,
   ): DefaultedQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
-    TQueryData,
-    TQueryKey
+    TQueryData
   > {
     if (options?._defaulted) {
       return options as DefaultedQueryObserverOptions<
         TQueryFnData,
         TError,
         TData,
-        TQueryData,
-        TQueryKey
+        TQueryData
       >
     }
 
@@ -746,13 +714,6 @@ export class QueryClient {
       ...this.getQueryDefaults(options?.queryKey),
       ...options,
       _defaulted: true,
-    }
-
-    if (!defaultedOptions.queryHash && defaultedOptions.queryKey) {
-      defaultedOptions.queryHash = hashQueryKeyByOptions(
-        defaultedOptions.queryKey,
-        defaultedOptions,
-      )
     }
 
     // dependent default values
@@ -768,8 +729,7 @@ export class QueryClient {
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
-      TQueryKey
+      TQueryData
     >
   }
 

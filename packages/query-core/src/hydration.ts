@@ -1,9 +1,7 @@
 import type { QueryClient } from './queryClient'
 import type { Query, QueryState } from './query'
 import type {
-  MutationKey,
   MutationOptions,
-  QueryKey,
   QueryOptions,
 } from './types'
 import type { Mutation, MutationState } from './mutation'
@@ -25,13 +23,12 @@ export interface HydrateOptions {
 }
 
 interface DehydratedMutation {
-  mutationKey?: MutationKey
+  mutationKey?: string
   state: MutationState
 }
 
 interface DehydratedQuery {
-  queryHash: string
-  queryKey: QueryKey
+  queryKey: string
   state: QueryState
 }
 
@@ -61,7 +58,6 @@ function dehydrateQuery(query: Query): DehydratedQuery {
   return {
     state: query.state,
     queryKey: query.queryKey,
-    queryHash: query.queryHash,
   }
 }
 
@@ -140,7 +136,7 @@ export function hydrate(
   })
 
   queries.forEach((dehydratedQuery) => {
-    const query = queryCache.get(dehydratedQuery.queryHash)
+    const query = queryCache.get(dehydratedQuery.queryKey)
 
     // Reset fetch status to idle in the dehydrated state to avoid
     // query being stuck in fetching state upon hydration
@@ -163,7 +159,6 @@ export function hydrate(
       {
         ...options?.defaultOptions?.queries,
         queryKey: dehydratedQuery.queryKey,
-        queryHash: dehydratedQuery.queryHash,
       },
       dehydratedQueryState,
     )

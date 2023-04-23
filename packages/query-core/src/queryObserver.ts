@@ -10,7 +10,6 @@ import {
 import { notifyManager } from './notifyManager'
 import type {
   PlaceholderDataFunction,
-  QueryKey,
   QueryObserverBaseResult,
   QueryObserverOptions,
   QueryObserverResult,
@@ -42,19 +41,17 @@ export class QueryObserver<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
+  TQueryData = TQueryFnData
 > extends Subscribable<QueryObserverListener<TData, TError>> {
   options: QueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
-    TQueryData,
-    TQueryKey
+    TQueryData
   >
 
   private client: QueryClient
-  private currentQuery!: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+  private currentQuery!: Query<TQueryFnData, TError, TQueryData>
   private currentQueryInitialState!: QueryState<TQueryData, TError>
   private currentResult!: QueryObserverResult<TData, TError>
   private currentResultState?: QueryState<TQueryData, TError>
@@ -62,8 +59,7 @@ export class QueryObserver<
     TQueryFnData,
     TError,
     TData,
-    TQueryData,
-    TQueryKey
+    TQueryData
   >
   private previousQueryResult?: QueryObserverResult<TData, TError>
   private selectError: TError | null
@@ -80,8 +76,7 @@ export class QueryObserver<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
-      TQueryKey
+      TQueryData
     >,
   ) {
     super()
@@ -145,8 +140,7 @@ export class QueryObserver<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
-      TQueryKey
+      TQueryData
     >,
     notifyOptions?: NotifyOptions,
   ): void {
@@ -234,8 +228,7 @@ export class QueryObserver<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
-      TQueryKey
+      TQueryData
     >,
   ): QueryObserverResult<TData, TError> {
     const query = this.client.getQueryCache().build(this.client, options)
@@ -266,7 +259,7 @@ export class QueryObserver<
     return trackedResult
   }
 
-  getCurrentQuery(): Query<TQueryFnData, TError, TQueryData, TQueryKey> {
+  getCurrentQuery(): Query<TQueryFnData, TError, TQueryData> {
     return this.currentQuery
   }
 
@@ -291,8 +284,7 @@ export class QueryObserver<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
-      TQueryKey
+      TQueryData
     >,
   ): Promise<QueryObserverResult<TData, TError>> {
     const defaultedOptions = this.client.defaultQueryOptions(options)
@@ -325,7 +317,7 @@ export class QueryObserver<
 
     // Fetch
     let promise: Promise<TQueryData | undefined> = this.currentQuery.fetch(
-      this.options as QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>,
+      this.options as QueryOptions<TQueryFnData, TError, TQueryData>,
       fetchOptions,
     )
 
@@ -413,13 +405,12 @@ export class QueryObserver<
   }
 
   protected createResult(
-    query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
+    query: Query<TQueryFnData, TError, TQueryData>,
     options: QueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
-      TQueryData,
-      TQueryKey
+      TQueryData
     >,
   ): QueryObserverResult<TData, TError> {
     const prevQuery = this.currentQuery
@@ -650,7 +641,7 @@ export class QueryObserver<
     }
 
     const prevQuery = this.currentQuery as
-      | Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      | Query<TQueryFnData, TError, TQueryData>
       | undefined
     this.currentQuery = query
     this.currentQueryInitialState = query.state
@@ -708,7 +699,7 @@ export class QueryObserver<
 }
 
 function shouldLoadOnMount(
-  query: Query<any, any, any, any>,
+  query: Query<any, any, any>,
   options: QueryObserverOptions<any, any, any, any>,
 ): boolean {
   return (
@@ -719,8 +710,8 @@ function shouldLoadOnMount(
 }
 
 function shouldFetchOnMount(
-  query: Query<any, any, any, any>,
-  options: QueryObserverOptions<any, any, any, any, any>,
+  query: Query<any, any, any>,
+  options: QueryObserverOptions<any, any, any, any>,
 ): boolean {
   return (
     shouldLoadOnMount(query, options) ||
@@ -730,8 +721,8 @@ function shouldFetchOnMount(
 }
 
 function shouldFetchOn(
-  query: Query<any, any, any, any>,
-  options: QueryObserverOptions<any, any, any, any, any>,
+  query: Query<any, any, any>,
+  options: QueryObserverOptions<any, any, any, any>,
   field: typeof options['refetchOnMount'] &
     typeof options['refetchOnWindowFocus'] &
     typeof options['refetchOnReconnect'],
@@ -745,10 +736,10 @@ function shouldFetchOn(
 }
 
 function shouldFetchOptionally(
-  query: Query<any, any, any, any>,
-  prevQuery: Query<any, any, any, any>,
-  options: QueryObserverOptions<any, any, any, any, any>,
-  prevOptions: QueryObserverOptions<any, any, any, any, any>,
+  query: Query<any, any, any>,
+  prevQuery: Query<any, any, any>,
+  options: QueryObserverOptions<any, any, any, any>,
+  prevOptions: QueryObserverOptions<any, any, any, any>,
 ): boolean {
   return (
     options.enabled !== false &&
@@ -759,8 +750,8 @@ function shouldFetchOptionally(
 }
 
 function isStale(
-  query: Query<any, any, any, any>,
-  options: QueryObserverOptions<any, any, any, any, any>,
+  query: Query<any, any, any>,
+  options: QueryObserverOptions<any, any, any, any>,
 ): boolean {
   return query.isStaleByTime(options.staleTime)
 }

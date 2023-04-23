@@ -3,10 +3,8 @@ import type { Query } from './query'
 import type {
   FetchStatus,
   MutationFunction,
-  MutationKey,
   MutationOptions,
   QueryFunction,
-  QueryKey,
   QueryOptions,
 } from './types'
 
@@ -28,7 +26,7 @@ export interface QueryFilters {
   /**
    * Include queries matching this query key
    */
-  queryKey?: QueryKey
+  queryKey?: string
   /**
    * Include or exclude stale queries
    */
@@ -51,7 +49,7 @@ export interface MutationFilters {
   /**
    * Include mutations matching this mutation key
    */
-  mutationKey?: MutationKey
+  mutationKey?: string
   /**
    * Include or exclude fetching mutations
    */
@@ -102,11 +100,10 @@ export function timeUntilStale(updatedAt: number, staleTime?: number): number {
 }
 
 export function parseQueryArgs<
-  TOptions extends QueryOptions<any, any, any, TQueryKey>,
-  TQueryKey extends QueryKey = QueryKey,
+  TOptions extends QueryOptions<any, any, any>,
 >(
-  arg1: TQueryKey | TOptions,
-  arg2?: QueryFunction<any, TQueryKey> | TOptions,
+  arg1: string | TOptions,
+  arg2?: QueryFunction<any> | TOptions,
   arg3?: TOptions,
 ): TOptions {
   if (!isQueryKey(arg1)) {
@@ -123,7 +120,7 @@ export function parseQueryArgs<
 export function parseMutationArgs<
   TOptions extends MutationOptions<any, any, any, any>,
 >(
-  arg1: MutationKey | MutationFunction<any, any> | TOptions,
+  arg1: string | MutationFunction<any, any> | TOptions,
   arg2?: MutationFunction<any, any> | TOptions,
   arg3?: TOptions,
 ): TOptions {
@@ -145,7 +142,7 @@ export function parseFilterArgs<
   TFilters extends QueryFilters,
   TOptions = unknown,
 >(
-  arg1?: QueryKey | TFilters,
+  arg1?: string | TFilters,
   arg2?: TFilters | TOptions,
   arg3?: TOptions,
 ): [TFilters, TOptions | undefined] {
@@ -158,7 +155,7 @@ export function parseMutationFilterArgs<
   TFilters extends MutationFilters,
   TOptions = unknown,
 >(
-  arg1?: QueryKey | TFilters,
+  arg1?: string | TFilters,
   arg2?: TFilters | TOptions,
   arg3?: TOptions,
 ): [TFilters, TOptions | undefined] {
@@ -171,7 +168,7 @@ export function parseMutationFilterArgs<
 
 export function matchQuery(
   filters: QueryFilters,
-  query: Query<any, any, any, any>,
+  query: Query<any, any, any>,
 ): boolean {
   const {
     type = 'all',
@@ -184,7 +181,7 @@ export function matchQuery(
 
   if (isQueryKey(queryKey)) {
     if (exact) {
-      if (query.queryHash !== hashQueryKeyByOptions(queryKey, query.options)) {
+      if (query.queryKey !== queryKey) {
         return false
       }
     } else if (!partialMatchKey(query.queryKey, queryKey)) {
@@ -230,9 +227,7 @@ export function matchMutation(
       return false
     }
     if (exact) {
-      if (
-        hashQueryKey(mutation.options.mutationKey) !== hashQueryKey(mutationKey)
-      ) {
+      if (mutation.options.mutationKey !== mutationKey) {
         return false
       }
     } else if (!partialMatchKey(mutation.options.mutationKey, mutationKey)) {
@@ -254,36 +249,11 @@ export function matchMutation(
   return true
 }
 
-export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
-  queryKey: TQueryKey,
-  options?: QueryOptions<any, any, any, TQueryKey>,
-): string {
-  const hashFn = options?.queryKeyHashFn || hashQueryKey
-  return hashFn(queryKey)
-}
-
-/**
- * Default query keys hash function.
- * Hashes the value into a stable hash.
- */
-export function hashQueryKey(queryKey: QueryKey): string {
-  return JSON.stringify(queryKey, (_, val) =>
-    isPlainObject(val)
-      ? Object.keys(val)
-          .sort()
-          .reduce((result, key) => {
-            result[key] = val[key]
-            return result
-          }, {} as any)
-      : val,
-  )
-}
-
 /**
  * Checks if key `b` partially matches with key `a`.
  */
-export function partialMatchKey(a: QueryKey, b: QueryKey): boolean {
-  return partialDeepEqual(a, b)
+export function partialMatchKey(a: string, b: string): boolean {
+  return a.startsWith(b)
 }
 
 /**
@@ -392,8 +362,8 @@ function hasObjectPrototype(o: any): boolean {
   return Object.prototype.toString.call(o) === '[object Object]'
 }
 
-export function isQueryKey(value: unknown): value is QueryKey {
-  return Array.isArray(value)
+export function isQueryKey(value: unknown): value is string {
+  return typeof value === 'string';
 }
 
 export function isError(value: any): value is Error {
@@ -423,7 +393,7 @@ export function getAbortController(): AbortController | undefined {
 
 export function replaceData<
   TData,
-  TOptions extends QueryOptions<any, any, any, any>,
+  TOptions extends QueryOptions<any, any, any>,
 >(prevData: TData | undefined, data: TData, options: TOptions): TData {
   // Use prev data if an isDataEqual function is defined and returns `true`
   if (options.isDataEqual?.(prevData, data)) {
