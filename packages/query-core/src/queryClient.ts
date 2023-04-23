@@ -1,11 +1,9 @@
 import type { QueryFilters, Updater, MutationFilters } from './utils'
 import {
-  hashQueryKey,
   noop,
   parseFilterArgs,
   parseQueryArgs,
   partialMatchKey,
-  hashQueryKeyByOptions,
   functionalUpdate,
 } from './utils'
 import type {
@@ -601,9 +599,7 @@ export class QueryClient {
     queryKey: string,
     options: QueryObserverOptions<unknown, any, any, any>,
   ): void {
-    const result = this.queryDefaults.find(
-      (x) => hashQueryKey(queryKey) === hashQueryKey(x.queryKey),
-    )
+    const result = this.queryDefaults.find((x) => queryKey === x.queryKey)
     if (result) {
       result.defaultOptions = options
     } else {
@@ -646,9 +642,7 @@ export class QueryClient {
     mutationKey: MutationKey,
     options: MutationObserverOptions<any, any, any, any>,
   ): void {
-    const result = this.mutationDefaults.find(
-      (x) => hashQueryKey(mutationKey) === hashQueryKey(x.mutationKey),
-    )
+    const result = this.mutationDefaults.find((x) => mutationKey === x.mutationKey)
     if (result) {
       result.defaultOptions = options
     } else {
@@ -721,13 +715,6 @@ export class QueryClient {
       ...this.getQueryDefaults(options?.queryKey),
       ...options,
       _defaulted: true,
-    }
-
-    if (!defaultedOptions.queryKey && defaultedOptions.queryKey) {
-      defaultedOptions.queryKey = hashQueryKeyByOptions(
-        defaultedOptions.queryKey,
-        defaultedOptions,
-      )
     }
 
     // dependent default values

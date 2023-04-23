@@ -20,10 +20,6 @@ interface QueryCacheConfig {
   ) => void
 }
 
-interface QueryHashMap {
-  [hash: string]: Query<any, any, any>
-}
-
 interface NotifyEventQueryAdded extends NotifyEvent {
   type: 'added'
   query: Query<any, any, any>
@@ -80,7 +76,9 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   config: QueryCacheConfig
 
   private queries: Query<any, any, any>[]
-  private queriesMap: QueryHashMap
+  private queriesMap: {
+    [key: string]: Query<any, any, any>
+  }
 
   constructor(config?: QueryCacheConfig) {
     super()
