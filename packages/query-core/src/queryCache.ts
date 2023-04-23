@@ -21,46 +21,46 @@ interface QueryCacheConfig {
 }
 
 interface QueryHashMap {
-  [hash: string]: Query<any, any, any, any>
+  [hash: string]: Query<any, any, any>
 }
 
 interface NotifyEventQueryAdded extends NotifyEvent {
   type: 'added'
-  query: Query<any, any, any, any>
+  query: Query<any, any, any>
 }
 
 interface NotifyEventQueryRemoved extends NotifyEvent {
   type: 'removed'
-  query: Query<any, any, any, any>
+  query: Query<any, any, any>
 }
 
 interface NotifyEventQueryUpdated extends NotifyEvent {
   type: 'updated'
-  query: Query<any, any, any, any>
+  query: Query<any, any, any>
   action: Action<any, any>
 }
 
 interface NotifyEventQueryObserverAdded extends NotifyEvent {
   type: 'observerAdded'
-  query: Query<any, any, any, any>
-  observer: QueryObserver<any, any, any, any, any>
+  query: Query<any, any, any>
+  observer: QueryObserver<any, any, any, any>
 }
 
 interface NotifyEventQueryObserverRemoved extends NotifyEvent {
   type: 'observerRemoved'
-  query: Query<any, any, any, any>
-  observer: QueryObserver<any, any, any, any, any>
+  query: Query<any, any, any>
+  observer: QueryObserver<any, any, any, any>
 }
 
 interface NotifyEventQueryObserverResultsUpdated extends NotifyEvent {
   type: 'observerResultsUpdated'
-  query: Query<any, any, any, any>
+  query: Query<any, any, any>
 }
 
 interface NotifyEventQueryObserverOptionsUpdated extends NotifyEvent {
   type: 'observerOptionsUpdated'
-  query: Query<any, any, any, any>
-  observer: QueryObserver<any, any, any, any, any>
+  query: Query<any, any, any>
+  observer: QueryObserver<any, any, any, any>
 }
 
 type QueryCacheNotifyEvent =
@@ -79,7 +79,7 @@ type QueryCacheListener = (event: QueryCacheNotifyEvent) => void
 export class QueryCache extends Subscribable<QueryCacheListener> {
   config: QueryCacheConfig
 
-  private queries: Query<any, any, any, any>[]
+  private queries: Query<any, any, any>[]
   private queriesMap: QueryHashMap
 
   constructor(config?: QueryCacheConfig) {
@@ -89,22 +89,21 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     this.queriesMap = {}
   }
 
-  build<TQueryFnData, TError, TData, TQueryKey extends QueryKey>(
+  build<TQueryFnData, TError, TData>(
     client: QueryClient,
-    options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options: QueryOptions<TQueryFnData, TError, TData>,
     state?: QueryState<TData, TError>,
-  ): Query<TQueryFnData, TError, TData, TQueryKey> {
+  ): Query<TQueryFnData, TError, TData> {
     const queryKey = options.queryKey!
     const queryHash =
       options.queryHash ?? hashQueryKeyByOptions(queryKey, options)
-    let query = this.get<TQueryFnData, TError, TData, TQueryKey>(queryHash)
+    let query = this.get<TQueryFnData, TError, TData>(queryHash)
 
     if (!query) {
       query = new Query({
         cache: this,
         logger: client.getLogger(),
         queryKey,
-        queryHash,
         options: client.defaultQueryOptions(options),
         state,
         defaultOptions: client.getQueryDefaults(queryKey),
@@ -115,7 +114,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     return query
   }
 
-  add(query: Query<any, any, any, any>): void {
+  add(query: Query<any, any, any>): void {
     if (!this.queriesMap[query.queryHash]) {
       this.queriesMap[query.queryHash] = query
       this.queries.push(query)
@@ -126,7 +125,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     }
   }
 
-  remove(query: Query<any, any, any, any>): void {
+  remove(query: Query<any, any, any>): void {
     const queryInMap = this.queriesMap[query.queryHash]
 
     if (queryInMap) {
@@ -154,10 +153,9 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
-    TQueryKey extends QueryKey = QueryKey,
   >(
     queryHash: string,
-  ): Query<TQueryFnData, TError, TData, TQueryKey> | undefined {
+  ): Query<TQueryFnData, TError, TData> | undefined {
     return this.queriesMap[queryHash]
   }
 

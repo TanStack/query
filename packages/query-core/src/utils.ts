@@ -102,11 +102,10 @@ export function timeUntilStale(updatedAt: number, staleTime?: number): number {
 }
 
 export function parseQueryArgs<
-  TOptions extends QueryOptions<any, any, any, TQueryKey>,
-  TQueryKey extends QueryKey = QueryKey,
+  TOptions extends QueryOptions<any, any, any>,
 >(
-  arg1: TQueryKey | TOptions,
-  arg2?: QueryFunction<any, TQueryKey> | TOptions,
+  arg1: string | TOptions,
+  arg2?: QueryFunction<any> | TOptions,
   arg3?: TOptions,
 ): TOptions {
   if (!isQueryKey(arg1)) {
@@ -171,7 +170,7 @@ export function parseMutationFilterArgs<
 
 export function matchQuery(
   filters: QueryFilters,
-  query: Query<any, any, any, any>,
+  query: Query<any, any, any>,
 ): boolean {
   const {
     type = 'all',
@@ -254,9 +253,9 @@ export function matchMutation(
   return true
 }
 
-export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
-  queryKey: TQueryKey,
-  options?: QueryOptions<any, any, any, TQueryKey>,
+export function hashQueryKeyByOptions(
+  queryKey: string,
+  options?: QueryOptions<any, any, any>,
 ): string {
   const hashFn = options?.queryKeyHashFn || hashQueryKey
   return hashFn(queryKey)
@@ -423,7 +422,7 @@ export function getAbortController(): AbortController | undefined {
 
 export function replaceData<
   TData,
-  TOptions extends QueryOptions<any, any, any, any>,
+  TOptions extends QueryOptions<any, any, any>,
 >(prevData: TData | undefined, data: TData, options: TOptions): TData {
   // Use prev data if an isDataEqual function is defined and returns `true`
   if (options.isDataEqual?.(prevData, data)) {
