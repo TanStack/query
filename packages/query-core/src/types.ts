@@ -512,8 +512,6 @@ export type InfiniteQueryObserverResult<TData = unknown, TError = unknown> =
   | InfiniteQueryObserverRefetchErrorResult<TData, TError>
   | InfiniteQueryObserverSuccessResult<TData, TError>
 
-export type MutationKey = readonly unknown[]
-
 export type MutationStatus = 'idle' | 'loading' | 'success' | 'error'
 
 export interface MutationMeta {
@@ -531,7 +529,7 @@ export interface MutationOptions<
   TContext = unknown,
 > {
   mutationFn?: MutationFunction<TData, TVariables>
-  mutationKey?: MutationKey
+  mutationKey?: string
   variables?: TVariables
   onMutate?: (
     variables: TVariables,
