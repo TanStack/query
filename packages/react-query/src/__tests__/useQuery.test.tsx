@@ -1473,6 +1473,159 @@ describe('useQuery', () => {
     })
   })
 
+  it('should keep the previous data when placeholderData is set and select fn transform is used', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+
+    function Page() {
+      const [count, setCount] = React.useState(0)
+
+      const state = useQuery({
+        queryKey: [key, count],
+        queryFn: async () => {
+          await sleep(10)
+          return {
+            count,
+          }
+        },
+        select(data) {
+          return data.count
+        },
+        placeholderData: keepPreviousData,
+      })
+
+      states.push(state)
+
+      return (
+        <div>
+          <div>data: {state.data}</div>
+          <button onClick={() => setCount(1)}>setCount</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('data: 0'))
+
+    fireEvent.click(rendered.getByRole('button', { name: 'setCount' }))
+
+    await waitFor(() => rendered.getByText('data: 1'))
+
+    // Initial
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isFetching: true,
+      isSuccess: false,
+      isPlaceholderData: false,
+    })
+    // Fetched
+    expect(states[1]).toMatchObject({
+      data: 0,
+      isFetching: false,
+      isSuccess: true,
+      isPlaceholderData: false,
+    })
+    // Set state
+    expect(states[2]).toMatchObject({
+      data: 0,
+      isFetching: true,
+      isSuccess: true,
+      isPlaceholderData: true,
+    })
+    // New data
+    expect(states[3]).toMatchObject({
+      data: 1,
+      isFetching: false,
+      isSuccess: true,
+      isPlaceholderData: false,
+    })
+  })
+
+  it('should show placeholderData between multiple pending queries when select fn transform is used', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+
+    function Page() {
+      const [count, setCount] = React.useState(0)
+
+      const state = useQuery({
+        queryKey: [key, count],
+        queryFn: async () => {
+          await sleep(10)
+          return {
+            count,
+          }
+        },
+        select(data) {
+          return data.count
+        },
+        placeholderData: keepPreviousData,
+      })
+
+      states.push(state)
+
+      return (
+        <div>
+          <div>data: {state.data}</div>
+          <button onClick={() => setCount((prev) => prev + 1)}>setCount</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('data: 0'))
+
+    fireEvent.click(rendered.getByRole('button', { name: 'setCount' }))
+    fireEvent.click(rendered.getByRole('button', { name: 'setCount' }))
+    fireEvent.click(rendered.getByRole('button', { name: 'setCount' }))
+
+    await waitFor(() => rendered.getByText('data: 3'))
+    // Initial
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isFetching: true,
+      isSuccess: false,
+      isPlaceholderData: false,
+    })
+    // Fetched
+    expect(states[1]).toMatchObject({
+      data: 0,
+      isFetching: false,
+      isSuccess: true,
+      isPlaceholderData: false,
+    })
+    // Set state -> count = 1
+    expect(states[2]).toMatchObject({
+      data: 0,
+      isFetching: true,
+      isSuccess: true,
+      isPlaceholderData: true,
+    })
+    // Set state -> count = 2
+    expect(states[3]).toMatchObject({
+      data: 0,
+      isFetching: true,
+      isSuccess: true,
+      isPlaceholderData: true,
+    })
+    // Set state -> count = 3
+    expect(states[4]).toMatchObject({
+      data: 0,
+      isFetching: true,
+      isSuccess: true,
+      isPlaceholderData: true,
+    })
+    // New data
+    expect(states[5]).toMatchObject({
+      data: 3,
+      isFetching: false,
+      isSuccess: true,
+      isPlaceholderData: false,
+    })
+  })
+
   it('should transition to error state when placeholderData is set', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []

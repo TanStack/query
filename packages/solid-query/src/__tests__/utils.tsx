@@ -1,5 +1,5 @@
 import type { QueryClientConfig } from '@tanstack/query-core'
-import { QueryClient } from '@tanstack/query-core'
+import { QueryClient } from '../QueryClient'
 import type { ParentProps } from 'solid-js'
 import { createEffect, createSignal, onCleanup, Show } from 'solid-js'
 import { vi } from 'vitest'

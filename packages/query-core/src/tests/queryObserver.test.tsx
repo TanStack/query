@@ -691,6 +691,61 @@ describe('queryObserver', () => {
     expect(observer.getCurrentResult().isPlaceholderData).toBe(false)
   })
 
+  test('should pass the correct previous data to placeholderData function params when select function is used in conjunction', async () => {
+    const results: QueryObserverResult[] = []
+
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const data1 = { value: 'data1' }
+    const data2 = { value: 'data2' }
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key1,
+      queryFn: () => data1,
+      placeholderData: (prev) => prev,
+      select: (data) => data.value,
+    })
+
+    const unsubscribe = observer.subscribe((result) => {
+      results.push(result)
+    })
+
+    await sleep(1)
+
+    observer.setOptions({
+      queryKey: key2,
+      queryFn: () => data2,
+      placeholderData: (prev) => prev,
+      select: (data) => data.value,
+    })
+
+    await sleep(1)
+    unsubscribe()
+
+    expect(results.length).toBe(4)
+    expect(results[0]).toMatchObject({
+      data: undefined,
+      status: 'pending',
+      fetchStatus: 'fetching',
+    }) // Initial fetch
+    expect(results[1]).toMatchObject({
+      data: 'data1',
+      status: 'success',
+      fetchStatus: 'idle',
+    }) // Successful fetch
+    expect(results[2]).toMatchObject({
+      data: 'data1',
+      status: 'success',
+      fetchStatus: 'fetching',
+    }) // Fetch for new key, but using previous data as placeholder
+    expect(results[3]).toMatchObject({
+      data: 'data2',
+      status: 'success',
+      fetchStatus: 'idle',
+    }) // Successful fetch for new key
+  })
+
   test('setOptions should notify cache listeners', async () => {
     const key = queryKey()
 
