@@ -720,12 +720,12 @@ importers:
       '@tanstack/solid-query': link:../../../packages/solid-query
       solid-js: 1.6.16
       solid-start: 0.2.24_euxzheln45tfyr565dhf2xv3la
-      undici: 5.14.0
+      undici: 5.20.0
     devDependencies:
       '@types/node': 18.13.0
       esbuild: 0.14.54
       postcss: 8.4.21
-      solid-start-node: 0.2.21_2vqkbilyolq35n53mildrhalmu
+      solid-start-node: 0.2.21_wmplqqqr5tdglivwyrjsogoe24
       typescript: 4.9.5
       vite: 4.2.1_@types+node@18.13.0
 
@@ -1854,7 +1854,7 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
     dependencies:
-      '@babel/types': 7.20.7
+      '@babel/types': 7.21.3
 
   /@babel/plugin-bugfix-safari-id-destructuring-collision-in-function-expression/7.18.6_@babel+core@7.19.1:
     resolution: {integrity: sha512-Dgxsyg54Fx1d4Nge8UnvTrED63vrwOdPmyvPzlNN/boaliRP54pm3pGzZD1SJUwrBA+Cs/xdG8kXX6Mn/RfISQ==}
@@ -17101,7 +17101,7 @@ packages:
       '@babel/types': 7.21.3
       solid-js: 1.6.16
 
-  /solid-start-node/0.2.21_2vqkbilyolq35n53mildrhalmu:
+  /solid-start-node/0.2.21_wmplqqqr5tdglivwyrjsogoe24:
     resolution: {integrity: sha512-DmmJT6K+uF0yLPkn1GQvIHmZRUdYlQwBijruvCiEWuy3d1sLedRnP22K/+u9eKqm8ruFOTQHrc/1wuGVcj3JXg==}
     peerDependencies:
       solid-start: '*'
@@ -17117,7 +17117,7 @@ packages:
       sirv: 2.0.2
       solid-start: 0.2.24_euxzheln45tfyr565dhf2xv3la
       terser: 5.16.3
-      undici: 5.14.0
+      undici: 5.20.0
       vite: 4.2.1_@types+node@18.13.0
     transitivePeerDependencies:
       - supports-color
@@ -17185,9 +17185,9 @@ packages:
       set-cookie-parser: 2.5.1
       sirv: 2.0.2
       solid-js: 1.6.16
-      solid-start-node: 0.2.21_2vqkbilyolq35n53mildrhalmu
+      solid-start-node: 0.2.21_wmplqqqr5tdglivwyrjsogoe24
       terser: 5.16.3
-      undici: 5.19.1
+      undici: 5.20.0
       vite: 4.2.1_@types+node@18.13.0
       vite-plugin-inspect: 0.7.15_rollup@3.20.2+vite@4.2.1
       vite-plugin-solid: 2.6.1_solid-js@1.6.16+vite@4.2.1
@@ -18334,12 +18334,6 @@ packages:
 
   /undici/5.20.0:
     resolution: {integrity: sha512-J3j60dYzuo6Eevbawwp1sdg16k5Tf768bxYK4TUJRH7cBM4kFCbf3mOnM/0E3vQYXvpxITbbWmBafaDbxLDz3g==}
-    engines: {node: '>=12.18'}
-    dependencies:
-      busboy: 1.6.0
-
-  /undici/5.19.1:
-    resolution: {integrity: sha512-YiZ61LPIgY73E7syxCDxxa3LV2yl3sN8spnIuTct60boiiRaE1J8mNWHO8Im2Zi/sFrPusjLlmRPrsyraSqX6A==}
     engines: {node: '>=12.18'}
     dependencies:
       busboy: 1.6.0

@@ -17,11 +17,11 @@ import type {
   QueryOptions,
   RefetchOptions,
 } from './types'
-import type { Query, QueryState, Action, FetchOptions } from './query'
+import type { Query, QueryState, FetchOptions } from './query'
 import type { QueryClient } from './queryClient'
 import { focusManager } from './focusManager'
 import { Subscribable } from './subscribable'
-import { canFetch, isCancelledError } from './retryer'
+import { canFetch } from './retryer'
 
 type QueryObserverListener<TData, TError> = (
   result: QueryObserverResult<TData, TError>,
@@ -29,8 +29,6 @@ type QueryObserverListener<TData, TError> = (
 
 export interface NotifyOptions {
   listeners?: boolean
-  onError?: boolean
-  onSuccess?: boolean
 }
 
 export interface ObserverFetchOptions extends FetchOptions {
@@ -632,16 +630,8 @@ export class QueryObserver<
     }
   }
 
-  onQueryUpdate(action: Action<TData, TError>): void {
-    const notifyOptions: NotifyOptions = {}
-
-    if (action.type === 'success') {
-      notifyOptions.onSuccess = !action.manual
-    } else if (action.type === 'error' && !isCancelledError(action.error)) {
-      notifyOptions.onError = true
-    }
-
-    this.#updateResult(notifyOptions)
+  onQueryUpdate(): void {
+    this.#updateResult()
 
     if (this.hasListeners()) {
       this.#updateTimers()
@@ -650,16 +640,7 @@ export class QueryObserver<
 
   #notify(notifyOptions: NotifyOptions): void {
     notifyManager.batch(() => {
-      // First trigger the configuration callbacks
-      if (notifyOptions.onSuccess) {
-        this.options.onSuccess?.(this.#currentResult.data!)
-        this.options.onSettled?.(this.#currentResult.data, null)
-      } else if (notifyOptions.onError) {
-        this.options.onError?.(this.#currentResult.error!)
-        this.options.onSettled?.(undefined, this.#currentResult.error)
-      }
-
-      // Then trigger the listeners
+      // First, trigger the listeners
       if (notifyOptions.listeners) {
         this.listeners.forEach((listener) => {
           listener(this.#currentResult)

@@ -144,10 +144,6 @@ describe('useQueries', () => {
               expectTypeNotAny(a)
               return a.toLowerCase()
             },
-            onSuccess: (a) => {
-              expectType<string>(a)
-              expectTypeNotAny(a)
-            },
             placeholderData: 'string',
             // @ts-expect-error (initialData: string)
             initialData: 123,
@@ -159,14 +155,6 @@ describe('useQueries', () => {
               expectType<string>(a)
               expectTypeNotAny(a)
               return parseInt(a)
-            },
-            onSuccess: (a) => {
-              expectType<number>(a)
-              expectTypeNotAny(a)
-            },
-            onError: (e) => {
-              expectType<boolean>(e)
-              expectTypeNotAny(e)
             },
             placeholderData: 'string',
             // @ts-expect-error (initialData: string)
@@ -304,10 +292,6 @@ describe('useQueries', () => {
               expectTypeNotAny(a)
               return a.toLowerCase()
             },
-            onSuccess: (a) => {
-              expectType<string>(a)
-              expectTypeNotAny(a)
-            },
             placeholderData: 'string',
             // @ts-expect-error (initialData: string)
             initialData: 123,
@@ -319,14 +303,6 @@ describe('useQueries', () => {
               expectType<string>(a)
               expectTypeNotAny(a)
               return parseInt(a)
-            },
-            onSuccess: (a) => {
-              expectType<number>(a)
-              expectTypeNotAny(a)
-            },
-            onError: (e) => {
-              expectType<boolean>(e)
-              expectTypeNotAny(e)
             },
             placeholderData: 'string',
             // @ts-expect-error (initialData: string)
@@ -423,60 +399,38 @@ describe('useQueries', () => {
         ],
       })
 
-      // select / onSuccess / onSettled params are "indirectly" enforced
+      // select params are "indirectly" enforced
       useQueries({
         queries: [
           // unfortunately TS will not suggest the type for you
           {
             queryKey: key1,
             queryFn: () => 'string',
-            // @ts-expect-error (noImplicitAny)
-            onSuccess: (a) => null,
-            // @ts-expect-error (noImplicitAny)
-            onSettled: (a) => null,
           },
           // however you can add a type to the callback
           {
             queryKey: key2,
             queryFn: () => 'string',
-            onSuccess: (a: string) => {
-              expectType<string>(a)
-              expectTypeNotAny(a)
-            },
-            onSettled: (a: string | undefined) => {
-              expectType<string | undefined>(a)
-              expectTypeNotAny(a)
-            },
           },
           // the type you do pass is enforced
           {
             queryKey: key3,
             queryFn: () => 'string',
-            // @ts-expect-error (only accepts string)
-            onSuccess: (a: number) => null,
           },
           {
             queryKey: key4,
             queryFn: () => 'string',
             select: (a: string) => parseInt(a),
-            // @ts-expect-error (select is defined => only accepts number)
-            onSuccess: (a: string) => null,
-            onSettled: (a: number | undefined) => {
-              expectType<number | undefined>(a)
-              expectTypeNotAny(a)
-            },
           },
         ],
       })
 
       // callbacks are also indirectly enforced with Array.map
       useQueries({
-        // @ts-expect-error (onSuccess only accepts string)
         queries: Array(50).map((_, i) => ({
           queryKey: ['key', i] as const,
           queryFn: () => i + 10,
           select: (data: number) => data.toString(),
-          onSuccess: (_data: number) => null,
         })),
       })
       useQueries({
@@ -484,7 +438,6 @@ describe('useQueries', () => {
           queryKey: ['key', i] as const,
           queryFn: () => i + 10,
           select: (data: number) => data.toString(),
-          onSuccess: (_data: string) => null,
         })),
       })
 
@@ -494,32 +447,15 @@ describe('useQueries', () => {
           {
             queryKey: key1,
             queryFn: () => 'string',
-            // @ts-expect-error (noImplicitAny)
-            onSuccess: (a) => null,
-            // @ts-expect-error (noImplicitAny)
-            onSettled: (a) => null,
           },
           {
             queryKey: key2,
             queryFn: () => 'string',
-            onSuccess: (a: string) => {
-              expectType<string>(a)
-              expectTypeNotAny(a)
-            },
-            onSettled: (a: string | undefined) => {
-              expectType<string | undefined>(a)
-              expectTypeNotAny(a)
-            },
           },
           {
             queryKey: key4,
             queryFn: () => 'string',
             select: (a: string) => parseInt(a),
-            onSuccess: (_a: number) => null,
-            onSettled: (a: number | undefined) => {
-              expectType<number | undefined>(a)
-              expectTypeNotAny(a)
-            },
           },
         ],
       })
@@ -533,12 +469,6 @@ describe('useQueries', () => {
           {
             queryKey: key1,
             queryFn: () => Promise.resolve('string'),
-            onSuccess: (a: string) => {
-              expectType<string>(a)
-              expectTypeNotAny(a)
-            },
-            // @ts-expect-error (refuses to accept a Promise)
-            onSettled: (a: Promise<string>) => null,
           },
         ],
       })
@@ -645,11 +575,10 @@ describe('useQueries', () => {
         queries: queries.map(
           // no need to type the mapped query
           (query) => {
-            const { queryFn: fn, queryKey: key, onError: err } = query
+            const { queryFn: fn, queryKey: key } = query
             expectType<QueryFunction<TQueryFnData, TQueryKey> | undefined>(fn)
             return {
               queryKey: key,
-              onError: err,
               queryFn: fn
                 ? (ctx: QueryFunctionContext<TQueryKey>) => {
                     expectType<TQueryKey>(ctx.queryKey)

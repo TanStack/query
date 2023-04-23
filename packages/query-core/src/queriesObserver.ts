@@ -158,13 +158,6 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
       (defaultedOptions) => !matchedQueryHashes.has(defaultedOptions.queryHash),
     )
 
-    const matchingObserversSet = new Set(
-      matchingObservers.map((match) => match.observer),
-    )
-    const unmatchedObservers = prevObservers.filter(
-      (prevObserver) => !matchingObserversSet.has(prevObserver),
-    )
-
     const getObserver = (options: QueryObserverOptions): QueryObserver => {
       const defaultedOptions = this.#client.defaultQueryOptions(options)
       const currentObserver = this.#observers.find(

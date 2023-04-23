@@ -80,21 +80,17 @@ describe('createQuery', () => {
       createQuery(() => ({
         queryKey: [key],
         queryFn: async () => true,
-        onSuccess: (data) => expectType<boolean>(data),
-        onSettled: (data) => expectType<boolean | undefined>(data),
       }))
 
       // it should be possible to specify a union type as result type
       const unionTypeSync = createQuery(() => ({
         queryKey: key,
         queryFn: () => (Math.random() > 0.5 ? 'a' : 'b'),
-        onSuccess: (data) => expectType<'a' | 'b'>(data),
       }))
       expectType<'a' | 'b' | undefined>(unionTypeSync.data)
       const unionTypeAsync = createQuery<'a' | 'b'>(() => ({
         queryKey: key,
         queryFn: () => Promise.resolve(Math.random() > 0.5 ? 'a' : 'b'),
-        onSuccess: (data) => expectType<'a' | 'b'>(data),
       }))
       expectType<'a' | 'b' | undefined>(unionTypeAsync.data)
 
@@ -489,241 +485,6 @@ describe('createQuery', () => {
       isFetched: true,
       isFetchedAfterMount: true,
     })
-  })
-
-  it('should call onSuccess after a query has been fetched', async () => {
-    const key = queryKey()
-    const states: CreateQueryResult<string>[] = []
-    const onSuccess = vi.fn()
-
-    function Page() {
-      const state = createQuery(() => ({
-        queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'data'
-        },
-        onSuccess,
-      }))
-      createRenderEffect(() => {
-        states.push({ ...state })
-      })
-      return <div>data: {state.data}</div>
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
-
-    await screen.findByText('data: data')
-    expect(states.length).toBe(2)
-    expect(onSuccess).toHaveBeenCalledTimes(1)
-    expect(onSuccess).toHaveBeenCalledWith('data')
-  })
-
-  it('should call onSuccess after a disabled query has been fetched', async () => {
-    const key = queryKey()
-    const states: CreateQueryResult<string>[] = []
-    const onSuccess = vi.fn()
-
-    function Page() {
-      const state = createQuery(() => ({
-        queryKey: key,
-        queryFn: () => 'data',
-        enabled: false,
-        onSuccess,
-      }))
-
-      createRenderEffect(() => {
-        states.push({ ...state })
-      })
-
-      createEffect(() => {
-        const refetch = state.refetch
-        setActTimeout(() => {
-          refetch()
-        }, 10)
-      })
-
-      return null
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
-
-    await sleep(50)
-    expect(onSuccess).toHaveBeenCalledTimes(1)
-    expect(onSuccess).toHaveBeenCalledWith('data')
-  })
-
-  it('should not call onSuccess if a component has unmounted', async () => {
-    const key = queryKey()
-    const states: CreateQueryResult<string>[] = []
-    const onSuccess = vi.fn()
-
-    function Page() {
-      const [show, setShow] = createSignal(true)
-
-      createEffect(() => {
-        setShow(false)
-      })
-      return <>{show() && <Component />}</>
-    }
-
-    function Component() {
-      const state = createQuery(() => ({
-        queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'data'
-        },
-        onSuccess,
-      }))
-      createRenderEffect(() => {
-        states.push({ ...state })
-      })
-      return null
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
-
-    await sleep(50)
-    expect(states.length).toBe(1)
-    expect(onSuccess).toHaveBeenCalledTimes(0)
-  })
-
-  it('should call onError after a query has been fetched with an error', async () => {
-    const key = queryKey()
-    const states: CreateQueryResult<unknown>[] = []
-    const onError = vi.fn()
-
-    function Page() {
-      const state = createQuery(() => ({
-        queryKey: key,
-        queryFn: () => Promise.reject(new Error('error')),
-        retry: false,
-        onError,
-      }))
-
-      createRenderEffect(() => {
-        states.push({ ...state })
-      })
-
-      return null
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
-
-    await sleep(10)
-    expect(states.length).toBe(2)
-    expect(onError).toHaveBeenCalledTimes(1)
-    expect(onError).toHaveBeenCalledWith(new Error('error'))
-  })
-
-  it('should not call onError when receiving a CancelledError', async () => {
-    const key = queryKey()
-    const onError = vi.fn()
-
-    function Page() {
-      const state = createQuery(() => ({
-        queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 23
-        },
-        onError,
-      }))
-      return (
-        <span>
-          status: {state.status}, fetchStatus: {state.fetchStatus}
-        </span>
-      )
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
-
-    await sleep(5)
-    await queryClient.cancelQueries({ queryKey: key })
-    // query cancellation will reset the query to it's initial state
-    await waitFor(() => screen.getByText('status: pending, fetchStatus: idle'))
-    expect(onError).not.toHaveBeenCalled()
-  })
-
-  it('should call onSettled after a query has been fetched', async () => {
-    const key = queryKey()
-    const states: CreateQueryResult<string>[] = []
-    const onSettled = vi.fn()
-
-    function Page() {
-      const state = createQuery(() => ({
-        queryKey: key,
-        queryFn: () => 'data',
-        onSettled,
-      }))
-
-      createRenderEffect(() => {
-        states.push({ ...state })
-      })
-      return null
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
-
-    await sleep(10)
-    expect(states.length).toBe(2)
-    expect(onSettled).toHaveBeenCalledTimes(1)
-    expect(onSettled).toHaveBeenCalledWith('data', null)
-  })
-
-  it('should call onSettled after a query has been fetched with an error', async () => {
-    const key = queryKey()
-    const states: CreateQueryResult<string>[] = []
-    const onSettled = vi.fn()
-
-    function Page() {
-      const state = createQuery(() => ({
-        queryKey: key,
-        queryFn: () => Promise.reject<unknown>('error'),
-        retry: false,
-        onSettled,
-      }))
-      createRenderEffect(() => {
-        states.push({ ...state })
-      })
-      return null
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
-
-    await sleep(10)
-    expect(states.length).toBe(2)
-    expect(onSettled).toHaveBeenCalledTimes(1)
-    expect(onSettled).toHaveBeenCalledWith(undefined, 'error')
   })
 
   it('should not cancel an ongoing fetch when refetch is called with cancelRefetch=false if we have data already', async () => {
@@ -2272,56 +2033,6 @@ describe('createQuery', () => {
     // Since components are rendered once
     // There wiil only be one pass
     expect(renders).toBe(1)
-  })
-
-  it('should batch re-renders including hook callbacks', async () => {
-    const key = queryKey()
-
-    let renders = 0
-    let callbackCount = 0
-
-    const queryFn = async () => {
-      await sleep(10)
-      return 'data'
-    }
-
-    function Page() {
-      const [count, setCount] = createSignal(0)
-      createQuery(() => ({
-        queryKey: key,
-        queryFn,
-        onSuccess: () => {
-          setCount((x) => x + 1)
-        },
-      }))
-      createQuery(() => ({
-        queryKey: key,
-        queryFn,
-        onSuccess: () => {
-          setCount((x) => x + 1)
-        },
-      }))
-
-      createEffect(() => {
-        renders++
-        callbackCount = count()
-      })
-
-      return <div>count: {count()}</div>
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
-
-    await waitFor(() => screen.getByText('count: 2'))
-
-    // Should be 3 instead of 5
-    expect(renders).toBe(3)
-    // Both callbacks should have been executed
-    expect(callbackCount).toBe(2)
   })
 
   it('should render latest data even if react has discarded certain renders', async () => {
@@ -6105,40 +5816,6 @@ describe('createQuery', () => {
       status: 'error',
       error,
     })
-  })
-
-  it('setQueryData - should not call onSuccess callback of active observers', async () => {
-    const key = queryKey()
-    const onSuccess = vi.fn()
-
-    function Page() {
-      const state = createQuery(() => ({
-        queryKey: key,
-        queryFn: () => 'data',
-        onSuccess,
-      }))
-      return (
-        <div>
-          <div>data: {state.data}</div>
-          <button onClick={() => queryClient.setQueryData(key, 'newData')}>
-            setQueryData
-          </button>
-        </div>
-      )
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
-
-    await waitFor(() => screen.getByText('data: data'))
-    fireEvent.click(screen.getByRole('button', { name: /setQueryData/i }))
-    await waitFor(() => screen.getByText('data: newData'))
-
-    expect(onSuccess).toHaveBeenCalledTimes(1)
-    expect(onSuccess).toHaveBeenCalledWith('data')
   })
 
   it('setQueryData - should respect updatedAt', async () => {
