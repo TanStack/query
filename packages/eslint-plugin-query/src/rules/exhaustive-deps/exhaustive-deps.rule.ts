@@ -3,6 +3,7 @@ import { AST_NODE_TYPES } from '@typescript-eslint/utils'
 import { ASTUtils } from '../../utils/ast-utils'
 import { createRule } from '../../utils/create-rule'
 import { uniqueBy } from '../../utils/unique-by'
+import { ExhaustiveDepsUtils } from './exhaustive-deps.utils'
 
 const QUERY_KEY = 'queryKey'
 const QUERY_FN = 'queryFn'
@@ -79,28 +80,19 @@ export const rule = createRule({
 
         const sourceCode = context.getSourceCode()
         const queryKeyValue = queryKeyNode
-        const reactComponent = ASTUtils.getReactComponentOrHookAncestor(context)
-        const refs = ASTUtils.getExternalRefs({
+        const externalRefs = ASTUtils.getExternalRefs({
           scopeManager,
           sourceCode,
           node: queryFn.value,
-        }).filter((ref) => {
-          return (
-            reactComponent === undefined ||
-            ASTUtils.isDeclaredInNode({
-              scopeManager,
-              functionNode: reactComponent,
-              reference: ref,
-            })
-          )
         })
 
-        const relevantRefs = refs.filter((ref) => {
-          return (
-            ref.identifier.name !== 'undefined' &&
-            ref.identifier.parent?.type !== AST_NODE_TYPES.NewExpression
-          )
-        })
+        const relevantRefs = externalRefs.filter((reference) =>
+          ExhaustiveDepsUtils.isRelevantReference({
+            context,
+            reference,
+            scopeManager,
+          }),
+        )
 
         const existingKeys = ASTUtils.getNestedIdentifiers(queryKeyValue).map(
           (identifier) => ASTUtils.mapKeyNodeToText(identifier, sourceCode),

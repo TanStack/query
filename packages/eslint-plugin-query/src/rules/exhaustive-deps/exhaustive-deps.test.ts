@@ -298,6 +298,24 @@ ruleTester.run('exhaustive-deps', rule, {
         }
       `,
     },
+    {
+      name: 'should ignore references of the queryClient',
+      code: `
+        const CONST_VAL = 1
+        function useHook() {
+          const queryClient = useQueryClient()
+          const kueryKlient = useQueryClient()
+          useQuery({
+            queryKey: ["foo"],
+            queryFn: () => {
+                doSomething(queryClient)
+                queryClient.invalidateQueries()
+                doSomethingSus(kueryKlient)
+            }
+          });
+        }
+      `,
+    },
   ],
   invalid: [
     {
