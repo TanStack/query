@@ -10,7 +10,6 @@ import {
 import { notifyManager } from './notifyManager'
 import type {
   PlaceholderDataFunction,
-  QueryKey,
   QueryObserverBaseResult,
   QueryObserverOptions,
   QueryObserverResult,

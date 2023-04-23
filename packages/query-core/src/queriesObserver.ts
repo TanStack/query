@@ -74,7 +74,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
 
       const newObservers = newObserverMatches.map((match) => match.observer)
       const newObserversMap = Object.fromEntries(
-        newObservers.map((observer) => [observer.options.queryHash, observer]),
+        newObservers.map((observer) => [observer.options.queryKey, observer]),
       )
       const newResult = newObservers.map((observer) =>
         observer.getCurrentResult(),
@@ -139,7 +139,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
       defaultedQueryOptions.flatMap((defaultedOptions) => {
         const match = prevObservers.find(
           (observer) =>
-            observer.options.queryHash === defaultedOptions.queryHash,
+            observer.options.queryKey === defaultedOptions.queryKey,
         )
         if (match != null) {
           return [{ defaultedQueryOptions: defaultedOptions, observer: match }]
@@ -147,12 +147,12 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
         return []
       })
 
-    const matchedQueryHashes = matchingObservers.map(
-      (match) => match.defaultedQueryOptions.queryHash,
+    const matchedQueryKeys = matchingObservers.map(
+      (match) => match.defaultedQueryOptions.queryKey,
     )
     const unmatchedQueries = defaultedQueryOptions.filter(
       (defaultedOptions) =>
-        !matchedQueryHashes.includes(defaultedOptions.queryHash),
+        !matchedQueryKeys.includes(defaultedOptions.queryKey),
     )
 
     const unmatchedObservers = prevObservers.filter(
@@ -162,7 +162,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
 
     const getObserver = (options: QueryObserverOptions): QueryObserver => {
       const defaultedOptions = this.client.defaultQueryOptions(options)
-      const currentObserver = this.observersMap[defaultedOptions.queryHash!]
+      const currentObserver = this.observersMap[defaultedOptions.queryKey!]
       return currentObserver ?? new QueryObserver(this.client, defaultedOptions)
     }
 

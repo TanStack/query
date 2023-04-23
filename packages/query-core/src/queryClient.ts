@@ -20,7 +20,6 @@ import type {
   MutationObserverOptions,
   MutationOptions,
   QueryFunction,
-  QueryKey,
   QueryObserverOptions,
   QueryOptions,
   RefetchOptions,
@@ -44,7 +43,7 @@ import { defaultLogger } from './logger'
 // TYPES
 
 interface QueryDefaults {
-  queryKey: QueryKey
+  queryKey: string
   defaultOptions: QueryOptions<any, any, any>
 }
 
@@ -112,8 +111,8 @@ export class QueryClient {
   }
 
   isFetching(filters?: QueryFilters): number
-  isFetching(queryKey?: QueryKey, filters?: QueryFilters): number
-  isFetching(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): number {
+  isFetching(queryKey?: string, filters?: QueryFilters): number
+  isFetching(arg1?: string | QueryFilters, arg2?: QueryFilters): number {
     const [filters] = parseFilterArgs(arg1, arg2)
     filters.fetchStatus = 'fetching'
     return this.queryCache.findAll(filters).length
@@ -124,7 +123,7 @@ export class QueryClient {
   }
 
   getQueryData<TQueryFnData = unknown>(
-    queryKey: QueryKey,
+    queryKey: string,
     filters?: QueryFilters,
   ): TQueryFnData | undefined {
     return this.queryCache.find<TQueryFnData>(queryKey, filters)?.state.data
@@ -188,14 +187,14 @@ export class QueryClient {
   }
 
   getQueriesData<TQueryFnData = unknown>(
-    queryKey: QueryKey,
-  ): [QueryKey, TQueryFnData | undefined][]
+    queryKey: string,
+  ): [string, TQueryFnData | undefined][]
   getQueriesData<TQueryFnData = unknown>(
     filters: QueryFilters,
-  ): [QueryKey, TQueryFnData | undefined][]
+  ): [string, TQueryFnData | undefined][]
   getQueriesData<TQueryFnData = unknown>(
-    queryKeyOrFilters: QueryKey | QueryFilters,
-  ): [QueryKey, TQueryFnData | undefined][] {
+    queryKeyOrFilters: string | QueryFilters,
+  ): [string, TQueryFnData | undefined][] {
     return this.getQueryCache()
       .findAll(queryKeyOrFilters)
       .map(({ queryKey, state }) => {
@@ -205,7 +204,7 @@ export class QueryClient {
   }
 
   setQueryData<TQueryFnData>(
-    queryKey: QueryKey,
+    queryKey: string,
     updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
     options?: SetDataOptions,
   ): TQueryFnData | undefined {
@@ -225,22 +224,22 @@ export class QueryClient {
   }
 
   setQueriesData<TQueryFnData>(
-    queryKey: QueryKey,
+    queryKey: string,
     updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
     options?: SetDataOptions,
-  ): [QueryKey, TQueryFnData | undefined][]
+  ): [string, TQueryFnData | undefined][]
 
   setQueriesData<TQueryFnData>(
     filters: QueryFilters,
     updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
     options?: SetDataOptions,
-  ): [QueryKey, TQueryFnData | undefined][]
+  ): [string, TQueryFnData | undefined][]
 
   setQueriesData<TQueryFnData>(
-    queryKeyOrFilters: QueryKey | QueryFilters,
+    queryKeyOrFilters: string | QueryFilters,
     updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
     options?: SetDataOptions,
-  ): [QueryKey, TQueryFnData | undefined][] {
+  ): [string, TQueryFnData | undefined][] {
     return notifyManager.batch(() =>
       this.getQueryCache()
         .findAll(queryKeyOrFilters)
@@ -252,15 +251,15 @@ export class QueryClient {
   }
 
   getQueryState<TQueryFnData = unknown, TError = undefined>(
-    queryKey: QueryKey,
+    queryKey: string,
     filters?: QueryFilters,
   ): QueryState<TQueryFnData, TError> | undefined {
     return this.queryCache.find<TQueryFnData, TError>(queryKey, filters)?.state
   }
 
   removeQueries(filters?: QueryFilters): void
-  removeQueries(queryKey?: QueryKey, filters?: QueryFilters): void
-  removeQueries(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): void {
+  removeQueries(queryKey?: string, filters?: QueryFilters): void
+  removeQueries(arg1?: string | QueryFilters, arg2?: QueryFilters): void {
     const [filters] = parseFilterArgs(arg1, arg2)
     const queryCache = this.queryCache
     notifyManager.batch(() => {
@@ -275,12 +274,12 @@ export class QueryClient {
     options?: ResetOptions,
   ): Promise<void>
   resetQueries<TPageData = unknown>(
-    queryKey?: QueryKey,
+    queryKey?: string,
     filters?: ResetQueryFilters<TPageData>,
     options?: ResetOptions,
   ): Promise<void>
   resetQueries(
-    arg1?: QueryKey | ResetQueryFilters,
+    arg1?: string | ResetQueryFilters,
     arg2?: ResetQueryFilters | ResetOptions,
     arg3?: ResetOptions,
   ): Promise<void> {
@@ -302,12 +301,12 @@ export class QueryClient {
 
   cancelQueries(filters?: QueryFilters, options?: CancelOptions): Promise<void>
   cancelQueries(
-    queryKey?: QueryKey,
+    queryKey?: string,
     filters?: QueryFilters,
     options?: CancelOptions,
   ): Promise<void>
   cancelQueries(
-    arg1?: QueryKey | QueryFilters,
+    arg1?: string | QueryFilters,
     arg2?: QueryFilters | CancelOptions,
     arg3?: CancelOptions,
   ): Promise<void> {
@@ -331,12 +330,12 @@ export class QueryClient {
     options?: InvalidateOptions,
   ): Promise<void>
   invalidateQueries<TPageData = unknown>(
-    queryKey?: QueryKey,
+    queryKey?: string,
     filters?: InvalidateQueryFilters<TPageData>,
     options?: InvalidateOptions,
   ): Promise<void>
   invalidateQueries(
-    arg1?: QueryKey | InvalidateQueryFilters,
+    arg1?: string | InvalidateQueryFilters,
     arg2?: InvalidateQueryFilters | InvalidateOptions,
     arg3?: InvalidateOptions,
   ): Promise<void> {
@@ -363,12 +362,12 @@ export class QueryClient {
     options?: RefetchOptions,
   ): Promise<void>
   refetchQueries<TPageData = unknown>(
-    queryKey?: QueryKey,
+    queryKey?: string,
     filters?: RefetchQueryFilters<TPageData>,
     options?: RefetchOptions,
   ): Promise<void>
   refetchQueries(
-    arg1?: QueryKey | RefetchQueryFilters,
+    arg1?: string | RefetchQueryFilters,
     arg2?: RefetchQueryFilters | RefetchOptions,
     arg3?: RefetchOptions,
   ): Promise<void> {
@@ -599,7 +598,7 @@ export class QueryClient {
   }
 
   setQueryDefaults(
-    queryKey: QueryKey,
+    queryKey: string,
     options: QueryObserverOptions<unknown, any, any, any>,
   ): void {
     const result = this.queryDefaults.find(
@@ -613,7 +612,7 @@ export class QueryClient {
   }
 
   getQueryDefaults(
-    queryKey?: QueryKey,
+    queryKey?: string,
   ): QueryObserverOptions<any, any, any, any> | undefined {
     if (!queryKey) {
       return undefined
@@ -724,8 +723,8 @@ export class QueryClient {
       _defaulted: true,
     }
 
-    if (!defaultedOptions.queryHash && defaultedOptions.queryKey) {
-      defaultedOptions.queryHash = hashQueryKeyByOptions(
+    if (!defaultedOptions.queryKey && defaultedOptions.queryKey) {
+      defaultedOptions.queryKey = hashQueryKeyByOptions(
         defaultedOptions.queryKey,
         defaultedOptions,
       )

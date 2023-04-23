@@ -1,7 +1,6 @@
 import { getAbortController, noop, replaceData, timeUntilStale } from './utils'
 import type {
   InitialDataFunction,
-  QueryKey,
   QueryOptions,
   QueryStatus,
   QueryFunctionContext,
@@ -28,7 +27,6 @@ interface QueryConfig<
 > {
   cache: QueryCache
   queryKey: string
-  queryHash: string
   logger?: Logger
   options?: QueryOptions<TQueryFnData, TError, TData>
   defaultOptions?: QueryOptions<TQueryFnData, TError, TData>
@@ -454,7 +452,7 @@ export class Query<
         if (typeof data === 'undefined') {
           if (process.env.NODE_ENV !== 'production') {
             this.logger.error(
-              `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ${this.queryHash}`,
+              `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ${this.queryKey}`,
             )
           }
           onError(new Error('undefined') as any)

@@ -8,8 +8,6 @@ import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
 import type { Logger } from './logger'
 
-export type QueryKey = readonly unknown[]
-
 export type QueryFunction<
   T = unknown
 > = (context: QueryFunctionContext) => T | Promise<T>

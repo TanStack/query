@@ -6,7 +6,6 @@ import type {
   MutationKey,
   MutationOptions,
   QueryFunction,
-  QueryKey,
   QueryOptions,
 } from './types'
 
@@ -28,7 +27,7 @@ export interface QueryFilters {
   /**
    * Include queries matching this query key
    */
-  queryKey?: QueryKey
+  queryKey?: string
   /**
    * Include or exclude stale queries
    */
@@ -144,7 +143,7 @@ export function parseFilterArgs<
   TFilters extends QueryFilters,
   TOptions = unknown,
 >(
-  arg1?: QueryKey | TFilters,
+  arg1?: string | TFilters,
   arg2?: TFilters | TOptions,
   arg3?: TOptions,
 ): [TFilters, TOptions | undefined] {
@@ -157,7 +156,7 @@ export function parseMutationFilterArgs<
   TFilters extends MutationFilters,
   TOptions = unknown,
 >(
-  arg1?: QueryKey | TFilters,
+  arg1?: string | TFilters,
   arg2?: TFilters | TOptions,
   arg3?: TOptions,
 ): [TFilters, TOptions | undefined] {
@@ -183,7 +182,7 @@ export function matchQuery(
 
   if (isQueryKey(queryKey)) {
     if (exact) {
-      if (query.queryHash !== hashQueryKeyByOptions(queryKey, query.options)) {
+      if (query.queryKey !== hashQueryKeyByOptions(queryKey, query.options)) {
         return false
       }
     } else if (!partialMatchKey(query.queryKey, queryKey)) {
@@ -265,7 +264,7 @@ export function hashQueryKeyByOptions(
  * Default query keys hash function.
  * Hashes the value into a stable hash.
  */
-export function hashQueryKey(queryKey: QueryKey): string {
+export function hashQueryKey(queryKey: string): string {
   return JSON.stringify(queryKey, (_, val) =>
     isPlainObject(val)
       ? Object.keys(val)
@@ -281,7 +280,7 @@ export function hashQueryKey(queryKey: QueryKey): string {
 /**
  * Checks if key `b` partially matches with key `a`.
  */
-export function partialMatchKey(a: QueryKey, b: QueryKey): boolean {
+export function partialMatchKey(a: string, b: string): boolean {
   return partialDeepEqual(a, b)
 }
 
@@ -391,8 +390,8 @@ function hasObjectPrototype(o: any): boolean {
   return Object.prototype.toString.call(o) === '[object Object]'
 }
 
-export function isQueryKey(value: unknown): value is QueryKey {
-  return Array.isArray(value)
+export function isQueryKey(value: unknown): value is string {
+  return typeof value === 'string';
 }
 
 export function isError(value: any): value is Error {

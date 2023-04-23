@@ -5,7 +5,6 @@ import type {
   InfiniteData,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
-  QueryKey,
 } from './types'
 import type { QueryClient } from './queryClient'
 import type { NotifyOptions, ObserverFetchOptions } from './queryObserver'
