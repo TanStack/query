@@ -1041,7 +1041,7 @@ importers:
 
   packages/svelte-query:
     specifiers:
-      '@sveltejs/package': ^1.0.0
+      '@sveltejs/package': ^2.0.2
       '@sveltejs/vite-plugin-svelte': ^2.0.2
       '@tanstack/query-core': workspace:*
       '@testing-library/svelte': ^3.2.2
@@ -1057,7 +1057,7 @@ importers:
     dependencies:
       '@tanstack/query-core': link:../query-core
     devDependencies:
-      '@sveltejs/package': 1.0.2_glsdxddlaertg66rhhvanbinpy
+      '@sveltejs/package': 2.0.2_glsdxddlaertg66rhhvanbinpy
       '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.0.4
       '@testing-library/svelte': 3.2.2_svelte@3.55.0
       '@vitest/coverage-istanbul': 0.27.1_jsdom@20.0.3
@@ -6305,8 +6305,8 @@ packages:
       - supports-color
     dev: true
 
-  /@sveltejs/package/1.0.2_glsdxddlaertg66rhhvanbinpy:
-    resolution: {integrity: sha512-VY9U+05d9uNFDj7ScKRlHORYlfPSHwJewBjV+V2RsnViexpLFPUrboC9SiPYDCpLnbeqwXerxhO6twGHUBGeIA==}
+  /@sveltejs/package/2.0.2_glsdxddlaertg66rhhvanbinpy:
+    resolution: {integrity: sha512-cCOCcO8yMHnhHyaR51nQtvKZ3o/vSU9UYI1EXLT1j2CKNPMuH1/g6JNwKcNNrtQGwwquudc69ZeYy8D/TDNwEw==}
     engines: {node: ^16.14 || >=18}
     hasBin: true
     peerDependencies:
