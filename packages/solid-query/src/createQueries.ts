@@ -1,11 +1,11 @@
 import type {
   QueriesPlaceholderDataFunction,
-  QueryClient,
   QueryFunction,
   QueryKey,
   DefaultError,
 } from '@tanstack/query-core'
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
+import type { QueryClient } from './QueryClient'
 import type { Accessor } from 'solid-js'
 import { createComputed, onCleanup, onMount } from 'solid-js'
 import { createStore, unwrap } from 'solid-js/store'

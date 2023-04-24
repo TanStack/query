@@ -128,33 +128,6 @@ describe('select', () => {
       return result
     })
   })
-  it('should pass transformed data to onSuccess', () => {
-    doNotExecute(() => {
-      const infiniteQuery = useInfiniteQuery({
-        queryKey: ['key'],
-        queryFn: ({ pageParam }) => {
-          return pageParam * 5
-        },
-        defaultPageParam: 1,
-        getNextPageParam: () => undefined,
-        select: (data) => {
-          return {
-            ...data,
-            pages: data.pages.map((page) => page.toString()),
-          }
-        },
-        onSuccess: (data) => {
-          const result: Expect<Equal<InfiniteData<string>, typeof data>> = true
-          doNotExecute(() => result)
-        },
-      })
-
-      const result: Expect<
-        Equal<InfiniteData<string> | undefined, (typeof infiniteQuery)['data']>
-      > = true
-      return result
-    })
-  })
 })
 describe('getNextPageParam / getPreviousPageParam', () => {
   it('should get typed params', () => {

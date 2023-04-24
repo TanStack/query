@@ -41,25 +41,6 @@ export function useBaseQuery<
     ? 'isRestoring'
     : 'optimistic'
 
-  // Include callbacks in batch renders
-  if (defaultedOptions.onError) {
-    defaultedOptions.onError = notifyManager.batchCalls(
-      defaultedOptions.onError,
-    )
-  }
-
-  if (defaultedOptions.onSuccess) {
-    defaultedOptions.onSuccess = notifyManager.batchCalls(
-      defaultedOptions.onSuccess,
-    )
-  }
-
-  if (defaultedOptions.onSettled) {
-    defaultedOptions.onSettled = notifyManager.batchCalls(
-      defaultedOptions.onSettled,
-    )
-  }
-
   ensureStaleTime(defaultedOptions)
   ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary)
 

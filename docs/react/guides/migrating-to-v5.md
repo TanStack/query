@@ -132,6 +132,10 @@ A few notes about how codemod works:
 - If the codemod cannot infer the usage, then it will leave a message on the console. The message contains the file name and the line number of the usage. In this case, you need to do the migration manually.
 - If the transformation results in an error, you will also see a message on the console. This message will notify you something unexpected happened, please do the migration manually.
 
+### Callbacks on useQuery (and QueryObserver) have been removed
+
+`onSuccess`, `onError` and `onSettled` have been removed from Queries. They haven't been touched for Mutations. Please see [this RFC](https://github.com/TanStack/query/discussions/5279) for motivations behind this change and what to do instead.
+
 ### The `remove` method has been removed from useQuery
 
 Previously, remove method used to remove the query from the queryCache without informing observers about it. It was best used to remove data imperatively that is no longer needed, e.g. when logging a user out.
@@ -333,6 +337,10 @@ Previously, we've allowed to overwrite the `pageParams` that would be returned f
 
 ## React Query Breaking Changes
 
+### The minimum required React version is now 18.0
+
+React Query v5 requires React 18.0 or later. This is because we are using the new `useSyncExternalStore` hook, which is only available in React 18.0 and later. Previously, we have been using the shim provided by React.
+
 ### The `contextSharing` prop has been removed from QueryClientProvider
 
 You could previously use the `contextSharing` property to share the first (and at least one) instance of the query client context across the window. This ensured that if TanStack Query was used across different bundles or microfrontends then they will all use the same instance of the context, regardless of module scoping.
@@ -386,6 +394,8 @@ To understand the reasoning behing this change checkout the [v5 roadmap discussi
 [//]: # 'NewFeatures'
 
 ## New Features 🚀
+
+v5 also comes with new features:
 
 ### Simplified optimistic updates
 
