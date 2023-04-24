@@ -1,13 +1,13 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-  import { getPostById } from './data'
+  import { api } from './api'
   import type { Post } from './types'
 
   export let postId: number
 
   const post = createQuery<Post, Error>({
     queryKey: ['post', postId],
-    queryFn: () => getPostById(postId),
+    queryFn: () => api().getPostById(postId),
   })
 </script>
 
