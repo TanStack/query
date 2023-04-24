@@ -212,14 +212,12 @@ export class QueryClient {
     filters: QueryFilters = {},
     cancelOptions: CancelOptions = {},
   ): Promise<void> {
-    if (typeof cancelOptions.revert === 'undefined') {
-      cancelOptions.revert = true
-    }
+    const defaultedCancelOptions = { revert: true, ...cancelOptions }
 
     const promises = notifyManager.batch(() =>
       this.#queryCache
         .findAll(filters)
-        .map((query) => query.cancel(cancelOptions)),
+        .map((query) => query.cancel(defaultedCancelOptions)),
     )
 
     return Promise.all(promises).then(noop).catch(noop)

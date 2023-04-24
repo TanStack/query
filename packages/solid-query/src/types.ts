@@ -2,17 +2,19 @@
 
 import type {
   QueryKey,
-  QueryObserverOptions,
   QueryObserverResult,
   MutateFunction,
   MutationObserverOptions,
   MutationObserverResult,
   DefinedQueryObserverResult,
-  InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   WithRequired,
   DefaultError,
 } from '@tanstack/query-core'
+import type {
+  QueryObserverOptions,
+  InfiniteQueryObserverOptions,
+} from './QueryClient'
 
 export type FunctionedParams<T> = () => T
 

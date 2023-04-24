@@ -11,7 +11,7 @@
     "emitDeclarationOnly": false,
     "types": ["vitest/globals"]
   },
-  "include": ["src"],
+  "include": ["src", "createInfiniteQuery.test.tsx", "suspense.test.tsx"],
   "exclude": ["node_modules", "build"],
   "references": [{ "path": "../query-core" }]
 }

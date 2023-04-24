@@ -124,27 +124,6 @@ describe('useQuery', () => {
     })
   })
 
-  test('should update query on reactive options object change', async () => {
-    const spy = vi.fn()
-    const onSuccess = ref(() => {
-      // Noop
-    })
-    useQuery(
-      reactive({
-        queryKey: ['key6'],
-        queryFn: simpleFetcher,
-        onSuccess,
-        staleTime: 1000,
-      }),
-    )
-
-    onSuccess.value = spy
-
-    await flushPromises()
-
-    expect(spy).toBeCalledTimes(1)
-  })
-
   test('should update query on reactive (Ref) key change', async () => {
     const secondKeyRef = ref('key7')
     const query = useQuery({

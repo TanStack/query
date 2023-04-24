@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/svelte-query",
-  "version": "5.0.0-alpha.12",
+  "version": "5.0.0-alpha.21",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Svelte",
   "author": "Dre Johnson",
   "license": "MIT",
@@ -19,10 +19,10 @@
     "test:eslint": "eslint --ext .svelte,.ts ./src",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "build": "svelte-package && rimraf ./build/lib/package.json"
+    "build": "svelte-package --input ./src --output ./build/lib && rimraf ./build/lib/__tests__"
   },
   "devDependencies": {
-    "@sveltejs/package": "^1.0.0",
+    "@sveltejs/package": "^2.0.2",
     "@sveltejs/vite-plugin-svelte": "^2.0.2",
     "@testing-library/svelte": "^3.2.2",
     "eslint-plugin-svelte": "^2.14.1",
