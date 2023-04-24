@@ -463,7 +463,7 @@ export class Query<
               `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ${this.queryHash}`,
             )
           }
-          onError(new Error('undefined') as any)
+          onError(new Error(`${this.queryHash} data is undefined`) as any)
           return
         }
 
