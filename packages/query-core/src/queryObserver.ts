@@ -342,12 +342,14 @@ export class QueryObserver<
   }
 
   #computeRefetchInterval() {
-    return typeof this.options.refetchInterval === 'function'
-      ? this.options.refetchInterval(
-          this.#currentResult.data,
-          this.#currentQuery,
-        )
-      : this.options.refetchInterval ?? false
+    return (
+      (typeof this.options.refetchInterval === 'function'
+        ? this.options.refetchInterval(
+            this.#currentResult.data,
+            this.#currentQuery,
+          )
+        : this.options.refetchInterval) ?? false
+    )
   }
 
   #updateRefetchInterval(nextInterval: number | false): void {

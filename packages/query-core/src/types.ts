@@ -202,7 +202,7 @@ export interface QueryObserverOptions<
     | ((
         data: TData | undefined,
         query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
-      ) => number | false)
+      ) => number | false | undefined)
   /**
    * If set to `true`, the query will continue to refetch while their tab/window is in the background.
    * Defaults to `false`.
