@@ -2747,7 +2747,7 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('Error test jaylen'))
   })
 
-  it('should throw error if queryFn throws and throwErrors is in use', async () => {
+  it('should throw error if queryFn throws and throwOnError is in use', async () => {
     const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
@@ -2758,7 +2758,7 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn: () => Promise.reject(new Error('Error test jaylen')),
         retry: false,
-        throwErrors: true,
+        throwOnError: true,
       })
 
       return (
@@ -2780,7 +2780,7 @@ describe('useQuery', () => {
     consoleMock.mockRestore()
   })
 
-  it('should update with data if we observe no properties and throwErrors', async () => {
+  it('should update with data if we observe no properties and throwOnError', async () => {
     const key = queryKey()
 
     let result: UseQueryResult<string> | undefined
@@ -2789,7 +2789,7 @@ describe('useQuery', () => {
       const query = useQuery({
         queryKey: key,
         queryFn: () => Promise.resolve('data'),
-        throwErrors: true,
+        throwOnError: true,
       })
 
       React.useEffect(() => {
@@ -2817,7 +2817,7 @@ describe('useQuery', () => {
         queryFn: () => Promise.reject(new Error('Local Error')),
 
         retry: false,
-        throwErrors: (err) => err.message !== 'Local Error',
+        throwOnError: (err) => err.message !== 'Local Error',
       })
 
       return (
@@ -2852,7 +2852,7 @@ describe('useQuery', () => {
         queryFn: () => Promise.reject(new Error('Remote Error')),
 
         retry: false,
-        throwErrors: (err) => err.message !== 'Local Error',
+        throwOnError: (err) => err.message !== 'Local Error',
       })
 
       return (

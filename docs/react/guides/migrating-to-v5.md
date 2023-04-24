@@ -202,9 +202,9 @@ const queryClient = new QueryClient({
 })
 ```
 
-### The `useErrorBoundary` option has been renamed to `throwErrors`
+### The `useErrorBoundary` option has been renamed to `throwOnError`
 
-To make the `useErrorBoundary` option more framework-agnostic and avoid confusion with the established React function prefix "`use`" for hooks and the "ErrorBoundary" component name, it has been renamed to `throwErrors` to more accurately reflect its functionality.
+To make the `useErrorBoundary` option more framework-agnostic and avoid confusion with the established React function prefix "`use`" for hooks and the "ErrorBoundary" component name, it has been renamed to `throwOnError` to more accurately reflect its functionality.
 
 ### TypeScript: `Error` is now the default type for errors instead of `unknown`
 
