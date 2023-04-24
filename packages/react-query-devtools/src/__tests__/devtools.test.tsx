@@ -1094,7 +1094,7 @@ describe('ReactQueryDevtools', () => {
 
   it('should not refetch when already restoring a query', async () => {
     const { queryClient } = createQueryClient()
-    
+
     let count = 0
     let resolvePromise: (value: unknown) => void = () => undefined
 
@@ -1104,7 +1104,7 @@ describe('ReactQueryDevtools', () => {
 
         // Resolve the promise immediately when
         // the query is fetched for the first time
-        if(count === 1) {
+        if (count === 1) {
           return Promise.resolve('test')
         }
 
@@ -1117,9 +1117,7 @@ describe('ReactQueryDevtools', () => {
 
       return (
         <div>
-          <h1>
-            {typeof data === 'string' ? data : 'No data'}
-          </h1>
+          <h1>{typeof data === 'string' ? data : 'No data'}</h1>
         </div>
       )
     }
