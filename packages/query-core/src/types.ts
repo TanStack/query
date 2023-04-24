@@ -154,7 +154,7 @@ export interface InfiniteQueryPageParamsOptions<
   getNextPageParam: GetNextPageParamFunction<TPageParam, TQueryFnData>
 }
 
-export type throwOnError<
+export type ThrowOnError<
   TQueryFnData,
   TError,
   TQueryData,
@@ -266,7 +266,7 @@ export interface QueryObserverOptions<
    * If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`).
    * Defaults to `false`.
    */
-  throwOnError?: throwOnError<TQueryFnData, TError, TQueryData, TQueryKey>
+  throwOnError?: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * This option can be used to transform or select a part of the data returned by the query function.
    */
