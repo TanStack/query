@@ -204,6 +204,10 @@
             {
               "label": "Angular Query",
               "to": "react/community/angular-query"
+            },
+            {
+              "label": "Zodios",
+              "to": "react/community/zodios-by-ecrybe"
             }
           ]
         },

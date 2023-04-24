@@ -1,5 +1,5 @@
 ---
-id: zodios by ecrybe
+id: zodios-by-ecrybe
 title: Zodios
 ---
 
