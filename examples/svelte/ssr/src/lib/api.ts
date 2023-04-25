@@ -14,5 +14,5 @@ export const api = (customFetch = fetch) => ({
     )
     const data = (await response.json()) as Post
     return data
-  }
+  },
 })
