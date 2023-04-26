@@ -28,7 +28,8 @@
       "{workspaceRoot}/rollup.config.js",
       "{workspaceRoot}/rollup.config.ts",
       "{workspaceRoot}/tsconfig.json",
-      "{workspaceRoot}/tsconfig.base.json"
+      "{workspaceRoot}/tsconfig.base.json",
+      "{workspaceRoot}/package.json"
     ],
     "globalNonBuildAffectingConfig": [
       "{workspaceRoot}/.eslintrc",
