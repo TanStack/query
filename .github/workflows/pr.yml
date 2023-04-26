@@ -60,7 +60,7 @@ jobs:
         with:
           timeout_minutes: 5
           max_attempts: 3
-          command: npx nx affected --targets=test:eslint,test:types,test:build,test:lib --parallel=1
+          command: npx nx affected --targets=test:eslint,test:types,test:build,test:lib --parallel=1 --base=${{ github.event.pull_request.base.sha }} --skip-nx-cache
       - name: Stop Agents
         run: npx nx-cloud stop-all-agents
       - name: Upload coverage to Codecov
