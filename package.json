@@ -112,6 +112,5 @@
         "path": "packages/*/build/umd/*.production.js"
       }
     ]
-  },
-  "foo": "bar2"
+  }
 }
