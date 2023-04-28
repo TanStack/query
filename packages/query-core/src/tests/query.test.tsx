@@ -817,7 +817,7 @@ describe('query', () => {
 
     await sleep(10)
 
-    const error = new Error('undefined')
+    const error = new Error(`${JSON.stringify(key)} data is undefined`)
 
     expect(observerResult).toMatchObject({
       isError: true,
