@@ -28,12 +28,17 @@
     "test:types": "tsc",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
+    "build": "mkdir ./build && cp -R ../codemods/src ./build/codemods",
     "build:types": "tsc --build"
   },
   "files": [
     "build/lib/*",
     "build/umd/*",
-    "src"
+    "src",
+    "build/codemods",
+    "!build/codemods/jest.config.js",
+    "!build/codemods/**/__testfixtures__",
+    "!build/codemods/**/__tests__"
   ],
   "devDependencies": {
     "@types/react": "^18.0.14",
