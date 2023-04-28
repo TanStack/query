@@ -499,7 +499,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => screen.getByText('error boundary'))
   })
 
-  it('should not throw errors to the error boundary when throwErrors: false', async () => {
+  it('should not throw errors to the error boundary when throwOnError: false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -510,7 +510,7 @@ describe("useQuery's in Suspense mode", () => {
           throw new Error('Suspense Error a2x')
         },
         retry: false,
-        throwErrors: false,
+        throwOnError: false,
       }))
 
       // read state.data to trigger suspense.
@@ -548,7 +548,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => screen.getByText('rendered'))
   })
 
-  it('should throw errors to the error boundary when a throwErrors function returns true', async () => {
+  it('should throw errors to the error boundary when a throwOnError function returns true', async () => {
     const key = queryKey()
 
     function Page() {
@@ -559,7 +559,7 @@ describe("useQuery's in Suspense mode", () => {
           return Promise.reject(new Error('Remote Error'))
         },
         retry: false,
-        throwErrors: (err) => err.message !== 'Local Error',
+        throwOnError: (err) => err.message !== 'Local Error',
       }))
 
       // read state.data to trigger suspense.
@@ -597,7 +597,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => screen.getByText('error boundary'))
   })
 
-  it('should not throw errors to the error boundary when a throwErrors function returns false', async () => {
+  it('should not throw errors to the error boundary when a throwOnError function returns false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -610,7 +610,7 @@ describe("useQuery's in Suspense mode", () => {
 
         retry: false,
         suspense: true,
-        throwErrors: (err) => err.message !== 'Local Error',
+        throwOnError: (err) => err.message !== 'Local Error',
       }))
 
       // read state.data to trigger suspense.

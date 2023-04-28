@@ -62,7 +62,7 @@ export function createBaseQuery<
   defaultedOptions.structuralSharing = false
   if (isServer) {
     defaultedOptions.retry = false
-    defaultedOptions.throwErrors = true
+    defaultedOptions.throwOnError = true
   }
   const observer = new Observer(client(), defaultedOptions)
 
@@ -241,7 +241,7 @@ export function createBaseQuery<
         if (
           state.isError &&
           !state.isFetching &&
-          shouldThrowError(observer.options.throwErrors, [
+          shouldThrowError(observer.options.throwOnError, [
             state.error,
             observer.getCurrentQuery(),
           ])

@@ -243,7 +243,7 @@ export function useQueries<T extends any[]>(
       getHasError({
         result,
         errorResetBoundary,
-        throwErrors: defaultedQueries[index]?.throwErrors ?? false,
+        throwOnError: defaultedQueries[index]?.throwOnError ?? false,
         query: observerQueries[index]!,
       }),
   )

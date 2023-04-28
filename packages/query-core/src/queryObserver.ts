@@ -342,12 +342,14 @@ export class QueryObserver<
   }
 
   #computeRefetchInterval() {
-    return typeof this.options.refetchInterval === 'function'
-      ? this.options.refetchInterval(
-          this.#currentResult.data,
-          this.#currentQuery,
-        )
-      : this.options.refetchInterval ?? false
+    return (
+      (typeof this.options.refetchInterval === 'function'
+        ? this.options.refetchInterval(
+            this.#currentResult.data,
+            this.#currentQuery,
+          )
+        : this.options.refetchInterval) ?? false
+    )
   }
 
   #updateRefetchInterval(nextInterval: number | false): void {
@@ -593,7 +595,7 @@ export class QueryObserver<
 
       const includedProps = new Set(notifyOnChangeProps ?? this.#trackedProps)
 
-      if (this.options.throwErrors) {
+      if (this.options.throwOnError) {
         includedProps.add('error')
       }
 

@@ -534,7 +534,7 @@ describe("useQuery's in Suspense mode", () => {
     consoleMock.mockRestore()
   })
 
-  it('should not throw errors to the error boundary when throwErrors: false', async () => {
+  it('should not throw errors to the error boundary when throwOnError: false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -546,7 +546,7 @@ describe("useQuery's in Suspense mode", () => {
         },
         retry: false,
         suspense: true,
-        throwErrors: false,
+        throwOnError: false,
       })
       return <div>rendered</div>
     }
@@ -573,7 +573,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => rendered.getByText('rendered'))
   })
 
-  it('should throw errors to the error boundary when a throwErrors function returns true', async () => {
+  it('should throw errors to the error boundary when a throwOnError function returns true', async () => {
     const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
@@ -588,7 +588,7 @@ describe("useQuery's in Suspense mode", () => {
         },
         retry: false,
         suspense: true,
-        throwErrors: (err) => err.message !== 'Local Error',
+        throwOnError: (err) => err.message !== 'Local Error',
       })
       return <div>rendered</div>
     }
@@ -616,7 +616,7 @@ describe("useQuery's in Suspense mode", () => {
     consoleMock.mockRestore()
   })
 
-  it('should not throw errors to the error boundary when a throwErrors function returns false', async () => {
+  it('should not throw errors to the error boundary when a throwOnError function returns false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -628,7 +628,7 @@ describe("useQuery's in Suspense mode", () => {
         },
         retry: false,
         suspense: true,
-        throwErrors: (err) => err.message !== 'Local Error',
+        throwOnError: (err) => err.message !== 'Local Error',
       })
       return <div>rendered</div>
     }
