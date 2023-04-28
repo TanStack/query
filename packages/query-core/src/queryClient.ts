@@ -540,11 +540,9 @@ export class QueryClient {
     arg3?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<InfiniteData<TData>> {
     const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
-    parsedOptions.behavior = infiniteQueryBehavior<
-      TQueryFnData,
-      TError,
-      TData
-    >()
+    parsedOptions.behavior = infiniteQueryBehavior<TQueryFnData, TError, TData>(
+      parsedOptions.behavior,
+    )
     return this.fetchQuery(parsedOptions)
   }
 

@@ -80,7 +80,7 @@ export class InfiniteQueryObserver<
     super.setOptions(
       {
         ...options,
-        behavior: infiniteQueryBehavior(),
+        behavior: infiniteQueryBehavior(options?.behavior),
       },
       notifyOptions,
     )
@@ -95,7 +95,7 @@ export class InfiniteQueryObserver<
       TQueryKey
     >,
   ): InfiniteQueryObserverResult<TData, TError> {
-    options.behavior = infiniteQueryBehavior()
+    options.behavior = infiniteQueryBehavior(options.behavior)
     return super.getOptimisticResult(options) as InfiniteQueryObserverResult<
       TData,
       TError

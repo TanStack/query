@@ -7,11 +7,11 @@ import type {
   RefetchQueryFilters,
 } from './types'
 
-export function infiniteQueryBehavior<
-  TQueryFnData,
-  TError,
-  TData,
->(): QueryBehavior<TQueryFnData, TError, InfiniteData<TData>> {
+export function infiniteQueryBehavior<TQueryFnData, TError, TData>(
+  behaviorFromOptions:
+    | QueryBehavior<TQueryFnData, TError, InfiniteData<TData>>
+    | undefined,
+): QueryBehavior<TQueryFnData, TError, InfiniteData<TData>> {
   return {
     onFetch: (context) => {
       context.fetchFn = () => {
@@ -159,6 +159,7 @@ export function infiniteQueryBehavior<
 
         return finalPromise
       }
+      behaviorFromOptions?.onFetch(context)
     },
   }
 }
