@@ -1,4 +1,4 @@
-import { getPostById } from '$lib/data'
+import { api } from '$lib/api'
 import type { PageLoad } from './$types'
 
 export const load: PageLoad = async ({ parent, fetch, params }) => {
@@ -8,7 +8,7 @@ export const load: PageLoad = async ({ parent, fetch, params }) => {
 
   await queryClient.prefetchQuery({
     queryKey: ['post', postId],
-    queryFn: () => getPostById(postId, fetch),
+    queryFn: () => api(fetch).getPostById(postId),
   })
 
   return { postId }
