@@ -56,7 +56,7 @@ export function useMutation<
 
   if (
     result.error &&
-    shouldThrowError(observer.options.throwErrors, [result.error])
+    shouldThrowError(observer.options.throwOnError, [result.error])
   ) {
     throw result.error
   }

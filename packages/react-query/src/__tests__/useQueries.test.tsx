@@ -644,7 +644,7 @@ describe('useQueries', () => {
     }
   })
 
-  it("should throw error if in one of queries' queryFn throws and throwErrors is in use", async () => {
+  it("should throw error if in one of queries' queryFn throws and throwOnError is in use", async () => {
     const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
@@ -661,14 +661,14 @@ describe('useQueries', () => {
             queryFn: () =>
               Promise.reject(
                 new Error(
-                  'this should not throw because throwErrors is not set',
+                  'this should not throw because throwOnError is not set',
                 ),
               ),
           },
           {
             queryKey: key2,
             queryFn: () => Promise.reject(new Error('single query error')),
-            throwErrors: true,
+            throwOnError: true,
             retry: false,
           },
           {
@@ -681,7 +681,7 @@ describe('useQueries', () => {
               Promise.reject(
                 new Error('this should not throw because query#2 already did'),
               ),
-            throwErrors: true,
+            throwOnError: true,
             retry: false,
           },
         ],
@@ -709,7 +709,7 @@ describe('useQueries', () => {
     consoleMock.mockRestore()
   })
 
-  it("should throw error if in one of queries' queryFn throws and throwErrors function resolves to true", async () => {
+  it("should throw error if in one of queries' queryFn throws and throwOnError function resolves to true", async () => {
     const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
@@ -726,10 +726,10 @@ describe('useQueries', () => {
             queryFn: () =>
               Promise.reject(
                 new Error(
-                  'this should not throw because throwErrors function resolves to false',
+                  'this should not throw because throwOnError function resolves to false',
                 ),
               ),
-            throwErrors: () => false,
+            throwOnError: () => false,
             retry: false,
           },
           {
@@ -739,7 +739,7 @@ describe('useQueries', () => {
           {
             queryKey: key3,
             queryFn: () => Promise.reject(new Error('single query error')),
-            throwErrors: () => true,
+            throwOnError: () => true,
             retry: false,
           },
           {
@@ -748,7 +748,7 @@ describe('useQueries', () => {
               Promise.reject(
                 new Error('this should not throw because query#3 already did'),
               ),
-            throwErrors: true,
+            throwOnError: true,
             retry: false,
           },
         ],
