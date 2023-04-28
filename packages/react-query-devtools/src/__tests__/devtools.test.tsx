@@ -1091,4 +1091,56 @@ describe('ReactQueryDevtools', () => {
       expect(screen.getByText('No error, success')).toBeInTheDocument()
     })
   })
+
+  it('should not refetch when already restoring a query', async () => {
+    const { queryClient } = createQueryClient()
+
+    let count = 0
+    let resolvePromise: (value: unknown) => void = () => undefined
+
+    function App() {
+      const { data } = useQuery(['key'], () => {
+        count++
+
+        // Resolve the promise immediately when
+        // the query is fetched for the first time
+        if (count === 1) {
+          return Promise.resolve('test')
+        }
+
+        return new Promise((resolve) => {
+          // Do not resolve immediately and store the
+          // resolve function to resolve the promise later
+          resolvePromise = resolve
+        })
+      })
+
+      return (
+        <div>
+          <h1>{typeof data === 'string' ? data : 'No data'}</h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <App />, {
+      initialIsOpen: true,
+    })
+
+    const loadingButton = await screen.findByRole('button', {
+      name: 'Trigger loading',
+    })
+    fireEvent.click(loadingButton)
+
+    await waitFor(() => {
+      expect(screen.getByText('Restore loading')).toBeInTheDocument()
+    })
+
+    // Click the restore loading button twice and only resolve query promise
+    // after the second click.
+    fireEvent.click(screen.getByRole('button', { name: /restore loading/i }))
+    fireEvent.click(screen.getByRole('button', { name: /restore loading/i }))
+    resolvePromise('test')
+
+    expect(count).toBe(2)
+  })
 })
