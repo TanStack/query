@@ -6,7 +6,7 @@ title: Videos & Talks
 <iframe
   width="280"
   height="400"
-  title="React Query: It’s Time to Break up with your &quot;Global State&quot;! –Tanner Linsley"
+  title="React Query: It’s Time to Break up with your Global State! –Tanner Linsley"
   src="https://www.youtube.com/embed/seU46c6Jz7E"
   frameborder="0"
   allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
