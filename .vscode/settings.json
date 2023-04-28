@@ -1,3 +1,4 @@
 {
-  "eslint.workingDirectories": [{ "pattern": "./packages/*/" }]
+  "eslint.workingDirectories": [{ "pattern": "./packages/*/" }],
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
