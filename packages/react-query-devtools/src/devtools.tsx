@@ -1035,6 +1035,15 @@ const ActiveQuery = ({
         <Button
           type="button"
           onClick={() => {
+            // Return early if the query is already restoring
+            if (
+              activeQuery.state.fetchStatus === 'fetching' &&
+              typeof activeQuery.state.fetchMeta?.__previousQueryOptions ===
+                'undefined'
+            ) {
+              return
+            }
+
             if (activeQuery.state.data === undefined) {
               restoreQueryAfterLoadingOrError()
             } else {
