@@ -123,10 +123,9 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
         react: 'React',
         'react-dom': 'ReactDOM',
         '@tanstack/react-query': 'ReactQuery',
-        '@tanstack/match-sorter-utils': 'MatchSorterUtils',
-        superjson: 'SuperJson',
+        '@tanstack/query-devtools': 'TanstackQueryDevtools',
       },
-      bundleUMDGlobals: ['@tanstack/match-sorter-utils', 'superjson'],
+      bundleUMDGlobals: ['@tanstack/query-devtools'],
     }),
     ...buildConfigs({
       name: 'react-query-devtools-prod',
@@ -159,6 +158,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       bundleUMDGlobals: ['@tanstack/query-persist-client-core'],
     }),
     createSolidQueryConfig(),
+    createTanstackQueryDevtoolsConfig(),
     ...buildConfigs({
       name: 'vue-query',
       packageDir: 'packages/vue-query',
@@ -472,6 +472,36 @@ function createSolidQueryConfig() {
     }
     output.dir = `${packageDir}/build/${format}`
   })
+
+  const plugins = solidRollupOptions.plugins as Plugin[]
+  // Prevent types generation since it doesn't resolve the directory correctly
+  // Instead build:types will generate those types anyway
+  const filtered = plugins.filter((plugin) => plugin.name !== 'ts')
+
+  solidRollupOptions.plugins = filtered
+
+  return solidRollupOptions
+}
+
+function createTanstackQueryDevtoolsConfig() {
+  const packageDir = 'packages/query-devtools'
+  const solidRollupOptions = withSolid({
+    input: `${packageDir}/src/index.tsx`,
+    targets: ['esm', 'cjs', 'umd'],
+  }) as RollupOptions
+
+  const outputs = !solidRollupOptions.output
+    ? []
+    : Array.isArray(solidRollupOptions.output)
+    ? solidRollupOptions.output
+    : [solidRollupOptions.output]
+
+  outputs.forEach((output) => {
+    const format = output.format
+    output.dir = `${packageDir}/build/${format}`
+  })
+
+  solidRollupOptions.external = []
 
   const plugins = solidRollupOptions.plugins as Plugin[]
   // Prevent types generation since it doesn't resolve the directory correctly

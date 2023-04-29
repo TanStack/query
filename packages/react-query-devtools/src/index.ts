@@ -9,9 +9,9 @@ export const ReactQueryDevtools: (typeof devtools)['ReactQueryDevtools'] =
       }
     : devtools.ReactQueryDevtools
 
-export const ReactQueryDevtoolsPanel: (typeof devtools)['ReactQueryDevtoolsPanel'] =
-  process.env.NODE_ENV !== 'development'
-    ? (function () {
-        return null
-      } as any)
-    : devtools.ReactQueryDevtoolsPanel
+// export const ReactQueryDevtoolsPanel: (typeof devtools)['ReactQueryDevtoolsPanel'] =
+//   process.env.NODE_ENV !== 'development'
+//     ? (function () {
+//         return null
+//       } as any)
+//     : devtools.ReactQueryDevtoolsPanel

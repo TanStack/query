@@ -54,8 +54,7 @@
     "react-error-boundary": "^3.1.4"
   },
   "dependencies": {
-    "@tanstack/match-sorter-utils": "^8.7.0",
-    "superjson": "^1.10.0"
+    "@tanstack/query-devtools": "workspace:*"
   },
   "peerDependencies": {
     "@tanstack/react-query": "workspace:*",
