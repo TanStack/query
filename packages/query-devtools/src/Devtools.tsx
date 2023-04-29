@@ -74,7 +74,7 @@ const BUTTON_POSITION: DevtoolsButtonPosition = 'bottom-right'
 const POSITION: DevtoolsPosition = 'bottom'
 const INITIAL_IS_OPEN = false
 const DEFAULT_HEIGHT = 500
-const DEFAULT_WIDTH = 400
+const DEFAULT_WIDTH = 500
 const DEFAULT_SORT_FN_NAME = Object.keys(sortFns)[0]
 const DEFAULT_SORT_ORDER = 1
 
@@ -302,14 +302,6 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
   let queriesContainerRef!: HTMLDivElement
   let panelRef!: HTMLDivElement
 
-  // onMount(() => {
-  //   createResizeObserver(queriesContainerRef, ({ width, height }, el) => {
-  //     if (el === queriesContainerRef) {
-  //       setQueryContainerWidth(width);
-  //     }
-  //   });
-  // });
-
   onMount(() => {
     createResizeObserver(panelRef, ({ width }, el) => {
       if (el === panelRef) {
@@ -343,11 +335,11 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
         height:
           position() === 'bottom' || position() === 'top'
             ? `${props.localStore.height || DEFAULT_HEIGHT}px`
-            : undefined,
+            : 'auto',
         width:
           position() === 'right' || position() === 'left'
             ? `${props.localStore.width || DEFAULT_WIDTH}px`
-            : undefined,
+            : 'auto',
       }}
       ref={panelRef}
       aria-label="Tanstack query devtools"
@@ -1117,9 +1109,9 @@ const getStyles = () => {
         border-radius: 9999px;
         background-color: transparent;
         border: none;
-        height: 48px;
+        height: 40px;
         display: flex;
-        width: 48px;
+        width: 40px;
         overflow: hidden;
         cursor: pointer;
         outline: none;
@@ -1143,20 +1135,20 @@ const getStyles = () => {
       }
     `,
     'devtoolsBtn-position-bottom-right': css`
-      bottom: 16px;
-      right: 16px;
+      bottom: 12px;
+      right: 12px;
     `,
     'devtoolsBtn-position-bottom-left': css`
-      bottom: 16px;
-      left: 16px;
+      bottom: 12px;
+      left: 12px;
     `,
     'devtoolsBtn-position-top-left': css`
-      top: 16px;
-      left: 16px;
+      top: 12px;
+      left: 12px;
     `,
     'devtoolsBtn-position-top-right': css`
-      top: 16px;
-      right: 16px;
+      top: 12px;
+      right: 12px;
     `,
     'panel-position-top': css`
       top: 0;

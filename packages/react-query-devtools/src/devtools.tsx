@@ -35,7 +35,7 @@ export function ReactQueryDevtools(
 ): React.ReactElement | null {
   const queryClient = useQueryClient()
   const ref = useRef<HTMLDivElement>(null)
-  const { buttonPosition, position } = props
+  const { buttonPosition, position, initialIsOpen } = props
   const [devtools] = useState(
     new TanstackQueryDevtools({
       client: props.client || queryClient,
@@ -58,6 +58,10 @@ export function ReactQueryDevtools(
       devtools.setPosition(position)
     }
   }, [position, devtools])
+
+  useEffect(() => {
+    devtools.setInitialIsOpen(initialIsOpen || false)
+  }, [initialIsOpen, devtools])
 
   useEffect(() => {
     if (ref.current) {
