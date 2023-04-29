@@ -105,11 +105,11 @@ export const Devtools = () => {
   })
 
   const isOpen = createMemo(() => {
-    return (
-      localStore.open === 'true' ||
-      useQueryDevtoolsContext().initialIsOpen ||
-      INITIAL_IS_OPEN
-    )
+    return localStore.open === 'true'
+      ? true
+      : localStore.open === 'false'
+      ? false
+      : useQueryDevtoolsContext().initialIsOpen || INITIAL_IS_OPEN
   })
 
   const position = createMemo(() => {
