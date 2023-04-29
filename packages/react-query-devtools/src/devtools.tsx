@@ -38,7 +38,7 @@ export function ReactQueryDevtools(
   const { buttonPosition, position } = props
   const [devtools] = useState(
     new TanstackQueryDevtools({
-      client: queryClient,
+      client: props.client || queryClient,
       queryFlavor: 'React Query',
       version: '5',
       onlineManager,
