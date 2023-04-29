@@ -50,6 +50,7 @@ const babelPlugin = (type: 'legacy' | 'modern') =>
 
 export default function rollup(options: RollupOptions): RollupOptions[] {
   return [
+    createTanstackQueryDevtoolsConfig(),
     ...buildConfigs({
       name: 'query-core',
       packageDir: 'packages/query-core',
@@ -158,7 +159,6 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       bundleUMDGlobals: ['@tanstack/query-persist-client-core'],
     }),
     createSolidQueryConfig(),
-    createTanstackQueryDevtoolsConfig(),
     ...buildConfigs({
       name: 'vue-query',
       packageDir: 'packages/vue-query',
