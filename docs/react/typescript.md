@@ -140,6 +140,25 @@ const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 
 [//]: # 'Materials'
 
+## Typing Query Options
+
+If you inline query options into `useQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `useQuery` and e.g. `prefetchQuery`. In that case, you'd lose type inference. To get it back, you can use `queryOptions` helper:
+
+```ts
+import { queryOptions } from '@tanstack/react-query'
+
+function groupOptions() {
+  return queryOptions({
+    queryKey: ['groups'],
+    queryFn: fetchGroups,
+    staleTime: 5 * 1000,
+  })
+}
+
+useQuery(groupOptions())
+queryClient.prefetchQuery(groupOptions())
+```
+
 ## Further Reading
 
 For tips and tricks around type inference, have a look at [React Query and TypeScript](../community/tkdodos-blog#6-react-query-and-typescript) from
