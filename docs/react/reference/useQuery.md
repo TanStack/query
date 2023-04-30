@@ -38,9 +38,6 @@ const {
   initialDataUpdatedAt,
   meta,
   notifyOnChangeProps,
-  onError,
-  onSettled,
-  onSuccess,
   placeholderData,
   queryKeyHashFn,
   refetchInterval,
@@ -134,15 +131,6 @@ const {
   - If set to `['data', 'error']` for example, the component will only re-render when the `data` or `error` properties change.
   - If set to `"all"`, the component will opt-out of smart tracking and re-render whenever a query is updated.
   - By default, access to properties will be tracked, and the component will only re-render when one of the tracked properties change.
-- `onSuccess: (data: TData) => void`
-  - Optional
-  - This function will fire any time the query successfully fetches new data.
-- `onError: (error: TError) => void`
-  - Optional
-  - This function will fire if the query encounters an error and will be passed the error.
-- `onSettled: (data?: TData, error?: TError) => void`
-  - Optional
-  - This function will fire any time the query is either successfully fetched or errors and be passed either the data or error.
 - `select: (data: TData) => unknown`
   - Optional
   - This option can be used to transform or select a part of the data returned by the query function. It affects the returned `data` value, but does not affect what gets stored in the query cache.
