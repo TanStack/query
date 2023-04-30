@@ -443,16 +443,4 @@ Note that the infinite list must be bi-directional, which requires both `getNext
 
 See the [Typescript Docs](../typescript#typing-query-options) for more details.
 
-### CreateStore
-
-We are now exposing a way to customize how queries are stored internally. Per default, a `Map` is used but, with the new `createStore` function, you can now use any data structure you want.
-
-```ts
-const queryClient = new QueryClient({
-  queryCache: new QueryCache({
-    createStore: () => new Map()
-  }),
-})
-```
-
 [//]: # 'NewFeatures'

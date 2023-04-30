@@ -27,7 +27,6 @@ interface QueryCacheConfig {
     error: DefaultError | null,
     query: Query<unknown, unknown, unknown>,
   ) => void
-  createStore?: () => QueryStore
 }
 
 interface NotifyEventQueryAdded extends NotifyEvent {
@@ -95,7 +94,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
   constructor(public config: QueryCacheConfig = {}) {
     super()
-    this.#queries = config.createStore?.() ?? new Map<string, Query>()
+    this.#queries = new Map<string, Query>()
   }
 
   build<TQueryFnData, TError, TData, TQueryKey extends QueryKey>(
