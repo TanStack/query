@@ -128,8 +128,8 @@ import { compress, decompress } from 'lz-string';
 const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity } } });
 
 persistQueryClient({
-  queryClient: connectionsQueryClient,
-  persistor: createSyncStoragePersister({
+  queryClient: queryClient,
+  persister: createSyncStoragePersister({
     storage: window.localStorage,
     serialize: data => compress(JSON.stringify(data)),
     deserialize: data => JSON.parse(decompress(data)),

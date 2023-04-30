@@ -101,7 +101,7 @@ const ActiveQuery = ({
 
   const restoreQueryAfterLoadingOrError = () => {
     activeQuery.fetch(
-      (activeQuery.state.fetchMeta as any).__previousQueryOptions,
+      (activeQuery.state.fetchMeta as any)?.__previousQueryOptions,
       {
         // Make sure this fetch will cancel the previous one
         cancelRefetch: true,
@@ -252,6 +252,14 @@ const ActiveQuery = ({
         <Button
           type="button"
           onClick={() => {
+            // Return early if the query is already restoring
+            if (
+              activeQuery.state.fetchStatus === 'fetching' &&
+              typeof (activeQuery.state.fetchMeta as any)
+                ?.__previousQueryOptions === 'undefined'
+            ) {
+              return
+            }
             if (activeQuery.state.data === undefined) {
               restoreQueryAfterLoadingOrError()
             } else {
