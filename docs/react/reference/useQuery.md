@@ -137,12 +137,15 @@ const {
   - If set to `"all"`, the component will opt-out of smart tracking and re-render whenever a query is updated.
   - By default, access to properties will be tracked, and the component will only re-render when one of the tracked properties change.
 - `onSuccess: (data: TData) => void`
+  - **Deprecated** - this callback will be removed in the next major version
   - Optional
   - This function will fire any time the query successfully fetches new data.
 - `onError: (error: TError) => void`
+  - **Deprecated** - this callback will be removed in the next major version
   - Optional
   - This function will fire if the query encounters an error and will be passed the error.
 - `onSettled: (data?: TData, error?: TError) => void`
+- **Deprecated** - this callback will be removed in the next major version
   - Optional
   - This function will fire any time the query is either successfully fetched or errors and be passed either the data or error.
 - `select: (data: TData) => unknown`
