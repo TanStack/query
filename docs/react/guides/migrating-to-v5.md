@@ -439,16 +439,8 @@ You can adjust the `maxPages` value according to the UX and refetching performan
 
 Note that the infinite list must be bi-directional, which requires both `getNextPageParam` and `getPreviousPageParam` to be defined.
 
-### CreateStore
+### Typesafe way to create Query Options
 
-We are now exposing a way to customize how queries are stored internally. Per default, a `Map` is used but, with the new `createStore` function, you can now use any data structure you want.
-
-```ts
-const queryClient = new QueryClient({
-  queryCache: new QueryCache({
-    createStore: () => new Map()
-  }),
-})
-```
+See the [Typescript Docs](../typescript#typing-query-options) for more details.
 
 [//]: # 'NewFeatures'
