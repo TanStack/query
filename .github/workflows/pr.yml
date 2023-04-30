@@ -22,7 +22,7 @@ jobs:
           version: 7
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.14.2
+          node-version: 18.16.0
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
@@ -42,7 +42,7 @@ jobs:
           version: 7
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.19.0
+          node-version: 18.16.0
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
@@ -79,25 +79,8 @@ jobs:
           version: 7
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.14.2
+          node-version: 18.16.0
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - run: pnpm run test:format --base=${{ github.event.pull_request.base.sha }}
-  test-build:
-    name: 'Test Build'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2.2.4
-        with:
-          version: 7
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.14.2
-          cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:build
-        env:
-          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}

@@ -1089,20 +1089,23 @@ describe('ReactQueryDevtools', () => {
     let resolvePromise: (value: unknown) => void = () => undefined
 
     function App() {
-      const { data } = useQuery(['key'], () => {
-        count++
+      const { data } = useQuery({
+        queryKey: ['key'],
+        queryFn: () => {
+          count++
 
-        // Resolve the promise immediately when
-        // the query is fetched for the first time
-        if (count === 1) {
-          return Promise.resolve('test')
-        }
+          // Resolve the promise immediately when
+          // the query is fetched for the first time
+          if (count === 1) {
+            return Promise.resolve('test')
+          }
 
-        return new Promise((resolve) => {
-          // Do not resolve immediately and store the
-          // resolve function to resolve the promise later
-          resolvePromise = resolve
-        })
+          return new Promise((resolve) => {
+            // Do not resolve immediately and store the
+            // resolve function to resolve the promise later
+            resolvePromise = resolve
+          })
+        },
       })
 
       return (
