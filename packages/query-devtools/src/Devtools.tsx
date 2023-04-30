@@ -1,4 +1,5 @@
 import type { Accessor, Component, JSX, Setter } from 'solid-js'
+import { For } from 'solid-js'
 import {
   createEffect,
   createMemo,
@@ -35,6 +36,7 @@ import type {
   QueryDevtoolsProps,
   DevtoolsPosition,
   DevtoolsButtonPosition,
+  DevToolsErrorType,
 } from './Context'
 import { QueryDevtoolsContext, useQueryDevtoolsContext } from './Context'
 import { TransitionGroup } from 'solid-transition-group'
@@ -43,17 +45,6 @@ import { Key } from '@solid-primitives/keyed'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { createResizeObserver } from '@solid-primitives/resize-observer'
-
-interface DevToolsErrorType {
-  /**
-   * The name of the error.
-   */
-  name: string
-  /**
-   * How the error is initialized.
-   */
-  initializer: (query: Query) => Error
-}
 
 interface DevtoolsPanelProps {
   localStore: StorageObject<string>
@@ -118,6 +109,7 @@ export const Devtools = () => {
 
   return (
     <div
+      // styles for animating the panel in and out
       class={css`
         & .TSQD-panel-exit-active,
         & .TSQD-panel-enter-active {
@@ -174,10 +166,13 @@ export const Devtools = () => {
               styles[`devtoolsBtn-position-${buttonPosition()}`],
             )}
           >
-            <div>
+            <div aria-hidden="true">
               <TanstackLogo />
             </div>
-            <button onClick={() => setLocalStore('open', 'true')}>
+            <button
+              aria-label="Open Tanstack query devtools"
+              onClick={() => setLocalStore('open', 'true')}
+            >
               <TanstackLogo />
             </button>
           </div>
@@ -268,6 +263,9 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
         props.setLocalStore('width', String(Math.round(newSize)))
 
         const newWidth = panelElement.getBoundingClientRect().width
+        // If the panel size didn't decrease, this means we have reached the minimum width
+        // of the panel so we restore the original width in local storage
+        // Restoring the width helps in smooth open/close transitions
         if (Number(props.localStore.width) < newWidth) {
           props.setLocalStore('width', String(newWidth))
         }
@@ -277,6 +275,8 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
             ? startY - moveEvent.clientY
             : moveEvent.clientY - startY
         newSize = Math.round(height + valToAdd)
+        // If the panel size is less than the minimum height,
+        // we set the size to the minimum height
         if (newSize < minHeight) {
           newSize = minHeight
           setSelectedQueryHash(null)
@@ -317,20 +317,24 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
 
   return (
     <aside
-      class={`${styles.panel} ${styles[`panel-position-${position()}`]} 
-        ${css`
-          flex-direction: ${panelWidth() < secondBreakpoint ? 'column' : 'row'};
-          background-color: ${panelWidth() < secondBreakpoint
-            ? tokens.colors.gray[600]
-            : tokens.colors.darkGray[900]};
-          ${panelWidth() < thirdBreakpoint &&
-          (position() === 'right' || position() === 'left')
-            ? `
+      // Some context for styles here
+      // background-color - Changes to a lighter color create a harder contrast
+      // between the queries and query detail panel
+      // -
+      // min-width - When the panel is in the left or right position, the panel
+      // width is set to min-content to allow the panel to shrink to the lowest possible width
+      class={`${styles.panel} ${styles[`panel-position-${position()}`]} ${css`
+        flex-direction: ${panelWidth() < secondBreakpoint ? 'column' : 'row'};
+        background-color: ${panelWidth() < secondBreakpoint
+          ? tokens.colors.gray[600]
+          : tokens.colors.darkGray[900]};
+        ${panelWidth() < thirdBreakpoint &&
+        (position() === 'right' || position() === 'left')
+          ? `
             min-width: min-content;
           `
-            : ''}
-        `} 
-      `}
+          : ''}
+      `}`}
       style={{
         height:
           position() === 'bottom' || position() === 'top'
@@ -353,6 +357,8 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
       ></div>
       <div
         ref={queriesContainerRef}
+        // When the panels are stacked we use the height style
+        // to divide the panels into two equal parts
         class={`${styles.queriesContainer} ${css`
           ${panelWidth() < secondBreakpoint && selectedQueryHash()
             ? `
@@ -742,6 +748,10 @@ const QueryDetails = () => {
 
   const [restoringLoading, setRestoringLoading] = createSignal(false)
 
+  const errorTypes = createMemo(() => {
+    return useQueryDevtoolsContext().errorTypes || []
+  })
+
   const activeQuery = createSubscribeToQueryCacheBatcher(
     (queryCache) =>
       queryCache()
@@ -962,25 +972,57 @@ const QueryDetails = () => {
             ></span>
             {statusLabel() === 'fetching' ? 'Restore' : 'Trigger'} Loading
           </button>
-          <button
-            class={css`
-              color: ${tokens.colors.red[400]};
-            `}
-            onClick={() => {
-              if (!activeQuery()!.state.error) {
-                triggerError()
-              } else {
-                queryClient.resetQueries(activeQuery())
-              }
-            }}
-          >
-            <span
+          <Show when={errorTypes().length === 0 || queryStatus() === 'error'}>
+            <button
               class={css`
-                background-color: ${tokens.colors.red[400]};
+                color: ${tokens.colors.red[400]};
               `}
-            ></span>
-            {queryStatus() === 'error' ? 'Restore' : 'Trigger'} Error
-          </button>
+              onClick={() => {
+                if (!activeQuery()!.state.error) {
+                  triggerError()
+                } else {
+                  queryClient.resetQueries(activeQuery())
+                }
+              }}
+            >
+              <span
+                class={css`
+                  background-color: ${tokens.colors.red[400]};
+                `}
+              ></span>
+              {queryStatus() === 'error' ? 'Restore' : 'Trigger'} Error
+            </button>
+          </Show>
+          <Show
+            when={!(errorTypes().length === 0 || queryStatus() === 'error')}
+          >
+            <div class={styles.actionsSelect}>
+              <span
+                class={css`
+                  background-color: ${tokens.colors.red[400]};
+                `}
+              ></span>
+              Trigger Error
+              <select
+                disabled={queryStatus() === 'pending'}
+                onChange={(e) => {
+                  const errorType = errorTypes().find(
+                    (t) => t.name === e.currentTarget.value,
+                  )
+
+                  triggerError(errorType)
+                }}
+              >
+                <option value="" disabled selected></option>
+                <For each={errorTypes()}>
+                  {(errorType) => (
+                    <option value={errorType.name}>{errorType.name}</option>
+                  )}
+                </For>
+              </select>
+              <ChevronDown />
+            </div>
+          </Show>
         </div>
         <div class={styles.detailsHeader}>Data Explorer</div>
         <div
@@ -1610,6 +1652,51 @@ const getStyles = () => {
           height: ${size[2]};
           border-radius: ${tokens.border.radius.full};
         }
+      }
+    `,
+    actionsSelect: css`
+      font-size: ${font.size.sm};
+      padding: ${tokens.size[2]} ${tokens.size[2]};
+      display: flex;
+      border-radius: ${tokens.border.radius.md};
+      overflow: hidden;
+      border: 1px solid ${colors.darkGray[400]};
+      background-color: ${colors.darkGray[600]};
+      align-items: center;
+      gap: ${tokens.size[2]};
+      font-weight: ${font.weight.medium};
+      line-height: ${font.lineHeight.sm};
+      color: ${tokens.colors.red[400]};
+      cursor: pointer;
+      position: relative;
+      &:hover {
+        background-color: ${colors.darkGray[500]};
+      }
+      & > span {
+        width: ${size[2]};
+        height: ${size[2]};
+        border-radius: ${tokens.border.radius.full};
+      }
+      &:focus-within {
+        outline-offset: 2px;
+        border-radius: ${border.radius.xs};
+        outline: 2px solid ${colors.blue[800]};
+      }
+      & select {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        appearance: none;
+        background-color: transparent;
+        border: none;
+        color: transparent;
+        outline: none;
+      }
+
+      & svg path {
+        stroke: ${tokens.colors.red[400]} !important;
       }
     `,
     settingsMenu: css`

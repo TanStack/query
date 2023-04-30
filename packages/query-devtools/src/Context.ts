@@ -1,10 +1,21 @@
-import type { QueryClient, onlineManager } from '@tanstack/query-core'
+import type { QueryClient, onlineManager, Query } from '@tanstack/query-core'
 import { createContext, useContext } from 'solid-js'
 
 type XPosition = 'left' | 'right'
 type YPosition = 'top' | 'bottom'
 export type DevtoolsPosition = XPosition | YPosition
 export type DevtoolsButtonPosition = `${YPosition}-${XPosition}`
+
+export interface DevToolsErrorType {
+  /**
+   * The name of the error.
+   */
+  name: string
+  /**
+   * How the error is initialized.
+   */
+  initializer: (query: Query) => Error
+}
 
 export interface QueryDevtoolsProps {
   readonly client: QueryClient
@@ -15,6 +26,7 @@ export interface QueryDevtoolsProps {
   buttonPosition?: DevtoolsButtonPosition
   position?: DevtoolsPosition
   initialIsOpen?: boolean
+  errorTypes?: DevToolsErrorType[]
 }
 
 export const QueryDevtoolsContext = createContext<QueryDevtoolsProps>({

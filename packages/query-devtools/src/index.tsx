@@ -8,11 +8,12 @@ import type {
   DevtoolsButtonPosition,
   DevtoolsPosition,
   QueryDevtoolsProps,
+  DevToolsErrorType,
 } from './Context'
 import type { Signal } from 'solid-js'
 import { createSignal } from 'solid-js'
 
-export type { DevtoolsButtonPosition, DevtoolsPosition }
+export type { DevtoolsButtonPosition, DevtoolsPosition, DevToolsErrorType }
 export interface TanstackQueryDevtoolsConfig extends QueryDevtoolsProps {}
 
 class TanstackQueryDevtools {
@@ -24,6 +25,7 @@ class TanstackQueryDevtools {
   buttonPosition: Signal<DevtoolsButtonPosition | undefined>
   position: Signal<DevtoolsPosition | undefined>
   initialIsOpen: Signal<boolean | undefined>
+  errorTypes: Signal<DevToolsErrorType[] | undefined>
   dispose?: () => void
 
   constructor(config: TanstackQueryDevtoolsConfig) {
@@ -35,6 +37,7 @@ class TanstackQueryDevtools {
       buttonPosition,
       position,
       initialIsOpen,
+      errorTypes,
     } = config
     this.client = client
     this.queryFlavor = queryFlavor
@@ -43,6 +46,7 @@ class TanstackQueryDevtools {
     this.buttonPosition = createSignal(buttonPosition)
     this.position = createSignal(position)
     this.initialIsOpen = createSignal(initialIsOpen)
+    this.errorTypes = createSignal(errorTypes)
   }
 
   setButtonPosition(position: DevtoolsButtonPosition) {
@@ -57,6 +61,10 @@ class TanstackQueryDevtools {
     this.initialIsOpen[1](isOpen)
   }
 
+  setErrorTypes(errorTypes: DevToolsErrorType[]) {
+    this.errorTypes[1](errorTypes)
+  }
+
   mount<T extends HTMLElement>(el: T) {
     if (this.isMounted) {
       throw new Error('Devtools is already mounted')
@@ -65,6 +73,7 @@ class TanstackQueryDevtools {
       const [btnPosition] = this.buttonPosition
       const [pos] = this.position
       const [isOpen] = this.initialIsOpen
+      const [errors] = this.errorTypes
       return (
         <DevtoolsComponent
           client={this.client}
@@ -80,6 +89,9 @@ class TanstackQueryDevtools {
             },
             get initialIsOpen() {
               return isOpen()
+            },
+            get errorTypes() {
+              return errors()
             },
           }}
         />

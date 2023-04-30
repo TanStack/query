@@ -5,6 +5,7 @@ import { useQueryClient, onlineManager } from '@tanstack/react-query'
 import type {
   DevtoolsButtonPosition,
   DevtoolsPosition,
+  DevToolsErrorType,
 } from '@tanstack/query-devtools'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
 import React from 'react'
@@ -28,6 +29,10 @@ export interface DevtoolsOptions {
    * Custom instance of QueryClient
    */
   client?: QueryClient
+  /**
+   * Use this so you can define custom errors that can be shown in the devtools.
+   */
+  errorTypes?: DevToolsErrorType[]
 }
 
 export function ReactQueryDevtools(
@@ -35,7 +40,7 @@ export function ReactQueryDevtools(
 ): React.ReactElement | null {
   const queryClient = useQueryClient()
   const ref = useRef<HTMLDivElement>(null)
-  const { buttonPosition, position, initialIsOpen } = props
+  const { buttonPosition, position, initialIsOpen, errorTypes } = props
   const [devtools] = useState(
     new TanstackQueryDevtools({
       client: props.client || queryClient,
@@ -44,6 +49,8 @@ export function ReactQueryDevtools(
       onlineManager,
       buttonPosition,
       position,
+      initialIsOpen,
+      errorTypes,
     }),
   )
 
@@ -62,6 +69,10 @@ export function ReactQueryDevtools(
   useEffect(() => {
     devtools.setInitialIsOpen(initialIsOpen || false)
   }, [initialIsOpen, devtools])
+
+  useEffect(() => {
+    devtools.setErrorTypes(errorTypes || [])
+  }, [errorTypes, devtools])
 
   useEffect(() => {
     if (ref.current) {
