@@ -154,7 +154,7 @@ export interface InfiniteQueryPageParamsOptions<
   getNextPageParam: GetNextPageParamFunction<TPageParam, TQueryFnData>
 }
 
-export type ThrowErrors<
+export type ThrowOnError<
   TQueryFnData,
   TError,
   TQueryData,
@@ -202,7 +202,7 @@ export interface QueryObserverOptions<
     | ((
         data: TData | undefined,
         query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
-      ) => number | false)
+      ) => number | false | undefined)
   /**
    * If set to `true`, the query will continue to refetch while their tab/window is in the background.
    * Defaults to `false`.
@@ -260,25 +260,13 @@ export interface QueryObserverOptions<
    */
   notifyOnChangeProps?: Array<keyof InfiniteQueryObserverResult> | 'all'
   /**
-   * This callback will fire any time the query successfully fetches new data.
-   */
-  onSuccess?: (data: TData) => void
-  /**
-   * This callback will fire if the query encounters an error and will be passed the error.
-   */
-  onError?: (err: TError) => void
-  /**
-   * This callback will fire any time the query is either successfully fetched or errors and be passed either the data or error.
-   */
-  onSettled?: (data: TData | undefined, error: TError | null) => void
-  /**
    * Whether errors should be thrown instead of setting the `error` property.
    * If set to `true` or `suspense` is `true`, all errors will be thrown to the error boundary.
    * If set to `false` and `suspense` is `false`, errors are returned as state.
    * If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`).
    * Defaults to `false`.
    */
-  throwErrors?: ThrowErrors<TQueryFnData, TError, TQueryData, TQueryKey>
+  throwOnError?: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * This option can be used to transform or select a part of the data returned by the query function.
    */
@@ -309,7 +297,7 @@ export type DefaultedQueryObserverOptions<
   TQueryKey extends QueryKey = QueryKey,
 > = WithRequired<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
-  'throwErrors' | 'refetchOnReconnect'
+  'throwOnError' | 'refetchOnReconnect'
 >
 
 export interface InfiniteQueryObserverOptions<
@@ -345,7 +333,7 @@ export type DefaultedInfiniteQueryObserverOptions<
     TQueryKey,
     TPageParam
   >,
-  'throwErrors' | 'refetchOnReconnect'
+  'throwOnError' | 'refetchOnReconnect'
 >
 
 export interface FetchQueryOptions<
@@ -648,7 +636,7 @@ export interface MutationObserverOptions<
   TVariables = void,
   TContext = unknown,
 > extends MutationOptions<TData, TError, TVariables, TContext> {
-  throwErrors?: boolean | ((error: TError) => boolean)
+  throwOnError?: boolean | ((error: TError) => boolean)
 }
 
 export interface MutateOptions<

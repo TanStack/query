@@ -108,7 +108,7 @@ If you want to run it against `.js` or `.jsx` files, please use the command belo
 ```
 npx jscodeshift ./path/to/src/ \
   --extensions=js,jsx \
-  --transform=./node_modules/@tanstack/react-query/codemods/v5/remove-overloads/remove-overloads.js
+  --transform=./node_modules/@tanstack/react-query/build/codemods/v5/remove-overloads/remove-overloads.js
 ```
 
 If you want to run it against `.ts` or `.tsx` files, please use the command below:
@@ -117,7 +117,7 @@ If you want to run it against `.ts` or `.tsx` files, please use the command belo
 npx jscodeshift ./path/to/src/ \
   --extensions=ts,tsx \
   --parser=tsx \
-  --transform=./node_modules/@tanstack/react-query/codemods/v5/remove-overloads/remove-overloads.js
+  --transform=./node_modules/@tanstack/react-query/build/codemods/v5/remove-overloads/remove-overloads.js
 ```
 
 Please note in the case of `TypeScript` you need to use `tsx` as the parser; otherwise, the codemod won't be applied properly!
@@ -131,6 +131,10 @@ A few notes about how codemod works:
 - If object parameters can be inferred, the codemod will attempt to copy the already existing properties to the newly created one.
 - If the codemod cannot infer the usage, then it will leave a message on the console. The message contains the file name and the line number of the usage. In this case, you need to do the migration manually.
 - If the transformation results in an error, you will also see a message on the console. This message will notify you something unexpected happened, please do the migration manually.
+
+### Callbacks on useQuery (and QueryObserver) have been removed
+
+`onSuccess`, `onError` and `onSettled` have been removed from Queries. They haven't been touched for Mutations. Please see [this RFC](https://github.com/TanStack/query/discussions/5279) for motivations behind this change and what to do instead.
 
 ### The `remove` method has been removed from useQuery
 
@@ -198,9 +202,9 @@ const queryClient = new QueryClient({
 })
 ```
 
-### The `useErrorBoundary` option has been renamed to `throwErrors`
+### The `useErrorBoundary` option has been renamed to `throwOnError`
 
-To make the `useErrorBoundary` option more framework-agnostic and avoid confusion with the established React function prefix "`use`" for hooks and the "ErrorBoundary" component name, it has been renamed to `throwErrors` to more accurately reflect its functionality.
+To make the `useErrorBoundary` option more framework-agnostic and avoid confusion with the established React function prefix "`use`" for hooks and the "ErrorBoundary" component name, it has been renamed to `throwOnError` to more accurately reflect its functionality.
 
 ### TypeScript: `Error` is now the default type for errors instead of `unknown`
 
@@ -333,6 +337,10 @@ Previously, we've allowed to overwrite the `pageParams` that would be returned f
 
 ## React Query Breaking Changes
 
+### The minimum required React version is now 18.0
+
+React Query v5 requires React 18.0 or later. This is because we are using the new `useSyncExternalStore` hook, which is only available in React 18.0 and later. Previously, we have been using the shim provided by React.
+
 ### The `contextSharing` prop has been removed from QueryClientProvider
 
 You could previously use the `contextSharing` property to share the first (and at least one) instance of the query client context across the window. This ensured that if TanStack Query was used across different bundles or microfrontends then they will all use the same instance of the context, regardless of module scoping.
@@ -386,6 +394,8 @@ To understand the reasoning behing this change checkout the [v5 roadmap discussi
 [//]: # 'NewFeatures'
 
 ## New Features 🚀
+
+v5 also comes with new features:
 
 ### Simplified optimistic updates
 

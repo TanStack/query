@@ -172,6 +172,7 @@ export function useQueries<
 ): TCombinedResult {
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
+  const errorResetBoundary = useQueryErrorResetBoundary()
 
   const defaultedQueries = React.useMemo(
     () =>
@@ -187,6 +188,13 @@ export function useQueries<
       }),
     [queries, client, isRestoring],
   )
+
+  defaultedQueries.forEach((query) => {
+    ensureStaleTime(query)
+    ensurePreventErrorBoundaryRetry(query, errorResetBoundary)
+  })
+
+  useClearResetErrorBoundary(errorResetBoundary)
 
   const [observer] = React.useState(
     () =>
@@ -224,15 +232,6 @@ export function useQueries<
     )
   }, [defaultedQueries, options, observer])
 
-  const errorResetBoundary = useQueryErrorResetBoundary()
-
-  defaultedQueries.forEach((query) => {
-    ensurePreventErrorBoundaryRetry(query, errorResetBoundary)
-    ensureStaleTime(query)
-  })
-
-  useClearResetErrorBoundary(errorResetBoundary)
-
   const shouldAtLeastOneSuspend = optimisticResult.some((result, index) =>
     shouldSuspend(defaultedQueries[index], result, isRestoring),
   )
@@ -256,14 +255,14 @@ export function useQueries<
   if (suspensePromises.length > 0) {
     throw Promise.all(suspensePromises)
   }
-
+  const observerQueries = observer.getQueries()
   const firstSingleResultWhichShouldThrow = optimisticResult.find(
     (result, index) =>
       getHasError({
         result,
         errorResetBoundary,
-        throwErrors: defaultedQueries[index]?.throwErrors ?? false,
-        query: observer.getQueries()[index]!,
+        throwOnError: defaultedQueries[index]?.throwOnError ?? false,
+        query: observerQueries[index]!,
       }),
   )
 

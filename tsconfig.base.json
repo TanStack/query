@@ -15,6 +15,7 @@
     "strictNullChecks": true,
     "jsx": "react",
     "declaration": true,
+    "declarationMap": true,
     "emitDeclarationOnly": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

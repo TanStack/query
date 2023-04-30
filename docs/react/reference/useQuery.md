@@ -23,7 +23,6 @@ const {
   isPlaceholderData,
   isRefetchError,
   isRefetching,
-  isInitialLoading,
   isStale,
   isSuccess,
   refetch,
@@ -56,7 +55,7 @@ const {
   staleTime,
   structuralSharing,
   suspense,
-  throwErrors,
+  throwOnError,
 })
 ```
 
@@ -101,7 +100,7 @@ const {
 - `queryKeyHashFn: (queryKey: QueryKey) => string`
   - Optional
   - If specified, this function is used to hash the `queryKey` to a string.
-- `refetchInterval: number | false | ((data: TData | undefined, query: Query) => number | false)`
+- `refetchInterval: number | false | ((data: TData | undefined, query: Query) => number | false | undefined)`
   - Optional
   - If set to a number, all queries will continuously refetch at this frequency in milliseconds
   - If set to a function, the function will be executed with the latest data and query to compute a frequency
@@ -171,8 +170,8 @@ const {
   - Defaults to `true`
   - If set to `false`, structural sharing between query results will be disabled.
   - If set to a function, the old and new data values will be passed through this function, which should combine them into resolved data for the query. This way, you can retain references from the old data to improve performance even when that data contains non-serializable values.
-- `throwErrors: undefined | boolean | (error: TError, query: Query) => boolean`
-  - Defaults to the global query config's `throwErrors` value, which is `undefined`
+- `throwOnError: undefined | boolean | (error: TError, query: Query) => boolean`
+  - Defaults to the global query config's `throwOnError` value, which is `undefined`
   - Set this to `true` if you want errors to be thrown in the render phase and propagate to the nearest error boundary
   - Set this to `false` to disable `suspense`'s default behavior of throwing errors to the error boundary.
   - If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`)

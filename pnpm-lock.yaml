@@ -720,19 +720,19 @@ importers:
       '@tanstack/solid-query': link:../../../packages/solid-query
       solid-js: 1.6.16
       solid-start: 0.2.24_euxzheln45tfyr565dhf2xv3la
-      undici: 5.14.0
+      undici: 5.20.0
     devDependencies:
       '@types/node': 18.13.0
       esbuild: 0.14.54
       postcss: 8.4.21
-      solid-start-node: 0.2.21_2vqkbilyolq35n53mildrhalmu
+      solid-start-node: 0.2.21_wmplqqqr5tdglivwyrjsogoe24
       typescript: 4.9.5
       vite: 4.2.1_@types+node@18.13.0
 
   examples/svelte/auto-refetching:
     specifiers:
-      '@sveltejs/adapter-auto': ^1.0.0
-      '@sveltejs/kit': ^1.0.0
+      '@sveltejs/adapter-auto': ^2.0.0
+      '@sveltejs/kit': ^1.15.0
       '@tanstack/svelte-query': ^4.20.0
       svelte: ^3.54.0
       svelte-check: ^2.9.2
@@ -742,8 +742,8 @@ importers:
     dependencies:
       '@tanstack/svelte-query': 4.26.1_svelte@3.55.0
     devDependencies:
-      '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.7
-      '@sveltejs/kit': 1.0.7_svelte@3.55.0+vite@4.0.4
+      '@sveltejs/adapter-auto': 2.0.0_@sveltejs+kit@1.15.2
+      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.0.4
       svelte: 3.55.0
       svelte-check: 2.10.3_svelte@3.55.0
       tslib: 2.4.1
@@ -752,8 +752,8 @@ importers:
 
   examples/svelte/basic:
     specifiers:
-      '@sveltejs/adapter-auto': ^1.0.0
-      '@sveltejs/kit': ^1.0.0
+      '@sveltejs/adapter-auto': ^2.0.0
+      '@sveltejs/kit': ^1.15.0
       '@tanstack/svelte-query': ^4.20.0
       svelte: ^3.54.0
       svelte-check: ^2.9.2
@@ -763,8 +763,8 @@ importers:
     dependencies:
       '@tanstack/svelte-query': 4.26.1_svelte@3.55.0
     devDependencies:
-      '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.7
-      '@sveltejs/kit': 1.0.7_svelte@3.55.0+vite@4.0.4
+      '@sveltejs/adapter-auto': 2.0.0_@sveltejs+kit@1.15.2
+      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.0.4
       svelte: 3.55.0
       svelte-check: 2.10.3_svelte@3.55.0
       tslib: 2.4.1
@@ -773,8 +773,8 @@ importers:
 
   examples/svelte/load-more-infinite-scroll:
     specifiers:
-      '@sveltejs/adapter-auto': ^1.0.0
-      '@sveltejs/kit': ^1.0.0
+      '@sveltejs/adapter-auto': ^2.0.0
+      '@sveltejs/kit': ^1.15.0
       '@tanstack/svelte-query': ^4.20.0
       svelte: ^3.54.0
       svelte-check: ^2.9.2
@@ -784,8 +784,8 @@ importers:
     dependencies:
       '@tanstack/svelte-query': 4.26.1_svelte@3.55.0
     devDependencies:
-      '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.7
-      '@sveltejs/kit': 1.0.7_svelte@3.55.0+vite@4.0.4
+      '@sveltejs/adapter-auto': 2.0.0_@sveltejs+kit@1.15.2
+      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.0.4
       svelte: 3.55.0
       svelte-check: 2.10.3_svelte@3.55.0
       tslib: 2.4.1
@@ -794,8 +794,8 @@ importers:
 
   examples/svelte/optimistic-updates-typescript:
     specifiers:
-      '@sveltejs/adapter-auto': ^1.0.0
-      '@sveltejs/kit': ^1.0.0
+      '@sveltejs/adapter-auto': ^2.0.0
+      '@sveltejs/kit': ^1.15.0
       '@tanstack/svelte-query': ^4.20.0
       svelte: ^3.54.0
       svelte-check: ^2.9.2
@@ -805,8 +805,8 @@ importers:
     dependencies:
       '@tanstack/svelte-query': 4.26.1_svelte@3.55.0
     devDependencies:
-      '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.7
-      '@sveltejs/kit': 1.0.7_svelte@3.55.0+vite@4.0.4
+      '@sveltejs/adapter-auto': 2.0.0_@sveltejs+kit@1.15.2
+      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.0.4
       svelte: 3.55.0
       svelte-check: 2.10.3_svelte@3.55.0
       tslib: 2.4.1
@@ -815,8 +815,8 @@ importers:
 
   examples/svelte/playground:
     specifiers:
-      '@sveltejs/adapter-auto': ^1.0.0
-      '@sveltejs/kit': ^1.0.0
+      '@sveltejs/adapter-auto': ^2.0.0
+      '@sveltejs/kit': ^1.15.0
       '@tanstack/svelte-query': ^4.20.0
       svelte: ^3.54.0
       svelte-check: ^2.9.2
@@ -826,8 +826,8 @@ importers:
     dependencies:
       '@tanstack/svelte-query': 4.26.1_svelte@3.55.0
     devDependencies:
-      '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.7
-      '@sveltejs/kit': 1.0.7_svelte@3.55.0+vite@4.0.4
+      '@sveltejs/adapter-auto': 2.0.0_@sveltejs+kit@1.15.2
+      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.0.4
       svelte: 3.55.0
       svelte-check: 2.10.3_svelte@3.55.0
       tslib: 2.4.1
@@ -857,8 +857,8 @@ importers:
 
   examples/svelte/ssr:
     specifiers:
-      '@sveltejs/adapter-auto': ^1.0.0
-      '@sveltejs/kit': ^1.0.0
+      '@sveltejs/adapter-auto': ^2.0.0
+      '@sveltejs/kit': ^1.15.0
       '@tanstack/svelte-query': ^4.20.0
       svelte: ^3.54.0
       svelte-check: ^2.9.2
@@ -868,8 +868,8 @@ importers:
     dependencies:
       '@tanstack/svelte-query': 4.26.1_svelte@3.55.0
     devDependencies:
-      '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.7
-      '@sveltejs/kit': 1.0.7_svelte@3.55.0+vite@4.0.4
+      '@sveltejs/adapter-auto': 2.0.0_@sveltejs+kit@1.15.2
+      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.0.4
       svelte: 3.55.0
       svelte-check: 2.10.3_svelte@3.55.0
       tslib: 2.4.1
@@ -878,8 +878,8 @@ importers:
 
   examples/svelte/star-wars:
     specifiers:
-      '@sveltejs/adapter-auto': ^1.0.0
-      '@sveltejs/kit': ^1.0.0
+      '@sveltejs/adapter-auto': ^2.0.0
+      '@sveltejs/kit': ^1.15.0
       '@tanstack/svelte-query': ^4.20.0
       autoprefixer: ^10.4.13
       postcss: ^8.4.20
@@ -892,8 +892,8 @@ importers:
     dependencies:
       '@tanstack/svelte-query': 4.26.1_svelte@3.55.0
     devDependencies:
-      '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.7
-      '@sveltejs/kit': 1.0.7_svelte@3.55.0+vite@4.0.4
+      '@sveltejs/adapter-auto': 2.0.0_@sveltejs+kit@1.15.2
+      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.0.4
       autoprefixer: 10.4.13_postcss@8.4.21
       postcss: 8.4.21
       svelte: 3.55.0
@@ -1069,7 +1069,7 @@ importers:
 
   packages/svelte-query:
     specifiers:
-      '@sveltejs/package': ^1.0.0
+      '@sveltejs/package': ^2.0.2
       '@sveltejs/vite-plugin-svelte': ^2.0.2
       '@tanstack/query-core': workspace:*
       '@testing-library/svelte': ^3.2.2
@@ -1083,7 +1083,7 @@ importers:
     dependencies:
       '@tanstack/query-core': link:../query-core
     devDependencies:
-      '@sveltejs/package': 1.0.2_glsdxddlaertg66rhhvanbinpy
+      '@sveltejs/package': 2.0.2_glsdxddlaertg66rhhvanbinpy
       '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.0.4
       '@testing-library/svelte': 3.2.2_svelte@3.55.0
       eslint-plugin-svelte: 2.14.1_svelte@3.55.0
@@ -1854,7 +1854,7 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
     dependencies:
-      '@babel/types': 7.20.7
+      '@babel/types': 7.21.3
 
   /@babel/plugin-bugfix-safari-id-destructuring-collision-in-function-expression/7.18.6_@babel+core@7.19.1:
     resolution: {integrity: sha512-Dgxsyg54Fx1d4Nge8UnvTrED63vrwOdPmyvPzlNN/boaliRP54pm3pGzZD1SJUwrBA+Cs/xdG8kXX6Mn/RfISQ==}
@@ -6867,17 +6867,17 @@ packages:
     dependencies:
       solid-js: 1.6.16
 
-  /@sveltejs/adapter-auto/1.0.0_@sveltejs+kit@1.0.7:
-    resolution: {integrity: sha512-yKyPvlLVua1bJ/42FrR3X041mFGdB4GzTZOAEoHUcNBRE5Mhx94+eqHpC3hNvAOiLEDcKfVO0ObyKSu7qldU+w==}
+  /@sveltejs/adapter-auto/2.0.0_@sveltejs+kit@1.15.2:
+    resolution: {integrity: sha512-b+gkHFZgD771kgV3aO4avHFd7y1zhmMYy9i6xOK7m/rwmwaRO8gnF5zBc0Rgca80B2PMU1bKNxyBTHA14OzUAQ==}
     peerDependencies:
       '@sveltejs/kit': ^1.0.0
     dependencies:
-      '@sveltejs/kit': 1.0.7_svelte@3.55.0+vite@4.0.4
+      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.0.4
       import-meta-resolve: 2.2.1
     dev: true
 
-  /@sveltejs/kit/1.0.7_svelte@3.55.0+vite@4.0.4:
-    resolution: {integrity: sha512-u8JS4aXFWlrnu/tjl+EhJ/FvBEjLYDyMaLe7EAU4sW+PfDqnqyHBAPg/IQi5JuBg6l+Z816F4WrTe+zplUTQDg==}
+  /@sveltejs/kit/1.15.2_svelte@3.55.0+vite@4.0.4:
+    resolution: {integrity: sha512-rLNxZrjbrlPf8AWW8GAU4L/Vvu17e9v8EYl7pUip7x72lTft7RcxeP3z7tsrHpMSBBxC9o4XdKzFvz1vMZyXZw==}
     engines: {node: ^16.14 || >=18}
     hasBin: true
     requiresBuild: true
@@ -6888,24 +6888,24 @@ packages:
       '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.0.4
       '@types/cookie': 0.5.1
       cookie: 0.5.0
-      devalue: 4.2.0
+      devalue: 4.3.0
       esm-env: 1.0.0
       kleur: 4.1.5
-      magic-string: 0.27.0
+      magic-string: 0.30.0
       mime: 3.0.0
       sade: 1.8.1
       set-cookie-parser: 2.5.1
       sirv: 2.0.2
       svelte: 3.55.0
       tiny-glob: 0.2.9
-      undici: 5.14.0
+      undici: 5.20.0
       vite: 4.0.4
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /@sveltejs/package/1.0.2_glsdxddlaertg66rhhvanbinpy:
-    resolution: {integrity: sha512-VY9U+05d9uNFDj7ScKRlHORYlfPSHwJewBjV+V2RsnViexpLFPUrboC9SiPYDCpLnbeqwXerxhO6twGHUBGeIA==}
+  /@sveltejs/package/2.0.2_glsdxddlaertg66rhhvanbinpy:
+    resolution: {integrity: sha512-cCOCcO8yMHnhHyaR51nQtvKZ3o/vSU9UYI1EXLT1j2CKNPMuH1/g6JNwKcNNrtQGwwquudc69ZeYy8D/TDNwEw==}
     engines: {node: ^16.14 || >=18}
     hasBin: true
     peerDependencies:
@@ -10070,8 +10070,8 @@ packages:
       minimist: 1.2.6
     dev: true
 
-  /devalue/4.2.0:
-    resolution: {integrity: sha512-mbjoAaCL2qogBKgeFxFPOXAUsZchircF+B/79LD4sHH0+NHfYm8gZpQrskKDn5gENGt35+5OI1GUF7hLVnkPDw==}
+  /devalue/4.3.0:
+    resolution: {integrity: sha512-n94yQo4LI3w7erwf84mhRUkUJfhLoCZiLyoOZ/QFsDbcWNZePrLwbQpvZBUG2TNxwV3VjCKPxkiiQA6pe3TrTA==}
     dev: true
 
   /didyoumean/1.2.2:
@@ -14081,6 +14081,13 @@ packages:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.4.14
 
+  /magic-string/0.30.0:
+    resolution: {integrity: sha512-LA+31JYDJLs82r2ScLrlz1GjSgu66ZV518eyWT+S8VhyQn/JL0u9MeBOvQMGYiPk1DBiSN9DDMOcXvigJZaViQ==}
+    engines: {node: '>=12'}
+    dependencies:
+      '@jridgewell/sourcemap-codec': 1.4.14
+    dev: true
+
   /make-dir/2.1.0:
     resolution: {integrity: sha512-LS9X+dc8KLxXCb8dni79fLIIUA5VyZoyjSMCwTluaXA0o27cCK0bhXkpgw+sTXVpPy/lSO57ilRixqk0vDmtRA==}
     engines: {node: '>=6'}
@@ -17094,7 +17101,7 @@ packages:
       '@babel/types': 7.21.3
       solid-js: 1.6.16
 
-  /solid-start-node/0.2.21_2vqkbilyolq35n53mildrhalmu:
+  /solid-start-node/0.2.21_wmplqqqr5tdglivwyrjsogoe24:
     resolution: {integrity: sha512-DmmJT6K+uF0yLPkn1GQvIHmZRUdYlQwBijruvCiEWuy3d1sLedRnP22K/+u9eKqm8ruFOTQHrc/1wuGVcj3JXg==}
     peerDependencies:
       solid-start: '*'
@@ -17110,7 +17117,7 @@ packages:
       sirv: 2.0.2
       solid-start: 0.2.24_euxzheln45tfyr565dhf2xv3la
       terser: 5.16.3
-      undici: 5.14.0
+      undici: 5.20.0
       vite: 4.2.1_@types+node@18.13.0
     transitivePeerDependencies:
       - supports-color
@@ -17178,9 +17185,9 @@ packages:
       set-cookie-parser: 2.5.1
       sirv: 2.0.2
       solid-js: 1.6.16
-      solid-start-node: 0.2.21_2vqkbilyolq35n53mildrhalmu
+      solid-start-node: 0.2.21_wmplqqqr5tdglivwyrjsogoe24
       terser: 5.16.3
-      undici: 5.19.1
+      undici: 5.20.0
       vite: 4.2.1_@types+node@18.13.0
       vite-plugin-inspect: 0.7.15_rollup@3.20.2+vite@4.2.1
       vite-plugin-solid: 2.6.1_solid-js@1.6.16+vite@4.2.1
@@ -18325,14 +18332,8 @@ packages:
       which-boxed-primitive: 1.0.2
     dev: true
 
-  /undici/5.14.0:
-    resolution: {integrity: sha512-yJlHYw6yXPPsuOH0x2Ib1Km61vu4hLiRRQoafs+WUgX1vO64vgnxiCEN9dpIrhZyHFsai3F0AEj4P9zy19enEQ==}
-    engines: {node: '>=12.18'}
-    dependencies:
-      busboy: 1.6.0
-
-  /undici/5.19.1:
-    resolution: {integrity: sha512-YiZ61LPIgY73E7syxCDxxa3LV2yl3sN8spnIuTct60boiiRaE1J8mNWHO8Im2Zi/sFrPusjLlmRPrsyraSqX6A==}
+  /undici/5.20.0:
+    resolution: {integrity: sha512-J3j60dYzuo6Eevbawwp1sdg16k5Tf768bxYK4TUJRH7cBM4kFCbf3mOnM/0E3vQYXvpxITbbWmBafaDbxLDz3g==}
     engines: {node: '>=12.18'}
     dependencies:
       busboy: 1.6.0

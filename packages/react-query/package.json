@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query",
-  "version": "5.0.0-alpha.18",
+  "version": "5.0.0-alpha.24",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -28,12 +28,17 @@
     "test:types": "tsc",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
+    "build": "mkdir -p ./build && cp -R ../codemods/src ./build/codemods",
     "build:types": "tsc --build"
   },
   "files": [
     "build/lib/*",
     "build/umd/*",
-    "src"
+    "src",
+    "build/codemods",
+    "!build/codemods/jest.config.js",
+    "!build/codemods/**/__testfixtures__",
+    "!build/codemods/**/__tests__"
   ],
   "devDependencies": {
     "@types/react": "^18.0.14",

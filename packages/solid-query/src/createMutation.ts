@@ -1,4 +1,5 @@
-import type { QueryClient, DefaultError } from '@tanstack/query-core'
+import type { DefaultError } from '@tanstack/query-core'
+import type { QueryClient } from './QueryClient'
 import { MutationObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {
@@ -53,7 +54,7 @@ export function createMutation<
       () => {
         if (
           state.isError &&
-          shouldThrowError(observer.options.throwErrors, [state.error])
+          shouldThrowError(observer.options.throwOnError, [state.error])
         ) {
           throw state.error
         }

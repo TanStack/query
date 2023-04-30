@@ -1,4 +1,4 @@
-import type { QueryClient } from '@tanstack/query-core'
+import type { QueryClient } from './QueryClient'
 import type { JSX } from 'solid-js'
 import { createContext, useContext, onMount, onCleanup } from 'solid-js'
 

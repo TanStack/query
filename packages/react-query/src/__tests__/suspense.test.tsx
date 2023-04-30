@@ -190,88 +190,6 @@ describe("useQuery's in Suspense mode", () => {
     expect(queryCache.find({ queryKey: key })?.getObserversCount()).toBe(0)
   })
 
-  it('should call onSuccess on the first successful call', async () => {
-    const key = queryKey()
-
-    const successFn = vi.fn()
-
-    function Page() {
-      useQuery({
-        queryKey: [key],
-        queryFn: async () => {
-          await sleep(10)
-          return key
-        },
-        suspense: true,
-        select: () => 'selected',
-        onSuccess: successFn,
-      })
-
-      return <>rendered</>
-    }
-
-    const rendered = renderWithClient(
-      queryClient,
-      <React.Suspense fallback="loading">
-        <Page />
-      </React.Suspense>,
-    )
-
-    await waitFor(() => rendered.getByText('rendered'))
-
-    await waitFor(() => expect(successFn).toHaveBeenCalledTimes(1))
-    await waitFor(() => expect(successFn).toHaveBeenCalledWith('selected'))
-  })
-
-  it('should call every onSuccess handler within a suspense boundary', async () => {
-    const key = queryKey()
-
-    const successFn1 = vi.fn()
-    const successFn2 = vi.fn()
-
-    function FirstComponent() {
-      useQuery({
-        queryKey: key,
-        queryFn: () => {
-          sleep(10)
-          return 'data'
-        },
-        suspense: true,
-        onSuccess: successFn1,
-      })
-
-      return <span>first</span>
-    }
-
-    function SecondComponent() {
-      useQuery({
-        queryKey: key,
-        queryFn: () => {
-          sleep(10)
-          return 'data'
-        },
-
-        suspense: true,
-        onSuccess: successFn2,
-      })
-
-      return <span>second</span>
-    }
-
-    const rendered = renderWithClient(
-      queryClient,
-      <React.Suspense fallback="loading">
-        <FirstComponent />
-        <SecondComponent />
-      </React.Suspense>,
-    )
-
-    await waitFor(() => rendered.getByText('second'))
-
-    await waitFor(() => expect(successFn1).toHaveBeenCalledTimes(1))
-    await waitFor(() => expect(successFn2).toHaveBeenCalledTimes(1))
-  })
-
   // https://github.com/tannerlinsley/react-query/issues/468
   it('should reset error state if new component instances are mounted', async () => {
     const consoleMock = vi
@@ -616,7 +534,7 @@ describe("useQuery's in Suspense mode", () => {
     consoleMock.mockRestore()
   })
 
-  it('should not throw errors to the error boundary when throwErrors: false', async () => {
+  it('should not throw errors to the error boundary when throwOnError: false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -628,7 +546,7 @@ describe("useQuery's in Suspense mode", () => {
         },
         retry: false,
         suspense: true,
-        throwErrors: false,
+        throwOnError: false,
       })
       return <div>rendered</div>
     }
@@ -655,7 +573,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => rendered.getByText('rendered'))
   })
 
-  it('should throw errors to the error boundary when a throwErrors function returns true', async () => {
+  it('should throw errors to the error boundary when a throwOnError function returns true', async () => {
     const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
@@ -670,7 +588,7 @@ describe("useQuery's in Suspense mode", () => {
         },
         retry: false,
         suspense: true,
-        throwErrors: (err) => err.message !== 'Local Error',
+        throwOnError: (err) => err.message !== 'Local Error',
       })
       return <div>rendered</div>
     }
@@ -698,7 +616,7 @@ describe("useQuery's in Suspense mode", () => {
     consoleMock.mockRestore()
   })
 
-  it('should not throw errors to the error boundary when a throwErrors function returns false', async () => {
+  it('should not throw errors to the error boundary when a throwOnError function returns false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -710,7 +628,7 @@ describe("useQuery's in Suspense mode", () => {
         },
         retry: false,
         suspense: true,
-        throwErrors: (err) => err.message !== 'Local Error',
+        throwOnError: (err) => err.message !== 'Local Error',
       })
       return <div>rendered</div>
     }

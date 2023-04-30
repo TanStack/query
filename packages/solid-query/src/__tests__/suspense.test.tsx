@@ -217,89 +217,6 @@ describe("useQuery's in Suspense mode", () => {
     expect(queryCache.find({ queryKey: key })?.getObserversCount()).toBe(0)
   })
 
-  it('should call onSuccess on the first successful call', async () => {
-    const key = queryKey()
-
-    const successFn = vi.fn()
-
-    function Page() {
-      createQuery(() => ({
-        queryKey: [key],
-        queryFn: async () => {
-          await sleep(10)
-          return key
-        },
-
-        suspense: true,
-        select: () => 'selected',
-        onSuccess: successFn,
-      }))
-
-      return <>rendered</>
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
-    ))
-
-    await waitFor(() => screen.getByText('rendered'))
-
-    await waitFor(() => expect(successFn).toHaveBeenCalledTimes(1))
-    await waitFor(() => expect(successFn).toHaveBeenCalledWith('selected'))
-  })
-
-  it('should call every onSuccess handler within a suspense boundary', async () => {
-    const key = queryKey()
-
-    const successFn1 = vi.fn()
-    const successFn2 = vi.fn()
-
-    function FirstComponent() {
-      createQuery(() => ({
-        queryKey: key,
-        queryFn: () => {
-          sleep(10)
-          return 'data'
-        },
-        onSuccess: successFn1,
-      }))
-
-      return <span>first</span>
-    }
-
-    function SecondComponent() {
-      createQuery(() => ({
-        queryKey: key,
-        queryFn: () => {
-          sleep(10)
-          return 'data'
-        },
-        onSuccess: successFn2,
-      }))
-
-      return <span>second</span>
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="loading">
-          <FirstComponent />
-          <SecondComponent />
-        </Suspense>
-        ,
-      </QueryClientProvider>
-    ))
-
-    await waitFor(() => screen.getByText('second'))
-
-    await waitFor(() => expect(successFn1).toHaveBeenCalledTimes(1))
-    await waitFor(() => expect(successFn2).toHaveBeenCalledTimes(1))
-  })
-
   // https://github.com/tannerlinsley/react-query/issues/468
   it('should reset error state if new component instances are mounted', async () => {
     const key = queryKey()
@@ -582,7 +499,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => screen.getByText('error boundary'))
   })
 
-  it('should not throw errors to the error boundary when throwErrors: false', async () => {
+  it('should not throw errors to the error boundary when throwOnError: false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -593,7 +510,7 @@ describe("useQuery's in Suspense mode", () => {
           throw new Error('Suspense Error a2x')
         },
         retry: false,
-        throwErrors: false,
+        throwOnError: false,
       }))
 
       // read state.data to trigger suspense.
@@ -631,7 +548,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => screen.getByText('rendered'))
   })
 
-  it('should throw errors to the error boundary when a throwErrors function returns true', async () => {
+  it('should throw errors to the error boundary when a throwOnError function returns true', async () => {
     const key = queryKey()
 
     function Page() {
@@ -642,7 +559,7 @@ describe("useQuery's in Suspense mode", () => {
           return Promise.reject(new Error('Remote Error'))
         },
         retry: false,
-        throwErrors: (err) => err.message !== 'Local Error',
+        throwOnError: (err) => err.message !== 'Local Error',
       }))
 
       // read state.data to trigger suspense.
@@ -680,7 +597,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => screen.getByText('error boundary'))
   })
 
-  it('should not throw errors to the error boundary when a throwErrors function returns false', async () => {
+  it('should not throw errors to the error boundary when a throwOnError function returns false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -693,7 +610,7 @@ describe("useQuery's in Suspense mode", () => {
 
         retry: false,
         suspense: true,
-        throwErrors: (err) => err.message !== 'Local Error',
+        throwOnError: (err) => err.message !== 'Local Error',
       }))
 
       // read state.data to trigger suspense.

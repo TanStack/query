@@ -3,11 +3,11 @@
 // in solid-js/web package. I'll create a GitHub issue with them to see
 // why that happens.
 import type {
-  QueryClient,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
+import type { QueryClient } from './QueryClient'
 import { hydrate } from '@tanstack/query-core'
 import { notifyManager } from '@tanstack/query-core'
 import type { Accessor } from 'solid-js'
@@ -19,10 +19,27 @@ import {
   on,
   onCleanup,
 } from 'solid-js'
-import { createStore, unwrap } from 'solid-js/store'
+import { createStore, reconcile, unwrap } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
 import type { CreateBaseQueryOptions } from './types'
 import { shouldThrowError } from './utils'
+
+function reconcileFn<TData, TError>(
+  store: QueryObserverResult<TData, TError>,
+  result: QueryObserverResult<TData, TError>,
+  reconcileOption:
+    | string
+    | false
+    | ((oldData: TData | undefined, newData: TData) => TData),
+): QueryObserverResult<TData, TError> {
+  if (reconcileOption === false) return result
+  if (typeof reconcileOption === 'function') {
+    const newData = reconcileOption(store.data, result.data as TData)
+    return { ...result, data: newData } as typeof result
+  }
+  const newData = reconcile(result.data, { key: reconcileOption })(store.data)
+  return { ...result, data: newData } as typeof result
+}
 
 // Base Query Function that is used to create the query.
 export function createBaseQuery<
@@ -42,9 +59,10 @@ export function createBaseQuery<
 
   const defaultedOptions = client().defaultQueryOptions(options())
   defaultedOptions._optimisticResults = 'optimistic'
+  defaultedOptions.structuralSharing = false
   if (isServer) {
     defaultedOptions.retry = false
-    defaultedOptions.throwErrors = true
+    defaultedOptions.throwOnError = true
   }
   const observer = new Observer(client(), defaultedOptions)
 
@@ -73,8 +91,9 @@ export function createBaseQuery<
           // copying over the missing properties from state in order to support hydration
           dataUpdateCount: query.state.dataUpdateCount,
           fetchFailureCount: query.state.fetchFailureCount,
-          fetchFailureReason: query.state.fetchFailureReason,
-          fetchMeta: query.state.fetchMeta,
+          // Removing these properties since they might not be serializable
+          // fetchFailureReason: query.state.fetchFailureReason,
+          // fetchMeta: query.state.fetchMeta,
           isInvalidated: query.state.isInvalidated,
         }
 
@@ -96,18 +115,28 @@ export function createBaseQuery<
   const createClientSubscriber = () => {
     return observer.subscribe((result) => {
       notifyManager.batchCalls(() => {
-        const unwrappedResult = { ...unwrap(result) }
+        // @ts-expect-error - This will error because the reconcile option does not
+        // exist on the query-core QueryObserverResult type
+        const reconcileOptions = observer.options.reconcile
         // If the query has data we dont suspend but instead mutate the resource
         // This could happen when placeholderData/initialData is defined
-        if (
-          queryResource()?.data &&
-          unwrappedResult.data &&
-          !queryResource.loading
-        ) {
-          setState(unwrappedResult)
+        if (queryResource()?.data && result.data && !queryResource.loading) {
+          setState((store) => {
+            return reconcileFn(
+              store,
+              result,
+              reconcileOptions === undefined ? 'id' : reconcileOptions,
+            )
+          })
           mutate(state)
         } else {
-          setState(unwrappedResult)
+          setState((store) => {
+            return reconcileFn(
+              store,
+              result,
+              reconcileOptions === undefined ? 'id' : reconcileOptions,
+            )
+          })
           refetch()
         }
       })()
@@ -212,7 +241,7 @@ export function createBaseQuery<
         if (
           state.isError &&
           !state.isFetching &&
-          shouldThrowError(observer.options.throwErrors, [
+          shouldThrowError(observer.options.throwOnError, [
             state.error,
             observer.getCurrentQuery(),
           ])

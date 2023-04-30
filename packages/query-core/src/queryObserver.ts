@@ -17,11 +17,11 @@ import type {
   QueryOptions,
   RefetchOptions,
 } from './types'
-import type { Query, QueryState, Action, FetchOptions } from './query'
+import type { Query, QueryState, FetchOptions } from './query'
 import type { QueryClient } from './queryClient'
 import { focusManager } from './focusManager'
 import { Subscribable } from './subscribable'
-import { canFetch, isCancelledError } from './retryer'
+import { canFetch } from './retryer'
 
 type QueryObserverListener<TData, TError> = (
   result: QueryObserverResult<TData, TError>,
@@ -29,8 +29,6 @@ type QueryObserverListener<TData, TError> = (
 
 export interface NotifyOptions {
   listeners?: boolean
-  onError?: boolean
-  onSuccess?: boolean
 }
 
 export interface ObserverFetchOptions extends FetchOptions {
@@ -64,10 +62,12 @@ export class QueryObserver<
     TQueryData,
     TQueryKey
   >
-  #previousQueryResult?: QueryObserverResult<TData, TError>
   #selectError: TError | null
   #selectFn?: (data: TQueryData) => TData
   #selectResult?: TData
+  // This property keeps track of the last defined query data.
+  // It will be used to pass the previous data to the placeholder function between renders.
+  #lastDefinedQueryData?: TQueryData
   #staleTimeoutId?: ReturnType<typeof setTimeout>
   #refetchIntervalId?: ReturnType<typeof setInterval>
   #currentRefetchInterval?: number | false
@@ -342,12 +342,14 @@ export class QueryObserver<
   }
 
   #computeRefetchInterval() {
-    return typeof this.options.refetchInterval === 'function'
-      ? this.options.refetchInterval(
-          this.#currentResult.data,
-          this.#currentQuery,
-        )
-      : this.options.refetchInterval ?? false
+    return (
+      (typeof this.options.refetchInterval === 'function'
+        ? this.options.refetchInterval(
+            this.#currentResult.data,
+            this.#currentQuery,
+          )
+        : this.options.refetchInterval) ?? false
+    )
   }
 
   #updateRefetchInterval(nextInterval: number | false): void {
@@ -414,9 +416,6 @@ export class QueryObserver<
     const queryInitialState = queryChange
       ? query.state
       : this.#currentQueryInitialState
-    const prevQueryResult = queryChange
-      ? this.#currentResult
-      : this.#previousQueryResult
 
     const { state } = query
     let { error, errorUpdatedAt, fetchStatus, status } = state
@@ -490,7 +489,7 @@ export class QueryObserver<
           typeof options.placeholderData === 'function'
             ? (
                 options.placeholderData as unknown as PlaceholderDataFunction<TQueryData>
-              )(prevQueryResult?.data as TQueryData | undefined)
+              )(this.#lastDefinedQueryData)
             : options.placeholderData
         if (options.select && typeof placeholderData !== 'undefined') {
           try {
@@ -504,7 +503,11 @@ export class QueryObserver<
 
       if (typeof placeholderData !== 'undefined') {
         status = 'success'
-        data = replaceData(prevResult?.data, placeholderData, options) as TData
+        data = replaceData(
+          prevResult?.data,
+          placeholderData as unknown,
+          options,
+        ) as TData
         isPlaceholderData = true
       }
     }
@@ -568,6 +571,9 @@ export class QueryObserver<
       return
     }
 
+    if (this.#currentResultState.data !== undefined) {
+      this.#lastDefinedQueryData = this.#currentResultState.data
+    }
     this.#currentResult = nextResult
 
     // Determine which callbacks to trigger
@@ -589,7 +595,7 @@ export class QueryObserver<
 
       const includedProps = new Set(notifyOnChangeProps ?? this.#trackedProps)
 
-      if (this.options.throwErrors) {
+      if (this.options.throwOnError) {
         includedProps.add('error')
       }
 
@@ -619,7 +625,6 @@ export class QueryObserver<
       | undefined
     this.#currentQuery = query
     this.#currentQueryInitialState = query.state
-    this.#previousQueryResult = this.#currentResult
 
     if (this.hasListeners()) {
       prevQuery?.removeObserver(this)
@@ -627,16 +632,8 @@ export class QueryObserver<
     }
   }
 
-  onQueryUpdate(action: Action<TData, TError>): void {
-    const notifyOptions: NotifyOptions = {}
-
-    if (action.type === 'success') {
-      notifyOptions.onSuccess = !action.manual
-    } else if (action.type === 'error' && !isCancelledError(action.error)) {
-      notifyOptions.onError = true
-    }
-
-    this.#updateResult(notifyOptions)
+  onQueryUpdate(): void {
+    this.#updateResult()
 
     if (this.hasListeners()) {
       this.#updateTimers()
@@ -645,16 +642,7 @@ export class QueryObserver<
 
   #notify(notifyOptions: NotifyOptions): void {
     notifyManager.batch(() => {
-      // First trigger the configuration callbacks
-      if (notifyOptions.onSuccess) {
-        this.options.onSuccess?.(this.#currentResult.data!)
-        this.options.onSettled?.(this.#currentResult.data, null)
-      } else if (notifyOptions.onError) {
-        this.options.onError?.(this.#currentResult.error!)
-        this.options.onSettled?.(undefined, this.#currentResult.error)
-      }
-
-      // Then trigger the listeners
+      // First, trigger the listeners
       if (notifyOptions.listeners) {
         this.listeners.forEach((listener) => {
           listener(this.#currentResult)

@@ -165,28 +165,28 @@ export class QueriesObserver<
     queries: QueryObserverOptions[],
   ): QueryObserverMatch[] {
     const prevObservers = this.#observers
+    const prevObserversMap = new Map(
+      prevObservers.map((observer) => [observer.options.queryHash, observer]),
+    )
+
     const defaultedQueryOptions = queries.map((options) =>
       this.#client.defaultQueryOptions(options),
     )
 
     const matchingObservers: QueryObserverMatch[] =
       defaultedQueryOptions.flatMap((defaultedOptions) => {
-        const match = prevObservers.find(
-          (observer) =>
-            observer.options.queryHash === defaultedOptions.queryHash,
-        )
+        const match = prevObserversMap.get(defaultedOptions.queryHash)
         if (match != null) {
           return [{ defaultedQueryOptions: defaultedOptions, observer: match }]
         }
         return []
       })
 
-    const matchedQueryHashes = matchingObservers.map(
-      (match) => match.defaultedQueryOptions.queryHash,
+    const matchedQueryHashes = new Set(
+      matchingObservers.map((match) => match.defaultedQueryOptions.queryHash),
     )
     const unmatchedQueries = defaultedQueryOptions.filter(
-      (defaultedOptions) =>
-        !matchedQueryHashes.includes(defaultedOptions.queryHash),
+      (defaultedOptions) => !matchedQueryHashes.has(defaultedOptions.queryHash),
     )
 
     const getObserver = (options: QueryObserverOptions): QueryObserver => {

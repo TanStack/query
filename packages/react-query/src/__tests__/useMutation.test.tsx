@@ -688,7 +688,7 @@ describe('useMutation', () => {
     fireEvent.click(getByText('unmount'))
   })
 
-  it('should be able to throw an error when throwErrors is set to true', async () => {
+  it('should be able to throw an error when throwOnError is set to true', async () => {
     const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
@@ -699,7 +699,7 @@ describe('useMutation', () => {
           err.stack = ''
           return Promise.reject(err)
         },
-        throwErrors: true,
+        throwOnError: true,
       })
 
       return (
@@ -735,7 +735,7 @@ describe('useMutation', () => {
     consoleMock.mockRestore()
   })
 
-  it('should be able to throw an error when throwErrors is a function that returns true', async () => {
+  it('should be able to throw an error when throwOnError is a function that returns true', async () => {
     const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
@@ -747,7 +747,7 @@ describe('useMutation', () => {
           err.stack = ''
           return Promise.reject(err)
         },
-        throwErrors: () => {
+        throwOnError: () => {
           boundary = !boundary
           return !boundary
         },
