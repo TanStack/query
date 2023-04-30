@@ -123,20 +123,6 @@ if (axios.isAxiosError(error)) {
 [typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPRTr2swBaAI458VALAAoUJFhx6AD2ARUpcpSqLlqCZKkw8YdHADi5ZGDgBeRHGAATAFxxGyEACNcRKVNYRm8CToMKwAFmYQFqo2ABQAlM4ACurAGAA8ERYA2gC6AHzWBVoqAHQA5sExVJxl5mA6cSUwoeiMMTyokMzGVgUdXRgl9vQMcT6SfgG2uORQRNYoGNi4eDFIIisA0uh4zllUtZH1VDkANHAb+ABijM5BIeF1qoRjkpyccJ9fAHoA-OPAEhwGLFVAlVIAQSUKgAolBZjEZtA4nFEFJPkioOi4O84H8pIQgA)
 [//]: # 'Playground6'
 
-A neat trick that also works is specifying an empty `onError` handler just to get type inference for the error field:
-
-```tsx
-import axios, { AxiosError } from 'axios'
-
-const { error } = useQuery({
-  queryKey: ['groups'],
-  queryFn: fetchGroups,
-  onError: (_error: AxiosError) => {},
-})
-error
-// ^? const error: AxiosError | null
-```
-
 ### Registering a global Error
 
 TanStack Query v5 allows for a way to set a global Error type for everything, without having to specify generics on call-sides, by amending the `Register` interface. This will make sure inference still works, but the error field will be of the specified type:
