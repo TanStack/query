@@ -712,7 +712,7 @@ importers:
     dependencies:
       '@solidjs/meta': 0.28.2_solid-js@1.6.16
       '@solidjs/router': 0.7.1_solid-js@1.6.16
-      '@tanstack/solid-query': link:../../../packages/solid-query
+      '@tanstack/solid-query': 5.0.0-alpha.26_solid-js@1.6.16
       solid-js: 1.6.16
       solid-start: 0.2.24_euxzheln45tfyr565dhf2xv3la
       undici: 5.20.0
@@ -993,7 +993,6 @@ importers:
       '@solid-primitives/resize-observer': ^2.0.15
       '@solid-primitives/storage': ^1.3.9
       '@tanstack/match-sorter-utils': ^8.8.4
-      '@tanstack/query-core': workspace:*
       solid-js: ^1.6.10
       solid-transition-group: ^0.2.2
       superjson: ^1.12.1
@@ -1004,7 +1003,6 @@ importers:
       '@solid-primitives/resize-observer': 2.0.15_solid-js@1.6.16
       '@solid-primitives/storage': 1.3.9_solid-js@1.6.16
       '@tanstack/match-sorter-utils': 8.8.4
-      '@tanstack/query-core': link:../query-core
       solid-js: 1.6.16
       solid-transition-group: 0.2.2_solid-js@1.6.16
       superjson: 1.12.3
@@ -7070,6 +7068,10 @@ packages:
     resolution: {integrity: sha512-Zrx2pVQUP4ndnsu6+K/m8zerXSVY8QM+YSbxA1/jbBY21GeCd5oKfYl92oXPK0hPEUtoNuunIdiq0ZMqLos+Zg==}
     dev: false
 
+  /@tanstack/query-core/5.0.0-alpha.26:
+    resolution: {integrity: sha512-vppYnb31rY8e6fBUuZ/VjuIpiaS3mkjFoD1u8gvdynmG0eHZOysJ1IbcKNEAT5QC9eJRsTHVqfitO9pKkZch4w==}
+    dev: false
+
   /@tanstack/query-persist-client-core/4.26.1:
     resolution: {integrity: sha512-gKO5VQuvNlMMTNSxRtB4tm3zGSx3/U9YluFkdumsHana9YMh3ngc76gUCbQZsnf5DDCwdI673F7A7oSphp/vgA==}
     dependencies:
@@ -7180,6 +7182,15 @@ packages:
       solid-js: 1.6.16
     dev: false
 
+  /@tanstack/solid-query/5.0.0-alpha.26_solid-js@1.6.16:
+    resolution: {integrity: sha512-dFozaqs1KECG+Xk591dUTw6yDCxyEs70lQ8TMDMAGrehwiRN8LiZ1IVdUF1VyF8Q+HWEGbDF+jwtyKBmYrZnoQ==}
+    peerDependencies:
+      solid-js: ^1.6.13
+    dependencies:
+      '@tanstack/query-core': 5.0.0-alpha.26
+      solid-js: 1.6.16
+    dev: false
+
   /@tanstack/svelte-query/4.26.1_svelte@3.55.0:
     resolution: {integrity: sha512-5w51/QUw8lZZ99wtCk+6gze3fBws6JTSrMAxb3bM0o6fdDCUuTXl4LTv41ZCPuhbTnzzlUNKzGPcJDiQ1fSxRQ==}
     peerDependencies:
@@ -7255,7 +7266,7 @@ packages:
     dependencies:
       '@adobe/css-tools': 4.1.0
       '@babel/runtime': 7.21.0
-      '@types/testing-library__jest-dom': 5.14.5_d573maxasnl5kxwdyzebcnmhpm
+      '@types/testing-library__jest-dom': 5.14.5
       aria-query: 5.1.3
       chalk: 3.0.0
       css.escape: 1.5.1
@@ -7575,13 +7586,6 @@ packages:
     dependencies:
       '@types/jest': 29.4.0
     dev: true
-
-  /@types/testing-library__jest-dom/5.14.5_d573maxasnl5kxwdyzebcnmhpm:
-    resolution: {integrity: sha512-SBwbxYoyPIvxHbeHxTZX2Pe/74F/tX2/D3mMvzabdeJ25bBojfW0TyB8BHrbq/9zaaKICJZjLP+8r6AeZMFCuQ==}
-    dependencies:
-      '@types/jest': 29.4.0
-    dev: true
-    patched: true
 
   /@types/yargs-parser/21.0.0:
     resolution: {integrity: sha512-iO9ZQHkZxHn4mSakYV0vFHAVDyEOIJQrV2uZ06HxEPcx+mt8swXoZHIbaaJ2crJYFfErySgktuTZ3BeLz+XmFA==}
