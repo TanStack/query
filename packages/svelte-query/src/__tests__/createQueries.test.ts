@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/svelte'
+import { render, waitFor } from '@testing-library/svelte'
 import CreateQueries from './CreateQueries.svelte'
 import { sleep } from './utils'
 
 describe('createQueries', () => {
   it('Render and wait for success', async () => {
-    render(CreateQueries, {
+    const rendered = render(CreateQueries, {
       props: {
         options: [
           {
@@ -26,12 +26,14 @@ describe('createQueries', () => {
       },
     })
 
-    expect(screen.queryByText('Success 1')).not.toBeInTheDocument()
-    expect(screen.queryByText('Success 2')).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(rendered.queryByText('Success 1')).not.toBeInTheDocument()
+      expect(rendered.queryByText('Success 2')).not.toBeInTheDocument()
+    })
 
-    await sleep(20)
-
-    expect(screen.queryByText('Success 1')).toBeInTheDocument()
-    expect(screen.queryByText('Success 2')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(rendered.queryByText('Success 1')).toBeInTheDocument()
+      expect(rendered.queryByText('Success 2')).toBeInTheDocument()
+    })
   })
 })
