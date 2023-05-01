@@ -26,6 +26,11 @@ export const packages: Package[] = [
   },
   { name: '@tanstack/react-query', packageDir: 'react-query', srcDir: 'src' },
   {
+    name: '@tanstack/query-devtools',
+    packageDir: 'query-devtools',
+    srcDir: 'src',
+  },
+  {
     name: '@tanstack/react-query-devtools',
     packageDir: 'react-query-devtools',
     srcDir: 'src',
