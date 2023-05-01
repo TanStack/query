@@ -61,7 +61,7 @@ export const packages: Package[] = [
     name: '@tanstack/svelte-query',
     packageDir: 'svelte-query',
     srcDir: 'src',
-    entries: [],
+    entries: ['module', 'svelte', 'types'],
   },
   {
     name: '@tanstack/vue-query',
