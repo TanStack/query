@@ -32,7 +32,7 @@ describe('createQuery', () => {
     const options: WritableOrVal<CreateQueryOptions> = writable({
       queryKey: ['test', [1]],
       queryFn: async ({ queryKey }) => {
-        await sleep(50)
+        await sleep(10)
         const ids = queryKey[1]
         if (!ids || !Array.isArray(ids)) return []
         return ids.map((id) => ({ id }))
@@ -41,24 +41,26 @@ describe('createQuery', () => {
     })
     const rendered = render(CreateQuery, { props: { options } })
 
-    expect(rendered.queryByText('id: 1')).not.toBeInTheDocument()
-    expect(rendered.queryByText('id: 2')).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(rendered.queryByText('id: 1')).not.toBeInTheDocument()
+      expect(rendered.queryByText('id: 2')).not.toBeInTheDocument()
+    })
 
-    await sleep(100)
-
-    expect(rendered.queryByText('id: 1')).toBeInTheDocument()
-    expect(rendered.queryByText('id: 2')).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(rendered.queryByText('id: 1')).toBeInTheDocument()
+      expect(rendered.queryByText('id: 2')).not.toBeInTheDocument()
+    })
 
     options.update((o) => ({ ...o, queryKey: ['test', [1, 2]] }))
 
-    await sleep(0)
+    await waitFor(() => {
+      expect(rendered.queryByText('id: 1')).toBeInTheDocument()
+      expect(rendered.queryByText('id: 2')).not.toBeInTheDocument()
+    })
 
-    expect(rendered.queryByText('id: 1')).toBeInTheDocument()
-    expect(rendered.queryByText('id: 2')).not.toBeInTheDocument()
-
-    await sleep(100)
-
-    expect(rendered.queryByText('id: 1')).toBeInTheDocument()
-    expect(rendered.queryByText('id: 2')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(rendered.queryByText('id: 1')).toBeInTheDocument()
+      expect(rendered.queryByText('id: 2')).toBeInTheDocument()
+    })
   })
 })
