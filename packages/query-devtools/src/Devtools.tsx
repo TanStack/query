@@ -355,6 +355,13 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
         )}
         onMouseDown={handleDragStart}
       ></div>
+      <button
+        aria-label="Close tanstack query devtools"
+        class={cx(styles.closeBtn, styles[`closeBtn-position-${position()}`])}
+        onClick={() => props.setLocalStore('open', 'false')}
+      >
+        <ChevronDown />
+      </button>
       <div
         ref={queriesContainerRef}
         // When the panels are stacked we use the height style
@@ -1169,7 +1176,6 @@ const getStyles = () => {
       z-index: 9999;
       display: flex;
       gap: ${tokens.size[0.5]};
-      overflow: hidden;
       & * {
         font-family: 'Inter', sans-serif;
         color: ${colors.gray[300]};
@@ -1221,6 +1227,115 @@ const getStyles = () => {
       top: 0;
       border-right: ${colors.darkGray[300]} 1px solid;
       max-width: 90%;
+    `,
+    closeBtn: css`
+      position: absolute;
+      cursor: pointer;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      outline: none;
+      &:hover {
+        background-color: ${colors.darkGray[500]};
+      }
+      &:focus-visible {
+        outline: 2px solid ${colors.blue[600]};
+      }
+    `,
+    'closeBtn-position-top': css`
+      bottom: 0;
+      right: ${size[3]};
+      transform: translate(0, 100%);
+      background-color: ${colors.darkGray[700]};
+      border-right: ${colors.darkGray[300]} 1px solid;
+      border-left: ${colors.darkGray[300]} 1px solid;
+      border-top: none;
+      border-bottom: ${colors.darkGray[300]} 1px solid;
+      border-radius: 0px 0px ${border.radius.sm} ${border.radius.sm};
+      padding: ${size[1.5]} ${size[2.5]} ${size[2]} ${size[2.5]};
+
+      &::after {
+        content: ' ';
+        position: absolute;
+        bottom: 100%;
+        left: -${size[2.5]};
+        height: ${size[1.5]};
+        width: calc(100% + ${size[5]});
+      }
+
+      & svg {
+        transform: rotate(180deg);
+      }
+    `,
+    'closeBtn-position-bottom': css`
+      top: 0;
+      right: ${size[3]};
+      transform: translate(0, -100%);
+      background-color: ${colors.darkGray[700]};
+      border-right: ${colors.darkGray[300]} 1px solid;
+      border-left: ${colors.darkGray[300]} 1px solid;
+      border-top: ${colors.darkGray[300]} 1px solid;
+      border-bottom: none;
+      border-radius: ${border.radius.sm} ${border.radius.sm} 0px 0px;
+      padding: ${size[2]} ${size[2.5]} ${size[1.5]} ${size[2.5]};
+
+      &::after {
+        content: ' ';
+        position: absolute;
+        top: 100%;
+        left: -${size[2.5]};
+        height: ${size[1.5]};
+        width: calc(100% + ${size[5]});
+      }
+    `,
+    'closeBtn-position-right': css`
+      bottom: ${size[3]};
+      left: 0;
+      transform: translate(-100%, 0);
+      background-color: ${colors.darkGray[700]};
+      border-right: none;
+      border-left: ${colors.darkGray[300]} 1px solid;
+      border-top: ${colors.darkGray[300]} 1px solid;
+      border-bottom: ${colors.darkGray[300]} 1px solid;
+      border-radius: ${border.radius.sm} 0px 0px ${border.radius.sm};
+      padding: ${size[2.5]} ${size[1]} ${size[2.5]} ${size[1.5]};
+
+      &::after {
+        content: ' ';
+        position: absolute;
+        left: 100%;
+        height: calc(100% + ${size[5]});
+        width: ${size[1.5]};
+      }
+
+      & svg {
+        transform: rotate(-90deg);
+      }
+    `,
+    'closeBtn-position-left': css`
+      bottom: ${size[3]};
+      right: 0;
+      transform: translate(100%, 0);
+      background-color: ${colors.darkGray[700]};
+      border-left: none;
+      border-right: ${colors.darkGray[300]} 1px solid;
+      border-top: ${colors.darkGray[300]} 1px solid;
+      border-bottom: ${colors.darkGray[300]} 1px solid;
+      border-radius: 0px ${border.radius.sm} ${border.radius.sm} 0px;
+      padding: ${size[2.5]} ${size[1.5]} ${size[2.5]} ${size[1]};
+
+      &::after {
+        content: ' ';
+        position: absolute;
+        right: 100%;
+        height: calc(100% + ${size[5]});
+        width: ${size[1.5]};
+      }
+
+      & svg {
+        transform: rotate(90deg);
+      }
     `,
     queriesContainer: css`
       flex: 1 1 700px;
