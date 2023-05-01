@@ -11,6 +11,13 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "main": "build/lib/index.js",
+  "exports": {
+    ".": {
+      "require": "./build/lib/index.js",
+      "default": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "clean": "rimraf ./build",
     "dev": "tsup --watch --sourcemap",

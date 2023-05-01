@@ -15,18 +15,11 @@ async function run() {
         path.resolve(rootDir, 'packages', pkg.packageDir, 'package.json'),
       )
 
-      const entries =
-        pkg.name === '@tanstack/eslint-plugin-query'
-          ? (['main'] as const)
-          : pkg.name === '@tanstack/svelte-query'
-          ? (['types', 'module'] as const)
-          : (['main', 'types', 'module'] as const)
-
       await Promise.all(
-        entries.map(async (entryKey) => {
-          const entry = pkgJson[entryKey] as string
+        pkg.entries.map(async (entryKey) => {
+          const entry = pkgJson[entryKey] as unknown
 
-          if (!entry) {
+          if (typeof entry !== 'string') {
             throw new Error(
               `Missing entry for "${entryKey}" in ${pkg.packageDir}/package.json!`,
             )
@@ -46,6 +39,27 @@ async function run() {
           }
         }),
       )
+      
+      const defaultExport = pkgJson.exports?.['.']?.['default'] as unknown
+
+      if (typeof defaultExport !== 'string') {
+        throw new Error(
+          `Missing exports['.']['default'] in ${pkg.packageDir}/package.json!`,
+        )
+      }
+
+      const filePath = path.resolve(
+        rootDir,
+        'packages',
+        pkg.packageDir,
+        defaultExport,
+      )
+
+      try {
+        await fsp.access(filePath)
+      } catch (err) {
+        failedValidations.push(`Missing build file: ${filePath}`)
+      }
     }),
   )
   console.info('')
