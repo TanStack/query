@@ -1362,6 +1362,7 @@ const getStyles = () => {
       background-color: ${colors.darkGray[700]};
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     `,
     dragHandle: css`
       position: absolute;
