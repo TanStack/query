@@ -47,3 +47,15 @@ opera >= 53
 ```
 
 > Depending on your environment, you might need to add polyfills. If you want to support older browsers, you need to transpile the library from `node_modules` yourselves.
+
+### Recommendations
+
+It is recommended to also use our [ESLint Plugin Query](./eslint/eslint-plugin-query) to help you catch bugs and inconsistencies while you code. You can install it via:
+
+```bash
+$ npm i -D @tanstack/eslint-plugin-query
+# or
+$ pnpm add -D @tanstack/eslint-plugin-query
+# or
+$ yarn add -D @tanstack/eslint-plugin-query
+```
