@@ -684,22 +684,10 @@ export const QueryStatusCount: Component = () => {
 export const QueryStatus: Component<QueryStatusProps> = (props) => {
   const styles = getStyles()
 
-  let tagRef!: HTMLDivElement
+  let tagRef!: HTMLButtonElement
 
   const [mouseOver, setMouseOver] = createSignal(false)
-
-  onMount(() => {
-    const mouseOverHandler = () => setMouseOver(true)
-    const mouseOutHandler = () => setMouseOver(false)
-
-    tagRef.addEventListener('mouseenter', mouseOverHandler)
-    tagRef.addEventListener('mouseleave', mouseOutHandler)
-
-    onCleanup(() => {
-      tagRef.removeEventListener('mouseenter', mouseOverHandler)
-      tagRef.removeEventListener('mouseleave', mouseOutHandler)
-    })
-  })
+  const [focused, setFocused] = createSignal(false)
 
   const showLabel = createMemo(() => {
     if (selectedQueryHash()) {
@@ -715,9 +703,41 @@ export const QueryStatus: Component<QueryStatusProps> = (props) => {
   })
 
   return (
-    <div ref={tagRef} class={styles.queryStatusTag}>
-      <Show when={!showLabel() && mouseOver()}>
-        <div class={cx(styles.statusTooltip)}>{props.label}</div>
+    <button
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      onMouseEnter={() => setMouseOver(true)}
+      onMouseLeave={() => {
+        setMouseOver(false)
+        setFocused(false)
+      }}
+      disabled={showLabel()}
+      ref={tagRef}
+      class={cx(
+        styles.queryStatusTag,
+        !showLabel()
+          ? css`
+              cursor: pointer;
+              &:hover {
+                background: ${tokens.colors.darkGray[400]}${tokens.alpha[80]};
+              }
+            `
+          : null,
+      )}
+      {...(mouseOver() || focused()
+        ? {
+            'aria-describedby': 'TSQD-status-tooltip',
+          }
+        : {})}
+    >
+      <Show when={!showLabel() && (mouseOver() || focused())}>
+        <div
+          role="tooltip"
+          id="TSQD-status-tooltip"
+          class={cx(styles.statusTooltip)}
+        >
+          {props.label}
+        </div>
       </Show>
       <span
         class={css`
@@ -745,7 +765,7 @@ export const QueryStatus: Component<QueryStatusProps> = (props) => {
       >
         {props.count}
       </span>
-    </div>
+    </button>
   )
 }
 
@@ -1423,7 +1443,6 @@ const getStyles = () => {
     `,
     queryStatusTag: css`
       display: flex;
-      cursor: pointer;
       gap: ${tokens.size[1.5]};
       background: ${colors.darkGray[500]};
       border-radius: ${tokens.border.radius.md};
@@ -1436,8 +1455,9 @@ const getStyles = () => {
       border: none;
       user-select: none;
       position: relative;
-      &:hover {
-        background: ${colors.darkGray[400]}${alpha[80]};
+      &:focus-visible {
+        outline-offset: 2px;
+        outline: 2px solid ${colors.blue[800]};
       }
       & span:nth-child(2) {
         color: ${colors.gray[300]}${alpha[80]};
