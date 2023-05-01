@@ -781,7 +781,7 @@ describe('createMutation', () => {
     fireEvent.click(screen.getByText('unmount'))
   })
 
-  it('should be able to throw an error when throwErrors is set to true', async () => {
+  it('should be able to throw an error when throwOnError is set to true', async () => {
     function Page() {
       const mutation = createMutation<string, Error>(() => ({
         mutationFn: () => {
@@ -789,7 +789,7 @@ describe('createMutation', () => {
           err.stack = ''
           return Promise.reject(err)
         },
-        throwErrors: true,
+        throwOnError: true,
       }))
 
       return (
@@ -820,7 +820,7 @@ describe('createMutation', () => {
     })
   })
 
-  it('should be able to throw an error when throwErrors is a function that returns true', async () => {
+  it('should be able to throw an error when throwOnError is a function that returns true', async () => {
     let boundary = false
     function Page() {
       const mutation = createMutation<string, Error>(() => ({
@@ -829,7 +829,7 @@ describe('createMutation', () => {
           err.stack = ''
           return Promise.reject(err)
         },
-        throwErrors: () => {
+        throwOnError: () => {
           boundary = !boundary
           return !boundary
         },

@@ -108,7 +108,7 @@ If you want to run it against `.js` or `.jsx` files, please use the command belo
 ```
 npx jscodeshift ./path/to/src/ \
   --extensions=js,jsx \
-  --transform=./node_modules/@tanstack/react-query/codemods/v5/remove-overloads/remove-overloads.js
+  --transform=./node_modules/@tanstack/react-query/build/codemods/v5/remove-overloads/remove-overloads.js
 ```
 
 If you want to run it against `.ts` or `.tsx` files, please use the command below:
@@ -117,7 +117,7 @@ If you want to run it against `.ts` or `.tsx` files, please use the command belo
 npx jscodeshift ./path/to/src/ \
   --extensions=ts,tsx \
   --parser=tsx \
-  --transform=./node_modules/@tanstack/react-query/codemods/v5/remove-overloads/remove-overloads.js
+  --transform=./node_modules/@tanstack/react-query/build/codemods/v5/remove-overloads/remove-overloads.js
 ```
 
 Please note in the case of `TypeScript` you need to use `tsx` as the parser; otherwise, the codemod won't be applied properly!
@@ -202,9 +202,9 @@ const queryClient = new QueryClient({
 })
 ```
 
-### The `useErrorBoundary` option has been renamed to `throwErrors`
+### The `useErrorBoundary` option has been renamed to `throwOnError`
 
-To make the `useErrorBoundary` option more framework-agnostic and avoid confusion with the established React function prefix "`use`" for hooks and the "ErrorBoundary" component name, it has been renamed to `throwErrors` to more accurately reflect its functionality.
+To make the `useErrorBoundary` option more framework-agnostic and avoid confusion with the established React function prefix "`use`" for hooks and the "ErrorBoundary" component name, it has been renamed to `throwOnError` to more accurately reflect its functionality.
 
 ### TypeScript: `Error` is now the default type for errors instead of `unknown`
 
@@ -439,16 +439,8 @@ You can adjust the `maxPages` value according to the UX and refetching performan
 
 Note that the infinite list must be bi-directional, which requires both `getNextPageParam` and `getPreviousPageParam` to be defined.
 
-### CreateStore
+### Typesafe way to create Query Options
 
-We are now exposing a way to customize how queries are stored internally. Per default, a `Map` is used but, with the new `createStore` function, you can now use any data structure you want.
-
-```ts
-const queryClient = new QueryClient({
-  queryCache: new QueryCache({
-    createStore: () => new Map()
-  }),
-})
-```
+See the [Typescript Docs](../typescript#typing-query-options) for more details.
 
 [//]: # 'NewFeatures'

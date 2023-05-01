@@ -38,7 +38,7 @@ describe('QueryErrorResetBoundary', () => {
             }
           },
           retry: false,
-          throwErrors: true,
+          throwOnError: true,
         })
         return <div>{data}</div>
       }
@@ -97,7 +97,7 @@ describe('QueryErrorResetBoundary', () => {
           },
           retry: false,
           enabled: !succeed,
-          throwErrors: true,
+          throwOnError: true,
         })
         return (
           <div>
@@ -163,7 +163,7 @@ describe('QueryErrorResetBoundary', () => {
           },
           retry: false,
           enabled,
-          throwErrors: true,
+          throwOnError: true,
         })
 
         React.useEffect(() => {
@@ -221,7 +221,7 @@ describe('QueryErrorResetBoundary', () => {
           },
           retry: false,
           enabled: false,
-          throwErrors: true,
+          throwOnError: true,
         })
 
         return (
@@ -289,7 +289,7 @@ describe('QueryErrorResetBoundary', () => {
             }
           },
           retry: false,
-          throwErrors: true,
+          throwOnError: true,
         })
         return <div>{data}</div>
       }
@@ -347,7 +347,7 @@ describe('QueryErrorResetBoundary', () => {
             }
           },
           retry: false,
-          throwErrors: true,
+          throwOnError: true,
           initialData: 'initial',
         })
         return <div>{data}</div>
@@ -408,7 +408,7 @@ describe('QueryErrorResetBoundary', () => {
             }
           },
           retry: false,
-          throwErrors: true,
+          throwOnError: true,
         })
         return <div>{data}</div>
       }
@@ -471,7 +471,7 @@ describe('QueryErrorResetBoundary', () => {
             throw new Error('Error')
           },
           retry: false,
-          throwErrors: true,
+          throwOnError: true,
         })
         return <div>{data}</div>
       }
@@ -624,7 +624,7 @@ describe('QueryErrorResetBoundary', () => {
             }
           },
           retry: false,
-          throwErrors: true,
+          throwOnError: true,
         })
         return <div>{data}</div>
       }
@@ -685,7 +685,7 @@ describe('QueryErrorResetBoundary', () => {
                 }
               },
               retry: false,
-              throwErrors: true,
+              throwOnError: true,
               retryOnMount: true,
             },
           ],
@@ -748,7 +748,7 @@ describe('QueryErrorResetBoundary', () => {
                 }
               },
               retry: false,
-              throwErrors: true,
+              throwOnError: true,
               retryOnMount: true,
               suspense: true,
             },

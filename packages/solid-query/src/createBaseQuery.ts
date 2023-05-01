@@ -62,7 +62,7 @@ export function createBaseQuery<
   defaultedOptions.structuralSharing = false
   if (isServer) {
     defaultedOptions.retry = false
-    defaultedOptions.throwErrors = true
+    defaultedOptions.throwOnError = true
   }
   const observer = new Observer(client(), defaultedOptions)
 
@@ -91,8 +91,9 @@ export function createBaseQuery<
           // copying over the missing properties from state in order to support hydration
           dataUpdateCount: query.state.dataUpdateCount,
           fetchFailureCount: query.state.fetchFailureCount,
-          fetchFailureReason: query.state.fetchFailureReason,
-          fetchMeta: query.state.fetchMeta,
+          // Removing these properties since they might not be serializable
+          // fetchFailureReason: query.state.fetchFailureReason,
+          // fetchMeta: query.state.fetchMeta,
           isInvalidated: query.state.isInvalidated,
         }
 
@@ -240,7 +241,7 @@ export function createBaseQuery<
         if (
           state.isError &&
           !state.isFetching &&
-          shouldThrowError(observer.options.throwErrors, [
+          shouldThrowError(observer.options.throwOnError, [
             state.error,
             observer.getCurrentQuery(),
           ])
