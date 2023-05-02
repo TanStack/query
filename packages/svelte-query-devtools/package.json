@@ -46,7 +46,8 @@
     "vite": "^4.0.0"
   },
   "dependencies": {
-    "@tanstack/query-devtools": "workspace:*"
+    "@tanstack/query-devtools": "workspace:*",
+    "@tanstack/svelte-query": "workspace:*"
   },
   "peerDependencies": {
     "@tanstack/svelte-query": "workspace:*",
