@@ -49,8 +49,14 @@ export type InitialDataFunction<T> = () => T | undefined
 
 type NonFunctionGuard<T> = T extends Function ? never : T
 
-export type PlaceholderDataFunction<TQueryData> = (
+export type PlaceholderDataFunction<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = (
   previousData: TQueryData | undefined,
+  previousQuery: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined,
 ) => TQueryData | undefined
 
 export type QueriesPlaceholderDataFunction<TQueryData> = () =>
