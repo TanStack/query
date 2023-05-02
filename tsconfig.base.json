@@ -22,11 +22,15 @@
     "baseUrl": ".",
     "paths": {
       "@tanstack/query-core": ["packages/query-core/src"],
-      "@tanstack/query-persist-client-core": ["packages/query-persist-client-core/src"],
+      "@tanstack/query-persist-client-core": [
+        "packages/query-persist-client-core/src"
+      ],
       "@tanstack/query-async-storage-persister": [
         "packages/query-async-storage-persister/src"
       ],
-      "@tanstack/query-broadcast-client-experimental": ["packages/query-broadcast-client-experimental/src"],
+      "@tanstack/query-broadcast-client-experimental": [
+        "packages/query-broadcast-client-experimental/src"
+      ],
       "@tanstack/query-sync-storage-persister": [
         "packages/query-sync-storage-persister/src"
       ],
@@ -37,6 +41,7 @@
       ],
       "@tanstack/solid-query": ["packages/solid-query/src"],
       "@tanstack/vue-query": ["packages/vue-query/src"],
+      "@tanstack/query-devtools": ["packages/query-devtools"]
     }
   }
 }
