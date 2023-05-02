@@ -30,9 +30,14 @@
     "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
   "include": ["src", "src/**/*.svelte"],
+  "paths": {
+    "@tanstack/query-core": ["../query-core/src"],
+    "@tanstack/query-devtools": ["../query-devtools/src"],
+    "@tanstack/svelte-query": ["../svelte-query/src"],
+  },
   "references": [
     { "path": "../query-core" },
-    { "path": "../svelte-query" },
-    { "path": "../query-devtools" }
+    { "path": "../query-devtools" },
+    { "path": "../svelte-query" }
   ]
 }
