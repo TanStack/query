@@ -10,15 +10,17 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "types": "./build/types/index.d.ts",
-  "main": "./build/umd/index.js",
-  "module": "./build/esm/index.js",
+  "types": "build/types/index.d.ts",
+  "main": "build/umd/index.js",
+  "module": "build/esm/index.js",
   "exports": {
     ".": {
+      "types": "./build/types/index.d.ts",
       "import": "./build/esm/index.js",
       "require": "./build/umd/index.js",
       "default": "./build/umd/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "clean": "rimraf ./build",
