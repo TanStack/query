@@ -15,7 +15,7 @@ export type {
   QueryClientConfig,
   InfiniteQueryObserverOptions,
 } from './QueryClient'
-export { createQuery } from './createQuery'
+export { createQuery, queryOptions } from './createQuery'
 export {
   QueryClientContext,
   QueryClientProvider,
