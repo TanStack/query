@@ -5,6 +5,7 @@ import type {
   QueriesPlaceholderDataFunction,
   QueryObserverResult,
   DefaultError,
+  QueriesObserverOptions,
 } from '@tanstack/query-core'
 
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
@@ -150,44 +151,56 @@ export type QueriesResults<
   : // Fallback
     QueryObserverResult[]
 
-export type CreateQueriesResult<T extends any[]> = Readable<QueriesResults<T>>
-
-export function createQueries<T extends any[]>(
+export function createQueries<
+  T extends any[],
+  TCombinedResult = QueriesResults<T>,
+>(
   {
     queries,
+    ...options
   }: {
     queries: WritableOrVal<[...QueriesOptions<T>]>
+    combine?: (result: QueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,
-): CreateQueriesResult<T> {
+): Readable<TCombinedResult> {
   const client = useQueryClient(queryClient)
   // const isRestoring = useIsRestoring()
 
   const queriesStore = isWritable(queries) ? queries : writable(queries)
 
   const defaultedQueriesStore = derived(queriesStore, ($queries) => {
-    return $queries.map((options) => {
-      const defaultedOptions = client.defaultQueryOptions(options)
+    return $queries.map((opts) => {
+      const defaultedOptions = client.defaultQueryOptions(opts)
       // Make sure the results are already in fetching state before subscribing or updating options
       defaultedOptions._optimisticResults = 'optimistic'
 
       return defaultedOptions
     })
   })
-  const observer = new QueriesObserver(client, get(defaultedQueriesStore))
+  const observer = new QueriesObserver<TCombinedResult>(
+    client,
+    get(defaultedQueriesStore),
+    options as QueriesObserverOptions<TCombinedResult>,
+  )
 
   defaultedQueriesStore.subscribe(($defaultedQueries) => {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
-    observer.setQueries($defaultedQueries, { listeners: false })
+    observer.setQueries(
+      $defaultedQueries,
+      options as QueriesObserverOptions<TCombinedResult>,
+      { listeners: false },
+    )
   })
 
-  const { subscribe } = readable(
-    observer.getOptimisticResult(get(defaultedQueriesStore)) as any,
-    (set) => {
-      return observer.subscribe(notifyManager.batchCalls(set))
-    },
+  const [, getCombinedResult] = observer.getOptimisticResult(
+    get(defaultedQueriesStore),
   )
+
+  const { subscribe } = readable(getCombinedResult() as any, (set) => {
+    return observer.subscribe(notifyManager.batchCalls(set))
+  })
 
   return { subscribe }
 }
