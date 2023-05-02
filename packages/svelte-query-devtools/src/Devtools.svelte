@@ -9,7 +9,7 @@
   } from '@tanstack/query-devtools'
   import { TanstackQueryDevtools } from '@tanstack/query-devtools'
 
-  export let initialIsOpen: boolean = false
+  export let initialIsOpen = false
   export let buttonPosition: DevtoolsButtonPosition = 'bottom-left'
   export let position: DevtoolsPosition = 'bottom'
   export let client: QueryClient = useQueryClient()
