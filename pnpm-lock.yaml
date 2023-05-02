@@ -712,7 +712,7 @@ importers:
     dependencies:
       '@solidjs/meta': 0.28.2_solid-js@1.6.16
       '@solidjs/router': 0.7.1_solid-js@1.6.16
-      '@tanstack/solid-query': 5.0.0-alpha.26_solid-js@1.6.16
+      '@tanstack/solid-query': link:../../../packages/solid-query
       solid-js: 1.6.16
       solid-start: 0.2.24_euxzheln45tfyr565dhf2xv3la
       undici: 5.20.0
@@ -993,6 +993,7 @@ importers:
       '@solid-primitives/resize-observer': ^2.0.15
       '@solid-primitives/storage': ^1.3.9
       '@tanstack/match-sorter-utils': ^8.8.4
+      '@tanstack/query-core': workspace:*
       solid-js: ^1.6.10
       solid-transition-group: ^0.2.2
       superjson: ^1.12.1
@@ -1007,6 +1008,7 @@ importers:
       solid-transition-group: 0.2.2_solid-js@1.6.16
       superjson: 1.12.3
     devDependencies:
+      '@tanstack/query-core': link:../query-core
       vite-plugin-solid: 2.6.1_solid-js@1.6.16
 
   packages/query-persist-client-core:
@@ -7068,10 +7070,6 @@ packages:
     resolution: {integrity: sha512-Zrx2pVQUP4ndnsu6+K/m8zerXSVY8QM+YSbxA1/jbBY21GeCd5oKfYl92oXPK0hPEUtoNuunIdiq0ZMqLos+Zg==}
     dev: false
 
-  /@tanstack/query-core/5.0.0-alpha.26:
-    resolution: {integrity: sha512-vppYnb31rY8e6fBUuZ/VjuIpiaS3mkjFoD1u8gvdynmG0eHZOysJ1IbcKNEAT5QC9eJRsTHVqfitO9pKkZch4w==}
-    dev: false
-
   /@tanstack/query-persist-client-core/4.26.1:
     resolution: {integrity: sha512-gKO5VQuvNlMMTNSxRtB4tm3zGSx3/U9YluFkdumsHana9YMh3ngc76gUCbQZsnf5DDCwdI673F7A7oSphp/vgA==}
     dependencies:
@@ -7179,15 +7177,6 @@ packages:
       solid-js: ^1.5.7
     dependencies:
       '@tanstack/query-core': 4.26.1
-      solid-js: 1.6.16
-    dev: false
-
-  /@tanstack/solid-query/5.0.0-alpha.26_solid-js@1.6.16:
-    resolution: {integrity: sha512-dFozaqs1KECG+Xk591dUTw6yDCxyEs70lQ8TMDMAGrehwiRN8LiZ1IVdUF1VyF8Q+HWEGbDF+jwtyKBmYrZnoQ==}
-    peerDependencies:
-      solid-js: ^1.6.13
-    dependencies:
-      '@tanstack/query-core': 5.0.0-alpha.26
       solid-js: 1.6.16
     dev: false
 
