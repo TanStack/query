@@ -30,12 +30,11 @@
     })
 
     devtools.mount(ref)
-    
+
     return () => {
       devtools.unmount()
     }
   })
-  
 </script>
 
 <div bind:this={ref} />
