@@ -5,11 +5,10 @@ export class Subscribable<TListener extends Function = Listener> {
 
   constructor() {
     this.listeners = []
-    this.subscribe = this.subscribe.bind(this)
   }
 
   subscribe(listener: TListener): () => void {
-    this.listeners.push(listener as TListener)
+    this.listeners.push(listener)
 
     this.onSubscribe()
 
