@@ -14,7 +14,6 @@ import {
 } from './utils'
 import type {
   DefinedUseQueryResult,
-  Query,
   QueryFunction,
   QueryFunctionContext,
   UseQueryOptions,
