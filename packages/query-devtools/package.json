@@ -16,7 +16,8 @@
   "exports": {
     ".": {
       "import": "./build/esm/index.js",
-      "require": "./build/umd/index.js"
+      "require": "./build/umd/index.js",
+      "default": "./build/umd/index.js"
     }
   },
   "scripts": {
