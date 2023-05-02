@@ -33,7 +33,8 @@
     "src"
   ],
   "devDependencies": {
-    "vite-plugin-solid": "^2.5.0"
+    "vite-plugin-solid": "^2.5.0",
+    "@tanstack/query-core": "workspace:*"
   },
   "dependencies": {
     "@emotion/css": "^11.10.5",
