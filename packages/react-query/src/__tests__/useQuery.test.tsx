@@ -14,6 +14,7 @@ import {
 } from './utils'
 import type {
   DefinedUseQueryResult,
+  Query,
   QueryFunction,
   QueryFunctionContext,
   UseQueryOptions,
@@ -1540,6 +1541,60 @@ describe('useQuery', () => {
       isSuccess: true,
       isPlaceholderData: false,
     })
+  })
+
+  it('should keep the previous queryKey (from prevQuery) between multiple pending queries when placeholderData is set and select fn transform is used', async () => {
+    const keys: Array<readonly unknown[] | null> = []
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+
+    function Page() {
+      const [count, setCount] = React.useState(0)
+
+      const state = useQuery({
+        queryKey: [key, count],
+        queryFn: async () => {
+          await sleep(10)
+          return {
+            count,
+          }
+        },
+        select(data) {
+          return data.count
+        },
+        placeholderData: (prevData, prevQuery) => {
+          if (prevQuery) {
+            keys.push(prevQuery.queryKey)
+          }
+          return prevData
+        },
+      })
+
+      states.push(state)
+
+      return (
+        <div>
+          <div>data: {state.data}</div>
+          <button onClick={() => setCount((prev) => prev + 1)}>setCount</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('data: 0'))
+
+    fireEvent.click(rendered.getByRole('button', { name: 'setCount' }))
+    fireEvent.click(rendered.getByRole('button', { name: 'setCount' }))
+    fireEvent.click(rendered.getByRole('button', { name: 'setCount' }))
+
+    await waitFor(() => rendered.getByText('data: 3'))
+
+    const allPreviousKeysAreTheFirstQueryKey = keys.every(
+      (k) => JSON.stringify(k) === JSON.stringify([key, 0]),
+    )
+
+    expect(allPreviousKeysAreTheFirstQueryKey).toBe(true)
   })
 
   it('should show placeholderData between multiple pending queries when select fn transform is used', async () => {
