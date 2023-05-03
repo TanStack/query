@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { DEV, BROWSER } from 'esm-env'
   import type { QueryClient } from '@tanstack/svelte-query'
   import { useQueryClient, onlineManager } from '@tanstack/svelte-query'
   import type {
@@ -7,7 +8,6 @@
     DevtoolsPosition,
     DevToolsErrorType,
   } from '@tanstack/query-devtools'
-  import { TanstackQueryDevtools } from '@tanstack/query-devtools'
 
   export let initialIsOpen = false
   export let buttonPosition: DevtoolsButtonPosition = 'bottom-left'
@@ -17,24 +17,27 @@
 
   let ref: HTMLDivElement
 
-  onMount(() => {
-    const devtools = new TanstackQueryDevtools({
-      client,
-      queryFlavor: 'Svelte Query',
-      version: '5',
-      onlineManager,
-      buttonPosition,
-      position,
-      initialIsOpen,
-      errorTypes,
+  if (DEV && BROWSER) {
+    onMount(async () => {
+      const { TanstackQueryDevtools } = await import('@tanstack/query-devtools')
+      const devtools = new TanstackQueryDevtools({
+        client,
+        queryFlavor: 'Svelte Query',
+        version: '5',
+        onlineManager,
+        buttonPosition,
+        position,
+        initialIsOpen,
+        errorTypes,
+      })
+
+      devtools.mount(ref)
+
+      return () => {
+        devtools.unmount()
+      }
     })
-
-    devtools.mount(ref)
-
-    return () => {
-      devtools.unmount()
-    }
-  })
+  }
 </script>
 
 <div bind:this={ref} />

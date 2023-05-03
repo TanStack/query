@@ -47,7 +47,8 @@
   },
   "dependencies": {
     "@tanstack/query-devtools": "workspace:*",
-    "@tanstack/svelte-query": "workspace:*"
+    "@tanstack/svelte-query": "workspace:*",
+    "esm-env": "^1.0.0"
   },
   "peerDependencies": {
     "@tanstack/svelte-query": "workspace:*",
