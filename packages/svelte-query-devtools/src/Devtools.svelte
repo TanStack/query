@@ -17,11 +17,12 @@
   export let errorTypes: DevToolsErrorType[] = []
 
   let ref: HTMLDivElement
-  let devtools: TanstackQueryDevtools;
+  let devtools: TanstackQueryDevtools
 
   if (DEV && BROWSER) {
     onMount(async () => {
-      const QueryDevtools = (await import('@tanstack/query-devtools')).TanstackQueryDevtools
+      const QueryDevtools = (await import('@tanstack/query-devtools'))
+        .TanstackQueryDevtools
       devtools = new QueryDevtools({
         client,
         queryFlavor: 'Svelte Query',
