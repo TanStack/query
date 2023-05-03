@@ -4,6 +4,7 @@
   import type { QueryClient } from '@tanstack/svelte-query'
   import { useQueryClient, onlineManager } from '@tanstack/svelte-query'
   import type {
+    TanstackQueryDevtools,
     DevtoolsButtonPosition,
     DevtoolsPosition,
     DevToolsErrorType,
@@ -16,11 +17,12 @@
   export let errorTypes: DevToolsErrorType[] = []
 
   let ref: HTMLDivElement
+  let devtools: TanstackQueryDevtools;
 
   if (DEV && BROWSER) {
     onMount(async () => {
-      const { TanstackQueryDevtools } = await import('@tanstack/query-devtools')
-      const devtools = new TanstackQueryDevtools({
+      const QueryDevtools = (await import('@tanstack/query-devtools')).TanstackQueryDevtools
+      devtools = new QueryDevtools({
         client,
         queryFlavor: 'Svelte Query',
         version: '5',
@@ -37,6 +39,15 @@
         devtools.unmount()
       }
     })
+  }
+
+  $: {
+    if (devtools) {
+      devtools.setButtonPosition(buttonPosition)
+      devtools.setPosition(position)
+      devtools.setInitialIsOpen(initialIsOpen)
+      devtools.setErrorTypes(errorTypes)
+    }
   }
 </script>
 
