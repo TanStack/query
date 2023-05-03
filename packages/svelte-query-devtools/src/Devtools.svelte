@@ -17,7 +17,7 @@
   export let errorTypes: DevToolsErrorType[] = []
 
   let ref: HTMLDivElement
-  let devtools: TanstackQueryDevtools
+  let devtools: TanstackQueryDevtools | undefined
 
   if (DEV && BROWSER) {
     onMount(async () => {
@@ -37,7 +37,7 @@
       devtools.mount(ref)
 
       return () => {
-        devtools.unmount()
+        devtools?.unmount()
       }
     })
   }
