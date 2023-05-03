@@ -1,3 +1,1 @@
-import Devtools from './Devtools.svelte'
-
-export const SvelteQueryDevtools = Devtools
+export { default as SvelteQueryDevtools } from './Devtools.svelte'
