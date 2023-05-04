@@ -25,10 +25,7 @@
     "strictNullChecks": true,
     "target": "esnext",
     "tsBuildInfoFile": "./build/.tsbuildinfo",
-    "types": ["vitest/globals", "@testing-library/jest-dom"],
-    "paths": {
-      "@tanstack/query-core": ["../query-core/src"]
-    }
+    "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
   "include": ["src", "src/**/*.svelte"]
 }

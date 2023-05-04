@@ -24,12 +24,7 @@
     "strict": true,
     "strictNullChecks": true,
     "target": "esnext",
-    "tsBuildInfoFile": "./build/.tsbuildinfo",
-    "paths": {
-      "@tanstack/query-core": ["../query-core/src"],
-      "@tanstack/query-devtools": ["../query-devtools/src"],
-      "@tanstack/svelte-query": ["../svelte-query/src"]
-    }
+    "tsBuildInfoFile": "./build/.tsbuildinfo"
   },
   "include": ["src", "src/**/*.svelte"]
 }
