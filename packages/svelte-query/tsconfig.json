@@ -3,7 +3,6 @@
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "checkJs": true,
-    "composite": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "importsNotUsedAsValues": "error",
@@ -20,15 +19,16 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "resolveJsonModule": true,
-    "rootDir": "./src",
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
     "strictNullChecks": true,
     "target": "esnext",
     "tsBuildInfoFile": "./build/.tsbuildinfo",
-    "types": ["vitest/globals", "@testing-library/jest-dom"]
+    "types": ["vitest/globals", "@testing-library/jest-dom"],
+    "paths": {
+      "@tanstack/query-core": ["../query-core/src"]
+    }
   },
-  "include": ["src", "src/**/*.svelte"],
-  "references": [{ "path": "../query-core" }]
+  "include": ["src", "src/**/*.svelte"]
 }
