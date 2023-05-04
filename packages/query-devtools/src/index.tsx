@@ -17,7 +17,7 @@ export type { DevtoolsButtonPosition, DevtoolsPosition, DevToolsErrorType }
 export interface TanstackQueryDevtoolsConfig extends QueryDevtoolsProps {}
 
 class TanstackQueryDevtools {
-  client: QueryClient
+  client: Signal<QueryClient>
   onlineManager: typeof TonlineManager
   queryFlavor: string
   version: string
@@ -39,7 +39,7 @@ class TanstackQueryDevtools {
       initialIsOpen,
       errorTypes,
     } = config
-    this.client = client
+    this.client = createSignal(client)
     this.queryFlavor = queryFlavor
     this.version = version
     this.onlineManager = onlineManager
@@ -65,6 +65,10 @@ class TanstackQueryDevtools {
     this.errorTypes[1](errorTypes)
   }
 
+  setClient(client: QueryClient) {
+    this.client[1](client)
+  }
+
   mount<T extends HTMLElement>(el: T) {
     if (this.isMounted) {
       throw new Error('Devtools is already mounted')
@@ -74,13 +78,16 @@ class TanstackQueryDevtools {
       const [pos] = this.position
       const [isOpen] = this.initialIsOpen
       const [errors] = this.errorTypes
+      const [queryClient] = this.client
       return (
         <DevtoolsComponent
-          client={this.client}
           queryFlavor={this.queryFlavor}
           version={this.version}
           onlineManager={this.onlineManager}
           {...{
+            get client() {
+              return queryClient()
+            },
             get buttonPosition() {
               return btnPosition()
             },
