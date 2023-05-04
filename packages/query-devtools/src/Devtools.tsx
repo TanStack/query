@@ -1844,7 +1844,7 @@ const getStyles = () => {
       background-color: ${colors.darkGray[400]};
       font-size: ${font.size.sm};
       color: ${colors.gray[500]};
-      z-index: 2;
+      z-index: 7;
     `,
     settingsMenuHeader: css`
       padding: ${tokens.size[1.5]} ${tokens.size[2.5]};
