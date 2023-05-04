@@ -33,7 +33,7 @@
   "paths": {
     "@tanstack/query-core": ["../query-core/src"],
     "@tanstack/query-devtools": ["../query-devtools/src"],
-    "@tanstack/svelte-query": ["../svelte-query/src"],
+    "@tanstack/svelte-query": ["../svelte-query/src"]
   },
   "references": [
     { "path": "../query-core" },

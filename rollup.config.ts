@@ -499,6 +499,10 @@ function createTanstackQueryDevtoolsConfig() {
   outputs.forEach((output) => {
     const format = output.format
     output.dir = `${packageDir}/build/${format}`
+    if (output.format === 'esm') {
+      output.dir = undefined
+      output.file = `${packageDir}/build/${format}/index.mjs`
+    }
   })
 
   solidRollupOptions.external = []

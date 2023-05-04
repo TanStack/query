@@ -12,7 +12,6 @@
     "lib": ["esnext", "DOM", "DOM.Iterable"],
     "moduleResolution": "node",
     "module": "esnext",
-    "noEmit": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,

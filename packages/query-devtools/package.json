@@ -12,11 +12,11 @@
   },
   "types": "build/types/index.d.ts",
   "main": "build/umd/index.js",
-  "module": "build/esm/index.js",
+  "module": "build/esm/index.mjs",
   "exports": {
     ".": {
       "types": "./build/types/index.d.ts",
-      "import": "./build/esm/index.js",
+      "import": "./build/esm/index.mjs",
       "require": "./build/umd/index.js",
       "default": "./build/umd/index.js"
     },
