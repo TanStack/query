@@ -173,10 +173,6 @@
               "to": "react/guides/testing"
             },
             {
-              "label": "Batching Requests",
-              "to": "react/guides/batching-requests"
-            },
-            {
               "label": "Does this replace [Redux, MobX, etc]?",
               "to": "react/guides/does-this-replace-client-state"
             },
@@ -196,6 +192,10 @@
             {
               "label": "TkDodo's Blog",
               "to": "react/community/tkdodos-blog"
+            },
+            {
+              "label": "Batching Requests",
+              "to": "react/community/batching-requests-using-bathshit"
             },
             {
               "label": "Query Key Factory",
