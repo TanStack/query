@@ -1,6 +1,6 @@
 ---
 id: batching-requests
-title: Caching Examples
+title: Batching Requests
 ---
 
 Many times we want to batch the requests a program(or component) does into one single request that fetches all the data items needed to execute(render) the program.

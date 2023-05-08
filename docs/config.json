@@ -173,6 +173,10 @@
               "to": "react/guides/testing"
             },
             {
+              "label": "Batching Requests",
+              "to": "react/guides/batching-requests"
+            },
+            {
               "label": "Does this replace [Redux, MobX, etc]?",
               "to": "react/guides/does-this-replace-client-state"
             },
