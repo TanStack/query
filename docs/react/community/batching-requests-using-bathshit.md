@@ -55,10 +55,10 @@ Finally lets define our user details component that consumes the hook we made.
 
 ```ts
 const UserDetails = (props: {userId: number}) => {
-  const {isFetching, data} = useUser(props.userId)
+  const {isLoading, data} = useUser(props.userId)
   return <>
     {
-      isFetching ? 
+      isLoading ? 
         <div>Loading user {props.userId}</div> 
       : 
         <div>
