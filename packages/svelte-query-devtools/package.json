@@ -1,0 +1,67 @@
+{
+  "name": "@tanstack/svelte-query-devtools",
+  "version": "4.29.5",
+  "description": "Developer tools to interact with and visualize the TanStack/svelte-query cache",
+  "author": "Pukar Sharma",
+  "license": "MIT",
+  "repository": "tanstack/query",
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "type": "module",
+  "module": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
+  "svelte": "./build/lib/index.js",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "svelte": "./build/lib/index.js"
+    }
+  },
+  "files": [
+    "build/lib",
+    "src",
+    "!build/lib/__tests__",
+    "!src/__tests__"
+  ],
+  "scripts": {
+    "dev": "vite dev",
+    "clean": "rimraf ./build/lib",
+    "test:types": "svelte-check --tsconfig ./tsconfig.json",
+    "test:eslint": "eslint --ext .svelte,.ts ./src",
+    "test:lib": "vitest run --coverage true",
+    "test:lib:dev": "vitest watch",
+    "format": "prettier --plugin-search-dir . --write . --ignore-path .gitignore",
+    "build": "svelte-kit sync && svelte-package -o build/lib && publint"
+  },
+  "dependencies": {
+    "@tanstack/match-sorter-utils": "^8.8.4",
+    "@tanstack/svelte-query": "^4.29.5",
+    "esm-env": "^1.0.0",
+    "superjson": "^1.12.3"
+  },
+  "peerDependencies": {
+    "svelte": "^3.54.0"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "^2.0.0",
+    "@sveltejs/kit": "^1.5.0",
+    "@sveltejs/package": "^2.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "eslint": "^8.28.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-svelte": "^2.26.0",
+    "prettier": "^2.8.0",
+    "prettier-plugin-svelte": "^2.8.1",
+    "publint": "^0.1.9",
+    "rimraf": "^5.0.0",
+    "svelte": "^3.54.0",
+    "svelte-check": "^3.0.1",
+    "typescript": "^5.0.0",
+    "vite": "^4.3.0",
+    "vitest": "^0.31.0"
+  }
+}
