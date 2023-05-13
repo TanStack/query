@@ -65,9 +65,9 @@ export class QueryObserver<
   #selectError: TError | null
   #selectFn?: (data: TQueryData) => TData
   #selectResult?: TData
-  // This property keeps track of the last defined query data.
-  // It will be used to pass the previous data to the placeholder function between renders.
-  #lastDefinedQueryData?: TQueryData
+  // This property keeps track of the last query with defined data.
+  // It will be used to pass the previous data and query to the placeholder function between renders.
+  #lastQueryWithDefinedData?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
   #staleTimeoutId?: ReturnType<typeof setTimeout>
   #refetchIntervalId?: ReturnType<typeof setInterval>
   #currentRefetchInterval?: number | false
@@ -489,7 +489,10 @@ export class QueryObserver<
           typeof options.placeholderData === 'function'
             ? (
                 options.placeholderData as unknown as PlaceholderDataFunction<TQueryData>
-              )(this.#lastDefinedQueryData)
+              )(
+                this.#lastQueryWithDefinedData?.state.data,
+                this.#lastQueryWithDefinedData as any,
+              )
             : options.placeholderData
         if (options.select && typeof placeholderData !== 'undefined') {
           try {
@@ -572,7 +575,7 @@ export class QueryObserver<
     }
 
     if (this.#currentResultState.data !== undefined) {
-      this.#lastDefinedQueryData = this.#currentResultState.data
+      this.#lastQueryWithDefinedData = this.#currentQuery
     }
     this.#currentResult = nextResult
 
