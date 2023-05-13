@@ -207,5 +207,5 @@ export function createQueries<
     )
   })
 
-  return state as TCombinedResult
+  return state
 }
