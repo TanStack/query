@@ -111,8 +111,6 @@ describe('useQueries', () => {
 
     await waitFor(() => rendered.getByText('data: 2'))
 
-    console.log(results)
-
     // only one render for data update, no render for isFetching transition
     expect(results.length).toBe(3)
 
