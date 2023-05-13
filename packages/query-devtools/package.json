@@ -1,0 +1,55 @@
+{
+  "name": "@tanstack/query-devtools",
+  "version": "5.0.0-alpha.30",
+  "description": "Developer tools to interact with and visualize the TanStack Query cache",
+  "author": "tannerlinsley",
+  "license": "MIT",
+  "repository": "tanstack/query",
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "types": "build/types/index.d.ts",
+  "main": "build/umd/index.js",
+  "module": "build/esm/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./build/types/index.d.ts",
+      "import": "./build/esm/index.mjs",
+      "require": "./build/umd/index.js",
+      "default": "./build/umd/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "clean": "rimraf ./build",
+    "test:eslint": "eslint --ext .ts,.tsx ./src",
+    "test:types": "tsc",
+    "test:lib": "vitest run --coverage",
+    "test:lib:dev": "pnpm run test:lib --watch",
+    "build:types": "tsc --build"
+  },
+  "files": [
+    "build",
+    "src"
+  ],
+  "devDependencies": {
+    "vite-plugin-solid": "^2.5.0",
+    "@tanstack/query-core": "workspace:*"
+  },
+  "dependencies": {
+    "@emotion/css": "^11.10.5",
+    "@solid-primitives/keyed": "^1.1.4",
+    "@solid-primitives/resize-observer": "^2.0.15",
+    "@solid-primitives/storage": "^1.3.9",
+    "@tanstack/match-sorter-utils": "^8.8.4",
+    "solid-js": "^1.6.10",
+    "solid-transition-group": "^0.2.2",
+    "superjson": "^1.12.1"
+  },
+  "peerDependencies": {
+    "@tanstack/query-core": "workspace:*"
+  },
+  "peerDependenciesMeta": {}
+}

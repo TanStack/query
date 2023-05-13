@@ -40,6 +40,12 @@ export const packages: Package[] = [
     entries: ['main', 'module', 'types'],
   },
   {
+    name: '@tanstack/query-devtools',
+    packageDir: 'query-devtools',
+    srcDir: 'src',
+    entries: ['main', 'module', 'types'],
+  },
+  {
     name: '@tanstack/react-query-devtools',
     packageDir: 'react-query-devtools',
     srcDir: 'src',
@@ -60,6 +66,12 @@ export const packages: Package[] = [
   {
     name: '@tanstack/svelte-query',
     packageDir: 'svelte-query',
+    srcDir: 'src',
+    entries: ['module', 'svelte', 'types'],
+  },
+  {
+    name: '@tanstack/svelte-query-devtools',
+    packageDir: 'svelte-query-devtools',
     srcDir: 'src',
     entries: ['module', 'svelte', 'types'],
   },
