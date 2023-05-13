@@ -1,4 +1,4 @@
-import { render, waitFor } from '@testing-library/react'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
@@ -69,6 +69,54 @@ describe('useQueries', () => {
     expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
     expect(results[1]).toMatchObject([{ data: 1 }, { data: undefined }])
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
+  })
+
+  it('should track results', async () => {
+    const key1 = queryKey()
+    const results: UseQueryResult[][] = []
+    let count = 0
+
+    function Page() {
+      const result = useQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: async () => {
+              await sleep(10)
+              count++
+              return count
+            },
+          },
+        ],
+      })
+      results.push(result)
+
+      return (
+        <div>
+          <div>data: {String(result[0].data ?? 'null')} </div>
+          <button onClick={() => result[0].refetch()}>refetch</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('data: 1'))
+
+    expect(results.length).toBe(2)
+    expect(results[0]).toMatchObject([{ data: undefined }])
+    expect(results[1]).toMatchObject([{ data: 1 }])
+
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+
+    await waitFor(() => rendered.getByText('data: 2'))
+
+    console.log(results)
+
+    // only one render for data update, no render for isFetching transition
+    expect(results.length).toBe(3)
+
+    expect(results[2]).toMatchObject([{ data: 2 }])
   })
 
   it('handles type parameter - tuple of tuples', async () => {
