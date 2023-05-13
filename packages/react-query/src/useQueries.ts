@@ -205,7 +205,7 @@ export function useQueries<
       ),
   )
 
-  const [optimisticResult, getCombinedResult] =
+  const [optimisticResult, getCombinedResult, trackResult] =
     observer.getOptimisticResult(defaultedQueries)
 
   React.useSyncExternalStore(
@@ -270,5 +270,5 @@ export function useQueries<
     throw firstSingleResultWhichShouldThrow.error
   }
 
-  return getCombinedResult()
+  return getCombinedResult(trackResult())
 }

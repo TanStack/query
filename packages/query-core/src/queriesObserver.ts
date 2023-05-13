@@ -146,7 +146,11 @@ export class QueriesObserver<
 
   getOptimisticResult(
     queries: QueryObserverOptions[],
-  ): [QueryObserverResult[], () => TCombinedResult] {
+  ): [
+    rawResult: QueryObserverResult[],
+    combineResult: (r?: QueryObserverResult[]) => TCombinedResult,
+    trackResult: () => QueryObserverResult[],
+  ] {
     const matches = this.#findMatchingObservers(queries)
     const result = matches.map((match) =>
       match.observer.getOptimisticResult(match.defaultedQueryOptions),
@@ -154,15 +158,16 @@ export class QueriesObserver<
 
     return [
       result,
+      (r?: QueryObserverResult[]) => {
+        return this.#combineResult(r ?? result)
+      },
       () => {
-        return this.#combineResult(
-          matches.map((match, index) => {
-            const observerResult = result[index]!
-            return !match.defaultedQueryOptions.notifyOnChangeProps
-              ? match.observer.trackResult(observerResult)
-              : observerResult
-          }),
-        )
+        return matches.map((match, index) => {
+          const observerResult = result[index]!
+          return !match.defaultedQueryOptions.notifyOnChangeProps
+            ? match.observer.trackResult(observerResult)
+            : observerResult
+        })
       },
     ]
   }
