@@ -1,4 +1,4 @@
-import { createQuery } from '../index'
+import { createQuery, queryOptions } from '../index'
 
 export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
   T,
@@ -25,6 +25,26 @@ describe('initialData', () => {
             wow: true,
           },
         }))
+
+        const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
+        return result
+      })
+    })
+
+    it('TData should be defined when passed through queryOptions', () => {
+      doNotExecute(() => {
+        const options = queryOptions(() => ({
+          queryKey: ['key'],
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          initialData: {
+            wow: true,
+          },
+        }))
+        const { data } = createQuery(options)
 
         const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
         return result

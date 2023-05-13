@@ -34,11 +34,16 @@ module.exports = {
   ].filter(Boolean),
   overrides: [
     {
-      exclude: ['./packages/solid-query/**', './packages/svelte-query/**', './packages/vue-query/**'],
+      exclude: [
+        './packages/solid-query/**',
+        './packages/query-devtools/**',
+        './packages/svelte-query/**',
+        './packages/vue-query/**',
+      ],
       presets: ['@babel/react'],
     },
     {
-      include: './packages/solid-query/**',
+      include: ['./packages/solid-query/**', './packages/query-devtools/**'],
       presets: ['babel-preset-solid'],
     },
   ],

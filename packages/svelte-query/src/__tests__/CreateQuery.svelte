@@ -1,11 +1,8 @@
 <script lang="ts">
-  import {
-    createQuery,
-    QueryClient,
-    type CreateQueryOptions,
-    type WritableOrVal,
-  } from '../index'
+  import { QueryClient } from '@tanstack/query-core'
   import { setQueryClientContext } from '../context'
+  import { createQuery } from '../createQuery'
+  import type { CreateQueryOptions, WritableOrVal } from '../types'
 
   export let options: WritableOrVal<CreateQueryOptions<any>>
 
