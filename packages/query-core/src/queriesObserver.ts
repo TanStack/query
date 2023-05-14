@@ -34,7 +34,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
   }
 
   protected onSubscribe(): void {
-    if (this.listeners.length === 1) {
+    if (this.listeners.size === 1) {
       this.observers.forEach((observer) => {
         observer.subscribe((result) => {
           this.onUpdate(observer, result)
@@ -44,13 +44,13 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
   }
 
   protected onUnsubscribe(): void {
-    if (!this.listeners.length) {
+    if (!this.listeners.size) {
       this.destroy()
     }
   }
 
   destroy(): void {
-    this.listeners = []
+    this.listeners = new Set()
     this.observers.forEach((observer) => {
       observer.destroy()
     })
@@ -209,7 +209,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
 
   private notify(): void {
     notifyManager.batch(() => {
-      this.listeners.forEach((listener) => {
+      this.listeners.forEach(({ listener }) => {
         listener(this.result)
       })
     })
