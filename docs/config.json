@@ -194,6 +194,10 @@
               "to": "react/community/tkdodos-blog"
             },
             {
+              "label": "Batching Requests",
+              "to": "react/community/batching-requests-using-bathshit"
+            },
+            {
               "label": "Query Key Factory",
               "to": "react/community/lukemorales-query-key-factory"
             },

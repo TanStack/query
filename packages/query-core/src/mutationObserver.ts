@@ -68,7 +68,7 @@ export class MutationObserver<
   }
 
   protected onUnsubscribe(): void {
-    if (!this.listeners.length) {
+    if (!this.hasListeners()) {
       this.#currentMutation?.removeObserver(this)
     }
   }

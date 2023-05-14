@@ -59,7 +59,7 @@ export class QueriesObserver<
   }
 
   protected onSubscribe(): void {
-    if (this.listeners.length === 1) {
+    if (this.listeners.size === 1) {
       this.#observers.forEach((observer) => {
         observer.subscribe((result) => {
           this.#onUpdate(observer, result)
@@ -69,13 +69,13 @@ export class QueriesObserver<
   }
 
   protected onUnsubscribe(): void {
-    if (!this.listeners.length) {
+    if (!this.listeners.size) {
       this.destroy()
     }
   }
 
   destroy(): void {
-    this.listeners = []
+    this.listeners = new Set()
     this.#observers.forEach((observer) => {
       observer.destroy()
     })
