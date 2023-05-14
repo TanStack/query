@@ -67,7 +67,7 @@ export class OnlineManager extends Subscribable {
   }
 
   onOnline(): void {
-    this.listeners.forEach((listener) => {
+    this.listeners.forEach(({ listener }) => {
       listener()
     })
   }

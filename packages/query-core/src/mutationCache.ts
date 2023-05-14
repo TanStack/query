@@ -154,7 +154,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 
   notify(event: MutationCacheNotifyEvent) {
     notifyManager.batch(() => {
-      this.listeners.forEach((listener) => {
+      this.listeners.forEach(({ listener }) => {
         listener(event)
       })
     })

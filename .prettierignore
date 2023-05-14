@@ -1,2 +1,3 @@
 /packages/svelte-query/.svelte-kit
+/packages/react-query/build
 /packages/codemods/**/__testfixtures__

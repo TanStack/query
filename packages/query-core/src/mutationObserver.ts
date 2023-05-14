@@ -68,7 +68,7 @@ export class MutationObserver<
   }
 
   protected onUnsubscribe(): void {
-    if (!this.listeners.length) {
+    if (!this.hasListeners()) {
       this.#currentMutation?.removeObserver(this)
     }
   }
@@ -159,7 +159,7 @@ export class MutationObserver<
       }
 
       // Then trigger the listeners
-      this.listeners.forEach((listener) => {
+      this.listeners.forEach(({ listener }) => {
         listener(this.#currentResult)
       })
     })

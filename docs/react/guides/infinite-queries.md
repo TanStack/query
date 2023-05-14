@@ -74,7 +74,7 @@ function Projects() {
     <>
       {data.pages.map((group, i) => (
         <React.Fragment key={i}>
-          {group.projects.map((project) => (
+          {group.data.map((project) => (
             <p key={project.id}>{project.name}</p>
           ))}
         </React.Fragment>
