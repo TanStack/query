@@ -647,7 +647,7 @@ export class QueryObserver<
     notifyManager.batch(() => {
       // First, trigger the listeners
       if (notifyOptions.listeners) {
-        this.listeners.forEach(({ listener }) => {
+        this.listeners.forEach((listener) => {
           listener(this.#currentResult)
         })
       }

@@ -159,7 +159,7 @@ export class MutationObserver<
       }
 
       // Then trigger the listeners
-      this.listeners.forEach(({ listener }) => {
+      this.listeners.forEach((listener) => {
         listener(this.#currentResult)
       })
     })

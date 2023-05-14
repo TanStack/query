@@ -199,7 +199,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
 
   #notify(): void {
     notifyManager.batch(() => {
-      this.listeners.forEach(({ listener }) => {
+      this.listeners.forEach((listener) => {
         listener(this.#result)
       })
     })
