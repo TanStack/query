@@ -53,5 +53,13 @@
     "import/no-unused-modules": ["off", { "unusedExports": true }],
     "no-redeclare": "off",
     "react-hooks/exhaustive-deps": "error"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.{ts,tsx}"],
+      "rules": {
+        "@typescript-eslint/no-unnecessary-condition": "off"
+      }
+    }
+  ]
 }
