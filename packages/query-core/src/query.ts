@@ -282,7 +282,7 @@ export class Query<
   }
 
   addObserver(observer: QueryObserver<any, any, any, any, any>): void {
-    if (this.observers.indexOf(observer) === -1) {
+    if (!this.observers.includes(observer)) {
       this.observers.push(observer)
 
       // Stop the query from being garbage collected
@@ -293,7 +293,7 @@ export class Query<
   }
 
   removeObserver(observer: QueryObserver<any, any, any, any, any>): void {
-    if (this.observers.indexOf(observer) !== -1) {
+    if (this.observers.includes(observer)) {
       this.observers = this.observers.filter((x) => x !== observer)
 
       if (!this.observers.length) {
