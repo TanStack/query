@@ -148,11 +148,11 @@ const {
 - `initialDataUpdatedAt: number | (() => number | undefined)`
   - Optional
   - If set, this value will be used as the time (in milliseconds) of when the `initialData` itself was last updated.
-- `placeholderData: TData | (previousValue: TData) => TData`
+- `placeholderData: TData | (previousValue: TData | undefined; previousQuery: Query | undefined,) => TData`
   - Optional
-  - If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `pending` data and no initialData has been provided.
+  - If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `pending` state.
   - `placeholderData` is **not persisted** to the cache
-  - If you provide a function for `placeholderData`, as a first argument you will receive previously watched query data if available
+  - If you provide a function for `placeholderData`, as a first argument you will receive previously watched query data if available, and the second argument will be the complete previousQuery instance.
 - `structuralSharing: boolean | ((oldData: TData | undefined, newData: TData) => TData)`
   - Optional
   - Defaults to `true`
