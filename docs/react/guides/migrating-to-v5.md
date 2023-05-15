@@ -441,6 +441,10 @@ Note that the infinite list must be bi-directional, which requires both `getNext
 
 ### Typesafe way to create Query Options
 
-See the [Typescript Docs](../typescript#typing-query-options) for more details.
+See the [TypeScript docs](../typescript#typing-query-options) for more details.
+
+### New `combine` option for `useQueries`
+
+See the [useQueries docs](../reference/useQueries#combine) for more details.
 
 [//]: # 'NewFeatures'
