@@ -848,4 +848,152 @@ describe('useQueries', () => {
 
     await waitFor(() => rendered.getByText('data: custom client'))
   })
+
+  it('should combine queries', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    function Page() {
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: key1,
+              queryFn: () => Promise.resolve('first result'),
+            },
+            {
+              queryKey: key2,
+              queryFn: () => Promise.resolve('second result'),
+            },
+          ],
+          combine: (results) => {
+            return {
+              combined: true,
+              res: results.map((res) => res.data).join(','),
+            }
+          },
+        },
+        queryClient,
+      )
+
+      return (
+        <div>
+          <div>
+            data: {String(queries.combined)} {queries.res}
+          </div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitFor(() =>
+      rendered.getByText('data: true first result,second result'),
+    )
+  })
+
+  it('should track property access through combine function', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    let count = 0
+    const results: Array<unknown> = []
+
+    function Page() {
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: key1,
+              queryFn: async () => {
+                await sleep(10)
+                return Promise.resolve('first result ' + count)
+              },
+            },
+            {
+              queryKey: key2,
+              queryFn: async () => {
+                await sleep(20)
+                return Promise.resolve('second result ' + count)
+              },
+            },
+          ],
+          combine: (queryResults) => {
+            return {
+              combined: true,
+              refetch: () => queryResults.forEach((res) => res.refetch()),
+              res: queryResults
+                .flatMap((res) => (res.data ? [res.data] : []))
+                .join(','),
+            }
+          },
+        },
+        queryClient,
+      )
+
+      results.push(queries)
+
+      return (
+        <div>
+          <div>
+            data: {String(queries.combined)} {queries.res}
+          </div>
+          <button onClick={() => queries.refetch()}>refetch</button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitFor(() =>
+      rendered.getByText('data: true first result 0,second result 0'),
+    )
+
+    expect(results.length).toBe(3)
+
+    expect(results[0]).toStrictEqual({
+      combined: true,
+      refetch: expect.any(Function),
+      res: '',
+    })
+
+    expect(results[1]).toStrictEqual({
+      combined: true,
+      refetch: expect.any(Function),
+      res: 'first result 0',
+    })
+
+    expect(results[2]).toStrictEqual({
+      combined: true,
+      refetch: expect.any(Function),
+      res: 'first result 0,second result 0',
+    })
+
+    count++
+
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+
+    await waitFor(() =>
+      rendered.getByText('data: true first result 1,second result 1'),
+    )
+
+    expect(results.length).toBe(5)
+
+    expect(results[3]).toStrictEqual({
+      combined: true,
+      refetch: expect.any(Function),
+      res: 'first result 1,second result 0',
+    })
+
+    expect(results[4]).toStrictEqual({
+      combined: true,
+      refetch: expect.any(Function),
+      res: 'first result 1,second result 1',
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+
+    await sleep(50)
+    // no further re-render because data didn't change
+    expect(results.length).toBe(5)
+  })
 })
