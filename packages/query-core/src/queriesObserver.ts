@@ -8,6 +8,7 @@ import type { QueryClient } from './queryClient'
 import type { NotifyOptions } from './queryObserver'
 import { QueryObserver } from './queryObserver'
 import { Subscribable } from './subscribable'
+import { replaceEqualDeep } from './utils'
 
 function difference<T>(array1: T[], array2: T[]): T[] {
   return array1.filter((x) => array2.indexOf(x) === -1)
@@ -21,23 +22,40 @@ function replaceAt<T>(array: T[], index: number, value: T): T[] {
 
 type QueriesObserverListener = (result: QueryObserverResult[]) => void
 
-export class QueriesObserver extends Subscribable<QueriesObserverListener> {
+export interface QueriesObserverOptions<
+  TCombinedResult = QueryObserverResult[],
+> {
+  combine?: (result: QueryObserverResult[]) => TCombinedResult
+}
+
+export class QueriesObserver<
+  TCombinedResult = QueryObserverResult[],
+> extends Subscribable<QueriesObserverListener> {
   #client: QueryClient
-  #result: QueryObserverResult[]
+  #result!: QueryObserverResult[]
   #queries: QueryObserverOptions[]
   #observers: QueryObserver[]
+  #options?: QueriesObserverOptions<TCombinedResult>
+  #combinedResult!: TCombinedResult
 
-  constructor(client: QueryClient, queries?: QueryObserverOptions[]) {
+  constructor(
+    client: QueryClient,
+    queries: QueryObserverOptions[],
+    options?: QueriesObserverOptions<TCombinedResult>,
+  ) {
     super()
 
     this.#client = client
     this.#queries = []
-    this.#result = []
     this.#observers = []
 
-    if (queries) {
-      this.setQueries(queries)
-    }
+    this.#setResult([])
+    this.setQueries(queries, options)
+  }
+
+  #setResult(value: QueryObserverResult[]) {
+    this.#result = value
+    this.#combinedResult = this.#combineResult(value)
   }
 
   protected onSubscribe(): void {
@@ -65,9 +83,11 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
 
   setQueries(
     queries: QueryObserverOptions[],
+    options?: QueriesObserverOptions<TCombinedResult>,
     notifyOptions?: NotifyOptions,
   ): void {
     this.#queries = queries
+    this.#options = options
 
     notifyManager.batch(() => {
       const prevObservers = this.#observers
@@ -92,7 +112,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
       }
 
       this.#observers = newObservers
-      this.#result = newResult
+      this.#setResult(newResult)
 
       if (!this.hasListeners()) {
         return
@@ -112,8 +132,8 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
     })
   }
 
-  getCurrentResult(): QueryObserverResult[] {
-    return this.#result
+  getCurrentResult(): TCombinedResult {
+    return this.#combinedResult
   }
 
   getQueries() {
@@ -124,10 +144,40 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
     return this.#observers
   }
 
-  getOptimisticResult(queries: QueryObserverOptions[]): QueryObserverResult[] {
-    return this.#findMatchingObservers(queries).map((match) =>
+  getOptimisticResult(
+    queries: QueryObserverOptions[],
+  ): [
+    rawResult: QueryObserverResult[],
+    combineResult: (r?: QueryObserverResult[]) => TCombinedResult,
+    trackResult: () => QueryObserverResult[],
+  ] {
+    const matches = this.#findMatchingObservers(queries)
+    const result = matches.map((match) =>
       match.observer.getOptimisticResult(match.defaultedQueryOptions),
     )
+
+    return [
+      result,
+      (r?: QueryObserverResult[]) => {
+        return this.#combineResult(r ?? result)
+      },
+      () => {
+        return matches.map((match, index) => {
+          const observerResult = result[index]!
+          return !match.defaultedQueryOptions.notifyOnChangeProps
+            ? match.observer.trackResult(observerResult)
+            : observerResult
+        })
+      },
+    ]
+  }
+
+  #combineResult(input: QueryObserverResult[]): TCombinedResult {
+    const combine = this.#options?.combine
+    if (combine) {
+      return replaceEqualDeep(this.#combinedResult, combine(input))
+    }
+    return input as any
   }
 
   #findMatchingObservers(
@@ -192,7 +242,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
   #onUpdate(observer: QueryObserver, result: QueryObserverResult): void {
     const index = this.#observers.indexOf(observer)
     if (index !== -1) {
-      this.#result = replaceAt(this.#result, index, result)
+      this.#setResult(replaceAt(this.#result, index, result))
       this.#notify()
     }
   }

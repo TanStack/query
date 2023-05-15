@@ -36,3 +36,4 @@ export type {
   DehydratedState,
   HydrateOptions,
 } from './hydration'
+export type { QueriesObserverOptions } from './queriesObserver'

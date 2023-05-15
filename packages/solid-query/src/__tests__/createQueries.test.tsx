@@ -672,7 +672,7 @@ describe('useQueries', () => {
     const QueriesObserverSpy = vi
       .spyOn(QueriesObserverModule, 'QueriesObserver')
       .mockImplementation((fn) => {
-        return new QueriesObserverMock(fn)
+        return new QueriesObserverMock(fn, [])
       })
 
     function Queries() {

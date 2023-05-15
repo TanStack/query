@@ -3,6 +3,7 @@ import { QueriesObserver } from '@tanstack/query-core'
 import type {
   QueriesPlaceholderDataFunction,
   QueryKey,
+  QueriesObserverOptions,
 } from '@tanstack/query-core'
 import type { Ref } from 'vue-demi'
 import { computed, onScopeDispose, readonly, ref, watch } from 'vue-demi'
@@ -145,19 +146,24 @@ export type UseQueriesResults<
 
 type UseQueriesOptionsArg<T extends any[]> = readonly [...UseQueriesOptions<T>]
 
-export function useQueries<T extends any[]>(
+export function useQueries<
+  T extends any[],
+  TCombinedResult = UseQueriesResults<T>,
+>(
   {
     queries,
+    ...options
   }: {
     queries: MaybeRefDeep<UseQueriesOptionsArg<T>>
+    combine?: (result: UseQueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,
-): Readonly<Ref<UseQueriesResults<T>>> {
+): Readonly<Ref<TCombinedResult>> {
   const client = queryClient || useQueryClient()
 
   const defaultedQueries = computed(() =>
-    cloneDeepUnref(queries).map((options) => {
-      const defaulted = client.defaultQueryOptions(options)
+    cloneDeepUnref(queries).map((queryOptions) => {
+      const defaulted = client.defaultQueryOptions(queryOptions)
       defaulted._optimisticResults = client.isRestoring.value
         ? 'isRestoring'
         : 'optimistic'
@@ -166,8 +172,15 @@ export function useQueries<T extends any[]>(
     }),
   )
 
-  const observer = new QueriesObserver(client, defaultedQueries.value)
-  const state = ref(observer.getCurrentResult())
+  const observer = new QueriesObserver<TCombinedResult>(
+    client,
+    defaultedQueries.value,
+    options as QueriesObserverOptions<TCombinedResult>,
+  )
+  const [, getCombinedResult] = observer.getOptimisticResult(
+    defaultedQueries.value,
+  )
+  const state = ref(getCombinedResult()) as Ref<TCombinedResult>
 
   const unsubscribe = ref(() => {
     // noop
@@ -178,20 +191,29 @@ export function useQueries<T extends any[]>(
     (isRestoring) => {
       if (!isRestoring) {
         unsubscribe.value()
-        unsubscribe.value = observer.subscribe((result) => {
-          state.value.splice(0, result.length, ...result)
+        unsubscribe.value = observer.subscribe(() => {
+          const [, getCombinedResultRestoring] = observer.getOptimisticResult(
+            defaultedQueries.value,
+          )
+          state.value = getCombinedResultRestoring()
         })
         // Subscription would not fire for persisted results
-        state.value = observer.getOptimisticResult(defaultedQueries.value)
+        const [, getCombinedResultPersisted] = observer.getOptimisticResult(
+          defaultedQueries.value,
+        )
+        state.value = getCombinedResultPersisted()
       }
     },
     { immediate: true },
   )
 
   watch(
-    defaultedQueries,
+    [defaultedQueries],
     () => {
-      observer.setQueries(defaultedQueries.value)
+      observer.setQueries(
+        defaultedQueries.value,
+        options as QueriesObserverOptions<TCombinedResult>,
+      )
       state.value = observer.getCurrentResult()
     },
     { deep: true },
@@ -201,5 +223,5 @@ export function useQueries<T extends any[]>(
     unsubscribe.value()
   })
 
-  return readonly(state) as Readonly<Ref<UseQueriesResults<T>>>
+  return readonly(state) as Readonly<Ref<TCombinedResult>>
 }

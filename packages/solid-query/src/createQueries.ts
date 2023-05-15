@@ -3,11 +3,12 @@ import type {
   QueryFunction,
   QueryKey,
   DefaultError,
+  QueriesObserverOptions,
 } from '@tanstack/query-core'
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
 import type { QueryClient } from './QueryClient'
 import type { Accessor } from 'solid-js'
-import { createComputed, onCleanup, onMount } from 'solid-js'
+import { createComputed, onCleanup } from 'solid-js'
 import { createStore, unwrap } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
 import type { CreateQueryResult, SolidQueryOptions } from './types'
@@ -148,12 +149,16 @@ export type QueriesResults<
   : // Fallback
     CreateQueryResult[]
 
-export function createQueries<T extends any[]>(
+export function createQueries<
+  T extends any[],
+  TCombinedResult = QueriesResults<T>,
+>(
   queriesOptions: Accessor<{
     queries: readonly [...QueriesOptions<T>]
+    combine?: (result: QueriesResults<T>) => TCombinedResult
   }>,
   queryClient?: Accessor<QueryClient>,
-): QueriesResults<T> {
+): TCombinedResult {
   const client = useQueryClient(queryClient?.())
 
   const defaultedQueries = queriesOptions().queries.map((options) => {
@@ -162,23 +167,28 @@ export function createQueries<T extends any[]>(
     return defaultedOptions
   })
 
-  const observer = new QueriesObserver(client, defaultedQueries)
+  const observer = new QueriesObserver(
+    client,
+    defaultedQueries,
+    queriesOptions().combine
+      ? ({
+          combine: queriesOptions().combine,
+        } as QueriesObserverOptions<TCombinedResult>)
+      : undefined,
+  )
 
-  const [state, setState] = createStore(
-    observer.getOptimisticResult(defaultedQueries),
+  // @ts-expect-error - Types issue with solid-js createStore
+  const [state, setState] = createStore<TCombinedResult>(
+    observer.getOptimisticResult(defaultedQueries)[1](),
   )
 
   const unsubscribe = observer.subscribe((result) => {
     notifyManager.batchCalls(() => {
-      setState(unwrap(result))
+      setState(unwrap(result) as unknown as TCombinedResult)
     })()
   })
 
   onCleanup(unsubscribe)
-
-  onMount(() => {
-    observer.setQueries(defaultedQueries, { listeners: false })
-  })
 
   createComputed(() => {
     const updatedQueries = queriesOptions().queries.map((options) => {
@@ -186,8 +196,16 @@ export function createQueries<T extends any[]>(
       defaultedOptions._optimisticResults = 'optimistic'
       return defaultedOptions
     })
-    observer.setQueries(updatedQueries)
+    observer.setQueries(
+      updatedQueries,
+      queriesOptions().combine
+        ? ({
+            combine: queriesOptions().combine,
+          } as QueriesObserverOptions<TCombinedResult>)
+        : undefined,
+      { listeners: false },
+    )
   })
 
-  return state as QueriesResults<T>
+  return state
 }

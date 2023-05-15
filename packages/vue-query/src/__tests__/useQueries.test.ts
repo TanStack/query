@@ -217,4 +217,40 @@ describe('useQueries', () => {
 
     expect(useQueryClient).toHaveBeenCalledTimes(0)
   })
+
+  test('should combine queries', async () => {
+    const firstResult = 'first result'
+    const secondResult = 'second result'
+
+    const queryClient = new QueryClient()
+    const queries = [
+      {
+        queryKey: ['key41'],
+        queryFn: getSimpleFetcherWithReturnData(firstResult),
+      },
+      {
+        queryKey: ['key42'],
+        queryFn: getSimpleFetcherWithReturnData(secondResult),
+      },
+    ]
+
+    const queriesResult = useQueries(
+      {
+        queries,
+        combine: (results) => {
+          return {
+            combined: true,
+            res: results.map((res) => res.data),
+          }
+        },
+      },
+      queryClient,
+    )
+    await flushPromises()
+
+    expect(queriesResult.value).toMatchObject({
+      combined: true,
+      res: [firstResult, secondResult],
+    })
+  })
 })

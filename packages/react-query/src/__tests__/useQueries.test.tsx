@@ -1,4 +1,4 @@
-import { render, waitFor } from '@testing-library/react'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
@@ -69,6 +69,52 @@ describe('useQueries', () => {
     expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
     expect(results[1]).toMatchObject([{ data: 1 }, { data: undefined }])
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
+  })
+
+  it('should track results', async () => {
+    const key1 = queryKey()
+    const results: UseQueryResult[][] = []
+    let count = 0
+
+    function Page() {
+      const result = useQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: async () => {
+              await sleep(10)
+              count++
+              return count
+            },
+          },
+        ],
+      })
+      results.push(result)
+
+      return (
+        <div>
+          <div>data: {String(result[0].data ?? 'null')} </div>
+          <button onClick={() => result[0].refetch()}>refetch</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('data: 1'))
+
+    expect(results.length).toBe(2)
+    expect(results[0]).toMatchObject([{ data: undefined }])
+    expect(results[1]).toMatchObject([{ data: 1 }])
+
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+
+    await waitFor(() => rendered.getByText('data: 2'))
+
+    // only one render for data update, no render for isFetching transition
+    expect(results.length).toBe(3)
+
+    expect(results[2]).toMatchObject([{ data: 2 }])
   })
 
   it('handles type parameter - tuple of tuples', async () => {
@@ -801,5 +847,153 @@ describe('useQueries', () => {
     const rendered = render(<Page></Page>)
 
     await waitFor(() => rendered.getByText('data: custom client'))
+  })
+
+  it('should combine queries', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    function Page() {
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: key1,
+              queryFn: () => Promise.resolve('first result'),
+            },
+            {
+              queryKey: key2,
+              queryFn: () => Promise.resolve('second result'),
+            },
+          ],
+          combine: (results) => {
+            return {
+              combined: true,
+              res: results.map((res) => res.data).join(','),
+            }
+          },
+        },
+        queryClient,
+      )
+
+      return (
+        <div>
+          <div>
+            data: {String(queries.combined)} {queries.res}
+          </div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitFor(() =>
+      rendered.getByText('data: true first result,second result'),
+    )
+  })
+
+  it('should track property access through combine function', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    let count = 0
+    const results: Array<unknown> = []
+
+    function Page() {
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: key1,
+              queryFn: async () => {
+                await sleep(10)
+                return Promise.resolve('first result ' + count)
+              },
+            },
+            {
+              queryKey: key2,
+              queryFn: async () => {
+                await sleep(20)
+                return Promise.resolve('second result ' + count)
+              },
+            },
+          ],
+          combine: (queryResults) => {
+            return {
+              combined: true,
+              refetch: () => queryResults.forEach((res) => res.refetch()),
+              res: queryResults
+                .flatMap((res) => (res.data ? [res.data] : []))
+                .join(','),
+            }
+          },
+        },
+        queryClient,
+      )
+
+      results.push(queries)
+
+      return (
+        <div>
+          <div>
+            data: {String(queries.combined)} {queries.res}
+          </div>
+          <button onClick={() => queries.refetch()}>refetch</button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitFor(() =>
+      rendered.getByText('data: true first result 0,second result 0'),
+    )
+
+    expect(results.length).toBe(3)
+
+    expect(results[0]).toStrictEqual({
+      combined: true,
+      refetch: expect.any(Function),
+      res: '',
+    })
+
+    expect(results[1]).toStrictEqual({
+      combined: true,
+      refetch: expect.any(Function),
+      res: 'first result 0',
+    })
+
+    expect(results[2]).toStrictEqual({
+      combined: true,
+      refetch: expect.any(Function),
+      res: 'first result 0,second result 0',
+    })
+
+    count++
+
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+
+    await waitFor(() =>
+      rendered.getByText('data: true first result 1,second result 1'),
+    )
+
+    expect(results.length).toBe(5)
+
+    expect(results[3]).toStrictEqual({
+      combined: true,
+      refetch: expect.any(Function),
+      res: 'first result 1,second result 0',
+    })
+
+    expect(results[4]).toStrictEqual({
+      combined: true,
+      refetch: expect.any(Function),
+      res: 'first result 1,second result 1',
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+
+    await sleep(50)
+    // no further re-render because data didn't change
+    expect(results.length).toBe(5)
   })
 })

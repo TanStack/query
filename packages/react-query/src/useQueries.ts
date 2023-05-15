@@ -7,6 +7,7 @@ import type {
   QueriesPlaceholderDataFunction,
   QueryClient,
   DefaultError,
+  QueriesObserverOptions,
 } from '@tanstack/query-core'
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
@@ -156,22 +157,27 @@ export type QueriesResults<
   : // Fallback
     UseQueryResult[]
 
-export function useQueries<T extends any[]>(
+export function useQueries<
+  T extends any[],
+  TCombinedResult = QueriesResults<T>,
+>(
   {
     queries,
+    ...options
   }: {
     queries: readonly [...QueriesOptions<T>]
+    combine?: (result: QueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,
-): QueriesResults<T> {
+): TCombinedResult {
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
 
   const defaultedQueries = React.useMemo(
     () =>
-      queries.map((options) => {
-        const defaultedOptions = client.defaultQueryOptions(options)
+      queries.map((opts) => {
+        const defaultedOptions = client.defaultQueryOptions(opts)
 
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = isRestoring
@@ -191,10 +197,16 @@ export function useQueries<T extends any[]>(
   useClearResetErrorBoundary(errorResetBoundary)
 
   const [observer] = React.useState(
-    () => new QueriesObserver(client, defaultedQueries),
+    () =>
+      new QueriesObserver<TCombinedResult>(
+        client,
+        defaultedQueries,
+        options as QueriesObserverOptions<TCombinedResult>,
+      ),
   )
 
-  const optimisticResult = observer.getOptimisticResult(defaultedQueries)
+  const [optimisticResult, getCombinedResult, trackResult] =
+    observer.getOptimisticResult(defaultedQueries)
 
   React.useSyncExternalStore(
     React.useCallback(
@@ -211,8 +223,14 @@ export function useQueries<T extends any[]>(
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
-    observer.setQueries(defaultedQueries, { listeners: false })
-  }, [defaultedQueries, observer])
+    observer.setQueries(
+      defaultedQueries,
+      options as QueriesObserverOptions<TCombinedResult>,
+      {
+        listeners: false,
+      },
+    )
+  }, [defaultedQueries, options, observer])
 
   const shouldAtLeastOneSuspend = optimisticResult.some((result, index) =>
     shouldSuspend(defaultedQueries[index], result, isRestoring),
@@ -220,14 +238,14 @@ export function useQueries<T extends any[]>(
 
   const suspensePromises = shouldAtLeastOneSuspend
     ? optimisticResult.flatMap((result, index) => {
-        const options = defaultedQueries[index]
+        const opts = defaultedQueries[index]
         const queryObserver = observer.getObservers()[index]
 
-        if (options && queryObserver) {
-          if (shouldSuspend(options, result, isRestoring)) {
-            return fetchOptimistic(options, queryObserver, errorResetBoundary)
+        if (opts && queryObserver) {
+          if (shouldSuspend(opts, result, isRestoring)) {
+            return fetchOptimistic(opts, queryObserver, errorResetBoundary)
           } else if (willFetch(result, isRestoring)) {
-            void fetchOptimistic(options, queryObserver, errorResetBoundary)
+            void fetchOptimistic(opts, queryObserver, errorResetBoundary)
           }
         }
         return []
@@ -252,5 +270,5 @@ export function useQueries<T extends any[]>(
     throw firstSingleResultWhichShouldThrow.error
   }
 
-  return optimisticResult as QueriesResults<T>
+  return getCombinedResult(trackResult())
 }
