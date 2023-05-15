@@ -48,7 +48,12 @@ export interface InfiniteData<TData> {
   pageParams: unknown[]
 }
 
-export interface QueryMeta {
+export interface QueryMeta<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> {
   [index: string]: unknown
 }
 
@@ -101,7 +106,7 @@ export interface QueryOptions<
    * Additional payload to be stored on each query.
    * Use this property to pass information that can be used in other places.
    */
-  meta?: QueryMeta
+  meta?: QueryMeta<TQueryFnData, TError, TData, TQueryKey>
 }
 
 export type UseErrorBoundary<
@@ -544,7 +549,12 @@ export type MutationKey = readonly unknown[]
 
 export type MutationStatus = 'idle' | 'loading' | 'success' | 'error'
 
-export interface MutationMeta {
+export interface MutationMeta<
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown,
+> {
   [index: string]: unknown
 }
 
@@ -585,7 +595,7 @@ export interface MutationOptions<
   networkMode?: NetworkMode
   cacheTime?: number
   _defaulted?: boolean
-  meta?: MutationMeta
+  meta?: MutationMeta<TData, TError, TVariables, TContext>
 }
 
 export interface MutationObserverOptions<
