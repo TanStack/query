@@ -549,10 +549,11 @@ export type MutationKey = readonly unknown[]
 
 export type MutationStatus = 'idle' | 'loading' | 'success' | 'error'
 
+// @ts-expect-error
 export interface MutationMeta<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown,
 > {
   [index: string]: unknown
