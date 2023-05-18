@@ -275,7 +275,7 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
     },
     {
-      name: 'should ignore constants defined out of scope (react component)',
+      name: 'should ignore constants defined out of scope (react component, function declaration)',
       code: `
         const CONST_VAL = 1
         function MyComponent() {
@@ -287,10 +287,58 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
     },
     {
-      name: 'should ignore constants defined out of scope (react hook)',
+      name: 'should ignore constants defined out of scope (react component, function expression)',
+      code: `
+        const CONST_VAL = 1
+        const MyComponent = () => {
+          useQuery({
+            queryKey: ["foo"],
+            queryFn: () => CONST_VAL
+          });
+        }
+      `,
+    },
+    {
+      name: 'should ignore constants defined out of scope (react component, anonymous function)',
+      code: `
+        const CONST_VAL = 1
+        const MyComponent = function () {
+          useQuery({
+            queryKey: ["foo"],
+            queryFn: () => CONST_VAL
+          });
+        }
+      `,
+    },
+    {
+      name: 'should ignore constants defined out of scope (react hook, function declaration)',
       code: `
         const CONST_VAL = 1
         function useHook() {
+          useQuery({
+            queryKey: ["foo"],
+            queryFn: () => CONST_VAL
+          });
+        }
+      `,
+    },
+    {
+      name: 'should ignore constants defined out of scope (react hook, function expression)',
+      code: `
+        const CONST_VAL = 1
+        const useHook = () => {
+          useQuery({
+            queryKey: ["foo"],
+            queryFn: () => CONST_VAL
+          });
+        }
+      `,
+    },
+    {
+      name: 'should ignore constants defined out of scope (react hook, anonymous function)',
+      code: `
+        const CONST_VAL = 1
+        const useHook = function () {
           useQuery({
             queryKey: ["foo"],
             queryFn: () => CONST_VAL

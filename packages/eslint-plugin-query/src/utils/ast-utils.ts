@@ -203,18 +203,29 @@ export const ASTUtils = {
       ]),
     )
   },
+  isValidReactComponentOrHookName(identifier: TSESTree.Identifier | null) {
+    return identifier !== null && /^(use|[A-Z])/.test(identifier.name)
+  },
   getReactComponentOrHookAncestor(
     context: Readonly<RuleContext<string, readonly unknown[]>>,
   ) {
     return context.getAncestors().find((x) => {
+      if (
+        x.type === AST_NODE_TYPES.FunctionDeclaration &&
+        ASTUtils.isValidReactComponentOrHookName(x.id)
+      ) {
+        return true
+      }
+
       return (
+        x.parent?.type === AST_NODE_TYPES.VariableDeclarator &&
+        x.parent.id.type === AST_NODE_TYPES.Identifier &&
         ASTUtils.isNodeOfOneOf(x, [
           AST_NODE_TYPES.FunctionDeclaration,
           AST_NODE_TYPES.FunctionExpression,
           AST_NODE_TYPES.ArrowFunctionExpression,
         ]) &&
-        x.id !== null &&
-        /^(use|[A-Z])/.test(x.id.name)
+        ASTUtils.isValidReactComponentOrHookName(x.parent.id)
       )
     }) as
       | TSESTree.FunctionDeclaration
