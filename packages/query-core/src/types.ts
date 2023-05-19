@@ -372,7 +372,9 @@ export interface FetchInfiniteQueryOptions<
       TQueryKey,
       TPageParam
     >,
-    DefaultPageParam<TPageParam> {}
+    DefaultPageParam<TPageParam> {
+  pages?: number
+}
 
 export interface ResultOptions {
   throwOnError?: boolean

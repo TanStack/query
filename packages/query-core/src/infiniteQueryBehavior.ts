@@ -7,11 +7,9 @@ import type {
   QueryKey,
 } from './types'
 
-export function infiniteQueryBehavior<
-  TQueryFnData,
-  TError,
-  TData,
->(): QueryBehavior<TQueryFnData, TError, InfiniteData<TData>> {
+export function infiniteQueryBehavior<TQueryFnData, TError, TData>(
+  pages?: number,
+): QueryBehavior<TQueryFnData, TError, InfiniteData<TData>> {
   return {
     onFetch: (context) => {
       context.fetchFn = async () => {
@@ -102,8 +100,10 @@ export function infiniteQueryBehavior<
             oldPageParams[0] ?? options.defaultPageParam,
           )
 
+          const remainingPages = pages ?? oldPages.length
+
           // Fetch remaining pages
-          for (let i = 1; i < oldPages.length; i++) {
+          for (let i = 1; i < remainingPages; i++) {
             const param = getNextPageParam(options, result)
             result = await fetchPage(result, param)
           }
