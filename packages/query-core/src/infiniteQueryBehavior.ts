@@ -84,13 +84,8 @@ export function infiniteQueryBehavior<
 
         let result: InfiniteData<unknown>
 
-        // Fetch first page?
-        if (!oldPages.length) {
-          result = await fetchPage(empty, options.defaultPageParam)
-        }
-
         // fetch next / previous page?
-        else if (direction) {
+        if (direction && oldPages.length) {
           const previous = direction === 'backward'
           const pageParamFn = previous ? getPreviousPageParam : getNextPageParam
           const oldData = {
@@ -100,12 +95,12 @@ export function infiniteQueryBehavior<
           const param = pageParamFn(options, oldData)
 
           result = await fetchPage(oldData, param, previous)
-        }
-
-        // Refetch pages
-        else {
+        } else {
           // Fetch first page
-          result = await fetchPage(empty, oldPageParams[0])
+          result = await fetchPage(
+            empty,
+            oldPageParams[0] ?? options.defaultPageParam,
+          )
 
           // Fetch remaining pages
           for (let i = 1; i < oldPages.length; i++) {
