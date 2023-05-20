@@ -1,8 +1,8 @@
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import path from 'path';
-import type { UserConfig } from 'vite';
+import { defineConfig } from 'vite';
 
-const config: UserConfig = {
+export default defineConfig({
   plugins: [svelte()],
   resolve: {
     alias: {
@@ -17,6 +17,4 @@ const config: UserConfig = {
     include: ['src/**/*.{test,spec}.{js,ts}'],
     setupFiles: ['vitest.setup.ts']
   }
-};
-
-export default config;
+});
