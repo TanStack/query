@@ -43,7 +43,7 @@
     "test:types": "tsc",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "build:types": "tsc --build && cp build/lib/index.d.ts build/lib/index.prod.d.ts"
+    "build:types": "tsc --build && node scripts/copy-types.js"
   },
   "devDependencies": {
     "@tanstack/react-query": "workspace:*",
