@@ -41,7 +41,7 @@
     "@expo/config": "^3.3.27",
     "@types/react-native": "~0.64.3",
     "babel-plugin-module-resolver": "^4.1.0",
-    "eslint": "^7.32.0",
+    "eslint": "^8.34.0",
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-prettier": "^4.0.0",
     "prettier": "^2.3.2",
