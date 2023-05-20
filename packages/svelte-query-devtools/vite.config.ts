@@ -1,8 +1,8 @@
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import path from 'path';
-import type { UserConfig } from 'vite';
+import { defineConfig } from 'vite';
 
-const config: UserConfig = {
+export default defineConfig({
   plugins: [svelte()],
   resolve: {
     alias: {
@@ -11,6 +11,4 @@ const config: UserConfig = {
       "@tanstack/svelte-query": path.resolve(__dirname, '..', 'svelte-query', 'src'),
     }
   }
-};
-
-export default config;
+});
