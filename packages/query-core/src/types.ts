@@ -359,22 +359,28 @@ export interface FetchQueryOptions<
   staleTime?: number
 }
 
-export interface FetchInfiniteQueryOptions<
+type FetchInfiniteQueryPages<TQueryFnData = unknown, TPageParam = unknown> =
+  | { pages?: never; getNextPageParam?: never }
+  | {
+      pages: number
+      getNextPageParam: GetNextPageParamFunction<TPageParam, TQueryFnData>
+    }
+
+export type FetchInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends FetchQueryOptions<
-      TQueryFnData,
-      TError,
-      InfiniteData<TData>,
-      TQueryKey,
-      TPageParam
-    >,
-    DefaultPageParam<TPageParam> {
-  pages?: number
-}
+> = FetchQueryOptions<
+  TQueryFnData,
+  TError,
+  InfiniteData<TData>,
+  TQueryKey,
+  TPageParam
+> &
+  DefaultPageParam<TPageParam> &
+  FetchInfiniteQueryPages<TQueryFnData, TPageParam>
 
 export interface ResultOptions {
   throwOnError?: boolean
