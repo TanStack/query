@@ -905,14 +905,14 @@ describe('useQueries', () => {
             {
               queryKey: key1,
               queryFn: async () => {
-                await sleep(10)
+                await sleep(5)
                 return Promise.resolve('first result ' + count)
               },
             },
             {
               queryKey: key2,
               queryFn: async () => {
-                await sleep(20)
+                await sleep(25)
                 return Promise.resolve('second result ' + count)
               },
             },
