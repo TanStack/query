@@ -5,7 +5,6 @@ import type {
   CreateMutateFunction,
   CreateMutationOptions,
   CreateMutationResult,
-  WritableOrVal,
 } from './types'
 import { useQueryClient } from './useQueryClient'
 import { isWritable } from './utils'
@@ -16,9 +15,7 @@ export function createMutation<
   TVariables = void,
   TContext = unknown,
 >(
-  options: WritableOrVal<
-    CreateMutationOptions<TData, TError, TVariables, TContext>
-  >,
+  options: CreateMutationOptions<TData, TError, TVariables, TContext>,
   queryClient?: QueryClient,
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
   const client = useQueryClient(queryClient)
