@@ -9,7 +9,6 @@ import { InfiniteQueryObserver } from '@tanstack/query-core'
 import type {
   CreateInfiniteQueryOptions,
   CreateInfiniteQueryResult,
-  WritableOrVal,
 } from './types'
 import { createBaseQuery } from './createBaseQuery'
 
@@ -20,15 +19,13 @@ export function createInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: WritableOrVal<
-    CreateInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryFnData,
-      TQueryKey,
-      TPageParam
-    >
+  options: CreateInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryFnData,
+    TQueryKey,
+    TPageParam
   >,
   queryClient?: QueryClient,
 ): CreateInfiniteQueryResult<TData, TError> {
