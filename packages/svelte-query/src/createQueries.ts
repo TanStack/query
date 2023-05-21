@@ -57,7 +57,12 @@ type GetOptions<T> =
         queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
         select: (data: any) => infer TData
       }
-    ? QueryObserverOptionsForCreateQueries<TQueryFnData, Error, TData, TQueryKey>
+    ? QueryObserverOptionsForCreateQueries<
+        TQueryFnData,
+        Error,
+        TData,
+        TQueryKey
+      >
     : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
     ? QueryObserverOptionsForCreateQueries<
         TQueryFnData,
@@ -119,7 +124,12 @@ export type QueriesOptions<
       infer TData,
       infer TQueryKey
     >[]
-  ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError, TData, TQueryKey>[]
+  ? QueryObserverOptionsForCreateQueries<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey
+    >[]
   : // Fallback
     QueryObserverOptionsForCreateQueries[]
 
