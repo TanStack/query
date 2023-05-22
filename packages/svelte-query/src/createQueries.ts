@@ -6,24 +6,25 @@ import type {
   QueryObserverResult,
   DefaultError,
   QueriesObserverOptions,
+  QueryObserverOptions,
 } from '@tanstack/query-core'
 
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
 import { derived, get, readable, writable, type Readable } from 'svelte/store'
 
-import type { CreateQueryOptions, WritableOrVal } from './types'
+import type { WritableOrVal } from './types'
 import { useQueryClient } from './useQueryClient'
 import { isWritable } from './utils'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter
-type CreateQueryOptionsForCreateQueries<
+type QueryObserverOptionsForCreateQueries<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = Omit<
-  CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
   'placeholderData'
 > & {
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
@@ -39,33 +40,38 @@ type GetOptions<T> =
     error?: infer TError
     data: infer TData
   }
-    ? CreateQueryOptionsForCreateQueries<TQueryFnData, TError, TData>
+    ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError, TData>
     : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
-    ? CreateQueryOptionsForCreateQueries<TQueryFnData, TError>
+    ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError>
     : T extends { data: infer TData; error?: infer TError }
-    ? CreateQueryOptionsForCreateQueries<unknown, TError, TData>
+    ? QueryObserverOptionsForCreateQueries<unknown, TError, TData>
     : // Part 2: responsible for applying explicit type parameter to function arguments, if tuple [TQueryFnData, TError, TData]
     T extends [infer TQueryFnData, infer TError, infer TData]
-    ? CreateQueryOptionsForCreateQueries<TQueryFnData, TError, TData>
+    ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError, TData>
     : T extends [infer TQueryFnData, infer TError]
-    ? CreateQueryOptionsForCreateQueries<TQueryFnData, TError>
+    ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError>
     : T extends [infer TQueryFnData]
-    ? CreateQueryOptionsForCreateQueries<TQueryFnData>
+    ? QueryObserverOptionsForCreateQueries<TQueryFnData>
     : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
     T extends {
         queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
         select: (data: any) => infer TData
       }
-    ? CreateQueryOptionsForCreateQueries<TQueryFnData, Error, TData, TQueryKey>
+    ? QueryObserverOptionsForCreateQueries<
+        TQueryFnData,
+        Error,
+        TData,
+        TQueryKey
+      >
     : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
-    ? CreateQueryOptionsForCreateQueries<
+    ? QueryObserverOptionsForCreateQueries<
         TQueryFnData,
         Error,
         TQueryFnData,
         TQueryKey
       >
     : // Fallback
-      CreateQueryOptionsForCreateQueries
+      QueryObserverOptionsForCreateQueries
 
 type GetResults<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
@@ -101,7 +107,7 @@ export type QueriesOptions<
   Result extends any[] = [],
   Depth extends ReadonlyArray<number> = [],
 > = Depth['length'] extends MAXIMUM_DEPTH
-  ? CreateQueryOptionsForCreateQueries[]
+  ? QueryObserverOptionsForCreateQueries[]
   : T extends []
   ? []
   : T extends [infer Head]
@@ -112,15 +118,20 @@ export type QueriesOptions<
   ? T
   : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
   // use this to infer the param types in the case of Array.map() argument
-  T extends CreateQueryOptionsForCreateQueries<
+  T extends QueryObserverOptionsForCreateQueries<
       infer TQueryFnData,
       infer TError,
       infer TData,
       infer TQueryKey
     >[]
-  ? CreateQueryOptionsForCreateQueries<TQueryFnData, TError, TData, TQueryKey>[]
+  ? QueryObserverOptionsForCreateQueries<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey
+    >[]
   : // Fallback
-    CreateQueryOptionsForCreateQueries[]
+    QueryObserverOptionsForCreateQueries[]
 
 /**
  * QueriesResults reducer recursively maps type param to results
@@ -137,7 +148,7 @@ export type QueriesResults<
   ? [...Result, GetResults<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesResults<[...Tail], [...Result, GetResults<Head>], [...Depth, 1]>
-  : T extends CreateQueryOptionsForCreateQueries<
+  : T extends QueryObserverOptionsForCreateQueries<
       infer TQueryFnData,
       infer TError,
       infer TData,
