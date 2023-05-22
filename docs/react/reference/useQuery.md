@@ -145,7 +145,7 @@ const {
   - Optional
   - This function will fire if the query encounters an error and will be passed the error.
 - `onSettled: (data?: TData, error?: TError) => void`
-- **Deprecated** - this callback will be removed in the next major version
+  - **Deprecated** - this callback will be removed in the next major version
   - Optional
   - This function will fire any time the query is either successfully fetched or errors and be passed either the data or error.
 - `select: (data: TData) => unknown`
