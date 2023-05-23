@@ -24,9 +24,8 @@ export function useIsMutating(
     status: 'pending' as const,
   }))
 
-  const length = computed(
-    () => useMutationState({ filters: unreffedFilters }, client).value.length,
-  )
+  const mutationState = useMutationState({ filters: unreffedFilters }, client)
+  const length = computed(() => mutationState.value.length)
 
   return length
 }
