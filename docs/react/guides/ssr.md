@@ -404,18 +404,20 @@ Fetch your data in a Server Component higher up in the component tree than the C
 
 ```tsx
 // app/hydratedPosts.jsx
-import { dehydrate, Hydrate } from '@tanstack/react-query'
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import getQueryClient from './getQueryClient'
 
 export default async function HydratedPosts() {
   const queryClient = getQueryClient()
-  await queryClient.prefetchQuery(['posts'], getPosts)
+  await queryClient.prefetchQuery({querykey:['posts'], queryFn:getPosts})
+  // for infinite queries with useInfiniteQuery use
+    // await queryClient.prefetchInfiniteQuery({queryKey:['posts'], queryFn:getPosts,...})
   const dehydratedState = dehydrate(queryClient)
 
   return (
-    <Hydrate state={dehydratedState}>
+    <HydrationBoundary state={dehydratedState}>
       <Posts />
-    </Hydrate>
+    </HydrationBoundary>
   )
 }
 ```
