@@ -409,6 +409,7 @@ import getQueryClient from './getQueryClient'
 
 export default async function HydratedPosts() {
   const queryClient = getQueryClient()
+  
   await queryClient.prefetchQuery({querykey:['posts'], queryFn:getPosts})
   // for infinite queries with useInfiniteQuery use
     // await queryClient.prefetchInfiniteQuery({queryKey:['posts'], queryFn:getPosts,...})
