@@ -7,7 +7,14 @@ import type { QueryFilters, QueryTypeFilter } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
 
-export interface Register {
+// @ts-expect-error unused arg
+export interface Register<
+  TQueryFnDataOrTData = unknown,
+  TError = unknown,
+  TDataOrTVariables = unknown,
+  TQueryKeyOrTContext = unknown,
+  TPageParam = never,
+> {
   // defaultError: Error
   // queryMeta: Record<string, unknown>
   // mutationMeta: Record<string, unknown>
@@ -85,7 +92,13 @@ export interface InfiniteData<TData> {
   pageParams: unknown[]
 }
 
-export type QueryMeta = Register extends {
+export type QueryMeta<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = never,
+> = Register<TQueryFnData, TError, TData, TQueryKey, TPageParam> extends {
   queryMeta: infer TQueryMeta
 }
   ? TQueryMeta extends Record<string, unknown>
@@ -137,7 +150,7 @@ export interface QueryOptions<
    * Additional payload to be stored on each query.
    * Use this property to pass information that can be used in other places.
    */
-  meta?: QueryMeta
+  meta?: QueryMeta<TQueryFnData, TError, TData, TQueryKey, TPageParam>
   /**
    * Maximum number of pages to store in the data of an infinite query.
    */
@@ -610,7 +623,12 @@ export type MutationKey = readonly unknown[]
 
 export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
 
-export type MutationMeta = Register extends {
+export type MutationMeta<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = unknown,
+  TContext = unknown,
+> = Register<TData, TError, TVariables, TContext> extends {
   mutationMeta: infer TMutationMeta
 }
   ? TMutationMeta
@@ -652,7 +670,7 @@ export interface MutationOptions<
   networkMode?: NetworkMode
   gcTime?: number
   _defaulted?: boolean
-  meta?: MutationMeta
+  meta?: MutationMeta<TData, TError, TVariables, TContext>
 }
 
 export interface MutationObserverOptions<
