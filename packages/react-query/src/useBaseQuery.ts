@@ -14,6 +14,7 @@ import {
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
 import { ensureStaleTime, shouldSuspend, fetchOptimistic } from './suspense'
+import { useLazyRef } from './useLazyRef'
 
 export function useBaseQuery<
   TQueryFnData,
@@ -65,37 +66,75 @@ export function useBaseQuery<
 
   useClearResetErrorBoundary(errorResetBoundary)
 
-  const [observer] = React.useState(
-    () =>
-      new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
-        queryClient,
-        defaultedOptions,
-      ),
-  )
+  /**
+   * It can take much time between useLazyRef and useSyncExternalStore callback.
+   * Let's assume, we have two components (A and B), with the same query inside.
+   * There is a potential situation, when the component B can subscribe to changes
+   * after these changes occured in the component A.
+   *
+   * You can get more info here: https://github.com/TanStack/query/issues/5443
+   */
+  const initiallyUnsubscribe = React.useRef<() => void>()
+  const needsToFlushStoreChange = React.useRef(false)
+  const observerRef = useLazyRef(() => {
+    const observer = new Observer<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >(queryClient, defaultedOptions)
 
-  const result = observer.getOptimisticResult(defaultedOptions)
+    initiallyUnsubscribe.current = observer.subscribe(() => {
+      needsToFlushStoreChange.current = true
+    })
+
+    return observer
+  })
+
+  const result = observerRef.current.getOptimisticResult(defaultedOptions)
 
   useSyncExternalStore(
     React.useCallback(
-      (onStoreChange) =>
-        isRestoring
-          ? () => undefined
-          : observer.subscribe(notifyManager.batchCalls(onStoreChange)),
-      [observer, isRestoring],
+      (onStoreChange) => {
+        if (isRestoring) {
+          return () => undefined
+        }
+
+        /**
+         * We have to call onStoreChange manually
+         * in case, if there were any notifies for the observer
+         * before the first useSyncExternalStore callback execution
+         */
+        if (needsToFlushStoreChange.current) {
+          needsToFlushStoreChange.current = false
+          onStoreChange()
+          initiallyUnsubscribe.current?.()
+        }
+
+        return observerRef.current.subscribe(
+          notifyManager.batchCalls(onStoreChange),
+        )
+      },
+      [isRestoring],
     ),
-    () => observer.getCurrentResult(),
-    () => observer.getCurrentResult(),
+    () => observerRef.current.getCurrentResult(),
+    () => observerRef.current.getCurrentResult(),
   )
 
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
-    observer.setOptions(defaultedOptions, { listeners: false })
-  }, [defaultedOptions, observer])
+    observerRef.current.setOptions(defaultedOptions, { listeners: false })
+  }, [defaultedOptions])
 
   // Handle suspense
   if (shouldSuspend(defaultedOptions, result, isRestoring)) {
-    throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
+    throw fetchOptimistic(
+      defaultedOptions,
+      observerRef.current,
+      errorResetBoundary,
+    )
   }
 
   // Handle error boundary
@@ -104,7 +143,7 @@ export function useBaseQuery<
       result,
       errorResetBoundary,
       useErrorBoundary: defaultedOptions.useErrorBoundary,
-      query: observer.getCurrentQuery(),
+      query: observerRef.current.getCurrentQuery(),
     })
   ) {
     throw result.error
@@ -112,6 +151,6 @@ export function useBaseQuery<
 
   // Handle result property usage tracking
   return !defaultedOptions.notifyOnChangeProps
-    ? observer.trackResult(result)
+    ? observerRef.current.trackResult(result)
     : result
 }
