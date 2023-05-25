@@ -14,7 +14,6 @@ importers:
       '@babel/preset-react': ^7.18.6
       '@babel/preset-typescript': ^7.18.6
       '@commitlint/parse': ^17.4.2
-      '@nrwl/nx-cloud': ^15.3.1
       '@rollup/plugin-babel': ^6.0.3
       '@rollup/plugin-commonjs': 24.0.1
       '@rollup/plugin-node-resolve': ^15.0.1
@@ -85,7 +84,6 @@ importers:
       '@babel/preset-react': 7.18.6_@babel+core@7.20.12
       '@babel/preset-typescript': 7.18.6_@babel+core@7.20.12
       '@commitlint/parse': 17.4.4
-      '@nrwl/nx-cloud': 15.3.1
       '@rollup/plugin-babel': 6.0.3_kr63qssm7gqzntdkv6nc73jyxi
       '@rollup/plugin-commonjs': 24.0.1_rollup@3.15.0
       '@rollup/plugin-node-resolve': 15.0.1_rollup@3.15.0
@@ -6336,22 +6334,6 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.13.0
 
-  /@nrwl/nx-cloud/15.3.1:
-    resolution: {integrity: sha512-6NMXtmRQLDv8MiXfVLnqi0+qkY7IUdo0FN7lKXZ0Inlzxoky1gvYRzcI1gXyGuw9Ma/t+gjCLXUQAnUGdovYog==}
-    hasBin: true
-    dependencies:
-      axios: 0.21.4
-      chalk: 4.1.0
-      dotenv: 10.0.0
-      fs-extra: 10.1.0
-      node-machine-id: 1.1.12
-      strip-json-comments: 3.1.1
-      tar: 6.1.11
-      yargs-parser: 21.1.1
-    transitivePeerDependencies:
-      - debug
-    dev: true
-
   /@nrwl/nx-cloud/16.0.5:
     resolution: {integrity: sha512-1p82ym8WE9ziejwgPslstn19iV/VkHfHfKr/5YOnfCHQS+NxUf92ogcYhHXtqWLblVZ9Zs4W4pkSXK4e04wCmQ==}
     dependencies:
@@ -8864,6 +8846,7 @@ packages:
       follow-redirects: 1.15.1_debug@4.3.4
     transitivePeerDependencies:
       - debug
+    dev: false
 
   /axios/0.24.0:
     resolution: {integrity: sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA==}
@@ -9512,14 +9495,6 @@ packages:
     dependencies:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
-
-  /chalk/4.1.0:
-    resolution: {integrity: sha512-qwx12AxXe2Q5xQ43Ac//I6v5aXTipYrSESdOgzrN+9XjgEpyjpKuvSGaN4qE93f7TQTlerQQ8S+EQ0EyDoVL1A==}
-    engines: {node: '>=10'}
-    dependencies:
-      ansi-styles: 4.3.0
-      supports-color: 7.2.0
-    dev: true
 
   /chalk/4.1.1:
     resolution: {integrity: sha512-diHzdDKxcU+bAsUboHLPEDQiw0qEe0qd7SYUn3HgcFlWgbDcfLGswOHYeGrHKzG9z6UYf01d9VFMfZxPM1xZSg==}
@@ -12222,15 +12197,6 @@ packages:
       jsonfile: 2.4.0
       klaw: 1.3.1
     dev: false
-
-  /fs-extra/10.1.0:
-    resolution: {integrity: sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==}
-    engines: {node: '>=12'}
-    dependencies:
-      graceful-fs: 4.2.10
-      jsonfile: 6.1.0
-      universalify: 2.0.0
-    dev: true
 
   /fs-extra/11.1.0:
     resolution: {integrity: sha512-0rcTq621PD5jM/e0a3EJoGC/1TC5ZBCERW82LQuwfGnCa1V8w7dpYH1yNu+SLb6E5dkeCBzKEyLGlFrnr+dUyw==}
