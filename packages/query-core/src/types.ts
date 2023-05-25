@@ -68,6 +68,7 @@ export interface QueryOptions<
    */
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
+  refetchInterval?: number;
   networkMode?: NetworkMode
   cacheTime?: number
   isDataEqual?: (oldData: TData | undefined, newData: TData) => boolean
