@@ -43,18 +43,13 @@ importers:
       eslint: ^8.34.0
       eslint-config-prettier: ^8.6.0
       eslint-config-react-app: ^7.0.1
-      eslint-config-standard: ^17.0.0
-      eslint-config-standard-react: ^13.0.0
       eslint-import-resolver-typescript: ^3.5.3
-      eslint-plugin-flowtype: 8.0.3
       eslint-plugin-import: ^2.27.5
       eslint-plugin-jsx-a11y: ^6.7.1
-      eslint-plugin-node: ^11.1.0
       eslint-plugin-prettier: ^4.2.1
       eslint-plugin-promise: ^6.1.1
       eslint-plugin-react: 7.32.2
       eslint-plugin-react-hooks: ^4.6.0
-      eslint-plugin-standard: ^5.0.0
       git-log-parser: ^1.2.0
       jsonfile: ^6.1.0
       luxon: ^3.2.1
@@ -113,18 +108,13 @@ importers:
       eslint: 8.34.0
       eslint-config-prettier: 8.6.0_eslint@8.34.0
       eslint-config-react-app: 7.0.1_d3h4du5hhxu4xm2mfwsbeklwpy
-      eslint-config-standard: 17.0.0_64lqc4abskaajyxyqyvzpvimeu
-      eslint-config-standard-react: 13.0.0_loxmahvyew7cryq7d67l7ot7zy
       eslint-import-resolver-typescript: 3.5.3_mvgyw3chnqkp6sgfmmtihyjpnm
-      eslint-plugin-flowtype: 8.0.3_eslint@8.34.0
       eslint-plugin-import: 2.27.5_2hqppaeqs2axgzqg6vttejknky
       eslint-plugin-jsx-a11y: 6.7.1_eslint@8.34.0
-      eslint-plugin-node: 11.1.0_eslint@8.34.0
       eslint-plugin-prettier: 4.2.1_u5wnrdwibbfomslmnramz52buy
       eslint-plugin-promise: 6.1.1_eslint@8.34.0
       eslint-plugin-react: 7.32.2_eslint@8.34.0
       eslint-plugin-react-hooks: 4.6.0_eslint@8.34.0
-      eslint-plugin-standard: 5.0.0_eslint@8.34.0
       git-log-parser: 1.2.0
       jsonfile: 6.1.0
       luxon: 3.2.1
@@ -11030,31 +11020,6 @@ packages:
       - supports-color
     dev: true
 
-  /eslint-config-standard-react/13.0.0_loxmahvyew7cryq7d67l7ot7zy:
-    resolution: {integrity: sha512-HrVPGj8UncHfV+BsdJTuJpVsomn6AIrke3Af2Fh4XFvQQDU+iO6N2ZL+UsC+scExft4fU3uf7fJwj7PKWnXJDA==}
-    peerDependencies:
-      eslint: ^8.8.0
-      eslint-plugin-react: ^7.28.0
-      eslint-plugin-react-hooks: ^4.6.0
-    dependencies:
-      eslint: 8.34.0
-      eslint-plugin-react: 7.32.2_eslint@8.34.0
-      eslint-plugin-react-hooks: 4.6.0_eslint@8.34.0
-    dev: true
-
-  /eslint-config-standard/17.0.0_64lqc4abskaajyxyqyvzpvimeu:
-    resolution: {integrity: sha512-/2ks1GKyqSOkH7JFvXJicu0iMpoojkwB+f5Du/1SC0PtBL+s8v30k9njRZ21pm2drKYm2342jFnGWzttxPmZVg==}
-    peerDependencies:
-      eslint: ^8.0.1
-      eslint-plugin-import: ^2.25.2
-      eslint-plugin-n: ^15.0.0
-      eslint-plugin-promise: ^6.0.0
-    dependencies:
-      eslint: 8.34.0
-      eslint-plugin-import: 2.27.5_2hqppaeqs2axgzqg6vttejknky
-      eslint-plugin-promise: 6.1.1_eslint@8.34.0
-    dev: true
-
   /eslint-import-resolver-alias/1.1.2:
     resolution: {integrity: sha512-WdviM1Eu834zsfjHtcGHtGfcu+F30Od3V7I9Fi57uhBEwPkjDcii7/yW8jAT+gOhn4P/vOxxNAXbFAKsrrc15w==}
     engines: {node: '>= 4'}
@@ -11149,17 +11114,6 @@ packages:
       eslint-import-resolver-typescript: 3.5.3_mvgyw3chnqkp6sgfmmtihyjpnm
     transitivePeerDependencies:
       - supports-color
-    dev: true
-
-  /eslint-plugin-es/3.0.1_eslint@8.34.0:
-    resolution: {integrity: sha512-GUmAsJaN4Fc7Gbtl8uOBlayo2DqhwWvEzykMHSCZHU3XdJ+NSzzZcVhXh3VxX5icqQ+oQdIEawXX8xkR3mIFmQ==}
-    engines: {node: '>=8.10.0'}
-    peerDependencies:
-      eslint: '>=4.19.1'
-    dependencies:
-      eslint: 8.34.0
-      eslint-utils: 2.1.0
-      regexpp: 3.2.0
     dev: true
 
   /eslint-plugin-flowtype/4.7.0_eslint@8.34.0:
@@ -11310,21 +11264,6 @@ packages:
       semver: 6.3.0
     dev: true
 
-  /eslint-plugin-node/11.1.0_eslint@8.34.0:
-    resolution: {integrity: sha512-oUwtPJ1W0SKD0Tr+wqu92c5xuCeQqB3hSCHasn/ZgjFdA9iDGNkNf2Zi9ztY7X+hNuMib23LNGRm6+uN+KLE3g==}
-    engines: {node: '>=8.10.0'}
-    peerDependencies:
-      eslint: '>=5.16.0'
-    dependencies:
-      eslint: 8.34.0
-      eslint-plugin-es: 3.0.1_eslint@8.34.0
-      eslint-utils: 2.1.0
-      ignore: 5.2.0
-      minimatch: 3.1.2
-      resolve: 1.22.1
-      semver: 6.3.0
-    dev: true
-
   /eslint-plugin-prettier/3.4.1_xoqne3g7d6xfdczrzho4jsgkne:
     resolution: {integrity: sha512-htg25EUYUeIhKHXjOinK4BgCcDwtLHjqaxCDsMy5nbnUMkKFvIhMVCp+5GFUXQ4Nr8lBsPqtGAqBenbpFqAA2g==}
     engines: {node: '>=6.0.0'}
@@ -11448,15 +11387,6 @@ packages:
       resolve: 2.0.0-next.4
       semver: 6.3.0
       string.prototype.matchall: 4.0.8
-    dev: true
-
-  /eslint-plugin-standard/5.0.0_eslint@8.34.0:
-    resolution: {integrity: sha512-eSIXPc9wBM4BrniMzJRBm2uoVuXz2EPa+NXPk2+itrVt+r5SbKFERx/IgrK/HmfjddyKVz2f+j+7gBRvu19xLg==}
-    deprecated: 'standard 16.0.0 and eslint-config-standard 16.0.0 no longer require the eslint-plugin-standard package. You can remove it from your dependencies with ''npm rm eslint-plugin-standard''. More info here: https://github.com/standard/standard/issues/1316'
-    peerDependencies:
-      eslint: '>=5.0.0'
-    dependencies:
-      eslint: 8.34.0
     dev: true
 
   /eslint-plugin-svelte/2.14.1_svelte@3.55.0:
