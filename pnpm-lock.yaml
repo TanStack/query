@@ -18,6 +18,7 @@ importers:
       '@rollup/plugin-commonjs': 24.0.1
       '@rollup/plugin-node-resolve': ^15.0.1
       '@rollup/plugin-replace': ^5.0.2
+      '@rollup/plugin-terser': ^0.4.3
       '@testing-library/jest-dom': ^5.16.5
       '@testing-library/react': ^13.4.0
       '@testing-library/react-hooks': ^8.0.1
@@ -67,7 +68,6 @@ importers:
       rollup: ^3.15.0
       rollup-plugin-preserve-directives: 0.1.0
       rollup-plugin-size: ^0.2.2
-      rollup-plugin-terser: ^7.0.2
       rollup-plugin-visualizer: ^5.9.0
       rollup-preset-solid: ^1.4.0
       semver: ^7.3.8
@@ -88,6 +88,7 @@ importers:
       '@rollup/plugin-commonjs': 24.0.1_rollup@3.15.0
       '@rollup/plugin-node-resolve': 15.0.1_rollup@3.15.0
       '@rollup/plugin-replace': 5.0.2_rollup@3.15.0
+      '@rollup/plugin-terser': 0.4.3_rollup@3.15.0
       '@testing-library/jest-dom': 5.16.5
       '@testing-library/react': 13.4.0_biqbaboplfbrettd7655fr4n2y
       '@testing-library/react-hooks': 8.0.1_zula6vjvt3wdocc4mwcxqa6nzi
@@ -137,7 +138,6 @@ importers:
       rollup: 3.15.0
       rollup-plugin-preserve-directives: 0.1.0_rollup@3.15.0
       rollup-plugin-size: 0.2.2
-      rollup-plugin-terser: 7.0.2_rollup@3.15.0
       rollup-plugin-visualizer: 5.9.0_rollup@3.15.0
       rollup-preset-solid: 1.4.0
       semver: 7.3.8
@@ -6825,6 +6825,21 @@ packages:
       '@rollup/pluginutils': 5.0.2_rollup@3.15.0
       magic-string: 0.27.0
       rollup: 3.15.0
+    dev: true
+
+  /@rollup/plugin-terser/0.4.3_rollup@3.15.0:
+    resolution: {integrity: sha512-EF0oejTMtkyhrkwCdg0HJ0IpkcaVg1MMSf2olHb2Jp+1mnLM04OhjpJWGma4HobiDTF0WCyViWuvadyE9ch2XA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^2.x || ^3.x
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      rollup: 3.15.0
+      serialize-javascript: 6.0.1
+      smob: 1.1.1
+      terser: 5.17.6
     dev: true
 
   /@rollup/pluginutils/3.1.0_rollup@2.79.1:
@@ -16508,19 +16523,6 @@ packages:
       terser: 5.16.3
     dev: true
 
-  /rollup-plugin-terser/7.0.2_rollup@3.15.0:
-    resolution: {integrity: sha512-w3iIaU4OxcF52UUXiZNsNeuXIMDvFrr+ZXK6bFZ0Q60qyVfq4uLptoS4bbq3paG3x216eQllFZX7zt6TIImguQ==}
-    deprecated: This package has been deprecated and is no longer maintained. Please use @rollup/plugin-terser
-    peerDependencies:
-      rollup: ^2.0.0
-    dependencies:
-      '@babel/code-frame': 7.18.6
-      jest-worker: 26.6.2
-      rollup: 3.15.0
-      serialize-javascript: 4.0.0
-      terser: 5.16.3
-    dev: true
-
   /rollup-plugin-visualizer/5.9.0_rollup@3.15.0:
     resolution: {integrity: sha512-bbDOv47+Bw4C/cgs0czZqfm8L82xOZssk4ayZjG40y9zbXclNk7YikrZTDao6p7+HDiGxrN0b65SgZiVm9k1Cg==}
     engines: {node: '>=14'}
@@ -16796,6 +16798,12 @@ packages:
       randombytes: 2.1.0
     dev: true
 
+  /serialize-javascript/6.0.1:
+    resolution: {integrity: sha512-owoXEFjWRllis8/M1Q+Cw5k8ZH40e3zhp/ovX+Xr/vi1qj6QesbyXXViFbpNvWvPNAD62SutwEXavefrLJWj7w==}
+    dependencies:
+      randombytes: 2.1.0
+    dev: true
+
   /serve-static/1.15.0:
     resolution: {integrity: sha512-XGuRDNjXUijsUL0vl6nSD7cwURuzEgglbOaFuZM9g3kwDXOWVTck0jLzjPzGD+TazWbboZYu52/9/XPdUgne9g==}
     engines: {node: '>= 0.8.0'}
@@ -16967,6 +16975,10 @@ packages:
   /slugify/1.6.5:
     resolution: {integrity: sha512-8mo9bslnBO3tr5PEVFzMPIWwWnipGS0xVbYf65zxDqfNwmzYn1LpiKNrR6DlClusuvo+hDHd1zKpmfAe83NQSQ==}
     engines: {node: '>=8.0.0'}
+
+  /smob/1.1.1:
+    resolution: {integrity: sha512-i5aqEBPnDv9d77+NDxfjROtywxzNdAVNyaOr+RsLhM28Ts+Ar7luIp/Q+SBYa6wv/7BBcOpEkrhtDxsl2WA9Jg==}
+    dev: true
 
   /snapdragon-node/2.1.1:
     resolution: {integrity: sha512-O27l4xaMYt/RSQ5TR3vpWCAB5Kb/czIcqUFOM/C4fYcLnbZUc1PkjTAMjof2pBWaSTwOUd6qUHcFGVGj7aIwnw==}
@@ -17845,6 +17857,17 @@ packages:
       acorn: 8.8.1
       commander: 2.20.3
       source-map-support: 0.5.21
+
+  /terser/5.17.6:
+    resolution: {integrity: sha512-V8QHcs8YuyLkLHsJO5ucyff1ykrLVsR4dNnS//L5Y3NiSXpbK1J+WMVUs67eI0KTxs9JtHhgEQpXQVHlHI92DQ==}
+    engines: {node: '>=10'}
+    hasBin: true
+    dependencies:
+      '@jridgewell/source-map': 0.3.2
+      acorn: 8.8.1
+      commander: 2.20.3
+      source-map-support: 0.5.21
+    dev: true
 
   /test-exclude/6.0.0:
     resolution: {integrity: sha512-cAGWPIyOHU6zlmg88jwm7VRyXnMN7iV68OGAbYDk/Mh/xC/pzVPlQtY6ngoIH/5/tciuhGfvESU8GrHrcxD56w==}

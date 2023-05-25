@@ -1,5 +1,5 @@
 import babel from '@rollup/plugin-babel'
-import { terser } from 'rollup-plugin-terser'
+import terser from '@rollup/plugin-terser'
 import size from 'rollup-plugin-size'
 import externals from 'rollup-plugin-node-externals'
 import resolve from '@rollup/plugin-node-resolve'
