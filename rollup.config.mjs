@@ -1,4 +1,5 @@
-import path from 'node:path'
+import { resolve } from 'node:path'
+import { fileURLToPath } from "node:url"
 import { defineConfig } from 'rollup'
 import babel from '@rollup/plugin-babel'
 import terser from '@rollup/plugin-terser'
@@ -8,6 +9,8 @@ import nodeResolve from '@rollup/plugin-node-resolve'
 import commonJS from '@rollup/plugin-commonjs'
 import withSolid from 'rollup-preset-solid'
 // import preserveDirectives from 'rollup-plugin-preserve-directives'
+
+const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
 /**
  * @typedef {Object} Options
@@ -32,6 +35,7 @@ const forceEnvPlugin = (type) =>
 /** @param {'legacy' | 'modern'} type */
 const babelPlugin = (type) =>
   babel({
+    configFile: resolve(__dirname, 'babel.config.js'),
     browserslistConfigFile: type === 'modern' ? true : false,
     targets:
       type === 'modern'
@@ -63,15 +67,15 @@ const babelPlugin = (type) =>
  * @param {boolean} [opts.skipUmdBuild] - Flag indicating whether to skip UMD build.
  * @returns {import('rollup').RollupOptions[]}
  */
-function buildConfigs(opts) {
-  const firstEntry = path.resolve(
+export function buildConfigs(opts) {
+  const firstEntry = resolve(
     opts.packageDir,
     Array.isArray(opts.entryFile) ? opts.entryFile[0] : opts.entryFile,
   )
   const entries = Array.isArray(opts.entryFile)
     ? opts.entryFile
     : [opts.entryFile]
-  const input = entries.map((entry) => path.resolve(opts.packageDir, entry))
+  const input = entries.map((entry) => resolve(opts.packageDir, entry))
   const externalDeps = Object.keys(opts.globals)
 
   const bundleUMDGlobals = opts.bundleUMDGlobals || []

@@ -3,6 +3,8 @@
     "allowJs": true,
     "checkJs": true,
     "esModuleInterop": true,
+    "module": "ES2020",
+    "moduleResolution": "node",
     "noEmit": true,
   },
   "include": ["rollup.config.mjs"]
