@@ -157,8 +157,8 @@ importers:
     dependencies:
       '@algolia/client-search': 4.17.1
       '@algolia/transporter': 4.17.1
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
+      '@tanstack/react-query': link:../../../packages/react-query
+      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
       algoliasearch: 4.17.1
     devDependencies:
       '@tanstack/eslint-plugin-query': link:../../../packages/eslint-plugin-query
@@ -180,8 +180,8 @@ importers:
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
+      '@tanstack/react-query': link:../../../packages/react-query
+      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
       axios: 1.4.0
       isomorphic-unfetch: 3.0.0
       next: 12.2.2_biqbaboplfbrettd7655fr4n2y
@@ -199,8 +199,8 @@ importers:
       react-dom: ^18.2.0
       vite: ^4.2.0
     dependencies:
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
+      '@tanstack/react-query': link:../../../packages/react-query
+      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
       axios: 1.4.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -220,8 +220,8 @@ importers:
       react-dom: ^18.2.0
       vite: ^4.2.0
     dependencies:
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
+      '@tanstack/react-query': link:../../../packages/react-query
+      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
       graphql: 16.6.0
       graphql-request: 6.1.0_graphql@16.6.0
       react: 18.2.0
@@ -248,10 +248,10 @@ importers:
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
-      '@tanstack/query-sync-storage-persister': 5.0.0-alpha.38
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
-      '@tanstack/react-query-persist-client': 5.0.0-alpha.38_j3ck4gkdkmuwxbvrwpcupxnviq
+      '@tanstack/query-sync-storage-persister': link:../../../packages/query-sync-storage-persister
+      '@tanstack/react-query': link:../../../packages/react-query
+      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query-persist-client': link:../../../packages/react-query-persist-client
       axios: 1.4.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -275,8 +275,8 @@ importers:
       react-dom: ^18.2.0
       vite: ^4.2.0
     dependencies:
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
+      '@tanstack/react-query': link:../../../packages/react-query
+      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
       axios: 1.4.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -295,8 +295,8 @@ importers:
       react-dom: ^18.2.0
       react-intersection-observer: ^8.33.1
     dependencies:
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
+      '@tanstack/react-query': link:../../../packages/react-query
+      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
       axios: 1.4.0
       isomorphic-unfetch: 3.0.0
       next: 12.2.2_biqbaboplfbrettd7655fr4n2y
@@ -315,8 +315,8 @@ importers:
       react-dom: ^18.2.0
       react-intersection-observer: ^8.33.1
     dependencies:
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
+      '@tanstack/react-query': link:../../../packages/react-query
+      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
       axios: 1.4.0
       isomorphic-unfetch: 3.0.0
       next: 12.2.2_biqbaboplfbrettd7655fr4n2y
@@ -336,8 +336,8 @@ importers:
       resolve-from: ^5.0.0
       web-streams-polyfill: ^3.0.3
     dependencies:
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
+      '@tanstack/react-query': link:../../../packages/react-query
+      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
       ky: 0.33.3
       ky-universal: 0.11.0_anwdybaqsst5tzyumxedudwscu
       next: 12.2.2_biqbaboplfbrettd7655fr4n2y
@@ -361,11 +361,11 @@ importers:
       react-hot-toast: ^2.4.1
       vite: ^4.2.0
     dependencies:
-      '@tanstack/query-sync-storage-persister': 5.0.0-alpha.38
+      '@tanstack/query-sync-storage-persister': link:../../../packages/query-sync-storage-persister
       '@tanstack/react-location': 3.7.4_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
-      '@tanstack/react-query-persist-client': 5.0.0-alpha.38_j3ck4gkdkmuwxbvrwpcupxnviq
+      '@tanstack/react-query': link:../../../packages/react-query
+      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query-persist-client': link:../../../packages/react-query-persist-client
       ky: 0.33.3
       msw: 0.39.2
       react: 18.2.0
@@ -389,8 +389,8 @@ importers:
       react-dom: ^18.2.0
       typescript: ^5.0.4
     dependencies:
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
+      '@tanstack/react-query': link:../../../packages/react-query
+      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
       axios: 1.4.0
       isomorphic-unfetch: 3.0.0
       next: 12.2.2_biqbaboplfbrettd7655fr4n2y
@@ -412,8 +412,8 @@ importers:
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
+      '@tanstack/react-query': link:../../../packages/react-query
+      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
       axios: 1.4.0
       isomorphic-unfetch: 3.0.0
       next: 12.2.2_biqbaboplfbrettd7655fr4n2y
@@ -429,8 +429,8 @@ importers:
       react-dom: ^18.2.0
       vite: ^4.2.0
     dependencies:
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
+      '@tanstack/react-query': link:../../../packages/react-query
+      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
     devDependencies:
@@ -447,8 +447,8 @@ importers:
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
+      '@tanstack/react-query': link:../../../packages/react-query
+      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
       axios: 1.4.0
       isomorphic-unfetch: 3.0.0
       next: 12.2.2_biqbaboplfbrettd7655fr4n2y
@@ -487,8 +487,8 @@ importers:
       '@react-native-community/netinfo': 9.3.7_react-native@0.71.8
       '@react-navigation/native': 6.1.6_gajkl6h4mub3maplmto5awooha
       '@react-navigation/stack': 6.3.16_rlykizqukdbu3wgflkqn2lvmua
-      '@tanstack/react-query': 5.0.0-alpha.38_gajkl6h4mub3maplmto5awooha
-      '@tanstack/react-query-devtools': 5.0.0-alpha.38_stgp6pt6i6gzd5qn7hjgr5vo3a
+      '@tanstack/react-query': link:../../../packages/react-query
+      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
       expo: 48.0.17_@babel+core@7.21.8
       expo-constants: 14.2.1_expo@48.0.17
       expo-status-bar: 1.4.4
@@ -527,8 +527,8 @@ importers:
       sort-by: ^1.2.0
       vite: ^4.2.0
     dependencies:
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
+      '@tanstack/react-query': link:../../../packages/react-query
+      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
       localforage: 1.10.0
       match-sorter: 6.3.1
       react: 18.2.0
@@ -560,8 +560,8 @@ importers:
       '@emotion/styled': 11.11.0_s2jwwd4ifzjofup7sguc5tked4
       '@mui/material': 5.13.2_uezof7ypth34kbjqel6r5qrdpu
       '@mui/styles': 5.13.2_react@18.2.0
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
+      '@tanstack/react-query': link:../../../packages/react-query
+      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-router: 6.11.2_react@18.2.0
@@ -580,8 +580,8 @@ importers:
       react-dom: ^18.2.0
       vite: ^4.2.0
     dependencies:
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
+      '@tanstack/react-query': link:../../../packages/react-query
+      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
       axios: 1.4.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -608,8 +608,8 @@ importers:
       '@emotion/styled': 11.11.0_s2jwwd4ifzjofup7sguc5tked4
       '@mui/material': 5.13.2_uezof7ypth34kbjqel6r5qrdpu
       '@mui/styles': 5.13.2_react@18.2.0
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
+      '@tanstack/react-query': link:../../../packages/react-query
+      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-router: 6.11.2_react@18.2.0
@@ -629,8 +629,8 @@ importers:
       react-error-boundary: ^3.1.4
       vite: ^4.2.0
     dependencies:
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
+      '@tanstack/react-query': link:../../../packages/react-query
+      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
       axios: 1.4.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -649,7 +649,7 @@ importers:
       vite: ^4.2.0
       vite-plugin-solid: ^2.5.0
     dependencies:
-      '@tanstack/solid-query': 5.0.0-alpha.38_solid-js@1.6.16
+      '@tanstack/solid-query': link:../../../packages/solid-query
       graphql: 16.6.0
       graphql-request: 6.1.0_graphql@16.6.0
       solid-js: 1.6.16
@@ -666,7 +666,7 @@ importers:
       vite: ^4.2.0
       vite-plugin-solid: ^2.5.0
     dependencies:
-      '@tanstack/solid-query': 5.0.0-alpha.38_solid-js@1.6.16
+      '@tanstack/solid-query': link:../../../packages/solid-query
       solid-js: 1.6.16
     devDependencies:
       typescript: 5.0.4
@@ -681,7 +681,7 @@ importers:
       vite: ^4.2.0
       vite-plugin-solid: ^2.5.0
     dependencies:
-      '@tanstack/solid-query': 5.0.0-alpha.38_solid-js@1.6.16
+      '@tanstack/solid-query': link:../../../packages/solid-query
       solid-js: 1.6.16
     devDependencies:
       typescript: 5.0.4
@@ -697,7 +697,7 @@ importers:
       vite: ^4.2.0
       vite-plugin-solid: ^2.5.0
     dependencies:
-      '@tanstack/solid-query': 5.0.0-alpha.38_solid-js@1.6.16
+      '@tanstack/solid-query': link:../../../packages/solid-query
       solid-js: 1.6.16
     devDependencies:
       '@tanstack/eslint-plugin-query': link:../../../packages/eslint-plugin-query
@@ -722,7 +722,7 @@ importers:
     dependencies:
       '@solidjs/meta': 0.28.2_solid-js@1.6.16
       '@solidjs/router': 0.7.1_solid-js@1.6.16
-      '@tanstack/solid-query': 5.0.0-alpha.38_solid-js@1.6.16
+      '@tanstack/solid-query': link:../../../packages/solid-query
       solid-js: 1.6.16
       solid-start: 0.2.24_euxzheln45tfyr565dhf2xv3la
       undici: 5.22.1
@@ -745,7 +745,7 @@ importers:
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
-      '@tanstack/svelte-query': 5.0.0-alpha.38_svelte@3.55.0
+      '@tanstack/svelte-query': link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto': 2.1.0_@sveltejs+kit@1.19.0
       '@sveltejs/kit': 1.19.0_svelte@3.55.0+vite@4.2.1
@@ -766,7 +766,7 @@ importers:
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
-      '@tanstack/svelte-query': 5.0.0-alpha.38_svelte@3.55.0
+      '@tanstack/svelte-query': link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto': 2.1.0_@sveltejs+kit@1.19.0
       '@sveltejs/kit': 1.19.0_svelte@3.55.0+vite@4.2.1
@@ -787,7 +787,7 @@ importers:
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
-      '@tanstack/svelte-query': 5.0.0-alpha.38_svelte@3.55.0
+      '@tanstack/svelte-query': link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto': 2.1.0_@sveltejs+kit@1.19.0
       '@sveltejs/kit': 1.19.0_svelte@3.55.0+vite@4.2.1
@@ -808,7 +808,7 @@ importers:
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
-      '@tanstack/svelte-query': 5.0.0-alpha.38_svelte@3.55.0
+      '@tanstack/svelte-query': link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto': 2.1.0_@sveltejs+kit@1.19.0
       '@sveltejs/kit': 1.19.0_svelte@3.55.0+vite@4.2.1
@@ -829,7 +829,7 @@ importers:
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
-      '@tanstack/svelte-query': 5.0.0-alpha.38_svelte@3.55.0
+      '@tanstack/svelte-query': link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto': 2.1.0_@sveltejs+kit@1.19.0
       '@sveltejs/kit': 1.19.0_svelte@3.55.0+vite@4.2.1
@@ -850,7 +850,7 @@ importers:
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
-      '@tanstack/svelte-query': 5.0.0-alpha.38_svelte@3.55.0
+      '@tanstack/svelte-query': link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/vite-plugin-svelte': 2.3.0_svelte@3.55.0+vite@4.2.1
       '@tsconfig/svelte': 4.0.1
@@ -871,7 +871,7 @@ importers:
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
-      '@tanstack/svelte-query': 5.0.0-alpha.38_svelte@3.55.0
+      '@tanstack/svelte-query': link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto': 2.1.0_@sveltejs+kit@1.19.0
       '@sveltejs/kit': 1.19.0_svelte@3.55.0+vite@4.2.1
@@ -895,7 +895,7 @@ importers:
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
-      '@tanstack/svelte-query': 5.0.0-alpha.38_svelte@3.55.0
+      '@tanstack/svelte-query': link:../../../packages/svelte-query
     devDependencies:
       '@sveltejs/adapter-auto': 2.1.0_@sveltejs+kit@1.19.0
       '@sveltejs/kit': 1.19.0_svelte@3.55.0+vite@4.2.1
@@ -916,7 +916,7 @@ importers:
       vite: ^4.2.0
       vue: ^3.2.47
     dependencies:
-      '@tanstack/vue-query': 5.0.0-alpha.38_vue@3.2.47
+      '@tanstack/vue-query': link:../../../packages/vue-query
       vue: 3.2.47
     devDependencies:
       '@vitejs/plugin-vue': 4.2.3_vite@4.2.1+vue@3.2.47
@@ -931,7 +931,7 @@ importers:
       vite: ^4.2.0
       vue: ^3.2.47
     dependencies:
-      '@tanstack/vue-query': 5.0.0-alpha.38_vue@3.2.47
+      '@tanstack/vue-query': link:../../../packages/vue-query
       vue: 3.2.47
     devDependencies:
       '@vitejs/plugin-vue': 4.2.3_vite@4.2.1+vue@3.2.47
@@ -948,9 +948,9 @@ importers:
       vite: ^4.2.0
       vue: ^3.2.47
     dependencies:
-      '@tanstack/query-persist-client-core': 5.0.0-alpha.38
-      '@tanstack/query-sync-storage-persister': 5.0.0-alpha.38
-      '@tanstack/vue-query': 5.0.0-alpha.38_vue@3.2.47
+      '@tanstack/query-persist-client-core': link:../../../packages/query-persist-client-core
+      '@tanstack/query-sync-storage-persister': link:../../../packages/query-sync-storage-persister
+      '@tanstack/vue-query': link:../../../packages/vue-query
       vue: 3.2.47
     devDependencies:
       '@vitejs/plugin-vue': 4.2.3_vite@4.2.1+vue@3.2.47
@@ -4848,37 +4848,6 @@ packages:
       remove-accents: 0.4.2
     dev: false
 
-  /@tanstack/query-core/5.0.0-alpha.38:
-    resolution: {integrity: sha512-V5sxUNw2heNjAv15fgFODWxvjpJ/cw9rUN/uS0jFJCGE25tGuuoTSuYaIneChiBkEEK99QEWESY7sypWQY9f1g==}
-    dev: false
-
-  /@tanstack/query-devtools/5.0.0-alpha.38:
-    resolution: {integrity: sha512-OAINc9ZKVLlQEwXfFXW6ZJlJy+L1aIHeayDZt7DyN+5tY9if//Nk0t3iYovyf2yhUNLS0tjiv+O4vhaSvf17Ng==}
-    peerDependencies:
-      '@tanstack/query-core': 5.0.0-alpha.38
-    dependencies:
-      '@emotion/css': 11.11.0
-      '@solid-primitives/keyed': 1.2.0_solid-js@1.6.16
-      '@solid-primitives/resize-observer': 2.0.18_solid-js@1.6.16
-      '@solid-primitives/storage': 1.3.11_solid-js@1.6.16
-      '@tanstack/match-sorter-utils': 8.8.4
-      solid-js: 1.6.16
-      solid-transition-group: 0.2.2_solid-js@1.6.16
-      superjson: 1.12.3
-    dev: false
-
-  /@tanstack/query-persist-client-core/5.0.0-alpha.38:
-    resolution: {integrity: sha512-Nl+qcIgdUZj8Xccb4TBQV1u9qIakX7958+Ig77+YtpxxCpwWL605v/Lpxu5E0DIc/L6Oqvv2gq1LJaI1ZggRMg==}
-    dependencies:
-      '@tanstack/query-core': 5.0.0-alpha.38
-    dev: false
-
-  /@tanstack/query-sync-storage-persister/5.0.0-alpha.38:
-    resolution: {integrity: sha512-lspoRrhNaPqnzFM6VcWWngyWDBfb+Oq2zPKbmQIQRY54sOjj2UaWzTO91yO2cXqFHP/KzM0oSW8mC3+w9RM2rg==}
-    dependencies:
-      '@tanstack/query-persist-client-core': 5.0.0-alpha.38
-    dev: false
-
   /@tanstack/react-location/3.7.4_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-6rH2vNHGr0uyeUz5ZHvWMYjeYKGgIKFzvs5749QtnS9f+FU7t7fQE0hKZAzltBZk82LT7iYbcHBRyUg2lW13VA==}
     engines: {node: '>=12'}
@@ -4890,112 +4859,6 @@ packages:
       history: 5.3.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-    dev: false
-
-  /@tanstack/react-query-devtools/5.0.0-alpha.38_stgp6pt6i6gzd5qn7hjgr5vo3a:
-    resolution: {integrity: sha512-ou5a0iTqOebNhJzL9LArSst/GsI+/qwliAJpUE6EZcLIeHBlRhdE0pTEH+4qrvbkSNTQx0sXGSSgB9HeuT/45g==}
-    peerDependencies:
-      '@tanstack/react-query': 5.0.0-alpha.38
-      react: ^18.0.0
-      react-dom: ^18.0.0
-    dependencies:
-      '@tanstack/query-devtools': 5.0.0-alpha.38
-      '@tanstack/react-query': 5.0.0-alpha.38_gajkl6h4mub3maplmto5awooha
-      react: 18.2.0
-    transitivePeerDependencies:
-      - '@tanstack/query-core'
-    dev: false
-
-  /@tanstack/react-query-devtools/5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a:
-    resolution: {integrity: sha512-ou5a0iTqOebNhJzL9LArSst/GsI+/qwliAJpUE6EZcLIeHBlRhdE0pTEH+4qrvbkSNTQx0sXGSSgB9HeuT/45g==}
-    peerDependencies:
-      '@tanstack/react-query': 5.0.0-alpha.38
-      react: ^18.0.0
-      react-dom: ^18.0.0
-    dependencies:
-      '@tanstack/query-devtools': 5.0.0-alpha.38
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-    transitivePeerDependencies:
-      - '@tanstack/query-core'
-    dev: false
-
-  /@tanstack/react-query-persist-client/5.0.0-alpha.38_j3ck4gkdkmuwxbvrwpcupxnviq:
-    resolution: {integrity: sha512-C474HHItd8LADbZUBq/yMVcpLbDWRgqPn2ln2cpZx3PunpaK8RYJy8bJl2T0bRsjg4NTo+Cx5fQBNrD+h54MwA==}
-    peerDependencies:
-      '@tanstack/react-query': 5.0.0-alpha.38
-    dependencies:
-      '@tanstack/query-persist-client-core': 5.0.0-alpha.38
-      '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
-    dev: false
-
-  /@tanstack/react-query/5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-5fWIq+QQ0zCA9j0KOxpUOlm11WJJOWN6T9wJoHTPGt01F9Lw0T61BOZmQiy5hoMKPJ6Ks8SJ+UgjcABWKFNENA==}
-    peerDependencies:
-      react: ^18.0.0
-      react-dom: ^18.0.0
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-    dependencies:
-      '@tanstack/query-core': 5.0.0-alpha.38
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-    dev: false
-
-  /@tanstack/react-query/5.0.0-alpha.38_gajkl6h4mub3maplmto5awooha:
-    resolution: {integrity: sha512-5fWIq+QQ0zCA9j0KOxpUOlm11WJJOWN6T9wJoHTPGt01F9Lw0T61BOZmQiy5hoMKPJ6Ks8SJ+UgjcABWKFNENA==}
-    peerDependencies:
-      react: ^18.0.0
-      react-dom: ^18.0.0
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-    dependencies:
-      '@tanstack/query-core': 5.0.0-alpha.38
-      react: 18.2.0
-      react-native: 0.71.8_wn6zaaxe2xt3xsygjqv5uvr2am
-    dev: false
-
-  /@tanstack/solid-query/5.0.0-alpha.38_solid-js@1.6.16:
-    resolution: {integrity: sha512-fxEN7DYVWx+RNXL9UHcQOsRiyW5Bpu7Xk/d4l+o1prmtjDBdBrVGR5c8WXzHhrNLxPl9pQC9u2i2UtAEtd/Hzg==}
-    peerDependencies:
-      solid-js: ^1.6.13
-    dependencies:
-      '@tanstack/query-core': 5.0.0-alpha.38
-      solid-js: 1.6.16
-    dev: false
-
-  /@tanstack/svelte-query/5.0.0-alpha.38_svelte@3.55.0:
-    resolution: {integrity: sha512-n8U+0EZc7A8AIIE7myLEkMHFiYecJmRiaZkzp0PEtsSEps2vm8tYlnvWoItrk6WA9mu68SCuQbxbGGnUM/zvhA==}
-    peerDependencies:
-      svelte: ^3.54.0
-    dependencies:
-      '@tanstack/query-core': 5.0.0-alpha.38
-      svelte: 3.55.0
-    dev: false
-
-  /@tanstack/vue-query/5.0.0-alpha.38_vue@3.2.47:
-    resolution: {integrity: sha512-4oQX41Qbct7rI32CiwKqd16RGD8NEx8PkaRMDBZF5dTWTjJHaH8ytZ4D9KhLevTROgMaDXjJ/hKlr7GdsnVdWA==}
-    peerDependencies:
-      '@vue/composition-api': ^1.1.2
-      vue: ^2.5.0 || ^3.0.0
-    peerDependenciesMeta:
-      '@vue/composition-api':
-        optional: true
-    dependencies:
-      '@tanstack/match-sorter-utils': 8.8.4
-      '@tanstack/query-core': 5.0.0-alpha.38
-      '@vue/devtools-api': 6.5.0
-      vue: 3.2.47
-      vue-demi: 0.13.11_vue@3.2.47
     dev: false
 
   /@testing-library/dom/8.18.1:
@@ -14648,6 +14511,7 @@ packages:
   /svelte/3.55.0:
     resolution: {integrity: sha512-uGu2FVMlOuey4JoKHKrpZFkoYyj0VLjJdz47zX5+gVK5odxHM40RVhar9/iK2YFRVxvfg9FkhfVlR0sjeIrOiA==}
     engines: {node: '>= 8'}
+    dev: true
 
   /svelte2tsx/0.6.0_te34cpvlju4yjc65c47pehvaqa:
     resolution: {integrity: sha512-TrxfQkO7CKi8Pu2eC/FyteDCdk3OOeQV5u6z7OjYAsOhsd0ClzAKqxJdvp6xxNQLrbFzf/XvCi9Fy8MQ1MleFA==}
@@ -15686,21 +15550,6 @@ packages:
         optional: true
     dependencies:
       '@vue/composition-api': 1.7.1_vue@3.2.47
-      vue: 3.2.47
-    dev: false
-
-  /vue-demi/0.13.11_vue@3.2.47:
-    resolution: {integrity: sha512-IR8HoEEGM65YY3ZJYAjMlKygDQn25D5ajNFNoKh9RSDMQtlzCxtfQjdQgv9jjK+m3377SsJXY8ysq8kLCZL25A==}
-    engines: {node: '>=12'}
-    hasBin: true
-    requiresBuild: true
-    peerDependencies:
-      '@vue/composition-api': ^1.0.0-rc.1
-      vue: ^3.0.0-0 || ^2.6.0
-    peerDependenciesMeta:
-      '@vue/composition-api':
-        optional: true
-    dependencies:
       vue: 3.2.47
     dev: false
 
