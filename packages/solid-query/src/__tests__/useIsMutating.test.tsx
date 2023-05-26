@@ -1,9 +1,8 @@
-import { fireEvent, screen, waitFor } from '@solidjs/testing-library'
+import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
 import { createMutation, QueryClientProvider, useIsMutating } from '..'
 import { createQueryClient, sleep } from './utils'
 
 import { createEffect, createRenderEffect, createSignal, Show } from 'solid-js'
-import { render } from '@solidjs/testing-library'
 import * as MutationCacheModule from '../../../query-core/src/mutationCache'
 import { setActTimeout } from './utils'
 import { vi } from 'vitest'
