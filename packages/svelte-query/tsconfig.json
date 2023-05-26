@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowImportingTsExtensions": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "checkJs": true,
@@ -7,12 +8,10 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "lib": ["esnext", "DOM", "DOM.Iterable"],
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "module": "esnext",
     "noEmit": true,
-    "noImplicitAny": true,
     "noImplicitReturns": true,
-    "noImplicitThis": true,
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -20,7 +19,6 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "strictNullChecks": true,
     "target": "esnext",
     "types": ["vitest/globals", "@testing-library/jest-dom"]
   },

@@ -4,7 +4,7 @@
     HydrateOptions,
     QueryClient,
   } from '@tanstack/query-core'
-  import { useHydrate } from './useHydrate'
+  import { useHydrate } from './useHydrate.ts'
 
   export let state: DehydratedState
   export let options: HydrateOptions | undefined = undefined

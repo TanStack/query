@@ -1,6 +1,6 @@
 import { vi } from 'vitest'
 import { act } from '@testing-library/svelte'
-import { QueryClient, type QueryClientConfig } from '../index'
+import { QueryClient, type QueryClientConfig } from '../index.ts'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
   return new QueryClient(config)

@@ -1,11 +1,11 @@
 import { QueryObserver } from '@tanstack/query-core'
 import type { QueryKey, QueryClient, DefaultError } from '@tanstack/query-core'
-import { createBaseQuery } from './createBaseQuery'
+import { createBaseQuery } from './createBaseQuery.ts'
 import type {
   DefinedCreateQueryResult,
   CreateQueryOptions,
   CreateQueryResult,
-} from './types'
+} from './types.ts'
 
 type UndefinedInitialDataOptions<
   TQueryFnData = unknown,

@@ -1,9 +1,9 @@
-import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
-import { notifyManager } from '@tanstack/query-core'
-import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
-import { useQueryClient } from './useQueryClient'
 import { derived, get, readable, writable } from 'svelte/store'
-import { isWritable } from './utils'
+import { notifyManager } from '@tanstack/query-core'
+import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
+import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types.ts'
+import { useQueryClient } from './useQueryClient.ts'
+import { isWritable } from './utils.ts'
 
 export function createBaseQuery<
   TQueryFnData,

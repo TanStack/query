@@ -4,7 +4,7 @@ import {
   notifyManager,
 } from '@tanstack/query-core'
 import { type Readable, readable } from 'svelte/store'
-import { useQueryClient } from './useQueryClient'
+import { useQueryClient } from './useQueryClient.ts'
 
 export function useIsFetching(
   filters?: QueryFilters,

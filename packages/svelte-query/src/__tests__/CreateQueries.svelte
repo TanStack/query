@@ -1,8 +1,8 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
-  import { setQueryClientContext } from '../context'
-  import { createQueries } from '../createQueries'
-  import type { QueriesOptions } from '../createQueries'
+  import { setQueryClientContext } from '../context.ts'
+  import { createQueries } from '../createQueries.ts'
+  import type { QueriesOptions } from '../createQueries.ts'
 
   export let options: { queries: [...QueriesOptions<any>] }
 

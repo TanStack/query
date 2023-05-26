@@ -1,5 +1,5 @@
 import type { Writable } from 'svelte/store'
-import type { WritableOrVal } from './types'
+import type { WritableOrVal } from './types.ts'
 
 export function isWritable<T extends object>(
   obj: WritableOrVal<T>,

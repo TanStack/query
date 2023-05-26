@@ -1,5 +1,5 @@
 import type { QueryClient } from '@tanstack/query-core'
-import { getQueryClientContext } from './context'
+import { getQueryClientContext } from './context.ts'
 
 export function useQueryClient(queryClient?: QueryClient): QueryClient {
   const client = getQueryClientContext()
