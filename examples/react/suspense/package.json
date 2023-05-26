@@ -5,16 +5,16 @@
   "keywords": [],
   "main": "src/index.jsx",
   "dependencies": {
-    "axios": "^0.21.1",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "react-error-boundary": "^2.2.3",
-    "@tanstack/react-query": "^4.7.1",
-    "@tanstack/react-query-devtools": "^4.7.1"
+    "@tanstack/react-query": "^5.0.0-alpha.38",
+    "@tanstack/react-query-devtools": "^5.0.0-alpha.38",
+    "axios": "^1.4.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-error-boundary": "^3.1.4"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^2.0.0",
-    "vite": "^3.0.0"
+    "@vitejs/plugin-react": "^4.0.0",
+    "vite": "^4.2.0"
   },
   "scripts": {
     "dev": "vite",

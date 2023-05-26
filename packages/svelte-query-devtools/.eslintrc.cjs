@@ -1,11 +1,9 @@
-// @ts-check
-
 /** @type {import('eslint').Linter.Config} */
 const config = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
     tsconfigRootDir: __dirname,
-    project: './tsconfig.eslint.json',
+    project: './tsconfig.json',
     sourceType: 'module',
     extraFileExtensions: ['.svelte'],
   },
@@ -13,7 +11,7 @@ const config = {
     'react-hooks/rules-of-hooks': 'off',
   },
   extends: ['plugin:svelte/recommended', '../../.eslintrc'],
-  ignorePatterns: ['*.config.*', '**/build/*', '**/.svelte-kit/*'],
+  ignorePatterns: ['*.config.*', '*.setup.*', '**/build/*'],
   overrides: [
     {
       files: ['*.svelte'],

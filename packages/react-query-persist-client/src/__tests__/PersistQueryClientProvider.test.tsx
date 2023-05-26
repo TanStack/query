@@ -401,6 +401,66 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('fetched'))
   })
 
+  test('should await onSuccess after successful restoring', async () => {
+    const key = queryKey()
+
+    const queryClient = createQueryClient()
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
+
+    const persister = createMockPersister()
+
+    await persistQueryClientSave({ queryClient, persister })
+
+    queryClient.clear()
+
+    const states: Array<string> = []
+
+    function Page() {
+      const { data, fetchStatus } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          states.push('fetching')
+          await sleep(10)
+          states.push('fetched')
+          return 'fetched'
+        },
+      })
+
+      return (
+        <div>
+          <h1>{data}</h1>
+          <h2>fetchStatus: {fetchStatus}</h2>
+        </div>
+      )
+    }
+
+    const rendered = render(
+      <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{ persister }}
+        onSuccess={async () => {
+          states.push('onSuccess')
+          await sleep(20)
+          states.push('onSuccess done')
+        }}
+      >
+        <Page />
+      </PersistQueryClientProvider>,
+    )
+
+    await waitFor(() => rendered.getByText('hydrated'))
+    await waitFor(() => rendered.getByText('fetched'))
+    expect(states).toEqual([
+      'onSuccess',
+      'onSuccess done',
+      'fetching',
+      'fetched',
+    ])
+  })
+
   test('should remove cache after non-successful restoring', async () => {
     const key = queryKey()
     const consoleMock = vi.spyOn(console, 'error')

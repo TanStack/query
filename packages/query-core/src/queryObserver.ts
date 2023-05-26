@@ -1,4 +1,14 @@
-import type { DefaultedQueryObserverOptions, DefaultError } from './types'
+import type {
+  DefaultedQueryObserverOptions,
+  DefaultError,
+  PlaceholderDataFunction,
+  QueryKey,
+  QueryObserverBaseResult,
+  QueryObserverOptions,
+  QueryObserverResult,
+  QueryOptions,
+  RefetchOptions,
+} from './types'
 import {
   isServer,
   isValidTimeout,
@@ -8,15 +18,6 @@ import {
   timeUntilStale,
 } from './utils'
 import { notifyManager } from './notifyManager'
-import type {
-  PlaceholderDataFunction,
-  QueryKey,
-  QueryObserverBaseResult,
-  QueryObserverOptions,
-  QueryObserverResult,
-  QueryOptions,
-  RefetchOptions,
-} from './types'
 import type { Query, QueryState, FetchOptions } from './query'
 import type { QueryClient } from './queryClient'
 import { focusManager } from './focusManager'
