@@ -42,7 +42,7 @@ importers:
       cpy-cli: ^4.2.0
       current-git-branch: ^1.1.0
       eslint: ^8.34.0
-      eslint-config-prettier: ^8.6.0
+      eslint-config-prettier: ^8.8.0
       eslint-config-react-app: ^7.0.1
       eslint-import-resolver-typescript: ^3.5.3
       eslint-plugin-import: ^2.27.5
@@ -57,7 +57,7 @@ importers:
       nx: ^16.2.2
       nx-cloud: ^16.0.5
       prettier: ^2.8.8
-      prettier-plugin-svelte: ^2.9.0
+      prettier-plugin-svelte: ^2.10.0
       react: ^18.2.0
       react-dom: ^18.2.0
       rimraf: ^4.1.2
@@ -107,12 +107,12 @@ importers:
       cpy-cli: 4.2.0
       current-git-branch: 1.1.0
       eslint: 8.34.0
-      eslint-config-prettier: 8.6.0_eslint@8.34.0
+      eslint-config-prettier: 8.8.0_eslint@8.34.0
       eslint-config-react-app: 7.0.1_4ucp7kmmt6mm7ajuoa4z6fky3m
       eslint-import-resolver-typescript: 3.5.3_mvgyw3chnqkp6sgfmmtihyjpnm
       eslint-plugin-import: 2.27.5_36tnx7j76xmyw4sddv6l5lsnda
       eslint-plugin-jsx-a11y: 6.7.1_eslint@8.34.0
-      eslint-plugin-prettier: 4.2.1_c55dtrtzl4q7ozvpzijpko3dje
+      eslint-plugin-prettier: 4.2.1_l5okqvx475aergbymncaivscmi
       eslint-plugin-promise: 6.1.1_eslint@8.34.0
       eslint-plugin-react: 7.32.2_eslint@8.34.0
       eslint-plugin-react-hooks: 4.6.0_eslint@8.34.0
@@ -122,7 +122,7 @@ importers:
       nx: 16.2.2
       nx-cloud: 16.0.5
       prettier: 2.8.8
-      prettier-plugin-svelte: 2.9.0_prettier@2.8.8
+      prettier-plugin-svelte: 2.10.0_prettier@2.8.8
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       rimraf: 4.1.2
@@ -149,7 +149,7 @@ importers:
       '@types/react': ^18.2.4
       '@types/react-dom': ^18.2.4
       '@vitejs/plugin-react': ^4.0.0
-      algoliasearch: 4.12.2
+      algoliasearch: 4.17.1
       react: ^18.2.0
       react-dom: ^18.2.0
       typescript: ^5.0.4
@@ -159,7 +159,7 @@ importers:
       '@algolia/transporter': 4.17.1
       '@tanstack/react-query': 5.0.0-alpha.38_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
-      algoliasearch: 4.12.2
+      algoliasearch: 4.17.1
     devDependencies:
       '@tanstack/eslint-plugin-query': link:../../../packages/eslint-plugin-query
       '@types/react': 18.2.7
@@ -358,7 +358,7 @@ importers:
       msw: ^0.39.2
       react: ^18.2.0
       react-dom: ^18.2.0
-      react-hot-toast: ^2.2.0
+      react-hot-toast: ^2.4.1
       vite: ^4.2.0
     dependencies:
       '@tanstack/query-sync-storage-persister': 5.0.0-alpha.38
@@ -370,7 +370,7 @@ importers:
       msw: 0.39.2
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      react-hot-toast: 2.2.0_biqbaboplfbrettd7655fr4n2y
+      react-hot-toast: 2.4.1_biqbaboplfbrettd7655fr4n2y
     devDependencies:
       '@vitejs/plugin-react': 4.0.0_vite@4.2.1
       vite: 4.2.1
@@ -521,7 +521,8 @@ importers:
       match-sorter: ^6.3.1
       react: ^18.2.0
       react-dom: ^18.2.0
-      react-router-dom: ^6.4.0
+      react-router: ^6.11.2
+      react-router-dom: ^6.11.2
       rooks: ^6.4.3
       sort-by: ^1.2.0
       vite: ^4.2.0
@@ -532,7 +533,8 @@ importers:
       match-sorter: 6.3.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      react-router-dom: 6.4.1_biqbaboplfbrettd7655fr4n2y
+      react-router: 6.11.2_react@18.2.0
+      react-router-dom: 6.11.2_biqbaboplfbrettd7655fr4n2y
       rooks: 6.4.3_biqbaboplfbrettd7655fr4n2y
       sort-by: 1.2.0
     devDependencies:
@@ -550,8 +552,8 @@ importers:
       '@vitejs/plugin-react': ^4.0.0
       react: ^18.2.0
       react-dom: ^18.2.0
-      react-router: ^5.1.2
-      react-router-dom: ^5.1.2
+      react-router: ^6.11.2
+      react-router-dom: ^6.11.2
       vite: ^4.2.0
     dependencies:
       '@emotion/react': 11.11.0_react@18.2.0
@@ -562,8 +564,8 @@ importers:
       '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      react-router: 5.3.3_react@18.2.0
-      react-router-dom: 5.3.3_react@18.2.0
+      react-router: 6.11.2_react@18.2.0
+      react-router-dom: 6.11.2_biqbaboplfbrettd7655fr4n2y
     devDependencies:
       '@vitejs/plugin-react': 4.0.0_vite@4.2.1
       vite: 4.2.1
@@ -598,8 +600,8 @@ importers:
       '@vitejs/plugin-react': ^4.0.0
       react: ^18.2.0
       react-dom: ^18.2.0
-      react-router: ^5.1.2
-      react-router-dom: ^5.1.2
+      react-router: ^6.11.2
+      react-router-dom: ^6.11.2
       vite: ^4.2.0
     dependencies:
       '@emotion/react': 11.11.0_react@18.2.0
@@ -610,8 +612,8 @@ importers:
       '@tanstack/react-query-devtools': 5.0.0-alpha.38_tdenkryqyv4pmbomf62zfnoz3a
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      react-router: 5.3.3_react@18.2.0
-      react-router-dom: 5.3.3_react@18.2.0
+      react-router: 6.11.2_react@18.2.0
+      react-router-dom: 6.11.2_biqbaboplfbrettd7655fr4n2y
     devDependencies:
       '@vitejs/plugin-react': 4.0.0_vite@4.2.1
       vite: 4.2.1
@@ -710,7 +712,7 @@ importers:
       '@tanstack/solid-query': ^5.0.0-alpha.38
       '@types/node': ^18.13.0
       esbuild: ^0.14.54
-      postcss: ^8.4.18
+      postcss: ^8.4.23
       solid-js: ^1.6.13
       solid-start: ^0.2.23
       solid-start-node: ^0.2.0
@@ -727,7 +729,7 @@ importers:
     devDependencies:
       '@types/node': 18.13.0
       esbuild: 0.14.54
-      postcss: 8.4.21
+      postcss: 8.4.23
       solid-start-node: 0.2.21_5pmsg3sxzd2hvt44owyvx4xote
       typescript: 5.0.4
       vite: 4.2.1_@types+node@18.13.0
@@ -739,7 +741,7 @@ importers:
       '@tanstack/svelte-query': ^5.0.0-alpha.38
       svelte: ^3.54.0
       svelte-check: ^3.3.2
-      tslib: ^2.5.0
+      tslib: ^2.5.2
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
@@ -749,7 +751,7 @@ importers:
       '@sveltejs/kit': 1.19.0_svelte@3.55.0+vite@4.2.1
       svelte: 3.55.0
       svelte-check: 3.3.2_svelte@3.55.0
-      tslib: 2.5.0
+      tslib: 2.5.2
       typescript: 5.0.4
       vite: 4.2.1
 
@@ -760,7 +762,7 @@ importers:
       '@tanstack/svelte-query': ^5.0.0-alpha.38
       svelte: ^3.54.0
       svelte-check: ^3.3.2
-      tslib: ^2.5.0
+      tslib: ^2.5.2
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
@@ -770,7 +772,7 @@ importers:
       '@sveltejs/kit': 1.19.0_svelte@3.55.0+vite@4.2.1
       svelte: 3.55.0
       svelte-check: 3.3.2_svelte@3.55.0
-      tslib: 2.5.0
+      tslib: 2.5.2
       typescript: 5.0.4
       vite: 4.2.1
 
@@ -781,7 +783,7 @@ importers:
       '@tanstack/svelte-query': ^5.0.0-alpha.38
       svelte: ^3.54.0
       svelte-check: ^3.3.2
-      tslib: ^2.5.0
+      tslib: ^2.5.2
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
@@ -791,7 +793,7 @@ importers:
       '@sveltejs/kit': 1.19.0_svelte@3.55.0+vite@4.2.1
       svelte: 3.55.0
       svelte-check: 3.3.2_svelte@3.55.0
-      tslib: 2.5.0
+      tslib: 2.5.2
       typescript: 5.0.4
       vite: 4.2.1
 
@@ -802,7 +804,7 @@ importers:
       '@tanstack/svelte-query': ^5.0.0-alpha.38
       svelte: ^3.54.0
       svelte-check: ^3.3.2
-      tslib: ^2.5.0
+      tslib: ^2.5.2
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
@@ -812,7 +814,7 @@ importers:
       '@sveltejs/kit': 1.19.0_svelte@3.55.0+vite@4.2.1
       svelte: 3.55.0
       svelte-check: 3.3.2_svelte@3.55.0
-      tslib: 2.5.0
+      tslib: 2.5.2
       typescript: 5.0.4
       vite: 4.2.1
 
@@ -823,7 +825,7 @@ importers:
       '@tanstack/svelte-query': ^5.0.0-alpha.38
       svelte: ^3.54.0
       svelte-check: ^3.3.2
-      tslib: ^2.5.0
+      tslib: ^2.5.2
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
@@ -833,7 +835,7 @@ importers:
       '@sveltejs/kit': 1.19.0_svelte@3.55.0+vite@4.2.1
       svelte: 3.55.0
       svelte-check: 3.3.2_svelte@3.55.0
-      tslib: 2.5.0
+      tslib: 2.5.2
       typescript: 5.0.4
       vite: 4.2.1
 
@@ -844,7 +846,7 @@ importers:
       '@tsconfig/svelte': ^3.0.0
       svelte: ^3.54.0
       svelte-check: ^3.3.2
-      tslib: ^2.5.0
+      tslib: ^2.5.2
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
@@ -854,7 +856,7 @@ importers:
       '@tsconfig/svelte': 3.0.0
       svelte: 3.55.0
       svelte-check: 3.3.2_svelte@3.55.0
-      tslib: 2.5.0
+      tslib: 2.5.2
       typescript: 5.0.4
       vite: 4.2.1
 
@@ -865,7 +867,7 @@ importers:
       '@tanstack/svelte-query': ^5.0.0-alpha.38
       svelte: ^3.54.0
       svelte-check: ^3.3.2
-      tslib: ^2.5.0
+      tslib: ^2.5.2
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
@@ -875,7 +877,7 @@ importers:
       '@sveltejs/kit': 1.19.0_svelte@3.55.0+vite@4.2.1
       svelte: 3.55.0
       svelte-check: 3.3.2_svelte@3.55.0
-      tslib: 2.5.0
+      tslib: 2.5.2
       typescript: 5.0.4
       vite: 4.2.1
 
@@ -889,7 +891,7 @@ importers:
       svelte: ^3.54.0
       svelte-check: ^3.3.2
       tailwindcss: ^3.3.2
-      tslib: ^2.5.0
+      tslib: ^2.5.2
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
@@ -902,7 +904,7 @@ importers:
       svelte: 3.55.0
       svelte-check: 3.3.2_unnuimhrmy7wkrlhr4xd5f5uky
       tailwindcss: 3.3.2
-      tslib: 2.5.0
+      tslib: 2.5.2
       typescript: 5.0.4
       vite: 4.2.1
 
@@ -998,8 +1000,8 @@ importers:
     specifiers:
       '@emotion/css': ^11.10.5
       '@solid-primitives/keyed': ^1.1.4
-      '@solid-primitives/resize-observer': ^2.0.15
-      '@solid-primitives/storage': ^1.3.9
+      '@solid-primitives/resize-observer': ^2.0.18
+      '@solid-primitives/storage': ^1.3.11
       '@tanstack/match-sorter-utils': ^8.8.4
       '@tanstack/query-core': workspace:*
       solid-js: ^1.6.10
@@ -1009,8 +1011,8 @@ importers:
     dependencies:
       '@emotion/css': 11.11.0
       '@solid-primitives/keyed': 1.2.0_solid-js@1.6.16
-      '@solid-primitives/resize-observer': 2.0.16_solid-js@1.6.16
-      '@solid-primitives/storage': 1.3.10_solid-js@1.6.16
+      '@solid-primitives/resize-observer': 2.0.18_solid-js@1.6.16
+      '@solid-primitives/storage': 1.3.11_solid-js@1.6.16
       '@tanstack/match-sorter-utils': 8.8.4
       solid-js: 1.6.16
       solid-transition-group: 0.2.2_solid-js@1.6.16
@@ -1103,7 +1105,7 @@ importers:
       jsdom: ^22.0.0
       svelte: ^3.54.0
       svelte-check: ^3.3.2
-      tslib: ^2.5.0
+      tslib: ^2.5.2
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
@@ -1116,7 +1118,7 @@ importers:
       jsdom: 22.0.0
       svelte: 3.55.0
       svelte-check: 3.3.2_svelte@3.55.0
-      tslib: 2.5.0
+      tslib: 2.5.2
       typescript: 5.0.4
       vite: 4.2.1
 
@@ -1132,7 +1134,7 @@ importers:
       jsdom: ^22.0.0
       svelte: ^3.54.0
       svelte-check: ^3.3.2
-      tslib: ^2.5.0
+      tslib: ^2.5.2
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
@@ -1147,7 +1149,7 @@ importers:
       jsdom: 22.0.0
       svelte: 3.55.0
       svelte-check: 3.3.2_svelte@3.55.0
-      tslib: 2.5.0
+      tslib: 2.5.2
       typescript: 5.0.4
       vite: 4.2.1
 
@@ -1178,48 +1180,37 @@ packages:
     resolution: {integrity: sha512-mMVJ/j/GbZ/De4ZHWbQAQO1J6iVnjtZLc9WEdkUQb8S/Bu2cAF2bETXUgMAdvMG3/ngtKmcNBe+Zms9bg6jnQQ==}
     dev: true
 
-  /@algolia/cache-browser-local-storage/4.12.2:
-    resolution: {integrity: sha512-z8LjFsQc0B6h6LEE3pkUGM4ErVktn6bkFbhnYbTccjmFVQ+wXFJd/D63e0WtaC+hwRB1xq8uKhkz9oojEKEsGA==}
+  /@algolia/cache-browser-local-storage/4.17.1:
+    resolution: {integrity: sha512-e91Jpu93X3t3mVdQwF3ZDjSFMFIfzSc+I76G4EX8nl9RYXgqcjframoL05VTjcD2YCsI18RIHAWVCBoCXVZnrw==}
     dependencies:
-      '@algolia/cache-common': 4.12.2
-    dev: false
-
-  /@algolia/cache-common/4.12.2:
-    resolution: {integrity: sha512-r//r7MF0Na0HxD2BHnjWsDKuI72Z5UEf/Rb/8MC08XKBsjCwBihGxWxycjRcNGjNEIxJBsvRMIEOipcd9qD54g==}
+      '@algolia/cache-common': 4.17.1
     dev: false
 
   /@algolia/cache-common/4.17.1:
     resolution: {integrity: sha512-fvi1WT8aSiGAKrcTw8Qg3RYgcwW8GZMHcqEm4AyDBEy72JZlFBSY80cTQ75MslINjCHXLDT+9EN8AGI9WVY7uA==}
     dev: false
 
-  /@algolia/cache-in-memory/4.12.2:
-    resolution: {integrity: sha512-opWpbBUloP1fcTG3wBDnAfcoyNXW5GFDgGtLXrSANdfnelPKkr3O8j01ZTkRlPIuBDR0izGZG8MVWMDlTf71Bw==}
+  /@algolia/cache-in-memory/4.17.1:
+    resolution: {integrity: sha512-NbBt6eBWlsXc5geSpfPRC5dkIB/0Ptthw8r0yM5Z7D3sPlYdnTZSO9y9XWXIptRMwmZe4cM8iBMN8y0tzbcBkA==}
     dependencies:
-      '@algolia/cache-common': 4.12.2
+      '@algolia/cache-common': 4.17.1
     dev: false
 
-  /@algolia/client-account/4.12.2:
-    resolution: {integrity: sha512-HZqEyeVVjzOlfoSUyc+7+ueEJmRgqSuC+hqQOGECYa5JVno4d8eRVuDAMOb87I2LOdg/WoFMcAtaaRq2gpfV/w==}
+  /@algolia/client-account/4.17.1:
+    resolution: {integrity: sha512-3rL/6ofJvyL+q8TiWM3qoM9tig+SY4gB1Vbsj+UeJPnJm8Khm+7OS+r+mFraqR6pTehYqN8yGYoE7x4diEn4aA==}
     dependencies:
-      '@algolia/client-common': 4.12.2
-      '@algolia/client-search': 4.12.2
-      '@algolia/transporter': 4.12.2
+      '@algolia/client-common': 4.17.1
+      '@algolia/client-search': 4.17.1
+      '@algolia/transporter': 4.17.1
     dev: false
 
-  /@algolia/client-analytics/4.12.2:
-    resolution: {integrity: sha512-7ktimzesu+vk3l+eG9w/nQh6/9AoIieCKmoiRIguKh6okGsaSBrcTHvUwIQEIiliqPuAFBk2M8eXYFqOZzwCZw==}
+  /@algolia/client-analytics/4.17.1:
+    resolution: {integrity: sha512-Bepr2w249vODqeBtM7i++tPmUsQ9B81aupUGbDWmjA/FX+jzQqOdhW8w1CFO5kWViNKTbz2WBIJ9U3x8hOa4bA==}
     dependencies:
-      '@algolia/client-common': 4.12.2
-      '@algolia/client-search': 4.12.2
-      '@algolia/requester-common': 4.12.2
-      '@algolia/transporter': 4.12.2
-    dev: false
-
-  /@algolia/client-common/4.12.2:
-    resolution: {integrity: sha512-+dTicT1lklwOpeoiDspUoRSQYHhrr2IzllrX89/WuTPEBm2eww1xurqrSTQYC0MuVeX1s9/i4k34Q0ZnspypWg==}
-    dependencies:
-      '@algolia/requester-common': 4.12.2
-      '@algolia/transporter': 4.12.2
+      '@algolia/client-common': 4.17.1
+      '@algolia/client-search': 4.17.1
+      '@algolia/requester-common': 4.17.1
+      '@algolia/transporter': 4.17.1
     dev: false
 
   /@algolia/client-common/4.17.1:
@@ -1229,20 +1220,12 @@ packages:
       '@algolia/transporter': 4.17.1
     dev: false
 
-  /@algolia/client-personalization/4.12.2:
-    resolution: {integrity: sha512-JBW3vYFGIm5sAAy3cLUdmUCpmSAdreo5S1fERg7xgF6KyxGrwyy5BViTNWrOKG+av2yusk1wKydOYJ1Fbpbaxw==}
+  /@algolia/client-personalization/4.17.1:
+    resolution: {integrity: sha512-gJku9DG/THJpfsSlG/az0a3QIn+VVff9kKh8PG8+7ZfxOHS+C+Y5YSeZVsC+c2cfoKLPo3CuHIiJ/p86erR3bA==}
     dependencies:
-      '@algolia/client-common': 4.12.2
-      '@algolia/requester-common': 4.12.2
-      '@algolia/transporter': 4.12.2
-    dev: false
-
-  /@algolia/client-search/4.12.2:
-    resolution: {integrity: sha512-JIqi14TgfEqAooNbSPBC1ZCk3Pnviqlaz9KofAqWBxSRTpPUFnU/XQCU5ihR0PC68SFVDnU/Y9cak/XotXPUeg==}
-    dependencies:
-      '@algolia/client-common': 4.12.2
-      '@algolia/requester-common': 4.12.2
-      '@algolia/transporter': 4.12.2
+      '@algolia/client-common': 4.17.1
+      '@algolia/requester-common': 4.17.1
+      '@algolia/transporter': 4.17.1
     dev: false
 
   /@algolia/client-search/4.17.1:
@@ -1253,46 +1236,30 @@ packages:
       '@algolia/transporter': 4.17.1
     dev: false
 
-  /@algolia/logger-common/4.12.2:
-    resolution: {integrity: sha512-iOiJAymLjq137G7+8EQuUEkrgta0cZGMg6scp8s4hJ+X6k+6By4nyptdkCWYwKLsW/Xy927QcIhGlkWV78vQIQ==}
-    dev: false
-
   /@algolia/logger-common/4.17.1:
     resolution: {integrity: sha512-Us28Ot+fLEmX9M96sa65VZ8EyEEzhYPxfhV9aQyKDjfXbUdJlJxKt6wZpoEg9RAPSdO8IjK9nmuW2P8au3rRsg==}
     dev: false
 
-  /@algolia/logger-console/4.12.2:
-    resolution: {integrity: sha512-veuQZyTSqHoHJtr9mLMnYeal9Mee6hCie4eqY+645VbeOrgT9p/kCMbKg5GLJGoLPlXGu7C0XpHyUj5k7/NQyw==}
+  /@algolia/logger-console/4.17.1:
+    resolution: {integrity: sha512-iKGQTpOjHiE64W3JIOu6dmDvn+AfYIElI9jf/Nt6umRPmP/JI9rK+OHUoW4pKrBtdG0DPd62ppeNXzSnLxY6/g==}
     dependencies:
-      '@algolia/logger-common': 4.12.2
+      '@algolia/logger-common': 4.17.1
     dev: false
 
-  /@algolia/requester-browser-xhr/4.12.2:
-    resolution: {integrity: sha512-FpFdHNd81tS3zj6Glqd+lt+RV0ljPExKtx+QB+gani6HWZ9YlSCM+Zl82T4ibxN+hmkrMeAyT+TMzS0jiGhGyQ==}
+  /@algolia/requester-browser-xhr/4.17.1:
+    resolution: {integrity: sha512-W5mGfGDsyfVR+r4pUFrYLGBEM18gs38+GNt5PE5uPULy4uVTSnnVSkJkWeRkmLBk9zEZ/Nld8m4zavK6dtEuYg==}
     dependencies:
-      '@algolia/requester-common': 4.12.2
-    dev: false
-
-  /@algolia/requester-common/4.12.2:
-    resolution: {integrity: sha512-4szj/lvDQf/u8EyyRBBRZD1ZkKDyLBbckLj7meQDlnbfwnW1UpLwpB2l3XJ9wDmDSftGxUCeTl5oMFe4z9OEvQ==}
+      '@algolia/requester-common': 4.17.1
     dev: false
 
   /@algolia/requester-common/4.17.1:
     resolution: {integrity: sha512-HggXdjvVFQR0I5l7hM5WdHgQ1tqcRWeyXZz8apQ7zPWZhirmY2E9D6LVhDh/UnWQNEm7nBtM+eMFONJ3bZccIQ==}
     dev: false
 
-  /@algolia/requester-node-http/4.12.2:
-    resolution: {integrity: sha512-UXfJNZt2KMwjBjiOa3cJ/PyoXWZa/F1vy6rdyG4xQeZDcLbqKP3O2b+bOJcGPmFbmdwBhtAyMVLt+hvAvAVfOw==}
+  /@algolia/requester-node-http/4.17.1:
+    resolution: {integrity: sha512-NzFWecXT6d0PPsQY9L+/qoK2deF74OLcpvqCH+Vh3mh+QzPsFafcBExdguAjZsAWDn1R6JEeFW7/fo/p0SE57w==}
     dependencies:
-      '@algolia/requester-common': 4.12.2
-    dev: false
-
-  /@algolia/transporter/4.12.2:
-    resolution: {integrity: sha512-PUq79if4CukXsm27ymTQ3eD3juSvMcyJmt6mxCkSFE0zQRL4ert61HBlNH6S9y/quUVe3g7oggfHq3d5pdpqZA==}
-    dependencies:
-      '@algolia/cache-common': 4.12.2
-      '@algolia/logger-common': 4.12.2
-      '@algolia/requester-common': 4.12.2
+      '@algolia/requester-common': 4.17.1
     dev: false
 
   /@algolia/transporter/4.17.1:
@@ -2748,11 +2715,11 @@ packages:
       '@typescript-eslint/eslint-plugin': 5.59.7_lhwnuo7mh7t3uu6mtx7cuxuc7m
       '@typescript-eslint/parser': 5.59.7_twx2qloifaq5rdyv2wmfnyf27m
       eslint: 8.34.0
-      eslint-config-prettier: 8.6.0_eslint@8.34.0
+      eslint-config-prettier: 8.8.0_eslint@8.34.0
       eslint-plugin-flowtype: 8.0.3_wlvu2e2v2srf2lpwxwe65camz4
       eslint-plugin-import: 2.27.5_prqcae67pddiqbosymhw3vyt7q
       eslint-plugin-jest: 27.2.1_2speqnm4gbphbfsl4vldlaavqu
-      eslint-plugin-prettier: 4.2.1_c55dtrtzl4q7ozvpzijpko3dje
+      eslint-plugin-prettier: 4.2.1_l5okqvx475aergbymncaivscmi
       eslint-plugin-promise: 6.1.1_eslint@8.34.0
       eslint-plugin-react: 7.32.2_eslint@8.34.0
       eslint-plugin-react-hooks: 4.6.0_eslint@8.34.0
@@ -3350,7 +3317,7 @@ packages:
       rimraf: 2.7.1
       sudo-prompt: 8.2.5
       tmp: 0.0.33
-      tslib: 2.5.0
+      tslib: 2.5.2
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -4145,7 +4112,7 @@ packages:
       open: 8.4.0
       picocolors: 1.0.0
       tiny-glob: 0.2.9
-      tslib: 2.5.0
+      tslib: 2.5.2
     dev: true
 
   /@polka/url/1.0.0-next.21:
@@ -4428,8 +4395,8 @@ packages:
       warn-once: 0.1.0
     dev: false
 
-  /@remix-run/router/1.0.1:
-    resolution: {integrity: sha512-eBV5rvW4dRFOU1eajN7FmYxjAIVz/mRHgUE9En9mBn6m3mulK3WTR5C3iQhL9MZ14rWAq+xOlEaCkDiW0/heOg==}
+  /@remix-run/router/1.6.2:
+    resolution: {integrity: sha512-LzqpSrMK/3JBAVBI9u3NWtOhWNw5AMQfrUFYB0+bDHTSw17z++WJLsPsxAuK+oSddsxk4d7F/JcdDPM1M5YAhA==}
     engines: {node: '>=14'}
     dev: false
 
@@ -4666,12 +4633,12 @@ packages:
       '@sinonjs/commons': 3.0.0
     dev: false
 
-  /@solid-primitives/event-listener/2.2.11_solid-js@1.6.16:
-    resolution: {integrity: sha512-pX/offimvt8qtXxwk3kUB6R7igVhnXmSHosQ0ITBOPQvcyhB9Lfrb80zSM8Z0MUf6ZKWyt5n8lco+yK5v2+bIg==}
+  /@solid-primitives/event-listener/2.2.13_solid-js@1.6.16:
+    resolution: {integrity: sha512-8GtVEq0ECZoa5Klo1jjfGPfwg0zVJ8TNnNkWu8FqRkh0CkhbhCVJAKwjleem9K/qL6zUDfJihLjhqGBTBbb+8w==}
     peerDependencies:
       solid-js: ^1.6.12
     dependencies:
-      '@solid-primitives/utils': 6.1.1_solid-js@1.6.16
+      '@solid-primitives/utils': 6.2.0_solid-js@1.6.16
       solid-js: 1.6.16
     dev: false
 
@@ -4692,42 +4659,42 @@ packages:
       solid-js: 1.6.16
     dev: false
 
-  /@solid-primitives/resize-observer/2.0.16_solid-js@1.6.16:
-    resolution: {integrity: sha512-WuCjYXc/tmtmO15h+tEvfMFu+mh860WbDd4weCCRvWQgxvrYJR5FJ4s68cfHFh86Pc2oxuynpBevFFA7uvj4vg==}
+  /@solid-primitives/resize-observer/2.0.18_solid-js@1.6.16:
+    resolution: {integrity: sha512-k4jTqa2hQc1HBLGUUSy69ziVJF2xlBzglUp2Saeor7RrZiWudODGyoUMdNAY+PN3iH4zyH4eEa/Fs+9kIrREig==}
     peerDependencies:
       solid-js: ^1.6.12
     dependencies:
-      '@solid-primitives/event-listener': 2.2.11_solid-js@1.6.16
-      '@solid-primitives/rootless': 1.4.0_solid-js@1.6.16
-      '@solid-primitives/static-store': 0.0.3_solid-js@1.6.16
-      '@solid-primitives/utils': 6.1.1_solid-js@1.6.16
+      '@solid-primitives/event-listener': 2.2.13_solid-js@1.6.16
+      '@solid-primitives/rootless': 1.4.1_solid-js@1.6.16
+      '@solid-primitives/static-store': 0.0.4_solid-js@1.6.16
+      '@solid-primitives/utils': 6.2.0_solid-js@1.6.16
       solid-js: 1.6.16
     dev: false
 
-  /@solid-primitives/rootless/1.4.0_solid-js@1.6.16:
-    resolution: {integrity: sha512-hShkSvajBQKWI0g1oNKfLb3W5owQIhW1wBaMBgq/sAdUhWevyM+ldYab2bry5vnh7DxemLSCrtvFJWNTHCuJgQ==}
+  /@solid-primitives/rootless/1.4.1_solid-js@1.6.16:
+    resolution: {integrity: sha512-h7VBUk8usD76Eh1a4wT17PcGtIRxGPlLuJ4Mf7roCNu46W5cc9DAoz8M6XebuZWVKeUkML/JuPMZQSV0mLo2Fw==}
     peerDependencies:
       solid-js: ^1.6.12
     dependencies:
-      '@solid-primitives/utils': 6.1.1_solid-js@1.6.16
+      '@solid-primitives/utils': 6.2.0_solid-js@1.6.16
       solid-js: 1.6.16
     dev: false
 
-  /@solid-primitives/static-store/0.0.3_solid-js@1.6.16:
-    resolution: {integrity: sha512-OHwr9w8gb+IZGGEdmPL5Oet62p4c8Py3AaxxOopxv++SmGoed2niO8nORNbUk/riScvqzeDpOrAuQ//fYPm2tw==}
+  /@solid-primitives/static-store/0.0.4_solid-js@1.6.16:
+    resolution: {integrity: sha512-NcLtDNA6H+Z9LmqaUe4SKfMx0YbszIMXEqfV15cB34t5XyEeOM5TihYwsVJ/dpkmpHYzflm0SwAL+P9uwyzvWQ==}
     peerDependencies:
       solid-js: ^1.6.12
     dependencies:
-      '@solid-primitives/utils': 6.1.1_solid-js@1.6.16
+      '@solid-primitives/utils': 6.2.0_solid-js@1.6.16
       solid-js: 1.6.16
     dev: false
 
-  /@solid-primitives/storage/1.3.10_solid-js@1.6.16:
-    resolution: {integrity: sha512-5VjQdYFKk6PP7Yr+kA4ev/cTp/wwpHu92zvBe4YlIEdUvOFJ9WloX8ALrOb6XkqvHPBQXRbBJX1ZMzRmUhIDSw==}
+  /@solid-primitives/storage/1.3.11_solid-js@1.6.16:
+    resolution: {integrity: sha512-PpQWR3TaTxHIJFbI9ZssYTM4Aa67g1vJIgps4TPhcXzHqqomrPAIveFC2FG7SDQoi9YQia8FVBjigELziJpfIg==}
     peerDependencies:
       solid-js: ^1.6.12
     dependencies:
-      '@solid-primitives/utils': 6.1.1_solid-js@1.6.16
+      '@solid-primitives/utils': 6.2.0_solid-js@1.6.16
       solid-js: 1.6.16
     dev: false
 
@@ -4741,6 +4708,14 @@ packages:
 
   /@solid-primitives/utils/6.1.1_solid-js@1.6.16:
     resolution: {integrity: sha512-wxxUdxja126jTROs9Ro8Z5ExbHs9rv2Tl744S3Qmzki/gTcTXW8D1TvTArQcjqkCvSw8OIQ2EO2NI8sR28Trxg==}
+    peerDependencies:
+      solid-js: ^1.6.12
+    dependencies:
+      solid-js: 1.6.16
+    dev: false
+
+  /@solid-primitives/utils/6.2.0_solid-js@1.6.16:
+    resolution: {integrity: sha512-T62WlLwKkbmicsw/xpwMQyv9MmZRSaVyutXfS5icc9v0cb8qGMUxRxr5LVvZHYQCZ9DEFboZB0r711xsbVBbeA==}
     peerDependencies:
       solid-js: ^1.6.12
     dependencies:
@@ -4863,7 +4838,7 @@ packages:
   /@swc/helpers/0.4.2:
     resolution: {integrity: sha512-556Az0VX7WR6UdoTn4htt/l3zPQ7bsQWK+HqdG4swV7beUCxo/BqmvbOpUkTIm/9ih86LIf1qsUnywNL3obGHw==}
     dependencies:
-      tslib: 2.5.0
+      tslib: 2.5.2
     dev: false
 
   /@tanstack/match-sorter-utils/8.8.4:
@@ -4884,8 +4859,8 @@ packages:
     dependencies:
       '@emotion/css': 11.11.0
       '@solid-primitives/keyed': 1.2.0_solid-js@1.6.16
-      '@solid-primitives/resize-observer': 2.0.16_solid-js@1.6.16
-      '@solid-primitives/storage': 1.3.10_solid-js@1.6.16
+      '@solid-primitives/resize-observer': 2.0.18_solid-js@1.6.16
+      '@solid-primitives/storage': 1.3.11_solid-js@1.6.16
       '@tanstack/match-sorter-utils': 8.8.4
       solid-js: 1.6.16
       solid-transition-group: 0.2.2_solid-js@1.6.16
@@ -6036,7 +6011,7 @@ packages:
     engines: {node: '>=14.15.0'}
     dependencies:
       js-yaml: 3.14.1
-      tslib: 2.5.0
+      tslib: 2.5.2
     dev: true
 
   /@zkochan/js-yaml/0.0.6:
@@ -6132,23 +6107,23 @@ packages:
       uri-js: 4.4.1
     dev: true
 
-  /algoliasearch/4.12.2:
-    resolution: {integrity: sha512-bn1P9+V415zeDQJtXn+1SwuwedEAv9/LJAxt8XwR6ygH/sMwaHSm2hpkz8wIbCBt/tKQ43TL672Kyxzv5PwGgQ==}
+  /algoliasearch/4.17.1:
+    resolution: {integrity: sha512-4GDQ1RhP2qUR3x8PevFRbEdqZqIARNViZYjgTJmA1T7wRNtFA3W4Aqc/RsODqa1J8IO/QDla5x4tWuUS8NV8wA==}
     dependencies:
-      '@algolia/cache-browser-local-storage': 4.12.2
-      '@algolia/cache-common': 4.12.2
-      '@algolia/cache-in-memory': 4.12.2
-      '@algolia/client-account': 4.12.2
-      '@algolia/client-analytics': 4.12.2
-      '@algolia/client-common': 4.12.2
-      '@algolia/client-personalization': 4.12.2
-      '@algolia/client-search': 4.12.2
-      '@algolia/logger-common': 4.12.2
-      '@algolia/logger-console': 4.12.2
-      '@algolia/requester-browser-xhr': 4.12.2
-      '@algolia/requester-common': 4.12.2
-      '@algolia/requester-node-http': 4.12.2
-      '@algolia/transporter': 4.12.2
+      '@algolia/cache-browser-local-storage': 4.17.1
+      '@algolia/cache-common': 4.17.1
+      '@algolia/cache-in-memory': 4.17.1
+      '@algolia/client-account': 4.17.1
+      '@algolia/client-analytics': 4.17.1
+      '@algolia/client-common': 4.17.1
+      '@algolia/client-personalization': 4.17.1
+      '@algolia/client-search': 4.17.1
+      '@algolia/logger-common': 4.17.1
+      '@algolia/logger-console': 4.17.1
+      '@algolia/requester-browser-xhr': 4.17.1
+      '@algolia/requester-common': 4.17.1
+      '@algolia/requester-node-http': 4.17.1
+      '@algolia/transporter': 4.17.1
     dev: false
 
   /anser/1.4.10:
@@ -6366,7 +6341,7 @@ packages:
     resolution: {integrity: sha512-O0yuUDnZeQDL+ncNGlJ78BiO4jnYI3bvMsD5prT0/nsgijG/LpNBIr63gTjVTNsiGkgQhiyCShTgxt8oXOrklA==}
     engines: {node: '>=4'}
     dependencies:
-      tslib: 2.5.0
+      tslib: 2.5.2
 
   /astral-regex/1.0.0:
     resolution: {integrity: sha512-+Ryf6g3BKoRc7jfp7ad8tM4TtMiaWvbF/1/sQcZPkkS7ag3D5nMBCe2UfOTONtAkaG0tO0ij3C5Lwmf1EiyjHg==}
@@ -8359,8 +8334,8 @@ packages:
       eslint: 8.34.0
     dev: true
 
-  /eslint-config-prettier/8.6.0_eslint@8.34.0:
-    resolution: {integrity: sha512-bAF0eLpLVqP5oEVUFKpMA+NnRFICwn9X8B5jrR9FcqnYBuPbqWEjTEspPWMj5ye6czoSLDweCzSo3Ko7gGrZaA==}
+  /eslint-config-prettier/8.8.0_eslint@8.34.0:
+    resolution: {integrity: sha512-wLbQiFre3tdGgpDv67NQKnJuTlcUVYHas3k+DZCc2U2BadthoEY4B7hLPvAxaqdyOGCzuLfii2fqGph10va7oA==}
     hasBin: true
     peerDependencies:
       eslint: '>=7.0.0'
@@ -8676,7 +8651,7 @@ packages:
       prettier-linter-helpers: 1.0.0
     dev: true
 
-  /eslint-plugin-prettier/4.2.1_c55dtrtzl4q7ozvpzijpko3dje:
+  /eslint-plugin-prettier/4.2.1_l5okqvx475aergbymncaivscmi:
     resolution: {integrity: sha512-f/0rXLXUt0oFYs8ra4w49wYZBG5GKZpAYsJSm6rnYL5uVDjd+zowwMwVZHnAjf4edNrKpCDYfXDgmRE/Ak7QyQ==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
@@ -8688,7 +8663,7 @@ packages:
         optional: true
     dependencies:
       eslint: 8.34.0
-      eslint-config-prettier: 8.6.0_eslint@8.34.0
+      eslint-config-prettier: 8.8.0_eslint@8.34.0
       prettier: 2.8.8
       prettier-linter-helpers: 1.0.0
     dev: true
@@ -9773,7 +9748,7 @@ packages:
       graphql: ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
       graphql: 15.8.0
-      tslib: 2.5.0
+      tslib: 2.5.2
     dev: false
 
   /graphql/15.8.0:
@@ -9891,17 +9866,6 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       source-map: 0.7.4
-    dev: false
-
-  /history/4.10.1:
-    resolution: {integrity: sha512-36nwAD620w12kuzPAsyINPWJqlNbij+hpK1k9XRloDtym8mxzGYl2c17LnV6IAGB2Dmg4tEa7G7DlawS0+qjew==}
-    dependencies:
-      '@babel/runtime': 7.21.0
-      loose-envify: 1.4.0
-      resolve-pathname: 3.0.0
-      tiny-invariant: 1.2.0
-      tiny-warning: 1.0.3
-      value-equal: 1.0.1
     dev: false
 
   /history/5.3.0:
@@ -10492,10 +10456,6 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       is-docker: 2.2.1
-
-  /isarray/0.0.1:
-    resolution: {integrity: sha512-D2S+3GLxWH+uhrNEcoh/fnmYeP8E8/zHl644d/jdA0g2uyXvy3sb0qxotE+ne0LtccHknQzWwZEzhak7oJ0COQ==}
-    dev: false
 
   /isarray/1.0.0:
     resolution: {integrity: sha512-VLghIWNM6ELQzo7zwmcg0NmTVyWKYjvIeM83yjp0wRDTmUnrM678fQbcKBo6n2CJEF0szoG//ytg+TKla89ALQ==}
@@ -11192,7 +11152,7 @@ packages:
   /lower-case/2.0.2:
     resolution: {integrity: sha512-7fm3l3NAF9WfN6W3JOmf5drwpVqX78JtoGJ3A6W0a6ZnldM41w2fV5D490psKFTpMds8TJse/eHLFFsNHHjHgg==}
     dependencies:
-      tslib: 2.5.0
+      tslib: 2.5.2
     dev: true
 
   /lru-cache/4.1.5:
@@ -11758,18 +11718,6 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /mini-create-react-context/0.4.1_sh5qlbywuemxd2y3xkrw2y2kr4:
-    resolution: {integrity: sha512-YWCYEmd5CQeHGSAKrYvXgmzzkrvssZcuuQDDeqkT+PziKGMgE+0MCCtcKbROzocGBG1meBLl2FotlRwf4gAzbQ==}
-    peerDependencies:
-      prop-types: ^15.0.0
-      react: ^0.14.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-    dependencies:
-      '@babel/runtime': 7.21.0
-      prop-types: 15.8.1
-      react: 18.2.0
-      tiny-warning: 1.0.3
-    dev: false
-
   /minimatch/3.0.5:
     resolution: {integrity: sha512-tUpxzX0VAzJHjLu0xUfFv1gwVp9ba3IOuRAVH2EGuRW8a5emA2FlACLqiT/lDVtS1W+TGNwqz3sWaNyLgDJWuw==}
     dependencies:
@@ -11936,12 +11884,6 @@ packages:
       object-assign: 4.1.1
       thenify-all: 1.6.0
 
-  /nanoid/3.3.4:
-    resolution: {integrity: sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==}
-    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
-    hasBin: true
-    dev: true
-
   /nanoid/3.3.6:
     resolution: {integrity: sha512-BGcqMMJuToF7i1rt+2PWSNVnWIkGCU78jBG3RxO/bZlnZPK2Cmi2QaffxGO/2RvWi9sL+FAiRiXMgsyxQ1DIDA==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -12047,7 +11989,7 @@ packages:
     resolution: {integrity: sha512-fgAN3jGAh+RoxUGZHTSOLJIqUc2wmoBwGR4tbpNAKmmovFoWq0OdRkb0VkldReO2a2iBT/OEulG9XSUc10r3zg==}
     dependencies:
       lower-case: 2.0.2
-      tslib: 2.5.0
+      tslib: 2.5.2
     dev: true
 
   /nocache/3.0.4:
@@ -12609,7 +12551,7 @@ packages:
     resolution: {integrity: sha512-uWlGT3YSnK9x3BQJaOdcZwrnV6hPpd8jFH1/ucpiLRPh/2zCVJKS19E4GvYHvaCcACn3foXZ0cLB9Wrx1KGe5g==}
     dependencies:
       no-case: 3.0.4
-      tslib: 2.5.0
+      tslib: 2.5.2
     dev: true
 
   /pascalcase/0.1.1:
@@ -12650,12 +12592,6 @@ packages:
 
   /path-parse/1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
-
-  /path-to-regexp/1.8.0:
-    resolution: {integrity: sha512-n43JRhlUKUAlibEJhPeir1ncUID16QnEjNpwzNdO3Lm4ywrBpBZ5oLD0I6br9evr1Y9JTqwRtAh7JLoOzAQdVA==}
-    dependencies:
-      isarray: 0.0.1
-    dev: false
 
   /path-to-regexp/6.2.1:
     resolution: {integrity: sha512-JLyh7xT1kizaEvcaXOQwOc2/Yhw6KZOvPf1S8401UyLk86CU79LN3vl7ztXGm/pZ+YjoyAJ4rxmHwbkBXJX+yw==}
@@ -12847,15 +12783,6 @@ packages:
   /postcss-value-parser/4.2.0:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
 
-  /postcss/8.4.21:
-    resolution: {integrity: sha512-tP7u/Sn/dVxK2NnruI4H9BG+x+Wxz6oeZ1cJ8P6G/PZY0IKk4k/63TDsQf2kQq3+qoJeLm2kIBUNlZe3zgb4Zg==}
-    engines: {node: ^10 || ^12 || >=14}
-    dependencies:
-      nanoid: 3.3.4
-      picocolors: 1.0.0
-      source-map-js: 1.0.2
-    dev: true
-
   /postcss/8.4.23:
     resolution: {integrity: sha512-bQ3qMcpF6A/YjR55xtoTr0jGOlnPOKAIMdOWiv0EIT6HVPEaJiJB4NLljSbiHoC2RX7DN5Uvjtpbg1NPdwv1oA==}
     engines: {node: ^10 || ^12 || >=14}
@@ -12885,8 +12812,8 @@ packages:
       fast-diff: 1.2.0
     dev: true
 
-  /prettier-plugin-svelte/2.9.0_prettier@2.8.8:
-    resolution: {integrity: sha512-3doBi5NO4IVgaNPtwewvrgPpqAcvNv0NwJNflr76PIGgi9nf1oguQV1Hpdm9TI2ALIQVn/9iIwLpBO5UcD2Jiw==}
+  /prettier-plugin-svelte/2.10.0_prettier@2.8.8:
+    resolution: {integrity: sha512-GXMY6t86thctyCvQq+jqElO+MKdB09BkL3hexyGP3Oi8XLKRFaJP1ud/xlWCZ9ZIa2BxHka32zhHfcuU+XsRQg==}
     peerDependencies:
       prettier: ^1.16.4 || ^2.0.0
       svelte: ^3.2.0
@@ -13129,8 +13056,8 @@ packages:
       react: 18.2.0
     dev: false
 
-  /react-hot-toast/2.2.0_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-248rXw13uhf/6TNDVzagX+y7R8J183rp7MwUMNkcrBRyHj/jWOggfXTGlM8zAOuh701WyVW+eUaWG2LeSufX9g==}
+  /react-hot-toast/2.4.1_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-j8z+cQbWIM5LY37pR6uZR6D4LfseplqnuAO4co4u8917hBUvXlEqyP1ZzqVLcqoyUesZZv/ImreoCeHVDpE5pQ==}
     engines: {node: '>=10'}
     peerDependencies:
       react: '>=16'
@@ -13329,59 +13256,26 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
-  /react-router-dom/5.3.3_react@18.2.0:
-    resolution: {integrity: sha512-Ov0tGPMBgqmbu5CDmN++tv2HQ9HlWDuWIIqn4b88gjlAN5IHI+4ZUZRcpz9Hl0azFIwihbLDYw1OiHGRo7ZIng==}
-    peerDependencies:
-      react: '>=15'
-    dependencies:
-      '@babel/runtime': 7.18.9
-      history: 4.10.1
-      loose-envify: 1.4.0
-      prop-types: 15.8.1
-      react: 18.2.0
-      react-router: 5.3.3_react@18.2.0
-      tiny-invariant: 1.2.0
-      tiny-warning: 1.0.3
-    dev: false
-
-  /react-router-dom/6.4.1_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-MY7NJCrGNVJtGp8ODMOBHu20UaIkmwD2V3YsAOUQoCXFk7Ppdwf55RdcGyrSj+ycSL9Uiwrb3gTLYSnzcRoXww==}
+  /react-router-dom/6.11.2_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-JNbKtAeh1VSJQnH6RvBDNhxNwemRj7KxCzc5jb7zvDSKRnPWIFj9pO+eXqjM69gQJ0r46hSz1x4l9y0651DKWw==}
     engines: {node: '>=14'}
     peerDependencies:
       react: '>=16.8'
       react-dom: '>=16.8'
     dependencies:
-      '@remix-run/router': 1.0.1
+      '@remix-run/router': 1.6.2
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      react-router: 6.4.1_react@18.2.0
+      react-router: 6.11.2_react@18.2.0
     dev: false
 
-  /react-router/5.3.3_react@18.2.0:
-    resolution: {integrity: sha512-mzQGUvS3bM84TnbtMYR8ZjKnuPJ71IjSzR+DE6UkUqvN4czWIqEs17yLL8xkAycv4ev0AiN+IGrWu88vJs/p2w==}
-    peerDependencies:
-      react: '>=15'
-    dependencies:
-      '@babel/runtime': 7.18.9
-      history: 4.10.1
-      hoist-non-react-statics: 3.3.2
-      loose-envify: 1.4.0
-      mini-create-react-context: 0.4.1_sh5qlbywuemxd2y3xkrw2y2kr4
-      path-to-regexp: 1.8.0
-      prop-types: 15.8.1
-      react: 18.2.0
-      react-is: 16.13.1
-      tiny-invariant: 1.2.0
-      tiny-warning: 1.0.3
-    dev: false
-
-  /react-router/6.4.1_react@18.2.0:
-    resolution: {integrity: sha512-OJASKp5AykDWFewgWUim1vlLr7yfD4vO/h+bSgcP/ix8Md+LMHuAjovA74MQfsfhQJGGN1nHRhwS5qQQbbBt3A==}
+  /react-router/6.11.2_react@18.2.0:
+    resolution: {integrity: sha512-74z9xUSaSX07t3LM+pS6Un0T55ibUE/79CzfZpy5wsPDZaea1F8QkrsiyRnA2YQ7LwE/umaydzXZV80iDCPkMg==}
     engines: {node: '>=14'}
     peerDependencies:
       react: '>=16.8'
     dependencies:
-      '@remix-run/router': 1.0.1
+      '@remix-run/router': 1.6.2
       react: 18.2.0
     dev: false
 
@@ -13495,7 +13389,7 @@ packages:
       ast-types: 0.14.2
       esprima: 4.0.1
       source-map: 0.6.1
-      tslib: 2.5.0
+      tslib: 2.5.2
 
   /redent/3.0.0:
     resolution: {integrity: sha512-6tDA8g98We0zd0GvVeMT9arEOnTw9qM03L9cJXaCjrip1OO764RDBLBfrB4cwzNGDj5OA5ioymC9GkizgWJDUg==}
@@ -13628,10 +13522,6 @@ packages:
   /resolve-from/5.0.0:
     resolution: {integrity: sha512-qYg9KP24dD5qka9J47d0aVky0N+b4fTU89LN9iDnjB5waksiC49rvMB0PrUJQGoTmH50XPiqOvAjDfaijGxYZw==}
     engines: {node: '>=8'}
-
-  /resolve-pathname/3.0.0:
-    resolution: {integrity: sha512-C7rARubxI8bXFNB/hqcp/4iUeIXJhJZvFPFPiSPRnhU5UPxzMFIl+2E6yY6c4k9giDJAhtV+enfA+G89N6Csng==}
-    dev: false
 
   /resolve-url/0.2.1:
     resolution: {integrity: sha512-ZuF55hVUQaaczgOIwqWzkEcEidmlD/xl44x1UZnhOXcYuFN2S6+rcxpG+C1N3So0wvNI3DmJICUFfu2SxhBmvg==}
@@ -13854,7 +13744,7 @@ packages:
   /rxjs/7.8.1:
     resolution: {integrity: sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==}
     dependencies:
-      tslib: 2.5.0
+      tslib: 2.5.2
 
   /sade/1.8.1:
     resolution: {integrity: sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A==}
@@ -14962,7 +14852,7 @@ packages:
     engines: {node: ^14.18.0 || >=16.0.0}
     dependencies:
       '@pkgr/utils': 2.3.1
-      tslib: 2.5.0
+      tslib: 2.5.2
     dev: true
 
   /tailwindcss/3.3.2:
@@ -15150,10 +15040,6 @@ packages:
       globrex: 0.1.2
     dev: true
 
-  /tiny-invariant/1.2.0:
-    resolution: {integrity: sha512-1Uhn/aqw5C6RI4KejVeTg6mIS7IqxnLJ8Mv2tV5rTc0qWobay7pDUz6Wi392Cnc8ak1H0F2cjoRzb2/AW4+Fvg==}
-    dev: false
-
   /tiny-warning/1.0.3:
     resolution: {integrity: sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA==}
     dev: false
@@ -15340,6 +15226,10 @@ packages:
 
   /tslib/2.5.0:
     resolution: {integrity: sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg==}
+    dev: true
+
+  /tslib/2.5.2:
+    resolution: {integrity: sha512-5svOrSA2w3iGFDs1HibEVBGbDrAY82bFQ3HZ3ixB+88nsbsWQoKqDRb5UBYAUPEzbBn6dAp5gRNXglySbx1MlA==}
 
   /tsup/6.7.0:
     resolution: {integrity: sha512-L3o8hGkaHnu5TdJns+mCqFsDBo83bJ44rlK7e6VdanIvpea4ArPcU3swWGsLVbXak1PqQx/V+SSmFPujBK+zEQ==}
@@ -15727,10 +15617,6 @@ packages:
     resolution: {integrity: sha512-M6w37eVCMMouJ9V/sdPGnC5H4uDr73/+xdq0FBLO3TFFX1+7wiUY6Es328NN+y43tmY+doUdN9g9J21vqB7iLw==}
     dependencies:
       builtins: 1.0.3
-    dev: false
-
-  /value-equal/1.0.1:
-    resolution: {integrity: sha512-NOJ6JZCAWr0zlxZt+xqCHNTEKOsrks2HQd4MqhP1qy4z1SkbEP467eNx6TgDKXMvUOb+OENfJCZwM+16n7fRfw==}
     dev: false
 
   /vary/1.1.2:

@@ -10,8 +10,7 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
-import { useParams } from "react-router";
+import { useParams, Link as RouterLink } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import fetch from "./fetch";
 

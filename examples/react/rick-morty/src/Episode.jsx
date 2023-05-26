@@ -1,7 +1,6 @@
 import React from "react";
 import { Typography, Link } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
-import { useParams } from "react-router";
+import { useParams, Link as RouterLink } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import fetch from "./fetch";
 

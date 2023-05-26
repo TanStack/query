@@ -12,7 +12,7 @@
     "@algolia/transporter": "4.17.1",
     "@tanstack/react-query": "^5.0.0-alpha.38",
     "@tanstack/react-query-devtools": "^5.0.0-alpha.38",
-    "algoliasearch": "4.12.2"
+    "algoliasearch": "4.17.1"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.0.0-alpha.36",

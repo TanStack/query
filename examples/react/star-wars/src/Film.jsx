@@ -1,12 +1,12 @@
 import React from "react";
 import { Typography, Link } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
-import { withRouter } from "react-router";
+import { useParams, Link as RouterLink } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import fetch from "./fetch";
 
-function Film(props) {
-  const filmId = props.match.params.filmId;
+function Film() {
+  let params = useParams();
+  const filmId = params.filmId;
   const { data, status, error } = useQuery({
     queryKey: ["film", filmId],
     queryFn: () => fetch(`https://swapi.dev/api/films/${filmId}/`),
@@ -54,4 +54,4 @@ function Character(props) {
   );
 }
 
-export default withRouter(Film);
+export default Film;

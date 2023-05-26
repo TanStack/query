@@ -10,13 +10,13 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
-import { withRouter } from "react-router";
+import { useParams, Link as RouterLink } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import fetch from "./fetch";
 
-function Character(props) {
-  const characterId = props.match.params.characterId;
+function Character() {
+  let params = useParams();
+  const characterId = params.characterId;
   const { status, error, data } = useQuery({
     queryKey: ["character", characterId],
     queryFn: () => fetch(`https://swapi.dev/api/people/${characterId}/`),
@@ -119,4 +119,4 @@ function Homeworld(props) {
   return data.name;
 }
 
-export default withRouter(Character);
+export default Character;
