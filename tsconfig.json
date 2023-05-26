@@ -1,9 +1,5 @@
 {
-  "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-  },
-  "include": ["rollup.config.ts"],
+  "files": [],
   "references": [
     { "path": "packages/query-core" },
     { "path": "packages/query-persist-client-core" },
