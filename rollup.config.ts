@@ -1,7 +1,7 @@
 import type { OutputOptions, Plugin, RollupOptions } from 'rollup'
 import babel from '@rollup/plugin-babel'
 import terser from '@rollup/plugin-terser'
-import visualizer from 'rollup-plugin-visualizer'
+import { visualizer } from 'rollup-plugin-visualizer'
 import replace from '@rollup/plugin-replace'
 import nodeResolve from '@rollup/plugin-node-resolve'
 import commonJS from '@rollup/plugin-commonjs'
