@@ -9,6 +9,6 @@
     "nuxt": "^3.0.0-rc.12"
   },
   "dependencies": {
-    "@tanstack/vue-query": "^4.13.3"
+    "@tanstack/vue-query": "^5.0.0-alpha.38"
   }
 }

@@ -41,17 +41,17 @@
     "build/lib/*",
     "build/umd/*"
   ],
+  "dependencies": {
+    "@tanstack/query-core": "workspace:*",
+    "@tanstack/match-sorter-utils": "^8.8.4",
+    "@vue/devtools-api": "^6.5.0",
+    "vue-demi": "^0.13.11"
+  },
   "devDependencies": {
     "@vue/composition-api": "1.7.1",
     "vue": "^3.2.47",
     "vue2": "npm:vue@2.6",
     "vue2.7": "npm:vue@2.7"
-  },
-  "dependencies": {
-    "@tanstack/query-core": "workspace:*",
-    "@vue/devtools-api": "^6.5.0",
-    "@tanstack/match-sorter-utils": "^8.7.6",
-    "vue-demi": "^0.13.11"
   },
   "peerDependencies": {
     "@vue/composition-api": "^1.1.2",

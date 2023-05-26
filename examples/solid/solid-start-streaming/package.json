@@ -15,7 +15,7 @@
     "vite": "^4.1.4"
   },
   "dependencies": {
-    "@tanstack/solid-query": "^5.0.0-alpha.3",
+    "@tanstack/solid-query": "^5.0.0-alpha.38",
     "@solidjs/meta": "^0.28.2",
     "@solidjs/router": "^0.7.0",
     "solid-js": "^1.6.13",

@@ -10,7 +10,7 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
-    "@tanstack/svelte-query": "^4.20.0"
+    "@tanstack/svelte-query": "^5.0.0-alpha.38"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^2.1.0",
