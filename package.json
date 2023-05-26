@@ -58,7 +58,7 @@
     "axios": "^1.4.0",
     "babel-preset-solid": "^1.6.10",
     "bundlewatch": "^0.3.3",
-    "chalk": "^5.2.0",
+    "chalk": "^4.1.2",
     "concurrently": "^8.0.1",
     "cpy-cli": "^4.2.0",
     "current-git-branch": "^1.1.0",
