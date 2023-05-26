@@ -14,7 +14,7 @@
     "@tanstack/query-sync-storage-persister": "^4.14.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "3.2.0",
+    "@vitejs/plugin-vue": "^4.0.0",
     "typescript": "4.8.4",
     "vite": "^4.0.0"
   }

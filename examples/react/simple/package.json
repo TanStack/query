@@ -15,7 +15,7 @@
     "@tanstack/react-query-devtools": "^4.7.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^2.0.0",
+    "@vitejs/plugin-react": "^4.0.0",
     "vite": "^4.0.0"
   },
   "browserslist": {
