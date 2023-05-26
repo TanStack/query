@@ -10,7 +10,7 @@ import {
   on,
   Switch,
 } from 'solid-js'
-import { fireEvent, render, screen, waitFor } from 'solid-testing-library'
+import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
 import type {
   CreateQueryOptions,
   CreateQueryResult,

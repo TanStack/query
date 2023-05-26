@@ -19,6 +19,7 @@ importers:
       '@rollup/plugin-node-resolve': ^15.0.1
       '@rollup/plugin-replace': ^5.0.2
       '@rollup/plugin-terser': ^0.4.3
+      '@solidjs/testing-library': ^0.5.1
       '@testing-library/jest-dom': ^5.16.5
       '@testing-library/react': ^14.0.0
       '@testing-library/react-hooks': ^8.0.1
@@ -66,7 +67,6 @@ importers:
       rollup-preset-solid: ^1.4.0
       semver: ^7.3.8
       solid-js: ^1.6.13
-      solid-testing-library: ^0.5.1
       stream-to-array: ^2.3.0
       ts-node: ^10.9.1
       typescript: ^4.7.4
@@ -83,6 +83,7 @@ importers:
       '@rollup/plugin-node-resolve': 15.0.1_rollup@3.23.0
       '@rollup/plugin-replace': 5.0.2_rollup@3.23.0
       '@rollup/plugin-terser': 0.4.3_rollup@3.23.0
+      '@solidjs/testing-library': 0.5.2_solid-js@1.6.16
       '@testing-library/jest-dom': 5.16.5
       '@testing-library/react': 14.0.0_biqbaboplfbrettd7655fr4n2y
       '@testing-library/react-hooks': 8.0.1_zula6vjvt3wdocc4mwcxqa6nzi
@@ -130,7 +131,6 @@ importers:
       rollup-preset-solid: 1.4.0
       semver: 7.3.8
       solid-js: 1.6.16
-      solid-testing-library: 0.5.1_solid-js@1.6.16
       stream-to-array: 2.3.0
       ts-node: 10.9.1_4bewfcp2iebiwuold25d6rgcsy
       typescript: 4.9.5
@@ -388,13 +388,14 @@ importers:
     dependencies:
       '@tanstack/react-query': 4.26.1_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-devtools': 4.26.1_brdhmlf72zuns3lsk66phyptty
-      '@types/node': 14.14.14
-      '@types/react': 18.0.15
       axios: 0.21.4
       isomorphic-unfetch: 3.0.0
       next: 12.2.2_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+    devDependencies:
+      '@types/node': 14.14.14
+      '@types/react': 18.0.15
       typescript: 4.7.4
 
   examples/react/pagination:
@@ -1877,7 +1878,7 @@ packages:
     resolution: {integrity: sha512-0NFvs3VkuSYbFi1x2Vd6tKrywq+z/cLeYC/RJNFrIX/30Bf5aiGYbtvGXolEktzJH8o5E5KJ3tT+nkxuuZFVlA==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/types': 7.21.3
+      '@babel/types': 7.21.5
 
   /@babel/helper-module-imports/7.21.4:
     resolution: {integrity: sha512-orajc5T2PsRYUN3ZryCEFeMDYwyw09c/pZeaQEZPH0MpKzSvn3e0uXsDBu3k03VI+9DBiRo+l22BfKTpKwa/Wg==}
@@ -8195,6 +8196,16 @@ packages:
     dependencies:
       solid-js: 1.6.16
 
+  /@solidjs/testing-library/0.5.2_solid-js@1.6.16:
+    resolution: {integrity: sha512-GXUiI0Itz/7FfTJrV0RoICS2lL0RE3D1lNSrnuNg9nLC28qKnEQhm9Gfk4gFP9rGVzmsJJJC7yf8kbHMuyR2AA==}
+    engines: {node: '>= 14'}
+    peerDependencies:
+      solid-js: '>=1.0.0'
+    dependencies:
+      '@testing-library/dom': 8.20.0
+      solid-js: 1.6.16
+    dev: true
+
   /@sveltejs/adapter-auto/2.0.0_@sveltejs+kit@1.15.2:
     resolution: {integrity: sha512-b+gkHFZgD771kgV3aO4avHFd7y1zhmMYy9i6xOK7m/rwmwaRO8gnF5zBc0Rgca80B2PMU1bKNxyBTHA14OzUAQ==}
     peerDependencies:
@@ -8505,7 +8516,7 @@ packages:
       aria-query: 5.1.3
       chalk: 4.1.2
       dom-accessibility-api: 0.5.14
-      lz-string: 1.4.4
+      lz-string: 1.5.0
       pretty-format: 27.5.1
     dev: true
 
@@ -8739,7 +8750,7 @@ packages:
 
   /@types/node/14.14.14:
     resolution: {integrity: sha512-UHnOPWVWV1z+VV8k6L1HhG7UbGBgIdghqF3l9Ny9ApPghbjICXkUJSd/b9gOgQfjM1r+37cipdw/HJ3F6ICEnQ==}
-    dev: false
+    dev: true
 
   /@types/node/18.13.0:
     resolution: {integrity: sha512-gC3TazRzGoOnoKAhUx+Q0t8S9Tzs74z7m0ipwGpSqQrleP14hKxP4/JUeEQcD3W1/aIpnWl8pHowI7WokuZpXg==}
@@ -8802,6 +8813,7 @@ packages:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.2
       csstype: 3.1.0
+    dev: true
 
   /@types/react/18.0.28:
     resolution: {integrity: sha512-RD0ivG1kEztNBdoAK7lekI9M+azSnitIn85h4iOiaLjaTrMjzslhaqCGaI4IyCJ1RljWiLCEu4jyrLLgqxBTew==}
@@ -11313,7 +11325,7 @@ packages:
       es-get-iterator: 1.1.3
       get-intrinsic: 1.2.0
       is-arguments: 1.1.1
-      is-array-buffer: 3.0.1
+      is-array-buffer: 3.0.2
       is-date-object: 1.0.5
       is-regex: 1.1.4
       is-shared-array-buffer: 1.0.2
@@ -11617,7 +11629,7 @@ packages:
       has-proto: 1.0.1
       has-symbols: 1.0.3
       internal-slot: 1.0.5
-      is-array-buffer: 3.0.1
+      is-array-buffer: 3.0.2
       is-callable: 1.2.7
       is-negative-zero: 2.0.2
       is-regex: 1.1.4
@@ -11625,7 +11637,7 @@ packages:
       is-string: 1.0.7
       is-typed-array: 1.1.10
       is-weakref: 1.0.2
-      object-inspect: 1.12.2
+      object-inspect: 1.12.3
       object-keys: 1.1.1
       object.assign: 4.1.4
       regexp.prototype.flags: 1.4.3
@@ -13849,14 +13861,6 @@ packages:
       has-tostringtag: 1.0.0
     dev: true
 
-  /is-array-buffer/3.0.1:
-    resolution: {integrity: sha512-ASfLknmY8Xa2XtB4wmbz13Wu202baeA18cJBCeCy0wXUHZF0IPyVEXqKEcd+t2fNSLLL1vC6k7lxZEojNbISXQ==}
-    dependencies:
-      call-bind: 1.0.2
-      get-intrinsic: 1.2.0
-      is-typed-array: 1.1.10
-    dev: true
-
   /is-array-buffer/3.0.2:
     resolution: {integrity: sha512-y+FyyR/w8vfIRq4eQcM1EYgSTnmHXPqaF+IgzgraytCFq5Xh8lllDVmAZolPJiZttZLeFSINPYMaEJ7/vWUa1w==}
     dependencies:
@@ -14985,11 +14989,6 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
-  /lz-string/1.4.4:
-    resolution: {integrity: sha512-0ckx7ZHRPqb0oUm8zNr+90mtf9DQB60H1wMCjBtfi62Kl3a7JbHob6gA2bC+xRvZoOL+1hzUK8jeuEIQE8svEQ==}
-    hasBin: true
-    dev: true
-
   /lz-string/1.5.0:
     resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}
     hasBin: true
@@ -16088,10 +16087,6 @@ packages:
   /object-hash/3.0.0:
     resolution: {integrity: sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==}
     engines: {node: '>= 6'}
-    dev: true
-
-  /object-inspect/1.12.2:
-    resolution: {integrity: sha512-z+cPxW0QGUp0mcqcsgQyLVRDoXFQbXOwBaqyF7VIgI4TWNQsDHrBpUQslRmIfAoYWdYzs6UlKJtB2XJpTaNSpQ==}
     dev: true
 
   /object-inspect/1.12.3:
@@ -17828,7 +17823,7 @@ packages:
     dependencies:
       call-bind: 1.0.2
       get-intrinsic: 1.2.0
-      object-inspect: 1.12.2
+      object-inspect: 1.12.3
     dev: true
 
   /siginfo/2.0.0:
@@ -18060,17 +18055,6 @@ packages:
       wait-on: 6.0.1_debug@4.3.4
     transitivePeerDependencies:
       - supports-color
-
-  /solid-testing-library/0.5.1_solid-js@1.6.16:
-    resolution: {integrity: sha512-CfcCWsI5zIJz2zcyZQz2weq+6cCS5QrcmWeEmUEy03fElJ/BV5Ly4MMTsmwdOK803zY3wJP5pPf026C40VrE1Q==}
-    engines: {node: '>= 14'}
-    deprecated: This package is now available at @solidjs/testing-library
-    peerDependencies:
-      solid-js: '>=1.0.0'
-    dependencies:
-      '@testing-library/dom': 8.20.0
-      solid-js: 1.6.16
-    dev: true
 
   /solid-transition-group/0.2.2_solid-js@1.6.16:
     resolution: {integrity: sha512-6nB90UM2PB6VsIo/UCkmZmlIJb9mnmP7QPGrePqQJWtpUiRs5PbhkB8fvdyv9g/RPHWYpdJhQgxL6n++WmTt5A==}
@@ -19199,6 +19183,7 @@ packages:
     resolution: {integrity: sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==}
     engines: {node: '>=4.2.0'}
     hasBin: true
+    dev: true
 
   /typescript/4.8.4:
     resolution: {integrity: sha512-QCh+85mCy+h0IGff8r5XWzOVSbBO+KfeYrMQh7NJ58QujwcE22u+NUSmUxqF+un70P9GXKxa2HCNiTTMJknyjQ==}
