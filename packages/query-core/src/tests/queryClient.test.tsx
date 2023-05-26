@@ -13,8 +13,7 @@ import type {
   QueryFunction,
   QueryObserverOptions,
 } from '..'
-import { MutationObserver, QueryObserver } from '..'
-import { focusManager, onlineManager } from '..'
+import { MutationObserver, QueryObserver, focusManager, onlineManager } from '..'
 import { noop } from '../utils'
 import { vi } from 'vitest'
 
