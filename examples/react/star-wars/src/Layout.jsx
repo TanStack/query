@@ -4,8 +4,8 @@ import Film from "./Film";
 import Characters from "./Characters";
 import Character from "./Character";
 import Home from "./Home";
-import { Link, Button } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { Link, Button } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { Switch, Route, Link as RouterLink } from "react-router-dom";
 
 export default function Layout(props) {

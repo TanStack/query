@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Link } from "@material-ui/core";
+import { Typography, Link } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";

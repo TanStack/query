@@ -9,7 +9,7 @@ import {
   TableHead,
   TableRow,
   Paper,
-} from "@material-ui/core";
+} from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
