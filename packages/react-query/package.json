@@ -28,7 +28,7 @@
     "test:types": "tsc",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "build": "node scripts/copy-codemods.js",
+    "build": "cpy ../codemods/src/**/* ./build/codemods",
     "build:types": "tsc --build"
   },
   "files": [
