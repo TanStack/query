@@ -1,6 +1,12 @@
 import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
 
-import { createQueryClient, sleep, Blink, queryKey, setActTimeout } from './utils'
+import {
+  createQueryClient,
+  sleep,
+  Blink,
+  queryKey,
+  setActTimeout,
+} from './utils'
 
 import {
   createEffect,

@@ -1,4 +1,9 @@
-import type { DefaultedQueryObserverOptions, QueryObserverResult, QueryKey, QueryObserver } from '@tanstack/query-core'
+import type {
+  DefaultedQueryObserverOptions,
+  QueryObserverResult,
+  QueryKey,
+  QueryObserver,
+} from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 
 export const ensureStaleTime = (
