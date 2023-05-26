@@ -10,9 +10,9 @@ import type {
 } from '@tanstack/query-core'
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
 import { derived, get, readable, writable, type Readable } from 'svelte/store'
-import type { WritableOrVal } from './types.ts'
-import { useQueryClient } from './useQueryClient.ts'
-import { isWritable } from './utils.ts'
+import type { WritableOrVal } from './types'
+import { useQueryClient } from './useQueryClient'
+import { isWritable } from './utils'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter

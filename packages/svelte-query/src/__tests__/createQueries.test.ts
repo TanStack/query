@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { render, waitFor } from '@testing-library/svelte'
 import CreateQueries from './CreateQueries.svelte'
-import { sleep } from './utils.ts'
+import { sleep } from './utils'
 
 describe('createQueries', () => {
   it('Render and wait for success', async () => {

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte'
   import { QueryClient } from '@tanstack/query-core'
-  import { setQueryClientContext } from './context.ts'
+  import { setQueryClientContext } from './context'
 
   export let client = new QueryClient()
 

@@ -9,8 +9,8 @@ import { InfiniteQueryObserver } from '@tanstack/query-core'
 import type {
   CreateInfiniteQueryOptions,
   CreateInfiniteQueryResult,
-} from './types.ts'
-import { createBaseQuery } from './createBaseQuery.ts'
+} from './types'
+import { createBaseQuery } from './createBaseQuery'
 
 export function createInfiniteQuery<
   TQueryFnData,

@@ -5,9 +5,9 @@ import type {
   CreateMutateFunction,
   CreateMutationOptions,
   CreateMutationResult,
-} from './types.ts'
-import { useQueryClient } from './useQueryClient.ts'
-import { isWritable } from './utils.ts'
+} from './types'
+import { useQueryClient } from './useQueryClient'
+import { isWritable } from './utils'
 
 export function createMutation<
   TData = unknown,
