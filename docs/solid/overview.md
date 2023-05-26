@@ -129,20 +129,21 @@ export default function App() {
 function Example() {
   // ❌ react version -- supports destructing outside reactive context
   // const { isPending, error, data } = useQuery({
-  //  queryKey: ['repoData'], () =>
-  //  queryFn:  fetch('https://api.github.com/repos/tannerlinsley/react-query').then(res =>
-  //     res.json()
-  //   )
+  //   queryKey: ['repoData'],
+  //   queryFn: () =>
+  //     fetch('https://api.github.com/repos/tannerlinsley/react-query').then(
+  //       (res) => res.json()
+  //     ),
   // })
 
   // ✅ solid version -- does not support destructuring outside reactive context
-  const query = createQuery({
-    queryKey: () => ['repoData'],
+  const query = createQuery(() => ({
+    queryKey: ['repoData'],
     queryFn: () =>
       fetch('https://api.github.com/repos/tannerlinsley/react-query').then(
-        (res) => res.json(),
+        (res) => res.json()
       ),
-  })
+  }))
 
   // ✅ access query properties in JSX reactive context
   return (
