@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "graphql": "^16.6.0",
-    "graphql-request": "^5.0.0",
+    "graphql-request": "^6.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "@tanstack/react-query": "^5.0.0-alpha.38",
