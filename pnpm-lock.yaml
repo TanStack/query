@@ -151,7 +151,7 @@ importers:
       react: ^18.2.0
       react-dom: ^18.2.0
       typescript: ^4.7.4
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@algolia/client-search': 4.11.0
       '@algolia/transporter': 4.11.0
@@ -162,11 +162,11 @@ importers:
       '@tanstack/eslint-plugin-query': 4.26.2
       '@types/react': 18.0.15
       '@types/react-dom': 18.0.6
-      '@vitejs/plugin-react': 4.0.0_vite@4.3.8
+      '@vitejs/plugin-react': 4.0.0_vite@4.2.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       typescript: 4.8.4
-      vite: 4.3.8
+      vite: 4.2.1
 
   examples/react/auto-refetching:
     specifiers:
@@ -195,7 +195,7 @@ importers:
       axios: ^0.21.1
       react: ^18.0.0
       react-dom: ^18.0.0
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@tanstack/react-query': 4.26.1_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-devtools': 4.26.1_brdhmlf72zuns3lsk66phyptty
@@ -204,8 +204,8 @@ importers:
       react-dom: 18.2.0_react@18.2.0
     devDependencies:
       '@tanstack/eslint-plugin-query': 4.26.2
-      '@vitejs/plugin-react': 4.0.0_vite@4.3.8
-      vite: 4.3.8
+      '@vitejs/plugin-react': 4.0.0_vite@4.2.1
+      vite: 4.2.1
 
   examples/react/basic-graphql-request:
     specifiers:
@@ -216,7 +216,7 @@ importers:
       graphql-request: ^3.1.0
       react: ^18.0.0
       react-dom: ^18.0.0
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@tanstack/react-query': 4.26.1_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-devtools': 4.26.1_brdhmlf72zuns3lsk66phyptty
@@ -225,8 +225,8 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
     devDependencies:
-      '@vitejs/plugin-react': 4.0.0_vite@4.3.8
-      vite: 4.3.8
+      '@vitejs/plugin-react': 4.0.0_vite@4.2.1
+      vite: 4.2.1
 
   examples/react/basic-typescript:
     specifiers:
@@ -244,7 +244,7 @@ importers:
       react: ^18.0.0
       react-dom: ^18.0.0
       typescript: 4.7.4
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@tanstack/query-sync-storage-persister': 4.26.1
       '@tanstack/react-query': 4.26.1_biqbaboplfbrettd7655fr4n2y
@@ -257,11 +257,11 @@ importers:
       '@tanstack/eslint-plugin-query': 4.26.2
       '@types/react': 17.0.50
       '@types/react-dom': 17.0.17
-      '@vitejs/plugin-react': 4.0.0_vite@4.3.8
+      '@vitejs/plugin-react': 4.0.0_vite@4.2.1
       eslint: 8.34.0
       eslint-config-prettier: 8.5.0_eslint@8.34.0
       typescript: 4.7.4
-      vite: 4.3.8
+      vite: 4.2.1
 
   examples/react/default-query-function:
     specifiers:
@@ -271,7 +271,7 @@ importers:
       axios: ^0.26.1
       react: ^18.0.0
       react-dom: ^18.0.0
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@tanstack/react-query': 4.26.1_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-devtools': 4.26.1_brdhmlf72zuns3lsk66phyptty
@@ -279,8 +279,8 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
     devDependencies:
-      '@vitejs/plugin-react': 4.0.0_vite@4.3.8
-      vite: 4.3.8
+      '@vitejs/plugin-react': 4.0.0_vite@4.2.1
+      vite: 4.2.1
 
   examples/react/infinite-query-with-max-pages:
     specifiers:
@@ -357,7 +357,7 @@ importers:
       react: ^18.0.0
       react-dom: ^18.0.0
       react-hot-toast: ^2.2.0
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@tanstack/query-sync-storage-persister': 4.26.1
       '@tanstack/react-location': 3.7.4_biqbaboplfbrettd7655fr4n2y
@@ -370,8 +370,8 @@ importers:
       react-dom: 18.2.0_react@18.2.0
       react-hot-toast: 2.2.0_biqbaboplfbrettd7655fr4n2y
     devDependencies:
-      '@vitejs/plugin-react': 4.0.0_vite@4.3.8
-      vite: 4.3.8
+      '@vitejs/plugin-react': 4.0.0_vite@4.2.1
+      vite: 4.2.1
 
   examples/react/optimistic-updates-typescript:
     specifiers:
@@ -423,15 +423,15 @@ importers:
       '@vitejs/plugin-react': ^4.0.0
       react: ^18.0.0
       react-dom: ^18.0.0
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@tanstack/react-query': 4.26.1_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-devtools': 4.26.1_brdhmlf72zuns3lsk66phyptty
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
     devDependencies:
-      '@vitejs/plugin-react': 4.0.0_vite@4.3.8
-      vite: 4.3.8
+      '@vitejs/plugin-react': 4.0.0_vite@4.2.1
+      vite: 4.2.1
 
   examples/react/prefetching:
     specifiers:
@@ -526,7 +526,7 @@ importers:
       react-router-dom: ^6.4.0
       rooks: ^6.4.3
       sort-by: ^1.2.0
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@tanstack/react-query': 4.26.1_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-devtools': 4.26.1_brdhmlf72zuns3lsk66phyptty
@@ -538,8 +538,8 @@ importers:
       rooks: 6.4.3_biqbaboplfbrettd7655fr4n2y
       sort-by: 1.2.0
     devDependencies:
-      '@vitejs/plugin-react': 4.0.0_vite@4.3.8
-      vite: 4.3.8
+      '@vitejs/plugin-react': 4.0.0_vite@4.2.1
+      vite: 4.2.1
 
   examples/react/rick-morty:
     specifiers:
@@ -551,7 +551,7 @@ importers:
       react-dom: ^18.0.0
       react-router: ^5.1.2
       react-router-dom: ^5.1.2
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@material-ui/core': 4.12.4_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query': 4.26.1_biqbaboplfbrettd7655fr4n2y
@@ -561,8 +561,8 @@ importers:
       react-router: 5.3.3_react@18.2.0
       react-router-dom: 5.3.3_react@18.2.0
     devDependencies:
-      '@vitejs/plugin-react': 4.0.0_vite@4.3.8
-      vite: 4.3.8
+      '@vitejs/plugin-react': 4.0.0_vite@4.2.1
+      vite: 4.2.1
 
   examples/react/simple:
     specifiers:
@@ -572,7 +572,7 @@ importers:
       axios: ^0.26.1
       react: ^18.0.0
       react-dom: ^18.0.0
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@tanstack/react-query': 4.26.1_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-devtools': 4.26.1_brdhmlf72zuns3lsk66phyptty
@@ -580,8 +580,8 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
     devDependencies:
-      '@vitejs/plugin-react': 4.0.0_vite@4.3.8
-      vite: 4.3.8
+      '@vitejs/plugin-react': 4.0.0_vite@4.2.1
+      vite: 4.2.1
 
   examples/react/star-wars:
     specifiers:
@@ -593,7 +593,7 @@ importers:
       react-dom: ^18.0.0
       react-router: ^5.1.2
       react-router-dom: ^5.1.2
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@material-ui/core': 4.12.4_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query': 4.26.1_biqbaboplfbrettd7655fr4n2y
@@ -603,8 +603,8 @@ importers:
       react-router: 5.3.3_react@18.2.0
       react-router-dom: 5.3.3_react@18.2.0
     devDependencies:
-      '@vitejs/plugin-react': 4.0.0_vite@4.3.8
-      vite: 4.3.8
+      '@vitejs/plugin-react': 4.0.0_vite@4.2.1
+      vite: 4.2.1
 
   examples/react/suspense:
     specifiers:
@@ -615,7 +615,7 @@ importers:
       react: ^18.0.0
       react-dom: ^18.0.0
       react-error-boundary: ^2.2.3
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@tanstack/react-query': 4.26.1_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-devtools': 4.26.1_brdhmlf72zuns3lsk66phyptty
@@ -624,8 +624,8 @@ importers:
       react-dom: 18.2.0_react@18.2.0
       react-error-boundary: 2.3.2_react@18.2.0
     devDependencies:
-      '@vitejs/plugin-react': 4.0.0_vite@4.3.8
-      vite: 4.3.8
+      '@vitejs/plugin-react': 4.0.0_vite@4.2.1
+      vite: 4.2.1
 
   examples/solid/basic-graphql-request:
     specifiers:
@@ -634,7 +634,7 @@ importers:
       graphql-request: ^5.0.0
       solid-js: ^1.6.13
       typescript: 4.7.4
-      vite: ^4.3.0
+      vite: ^4.2.0
       vite-plugin-solid: ^2.5.0
     dependencies:
       '@tanstack/solid-query': 4.26.1_solid-js@1.6.16
@@ -643,38 +643,38 @@ importers:
       solid-js: 1.6.16
     devDependencies:
       typescript: 4.7.4
-      vite: 4.3.8
-      vite-plugin-solid: 2.6.1_solid-js@1.6.16+vite@4.3.8
+      vite: 4.2.1
+      vite-plugin-solid: 2.6.1_solid-js@1.6.16+vite@4.2.1
 
   examples/solid/basic-typescript:
     specifiers:
       '@tanstack/solid-query': ^4.3.9
       solid-js: ^1.6.13
       typescript: 4.7.4
-      vite: ^4.3.0
+      vite: ^4.2.0
       vite-plugin-solid: ^2.5.0
     dependencies:
       '@tanstack/solid-query': 4.26.1_solid-js@1.6.16
       solid-js: 1.6.16
     devDependencies:
       typescript: 4.7.4
-      vite: 4.3.8
-      vite-plugin-solid: 2.6.1_solid-js@1.6.16+vite@4.3.8
+      vite: 4.2.1
+      vite-plugin-solid: 2.6.1_solid-js@1.6.16+vite@4.2.1
 
   examples/solid/default-query-function:
     specifiers:
       '@tanstack/solid-query': ^4.3.9
       solid-js: ^1.6.13
       typescript: 4.7.4
-      vite: ^4.3.0
+      vite: ^4.2.0
       vite-plugin-solid: ^2.5.0
     dependencies:
       '@tanstack/solid-query': 4.26.1_solid-js@1.6.16
       solid-js: 1.6.16
     devDependencies:
       typescript: 4.7.4
-      vite: 4.3.8
-      vite-plugin-solid: 2.6.1_solid-js@1.6.16+vite@4.3.8
+      vite: 4.2.1
+      vite-plugin-solid: 2.6.1_solid-js@1.6.16+vite@4.2.1
 
   examples/solid/simple:
     specifiers:
@@ -682,7 +682,7 @@ importers:
       '@tanstack/solid-query': ^4.3.9
       solid-js: ^1.6.13
       typescript: 4.7.4
-      vite: ^4.3.0
+      vite: ^4.2.0
       vite-plugin-solid: ^2.5.0
     dependencies:
       '@tanstack/solid-query': 4.26.1_solid-js@1.6.16
@@ -690,8 +690,8 @@ importers:
     devDependencies:
       '@tanstack/eslint-plugin-query': 4.26.2
       typescript: 4.7.4
-      vite: 4.3.8
-      vite-plugin-solid: 2.6.1_solid-js@1.6.16+vite@4.3.8
+      vite: 4.2.1
+      vite-plugin-solid: 2.6.1_solid-js@1.6.16+vite@4.2.1
 
   examples/solid/solid-start-streaming:
     specifiers:
@@ -731,17 +731,17 @@ importers:
       svelte-check: ^2.9.2
       tslib: ^2.4.1
       typescript: ^4.7.4
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@tanstack/svelte-query': 4.26.1_svelte@3.55.0
     devDependencies:
       '@sveltejs/adapter-auto': 2.0.0_@sveltejs+kit@1.15.2
-      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.3.8
+      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.2.1
       svelte: 3.55.0
       svelte-check: 2.10.3_svelte@3.55.0
       tslib: 2.4.1
       typescript: 4.8.4
-      vite: 4.3.8
+      vite: 4.2.1
 
   examples/svelte/basic:
     specifiers:
@@ -752,17 +752,17 @@ importers:
       svelte-check: ^2.9.2
       tslib: ^2.4.1
       typescript: ^4.7.4
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@tanstack/svelte-query': 4.26.1_svelte@3.55.0
     devDependencies:
       '@sveltejs/adapter-auto': 2.0.0_@sveltejs+kit@1.15.2
-      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.3.8
+      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.2.1
       svelte: 3.55.0
       svelte-check: 2.10.3_svelte@3.55.0
       tslib: 2.4.1
       typescript: 4.8.4
-      vite: 4.3.8
+      vite: 4.2.1
 
   examples/svelte/load-more-infinite-scroll:
     specifiers:
@@ -773,17 +773,17 @@ importers:
       svelte-check: ^2.9.2
       tslib: ^2.4.1
       typescript: ^4.7.4
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@tanstack/svelte-query': 4.26.1_svelte@3.55.0
     devDependencies:
       '@sveltejs/adapter-auto': 2.0.0_@sveltejs+kit@1.15.2
-      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.3.8
+      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.2.1
       svelte: 3.55.0
       svelte-check: 2.10.3_svelte@3.55.0
       tslib: 2.4.1
       typescript: 4.8.4
-      vite: 4.3.8
+      vite: 4.2.1
 
   examples/svelte/optimistic-updates-typescript:
     specifiers:
@@ -794,17 +794,17 @@ importers:
       svelte-check: ^2.9.2
       tslib: ^2.4.1
       typescript: ^4.7.4
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@tanstack/svelte-query': 4.26.1_svelte@3.55.0
     devDependencies:
       '@sveltejs/adapter-auto': 2.0.0_@sveltejs+kit@1.15.2
-      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.3.8
+      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.2.1
       svelte: 3.55.0
       svelte-check: 2.10.3_svelte@3.55.0
       tslib: 2.4.1
       typescript: 4.8.4
-      vite: 4.3.8
+      vite: 4.2.1
 
   examples/svelte/playground:
     specifiers:
@@ -815,17 +815,17 @@ importers:
       svelte-check: ^2.9.2
       tslib: ^2.4.1
       typescript: ^4.7.4
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@tanstack/svelte-query': 4.26.1_svelte@3.55.0
     devDependencies:
       '@sveltejs/adapter-auto': 2.0.0_@sveltejs+kit@1.15.2
-      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.3.8
+      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.2.1
       svelte: 3.55.0
       svelte-check: 2.10.3_svelte@3.55.0
       tslib: 2.4.1
       typescript: 4.8.4
-      vite: 4.3.8
+      vite: 4.2.1
 
   examples/svelte/simple:
     specifiers:
@@ -836,17 +836,17 @@ importers:
       svelte-check: ^2.9.2
       tslib: ^2.4.1
       typescript: ^4.7.4
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@tanstack/svelte-query': 4.26.1_svelte@3.55.0
     devDependencies:
-      '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.3.8
+      '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.2.1
       '@tsconfig/svelte': 3.0.0
       svelte: 3.55.0
       svelte-check: 2.10.3_svelte@3.55.0
       tslib: 2.4.1
       typescript: 4.8.4
-      vite: 4.3.8
+      vite: 4.2.1
 
   examples/svelte/ssr:
     specifiers:
@@ -857,17 +857,17 @@ importers:
       svelte-check: ^2.9.2
       tslib: ^2.4.1
       typescript: ^4.7.4
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@tanstack/svelte-query': 4.26.1_svelte@3.55.0
     devDependencies:
       '@sveltejs/adapter-auto': 2.0.0_@sveltejs+kit@1.15.2
-      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.3.8
+      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.2.1
       svelte: 3.55.0
       svelte-check: 2.10.3_svelte@3.55.0
       tslib: 2.4.1
       typescript: 4.8.4
-      vite: 4.3.8
+      vite: 4.2.1
 
   examples/svelte/star-wars:
     specifiers:
@@ -881,12 +881,12 @@ importers:
       tailwindcss: ^3.2.4
       tslib: ^2.4.1
       typescript: ^4.7.4
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@tanstack/svelte-query': 4.26.1_svelte@3.55.0
     devDependencies:
       '@sveltejs/adapter-auto': 2.0.0_@sveltejs+kit@1.15.2
-      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.3.8
+      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.2.1
       autoprefixer: 10.4.13_postcss@8.4.21
       postcss: 8.4.21
       svelte: 3.55.0
@@ -894,37 +894,37 @@ importers:
       tailwindcss: 3.2.4_postcss@8.4.21
       tslib: 2.4.1
       typescript: 4.8.4
-      vite: 4.3.8
+      vite: 4.2.1
 
   examples/vue/basic:
     specifiers:
       '@tanstack/vue-query': ^4.13.3
       '@vitejs/plugin-vue': ^4.0.0
       typescript: 4.7.4
-      vite: ^4.3.0
+      vite: ^4.2.0
       vue: ^3.2.41
     dependencies:
       '@tanstack/vue-query': 4.26.1_vue@3.2.41
       vue: 3.2.41
     devDependencies:
-      '@vitejs/plugin-vue': 4.2.3_vite@4.3.8+vue@3.2.41
+      '@vitejs/plugin-vue': 4.2.3_vite@4.2.1+vue@3.2.41
       typescript: 4.7.4
-      vite: 4.3.8
+      vite: 4.2.1
 
   examples/vue/dependent-queries:
     specifiers:
       '@tanstack/vue-query': ^4.9.0
       '@vitejs/plugin-vue': ^4.0.0
       typescript: 4.8.4
-      vite: ^4.3.0
+      vite: ^4.2.0
       vue: 3.2.39
     dependencies:
       '@tanstack/vue-query': 4.26.1_vue@3.2.39
       vue: 3.2.39
     devDependencies:
-      '@vitejs/plugin-vue': 4.2.3_vite@4.3.8+vue@3.2.39
+      '@vitejs/plugin-vue': 4.2.3_vite@4.2.1+vue@3.2.39
       typescript: 4.8.4
-      vite: 4.3.8
+      vite: 4.2.1
 
   examples/vue/persister:
     specifiers:
@@ -933,7 +933,7 @@ importers:
       '@tanstack/vue-query': ^4.14.1
       '@vitejs/plugin-vue': ^4.0.0
       typescript: 4.8.4
-      vite: ^4.3.0
+      vite: ^4.2.0
       vue: 3.2.41
     dependencies:
       '@tanstack/query-persist-client-core': 4.26.1
@@ -941,9 +941,9 @@ importers:
       '@tanstack/vue-query': 4.26.1_vue@3.2.41
       vue: 3.2.41
     devDependencies:
-      '@vitejs/plugin-vue': 4.2.3_vite@4.3.8+vue@3.2.41
+      '@vitejs/plugin-vue': 4.2.3_vite@4.2.1+vue@3.2.41
       typescript: 4.8.4
-      vite: 4.3.8
+      vite: 4.2.1
 
   packages/codemods:
     specifiers:
@@ -1095,12 +1095,12 @@ importers:
       svelte-check: ^2.9.2
       tslib: ^2.4.1
       typescript: ^4.7.4
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@tanstack/query-core': link:../query-core
     devDependencies:
       '@sveltejs/package': 2.0.2_glsdxddlaertg66rhhvanbinpy
-      '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.3.8
+      '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.2.1
       '@testing-library/svelte': 3.2.2_svelte@3.55.0
       eslint-plugin-svelte: 2.14.1_svelte@3.55.0
       jsdom: 20.0.3
@@ -1108,7 +1108,7 @@ importers:
       svelte-check: 2.10.3_svelte@3.55.0
       tslib: 2.4.1
       typescript: 4.8.4
-      vite: 4.3.8
+      vite: 4.2.1
 
   packages/svelte-query-devtools:
     specifiers:
@@ -1124,14 +1124,14 @@ importers:
       svelte-check: ^2.9.2
       tslib: ^2.4.1
       typescript: ^4.7.4
-      vite: ^4.3.0
+      vite: ^4.2.0
     dependencies:
       '@tanstack/query-devtools': link:../query-devtools
       '@tanstack/svelte-query': link:../svelte-query
       esm-env: 1.0.0
     devDependencies:
       '@sveltejs/package': 2.0.2_tuotfx7glloxurl4snpq7ztuqe
-      '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.3.8
+      '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.2.1
       '@testing-library/svelte': 3.2.2_svelte@3.55.0
       eslint-plugin-svelte: 2.14.1_svelte@3.55.0
       jsdom: 20.0.3
@@ -1139,7 +1139,7 @@ importers:
       svelte-check: 2.10.3_svelte@3.55.0
       tslib: 2.5.0
       typescript: 4.9.5
-      vite: 4.3.8
+      vite: 4.2.1
 
   packages/vue-query:
     specifiers:
@@ -8013,11 +8013,11 @@ packages:
     peerDependencies:
       '@sveltejs/kit': ^1.0.0
     dependencies:
-      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.3.8
+      '@sveltejs/kit': 1.15.2_svelte@3.55.0+vite@4.2.1
       import-meta-resolve: 2.2.1
     dev: true
 
-  /@sveltejs/kit/1.15.2_svelte@3.55.0+vite@4.3.8:
+  /@sveltejs/kit/1.15.2_svelte@3.55.0+vite@4.2.1:
     resolution: {integrity: sha512-rLNxZrjbrlPf8AWW8GAU4L/Vvu17e9v8EYl7pUip7x72lTft7RcxeP3z7tsrHpMSBBxC9o4XdKzFvz1vMZyXZw==}
     engines: {node: ^16.14 || >=18}
     hasBin: true
@@ -8026,7 +8026,7 @@ packages:
       svelte: ^3.54.0
       vite: ^4.0.0
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.3.8
+      '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.0+vite@4.2.1
       '@types/cookie': 0.5.1
       cookie: 0.5.0
       devalue: 4.3.0
@@ -8040,7 +8040,7 @@ packages:
       svelte: 3.55.0
       tiny-glob: 0.2.9
       undici: 5.20.0
-      vite: 4.3.8
+      vite: 4.2.1
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -8077,7 +8077,7 @@ packages:
       - typescript
     dev: true
 
-  /@sveltejs/vite-plugin-svelte/2.0.2_svelte@3.55.0+vite@4.3.8:
+  /@sveltejs/vite-plugin-svelte/2.0.2_svelte@3.55.0+vite@4.2.1:
     resolution: {integrity: sha512-xCEan0/NNpQuL0l5aS42FjwQ6wwskdxC3pW1OeFtEKNZwRg7Evro9lac9HesGP6TdFsTv2xMes5ASQVKbCacxg==}
     engines: {node: ^14.18.0 || >= 16}
     peerDependencies:
@@ -8090,8 +8090,8 @@ packages:
       magic-string: 0.27.0
       svelte: 3.55.0
       svelte-hmr: 0.15.1_svelte@3.55.0
-      vite: 4.3.8
-      vitefu: 0.2.4_vite@4.3.8
+      vite: 4.2.1
+      vitefu: 0.2.4_vite@4.2.1
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -9073,7 +9073,7 @@ packages:
       eslint-visitor-keys: 3.3.0
     dev: true
 
-  /@vitejs/plugin-react/4.0.0_vite@4.3.8:
+  /@vitejs/plugin-react/4.0.0_vite@4.2.1:
     resolution: {integrity: sha512-HX0XzMjL3hhOYm+0s95pb0Z7F8O81G7joUHgfDd/9J/ZZf5k4xX6QAMFkKsHFxaHlf6X7GD7+XuaZ66ULiJuhQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
@@ -9083,30 +9083,30 @@ packages:
       '@babel/plugin-transform-react-jsx-self': 7.21.0_@babel+core@7.21.8
       '@babel/plugin-transform-react-jsx-source': 7.19.6_@babel+core@7.21.8
       react-refresh: 0.14.0
-      vite: 4.3.8
+      vite: 4.2.1
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /@vitejs/plugin-vue/4.2.3_vite@4.3.8+vue@3.2.39:
+  /@vitejs/plugin-vue/4.2.3_vite@4.2.1+vue@3.2.39:
     resolution: {integrity: sha512-R6JDUfiZbJA9cMiguQ7jxALsgiprjBeHL5ikpXfJCH62pPHtI+JdJ5xWj6Ev73yXSlYl86+blXn1kZHQ7uElxw==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
       vite: ^4.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 4.3.8
+      vite: 4.2.1
       vue: 3.2.39
     dev: true
 
-  /@vitejs/plugin-vue/4.2.3_vite@4.3.8+vue@3.2.41:
+  /@vitejs/plugin-vue/4.2.3_vite@4.2.1+vue@3.2.41:
     resolution: {integrity: sha512-R6JDUfiZbJA9cMiguQ7jxALsgiprjBeHL5ikpXfJCH62pPHtI+JdJ5xWj6Ev73yXSlYl86+blXn1kZHQ7uElxw==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
       vite: ^4.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 4.3.8
+      vite: 4.2.1
       vue: 3.2.41
     dev: true
 
@@ -9180,7 +9180,7 @@ packages:
     resolution: {integrity: sha512-aNmNHyLPsw+sVvlQFQ2/8sjNuLtK54TC6cuKnVzAY93ks4ZBrvwQSnkkIh7bsbNhum5hJBS00wSDipQ937f5DA==}
     dependencies:
       '@babel/parser': 7.21.9
-      postcss: 8.4.21
+      postcss: 8.4.23
       source-map: 0.6.1
     dev: true
 
@@ -16421,6 +16421,7 @@ packages:
       nanoid: 3.3.4
       picocolors: 1.0.0
       source-map-js: 1.0.2
+    dev: true
 
   /postcss/8.4.23:
     resolution: {integrity: sha512-bQ3qMcpF6A/YjR55xtoTr0jGOlnPOKAIMdOWiv0EIT6HVPEaJiJB4NLljSbiHoC2RX7DN5Uvjtpbg1NPdwv1oA==}
@@ -19219,7 +19220,7 @@ packages:
       picocolors: 1.0.0
       source-map: 0.6.1
       source-map-support: 0.5.21
-      vite: 4.3.8_@types+node@18.13.0
+      vite: 4.2.1_@types+node@18.13.0
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -19296,29 +19297,42 @@ packages:
       merge-anything: 5.1.4
       solid-js: 1.6.16
       solid-refresh: 0.5.2_solid-js@1.6.16
-      vite: 4.2.1_@types+node@18.13.0
+      vite: 4.2.1
       vitefu: 0.2.4_vite@4.2.1
     transitivePeerDependencies:
       - supports-color
 
-  /vite-plugin-solid/2.6.1_solid-js@1.6.16+vite@4.3.8:
-    resolution: {integrity: sha512-/khM/ha3B5/pTWQWVJd/0n6ODPIrOcajwhbrD8Gnv37XmJJssu+KA8ssN73raMIicf2eiQKiTAV39w7dSl4Irg==}
+  /vite/4.2.1:
+    resolution: {integrity: sha512-7MKhqdy0ISo4wnvwtqZkjke6XN4taqQ2TBaTccLIpOKv7Vp2h4Y+NpmWCnGDeSvvn45KxvWgGyb0MkHvY1vgbg==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
     peerDependencies:
-      solid-js: ^1.3.17 || ^1.4.0 || ^1.5.0 || ^1.6.0
-      vite: ^3.0.0 || ^4.0.0
+      '@types/node': '>= 14'
+      less: '*'
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
     dependencies:
-      '@babel/core': 7.20.12
-      '@babel/preset-typescript': 7.18.6_@babel+core@7.20.12
-      '@types/babel__core': 7.20.0
-      babel-preset-solid: 1.6.10_@babel+core@7.20.12
-      merge-anything: 5.1.4
-      solid-js: 1.6.16
-      solid-refresh: 0.5.2_solid-js@1.6.16
-      vite: 4.3.8
-      vitefu: 0.2.4_vite@4.3.8
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
+      esbuild: 0.17.14
+      postcss: 8.4.23
+      resolve: 1.22.1
+      rollup: 3.23.0
+    optionalDependencies:
+      fsevents: 2.3.2
 
   /vite/4.2.1_@types+node@18.13.0:
     resolution: {integrity: sha512-7MKhqdy0ISo4wnvwtqZkjke6XN4taqQ2TBaTccLIpOKv7Vp2h4Y+NpmWCnGDeSvvn45KxvWgGyb0MkHvY1vgbg==}
@@ -19347,76 +19361,11 @@ packages:
     dependencies:
       '@types/node': 18.13.0
       esbuild: 0.17.14
-      postcss: 8.4.21
+      postcss: 8.4.23
       resolve: 1.22.1
       rollup: 3.23.0
     optionalDependencies:
       fsevents: 2.3.2
-
-  /vite/4.3.8:
-    resolution: {integrity: sha512-uYB8PwN7hbMrf4j1xzGDk/lqjsZvCDbt/JC5dyfxc19Pg8kRm14LinK/uq+HSLNswZEoKmweGdtpbnxRtrAXiQ==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': '>= 14'
-      less: '*'
-      sass: '*'
-      stylus: '*'
-      sugarss: '*'
-      terser: ^5.4.0
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      less:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-    dependencies:
-      esbuild: 0.17.14
-      postcss: 8.4.23
-      rollup: 3.23.0
-    optionalDependencies:
-      fsevents: 2.3.2
-    dev: true
-
-  /vite/4.3.8_@types+node@18.13.0:
-    resolution: {integrity: sha512-uYB8PwN7hbMrf4j1xzGDk/lqjsZvCDbt/JC5dyfxc19Pg8kRm14LinK/uq+HSLNswZEoKmweGdtpbnxRtrAXiQ==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': '>= 14'
-      less: '*'
-      sass: '*'
-      stylus: '*'
-      sugarss: '*'
-      terser: ^5.4.0
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      less:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-    dependencies:
-      '@types/node': 18.13.0
-      esbuild: 0.17.14
-      postcss: 8.4.23
-      rollup: 3.23.0
-    optionalDependencies:
-      fsevents: 2.3.2
-    dev: true
 
   /vitefu/0.2.4:
     resolution: {integrity: sha512-fanAXjSaf9xXtOOeno8wZXIhgia+CZury481LsDaV++lSvcU2R9Ch2bPh3PYFyoHW+w9LqAeYRISVQjUIew14g==}
@@ -19435,18 +19384,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.2.1_@types+node@18.13.0
-
-  /vitefu/0.2.4_vite@4.3.8:
-    resolution: {integrity: sha512-fanAXjSaf9xXtOOeno8wZXIhgia+CZury481LsDaV++lSvcU2R9Ch2bPh3PYFyoHW+w9LqAeYRISVQjUIew14g==}
-    peerDependencies:
-      vite: ^3.0.0 || ^4.0.0
-    peerDependenciesMeta:
-      vite:
-        optional: true
-    dependencies:
-      vite: 4.3.8
-    dev: true
+      vite: 4.2.1
 
   /vitest/0.27.3:
     resolution: {integrity: sha512-Ld3UVgRVhJUtqvQ3dW89GxiApFAgBsWJZBCWzK+gA3w2yG68csXlGZZ4WDJURf+8ecNfgrScga6xY+8YSOpiMg==}
