@@ -4,7 +4,7 @@
   "sourceRoot": "./",
   "targets": {
     "rollup": {
-      "command": "rollup --config rollup.config.js",
+      "command": "rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
       "outputs": [
         "{workspaceRoot}/packages/*/build/**/*(.cjs|.mjs|.js)*",
         "{workspaceRoot}/packages/*/build/stats*",
