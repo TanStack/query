@@ -1,7 +1,6 @@
 import type { OutputOptions, Plugin, RollupOptions } from 'rollup'
 import babel from '@rollup/plugin-babel'
 import terser from '@rollup/plugin-terser'
-import size from 'rollup-plugin-size'
 import visualizer from 'rollup-plugin-visualizer'
 import replace from '@rollup/plugin-replace'
 import nodeResolve from '@rollup/plugin-node-resolve'
@@ -419,14 +418,14 @@ function umdProd({
         mangle: true,
         compress: true,
       }),
-      size({}),
       visualizer({
         filename: `${packageDir}/build/stats-html.html`,
+        template: 'treemap',
         gzipSize: true,
       }),
       visualizer({
         filename: `${packageDir}/build/stats.json`,
-        json: true,
+        template: 'raw-data',
         gzipSize: true,
       }),
     ],
