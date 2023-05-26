@@ -1,19 +1,18 @@
-import type { OutputOptions, Plugin, RollupOptions } from 'rollup'
+import path from 'node:path'
 import babel from '@rollup/plugin-babel'
 import terser from '@rollup/plugin-terser'
 import { visualizer } from 'rollup-plugin-visualizer'
 import replace from '@rollup/plugin-replace'
 import nodeResolve from '@rollup/plugin-node-resolve'
 import commonJS from '@rollup/plugin-commonjs'
-import path from 'path'
 import withSolid from 'rollup-preset-solid'
 import preserveDirectives from 'rollup-plugin-preserve-directives'
+import type { OutputOptions, Plugin, RollupOptions } from 'rollup'
 
 type Options = {
   input: string | string[]
   packageDir: string
   external: RollupOptions['external']
-  banner: string
   jsName: string
   outputFile: string
   globals: Record<string, string>
@@ -210,7 +209,6 @@ function buildConfigs(opts: {
   )
 
   const external = (moduleName) => externalDeps.includes(moduleName)
-  const banner = '' //createBanner(opts.name)
 
   const options: Options = {
     input,
@@ -218,7 +216,6 @@ function buildConfigs(opts: {
     outputFile: opts.outputFile,
     packageDir: opts.packageDir,
     external,
-    banner,
     globals: opts.globals,
     forceDevEnv: opts.forceDevEnv || false,
     forceBundle: opts.forceBundle || false,
@@ -240,7 +237,6 @@ function mjs({
   input,
   packageDir,
   external,
-  banner,
   outputFile,
   forceDevEnv,
   forceBundle,
@@ -249,14 +245,12 @@ function mjs({
     format: 'esm',
     file: `${packageDir}/build/lib/${outputFile}.mjs`,
     sourcemap: true,
-    banner,
   }
 
   const normalOutput: OutputOptions = {
     format: 'esm',
     dir: `${packageDir}/build/lib`,
     sourcemap: true,
-    banner,
     preserveModules: true,
     entryFileNames: '[name].mjs',
   }
@@ -280,7 +274,6 @@ function esm({
   input,
   packageDir,
   external,
-  banner,
   outputFile,
   forceDevEnv,
   forceBundle,
@@ -289,14 +282,12 @@ function esm({
     format: 'esm',
     file: `${packageDir}/build/lib/${outputFile}.esm.js`,
     sourcemap: true,
-    banner,
   }
 
   const normalOutput: OutputOptions = {
     format: 'esm',
     dir: `${packageDir}/build/lib`,
     sourcemap: true,
-    banner,
     preserveModules: true,
     entryFileNames: '[name].esm.js',
   }
@@ -320,7 +311,6 @@ function cjs({
   input,
   external,
   packageDir,
-  banner,
   outputFile,
   forceDevEnv,
   forceBundle,
@@ -330,7 +320,6 @@ function cjs({
     file: `${packageDir}/build/lib/${outputFile}.js`,
     sourcemap: true,
     exports: 'named',
-    banner,
   }
 
   const normalOutput: OutputOptions = {
@@ -338,7 +327,6 @@ function cjs({
     dir: `${packageDir}/build/lib`,
     sourcemap: true,
     exports: 'named',
-    banner,
     preserveModules: true,
     entryFileNames: '[name].js',
   }
@@ -364,7 +352,6 @@ function umdDev({
   packageDir,
   outputFile,
   globals,
-  banner,
   jsName,
 }: Options): RollupOptions {
   return {
@@ -377,7 +364,6 @@ function umdDev({
       file: `${packageDir}/build/umd/${outputFile}.development.js`,
       name: jsName,
       globals,
-      banner,
     },
     plugins: [
       commonJS(),
@@ -394,7 +380,6 @@ function umdProd({
   packageDir,
   outputFile,
   globals,
-  banner,
   jsName,
 }: Options): RollupOptions {
   return {
@@ -407,7 +392,6 @@ function umdProd({
       file: `${packageDir}/build/umd/${outputFile}.production.js`,
       name: jsName,
       globals,
-      banner,
     },
     plugins: [
       commonJS(),
