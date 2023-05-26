@@ -54,7 +54,7 @@ importers:
       luxon: ^3.2.1
       nx: ^16.0.1
       nx-cloud: ^16.0.5
-      prettier: ^2.8.4
+      prettier: ^2.8.8
       prettier-plugin-svelte: ^2.9.0
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -108,7 +108,7 @@ importers:
       eslint-import-resolver-typescript: 3.5.3_mvgyw3chnqkp6sgfmmtihyjpnm
       eslint-plugin-import: 2.27.5_2hqppaeqs2axgzqg6vttejknky
       eslint-plugin-jsx-a11y: 6.7.1_eslint@8.34.0
-      eslint-plugin-prettier: 4.2.1_u5wnrdwibbfomslmnramz52buy
+      eslint-plugin-prettier: 4.2.1_c55dtrtzl4q7ozvpzijpko3dje
       eslint-plugin-promise: 6.1.1_eslint@8.34.0
       eslint-plugin-react: 7.32.2_eslint@8.34.0
       eslint-plugin-react-hooks: 4.6.0_eslint@8.34.0
@@ -117,8 +117,8 @@ importers:
       luxon: 3.2.1
       nx: 16.0.1
       nx-cloud: 16.0.5
-      prettier: 2.8.4
-      prettier-plugin-svelte: 2.9.0_prettier@2.8.4
+      prettier: 2.8.8
+      prettier-plugin-svelte: 2.9.0_prettier@2.8.8
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       rimraf: 4.1.2
@@ -12078,7 +12078,7 @@ packages:
       prettier-linter-helpers: 1.0.0
     dev: true
 
-  /eslint-plugin-prettier/4.2.1_u5wnrdwibbfomslmnramz52buy:
+  /eslint-plugin-prettier/4.2.1_c55dtrtzl4q7ozvpzijpko3dje:
     resolution: {integrity: sha512-f/0rXLXUt0oFYs8ra4w49wYZBG5GKZpAYsJSm6rnYL5uVDjd+zowwMwVZHnAjf4edNrKpCDYfXDgmRE/Ak7QyQ==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
@@ -12091,7 +12091,7 @@ packages:
     dependencies:
       eslint: 8.34.0
       eslint-config-prettier: 8.6.0_eslint@8.34.0
-      prettier: 2.8.4
+      prettier: 2.8.8
       prettier-linter-helpers: 1.0.0
     dev: true
 
@@ -16380,19 +16380,13 @@ packages:
       fast-diff: 1.2.0
     dev: true
 
-  /prettier-plugin-svelte/2.9.0_prettier@2.8.4:
+  /prettier-plugin-svelte/2.9.0_prettier@2.8.8:
     resolution: {integrity: sha512-3doBi5NO4IVgaNPtwewvrgPpqAcvNv0NwJNflr76PIGgi9nf1oguQV1Hpdm9TI2ALIQVn/9iIwLpBO5UcD2Jiw==}
     peerDependencies:
       prettier: ^1.16.4 || ^2.0.0
       svelte: ^3.2.0
     dependencies:
-      prettier: 2.8.4
-    dev: true
-
-  /prettier/2.8.4:
-    resolution: {integrity: sha512-vIS4Rlc2FNh0BySk3Wkd6xmwxB0FpOndW5fisM5H8hsZSxU2VWVB5CWIkIjWvrHjIhxk2g3bfMKM87zNTrZddw==}
-    engines: {node: '>=10.13.0'}
-    hasBin: true
+      prettier: 2.8.8
     dev: true
 
   /prettier/2.8.8:
