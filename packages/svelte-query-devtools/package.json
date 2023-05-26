@@ -38,7 +38,7 @@
     "@sveltejs/vite-plugin-svelte": "^2.0.2",
     "@testing-library/svelte": "^3.2.2",
     "eslint-plugin-svelte": "^2.14.1",
-    "jsdom": "^20.0.3",
+    "jsdom": "^22.0.0",
     "svelte": "^3.54.0",
     "svelte-check": "^2.9.2",
     "tslib": "^2.4.1",

@@ -10,7 +10,7 @@
   "dependencies": {
     "@tanstack/react-query": "^4.7.1",
     "@tanstack/react-query-devtools": "^4.7.1",
-    "axios": "^0.21.1",
+    "axios": "^1.4.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },
