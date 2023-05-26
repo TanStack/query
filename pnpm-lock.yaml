@@ -19,6 +19,7 @@ importers:
       '@rollup/plugin-node-resolve': ^15.0.2
       '@rollup/plugin-replace': ^5.0.2
       '@rollup/plugin-terser': ^0.4.3
+      '@rollup/plugin-typescript': ^11.1.1
       '@solidjs/testing-library': ^0.5.1
       '@testing-library/jest-dom': ^5.16.5
       '@testing-library/react': ^14.0.0
@@ -69,6 +70,7 @@ importers:
       solid-js: ^1.6.13
       stream-to-array: ^2.3.0
       ts-node: ^10.9.1
+      tslib: ^2.5.2
       typescript: ^5.0.4
       vitest: ^0.27.1
       vue: ^3.2.47
@@ -83,6 +85,7 @@ importers:
       '@rollup/plugin-node-resolve': 15.0.2_rollup@3.23.0
       '@rollup/plugin-replace': 5.0.2_rollup@3.23.0
       '@rollup/plugin-terser': 0.4.3_rollup@3.23.0
+      '@rollup/plugin-typescript': 11.1.1_3z2bg3rkwokrf7bt2qgphugr2y
       '@solidjs/testing-library': 0.5.2_solid-js@1.6.16
       '@testing-library/jest-dom': 5.16.5
       '@testing-library/react': 14.0.0_biqbaboplfbrettd7655fr4n2y
@@ -133,6 +136,7 @@ importers:
       solid-js: 1.6.16
       stream-to-array: 2.3.0
       ts-node: 10.9.1_ztltjo43tmsep75uum5mceyifa
+      tslib: 2.5.2
       typescript: 5.0.4
       vitest: 0.27.3
       vue: 3.2.47
@@ -739,7 +743,6 @@ importers:
       '@tanstack/svelte-query': ^5.0.0-alpha.38
       svelte: ^3.54.0
       svelte-check: ^3.3.2
-      tslib: ^2.5.2
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
@@ -749,7 +752,6 @@ importers:
       '@sveltejs/kit': 1.19.0_svelte@3.55.0+vite@4.2.1
       svelte: 3.55.0
       svelte-check: 3.3.2_svelte@3.55.0
-      tslib: 2.5.2
       typescript: 5.0.4
       vite: 4.2.1
 
@@ -760,7 +762,6 @@ importers:
       '@tanstack/svelte-query': ^5.0.0-alpha.38
       svelte: ^3.54.0
       svelte-check: ^3.3.2
-      tslib: ^2.5.2
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
@@ -770,7 +771,6 @@ importers:
       '@sveltejs/kit': 1.19.0_svelte@3.55.0+vite@4.2.1
       svelte: 3.55.0
       svelte-check: 3.3.2_svelte@3.55.0
-      tslib: 2.5.2
       typescript: 5.0.4
       vite: 4.2.1
 
@@ -781,7 +781,6 @@ importers:
       '@tanstack/svelte-query': ^5.0.0-alpha.38
       svelte: ^3.54.0
       svelte-check: ^3.3.2
-      tslib: ^2.5.2
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
@@ -791,7 +790,6 @@ importers:
       '@sveltejs/kit': 1.19.0_svelte@3.55.0+vite@4.2.1
       svelte: 3.55.0
       svelte-check: 3.3.2_svelte@3.55.0
-      tslib: 2.5.2
       typescript: 5.0.4
       vite: 4.2.1
 
@@ -802,7 +800,6 @@ importers:
       '@tanstack/svelte-query': ^5.0.0-alpha.38
       svelte: ^3.54.0
       svelte-check: ^3.3.2
-      tslib: ^2.5.2
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
@@ -812,7 +809,6 @@ importers:
       '@sveltejs/kit': 1.19.0_svelte@3.55.0+vite@4.2.1
       svelte: 3.55.0
       svelte-check: 3.3.2_svelte@3.55.0
-      tslib: 2.5.2
       typescript: 5.0.4
       vite: 4.2.1
 
@@ -823,7 +819,6 @@ importers:
       '@tanstack/svelte-query': ^5.0.0-alpha.38
       svelte: ^3.54.0
       svelte-check: ^3.3.2
-      tslib: ^2.5.2
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
@@ -833,7 +828,6 @@ importers:
       '@sveltejs/kit': 1.19.0_svelte@3.55.0+vite@4.2.1
       svelte: 3.55.0
       svelte-check: 3.3.2_svelte@3.55.0
-      tslib: 2.5.2
       typescript: 5.0.4
       vite: 4.2.1
 
@@ -844,7 +838,6 @@ importers:
       '@tsconfig/svelte': ^4.0.1
       svelte: ^3.54.0
       svelte-check: ^3.3.2
-      tslib: ^2.5.2
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
@@ -854,7 +847,6 @@ importers:
       '@tsconfig/svelte': 4.0.1
       svelte: 3.55.0
       svelte-check: 3.3.2_svelte@3.55.0
-      tslib: 2.5.2
       typescript: 5.0.4
       vite: 4.2.1
 
@@ -865,7 +857,6 @@ importers:
       '@tanstack/svelte-query': ^5.0.0-alpha.38
       svelte: ^3.54.0
       svelte-check: ^3.3.2
-      tslib: ^2.5.2
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
@@ -875,7 +866,6 @@ importers:
       '@sveltejs/kit': 1.19.0_svelte@3.55.0+vite@4.2.1
       svelte: 3.55.0
       svelte-check: 3.3.2_svelte@3.55.0
-      tslib: 2.5.2
       typescript: 5.0.4
       vite: 4.2.1
 
@@ -889,7 +879,6 @@ importers:
       svelte: ^3.54.0
       svelte-check: ^3.3.2
       tailwindcss: ^3.3.2
-      tslib: ^2.5.2
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
@@ -902,7 +891,6 @@ importers:
       svelte: 3.55.0
       svelte-check: 3.3.2_unnuimhrmy7wkrlhr4xd5f5uky
       tailwindcss: 3.3.2
-      tslib: 2.5.2
       typescript: 5.0.4
       vite: 4.2.1
 
@@ -1103,7 +1091,6 @@ importers:
       jsdom: ^22.0.0
       svelte: ^3.54.0
       svelte-check: ^3.3.2
-      tslib: ^2.5.2
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
@@ -1116,7 +1103,6 @@ importers:
       jsdom: 22.0.0
       svelte: 3.55.0
       svelte-check: 3.3.2_svelte@3.55.0
-      tslib: 2.5.2
       typescript: 5.0.4
       vite: 4.2.1
 
@@ -1132,7 +1118,6 @@ importers:
       jsdom: ^22.0.0
       svelte: ^3.54.0
       svelte-check: ^3.3.2
-      tslib: ^2.5.2
       typescript: ^5.0.4
       vite: ^4.2.0
     dependencies:
@@ -1147,7 +1132,6 @@ importers:
       jsdom: 22.0.0
       svelte: 3.55.0
       svelte-check: 3.3.2_svelte@3.55.0
-      tslib: 2.5.2
       typescript: 5.0.4
       vite: 4.2.1
 
@@ -4555,6 +4539,26 @@ packages:
       serialize-javascript: 6.0.1
       smob: 1.1.1
       terser: 5.17.6
+    dev: true
+
+  /@rollup/plugin-typescript/11.1.1_3z2bg3rkwokrf7bt2qgphugr2y:
+    resolution: {integrity: sha512-Ioir+x5Bejv72Lx2Zbz3/qGg7tvGbxQZALCLoJaGrkNXak/19+vKgKYJYM3i/fJxvsb23I9FuFQ8CUBEfsmBRg==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^2.14.0||^3.0.0
+      tslib: '*'
+      typescript: '>=3.7.0'
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+      tslib:
+        optional: true
+    dependencies:
+      '@rollup/pluginutils': 5.0.2_rollup@3.23.0
+      resolve: 1.22.2
+      rollup: 3.23.0
+      tslib: 2.5.2
+      typescript: 5.0.4
     dev: true
 
   /@rollup/pluginutils/3.1.0_rollup@2.79.1:
@@ -11798,7 +11802,7 @@ packages:
       tar-stream: 2.2.0
       tmp: 0.2.1
       tsconfig-paths: 4.1.2
-      tslib: 2.5.0
+      tslib: 2.5.2
       v8-compile-cache: 2.3.0
       yargs: 17.7.1
       yargs-parser: 21.1.1
@@ -14782,10 +14786,6 @@ packages:
 
   /tslib/1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
-    dev: true
-
-  /tslib/2.5.0:
-    resolution: {integrity: sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg==}
     dev: true
 
   /tslib/2.5.2:
