@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from 'solid-testing-library'
+import { render, screen, waitFor } from '@solidjs/testing-library'
 import { queryKey } from './utils'
 
 import { QueryCache } from '@tanstack/query-core'

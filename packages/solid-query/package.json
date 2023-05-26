@@ -47,11 +47,11 @@
     "build/types/*",
     "src"
   ],
-  "devDependencies": {
-    "vite-plugin-solid": "^2.3.9"
-  },
   "dependencies": {
     "@tanstack/query-core": "workspace:*"
+  },
+  "devDependencies": {
+    "vite-plugin-solid": "^2.5.0"
   },
   "peerDependencies": {
     "solid-js": "^1.6.13"

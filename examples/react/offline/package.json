@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@tanstack/react-location": "^3.7.0",
-    "ky": "^0.30.0",
+    "ky": "^0.33.0",
     "msw": "^0.39.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -20,8 +20,8 @@
     "@tanstack/query-sync-storage-persister": "^4.7.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^2.0.0",
-    "vite": "^3.0.0"
+    "@vitejs/plugin-react": "^4.0.0",
+    "vite": "^4.2.0"
   },
   "browserslist": {
     "production": [

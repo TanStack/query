@@ -34,10 +34,6 @@
     "build",
     "src"
   ],
-  "devDependencies": {
-    "vite-plugin-solid": "^2.5.0",
-    "@tanstack/query-core": "workspace:*"
-  },
   "dependencies": {
     "@emotion/css": "^11.10.5",
     "@solid-primitives/keyed": "^1.1.4",
@@ -47,6 +43,10 @@
     "solid-js": "^1.6.10",
     "solid-transition-group": "^0.2.2",
     "superjson": "^1.12.1"
+  },
+  "devDependencies": {
+    "@tanstack/query-core": "workspace:*",
+    "vite-plugin-solid": "^2.5.0"
   },
   "peerDependencies": {
     "@tanstack/query-core": "workspace:*"
