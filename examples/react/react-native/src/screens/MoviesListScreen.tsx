@@ -3,14 +3,14 @@ import { FlatList, RefreshControl } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 
 import { StackNavigationProp } from '@react-navigation/stack';
-import { LoadingIndicator } from '@app/components/LoadingIndicator';
-import { ErrorMessage } from '@app/components/ErrorMessage';
-import { Divider } from '@app/components/Divider';
-import { ListItem } from '@app/components/ListItem';
-import { useRefreshByUser } from '@app/hooks/useRefreshByUser';
-import { useRefreshOnFocus } from '@app/hooks/useRefreshOnFocus';
-import { fetchMovies, Movie } from '@app/lib/api';
-import { MoviesStackNavigator } from '@app/navigation/types';
+import { LoadingIndicator } from '../components/LoadingIndicator';
+import { ErrorMessage } from '../components/ErrorMessage';
+import { Divider } from '../components/Divider';
+import { ListItem } from '../components/ListItem';
+import { useRefreshByUser } from '../hooks/useRefreshByUser';
+import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus';
+import { fetchMovies, Movie } from '../lib/api';
+import { MoviesStackNavigator } from '../navigation/types';
 
 type MoviesListScreenNavigationProp = StackNavigationProp<
   MoviesStackNavigator,

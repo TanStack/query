@@ -4,18 +4,18 @@
   "main": "pages/index.tsx",
   "license": "MIT",
   "dependencies": {
+    "@tanstack/react-query": "^5.0.0-alpha.38",
+    "@tanstack/react-query-devtools": "^5.0.0-alpha.38",
     "axios": "^1.4.0",
     "isomorphic-unfetch": "3.0.0",
     "next": "12.2.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "@tanstack/react-query": "^4.7.1",
-    "@tanstack/react-query-devtools": "^4.7.1"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/node": "^18.13.0",
-    "@types/react": "^18.0.14",
-    "@types/react-dom": "^18.0.5",
+    "@types/react": "^18.2.4",
+    "@types/react-dom": "^18.2.4",
     "typescript": "^5.0.4"
   },
   "scripts": {
