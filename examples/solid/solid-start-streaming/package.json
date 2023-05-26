@@ -7,7 +7,7 @@
   },
   "type": "module",
   "devDependencies": {
-    "@types/node": "^18.11.9",
+    "@types/node": "^18.13.0",
     "esbuild": "^0.14.54",
     "postcss": "^8.4.18",
     "solid-start-node": "^0.2.0",
