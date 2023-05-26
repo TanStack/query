@@ -29,7 +29,11 @@ export default function Layout(props) {
           <Route exact path="/films" element={<Films />} />
           <Route exact path="/films/:filmId" element={<Film />} />
           <Route exact path="/characters" element={<Characters />} />
-          <Route exact path="/characters/:characterId" element={<Character />} />
+          <Route
+            exact
+            path="/characters/:characterId"
+            element={<Character />}
+          />
           <Route path="/" element={<Home />} />
         </Routes>
       </main>

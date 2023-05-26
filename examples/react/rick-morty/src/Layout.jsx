@@ -29,7 +29,11 @@ export default function Layout() {
           <Route exact path="/episodes" element={<Episodes />} />
           <Route exact path="/episodes/:episodeId" element={<Episode />} />
           <Route exact path="/characters" element={<Characters />} />
-          <Route exact path="/characters/:characterId" element={<Character />} />
+          <Route
+            exact
+            path="/characters/:characterId"
+            element={<Character />}
+          />
           <Route path="/" element={<Home />} />
         </Routes>
       </main>
