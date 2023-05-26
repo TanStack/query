@@ -7,28 +7,30 @@ import replace from '@rollup/plugin-replace'
 import nodeResolve from '@rollup/plugin-node-resolve'
 import commonJS from '@rollup/plugin-commonjs'
 import withSolid from 'rollup-preset-solid'
-import preserveDirectives from 'rollup-plugin-preserve-directives'
-import type { OutputOptions, Plugin, RollupOptions } from 'rollup'
+// import preserveDirectives from 'rollup-plugin-preserve-directives'
 
-type Options = {
-  input: string | string[]
-  packageDir: string
-  external: RollupOptions['external']
-  jsName: string
-  outputFile: string
-  globals: Record<string, string>
-  forceDevEnv: boolean
-  forceBundle: boolean
-}
+/**
+ * @typedef {Object} Options
+ * @property {string | string[]} input - The input string or array of strings.
+ * @property {string} packageDir - The package directory.
+ * @property {import('rollup').RollupOptions['external']} external - The external options of Rollup.
+ * @property {string} jsName - The JavaScript name.
+ * @property {string} outputFile - The output file.
+ * @property {Record<string, string>} globals - The globals record.
+ * @property {boolean} forceDevEnv - Flag indicating whether to force development environment.
+ * @property {boolean} forceBundle - Flag indicating whether to force bundling.
+ */
 
-const forceEnvPlugin = (type: 'development' | 'production') =>
+/** @param {'development' | 'production'} type */
+const forceEnvPlugin = (type) =>
   replace({
     'process.env.NODE_ENV': `"${type}"`,
     delimiters: ['', ''],
     preventAssignment: true,
   })
 
-const babelPlugin = (type: 'legacy' | 'modern') =>
+/** @param {'legacy' | 'modern'} type */
+const babelPlugin = (type) =>
   babel({
     browserslistConfigFile: type === 'modern' ? true : false,
     targets:
@@ -47,20 +49,21 @@ const babelPlugin = (type: 'legacy' | 'modern') =>
     extensions: ['.ts', '.tsx', '.native.ts'],
   })
 
-function buildConfigs(opts: {
-  packageDir: string
-  name: string
-  jsName: string
-  outputFile: string
-  entryFile: string | string[]
-  globals: Record<string, string>
-  // This option allows to bundle specified dependencies for umd build
-  bundleUMDGlobals?: string[]
-  // Force prod env build
-  forceDevEnv?: boolean
-  forceBundle?: boolean
-  skipUmdBuild?: boolean
-}): RollupOptions[] {
+/**
+ * @param {Object} opts - Options for building configurations.
+ * @param {string} opts.packageDir - The package directory.
+ * @param {string} opts.name - The name.
+ * @param {string} opts.jsName - The JavaScript name.
+ * @param {string} opts.outputFile - The output file.
+ * @param {string | string[]} opts.entryFile - The entry file or array of entry files.
+ * @param {Record<string, string>} opts.globals - The globals record.
+ * @param {string[]} [opts.bundleUMDGlobals] - List of dependencies to bundle for UMD build.
+ * @param {boolean} [opts.forceDevEnv] - Flag indicating whether to force development environment.
+ * @param {boolean} [opts.forceBundle] - Flag indicating whether to force bundling.
+ * @param {boolean} [opts.skipUmdBuild] - Flag indicating whether to skip UMD build.
+ * @returns {import('rollup').RollupOptions[]}
+ */
+function buildConfigs(opts) {
   const firstEntry = path.resolve(
     opts.packageDir,
     Array.isArray(opts.entryFile) ? opts.entryFile[0] : opts.entryFile,
@@ -78,7 +81,8 @@ function buildConfigs(opts: {
 
   const external = (moduleName) => externalDeps.includes(moduleName)
 
-  const options: Options = {
+  /** @type {Options} */
+  const options = {
     input,
     jsName: opts.jsName,
     outputFile: opts.outputFile,
@@ -101,6 +105,10 @@ function buildConfigs(opts: {
   return builds
 }
 
+/**
+ * @param {Options} options - Options for building configurations.
+ * @returns {import('rollup').RollupOptions}
+ */
 function mjs({
   input,
   packageDir,
@@ -108,14 +116,16 @@ function mjs({
   outputFile,
   forceDevEnv,
   forceBundle,
-}: Options): RollupOptions {
-  const bundleOutput: OutputOptions = {
+}) {
+  /** @type {import('rollup').OutputOptions} */
+  const bundleOutput = {
     format: 'esm',
     file: `${packageDir}/build/lib/${outputFile}.mjs`,
     sourcemap: true,
   }
 
-  const normalOutput: OutputOptions = {
+  /** @type {import('rollup').OutputOptions} */
+  const normalOutput = {
     format: 'esm',
     dir: `${packageDir}/build/lib`,
     sourcemap: true,
@@ -133,11 +143,15 @@ function mjs({
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
-      preserveDirectives(),
+      // preserveDirectives(),
     ],
   }
 }
 
+/**
+ * @param {Options} options - Options for building configurations.
+ * @returns {import('rollup').RollupOptions}
+ */
 function esm({
   input,
   packageDir,
@@ -145,14 +159,16 @@ function esm({
   outputFile,
   forceDevEnv,
   forceBundle,
-}: Options): RollupOptions {
-  const bundleOutput: OutputOptions = {
+}) {
+  /** @type {import('rollup').OutputOptions} */
+  const bundleOutput = {
     format: 'esm',
     file: `${packageDir}/build/lib/${outputFile}.esm.js`,
     sourcemap: true,
   }
 
-  const normalOutput: OutputOptions = {
+  /** @type {import('rollup').OutputOptions} */
+  const normalOutput = {
     format: 'esm',
     dir: `${packageDir}/build/lib`,
     sourcemap: true,
@@ -170,11 +186,15 @@ function esm({
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
-      preserveDirectives(),
+      // preserveDirectives(),
     ],
   }
 }
 
+/**
+ * @param {Options} options - Options for building configurations.
+ * @returns {import('rollup').RollupOptions}
+ */
 function cjs({
   input,
   external,
@@ -182,15 +202,17 @@ function cjs({
   outputFile,
   forceDevEnv,
   forceBundle,
-}: Options): RollupOptions {
-  const bundleOutput: OutputOptions = {
+}) {
+  /** @type {import('rollup').OutputOptions} */
+  const bundleOutput = {
     format: 'cjs',
     file: `${packageDir}/build/lib/${outputFile}.js`,
     sourcemap: true,
     exports: 'named',
   }
 
-  const normalOutput: OutputOptions = {
+  /** @type {import('rollup').OutputOptions} */
+  const normalOutput = {
     format: 'cjs',
     dir: `${packageDir}/build/lib`,
     sourcemap: true,
@@ -209,11 +231,15 @@ function cjs({
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
-      preserveDirectives(),
+      // preserveDirectives(),
     ],
   }
 }
 
+/**
+ * @param {Options} options - Options for building configurations.
+ * @returns {import('rollup').RollupOptions}
+ */
 function umdDev({
   input,
   external,
@@ -221,7 +247,7 @@ function umdDev({
   outputFile,
   globals,
   jsName,
-}: Options): RollupOptions {
+}) {
   return {
     // UMD (Dev)
     external,
@@ -242,6 +268,10 @@ function umdDev({
   }
 }
 
+/**
+ * @param {Options} options - Options for building configurations.
+ * @returns {import('rollup').RollupOptions}
+ */
 function umdProd({
   input,
   external,
@@ -249,7 +279,7 @@ function umdProd({
   outputFile,
   globals,
   jsName,
-}: Options): RollupOptions {
+}) {
   return {
     // UMD (Prod)
     external,
@@ -286,11 +316,11 @@ function umdProd({
 
 function createSolidQueryConfig() {
   const packageDir = 'packages/solid-query'
-  const solidRollupOptions = withSolid({
+  const solidRollupOptions = /** @type {import('rollup').RollupOptions} */ (withSolid({
     input: `${packageDir}/src/index.ts`,
     targets: ['esm', 'cjs', 'umd'],
     external: ['@tanstack/query-core'],
-  }) as RollupOptions
+  }))
 
   const outputs = !solidRollupOptions.output
     ? []
@@ -311,7 +341,7 @@ function createSolidQueryConfig() {
     output.dir = `${packageDir}/build/${format}`
   })
 
-  const plugins = solidRollupOptions.plugins as Plugin[]
+  const plugins = /** @type {import('rollup').Plugin[]} */ (solidRollupOptions.plugins)
   // Prevent types generation since it doesn't resolve the directory correctly
   // Instead build:types will generate those types anyway
   const filtered = plugins.filter((plugin) => plugin.name !== 'ts')
@@ -323,10 +353,10 @@ function createSolidQueryConfig() {
 
 function createTanstackQueryDevtoolsConfig() {
   const packageDir = 'packages/query-devtools'
-  const solidRollupOptions = withSolid({
+  const solidRollupOptions = /** @type {import('rollup').RollupOptions} */ (withSolid({
     input: `${packageDir}/src/index.tsx`,
     targets: ['esm', 'cjs', 'umd'],
-  }) as RollupOptions
+  }))
 
   const outputs = !solidRollupOptions.output
     ? []
@@ -345,7 +375,7 @@ function createTanstackQueryDevtoolsConfig() {
 
   solidRollupOptions.external = []
 
-  const plugins = solidRollupOptions.plugins as Plugin[]
+  const plugins = /** @type {import('rollup').Plugin[]} */ (solidRollupOptions.plugins)
   // Prevent types generation since it doesn't resolve the directory correctly
   // Instead build:types will generate those types anyway
   const filtered = plugins.filter((plugin) => plugin.name !== 'ts')

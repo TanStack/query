@@ -5,5 +5,5 @@
     "esModuleInterop": true,
     "noEmit": true,
   },
-  "include": ["rollup.config.ts"]
+  "include": ["rollup.config.mjs"]
 }

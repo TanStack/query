@@ -19,7 +19,6 @@ importers:
       '@rollup/plugin-node-resolve': ^15.0.2
       '@rollup/plugin-replace': ^5.0.2
       '@rollup/plugin-terser': ^0.4.3
-      '@rollup/plugin-typescript': ^11.1.1
       '@solidjs/testing-library': ^0.5.1
       '@testing-library/jest-dom': ^5.16.5
       '@testing-library/react': ^14.0.0
@@ -85,7 +84,6 @@ importers:
       '@rollup/plugin-node-resolve': 15.0.2_rollup@3.23.0
       '@rollup/plugin-replace': 5.0.2_rollup@3.23.0
       '@rollup/plugin-terser': 0.4.3_rollup@3.23.0
-      '@rollup/plugin-typescript': 11.1.1_3z2bg3rkwokrf7bt2qgphugr2y
       '@solidjs/testing-library': 0.5.2_solid-js@1.6.16
       '@testing-library/jest-dom': 5.16.5
       '@testing-library/react': 14.0.0_biqbaboplfbrettd7655fr4n2y
@@ -253,7 +251,7 @@ importers:
       '@tanstack/query-sync-storage-persister': link:../../../packages/query-sync-storage-persister
       '@tanstack/react-query': link:../../../packages/react-query
       '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
-      '@tanstack/react-query-persist-client': link:../../../packages/react-query-persist-client
+      '@tanstack/react-query-persist-client': 5.0.0-alpha.40_humrprwu6vw6cl2ap36kcn45uy
       axios: 1.4.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -367,7 +365,7 @@ importers:
       '@tanstack/react-location': 3.7.4_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query': link:../../../packages/react-query
       '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
-      '@tanstack/react-query-persist-client': link:../../../packages/react-query-persist-client
+      '@tanstack/react-query-persist-client': 5.0.0-alpha.40_humrprwu6vw6cl2ap36kcn45uy
       ky: 0.33.3
       msw: 0.39.2
       react: 18.2.0
@@ -4540,26 +4538,6 @@ packages:
       terser: 5.17.6
     dev: true
 
-  /@rollup/plugin-typescript/11.1.1_3z2bg3rkwokrf7bt2qgphugr2y:
-    resolution: {integrity: sha512-Ioir+x5Bejv72Lx2Zbz3/qGg7tvGbxQZALCLoJaGrkNXak/19+vKgKYJYM3i/fJxvsb23I9FuFQ8CUBEfsmBRg==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      rollup: ^2.14.0||^3.0.0
-      tslib: '*'
-      typescript: '>=3.7.0'
-    peerDependenciesMeta:
-      rollup:
-        optional: true
-      tslib:
-        optional: true
-    dependencies:
-      '@rollup/pluginutils': 5.0.2_rollup@3.23.0
-      resolve: 1.22.2
-      rollup: 3.23.0
-      tslib: 2.5.2
-      typescript: 5.0.4
-    dev: true
-
   /@rollup/pluginutils/3.1.0_rollup@3.23.0:
     resolution: {integrity: sha512-GksZ6pr6TpIjHm8h9lSQ8pi8BE9VeubNT0OMJ3B5uZJ8pz73NPiqOtCog/x2/QzM1ENChPKxMDhiQuRHsqc+lg==}
     engines: {node: '>= 8.0.0'}
@@ -4837,6 +4815,16 @@ packages:
       remove-accents: 0.4.2
     dev: false
 
+  /@tanstack/query-core/5.0.0-alpha.38:
+    resolution: {integrity: sha512-V5sxUNw2heNjAv15fgFODWxvjpJ/cw9rUN/uS0jFJCGE25tGuuoTSuYaIneChiBkEEK99QEWESY7sypWQY9f1g==}
+    dev: false
+
+  /@tanstack/query-persist-client-core/5.0.0-alpha.38:
+    resolution: {integrity: sha512-Nl+qcIgdUZj8Xccb4TBQV1u9qIakX7958+Ig77+YtpxxCpwWL605v/Lpxu5E0DIc/L6Oqvv2gq1LJaI1ZggRMg==}
+    dependencies:
+      '@tanstack/query-core': 5.0.0-alpha.38
+    dev: false
+
   /@tanstack/react-location/3.7.4_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-6rH2vNHGr0uyeUz5ZHvWMYjeYKGgIKFzvs5749QtnS9f+FU7t7fQE0hKZAzltBZk82LT7iYbcHBRyUg2lW13VA==}
     engines: {node: '>=12'}
@@ -4848,6 +4836,15 @@ packages:
       history: 5.3.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+    dev: false
+
+  /@tanstack/react-query-persist-client/5.0.0-alpha.40_humrprwu6vw6cl2ap36kcn45uy:
+    resolution: {integrity: sha512-RasVSA5mPyo/iFNg3DmyiJU9YbK0hBdFXjpGRyD1q3VxF6ve90i6eqxBBT+efWNA5LCfvsofHCh0ZNFmtZFXoA==}
+    peerDependencies:
+      '@tanstack/react-query': 5.0.0-alpha.38
+    dependencies:
+      '@tanstack/query-persist-client-core': 5.0.0-alpha.38
+      '@tanstack/react-query': link:packages/react-query
     dev: false
 
   /@testing-library/dom/8.18.1:
