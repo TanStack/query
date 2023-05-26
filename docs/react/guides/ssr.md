@@ -302,19 +302,19 @@ ReactDOM.hydrate(
 
 ## Using the `app` Directory in Next.js 13
 
-Both prefetching approaches, using `initialData` or `<Hydrate>`, are available within the `app` directory.
+Both prefetching approaches, using `initialData` or `<HydrationBoundary>`, are available within the `app` directory.
 
 - Prefetch the data in a Server Component and prop drill `initialData` to Client Components
   - Quick to set up for simple cases
   - May need to prop drill through multiple layers of Client Components
   - May need to prop drill to multiple Client Components using the same query
   - Query refetching is based on when the page loads instead of when the data was prefetched on the server
-- Prefetch the query on the server, dehydrate the cache and rehydrate it on the client with `<Hydrate>`
+- Prefetch the query on the server, dehydrate the cache and rehydrate it on the client with `<HydrationBoundary>`
   - Requires slightly more setup up front
   - No need to prop drill
   - Query refetching is based on when the query was prefetched on the server
 
-### `<QueryClientProvider>` is required by both the `initialData` and `<Hydrate>` prefetching approaches
+### `<QueryClientProvider>` is required by both the `initialData` and `<HydrationBoundary>` prefetching approaches
 
 The hooks provided by the `react-query` package need to retrieve a `QueryClient` from their context. Wrap your component tree with `<QueryClientProvider>` and pass it an instance of `QueryClient`.
 
@@ -379,7 +379,7 @@ export function Posts(props) {
 }
 ```
 
-### Using `<Hydrate>`
+### Using `<HydrationBoundary>`
 
 Create a request-scoped singleton instance of `QueryClient`. **This ensures that data is not shared between different users and requests, while still only creating the QueryClient once per request.**
 
@@ -397,8 +397,8 @@ Fetch your data in a Server Component higher up in the component tree than the C
 - Retrieve the `QueryClient` singleton instance
 - Prefetch the data using the client's prefetchQuery method and wait for it to complete
 - Use `dehydrate` to obtain the dehydrated state of the prefetched queries from the query cache
-- Wrap the component tree that needs the prefetched queries inside `<Hydrate>`, and provide it with the dehydrated state
-- You can fetch inside multiple Server Components and use `<Hydrate>` in multiple places
+- Wrap the component tree that needs the prefetched queries inside `<HydrationBoundary>`, and provide it with the dehydrated state
+- You can fetch inside multiple Server Components and use `<HydrationBoundary>` in multiple places
 
 > NOTE: TypeScript currently complains of a type error when using async Server Components. As a temporary workaround, use `{/* @ts-expect-error Server Component */}` when calling this component inside another. For more information, see [End-to-End Type Safety](https://beta.nextjs.org/docs/configuring/typescript#end-to-end-type-safety) in the Next.js 13 beta docs.
 
@@ -423,7 +423,7 @@ export default async function HydratedPosts() {
 }
 ```
 
-During server rendering, calls to `useQuery` nested within the `<Hydrate>` Client Component will have access to prefetched data provided in the state property.
+During server rendering, calls to `useQuery` nested within the `<HydrationBoundary>` Client Component will have access to prefetched data provided in the state property.
 
 ```tsx
 // app/posts.jsx
