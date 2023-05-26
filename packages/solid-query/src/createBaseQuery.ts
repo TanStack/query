@@ -8,8 +8,7 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 import type { QueryClient } from './QueryClient'
-import { hydrate } from '@tanstack/query-core'
-import { notifyManager } from '@tanstack/query-core'
+import { hydrate, notifyManager } from '@tanstack/query-core'
 import type { Accessor } from 'solid-js'
 import { isServer } from 'solid-js/web'
 import {

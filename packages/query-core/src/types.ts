@@ -1,12 +1,11 @@
 /* istanbul ignore file */
 
 import type { MutationState } from './mutation'
-import type { QueryBehavior, Query } from './query'
+import type { FetchDirection, QueryBehavior, Query } from './query'
 import type { RetryValue, RetryDelayValue } from './retryer'
 import type { QueryFilters, QueryTypeFilter } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
-import type { FetchDirection } from './query'
 
 export interface Register {
   // defaultError: Error

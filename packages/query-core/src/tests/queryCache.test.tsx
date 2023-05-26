@@ -1,6 +1,5 @@
 import { sleep, queryKey, createQueryClient } from './utils'
-import { QueryClient } from '..'
-import { QueryCache, QueryObserver } from '..'
+import { QueryClient, QueryCache, QueryObserver } from '..'
 import { waitFor } from '@testing-library/react'
 import { vi } from 'vitest'
 

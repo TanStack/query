@@ -1,9 +1,8 @@
 import { render, screen, waitFor } from '@solidjs/testing-library'
-import { queryKey } from './utils'
+import { createQueryClient, sleep, queryKey } from './utils'
 
 import { QueryCache } from '@tanstack/query-core'
 import { createQuery, QueryClientProvider, useQueryClient } from '..'
-import { createQueryClient, sleep } from './utils'
 import { vi } from 'vitest'
 
 describe('QueryClientProvider', () => {

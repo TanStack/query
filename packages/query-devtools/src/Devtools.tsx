@@ -1,5 +1,4 @@
 import type { Accessor, Component, JSX, Setter } from 'solid-js'
-import { For } from 'solid-js'
 import {
   createEffect,
   createMemo,
@@ -7,6 +6,7 @@ import {
   on,
   onCleanup,
   onMount,
+  For,
   Show,
 } from 'solid-js'
 import { rankItem } from '@tanstack/match-sorter-utils'
