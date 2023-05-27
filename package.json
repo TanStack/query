@@ -1,10 +1,11 @@
 {
   "name": "query",
   "repository": "https://github.com/tanstack/query.git",
+  "packageManager": "pnpm@8.5.1",
   "scripts": {
     "clean": "pnpm --filter \"./packages/**\" run clean",
     "preinstall": "node -e \"if(process.env.CI == 'true') {console.log('Skipping preinstall...'); process.exit(1)}\" || npx -y only-allow pnpm",
-    "install:csb": "pnpm install --frozen-lockfile",
+    "install:csb": "corepack enable && pnpm install --frozen-lockfile",
     "test": "pnpm run test:ci",
     "test:ci": "nx affected --targets=test:lib,test:types,test:eslint,test:format --parallel=5",
     "test:react:17": "nx affected --target=test:lib --parallel=5",

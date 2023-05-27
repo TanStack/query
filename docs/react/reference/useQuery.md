@@ -5,30 +5,31 @@ title: useQuery
 
 ```tsx
 const {
-  data,
-  dataUpdatedAt,
-  error,
-  errorUpdatedAt,
-  failureCount,
-  failureReason,
-  isError,
-  isFetched,
-  isFetchedAfterMount,
-  isFetching,
-  isPaused,
-  isLoading,
-  isLoadingError,
-  isPlaceholderData,
-  isPreviousData,
-  isRefetchError,
-  isRefetching,
-  isInitialLoading,
-  isStale,
-  isSuccess,
-  refetch,
-  remove,
-  status,
-  fetchStatus,
+	data,
+	dataUpdatedAt,
+	error,
+	errorUpdateCount,
+	errorUpdatedAt,
+	failureCount,
+	failureReason,
+	fetchStatus,
+	isError,
+	isFetched,
+	isFetchedAfterMount,
+	isFetching,
+	isInitialLoading,
+	isLoading,
+	isLoadingError,
+	isPaused,
+	isPlaceholderData,
+	isPreviousData,
+	isRefetchError,
+	isRefetching,
+	isStale,
+	isSuccess,
+	refetch,
+	remove,
+	status
 } = useQuery({
   queryKey,
   queryFn,
@@ -145,7 +146,7 @@ const {
   - Optional
   - This function will fire if the query encounters an error and will be passed the error.
 - `onSettled: (data?: TData, error?: TError) => void`
-- **Deprecated** - this callback will be removed in the next major version
+  - **Deprecated** - this callback will be removed in the next major version
   - Optional
   - This function will fire any time the query is either successfully fetched or errors and be passed either the data or error.
 - `select: (data: TData) => unknown`
