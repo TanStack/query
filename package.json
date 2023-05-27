@@ -90,7 +90,6 @@
     "solid-js": "^1.6.13",
     "stream-to-array": "^2.3.0",
     "ts-node": "^10.9.1",
-    "tslib": "^2.5.2",
     "typescript": "^5.0.4",
     "vitest": "^0.27.1",
     "vue": "^3.2.47"
