@@ -7,7 +7,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "ky": "^0.33.0",
+    "ky": "^0.33.3",
     "ky-universal": "^0.11.0",
     "next": "^13.4.4",
     "react": "^18.2.0",
