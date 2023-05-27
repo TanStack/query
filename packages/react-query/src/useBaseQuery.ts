@@ -1,4 +1,3 @@
-'use client'
 import * as React from 'react'
 
 import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
