@@ -8,10 +8,8 @@ import type {
   QueriesObserverOptions,
   QueryObserverOptions,
 } from '@tanstack/query-core'
-
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
 import { derived, get, readable, writable, type Readable } from 'svelte/store'
-
 import type { WritableOrVal } from './types'
 import { useQueryClient } from './useQueryClient'
 import { isWritable } from './utils'

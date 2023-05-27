@@ -1,6 +1,6 @@
 import { json, type RequestHandler } from '@sveltejs/kit'
 
-let list = { items: ['Item 1', 'Item 2', 'Item 3'] }
+const list = { items: ['Item 1', 'Item 2', 'Item 3'] }
 
 /** @type {import('./$types').RequestHandler} */
 export const GET: RequestHandler = async ({ url }) => {

@@ -48,7 +48,7 @@ function Example() {
     if (inView) {
       fetchNextPage()
     }
-  }, [inView])
+  }, [fetchNextPage, inView])
 
   return (
     <div>
@@ -110,7 +110,7 @@ function Example() {
       )}
       <hr />
       <Link href="/about">
-        <a>Go to another page</a>
+        Go to another page
       </Link>
       <ReactQueryDevtools initialIsOpen />
     </div>

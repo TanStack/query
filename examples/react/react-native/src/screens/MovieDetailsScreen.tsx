@@ -5,11 +5,11 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 
-import { LoadingIndicator } from '@app/components/LoadingIndicator';
-import { ErrorMessage } from '@app/components/ErrorMessage';
-import { useRefreshByUser } from '@app/hooks/useRefreshByUser';
-import { fetchMovie, MovieDetails } from '@app/lib/api';
-import type { MoviesStackNavigator } from '@app/navigation/types';
+import { LoadingIndicator } from '../components/LoadingIndicator';
+import { ErrorMessage } from '../components/ErrorMessage';
+import { useRefreshByUser } from '../hooks/useRefreshByUser';
+import { fetchMovie, MovieDetails } from '../lib/api';
+import type { MoviesStackNavigator } from '../navigation/types';
 
 type MoviesDetailsScreenNavigationProp = StackNavigationProp<
   MoviesStackNavigator,

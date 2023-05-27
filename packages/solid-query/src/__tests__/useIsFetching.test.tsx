@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from 'solid-testing-library'
+import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
 
 import { createEffect, createRenderEffect, createSignal, Show } from 'solid-js'
 import { createQuery, QueryCache, QueryClientProvider, useIsFetching } from '..'

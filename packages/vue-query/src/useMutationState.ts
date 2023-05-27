@@ -4,8 +4,8 @@ import type {
   MutationFilters as MF,
   Mutation,
   DefaultError,
+  MutationState,
 } from '@tanstack/query-core'
-import type { MutationState } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
 import type { QueryClient } from './queryClient'

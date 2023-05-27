@@ -9,9 +9,8 @@ import {
   TableHead,
   TableRow,
   Paper,
-} from "@material-ui/core";
-import { Link as RouterLink } from "react-router-dom";
-import { useParams } from "react-router";
+} from "@mui/material";
+import { useParams, Link as RouterLink } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import fetch from "./fetch";
 
