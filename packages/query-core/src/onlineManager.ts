@@ -5,6 +5,8 @@ type SetupFn = (
   setOnline: (online?: boolean) => void,
 ) => (() => void) | undefined
 
+const onlineEvents = ['online', 'offline'] as const
+
 export class OnlineManager extends Subscribable {
   private online?: boolean
   private cleanup?: () => void
@@ -19,13 +21,15 @@ export class OnlineManager extends Subscribable {
       if (!isServer && window.addEventListener) {
         const listener = () => onOnline()
         // Listen to online
-        window.addEventListener('online', listener, false)
-        window.addEventListener('offline', listener, false)
+        onlineEvents.forEach((event) => {
+          window.addEventListener(event, listener, false)
+        })
 
         return () => {
           // Be sure to unsubscribe if a new handler is set
-          window.removeEventListener('online', listener)
-          window.removeEventListener('offline', listener)
+          onlineEvents.forEach((event) => {
+            window.removeEventListener(event, listener)
+          })
         }
       }
 
