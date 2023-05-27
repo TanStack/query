@@ -22,12 +22,12 @@
   const addMutation = createMutation({
     mutationFn: (value: string) =>
       fetch(`${endpoint}?add=${value}`).then((r) => r.json()),
-    onSuccess: () => client.invalidateQueries(['refetch']),
+    onSuccess: () => client.invalidateQueries({ queryKey: ['refetch']}),
   })
 
   const clearMutation = createMutation({
     mutationFn: () => fetch(`${endpoint}?clear=1`).then((r) => r.json()),
-    onSuccess: () => client.invalidateQueries(['refetch']),
+    onSuccess: () => client.invalidateQueries({ queryKey: ['refetch']}),
   })
 </script>
 

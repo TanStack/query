@@ -12,9 +12,11 @@
     editingIndex,
   } from '../lib/stores'
 
+  type Todo = { id: number, name: string, notes: string }
+
   const queryClient = useQueryClient()
 
-  const fetchTodoById = async ({ id }: { id: number }) => {
+  const fetchTodoById = async ({ id }: { id: number }): Promise<Todo> => {
     console.info('fetchTodoById', { id })
     return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -23,16 +25,25 @@
             new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
           )
         }
-        resolve($list.find((d) => d.id === id))
+        const todo = $list.find((d) => d.id === id)
+        if (!todo) {
+          return reject(
+            new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
+          )
+        }
+        resolve(todo)
       }, $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin))
     })
   }
 
-  function patchTodo(todo) {
+  function patchTodo(todo?: Todo): Promise<Todo> {
     console.info('patchTodo', todo)
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         if (Math.random() < $errorRate) {
+          return reject(new Error(JSON.stringify({ patchTodo: todo }, null, 2)))
+        }
+        if (!todo) {
           return reject(new Error(JSON.stringify({ patchTodo: todo }, null, 2)))
         }
         list.set(
@@ -86,7 +97,7 @@
     <span>
       Error! <button on:click={() => $query.refetch()}>Retry</button>
     </span>
-  {:else}
+  {:else if todo}
     <label>
       Name:{' '}
       <input bind:value={todo.name} disabled={disableEditSave} />
