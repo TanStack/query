@@ -39,12 +39,12 @@
   },
   "devDependencies": {
     "@sveltejs/package": "^2.0.2",
-    "@sveltejs/vite-plugin-svelte": "^2.3.0",
+    "@sveltejs/vite-plugin-svelte": "^2.4.0",
     "@testing-library/svelte": "^3.2.2",
     "eslint-plugin-svelte": "^2.29.0",
     "jsdom": "^22.0.0",
     "svelte": "^3.54.0",
-    "svelte-check": "^3.3.2",
+    "svelte-check": "^3.4.3",
     "tslib": "^2.5.2",
     "typescript": "^5.0.4",
     "vite": "^4.2.0"

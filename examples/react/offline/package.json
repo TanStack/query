@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@tanstack/react-location": "^3.7.0",
-    "ky": "^0.33.0",
+    "ky": "^0.33.3",
     "msw": "^0.39.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
