@@ -129,7 +129,7 @@ export class Mutation<
   }
 
   addObserver(observer: MutationObserver<any, any, any, any>): void {
-    if (this.observers.indexOf(observer) === -1) {
+    if (!this.observers.includes(observer)) {
       this.observers.push(observer)
 
       // Stop the mutation from being garbage collected
