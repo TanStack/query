@@ -12,7 +12,7 @@
     editingIndex,
   } from '../lib/stores'
 
-  type Todo = { id: number, name: string, notes: string }
+  type Todo = { id: number; name: string; notes: string }
 
   const queryClient = useQueryClient()
 

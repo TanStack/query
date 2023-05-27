@@ -12,7 +12,7 @@
 
   let name = ''
 
-  const postTodo = async ({ name, notes }: { name: string, notes: string }) => {
+  const postTodo = async ({ name, notes }: { name: string; notes: string }) => {
     console.info('postTodo', { name, notes })
     return new Promise((resolve, reject) => {
       setTimeout(() => {
