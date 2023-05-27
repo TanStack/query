@@ -64,7 +64,7 @@ Svelte Query offers useful functions and components that will make managing serv
 - `useIsMutating`
 - `useHydrate`
 - `<QueryClientProvider>`
-- `<Hydrate>`
+- `<HydrationBoundary>`
 
 ## Important Differences between Svelte Query & React Query
 

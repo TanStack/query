@@ -35,8 +35,8 @@
     "src"
   ],
   "dependencies": {
-    "@emotion/css": "^11.10.5",
-    "@solid-primitives/keyed": "^1.1.4",
+    "@emotion/css": "^11.11.0",
+    "@solid-primitives/keyed": "^1.2.0",
     "@solid-primitives/resize-observer": "^2.0.18",
     "@solid-primitives/storage": "^1.3.11",
     "@tanstack/match-sorter-utils": "^8.8.4",

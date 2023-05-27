@@ -206,14 +206,11 @@ export const ASTUtils = {
   isValidReactComponentOrHookName(identifier: TSESTree.Identifier | null) {
     return identifier !== null && /^(use|[A-Z])/.test(identifier.name)
   },
-  getReactComponentOrHookAncestor(
+  getFunctionAncestor(
     context: Readonly<RuleContext<string, readonly unknown[]>>,
   ) {
     return context.getAncestors().find((x) => {
-      if (
-        x.type === AST_NODE_TYPES.FunctionDeclaration &&
-        ASTUtils.isValidReactComponentOrHookName(x.id)
-      ) {
+      if (x.type === AST_NODE_TYPES.FunctionDeclaration) {
         return true
       }
 
@@ -224,14 +221,9 @@ export const ASTUtils = {
           AST_NODE_TYPES.FunctionDeclaration,
           AST_NODE_TYPES.FunctionExpression,
           AST_NODE_TYPES.ArrowFunctionExpression,
-        ]) &&
-        ASTUtils.isValidReactComponentOrHookName(x.parent.id)
+        ])
       )
-    }) as
-      | TSESTree.FunctionDeclaration
-      | TSESTree.FunctionExpression
-      | TSESTree.ArrowFunctionExpression
-      | undefined
+    })
   },
   getReferencedExpressionByIdentifier(params: {
     node: TSESTree.Node
