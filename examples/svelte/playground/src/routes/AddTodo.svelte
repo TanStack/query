@@ -12,7 +12,7 @@
 
   let name = ''
 
-  const postTodo = async ({ name, notes }) => {
+  const postTodo = async ({ name, notes }: { name: string; notes: string }) => {
     console.info('postTodo', { name, notes })
     return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -41,7 +41,7 @@
   <input bind:value={name} disabled={$addMutation.status === 'pending'} />
 
   <button
-    on:click={() => $addMutation.mutate({ name })}
+    on:click={() => $addMutation.mutate({ name, notes: name })}
     disabled={$addMutation.status === 'pending' || !name}
   >
     Add Todo

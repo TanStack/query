@@ -8,8 +8,8 @@
 
   const query = createInfiniteQuery({
     queryKey: ['planets'],
-    queryFn: fetchPlanets,
-    //@ts-ignore
+    queryFn: ({ pageParam }) => fetchPlanets({ pageParam }),
+    defaultPageParam: 1,
     getNextPageParam: (lastPage) => {
       if (lastPage.next) {
         const nextUrl = new URLSearchParams(new URL(lastPage.next).search)
