@@ -33,7 +33,7 @@ export default () => {
       <br />
       <br />
       <Link href="/">
-        <a>Back</a>
+        Back
       </Link>
     </div>
   )
