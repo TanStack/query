@@ -5,7 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^1.4.0",
-    "isomorphic-unfetch": "3.0.0",
+    "isomorphic-unfetch": "4.0.2",
     "next": "12.2.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
