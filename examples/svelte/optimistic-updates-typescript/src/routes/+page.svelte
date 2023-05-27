@@ -46,7 +46,7 @@
     onMutate: async (newTodo: string) => {
       text = ''
       // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-      await client.cancelQueries(['optimistic'])
+      await client.cancelQueries({ queryKey: ['optimistic'] })
 
       // Snapshot the previous value
       const previousTodos = client.getQueryData<Todos>(['optimistic'])
@@ -72,7 +72,7 @@
     },
     // Always refetch after error or success:
     onSettled: () => {
-      client.invalidateQueries(['optimistic'])
+      client.invalidateQueries({ queryKey: ['optimistic'] })
     },
   })
 </script>
