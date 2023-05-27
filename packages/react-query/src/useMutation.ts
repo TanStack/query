@@ -1,3 +1,4 @@
+'use client'
 import * as React from 'react'
 import type { QueryClient, DefaultError } from '@tanstack/query-core'
 import { notifyManager, MutationObserver } from '@tanstack/query-core'
