@@ -2,8 +2,8 @@ import { branchConfigs, latestBranch, packages, rootDir } from './config.mjs'
 import type { BranchConfig, Commit, Package } from './types'
 
 // Originally ported to TS from https://github.com/remix-run/react-router/tree/main/scripts/{version,publish}.js
-import path from 'path'
-import { execSync } from 'child_process'
+import path from 'node:path'
+import { execSync } from 'node:child_process'
 import chalk from 'chalk'
 import jsonfile from 'jsonfile'
 import * as semver from 'semver'
@@ -13,7 +13,6 @@ import log from 'git-log-parser'
 import streamToArray from 'stream-to-array'
 import axios from 'axios'
 import { DateTime } from 'luxon'
-
 import type { PackageJson } from 'type-fest'
 
 const releaseCommitMsg = (version: string) => `release: v${version}`

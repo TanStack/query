@@ -1,6 +1,6 @@
+import path from 'node:path'
+import fsp from 'node:fs/promises'
 import { packages, rootDir } from './config.mjs'
-import path from 'path'
-import fsp from 'fs/promises'
 import jsonfile from 'jsonfile'
 
 import type { PackageJson } from 'type-fest'
