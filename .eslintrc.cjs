@@ -1,7 +1,7 @@
 // @ts-check
 
 /** @type {import('eslint').Linter.Config} */
-module.exports = {
+const config = {
   root: true,
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'import'],
@@ -65,3 +65,5 @@ module.exports = {
     },
   ],
 }
+
+module.exports = config;
