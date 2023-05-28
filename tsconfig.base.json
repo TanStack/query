@@ -20,6 +20,8 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "baseUrl": ".",
+    "allowJs": true,
+    "checkJs": true,
     "paths": {
       "@tanstack/query-core": ["packages/query-core/src"],
       "@tanstack/query-persist-client-core": [
@@ -43,5 +45,6 @@
       "@tanstack/vue-query": ["packages/vue-query/src"],
       "@tanstack/query-devtools": ["packages/query-devtools"]
     }
-  }
+  },
+  "include": [".eslintrc.cjs", "scripts"]
 }

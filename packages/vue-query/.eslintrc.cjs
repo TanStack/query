@@ -2,13 +2,11 @@
 
 /** @type {import('eslint').Linter.Config} */
 const config = {
+  root: true,
+  extends: ['../../.eslintrc.cjs'],
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: './tsconfig.eslint.json',
-    sourceType: 'module',
-  },
-  rules: {
-    'react-hooks/rules-of-hooks': 'off',
   },
 }
 
