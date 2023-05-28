@@ -1,13 +1,5 @@
 {
-  "compilerOptions": {
-    "allowJs": true,
-    "checkJs": true,
-    "esModuleInterop": true,
-    "module": "ES2020",
-    "moduleResolution": "node",
-    "noEmit": true,
-  },
-  "include": ["rollup.config.mjs"],
+  "files": [],
   "references": [
     { "path": "packages/query-core" },
     { "path": "packages/query-persist-client-core" },

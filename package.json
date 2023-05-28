@@ -81,6 +81,7 @@
     "rimraf": "^4.1.2",
     "rollup": "^3.23.0",
     "rollup-plugin-preserve-directives": "^0.2.0",
+    "rollup-plugin-size": "^0.3.1",
     "rollup-plugin-visualizer": "^5.9.0",
     "rollup-preset-solid": "^2.0.1",
     "semver": "^7.5.1",

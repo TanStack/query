@@ -46,5 +46,5 @@
       "@tanstack/query-devtools": ["packages/query-devtools"]
     }
   },
-  "include": [".eslintrc.cjs", "scripts"]
+  "include": [".eslintrc.cjs", "rollup.config.mjs", "scripts"]
 }

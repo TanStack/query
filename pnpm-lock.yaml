@@ -159,6 +159,9 @@ importers:
       rollup-plugin-preserve-directives:
         specifier: ^0.2.0
         version: 0.2.0(rollup@3.23.0)
+      rollup-plugin-size:
+        specifier: ^0.3.1
+        version: 0.3.1
       rollup-plugin-visualizer:
         specifier: ^5.9.0
         version: 5.9.0(rollup@3.23.0)
@@ -6992,6 +6995,11 @@ packages:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
 
+  /chalk@5.2.0:
+    resolution: {integrity: sha512-ree3Gqw/nazQAPuJJEy+avdl7QfZMcUvmHIKgEZkGL+xOBzRvup5Hxo6LHuMceSxOabuJLJm5Yp/92R9eMmMvA==}
+    engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
+    dev: true
+
   /chardet@0.7.0:
     resolution: {integrity: sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==}
     dev: false
@@ -13300,6 +13308,11 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
+  /pretty-bytes@6.1.0:
+    resolution: {integrity: sha512-Rk753HI8f4uivXi4ZCIYdhmG1V+WKzvRMg/X+M42a6t7D07RcmopXJMDNk6N++7Bl75URRGsb40ruvg7Hcp2wQ==}
+    engines: {node: ^14.13.1 || >=16.0.0}
+    dev: true
+
   /pretty-format@25.5.0:
     resolution: {integrity: sha512-kbo/kq2LQ/A/is0PQwsEHM7Ca6//bGPPvU6UnsdDRSKTWxT/ru/xb88v4BJf6a69H+uTytOEsTusT9ksd/1iWQ==}
     engines: {node: '>= 8.3'}
@@ -14182,6 +14195,21 @@ packages:
     dependencies:
       magic-string: 0.30.0
       rollup: 3.23.0
+    dev: true
+
+  /rollup-plugin-size@0.3.1:
+    resolution: {integrity: sha512-SAtpTAAJ0nFkISxLxYjDZX9Zqt34tAIil98R305ZM0GhTnnO6VYG0P5M+2IXKo/iNDdbpBcIfg1W06CLtk/vXA==}
+    dependencies:
+      axios: 1.4.0
+      chalk: 5.2.0
+      ci-env: 1.17.0
+      fs-extra: 11.1.1
+      glob: 8.1.0
+      minimatch: 5.1.6
+      pretty-bytes: 6.1.0
+      zlib: 1.0.5
+    transitivePeerDependencies:
+      - debug
     dev: true
 
   /rollup-plugin-visualizer@5.9.0(rollup@3.23.0):
@@ -16684,6 +16712,11 @@ packages:
   /yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+
+  /zlib@1.0.5:
+    resolution: {integrity: sha512-40fpE2II+Cd3k8HWTWONfeKE2jL+P42iWJ1zzps5W51qcTsOUKM5Q5m2PFb0CLxlmFAaUuUdJGc3OfZy947v0w==}
+    engines: {node: '>=0.2.0'}
+    dev: true
 
   /zod@3.21.4:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}

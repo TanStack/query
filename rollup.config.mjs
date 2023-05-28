@@ -1,11 +1,14 @@
+// @ts-check
+
 import { resolve } from 'node:path'
 import { fileURLToPath } from "node:url"
 import { defineConfig } from 'rollup'
-import babel from '@rollup/plugin-babel'
+import { babel } from '@rollup/plugin-babel'
 import terser from '@rollup/plugin-terser'
+import size from 'rollup-plugin-size'
 import { visualizer } from 'rollup-plugin-visualizer'
 import replace from '@rollup/plugin-replace'
-import nodeResolve from '@rollup/plugin-node-resolve'
+import { nodeResolve } from '@rollup/plugin-node-resolve'
 import commonJS from '@rollup/plugin-commonjs'
 import withSolid from 'rollup-preset-solid'
 import preserveDirectives from 'rollup-plugin-preserve-directives'
@@ -304,6 +307,7 @@ function umdProd({
         mangle: true,
         compress: true,
       }),
+      size({}),
       visualizer({
         filename: `${packageDir}/build/stats-html.html`,
         template: 'treemap',
