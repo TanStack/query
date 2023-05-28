@@ -49,6 +49,7 @@ const config = {
     ],
     'import/default': 'off',
     'import/export': 'off',
+    "import/newline-after-import": "error",
     'import/no-cycle': 'error',
     'import/no-duplicates': 'off',
     'import/no-unresolved': ['error', { ignore: ['^@tanstack/'] }],
