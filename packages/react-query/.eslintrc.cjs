@@ -2,8 +2,10 @@
 
 /** @type {import('eslint').Linter.Config} */
 const config = {
-  root: true,
-  extends: ['../../.eslintrc.cjs', 'react-app',],
+  extends: [
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+  ],
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: './tsconfig.eslint.json',

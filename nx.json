@@ -31,7 +31,7 @@
       "{workspaceRoot}/tsconfig.base.json",
       "{workspaceRoot}/package.json"
     ],
-    "globalNonBuildAffectingConfig": ["{workspaceRoot}/.eslintrc"],
+    "globalNonBuildAffectingConfig": ["{workspaceRoot}/.eslintrc.cjs"],
     "default": [
       "{projectRoot}/**/*",
       "globalBuildAffectingConfig",
@@ -41,9 +41,9 @@
     ],
     "public": [
       "default",
-      "!{workspaceRoot}/.eslintrc",
+      "!{workspaceRoot}/.eslintrc.cjs",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
-      "!{projectRoot}/.eslintrc*",
+      "!{projectRoot}/.eslintrc.cjs",
       "!{projectRoot}/tsconfig.eslint.json"
     ]
   },
