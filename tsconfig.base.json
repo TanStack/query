@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "allowJs": true,
-    "checkJs": true,
     "lib": ["DOM", "DOM.Iterable", "ES2020"],
     "target": "ES2020",
     "module": "ES2020",
@@ -22,6 +20,8 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "baseUrl": ".",
+    "allowJs": true,
+    "checkJs": true,
     "paths": {
       "@tanstack/query-core": ["packages/query-core/src"],
       "@tanstack/query-persist-client-core": [

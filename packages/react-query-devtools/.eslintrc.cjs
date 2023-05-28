@@ -8,6 +8,7 @@ const config = {
     tsconfigRootDir: __dirname,
     project: './tsconfig.eslint.json',
     sourceType: 'module',
+    ecmaVersion: 2020,
   },
   rules: {
     'react/jsx-key': ['error', { checkFragmentShorthand: true }],

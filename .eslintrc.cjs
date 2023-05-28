@@ -21,10 +21,10 @@ module.exports = {
     ecmaVersion: 2020,
   },
   settings: {
-    "import/parsers": {
-      "@typescript-eslint/parser": [".ts", ".tsx"]
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts', '.tsx'],
     },
-    "import/resolver": {
+    'import/resolver': {
       typescript: true,
     },
     react: {
