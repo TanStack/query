@@ -1,4 +1,4 @@
-import { packages, rootDir } from './config'
+import { packages, rootDir } from './config.mjs'
 import path from 'path'
 import fsp from 'fs/promises'
 import jsonfile from 'jsonfile'

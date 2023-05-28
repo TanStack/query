@@ -1,4 +1,4 @@
-import { branchConfigs, latestBranch, packages, rootDir } from './config'
+import { branchConfigs, latestBranch, packages, rootDir } from './config.mjs'
 import type { BranchConfig, Commit, Package } from './types'
 
 // Originally ported to TS from https://github.com/remix-run/react-router/tree/main/scripts/{version,publish}.js
