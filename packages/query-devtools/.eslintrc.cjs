@@ -2,15 +2,13 @@
 
 /** @type {import('eslint').Linter.Config} */
 const config = {
+  root: true,
+  extends: ['../../.eslintrc.cjs'],
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: './tsconfig.eslint.json',
     sourceType: 'module',
-  },
-  rules: {
-    'react/react-in-jsx-scope': 'off',
-    'react-hooks/rules-of-hooks': 'off',
-    'react/jsx-key': 'off',
+    ecmaVersion: 2020,
   },
 }
 

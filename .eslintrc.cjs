@@ -21,6 +21,15 @@ module.exports = {
     ecmaVersion: 2020,
   },
   settings: {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      node: true,
+      typescript: {
+        project: "packages/*/tsconfig.json"
+      }
+    },
     react: {
       version: 'detect',
     },

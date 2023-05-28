@@ -2,7 +2,8 @@
 
 /** @type {import('eslint').Linter.Config} */
 const config = {
-  extends: ['../../.eslintrc'],
+  root: true,
+  extends: ['../../.eslintrc.cjs'],
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: './tsconfig.eslint.json',

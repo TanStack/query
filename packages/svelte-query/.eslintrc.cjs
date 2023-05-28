@@ -1,6 +1,7 @@
 /** @type {import('eslint').Linter.Config} */
 const config = {
-  extends: ['../../.eslintrc', 'plugin:svelte/recommended'],
+  root: true,
+  extends: ['../../.eslintrc.cjs', 'plugin:svelte/recommended'],
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: './tsconfig.json',

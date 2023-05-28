@@ -2,6 +2,7 @@
 
 /** @type {import('eslint').Linter.Config} */
 const config = {
+  root: true,
   extends: ['../../.eslintrc.cjs', 'react-app',],
   parserOptions: {
     tsconfigRootDir: __dirname,
