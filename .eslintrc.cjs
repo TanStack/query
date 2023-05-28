@@ -8,6 +8,7 @@ module.exports = {
   extends: [
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:import/recommended',
     'plugin:import/typescript',
     'prettier',
   ],
@@ -46,7 +47,10 @@ module.exports = {
     '@typescript-eslint/no-inferrable-types': [
       'error', { ignoreParameters: true },
     ],
+    'import/default': 'off',
+    'import/export': 'off',
     'import/no-cycle': 'error',
+    'import/no-duplicates': 'off',
     'import/no-unresolved': ['error', { ignore: ['^@tanstack/'] }],
     'import/no-unused-modules': ['off', { unusedExports: true }],
     'no-redeclare': 'off',
