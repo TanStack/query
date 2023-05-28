@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
     "lib": ["DOM", "DOM.Iterable", "ES2020"],
     "target": "ES2020",
     "module": "ES2020",
@@ -43,5 +45,6 @@
       "@tanstack/vue-query": ["packages/vue-query/src"],
       "@tanstack/query-devtools": ["packages/query-devtools"]
     }
-  }
+  },
+  "include": [".eslintrc.cjs"]
 }
