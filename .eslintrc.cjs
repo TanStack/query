@@ -25,10 +25,7 @@ module.exports = {
       "@typescript-eslint/parser": [".ts", ".tsx"]
     },
     "import/resolver": {
-      node: true,
-      typescript: {
-        project: "packages/*/tsconfig.json"
-      }
+      typescript: true,
     },
     react: {
       version: 'detect',

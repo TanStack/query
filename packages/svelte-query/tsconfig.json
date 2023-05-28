@@ -7,9 +7,9 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "lib": ["esnext", "DOM", "DOM.Iterable"],
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ES2020",
     "moduleResolution": "bundler",
-    "module": "esnext",
     "noEmit": true,
     "noImplicitReturns": true,
     "noUncheckedIndexedAccess": true,
@@ -19,7 +19,7 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "target": "esnext",
+    "target": "ES2020",
     "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
   "include": ["src/**/*.js", "src/**/*.ts", "src/**/*.svelte", ".eslintrc.cjs", "vite.config.ts"]
