@@ -1,3 +1,5 @@
+// @ts-check
+
 /** @type {import('eslint').Linter.Config} */
 const config = {
   root: true,
@@ -5,8 +7,6 @@ const config = {
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: './tsconfig.json',
-    sourceType: 'module',
-    ecmaVersion: 2020,
     extraFileExtensions: ['.svelte'],
   },
   ignorePatterns: ['*.config.*', '*.setup.*', '**/build/*'],
