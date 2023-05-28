@@ -100,7 +100,7 @@ export class QueryObserver<
   }
 
   protected onSubscribe(): void {
-    if (this.listeners.length === 1) {
+    if (this.listeners.size === 1) {
       this.currentQuery.addObserver(this)
 
       if (shouldFetchOnMount(this.currentQuery, this.options)) {
@@ -112,7 +112,7 @@ export class QueryObserver<
   }
 
   protected onUnsubscribe(): void {
-    if (!this.listeners.length) {
+    if (!this.hasListeners()) {
       this.destroy()
     }
   }
@@ -134,7 +134,7 @@ export class QueryObserver<
   }
 
   destroy(): void {
-    this.listeners = []
+    this.listeners = new Set()
     this.clearStaleTimeout()
     this.clearRefetchInterval()
     this.currentQuery.removeObserver(this)
@@ -691,7 +691,7 @@ export class QueryObserver<
 
       // Then trigger the listeners
       if (notifyOptions.listeners) {
-        this.listeners.forEach((listener) => {
+        this.listeners.forEach(({ listener }) => {
           listener(this.currentResult)
         })
       }

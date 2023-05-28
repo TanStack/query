@@ -817,7 +817,7 @@ describe('query', () => {
 
     await sleep(10)
 
-    const error = new Error('undefined')
+    const error = new Error(`${JSON.stringify(key)} data is undefined`)
 
     expect(observerResult).toMatchObject({
       isError: true,
@@ -882,5 +882,29 @@ describe('query', () => {
     })
 
     expect(initialDataUpdatedAtSpy).toHaveBeenCalled()
+  })
+
+  test('queries should be garbage collected even if they never fetched', async () => {
+    const key = queryKey()
+
+    queryClient.setQueryDefaults(key, { cacheTime: 10 })
+
+    const fn = jest.fn()
+
+    const unsubscribe = queryClient.getQueryCache().subscribe(fn)
+
+    queryClient.setQueryData(key, 'data')
+
+    await waitFor(() =>
+      expect(fn).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'removed',
+        }),
+      ),
+    )
+
+    expect(queryClient.getQueryCache().findAll()).toHaveLength(0)
+
+    unsubscribe()
   })
 })

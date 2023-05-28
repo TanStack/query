@@ -1,7 +1,9 @@
+import type { TSESLint } from '@typescript-eslint/utils'
 import { AST_NODE_TYPES } from '@typescript-eslint/utils'
 import { ASTUtils } from '../../utils/ast-utils'
 import { createRule } from '../../utils/create-rule'
 import { uniqueBy } from '../../utils/unique-by'
+import { ExhaustiveDepsUtils } from './exhaustive-deps.utils'
 
 const QUERY_KEY = 'queryKey'
 const QUERY_FN = 'queryFn'
@@ -58,6 +60,13 @@ export const rule = createRule({
 
         let queryKeyNode = queryKey.value
 
+        if (
+          queryKeyNode.type === AST_NODE_TYPES.TSAsExpression &&
+          queryKeyNode.expression.type === AST_NODE_TYPES.ArrayExpression
+        ) {
+          queryKeyNode = queryKeyNode.expression
+        }
+
         if (queryKeyNode.type === AST_NODE_TYPES.Identifier) {
           const expression = ASTUtils.getReferencedExpressionByIdentifier({
             context,
@@ -69,24 +78,21 @@ export const rule = createRule({
           }
         }
 
-        if (queryKeyNode.type !== AST_NODE_TYPES.ArrayExpression) {
-          // TODO support query key factory
-          return
-        }
-
         const sourceCode = context.getSourceCode()
         const queryKeyValue = queryKeyNode
-        const refs = ASTUtils.getExternalRefs({
+        const externalRefs = ASTUtils.getExternalRefs({
           scopeManager,
+          sourceCode,
           node: queryFn.value,
         })
 
-        const relevantRefs = refs.filter((ref) => {
-          return (
-            ref.identifier.name !== 'undefined' &&
-            ref.resolved?.defs.every((def) => def.type !== 'ClassName')
-          )
-        })
+        const relevantRefs = externalRefs.filter((reference) =>
+          ExhaustiveDepsUtils.isRelevantReference({
+            context,
+            reference,
+            scopeManager,
+          }),
+        )
 
         const existingKeys = ASTUtils.getNestedIdentifiers(queryKeyValue).map(
           (identifier) => ASTUtils.mapKeyNodeToText(identifier, sourceCode),
@@ -101,7 +107,8 @@ export const rule = createRule({
             return (
               !ref.isTypeReference &&
               !ASTUtils.isAncestorIsCallee(ref.identifier) &&
-              !existingKeys.some((existingKey) => existingKey === text)
+              !existingKeys.some((existingKey) => existingKey === text) &&
+              !existingKeys.includes(text.split('.')[0] ?? '')
             )
           })
           .map(({ ref, text }) => ({
@@ -120,21 +127,25 @@ export const rule = createRule({
             .getText(queryKeyValue)
             .replace(/\]$/, `, ${missingAsText}]`)
 
+          const suggestions: TSESLint.ReportSuggestionArray<string> = []
+
+          if (queryKeyNode.type === AST_NODE_TYPES.ArrayExpression) {
+            suggestions.push({
+              messageId: 'fixTo',
+              data: { result: existingWithMissing },
+              fix(fixer) {
+                return fixer.replaceText(queryKeyValue, existingWithMissing)
+              },
+            })
+          }
+
           context.report({
             node: node,
             messageId: 'missingDeps',
             data: {
               deps: uniqueMissingRefs.map((ref) => ref.text).join(', '),
             },
-            suggest: [
-              {
-                messageId: 'fixTo',
-                data: { result: existingWithMissing },
-                fix(fixer) {
-                  return fixer.replaceText(queryKeyValue, existingWithMissing)
-                },
-              },
-            ],
+            suggest: suggestions,
           })
         }
       },

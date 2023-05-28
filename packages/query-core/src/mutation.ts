@@ -89,10 +89,11 @@ export class Mutation<
   TContext = unknown,
 > extends Removable {
   state: MutationState<TData, TError, TVariables, TContext>
-  options: MutationOptions<TData, TError, TVariables, TContext>
+  options!: MutationOptions<TData, TError, TVariables, TContext>
   mutationId: number
 
   private observers: MutationObserver<TData, TError, TVariables, TContext>[]
+  private defaultOptions?: MutationOptions<TData, TError, TVariables, TContext>
   private mutationCache: MutationCache
   private logger: Logger
   private retryer?: Retryer<TData>
@@ -100,18 +101,23 @@ export class Mutation<
   constructor(config: MutationConfig<TData, TError, TVariables, TContext>) {
     super()
 
-    this.options = {
-      ...config.defaultOptions,
-      ...config.options,
-    }
+    this.defaultOptions = config.defaultOptions
     this.mutationId = config.mutationId
     this.mutationCache = config.mutationCache
     this.logger = config.logger || defaultLogger
     this.observers = []
     this.state = config.state || getDefaultState()
 
-    this.updateCacheTime(this.options.cacheTime)
+    this.setOptions(config.options)
     this.scheduleGc()
+  }
+
+  setOptions(
+    options?: MutationOptions<TData, TError, TVariables, TContext>,
+  ): void {
+    this.options = { ...this.defaultOptions, ...options }
+
+    this.updateCacheTime(this.options.cacheTime)
   }
 
   get meta(): MutationMeta | undefined {
@@ -123,7 +129,7 @@ export class Mutation<
   }
 
   addObserver(observer: MutationObserver<any, any, any, any>): void {
-    if (this.observers.indexOf(observer) === -1) {
+    if (!this.observers.includes(observer)) {
       this.observers.push(observer)
 
       // Stop the mutation from being garbage collected
@@ -159,12 +165,8 @@ export class Mutation<
     }
   }
 
-  continue(): Promise<TData> {
-    if (this.retryer) {
-      this.retryer.continue()
-      return this.retryer.promise
-    }
-    return this.execute()
+  continue(): Promise<unknown> {
+    return this.retryer?.continue() ?? this.execute()
   }
 
   async execute(): Promise<TData> {
@@ -227,6 +229,15 @@ export class Mutation<
         this.state.context!,
       )
 
+      // Notify cache callback
+      await this.mutationCache.config.onSettled?.(
+        data,
+        null,
+        this.state.variables,
+        this.state.context,
+        this as Mutation<unknown, unknown, unknown, unknown>,
+      )
+
       await this.options.onSettled?.(
         data,
         null,
@@ -254,6 +265,15 @@ export class Mutation<
           error as TError,
           this.state.variables!,
           this.state.context,
+        )
+
+        // Notify cache callback
+        await this.mutationCache.config.onSettled?.(
+          undefined,
+          error,
+          this.state.variables,
+          this.state.context,
+          this as Mutation<unknown, unknown, unknown, unknown>,
         )
 
         await this.options.onSettled?.(

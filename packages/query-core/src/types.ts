@@ -204,14 +204,20 @@ export interface QueryObserverOptions<
   notifyOnChangeProps?: Array<keyof InfiniteQueryObserverResult> | 'all'
   /**
    * This callback will fire any time the query successfully fetches new data.
+   *
+   * @deprecated This callback will be removed in the next major version.
    */
   onSuccess?: (data: TData) => void
   /**
    * This callback will fire if the query encounters an error and will be passed the error.
+   *
+   * @deprecated This callback will be removed in the next major version.
    */
   onError?: (err: TError) => void
   /**
    * This callback will fire any time the query is either successfully fetched or errors and be passed either the data or error.
+   *
+   * @deprecated This callback will be removed in the next major version.
    */
   onSettled?: (data: TData | undefined, error: TError | null) => void
   /**
@@ -725,4 +731,17 @@ export interface CancelOptions {
 
 export interface SetDataOptions {
   updatedAt?: number
+}
+
+export type NotifyEventType =
+  | 'added'
+  | 'removed'
+  | 'updated'
+  | 'observerAdded'
+  | 'observerRemoved'
+  | 'observerResultsUpdated'
+  | 'observerOptionsUpdated'
+
+export interface NotifyEvent {
+  type: NotifyEventType
 }

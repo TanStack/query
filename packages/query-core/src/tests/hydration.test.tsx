@@ -426,4 +426,44 @@ describe('dehydration and rehydration', () => {
 
     queryClient.clear()
   })
+
+  test('should set the fetchStatus to idle in all cases when dehydrating', async () => {
+    const queryCache = new QueryCache()
+    const queryClient = createQueryClient({ queryCache })
+
+    let isInitialFetch = true
+    let resolvePromise: (value: unknown) => void = () => undefined
+
+    const customFetchData = () => {
+      const promise = new Promise((resolve) => {
+        resolvePromise = resolve
+      })
+      // Resolve the promise in initial fetch
+      // because we are awaiting the query first time
+      if (isInitialFetch) {
+        resolvePromise('string')
+      }
+      isInitialFetch = false
+      return promise
+    }
+
+    await queryClient.prefetchQuery(['string'], () => customFetchData())
+
+    queryClient.refetchQueries(['string'])
+
+    const dehydrated = dehydrate(queryClient)
+    resolvePromise('string')
+    expect(
+      dehydrated.queries.find((q) => q.queryHash === '["string"]')?.state
+        .fetchStatus,
+    ).toBe('fetching')
+    const stringified = JSON.stringify(dehydrated)
+
+    // ---
+    const parsed = JSON.parse(stringified)
+    const hydrationCache = new QueryCache()
+    const hydrationClient = createQueryClient({ queryCache: hydrationCache })
+    hydrate(hydrationClient, parsed)
+    expect(hydrationCache.find(['string'])?.state.fetchStatus).toBe('idle')
+  })
 })

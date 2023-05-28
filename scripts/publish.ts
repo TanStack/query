@@ -1,16 +1,9 @@
-import {
-  branchConfigs,
-  examplesDirs,
-  latestBranch,
-  packages,
-  rootDir,
-} from './config'
+import { branchConfigs, latestBranch, packages, rootDir } from './config'
 import type { BranchConfig, Commit, Package } from './types'
 
 // Originally ported to TS from https://github.com/remix-run/react-router/tree/main/scripts/{version,publish}.js
 import path from 'path'
-import { exec, execSync } from 'child_process'
-import fsp from 'fs/promises'
+import { execSync } from 'child_process'
 import chalk from 'chalk'
 import jsonfile from 'jsonfile'
 import semver from 'semver'
@@ -41,10 +34,6 @@ async function run() {
 
   const isLatestBranch = branchName === latestBranch
   const npmTag = isLatestBranch ? 'latest' : branchName
-
-  let remoteURL = execSync('git config --get remote.origin.url').toString()
-
-  remoteURL = remoteURL.substring(0, remoteURL.indexOf('.git'))
 
   // Get tags
   let tags: string[] = execSync('git tag').toString().split('\n')
@@ -165,14 +154,14 @@ async function run() {
 
   const changedPackages = RELEASE_ALL
     ? packages
-    : changedFiles.reduce((changedPackages, file) => {
+    : changedFiles.reduce((acc, file) => {
         const pkg = packages.find((p) =>
           file.startsWith(path.join('packages', p.packageDir, p.srcDir)),
         )
-        if (pkg && !changedPackages.find((d) => d.name === pkg.name)) {
-          changedPackages.push(pkg)
+        if (pkg && !acc.find((d) => d.name === pkg.name)) {
+          acc.push(pkg)
         }
-        return changedPackages
+        return acc
       }, [] as Package[])
 
   // If a package has a dependency that has been updated, we need to update the
@@ -282,7 +271,7 @@ async function run() {
 
                 if (process.env.GH_TOKEN) {
                   const query = `${
-                    commit.author.email ?? commit.committer.email
+                    commit.author.email || commit.committer.email
                   }`
 
                   const res = await axios.get(
@@ -303,16 +292,15 @@ async function run() {
                 const scope = commit.parsed.scope
                   ? `${commit.parsed.scope}: `
                   : ''
-                const subject = commit.parsed.subject ?? commit.subject
-                // const commitUrl = `${remoteURL}/commit/${commit.commit.long}`;
+                const subject = commit.parsed.subject || commit.subject
 
                 return `- ${scope}${subject} (${commit.commit.short}) ${
                   username
                     ? `by @${username}`
-                    : `by ${commit.author.name ?? commit.author.email}`
+                    : `by ${commit.author.name || commit.author.email}`
                 }`
               }),
-            ).then((commits) => [type, commits] as const)
+            ).then((c) => [type, c] as const)
           }),
       ).then((groups) => {
         return groups
@@ -368,62 +356,15 @@ async function run() {
     return
   }
 
-  console.info('Testing packages...')
-  execSync(`pnpm run test:ci`, { encoding: 'utf8', stdio: 'inherit' })
-  console.info('')
-
   console.info('Building packages...')
-  execSync(`pnpm run build`, { encoding: 'utf8', stdio: 'inherit' })
+  execSync(`pnpm run build --skip-nx-cache`, {
+    encoding: 'utf8',
+    stdio: 'inherit',
+  })
   console.info('')
 
   console.info('Validating packages...')
-  const failedValidations: string[] = []
-
-  await Promise.all(
-    packages.map(async (pkg) => {
-      const pkgJson = await readPackageJson(
-        path.resolve(rootDir, 'packages', pkg.packageDir, 'package.json'),
-      )
-
-      const entries =
-        pkg.name === '@tanstack/eslint-plugin-query'
-          ? (['main'] as const)
-          : pkg.name === '@tanstack/svelte-query'
-          ? (['types', 'module'] as const)
-          : (['main', 'types', 'module'] as const)
-
-      await Promise.all(
-        entries.map(async (entryKey) => {
-          const entry = pkgJson[entryKey] as string
-
-          if (!entry) {
-            throw new Error(
-              `Missing entry for "${entryKey}" in ${pkg.packageDir}/package.json!`,
-            )
-          }
-
-          const filePath = path.resolve(
-            rootDir,
-            'packages',
-            pkg.packageDir,
-            entry,
-          )
-
-          try {
-            await fsp.access(filePath)
-          } catch (err) {
-            failedValidations.push(`Missing build file: ${filePath}`)
-          }
-        }),
-      )
-    }),
-  )
-  console.info('')
-  if (failedValidations.length > 0) {
-    throw new Error(
-      'Some packages failed validation:\n\n' + failedValidations.join('\n'),
-    )
-  }
+  execSync(`pnpm run validatePackages`, { encoding: 'utf8', stdio: 'inherit' })
 
   console.info(`Updating all changed packages to version ${version}...`)
   // Update each package to the new version
@@ -460,7 +401,7 @@ async function run() {
   console.info(`Publishing all packages to npm with tag "${npmTag}"`)
 
   // Publish each package
-  changedPackages.map((pkg) => {
+  changedPackages.forEach((pkg) => {
     const packageDir = path.join(rootDir, 'packages', pkg.packageDir)
     const cmd = `cd ${packageDir} && pnpm publish --tag ${npmTag} --access=public --no-git-checks`
     console.info(

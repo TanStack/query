@@ -2,8 +2,14 @@ import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
 import { AST_NODE_TYPES } from '@typescript-eslint/utils'
 import { createRule } from '../../utils/create-rule'
 import { ASTUtils } from '../../utils/ast-utils'
+import { objectKeys } from '../../utils/object-utils'
 
-const QUERY_CALLS = ['useQuery', 'createQuery']
+const QUERY_CALLS = {
+  useQuery: { key: 'queryKey', fn: 'queryFn', type: 'query' },
+  createQuery: { key: 'queryKey', fn: 'queryFn', type: 'query' },
+  useMutation: { key: 'mutationKey', fn: 'mutationFn', type: 'mutation' },
+  createMutation: { key: 'mutationKey', fn: 'mutationFn', type: 'mutation' },
+}
 
 const messages = {
   preferObjectSyntax: `Objects syntax for query is preferred`,
@@ -32,11 +38,13 @@ export const rule: TSESLint.RuleModule<MessageKey, readonly unknown[]> =
     create(context, _, helpers) {
       return {
         CallExpression(node) {
-          const isTanstackQueryCall =
-            ASTUtils.isIdentifierWithOneOfNames(node.callee, QUERY_CALLS) &&
-            helpers.isTanstackQueryImport(node.callee)
-
-          if (!isTanstackQueryCall) {
+          if (
+            !ASTUtils.isIdentifierWithOneOfNames(
+              node.callee,
+              objectKeys(QUERY_CALLS),
+            ) ||
+            !helpers.isTanstackQueryImport(node.callee)
+          ) {
             return
           }
 
@@ -101,6 +109,7 @@ export const rule: TSESLint.RuleModule<MessageKey, readonly unknown[]> =
               runCheckOnNode({
                 context: context,
                 callNode: node,
+                callString: node.callee.name,
                 expression: stmt.argument,
                 messageId: 'returnTypeAreNotObjectSyntax',
               })
@@ -121,6 +130,7 @@ export const rule: TSESLint.RuleModule<MessageKey, readonly unknown[]> =
               return runCheckOnNode({
                 context: context,
                 callNode: node,
+                callString: node.callee.name,
                 expression: referencedNode,
                 messageId: 'preferObjectSyntax',
               })
@@ -130,6 +140,7 @@ export const rule: TSESLint.RuleModule<MessageKey, readonly unknown[]> =
           runCheckOnNode({
             context: context,
             callNode: node,
+            callString: node.callee.name,
             expression: firstArgument,
             messageId: 'preferObjectSyntax',
           })
@@ -141,10 +152,11 @@ export const rule: TSESLint.RuleModule<MessageKey, readonly unknown[]> =
 function runCheckOnNode(params: {
   context: Readonly<TSESLint.RuleContext<MessageKey, readonly unknown[]>>
   callNode: TSESTree.CallExpression
+  callString: keyof typeof QUERY_CALLS
   expression: TSESTree.Node
   messageId: MessageKey
 }) {
-  const { context, expression, messageId, callNode } = params
+  const { context, expression, messageId, callNode, callString } = params
   const sourceCode = context.getSourceCode()
 
   if (expression.type === AST_NODE_TYPES.ObjectExpression) {
@@ -157,7 +169,11 @@ function runCheckOnNode(params: {
   const optionsObject =
     secondArgument?.type === AST_NODE_TYPES.ObjectExpression
       ? secondArgument
-      : thirdArgument?.type === AST_NODE_TYPES.ObjectExpression
+      : thirdArgument !== undefined &&
+        ASTUtils.isNodeOfOneOf(thirdArgument, [
+          AST_NODE_TYPES.ObjectExpression,
+          AST_NODE_TYPES.Identifier,
+        ])
       ? thirdArgument
       : undefined
 
@@ -184,31 +200,65 @@ function runCheckOnNode(params: {
     return
   }
 
+  const callProps = QUERY_CALLS[callString]
+
   context.report({
     node: callNode,
     messageId: 'preferObjectSyntax',
     fix(fixer) {
       const optionsObjectProperties: string[] = []
 
-      // queryKey
-      const firstArgument = callNode.arguments[0]
-      const queryKey = sourceCode.getText(firstArgument)
-      const queryKeyProperty =
-        queryKey === 'queryKey' ? 'queryKey' : `queryKey: ${queryKey}`
+      if (callProps.type === 'query') {
+        // queryKey
+        const firstArgument = callNode.arguments[0]
+        const queryKey = sourceCode.getText(firstArgument)
+        const queryKeyProperty =
+          queryKey === callProps.key
+            ? callProps.key
+            : `${callProps.key}: ${queryKey}`
 
-      optionsObjectProperties.push(queryKeyProperty)
+        optionsObjectProperties.push(queryKeyProperty)
 
-      // queryFn
-      if (secondArgument && secondArgument !== optionsObject) {
-        const queryFn = sourceCode.getText(secondArgument)
-        const queryFnProperty =
-          queryFn === 'queryFn' ? 'queryFn' : `queryFn: ${queryFn}`
+        // queryFn
+        if (secondArgument && secondArgument !== optionsObject) {
+          const queryFn = sourceCode.getText(secondArgument)
+          const queryFnProperty =
+            queryFn === callProps.fn
+              ? callProps.fn
+              : `${callProps.fn}: ${queryFn}`
 
-        optionsObjectProperties.push(queryFnProperty)
+          optionsObjectProperties.push(queryFnProperty)
+        }
+      }
+
+      if (callProps.type === 'mutation') {
+        const isMutationKeyPresent =
+          callNode.arguments.length === 3 ||
+          callNode.arguments[1]?.type === 'ArrowFunctionExpression'
+
+        if (isMutationKeyPresent) {
+          const mutationKeyNode = callNode.arguments[0]
+          const mutationKeyText = sourceCode.getText(mutationKeyNode)
+          const mutationKeyProperty =
+            mutationKeyText === callProps.key
+              ? callProps.key
+              : `${callProps.key}: ${mutationKeyText}`
+
+          optionsObjectProperties.push(mutationKeyProperty)
+        }
+
+        const mutationFnNode = callNode.arguments[isMutationKeyPresent ? 1 : 0]
+        const mutationFnText = sourceCode.getText(mutationFnNode)
+        const mutationFnProperty =
+          mutationFnText === callProps.fn
+            ? callProps.fn
+            : `${callProps.fn}: ${mutationFnText}`
+
+        optionsObjectProperties.push(mutationFnProperty)
       }
 
       // options
-      if (optionsObject) {
+      if (optionsObject?.type === AST_NODE_TYPES.ObjectExpression) {
         const existingObjectProperties = optionsObject.properties.map(
           (objectLiteral) => {
             return sourceCode.getText(objectLiteral)
@@ -216,6 +266,10 @@ function runCheckOnNode(params: {
         )
 
         optionsObjectProperties.push(...existingObjectProperties)
+      }
+
+      if (optionsObject?.type === AST_NODE_TYPES.Identifier) {
+        optionsObjectProperties.push(`...${sourceCode.getText(optionsObject)}`)
       }
 
       const calleeText = sourceCode.getText(callNode).split('(')[0]

@@ -66,7 +66,7 @@ export class FocusManager extends Subscribable {
   }
 
   onFocus(): void {
-    this.listeners.forEach((listener) => {
+    this.listeners.forEach(({ listener }) => {
       listener()
     })
   }

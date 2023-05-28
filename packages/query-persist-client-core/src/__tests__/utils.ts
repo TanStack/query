@@ -1,5 +1,9 @@
 import type { QueryClientConfig } from '@tanstack/query-core'
 import { QueryClient } from '@tanstack/query-core'
+import type {
+  Persister,
+  PersistedClient,
+} from '@tanstack/query-persist-client-core'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
   jest.spyOn(console, 'error').mockImplementation(() => undefined)
@@ -16,4 +20,29 @@ export function sleep(timeout: number): Promise<void> {
   return new Promise((resolve, _reject) => {
     setTimeout(resolve, timeout)
   })
+}
+
+export const createMockPersister = (): Persister => {
+  let storedState: PersistedClient | undefined
+
+  return {
+    async persistClient(persistClient: PersistedClient) {
+      storedState = persistClient
+    },
+    async restoreClient() {
+      await sleep(10)
+      return storedState
+    },
+    removeClient() {
+      storedState = undefined
+    },
+  }
+}
+
+export const createSpyablePersister = (): Persister => {
+  return {
+    persistClient: jest.fn(),
+    restoreClient: jest.fn(),
+    removeClient: jest.fn(),
+  }
 }

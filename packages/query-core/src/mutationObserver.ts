@@ -74,10 +74,11 @@ export class MutationObserver<
         observer: this,
       })
     }
+    this.currentMutation?.setOptions(this.options)
   }
 
   protected onUnsubscribe(): void {
-    if (!this.listeners.length) {
+    if (!this.hasListeners()) {
       this.currentMutation?.removeObserver(this)
     }
   }
@@ -166,7 +167,7 @@ export class MutationObserver<
   private notify(options: NotifyOptions) {
     notifyManager.batch(() => {
       // First trigger the mutate callbacks
-      if (this.mutateOptions) {
+      if (this.mutateOptions && this.hasListeners()) {
         if (options.onSuccess) {
           this.mutateOptions.onSuccess?.(
             this.currentResult.data!,
@@ -196,7 +197,7 @@ export class MutationObserver<
 
       // Then trigger the listeners
       if (options.listeners) {
-        this.listeners.forEach((listener) => {
+        this.listeners.forEach(({ listener }) => {
           listener(this.currentResult)
         })
       }

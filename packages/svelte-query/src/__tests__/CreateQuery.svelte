@@ -1,17 +1,15 @@
 <script lang="ts">
-  import { createQuery, QueryClient } from '../index'
+  import { QueryClient } from '@tanstack/query-core'
   import { setQueryClientContext } from '../context'
+  import { createQuery } from '../createQuery'
+  import type { CreateQueryOptions } from '../types'
 
-  export let queryKey: Array<string>
-  export let queryFn: () => Promise<string>
+  export let options: CreateQueryOptions
 
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
 
-  const query = createQuery({
-    queryKey,
-    queryFn,
-  })
+  const query = createQuery(options)
 </script>
 
 {#if $query.isLoading}

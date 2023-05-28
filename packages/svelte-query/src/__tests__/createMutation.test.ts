@@ -1,22 +1,23 @@
 import { describe, it, expect, vi } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/svelte'
+import { fireEvent, render, waitFor } from '@testing-library/svelte'
 import CreateMutation from './CreateMutation.svelte'
-import { sleep } from './utils'
 
 describe('createMutation', () => {
   it('Call mutate and check function runs', async () => {
-    const queryFn = vi.fn()
+    const mutationFn = vi.fn()
 
-    render(CreateMutation, {
+    const rendered = render(CreateMutation, {
       props: {
-        queryFn,
+        options: {
+          mutationFn,
+        },
       },
     })
 
-    fireEvent.click(screen.getByRole('button'))
+    fireEvent.click(rendered.getByRole('button'))
 
-    await sleep(200)
-
-    expect(queryFn).toHaveBeenCalledTimes(1)
+    await waitFor(() => {
+      expect(mutationFn).toHaveBeenCalledTimes(1)
+    })
   })
 })

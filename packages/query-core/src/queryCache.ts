@@ -2,7 +2,7 @@ import type { QueryFilters } from './utils'
 import { hashQueryKeyByOptions, matchQuery, parseFilterArgs } from './utils'
 import type { Action, QueryState } from './query'
 import { Query } from './query'
-import type { QueryKey, QueryOptions } from './types'
+import type { NotifyEvent, QueryKey, QueryOptions } from './types'
 import { notifyManager } from './notifyManager'
 import type { QueryClient } from './queryClient'
 import { Subscribable } from './subscribable'
@@ -13,46 +13,51 @@ import type { QueryObserver } from './queryObserver'
 interface QueryCacheConfig {
   onError?: (error: unknown, query: Query<unknown, unknown, unknown>) => void
   onSuccess?: (data: unknown, query: Query<unknown, unknown, unknown>) => void
+  onSettled?: (
+    data: unknown | undefined,
+    error: unknown | null,
+    query: Query<unknown, unknown, unknown>,
+  ) => void
 }
 
 interface QueryHashMap {
   [hash: string]: Query<any, any, any, any>
 }
 
-interface NotifyEventQueryAdded {
+interface NotifyEventQueryAdded extends NotifyEvent {
   type: 'added'
   query: Query<any, any, any, any>
 }
 
-interface NotifyEventQueryRemoved {
+interface NotifyEventQueryRemoved extends NotifyEvent {
   type: 'removed'
   query: Query<any, any, any, any>
 }
 
-interface NotifyEventQueryUpdated {
+interface NotifyEventQueryUpdated extends NotifyEvent {
   type: 'updated'
   query: Query<any, any, any, any>
   action: Action<any, any>
 }
 
-interface NotifyEventQueryObserverAdded {
+interface NotifyEventQueryObserverAdded extends NotifyEvent {
   type: 'observerAdded'
   query: Query<any, any, any, any>
   observer: QueryObserver<any, any, any, any, any>
 }
 
-interface NotifyEventQueryObserverRemoved {
+interface NotifyEventQueryObserverRemoved extends NotifyEvent {
   type: 'observerRemoved'
   query: Query<any, any, any, any>
   observer: QueryObserver<any, any, any, any, any>
 }
 
-interface NotifyEventQueryObserverResultsUpdated {
+interface NotifyEventQueryObserverResultsUpdated extends NotifyEvent {
   type: 'observerResultsUpdated'
   query: Query<any, any, any, any>
 }
 
-interface NotifyEventQueryObserverOptionsUpdated {
+interface NotifyEventQueryObserverOptionsUpdated extends NotifyEvent {
   type: 'observerOptionsUpdated'
   query: Query<any, any, any, any>
   observer: QueryObserver<any, any, any, any, any>
@@ -149,10 +154,10 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
-    TQueyKey extends QueryKey = QueryKey,
+    TQueryKey extends QueryKey = QueryKey,
   >(
     queryHash: string,
-  ): Query<TQueryFnData, TError, TData, TQueyKey> | undefined {
+  ): Query<TQueryFnData, TError, TData, TQueryKey> | undefined {
     return this.queriesMap[queryHash]
   }
 
@@ -185,7 +190,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
   notify(event: QueryCacheNotifyEvent) {
     notifyManager.batch(() => {
-      this.listeners.forEach((listener) => {
+      this.listeners.forEach(({ listener }) => {
         listener(event)
       })
     })

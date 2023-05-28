@@ -62,7 +62,7 @@ export const load: PageLoad = async () => {
   const query = createQuery({
     queryKey: ['posts'],
     queryFn: getPosts,
-    initialData: posts
+    initialData: data.posts
   })
 </script>
 ```
@@ -107,9 +107,9 @@ export const load: LayoutLoad = async () => {
 ```markdown
 <script lang="ts">
   import { QueryClientProvider } from '@tanstack/svelte-query'
-  import type { PageData } from './$types'
+  import type { LayoutData } from './$types'
 
-  export let data: PageData
+  export let data: LayoutData
 </script>
 
 <QueryClientProvider client={data.queryClient}>
@@ -122,11 +122,13 @@ export const load: LayoutLoad = async () => {
 ```ts
 import type { PageLoad } from './$types'
 
-export const load: PageLoad = async ({ parent }) => {
+export const load: PageLoad = async ({ parent, fetch }) => {
   const { queryClient } = await parent()
+
+  // You need to use the SvelteKit fetch function here
   await queryClient.prefetchQuery({
     queryKey: ['posts'],
-    queryFn: getPosts
+    queryFn: async () => (await fetch('/api/posts')).json()
   })
 }
 ```
@@ -140,7 +142,7 @@ export const load: PageLoad = async ({ parent }) => {
   // This data is cached by prefetchQuery in +page.ts so no fetch actually happens here
   const query = createQuery({
     queryKey: ['posts'],
-    queryFn: getPosts
+    queryFn: async () => (await fetch('/api/posts')).json()
   })
 </script>
 ```

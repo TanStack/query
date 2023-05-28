@@ -1,5 +1,5 @@
 import type { MutationObserver } from './mutationObserver'
-import type { MutationOptions } from './types'
+import type { MutationOptions, NotifyEvent } from './types'
 import type { QueryClient } from './queryClient'
 import { notifyManager } from './notifyManager'
 import type { Action, MutationState } from './mutation'
@@ -25,38 +25,45 @@ interface MutationCacheConfig {
   ) => Promise<unknown> | unknown
   onMutate?: (
     variables: unknown,
-    mutation: Mutation<unknown, unknown, unknown, unknown>,
+    mutation: Mutation<unknown, unknown, unknown>,
+  ) => Promise<unknown> | unknown
+  onSettled?: (
+    data: unknown | undefined,
+    error: unknown | null,
+    variables: unknown,
+    context: unknown,
+    mutation: Mutation<unknown, unknown, unknown>,
   ) => Promise<unknown> | unknown
 }
 
-interface NotifyEventMutationAdded {
+interface NotifyEventMutationAdded extends NotifyEvent {
   type: 'added'
   mutation: Mutation<any, any, any, any>
 }
-interface NotifyEventMutationRemoved {
+interface NotifyEventMutationRemoved extends NotifyEvent {
   type: 'removed'
   mutation: Mutation<any, any, any, any>
 }
 
-interface NotifyEventMutationObserverAdded {
+interface NotifyEventMutationObserverAdded extends NotifyEvent {
   type: 'observerAdded'
   mutation: Mutation<any, any, any, any>
   observer: MutationObserver<any, any, any>
 }
 
-interface NotifyEventMutationObserverRemoved {
+interface NotifyEventMutationObserverRemoved extends NotifyEvent {
   type: 'observerRemoved'
   mutation: Mutation<any, any, any, any>
   observer: MutationObserver<any, any, any>
 }
 
-interface NotifyEventMutationObserverOptionsUpdated {
+interface NotifyEventMutationObserverOptionsUpdated extends NotifyEvent {
   type: 'observerOptionsUpdated'
   mutation?: Mutation<any, any, any, any>
   observer: MutationObserver<any, any, any, any>
 }
 
-interface NotifyEventMutationUpdated {
+interface NotifyEventMutationUpdated extends NotifyEvent {
   type: 'updated'
   mutation: Mutation<any, any, any, any>
   action: Action<any, any, any, any>
@@ -79,6 +86,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 
   private mutations: Mutation<any, any, any, any>[]
   private mutationId: number
+  private resuming: Promise<unknown> | undefined
 
   constructor(config?: MutationCacheConfig) {
     super()
@@ -146,20 +154,28 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 
   notify(event: MutationCacheNotifyEvent) {
     notifyManager.batch(() => {
-      this.listeners.forEach((listener) => {
+      this.listeners.forEach(({ listener }) => {
         listener(event)
       })
     })
   }
 
-  resumePausedMutations(): Promise<void> {
-    const pausedMutations = this.mutations.filter((x) => x.state.isPaused)
-    return notifyManager.batch(() =>
-      pausedMutations.reduce(
-        (promise, mutation) =>
-          promise.then(() => mutation.continue().catch(noop)),
-        Promise.resolve(),
-      ),
-    )
+  resumePausedMutations(): Promise<unknown> {
+    this.resuming = (this.resuming ?? Promise.resolve())
+      .then(() => {
+        const pausedMutations = this.mutations.filter((x) => x.state.isPaused)
+        return notifyManager.batch(() =>
+          pausedMutations.reduce(
+            (promise, mutation) =>
+              promise.then(() => mutation.continue().catch(noop)),
+            Promise.resolve() as Promise<unknown>,
+          ),
+        )
+      })
+      .then(() => {
+        this.resuming = undefined
+      })
+
+    return this.resuming
   }
 }

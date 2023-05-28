@@ -1,13 +1,15 @@
 <script lang="ts">
-  import { createMutation, QueryClient } from '../index'
+  import { QueryClient } from '@tanstack/query-core'
   import { setQueryClientContext } from '../context'
+  import { createMutation } from '../createMutation'
+  import type { CreateMutationOptions } from '../types'
 
-  export let queryFn: () => Promise<string>
+  export let options: CreateMutationOptions
 
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
 
-  const mutation = createMutation(queryFn)
+  const mutation = createMutation(options)
 </script>
 
-<button on:click={$mutation.mutate}>Click</button>
+<button on:click={() => $mutation.mutate()}>Click</button>

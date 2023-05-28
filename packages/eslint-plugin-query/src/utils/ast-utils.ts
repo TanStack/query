@@ -1,4 +1,5 @@
 import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
+import type TSESLintScopeManager from '@typescript-eslint/scope-manager'
 import { AST_NODE_TYPES } from '@typescript-eslint/utils'
 import type { RuleContext } from '@typescript-eslint/utils/dist/ts-eslint'
 import { uniqueBy } from './unique-by'
@@ -19,10 +20,10 @@ export const ASTUtils = {
   ): node is TSESTree.Identifier {
     return ASTUtils.isIdentifier(node) && node.name === name
   },
-  isIdentifierWithOneOfNames(
+  isIdentifierWithOneOfNames<T extends string[]>(
     node: TSESTree.Node,
-    name: string[],
-  ): node is TSESTree.Identifier {
+    name: T,
+  ): node is TSESTree.Identifier & { name: T[number] } {
     return ASTUtils.isIdentifier(node) && name.includes(node.name)
   },
   isProperty(node: TSESTree.Node): node is TSESTree.Property {
@@ -52,6 +53,12 @@ export const ASTUtils = {
 
     if (ASTUtils.isIdentifier(node)) {
       identifiers.push(node)
+    }
+
+    if ('arguments' in node) {
+      node.arguments.forEach((x) => {
+        identifiers.push(...ASTUtils.getNestedIdentifiers(x))
+      })
     }
 
     if ('elements' in node) {
@@ -134,26 +141,56 @@ export const ASTUtils = {
 
     return identifier
   },
+  isDeclaredInNode(params: {
+    functionNode: TSESTree.Node
+    reference: TSESLintScopeManager.Reference
+    scopeManager: TSESLint.Scope.ScopeManager
+  }) {
+    const { functionNode, reference, scopeManager } = params
+    const scope = scopeManager.acquire(functionNode)
+
+    if (scope === null) {
+      return false
+    }
+
+    return scope.set.has(reference.identifier.name)
+  },
   getExternalRefs(params: {
     scopeManager: TSESLint.Scope.ScopeManager
+    sourceCode: Readonly<TSESLint.SourceCode>
     node: TSESTree.Node
   }): TSESLint.Scope.Reference[] {
-    const { scopeManager, node } = params
+    const { scopeManager, sourceCode, node } = params
     const scope = scopeManager.acquire(node)
 
     if (scope === null) {
       return []
     }
 
-    const readOnlyRefs = scope.references.filter((x) => x.isRead())
+    const references = scope.references
+      .filter((x) => x.isRead() && !scope.set.has(x.identifier.name))
+      .map((x) => {
+        const referenceNode = ASTUtils.traverseUpOnly(x.identifier, [
+          AST_NODE_TYPES.MemberExpression,
+          AST_NODE_TYPES.Identifier,
+        ])
+
+        return {
+          variable: x,
+          node: referenceNode,
+          text: sourceCode.getText(referenceNode),
+        }
+      })
+
     const localRefIds = new Set(
-      [...scope.set.values()].map((x) => x.identifiers[0]),
-    )
-    const externalRefs = readOnlyRefs.filter(
-      (x) => x.resolved === null || !localRefIds.has(x.resolved.identifiers[0]),
+      [...scope.set.values()].map((x) => sourceCode.getText(x.identifiers[0])),
     )
 
-    return uniqueBy(externalRefs, (x) => x.resolved)
+    const externalRefs = references.filter(
+      (x) => x.variable.resolved === null || !localRefIds.has(x.text),
+    )
+
+    return uniqueBy(externalRefs, (x) => x.text).map((x) => x.variable)
   },
   mapKeyNodeToText(
     node: TSESTree.Node,
@@ -165,6 +202,28 @@ export const ASTUtils = {
         AST_NODE_TYPES.Identifier,
       ]),
     )
+  },
+  isValidReactComponentOrHookName(identifier: TSESTree.Identifier | null) {
+    return identifier !== null && /^(use|[A-Z])/.test(identifier.name)
+  },
+  getFunctionAncestor(
+    context: Readonly<RuleContext<string, readonly unknown[]>>,
+  ) {
+    return context.getAncestors().find((x) => {
+      if (x.type === AST_NODE_TYPES.FunctionDeclaration) {
+        return true
+      }
+
+      return (
+        x.parent?.type === AST_NODE_TYPES.VariableDeclarator &&
+        x.parent.id.type === AST_NODE_TYPES.Identifier &&
+        ASTUtils.isNodeOfOneOf(x, [
+          AST_NODE_TYPES.FunctionDeclaration,
+          AST_NODE_TYPES.FunctionExpression,
+          AST_NODE_TYPES.ArrowFunctionExpression,
+        ])
+      )
+    })
   },
   getReferencedExpressionByIdentifier(params: {
     node: TSESTree.Node
