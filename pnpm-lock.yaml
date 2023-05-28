@@ -157,8 +157,8 @@ importers:
         specifier: ^3.23.0
         version: 3.23.0
       rollup-plugin-preserve-directives:
-        specifier: ^0.1.1
-        version: 0.1.1(rollup@3.23.0)
+        specifier: ^0.2.0
+        version: 0.2.0(rollup@3.23.0)
       rollup-plugin-visualizer:
         specifier: ^5.9.0
         version: 5.9.0(rollup@3.23.0)
@@ -6423,11 +6423,6 @@ packages:
   /available-typed-arrays@1.0.5:
     resolution: {integrity: sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==}
     engines: {node: '>= 0.4'}
-    dev: true
-
-  /axe-core@4.6.3:
-    resolution: {integrity: sha512-/BQzOX780JhsxDnPpH4ZiyrJAzcd8AfzFPkv+89veFSr1rcMjuq2JDCwypKaPeB6ljHp9KjXhPpjgCvQlWYuqg==}
-    engines: {node: '>=4'}
     dev: true
 
   /axios@0.24.0:
@@ -14180,8 +14175,8 @@ packages:
     hasBin: true
     dev: true
 
-  /rollup-plugin-preserve-directives@0.1.1(rollup@3.23.0):
-    resolution: {integrity: sha512-htKdBt+0ONtxIx2nB10vmQwNn7xJrAKR+HL4rCiP972s6bVlFYaUBm3dXFGfD29Ur/LTOtSakmASi9EUdq/MPQ==}
+  /rollup-plugin-preserve-directives@0.2.0(rollup@3.23.0):
+    resolution: {integrity: sha512-KUwbBaFvD1zFIDNnOkR+u64sSod3m0l6q46/SzTOa4GTQ6hp6w0FRr2u7x99YkY9qhlna5panmTmuLWeJ/2KWw==}
     peerDependencies:
       rollup: 2.x || 3.x
     dependencies:

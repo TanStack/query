@@ -8,7 +8,7 @@ import replace from '@rollup/plugin-replace'
 import nodeResolve from '@rollup/plugin-node-resolve'
 import commonJS from '@rollup/plugin-commonjs'
 import withSolid from 'rollup-preset-solid'
-// import preserveDirectives from 'rollup-plugin-preserve-directives'
+import preserveDirectives from 'rollup-plugin-preserve-directives'
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
@@ -147,7 +147,7 @@ function mjs({
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
-      // preserveDirectives(),
+      preserveDirectives(),
     ],
   }
 }
@@ -190,7 +190,7 @@ function esm({
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
-      // preserveDirectives(),
+      preserveDirectives(),
     ],
   }
 }
@@ -235,7 +235,7 @@ function cjs({
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
-      // preserveDirectives(),
+      preserveDirectives(),
     ],
   }
 }
