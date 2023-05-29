@@ -1,7 +1,7 @@
 // @ts-check
 
 /** @type {import('eslint').Linter.Config} */
-module.exports = {
+const config = {
   root: true,
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'import'],
@@ -49,6 +49,7 @@ module.exports = {
     ],
     'import/default': 'off',
     'import/export': 'off',
+    "import/newline-after-import": "error",
     'import/no-cycle': 'error',
     'import/no-duplicates': 'off',
     'import/no-unresolved': ['error', { ignore: ['^@tanstack/'] }],
@@ -65,3 +66,5 @@ module.exports = {
     },
   ],
 }
+
+module.exports = config;
