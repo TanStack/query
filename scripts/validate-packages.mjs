@@ -13,7 +13,7 @@ async function run() {
   await Promise.all(
     packages.map(async (pkg) => {
       const pkgJson = await readPackageJson(
-        path.resolve(rootDir, 'packages', pkg.packageDir, 'package.json'),
+        path.resolve(rootDir, pkg.packageDir, 'package.json'),
       )
 
       await Promise.all(
@@ -26,12 +26,7 @@ async function run() {
             )
           }
 
-          const filePath = path.resolve(
-            rootDir,
-            'packages',
-            pkg.packageDir,
-            entry,
-          )
+          const filePath = path.resolve(rootDir, pkg.packageDir, entry)
 
           try {
             await fsp.access(filePath)
@@ -51,12 +46,7 @@ async function run() {
         )
       }
 
-      const filePath = path.resolve(
-        rootDir,
-        'packages',
-        pkg.packageDir,
-        defaultExport,
-      )
+      const filePath = path.resolve(rootDir, pkg.packageDir, defaultExport)
 
       try {
         await fsp.access(filePath)

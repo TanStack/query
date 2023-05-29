@@ -154,7 +154,10 @@ async function run() {
     -1,
   )
 
-  /** @type {string[]} */
+  /**
+   * Uses git diff to determine which files have changed since the latest tag
+   * @type {string[]}
+   */
   const changedFiles = process.env.TAG
     ? []
     : execSync(`git diff ${latestTag} --name-only`)
@@ -162,11 +165,14 @@ async function run() {
         .split('\n')
         .filter(Boolean)
 
+  /** Uses packages and changedFiles to determine which packages have changed */
   const changedPackages = RELEASE_ALL
     ? packages
     : changedFiles.reduce((acc, file) => {
-        const pkg = packages.find((p) =>
-          file.startsWith(path.join('packages', p.packageDir, p.srcDir)),
+        const pkg = packages.find(
+          (p) =>
+            file.startsWith(path.join(p.packageDir, 'src')) ||
+            file.startsWith(path.join(p.packageDir, 'package.json')),
         )
         if (pkg && !acc.find((d) => d.name === pkg.name)) {
           acc.push(pkg)
@@ -181,7 +187,7 @@ async function run() {
   for (let runs = 0; runs < 3; runs++) {
     for (const pkg of packages) {
       const packageJson = await readPackageJson(
-        path.resolve(rootDir, 'packages', pkg.packageDir, 'package.json'),
+        path.resolve(rootDir, pkg.packageDir, 'package.json'),
       )
       const allDependencies = Object.keys(
         Object.assign(
@@ -362,7 +368,7 @@ async function run() {
     console.info(`  Updating ${pkg.name} version to ${version}...`)
 
     await updatePackageJson(
-      path.resolve(rootDir, 'packages', pkg.packageDir, 'package.json'),
+      path.resolve(rootDir, pkg.packageDir, 'package.json'),
       (config) => {
         config.version = version
       },
@@ -392,7 +398,7 @@ async function run() {
 
   // Publish each package
   changedPackages.forEach((pkg) => {
-    const packageDir = path.join(rootDir, 'packages', pkg.packageDir)
+    const packageDir = path.join(rootDir, pkg.packageDir)
     const cmd = `cd ${packageDir} && pnpm publish --tag ${npmTag} --access=public --no-git-checks`
     console.info(
       `  Publishing ${pkg.name}@${version} to npm with tag "${npmTag}"...`,
