@@ -20,8 +20,8 @@
     "dev": "pnpm run watch",
     "prettier": "prettier --plugin-search-dir . \"{packages,examples}/**/src/**/*.{md,js,jsx,cjs,ts,tsx,json,vue,svelte}\"",
     "prettier:write": "pnpm run prettier --write",
-    "cipublish": "node scripts/publish.ts",
-    "validatePackages": "node scripts/validate-packages.ts"
+    "cipublish": "node scripts/publish.mjs",
+    "validatePackages": "node scripts/validate-packages.mjs"
   },
   "nx": {
     "includedScripts": [
