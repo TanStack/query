@@ -102,7 +102,8 @@ async function run() {
 
         Promise.all(
           arr.map(async (d) => {
-            const parsed = await parseCommit(d.subject)
+            // @ts-ignore
+            const parsed = await parseCommit.default(d.subject)
 
             return { ...d, parsed }
           }),
