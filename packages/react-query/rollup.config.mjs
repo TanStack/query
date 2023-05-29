@@ -3,8 +3,8 @@
 import { defineConfig } from 'rollup'
 import { buildConfigs } from '../../scripts/getRollupConfig.mjs'
 
-export default defineConfig([
-  ...buildConfigs({
+export default defineConfig(
+  buildConfigs({
     name: 'react-query',
     packageDir: '.',
     jsName: 'ReactQuery',
@@ -18,4 +18,4 @@ export default defineConfig([
     },
     bundleUMDGlobals: ['@tanstack/query-core'],
   }),
-])
+)

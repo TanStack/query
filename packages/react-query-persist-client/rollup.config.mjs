@@ -3,8 +3,8 @@
 import { defineConfig } from 'rollup'
 import { buildConfigs } from '../../scripts/getRollupConfig.mjs'
 
-export default defineConfig([
-  ...buildConfigs({
+export default defineConfig(
+  buildConfigs({
     name: 'react-query-persist-client',
     packageDir: '.',
     jsName: 'ReactQueryPersistClient',
@@ -17,4 +17,4 @@ export default defineConfig([
     },
     bundleUMDGlobals: ['@tanstack/query-persist-client-core'],
   }),
-])
+)

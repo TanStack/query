@@ -3,4 +3,4 @@
 import { defineConfig } from 'rollup'
 import { createTanstackQueryDevtoolsConfig } from '../../scripts/getRollupConfig.mjs'
 
-export default defineConfig([createTanstackQueryDevtoolsConfig()])
+export default defineConfig(createTanstackQueryDevtoolsConfig())

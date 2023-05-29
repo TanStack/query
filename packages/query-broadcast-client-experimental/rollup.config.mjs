@@ -3,8 +3,8 @@
 import { defineConfig } from 'rollup'
 import { buildConfigs } from '../../scripts/getRollupConfig.mjs'
 
-export default defineConfig([
-  ...buildConfigs({
+export default defineConfig(
+  buildConfigs({
     name: 'query-broadcast-client-experimental',
     packageDir: '.',
     jsName: 'QueryBroadcastClient',
@@ -15,4 +15,4 @@ export default defineConfig([
       'broadcast-channel': 'BroadcastChannel',
     },
   }),
-])
+)

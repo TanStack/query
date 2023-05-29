@@ -3,8 +3,8 @@
 import { defineConfig } from 'rollup'
 import { buildConfigs } from '../../scripts/getRollupConfig.mjs'
 
-export default defineConfig([
-  ...buildConfigs({
+export default defineConfig(
+  buildConfigs({
     name: 'vue-query',
     packageDir: '.',
     jsName: 'VueQuery',
@@ -23,4 +23,4 @@ export default defineConfig([
       '@vue/devtools-api',
     ],
   }),
-])
+)
