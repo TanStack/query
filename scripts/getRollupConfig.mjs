@@ -1,7 +1,6 @@
 // @ts-check
 
 import { resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { babel } from '@rollup/plugin-babel'
 import terser from '@rollup/plugin-terser'
 import size from 'rollup-plugin-size'
@@ -11,8 +10,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve'
 import commonJS from '@rollup/plugin-commonjs'
 import withSolid from 'rollup-preset-solid'
 import preserveDirectives from 'rollup-plugin-preserve-directives'
-
-const __dirname = fileURLToPath(new URL('.', import.meta.url))
+import { rootDir } from './config.mjs'
 
 /** @param {'development' | 'production'} type */
 const forceEnvPlugin = (type) =>
@@ -25,7 +23,7 @@ const forceEnvPlugin = (type) =>
 /** @param {'legacy' | 'modern'} type */
 const babelPlugin = (type) =>
   babel({
-    configFile: resolve(__dirname, '../babel.config.js'),
+    configFile: resolve(rootDir, 'babel.config.js'),
     browserslistConfigFile: type === 'modern' ? true : false,
     targets:
       type === 'modern'
