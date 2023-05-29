@@ -2,7 +2,6 @@
 
 import { resolve } from 'node:path'
 import { fileURLToPath } from "node:url"
-import { defineConfig } from 'rollup'
 import { babel } from '@rollup/plugin-babel'
 import terser from '@rollup/plugin-terser'
 import size from 'rollup-plugin-size'
@@ -14,18 +13,6 @@ import withSolid from 'rollup-preset-solid'
 import preserveDirectives from 'rollup-plugin-preserve-directives'
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
-
-/**
- * @typedef {Object} Options
- * @property {string | string[]} input - The input string or array of strings.
- * @property {string} packageDir - The package directory.
- * @property {import('rollup').RollupOptions['external']} external - The external options of Rollup.
- * @property {string} jsName - The JavaScript name.
- * @property {string} outputFile - The output file.
- * @property {Record<string, string>} globals - The globals record.
- * @property {boolean} forceDevEnv - Flag indicating whether to force development environment.
- * @property {boolean} forceBundle - Flag indicating whether to force bundling.
- */
 
 /** @param {'development' | 'production'} type */
 const forceEnvPlugin = (type) =>
@@ -88,7 +75,7 @@ export function buildConfigs(opts) {
 
   const external = (moduleName) => externalDeps.includes(moduleName)
 
-  /** @type {Options} */
+  /** @type {import('./types').Options} */
   const options = {
     input,
     jsName: opts.jsName,
@@ -113,7 +100,7 @@ export function buildConfigs(opts) {
 }
 
 /**
- * @param {Options} options - Options for building configurations.
+ * @param {import('./types').Options} options - Options for building configurations.
  * @returns {import('rollup').RollupOptions}
  */
 function mjs({
@@ -156,7 +143,7 @@ function mjs({
 }
 
 /**
- * @param {Options} options - Options for building configurations.
+ * @param {import('./types').Options} options - Options for building configurations.
  * @returns {import('rollup').RollupOptions}
  */
 function esm({
@@ -199,7 +186,7 @@ function esm({
 }
 
 /**
- * @param {Options} options - Options for building configurations.
+ * @param {import('./types').Options} options - Options for building configurations.
  * @returns {import('rollup').RollupOptions}
  */
 function cjs({
@@ -244,7 +231,7 @@ function cjs({
 }
 
 /**
- * @param {Options} options - Options for building configurations.
+ * @param {import('./types').Options} options - Options for building configurations.
  * @returns {import('rollup').RollupOptions}
  */
 function umdDev({
@@ -276,7 +263,7 @@ function umdDev({
 }
 
 /**
- * @param {Options} options - Options for building configurations.
+ * @param {import('./types').Options} options - Options for building configurations.
  * @returns {import('rollup').RollupOptions}
  */
 function umdProd({
