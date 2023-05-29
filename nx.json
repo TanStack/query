@@ -63,6 +63,13 @@
       "inputs": ["default", "^public"],
       "dependsOn": ["^test:types"]
     },
+    "build": {
+      "outputs": [
+        "{projectRoot}/build/**/*.{js,cjs,mjs,svelte}"
+      ],
+      "inputs": ["default", "^public"],
+      "dependsOn": ["^build"]
+    },
     "build:types": {
       "outputs": [
         "{projectRoot}/build/**/*.d.ts",
