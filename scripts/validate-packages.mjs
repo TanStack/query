@@ -1,13 +1,12 @@
 import path from 'node:path'
 import fsp from 'node:fs/promises'
-import { packages, rootDir } from './config.mjs'
 import jsonfile from 'jsonfile'
-
-import type { PackageJson } from 'type-fest'
+import { packages, rootDir } from './config.mjs'
 
 async function run() {
   console.info('Validating packages...')
-  const failedValidations: string[] = []
+  /** @type {string[]} */
+  const failedValidations = []
 
   await Promise.all(
     packages.map(async (pkg) => {
@@ -17,7 +16,7 @@ async function run() {
 
       await Promise.all(
         pkg.entries.map(async (entryKey) => {
-          const entry = pkgJson[entryKey] as unknown
+          const entry = /** @type {unknown} */ (pkgJson[entryKey])
 
           if (typeof entry !== 'string') {
             throw new Error(
@@ -40,7 +39,7 @@ async function run() {
         }),
       )
       
-      const defaultExport = pkgJson.exports?.['.']?.['default'] as unknown
+      const defaultExport = /** @type {unknown} */ (pkgJson.exports?.['.']?.['default'])
 
       if (typeof defaultExport !== 'string') {
         throw new Error(
@@ -75,6 +74,11 @@ run().catch((err) => {
   process.exit(1)
 })
 
-async function readPackageJson(pathName: string) {
-  return (await jsonfile.readFile(pathName)) as PackageJson
+/**
+ * 
+ * @param {string} pathName 
+ * @returns {Promise<import('type-fest').PackageJson>}
+ */
+async function readPackageJson(pathName) {
+  return (await jsonfile.readFile(pathName))
 }
