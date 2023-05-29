@@ -1,7 +1,7 @@
 // @ts-check
 
 import { resolve } from 'node:path'
-import { fileURLToPath } from "node:url"
+import { fileURLToPath } from 'node:url'
 import { babel } from '@rollup/plugin-babel'
 import terser from '@rollup/plugin-terser'
 import size from 'rollup-plugin-size'
@@ -12,7 +12,7 @@ import commonJS from '@rollup/plugin-commonjs'
 import withSolid from 'rollup-preset-solid'
 import preserveDirectives from 'rollup-plugin-preserve-directives'
 
-const __dirname = fileURLToPath(new URL(".", import.meta.url));
+const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
 /** @param {'development' | 'production'} type */
 const forceEnvPlugin = (type) =>
@@ -234,14 +234,7 @@ function cjs({
  * @param {import('./types').Options} options - Options for building configurations.
  * @returns {import('rollup').RollupOptions}
  */
-function umdDev({
-  input,
-  external,
-  packageDir,
-  outputFile,
-  globals,
-  jsName,
-}) {
+function umdDev({ input, external, packageDir, outputFile, globals, jsName }) {
   return {
     // UMD (Dev)
     external,
@@ -266,14 +259,7 @@ function umdDev({
  * @param {import('./types').Options} options - Options for building configurations.
  * @returns {import('rollup').RollupOptions}
  */
-function umdProd({
-  input,
-  external,
-  packageDir,
-  outputFile,
-  globals,
-  jsName,
-}) {
+function umdProd({ input, external, packageDir, outputFile, globals, jsName }) {
   return {
     // UMD (Prod)
     external,
@@ -311,11 +297,13 @@ function umdProd({
 
 export function createSolidQueryConfig() {
   const packageDir = '.'
-  const solidRollupOptions = /** @type {import('rollup').RollupOptions} */ (withSolid({
-    input: `${packageDir}/src/index.ts`,
-    targets: ['esm', 'cjs', 'umd'],
-    external: ['@tanstack/query-core'],
-  }))
+  const solidRollupOptions = /** @type {import('rollup').RollupOptions} */ (
+    withSolid({
+      input: `${packageDir}/src/index.ts`,
+      targets: ['esm', 'cjs', 'umd'],
+      external: ['@tanstack/query-core'],
+    })
+  )
 
   const outputs = !solidRollupOptions.output
     ? []
@@ -336,7 +324,9 @@ export function createSolidQueryConfig() {
     output.dir = `${packageDir}/build/${format}`
   })
 
-  const plugins = /** @type {import('rollup').Plugin[]} */ (solidRollupOptions.plugins)
+  const plugins = /** @type {import('rollup').Plugin[]} */ (
+    solidRollupOptions.plugins
+  )
   // Prevent types generation since it doesn't resolve the directory correctly
   // Instead build:types will generate those types anyway
   const filtered = plugins.filter((plugin) => plugin.name !== 'ts')
@@ -348,10 +338,12 @@ export function createSolidQueryConfig() {
 
 export function createTanstackQueryDevtoolsConfig() {
   const packageDir = '.'
-  const solidRollupOptions = /** @type {import('rollup').RollupOptions} */ (withSolid({
-    input: `${packageDir}/src/index.tsx`,
-    targets: ['esm', 'cjs', 'umd'],
-  }))
+  const solidRollupOptions = /** @type {import('rollup').RollupOptions} */ (
+    withSolid({
+      input: `${packageDir}/src/index.tsx`,
+      targets: ['esm', 'cjs', 'umd'],
+    })
+  )
 
   const outputs = !solidRollupOptions.output
     ? []
@@ -370,7 +362,9 @@ export function createTanstackQueryDevtoolsConfig() {
 
   solidRollupOptions.external = []
 
-  const plugins = /** @type {import('rollup').Plugin[]} */ (solidRollupOptions.plugins)
+  const plugins = /** @type {import('rollup').Plugin[]} */ (
+    solidRollupOptions.plugins
+  )
   // Prevent types generation since it doesn't resolve the directory correctly
   // Instead build:types will generate those types anyway
   const filtered = plugins.filter((plugin) => plugin.name !== 'ts')

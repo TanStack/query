@@ -18,7 +18,9 @@ import { branchConfigs, latestBranch, packages, rootDir } from './config.mjs'
 const releaseCommitMsg = (version) => `release: v${version}`
 
 async function run() {
-  const branchName = /** @type {string} */ (process.env.BRANCH ?? currentGitBranch())
+  const branchName = /** @type {string} */ (
+    process.env.BRANCH ?? currentGitBranch()
+  )
 
   /** @type {import('./types').BranchConfig | undefined} */
   const branchConfig = branchConfigs[branchName]
@@ -152,7 +154,7 @@ async function run() {
     -1,
   )
 
-    /** @type {string[]} */
+  /** @type {string[]} */
   const changedFiles = process.env.TAG
     ? []
     : execSync(`git diff ${latestTag} --name-only`)
@@ -302,7 +304,9 @@ async function run() {
 
   const releaseType = branchConfig.prerelease
     ? 'prerelease'
-    : /** @type {const} */ ({ 0: 'patch', 1: 'minor', 2: 'major' })[recommendedReleaseLevel]
+    : /** @type {const} */ ({ 0: 'patch', 1: 'minor', 2: 'major' })[
+        recommendedReleaseLevel
+      ]
 
   if (!releaseType) {
     throw new Error(`Invalid release level: ${recommendedReleaseLevel}`)
@@ -444,15 +448,15 @@ function capitalize(str) {
 }
 
 /**
- * @param {string} pathName 
+ * @param {string} pathName
  * @returns {Promise<import('type-fest').PackageJson>}
  */
 async function readPackageJson(pathName) {
-  return (await jsonfile.readFile(pathName))
+  return await jsonfile.readFile(pathName)
 }
 
 /**
- * @param {string} pathName 
+ * @param {string} pathName
  * @param {(json: import('type-fest').PackageJson) => Promise<void> | void} transform
  */
 async function updatePackageJson(pathName, transform) {

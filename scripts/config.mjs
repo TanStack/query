@@ -1,7 +1,7 @@
 // @ts-check
 
 import { resolve } from 'node:path'
-import { fileURLToPath } from "node:url";
+import { fileURLToPath } from 'node:url'
 
 /**
  * List your npm packages here. The first package will be used as the versioner.
@@ -116,5 +116,5 @@ export const branchConfigs = {
   },
 }
 
-const __dirname = fileURLToPath(new URL(".", import.meta.url));
+const __dirname = fileURLToPath(new URL('.', import.meta.url))
 export const rootDir = resolve(__dirname, '..')

@@ -10,7 +10,10 @@ export const Header = () => {
       <Link href="/" className={pathname === '/' ? 'is-active' : ''}>
         Home
       </Link>
-      <Link href="/client-only" className={pathname === '/client-only' ? 'is-active' : ''}>
+      <Link
+        href="/client-only"
+        className={pathname === '/client-only' ? 'is-active' : ''}
+      >
         Client-Only
       </Link>
       <style jsx>{`

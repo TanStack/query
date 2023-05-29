@@ -40,8 +40,10 @@ async function run() {
           }
         }),
       )
-      
-      const defaultExport = /** @type {unknown} */ (pkgJson.exports?.['.']?.['default'])
+
+      const defaultExport = /** @type {unknown} */ (
+        pkgJson.exports?.['.']?.['default']
+      )
 
       if (typeof defaultExport !== 'string') {
         throw new Error(
@@ -77,9 +79,9 @@ run().catch((err) => {
 })
 
 /**
- * @param {string} pathName 
+ * @param {string} pathName
  * @returns {Promise<import('type-fest').PackageJson>}
  */
 async function readPackageJson(pathName) {
-  return (await jsonfile.readFile(pathName))
+  return await jsonfile.readFile(pathName)
 }

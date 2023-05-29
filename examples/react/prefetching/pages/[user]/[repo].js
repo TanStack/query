@@ -32,9 +32,7 @@ export default () => {
       )}
       <br />
       <br />
-      <Link href="/">
-        Back
-      </Link>
+      <Link href="/">Back</Link>
     </div>
   )
 }

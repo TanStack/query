@@ -65,9 +65,7 @@
       "dependsOn": ["^test:types"]
     },
     "build": {
-      "outputs": [
-        "{projectRoot}/build/**/*"
-      ],
+      "outputs": ["{projectRoot}/build/**/*"],
       "inputs": ["default", "^public"],
       "dependsOn": ["^build"]
     },

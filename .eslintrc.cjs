@@ -36,7 +36,8 @@ const config = {
     '@typescript-eslint/ban-types': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/consistent-type-imports': [
-      'error', { prefer: 'type-imports' }
+      'error',
+      { prefer: 'type-imports' },
     ],
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-empty-interface': 'off',
@@ -45,11 +46,12 @@ const config = {
     '@typescript-eslint/no-unnecessary-condition': 'error',
     '@typescript-eslint/no-unnecessary-type-assertion': 'error',
     '@typescript-eslint/no-inferrable-types': [
-      'error', { ignoreParameters: true },
+      'error',
+      { ignoreParameters: true },
     ],
     'import/default': 'off',
     'import/export': 'off',
-    "import/newline-after-import": "error",
+    'import/newline-after-import': 'error',
     'import/no-cycle': 'error',
     'import/no-duplicates': 'off',
     'import/no-unresolved': ['error', { ignore: ['^@tanstack/'] }],
@@ -67,4 +69,4 @@ const config = {
   ],
 }
 
-module.exports = config;
+module.exports = config

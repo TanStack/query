@@ -109,9 +109,7 @@ function Example() {
         </>
       )}
       <hr />
-      <Link href="/about">
-        Go to another page
-      </Link>
+      <Link href="/about">Go to another page</Link>
       <ReactQueryDevtools initialIsOpen />
     </div>
   )
