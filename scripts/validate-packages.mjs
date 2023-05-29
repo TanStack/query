@@ -75,7 +75,6 @@ run().catch((err) => {
 })
 
 /**
- * 
  * @param {string} pathName 
  * @returns {Promise<import('type-fest').PackageJson>}
  */

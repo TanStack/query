@@ -1,7 +1,6 @@
-import { branchConfigs, latestBranch, packages, rootDir } from './config.mjs'
-import type { BranchConfig, Commit, Package } from './types'
-
+// @ts-check
 // Originally ported to TS from https://github.com/remix-run/react-router/tree/main/scripts/{version,publish}.js
+
 import path from 'node:path'
 import { execSync } from 'node:child_process'
 import chalk from 'chalk'
@@ -13,17 +12,16 @@ import log from 'git-log-parser'
 import streamToArray from 'stream-to-array'
 import axios from 'axios'
 import { DateTime } from 'luxon'
-import type { PackageJson } from 'type-fest'
+import { branchConfigs, latestBranch, packages, rootDir } from './config.mjs'
 
-const releaseCommitMsg = (version: string) => `release: v${version}`
+/** @param {string} version */
+const releaseCommitMsg = (version) => `release: v${version}`
 
 async function run() {
-  const branchName: string =
-    process.env.BRANCH ??
-    // (process.env.PR_NUMBER ? `pr-${process.env.PR_NUMBER}` : currentGitBranch())
-    currentGitBranch()
+  const branchName = /** @type {string} */ (process.env.BRANCH ?? currentGitBranch())
 
-  const branchConfig: BranchConfig | undefined = branchConfigs[branchName]
+  /** @type {import('./types').BranchConfig | undefined} */
+  const branchConfig = branchConfigs[branchName]
 
   if (!branchConfig) {
     console.log(`No publish config found for branch: ${branchName}`)
@@ -35,7 +33,8 @@ async function run() {
   const npmTag = isLatestBranch ? 'latest' : branchName
 
   // Get tags
-  let tags: string[] = execSync('git tag').toString().split('\n')
+  /** @type {string[]} */
+  let tags = execSync('git tag').toString().split('\n')
 
   // Filter tags to our branch/pre-release combo
   tags = tags
@@ -51,7 +50,7 @@ async function run() {
     .sort(semver.compare)
 
   // Get the latest tag
-  let latestTag = [...tags].pop()
+  let latestTag = /** @type {string} */ ([...tags].pop())
 
   let range = `${latestTag}..HEAD`
   // let range = ``;
@@ -88,14 +87,17 @@ async function run() {
 
   console.info(`Git Range: ${range}`)
 
-  // Get the commits since the latest tag
+  /**
+   * Get the commits since the latest tag
+   * @type {import('./types').Commit[]}
+   */
   const commitsSinceLatestTag = (
-    await new Promise<Commit[]>((resolve, reject) => {
+    await new Promise((resolve, reject) => {
       const strm = log.parse({
         _: range,
       })
 
-      streamToArray(strm, function (err: any, arr: any[]) {
+      streamToArray(strm, function (err, arr) {
         if (err) return reject(err)
 
         Promise.all(
@@ -107,7 +109,7 @@ async function run() {
         ).then((res) => resolve(res.filter(Boolean)))
       })
     })
-  ).filter((commit: Commit) => {
+  ).filter((/** @type {import('./types').Commit} */ commit) => {
     const exclude = [
       commit.subject.startsWith('Merge branch '), // No merge commits
       commit.subject.startsWith(releaseCommitMsg('')), // No example update commits
@@ -120,23 +122,28 @@ async function run() {
     `Parsing ${commitsSinceLatestTag.length} commits since ${latestTag}...`,
   )
 
-  // Pares the commit messsages, log them, and determine the type of release needed
-  let recommendedReleaseLevel: number = commitsSinceLatestTag.reduce(
+  /**
+   * Parses the commit messsages, log them, and determine the type of release needed
+   * @type {number}
+   */
+  let recommendedReleaseLevel = commitsSinceLatestTag.reduce(
     (releaseLevel, commit) => {
-      if (['fix', 'refactor', 'perf'].includes(commit.parsed.type!)) {
-        releaseLevel = Math.max(releaseLevel, 0)
-      }
-      if (['feat'].includes(commit.parsed.type!)) {
-        releaseLevel = Math.max(releaseLevel, 1)
-      }
-      if (commit.body.includes('BREAKING CHANGE')) {
-        releaseLevel = Math.max(releaseLevel, 2)
-      }
-      if (
-        commit.subject.includes('RELEASE_ALL') ||
-        commit.body.includes('RELEASE_ALL')
-      ) {
-        RELEASE_ALL = true
+      if (commit.parsed.type) {
+        if (['fix', 'refactor', 'perf'].includes(commit.parsed.type)) {
+          releaseLevel = Math.max(releaseLevel, 0)
+        }
+        if (['feat'].includes(commit.parsed.type)) {
+          releaseLevel = Math.max(releaseLevel, 1)
+        }
+        if (commit.body.includes('BREAKING CHANGE')) {
+          releaseLevel = Math.max(releaseLevel, 2)
+        }
+        if (
+          commit.subject.includes('RELEASE_ALL') ||
+          commit.body.includes('RELEASE_ALL')
+        ) {
+          RELEASE_ALL = true
+        }
       }
 
       return releaseLevel
@@ -144,7 +151,8 @@ async function run() {
     -1,
   )
 
-  const changedFiles: string[] = process.env.TAG
+    /** @type {string[]} */
+  const changedFiles = process.env.TAG
     ? []
     : execSync(`git diff ${latestTag} --name-only`)
         .toString()
@@ -161,7 +169,7 @@ async function run() {
           acc.push(pkg)
         }
         return acc
-      }, [] as Package[])
+      }, /** @type {import('./types').Package[]} */ ([]))
 
   // If a package has a dependency that has been updated, we need to update the
   // package that depends on it as well.
@@ -212,28 +220,6 @@ async function run() {
     }
   }
 
-  function getSorterFn<TItem>(sorters: ((d: TItem) => any)[]) {
-    return (a: TItem, b: TItem) => {
-      let i = 0
-
-      sorters.some((sorter) => {
-        const sortedA = sorter(a)
-        const sortedB = sorter(b)
-        if (sortedA > sortedB) {
-          i = 1
-          return true
-        }
-        if (sortedA < sortedB) {
-          i = -1
-          return true
-        }
-        return false
-      })
-
-      return i
-    }
-  }
-
   const changelogCommitsMd = process.env.TAG
     ? `Manual Release: ${process.env.TAG}`
     : await Promise.all(
@@ -245,7 +231,7 @@ async function run() {
               ...acc,
               [type]: [...(acc[type] || []), next],
             }
-          }, {} as Record<string, Commit[]>),
+          }, /** @type {Record<string, import('./types').Commit[]>} */ ({})),
         )
           .sort(
             getSorterFn([
@@ -299,7 +285,7 @@ async function run() {
                     : `by ${commit.author.name || commit.author.email}`
                 }`
               }),
-            ).then((c) => [type, c] as const)
+            ).then((c) => /** @type {const} */ ([type, c]))
           }),
       ).then((groups) => {
         return groups
@@ -315,7 +301,7 @@ async function run() {
 
   const releaseType = branchConfig.prerelease
     ? 'prerelease'
-    : ({ 0: 'patch', 1: 'minor', 2: 'major' } as const)[recommendedReleaseLevel]
+    : /** @type {const} */ ({ 0: 'patch', 1: 'minor', 2: 'major' })[recommendedReleaseLevel]
 
   if (!releaseType) {
     throw new Error(`Invalid release level: ${recommendedReleaseLevel}`)
@@ -323,7 +309,7 @@ async function run() {
 
   const version = process.env.TAG
     ? semver.parse(process.env.TAG)?.version
-    : semver.inc(latestTag!, releaseType, npmTag)
+    : semver.inc(latestTag, releaseType, npmTag)
 
   if (!version) {
     throw new Error(
@@ -451,18 +437,24 @@ run().catch((err) => {
   process.exit(1)
 })
 
-function capitalize(str: string) {
+/** @param {string} str */
+function capitalize(str) {
   return str.slice(0, 1).toUpperCase() + str.slice(1)
 }
 
-async function readPackageJson(pathName: string) {
-  return (await jsonfile.readFile(pathName)) as PackageJson
+/**
+ * @param {string} pathName 
+ * @returns {Promise<import('type-fest').PackageJson>}
+ */
+async function readPackageJson(pathName) {
+  return (await jsonfile.readFile(pathName))
 }
 
-async function updatePackageJson(
-  pathName: string,
-  transform: (json: PackageJson) => Promise<void> | void,
-) {
+/**
+ * @param {string} pathName 
+ * @param {(json: import('type-fest').PackageJson) => Promise<void> | void} transform
+ */
+async function updatePackageJson(pathName, transform) {
   const json = await readPackageJson(pathName)
   await transform(json)
   await jsonfile.writeFile(pathName, json, {
@@ -473,4 +465,31 @@ async function updatePackageJson(
 function getTaggedVersion() {
   const output = execSync('git tag --list --points-at HEAD').toString()
   return output.replace(/^v|\n+$/g, '')
+}
+
+/**
+ * @template TItem
+ * @param {((d: TItem) => any)[]} sorters
+ * @returns {(a: TItem, b: TItem) => number}
+ */
+function getSorterFn(sorters) {
+  return (a, b) => {
+    let i = 0
+
+    sorters.some((sorter) => {
+      const sortedA = sorter(a)
+      const sortedB = sorter(b)
+      if (sortedA > sortedB) {
+        i = 1
+        return true
+      }
+      if (sortedA < sortedB) {
+        i = -1
+        return true
+      }
+      return false
+    })
+
+    return i
+  }
 }
