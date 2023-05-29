@@ -39,7 +39,6 @@ export type Parsed = {
 export type Package = {
   name: string
   packageDir: string
-  srcDir: string
   entries: Array<'main' | 'module' | 'svelte' | 'types'>
 }
 
@@ -50,7 +49,6 @@ export type BranchConfig = {
 
 export type Options = {
   input: string | string[]
-  packageDir: string
   external: RollupOptions['external']
   jsName: string
   outputFile: string

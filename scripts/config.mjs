@@ -1,7 +1,7 @@
 // @ts-check
 
 import { resolve } from 'node:path'
-import { fileURLToPath } from "node:url";
+import { fileURLToPath } from 'node:url'
 
 /**
  * List your npm packages here. The first package will be used as the versioner.
@@ -10,86 +10,72 @@ import { fileURLToPath } from "node:url";
 export const packages = [
   {
     name: '@tanstack/query-core',
-    packageDir: 'query-core',
-    srcDir: 'src',
+    packageDir: 'packages/query-core',
     entries: ['main', 'module', 'types'],
   },
   {
     name: '@tanstack/query-persist-client-core',
-    packageDir: 'query-persist-client-core',
-    srcDir: 'src',
+    packageDir: 'packages/query-persist-client-core',
     entries: ['main', 'module', 'types'],
   },
   {
     name: '@tanstack/query-async-storage-persister',
-    packageDir: 'query-async-storage-persister',
-    srcDir: 'src',
+    packageDir: 'packages/query-async-storage-persister',
     entries: ['main', 'module', 'types'],
   },
   {
     name: '@tanstack/query-broadcast-client-experimental',
-    packageDir: 'query-broadcast-client-experimental',
-    srcDir: 'src',
+    packageDir: 'packages/query-broadcast-client-experimental',
     entries: ['main', 'module', 'types'],
   },
   {
     name: '@tanstack/query-sync-storage-persister',
-    packageDir: 'query-sync-storage-persister',
-    srcDir: 'src',
+    packageDir: 'packages/query-sync-storage-persister',
     entries: ['main', 'module', 'types'],
   },
   {
     name: '@tanstack/react-query',
-    packageDir: 'react-query',
-    srcDir: 'src',
+    packageDir: 'packages/react-query',
     entries: ['main', 'module', 'types'],
   },
   {
     name: '@tanstack/query-devtools',
-    packageDir: 'query-devtools',
-    srcDir: 'src',
+    packageDir: 'packages/query-devtools',
     entries: ['main', 'module', 'types'],
   },
   {
     name: '@tanstack/react-query-devtools',
-    packageDir: 'react-query-devtools',
-    srcDir: 'src',
+    packageDir: 'packages/react-query-devtools',
     entries: ['main', 'module', 'types'],
   },
   {
     name: '@tanstack/react-query-persist-client',
-    packageDir: 'react-query-persist-client',
-    srcDir: 'src',
+    packageDir: 'packages/react-query-persist-client',
     entries: ['main', 'module', 'types'],
   },
   {
     name: '@tanstack/solid-query',
-    packageDir: 'solid-query',
-    srcDir: 'src',
+    packageDir: 'packages/solid-query',
     entries: ['main', 'module', 'types'],
   },
   {
     name: '@tanstack/svelte-query',
-    packageDir: 'svelte-query',
-    srcDir: 'src',
+    packageDir: 'packages/svelte-query',
     entries: ['module', 'svelte', 'types'],
   },
   {
     name: '@tanstack/svelte-query-devtools',
-    packageDir: 'svelte-query-devtools',
-    srcDir: 'src',
+    packageDir: 'packages/svelte-query-devtools',
     entries: ['module', 'svelte', 'types'],
   },
   {
     name: '@tanstack/vue-query',
-    packageDir: 'vue-query',
-    srcDir: 'src',
+    packageDir: 'packages/vue-query',
     entries: ['main', 'module', 'types'],
   },
   {
     name: '@tanstack/eslint-plugin-query',
-    packageDir: 'eslint-plugin-query',
-    srcDir: 'src',
+    packageDir: 'packages/eslint-plugin-query',
     entries: ['main'],
   },
 ]
@@ -116,5 +102,5 @@ export const branchConfigs = {
   },
 }
 
-const __dirname = fileURLToPath(new URL(".", import.meta.url));
+const __dirname = fileURLToPath(new URL('.', import.meta.url))
 export const rootDir = resolve(__dirname, '..')

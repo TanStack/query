@@ -1,7 +1,6 @@
 // @ts-check
 
 import { resolve } from 'node:path'
-import { fileURLToPath } from "node:url"
 import { babel } from '@rollup/plugin-babel'
 import terser from '@rollup/plugin-terser'
 import size from 'rollup-plugin-size'
@@ -11,8 +10,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve'
 import commonJS from '@rollup/plugin-commonjs'
 import withSolid from 'rollup-preset-solid'
 import preserveDirectives from 'rollup-plugin-preserve-directives'
-
-const __dirname = fileURLToPath(new URL(".", import.meta.url));
+import { rootDir } from './config.mjs'
 
 /** @param {'development' | 'production'} type */
 const forceEnvPlugin = (type) =>
@@ -25,7 +23,7 @@ const forceEnvPlugin = (type) =>
 /** @param {'legacy' | 'modern'} type */
 const babelPlugin = (type) =>
   babel({
-    configFile: resolve(__dirname, '../babel.config.js'),
+    configFile: resolve(rootDir, 'babel.config.js'),
     browserslistConfigFile: type === 'modern' ? true : false,
     targets:
       type === 'modern'
@@ -45,11 +43,10 @@ const babelPlugin = (type) =>
 
 /**
  * @param {Object} opts - Options for building configurations.
- * @param {string} opts.packageDir - The package directory.
  * @param {string} opts.name - The name.
  * @param {string} opts.jsName - The JavaScript name.
  * @param {string} opts.outputFile - The output file.
- * @param {string | string[]} opts.entryFile - The entry file or array of entry files.
+ * @param {string} opts.entryFile - The entry file.
  * @param {Record<string, string>} opts.globals - The globals record.
  * @param {string[]} [opts.bundleUMDGlobals] - List of dependencies to bundle for UMD build.
  * @param {boolean} [opts.forceDevEnv] - Flag indicating whether to force development environment.
@@ -58,14 +55,8 @@ const babelPlugin = (type) =>
  * @returns {import('rollup').RollupOptions[]}
  */
 export function buildConfigs(opts) {
-  const firstEntry = resolve(
-    opts.packageDir,
-    Array.isArray(opts.entryFile) ? opts.entryFile[0] : opts.entryFile,
-  )
-  const entries = Array.isArray(opts.entryFile)
-    ? opts.entryFile
-    : [opts.entryFile]
-  const input = entries.map((entry) => resolve(opts.packageDir, entry))
+  const firstEntry = opts.entryFile
+  const input = [opts.entryFile]
   const externalDeps = Object.keys(opts.globals)
 
   const bundleUMDGlobals = opts.bundleUMDGlobals || []
@@ -73,15 +64,12 @@ export function buildConfigs(opts) {
     (external) => !bundleUMDGlobals.includes(external),
   )
 
-  const external = (moduleName) => externalDeps.includes(moduleName)
-
   /** @type {import('./types').Options} */
   const options = {
     input,
     jsName: opts.jsName,
     outputFile: opts.outputFile,
-    packageDir: opts.packageDir,
-    external,
+    external: (moduleName) => externalDeps.includes(moduleName),
     globals: opts.globals,
     forceDevEnv: opts.forceDevEnv || false,
     forceBundle: opts.forceBundle || false,
@@ -103,25 +91,18 @@ export function buildConfigs(opts) {
  * @param {import('./types').Options} options - Options for building configurations.
  * @returns {import('rollup').RollupOptions}
  */
-function mjs({
-  input,
-  packageDir,
-  external,
-  outputFile,
-  forceDevEnv,
-  forceBundle,
-}) {
+function mjs({ input, external, outputFile, forceDevEnv, forceBundle }) {
   /** @type {import('rollup').OutputOptions} */
   const bundleOutput = {
     format: 'esm',
-    file: `${packageDir}/build/lib/${outputFile}.mjs`,
+    file: `./build/lib/${outputFile}.mjs`,
     sourcemap: true,
   }
 
   /** @type {import('rollup').OutputOptions} */
   const normalOutput = {
     format: 'esm',
-    dir: `${packageDir}/build/lib`,
+    dir: `./build/lib`,
     sourcemap: true,
     preserveModules: true,
     entryFileNames: '[name].mjs',
@@ -146,25 +127,18 @@ function mjs({
  * @param {import('./types').Options} options - Options for building configurations.
  * @returns {import('rollup').RollupOptions}
  */
-function esm({
-  input,
-  packageDir,
-  external,
-  outputFile,
-  forceDevEnv,
-  forceBundle,
-}) {
+function esm({ input, external, outputFile, forceDevEnv, forceBundle }) {
   /** @type {import('rollup').OutputOptions} */
   const bundleOutput = {
     format: 'esm',
-    file: `${packageDir}/build/lib/${outputFile}.esm.js`,
+    file: `./build/lib/${outputFile}.esm.js`,
     sourcemap: true,
   }
 
   /** @type {import('rollup').OutputOptions} */
   const normalOutput = {
     format: 'esm',
-    dir: `${packageDir}/build/lib`,
+    dir: `./build/lib`,
     sourcemap: true,
     preserveModules: true,
     entryFileNames: '[name].esm.js',
@@ -189,18 +163,11 @@ function esm({
  * @param {import('./types').Options} options - Options for building configurations.
  * @returns {import('rollup').RollupOptions}
  */
-function cjs({
-  input,
-  external,
-  packageDir,
-  outputFile,
-  forceDevEnv,
-  forceBundle,
-}) {
+function cjs({ input, external, outputFile, forceDevEnv, forceBundle }) {
   /** @type {import('rollup').OutputOptions} */
   const bundleOutput = {
     format: 'cjs',
-    file: `${packageDir}/build/lib/${outputFile}.js`,
+    file: `./build/lib/${outputFile}.js`,
     sourcemap: true,
     exports: 'named',
   }
@@ -208,7 +175,7 @@ function cjs({
   /** @type {import('rollup').OutputOptions} */
   const normalOutput = {
     format: 'cjs',
-    dir: `${packageDir}/build/lib`,
+    dir: `./build/lib`,
     sourcemap: true,
     exports: 'named',
     preserveModules: true,
@@ -234,14 +201,7 @@ function cjs({
  * @param {import('./types').Options} options - Options for building configurations.
  * @returns {import('rollup').RollupOptions}
  */
-function umdDev({
-  input,
-  external,
-  packageDir,
-  outputFile,
-  globals,
-  jsName,
-}) {
+function umdDev({ input, external, outputFile, globals, jsName }) {
   return {
     // UMD (Dev)
     external,
@@ -249,7 +209,7 @@ function umdDev({
     output: {
       format: 'umd',
       sourcemap: true,
-      file: `${packageDir}/build/umd/${outputFile}.development.js`,
+      file: `./build/umd/${outputFile}.development.js`,
       name: jsName,
       globals,
     },
@@ -266,14 +226,7 @@ function umdDev({
  * @param {import('./types').Options} options - Options for building configurations.
  * @returns {import('rollup').RollupOptions}
  */
-function umdProd({
-  input,
-  external,
-  packageDir,
-  outputFile,
-  globals,
-  jsName,
-}) {
+function umdProd({ input, external, outputFile, globals, jsName }) {
   return {
     // UMD (Prod)
     external,
@@ -281,7 +234,7 @@ function umdProd({
     output: {
       format: 'umd',
       sourcemap: true,
-      file: `${packageDir}/build/umd/${outputFile}.production.js`,
+      file: `./build/umd/${outputFile}.production.js`,
       name: jsName,
       globals,
     },
@@ -296,12 +249,12 @@ function umdProd({
       }),
       size({}),
       visualizer({
-        filename: `${packageDir}/build/stats-html.html`,
+        filename: `./build/stats-html.html`,
         template: 'treemap',
         gzipSize: true,
       }),
       visualizer({
-        filename: `${packageDir}/build/stats.json`,
+        filename: `./build/stats.json`,
         template: 'raw-data',
         gzipSize: true,
       }),
@@ -310,12 +263,13 @@ function umdProd({
 }
 
 export function createSolidQueryConfig() {
-  const packageDir = '.'
-  const solidRollupOptions = /** @type {import('rollup').RollupOptions} */ (withSolid({
-    input: `${packageDir}/src/index.ts`,
-    targets: ['esm', 'cjs', 'umd'],
-    external: ['@tanstack/query-core'],
-  }))
+  const solidRollupOptions = /** @type {import('rollup').RollupOptions} */ (
+    withSolid({
+      input: `./src/index.ts`,
+      targets: ['esm', 'cjs', 'umd'],
+      external: ['@tanstack/query-core'],
+    })
+  )
 
   const outputs = !solidRollupOptions.output
     ? []
@@ -333,10 +287,12 @@ export function createSolidQueryConfig() {
         '@tanstack/query-core': 'QueryCore',
       }
     }
-    output.dir = `${packageDir}/build/${format}`
+    output.dir = `./build/${format}`
   })
 
-  const plugins = /** @type {import('rollup').Plugin[]} */ (solidRollupOptions.plugins)
+  const plugins = /** @type {import('rollup').Plugin[]} */ (
+    solidRollupOptions.plugins
+  )
   // Prevent types generation since it doesn't resolve the directory correctly
   // Instead build:types will generate those types anyway
   const filtered = plugins.filter((plugin) => plugin.name !== 'ts')
@@ -347,11 +303,12 @@ export function createSolidQueryConfig() {
 }
 
 export function createTanstackQueryDevtoolsConfig() {
-  const packageDir = '.'
-  const solidRollupOptions = /** @type {import('rollup').RollupOptions} */ (withSolid({
-    input: `${packageDir}/src/index.tsx`,
-    targets: ['esm', 'cjs', 'umd'],
-  }))
+  const solidRollupOptions = /** @type {import('rollup').RollupOptions} */ (
+    withSolid({
+      input: `./src/index.tsx`,
+      targets: ['esm', 'cjs', 'umd'],
+    })
+  )
 
   const outputs = !solidRollupOptions.output
     ? []
@@ -361,16 +318,18 @@ export function createTanstackQueryDevtoolsConfig() {
 
   outputs.forEach((output) => {
     const format = output.format
-    output.dir = `${packageDir}/build/${format}`
+    output.dir = `./build/${format}`
     if (output.format === 'esm') {
       output.dir = undefined
-      output.file = `${packageDir}/build/${format}/index.mjs`
+      output.file = `./build/${format}/index.mjs`
     }
   })
 
   solidRollupOptions.external = []
 
-  const plugins = /** @type {import('rollup').Plugin[]} */ (solidRollupOptions.plugins)
+  const plugins = /** @type {import('rollup').Plugin[]} */ (
+    solidRollupOptions.plugins
+  )
   // Prevent types generation since it doesn't resolve the directory correctly
   // Instead build:types will generate those types anyway
   const filtered = plugins.filter((plugin) => plugin.name !== 'ts')

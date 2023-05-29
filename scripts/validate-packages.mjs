@@ -3,6 +3,7 @@
 import path from 'node:path'
 import fsp from 'node:fs/promises'
 import jsonfile from 'jsonfile'
+import { publint } from 'publint'
 import { packages, rootDir } from './config.mjs'
 
 async function run() {
@@ -13,7 +14,7 @@ async function run() {
   await Promise.all(
     packages.map(async (pkg) => {
       const pkgJson = await readPackageJson(
-        path.resolve(rootDir, 'packages', pkg.packageDir, 'package.json'),
+        path.resolve(rootDir, pkg.packageDir, 'package.json'),
       )
 
       await Promise.all(
@@ -26,12 +27,7 @@ async function run() {
             )
           }
 
-          const filePath = path.resolve(
-            rootDir,
-            'packages',
-            pkg.packageDir,
-            entry,
-          )
+          const filePath = path.resolve(rootDir, pkg.packageDir, entry)
 
           try {
             await fsp.access(filePath)
@@ -40,8 +36,10 @@ async function run() {
           }
         }),
       )
-      
-      const defaultExport = /** @type {unknown} */ (pkgJson.exports?.['.']?.['default'])
+
+      const defaultExport = /** @type {unknown} */ (
+        pkgJson.exports?.['.']?.['default']
+      )
 
       if (typeof defaultExport !== 'string') {
         throw new Error(
@@ -49,18 +47,19 @@ async function run() {
         )
       }
 
-      const filePath = path.resolve(
-        rootDir,
-        'packages',
-        pkg.packageDir,
-        defaultExport,
-      )
+      const filePath = path.resolve(rootDir, pkg.packageDir, defaultExport)
 
       try {
         await fsp.access(filePath)
       } catch (err) {
         failedValidations.push(`Missing build file: ${filePath}`)
       }
+
+      const publintResult = await publint({ pkgDir: pkg.packageDir })
+
+      publintResult.forEach((message) => {
+        console.log(`Publint warning: ${JSON.stringify(message, null, 2)}`)
+      })
     }),
   )
   console.info('')
@@ -77,9 +76,9 @@ run().catch((err) => {
 })
 
 /**
- * @param {string} pathName 
+ * @param {string} pathName
  * @returns {Promise<import('type-fest').PackageJson>}
  */
 async function readPackageJson(pathName) {
-  return (await jsonfile.readFile(pathName))
+  return await jsonfile.readFile(pathName)
 }

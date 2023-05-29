@@ -1,15 +1,14 @@
 // @ts-check
 
 import { defineConfig } from 'rollup'
-import { buildConfigs } from "../../scripts/getRollupConfig.mjs"
+import { buildConfigs } from '../../scripts/getRollupConfig.mjs'
 
-export default defineConfig([
-  ...buildConfigs({
+export default defineConfig(
+  buildConfigs({
     name: 'react-query-persist-client',
-    packageDir: '.',
     jsName: 'ReactQueryPersistClient',
     outputFile: 'index',
-    entryFile: 'src/index.ts',
+    entryFile: './src/index.ts',
     globals: {
       react: 'React',
       '@tanstack/query-persist-client-core': 'QueryPersistClientCore',
@@ -17,4 +16,4 @@ export default defineConfig([
     },
     bundleUMDGlobals: ['@tanstack/query-persist-client-core'],
   }),
-])
+)

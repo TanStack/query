@@ -1,7 +1,7 @@
 // @ts-check
 
 /** @type {import('eslint').Linter.Config} */
-module.exports = {
+const config = {
   root: true,
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'import'],
@@ -36,7 +36,8 @@ module.exports = {
     '@typescript-eslint/ban-types': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/consistent-type-imports': [
-      'error', { prefer: 'type-imports' }
+      'error',
+      { prefer: 'type-imports' },
     ],
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-empty-interface': 'off',
@@ -45,10 +46,12 @@ module.exports = {
     '@typescript-eslint/no-unnecessary-condition': 'error',
     '@typescript-eslint/no-unnecessary-type-assertion': 'error',
     '@typescript-eslint/no-inferrable-types': [
-      'error', { ignoreParameters: true },
+      'error',
+      { ignoreParameters: true },
     ],
     'import/default': 'off',
     'import/export': 'off',
+    'import/newline-after-import': 'error',
     'import/no-cycle': 'error',
     'import/no-duplicates': 'off',
     'import/no-unresolved': ['error', { ignore: ['^@tanstack/'] }],
@@ -65,3 +68,5 @@ module.exports = {
     },
   ],
 }
+
+module.exports = config
