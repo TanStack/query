@@ -49,7 +49,6 @@ export type BranchConfig = {
 
 export type Options = {
   input: string | string[]
-  packageDir: string
   external: RollupOptions['external']
   jsName: string
   outputFile: string

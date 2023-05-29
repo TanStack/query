@@ -6,10 +6,9 @@ import { buildConfigs } from '../../scripts/getRollupConfig.mjs'
 export default defineConfig(
   buildConfigs({
     name: 'vue-query',
-    packageDir: '.',
     jsName: 'VueQuery',
     outputFile: 'index',
-    entryFile: 'src/index.ts',
+    entryFile: './src/index.ts',
     globals: {
       '@tanstack/query-core': 'QueryCore',
       vue: 'Vue',

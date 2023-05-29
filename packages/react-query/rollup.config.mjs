@@ -6,10 +6,9 @@ import { buildConfigs } from '../../scripts/getRollupConfig.mjs'
 export default defineConfig(
   buildConfigs({
     name: 'react-query',
-    packageDir: '.',
     jsName: 'ReactQuery',
     outputFile: 'index',
-    entryFile: ['src/index.ts'],
+    entryFile: './src/index.ts',
     globals: {
       react: 'React',
       'react-dom': 'ReactDOM',

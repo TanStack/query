@@ -6,10 +6,9 @@ import { buildConfigs } from '../../scripts/getRollupConfig.mjs'
 export default defineConfig([
   ...buildConfigs({
     name: 'react-query-devtools',
-    packageDir: '.',
     jsName: 'ReactQueryDevtools',
     outputFile: 'index',
-    entryFile: 'src/index.ts',
+    entryFile: './src/index.ts',
     globals: {
       react: 'React',
       'react-dom': 'ReactDOM',
@@ -20,10 +19,9 @@ export default defineConfig([
   }),
   ...buildConfigs({
     name: 'react-query-devtools-prod',
-    packageDir: '.',
     jsName: 'ReactQueryDevtools',
     outputFile: 'index.prod',
-    entryFile: 'src/index.ts',
+    entryFile: './src/index.ts',
     globals: {
       react: 'React',
       'react-dom': 'ReactDOM',
