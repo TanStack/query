@@ -5,7 +5,7 @@
   "targets": {
     "build": {
       "command": "echo \"  @tanstack/query > All packages built! 📦\"",
-      "dependsOn": ["^build:types", "^build"]
+      "dependsOn": ["^build", "^build:codemods", "^build:types"]
     },
     "test:build": {
       "executor": "nx:run-commands",
