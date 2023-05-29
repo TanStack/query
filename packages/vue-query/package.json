@@ -35,6 +35,7 @@
     "test:2.7": "vue-demi-switch 2.7 vue2.7 && vitest",
     "test:3": "vue-demi-switch 3 && vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
+    "build": "rollup --config rollup.config.mjs",
     "build:types": "tsc --build"
   },
   "files": [

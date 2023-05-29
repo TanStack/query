@@ -33,6 +33,7 @@
     "test:types": "tsc",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
+    "build": "rollup --config rollup.config.mjs",
     "build:types": "tsc --build"
   },
   "devDependencies": {

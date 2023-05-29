@@ -322,8 +322,8 @@ function umdProd({
   }
 }
 
-function createSolidQueryConfig() {
-  const packageDir = 'packages/solid-query'
+export function createSolidQueryConfig() {
+  const packageDir = '.'
   const solidRollupOptions = /** @type {import('rollup').RollupOptions} */ (withSolid({
     input: `${packageDir}/src/index.ts`,
     targets: ['esm', 'cjs', 'umd'],
@@ -359,8 +359,8 @@ function createSolidQueryConfig() {
   return solidRollupOptions
 }
 
-function createTanstackQueryDevtoolsConfig() {
-  const packageDir = 'packages/query-devtools'
+export function createTanstackQueryDevtoolsConfig() {
+  const packageDir = '.'
   const solidRollupOptions = /** @type {import('rollup').RollupOptions} */ (withSolid({
     input: `${packageDir}/src/index.tsx`,
     targets: ['esm', 'cjs', 'umd'],
@@ -392,134 +392,3 @@ function createTanstackQueryDevtoolsConfig() {
 
   return solidRollupOptions
 }
-
-export default defineConfig([
-  createTanstackQueryDevtoolsConfig(),
-  ...buildConfigs({
-    name: 'query-core',
-    packageDir: 'packages/query-core',
-    jsName: 'QueryCore',
-    outputFile: 'index',
-    entryFile: ['src/index.ts'],
-    globals: {},
-  }),
-  ...buildConfigs({
-    name: 'query-persist-client-core',
-    packageDir: 'packages/query-persist-client-core',
-    jsName: 'QueryPersistClientCore',
-    outputFile: 'index',
-    entryFile: ['src/index.ts'],
-    globals: {
-      '@tanstack/query-core': 'QueryCore',
-    },
-  }),
-  ...buildConfigs({
-    name: 'query-async-storage-persister',
-    packageDir: 'packages/query-async-storage-persister',
-    jsName: 'QueryAsyncStoragePersister',
-    outputFile: 'index',
-    entryFile: 'src/index.ts',
-    globals: {
-      '@tanstack/query-persist-client-core': 'QueryPersistClientCore',
-    },
-  }),
-  ...buildConfigs({
-    name: 'query-broadcast-client-experimental',
-    packageDir: 'packages/query-broadcast-client-experimental',
-    jsName: 'QueryBroadcastClient',
-    outputFile: 'index',
-    entryFile: 'src/index.ts',
-    globals: {
-      '@tanstack/query-core': 'QueryCore',
-      'broadcast-channel': 'BroadcastChannel',
-    },
-  }),
-  ...buildConfigs({
-    name: 'query-sync-storage-persister',
-    packageDir: 'packages/query-sync-storage-persister',
-    jsName: 'QuerySyncStoragePersister',
-    outputFile: 'index',
-    entryFile: 'src/index.ts',
-    globals: {
-      '@tanstack/query-persist-client-core': 'QueryPersistClientCore',
-    },
-  }),
-  ...buildConfigs({
-    name: 'react-query',
-    packageDir: 'packages/react-query',
-    jsName: 'ReactQuery',
-    outputFile: 'index',
-    entryFile: ['src/index.ts'],
-    globals: {
-      react: 'React',
-      'react-dom': 'ReactDOM',
-      '@tanstack/query-core': 'QueryCore',
-      'react-native': 'ReactNative',
-    },
-    bundleUMDGlobals: ['@tanstack/query-core'],
-  }),
-  ...buildConfigs({
-    name: 'react-query-devtools',
-    packageDir: 'packages/react-query-devtools',
-    jsName: 'ReactQueryDevtools',
-    outputFile: 'index',
-    entryFile: 'src/index.ts',
-    globals: {
-      react: 'React',
-      'react-dom': 'ReactDOM',
-      '@tanstack/react-query': 'ReactQuery',
-      '@tanstack/query-devtools': 'TanstackQueryDevtools',
-    },
-    bundleUMDGlobals: ['@tanstack/query-devtools'],
-  }),
-  ...buildConfigs({
-    name: 'react-query-devtools-prod',
-    packageDir: 'packages/react-query-devtools',
-    jsName: 'ReactQueryDevtools',
-    outputFile: 'index.prod',
-    entryFile: 'src/index.ts',
-    globals: {
-      react: 'React',
-      'react-dom': 'ReactDOM',
-      '@tanstack/react-query': 'ReactQuery',
-      '@tanstack/match-sorter-utils': 'MatchSorterUtils',
-      superjson: 'SuperJson',
-    },
-    forceDevEnv: true,
-    forceBundle: true,
-    skipUmdBuild: true,
-  }),
-  ...buildConfigs({
-    name: 'react-query-persist-client',
-    packageDir: 'packages/react-query-persist-client',
-    jsName: 'ReactQueryPersistClient',
-    outputFile: 'index',
-    entryFile: 'src/index.ts',
-    globals: {
-      react: 'React',
-      '@tanstack/query-persist-client-core': 'QueryPersistClientCore',
-      '@tanstack/react-query': 'ReactQuery',
-    },
-    bundleUMDGlobals: ['@tanstack/query-persist-client-core'],
-  }),
-  createSolidQueryConfig(),
-  ...buildConfigs({
-    name: 'vue-query',
-    packageDir: 'packages/vue-query',
-    jsName: 'VueQuery',
-    outputFile: 'index',
-    entryFile: 'src/index.ts',
-    globals: {
-      '@tanstack/query-core': 'QueryCore',
-      vue: 'Vue',
-      'vue-demi': 'Vue',
-      '@tanstack/match-sorter-utils': 'MatchSorter',
-      '@vue/devtools-api': 'DevtoolsApi',
-    },
-    bundleUMDGlobals: [
-      '@tanstack/query-core',
-      '@tanstack/match-sorter-utils',
-      '@vue/devtools-api',
-    ],
-  }),
-])
