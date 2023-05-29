@@ -31,6 +31,8 @@
     "clean": "rimraf ./build",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
+    "build": "pnpm build:rollup && pnpm build:types",
+    "build:rollup": "rollup --config rollup.config.mjs",
     "build:types": "tsc --build"
   },
   "dependencies": {

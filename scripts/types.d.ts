@@ -52,7 +52,6 @@ export type Options = {
   input: string | string[]
   packageDir: string
   external: RollupOptions['external']
-  banner: string
   jsName: string
   outputFile: string
   globals: Record<string, string>

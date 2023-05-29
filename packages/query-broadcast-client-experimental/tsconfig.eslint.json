@@ -3,5 +3,5 @@
   "compilerOptions": {
     "noEmit": true
   },
-  "include": ["**/*.ts", "**/*.tsx", "./.eslintrc.cjs"]
+  "include": ["**/*.ts", "**/*.tsx", ".eslintrc.cjs", "rollup.config.mjs"]
 }

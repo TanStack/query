@@ -2,7 +2,6 @@
 
 import { resolve } from 'node:path'
 import { fileURLToPath } from "node:url"
-import { defineConfig } from 'rollup'
 import { babel } from '@rollup/plugin-babel'
 import terser from '@rollup/plugin-terser'
 import size from 'rollup-plugin-size'
@@ -15,18 +14,6 @@ import preserveDirectives from 'rollup-plugin-preserve-directives'
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
-/**
- * @typedef {Object} Options
- * @property {string | string[]} input - The input string or array of strings.
- * @property {string} packageDir - The package directory.
- * @property {import('rollup').RollupOptions['external']} external - The external options of Rollup.
- * @property {string} jsName - The JavaScript name.
- * @property {string} outputFile - The output file.
- * @property {Record<string, string>} globals - The globals record.
- * @property {boolean} forceDevEnv - Flag indicating whether to force development environment.
- * @property {boolean} forceBundle - Flag indicating whether to force bundling.
- */
-
 /** @param {'development' | 'production'} type */
 const forceEnvPlugin = (type) =>
   replace({
@@ -38,7 +25,7 @@ const forceEnvPlugin = (type) =>
 /** @param {'legacy' | 'modern'} type */
 const babelPlugin = (type) =>
   babel({
-    configFile: resolve(__dirname, 'babel.config.js'),
+    configFile: resolve(__dirname, '../babel.config.js'),
     browserslistConfigFile: type === 'modern' ? true : false,
     targets:
       type === 'modern'
@@ -88,7 +75,7 @@ export function buildConfigs(opts) {
 
   const external = (moduleName) => externalDeps.includes(moduleName)
 
-  /** @type {Options} */
+  /** @type {import('./types').Options} */
   const options = {
     input,
     jsName: opts.jsName,
@@ -113,7 +100,7 @@ export function buildConfigs(opts) {
 }
 
 /**
- * @param {Options} options - Options for building configurations.
+ * @param {import('./types').Options} options - Options for building configurations.
  * @returns {import('rollup').RollupOptions}
  */
 function mjs({
@@ -156,7 +143,7 @@ function mjs({
 }
 
 /**
- * @param {Options} options - Options for building configurations.
+ * @param {import('./types').Options} options - Options for building configurations.
  * @returns {import('rollup').RollupOptions}
  */
 function esm({
@@ -199,7 +186,7 @@ function esm({
 }
 
 /**
- * @param {Options} options - Options for building configurations.
+ * @param {import('./types').Options} options - Options for building configurations.
  * @returns {import('rollup').RollupOptions}
  */
 function cjs({
@@ -244,7 +231,7 @@ function cjs({
 }
 
 /**
- * @param {Options} options - Options for building configurations.
+ * @param {import('./types').Options} options - Options for building configurations.
  * @returns {import('rollup').RollupOptions}
  */
 function umdDev({
@@ -276,7 +263,7 @@ function umdDev({
 }
 
 /**
- * @param {Options} options - Options for building configurations.
+ * @param {import('./types').Options} options - Options for building configurations.
  * @returns {import('rollup').RollupOptions}
  */
 function umdProd({
@@ -322,8 +309,8 @@ function umdProd({
   }
 }
 
-function createSolidQueryConfig() {
-  const packageDir = 'packages/solid-query'
+export function createSolidQueryConfig() {
+  const packageDir = '.'
   const solidRollupOptions = /** @type {import('rollup').RollupOptions} */ (withSolid({
     input: `${packageDir}/src/index.ts`,
     targets: ['esm', 'cjs', 'umd'],
@@ -359,8 +346,8 @@ function createSolidQueryConfig() {
   return solidRollupOptions
 }
 
-function createTanstackQueryDevtoolsConfig() {
-  const packageDir = 'packages/query-devtools'
+export function createTanstackQueryDevtoolsConfig() {
+  const packageDir = '.'
   const solidRollupOptions = /** @type {import('rollup').RollupOptions} */ (withSolid({
     input: `${packageDir}/src/index.tsx`,
     targets: ['esm', 'cjs', 'umd'],
@@ -392,134 +379,3 @@ function createTanstackQueryDevtoolsConfig() {
 
   return solidRollupOptions
 }
-
-export default defineConfig([
-  createTanstackQueryDevtoolsConfig(),
-  ...buildConfigs({
-    name: 'query-core',
-    packageDir: 'packages/query-core',
-    jsName: 'QueryCore',
-    outputFile: 'index',
-    entryFile: ['src/index.ts'],
-    globals: {},
-  }),
-  ...buildConfigs({
-    name: 'query-persist-client-core',
-    packageDir: 'packages/query-persist-client-core',
-    jsName: 'QueryPersistClientCore',
-    outputFile: 'index',
-    entryFile: ['src/index.ts'],
-    globals: {
-      '@tanstack/query-core': 'QueryCore',
-    },
-  }),
-  ...buildConfigs({
-    name: 'query-async-storage-persister',
-    packageDir: 'packages/query-async-storage-persister',
-    jsName: 'QueryAsyncStoragePersister',
-    outputFile: 'index',
-    entryFile: 'src/index.ts',
-    globals: {
-      '@tanstack/query-persist-client-core': 'QueryPersistClientCore',
-    },
-  }),
-  ...buildConfigs({
-    name: 'query-broadcast-client-experimental',
-    packageDir: 'packages/query-broadcast-client-experimental',
-    jsName: 'QueryBroadcastClient',
-    outputFile: 'index',
-    entryFile: 'src/index.ts',
-    globals: {
-      '@tanstack/query-core': 'QueryCore',
-      'broadcast-channel': 'BroadcastChannel',
-    },
-  }),
-  ...buildConfigs({
-    name: 'query-sync-storage-persister',
-    packageDir: 'packages/query-sync-storage-persister',
-    jsName: 'QuerySyncStoragePersister',
-    outputFile: 'index',
-    entryFile: 'src/index.ts',
-    globals: {
-      '@tanstack/query-persist-client-core': 'QueryPersistClientCore',
-    },
-  }),
-  ...buildConfigs({
-    name: 'react-query',
-    packageDir: 'packages/react-query',
-    jsName: 'ReactQuery',
-    outputFile: 'index',
-    entryFile: ['src/index.ts'],
-    globals: {
-      react: 'React',
-      'react-dom': 'ReactDOM',
-      '@tanstack/query-core': 'QueryCore',
-      'react-native': 'ReactNative',
-    },
-    bundleUMDGlobals: ['@tanstack/query-core'],
-  }),
-  ...buildConfigs({
-    name: 'react-query-devtools',
-    packageDir: 'packages/react-query-devtools',
-    jsName: 'ReactQueryDevtools',
-    outputFile: 'index',
-    entryFile: 'src/index.ts',
-    globals: {
-      react: 'React',
-      'react-dom': 'ReactDOM',
-      '@tanstack/react-query': 'ReactQuery',
-      '@tanstack/query-devtools': 'TanstackQueryDevtools',
-    },
-    bundleUMDGlobals: ['@tanstack/query-devtools'],
-  }),
-  ...buildConfigs({
-    name: 'react-query-devtools-prod',
-    packageDir: 'packages/react-query-devtools',
-    jsName: 'ReactQueryDevtools',
-    outputFile: 'index.prod',
-    entryFile: 'src/index.ts',
-    globals: {
-      react: 'React',
-      'react-dom': 'ReactDOM',
-      '@tanstack/react-query': 'ReactQuery',
-      '@tanstack/match-sorter-utils': 'MatchSorterUtils',
-      superjson: 'SuperJson',
-    },
-    forceDevEnv: true,
-    forceBundle: true,
-    skipUmdBuild: true,
-  }),
-  ...buildConfigs({
-    name: 'react-query-persist-client',
-    packageDir: 'packages/react-query-persist-client',
-    jsName: 'ReactQueryPersistClient',
-    outputFile: 'index',
-    entryFile: 'src/index.ts',
-    globals: {
-      react: 'React',
-      '@tanstack/query-persist-client-core': 'QueryPersistClientCore',
-      '@tanstack/react-query': 'ReactQuery',
-    },
-    bundleUMDGlobals: ['@tanstack/query-persist-client-core'],
-  }),
-  createSolidQueryConfig(),
-  ...buildConfigs({
-    name: 'vue-query',
-    packageDir: 'packages/vue-query',
-    jsName: 'VueQuery',
-    outputFile: 'index',
-    entryFile: 'src/index.ts',
-    globals: {
-      '@tanstack/query-core': 'QueryCore',
-      vue: 'Vue',
-      'vue-demi': 'Vue',
-      '@tanstack/match-sorter-utils': 'MatchSorter',
-      '@vue/devtools-api': 'DevtoolsApi',
-    },
-    bundleUMDGlobals: [
-      '@tanstack/query-core',
-      '@tanstack/match-sorter-utils',
-      '@vue/devtools-api',
-    ],
-  }),
-])

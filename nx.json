@@ -8,9 +8,10 @@
           "test:eslint",
           "test:types",
           "test:build",
-          "build:types",
           "build",
-          "rollup"
+          "build:rollup",
+          "build:codemods",
+          "build:types"
         ],
         "accessToken": "ZDdkNDA4MGEtYjNmYi00MWI4LWE1N2QtYTdlNmYxMGJlZWM2fHJlYWQ="
       }
@@ -63,13 +64,12 @@
       "inputs": ["default", "^public"],
       "dependsOn": ["^test:types"]
     },
-    "build:types": {
+    "build": {
       "outputs": [
-        "{projectRoot}/build/**/*.d.ts",
-        "{projectRoot}/build/.tsbuildinfo"
+        "{projectRoot}/build/**/*"
       ],
       "inputs": ["default", "^public"],
-      "dependsOn": ["^build:types"]
+      "dependsOn": ["^build"]
     },
     "test:build": {
       "dependsOn": ["build"],

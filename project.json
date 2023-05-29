@@ -3,18 +3,9 @@
   "$schema": "./node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "./",
   "targets": {
-    "rollup": {
-      "command": "rollup --config rollup.config.mjs",
-      "outputs": [
-        "{workspaceRoot}/packages/*/build/**/*(.cjs|.mjs|.js)*",
-        "{workspaceRoot}/packages/*/build/stats*",
-        "{workspaceRoot}/packages/*/build/**/*.svelte"
-      ],
-      "inputs": ["default"]
-    },
     "build": {
       "command": "echo \"  @tanstack/query > All packages built! 📦\"",
-      "dependsOn": ["rollup", "^build:types", "^build"]
+      "dependsOn": ["^build"]
     },
     "test:build": {
       "executor": "nx:run-commands",
