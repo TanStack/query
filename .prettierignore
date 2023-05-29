@@ -1,3 +1,5 @@
+**/.next
 **/.svelte-kit
 **/build
+**/dist
 /packages/codemods/**/__testfixtures__
