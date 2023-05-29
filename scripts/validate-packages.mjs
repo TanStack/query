@@ -3,6 +3,7 @@
 import path from 'node:path'
 import fsp from 'node:fs/promises'
 import jsonfile from 'jsonfile'
+import { publint } from 'publint'
 import { packages, rootDir } from './config.mjs'
 
 async function run() {
@@ -53,6 +54,12 @@ async function run() {
       } catch (err) {
         failedValidations.push(`Missing build file: ${filePath}`)
       }
+
+      const publintResult = await publint({ pkgDir: pkg.packageDir })
+
+      publintResult.forEach((message) => {
+        console.log(`Publint warning: ${JSON.stringify(message, null, 2)}`)
+      })
     }),
   )
   console.info('')
