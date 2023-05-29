@@ -8,9 +8,9 @@
           "test:eslint",
           "test:types",
           "test:build",
-          "build:types",
           "build",
-          "rollup"
+          "build:codemods",
+          "build:types"
         ],
         "accessToken": "ZDdkNDA4MGEtYjNmYi00MWI4LWE1N2QtYTdlNmYxMGJlZWM2fHJlYWQ="
       }
