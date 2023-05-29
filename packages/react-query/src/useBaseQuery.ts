@@ -77,10 +77,17 @@ export function useBaseQuery<
 
   useSyncExternalStore(
     React.useCallback(
-      (onStoreChange) =>
-        isRestoring
+      (onStoreChange) => {
+        const unsubscribe = isRestoring
           ? () => undefined
-          : observer.subscribe(notifyManager.batchCalls(onStoreChange)),
+          : observer.subscribe(notifyManager.batchCalls(onStoreChange))
+
+        // Update result to make sure we did not miss any query updates
+        // between creating the observer and subscribing to it.
+        observer.updateResult()
+
+        return unsubscribe
+      },
       [observer, isRestoring],
     ),
     () => observer.getCurrentResult(),

@@ -288,10 +288,13 @@ describe('PersistQueryClientProvider', () => {
 
     queryClient.clear()
 
+    let fetched = false
+
     function Page() {
       const state = useQuery(
         key,
         async () => {
+          fetched = true
           await sleep(10)
           return 'fetched'
         },
@@ -322,7 +325,9 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('data: null'))
     await waitFor(() => rendered.getByText('data: hydrated'))
 
-    expect(states).toHaveLength(2)
+    expect(states).toHaveLength(3)
+
+    expect(fetched).toBe(false)
 
     expect(states[0]).toMatchObject({
       status: 'loading',
@@ -335,6 +340,9 @@ describe('PersistQueryClientProvider', () => {
       fetchStatus: 'idle',
       data: 'hydrated',
     })
+
+    // #5443 seems like we get an extra render now ...
+    expect(states[1]).toStrictEqual(states[2])
   })
 
   test('should call onSuccess after successful restoring', async () => {
