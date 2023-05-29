@@ -2,7 +2,6 @@
   "name": "query",
   "repository": "https://github.com/tanstack/query.git",
   "packageManager": "pnpm@8.5.1",
-  "namespace": "@tanstack",
   "scripts": {
     "clean": "pnpm --filter \"./packages/**\" run clean",
     "preinstall": "node -e \"if(process.env.CI == 'true') {console.log('Skipping preinstall...'); process.exit(1)}\" || npx -y only-allow pnpm",
@@ -23,6 +22,13 @@
     "cipublish": "node scripts/publish.mjs",
     "validatePackages": "node scripts/validate-packages.mjs"
   },
+  "nx": {
+    "includedScripts": [
+      "test:format",
+      "test:build"
+    ]
+  },
+  "namespace": "@tanstack",
   "devDependencies": {
     "@babel/core": "^7.21.8",
     "@babel/preset-env": "^7.21.5",
