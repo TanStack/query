@@ -9,6 +9,7 @@
           "test:types",
           "test:build",
           "build",
+          "build:rollup",
           "build:codemods",
           "build:types"
         ],
@@ -65,18 +66,10 @@
     },
     "build": {
       "outputs": [
-        "{projectRoot}/build/**/*.{js,cjs,mjs,svelte}"
+        "{projectRoot}/build/**/*"
       ],
       "inputs": ["default", "^public"],
       "dependsOn": ["^build"]
-    },
-    "build:types": {
-      "outputs": [
-        "{projectRoot}/build/**/*.d.ts",
-        "{projectRoot}/build/.tsbuildinfo"
-      ],
-      "inputs": ["default", "^public"],
-      "dependsOn": ["^build:types"]
     },
     "test:build": {
       "dependsOn": ["build"],

@@ -28,7 +28,8 @@
     "test:types": "tsc",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "build": "rollup --config rollup.config.mjs",
+    "build": "pnpm build:rollup && pnpm build:codemods && pnpm build:types",
+    "build:rollup": "rollup --config rollup.config.mjs",
     "build:codemods": "cpy ../codemods/src/**/* ./build/codemods",
     "build:types": "tsc --build"
   },
