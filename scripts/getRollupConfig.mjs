@@ -91,13 +91,7 @@ export function buildConfigs(opts) {
  * @param {import('./types').Options} options - Options for building configurations.
  * @returns {import('rollup').RollupOptions}
  */
-function mjs({
-  input,
-  external,
-  outputFile,
-  forceDevEnv,
-  forceBundle,
-}) {
+function mjs({ input, external, outputFile, forceDevEnv, forceBundle }) {
   /** @type {import('rollup').OutputOptions} */
   const bundleOutput = {
     format: 'esm',
@@ -133,13 +127,7 @@ function mjs({
  * @param {import('./types').Options} options - Options for building configurations.
  * @returns {import('rollup').RollupOptions}
  */
-function esm({
-  input,
-  external,
-  outputFile,
-  forceDevEnv,
-  forceBundle,
-}) {
+function esm({ input, external, outputFile, forceDevEnv, forceBundle }) {
   /** @type {import('rollup').OutputOptions} */
   const bundleOutput = {
     format: 'esm',
@@ -175,13 +163,7 @@ function esm({
  * @param {import('./types').Options} options - Options for building configurations.
  * @returns {import('rollup').RollupOptions}
  */
-function cjs({
-  input,
-  external,
-  outputFile,
-  forceDevEnv,
-  forceBundle,
-}) {
+function cjs({ input, external, outputFile, forceDevEnv, forceBundle }) {
   /** @type {import('rollup').OutputOptions} */
   const bundleOutput = {
     format: 'cjs',
