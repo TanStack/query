@@ -7,7 +7,7 @@ import chalk from 'chalk'
 import jsonfile from 'jsonfile'
 import * as semver from 'semver'
 import currentGitBranch from 'current-git-branch'
-import parseCommit from '@commitlint/parse'
+import { parse as parseCommit } from '@commitlint/parse'
 import log from 'git-log-parser'
 import streamToArray from 'stream-to-array'
 import axios from 'axios'
@@ -104,8 +104,7 @@ async function run() {
 
         Promise.all(
           arr.map(async (d) => {
-            // @ts-ignore
-            const parsed = await parseCommit.default(d.subject)
+            const parsed = await parseCommit(d.subject)
 
             return { ...d, parsed }
           }),
