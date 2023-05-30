@@ -4,10 +4,11 @@
 const config = {
   root: true,
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'import'],
+  plugins: ['@typescript-eslint', 'compat', 'import'],
   extends: [
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:compat/recommended',
     'plugin:import/recommended',
     'plugin:import/typescript',
     'prettier',
