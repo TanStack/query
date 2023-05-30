@@ -1007,7 +1007,7 @@ importers:
         specifier: ^5.0.0-alpha.38
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: workspace:5.0.0-alpha.39
+        specifier: ^5.0.0-alpha.39
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1038,7 +1038,7 @@ importers:
         specifier: ^5.0.0-alpha.38
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: workspace:5.0.0-alpha.39
+        specifier: ^5.0.0-alpha.39
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1069,7 +1069,7 @@ importers:
         specifier: ^5.0.0-alpha.38
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: workspace:5.0.0-alpha.39
+        specifier: ^5.0.0-alpha.39
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1100,7 +1100,7 @@ importers:
         specifier: ^5.0.0-alpha.38
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: workspace:5.0.0-alpha.39
+        specifier: ^5.0.0-alpha.39
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1131,7 +1131,7 @@ importers:
         specifier: ^5.0.0-alpha.38
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: workspace:5.0.0-alpha.39
+        specifier: ^5.0.0-alpha.39
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1162,7 +1162,7 @@ importers:
         specifier: ^5.0.0-alpha.38
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: workspace:5.0.0-alpha.39
+        specifier: ^5.0.0-alpha.39
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
@@ -1193,7 +1193,7 @@ importers:
         specifier: ^5.0.0-alpha.38
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: workspace:5.0.0-alpha.39
+        specifier: ^5.0.0-alpha.39
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1224,7 +1224,7 @@ importers:
         specifier: ^5.0.0-alpha.38
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: workspace:5.0.0-alpha.39
+        specifier: ^5.0.0-alpha.39
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
