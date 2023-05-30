@@ -22,8 +22,8 @@ importers:
         specifier: ^7.21.5
         version: 7.21.5(@babel/core@7.21.8)
       '@commitlint/parse':
-        specifier: ^17.4.4
-        version: 17.4.4
+        specifier: ^17.6.5
+        version: 17.6.5
       '@rollup/plugin-babel':
         specifier: ^6.0.3
         version: 6.0.3(@babel/core@7.21.8)(rollup@3.23.0)
@@ -3093,8 +3093,8 @@ packages:
       minimist: 1.2.6
     dev: false
 
-  /@commitlint/parse@17.4.4:
-    resolution: {integrity: sha512-EKzz4f49d3/OU0Fplog7nwz/lAfXMaDxtriidyGF9PtR+SRbgv4FhsfF310tKxs6EPj8Y+aWWuX3beN5s+yqGg==}
+  /@commitlint/parse@17.6.5:
+    resolution: {integrity: sha512-0zle3bcn1Hevw5Jqpz/FzEWNo2KIzUbc1XyGg6WrWEoa6GH3A1pbqNF6MvE6rjuy6OY23c8stWnb4ETRZyN+Yw==}
     engines: {node: '>=v14'}
     dependencies:
       '@commitlint/types': 17.4.4
