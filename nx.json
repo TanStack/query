@@ -25,12 +25,12 @@
   },
   "namedInputs": {
     "globalBuildAffectingConfig": [
+      "{workspaceRoot}/.browserslistrc",
       "{workspaceRoot}/babel.config.js",
-      "{workspaceRoot}/rollup.config.js",
-      "{workspaceRoot}/rollup.config.ts",
+      "{workspaceRoot}/package.json",
+      "{workspaceRoot}/scripts/getRollupConfig.mjs",
       "{workspaceRoot}/tsconfig.json",
-      "{workspaceRoot}/tsconfig.base.json",
-      "{workspaceRoot}/package.json"
+      "{workspaceRoot}/tsconfig.base.json"
     ],
     "globalNonBuildAffectingConfig": ["{workspaceRoot}/.eslintrc.cjs"],
     "default": [
