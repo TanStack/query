@@ -114,6 +114,9 @@ importers:
       eslint-import-resolver-typescript:
         specifier: ^3.5.5
         version: 3.5.5(@typescript-eslint/parser@5.59.7)(eslint-plugin-import@2.27.5)(eslint@8.34.0)
+      eslint-plugin-compat:
+        specifier: ^4.1.4
+        version: 4.1.4(eslint@8.34.0)
       eslint-plugin-import:
         specifier: ^2.27.5
         version: 2.27.5(@typescript-eslint/parser@5.59.7)(eslint-import-resolver-typescript@3.5.5)(eslint@8.34.0)
@@ -1007,7 +1010,7 @@ importers:
         specifier: ^5.0.0-alpha.38
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: workspace:5.0.0-alpha.39
+        specifier: ^5.0.0-alpha.39
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1038,7 +1041,7 @@ importers:
         specifier: ^5.0.0-alpha.38
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: workspace:5.0.0-alpha.39
+        specifier: ^5.0.0-alpha.39
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1069,7 +1072,7 @@ importers:
         specifier: ^5.0.0-alpha.38
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: workspace:5.0.0-alpha.39
+        specifier: ^5.0.0-alpha.39
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1100,7 +1103,7 @@ importers:
         specifier: ^5.0.0-alpha.38
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: workspace:5.0.0-alpha.39
+        specifier: ^5.0.0-alpha.39
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1131,7 +1134,7 @@ importers:
         specifier: ^5.0.0-alpha.38
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: workspace:5.0.0-alpha.39
+        specifier: ^5.0.0-alpha.39
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1162,7 +1165,7 @@ importers:
         specifier: ^5.0.0-alpha.38
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: workspace:5.0.0-alpha.39
+        specifier: ^5.0.0-alpha.39
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
@@ -1193,7 +1196,7 @@ importers:
         specifier: ^5.0.0-alpha.38
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: workspace:5.0.0-alpha.39
+        specifier: ^5.0.0-alpha.39
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1224,7 +1227,7 @@ importers:
         specifier: ^5.0.0-alpha.38
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: workspace:5.0.0-alpha.39
+        specifier: ^5.0.0-alpha.39
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -3982,6 +3985,10 @@ packages:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
 
+  /@mdn/browser-compat-data@5.2.59:
+    resolution: {integrity: sha512-f7VxPGqVLCSe+0KdDas33JyGY+eHJTfBkgAsoiM1BSv7e238FYJMTFwfGLhjnhOwc33wUwsnjiHSfXukwzbqog==}
+    dev: true
+
   /@mswjs/cookies@0.2.1:
     resolution: {integrity: sha512-0tDfcPw5/s7QsNQqS3knAvAD5w5PF1nNPagRhKO/yECY+sMbJxoC2sLWnH7Lzmh52mTSVLKDhd1r92Q3kfljnQ==}
     engines: {node: '>=14'}
@@ -5445,6 +5452,10 @@ packages:
     engines: {node: '>= 10'}
     dev: true
 
+  /@tsconfig/node14@1.0.3:
+    resolution: {integrity: sha512-ysT8mhdixWK6Hw3i1V2AeRqZ5WfXg1G43mqoYlM2nc6388Fq5jcXyr5mRsqViLx/GJYdoL0bfXD8nmF+Zn/Iow==}
+    dev: true
+
   /@tsconfig/svelte@4.0.1:
     resolution: {integrity: sha512-B+XlGpmuAQzJqDoBATNCvEPqQg0HkO7S8pM14QDI5NsmtymzRexQ1N+nX2H6RTtFbuFgaZD4I8AAi8voGg0GLg==}
     dev: true
@@ -6325,6 +6336,12 @@ packages:
     resolution: {integrity: sha512-Q+JC7Whu8HhmTdBph/Tq59IoRtoy6KAm5zzPv00WdujX82lbAL8K7WVjne7vdCsAmbF4AYaDOPyO3k0kl8qIrw==}
     engines: {node: '>=0.10.0'}
     dev: false
+
+  /ast-metadata-inferer@0.8.0:
+    resolution: {integrity: sha512-jOMKcHht9LxYIEQu+RVd22vtgrPaVCtDRQ/16IGmurdzxvYbDd5ynxjnyrzLnieG96eTcAyaoj/wN/4/1FyyeA==}
+    dependencies:
+      '@mdn/browser-compat-data': 5.2.59
+    dev: true
 
   /ast-types-flow@0.0.7:
     resolution: {integrity: sha512-eBvWn1lvIApYMhzQMsu9ciLfkBY499mFZlNqG+/9WR7PVlroQw0vG30cOQQbaKz3sCEc44TAOu2ykzqXSNnwag==}
@@ -8529,6 +8546,23 @@ packages:
       eslint-import-resolver-typescript: 3.5.5(@typescript-eslint/parser@5.59.7)(eslint-plugin-import@2.27.5)(eslint@8.34.0)
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /eslint-plugin-compat@4.1.4(eslint@8.34.0):
+    resolution: {integrity: sha512-RxySWBmzfIROLFKgeJBJue2BU/6vM2KJWXWAUq+oW4QtrsZXRxbjgxmO1OfF3sHcRuuIenTS/wgo3GyUWZF24w==}
+    engines: {node: '>=14.x'}
+    peerDependencies:
+      eslint: ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
+    dependencies:
+      '@mdn/browser-compat-data': 5.2.59
+      '@tsconfig/node14': 1.0.3
+      ast-metadata-inferer: 0.8.0
+      browserslist: 4.21.5
+      caniuse-lite: 1.0.30001489
+      eslint: 8.34.0
+      find-up: 5.0.0
+      lodash.memoize: 4.1.2
+      semver: 7.3.8
     dev: true
 
   /eslint-plugin-flowtype@8.0.3(@babel/plugin-syntax-flow@7.18.6)(@babel/plugin-transform-react-jsx@7.19.0)(eslint@8.34.0):
@@ -11228,6 +11262,10 @@ packages:
   /lodash.isequal@4.5.0:
     resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
     dev: false
+
+  /lodash.memoize@4.1.2:
+    resolution: {integrity: sha512-t7j+NzmgnQzTAYXcsHYLgimltOV1MXHtlOWf6GjL9Kj8GK5FInw5JotxvbOs+IvV1/Dzo04/fCGfLVs7aXb4Ag==}
+    dev: true
 
   /lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
@@ -14414,6 +14452,14 @@ packages:
 
   /semver@7.3.4:
     resolution: {integrity: sha512-tCfb2WLjqFAtXn4KEdxIhalnRtoKFN7nAwj0B3ZXCbQloV2tq5eDbcTmT68JJD3nRJq24/XgxtQKFIpQdtvmVw==}
+    engines: {node: '>=10'}
+    hasBin: true
+    dependencies:
+      lru-cache: 6.0.0
+    dev: true
+
+  /semver@7.3.8:
+    resolution: {integrity: sha512-NB1ctGL5rlHrPJtFDVIVzTyQylMLu9N9VICA6HSFJo8MCGVTMW6gfpicwKmmK/dAjTOrqu5l63JJOpDSrAis3A==}
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
