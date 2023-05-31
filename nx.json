@@ -14,6 +14,7 @@
           "build:codemods",
           "build:types"
         ],
+        "parallel": 5,
         "accessToken": "ZDdkNDA4MGEtYjNmYi00MWI4LWE1N2QtYTdlNmYxMGJlZWM2fHJlYWQ="
       }
     }
