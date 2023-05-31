@@ -27,7 +27,7 @@
   },
   "sideEffects": false,
   "scripts": {
-    "clean": "rimraf ./build",
+    "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "pnpm build:types",
     "test:lib": "pnpm run test:2 && pnpm run test:2.7 && pnpm run test:3",
