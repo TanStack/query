@@ -15,10 +15,11 @@ const config = {
   ],
   env: {
     browser: true,
+    es2020: true,
   },
   parserOptions: {
     tsconfigRootDir: __dirname,
-    project: './tsconfig.base.json',
+    project: './tsconfig.json',
     sourceType: 'module',
     ecmaVersion: 2020,
   },

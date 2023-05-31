@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-devtools",
-  "version": "5.0.0-alpha.43",
+  "version": "5.0.0-alpha.44",
   "description": "Developer tools to interact with and visualize the TanStack/react-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -38,28 +38,28 @@
     "src"
   ],
   "scripts": {
-    "clean": "rimraf ./build",
+    "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc",
+    "test:types": "pnpm build:types",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "build": "pnpm build:rollup && pnpm build:types",
     "build:rollup": "rollup --config rollup.config.mjs",
-    "build:types": "tsc --build && cpy build/lib/index.d.ts build/lib/index.prod.d.ts"
+    "build:types": "tsc --emitDeclarationOnly && cpy index.d.ts index.prod.d.ts --cwd=build/lib"
+  },
+  "dependencies": {
+    "@tanstack/query-devtools": "^5.0.0-alpha.43"
   },
   "devDependencies": {
-    "@tanstack/react-query": "workspace:*",
+    "@tanstack/react-query": "^5.0.0-alpha.43",
     "@types/react": "^18.2.4",
     "@types/react-dom": "^18.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^3.1.4"
   },
-  "dependencies": {
-    "@tanstack/query-devtools": "workspace:*"
-  },
   "peerDependencies": {
-    "@tanstack/react-query": "workspace:*",
+    "@tanstack/react-query": "^5.0.0-alpha.43",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   }

@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query",
-  "version": "5.0.0-alpha.43",
+  "version": "5.0.0-alpha.44",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -23,15 +23,15 @@
   },
   "sideEffects": false,
   "scripts": {
-    "clean": "rimraf ./build",
+    "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc",
+    "test:types": "pnpm build:types",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "build": "pnpm build:rollup && pnpm build:codemods && pnpm build:types",
     "build:rollup": "rollup --config rollup.config.mjs",
     "build:codemods": "cpy ../codemods/src/**/* ./build/codemods",
-    "build:types": "tsc --build"
+    "build:types": "tsc --emitDeclarationOnly"
   },
   "files": [
     "build/lib/*",
@@ -42,15 +42,15 @@
     "!build/codemods/**/__testfixtures__",
     "!build/codemods/**/__tests__"
   ],
+  "dependencies": {
+    "@tanstack/query-core": "^5.0.0-alpha.43"
+  },
   "devDependencies": {
     "@types/react": "^18.2.4",
     "@types/react-dom": "^18.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^3.1.4"
-  },
-  "dependencies": {
-    "@tanstack/query-core": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0",

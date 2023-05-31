@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/svelte-query",
-  "version": "5.0.0-alpha.43",
+  "version": "5.0.0-alpha.44",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Svelte",
   "author": "Lachlan Collins",
   "license": "MIT",
@@ -30,12 +30,15 @@
     "!src/__tests__"
   ],
   "scripts": {
-    "clean": "rimraf ./build",
+    "clean": "rimraf ./build && rimraf ./coverage",
     "test:types": "svelte-check --tsconfig ./tsconfig.json && pnpm build",
     "test:eslint": "eslint --ext .svelte,.ts ./src",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "build": "svelte-package --input ./src --output ./build/lib"
+  },
+  "dependencies": {
+    "@tanstack/query-core": "^5.0.0-alpha.43"
   },
   "devDependencies": {
     "@sveltejs/package": "^2.0.2",
@@ -48,9 +51,6 @@
     "tslib": "^2.5.2",
     "typescript": "^5.0.4",
     "vite": "^4.2.0"
-  },
-  "dependencies": {
-    "@tanstack/query-core": "workspace:*"
   },
   "peerDependencies": {
     "svelte": "^3.54.0"

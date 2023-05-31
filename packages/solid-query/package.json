@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query",
-  "version": "5.0.0-alpha.43",
+  "version": "5.0.0-alpha.44",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Solid",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -32,14 +32,14 @@
     "./src/setBatchUpdatesFn.ts"
   ],
   "scripts": {
-    "clean": "rimraf ./build",
+    "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc",
+    "test:types": "pnpm build:types",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "build": "pnpm build:rollup && pnpm build:types",
     "build:rollup": "rollup --config rollup.config.mjs",
-    "build:types": "tsc --build"
+    "build:types": "tsc"
   },
   "files": [
     "build/esm/*",
@@ -50,13 +50,12 @@
     "src"
   ],
   "dependencies": {
-    "@tanstack/query-core": "workspace:*"
+    "@tanstack/query-core": "^5.0.0-alpha.43"
   },
   "devDependencies": {
     "vite-plugin-solid": "^2.5.0"
   },
   "peerDependencies": {
     "solid-js": "^1.6.13"
-  },
-  "peerDependenciesMeta": {}
+  }
 }
