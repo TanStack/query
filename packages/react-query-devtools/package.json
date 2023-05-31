@@ -47,6 +47,9 @@
     "build:rollup": "rollup --config rollup.config.mjs",
     "build:types": "tsc --emitDeclarationOnly && cpy index.d.ts index.prod.d.ts --cwd=build/lib"
   },
+  "dependencies": {
+    "@tanstack/query-devtools": "^5.0.0-alpha.43"
+  },
   "devDependencies": {
     "@tanstack/react-query": "^5.0.0-alpha.43",
     "@types/react": "^18.2.4",
@@ -54,9 +57,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^3.1.4"
-  },
-  "dependencies": {
-    "@tanstack/query-devtools": "^5.0.0-alpha.43"
   },
   "peerDependencies": {
     "@tanstack/react-query": "^5.0.0-alpha.43",

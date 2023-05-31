@@ -57,6 +57,5 @@
   },
   "peerDependencies": {
     "solid-js": "^1.6.13"
-  },
-  "peerDependenciesMeta": {}
+  }
 }

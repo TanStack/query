@@ -42,15 +42,15 @@
     "!build/codemods/**/__testfixtures__",
     "!build/codemods/**/__tests__"
   ],
+  "dependencies": {
+    "@tanstack/query-core": "^5.0.0-alpha.43"
+  },
   "devDependencies": {
     "@types/react": "^18.2.4",
     "@types/react-dom": "^18.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^3.1.4"
-  },
-  "dependencies": {
-    "@tanstack/query-core": "^5.0.0-alpha.43"
   },
   "peerDependencies": {
     "react": "^18.0.0",
