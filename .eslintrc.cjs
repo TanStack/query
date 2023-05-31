@@ -15,6 +15,7 @@ const config = {
   ],
   env: {
     browser: true,
+    es2020: true,
   },
   parserOptions: {
     tsconfigRootDir: __dirname,
