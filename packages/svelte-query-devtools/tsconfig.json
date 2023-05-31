@@ -1,9 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "isolatedModules": true,
-    "noEmit": true,
-    "sourceMap": true
+    "noEmit": true
   },
   "include": [
     "src/**/*.js",
