@@ -1,13 +1,11 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "composite": true,
     "declarationDir": "./build/types",
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
     "outDir": "./build/source",
     "rootDir": "./src",
-    "tsBuildInfoFile": "./build/.tsbuildinfo",
     "types": ["vitest/globals"]
   },
   "include": ["src"]
