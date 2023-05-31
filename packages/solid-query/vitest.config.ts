@@ -5,11 +5,11 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
   test: {
     name: 'solid-query',
+    dir: './src',
     watch: false,
     setupFiles: [],
     environment: 'jsdom',
     globals: true,
-    dir: 'src/__tests__',
     coverage: { provider: 'istanbul' },
   },
   resolve: {
