@@ -28,7 +28,7 @@
     "src"
   ],
   "scripts": {
-    "clean": "rimraf ./build",
+    "clean": "rimraf ./build && rimraf ./coverage",
     "test:types": "svelte-check --tsconfig ./tsconfig.json",
     "test:eslint": "eslint --ext .svelte,.ts ./src",
     "build": "svelte-package --input ./src --output ./build/lib"
@@ -46,12 +46,12 @@
     "vite": "^4.2.0"
   },
   "dependencies": {
-    "@tanstack/query-devtools": "workspace:*",
-    "@tanstack/svelte-query": "workspace:*",
+    "@tanstack/query-devtools": "^5.0.0-alpha.43",
+    "@tanstack/svelte-query": "^5.0.0-alpha.43",
     "esm-env": "^1.0.0"
   },
   "peerDependencies": {
-    "@tanstack/svelte-query": "workspace:*",
+    "@tanstack/svelte-query": "^5.0.0-alpha.43",
     "svelte": "^3.54.0"
   }
 }

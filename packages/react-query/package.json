@@ -23,15 +23,15 @@
   },
   "sideEffects": false,
   "scripts": {
-    "clean": "rimraf ./build",
+    "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc",
+    "test:types": "pnpm build:types",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "build": "pnpm build:rollup && pnpm build:codemods && pnpm build:types",
     "build:rollup": "rollup --config rollup.config.mjs",
     "build:codemods": "cpy ../codemods/src/**/* ./build/codemods",
-    "build:types": "tsc --build"
+    "build:types": "tsc --emitDeclarationOnly"
   },
   "files": [
     "build/lib/*",
@@ -50,7 +50,7 @@
     "react-error-boundary": "^3.1.4"
   },
   "dependencies": {
-    "@tanstack/query-core": "workspace:*"
+    "@tanstack/query-core": "^5.0.0-alpha.43"
   },
   "peerDependencies": {
     "react": "^18.0.0",

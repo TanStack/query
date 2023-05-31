@@ -1,11 +1,10 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "composite": true,
-    "rootDir": "./src",
     "outDir": "./build/lib",
+    "rootDir": "./src",
     "tsBuildInfoFile": "./build/.tsbuildinfo"
   },
-  "include": ["src"],
-  "references": [{ "path": "../query-core" }]
+  "include": ["src"]
 }

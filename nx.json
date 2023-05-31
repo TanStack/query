@@ -1,4 +1,5 @@
 {
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "tasksRunnerOptions": {
     "default": {
       "runner": "nx-cloud",
@@ -13,6 +14,7 @@
           "build:codemods",
           "build:types"
         ],
+        "parallel": 5,
         "accessToken": "ZDdkNDA4MGEtYjNmYi00MWI4LWE1N2QtYTdlNmYxMGJlZWM2fHJlYWQ="
       }
     }
@@ -29,8 +31,7 @@
       "{workspaceRoot}/babel.config.js",
       "{workspaceRoot}/package.json",
       "{workspaceRoot}/scripts/getRollupConfig.mjs",
-      "{workspaceRoot}/tsconfig.json",
-      "{workspaceRoot}/tsconfig.base.json"
+      "{workspaceRoot}/tsconfig.json"
     ],
     "globalNonBuildAffectingConfig": ["{workspaceRoot}/.eslintrc.cjs"],
     "default": [
@@ -54,7 +55,8 @@
       "inputs": ["default", "^public"]
     },
     "test:eslint": {
-      "inputs": ["default", "^public"]
+      "inputs": ["default", "^public"],
+      "dependsOn": ["^build"]
     },
     "test:types": {
       "outputs": [

@@ -28,26 +28,27 @@
     "src"
   ],
   "scripts": {
-    "clean": "rimraf ./build",
+    "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc",
+    "test:types": "pnpm build:types",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "build": "pnpm build:rollup && pnpm build:types",
     "build:rollup": "rollup --config rollup.config.mjs",
-    "build:types": "tsc --build"
+    "build:types": "tsc --emitDeclarationOnly"
   },
   "devDependencies": {
-    "@tanstack/react-query": "workspace:*",
+    "@tanstack/query-core": "^5.0.0-alpha.43",
+    "@tanstack/react-query": "^5.0.0-alpha.43",
     "@types/react": "^18.2.4",
     "@types/react-dom": "^18.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "dependencies": {
-    "@tanstack/query-persist-client-core": "workspace:*"
+    "@tanstack/query-persist-client-core": "^5.0.0-alpha.43"
   },
   "peerDependencies": {
-    "@tanstack/react-query": "workspace:*"
+    "@tanstack/react-query": "^5.0.0-alpha.43"
   }
 }

@@ -30,7 +30,7 @@
     "!src/__tests__"
   ],
   "scripts": {
-    "clean": "rimraf ./build",
+    "clean": "rimraf ./build && rimraf ./coverage",
     "test:types": "svelte-check --tsconfig ./tsconfig.json && pnpm build",
     "test:eslint": "eslint --ext .svelte,.ts ./src",
     "test:lib": "vitest run --coverage",
@@ -50,7 +50,7 @@
     "vite": "^4.2.0"
   },
   "dependencies": {
-    "@tanstack/query-core": "workspace:*"
+    "@tanstack/query-core": "^5.0.0-alpha.43"
   },
   "peerDependencies": {
     "svelte": "^3.54.0"
