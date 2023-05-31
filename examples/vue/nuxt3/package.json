@@ -5,10 +5,10 @@
     "build": "nuxi build",
     "start": "node .output/server/index.mjs"
   },
-  "devDependencies": {
-    "nuxt": "^3.0.0-rc.12"
-  },
   "dependencies": {
     "@tanstack/vue-query": "^5.0.0-alpha.38"
+  },
+  "devDependencies": {
+    "nuxt": "^3.5.2"
   }
 }
