@@ -38,6 +38,7 @@
     "build:types": "tsc --build"
   },
   "devDependencies": {
+    "@tanstack/query-core": "workspace:*",
     "@tanstack/react-query": "workspace:*",
     "@types/react": "^18.2.4",
     "@types/react-dom": "^18.2.4",

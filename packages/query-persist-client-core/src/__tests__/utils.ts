@@ -3,7 +3,7 @@ import { QueryClient } from '@tanstack/query-core'
 import type {
   Persister,
   PersistedClient,
-} from '@tanstack/query-persist-client-core'
+} from '../persist'
 import { vi } from 'vitest'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {

@@ -1410,6 +1410,9 @@ importers:
 
   packages/query-sync-storage-persister:
     dependencies:
+      '@tanstack/query-core':
+        specifier: workspace:*
+        version: link:../query-core
       '@tanstack/query-persist-client-core':
         specifier: workspace:*
         version: link:../query-persist-client-core
@@ -1470,6 +1473,9 @@ importers:
         specifier: workspace:*
         version: link:../query-persist-client-core
     devDependencies:
+      '@tanstack/query-core':
+        specifier: workspace:*
+        version: link:../query-core
       '@tanstack/react-query':
         specifier: workspace:*
         version: link:../react-query

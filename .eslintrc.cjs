@@ -18,7 +18,7 @@ const config = {
   },
   parserOptions: {
     tsconfigRootDir: __dirname,
-    project: './tsconfig.base.json',
+    project: './tsconfig.json',
     sourceType: 'module',
     ecmaVersion: 2020,
   },

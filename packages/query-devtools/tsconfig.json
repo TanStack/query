@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "composite": true,
     "rootDir": "./src",
@@ -12,6 +12,5 @@
     "types": ["vitest/globals"]
   },
   "include": ["src"],
-  "exclude": ["node_modules", "build"],
-  "references": [{ "path": "../query-core" }]
+  "exclude": ["node_modules", "build"]
 }

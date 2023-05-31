@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "composite": true,
     "rootDir": "./src",
@@ -7,6 +7,5 @@
     "tsBuildInfoFile": "./build/.tsbuildinfo",
     "types": ["vitest/globals"]
   },
-  "include": ["src"],
-  "references": [{ "path": "../query-persist-client-core" }]
+  "include": ["src"]
 }

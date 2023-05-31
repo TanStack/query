@@ -1,4 +1,5 @@
 {
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "tasksRunnerOptions": {
     "default": {
       "runner": "nx-cloud",
@@ -29,8 +30,7 @@
       "{workspaceRoot}/babel.config.js",
       "{workspaceRoot}/package.json",
       "{workspaceRoot}/scripts/getRollupConfig.mjs",
-      "{workspaceRoot}/tsconfig.json",
-      "{workspaceRoot}/tsconfig.base.json"
+      "{workspaceRoot}/tsconfig.json"
     ],
     "globalNonBuildAffectingConfig": ["{workspaceRoot}/.eslintrc.cjs"],
     "default": [
