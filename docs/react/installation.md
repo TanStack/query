@@ -25,15 +25,15 @@ React Query is compatible with React v18+ and works with ReactDOM and React Nati
 
 ### CDN
 
-If you're not using a module bundler or package manager we also have a global ("UMD") build hosted on the [unpkg.com](https://unpkg.com) CDN. Simply add the following `<script>` tag to the bottom of your HTML file:
+If you're not using a module bundler or package manager, you can also use this library via an ESM-compatible CDN such as [ESM.sh](https://esm.sh/) or [Skypack](https://www.skypack.dev/). Simply add a `<script type="module">` tag to the bottom of your HTML file:
 
 ```html
-<script src="https://unpkg.com/@tanstack/react-query@alpha/build/umd/index.production.js"></script>
+<script type="module">
+  import React from 'https://esm.sh/react@18'
+  import ReactDOM from 'https://esm.sh/react-dom@18'
+  import { QueryClient } from 'https://esm.sh/@tanstack/react-query@alpha'
+</script>
 ```
-
-Once you've added this you will have access to the `window.ReactQuery` object and its exports.
-
-> This installation/usage requires the [React CDN script bundles](https://reactjs.org/docs/cdn-links.html) to be on the page as well.
 
 ### Requirements
 
