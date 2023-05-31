@@ -1,20 +1,20 @@
-import React, { lazy } from "react";
-import ReactDOM from "react-dom/client";
+import React, { lazy } from 'react'
+import ReactDOM from 'react-dom/client'
 import {
   useQueryClient,
   QueryClient,
   QueryClientProvider,
   QueryErrorResetBoundary,
-} from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { ErrorBoundary } from "react-error-boundary";
+} from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { ErrorBoundary } from 'react-error-boundary'
 
-import { fetchProjects } from "./queries";
+import { fetchProjects } from './queries'
 
-import Button from "./components/Button";
+import Button from './components/Button'
 
-const Projects = lazy(() => import("./components/Projects"));
-const Project = lazy(() => import("./components/Project"));
+const Projects = lazy(() => import('./components/Projects'))
+const Project = lazy(() => import('./components/Project'))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,20 +23,20 @@ const queryClient = new QueryClient({
       suspense: true,
     },
   },
-});
+})
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Example />
     </QueryClientProvider>
-  );
+  )
 }
 
 function Example() {
-  const queryClient = useQueryClient();
-  const [showProjects, setShowProjects] = React.useState(false);
-  const [activeProject, setActiveProject] = React.useState(null);
+  const queryClient = useQueryClient()
+  const [showProjects, setShowProjects] = React.useState(false)
+  const [activeProject, setActiveProject] = React.useState(null)
 
   return (
     <>
@@ -45,15 +45,15 @@ function Example() {
           setShowProjects((old) => {
             if (!old) {
               queryClient.prefetchQuery({
-                queryKey: ["projects"],
+                queryKey: ['projects'],
                 queryFn: fetchProjects,
-              });
+              })
             }
-            return !old;
-          });
+            return !old
+          })
         }}
       >
-        {showProjects ? "Hide Projects" : "Show Projects"}
+        {showProjects ? 'Hide Projects' : 'Show Projects'}
       </Button>
 
       <hr />
@@ -63,9 +63,9 @@ function Example() {
           <ErrorBoundary
             fallbackRender={({ error, resetErrorBoundary }) => (
               <div>
-                There was an error!{" "}
+                There was an error!{' '}
                 <Button onClick={() => resetErrorBoundary()}>Try again</Button>
-                <pre style={{ whiteSpace: "normal" }}>{error.message}</pre>
+                <pre style={{ whiteSpace: 'normal' }}>{error.message}</pre>
               </div>
             )}
             onReset={reset}
@@ -87,8 +87,8 @@ function Example() {
       </QueryErrorResetBoundary>
       <ReactQueryDevtools initialIsOpen />
     </>
-  );
+  )
 }
 
-const rootElement = document.getElementById("root");
-ReactDOM.createRoot(rootElement).render(<App />);
+const rootElement = document.getElementById('root')
+ReactDOM.createRoot(rootElement).render(<App />)
