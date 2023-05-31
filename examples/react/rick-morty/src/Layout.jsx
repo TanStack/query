@@ -1,15 +1,15 @@
-import React from "react";
-import Episodes from "./Episodes";
-import Episode from "./Episode";
-import Characters from "./Characters";
-import Character from "./Character";
-import Home from "./Home";
-import { Link, Button } from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import { Routes, Route, Link as RouterLink } from "react-router-dom";
+import React from 'react'
+import Episodes from './Episodes'
+import Episode from './Episode'
+import Characters from './Characters'
+import Character from './Character'
+import Home from './Home'
+import { Link, Button } from '@mui/material'
+import { makeStyles } from '@mui/styles'
+import { Routes, Route, Link as RouterLink } from 'react-router-dom'
 
 export default function Layout() {
-  const classes = useStyles();
+  const classes = useStyles()
 
   return (
     <div className="App">
@@ -38,21 +38,21 @@ export default function Layout() {
         </Routes>
       </main>
     </div>
-  );
+  )
 }
 
 const useStyles = makeStyles((theme) => ({
   main: {
-    margin: "0 auto",
-    padding: "16px",
+    margin: '0 auto',
+    padding: '16px',
   },
   menu: {
-    margin: "0 auto",
-    display: "flex",
-    justifyContent: "center",
-    backgroundColor: "#CCC",
-    "& button": {
+    margin: '0 auto',
+    display: 'flex',
+    justifyContent: 'center',
+    backgroundColor: '#CCC',
+    '& button': {
       margin: theme.spacing(1),
     },
   },
-}));
+}))
