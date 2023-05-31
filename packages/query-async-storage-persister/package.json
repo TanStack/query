@@ -38,6 +38,6 @@
     "build:types": "tsc --emitDeclarationOnly"
   },
   "dependencies": {
-    "@tanstack/query-persist-client-core": "workspace:*"
+    "@tanstack/query-persist-client-core": "^5.0.0-alpha.43"
   }
 }

@@ -50,7 +50,7 @@
     "vite": "^4.2.0"
   },
   "dependencies": {
-    "@tanstack/query-core": "workspace:*"
+    "@tanstack/query-core": "^5.0.0-alpha.43"
   },
   "peerDependencies": {
     "svelte": "^3.54.0"

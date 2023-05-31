@@ -38,17 +38,17 @@
     "build:types": "tsc --emitDeclarationOnly"
   },
   "devDependencies": {
-    "@tanstack/query-core": "workspace:*",
-    "@tanstack/react-query": "workspace:*",
+    "@tanstack/query-core": "^5.0.0-alpha.43",
+    "@tanstack/react-query": "^5.0.0-alpha.43",
     "@types/react": "^18.2.4",
     "@types/react-dom": "^18.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "dependencies": {
-    "@tanstack/query-persist-client-core": "workspace:*"
+    "@tanstack/query-persist-client-core": "^5.0.0-alpha.43"
   },
   "peerDependencies": {
-    "@tanstack/react-query": "workspace:*"
+    "@tanstack/react-query": "^5.0.0-alpha.43"
   }
 }

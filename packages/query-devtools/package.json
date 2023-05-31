@@ -47,11 +47,11 @@
     "superjson": "^1.12.1"
   },
   "devDependencies": {
-    "@tanstack/query-core": "workspace:*",
+    "@tanstack/query-core": "^5.0.0-alpha.43",
     "vite-plugin-solid": "^2.5.0"
   },
   "peerDependencies": {
-    "@tanstack/query-core": "workspace:*"
+    "@tanstack/query-core": "^5.0.0-alpha.43"
   },
   "peerDependenciesMeta": {}
 }

@@ -44,7 +44,7 @@
     "build/umd/*"
   ],
   "dependencies": {
-    "@tanstack/query-core": "workspace:*",
+    "@tanstack/query-core": "^5.0.0-alpha.43",
     "@tanstack/match-sorter-utils": "^8.8.4",
     "@vue/devtools-api": "^6.5.0",
     "vue-demi": "^0.13.11"

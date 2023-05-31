@@ -50,7 +50,7 @@
     "react-error-boundary": "^3.1.4"
   },
   "dependencies": {
-    "@tanstack/query-core": "workspace:*"
+    "@tanstack/query-core": "^5.0.0-alpha.43"
   },
   "peerDependencies": {
     "react": "^18.0.0",
