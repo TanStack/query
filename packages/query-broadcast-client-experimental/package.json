@@ -30,10 +30,10 @@
   "scripts": {
     "clean": "rimraf ./build",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc",
+    "test:types": "pnpm build:types",
     "build": "pnpm build:rollup && pnpm build:types",
     "build:rollup": "rollup --config rollup.config.mjs",
-    "build:types": "tsc --build"
+    "build:types": "tsc --emitDeclarationOnly"
   },
   "dependencies": {
     "@tanstack/query-core": "workspace:*",

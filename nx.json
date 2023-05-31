@@ -55,7 +55,8 @@
       "inputs": ["default", "^public"]
     },
     "test:eslint": {
-      "inputs": ["default", "^public"]
+      "inputs": ["default", "^public"],
+      "dependsOn": ["^build"]
     },
     "test:types": {
       "outputs": [
