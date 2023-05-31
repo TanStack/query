@@ -1,4 +1,3 @@
-import { resolve } from 'path'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
@@ -10,10 +9,5 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     coverage: { provider: 'istanbul' },
-  },
-  resolve: {
-    alias: {
-      '@tanstack/react-query': resolve(__dirname, '..', 'react-query', 'src'),
-    },
   },
 })
