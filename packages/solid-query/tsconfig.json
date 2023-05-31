@@ -2,8 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "composite": true,
-    "emitDeclarationOnly": false,
     "declarationDir": "./build/types",
+    "emitDeclarationOnly": false,
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
     "outDir": "./build/source",

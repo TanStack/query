@@ -2,15 +2,14 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "composite": true,
-    "rootDir": "./src",
-    "outDir": "./build/source",
     "declarationDir": "./build/types",
-    "tsBuildInfoFile": "./build/.tsbuildinfo",
+    "emitDeclarationOnly": false,
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "emitDeclarationOnly": false,
+    "outDir": "./build/source",
+    "rootDir": "./src",
+    "tsBuildInfoFile": "./build/.tsbuildinfo",
     "types": ["vitest/globals"]
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "build"]
+  "include": ["src"]
 }
