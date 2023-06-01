@@ -13,12 +13,10 @@
   "type": "module",
   "types": "build/lib/index.d.ts",
   "module": "build/lib/index.js",
-  "svelte": "build/lib/index.js",
   "exports": {
     ".": {
       "types": "./build/lib/index.d.ts",
       "import": "./build/lib/index.js",
-      "svelte": "./build/lib/index.js",
       "default": "./build/lib/index.js"
     },
     "./package.json": "./package.json"
