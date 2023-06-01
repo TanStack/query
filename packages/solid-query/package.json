@@ -10,6 +10,7 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
+  "type": "commonjs",
   "types": "build/types/index.d.ts",
   "main": "build/cjs/index.js",
   "module": "build/esm/index.js",
