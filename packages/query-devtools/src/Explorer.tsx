@@ -1,5 +1,5 @@
 import { displayValue } from './utils'
-import superjson from 'superjson'
+import * as superjson from 'superjson'
 import { css, cx } from '@emotion/css'
 import { tokens } from './theme'
 import { createMemo, createSignal, Index, Match, Show, Switch } from 'solid-js'
