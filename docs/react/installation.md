@@ -3,9 +3,9 @@ id: installation
 title: Installation
 ---
 
-You can install React Query via [NPM](https://npmjs.com),
+You can install React Query via [NPM](https://npmjs.com/),
 or a good ol' `<script>` via
-[unpkg.com](https://unpkg.com).
+[ESM.sh](https://esm.sh/).
 
 > v5 is currently in alpha.
 
@@ -25,7 +25,7 @@ React Query is compatible with React v18+ and works with ReactDOM and React Nati
 
 ### CDN
 
-If you're not using a module bundler or package manager, you can also use this library via an ESM-compatible CDN such as [ESM.sh](https://esm.sh/) or [Skypack](https://www.skypack.dev/). Simply add a `<script type="module">` tag to the bottom of your HTML file:
+If you're not using a module bundler or package manager, you can also use this library via an ESM-compatible CDN such as [ESM.sh](https://esm.sh/). Simply add a `<script type="module">` tag to the bottom of your HTML file:
 
 ```html
 <script type="module">
