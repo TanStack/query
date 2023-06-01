@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/svelte-query-devtools",
-  "version": "5.0.0-alpha.44",
+  "version": "5.0.0-alpha.46",
   "description": "Developer tools to interact with and visualize the TanStack/svelte-query cache",
   "author": "Lachlan Collins",
   "license": "MIT",
@@ -13,7 +13,7 @@
   "type": "module",
   "types": "build/lib/index.d.ts",
   "module": "build/lib/index.js",
-  "svelte": "build/lib/index.js",
+  "svelte": "./build/lib/index.js",
   "exports": {
     ".": {
       "types": "./build/lib/index.d.ts",

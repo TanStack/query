@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-sync-storage-persister",
-  "version": "5.0.0-alpha.44",
+  "version": "5.0.0-alpha.46",
   "description": "A persister for synchronous storages, to be used with TanStack/Query",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -10,6 +10,7 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
+  "type": "commonjs",
   "types": "build/lib/index.d.ts",
   "main": "build/lib/index.js",
   "module": "build/lib/index.esm.js",
@@ -30,7 +31,7 @@
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "pnpm build:types",
+    "test:types": "tsc --noEmit",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "build": "pnpm build:rollup && pnpm build:types",

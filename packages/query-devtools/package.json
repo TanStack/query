@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-devtools",
-  "version": "5.0.0-alpha.44",
+  "version": "5.0.0-alpha.46",
   "description": "Developer tools to interact with and visualize the TanStack Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -10,6 +10,7 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
+  "type": "commonjs",
   "types": "build/types/index.d.ts",
   "main": "build/umd/index.js",
   "module": "build/esm/index.mjs",
@@ -25,7 +26,7 @@
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "pnpm build:types",
+    "test:types": "tsc --noEmit",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "build": "pnpm build:rollup && pnpm build:types",

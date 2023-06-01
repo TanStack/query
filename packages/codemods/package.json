@@ -10,6 +10,7 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
+  "type": "commonjs",
   "exports": {
     "./package.json": "./package.json"
   },

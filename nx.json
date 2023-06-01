@@ -28,7 +28,7 @@
   "namedInputs": {
     "globalBuildAffectingConfig": [
       "{workspaceRoot}/.browserslistrc",
-      "{workspaceRoot}/babel.config.js",
+      "{workspaceRoot}/babel.config.cjs",
       "{workspaceRoot}/package.json",
       "{workspaceRoot}/scripts/getRollupConfig.mjs",
       "{workspaceRoot}/tsconfig.json"
@@ -51,26 +51,22 @@
   },
   "targetDefaults": {
     "test:lib": {
-      "outputs": ["{projectRoot}/coverage"],
+      "dependsOn": ["^build"],
       "inputs": ["default", "^public"],
-      "dependsOn": ["^build"]
+      "outputs": ["{projectRoot}/coverage"]
     },
     "test:eslint": {
-      "inputs": ["default", "^public"],
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^public"]
     },
     "test:types": {
-      "outputs": [
-        "{projectRoot}/build/**/*.d.ts",
-        "{projectRoot}/build/.tsbuildinfo"
-      ],
-      "inputs": ["default", "^public"],
-      "dependsOn": ["^test:types"]
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^public"]
     },
     "build": {
-      "outputs": ["{projectRoot}/build/**/*"],
+      "dependsOn": ["^build"],
       "inputs": ["default", "^public"],
-      "dependsOn": ["^build"]
+      "outputs": ["{projectRoot}/build/**/*"]
     },
     "test:build": {
       "dependsOn": ["build"],

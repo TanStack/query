@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-broadcast-client-experimental",
-  "version": "5.0.0-alpha.44",
+  "version": "5.0.0-alpha.46",
   "description": "An experimental plugin to for broadcasting the state of your queryClient between browser tabs/windows",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -10,6 +10,7 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
+  "type": "commonjs",
   "types": "build/lib/index.d.ts",
   "main": "build/lib/index.js",
   "module": "build/lib/index.esm.js",
@@ -30,7 +31,7 @@
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "pnpm build:types",
+    "test:types": "tsc --noEmit",
     "build": "pnpm build:rollup && pnpm build:types",
     "build:rollup": "rollup --config rollup.config.mjs",
     "build:types": "tsc --emitDeclarationOnly"

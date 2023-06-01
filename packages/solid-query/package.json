@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query",
-  "version": "5.0.0-alpha.44",
+  "version": "5.0.0-alpha.46",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Solid",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -10,6 +10,7 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
+  "type": "commonjs",
   "types": "build/types/index.d.ts",
   "main": "build/cjs/index.js",
   "module": "build/esm/index.js",
@@ -34,7 +35,7 @@
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "pnpm build:types",
+    "test:types": "tsc --noEmit",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "build": "pnpm build:rollup && pnpm build:types",

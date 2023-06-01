@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/eslint-plugin-query",
-  "version": "5.0.0-alpha.44",
+  "version": "5.0.0-alpha.46",
   "description": "ESLint plugin for TanStack Query",
   "author": "Eliya Cohen",
   "license": "MIT",
@@ -10,6 +10,7 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
+  "type": "commonjs",
   "main": "build/lib/index.js",
   "exports": {
     ".": {
@@ -22,7 +23,7 @@
     "clean": "rimraf ./build && rimraf ./coverage",
     "dev": "tsup --watch --sourcemap",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc --emitDeclarationOnly",
+    "test:types": "tsc --noEmit",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "build": "tsup --minify"
