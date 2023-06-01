@@ -11,7 +11,6 @@
     "declarationMap": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
     "lib": ["DOM", "DOM.Iterable", "ES2020"],
     "module": "ES2020",
     "moduleResolution": "node",
