@@ -23,7 +23,7 @@ const forceEnvPlugin = (type) =>
 /** @param {'legacy' | 'modern'} type */
 const babelPlugin = (type) =>
   babel({
-    configFile: resolve(rootDir, 'babel.config.js'),
+    configFile: resolve(rootDir, 'babel.config.cjs'),
     browserslistConfigFile: type === 'modern' ? true : false,
     targets:
       type === 'modern'

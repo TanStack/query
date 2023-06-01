@@ -28,7 +28,7 @@
   "namedInputs": {
     "globalBuildAffectingConfig": [
       "{workspaceRoot}/.browserslistrc",
-      "{workspaceRoot}/babel.config.js",
+      "{workspaceRoot}/babel.config.cjs",
       "{workspaceRoot}/package.json",
       "{workspaceRoot}/scripts/getRollupConfig.mjs",
       "{workspaceRoot}/tsconfig.json"
