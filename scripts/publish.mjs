@@ -167,17 +167,14 @@ async function run() {
   /** Uses packages and changedFiles to determine which packages have changed */
   const changedPackages = RELEASE_ALL
     ? packages
-    : changedFiles.reduce((acc, file) => {
-        const pkg = packages.find(
-          (p) =>
-            file.startsWith(path.join(p.packageDir, 'src')) ||
-            file.startsWith(path.join(p.packageDir, 'package.json')),
+    : packages.filter((pkg) => {
+        const changed = changedFiles.some(
+          (file) =>
+            file.startsWith(path.join(pkg.packageDir, 'src')) ||
+            file.startsWith(path.join(pkg.packageDir, 'package.json')),
         )
-        if (pkg && !acc.find((d) => d.name === pkg.name)) {
-          acc.push(pkg)
-        }
-        return acc
-      }, /** @type {import('./types').Package[]} */ ([]))
+        return changed
+      })
 
   // If a package has a dependency that has been updated, we need to update the
   // package that depends on it as well.
