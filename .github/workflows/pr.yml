@@ -16,8 +16,9 @@ jobs:
       main-branch-name: alpha
       artifacts-name: nx-cloud-artifact
       artifacts-path: |
-        packages/**/build/**
-        packages/**/coverage/**
+        **/build/**
+        **/coverage/**
+        !**/node_modules/**
       parallel-commands: |
         npx nx test:format
         npx nx affected --targets=test:eslint,test:types,test:build,test:lib
