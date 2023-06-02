@@ -36,9 +36,6 @@ importers:
       '@rollup/plugin-replace':
         specifier: ^5.0.2
         version: 5.0.2(rollup@3.23.0)
-      '@rollup/plugin-terser':
-        specifier: ^0.4.3
-        version: 0.4.3(rollup@3.23.0)
       '@solidjs/testing-library':
         specifier: ^0.5.1
         version: 0.5.1(solid-js@1.6.16)
@@ -165,9 +162,6 @@ importers:
       rollup-plugin-preserve-directives:
         specifier: ^0.2.0
         version: 0.2.0(rollup@3.23.0)
-      rollup-plugin-size:
-        specifier: ^0.3.1
-        version: 0.3.1
       rollup-plugin-visualizer:
         specifier: ^5.9.0
         version: 5.9.0(rollup@3.23.0)
@@ -5026,21 +5020,6 @@ packages:
         optional: true
     dependencies:
       rollup: 3.23.0
-      terser: 5.17.6
-    dev: true
-
-  /@rollup/plugin-terser@0.4.3(rollup@3.23.0):
-    resolution: {integrity: sha512-EF0oejTMtkyhrkwCdg0HJ0IpkcaVg1MMSf2olHb2Jp+1mnLM04OhjpJWGma4HobiDTF0WCyViWuvadyE9ch2XA==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      rollup: ^2.x || ^3.x
-    peerDependenciesMeta:
-      rollup:
-        optional: true
-    dependencies:
-      rollup: 3.23.0
-      serialize-javascript: 6.0.1
-      smob: 1.1.1
       terser: 5.17.6
     dev: true
 
@@ -13428,11 +13407,6 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
-  /pretty-bytes@6.1.0:
-    resolution: {integrity: sha512-Rk753HI8f4uivXi4ZCIYdhmG1V+WKzvRMg/X+M42a6t7D07RcmopXJMDNk6N++7Bl75URRGsb40ruvg7Hcp2wQ==}
-    engines: {node: ^14.13.1 || >=16.0.0}
-    dev: true
-
   /pretty-format@25.5.0:
     resolution: {integrity: sha512-kbo/kq2LQ/A/is0PQwsEHM7Ca6//bGPPvU6UnsdDRSKTWxT/ru/xb88v4BJf6a69H+uTytOEsTusT9ksd/1iWQ==}
     engines: {node: '>= 8.3'}
@@ -13596,12 +13570,6 @@ packages:
     dependencies:
       performance-now: 2.1.0
     dev: false
-
-  /randombytes@2.1.0:
-    resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
-    dependencies:
-      safe-buffer: 5.2.1
-    dev: true
 
   /range-parser@1.2.1:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
@@ -14328,21 +14296,6 @@ packages:
       rollup: 3.23.0
     dev: true
 
-  /rollup-plugin-size@0.3.1:
-    resolution: {integrity: sha512-SAtpTAAJ0nFkISxLxYjDZX9Zqt34tAIil98R305ZM0GhTnnO6VYG0P5M+2IXKo/iNDdbpBcIfg1W06CLtk/vXA==}
-    dependencies:
-      axios: 1.4.0
-      chalk: 5.2.0
-      ci-env: 1.17.0
-      fs-extra: 11.1.1
-      glob: 8.1.0
-      minimatch: 5.1.6
-      pretty-bytes: 6.1.0
-      zlib: 1.0.5
-    transitivePeerDependencies:
-      - debug
-    dev: true
-
   /rollup-plugin-visualizer@5.9.0(rollup@3.23.0):
     resolution: {integrity: sha512-bbDOv47+Bw4C/cgs0czZqfm8L82xOZssk4ayZjG40y9zbXclNk7YikrZTDao6p7+HDiGxrN0b65SgZiVm9k1Cg==}
     engines: {node: '>=14'}
@@ -14605,12 +14558,6 @@ packages:
       type-fest: 0.12.0
     dev: false
 
-  /serialize-javascript@6.0.1:
-    resolution: {integrity: sha512-owoXEFjWRllis8/M1Q+Cw5k8ZH40e3zhp/ovX+Xr/vi1qj6QesbyXXViFbpNvWvPNAD62SutwEXavefrLJWj7w==}
-    dependencies:
-      randombytes: 2.1.0
-    dev: true
-
   /serve-static@1.15.0:
     resolution: {integrity: sha512-XGuRDNjXUijsUL0vl6nSD7cwURuzEgglbOaFuZM9g3kwDXOWVTck0jLzjPzGD+TazWbboZYu52/9/XPdUgne9g==}
     engines: {node: '>= 0.8.0'}
@@ -14769,10 +14716,6 @@ packages:
   /slugify@1.6.5:
     resolution: {integrity: sha512-8mo9bslnBO3tr5PEVFzMPIWwWnipGS0xVbYf65zxDqfNwmzYn1LpiKNrR6DlClusuvo+hDHd1zKpmfAe83NQSQ==}
     engines: {node: '>=8.0.0'}
-
-  /smob@1.1.1:
-    resolution: {integrity: sha512-i5aqEBPnDv9d77+NDxfjROtywxzNdAVNyaOr+RsLhM28Ts+Ar7luIp/Q+SBYa6wv/7BBcOpEkrhtDxsl2WA9Jg==}
-    dev: true
 
   /snapdragon-node@2.1.1:
     resolution: {integrity: sha512-O27l4xaMYt/RSQ5TR3vpWCAB5Kb/czIcqUFOM/C4fYcLnbZUc1PkjTAMjof2pBWaSTwOUd6qUHcFGVGj7aIwnw==}
@@ -16846,11 +16789,6 @@ packages:
   /yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
-
-  /zlib@1.0.5:
-    resolution: {integrity: sha512-40fpE2II+Cd3k8HWTWONfeKE2jL+P42iWJ1zzps5W51qcTsOUKM5Q5m2PFb0CLxlmFAaUuUdJGc3OfZy947v0w==}
-    engines: {node: '>=0.2.0'}
-    dev: true
 
   /zod@3.21.4:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}

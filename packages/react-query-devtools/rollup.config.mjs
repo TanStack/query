@@ -31,6 +31,5 @@ export default defineConfig([
     },
     forceDevEnv: true,
     forceBundle: true,
-    skipUmdBuild: true,
   }),
 ])
