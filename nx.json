@@ -9,10 +9,7 @@
           "test:eslint",
           "test:types",
           "test:build",
-          "build",
-          "build:rollup",
-          "build:codemods",
-          "build:types"
+          "build"
         ],
         "parallel": 5,
         "accessToken": "ZDdkNDA4MGEtYjNmYi00MWI4LWE1N2QtYTdlNmYxMGJlZWM2fHJlYWQ="
@@ -26,18 +23,18 @@
     }
   },
   "namedInputs": {
-    "globalBuildAffectingConfig": [
+    "globalConfig": [
       "{workspaceRoot}/.browserslistrc",
+      "{workspaceRoot}/.eslintrc.cjs",
       "{workspaceRoot}/babel.config.cjs",
       "{workspaceRoot}/package.json",
+      "{workspaceRoot}/pnpm-lock.yaml",
       "{workspaceRoot}/scripts/getRollupConfig.mjs",
       "{workspaceRoot}/tsconfig.json"
     ],
-    "globalNonBuildAffectingConfig": ["{workspaceRoot}/.eslintrc.cjs"],
     "default": [
+      "globalConfig",
       "{projectRoot}/**/*",
-      "globalBuildAffectingConfig",
-      "globalNonBuildAffectingConfig",
       "!{projectRoot}/**/*.md",
       "!{projectRoot}/**/build/**/*"
     ],
