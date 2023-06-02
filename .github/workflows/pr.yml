@@ -25,7 +25,7 @@ jobs:
           node-version: 18.16.0
           cache: 'pnpm'
       - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+        run: pnpm install --frozen-lockfile
       - name: Start Nx Agent ${{ matrix.agent }}
         run: npx nx-cloud start-agent
   orchestrator:
@@ -45,7 +45,7 @@ jobs:
           node-version: 18.16.0
           cache: 'pnpm'
       - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+        run: pnpm install --frozen-lockfile
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v2
       - run: |
@@ -82,5 +82,5 @@ jobs:
           node-version: 18.16.0
           cache: 'pnpm'
       - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+        run: pnpm install --frozen-lockfile
       - run: pnpm run test:format --base=${{ github.event.pull_request.base.sha }}
