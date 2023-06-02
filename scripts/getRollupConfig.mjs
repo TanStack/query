@@ -75,7 +75,7 @@ export function buildConfigs(opts) {
       exports: 'named',
       preserveModules: true,
       entryFileNames: '[name].js',
-    }
+    },
   ]
 
   return {
