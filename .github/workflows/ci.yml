@@ -55,3 +55,11 @@ jobs:
           TAG: ${{ inputs.tag }}
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
+      - name: Uploading artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: nx-cloud-artifact
+          path: |
+            **/build/**
+            **/coverage/**
+            !**/node_modules/**

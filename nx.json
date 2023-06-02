@@ -29,25 +29,23 @@
     }
   },
   "namedInputs": {
-    "globalBuildAffectingConfig": [
+    "sharedGlobals": [
       "{workspaceRoot}/.browserslistrc",
+      "{workspaceRoot}/.eslintrc.cjs",
       "{workspaceRoot}/babel.config.cjs",
       "{workspaceRoot}/package.json",
       "{workspaceRoot}/scripts/getRollupConfig.mjs",
       "{workspaceRoot}/tsconfig.json"
     ],
-    "globalNonBuildAffectingConfig": ["{workspaceRoot}/.eslintrc.cjs"],
     "default": [
+      "sharedGlobals",
       "{projectRoot}/**/*",
-      "globalBuildAffectingConfig",
-      "globalNonBuildAffectingConfig",
       "!{projectRoot}/**/*.md",
-      "!{projectRoot}/**/build/**/*"
+      "!{projectRoot}/build"
     ],
     "public": [
       "default",
-      "!{workspaceRoot}/.eslintrc.cjs",
-      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "{projectRoot}/build",
       "!{projectRoot}/.eslintrc.cjs",
       "!{projectRoot}/tsconfig.eslint.json"
     ]
