@@ -1,8 +1,10 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "composite": true,
     "outDir": "./build/lib",
     "rootDir": "./src",
+    "tsBuildInfoFile": "./build/.tsbuildinfo",
     "types": ["vitest/globals"]
   },
   "include": ["src"]

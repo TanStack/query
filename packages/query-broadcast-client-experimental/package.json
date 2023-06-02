@@ -31,7 +31,7 @@
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc --noEmit",
+    "test:types": "pnpm build:types",
     "build": "pnpm build:rollup && pnpm build:types",
     "build:rollup": "rollup --config rollup.config.mjs",
     "build:types": "tsc --emitDeclarationOnly"

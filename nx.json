@@ -51,22 +51,26 @@
   },
   "targetDefaults": {
     "test:lib": {
-      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/coverage"],
       "inputs": ["default", "^public"],
-      "outputs": ["{projectRoot}/coverage"]
+      "dependsOn": ["^build"]
     },
     "test:eslint": {
-      "dependsOn": ["^build"],
-      "inputs": ["default", "^public"]
+      "inputs": ["default", "^public"],
+      "dependsOn": ["^build"]
     },
     "test:types": {
-      "dependsOn": ["^build"],
-      "inputs": ["default", "^public"]
+      "outputs": [
+        "{projectRoot}/build/**/*.d.ts",
+        "{projectRoot}/build/.tsbuildinfo"
+      ],
+      "inputs": ["default", "^public"],
+      "dependsOn": ["^test:types"]
     },
     "build": {
-      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/build/**/*"],
       "inputs": ["default", "^public"],
-      "outputs": ["{projectRoot}/build/**/*"]
+      "dependsOn": ["^build"]
     },
     "test:build": {
       "dependsOn": ["build"],

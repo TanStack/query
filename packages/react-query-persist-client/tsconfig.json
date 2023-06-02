@@ -1,9 +1,11 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "composite": true,
     "jsx": "react",
     "outDir": "./build/lib",
     "rootDir": "./src",
+    "tsBuildInfoFile": "./build/.tsbuildinfo",
     "types": ["vitest/globals"]
   },
   "include": ["src"]
