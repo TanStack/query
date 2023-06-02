@@ -1,9 +1,20 @@
 name: pr
+
 on: [pull_request]
+
 env:
   NX_DAEMON: false
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+
 jobs:
+  main:
+    name: Nx Cloud - Main Job
+    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.13.0
+    with:
+      node-version: "18.16.0"
+      pnpm-version: "8.6.0"
+      parallel-commands: |
+        npx nx affected --targets=test:eslint,test:types,test:build,test:lib
   agent:
     name: 'Nx Cloud Agents'
     runs-on: ubuntu-latest
