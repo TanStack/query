@@ -84,6 +84,9 @@ importers:
       '@vitest/coverage-istanbul':
         specifier: ^0.27.1
         version: 0.27.3
+      '@vue/composition-api':
+        specifier: ^1.7.1
+        version: 1.7.1(vue@3.2.47)
       axios:
         specifier: ^1.4.0
         version: 1.4.0
@@ -183,6 +186,9 @@ importers:
       stream-to-array:
         specifier: ^2.3.0
         version: 2.3.0
+      tslib:
+        specifier: ^2.5.2
+        version: 2.5.2
       type-fest:
         specifier: ^3.11.0
         version: 3.11.0
@@ -1529,9 +1535,6 @@ importers:
       svelte-check:
         specifier: ^3.4.3
         version: 3.4.3(@babel/core@7.21.8)(postcss@8.4.23)(svelte@3.55.0)
-      tslib:
-        specifier: ^2.5.2
-        version: 2.5.2
       typescript:
         specifier: ^5.0.4
         version: 5.0.4
@@ -1566,9 +1569,6 @@ importers:
       svelte-check:
         specifier: ^3.4.3
         version: 3.4.3(@babel/core@7.21.8)(postcss@8.4.23)(svelte@3.55.0)
-      tslib:
-        specifier: ^2.5.2
-        version: 2.5.2
       typescript:
         specifier: ^5.0.4
         version: 5.0.4
@@ -1584,6 +1584,9 @@ importers:
       '@tanstack/query-core':
         specifier: ^5.0.0-alpha.43
         version: link:../query-core
+      '@vue/composition-api':
+        specifier: ^1.1.2
+        version: 1.7.1(vue@3.2.47)
       '@vue/devtools-api':
         specifier: ^6.5.0
         version: 6.5.0
@@ -1591,9 +1594,6 @@ importers:
         specifier: ^0.13.11
         version: 0.13.11(@vue/composition-api@1.7.1)(vue@3.2.47)
     devDependencies:
-      '@vue/composition-api':
-        specifier: 1.7.1
-        version: 1.7.1(vue@3.2.47)
       vue:
         specifier: ^3.2.47
         version: 3.2.47

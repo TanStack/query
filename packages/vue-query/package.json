@@ -51,7 +51,6 @@
     "vue-demi": "^0.13.11"
   },
   "devDependencies": {
-    "@vue/composition-api": "1.7.1",
     "vue": "^3.2.47",
     "vue2": "npm:vue@2.6",
     "vue2.7": "npm:vue@2.7"
