@@ -8,11 +8,12 @@ env:
 
 jobs:
   main:
-    name: Nx Cloud
+    name: Nx Cloud - Main Job
     uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.13.0
     with:
       node-version: 18.16.0
       pnpm-version: 8.6.0
+      number-of-agents: 3
       main-branch-name: alpha
       artifacts-name: nx-cloud-artifact
       artifacts-path: |
@@ -21,7 +22,15 @@ jobs:
         !**/node_modules/**
       parallel-commands: |
         npx nx test:format
+      parallel-commands-on-agents: |
         npx nx affected --targets=test:eslint,test:types,test:build,test:lib
+  agents:
+    name: Nx Cloud - Agents
+    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.13.0
+    with:
+      node-version: 18.16.0
+      pnpm-version: 8.6.0
+      number-of-agents: 3
   codecov:
     name: Codecov
     needs: main
