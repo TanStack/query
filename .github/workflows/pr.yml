@@ -1,94 +1,37 @@
 name: pr
+
 on: [pull_request]
+
 env:
-  NX_DAEMON: false
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
+
 jobs:
-  agent:
-    name: 'Nx Cloud Agents'
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    strategy:
-      matrix:
-        agent: [1, 2, 3, 4]
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          ref: ${{ github.head_ref }}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2.2.4
-        with:
-          version: 8
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.16.0
-          cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - name: Start Nx Agent ${{ matrix.agent }}
-        run: npx nx-cloud start-agent
-  orchestrator:
-    name: 'Nx Cloud Orchestrator'
+  main:
+    name: Nx Cloud
+    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.13.0
+    with:
+      node-version: 18.16.0
+      pnpm-version: 8.6.0
+      main-branch-name: alpha
+      artifacts-name: nx-cloud-artifact
+      artifacts-path: |
+        **/build/**
+        **/coverage/**
+        !**/node_modules/**
+      parallel-commands: |
+        npx nx test:format
+        npx nx affected --targets=test:eslint,test:types,test:build,test:lib
+  codecov:
+    name: Codecov
+    needs: main
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Downloading artifacts
+        uses: actions/download-artifact@v3
         with:
-          fetch-depth: 0
-          ref: ${{ github.head_ref }}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2.2.4
-        with:
-          version: 8
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.16.0
-          cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - name: Get appropriate base and head commits for `nx affected` commands
-        uses: nrwl/nx-set-shas@v3
-        with:
-          main-branch-name: 'alpha'
-      - run: |
-          echo "BASE: ${{ env.NX_BASE }}"
-          echo "HEAD: ${{ env.NX_HEAD }}"
-      - name: Start CI Orchestrator
-        run: npx nx-cloud start-ci-run
-      - name: Run All Checks
-        uses: nick-fields/retry@v2.8.3
-        env:
-          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
-        with:
-          timeout_minutes: 5
-          max_attempts: 3
-          command: npx nx affected --targets=test:eslint,test:types,test:build,test:lib --base=${{ github.event.pull_request.base.sha }}
-      - name: Stop Agents
-        run: npx nx-cloud stop-all-agents
+          name: nx-cloud-artifact
+          path: .
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
-  format:
-    name: 'Format'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          ref: ${{ github.head_ref }}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2.2.4
-        with:
-          version: 8
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.16.0
-          cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:format --base=${{ github.event.pull_request.base.sha }}
