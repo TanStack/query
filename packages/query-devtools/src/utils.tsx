@@ -1,5 +1,5 @@
 import type { Query } from '@tanstack/query-core'
-import SuperJSON from 'superjson'
+import * as superjson from 'superjson'
 
 export function getQueryStatusLabel(query: Query) {
   return query.state.fetchStatus === 'fetching'
@@ -60,7 +60,7 @@ export function getQueryStatusColorByLabel(label: IQueryStatusLabel) {
  * @param {boolean} beautify Formats json to multiline
  */
 export const displayValue = (value: unknown, beautify: boolean = false) => {
-  const { json } = SuperJSON.serialize(value)
+  const { json } = superjson.serialize(value)
 
   return JSON.stringify(json, null, beautify ? 2 : undefined)
 }
