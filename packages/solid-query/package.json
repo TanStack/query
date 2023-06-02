@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query",
-  "version": "5.0.0-alpha.48",
+  "version": "5.0.0-alpha.50",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Solid",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -45,7 +45,6 @@
   "files": [
     "build/esm/*",
     "build/cjs/*",
-    "build/umd/*",
     "build/source/*",
     "build/types/*",
     "src"

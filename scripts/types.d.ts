@@ -46,13 +46,3 @@ export type BranchConfig = {
   prerelease: boolean
   ghRelease: boolean
 }
-
-export type Options = {
-  input: string | string[]
-  external: RollupOptions['external']
-  jsName: string
-  outputFile: string
-  globals: Record<string, string>
-  forceDevEnv: boolean
-  forceBundle: boolean
-}

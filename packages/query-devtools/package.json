@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-devtools",
-  "version": "5.0.0-alpha.48",
+  "version": "5.0.0-alpha.50",
   "description": "Developer tools to interact with and visualize the TanStack Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -12,14 +12,14 @@
   },
   "type": "commonjs",
   "types": "build/types/index.d.ts",
-  "main": "build/umd/index.js",
+  "main": "build/cjs/index.js",
   "module": "build/esm/index.mjs",
   "exports": {
     ".": {
       "types": "./build/types/index.d.ts",
       "import": "./build/esm/index.mjs",
-      "require": "./build/umd/index.js",
-      "default": "./build/umd/index.js"
+      "require": "./build/cjs/index.js",
+      "default": "./build/cjs/index.js"
     },
     "./package.json": "./package.json"
   },
