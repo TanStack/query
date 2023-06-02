@@ -35,11 +35,11 @@
     ],
     "globalNonBuildAffectingConfig": ["{workspaceRoot}/.eslintrc.cjs"],
     "default": [
-      "{projectRoot}/**/*",
       "globalBuildAffectingConfig",
       "globalNonBuildAffectingConfig",
+      "{projectRoot}/**/*",
       "!{projectRoot}/**/*.md",
-      "!{projectRoot}/**/build/**/*"
+      "!{projectRoot}/build/**/*"
     ],
     "public": [
       "default",
@@ -47,30 +47,33 @@
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
       "!{projectRoot}/.eslintrc.cjs",
       "!{projectRoot}/tsconfig.eslint.json"
+    ],
+    "build": [
+      "{projectRoot}/build/**/*"
     ]
   },
   "targetDefaults": {
     "test:lib": {
       "dependsOn": ["^build"],
-      "inputs": ["default", "^public"],
+      "inputs": ["default", "^public", "^build"],
       "outputs": ["{projectRoot}/coverage"]
     },
     "test:eslint": {
       "dependsOn": ["^build"],
-      "inputs": ["default", "^public"]
+      "inputs": ["default", "^public", "^build"]
     },
     "test:types": {
       "dependsOn": ["^build"],
-      "inputs": ["default", "^public"]
+      "inputs": ["default", "^public", "^build"]
     },
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["default", "^public"],
+      "inputs": ["default", "^public", "^build"],
       "outputs": ["{projectRoot}/build/**/*"]
     },
     "test:build": {
       "dependsOn": ["build"],
-      "inputs": ["^public"]
+      "inputs": ["^public", "^build"]
     }
   }
 }
