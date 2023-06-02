@@ -14,6 +14,5 @@ export default defineConfig(
       '@tanstack/query-persist-client-core': 'QueryPersistClientCore',
       '@tanstack/react-query': 'ReactQuery',
     },
-    bundleUMDGlobals: ['@tanstack/query-persist-client-core'],
   }),
 )

@@ -42,7 +42,7 @@
   },
   "files": [
     "build/lib/*",
-    "build/umd/*"
+    "src"
   ],
   "dependencies": {
     "@tanstack/query-core": "^5.0.0-alpha.43",

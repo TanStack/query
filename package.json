@@ -40,7 +40,6 @@
     "@rollup/plugin-commonjs": "^25.0.0",
     "@rollup/plugin-node-resolve": "^15.0.2",
     "@rollup/plugin-replace": "^5.0.2",
-    "@rollup/plugin-terser": "^0.4.3",
     "@solidjs/testing-library": "^0.5.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
@@ -83,7 +82,6 @@
     "rimraf": "^5.0.1",
     "rollup": "^3.23.0",
     "rollup-plugin-preserve-directives": "^0.2.0",
-    "rollup-plugin-size": "^0.3.1",
     "rollup-plugin-visualizer": "^5.9.0",
     "rollup-preset-solid": "^2.0.1",
     "semver": "^7.5.1",
@@ -97,7 +95,7 @@
   "bundlewatch": {
     "files": [
       {
-        "path": "packages/*/build/umd/*.production.js"
+        "path": "packages/*/build/lib/*.js"
       }
     ]
   },

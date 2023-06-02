@@ -36,7 +36,6 @@
   },
   "files": [
     "build/lib/*",
-    "build/umd/*",
     "src",
     "build/codemods",
     "!build/codemods/jest.config.js",
