@@ -8,14 +8,16 @@ env:
 
 jobs:
   main:
-    name: Nx Cloud - Main Job
+    name: Nx Cloud
     uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.13.0
     with:
-      node-version: "18.16.0"
-      pnpm-version: "8.6.0"
-      main-branch-name: "alpha"
-      artifacts-name: "coverage-artifact"
-      artifacts-path: "packages/**/coverage/**"
+      node-version: 18.16.0
+      pnpm-version: 8.6.0
+      main-branch-name: alpha
+      artifacts-name: nx-cloud-artifact
+      artifacts-path: |
+        packages/**/build/**
+        packages/**/coverage/**
       parallel-commands: |
         npx nx test:format
         npx nx affected --targets=test:eslint,test:types,test:build,test:lib
@@ -28,7 +30,7 @@ jobs:
       - name: Downloading artifacts
         uses: actions/download-artifact@v3
         with:
-          name: "coverage-artifact"
-          path: path/to/artifact
+          name: nx-cloud-artifact
+          path: .
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
