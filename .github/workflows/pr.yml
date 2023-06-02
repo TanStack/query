@@ -3,8 +3,8 @@ name: pr
 on: [pull_request]
 
 env:
-  NX_DAEMON: false
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
 
 jobs:
   main:
@@ -14,7 +14,21 @@ jobs:
       node-version: "18.16.0"
       pnpm-version: "8.6.0"
       main-branch-name: "alpha"
-      artifacts-path: "**/coverage/**"
+      artifacts-name: "coverage-artifact"
+      artifacts-path: "packages/**/coverage/**"
       parallel-commands: |
         npx nx test:format
         npx nx affected --targets=test:eslint,test:types,test:build,test:lib
+  codecov:
+    name: Codecov
+    needs: main
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Downloading artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: "coverage-artifact"
+          path: path/to/artifact
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
