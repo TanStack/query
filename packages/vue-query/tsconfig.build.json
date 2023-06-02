@@ -3,7 +3,7 @@
   "compilerOptions": {
     "emitDeclarationOnly": true,
     "outDir": "./build/lib",
-    "rootDir": "./src",
+    "rootDir": "./src"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["src/__mocks__/**/*", "src/__tests__/**/*"]
