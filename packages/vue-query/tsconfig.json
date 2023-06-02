@@ -1,13 +1,9 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "noEmit": true,
+    "outDir": "./build/lib",
+    "rootDir": "./src",
     "types": ["vitest/globals"]
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    ".eslintrc.cjs",
-    "rollup.config.mjs"
-  ]
+  "include": ["src"]
 }

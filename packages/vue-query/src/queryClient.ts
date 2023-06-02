@@ -27,7 +27,6 @@ import type { MaybeRefDeep } from './types'
 import { cloneDeepUnref } from './utils'
 import { QueryCache } from './queryCache'
 import { MutationCache } from './mutationCache'
-import type { Ref } from 'vue'
 
 export class QueryClient extends QC {
   constructor(config: MaybeRefDeep<QueryClientConfig> = {}) {
@@ -40,7 +39,7 @@ export class QueryClient extends QC {
     super(vueQueryConfig)
   }
 
-  isRestoring: Ref<boolean> = ref(false)
+  isRestoring = ref(false)
 
   isFetching(filters: MaybeRefDeep<QueryFilters> = {}): number {
     return super.isFetching(cloneDeepUnref(filters))

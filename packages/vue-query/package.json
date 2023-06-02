@@ -30,7 +30,7 @@
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc --project tsconfig.json",
+    "test:types": "tsc --noEmit",
     "test:lib": "pnpm run test:2 && pnpm run test:2.7 && pnpm run test:3",
     "test:2": "vue-demi-switch 2 vue2 && vitest",
     "test:2.7": "vue-demi-switch 2.7 vue2.7 && vitest",
@@ -38,7 +38,7 @@
     "test:lib:dev": "pnpm run test:lib --watch",
     "build": "pnpm build:rollup && pnpm build:types",
     "build:rollup": "rollup --config rollup.config.mjs",
-    "build:types": "tsc --project tsconfig.build.json"
+    "build:types": "tsc --emitDeclarationOnly"
   },
   "files": [
     "build/lib/*",
@@ -51,13 +51,13 @@
     "vue-demi": "^0.13.11"
   },
   "devDependencies": {
-    "@vue/composition-api": "^1.7.1",
+    "@vue/composition-api": "1.7.1",
     "vue": "^3.2.47",
     "vue2": "npm:vue@2.6",
     "vue2.7": "npm:vue@2.7"
   },
   "peerDependencies": {
-    "@vue/composition-api": "^1.7.1",
+    "@vue/composition-api": "^1.1.2",
     "vue": "^2.5.0 || ^3.0.0"
   },
   "peerDependenciesMeta": {

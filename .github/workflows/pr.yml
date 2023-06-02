@@ -17,15 +17,17 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
-      - uses: pnpm/action-setup@v2.2.4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.4
         with:
           version: 8
-      - uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
           node-version: 18.16.0
           cache: 'pnpm'
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - name: Start Nx Agent ${{ matrix.agent }}
         run: npx nx-cloud start-agent
   orchestrator:
@@ -37,17 +39,21 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
-      - uses: pnpm/action-setup@v2.2.4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.4
         with:
           version: 8
-      - uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
           node-version: 18.16.0
           cache: 'pnpm'
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v2
+        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+      - name: Get appropriate base and head commits for `nx affected` commands
+        uses: nrwl/nx-set-shas@v3
+        with:
+          main-branch-name: 'alpha'
       - run: |
           echo "BASE: ${{ env.NX_BASE }}"
           echo "HEAD: ${{ env.NX_HEAD }}"
@@ -74,13 +80,15 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
-      - uses: pnpm/action-setup@v2.2.4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.4
         with:
           version: 8
-      - uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
           node-version: 18.16.0
           cache: 'pnpm'
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - run: pnpm run test:format --base=${{ github.event.pull_request.base.sha }}
