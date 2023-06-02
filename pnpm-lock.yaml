@@ -1592,7 +1592,7 @@ importers:
         version: 0.13.11(@vue/composition-api@1.7.1)(vue@3.2.47)
     devDependencies:
       '@vue/composition-api':
-        specifier: ^1.7.1
+        specifier: 1.7.1
         version: 1.7.1(vue@3.2.47)
       vue:
         specifier: ^3.2.47
