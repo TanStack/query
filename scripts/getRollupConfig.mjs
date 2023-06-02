@@ -3,6 +3,7 @@
 import { resolve } from 'node:path'
 import { babel } from '@rollup/plugin-babel'
 import terser from '@rollup/plugin-terser'
+// @ts-ignore
 import size from 'rollup-plugin-size'
 import { visualizer } from 'rollup-plugin-visualizer'
 import replace from '@rollup/plugin-replace'
