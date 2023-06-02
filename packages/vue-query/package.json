@@ -17,7 +17,7 @@
   "type": "commonjs",
   "types": "build/lib/index.d.ts",
   "main": "build/lib/index.js",
-  "module": "build/lib/index.esm.js",
+  "module": "build/lib/index.mjs",
   "exports": {
     ".": {
       "types": "./build/lib/index.d.ts",
