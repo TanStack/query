@@ -34,7 +34,6 @@ const babelPlugin = () =>
  * @param {string} opts.outputFile - The output file.
  * @param {string} opts.entryFile - The entry file.
  * @param {Record<string, string>} opts.globals - The globals record.
- * @param {string[]} [opts.bundleUMDGlobals] - List of dependencies to bundle for UMD build.
  * @param {boolean} [opts.forceDevEnv] - Flag indicating whether to force development environment.
  * @param {boolean} [opts.forceBundle] - Flag indicating whether to force bundling.
  * @returns {import('rollup').RollupOptions}
@@ -107,7 +106,7 @@ export function createSolidQueryConfig() {
   const solidRollupOptions = /** @type {import('rollup').RollupOptions} */ (
     withSolid({
       input: `./src/index.ts`,
-      targets: ['esm', 'cjs', 'umd'],
+      targets: ['esm', 'cjs'],
       external: ['@tanstack/query-core'],
     })
   )
@@ -120,14 +119,6 @@ export function createSolidQueryConfig() {
 
   outputs.forEach((output) => {
     const format = output.format
-    if (format === 'umd') {
-      output.globals = {
-        'solid-js/store': 'SolidStore',
-        'solid-js/web': 'SolidWeb',
-        'solid-js': 'Solid',
-        '@tanstack/query-core': 'QueryCore',
-      }
-    }
     output.dir = `./build/${format}`
   })
 
@@ -147,7 +138,7 @@ export function createTanstackQueryDevtoolsConfig() {
   const solidRollupOptions = /** @type {import('rollup').RollupOptions} */ (
     withSolid({
       input: `./src/index.tsx`,
-      targets: ['esm', 'cjs', 'umd'],
+      targets: ['esm', 'cjs'],
     })
   )
 

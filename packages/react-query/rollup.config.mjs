@@ -15,6 +15,5 @@ export default defineConfig(
       '@tanstack/query-core': 'QueryCore',
       'react-native': 'ReactNative',
     },
-    bundleUMDGlobals: ['@tanstack/query-core'],
   }),
 )

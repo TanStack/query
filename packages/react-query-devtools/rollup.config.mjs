@@ -4,7 +4,7 @@ import { defineConfig } from 'rollup'
 import { buildConfigs } from '../../scripts/getRollupConfig.mjs'
 
 export default defineConfig([
-  ...buildConfigs({
+  buildConfigs({
     name: 'react-query-devtools',
     jsName: 'ReactQueryDevtools',
     outputFile: 'index',
@@ -15,9 +15,8 @@ export default defineConfig([
       '@tanstack/react-query': 'ReactQuery',
       '@tanstack/query-devtools': 'TanstackQueryDevtools',
     },
-    bundleUMDGlobals: ['@tanstack/query-devtools'],
   }),
-  ...buildConfigs({
+  buildConfigs({
     name: 'react-query-devtools-prod',
     jsName: 'ReactQueryDevtools',
     outputFile: 'index.prod',

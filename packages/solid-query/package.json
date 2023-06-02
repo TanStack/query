@@ -45,7 +45,6 @@
   "files": [
     "build/esm/*",
     "build/cjs/*",
-    "build/umd/*",
     "build/source/*",
     "build/types/*",
     "src"

@@ -16,10 +16,5 @@ export default defineConfig(
       '@tanstack/match-sorter-utils': 'MatchSorter',
       '@vue/devtools-api': 'DevtoolsApi',
     },
-    bundleUMDGlobals: [
-      '@tanstack/query-core',
-      '@tanstack/match-sorter-utils',
-      '@vue/devtools-api',
-    ],
   }),
 )

@@ -25,7 +25,6 @@
   "sideEffects": false,
   "files": [
     "build/lib/*",
-    "build/umd/*",
     "src"
   ],
   "scripts": {
