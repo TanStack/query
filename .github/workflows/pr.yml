@@ -13,6 +13,7 @@ jobs:
     with:
       node-version: "18.16.0"
       pnpm-version: "8.6.0"
+      main-branch-name: "alpha"
       parallel-commands: |
         npx nx test:format
         npx nx affected --targets=test:eslint,test:types,test:build,test:lib
