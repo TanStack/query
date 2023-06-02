@@ -75,7 +75,7 @@ export function buildConfigs(opts) {
     forceBundle: opts.forceBundle || false,
   }
 
-  let builds = [mjs(options), esm(options), cjs(options)]
+  let builds = [mjs(options), cjs(options)]
 
   if (!opts.skipUmdBuild) {
     builds = builds.concat([
@@ -115,42 +115,6 @@ function mjs({ input, external, outputFile, forceDevEnv, forceBundle }) {
     output: forceBundle ? bundleOutput : normalOutput,
     plugins: [
       babelPlugin('modern'),
-      commonJS(),
-      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
-      forceDevEnv ? forceEnvPlugin('development') : undefined,
-      preserveDirectives(),
-    ],
-  }
-}
-
-/**
- * @param {import('./types').Options} options - Options for building configurations.
- * @returns {import('rollup').RollupOptions}
- */
-function esm({ input, external, outputFile, forceDevEnv, forceBundle }) {
-  /** @type {import('rollup').OutputOptions} */
-  const bundleOutput = {
-    format: 'esm',
-    file: `./build/lib/${outputFile}.esm.js`,
-    sourcemap: true,
-  }
-
-  /** @type {import('rollup').OutputOptions} */
-  const normalOutput = {
-    format: 'esm',
-    dir: `./build/lib`,
-    sourcemap: true,
-    preserveModules: true,
-    entryFileNames: '[name].esm.js',
-  }
-
-  return {
-    // ESM
-    external,
-    input,
-    output: forceBundle ? bundleOutput : normalOutput,
-    plugins: [
-      babelPlugin('legacy'),
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
