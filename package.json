@@ -8,7 +8,7 @@
     "preinstall": "node -e \"if(process.env.CI == 'true') {console.log('Skipping preinstall...'); process.exit(1)}\" || npx -y only-allow pnpm",
     "install:csb": "corepack enable && pnpm install --frozen-lockfile",
     "test": "pnpm run test:ci",
-    "test:ci": "nx run-many --projects=packages/** --targets=test:format,test:eslint,test:lib,test:types,build,test:build",
+    "test:ci": "nx run-many --exclude=examples/** --targets=test:format,test:eslint,test:lib,test:types,build,test:build",
     "test:eslint": "nx affected --target=test:eslint",
     "test:format": "pnpm run prettier --check",
     "test:lib": "nx affected --target=test:lib",
