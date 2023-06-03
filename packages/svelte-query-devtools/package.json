@@ -17,8 +17,8 @@
   "exports": {
     ".": {
       "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.js",
       "svelte": "./build/lib/index.js",
+      "import": "./build/lib/index.js",
       "default": "./build/lib/index.js"
     },
     "./package.json": "./package.json"

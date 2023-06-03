@@ -23,13 +23,9 @@
     },
     "./production": {
       "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.prod.mjs",
-      "default": "./build/lib/index.prod.js"
-    },
-    "./build/lib/index.prod.js": {
-      "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.prod.mjs",
-      "default": "./build/lib/index.prod.js"
+      "import": "./build/lib/index.prod.js",
+      "require": "./build/lib/index.prod.cjs",
+      "default": "./build/lib/index.prod.cjs"
     },
     "./package.json": "./package.json"
   },

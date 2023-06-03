@@ -20,6 +20,7 @@
     "@tanstack/query-async-storage-persister",
     "@tanstack/query-broadcast-client-experimental",
     "@tanstack/query-core",
+    "@tanstack/query-devtools",
     "@tanstack/query-persist-client-core",
     "@tanstack/query-sync-storage-persister",
     "@tanstack/react-query",
@@ -28,7 +29,6 @@
     "@tanstack/solid-query",
     "@tanstack/svelte-query",
     "@tanstack/svelte-query-devtools",
-    "@tanstack/vue-query",
-    "@tanstack/query-devtools"
+    "@tanstack/vue-query"
   ]
 }

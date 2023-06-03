@@ -9,13 +9,8 @@ import { fileURLToPath } from 'node:url'
  */
 export const packages = [
   {
-    name: '@tanstack/query-core',
-    packageDir: 'packages/query-core',
-    entries: ['main', 'module', 'types'],
-  },
-  {
-    name: '@tanstack/query-persist-client-core',
-    packageDir: 'packages/query-persist-client-core',
+    name: '@tanstack/eslint-plugin-query',
+    packageDir: 'packages/eslint-plugin-query',
     entries: ['main', 'module', 'types'],
   },
   {
@@ -29,6 +24,21 @@ export const packages = [
     entries: ['main', 'module', 'types'],
   },
   {
+    name: '@tanstack/query-core',
+    packageDir: 'packages/query-core',
+    entries: ['main', 'module', 'types'],
+  },
+  {
+    name: '@tanstack/query-devtools',
+    packageDir: 'packages/query-devtools',
+    entries: ['main', 'module', 'types'],
+  },
+  {
+    name: '@tanstack/query-persist-client-core',
+    packageDir: 'packages/query-persist-client-core',
+    entries: ['main', 'module', 'types'],
+  },
+  {
     name: '@tanstack/query-sync-storage-persister',
     packageDir: 'packages/query-sync-storage-persister',
     entries: ['main', 'module', 'types'],
@@ -36,11 +46,6 @@ export const packages = [
   {
     name: '@tanstack/react-query',
     packageDir: 'packages/react-query',
-    entries: ['main', 'module', 'types'],
-  },
-  {
-    name: '@tanstack/query-devtools',
-    packageDir: 'packages/query-devtools',
     entries: ['main', 'module', 'types'],
   },
   {
@@ -72,11 +77,6 @@ export const packages = [
     name: '@tanstack/vue-query',
     packageDir: 'packages/vue-query',
     entries: ['main', 'module', 'types'],
-  },
-  {
-    name: '@tanstack/eslint-plugin-query',
-    packageDir: 'packages/eslint-plugin-query',
-    entries: ['main'],
   },
 ]
 
