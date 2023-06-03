@@ -9,8 +9,5 @@ export default defineConfig(
     jsName: 'QueryPersistClientCore',
     outputFile: 'index',
     entryFile: './src/index.ts',
-    globals: {
-      '@tanstack/query-core': 'QueryCore',
-    },
   }),
 )

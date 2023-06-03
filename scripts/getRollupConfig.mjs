@@ -6,6 +6,7 @@ import { visualizer } from 'rollup-plugin-visualizer'
 import replace from '@rollup/plugin-replace'
 import { nodeResolve } from '@rollup/plugin-node-resolve'
 import commonJS from '@rollup/plugin-commonjs'
+import externals from 'rollup-plugin-node-externals'
 import withSolid from 'rollup-preset-solid'
 import preserveDirectives from 'rollup-plugin-preserve-directives'
 import { rootDir } from './config.mjs'
@@ -33,14 +34,12 @@ const babelPlugin = () =>
  * @param {string} opts.jsName - The JavaScript name.
  * @param {string} opts.outputFile - The output file.
  * @param {string} opts.entryFile - The entry file.
- * @param {Record<string, string>} opts.globals - The globals record.
  * @param {boolean} [opts.forceDevEnv] - Flag indicating whether to force development environment.
  * @param {boolean} [opts.forceBundle] - Flag indicating whether to force bundling.
  * @returns {import('rollup').RollupOptions}
  */
 export function buildConfigs(opts) {
   const input = [opts.entryFile]
-  const externalDeps = Object.keys(opts.globals)
   const forceDevEnv = opts.forceDevEnv || false
   const forceBundle = opts.forceBundle || false
 
@@ -81,12 +80,17 @@ export function buildConfigs(opts) {
   return {
     input,
     output: forceBundle ? bundleOutput : normalOutput,
-    external: (moduleName) => externalDeps.includes(moduleName),
     plugins: [
       commonJS(),
       babelPlugin(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
+      externals({
+        packagePath: './package.json',
+        deps: true,
+        devDeps: true,
+        peerDeps: true,
+      }),
       preserveDirectives(),
       visualizer({
         filename: `./build/stats-html.html`,
