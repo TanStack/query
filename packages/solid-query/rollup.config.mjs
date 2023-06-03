@@ -1,6 +1,12 @@
 // @ts-check
 
 import { defineConfig } from 'rollup'
-import { createSolidQueryConfig } from '../../scripts/getRollupConfig.mjs'
+import { buildConfigs } from '../../scripts/getRollupConfig.mjs'
 
-export default defineConfig(createSolidQueryConfig())
+export default defineConfig(
+  buildConfigs({
+    name: 'solid-query',
+    outputFile: 'index',
+    entryFile: './src/index.ts',
+  }),
+)

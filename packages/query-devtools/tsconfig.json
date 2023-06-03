@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "declarationDir": "./build/types",
+    "declarationDir": "./build/lib",
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
     "outDir": "./build/source",

@@ -6,7 +6,6 @@ import { buildConfigs } from '../../scripts/getRollupConfig.mjs'
 export default defineConfig(
   buildConfigs({
     name: 'query-persist-client-core',
-    jsName: 'QueryPersistClientCore',
     outputFile: 'index',
     entryFile: './src/index.ts',
   }),

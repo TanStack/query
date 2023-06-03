@@ -10,16 +10,16 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "type": "commonjs",
+  "type": "module",
   "types": "build/types/index.d.ts",
-  "main": "build/cjs/index.js",
-  "module": "build/esm/index.mjs",
+  "main": "build/cjs/index.cjs",
+  "module": "build/esm/index.js",
   "exports": {
     ".": {
       "types": "./build/types/index.d.ts",
       "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.js",
-      "default": "./build/cjs/index.js"
+      "require": "./build/lib/index.cjs",
+      "default": "./build/lib/index.cjs"
     },
     "./package.json": "./package.json"
   },
