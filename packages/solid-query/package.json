@@ -10,22 +10,22 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "type": "commonjs",
+  "type": "module",
   "types": "build/types/index.d.ts",
-  "main": "build/cjs/index.js",
-  "module": "build/esm/index.js",
+  "main": "build/lib/index.cjs",
+  "module": "build/lib/index.js",
   "exports": {
     ".": {
       "types": "./build/types/index.d.ts",
       "solid": "./build/source/index.js",
-      "import": "./build/esm/index.js",
+      "import": "./build/lib/index.js",
       "browser": {
-        "import": "./build/esm/index.js",
-        "require": "./build/cjs/index.js"
+        "import": "./build/lib/index.js",
+        "require": "./build/lib/index.cjs"
       },
-      "require": "./build/cjs/index.js",
-      "node": "./build/cjs/index.js",
-      "default": "./build/cjs/index.js"
+      "require": "./build/lib/index.cjs",
+      "node": "./build/lib/index.cjs",
+      "default": "./build/lib/index.cjs"
     },
     "./package.json": "./package.json"
   },
@@ -39,7 +39,7 @@
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "build": "pnpm build:rollup && pnpm build:types",
-    "build:rollup": "rollup --config rollup.config.mjs",
+    "build:rollup": "rollup --config rollup.config.js",
     "build:types": "tsc"
   },
   "files": [

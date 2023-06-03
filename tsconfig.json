@@ -11,6 +11,7 @@
     "declarationMap": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
     "lib": ["DOM", "DOM.Iterable", "ES2020"],
     "module": "ES2020",
     "moduleResolution": "node",
@@ -26,5 +27,5 @@
     "strictNullChecks": true,
     "target": "ES2020"
   },
-  "include": [".eslintrc.cjs", "rollup.config.mjs", "scripts"]
+  "include": [".eslintrc.cjs", "rollup.config.js", "scripts"]
 }

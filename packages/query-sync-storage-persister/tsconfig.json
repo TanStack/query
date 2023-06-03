@@ -2,7 +2,6 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./build/lib",
-    "rootDir": "./src",
     "types": ["vitest/globals"]
   },
   "include": ["src"]

@@ -10,12 +10,16 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "type": "commonjs",
-  "main": "build/lib/index.js",
+  "type": "module",
+  "types": "build/lib/index.d.ts",
+  "main": "build/lib/index.cjs",
+  "module": "build/lib/index.js",
   "exports": {
     ".": {
-      "require": "./build/lib/index.js",
-      "default": "./build/lib/index.js"
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.js",
+      "require": "./build/lib/index.cjs",
+      "default": "./build/lib/index.cjs"
     },
     "./package.json": "./package.json"
   },
@@ -26,7 +30,7 @@
     "test:types": "tsc --noEmit",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "build": "tsup --minify"
+    "build": "tsup --minify --dts"
   },
   "files": [
     "build"
@@ -37,6 +41,10 @@
     ],
     "external": [
       "eslint"
+    ],
+    "format": [
+      "cjs",
+      "esm"
     ],
     "clean": true,
     "bundle": true,
