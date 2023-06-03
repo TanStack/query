@@ -1,14 +1,13 @@
 // @ts-check
+import withSolid from 'rollup-preset-solid'
 
-import { defineConfig } from 'rollup'
-import { buildConfigs } from '../../scripts/getRollupConfig.js'
+const config = withSolid({
+  input: 'src/index.tsx',
+  targets: ['esm', 'cjs'],
+})
 
-export default defineConfig(
-  buildConfigs({
-    name: 'query-devtools',
-    outputFile: 'index',
-    entryFile: './src/index.tsx',
-    forceBundle: true,
-    bundleDeps: true,
-  }),
-)
+if (!Array.isArray(config)) {
+  config.external = []
+}
+
+export default config
