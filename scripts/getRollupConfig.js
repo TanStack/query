@@ -7,9 +7,8 @@ import replace from '@rollup/plugin-replace'
 import { nodeResolve } from '@rollup/plugin-node-resolve'
 import commonJS from '@rollup/plugin-commonjs'
 import externals from 'rollup-plugin-node-externals'
-import withSolid from 'rollup-preset-solid'
 import preserveDirectives from 'rollup-plugin-preserve-directives'
-import { rootDir } from './config.mjs'
+import { rootDir } from './config.js'
 
 /** @param {'development' | 'production'} type */
 const forceEnvPlugin = (type) =>
@@ -31,9 +30,9 @@ const babelPlugin = () =>
 /**
  * @param {Object} opts - Options for building configurations.
  * @param {string} opts.name - The name.
- * @param {string} opts.jsName - The JavaScript name.
  * @param {string} opts.outputFile - The output file.
  * @param {string} opts.entryFile - The entry file.
+ * @param {boolean} [opts.bundleDeps] - Flag indicating whether to make all deps external.
  * @param {boolean} [opts.forceDevEnv] - Flag indicating whether to force development environment.
  * @param {boolean} [opts.forceBundle] - Flag indicating whether to force bundling.
  * @returns {import('rollup').RollupOptions}
@@ -42,17 +41,18 @@ export function buildConfigs(opts) {
   const input = [opts.entryFile]
   const forceDevEnv = opts.forceDevEnv || false
   const forceBundle = opts.forceBundle || false
+  const bundleDeps = opts.bundleDeps || false
 
   /** @type {import('rollup').OutputOptions[]} */
   const bundleOutput = [
     {
       format: 'esm',
-      file: `./build/lib/${opts.outputFile}.mjs`,
+      file: `./build/lib/${opts.outputFile}.js`,
       sourcemap: true,
     },
     {
       format: 'cjs',
-      file: `./build/lib/${opts.outputFile}.js`,
+      file: `./build/lib/${opts.outputFile}.cjs`,
       sourcemap: true,
       exports: 'named',
     },
@@ -65,7 +65,7 @@ export function buildConfigs(opts) {
       dir: `./build/lib`,
       sourcemap: true,
       preserveModules: true,
-      entryFileNames: '[name].mjs',
+      entryFileNames: '[name].js',
     },
     {
       format: 'cjs',
@@ -73,7 +73,7 @@ export function buildConfigs(opts) {
       sourcemap: true,
       exports: 'named',
       preserveModules: true,
-      entryFileNames: '[name].js',
+      entryFileNames: '[name].cjs',
     },
   ]
 
@@ -85,12 +85,14 @@ export function buildConfigs(opts) {
       babelPlugin(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
-      externals({
-        packagePath: './package.json',
-        deps: true,
-        devDeps: true,
-        peerDeps: true,
-      }),
+      bundleDeps
+        ? undefined
+        : externals({
+            packagePath: './package.json',
+            deps: true,
+            devDeps: true,
+            peerDeps: true,
+          }),
       preserveDirectives(),
       visualizer({
         filename: `./build/stats-html.html`,
@@ -104,73 +106,4 @@ export function buildConfigs(opts) {
       }),
     ],
   }
-}
-
-export function createSolidQueryConfig() {
-  const solidRollupOptions = /** @type {import('rollup').RollupOptions} */ (
-    withSolid({
-      input: `./src/index.ts`,
-      targets: ['esm', 'cjs'],
-      external: ['@tanstack/query-core'],
-    })
-  )
-
-  const outputs = !solidRollupOptions.output
-    ? []
-    : Array.isArray(solidRollupOptions.output)
-    ? solidRollupOptions.output
-    : [solidRollupOptions.output]
-
-  outputs.forEach((output) => {
-    const format = output.format
-    output.dir = `./build/${format}`
-  })
-
-  const plugins = /** @type {import('rollup').Plugin[]} */ (
-    solidRollupOptions.plugins
-  )
-  // Prevent types generation since it doesn't resolve the directory correctly
-  // Instead build:types will generate those types anyway
-  const filtered = plugins.filter((plugin) => plugin.name !== 'ts')
-
-  solidRollupOptions.plugins = filtered
-
-  return solidRollupOptions
-}
-
-export function createTanstackQueryDevtoolsConfig() {
-  const solidRollupOptions = /** @type {import('rollup').RollupOptions} */ (
-    withSolid({
-      input: `./src/index.tsx`,
-      targets: ['esm', 'cjs'],
-    })
-  )
-
-  const outputs = !solidRollupOptions.output
-    ? []
-    : Array.isArray(solidRollupOptions.output)
-    ? solidRollupOptions.output
-    : [solidRollupOptions.output]
-
-  outputs.forEach((output) => {
-    const format = output.format
-    output.dir = `./build/${format}`
-    if (output.format === 'esm') {
-      output.dir = undefined
-      output.file = `./build/${format}/index.mjs`
-    }
-  })
-
-  solidRollupOptions.external = []
-
-  const plugins = /** @type {import('rollup').Plugin[]} */ (
-    solidRollupOptions.plugins
-  )
-  // Prevent types generation since it doesn't resolve the directory correctly
-  // Instead build:types will generate those types anyway
-  const filtered = plugins.filter((plugin) => plugin.name !== 'ts')
-
-  solidRollupOptions.plugins = filtered
-
-  return solidRollupOptions
 }

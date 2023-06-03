@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-devtools",
-  "version": "5.0.0-alpha.50",
+  "version": "5.0.0-alpha.51",
   "description": "Developer tools to interact with and visualize the TanStack Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -10,16 +10,17 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "type": "commonjs",
+  "type": "module",
   "types": "build/types/index.d.ts",
-  "main": "build/cjs/index.js",
-  "module": "build/esm/index.mjs",
+  "main": "build/lib/index.cjs",
+  "module": "build/lib/index.js",
   "exports": {
     ".": {
       "types": "./build/types/index.d.ts",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.js",
-      "default": "./build/cjs/index.js"
+      "solid": "./build/source/index.jsx",
+      "import": "./build/lib/index.js",
+      "require": "./build/lib/index.cjs",
+      "default": "./build/lib/index.cjs"
     },
     "./package.json": "./package.json"
   },
@@ -30,7 +31,7 @@
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "build": "pnpm build:rollup && pnpm build:types",
-    "build:rollup": "rollup --config rollup.config.mjs",
+    "build:rollup": "rollup --config rollup.config.js",
     "build:types": "tsc"
   },
   "files": [

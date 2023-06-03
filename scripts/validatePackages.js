@@ -4,7 +4,7 @@ import path from 'node:path'
 import fsp from 'node:fs/promises'
 import jsonfile from 'jsonfile'
 import { publint } from 'publint'
-import { packages, rootDir } from './config.mjs'
+import { packages, rootDir } from './config.js'
 
 async function run() {
   console.info('Validating packages...')
@@ -58,7 +58,13 @@ async function run() {
       const publintResult = await publint({ pkgDir: pkg.packageDir })
 
       publintResult.forEach((message) => {
-        console.log(`Publint warning: ${JSON.stringify(message, null, 2)}`)
+        failedValidations.push(
+          `Publint warning: ${pkg.packageDir} ${JSON.stringify(
+            message,
+            null,
+            2,
+          )}`,
+        )
       })
     }),
   )

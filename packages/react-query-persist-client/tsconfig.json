@@ -3,7 +3,6 @@
   "compilerOptions": {
     "jsx": "react",
     "outDir": "./build/lib",
-    "rootDir": "./src",
     "types": ["vitest/globals"]
   },
   "include": ["src"]

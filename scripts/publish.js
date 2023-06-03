@@ -12,7 +12,7 @@ import log from 'git-log-parser'
 import streamToArray from 'stream-to-array'
 import axios from 'axios'
 import { DateTime } from 'luxon'
-import { branchConfigs, latestBranch, packages, rootDir } from './config.mjs'
+import { branchConfigs, latestBranch, packages, rootDir } from './config.js'
 
 /** @param {string} version */
 const releaseCommitMsg = (version) => `release: v${version}`
@@ -22,7 +22,7 @@ async function run() {
     process.env.BRANCH ?? currentGitBranch()
   )
 
-  /** @type {import('./types').BranchConfig | undefined} */
+  /** @type {import('./types.js').BranchConfig | undefined} */
   const branchConfig = branchConfigs[branchName]
 
   if (!branchConfig) {
@@ -91,7 +91,7 @@ async function run() {
 
   /**
    * Get the commits since the latest tag
-   * @type {import('./types').Commit[]}
+   * @type {import('./types.js').Commit[]}
    */
   const commitsSinceLatestTag = (
     await new Promise((resolve, reject) => {
@@ -111,7 +111,7 @@ async function run() {
         ).then((res) => resolve(res.filter(Boolean)))
       })
     })
-  ).filter((/** @type {import('./types').Commit} */ commit) => {
+  ).filter((/** @type {import('./types.js').Commit} */ commit) => {
     const exclude = [
       commit.subject.startsWith('Merge branch '), // No merge commits
       commit.subject.startsWith(releaseCommitMsg('')), // No example update commits
@@ -236,7 +236,7 @@ async function run() {
               ...acc,
               [type]: [...(acc[type] || []), next],
             }
-          }, /** @type {Record<string, import('./types').Commit[]>} */ ({})),
+          }, /** @type {Record<string, import('./types.js').Commit[]>} */ ({})),
         )
           .sort(
             getSorterFn([
