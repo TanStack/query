@@ -11,13 +11,14 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "type": "module",
-  "types": "build/types/index.d.ts",
-  "main": "build/cjs/index.cjs",
-  "module": "build/esm/index.js",
+  "types": "build/lib/index.d.ts",
+  "main": "build/lib/index.cjs",
+  "module": "build/lib/index.js",
   "exports": {
     ".": {
-      "types": "./build/types/index.d.ts",
-      "import": "./build/esm/index.mjs",
+      "types": "./build/lib/index.d.ts",
+      "solid": "./build/source/index.js",
+      "import": "./build/lib/index.js",
       "require": "./build/lib/index.cjs",
       "default": "./build/lib/index.cjs"
     },

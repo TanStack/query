@@ -7,6 +7,6 @@ export default defineConfig(
   buildConfigs({
     name: 'query-devtools',
     outputFile: 'index',
-    entryFile: './src/index.ts',
+    entryFile: './src/index.tsx',
   }),
 )
