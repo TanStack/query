@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/svelte-query-devtools",
-  "version": "5.0.0-alpha.51",
+  "version": "5.0.0-alpha.53",
   "description": "Developer tools to interact with and visualize the TanStack/svelte-query cache",
   "author": "Lachlan Collins",
   "license": "MIT",
@@ -31,6 +31,7 @@
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:types": "svelte-check --tsconfig ./tsconfig.json",
     "test:eslint": "eslint --ext .svelte,.ts ./src",
+    "test:build": "publint",
     "build": "svelte-package --input ./src --output ./build/lib"
   },
   "dependencies": {

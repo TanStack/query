@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/eslint-plugin-query",
-  "version": "5.0.0-alpha.51",
+  "version": "5.0.0-alpha.53",
   "description": "ESLint plugin for TanStack Query",
   "author": "Eliya Cohen",
   "license": "MIT",
@@ -30,6 +30,7 @@
     "test:types": "tsc --noEmit",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
+    "test:build": "publint",
     "build": "tsup --minify --dts"
   },
   "files": [

@@ -95,13 +95,8 @@ export function buildConfigs(opts) {
           }),
       preserveDirectives(),
       visualizer({
-        filename: `./build/stats-html.html`,
+        filename: `./build/stats.html`,
         template: 'treemap',
-        gzipSize: true,
-      }),
-      visualizer({
-        filename: `./build/stats.json`,
-        template: 'raw-data',
         gzipSize: true,
       }),
     ],

@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/svelte-query",
-  "version": "5.0.0-alpha.51",
+  "version": "5.0.0-alpha.53",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Svelte",
   "author": "Lachlan Collins",
   "license": "MIT",
@@ -35,6 +35,7 @@
     "test:eslint": "eslint --ext .svelte,.ts ./src",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
+    "test:build": "publint",
     "build": "svelte-package --input ./src --output ./build/lib"
   },
   "dependencies": {

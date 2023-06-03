@@ -8,25 +8,24 @@
     "preinstall": "node -e \"if(process.env.CI == 'true') {console.log('Skipping preinstall...'); process.exit(1)}\" || npx -y only-allow pnpm",
     "install:csb": "corepack enable && pnpm install --frozen-lockfile",
     "test": "pnpm run test:ci",
-    "test:ci": "nx affected --targets=test:format,test:lib,test:types,test:eslint",
+    "test:ci": "nx run-many --exclude=examples/** --targets=test:format,test:eslint,test:lib,test:types,build,test:build",
     "test:eslint": "nx affected --target=test:eslint",
     "test:format": "pnpm run prettier --check",
     "test:lib": "nx affected --target=test:lib",
     "test:lib:dev": "pnpm --filter \"./packages/**\" run test:lib:dev",
-    "test:build": "nx run-many --target=test:build --projects=root",
+    "test:build": "nx affected --target=test:build",
     "test:types": "nx affected --target=test:types",
-    "build": "nx run-many --target=build --projects=root",
+    "build": "nx affected --target=build",
+    "build:all": "nx run-many --exclude=examples/** --target=build",
     "watch": "concurrently --kill-others \"pnpm -r build:rollup -w\" \"pnpm -r build:types --watch\"",
     "dev": "pnpm run watch",
     "prettier": "prettier --plugin-search-dir . \"{packages,examples,scripts}/**/*.{md,js,jsx,cjs,ts,tsx,json,vue,svelte}\"",
     "prettier:write": "pnpm run prettier --write",
-    "cipublish": "node scripts/publish.js",
-    "validatePackages": "node scripts/validatePackages.js"
+    "cipublish": "node scripts/publish.js"
   },
   "nx": {
     "includedScripts": [
-      "test:format",
-      "test:build"
+      "test:format"
     ]
   },
   "namespace": "@tanstack",
@@ -57,7 +56,6 @@
     "@vitest/coverage-istanbul": "^0.27.1",
     "axios": "^1.4.0",
     "babel-preset-solid": "^1.6.10",
-    "bundlewatch": "^0.3.3",
     "chalk": "^5.2.0",
     "concurrently": "^8.0.1",
     "cpy-cli": "^4.2.0",
@@ -91,13 +89,6 @@
     "typescript": "^5.0.4",
     "vitest": "^0.27.1",
     "vue": "^3.2.47"
-  },
-  "bundlewatch": {
-    "files": [
-      {
-        "path": "packages/*/build/lib/*.js"
-      }
-    ]
   },
   "pnpm": {
     "patchedDependencies": {
