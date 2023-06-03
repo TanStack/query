@@ -13,7 +13,7 @@ jobs:
     with:
       node-version: 18.16.0
       pnpm-version: 8.6.0
-      number-of-agents: 3
+      number-of-agents: 1
       main-branch-name: alpha
       artifacts-name: nx-cloud-artifact
       artifacts-path: |
@@ -30,7 +30,7 @@ jobs:
     with:
       node-version: 18.16.0
       pnpm-version: 8.6.0
-      number-of-agents: 3
+      number-of-agents: 1
   codecov:
     name: Codecov
     needs: main
