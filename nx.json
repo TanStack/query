@@ -40,8 +40,7 @@
     "default": [
       "sharedGlobals",
       "{projectRoot}/**/*",
-      "!{projectRoot}/**/*.md",
-      "!{projectRoot}/build"
+      "!{projectRoot}/**/*.md"
     ],
     "public": [
       "default",
@@ -67,7 +66,7 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["default", "^public"],
-      "outputs": ["{projectRoot}/build/**/*"]
+      "outputs": ["{projectRoot}/build"]
     },
     "test:build": {
       "dependsOn": ["build"],

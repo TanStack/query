@@ -41,6 +41,5 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: nx-cloud-artifact
-          path: .
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
