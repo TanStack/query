@@ -59,7 +59,11 @@ async function run() {
 
       publintResult.forEach((message) => {
         failedValidations.push(
-          `Publint warning: ${pkg.packageDir} ${JSON.stringify(message, null, 2)}`,
+          `Publint warning: ${pkg.packageDir} ${JSON.stringify(
+            message,
+            null,
+            2,
+          )}`,
         )
       })
     }),
