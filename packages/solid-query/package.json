@@ -43,10 +43,7 @@
     "build:types": "tsc"
   },
   "files": [
-    "build/esm/*",
-    "build/cjs/*",
-    "build/source/*",
-    "build/types/*",
+    "build",
     "src"
   ],
   "dependencies": {
