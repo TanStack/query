@@ -34,7 +34,7 @@
     "test:types": "tsc --noEmit",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint",
+    "test:build": "publint --strict",
     "build": "pnpm build:rollup && pnpm rename-build-dir",
     "rename-build-dir": "rimraf ./build && mv ./dist ./build",
     "build:rollup": "rollup --config rollup.config.js",
