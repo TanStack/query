@@ -8,5 +8,7 @@ export default defineConfig(
     name: 'query-devtools',
     outputFile: 'index',
     entryFile: './src/index.tsx',
+    forceBundle: true,
+    bundleDeps: true,
   }),
 )

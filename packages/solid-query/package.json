@@ -11,12 +11,12 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "type": "module",
-  "types": "build/lib/index.d.ts",
+  "types": "build/types/index.d.ts",
   "main": "build/lib/index.cjs",
   "module": "build/lib/index.js",
   "exports": {
     ".": {
-      "types": "./build/lib/index.d.ts",
+      "types": "./build/types/index.d.ts",
       "solid": "./build/source/index.js",
       "import": "./build/lib/index.js",
       "browser": {

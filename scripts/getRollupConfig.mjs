@@ -32,6 +32,7 @@ const babelPlugin = () =>
  * @param {string} opts.name - The name.
  * @param {string} opts.outputFile - The output file.
  * @param {string} opts.entryFile - The entry file.
+ * @param {boolean} [opts.bundleDeps] - Flag indicating whether to make all deps external.
  * @param {boolean} [opts.forceDevEnv] - Flag indicating whether to force development environment.
  * @param {boolean} [opts.forceBundle] - Flag indicating whether to force bundling.
  * @returns {import('rollup').RollupOptions}
@@ -40,6 +41,7 @@ export function buildConfigs(opts) {
   const input = [opts.entryFile]
   const forceDevEnv = opts.forceDevEnv || false
   const forceBundle = opts.forceBundle || false
+  const bundleDeps = opts.bundleDeps || false
 
   /** @type {import('rollup').OutputOptions[]} */
   const bundleOutput = [
@@ -83,7 +85,7 @@ export function buildConfigs(opts) {
       babelPlugin(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
-      externals({
+      bundleDeps ? undefined : externals({
         packagePath: './package.json',
         deps: true,
         devDeps: true,
