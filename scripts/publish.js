@@ -348,16 +348,6 @@ async function run() {
     return
   }
 
-  console.info('Building packages...')
-  execSync(`pnpm run build --skip-nx-cache`, {
-    encoding: 'utf8',
-    stdio: 'inherit',
-  })
-  console.info('')
-
-  console.info('Validating packages...')
-  execSync(`pnpm run validatePackages`, { encoding: 'utf8', stdio: 'inherit' })
-
   console.info(`Updating all changed packages to version ${version}...`)
   // Update each package to the new version
   for (const pkg of changedPackages) {

@@ -35,6 +35,7 @@
     "test:eslint": "eslint --ext .svelte,.ts ./src",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
+    "test:build": "publint",
     "build": "svelte-package --input ./src --output ./build/lib"
   },
   "dependencies": {

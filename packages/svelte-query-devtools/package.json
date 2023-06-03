@@ -31,6 +31,7 @@
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:types": "svelte-check --tsconfig ./tsconfig.json",
     "test:eslint": "eslint --ext .svelte,.ts ./src",
+    "test:build": "publint",
     "build": "svelte-package --input ./src --output ./build/lib"
   },
   "dependencies": {
