@@ -12,7 +12,7 @@
   },
   "type": "module",
   "types": "dist/types/index.d.ts",
-  "main": "dist/cjs/index.js",
+  "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.js",
   "exports": {
     ".": {
@@ -21,10 +21,10 @@
       "import": "./dist/esm/index.js",
       "browser": {
         "import": "./dist/esm/index.js",
-        "require": "./dist/cjs/index.js"
+        "require": "./dist/cjs/index.cjs"
       },
-      "require": "./dist/cjs/index.js",
-      "node": "./dist/cjs/index.js"
+      "require": "./dist/cjs/index.cjs",
+      "node": "./dist/cjs/index.cjs"
     },
     "./package.json": "./package.json"
   },
