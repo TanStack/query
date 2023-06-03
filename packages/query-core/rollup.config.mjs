@@ -9,6 +9,5 @@ export default defineConfig(
     jsName: 'QueryCore',
     outputFile: 'index',
     entryFile: './src/index.ts',
-    globals: {},
   }),
 )

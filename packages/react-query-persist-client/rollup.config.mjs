@@ -9,10 +9,5 @@ export default defineConfig(
     jsName: 'ReactQueryPersistClient',
     outputFile: 'index',
     entryFile: './src/index.ts',
-    globals: {
-      react: 'React',
-      '@tanstack/query-persist-client-core': 'QueryPersistClientCore',
-      '@tanstack/react-query': 'ReactQuery',
-    },
   }),
 )
