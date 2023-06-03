@@ -85,12 +85,14 @@ export function buildConfigs(opts) {
       babelPlugin(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
-      bundleDeps ? undefined : externals({
-        packagePath: './package.json',
-        deps: true,
-        devDeps: true,
-        peerDeps: true,
-      }),
+      bundleDeps
+        ? undefined
+        : externals({
+            packagePath: './package.json',
+            deps: true,
+            devDeps: true,
+            peerDeps: true,
+          }),
       preserveDirectives(),
       visualizer({
         filename: `./build/stats-html.html`,

@@ -58,7 +58,9 @@ async function run() {
       const publintResult = await publint({ pkgDir: pkg.packageDir })
 
       publintResult.forEach((message) => {
-        failedValidations.push(`Publint warning: ${JSON.stringify(message, null, 2)}`)
+        failedValidations.push(
+          `Publint warning: ${JSON.stringify(message, null, 2)}`,
+        )
       })
     }),
   )
