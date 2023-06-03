@@ -9,12 +9,5 @@ export default defineConfig(
     jsName: 'VueQuery',
     outputFile: 'index',
     entryFile: './src/index.ts',
-    globals: {
-      '@tanstack/query-core': 'QueryCore',
-      vue: 'Vue',
-      'vue-demi': 'Vue',
-      '@tanstack/match-sorter-utils': 'MatchSorter',
-      '@vue/devtools-api': 'DevtoolsApi',
-    },
   }),
 )

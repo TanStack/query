@@ -9,8 +9,5 @@ export default defineConfig(
     jsName: 'QueryAsyncStoragePersister',
     outputFile: 'index',
     entryFile: './src/index.ts',
-    globals: {
-      '@tanstack/query-persist-client-core': 'QueryPersistClientCore',
-    },
   }),
 )

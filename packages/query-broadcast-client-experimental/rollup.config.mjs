@@ -9,9 +9,5 @@ export default defineConfig(
     jsName: 'QueryBroadcastClient',
     outputFile: 'index',
     entryFile: './src/index.ts',
-    globals: {
-      '@tanstack/query-core': 'QueryCore',
-      'broadcast-channel': 'BroadcastChannel',
-    },
   }),
 )
