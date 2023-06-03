@@ -11,16 +11,20 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "type": "module",
-  "types": "build/lib/index.d.ts",
-  "main": "build/lib/index.cjs",
-  "module": "build/lib/index.js",
+  "types": "build/types/index.d.ts",
+  "main": "build/cjs/index.js",
+  "module": "build/esm/index.js",
   "exports": {
     ".": {
-      "types": "./build/lib/index.d.ts",
-      "solid": "./build/lib/index.js",
-      "import": "./build/lib/index.js",
-      "require": "./build/lib/index.cjs",
-      "default": "./build/lib/index.cjs"
+      "types": "./build/types/index.d.ts",
+      "solid": "./build/source/index.jsx",
+      "import": "./build/esm/index.js",
+      "browser": {
+        "import": "./build/esm/index.js",
+        "require": "./build/cjs/index.js"
+      },
+      "require": "./build/cjs/index.js",
+      "node": "./build/cjs/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -31,7 +35,8 @@
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint",
-    "build": "pnpm build:rollup && pnpm build:types",
+    "build": "pnpm build:rollup && pnpm rename-build-dir",
+    "rename-build-dir": "rimraf ./build && mv ./dist ./build",
     "build:rollup": "rollup --config rollup.config.js",
     "build:types": "tsc --emitDeclarationOnly"
   },
@@ -51,6 +56,7 @@
   },
   "devDependencies": {
     "@tanstack/query-core": "^5.0.0-alpha.43",
+    "rollup-preset-solid": "^2.0.1",
     "vite-plugin-solid": "^2.5.0"
   }
 }
