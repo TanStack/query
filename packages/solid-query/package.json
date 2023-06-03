@@ -16,7 +16,7 @@
   "module": "build/lib/index.js",
   "exports": {
     ".": {
-      "types": "./build/types/index.d.ts",
+      "types": "./build/lib/index.d.ts",
       "solid": "./build/lib/index.js",
       "import": "./build/lib/index.js",
       "require": "./build/lib/index.cjs",
