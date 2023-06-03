@@ -5,8 +5,7 @@
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
     "outDir": "./build/source",
-    "rootDir": "./src",
     "types": ["vitest/globals"]
   },
-  "include": ["src", "createInfiniteQuery.test.tsx", "suspense.test.tsx"]
+  "include": ["src"]
 }
