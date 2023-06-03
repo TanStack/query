@@ -17,14 +17,9 @@
   "exports": {
     ".": {
       "types": "./build/types/index.d.ts",
-      "solid": "./build/source/index.js",
+      "solid": "./build/lib/index.js",
       "import": "./build/lib/index.js",
-      "browser": {
-        "import": "./build/lib/index.js",
-        "require": "./build/lib/index.cjs"
-      },
       "require": "./build/lib/index.cjs",
-      "node": "./build/lib/index.cjs",
       "default": "./build/lib/index.cjs"
     },
     "./package.json": "./package.json"
@@ -40,7 +35,7 @@
     "test:lib:dev": "pnpm run test:lib --watch",
     "build": "pnpm build:rollup && pnpm build:types",
     "build:rollup": "rollup --config rollup.config.js",
-    "build:types": "tsc"
+    "build:types": "tsc --emitDeclarationOnly"
   },
   "files": [
     "build",
