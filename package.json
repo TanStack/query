@@ -16,6 +16,7 @@
     "test:build": "nx affected --target=test:build",
     "test:types": "nx affected --target=test:types",
     "build": "nx affected --target=build",
+    "build:all": "nx run-many --exclude=examples/** --target=build",
     "watch": "concurrently --kill-others \"pnpm -r build:rollup -w\" \"pnpm -r build:types --watch\"",
     "dev": "pnpm run watch",
     "prettier": "prettier --plugin-search-dir . \"{packages,examples,scripts}/**/*.{md,js,jsx,cjs,ts,tsx,json,vue,svelte}\"",
