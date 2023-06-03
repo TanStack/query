@@ -11,13 +11,13 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "type": "module",
-  "types": "build/types/index.d.ts",
+  "types": "build/lib/index.d.ts",
   "main": "build/lib/index.cjs",
   "module": "build/lib/index.js",
   "exports": {
     ".": {
-      "types": "./build/types/index.d.ts",
-      "solid": "./build/source/index.jsx",
+      "types": "./build/lib/index.d.ts",
+      "solid": "./build/lib/index.js",
       "import": "./build/lib/index.js",
       "require": "./build/lib/index.cjs",
       "default": "./build/lib/index.cjs"
@@ -32,7 +32,7 @@
     "test:lib:dev": "pnpm run test:lib --watch",
     "build": "pnpm build:rollup && pnpm build:types",
     "build:rollup": "rollup --config rollup.config.js",
-    "build:types": "tsc"
+    "build:types": "tsc --emitDeclarationOnly"
   },
   "files": [
     "build",
