@@ -27,5 +27,5 @@
     "strictNullChecks": true,
     "target": "ES2020"
   },
-  "include": [".eslintrc.cjs", "rollup.config.mjs", "scripts"]
+  "include": [".eslintrc.cjs", "rollup.config.js", "scripts"]
 }

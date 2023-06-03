@@ -8,7 +8,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve'
 import commonJS from '@rollup/plugin-commonjs'
 import externals from 'rollup-plugin-node-externals'
 import preserveDirectives from 'rollup-plugin-preserve-directives'
-import { rootDir } from './config.mjs'
+import { rootDir } from './config.js'
 
 /** @param {'development' | 'production'} type */
 const forceEnvPlugin = (type) =>

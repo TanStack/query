@@ -33,7 +33,7 @@
       "{workspaceRoot}/.browserslistrc",
       "{workspaceRoot}/babel.config.cjs",
       "{workspaceRoot}/package.json",
-      "{workspaceRoot}/scripts/getRollupConfig.mjs",
+      "{workspaceRoot}/scripts/getRollupConfig.js",
       "{workspaceRoot}/tsconfig.json"
     ],
     "globalNonBuildAffectingConfig": ["{workspaceRoot}/.eslintrc.cjs"],
