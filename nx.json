@@ -12,10 +12,7 @@
           "test:eslint",
           "test:types",
           "test:build",
-          "build",
-          "build:rollup",
-          "build:codemods",
-          "build:types"
+          "build"
         ],
         "parallel": 5,
         "accessToken": "ZDdkNDA4MGEtYjNmYi00MWI4LWE1N2QtYTdlNmYxMGJlZWM2fHJlYWQ="
