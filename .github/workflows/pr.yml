@@ -121,4 +121,5 @@ jobs:
           max_attempts: 3
           command: npx nx affected --targets=test:lib --base=${{ github.event.pull_request.base.sha }}
         env:
+          NX_CLOUD_DISTRIBUTED_EXECUTION: false
           REACTJS_VERSION: 17
