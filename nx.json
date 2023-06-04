@@ -14,7 +14,7 @@
           "test:build",
           "build"
         ],
-        "parallel": 5,
+        "parallel": 3,
         "accessToken": "ZDdkNDA4MGEtYjNmYi00MWI4LWE1N2QtYTdlNmYxMGJlZWM2fHJlYWQ="
       }
     }
