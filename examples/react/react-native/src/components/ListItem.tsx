@@ -1,11 +1,11 @@
-import * as React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Paragraph, TouchableRipple } from 'react-native-paper';
+import * as React from 'react'
+import { View, StyleSheet } from 'react-native'
+import { Paragraph, TouchableRipple } from 'react-native-paper'
 
 type Props = {
-  item: any;
-  onPress: (item: any) => void;
-};
+  item: any
+  onPress: (item: any) => void
+}
 
 export function ListItem({ item, onPress }: Props) {
   return (
@@ -19,7 +19,7 @@ export function ListItem({ item, onPress }: Props) {
         </View>
       </View>
     </TouchableRipple>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -38,4 +38,4 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   title: { fontWeight: 'bold' },
-});
+})

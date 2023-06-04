@@ -1,2 +1,5 @@
-/packages/svelte-query/.svelte-kit
-/packages/react-query/build
+**/.next
+**/.svelte-kit
+**/build
+**/coverage
+**/dist

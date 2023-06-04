@@ -66,7 +66,7 @@ export const Examples = () => {
   // --- NewExpression
   const queryCache1 = new QueryCache({
     onError: (error) => console.log(error),
-    onSuccess: (success) => console.log(success)
+    onSuccess: (success) => console.log(success),
   })
   queryCache1.find('todos')
   queryCache1.findAll('todos')

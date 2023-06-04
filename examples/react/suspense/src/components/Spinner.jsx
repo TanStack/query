@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 
 export default function Spinner() {
   return (
@@ -6,8 +6,8 @@ export default function Spinner() {
       className="fa fa-circle-o-notch fa-spin"
       style={{
         marginLeft: 4,
-        fontSize: "small",
+        fontSize: 'small',
       }}
     />
-  );
+  )
 }

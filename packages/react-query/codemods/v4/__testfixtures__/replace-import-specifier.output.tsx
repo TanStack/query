@@ -1,6 +1,9 @@
 // React Query
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useQuery as RenamedUseQuery, useQueryClient as RenamedUseQueryClient } from '@tanstack/react-query'
+import {
+  useQuery as RenamedUseQuery,
+  useQueryClient as RenamedUseQueryClient,
+} from '@tanstack/react-query'
 import DefaultReactQuery from '@tanstack/react-query'
 import * as NamespacedReactQuery from '@tanstack/react-query'
 // Devtools

@@ -1,13 +1,13 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App";
-import { worker } from "./api";
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
+import { worker } from './api'
 
-worker.start();
+worker.start()
 
-const rootElement = document.getElementById("root");
+const rootElement = document.getElementById('root')
 ReactDOM.createRoot(rootElement).render(
-  <div style={{ padding: "16px" }}>
+  <div style={{ padding: '16px' }}>
     <App />
-  </div>
-);
+  </div>,
+)
