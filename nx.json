@@ -42,6 +42,7 @@
     "public": [
       "default",
       "{projectRoot}/build",
+      "{projectRoot}/dist",
       "!{projectRoot}/.eslintrc.cjs",
       "!{projectRoot}/tsconfig.eslint.json"
     ]
@@ -63,7 +64,7 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["default", "^public"],
-      "outputs": ["{projectRoot}/build"]
+      "outputs": ["{projectRoot}/build", "{projectRoot}/dist"]
     },
     "test:build": {
       "dependsOn": ["build"],
