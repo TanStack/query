@@ -45,7 +45,7 @@ jobs:
         with:
           timeout_minutes: 5
           max_attempts: 3
-          command: npx nx affected --targets=test:format,test:eslint,test:lib,test:types,build,test:build
+          command: npx nx affected --targets=test:eslint,test:lib,test:types,build,test:build
       - name: Stop Agents
         run: npx nx-cloud stop-all-agents
       - name: Upload coverage to Codecov
@@ -74,3 +74,23 @@ jobs:
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - name: Start Nx Agent ${{ matrix.agent }}
         run: npx nx-cloud start-agent
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 8
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.16.0
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+      - name: Run prettier
+        run: pnpm run test:format
