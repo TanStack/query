@@ -12,12 +12,9 @@
           "test:eslint",
           "test:types",
           "test:build",
-          "build",
-          "build:rollup",
-          "build:codemods",
-          "build:types"
+          "build"
         ],
-        "parallel": 5,
+        "parallel": 3,
         "accessToken": "ZDdkNDA4MGEtYjNmYi00MWI4LWE1N2QtYTdlNmYxMGJlZWM2fHJlYWQ="
       }
     }
@@ -29,25 +26,23 @@
     }
   },
   "namedInputs": {
-    "globalBuildAffectingConfig": [
+    "sharedGlobals": [
       "{workspaceRoot}/.browserslistrc",
+      "{workspaceRoot}/.eslintrc.cjs",
       "{workspaceRoot}/babel.config.cjs",
       "{workspaceRoot}/package.json",
       "{workspaceRoot}/scripts/getRollupConfig.js",
       "{workspaceRoot}/tsconfig.json"
     ],
-    "globalNonBuildAffectingConfig": ["{workspaceRoot}/.eslintrc.cjs"],
     "default": [
+      "sharedGlobals",
       "{projectRoot}/**/*",
-      "globalBuildAffectingConfig",
-      "globalNonBuildAffectingConfig",
-      "!{projectRoot}/**/*.md",
-      "!{projectRoot}/**/build/**/*"
+      "!{projectRoot}/**/*.md"
     ],
     "public": [
       "default",
-      "!{workspaceRoot}/.eslintrc.cjs",
-      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "{projectRoot}/build",
+      "{projectRoot}/dist",
       "!{projectRoot}/.eslintrc.cjs",
       "!{projectRoot}/tsconfig.eslint.json"
     ]
@@ -69,7 +64,7 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["default", "^public"],
-      "outputs": ["{projectRoot}/build/**/*"]
+      "outputs": ["{projectRoot}/build", "{projectRoot}/dist"]
     },
     "test:build": {
       "dependsOn": ["build"],
