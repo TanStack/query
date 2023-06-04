@@ -1,14 +1,30 @@
 // @ts-check
 
 import { defineConfig } from 'rollup'
-import { buildConfigs } from '../../scripts/getRollupConfig.js'
+import withSolid from 'rollup-preset-solid'
 
-export default defineConfig(
-  buildConfigs({
-    name: 'query-devtools',
-    outputFile: 'index',
-    entryFile: './src/index.tsx',
-    forceBundle: true,
-    bundleDeps: true,
-  }),
-)
+export function createQueryDevtoolsConfig() {
+  const solidRollupOptions = /** @type {import('rollup').RollupOptions} */ (
+    withSolid({
+      input: `./src/index.tsx`,
+      targets: ['esm', 'cjs'],
+      external: [],
+    })
+  )
+
+  const outputs = !solidRollupOptions.output
+    ? []
+    : Array.isArray(solidRollupOptions.output)
+    ? solidRollupOptions.output
+    : [solidRollupOptions.output]
+
+  outputs.forEach((output) => {
+    if (output.format === 'cjs') {
+      output.entryFileNames = '[name].cjs'
+    }
+  })
+
+  return solidRollupOptions
+}
+
+export default defineConfig(createQueryDevtoolsConfig())
