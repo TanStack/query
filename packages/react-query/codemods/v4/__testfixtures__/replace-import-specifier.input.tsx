@@ -1,9 +1,6 @@
 // React Query
 import { useQuery, useQueryClient } from 'react-query'
-import {
-  useQuery as RenamedUseQuery,
-  useQueryClient as RenamedUseQueryClient,
-} from 'react-query'
+import { useQuery as RenamedUseQuery, useQueryClient as RenamedUseQueryClient } from 'react-query'
 import DefaultReactQuery from 'react-query'
 import * as NamespacedReactQuery from 'react-query'
 // Devtools
