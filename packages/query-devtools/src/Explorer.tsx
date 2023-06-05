@@ -1,5 +1,5 @@
 import { displayValue } from './utils'
-import superjson from 'superjson'
+import { stringify } from 'superjson'
 import { css, cx } from '@emotion/css'
 import { tokens } from './theme'
 import { createMemo, createSignal, Index, Match, Show, Switch } from 'solid-js'
@@ -77,23 +77,21 @@ const CopyButton = (props: { value: unknown }) => {
       onClick={
         copyState() === 'NoCopy'
           ? () => {
-              navigator.clipboard
-                .writeText(superjson.stringify(props.value))
-                .then(
-                  () => {
-                    setCopyState('SuccessCopy')
-                    setTimeout(() => {
-                      setCopyState('NoCopy')
-                    }, 1500)
-                  },
-                  (err) => {
-                    console.error('Failed to copy: ', err)
-                    setCopyState('ErrorCopy')
-                    setTimeout(() => {
-                      setCopyState('NoCopy')
-                    }, 1500)
-                  },
-                )
+              navigator.clipboard.writeText(stringify(props.value)).then(
+                () => {
+                  setCopyState('SuccessCopy')
+                  setTimeout(() => {
+                    setCopyState('NoCopy')
+                  }, 1500)
+                },
+                (err) => {
+                  console.error('Failed to copy: ', err)
+                  setCopyState('ErrorCopy')
+                  setTimeout(() => {
+                    setCopyState('NoCopy')
+                  }, 1500)
+                },
+              )
             }
           : undefined
       }

@@ -1,21 +1,21 @@
-import * as React from "react";
-import { Form, useLoaderData, redirect, useNavigate } from "react-router-dom";
+import * as React from 'react'
+import { Form, useLoaderData, redirect, useNavigate } from 'react-router-dom'
 
-import { updateContact } from "../contacts";
+import { updateContact } from '../contacts'
 
 export const action =
   (queryClient) =>
   async ({ request, params }) => {
-    const formData = await request.formData();
-    const updates = Object.fromEntries(formData);
-    await updateContact(params.contactId, updates);
-    queryClient.invalidateQueries({ queryKey: ["contacts"] });
-    return redirect(`/contacts/${params.contactId}`);
-  };
+    const formData = await request.formData()
+    const updates = Object.fromEntries(formData)
+    await updateContact(params.contactId, updates)
+    queryClient.invalidateQueries({ queryKey: ['contacts'] })
+    return redirect(`/contacts/${params.contactId}`)
+  }
 
 export default function Edit() {
-  const contact = useLoaderData();
-  const navigate = useNavigate();
+  const contact = useLoaderData()
+  const navigate = useNavigate()
 
   return (
     <Form method="post" id="contact-form">
@@ -64,12 +64,12 @@ export default function Edit() {
         <button
           type="button"
           onClick={() => {
-            navigate(-1);
+            navigate(-1)
           }}
         >
           Cancel
         </button>
       </p>
     </Form>
-  );
+  )
 }

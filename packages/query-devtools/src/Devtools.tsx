@@ -20,6 +20,7 @@ import {
   getQueryStatusColorByLabel,
   sortFns,
   convertRemToPixels,
+  getSidedProp,
 } from './utils'
 import {
   ArrowDown,
@@ -81,6 +82,8 @@ export const DevtoolsComponent: Component<QueryDevtoolsProps> = (props) => {
     </QueryDevtoolsContext.Provider>
   )
 }
+
+export default DevtoolsComponent
 
 export const Devtools = () => {
   loadFonts()
@@ -314,6 +317,42 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
     props.setLocalStore('position', pos)
     setSettingsOpen(false)
   }
+
+  createEffect(() => {
+    const rootContainer = panelRef.parentElement?.parentElement?.parentElement
+    if (!rootContainer) return
+    const styleProp = getSidedProp(
+      'padding',
+      props.localStore.position as DevtoolsPosition,
+    )
+    const isVertical =
+      props.localStore.position === 'left' ||
+      props.localStore.position === 'right'
+    const previousPaddings = (({
+      padding,
+      paddingTop,
+      paddingBottom,
+      paddingLeft,
+      paddingRight,
+    }) => ({
+      padding,
+      paddingTop,
+      paddingBottom,
+      paddingLeft,
+      paddingRight,
+    }))(rootContainer.style)
+
+    rootContainer.style[styleProp] = `${
+      isVertical ? props.localStore.width : props.localStore.height
+    }px`
+
+    onCleanup(() => {
+      Object.entries(previousPaddings).forEach(([property, previousValue]) => {
+        rootContainer.style[property as keyof typeof previousPaddings] =
+          previousValue
+      })
+    })
+  })
 
   return (
     <aside
@@ -1200,6 +1239,7 @@ const getStyles = () => {
         font-family: 'Inter', sans-serif;
         color: ${colors.gray[300]};
         box-sizing: border-box;
+        text-transform: none;
       }
     `,
     'devtoolsBtn-position-bottom-right': css`

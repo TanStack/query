@@ -1,6 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
-
-import * as QueriesObserverModule from '../../../query-core/src/queriesObserver'
+import * as QueryCore from '@tanstack/query-core'
 
 import type { QueryFunctionContext, QueryKey } from '@tanstack/query-core'
 import { createRenderEffect, createSignal } from 'solid-js'
@@ -670,7 +669,7 @@ describe('useQueries', () => {
     }
 
     const QueriesObserverSpy = vi
-      .spyOn(QueriesObserverModule, 'QueriesObserver')
+      .spyOn(QueryCore, 'QueriesObserver')
       .mockImplementation((fn) => {
         return new QueriesObserverMock(fn, [])
       })

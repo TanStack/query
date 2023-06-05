@@ -3,9 +3,9 @@ id: installation
 title: Installation
 ---
 
-You can install React Query via [NPM](https://npmjs.com),
+You can install React Query via [NPM](https://npmjs.com/),
 or a good ol' `<script>` via
-[unpkg.com](https://unpkg.com).
+[ESM.sh](https://esm.sh/).
 
 > v5 is currently in alpha.
 
@@ -25,15 +25,17 @@ React Query is compatible with React v18+ and works with ReactDOM and React Nati
 
 ### CDN
 
-If you're not using a module bundler or package manager we also have a global ("UMD") build hosted on the [unpkg.com](https://unpkg.com) CDN. Simply add the following `<script>` tag to the bottom of your HTML file:
+If you're not using a module bundler or package manager, you can also use this library via an ESM-compatible CDN such as [ESM.sh](https://esm.sh/). Simply add a `<script type="module">` tag to the bottom of your HTML file:
 
 ```html
-<script src="https://unpkg.com/@tanstack/react-query@alpha/build/umd/index.production.js"></script>
+<script type="module">
+  import React from 'https://esm.sh/react@18.2.0'
+  import ReactDOM from 'https://esm.sh/react-dom@18.2.0'
+  import { QueryClient } from 'https://esm.sh/@tanstack/react-query@alpha'
+</script>
 ```
 
-Once you've added this you will have access to the `window.ReactQuery` object and its exports.
-
-> This installation/usage requires the [React CDN script bundles](https://reactjs.org/docs/cdn-links.html) to be on the page as well.
+> You can find instructions on how to use React without JSX [here](https://react.dev/reference/react/createElement#creating-an-element-without-jsx).
 
 ### Requirements
 

@@ -2,7 +2,7 @@ import type {
   QueryClient,
   onlineManager as TonlineManager,
 } from '@tanstack/query-core'
-import { DevtoolsComponent } from './Devtools'
+import type { DevtoolsComponent } from './Devtools'
 import { render } from 'solid-js/web'
 import type {
   DevtoolsButtonPosition,
@@ -11,7 +11,7 @@ import type {
   DevToolsErrorType,
 } from './Context'
 import type { Signal } from 'solid-js'
-import { createSignal } from 'solid-js'
+import { createSignal, lazy } from 'solid-js'
 
 export type { DevtoolsButtonPosition, DevtoolsPosition, DevToolsErrorType }
 export interface TanstackQueryDevtoolsConfig extends QueryDevtoolsProps {}
@@ -26,6 +26,7 @@ class TanstackQueryDevtools {
   position: Signal<DevtoolsPosition | undefined>
   initialIsOpen: Signal<boolean | undefined>
   errorTypes: Signal<DevToolsErrorType[] | undefined>
+  Component: typeof DevtoolsComponent | undefined
   dispose?: () => void
 
   constructor(config: TanstackQueryDevtoolsConfig) {
@@ -79,8 +80,18 @@ class TanstackQueryDevtools {
       const [isOpen] = this.initialIsOpen
       const [errors] = this.errorTypes
       const [queryClient] = this.client
+
+      let Devtools: typeof DevtoolsComponent
+
+      if (this.Component) {
+        Devtools = this.Component
+      } else {
+        Devtools = lazy(() => import('./Devtools'))
+        this.Component = Devtools
+      }
+
       return (
-        <DevtoolsComponent
+        <Devtools
           queryFlavor={this.queryFlavor}
           version={this.version}
           onlineManager={this.onlineManager}

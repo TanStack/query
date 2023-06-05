@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-devtools",
-  "version": "5.0.0-alpha.38",
+  "version": "5.0.0-alpha.55",
   "description": "Developer tools to interact with and visualize the TanStack Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -10,28 +10,36 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "types": "build/types/index.d.ts",
-  "main": "build/umd/index.js",
-  "module": "build/esm/index.mjs",
+  "type": "module",
+  "types": "dist/types/index.d.ts",
+  "main": "dist/cjs/index.cjs",
+  "module": "dist/esm/index.js",
   "exports": {
     ".": {
-      "types": "./build/types/index.d.ts",
-      "import": "./build/esm/index.mjs",
-      "require": "./build/umd/index.js",
-      "default": "./build/umd/index.js"
+      "types": "./dist/types/index.d.ts",
+      "solid": "./dist/source/index.jsx",
+      "import": "./dist/esm/index.js",
+      "browser": {
+        "import": "./dist/esm/index.js",
+        "require": "./dist/cjs/index.cjs"
+      },
+      "require": "./dist/cjs/index.cjs",
+      "node": "./dist/cjs/index.cjs"
     },
     "./package.json": "./package.json"
   },
   "scripts": {
-    "clean": "rimraf ./build",
+    "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc",
+    "test:types": "tsc --noEmit",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "build:types": "tsc --build"
+    "test:build": "publint --strict",
+    "build": "pnpm build:rollup",
+    "build:rollup": "rollup --config rollup.config.js"
   },
   "files": [
-    "build",
+    "dist",
     "src"
   ],
   "dependencies": {
@@ -45,11 +53,8 @@
     "superjson": "^1.12.1"
   },
   "devDependencies": {
-    "@tanstack/query-core": "workspace:*",
+    "@tanstack/query-core": "^5.0.0-alpha.43",
+    "rollup-preset-solid": "^2.0.1",
     "vite-plugin-solid": "^2.5.0"
-  },
-  "peerDependencies": {
-    "@tanstack/query-core": "workspace:*"
-  },
-  "peerDependenciesMeta": {}
+  }
 }
