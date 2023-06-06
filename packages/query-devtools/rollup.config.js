@@ -21,6 +21,7 @@ export function createQueryDevtoolsConfig() {
   outputs.forEach((output) => {
     if (output.format === 'cjs') {
       output.entryFileNames = '[name].cjs'
+      output.chunkFileNames = '[name]-[hash].cjs'
     }
   })
 
