@@ -492,6 +492,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                 } else {
                   onlineManager().setOnline(false)
                   setOffline(true)
+                  window.dispatchEvent(new Event('offline'))
                 }
               }}
               class={styles.actionsBtn}
