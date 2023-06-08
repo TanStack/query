@@ -1,6 +1,7 @@
 class UnknownUsageError extends Error {
   /**
    * @param {import('jscodeshift').CallExpression} callExpression
+   * @param {string} filePath
    */
   constructor(callExpression, filePath) {
     super('')
