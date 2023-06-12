@@ -3,7 +3,7 @@
   "compilerOptions": {
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "outDir": "./build/lib",
+    "outDir": "./dist",
     "types": ["vitest/globals"]
   },
   "include": ["src"]
