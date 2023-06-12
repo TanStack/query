@@ -25,7 +25,7 @@ export function createSolidQueryConfig() {
     }
   })
 
-  return solidRollupOptions  
+  return solidRollupOptions
 }
 
 export default defineConfig(createSolidQueryConfig())
