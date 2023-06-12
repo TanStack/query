@@ -1,16 +1,16 @@
-import React from "react";
-import { useQuery } from "@tanstack/react-query";
+import React from 'react'
+import { useQuery } from '@tanstack/react-query'
 
-import Button from "./Button";
-import Spinner from "./Spinner";
+import Button from './Button'
+import Spinner from './Spinner'
 
-import { fetchProject } from "../queries";
+import { fetchProject } from '../queries'
 
 export default function Project({ activeProject, setActiveProject }) {
   const { data, isFetching } = useQuery({
-    queryKey: ["project", activeProject],
+    queryKey: ['project', activeProject],
     queryFn: () => fetchProject(activeProject),
-  });
+  })
 
   return (
     <div>
@@ -28,5 +28,5 @@ export default function Project({ activeProject, setActiveProject }) {
       <br />
       <br />
     </div>
-  );
+  )
 }
