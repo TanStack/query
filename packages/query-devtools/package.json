@@ -29,14 +29,13 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "clean": "rimraf ./build && rimraf ./coverage",
+    "clean": "rimraf ./dist && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc --noEmit",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
-    "build": "pnpm build:rollup",
-    "build:rollup": "rollup --config rollup.config.js"
+    "build": "rollup --config rollup.config.js"
   },
   "files": [
     "dist",

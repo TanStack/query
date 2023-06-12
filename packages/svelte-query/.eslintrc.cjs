@@ -8,7 +8,7 @@ const config = {
     project: './tsconfig.json',
     extraFileExtensions: ['.svelte'],
   },
-  ignorePatterns: ['*.config.*', '*.setup.*', '**/build/*'],
+  ignorePatterns: ['*.config.*', '*.setup.*', '**/dist/*'],
   overrides: [
     {
       files: ['*.svelte'],
