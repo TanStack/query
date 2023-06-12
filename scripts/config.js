@@ -87,19 +87,15 @@ export const packages = [
 export const branchConfigs = {
   main: {
     prerelease: false,
-    ghRelease: true,
   },
   next: {
     prerelease: true,
-    ghRelease: true,
   },
   beta: {
     prerelease: true,
-    ghRelease: true,
   },
   alpha: {
     prerelease: true,
-    ghRelease: true,
   },
 }
 

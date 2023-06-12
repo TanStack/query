@@ -4,7 +4,7 @@
 import path from 'node:path'
 import { execSync } from 'node:child_process'
 import chalk from 'chalk'
-import jsonfile from 'jsonfile'
+import { readFile, writeFile } from 'jsonfile'
 import * as semver from 'semver'
 import currentGitBranch from 'current-git-branch'
 import { parse as parseCommit } from '@commitlint/parse'
@@ -373,17 +373,6 @@ async function run() {
     return
   }
 
-  // Tag and commit
-  console.info(`Creating new git tag v${version}`)
-  execSync(`git tag -a -m "v${version}" v${version}`)
-
-  const taggedVersion = getTaggedVersion()
-  if (!taggedVersion) {
-    throw new Error(
-      'Missing the tagged release version. Something weird is afoot!',
-    )
-  }
-
   console.info()
   console.info(`Publishing all packages to npm with tag "${npmTag}"`)
 
@@ -401,36 +390,33 @@ async function run() {
 
   console.info()
 
-  console.info(`Pushing new tags to branch.`)
-  execSync(`git push --tags`)
-  console.info(`  Pushed tags to branch.`)
+  console.info(`Creating github release...`)
+  // Stringify the markdown to excape any quotes
+  execSync(
+    `gh release create v${version} ${
+      !isMainBranch ? '--prerelease' : ''
+    } --notes '${changelogMd.replace(/'/g, '"')}'`,
+  )
+  console.info(`  Github release created.`)
 
-  if (branchConfig.ghRelease) {
-    console.info(`Creating github release...`)
-    // Stringify the markdown to excape any quotes
-    execSync(
-      `gh release create v${version} ${
-        !isMainBranch ? '--prerelease' : ''
-      } --notes '${changelogMd.replace(/'/g, '"')}'`,
-    )
-    console.info(`  Github release created.`)
+  console.info(`Committing changes...`)
+  execSync(`git add -A && git commit -m "${releaseCommitMsg(version)}"`)
+  console.info()
+  console.info(`  Committed Changes.`)
 
-    console.info(`Committing changes...`)
-    execSync(`git add -A && git commit -m "${releaseCommitMsg(version)}"`)
-    console.info()
-    console.info(`  Committed Changes.`)
-    console.info(`Pushing changes...`)
-    execSync(`git push`)
-    console.info()
-    console.info(`  Changes pushed.`)
-  } else {
-    console.info(`Skipping github release and change commit.`)
-  }
+  console.info(`Pushing changes...`)
+  execSync(`git push`)
+  console.info()
+  console.info(`  Changes pushed.`)
+
+  console.info(`Creating new git tag v${version}`)
+  execSync(`git tag -a -m "v${version}" v${version}`)
 
   console.info(`Pushing tags...`)
   execSync(`git push --tags`)
   console.info()
   console.info(`  Tags pushed.`)
+
   console.info(`All done!`)
 }
 
@@ -449,7 +435,7 @@ function capitalize(str) {
  * @returns {Promise<import('type-fest').PackageJson>}
  */
 async function readPackageJson(pathName) {
-  return await jsonfile.readFile(pathName)
+  return await readFile(pathName)
 }
 
 /**
@@ -459,14 +445,9 @@ async function readPackageJson(pathName) {
 async function updatePackageJson(pathName, transform) {
   const json = await readPackageJson(pathName)
   await transform(json)
-  await jsonfile.writeFile(pathName, json, {
+  await writeFile(pathName, json, {
     spaces: 2,
   })
-}
-
-function getTaggedVersion() {
-  const output = execSync('git tag --list --points-at HEAD').toString()
-  return output.replace(/^v|\n+$/g, '')
 }
 
 /**
