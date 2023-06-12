@@ -152,7 +152,9 @@ async function run() {
         const changed = changedFiles.some(
           (file) =>
             file.startsWith(path.join('packages', pkg.packageDir, 'src')) ||
-            file.startsWith(path.join('packages', pkg.packageDir, 'package.json')),
+            file.startsWith(
+              path.join('packages', pkg.packageDir, 'package.json'),
+            ),
         )
         return changed
       })
