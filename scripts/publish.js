@@ -4,7 +4,7 @@
 import path from 'node:path'
 import { execSync } from 'node:child_process'
 import chalk from 'chalk'
-import { readFile, writeFile } from 'jsonfile'
+import jsonfile from 'jsonfile'
 import * as semver from 'semver'
 import currentGitBranch from 'current-git-branch'
 import { parse as parseCommit } from '@commitlint/parse'
@@ -435,7 +435,7 @@ function capitalize(str) {
  * @returns {Promise<import('type-fest').PackageJson>}
  */
 async function readPackageJson(pathName) {
-  return await readFile(pathName)
+  return await jsonfile.readFile(pathName)
 }
 
 /**
@@ -445,7 +445,7 @@ async function readPackageJson(pathName) {
 async function updatePackageJson(pathName, transform) {
   const json = await readPackageJson(pathName)
   await transform(json)
-  await writeFile(pathName, json, {
+  await jsonfile.writeFile(pathName, json, {
     spaces: 2,
   })
 }
