@@ -33,10 +33,10 @@ async function run() {
   tags = tags
     .filter((tag) => semver.valid(tag))
     .filter((tag) => {
-      if (isMainBranch) {
-        return semver.prerelease(tag) === null
+      if (semver.prerelease(tag) === null) {
+        return isMainBranch
       } else {
-        return tag.includes(`-`)
+        return !isMainBranch
       }
     })
     // sort by latest
