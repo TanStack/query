@@ -80,9 +80,10 @@ export const packages = [
   },
 ]
 
-export const latestBranch = 'main'
-
-/** @type {Record<string, import('./types').BranchConfig>} */
+/**
+ * Contains config for publishable branches.
+ * @type {Record<string, import('./types').BranchConfig>}
+ */
 export const branchConfigs = {
   main: {
     prerelease: false,

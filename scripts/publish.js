@@ -12,7 +12,7 @@ import log from 'git-log-parser'
 import streamToArray from 'stream-to-array'
 import axios from 'axios'
 import { DateTime } from 'luxon'
-import { branchConfigs, latestBranch, packages, rootDir } from './config.js'
+import { branchConfigs, packages, rootDir } from './config.js'
 
 /** @param {string} version */
 const releaseCommitMsg = (version) => `release: v${version}`
@@ -31,8 +31,8 @@ async function run() {
     process.exit(0)
   }
 
-  const isLatestBranch = branchName === latestBranch
-  const npmTag = isLatestBranch ? 'latest' : branchName
+  const isMainBranch = branchName === 'main'
+  const npmTag = isMainBranch ? 'latest' : branchName
 
   // Get tags
   /** @type {string[]} */
@@ -42,11 +42,11 @@ async function run() {
   tags = tags
     .filter((tag) => semver.valid(tag))
     .filter((tag) => {
-      if (isLatestBranch) {
-        return semver.prerelease(tag) == null
+      if (isMainBranch) {
+        return semver.prerelease(tag) === null
+      } else {
+        return tag.includes(`-`)
       }
-
-      return tag.includes(`-${branchName}`)
     })
     // sort by latest
     .sort(semver.compare)
@@ -406,7 +406,7 @@ async function run() {
     // Stringify the markdown to excape any quotes
     execSync(
       `gh release create v${version} ${
-        !isLatestBranch ? '--prerelease' : ''
+        !isMainBranch ? '--prerelease' : ''
       } --notes '${changelogMd.replace(/'/g, '"')}'`,
     )
     console.info(`  Github release created.`)
