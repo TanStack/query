@@ -22,15 +22,6 @@ async function run() {
     process.env.BRANCH ?? currentGitBranch()
   )
 
-  /** @type {import('./types.js').BranchConfig | undefined} */
-  const branchConfig = branchConfigs[branchName]
-
-  if (!branchConfig) {
-    console.log(`No publish config found for branch: ${branchName}`)
-    console.log('Exiting...')
-    process.exit(0)
-  }
-
   const isMainBranch = branchName === 'main'
   const npmTag = isMainBranch ? 'latest' : branchName
 
@@ -307,6 +298,15 @@ async function run() {
 
   if (process.env.TAG && recommendedReleaseLevel === -1) {
     recommendedReleaseLevel = 0
+  }
+
+  /** @type {import('./types.js').BranchConfig | undefined} */
+  const branchConfig = branchConfigs[branchName]
+
+  if (!branchConfig) {
+    console.log(`No publish config found for branch: ${branchName}`)
+    console.log('Exiting...')
+    process.exit(0)
   }
 
   const releaseType = branchConfig.prerelease
