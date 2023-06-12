@@ -41,7 +41,7 @@
     "build": "rollup --config rollup.config.js"
   },
   "files": [
-    "build",
+    "dist",
     "src"
   ],
   "dependencies": {
