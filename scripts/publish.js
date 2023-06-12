@@ -127,6 +127,10 @@ async function run() {
 
   /**
    * Parses the commit messsages, log them, and determine the type of release needed
+   * -1 means no release is necessary
+   * 0 means patch release is necessary
+   * 1 means minor release is necessary
+   * 2 means major release is necessary
    * @type {number}
    */
   let recommendedReleaseLevel = commitsSinceLatestTag.reduce(
