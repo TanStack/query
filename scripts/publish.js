@@ -12,7 +12,7 @@ import log from 'git-log-parser'
 import streamToArray from 'stream-to-array'
 import axios from 'axios'
 import { DateTime } from 'luxon'
-import { branchConfigs, latestBranch, packages, rootDir } from './config.js'
+import { branchConfigs, packages, rootDir } from './config.js'
 
 /** @param {string} version */
 const releaseCommitMsg = (version) => `release: v${version}`
@@ -22,17 +22,8 @@ async function run() {
     process.env.BRANCH ?? currentGitBranch()
   )
 
-  /** @type {import('./types.js').BranchConfig | undefined} */
-  const branchConfig = branchConfigs[branchName]
-
-  if (!branchConfig) {
-    console.log(`No publish config found for branch: ${branchName}`)
-    console.log('Exiting...')
-    process.exit(0)
-  }
-
-  const isLatestBranch = branchName === latestBranch
-  const npmTag = isLatestBranch ? 'latest' : branchName
+  const isMainBranch = branchName === 'main'
+  const npmTag = isMainBranch ? 'latest' : branchName
 
   // Get tags
   /** @type {string[]} */
@@ -42,11 +33,11 @@ async function run() {
   tags = tags
     .filter((tag) => semver.valid(tag))
     .filter((tag) => {
-      if (isLatestBranch) {
-        return semver.prerelease(tag) == null
+      if (semver.prerelease(tag) === null) {
+        return isMainBranch
+      } else {
+        return !isMainBranch
       }
-
-      return tag.includes(`-${branchName}`)
     })
     // sort by latest
     .sort(semver.compare)
@@ -95,6 +86,7 @@ async function run() {
    */
   const commitsSinceLatestTag = (
     await new Promise((resolve, reject) => {
+      /** @type {NodeJS.ReadableStream} */
       const strm = log.parse({
         _: range,
       })
@@ -126,6 +118,10 @@ async function run() {
 
   /**
    * Parses the commit messsages, log them, and determine the type of release needed
+   * -1 means no release is necessary
+   * 0 means patch release is necessary
+   * 1 means minor release is necessary
+   * 2 means major release is necessary
    * @type {number}
    */
   let recommendedReleaseLevel = commitsSinceLatestTag.reduce(
@@ -304,6 +300,15 @@ async function run() {
     recommendedReleaseLevel = 0
   }
 
+  /** @type {import('./types.js').BranchConfig | undefined} */
+  const branchConfig = branchConfigs[branchName]
+
+  if (!branchConfig) {
+    console.log(`No publish config found for branch: ${branchName}`)
+    console.log('Exiting...')
+    process.exit(0)
+  }
+
   const releaseType = branchConfig.prerelease
     ? 'prerelease'
     : /** @type {const} */ ({ 0: 'patch', 1: 'minor', 2: 'major' })[
@@ -368,17 +373,6 @@ async function run() {
     return
   }
 
-  // Tag and commit
-  console.info(`Creating new git tag v${version}`)
-  execSync(`git tag -a -m "v${version}" v${version}`)
-
-  const taggedVersion = getTaggedVersion()
-  if (!taggedVersion) {
-    throw new Error(
-      'Missing the tagged release version. Something weird is afoot!',
-    )
-  }
-
   console.info()
   console.info(`Publishing all packages to npm with tag "${npmTag}"`)
 
@@ -396,36 +390,33 @@ async function run() {
 
   console.info()
 
-  console.info(`Pushing new tags to branch.`)
-  execSync(`git push --tags`)
-  console.info(`  Pushed tags to branch.`)
+  console.info(`Committing changes...`)
+  execSync(`git add -A && git commit -m "${releaseCommitMsg(version)}"`)
+  console.info()
+  console.info(`  Committed Changes.`)
 
-  if (branchConfig.ghRelease) {
-    console.info(`Creating github release...`)
-    // Stringify the markdown to excape any quotes
-    execSync(
-      `gh release create v${version} ${
-        !isLatestBranch ? '--prerelease' : ''
-      } --notes '${changelogMd.replace(/'/g, '"')}'`,
-    )
-    console.info(`  Github release created.`)
+  console.info(`Pushing changes...`)
+  execSync(`git push`)
+  console.info()
+  console.info(`  Changes pushed.`)
 
-    console.info(`Committing changes...`)
-    execSync(`git add -A && git commit -m "${releaseCommitMsg(version)}"`)
-    console.info()
-    console.info(`  Committed Changes.`)
-    console.info(`Pushing changes...`)
-    execSync(`git push`)
-    console.info()
-    console.info(`  Changes pushed.`)
-  } else {
-    console.info(`Skipping github release and change commit.`)
-  }
+  console.info(`Creating new git tag v${version}`)
+  execSync(`git tag -a -m "v${version}" v${version}`)
 
   console.info(`Pushing tags...`)
   execSync(`git push --tags`)
   console.info()
   console.info(`  Tags pushed.`)
+
+  console.info(`Creating github release...`)
+  // Stringify the markdown to excape any quotes
+  execSync(
+    `gh release create v${version} ${
+      !isMainBranch ? '--prerelease' : ''
+    } --notes '${changelogMd.replace(/'/g, '"')}'`,
+  )
+  console.info(`  Github release created.`)
+
   console.info(`All done!`)
 }
 
@@ -457,11 +448,6 @@ async function updatePackageJson(pathName, transform) {
   await jsonfile.writeFile(pathName, json, {
     spaces: 2,
   })
-}
-
-function getTaggedVersion() {
-  const output = execSync('git tag --list --points-at HEAD').toString()
-  return output.replace(/^v|\n+$/g, '')
 }
 
 /**
