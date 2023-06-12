@@ -95,6 +95,7 @@ async function run() {
    */
   const commitsSinceLatestTag = (
     await new Promise((resolve, reject) => {
+      /** @type {NodeJS.ReadableStream} */
       const strm = log.parse({
         _: range,
       })
