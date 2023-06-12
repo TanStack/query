@@ -174,6 +174,9 @@ importers:
       rollup-plugin-visualizer:
         specifier: ^5.9.0
         version: 5.9.0(rollup@3.23.0)
+      rollup-preset-solid:
+        specifier: ^2.0.1
+        version: 2.0.1
       semver:
         specifier: ^7.5.1
         version: 7.5.1
@@ -1398,9 +1401,6 @@ importers:
       '@tanstack/query-core':
         specifier: ^5.0.0-alpha.43
         version: link:../query-core
-      rollup-preset-solid:
-        specifier: ^2.0.1
-        version: 2.0.1
       vite-plugin-solid:
         specifier: ^2.5.0
         version: 2.6.1(solid-js@1.6.16)(vite@4.2.1)

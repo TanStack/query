@@ -11,16 +11,20 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "type": "module",
-  "types": "build/lib/index.d.ts",
-  "main": "build/lib/index.cjs",
-  "module": "build/lib/index.js",
+  "types": "dist/types/index.d.ts",
+  "main": "dist/cjs/index.cjs",
+  "module": "dist/esm/index.js",
   "exports": {
     ".": {
-      "types": "./build/lib/index.d.ts",
-      "solid": "./build/lib/index.js",
-      "import": "./build/lib/index.js",
-      "require": "./build/lib/index.cjs",
-      "default": "./build/lib/index.cjs"
+      "types": "./dist/types/index.d.ts",
+      "solid": "./dist/source/index.jsx",
+      "import": "./dist/esm/index.js",
+      "browser": {
+        "import": "./dist/esm/index.js",
+        "require": "./dist/cjs/index.cjs"
+      },
+      "require": "./dist/cjs/index.cjs",
+      "node": "./dist/cjs/index.cjs"
     },
     "./package.json": "./package.json"
   },
@@ -28,15 +32,13 @@
     "./src/setBatchUpdatesFn.ts"
   ],
   "scripts": {
-    "clean": "rimraf ./build && rimraf ./coverage",
+    "clean": "rimraf ./dist && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc --noEmit",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
-    "build": "pnpm build:rollup && pnpm build:types",
-    "build:rollup": "rollup --config rollup.config.js",
-    "build:types": "tsc --emitDeclarationOnly"
+    "build": "rollup --config rollup.config.js"
   },
   "files": [
     "build",
