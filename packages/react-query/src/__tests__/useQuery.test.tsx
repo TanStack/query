@@ -5960,4 +5960,37 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('data: custom client'))
   })
+
+  it('should be notified of updates between create and subscribe', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const mounted = React.useRef<boolean>(false)
+      const { data, status } = useQuery({
+        enabled: false,
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 5
+        },
+      })
+
+      // this simulates a synchronous update between the time the query is created
+      // and the time it is subscribed to that could be missed otherwise
+      if (!mounted.current) {
+        mounted.current = true
+        queryClient.setQueryData(key, 1)
+      }
+
+      return (
+        <div>
+          <span>status: {status}</span>
+          <span>data: {data}</span>
+        </div>
+      )
+    }
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() => rendered.getByText('status: success'))
+    await waitFor(() => rendered.getByText('data: 1'))
+  })
 })
