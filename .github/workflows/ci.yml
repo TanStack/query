@@ -1,7 +1,5 @@
 name: ci
-concurrency:
-  group: publish-${{ github.github.base_ref }}
-  cancel-in-progress: true
+
 on:
   workflow_dispatch:
     inputs:
@@ -13,9 +11,15 @@ on:
       - 'main'
       - 'alpha'
       - 'beta'
+
+concurrency:
+  group: publish-${{ github.github.base_ref }}
+  cancel-in-progress: true
+
 env:
-  NX_DAEMON: false
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_CLOUD_AUTH_TOKEN: ${{ secrets.NX_CLOUD_AUTH_TOKEN }}
+
 jobs:
   test-and-publish:
     if: github.repository == 'TanStack/query' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/beta')
