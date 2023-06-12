@@ -321,10 +321,9 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
   createEffect(() => {
     const rootContainer = panelRef.parentElement?.parentElement?.parentElement
     if (!rootContainer) return
-    const styleProp = getSidedProp(
-      'padding',
-      props.localStore.position as DevtoolsPosition,
-    )
+    const currentPosition = (props.localStore.position ||
+      POSITION) as DevtoolsPosition
+    const styleProp = getSidedProp('padding', currentPosition)
     const isVertical =
       props.localStore.position === 'left' ||
       props.localStore.position === 'right'
@@ -492,6 +491,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                 } else {
                   onlineManager().setOnline(false)
                   setOffline(true)
+                  window.dispatchEvent(new Event('offline'))
                 }
               }}
               class={styles.actionsBtn}
