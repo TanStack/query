@@ -390,15 +390,6 @@ async function run() {
 
   console.info()
 
-  console.info(`Creating github release...`)
-  // Stringify the markdown to excape any quotes
-  execSync(
-    `gh release create v${version} ${
-      !isMainBranch ? '--prerelease' : ''
-    } --notes '${changelogMd.replace(/'/g, '"')}'`,
-  )
-  console.info(`  Github release created.`)
-
   console.info(`Committing changes...`)
   execSync(`git add -A && git commit -m "${releaseCommitMsg(version)}"`)
   console.info()
@@ -416,6 +407,15 @@ async function run() {
   execSync(`git push --tags`)
   console.info()
   console.info(`  Tags pushed.`)
+
+  console.info(`Creating github release...`)
+  // Stringify the markdown to excape any quotes
+  execSync(
+    `gh release create v${version} ${
+      !isMainBranch ? '--prerelease' : ''
+    } --notes '${changelogMd.replace(/'/g, '"')}'`,
+  )
+  console.info(`  Github release created.`)
 
   console.info(`All done!`)
 }
