@@ -53,7 +53,6 @@
   },
   "devDependencies": {
     "@tanstack/query-core": "^5.0.0-alpha.43",
-    "rollup-preset-solid": "^2.0.1",
     "vite-plugin-solid": "^2.5.0"
   }
 }
