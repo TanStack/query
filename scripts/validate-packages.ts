@@ -39,7 +39,7 @@ async function run() {
           }
         }),
       )
-      
+
       const defaultExport = pkgJson.exports?.['.']?.['default'] as unknown
 
       if (typeof defaultExport !== 'string') {

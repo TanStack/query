@@ -1,26 +1,72 @@
 name: pr
+
 on: [pull_request]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
 env:
-  NX_DAEMON: false
+  NX_CLOUD_DISTRIBUTED_EXECUTION: true
+  NX_CLOUD_DISTRIBUTED_EXECUTION_AGENT_COUNT: 3
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_CLOUD_AUTH_TOKEN: ${{ secrets.NX_CLOUD_AUTH_TOKEN }}
+
 jobs:
-  agent:
-    name: 'Nx Cloud Agents'
+  main:
+    name: Nx Cloud - Main Job
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    strategy:
-      matrix:
-        agent: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          ref: ${{ github.head_ref }}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
-      - uses: pnpm/action-setup@v2.2.4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.4
         with:
           version: 8
-      - uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.2
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+      - name: Get appropriate base and head commits for `nx affected` commands
+        uses: nrwl/nx-set-shas@v3
+        with:
+          main-branch-name: 'main'
+      - run: |
+          echo "BASE: ${{ env.NX_BASE }}"
+          echo "HEAD: ${{ env.NX_HEAD }}"
+      - name: Start CI Orchestrator
+        run: npx nx-cloud start-ci-run
+      - name: Run Tests
+        uses: nick-fields/retry@v2.8.3
+        with:
+          timeout_minutes: 5
+          max_attempts: 3
+          command: npx nx affected --targets=test:eslint,test:lib,test:types,test:build
+      - name: Stop Agents
+        run: npx nx-cloud stop-all-agents
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+  agents:
+    name: Nx Cloud - Agents
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        agent: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 8
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
           node-version: 16.14.2
           cache: 'pnpm'
@@ -28,62 +74,26 @@ jobs:
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - name: Start Nx Agent ${{ matrix.agent }}
         run: npx nx-cloud start-agent
-  orchestrator:
-    name: 'Nx Cloud Orchestrator'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          ref: ${{ github.head_ref }}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
-      - uses: pnpm/action-setup@v2.2.4
-        with:
-          version: 8
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.14.2
-          cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v2
-      - run: |
-          echo "BASE: ${{ env.NX_BASE }}"
-          echo "HEAD: ${{ env.NX_HEAD }}"
-      - name: Start CI Orchestrator
-        run: npx nx-cloud start-ci-run
-      - name: Run All Checks
-        uses: nick-fields/retry@v2.8.3
-        env:
-          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
-        with:
-          timeout_minutes: 5
-          max_attempts: 3
-          command: npx nx affected --targets=test:eslint,test:types,test:build,test:lib --base=${{ github.event.pull_request.base.sha }}
-      - name: Stop Agents
-        run: npx nx-cloud stop-all-agents
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
   format:
-    name: 'Format'
+    name: Format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          ref: ${{ github.head_ref }}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
-      - uses: pnpm/action-setup@v2.2.4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.4
         with:
           version: 8
-      - uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
           node-version: 16.14.2
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:format
+      - name: Run prettier
+        run: pnpm run test:format
   test-react-17:
     name: 'Test React 17'
     runs-on: ubuntu-latest
@@ -111,4 +121,5 @@ jobs:
           max_attempts: 3
           command: npx nx affected --targets=test:lib --base=${{ github.event.pull_request.base.sha }}
         env:
+          NX_CLOUD_DISTRIBUTED_EXECUTION: false
           REACTJS_VERSION: 17

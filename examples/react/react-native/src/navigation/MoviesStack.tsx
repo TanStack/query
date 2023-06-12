@@ -1,11 +1,11 @@
-import * as React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import * as React from 'react'
+import { createStackNavigator } from '@react-navigation/stack'
 
-import { MoviesStackNavigator } from './types';
-import { MoviesListScreen } from '@app/screens/MoviesListScreen';
-import { MovieDetailsScreen } from '@app/screens/MovieDetailsScreen';
+import { MoviesStackNavigator } from './types'
+import { MoviesListScreen } from '@app/screens/MoviesListScreen'
+import { MovieDetailsScreen } from '@app/screens/MovieDetailsScreen'
 
-const Stack = createStackNavigator<MoviesStackNavigator>();
+const Stack = createStackNavigator<MoviesStackNavigator>()
 
 export function MoviesStack() {
   return (
@@ -25,5 +25,5 @@ export function MoviesStack() {
         }}
       />
     </Stack.Navigator>
-  );
+  )
 }

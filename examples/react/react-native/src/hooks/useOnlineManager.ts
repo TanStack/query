@@ -1,7 +1,7 @@
-import * as React from 'react';
-import NetInfo from '@react-native-community/netinfo';
-import { onlineManager } from '@tanstack/react-query';
-import { Platform } from 'react-native';
+import * as React from 'react'
+import NetInfo from '@react-native-community/netinfo'
+import { onlineManager } from '@tanstack/react-query'
+import { Platform } from 'react-native'
 
 export function useOnlineManager() {
   React.useEffect(() => {
@@ -11,9 +11,9 @@ export function useOnlineManager() {
         onlineManager.setOnline(
           state.isConnected != null &&
             state.isConnected &&
-            Boolean(state.isInternetReachable)
-        );
-      });
+            Boolean(state.isInternetReachable),
+        )
+      })
     }
-  }, []);
+  }, [])
 }

@@ -10,7 +10,7 @@ export default async (req, res) => {
     list = []
   }
 
-  await new Promise(r => setTimeout(r, 100))
+  await new Promise((r) => setTimeout(r, 100))
 
   res.json(list)
 }
