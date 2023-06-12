@@ -19,7 +19,7 @@
     "build:types": "nx affected --target=build:types --parallel=5",
     "watch": "concurrently --kill-others \"rollup --config rollup.config.js -w\" \"pnpm run build:types --watch\"",
     "dev": "pnpm run watch",
-    "prettier": "prettier --plugin-search-dir . \"{packages,examples}/**/src/**/*.{md,js,jsx,ts,tsx,json,vue,svelte}\"",
+    "prettier": "prettier --plugin-search-dir . \"{packages,examples,scripts}/**/*.{md,js,jsx,cjs,ts,tsx,json,vue,svelte}\"",
     "prettier:write": "pnpm run prettier --write",
     "cipublish": "ts-node scripts/publish.ts",
     "validatePackages": "ts-node scripts/validate-packages.ts"

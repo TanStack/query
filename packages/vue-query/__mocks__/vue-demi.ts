@@ -1,4 +1,4 @@
-const vue = jest.requireActual("vue-demi");
+const vue = jest.requireActual('vue-demi')
 
 module.exports = {
   ...vue,
@@ -6,4 +6,4 @@ module.exports = {
   provide: jest.fn(),
   onScopeDispose: jest.fn(),
   getCurrentInstance: jest.fn(() => ({ proxy: {} })),
-};
+}

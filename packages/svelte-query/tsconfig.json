@@ -29,7 +29,5 @@
     "tsBuildInfoFile": "./build/.tsbuildinfo"
   },
   "include": ["src"],
-  "references": [
-    { "path": "../query-core" }
-  ]
+  "references": [{ "path": "../query-core" }]
 }

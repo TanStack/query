@@ -1,17 +1,17 @@
-import React from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import React from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
-import Button from "./Button";
-import Spinner from "./Spinner";
+import Button from './Button'
+import Spinner from './Spinner'
 
-import { fetchProjects, fetchProject } from "../queries";
+import { fetchProjects, fetchProject } from '../queries'
 
 export default function Projects({ setActiveProject }) {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
   const { data, isFetching } = useQuery({
-    queryKey: ["projects"],
+    queryKey: ['projects'],
     queryFn: fetchProjects,
-  });
+  })
 
   return (
     <div>
@@ -22,17 +22,17 @@ export default function Projects({ setActiveProject }) {
             onClick={() => {
               // Prefetch the project query
               queryClient.prefetchQuery({
-                queryKey: ["project", project.name],
+                queryKey: ['project', project.name],
                 queryFn: () => fetchProject(project.name),
-              });
-              setActiveProject(project.name);
+              })
+              setActiveProject(project.name)
             }}
           >
             Load
-          </Button>{" "}
+          </Button>{' '}
           {project.name}
         </p>
       ))}
     </div>
-  );
+  )
 }
