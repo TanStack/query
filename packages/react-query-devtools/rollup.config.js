@@ -4,12 +4,12 @@ import { defineConfig } from 'rollup'
 import { buildConfigs } from '../../scripts/getRollupConfig.js'
 
 export default defineConfig([
-  buildConfigs({
+  ...buildConfigs({
     name: 'react-query-devtools',
     outputFile: 'index',
     entryFile: './src/index.ts',
   }),
-  buildConfigs({
+  ...buildConfigs({
     name: 'react-query-devtools-prod',
     outputFile: 'index.prod',
     entryFile: './src/index.ts',

@@ -177,10 +177,6 @@ Custom loggers were already deprecated in 4 and have been removed in this versio
 
 We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](../installation#requirements).
 
-### Supported Bundlers
-
-We have removed the legacy `.esm.js` output, which was used by bundlers which didn't recognise the modern `.mjs` extension such as Webpack v4. If you are still using Webpack v4, you can continue to use TanStack Query v4, or upgrade to Webpack v5 or another bundler.
-
 ### Private class fields and methods
 
 TanStack Query has always had private fields and methods on classes, but they weren't really private - they were just private in `TypeScript`. We now use [ECMAScript Private class features](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_class_fields), which means those fields are now truly private and can't be accessed from the outside at runtime.
