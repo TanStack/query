@@ -1,7 +1,6 @@
 {
   "name": "@tanstack/query-example-svelte-load-more-infinite-scroll",
   "private": true,
-  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite dev",

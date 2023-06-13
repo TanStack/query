@@ -1,7 +1,6 @@
 {
   "name": "@tanstack/query-example-react-nextjs",
   "private": true,
-  "version": "1.0.0",
   "license": "MIT",
   "scripts": {
     "dev": "next",
