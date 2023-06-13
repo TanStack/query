@@ -16,8 +16,8 @@
   },
   "type": "module",
   "types": "build/lib/index.d.ts",
-  "main": "build/lib/index.cjs",
-  "module": "build/lib/index.js",
+  "main": "build/lib/index.legacy.cjs",
+  "module": "build/lib/index.legacy.js",
   "exports": {
     ".": {
       "types": "./build/lib/index.d.ts",
