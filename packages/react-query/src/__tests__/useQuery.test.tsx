@@ -914,7 +914,7 @@ describe('useQuery', () => {
     // required to make sure no additional renders are happening after data is successfully fetched for the second time
     await sleep(100)
 
-    expect(states.length).toBe(5)
+    expect(states.length).toBe(4)
     // First load
     expect(states[0]).toMatchObject({ isLoading: true, isSuccess: false })
     // First success
@@ -922,9 +922,11 @@ describe('useQuery', () => {
     // Remove
     expect(states[2]).toMatchObject({ isLoading: true, isSuccess: false })
     // Hook state update
-    expect(states[3]).toMatchObject({ isLoading: true, isSuccess: false })
+    // this update is now skipped ! because nothing changed
+    // see github issue: https://github.com/TanStack/query/issues/5538
+    // expect(states[3]).toMatchObject({ isLoading: true, isSuccess: false })
     // Second success
-    expect(states[4]).toMatchObject({ isLoading: false, isSuccess: true })
+    expect(states[3]).toMatchObject({ isLoading: false, isSuccess: true })
   })
 
   it('should fetch when refetchOnMount is false and nothing has been fetched yet', async () => {
@@ -3650,6 +3652,7 @@ describe('useQuery', () => {
           )
           act(() => setPrefetched(true))
         }
+
         prefetch()
       }, [])
 
@@ -5879,6 +5882,7 @@ describe('useQuery', () => {
         </div>
       )
     }
+
     const rendered = renderWithClient(queryClient, <Page />)
     const fetchBtn = rendered.getByRole('button', { name: 'refetch' })
     await waitFor(() => rendered.getByText('data: 1'))
@@ -5916,8 +5920,84 @@ describe('useQuery', () => {
         </div>
       )
     }
+
     const rendered = renderWithClient(queryClient, <Page />)
     await waitFor(() => rendered.getByText('status: success'))
     await waitFor(() => rendered.getByText('data: 1'))
+  })
+  it('should reuse same data object reference when queryKey changes back to some cached data', async () => {
+    jest.useFakeTimers()
+    const spy = jest.fn()
+
+    function fetchNumber(id: number) {
+      return new Promise((resolve) => {
+        setTimeout(
+          () =>
+            resolve({
+              numbers: {
+                current: {
+                  id,
+                },
+              },
+            }),
+          1000,
+        )
+      })
+    }
+    function Test() {
+      const [id, setId] = React.useState(1)
+
+      const { data } = useQuery({
+        select: selector,
+        queryKey: ['user', id],
+        queryFn: () => fetchNumber(id),
+      })
+
+      React.useEffect(() => {
+        spy(data)
+      }, [data])
+
+      return (
+        <div>
+          <button name="1" onClick={() => setId(1)}>
+            1
+          </button>
+          <button name="2" onClick={() => setId(2)}>
+            2
+          </button>
+          <span>Rendered Id: {data?.id}</span>
+        </div>
+      )
+    }
+
+    function selector(data: any) {
+      return data.numbers.current
+    }
+
+    const rendered = renderWithClient(queryClient, <Test />)
+    expect(spy).toHaveBeenCalledTimes(1)
+    spy.mockClear()
+    jest.advanceTimersByTime(1000)
+    await waitFor(() => rendered.getByText('Rendered Id: 1'))
+    expect(spy).toHaveBeenCalledTimes(1)
+    spy.mockClear()
+
+    fireEvent.click(rendered.getByRole('button', { name: /2/ }))
+    jest.advanceTimersByTime(1000)
+    await waitFor(() => rendered.getByText('Rendered Id: 2'))
+    expect(spy).toHaveBeenCalledTimes(2) // called with undefined because id changed
+    spy.mockClear()
+
+    fireEvent.click(rendered.getByRole('button', { name: /1/ }))
+    jest.advanceTimersByTime(1000)
+    await waitFor(() => rendered.getByText('Rendered Id: 1'))
+    expect(spy).toHaveBeenCalledTimes(1)
+    spy.mockClear()
+
+    fireEvent.click(rendered.getByRole('button', { name: /2/ }))
+    jest.advanceTimersByTime(1000)
+    await waitFor(() => rendered.getByText('Rendered Id: 2'))
+    expect(spy).toHaveBeenCalledTimes(1)
+    spy.mockClear()
   })
 })

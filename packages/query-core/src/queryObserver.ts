@@ -240,7 +240,28 @@ export class QueryObserver<
   ): QueryObserverResult<TData, TError> {
     const query = this.client.getQueryCache().build(this.client, options)
 
-    return this.createResult(query, options)
+    const result = this.createResult(query, options)
+
+    if (!options.keepPreviousData) {
+      // this assigns the optimistic result to the current Observer
+      // because if the query function changes, useQuery will be performing
+      // an effect where it would fetch again.
+      // When the fetch finishes, we perform a deep data cloning in order
+      // to reuse objects references. This deep data clone is performed against
+      // the `observer.currentResult.data` property
+      // When QueryKey changes, we refresh the query and get new `optimistic`
+      // result, while we leave the `observer.currentResult`, so when new data
+      // arrives, it finds the old `observer.currentResult` which is related
+      // to the old QueryKey. Which means that currentResult and selectData are
+      // out of sync already.
+      // To solve this, we move the cursor of the currentResult everytime
+      // an observer reads an optimistic value.
+
+      // When keeping the previous data, the result doesn't change until new
+      // data arrives.
+      this.currentResult = result
+    }
+    return result
   }
 
   getCurrentResult(): QueryObserverResult<TData, TError> {
