@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { QueriesObserver } from '@tanstack/query-core'
+import { isServer, QueriesObserver } from '@tanstack/query-core'
 import {
   computed,
   onScopeDispose,
@@ -13,7 +13,7 @@ import type { Ref } from 'vue-demi'
 import type { QueryFunction, QueryObserverResult } from '@tanstack/query-core'
 
 import { useQueryClient } from './useQueryClient'
-import { cloneDeepUnref } from './utils'
+import { cloneDeepUnref, noop } from './utils'
 import type { UseQueryOptions } from './useQuery'
 import type { QueryClient } from './queryClient'
 
@@ -175,18 +175,19 @@ export function useQueries<T extends any[]>({
   const observer = new QueriesObserver(queryClient, defaultedQueries.value)
   const state = reactive(observer.getCurrentResult())
 
-  const unsubscribe = ref(() => {
-    // noop
-  })
+  const unsubscribe = ref(noop)
 
   watch(
     queryClient.isRestoring,
     (isRestoring) => {
       if (!isRestoring) {
         unsubscribe.value()
-        unsubscribe.value = observer.subscribe((result) => {
-          state.splice(0, result.length, ...result)
-        })
+        // Nuxt2 memory leak fix - do not subscribe on server
+        if (!isServer) {
+          unsubscribe.value = observer.subscribe((result) => {
+            state.splice(0, result.length, ...result)
+          })
+        }
         // Subscription would not fire for persisted results
         state.splice(
           0,
