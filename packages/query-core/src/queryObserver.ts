@@ -242,7 +242,7 @@ export class QueryObserver<
 
     const result = this.createResult(query, options)
 
-    if (!options.keepPreviousData) {
+    if (shouldAssignObserverCurrentProperties(this, result, options)) {
       // this assigns the optimistic result to the current Observer
       // because if the query function changes, useQuery will be performing
       // an effect where it would fetch again.
@@ -260,6 +260,8 @@ export class QueryObserver<
       // When keeping the previous data, the result doesn't change until new
       // data arrives.
       this.currentResult = result
+      this.currentResultOptions = this.options
+      this.currentResultState = this.currentQuery.state
     }
     return result
   }
@@ -784,4 +786,52 @@ function isStale(
   options: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
   return query.isStaleByTime(options.staleTime)
+}
+
+// this function would decide if we will update the observer's 'current'
+// properties after an optimistic reading via getOptimisticResult
+function shouldAssignObserverCurrentProperties<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+  optimisticResult: QueryObserverResult<TData, TError>,
+  options: DefaultedQueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  >,
+) {
+  // it is important to keep this condition like this for three reasons:
+  // 1. It will get removed in the v5
+  // 2. it reads: don't update the properties if we want to keep the previous
+  // data.
+  // 3. The opposite condition (!options.keepPreviousData) would fallthrough
+  // and will result in a bad decision
+  if (options.keepPreviousData) {
+    return false
+  }
+
+  // if the newly created result isn't what the observer is holding as current,
+  // then we'll need to update the properties as well
+  if (observer.getCurrentResult() !== optimisticResult) {
+    return true
+  }
+
+  // this means we want to put some placeholder data when pending and queryKey
+  // changed.
+  if (options.placeholderData !== undefined) {
+    // re-assign properties only if current data is placeholder data
+    // which means that data did not arrive yet, so, if there is some cached data
+    // we need to "prepare" to receive it
+    return optimisticResult.isPlaceholderData
+  }
+
+  // basically, just keep previous properties if nothing changed
+  return false
 }

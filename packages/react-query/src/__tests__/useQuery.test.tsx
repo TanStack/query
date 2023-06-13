@@ -921,10 +921,6 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ isLoading: false, isSuccess: true })
     // Remove
     expect(states[2]).toMatchObject({ isLoading: true, isSuccess: false })
-    // Hook state update
-    // this update is now skipped ! because nothing changed
-    // see github issue: https://github.com/TanStack/query/issues/5538
-    // expect(states[3]).toMatchObject({ isLoading: true, isSuccess: false })
     // Second success
     expect(states[3]).toMatchObject({ isLoading: false, isSuccess: true })
   })
@@ -5926,23 +5922,11 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('data: 1'))
   })
   it('should reuse same data object reference when queryKey changes back to some cached data', async () => {
-    jest.useFakeTimers()
     const spy = jest.fn()
 
-    function fetchNumber(id: number) {
-      return new Promise((resolve) => {
-        setTimeout(
-          () =>
-            resolve({
-              numbers: {
-                current: {
-                  id,
-                },
-              },
-            }),
-          1000,
-        )
-      })
+    async function fetchNumber(id: number) {
+      await sleep(5)
+      return { numbers: { current: { id } } }
     }
     function Test() {
       const [id, setId] = React.useState(1)
@@ -5976,28 +5960,24 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Test />)
     expect(spy).toHaveBeenCalledTimes(1)
+
     spy.mockClear()
-    jest.advanceTimersByTime(1000)
     await waitFor(() => rendered.getByText('Rendered Id: 1'))
     expect(spy).toHaveBeenCalledTimes(1)
-    spy.mockClear()
 
+    spy.mockClear()
     fireEvent.click(rendered.getByRole('button', { name: /2/ }))
-    jest.advanceTimersByTime(1000)
     await waitFor(() => rendered.getByText('Rendered Id: 2'))
     expect(spy).toHaveBeenCalledTimes(2) // called with undefined because id changed
-    spy.mockClear()
 
+    spy.mockClear()
     fireEvent.click(rendered.getByRole('button', { name: /1/ }))
-    jest.advanceTimersByTime(1000)
     await waitFor(() => rendered.getByText('Rendered Id: 1'))
     expect(spy).toHaveBeenCalledTimes(1)
-    spy.mockClear()
 
+    spy.mockClear()
     fireEvent.click(rendered.getByRole('button', { name: /2/ }))
-    jest.advanceTimersByTime(1000)
     await waitFor(() => rendered.getByText('Rendered Id: 2'))
     expect(spy).toHaveBeenCalledTimes(1)
-    spy.mockClear()
   })
 })
