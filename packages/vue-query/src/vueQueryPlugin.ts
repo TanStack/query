@@ -3,7 +3,7 @@ import { isServer } from '@tanstack/query-core'
 import type { QueryClientConfig } from '@tanstack/query-core'
 
 import { QueryClient } from './queryClient'
-import { getClientKey } from './utils'
+import { getClientKey, noop } from './utils'
 import { setupDevtools } from './devtools/devtools'
 import type { MaybeRefDeep } from './types'
 
@@ -61,9 +61,7 @@ export const VueQueryPlugin = {
       client.mount()
     }
 
-    let persisterUnmount = () => {
-      // noop
-    }
+    let persisterUnmount = noop
 
     if (options.clientPersister) {
       client.isRestoring.value = true
