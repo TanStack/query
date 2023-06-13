@@ -18,14 +18,40 @@ const forceEnvPlugin = (type) =>
     preventAssignment: true,
   })
 
-const babelPlugin = () =>
+/** @param {'legacy' | 'modern'} type */
+const babelPlugin = (type) =>
   babel({
     configFile: resolve(rootDir, 'babel.config.cjs'),
-    browserslistConfigFile: true,
+    browserslistConfigFile: type === 'modern' ? true : false,
+    targets:
+      type === 'modern'
+        ? ''
+        : {
+            chrome: '73',
+            firefox: '78',
+            edge: '79',
+            safari: '12',
+            ios: '12',
+            opera: '53',
+          },
     babelHelpers: 'bundled',
     exclude: /node_modules/,
-    extensions: ['.ts', '.tsx', '.native.ts'],
+    extensions: ['.ts', '.tsx'],
   })
+
+/**
+ * @param {Object} opts - Options for building configurations.
+ * @param {string} opts.name - The name.
+ * @param {string} opts.outputFile - The output file.
+ * @param {string} opts.entryFile - The entry file.
+ * @param {boolean} [opts.bundleDeps] - Flag indicating whether to make all deps external.
+ * @param {boolean} [opts.forceDevEnv] - Flag indicating whether to force development environment.
+ * @param {boolean} [opts.forceBundle] - Flag indicating whether to force bundling.
+ * @returns {import('rollup').RollupOptions[]}
+ */
+export function buildConfigs(opts) {
+  return [modernConfig(opts), legacyConfig(opts)]
+}
 
 /**
  * @param {Object} opts - Options for building configurations.
@@ -37,8 +63,7 @@ const babelPlugin = () =>
  * @param {boolean} [opts.forceBundle] - Flag indicating whether to force bundling.
  * @returns {import('rollup').RollupOptions}
  */
-export function buildConfigs(opts) {
-  const input = [opts.entryFile]
+function modernConfig(opts) {
   const forceDevEnv = opts.forceDevEnv || false
   const forceBundle = opts.forceBundle || false
   const bundleDeps = opts.bundleDeps || false
@@ -78,12 +103,12 @@ export function buildConfigs(opts) {
   ]
 
   return {
-    input,
+    input: [opts.entryFile],
     output: forceBundle ? bundleOutput : normalOutput,
     plugins: [
       commonJS(),
-      babelPlugin(),
-      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
+      babelPlugin('modern'),
+      nodeResolve({ extensions: ['.ts', '.tsx'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
       bundleDeps
         ? undefined
@@ -99,6 +124,76 @@ export function buildConfigs(opts) {
         template: 'treemap',
         gzipSize: true,
       }),
+    ],
+  }
+}
+
+/**
+ * @param {Object} opts - Options for building configurations.
+ * @param {string} opts.name - The name.
+ * @param {string} opts.outputFile - The output file.
+ * @param {string} opts.entryFile - The entry file.
+ * @param {boolean} [opts.bundleDeps] - Flag indicating whether to make all deps external.
+ * @param {boolean} [opts.forceDevEnv] - Flag indicating whether to force development environment.
+ * @param {boolean} [opts.forceBundle] - Flag indicating whether to force bundling.
+ * @returns {import('rollup').RollupOptions}
+ */
+function legacyConfig(opts) {
+  const forceDevEnv = opts.forceDevEnv || false
+  const forceBundle = opts.forceBundle || false
+  const bundleDeps = opts.bundleDeps || false
+
+  /** @type {import('rollup').OutputOptions[]} */
+  const bundleOutput = [
+    {
+      format: 'esm',
+      file: `./build/lib/${opts.outputFile}.legacy.js`,
+      sourcemap: true,
+    },
+    {
+      format: 'cjs',
+      file: `./build/lib/${opts.outputFile}.legacy.cjs`,
+      sourcemap: true,
+      exports: 'named',
+    },
+  ]
+
+  /** @type {import('rollup').OutputOptions[]} */
+  const normalOutput = [
+    {
+      format: 'esm',
+      dir: `./build/lib`,
+      sourcemap: true,
+      preserveModules: true,
+      entryFileNames: '[name].legacy.js',
+    },
+    {
+      format: 'cjs',
+      dir: `./build/lib`,
+      sourcemap: true,
+      exports: 'named',
+      preserveModules: true,
+      entryFileNames: '[name].legacy.cjs',
+    },
+  ]
+
+  return {
+    input: [opts.entryFile],
+    output: forceBundle ? bundleOutput : normalOutput,
+    plugins: [
+      commonJS(),
+      babelPlugin('legacy'),
+      nodeResolve({ extensions: ['.ts', '.tsx'] }),
+      forceDevEnv ? forceEnvPlugin('development') : undefined,
+      bundleDeps
+        ? undefined
+        : externals({
+            packagePath: './package.json',
+            deps: true,
+            devDeps: true,
+            peerDeps: true,
+          }),
+      preserveDirectives(),
     ],
   }
 }
