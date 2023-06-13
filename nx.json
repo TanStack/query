@@ -1,4 +1,8 @@
 {
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "affected": {
+    "defaultBase": "main"
+  },
   "tasksRunnerOptions": {
     "default": {
       "runner": "nx-cloud",
@@ -12,6 +16,7 @@
           "build",
           "rollup"
         ],
+        "parallel": 5,
         "accessToken": "ZDdkNDA4MGEtYjNmYi00MWI4LWE1N2QtYTdlNmYxMGJlZWM2fHJlYWQ="
       }
     }

@@ -24,16 +24,8 @@ async function run() {
     // (process.env.PR_NUMBER ? `pr-${process.env.PR_NUMBER}` : currentGitBranch())
     currentGitBranch()
 
-  const branchConfig: BranchConfig | undefined = branchConfigs[branchName]
-
-  if (!branchConfig) {
-    console.log(`No publish config found for branch: ${branchName}`)
-    console.log('Exiting...')
-    process.exit(0)
-  }
-
-  const isLatestBranch = branchName === latestBranch
-  const npmTag = isLatestBranch ? 'latest' : branchName
+  const isMainBranch = branchName === 'main'
+  const npmTag = isMainBranch ? 'latest' : branchName
 
   // Get tags
   let tags: string[] = execSync('git tag').toString().split('\n')
@@ -42,11 +34,11 @@ async function run() {
   tags = tags
     .filter((tag) => semver.valid(tag))
     .filter((tag) => {
-      if (isLatestBranch) {
-        return semver.prerelease(tag) == null
+      if (semver.prerelease(tag) === null) {
+        return isMainBranch
+      } else {
+        return !isMainBranch
       }
-
-      return tag.includes(`-${branchName}`)
     })
     // sort by latest
     .sort(semver.compare)
@@ -124,20 +116,22 @@ async function run() {
   // Pares the commit messsages, log them, and determine the type of release needed
   let recommendedReleaseLevel: number = commitsSinceLatestTag.reduce(
     (releaseLevel, commit) => {
-      if (['fix', 'refactor', 'perf'].includes(commit.parsed.type!)) {
-        releaseLevel = Math.max(releaseLevel, 0)
-      }
-      if (['feat'].includes(commit.parsed.type!)) {
-        releaseLevel = Math.max(releaseLevel, 1)
-      }
-      if (commit.body.includes('BREAKING CHANGE')) {
-        releaseLevel = Math.max(releaseLevel, 2)
-      }
-      if (
-        commit.subject.includes('RELEASE_ALL') ||
-        commit.body.includes('RELEASE_ALL')
-      ) {
-        RELEASE_ALL = true
+      if (commit.parsed.type) {
+        if (['fix', 'refactor', 'perf'].includes(commit.parsed.type!)) {
+          releaseLevel = Math.max(releaseLevel, 0)
+        }
+        if (['feat'].includes(commit.parsed.type!)) {
+          releaseLevel = Math.max(releaseLevel, 1)
+        }
+        if (commit.body.includes('BREAKING CHANGE')) {
+          releaseLevel = Math.max(releaseLevel, 2)
+        }
+        if (
+          commit.subject.includes('RELEASE_ALL') ||
+          commit.body.includes('RELEASE_ALL')
+        ) {
+          RELEASE_ALL = true
+        }
       }
 
       return releaseLevel
@@ -154,15 +148,16 @@ async function run() {
 
   const changedPackages = RELEASE_ALL
     ? packages
-    : changedFiles.reduce((acc, file) => {
-        const pkg = packages.find((p) =>
-          file.startsWith(path.join('packages', p.packageDir, p.srcDir)),
+    : packages.filter((pkg) => {
+        const changed = changedFiles.some(
+          (file) =>
+            file.startsWith(path.join('packages', pkg.packageDir, 'src')) ||
+            file.startsWith(
+              path.join('packages', pkg.packageDir, 'package.json'),
+            ),
         )
-        if (pkg && !acc.find((d) => d.name === pkg.name)) {
-          acc.push(pkg)
-        }
-        return acc
-      }, [] as Package[])
+        return changed
+      })
 
   // If a package has a dependency that has been updated, we need to update the
   // package that depends on it as well.
@@ -210,28 +205,6 @@ async function run() {
         `There have been no changes since the release of ${latestTag} that require a new version. You're good!`,
       )
       return
-    }
-  }
-
-  function getSorterFn<TItem>(sorters: ((d: TItem) => any)[]) {
-    return (a: TItem, b: TItem) => {
-      let i = 0
-
-      sorters.some((sorter) => {
-        const sortedA = sorter(a)
-        const sortedB = sorter(b)
-        if (sortedA > sortedB) {
-          i = 1
-          return true
-        }
-        if (sortedA < sortedB) {
-          i = -1
-          return true
-        }
-        return false
-      })
-
-      return i
     }
   }
 
@@ -314,6 +287,14 @@ async function run() {
     recommendedReleaseLevel = 0
   }
 
+  const branchConfig: BranchConfig | undefined = branchConfigs[branchName]
+
+  if (!branchConfig) {
+    console.log(`No publish config found for branch: ${branchName}`)
+    console.log('Exiting...')
+    process.exit(0)
+  }
+
   const releaseType = branchConfig.prerelease
     ? 'prerelease'
     : ({ 0: 'patch', 1: 'minor', 2: 'major' } as const)[recommendedReleaseLevel]
@@ -386,17 +367,6 @@ async function run() {
     return
   }
 
-  // Tag and commit
-  console.info(`Creating new git tag v${version}`)
-  execSync(`git tag -a -m "v${version}" v${version}`)
-
-  const taggedVersion = getTaggedVersion()
-  if (!taggedVersion) {
-    throw new Error(
-      'Missing the tagged release version. Something weird is afoot!',
-    )
-  }
-
   console.info()
   console.info(`Publishing all packages to npm with tag "${npmTag}"`)
 
@@ -414,36 +384,33 @@ async function run() {
 
   console.info()
 
-  console.info(`Pushing new tags to branch.`)
-  execSync(`git push --tags`)
-  console.info(`  Pushed tags to branch.`)
+  console.info(`Committing changes...`)
+  execSync(`git add -A && git commit -m "${releaseCommitMsg(version)}"`)
+  console.info()
+  console.info(`  Committed Changes.`)
 
-  if (branchConfig.ghRelease) {
-    console.info(`Creating github release...`)
-    // Stringify the markdown to excape any quotes
-    execSync(
-      `gh release create v${version} ${
-        !isLatestBranch ? '--prerelease' : ''
-      } --notes '${changelogMd.replace(/'/g, '"')}'`,
-    )
-    console.info(`  Github release created.`)
+  console.info(`Pushing changes...`)
+  execSync(`git push`)
+  console.info()
+  console.info(`  Changes pushed.`)
 
-    console.info(`Committing changes...`)
-    execSync(`git add -A && git commit -m "${releaseCommitMsg(version)}"`)
-    console.info()
-    console.info(`  Committed Changes.`)
-    console.info(`Pushing changes...`)
-    execSync(`git push`)
-    console.info()
-    console.info(`  Changes pushed.`)
-  } else {
-    console.info(`Skipping github release and change commit.`)
-  }
+  console.info(`Creating new git tag v${version}`)
+  execSync(`git tag -a -m "v${version}" v${version}`)
 
   console.info(`Pushing tags...`)
   execSync(`git push --tags`)
   console.info()
   console.info(`  Tags pushed.`)
+
+  console.info(`Creating github release...`)
+  // Stringify the markdown to excape any quotes
+  execSync(
+    `gh release create v${version} ${
+      !isMainBranch ? '--prerelease' : ''
+    } --notes '${changelogMd.replace(/'/g, '"')}'`,
+  )
+  console.info(`  Github release created.`)
+
   console.info(`All done!`)
 }
 
@@ -471,7 +438,24 @@ async function updatePackageJson(
   })
 }
 
-function getTaggedVersion() {
-  const output = execSync('git tag --list --points-at HEAD').toString()
-  return output.replace(/^v|\n+$/g, '')
+function getSorterFn<TItem>(sorters: ((d: TItem) => any)[]) {
+  return (a: TItem, b: TItem) => {
+    let i = 0
+
+    sorters.some((sorter) => {
+      const sortedA = sorter(a)
+      const sortedB = sorter(b)
+      if (sortedA > sortedB) {
+        i = 1
+        return true
+      }
+      if (sortedA < sortedB) {
+        i = -1
+        return true
+      }
+      return false
+    })
+
+    return i
+  }
 }

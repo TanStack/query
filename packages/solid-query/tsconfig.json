@@ -11,7 +11,5 @@
     "emitDeclarationOnly": false
   },
   "include": ["src"],
-  "references": [
-    { "path": "../query-core" }
-  ]
+  "references": [{ "path": "../query-core" }]
 }

@@ -14,7 +14,7 @@ export default async (req, res) => {
       }
     })
 
-  await new Promise(r => setTimeout(r, 1000))
+  await new Promise((r) => setTimeout(r, 1000))
 
   res.json({ projects, hasMore: page < 9 })
 }

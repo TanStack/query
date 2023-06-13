@@ -16,13 +16,13 @@ module.exports = ({ jscodeshift, utils, root }) => {
       // First, we need to find all call expressions.
       .find(jscodeshift.CallExpression, {})
       // Then we narrow the collection to the `useQuery` like hook calls.
-      .filter(node =>
-        filterUseQueryLikeHookCalls(node.value, importIdentifiers, hooks)
+      .filter((node) =>
+        filterUseQueryLikeHookCalls(node.value, importIdentifiers, hooks),
       )
 
   const execute = (hooks, replacer) => {
     findUseQueryLikeHookCalls(utils.locateImports(hooks), hooks).replaceWith(
-      replacer
+      replacer,
     )
   }
 

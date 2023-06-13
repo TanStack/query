@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from 'react'
 import {
   Outlet,
   useLoaderData,
@@ -6,42 +6,42 @@ import {
   NavLink,
   useNavigation,
   useSubmit,
-} from "react-router-dom";
-import { useDebounce } from "rooks";
+} from 'react-router-dom'
+import { useDebounce } from 'rooks'
 
-import { createContact, getContacts } from "../contacts";
-import { useQuery, useIsFetching } from "@tanstack/react-query";
+import { createContact, getContacts } from '../contacts'
+import { useQuery, useIsFetching } from '@tanstack/react-query'
 
 const contactListQuery = (q) => ({
-  queryKey: ["contacts", "list", q ?? "all"],
+  queryKey: ['contacts', 'list', q ?? 'all'],
   queryFn: () => getContacts(q),
-});
+})
 
 export const loader =
   (queryClient) =>
   async ({ request }) => {
-    const url = new URL(request.url);
-    const q = url.searchParams.get("q");
+    const url = new URL(request.url)
+    const q = url.searchParams.get('q')
     if (!queryClient.getQueryData(contactListQuery(q).queryKey)) {
-      await queryClient.fetchQuery(contactListQuery(q));
+      await queryClient.fetchQuery(contactListQuery(q))
     }
-    return { q };
-  };
+    return { q }
+  }
 
 export const action = (queryClient) => async () => {
-  const contact = await createContact();
-  queryClient.invalidateQueries({ queryKey: ["contacts", "list"] });
-  return contact;
-};
+  const contact = await createContact()
+  queryClient.invalidateQueries({ queryKey: ['contacts', 'list'] })
+  return contact
+}
 
 export default function Root() {
-  const { q } = useLoaderData();
-  const { data: contacts } = useQuery(contactListQuery(q));
-  const searching = useIsFetching(["contacts", "list"]) > 0;
-  const navigation = useNavigation();
-  const submit = useSubmit();
+  const { q } = useLoaderData()
+  const { data: contacts } = useQuery(contactListQuery(q))
+  const searching = useIsFetching(['contacts', 'list']) > 0
+  const navigation = useNavigation()
+  const submit = useSubmit()
 
-  const debouncedSubmit = useDebounce(submit, 500);
+  const debouncedSubmit = useDebounce(submit, 500)
 
   return (
     <>
@@ -58,9 +58,9 @@ export default function Root() {
               key={q}
               autoFocus
               defaultValue={q}
-              className={searching ? "loading" : ""}
+              className={searching ? 'loading' : ''}
               onChange={(event) => {
-                debouncedSubmit(event.currentTarget.form);
+                debouncedSubmit(event.currentTarget.form)
               }}
             />
             <div id="search-spinner" aria-hidden hidden={!searching} />
@@ -78,7 +78,7 @@ export default function Root() {
                   <NavLink
                     to={`contacts/${contact.id}`}
                     className={({ isActive, isPending }) =>
-                      isActive ? "active" : isPending ? "pending" : ""
+                      isActive ? 'active' : isPending ? 'pending' : ''
                     }
                   >
                     {contact.first || contact.last ? (
@@ -87,7 +87,7 @@ export default function Root() {
                       </>
                     ) : (
                       <i>No Name</i>
-                    )}{" "}
+                    )}{' '}
                     {contact.favorite && <span>★</span>}
                   </NavLink>
                 </li>
@@ -102,10 +102,10 @@ export default function Root() {
       </div>
       <div
         id="detail"
-        className={navigation.state === "loading" ? "loading" : ""}
+        className={navigation.state === 'loading' ? 'loading' : ''}
       >
         <Outlet />
       </div>
     </>
-  );
+  )
 }

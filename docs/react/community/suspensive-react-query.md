@@ -3,21 +3,22 @@ id: suspensive-react-query
 title: Suspensive React Query
 ---
 
-Typesafe useQuery, useInfiniteQuery with default suspense option.
+Typesafe useQuery, useQueries, useInfiniteQuery with default suspense option.
 
-Use @suspensive/react-query, delegate loading and error handling to the outside of the component with useSuspenseQuery and useSuspenseInfiniteQuery, and focus on success inside the component.
+Use @suspensive/react-query, delegate loading and error handling to the outside of the component with [useSuspenseQuery](https://suspensive.org/docs/react-query/src/useSuspenseQuery.i18n), [useSuspenseQueries](https://suspensive.org/docs/react-query/src/useSuspenseQueries.i18n) and [useSuspenseInfiniteQuery](https://suspensive.org/docs/react-query/src/useSuspenseInfiniteQuery.i18n), and focus on success inside the component.
 
 You don't even need to use the isSuccess flag.
 
 ## Installation
+
 You can install @suspensive/react-query via [NPM](https://www.npmjs.com/package/@suspensive/react-query).
 
 ```bash
-$ npm i @suspensive/react @suspensive/react-query
+$ npm i @suspensive/react-query
 # or
-$ pnpm add @suspensive/react @suspensive/react-query
+$ pnpm add @suspensive/react-query
 # or
-$ yarn add @suspensive/react @suspensive/react-query
+$ yarn add @suspensive/react-query
 ```
 
 ### Motivation
@@ -28,7 +29,9 @@ If you turn suspense mode on in @tanstack/react-query, You can use useQuery with
 import { useQuery } from '@tanstack/react-query'
 
 const Example = () => {
-  const query = useQuery(queryKey, queryFn, {
+  const query = useQuery({
+    queryKey,
+    queryFn,
     suspense: true,
   })
 
@@ -55,7 +58,10 @@ In addition, this hook's options have default suspense: true. and you can provid
 import { useSuspenseQuery } from '@suspensive/react-query'
 
 const Example = () => {
-  const query = useSuspenseQuery(queryKey, queryFn, options) // suspense:true is default.
+  const query = useSuspenseQuery({
+    queryKey,
+    queryFn,
+  }) // suspense:true is default.
 
   // No need to do type narrowing by isSuccess
   query.data // TData
@@ -66,4 +72,6 @@ const Example = () => {
 
 Now, we can concentrate component as any fetching will be always success in component.
 
-Check the complete documentation on [GitHub](https://github.com/suspensive/react).
+### More Information
+
+Check the complete documentation on [Suspensive Official Docs Site](https://suspensive.org/) and also welcome Pull Request on [Suspensive GitHub](https://github.com/suspensive/react)

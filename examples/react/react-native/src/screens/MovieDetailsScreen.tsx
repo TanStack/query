@@ -1,38 +1,38 @@
-import * as React from 'react';
-import { View, RefreshControl, StyleSheet, ScrollView } from 'react-native';
-import { Title, Paragraph } from 'react-native-paper';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RouteProp } from '@react-navigation/native';
-import { useQuery } from '@tanstack/react-query';
+import * as React from 'react'
+import { View, RefreshControl, StyleSheet, ScrollView } from 'react-native'
+import { Title, Paragraph } from 'react-native-paper'
+import { StackNavigationProp } from '@react-navigation/stack'
+import { RouteProp } from '@react-navigation/native'
+import { useQuery } from '@tanstack/react-query'
 
-import { LoadingIndicator } from '@app/components/LoadingIndicator';
-import { ErrorMessage } from '@app/components/ErrorMessage';
-import { useRefreshByUser } from '@app/hooks/useRefreshByUser';
-import { fetchMovie, MovieDetails } from '@app/lib/api';
-import type { MoviesStackNavigator } from '@app/navigation/types';
+import { LoadingIndicator } from '@app/components/LoadingIndicator'
+import { ErrorMessage } from '@app/components/ErrorMessage'
+import { useRefreshByUser } from '@app/hooks/useRefreshByUser'
+import { fetchMovie, MovieDetails } from '@app/lib/api'
+import type { MoviesStackNavigator } from '@app/navigation/types'
 
 type MoviesDetailsScreenNavigationProp = StackNavigationProp<
   MoviesStackNavigator,
   'MovieDetails'
->;
+>
 
 type Props = {
-  navigation: MoviesDetailsScreenNavigationProp;
-  route: RouteProp<MoviesStackNavigator, 'MovieDetails'>;
-};
+  navigation: MoviesDetailsScreenNavigationProp
+  route: RouteProp<MoviesStackNavigator, 'MovieDetails'>
+}
 
 export function MovieDetailsScreen({ route }: Props) {
   const { isLoading, error, data, refetch } = useQuery<MovieDetails, Error>(
     ['movie', route.params.movie.title],
     () => fetchMovie(route.params.movie.title),
-    { initialData: route.params.movie as MovieDetails }
-  );
+    { initialData: route.params.movie as MovieDetails },
+  )
 
-  const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
+  const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch)
 
-  if (isLoading) return <LoadingIndicator />;
-  if (error) return <ErrorMessage message={error.message}></ErrorMessage>;
-  if (!data) return null;
+  if (isLoading) return <LoadingIndicator />
+  if (error) return <ErrorMessage message={error.message}></ErrorMessage>
+  if (!data) return null
 
   return (
     <ScrollView
@@ -65,7 +65,7 @@ export function MovieDetailsScreen({ route }: Props) {
         <LoadingIndicator />
       )}
     </ScrollView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -82,4 +82,4 @@ const styles = StyleSheet.create({
     margin: 20,
     marginTop: 10,
   },
-});
+})
