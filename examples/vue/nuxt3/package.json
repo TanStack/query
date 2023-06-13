@@ -1,4 +1,5 @@
 {
+  "name": "@tanstack/query-example-vue-nuxt3",
   "private": true,
   "scripts": {
     "dev": "nuxi dev",
