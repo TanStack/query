@@ -1,7 +1,6 @@
 {
   "name": "@tanstack/query-example-solid-default-query-function",
-  "version": "0.0.0",
-  "description": "",
+  "private": true,
   "scripts": {
     "start": "vite",
     "dev": "vite",

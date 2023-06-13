@@ -1,5 +1,6 @@
 {
-  "name": "solid-start-streaming",
+  "name": "@tanstack/query-example-solid-solid-start-streaming",
+  "private": true,
   "scripts": {
     "dev": "solid-start dev",
     "build": "solid-start build",

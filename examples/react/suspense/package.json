@@ -1,8 +1,6 @@
 {
   "name": "@tanstack/query-example-react-suspense",
-  "version": "1.0.0",
-  "description": "",
-  "keywords": [],
+  "private": true,
   "main": "src/index.jsx",
   "dependencies": {
     "@tanstack/react-query": "^5.0.0-alpha.38",
