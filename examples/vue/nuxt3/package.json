@@ -1,14 +1,15 @@
 {
+  "name": "@tanstack/query-example-vue-nuxt3",
   "private": true,
   "scripts": {
     "dev": "nuxi dev",
     "build": "nuxi build",
     "start": "node .output/server/index.mjs"
   },
-  "devDependencies": {
-    "nuxt": "^3.0.0-rc.12"
-  },
   "dependencies": {
     "@tanstack/vue-query": "^4.13.3"
+  },
+  "devDependencies": {
+    "nuxt": "^3.0.0-rc.12"
   }
 }

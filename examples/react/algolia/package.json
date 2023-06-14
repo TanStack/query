@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-example-react-algolia",
-  "version": "0.0.1",
+  "private": true,
   "main": "src/index.tsx",
   "scripts": {
     "dev": "vite",
@@ -8,21 +8,21 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/react-query": "^4.7.1",
-    "@tanstack/react-query-devtools": "^4.7.1",
     "@algolia/client-search": "4.11.0",
     "@algolia/transporter": "4.11.0",
-    "algoliasearch": "4.12.2"
+    "@tanstack/react-query": "^4.7.1",
+    "@tanstack/react-query-devtools": "^4.7.1",
+    "algoliasearch": "4.12.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^4.13.0",
-    "@vitejs/plugin-react": "^2.0.0",
-    "vite": "^3.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "typescript": "^4.7.4",
     "@types/react": "^18.0.14",
-    "@types/react-dom": "^18.0.5"
+    "@types/react-dom": "^18.0.5",
+    "@vitejs/plugin-react": "^2.0.0",
+    "typescript": "^4.7.4",
+    "vite": "^3.0.0"
   },
   "browserslist": {
     "production": [

@@ -1,4 +1,4 @@
-{
+const config = {
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "./tsconfig.json",
@@ -23,3 +23,5 @@
     }
   ]
 }
+
+module.exports = config

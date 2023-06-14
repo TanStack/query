@@ -1,4 +1,4 @@
-{
+const config = {
   "parserOptions": {
     "project": "./tsconfig.json",
     "sourceType": "module"
@@ -7,3 +7,5 @@
     "react-hooks/rules-of-hooks": "off"
   }
 }
+
+module.exports = config
