@@ -25,7 +25,10 @@ type QueriesObserverListener = (result: QueryObserverResult[]) => void
 export interface QueriesObserverOptions<
   TCombinedResult = QueryObserverResult[],
 > {
-  combine?: (result: QueryObserverResult[]) => TCombinedResult
+  combine?: (
+    result: QueryObserverResult[],
+    combinedResult: TCombinedResult | undefined,
+  ) => TCombinedResult
 }
 
 export class QueriesObserver<
@@ -175,7 +178,10 @@ export class QueriesObserver<
   #combineResult(input: QueryObserverResult[]): TCombinedResult {
     const combine = this.#options?.combine
     if (combine) {
-      return replaceEqualDeep(this.#combinedResult, combine(input))
+      return replaceEqualDeep(
+        this.#combinedResult,
+        combine(input, this.#combinedResult),
+      )
     }
     return input as any
   }
