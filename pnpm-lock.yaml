@@ -244,6 +244,12 @@ importers:
       algoliasearch:
         specifier: 4.12.2
         version: 4.12.2
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^4.13.0
@@ -257,12 +263,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^2.0.0
         version: 2.1.0(vite@3.2.2)
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
       typescript:
         specifier: ^4.7.4
         version: 4.8.4
@@ -529,12 +529,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^4.7.1
         version: link:../../../packages/react-query-devtools
-      '@types/node':
-        specifier: 14.14.14
-        version: 14.14.14
-      '@types/react':
-        specifier: ^18.0.15
-        version: 18.0.15
       axios:
         specifier: ^0.21.1
         version: 0.21.4
@@ -550,6 +544,13 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+    devDependencies:
+      '@types/node':
+        specifier: 14.14.14
+        version: 14.14.14
+      '@types/react':
+        specifier: ^18.0.15
+        version: 18.0.15
       typescript:
         specifier: ^4.1.2
         version: 4.8.3
@@ -6193,7 +6194,7 @@ packages:
 
   /@types/node@14.14.14:
     resolution: {integrity: sha512-UHnOPWVWV1z+VV8k6L1HhG7UbGBgIdghqF3l9Ny9ApPghbjICXkUJSd/b9gOgQfjM1r+37cipdw/HJ3F6ICEnQ==}
-    dev: false
+    dev: true
 
   /@types/node@17.0.45:
     resolution: {integrity: sha512-w+tIMs3rq2afQdsPJlODhoUEKzFP1ayaoyl1CcnwtIlsVe7K7bA1NGm4s3PraqTLlXnbIN84zuBlxBWo1u9BLw==}
@@ -16895,6 +16896,7 @@ packages:
     resolution: {integrity: sha512-goMHfm00nWPa8UvR/CPSvykqf6dVV8x/dp0c5mFTMTIu0u0FlGWRioyy7Nn0PGAdHxpJZnuO/ut+PpQ8UiHAig==}
     engines: {node: '>=4.2.0'}
     hasBin: true
+    dev: true
 
   /typescript@4.8.4:
     resolution: {integrity: sha512-QCh+85mCy+h0IGff8r5XWzOVSbBO+KfeYrMQh7NJ58QujwcE22u+NUSmUxqF+un70P9GXKxa2HCNiTTMJknyjQ==}

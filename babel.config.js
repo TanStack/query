@@ -41,7 +41,7 @@ module.exports = {
       presets: ['@babel/react'],
     },
     {
-      include: './packages/solid-query/**',
+      include: ['./packages/solid-query/**'],
       presets: ['babel-preset-solid'],
     },
   ],
