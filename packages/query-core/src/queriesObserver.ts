@@ -39,7 +39,7 @@ export class QueriesObserver<
   #queries: QueryObserverOptions[]
   #observers: QueryObserver[]
   #options?: QueriesObserverOptions<TCombinedResult>
-  #combinedResult!: TCombinedResult
+  #combinedResult?: TCombinedResult
 
   constructor(
     client: QueryClient,
@@ -135,7 +135,7 @@ export class QueriesObserver<
     })
   }
 
-  getCurrentResult(): TCombinedResult {
+  getCurrentResult(): TCombinedResult | undefined {
     return this.#combinedResult
   }
 
