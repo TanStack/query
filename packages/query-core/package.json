@@ -11,21 +11,21 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "type": "module",
-  "types": "build/lib/index.d.ts",
-  "main": "build/lib/index.legacy.cjs",
-  "module": "build/lib/index.legacy.js",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
   "exports": {
     ".": {
-      "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.js",
-      "require": "./build/lib/index.cjs",
-      "default": "./build/lib/index.cjs"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.cjs"
     },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "files": [
-    "build/lib/*",
+    "dist",
     "src"
   ],
   "scripts": {
@@ -35,8 +35,6 @@
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
-    "build": "pnpm build:rollup && pnpm build:types",
-    "build:rollup": "rollup --config rollup.config.js",
-    "build:types": "tsc --emitDeclarationOnly"
+    "build": "tsup"
   }
 }

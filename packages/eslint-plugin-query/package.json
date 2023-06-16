@@ -55,8 +55,7 @@
     "@typescript-eslint/eslint-plugin": "^5.54.0",
     "@typescript-eslint/parser": "^5.54.0",
     "@typescript-eslint/utils": "^5.54.0",
-    "eslint": "^8.34.0",
-    "tsup": "^6.7.0"
+    "eslint": "^8.34.0"
   },
   "peerDependencies": {
     "eslint": "^8.0.0"
