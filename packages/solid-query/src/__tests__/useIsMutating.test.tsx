@@ -3,7 +3,7 @@ import { createMutation, QueryClientProvider, useIsMutating } from '..'
 import { createQueryClient, sleep, setActTimeout } from './utils'
 
 import { createEffect, createRenderEffect, createSignal, Show } from 'solid-js'
-import * as MutationCacheModule from '../../../query-core/src/mutationCache'
+import * as QueryCore from '@tanstack/query-core'
 import { vi } from 'vitest'
 
 describe('useIsMutating', () => {
@@ -186,7 +186,7 @@ describe('useIsMutating', () => {
   it('should not change state if unmounted', async () => {
     // We have to mock the MutationCache to not unsubscribe
     // the listener when the component is unmounted
-    class MutationCacheMock extends MutationCacheModule.MutationCache {
+    class MutationCacheMock extends QueryCore.MutationCache {
       subscribe(listener: any) {
         super.subscribe(listener)
         return () => void 0
@@ -194,7 +194,7 @@ describe('useIsMutating', () => {
     }
 
     const MutationCacheSpy = vi
-      .spyOn(MutationCacheModule, 'MutationCache')
+      .spyOn(QueryCore, 'MutationCache')
       .mockImplementation((fn) => {
         return new MutationCacheMock(fn)
       })

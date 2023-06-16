@@ -1,10 +1,11 @@
 class UnknownUsageError extends Error {
   /**
    * @param {import('jscodeshift').CallExpression} callExpression
+   * @param {string} filePath
    */
   constructor(callExpression, filePath) {
     super('')
-    this.message = this.#buildMessage(callExpression, filePath)
+    this.message = this.buildMessage(callExpression, filePath)
     this.name = 'UnknownUsageError'
   }
 
@@ -14,7 +15,7 @@ class UnknownUsageError extends Error {
    * @param {string} filePath
    * @returns {string}
    */
-  #buildMessage(callExpression, filePath) {
+  buildMessage(callExpression, filePath) {
     const location = callExpression.callee.loc
     const start = location.start.line
     const end = location.end.line

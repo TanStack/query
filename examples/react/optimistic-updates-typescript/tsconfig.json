@@ -1,5 +1,4 @@
 {
-  "include": ["./pages/**/*"],
   "compilerOptions": {
     "strict": true,
     "esModuleInterop": true,
@@ -16,5 +15,6 @@
     "isolatedModules": true,
     "incremental": true
   },
+  "include": ["src"],
   "exclude": ["node_modules"]
 }

@@ -1,12 +1,12 @@
-import * as React from 'react';
-import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import * as React from 'react'
+import { ActivityIndicator, View, StyleSheet } from 'react-native'
 
 export function LoadingIndicator() {
   return (
     <View style={styles.fill}>
       <ActivityIndicator size="large" />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -15,4 +15,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-});
+})

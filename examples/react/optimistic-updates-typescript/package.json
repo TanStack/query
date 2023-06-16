@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-example-react-optimistic-updates-typescript",
-  "version": "1.0.0",
+  "private": true,
   "main": "pages/index.tsx",
   "license": "MIT",
   "dependencies": {
