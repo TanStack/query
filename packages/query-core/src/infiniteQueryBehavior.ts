@@ -7,11 +7,9 @@ import type {
   QueryKey,
 } from './types'
 
-export function infiniteQueryBehavior<
-  TQueryFnData,
-  TError,
-  TData,
->(): QueryBehavior<TQueryFnData, TError, InfiniteData<TData>> {
+export function infiniteQueryBehavior<TQueryFnData, TError, TData>(
+  pages?: number,
+): QueryBehavior<TQueryFnData, TError, InfiniteData<TData>> {
   return {
     onFetch: (context) => {
       context.fetchFn = async () => {
@@ -84,13 +82,8 @@ export function infiniteQueryBehavior<
 
         let result: InfiniteData<unknown>
 
-        // Fetch first page?
-        if (!oldPages.length) {
-          result = await fetchPage(empty, options.defaultPageParam)
-        }
-
         // fetch next / previous page?
-        else if (direction) {
+        if (direction && oldPages.length) {
           const previous = direction === 'backward'
           const pageParamFn = previous ? getPreviousPageParam : getNextPageParam
           const oldData = {
@@ -100,15 +93,17 @@ export function infiniteQueryBehavior<
           const param = pageParamFn(options, oldData)
 
           result = await fetchPage(oldData, param, previous)
-        }
-
-        // Refetch pages
-        else {
+        } else {
           // Fetch first page
-          result = await fetchPage(empty, oldPageParams[0])
+          result = await fetchPage(
+            empty,
+            oldPageParams[0] ?? options.defaultPageParam,
+          )
+
+          const remainingPages = pages ?? oldPages.length
 
           // Fetch remaining pages
-          for (let i = 1; i < oldPages.length; i++) {
+          for (let i = 1; i < remainingPages; i++) {
             const param = getNextPageParam(options, result)
             result = await fetchPage(result, param)
           }
