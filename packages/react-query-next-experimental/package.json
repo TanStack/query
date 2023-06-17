@@ -1,7 +1,7 @@
 {
-  "name": "@tanstack/react-query",
+  "name": "@tanstack/react-query-next-experimental",
   "version": "5.0.0-alpha.67",
-  "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
+  "description": "Hydration utils for React Query in the NextJs app directory",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": "tanstack/query",
@@ -24,6 +24,10 @@
     "./package.json": "./package.json"
   },
   "sideEffects": false,
+  "files": [
+    "build/lib/*",
+    "src"
+  ],
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
@@ -31,40 +35,23 @@
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
-    "build": "pnpm build:rollup && pnpm build:codemods && pnpm build:types",
+    "build": "pnpm build:rollup && pnpm build:types",
     "build:rollup": "rollup --config rollup.config.js",
-    "build:codemods": "cpy ../codemods/src/**/* ./build/codemods",
-    "build:types": "tsc --emitDeclarationOnly"
-  },
-  "files": [
-    "build/lib/*",
-    "src",
-    "build/codemods",
-    "!build/codemods/jest.config.js",
-    "!build/codemods/**/__testfixtures__",
-    "!build/codemods/**/__tests__"
-  ],
-  "dependencies": {
-    "@tanstack/query-core": "workspace:*"
+    "build:types": "tsc --emitDeclarationOnly && cpy index.d.ts index.prod.d.ts --cwd=build/lib"
   },
   "devDependencies": {
+    "@tanstack/react-query": "workspace:*",
     "@types/react": "^18.2.4",
     "@types/react-dom": "^18.2.4",
+    "next": "^13.4.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^3.1.4"
   },
   "peerDependencies": {
+    "@tanstack/react-query": "workspace:*",
+    "next": "^13.0.0",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "react-native": "*"
-  },
-  "peerDependenciesMeta": {
-    "react-dom": {
-      "optional": true
-    },
-    "react-native": {
-      "optional": true
-    }
+    "react-dom": "^18.0.0"
   }
 }
