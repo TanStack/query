@@ -8,10 +8,10 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "vue": "3.2.41",
     "@tanstack/vue-query": "^4.14.1",
     "@tanstack/query-persist-client-core": "^4.14.1",
-    "@tanstack/query-sync-storage-persister": "^4.14.1"
+    "@tanstack/query-sync-storage-persister": "^4.14.1",
+    "vue": "3.2.41"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "3.2.0",

@@ -16,8 +16,9 @@ import type {
   QueryObserverResult,
   QueryFunction,
 } from '@tanstack/query-core'
+import { isServer } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
-import { updateState, isQueryKey, cloneDeepUnref } from './utils'
+import { updateState, isQueryKey, cloneDeepUnref, noop } from './utils'
 import type { MaybeRef, WithQueryClientKey } from './types'
 import type { UseQueryOptions } from './useQuery'
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
@@ -71,9 +72,7 @@ export function useBaseQuery<
   const observer = new Observer(queryClient, defaultedOptions.value)
   const state = reactive(observer.getCurrentResult())
 
-  const unsubscribe = ref(() => {
-    // noop
-  })
+  const unsubscribe = ref(noop)
 
   watch(
     queryClient.isRestoring,
@@ -81,9 +80,12 @@ export function useBaseQuery<
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (!isRestoring) {
         unsubscribe.value()
-        unsubscribe.value = observer.subscribe((result) => {
-          updateState(state, result)
-        })
+        // Nuxt2 memory leak fix - do not subscribe on server
+        if (!isServer) {
+          unsubscribe.value = observer.subscribe((result) => {
+            updateState(state, result)
+          })
+        }
       }
     },
     { immediate: true },
@@ -104,9 +106,7 @@ export function useBaseQuery<
 
   const suspense = () => {
     return new Promise<QueryObserverResult<TData, TError>>((resolve) => {
-      let stopWatch = () => {
-        //noop
-      }
+      let stopWatch = noop
       const run = () => {
         if (defaultedOptions.value.enabled !== false) {
           const optimisticResult = observer.getOptimisticResult(
