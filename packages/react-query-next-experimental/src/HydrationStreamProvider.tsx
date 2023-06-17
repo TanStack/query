@@ -51,7 +51,9 @@ export interface HydrationStreamProviderProps<TShape> {
 }
 
 export function createHydrationStreamProvider<TShape>() {
-  const context = React.createContext<HydrationStreamContext<TShape>>(null as any)
+  const context = React.createContext<HydrationStreamContext<TShape>>(
+    null as any,
+  )
   /**
 
    * 1. (Happens on server): `useServerInsertedHTML()` is called **on the server** whenever a `Suspense`-boundary completes
