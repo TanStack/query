@@ -31,8 +31,8 @@
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
-    "build": "pnpm build:rollup && pnpm build:codemods && pnpm build:types",
-    "build:rollup": "rollup --config rollup.config.js",
+    "build": "pnpm build:tsup && pnpm build:codemods && pnpm build:types",
+    "build:tsup": "tsup",
     "build:codemods": "cpy ../codemods/src/**/* ./build/codemods",
     "build:types": "tsc --emitDeclarationOnly"
   },

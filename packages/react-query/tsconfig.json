@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "jsx": "react",
-    "outDir": "./build/lib",
+    "outDir": "./dist",
     "types": ["vitest/globals"]
   },
   "include": ["src"]
