@@ -439,6 +439,10 @@ You can adjust the `maxPages` value according to the UX and refetching performan
 
 Note that the infinite list must be bi-directional, which requires both `getNextPageParam` and `getPreviousPageParam` to be defined.
 
+### Infinite Queries can prefetch multiple pages
+
+Infinite Queries can be prefetched like regular Queries. Per default, only the first page of the Query will be prefetched and will be stored under the given QueryKey. If you want to prefetch more than one page, you can use the `pages` option. Read the [prefetching guide](../guides/prefetching) for more information.
+
 ### Typesafe way to create Query Options
 
 See the [TypeScript docs](../typescript#typing-query-options) for more details.
