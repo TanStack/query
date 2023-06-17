@@ -3,12 +3,12 @@
 import { defineConfig } from 'tsup'
 
 export default defineConfig({
-  entry: ['src/*.ts'],
+  entry: ['src/index.ts'],
   format: ['cjs', 'esm'],
   target: ['es2020', 'node16'],
   outDir: 'build/lib',
-  bundle: false,
-  splitting: false,
+  external: [/eslint/],
+  bundle: true,
   sourcemap: true,
   clean: true,
 })
