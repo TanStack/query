@@ -37,7 +37,7 @@
     "test:build": "publint --strict",
     "build": "pnpm build:rollup && pnpm build:types",
     "build:rollup": "rollup --config rollup.config.js",
-    "build:types": "tsc --emitDeclarationOnly && cpy index.d.ts index.prod.d.ts --cwd=build/lib"
+    "build:types": "tsc --emitDeclarationOnly"
   },
   "devDependencies": {
     "@tanstack/react-query": "workspace:*",
