@@ -649,6 +649,46 @@ describe('queryClient', () => {
         pageParams: [10],
       })
     })
+
+    test('should prefetch multiple pages', async () => {
+      const key = queryKey()
+
+      await queryClient.prefetchInfiniteQuery({
+        queryKey: key,
+        queryFn: ({ pageParam }) => String(pageParam),
+        getNextPageParam: (_lastPage, _pages, lastPageParam) =>
+          lastPageParam + 5,
+        defaultPageParam: 10,
+        pages: 3,
+      })
+
+      const result = queryClient.getQueryData(key)
+
+      expect(result).toEqual({
+        pages: ['10', '15', '20'],
+        pageParams: [10, 15, 20],
+      })
+    })
+
+    test('should stop prefetching if getNextPageParam returns undefined', async () => {
+      const key = queryKey()
+
+      await queryClient.prefetchInfiniteQuery({
+        queryKey: key,
+        queryFn: ({ pageParam }) => String(pageParam),
+        getNextPageParam: (_lastPage, _pages, lastPageParam) =>
+          lastPageParam >= 20 ? undefined : lastPageParam + 5,
+        defaultPageParam: 10,
+        pages: 5,
+      })
+
+      const result = queryClient.getQueryData(key)
+
+      expect(result).toEqual({
+        pages: ['10', '15', '20'],
+        pageParams: [10, 15, 20],
+      })
+    })
   })
 
   describe('prefetchQuery', () => {
