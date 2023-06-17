@@ -15,6 +15,7 @@ import {
 } from './test-utils'
 import { useQuery } from '../useQuery'
 import { parseQueryArgs, useBaseQuery } from '../useBaseQuery'
+import { noop } from '../utils'
 
 jest.mock('../useQueryClient')
 jest.mock('../useBaseQuery')
@@ -116,9 +117,7 @@ describe('useQuery', () => {
 
   test('should update query on reactive options object change', async () => {
     const spy = jest.fn()
-    const onSuccess = ref(() => {
-      // Noop
-    })
+    const onSuccess = ref(noop)
     useQuery(
       ['key6'],
       simpleFetcher,

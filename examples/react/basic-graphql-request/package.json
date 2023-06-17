@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-example-react-basic-graphql-request",
-  "version": "0.0.1",
+  "private": true,
   "main": "src/index.jsx",
   "scripts": {
     "dev": "vite",
