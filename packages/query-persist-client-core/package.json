@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-persist-client-core",
-  "version": "5.0.0-alpha.34",
+  "version": "5.0.0-alpha.63",
   "description": "Set of utilities for interacting with persisters, which can save your queryClient for later use",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -10,32 +10,36 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
+  "type": "module",
   "types": "build/lib/index.d.ts",
-  "main": "build/lib/index.js",
-  "module": "build/lib/index.esm.js",
+  "main": "build/lib/index.legacy.cjs",
+  "module": "build/lib/index.legacy.js",
   "exports": {
     ".": {
       "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.mjs",
-      "default": "./build/lib/index.js"
+      "import": "./build/lib/index.js",
+      "require": "./build/lib/index.cjs",
+      "default": "./build/lib/index.cjs"
     },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "files": [
     "build/lib/*",
-    "build/umd/*",
     "src"
   ],
   "scripts": {
-    "clean": "rimraf ./build",
+    "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc",
+    "test:types": "tsc --noEmit",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "build:types": "tsc --build"
+    "test:build": "publint --strict",
+    "build": "pnpm build:rollup && pnpm build:types",
+    "build:rollup": "rollup --config rollup.config.js",
+    "build:types": "tsc --emitDeclarationOnly"
   },
   "dependencies": {
-    "@tanstack/query-core": "workspace:*"
+    "@tanstack/query-core": "^5.0.0-alpha.43"
   }
 }

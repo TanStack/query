@@ -1,4 +1,14 @@
-import type { DefaultedQueryObserverOptions, DefaultError } from './types'
+import type {
+  DefaultedQueryObserverOptions,
+  DefaultError,
+  PlaceholderDataFunction,
+  QueryKey,
+  QueryObserverBaseResult,
+  QueryObserverOptions,
+  QueryObserverResult,
+  QueryOptions,
+  RefetchOptions,
+} from './types'
 import {
   isServer,
   isValidTimeout,
@@ -8,15 +18,6 @@ import {
   timeUntilStale,
 } from './utils'
 import { notifyManager } from './notifyManager'
-import type {
-  PlaceholderDataFunction,
-  QueryKey,
-  QueryObserverBaseResult,
-  QueryObserverOptions,
-  QueryObserverResult,
-  QueryOptions,
-  RefetchOptions,
-} from './types'
 import type { Query, QueryState, FetchOptions } from './query'
 import type { QueryClient } from './queryClient'
 import { focusManager } from './focusManager'
@@ -190,7 +191,7 @@ export class QueryObserver<
     }
 
     // Update result
-    this.#updateResult(notifyOptions)
+    this.updateResult(notifyOptions)
 
     // Update stale interval if needed
     if (
@@ -290,7 +291,7 @@ export class QueryObserver<
       ...fetchOptions,
       cancelRefetch: fetchOptions.cancelRefetch ?? true,
     }).then(() => {
-      this.#updateResult()
+      this.updateResult()
       return this.#currentResult
     })
   }
@@ -336,7 +337,7 @@ export class QueryObserver<
 
     this.#staleTimeoutId = setTimeout(() => {
       if (!this.#currentResult.isStale) {
-        this.#updateResult()
+        this.updateResult()
       }
     }, timeout)
   }
@@ -560,7 +561,7 @@ export class QueryObserver<
     return result as QueryObserverResult<TData, TError>
   }
 
-  #updateResult(notifyOptions?: NotifyOptions): void {
+  updateResult(notifyOptions?: NotifyOptions): void {
     const prevResult = this.#currentResult as
       | QueryObserverResult<TData, TError>
       | undefined
@@ -636,7 +637,7 @@ export class QueryObserver<
   }
 
   onQueryUpdate(): void {
-    this.#updateResult()
+    this.updateResult()
 
     if (this.hasListeners()) {
       this.#updateTimers()

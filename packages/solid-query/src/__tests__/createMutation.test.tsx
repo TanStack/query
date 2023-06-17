@@ -5,7 +5,7 @@ import {
   createSignal,
   ErrorBoundary,
 } from 'solid-js'
-import { fireEvent, render, screen, waitFor } from 'solid-testing-library'
+import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
 import {
   createMutation,
   MutationCache,

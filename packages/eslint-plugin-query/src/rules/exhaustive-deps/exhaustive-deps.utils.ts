@@ -9,7 +9,7 @@ export const ExhaustiveDepsUtils = {
     scopeManager: TSESLint.Scope.ScopeManager
   }) {
     const { reference, scopeManager, context } = params
-    const component = ASTUtils.getReactComponentOrHookAncestor(context)
+    const component = ASTUtils.getFunctionAncestor(context)
 
     if (
       component !== undefined &&

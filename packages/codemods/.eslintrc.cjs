@@ -5,7 +5,6 @@ const config = {
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: './tsconfig.eslint.json',
-    sourceType: 'module',
   },
   overrides: [
     {

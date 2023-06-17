@@ -303,10 +303,13 @@ describe('PersistQueryClientProvider', () => {
 
     queryClient.clear()
 
+    let fetched = false
+
     function Page() {
       const state = useQuery({
         queryKey: key,
         queryFn: async () => {
+          fetched = true
           await sleep(10)
           return 'fetched'
         },
@@ -336,7 +339,9 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('data: null'))
     await waitFor(() => rendered.getByText('data: hydrated'))
 
-    expect(states).toHaveLength(2)
+    expect(states).toHaveLength(3)
+
+    expect(fetched).toBe(false)
 
     expect(states[0]).toMatchObject({
       status: 'pending',
@@ -349,6 +354,9 @@ describe('PersistQueryClientProvider', () => {
       fetchStatus: 'idle',
       data: 'hydrated',
     })
+
+    // #5443 seems like we get an extra render now ...
+    expect(states[1]).toStrictEqual(states[2])
   })
 
   test('should call onSuccess after successful restoring', async () => {
@@ -399,6 +407,66 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('hydrated'))
     expect(onSuccess).toHaveBeenCalledTimes(1)
     await waitFor(() => rendered.getByText('fetched'))
+  })
+
+  test('should await onSuccess after successful restoring', async () => {
+    const key = queryKey()
+
+    const queryClient = createQueryClient()
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
+
+    const persister = createMockPersister()
+
+    await persistQueryClientSave({ queryClient, persister })
+
+    queryClient.clear()
+
+    const states: Array<string> = []
+
+    function Page() {
+      const { data, fetchStatus } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          states.push('fetching')
+          await sleep(10)
+          states.push('fetched')
+          return 'fetched'
+        },
+      })
+
+      return (
+        <div>
+          <h1>{data}</h1>
+          <h2>fetchStatus: {fetchStatus}</h2>
+        </div>
+      )
+    }
+
+    const rendered = render(
+      <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{ persister }}
+        onSuccess={async () => {
+          states.push('onSuccess')
+          await sleep(20)
+          states.push('onSuccess done')
+        }}
+      >
+        <Page />
+      </PersistQueryClientProvider>,
+    )
+
+    await waitFor(() => rendered.getByText('hydrated'))
+    await waitFor(() => rendered.getByText('fetched'))
+    expect(states).toEqual([
+      'onSuccess',
+      'onSuccess done',
+      'fetching',
+      'fetched',
+    ])
   })
 
   test('should remove cache after non-successful restoring', async () => {

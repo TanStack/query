@@ -1,15 +1,15 @@
-import React from "react";
-import Episodes from "./Episodes";
-import Episode from "./Episode";
-import Characters from "./Characters";
-import Character from "./Character";
-import Home from "./Home";
-import { Link, Button } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import { Switch, Route, Link as RouterLink } from "react-router-dom";
+import React from 'react'
+import Episodes from './Episodes'
+import Episode from './Episode'
+import Characters from './Characters'
+import Character from './Character'
+import Home from './Home'
+import { Link, Button } from '@mui/material'
+import { makeStyles } from '@mui/styles'
+import { Routes, Route, Link as RouterLink } from 'react-router-dom'
 
 export default function Layout() {
-  const classes = useStyles();
+  const classes = useStyles()
 
   return (
     <div className="App">
@@ -25,40 +25,34 @@ export default function Layout() {
         </Link>
       </nav>
       <main className={classes.main}>
-        <Switch>
-          <Route exact path="/episodes">
-            <Episodes />
-          </Route>
-          <Route exact path="/episodes/:episodeId">
-            <Episode />
-          </Route>
-          <Route exact path="/characters">
-            <Characters />
-          </Route>
-          <Route exact path="/characters/:characterId">
-            <Character />
-          </Route>
-          <Route path="/">
-            <Home />
-          </Route>
-        </Switch>
+        <Routes>
+          <Route exact path="/episodes" element={<Episodes />} />
+          <Route exact path="/episodes/:episodeId" element={<Episode />} />
+          <Route exact path="/characters" element={<Characters />} />
+          <Route
+            exact
+            path="/characters/:characterId"
+            element={<Character />}
+          />
+          <Route path="/" element={<Home />} />
+        </Routes>
       </main>
     </div>
-  );
+  )
 }
 
 const useStyles = makeStyles((theme) => ({
   main: {
-    margin: "0 auto",
-    padding: "16px",
+    margin: '0 auto',
+    padding: '16px',
   },
   menu: {
-    margin: "0 auto",
-    display: "flex",
-    justifyContent: "center",
-    backgroundColor: "#CCC",
-    "& button": {
+    margin: '0 auto',
+    display: 'flex',
+    justifyContent: 'center',
+    backgroundColor: '#CCC',
+    '& button': {
       margin: theme.spacing(1),
     },
   },
-}));
+}))

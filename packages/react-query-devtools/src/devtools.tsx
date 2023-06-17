@@ -9,6 +9,7 @@ import type {
 } from '@tanstack/query-devtools'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
 import React from 'react'
+
 export interface DevtoolsOptions {
   /**
    * Set this true if you want the dev tools to default to being open
@@ -36,7 +37,7 @@ export interface DevtoolsOptions {
   errorTypes?: DevToolsErrorType[]
 }
 
-export function ReactQueryDevtools(
+function ReactQueryDevtoolsDev(
   props: DevtoolsOptions,
 ): React.ReactElement | null {
   const queryClient = useQueryClient()
@@ -92,3 +93,14 @@ export function ReactQueryDevtools(
 
   return <div ref={ref}></div>
 }
+
+function ReactQueryDevtoolsProd(
+  _props: DevtoolsOptions,
+): React.ReactElement | null {
+  return null
+}
+
+export const ReactQueryDevtools: typeof ReactQueryDevtoolsDev =
+  process.env.NODE_ENV !== 'development'
+    ? ReactQueryDevtoolsProd
+    : ReactQueryDevtoolsDev

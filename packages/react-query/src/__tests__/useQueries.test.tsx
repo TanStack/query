@@ -912,7 +912,7 @@ describe('useQueries', () => {
             {
               queryKey: key2,
               queryFn: async () => {
-                await sleep(25)
+                await sleep(50)
                 return Promise.resolve('second result ' + count)
               },
             },
@@ -992,7 +992,7 @@ describe('useQueries', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
 
-    await sleep(50)
+    await sleep(100)
     // no further re-render because data didn't change
     expect(results.length).toBe(5)
   })

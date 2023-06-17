@@ -15,7 +15,9 @@ This is the simpler variant, as it doesn't interact with the cache directly.
     mutationFn: (newTodo: string) => axios.post('/api/data', { text: newTodo }),
     // make sure to _return_ the Promise from the query invalidation
     // so that the mutation stays in `pending` state until the refetch is finished
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+    onSettled: async () => {
+      return await queryClient.invalidateQueries({ queryKey: ['todos'] })
+    },
   })
 ```
 [//]: # 'ExampleUI1'

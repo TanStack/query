@@ -208,6 +208,10 @@
             {
               "label": "Angular Query",
               "to": "react/community/angular-query"
+            },
+            {
+              "label": "Suspensive React Query",
+              "to": "react/community/suspensive-react-query"
             }
           ]
         },

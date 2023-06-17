@@ -14,9 +14,10 @@ import type {
   MutationObserverOptions,
   DefaultError,
 } from '@tanstack/query-core'
+import { isServer } from '@tanstack/query-core'
 import type { MaybeRefDeep, DistributiveOmit } from './types'
 import { MutationObserver } from '@tanstack/query-core'
-import { cloneDeepUnref, updateState } from './utils'
+import { cloneDeepUnref, updateState, noop } from './utils'
 import { useQueryClient } from './useQueryClient'
 import type { QueryClient } from './queryClient'
 
@@ -71,9 +72,12 @@ export function useMutation<
   const observer = new MutationObserver(client, options.value)
   const state = reactive(observer.getCurrentResult())
 
-  const unsubscribe = observer.subscribe((result) => {
-    updateState(state, result)
-  })
+  // Nuxt2 memory leak fix - do not subscribe on server
+  const unsubscribe = isServer
+    ? noop
+    : observer.subscribe((result) => {
+        updateState(state, result)
+      })
 
   const mutate = (
     variables: TVariables,

@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/eslint-plugin-query",
-  "version": "5.0.0-alpha.36",
+  "version": "5.0.0-alpha.59",
   "description": "ESLint plugin for TanStack Query",
   "author": "Eliya Cohen",
   "license": "MIT",
@@ -10,22 +10,28 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "main": "build/lib/index.js",
+  "type": "module",
+  "types": "build/lib/index.d.ts",
+  "main": "build/lib/index.cjs",
+  "module": "build/lib/index.js",
   "exports": {
     ".": {
-      "require": "./build/lib/index.js",
-      "default": "./build/lib/index.js"
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.js",
+      "require": "./build/lib/index.cjs",
+      "default": "./build/lib/index.cjs"
     },
     "./package.json": "./package.json"
   },
   "scripts": {
-    "clean": "rimraf ./build",
+    "clean": "rimraf ./build && rimraf ./coverage",
     "dev": "tsup --watch --sourcemap",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc",
+    "test:types": "tsc --noEmit",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "build": "tsup --minify"
+    "test:build": "publint --strict",
+    "build": "tsup --minify --dts"
   },
   "files": [
     "build"
@@ -37,15 +43,22 @@
     "external": [
       "eslint"
     ],
+    "format": [
+      "cjs",
+      "esm"
+    ],
     "clean": true,
     "bundle": true,
     "outDir": "build/lib"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.41.0",
-    "@typescript-eslint/parser": "^5.41.0",
-    "@typescript-eslint/utils": "^5.41.0",
-    "eslint": "^8.26.0",
-    "tsup": "^6.3.0"
+    "@typescript-eslint/eslint-plugin": "^5.54.0",
+    "@typescript-eslint/parser": "^5.54.0",
+    "@typescript-eslint/utils": "^5.54.0",
+    "eslint": "^8.34.0",
+    "tsup": "^6.7.0"
+  },
+  "peerDependencies": {
+    "eslint": "^8.0.0"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-devtools",
-  "version": "5.0.0-alpha.35",
+  "version": "5.0.0-alpha.63",
   "description": "Developer tools to interact with and visualize the TanStack/react-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -10,54 +10,54 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
+  "type": "module",
   "types": "build/lib/index.d.ts",
-  "main": "build/lib/index.js",
-  "module": "build/lib/index.esm.js",
+  "main": "build/lib/index.legacy.cjs",
+  "module": "build/lib/index.legacy.js",
   "exports": {
     ".": {
       "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.mjs",
-      "default": "./build/lib/index.js"
+      "import": "./build/lib/index.js",
+      "require": "./build/lib/index.cjs",
+      "default": "./build/lib/index.cjs"
     },
     "./production": {
       "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.prod.mjs",
-      "default": "./build/lib/index.prod.js"
-    },
-    "./build/lib/index.prod.js": {
-      "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.prod.mjs",
-      "default": "./build/lib/index.prod.js"
+      "import": "./build/lib/index.prod.js",
+      "require": "./build/lib/index.prod.cjs",
+      "default": "./build/lib/index.prod.cjs"
     },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "files": [
     "build/lib/*",
-    "build/umd/*",
     "src"
   ],
   "scripts": {
-    "clean": "rimraf ./build",
+    "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc",
+    "test:types": "tsc --noEmit",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "build:types": "tsc --build && cp build/lib/index.d.ts build/lib/index.prod.d.ts"
+    "test:build": "publint --strict",
+    "build": "pnpm build:rollup && pnpm build:types",
+    "build:rollup": "rollup --config rollup.config.js",
+    "build:types": "tsc --emitDeclarationOnly && cpy index.d.ts index.prod.d.ts --cwd=build/lib"
+  },
+  "dependencies": {
+    "@tanstack/query-devtools": "^5.0.0-alpha.43"
   },
   "devDependencies": {
-    "@tanstack/react-query": "workspace:*",
-    "@types/react": "^18.0.14",
-    "@types/react-dom": "^18.0.5",
+    "@tanstack/react-query": "^5.0.0-alpha.43",
+    "@types/react": "^18.2.4",
+    "@types/react-dom": "^18.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^3.1.4"
   },
-  "dependencies": {
-    "@tanstack/query-devtools": "workspace:*"
-  },
   "peerDependencies": {
-    "@tanstack/react-query": "workspace:*",
+    "@tanstack/react-query": "^5.0.0-alpha.43",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   }

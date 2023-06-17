@@ -1,17 +1,14 @@
+// @ts-check
+
 /** @type {import('eslint').Linter.Config} */
 const config = {
-  parser: '@typescript-eslint/parser',
+  extends: ['plugin:svelte/recommended'],
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: './tsconfig.json',
-    sourceType: 'module',
     extraFileExtensions: ['.svelte'],
   },
-  rules: {
-    'react-hooks/rules-of-hooks': 'off',
-  },
-  extends: ['plugin:svelte/recommended', '../../.eslintrc'],
-  ignorePatterns: ['*.config.*', '*.setup.*', '**/build/*'],
+  ignorePatterns: ['*.config.*', '*.setup.*', '**/dist/*'],
   overrides: [
     {
       files: ['*.svelte'],

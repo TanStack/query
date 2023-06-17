@@ -1,7 +1,6 @@
 {
   "name": "@tanstack/query-example-solid-basic-typescript",
-  "version": "0.0.0",
-  "description": "",
+  "private": true,
   "scripts": {
     "start": "vite",
     "dev": "vite",
@@ -10,12 +9,12 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@tanstack/solid-query": "^4.3.9",
+    "@tanstack/solid-query": "^5.0.0-alpha.38",
     "solid-js": "^1.6.13"
   },
   "devDependencies": {
-    "typescript": "4.7.4",
-    "vite": "^3.0.9",
-    "vite-plugin-solid": "^2.3.9"
+    "typescript": "^5.0.4",
+    "vite": "^4.2.0",
+    "vite-plugin-solid": "^2.5.0"
   }
 }

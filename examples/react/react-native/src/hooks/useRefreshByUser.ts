@@ -1,20 +1,20 @@
-import * as React from 'react';
+import * as React from 'react'
 
 export function useRefreshByUser(refetch: () => Promise<unknown>) {
-  const [isRefetchingByUser, setIsRefetchingByUser] = React.useState(false);
+  const [isRefetchingByUser, setIsRefetchingByUser] = React.useState(false)
 
   async function refetchByUser() {
-    setIsRefetchingByUser(true);
+    setIsRefetchingByUser(true)
 
     try {
-      await refetch();
+      await refetch()
     } finally {
-      setIsRefetchingByUser(false);
+      setIsRefetchingByUser(false)
     }
   }
 
   return {
     isRefetchingByUser,
     refetchByUser,
-  };
+  }
 }

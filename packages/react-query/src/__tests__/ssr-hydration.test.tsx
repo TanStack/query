@@ -1,7 +1,7 @@
 import * as React from 'react'
 import ReactDOM from 'react-dom'
-import ReactDOMTestUtils from 'react-dom/test-utils'
-import ReactDOMServer from 'react-dom/server'
+import * as ReactDOMTestUtils from 'react-dom/test-utils'
+import * as ReactDOMServer from 'react-dom/server'
 // eslint-disable-next-line import/no-unresolved -- types only for module augmentation
 import type {} from 'react-dom/next'
 import { vi } from 'vitest'

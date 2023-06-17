@@ -212,10 +212,11 @@ ReactDOM.createRoot(rootElement).render(
 
 - `persistOptions: PersistQueryClientOptions`
   - all [options](#options) you can pass to [persistQueryClient](#persistqueryclient) minus the QueryClient itself
-- `onSuccess?: () => void`
+- `onSuccess?: () => Promise<unknown> | unknown`
   - optional
   - will be called when the initial restore is finished
   - can be used to [resumePausedMutations](../reference/QueryClient#queryclientresumepausedmutations)
+  - if a Promise is returned, it will be awaited; restoring is seen as ongoing until then
 
 ### useIsRestoring
 

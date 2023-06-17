@@ -3,7 +3,7 @@ import { render, waitFor } from '@testing-library/svelte'
 import { writable } from 'svelte/store'
 import CreateQuery from './CreateQuery.svelte'
 import { sleep } from './utils'
-import type { CreateQueryOptions, WritableOrVal } from '../types'
+import type { CreateQueryOptions } from '../types'
 
 describe('createQuery', () => {
   it('Render and wait for success', async () => {
@@ -29,7 +29,7 @@ describe('createQuery', () => {
   })
 
   it('should keep previous data when returned as placeholder data', async () => {
-    const options: WritableOrVal<CreateQueryOptions> = writable({
+    const options: CreateQueryOptions = writable({
       queryKey: ['test', [1]],
       queryFn: async ({ queryKey }) => {
         await sleep(10)

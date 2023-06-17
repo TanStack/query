@@ -311,6 +311,18 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
     },
     {
+      name: 'should ignore constants defined out of scope (non react component/hook function)',
+      code: `
+          const CONST_VAL = 1
+          function fn() {
+            return {
+              queryKey: ["foo"],
+              queryFn: () => CONST_VAL
+            }
+          }
+        `,
+    },
+    {
       name: 'should ignore constants defined out of scope (react hook, function declaration)',
       code: `
         const CONST_VAL = 1

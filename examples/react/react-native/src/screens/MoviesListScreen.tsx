@@ -1,53 +1,53 @@
-import * as React from 'react';
-import { FlatList, RefreshControl } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
+import * as React from 'react'
+import { FlatList, RefreshControl } from 'react-native'
+import { useQuery } from '@tanstack/react-query'
 
-import { StackNavigationProp } from '@react-navigation/stack';
-import { LoadingIndicator } from '@app/components/LoadingIndicator';
-import { ErrorMessage } from '@app/components/ErrorMessage';
-import { Divider } from '@app/components/Divider';
-import { ListItem } from '@app/components/ListItem';
-import { useRefreshByUser } from '@app/hooks/useRefreshByUser';
-import { useRefreshOnFocus } from '@app/hooks/useRefreshOnFocus';
-import { fetchMovies, Movie } from '@app/lib/api';
-import { MoviesStackNavigator } from '@app/navigation/types';
+import { StackNavigationProp } from '@react-navigation/stack'
+import { LoadingIndicator } from '../components/LoadingIndicator'
+import { ErrorMessage } from '../components/ErrorMessage'
+import { Divider } from '../components/Divider'
+import { ListItem } from '../components/ListItem'
+import { useRefreshByUser } from '../hooks/useRefreshByUser'
+import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus'
+import { fetchMovies, Movie } from '../lib/api'
+import { MoviesStackNavigator } from '../navigation/types'
 
 type MoviesListScreenNavigationProp = StackNavigationProp<
   MoviesStackNavigator,
   'MoviesList'
->;
+>
 
 type Props = {
-  navigation: MoviesListScreenNavigationProp;
-};
+  navigation: MoviesListScreenNavigationProp
+}
 
 export function MoviesListScreen({ navigation }: Props) {
   const { isPending, error, data, refetch } = useQuery<Movie[], Error>({
     queryKey: ['movies'],
     queryFn: fetchMovies,
-  });
-  const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
-  useRefreshOnFocus(refetch);
+  })
+  const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch)
+  useRefreshOnFocus(refetch)
 
   const onListItemPress = React.useCallback(
     (movie) => {
       navigation.navigate('MovieDetails', {
         movie,
-      });
+      })
     },
-    [navigation]
-  );
+    [navigation],
+  )
 
   const renderItem = React.useCallback(
     ({ item }) => {
-      return <ListItem item={item} onPress={onListItemPress} />;
+      return <ListItem item={item} onPress={onListItemPress} />
     },
-    [onListItemPress]
-  );
+    [onListItemPress],
+  )
 
-  if (isPending) return <LoadingIndicator />;
+  if (isPending) return <LoadingIndicator />
 
-  if (error) return <ErrorMessage message={error.message}></ErrorMessage>;
+  if (error) return <ErrorMessage message={error.message}></ErrorMessage>
 
   return (
     <FlatList
@@ -62,5 +62,5 @@ export function MoviesListScreen({ navigation }: Props) {
         />
       }
     ></FlatList>
-  );
+  )
 }

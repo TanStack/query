@@ -25,6 +25,8 @@ import type {
   ResetOptions,
   SetDataOptions,
   DefaultError,
+  CancelOptions,
+  DefaultedQueryObserverOptions,
 } from './types'
 import type { QueryState } from './query'
 import { QueryCache } from './queryCache'
@@ -33,7 +35,6 @@ import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
-import type { CancelOptions, DefaultedQueryObserverOptions } from './types'
 
 // TYPES
 

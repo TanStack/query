@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-persist-client",
-  "version": "5.0.0-alpha.35",
+  "version": "5.0.0-alpha.63",
   "description": "React bindings to work with persisters in TanStack/react-query",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -10,42 +10,46 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
+  "type": "module",
   "types": "build/lib/index.d.ts",
-  "main": "build/lib/index.js",
-  "module": "build/lib/index.esm.js",
+  "main": "build/lib/index.legacy.cjs",
+  "module": "build/lib/index.legacy.js",
   "exports": {
     ".": {
       "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.mjs",
-      "default": "./build/lib/index.js"
+      "import": "./build/lib/index.js",
+      "require": "./build/lib/index.cjs",
+      "default": "./build/lib/index.cjs"
     },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "files": [
     "build/lib/*",
-    "build/umd/*",
     "src"
   ],
   "scripts": {
-    "clean": "rimraf ./build",
+    "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc",
+    "test:types": "tsc --noEmit",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "build:types": "tsc --build"
+    "test:build": "publint --strict",
+    "build": "pnpm build:rollup && pnpm build:types",
+    "build:rollup": "rollup --config rollup.config.js",
+    "build:types": "tsc --emitDeclarationOnly"
+  },
+  "dependencies": {
+    "@tanstack/query-persist-client-core": "^5.0.0-alpha.43"
   },
   "devDependencies": {
-    "@tanstack/react-query": "workspace:*",
-    "@types/react": "^18.0.14",
-    "@types/react-dom": "^18.0.5",
+    "@tanstack/react-query": "^5.0.0-alpha.43",
+    "@types/react": "^18.2.4",
+    "@types/react-dom": "^18.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
-  "dependencies": {
-    "@tanstack/query-persist-client-core": "workspace:*"
-  },
   "peerDependencies": {
-    "@tanstack/react-query": "workspace:*"
+    "@tanstack/react-query": "^5.0.0-alpha.43"
   }
 }
