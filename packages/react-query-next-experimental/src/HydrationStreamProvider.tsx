@@ -165,11 +165,7 @@ export function createHydrationStreamProvider<TShape>() {
 
       return () => {
         // Cleanup after unmount
-        win[id] = {
-          push() {
-            // no-op
-          },
-        }
+        win[id] = []
       }
     }, [id, transformer])
     // </client stuff>
