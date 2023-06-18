@@ -139,7 +139,9 @@ export function createHydrationStreamProvider<TShape>() {
 
     // <client stuff>
     const onEntriesRef = React.useRef(props.onEntries)
-    onEntriesRef.current = props.onEntries
+    React.useEffect(() => {
+      onEntriesRef.current = props.onEntries
+    })
 
     // Client: consume cache:
     const onEntries = React.useCallback(
