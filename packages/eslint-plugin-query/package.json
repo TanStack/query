@@ -31,32 +31,19 @@
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
-    "build": "tsup --minify --dts"
+    "build": "pnpm build:tsup && pnpm build:types",
+    "build:tsup": "tsup",
+    "build:types": "tsc --emitDeclarationOnly"
   },
   "files": [
-    "build"
+    "build",
+    "src"
   ],
-  "tsup": {
-    "entry": [
-      "src/index.ts"
-    ],
-    "external": [
-      "eslint"
-    ],
-    "format": [
-      "cjs",
-      "esm"
-    ],
-    "clean": true,
-    "bundle": true,
-    "outDir": "build/lib"
-  },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.54.0",
     "@typescript-eslint/parser": "^5.54.0",
     "@typescript-eslint/utils": "^5.54.0",
-    "eslint": "^8.34.0",
-    "tsup": "^6.7.0"
+    "eslint": "^8.34.0"
   },
   "peerDependencies": {
     "eslint": "^8.0.0"
