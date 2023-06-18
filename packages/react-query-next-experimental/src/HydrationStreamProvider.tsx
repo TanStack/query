@@ -154,12 +154,12 @@ export function createHydrationStreamProvider<TShape>() {
 
       const win = window as any
       // Register cache consumer
-      const stream: Array<Serialized<TShape>> = win[id] ?? []
+      const winStream: Array<Serialized<TShape>> = win[id] ?? []
 
-      if (!Array.isArray(stream)) {
+      if (!Array.isArray(winStream)) {
         throw new Error(`${id} seem to have been registered twice`)
       }
-      onEntries(...stream)
+      onEntries(...winStream)
 
       // Register our own consumer
       win[id] = {
