@@ -1357,13 +1357,13 @@ importers:
   packages/query-async-storage-persister:
     dependencies:
       '@tanstack/query-persist-client-core':
-        specifier: ^5.0.0-alpha.43
+        specifier: workspace:*
         version: link:../query-persist-client-core
 
   packages/query-broadcast-client-experimental:
     dependencies:
       '@tanstack/query-core':
-        specifier: ^5.0.0-alpha.43
+        specifier: workspace:*
         version: link:../query-core
       broadcast-channel:
         specifier: ^5.1.0
@@ -1399,7 +1399,7 @@ importers:
         version: 1.12.3
     devDependencies:
       '@tanstack/query-core':
-        specifier: ^5.0.0-alpha.43
+        specifier: workspace:*
         version: link:../query-core
       vite-plugin-solid:
         specifier: ^2.5.0
@@ -1408,22 +1408,22 @@ importers:
   packages/query-persist-client-core:
     dependencies:
       '@tanstack/query-core':
-        specifier: ^5.0.0-alpha.43
+        specifier: workspace:*
         version: link:../query-core
 
   packages/query-sync-storage-persister:
     dependencies:
       '@tanstack/query-core':
-        specifier: ^5.0.0-alpha.43
+        specifier: workspace:*
         version: link:../query-core
       '@tanstack/query-persist-client-core':
-        specifier: ^5.0.0-alpha.43
+        specifier: workspace:*
         version: link:../query-persist-client-core
 
   packages/react-query:
     dependencies:
       '@tanstack/query-core':
-        specifier: ^5.0.0-alpha.43
+        specifier: workspace:*
         version: link:../query-core
       react-native:
         specifier: '*'
@@ -1448,11 +1448,11 @@ importers:
   packages/react-query-devtools:
     dependencies:
       '@tanstack/query-devtools':
-        specifier: ^5.0.0-alpha.43
+        specifier: workspace:*
         version: link:../query-devtools
     devDependencies:
       '@tanstack/react-query':
-        specifier: ^5.0.0-alpha.43
+        specifier: workspace:*
         version: link:../react-query
       '@types/react':
         specifier: ^18.2.4
@@ -1473,11 +1473,11 @@ importers:
   packages/react-query-persist-client:
     dependencies:
       '@tanstack/query-persist-client-core':
-        specifier: ^5.0.0-alpha.43
+        specifier: workspace:*
         version: link:../query-persist-client-core
     devDependencies:
       '@tanstack/react-query':
-        specifier: ^5.0.0-alpha.43
+        specifier: workspace:*
         version: link:../react-query
       '@types/react':
         specifier: ^18.2.4
@@ -1495,7 +1495,7 @@ importers:
   packages/solid-query:
     dependencies:
       '@tanstack/query-core':
-        specifier: ^5.0.0-alpha.43
+        specifier: workspace:*
         version: link:../query-core
       solid-js:
         specifier: ^1.6.13
@@ -1508,7 +1508,7 @@ importers:
   packages/svelte-query:
     dependencies:
       '@tanstack/query-core':
-        specifier: ^5.0.0-alpha.43
+        specifier: workspace:*
         version: link:../query-core
     devDependencies:
       '@sveltejs/package':
@@ -1545,7 +1545,7 @@ importers:
   packages/svelte-query-devtools:
     dependencies:
       '@tanstack/query-devtools':
-        specifier: ^5.0.0-alpha.43
+        specifier: workspace:*
         version: link:../query-devtools
       esm-env:
         specifier: ^1.0.0
@@ -1558,7 +1558,7 @@ importers:
         specifier: ^2.4.0
         version: 2.4.0(svelte@3.55.0)(vite@4.2.1)
       '@tanstack/svelte-query':
-        specifier: ^5.0.0-alpha.43
+        specifier: workspace:*
         version: link:../svelte-query
       eslint-plugin-svelte:
         specifier: ^2.29.0
@@ -1585,7 +1585,7 @@ importers:
         specifier: ^8.8.4
         version: 8.8.4
       '@tanstack/query-core':
-        specifier: ^5.0.0-alpha.43
+        specifier: workspace:*
         version: link:../query-core
       '@vue/devtools-api':
         specifier: ^6.5.0

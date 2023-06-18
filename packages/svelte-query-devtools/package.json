@@ -35,13 +35,13 @@
     "build": "svelte-package --input ./src --output ./dist"
   },
   "dependencies": {
-    "@tanstack/query-devtools": "^5.0.0-alpha.43",
+    "@tanstack/query-devtools": "workspace:*",
     "esm-env": "^1.0.0"
   },
   "devDependencies": {
     "@sveltejs/package": "^2.0.2",
     "@sveltejs/vite-plugin-svelte": "^2.4.0",
-    "@tanstack/svelte-query": "^5.0.0-alpha.43",
+    "@tanstack/svelte-query": "workspace:*",
     "eslint-plugin-svelte": "^2.29.0",
     "svelte": "^3.54.0",
     "svelte-check": "^3.4.3",
@@ -50,7 +50,7 @@
     "vite": "^4.2.0"
   },
   "peerDependencies": {
-    "@tanstack/svelte-query": "^5.0.0-alpha.43",
+    "@tanstack/svelte-query": "workspace:*",
     "svelte": "^3.54.0"
   }
 }

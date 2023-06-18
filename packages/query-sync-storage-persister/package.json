@@ -40,7 +40,7 @@
     "build:types": "tsc --emitDeclarationOnly"
   },
   "dependencies": {
-    "@tanstack/query-core": "^5.0.0-alpha.43",
-    "@tanstack/query-persist-client-core": "^5.0.0-alpha.43"
+    "@tanstack/query-core": "workspace:*",
+    "@tanstack/query-persist-client-core": "workspace:*"
   }
 }

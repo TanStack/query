@@ -38,7 +38,7 @@
     "build:types": "tsc --emitDeclarationOnly"
   },
   "dependencies": {
-    "@tanstack/query-core": "^5.0.0-alpha.43",
+    "@tanstack/query-core": "workspace:*",
     "broadcast-channel": "^5.1.0"
   }
 }
