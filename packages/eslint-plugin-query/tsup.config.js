@@ -8,7 +8,6 @@ export default defineConfig({
   target: ['chrome84', 'firefox90', 'edge84', 'safari15', 'ios15', 'opera70'],
   outDir: 'build/lib',
   external: [/eslint/],
-  bundle: true,
   sourcemap: true,
   clean: true,
 })

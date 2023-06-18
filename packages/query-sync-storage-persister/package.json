@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-sync-storage-persister",
-  "version": "5.0.0-alpha.66",
+  "version": "5.0.0-alpha.68",
   "description": "A persister for synchronous storages, to be used with TanStack/Query",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -40,7 +40,7 @@
     "build:types": "tsc --emitDeclarationOnly"
   },
   "dependencies": {
-    "@tanstack/query-core": "^5.0.0-alpha.43",
-    "@tanstack/query-persist-client-core": "^5.0.0-alpha.43"
+    "@tanstack/query-core": "workspace:*",
+    "@tanstack/query-persist-client-core": "workspace:*"
   }
 }
