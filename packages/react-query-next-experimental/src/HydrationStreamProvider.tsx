@@ -143,18 +143,15 @@ export function createHydrationStreamProvider<TShape>() {
       onEntriesRef.current = props.onEntries
     })
 
-    // Client: consume cache:
-    const onEntries = React.useCallback(
-      (...serializedEntries: Serialized<TShape>[]) => {
+    React.useEffect(() => {
+      // Client: consume cache:
+      const onEntries = (...serializedEntries: Serialized<TShape>[]) => {
         const entries = serializedEntries.map((serialized) =>
           transformer.deserialize(serialized),
         )
         onEntriesRef.current(entries)
-      },
-      [transformer],
-    )
+      }
 
-    React.useEffect(() => {
       const win = window as any
       // Register cache consumer
       const stream: Array<Serialized<TShape>> = win[id] ?? []
@@ -177,7 +174,7 @@ export function createHydrationStreamProvider<TShape>() {
           },
         }
       }
-    }, [id, onEntries])
+    }, [id, transformer])
     // </client stuff>
 
     return (
