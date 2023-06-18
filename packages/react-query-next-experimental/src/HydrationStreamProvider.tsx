@@ -82,7 +82,7 @@ export function createHydrationStreamProvider<TShape>() {
     onFlush?: () => TShape[]
   }) {
     // unique id for the cache provider
-    const id = `_${React.useId()}`
+    const id = `__RQ${React.useId()}`
     const idJSON = JSON.stringify(id)
 
     const [transformer] = React.useState(
