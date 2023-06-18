@@ -106,11 +106,9 @@ export function createHydrationStreamProvider<TShape>() {
       return []
     })
     const count = React.useRef(0)
-    const onDehydrateRef = React.useRef(props.onFlush)
-    onDehydrateRef.current = props.onFlush
     useServerInsertedHTML(() => {
       // This only happens on the server
-      stream.push(...(onDehydrateRef.current?.() ?? []))
+      stream.push(...(props.onFlush?.() ?? []))
 
       if (!stream.length) {
         return null
