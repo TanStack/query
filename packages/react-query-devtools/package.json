@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-devtools",
-  "version": "5.0.0-alpha.67",
+  "version": "5.0.0-alpha.68",
   "description": "Developer tools to interact with and visualize the TanStack/react-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -46,10 +46,10 @@
     "build:types": "tsc --emitDeclarationOnly && cpy index.d.ts index.prod.d.ts --cwd=build/lib"
   },
   "dependencies": {
-    "@tanstack/query-devtools": "^5.0.0-alpha.43"
+    "@tanstack/query-devtools": "workspace:*"
   },
   "devDependencies": {
-    "@tanstack/react-query": "^5.0.0-alpha.43",
+    "@tanstack/react-query": "workspace:*",
     "@types/react": "^18.2.4",
     "@types/react-dom": "^18.2.4",
     "react": "^18.2.0",
@@ -57,7 +57,7 @@
     "react-error-boundary": "^3.1.4"
   },
   "peerDependencies": {
-    "@tanstack/react-query": "^5.0.0-alpha.43",
+    "@tanstack/react-query": "workspace:*",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   }

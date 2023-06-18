@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-devtools",
-  "version": "5.0.0-alpha.62",
+  "version": "5.0.0-alpha.68",
   "description": "Developer tools to interact with and visualize the TanStack Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -52,7 +52,7 @@
     "superjson": "^1.12.1"
   },
   "devDependencies": {
-    "@tanstack/query-core": "^5.0.0-alpha.43",
+    "@tanstack/query-core": "workspace:*",
     "vite-plugin-solid": "^2.5.0"
   }
 }
