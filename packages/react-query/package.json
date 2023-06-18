@@ -45,7 +45,7 @@
     "!build/codemods/**/__tests__"
   ],
   "dependencies": {
-    "@tanstack/query-core": "^5.0.0-alpha.43"
+    "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^18.2.4",

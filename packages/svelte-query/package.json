@@ -39,7 +39,7 @@
     "build": "svelte-package --input ./src --output ./dist"
   },
   "dependencies": {
-    "@tanstack/query-core": "^5.0.0-alpha.43"
+    "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
     "@sveltejs/package": "^2.0.2",
