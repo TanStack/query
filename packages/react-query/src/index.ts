@@ -7,7 +7,8 @@ export * from '@tanstack/query-core'
 export * from './types'
 export { useQueries } from './useQueries'
 export type { QueriesResults, QueriesOptions } from './useQueries'
-export { useQuery, queryOptions } from './useQuery'
+export { useQuery } from './useQuery'
+export { queryOptions } from './queryOptions'
 export {
   QueryClientContext,
   QueryClientProvider,

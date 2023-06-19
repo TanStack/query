@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query",
-  "version": "5.0.0-alpha.66",
+  "version": "5.0.0-alpha.68",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Solid",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -45,7 +45,7 @@
     "src"
   ],
   "dependencies": {
-    "@tanstack/query-core": "^5.0.0-alpha.43"
+    "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
     "vite-plugin-solid": "^2.5.0"
