@@ -892,6 +892,74 @@ describe('useQueries', () => {
     )
   })
 
+  it('should get the last combined result as second params', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    let count = 0
+
+    function Page() {
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: key1,
+              async queryFn() {
+                await sleep(5)
+                return 'first result ' + count
+              },
+            },
+            {
+              queryKey: key2,
+              async queryFn() {
+                await sleep(50)
+                return 'second result ' + count
+              },
+            },
+          ],
+          combine(queryResults, lastCombinedResult) {
+            const isRefetching = queryResults.some((res) => res.isRefetching)
+
+            if (isRefetching) {
+              return { ...lastCombinedResult, old: true }
+            }
+
+            return {
+              old: false,
+              refetch: () => queryResults.forEach((res) => res.refetch()),
+              res: queryResults
+                .flatMap((res) => (res.data ? [res.data] : []))
+                .join(','),
+            }
+          },
+        },
+        queryClient,
+      )
+
+      return (
+        <div>
+          <div>
+            data: {String(queries.old)} {queries.res}
+          </div>
+          <button onClick={() => queries.refetch()}>refetch</button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitFor(() =>
+      rendered.getByText('data: false first result 0,second result 0'),
+    )
+
+    count++
+
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+
+    await waitFor(() =>
+      rendered.getByText('data: true first result 0,second result 0'),
+    )
+  })
+
   it('should track property access through combine function', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
