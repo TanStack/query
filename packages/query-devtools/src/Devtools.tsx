@@ -1664,6 +1664,7 @@ const getStyles = () => {
       max-width: 160px;
       border: 1px solid ${colors.darkGray[200]};
       cursor: pointer;
+      padding: 0;
       &:hover {
         background-color: ${colors.darkGray[500]};
       }
