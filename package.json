@@ -17,7 +17,7 @@
     "test:types": "nx affected --target=test:types",
     "build": "nx affected --target=build",
     "build:all": "nx run-many --exclude=examples/** --target=build",
-    "watch": "nx watch --all -- pnpm run build:all",
+    "watch": "pnpm run build:all && nx watch --all -- pnpm run build:all",
     "dev": "pnpm run watch",
     "prettier": "prettier --plugin-search-dir . \"{packages,examples,scripts}/**/*.{md,js,jsx,cjs,ts,tsx,json,vue,svelte}\"",
     "prettier:write": "pnpm run prettier --write",
