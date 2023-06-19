@@ -155,7 +155,7 @@ export function useQueries<
     ...options
   }: {
     queries: MaybeRefDeep<UseQueriesOptionsArg<T>>
-    combine?: (result: UseQueriesResults<T>) => TCombinedResult
+    combine?: (result: UseQueriesResults<T>, combinedResult: TCombinedResult | undefined) => TCombinedResult
   },
   queryClient?: QueryClient,
 ): Readonly<Ref<TCombinedResult>> {
