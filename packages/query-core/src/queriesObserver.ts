@@ -180,7 +180,13 @@ export class QueriesObserver<
     if (combine) {
       return replaceEqualDeep(
         this.#combinedResult,
-        combine(input, this.#combinedResult),
+        combine(
+          input,
+          Array.isArray(this.#combinedResult) &&
+            this.#combinedResult.length === 0
+            ? undefined
+            : this.#combinedResult,
+        ),
       )
     }
     return input as any
