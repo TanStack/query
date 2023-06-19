@@ -213,7 +213,7 @@ describe('useInfiniteQuery', () => {
 
     await waitFor(() => rendered.getByText('data: 0-asc'))
     await waitFor(() => rendered.getByText('isFetching: false'))
-    await waitFor(() => expect(states.length).toBe(7))
+    await waitFor(() => expect(states.length).toBe(6))
 
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -251,15 +251,7 @@ describe('useInfiniteQuery', () => {
       isSuccess: true,
       isPlaceholderData: true,
     })
-    // Hook state update
     expect(states[5]).toMatchObject({
-      data: { pages: ['0-desc', '1-desc'] },
-      isFetching: true,
-      isFetchingNextPage: false,
-      isSuccess: true,
-      isPlaceholderData: true,
-    })
-    expect(states[6]).toMatchObject({
       data: { pages: ['0-asc'] },
       isFetching: false,
       isFetchingNextPage: false,
