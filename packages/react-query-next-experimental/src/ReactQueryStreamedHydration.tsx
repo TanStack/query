@@ -1,6 +1,6 @@
 'use client'
 
-import type { ContextOptions, DehydratedState } from '@tanstack/react-query'
+import type { DehydratedState, QueryClient } from '@tanstack/react-query'
 import { dehydrate, hydrate, useQueryClient } from '@tanstack/react-query'
 import * as React from 'react'
 import type { HydrationStreamProviderProps } from './HydrationStreamProvider'
@@ -15,12 +15,10 @@ const stream = createHydrationStreamProvider<DehydratedState>()
  */
 export function ReactQueryStreamedHydration(props: {
   children: React.ReactNode
-  context?: ContextOptions['context']
+  queryClient?: QueryClient
   transformer?: HydrationStreamProviderProps<DehydratedState>['transformer']
 }) {
-  const queryClient = useQueryClient({
-    context: props.context,
-  })
+  const queryClient = useQueryClient(props.queryClient)
 
   // <server only>
   const isSubscribed = React.useRef(false)
@@ -60,7 +58,7 @@ export function ReactQueryStreamedHydration(props: {
             const shouldDehydrate =
               trackedKeys.has(query.queryHash) &&
               // !passedKeys.has(query.queryHash) &&
-              query.state.status !== 'loading'
+              query.state.status !== 'pending'
 
             // passedKeys.add(query.queryHash);
             return shouldDehydrate
