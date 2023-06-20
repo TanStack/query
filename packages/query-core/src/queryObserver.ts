@@ -817,12 +817,6 @@ function shouldAssignObserverCurrentProperties<
     return false
   }
 
-  // if the newly created result isn't what the observer is holding as current,
-  // then we'll need to update the properties as well
-  if (observer.getCurrentResult() !== optimisticResult) {
-    return true
-  }
-
   // this means we want to put some placeholder data when pending and queryKey
   // changed.
   if (options.placeholderData !== undefined) {
@@ -830,6 +824,12 @@ function shouldAssignObserverCurrentProperties<
     // which means that data did not arrive yet, so, if there is some cached data
     // we need to "prepare" to receive it
     return optimisticResult.isPlaceholderData
+  }
+
+  // if the newly created result isn't what the observer is holding as current,
+  // then we'll need to update the properties as well
+  if (observer.getCurrentResult() !== optimisticResult) {
+    return true
   }
 
   // basically, just keep previous properties if nothing changed
