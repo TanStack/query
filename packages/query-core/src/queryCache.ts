@@ -63,7 +63,7 @@ interface NotifyEventQueryObserverOptionsUpdated extends NotifyEvent {
   observer: QueryObserver<any, any, any, any, any>
 }
 
-type QueryCacheNotifyEvent =
+export type QueryCacheNotifyEvent =
   | NotifyEventQueryAdded
   | NotifyEventQueryRemoved
   | NotifyEventQueryUpdated
