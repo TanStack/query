@@ -1,7 +1,8 @@
 /* istanbul ignore file */
 
 export { CancelledError } from './retryer'
-export { QueryCache, QueryCacheNotifyEvent } from './queryCache'
+export { QueryCache } from './queryCache'
+export type { QueryCacheNotifyEvent } from './queryCache'
 export { QueryClient } from './queryClient'
 export { QueryObserver } from './queryObserver'
 export { QueriesObserver } from './queriesObserver'
