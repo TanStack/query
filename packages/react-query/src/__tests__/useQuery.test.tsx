@@ -6027,4 +6027,66 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('Rendered Id: 2'))
     expect(spy).toHaveBeenCalledTimes(1)
   })
+  it('should reuse same data object reference when queryKey changes and placeholderData is present', async () => {
+    const spy = vi.fn()
+
+    async function fetchNumber(id: number) {
+      await sleep(5)
+      return { numbers: { current: { id } } }
+    }
+    function Test() {
+      const [id, setId] = React.useState(1)
+
+      const { data } = useQuery({
+        select: selector,
+        queryKey: ['user', id],
+        queryFn: () => fetchNumber(id),
+        placeholderData: { numbers: { current: { id: 99 } } },
+      })
+
+      React.useEffect(() => {
+        spy(data)
+      }, [data])
+
+      return (
+        <div>
+          <button name="1" onClick={() => setId(1)}>
+            1
+          </button>
+          <button name="2" onClick={() => setId(2)}>
+            2
+          </button>
+          <span>Rendered Id: {data?.id}</span>
+        </div>
+      )
+    }
+
+    function selector(data: any) {
+      return data.numbers.current
+    }
+
+    const rendered = renderWithClient(queryClient, <Test />)
+    expect(spy).toHaveBeenCalledTimes(1)
+
+    spy.mockClear()
+    await waitFor(() => rendered.getByText('Rendered Id: 99'))
+    await waitFor(() => rendered.getByText('Rendered Id: 1'))
+    expect(spy).toHaveBeenCalledTimes(1)
+
+    spy.mockClear()
+    fireEvent.click(rendered.getByRole('button', { name: /2/ }))
+    await waitFor(() => rendered.getByText('Rendered Id: 99'))
+    await waitFor(() => rendered.getByText('Rendered Id: 2'))
+    expect(spy).toHaveBeenCalledTimes(2) // called with undefined because id changed
+
+    spy.mockClear()
+    fireEvent.click(rendered.getByRole('button', { name: /1/ }))
+    await waitFor(() => rendered.getByText('Rendered Id: 1'))
+    expect(spy).toHaveBeenCalledTimes(1)
+
+    spy.mockClear()
+    fireEvent.click(rendered.getByRole('button', { name: /2/ }))
+    await waitFor(() => rendered.getByText('Rendered Id: 2'))
+    expect(spy).toHaveBeenCalledTimes(1)
+  })
 })
