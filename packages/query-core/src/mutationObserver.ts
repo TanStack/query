@@ -119,21 +119,15 @@ export class MutationObserver<
     variables?: TVariables,
     options?: MutateOptions<TData, TError, TVariables, TContext>,
   ): Promise<TData> {
-    this.mutateOptions = options
+    this.mutateOptions = options;
 
-    if (this.currentMutation) {
-      this.currentMutation.removeObserver(this)
-    }
+    this.currentMutation = this.currentMutation ?? this.client.getMutationCache().build(this.client, { ...this.options,
+      variables: typeof variables !== 'undefined' ? variables : this.options.variables
+    });
 
-    this.currentMutation = this.client.getMutationCache().build(this.client, {
-      ...this.options,
-      variables:
-        typeof variables !== 'undefined' ? variables : this.options.variables,
-    })
-
-    this.currentMutation.addObserver(this)
-
-    return this.currentMutation.execute()
+    this.currentMutation.setOptions({ ...options, variables });
+    this.currentMutation.addObserver(this);
+    return this.currentMutation.execute();
   }
 
   private updateResult(): void {
