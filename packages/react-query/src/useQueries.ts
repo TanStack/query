@@ -166,7 +166,10 @@ export function useQueries<
     ...options
   }: {
     queries: readonly [...QueriesOptions<T>]
-    combine?: (result: QueriesResults<T>) => TCombinedResult
+    combine?: (
+      result: QueriesResults<T>,
+      combinedResult: TCombinedResult | undefined,
+    ) => TCombinedResult
   },
   queryClient?: QueryClient,
 ): TCombinedResult {
