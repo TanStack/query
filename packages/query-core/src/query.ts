@@ -392,7 +392,7 @@ export class Query<
     // Create fetch function
     const fetchFn = () => {
       if (!this.options.queryFn) {
-        return Promise.reject('Missing queryFn')
+        return Promise.reject(`Missing queryFn for queryKey '${this.queryKey}'`)
       }
       this.abortSignalConsumed = false
       return this.options.queryFn(queryFnContext)

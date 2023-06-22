@@ -795,7 +795,9 @@ describe('query', () => {
 
     const unsubscribe = observer.subscribe(() => undefined)
     await sleep(10)
-    expect(mockLogger.error).toHaveBeenCalledWith('Missing queryFn')
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      `Missing queryFn for queryKey '${key}'`,
+    )
 
     unsubscribe()
   })
