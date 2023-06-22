@@ -17,7 +17,7 @@
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "solid": "./dist/source/index.jsx",
+      "solid": "./dist/source/index.js",
       "import": "./dist/esm/index.js",
       "browser": {
         "import": "./dist/esm/index.js",
