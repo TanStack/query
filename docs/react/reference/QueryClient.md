@@ -547,7 +547,7 @@ function Component() {
 
 **Options**
 
-- `mutationKey: string | unknown[]`
+- `mutationKey: unknown[]`
 - `options: MutationOptions`
 
 > Similar to [`setQueryDefaults`](#queryclientsetquerydefaults), the order of registration does matter here.
