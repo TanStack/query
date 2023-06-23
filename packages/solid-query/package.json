@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query",
-  "version": "5.0.0-alpha.68",
+  "version": "5.0.0-alpha.69",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Solid",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -17,7 +17,7 @@
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "solid": "./dist/source/index.jsx",
+      "solid": "./dist/source/index.js",
       "import": "./dist/esm/index.js",
       "browser": {
         "import": "./dist/esm/index.js",
