@@ -5923,6 +5923,7 @@ describe('useQuery', () => {
   })
   it('should reuse same data object reference when queryKey changes back to some cached data', async () => {
     const spy = jest.fn()
+    const key = queryKey()
 
     async function fetchNumber(id: number) {
       await sleep(5)
@@ -5933,7 +5934,7 @@ describe('useQuery', () => {
 
       const { data } = useQuery({
         select: selector,
-        queryKey: ['user', id],
+        queryKey: [key, 'user', id],
         queryFn: () => fetchNumber(id),
       })
 
@@ -5982,6 +5983,7 @@ describe('useQuery', () => {
   })
   it('should reuse same data object reference when queryKey changes and placeholderData is present', async () => {
     const spy = jest.fn()
+    const key = queryKey()
 
     async function fetchNumber(id: number) {
       await sleep(5)
@@ -5992,7 +5994,7 @@ describe('useQuery', () => {
 
       const { data } = useQuery({
         select: selector,
-        queryKey: ['user', id],
+        queryKey: [key, 'user', id],
         queryFn: () => fetchNumber(id),
         placeholderData: { numbers: { current: { id: 99 } } },
       })
