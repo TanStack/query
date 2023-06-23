@@ -5969,6 +5969,7 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('data: 1'))
   })
   it('should reuse same data object reference when queryKey changes back to some cached data', async () => {
+    const key = queryKey()
     const spy = vi.fn()
 
     async function fetchNumber(id: number) {
@@ -5980,7 +5981,7 @@ describe('useQuery', () => {
 
       const { data } = useQuery({
         select: selector,
-        queryKey: ['user', id],
+        queryKey: [key, 'user', id],
         queryFn: () => fetchNumber(id),
       })
 
@@ -6028,6 +6029,7 @@ describe('useQuery', () => {
     expect(spy).toHaveBeenCalledTimes(1)
   })
   it('should reuse same data object reference when queryKey changes and placeholderData is present', async () => {
+    const key = queryKey()
     const spy = vi.fn()
 
     async function fetchNumber(id: number) {
@@ -6039,7 +6041,7 @@ describe('useQuery', () => {
 
       const { data } = useQuery({
         select: selector,
-        queryKey: ['user', id],
+        queryKey: [key, 'user', id],
         queryFn: () => fetchNumber(id),
         placeholderData: { numbers: { current: { id: 99 } } },
       })
