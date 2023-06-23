@@ -794,9 +794,11 @@ describe('query', () => {
     })
 
     const unsubscribe = observer.subscribe(() => undefined)
+
     await sleep(10)
+    const query = queryCache.find(key)!
     expect(mockLogger.error).toHaveBeenCalledWith(
-      `Missing queryFn for queryKey '${key}'`,
+      `Missing queryFn for queryKey '${query.queryHash}'`,
     )
 
     unsubscribe()
