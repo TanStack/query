@@ -191,8 +191,8 @@ importers:
         specifier: ^2.70.2
         version: 2.78.1
       rollup-plugin-preserve-directives:
-        specifier: 0.1.0
-        version: 0.1.0(rollup@2.78.1)
+        specifier: 0.2.0
+        version: 0.2.0(rollup@2.78.1)
       rollup-plugin-size:
         specifier: ^0.2.2
         version: 0.2.2
@@ -15332,11 +15332,12 @@ packages:
     dependencies:
       glob: 7.2.3
 
-  /rollup-plugin-preserve-directives@0.1.0(rollup@2.78.1):
-    resolution: {integrity: sha512-fgzIK3hwF/afa6L1Qdsvshn0JlCHZRx0Sh9l0jjUgz3VK0unMFuEB4uqL3Vdae4OXkn+MBYCeNEN9vm81IteiA==}
+  /rollup-plugin-preserve-directives@0.2.0(rollup@2.78.1):
+    resolution: {integrity: sha512-KUwbBaFvD1zFIDNnOkR+u64sSod3m0l6q46/SzTOa4GTQ6hp6w0FRr2u7x99YkY9qhlna5panmTmuLWeJ/2KWw==}
     peerDependencies:
       rollup: 2.x || 3.x
     dependencies:
+      magic-string: 0.30.0
       rollup: 2.78.1
     dev: true
 
