@@ -21,7 +21,6 @@ export function ReactQueryStreamedHydration(props: {
   const queryClient = useQueryClient(props.queryClient)
 
   // <server only>
-  const isSubscribed = React.useRef(false)
   /**
    * We need to track which queries were added/updated during the render
    */
@@ -33,7 +32,7 @@ export function ReactQueryStreamedHydration(props: {
 
   const cache = queryClient.getQueryCache()
 
-  if (typeof window === 'undefined' && !isSubscribed.current) {
+  if (typeof window === 'undefined') {
     // Do we need to care about unsubscribing? I don't think so to be honest
     cache.subscribe((event) => {
       switch (event.type) {
