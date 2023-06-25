@@ -44,7 +44,11 @@ export function infiniteQueryBehavior<
 
         // Get query function
         const queryFn =
-          context.options.queryFn || (() => Promise.reject('Missing queryFn'))
+          context.options.queryFn ||
+          (() =>
+            Promise.reject(
+              `Missing queryFn for queryKey '${context.options.queryHash}'`,
+            ))
 
         const buildNewPages = (
           pages: unknown[],
