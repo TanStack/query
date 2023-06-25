@@ -1,10 +1,9 @@
 import { computed, unref, onScopeDispose, ref, watch } from 'vue-demi'
 import type { Ref } from 'vue-demi'
 import type { MutationKey, MutationFilters as MF } from '@tanstack/query-core'
-import { isServer } from '@tanstack/query-core'
 
 import { useQueryClient } from './useQueryClient'
-import { cloneDeepUnref, isQueryKey, noop } from './utils'
+import { cloneDeepUnref, isQueryKey } from './utils'
 import type { MaybeRef, MaybeRefDeep, WithQueryClientKey } from './types'
 
 export type MutationFilters = MaybeRefDeep<WithQueryClientKey<MF>>
@@ -24,12 +23,9 @@ export function useIsMutating(
 
   const isMutating = ref(queryClient.isMutating(filters))
 
-  // Nuxt2 memory leak fix - do not subscribe on server
-  const unsubscribe = isServer
-    ? noop
-    : queryClient.getMutationCache().subscribe(() => {
-        isMutating.value = queryClient.isMutating(filters)
-      })
+  const unsubscribe = queryClient.getMutationCache().subscribe(() => {
+    isMutating.value = queryClient.isMutating(filters)
+  })
 
   watch(
     filters,

@@ -1,10 +1,9 @@
 import { computed, unref, onScopeDispose, ref, watch } from 'vue-demi'
 import type { Ref } from 'vue-demi'
 import type { QueryKey, QueryFilters as QF } from '@tanstack/query-core'
-import { isServer } from '@tanstack/query-core'
 
 import { useQueryClient } from './useQueryClient'
-import { cloneDeepUnref, isQueryKey, noop } from './utils'
+import { cloneDeepUnref, isQueryKey } from './utils'
 import type { MaybeRef, MaybeRefDeep, WithQueryClientKey } from './types'
 
 export type QueryFilters = MaybeRefDeep<WithQueryClientKey<QF>>
@@ -24,12 +23,9 @@ export function useIsFetching(
 
   const isFetching = ref(queryClient.isFetching(filters))
 
-  // Nuxt2 memory leak fix - do not subscribe on server
-  const unsubscribe = isServer
-    ? noop
-    : queryClient.getQueryCache().subscribe(() => {
-        isFetching.value = queryClient.isFetching(filters)
-      })
+  const unsubscribe = queryClient.getQueryCache().subscribe(() => {
+    isFetching.value = queryClient.isFetching(filters)
+  })
 
   watch(
     filters,
