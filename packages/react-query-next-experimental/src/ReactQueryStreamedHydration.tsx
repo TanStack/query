@@ -20,21 +20,15 @@ export function ReactQueryStreamedHydration(props: {
 }) {
   const queryClient = useQueryClient(props.queryClient)
 
-  // <server only>
   /**
    * We need to track which queries were added/updated during the render
    */
   const [trackedKeys] = React.useState(() => new Set<string>())
-  /**
-   * Track which queries were already passed to the client so we don't pass them again
-   */
-  // const [passedKeys] = useState(() => new Set<string>());
 
-  const cache = queryClient.getQueryCache()
-
+  // <server only>
   if (typeof window === 'undefined') {
     // Do we need to care about unsubscribing? I don't think so to be honest
-    cache.subscribe((event) => {
+    queryClient.getQueryCache().subscribe((event) => {
       switch (event.type) {
         case 'added':
         case 'updated':
