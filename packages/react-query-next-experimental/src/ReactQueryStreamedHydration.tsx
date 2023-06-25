@@ -48,13 +48,10 @@ export function ReactQueryStreamedHydration(props: {
          */
         const dehydratedState = dehydrate(queryClient, {
           shouldDehydrateQuery(query) {
-            const shouldDehydrate =
+            return (
               trackedKeys.has(query.queryHash) &&
-              // !passedKeys.has(query.queryHash) &&
               query.state.status !== 'pending'
-
-            // passedKeys.add(query.queryHash);
-            return shouldDehydrate
+            )
           },
         })
         trackedKeys.clear()
