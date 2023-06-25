@@ -191,8 +191,8 @@ importers:
         specifier: ^2.70.2
         version: 2.78.1
       rollup-plugin-preserve-directives:
-        specifier: 0.1.0
-        version: 0.1.0(rollup@2.78.1)
+        specifier: 0.2.0
+        version: 0.2.0(rollup@2.78.1)
       rollup-plugin-size:
         specifier: ^0.2.2
         version: 0.2.2
@@ -1295,6 +1295,9 @@ importers:
       '@tanstack/query-core':
         specifier: workspace:*
         version: link:../query-core
+      client-only:
+        specifier: 0.0.1
+        version: 0.0.1
       react-native:
         specifier: '*'
         version: 0.64.3(@babel/core@7.19.1)(@babel/preset-env@7.18.6)(react@18.2.0)
@@ -1378,6 +1381,9 @@ importers:
       '@tanstack/query-persist-client-core':
         specifier: workspace:*
         version: link:../query-persist-client-core
+      client-only:
+        specifier: 0.0.1
+        version: 0.0.1
     devDependencies:
       '@tanstack/react-query':
         specifier: workspace:*
@@ -8273,6 +8279,10 @@ packages:
   /cli-width@3.0.0:
     resolution: {integrity: sha512-FxqpkPPwu1HjuN93Omfm4h8uIanXofW0RxVEW3k5RKx+mJJYSthzNhp32Kzxxy3YAEZ/Dc/EWN1vZRY0+kOhbw==}
     engines: {node: '>= 10'}
+    dev: false
+
+  /client-only@0.0.1:
+    resolution: {integrity: sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==}
     dev: false
 
   /cliui@6.0.0:
@@ -15322,11 +15332,12 @@ packages:
     dependencies:
       glob: 7.2.3
 
-  /rollup-plugin-preserve-directives@0.1.0(rollup@2.78.1):
-    resolution: {integrity: sha512-fgzIK3hwF/afa6L1Qdsvshn0JlCHZRx0Sh9l0jjUgz3VK0unMFuEB4uqL3Vdae4OXkn+MBYCeNEN9vm81IteiA==}
+  /rollup-plugin-preserve-directives@0.2.0(rollup@2.78.1):
+    resolution: {integrity: sha512-KUwbBaFvD1zFIDNnOkR+u64sSod3m0l6q46/SzTOa4GTQ6hp6w0FRr2u7x99YkY9qhlna5panmTmuLWeJ/2KWw==}
     peerDependencies:
       rollup: 2.x || 3.x
     dependencies:
+      magic-string: 0.30.0
       rollup: 2.78.1
     dev: true
 

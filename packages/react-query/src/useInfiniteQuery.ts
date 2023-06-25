@@ -1,4 +1,4 @@
-'use client'
+import 'client-only'
 import type {
   QueryObserver,
   QueryFunction,

@@ -1,4 +1,4 @@
-'use client'
+import 'client-only'
 import * as React from 'react'
 import { useSyncExternalStore } from './useSyncExternalStore'
 
