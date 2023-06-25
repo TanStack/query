@@ -1,10 +1,11 @@
 import { QueryClient } from '../queryClient'
-import { noop } from '../utils'
 
 const queryClient = new QueryClient({
   logger: {
     ...console,
-    error: noop,
+    error: () => {
+      // Noop
+    },
   },
   defaultOptions: {
     queries: { retry: false, cacheTime: Infinity },
