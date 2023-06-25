@@ -55,6 +55,7 @@
   },
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
+    "client-only": "0.0.1",
     "use-sync-external-store": "^1.2.0"
   },
   "peerDependencies": {
