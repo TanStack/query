@@ -1,4 +1,4 @@
-'use client'
+import 'client-only'
 import * as React from 'react'
 
 import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
