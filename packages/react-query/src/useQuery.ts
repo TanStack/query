@@ -1,4 +1,4 @@
-import 'client-only'
+'use client'
 import type { QueryFunction, QueryKey } from '@tanstack/query-core'
 import { parseQueryArgs, QueryObserver } from '@tanstack/query-core'
 import type {
