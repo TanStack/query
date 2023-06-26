@@ -229,7 +229,7 @@ export class QueryObserver<
 
     const result = this.createResult(query, options)
 
-    if (shouldAssignObserverCurrentProperties(this, result, options)) {
+    if (shouldAssignObserverCurrentProperties(this, result)) {
       // this assigns the optimistic result to the current Observer
       // because if the query function changes, useQuery will be performing
       // an effect where it would fetch again.
@@ -754,23 +754,7 @@ function shouldAssignObserverCurrentProperties<
 >(
   observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
   optimisticResult: QueryObserverResult<TData, TError>,
-  options: DefaultedQueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >,
 ) {
-  // this means we want to put some placeholder data when pending and queryKey
-  // changed.
-  if (options.placeholderData !== undefined) {
-    // re-assign properties only if current data is placeholder data
-    // which means that data did not arrive yet, so, if there is some cached data
-    // we need to "prepare" to receive it
-    return optimisticResult.isPlaceholderData
-  }
-
   // if the newly created result isn't what the observer is holding as current,
   // then we'll need to update the properties as well
   if (observer.getCurrentResult() !== optimisticResult) {
