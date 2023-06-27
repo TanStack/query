@@ -133,33 +133,33 @@ jobs:
         run: NX_CI_EXECUTION_ENV=${{ matrix.typescript-version }} npx nx-cloud start-ci-run
       - name: Start Type Test
         run: nx affected --targets=test:types
-agents-for-type-testing:
-  name: Nx Cloud - Agents For Type Testing
-  runs-on: ubuntu-latest
-  timeout-minutes: 10
-  strategy:
-    matrix:
-      agent: [1, 2, 3]
-      typescript-version:
-        - '~5.1.0'
-        - '~5.0.0'
-        - '~4.9.0'
-        - '~4.8.0'
-        - '~4.7.0'
-  steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v2.2.4
-      with:
-        version: 8
-    - name: Setup Node
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18.16.0
-        cache: 'pnpm'
-    - name: Install dependencies
-      run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-    - name: Start Nx Agent ${{ matrix.agent }}
-      run: NX_CI_EXECUTION_ENV=${{ matrix.typescript-version }} npx nx-cloud start-agent
+  agents-for-type-testing:
+    name: Nx Cloud - Agents For Type Testing
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        agent: [1, 2, 3]
+        typescript-version:
+          - '~5.1.0'
+          - '~5.0.0'
+          - '~4.9.0'
+          - '~4.8.0'
+          - '~4.7.0'
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 8
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.16.0
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+      - name: Start Nx Agent ${{ matrix.agent }}
+        run: NX_CI_EXECUTION_ENV=${{ matrix.typescript-version }} npx nx-cloud start-agent
