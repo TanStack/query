@@ -13,7 +13,8 @@ export type QueryKey = readonly unknown[]
 export type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
-> = (context: QueryFunctionContext<TQueryKey>) => T | Promise<T>
+  TPageParam = any,
+> = (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>
 
 export interface QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,
