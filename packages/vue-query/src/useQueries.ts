@@ -1,12 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { QueriesObserver } from '@tanstack/query-core'
-import {
-  computed,
-  onScopeDispose,
-  reactive,
-  readonly,
-  watch,
-} from 'vue-demi'
+import { computed, onScopeDispose, reactive, readonly, watch } from 'vue-demi'
 import type { Ref } from 'vue-demi'
 
 import type { QueryFunction, QueryObserverResult } from '@tanstack/query-core'
