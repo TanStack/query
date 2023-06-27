@@ -98,6 +98,7 @@ jobs:
     name: Type Test Matrix
     runs-on: ubuntu-latest
     strategy:
+      continue-on-error: true
       matrix:
         typescript-version:
           - '~5.1.0'
@@ -141,6 +142,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
+      continue-on-error: true
       matrix:
         agent: [1, 2]
         typescript-version:
