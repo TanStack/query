@@ -1,15 +1,11 @@
 const config = {
-  parser: '@typescript-eslint/parser',
+  extends: ['plugin:svelte/recommended'],
   parserOptions: {
+    tsconfigRootDir: __dirname,
     project: './tsconfig.json',
-    sourceType: 'module',
     extraFileExtensions: ['.svelte'],
   },
-  rules: {
-    'react-hooks/rules-of-hooks': 'off',
-  },
-  extends: ['plugin:svelte/recommended'],
-  ignorePatterns: ['*.config.*', '**/build/*', '**/.svelte-kit/*'],
+  ignorePatterns: ['*.config.*', '*.setup.*', '**/dist/*'],
   overrides: [
     {
       files: ['*.svelte'],

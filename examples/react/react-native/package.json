@@ -37,12 +37,13 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
-    "@callstack/eslint-config": "^10.1.0",
+    "@callstack/eslint-config": "^13.0.2",
     "@expo/config": "^3.3.27",
     "@types/react-native": "~0.64.3",
     "babel-plugin-module-resolver": "^4.1.0",
-    "eslint": "^7.32.0",
+    "eslint": "^8.34.0",
     "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-plugin-flowtype": "^8.0.3",
     "eslint-plugin-prettier": "^4.0.0",
     "prettier": "^2.3.2",
     "typescript": "~4.4.3"
