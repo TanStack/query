@@ -69,7 +69,3 @@ function isPlainObject(value: unknown): value is Object {
   const prototype = Object.getPrototypeOf(value)
   return prototype === null || prototype === Object.prototype
 }
-
-export function noop(): void {
-  return undefined
-}
