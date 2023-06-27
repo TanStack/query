@@ -16,7 +16,6 @@ export const PersistQueryClientProvider = ({
   children,
   persistOptions,
   onSuccess,
-  ...props
 }: PersistQueryClientProviderProps): JSX.Element => {
   const [isRestoring, setIsRestoring] = React.useState(true)
   const refs = React.useRef({ persistOptions, onSuccess })
@@ -50,7 +49,7 @@ export const PersistQueryClientProvider = ({
   }, [client])
 
   return (
-    <QueryClientProvider client={client} {...props}>
+    <QueryClientProvider client={client}>
       <IsRestoringProvider value={isRestoring}>{children}</IsRestoringProvider>
     </QueryClientProvider>
   )
