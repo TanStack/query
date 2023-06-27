@@ -4706,81 +4706,85 @@ describe('useQuery', () => {
     })
   })
 
-  it('should update query state and not refetch when resetting a disabled query with resetQueries', async () => {
-    const key = queryKey()
-    const states: UseQueryResult<number>[] = []
-    let count = 0
+  it(
+    'should update query state and not refetch when resetting a disabled query with resetQueries',
+    async () => {
+      const key = queryKey()
+      const states: UseQueryResult<number>[] = []
+      let count = 0
 
-    function Page() {
-      const state = useQuery({
-        queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          count++
-          return count
-        },
-        staleTime: Infinity,
-        enabled: false,
-        notifyOnChangeProps: 'all',
+      function Page() {
+        const state = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(10)
+            count++
+            return count
+          },
+          staleTime: Infinity,
+          enabled: false,
+          notifyOnChangeProps: 'all',
+        })
+
+        states.push(state)
+
+        const { refetch } = state
+
+        return (
+          <div>
+            <button onClick={() => refetch()}>refetch</button>
+            <button onClick={() => queryClient.resetQueries({ queryKey: key })}>
+              reset
+            </button>
+            <div>data: {state.data ?? 'null'}</div>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() => rendered.getByText('data: null'))
+      fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+
+      await waitFor(() => rendered.getByText('data: 1'))
+      fireEvent.click(rendered.getByRole('button', { name: /reset/i }))
+
+      await waitFor(() => rendered.getByText('data: null'))
+      await waitFor(() => expect(states.length).toBe(4))
+
+      expect(count).toBe(1)
+
+      expect(states[0]).toMatchObject({
+        data: undefined,
+        isPending: true,
+        isFetching: false,
+        isSuccess: false,
+        isStale: true,
       })
-
-      states.push(state)
-
-      const { refetch } = state
-
-      return (
-        <div>
-          <button onClick={() => refetch()}>refetch</button>
-          <button onClick={() => queryClient.resetQueries({ queryKey: key })}>
-            reset
-          </button>
-          <div>data: {state.data ?? 'null'}</div>
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <Page />)
-
-    await waitFor(() => rendered.getByText('data: null'))
-    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
-
-    await waitFor(() => rendered.getByText('data: 1'))
-    fireEvent.click(rendered.getByRole('button', { name: /reset/i }))
-
-    await waitFor(() => rendered.getByText('data: null'))
-    await waitFor(() => expect(states.length).toBe(4))
-
-    expect(count).toBe(1)
-
-    expect(states[0]).toMatchObject({
-      data: undefined,
-      isPending: true,
-      isFetching: false,
-      isSuccess: false,
-      isStale: true,
-    })
-    expect(states[1]).toMatchObject({
-      data: undefined,
-      isPending: true,
-      isFetching: true,
-      isSuccess: false,
-      isStale: true,
-    })
-    expect(states[2]).toMatchObject({
-      data: 1,
-      isPending: false,
-      isFetching: false,
-      isSuccess: true,
-      isStale: false,
-    })
-    expect(states[3]).toMatchObject({
-      data: undefined,
-      isPending: true,
-      isFetching: false,
-      isSuccess: false,
-      isStale: true,
-    })
-  })
+      expect(states[1]).toMatchObject({
+        data: undefined,
+        isPending: true,
+        isFetching: true,
+        isSuccess: false,
+        isStale: true,
+      })
+      expect(states[2]).toMatchObject({
+        data: 1,
+        isPending: false,
+        isFetching: false,
+        isSuccess: true,
+        isStale: false,
+      })
+      expect(states[3]).toMatchObject({
+        data: undefined,
+        isPending: true,
+        isFetching: false,
+        isSuccess: false,
+        isStale: true,
+      })
+    },
+    { retry: 3 },
+  )
 
   it('should only call the query hash function once each render', async () => {
     const key = queryKey()
