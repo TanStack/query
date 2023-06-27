@@ -42,6 +42,15 @@
     "build:rollup": "rollup --config rollup.config.js",
     "build:types": "tsc --emitDeclarationOnly"
   },
+  "nx": {
+    "targets": {
+      "test:lib": {
+        "dependsOn": [
+          "test:types"
+        ]
+      }
+    }
+  },
   "files": [
     "build/lib/*",
     "src"
