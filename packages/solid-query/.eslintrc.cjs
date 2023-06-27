@@ -1,11 +1,7 @@
 const config = {
   parserOptions: {
+    tsconfigRootDir: __dirname,
     project: './tsconfig.json',
-    sourceType: 'module',
-  },
-  rules: {
-    'react/react-in-jsx-scope': 'off',
-    'react-hooks/rules-of-hooks': 'off',
   },
 }
 
