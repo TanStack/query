@@ -39,7 +39,10 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData>(
         // Get query function
         const queryFn =
           context.options.queryFn ||
-          (() => Promise.reject(new Error('Missing queryFn')))
+          (() =>
+            Promise.reject(
+              new Error(`Missing queryFn: '${context.options.queryHash}'`),
+            ))
 
         // Create function to fetch a page
         const fetchPage = async (

@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/vue-query",
-  "version": "5.0.0-alpha.68",
+  "version": "5.0.0-alpha.71",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in Vue",
   "author": "Damian Osipiuk",
   "license": "MIT",
@@ -41,6 +41,15 @@
     "build": "pnpm build:rollup && pnpm build:types",
     "build:rollup": "rollup --config rollup.config.js",
     "build:types": "tsc --emitDeclarationOnly"
+  },
+  "nx": {
+    "targets": {
+      "test:lib": {
+        "dependsOn": [
+          "test:types"
+        ]
+      }
+    }
   },
   "files": [
     "build/lib/*",
