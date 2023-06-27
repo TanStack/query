@@ -97,8 +97,9 @@ jobs:
   type-test-matrix:
     name: Type Test Matrix
     runs-on: ubuntu-latest
+    continue-on-error: true
     strategy:
-      continue-on-error: true
+      fail-fast: false
       matrix:
         typescript-version:
           - '~5.1.0'
@@ -141,8 +142,9 @@ jobs:
     name: Nx Cloud - Agents For Type Testing
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    continue-on-error: true
     strategy:
-      continue-on-error: true
+      fail-fast: false
       matrix:
         agent: [1, 2]
         typescript-version:
