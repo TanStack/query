@@ -1,7 +1,17 @@
 'use client'
 
-import type { DehydratedState, QueryClient } from '@tanstack/react-query'
-import { dehydrate, hydrate, useQueryClient } from '@tanstack/react-query'
+import type {
+  DehydratedState,
+  DehydrateOptions,
+  HydrateOptions,
+  QueryClient,
+} from '@tanstack/react-query'
+import {
+  defaultShouldDehydrateQuery,
+  dehydrate,
+  hydrate,
+  useQueryClient,
+} from '@tanstack/react-query'
 import * as React from 'react'
 import type { HydrationStreamProviderProps } from './HydrationStreamProvider'
 import { createHydrationStreamProvider } from './HydrationStreamProvider'
@@ -16,6 +26,10 @@ const stream = createHydrationStreamProvider<DehydratedState>()
 export function ReactQueryStreamedHydration(props: {
   children: React.ReactNode
   queryClient?: QueryClient
+  options?: {
+    hydrate?: HydrateOptions
+    dehydrate?: DehydrateOptions
+  }
   transformer?: HydrationStreamProviderProps<DehydratedState>['transformer']
 }) {
   const queryClient = useQueryClient(props.queryClient)
@@ -46,12 +60,14 @@ export function ReactQueryStreamedHydration(props: {
         /**
          * Dehydrated state of the client where we only include the queries that were added/updated since the last flush
          */
+        const shouldDehydrate =
+          props.options?.dehydrate?.shouldDehydrateQuery ??
+          defaultShouldDehydrateQuery
+
         const dehydratedState = dehydrate(queryClient, {
+          ...props.options?.dehydrate,
           shouldDehydrateQuery(query) {
-            return (
-              trackedKeys.has(query.queryHash) &&
-              query.state.status !== 'pending'
-            )
+            return trackedKeys.has(query.queryHash) && shouldDehydrate(query)
           },
         })
         trackedKeys.clear()
@@ -65,7 +81,7 @@ export function ReactQueryStreamedHydration(props: {
       // Happens in browser:
       onEntries={(entries) => {
         for (const hydratedState of entries) {
-          hydrate(queryClient, hydratedState)
+          hydrate(queryClient, hydratedState, props.options?.hydrate)
         }
       }}
       // Handle BigInts etc using superjson
