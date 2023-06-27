@@ -40,7 +40,8 @@
     "build:types": "tsc --emitDeclarationOnly"
   },
   "dependencies": {
-    "@tanstack/query-persist-client-core": "workspace:*"
+    "@tanstack/query-persist-client-core": "workspace:*",
+    "client-only": "0.0.1"
   },
   "devDependencies": {
     "@tanstack/react-query": "workspace:*",
