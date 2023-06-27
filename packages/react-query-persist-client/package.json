@@ -16,6 +16,7 @@
   "module": "build/lib/index.legacy.js",
   "exports": {
     ".": {
+      "react-server": "./build/lib/server.js",
       "types": "./build/lib/index.d.ts",
       "import": "./build/lib/index.js",
       "require": "./build/lib/index.cjs",

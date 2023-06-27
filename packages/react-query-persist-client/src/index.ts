@@ -1,4 +1,4 @@
-// Re-export core
-export * from '@tanstack/query-persist-client-core'
+export * from './shared'
 
+// client-only
 export * from './PersistQueryClientProvider'

@@ -11,7 +11,7 @@ export default defineConfig([
   }),
   ...buildConfigs({
     name: 'react-query-server',
-    outputFile: 'index',
+    outputFile: 'server',
     entryFile: './src/server.ts',
   }),
 ])
