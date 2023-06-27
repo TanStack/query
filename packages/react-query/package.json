@@ -18,6 +18,7 @@
     ".": {
       "import": {
         "types": "./build/modern/index.d.ts",
+        "react-server": "./build/modern/server.js",
         "default": "./build/modern/index.js"
       },
       "require": {

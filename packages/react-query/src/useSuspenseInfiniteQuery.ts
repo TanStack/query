@@ -1,4 +1,4 @@
-'use client'
+import 'client-only'
 import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type {
