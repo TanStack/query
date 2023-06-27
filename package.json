@@ -73,8 +73,8 @@
     "git-log-parser": "^1.2.0",
     "jsonfile": "^6.1.0",
     "luxon": "^3.3.0",
-    "nx": "^16.3.1",
-    "nx-cloud": "^16.0.5",
+    "nx": "16.4.0",
+    "nx-cloud": "16.0.5",
     "prettier": "^2.8.8",
     "prettier-plugin-svelte": "^2.10.0",
     "publint": "^0.1.12",
@@ -101,3 +101,4 @@
     }
   }
 }
+
