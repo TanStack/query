@@ -1608,6 +1608,9 @@ importers:
       '@tanstack/query-persist-client-core':
         specifier: workspace:*
         version: link:../query-persist-client-core
+      client-only:
+        specifier: 0.0.1
+        version: 0.0.1
     devDependencies:
       '@tanstack/react-query':
         specifier: workspace:*

@@ -1,4 +1,4 @@
-'use client'
+import 'client-only'
 import * as React from 'react'
 import { MutationObserver, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
