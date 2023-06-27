@@ -1,4 +1,4 @@
-import 'client-only'
+'use client'
 import * as React from 'react'
 import type { QueryKey, QueryFilters } from '@tanstack/query-core'
 import { notifyManager, parseFilterArgs } from '@tanstack/query-core'
