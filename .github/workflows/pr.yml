@@ -128,4 +128,4 @@ jobs:
       - name: install other ts versions
         run: pnpm add -Dw typescript@${{ matrix.typescript-version }}
       - name: Start Type Test
-        run: NX_CI_EXECUTION_ENV=${{ matrix.typescript-version }} npx nx affected --targets=test:types
+        run: TS_VERSION=${{ matrix.typescript-version }} npx nx affected --targets=test:types

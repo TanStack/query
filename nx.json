@@ -58,7 +58,7 @@
     },
     "test:types": {
       "dependsOn": ["^build"],
-      "inputs": ["default", "^public", { "env": "NX_CI_EXECUTION_ENV" }]
+      "inputs": ["default", "^public", { "env": "TS_VERSION" }]
     },
     "test:build": {
       "dependsOn": ["build"],
