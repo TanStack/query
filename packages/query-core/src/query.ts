@@ -281,7 +281,7 @@ export class Query<
   }
 
   addObserver(observer: QueryObserver<any, any, any, any, any>): void {
-    if (this.#observers.indexOf(observer) === -1) {
+    if (!this.#observers.includes(observer)) {
       this.#observers.push(observer)
 
       // Stop the query from being garbage collected
@@ -292,7 +292,7 @@ export class Query<
   }
 
   removeObserver(observer: QueryObserver<any, any, any, any, any>): void {
-    if (this.#observers.indexOf(observer) !== -1) {
+    if (this.#observers.includes(observer)) {
       this.#observers = this.#observers.filter((x) => x !== observer)
 
       if (!this.#observers.length) {
@@ -387,7 +387,9 @@ export class Query<
     // Create fetch function
     const fetchFn = () => {
       if (!this.options.queryFn) {
-        return Promise.reject(new Error('Missing queryFn'))
+        return Promise.reject(
+          new Error(`Missing queryFn: '${this.options.queryHash}'`),
+        )
       }
       this.#abortSignalConsumed = false
       return this.options.queryFn(

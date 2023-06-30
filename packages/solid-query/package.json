@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query",
-  "version": "5.0.0-alpha.43",
+  "version": "5.0.0-alpha.70",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Solid",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -10,21 +10,21 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "types": "build/types/index.d.ts",
-  "main": "build/cjs/index.js",
-  "module": "build/esm/index.js",
+  "type": "module",
+  "types": "dist/types/index.d.ts",
+  "main": "dist/cjs/index.cjs",
+  "module": "dist/esm/index.js",
   "exports": {
     ".": {
-      "types": "./build/types/index.d.ts",
-      "solid": "./build/source/index.js",
-      "import": "./build/esm/index.js",
+      "types": "./dist/types/index.d.ts",
+      "solid": "./dist/source/index.js",
+      "import": "./dist/esm/index.js",
       "browser": {
-        "import": "./build/esm/index.js",
-        "require": "./build/cjs/index.js"
+        "import": "./dist/esm/index.js",
+        "require": "./dist/cjs/index.cjs"
       },
-      "require": "./build/cjs/index.js",
-      "node": "./build/cjs/index.js",
-      "default": "./build/cjs/index.js"
+      "require": "./dist/cjs/index.cjs",
+      "node": "./dist/cjs/index.cjs"
     },
     "./package.json": "./package.json"
   },
@@ -32,21 +32,16 @@
     "./src/setBatchUpdatesFn.ts"
   ],
   "scripts": {
-    "clean": "rimraf ./build",
+    "clean": "rimraf ./dist && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc",
+    "test:types": "tsc --noEmit",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "build": "pnpm build:rollup && pnpm build:types",
-    "build:rollup": "rollup --config rollup.config.mjs",
-    "build:types": "tsc --build"
+    "test:build": "publint --strict",
+    "build": "rollup --config rollup.config.js"
   },
   "files": [
-    "build/esm/*",
-    "build/cjs/*",
-    "build/umd/*",
-    "build/source/*",
-    "build/types/*",
+    "dist",
     "src"
   ],
   "dependencies": {
@@ -57,6 +52,5 @@
   },
   "peerDependencies": {
     "solid-js": "^1.6.13"
-  },
-  "peerDependenciesMeta": {}
+  }
 }

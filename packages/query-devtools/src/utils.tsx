@@ -1,5 +1,6 @@
 import type { Query } from '@tanstack/query-core'
-import SuperJSON from 'superjson'
+import { serialize } from 'superjson'
+import type { DevtoolsPosition } from './Context'
 
 export function getQueryStatusLabel(query: Query) {
   return query.state.fetchStatus === 'fetching'
@@ -21,6 +22,15 @@ export const queryStatusLabels = [
   'fetching',
 ] as const
 export type IQueryStatusLabel = (typeof queryStatusLabels)[number]
+
+export function getSidedProp<T extends string>(
+  prop: T,
+  side: DevtoolsPosition,
+) {
+  return `${prop}${
+    side.charAt(0).toUpperCase() + side.slice(1)
+  }` as `${T}${Capitalize<DevtoolsPosition>}`
+}
 
 export function getQueryStatusColor({
   queryState,
@@ -60,7 +70,7 @@ export function getQueryStatusColorByLabel(label: IQueryStatusLabel) {
  * @param {boolean} beautify Formats json to multiline
  */
 export const displayValue = (value: unknown, beautify: boolean = false) => {
-  const { json } = SuperJSON.serialize(value)
+  const { json } = serialize(value)
 
   return JSON.stringify(json, null, beautify ? 2 : undefined)
 }

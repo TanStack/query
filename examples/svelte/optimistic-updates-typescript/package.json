@@ -1,7 +1,6 @@
 {
   "name": "@tanstack/query-example-svelte-optimistic-updates-typescript",
   "private": true,
-  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite dev",
@@ -11,7 +10,7 @@
   },
   "dependencies": {
     "@tanstack/svelte-query": "^5.0.0-alpha.38",
-    "@tanstack/svelte-query-devtools": "workspace:5.0.0-alpha.39"
+    "@tanstack/svelte-query-devtools": "^5.0.0-alpha.39"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^2.1.0",

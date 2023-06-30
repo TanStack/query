@@ -1,4 +1,5 @@
-import { queryOptions, useQuery } from '../useQuery'
+import { useQuery } from '../useQuery'
+import { queryOptions } from '../queryOptions'
 import type { Expect, Equal } from './utils'
 import { doNotExecute } from './utils'
 

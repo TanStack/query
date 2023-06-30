@@ -1,15 +1,15 @@
-import React from "react";
+import React from 'react'
 
-import Spinner from "./Spinner";
+import Spinner from './Spinner'
 
 export default function Button({ children, onClick }) {
-  const [isPending, startTransition] = React.useTransition();
+  const [isPending, startTransition] = React.useTransition()
 
   const handleClick = (e) => {
     startTransition(() => {
-      onClick(e);
-    });
-  };
+      onClick(e)
+    })
+  }
 
   return (
     <>
@@ -17,5 +17,5 @@ export default function Button({ children, onClick }) {
         {children} {isPending ? <Spinner /> : null}
       </button>
     </>
-  );
+  )
 }

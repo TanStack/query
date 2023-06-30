@@ -1,14 +1,16 @@
 import { waitFor } from '@testing-library/react'
-import type { QueryClient, InfiniteQueryObserverResult } from '..'
+import type { QueryClient, QueryCache, InfiniteQueryObserverResult } from '..'
 import { InfiniteQueryObserver, CancelledError } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
 import { vi } from 'vitest'
 
 describe('InfiniteQueryBehavior', () => {
   let queryClient: QueryClient
+  let queryCache: QueryCache
 
   beforeEach(() => {
     queryClient = createQueryClient()
+    queryCache = queryClient.getQueryCache()
     queryClient.mount()
   })
 
@@ -35,9 +37,10 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     await waitFor(() => {
+      const query = queryCache.find({ queryKey: key })!
       return expect(observerResult).toMatchObject({
         isError: true,
-        error: new Error('Missing queryFn'),
+        error: new Error(`Missing queryFn: '${query.queryHash}'`),
       })
     })
 

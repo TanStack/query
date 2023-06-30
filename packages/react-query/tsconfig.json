@@ -1,12 +1,9 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "composite": true,
-    "rootDir": "./src",
+    "jsx": "react",
     "outDir": "./build/lib",
-    "tsBuildInfoFile": "./build/.tsbuildinfo",
     "types": ["vitest/globals"]
   },
-  "include": ["src"],
-  "references": [{ "path": "../query-core" }]
+  "include": ["src"]
 }

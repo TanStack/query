@@ -20,6 +20,7 @@ import {
   getQueryStatusColorByLabel,
   sortFns,
   convertRemToPixels,
+  getSidedProp,
 } from './utils'
 import {
   ArrowDown,
@@ -81,6 +82,8 @@ export const DevtoolsComponent: Component<QueryDevtoolsProps> = (props) => {
     </QueryDevtoolsContext.Provider>
   )
 }
+
+export default DevtoolsComponent
 
 export const Devtools = () => {
   loadFonts()
@@ -315,6 +318,41 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
     setSettingsOpen(false)
   }
 
+  createEffect(() => {
+    const rootContainer = panelRef.parentElement?.parentElement?.parentElement
+    if (!rootContainer) return
+    const currentPosition = (props.localStore.position ||
+      POSITION) as DevtoolsPosition
+    const styleProp = getSidedProp('padding', currentPosition)
+    const isVertical =
+      props.localStore.position === 'left' ||
+      props.localStore.position === 'right'
+    const previousPaddings = (({
+      padding,
+      paddingTop,
+      paddingBottom,
+      paddingLeft,
+      paddingRight,
+    }) => ({
+      padding,
+      paddingTop,
+      paddingBottom,
+      paddingLeft,
+      paddingRight,
+    }))(rootContainer.style)
+
+    rootContainer.style[styleProp] = `${
+      isVertical ? props.localStore.width : props.localStore.height
+    }px`
+
+    onCleanup(() => {
+      Object.entries(previousPaddings).forEach(([property, previousValue]) => {
+        rootContainer.style[property as keyof typeof previousPaddings] =
+          previousValue
+      })
+    })
+  })
+
   return (
     <aside
       // Some context for styles here
@@ -453,6 +491,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                 } else {
                   onlineManager().setOnline(false)
                   setOffline(true)
+                  window.dispatchEvent(new Event('offline'))
                 }
               }}
               class={styles.actionsBtn}
@@ -1200,6 +1239,7 @@ const getStyles = () => {
         font-family: 'Inter', sans-serif;
         color: ${colors.gray[300]};
         box-sizing: border-box;
+        text-transform: none;
       }
     `,
     'devtoolsBtn-position-bottom-right': css`
@@ -1624,6 +1664,7 @@ const getStyles = () => {
       max-width: 160px;
       border: 1px solid ${colors.darkGray[200]};
       cursor: pointer;
+      padding: 0;
       &:hover {
         background-color: ${colors.darkGray[500]};
       }
