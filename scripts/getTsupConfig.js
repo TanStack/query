@@ -3,6 +3,7 @@
 /**
  * @param {Object} opts - Options for building configurations.
  * @param {string[]} opts.entry - The entry array.
+ * @param {boolean} opts.bundle - Whether to bundle the output.
  * @returns {import('tsup').Options}
  */
 export function modernConfig(opts) {
@@ -11,8 +12,8 @@ export function modernConfig(opts) {
     format: ['cjs', 'esm'],
     target: ['chrome84', 'firefox90', 'edge84', 'safari15', 'ios15', 'opera70'],
     outDir: 'build/modern',
-    bundle: false,
-    splitting: false,
+    bundle: opts.bundle,
+    splitting: opts.bundle,
     dts: true,
     sourcemap: true,
     clean: true,
@@ -22,6 +23,7 @@ export function modernConfig(opts) {
 /**
  * @param {Object} opts - Options for building configurations.
  * @param {string[]} opts.entry - The entry array.
+ * @param {boolean} opts.bundle - Whether to bundle the output.
  * @returns {import('tsup').Options}
  */
 export function legacyConfig(opts) {
@@ -30,8 +32,8 @@ export function legacyConfig(opts) {
     format: ['cjs', 'esm'],
     target: ['es2020', 'node16'],
     outDir: 'build/legacy',
-    bundle: false,
-    splitting: false,
+    bundle: opts.bundle,
+    splitting: opts.bundle,
     dts: true,
     sourcemap: true,
     clean: true,

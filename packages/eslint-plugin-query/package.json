@@ -29,7 +29,7 @@
   },
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
-    "dev": "tsup --watch",
+    "dev": "tsup --watch --sourcemap",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc --noEmit",
     "test:lib": "vitest run --coverage",
