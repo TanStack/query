@@ -55,5 +55,5 @@ module.exports = (file, api) => {
     },
   })
 
-  return root.toSource({ quote: 'single', lineTerminator: '\n' })
+  return root.toSource({ quote: 'single' })
 }

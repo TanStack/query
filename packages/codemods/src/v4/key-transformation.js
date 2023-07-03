@@ -134,5 +134,5 @@ module.exports = (file, api) => {
   // This function transforms usages of `QueryCache`.
   transformQueryCacheUsages({ jscodeshift, utils, root, filePath })
 
-  return root.toSource({ quote: 'single', lineTerminator: '\n' })
+  return root.toSource({ quote: 'single' })
 }
