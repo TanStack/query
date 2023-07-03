@@ -78,7 +78,7 @@
     "nx-cloud": "^16.0.5",
     "prettier": "^2.8.8",
     "prettier-plugin-svelte": "^2.10.1",
-    "publint": "^0.1.12",
+    "publint": "^0.1.15",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "rimraf": "^5.0.1",

@@ -16,10 +16,14 @@
   "module": "build/lib/index.js",
   "exports": {
     ".": {
-      "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.js",
-      "require": "./build/lib/index.cjs",
-      "default": "./build/lib/index.cjs"
+      "import": {
+        "types": "./build/lib/index.d.ts",
+        "default": "./build/lib/index.js"
+      },
+      "require": {
+        "types": "./build/lib/index.d.cts",
+        "default": "./build/lib/index.cjs"
+      }
     },
     "./package.json": "./package.json"
   },
@@ -31,18 +35,16 @@
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
-    "build": "pnpm build:tsup && pnpm build:types",
-    "build:tsup": "tsup",
-    "build:types": "tsc --emitDeclarationOnly"
+    "build": "tsup"
   },
   "files": [
     "build",
     "src"
   ],
+  "dependencies": {
+    "@typescript-eslint/utils": "^5.54.0"
+  },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.54.0",
-    "@typescript-eslint/parser": "^5.54.0",
-    "@typescript-eslint/utils": "^5.54.0",
     "eslint": "^8.34.0"
   },
   "peerDependencies": {
