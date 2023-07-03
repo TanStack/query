@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { isServer, QueriesObserver } from '@tanstack/query-core'
+import { QueriesObserver } from '@tanstack/query-core'
 import type {
   QueriesPlaceholderDataFunction,
   QueryKey,
@@ -11,7 +11,7 @@ import type { Ref } from 'vue-demi'
 import { computed, onScopeDispose, readonly, ref, watch } from 'vue-demi'
 
 import { useQueryClient } from './useQueryClient'
-import { cloneDeepUnref, noop } from './utils'
+import { cloneDeepUnref } from './utils'
 import type { UseQueryOptions } from './useQuery'
 import type { QueryClient } from './queryClient'
 import type { DistributiveOmit, MaybeRefDeep } from './types'
@@ -182,22 +182,21 @@ export function useQueries<
   )
   const state = ref(getCombinedResult()) as Ref<TCombinedResult>
 
-  const unsubscribe = ref(noop)
+  const unsubscribe = ref(() => {
+    // noop
+  })
 
   watch(
     client.isRestoring,
     (isRestoring) => {
       if (!isRestoring) {
         unsubscribe.value()
-        // Nuxt2 memory leak fix - do not subscribe on server
-        if (!isServer) {
-          unsubscribe.value = observer.subscribe(() => {
-            const [, getCombinedResultRestoring] = observer.getOptimisticResult(
-              defaultedQueries.value,
-            )
-            state.value = getCombinedResultRestoring()
-          })
-        }
+        unsubscribe.value = observer.subscribe(() => {
+          const [, getCombinedResultRestoring] = observer.getOptimisticResult(
+            defaultedQueries.value,
+          )
+          state.value = getCombinedResultRestoring()
+        })
         // Subscription would not fire for persisted results
         const [, getCombinedResultPersisted] = observer.getOptimisticResult(
           defaultedQueries.value,
