@@ -9,7 +9,8 @@ import type {
   QueryObserverOptions,
 } from '@tanstack/query-core'
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
-import { derived, get, readable, type Readable } from 'svelte/store'
+import { derived, get, readable } from 'svelte/store'
+import type { Readable } from 'svelte/store'
 import type { StoreOrVal } from './types'
 import { useQueryClient } from './useQueryClient'
 import { isSvelteStore } from './utils'
