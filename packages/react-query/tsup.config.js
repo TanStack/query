@@ -9,6 +9,7 @@ export default defineConfig({
   outDir: 'build/lib',
   bundle: false,
   splitting: false,
+  dts: true,
   sourcemap: true,
   clean: true,
 })
