@@ -11,18 +11,18 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "type": "module",
-  "types": "build/lib/index.d.ts",
-  "main": "build/lib/index.cjs",
-  "module": "build/lib/index.js",
+  "types": "build/legacy/index.d.ts",
+  "main": "build/legacy/index.cjs",
+  "module": "build/legacy/index.js",
   "exports": {
     ".": {
       "import": {
-        "types": "./build/lib/index.d.ts",
-        "default": "./build/lib/index.js"
+        "types": "./build/legacy/index.d.ts",
+        "default": "./build/legacy/index.js"
       },
       "require": {
-        "types": "./build/lib/index.d.cts",
-        "default": "./build/lib/index.cjs"
+        "types": "./build/legacy/index.d.cts",
+        "default": "./build/legacy/index.cjs"
       }
     },
     "./package.json": "./package.json"
