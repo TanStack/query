@@ -30,6 +30,7 @@
   },
   "namespace": "@tanstack",
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.4.2",
     "@babel/core": "^7.21.8",
     "@babel/preset-env": "^7.21.5",
     "@babel/preset-react": "^7.18.6",
