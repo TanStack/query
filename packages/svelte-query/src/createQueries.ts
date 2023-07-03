@@ -9,10 +9,10 @@ import type {
   QueryObserverOptions,
 } from '@tanstack/query-core'
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
-import { derived, get, readable, writable, type Readable } from 'svelte/store'
-import type { WritableOrVal } from './types'
+import { derived, get, readable, type Readable } from 'svelte/store'
+import type { StoreOrVal } from './types'
 import { useQueryClient } from './useQueryClient'
-import { isWritable } from './utils'
+import { isSvelteStore } from './utils'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter
@@ -168,7 +168,7 @@ export function createQueries<
     queries,
     ...options
   }: {
-    queries: WritableOrVal<[...QueriesOptions<T>]>
+    queries: StoreOrVal<[...QueriesOptions<T>]>
     combine?: (result: QueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,
@@ -176,7 +176,7 @@ export function createQueries<
   const client = useQueryClient(queryClient)
   // const isRestoring = useIsRestoring()
 
-  const queriesStore = isWritable(queries) ? queries : writable(queries)
+  const queriesStore = isSvelteStore(queries) ? queries : readable(queries)
 
   const defaultedQueriesStore = derived(queriesStore, ($queries) => {
     return $queries.map((opts) => {

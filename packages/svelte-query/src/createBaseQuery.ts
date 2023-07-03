@@ -1,9 +1,9 @@
-import { derived, get, readable, writable } from 'svelte/store'
+import { derived, get, readable } from 'svelte/store'
 import { notifyManager } from '@tanstack/query-core'
 import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
 import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
 import { useQueryClient } from './useQueryClient'
-import { isWritable } from './utils'
+import { isSvelteStore } from './utils'
 
 export function createBaseQuery<
   TQueryFnData,
@@ -24,7 +24,7 @@ export function createBaseQuery<
 ): CreateBaseQueryResult<TData, TError> {
   const client = useQueryClient(queryClient)
 
-  const optionsStore = isWritable(options) ? options : writable(options)
+  const optionsStore = isSvelteStore(options) ? options : readable(options)
 
   const defaultedOptionsStore = derived(optionsStore, ($options) => {
     const defaultedOptions = client.defaultQueryOptions($options)

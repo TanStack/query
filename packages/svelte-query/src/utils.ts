@@ -1,8 +1,8 @@
-import type { Writable } from 'svelte/store'
-import type { WritableOrVal } from './types'
+import type { Readable } from 'svelte/store'
+import type { StoreOrVal } from './types'
 
-export function isWritable<T extends object>(
-  obj: WritableOrVal<T>,
-): obj is Writable<T> {
-  return 'subscribe' in obj && 'set' in obj && 'update' in obj
+export function isSvelteStore<T extends object>(
+  obj: StoreOrVal<T>,
+): obj is Readable<T> {
+  return 'subscribe' in obj
 }
