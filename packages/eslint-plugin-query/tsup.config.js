@@ -7,7 +7,7 @@ export default defineConfig({
   format: ['cjs', 'esm'],
   target: ['chrome84', 'firefox90', 'edge84', 'safari15', 'ios15', 'opera70'],
   outDir: 'build/lib',
-  external: [/eslint/],
+  dts: true,
   sourcemap: true,
   clean: true,
 })
