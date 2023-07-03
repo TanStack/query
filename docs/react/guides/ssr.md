@@ -417,7 +417,7 @@ Fetch your data in a Server Component higher up in the component tree than the C
 - Wrap the component tree that needs the prefetched queries inside `<Hydrate>`, and provide it with the dehydrated state
 - You can fetch inside multiple Server Components and use `<Hydrate>` in multiple places
 
-> NOTE: TypeScript currently complains of a type error when using async Server Components. As a temporary workaround, use `{/* @ts-expect-error Server Component */}` when calling this component inside another. For more information, see [End-to-End Type Safety](https://beta.nextjs.org/docs/configuring/typescript#end-to-end-type-safety) in the Next.js 13 beta docs.
+> NOTE: If you encounter a type error while using async Server Components with TypeScript versions lower than `5.1.3` and `@types/react` versions lower than `18.2.8`, it is recommended to update to the latest versions of both. Alternatively, you can use the temporary workaround of adding `{/* @ts-expect-error Server Component */}` when calling this component inside another. For more information, see [Async Server Component TypeScript Error](https://nextjs.org/docs/app/building-your-application/configuring/typescript#async-server-component-typescript-error) in the Next.js 13 docs.
 
 ```tsx
 // app/hydratedPosts.jsx
