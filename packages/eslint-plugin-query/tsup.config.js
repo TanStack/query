@@ -7,7 +7,7 @@ export default defineConfig({
   format: ['cjs', 'esm'],
   target: ['es2020', 'node16'],
   outDir: 'build/lib',
-  external: [/eslint/],
+  dts: true,
   sourcemap: true,
   clean: true,
 })
