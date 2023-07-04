@@ -39,7 +39,7 @@ describe('createQuery', () => {
       },
       placeholderData: (previousData: { id: number }[]) => previousData,
     }) satisfies CreateQueryOptions
-  
+
     const rendered = render(CreateQuery, { props: { options } })
 
     await waitFor(() => {
@@ -73,11 +73,11 @@ describe('createQuery', () => {
         return 'Success'
       },
     }) satisfies CreateQueryOptions
-    
+
     const rendered = render(CreateQuery, {
       props: {
         options: optionsStore,
-      }
+      },
     })
 
     await waitFor(() => {
@@ -86,7 +86,7 @@ describe('createQuery', () => {
   })
 
   test('Accept a derived store for options', async () => {
-    const writableStore = writable("test");
+    const writableStore = writable('test')
 
     const derivedStore = derived(writableStore, ($store) => ({
       queryKey: [$store],
@@ -95,11 +95,11 @@ describe('createQuery', () => {
         return 'Success'
       },
     })) satisfies CreateQueryOptions
-    
+
     const rendered = render(CreateQuery, {
       props: {
         options: derivedStore,
-      }
+      },
     })
 
     await waitFor(() => {
