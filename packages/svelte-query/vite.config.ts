@@ -6,7 +6,6 @@ export default defineConfig({
   test: {
     name: 'svelte-query',
     watch: false,
-    globals: true,
     coverage: { provider: 'istanbul' },
     environment: 'jsdom',
     include: ['src/**/*.{test,spec}.{js,ts}'],
