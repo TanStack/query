@@ -43,5 +43,5 @@ To solve this, create a store for the options and use it as input for the query.
 const query = createQuery(queryOptions)
 </script>
 
-<input type="number" bind:input={$queryOptions.refetchInterval} />
+<input type="number" bind:value={$queryOptions.refetchInterval} />
 ```
