@@ -24,12 +24,14 @@ export function createBaseQuery<
 ): CreateBaseQueryResult<TData, TError> {
   const client = useQueryClient(queryClient)
 
+  // Converts options to a svelte store if not already a store.
   const optionsStore = isSvelteStore(options) ? options : readable(options)
 
-  const defaultedOptionsStore = derived(optionsStore, ($options) => {
-    const defaultedOptions = client.defaultQueryOptions($options)
+  // Creates a store that will always have the default options applied.
+  const defaultedOptionsStore = derived(optionsStore, ($optionsStore) => {
+    const defaultedOptions = client.defaultQueryOptions($optionsStore)
     defaultedOptions._optimisticResults = 'optimistic'
-
+    console.log("defaultedOptions", defaultedOptions)
     return defaultedOptions
   })
 
