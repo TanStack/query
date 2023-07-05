@@ -54,6 +54,7 @@ export function createBaseQuery<
   })
 
   const { subscribe } = derived(result, ($result) => {
+    console.log("derived", $result)
     $result = observer.getOptimisticResult(get(defaultedOptionsStore))
     return !get(defaultedOptionsStore).notifyOnChangeProps
       ? observer.trackResult($result)
