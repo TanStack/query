@@ -55,12 +55,15 @@ export function createBaseQuery<
   })
 
   /** Subscribe to changes in result and defaultedOptionsStore */
-  const { subscribe } = derived([result, defaultedOptionsStore], ([$result, $defaultedOptionsStore]) => {
-    $result = observer.getOptimisticResult($defaultedOptionsStore)
-    return !$defaultedOptionsStore.notifyOnChangeProps
-      ? observer.trackResult($result)
-      : $result
-  })
+  const { subscribe } = derived(
+    [result, defaultedOptionsStore],
+    ([$result, $defaultedOptionsStore]) => {
+      $result = observer.getOptimisticResult($defaultedOptionsStore)
+      return !$defaultedOptionsStore.notifyOnChangeProps
+        ? observer.trackResult($result)
+        : $result
+    },
+  )
 
   return { subscribe }
 }

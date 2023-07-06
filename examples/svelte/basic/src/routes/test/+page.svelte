@@ -1,15 +1,18 @@
 <script lang="ts">
-	import { writable, derived } from "svelte/store";
-	import { createQuery } from "@tanstack/svelte-query";
+  import { writable, derived } from 'svelte/store'
+  import { createQuery } from '@tanstack/svelte-query'
 
-	const store = writable(1);
+  const store = writable(1)
 
-	const queryOptions = derived(store, person => ({
+  const queryOptions = derived(store, (person) => ({
     queryKey: ['myquery', person],
-    queryFn: async () => await fetch(`https://swapi.dev/api/people/${person}`).then((r) => r.json()),
-	}))
-	
-  const query = createQuery(queryOptions);
+    queryFn: async () =>
+      await fetch(`https://swapi.dev/api/people/${person}`).then((r) =>
+        r.json(),
+      ),
+  }))
+
+  const query = createQuery(queryOptions)
 </script>
 
 <input type="number" bind:value={$store} />
