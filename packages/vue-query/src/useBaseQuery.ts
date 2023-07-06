@@ -4,7 +4,6 @@ import {
   readonly,
   reactive,
   watch,
-  ref,
   computed,
 } from 'vue-demi'
 import type { ToRefs } from 'vue-demi'
@@ -86,17 +85,17 @@ export function useBaseQuery<
   const observer = new Observer(client, defaultedOptions.value)
   const state = reactive(observer.getCurrentResult())
 
-  const unsubscribe = ref(() => {
+  let unsubscribe = () => {
     // noop
-  })
+  }
 
   watch(
     client.isRestoring,
     (isRestoring) => {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (!isRestoring) {
-        unsubscribe.value()
-        unsubscribe.value = observer.subscribe((result) => {
+        unsubscribe()
+        unsubscribe = observer.subscribe((result) => {
           updateState(state, result)
         })
       }
@@ -114,7 +113,7 @@ export function useBaseQuery<
   )
 
   onScopeDispose(() => {
-    unsubscribe.value()
+    unsubscribe()
   })
 
   const suspense = () => {

@@ -8,7 +8,7 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 import type { Ref } from 'vue-demi'
-import { computed, onScopeDispose, readonly, ref, watch } from 'vue-demi'
+import { computed, onScopeDispose, readonly, watch } from 'vue-demi'
 
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
@@ -182,16 +182,16 @@ export function useQueries<
   )
   const state = ref(getCombinedResult()) as Ref<TCombinedResult>
 
-  const unsubscribe = ref(() => {
+  let unsubscribe = () => {
     // noop
-  })
+  }
 
   watch(
     client.isRestoring,
     (isRestoring) => {
       if (!isRestoring) {
-        unsubscribe.value()
-        unsubscribe.value = observer.subscribe(() => {
+        unsubscribe()
+        unsubscribe = observer.subscribe(() => {
           const [, getCombinedResultRestoring] = observer.getOptimisticResult(
             defaultedQueries.value,
           )
@@ -220,7 +220,7 @@ export function useQueries<
   )
 
   onScopeDispose(() => {
-    unsubscribe.value()
+    unsubscribe()
   })
 
   return readonly(state) as Readonly<Ref<TCombinedResult>>
