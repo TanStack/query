@@ -14,11 +14,11 @@
 {:else if $query.isError}
   <p>Error</p>
 {:else if $query.isSuccess}
-  <p>{$query.data}</p>
+  {#if Array.isArray($query.data)}
+    {#each $query.data as item}
+      <p>{item}</p>
+    {/each}
+  {:else}
+    <p>{$query.data}</p>
+  {/if}
 {/if}
-
-<ul>
-  {#each $query.data ?? [] as entry}
-    <li>id: {entry.id}</li>
-  {/each}
-</ul>
