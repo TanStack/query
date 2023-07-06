@@ -112,7 +112,7 @@ describe('createQuery', () => {
       expect(rendered.queryByText('Success 2')).not.toBeInTheDocument()
     })
   })
-  
+
   test('Keep previous data when returned as placeholder data', async () => {
     const writableStore = writable<number[]>([1])
 
