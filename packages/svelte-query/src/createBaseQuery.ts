@@ -22,19 +22,20 @@ export function createBaseQuery<
   Observer: typeof QueryObserver,
   queryClient?: QueryClient,
 ): CreateBaseQueryResult<TData, TError> {
+  /** Load query client */
   const client = useQueryClient(queryClient)
 
-  // Converts options to a svelte store if not already a store.
+  /** Converts options to a svelte store if not already a store object */
   const optionsStore = isSvelteStore(options) ? options : readable(options)
 
-  // Creates a store that will always have the default options applied.
+  /** Creates a store that has the default options applied */
   const defaultedOptionsStore = derived(optionsStore, ($optionsStore) => {
     const defaultedOptions = client.defaultQueryOptions($optionsStore)
     defaultedOptions._optimisticResults = 'optimistic'
-    console.log("defaultedOptions", defaultedOptions)
     return defaultedOptions
   })
 
+  /** Creates the observer */
   const observer = new Observer<
     TQueryFnData,
     TError,
@@ -53,10 +54,10 @@ export function createBaseQuery<
     return observer.subscribe(notifyManager.batchCalls(set))
   })
 
-  const { subscribe } = derived(result, ($result) => {
-    console.log("derived", $result)
-    $result = observer.getOptimisticResult(get(defaultedOptionsStore))
-    return !get(defaultedOptionsStore).notifyOnChangeProps
+  /** Subscribe to changes in result and defaultedOptionsStore */
+  const { subscribe } = derived([result, defaultedOptionsStore], ([$result, $defaultedOptionsStore]) => {
+    $result = observer.getOptimisticResult($defaultedOptionsStore)
+    return !$defaultedOptionsStore.notifyOnChangeProps
       ? observer.trackResult($result)
       : $result
   })
