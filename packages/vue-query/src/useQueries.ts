@@ -1,13 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { QueriesObserver } from '@tanstack/query-core'
-import {
-  computed,
-  onScopeDispose,
-  reactive,
-  readonly,
-  ref,
-  watch,
-} from 'vue-demi'
+import { computed, onScopeDispose, reactive, readonly, watch } from 'vue-demi'
 import type { Ref } from 'vue-demi'
 
 import type { QueryFunction, QueryObserverResult } from '@tanstack/query-core'
@@ -175,16 +168,16 @@ export function useQueries<T extends any[]>({
   const observer = new QueriesObserver(queryClient, defaultedQueries.value)
   const state = reactive(observer.getCurrentResult())
 
-  const unsubscribe = ref(() => {
+  let unsubscribe = () => {
     // noop
-  })
+  }
 
   watch(
     queryClient.isRestoring,
     (isRestoring) => {
       if (!isRestoring) {
-        unsubscribe.value()
-        unsubscribe.value = observer.subscribe((result) => {
+        unsubscribe()
+        unsubscribe = observer.subscribe((result) => {
           state.splice(0, result.length, ...result)
         })
         // Subscription would not fire for persisted results
@@ -208,7 +201,7 @@ export function useQueries<T extends any[]>({
   )
 
   onScopeDispose(() => {
-    unsubscribe.value()
+    unsubscribe()
   })
 
   return readonly(state) as UseQueriesResults<T>
