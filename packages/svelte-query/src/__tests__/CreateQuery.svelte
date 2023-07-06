@@ -1,15 +1,12 @@
 <script lang="ts">
-  import { QueryClient } from '@tanstack/query-core'
-  import { setQueryClientContext } from '../context'
   import { createQuery } from '../createQuery'
+  import type { QueryClient } from '@tanstack/query-core'
   import type { CreateQueryOptions } from '../types'
 
   export let options: CreateQueryOptions<any>
+  export let queryClient: QueryClient
 
-  const queryClient = new QueryClient()
-  setQueryClientContext(queryClient)
-
-  const query = createQuery(options)
+  const query = createQuery(options, queryClient)
 </script>
 
 {#if $query.isPending}
@@ -17,7 +14,7 @@
 {:else if $query.isError}
   <p>Error</p>
 {:else if $query.isSuccess}
-  <p>Success</p>
+  <p>{$query.data}</p>
 {/if}
 
 <ul>
