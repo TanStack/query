@@ -8,7 +8,7 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 import type { Ref } from 'vue-demi'
-import { computed, onScopeDispose, readonly, watch } from 'vue-demi'
+import { computed, onScopeDispose, readonly, ref, watch } from 'vue-demi'
 
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'

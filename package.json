@@ -75,7 +75,7 @@
     "jsdom": "^22.0.0",
     "jsonfile": "^6.1.0",
     "luxon": "^3.3.0",
-    "nx": "^16.3.1",
+    "nx": "^16.5.0",
     "nx-cloud": "^16.0.5",
     "prettier": "^2.8.8",
     "prettier-plugin-svelte": "^2.10.1",
