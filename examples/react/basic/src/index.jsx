@@ -10,21 +10,13 @@ import {
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 60 * 1000,
-    },
-  },
-})
+const queryClient = new QueryClient()
 
 function App() {
   const [postId, setPostId] = React.useState(-1)
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Test />
-
       <p>
         As you visit the posts below, you will notice them in a loading state
         the first time you load them. However, after you return to this list and
@@ -140,29 +132,6 @@ function Post({ postId, setPostId }) {
         </>
       )}
     </div>
-  )
-}
-
-function Test() {
-  const [id, setId] = React.useState(1)
-
-  const query = useQuery({
-    queryKey: ['myquery', id],
-    queryFn: async () =>
-      await fetch(`https://swapi.dev/api/people/${id}`).then((r) => r.json()),
-  })
-
-  return (
-    <>
-      <input onChange={(e) => setId(e.target.value)} value={id} />
-      {query.isPending ? (
-        <p>Loading...</p>
-      ) : query.isError ? (
-        <p>Error: {query.error.message}</p>
-      ) : (
-        <pre>{JSON.stringify(query.data, null, 2)}</pre>
-      )}
-    </>
   )
 }
 

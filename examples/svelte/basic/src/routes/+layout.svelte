@@ -8,7 +8,6 @@
     defaultOptions: {
       queries: {
         enabled: browser,
-        staleTime: 60 * 1000,
       },
     },
   })
