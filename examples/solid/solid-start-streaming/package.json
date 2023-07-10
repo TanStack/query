@@ -7,12 +7,15 @@
     "start": "solid-start start"
   },
   "type": "module",
+  "resolutions": {
+    "solid-js": "^1.7.7"
+  },
   "dependencies": {
-    "@tanstack/solid-query": "^5.0.0-alpha.38",
-    "@solidjs/meta": "^0.28.2",
-    "@solidjs/router": "^0.7.0",
-    "solid-js": "^1.6.13",
-    "solid-start": "^0.2.23",
+    "@tanstack/solid-query": "5.0.0-alpha.75",
+    "@solidjs/meta": "~0.28.5",
+    "@solidjs/router": "~0.8.2",
+    "solid-js": "^1.7.7",
+    "solid-start": "~0.2.26",
     "undici": "^5.22.1"
   },
   "devDependencies": {
