@@ -59,14 +59,15 @@ const hydrateableObserverResult = <
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
   result: QueryObserverResult<T2, TError>,
 ): HydrateableQueryState<T2, TError> => {
-  const { refetch, ...rest } = unwrap(result)
+  // Including the extra properties is only relevant on the server
+  if (!isServer) return result as HydrateableQueryState<T2, TError>
 
   return {
-    ...rest,
+    ...unwrap(result),
 
     // cast to refetch function should be safe, since we only remove it on the server,
     // and refetch is not relevant on the server
-    refetch: (isServer ? undefined : refetch) as HydrateableQueryState<
+    refetch: undefined as unknown as HydrateableQueryState<
       T2,
       TError
     >['refetch'],
@@ -79,8 +80,8 @@ const hydrateableObserverResult = <
     isInvalidated: query.state.isInvalidated,
 
     // Unsetting these properties on the server since they might not be serializable
-    fetchFailureReason: isServer ? null : query.state.fetchFailureReason,
-    fetchMeta: isServer ? null : query.state.fetchMeta,
+    fetchFailureReason: null,
+    fetchMeta: null,
   }
 }
 
