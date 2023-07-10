@@ -7,6 +7,9 @@
     "start": "solid-start start"
   },
   "type": "module",
+  "resolutions": {
+    "solid-js": "^1.7.7"
+  },
   "dependencies": {
     "@solidjs/meta": "^0.28.2",
     "@solidjs/router": "^0.7.0",
