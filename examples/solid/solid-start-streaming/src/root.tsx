@@ -21,6 +21,7 @@ export default function Root() {
     defaultOptions: {
       queries: {
         retry: false,
+        staleTime: 5000,
       },
     },
   })
@@ -38,12 +39,13 @@ export default function Root() {
             <Suspense
               fallback={<div>loading... [root.tsx suspense boundary]</div>}
             >
-              <A href="/">Index</A>
+              <A href="/">Home</A>
               <A href="/streamed">Streamed</A>
               <A href="/deferred">Deferred</A>
               <A href="/mixed">Mixed</A>
               <A href="/with-error">With Error</A>
               <A href="/hydration">Hydration</A>
+              <A href="/prefetch">Prefetch</A>
 
               <Routes>
                 <FileRoutes />
