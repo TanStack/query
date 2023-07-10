@@ -130,14 +130,8 @@ export function createBaseQuery<
         const unwrappedResult = hydrateableObserverResult(query, result)
 
         if (unwrappedResult.isError) {
-          if (process.env['NODE_ENV'] === 'development') {
-            console.error(unwrappedResult.error)
-          }
           reject(unwrappedResult.error)
-        }
-        if (unwrappedResult.isSuccess) {
-          // Use of any here is fine
-          // We cannot include refetch since it is not serializable
+        } else {
           resolve(unwrappedResult)
         }
       })()
