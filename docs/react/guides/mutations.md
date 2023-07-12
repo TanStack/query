@@ -387,6 +387,21 @@ export default function App() {
 
 We also have an extensive [offline example](../examples/react/offline) that covers both queries and mutations.
 
+### Return value stability for React dependencies
+
+The mutate function itself is stable, but the object returned from useMutation is not. If you destruct, you can add it to your dependency array:
+
+[//]: # 'Example12'
+
+```tsx
+const { mutate } = useMutation(…)
+
+// This will only be called on mount
+useEffect(() => { mutate() }, [mutate])
+```
+
+[//]: # 'Example12'
+
 [//]: # 'Materials'
 
 ## Further reading
