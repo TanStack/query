@@ -73,7 +73,7 @@ export function useBaseQuery<
       ),
   )
 
-  const optimisticResult = observer.getOptimisticResult(defaultedOptions)
+  const result = observer.getOptimisticResult(defaultedOptions)
 
   useSyncExternalStore(
     React.useCallback(
@@ -101,26 +101,26 @@ export function useBaseQuery<
   }, [defaultedOptions, observer])
 
   // Handle suspense
-  if (shouldSuspend(defaultedOptions, optimisticResult, isRestoring)) {
+  if (shouldSuspend(defaultedOptions, result, isRestoring)) {
     throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
   }
 
   // Handle error boundary
   if (
     getHasError({
-      result: optimisticResult,
+      result: result,
       errorResetBoundary,
       useErrorBoundary: defaultedOptions.useErrorBoundary,
       query: observer.getCurrentQuery(),
     })
   ) {
-    throw optimisticResult.error
+    throw result.error
   }
 
   // Handle result property usage tracking
   return React.useMemo(() => {
     return !defaultedOptions.notifyOnChangeProps
-      ? observer.trackResult(optimisticResult)
-      : optimisticResult
-  }, [defaultedOptions.notifyOnChangeProps, observer, optimisticResult])
+      ? observer.trackResult(result)
+      : result
+  }, [defaultedOptions.notifyOnChangeProps, observer, result])
 }
