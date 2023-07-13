@@ -11,7 +11,9 @@ export function useQueryClient(id = ''): QueryClient {
     const vm = getCurrentInstance()?.proxy
 
     if (!vm) {
-      throw new Error('vue-query hooks can only be used inside setup() function.')
+      throw new Error(
+        'vue-query hooks can only be used inside setup() function.',
+      )
     }
 
     throw new Error(
