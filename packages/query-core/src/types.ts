@@ -125,12 +125,6 @@ export interface QueryObserverOptions<
   TQueryKey extends QueryKey = QueryKey,
 > extends QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey> {
   /**
-   * Set this to `false` to disable optimistic results. Will improve performance, by not recalculating the object on each render.
-   * Allowing for changes to be watched via the object directly.
-   * Defaults to `true`.
-   */
-  optimistic?: boolean
-  /**
    * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
    * Defaults to `true`.

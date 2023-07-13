@@ -73,7 +73,7 @@ export function useBaseQuery<
       ),
   )
 
-  let result = useSyncExternalStore(
+  const result = useSyncExternalStore(
     React.useCallback(
       (onStoreChange) => {
         const unsubscribe = isRestoring
@@ -91,10 +91,6 @@ export function useBaseQuery<
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult(),
   )
-
-  if (defaultedOptions.optimistic !== false) {
-    result = observer.getOptimisticResult(defaultedOptions)
-  }
 
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because
