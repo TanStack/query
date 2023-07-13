@@ -226,7 +226,6 @@ export function useQueries<T extends any[]>({
   if (suspensePromises.length > 0) {
     throw Promise.all(suspensePromises)
   }
-
   const observerQueries = observer.getQueries()
   const firstSingleResultWhichShouldThrow = results.find(
     (result, index) =>
