@@ -27,14 +27,17 @@ If you have been assigned to fix an issue or develop a new feature, please follo
 - Submit PR for review.
 
 ### Running examples
+
 - Make sure you've installed the dependencies by running `$ pnpm install` in the repo's root directory.
 - If you want to run the example against your local changes, run `pnpm run watch` in the repo's root directory. Otherwise, it will be run against the latest TanStack Query release.
 - Run `pnpm run dev` in the selected examples' directory.
 
 #### Note on `examples/react-native`
+
 React Native example requires Expo to work. Please follow the instructions from example's README.md file to learn more.
 
 #### Note on standalone execution
+
 If you want to run an example without installing dependencies for the whole repo, just follow instructions from the example's README.md file. It will be then run against the latest TanStack Query release.
 
 ## Online one-click setup

@@ -1,11 +1,6 @@
 {
   "extends": ["plugin:@tanstack/eslint-plugin-query/recommended"],
   "parserOptions": {
-    "project": "./tsconfig.json",
-    "sourceType": "module"
-  },
-  "rules": {
-    "react/react-in-jsx-scope": "off",
-    "jsx-a11y/accessible-emoji": "off"
+    "project": "./tsconfig.json"
   }
 }

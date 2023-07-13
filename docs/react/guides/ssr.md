@@ -20,7 +20,7 @@ The exact implementation of these mechanisms may vary from platform to platform,
 
 React Query supports both of these forms of pre-rendering regardless of what platform you may be using.
 
-> Note: For notes about how to integrate with the new beta `/app`-folder in Next.js, see further down in this guide.
+> Note: For notes about how to integrate with the new `/app`-folder in Next.js, see further down in this guide.
 
 ### Using `initialData`
 
@@ -317,11 +317,7 @@ ReactDOM.hydrate(
 )
 ```
 
-## Using Experimental `app` Directory in Next.js 13
-
-> **WARNING:** The `app` directory introduced in Next.js 13 is currently in beta, and it is not recommended for use in production. The API is not stable.
->
-> This guide is provided as is to supply a quick start for early exploration of Next.js 13's experimental features and does not represent the final APIs.
+## Using the `app` Directory in Next.js 13
 
 Both prefetching approaches, using `initialData` or `<Hydrate>`, are available within the `app` directory.
 

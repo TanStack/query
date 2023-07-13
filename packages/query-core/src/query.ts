@@ -282,7 +282,7 @@ export class Query<
   }
 
   addObserver(observer: QueryObserver<any, any, any, any, any>): void {
-    if (this.observers.indexOf(observer) === -1) {
+    if (!this.observers.includes(observer)) {
       this.observers.push(observer)
 
       // Stop the query from being garbage collected
@@ -293,7 +293,7 @@ export class Query<
   }
 
   removeObserver(observer: QueryObserver<any, any, any, any, any>): void {
-    if (this.observers.indexOf(observer) !== -1) {
+    if (this.observers.includes(observer)) {
       this.observers = this.observers.filter((x) => x !== observer)
 
       if (!this.observers.length) {
@@ -392,7 +392,9 @@ export class Query<
     // Create fetch function
     const fetchFn = () => {
       if (!this.options.queryFn) {
-        return Promise.reject('Missing queryFn')
+        return Promise.reject(
+          `Missing queryFn for queryKey '${this.options.queryHash}'`,
+        )
       }
       this.abortSignalConsumed = false
       return this.options.queryFn(queryFnContext)
@@ -463,7 +465,7 @@ export class Query<
               `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ${this.queryHash}`,
             )
           }
-          onError(new Error('undefined') as any)
+          onError(new Error(`${this.queryHash} data is undefined`) as any)
           return
         }
 

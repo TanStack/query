@@ -661,6 +661,43 @@ describe('ReactQueryDevtools', () => {
     expect(filterInput.value).toEqual('posts')
   })
 
+  it('should not show queries after clear', async () => {
+    const { queryClient, queryCache } = createQueryClient()
+
+    function Page() {
+      const query1Result = useQuery(['query-1'], async () => {
+        return 'query-1-result'
+      })
+      const query2Result = useQuery(['query-2'], async () => {
+        return 'query-2-result'
+      })
+      const query3Result = useQuery(['query-3'], async () => {
+        return 'query-3-result'
+      })
+
+      return (
+        <div>
+          <h1>
+            {query1Result.data} {query2Result.data} {query3Result.data}{' '}
+          </h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /open react query devtools/i }),
+    )
+
+    expect(queryCache.getAll()).toHaveLength(3)
+
+    const clearButton = screen.getByLabelText(/clear/i)
+    fireEvent.click(clearButton)
+
+    expect(queryCache.getAll()).toHaveLength(0)
+  })
+
   it('style should have a nonce', async () => {
     const { queryClient } = createQueryClient()
 
@@ -1053,5 +1090,57 @@ describe('ReactQueryDevtools', () => {
     await waitFor(() => {
       expect(screen.getByText('No error, success')).toBeInTheDocument()
     })
+  })
+
+  it('should not refetch when already restoring a query', async () => {
+    const { queryClient } = createQueryClient()
+
+    let count = 0
+    let resolvePromise: (value: unknown) => void = () => undefined
+
+    function App() {
+      const { data } = useQuery(['key'], () => {
+        count++
+
+        // Resolve the promise immediately when
+        // the query is fetched for the first time
+        if (count === 1) {
+          return Promise.resolve('test')
+        }
+
+        return new Promise((resolve) => {
+          // Do not resolve immediately and store the
+          // resolve function to resolve the promise later
+          resolvePromise = resolve
+        })
+      })
+
+      return (
+        <div>
+          <h1>{typeof data === 'string' ? data : 'No data'}</h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <App />, {
+      initialIsOpen: true,
+    })
+
+    const loadingButton = await screen.findByRole('button', {
+      name: 'Trigger loading',
+    })
+    fireEvent.click(loadingButton)
+
+    await waitFor(() => {
+      expect(screen.getByText('Restore loading')).toBeInTheDocument()
+    })
+
+    // Click the restore loading button twice and only resolve query promise
+    // after the second click.
+    fireEvent.click(screen.getByRole('button', { name: /restore loading/i }))
+    fireEvent.click(screen.getByRole('button', { name: /restore loading/i }))
+    resolvePromise('test')
+
+    expect(count).toBe(2)
   })
 })

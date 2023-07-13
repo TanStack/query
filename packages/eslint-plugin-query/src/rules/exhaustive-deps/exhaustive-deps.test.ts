@@ -39,6 +39,20 @@ ruleTester.run('exhaustive-deps', rule, {
       code: 'useQuery({ queryKey: ["entity", id], queryFn: () => api.entity.get(id) });',
     },
     {
+      name: 'should not pass api when is being used for calling a function',
+      code: `
+        import useApi from './useApi'
+
+        const useFoo = () => {
+          const api = useApi();
+          return useQuery({
+            queryKey: ['foo'],
+            queryFn: () => api.fetchFoo(),
+          })
+        }
+      `,
+    },
+    {
       name: 'should pass props.src',
       code: `
         function MyComponent(props) {
@@ -258,6 +272,108 @@ ruleTester.run('exhaustive-deps', rule, {
             return data[0].name;
           },
         });
+      `,
+    },
+    {
+      name: 'should ignore constants defined out of scope (react component, function declaration)',
+      code: `
+        const CONST_VAL = 1
+        function MyComponent() {
+          useQuery({
+            queryKey: ["foo"],
+            queryFn: () => CONST_VAL
+          });
+        }
+      `,
+    },
+    {
+      name: 'should ignore constants defined out of scope (react component, function expression)',
+      code: `
+        const CONST_VAL = 1
+        const MyComponent = () => {
+          useQuery({
+            queryKey: ["foo"],
+            queryFn: () => CONST_VAL
+          });
+        }
+      `,
+    },
+    {
+      name: 'should ignore constants defined out of scope (react component, anonymous function)',
+      code: `
+        const CONST_VAL = 1
+        const MyComponent = function () {
+          useQuery({
+            queryKey: ["foo"],
+            queryFn: () => CONST_VAL
+          });
+        }
+      `,
+    },
+    {
+      name: 'should ignore constants defined out of scope (non react component/hook function)',
+      code: `
+          const CONST_VAL = 1
+          function fn() {
+            return {
+              queryKey: ["foo"],
+              queryFn: () => CONST_VAL
+            }
+          }
+        `,
+    },
+    {
+      name: 'should ignore constants defined out of scope (react hook, function declaration)',
+      code: `
+        const CONST_VAL = 1
+        function useHook() {
+          useQuery({
+            queryKey: ["foo"],
+            queryFn: () => CONST_VAL
+          });
+        }
+      `,
+    },
+    {
+      name: 'should ignore constants defined out of scope (react hook, function expression)',
+      code: `
+        const CONST_VAL = 1
+        const useHook = () => {
+          useQuery({
+            queryKey: ["foo"],
+            queryFn: () => CONST_VAL
+          });
+        }
+      `,
+    },
+    {
+      name: 'should ignore constants defined out of scope (react hook, anonymous function)',
+      code: `
+        const CONST_VAL = 1
+        const useHook = function () {
+          useQuery({
+            queryKey: ["foo"],
+            queryFn: () => CONST_VAL
+          });
+        }
+      `,
+    },
+    {
+      name: 'should ignore references of the queryClient',
+      code: `
+        const CONST_VAL = 1
+        function useHook() {
+          const queryClient = useQueryClient()
+          const kueryKlient = useQueryClient()
+          useQuery({
+            queryKey: ["foo"],
+            queryFn: () => {
+                doSomething(queryClient)
+                queryClient.invalidateQueries()
+                doSomethingSus(kueryKlient)
+            }
+          });
+        }
       `,
     },
   ],

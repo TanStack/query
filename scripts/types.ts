@@ -38,9 +38,9 @@ export type Package = {
   name: string
   packageDir: string
   srcDir: string
+  entries: Array<'main' | 'module' | 'svelte' | 'types'>
 }
 
 export type BranchConfig = {
   prerelease: boolean
-  ghRelease: boolean
 }

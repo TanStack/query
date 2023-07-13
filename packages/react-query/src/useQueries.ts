@@ -157,6 +157,7 @@ export function useQueries<T extends any[]>({
 }): QueriesResults<T> {
   const queryClient = useQueryClient({ context })
   const isRestoring = useIsRestoring()
+  const errorResetBoundary = useQueryErrorResetBoundary()
 
   const defaultedQueries = React.useMemo(
     () =>
@@ -173,17 +174,18 @@ export function useQueries<T extends any[]>({
     [queries, queryClient, isRestoring],
   )
 
-  const atLeastOneOptimistic = React.useMemo(() => {
-    return defaultedQueries.some((result) =>
-      result.optimistic !== false
-    )
-  }, [defaultedQueries]);
+  defaultedQueries.forEach((query) => {
+    ensureStaleTime(query)
+    ensurePreventErrorBoundaryRetry(query, errorResetBoundary)
+  })
+
+  useClearResetErrorBoundary(errorResetBoundary)
 
   const [observer] = React.useState(
     () => new QueriesObserver(queryClient, defaultedQueries),
   )
 
-  let results = useSyncExternalStore(
+  const results = useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
         isRestoring
@@ -195,24 +197,11 @@ export function useQueries<T extends any[]>({
     () => observer.getCurrentResult(),
   )
 
-  if (atLeastOneOptimistic) {
-    results = observer.getOptimisticResult(defaultedQueries)
-  }
-
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
     observer.setQueries(defaultedQueries, { listeners: false })
   }, [defaultedQueries, observer])
-
-  const errorResetBoundary = useQueryErrorResetBoundary()
-
-  defaultedQueries.forEach((query) => {
-    ensurePreventErrorBoundaryRetry(query, errorResetBoundary)
-    ensureStaleTime(query)
-  })
-
-  useClearResetErrorBoundary(errorResetBoundary)
 
   const shouldAtLeastOneSuspend = results.some((result, index) =>
     shouldSuspend(defaultedQueries[index], result, isRestoring),
@@ -238,13 +227,14 @@ export function useQueries<T extends any[]>({
     throw Promise.all(suspensePromises)
   }
 
+  const observerQueries = observer.getQueries()
   const firstSingleResultWhichShouldThrow = results.find(
     (result, index) =>
       getHasError({
         result,
         errorResetBoundary,
         useErrorBoundary: defaultedQueries[index]?.useErrorBoundary ?? false,
-        query: observer.getQueries()[index]!,
+        query: observerQueries[index]!,
       }),
   )
 

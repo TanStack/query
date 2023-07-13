@@ -794,8 +794,12 @@ describe('query', () => {
     })
 
     const unsubscribe = observer.subscribe(() => undefined)
+
     await sleep(10)
-    expect(mockLogger.error).toHaveBeenCalledWith('Missing queryFn')
+    const query = queryCache.find(key)!
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      `Missing queryFn for queryKey '${query.queryHash}'`,
+    )
 
     unsubscribe()
   })
@@ -817,7 +821,7 @@ describe('query', () => {
 
     await sleep(10)
 
-    const error = new Error('undefined')
+    const error = new Error(`${JSON.stringify(key)} data is undefined`)
 
     expect(observerResult).toMatchObject({
       isError: true,

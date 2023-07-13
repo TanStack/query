@@ -1,17 +1,23 @@
 {
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "affected": {
+    "defaultBase": "main"
+  },
   "tasksRunnerOptions": {
     "default": {
-      "runner": "nx/tasks-runners/default",
+      "runner": "nx-cloud",
       "options": {
         "cacheableOperations": [
           "test:lib",
           "test:eslint",
           "test:types",
-          "build:types",
-          "test:format",
           "test:build",
-          "build"
-        ]
+          "build:types",
+          "build",
+          "rollup"
+        ],
+        "parallel": 5,
+        "accessToken": "ZDdkNDA4MGEtYjNmYi00MWI4LWE1N2QtYTdlNmYxMGJlZWM2fHJlYWQ="
       }
     }
   },
@@ -27,7 +33,8 @@
       "{workspaceRoot}/rollup.config.js",
       "{workspaceRoot}/rollup.config.ts",
       "{workspaceRoot}/tsconfig.json",
-      "{workspaceRoot}/tsconfig.base.json"
+      "{workspaceRoot}/tsconfig.base.json",
+      "{workspaceRoot}/package.json"
     ],
     "globalNonBuildAffectingConfig": [
       "{workspaceRoot}/.eslintrc",
@@ -36,7 +43,9 @@
     "default": [
       "{projectRoot}/**/*",
       "globalBuildAffectingConfig",
-      "globalNonBuildAffectingConfig"
+      "globalNonBuildAffectingConfig",
+      "!{projectRoot}/**/*.md",
+      "!{projectRoot}/**/build/**/*"
     ],
     "public": [
       "default",
@@ -56,12 +65,18 @@
       "inputs": ["default", "^public"]
     },
     "test:types": {
-      "outputs": ["{projectRoot}/build"],
+      "outputs": [
+        "{projectRoot}/build/**/*.d.ts",
+        "{projectRoot}/build/.tsbuildinfo"
+      ],
       "inputs": ["default", "^public"],
       "dependsOn": ["^test:types"]
     },
     "build:types": {
-      "outputs": ["{projectRoot}/build"],
+      "outputs": [
+        "{projectRoot}/build/**/*.d.ts",
+        "{projectRoot}/build/.tsbuildinfo"
+      ],
       "inputs": ["default", "^public"],
       "dependsOn": ["^build:types"]
     },

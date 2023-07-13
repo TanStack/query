@@ -1,16 +1,16 @@
-import useAlgolia from "./useAlgolia";
+import useAlgolia from './useAlgolia'
 
 type Product = {
-  name: string;
-  shortDescription: string;
-  salePrice: number;
-};
+  name: string
+  shortDescription: string
+  salePrice: number
+}
 
 type SearchResultsProps = {
-  query: string;
-};
+  query: string
+}
 
-export default function SearchResults({ query = "" }: SearchResultsProps) {
+export default function SearchResults({ query = '' }: SearchResultsProps) {
   const {
     hits,
     isLoading,
@@ -20,17 +20,17 @@ export default function SearchResults({ query = "" }: SearchResultsProps) {
     isFetchingNextPage,
     fetchNextPage,
   } = useAlgolia<Product>({
-    indexName: "bestbuy",
+    indexName: 'bestbuy',
     query,
     hitsPerPage: 5,
     staleTime: 1000 * 30, // 30s
     cacheTime: 1000 * 60 * 15, // 15m
     enabled: !!query,
-  });
+  })
 
-  if (!query) return null;
+  if (!query) return null
 
-  if (isLoading) return <div className="loading">Loading...</div>;
+  if (isLoading) return <div className="loading">Loading...</div>
 
   return (
     <div>
@@ -69,5 +69,5 @@ export default function SearchResults({ query = "" }: SearchResultsProps) {
         )}
       </div>
     </div>
-  );
+  )
 }

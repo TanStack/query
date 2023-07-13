@@ -1,16 +1,16 @@
-import * as React from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import * as React from 'react'
+import { Text, View, StyleSheet } from 'react-native'
 
 type Props = {
-  message: string;
-};
+  message: string
+}
 
 export function ErrorMessage({ message }: Props) {
   return (
     <View style={styles.fill}>
       <Text>{message}</Text>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -19,4 +19,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-});
+})

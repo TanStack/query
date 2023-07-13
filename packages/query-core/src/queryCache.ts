@@ -63,7 +63,7 @@ interface NotifyEventQueryObserverOptionsUpdated extends NotifyEvent {
   observer: QueryObserver<any, any, any, any, any>
 }
 
-type QueryCacheNotifyEvent =
+export type QueryCacheNotifyEvent =
   | NotifyEventQueryAdded
   | NotifyEventQueryRemoved
   | NotifyEventQueryUpdated
@@ -190,7 +190,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
   notify(event: QueryCacheNotifyEvent) {
     notifyManager.batch(() => {
-      this.listeners.forEach((listener) => {
+      this.listeners.forEach(({ listener }) => {
         listener(event)
       })
     })

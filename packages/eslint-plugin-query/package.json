@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/eslint-plugin-query",
-  "version": "4.27.0",
+  "version": "4.29.9",
   "description": "ESLint plugin for TanStack Query",
   "author": "Eliya Cohen",
   "license": "MIT",
@@ -11,6 +11,13 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "main": "build/lib/index.js",
+  "exports": {
+    ".": {
+      "require": "./build/lib/index.js",
+      "default": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "clean": "rimraf ./build",
     "dev": "tsup --watch --sourcemap",
