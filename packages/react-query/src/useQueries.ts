@@ -185,7 +185,9 @@ export function useQueries<T extends any[]>({
     () => new QueriesObserver(queryClient, defaultedQueries),
   )
 
-  const results = useSyncExternalStore(
+  const optimisticResult = observer.getOptimisticResult(defaultedQueries)
+
+  useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
         isRestoring
@@ -203,12 +205,12 @@ export function useQueries<T extends any[]>({
     observer.setQueries(defaultedQueries, { listeners: false })
   }, [defaultedQueries, observer])
 
-  const shouldAtLeastOneSuspend = results.some((result, index) =>
+  const shouldAtLeastOneSuspend = optimisticResult.some((result, index) =>
     shouldSuspend(defaultedQueries[index], result, isRestoring),
   )
 
   const suspensePromises = shouldAtLeastOneSuspend
-    ? results.flatMap((result, index) => {
+    ? optimisticResult.flatMap((result, index) => {
         const options = defaultedQueries[index]
         const queryObserver = observer.getObservers()[index]
 
@@ -227,7 +229,7 @@ export function useQueries<T extends any[]>({
     throw Promise.all(suspensePromises)
   }
   const observerQueries = observer.getQueries()
-  const firstSingleResultWhichShouldThrow = results.find(
+  const firstSingleResultWhichShouldThrow = optimisticResult.find(
     (result, index) =>
       getHasError({
         result,
@@ -241,5 +243,5 @@ export function useQueries<T extends any[]>({
     throw firstSingleResultWhichShouldThrow.error
   }
 
-  return results as QueriesResults<T>
+  return optimisticResult as QueriesResults<T>
 }
