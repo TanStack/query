@@ -4,7 +4,6 @@ import {
   readonly,
   reactive,
   watch,
-  ref,
   computed,
 } from 'vue-demi'
 import type { ToRefs } from 'vue-demi'
@@ -14,9 +13,8 @@ import type {
   QueryObserverResult,
   DefaultedQueryObserverOptions,
 } from '@tanstack/query-core'
-import { isServer } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
-import { updateState, cloneDeepUnref, noop } from './utils'
+import { updateState, cloneDeepUnref } from './utils'
 import type { QueryClient } from './queryClient'
 import type { UseQueryOptions } from './useQuery'
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
@@ -87,20 +85,19 @@ export function useBaseQuery<
   const observer = new Observer(client, defaultedOptions.value)
   const state = reactive(observer.getCurrentResult())
 
-  const unsubscribe = ref(noop)
+  let unsubscribe = () => {
+    // noop
+  }
 
   watch(
     client.isRestoring,
     (isRestoring) => {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (!isRestoring) {
-        unsubscribe.value()
-        // Nuxt2 memory leak fix - do not subscribe on server
-        if (!isServer) {
-          unsubscribe.value = observer.subscribe((result) => {
-            updateState(state, result)
-          })
-        }
+        unsubscribe()
+        unsubscribe = observer.subscribe((result) => {
+          updateState(state, result)
+        })
       }
     },
     { immediate: true },
@@ -116,12 +113,14 @@ export function useBaseQuery<
   )
 
   onScopeDispose(() => {
-    unsubscribe.value()
+    unsubscribe()
   })
 
   const suspense = () => {
     return new Promise<QueryObserverResult<TData, TError>>((resolve) => {
-      let stopWatch = noop
+      let stopWatch = () => {
+        //noop
+      }
       const run = () => {
         if (defaultedOptions.value.enabled !== false) {
           const optimisticResult = observer.getOptimisticResult(

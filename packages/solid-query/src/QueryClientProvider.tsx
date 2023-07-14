@@ -7,11 +7,10 @@ export const QueryClientContext = createContext<QueryClient | undefined>(
 )
 
 export const useQueryClient = (queryClient?: QueryClient) => {
-  const client = useContext(QueryClientContext)
-
   if (queryClient) {
     return queryClient
   }
+  const client = useContext(QueryClientContext)
 
   if (!client) {
     throw new Error('No QueryClient set, use QueryClientProvider to set one')

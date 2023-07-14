@@ -693,17 +693,15 @@ describe('useQuery', () => {
     // required to make sure no additional renders are happening after data is successfully fetched for the second time
     await sleep(100)
 
-    expect(states.length).toBe(5)
+    expect(states.length).toBe(4)
     // First load
     expect(states[0]).toMatchObject({ isPending: true, isSuccess: false })
     // First success
     expect(states[1]).toMatchObject({ isPending: false, isSuccess: true })
     // Remove
     expect(states[2]).toMatchObject({ isPending: true, isSuccess: false })
-    // Hook state update
-    expect(states[3]).toMatchObject({ isPending: true, isSuccess: false })
     // Second success
-    expect(states[4]).toMatchObject({ isPending: false, isSuccess: true })
+    expect(states[3]).toMatchObject({ isPending: false, isSuccess: true })
   })
 
   it('should fetch when refetchOnMount is false and nothing has been fetched yet', async () => {
@@ -1716,7 +1714,7 @@ describe('useQuery', () => {
     act(() => rendered.rerender(<Page count={2} />))
     await waitFor(() => rendered.getByText('error: Error test'))
 
-    await waitFor(() => expect(states.length).toBe(8))
+    await waitFor(() => expect(states.length).toBe(6))
     // Initial
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -1741,16 +1739,8 @@ describe('useQuery', () => {
       error: null,
       isPlaceholderData: true,
     })
-    // Hook state update
-    expect(states[3]).toMatchObject({
-      data: 0,
-      isFetching: true,
-      status: 'success',
-      error: null,
-      isPlaceholderData: true,
-    })
     // New data
-    expect(states[4]).toMatchObject({
+    expect(states[3]).toMatchObject({
       data: 1,
       isFetching: false,
       status: 'success',
@@ -1758,15 +1748,7 @@ describe('useQuery', () => {
       isPlaceholderData: false,
     })
     // rerender Page 2
-    expect(states[5]).toMatchObject({
-      data: 1,
-      isFetching: true,
-      status: 'success',
-      error: null,
-      isPlaceholderData: true,
-    })
-    // Hook state update again
-    expect(states[6]).toMatchObject({
+    expect(states[4]).toMatchObject({
       data: 1,
       isFetching: true,
       status: 'success',
@@ -1774,13 +1756,13 @@ describe('useQuery', () => {
       isPlaceholderData: true,
     })
     // Error
-    expect(states[7]).toMatchObject({
+    expect(states[5]).toMatchObject({
       data: undefined,
       isFetching: false,
       status: 'error',
       isPlaceholderData: false,
     })
-    expect(states[7]?.error).toHaveProperty('message', 'Error test')
+    expect(states[5]!.error).toHaveProperty('message', 'Error test')
   })
 
   it('should not show initial data from next query if placeholderData is set', async () => {
@@ -1825,7 +1807,7 @@ describe('useQuery', () => {
       rendered.getByText('data: 1, count: 1, isFetching: false'),
     )
 
-    expect(states.length).toBe(5)
+    expect(states.length).toBe(4)
 
     // Initial
     expect(states[0]).toMatchObject({
@@ -1848,15 +1830,8 @@ describe('useQuery', () => {
       isSuccess: true,
       isPlaceholderData: false,
     })
-    // Hook state update
-    expect(states[3]).toMatchObject({
-      data: 99,
-      isFetching: true,
-      isSuccess: true,
-      isPlaceholderData: false,
-    })
     // New data
-    expect(states[4]).toMatchObject({
+    expect(states[3]).toMatchObject({
       data: 1,
       isFetching: false,
       isSuccess: true,
@@ -5992,5 +5967,128 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
     await waitFor(() => rendered.getByText('status: success'))
     await waitFor(() => rendered.getByText('data: 1'))
+  })
+  it('should reuse same data object reference when queryKey changes back to some cached data', async () => {
+    const key = queryKey()
+    const spy = vi.fn()
+
+    async function fetchNumber(id: number) {
+      await sleep(5)
+      return { numbers: { current: { id } } }
+    }
+    function Test() {
+      const [id, setId] = React.useState(1)
+
+      const { data } = useQuery({
+        select: selector,
+        queryKey: [key, 'user', id],
+        queryFn: () => fetchNumber(id),
+      })
+
+      React.useEffect(() => {
+        spy(data)
+      }, [data])
+
+      return (
+        <div>
+          <button name="1" onClick={() => setId(1)}>
+            1
+          </button>
+          <button name="2" onClick={() => setId(2)}>
+            2
+          </button>
+          <span>Rendered Id: {data?.id}</span>
+        </div>
+      )
+    }
+
+    function selector(data: any) {
+      return data.numbers.current
+    }
+
+    const rendered = renderWithClient(queryClient, <Test />)
+    expect(spy).toHaveBeenCalledTimes(1)
+
+    spy.mockClear()
+    await waitFor(() => rendered.getByText('Rendered Id: 1'))
+    expect(spy).toHaveBeenCalledTimes(1)
+
+    spy.mockClear()
+    fireEvent.click(rendered.getByRole('button', { name: /2/ }))
+    await waitFor(() => rendered.getByText('Rendered Id: 2'))
+    expect(spy).toHaveBeenCalledTimes(2) // called with undefined because id changed
+
+    spy.mockClear()
+    fireEvent.click(rendered.getByRole('button', { name: /1/ }))
+    await waitFor(() => rendered.getByText('Rendered Id: 1'))
+    expect(spy).toHaveBeenCalledTimes(1)
+
+    spy.mockClear()
+    fireEvent.click(rendered.getByRole('button', { name: /2/ }))
+    await waitFor(() => rendered.getByText('Rendered Id: 2'))
+    expect(spy).toHaveBeenCalledTimes(1)
+  })
+  it('should reuse same data object reference when queryKey changes and placeholderData is present', async () => {
+    const key = queryKey()
+    const spy = vi.fn()
+
+    async function fetchNumber(id: number) {
+      await sleep(5)
+      return { numbers: { current: { id } } }
+    }
+    function Test() {
+      const [id, setId] = React.useState(1)
+
+      const { data } = useQuery({
+        select: selector,
+        queryKey: [key, 'user', id],
+        queryFn: () => fetchNumber(id),
+        placeholderData: { numbers: { current: { id: 99 } } },
+      })
+
+      React.useEffect(() => {
+        spy(data)
+      }, [data])
+
+      return (
+        <div>
+          <button name="1" onClick={() => setId(1)}>
+            1
+          </button>
+          <button name="2" onClick={() => setId(2)}>
+            2
+          </button>
+          <span>Rendered Id: {data?.id}</span>
+        </div>
+      )
+    }
+
+    function selector(data: any) {
+      return data.numbers.current
+    }
+
+    const rendered = renderWithClient(queryClient, <Test />)
+    expect(spy).toHaveBeenCalledTimes(1)
+
+    spy.mockClear()
+    await waitFor(() => rendered.getByText('Rendered Id: 99'))
+    await waitFor(() => rendered.getByText('Rendered Id: 1'))
+    expect(spy).toHaveBeenCalledTimes(1)
+
+    spy.mockClear()
+    fireEvent.click(rendered.getByRole('button', { name: /2/ }))
+    await waitFor(() => rendered.getByText('Rendered Id: 99'))
+    await waitFor(() => rendered.getByText('Rendered Id: 2'))
+    expect(spy).toHaveBeenCalledTimes(2) // called with undefined because id changed
+
+    spy.mockClear()
+    fireEvent.click(rendered.getByRole('button', { name: /1/ }))
+    await waitFor(() => rendered.getByText('Rendered Id: 1'))
+    expect(spy).toHaveBeenCalledTimes(1)
+
+    spy.mockClear()
+    fireEvent.click(rendered.getByRole('button', { name: /2/ }))
+    await waitFor(() => rendered.getByText('Rendered Id: 2'))
+    expect(spy).toHaveBeenCalledTimes(1)
   })
 })

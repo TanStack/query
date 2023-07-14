@@ -227,7 +227,30 @@ export class QueryObserver<
   ): QueryObserverResult<TData, TError> {
     const query = this.#client.getQueryCache().build(this.#client, options)
 
-    return this.createResult(query, options)
+    const result = this.createResult(query, options)
+
+    if (shouldAssignObserverCurrentProperties(this, result)) {
+      // this assigns the optimistic result to the current Observer
+      // because if the query function changes, useQuery will be performing
+      // an effect where it would fetch again.
+      // When the fetch finishes, we perform a deep data cloning in order
+      // to reuse objects references. This deep data clone is performed against
+      // the `observer.currentResult.data` property
+      // When QueryKey changes, we refresh the query and get new `optimistic`
+      // result, while we leave the `observer.currentResult`, so when new data
+      // arrives, it finds the old `observer.currentResult` which is related
+      // to the old QueryKey. Which means that currentResult and selectData are
+      // out of sync already.
+      // To solve this, we move the cursor of the currentResult everytime
+      // an observer reads an optimistic value.
+
+      // When keeping the previous data, the result doesn't change until new
+      // data arrives.
+      this.#currentResult = result
+      this.#currentResultOptions = this.options
+      this.#currentResultState = this.#currentQuery.state
+    }
+    return result
   }
 
   getCurrentResult(): QueryObserverResult<TData, TError> {
@@ -718,4 +741,26 @@ function isStale(
   options: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
   return query.isStaleByTime(options.staleTime)
+}
+
+// this function would decide if we will update the observer's 'current'
+// properties after an optimistic reading via getOptimisticResult
+function shouldAssignObserverCurrentProperties<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+  optimisticResult: QueryObserverResult<TData, TError>,
+) {
+  // if the newly created result isn't what the observer is holding as current,
+  // then we'll need to update the properties as well
+  if (observer.getCurrentResult() !== optimisticResult) {
+    return true
+  }
+
+  // basically, just keep previous properties if nothing changed
+  return false
 }
