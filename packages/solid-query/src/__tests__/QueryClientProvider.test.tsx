@@ -161,4 +161,21 @@ describe('QueryClientProvider', () => {
       consoleMock.mockRestore()
     })
   })
+
+  it('should not throw an error if user provides custom query client', () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    function Page() {
+      const client = createQueryClient()
+      useQueryClient(client)
+      return null
+    }
+
+    render(() => <Page />)
+    expect(consoleMock).not.toHaveBeenCalled()
+
+    consoleMock.mockRestore()
+  })
 })

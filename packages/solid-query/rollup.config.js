@@ -8,7 +8,6 @@ export function createSolidQueryConfig() {
     withSolid({
       input: `./src/index.ts`,
       targets: ['esm', 'cjs'],
-      external: ['@tanstack/query-core'],
     })
   )
 

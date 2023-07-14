@@ -8,9 +8,10 @@ export function createQueryDevtoolsConfig() {
     withSolid({
       input: `./src/index.tsx`,
       targets: ['esm', 'cjs'],
-      external: [],
     })
   )
+
+  solidRollupOptions.external = []
 
   const outputs = !solidRollupOptions.output
     ? []

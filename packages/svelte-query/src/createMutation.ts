@@ -1,4 +1,4 @@
-import { readable, derived, writable, get } from 'svelte/store'
+import { readable, derived, get } from 'svelte/store'
 import type { QueryClient, DefaultError } from '@tanstack/query-core'
 import { MutationObserver, notifyManager } from '@tanstack/query-core'
 import type {
@@ -7,7 +7,7 @@ import type {
   CreateMutationResult,
 } from './types'
 import { useQueryClient } from './useQueryClient'
-import { isWritable } from './utils'
+import { isSvelteStore } from './utils'
 
 export function createMutation<
   TData = unknown,
@@ -20,7 +20,7 @@ export function createMutation<
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
   const client = useQueryClient(queryClient)
 
-  const optionsStore = isWritable(options) ? options : writable(options)
+  const optionsStore = isSvelteStore(options) ? options : readable(options)
 
   const observer = new MutationObserver<TData, TError, TVariables, TContext>(
     client,

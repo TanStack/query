@@ -20,21 +20,23 @@
   let devtools: TanstackQueryDevtools | undefined
 
   if (DEV && BROWSER) {
-    onMount(async () => {
-      const QueryDevtools = (await import('@tanstack/query-devtools'))
-        .TanstackQueryDevtools
-      devtools = new QueryDevtools({
-        client,
-        queryFlavor: 'Svelte Query',
-        version: '5',
-        onlineManager,
-        buttonPosition,
-        position,
-        initialIsOpen,
-        errorTypes,
-      })
+    onMount(() => {
+      import('@tanstack/query-devtools').then((m) => {
+        const QueryDevtools = m.TanstackQueryDevtools
 
-      devtools.mount(ref)
+        devtools = new QueryDevtools({
+          client,
+          queryFlavor: 'Svelte Query',
+          version: '5',
+          onlineManager,
+          buttonPosition,
+          position,
+          initialIsOpen,
+          errorTypes,
+        })
+
+        devtools.mount(ref)
+      })
 
       return () => {
         devtools?.unmount()
