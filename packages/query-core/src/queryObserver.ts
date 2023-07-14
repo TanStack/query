@@ -45,7 +45,7 @@ export class QueryObserver<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends Subscribable<QueryObserverListener<TData, TError>> {
-  options: QueryObserverOptions<
+  options!: DefaultedQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
@@ -87,11 +87,11 @@ export class QueryObserver<
     super()
 
     this.client = client
-    this.options = options
+    this.options = client.defaultQueryOptions(options);
     this.trackedProps = new Set()
     this.selectError = null
     this.bindMethods()
-    this.setOptions(options)
+    this.setOptions(this.options)
   }
 
   protected bindMethods(): void {

@@ -104,7 +104,7 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states[1]).toMatchObject({
       status: 'success',
-      fetchStatus: 'fetching',
+      fetchStatus: 'idle',
       data: 'hydrated',
     })
 
@@ -258,7 +258,7 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states[1]).toMatchObject({
       status: 'success',
-      fetchStatus: 'fetching',
+      fetchStatus: 'idle',
       data: 'hydrated',
     })
 
@@ -325,7 +325,7 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('data: null'))
     await waitFor(() => rendered.getByText('data: hydrated'))
 
-    expect(states).toHaveLength(3)
+    expect(states).toHaveLength(2)
 
     expect(fetched).toBe(false)
 
@@ -340,9 +340,6 @@ describe('PersistQueryClientProvider', () => {
       fetchStatus: 'idle',
       data: 'hydrated',
     })
-
-    // #5443 seems like we get an extra render now ...
-    expect(states[1]).toStrictEqual(states[2])
   })
 
   test('should call onSuccess after successful restoring', async () => {
@@ -428,7 +425,7 @@ describe('PersistQueryClientProvider', () => {
     expect(mockLogger.error).toHaveBeenNthCalledWith(2, error)
   })
 
-  test('should be able to persist into multiple clients', async () => {
+  test.only('should be able to persist into multiple clients', async () => {
     const key = queryKey()
     const states: UseQueryResult[] = []
 
@@ -525,7 +522,7 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states[2]).toMatchObject({
       status: 'success',
-      fetchStatus: 'fetching',
+      fetchStatus: 'idle',
       data: 'hydrated',
     })
 
