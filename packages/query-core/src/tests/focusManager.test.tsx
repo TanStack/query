@@ -38,20 +38,6 @@ describe('focusManager', () => {
     expect(focusManager.isFocused()).toBeTruthy()
   })
 
-  it('should not notify listeners on focus if already focused', async () => {
-    const subscriptionSpy = jest.fn()
-    const unsubscribe = focusManager.subscribe(subscriptionSpy)
-
-    focusManager.setFocused(true)
-    expect(subscriptionSpy).toHaveBeenCalledTimes(1)
-    subscriptionSpy.mockReset()
-
-    focusManager.setFocused(false)
-    expect(subscriptionSpy).toHaveBeenCalledTimes(0)
-
-    unsubscribe()
-  })
-
   it('should return true for isFocused if document is undefined', async () => {
     const { document } = globalThis
 
@@ -151,5 +137,26 @@ describe('focusManager', () => {
     expect(setupSpy).toHaveBeenCalledTimes(2)
 
     unsubscribe2()
+  })
+
+  test('should call listeners when setFocused is called', () => {
+    const listener = jest.fn()
+
+    focusManager.subscribe(listener)
+
+    focusManager.setFocused(true)
+    focusManager.setFocused(true)
+
+    expect(listener).toHaveBeenCalledTimes(1)
+
+    focusManager.setFocused(false)
+    focusManager.setFocused(false)
+
+    expect(listener).toHaveBeenCalledTimes(2)
+
+    focusManager.setFocused(undefined)
+    focusManager.setFocused(undefined)
+
+    expect(listener).toHaveBeenCalledTimes(3)
   })
 })
