@@ -237,7 +237,7 @@ queryClient.setQueryData(['projects'], (data) => ({
 ```tsx
 queryClient.setQueryData(['projects'], (data) => ({
   pages: data.pages.slice(0,1),
-  pageParams: data.pages.slice(0,1),
+  pageParams: data.pageParams.slice(0,1),
 }))
 ```
 
