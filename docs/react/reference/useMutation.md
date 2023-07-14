@@ -51,7 +51,7 @@ mutate(variables, {
   - If set to `Infinity`, will disable garbage collection
 - `mutationKey: unknown[]`
   - Optional
-  - A mutation key can be set to inherit defaults set with `queryClient.setMutationDefaults` or to identify the mutation in the devtools.
+  - A mutation key can be set to inherit defaults set with `queryClient.setMutationDefaults`.
 - `networkMode: 'online' | 'always' | 'offlineFirst`
   - optional
   - defaults to `'online'`
