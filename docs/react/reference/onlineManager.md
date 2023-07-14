@@ -10,6 +10,7 @@ It can be used to change the default event listeners or to manually change the o
 Its available methods are:
 
 - [`setEventListener`](#onlinemanagerseteventlistener)
+- [`subscribe`](#onlinemanagersubscribe)
 - [`setOnline`](#onlinemanagersetonline)
 - [`isOnline`](#onlinemanagerisonline)
 
@@ -28,9 +29,21 @@ onlineManager.setEventListener(setOnline => {
 })
 ```
 
+## `onlineManager.subscribe`
+
+`subscribe` can be used to subscribe to changes in the online state. It returns an unsubscribe function:
+
+```tsx
+import { onlineManager } from '@tanstack/react-query'
+
+const unsubscribe = onlineManager.subscribe(isOnline => {
+  console.log('isOnline', isOnline)
+})
+```
+
 ## `onlineManager.setOnline`
 
-`setOnline` can be used to manually set the online state. Set `undefined` to fallback to the default online check.
+`setOnline` can be used to manually set the online state.
 
 ```tsx
 import { onlineManager } from '@tanstack/react-query'
@@ -40,14 +53,11 @@ onlineManager.setOnline(true)
 
 // Set to offline
 onlineManager.setOnline(false)
-
-// Fallback to the default online check
-onlineManager.setOnline(undefined)
 ```
 
 **Options**
 
-- `online: boolean | undefined`
+- `online: boolean`
 
 ## `onlineManager.isOnline`
 
