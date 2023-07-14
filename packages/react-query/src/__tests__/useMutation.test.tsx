@@ -7,7 +7,7 @@ import { MutationCache, QueryCache, useMutation } from '..'
 import type { UseMutationResult } from '../types'
 import {
   createQueryClient,
-  mockNavigatorOnLine,
+  mockOnlineManagerIsOnline,
   queryKey,
   renderWithClient,
   setActTimeout,
@@ -427,7 +427,7 @@ describe('useMutation', () => {
   })
 
   it('should not retry mutations while offline', async () => {
-    const onlineMock = mockNavigatorOnLine(false)
+    const onlineMock = mockOnlineManagerIsOnline(false)
 
     let count = 0
 
@@ -488,7 +488,7 @@ describe('useMutation', () => {
   })
 
   it('should call onMutate even if paused', async () => {
-    const onlineMock = mockNavigatorOnLine(false)
+    const onlineMock = mockOnlineManagerIsOnline(false)
     const onMutate = vi.fn()
     let count = 0
 
@@ -536,7 +536,7 @@ describe('useMutation', () => {
   })
 
   it('should optimistically go to paused state if offline', async () => {
-    const onlineMock = mockNavigatorOnLine(false)
+    const onlineMock = mockOnlineManagerIsOnline(false)
     let count = 0
     const states: Array<string> = []
 
@@ -583,7 +583,7 @@ describe('useMutation', () => {
   })
 
   it('should be able to retry a mutation when online', async () => {
-    const onlineMock = mockNavigatorOnLine(false)
+    const onlineMock = mockOnlineManagerIsOnline(false)
 
     let count = 0
     const states: UseMutationResult<any, any, any, any>[] = []

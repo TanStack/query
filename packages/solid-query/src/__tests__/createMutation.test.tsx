@@ -15,7 +15,7 @@ import {
 import type { CreateMutationResult } from '../types'
 import {
   createQueryClient,
-  mockNavigatorOnLine,
+  mockOnlineManagerIsOnline,
   queryKey,
   setActTimeout,
   sleep,
@@ -495,7 +495,7 @@ describe('createMutation', () => {
   })
 
   it('should not retry mutations while offline', async () => {
-    const onlineMock = mockNavigatorOnLine(false)
+    const onlineMock = mockOnlineManagerIsOnline(false)
 
     let count = 0
 
@@ -562,7 +562,7 @@ describe('createMutation', () => {
   })
 
   it('should call onMutate even if paused', async () => {
-    const onlineMock = mockNavigatorOnLine(false)
+    const onlineMock = mockOnlineManagerIsOnline(false)
     const onMutate = vi.fn()
     let count = 0
 
@@ -614,7 +614,7 @@ describe('createMutation', () => {
   })
 
   it('should optimistically go to paused state if offline', async () => {
-    const onlineMock = mockNavigatorOnLine(false)
+    const onlineMock = mockOnlineManagerIsOnline(false)
     let count = 0
     const states: Array<string> = []
 
@@ -667,7 +667,7 @@ describe('createMutation', () => {
   })
 
   it('should be able to retry a mutation when online', async () => {
-    const onlineMock = mockNavigatorOnLine(false)
+    const onlineMock = mockOnlineManagerIsOnline(false)
 
     let count = 0
     const states: CreateMutationResult<any, any, any, any>[] = []

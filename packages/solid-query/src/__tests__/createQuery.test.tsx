@@ -27,7 +27,7 @@ import {
   Blink,
   createQueryClient,
   expectType,
-  mockNavigatorOnLine,
+  mockOnlineManagerIsOnline,
   mockVisibilityState,
   queryKey,
   setActTimeout,
@@ -4999,7 +4999,7 @@ describe('createQuery', () => {
 
   describe('networkMode online', () => {
     it('online queries should not start fetching if you are offline', async () => {
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       const key = queryKey()
       const states: Array<any> = []
@@ -5087,7 +5087,7 @@ describe('createQuery', () => {
 
       await waitFor(() => screen.getByText('data: data1'))
 
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
       fireEvent.click(screen.getByRole('button', { name: /invalidate/i }))
 
       await waitFor(() =>
@@ -5155,7 +5155,7 @@ describe('createQuery', () => {
 
       await waitFor(() => screen.getByText('data: data1'))
 
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
       fireEvent.click(screen.getByRole('button', { name: /invalidate/i }))
 
       await waitFor(() =>
@@ -5201,7 +5201,7 @@ describe('createQuery', () => {
         )
       }
 
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       render(() => (
         <QueryClientProvider client={queryClient}>
@@ -5256,7 +5256,7 @@ describe('createQuery', () => {
         )
       }
 
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       render(() => (
         <QueryClientProvider client={queryClient}>
@@ -5314,7 +5314,7 @@ describe('createQuery', () => {
         )
       }
 
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       render(() => (
         <QueryClientProvider client={queryClient}>
@@ -5395,7 +5395,7 @@ describe('createQuery', () => {
       )
       await waitFor(() => screen.getByText('failureReason: failed1'))
 
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       await sleep(20)
 
@@ -5456,7 +5456,7 @@ describe('createQuery', () => {
         )
       }
 
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       render(() => (
         <QueryClientProvider client={queryClient}>
@@ -5515,7 +5515,7 @@ describe('createQuery', () => {
         )
       }
 
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       render(() => (
         <QueryClientProvider client={queryClient}>
@@ -5599,7 +5599,7 @@ describe('createQuery', () => {
         screen.getByText('status: success, fetchStatus: idle'),
       )
 
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       fireEvent.click(screen.getByRole('button', { name: /invalidate/i }))
 
@@ -5629,7 +5629,7 @@ describe('createQuery', () => {
 
   describe('networkMode always', () => {
     it('always queries should start fetching even if you are offline', async () => {
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       const key = queryKey()
       let count = 0
@@ -5671,7 +5671,7 @@ describe('createQuery', () => {
     })
 
     it('always queries should not pause retries', async () => {
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       const key = queryKey()
       let count = 0
@@ -5721,7 +5721,7 @@ describe('createQuery', () => {
 
   describe('networkMode offlineFirst', () => {
     it('offlineFirst queries should start fetching if you are offline, but pause retries', async () => {
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       const key = queryKey()
       let count = 0

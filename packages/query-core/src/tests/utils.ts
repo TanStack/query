@@ -2,7 +2,7 @@ import { act } from '@testing-library/react'
 import { vi } from 'vitest'
 
 import type { MutationOptions, QueryClientConfig } from '..'
-import { QueryClient } from '..'
+import { onlineManager, QueryClient } from '..'
 import * as utils from '../utils'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
@@ -13,8 +13,8 @@ export function mockVisibilityState(value: DocumentVisibilityState) {
   return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
-export function mockNavigatorOnLine(value: boolean) {
-  return vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
+export function mockOnlineManagerIsOnline(value: boolean) {
+  return vi.spyOn(onlineManager, 'isOnline').mockReturnValue(value)
 }
 
 let queryKeyCount = 0

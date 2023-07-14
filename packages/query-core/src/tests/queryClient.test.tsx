@@ -5,7 +5,7 @@ import {
   sleep,
   queryKey,
   createQueryClient,
-  mockNavigatorOnLine,
+  mockOnlineManagerIsOnline,
 } from './utils'
 import type {
   QueryCache,
@@ -1074,7 +1074,7 @@ describe('queryClient', () => {
       const key1 = queryKey()
       const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       await queryClient.refetchQueries({ queryKey: key1 })
 
@@ -1088,7 +1088,7 @@ describe('queryClient', () => {
       queryClient.setQueryDefaults(key1, { networkMode: 'always' })
       const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       await queryClient.refetchQueries({ queryKey: key1 })
 
@@ -1491,6 +1491,7 @@ describe('queryClient', () => {
         'resumePausedMutations',
       )
 
+      onlineManager.setOnline(false)
       onlineManager.setOnline(true)
       expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1)
       expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(1)

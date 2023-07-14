@@ -3,6 +3,7 @@ import { QueryClient } from '../QueryClient'
 import type { ParentProps } from 'solid-js'
 import { createEffect, createSignal, onCleanup, Show } from 'solid-js'
 import { vi } from 'vitest'
+import { onlineManager } from '@tanstack/query-core'
 
 let queryKeyCount = 0
 export function queryKey(): Array<string> {
@@ -38,8 +39,8 @@ export function mockVisibilityState(value: DocumentVisibilityState) {
   return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
-export function mockNavigatorOnLine(value: boolean) {
-  return vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
+export function mockOnlineManagerIsOnline(value: boolean) {
+  return vi.spyOn(onlineManager, 'isOnline').mockReturnValue(value)
 }
 
 export function sleep(timeout: number): Promise<void> {
