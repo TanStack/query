@@ -1,0 +1,23 @@
+{
+  "name": "@tanstack/query-example-nextjs-suspense-streaming",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^v5.0.0-alpha.68",
+    "@tanstack/react-query-devtools": "^v5.0.0-alpha.68",
+    "next": "^13.4.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "superjson": "^1.12.3"
+  },
+  "devDependencies": {
+    "@types/node": "20.2.5",
+    "@types/react": "18.2.8",
+    "typescript": "5.1.3"
+  }
+}

@@ -59,6 +59,11 @@ export const packages = [
     entries: ['main', 'module', 'types'],
   },
   {
+    name: '@tanstack/react-query-next-experimental',
+    packageDir: 'packages/react-query-next-experimental',
+    entries: ['main', 'module', 'types'],
+  },
+  {
     name: '@tanstack/solid-query',
     packageDir: 'packages/solid-query',
     entries: ['main', 'module', 'types'],
