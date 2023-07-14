@@ -325,7 +325,7 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('data: null'))
     await waitFor(() => rendered.getByText('data: hydrated'))
 
-    expect(states).toHaveLength(3)
+    expect(states).toHaveLength(2)
 
     expect(fetched).toBe(false)
 
@@ -340,9 +340,6 @@ describe('PersistQueryClientProvider', () => {
       fetchStatus: 'idle',
       data: 'hydrated',
     })
-
-    // #5443 seems like we get an extra render now ...
-    expect(states[1]).toStrictEqual(states[2])
   })
 
   test('should call onSuccess after successful restoring', async () => {
