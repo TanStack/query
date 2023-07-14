@@ -1394,7 +1394,7 @@ describe('queryClient', () => {
       queryCacheOnFocusSpy.mockRestore()
       queryCacheOnOnlineSpy.mockRestore()
       mutationCacheResumePausedMutationsSpy.mockRestore()
-      onlineManager.setOnline(undefined)
+      onlineManager.setOnline(true)
     })
 
     test('should resume paused mutations when coming online', async () => {
@@ -1424,7 +1424,7 @@ describe('queryClient', () => {
         expect(observer1.getCurrentResult().status).toBe('success')
       })
 
-      onlineManager.setOnline(undefined)
+      onlineManager.setOnline(true)
     })
 
     test('should resume paused mutations one after the other when invoked manually at the same time', async () => {
@@ -1459,7 +1459,7 @@ describe('queryClient', () => {
         expect(observer2.getCurrentResult().isPaused).toBeTruthy()
       })
 
-      onlineManager.setOnline(undefined)
+      onlineManager.setOnline(true)
       void queryClient.resumePausedMutations()
       await sleep(5)
       await queryClient.resumePausedMutations()
@@ -1503,7 +1503,7 @@ describe('queryClient', () => {
       queryCacheOnOnlineSpy.mockRestore()
       mutationCacheResumePausedMutationsSpy.mockRestore()
       focusManager.setFocused(undefined)
-      onlineManager.setOnline(undefined)
+      onlineManager.setOnline(true)
     })
 
     test('should not notify queryCache and mutationCache after multiple mounts/unmounts', async () => {
@@ -1538,7 +1538,7 @@ describe('queryClient', () => {
       queryCacheOnOnlineSpy.mockRestore()
       mutationCacheResumePausedMutationsSpy.mockRestore()
       focusManager.setFocused(undefined)
-      onlineManager.setOnline(undefined)
+      onlineManager.setOnline(true)
     })
   })
 
