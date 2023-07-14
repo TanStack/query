@@ -199,7 +199,7 @@ useInfiniteQuery({
 
 ## What if I want to manually update the infinite query?
 
-Manually removing first page:
+### Manually removing first page:
 
 [//]: # 'Example6'
 
@@ -212,7 +212,7 @@ queryClient.setQueryData(['projects'], (data) => ({
 
 [//]: # 'Example6'
 
-Manually removing a single value from an individual page:
+### Manually removing a single value from an individual page:
 
 [//]: # 'Example7'
 
@@ -230,4 +230,17 @@ queryClient.setQueryData(['projects'], (data) => ({
 
 [//]: # 'Example7'
 
-Make sure to keep the same data structure of pages and pageParams!
+### Keep only the first page:
+
+[//]: # 'Example8'
+
+```tsx
+queryClient.setQueryData(['projects'], (data) => ({
+  pages: data.pages.slice(0,1),
+  pageParams: data.pages.slice(0,1),
+}))
+```
+
+[//]: # 'Example8'
+
+Make sure to always keep the same data structure of pages and pageParams!
