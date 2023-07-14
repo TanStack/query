@@ -313,8 +313,11 @@ describe('VueQueryPlugin', () => {
           vi.fn(),
           new Promise((resolve) => {
             setTimeout(() => {
-              client.setQueryData(['persist'], () => ({
-                foo: 'bar',
+              client.setQueryData(['persist1'], () => ({
+                foo1: 'bar1',
+              }))
+              client.setQueryData(['persist2'], () => ({
+                foo2: 'bar2',
               }))
               resolve()
             }, 0)
@@ -324,11 +327,19 @@ describe('VueQueryPlugin', () => {
 
       const fnSpy = vi.fn()
 
+      const query = useQuery(
+        {
+          queryKey: ['persist1'],
+          queryFn: fnSpy,
+        },
+        customClient,
+      )
+
       const queries = useQueries(
         {
           queries: [
             {
-              queryKey: ['persist'],
+              queryKey: ['persist2'],
               queryFn: fnSpy,
             },
           ],
@@ -337,6 +348,10 @@ describe('VueQueryPlugin', () => {
       )
 
       expect(customClient.isRestoring.value).toBeTruthy()
+
+      expect(query.isFetching.value).toBeFalsy()
+      expect(query.data.value).toStrictEqual(undefined)
+
       expect(queries.value[0].isFetching).toBeFalsy()
       expect(queries.value[0].data).toStrictEqual(undefined)
       expect(fnSpy).toHaveBeenCalledTimes(0)
@@ -344,7 +359,8 @@ describe('VueQueryPlugin', () => {
       await flushPromises()
 
       expect(customClient.isRestoring.value).toBeFalsy()
-      expect(queries.value[0].data).toStrictEqual({ foo: 'bar' })
+      expect(query.data.value).toStrictEqual({ foo1: 'bar1' })
+      expect(queries.value[0].data).toStrictEqual({ foo2: 'bar2' })
       expect(fnSpy).toHaveBeenCalledTimes(0)
     })
   })
