@@ -58,9 +58,9 @@ export class FocusManager extends Subscribable {
   }
 
   setFocused(focused?: boolean): void {
-    this.focused = focused
-
-    if (focused) {
+    const changed = this.focused !== focused
+    if (changed) {
+      this.focused = focused
       this.onFocus()
     }
   }
