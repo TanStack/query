@@ -3,7 +3,7 @@
 import { setupDevtoolsPlugin } from '@vue/devtools-api'
 import type { CustomInspectorNode } from '@vue/devtools-api'
 import { rankItem } from '@tanstack/match-sorter-utils'
-import type { Query } from '@tanstack/query-core'
+import type { Query, QueryCacheNotifyEvent } from '@tanstack/query-core'
 import type { QueryClient } from '../queryClient'
 import {
   getQueryStateLabel,
@@ -103,10 +103,15 @@ export function setupDevtools(app: any, queryClient: QueryClient) {
         api.sendInspectorTree(pluginId)
         api.sendInspectorState(pluginId)
 
+        const queryEvents: QueryCacheNotifyEvent['type'][] = [
+          'added',
+          'removed',
+          'updated',
+        ]
         if (
           // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
           event &&
-          ['queryAdded', 'queryRemoved', 'queryUpdated'].includes(event.type)
+          queryEvents.includes(event.type)
         ) {
           api.addTimelineEvent({
             layerId: pluginId,
