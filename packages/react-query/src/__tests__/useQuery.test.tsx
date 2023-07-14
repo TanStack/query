@@ -3638,6 +3638,7 @@ describe('useQuery', () => {
           })
           act(() => setPrefetched(true))
         }
+
         prefetch()
       }, [])
 
@@ -5904,6 +5905,7 @@ describe('useQuery', () => {
         </div>
       )
     }
+
     const rendered = renderWithClient(queryClient, <Page />)
     const fetchBtn = rendered.getByRole('button', { name: 'refetch' })
     await waitFor(() => rendered.getByText('data: 1'))
@@ -5964,6 +5966,7 @@ describe('useQuery', () => {
         </div>
       )
     }
+
     const rendered = renderWithClient(queryClient, <Page />)
     await waitFor(() => rendered.getByText('status: success'))
     await waitFor(() => rendered.getByText('data: 1'))

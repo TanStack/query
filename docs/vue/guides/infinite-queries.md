@@ -54,18 +54,3 @@ const {
 ```
 
 [//]: # 'Example'
-[//]: # 'Example6'
-
-```tsx
-const newPagesArray =
-  oldPagesArray?.pages.map((page) =>
-    page.filter((val) => val.id !== updatedId),
-  ) ?? []
-
-queryClient.setQueryData(['projects'], (data) => ({
-  pages: newPagesArray,
-  pageParams: data.pageParams,
-}))
-```
-
-[//]: # 'Example6'
