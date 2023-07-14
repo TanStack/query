@@ -8,8 +8,9 @@
     "start": "next start"
   },
   "dependencies": {
-    "@tanstack/react-query": "^v5.0.0-alpha.68",
-    "@tanstack/react-query-devtools": "^v5.0.0-alpha.68",
+    "@tanstack/react-query": "^5.0.0-alpha.68",
+    "@tanstack/react-query-devtools": "^5.0.0-alpha.68",
+    "@tanstack/react-query-next-experimental": "^5.0.0-alpha.80",
     "next": "^13.4.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

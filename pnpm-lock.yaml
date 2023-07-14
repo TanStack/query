@@ -492,11 +492,14 @@ importers:
   examples/react/nextjs-suspense-streaming:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^v5.0.0-alpha.68
+        specifier: ^5.0.0-alpha.68
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^v5.0.0-alpha.68
+        specifier: ^5.0.0-alpha.68
         version: link:../../../packages/react-query-devtools
+      '@tanstack/react-query-next-experimental':
+        specifier: ^5.0.0-alpha.80
+        version: link:../../../packages/react-query-next-experimental
       next:
         specifier: ^13.4.4
         version: 13.4.6(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
@@ -6763,7 +6766,7 @@ packages:
     resolution: {integrity: sha512-55Shns6WPxlYsz4WX7q9ZJBL77sKE1ZAYNYStLs6GbhIOMrNtjMvzcob6gu3cGlfpCR4bT7NXgyJ3tly2+Hx8Q==}
     dependencies:
       '@babel/parser': 7.22.5
-      postcss: 8.4.23
+      postcss: 8.4.26
       source-map: 0.6.1
     dev: true
 
@@ -6778,7 +6781,7 @@ packages:
       '@vue/shared': 3.2.47
       estree-walker: 2.0.2
       magic-string: 0.25.9
-      postcss: 8.4.23
+      postcss: 8.4.26
       source-map: 0.6.1
 
   /@vue/compiler-ssr@3.2.47:
@@ -14587,7 +14590,6 @@ packages:
       nanoid: 3.3.6
       picocolors: 1.0.0
       source-map-js: 1.0.2
-    dev: true
 
   /prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
