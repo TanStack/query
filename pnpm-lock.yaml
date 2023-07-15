@@ -1424,7 +1424,7 @@ importers:
         specifier: ^8.8.4
         version: 8.8.4
       solid-js:
-        specifier: ^1.6.10
+        specifier: ^1.6.13
         version: 1.6.13
       solid-transition-group:
         specifier: ^0.2.2
