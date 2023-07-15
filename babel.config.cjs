@@ -38,6 +38,7 @@ module.exports = {
         './packages/react-query/**',
         './packages/react-query-devtools/**',
         './packages/react-query-persist-client/**',
+        './packages/react-query-next-experimental/**',
       ],
       presets: ['@babel/react'],
     },

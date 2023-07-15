@@ -279,6 +279,10 @@
               "to": "react/examples/react/nextjs"
             },
             {
+              "label": "Next.js app with streaming",
+              "to": "react/examples/react/nextjs-suspense-streaming"
+            },
+            {
               "label": "React Native",
               "to": "react/examples/react/react-native"
             },
