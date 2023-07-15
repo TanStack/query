@@ -59,7 +59,7 @@
     "@typescript-eslint/parser": "^5.54.0",
     "@vitest/coverage-istanbul": "^0.27.1",
     "axios": "^1.4.0",
-    "babel-preset-solid": "^1.6.16",
+    "babel-preset-solid": "^1.6.10",
     "chalk": "^5.2.0",
     "concurrently": "^8.0.1",
     "cpy-cli": "^4.2.0",
