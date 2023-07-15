@@ -1,9 +1,9 @@
-import { derived, get, readable, writable } from 'svelte/store'
+import { derived, get, readable } from 'svelte/store'
 import { notifyManager } from '@tanstack/query-core'
 import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
 import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
 import { useQueryClient } from './useQueryClient'
-import { isWritable } from './utils'
+import { isSvelteStore } from './utils'
 
 export function createBaseQuery<
   TQueryFnData,
@@ -22,17 +22,20 @@ export function createBaseQuery<
   Observer: typeof QueryObserver,
   queryClient?: QueryClient,
 ): CreateBaseQueryResult<TData, TError> {
+  /** Load query client */
   const client = useQueryClient(queryClient)
 
-  const optionsStore = isWritable(options) ? options : writable(options)
+  /** Converts options to a svelte store if not already a store object */
+  const optionsStore = isSvelteStore(options) ? options : readable(options)
 
-  const defaultedOptionsStore = derived(optionsStore, ($options) => {
-    const defaultedOptions = client.defaultQueryOptions($options)
+  /** Creates a store that has the default options applied */
+  const defaultedOptionsStore = derived(optionsStore, ($optionsStore) => {
+    const defaultedOptions = client.defaultQueryOptions($optionsStore)
     defaultedOptions._optimisticResults = 'optimistic'
-
     return defaultedOptions
   })
 
+  /** Creates the observer */
   const observer = new Observer<
     TQueryFnData,
     TError,
@@ -51,12 +54,16 @@ export function createBaseQuery<
     return observer.subscribe(notifyManager.batchCalls(set))
   })
 
-  const { subscribe } = derived(result, ($result) => {
-    $result = observer.getOptimisticResult(get(defaultedOptionsStore))
-    return !get(defaultedOptionsStore).notifyOnChangeProps
-      ? observer.trackResult($result)
-      : $result
-  })
+  /** Subscribe to changes in result and defaultedOptionsStore */
+  const { subscribe } = derived(
+    [result, defaultedOptionsStore],
+    ([$result, $defaultedOptionsStore]) => {
+      $result = observer.getOptimisticResult($defaultedOptionsStore)
+      return !$defaultedOptionsStore.notifyOnChangeProps
+        ? observer.trackResult($result)
+        : $result
+    },
+  )
 
   return { subscribe }
 }

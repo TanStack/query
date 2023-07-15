@@ -13,7 +13,7 @@ import type {
 import type { Readable, Writable } from 'svelte/store'
 
 /** Allows a type to be either the base object or a store of that object */
-export type WritableOrVal<T> = T | Writable<T>
+export type StoreOrVal<T> = T | Readable<T> | Writable<T>
 
 /** Options for createBaseQuery */
 export type CreateBaseQueryOptions<
@@ -22,7 +22,7 @@ export type CreateBaseQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = WritableOrVal<
+> = StoreOrVal<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
 >
 
@@ -54,7 +54,7 @@ export type CreateInfiniteQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> = WritableOrVal<
+> = StoreOrVal<
   InfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
@@ -89,7 +89,7 @@ export type CreateMutationOptions<
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> = WritableOrVal<
+> = StoreOrVal<
   Omit<
     MutationObserverOptions<TData, TError, TVariables, TContext>,
     '_defaulted' | 'variables'

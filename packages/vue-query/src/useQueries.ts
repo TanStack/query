@@ -182,16 +182,16 @@ export function useQueries<
   )
   const state = ref(getCombinedResult()) as Ref<TCombinedResult>
 
-  const unsubscribe = ref(() => {
+  let unsubscribe = () => {
     // noop
-  })
+  }
 
   watch(
     client.isRestoring,
     (isRestoring) => {
       if (!isRestoring) {
-        unsubscribe.value()
-        unsubscribe.value = observer.subscribe(() => {
+        unsubscribe()
+        unsubscribe = observer.subscribe(() => {
           const [, getCombinedResultRestoring] = observer.getOptimisticResult(
             defaultedQueries.value,
           )
@@ -214,13 +214,16 @@ export function useQueries<
         defaultedQueries.value,
         options as QueriesObserverOptions<TCombinedResult>,
       )
-      state.value = observer.getCurrentResult()
+      const [, getCombinedResultPersisted] = observer.getOptimisticResult(
+        defaultedQueries.value,
+      )
+      state.value = getCombinedResultPersisted()
     },
     { deep: true },
   )
 
   onScopeDispose(() => {
-    unsubscribe.value()
+    unsubscribe()
   })
 
   return readonly(state) as Readonly<Ref<TCombinedResult>>

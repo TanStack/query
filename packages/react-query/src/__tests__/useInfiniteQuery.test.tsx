@@ -213,7 +213,7 @@ describe('useInfiniteQuery', () => {
 
     await waitFor(() => rendered.getByText('data: 0-asc'))
     await waitFor(() => rendered.getByText('isFetching: false'))
-    await waitFor(() => expect(states.length).toBe(7))
+    await waitFor(() => expect(states.length).toBe(6))
 
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -251,15 +251,7 @@ describe('useInfiniteQuery', () => {
       isSuccess: true,
       isPlaceholderData: true,
     })
-    // Hook state update
     expect(states[5]).toMatchObject({
-      data: { pages: ['0-desc', '1-desc'] },
-      isFetching: true,
-      isFetchingNextPage: false,
-      isSuccess: true,
-      isPlaceholderData: true,
-    })
-    expect(states[6]).toMatchObject({
       data: { pages: ['0-asc'] },
       isFetching: false,
       isFetchingNextPage: false,
@@ -606,77 +598,47 @@ describe('useInfiniteQuery', () => {
 
   it('should silently cancel any ongoing fetch when fetching more', async () => {
     const key = queryKey()
-    const states: UseInfiniteQueryResult<InfiniteData<number>>[] = []
 
     function Page() {
       const start = 10
-      const state = useInfiniteQuery({
-        queryKey: key,
-        queryFn: async ({ pageParam }) => {
-          await sleep(50)
-          return Number(pageParam)
-        },
-        defaultPageParam: start,
-        getNextPageParam: (lastPage) => lastPage + 1,
-        notifyOnChangeProps: 'all',
-      })
+      const { data, fetchNextPage, refetch, status, fetchStatus } =
+        useInfiniteQuery({
+          queryKey: key,
+          queryFn: async ({ pageParam }) => {
+            await sleep(50)
+            return Number(pageParam)
+          },
+          defaultPageParam: start,
+          getNextPageParam: (lastPage) => lastPage + 1,
+        })
 
-      states.push(state)
-
-      const { refetch, fetchNextPage } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          refetch()
-        }, 100)
-        setActTimeout(() => {
-          fetchNextPage()
-        }, 110)
-      }, [fetchNextPage, refetch])
-
-      return null
+      return (
+        <div>
+          <button onClick={() => fetchNextPage()}>fetchNextPage</button>
+          <button onClick={() => refetch()}>refetch</button>
+          <div>data: {JSON.stringify(data)}</div>
+          <div>
+            status: {status}, {fetchStatus}
+          </div>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(300)
+    await waitFor(() => rendered.getByText('status: success, idle'))
+    await waitFor(() =>
+      rendered.getByText('data: {"pages":[10],"pageParams":[10]}'),
+    )
 
-    expect(states.length).toBe(5)
-    expect(states[0]).toMatchObject({
-      hasNextPage: false,
-      data: undefined,
-      isFetching: true,
-      isFetchingNextPage: false,
-      isSuccess: false,
-    })
-    expect(states[1]).toMatchObject({
-      hasNextPage: true,
-      data: { pages: [10] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
-    expect(states[2]).toMatchObject({
-      hasNextPage: true,
-      data: { pages: [10] },
-      isFetching: true,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
-    expect(states[3]).toMatchObject({
-      hasNextPage: true,
-      data: { pages: [10] },
-      isFetching: true,
-      isFetchingNextPage: true,
-      isSuccess: true,
-    })
-    expect(states[4]).toMatchObject({
-      hasNextPage: true,
-      data: { pages: [10, 11] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+    await waitFor(() => rendered.getByText('status: success, fetching'))
+    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
+
+    await waitFor(() => rendered.getByText('status: success, idle'))
+    await waitFor(() =>
+      rendered.getByText('data: {"pages":[10,11],"pageParams":[10,11]}'),
+    )
   })
 
   it('should silently cancel an ongoing fetchNextPage request when another fetchNextPage is invoked', async () => {

@@ -142,7 +142,7 @@ useInfiniteQuery({
 
 ## What if I want to manually update the infinite query?
 
-Manually removing first page:
+### Manually removing first page:
 
 [//]: # 'Example5'
 
@@ -155,7 +155,7 @@ queryClient.setQueryData(['projects'], (data) => ({
 
 [//]: # 'Example5'
 
-Manually removing a single value from an individual page:
+### Manually removing a single value from an individual page:
 
 [//]: # 'Example6'
 
@@ -173,9 +173,23 @@ queryClient.setQueryData(['projects'], (data) => ({
 
 [//]: # 'Example6'
 
-Make sure to keep the same data structure of pages and pageParams!
+### Keep only the first page:
 
 [//]: # 'Example7'
+
+```tsx
+queryClient.setQueryData(['projects'], (data) => ({
+  pages: data.pages.slice(0,1),
+  pageParams: data.pageParams.slice(0,1),
+}))
+```
+
+[//]: # 'Example7'
+
+Make sure to always keep the same data structure of pages and pageParams!
+
+
+[//]: # 'Example8'
 
 ## What if I want to limit the number of pages?
 
@@ -188,7 +202,7 @@ The solution is to use a "Limited Infinite Query". This is made possible by usin
 
 In the following example only 3 pages are kept in the query data pages array. If a refetch is needed, only 3 pages will be refetched sequentially.
 
-[//]: # 'Example7'
+[//]: # 'Example8'
 
 ```tsx
 useInfiniteQuery({
@@ -205,7 +219,7 @@ useInfiniteQuery({
 
 If your API doesn't return a cursor, you can use the `pageParam` as a cursor. Because  `getNextPageParam` and `getPreviousPageParam` also get the `pageParam`of the current page, you can use it to calculate the next / previous page param.
 
-[//]: # 'Example8'
+[//]: # 'Example9'
 
 ```tsx
 return useInfiniteQuery({
@@ -227,4 +241,4 @@ return useInfiniteQuery({
 })
 ```
 
-[//]: # 'Example8'
+[//]: # 'Example9'
