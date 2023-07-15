@@ -47,7 +47,7 @@
     "@solid-primitives/resize-observer": "^2.0.18",
     "@solid-primitives/storage": "^1.3.11",
     "@tanstack/match-sorter-utils": "^8.8.4",
-    "solid-js": "^1.6.10",
+    "solid-js": "^1.6.13",
     "solid-transition-group": "^0.2.2",
     "superjson": "^1.12.1"
   },
