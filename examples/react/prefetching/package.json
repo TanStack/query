@@ -5,7 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "@tanstack/react-query": "^5.0.0-alpha.81",
-    "@tanstack/react-query-devtools": "^5.0.0-alpha.81",
+    "@tanstack/react-query-devtools": "^5.0.0-alpha.82",
     "axios": "^1.4.0",
     "isomorphic-unfetch": "4.0.2",
     "next": "^13.4.4",

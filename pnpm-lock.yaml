@@ -220,7 +220,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       algoliasearch:
         specifier: 4.17.1
@@ -257,7 +257,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.4.0
@@ -281,7 +281,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.4.0
@@ -309,7 +309,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       graphql:
         specifier: ^16.6.0
@@ -340,7 +340,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
         specifier: ^5.0.0-alpha.81
@@ -386,7 +386,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.4.0
@@ -411,7 +411,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.4.0
@@ -438,7 +438,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.4.0
@@ -465,7 +465,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       ky:
         specifier: ^0.33.3
@@ -495,7 +495,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-next-experimental':
         specifier: ^5.0.0-alpha.81
@@ -535,7 +535,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
         specifier: ^5.0.0-alpha.81
@@ -569,7 +569,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.4.0
@@ -606,7 +606,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.4.0
@@ -630,7 +630,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -652,7 +652,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.4.0
@@ -685,7 +685,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       expo:
         specifier: ^48.0.17
@@ -758,7 +758,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       localforage:
         specifier: ^1.10.0
@@ -810,7 +810,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -838,7 +838,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.4.0
@@ -875,7 +875,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -903,7 +903,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.4.0
@@ -1056,7 +1056,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1087,7 +1087,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1118,7 +1118,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1149,7 +1149,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1180,7 +1180,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1211,7 +1211,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
@@ -1242,7 +1242,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1273,7 +1273,7 @@ importers:
         specifier: ^5.0.0-alpha.81
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.0.0-alpha.81
+        specifier: ^5.0.0-alpha.82
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':

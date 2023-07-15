@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.0.0-alpha.81",
-    "@tanstack/react-query-devtools": "^5.0.0-alpha.81",
+    "@tanstack/react-query-devtools": "^5.0.0-alpha.82",
     "axios": "^1.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

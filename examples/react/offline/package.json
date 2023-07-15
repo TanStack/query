@@ -11,7 +11,7 @@
     "@tanstack/query-sync-storage-persister": "^5.0.0-alpha.81",
     "@tanstack/react-location": "^3.7.0",
     "@tanstack/react-query": "^5.0.0-alpha.81",
-    "@tanstack/react-query-devtools": "^5.0.0-alpha.81",
+    "@tanstack/react-query-devtools": "^5.0.0-alpha.82",
     "@tanstack/react-query-persist-client": "^5.0.0-alpha.81",
     "ky": "^0.33.3",
     "msw": "^0.39.2",
