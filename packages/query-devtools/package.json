@@ -49,7 +49,7 @@
     "@tanstack/match-sorter-utils": "^8.8.4",
     "solid-js": "^1.6.13",
     "solid-transition-group": "^0.2.2",
-    "superjson": "^1.12.1"
+    "superjson": "^1.12.4"
   },
   "devDependencies": {
     "@tanstack/query-core": "workspace:*",
