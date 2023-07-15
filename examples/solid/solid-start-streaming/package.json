@@ -16,7 +16,7 @@
     "undici": "^5.22.1"
   },
   "devDependencies": {
-    "@types/node": "^18.13.0",
+    "@types/node": "^18.16.0",
     "esbuild": "^0.14.54",
     "postcss": "^8.4.23",
     "solid-start-node": "^0.2.0",
