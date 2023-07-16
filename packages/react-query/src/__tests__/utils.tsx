@@ -4,6 +4,7 @@ import * as utils from '@tanstack/query-core'
 import { vi } from 'vitest'
 import { QueryClient, QueryClientProvider } from '..'
 import type { QueryClientConfig } from '..'
+import type { SpyInstance } from 'vitest'
 
 export function renderWithClient(
   client: QueryClient,
@@ -45,11 +46,11 @@ export function createQueryClient(config?: QueryClientConfig): QueryClient {
   return new QueryClient(config)
 }
 
-export function mockVisibilityState(value: DocumentVisibilityState) {
+export function mockVisibilityState(value: DocumentVisibilityState): SpyInstance<[], DocumentVisibilityState> {
   return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
-export function mockNavigatorOnLine(value: boolean) {
+export function mockNavigatorOnLine(value: boolean): SpyInstance<[], boolean> {
   return vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
 }
 

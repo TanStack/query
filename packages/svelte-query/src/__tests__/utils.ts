@@ -1,16 +1,18 @@
 import { vi } from 'vitest'
 import { act } from '@testing-library/svelte'
-import { QueryClient, type QueryClientConfig } from '../index'
+import { QueryClient } from '../index'
+import type { QueryClientConfig } from '../index'
+import type { SpyInstance } from 'vitest'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
   return new QueryClient(config)
 }
 
-export function mockVisibilityState(value: DocumentVisibilityState) {
+export function mockVisibilityState(value: DocumentVisibilityState): SpyInstance<[], DocumentVisibilityState> {
   return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
-export function mockNavigatorOnLine(value: boolean) {
+export function mockNavigatorOnLine(value: boolean): SpyInstance<[], boolean> {
   return vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
 }
 

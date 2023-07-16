@@ -3,6 +3,7 @@ import { vi } from 'vitest'
 import { QueryClient } from '../QueryClient'
 import type { QueryClientConfig } from '@tanstack/query-core'
 import type { ParentProps } from 'solid-js'
+import type { SpyInstance } from 'vitest'
 
 let queryKeyCount = 0
 export function queryKey(): Array<string> {
@@ -34,11 +35,11 @@ export function createQueryClient(config?: QueryClientConfig): QueryClient {
   return new QueryClient(config)
 }
 
-export function mockVisibilityState(value: DocumentVisibilityState) {
+export function mockVisibilityState(value: DocumentVisibilityState): SpyInstance<[], DocumentVisibilityState> {
   return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
-export function mockNavigatorOnLine(value: boolean) {
+export function mockNavigatorOnLine(value: boolean): SpyInstance<[], boolean> {
   return vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
 }
 
