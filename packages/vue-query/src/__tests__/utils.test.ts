@@ -1,5 +1,5 @@
-import { updateState, cloneDeep, cloneDeepUnref } from '../utils'
 import { reactive, ref } from 'vue-demi'
+import { cloneDeep, cloneDeepUnref, updateState } from '../utils'
 
 describe('utils', () => {
   describe('updateState', () => {

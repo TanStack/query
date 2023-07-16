@@ -1,9 +1,9 @@
 import { act } from '@testing-library/react'
 import { vi } from 'vitest'
 
-import type { MutationOptions, QueryClientConfig } from '..'
 import { QueryClient } from '..'
 import * as utils from '../utils'
+import type { MutationOptions, QueryClientConfig } from '..'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
   return new QueryClient(config)

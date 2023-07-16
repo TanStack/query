@@ -1,7 +1,7 @@
+import { vi } from 'vitest'
 import { sleep } from '../utils'
 import { FocusManager } from '../focusManager'
 import { setIsServer } from './utils'
-import { vi } from 'vitest'
 
 describe('focusManager', () => {
   let focusManager: FocusManager

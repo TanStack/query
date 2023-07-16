@@ -1,17 +1,17 @@
+import { render } from 'solid-js/web'
+import { createSignal, lazy } from 'solid-js'
 import type {
   QueryClient,
   onlineManager as TonlineManager,
 } from '@tanstack/query-core'
 import type { DevtoolsComponent } from './Devtools'
-import { render } from 'solid-js/web'
 import type {
+  DevToolsErrorType,
   DevtoolsButtonPosition,
   DevtoolsPosition,
   QueryDevtoolsProps,
-  DevToolsErrorType,
 } from './Context'
 import type { Signal } from 'solid-js'
-import { createSignal, lazy } from 'solid-js'
 
 export type { DevtoolsButtonPosition, DevtoolsPosition, DevToolsErrorType }
 export interface TanstackQueryDevtoolsConfig extends QueryDevtoolsProps {}

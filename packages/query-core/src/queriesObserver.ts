@@ -1,14 +1,14 @@
 import { notifyManager } from './notifyManager'
-import type {
-  QueryObserverOptions,
-  QueryObserverResult,
-  DefaultedQueryObserverOptions,
-} from './types'
-import type { QueryClient } from './queryClient'
-import type { NotifyOptions } from './queryObserver'
 import { QueryObserver } from './queryObserver'
 import { Subscribable } from './subscribable'
 import { replaceEqualDeep } from './utils'
+import type {
+  DefaultedQueryObserverOptions,
+  QueryObserverOptions,
+  QueryObserverResult,
+} from './types'
+import type { QueryClient } from './queryClient'
+import type { NotifyOptions } from './queryObserver'
 
 function difference<T>(array1: T[], array2: T[]): T[] {
   return array1.filter((x) => !array2.includes(x))

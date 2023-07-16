@@ -1,11 +1,11 @@
 import { onScopeDispose, reactive } from 'vue-demi'
 
-import { flushPromises, successMutator } from './test-utils'
+import { vi } from 'vitest'
 import { useMutation } from '../useMutation'
 import { useIsMutating, useMutationState } from '../useMutationState'
-import { vi } from 'vitest'
-import type { MockedFunction } from 'vitest'
 import { useQueryClient } from '../useQueryClient'
+import { flushPromises, successMutator } from './test-utils'
+import type { MockedFunction } from 'vitest'
 
 vi.mock('../useQueryClient')
 

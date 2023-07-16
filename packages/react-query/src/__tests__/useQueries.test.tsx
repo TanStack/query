@@ -2,15 +2,7 @@ import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
-import type { QueryFunctionContext } from '@tanstack/query-core'
 import { vi } from 'vitest'
-import type {
-  QueryFunction,
-  QueryKey,
-  QueryObserverResult,
-  UseQueryOptions,
-  UseQueryResult,
-} from '..'
 import { QueryCache, useQueries } from '..'
 import {
   createQueryClient,
@@ -20,6 +12,14 @@ import {
   renderWithClient,
   sleep,
 } from './utils'
+import type {
+  QueryFunction,
+  QueryKey,
+  QueryObserverResult,
+  UseQueryOptions,
+  UseQueryResult,
+} from '..'
+import type { QueryFunctionContext } from '@tanstack/query-core'
 
 describe('useQueries', () => {
   const queryCache = new QueryCache()

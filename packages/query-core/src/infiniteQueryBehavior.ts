@@ -1,5 +1,5 @@
-import type { QueryBehavior } from './query'
 import { addToEnd, addToStart } from './utils'
+import type { QueryBehavior } from './query'
 import type {
   InfiniteData,
   InfiniteQueryPageParamsOptions,

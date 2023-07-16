@@ -76,8 +76,8 @@
     "jsdom": "^22.0.0",
     "jsonfile": "^6.1.0",
     "luxon": "^3.3.0",
-    "nx": "^16.5.0",
-    "nx-cloud": "^16.0.5",
+    "nx": "^16.5.2",
+    "nx-cloud": "^16.1.0",
     "prettier": "^2.8.8",
     "prettier-plugin-svelte": "^2.10.1",
     "publint": "^0.1.16",
@@ -95,6 +95,7 @@
     "tsup": "^7.1.0",
     "type-fest": "^3.13.0",
     "typescript": "^5.0.4",
+    "vite": "^4.2.0",
     "vitest": "^0.27.1",
     "vue": "^3.2.47"
   },

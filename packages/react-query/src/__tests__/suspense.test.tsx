@@ -1,7 +1,7 @@
 import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import type { InfiniteData, UseInfiniteQueryResult, UseQueryResult } from '..'
+import { vi } from 'vitest'
 import {
   QueryCache,
   QueryErrorResetBoundary,
@@ -11,7 +11,7 @@ import {
   useQueryErrorResetBoundary,
 } from '..'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
-import { vi } from 'vitest'
+import type { InfiniteData, UseInfiniteQueryResult, UseQueryResult } from '..'
 
 describe("useQuery's in Suspense mode", () => {
   const queryCache = new QueryCache()

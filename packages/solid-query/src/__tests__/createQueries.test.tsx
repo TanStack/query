@@ -1,19 +1,13 @@
 import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
 import * as QueryCore from '@tanstack/query-core'
 
-import type { QueryFunctionContext, QueryKey } from '@tanstack/query-core'
 import { createRenderEffect, createSignal } from 'solid-js'
-import type {
-  CreateQueryResult,
-  QueryFunction,
-  QueryObserverResult,
-  SolidQueryOptions,
-} from '..'
+import { vi } from 'vitest'
 import {
-  createQueries,
   QueriesObserver,
   QueryCache,
   QueryClientProvider,
+  createQueries,
 } from '..'
 import {
   createQueryClient,
@@ -22,7 +16,13 @@ import {
   queryKey,
   sleep,
 } from './utils'
-import { vi } from 'vitest'
+import type { QueryFunctionContext, QueryKey } from '@tanstack/query-core'
+import type {
+  CreateQueryResult,
+  QueryFunction,
+  QueryObserverResult,
+  SolidQueryOptions,
+} from '..'
 
 describe('useQueries', () => {
   const queryCache = new QueryCache()

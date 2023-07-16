@@ -1,5 +1,5 @@
-import { QueryClient } from '../queryClient'
 import { vi } from 'vitest'
+import { QueryClient } from '../queryClient'
 
 const queryClient = new QueryClient({
   defaultOptions: {

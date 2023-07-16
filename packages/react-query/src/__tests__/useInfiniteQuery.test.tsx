@@ -1,6 +1,8 @@
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
+import { vi } from 'vitest'
+import { QueryCache, keepPreviousData, useInfiniteQuery } from '..'
 import {
   createQueryClient,
   queryKey,
@@ -13,8 +15,6 @@ import type {
   QueryFunctionContext,
   UseInfiniteQueryResult,
 } from '..'
-import { QueryCache, useInfiniteQuery, keepPreviousData } from '..'
-import { vi } from 'vitest'
 import type { Mock } from 'vitest'
 
 interface Result {

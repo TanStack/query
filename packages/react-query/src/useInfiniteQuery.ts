@@ -1,14 +1,14 @@
 'use client'
+import { InfiniteQueryObserver } from '@tanstack/query-core'
+import { useBaseQuery } from './useBaseQuery'
 import type {
-  QueryObserver,
-  QueryKey,
-  QueryClient,
   DefaultError,
   InfiniteData,
+  QueryClient,
+  QueryKey,
+  QueryObserver,
 } from '@tanstack/query-core'
-import { InfiniteQueryObserver } from '@tanstack/query-core'
 import type { UseInfiniteQueryOptions, UseInfiniteQueryResult } from './types'
-import { useBaseQuery } from './useBaseQuery'
 
 // HOOK
 export function useInfiniteQuery<

@@ -1,12 +1,12 @@
+import { QueryClient as QueryCoreClient } from '@tanstack/query-core'
 import type {
-  QueryClientConfig as QueryCoreClientConfig,
   DefaultOptions as CoreDefaultOptions,
-  QueryObserverOptions as QueryCoreObserverOptions,
-  InfiniteQueryObserverOptions as QueryCoreInfiniteQueryObserverOptions,
   DefaultError,
+  QueryClientConfig as QueryCoreClientConfig,
+  InfiniteQueryObserverOptions as QueryCoreInfiniteQueryObserverOptions,
+  QueryObserverOptions as QueryCoreObserverOptions,
   QueryKey,
 } from '@tanstack/query-core'
-import { QueryClient as QueryCoreClient } from '@tanstack/query-core'
 
 export interface QueryObserverOptions<
   TQueryFnData = unknown,

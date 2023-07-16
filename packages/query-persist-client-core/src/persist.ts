@@ -1,11 +1,11 @@
+import { dehydrate, hydrate } from '@tanstack/query-core'
 import type {
-  QueryClient,
-  DehydratedState,
   DehydrateOptions,
+  DehydratedState,
   HydrateOptions,
   NotifyEventType,
+  QueryClient,
 } from '@tanstack/query-core'
-import { dehydrate, hydrate } from '@tanstack/query-core'
 
 export type Promisable<T> = T | PromiseLike<T>
 

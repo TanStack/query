@@ -1,8 +1,8 @@
 import { ref } from 'vue-demi'
 import { QueryCache as QueryCacheOrigin } from '@tanstack/query-core'
 
-import { QueryCache } from '../queryCache'
 import { vi } from 'vitest'
+import { QueryCache } from '../queryCache'
 
 describe('QueryCache', () => {
   beforeAll(() => {

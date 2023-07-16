@@ -1,18 +1,18 @@
 import '@testing-library/jest-dom'
 import {
+  ErrorBoundary,
   createEffect,
   createRenderEffect,
   createSignal,
-  ErrorBoundary,
 } from 'solid-js'
 import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
+import { vi } from 'vitest'
 import {
-  createMutation,
   MutationCache,
   QueryCache,
   QueryClientProvider,
+  createMutation,
 } from '..'
-import type { CreateMutationResult } from '../types'
 import {
   createQueryClient,
   mockNavigatorOnLine,
@@ -20,7 +20,7 @@ import {
   setActTimeout,
   sleep,
 } from './utils'
-import { vi } from 'vitest'
+import type { CreateMutationResult } from '../types'
 
 describe('createMutation', () => {
   const queryCache = new QueryCache()
