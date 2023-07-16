@@ -21,7 +21,7 @@
     "postcss": "^8.4.23",
     "solid-start-node": "^0.2.0",
     "typescript": "^5.0.4",
-    "vite": "^4.1.4"
+    "vite": "^4.4.0"
   },
   "engines": {
     "node": ">=16.8"
