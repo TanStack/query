@@ -2,17 +2,17 @@
 
 import type { Context } from 'solid-js'
 import type {
-  QueryClient,
-  QueryKey,
-  QueryObserverOptions,
-  QueryObserverResult,
-  MutateFunction,
-  MutationObserverOptions,
-  MutationObserverResult,
   DefinedQueryObserverResult,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
+  MutateFunction,
+  MutationObserverOptions,
+  MutationObserverResult,
+  QueryClient,
   QueryFilters,
+  QueryKey,
+  QueryObserverOptions,
+  QueryObserverResult,
   QueryOptions,
 } from '@tanstack/query-core'
 

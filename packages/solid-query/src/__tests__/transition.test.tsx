@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from 'solid-testing-library'
 
-import { createSignal, Show, startTransition, Suspense } from 'solid-js'
-import { createQuery, QueryCache, QueryClientProvider } from '..'
+import { Show, Suspense, createSignal, startTransition } from 'solid-js'
+import { QueryCache, QueryClientProvider, createQuery } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
 
 describe("useQuery's in Suspense mode with transitions", () => {

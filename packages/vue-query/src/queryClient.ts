@@ -1,33 +1,33 @@
 import { ref } from 'vue-demi'
 import { QueryClient as QC } from '@tanstack/query-core'
-import type {
-  QueryKey,
-  QueryClientConfig,
-  SetDataOptions,
-  ResetQueryFilters,
-  ResetOptions,
-  CancelOptions,
-  InvalidateQueryFilters,
-  InvalidateOptions,
-  RefetchQueryFilters,
-  RefetchOptions,
-  FetchQueryOptions,
-  QueryFunction,
-  FetchInfiniteQueryOptions,
-  InfiniteData,
-  DefaultOptions,
-  QueryObserverOptions,
-  MutationKey,
-  MutationObserverOptions,
-  QueryFilters,
-  MutationFilters,
-  QueryState,
-  Updater,
-} from '@tanstack/query-core'
-import type { MaybeRefDeep } from './types'
 import { cloneDeepUnref, isQueryKey } from './utils'
 import { QueryCache } from './queryCache'
 import { MutationCache } from './mutationCache'
+import type { MaybeRefDeep } from './types'
+import type {
+  CancelOptions,
+  DefaultOptions,
+  FetchInfiniteQueryOptions,
+  FetchQueryOptions,
+  InfiniteData,
+  InvalidateOptions,
+  InvalidateQueryFilters,
+  MutationFilters,
+  MutationKey,
+  MutationObserverOptions,
+  QueryClientConfig,
+  QueryFilters,
+  QueryFunction,
+  QueryKey,
+  QueryObserverOptions,
+  QueryState,
+  RefetchOptions,
+  RefetchQueryFilters,
+  ResetOptions,
+  ResetQueryFilters,
+  SetDataOptions,
+  Updater,
+} from '@tanstack/query-core'
 
 export class QueryClient extends QC {
   constructor(config: MaybeRefDeep<QueryClientConfig> = {}) {

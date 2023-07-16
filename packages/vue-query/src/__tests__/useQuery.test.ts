@@ -1,20 +1,20 @@
 import {
   computed,
+  getCurrentInstance,
+  onScopeDispose,
   reactive,
   ref,
-  onScopeDispose,
-  getCurrentInstance,
 } from 'vue-demi'
 import { QueryObserver } from '@tanstack/query-core'
 
-import {
-  flushPromises,
-  rejectFetcher,
-  simpleFetcher,
-  getSimpleFetcherWithReturnData,
-} from './test-utils'
 import { useQuery } from '../useQuery'
 import { parseQueryArgs, useBaseQuery } from '../useBaseQuery'
+import {
+  flushPromises,
+  getSimpleFetcherWithReturnData,
+  rejectFetcher,
+  simpleFetcher,
+} from './test-utils'
 
 jest.mock('../useQueryClient')
 jest.mock('../useBaseQuery')

@@ -1,13 +1,13 @@
-import type { App, ComponentOptions } from 'vue'
 import { isVue2, isVue3, ref } from 'vue-demi'
 
 import { QueryClient } from '../queryClient'
 import { VueQueryPlugin } from '../vueQueryPlugin'
 import { VUE_QUERY_CLIENT } from '../utils'
 import { setupDevtools } from '../devtools/devtools'
-import { flushPromises } from './test-utils'
 import { useQuery } from '../useQuery'
 import { useQueries } from '../useQueries'
+import { flushPromises } from './test-utils'
+import type { App, ComponentOptions } from 'vue'
 
 jest.mock('../devtools/devtools')
 jest.mock('../useQueryClient')

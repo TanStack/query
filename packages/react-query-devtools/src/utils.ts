@@ -1,10 +1,10 @@
 import * as React from 'react'
-import type { Query } from '@tanstack/react-query'
 import SuperJSON from 'superjson'
 
-import type { Theme } from './theme'
 import { useTheme } from './theme'
 import useMediaQuery from './useMediaQuery'
+import type { Theme } from './theme'
+import type { Query } from '@tanstack/react-query'
 
 type StyledComponent<T> = T extends 'button'
   ? React.DetailedHTMLProps<

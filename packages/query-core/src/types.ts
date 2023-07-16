@@ -1,8 +1,8 @@
 /* istanbul ignore file */
 
 import type { MutationState } from './mutation'
-import type { QueryBehavior, Query } from './query'
-import type { RetryValue, RetryDelayValue } from './retryer'
+import type { Query, QueryBehavior } from './query'
+import type { RetryDelayValue, RetryValue } from './retryer'
 import type { QueryFilters, QueryTypeFilter } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'

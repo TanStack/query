@@ -1,17 +1,17 @@
 import * as React from 'react'
-import { fireEvent, screen, waitFor, act } from '@testing-library/react'
+import { act, fireEvent, screen, waitFor } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import '@testing-library/jest-dom'
-import type { QueryClient } from '@tanstack/react-query'
 import { useQuery } from '@tanstack/react-query'
+import UserEvent from '@testing-library/user-event'
 import { defaultPanelSize, sortFns } from '../utils'
 import {
+  createQueryClient,
   getByTextContent,
   renderWithClient,
   sleep,
-  createQueryClient,
 } from './utils'
-import UserEvent from '@testing-library/user-event'
+import type { QueryClient } from '@tanstack/react-query'
 
 // TODO: This should be removed with the types for react-error-boundary get updated.
 declare module 'react-error-boundary' {

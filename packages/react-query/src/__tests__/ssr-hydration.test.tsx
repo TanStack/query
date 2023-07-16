@@ -6,11 +6,11 @@ import ReactDOMServer from 'react-dom/server'
 import type {} from 'react-dom/next'
 
 import {
-  useQuery,
-  QueryClientProvider,
   QueryCache,
+  QueryClientProvider,
   dehydrate,
   hydrate,
+  useQuery,
 } from '..'
 import { createQueryClient, setIsServer, sleep } from './utils'
 

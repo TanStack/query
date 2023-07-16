@@ -1,11 +1,9 @@
 'use client'
 import * as React from 'react'
-import { useSyncExternalStore } from './useSyncExternalStore'
 
-import type { QueryKey, QueryFunction } from '@tanstack/query-core'
-import { notifyManager, QueriesObserver } from '@tanstack/query-core'
+import { QueriesObserver, notifyManager } from '@tanstack/query-core'
+import { useSyncExternalStore } from './useSyncExternalStore'
 import { useQueryClient } from './QueryClientProvider'
-import type { UseQueryOptions, UseQueryResult } from './types'
 import { useIsRestoring } from './isRestoring'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
@@ -15,10 +13,12 @@ import {
 } from './errorBoundaryUtils'
 import {
   ensureStaleTime,
-  shouldSuspend,
   fetchOptimistic,
+  shouldSuspend,
   willFetch,
 } from './suspense'
+import type { QueryFunction, QueryKey } from '@tanstack/query-core'
+import type { UseQueryOptions, UseQueryResult } from './types'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // - `context` is omitted as it is passed as a root-level option to `useQueries` instead.

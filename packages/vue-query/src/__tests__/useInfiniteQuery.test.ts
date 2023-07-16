@@ -1,5 +1,5 @@
-import { infiniteFetcher, flushPromises } from './test-utils'
 import { useInfiniteQuery } from '../useInfiniteQuery'
+import { flushPromises, infiniteFetcher } from './test-utils'
 
 jest.mock('../useQueryClient')
 
