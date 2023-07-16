@@ -1,4 +1,4 @@
-import { json, } from '@sveltejs/kit'
+import { json } from '@sveltejs/kit'
 import type { RequestHandler } from '@sveltejs/kit'
 
 type Todo = {

@@ -35,7 +35,9 @@ export function createQueryClient(config?: QueryClientConfig): QueryClient {
   return new QueryClient(config)
 }
 
-export function mockVisibilityState(value: DocumentVisibilityState): SpyInstance<[], DocumentVisibilityState> {
+export function mockVisibilityState(
+  value: DocumentVisibilityState,
+): SpyInstance<[], DocumentVisibilityState> {
   return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 

@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "typescript": "^5.0.4",
-    "vite": "^4.2.0",
+    "vite": "^4.4.4",
     "vite-plugin-vue2": "2.0.2"
   }
 }
