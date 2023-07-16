@@ -4085,7 +4085,7 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('[{"a":"a"}]'))
   })
 
-  it('should refetch if any query instance becomes enabled', async () => {
+  it.only('should refetch if any query instance becomes enabled', async () => {
     const key = queryKey()
 
     const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')

@@ -161,7 +161,6 @@ describe('React hydration', () => {
 
       function Page() {
         const { data } = useQuery(['string'], () => dataQuery(['string']))
-        console.log(data);
         return (
           <div>
             <h1>{data}</h1>
@@ -192,8 +191,8 @@ describe('React hydration', () => {
         </QueryClientProvider>,
       )
 
-      await sleep(10)
-      rendered.getByText('string')
+      // this was failing because it was doing the cache first and then making a request afterwards.
+      await rendered.findByText('string')
 
       queryClient.clear()
       newClientQueryClient.clear()

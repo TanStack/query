@@ -36,7 +36,28 @@ export function useBaseQuery<
   const errorResetBoundary = useQueryErrorResetBoundary()
 
   const defaultedOptions = React.useMemo(() => {
-    return queryClient.defaultQueryOptions(options);
+    const newDefaultOptions = queryClient.defaultQueryOptions(options);
+
+    // Include callbacks in batch renders
+    if (newDefaultOptions.onError) {
+      newDefaultOptions.onError = notifyManager.batchCalls(
+        newDefaultOptions.onError,
+      )
+    }
+
+    if (newDefaultOptions.onSuccess) {
+      newDefaultOptions.onSuccess = notifyManager.batchCalls(
+        newDefaultOptions.onSuccess,
+      )
+    }
+
+    if (newDefaultOptions.onSettled) {
+      newDefaultOptions.onSettled = notifyManager.batchCalls(
+        newDefaultOptions.onSettled,
+      )
+    }
+
+    return newDefaultOptions;
   }, [queryClient, options]);
 
   // Make sure results are optimistically set in fetching state before subscribing or updating options
@@ -44,36 +65,18 @@ export function useBaseQuery<
     ? 'isRestoring'
     : 'optimistic'
 
-  // Include callbacks in batch renders
-  if (defaultedOptions.onError) {
-    defaultedOptions.onError = notifyManager.batchCalls(
-      defaultedOptions.onError,
-    )
-  }
-
-  if (defaultedOptions.onSuccess) {
-    defaultedOptions.onSuccess = notifyManager.batchCalls(
-      defaultedOptions.onSuccess,
-    )
-  }
-
-  if (defaultedOptions.onSettled) {
-    defaultedOptions.onSettled = notifyManager.batchCalls(
-      defaultedOptions.onSettled,
-    )
-  }
-
   ensureStaleTime(defaultedOptions)
   ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary)
 
   useClearResetErrorBoundary(errorResetBoundary)
 
   const observer = React.useMemo(
-    () =>
-      new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
+    () => {
+      return new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
         queryClient,
         defaultedOptions
-      ), // eslint-disable-next-line react-hooks/exhaustive-deps
+      );
+    }, // eslint-disable-next-line react-hooks/exhaustive-deps
     [queryClient]
   )
 
@@ -81,11 +84,10 @@ export function useBaseQuery<
   React.useMemo(() => {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
-    observer.setOptions(defaultedOptions, { listeners: false })
+    observer.setOptions(defaultedOptions, { listeners: false, })
   }, [defaultedOptions, observer])
 
 
-  // const result = observer.getOptimisticResult(defaultedOptions)
   const result = useSyncExternalStore(
     React.useCallback((onStoreChange) => {
       const unsubscribe = isRestoring
@@ -101,6 +103,10 @@ export function useBaseQuery<
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult(),
   )
+
+  // React.useEffect(() => {
+  //   observer.setOptions(defaultedOptions, { listeners: false });
+  // }, [defaultedOptions, observer])
 
   // Handle suspense
   if (shouldSuspend(defaultedOptions, result, isRestoring)) {

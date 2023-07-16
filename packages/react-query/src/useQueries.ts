@@ -162,32 +162,37 @@ export function useQueries<T extends any[]>({
   const defaultedQueries = React.useMemo(
     () =>
       queries.map((options) => {
-        const defaultedOptions = queryClient.defaultQueryOptions(options)
-
-        // Make sure the results are already in fetching state before subscribing or updating options
-        defaultedOptions._optimisticResults = isRestoring
-          ? 'isRestoring'
-          : 'optimistic'
-
-        return defaultedOptions
+        return queryClient.defaultQueryOptions(options)
       }),
-    [queries, queryClient, isRestoring],
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    [...queries, queryClient],
   )
 
   defaultedQueries.forEach((query) => {
+    // Make sure the results are already in fetching state before subscribing or updating options
+    query._optimisticResults = isRestoring
+      ? 'isRestoring'
+      : 'optimistic'
+
     ensureStaleTime(query)
     ensurePreventErrorBoundaryRetry(query, errorResetBoundary)
   })
 
   useClearResetErrorBoundary(errorResetBoundary)
 
-  const [observer] = React.useState(
+  const observer = React.useMemo(
     () => new QueriesObserver(queryClient, defaultedQueries),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [queryClient]
   )
 
-  const optimisticResult = observer.getOptimisticResult(defaultedQueries)
+  React.useMemo(() => {
+    // Do not notify on updates because of changes in the options because
+    // these changes should already be reflected in the optimistic result.
+    observer.setQueries(defaultedQueries, { listeners: false })
+  }, [defaultedQueries, observer])
 
-  useSyncExternalStore(
+  const results = useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
         isRestoring
@@ -199,18 +204,12 @@ export function useQueries<T extends any[]>({
     () => observer.getCurrentResult(),
   )
 
-  React.useEffect(() => {
-    // Do not notify on updates because of changes in the options because
-    // these changes should already be reflected in the optimistic result.
-    observer.setQueries(defaultedQueries, { listeners: false })
-  }, [defaultedQueries, observer])
-
-  const shouldAtLeastOneSuspend = optimisticResult.some((result, index) =>
+  const shouldAtLeastOneSuspend = results.some((result, index) =>
     shouldSuspend(defaultedQueries[index], result, isRestoring),
   )
 
   const suspensePromises = shouldAtLeastOneSuspend
-    ? optimisticResult.flatMap((result, index) => {
+    ? results.flatMap((result, index) => {
         const options = defaultedQueries[index]
         const queryObserver = observer.getObservers()[index]
 
@@ -229,7 +228,7 @@ export function useQueries<T extends any[]>({
     throw Promise.all(suspensePromises)
   }
   const observerQueries = observer.getQueries()
-  const firstSingleResultWhichShouldThrow = optimisticResult.find(
+  const firstSingleResultWhichShouldThrow = results.find(
     (result, index) =>
       getHasError({
         result,
@@ -243,5 +242,5 @@ export function useQueries<T extends any[]>({
     throw firstSingleResultWhichShouldThrow.error
   }
 
-  return optimisticResult as QueriesResults<T>
+  return results as QueriesResults<T>
 }

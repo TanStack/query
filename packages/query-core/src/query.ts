@@ -150,11 +150,10 @@ export class Query<
   initialState: QueryState<TData, TError>
   revertState?: QueryState<TData, TError>
   state: QueryState<TData, TError>
-  isFetchingOptimistic?: boolean
+  promise?: Promise<TData>
 
   private cache: QueryCache
   private logger: Logger
-  private promise?: Promise<TData>
   private retryer?: Retryer<TData>
   private observers: QueryObserver<any, any, any, any, any>[]
   private defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
@@ -447,11 +446,8 @@ export class Query<
         }
       }
 
-      if (!this.isFetchingOptimistic) {
-        // Schedule query gc after fetching
-        this.scheduleGc()
-      }
-      this.isFetchingOptimistic = false
+      // Schedule query gc after fetching
+      this.scheduleGc()
     }
 
     // Try to fetch the data
@@ -479,11 +475,8 @@ export class Query<
           this as Query<any, any, any, any>,
         )
 
-        if (!this.isFetchingOptimistic) {
-          // Schedule query gc after fetching
-          this.scheduleGc()
-        }
-        this.isFetchingOptimistic = false
+        // Schedule query gc after fetching
+        this.scheduleGc()
       },
       onError,
       onFail: (failureCount, error) => {

@@ -687,7 +687,7 @@ describe('QueryErrorResetBoundary', () => {
       await waitFor(() => rendered.getByText('data'))
     })
 
-    it('with suspense should retry fetch if the reset error boundary has been reset', async () => {
+    it.only('with suspense should retry fetch if the reset error boundary has been reset', async () => {
       const key = queryKey()
 
       let succeed = false

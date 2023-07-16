@@ -65,6 +65,8 @@ export class QueryObserver<
     TQueryData,
     TQueryKey
   >
+  private previousOptions?: DefaultedQueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>;
+  private previousQuery?: Query<TQueryFnData, TError, TQueryData, TQueryKey>;
   private previousQueryResult?: QueryObserverResult<TData, TError>
   private selectError: TError | null
   private selectFn?: (data: TQueryData) => TData
@@ -150,9 +152,7 @@ export class QueryObserver<
     >,
     notifyOptions?: NotifyOptions,
   ): void {
-    const prevOptions = this.options
-    const prevQuery = this.currentQuery
-
+    this.previousOptions = this.options;
     this.options = this.client.defaultQueryOptions(options)
 
     if (
@@ -166,7 +166,7 @@ export class QueryObserver<
         )
     }
 
-    if (!shallowEqualObjects(prevOptions, this.options)) {
+    if (!shallowEqualObjects(this.previousOptions, this.options)) {
       this.client.getQueryCache().notify({
         type: 'observerOptionsUpdated',
         query: this.currentQuery,
@@ -183,35 +183,27 @@ export class QueryObserver<
 
     // Keep previous query key if the user does not supply one
     if (!this.options.queryKey) {
-      this.options.queryKey = prevOptions.queryKey
+      this.options.queryKey = this.previousOptions.queryKey
     }
 
     this.updateQuery()
 
     const mounted = this.hasListeners()
 
-    // Fetch if there are subscribers
-    if (
-      mounted &&
-      shouldFetchOptionally(
-        this.currentQuery,
-        prevQuery,
-        this.options,
-        prevOptions,
-      )
-    ) {
-      this.executeFetch()
-    }
-
     // Update result
     this.updateResult(notifyOptions)
+
+    // Fetch if there are subscribers
+    if (this.currentResult.isFetching) {
+      this.executeFetch()
+    }
 
     // Update stale interval if needed
     if (
       mounted &&
-      (this.currentQuery !== prevQuery ||
-        this.options.enabled !== prevOptions.enabled ||
-        this.options.staleTime !== prevOptions.staleTime)
+      (this.currentQuery !== this.previousQuery ||
+        this.options.enabled !== this.previousOptions.enabled ||
+        this.options.staleTime !== this.previousOptions.staleTime)
     ) {
       this.updateStaleTimeout()
     }
@@ -221,26 +213,12 @@ export class QueryObserver<
     // Update refetch interval if needed
     if (
       mounted &&
-      (this.currentQuery !== prevQuery ||
-        this.options.enabled !== prevOptions.enabled ||
+      (this.currentQuery !== this.previousQuery ||
+        this.options.enabled !== this.previousOptions.enabled ||
         nextRefetchInterval !== this.currentRefetchInterval)
     ) {
       this.updateRefetchInterval(nextRefetchInterval)
     }
-  }
-
-  getOptimisticResult(
-    options: DefaultedQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >,
-  ): QueryObserverResult<TData, TError> {
-    const query = this.client.getQueryCache().build(this.client, options)
-
-    return this.createResult(query, options)
   }
 
   getCurrentResult(): QueryObserverResult<TData, TError> {
@@ -284,25 +262,6 @@ export class QueryObserver<
       ...options,
       meta: { refetchPage },
     })
-  }
-
-  fetchOptimistic(
-    options: QueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >,
-  ): Promise<QueryObserverResult<TData, TError>> {
-    const defaultedOptions = this.client.defaultQueryOptions(options)
-
-    const query = this.client
-      .getQueryCache()
-      .build(this.client, defaultedOptions)
-    query.isFetchingOptimistic = true
-
-    return query.fetch().then(() => this.createResult(query, defaultedOptions))
   }
 
   protected fetch(
@@ -412,18 +371,11 @@ export class QueryObserver<
     }
   }
 
-  protected createResult(
-    query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
-    options: QueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >,
-  ): QueryObserverResult<TData, TError> {
-    const prevQuery = this.currentQuery
-    const prevOptions = this.options
+  protected createResult(): QueryObserverResult<TData, TError> {
+    const query = this.currentQuery;
+    const options = this.options;
+    const prevQuery = this.previousQuery
+    const prevOptions = this.previousOptions
     const prevResult = this.currentResult as
       | QueryObserverResult<TData, TError>
       | undefined
@@ -447,7 +399,6 @@ export class QueryObserver<
     if (options._optimisticResults) {
       const mounted = this.hasListeners()
 
-      // we don't want to fetch on suspense call because it should already be loaded?
       const fetchOnMount = !mounted && shouldFetchOnMount(query, options)
 
       const fetchOptionally =
@@ -595,13 +546,10 @@ export class QueryObserver<
       | QueryObserverResult<TData, TError>
       | undefined
 
-    const nextResult = this.createResult(this.currentQuery, this.options)
+    const nextResult = this.createResult()
     this.currentResultState = this.currentQuery.state
     this.currentResultOptions = this.options
 
-    // console.log(JSON.stringify({
-    //   nextResult, prevResult
-    // }, undefined, 4))
     // Only notify and update result if sometfhing has changed
     if (shallowEqualObjects(nextResult, prevResult)) {
       return
@@ -648,6 +596,8 @@ export class QueryObserver<
 
   private updateQuery(): void {
     const query = this.client.getQueryCache().build(this.client, this.options)
+
+    this.previousQuery = this.currentQuery;
 
     if (query === this.currentQuery) {
       return
@@ -750,13 +700,13 @@ function shouldFetchOn(
 
 function shouldFetchOptionally(
   query: Query<any, any, any, any>,
-  prevQuery: Query<any, any, any, any>,
+  prevQuery: Query<any, any, any, any> | undefined,
   options: QueryObserverOptions<any, any, any, any, any>,
-  prevOptions: QueryObserverOptions<any, any, any, any, any>,
+  prevOptions: QueryObserverOptions<any, any, any, any, any> | undefined,
 ): boolean {
   return (
     options.enabled !== false &&
-    (query !== prevQuery || prevOptions.enabled === false) &&
+    (query !== prevQuery || prevOptions?.enabled === false) &&
     (!options.suspense || query.state.status !== 'error') &&
     isStale(query, options)
   )

@@ -425,7 +425,7 @@ describe('PersistQueryClientProvider', () => {
     expect(mockLogger.error).toHaveBeenNthCalledWith(2, error)
   })
 
-  test.only('should be able to persist into multiple clients', async () => {
+  test('should be able to persist into multiple clients', async () => {
     const key = queryKey()
     const states: UseQueryResult[] = []
 

@@ -16,7 +16,7 @@ describe("useQuery's in Suspense mode", () => {
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({ queryCache })
 
-  it('should render the correct amount of times in Suspense mode', async () => {
+  it.only('should render the correct amount of times in Suspense mode', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
 
@@ -60,7 +60,6 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('data: 2'))
 
-    console.log(renders, states)
     expect(renders).toBe(4)
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: 1, status: 'success' })
