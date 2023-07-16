@@ -1,12 +1,12 @@
+import { vi } from 'vitest'
+import { QueryCache } from '../queryCache'
+import { dehydrate, hydrate } from '../hydration'
 import {
   createQueryClient,
   executeMutation,
   mockNavigatorOnLine,
   sleep,
 } from './utils'
-import { QueryCache } from '../queryCache'
-import { dehydrate, hydrate } from '../hydration'
-import { vi } from 'vitest'
 
 async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
   await sleep(ms || 0)

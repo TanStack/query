@@ -1,7 +1,7 @@
 import type {
+  PersistRetryer,
   PersistedClient,
   Persister,
-  PersistRetryer,
 } from '@tanstack/query-persist-client-core'
 
 interface Storage {

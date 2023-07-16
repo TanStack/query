@@ -7,11 +7,11 @@ import type {} from 'react-dom/next'
 import { vi } from 'vitest'
 
 import {
-  useQuery,
-  QueryClientProvider,
   QueryCache,
+  QueryClientProvider,
   dehydrate,
   hydrate,
+  useQuery,
 } from '..'
 import { createQueryClient, setIsServer, sleep } from './utils'
 

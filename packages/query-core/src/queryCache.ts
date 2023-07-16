@@ -1,17 +1,17 @@
-import type { QueryFilters } from './utils'
 import { hashQueryKeyByOptions, matchQuery } from './utils'
-import type { Action, QueryState } from './query'
 import { Query } from './query'
+import { notifyManager } from './notifyManager'
+import { Subscribable } from './subscribable'
+import type { QueryFilters } from './utils'
+import type { Action, QueryState } from './query'
 import type {
+  DefaultError,
   NotifyEvent,
   QueryKey,
   QueryOptions,
-  DefaultError,
   WithRequired,
 } from './types'
-import { notifyManager } from './notifyManager'
 import type { QueryClient } from './queryClient'
-import { Subscribable } from './subscribable'
 import type { QueryObserver } from './queryObserver'
 
 // TYPES

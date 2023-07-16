@@ -1,4 +1,4 @@
-import { setContext, getContext } from 'svelte'
+import { getContext, setContext } from 'svelte'
 import type { QueryClient } from '@tanstack/query-core'
 
 const _contextKey = '$$_queryClient'

@@ -1,17 +1,8 @@
 'use client'
 import * as React from 'react'
 
-import type {
-  QueryKey,
-  QueryFunction,
-  QueriesPlaceholderDataFunction,
-  QueryClient,
-  DefaultError,
-  QueriesObserverOptions,
-} from '@tanstack/query-core'
-import { notifyManager, QueriesObserver } from '@tanstack/query-core'
+import { QueriesObserver, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
-import type { UseQueryOptions, UseQueryResult } from './types'
 import { useIsRestoring } from './isRestoring'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
@@ -21,10 +12,19 @@ import {
 } from './errorBoundaryUtils'
 import {
   ensureStaleTime,
-  shouldSuspend,
   fetchOptimistic,
+  shouldSuspend,
   willFetch,
 } from './suspense'
+import type { UseQueryOptions, UseQueryResult } from './types'
+import type {
+  DefaultError,
+  QueriesObserverOptions,
+  QueriesPlaceholderDataFunction,
+  QueryClient,
+  QueryFunction,
+  QueryKey,
+} from '@tanstack/query-core'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter

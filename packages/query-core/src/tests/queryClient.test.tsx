@@ -1,18 +1,7 @@
 import { waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
-import {
-  sleep,
-  queryKey,
-  createQueryClient,
-  mockNavigatorOnLine,
-} from './utils'
-import type {
-  QueryCache,
-  QueryClient,
-  QueryFunction,
-  QueryObserverOptions,
-} from '..'
+import { vi } from 'vitest'
 import {
   MutationObserver,
   QueryObserver,
@@ -20,7 +9,18 @@ import {
   onlineManager,
 } from '..'
 import { noop } from '../utils'
-import { vi } from 'vitest'
+import {
+  createQueryClient,
+  mockNavigatorOnLine,
+  queryKey,
+  sleep,
+} from './utils'
+import type {
+  QueryCache,
+  QueryClient,
+  QueryFunction,
+  QueryObserverOptions,
+} from '..'
 
 describe('queryClient', () => {
   let queryClient: QueryClient

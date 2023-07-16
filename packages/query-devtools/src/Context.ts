@@ -1,5 +1,5 @@
-import type { QueryClient, onlineManager, Query } from '@tanstack/query-core'
 import { createContext, useContext } from 'solid-js'
+import type { Query, QueryClient, onlineManager } from '@tanstack/query-core'
 
 type XPosition = 'left' | 'right'
 type YPosition = 'top' | 'bottom'

@@ -1,9 +1,9 @@
 'use client'
 import * as React from 'react'
-import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 import { notifyManager } from '@tanstack/query-core'
 
 import { useQueryClient } from './QueryClientProvider'
+import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 
 export function useIsFetching(
   filters?: QueryFilters,

@@ -1,9 +1,9 @@
-import { displayValue } from './utils'
 import { stringify } from 'superjson'
 import { css, cx } from '@emotion/css'
-import { tokens } from './theme'
-import { createMemo, createSignal, Index, Match, Show, Switch } from 'solid-js'
+import { Index, Match, Show, Switch, createMemo, createSignal } from 'solid-js'
 import { Key } from '@solid-primitives/keyed'
+import { tokens } from './theme'
+import { displayValue } from './utils'
 import { CopiedCopier, Copier, ErrorCopier } from './icons'
 
 /**

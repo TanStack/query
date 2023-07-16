@@ -1,14 +1,14 @@
-import type { App, ComponentOptions } from 'vue'
 import { isVue2, isVue3, ref } from 'vue-demi'
 
+import { vi } from 'vitest'
 import { QueryClient } from '../queryClient'
 import { VueQueryPlugin } from '../vueQueryPlugin'
 import { VUE_QUERY_CLIENT } from '../utils'
 import { setupDevtools } from '../devtools/devtools'
-import { flushPromises } from './test-utils'
 import { useQuery } from '../useQuery'
 import { useQueries } from '../useQueries'
-import { vi } from 'vitest'
+import { flushPromises } from './test-utils'
+import type { App, ComponentOptions } from 'vue'
 import type { Mock } from 'vitest'
 
 vi.mock('../devtools/devtools')

@@ -1,5 +1,5 @@
-import type { Query } from '@tanstack/query-core'
 import { serialize } from 'superjson'
+import type { Query } from '@tanstack/query-core'
 import type { DevtoolsPosition } from './Context'
 
 export function getQueryStatusLabel(query: Query) {

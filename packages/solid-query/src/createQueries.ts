@@ -1,16 +1,16 @@
-import type {
-  QueriesPlaceholderDataFunction,
-  QueryFunction,
-  QueryKey,
-  DefaultError,
-  QueriesObserverOptions,
-} from '@tanstack/query-core'
-import { notifyManager, QueriesObserver } from '@tanstack/query-core'
-import type { QueryClient } from './QueryClient'
-import type { Accessor } from 'solid-js'
+import { QueriesObserver, notifyManager } from '@tanstack/query-core'
 import { createComputed, onCleanup } from 'solid-js'
 import { createStore, unwrap } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
+import type { Accessor } from 'solid-js'
+import type { QueryClient } from './QueryClient'
+import type {
+  DefaultError,
+  QueriesObserverOptions,
+  QueriesPlaceholderDataFunction,
+  QueryFunction,
+  QueryKey,
+} from '@tanstack/query-core'
 import type { CreateQueryResult, SolidQueryOptions } from './types'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.

@@ -1,14 +1,14 @@
-import type { ToRefs, UnwrapRef } from 'vue-demi'
 import { QueryObserver } from '@tanstack/query-core'
-import type {
-  QueryKey,
-  QueryObserverResult,
-  DefinedQueryObserverResult,
-  WithRequired,
-  QueryObserverOptions,
-  DefaultError,
-} from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
+import type { ToRefs, UnwrapRef } from 'vue-demi'
+import type {
+  DefaultError,
+  DefinedQueryObserverResult,
+  QueryKey,
+  QueryObserverOptions,
+  QueryObserverResult,
+  WithRequired,
+} from '@tanstack/query-core'
 import type { UseBaseQueryReturnType } from './useBaseQuery'
 import type { DistributiveOmit, MaybeRefDeep } from './types'
 import type { QueryClient } from './queryClient'

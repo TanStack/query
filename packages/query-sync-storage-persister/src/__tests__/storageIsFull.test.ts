@@ -1,8 +1,8 @@
 import {
-  dehydrate,
   MutationCache,
   QueryCache,
   QueryClient,
+  dehydrate,
 } from '@tanstack/query-core'
 import { removeOldestQuery } from '@tanstack/query-persist-client-core'
 import { createSyncStoragePersister } from '../index'

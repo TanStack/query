@@ -1,22 +1,22 @@
 import { noop, replaceData, timeUntilStale } from './utils'
+import { notifyManager } from './notifyManager'
+import { canFetch, createRetryer, isCancelledError } from './retryer'
+import { Removable } from './removable'
 import type {
+  CancelOptions,
+  DefaultError,
+  FetchStatus,
   InitialDataFunction,
+  QueryFunctionContext,
   QueryKey,
+  QueryMeta,
   QueryOptions,
   QueryStatus,
-  QueryFunctionContext,
-  QueryMeta,
-  CancelOptions,
   SetDataOptions,
-  FetchStatus,
-  DefaultError,
 } from './types'
 import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
-import { notifyManager } from './notifyManager'
 import type { Retryer } from './retryer'
-import { isCancelledError, canFetch, createRetryer } from './retryer'
-import { Removable } from './removable'
 
 // TYPES
 

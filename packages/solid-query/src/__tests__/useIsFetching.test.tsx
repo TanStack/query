@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
 
-import { createEffect, createRenderEffect, createSignal, Show } from 'solid-js'
-import { createQuery, QueryCache, QueryClientProvider, useIsFetching } from '..'
+import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
+import { QueryCache, QueryClientProvider, createQuery, useIsFetching } from '..'
 import { createQueryClient, queryKey, setActTimeout, sleep } from './utils'
 
 describe('useIsFetching', () => {

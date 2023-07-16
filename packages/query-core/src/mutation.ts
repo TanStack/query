@@ -1,15 +1,15 @@
+import { notifyManager } from './notifyManager'
+import { Removable } from './removable'
+import { canFetch, createRetryer } from './retryer'
 import type {
+  DefaultError,
+  MutationMeta,
   MutationOptions,
   MutationStatus,
-  MutationMeta,
-  DefaultError,
 } from './types'
 import type { MutationCache } from './mutationCache'
 import type { MutationObserver } from './mutationObserver'
-import { notifyManager } from './notifyManager'
-import { Removable } from './removable'
 import type { Retryer } from './retryer'
-import { canFetch, createRetryer } from './retryer'
 
 // TYPES
 

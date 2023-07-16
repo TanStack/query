@@ -1,9 +1,9 @@
-import type { TSESLint } from '@typescript-eslint/utils'
 import { AST_NODE_TYPES } from '@typescript-eslint/utils'
 import { ASTUtils } from '../../utils/ast-utils'
 import { createRule } from '../../utils/create-rule'
 import { uniqueBy } from '../../utils/unique-by'
 import { ExhaustiveDepsUtils } from './exhaustive-deps.utils'
+import type { TSESLint } from '@typescript-eslint/utils'
 
 const QUERY_KEY = 'queryKey'
 const QUERY_FN = 'queryFn'

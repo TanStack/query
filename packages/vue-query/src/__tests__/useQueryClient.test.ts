@@ -1,7 +1,7 @@
 import { getCurrentInstance, inject } from 'vue-demi'
+import { vi } from 'vitest'
 import { useQueryClient } from '../useQueryClient'
 import { VUE_QUERY_CLIENT } from '../utils'
-import { vi } from 'vitest'
 import type { Mock } from 'vitest'
 
 describe('useQueryClient', () => {

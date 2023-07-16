@@ -1,6 +1,6 @@
+import { createContext, onCleanup, onMount, useContext } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type { JSX } from 'solid-js'
-import { createContext, useContext, onMount, onCleanup } from 'solid-js'
 
 export const QueryClientContext = createContext<QueryClient | undefined>(
   undefined,
