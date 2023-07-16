@@ -1,4 +1,4 @@
-import { type RenderOptions, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import * as React from 'react'
 import {
   QueryCache,
@@ -6,6 +6,7 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '../devtools'
+import type { RenderOptions } from '@testing-library/react'
 
 export function renderWithClient(
   client: QueryClient,
