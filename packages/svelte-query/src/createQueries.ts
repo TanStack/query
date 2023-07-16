@@ -1,4 +1,3 @@
-
 import { QueriesObserver, notifyManager } from '@tanstack/query-core'
 import { type Readable, readable } from 'svelte/store'
 

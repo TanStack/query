@@ -7,7 +7,6 @@ import {
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '../devtools'
 
-
 export function renderWithClient(
   client: QueryClient,
   ui: React.ReactElement,

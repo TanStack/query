@@ -1,6 +1,5 @@
 import { fireEvent, render, screen, waitFor } from 'solid-testing-library'
 
-
 import {
   For,
   Index,
