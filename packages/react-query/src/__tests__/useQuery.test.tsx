@@ -1,6 +1,9 @@
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import * as React from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
+import { vi } from 'vitest'
+import { QueryCache, keepPreviousData, useQuery } from '..'
 import {
   Blink,
   createQueryClient,
@@ -19,9 +22,6 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from '..'
-import { QueryCache, useQuery, keepPreviousData } from '..'
-import { ErrorBoundary } from 'react-error-boundary'
-import { vi } from 'vitest'
 import type { Mock } from 'vitest'
 
 describe('useQuery', () => {

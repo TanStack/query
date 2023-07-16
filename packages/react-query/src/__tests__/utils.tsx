@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { act, render } from '@testing-library/react'
-import type { QueryClientConfig } from '..'
-import { QueryClient, QueryClientProvider } from '..'
 import * as utils from '@tanstack/query-core'
 import { vi } from 'vitest'
+import { QueryClient, QueryClientProvider } from '..'
+import type { QueryClientConfig } from '..'
 
 export function renderWithClient(
   client: QueryClient,

@@ -1,13 +1,13 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { DEV, BROWSER } from 'esm-env'
+  import { BROWSER, DEV } from 'esm-env'
+  import { onlineManager, useQueryClient } from '@tanstack/svelte-query'
   import type { QueryClient } from '@tanstack/svelte-query'
-  import { useQueryClient, onlineManager } from '@tanstack/svelte-query'
   import type {
-    TanstackQueryDevtools,
+    DevToolsErrorType,
     DevtoolsButtonPosition,
     DevtoolsPosition,
-    DevToolsErrorType,
+    TanstackQueryDevtools,
   } from '@tanstack/query-devtools'
 
   export let initialIsOpen = false

@@ -1,6 +1,6 @@
+import { vi } from 'vitest'
 import { asyncThrottle } from '../asyncThrottle'
 import { sleep as delay } from './utils'
-import { vi } from 'vitest'
 
 describe('asyncThrottle', () => {
   test('basic', async () => {

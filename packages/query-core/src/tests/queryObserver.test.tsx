@@ -1,7 +1,7 @@
-import { sleep, queryKey, expectType, createQueryClient } from './utils'
-import type { QueryClient, QueryObserverResult } from '..'
-import { QueryObserver, focusManager } from '..'
 import { vi } from 'vitest'
+import { QueryObserver, focusManager } from '..'
+import { createQueryClient, expectType, queryKey, sleep } from './utils'
+import type { QueryClient, QueryObserverResult } from '..'
 
 describe('queryObserver', () => {
   let queryClient: QueryClient

@@ -1,10 +1,10 @@
 import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
-import { createMutation, QueryClientProvider, useIsMutating } from '..'
-import { createQueryClient, sleep, setActTimeout } from './utils'
 
-import { createEffect, createRenderEffect, createSignal, Show } from 'solid-js'
+import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import * as QueryCore from '@tanstack/query-core'
 import { vi } from 'vitest'
+import { QueryClientProvider, createMutation, useIsMutating } from '..'
+import { createQueryClient, setActTimeout, sleep } from './utils'
 
 describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {

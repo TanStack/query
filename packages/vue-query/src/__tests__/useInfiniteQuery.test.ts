@@ -1,6 +1,6 @@
-import { infiniteFetcher, flushPromises } from './test-utils'
-import { useInfiniteQuery } from '../useInfiniteQuery'
 import { vi } from 'vitest'
+import { useInfiniteQuery } from '../useInfiniteQuery'
+import { flushPromises, infiniteFetcher } from './test-utils'
 
 vi.mock('../useQueryClient')
 

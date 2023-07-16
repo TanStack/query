@@ -1,8 +1,11 @@
+import { waitFor } from '@testing-library/react'
+import { vi } from 'vitest'
+import { QueryObserver, isCancelledError, onlineManager } from '..'
 import {
-  sleep,
-  queryKey,
-  mockVisibilityState,
   createQueryClient,
+  mockVisibilityState,
+  queryKey,
+  sleep,
 } from './utils'
 import type {
   QueryCache,
@@ -10,9 +13,6 @@ import type {
   QueryFunctionContext,
   QueryObserverResult,
 } from '..'
-import { QueryObserver, isCancelledError, onlineManager } from '..'
-import { waitFor } from '@testing-library/react'
-import { vi } from 'vitest'
 
 describe('query', () => {
   let queryClient: QueryClient

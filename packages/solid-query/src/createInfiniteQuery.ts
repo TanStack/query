@@ -1,17 +1,17 @@
+import { InfiniteQueryObserver } from '@tanstack/query-core'
+import { createMemo } from 'solid-js'
+import { createBaseQuery } from './createBaseQuery'
 import type {
-  QueryObserver,
-  QueryKey,
   DefaultError,
   InfiniteData,
+  QueryKey,
+  QueryObserver,
 } from '@tanstack/query-core'
 import type { QueryClient } from './QueryClient'
-import { InfiniteQueryObserver } from '@tanstack/query-core'
 import type {
   CreateInfiniteQueryOptions,
   CreateInfiniteQueryResult,
 } from './types'
-import { createBaseQuery } from './createBaseQuery'
-import { createMemo } from 'solid-js'
 import type { Accessor } from 'solid-js'
 
 export function createInfiniteQuery<

@@ -1,14 +1,3 @@
-import type {
-  DefaultedQueryObserverOptions,
-  DefaultError,
-  PlaceholderDataFunction,
-  QueryKey,
-  QueryObserverBaseResult,
-  QueryObserverOptions,
-  QueryObserverResult,
-  QueryOptions,
-  RefetchOptions,
-} from './types'
 import {
   isServer,
   isValidTimeout,
@@ -18,11 +7,22 @@ import {
   timeUntilStale,
 } from './utils'
 import { notifyManager } from './notifyManager'
-import type { Query, QueryState, FetchOptions } from './query'
-import type { QueryClient } from './queryClient'
 import { focusManager } from './focusManager'
 import { Subscribable } from './subscribable'
 import { canFetch } from './retryer'
+import type { QueryClient } from './queryClient'
+import type { FetchOptions, Query, QueryState } from './query'
+import type {
+  DefaultError,
+  DefaultedQueryObserverOptions,
+  PlaceholderDataFunction,
+  QueryKey,
+  QueryObserverBaseResult,
+  QueryObserverOptions,
+  QueryObserverResult,
+  QueryOptions,
+  RefetchOptions,
+} from './types'
 
 type QueryObserverListener<TData, TError> = (
   result: QueryObserverResult<TData, TError>,

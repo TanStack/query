@@ -1,7 +1,7 @@
-import { sleep, queryKey, createQueryClient } from './utils'
-import { QueryClient, QueryCache, QueryObserver } from '..'
 import { waitFor } from '@testing-library/react'
 import { vi } from 'vitest'
+import { QueryCache, QueryClient, QueryObserver } from '..'
+import { createQueryClient, queryKey, sleep } from './utils'
 
 describe('queryCache', () => {
   let queryClient: QueryClient

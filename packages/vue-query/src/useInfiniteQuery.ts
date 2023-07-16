@@ -1,15 +1,15 @@
 import { InfiniteQueryObserver } from '@tanstack/query-core'
+import { useBaseQuery } from './useBaseQuery'
 import type {
+  DefaultError,
   InfiniteData,
+  InfiniteQueryObserverOptions,
+  InfiniteQueryObserverResult,
+  QueryKey,
   QueryObserver,
   WithRequired,
-  QueryKey,
-  InfiniteQueryObserverResult,
-  InfiniteQueryObserverOptions,
-  DefaultError,
 } from '@tanstack/query-core'
 
-import { useBaseQuery } from './useBaseQuery'
 import type { UseBaseQueryReturnType } from './useBaseQuery'
 
 import type { DistributiveOmit, MaybeRefDeep } from './types'

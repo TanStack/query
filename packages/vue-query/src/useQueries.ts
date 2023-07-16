@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { QueriesObserver } from '@tanstack/query-core'
-import type {
-  QueriesPlaceholderDataFunction,
-  QueryKey,
-  QueriesObserverOptions,
-  QueryFunction,
-  QueryObserverResult,
-} from '@tanstack/query-core'
-import type { Ref } from 'vue-demi'
 import { computed, onScopeDispose, readonly, ref, watch } from 'vue-demi'
 
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
+import type { Ref } from 'vue-demi'
+import type {
+  QueriesObserverOptions,
+  QueriesPlaceholderDataFunction,
+  QueryFunction,
+  QueryKey,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 import type { UseQueryOptions } from './useQuery'
 import type { QueryClient } from './queryClient'
 import type { DistributiveOmit, MaybeRefDeep } from './types'

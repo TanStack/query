@@ -1,26 +1,28 @@
-import type { Accessor, Component, JSX, Setter } from 'solid-js'
 import {
+  For,
+  Show,
   createEffect,
   createMemo,
   createSignal,
   on,
   onCleanup,
   onMount,
-  For,
-  Show,
 } from 'solid-js'
 import { rankItem } from '@tanstack/match-sorter-utils'
 import { css, cx } from '@emotion/css'
+import { TransitionGroup } from 'solid-transition-group'
+import { Key } from '@solid-primitives/keyed'
+import { createLocalStorage } from '@solid-primitives/storage'
+import { createResizeObserver } from '@solid-primitives/resize-observer'
 import { tokens } from './theme'
-import type { Query, QueryCache, QueryState } from '@tanstack/query-core'
 import {
-  getQueryStatusLabel,
-  getQueryStatusColor,
-  displayValue,
-  getQueryStatusColorByLabel,
-  sortFns,
   convertRemToPixels,
+  displayValue,
+  getQueryStatusColor,
+  getQueryStatusColorByLabel,
+  getQueryStatusLabel,
   getSidedProp,
+  sortFns,
 } from './utils'
 import {
   ArrowDown,
@@ -33,19 +35,17 @@ import {
   Wifi,
 } from './icons'
 import Explorer from './Explorer'
-import type {
-  QueryDevtoolsProps,
-  DevtoolsPosition,
-  DevtoolsButtonPosition,
-  DevToolsErrorType,
-} from './Context'
 import { QueryDevtoolsContext, useQueryDevtoolsContext } from './Context'
-import { TransitionGroup } from 'solid-transition-group'
 import { loadFonts } from './fonts'
-import { Key } from '@solid-primitives/keyed'
+import type {
+  DevToolsErrorType,
+  DevtoolsButtonPosition,
+  DevtoolsPosition,
+  QueryDevtoolsProps,
+} from './Context'
+import type { Query, QueryCache, QueryState } from '@tanstack/query-core'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
-import { createLocalStorage } from '@solid-primitives/storage'
-import { createResizeObserver } from '@solid-primitives/resize-observer'
+import type { Accessor, Component, JSX, Setter } from 'solid-js'
 
 interface DevtoolsPanelProps {
   localStore: StorageObject<string>

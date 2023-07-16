@@ -1,14 +1,22 @@
-import type { QueryFilters, Updater, MutationFilters } from './utils'
 import {
+  functionalUpdate,
   hashKey,
+  hashQueryKeyByOptions,
   noop,
   partialMatchKey,
-  hashQueryKeyByOptions,
-  functionalUpdate,
 } from './utils'
+import { QueryCache } from './queryCache'
+import { MutationCache } from './mutationCache'
+import { focusManager } from './focusManager'
+import { onlineManager } from './onlineManager'
+import { notifyManager } from './notifyManager'
+import { infiniteQueryBehavior } from './infiniteQueryBehavior'
+import type { QueryState } from './query'
 import type {
-  QueryClientConfig,
+  CancelOptions,
+  DefaultError,
   DefaultOptions,
+  DefaultedQueryObserverOptions,
   FetchInfiniteQueryOptions,
   FetchQueryOptions,
   InfiniteData,
@@ -17,6 +25,7 @@ import type {
   MutationKey,
   MutationObserverOptions,
   MutationOptions,
+  QueryClientConfig,
   QueryKey,
   QueryObserverOptions,
   QueryOptions,
@@ -24,17 +33,8 @@ import type {
   RefetchQueryFilters,
   ResetOptions,
   SetDataOptions,
-  DefaultError,
-  CancelOptions,
-  DefaultedQueryObserverOptions,
 } from './types'
-import type { QueryState } from './query'
-import { QueryCache } from './queryCache'
-import { MutationCache } from './mutationCache'
-import { focusManager } from './focusManager'
-import { onlineManager } from './onlineManager'
-import { notifyManager } from './notifyManager'
-import { infiniteQueryBehavior } from './infiniteQueryBehavior'
+import type { MutationFilters, QueryFilters, Updater } from './utils'
 
 // TYPES
 

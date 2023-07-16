@@ -1,8 +1,8 @@
 import type {
   DefaultedQueryObserverOptions,
-  QueryObserverResult,
   QueryKey,
   QueryObserver,
+  QueryObserverResult,
 } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 

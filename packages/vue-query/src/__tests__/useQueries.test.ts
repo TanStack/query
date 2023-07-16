@@ -1,15 +1,15 @@
 import { onScopeDispose, ref } from 'vue-demi'
 
-import {
-  flushPromises,
-  rejectFetcher,
-  simpleFetcher,
-  getSimpleFetcherWithReturnData,
-} from './test-utils'
+import { vi } from 'vitest'
 import { useQueries } from '../useQueries'
 import { useQueryClient } from '../useQueryClient'
 import { QueryClient } from '../queryClient'
-import { vi } from 'vitest'
+import {
+  flushPromises,
+  getSimpleFetcherWithReturnData,
+  rejectFetcher,
+  simpleFetcher,
+} from './test-utils'
 import type { MockedFunction } from 'vitest'
 
 vi.mock('../useQueryClient')

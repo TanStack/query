@@ -1,8 +1,8 @@
 import { ref } from 'vue-demi'
 import { MutationCache as MutationCacheOrigin } from '@tanstack/query-core'
 
-import { MutationCache } from '../mutationCache'
 import { vi } from 'vitest'
+import { MutationCache } from '../mutationCache'
 
 describe('MutationCache', () => {
   beforeAll(() => {

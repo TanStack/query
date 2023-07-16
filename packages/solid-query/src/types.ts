@@ -1,19 +1,19 @@
 /* istanbul ignore file */
 
 import type {
-  QueryKey,
-  QueryObserverResult,
+  DefaultError,
+  DefinedQueryObserverResult,
+  InfiniteQueryObserverResult,
   MutateFunction,
   MutationObserverOptions,
   MutationObserverResult,
-  DefinedQueryObserverResult,
-  InfiniteQueryObserverResult,
+  QueryKey,
+  QueryObserverResult,
   WithRequired,
-  DefaultError,
 } from '@tanstack/query-core'
 import type {
-  QueryObserverOptions,
   InfiniteQueryObserverOptions,
+  QueryObserverOptions,
 } from './QueryClient'
 
 export type FunctionedParams<T> = () => T
