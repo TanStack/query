@@ -1,8 +1,8 @@
-import type { QueryClientConfig } from '@tanstack/query-core'
 import { QueryClient } from '@tanstack/query-core'
+import type { QueryClientConfig } from '@tanstack/query-core'
 import type {
-  Persister,
   PersistedClient,
+  Persister,
 } from '@tanstack/query-persist-client-core'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {

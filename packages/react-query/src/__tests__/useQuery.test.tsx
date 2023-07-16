@@ -1,6 +1,8 @@
 import { act, fireEvent, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import * as React from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
+import { QueryCache, useQuery } from '..'
 import {
   Blink,
   createQueryClient,
@@ -20,8 +22,6 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from '..'
-import { QueryCache, useQuery } from '..'
-import { ErrorBoundary } from 'react-error-boundary'
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()

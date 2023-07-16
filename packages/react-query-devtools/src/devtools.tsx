@@ -1,48 +1,48 @@
 'use client'
 import * as React from 'react'
-import { useSyncExternalStore } from './useSyncExternalStore'
-import type {
-  QueryCache,
-  QueryClient,
-  QueryKey as QueryKeyType,
-  ContextOptions,
-  Query,
-} from '@tanstack/react-query'
 import {
-  useQueryClient,
-  onlineManager,
   notifyManager,
+  onlineManager,
+  useQueryClient,
 } from '@tanstack/react-query'
 import { rankItem } from '@tanstack/match-sorter-utils'
+import { useMemo } from 'react'
+import { useSyncExternalStore } from './useSyncExternalStore'
 import useLocalStorage from './useLocalStorage'
 import {
-  isVerticalSide,
-  sortFns,
-  useIsMounted,
-  getSidePanelStyle,
-  minPanelSize,
-  getResizeHandleStyle,
-  getSidedProp,
   defaultPanelSize,
   displayValue,
+  getResizeHandleStyle,
+  getSidePanelStyle,
+  getSidedProp,
+  isVerticalSide,
+  minPanelSize,
+  sortFns,
+  useIsMounted,
 } from './utils'
-import type { Corner, Side } from './utils'
 import {
-  Panel,
-  QueryKeys,
-  QueryKey,
+  ActiveQueryPanel,
   Button,
   Code,
   Input,
+  Panel,
+  QueryKey,
+  QueryKeys,
   Select,
-  ActiveQueryPanel,
 } from './styledComponents'
 import ScreenReader from './screenreader'
 import { ThemeProvider, defaultTheme as theme } from './theme'
-import { getQueryStatusLabel, getQueryStatusColor } from './utils'
+import { getQueryStatusColor, getQueryStatusLabel } from './utils'
 import Explorer from './Explorer'
 import Logo from './Logo'
-import { useMemo } from 'react'
+import type { Corner, Side } from './utils'
+import type {
+  ContextOptions,
+  Query,
+  QueryCache,
+  QueryClient,
+  QueryKey as QueryKeyType,
+} from '@tanstack/react-query'
 
 export interface DevToolsErrorType {
   /**

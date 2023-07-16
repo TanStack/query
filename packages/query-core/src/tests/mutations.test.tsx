@@ -1,8 +1,8 @@
-import type { QueryClient } from '..'
-import { createQueryClient, executeMutation, queryKey, sleep } from './utils'
-import type { MutationState } from '../mutation'
-import { MutationObserver } from '../mutationObserver'
 import { waitFor } from '@testing-library/react'
+import { MutationObserver } from '../mutationObserver'
+import { createQueryClient, executeMutation, queryKey, sleep } from './utils'
+import type { QueryClient } from '..'
+import type { MutationState } from '../mutation'
 
 describe('mutations', () => {
   let queryClient: QueryClient

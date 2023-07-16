@@ -1,16 +1,16 @@
 import { fireEvent, render, screen, waitFor } from 'solid-testing-library'
 
 import {
+  ErrorBoundary,
+  Show,
   createContext,
   createEffect,
   createRenderEffect,
   createSignal,
-  ErrorBoundary,
-  Show,
 } from 'solid-js'
-import type { QueryClient } from '..'
-import { createQuery, QueryCache, QueryClientProvider, useIsFetching } from '..'
+import { QueryCache, QueryClientProvider, createQuery, useIsFetching } from '..'
 import { createQueryClient, queryKey, setActTimeout, sleep } from './utils'
+import type { QueryClient } from '..'
 
 describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105

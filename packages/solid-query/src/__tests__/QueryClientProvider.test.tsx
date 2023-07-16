@@ -1,12 +1,12 @@
 import { render, screen, waitFor } from 'solid-testing-library'
-import { queryKey } from './utils'
 
 import { QueryCache, QueryClient } from '@tanstack/query-core'
-import type { Context } from 'solid-js'
 import { createContext, useContext } from 'solid-js'
 import { renderToString } from 'solid-js/web'
-import { createQuery, QueryClientProvider, useQueryClient } from '..'
+import { QueryClientProvider, createQuery, useQueryClient } from '..'
+import { queryKey } from './utils'
 import { createQueryClient, sleep } from './utils'
+import type { Context } from 'solid-js'
 
 describe('QueryClientProvider', () => {
   it('sets a specific cache for all queries to use', async () => {

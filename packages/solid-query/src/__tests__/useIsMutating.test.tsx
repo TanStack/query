@@ -1,22 +1,22 @@
 import { fireEvent, screen, waitFor } from 'solid-testing-library'
-import {
-  createMutation,
-  QueryClient,
-  QueryClientProvider,
-  useIsMutating,
-} from '..'
-import { createQueryClient, sleep } from './utils'
 
 import {
+  ErrorBoundary,
+  Show,
   createContext,
   createEffect,
   createRenderEffect,
   createSignal,
-  ErrorBoundary,
-  Show,
 } from 'solid-js'
 import { render } from 'solid-testing-library'
+import {
+  QueryClient,
+  QueryClientProvider,
+  createMutation,
+  useIsMutating,
+} from '..'
 import * as MutationCacheModule from '../../../query-core/src/mutationCache'
+import { createQueryClient, sleep } from './utils'
 import { setActTimeout } from './utils'
 
 describe('useIsMutating', () => {

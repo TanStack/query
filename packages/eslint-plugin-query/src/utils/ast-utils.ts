@@ -1,8 +1,8 @@
+import { AST_NODE_TYPES } from '@typescript-eslint/utils'
+import { uniqueBy } from './unique-by'
 import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
 import type TSESLintScopeManager from '@typescript-eslint/scope-manager'
-import { AST_NODE_TYPES } from '@typescript-eslint/utils'
 import type { RuleContext } from '@typescript-eslint/utils/dist/ts-eslint'
-import { uniqueBy } from './unique-by'
 
 export const ASTUtils = {
   isNodeOfOneOf<T extends AST_NODE_TYPES>(

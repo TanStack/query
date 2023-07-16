@@ -1,20 +1,18 @@
 import '@testing-library/jest-dom'
 import {
+  ErrorBoundary,
   createContext,
   createEffect,
   createRenderEffect,
   createSignal,
-  ErrorBoundary,
 } from 'solid-js'
 import { fireEvent, render, screen, waitFor } from 'solid-testing-library'
-import type { QueryClient } from '..'
 import {
-  createMutation,
   MutationCache,
   QueryCache,
   QueryClientProvider,
+  createMutation,
 } from '..'
-import type { CreateMutationResult } from '../types'
 import {
   createQueryClient,
   mockNavigatorOnLine,
@@ -22,6 +20,8 @@ import {
   setActTimeout,
   sleep,
 } from './utils'
+import type { QueryClient } from '..'
+import type { CreateMutationResult } from '../types'
 
 describe('useMutation', () => {
   const queryCache = new QueryCache()

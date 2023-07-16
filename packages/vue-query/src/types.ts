@@ -1,9 +1,9 @@
 /* istanbul ignore file */
 
 import type {
+  InfiniteQueryObserverOptions,
   QueryKey,
   QueryObserverOptions,
-  InfiniteQueryObserverOptions,
 } from '@tanstack/query-core'
 import type { Ref, UnwrapRef } from 'vue-demi'
 import type { QueryClient } from './queryClient'

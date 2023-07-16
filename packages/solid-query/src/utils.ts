@@ -1,8 +1,8 @@
 import type {
-  SolidQueryKey,
-  SolidQueryFilters,
   ParseFilterArgs,
   ParseQueryArgs,
+  SolidQueryFilters,
+  SolidQueryKey,
 } from './types'
 import type { QueryFunction, QueryOptions } from '@tanstack/query-core'
 

@@ -1,17 +1,17 @@
-import type { QueryObserver } from '@tanstack/query-core'
-import type { QueryKey, QueryObserverResult } from '@tanstack/query-core'
-import type { CreateBaseQueryOptions } from './types'
-import { useQueryClient } from './QueryClientProvider'
 import {
-  onMount,
-  onCleanup,
+  batch,
   createComputed,
   createResource,
   on,
-  batch,
+  onCleanup,
+  onMount,
 } from 'solid-js'
 import { createStore, unwrap } from 'solid-js/store'
+import { useQueryClient } from './QueryClientProvider'
 import { shouldThrowError } from './utils'
+import type { QueryObserver } from '@tanstack/query-core'
+import type { QueryKey, QueryObserverResult } from '@tanstack/query-core'
+import type { CreateBaseQueryOptions } from './types'
 
 // Base Query Function that is used to create the query.
 export function createBaseQuery<

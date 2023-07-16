@@ -1,7 +1,7 @@
 import { reactive, ref } from 'vue-demi'
-import { errorMutator, flushPromises, successMutator } from './test-utils'
 import { parseMutationArgs, useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
+import { errorMutator, flushPromises, successMutator } from './test-utils'
 
 jest.mock('../useQueryClient')
 

@@ -1,16 +1,16 @@
 /* istanbul ignore file */
 
 import { setupDevtoolsPlugin } from '@vue/devtools-api'
-import type { CustomInspectorNode } from '@vue/devtools-api'
 import { rankItem } from '@tanstack/match-sorter-utils'
-import type { Query, QueryCacheNotifyEvent } from '@tanstack/query-core'
-import type { QueryClient } from '../queryClient'
 import {
   getQueryStateLabel,
   getQueryStatusBg,
   getQueryStatusFg,
   sortFns,
 } from './utils'
+import type { CustomInspectorNode } from '@vue/devtools-api'
+import type { Query, QueryCacheNotifyEvent } from '@tanstack/query-core'
+import type { QueryClient } from '../queryClient'
 
 const pluginId = 'vue-query'
 const pluginName = 'Vue Query'
