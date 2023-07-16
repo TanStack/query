@@ -914,17 +914,15 @@ describe('useQuery', () => {
     // required to make sure no additional renders are happening after data is successfully fetched for the second time
     await sleep(100)
 
-    expect(states.length).toBe(5)
+    expect(states.length).toBe(4)
     // First load
     expect(states[0]).toMatchObject({ isLoading: true, isSuccess: false })
     // First success
     expect(states[1]).toMatchObject({ isLoading: false, isSuccess: true })
     // Remove
     expect(states[2]).toMatchObject({ isLoading: true, isSuccess: false })
-    // Hook state update
-    expect(states[3]).toMatchObject({ isLoading: true, isSuccess: false })
     // Second success
-    expect(states[4]).toMatchObject({ isLoading: false, isSuccess: true })
+    expect(states[3]).toMatchObject({ isLoading: false, isSuccess: true })
   })
 
   it('should fetch when refetchOnMount is false and nothing has been fetched yet', async () => {
@@ -1713,7 +1711,7 @@ describe('useQuery', () => {
     act(() => rendered.rerender(<Page count={2} />))
     await waitFor(() => rendered.getByText('error: Error test'))
 
-    await waitFor(() => expect(states.length).toBe(8))
+    await waitFor(() => expect(states.length).toBe(6))
     // Initial
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -1738,16 +1736,8 @@ describe('useQuery', () => {
       error: null,
       isPreviousData: true,
     })
-    // Hook state update
-    expect(states[3]).toMatchObject({
-      data: 0,
-      isFetching: true,
-      status: 'success',
-      error: null,
-      isPreviousData: true,
-    })
     // New data
-    expect(states[4]).toMatchObject({
+    expect(states[3]).toMatchObject({
       data: 1,
       isFetching: false,
       status: 'success',
@@ -1755,15 +1745,7 @@ describe('useQuery', () => {
       isPreviousData: false,
     })
     // rerender Page 2
-    expect(states[5]).toMatchObject({
-      data: 1,
-      isFetching: true,
-      status: 'success',
-      error: null,
-      isPreviousData: true,
-    })
-    // Hook state update again
-    expect(states[6]).toMatchObject({
+    expect(states[4]).toMatchObject({
       data: 1,
       isFetching: true,
       status: 'success',
@@ -1771,13 +1753,13 @@ describe('useQuery', () => {
       isPreviousData: true,
     })
     // Error
-    expect(states[7]).toMatchObject({
+    expect(states[5]).toMatchObject({
       data: undefined,
       isFetching: false,
       status: 'error',
       isPreviousData: false,
     })
-    expect(states[7]?.error).toHaveProperty('message', 'Error test')
+    expect(states[5]?.error).toHaveProperty('message', 'Error test')
   })
 
   it('should not show initial data from next query if keepPreviousData is set', async () => {
@@ -1821,7 +1803,7 @@ describe('useQuery', () => {
       rendered.getByText('data: 1, count: 1, isFetching: false'),
     )
 
-    expect(states.length).toBe(5)
+    expect(states.length).toBe(4)
 
     // Initial
     expect(states[0]).toMatchObject({
@@ -1844,15 +1826,8 @@ describe('useQuery', () => {
       isSuccess: true,
       isPreviousData: false,
     })
-    // Hook state update
-    expect(states[3]).toMatchObject({
-      data: 99,
-      isFetching: true,
-      isSuccess: true,
-      isPreviousData: false,
-    })
     // New data
-    expect(states[4]).toMatchObject({
+    expect(states[3]).toMatchObject({
       data: 1,
       isFetching: false,
       isSuccess: true,

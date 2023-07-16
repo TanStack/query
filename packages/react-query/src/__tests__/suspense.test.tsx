@@ -60,6 +60,7 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('data: 2'))
 
+    console.log(renders, states)
     expect(renders).toBe(4)
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: 1, status: 'success' })

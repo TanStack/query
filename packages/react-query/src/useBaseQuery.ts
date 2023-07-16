@@ -2,7 +2,7 @@
 import * as React from 'react'
 import { useSyncExternalStore } from './useSyncExternalStore'
 
-import type {QueryKey, QueryObserver} from '@tanstack/query-core'
+import type { QueryKey, QueryObserver } from '@tanstack/query-core'
 import { notifyManager } from '@tanstack/query-core'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
@@ -35,26 +35,14 @@ export function useBaseQuery<
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
 
+  const defaultedOptions = React.useMemo(() => {
+    return queryClient.defaultQueryOptions(options);
+  }, [queryClient, options]);
+
   // Make sure results are optimistically set in fetching state before subscribing or updating options
-  options._optimisticResults = isRestoring
+  defaultedOptions._optimisticResults = isRestoring
     ? 'isRestoring'
     : 'optimistic'
-
-  const observer = React.useMemo(
-    () =>
-      new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
-        queryClient,
-        options
-      ), // eslint-disable-next-line react-hooks/exhaustive-deps
-    [queryClient]
-  )
-
-  const defaultedOptions = React.useMemo(() => {
-    // Do not notify on updates because of changes in the options because
-    // these changes should already be reflected in the optimistic result.
-    observer.setOptions(options, { listeners: false });
-    return observer.options;
-  }, [observer, options]);
 
   // Include callbacks in batch renders
   if (defaultedOptions.onError) {
@@ -80,21 +68,36 @@ export function useBaseQuery<
 
   useClearResetErrorBoundary(errorResetBoundary)
 
+  const observer = React.useMemo(
+    () =>
+      new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
+        queryClient,
+        defaultedOptions
+      ), // eslint-disable-next-line react-hooks/exhaustive-deps
+    [queryClient]
+  )
+
+  // This is a use memo here, so it applies to the useSyncExternalStore
+  React.useMemo(() => {
+    // Do not notify on updates because of changes in the options because
+    // these changes should already be reflected in the optimistic result.
+    observer.setOptions(defaultedOptions, { listeners: false })
+  }, [defaultedOptions, observer])
+
+
+  // const result = observer.getOptimisticResult(defaultedOptions)
   const result = useSyncExternalStore(
-    React.useCallback(
-      (onStoreChange) => {
-        const unsubscribe = isRestoring
-          ? () => undefined
-          : observer.subscribe(notifyManager.batchCalls(onStoreChange))
+    React.useCallback((onStoreChange) => {
+      const unsubscribe = isRestoring
+        ? () => undefined
+        : observer.subscribe(notifyManager.batchCalls(onStoreChange))
 
-        // Update result to make sure we did not miss any query updates
-        // between creating the observer and subscribing to it.
-        observer.updateResult()
+      // Update result to make sure we did not miss any query updates
+      // between creating the observer and subscribing to it.
+      observer.updateResult()
 
-        return unsubscribe
-      },
-      [observer, isRestoring],
-    ),
+      return unsubscribe
+    }, [observer, isRestoring]),
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult(),
   )
@@ -107,7 +110,7 @@ export function useBaseQuery<
   // Handle error boundary
   if (
     getHasError({
-      result,
+      result: result,
       errorResetBoundary,
       useErrorBoundary: defaultedOptions.useErrorBoundary,
       query: observer.getCurrentQuery(),

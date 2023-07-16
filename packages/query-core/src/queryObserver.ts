@@ -91,7 +91,7 @@ export class QueryObserver<
     this.trackedProps = new Set()
     this.selectError = null
     this.bindMethods()
-    this.setOptions(this.options)
+    this.setOptions(this.options, {listeners: false})
   }
 
   protected bindMethods(): void {
@@ -447,6 +447,7 @@ export class QueryObserver<
     if (options._optimisticResults) {
       const mounted = this.hasListeners()
 
+      // we don't want to fetch on suspense call because it should already be loaded?
       const fetchOnMount = !mounted && shouldFetchOnMount(query, options)
 
       const fetchOptionally =
@@ -598,7 +599,10 @@ export class QueryObserver<
     this.currentResultState = this.currentQuery.state
     this.currentResultOptions = this.options
 
-    // Only notify and update result if something has changed
+    // console.log(JSON.stringify({
+    //   nextResult, prevResult
+    // }, undefined, 4))
+    // Only notify and update result if sometfhing has changed
     if (shallowEqualObjects(nextResult, prevResult)) {
       return
     }

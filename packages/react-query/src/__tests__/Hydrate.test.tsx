@@ -161,6 +161,7 @@ describe('React hydration', () => {
 
       function Page() {
         const { data } = useQuery(['string'], () => dataQuery(['string']))
+        console.log(data);
         return (
           <div>
             <h1>{data}</h1>
