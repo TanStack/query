@@ -6,4 +6,9 @@ import { legacyConfig, modernConfig } from '../../scripts/getTsupConfig.js'
 export default defineConfig([
   modernConfig({ entry: ['src/*.ts', 'src/*.tsx'] }),
   legacyConfig({ entry: ['src/*.ts', 'src/*.tsx'] }),
+  modernConfig({
+    entry: ['src/*.ts', 'src/*.tsx'],
+    outDir: 'build/prod',
+    forceDev: true,
+  }),
 ])

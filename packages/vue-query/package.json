@@ -52,7 +52,7 @@
     }
   },
   "files": [
-    "build/lib/*",
+    "build",
     "src"
   ],
   "dependencies": {
