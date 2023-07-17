@@ -16,9 +16,7 @@ export function modernConfig(opts) {
     outDir: opts.outDir || 'build/modern',
     bundle: opts.bundle || false,
     splitting: opts.bundle || false,
-    env: opts.forceDev
-      ? { NODE_ENV: 'development' }
-      : { NODE_ENV: 'production' },
+    env: opts.forceDev ? { NODE_ENV: 'development' } : undefined,
     dts: true,
     sourcemap: true,
     clean: true,
@@ -41,9 +39,7 @@ export function legacyConfig(opts) {
     outDir: opts.outDir || 'build/legacy',
     bundle: opts.bundle || false,
     splitting: opts.bundle || false,
-    env: opts.forceDev
-      ? { NODE_ENV: 'development' }
-      : { NODE_ENV: 'production' },
+    env: opts.forceDev ? { NODE_ENV: 'development' } : undefined,
     dts: true,
     sourcemap: true,
     clean: true,
