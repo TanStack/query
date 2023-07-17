@@ -7,7 +7,7 @@ Svelte uses a compiler to build your code which optimises rendering. By default,
 
 In the below example, the `refetchInterval` option is set from the variable `intervalMs`, which is edited by the input field. However, as the query is not told it should react to changes in `intervalMs`, `refetchInterval` will not change when the input value changes.
 
-```markdown
+```svelte
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
 
@@ -27,7 +27,7 @@ In the below example, the `refetchInterval` option is set from the variable `int
 
 To solve this, you can prefix the query with `$: ` to tell the compiler it should be reactive.
 
-```markdown
+```svelte
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
 
