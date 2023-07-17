@@ -89,7 +89,7 @@ function Todos({ todoId }) {
 }
 ```
 
-Note that query keys act as dependency arrays for your query functions. Adding dependent variables to your query key will insure that queries are cached independently, and that any time a variable changes, *queries will be refetched automatically.* (See the [exhaustive-deps](../eslint/exhaustive-deps) section for more information and examples.)
+Note that query keys act as dependencies for your query functions. Adding dependent variables to your query key will ensure that queries are cached independently, and that any time a variable changes, *queries will be refetched automatically (depending on your `staleTime` settings).* (See the [exhaustive-deps](../eslint/exhaustive-deps) section for more information and examples.)
 
 [//]: # 'Example5'
 [//]: # 'Materials'
