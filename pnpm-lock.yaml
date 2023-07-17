@@ -27,18 +27,6 @@ importers:
       '@commitlint/parse':
         specifier: ^17.6.5
         version: 17.6.5
-      '@rollup/plugin-babel':
-        specifier: ^6.0.3
-        version: 6.0.3(@babel/core@7.21.8)(rollup@3.26.0)
-      '@rollup/plugin-commonjs':
-        specifier: ^25.0.2
-        version: 25.0.2(rollup@3.26.0)
-      '@rollup/plugin-node-resolve':
-        specifier: ^15.1.0
-        version: 15.1.0(rollup@3.26.0)
-      '@rollup/plugin-replace':
-        specifier: ^5.0.2
-        version: 5.0.2(rollup@3.26.0)
       '@solidjs/testing-library':
         specifier: ^0.5.1
         version: 0.5.1(solid-js@1.6.13)
@@ -174,15 +162,6 @@ importers:
       rollup:
         specifier: ^3.26.0
         version: 3.26.0
-      rollup-plugin-node-externals:
-        specifier: ^6.1.1
-        version: 6.1.1(rollup@3.26.0)
-      rollup-plugin-preserve-directives:
-        specifier: ^0.2.0
-        version: 0.2.0(rollup@3.26.0)
-      rollup-plugin-visualizer:
-        specifier: ^5.9.2
-        version: 5.9.2(rollup@3.26.0)
       rollup-preset-solid:
         specifier: ^2.0.1
         version: 2.0.1
@@ -5548,24 +5527,6 @@ packages:
       resolve: 1.22.2
       rollup: 2.79.1
 
-  /@rollup/plugin-commonjs@25.0.2(rollup@3.26.0):
-    resolution: {integrity: sha512-NGTwaJxIO0klMs+WSFFtBP7b9TdTJ3K76HZkewT8/+yHzMiUGVQgaPtLQxNVYIgT5F7lxkEyVID+yS3K7bhCow==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      rollup: ^2.68.0||^3.0.0
-    peerDependenciesMeta:
-      rollup:
-        optional: true
-    dependencies:
-      '@rollup/pluginutils': 5.0.2(rollup@3.26.0)
-      commondir: 1.0.1
-      estree-walker: 2.0.2
-      glob: 8.1.0
-      is-reference: 1.2.1
-      magic-string: 0.27.0
-      rollup: 3.26.0
-    dev: true
-
   /@rollup/plugin-json@4.1.0(rollup@2.79.1):
     resolution: {integrity: sha512-yfLbTdNS6amI/2OpmbiBoW12vngr5NW2jCJVZSBEz+H5KfUJZ2M7sDjk0U6GOOdCWFVScShte29o9NezJ53TPw==}
     peerDependencies:
@@ -5603,20 +5564,6 @@ packages:
       is-builtin-module: 3.2.1
       is-module: 1.0.0
       resolve: 1.22.2
-      rollup: 3.26.0
-    dev: true
-
-  /@rollup/plugin-replace@5.0.2(rollup@3.26.0):
-    resolution: {integrity: sha512-M9YXNekv/C/iHHK+cvORzfRYfPbq0RDD8r0G+bMiTXjNGKulPnCT9O3Ss46WfhI6ZOCgApOP7xAdmCQJ+U2LAA==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      rollup: ^1.20.0||^2.0.0||^3.0.0
-    peerDependenciesMeta:
-      rollup:
-        optional: true
-    dependencies:
-      '@rollup/pluginutils': 5.0.2(rollup@3.26.0)
-      magic-string: 0.27.0
       rollup: 3.26.0
     dev: true
 
@@ -15349,24 +15296,6 @@ packages:
     hasBin: true
     dependencies:
       glob: 10.3.0
-    dev: true
-
-  /rollup-plugin-node-externals@6.1.1(rollup@3.26.0):
-    resolution: {integrity: sha512-127OFMkpH5rBVlRHRBDUMk1m1sGuzbGy7so5aj/IkpUb2r3+wOWjR/erUzd2ChEQWPsxsyQG6xpYYvPBAdcBRA==}
-    engines: {node: '>=16.0.0'}
-    peerDependencies:
-      rollup: ^3.0.0
-    dependencies:
-      rollup: 3.26.0
-    dev: true
-
-  /rollup-plugin-preserve-directives@0.2.0(rollup@3.26.0):
-    resolution: {integrity: sha512-KUwbBaFvD1zFIDNnOkR+u64sSod3m0l6q46/SzTOa4GTQ6hp6w0FRr2u7x99YkY9qhlna5panmTmuLWeJ/2KWw==}
-    peerDependencies:
-      rollup: 2.x || 3.x
-    dependencies:
-      magic-string: 0.30.0
-      rollup: 3.26.0
     dev: true
 
   /rollup-plugin-visualizer@5.9.2(rollup@3.26.0):
