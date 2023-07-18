@@ -27,12 +27,12 @@
     },
     "./production": {
       "import": {
-        "types": "./build/prod/index.d.ts",
-        "default": "./build/prod/index.js"
+        "types": "./build/modern/production.d.ts",
+        "default": "./build/modern/production.js"
       },
       "require": {
-        "types": "./build/prod/index.d.cts",
-        "default": "./build/prod/index.cjs"
+        "types": "./build/modern/production.d.cts",
+        "default": "./build/modern/production.cjs"
       }
     },
     "./package.json": "./package.json"
