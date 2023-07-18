@@ -10,7 +10,6 @@ import type { SpyInstance } from 'vitest'
 export function renderWithClient(
   client: QueryClient,
   ui: React.ReactElement,
-  j,
 ): ReturnType<typeof render> {
   const { rerender, ...result } = render(
     <QueryClientProvider client={client}>{ui}</QueryClientProvider>,

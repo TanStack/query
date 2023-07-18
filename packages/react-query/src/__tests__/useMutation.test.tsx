@@ -455,6 +455,8 @@ describe('useMutation', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
+    window.dispatchEvent(new Event('offline'))
+
     await waitFor(() => {
       expect(
         rendered.getByText('error: null, status: idle, isPaused: false'),
@@ -471,7 +473,7 @@ describe('useMutation', () => {
 
     expect(count).toBe(0)
 
-    onlineMock.mockReturnValue(true)
+    onlineMock.mockRestore()
     window.dispatchEvent(new Event('online'))
 
     await sleep(100)
@@ -483,8 +485,6 @@ describe('useMutation', () => {
     })
 
     expect(count).toBe(2)
-
-    onlineMock.mockRestore()
   })
 
   it('should call onMutate even if paused', async () => {
@@ -517,6 +517,8 @@ describe('useMutation', () => {
 
     await rendered.findByText('data: null, status: idle, isPaused: false')
 
+    window.dispatchEvent(new Event('offline'))
+
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
     await rendered.findByText('data: null, status: pending, isPaused: true')
@@ -524,15 +526,13 @@ describe('useMutation', () => {
     expect(onMutate).toHaveBeenCalledTimes(1)
     expect(onMutate).toHaveBeenCalledWith('todo')
 
-    onlineMock.mockReturnValue(true)
+    onlineMock.mockRestore()
     window.dispatchEvent(new Event('online'))
 
     await rendered.findByText('data: 1, status: success, isPaused: false')
 
     expect(onMutate).toHaveBeenCalledTimes(1)
     expect(count).toBe(1)
-
-    onlineMock.mockRestore()
   })
 
   it('should optimistically go to paused state if offline', async () => {
@@ -566,6 +566,8 @@ describe('useMutation', () => {
 
     await rendered.findByText('data: null, status: idle, isPaused: false')
 
+    window.dispatchEvent(new Event('offline'))
+
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
     await rendered.findByText('data: null, status: pending, isPaused: true')
@@ -574,12 +576,10 @@ describe('useMutation', () => {
     expect(states[0]).toBe('idle, false')
     expect(states[1]).toBe('pending, true')
 
-    onlineMock.mockReturnValue(true)
+    onlineMock.mockRestore()
     window.dispatchEvent(new Event('online'))
 
     await rendered.findByText('data: 1, status: success, isPaused: false')
-
-    onlineMock.mockRestore()
   })
 
   it('should be able to retry a mutation when online', async () => {
@@ -608,6 +608,7 @@ describe('useMutation', () => {
 
       React.useEffect(() => {
         setActTimeout(() => {
+          window.dispatchEvent(new Event('offline'))
           mutate('todo')
         }, 10)
       }, [mutate])
@@ -645,7 +646,7 @@ describe('useMutation', () => {
       failureReason: new Error('oops'),
     })
 
-    onlineMock.mockReturnValue(true)
+    onlineMock.mockRestore()
     window.dispatchEvent(new Event('online'))
 
     await sleep(50)
@@ -664,8 +665,6 @@ describe('useMutation', () => {
       failureReason: null,
       data: 'data',
     })
-
-    onlineMock.mockRestore()
   })
 
   it('should not change state if unmounted', async () => {

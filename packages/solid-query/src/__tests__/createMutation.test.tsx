@@ -535,6 +535,8 @@ describe('createMutation', () => {
       ).toBeInTheDocument()
     })
 
+    window.dispatchEvent(new Event('offline'))
+
     fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
 
     await waitFor(() => {
@@ -545,7 +547,7 @@ describe('createMutation', () => {
 
     expect(count).toBe(0)
 
-    onlineMock.mockReturnValue(true)
+    onlineMock.mockRestore()
     window.dispatchEvent(new Event('online'))
 
     await sleep(100)
@@ -557,8 +559,6 @@ describe('createMutation', () => {
     })
 
     expect(count).toBe(2)
-
-    onlineMock.mockRestore()
   })
 
   it('should call onMutate even if paused', async () => {
@@ -595,6 +595,8 @@ describe('createMutation', () => {
 
     await screen.findByText('data: null, status: idle, isPaused: false')
 
+    window.dispatchEvent(new Event('offline'))
+
     fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
 
     await screen.findByText('data: null, status: pending, isPaused: true')
@@ -602,15 +604,13 @@ describe('createMutation', () => {
     expect(onMutate).toHaveBeenCalledTimes(1)
     expect(onMutate).toHaveBeenCalledWith('todo')
 
-    onlineMock.mockReturnValue(true)
+    onlineMock.mockRestore()
     window.dispatchEvent(new Event('online'))
 
     await screen.findByText('data: 1, status: success, isPaused: false')
 
     expect(onMutate).toHaveBeenCalledTimes(1)
     expect(count).toBe(1)
-
-    onlineMock.mockRestore()
   })
 
   it('should optimistically go to paused state if offline', async () => {
@@ -693,6 +693,7 @@ describe('createMutation', () => {
       createEffect(() => {
         const { mutate } = mutation
         setActTimeout(() => {
+          window.dispatchEvent(new Event('offline'))
           mutate('todo')
         }, 10)
       })
@@ -734,7 +735,7 @@ describe('createMutation', () => {
       failureReason: new Error('oops'),
     })
 
-    onlineMock.mockReturnValue(true)
+    onlineMock.mockRestore()
     window.dispatchEvent(new Event('online'))
 
     await sleep(50)
@@ -753,8 +754,6 @@ describe('createMutation', () => {
       failureReason: null,
       data: 'data',
     })
-
-    onlineMock.mockRestore()
   })
 
   it('should not change state if unmounted', async () => {
