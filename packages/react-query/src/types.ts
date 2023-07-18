@@ -64,20 +64,20 @@ export type UseQueryResult<
   TError = DefaultError,
 > = UseBaseQueryResult<TData, TError>
 
-export type DefinedUseBaseQueryResult<
-  TData = unknown,
-  TError = DefaultError,
-> = DefinedQueryObserverResult<TData, TError>
-
 export type DefinedUseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = DefinedUseBaseQueryResult<TData, TError>
+> = DefinedQueryObserverResult<TData, TError>
 
 export type UseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = InfiniteQueryObserverResult<TData, TError>
+
+export type DefinedUseInfiniteQueryResult<
+  TData = unknown,
+  TError = DefaultError,
+> = DefinedQueryObserverResult<TData, TError>
 
 export interface UseMutationOptions<
   TData = unknown,

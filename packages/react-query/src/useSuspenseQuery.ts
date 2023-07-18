@@ -16,9 +16,14 @@ export function useSuspenseQuery<
     'enabled' | 'suspense' | 'throwOnError' | 'placeholderData'
   >,
   queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> {
+): Omit<DefinedUseQueryResult<TData, TError>, 'isPlaceholderData'> {
   return useBaseQuery(
-    options,
+    {
+      ...options,
+      enabled: true,
+      suspense: true,
+      throwOnError: true,
+    },
     QueryObserver,
     queryClient,
   ) as DefinedUseQueryResult<TData, TError>

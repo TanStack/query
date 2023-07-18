@@ -10,7 +10,6 @@ import type {
 } from '@tanstack/query-core'
 import type { UseInfiniteQueryOptions, UseInfiniteQueryResult } from './types'
 
-// HOOK
 export function useInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,
