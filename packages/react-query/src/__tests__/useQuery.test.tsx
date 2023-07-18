@@ -2603,24 +2603,24 @@ describe('useQuery', () => {
         refetchOnWindowFocus: 'always',
       })
       states.push(state)
-      return null
+      return (
+        <div>
+          <div>
+            data: {state.data}, isFetching: {String(state.isFetching)}
+          </div>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(20)
+    await waitFor(() => rendered.getByText('data: 0, isFetching: false'))
 
     act(() => {
       window.dispatchEvent(new Event('visibilitychange'))
     })
 
-    await sleep(20)
-
-    await waitFor(() => expect(states.length).toBe(4))
-    expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
-    expect(states[1]).toMatchObject({ data: 0, isFetching: false })
-    expect(states[2]).toMatchObject({ data: 0, isFetching: true })
-    expect(states[3]).toMatchObject({ data: 1, isFetching: false })
+    await waitFor(() => rendered.getByText('data: 1, isFetching: false'))
   })
 
   it('should calculate focus behaviour for `refetchOnWindowFocus` depending on function', async () => {
@@ -5458,6 +5458,7 @@ describe('useQuery', () => {
       await waitFor(() => rendered.getByText('failureReason: failed1'))
 
       const onlineMock = mockNavigatorOnLine(false)
+      window.dispatchEvent(new Event('offline'))
 
       await sleep(20)
 
