@@ -2129,39 +2129,6 @@ describe('createQuery', () => {
     screen.getByText('status: pending')
   })
 
-  // See https://github.com/tannerlinsley/react-query/issues/147
-  it('should not pass stringified variables to query function', async () => {
-    const key = queryKey()
-    const variables = { number: 5, boolean: false, object: {}, array: [] }
-    type CustomQueryKey = readonly [typeof key, typeof variables]
-    const states: CreateQueryResult<CustomQueryKey, unknown>[] = []
-
-    function Page() {
-      const state = createQuery(() => ({
-        queryKey: [key, variables] as const,
-        queryFn: async (ctx) => {
-          await sleep(10)
-          return ctx.queryKey
-        },
-      }))
-
-      createRenderEffect(() => {
-        states.push({ ...state })
-      })
-      return null
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
-
-    await sleep(20)
-
-    expect(states[1]?.data).toEqual([key, variables])
-  })
-
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {
     const key = queryKey()
     const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')

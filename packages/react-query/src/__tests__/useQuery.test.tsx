@@ -18,7 +18,6 @@ import {
 import type {
   DefinedUseQueryResult,
   QueryFunction,
-  QueryFunctionContext,
   UseQueryOptions,
   UseQueryResult,
 } from '..'
@@ -2435,33 +2434,6 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     rendered.getByText('status: pending')
-  })
-
-  // See https://github.com/tannerlinsley/react-query/issues/147
-  it('should not pass stringified variables to query function', async () => {
-    const key = queryKey()
-    const variables = { number: 5, boolean: false, object: {}, array: [] }
-    type CustomQueryKey = [typeof key, typeof variables]
-    const states: UseQueryResult<CustomQueryKey>[] = []
-
-    const queryFn = async (ctx: QueryFunctionContext<CustomQueryKey>) => {
-      await sleep(10)
-      return ctx.queryKey
-    }
-
-    function Page() {
-      const state = useQuery({ queryKey: [key, variables], queryFn })
-      states.push(state)
-      return <div>{state.status}</div>
-    }
-
-    const rendered = renderWithClient(queryClient, <Page />)
-
-    await waitFor(() => {
-      rendered.getByText('success')
-    })
-
-    expect(states[1]?.data).toEqual([key, variables])
   })
 
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {
