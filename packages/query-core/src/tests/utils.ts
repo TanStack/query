@@ -15,7 +15,9 @@ export function mockVisibilityState(
   return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
-export function mockOnlineManagerIsOnline(value: boolean): SpyInstance<[], boolean> {
+export function mockOnlineManagerIsOnline(
+  value: boolean,
+): SpyInstance<[], boolean> {
   return vi.spyOn(onlineManager, 'isOnline').mockReturnValue(value)
 }
 
