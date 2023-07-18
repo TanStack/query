@@ -1,19 +1,19 @@
 import * as React from 'react'
 import { render, waitFor } from '@testing-library/react'
 
-import type {
-  UseQueryResult,
-  DefinedUseQueryResult,
-} from '@tanstack/react-query'
-import { QueryClient, useQuery, useQueries } from '@tanstack/react-query'
+import { QueryClient, useQueries, useQuery } from '@tanstack/react-query'
+import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
+
+import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
+import { createQueryClient, mockLogger, queryKey, sleep } from './utils'
 import type {
   PersistedClient,
   Persister,
 } from '@tanstack/query-persist-client-core'
-import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
-
-import { createQueryClient, mockLogger, queryKey, sleep } from './utils'
-import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
+import type {
+  DefinedUseQueryResult,
+  UseQueryResult,
+} from '@tanstack/react-query'
 
 const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined
@@ -325,7 +325,7 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('data: null'))
     await waitFor(() => rendered.getByText('data: hydrated'))
 
-    expect(states).toHaveLength(3)
+    expect(states).toHaveLength(2)
 
     expect(fetched).toBe(false)
 
@@ -340,9 +340,6 @@ describe('PersistQueryClientProvider', () => {
       fetchStatus: 'idle',
       data: 'hydrated',
     })
-
-    // #5443 seems like we get an extra render now ...
-    expect(states[1]).toStrictEqual(states[2])
   })
 
   test('should call onSuccess after successful restoring', async () => {

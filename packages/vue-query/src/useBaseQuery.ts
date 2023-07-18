@@ -1,22 +1,22 @@
 import {
-  onScopeDispose,
-  toRefs,
-  readonly,
-  reactive,
-  watch,
   computed,
+  onScopeDispose,
+  reactive,
+  readonly,
+  toRefs,
   unref,
+  watch,
 } from 'vue-demi'
+import { useQueryClient } from './useQueryClient'
+import { cloneDeepUnref, isQueryKey, updateState } from './utils'
 import type { ToRefs, UnwrapRef } from 'vue-demi'
 import type {
-  QueryObserver,
+  QueryFunction,
   QueryKey,
+  QueryObserver,
   QueryObserverOptions,
   QueryObserverResult,
-  QueryFunction,
 } from '@tanstack/query-core'
-import { useQueryClient } from './useQueryClient'
-import { updateState, isQueryKey, cloneDeepUnref } from './utils'
 import type { MaybeRef, WithQueryClientKey } from './types'
 import type { UseQueryOptions } from './useQuery'
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'

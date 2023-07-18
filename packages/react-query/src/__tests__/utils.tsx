@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { act, render } from '@testing-library/react'
-import type { ContextOptions, QueryClientConfig, MutationOptions } from '..'
-import { QueryClient, QueryClientProvider } from '..'
 import * as utils from '@tanstack/query-core'
+import { QueryClient, QueryClientProvider } from '..'
+import type { ContextOptions, MutationOptions, QueryClientConfig } from '..'
 
 export function renderWithClient(
   client: QueryClient,

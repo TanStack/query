@@ -1,7 +1,7 @@
 import { getCurrentInstance, inject } from 'vue-demi'
 
-import type { QueryClient } from './queryClient'
 import { getClientKey } from './utils'
+import type { QueryClient } from './queryClient'
 
 export function useQueryClient(id = ''): QueryClient {
   const vm = getCurrentInstance()?.proxy

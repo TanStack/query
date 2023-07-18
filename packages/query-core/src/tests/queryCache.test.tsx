@@ -1,8 +1,8 @@
-import { sleep, queryKey, createQueryClient } from './utils'
-import type { QueryClient } from '..'
-import { QueryCache, QueryObserver } from '..'
-import type { Query } from '.././query'
 import { waitFor } from '@testing-library/react'
+import { QueryCache, QueryObserver } from '..'
+import { createQueryClient, queryKey, sleep } from './utils'
+import type { QueryClient } from '..'
+import type { Query } from '.././query'
 
 describe('queryCache', () => {
   let queryClient: QueryClient

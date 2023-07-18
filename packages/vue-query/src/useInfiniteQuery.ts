@@ -1,19 +1,19 @@
 import { InfiniteQueryObserver } from '@tanstack/query-core'
+import { useBaseQuery } from './useBaseQuery'
 import type { UnwrapRef } from 'vue-demi'
 import type {
-  QueryObserver,
+  InfiniteQueryObserverResult,
   QueryFunction,
   QueryKey,
-  InfiniteQueryObserverResult,
+  QueryObserver,
 } from '@tanstack/query-core'
 
-import { useBaseQuery } from './useBaseQuery'
 import type { UseQueryReturnType } from './useBaseQuery'
 
 import type {
-  WithQueryClientKey,
-  VueInfiniteQueryObserverOptions,
   DistributiveOmit,
+  VueInfiniteQueryObserverOptions,
+  WithQueryClientKey,
 } from './types'
 
 export type UseInfiniteQueryOptions<

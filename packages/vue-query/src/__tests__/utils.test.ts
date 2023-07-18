@@ -1,5 +1,5 @@
-import { isQueryKey, updateState, cloneDeep, cloneDeepUnref } from '../utils'
 import { reactive, ref } from 'vue-demi'
+import { cloneDeep, cloneDeepUnref, isQueryKey, updateState } from '../utils'
 
 describe('utils', () => {
   describe('isQueryKey', () => {

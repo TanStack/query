@@ -2,8 +2,8 @@ import { fireEvent, waitFor } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
 
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 import { QueryCache, QueryErrorResetBoundary, useQueries, useQuery } from '..'
+import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 
 // TODO: This should be removed with the types for react-error-boundary get updated.
 declare module 'react-error-boundary' {

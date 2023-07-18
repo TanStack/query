@@ -1,9 +1,9 @@
-import { computed, unref, onScopeDispose, ref, watch } from 'vue-demi'
-import type { Ref } from 'vue-demi'
-import type { QueryKey, QueryFilters as QF } from '@tanstack/query-core'
-
+import { computed, onScopeDispose, ref, unref, watch } from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref, isQueryKey } from './utils'
+import type { Ref } from 'vue-demi'
+import type { QueryFilters as QF, QueryKey } from '@tanstack/query-core'
+
 import type { MaybeRef, MaybeRefDeep, WithQueryClientKey } from './types'
 
 export type QueryFilters = MaybeRefDeep<WithQueryClientKey<QF>>

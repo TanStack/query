@@ -1,14 +1,14 @@
 import { onScopeDispose, reactive } from 'vue-demi'
 
-import {
-  flushPromises,
-  rejectFetcher,
-  simpleFetcher,
-  getSimpleFetcherWithReturnData,
-} from './test-utils'
 import { useQueries } from '../useQueries'
 import { useQueryClient } from '../useQueryClient'
 import { QueryClient } from '../queryClient'
+import {
+  flushPromises,
+  getSimpleFetcherWithReturnData,
+  rejectFetcher,
+  simpleFetcher,
+} from './test-utils'
 
 jest.mock('../useQueryClient')
 

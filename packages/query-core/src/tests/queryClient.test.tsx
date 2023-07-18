@@ -1,16 +1,16 @@
 import { waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
-import { sleep, queryKey, mockLogger, createQueryClient } from './utils'
+import { InfiniteQueryObserver, MutationObserver, QueryObserver } from '..'
+import { focusManager, onlineManager } from '..'
+import { noop } from '../utils'
+import { createQueryClient, mockLogger, queryKey, sleep } from './utils'
 import type {
   QueryCache,
   QueryClient,
   QueryFunction,
   QueryObserverOptions,
 } from '..'
-import { InfiniteQueryObserver, MutationObserver, QueryObserver } from '..'
-import { focusManager, onlineManager } from '..'
-import { noop } from '../utils'
 
 describe('queryClient', () => {
   let queryClient: QueryClient

@@ -3,9 +3,7 @@ import '@testing-library/jest-dom'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
-import type { QueryClient } from '..'
 import { MutationCache, QueryCache, useMutation } from '..'
-import type { UseMutationResult } from '../types'
 import {
   createQueryClient,
   mockNavigatorOnLine,
@@ -14,6 +12,8 @@ import {
   setActTimeout,
   sleep,
 } from './utils'
+import type { QueryClient } from '..'
+import type { UseMutationResult } from '../types'
 
 describe('useMutation', () => {
   const queryCache = new QueryCache()

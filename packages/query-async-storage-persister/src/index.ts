@@ -1,9 +1,9 @@
+import { asyncThrottle } from './asyncThrottle'
 import type {
   PersistedClient,
   Persister,
   Promisable,
 } from '@tanstack/query-persist-client-core'
-import { asyncThrottle } from './asyncThrottle'
 
 interface AsyncStorage {
   getItem: (key: string) => Promise<string | null>

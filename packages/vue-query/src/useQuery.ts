@@ -1,17 +1,17 @@
-import type { ToRefs, UnwrapRef } from 'vue-demi'
 import { QueryObserver } from '@tanstack/query-core'
+import { useBaseQuery } from './useBaseQuery'
+import type { ToRefs, UnwrapRef } from 'vue-demi'
 import type {
+  DefinedQueryObserverResult,
   QueryFunction,
   QueryKey,
   QueryObserverResult,
-  DefinedQueryObserverResult,
 } from '@tanstack/query-core'
-import { useBaseQuery } from './useBaseQuery'
 import type { UseQueryReturnType as UQRT } from './useBaseQuery'
 import type {
-  WithQueryClientKey,
-  VueQueryObserverOptions,
   DistributiveOmit,
+  VueQueryObserverOptions,
+  WithQueryClientKey,
 } from './types'
 
 export type UseQueryReturnType<TData, TError> = DistributiveOmit<

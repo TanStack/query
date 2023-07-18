@@ -2,15 +2,15 @@
 
 import type * as React from 'react'
 import type {
+  DefinedQueryObserverResult,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
+  MutateFunction,
+  MutationObserverOptions,
   MutationObserverResult,
+  QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
-  QueryKey,
-  MutationObserverOptions,
-  MutateFunction,
-  DefinedQueryObserverResult,
 } from '@tanstack/query-core'
 import type { QueryClient } from '@tanstack/query-core'
 
