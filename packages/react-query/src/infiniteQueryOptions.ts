@@ -1,3 +1,4 @@
+import type { InfiniteData } from '@tanstack/query-core'
 import type { UseInfiniteQueryOptions } from './types'
 import type { DefaultError, QueryKey } from '@tanstack/query-core'
 
@@ -34,7 +35,7 @@ export type DefinedInitialDataInfiniteOptions<
   TQueryKey,
   TPageParam
 > & {
-  initialData: TQueryFnData | (() => TQueryFnData)
+  initialData: InfiniteData<TQueryData> | (() => InfiniteData<TQueryData>)
 }
 
 export function infiniteQueryOptions<

@@ -1,20 +1,6 @@
 'use client'
 import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
-import {
-  DefinedInitialDataOptions,
-  UndefinedInitialDataOptions,
-} from './queryOptions'
-import type {
-  DefinedUseInfiniteQueryResult,
-  DefinedUseQueryResult,
-  UseQueryResult,
-} from './types'
-import type {
-  DefinedInitialDataInfiniteOptions,
-  UndefinedInitialDataInfiniteOptions,
-} from './infiniteQueryOptions'
-import type { UseInfiniteQueryOptions, UseInfiniteQueryResult } from './types'
 import type {
   DefaultError,
   InfiniteData,
@@ -22,6 +8,15 @@ import type {
   QueryKey,
   QueryObserver,
 } from '@tanstack/query-core'
+import type {
+  DefinedUseInfiniteQueryResult,
+  UseInfiniteQueryOptions,
+  UseInfiniteQueryResult,
+} from './types'
+import type {
+  DefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
+} from './infiniteQueryOptions'
 
 export function useInfiniteQuery<
   TQueryFnData,

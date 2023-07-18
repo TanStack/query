@@ -2,6 +2,7 @@
 
 import type {
   DefaultError,
+  DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
@@ -77,7 +78,7 @@ export type UseInfiniteQueryResult<
 export type DefinedUseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = DefinedQueryObserverResult<TData, TError>
+> = DefinedInfiniteQueryObserverResult<TData, TError>
 
 export interface UseMutationOptions<
   TData = unknown,
