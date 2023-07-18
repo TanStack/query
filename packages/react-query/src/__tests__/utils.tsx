@@ -1,8 +1,9 @@
 import * as React from 'react'
 import { act, render } from '@testing-library/react'
+
 import * as utils from '@tanstack/query-core'
 import { vi } from 'vitest'
-import { QueryClient, QueryClientProvider } from '..'
+import { QueryClient, QueryClientProvider, onlineManager } from '..'
 import type { QueryClientConfig } from '..'
 import type { SpyInstance } from 'vitest'
 
@@ -52,8 +53,10 @@ export function mockVisibilityState(
   return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
-export function mockNavigatorOnLine(value: boolean): SpyInstance<[], boolean> {
-  return vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
+export function mockOnlineManagerIsOnline(
+  value: boolean,
+): SpyInstance<[], boolean> {
+  return vi.spyOn(onlineManager, 'isOnline').mockReturnValue(value)
 }
 
 let queryKeyCount = 0

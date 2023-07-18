@@ -485,13 +485,11 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
             <button
               onClick={() => {
                 if (offline()) {
-                  onlineManager().setOnline(undefined)
+                  onlineManager().setOnline(true)
                   setOffline(false)
-                  window.dispatchEvent(new Event('online'))
                 } else {
                   onlineManager().setOnline(false)
                   setOffline(true)
-                  window.dispatchEvent(new Event('offline'))
                 }
               }}
               class={styles.actionsBtn}

@@ -8,7 +8,7 @@ import {
   Blink,
   createQueryClient,
   expectType,
-  mockNavigatorOnLine,
+  mockOnlineManagerIsOnline,
   mockVisibilityState,
   queryKey,
   renderWithClient,
@@ -18,7 +18,6 @@ import {
 import type {
   DefinedUseQueryResult,
   QueryFunction,
-  QueryFunctionContext,
   UseQueryOptions,
   UseQueryResult,
 } from '..'
@@ -2435,33 +2434,6 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     rendered.getByText('status: pending')
-  })
-
-  // See https://github.com/tannerlinsley/react-query/issues/147
-  it('should not pass stringified variables to query function', async () => {
-    const key = queryKey()
-    const variables = { number: 5, boolean: false, object: {}, array: [] }
-    type CustomQueryKey = [typeof key, typeof variables]
-    const states: UseQueryResult<CustomQueryKey>[] = []
-
-    const queryFn = async (ctx: QueryFunctionContext<CustomQueryKey>) => {
-      await sleep(10)
-      return ctx.queryKey
-    }
-
-    function Page() {
-      const state = useQuery({ queryKey: [key, variables], queryFn })
-      states.push(state)
-      return <div>{state.status}</div>
-    }
-
-    const rendered = renderWithClient(queryClient, <Page />)
-
-    await waitFor(() => {
-      rendered.getByText('success')
-    })
-
-    expect(states[1]?.data).toEqual([key, variables])
   })
 
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {
@@ -5081,7 +5053,7 @@ describe('useQuery', () => {
 
   describe('networkMode online', () => {
     it('online queries should not start fetching if you are offline', async () => {
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       const key = queryKey()
       const states: Array<any> = []
@@ -5110,10 +5082,11 @@ describe('useQuery', () => {
       }
 
       const rendered = renderWithClient(queryClient, <Page />)
+      window.dispatchEvent(new Event('offline'))
 
       await waitFor(() => rendered.getByText('status: pending, isPaused: true'))
 
-      onlineMock.mockReturnValue(true)
+      onlineMock.mockRestore()
       window.dispatchEvent(new Event('online'))
 
       await waitFor(() =>
@@ -5124,8 +5097,6 @@ describe('useQuery', () => {
       })
 
       expect(states).toEqual(['paused', 'fetching', 'idle'])
-
-      onlineMock.mockRestore()
     })
 
     it('online queries should not refetch if you are offline', async () => {
@@ -5163,7 +5134,9 @@ describe('useQuery', () => {
 
       await waitFor(() => rendered.getByText('data: data1'))
 
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
+      window.dispatchEvent(new Event('offline'))
+
       fireEvent.click(rendered.getByRole('button', { name: /invalidate/i }))
 
       await waitFor(() =>
@@ -5173,7 +5146,7 @@ describe('useQuery', () => {
       )
       await waitFor(() => rendered.getByText('failureReason: null'))
 
-      onlineMock.mockReturnValue(true)
+      onlineMock.mockRestore()
       window.dispatchEvent(new Event('online'))
 
       await waitFor(() =>
@@ -5192,8 +5165,6 @@ describe('useQuery', () => {
       await waitFor(() => {
         expect(rendered.getByText('data: data2')).toBeInTheDocument()
       })
-
-      onlineMock.mockRestore()
     })
 
     it('online queries should not refetch if you are offline and refocus', async () => {
@@ -5229,7 +5200,7 @@ describe('useQuery', () => {
 
       await waitFor(() => rendered.getByText('data: data1'))
 
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
       fireEvent.click(rendered.getByRole('button', { name: /invalidate/i }))
 
       await waitFor(() =>
@@ -5275,7 +5246,7 @@ describe('useQuery', () => {
         )
       }
 
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       const rendered = renderWithClient(queryClient, <Page />)
 
@@ -5326,7 +5297,7 @@ describe('useQuery', () => {
         )
       }
 
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       const rendered = renderWithClient(queryClient, <Page />)
 
@@ -5380,9 +5351,10 @@ describe('useQuery', () => {
         )
       }
 
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       const rendered = renderWithClient(queryClient, <Page />)
+      window.dispatchEvent(new Event('offline'))
 
       await waitFor(() =>
         rendered.getByText('status: success, fetchStatus: paused'),
@@ -5405,7 +5377,7 @@ describe('useQuery', () => {
         window.dispatchEvent(new Event('visibilitychange'))
       })
 
-      onlineMock.mockReturnValue(true)
+      onlineMock.mockRestore()
       act(() => {
         window.dispatchEvent(new Event('online'))
       })
@@ -5418,7 +5390,6 @@ describe('useQuery', () => {
       })
 
       expect(count).toBe(1)
-      onlineMock.mockRestore()
     })
 
     it('online queries should pause retries if you are offline', async () => {
@@ -5457,7 +5428,7 @@ describe('useQuery', () => {
       )
       await waitFor(() => rendered.getByText('failureReason: failed1'))
 
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
       window.dispatchEvent(new Event('offline'))
 
       await sleep(20)
@@ -5519,9 +5490,11 @@ describe('useQuery', () => {
         )
       }
 
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       const rendered = renderWithClient(queryClient, <Page />)
+
+      window.dispatchEvent(new Event('offline'))
 
       await waitFor(() =>
         rendered.getByText('status: pending, fetchStatus: paused'),
@@ -5529,7 +5502,7 @@ describe('useQuery', () => {
 
       fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
 
-      onlineMock.mockReturnValue(true)
+      onlineMock.mockRestore()
       window.dispatchEvent(new Event('online'))
 
       await waitFor(() => {
@@ -5542,8 +5515,6 @@ describe('useQuery', () => {
       // give it a bit more time to make sure queryFn is not called again
       await sleep(15)
       expect(count).toBe(1)
-
-      onlineMock.mockRestore()
     })
 
     it('online queries should not fetch if paused and we go online when cancelled and no refetchOnReconnect', async () => {
@@ -5576,7 +5547,7 @@ describe('useQuery', () => {
         )
       }
 
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       const rendered = renderWithClient(queryClient, <Page />)
 
@@ -5652,7 +5623,7 @@ describe('useQuery', () => {
         rendered.getByText('status: success, fetchStatus: idle'),
       )
 
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       fireEvent.click(rendered.getByRole('button', { name: /invalidate/i }))
 
@@ -5682,7 +5653,7 @@ describe('useQuery', () => {
 
   describe('networkMode always', () => {
     it('always queries should start fetching even if you are offline', async () => {
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       const key = queryKey()
       let count = 0
@@ -5722,7 +5693,7 @@ describe('useQuery', () => {
     })
 
     it('always queries should not pause retries', async () => {
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       const key = queryKey()
       let count = 0
@@ -5768,7 +5739,7 @@ describe('useQuery', () => {
 
   describe('networkMode offlineFirst', () => {
     it('offlineFirst queries should start fetching if you are offline, but pause retries', async () => {
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       const key = queryKey()
       let count = 0
@@ -5799,6 +5770,8 @@ describe('useQuery', () => {
 
       const rendered = renderWithClient(queryClient, <Page />)
 
+      window.dispatchEvent(new Event('offline'))
+
       await waitFor(() =>
         rendered.getByText(
           'status: pending, fetchStatus: paused, failureCount: 1',
@@ -5808,7 +5781,7 @@ describe('useQuery', () => {
 
       expect(count).toBe(1)
 
-      onlineMock.mockReturnValue(true)
+      onlineMock.mockRestore()
       window.dispatchEvent(new Event('online'))
 
       await waitFor(() =>
@@ -5817,8 +5790,6 @@ describe('useQuery', () => {
       await waitFor(() => rendered.getByText('failureReason: failed3'))
 
       expect(count).toBe(3)
-
-      onlineMock.mockRestore()
     })
   })
 

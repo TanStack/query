@@ -1,5 +1,6 @@
 import { Show, createEffect, createSignal, onCleanup } from 'solid-js'
 import { vi } from 'vitest'
+import { onlineManager } from '@tanstack/query-core'
 import { QueryClient } from '../QueryClient'
 import type { QueryClientConfig } from '@tanstack/query-core'
 import type { ParentProps } from 'solid-js'
@@ -41,8 +42,10 @@ export function mockVisibilityState(
   return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
-export function mockNavigatorOnLine(value: boolean): SpyInstance<[], boolean> {
-  return vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
+export function mockOnlineManagerIsOnline(
+  value: boolean,
+): SpyInstance<[], boolean> {
+  return vi.spyOn(onlineManager, 'isOnline').mockReturnValue(value)
 }
 
 export function sleep(timeout: number): Promise<void> {

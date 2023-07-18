@@ -10,6 +10,7 @@ It can be used to change the default event listeners or to manually change the f
 Its available methods are:
 
 - [`setEventListener`](#focusmanagerseteventlistener)
+- [`subscribe`](#focusmanagersubscribe)
 - [`setFocused`](#focusmanagersetfocused)
 - [`isFocused`](#focusmanagerisfocused)
 
@@ -33,9 +34,21 @@ focusManager.setEventListener((handleFocus) => {
 })
 ```
 
+## `focusManager.subscribe`
+
+`subscribe` can be used to subscribe to changes in the visibility state. It returns an unsubscribe function:
+
+```tsx
+import { focusManager } from '@tanstack/react-query'
+
+const unsubscribe = focusManager.subscribe(isVisible => {
+  console.log('isVisible', isVisible)
+})
+```
+
 ## `focusManager.setFocused`
 
-`setFocused` can be used to manually set the focus state. Set `undefined` to fallback to the default focus check.
+`setFocused` can be used to manually set the focus state. Set `undefined` to fall back to the default focus check.
 
 ```tsx
 import { focusManager } from '@tanstack/react-query'

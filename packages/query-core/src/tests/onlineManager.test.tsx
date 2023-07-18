@@ -31,7 +31,7 @@ describe('onlineManager', () => {
   test('setEventListener should use online boolean arg', async () => {
     let count = 0
 
-    const setup = (setOnline: (online?: boolean) => void) => {
+    const setup = (setOnline: (online: boolean) => void) => {
       setTimeout(() => {
         count++
         setOnline(false)
@@ -154,19 +154,15 @@ describe('onlineManager', () => {
 
     onlineManager.subscribe(listener)
 
-    onlineManager.setOnline(true)
-    onlineManager.setOnline(true)
-
-    expect(listener).toHaveBeenCalledTimes(1)
-
     onlineManager.setOnline(false)
     onlineManager.setOnline(false)
+
+    expect(listener).toHaveBeenNthCalledWith(1, false)
+
+    onlineManager.setOnline(true)
+    onlineManager.setOnline(true)
 
     expect(listener).toHaveBeenCalledTimes(2)
-
-    onlineManager.setOnline(undefined)
-    onlineManager.setOnline(undefined)
-
-    expect(listener).toHaveBeenCalledTimes(3)
+    expect(listener).toHaveBeenNthCalledWith(2, true)
   })
 })

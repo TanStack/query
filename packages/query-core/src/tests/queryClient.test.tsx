@@ -1,7 +1,6 @@
 import { waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
-import { vi } from 'vitest'
 import {
   MutationObserver,
   QueryObserver,
@@ -11,7 +10,7 @@ import {
 import { noop } from '../utils'
 import {
   createQueryClient,
-  mockNavigatorOnLine,
+  mockOnlineManagerIsOnline,
   queryKey,
   sleep,
 } from './utils'
@@ -1074,7 +1073,7 @@ describe('queryClient', () => {
       const key1 = queryKey()
       const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       await queryClient.refetchQueries({ queryKey: key1 })
 
@@ -1088,7 +1087,7 @@ describe('queryClient', () => {
       queryClient.setQueryDefaults(key1, { networkMode: 'always' })
       const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
-      const onlineMock = mockNavigatorOnLine(false)
+      const onlineMock = mockOnlineManagerIsOnline(false)
 
       await queryClient.refetchQueries({ queryKey: key1 })
 
@@ -1394,7 +1393,7 @@ describe('queryClient', () => {
       queryCacheOnFocusSpy.mockRestore()
       queryCacheOnOnlineSpy.mockRestore()
       mutationCacheResumePausedMutationsSpy.mockRestore()
-      onlineManager.setOnline(undefined)
+      onlineManager.setOnline(true)
     })
 
     test('should resume paused mutations when coming online', async () => {
@@ -1424,7 +1423,7 @@ describe('queryClient', () => {
         expect(observer1.getCurrentResult().status).toBe('success')
       })
 
-      onlineManager.setOnline(undefined)
+      onlineManager.setOnline(true)
     })
 
     test('should resume paused mutations one after the other when invoked manually at the same time', async () => {
@@ -1459,7 +1458,7 @@ describe('queryClient', () => {
         expect(observer2.getCurrentResult().isPaused).toBeTruthy()
       })
 
-      onlineManager.setOnline(undefined)
+      onlineManager.setOnline(true)
       void queryClient.resumePausedMutations()
       await sleep(5)
       await queryClient.resumePausedMutations()
@@ -1491,6 +1490,7 @@ describe('queryClient', () => {
         'resumePausedMutations',
       )
 
+      onlineManager.setOnline(false)
       onlineManager.setOnline(true)
       expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1)
       expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(1)
@@ -1503,7 +1503,7 @@ describe('queryClient', () => {
       queryCacheOnOnlineSpy.mockRestore()
       mutationCacheResumePausedMutationsSpy.mockRestore()
       focusManager.setFocused(undefined)
-      onlineManager.setOnline(undefined)
+      onlineManager.setOnline(true)
     })
 
     test('should not notify queryCache and mutationCache after multiple mounts/unmounts', async () => {
@@ -1538,7 +1538,7 @@ describe('queryClient', () => {
       queryCacheOnOnlineSpy.mockRestore()
       mutationCacheResumePausedMutationsSpy.mockRestore()
       focusManager.setFocused(undefined)
-      onlineManager.setOnline(undefined)
+      onlineManager.setOnline(true)
     })
   })
 

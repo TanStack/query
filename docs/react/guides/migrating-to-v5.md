@@ -276,6 +276,14 @@ There are some caveats to this change however, which you must be aware of:
 
 The `visibilitychange` event is used exclusively now. This is possible because we only support browsers that support the `visibilitychange` event. This fixes a bunch of issues [as listed here](https://github.com/TanStack/query/pull/4805).
 
+### Network status no longer relies on the `navigator.onLine` property
+
+`navigator.onLine` doesn't work well in Chromium based browsers. There are [a lot of issues](https://bugs.chromium.org/p/chromium/issues/list?q=navigator.online) around false negatives, which lead to Queries being wrongfully marked as `offline`.
+
+To circumvent this, we now always start with `online: true` and only listen to `online` and `offline` events to update the status.
+
+This should reduce the likelihood of false negatives, however, it might mean false positives for offline apps that load via serviceWorkers, which can work even without an internet connection.
+
 ### Removed custom `context` prop in favor of custom `queryClient` instance
 
 In v4, we introduced the possibility to pass a custom `context` to all react-query hooks. This allowed for proper isolation when using MicroFrontends.

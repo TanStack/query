@@ -5,7 +5,7 @@ import { MutationCache } from '../mutationCache'
 import {
   createQueryClient,
   executeMutation,
-  mockNavigatorOnLine,
+  mockOnlineManagerIsOnline,
   sleep,
 } from './utils'
 
@@ -347,7 +347,7 @@ describe('dehydration and rehydration', () => {
   test('should be able to dehydrate mutations and continue on hydration', async () => {
     const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
-    const onlineMock = mockNavigatorOnLine(false)
+    const onlineMock = mockOnlineManagerIsOnline(false)
 
     const serverAddTodo = vi
       .fn()

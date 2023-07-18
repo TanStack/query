@@ -1,6 +1,6 @@
 import { act } from '@testing-library/react'
 import { vi } from 'vitest'
-import { QueryClient } from '..'
+import { QueryClient, onlineManager } from '..'
 import * as utils from '../utils'
 import type { SpyInstance } from 'vitest'
 import type { MutationOptions, QueryClientConfig } from '..'
@@ -15,8 +15,10 @@ export function mockVisibilityState(
   return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
-export function mockNavigatorOnLine(value: boolean): SpyInstance<[], boolean> {
-  return vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
+export function mockOnlineManagerIsOnline(
+  value: boolean,
+): SpyInstance<[], boolean> {
+  return vi.spyOn(onlineManager, 'isOnline').mockReturnValue(value)
 }
 
 let queryKeyCount = 0
