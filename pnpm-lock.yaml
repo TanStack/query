@@ -12,18 +12,6 @@ importers:
       '@arethetypeswrong/cli':
         specifier: ^0.6.0
         version: 0.6.0
-      '@babel/core':
-        specifier: ^7.21.8
-        version: 7.21.8
-      '@babel/preset-env':
-        specifier: ^7.21.5
-        version: 7.21.5(@babel/core@7.21.8)
-      '@babel/preset-react':
-        specifier: ^7.18.6
-        version: 7.18.6(@babel/core@7.21.8)
-      '@babel/preset-typescript':
-        specifier: ^7.21.5
-        version: 7.21.5(@babel/core@7.21.8)
       '@commitlint/parse':
         specifier: ^17.6.5
         version: 17.6.5
@@ -84,9 +72,6 @@ importers:
       axios:
         specifier: ^1.4.0
         version: 1.4.0
-      babel-preset-solid:
-        specifier: ^1.6.10
-        version: 1.6.10(@babel/core@7.21.8)
       chalk:
         specifier: ^5.2.0
         version: 5.2.0
@@ -1362,7 +1347,7 @@ importers:
         version: 0.11.6
       jscodeshift:
         specifier: 0.15.0
-        version: 0.15.0(@babel/preset-env@7.21.5)
+        version: 0.15.0
 
   packages/eslint-plugin-query:
     dependencies:
@@ -2206,6 +2191,7 @@ packages:
   /@babel/helper-validator-option@7.18.6:
     resolution: {integrity: sha512-XO7gESt5ouv/LRJdrVjkShckw6STTaB7l9BrpBaAHDeF5YZT+01PCwmR0SJHnkW6i8OwW/EVWRShfi4j2x+KQw==}
     engines: {node: '>=6.9.0'}
+    dev: false
 
   /@babel/helper-validator-option@7.22.5:
     resolution: {integrity: sha512-R3oB6xlIVKUnxNUxbmgq7pKjxpru24zlimpE8WK47fACIlM0II/Hm1RS8IaOI7NgCr6LNS+jl5l75m20npAziw==}
@@ -3095,16 +3081,7 @@ packages:
     dependencies:
       '@babel/core': 7.21.8
       '@babel/helper-plugin-utils': 7.19.0
-
-  /@babel/plugin-transform-react-jsx-development@7.18.6(@babel/core@7.21.8):
-    resolution: {integrity: sha512-SA6HEjwYFKF7WDjWcMcMGUimmw/nhNRDWxr+KaLSCrkD/LMDBvWRmHAYgE1HDeF8KUuI8OAu+RT6EOtKxSW2qA==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/core': 7.21.8
-      '@babel/plugin-transform-react-jsx': 7.19.0(@babel/core@7.21.8)
-    dev: true
+    dev: false
 
   /@babel/plugin-transform-react-jsx-self@7.18.6(@babel/core@7.21.8):
     resolution: {integrity: sha512-A0LQGx4+4Jv7u/tWzoJF7alZwnBDQd6cGLh9P+Ttk4dpiL+J5p7NSNv/9tlEFFJDq3kjxOavWmbm6t0Gk+A3Ig==}
@@ -3156,17 +3133,6 @@ packages:
       '@babel/helper-plugin-utils': 7.19.0
       '@babel/plugin-syntax-jsx': 7.18.6(@babel/core@7.21.8)
       '@babel/types': 7.22.5
-
-  /@babel/plugin-transform-react-pure-annotations@7.18.6(@babel/core@7.21.8):
-    resolution: {integrity: sha512-I8VfEPg9r2TRDdvnHgPepTKvuRomzA8+u+nhY7qSI1fR2hRNebasZEETLyM5mAUr0Ku56OkXJ0I7NHJnO6cJiQ==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/core': 7.21.8
-      '@babel/helper-annotate-as-pure': 7.18.6
-      '@babel/helper-plugin-utils': 7.22.5
-    dev: true
 
   /@babel/plugin-transform-regenerator@7.18.6(@babel/core@7.21.8):
     resolution: {integrity: sha512-poqRI2+qiSdeldcz4wTSTXBRryoq3Gc70ye7m7UD5Ww0nE29IXqMl6r7Nd15WBgRd74vloEMlShtH6CKxVzfmQ==}
@@ -3432,21 +3398,6 @@ packages:
       '@babel/plugin-transform-dotall-regex': 7.18.6(@babel/core@7.21.8)
       '@babel/types': 7.22.5
       esutils: 2.0.3
-
-  /@babel/preset-react@7.18.6(@babel/core@7.21.8):
-    resolution: {integrity: sha512-zXr6atUmyYdiWRVLOZahakYmOBHtWc2WGCkP8PYTgZi0iJXDY2CN180TdrIW4OGOAdLc7TifzDIvtx6izaRIzg==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/core': 7.21.8
-      '@babel/helper-plugin-utils': 7.20.2
-      '@babel/helper-validator-option': 7.18.6
-      '@babel/plugin-transform-react-display-name': 7.18.6(@babel/core@7.21.8)
-      '@babel/plugin-transform-react-jsx': 7.19.0(@babel/core@7.21.8)
-      '@babel/plugin-transform-react-jsx-development': 7.18.6(@babel/core@7.21.8)
-      '@babel/plugin-transform-react-pure-annotations': 7.18.6(@babel/core@7.21.8)
-    dev: true
 
   /@babel/preset-typescript@7.21.5(@babel/core@7.21.8):
     resolution: {integrity: sha512-iqe3sETat5EOrORXiQ6rWfoOg2y68Cs75B9wNxdPW4kixJxh7aXQE1KPdWLDniC24T/6dSnguF33W9j/ZZQcmA==}
@@ -11647,7 +11598,7 @@ packages:
       - supports-color
     dev: false
 
-  /jscodeshift@0.15.0(@babel/preset-env@7.21.5):
+  /jscodeshift@0.15.0:
     resolution: {integrity: sha512-t337Wx7Vy1ffhas7E1KZUHaR9YPdeCfxPvxz9k6DKwYW88pcs1piR1eR9d+7GQZGSQIZd6a+cfIM3XpMe9rFKQ==}
     hasBin: true
     peerDependencies:
@@ -11662,7 +11613,6 @@ packages:
       '@babel/plugin-proposal-nullish-coalescing-operator': 7.18.6(@babel/core@7.21.8)
       '@babel/plugin-proposal-optional-chaining': 7.21.0(@babel/core@7.21.8)
       '@babel/plugin-transform-modules-commonjs': 7.22.5(@babel/core@7.21.8)
-      '@babel/preset-env': 7.21.5(@babel/core@7.21.8)
       '@babel/preset-flow': 7.18.6(@babel/core@7.21.8)
       '@babel/preset-typescript': 7.21.5(@babel/core@7.21.8)
       '@babel/register': 7.18.6(@babel/core@7.21.8)
