@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { render, waitFor } from '@testing-library/react'
 
-import { sleep, queryKey, createQueryClient } from './utils'
-import { QueryClientProvider, QueryCache, useQuery, useQueryClient } from '..'
 import { vi } from 'vitest'
+import { QueryCache, QueryClientProvider, useQuery, useQueryClient } from '..'
+import { createQueryClient, queryKey, sleep } from './utils'
 
 describe('QueryClientProvider', () => {
   test('sets a specific cache for all queries to use', async () => {

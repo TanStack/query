@@ -1,11 +1,5 @@
 'use client'
 
-import type {
-  DehydratedState,
-  DehydrateOptions,
-  HydrateOptions,
-  QueryClient,
-} from '@tanstack/react-query'
 import {
   defaultShouldDehydrateQuery,
   dehydrate,
@@ -13,8 +7,14 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import * as React from 'react'
-import type { HydrationStreamProviderProps } from './HydrationStreamProvider'
 import { createHydrationStreamProvider } from './HydrationStreamProvider'
+import type { HydrationStreamProviderProps } from './HydrationStreamProvider'
+import type {
+  DehydrateOptions,
+  DehydratedState,
+  HydrateOptions,
+  QueryClient,
+} from '@tanstack/react-query'
 
 const stream = createHydrationStreamProvider<DehydratedState>()
 

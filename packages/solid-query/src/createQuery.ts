@@ -1,9 +1,9 @@
-import type { QueryKey, DefaultError } from '@tanstack/query-core'
 import { QueryObserver } from '@tanstack/query-core'
-import type { QueryClient } from './QueryClient'
-import type { Accessor } from 'solid-js'
 import { createMemo } from 'solid-js'
 import { createBaseQuery } from './createBaseQuery'
+import type { DefaultError, QueryKey } from '@tanstack/query-core'
+import type { QueryClient } from './QueryClient'
+import type { Accessor } from 'solid-js'
 import type {
   CreateQueryOptions,
   CreateQueryResult,

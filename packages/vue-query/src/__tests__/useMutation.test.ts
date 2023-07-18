@@ -1,8 +1,8 @@
 import { reactive, ref } from 'vue-demi'
-import { errorMutator, flushPromises, successMutator } from './test-utils'
+import { vi } from 'vitest'
 import { useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
-import { vi } from 'vitest'
+import { errorMutator, flushPromises, successMutator } from './test-utils'
 
 vi.mock('../useQueryClient')
 

@@ -2,14 +2,7 @@
 // Had to disable the lint rule because isServer type is defined as false
 // in solid-js/web package. I'll create a GitHub issue with them to see
 // why that happens.
-import type {
-  QueryKey,
-  QueryObserver,
-  QueryObserverResult,
-} from '@tanstack/query-core'
-import type { QueryClient } from './QueryClient'
 import { hydrate, notifyManager } from '@tanstack/query-core'
-import type { Accessor } from 'solid-js'
 import { isServer } from 'solid-js/web'
 import {
   createComputed,
@@ -20,8 +13,15 @@ import {
 } from 'solid-js'
 import { createStore, reconcile, unwrap } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
-import type { CreateBaseQueryOptions } from './types'
 import { shouldThrowError } from './utils'
+import type { CreateBaseQueryOptions } from './types'
+import type { Accessor } from 'solid-js'
+import type { QueryClient } from './QueryClient'
+import type {
+  QueryKey,
+  QueryObserver,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 
 function reconcileFn<TData, TError>(
   store: QueryObserverResult<TData, TError>,

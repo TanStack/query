@@ -1,5 +1,6 @@
-import { QueryClient } from '../queryClient'
 import { vi } from 'vitest'
+import { QueryClient } from '../queryClient'
+import type { Mock } from 'vitest'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -7,4 +8,4 @@ const queryClient = new QueryClient({
   },
 })
 
-export const useQueryClient = vi.fn(() => queryClient)
+export const useQueryClient: Mock<[], QueryClient> = vi.fn(() => queryClient)

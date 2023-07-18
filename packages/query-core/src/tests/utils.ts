@@ -1,19 +1,21 @@
 import { act } from '@testing-library/react'
 import { vi } from 'vitest'
-
-import type { MutationOptions, QueryClientConfig } from '..'
 import { onlineManager, QueryClient } from '..'
 import * as utils from '../utils'
+import type { SpyInstance } from 'vitest'
+import type { MutationOptions, QueryClientConfig } from '..'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
   return new QueryClient(config)
 }
 
-export function mockVisibilityState(value: DocumentVisibilityState) {
+export function mockVisibilityState(
+  value: DocumentVisibilityState,
+): SpyInstance<[], DocumentVisibilityState> {
   return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
-export function mockOnlineManagerIsOnline(value: boolean) {
+export function mockOnlineManagerIsOnline(value: boolean): SpyInstance<[], boolean> {
   return vi.spyOn(onlineManager, 'isOnline').mockReturnValue(value)
 }
 

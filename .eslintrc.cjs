@@ -4,11 +4,10 @@
 const config = {
   root: true,
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'compat', 'import'],
+  plugins: ['@typescript-eslint', 'import'],
   extends: [
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:compat/recommended',
     'plugin:import/recommended',
     'plugin:import/typescript',
     'prettier',
@@ -54,13 +53,31 @@ const config = {
     ],
     'import/default': 'off',
     'import/export': 'off',
+    'import/namespace': 'off',
     'import/newline-after-import': 'error',
     'import/no-cycle': 'error',
     'import/no-duplicates': 'off',
+    'import/no-named-as-default-member': 'off',
     'import/no-unresolved': ['error', { ignore: ['^@tanstack/'] }],
     'import/no-unused-modules': ['off', { unusedExports: true }],
+    'import/order': [
+      'error',
+      {
+        groups: [
+          'builtin',
+          'external',
+          'internal',
+          'parent',
+          'sibling',
+          'index',
+          'object',
+          'type',
+        ],
+      },
+    ],
     'no-redeclare': 'off',
     'no-shadow': 'error',
+    'sort-imports': ['error', { ignoreDeclarationSort: true }],
   },
   overrides: [
     {

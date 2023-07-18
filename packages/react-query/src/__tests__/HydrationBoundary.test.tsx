@@ -1,17 +1,17 @@
 import * as React from 'react'
 import { render } from '@testing-library/react'
 
-import {
-  QueryClient,
-  QueryClientProvider,
-  QueryCache,
-  useQuery,
-  dehydrate,
-  HydrationBoundary,
-} from '..'
-import { createQueryClient, sleep } from './utils'
 import * as coreModule from '@tanstack/query-core'
 import { vi } from 'vitest'
+import {
+  HydrationBoundary,
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+  dehydrate,
+  useQuery,
+} from '..'
+import { createQueryClient, sleep } from './utils'
 
 describe('React hydration', () => {
   const fetchData: (value: string) => Promise<string> = (value) =>

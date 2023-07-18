@@ -1,18 +1,18 @@
 'use client'
 import * as React from 'react'
 
-import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
 import { notifyManager } from '@tanstack/query-core'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
-import type { UseBaseQueryOptions } from './types'
 import { useIsRestoring } from './isRestoring'
 import {
   ensurePreventErrorBoundaryRetry,
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
-import { ensureStaleTime, shouldSuspend, fetchOptimistic } from './suspense'
+import { ensureStaleTime, fetchOptimistic, shouldSuspend } from './suspense'
+import type { UseBaseQueryOptions } from './types'
+import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
 
 export function useBaseQuery<
   TQueryFnData,

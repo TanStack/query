@@ -1,26 +1,21 @@
 import '@testing-library/jest-dom'
-import type { JSX } from 'solid-js'
 import {
+  ErrorBoundary,
+  Match,
+  Switch,
   createEffect,
   createMemo,
   createRenderEffect,
   createSignal,
-  ErrorBoundary,
-  Match,
   on,
-  Switch,
 } from 'solid-js'
 import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
-import type {
-  CreateQueryOptions,
-  CreateQueryResult,
-  DefinedCreateQueryResult,
-  QueryFunction,
-} from '..'
+import { vi } from 'vitest'
+import { reconcile } from 'solid-js/store'
 import {
-  createQuery,
   QueryCache,
   QueryClientProvider,
+  createQuery,
   keepPreviousData,
 } from '..'
 import {
@@ -33,9 +28,14 @@ import {
   setActTimeout,
   sleep,
 } from './utils'
-import { vi } from 'vitest'
+import type {
+  CreateQueryOptions,
+  CreateQueryResult,
+  DefinedCreateQueryResult,
+  QueryFunction,
+} from '..'
 import type { Mock } from 'vitest'
-import { reconcile } from 'solid-js/store'
+import type { JSX } from 'solid-js'
 
 describe('createQuery', () => {
   const queryCache = new QueryCache()

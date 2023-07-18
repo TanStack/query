@@ -1,9 +1,10 @@
-import type { QueryClientConfig } from '@tanstack/query-core'
-import { QueryClient } from '../QueryClient'
-import type { ParentProps } from 'solid-js'
-import { createEffect, createSignal, onCleanup, Show } from 'solid-js'
+import { Show, createEffect, createSignal, onCleanup } from 'solid-js'
 import { vi } from 'vitest'
 import { onlineManager } from '@tanstack/query-core'
+import { QueryClient } from '../QueryClient'
+import type { QueryClientConfig } from '@tanstack/query-core'
+import type { ParentProps } from 'solid-js'
+import type { SpyInstance } from 'vitest'
 
 let queryKeyCount = 0
 export function queryKey(): Array<string> {
@@ -35,11 +36,15 @@ export function createQueryClient(config?: QueryClientConfig): QueryClient {
   return new QueryClient(config)
 }
 
-export function mockVisibilityState(value: DocumentVisibilityState) {
+export function mockVisibilityState(
+  value: DocumentVisibilityState,
+): SpyInstance<[], DocumentVisibilityState> {
   return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
-export function mockOnlineManagerIsOnline(value: boolean) {
+export function mockOnlineManagerIsOnline(
+  value: boolean,
+): SpyInstance<[], boolean> {
   return vi.spyOn(onlineManager, 'isOnline').mockReturnValue(value)
 }
 

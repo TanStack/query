@@ -1,17 +1,17 @@
+import { vi } from 'vitest'
 import {
-  replaceEqualDeep,
-  partialMatchKey,
-  isPlainObject,
-  matchMutation,
-  scheduleMicrotask,
-  sleep,
-  isPlainArray,
   addToEnd,
   addToStart,
+  isPlainArray,
+  isPlainObject,
+  matchMutation,
+  partialMatchKey,
+  replaceEqualDeep,
+  scheduleMicrotask,
+  sleep,
 } from '../utils'
 import { Mutation } from '../mutation'
 import { createQueryClient } from './utils'
-import { vi } from 'vitest'
 
 describe('core/utils', () => {
   describe('isPlainObject', () => {

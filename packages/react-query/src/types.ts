@@ -1,17 +1,17 @@
 /* istanbul ignore file */
 
 import type {
+  DefaultError,
+  DefinedQueryObserverResult,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
+  MutateFunction,
+  MutationObserverOptions,
   MutationObserverResult,
+  QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
-  QueryKey,
-  MutationObserverOptions,
-  MutateFunction,
-  DefinedQueryObserverResult,
   WithRequired,
-  DefaultError,
 } from '@tanstack/query-core'
 
 export interface UseBaseQueryOptions<

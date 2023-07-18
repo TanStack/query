@@ -1,8 +1,8 @@
+import { createMemo, createSignal, onCleanup } from 'solid-js'
+import { useQueryClient } from './QueryClientProvider'
 import type { QueryFilters } from '@tanstack/query-core'
 import type { QueryClient } from './QueryClient'
 import type { Accessor } from 'solid-js'
-import { createMemo, createSignal, onCleanup } from 'solid-js'
-import { useQueryClient } from './QueryClientProvider'
 
 export function useIsFetching(
   filters?: Accessor<QueryFilters>,

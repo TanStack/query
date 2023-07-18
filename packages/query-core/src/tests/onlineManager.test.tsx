@@ -1,6 +1,6 @@
+import { vi } from 'vitest'
 import { OnlineManager } from '../onlineManager'
 import { setIsServer, sleep } from './utils'
-import { vi } from 'vitest'
 
 describe('onlineManager', () => {
   let onlineManager: OnlineManager

@@ -1,12 +1,13 @@
+import { expect, vi } from 'vitest'
+import { QueryCache } from '../queryCache'
+import { dehydrate, hydrate } from '../hydration'
+import { MutationCache } from '../mutationCache'
 import {
   createQueryClient,
   executeMutation,
   mockOnlineManagerIsOnline,
   sleep,
 } from './utils'
-import { QueryCache } from '../queryCache'
-import { dehydrate, hydrate } from '../hydration'
-import { vi } from 'vitest'
 
 async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
   await sleep(ms || 0)
@@ -556,5 +557,115 @@ describe('dehydration and rehydration', () => {
     expect(
       hydrationCache.find({ queryKey: ['string'] })?.state.fetchStatus,
     ).toBe('idle')
+  })
+
+  test('should dehydrate and hydrate meta for queries', async () => {
+    const queryCache = new QueryCache()
+    const queryClient = createQueryClient({ queryCache })
+    await queryClient.prefetchQuery({
+      queryKey: ['meta'],
+      queryFn: () => Promise.resolve('meta'),
+      meta: {
+        some: 'meta',
+      },
+    })
+    await queryClient.prefetchQuery({
+      queryKey: ['no-meta'],
+      queryFn: () => Promise.resolve('no-meta'),
+    })
+
+    const dehydrated = dehydrate(queryClient)
+
+    expect(
+      dehydrated.queries.find((q) => q.queryHash === '["meta"]')?.meta,
+    ).toEqual({
+      some: 'meta',
+    })
+
+    expect(
+      dehydrated.queries.find((q) => q.queryHash === '["no-meta"]')?.meta,
+    ).toEqual(undefined)
+
+    expect(
+      Object.keys(
+        dehydrated.queries.find((q) => q.queryHash === '["no-meta"]')!,
+      ),
+    ).not.toEqual(expect.arrayContaining(['meta']))
+
+    const stringified = JSON.stringify(dehydrated)
+
+    // ---
+
+    const parsed = JSON.parse(stringified)
+    const hydrationCache = new QueryCache()
+    const hydrationClient = createQueryClient({
+      queryCache: hydrationCache,
+    })
+    hydrate(hydrationClient, parsed)
+    expect(hydrationCache.find({ queryKey: ['meta'] })?.meta).toEqual({
+      some: 'meta',
+    })
+    expect(hydrationCache.find({ queryKey: ['no-meta'] })?.meta).toEqual(
+      undefined,
+    )
+  })
+
+  test('should dehydrate and hydrate meta for mutations', async () => {
+    const mutationCache = new MutationCache()
+    const queryClient = createQueryClient({ mutationCache })
+
+    await executeMutation(
+      queryClient,
+      {
+        mutationKey: ['meta'],
+        mutationFn: () => Promise.resolve('meta'),
+        meta: {
+          some: 'meta',
+        },
+      },
+      undefined,
+    )
+
+    await executeMutation(
+      queryClient,
+      {
+        mutationKey: ['no-meta'],
+        mutationFn: () => Promise.resolve('no-meta'),
+      },
+      undefined,
+    )
+
+    const dehydrated = dehydrate(queryClient, {
+      shouldDehydrateMutation: () => true,
+    })
+
+    expect(Object.keys(dehydrated.mutations[0]!)).toEqual(
+      expect.arrayContaining(['meta']),
+    )
+    expect(dehydrated.mutations[0]?.meta).toEqual({
+      some: 'meta',
+    })
+
+    expect(Object.keys(dehydrated.mutations[1]!)).not.toEqual(
+      expect.arrayContaining(['meta']),
+    )
+    expect(dehydrated.mutations[1]?.meta).toEqual(undefined)
+
+    const stringified = JSON.stringify(dehydrated)
+
+    // ---
+
+    const parsed = JSON.parse(stringified)
+    const hydrationCache = new MutationCache()
+    const hydrationClient = createQueryClient({
+      mutationCache: hydrationCache,
+    })
+    hydrate(hydrationClient, parsed)
+    expect(hydrationCache.find({ mutationKey: ['meta'] })?.meta).toEqual({
+      some: 'meta',
+    })
+    expect(hydrationCache.find({ mutationKey: ['no-meta'] })?.meta).toEqual(
+      undefined,
+    )
   })
 })

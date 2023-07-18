@@ -3,8 +3,8 @@ import '@testing-library/jest-dom'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
+import { vi } from 'vitest'
 import { MutationCache, QueryCache, useMutation } from '..'
-import type { UseMutationResult } from '../types'
 import {
   createQueryClient,
   mockOnlineManagerIsOnline,
@@ -13,7 +13,7 @@ import {
   setActTimeout,
   sleep,
 } from './utils'
-import { vi } from 'vitest'
+import type { UseMutationResult } from '../types'
 
 describe('useMutation', () => {
   const queryCache = new QueryCache()

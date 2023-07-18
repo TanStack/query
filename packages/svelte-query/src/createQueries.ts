@@ -1,19 +1,19 @@
-import type {
-  QueryKey,
-  QueryFunction,
-  QueryClient,
-  QueriesPlaceholderDataFunction,
-  QueryObserverResult,
-  DefaultError,
-  QueriesObserverOptions,
-  QueryObserverOptions,
-} from '@tanstack/query-core'
-import { notifyManager, QueriesObserver } from '@tanstack/query-core'
+import { QueriesObserver, notifyManager } from '@tanstack/query-core'
 import { derived, get, readable } from 'svelte/store'
-import type { Readable } from 'svelte/store'
-import type { StoreOrVal } from './types'
 import { useQueryClient } from './useQueryClient'
 import { isSvelteStore } from './utils'
+import type { Readable } from 'svelte/store'
+import type { StoreOrVal } from './types'
+import type {
+  DefaultError,
+  QueriesObserverOptions,
+  QueriesPlaceholderDataFunction,
+  QueryClient,
+  QueryFunction,
+  QueryKey,
+  QueryObserverOptions,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter

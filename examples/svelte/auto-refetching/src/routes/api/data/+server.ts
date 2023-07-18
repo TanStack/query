@@ -1,4 +1,5 @@
-import { json, type RequestHandler } from '@sveltejs/kit'
+import { json } from '@sveltejs/kit'
+import type { RequestHandler } from '@sveltejs/kit'
 
 const list = { items: ['Item 1', 'Item 2', 'Item 3'] }
 

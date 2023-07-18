@@ -1,5 +1,5 @@
-import type { TSESLint } from '@typescript-eslint/utils'
 import { rules } from '../rules'
+import type { TSESLint } from '@typescript-eslint/utils'
 
 function generateRecommendedConfig(
   allRules: Record<string, TSESLint.RuleModule<any, any>>,

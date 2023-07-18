@@ -1,14 +1,14 @@
 'use client'
-import { useRef, useState, useEffect } from 'react'
-import type { QueryClient } from '@tanstack/react-query'
-import { useQueryClient, onlineManager } from '@tanstack/react-query'
-import type {
-  DevtoolsButtonPosition,
-  DevtoolsPosition,
-  DevToolsErrorType,
-} from '@tanstack/query-devtools'
+import { useEffect, useRef, useState } from 'react'
+import { onlineManager, useQueryClient } from '@tanstack/react-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
 import React from 'react'
+import type {
+  DevToolsErrorType,
+  DevtoolsButtonPosition,
+  DevtoolsPosition,
+} from '@tanstack/query-devtools'
+import type { QueryClient } from '@tanstack/react-query'
 
 export interface DevtoolsOptions {
   /**

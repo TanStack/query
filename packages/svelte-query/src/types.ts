@@ -1,14 +1,14 @@
 import type {
+  DefaultError,
+  DefinedQueryObserverResult,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
+  MutateFunction,
+  MutationObserverOptions,
   MutationObserverResult,
+  QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
-  QueryKey,
-  MutationObserverOptions,
-  MutateFunction,
-  DefinedQueryObserverResult,
-  DefaultError,
 } from '@tanstack/query-core'
 import type { Readable, Writable } from 'svelte/store'
 

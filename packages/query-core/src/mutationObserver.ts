@@ -1,15 +1,15 @@
-import type { Action, Mutation } from './mutation'
 import { getDefaultState } from './mutation'
 import { notifyManager } from './notifyManager'
-import type { QueryClient } from './queryClient'
 import { Subscribable } from './subscribable'
-import type {
-  MutateOptions,
-  MutationObserverResult,
-  MutationObserverOptions,
-  DefaultError,
-} from './types'
 import { shallowEqualObjects } from './utils'
+import type { QueryClient } from './queryClient'
+import type {
+  DefaultError,
+  MutateOptions,
+  MutationObserverOptions,
+  MutationObserverResult,
+} from './types'
+import type { Action, Mutation } from './mutation'
 
 // TYPES
 

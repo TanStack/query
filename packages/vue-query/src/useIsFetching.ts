@@ -1,8 +1,8 @@
 import { computed, onScopeDispose, ref, watch } from 'vue-demi'
-import type { Ref } from 'vue-demi'
-import type { QueryFilters as QF } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
+import type { Ref } from 'vue-demi'
+import type { QueryFilters as QF } from '@tanstack/query-core'
 import type { MaybeRefDeep } from './types'
 import type { QueryClient } from './queryClient'
 

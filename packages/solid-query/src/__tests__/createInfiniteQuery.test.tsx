@@ -1,35 +1,35 @@
 import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
 
 import {
-  createQueryClient,
-  sleep,
-  Blink,
-  queryKey,
-  setActTimeout,
-} from './utils'
-
-import {
-  createEffect,
-  createRenderEffect,
-  createSignal,
   For,
   Index,
   Match,
   Switch,
+  createEffect,
+  createRenderEffect,
+  createSignal,
   on,
 } from 'solid-js'
+import { vi } from 'vitest'
+import {
+  QueryCache,
+  QueryClientProvider,
+  createInfiniteQuery,
+  keepPreviousData,
+} from '..'
+import {
+  Blink,
+  createQueryClient,
+  queryKey,
+  setActTimeout,
+  sleep,
+} from './utils'
+
 import type {
   CreateInfiniteQueryResult,
   InfiniteData,
   QueryFunctionContext,
 } from '..'
-import {
-  createInfiniteQuery,
-  QueryCache,
-  QueryClientProvider,
-  keepPreviousData,
-} from '..'
-import { vi } from 'vitest'
 import type { Mock } from 'vitest'
 
 interface Result {
