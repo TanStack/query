@@ -5458,6 +5458,7 @@ describe('useQuery', () => {
       await waitFor(() => rendered.getByText('failureReason: failed1'))
 
       const onlineMock = mockNavigatorOnLine(false)
+      window.dispatchEvent(new Event('offline'))
 
       await sleep(20)
 
