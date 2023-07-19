@@ -11,15 +11,19 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "type": "module",
-  "types": "build/lib/index.d.ts",
-  "main": "build/lib/index.legacy.cjs",
-  "module": "build/lib/index.legacy.js",
+  "types": "build/legacy/index.d.ts",
+  "main": "build/legacy/index.cjs",
+  "module": "build/legacy/index.js",
   "exports": {
     ".": {
-      "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.js",
-      "require": "./build/lib/index.cjs",
-      "default": "./build/lib/index.cjs"
+      "import": {
+        "types": "./build/modern/index.d.ts",
+        "default": "./build/modern/index.js"
+      },
+      "require": {
+        "types": "./build/modern/index.d.cts",
+        "default": "./build/modern/index.cjs"
+      }
     },
     "./package.json": "./package.json"
   },
@@ -30,16 +34,14 @@
     "test:types": "tsc --noEmit",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict",
-    "build": "pnpm build:rollup && pnpm build:codemods && pnpm build:types",
-    "build:rollup": "rollup --config rollup.config.js",
-    "build:codemods": "cpy ../codemods/src/**/* ./build/codemods",
-    "build:types": "tsc --emitDeclarationOnly"
+    "test:build": "publint --strict && attw --pack",
+    "build": "pnpm build:tsup && pnpm build:codemods",
+    "build:tsup": "tsup",
+    "build:codemods": "cpy ../codemods/src/**/* ./build/codemods"
   },
   "files": [
-    "build/lib/*",
+    "build",
     "src",
-    "build/codemods",
     "!build/codemods/jest.config.js",
     "!build/codemods/**/__testfixtures__",
     "!build/codemods/**/__tests__"

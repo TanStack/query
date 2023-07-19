@@ -27,11 +27,9 @@
   },
   "namedInputs": {
     "sharedGlobals": [
-      "{workspaceRoot}/.browserslistrc",
       "{workspaceRoot}/.eslintrc.cjs",
-      "{workspaceRoot}/babel.config.cjs",
       "{workspaceRoot}/package.json",
-      "{workspaceRoot}/scripts/getRollupConfig.js",
+      "{workspaceRoot}/scripts/getTsupConfig.js",
       "{workspaceRoot}/tsconfig.json"
     ],
     "default": [
