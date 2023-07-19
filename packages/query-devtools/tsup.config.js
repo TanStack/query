@@ -12,7 +12,7 @@ export default defineConfig(
     cjs: true,
     tsupOptions: (config) => ({
       ...config,
-      outDir: 'build'
+      outDir: 'build',
     }),
   },
 )
