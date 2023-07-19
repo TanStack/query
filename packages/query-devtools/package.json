@@ -11,34 +11,39 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "type": "module",
-  "types": "dist/types/index.d.ts",
-  "main": "dist/cjs/index.cjs",
-  "module": "dist/esm/index.js",
+  "main": "./build/index.cjs",
+  "module": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "browser": {},
   "exports": {
-    ".": {
-      "types": "./dist/types/index.d.ts",
-      "solid": "./dist/source/index.jsx",
-      "import": "./dist/esm/index.js",
-      "browser": {
-        "import": "./dist/esm/index.js",
-        "require": "./dist/cjs/index.cjs"
-      },
-      "require": "./dist/cjs/index.cjs",
-      "node": "./dist/cjs/index.cjs"
+    "solid": {
+      "development": "./build/dev.jsx",
+      "import": "./build/index.jsx"
     },
-    "./package.json": "./package.json"
+    "development": {
+      "import": {
+        "types": "./build/index.d.ts",
+        "default": "./build/dev.js"
+      },
+      "require": "./build/dev.cjs"
+    },
+    "import": {
+      "types": "./build/index.d.ts",
+      "default": "./build/index.js"
+    },
+    "require": "./build/index.cjs"
   },
   "scripts": {
-    "clean": "rimraf ./dist && rimraf ./coverage",
+    "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc --noEmit",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
-    "build": "rollup --config rollup.config.js"
+    "build": "tsup"
   },
   "files": [
-    "dist",
+    "build",
     "src"
   ],
   "dependencies": {
@@ -53,6 +58,7 @@
   },
   "devDependencies": {
     "@tanstack/query-core": "workspace:*",
+    "tsup-preset-solid": "^0.1.8",
     "vite-plugin-solid": "^2.5.0"
   }
 }
