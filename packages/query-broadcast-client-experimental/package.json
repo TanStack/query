@@ -35,7 +35,7 @@
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc --noEmit",
+    "test:types": "tsc",
     "test:build": "publint --strict && attw --pack",
     "build": "tsup"
   },
