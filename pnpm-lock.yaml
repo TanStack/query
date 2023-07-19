@@ -1540,8 +1540,8 @@ importers:
         version: link:../query-core
     devDependencies:
       '@sveltejs/package':
-        specifier: ^2.1.0
-        version: 2.1.0(svelte@4.0.0)(typescript@4.9.5)
+        specifier: ^2.2.0
+        version: 2.2.0(svelte@4.0.0)(typescript@5.1.3)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^2.4.2
         version: 2.4.2(svelte@4.0.0)(vite@4.4.4)
@@ -1568,8 +1568,8 @@ importers:
         version: 1.0.0
     devDependencies:
       '@sveltejs/package':
-        specifier: ^2.1.0
-        version: 2.1.0(svelte@4.0.0)(typescript@4.9.5)
+        specifier: ^2.2.0
+        version: 2.2.0(svelte@4.0.0)(typescript@5.1.3)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^2.4.2
         version: 2.4.2(svelte@4.0.0)(vite@4.4.4)
@@ -5598,8 +5598,8 @@ packages:
       - supports-color
     dev: true
 
-  /@sveltejs/package@2.1.0(svelte@4.0.0)(typescript@4.9.5):
-    resolution: {integrity: sha512-c6PLH9G2YLQ48kqrS2XX422BrLNABBstSiapamchVJaQnOTXyJmUR8KmoCCySnzVy3PiYL6jg12UnoPmjW3SwA==}
+  /@sveltejs/package@2.2.0(svelte@4.0.0)(typescript@5.1.3):
+    resolution: {integrity: sha512-TXbrzsk+T5WNcSzrU41D8P32vU5guo96lVS11/R+rpLhZBH5sORh0Qp6r68Jg4O5vcdS3JLwpwcpe8VFbT/QeA==}
     engines: {node: ^16.14 || >=18}
     hasBin: true
     peerDependencies:
@@ -5608,8 +5608,9 @@ packages:
       chokidar: 3.5.3
       kleur: 4.1.5
       sade: 1.8.1
+      semver: 7.5.4
       svelte: 4.0.0
-      svelte2tsx: 0.6.0(svelte@4.0.0)(typescript@4.9.5)
+      svelte2tsx: 0.6.19(svelte@4.0.0)(typescript@5.1.3)
     transitivePeerDependencies:
       - typescript
     dev: true
@@ -16053,16 +16054,16 @@ packages:
       typescript: 5.1.3
     dev: true
 
-  /svelte2tsx@0.6.0(svelte@4.0.0)(typescript@4.9.5):
-    resolution: {integrity: sha512-TrxfQkO7CKi8Pu2eC/FyteDCdk3OOeQV5u6z7OjYAsOhsd0ClzAKqxJdvp6xxNQLrbFzf/XvCi9Fy8MQ1MleFA==}
+  /svelte2tsx@0.6.19(svelte@4.0.0)(typescript@5.1.3):
+    resolution: {integrity: sha512-h3b5OtcO8zyVL/RiB2zsDwCopeo/UH+887uyhgb2mjnewOFwiTxu+4IGuVwrrlyuh2onM2ktfUemNrNmQwXONQ==}
     peerDependencies:
-      svelte: ^3.55
-      typescript: ^4.9.4
+      svelte: ^3.55 || ^4.0.0-next.0 || ^4.0
+      typescript: ^4.9.4 || ^5.0.0
     dependencies:
       dedent-js: 1.0.1
       pascal-case: 3.1.2
       svelte: 4.0.0
-      typescript: 4.9.5
+      typescript: 5.1.3
     dev: true
 
   /svelte@4.0.0:
@@ -16615,12 +16616,6 @@ packages:
       call-bind: 1.0.2
       for-each: 0.3.3
       is-typed-array: 1.1.10
-    dev: true
-
-  /typescript@4.9.5:
-    resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
-    engines: {node: '>=4.2.0'}
-    hasBin: true
     dev: true
 
   /typescript@5.0.4:
