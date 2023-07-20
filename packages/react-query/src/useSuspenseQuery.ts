@@ -1,9 +1,8 @@
 'use client'
 import { QueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
-import type { UseQueryOptions } from './types'
+import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
 import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
-import type { DefinedUseQueryResult } from './types'
 
 export function useSuspenseQuery<
   TQueryFnData = unknown,
@@ -11,12 +10,9 @@ export function useSuspenseQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: Omit<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'enabled' | 'suspense' | 'throwOnError' | 'placeholderData'
-  >,
+  options: UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
-): Omit<DefinedUseQueryResult<TData, TError>, 'isPlaceholderData'> {
+): UseSuspenseQueryResult<TData, TError> {
   return useBaseQuery(
     {
       ...options,
@@ -26,5 +22,5 @@ export function useSuspenseQuery<
     },
     QueryObserver,
     queryClient,
-  ) as DefinedUseQueryResult<TData, TError>
+  ) as UseSuspenseQueryResult<TData, TError>
 }

@@ -12,6 +12,7 @@ import type {
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
+  QueryObserverSuccessResult,
   WithRequired,
 } from '@tanstack/query-core'
 
@@ -34,6 +35,16 @@ export interface UseQueryOptions<
 > extends WithRequired<
     UseBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
     'queryKey'
+  > {}
+
+export interface UseSuspenseQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> extends Omit<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'enabled' | 'suspense' | 'throwOnError' | 'placeholderData'
   > {}
 
 export interface UseInfiniteQueryOptions<
@@ -64,6 +75,11 @@ export type UseQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = UseBaseQueryResult<TData, TError>
+
+export type UseSuspenseQueryResult<
+  TData = unknown,
+  TError = DefaultError,
+> = Omit<QueryObserverSuccessResult<TData, TError>, 'isPlaceholderData'>
 
 export type DefinedUseQueryResult<
   TData = unknown,
