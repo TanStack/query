@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/eslint-plugin-query",
-  "version": "5.0.0-alpha.84",
+  "version": "5.0.0-alpha.88",
   "description": "ESLint plugin for TanStack Query",
   "author": "Eliya Cohen",
   "license": "MIT",
@@ -11,18 +11,18 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "type": "module",
-  "types": "build/lib/index.d.ts",
-  "main": "build/lib/index.cjs",
-  "module": "build/lib/index.js",
+  "types": "build/legacy/index.d.ts",
+  "main": "build/legacy/index.cjs",
+  "module": "build/legacy/index.js",
   "exports": {
     ".": {
       "import": {
-        "types": "./build/lib/index.d.ts",
-        "default": "./build/lib/index.js"
+        "types": "./build/legacy/index.d.ts",
+        "default": "./build/legacy/index.js"
       },
       "require": {
-        "types": "./build/lib/index.d.cts",
-        "default": "./build/lib/index.cjs"
+        "types": "./build/legacy/index.d.cts",
+        "default": "./build/legacy/index.cjs"
       }
     },
     "./package.json": "./package.json"
@@ -31,7 +31,7 @@
     "clean": "rimraf ./build && rimraf ./coverage",
     "dev": "tsup --watch --sourcemap",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc --noEmit",
+    "test:types": "tsc",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",

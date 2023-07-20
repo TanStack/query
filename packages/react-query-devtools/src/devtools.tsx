@@ -37,7 +37,7 @@ export interface DevtoolsOptions {
   errorTypes?: DevToolsErrorType[]
 }
 
-function ReactQueryDevtoolsDev(
+export function ReactQueryDevtools(
   props: DevtoolsOptions,
 ): React.ReactElement | null {
   const queryClient = useQueryClient()
@@ -93,14 +93,3 @@ function ReactQueryDevtoolsDev(
 
   return <div ref={ref}></div>
 }
-
-function ReactQueryDevtoolsProd(
-  _props: DevtoolsOptions,
-): React.ReactElement | null {
-  return null
-}
-
-export const ReactQueryDevtools: typeof ReactQueryDevtoolsDev =
-  process.env.NODE_ENV !== 'development'
-    ? ReactQueryDevtoolsProd
-    : ReactQueryDevtoolsDev

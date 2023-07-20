@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/vue-query",
-  "version": "5.0.0-alpha.86",
+  "version": "5.0.0-alpha.88",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in Vue",
   "author": "Damian Osipiuk",
   "license": "MIT",
@@ -15,15 +15,19 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "type": "module",
-  "types": "build/lib/index.d.ts",
-  "main": "build/lib/index.legacy.cjs",
-  "module": "build/lib/index.legacy.js",
+  "types": "build/legacy/index.d.ts",
+  "main": "build/legacy/index.cjs",
+  "module": "build/legacy/index.js",
   "exports": {
     ".": {
-      "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.js",
-      "require": "./build/lib/index.cjs",
-      "default": "./build/lib/index.cjs"
+      "import": {
+        "types": "./build/modern/index.d.ts",
+        "default": "./build/modern/index.js"
+      },
+      "require": {
+        "types": "./build/modern/index.d.cts",
+        "default": "./build/modern/index.cjs"
+      }
     },
     "./package.json": "./package.json"
   },
@@ -31,16 +35,14 @@
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc --noEmit",
+    "test:types": "tsc",
     "test:lib": "pnpm run test:2 && pnpm run test:2.7 && pnpm run test:3",
     "test:2": "vue-demi-switch 2 vue2 && vitest",
     "test:2.7": "vue-demi-switch 2.7 vue2.7 && vitest",
     "test:3": "vue-demi-switch 3 && vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict",
-    "build": "pnpm build:rollup && pnpm build:types",
-    "build:rollup": "rollup --config rollup.config.js",
-    "build:types": "tsc --emitDeclarationOnly"
+    "test:build": "publint --strict && attw --pack",
+    "build": "tsup"
   },
   "nx": {
     "targets": {
@@ -52,7 +54,7 @@
     }
   },
   "files": [
-    "build/lib/*",
+    "build",
     "src"
   ],
   "dependencies": {

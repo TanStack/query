@@ -1,13 +1,8 @@
 // @ts-check
 
 import { defineConfig } from 'tsup'
+import { legacyConfig } from '../../scripts/getTsupConfig.js'
 
-export default defineConfig({
-  entry: ['src/index.ts'],
-  format: ['cjs', 'esm'],
-  target: ['es2020', 'node16'],
-  outDir: 'build/lib',
-  dts: true,
-  sourcemap: true,
-  clean: true,
-})
+export default defineConfig([
+  legacyConfig({ entry: ['src/*.ts', 'src/*.tsx'], bundle: true }),
+])

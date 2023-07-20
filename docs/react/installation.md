@@ -42,12 +42,12 @@ If you're not using a module bundler or package manager, you can also use this l
 React Query is optimized for modern browsers. It is compatible with the following browsers config
 
 ```
-Chrome >= 84
+Chrome >= 91
 Firefox >= 90
-Edge >= 84
+Edge >= 91
 Safari >= 15
 iOS >= 15
-opera >= 70
+opera >= 77
 ```
 
 > Depending on your environment, you might need to add polyfills. If you want to support older browsers, you need to transpile the library from `node_modules` yourselves.

@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-devtools",
-  "version": "5.0.0-alpha.86",
+  "version": "5.0.0-alpha.88",
   "description": "Developer tools to interact with and visualize the TanStack Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -11,48 +11,52 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "type": "module",
-  "types": "dist/types/index.d.ts",
-  "main": "dist/cjs/index.cjs",
-  "module": "dist/esm/index.js",
+  "main": "./build/index.cjs",
+  "module": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "browser": {},
   "exports": {
-    ".": {
-      "types": "./dist/types/index.d.ts",
-      "solid": "./dist/source/index.jsx",
-      "import": "./dist/esm/index.js",
-      "browser": {
-        "import": "./dist/esm/index.js",
-        "require": "./dist/cjs/index.cjs"
-      },
-      "require": "./dist/cjs/index.cjs",
-      "node": "./dist/cjs/index.cjs"
+    "solid": {
+      "development": "./build/dev.jsx",
+      "import": "./build/index.jsx"
     },
-    "./package.json": "./package.json"
+    "development": {
+      "import": {
+        "types": "./build/index.d.ts",
+        "default": "./build/dev.js"
+      },
+      "require": "./build/dev.cjs"
+    },
+    "import": {
+      "types": "./build/index.d.ts",
+      "default": "./build/index.js"
+    },
+    "require": "./build/index.cjs"
   },
   "scripts": {
-    "clean": "rimraf ./dist && rimraf ./coverage",
+    "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc --noEmit",
+    "test:types": "tsc",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
-    "build": "rollup --config rollup.config.js"
+    "build": "tsup"
   },
   "files": [
-    "dist",
+    "build",
     "src"
   ],
-  "dependencies": {
+  "devDependencies": {
     "@emotion/css": "^11.11.0",
     "@solid-primitives/keyed": "^1.2.0",
     "@solid-primitives/resize-observer": "^2.0.18",
     "@solid-primitives/storage": "^1.3.11",
     "@tanstack/match-sorter-utils": "^8.8.4",
+    "@tanstack/query-core": "workspace:*",
     "solid-js": "^1.6.13",
     "solid-transition-group": "^0.2.2",
-    "superjson": "^1.12.4"
-  },
-  "devDependencies": {
-    "@tanstack/query-core": "workspace:*",
+    "superjson": "^1.12.4",
+    "tsup-preset-solid": "^0.1.8",
     "vite-plugin-solid": "^2.5.0"
   }
 }
