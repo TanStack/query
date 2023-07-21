@@ -1,18 +1,18 @@
-import type {
-  QueryObserver,
-  QueryFunction,
-  QueryOptions,
-} from '@tanstack/query-core'
 import { InfiniteQueryObserver } from '@tanstack/query-core'
+import { createComputed } from 'solid-js'
+import { createStore } from 'solid-js/store'
+import { createBaseQuery } from './createBaseQuery'
+import { parseQueryArgs } from './utils'
 import type {
   CreateInfiniteQueryOptions,
   CreateInfiniteQueryResult,
   SolidQueryKey,
 } from './types'
-import { createBaseQuery } from './createBaseQuery'
-import { createComputed } from 'solid-js'
-import { createStore } from 'solid-js/store'
-import { parseQueryArgs } from './utils'
+import type {
+  QueryFunction,
+  QueryObserver,
+  QueryOptions,
+} from '@tanstack/query-core'
 
 export function createInfiniteQuery<
   TQueryFnData = unknown,

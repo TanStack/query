@@ -1,20 +1,20 @@
 'use client'
 import * as React from 'react'
-import { useSyncExternalStore } from './useSyncExternalStore'
-
-import type { MutationFunction, MutationKey } from '@tanstack/query-core'
 import {
+  MutationObserver,
   notifyManager,
   parseMutationArgs,
-  MutationObserver,
 } from '@tanstack/query-core'
+import { useSyncExternalStore } from './useSyncExternalStore'
+
 import { useQueryClient } from './QueryClientProvider'
+import { shouldThrowError } from './utils'
+import type { MutationFunction, MutationKey } from '@tanstack/query-core'
 import type {
   UseMutateFunction,
   UseMutationOptions,
   UseMutationResult,
 } from './types'
-import { shouldThrowError } from './utils'
 
 // HOOK
 

@@ -41,8 +41,8 @@ React Query is optimized for modern browsers. It is compatible with the followin
 Chrome >= 73
 Firefox >= 78
 Edge >= 79
-Safari >= 12.0
-iOS >= 12.0
+Safari >= 12.1
+iOS >= 12.2
 opera >= 53
 ```
 

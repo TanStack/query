@@ -1,8 +1,8 @@
 import { act } from '@testing-library/react'
 
-import type { MutationOptions, QueryClientConfig } from '@tanstack/query-core'
 import { QueryClient } from '@tanstack/query-core'
 import * as utils from '../utils'
+import type { MutationOptions, QueryClientConfig } from '@tanstack/query-core'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
   jest.spyOn(console, 'error').mockImplementation(() => undefined)

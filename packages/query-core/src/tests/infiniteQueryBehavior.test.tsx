@@ -1,16 +1,19 @@
 import { waitFor } from '@testing-library/react'
-import type {
-  QueryClient,
-  InfiniteQueryObserverResult,
-} from '@tanstack/query-core'
 import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { createQueryClient, queryKey } from './utils'
+import type {
+  InfiniteQueryObserverResult,
+  QueryCache,
+  QueryClient,
+} from '@tanstack/query-core'
 
 describe('InfiniteQueryBehavior', () => {
   let queryClient: QueryClient
+  let queryCache: QueryCache
 
   beforeEach(() => {
     queryClient = createQueryClient()
+    queryCache = queryClient.getQueryCache()
     queryClient.mount()
   })
 
@@ -35,9 +38,10 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     await waitFor(() => {
+      const query = queryCache.find(key)!
       return expect(observerResult).toMatchObject({
         isError: true,
-        error: 'Missing queryFn',
+        error: `Missing queryFn for queryKey '${query.queryHash}'`,
       })
     })
 

@@ -1,23 +1,22 @@
 import {
-  onScopeDispose,
-  toRefs,
-  readonly,
-  reactive,
-  watch,
-  ref,
   computed,
+  onScopeDispose,
+  reactive,
+  readonly,
+  toRefs,
   unref,
+  watch,
 } from 'vue-demi'
+import { useQueryClient } from './useQueryClient'
+import { cloneDeepUnref, isQueryKey, updateState } from './utils'
 import type { ToRefs, UnwrapRef } from 'vue-demi'
 import type {
-  QueryObserver,
+  QueryFunction,
   QueryKey,
+  QueryObserver,
   QueryObserverOptions,
   QueryObserverResult,
-  QueryFunction,
 } from '@tanstack/query-core'
-import { useQueryClient } from './useQueryClient'
-import { updateState, isQueryKey, cloneDeepUnref } from './utils'
 import type { MaybeRef, WithQueryClientKey } from './types'
 import type { UseQueryOptions } from './useQuery'
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
@@ -71,17 +70,17 @@ export function useBaseQuery<
   const observer = new Observer(queryClient, defaultedOptions.value)
   const state = reactive(observer.getCurrentResult())
 
-  const unsubscribe = ref(() => {
+  let unsubscribe = () => {
     // noop
-  })
+  }
 
   watch(
     queryClient.isRestoring,
     (isRestoring) => {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (!isRestoring) {
-        unsubscribe.value()
-        unsubscribe.value = observer.subscribe((result) => {
+        unsubscribe()
+        unsubscribe = observer.subscribe((result) => {
           updateState(state, result)
         })
       }
@@ -99,7 +98,7 @@ export function useBaseQuery<
   )
 
   onScopeDispose(() => {
-    unsubscribe.value()
+    unsubscribe()
   })
 
   const suspense = () => {

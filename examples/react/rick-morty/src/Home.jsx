@@ -1,11 +1,11 @@
-import React from "react";
-import { Typography } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import { Link } from "@material-ui/core";
-import { Link as RouterLink } from "react-router-dom";
+import React from 'react'
+import { Typography } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import { Link } from '@material-ui/core'
+import { Link as RouterLink } from 'react-router-dom'
 
 export default function Home() {
-  const classes = useStyles();
+  const classes = useStyles()
 
   return (
     <div>
@@ -26,16 +26,16 @@ export default function Home() {
           tag them as observable.
         </Typography>
         <Typography variant="body1">
-          Simply associate a key with your fetch call and let{" "}
+          Simply associate a key with your fetch call and let{' '}
           <strong>React Query</strong> handle the rest.
         </Typography>
         <Typography variant="h5">Ready to get started?</Typography>
         <Typography variant="body1">
-          Check out the{" "}
+          Check out the{' '}
           <Link component={RouterLink} to="/episodes">
             Episodes
-          </Link>{" "}
-          and{" "}
+          </Link>{' '}
+          and{' '}
           <Link component={RouterLink} to="/characters">
             Characters
           </Link>
@@ -43,14 +43,14 @@ export default function Home() {
         </Typography>
       </section>
     </div>
-  );
+  )
 }
 
 const useStyles = makeStyles(() => ({
   main: {
-    margin: "44px 0",
-    "& p": {
-      margin: "12px 0 24px",
+    margin: '44px 0',
+    '& p': {
+      margin: '12px 0 24px',
     },
   },
-}));
+}))

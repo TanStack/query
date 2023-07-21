@@ -1,9 +1,9 @@
 import { vi } from 'vitest'
 import { act } from '@testing-library/svelte'
 import {
+  type MutationOptions,
   QueryClient,
   type QueryClientConfig,
-  type MutationOptions,
 } from '../index'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {

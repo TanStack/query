@@ -1,3 +1,9 @@
+import { QueryObserver } from './queryObserver'
+import {
+  hasNextPage,
+  hasPreviousPage,
+  infiniteQueryBehavior,
+} from './infiniteQueryBehavior'
 import type {
   DefaultedInfiniteQueryObserverOptions,
   FetchNextPageOptions,
@@ -9,12 +15,6 @@ import type {
 } from './types'
 import type { QueryClient } from './queryClient'
 import type { NotifyOptions, ObserverFetchOptions } from './queryObserver'
-import { QueryObserver } from './queryObserver'
-import {
-  hasNextPage,
-  hasPreviousPage,
-  infiniteQueryBehavior,
-} from './infiniteQueryBehavior'
 import type { Query } from './query'
 
 type InfiniteQueryObserverListener<TData, TError> = (

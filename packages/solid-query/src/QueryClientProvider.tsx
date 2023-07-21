@@ -1,12 +1,12 @@
-import type { QueryClient } from '@tanstack/query-core'
-import type { Context, JSX } from 'solid-js'
 import {
   createContext,
-  useContext,
-  onMount,
-  onCleanup,
   mergeProps,
+  onCleanup,
+  onMount,
+  useContext,
 } from 'solid-js'
+import type { QueryClient } from '@tanstack/query-core'
+import type { Context, JSX } from 'solid-js'
 import type { ContextOptions } from './types'
 
 declare global {

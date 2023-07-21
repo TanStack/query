@@ -48,4 +48,19 @@ describe('notifyManager', () => {
 
     expect(notifySpy).toHaveBeenCalledTimes(1)
   })
+
+  it('typedefs should catch proper signatures', async () => {
+    const notifyManagerTest = createNotifyManager()
+
+    // we define some fn with its signature:
+    const fn: (a: string, b: number) => string = (a, b) => a + b
+
+    //now somefn expect to be called with args [a: string, b: number]
+    const someFn = notifyManagerTest.batchCalls(fn)
+
+    someFn('im happy', 4)
+
+    //@ts-expect-error
+    someFn('im not happy', false)
+  })
 })

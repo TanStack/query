@@ -43,5 +43,4 @@ export type Package = {
 
 export type BranchConfig = {
   prerelease: boolean
-  ghRelease: boolean
 }

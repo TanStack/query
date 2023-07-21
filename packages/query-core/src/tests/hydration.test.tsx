@@ -1,11 +1,11 @@
+import { QueryCache } from '../queryCache'
+import { dehydrate, hydrate } from '../hydration'
 import {
   createQueryClient,
   executeMutation,
   mockNavigatorOnLine,
   sleep,
 } from './utils'
-import { QueryCache } from '../queryCache'
-import { dehydrate, hydrate } from '../hydration'
 
 async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
   await sleep(ms || 0)

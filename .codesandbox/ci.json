@@ -1,6 +1,11 @@
 {
   "installCommand": "install:csb",
-  "sandboxes": ["/examples/react/basic-typescript", "/examples/solid/basic-typescript", "/examples/svelte/basic", "/examples/vue/basic"],
+  "sandboxes": [
+    "/examples/react/basic-typescript",
+    "/examples/solid/basic-typescript",
+    "/examples/svelte/basic",
+    "/examples/vue/basic"
+  ],
   "packages": ["packages/**"],
   "node": "16"
 }

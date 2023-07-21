@@ -1,14 +1,14 @@
 import { difference, replaceAt } from './utils'
 import { notifyManager } from './notifyManager'
+import { QueryObserver } from './queryObserver'
+import { Subscribable } from './subscribable'
 import type {
+  DefaultedQueryObserverOptions,
   QueryObserverOptions,
   QueryObserverResult,
-  DefaultedQueryObserverOptions,
 } from './types'
 import type { QueryClient } from './queryClient'
 import type { NotifyOptions } from './queryObserver'
-import { QueryObserver } from './queryObserver'
-import { Subscribable } from './subscribable'
 
 type QueriesObserverListener = (result: QueryObserverResult[]) => void
 

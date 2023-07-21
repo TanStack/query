@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { QueryKey, MutationKey } from '@tanstack/query-core'
 import { isRef, unref } from 'vue-demi'
+import type { MutationKey, QueryKey } from '@tanstack/query-core'
 import type { UnwrapRef } from 'vue-demi'
 
 export const VUE_QUERY_CLIENT = 'VUE_QUERY_CLIENT'

@@ -1,9 +1,11 @@
+import { waitFor } from '@testing-library/react'
+import { QueryObserver, isCancelledError, isError, onlineManager } from '..'
 import {
-  sleep,
-  queryKey,
-  mockVisibilityState,
-  mockLogger,
   createQueryClient,
+  mockLogger,
+  mockVisibilityState,
+  queryKey,
+  sleep,
 } from './utils'
 import type {
   QueryCache,
@@ -11,8 +13,6 @@ import type {
   QueryFunctionContext,
   QueryObserverResult,
 } from '..'
-import { QueryObserver, isCancelledError, isError, onlineManager } from '..'
-import { waitFor } from '@testing-library/react'
 
 describe('query', () => {
   let queryClient: QueryClient
@@ -794,8 +794,12 @@ describe('query', () => {
     })
 
     const unsubscribe = observer.subscribe(() => undefined)
+
     await sleep(10)
-    expect(mockLogger.error).toHaveBeenCalledWith('Missing queryFn')
+    const query = queryCache.find(key)!
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      `Missing queryFn for queryKey '${query.queryHash}'`,
+    )
 
     unsubscribe()
   })

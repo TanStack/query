@@ -1,16 +1,14 @@
 {
   "name": "@tanstack/query-example-react-suspense",
-  "version": "1.0.0",
-  "description": "",
-  "keywords": [],
+  "private": true,
   "main": "src/index.jsx",
   "dependencies": {
+    "@tanstack/react-query": "^4.7.1",
+    "@tanstack/react-query-devtools": "^4.7.1",
     "axios": "^0.21.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "react-error-boundary": "^2.2.3",
-    "@tanstack/react-query": "^4.7.1",
-    "@tanstack/react-query-devtools": "^4.7.1"
+    "react-error-boundary": "^2.2.3"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^2.0.0",

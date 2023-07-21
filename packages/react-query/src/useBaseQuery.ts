@@ -1,19 +1,19 @@
 'use client'
 import * as React from 'react'
-import { useSyncExternalStore } from './useSyncExternalStore'
 
-import type { QueryKey, QueryObserver } from '@tanstack/query-core'
 import { notifyManager } from '@tanstack/query-core'
+import { useSyncExternalStore } from './useSyncExternalStore'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
-import type { UseBaseQueryOptions } from './types'
 import { useIsRestoring } from './isRestoring'
 import {
   ensurePreventErrorBoundaryRetry,
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
-import { ensureStaleTime, shouldSuspend, fetchOptimistic } from './suspense'
+import { ensureStaleTime, fetchOptimistic, shouldSuspend } from './suspense'
+import type { QueryKey, QueryObserver } from '@tanstack/query-core'
+import type { UseBaseQueryOptions } from './types'
 
 export function useBaseQuery<
   TQueryFnData,
@@ -77,10 +77,17 @@ export function useBaseQuery<
 
   useSyncExternalStore(
     React.useCallback(
-      (onStoreChange) =>
-        isRestoring
+      (onStoreChange) => {
+        const unsubscribe = isRestoring
           ? () => undefined
-          : observer.subscribe(notifyManager.batchCalls(onStoreChange)),
+          : observer.subscribe(notifyManager.batchCalls(onStoreChange))
+
+        // Update result to make sure we did not miss any query updates
+        // between creating the observer and subscribing to it.
+        observer.updateResult()
+
+        return unsubscribe
+      },
       [observer, isRestoring],
     ),
     () => observer.getCurrentResult(),

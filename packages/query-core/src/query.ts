@@ -1,23 +1,23 @@
 import { getAbortController, noop, replaceData, timeUntilStale } from './utils'
+import { defaultLogger } from './logger'
+import { notifyManager } from './notifyManager'
+import { canFetch, createRetryer, isCancelledError } from './retryer'
+import { Removable } from './removable'
 import type {
+  CancelOptions,
+  FetchStatus,
   InitialDataFunction,
+  QueryFunctionContext,
   QueryKey,
+  QueryMeta,
   QueryOptions,
   QueryStatus,
-  QueryFunctionContext,
-  QueryMeta,
-  CancelOptions,
   SetDataOptions,
-  FetchStatus,
 } from './types'
 import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
 import type { Logger } from './logger'
-import { defaultLogger } from './logger'
-import { notifyManager } from './notifyManager'
 import type { Retryer } from './retryer'
-import { isCancelledError, canFetch, createRetryer } from './retryer'
-import { Removable } from './removable'
 
 // TYPES
 
@@ -392,7 +392,9 @@ export class Query<
     // Create fetch function
     const fetchFn = () => {
       if (!this.options.queryFn) {
-        return Promise.reject('Missing queryFn')
+        return Promise.reject(
+          `Missing queryFn for queryKey '${this.options.queryHash}'`,
+        )
       }
       this.abortSignalConsumed = false
       return this.options.queryFn(queryFnContext)

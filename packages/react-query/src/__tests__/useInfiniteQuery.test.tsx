@@ -1,6 +1,7 @@
 import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
+import { QueryCache, useInfiniteQuery } from '..'
 import {
   createQueryClient,
   queryKey,
@@ -13,7 +14,6 @@ import type {
   QueryFunctionContext,
   UseInfiniteQueryResult,
 } from '..'
-import { QueryCache, useInfiniteQuery } from '..'
 
 interface Result {
   items: number[]
