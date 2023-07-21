@@ -27,8 +27,14 @@ export function useIsMutating(
     isMutating.value = queryClient.isMutating(filters)
   })
 
+  const source = () => {
+    const deps = filters.value
+    if ('queryClient' in filters) delete filters.queryClient
+    return deps
+  }
+
   watch(
-    filters,
+    source,
     () => {
       isMutating.value = queryClient.isMutating(filters)
     },

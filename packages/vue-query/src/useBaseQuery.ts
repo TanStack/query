@@ -64,6 +64,10 @@ export function useBaseQuery<
       ? 'isRestoring'
       : 'optimistic'
 
+    if ('queryClient' in defaulted) {
+      delete defaulted.queryClient
+    }
+
     return defaulted
   })
 

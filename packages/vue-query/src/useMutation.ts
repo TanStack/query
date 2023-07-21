@@ -167,8 +167,14 @@ export function useMutation<
     })
   }
 
+  const source = () => {
+    const deps = options.value
+    if ('queryClient' in deps) delete deps.queryClient
+    return deps
+  }
+
   watch(
-    options,
+    source,
     () => {
       observer.setOptions(queryClient.defaultMutationOptions(options.value))
     },

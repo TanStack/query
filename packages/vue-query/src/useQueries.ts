@@ -191,8 +191,18 @@ export function useQueries<T extends any[]>({
     { immediate: true },
   )
 
+  const source = () => {
+    const deps = defaultedQueries.value
+    deps.forEach((options) => {
+      if ('queryClient' in options) {
+        delete options.queryClient
+      }
+    })
+    return deps
+  }
+
   watch(
-    unreffedQueries,
+    source,
     () => {
       observer.setQueries(defaultedQueries.value)
       state.splice(0, state.length, ...observer.getCurrentResult())

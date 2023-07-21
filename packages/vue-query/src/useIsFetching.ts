@@ -27,8 +27,14 @@ export function useIsFetching(
     isFetching.value = queryClient.isFetching(filters)
   })
 
+  const source = () => {
+    const deps = filters.value
+    if ('queryClient' in filters) delete filters.queryClient
+    return deps
+  }
+
   watch(
-    filters,
+    source,
     () => {
       isFetching.value = queryClient.isFetching(filters)
     },
