@@ -1,0 +1,14 @@
+{
+  "name": "solid-vite",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:bundle": "vite build"
+  },
+  "dependencies": {
+    "@tanstack/solid-query": "workspace:*",
+    "solid-js": "^1.6.13",
+    "vite": "^4.4.4",
+    "vite-plugin-solid": "^2.5.0"
+  }
+}
