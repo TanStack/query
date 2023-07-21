@@ -5,7 +5,7 @@ export const App = () => {
     queryKey: ['test'],
     queryFn: async () => {
       await new Promise((r) => setTimeout(r, 1000))
-      return "Success"
+      return 'Success'
     },
   })
 
@@ -17,9 +17,7 @@ export const App = () => {
     return <div>An error has occurred!</div>
   }
 
-  return (
-    <div>{query.data}</div>
-  );
+  return <div>{query.data}</div>
 }
 
-export default App;
+export default App

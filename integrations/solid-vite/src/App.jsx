@@ -6,7 +6,7 @@ export const App = () => {
     queryKey: ['test'],
     queryFn: async () => {
       await new Promise((r) => setTimeout(r, 1000))
-      return "Success"
+      return 'Success'
     },
   }))
 
@@ -19,4 +19,4 @@ export const App = () => {
   )
 }
 
-export default App;
+export default App
