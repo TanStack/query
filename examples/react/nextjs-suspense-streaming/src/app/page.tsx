@@ -1,5 +1,5 @@
 'use client'
-import { useQuery } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense } from 'react'
 
 // export const runtime = "edge"; // 'nodejs' (default) | 'edge'
@@ -15,7 +15,7 @@ function getBaseURL() {
 }
 const baseUrl = getBaseURL()
 function useWaitQuery(props: { wait: number }) {
-  const query = useQuery({
+  const query = useSuspenseQuery({
     queryKey: ['wait', props.wait],
     queryFn: async () => {
       const path = `/api/wait?wait=${props.wait}`
@@ -29,7 +29,6 @@ function useWaitQuery(props: { wait: number }) {
       ).json()
       return res
     },
-    suspense: true,
   })
 
   return [query.data as string, query] as const
