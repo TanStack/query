@@ -1,4 +1,4 @@
-import { isVue2, markRaw } from 'vue-demi'
+import { isVue2 } from 'vue-demi'
 import { isServer } from '@tanstack/query-core'
 
 import { QueryClient } from './queryClient'
@@ -56,8 +56,6 @@ export const VueQueryPlugin = {
         client = new QueryClient(clientConfig)
       }
     }
-
-    client = markRaw(client)
 
     if (!isServer) {
       client.mount()
