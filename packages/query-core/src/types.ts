@@ -55,6 +55,11 @@ export interface QueryMeta {
 
 export type NetworkMode = 'online' | 'always' | 'offlineFirst'
 
+export type NotifyOnChangeProps =
+  | Array<keyof InfiniteQueryObserverResult>
+  | 'all'
+  | (() => Array<keyof InfiniteQueryObserverResult> | 'all')
+
 export interface QueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
@@ -200,9 +205,10 @@ export interface QueryObserverOptions<
    * If set, the component will only re-render if any of the listed properties change.
    * When set to `['data', 'error']`, the component will only re-render when the `data` or `error` properties change.
    * When set to `'all'`, the component will re-render whenever a query is updated.
+   * When set to a function, the function will be executed to compute the list of properties.
    * By default, access to properties will be tracked, and the component will only re-render when one of the tracked properties change.
    */
-  notifyOnChangeProps?: Array<keyof InfiniteQueryObserverResult> | 'all'
+  notifyOnChangeProps?: NotifyOnChangeProps
   /**
    * This callback will fire any time the query successfully fetches new data.
    *
