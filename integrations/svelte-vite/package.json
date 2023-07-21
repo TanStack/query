@@ -1,0 +1,16 @@
+{
+  "name": "svelte-vite",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "@tanstack/svelte-query": "workspace:*",
+    "@tanstack/svelte-query-devtools": "workspace:*",
+    "@sveltejs/vite-plugin-svelte": "^2.4.2",
+    "svelte": "^4.0.3",
+    "vite": "^4.4.0"
+  }
+}
