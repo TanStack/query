@@ -3,8 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build"
+    "test:bundle": "vite build"
   },
   "devDependencies": {
     "@tanstack/svelte-query": "workspace:*",

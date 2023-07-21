@@ -12,6 +12,7 @@
           "test:eslint",
           "test:types",
           "test:build",
+          "test:bundle",
           "build"
         ],
         "parallel": 5,
@@ -59,14 +60,18 @@
       "dependsOn": ["^build"],
       "inputs": ["default", "^public"]
     },
+    "test:build": {
+      "dependsOn": ["build"],
+      "inputs": ["default", "^public"]
+    },
+    "test:bundle": {
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^public"]
+    },
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["default", "^public"],
       "outputs": ["{projectRoot}/build", "{projectRoot}/dist"]
-    },
-    "test:build": {
-      "dependsOn": ["build"],
-      "inputs": ["^public"]
     }
   }
 }
