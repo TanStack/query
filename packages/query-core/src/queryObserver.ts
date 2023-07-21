@@ -637,15 +637,21 @@ export class QueryObserver<
       }
 
       const { notifyOnChangeProps } = this.options
+      const notifyOnChangePropsValue =
+        typeof notifyOnChangeProps === 'function'
+          ? notifyOnChangeProps()
+          : notifyOnChangeProps
 
       if (
-        notifyOnChangeProps === 'all' ||
-        (!notifyOnChangeProps && !this.trackedProps.size)
+        notifyOnChangePropsValue === 'all' ||
+        (!notifyOnChangePropsValue && !this.trackedProps.size)
       ) {
         return true
       }
 
-      const includedProps = new Set(notifyOnChangeProps ?? this.trackedProps)
+      const includedProps = new Set(
+        notifyOnChangePropsValue ?? this.trackedProps,
+      )
 
       if (this.options.useErrorBoundary) {
         includedProps.add('error')
