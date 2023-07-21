@@ -1,13 +1,13 @@
 <script setup>
-  import { useQuery } from '@tanstack/vue-query'
+import { useQuery } from '@tanstack/vue-query'
 
-  const { isPending, isError, data } = useQuery({
-    queryKey: ['test'],
-    queryFn: async () => {
-      await new Promise((r) => setTimeout(r, 1000))
-      return 'Success'
-    },
-  })
+const { isPending, isError, data } = useQuery({
+  queryKey: ['test'],
+  queryFn: async () => {
+    await new Promise((r) => setTimeout(r, 1000))
+    return 'Success'
+  },
+})
 </script>
 
 <template>
