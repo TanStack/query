@@ -195,6 +195,8 @@ export function useQueries<T extends any[]>({
     const deps = defaultedQueries.value
     deps.forEach((options) => {
       if ('queryClient' in options) {
+        // @ts-ignore
+        // The `queryClient` property does exist; it lacks type definition.
         delete options.queryClient
       }
     })

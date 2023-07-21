@@ -65,6 +65,8 @@ export function useBaseQuery<
       : 'optimistic'
 
     if ('queryClient' in defaulted) {
+      // @ts-ignore
+      // The `queryClient` property does exist; it lacks type definition.
       delete defaulted.queryClient
     }
 

@@ -29,7 +29,7 @@ export function useIsMutating(
 
   const source = () => {
     const deps = filters.value
-    if ('queryClient' in filters) delete filters.queryClient
+    if ('queryClient' in deps) delete deps.queryClient
     return deps
   }
 
