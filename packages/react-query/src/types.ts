@@ -6,6 +6,7 @@ import type {
   DefinedQueryObserverResult,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
+  InfiniteQueryObserverSuccessResult,
   MutateFunction,
   MutationObserverOptions,
   MutationObserverResult,
@@ -66,6 +67,25 @@ export interface UseInfiniteQueryOptions<
     'queryKey'
   > {}
 
+export interface UseSuspenseInfiniteQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> extends Omit<
+    UseInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
+    >,
+    'enabled' | 'suspense' | 'throwOnError' | 'placeholderData'
+  > {}
+
 export type UseBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
@@ -95,6 +115,11 @@ export type DefinedUseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = DefinedInfiniteQueryObserverResult<TData, TError>
+
+export type UseSuspenseInfiniteQueryResult<
+  TData = unknown,
+  TError = DefaultError,
+> = Omit<InfiniteQueryObserverSuccessResult<TData, TError>, 'isPlaceholderData'>
 
 export interface UseMutationOptions<
   TData = unknown,

@@ -1,15 +1,20 @@
 'use client'
 import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
-import type { QueryObserver } from '@tanstack/query-core'
+import type {
+  InfiniteQueryObserverSuccessResult,
+  QueryObserver,
+} from '@tanstack/query-core'
 import type {
   DefaultError,
   InfiniteData,
   QueryClient,
   QueryKey,
 } from '@tanstack/query-core'
-import type { DefinedUseInfiniteQueryResult } from './types'
-import type { UseInfiniteQueryOptions } from './types'
+import type {
+  UseSuspenseInfiniteQueryOptions,
+  UseSuspenseInfiniteQueryResult,
+} from './types'
 
 export function useSuspenseInfiniteQuery<
   TQueryFnData,
@@ -18,19 +23,16 @@ export function useSuspenseInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: Omit<
-    UseInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryFnData,
-      TQueryKey,
-      TPageParam
-    >,
-    'enabled' | 'suspense' | 'throwOnError' | 'placeholderData'
+  options: UseSuspenseInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryFnData,
+    TQueryKey,
+    TPageParam
   >,
   queryClient?: QueryClient,
-): Omit<DefinedUseInfiniteQueryResult<TData, TError>, 'isPlaceholderData'> {
+): UseSuspenseInfiniteQueryResult<TData, TError> {
   return useBaseQuery(
     {
       ...options,
@@ -41,5 +43,5 @@ export function useSuspenseInfiniteQuery<
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     InfiniteQueryObserver as typeof QueryObserver,
     queryClient,
-  ) as DefinedUseInfiniteQueryResult<TData, TError>
+  ) as InfiniteQueryObserverSuccessResult<TData, TError>
 }
