@@ -191,26 +191,10 @@ export function useQueries<T extends any[]>({
     { immediate: true },
   )
 
-  const source = () => {
-    const deps = defaultedQueries.value
-    deps.forEach((options) => {
-      if ('queryClient' in options) {
-        // @ts-ignore
-        // The `queryClient` property does exist; it lacks type definition.
-        delete options.queryClient
-      }
-    })
-    return deps
-  }
-
-  watch(
-    source,
-    () => {
-      observer.setQueries(defaultedQueries.value)
-      state.splice(0, state.length, ...observer.getCurrentResult())
-    },
-    { deep: true },
-  )
+  watch(defaultedQueries, () => {
+    observer.setQueries(defaultedQueries.value)
+    state.splice(0, state.length, ...observer.getCurrentResult())
+  })
 
   onScopeDispose(() => {
     unsubscribe()

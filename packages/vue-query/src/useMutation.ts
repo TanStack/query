@@ -167,19 +167,9 @@ export function useMutation<
     })
   }
 
-  const source = () => {
-    const deps = options.value
-    if ('queryClient' in deps) delete deps.queryClient
-    return deps
-  }
-
-  watch(
-    source,
-    () => {
-      observer.setOptions(queryClient.defaultMutationOptions(options.value))
-    },
-    { deep: true },
-  )
+  watch(options, () => {
+    observer.setOptions(queryClient.defaultMutationOptions(options.value))
+  })
 
   onScopeDispose(() => {
     unsubscribe()

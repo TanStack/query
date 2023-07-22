@@ -64,12 +64,6 @@ export function useBaseQuery<
       ? 'isRestoring'
       : 'optimistic'
 
-    if ('queryClient' in defaulted) {
-      // @ts-ignore
-      // The `queryClient` property does exist; it lacks type definition.
-      delete defaulted.queryClient
-    }
-
     return defaulted
   })
 
@@ -94,14 +88,10 @@ export function useBaseQuery<
     { immediate: true },
   )
 
-  watch(
-    defaultedOptions,
-    () => {
-      observer.setOptions(defaultedOptions.value)
-      updateState(state, observer.getCurrentResult())
-    },
-    { deep: true },
-  )
+  watch(defaultedOptions, () => {
+    observer.setOptions(defaultedOptions.value)
+    updateState(state, observer.getCurrentResult())
+  })
 
   onScopeDispose(() => {
     unsubscribe()
