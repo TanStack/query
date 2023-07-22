@@ -80,10 +80,11 @@
     "semver": "^7.5.1",
     "solid-js": "^1.6.13",
     "stream-to-array": "^2.3.0",
-    "tsup": "^7.0.0",
-    "type-fest": "^3.11.0",
-    "typescript": "^5.1.3",
-    "vitest": "^0.27.1",
+    "tsup": "^7.1.0",
+    "type-fest": "^3.13.0",
+    "typescript": "^5.0.4",
+    "vite": "^4.4.4",
+    "vitest": "^0.33.0",
     "vue": "^3.2.47"
   },
   "pnpm": {
@@ -93,4 +94,3 @@
   },
   "foo": "blah2"
 }
-

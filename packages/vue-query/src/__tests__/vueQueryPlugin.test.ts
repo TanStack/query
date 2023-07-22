@@ -352,15 +352,15 @@ describe('VueQueryPlugin', () => {
       expect(query.isFetching.value).toBeFalsy()
       expect(query.data.value).toStrictEqual(undefined)
 
-      expect(queries.value[0].isFetching).toBeFalsy()
-      expect(queries.value[0].data).toStrictEqual(undefined)
+      expect(queries.value[0]?.isFetching).toBeFalsy()
+      expect(queries.value[0]?.data).toStrictEqual(undefined)
       expect(fnSpy).toHaveBeenCalledTimes(0)
 
       await flushPromises()
 
       expect(customClient.isRestoring.value).toBeFalsy()
       expect(query.data.value).toStrictEqual({ foo1: 'bar1' })
-      expect(queries.value[0].data).toStrictEqual({ foo2: 'bar2' })
+      expect(queries.value[0]?.data).toStrictEqual({ foo2: 'bar2' })
       expect(fnSpy).toHaveBeenCalledTimes(0)
     })
   })
