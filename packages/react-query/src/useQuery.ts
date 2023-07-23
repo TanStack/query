@@ -12,8 +12,6 @@ import type {
   UndefinedInitialDataOptions,
 } from './queryOptions'
 
-// HOOK
-
 export function useQuery<
   TQueryFnData = unknown,
   TError = DefaultError,

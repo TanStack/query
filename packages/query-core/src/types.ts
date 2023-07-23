@@ -585,14 +585,20 @@ export interface InfiniteQueryObserverSuccessResult<
   status: 'success'
 }
 
+export type DefinedInfiniteQueryObserverResult<
+  TData = unknown,
+  TError = DefaultError,
+> =
+  | InfiniteQueryObserverRefetchErrorResult<TData, TError>
+  | InfiniteQueryObserverSuccessResult<TData, TError>
+
 export type InfiniteQueryObserverResult<
   TData = unknown,
   TError = DefaultError,
 > =
   | InfiniteQueryObserverLoadingErrorResult<TData, TError>
   | InfiniteQueryObserverLoadingResult<TData, TError>
-  | InfiniteQueryObserverRefetchErrorResult<TData, TError>
-  | InfiniteQueryObserverSuccessResult<TData, TError>
+  | DefinedInfiniteQueryObserverResult<TData, TError>
 
 export type MutationKey = readonly unknown[]
 

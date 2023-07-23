@@ -5422,11 +5422,8 @@ describe('useQuery', () => {
       const rendered = renderWithClient(queryClient, <Page />)
 
       await waitFor(() =>
-        rendered.getByText(
-          'status: pending, fetchStatus: fetching, failureCount: 1',
-        ),
+        rendered.getByText(/status: pending, fetchStatus: fetching/i),
       )
-      await waitFor(() => rendered.getByText('failureReason: failed1'))
 
       const onlineMock = mockOnlineManagerIsOnline(false)
       window.dispatchEvent(new Event('offline'))

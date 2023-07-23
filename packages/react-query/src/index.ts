@@ -8,7 +8,10 @@ export * from './types'
 export { useQueries } from './useQueries'
 export type { QueriesResults, QueriesOptions } from './useQueries'
 export { useQuery } from './useQuery'
+export { useSuspenseQuery } from './useSuspenseQuery'
+export { useSuspenseInfiniteQuery } from './useSuspenseInfiniteQuery'
 export { queryOptions } from './queryOptions'
+export { infiniteQueryOptions } from './infiniteQueryOptions'
 export {
   QueryClientContext,
   QueryClientProvider,

@@ -2,15 +2,18 @@
 
 import type {
   DefaultError,
+  DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
+  InfiniteQueryObserverSuccessResult,
   MutateFunction,
   MutationObserverOptions,
   MutationObserverResult,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
+  QueryObserverSuccessResult,
   WithRequired,
 } from '@tanstack/query-core'
 
@@ -35,6 +38,16 @@ export interface UseQueryOptions<
     'queryKey'
   > {}
 
+export interface UseSuspenseQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> extends Omit<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'enabled' | 'suspense' | 'throwOnError' | 'placeholderData'
+  > {}
+
 export interface UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -54,6 +67,25 @@ export interface UseInfiniteQueryOptions<
     'queryKey'
   > {}
 
+export interface UseSuspenseInfiniteQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> extends Omit<
+    UseInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
+    >,
+    'enabled' | 'suspense' | 'throwOnError' | 'placeholderData'
+  > {}
+
 export type UseBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
@@ -64,20 +96,30 @@ export type UseQueryResult<
   TError = DefaultError,
 > = UseBaseQueryResult<TData, TError>
 
-export type DefinedUseBaseQueryResult<
+export type UseSuspenseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = DefinedQueryObserverResult<TData, TError>
+> = Omit<QueryObserverSuccessResult<TData, TError>, 'isPlaceholderData'>
 
 export type DefinedUseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = DefinedUseBaseQueryResult<TData, TError>
+> = DefinedQueryObserverResult<TData, TError>
 
 export type UseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = InfiniteQueryObserverResult<TData, TError>
+
+export type DefinedUseInfiniteQueryResult<
+  TData = unknown,
+  TError = DefaultError,
+> = DefinedInfiniteQueryObserverResult<TData, TError>
+
+export type UseSuspenseInfiniteQueryResult<
+  TData = unknown,
+  TError = DefaultError,
+> = Omit<InfiniteQueryObserverSuccessResult<TData, TError>, 'isPlaceholderData'>
 
 export interface UseMutationOptions<
   TData = unknown,
