@@ -16,22 +16,24 @@
   "types": "./build/index.d.ts",
   "browser": {},
   "exports": {
-    "solid": {
-      "development": "./build/dev.js",
-      "import": "./build/index.js"
-    },
     "development": {
       "import": {
         "types": "./build/index.d.ts",
         "default": "./build/dev.js"
       },
-      "require": "./build/dev.cjs"
+      "require": {
+        "types": "./build/index.d.cts",
+        "default": "./build/dev.cjs"
+      }
     },
     "import": {
       "types": "./build/index.d.ts",
       "default": "./build/index.js"
     },
-    "require": "./build/index.cjs"
+    "require": {
+      "types": "./build/index.d.cts",
+      "default": "./build/index.cjs"
+    }
   },
   "sideEffects": [
     "./src/setBatchUpdatesFn.ts"
@@ -50,13 +52,14 @@
     "src"
   ],
   "dependencies": {
-    "@tanstack/query-core": "workspace:*"
+    "@tanstack/query-core": "workspace:*",
+    "solid-js": "^1.7.8"
   },
   "devDependencies": {
-    "tsup-preset-solid": "^0.1.8",
-    "vite-plugin-solid": "^2.5.0"
+    "tsup-preset-solid": "^2.0.1",
+    "vite-plugin-solid": "^2.7.0"
   },
   "peerDependencies": {
-    "solid-js": "^1.6.13"
+    "solid-js": "^1.6.0"
   }
 }
