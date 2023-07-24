@@ -51,4 +51,4 @@ Still on **React Query v3**? No problem! Check out the v3 docs here: https://tan
 
 ### [Become a Sponsor!](https://github.com/sponsors/tannerlinsley/)
 
-<!-- Use the force, Luke -->
+<!-- Use the force, Luke! -->
