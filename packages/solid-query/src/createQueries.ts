@@ -1,23 +1,31 @@
-import { createComputed, onCleanup, onMount } from 'solid-js'
-import { QueriesObserver } from '@tanstack/query-core'
+import { QueriesObserver, notifyManager } from '@tanstack/query-core'
+import { createComputed, onCleanup } from 'solid-js'
 import { createStore, unwrap } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
-import { scheduleMicrotask } from './utils'
+import type { Accessor } from 'solid-js'
+import type { QueryClient } from './QueryClient'
 import type {
-  CreateQueryOptions,
-  CreateQueryResult,
-  SolidQueryKey,
-} from './types'
-import type { QueryFunction } from '@tanstack/query-core'
+  DefaultError,
+  QueriesObserverOptions,
+  QueriesPlaceholderDataFunction,
+  QueryFunction,
+  QueryKey,
+} from '@tanstack/query-core'
+import type { CreateQueryResult, SolidQueryOptions } from './types'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
-// - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
+// `placeholderData` function does not have a parameter
 type CreateQueryOptionsForCreateQueries<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = DefaultError,
   TData = TQueryFnData,
-  TQueryKey extends SolidQueryKey = SolidQueryKey,
-> = Omit<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'context'>
+  TQueryKey extends QueryKey = QueryKey,
+> = Omit<
+  SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'placeholderData'
+> & {
+  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+}
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
@@ -46,18 +54,13 @@ type GetOptions<T> =
         queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
         select: (data: any) => infer TData
       }
-    ? CreateQueryOptionsForCreateQueries<
-        TQueryFnData,
-        unknown,
-        TData,
-        () => TQueryKey
-      >
+    ? CreateQueryOptionsForCreateQueries<TQueryFnData, Error, TData, TQueryKey>
     : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
     ? CreateQueryOptionsForCreateQueries<
         TQueryFnData,
-        unknown,
+        Error,
         TQueryFnData,
-        () => TQueryKey
+        TQueryKey
       >
     : // Fallback
       CreateQueryOptionsForCreateQueries
@@ -139,65 +142,70 @@ export type QueriesResults<
       any
     >[]
   ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-    CreateQueryResult<unknown extends TData ? TQueryFnData : TData, TError>[]
+    CreateQueryResult<
+      unknown extends TData ? TQueryFnData : TData,
+      unknown extends TError ? DefaultError : TError
+    >[]
   : // Fallback
     CreateQueryResult[]
 
-type ArrType<T> = T extends (infer U)[] ? U : never
+export function createQueries<
+  T extends any[],
+  TCombinedResult = QueriesResults<T>,
+>(
+  queriesOptions: Accessor<{
+    queries: readonly [...QueriesOptions<T>]
+    combine?: (result: QueriesResults<T>) => TCombinedResult
+  }>,
+  queryClient?: Accessor<QueryClient>,
+): TCombinedResult {
+  const client = useQueryClient(queryClient?.())
 
-export function createQueries<T extends any[]>(queriesOptions: {
-  queries: readonly [...QueriesOptions<T>]
-  context?: CreateQueryOptions['context']
-}): QueriesResults<T> {
-  const queryClient = useQueryClient({ context: queriesOptions.context })
-
-  const normalizeOptions = (
-    options: ArrType<typeof queriesOptions.queries>,
-  ) => {
-    const normalizedOptions = { ...options, queryKey: options.queryKey?.() }
-    const defaultedOptions = queryClient.defaultQueryOptions(normalizedOptions)
+  const defaultedQueries = queriesOptions().queries.map((options) => {
+    const defaultedOptions = client.defaultQueryOptions(options)
     defaultedOptions._optimisticResults = 'optimistic'
     return defaultedOptions
-  }
+  })
 
-  const defaultedQueries = queriesOptions.queries.map((options) =>
-    normalizeOptions(options),
+  const observer = new QueriesObserver(
+    client,
+    defaultedQueries,
+    queriesOptions().combine
+      ? ({
+          combine: queriesOptions().combine,
+        } as QueriesObserverOptions<TCombinedResult>)
+      : undefined,
   )
 
-  const observer = new QueriesObserver(queryClient, defaultedQueries)
-
-  const [state, setState] = createStore(
-    observer.getOptimisticResult(defaultedQueries),
+  // @ts-expect-error - Types issue with solid-js createStore
+  const [state, setState] = createStore<TCombinedResult>(
+    observer.getOptimisticResult(defaultedQueries)[1](),
   )
-
-  const taskQueue: Array<() => void> = []
 
   const unsubscribe = observer.subscribe((result) => {
-    taskQueue.push(() => {
-      setState(unwrap(result))
-    })
-
-    scheduleMicrotask(() => {
-      const taskToRun = taskQueue.pop()
-      if (taskToRun) {
-        taskToRun()
-        taskQueue.splice(0, taskQueue.length)
-      }
-    })
+    notifyManager.batchCalls(() => {
+      setState(unwrap(result) as unknown as TCombinedResult)
+    })()
   })
 
   onCleanup(unsubscribe)
 
-  onMount(() => {
-    observer.setQueries(defaultedQueries, { listeners: false })
-  })
-
   createComputed(() => {
-    const updateDefaultedQueries = queriesOptions.queries.map((options) =>
-      normalizeOptions(options),
+    const updatedQueries = queriesOptions().queries.map((options) => {
+      const defaultedOptions = client.defaultQueryOptions(options)
+      defaultedOptions._optimisticResults = 'optimistic'
+      return defaultedOptions
+    })
+    observer.setQueries(
+      updatedQueries,
+      queriesOptions().combine
+        ? ({
+            combine: queriesOptions().combine,
+          } as QueriesObserverOptions<TCombinedResult>)
+        : undefined,
+      { listeners: false },
     )
-    observer.setQueries(updateDefaultedQueries)
   })
 
-  return state as QueriesResults<T>
+  return state
 }

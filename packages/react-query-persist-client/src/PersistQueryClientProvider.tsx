@@ -8,7 +8,7 @@ import type { QueryClientProviderProps } from '@tanstack/react-query'
 
 export type PersistQueryClientProviderProps = QueryClientProviderProps & {
   persistOptions: Omit<PersistQueryClientOptions, 'queryClient'>
-  onSuccess?: () => void
+  onSuccess?: () => Promise<unknown> | unknown
 }
 
 export const PersistQueryClientProvider = ({
@@ -33,10 +33,13 @@ export const PersistQueryClientProvider = ({
       queryClient: client,
     })
 
-    promise.then(() => {
+    promise.then(async () => {
       if (!isStale) {
-        refs.current.onSuccess?.()
-        setIsRestoring(false)
+        try {
+          await refs.current.onSuccess?.()
+        } finally {
+          setIsRestoring(false)
+        }
       }
     })
 

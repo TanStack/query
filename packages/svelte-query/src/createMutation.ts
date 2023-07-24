@@ -1,96 +1,38 @@
-import { derived, readable } from 'svelte/store'
-import {
-  type MutationFunction,
-  type MutationKey,
-  MutationObserver,
-  notifyManager,
-  parseMutationArgs,
-} from '@tanstack/query-core'
+import { derived, get, readable } from 'svelte/store'
+import { MutationObserver, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
+import { isSvelteStore } from './utils'
 import type {
   CreateMutateFunction,
   CreateMutationOptions,
   CreateMutationResult,
 } from './types'
+import type { DefaultError, QueryClient } from '@tanstack/query-core'
 
 export function createMutation<
   TData = unknown,
-  TError = unknown,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 >(
   options: CreateMutationOptions<TData, TError, TVariables, TContext>,
-): CreateMutationResult<TData, TError, TVariables, TContext>
-
-export function createMutation<
-  TData = unknown,
-  TError = unknown,
-  TVariables = void,
-  TContext = unknown,
->(
-  mutationFn: MutationFunction<TData, TVariables>,
-  options?: Omit<
-    CreateMutationOptions<TData, TError, TVariables, TContext>,
-    'mutationFn'
-  >,
-): CreateMutationResult<TData, TError, TVariables, TContext>
-
-export function createMutation<
-  TData = unknown,
-  TError = unknown,
-  TVariables = void,
-  TContext = unknown,
->(
-  mutationKey: MutationKey,
-  options?: Omit<
-    CreateMutationOptions<TData, TError, TVariables, TContext>,
-    'mutationKey'
-  >,
-): CreateMutationResult<TData, TError, TVariables, TContext>
-
-export function createMutation<
-  TData = unknown,
-  TError = unknown,
-  TVariables = void,
-  TContext = unknown,
->(
-  mutationKey: MutationKey,
-  mutationFn?: MutationFunction<TData, TVariables>,
-  options?: Omit<
-    CreateMutationOptions<TData, TError, TVariables, TContext>,
-    'mutationKey' | 'mutationFn'
-  >,
-): CreateMutationResult<TData, TError, TVariables, TContext>
-
-export function createMutation<
-  TData = unknown,
-  TError = unknown,
-  TVariables = void,
-  TContext = unknown,
->(
-  arg1:
-    | MutationKey
-    | MutationFunction<TData, TVariables>
-    | CreateMutationOptions<TData, TError, TVariables, TContext>,
-  arg2?:
-    | MutationFunction<TData, TVariables>
-    | CreateMutationOptions<TData, TError, TVariables, TContext>,
-  arg3?: CreateMutationOptions<TData, TError, TVariables, TContext>,
+  queryClient?: QueryClient,
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
-  const options = parseMutationArgs(arg1, arg2, arg3)
-  const queryClient = useQueryClient()
-  let observer = new MutationObserver<TData, TError, TVariables, TContext>(
-    queryClient,
-    options,
+  const client = useQueryClient(queryClient)
+
+  const optionsStore = isSvelteStore(options) ? options : readable(options)
+
+  const observer = new MutationObserver<TData, TError, TVariables, TContext>(
+    client,
+    get(optionsStore),
   )
   let mutate: CreateMutateFunction<TData, TError, TVariables, TContext>
 
-  readable(observer).subscribe(($observer) => {
-    observer = $observer
+  optionsStore.subscribe(($options) => {
     mutate = (variables, mutateOptions) => {
       observer.mutate(variables, mutateOptions).catch(noop)
     }
-    observer.setOptions(options)
+    observer.setOptions($options)
   })
 
   const result = readable(observer.getCurrentResult(), (set) => {

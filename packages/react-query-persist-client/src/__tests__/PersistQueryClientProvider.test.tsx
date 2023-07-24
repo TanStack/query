@@ -1,11 +1,12 @@
 import * as React from 'react'
 import { render, waitFor } from '@testing-library/react'
+import { vi } from 'vitest'
 
 import { QueryClient, useQueries, useQuery } from '@tanstack/react-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
-import { createQueryClient, mockLogger, queryKey, sleep } from './utils'
+import { createQueryClient, queryKey, sleep } from './utils'
 import type {
   PersistedClient,
   Persister,
@@ -57,7 +58,10 @@ describe('PersistQueryClientProvider', () => {
     const states: UseQueryResult<string>[] = []
 
     const queryClient = createQueryClient()
-    await queryClient.prefetchQuery(key, () => Promise.resolve('hydrated'))
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
 
     const persister = createMockPersister()
 
@@ -66,9 +70,12 @@ describe('PersistQueryClientProvider', () => {
     queryClient.clear()
 
     function Page() {
-      const state = useQuery(key, async () => {
-        await sleep(10)
-        return 'fetched'
+      const state = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 'fetched'
+        },
       })
 
       states.push(state)
@@ -97,7 +104,7 @@ describe('PersistQueryClientProvider', () => {
     expect(states).toHaveLength(4)
 
     expect(states[0]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
@@ -126,7 +133,10 @@ describe('PersistQueryClientProvider', () => {
     const states: UseQueryResult[] = []
 
     const queryClient = createQueryClient()
-    await queryClient.prefetchQuery(key, () => Promise.resolve('hydrated'))
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
 
     const persister = createMockPersister()
 
@@ -173,7 +183,7 @@ describe('PersistQueryClientProvider', () => {
     expect(states).toHaveLength(4)
 
     expect(states[0]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
@@ -202,7 +212,10 @@ describe('PersistQueryClientProvider', () => {
     const states: DefinedUseQueryResult<string>[] = []
 
     const queryClient = createQueryClient()
-    await queryClient.prefetchQuery(key, () => Promise.resolve('hydrated'))
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
 
     const persister = createMockPersister()
 
@@ -211,19 +224,18 @@ describe('PersistQueryClientProvider', () => {
     queryClient.clear()
 
     function Page() {
-      const state = useQuery(
-        key,
-        async () => {
+      const state = useQuery({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(10)
           return 'fetched'
         },
-        {
-          initialData: 'initial',
-          // make sure that initial data is older than the hydration data
-          // otherwise initialData would be newer and takes precedence
-          initialDataUpdatedAt: 1,
-        },
-      )
+
+        initialData: 'initial',
+        // make sure that initial data is older than the hydration data
+        // otherwise initialData would be newer and takes precedence
+        initialDataUpdatedAt: 1,
+      })
 
       states.push(state)
 
@@ -280,7 +292,10 @@ describe('PersistQueryClientProvider', () => {
     const states: UseQueryResult<string>[] = []
 
     const queryClient = createQueryClient()
-    await queryClient.prefetchQuery(key, () => Promise.resolve('hydrated'))
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
 
     const persister = createMockPersister()
 
@@ -291,17 +306,16 @@ describe('PersistQueryClientProvider', () => {
     let fetched = false
 
     function Page() {
-      const state = useQuery(
-        key,
-        async () => {
+      const state = useQuery({
+        queryKey: key,
+        queryFn: async () => {
           fetched = true
           await sleep(10)
           return 'fetched'
         },
-        {
-          staleTime: Infinity,
-        },
-      )
+
+        staleTime: Infinity,
+      })
 
       states.push(state)
 
@@ -330,7 +344,7 @@ describe('PersistQueryClientProvider', () => {
     expect(fetched).toBe(false)
 
     expect(states[0]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
@@ -346,7 +360,10 @@ describe('PersistQueryClientProvider', () => {
     const key = queryKey()
 
     const queryClient = createQueryClient()
-    await queryClient.prefetchQuery(key, () => Promise.resolve('hydrated'))
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
 
     const persister = createMockPersister()
 
@@ -355,9 +372,12 @@ describe('PersistQueryClientProvider', () => {
     queryClient.clear()
 
     function Page() {
-      const state = useQuery(key, async () => {
-        await sleep(10)
-        return 'fetched'
+      const state = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 'fetched'
+        },
       })
 
       return (
@@ -368,7 +388,7 @@ describe('PersistQueryClientProvider', () => {
       )
     }
 
-    const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
 
     const rendered = render(
       <PersistQueryClientProvider
@@ -386,20 +406,86 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('fetched'))
   })
 
-  test('should remove cache after non-successful restoring', async () => {
+  test('should await onSuccess after successful restoring', async () => {
     const key = queryKey()
-    jest.spyOn(console, 'warn').mockImplementation(() => undefined)
-    jest.spyOn(console, 'error').mockImplementation(() => undefined)
 
     const queryClient = createQueryClient()
-    const removeClient = jest.fn()
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
+
+    const persister = createMockPersister()
+
+    await persistQueryClientSave({ queryClient, persister })
+
+    queryClient.clear()
+
+    const states: Array<string> = []
+
+    function Page() {
+      const { data, fetchStatus } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          states.push('fetching')
+          await sleep(10)
+          states.push('fetched')
+          return 'fetched'
+        },
+      })
+
+      return (
+        <div>
+          <h1>{data}</h1>
+          <h2>fetchStatus: {fetchStatus}</h2>
+        </div>
+      )
+    }
+
+    const rendered = render(
+      <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{ persister }}
+        onSuccess={async () => {
+          states.push('onSuccess')
+          await sleep(20)
+          states.push('onSuccess done')
+        }}
+      >
+        <Page />
+      </PersistQueryClientProvider>,
+    )
+
+    await waitFor(() => rendered.getByText('hydrated'))
+    await waitFor(() => rendered.getByText('fetched'))
+    expect(states).toEqual([
+      'onSuccess',
+      'onSuccess done',
+      'fetching',
+      'fetched',
+    ])
+  })
+
+  test('should remove cache after non-successful restoring', async () => {
+    const key = queryKey()
+    const consoleMock = vi.spyOn(console, 'error')
+    const consoleWarn = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined)
+    consoleMock.mockImplementation(() => undefined)
+
+    const queryClient = createQueryClient()
+    const removeClient = vi.fn()
 
     const [error, persister] = createMockErrorPersister(removeClient)
 
     function Page() {
-      const state = useQuery(key, async () => {
-        await sleep(10)
-        return 'fetched'
+      const state = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 'fetched'
+        },
       })
 
       return (
@@ -421,8 +507,10 @@ describe('PersistQueryClientProvider', () => {
 
     await waitFor(() => rendered.getByText('fetched'))
     expect(removeClient).toHaveBeenCalledTimes(1)
-    expect(mockLogger.error).toHaveBeenCalledTimes(2)
-    expect(mockLogger.error).toHaveBeenNthCalledWith(2, error)
+    expect(consoleMock).toHaveBeenCalledTimes(1)
+    expect(consoleMock).toHaveBeenNthCalledWith(1, error)
+    consoleMock.mockRestore()
+    consoleWarn.mockRestore()
   })
 
   test('should be able to persist into multiple clients', async () => {
@@ -430,7 +518,10 @@ describe('PersistQueryClientProvider', () => {
     const states: UseQueryResult[] = []
 
     const queryClient = createQueryClient()
-    await queryClient.prefetchQuery(key, () => Promise.resolve('hydrated'))
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
 
     const persister = createMockPersister()
 
@@ -438,13 +529,13 @@ describe('PersistQueryClientProvider', () => {
 
     queryClient.clear()
 
-    const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
 
-    const queryFn1 = jest.fn().mockImplementation(async () => {
+    const queryFn1 = vi.fn().mockImplementation(async () => {
       await sleep(10)
       return 'queryFn1'
     })
-    const queryFn2 = jest.fn().mockImplementation(async () => {
+    const queryFn2 = vi.fn().mockImplementation(async () => {
       await sleep(10)
       return 'queryFn2'
     })
@@ -485,7 +576,7 @@ describe('PersistQueryClientProvider', () => {
     }
 
     function Page() {
-      const state = useQuery(key)
+      const state = useQuery({ queryKey: key })
 
       states.push(state)
 
@@ -509,13 +600,13 @@ describe('PersistQueryClientProvider', () => {
     expect(states).toHaveLength(5)
 
     expect(states[0]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
 
     expect(states[1]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })

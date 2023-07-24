@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
-import { ThemeProvider } from '@material-ui/core'
-import { createMuiTheme } from '@material-ui/core/styles'
+import { ThemeProvider } from '@mui/material'
+import { createTheme } from '@mui/material/styles'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
@@ -24,7 +24,7 @@ export default function App() {
   )
 }
 
-const theme = createMuiTheme({
+const theme = createTheme({
   typography: {
     h1: {
       fontFamily: 'Roboto Mono, monospace',

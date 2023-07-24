@@ -10,7 +10,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      cacheTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 1000 * 60 * 60 * 24, // 24 hours
     },
   },
 })
@@ -49,7 +49,7 @@ function Posts({
     <div>
       <h1>Posts</h1>
       <div>
-        {status === 'loading' ? (
+        {status === 'pending' ? (
           'Loading...'
         ) : error instanceof Error ? (
           <span>Error: {error.message}</span>
@@ -116,7 +116,7 @@ function Post({
           Back
         </a>
       </div>
-      {!postId || status === 'loading' ? (
+      {!postId || status === 'pending' ? (
         'Loading...'
       ) : error instanceof Error ? (
         <span>Error: {error.message}</span>

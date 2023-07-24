@@ -1,4 +1,4 @@
-import { createQuery } from '../createQuery'
+import { createQuery, queryOptions } from '../index'
 
 export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
   T,
@@ -14,7 +14,8 @@ describe('initialData', () => {
   describe('Config object overload', () => {
     it('TData should always be defined when initialData is provided as an object', () => {
       doNotExecute(() => {
-        const { data } = createQuery({
+        const { data } = createQuery(() => ({
+          queryKey: ['key'],
           queryFn: () => {
             return {
               wow: true,
@@ -23,7 +24,27 @@ describe('initialData', () => {
           initialData: {
             wow: true,
           },
-        })
+        }))
+
+        const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
+        return result
+      })
+    })
+
+    it('TData should be defined when passed through queryOptions', () => {
+      doNotExecute(() => {
+        const options = queryOptions(() => ({
+          queryKey: ['key'],
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          initialData: {
+            wow: true,
+          },
+        }))
+        const { data } = createQuery(options)
 
         const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
         return result
@@ -32,7 +53,8 @@ describe('initialData', () => {
 
     it('TData should always be defined when initialData is provided as a function which ALWAYS returns the data', () => {
       doNotExecute(() => {
-        const { data } = createQuery({
+        const { data } = createQuery(() => ({
+          queryKey: ['key'],
           queryFn: () => {
             return {
               wow: true,
@@ -41,7 +63,7 @@ describe('initialData', () => {
           initialData: () => ({
             wow: true,
           }),
-        })
+        }))
 
         const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
         return result
@@ -50,13 +72,14 @@ describe('initialData', () => {
 
     it('TData should have undefined in the union when initialData is NOT provided', () => {
       doNotExecute(() => {
-        const { data } = createQuery({
+        const { data } = createQuery(() => ({
+          queryKey: ['key'],
           queryFn: () => {
             return {
               wow: true,
             }
           },
-        })
+        }))
 
         const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
           true
@@ -66,14 +89,15 @@ describe('initialData', () => {
 
     it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
       doNotExecute(() => {
-        const { data } = createQuery({
+        const { data } = createQuery(() => ({
+          queryKey: ['key'],
           queryFn: () => {
             return {
               wow: true,
             }
           },
           initialData: () => undefined as { wow: boolean } | undefined,
-        })
+        }))
 
         const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
           true
@@ -85,7 +109,8 @@ describe('initialData', () => {
   describe('Query key overload', () => {
     it('TData should always be defined when initialData is provided', () => {
       doNotExecute(() => {
-        const { data } = createQuery(() => ['key'], {
+        const { data } = createQuery(() => ({
+          queryKey: ['key'],
           queryFn: () => {
             return {
               wow: true,
@@ -94,7 +119,7 @@ describe('initialData', () => {
           initialData: {
             wow: true,
           },
-        })
+        }))
 
         const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
         return result
@@ -103,13 +128,14 @@ describe('initialData', () => {
 
     it('TData should have undefined in the union when initialData is NOT provided', () => {
       doNotExecute(() => {
-        const { data } = createQuery(() => ['key'], {
+        const { data } = createQuery(() => ({
+          queryKey: ['key'],
           queryFn: () => {
             return {
               wow: true,
             }
           },
-        })
+        }))
 
         const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
           true
@@ -121,19 +147,18 @@ describe('initialData', () => {
   describe('Query key and func', () => {
     it('TData should always be defined when initialData is provided', () => {
       doNotExecute(() => {
-        const { data } = createQuery(
-          () => ['key'],
-          () => {
+        const { data } = createQuery(() => ({
+          queryKey: ['key'],
+          queryFn: () => {
             return {
               wow: true,
             }
           },
-          {
-            initialData: {
-              wow: true,
-            },
+
+          initialData: {
+            wow: true,
           },
-        )
+        }))
 
         const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
         return result
@@ -142,14 +167,14 @@ describe('initialData', () => {
 
     it('TData should have undefined in the union when initialData is NOT provided', () => {
       doNotExecute(() => {
-        const { data } = createQuery(
-          () => ['key'],
-          () => {
+        const { data } = createQuery(() => ({
+          queryKey: ['key'],
+          queryFn: () => {
             return {
               wow: true,
             }
           },
-        )
+        }))
 
         const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
           true

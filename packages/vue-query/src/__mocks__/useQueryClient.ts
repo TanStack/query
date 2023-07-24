@@ -1,15 +1,11 @@
+import { vi } from 'vitest'
 import { QueryClient } from '../queryClient'
+import type { Mock } from 'vitest'
 
 const queryClient = new QueryClient({
-  logger: {
-    ...console,
-    error: () => {
-      // Noop
-    },
-  },
   defaultOptions: {
-    queries: { retry: false, cacheTime: Infinity },
+    queries: { retry: false, gcTime: Infinity },
   },
 })
 
-export const useQueryClient = jest.fn(() => queryClient)
+export const useQueryClient: Mock<[], QueryClient> = vi.fn(() => queryClient)

@@ -7,7 +7,7 @@ React Query is now written in **TypeScript** to make sure the library and your p
 
 Things to keep in mind:
 
-- Types currently require using TypeScript v4.1 or greater
+- Types currently require using TypeScript **v4.7** or greater
 - Changes to types in this repository are considered **non-breaking** and are usually released as **patch** semver changes (otherwise every type enhancement would be a major version!).
 - It is **highly recommended that you lock your react-query package version to a specific patch release and upgrade with the expectation that types may be fixed or upgraded between any release**
 - The non-type-related public API of React Query still follows semver very strictly.
@@ -85,35 +85,79 @@ if (isSuccess) {
 
 ## Typing the error field
 
-The type for error defaults to `unknown`. This is in line with what TypeScript gives you per default in a catch clauses (see [useUnknownInCatchVariables](https://devblogs.microsoft.com/typescript/announcing-typescript-4-4/#use-unknown-catch-variables)). The safest way to work with `error` would be to perform a runtime check; another way would be to explicitly define types for `data` and `error`:
+The type for error defaults to `Error`, because that is what most users expect.
 
 ```tsx
 const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
-//      ^? const error: unknown
+//      ^? const error: Error
+```
 
-if (error instanceof Error) {
+[//]: # 'Playground5'
+
+[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPRTr2swBaAI458VALAAoUJFhx6AD2ARUpcpSqLlqCZKkw8YdHADi5ZGDgBeRHGAATAFxxGyEACNcRKVNYRm8CToMKwAFmYQFqo2ABQAlM4ACurAGAA8ERYA2gC6AHzWBVoqAHQA5sExVJxl5mA6cSUwoeiMMTyokMzGVgUdXRgl9vQMcT6SfgG2uORQRNYoGNi4eDFZVLWR9VQ5ADSkwWGZ9WOSnJxwl1cAegD8QA)
+
+[//]: # 'Playground5'
+
+If you want to throw a custom error, or something that isn't an `Error` at all, you can specify the type of the error field:
+
+```tsx
+const { error } = useQuery<Group[], string>(['groups'], fetchGroups)
+//      ^? const error: string | null
+```
+
+However, this has the drawback that type inference for all other generics of `useQuery` will not work anymore. It is generally not considered a good practice to throw something that isn't an `Error`, so if you have a subclass like `AxiosError` you can use _type narrowing_ to make the error field more specific:
+
+```tsx
+import axios from 'axios'
+
+const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
+//      ^? const error: Error | null
+
+if (axios.isAxiosError(error)) {
   error
-  // ^? const error: Error
+  // ^? const error: AxiosError
 }
 ```
 
-[//]: # 'Playground5'
+[//]: # 'Playground6'
+[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPRTr2swBaAI458VALAAoUJFhx6AD2ARUpcpSqLlqCZKkw8YdHADi5ZGDgBeRHGAATAFxxGyEACNcRKVNYRm8CToMKwAFmYQFqo2ABQAlM4ACurAGAA8ERYA2gC6AHzWBVoqAHQA5sExVJxl5mA6cSUwoeiMMTyokMzGVgUdXRgl9vQMcT6SfgG2uORQRNYoGNi4eDFIIisA0uh4zllUtZH1VDkANHAb+ABijM5BIeF1qoRjkpyccJ9fAHoA-OPAEhwGLFVAlVIAQSUKgAolBZjEZtA4nFEFJPkioOi4O84H8pIQgA)
+[//]: # 'Playground6'
 
-[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAORToCGAxjALQCOO+VAsAFCiSw4dAB7AIqUuUpURY1Nx68YeMOjgBxcsjBwAvIjjAAJgC44AO2QgARriK9eDCOdTwS6GAwAWmiNon6ABQAlGYAClLAGAA8vtoA2gC6AHx6qbLiAHQA5h6BVAD02Vpg8sGZMF7o5oG0qJAuarqpdQ0YmUZ0MHTBDjxOLvBIuORQRHooGNi4eIHxVMV+pVSJADSkHt5xpb08BQVwh0cAegD8fcAkcIEj0IaDdOYM6BBXAKJQo8GIvIe3ULx9nAzrxCEA)
+### Registering a global Error
 
-[//]: # 'Playground5'
+TanStack Query v5 allows for a way to set a global Error type for everything, without having to specify generics on call-sides, by amending the `Register` interface. This will make sure inference still works, but the error field will be of the specified type:
 
 ```tsx
-const { error } = useQuery<Group[], Error>(['groups'], fetchGroups)
-//      ^? const error: Error | null
+declare module '@tanstack/react-query' {
+  interface Register {
+    defaultError: AxiosError
+  }
+}
+
+const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
+//      ^? const error: AxiosError | null
 ```
 
-[//]: # 'Playground6'
-
-[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAORToCGAxjALQCOO+VAsAFCiSw4dAB7AIqUuUpURY1Nx68YeMOjgBxcsjBwAvIjjAAJgC44AO2QgARriK9eDCOdTwS6GAwAWmiNon6ABQAlGYAClLAGAA8vtoA2gC6AHx6qbLiAHQA5h6BVAD02Vpg8sGZMF7o5oG0qJAuarqpdQ0YmUZ0MHTBDjxOLvBIuORQRHooGNi4eLElSQA0cACiUKPJgfFUxX6lVIlL7p4+Jai9PAUFcNc3AHoA-LxAA)
-
-[//]: # 'Playground6'
 [//]: # 'Materials'
+
+## Typing Query Options
+
+If you inline query options into `useQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `useQuery` and e.g. `prefetchQuery`. In that case, you'd lose type inference. To get it back, you can use `queryOptions` helper:
+
+```ts
+import { queryOptions } from '@tanstack/react-query'
+
+function groupOptions() {
+  return queryOptions({
+    queryKey: ['groups'],
+    queryFn: fetchGroups,
+    staleTime: 5 * 1000,
+  })
+}
+
+useQuery(groupOptions())
+queryClient.prefetchQuery(groupOptions())
+```
 
 ## Further Reading
 

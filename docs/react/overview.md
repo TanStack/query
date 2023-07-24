@@ -66,7 +66,7 @@ export default function App() {
 }
 
 function Example() {
-  const { isLoading, error, data } = useQuery({
+  const { isPending, error, data } = useQuery({
     queryKey: ['repoData'],
     queryFn: () =>
       fetch('https://api.github.com/repos/TanStack/query').then(
@@ -74,7 +74,7 @@ function Example() {
       ),
   })
 
-  if (isLoading) return 'Loading...'
+  if (isPending) return 'Loading...'
 
   if (error) return 'An error has occurred: ' + error.message
 

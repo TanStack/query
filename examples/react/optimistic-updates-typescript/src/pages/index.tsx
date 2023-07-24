@@ -35,41 +35,8 @@ function Example() {
   const { isFetching, ...queryInfo } = useTodos()
 
   const addTodoMutation = useMutation({
-    mutationFn: (newTodo) => axios.post('/api/data', { text: newTodo }),
-    // When mutate is called:
-    onMutate: async (newTodo: string) => {
-      setText('')
-      // Cancel any outgoing refetches
-      // (so they don't overwrite our optimistic update)
-      await queryClient.cancelQueries({ queryKey: ['todos'] })
-
-      // Snapshot the previous value
-      const previousTodos = queryClient.getQueryData<Todos>(['todos'])
-
-      // Optimistically update to the new value
-      if (previousTodos) {
-        queryClient.setQueryData<Todos>(['todos'], {
-          ...previousTodos,
-          items: [
-            ...previousTodos.items,
-            { id: Math.random().toString(), text: newTodo },
-          ],
-        })
-      }
-
-      return { previousTodos }
-    },
-    // If the mutation fails,
-    // use the context returned from onMutate to roll back
-    onError: (err, variables, context) => {
-      if (context?.previousTodos) {
-        queryClient.setQueryData<Todos>(['todos'], context.previousTodos)
-      }
-    },
-    // Always refetch after error or success:
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['todos'] })
-    },
+    mutationFn: (newTodo: string) => axios.post('/api/data', { text: newTodo }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   })
 
   return (
@@ -85,6 +52,7 @@ function Example() {
       <form
         onSubmit={(e) => {
           e.preventDefault()
+          setText('')
           addTodoMutation.mutate(text)
         }}
       >
@@ -93,7 +61,7 @@ function Example() {
           onChange={(event) => setText(event.target.value)}
           value={text}
         />
-        <button disabled={addTodoMutation.isLoading}>Create</button>
+        <button disabled={addTodoMutation.isPending}>Create</button>
       </form>
       <br />
       {queryInfo.isSuccess && (
@@ -106,11 +74,34 @@ function Example() {
             {queryInfo.data.items.map((todo) => (
               <li key={todo.id}>{todo.text}</li>
             ))}
+            {addTodoMutation.isPending && (
+              <li
+                key={String(addTodoMutation.submittedAt)}
+                style={{ opacity: 0.5 }}
+              >
+                {addTodoMutation.variables}
+              </li>
+            )}
+            {addTodoMutation.isError && (
+              <li
+                key={String(addTodoMutation.submittedAt)}
+                style={{ color: 'red' }}
+              >
+                {addTodoMutation.variables}
+                <button
+                  onClick={() =>
+                    addTodoMutation.mutate(addTodoMutation.variables)
+                  }
+                >
+                  Retry
+                </button>
+              </li>
+            )}
           </ul>
           {isFetching && <div>Updating in background...</div>}
         </>
       )}
-      {queryInfo.isLoading && 'Loading'}
+      {queryInfo.isPending && 'Loading'}
       {queryInfo.error instanceof Error && queryInfo.error.message}
     </div>
   )

@@ -1,13 +1,15 @@
 import { getCurrentInstance, inject } from 'vue-demi'
+import { vi } from 'vitest'
 import { useQueryClient } from '../useQueryClient'
 import { VUE_QUERY_CLIENT } from '../utils'
+import type { Mock } from 'vitest'
 
 describe('useQueryClient', () => {
-  const injectSpy = inject as jest.Mock
-  const getCurrentInstanceSpy = getCurrentInstance as jest.Mock
+  const injectSpy = inject as Mock
+  const getCurrentInstanceSpy = getCurrentInstance as Mock
 
   beforeEach(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
   })
 
   test('should return queryClient when it is provided in the context', () => {

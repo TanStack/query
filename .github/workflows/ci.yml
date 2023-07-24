@@ -34,7 +34,7 @@ jobs:
           version: 8
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.14.2
+          node-version: 18.16.0
           registry-url: https://registry.npmjs.org/
           cache: 'pnpm'
       - name: Install dependencies
@@ -42,7 +42,7 @@ jobs:
       - name: Run Tests
         uses: nick-fields/retry@v2.8.3
         with:
-          command: pnpm run test:ci --base=${{ github.event.before }}
+          command: pnpm run test:ci
           timeout_minutes: 10
           max_attempts: 3
       - name: Publish

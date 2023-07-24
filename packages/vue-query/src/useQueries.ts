@@ -1,14 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { QueriesObserver } from '@tanstack/query-core'
-import { computed, onScopeDispose, reactive, readonly, watch } from 'vue-demi'
+import { computed, onScopeDispose, readonly, ref, watch } from 'vue-demi'
+
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
 import type { Ref } from 'vue-demi'
-
-import type { QueryFunction, QueryObserverResult } from '@tanstack/query-core'
-
+import type {
+  QueriesObserverOptions,
+  QueriesPlaceholderDataFunction,
+  QueryFunction,
+  QueryKey,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 import type { UseQueryOptions } from './useQuery'
 import type { QueryClient } from './queryClient'
+import type { DistributiveOmit, MaybeRefDeep } from './types'
+
+// This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
+// `placeholderData` function does not have a parameter
+type UseQueryOptionsForUseQueries<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = DistributiveOmit<
+  UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'placeholderData'
+> & {
+  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+}
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
@@ -20,28 +40,28 @@ type GetOptions<T> =
     error?: infer TError
     data: infer TData
   }
-    ? UseQueryOptions<TQueryFnData, TError, TData>
+    ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData>
     : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
-    ? UseQueryOptions<TQueryFnData, TError>
+    ? UseQueryOptionsForUseQueries<TQueryFnData, TError>
     : T extends { data: infer TData; error?: infer TError }
-    ? UseQueryOptions<unknown, TError, TData>
+    ? UseQueryOptionsForUseQueries<unknown, TError, TData>
     : // Part 2: responsible for applying explicit type parameter to function arguments, if tuple [TQueryFnData, TError, TData]
     T extends [infer TQueryFnData, infer TError, infer TData]
-    ? UseQueryOptions<TQueryFnData, TError, TData>
+    ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData>
     : T extends [infer TQueryFnData, infer TError]
-    ? UseQueryOptions<TQueryFnData, TError>
+    ? UseQueryOptionsForUseQueries<TQueryFnData, TError>
     : T extends [infer TQueryFnData]
-    ? UseQueryOptions<TQueryFnData>
+    ? UseQueryOptionsForUseQueries<TQueryFnData>
     : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
     T extends {
         queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
         select: (data: any) => infer TData
       }
-    ? UseQueryOptions<TQueryFnData, unknown, TData, TQueryKey>
+    ? UseQueryOptionsForUseQueries<TQueryFnData, Error, TData, TQueryKey>
     : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
-    ? UseQueryOptions<TQueryFnData, unknown, TQueryFnData, TQueryKey>
+    ? UseQueryOptionsForUseQueries<TQueryFnData, Error, TQueryFnData, TQueryKey>
     : // Fallback
-      UseQueryOptions
+      UseQueryOptionsForUseQueries
 
 type GetResults<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
@@ -77,7 +97,7 @@ export type UseQueriesOptions<
   Result extends any[] = [],
   Depth extends ReadonlyArray<number> = [],
 > = Depth['length'] extends MAXIMUM_DEPTH
-  ? UseQueryOptions[]
+  ? UseQueryOptionsForUseQueries[]
   : T extends []
   ? []
   : T extends [infer Head]
@@ -88,15 +108,15 @@ export type UseQueriesOptions<
   ? T
   : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
   // use this to infer the param types in the case of Array.map() argument
-  T extends UseQueryOptions<
+  T extends UseQueryOptionsForUseQueries<
       infer TQueryFnData,
       infer TError,
       infer TData,
       infer TQueryKey
     >[]
-  ? UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[]
+  ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData, TQueryKey>[]
   : // Fallback
-    UseQueryOptions[]
+    UseQueryOptionsForUseQueries[]
 
 /**
  * UseQueriesResults reducer recursively maps type param to results
@@ -113,7 +133,7 @@ export type UseQueriesResults<
   ? [...Result, GetResults<Head>]
   : T extends [infer Head, ...infer Tail]
   ? UseQueriesResults<[...Tail], [...Result, GetResults<Head>], [...Depth, 1]>
-  : T extends UseQueryOptions<
+  : T extends UseQueryOptionsForUseQueries<
       infer TQueryFnData,
       infer TError,
       infer TData,
@@ -126,38 +146,25 @@ export type UseQueriesResults<
 
 type UseQueriesOptionsArg<T extends any[]> = readonly [...UseQueriesOptions<T>]
 
-export function useQueries<T extends any[]>({
-  queries,
-  queryClient: queryClientInjected,
-}: {
-  queries: Ref<UseQueriesOptionsArg<T>> | UseQueriesOptionsArg<T>
-  queryClient?: QueryClient
-}): Readonly<UseQueriesResults<T>> {
-  const unreffedQueries = computed(
-    () => cloneDeepUnref(queries) as UseQueriesOptionsArg<T>,
-  )
-
-  const queryClientKey = unreffedQueries.value[0]?.queryClientKey
-  const optionsQueryClient = unreffedQueries.value[0]?.queryClient as
-    | QueryClient
-    | undefined
-  const queryClient =
-    queryClientInjected ?? optionsQueryClient ?? useQueryClient(queryClientKey)
-  if (
-    process.env.NODE_ENV !== 'production' &&
-    (queryClientKey || optionsQueryClient)
-  ) {
-    queryClient
-      .getLogger()
-      .error(
-        `Providing queryClient to individual queries in useQueries has been deprecated and will be removed in the next major version. You can still pass queryClient as an option directly to useQueries hook.`,
-      )
-  }
+export function useQueries<
+  T extends any[],
+  TCombinedResult = UseQueriesResults<T>,
+>(
+  {
+    queries,
+    ...options
+  }: {
+    queries: MaybeRefDeep<UseQueriesOptionsArg<T>>
+    combine?: (result: UseQueriesResults<T>) => TCombinedResult
+  },
+  queryClient?: QueryClient,
+): Readonly<Ref<TCombinedResult>> {
+  const client = queryClient || useQueryClient()
 
   const defaultedQueries = computed(() =>
-    unreffedQueries.value.map((options) => {
-      const defaulted = queryClient.defaultQueryOptions(options)
-      defaulted._optimisticResults = queryClient.isRestoring.value
+    cloneDeepUnref(queries).map((queryOptions) => {
+      const defaulted = client.defaultQueryOptions(queryOptions)
+      defaulted._optimisticResults = client.isRestoring.value
         ? 'isRestoring'
         : 'optimistic'
 
@@ -165,37 +172,52 @@ export function useQueries<T extends any[]>({
     }),
   )
 
-  const observer = new QueriesObserver(queryClient, defaultedQueries.value)
-  const state = reactive(observer.getCurrentResult())
+  const observer = new QueriesObserver<TCombinedResult>(
+    client,
+    defaultedQueries.value,
+    options as QueriesObserverOptions<TCombinedResult>,
+  )
+  const [, getCombinedResult] = observer.getOptimisticResult(
+    defaultedQueries.value,
+  )
+  const state = ref(getCombinedResult()) as Ref<TCombinedResult>
 
   let unsubscribe = () => {
     // noop
   }
 
   watch(
-    queryClient.isRestoring,
+    client.isRestoring,
     (isRestoring) => {
       if (!isRestoring) {
         unsubscribe()
-        unsubscribe = observer.subscribe((result) => {
-          state.splice(0, result.length, ...result)
+        unsubscribe = observer.subscribe(() => {
+          const [, getCombinedResultRestoring] = observer.getOptimisticResult(
+            defaultedQueries.value,
+          )
+          state.value = getCombinedResultRestoring()
         })
         // Subscription would not fire for persisted results
-        state.splice(
-          0,
-          state.length,
-          ...observer.getOptimisticResult(defaultedQueries.value),
+        const [, getCombinedResultPersisted] = observer.getOptimisticResult(
+          defaultedQueries.value,
         )
+        state.value = getCombinedResultPersisted()
       }
     },
     { immediate: true },
   )
 
   watch(
-    unreffedQueries,
+    [defaultedQueries],
     () => {
-      observer.setQueries(defaultedQueries.value)
-      state.splice(0, state.length, ...observer.getCurrentResult())
+      observer.setQueries(
+        defaultedQueries.value,
+        options as QueriesObserverOptions<TCombinedResult>,
+      )
+      const [, getCombinedResultPersisted] = observer.getOptimisticResult(
+        defaultedQueries.value,
+      )
+      state.value = getCombinedResultPersisted()
     },
     { deep: true },
   )
@@ -204,5 +226,5 @@ export function useQueries<T extends any[]>({
     unsubscribe()
   })
 
-  return readonly(state) as UseQueriesResults<T>
+  return readonly(state) as Readonly<Ref<TCombinedResult>>
 }

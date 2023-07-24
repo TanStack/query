@@ -8,14 +8,14 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "@tanstack/vue-query": "^4.14.1",
-    "@tanstack/query-persist-client-core": "^4.14.1",
-    "@tanstack/query-sync-storage-persister": "^4.14.1",
-    "vue": "3.2.41"
+    "@tanstack/query-persist-client-core": "^5.0.0-alpha.81",
+    "@tanstack/query-sync-storage-persister": "^5.0.0-alpha.81",
+    "@tanstack/vue-query": "^5.0.0-alpha.81",
+    "vue": "^3.2.47"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "3.2.0",
-    "typescript": "4.8.4",
-    "vite": "3.2.2"
+    "@vitejs/plugin-vue": "^4.2.3",
+    "typescript": "^5.0.4",
+    "vite": "^4.4.4"
   }
 }
