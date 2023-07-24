@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "@tanstack/solid-query": "^5.0.0-alpha.81",
-    "solid-js": "^1.6.13"
+    "solid-js": "^1.7.8"
   },
   "devDependencies": {
     "typescript": "^5.0.4",
