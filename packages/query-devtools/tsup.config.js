@@ -13,8 +13,8 @@ const preset_options = {
 }
 
 export default defineConfig(() => {
-  const parsed_options = parsePresetOptions(preset_options)
-  const tsup_options = generateTsupOptions(parsed_options)
+  const parsed_data = parsePresetOptions(preset_options)
+  const tsup_options = generateTsupOptions(parsed_data)
 
   tsup_options.forEach((tsup_option) => {
     tsup_option.outDir = 'build'

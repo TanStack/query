@@ -16,22 +16,24 @@
   "types": "./build/index.d.ts",
   "browser": {},
   "exports": {
-    "solid": {
-      "development": "./build/dev.js",
-      "import": "./build/index.js"
-    },
     "development": {
       "import": {
         "types": "./build/index.d.ts",
         "default": "./build/dev.js"
       },
-      "require": "./build/dev.cjs"
+      "require": {
+        "types": "./build/index.d.cts",
+        "default": "./build/dev.cjs"
+      }
     },
     "import": {
       "types": "./build/index.d.ts",
       "default": "./build/index.js"
     },
-    "require": "./build/index.cjs"
+    "require": {
+      "types": "./build/index.d.cts",
+      "default": "./build/index.cjs"
+    }
   },
   "sideEffects": [
     "./src/setBatchUpdatesFn.ts"
