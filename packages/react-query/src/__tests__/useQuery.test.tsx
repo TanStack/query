@@ -2313,7 +2313,7 @@ describe('useQuery', () => {
         expect(states.length).toBe(2)
         expect(states[0]).toMatchObject({
           data: undefined,
-          status: 'loading',
+          status: 'pending',
           isFetching: true,
         })
         expect(states[1]).toMatchObject({
@@ -2385,7 +2385,7 @@ describe('useQuery', () => {
         expect(states[0]).toMatchObject({
           data: undefined,
           isFetching: true,
-          status: 'loading',
+          status: 'pending',
         })
         expect(states[1]).toMatchObject({
           data: 'fetch counter: 1',
