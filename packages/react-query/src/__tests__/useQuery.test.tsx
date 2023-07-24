@@ -802,48 +802,6 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 'test' })
   })
 
-  it('should not re-render when it should only re-render only data change and the selected data did not change', async () => {
-    const key = queryKey()
-    const states: UseQueryResult<string>[] = []
-
-    function Page() {
-      const state = useQuery({
-        queryKey: key,
-        queryFn: () => ({ name: 'test' }),
-        select: (data) => data.name,
-        notifyOnChangeProps: ['data'],
-      })
-
-      states.push(state)
-
-      return (
-        <div>
-          <div>{state.data}</div>
-          <button onClick={() => state.refetch()}>refetch</button>
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <Page />)
-
-    await waitFor(() => {
-      rendered.getByText('test')
-    })
-
-    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
-
-    await waitFor(() => {
-      rendered.getByText('test')
-    })
-
-    expect(states[0]).toMatchObject({ data: undefined })
-    expect(states[1]).toMatchObject({ data: 'test' })
-
-    // make sure no additional renders happen
-    await sleep(50)
-    expect(states.length).toBe(2)
-  })
-
   it('should throw an error when a selector throws', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
@@ -2210,59 +2168,263 @@ describe('useQuery', () => {
     expect(states[2]).toMatchObject({ isStale: true })
   })
 
-  it('should not re-render when it should only re-render on data changes and the data did not change', async () => {
-    const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+  describe('notifyOnChangeProps', () => {
+    it('should not re-render when it should only re-render only data change and the selected data did not change', async () => {
+      const key = queryKey()
+      const states: UseQueryResult<string>[] = []
 
-    function Page() {
-      const state = useQuery({
-        queryKey: key,
-        queryFn: async () => {
-          await sleep(5)
-          return 'test'
-        },
+      function Page() {
+        const state = useQuery({
+          queryKey: key,
+          queryFn: () => ({ name: 'test' }),
+          select: (data) => data.name,
+          notifyOnChangeProps: ['data'],
+        })
 
-        notifyOnChangeProps: ['data'],
+        states.push(state)
+
+        return (
+          <div>
+            <div>{state.data}</div>
+            <button onClick={() => state.refetch()}>refetch</button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() => {
+        rendered.getByText('test')
       })
 
-      states.push(state)
+      fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
 
-      return (
-        <>
-          <button
-            onClick={async () => {
-              await state.refetch()
-            }}
-          >
-            refetch
-          </button>
+      await waitFor(() => {
+        rendered.getByText('test')
+      })
 
-          <div>{state.data}</div>
-        </>
-      )
-    }
+      expect(states[0]).toMatchObject({ data: undefined })
+      expect(states[1]).toMatchObject({ data: 'test' })
 
-    const rendered = renderWithClient(queryClient, <Page />)
+      // make sure no additional renders happen
+      await sleep(50)
+      expect(states.length).toBe(2)
+    })
+    it('should not re-render when it should only re-render on data changes and the data did not change', async () => {
+      const key = queryKey()
+      const states: UseQueryResult<string>[] = []
 
-    await waitFor(() => {
-      rendered.getByText('test')
+      function Page() {
+        const state = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(5)
+            return 'test'
+          },
+
+          notifyOnChangeProps: ['data'],
+        })
+
+        states.push(state)
+
+        return (
+          <>
+            <button
+              onClick={async () => {
+                await state.refetch()
+              }}
+            >
+              refetch
+            </button>
+
+            <div>{state.data}</div>
+          </>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() => {
+        rendered.getByText('test')
+      })
+
+      fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+
+      // sleep is required to make sure no additional renders happen after click
+      await sleep(20)
+
+      expect(states.length).toBe(2)
+      expect(states[0]).toMatchObject({
+        data: undefined,
+        status: 'pending',
+        isFetching: true,
+      })
+      expect(states[1]).toMatchObject({
+        data: 'test',
+        status: 'success',
+        isFetching: false,
+      })
     })
 
-    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+    // See https://github.com/TanStack/query/discussions/5588
+    describe('function', () => {
+      it('should not re-render when it should only re-render on data changes and the data did not change', async () => {
+        const key = queryKey()
+        const states: UseQueryResult<string>[] = []
 
-    // sleep is required to make sure no additional renders happen after click
-    await sleep(20)
+        function Page() {
+          const state = useQuery({
+            queryKey: key,
+            queryFn: async () => {
+              await sleep(5)
+              return 'test'
+            },
+            notifyOnChangeProps: () => ['data'],
+          })
 
-    expect(states.length).toBe(2)
-    expect(states[0]).toMatchObject({
-      data: undefined,
-      status: 'pending',
-      isFetching: true,
-    })
-    expect(states[1]).toMatchObject({
-      data: 'test',
-      status: 'success',
-      isFetching: false,
+          states.push(state)
+
+          return (
+            <>
+              <button
+                onClick={async () => {
+                  await state.refetch()
+                }}
+              >
+                refetch
+              </button>
+
+              <div>{state.data}</div>
+            </>
+          )
+        }
+
+        const rendered = renderWithClient(queryClient, <Page />)
+
+        await waitFor(() => {
+          rendered.getByText('test')
+        })
+
+        fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+
+        // sleep is required to make sure no additional renders happen after click
+        await sleep(20)
+
+        expect(states.length).toBe(2)
+        expect(states[0]).toMatchObject({
+          data: undefined,
+          status: 'loading',
+          isFetching: true,
+        })
+        expect(states[1]).toMatchObject({
+          data: 'test',
+          status: 'success',
+          isFetching: false,
+        })
+      })
+
+      it('should not re-render when change props are not actively being tracked', async () => {
+        const key = queryKey()
+        const states: UseQueryResult<string>[] = []
+
+        function Page() {
+          const fetchCounterRef = React.useRef(0)
+          const trackChangesRef = React.useRef(true)
+
+          const notifyOnChangeProps = React.useCallback(() => {
+            return trackChangesRef.current ? 'all' : []
+          }, [])
+
+          const state = useQuery({
+            queryKey: key,
+            queryFn: async () => {
+              await sleep(5)
+              fetchCounterRef.current++
+              return `fetch counter: ${fetchCounterRef.current}`
+            },
+            notifyOnChangeProps,
+          })
+
+          states.push(state)
+
+          return (
+            <>
+              <button
+                onClick={async () => {
+                  await state.refetch()
+                }}
+              >
+                refetch
+              </button>
+              <button
+                onClick={() => {
+                  trackChangesRef.current = true
+                }}
+              >
+                enableTracking
+              </button>
+              <button
+                onClick={() => {
+                  trackChangesRef.current = false
+                }}
+              >
+                disableTracking
+              </button>
+
+              <div>{state.data}</div>
+            </>
+          )
+        }
+
+        const rendered = renderWithClient(queryClient, <Page />)
+        await waitFor(() => {
+          rendered.getByText('fetch counter: 1')
+        })
+
+        expect(states.length).toBe(2)
+        expect(states[0]).toMatchObject({
+          data: undefined,
+          isFetching: true,
+          status: 'loading',
+        })
+        expect(states[1]).toMatchObject({
+          data: 'fetch counter: 1',
+          status: 'success',
+          isFetching: false,
+        })
+
+        // disable tracking and refetch to check for re-renders
+        fireEvent.click(
+          rendered.getByRole('button', { name: 'disableTracking' }),
+        )
+        fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+
+        // sleep is required to make sure no additional renders happen after click
+        await sleep(20)
+        // still expect to only have two re-renders from the initial fetch
+        expect(states.length).toBe(2)
+
+        // enable tracking and refetch to check for re-renders
+        fireEvent.click(
+          rendered.getByRole('button', { name: 'enableTracking' }),
+        )
+        fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+
+        // sleep is required to make sure no additional renders happen after click
+        await sleep(20)
+
+        expect(states.length).toBe(4)
+        expect(states[2]).toMatchObject({
+          data: 'fetch counter: 2',
+          status: 'success',
+          isFetching: true,
+        })
+        expect(states[3]).toMatchObject({
+          data: 'fetch counter: 3',
+          status: 'success',
+          isFetching: false,
+        })
+      })
     })
   })
 

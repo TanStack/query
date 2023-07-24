@@ -95,6 +95,11 @@ export type QueryMeta = Register extends {
 
 export type NetworkMode = 'online' | 'always' | 'offlineFirst'
 
+export type NotifyOnChangeProps =
+  | Array<keyof InfiniteQueryObserverResult>
+  | 'all'
+  | (() => Array<keyof InfiniteQueryObserverResult> | 'all')
+
 export interface QueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -261,9 +266,10 @@ export interface QueryObserverOptions<
    * If set, the component will only re-render if any of the listed properties change.
    * When set to `['data', 'error']`, the component will only re-render when the `data` or `error` properties change.
    * When set to `'all'`, the component will re-render whenever a query is updated.
+   * When set to a function, the function will be executed to compute the list of properties.
    * By default, access to properties will be tracked, and the component will only re-render when one of the tracked properties change.
    */
-  notifyOnChangeProps?: Array<keyof InfiniteQueryObserverResult> | 'all'
+  notifyOnChangeProps?: NotifyOnChangeProps
   /**
    * Whether errors should be thrown instead of setting the `error` property.
    * If set to `true` or `suspense` is `true`, all errors will be thrown to the error boundary.
@@ -292,8 +298,8 @@ export interface QueryObserverOptions<
   _optimisticResults?: 'optimistic' | 'isRestoring'
 }
 
-export type WithRequired<T, K extends keyof T> = Omit<T, K> &
-  Required<Pick<T, K>>
+export type WithRequired<T, K extends keyof T> = T & { [_ in K]: {} }
+
 export type DefaultedQueryObserverOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
