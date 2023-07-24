@@ -1452,7 +1452,7 @@ describe('createQuery', () => {
       return (
         <div>
           <h1>
-            data: {state.data}, count: {count}, isFetching:{' '}
+            data: {state.data}, count: {count()}, isFetching:{' '}
             {String(state.isFetching)}
           </h1>
           <button onClick={() => setCount(1)}>inc</button>
@@ -4265,7 +4265,7 @@ describe('createQuery', () => {
       return (
         <div>
           <h2>Data: {JSON.stringify(state.data)}</h2>
-          <h2>forceValue: {forceValue}</h2>
+          <h2>forceValue: {forceValue()}</h2>
           <button onClick={forceUpdate}>forceUpdate</button>
         </div>
       )
@@ -4320,7 +4320,7 @@ describe('createQuery', () => {
       return (
         <div>
           <h2>Data: {JSON.stringify(state.data)}</h2>
-          <h2>forceValue: {forceValue}</h2>
+          <h2>forceValue: {forceValue()}</h2>
           <button onClick={forceUpdate}>forceUpdate</button>
         </div>
       )
