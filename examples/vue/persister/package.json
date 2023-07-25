@@ -8,9 +8,9 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "@tanstack/query-persist-client-core": "^5.0.0-alpha.81",
-    "@tanstack/query-sync-storage-persister": "^5.0.0-alpha.81",
-    "@tanstack/vue-query": "^5.0.0-alpha.81",
+    "@tanstack/query-persist-client-core": "^5.0.0-beta.0",
+    "@tanstack/query-sync-storage-persister": "^5.0.0-beta.0",
+    "@tanstack/vue-query": "^5.0.0-beta.0",
     "vue": "^3.2.47"
   },
   "devDependencies": {
