@@ -1,6 +1,7 @@
 'use client'
 
 import { useServerInsertedHTML } from 'next/navigation'
+import Script from 'next/script'
 import * as React from 'react'
 
 const serializedSymbol = Symbol('serialized')
@@ -127,11 +128,13 @@ export function createHydrationStreamProvider<TShape>() {
         `window[${idJSON}].push(${serializedCacheArgs});`,
       ]
       return (
-        <script
+        <Script
           key={count.current++}
+          id={`_RQ-${count.current}`}
           dangerouslySetInnerHTML={{
             __html: html.join(''),
           }}
+          strategy="beforeInteractive"
         />
       )
     })
