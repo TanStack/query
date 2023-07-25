@@ -239,7 +239,7 @@ describe('useIsFetching', () => {
 
       return (
         <div>
-          <div>isFetching: {isFetching}</div>
+          <div>isFetching: {isFetching()}</div>
         </div>
       )
     }

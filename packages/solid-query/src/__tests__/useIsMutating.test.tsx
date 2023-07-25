@@ -175,7 +175,7 @@ describe('useIsMutating', () => {
       })
       return (
         <div>
-          <div>mutating: {isMutating}</div>
+          <div>mutating: {isMutating()}</div>
         </div>
       )
     }

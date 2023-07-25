@@ -17,7 +17,7 @@ importers:
         version: 17.6.5
       '@solidjs/testing-library':
         specifier: ^0.5.1
-        version: 0.5.1(solid-js@1.6.13)
+        version: 0.5.1(solid-js@1.7.8)
       '@testing-library/jest-dom':
         specifier: ^5.16.5
         version: 5.16.5
@@ -151,8 +151,8 @@ importers:
         specifier: ^7.5.1
         version: 7.5.1
       solid-js:
-        specifier: ^1.6.13
-        version: 1.6.13
+        specifier: ^1.7.8
+        version: 1.7.8
       stream-to-array:
         specifier: ^2.3.0
         version: 2.3.0
@@ -185,10 +185,10 @@ importers:
         version: 4.17.1
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       algoliasearch:
         specifier: 4.17.1
         version: 4.17.1
@@ -201,7 +201,7 @@ importers:
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(eslint@8.44.0)(typescript@5.0.4)
+        version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^18.2.4
         version: 18.2.4
@@ -222,10 +222,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.4.0
         version: 1.4.0
@@ -246,10 +246,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.4.0
         version: 1.4.0
@@ -262,7 +262,7 @@ importers:
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(eslint@8.44.0)(typescript@5.1.3)
+        version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-react':
         specifier: ^4.0.0
         version: 4.0.0(vite@4.4.4)
@@ -274,10 +274,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       graphql:
         specifier: ^16.6.0
         version: 16.6.0
@@ -302,16 +302,16 @@ importers:
     dependencies:
       '@tanstack/query-sync-storage-persister':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0
+        version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)
+        version: link:../../../packages/react-query-persist-client
       axios:
         specifier: ^1.4.0
         version: 1.4.0
@@ -324,7 +324,7 @@ importers:
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(eslint@8.34.0)(typescript@5.0.4)
+        version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^18.2.4
         version: 18.2.4
@@ -351,10 +351,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.4.0
         version: 1.4.0
@@ -376,10 +376,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.4.0
         version: 1.4.0
@@ -403,10 +403,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.4.0
         version: 1.4.0
@@ -430,10 +430,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       ky:
         specifier: ^0.33.3
         version: 0.33.3
@@ -460,13 +460,13 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-next-experimental':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(next@13.4.6)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-next-experimental
       next:
         specifier: ^13.4.4
         version: 13.4.6(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)
@@ -494,19 +494,19 @@ importers:
     dependencies:
       '@tanstack/query-sync-storage-persister':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0
+        version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-location':
         specifier: ^3.7.0
         version: 3.7.4(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)
+        version: link:../../../packages/react-query-persist-client
       ky:
         specifier: ^0.33.3
         version: 0.33.3
@@ -534,10 +534,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.4.0
         version: 1.4.0
@@ -571,10 +571,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.4.0
         version: 1.4.0
@@ -595,10 +595,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -617,10 +617,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.4.0
         version: 1.4.0
@@ -650,10 +650,10 @@ importers:
         version: 6.3.16(@react-navigation/native@6.1.6)(react-native-gesture-handler@2.9.0)(react-native-safe-area-context@4.5.0)(react-native-screens@3.20.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       expo:
         specifier: ^48.0.17
         version: 48.0.17(@babel/core@7.21.8)
@@ -723,10 +723,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       localforage:
         specifier: ^1.10.0
         version: 1.10.0
@@ -775,10 +775,10 @@ importers:
         version: 5.13.2(@types/react@18.2.4)(react@18.2.0)
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -803,10 +803,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.4.0
         version: 1.4.0
@@ -840,10 +840,10 @@ importers:
         version: 5.13.2(@types/react@18.2.4)(react@18.2.0)
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -868,10 +868,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.4.0
         version: 1.4.0
@@ -896,7 +896,7 @@ importers:
     dependencies:
       '@tanstack/solid-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(solid-js@1.6.13)
+        version: link:../../../packages/solid-query
       graphql:
         specifier: ^16.6.0
         version: 16.6.0
@@ -904,8 +904,8 @@ importers:
         specifier: ^6.1.0
         version: 6.1.0(graphql@16.6.0)
       solid-js:
-        specifier: ^1.6.13
-        version: 1.6.13
+        specifier: ^1.7.8
+        version: 1.7.8
     devDependencies:
       typescript:
         specifier: ^5.0.4
@@ -914,17 +914,17 @@ importers:
         specifier: ^4.4.4
         version: 4.4.4(@types/node@18.16.0)
       vite-plugin-solid:
-        specifier: ^2.5.0
-        version: 2.5.0(solid-js@1.6.13)(vite@4.4.4)
+        specifier: ^2.7.0
+        version: 2.7.0(solid-js@1.7.8)(vite@4.4.4)
 
   examples/solid/basic-typescript:
     dependencies:
       '@tanstack/solid-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(solid-js@1.6.13)
+        version: link:../../../packages/solid-query
       solid-js:
-        specifier: ^1.6.13
-        version: 1.6.13
+        specifier: ^1.7.8
+        version: 1.7.8
     devDependencies:
       typescript:
         specifier: ^5.0.4
@@ -933,17 +933,17 @@ importers:
         specifier: ^4.4.4
         version: 4.4.4(@types/node@18.16.0)
       vite-plugin-solid:
-        specifier: ^2.5.0
-        version: 2.5.0(solid-js@1.6.13)(vite@4.4.4)
+        specifier: ^2.7.0
+        version: 2.7.0(solid-js@1.7.8)(vite@4.4.4)
 
   examples/solid/default-query-function:
     dependencies:
       '@tanstack/solid-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(solid-js@1.6.13)
+        version: link:../../../packages/solid-query
       solid-js:
-        specifier: ^1.6.13
-        version: 1.6.13
+        specifier: ^1.7.8
+        version: 1.7.8
     devDependencies:
       typescript:
         specifier: ^5.0.4
@@ -952,21 +952,21 @@ importers:
         specifier: ^4.4.4
         version: 4.4.4(@types/node@18.16.0)
       vite-plugin-solid:
-        specifier: ^2.5.0
-        version: 2.5.0(solid-js@1.6.13)(vite@4.4.4)
+        specifier: ^2.7.0
+        version: 2.7.0(solid-js@1.7.8)(vite@4.4.4)
 
   examples/solid/simple:
     dependencies:
       '@tanstack/solid-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(solid-js@1.6.13)
+        version: link:../../../packages/solid-query
       solid-js:
-        specifier: ^1.6.13
-        version: 1.6.13
+        specifier: ^1.7.8
+        version: 1.7.8
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(eslint@8.44.0)(typescript@5.0.4)
+        version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: ^5.0.4
         version: 5.0.4
@@ -974,26 +974,26 @@ importers:
         specifier: ^4.4.4
         version: 4.4.4(@types/node@18.16.0)
       vite-plugin-solid:
-        specifier: ^2.5.0
-        version: 2.5.0(solid-js@1.6.13)(vite@4.4.4)
+        specifier: ^2.7.0
+        version: 2.7.0(solid-js@1.7.8)(vite@4.4.4)
 
   examples/solid/solid-start-streaming:
     dependencies:
       '@solidjs/meta':
         specifier: ^0.28.2
-        version: 0.28.2(solid-js@1.6.13)
+        version: 0.28.2(solid-js@1.7.8)
       '@solidjs/router':
         specifier: ^0.7.0
-        version: 0.7.0(solid-js@1.6.13)
+        version: 0.7.0(solid-js@1.7.8)
       '@tanstack/solid-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(solid-js@1.6.13)
+        version: link:../../../packages/solid-query
       solid-js:
-        specifier: ^1.6.13
-        version: 1.6.13
+        specifier: ^1.7.8
+        version: 1.7.8
       solid-start:
         specifier: ^0.2.23
-        version: 0.2.23(@solidjs/meta@0.28.2)(@solidjs/router@0.7.0)(solid-js@1.6.13)(solid-start-node@0.2.0)(vite@4.4.4)
+        version: 0.2.23(@solidjs/meta@0.28.2)(@solidjs/router@0.7.0)(solid-js@1.7.8)(solid-start-node@0.2.0)(vite@4.4.4)
       undici:
         specifier: ^5.22.1
         version: 5.22.1
@@ -1021,10 +1021,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(svelte@4.0.0)
+        version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/svelte-query@5.0.0-beta.0)(svelte@4.0.0)
+        version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1052,10 +1052,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(svelte@4.0.0)
+        version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/svelte-query@5.0.0-beta.0)(svelte@4.0.0)
+        version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1083,10 +1083,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(svelte@4.0.0)
+        version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/svelte-query@5.0.0-beta.0)(svelte@4.0.0)
+        version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1114,10 +1114,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(svelte@4.0.0)
+        version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/svelte-query@5.0.0-beta.0)(svelte@4.0.0)
+        version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1145,10 +1145,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(svelte@4.0.0)
+        version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/svelte-query@5.0.0-beta.0)(svelte@4.0.0)
+        version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1176,10 +1176,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(svelte@4.0.0)
+        version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/svelte-query@5.0.0-beta.0)(svelte@4.0.0)
+        version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^2.4.2
@@ -1207,10 +1207,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(svelte@4.0.0)
+        version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/svelte-query@5.0.0-beta.0)(svelte@4.0.0)
+        version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1238,10 +1238,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(svelte@4.0.0)
+        version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(@tanstack/svelte-query@5.0.0-beta.0)(svelte@4.0.0)
+        version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1278,7 +1278,7 @@ importers:
     dependencies:
       '@tanstack/vue-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(vue@3.2.47)
+        version: link:../../../packages/vue-query
       vue:
         specifier: ^3.2.47
         version: 3.2.47
@@ -1297,7 +1297,7 @@ importers:
     dependencies:
       '@tanstack/vue-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(vue@3.2.47)
+        version: link:../../../packages/vue-query
       vue:
         specifier: ^3.2.47
         version: 3.2.47
@@ -1316,13 +1316,13 @@ importers:
     dependencies:
       '@tanstack/query-persist-client-core':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0
+        version: link:../../../packages/query-persist-client-core
       '@tanstack/query-sync-storage-persister':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0
+        version: link:../../../packages/query-sync-storage-persister
       '@tanstack/vue-query':
         specifier: ^5.0.0-beta.0
-        version: 5.0.0-beta.0(vue@3.2.47)
+        version: link:../../../packages/vue-query
       vue:
         specifier: ^3.2.47
         version: 3.2.47
@@ -1400,14 +1400,14 @@ importers:
         specifier: workspace:*
         version: link:../../packages/solid-query
       solid-js:
-        specifier: ^1.6.13
-        version: 1.6.13
+        specifier: ^1.7.8
+        version: 1.7.8
       vite:
         specifier: ^4.4.4
         version: 4.4.4(@types/node@18.16.0)
       vite-plugin-solid:
-        specifier: ^2.5.0
-        version: 2.5.0(solid-js@1.6.13)(vite@4.4.4)
+        specifier: ^2.7.0
+        version: 2.7.0(solid-js@1.7.8)(vite@4.4.4)
 
   integrations/svelte-vite:
     devDependencies:
@@ -1511,8 +1511,8 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1(esbuild@0.18.13)(solid-js@1.7.8)(tsup@7.1.0)
       vite-plugin-solid:
-        specifier: ^2.5.0
-        version: 2.5.0(solid-js@1.7.8)(vite@4.4.4)
+        specifier: ^2.7.0
+        version: 2.7.0(solid-js@1.7.8)(vite@4.4.4)
 
   packages/query-persist-client-core:
     dependencies:
@@ -1634,15 +1634,15 @@ importers:
         specifier: workspace:*
         version: link:../query-core
       solid-js:
-        specifier: ^1.6.13
-        version: 1.6.13
+        specifier: ^1.7.8
+        version: 1.7.8
     devDependencies:
       tsup-preset-solid:
-        specifier: ^0.1.8
-        version: 0.1.8(esbuild@0.18.13)(solid-js@1.6.13)(tsup@6.7.0)
+        specifier: ^2.0.1
+        version: 2.0.1(esbuild@0.18.13)(solid-js@1.7.8)(tsup@7.1.0)
       vite-plugin-solid:
-        specifier: ^2.5.0
-        version: 2.5.0(solid-js@1.6.13)(vite@4.4.4)
+        specifier: ^2.7.0
+        version: 2.7.0(solid-js@1.7.8)(vite@4.4.4)
 
   packages/svelte-query:
     dependencies:
@@ -5046,30 +5046,12 @@ packages:
   /@emotion/weak-memoize@0.3.1:
     resolution: {integrity: sha512-EsBwpc7hBUJWAsNPBmJy4hxWx12v6bshQsldrVmjxJoc3isbxhOrF2IcCpaXxfvq03NwkI7sbsOLXbYuqF/8Ww==}
 
-  /@esbuild/android-arm64@0.17.19:
-    resolution: {integrity: sha512-KBMWvEZooR7+kzY0BtbTQn0OAYY7CsiydT63pVEaPtVYF0hXbUaOyZog37DKxK7NF3XacBJOpYT4adIJh+avxA==}
-    engines: {node: '>=12'}
-    cpu: [arm64]
-    os: [android]
-    requiresBuild: true
-    dev: true
-    optional: true
-
   /@esbuild/android-arm64@0.18.13:
     resolution: {integrity: sha512-j7NhycJUoUAG5kAzGf4fPWfd17N6SM3o1X6MlXVqfHvs2buFraCJzos9vbeWjLxOyBKHyPOnuCuipbhvbYtTAg==}
     engines: {node: '>=12'}
     cpu: [arm64]
     os: [android]
     requiresBuild: true
-    optional: true
-
-  /@esbuild/android-arm@0.17.19:
-    resolution: {integrity: sha512-rIKddzqhmav7MSmoFCmDIb6e2W57geRsM94gV2l38fzhXMwq7hZoClug9USI2pFRGL06f4IOPHHpFNOkWieR8A==}
-    engines: {node: '>=12'}
-    cpu: [arm]
-    os: [android]
-    requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/android-arm@0.18.13:
@@ -5080,30 +5062,12 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@esbuild/android-x64@0.17.19:
-    resolution: {integrity: sha512-uUTTc4xGNDT7YSArp/zbtmbhO0uEEK9/ETW29Wk1thYUJBz3IVnvgEiEwEa9IeLyvnpKrWK64Utw2bgUmDveww==}
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [android]
-    requiresBuild: true
-    dev: true
-    optional: true
-
   /@esbuild/android-x64@0.18.13:
     resolution: {integrity: sha512-M2eZkRxR6WnWfVELHmv6MUoHbOqnzoTVSIxgtsyhm/NsgmL+uTmag/VVzdXvmahak1I6sOb1K/2movco5ikDJg==}
     engines: {node: '>=12'}
     cpu: [x64]
     os: [android]
     requiresBuild: true
-    optional: true
-
-  /@esbuild/darwin-arm64@0.17.19:
-    resolution: {integrity: sha512-80wEoCfF/hFKM6WE1FyBHc9SfUblloAWx6FJkFWTWiCoht9Mc0ARGEM47e67W9rI09YoUxJL68WHfDRYEAvOhg==}
-    engines: {node: '>=12'}
-    cpu: [arm64]
-    os: [darwin]
-    requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/darwin-arm64@0.18.13:
@@ -5114,30 +5078,12 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@esbuild/darwin-x64@0.17.19:
-    resolution: {integrity: sha512-IJM4JJsLhRYr9xdtLytPLSH9k/oxR3boaUIYiHkAawtwNOXKE8KoU8tMvryogdcT8AU+Bflmh81Xn6Q0vTZbQw==}
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [darwin]
-    requiresBuild: true
-    dev: true
-    optional: true
-
   /@esbuild/darwin-x64@0.18.13:
     resolution: {integrity: sha512-RIrxoKH5Eo+yE5BtaAIMZaiKutPhZjw+j0OCh8WdvKEKJQteacq0myZvBDLU+hOzQOZWJeDnuQ2xgSScKf1Ovw==}
     engines: {node: '>=12'}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
-    optional: true
-
-  /@esbuild/freebsd-arm64@0.17.19:
-    resolution: {integrity: sha512-pBwbc7DufluUeGdjSU5Si+P3SoMF5DQ/F/UmTSb8HXO80ZEAJmrykPyzo1IfNbAoaqw48YRpv8shwd1NoI0jcQ==}
-    engines: {node: '>=12'}
-    cpu: [arm64]
-    os: [freebsd]
-    requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/freebsd-arm64@0.18.13:
@@ -5148,30 +5094,12 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@esbuild/freebsd-x64@0.17.19:
-    resolution: {integrity: sha512-4lu+n8Wk0XlajEhbEffdy2xy53dpR06SlzvhGByyg36qJw6Kpfk7cp45DR/62aPH9mtJRmIyrXAS5UWBrJT6TQ==}
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [freebsd]
-    requiresBuild: true
-    dev: true
-    optional: true
-
   /@esbuild/freebsd-x64@0.18.13:
     resolution: {integrity: sha512-pGzWWZJBInhIgdEwzn8VHUBang8UvFKsvjDkeJ2oyY5gZtAM6BaxK0QLCuZY+qoj/nx/lIaItH425rm/hloETA==}
     engines: {node: '>=12'}
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
-    optional: true
-
-  /@esbuild/linux-arm64@0.17.19:
-    resolution: {integrity: sha512-ct1Tg3WGwd3P+oZYqic+YZF4snNl2bsnMKRkb3ozHmnM0dGWuxcPTTntAF6bOP0Sp4x0PjSF+4uHQ1xvxfRKqg==}
-    engines: {node: '>=12'}
-    cpu: [arm64]
-    os: [linux]
-    requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-arm64@0.18.13:
@@ -5182,30 +5110,12 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@esbuild/linux-arm@0.17.19:
-    resolution: {integrity: sha512-cdmT3KxjlOQ/gZ2cjfrQOtmhG4HJs6hhvm3mWSRDPtZ/lP5oe8FWceS10JaSJC13GBd4eH/haHnqf7hhGNLerA==}
-    engines: {node: '>=12'}
-    cpu: [arm]
-    os: [linux]
-    requiresBuild: true
-    dev: true
-    optional: true
-
   /@esbuild/linux-arm@0.18.13:
     resolution: {integrity: sha512-4iMxLRMCxGyk7lEvkkvrxw4aJeC93YIIrfbBlUJ062kilUUnAiMb81eEkVvCVoh3ON283ans7+OQkuy1uHW+Hw==}
     engines: {node: '>=12'}
     cpu: [arm]
     os: [linux]
     requiresBuild: true
-    optional: true
-
-  /@esbuild/linux-ia32@0.17.19:
-    resolution: {integrity: sha512-w4IRhSy1VbsNxHRQpeGCHEmibqdTUx61Vc38APcsRbuVgK0OPEnQ0YD39Brymn96mOx48Y2laBQGqgZ0j9w6SQ==}
-    engines: {node: '>=12'}
-    cpu: [ia32]
-    os: [linux]
-    requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-ia32@0.18.13:
@@ -5224,30 +5134,12 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@esbuild/linux-loong64@0.17.19:
-    resolution: {integrity: sha512-2iAngUbBPMq439a+z//gE+9WBldoMp1s5GWsUSgqHLzLJ9WoZLZhpwWuym0u0u/4XmZ3gpHmzV84PonE+9IIdQ==}
-    engines: {node: '>=12'}
-    cpu: [loong64]
-    os: [linux]
-    requiresBuild: true
-    dev: true
-    optional: true
-
   /@esbuild/linux-loong64@0.18.13:
     resolution: {integrity: sha512-8pcKDApAsKc6WW51ZEVidSGwGbebYw2qKnO1VyD8xd6JN0RN6EUXfhXmDk9Vc4/U3Y4AoFTexQewQDJGsBXBpg==}
     engines: {node: '>=12'}
     cpu: [loong64]
     os: [linux]
     requiresBuild: true
-    optional: true
-
-  /@esbuild/linux-mips64el@0.17.19:
-    resolution: {integrity: sha512-LKJltc4LVdMKHsrFe4MGNPp0hqDFA1Wpt3jE1gEyM3nKUvOiO//9PheZZHfYRfYl6AwdTH4aTcXSqBerX0ml4A==}
-    engines: {node: '>=12'}
-    cpu: [mips64el]
-    os: [linux]
-    requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-mips64el@0.18.13:
@@ -5258,30 +5150,12 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@esbuild/linux-ppc64@0.17.19:
-    resolution: {integrity: sha512-/c/DGybs95WXNS8y3Ti/ytqETiW7EU44MEKuCAcpPto3YjQbyK3IQVKfF6nbghD7EcLUGl0NbiL5Rt5DMhn5tg==}
-    engines: {node: '>=12'}
-    cpu: [ppc64]
-    os: [linux]
-    requiresBuild: true
-    dev: true
-    optional: true
-
   /@esbuild/linux-ppc64@0.18.13:
     resolution: {integrity: sha512-pfn/OGZ8tyR8YCV7MlLl5hAit2cmS+j/ZZg9DdH0uxdCoJpV7+5DbuXrR+es4ayRVKIcfS9TTMCs60vqQDmh+w==}
     engines: {node: '>=12'}
     cpu: [ppc64]
     os: [linux]
     requiresBuild: true
-    optional: true
-
-  /@esbuild/linux-riscv64@0.17.19:
-    resolution: {integrity: sha512-FC3nUAWhvFoutlhAkgHf8f5HwFWUL6bYdvLc/TTuxKlvLi3+pPzdZiFKSWz/PF30TB1K19SuCxDTI5KcqASJqA==}
-    engines: {node: '>=12'}
-    cpu: [riscv64]
-    os: [linux]
-    requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-riscv64@0.18.13:
@@ -5292,30 +5166,12 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@esbuild/linux-s390x@0.17.19:
-    resolution: {integrity: sha512-IbFsFbxMWLuKEbH+7sTkKzL6NJmG2vRyy6K7JJo55w+8xDk7RElYn6xvXtDW8HCfoKBFK69f3pgBJSUSQPr+4Q==}
-    engines: {node: '>=12'}
-    cpu: [s390x]
-    os: [linux]
-    requiresBuild: true
-    dev: true
-    optional: true
-
   /@esbuild/linux-s390x@0.18.13:
     resolution: {integrity: sha512-Pct1QwF2sp+5LVi4Iu5Y+6JsGaV2Z2vm4O9Dd7XZ5tKYxEHjFtb140fiMcl5HM1iuv6xXO8O1Vrb1iJxHlv8UA==}
     engines: {node: '>=12'}
     cpu: [s390x]
     os: [linux]
     requiresBuild: true
-    optional: true
-
-  /@esbuild/linux-x64@0.17.19:
-    resolution: {integrity: sha512-68ngA9lg2H6zkZcyp22tsVt38mlhWde8l3eJLWkyLrp4HwMUr3c1s/M2t7+kHIhvMjglIBrFpncX1SzMckomGw==}
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [linux]
-    requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-x64@0.18.13:
@@ -5326,30 +5182,12 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@esbuild/netbsd-x64@0.17.19:
-    resolution: {integrity: sha512-CwFq42rXCR8TYIjIfpXCbRX0rp1jo6cPIUPSaWwzbVI4aOfX96OXY8M6KNmtPcg7QjYeDmN+DD0Wp3LaBOLf4Q==}
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [netbsd]
-    requiresBuild: true
-    dev: true
-    optional: true
-
   /@esbuild/netbsd-x64@0.18.13:
     resolution: {integrity: sha512-I6zs10TZeaHDYoGxENuksxE1sxqZpCp+agYeW039yqFwh3MgVvdmXL5NMveImOC6AtpLvE4xG5ujVic4NWFIDQ==}
     engines: {node: '>=12'}
     cpu: [x64]
     os: [netbsd]
     requiresBuild: true
-    optional: true
-
-  /@esbuild/openbsd-x64@0.17.19:
-    resolution: {integrity: sha512-cnq5brJYrSZ2CF6c35eCmviIN3k3RczmHz8eYaVlNasVqsNY+JKohZU5MKmaOI+KkllCdzOKKdPs762VCPC20g==}
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [openbsd]
-    requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/openbsd-x64@0.18.13:
@@ -5360,30 +5198,12 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@esbuild/sunos-x64@0.17.19:
-    resolution: {integrity: sha512-vCRT7yP3zX+bKWFeP/zdS6SqdWB8OIpaRq/mbXQxTGHnIxspRtigpkUcDMlSCOejlHowLqII7K2JKevwyRP2rg==}
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [sunos]
-    requiresBuild: true
-    dev: true
-    optional: true
-
   /@esbuild/sunos-x64@0.18.13:
     resolution: {integrity: sha512-X/xzuw4Hzpo/yq3YsfBbIsipNgmsm8mE/QeWbdGdTTeZ77fjxI2K0KP3AlhZ6gU3zKTw1bKoZTuKLnqcJ537qw==}
     engines: {node: '>=12'}
     cpu: [x64]
     os: [sunos]
     requiresBuild: true
-    optional: true
-
-  /@esbuild/win32-arm64@0.17.19:
-    resolution: {integrity: sha512-yYx+8jwowUstVdorcMdNlzklLYhPxjniHWFKgRqH7IFlUEa0Umu3KuYplf1HUZZ422e3NU9F4LGb+4O0Kdcaag==}
-    engines: {node: '>=12'}
-    cpu: [arm64]
-    os: [win32]
-    requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/win32-arm64@0.18.13:
@@ -5394,30 +5214,12 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@esbuild/win32-ia32@0.17.19:
-    resolution: {integrity: sha512-eggDKanJszUtCdlVs0RB+h35wNlb5v4TWEkq4vZcmVt5u/HiDZrTXe2bWFQUez3RgNHwx/x4sk5++4NSSicKkw==}
-    engines: {node: '>=12'}
-    cpu: [ia32]
-    os: [win32]
-    requiresBuild: true
-    dev: true
-    optional: true
-
   /@esbuild/win32-ia32@0.18.13:
     resolution: {integrity: sha512-D+wKZaRhQI+MUGMH+DbEr4owC2D7XnF+uyGiZk38QbgzLcofFqIOwFs7ELmIeU45CQgfHNy9Q+LKW3cE8g37Kg==}
     engines: {node: '>=12'}
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
-    optional: true
-
-  /@esbuild/win32-x64@0.17.19:
-    resolution: {integrity: sha512-lAhycmKnVOuRYNtRtatQR1LPQf2oYCkRGkSFnseDAKPl8lu5SOsK/e1sXe5a0Pc5kHIHe6P2I/ilntNv2xf3cA==}
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [win32]
-    requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/win32-x64@0.18.13:
@@ -7776,28 +7578,28 @@ packages:
       solid-js: 1.7.8
     dev: true
 
-  /@solidjs/meta@0.28.2(solid-js@1.6.13):
+  /@solidjs/meta@0.28.2(solid-js@1.7.8):
     resolution: {integrity: sha512-avlLgBPdk4KVxzRGFlYp/MIJo8B5jVgXPgk6OUnUP8km21Z+ovO+DUd7ZPA7ejv8PBdWi9GE3zCzw8RU2YuV2Q==}
     peerDependencies:
       solid-js: '>=1.4.0'
     dependencies:
-      solid-js: 1.6.13
+      solid-js: 1.7.8
 
-  /@solidjs/router@0.7.0(solid-js@1.6.13):
+  /@solidjs/router@0.7.0(solid-js@1.7.8):
     resolution: {integrity: sha512-8HI84twe5FjYRebSLMAhtkL9bRuTDIlxJK56kjfjU9WKGoUCTaWpCnkuj8Hqde1bWZ0X+GOZxKDfNkn1CjtjxA==}
     peerDependencies:
       solid-js: ^1.5.3
     dependencies:
-      solid-js: 1.6.13
+      solid-js: 1.7.8
 
-  /@solidjs/testing-library@0.5.1(solid-js@1.6.13):
+  /@solidjs/testing-library@0.5.1(solid-js@1.7.8):
     resolution: {integrity: sha512-UVwYzSTRHwxiW7jdgKFP3NERbMtA748MIOQFzF1f4tg1XYl8ACybwlrVPqaiKnPevUCcM2ED+Wsp6Yd5JA//yg==}
     engines: {node: '>= 14'}
     peerDependencies:
       solid-js: '>=1.0.0'
     dependencies:
       '@testing-library/dom': 8.20.1
-      solid-js: 1.6.13
+      solid-js: 1.7.8
     dev: true
 
   /@surma/rollup-plugin-off-main-thread@1.4.2:
@@ -8056,68 +7858,11 @@ packages:
     dependencies:
       tslib: 2.5.2
 
-  /@tanstack/eslint-plugin-query@5.0.0-beta.0(eslint@8.34.0)(typescript@5.0.4):
-    resolution: {integrity: sha512-amN8zGZmQOFXh778Dv/lqDc0Rb7nwfOnytq0w+tbanYOkXJRnUY8FP7ylkSeeNesr4cmQOeZNjSN0zIPxa5+ig==}
-    peerDependencies:
-      eslint: ^8.0.0
-    dependencies:
-      '@typescript-eslint/utils': 5.62.0(eslint@8.34.0)(typescript@5.0.4)
-      eslint: 8.34.0
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
-    dev: true
-
-  /@tanstack/eslint-plugin-query@5.0.0-beta.0(eslint@8.44.0)(typescript@5.0.4):
-    resolution: {integrity: sha512-amN8zGZmQOFXh778Dv/lqDc0Rb7nwfOnytq0w+tbanYOkXJRnUY8FP7ylkSeeNesr4cmQOeZNjSN0zIPxa5+ig==}
-    peerDependencies:
-      eslint: ^8.0.0
-    dependencies:
-      '@typescript-eslint/utils': 5.62.0(eslint@8.44.0)(typescript@5.0.4)
-      eslint: 8.44.0
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
-    dev: true
-
-  /@tanstack/eslint-plugin-query@5.0.0-beta.0(eslint@8.44.0)(typescript@5.1.3):
-    resolution: {integrity: sha512-amN8zGZmQOFXh778Dv/lqDc0Rb7nwfOnytq0w+tbanYOkXJRnUY8FP7ylkSeeNesr4cmQOeZNjSN0zIPxa5+ig==}
-    peerDependencies:
-      eslint: ^8.0.0
-    dependencies:
-      '@typescript-eslint/utils': 5.62.0(eslint@8.44.0)(typescript@5.1.3)
-      eslint: 8.44.0
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
-    dev: true
-
   /@tanstack/match-sorter-utils@8.8.4:
     resolution: {integrity: sha512-rKH8LjZiszWEvmi01NR72QWZ8m4xmXre0OOwlRGnjU01Eqz/QnN+cqpty2PJ0efHblq09+KilvyR7lsbzmXVEw==}
     engines: {node: '>=12'}
     dependencies:
       remove-accents: 0.4.2
-
-  /@tanstack/query-core@5.0.0-beta.0:
-    resolution: {integrity: sha512-VGq/H3PuRoj0shOcg1S5Flv3YD2qNz2ttk8w5xe5AHQE1I8NO9EHSBUxezIpk4dD6M7bQDtwHBMqqU2EwMwyUw==}
-    dev: false
-
-  /@tanstack/query-devtools@5.0.0-beta.0:
-    resolution: {integrity: sha512-4K/F6Gey/xPvlMz/22nUC/6Nag4hm9C1S5RaaJuItNJuoC0ZVi8R3bBUPUoWZCtcPrcVMH5mxT7CC1O6TbJXzA==}
-    dev: false
-
-  /@tanstack/query-persist-client-core@5.0.0-beta.0:
-    resolution: {integrity: sha512-KW2aOnUnAqLl4dFJbKbxrBI/rBCX0+incC/Y+MO1PGybiIsljPJvZdLIACrFW+Sq609erYoyoKNnazr9ZNjmpQ==}
-    dependencies:
-      '@tanstack/query-core': 5.0.0-beta.0
-    dev: false
-
-  /@tanstack/query-sync-storage-persister@5.0.0-beta.0:
-    resolution: {integrity: sha512-RIwMxD7mh2W00qUx9UTkM5AjspN9SHn5pZfzOHe7SDmzgxmX2WaXtgGJ70/ipjik5Hez4Cvh4yR9Gh+PNHEUZA==}
-    dependencies:
-      '@tanstack/query-core': 5.0.0-beta.0
-      '@tanstack/query-persist-client-core': 5.0.0-beta.0
-    dev: false
 
   /@tanstack/react-location@3.7.4(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-6rH2vNHGr0uyeUz5ZHvWMYjeYKGgIKFzvs5749QtnS9f+FU7t7fQE0hKZAzltBZk82LT7iYbcHBRyUg2lW13VA==}
@@ -8130,107 +7875,6 @@ packages:
       history: 5.3.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-    dev: false
-
-  /@tanstack/react-query-devtools@5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-5+voSk7ESr1Aj3QkIFQ9sj6yXOlOWgnF/fZoWlINRuIcH2A6XESBMgrQw+OaES7o6Lxs/dx3i3/OSNiBeIIBPA==}
-    peerDependencies:
-      '@tanstack/react-query': 5.0.0-beta.0
-      react: ^18.0.0
-      react-dom: ^18.0.0
-    dependencies:
-      '@tanstack/query-devtools': 5.0.0-beta.0
-      '@tanstack/react-query': 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-    dev: false
-
-  /@tanstack/react-query-next-experimental@5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0)(next@13.4.6)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-mqHggnLj2s5cceV/UfwIqupB6OletGYh7+e0n9T7uhKnZrsuPnRwaJlvSpJXRsAm2CjH+awio9yKMy3jcotcZA==}
-    peerDependencies:
-      '@tanstack/react-query': 5.0.0-beta.0
-      next: ^13.0.0
-      react: ^18.0.0
-      react-dom: ^18.0.0
-    dependencies:
-      '@tanstack/react-query': 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
-      next: 13.4.6(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-    dev: false
-
-  /@tanstack/react-query-persist-client@5.0.0-beta.0(@tanstack/react-query@5.0.0-beta.0):
-    resolution: {integrity: sha512-k6nbaBzuj9X+M/5xfN2ujcz3H4yoBtTFeXIFIXJ6AHQz0C1O8ETtUO7rcvLW6OuPcjNMPiQ7Gl2OaG4IyuiimQ==}
-    peerDependencies:
-      '@tanstack/react-query': 5.0.0-beta.0
-    dependencies:
-      '@tanstack/query-persist-client-core': 5.0.0-beta.0
-      '@tanstack/react-query': 5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
-    dev: false
-
-  /@tanstack/react-query@5.0.0-beta.0(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0):
-    resolution: {integrity: sha512-BoUlk3nxSih79xLpF/ilqvZtYB775F6LsNjUGFqmeVsEv4QbfyPy3SEOgou8O9ea0WzjvDXiMmP8ac4BZkrNRg==}
-    peerDependencies:
-      react: ^18.0.0
-      react-dom: ^18.0.0
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-    dependencies:
-      '@tanstack/query-core': 5.0.0-beta.0
-      client-only: 0.0.1
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      react-native: 0.71.8(@babel/core@7.21.8)(@babel/preset-env@7.21.5)(react@18.2.0)
-    dev: false
-
-  /@tanstack/solid-query@5.0.0-beta.0(solid-js@1.6.13):
-    resolution: {integrity: sha512-rvKq67xXLoihD14epuDKMq4ASutDo0Qw32Mw+41Rj6zHjCKl8MxRtBeA8caH1tmWGEVaqUBWWTesyccBeoY50g==}
-    peerDependencies:
-      solid-js: ^1.6.13
-    dependencies:
-      '@tanstack/query-core': 5.0.0-beta.0
-      solid-js: 1.6.13
-    dev: false
-
-  /@tanstack/svelte-query-devtools@5.0.0-beta.0(@tanstack/svelte-query@5.0.0-beta.0)(svelte@4.0.0):
-    resolution: {integrity: sha512-p12iS7L5J6OFHg+5UnqMzje33zTM3Lq4yg0lFKdRbpQokGf6FZXAwKC8APeF6nzH1qmgxK1oGvKAFsKOeoePEg==}
-    peerDependencies:
-      '@tanstack/svelte-query': 5.0.0-beta.0
-      svelte: '>=3 <5'
-    dependencies:
-      '@tanstack/query-devtools': 5.0.0-beta.0
-      '@tanstack/svelte-query': 5.0.0-beta.0(svelte@4.0.0)
-      esm-env: 1.0.0
-      svelte: 4.0.0
-    dev: false
-
-  /@tanstack/svelte-query@5.0.0-beta.0(svelte@4.0.0):
-    resolution: {integrity: sha512-gpum2YoJiszeOZh6u3KkUxyXHExq1lACWi++FYompRzhryYhByElYTBLo2TweT/s4RZu1ttyyD+5Kb1lfq7AWQ==}
-    peerDependencies:
-      svelte: '>=3 <5'
-    dependencies:
-      '@tanstack/query-core': 5.0.0-beta.0
-      svelte: 4.0.0
-    dev: false
-
-  /@tanstack/vue-query@5.0.0-beta.0(vue@3.2.47):
-    resolution: {integrity: sha512-RG3qkw+q85WDvkOwOKCwkjlOhY+Qd3NThrvYjQSwmYFsP+BwOcqAeJGIM1G1jp9vDRwSkypgaGEBr75xfqYhzw==}
-    peerDependencies:
-      '@vue/composition-api': ^1.1.2
-      vue: ^2.5.0 || ^3.0.0
-    peerDependenciesMeta:
-      '@vue/composition-api':
-        optional: true
-    dependencies:
-      '@tanstack/match-sorter-utils': 8.8.4
-      '@tanstack/query-core': 5.0.0-beta.0
-      '@vue/devtools-api': 6.5.0
-      vue: 3.2.47
-      vue-demi: 0.13.11(@vue/composition-api@1.7.1)(vue@3.2.47)
     dev: false
 
   /@testing-library/dom@8.20.1:
@@ -8930,6 +8574,7 @@ packages:
       typescript: 5.1.3
     transitivePeerDependencies:
       - supports-color
+    dev: false
 
   /@typescript-eslint/parser@5.54.0(eslint@8.34.0)(typescript@5.0.4):
     resolution: {integrity: sha512-aAVL3Mu2qTi+h/r04WI/5PfNWvO6pdhpeMRWk9R7rEV4mwJNzoWf5CCU5vDKBsPIFQFjEq1xg7XBI2rjiMXQbQ==}
@@ -8968,7 +8613,6 @@ packages:
       typescript: 5.1.3
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /@typescript-eslint/scope-manager@4.33.0:
     resolution: {integrity: sha512-5IfJHpgTsTZuONKbODctL4kKuQje/bzBRkwHE8UOZ4f89Zeddg+EGZs8PD8NcN4LdM3ygHWYB3ukPAYjvl/qbQ==}
@@ -8976,6 +8620,7 @@ packages:
     dependencies:
       '@typescript-eslint/types': 4.33.0
       '@typescript-eslint/visitor-keys': 4.33.0
+    dev: false
 
   /@typescript-eslint/scope-manager@5.54.0:
     resolution: {integrity: sha512-VTPYNZ7vaWtYna9M4oD42zENOBrb+ZYyCNdFs949GcN8Miwn37b8b7eMj+EZaq7VK9fx0Jd+JhmkhjFhvnovhg==}
@@ -9039,6 +8684,7 @@ packages:
   /@typescript-eslint/types@4.33.0:
     resolution: {integrity: sha512-zKp7CjQzLQImXEpLt2BUw1tvOMPfNoTAfb8l51evhYbOEEzdWyQNmHWWGPR6hwKJDAi+1VXSBmnhL9kyVTTOuQ==}
     engines: {node: ^8.10.0 || ^10.13.0 || >=11.10.1}
+    dev: false
 
   /@typescript-eslint/types@5.54.0:
     resolution: {integrity: sha512-nExy+fDCBEgqblasfeE3aQ3NuafBUxZxgxXcYfzYRZFHdVvk5q60KhCSkG0noHgHRo/xQ/BOzURLZAafFpTkmQ==}
@@ -9089,6 +8735,7 @@ packages:
       typescript: 5.1.3
     transitivePeerDependencies:
       - supports-color
+    dev: false
 
   /@typescript-eslint/typescript-estree@5.54.0(typescript@5.0.4):
     resolution: {integrity: sha512-X2rJG97Wj/VRo5YxJ8Qx26Zqf0RRKsVHd4sav8NElhbZzhpBI8jU54i6hfo9eheumj4oO4dcRN1B/zIVEqR/MQ==}
@@ -9129,7 +8776,6 @@ packages:
       typescript: 5.1.3
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /@typescript-eslint/typescript-estree@5.62.0(typescript@5.0.4):
     resolution: {integrity: sha512-CmcQ6uY7b9y694lKdRB8FEel7JbU/40iSAPomu++SjLMntB+2Leay2LO6i8VnJk58MtE9/nQSFIH6jpyRWyYzA==}
@@ -9171,6 +8817,7 @@ packages:
       typescript: 5.1.3
     transitivePeerDependencies:
       - supports-color
+    dev: false
 
   /@typescript-eslint/utils@5.54.0(eslint@8.34.0)(typescript@5.0.4):
     resolution: {integrity: sha512-cuwm8D/Z/7AuyAeJ+T0r4WZmlnlxQ8wt7C7fLpFlKMR+dY6QO79Cq1WpJhvZbMA4ZeZGHiRWnht7ZJ8qkdAunw==}
@@ -9252,26 +8899,6 @@ packages:
       - typescript
     dev: true
 
-  /@typescript-eslint/utils@5.62.0(eslint@8.44.0)(typescript@5.0.4):
-    resolution: {integrity: sha512-n8oxjeb5aIbPFEtmQxQYOLI0i9n5ySBEY/ZEHHZqKQSFnxio1rv6dthascc9dLuwrL0RC5mPCxB7vnAVGAYWAQ==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    peerDependencies:
-      eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-    dependencies:
-      '@eslint-community/eslint-utils': 4.4.0(eslint@8.44.0)
-      '@types/json-schema': 7.0.11
-      '@types/semver': 7.5.0
-      '@typescript-eslint/scope-manager': 5.62.0
-      '@typescript-eslint/types': 5.62.0
-      '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.0.4)
-      eslint: 8.44.0
-      eslint-scope: 5.1.1
-      semver: 7.5.4
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
-    dev: true
-
   /@typescript-eslint/utils@5.62.0(eslint@8.44.0)(typescript@5.1.3):
     resolution: {integrity: sha512-n8oxjeb5aIbPFEtmQxQYOLI0i9n5ySBEY/ZEHHZqKQSFnxio1rv6dthascc9dLuwrL0RC5mPCxB7vnAVGAYWAQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
@@ -9290,6 +8917,7 @@ packages:
     transitivePeerDependencies:
       - supports-color
       - typescript
+    dev: false
 
   /@typescript-eslint/visitor-keys@3.10.1:
     resolution: {integrity: sha512-9JgC82AaQeglebjZMgYR5wgmfUdUc+EitGUUMW8u2nDckaeimzW+VsoLV6FoimPv2id3VQzfjwBxEMVz08ameQ==}
@@ -9304,6 +8932,7 @@ packages:
     dependencies:
       '@typescript-eslint/types': 4.33.0
       eslint-visitor-keys: 2.1.0
+    dev: false
 
   /@typescript-eslint/visitor-keys@5.54.0:
     resolution: {integrity: sha512-xu4wT7aRCakGINTLGeyGqDn+78BwFlggwBjnHa1ar/KaGagnmwLYmlrXIrgAaQ3AE1Vd6nLfKASm7LrFHNbKGA==}
@@ -10638,18 +10267,6 @@ packages:
       '@types/babel__traverse': 7.17.1
     dev: false
 
-  /babel-plugin-jsx-dom-expressions@0.35.23(@babel/core@7.21.8):
-    resolution: {integrity: sha512-KaBiZPm2riB5jyRUy5BVaz8TkKcyAx2frePOG2lj5vbYsBpZHIknQkUU/csWr+EeV75h/mRHIOzLo2mX4Dxq3g==}
-    peerDependencies:
-      '@babel/core': ^7.20.12
-    dependencies:
-      '@babel/core': 7.21.8
-      '@babel/helper-module-imports': 7.18.6
-      '@babel/plugin-syntax-jsx': 7.22.5(@babel/core@7.21.8)
-      '@babel/types': 7.22.5
-      html-entities: 2.3.3
-      validate-html-nesting: 1.2.2
-
   /babel-plugin-jsx-dom-expressions@0.36.10(@babel/core@7.22.9):
     resolution: {integrity: sha512-QA2k/14WGw+RgcGGnEuLWwnu4em6CGhjeXtjvgOYyFHYS2a+CzPeaVQHDOlfuiBcjq/3hWMspHMIMnPEOIzdBg==}
     peerDependencies:
@@ -11078,14 +10695,6 @@ packages:
       - supports-color
     dev: false
 
-  /babel-preset-solid@1.6.10(@babel/core@7.21.8):
-    resolution: {integrity: sha512-qBLjzeWmgY5jX11sJg/lriXABYdClfJrJJrIHaT6G5EuGhxhm6jn7XjqXjLBZHBgy5n/Z+iqJ5YfQj8KG2jKTA==}
-    peerDependencies:
-      '@babel/core': ^7.0.0
-    dependencies:
-      '@babel/core': 7.21.8
-      babel-plugin-jsx-dom-expressions: 0.35.23(@babel/core@7.21.8)
-
   /babel-preset-solid@1.7.7(@babel/core@7.22.9):
     resolution: {integrity: sha512-tdxVzx3kgcIjNXAOmGRbzIhFBPeJjSakiN9yM+IYdL/+LtXNnbGqb0Va5tJb8Sjbk+QVEriovCyuzB5T7jeTvg==}
     peerDependencies:
@@ -11477,16 +11086,6 @@ packages:
     engines: {node: '>=12'}
     dependencies:
       run-applescript: 5.0.0
-
-  /bundle-require@4.0.1(esbuild@0.17.19):
-    resolution: {integrity: sha512-9NQkRHlNdNpDBGmLpngF3EFDcwodhMUuLz9PaWYciVcQF9SE4LFjM2DB/xV1Li5JiuDMv7ZUWuC3rGbqR0MAXQ==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
-    peerDependencies:
-      esbuild: '>=0.17'
-    dependencies:
-      esbuild: 0.17.19
-      load-tsconfig: 0.2.3
-    dev: true
 
   /bundle-require@4.0.1(esbuild@0.18.13):
     resolution: {integrity: sha512-9NQkRHlNdNpDBGmLpngF3EFDcwodhMUuLz9PaWYciVcQF9SE4LFjM2DB/xV1Li5JiuDMv7ZUWuC3rGbqR0MAXQ==}
@@ -11974,6 +11573,7 @@ packages:
       acorn: 8.9.0
       estree-walker: 3.0.3
       periscopic: 3.1.0
+    dev: true
 
   /collect-v8-coverage@1.0.2:
     resolution: {integrity: sha512-lHl4d5/ONEbLlJvaJNtsF/Lz+WvB07u2ycqTYbdrq7UypDXailES4valYb2eWiJFxZlVmpGekfqoxQhzyFdT4Q==}
@@ -12679,6 +12279,7 @@ packages:
     dependencies:
       mdn-data: 2.0.30
       source-map-js: 1.0.2
+    dev: true
 
   /css-vendor@2.0.8:
     resolution: {integrity: sha512-x9Aq0XTInxrkuFeHKbYC7zWY8ai7qJ04Kxd9MnvbC1uO5DagxoHQjm4JvG+vCdXOoFtCjbL2XSZfxmoYa9uQVQ==}
@@ -13846,7 +13447,7 @@ packages:
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
     dev: true
 
-  /esbuild-plugin-solid@0.4.2(esbuild@0.14.54)(solid-js@1.6.13):
+  /esbuild-plugin-solid@0.4.2(esbuild@0.14.54)(solid-js@1.7.8):
     resolution: {integrity: sha512-T5GphLoud3RumjeNYO3K9WVjWDzVKG5evlS7hUEUI0n9tiCL+CnbvJh3SSwFi3xeeXpZRrnZc1gd6FWQsVobTg==}
     peerDependencies:
       esbuild: '>=0.12'
@@ -13856,24 +13457,9 @@ packages:
       '@babel/preset-typescript': 7.21.5(@babel/core@7.22.9)
       babel-preset-solid: 1.7.7(@babel/core@7.22.9)
       esbuild: 0.14.54
-      solid-js: 1.6.13
+      solid-js: 1.7.8
     transitivePeerDependencies:
       - supports-color
-
-  /esbuild-plugin-solid@0.5.0(esbuild@0.18.13)(solid-js@1.6.13):
-    resolution: {integrity: sha512-ITK6n+0ayGFeDVUZWNMxX+vLsasEN1ILrg4pISsNOQ+mq4ljlJJiuXotInd+HE0MzwTcA9wExT1yzDE2hsqPsg==}
-    peerDependencies:
-      esbuild: '>=0.12'
-      solid-js: '>= 1.0'
-    dependencies:
-      '@babel/core': 7.22.9
-      '@babel/preset-typescript': 7.21.5(@babel/core@7.22.9)
-      babel-preset-solid: 1.7.7(@babel/core@7.22.9)
-      esbuild: 0.18.13
-      solid-js: 1.6.13
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
 
   /esbuild-plugin-solid@0.5.0(esbuild@0.18.13)(solid-js@1.7.8):
     resolution: {integrity: sha512-ITK6n+0ayGFeDVUZWNMxX+vLsasEN1ILrg4pISsNOQ+mq4ljlJJiuXotInd+HE0MzwTcA9wExT1yzDE2hsqPsg==}
@@ -13949,36 +13535,6 @@ packages:
       esbuild-windows-32: 0.14.54
       esbuild-windows-64: 0.14.54
       esbuild-windows-arm64: 0.14.54
-
-  /esbuild@0.17.19:
-    resolution: {integrity: sha512-XQ0jAPFkK/u3LcVRcvVHQcTIqD6E2H1fvZMA5dQPSOWb3suUbWbfbRf94pjc0bNzRYLfIrDRQXr7X+LHIm5oHw==}
-    engines: {node: '>=12'}
-    hasBin: true
-    requiresBuild: true
-    optionalDependencies:
-      '@esbuild/android-arm': 0.17.19
-      '@esbuild/android-arm64': 0.17.19
-      '@esbuild/android-x64': 0.17.19
-      '@esbuild/darwin-arm64': 0.17.19
-      '@esbuild/darwin-x64': 0.17.19
-      '@esbuild/freebsd-arm64': 0.17.19
-      '@esbuild/freebsd-x64': 0.17.19
-      '@esbuild/linux-arm': 0.17.19
-      '@esbuild/linux-arm64': 0.17.19
-      '@esbuild/linux-ia32': 0.17.19
-      '@esbuild/linux-loong64': 0.17.19
-      '@esbuild/linux-mips64el': 0.17.19
-      '@esbuild/linux-ppc64': 0.17.19
-      '@esbuild/linux-riscv64': 0.17.19
-      '@esbuild/linux-s390x': 0.17.19
-      '@esbuild/linux-x64': 0.17.19
-      '@esbuild/netbsd-x64': 0.17.19
-      '@esbuild/openbsd-x64': 0.17.19
-      '@esbuild/sunos-x64': 0.17.19
-      '@esbuild/win32-arm64': 0.17.19
-      '@esbuild/win32-ia32': 0.17.19
-      '@esbuild/win32-x64': 0.17.19
-    dev: true
 
   /esbuild@0.18.13:
     resolution: {integrity: sha512-vhg/WR/Oiu4oUIkVhmfcc23G6/zWuEQKFS+yiosSHe4aN6+DQRXIfeloYGibIfVhkr4wyfuVsGNLr+sQU1rWWw==}
@@ -14157,7 +13713,7 @@ packages:
       debug: 4.3.4(supports-color@6.1.0)
       enhanced-resolve: 5.15.0
       eslint: 8.34.0
-      eslint-module-utils: 2.8.0(@typescript-eslint/parser@4.33.0)(eslint-import-resolver-node@0.3.7)(eslint-import-resolver-typescript@3.5.5)(eslint@8.44.0)
+      eslint-module-utils: 2.8.0(@typescript-eslint/parser@5.54.0)(eslint-import-resolver-node@0.3.7)(eslint-import-resolver-typescript@3.5.5)(eslint@8.44.0)
       eslint-plugin-import: 2.27.5(@typescript-eslint/parser@5.54.0)(eslint-import-resolver-typescript@3.5.5)(eslint@8.34.0)
       get-tsconfig: 4.6.0
       globby: 13.2.0
@@ -14198,6 +13754,7 @@ packages:
       eslint-import-resolver-typescript: 3.5.5(@typescript-eslint/parser@5.54.0)(eslint-plugin-import@2.27.5)(eslint@8.34.0)
     transitivePeerDependencies:
       - supports-color
+    dev: false
 
   /eslint-module-utils@2.8.0(@typescript-eslint/parser@5.54.0)(eslint-import-resolver-node@0.3.7)(eslint-import-resolver-typescript@3.5.5)(eslint@8.34.0):
     resolution: {integrity: sha512-aWajIYfsqCKRDgUfjEXNN/JlrzauMuSEy5sbd7WXbtW3EH6A6MpwEh42c7qD+MqQo9QMJ6fWLAeIJynx0g6OAw==}
@@ -14256,7 +13813,6 @@ packages:
       eslint-import-resolver-typescript: 3.5.5(@typescript-eslint/parser@5.54.0)(eslint-plugin-import@2.27.5)(eslint@8.34.0)
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /eslint-plugin-flowtype@5.10.0(eslint@8.44.0):
     resolution: {integrity: sha512-vcz32f+7TP+kvTUyMXZmCnNujBQZDNmcqPImw8b9PZ+16w1Qdm6ryRuYZYVaG9xRqqmAPr2Cs9FAX5gN+x/bjw==}
@@ -14939,6 +14495,7 @@ packages:
     resolution: {integrity: sha512-7RUKfXgSMMkzt6ZuXmqapOurLGPPfgj6l9uRZ7lRGolvk0y2yocc35LdcxKC5PQZdn2DMqioAQ2NoWcrTKmm6g==}
     dependencies:
       '@types/estree': 1.0.1
+    dev: true
 
   /esutils@2.0.3:
     resolution: {integrity: sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==}
@@ -17219,6 +16776,7 @@ packages:
     resolution: {integrity: sha512-baJJdQLiYaJdvFbJqXrcGv3WU3QCzBlUcI5QhbesIm6/xPsvmO+2CDoi/GMOFBQEQm+PXkwOPrp9KK5ozZsp2w==}
     dependencies:
       '@types/estree': 1.0.1
+    dev: true
 
   /is-regex@1.1.4:
     resolution: {integrity: sha512-kvRdxDsxZjhzUX07ZnLydzS1TU/TJlTUHHY4YLL87e37oUA49DfkLqgy+VjFocowy29cKvcSiu+kIv728jTTVg==}
@@ -19142,6 +18700,7 @@ packages:
 
   /locate-character@3.0.0:
     resolution: {integrity: sha512-SW13ws7BjaeJ6p7Q6CO2nchbYEc3X3J6WrmTTDto7yMPqVSZTUyY5Tjbid+Ab8gLnATtygYtiDIJGQRRn2ZOiA==}
+    dev: true
 
   /locate-path@3.0.0:
     resolution: {integrity: sha512-7AO748wWnIhNqAuaty2ZWHkQHRSNfPVIsPIfwEOWO22AmaoVrWavlOcMR5nzTLNYvp36X220/maaRsrec1G65A==}
@@ -19303,6 +18862,7 @@ packages:
     engines: {node: '>=12'}
     dependencies:
       '@jridgewell/sourcemap-codec': 1.4.15
+    dev: true
 
   /magic-string@0.30.1:
     resolution: {integrity: sha512-mbVKXPmS0z0G4XqFDCTllmDQ6coZzn94aMlb0o/A4HEHJCKcanlDZwYJgwnkmgD3jyWhUgj9VsPrfd972yPffA==}
@@ -19422,6 +18982,7 @@ packages:
 
   /mdn-data@2.0.30:
     resolution: {integrity: sha512-GaqWWShW4kv/G9IEucWScBx9G1/vsFZZJUO+tD26M8J8z3Kw5RDQjaoZe03YAClgeS/SWPOcb4nkFBTEi5DUEA==}
+    dev: true
 
   /mdn-data@2.0.4:
     resolution: {integrity: sha512-iV3XNKw06j5Q7mi6h+9vbx23Tv7JkjEVgKHW4pimwyDGWm0OIQntJJ+u1C6mg6mK1EaTv42XQ7w76yuzH7M2cA==}
@@ -21706,6 +21267,7 @@ packages:
       '@types/estree': 1.0.1
       estree-walker: 3.0.3
       is-reference: 3.0.1
+    dev: true
 
   /picocolors@0.2.1:
     resolution: {integrity: sha512-cMlDqaLEqfSaW8Z7N5Jw+lyIW869EzT73/F5lhtY9cLGoVxSXznfgfXMO0Z5K0o0Q2TkTXq+0KFsdnSe3jDViA==}
@@ -25263,7 +24825,6 @@ packages:
   /seroval@0.5.1:
     resolution: {integrity: sha512-ZfhQVB59hmIauJG5Ydynupy8KHyr5imGNtdDhbZG68Ufh1Ynkv9KOYOAABf71oVbQxJ8VkWnMHAjEHE7fWkH5g==}
     engines: {node: '>=10'}
-    dev: true
 
   /serve-index@1.9.1(supports-color@6.1.0):
     resolution: {integrity: sha512-pXHfKNP4qujrtteMrSBb0rc8HJ9Ms/GrXwcUtUtD5s4ewDJI8bT3Cz2zTVRMKtri49pLx2e0Ya8ziP5Ya2pZZw==}
@@ -25515,40 +25076,13 @@ packages:
       websocket-driver: 0.7.4
     dev: false
 
-  /solid-js@1.6.13:
-    resolution: {integrity: sha512-/zcyeect3QnmcD58754IpOU/SzX3s9N19RlRVoKRz3tNpzvel7QKO4FX/PpIFQH6n/pxWq6rSh6b9fwe20XUvw==}
-    dependencies:
-      csstype: 3.1.0
-
   /solid-js@1.7.8:
     resolution: {integrity: sha512-XHBWk1FvFd0JMKljko7FfhefJMTSgYEuVKcQ2a8hzRXfiuSJAGsrPPafqEo+f6l+e8Oe3cROSpIL6kbzjC1fjQ==}
     dependencies:
       csstype: 3.1.2
       seroval: 0.5.1
-    dev: true
 
-  /solid-refresh@0.4.1(solid-js@1.6.13):
-    resolution: {integrity: sha512-v3tD/OXQcUyXLrWjPW1dXZyeWwP7/+GQNs8YTL09GBq+5FguA6IejJWUvJDrLIA4M0ho9/5zK2e9n+uy+4488g==}
-    peerDependencies:
-      solid-js: ^1.3
-    dependencies:
-      '@babel/generator': 7.22.9
-      '@babel/helper-module-imports': 7.22.5
-      '@babel/types': 7.22.5
-      solid-js: 1.6.13
-
-  /solid-refresh@0.4.1(solid-js@1.7.8):
-    resolution: {integrity: sha512-v3tD/OXQcUyXLrWjPW1dXZyeWwP7/+GQNs8YTL09GBq+5FguA6IejJWUvJDrLIA4M0ho9/5zK2e9n+uy+4488g==}
-    peerDependencies:
-      solid-js: ^1.3
-    dependencies:
-      '@babel/generator': 7.22.9
-      '@babel/helper-module-imports': 7.22.5
-      '@babel/types': 7.22.5
-      solid-js: 1.7.8
-    dev: true
-
-  /solid-refresh@0.5.3(solid-js@1.6.13):
+  /solid-refresh@0.5.3(solid-js@1.7.8):
     resolution: {integrity: sha512-Otg5it5sjOdZbQZJnvo99TEBAr6J7PQ5AubZLNU6szZzg3RQQ5MX04oteBIIGDs0y2Qv8aXKm9e44V8z+UnFdw==}
     peerDependencies:
       solid-js: ^1.3
@@ -25556,7 +25090,7 @@ packages:
       '@babel/generator': 7.22.9
       '@babel/helper-module-imports': 7.22.5
       '@babel/types': 7.22.5
-      solid-js: 1.6.13
+      solid-js: 1.7.8
 
   /solid-start-node@0.2.0(solid-start@0.2.23)(undici@5.22.1)(vite@4.4.4):
     resolution: {integrity: sha512-PBGm9HkzKrVf0cl3V2ViWmy51GgbrA1tklDAqbbMvhO7Dhh0TnkVRoySgJuahln9nX+1yoJw+uJST3+s0leQ9w==}
@@ -25572,14 +25106,14 @@ packages:
       polka: 1.0.0-next.22
       rollup: 2.79.1
       sirv: 2.0.2
-      solid-start: 0.2.23(@solidjs/meta@0.28.2)(@solidjs/router@0.7.0)(solid-js@1.6.13)(solid-start-node@0.2.0)(vite@4.4.4)
+      solid-start: 0.2.23(@solidjs/meta@0.28.2)(@solidjs/router@0.7.0)(solid-js@1.7.8)(solid-start-node@0.2.0)(vite@4.4.4)
       terser: 5.18.1
       undici: 5.22.1
       vite: 4.4.4(@types/node@18.16.0)
     transitivePeerDependencies:
       - supports-color
 
-  /solid-start@0.2.23(@solidjs/meta@0.28.2)(@solidjs/router@0.7.0)(solid-js@1.6.13)(solid-start-node@0.2.0)(vite@4.4.4):
+  /solid-start@0.2.23(@solidjs/meta@0.28.2)(@solidjs/router@0.7.0)(solid-js@1.7.8)(solid-start-node@0.2.0)(vite@4.4.4):
     resolution: {integrity: sha512-dKTRFtpjskHFyLq9n6oJxqWHYL7H8w14y4+OgIR+57+lqb1N7289kZLTHrzWxWyzDkIG9V1s2MQtiDfIaBP/MQ==}
     hasBin: true
     peerDependencies:
@@ -25619,8 +25153,8 @@ packages:
       '@babel/preset-env': 7.21.5(@babel/core@7.21.8)
       '@babel/preset-typescript': 7.21.5(@babel/core@7.21.8)
       '@babel/template': 7.22.5
-      '@solidjs/meta': 0.28.2(solid-js@1.6.13)
-      '@solidjs/router': 0.7.0(solid-js@1.6.13)
+      '@solidjs/meta': 0.28.2(solid-js@1.7.8)
+      '@solidjs/router': 0.7.0(solid-js@1.7.8)
       '@types/cookie': 0.5.1
       chokidar: 3.5.3
       compression: 1.7.4(supports-color@6.1.0)
@@ -25630,7 +25164,7 @@ packages:
       dotenv: 16.3.1
       es-module-lexer: 1.3.0
       esbuild: 0.14.54
-      esbuild-plugin-solid: 0.4.2(esbuild@0.14.54)(solid-js@1.6.13)
+      esbuild-plugin-solid: 0.4.2(esbuild@0.14.54)(solid-js@1.7.8)
       fast-glob: 3.2.12
       get-port: 6.1.2
       parse-multipart-data: 1.5.0
@@ -25641,13 +25175,13 @@ packages:
       sade: 1.8.1
       set-cookie-parser: 2.5.1
       sirv: 2.0.2
-      solid-js: 1.6.13
+      solid-js: 1.7.8
       solid-start-node: 0.2.0(solid-start@0.2.23)(undici@5.22.1)(vite@4.4.4)
       terser: 5.18.1
       undici: 5.22.1
       vite: 4.4.4(@types/node@18.16.0)
       vite-plugin-inspect: 0.7.29(rollup@3.26.0)(vite@4.4.4)
-      vite-plugin-solid: 2.7.0(solid-js@1.6.13)(vite@4.4.4)
+      vite-plugin-solid: 2.7.0(solid-js@1.7.8)(vite@4.4.4)
       wait-on: 6.0.1(debug@4.3.4)
     transitivePeerDependencies:
       - supports-color
@@ -26456,6 +25990,7 @@ packages:
       locate-character: 3.0.0
       magic-string: 0.30.0
       periscopic: 3.1.0
+    dev: true
 
   /svelte@4.0.3:
     resolution: {integrity: sha512-SSJZBR+Uca3Xa/R18/7IkkifDdz2Jfuq2eXMUphDhabDxQL6qR8QAUoEmrtYWhzeV0civoFw4Dcvo2yscysdeg==}
@@ -26990,20 +26525,6 @@ packages:
   /tslib@2.5.2:
     resolution: {integrity: sha512-5svOrSA2w3iGFDs1HibEVBGbDrAY82bFQ3HZ3ixB+88nsbsWQoKqDRb5UBYAUPEzbBn6dAp5gRNXglySbx1MlA==}
 
-  /tsup-preset-solid@0.1.8(esbuild@0.18.13)(solid-js@1.6.13)(tsup@6.7.0):
-    resolution: {integrity: sha512-V5TZFEZY9emACO3AZvKyCRzdoyjUcuMEEbTGcJnCma7OVvGnSNVoewFff9g0CaveJ8cZcC3u2tW9gMaxmPZ71A==}
-    peerDependencies:
-      tsup: ^6.5.0
-    dependencies:
-      esbuild-plugin-solid: 0.5.0(esbuild@0.18.13)(solid-js@1.6.13)
-      tsup: 6.7.0(typescript@5.0.4)
-      type-fest: 3.13.0
-    transitivePeerDependencies:
-      - esbuild
-      - solid-js
-      - supports-color
-    dev: true
-
   /tsup-preset-solid@2.0.1(esbuild@0.18.13)(solid-js@1.7.8)(tsup@7.1.0):
     resolution: {integrity: sha512-gN0nD2h4909XvpMnSuqgeiKqv+Ao7Y0d1p4VuF0hnQvazBTXrFHX2ImULG4uCsvU73q2zzoDzk5Ei6iACQmk5w==}
     peerDependencies:
@@ -27015,42 +26536,6 @@ packages:
       - esbuild
       - solid-js
       - supports-color
-    dev: true
-
-  /tsup@6.7.0(typescript@5.0.4):
-    resolution: {integrity: sha512-L3o8hGkaHnu5TdJns+mCqFsDBo83bJ44rlK7e6VdanIvpea4ArPcU3swWGsLVbXak1PqQx/V+SSmFPujBK+zEQ==}
-    engines: {node: '>=14.18'}
-    hasBin: true
-    peerDependencies:
-      '@swc/core': ^1
-      postcss: ^8.4.12
-      typescript: '>=4.1.0'
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      postcss:
-        optional: true
-      typescript:
-        optional: true
-    dependencies:
-      bundle-require: 4.0.1(esbuild@0.17.19)
-      cac: 6.7.14
-      chokidar: 3.5.3
-      debug: 4.3.4(supports-color@6.1.0)
-      esbuild: 0.17.19
-      execa: 5.1.1
-      globby: 11.1.0
-      joycon: 3.1.1
-      postcss-load-config: 3.1.4(postcss@8.4.23)
-      resolve-from: 5.0.0
-      rollup: 3.26.0
-      source-map: 0.8.0-beta.0
-      sucrase: 3.32.0
-      tree-kill: 1.2.2
-      typescript: 5.0.4
-    transitivePeerDependencies:
-      - supports-color
-      - ts-node
     dev: true
 
   /tsup@7.1.0(typescript@5.0.4):
@@ -27607,42 +27092,7 @@ packages:
       - rollup
       - supports-color
 
-  /vite-plugin-solid@2.5.0(solid-js@1.6.13)(vite@4.4.4):
-    resolution: {integrity: sha512-VneGd3RyFJvwaiffsqgymeMaofn0IzQLPwDzafTV2f1agoWeeJlk5VrI5WqT9BTtLe69vNNbCJWqLhHr9fOdDw==}
-    peerDependencies:
-      solid-js: ^1.3.17 || ^1.4.0 || ^1.5.0 || ^1.6.0
-      vite: ^3.0.0 || ^4.0.0
-    dependencies:
-      '@babel/core': 7.21.8
-      '@babel/preset-typescript': 7.21.5(@babel/core@7.21.8)
-      babel-preset-solid: 1.6.10(@babel/core@7.21.8)
-      merge-anything: 5.1.7
-      solid-js: 1.6.13
-      solid-refresh: 0.4.1(solid-js@1.6.13)
-      vite: 4.4.4(@types/node@18.16.0)
-      vitefu: 0.2.4(vite@4.4.4)
-    transitivePeerDependencies:
-      - supports-color
-
-  /vite-plugin-solid@2.5.0(solid-js@1.7.8)(vite@4.4.4):
-    resolution: {integrity: sha512-VneGd3RyFJvwaiffsqgymeMaofn0IzQLPwDzafTV2f1agoWeeJlk5VrI5WqT9BTtLe69vNNbCJWqLhHr9fOdDw==}
-    peerDependencies:
-      solid-js: ^1.3.17 || ^1.4.0 || ^1.5.0 || ^1.6.0
-      vite: ^3.0.0 || ^4.0.0
-    dependencies:
-      '@babel/core': 7.21.8
-      '@babel/preset-typescript': 7.21.5(@babel/core@7.21.8)
-      babel-preset-solid: 1.6.10(@babel/core@7.21.8)
-      merge-anything: 5.1.7
-      solid-js: 1.7.8
-      solid-refresh: 0.4.1(solid-js@1.7.8)
-      vite: 4.4.4(@types/node@18.16.0)
-      vitefu: 0.2.4(vite@4.4.4)
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
-  /vite-plugin-solid@2.7.0(solid-js@1.6.13)(vite@4.4.4):
+  /vite-plugin-solid@2.7.0(solid-js@1.7.8)(vite@4.4.4):
     resolution: {integrity: sha512-avp/Jl5zOp/Itfo67xtDB2O61U7idviaIp4mLsjhCa13PjKNasz+IID0jYTyqUp9SFx6/PmBr6v4KgDppqompg==}
     peerDependencies:
       solid-js: ^1.7.2
@@ -27653,8 +27103,8 @@ packages:
       '@types/babel__core': 7.20.1
       babel-preset-solid: 1.7.7(@babel/core@7.22.9)
       merge-anything: 5.1.7
-      solid-js: 1.6.13
-      solid-refresh: 0.5.3(solid-js@1.6.13)
+      solid-js: 1.7.8
+      solid-refresh: 0.5.3(solid-js@1.7.8)
       vite: 4.4.4(@types/node@18.16.0)
       vitefu: 0.2.4(vite@4.4.4)
     transitivePeerDependencies:

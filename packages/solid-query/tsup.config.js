@@ -1,18 +1,24 @@
 // @ts-check
 
-import { defineConfig } from 'tsup-preset-solid'
+import { defineConfig } from 'tsup'
+import { generateTsupOptions, parsePresetOptions } from 'tsup-preset-solid'
 
-export default defineConfig(
-  {
+const preset_options = {
+  entries: {
     entry: 'src/index.ts',
-    devEntry: true,
+    dev_entry: true,
   },
-  {
-    dropConsole: true,
-    cjs: true,
-    tsupOptions: (config) => ({
-      ...config,
-      outDir: 'build',
-    }),
-  },
-)
+  cjs: true,
+  drop_console: true,
+}
+
+export default defineConfig(() => {
+  const parsed_data = parsePresetOptions(preset_options)
+  const tsup_options = generateTsupOptions(parsed_data)
+
+  tsup_options.forEach((tsup_option) => {
+    tsup_option.outDir = 'build'
+  })
+
+  return tsup_options
+})
