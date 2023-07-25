@@ -11,15 +11,18 @@ export interface UserInfoProps {
   simulateError?: boolean
 }
 
+export const userInfoQueryOpts = (props?: UserInfoProps) => ({
+  queryKey: ['user'],
+  queryFn: () => fetchUser(props),
+  deferStream: props?.deferStream,
+})
+
 export const UserInfo: Component<UserInfoProps> = (props) => {
   const [simulateError, setSimulateError] = createSignal(props.simulateError)
 
-  const query = createQuery(() => ({
-    queryKey: ['user'],
-    queryFn: () =>
-      fetchUser({ sleep: props.sleep, simulateError: simulateError() }),
-    deferStream: props.deferStream,
-  }))
+  const query = createQuery(() =>
+    userInfoQueryOpts({ ...props, simulateError: simulateError() }),
+  )
 
   return (
     <Example
@@ -49,6 +52,13 @@ export const UserInfo: Component<UserInfoProps> = (props) => {
             <div>id: {user.id}</div>
             <div>name: {user.name}</div>
             <div>queryTime: {user.queryTime}</div>
+            <button
+              onClick={() => {
+                query.refetch()
+              }}
+            >
+              refetch
+            </button>
           </>
         )}
       </QueryBoundary>
