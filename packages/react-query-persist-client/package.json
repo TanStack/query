@@ -52,6 +52,8 @@
     "react-dom": "^18.2.0"
   },
   "peerDependencies": {
-    "@tanstack/react-query": "workspace:*"
+    "@tanstack/react-query": "workspace:*",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   }
 }
