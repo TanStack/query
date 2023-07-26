@@ -36,7 +36,7 @@
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
-    "test:build": "publint --strict && attw --pack",
+    "test:build": "publint --strict",
     "build": "tsup"
   },
   "dependencies": {

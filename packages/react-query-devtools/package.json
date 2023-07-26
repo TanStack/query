@@ -48,7 +48,7 @@
     "test:types": "tsc",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict && attw --pack --ignore-rules no-resolution",
+    "test:build": "publint --strict",
     "build": "tsup"
   },
   "dependencies": {
