@@ -83,4 +83,4 @@ TanStack Query maintainer [TkDodo](https://twitter.com/tkdodo) has a series of b
 
 ## [#19: Type-safe React Query](https://tkdodo.eu/blog/type-safe-react-query)
 
-> There's a big difference between "having types" and "being type-safe". This article tries to outline those differences and shows how you can get the best possible type-safety when using React Query together with TypeScript [Read more...](https://tkdodo.eu/blog/inside-react-query)
+> There's a big difference between "having types" and "being type-safe". This article tries to outline those differences and shows how you can get the best possible type-safety when using React Query together with TypeScript [Read more...](https://tkdodo.eu/blog/type-safe-react-query)
