@@ -8,3 +8,4 @@ export { useInfiniteQuery } from './useInfiniteQuery'
 export { useIsFetching } from './useIsFetching'
 
 export { useMutation } from './useMutation'
+export { useIsMutating } from './useIsMutating'
