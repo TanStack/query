@@ -72,21 +72,8 @@ export function useInfiniteQuery<
   queryClient?: QueryClient,
 ): UseInfiniteQueryResult<TData, TError>
 
-export function useInfiniteQuery<
-  TQueryFnData,
-  TError = DefaultError,
-  TData = InfiniteData<TQueryFnData>,
-  TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
->(
-  options: UseInfiniteQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey,
-    TPageParam
-  >,
+export function useInfiniteQuery(
+  options: UseInfiniteQueryOptions,
   queryClient?: QueryClient,
 ) {
   return useBaseQuery(

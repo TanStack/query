@@ -42,14 +42,6 @@ export function useQuery<
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError>
 
-export function useQuery<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  queryClient?: QueryClient,
-) {
+export function useQuery(options: UseQueryOptions, queryClient?: QueryClient) {
   return useBaseQuery(options, QueryObserver, queryClient)
 }
