@@ -1,6 +1,6 @@
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
-import { sleep } from './utils'
+import { isServer, sleep } from './utils'
 import type { CancelOptions, DefaultError, NetworkMode } from './types'
 
 // TYPES
@@ -158,7 +158,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
         }
 
         // Do we need to retry the request?
-        const retry = config.retry ?? 3
+        const retry = config.retry ?? (isServer ? 0 : 3)
         const retryDelay = config.retryDelay ?? defaultRetryDelay
         const delay =
           typeof retryDelay === 'function'
