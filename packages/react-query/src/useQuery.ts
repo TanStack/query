@@ -40,6 +40,8 @@ export function useQuery<
 >(
   options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
-) {
+): UseQueryResult<TData, TError>
+
+export function useQuery(options: UseQueryOptions, queryClient?: QueryClient) {
   return useBaseQuery(options, QueryObserver, queryClient)
 }

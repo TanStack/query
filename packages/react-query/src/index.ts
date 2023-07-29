@@ -11,7 +11,15 @@ export { useQuery } from './useQuery'
 export { useSuspenseQuery } from './useSuspenseQuery'
 export { useSuspenseInfiniteQuery } from './useSuspenseInfiniteQuery'
 export { queryOptions } from './queryOptions'
+export type {
+  DefinedInitialDataOptions,
+  UndefinedInitialDataOptions,
+} from './queryOptions'
 export { infiniteQueryOptions } from './infiniteQueryOptions'
+export type {
+  DefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
+} from './infiniteQueryOptions'
 export {
   QueryClientContext,
   QueryClientProvider,

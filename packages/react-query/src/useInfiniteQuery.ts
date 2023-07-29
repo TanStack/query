@@ -70,11 +70,16 @@ export function useInfiniteQuery<
     TPageParam
   >,
   queryClient?: QueryClient,
-): UseInfiniteQueryResult<TData, TError> {
+): UseInfiniteQueryResult<TData, TError>
+
+export function useInfiniteQuery(
+  options: UseInfiniteQueryOptions,
+  queryClient?: QueryClient,
+) {
   return useBaseQuery(
     options,
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     InfiniteQueryObserver as typeof QueryObserver,
     queryClient,
-  ) as UseInfiniteQueryResult<TData, TError>
+  )
 }
