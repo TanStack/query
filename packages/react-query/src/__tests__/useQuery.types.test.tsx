@@ -1,6 +1,7 @@
 import { useQuery } from '../useQuery'
 import { queryOptions } from '../queryOptions'
 import { doNotExecute } from './utils'
+import type { UseQueryOptions } from '../types'
 import type { Equal, Expect } from './utils'
 
 describe('initialData', () => {
@@ -99,77 +100,24 @@ describe('initialData', () => {
     })
   })
 
-  describe('Query key overload', () => {
-    it('TData should always be defined when initialData is provided', () => {
+  describe('custom hook', () => {
+    it('should allow custom hooks using UseQueryOptions', () => {
       doNotExecute(() => {
-        const { data } = useQuery({
-          queryKey: ['key'],
-          queryFn: () => {
-            return {
-              wow: true,
-            }
-          },
-          initialData: {
-            wow: true,
-          },
-        })
+        type Data = string
 
-        const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
-        return result
-      })
-    })
+        const useCustomQuery = (
+          options?: Omit<UseQueryOptions<Data>, 'queryKey' | 'queryFn'>,
+        ) => {
+          return useQuery({
+            ...options,
+            queryKey: ['todos-key'],
+            queryFn: () => Promise.resolve('data'),
+          })
+        }
 
-    it('TData should have undefined in the union when initialData is NOT provided', () => {
-      doNotExecute(() => {
-        const { data } = useQuery({
-          queryKey: ['key'],
-          queryFn: () => {
-            return {
-              wow: true,
-            }
-          },
-        })
+        const { data } = useCustomQuery()
 
-        const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
-          true
-        return result
-      })
-    })
-  })
-
-  describe('Query key and func', () => {
-    it('TData should always be defined when initialData is provided', () => {
-      doNotExecute(() => {
-        const { data } = useQuery({
-          queryKey: ['key'],
-          queryFn: () => {
-            return {
-              wow: true,
-            }
-          },
-          initialData: {
-            wow: true,
-          },
-        })
-
-        const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
-        return result
-      })
-    })
-
-    it('TData should have undefined in the union when initialData is NOT provided', () => {
-      doNotExecute(() => {
-        const { data } = useQuery({
-          queryKey: ['key'],
-          queryFn: () => {
-            return {
-              wow: true,
-            }
-          },
-        })
-
-        const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
-          true
+        const result: Expect<Equal<Data | undefined, typeof data>> = true
         return result
       })
     })
