@@ -1,7 +1,7 @@
 import type { QRL } from '@builder.io/qwik';
 import { useSignal, useVisibleTask$ } from '@builder.io/qwik';
 import type { Mutation, MutationFilters } from '@tanstack/query-core';
-import { getQueryClient } from './useQueryClient';
+import { createQueryClient } from './useQueryClient';
 
 export const useIsMutating = (
 	filters?: MutationFilters & {
@@ -11,7 +11,7 @@ export const useIsMutating = (
 	const isMutatingSig = useSignal<number>(0);
 
 	useVisibleTask$(({cleanup}) => {
-		const client = getQueryClient();
+		const client = createQueryClient();
 		const cache = client.getQueryCache();
 		isMutatingSig.value = client.isMutating(filters);
 		const unsubscribe = cache.subscribe(() => {

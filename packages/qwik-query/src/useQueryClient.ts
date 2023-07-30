@@ -3,7 +3,7 @@ import { QueryClient, hydrate } from '@tanstack/query-core';
 
 let queryClient: QueryClient | null = null;
 
-export const getQueryClient = (dehydratedData?: any) => {
+export const createQueryClient = (dehydratedData?: any) => {
 	if (isServer) {
 		throw 'You can use getQueryClient only it the client side!';
 	}

@@ -6,7 +6,7 @@ import {
 	useVisibleTask$,
 } from '@builder.io/qwik';
 import { MutationObserver, notifyManager } from '@tanstack/query-core';
-import { getQueryClient } from './useQueryClient';
+import { createQueryClient } from './useQueryClient';
 
 export function useMutation(options: any) {
 	const store = useStore<any>({});
@@ -30,7 +30,7 @@ export function useMutation(options: any) {
 }
 
 const createMutationObserver = (store: any, options: any) => {
-	const client = getQueryClient();
+	const client = createQueryClient();
 	const observer = new MutationObserver(client, options);
 
 	const unsubscribe = observer.subscribe(

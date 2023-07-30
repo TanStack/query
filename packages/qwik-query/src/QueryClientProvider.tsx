@@ -3,11 +3,11 @@ import {
 	component$,
 	useVisibleTask$
 } from '@builder.io/qwik';
-import { getQueryClient } from './useQueryClient';
+import { createQueryClient } from './useQueryClient';
 
 export default component$(() => {
 	useVisibleTask$(({ cleanup }) => {
-		const queryClient = getQueryClient();
+		const queryClient = createQueryClient();
 		queryClient.mount();
 		cleanup(() => {
 			queryClient.unmount();

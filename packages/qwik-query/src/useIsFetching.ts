@@ -5,7 +5,7 @@ import {
 	type QueryFilters,
 	type QueryKey,
 } from '@tanstack/query-core';
-import { getQueryClient } from './useQueryClient';
+import { createQueryClient } from './useQueryClient';
 
 export const useIsFetching = (
 	filters?: QueryFilters & {
@@ -17,7 +17,7 @@ export const useIsFetching = (
 	const isFetchingSig = useSignal<number>(0);
 
 	useVisibleTask$(({ cleanup }) => {
-		const client = getQueryClient();
+		const client = createQueryClient();
 		const cache = client.getQueryCache();
 		isFetchingSig.value = client.isFetching(filters);
 		const unsubscribe = cache.subscribe(() => {

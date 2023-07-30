@@ -13,7 +13,7 @@ import {
 	notifyManager,
 	type DehydratedState,
 } from '@tanstack/query-core';
-import { getQueryClient } from './useQueryClient';
+import { createQueryClient } from './useQueryClient';
 
 export enum ObserverType {
 	base,
@@ -68,7 +68,7 @@ const createQueryObserver = (
 		observerType === ObserverType.base
 			? QueryObserver
 			: (InfiniteQueryObserver as typeof QueryObserver);
-	const client = getQueryClient();
+	const client = createQueryClient();
 
 	const defaultedOptions = client.defaultQueryOptions(options);
 	defaultedOptions._optimisticResults = 'optimistic';
