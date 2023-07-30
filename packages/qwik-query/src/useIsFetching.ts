@@ -9,7 +9,7 @@ import { createQueryClient } from './useQueryClient';
 
 export const useIsFetching = (
 	filters?: QueryFilters & {
-		predicate: QRL<
+		predicate?: QRL<
 			() => (query: Query<unknown, Error, unknown, QueryKey>) => boolean
 		>;
 	}
