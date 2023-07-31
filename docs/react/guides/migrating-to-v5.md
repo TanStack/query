@@ -337,6 +337,23 @@ useInfiniteQuery({
 })
 ```
 
+### The returned type from `useInfiniteQuery`'s `pageParams` is now typed
+
+Previously, the type of `useInfiniteQuery.data.pageParams` was `unknown[]`. In v5, this is now typed to match your query:
+
+```diff
+const query = useInfiniteQuery({
+  queryKey,
+  queryFn: ({ pageParam }) => fetchSomething(pageParam),
+  defaultPageParam: 0,
+})
+if (query.isSuccess) {
+  const pageParams = query.data.pageParams;
+- //    ^? unknown[]
++ //    ^? number[] 
+}
+```
+
 ### Manual mode for infinite queries has been removed
 
 Previously, we've allowed to overwrite the `pageParams` that would be returned from `getNextPageParam` or `getPreviousPageParam` by passing a `pageParam` value directly to `fetchNextPage` or `fetchPreviousPage`. This feature didn't work at all with refetches and wasn't widely known or used. This also means that `getNextPageParam` is now required for infinite queries.
