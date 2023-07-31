@@ -69,7 +69,7 @@ describe("useQuery's in Suspense mode", () => {
 
   it('should return the correct states for a successful infinite query', async () => {
     const key = queryKey()
-    const states: UseInfiniteQueryResult<InfiniteData<number, number>>[] = []
+    const states: UseInfiniteQueryResult<InfiniteData<number>>[] = []
 
     function Page() {
       const [multiplier, setMultiplier] = React.useState(1)
