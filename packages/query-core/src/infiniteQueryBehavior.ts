@@ -7,9 +7,9 @@ import type {
   QueryKey,
 } from './types'
 
-export function infiniteQueryBehavior<TQueryFnData, TError, TData>(
+export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
   pages?: number,
-): QueryBehavior<TQueryFnData, TError, InfiniteData<TData>> {
+): QueryBehavior<TQueryFnData, TError, InfiniteData<TData, TPageParam>> {
   return {
     onFetch: (context) => {
       context.fetchFn = async () => {
@@ -54,7 +54,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData>(
             return Promise.reject()
           }
 
-          if (typeof param === 'undefined' && data.pages.length) {
+          if (param == null && data.pages.length) {
             return Promise.resolve(data)
           }
 
@@ -151,7 +151,7 @@ export function hasNextPage(
   data?: InfiniteData<unknown>,
 ): boolean {
   if (!data) return false
-  return typeof getNextPageParam(options, data) !== 'undefined'
+  return getNextPageParam(options, data) != null
 }
 
 /**
@@ -162,5 +162,5 @@ export function hasPreviousPage(
   data?: InfiniteData<unknown>,
 ): boolean {
   if (!data || !options.getPreviousPageParam) return false
-  return typeof getPreviousPageParam(options, data) !== 'undefined'
+  return getPreviousPageParam(options, data) != null
 }

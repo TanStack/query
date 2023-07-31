@@ -116,7 +116,7 @@ The options for `fetchInfiniteQuery` are exactly the same as those of [`fetchQue
 
 **Returns**
 
-- `Promise<InfiniteData<TData>>`
+- `Promise<InfiniteData<TData, TPageParam>>`
 
 ## `queryClient.prefetchQuery`
 

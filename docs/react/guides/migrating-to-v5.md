@@ -341,6 +341,10 @@ useInfiniteQuery({
 
 Previously, we've allowed to overwrite the `pageParams` that would be returned from `getNextPageParam` or `getPreviousPageParam` by passing a `pageParam` value directly to `fetchNextPage` or `fetchPreviousPage`. This feature didn't work at all with refetches and wasn't widely known or used. This also means that `getNextPageParam` is now required for infinite queries.
 
+### Returning `null` from `getNextPageParam` or `getPreviousPageParam` now indicates that there is no further page available
+
+In v4, you needed to explicitly return `undefined` to indicate that there is no further page available. We've widened this check to include `null`.
+
 ### No retries on the server
 
 On the server, `retry` now defaults to `0` instead of `3`. For prefetching, we have always defaulted to `0` retries, but since queries that have `suspense` enabled can now execute directly on the server as well (since React18), we have to make sure that we don't retry on the server at all.
@@ -401,8 +405,6 @@ Lastly the a new derived `isLoading` flag has been added to the queries that is 
 To understand the reasoning behing this change checkout the [v5 roadmap discussion](https://github.com/TanStack/query/discussions/4252).
 
 [//]: # 'FrameworkBreakingChanges'
-
-
 [//]: # 'NewFeatures'
 
 ## New Features 🚀
@@ -414,29 +416,26 @@ v5 also comes with new features:
 We have a new, simplified way to perform optimistic updates by leveraging the returned `variables` from `useMutation`:
 
 ```tsx
-  const queryInfo = useTodos()
-  const addTodoMutation = useMutation({
-    mutationFn: (newTodo: string) => axios.post('/api/data', { text: newTodo }),
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
-  })
+const queryInfo = useTodos()
+const addTodoMutation = useMutation({
+  mutationFn: (newTodo: string) => axios.post('/api/data', { text: newTodo }),
+  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+})
 
-  if (queryInfo.data) {
-    return (
-      <ul>
-        {queryInfo.data.items.map((todo) => (
-          <li key={todo.id}>{todo.text}</li>
-        ))}
-        {addTodoMutation.isPending && (
-          <li
-            key={String(addTodoMutation.submittedAt)}
-            style={{opacity: 0.5}}
-          >
-            {addTodoMutation.variables}
-          </li>
-        )}
-      </ul>
-    )
-  }
+if (queryInfo.data) {
+  return (
+    <ul>
+      {queryInfo.data.items.map((todo) => (
+        <li key={todo.id}>{todo.text}</li>
+      ))}
+      {addTodoMutation.isPending && (
+        <li key={String(addTodoMutation.submittedAt)} style={{ opacity: 0.5 }}>
+          {addTodoMutation.variables}
+        </li>
+      )}
+    </ul>
+  )
+}
 ```
 
 Here, we are only changing how the UI looks when the mutation is running instead of writing data directly to the cache. This works best if we only have one place where we need to show the optimistic update. For more details, have a look at the [optimistic updates documentation](../guides/optimistic-updates).
