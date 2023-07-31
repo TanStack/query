@@ -106,7 +106,7 @@ describe('dehydration and rehydration', () => {
     hydrationClient.clear()
   })
 
-  test('should be able to provide default options for the hydrated queries', async () => {
+  test.only('should be able to provide default options for the hydrated queries', async () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
     await queryClient.prefetchQuery(['string'], () => fetchData('string'))
@@ -116,9 +116,9 @@ describe('dehydration and rehydration', () => {
     const hydrationCache = new QueryCache()
     const hydrationClient = createQueryClient({ queryCache: hydrationCache })
     hydrate(hydrationClient, parsed, {
-      defaultOptions: { queries: { retry: 10 } },
+      defaultOptions: { queries: { cacheTime: 40_000 } },
     })
-    expect(hydrationCache.find(['string'])?.options.retry).toBe(10)
+    expect(hydrationCache.find(['string'])?.options.cacheTime).toBe(40_000)
     queryClient.clear()
     hydrationClient.clear()
   })
@@ -465,5 +465,34 @@ describe('dehydration and rehydration', () => {
     const hydrationClient = createQueryClient({ queryCache: hydrationCache })
     hydrate(hydrationClient, parsed)
     expect(hydrationCache.find(['string'])?.state.fetchStatus).toBe('idle')
+  })
+
+  test('should dehydrate and hydrate options correctly', async () => {
+    const ONE_HOUR = 60 * 60 * 1000;
+
+    const addedCustomOptions = {
+      cacheTime: ONE_HOUR * 12,
+      staleTime: ONE_HOUR * 10,
+      someRandomOption: 3,
+    }
+
+    const queryCache = new QueryCache()
+    const queryClient = createQueryClient({ queryCache })
+    await queryClient.prefetchQuery(['success-with-options'], () => fetchData('success-with-options'), addedCustomOptions)
+
+    const dehydrated = dehydrate(queryClient)
+    const stringified = JSON.stringify(dehydrated)
+
+    // ---
+
+    const parsed = JSON.parse(stringified)
+    const hydrationCache = new QueryCache()
+    const hydrationClient = createQueryClient({ queryCache: hydrationCache })
+    hydrate(hydrationClient, parsed)
+
+    expect(hydrationCache.find(['success-with-options'])?.options).toBe(expect.objectContaining(addedCustomOptions))
+
+    queryClient.clear()
+    hydrationClient.clear()
   })
 })

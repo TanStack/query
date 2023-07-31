@@ -33,6 +33,7 @@ interface DehydratedQuery {
   queryHash: string
   queryKey: QueryKey
   state: QueryState
+  options: QueryOptions
 }
 
 export interface DehydratedState {
@@ -60,6 +61,7 @@ function dehydrateMutation(mutation: Mutation): DehydratedMutation {
 function dehydrateQuery(query: Query): DehydratedQuery {
   return {
     state: query.state,
+    options: JSON.parse(JSON.stringify(query.options)), // To remove properties that are functions or other non-serializable types
     queryKey: query.queryKey,
     queryHash: query.queryHash,
   }
@@ -162,6 +164,7 @@ export function hydrate(
       client,
       {
         ...options?.defaultOptions?.queries,
+        ...dehydratedQuery.options,
         queryKey: dehydratedQuery.queryKey,
         queryHash: dehydratedQuery.queryHash,
       },
