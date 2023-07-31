@@ -35,7 +35,9 @@ export type DefinedInitialDataInfiniteOptions<
   TQueryKey,
   TPageParam
 > & {
-  initialData: InfiniteData<TQueryData> | (() => InfiniteData<TQueryData>)
+  initialData:
+    | InfiniteData<TQueryData, TPageParam>
+    | (() => InfiniteData<TQueryData, TPageParam>)
 }
 
 export function infiniteQueryOptions<

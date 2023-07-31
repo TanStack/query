@@ -16,8 +16,9 @@ describe('Discriminated union return type', () => {
         }),
       )
 
+      // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
       const result: Expect<
-        Equal<InfiniteData<string> | undefined, typeof query.data>
+        Equal<InfiniteData<string, unknown> | undefined, typeof query.data>
       > = true
       return result
     })
@@ -35,8 +36,10 @@ describe('Discriminated union return type', () => {
       )
 
       if (query.isSuccess) {
-        const result: Expect<Equal<InfiniteData<string>, typeof query.data>> =
-          true
+        // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
+        const result: Expect<
+          Equal<InfiniteData<string, unknown>, typeof query.data>
+        > = true
         return result
       }
       return

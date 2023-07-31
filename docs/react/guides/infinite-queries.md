@@ -13,8 +13,8 @@ When using `useInfiniteQuery`, you'll notice a few things are different:
 - The `fetchNextPage` and `fetchPreviousPage` functions are now available (`fetchNextPage` is required)
 - The `defaultPageParam` option is now available (and required) to specify the initial page param
 - The `getNextPageParam` and `getPreviousPageParam` options are available for both determining if there is more data to load and the information to fetch it. This information is supplied as an additional parameter in the query function
-- A `hasNextPage` boolean is now available and is `true` if `getNextPageParam` returns a value other than `undefined`
-- A `hasPreviousPage` boolean is now available and is `true` if `getPreviousPageParam` returns a value other than `undefined`
+- A `hasNextPage` boolean is now available and is `true` if `getNextPageParam` returns a value other than `null` or `undefined`
+- A `hasPreviousPage` boolean is now available and is `true` if `getPreviousPageParam` returns a value other than `null` or `undefined`
 - The `isFetchingNextPage` and `isFetchingPreviousPage` booleans are now available to distinguish between a background refresh state and a loading more state
 
 > Note: Options `initialData` or `placeholderData` need to conform to the same structure of an object with `data.pages` and `data.pageParams` properties.

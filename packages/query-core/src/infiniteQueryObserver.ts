@@ -33,7 +33,7 @@ export class InfiniteQueryObserver<
   TQueryFnData,
   TError,
   TData,
-  InfiniteData<TQueryData>,
+  InfiniteData<TQueryData, TPageParam>,
   TQueryKey
 > {
   // Type override
@@ -130,7 +130,12 @@ export class InfiniteQueryObserver<
   }
 
   protected createResult(
-    query: Query<TQueryFnData, TError, InfiniteData<TQueryData>, TQueryKey>,
+    query: Query<
+      TQueryFnData,
+      TError,
+      InfiniteData<TQueryData, TPageParam>,
+      TQueryKey
+    >,
     options: InfiniteQueryObserverOptions<
       TQueryFnData,
       TError,

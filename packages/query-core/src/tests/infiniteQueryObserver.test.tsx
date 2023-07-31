@@ -1,4 +1,4 @@
-import { vi } from 'vitest'
+import { expect, vi } from 'vitest'
 import { InfiniteQueryObserver } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
 import type { QueryClient } from '..'
@@ -119,6 +119,7 @@ describe('InfiniteQueryObserver', () => {
 
     expect(observer.getCurrentResult().data?.pages).toEqual(['1', '2'])
     expect(queryFn).toBeCalledTimes(2)
+    expect(observer.getCurrentResult().hasNextPage).toBe(true)
 
     next = undefined
 
@@ -126,5 +127,33 @@ describe('InfiniteQueryObserver', () => {
 
     expect(observer.getCurrentResult().data?.pages).toEqual(['1'])
     expect(queryFn).toBeCalledTimes(3)
+    expect(observer.getCurrentResult().hasNextPage).toBe(false)
+  })
+
+  test('should stop refetching if null is returned from getNextPageParam', async () => {
+    const key = queryKey()
+    let next: number | null = 2
+    const queryFn = vi.fn<any, any>(({ pageParam }) => String(pageParam))
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      defaultPageParam: 1,
+      getNextPageParam: () => next,
+    })
+
+    await observer.fetchNextPage()
+    await observer.fetchNextPage()
+
+    expect(observer.getCurrentResult().data?.pages).toEqual(['1', '2'])
+    expect(queryFn).toBeCalledTimes(2)
+    expect(observer.getCurrentResult().hasNextPage).toBe(true)
+
+    next = null
+
+    await observer.refetch()
+
+    expect(observer.getCurrentResult().data?.pages).toEqual(['1'])
+    expect(queryFn).toBeCalledTimes(3)
+    expect(observer.getCurrentResult().hasNextPage).toBe(false)
   })
 })
