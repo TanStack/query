@@ -54,7 +54,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
             return Promise.reject()
           }
 
-          if (typeof param === 'undefined' && data.pages.length) {
+          if (param == null && data.pages.length) {
             return Promise.resolve(data)
           }
 
