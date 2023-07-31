@@ -1,3 +1,9 @@
+import { ClientComponent } from '@/app/client-component'
+
 export default function Home() {
-  return <main></main>
+  return (
+    <main>
+      <ClientComponent />
+    </main>
+  )
 }
