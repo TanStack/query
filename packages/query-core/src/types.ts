@@ -80,9 +80,9 @@ export type GetNextPageParamFunction<TPageParam, TQueryFnData = unknown> = (
   allPageParams: TPageParam[],
 ) => TPageParam | undefined | null
 
-export interface InfiniteData<TData, TPageParams = unknown> {
+export interface InfiniteData<TData, TPageParam = unknown> {
   pages: TData[]
-  pageParams: TPageParams[]
+  pageParams: TPageParam[]
 }
 
 export type QueryMeta = Register extends {
