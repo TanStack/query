@@ -21,9 +21,9 @@ import type {
 export function useInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,
-  TData = InfiniteData<TQueryFnData>,
-  TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
+  TData = InfiniteData<TQueryFnData, TPageParam>,
+  TQueryKey extends QueryKey = QueryKey,
 >(
   options: UndefinedInitialDataInfiniteOptions<
     TQueryFnData,
@@ -39,9 +39,9 @@ export function useInfiniteQuery<
 export function useInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,
-  TData = InfiniteData<TQueryFnData>,
-  TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
+  TData = InfiniteData<TQueryFnData, TPageParam>,
+  TQueryKey extends QueryKey = QueryKey,
 >(
   options: DefinedInitialDataInfiniteOptions<
     TQueryFnData,
@@ -57,9 +57,9 @@ export function useInfiniteQuery<
 export function useInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,
-  TData = InfiniteData<TQueryFnData>,
-  TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
+  TData = InfiniteData<TQueryFnData, TPageParam>,
+  TQueryKey extends QueryKey = QueryKey,
 >(
   options: UseInfiniteQueryOptions<
     TQueryFnData,

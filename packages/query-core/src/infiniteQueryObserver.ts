@@ -25,10 +25,10 @@ type InfiniteQueryObserverListener<TData, TError> = (
 export class InfiniteQueryObserver<
   TQueryFnData = unknown,
   TError = DefaultError,
-  TData = InfiniteData<TQueryFnData>,
+  TPageParam = unknown,
+  TData = InfiniteData<TQueryFnData, TPageParam>,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
 > extends QueryObserver<
   TQueryFnData,
   TError,
