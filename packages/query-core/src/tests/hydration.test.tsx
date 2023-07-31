@@ -106,7 +106,7 @@ describe('dehydration and rehydration', () => {
     hydrationClient.clear()
   })
 
-  test.only('should be able to provide default options for the hydrated queries', async () => {
+  test('should be able to provide default options for the hydrated queries', async () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
     await queryClient.prefetchQuery(['string'], () => fetchData('string'))
