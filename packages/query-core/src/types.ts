@@ -322,7 +322,7 @@ export interface InfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
-      InfiniteData<TQueryData>,
+      InfiniteData<TQueryData, TPageParam>,
       TQueryKey,
       TPageParam
     >,
@@ -380,7 +380,7 @@ export type FetchInfiniteQueryOptions<
 > = FetchQueryOptions<
   TQueryFnData,
   TError,
-  InfiniteData<TData>,
+  InfiniteData<TData, TPageParam>,
   TQueryKey,
   TPageParam
 > &

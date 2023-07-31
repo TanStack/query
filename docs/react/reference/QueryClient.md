@@ -23,6 +23,7 @@ await queryClient.prefetchQuery({ queryKey: ['posts'], queryFn: fetchPosts })
 
 Its available methods are:
 
+- [`QueryClient`](#queryclient)
 - [`queryClient.fetchQuery`](#queryclientfetchquery)
 - [`queryClient.fetchInfiniteQuery`](#queryclientfetchinfinitequery)
 - [`queryClient.prefetchQuery`](#queryclientprefetchquery)
@@ -116,7 +117,7 @@ The options for `fetchInfiniteQuery` are exactly the same as those of [`fetchQue
 
 **Returns**
 
-- `Promise<InfiniteData<TData>>`
+- `Promise<InfiniteData<TData, TPageParam>>`
 
 ## `queryClient.prefetchQuery`
 

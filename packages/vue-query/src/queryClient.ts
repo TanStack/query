@@ -185,7 +185,7 @@ export class QueryClient extends QC {
       TQueryKey,
       TPageParam
     >,
-  ): Promise<InfiniteData<TData>>
+  ): Promise<InfiniteData<TData, TPageParam>>
   fetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -202,7 +202,7 @@ export class QueryClient extends QC {
         TPageParam
       >
     >,
-  ): Promise<InfiniteData<TData>> {
+  ): Promise<InfiniteData<TData, TPageParam>> {
     return super.fetchInfiniteQuery(cloneDeepUnref(options))
   }
 
