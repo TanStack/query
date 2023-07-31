@@ -39,6 +39,7 @@
   "devDependencies": {
     "@builder.io/qwik": "1.2.6",
     "@types/eslint": "8.40.2",
+    "@types/mocha": "^10.0.1",
     "@types/node": "^20.4.0",
     "@typescript-eslint/eslint-plugin": "5.61.0",
     "@typescript-eslint/parser": "5.61.0",
