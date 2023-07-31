@@ -1,4 +1,3 @@
-'use client'
 import * as React from 'react'
 import { shouldThrowError } from './utils'
 import type {

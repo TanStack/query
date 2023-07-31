@@ -1,5 +1,3 @@
-'use client'
-
 import { useServerInsertedHTML } from 'next/navigation'
 import * as React from 'react'
 

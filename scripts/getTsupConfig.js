@@ -5,6 +5,7 @@ import { esbuildPluginFilePathExtensions } from 'esbuild-plugin-file-path-extens
 /**
  * @param {Object} opts - Options for building configurations.
  * @param {string[]} opts.entry - The entry array.
+ * @param {import('tsup').Options['banner']} opts.banner - The banner option.
  * @returns {import('tsup').Options}
  */
 export function modernConfig(opts) {
@@ -17,12 +18,14 @@ export function modernConfig(opts) {
     sourcemap: true,
     clean: true,
     esbuildPlugins: [esbuildPluginFilePathExtensions({ esmExtension: 'js' })],
+    banner: opts.banner,
   }
 }
 
 /**
  * @param {Object} opts - Options for building configurations.
  * @param {string[]} opts.entry - The entry array.
+ * @param {import('tsup').Options['banner']} opts.banner - The banner option.
  * @returns {import('tsup').Options}
  */
 export function legacyConfig(opts) {
@@ -35,5 +38,6 @@ export function legacyConfig(opts) {
     sourcemap: true,
     clean: true,
     esbuildPlugins: [esbuildPluginFilePathExtensions({ esmExtension: 'js' })],
+    banner: opts.banner,
   }
 }
