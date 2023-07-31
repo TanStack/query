@@ -75,9 +75,9 @@ export type UseInfiniteQueryReturnType<TData, TError> = DistributiveOmit<
 export function useInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,
-  TPageParam = unknown,
-  TData = InfiniteData<TQueryFnData, TPageParam>,
+  TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 >(
   options: UseInfiniteQueryOptions<
     TQueryFnData,

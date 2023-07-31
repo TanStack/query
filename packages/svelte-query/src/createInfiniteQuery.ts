@@ -15,9 +15,9 @@ import type {
 export function createInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,
-  TPageParam = unknown,
-  TData = InfiniteData<TQueryFnData, TPageParam>,
+  TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 >(
   options: CreateInfiniteQueryOptions<
     TQueryFnData,

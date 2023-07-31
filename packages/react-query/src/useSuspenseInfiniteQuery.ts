@@ -19,9 +19,9 @@ import type {
 export function useSuspenseInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,
-  TPageParam = unknown,
-  TData = InfiniteData<TQueryFnData, TPageParam>,
+  TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 >(
   options: UseSuspenseInfiniteQueryOptions<
     TQueryFnData,

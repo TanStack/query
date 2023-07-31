@@ -187,7 +187,7 @@ Almost everyone gets `cacheTime` wrong. It sounds like "the amount of time that 
 
 `cacheTime` does nothing as long as a query is still in used. It only kicks in as soon as the query becomes unused. After the time has passed, data will be "garbage collected" to avoid the cache from growing.
 
-`gc` is referring to "garbage collect" time. It's a bit more technical, but also a quite [well known abbreviation](https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)) in computer science.
+`gc` is referring to "garbage collect" time. It's a bit more technical, but also a quite [well known abbreviation](<https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)>) in computer science.
 
 ```diff
 const MINUTE = 1000 * 60;
@@ -337,23 +337,6 @@ useInfiniteQuery({
 })
 ```
 
-### The returned type from `useInfiniteQuery`'s `pageParams` is now typed
-
-Previously, the type of `useInfiniteQuery.data.pageParams` was `unknown[]`. In v5, this is now typed to match your query:
-
-```diff
-const query = useInfiniteQuery({
-  queryKey,
-  queryFn: ({ pageParam }) => fetchSomething(pageParam),
-  defaultPageParam: 0,
-})
-if (query.isSuccess) {
-  const pageParams = query.data.pageParams;
-- //    ^? unknown[]
-+ //    ^? number[] 
-}
-```
-
 ### Manual mode for infinite queries has been removed
 
 Previously, we've allowed to overwrite the `pageParams` that would be returned from `getNextPageParam` or `getPreviousPageParam` by passing a `pageParam` value directly to `fetchNextPage` or `fetchPreviousPage`. This feature didn't work at all with refetches and wasn't widely known or used. This also means that `getNextPageParam` is now required for infinite queries.
@@ -422,8 +405,6 @@ Lastly the a new derived `isLoading` flag has been added to the queries that is 
 To understand the reasoning behing this change checkout the [v5 roadmap discussion](https://github.com/TanStack/query/discussions/4252).
 
 [//]: # 'FrameworkBreakingChanges'
-
-
 [//]: # 'NewFeatures'
 
 ## New Features 🚀
@@ -435,29 +416,26 @@ v5 also comes with new features:
 We have a new, simplified way to perform optimistic updates by leveraging the returned `variables` from `useMutation`:
 
 ```tsx
-  const queryInfo = useTodos()
-  const addTodoMutation = useMutation({
-    mutationFn: (newTodo: string) => axios.post('/api/data', { text: newTodo }),
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
-  })
+const queryInfo = useTodos()
+const addTodoMutation = useMutation({
+  mutationFn: (newTodo: string) => axios.post('/api/data', { text: newTodo }),
+  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+})
 
-  if (queryInfo.data) {
-    return (
-      <ul>
-        {queryInfo.data.items.map((todo) => (
-          <li key={todo.id}>{todo.text}</li>
-        ))}
-        {addTodoMutation.isPending && (
-          <li
-            key={String(addTodoMutation.submittedAt)}
-            style={{opacity: 0.5}}
-          >
-            {addTodoMutation.variables}
-          </li>
-        )}
-      </ul>
-    )
-  }
+if (queryInfo.data) {
+  return (
+    <ul>
+      {queryInfo.data.items.map((todo) => (
+        <li key={todo.id}>{todo.text}</li>
+      ))}
+      {addTodoMutation.isPending && (
+        <li key={String(addTodoMutation.submittedAt)} style={{ opacity: 0.5 }}>
+          {addTodoMutation.variables}
+        </li>
+      )}
+    </ul>
+  )
+}
 ```
 
 Here, we are only changing how the UI looks when the mutation is running instead of writing data directly to the cache. This works best if we only have one place where we need to show the optimistic update. For more details, have a look at the [optimistic updates documentation](../guides/optimistic-updates).
