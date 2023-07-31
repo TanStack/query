@@ -101,7 +101,10 @@ describe('select', () => {
       })
 
       const result: Expect<
-        Equal<InfiniteData<number> | undefined, (typeof infiniteQuery)['data']>
+        Equal<
+          InfiniteData<number, number> | undefined,
+          typeof infiniteQuery['data']
+        >
       > = true
       return result
     })
@@ -117,13 +120,15 @@ describe('select', () => {
         defaultPageParam: 1,
         getNextPageParam: () => undefined,
         select: (data) => {
-          const result: Expect<Equal<InfiniteData<number>, typeof data>> = true
+          const result: Expect<
+            Equal<InfiniteData<number, number>, typeof data>
+          > = true
           return result
         },
       })
 
       const result: Expect<
-        Equal<true | undefined, (typeof infiniteQuery)['data']>
+        Equal<true | undefined, typeof infiniteQuery['data']>
       > = true
       return result
     })
@@ -204,7 +209,10 @@ describe('getNextPageParam / getPreviousPageParam', () => {
       })
 
       const result: Expect<
-        Equal<InfiniteData<string> | undefined, (typeof infiniteQuery)['data']>
+        Equal<
+          InfiniteData<string, number> | undefined,
+          typeof infiniteQuery['data']
+        >
       > = true
       return result
     })
