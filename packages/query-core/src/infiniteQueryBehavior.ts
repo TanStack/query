@@ -151,8 +151,7 @@ export function hasNextPage(
   data?: InfiniteData<unknown>,
 ): boolean {
   if (!data) return false
-  const next = getNextPageParam(options, data)
-  return typeof next !== 'undefined' && next !== null
+  return getNextPageParam(options, data) != null
 }
 
 /**
@@ -163,6 +162,5 @@ export function hasPreviousPage(
   data?: InfiniteData<unknown>,
 ): boolean {
   if (!data || !options.getPreviousPageParam) return false
-  const previous = getPreviousPageParam(options, data)
-  return typeof previous !== 'undefined' && previous !== null
+  return getPreviousPageParam(options, data) != null
 }
