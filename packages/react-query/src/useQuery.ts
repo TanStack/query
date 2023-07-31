@@ -1,5 +1,4 @@
 import 'client-only'
-import type { QueryClient, QueryKey, DefaultError } from '@tanstack/query-core'
 import { QueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
