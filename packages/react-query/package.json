@@ -4,7 +4,7 @@
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
-  "repository": "tanstack/query",
+  "repository": "https://github.com/tanstack/query.git",
   "homepage": "https://tanstack.com/query",
   "funding": {
     "type": "github",
