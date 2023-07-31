@@ -1,4 +1,3 @@
-'use client'
 import * as React from 'react'
 import { notifyManager, parseFilterArgs } from '@tanstack/query-core'
 

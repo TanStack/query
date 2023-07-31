@@ -1,4 +1,3 @@
-'use client'
 import * as React from 'react'
 
 import { persistQueryClient } from '@tanstack/query-persist-client-core'

@@ -1,4 +1,3 @@
-'use client'
 import * as React from 'react'
 import { notifyManager, parseMutationFilterArgs } from '@tanstack/query-core'
 import { useSyncExternalStore } from './useSyncExternalStore'

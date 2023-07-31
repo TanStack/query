@@ -1,4 +1,3 @@
-'use client'
 import { InfiniteQueryObserver, parseQueryArgs } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type {

@@ -1,4 +1,3 @@
-'use client'
 import { QueryObserver, parseQueryArgs } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type { QueryFunction, QueryKey } from '@tanstack/query-core'

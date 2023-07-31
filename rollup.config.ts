@@ -1,4 +1,4 @@
-import type { OutputOptions, RollupOptions } from 'rollup'
+import path from 'path'
 import babel from '@rollup/plugin-babel'
 import { terser } from 'rollup-plugin-terser'
 import size from 'rollup-plugin-size'
@@ -6,8 +6,8 @@ import visualizer from 'rollup-plugin-visualizer'
 import replace from '@rollup/plugin-replace'
 import nodeResolve from '@rollup/plugin-node-resolve'
 import commonJS from '@rollup/plugin-commonjs'
-import path from 'path'
 import preserveDirectives from 'rollup-plugin-preserve-directives'
+import type { OutputOptions, RollupOptions } from 'rollup'
 
 type Options = {
   input: string | string[]
@@ -108,6 +108,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
         '@tanstack/query-core',
         'use-sync-external-store/shim/index.js',
       ],
+      banner: "'use client';",
     }),
     ...buildConfigs({
       name: 'react-query-devtools',
@@ -128,6 +129,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
         'use-sync-external-store/shim/index.js',
         'superjson',
       ],
+      banner: "'use client';",
     }),
     ...buildConfigs({
       name: 'react-query-devtools-prod',
@@ -146,6 +148,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       forceDevEnv: true,
       forceBundle: true,
       skipUmdBuild: true,
+      banner: "'use client';",
     }),
     ...buildConfigs({
       name: 'react-query-persist-client',
@@ -159,6 +162,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
         '@tanstack/react-query': 'ReactQuery',
       },
       bundleUMDGlobals: ['@tanstack/query-persist-client-core'],
+      banner: "'use client';",
     }),
     ...buildConfigs({
       name: 'solid-query',
@@ -208,6 +212,7 @@ function buildConfigs(opts: {
   forceDevEnv?: boolean
   forceBundle?: boolean
   skipUmdBuild?: boolean
+  banner?: string
 }): RollupOptions[] {
   const firstEntry = path.resolve(
     opts.packageDir,
@@ -225,7 +230,6 @@ function buildConfigs(opts: {
   )
 
   const external = (moduleName) => externalDeps.includes(moduleName)
-  const banner = '' //createBanner(opts.name)
 
   const options: Options = {
     input,
@@ -233,7 +237,7 @@ function buildConfigs(opts: {
     outputFile: opts.outputFile,
     packageDir: opts.packageDir,
     external,
-    banner,
+    banner: opts.banner || '',
     globals: opts.globals,
     forceDevEnv: opts.forceDevEnv || false,
     forceBundle: opts.forceBundle || false,
