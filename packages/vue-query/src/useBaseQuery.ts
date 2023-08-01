@@ -8,7 +8,12 @@ import {
   watch,
 } from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
-import { cloneDeepUnref, isQueryKey, updateState } from './utils'
+import {
+  cloneDeepUnref,
+  isQueryKey,
+  shouldThrowError,
+  updateState,
+} from './utils'
 import type { ToRefs, UnwrapRef } from 'vue-demi'
 import type {
   QueryFunction,
@@ -126,6 +131,23 @@ export function useBaseQuery<
       },
     )
   }
+
+  // Handle error boundary
+  watch(
+    () => state.error,
+    (error) => {
+      if (
+        state.isError &&
+        !state.isFetching &&
+        shouldThrowError(defaultedOptions.value.useErrorBoundary, [
+          error as TError,
+          observer.getCurrentQuery(),
+        ])
+      ) {
+        throw error
+      }
+    },
+  )
 
   return {
     ...(toRefs(readonly(state)) as UseQueryReturnType<TData, TError>),

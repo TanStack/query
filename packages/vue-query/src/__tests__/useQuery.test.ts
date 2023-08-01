@@ -233,6 +233,26 @@ describe('useQuery', () => {
     expect(status.value).toStrictEqual('loading')
   })
 
+  describe('errorBoundary', () => {
+    test('should evaluate useErrorBoundary when query is expected to throw', async () => {
+      const boundaryFn = jest.fn()
+      useQuery(['key0'], rejectFetcher, {
+        retry: false,
+        useErrorBoundary: boundaryFn,
+      })
+
+      await flushPromises()
+
+      expect(boundaryFn).toHaveBeenCalledTimes(1)
+      expect(boundaryFn).toHaveBeenCalledWith(
+        Error('Some error'),
+        expect.objectContaining({
+          state: expect.objectContaining({ status: 'error' }),
+        }),
+      )
+    })
+  })
+
   describe('parseQueryArgs', () => {
     test('should unwrap refs arguments', () => {
       const key = ref(['key'])

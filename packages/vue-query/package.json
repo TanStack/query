@@ -44,9 +44,9 @@
     "vue2": "npm:vue@2"
   },
   "dependencies": {
+    "@tanstack/match-sorter-utils": "^8.1.1",
     "@tanstack/query-core": "workspace:*",
     "@vue/devtools-api": "^6.4.2",
-    "@tanstack/match-sorter-utils": "^8.1.1",
     "vue-demi": "^0.13.11"
   },
   "peerDependencies": {

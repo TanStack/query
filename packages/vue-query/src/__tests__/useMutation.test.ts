@@ -311,6 +311,26 @@ describe('useMutation', () => {
     })
   })
 
+  describe('errorBoundary', () => {
+    test('should evaluate useErrorBoundary when mutation is expected to throw', async () => {
+      const err = new Error('Expected mock error. All is well!')
+      const boundaryFn = jest.fn()
+      const { mutate } = useMutation(
+        () => {
+          return Promise.reject(err)
+        },
+        { useErrorBoundary: boundaryFn },
+      )
+
+      mutate()
+
+      await flushPromises()
+
+      expect(boundaryFn).toHaveBeenCalledTimes(1)
+      expect(boundaryFn).toHaveBeenCalledWith(err)
+    })
+  })
+
   describe('parseMutationArgs', () => {
     test('should return the same instance of options', () => {
       const options = { retry: false }
