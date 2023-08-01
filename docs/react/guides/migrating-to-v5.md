@@ -462,4 +462,18 @@ See the [TypeScript docs](../typescript#typing-query-options) for more details.
 
 See the [useQueries docs](../reference/useQueries#combine) for more details.
 
+### new `useSuspenseQuery` and `useSuspenseInfiniteQuery` hooks
+
+With v5, suspense for data fetching finally becomes "stable". We've added dedicated hooks that work a bit differently than `useQuery` normally does. The main difference is that they return a tuple of `[data, query]` because you'll mostly care about `data` with this hook (since you don't have to handle pending and error states thanks to suspense). This makes it easy to directly use your data and rename the variable to something else. Further, `data` will never be potentially `undefined` on type level:
+
+```js
+const [post] = useSuspenseQuery({
+    // ^? const post: Post
+  queryKey: ['post', postId],
+  queryFn: () => fetchPost(postId),
+})
+```
+
+You can read more about them in the [suspense docs](../guides/suspense).
+
 [//]: # 'NewFeatures'
