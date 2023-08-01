@@ -27,13 +27,9 @@ export function useIsMutating(
     isMutating.value = queryClient.isMutating(filters)
   })
 
-  watch(
-    filters,
-    () => {
-      isMutating.value = queryClient.isMutating(filters)
-    },
-    { deep: true },
-  )
+  watch(filters, () => {
+    isMutating.value = queryClient.isMutating(filters)
+  })
 
   onScopeDispose(() => {
     unsubscribe()

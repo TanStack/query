@@ -27,13 +27,9 @@ export function useIsFetching(
     isFetching.value = queryClient.isFetching(filters)
   })
 
-  watch(
-    filters,
-    () => {
-      isFetching.value = queryClient.isFetching(filters)
-    },
-    { deep: true },
-  )
+  watch(filters, () => {
+    isFetching.value = queryClient.isFetching(filters)
+  })
 
   onScopeDispose(() => {
     unsubscribe()
