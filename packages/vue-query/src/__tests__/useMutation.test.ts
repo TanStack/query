@@ -1,7 +1,10 @@
 import { reactive, ref } from 'vue-demi'
+import { mount } from '@vue/test-utils'
 import { parseMutationArgs, useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
 import { errorMutator, flushPromises, successMutator } from './test-utils'
+import errorBoundary from './components/errorBoundary'
+import type { MutationObserverOptions } from '@tanstack/query-core'
 
 jest.mock('../useQueryClient')
 
@@ -308,6 +311,56 @@ describe('useMutation', () => {
         data: { value: undefined },
         error: { value: Error('Some error') },
       })
+    })
+  })
+
+  describe('errorBoundary', () => {
+    const errorBoundaryTestComponent = (options: MutationObserverOptions) => ({
+      components: {
+        'error-boundary': errorBoundary,
+        'error-component': {
+          template: `
+              <div>
+              <button @click='mutate'>mutate</button>
+              {{ error }}
+              </div>`,
+          setup() {
+            const { mutate, error } = useMutation(() => {
+              const err = new Error('Expected mock error. All is well!')
+              return Promise.reject(err)
+            }, options)
+            return {
+              mutate,
+              error,
+            }
+          },
+        },
+      },
+      template: '<error-boundary><error-component/></error-boundary>',
+    })
+
+    test('should be able to throw an error when useErrorBoundary is set to true', async () => {
+      const wrapper = mount(
+        errorBoundaryTestComponent({ useErrorBoundary: true }),
+      )
+      wrapper.find('button').trigger('click')
+
+      await flushPromises()
+
+      expect(wrapper.text()).toContain('error boundary')
+    })
+
+    test('should not throw an error when useErrorBoundary is set to false', async () => {
+      const wrapper = mount(
+        errorBoundaryTestComponent({ useErrorBoundary: false }),
+      )
+      wrapper.find('button').trigger('click')
+
+      await flushPromises()
+
+      expect(wrapper.text()).toContain(
+        'Error: Expected mock error. All is well!',
+      )
     })
   })
 
