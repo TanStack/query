@@ -98,29 +98,33 @@ export function useBaseQuery<
   })
 
   const suspense = () => {
-    return new Promise<QueryObserverResult<TData, TError>>((resolve) => {
-      let stopWatch = () => {
-        //noop
-      }
-      const run = () => {
-        if (defaultedOptions.value.enabled !== false) {
-          const optimisticResult = observer.getOptimisticResult(
-            defaultedOptions.value,
-          )
-          if (optimisticResult.isStale) {
-            stopWatch()
-            resolve(observer.fetchOptimistic(defaultedOptions.value))
-          } else {
-            stopWatch()
-            resolve(optimisticResult)
+    return new Promise<QueryObserverResult<TData, TError>>(
+      (resolve, reject) => {
+        let stopWatch = () => {
+          //noop
+        }
+        const run = () => {
+          if (defaultedOptions.value.enabled !== false) {
+            const optimisticResult = observer.getOptimisticResult(
+              defaultedOptions.value,
+            )
+            if (optimisticResult.isStale) {
+              stopWatch()
+              observer
+                .fetchOptimistic(defaultedOptions.value)
+                .then(resolve, reject)
+            } else {
+              stopWatch()
+              resolve(optimisticResult)
+            }
           }
         }
-      }
 
-      run()
+        run()
 
-      stopWatch = watch(defaultedOptions, run, { deep: true })
-    })
+        stopWatch = watch(defaultedOptions, run, { deep: true })
+      },
+    )
   }
 
   return {
