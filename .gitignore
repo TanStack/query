@@ -8,11 +8,10 @@ yarn.lock
 
 # builds
 types
-build
-*/build
-dist
-lib
-es
+*/**/build
+*/**/dist
+*/**/lib
+*/**/es
 artifacts
 .rpt2_cache
 coverage
@@ -39,9 +38,7 @@ stats.html
 
 *.log
 .DS_Store
-node_modules
 .cache
-dist
 .idea
 
 nx-cloud.env
