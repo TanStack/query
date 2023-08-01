@@ -5,7 +5,6 @@ import {
   reactive,
   ref,
 } from 'vue-demi'
-import { mount } from '@vue/test-utils'
 import { QueryObserver } from '@tanstack/query-core'
 
 import { useQuery } from '../useQuery'
@@ -16,8 +15,6 @@ import {
   rejectFetcher,
   simpleFetcher,
 } from './test-utils'
-import errorBoundary from './components/errorBoundary'
-import type { UseQueryOptions } from '../useQuery';
 
 jest.mock('../useQueryClient')
 jest.mock('../useBaseQuery')
@@ -237,43 +234,22 @@ describe('useQuery', () => {
   })
 
   describe('errorBoundary', () => {
-    const errorBoundaryTestComponent = (
-      options: Omit<UseQueryOptions, 'queryFn' | 'queryKey'>,
-    ) => ({
-      components: {
-        'error-boundary': errorBoundary,
-        'error-component': {
-          template: `
-            <div>{{ error }}</div>`,
-          setup() {
-            const { error } = useQuery(['key0'], rejectFetcher, options)
-            return {
-              error,
-            }
-          },
-        },
-      },
-      template: '<error-boundary><error-component/></error-boundary>',
-    })
-
-    test('should throw error if queryFn throws and useErrorBoundary is in use', async () => {
-      const wrapper = mount(
-        errorBoundaryTestComponent({ retry: false, useErrorBoundary: true }),
-      )
+    test('should evaluate useErrorBoundary when query is expected to throw', async () => {
+      const boundaryFn = jest.fn()
+      useQuery(['key0'], rejectFetcher, {
+        retry: false,
+        useErrorBoundary: boundaryFn,
+      })
 
       await flushPromises()
 
-      expect(wrapper.text()).toContain('error boundary')
-    })
-
-    test('should not throw error if queryFn throws and useErrorBoundary not in use', async () => {
-      const wrapper = mount(
-        errorBoundaryTestComponent({ retry: false, useErrorBoundary: false }),
+      expect(boundaryFn).toHaveBeenCalledTimes(1)
+      expect(boundaryFn).toHaveBeenCalledWith(
+        Error('Some error'),
+        expect.objectContaining({
+          state: expect.objectContaining({ status: 'error' }),
+        }),
       )
-
-      await flushPromises()
-
-      expect(wrapper.text()).toContain('Error: Some error')
     })
   })
 
