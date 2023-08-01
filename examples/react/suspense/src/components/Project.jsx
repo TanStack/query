@@ -7,7 +7,7 @@ import Spinner from './Spinner'
 import { fetchProject } from '../queries'
 
 export default function Project({ activeProject, setActiveProject }) {
-  const { data, isFetching } = useSuspenseQuery({
+  const [project, { isFetching }] = useSuspenseQuery({
     queryKey: ['project', activeProject],
     queryFn: () => fetchProject(activeProject),
   })
@@ -18,13 +18,11 @@ export default function Project({ activeProject, setActiveProject }) {
       <h1>
         {activeProject} {isFetching ? <Spinner /> : null}
       </h1>
-      {data ? (
-        <div>
-          <p>forks: {data.forks_count}</p>
-          <p>stars: {data.stargazers_count}</p>
-          <p>watchers: {data.watchers}</p>
-        </div>
-      ) : null}
+      <div>
+        <p>forks: {project.forks_count}</p>
+        <p>stars: {project.stargazers_count}</p>
+        <p>watchers: {project.watchers}</p>
+      </div>
       <br />
       <br />
     </div>

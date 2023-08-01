@@ -14,8 +14,9 @@ function getBaseURL() {
   return 'http://localhost:3000'
 }
 const baseUrl = getBaseURL()
-function useWaitQuery(props: { wait: number }) {
-  const query = useSuspenseQuery({
+
+function MyComponent(props: { wait: number }) {
+  const [data] = useSuspenseQuery({
     queryKey: ['wait', props.wait],
     queryFn: async () => {
       const path = `/api/wait?wait=${props.wait}`
@@ -30,12 +31,6 @@ function useWaitQuery(props: { wait: number }) {
       return res
     },
   })
-
-  return [query.data as string, query] as const
-}
-
-function MyComponent(props: { wait: number }) {
-  const [data] = useWaitQuery(props)
 
   return <div>result: {data}</div>
 }

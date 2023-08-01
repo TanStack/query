@@ -103,7 +103,7 @@ You can also use the dedicated `useSuspenseQuery` hook to enable suspense mode f
 ```tsx
 import { useSuspenseQuery } from '@tanstack/react-query'
 
-const { data } = useSuspenseQuery({ queryKey, queryFn })
+const [data, query] = useSuspenseQuery({ queryKey, queryFn })
 ```
 
 This has the same effect as setting the `suspense` option to `true` in the query config, but it works better in TypeScript, because `data` is guaranteed to be defined (as errors and loading states are handled by Suspense- and ErrorBoundaries).

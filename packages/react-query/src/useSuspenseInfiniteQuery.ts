@@ -32,8 +32,8 @@ export function useSuspenseInfiniteQuery<
     TPageParam
   >,
   queryClient?: QueryClient,
-): UseSuspenseInfiniteQueryResult<TData, TError> {
-  return useBaseQuery(
+): [TData, UseSuspenseInfiniteQueryResult<TData, TError>] {
+  const query = useBaseQuery(
     {
       ...options,
       enabled: true,
@@ -44,4 +44,6 @@ export function useSuspenseInfiniteQuery<
     InfiniteQueryObserver as typeof QueryObserver,
     queryClient,
   ) as InfiniteQueryObserverSuccessResult<TData, TError>
+
+  return [query.data, query]
 }

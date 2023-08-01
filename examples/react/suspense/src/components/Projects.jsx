@@ -8,7 +8,7 @@ import { fetchProjects, fetchProject } from '../queries'
 
 export default function Projects({ setActiveProject }) {
   const queryClient = useQueryClient()
-  const { data, isFetching } = useSuspenseQuery({
+  const [projects, { isFetching }] = useSuspenseQuery({
     queryKey: ['projects'],
     queryFn: fetchProjects,
   })
@@ -16,7 +16,7 @@ export default function Projects({ setActiveProject }) {
   return (
     <div>
       <h1>Projects {isFetching ? <Spinner /> : null}</h1>
-      {data.map((project) => (
+      {projects.map((project) => (
         <p key={project.name}>
           <Button
             onClick={() => {

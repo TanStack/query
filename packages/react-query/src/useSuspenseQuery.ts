@@ -12,8 +12,8 @@ export function useSuspenseQuery<
 >(
   options: UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> {
-  return useBaseQuery(
+): [TData, UseSuspenseQueryResult<TData, TError>] {
+  const query = useBaseQuery(
     {
       ...options,
       enabled: true,
@@ -23,4 +23,6 @@ export function useSuspenseQuery<
     QueryObserver,
     queryClient,
   ) as UseSuspenseQueryResult<TData, TError>
+
+  return [query.data, query]
 }
