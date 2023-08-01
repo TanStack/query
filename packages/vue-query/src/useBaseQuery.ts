@@ -7,7 +7,7 @@ import {
   watch,
 } from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
-import { cloneDeepUnref, updateState } from './utils'
+import { cloneDeepUnref, shouldThrowError, updateState } from './utils'
 import type { ToRefs } from 'vue-demi'
 import type {
   DefaultedQueryObserverOptions,
@@ -145,6 +145,23 @@ export function useBaseQuery<
       },
     )
   }
+
+  // Handle error boundary
+  watch(
+    () => state.error,
+    (error) => {
+      if (
+        state.isError &&
+        !state.isFetching &&
+        shouldThrowError(defaultedOptions.value.throwOnError, [
+          error as TError,
+          observer.getCurrentQuery(),
+        ])
+      ) {
+        throw error
+      }
+    },
+  )
 
   return {
     ...(toRefs(readonly(state)) as ToRefs<
