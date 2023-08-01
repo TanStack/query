@@ -4,7 +4,7 @@ import type {
   QueryKey,
   QueryState,
 } from '@tanstack/query-core'
-import { hashQueryKey } from '@tanstack/query-core'
+import { hashKey } from '@tanstack/query-core'
 
 export type Promisable<T> = T | PromiseLike<T>
 
@@ -29,7 +29,6 @@ export interface AsyncStorage {
 }
 
 export interface StoragePersisterOptions<QC extends QueryClient> {
-  // TODO: if we decide to move this to an API layer, we could make this work without passing queryClient
   /**
    * Query Client instance
    */
@@ -62,7 +61,6 @@ export interface StoragePersisterOptions<QC extends QueryClient> {
 }
 
 export function createPersister<T, QC extends QueryClient>(
-  queryFn: () => Promise<T>,
   {
     queryClient,
     storage,
@@ -72,8 +70,8 @@ export function createPersister<T, QC extends QueryClient>(
     deserialize = JSON.parse,
   }: StoragePersisterOptions<QC>,
 ) {
-  return async (context: QueryFunctionContext) => {
-    const queryHash = hashQueryKey(context.queryKey)
+  return async (queryFn: (context: QueryFunctionContext) => T | Promise<T>, context: QueryFunctionContext) => {
+    const queryHash = hashKey(context.queryKey)
     const queryState = queryClient.getQueryState(context.queryKey)
 
     if (!queryState?.data && storage != null) {
@@ -103,24 +101,32 @@ export function createPersister<T, QC extends QueryClient>(
       }
     }
 
-    const queryFnResult = await queryFn()
+    const queryFnResult = await queryFn(context)
 
     if (storage != null) {
-      // TODO: if we decide to move this to an API layer, we could make this work without additional timeout
-      setTimeout(() => {
-        const newState = queryClient.getQueryState(context.queryKey)
-
-        storage.setItem(
-          queryHash,
-          serialize({
-            state: newState!,
-            queryKey: context.queryKey,
-            queryHash: queryHash,
-            timestamp: Date.now(),
-            buster: buster,
-          }),
-        )
-      }, 0)
+      storage.setItem(
+        queryHash,
+        serialize({
+          state: {
+            data: queryFnResult,
+            dataUpdateCount: 0,
+            dataUpdatedAt: Date.now(),
+            status: 'success',
+            error: null,
+            errorUpdateCount: 0,
+            errorUpdatedAt: 0,
+            fetchFailureCount: 0,
+            fetchFailureReason: null,
+            fetchMeta: null,
+            fetchStatus: 'idle',
+            isInvalidated: false,
+          },
+          queryKey: context.queryKey,
+          queryHash: queryHash,
+          timestamp: Date.now(),
+          buster: buster,
+        }),
+      )
     }
 
     return Promise.resolve(queryFnResult)

@@ -392,6 +392,10 @@ export class Query<
         )
       }
       this.#abortSignalConsumed = false
+      if (this.options.persister) {
+        return this.options.persister(this.options.queryFn,  queryFnContext as QueryFunctionContext<TQueryKey>)
+      }
+
       return this.options.queryFn(
         queryFnContext as QueryFunctionContext<TQueryKey>,
       )
