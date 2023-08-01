@@ -1,7 +1,7 @@
-import { packages, rootDir } from './config'
 import path from 'path'
 import fsp from 'fs/promises'
 import jsonfile from 'jsonfile'
+import { packages, rootDir } from './config'
 
 import type { PackageJson } from 'type-fest'
 
