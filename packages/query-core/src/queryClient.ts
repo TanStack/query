@@ -324,10 +324,13 @@ export class QueryClient {
       TQueryKey,
       TPageParam
     >,
-  ): Promise<InfiniteData<TData>> {
-    options.behavior = infiniteQueryBehavior<TQueryFnData, TError, TData>(
-      options.pages,
-    )
+  ): Promise<InfiniteData<TData, TPageParam>> {
+    options.behavior = infiniteQueryBehavior<
+      TQueryFnData,
+      TError,
+      TData,
+      TPageParam
+    >(options.pages)
     return this.fetchQuery(options)
   }
 

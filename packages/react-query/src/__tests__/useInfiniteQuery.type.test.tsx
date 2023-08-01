@@ -100,9 +100,14 @@ describe('select', () => {
         getNextPageParam: () => undefined,
       })
 
+      // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
       const result: Expect<
-        Equal<InfiniteData<number> | undefined, (typeof infiniteQuery)['data']>
+        Equal<
+          InfiniteData<number, unknown> | undefined,
+          (typeof infiniteQuery)['data']
+        >
       > = true
+
       return result
     })
   })
@@ -117,7 +122,9 @@ describe('select', () => {
         defaultPageParam: 1,
         getNextPageParam: () => undefined,
         select: (data) => {
-          const result: Expect<Equal<InfiniteData<number>, typeof data>> = true
+          const result: Expect<
+            Equal<InfiniteData<number, number>, typeof data>
+          > = true
           return result
         },
       })
@@ -203,8 +210,12 @@ describe('getNextPageParam / getPreviousPageParam', () => {
         },
       })
 
+      // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
       const result: Expect<
-        Equal<InfiniteData<string> | undefined, (typeof infiniteQuery)['data']>
+        Equal<
+          InfiniteData<string, unknown> | undefined,
+          (typeof infiniteQuery)['data']
+        >
       > = true
       return result
     })

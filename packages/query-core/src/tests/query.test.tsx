@@ -5,6 +5,7 @@ import {
   createQueryClient,
   mockVisibilityState,
   queryKey,
+  setIsServer,
   sleep,
 } from './utils'
 import type {
@@ -802,6 +803,27 @@ describe('query', () => {
     )
     unsubscribe()
     consoleMock.mockRestore()
+  })
+
+  it('should not retry on the server', async () => {
+    const resetIsServer = setIsServer(true)
+
+    const key = queryKey()
+    let count = 0
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => {
+        count++
+        return Promise.reject(new Error('error'))
+      },
+    })
+
+    await observer.refetch()
+
+    expect(count).toBe(1)
+
+    resetIsServer()
   })
 
   test('constructor should call initialDataUpdatedAt if defined as a function', async () => {
