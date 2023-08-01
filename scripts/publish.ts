@@ -1,4 +1,3 @@
-
 // Originally ported to TS from https://github.com/remix-run/react-router/tree/main/scripts/{version,publish}.js
 import path from 'path'
 import { execSync } from 'child_process'
