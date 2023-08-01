@@ -4,7 +4,11 @@
   "description": "Developer tools to interact with and visualize the TanStack/react-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
-  "repository": "tanstack/query",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TanStack/query.git",
+    "directory": "packages/react-query-devtools"
+  },
   "homepage": "https://tanstack.com/query",
   "funding": {
     "type": "github",
