@@ -1,4 +1,4 @@
-import { rules } from '../rules'
+import { rules } from './rules'
 import type { TSESLint } from '@typescript-eslint/utils'
 
 function generateRecommendedConfig(
