@@ -236,11 +236,33 @@ queryClient.setQueryData(['projects'], (data) => ({
 
 ```tsx
 queryClient.setQueryData(['projects'], (data) => ({
-  pages: data.pages.slice(0,1),
-  pageParams: data.pageParams.slice(0,1),
+  pages: data.pages.slice(0, 1),
+  pageParams: data.pageParams.slice(0, 1),
 }))
 ```
 
 [//]: # 'Example8'
 
 Make sure to always keep the same data structure of pages and pageParams!
+
+## How can I pass a pageParam in the form of the data I want?
+
+```tsx
+const fetchProjects = async ({ pageParam }) => {
+  const { cursor = 0, id } = pageParam
+
+  const res = await fetch(`/api/projects?cursor=${cursor}&id=${id}`)
+  return res.json()
+}
+
+useInfiniteQuery({
+  queryKey: ['projects'],
+  queryFn: fetchProjects,
+  getNextPageParam: (lastPage) => {
+    return {
+      cursor: lastPage.nextCursor,
+      id: lastPage.nextId, // example property
+    }
+  },
+})
+```
