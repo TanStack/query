@@ -65,3 +65,15 @@ function isPlainObject(value: unknown): value is Object {
   const prototype = Object.getPrototypeOf(value)
   return prototype === null || prototype === Object.prototype
 }
+
+export function shouldThrowError<T extends (...args: any[]) => boolean>(
+  throwOnError: boolean | T | undefined,
+  params: Parameters<T>,
+): boolean {
+  // Allow throwOnError function to override throwing behavior on a per-error basis
+  if (typeof throwOnError === 'function') {
+    return throwOnError(...params)
+  }
+
+  return !!throwOnError
+}
