@@ -245,7 +245,7 @@ queryClient.setQueryData(['projects'], (data) => ({
 
 Make sure to always keep the same data structure of pages and pageParams!
 
-## How can I pass a pageParam in the form of the data I want?
+## How can I pass data in the desired format to the pageParam?
 
 ```tsx
 const fetchProjects = async ({ pageParam }) => {
@@ -261,7 +261,7 @@ useInfiniteQuery({
   getNextPageParam: (lastPage) => {
     return {
       cursor: lastPage.nextCursor,
-      id: lastPage.nextId, // example property
+      id: lastPage.nextId, // (*) example property
     }
   },
 })
