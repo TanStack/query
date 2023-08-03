@@ -1,41 +1,31 @@
-'use client'
-import * as React from 'react'
-
 import { persistQueryClient } from '@tanstack/query-persist-client-core'
+import { createEffect, createSignal } from 'solid-js'
 import { IsRestoringProvider, QueryClientProvider } from '@tanstack/solid-query'
 import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
 import type { QueryClientProviderProps } from '@tanstack/solid-query'
+import type { JSX } from 'solid-js'
 
 export type PersistQueryClientProviderProps = QueryClientProviderProps & {
   persistOptions: Omit<PersistQueryClientOptions, 'queryClient'>
   onSuccess?: () => void
 }
 
-export const PersistQueryClientProvider = ({
-  client,
-  children,
-  persistOptions,
-  onSuccess,
-  ...props
-}: PersistQueryClientProviderProps): JSX.Element => {
-  const [isRestoring, setIsRestoring] = React.useState(true)
-  const refs = React.useRef({ persistOptions, onSuccess })
+export const PersistQueryClientProvider = (props: PersistQueryClientProviderProps): JSX.Element => {
+  const [isRestoring, setIsRestoring] = createSignal(true)
+  const refs = () => ({ persistOptions: props.persistOptions, onSuccess: props.onSuccess })
 
-  React.useEffect(() => {
-    refs.current = { persistOptions, onSuccess }
-  })
-
-  React.useEffect(() => {
+  createEffect<() => void>((cleanup) => {
+    cleanup?.();
     let isStale = false
     setIsRestoring(true)
     const [unsubscribe, promise] = persistQueryClient({
-      ...refs.current.persistOptions,
-      queryClient: client,
+      ...refs().persistOptions,
+      queryClient: props.client,
     })
 
     promise.then(() => {
       if (!isStale) {
-        refs.current.onSuccess?.()
+        refs().onSuccess?.()
         setIsRestoring(false)
       }
     })
@@ -44,11 +34,11 @@ export const PersistQueryClientProvider = ({
       isStale = true
       unsubscribe()
     }
-  }, [client])
+  })
 
   return (
-    <QueryClientProvider client={client} {...props}>
-      <IsRestoringProvider value={isRestoring}>{children}</IsRestoringProvider>
+    <QueryClientProvider {...props} client={props.client}>
+      <IsRestoringProvider value={isRestoring}>{props.children}</IsRestoringProvider>
     </QueryClientProvider>
   )
 }
