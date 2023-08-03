@@ -52,6 +52,6 @@
     "@tanstack/query-persist-client-core": "workspace:*"
   },
   "peerDependencies": {
-    "@tanstack/react-query": "workspace:*"
+    "@tanstack/react-query": "workspace:^"
   }
 }
