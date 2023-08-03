@@ -1,6 +1,7 @@
-import { createComputed, onCleanup, onMount } from 'solid-js'
+import { createComputed, mergeProps, onCleanup, onMount } from 'solid-js'
 import { QueriesObserver } from '@tanstack/query-core'
 import { createStore, unwrap } from 'solid-js/store'
+import { useIsRestoring } from './isRestoring'
 import { useQueryClient } from './QueryClientProvider'
 import { scheduleMicrotask } from './utils'
 import type {
@@ -150,13 +151,18 @@ export function createQueries<T extends any[]>(queriesOptions: {
   context?: CreateQueryOptions['context']
 }): QueriesResults<T> {
   const queryClient = useQueryClient({ context: queriesOptions.context })
+  const isRestoring = useIsRestoring();
 
   const normalizeOptions = (
     options: ArrType<typeof queriesOptions.queries>,
   ) => {
     const normalizedOptions = { ...options, queryKey: options.queryKey?.() }
-    const defaultedOptions = queryClient.defaultQueryOptions(normalizedOptions)
-    defaultedOptions._optimisticResults = 'optimistic'
+    const defaultedOptions = mergeProps(queryClient.defaultQueryOptions(normalizedOptions), {
+      get _optimisticResults() {
+        return isRestoring() ? 'isRestoring' : 'optimistic'
+      }
+    })
+    
     return defaultedOptions
   }
 

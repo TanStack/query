@@ -2,6 +2,7 @@ import {
   batch,
   createComputed,
   createResource,
+  mergeProps,
   on,
   onCleanup,
   onMount,
@@ -9,6 +10,7 @@ import {
 import { createStore, unwrap } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
 import { shouldThrowError } from './utils'
+import { useIsRestoring } from './isRestoring'
 import type { QueryObserver } from '@tanstack/query-core'
 import type { QueryKey, QueryObserverResult } from '@tanstack/query-core'
 import type { CreateBaseQueryOptions } from './types'
@@ -31,9 +33,13 @@ export function createBaseQuery<
   Observer: typeof QueryObserver,
 ): QueryObserverResult<TData, TError> {
   const queryClient = useQueryClient({ context: options.context })
+  const isRestoring = useIsRestoring();
   const emptyData = Symbol('empty')
-  const defaultedOptions = queryClient.defaultQueryOptions(options)
-  defaultedOptions._optimisticResults = 'optimistic'
+  const defaultedOptions = mergeProps(queryClient.defaultQueryOptions(options), {
+    get _optimisticResults() {
+      return isRestoring() ? 'isRestoring' : 'optimistic'
+    }
+  })
   const observer = new Observer(queryClient, defaultedOptions)
 
   const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
@@ -87,7 +93,7 @@ export function createBaseQuery<
     })
   })
 
-  onCleanup(() => unsubscribe())
+  onCleanup(() => (!isRestoring() && unsubscribe()))
 
   onMount(() => {
     observer.setOptions(defaultedOptions, { listeners: false })
