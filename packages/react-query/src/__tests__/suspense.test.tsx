@@ -13,7 +13,7 @@ import {
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 import type {
   InfiniteData,
-  UseInfiniteQueryResult,
+  UseSuspenseInfiniteQueryResult,
   UseSuspenseQueryResult,
 } from '..'
 
@@ -72,7 +72,7 @@ describe('useSuspenseQuery', () => {
 
   it('should return the correct states for a successful infinite query', async () => {
     const key = queryKey()
-    const states: UseInfiniteQueryResult<InfiniteData<number>>[] = []
+    const states: UseSuspenseInfiniteQueryResult<InfiniteData<number>>[] = []
 
     function Page() {
       const [multiplier, setMultiplier] = React.useState(1)

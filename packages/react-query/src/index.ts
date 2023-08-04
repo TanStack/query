@@ -11,6 +11,10 @@ export { useQuery } from './useQuery'
 export { useSuspenseQuery } from './useSuspenseQuery'
 export { useSuspenseInfiniteQuery } from './useSuspenseInfiniteQuery'
 export { useSuspenseQueries } from './useSuspenseQueries'
+export type {
+  SuspenseQueriesResults,
+  SuspenseQueriesOptions,
+} from './useSuspenseQueries'
 export { queryOptions } from './queryOptions'
 export type {
   DefinedInitialDataOptions,
