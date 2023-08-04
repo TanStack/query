@@ -3,43 +3,27 @@ id: suspense
 title: Suspense
 ---
 
-React Query can also be used with React's Suspense for Data Fetching API's. To enable this mode, you can set either the global or query level config's `suspense` option to `true`.
+React Query can also be used with React's Suspense for Data Fetching API's. For this, we have dedicated hooks:
 
-Global configuration:
-
-```tsx
-// Configure for all queries
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      suspense: true,
-    },
-  },
-})
-
-function Root() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <App />
-    </QueryClientProvider>
-  )
-}
-```
-
-Query configuration:
-
-```tsx
-import { useQuery } from '@tanstack/react-query'
-
-// Enable for an individual query
-useQuery({ queryKey, queryFn, suspense: true })
-```
+- [useSuspenseQuery](../reference/useSuspenseQuery)
+- [useSuspenseInfiniteQuery](../reference/useSuspenseInfiniteQuery)
+- [useSuspenseQueries](../reference/useSuspenseQueries)
 
 When using suspense mode, `status` states and `error` objects are not needed and are then replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors). Please read the [Resetting Error Boundaries](#resetting-error-boundaries) and look at the [Suspense Example](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/main/examples/react/suspense) for more information on how to set up suspense mode.
 
 In addition to queries behaving differently in suspense mode, mutations also behave a bit differently. By default, instead of supplying the `error` variable when a mutation fails, it will be thrown during the next render of the component it's used in and propagate to the nearest error boundary, similar to query errors. If you wish to disable this, you can set the `throwOnError` option to `false`. If you wish that errors are not thrown at all, you can set the `throwOnError` option to `false` as well!
+
+Enabling suspense mode for a query:
+
+```tsx
+import { useSuspenseQuery } from '@tanstack/react-query'
+
+const { data } = useSuspenseQuery({ queryKey, queryFn })
+```
+
+This works nicely in TypeScript, because `data` is guaranteed to be defined (as errors and loading states are handled by Suspense- and ErrorBoundaries).
+
+On the flip side, you therefore can't conditionally enable / disable the Query. `placeholderData` also doesn't exist for this Query. To prevent the UI from being replaced by a fallback during an update, wrap your updates that change the QueryKey into [startTransition](https://react.dev/reference/react/Suspense#preventing-unwanted-fallbacks).
 
 ## Resetting Error Boundaries
 
@@ -95,20 +79,6 @@ const App: React.FC = () => {
   )
 }
 ```
-
-## useSuspenseQuery
-
-You can also use the dedicated `useSuspenseQuery` hook to enable suspense mode for a query:
-
-```tsx
-import { useSuspenseQuery } from '@tanstack/react-query'
-
-const { data } = useSuspenseQuery({ queryKey, queryFn })
-```
-
-This has the same effect as setting the `suspense` option to `true` in the query config, but it works better in TypeScript, because `data` is guaranteed to be defined (as errors and loading states are handled by Suspense- and ErrorBoundaries).
-
-On the flip side, you therefore can't conditionally enable / disable the Query. `placeholderData` also doesn't exist for this Query. To prevent the UI from being replaced by a fallback during an update, wrap your updates that change the QueryKey into [startTransition](https://react.dev/reference/react/Suspense#preventing-unwanted-fallbacks).
 
 ## Fetch-on-render vs Render-as-you-fetch
 

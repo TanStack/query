@@ -8,6 +8,7 @@ export { useQueries } from './useQueries'
 export { useQuery } from './useQuery'
 export { useSuspenseQuery } from './useSuspenseQuery'
 export { useSuspenseInfiniteQuery } from './useSuspenseInfiniteQuery'
+export { useSuspenseQueries } from './useSuspenseQueries'
 export {
   QueryClientContext,
   QueryClientProvider,

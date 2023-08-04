@@ -47,7 +47,7 @@
     "svelte-check": "^3.4.4"
   },
   "peerDependencies": {
-    "@tanstack/svelte-query": "workspace:*",
+    "@tanstack/svelte-query": "workspace:^",
     "svelte": ">=3 <5"
   }
 }

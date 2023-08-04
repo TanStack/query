@@ -58,8 +58,8 @@
     "src"
   ],
   "dependencies": {
-    "@tanstack/query-core": "workspace:*",
     "@tanstack/match-sorter-utils": "^8.8.4",
+    "@tanstack/query-core": "workspace:*",
     "@vue/devtools-api": "^6.5.0",
     "vue-demi": "^0.13.11"
   },
