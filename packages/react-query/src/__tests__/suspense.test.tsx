@@ -5,21 +5,25 @@ import { vi } from 'vitest'
 import {
   QueryCache,
   QueryErrorResetBoundary,
-  useInfiniteQuery,
-  useQueries,
-  useQuery,
   useQueryErrorResetBoundary,
+  useSuspenseInfiniteQuery,
+  useSuspenseQueries,
+  useSuspenseQuery,
 } from '..'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
-import type { InfiniteData, UseInfiniteQueryResult, UseQueryResult } from '..'
+import type {
+  InfiniteData,
+  UseSuspenseInfiniteQueryResult,
+  UseSuspenseQueryResult,
+} from '..'
 
-describe("useQuery's in Suspense mode", () => {
+describe('useSuspenseQuery', () => {
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({ queryCache })
 
   it('should render the correct amount of times in Suspense mode', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: UseSuspenseQueryResult<number>[] = []
 
     let count = 0
     let renders = 0
@@ -29,14 +33,13 @@ describe("useQuery's in Suspense mode", () => {
 
       const [stateKey, setStateKey] = React.useState(key)
 
-      const state = useQuery({
+      const state = useSuspenseQuery({
         queryKey: stateKey,
         queryFn: async () => {
           count++
           await sleep(10)
           return count
         },
-        suspense: true,
       })
 
       states.push(state)
@@ -69,17 +72,16 @@ describe("useQuery's in Suspense mode", () => {
 
   it('should return the correct states for a successful infinite query', async () => {
     const key = queryKey()
-    const states: UseInfiniteQueryResult<InfiniteData<number>>[] = []
+    const states: UseSuspenseInfiniteQueryResult<InfiniteData<number>>[] = []
 
     function Page() {
       const [multiplier, setMultiplier] = React.useState(1)
-      const state = useInfiniteQuery({
+      const state = useSuspenseInfiniteQuery({
         queryKey: [`${key}_${multiplier}`],
         queryFn: async ({ pageParam }) => {
           await sleep(10)
           return Number(pageParam * multiplier)
         },
-        suspense: true,
         defaultPageParam: 1,
         getNextPageParam: (lastPage) => lastPage + 1,
       })
@@ -127,7 +129,7 @@ describe("useQuery's in Suspense mode", () => {
     })
 
     function Page() {
-      useQuery({ queryKey: [key], queryFn, suspense: true })
+      useSuspenseQuery({ queryKey: [key], queryFn })
 
       return <>rendered</>
     }
@@ -148,13 +150,12 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     function Page() {
-      useQuery({
+      useSuspenseQuery({
         queryKey: key,
         queryFn: () => {
           sleep(10)
           return 'data'
         },
-        suspense: true,
       })
 
       return <>rendered</>
@@ -200,7 +201,7 @@ describe("useQuery's in Suspense mode", () => {
     let succeed = false
 
     function Page() {
-      useQuery({
+      useSuspenseQuery({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
@@ -212,7 +213,6 @@ describe("useQuery's in Suspense mode", () => {
           }
         },
         retryDelay: 10,
-        suspense: true,
       })
 
       return <div>rendered</div>
@@ -272,7 +272,7 @@ describe("useQuery's in Suspense mode", () => {
     let succeed = false
 
     function Page() {
-      useQuery({
+      useSuspenseQuery({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
@@ -283,7 +283,6 @@ describe("useQuery's in Suspense mode", () => {
           }
         },
         retry: false,
-        suspense: true,
       })
       return <div>rendered</div>
     }
@@ -332,7 +331,7 @@ describe("useQuery's in Suspense mode", () => {
     let count = 0
 
     function Component() {
-      const result = useQuery({
+      const result = useSuspenseQuery({
         queryKey: key,
         queryFn: async () => {
           await sleep(100)
@@ -340,7 +339,6 @@ describe("useQuery's in Suspense mode", () => {
           return count
         },
         retry: false,
-        suspense: true,
         staleTime: 0,
       })
       return (
@@ -388,7 +386,7 @@ describe("useQuery's in Suspense mode", () => {
     const key2 = queryKey()
 
     function Component(props: { queryKey: Array<string> }) {
-      const result = useQuery({
+      const result = useSuspenseQuery({
         queryKey: props.queryKey,
         queryFn: async () => {
           await sleep(100)
@@ -396,7 +394,6 @@ describe("useQuery's in Suspense mode", () => {
         },
 
         retry: false,
-        suspense: true,
       })
       return <div>data: {result.data}</div>
     }
@@ -437,7 +434,7 @@ describe("useQuery's in Suspense mode", () => {
     let succeed = false
 
     function Page() {
-      useQuery({
+      useSuspenseQuery({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
@@ -448,7 +445,6 @@ describe("useQuery's in Suspense mode", () => {
           }
         },
         retry: false,
-        suspense: true,
       })
       return <div>rendered</div>
     }
@@ -499,14 +495,13 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     function Page() {
-      useQuery({
+      useSuspenseQuery({
         queryKey: key,
         queryFn: async (): Promise<unknown> => {
           await sleep(10)
           throw new Error('Suspense Error a1x')
         },
         retry: false,
-        suspense: true,
       })
       return <div>rendered</div>
     }
@@ -532,171 +527,6 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => rendered.getByText('Loading...'))
     await waitFor(() => rendered.getByText('error boundary'))
     consoleMock.mockRestore()
-  })
-
-  it('should not throw errors to the error boundary when throwOnError: false', async () => {
-    const key = queryKey()
-
-    function Page() {
-      useQuery({
-        queryKey: key,
-        queryFn: async (): Promise<unknown> => {
-          await sleep(10)
-          throw new Error('Suspense Error a2x')
-        },
-        retry: false,
-        suspense: true,
-        throwOnError: false,
-      })
-      return <div>rendered</div>
-    }
-
-    function App() {
-      return (
-        <ErrorBoundary
-          fallbackRender={() => (
-            <div>
-              <div>error boundary</div>
-            </div>
-          )}
-        >
-          <React.Suspense fallback="Loading...">
-            <Page />
-          </React.Suspense>
-        </ErrorBoundary>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <App />)
-
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText('rendered'))
-  })
-
-  it('should throw errors to the error boundary when a throwOnError function returns true', async () => {
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
-    const key = queryKey()
-
-    function Page() {
-      useQuery({
-        queryKey: key,
-        queryFn: async (): Promise<unknown> => {
-          await sleep(10)
-          return Promise.reject(new Error('Remote Error'))
-        },
-        retry: false,
-        suspense: true,
-        throwOnError: (err) => err.message !== 'Local Error',
-      })
-      return <div>rendered</div>
-    }
-
-    function App() {
-      return (
-        <ErrorBoundary
-          fallbackRender={() => (
-            <div>
-              <div>error boundary</div>
-            </div>
-          )}
-        >
-          <React.Suspense fallback="Loading...">
-            <Page />
-          </React.Suspense>
-        </ErrorBoundary>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <App />)
-
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText('error boundary'))
-    consoleMock.mockRestore()
-  })
-
-  it('should not throw errors to the error boundary when a throwOnError function returns false', async () => {
-    const key = queryKey()
-
-    function Page() {
-      useQuery({
-        queryKey: key,
-        queryFn: async (): Promise<unknown> => {
-          await sleep(10)
-          return Promise.reject(new Error('Local Error'))
-        },
-        retry: false,
-        suspense: true,
-        throwOnError: (err) => err.message !== 'Local Error',
-      })
-      return <div>rendered</div>
-    }
-
-    function App() {
-      return (
-        <ErrorBoundary
-          fallbackRender={() => (
-            <div>
-              <div>error boundary</div>
-            </div>
-          )}
-        >
-          <React.Suspense fallback="Loading...">
-            <Page />
-          </React.Suspense>
-        </ErrorBoundary>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <App />)
-
-    await waitFor(() => rendered.getByText('Loading...'))
-    await waitFor(() => rendered.getByText('rendered'))
-  })
-
-  it('should not call the queryFn when not enabled', async () => {
-    const key = queryKey()
-
-    const queryFn = vi.fn<unknown[], Promise<string>>()
-    queryFn.mockImplementation(async () => {
-      await sleep(10)
-      return '23'
-    })
-
-    function Page() {
-      const [enabled, setEnabled] = React.useState(false)
-      const result = useQuery({
-        queryKey: [key],
-        queryFn,
-        suspense: true,
-        enabled,
-      })
-
-      return (
-        <div>
-          <button onClick={() => setEnabled(true)}>fire</button>
-          <h1>{result.data}</h1>
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(
-      queryClient,
-      <React.Suspense fallback="loading">
-        <Page />
-      </React.Suspense>,
-    )
-
-    expect(queryFn).toHaveBeenCalledTimes(0)
-
-    fireEvent.click(rendered.getByRole('button', { name: /fire/i }))
-
-    await waitFor(() => {
-      expect(rendered.getByRole('heading').textContent).toBe('23')
-    })
-
-    expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
   it('should error catched in error boundary without infinite loop', async () => {
@@ -710,7 +540,7 @@ describe("useQuery's in Suspense mode", () => {
     function Page() {
       const [nonce] = React.useState(0)
       const queryKeys = [`${key}-${succeed}`]
-      const result = useQuery({
+      const result = useSuspenseQuery({
         queryKey: queryKeys,
         queryFn: async () => {
           await sleep(10)
@@ -721,7 +551,6 @@ describe("useQuery's in Suspense mode", () => {
           }
         },
         retry: false,
-        suspense: true,
       })
       return (
         <div>
@@ -782,7 +611,7 @@ describe("useQuery's in Suspense mode", () => {
       const [key, rerender] = React.useReducer((x) => x + 1, 0)
       const queryKeys = [key, succeed]
 
-      const result = useQuery({
+      const result = useSuspenseQuery({
         queryKey: queryKeys,
         queryFn: async () => {
           await sleep(10)
@@ -793,7 +622,6 @@ describe("useQuery's in Suspense mode", () => {
           }
         },
         retry: false,
-        suspense: true,
       })
       return (
         <div>
@@ -839,77 +667,9 @@ describe("useQuery's in Suspense mode", () => {
     consoleMock.mockRestore()
   })
 
-  it('should error catched in error boundary without infinite loop when enabled changed', async () => {
-    const consoleMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined)
-    function Page() {
-      const queryKeys = '1'
-      const [enabled, setEnabled] = React.useState(false)
-
-      const result = useQuery<string>({
-        queryKey: [queryKeys],
-        queryFn: async () => {
-          await sleep(10)
-          throw new Error('Suspense Error Bingo')
-        },
-
-        retry: false,
-        suspense: true,
-        enabled,
-      })
-      return (
-        <div>
-          <span>rendered</span> <span>{result.data}</span>
-          <button
-            aria-label="fail"
-            onClick={() => {
-              setEnabled(true)
-            }}
-          >
-            fail
-          </button>
-        </div>
-      )
-    }
-
-    function App() {
-      const { reset } = useQueryErrorResetBoundary()
-      return (
-        <ErrorBoundary
-          onReset={reset}
-          fallbackRender={() => <div>error boundary</div>}
-        >
-          <React.Suspense fallback="Loading...">
-            <Page />
-          </React.Suspense>
-        </ErrorBoundary>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <App />)
-
-    // render empty data with 'rendered' when enabled is false
-    await waitFor(() => rendered.getByText('rendered'))
-
-    // change enabled to true
-    fireEvent.click(rendered.getByLabelText('fail'))
-
-    // render pending fallback
-    await waitFor(() => rendered.getByText('Loading...'))
-
-    // render error boundary fallback (error boundary)
-    await waitFor(() => rendered.getByText('error boundary'))
-    expect(consoleMock).toHaveBeenCalledWith(
-      expect.objectContaining(new Error('Suspense Error Bingo')),
-    )
-
-    consoleMock.mockRestore()
-  })
-
   it('should render the correct amount of times in Suspense mode when gcTime is set to 0', async () => {
     const key = queryKey()
-    let state: UseQueryResult<number> | null = null
+    let state: UseSuspenseQueryResult<number> | null = null
 
     let count = 0
     let renders = 0
@@ -917,14 +677,13 @@ describe("useQuery's in Suspense mode", () => {
     function Page() {
       renders++
 
-      state = useQuery({
+      state = useSuspenseQuery({
         queryKey: key,
         queryFn: async () => {
           count++
           await sleep(10)
           return count
         },
-        suspense: true,
         gcTime: 0,
       })
 
@@ -954,7 +713,7 @@ describe("useQuery's in Suspense mode", () => {
   })
 })
 
-describe('useQueries with suspense', () => {
+describe('useSuspenseQueries', () => {
   const queryClient = createQueryClient()
   it('should suspend all queries in parallel', async () => {
     const key1 = queryKey()
@@ -967,7 +726,7 @@ describe('useQueries with suspense', () => {
     }
 
     function Page() {
-      const result = useQueries({
+      const result = useSuspenseQueries({
         queries: [
           {
             queryKey: key1,
@@ -976,7 +735,6 @@ describe('useQueries with suspense', () => {
               await sleep(10)
               return '1'
             },
-            suspense: true,
           },
           {
             queryKey: key2,
@@ -985,7 +743,6 @@ describe('useQueries with suspense', () => {
               await sleep(20)
               return '2'
             },
-            suspense: true,
           },
         ],
       })
@@ -1004,63 +761,6 @@ describe('useQueries with suspense', () => {
     )
 
     await waitFor(() => rendered.getByText('loading'))
-    await waitFor(() => rendered.getByText('data: 1,2'))
-
-    expect(results).toEqual(['1', '2', 'loading'])
-  })
-
-  it('should allow to mix suspense with non-suspense', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const results: string[] = []
-
-    function Fallback() {
-      results.push('loading')
-      return <div>loading</div>
-    }
-
-    function Page() {
-      const result = useQueries({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: async () => {
-              results.push('1')
-              await sleep(50)
-              return '1'
-            },
-            suspense: true,
-          },
-          {
-            queryKey: key2,
-            queryFn: async () => {
-              results.push('2')
-              await sleep(200)
-              return '2'
-            },
-            staleTime: 2000,
-            suspense: false,
-          },
-        ],
-      })
-
-      return (
-        <div>
-          <h1>data: {result.map((it) => it.data ?? 'null').join(',')}</h1>
-          <h2>status: {result.map((it) => it.status).join(',')}</h2>
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(
-      queryClient,
-      <React.Suspense fallback={<Fallback />}>
-        <Page />
-      </React.Suspense>,
-    )
-    await waitFor(() => rendered.getByText('loading'))
-    await waitFor(() => rendered.getByText('status: success,pending'))
-    await waitFor(() => rendered.getByText('data: 1,null'))
     await waitFor(() => rendered.getByText('data: 1,2'))
 
     expect(results).toEqual(['1', '2', 'loading'])
@@ -1079,7 +779,7 @@ describe('useQueries with suspense', () => {
 
     function Page() {
       const ref = React.useRef(Math.random())
-      const result = useQueries({
+      const result = useSuspenseQueries({
         queries: [
           {
             queryKey: key1,
@@ -1089,7 +789,6 @@ describe('useQueries with suspense', () => {
               await sleep(10)
               return '1'
             },
-            suspense: true,
           },
           {
             queryKey: key2,
@@ -1099,7 +798,6 @@ describe('useQueries with suspense', () => {
               await sleep(20)
               return '2'
             },
-            suspense: true,
           },
         ],
       })
@@ -1120,63 +818,5 @@ describe('useQueries with suspense', () => {
     expect(refs.length).toBe(2)
     await waitFor(() => rendered.getByText('data: 1,2'))
     expect(refs[0]).toBe(refs[1])
-  })
-
-  it('should suspend all queries in parallel - global configuration', async () => {
-    const queryClientSuspenseMode = createQueryClient({
-      defaultOptions: {
-        queries: {
-          suspense: true,
-        },
-      },
-    })
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const results: string[] = []
-
-    function Fallback() {
-      results.push('loading')
-      return <div>loading</div>
-    }
-
-    function Page() {
-      const result = useQueries({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: async () => {
-              results.push('1')
-              await sleep(10)
-              return '1'
-            },
-          },
-          {
-            queryKey: key2,
-            queryFn: async () => {
-              results.push('2')
-              await sleep(20)
-              return '2'
-            },
-          },
-        ],
-      })
-      return (
-        <div>
-          <h1>data: {result.map((it) => it.data ?? 'null').join(',')}</h1>
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(
-      queryClientSuspenseMode,
-      <React.Suspense fallback={<Fallback />}>
-        <Page />
-      </React.Suspense>,
-    )
-
-    await waitFor(() => rendered.getByText('loading'))
-    await waitFor(() => rendered.getByText('data: 1,2'))
-
-    expect(results).toEqual(['1', '2', 'loading'])
   })
 })
