@@ -1,4 +1,4 @@
-import { type Accessor, createContext, useContext} from 'solid-js';
+import { type Accessor, createContext, useContext } from 'solid-js'
 
 const IsRestoringContext = createContext<Accessor<boolean>>(() => false)
 

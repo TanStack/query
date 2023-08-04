@@ -1,7 +1,6 @@
 import {
   batch,
   createComputed,
-  createEffect,
   createMemo,
   createRenderEffect,
   createResource,

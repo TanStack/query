@@ -3,7 +3,6 @@ import { fireEvent, render, screen, waitFor } from 'solid-testing-library'
 import {
   ErrorBoundary,
   createContext,
-  createEffect,
   createMemo,
   createRenderEffect,
   createSignal,
