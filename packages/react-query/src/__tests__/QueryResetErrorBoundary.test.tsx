@@ -754,7 +754,6 @@ describe('QueryErrorResetBoundary', () => {
                 }
               },
               retry: false,
-              throwOnError: true,
               retryOnMount: true,
             },
           ],
