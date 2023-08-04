@@ -400,7 +400,7 @@ The `loading` status has been renamed to `pending`, and similarly the derived `i
 
 For mutations as well the `status` has been changed from `loading` to `pending` and the `isLoading` flag has been changed to `isPending`.
 
-Lastly the a new derived `isLoading` flag has been added to the queries that is implemented as `isPending && isFetching`. This means that `isLoading` and `isInitialLoading` have the same thing, but `isInitialLoading` is deprecated now and will be removed in the next major version.
+Lastly, a new derived `isLoading` flag has been added to the queries that is implemented as `isPending && isFetching`. This means that `isLoading` and `isInitialLoading` have the same thing, but `isInitialLoading` is deprecated now and will be removed in the next major version.
 
 To understand the reasoning behing this change checkout the [v5 roadmap discussion](https://github.com/TanStack/query/discussions/4252).
 
@@ -461,5 +461,21 @@ See the [TypeScript docs](../typescript#typing-query-options) for more details.
 ### New `combine` option for `useQueries`
 
 See the [useQueries docs](../reference/useQueries#combine) for more details.
+
+### new hooks for suspense
+
+With v5, suspense for data fetching finally becomes "stable". We've added dedicated `useSuspenseQuery`, `useSuspenseInfiniteQuery` and `useSuspenseQueries` hooks. With these hooks, `data` will never be potentially `undefined` on type level:
+
+```js
+const [post] = useSuspenseQuery({
+    // ^? const post: Post
+  queryKey: ['post', postId],
+  queryFn: () => fetchPost(postId),
+})
+```
+
+The experimental `suspense: boolean` flag on the query hooks has been removed.
+
+You can read more about them in the [suspense docs](../guides/suspense).
 
 [//]: # 'NewFeatures'
