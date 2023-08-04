@@ -3,6 +3,7 @@ import { fireEvent, render, screen, waitFor } from 'solid-testing-library'
 import {
   ErrorBoundary,
   createContext,
+  createEffect,
   createMemo,
   createRenderEffect,
   createSignal,
@@ -62,7 +63,7 @@ describe('useQueries', () => {
       })
 
       createRenderEffect(() => {
-        results.push([...result])
+        results.push([{ ...result[0] }, { ...result[1] }])
       })
 
       return (
@@ -294,7 +295,7 @@ describe('useQueries', () => {
       })
 
       createRenderEffect(() => {
-        states.push([...result])
+        states.push(result.map((r) => ({ ...r })))
       })
 
       const text = createMemo(() => {
@@ -310,7 +311,7 @@ describe('useQueries', () => {
           <div>{text()}</div>
           <div>isFetching: {String(isFetching())}</div>
           <button onClick={() => setEnableId1(false)}>set1Disabled</button>
-          <button onClick={() => setEnableId1(true)}>set2Enabled</button>
+          <button onClick={() => setEnableId1(true)}>set1Enabled</button>
         </div>
       )
     }
@@ -326,7 +327,7 @@ describe('useQueries', () => {
 
     await waitFor(() => screen.getByText('data1: 10'))
     await waitFor(() => screen.getByText('isFetching: false'))
-    fireEvent.click(screen.getByRole('button', { name: /set2Enabled/i }))
+    fireEvent.click(screen.getByRole('button', { name: /set1Enabled/i }))
 
     await waitFor(() => screen.getByText('data1: 5 data2: 10'))
     await waitFor(() => screen.getByText('isFetching: false'))
@@ -1102,7 +1103,7 @@ describe('useQueries', () => {
           ],
         })
         createRenderEffect(() => {
-          results.push([...result])
+          results.push(result.map((r) => ({ ...r })))
         })
         return null
       }
