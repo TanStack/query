@@ -2410,6 +2410,9 @@ describe('useQuery', () => {
         )
         fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
 
+        await waitFor(() => {
+          rendered.getByText('fetch counter: 3')
+        })
         // sleep is required to make sure no additional renders happen after click
         await sleep(20)
 
