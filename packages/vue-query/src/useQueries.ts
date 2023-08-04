@@ -214,10 +214,7 @@ export function useQueries<
         defaultedQueries.value,
         options as QueriesObserverOptions<TCombinedResult>,
       )
-      const [, getCombinedResultPersisted] = observer.getOptimisticResult(
-        defaultedQueries.value,
-      )
-      state.value = getCombinedResultPersisted()
+      state.value = observer.getCurrentResult()
     },
     { deep: true },
   )
