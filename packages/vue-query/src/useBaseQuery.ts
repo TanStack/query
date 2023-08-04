@@ -8,7 +8,12 @@ import {
   watch,
 } from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
-import { cloneDeepUnref, isQueryKey, updateState } from './utils'
+import {
+  cloneDeepUnref,
+  isQueryKey,
+  shouldThrowError,
+  updateState,
+} from './utils'
 import type { ToRefs, UnwrapRef } from 'vue-demi'
 import type {
   QueryFunction,
@@ -88,44 +93,61 @@ export function useBaseQuery<
     { immediate: true },
   )
 
-  watch(
-    defaultedOptions,
-    () => {
-      observer.setOptions(defaultedOptions.value)
-      updateState(state, observer.getCurrentResult())
-    },
-    { deep: true },
-  )
+  watch(defaultedOptions, () => {
+    observer.setOptions(defaultedOptions.value)
+    updateState(state, observer.getCurrentResult())
+  })
 
   onScopeDispose(() => {
     unsubscribe()
   })
 
   const suspense = () => {
-    return new Promise<QueryObserverResult<TData, TError>>((resolve) => {
-      let stopWatch = () => {
-        //noop
-      }
-      const run = () => {
-        if (defaultedOptions.value.enabled !== false) {
-          const optimisticResult = observer.getOptimisticResult(
-            defaultedOptions.value,
-          )
-          if (optimisticResult.isStale) {
-            stopWatch()
-            resolve(observer.fetchOptimistic(defaultedOptions.value))
-          } else {
-            stopWatch()
-            resolve(optimisticResult)
+    return new Promise<QueryObserverResult<TData, TError>>(
+      (resolve, reject) => {
+        let stopWatch = () => {
+          //noop
+        }
+        const run = () => {
+          if (defaultedOptions.value.enabled !== false) {
+            const optimisticResult = observer.getOptimisticResult(
+              defaultedOptions.value,
+            )
+            if (optimisticResult.isStale) {
+              stopWatch()
+              observer
+                .fetchOptimistic(defaultedOptions.value)
+                .then(resolve, reject)
+            } else {
+              stopWatch()
+              resolve(optimisticResult)
+            }
           }
         }
-      }
 
-      run()
+        run()
 
-      stopWatch = watch(defaultedOptions, run, { deep: true })
-    })
+        stopWatch = watch(defaultedOptions, run, { deep: true })
+      },
+    )
   }
+
+  // Handle error boundary
+  watch(
+    () => state.error,
+    (error) => {
+      if (
+        state.isError &&
+        !state.isFetching &&
+        shouldThrowError(defaultedOptions.value.useErrorBoundary, [
+          error as TError,
+          observer.getCurrentQuery(),
+        ])
+      ) {
+        throw error
+      }
+    },
+  )
 
   return {
     ...(toRefs(readonly(state)) as UseQueryReturnType<TData, TError>),

@@ -8,7 +8,12 @@ import {
   watch,
 } from 'vue-demi'
 import { MutationObserver } from '@tanstack/query-core'
-import { cloneDeepUnref, isMutationKey, updateState } from './utils'
+import {
+  cloneDeepUnref,
+  isMutationKey,
+  shouldThrowError,
+  updateState,
+} from './utils'
 import { useQueryClient } from './useQueryClient'
 import type { ToRefs } from 'vue-demi'
 import type {
@@ -167,13 +172,9 @@ export function useMutation<
     })
   }
 
-  watch(
-    options,
-    () => {
-      observer.setOptions(queryClient.defaultMutationOptions(options.value))
-    },
-    { deep: true },
-  )
+  watch(options, () => {
+    observer.setOptions(queryClient.defaultMutationOptions(options.value))
+  })
 
   onScopeDispose(() => {
     unsubscribe()
@@ -182,6 +183,18 @@ export function useMutation<
   const resultRefs = toRefs(readonly(state)) as unknown as ToRefs<
     Readonly<MutationResult<TData, TError, TVariables, TContext>>
   >
+
+  watch(
+    () => state.error,
+    (error) => {
+      if (
+        error &&
+        shouldThrowError(options.value.useErrorBoundary, [error as TError])
+      ) {
+        throw error
+      }
+    },
+  )
 
   return {
     ...resultRefs,
