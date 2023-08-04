@@ -5,9 +5,9 @@ import { vi } from 'vitest'
 import {
   QueryCache,
   QueryErrorResetBoundary,
-  useQueries,
   useQueryErrorResetBoundary,
   useSuspenseInfiniteQuery,
+  useSuspenseQueries,
   useSuspenseQuery,
 } from '..'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
@@ -713,7 +713,7 @@ describe('useSuspenseQuery', () => {
   })
 })
 
-describe('useQueries with suspense', () => {
+describe('useSuspenseQueries', () => {
   const queryClient = createQueryClient()
   it('should suspend all queries in parallel', async () => {
     const key1 = queryKey()
@@ -726,7 +726,7 @@ describe('useQueries with suspense', () => {
     }
 
     function Page() {
-      const result = useQueries({
+      const result = useSuspenseQueries({
         queries: [
           {
             queryKey: key1,
@@ -766,62 +766,6 @@ describe('useQueries with suspense', () => {
     expect(results).toEqual(['1', '2', 'loading'])
   })
 
-  it('should allow to mix suspense with non-suspense', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const results: string[] = []
-
-    function Fallback() {
-      results.push('loading')
-      return <div>loading</div>
-    }
-
-    function Page() {
-      const result = useQueries({
-        queries: [
-          {
-            queryKey: key1,
-            queryFn: async () => {
-              results.push('1')
-              await sleep(50)
-              return '1'
-            },
-          },
-          {
-            queryKey: key2,
-            queryFn: async () => {
-              results.push('2')
-              await sleep(200)
-              return '2'
-            },
-            staleTime: 2000,
-            suspense: false,
-          },
-        ],
-      })
-
-      return (
-        <div>
-          <h1>data: {result.map((it) => it.data ?? 'null').join(',')}</h1>
-          <h2>status: {result.map((it) => it.status).join(',')}</h2>
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(
-      queryClient,
-      <React.Suspense fallback={<Fallback />}>
-        <Page />
-      </React.Suspense>,
-    )
-    await waitFor(() => rendered.getByText('loading'))
-    await waitFor(() => rendered.getByText('status: success,pending'))
-    await waitFor(() => rendered.getByText('data: 1,null'))
-    await waitFor(() => rendered.getByText('data: 1,2'))
-
-    expect(results).toEqual(['1', '2', 'loading'])
-  })
-
   it("shouldn't unmount before all promises fetched", async () => {
     const key1 = queryKey()
     const key2 = queryKey()
@@ -835,7 +779,7 @@ describe('useQueries with suspense', () => {
 
     function Page() {
       const ref = React.useRef(Math.random())
-      const result = useQueries({
+      const result = useSuspenseQueries({
         queries: [
           {
             queryKey: key1,
