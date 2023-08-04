@@ -467,7 +467,7 @@ See the [useQueries docs](../reference/useQueries#combine) for more details.
 With v5, suspense for data fetching finally becomes "stable". We've added dedicated `useSuspenseQuery`, `useSuspenseInfiniteQuery` and `useSuspenseQueries` hooks. With these hooks, `data` will never be potentially `undefined` on type level:
 
 ```js
-const [post] = useSuspenseQuery({
+const {data: post} = useSuspenseQuery({
     // ^? const post: Post
   queryKey: ['post', postId],
   queryFn: () => fetchPost(postId),
