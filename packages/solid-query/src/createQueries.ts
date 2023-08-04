@@ -1,15 +1,26 @@
-import { createComputed, mergeProps, onCleanup, onMount } from 'solid-js'
+import {
+  batch,
+  createComputed,
+  createEffect,
+  createMemo,
+  createRenderEffect,
+  createResource,
+  mergeProps,
+  on,
+  onCleanup,
+  onMount,
+} from 'solid-js'
 import { QueriesObserver } from '@tanstack/query-core'
 import { createStore, unwrap } from 'solid-js/store'
-import { useIsRestoring } from './isRestoring'
 import { useQueryClient } from './QueryClientProvider'
+import { useIsRestoring } from './isRestoring'
 import { scheduleMicrotask } from './utils'
 import type {
   CreateQueryOptions,
   CreateQueryResult,
   SolidQueryKey,
 } from './types'
-import type { QueryFunction } from '@tanstack/query-core'
+import type { QueryFunction, QueryObserverResult } from '@tanstack/query-core'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
@@ -151,59 +162,132 @@ export function createQueries<T extends any[]>(queriesOptions: {
   context?: CreateQueryOptions['context']
 }): QueriesResults<T> {
   const queryClient = useQueryClient({ context: queriesOptions.context })
-  const isRestoring = useIsRestoring();
+  const isRestoring = useIsRestoring()
 
-  const normalizeOptions = (
-    options: ArrType<typeof queriesOptions.queries>,
-  ) => {
-    const normalizedOptions = { ...options, queryKey: options.queryKey?.() }
-    const defaultedOptions = mergeProps(queryClient.defaultQueryOptions(normalizedOptions), {
-      get _optimisticResults() {
-        return isRestoring() ? 'isRestoring' : 'optimistic'
-      }
+  const normalizeOptions = (options: ArrType<QueriesOptions<T>>) => {
+    const normalizedOptions = mergeProps(options, {
+      get queryKey() {
+        return options.queryKey()
+      },
     })
-    
+    const defaultedOptions = mergeProps(
+      queryClient.defaultQueryOptions(normalizedOptions),
+      {
+        get _optimisticResults() {
+          return isRestoring() ? 'isRestoring' : 'optimistic'
+        },
+      },
+    )
     return defaultedOptions
   }
 
-  const defaultedQueries = queriesOptions.queries.map((options) =>
-    normalizeOptions(options),
+  const defaultedQueries = createMemo(() =>
+    queriesOptions.queries.map((options) => normalizeOptions(options)),
   )
 
-  const observer = new QueriesObserver(queryClient, defaultedQueries)
+  const observer = new QueriesObserver(queryClient, defaultedQueries())
 
   const [state, setState] = createStore(
-    observer.getOptimisticResult(defaultedQueries),
+    observer.getOptimisticResult(defaultedQueries()),
   )
 
-  const taskQueue: Array<() => void> = []
+  createRenderEffect(
+    on(
+      () => queriesOptions.queries.length,
+      () => {
+        setState(observer.getOptimisticResult(defaultedQueries()))
+      },
+    ),
+  )
 
-  const unsubscribe = observer.subscribe((result) => {
-    taskQueue.push(() => {
-      setState(unwrap(result))
-    })
+  const dataResources = createMemo(
+    on(
+      () => state.length,
+      () =>
+        state.map((queryRes) => {
+          return createResource(() => {
+            return new Promise((resolve) => {
+              if (!(queryRes.isFetching && queryRes.isLoading)) {
+                resolve(unwrap(queryRes.data))
+              }
+            })
+          })
+        }),
+    ),
+  )
 
-    scheduleMicrotask(() => {
-      const taskToRun = taskQueue.pop()
-      if (taskToRun) {
-        taskToRun()
-        taskQueue.splice(0, taskQueue.length)
-      }
-    })
+  batch(() => {
+    const dataResources_ = dataResources()
+    for (let index = 0; index < dataResources_.length; index++) {
+      const dataResource = dataResources_[index]!
+      dataResource[1].mutate(() => unwrap(state[index]!.data))
+      dataResource[1].refetch()
+    }
   })
 
+  let taskQueue: Array<() => void> = []
+  const subscribeToObserver = () =>
+    observer.subscribe((result) => {
+      taskQueue.push(() => {
+        batch(() => {
+          const dataResources_ = dataResources()
+          for (let index = 0; index < dataResources_.length; index++) {
+            const dataResource = dataResources_[index]!
+            const unwrappedResult = { ...unwrap(result[index]!) }
+            setState(index, unwrap(unwrappedResult))
+            dataResource[1].mutate(() => unwrap(state[index]!.data))
+            dataResource[1].refetch()
+          }
+        })
+      })
+
+      scheduleMicrotask(() => {
+        const taskToRun = taskQueue.pop()
+        if (taskToRun) {
+          taskToRun()
+        }
+        taskQueue = []
+      })
+    })
+
+  let unsubscribe: () => void = () => undefined
+  createComputed<() => void>((cleanup) => {
+    cleanup?.()
+    unsubscribe = isRestoring() ? () => undefined : subscribeToObserver()
+    // cleanup needs to be scheduled after synchronous effects take place
+    return () => scheduleMicrotask(unsubscribe)
+  })
   onCleanup(unsubscribe)
 
   onMount(() => {
-    observer.setQueries(defaultedQueries, { listeners: false })
+    observer.setQueries(defaultedQueries(), { listeners: false })
   })
 
   createComputed(() => {
-    const updateDefaultedQueries = queriesOptions.queries.map((options) =>
-      normalizeOptions(options),
-    )
-    observer.setQueries(updateDefaultedQueries)
+    observer.setQueries(defaultedQueries())
   })
 
-  return state as QueriesResults<T>
+  const handler = (index: number) => ({
+    get(target: QueryObserverResult, prop: keyof QueryObserverResult): any {
+      if (prop === 'data') {
+        return dataResources()[index]![0]()
+      }
+      return Reflect.get(target, prop)
+    },
+  })
+
+  const [proxifiedState, setProxifiedState] = createStore(
+    state.map((s, index) => {
+      return new Proxy(s, handler(index))
+    }),
+  )
+  createRenderEffect(() => {
+    setProxifiedState(
+      state.map((s, index) => {
+        return new Proxy(s, handler(index))
+      }),
+    )
+  })
+
+  return proxifiedState as QueriesResults<T>
 }

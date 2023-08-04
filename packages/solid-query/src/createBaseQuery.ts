@@ -8,9 +8,9 @@ import {
   onMount,
 } from 'solid-js'
 import { createStore, unwrap } from 'solid-js/store'
-import { useQueryClient } from './QueryClientProvider'
-import { shouldThrowError } from './utils'
 import { useIsRestoring } from './isRestoring'
+import { useQueryClient } from './QueryClientProvider'
+import { scheduleMicrotask, shouldThrowError } from './utils'
 import type { QueryObserver } from '@tanstack/query-core'
 import type { QueryKey, QueryObserverResult } from '@tanstack/query-core'
 import type { CreateBaseQueryOptions } from './types'
@@ -33,13 +33,17 @@ export function createBaseQuery<
   Observer: typeof QueryObserver,
 ): QueryObserverResult<TData, TError> {
   const queryClient = useQueryClient({ context: options.context })
-  const isRestoring = useIsRestoring();
+  const isRestoring = useIsRestoring()
   const emptyData = Symbol('empty')
-  const defaultedOptions = mergeProps(queryClient.defaultQueryOptions(options), {
-    get _optimisticResults() {
-      return isRestoring() ? 'isRestoring' : 'optimistic'
-    }
-  })
+
+  const getDefaultedOptions = () =>
+    mergeProps(queryClient.defaultQueryOptions(options), {
+      get _optimisticResults() {
+        return isRestoring() ? 'isRestoring' : 'optimistic'
+      },
+    })
+
+  const defaultedOptions = getDefaultedOptions()
   const observer = new Observer(queryClient, defaultedOptions)
 
   const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
@@ -66,60 +70,66 @@ export function createBaseQuery<
   })
 
   let taskQueue: Array<() => void> = []
+  const subscribeToObserver = () =>
+    observer.subscribe((result) => {
+      taskQueue.push(() => {
+        batch(() => {
+          const unwrappedResult = { ...unwrap(result) }
+          if (unwrappedResult.data === undefined) {
+            // This is a hack to prevent Solid
+            // from deleting the data property when it is `undefined`
+            // ref: https://www.solidjs.com/docs/latest/api#updating-stores
+            // @ts-ignore
+            unwrappedResult.data = emptyData
+          }
+          setState(unwrap(unwrappedResult))
+          mutate(() => unwrap(result.data))
+          refetch()
+        })
+      })
 
-  const unsubscribe = observer.subscribe((result) => {
-    taskQueue.push(() => {
-      batch(() => {
-        const unwrappedResult = { ...unwrap(result) }
-        if (unwrappedResult.data === undefined) {
-          // This is a hack to prevent Solid
-          // from deleting the data property when it is `undefined`
-          // ref: https://www.solidjs.com/docs/latest/api#updating-stores
-          // @ts-ignore
-          unwrappedResult.data = emptyData
+      queueMicrotask(() => {
+        const taskToRun = taskQueue.pop()
+        if (taskToRun) {
+          taskToRun()
         }
-        setState(unwrap(unwrappedResult))
-        mutate(() => unwrap(result.data))
-        refetch()
+        taskQueue = []
       })
     })
 
-    queueMicrotask(() => {
-      const taskToRun = taskQueue.pop()
-      if (taskToRun) {
-        taskToRun()
-      }
-      taskQueue = []
-    })
+  let unsubscribe: () => void = () => undefined
+  createComputed<() => void>((cleanup) => {
+    cleanup?.()
+    unsubscribe = isRestoring() ? () => undefined : subscribeToObserver()
+    // cleanup needs to be scheduled after synchronous effects take place
+    return () => scheduleMicrotask(unsubscribe)
   })
 
-  onCleanup(() => (!isRestoring() && unsubscribe()))
+  onCleanup(unsubscribe)
 
   onMount(() => {
     observer.setOptions(defaultedOptions, { listeners: false })
   })
 
   createComputed(() => {
-    const newDefaultedOptions = queryClient.defaultQueryOptions(options)
+    const newDefaultedOptions = getDefaultedOptions()
     observer.setOptions(newDefaultedOptions)
   })
 
   createComputed(
-    on(
-      () => state.status,
-      () => {
-        if (
-          state.isError &&
-          !state.isFetching &&
-          shouldThrowError(observer.options.useErrorBoundary, [
-            state.error,
-            observer.getCurrentQuery(),
-          ])
-        ) {
-          throw state.error
-        }
-      },
-    ),
+    on([() => state.status, isRestoring], () => {
+      if (
+        state.isError &&
+        !state.isFetching &&
+        !isRestoring() &&
+        shouldThrowError(observer.options.useErrorBoundary, [
+          state.error,
+          observer.getCurrentQuery(),
+        ])
+      ) {
+        throw state.error
+      }
+    }),
   )
 
   const handler = {
