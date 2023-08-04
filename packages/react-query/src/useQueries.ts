@@ -35,7 +35,7 @@ type UseQueryOptionsForUseQueries<
   TQueryKey extends QueryKey = QueryKey,
 > = Omit<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'placeholderData'
+  'placeholderData' | 'suspense'
 > & {
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
 }
