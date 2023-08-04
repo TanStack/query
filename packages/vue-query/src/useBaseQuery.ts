@@ -103,14 +103,10 @@ export function useBaseQuery<
     { immediate: true },
   )
 
-  watch(
-    defaultedOptions,
-    () => {
-      observer.setOptions(defaultedOptions.value)
-      updateState(state, observer.getCurrentResult())
-    },
-    { deep: true },
-  )
+  watch(defaultedOptions, () => {
+    observer.setOptions(defaultedOptions.value)
+    updateState(state, observer.getCurrentResult())
+  })
 
   onScopeDispose(() => {
     unsubscribe()

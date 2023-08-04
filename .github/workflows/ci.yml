@@ -34,9 +34,10 @@ jobs:
           version: 8
       - uses: actions/setup-node@v3
         with:
-          node-version: 18.16.0
           registry-url: https://registry.npmjs.org/
-          cache: 'pnpm'
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - name: Run Tests
