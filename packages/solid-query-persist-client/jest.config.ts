@@ -1,6 +1,5 @@
 export default {
   displayName: 'solid-query-persist-client',
-  preset: '../../jest-preset.js',
-  setupFilesAfterEnv: ['./jest.setup.ts'],
+  preset: './jest-preset.js',
   transform: { '^.+\\.(ts|tsx)$': './transform.js' },
 }
