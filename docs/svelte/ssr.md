@@ -11,7 +11,7 @@ The recommended way to achieve this is to use the `browser` module from SvelteKi
 
 **src/routes/+layout.svelte**
 
-```svelte
+```html
 <script lang="ts">
   import { browser } from '$app/environment'
   import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query'
@@ -42,17 +42,17 @@ If you wish to view the ideal SSR setup, please have a look at the [SSR example]
 Together with SvelteKit's [`load`](https://kit.svelte.dev/docs/load), you can pass the data loaded server-side into `createQuery`'s' `initialData` option:
 
 **src/routes/+page.ts**
-```ts
-import type { PageLoad } from './$types'
 
-export const load: PageLoad = async () => {
+```ts
+export async function load() {
   const posts = await getPosts()
   return { posts }
 }
 ```
 
 **src/routes/+page.svelte**
-```svelte
+
+```html
 <script>
   import { createQuery } from '@tanstack/svelte-query'
   import type { PageData } from './$types'
@@ -87,9 +87,8 @@ Svelte Query supports prefetching queries on the server. Using this setup below,
 ```ts
 import { browser } from '$app/environment'
 import { QueryClient } from '@tanstack/svelte-query'
-import type { LayoutLoad } from './$types'
 
-export const load: LayoutLoad = async () => {
+export async function load() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -104,7 +103,7 @@ export const load: LayoutLoad = async () => {
 
 **src/routes/+layout.svelte**
 
-```svelte
+```html
 <script lang="ts">
   import { QueryClientProvider } from '@tanstack/svelte-query'
   import type { LayoutData } from './$types'
@@ -120,9 +119,7 @@ export const load: LayoutLoad = async () => {
 **src/routes/+page.ts**
 
 ```ts
-import type { PageLoad } from './$types'
-
-export const load: PageLoad = async ({ parent, fetch }) => {
+export async function load({ parent, fetch }) {
   const { queryClient } = await parent()
 
   // You need to use the SvelteKit fetch function here
@@ -135,7 +132,7 @@ export const load: PageLoad = async ({ parent, fetch }) => {
 
 **src/routes/+page.svelte**
 
-```svelte
+```html
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
 
