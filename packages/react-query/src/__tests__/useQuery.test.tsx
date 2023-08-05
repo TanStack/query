@@ -6211,4 +6211,25 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('Rendered Id: 2'))
     expect(spy).toHaveBeenCalledTimes(1)
   })
+  it('should not cause an infinite render loop when using unstable callback ref', async () => {
+    const key = queryKey()
+
+    function Test() {
+      const [_, setRef] = React.useState<HTMLDivElement | null>()
+
+      const { data } = useQuery({
+        queryKey: [key],
+        queryFn: async () => {
+          await sleep(5)
+          return 'Works'
+        },
+      })
+
+      return <div ref={(value) => setRef(value)}>{data}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Test />)
+
+    await waitFor(() => rendered.getByText('Works'))
+  })
 })
