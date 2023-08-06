@@ -109,10 +109,10 @@ export function useBaseQuery<
           //noop
         }
         const run = () => {
+          const optimisticResult = observer.getOptimisticResult(
+            defaultedOptions.value,
+          )
           if (defaultedOptions.value.enabled !== false) {
-            const optimisticResult = observer.getOptimisticResult(
-              defaultedOptions.value,
-            )
             if (optimisticResult.isStale) {
               stopWatch()
               observer
@@ -122,6 +122,9 @@ export function useBaseQuery<
               stopWatch()
               resolve(optimisticResult)
             }
+          } else {
+            stopWatch()
+            resolve(optimisticResult)
           }
         }
 
