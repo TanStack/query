@@ -35,7 +35,6 @@ const createMutationObserver = (store: any, options: any) => {
 
 	const unsubscribe = observer.subscribe(
 		notifyManager.batchCalls((result: any) => {
-			console.log('mutation subscribe', result);
 			store.result = noSerialize(observer.getCurrentResult());
 			store.mutateAsync = noSerialize(result.mutate);
 		})

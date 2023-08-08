@@ -1,15 +1,14 @@
 import { isServer } from '@builder.io/qwik/build';
-import { QueryClient, hydrate } from '@tanstack/query-core';
+import { DehydratedState, QueryClient, hydrate } from '@tanstack/query-core';
 
 let queryClient: QueryClient | null = null;
 
-export const createQueryClient = (dehydratedData?: any) => {
+export const createQueryClient = (dehydratedData?: DehydratedState) => {
 	if (isServer) {
 		throw 'You can use getQueryClient only it the client side!';
 	}
 
 	if (queryClient && !dehydratedData) {
-		console.log('reuse');
 		return queryClient;
 	}
 

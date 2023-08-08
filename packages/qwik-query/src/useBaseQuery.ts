@@ -84,7 +84,6 @@ const createQueryObserver = (
 
 	const unsubscribe = observer.subscribe(
 		notifyManager.batchCalls((result: any) => {
-			console.log('observer.subscribe: ', result);
 			store.result = !defaultedOptions.notifyOnChangeProps
 				? noSerialize(observer.trackResult(result))
 				: noSerialize(result);
