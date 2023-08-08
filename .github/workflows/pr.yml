@@ -21,9 +21,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2.2.4
+        uses: pnpm/action-setup@v2
         with:
-          version: 8
+          version: 8.6.12
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
@@ -63,9 +63,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2.2.4
+        uses: pnpm/action-setup@v2
         with:
-          version: 8
+          version: 8.6.12
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
@@ -84,9 +84,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2.2.4
+        uses: pnpm/action-setup@v2
         with:
-          version: 8
+          version: 8.6.12
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
@@ -106,9 +106,9 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
-      - uses: pnpm/action-setup@v2.2.4
+      - uses: pnpm/action-setup@v2
         with:
-          version: 8
+          version: 8.6.12
       - uses: actions/setup-node@v3
         with:
           node-version-file: .nvmrc
