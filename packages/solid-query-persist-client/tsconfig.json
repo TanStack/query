@@ -1,18 +1,9 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "composite": true,
-    "rootDir": "./src",
-    "outDir": "./build/lib",
-    "declarationDir": "./build/lib",
-    "tsBuildInfoFile": "./build/.tsbuildinfo",
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "emitDeclarationOnly": false
+    "types": ["vitest/globals"]
   },
-  "include": ["src"],
-  "references": [
-    { "path": "../query-persist-client-core" },
-    { "path": "../solid-query" }
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx", ".eslintrc.cjs", "tsup.config.js"]
 }

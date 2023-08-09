@@ -1,52 +1,60 @@
 {
-  "name": "@tanstack/react-query-persist-client",
-  "version": "4.32.1",
-  "description": "React bindings to work with persisters in TanStack/react-query",
+  "name": "@tanstack/solid-query-persist-client",
+  "version": "5.0.0-beta.15",
+  "description": "Solid.js bindings to work with persisters in TanStack/solid-query",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/TanStack/query.git",
-    "directory": "packages/react-query-persist-client"
+    "directory": "packages/solid-query-persist-client"
   },
   "homepage": "https://tanstack.com/query",
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "types": "build/lib/index.d.ts",
-  "main": "build/lib/index.js",
-  "module": "build/lib/index.esm.js",
+  "type": "module",
+  "types": "./build/legacy/index.d.ts",
+  "main": "./build/legacy/index.cjs",
+  "module": "./build/legacy/index.js",
   "exports": {
     ".": {
-      "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.mjs",
-      "default": "./build/lib/index.js"
+      "import": {
+        "types": "./build/modern/index.d.ts",
+        "default": "./build/modern/index.js"
+      },
+      "require": {
+        "types": "./build/modern/index.d.cts",
+        "default": "./build/modern/index.cjs"
+      }
     },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "files": [
-    "build/lib/*",
-    "build/umd/*",
+    "build",
     "src"
   ],
   "scripts": {
-    "clean": "rimraf ./build",
+    "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
-    "test:lib": "jest --config ./jest.config.ts",
+    "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "build:types": "tsc --build"
-  },
-  "devDependencies": {
-    "@tanstack/solid-query": "workspace:*",
-    "solid-js": "^1.5.7"
+    "test:build": "publint --strict",
+    "build": "tsup"
   },
   "dependencies": {
     "@tanstack/query-persist-client-core": "workspace:*"
   },
+  "devDependencies": {
+    "tsup-preset-solid": "^2.0.1",
+    "vite-plugin-solid": "^2.7.0",
+    "solid-js": "^1.7.8"
+  },
   "peerDependencies": {
-    "@tanstack/solid-query": "workspace:*"
+    "@tanstack/solid-query": "workspace:*",
+    "solid-js": "^1.6.0"
   }
 }

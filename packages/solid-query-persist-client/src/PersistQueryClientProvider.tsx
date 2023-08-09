@@ -25,9 +25,11 @@ export const PersistQueryClientProvider = (
       queryClient: props.client,
     })
 
-    promise.then(() => {
-      if (!isStale) {
-        props.onSuccess?.()
+    promise.then(async () => {
+      if (isStale) return
+      try {
+        await props.onSuccess?.()
+      } finally {
         setIsRestoring(false)
       }
     })
@@ -36,7 +38,6 @@ export const PersistQueryClientProvider = (
       isStale = true
       unsubscribe()
     }
-
     return unsub
   })
 

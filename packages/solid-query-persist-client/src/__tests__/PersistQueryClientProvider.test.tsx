@@ -1,12 +1,11 @@
 import '@testing-library/jest-dom'
-
-import { render, screen, waitFor } from 'solid-testing-library'
+import { render, screen, waitFor } from '@solidjs/testing-library'
 import { QueryClient, createQueries, createQuery } from '@tanstack/solid-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
-import { createEffect, createSignal, on, onMount } from 'solid-js'
+import { createEffect, createSignal, onMount } from 'solid-js'
 
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
-import { createQueryClient, mockLogger, queryKey, sleep } from './utils'
+import { createQueryClient, queryKey, sleep } from './utils'
 import type {
   PersistedClient,
   Persister,
@@ -58,7 +57,10 @@ describe('PersistQueryClientProvider', () => {
     }[] = []
 
     const queryClient = createQueryClient()
-    await queryClient.prefetchQuery(key(), () => Promise.resolve('hydrated'))
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
 
     const persister = createMockPersister()
 
@@ -67,21 +69,19 @@ describe('PersistQueryClientProvider', () => {
     queryClient.clear()
 
     function Page() {
-      const state = createQuery(key, async () => {
-        await sleep(10)
-        return 'fetched'
-      })
-
-      createEffect(
-        on(
-          [() => state.status, () => state.fetchStatus, () => state.data],
-          () =>
-            states.push({
-              status: state.status,
-              fetchStatus: state.fetchStatus,
-              data: state.data,
-            }),
-        ),
+      const state = createQuery(() => ({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 'fetched'
+        },
+      }))
+      createEffect(() =>
+        states.push({
+          status: state.status,
+          fetchStatus: state.fetchStatus,
+          data: state.data,
+        }),
       )
 
       return (
@@ -108,7 +108,7 @@ describe('PersistQueryClientProvider', () => {
     expect(states).toHaveLength(3)
 
     expect(states[0]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
@@ -135,7 +135,10 @@ describe('PersistQueryClientProvider', () => {
     }[] = []
 
     const queryClient = createQueryClient()
-    await queryClient.prefetchQuery(key(), () => Promise.resolve('hydrated'))
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
 
     const persister = createMockPersister()
 
@@ -144,7 +147,7 @@ describe('PersistQueryClientProvider', () => {
     queryClient.clear()
 
     function Page() {
-      const [state] = createQueries({
+      const [state] = createQueries(() => ({
         queries: [
           {
             queryKey: key,
@@ -154,18 +157,14 @@ describe('PersistQueryClientProvider', () => {
             },
           },
         ] as const,
-      })
+      }))
 
-      createEffect(
-        on(
-          [() => state.status, () => state.fetchStatus, () => state.data],
-          () =>
-            states.push({
-              status: state.status,
-              fetchStatus: state.fetchStatus,
-              data: state.data,
-            }),
-        ),
+      createEffect(() =>
+        states.push({
+          status: state.status,
+          fetchStatus: state.fetchStatus,
+          data: state.data,
+        }),
       )
 
       return (
@@ -192,7 +191,7 @@ describe('PersistQueryClientProvider', () => {
     expect(states).toHaveLength(3)
 
     expect(states[0]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
@@ -219,7 +218,10 @@ describe('PersistQueryClientProvider', () => {
     }[] = []
 
     const queryClient = createQueryClient()
-    await queryClient.prefetchQuery(key(), () => Promise.resolve('hydrated'))
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
 
     const persister = createMockPersister()
 
@@ -228,30 +230,24 @@ describe('PersistQueryClientProvider', () => {
     queryClient.clear()
 
     function Page() {
-      const state = createQuery(
-        key,
-        async () => {
+      const state = createQuery(() => ({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(10)
           return 'fetched'
         },
-        {
-          initialData: 'initial',
-          // make sure that initial data is older than the hydration data
-          // otherwise initialData would be newer and takes precedence
-          initialDataUpdatedAt: 1,
-        },
-      )
+        initialData: 'initial',
+        // make sure that initial data is older than the hydration data
+        // otherwise initialData would be newer and takes precedence
+        initialDataUpdatedAt: 1,
+      }))
 
-      createEffect(
-        on(
-          [() => state.status, () => state.fetchStatus, () => state.data],
-          () =>
-            states.push({
-              status: state.status,
-              fetchStatus: state.fetchStatus,
-              data: state.data,
-            }),
-        ),
+      createEffect(() =>
+        states.push({
+          status: state.status,
+          fetchStatus: state.fetchStatus,
+          data: state.data,
+        }),
       )
 
       return (
@@ -305,7 +301,10 @@ describe('PersistQueryClientProvider', () => {
     }[] = []
 
     const queryClient = createQueryClient()
-    await queryClient.prefetchQuery(key(), () => Promise.resolve('hydrated'))
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
 
     const persister = createMockPersister()
 
@@ -316,28 +315,22 @@ describe('PersistQueryClientProvider', () => {
     let fetched = false
 
     function Page() {
-      const state = createQuery(
-        key,
-        async () => {
+      const state = createQuery(() => ({
+        queryKey: key,
+        queryFn: async () => {
           fetched = true
           await sleep(10)
           return 'fetched'
         },
-        {
-          staleTime: Infinity,
-        },
-      )
+        staleTime: Infinity,
+      }))
 
-      createEffect(
-        on(
-          [() => state.status, () => state.fetchStatus, () => state.data],
-          () =>
-            states.push({
-              status: state.status,
-              fetchStatus: state.fetchStatus,
-              data: state.data,
-            }),
-        ),
+      createEffect(() =>
+        states.push({
+          status: state.status,
+          fetchStatus: state.fetchStatus,
+          data: state.data,
+        }),
       )
 
       return (
@@ -365,7 +358,7 @@ describe('PersistQueryClientProvider', () => {
     expect(fetched).toBe(false)
 
     expect(states[0]).toMatchObject({
-      status: 'loading',
+      status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
@@ -381,7 +374,10 @@ describe('PersistQueryClientProvider', () => {
     const key = queryKey()
 
     const queryClient = createQueryClient()
-    await queryClient.prefetchQuery(key(), () => Promise.resolve('hydrated'))
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
 
     const persister = createMockPersister()
 
@@ -390,10 +386,13 @@ describe('PersistQueryClientProvider', () => {
     queryClient.clear()
 
     function Page() {
-      const state = createQuery(key, async () => {
-        await sleep(10)
-        return 'fetched'
-      })
+      const state = createQuery(() => ({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 'fetched'
+        },
+      }))
 
       return (
         <div>
@@ -403,7 +402,7 @@ describe('PersistQueryClientProvider', () => {
       )
     }
 
-    const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
 
     render(() => (
       <PersistQueryClientProvider
@@ -423,19 +422,23 @@ describe('PersistQueryClientProvider', () => {
 
   test('should remove cache after non-successful restoring', async () => {
     const key = queryKey()
-    jest.spyOn(console, 'warn').mockImplementation(() => undefined)
-    jest.spyOn(console, 'error').mockImplementation(() => undefined)
 
+    const onErrorMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
     const queryClient = createQueryClient()
-    const removeClient = jest.fn()
+    const removeClient = vi.fn()
 
     const [error, persister] = createMockErrorPersister(removeClient)
 
     function Page() {
-      const state = createQuery(key, async () => {
-        await sleep(10)
-        return 'fetched'
-      })
+      const state = createQuery(() => ({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 'fetched'
+        },
+      }))
 
       return (
         <div>
@@ -456,134 +459,134 @@ describe('PersistQueryClientProvider', () => {
 
     await waitFor(() => screen.getByText('fetched'))
     expect(removeClient).toHaveBeenCalledTimes(1)
-    expect(mockLogger.error).toHaveBeenCalledTimes(2)
-    expect(mockLogger.error).toHaveBeenNthCalledWith(2, error)
+    expect(onErrorMock).toHaveBeenCalledTimes(1)
+    expect(onErrorMock).toHaveBeenNthCalledWith(1, error)
+    onErrorMock.mockRestore()
   })
 
-  // test('should be able to persist into multiple clients', async () => {
-  //   const key = queryKey()
-  //   const states: {
-  //     status: string
-  //     fetchStatus: string
-  //     data: string | undefined
-  //   }[] = []
+  test('should be able to persist into multiple clients', async () => {
+    const key = queryKey()
+    const states: {
+      status: string
+      fetchStatus: string
+      data: string | undefined
+    }[] = []
 
-  //   const queryClient = createQueryClient()
-  //   await queryClient.prefetchQuery(key(), () => Promise.resolve('hydrated'))
+    const queryClient = createQueryClient()
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
 
-  //   const persister = createMockPersister()
+    const persister = createMockPersister()
 
-  //   await persistQueryClientSave({ queryClient, persister })
+    await persistQueryClientSave({ queryClient, persister })
 
-  //   queryClient.clear()
+    queryClient.clear()
 
-  //   const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
 
-  //   const queryFn1 = jest.fn().mockImplementation(async () => {
-  //     await sleep(10)
-  //     return 'queryFn1'
-  //   })
-  //   const queryFn2 = jest.fn().mockImplementation(async () => {
-  //     await sleep(10)
-  //     return 'queryFn2'
-  //   })
+    const queryFn1 = vi.fn().mockImplementation(async () => {
+      await sleep(10)
+      return 'queryFn1'
+    })
+    const queryFn2 = vi.fn().mockImplementation(async () => {
+      await sleep(10)
+      return 'queryFn2'
+    })
 
-  //   function App() {
-  //     const [client, setClient] = createSignal(
-  //       new QueryClient({
-  //         defaultOptions: {
-  //           queries: {
-  //             queryFn: queryFn1,
-  //           },
-  //         },
-  //       }),
-  //     )
+    function App() {
+      const [client, setClient] = createSignal(
+        new QueryClient({
+          defaultOptions: {
+            queries: {
+              queryFn: queryFn1,
+            },
+          },
+        }),
+      )
 
-  //     onMount(() => {
-  //       setClient(
-  //         new QueryClient({
-  //           defaultOptions: {
-  //             queries: {
-  //               queryFn: queryFn2,
-  //             },
-  //           },
-  //         }),
-  //       )
-  //     })
+      onMount(() => {
+        setClient(
+          new QueryClient({
+            defaultOptions: {
+              queries: {
+                queryFn: queryFn2,
+              },
+            },
+          }),
+        )
+      })
 
-  //     return (
-  //       <PersistQueryClientProvider
-  //         client={client()}
-  //         persistOptions={{ persister }}
-  //         onSuccess={onSuccess}
-  //       >
-  //         <Page />
-  //       </PersistQueryClientProvider>
-  //     )
-  //   }
+      return (
+        <PersistQueryClientProvider
+          client={client()}
+          persistOptions={{ persister }}
+          onSuccess={onSuccess}
+        >
+          <Page />
+        </PersistQueryClientProvider>
+      )
+    }
 
-  //   function Page() {
-  //     const state = createQuery(key)
+    function Page() {
+      const state = createQuery(() => ({ queryKey: key }))
 
-  //     createEffect(
-  //       on(
-  //         [() => state.status, () => state.fetchStatus, () => state.data],
-  //         () =>
-  //           states.push({
-  //             status: state.status,
-  //             fetchStatus: state.fetchStatus,
-  //             data: state.data as string | undefined,
-  //           }),
-  //       ),
-  //     )
+      createEffect(() =>
+        states.push({
+          status: state.status,
+          fetchStatus: state.fetchStatus,
+          data: state.data as string | undefined,
+        }),
+      )
 
-  //     return (
-  //       <div>
-  //         <h1>{String(state.data)}</h1>
-  //         <h2>fetchStatus: {state.fetchStatus}</h2>
-  //       </div>
-  //     )
-  //   }
+      return (
+        <div>
+          <h1>{String(state.data)}</h1>
+          <h2>fetchStatus: {state.fetchStatus}</h2>
+        </div>
+      )
+    }
 
-  //   render(() => <App />)
+    render(() => <App />)
 
-  //   await waitFor(() => screen.getByText('hydrated'))
-  //   await waitFor(() => screen.getByText('queryFn2'))
+    await waitFor(() => screen.getByText('hydrated'))
+    await waitFor(() => screen.getByText('queryFn2'))
 
-  //   expect(queryFn1).toHaveBeenCalledTimes(0)
-  //   expect(queryFn2).toHaveBeenCalledTimes(1)
-  //   expect(onSuccess).toHaveBeenCalledTimes(1)
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(1)
+    expect(onSuccess).toHaveBeenCalledTimes(1)
 
-  //   expect(states).toHaveLength(5)
+    expect(states).toHaveLength(5)
 
-  //   expect(states[0]).toMatchObject({
-  //     status: 'loading',
-  //     fetchStatus: 'idle',
-  //     data: undefined,
-  //   })
+    expect(states[0]).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'idle',
+      data: undefined,
+    })
 
-  //   expect(states[1]).toMatchObject({
-  //     status: 'loading',
-  //     fetchStatus: 'idle',
-  //     data: undefined,
-  //   })
+    expect(states[1]).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'idle',
+      data: undefined,
+    })
 
-  //   expect(states[2]).toMatchObject({
-  //     status: 'success',
-  //     fetchStatus: 'fetching',
-  //     data: 'hydrated',
-  //   })
+    expect(states[2]).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: 'hydrated',
+    })
 
-  //   expect(states[3]).toMatchObject({
-  //     status: 'success',
-  //     fetchStatus: 'fetching',
-  //     data: 'hydrated',
-  //   })
+    expect(states[3]).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: 'hydrated',
+    })
 
-  //   expect(states[4]).toMatchObject({
-  //     status: 'success',
-  //     fetchStatus: 'idle',
-  //     data: 'queryFn2',
-  //   })
-  // })
+    expect(states[4]).toMatchObject({
+      status: 'success',
+      fetchStatus: 'idle',
+      data: 'queryFn2',
+    })
+  })
 })
