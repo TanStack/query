@@ -113,8 +113,12 @@ export function createBaseQuery<
       get _optimisticResults() {
         return isRestoring() ? 'isRestoring' : 'optimistic'
       },
-      retry: isServer ? false : undefined,
-      throwOnError: isServer ? true : undefined,
+      ...(isServer
+        ? {
+            retry: false,
+            throwOnError: true,
+          }
+        : {}),
     }),
   )
 
@@ -157,7 +161,12 @@ export function createBaseQuery<
             reconcileOptions === undefined ? 'id' : reconcileOptions,
           )
         })
-        if (queryResource()?.data && result.data && !queryResource.loading)
+        if (
+          queryResource()?.data &&
+          result.data &&
+          !queryResource.loading &&
+          isRestoring()
+        )
           mutate(state)
         else refetch()
       })
@@ -175,13 +184,8 @@ export function createBaseQuery<
   >(
     () => {
       return new Promise((resolve, reject) => {
-        if (isServer) {
-          unsubscribe = createServerSubscriber(resolve, reject)
-        } else {
-          if (!unsubscribe) {
-            unsubscribe = createClientSubscriber()
-          }
-        }
+        if (isServer) unsubscribe = createServerSubscriber(resolve, reject)
+        else if (!unsubscribe) unsubscribe = createClientSubscriber()
 
         if (!state.isLoading) {
           const query = observer.getCurrentQuery()
@@ -221,21 +225,20 @@ export function createBaseQuery<
           })
         }
 
-        if (!unsubscribe) {
-          /**
-           * Do not refetch query on mount if query was fetched on server,
-           * even if `staleTime` is not set.
-           */
-          const newOptions = { ...defaultedOptions }
-          if (defaultedOptions.staleTime || !defaultedOptions.initialData) {
-            newOptions.refetchOnMount = false
-          }
-          // Setting the options as an immutable object to prevent
-          // wonky behavior with observer subscriptions
-          observer.setOptions(newOptions)
-          setState(observer.getOptimisticResult(newOptions))
-          unsubscribe = createClientSubscriber()
+        if (unsubscribe) return
+        /**
+         * Do not refetch query on mount if query was fetched on server,
+         * even if `staleTime` is not set.
+         */
+        const newOptions = { ...defaultedOptions }
+        if (defaultedOptions.staleTime || !defaultedOptions.initialData) {
+          newOptions.refetchOnMount = false
         }
+        // Setting the options as an immutable object to prevent
+        // wonky behavior with observer subscriptions
+        observer.setOptions(newOptions)
+        setState(observer.getOptimisticResult(newOptions))
+        unsubscribe = createClientSubscriber()
       },
     },
   )
@@ -246,6 +249,7 @@ export function createBaseQuery<
       () => {
         // cleanup needs to be scheduled after synchronous effects take place
         queueMicrotask(() => unsubscribe?.())
+        unsubscribe = null
         refetch()
       },
       { defer: true },
@@ -291,7 +295,7 @@ export function createBaseQuery<
     get(
       target: QueryObserverResult<TData, TError>,
       prop: keyof QueryObserverResult<TData, TError>,
-    ): any {
+    ) {
       const val = queryResource()?.[prop]
       return val !== undefined ? val : Reflect.get(target, prop)
     },

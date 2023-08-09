@@ -4,7 +4,7 @@ import { Show, Suspense, createSignal, startTransition } from 'solid-js'
 import { QueryCache, QueryClientProvider, createQuery } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
 
-describe("useQuery's in Suspense mode with transitions", () => {
+describe("createQuery's in Suspense mode with transitions", () => {
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({ queryCache })
 
@@ -19,7 +19,6 @@ describe("useQuery's in Suspense mode with transitions", () => {
           return true
         },
       }))
-
       return <Show when={state.data}>Message</Show>
     }
 
