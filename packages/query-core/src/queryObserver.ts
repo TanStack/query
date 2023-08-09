@@ -834,7 +834,7 @@ function shouldAssignObserverCurrentProperties<
 
   // if the newly created result isn't what the observer is holding as current,
   // then we'll need to update the properties as well
-  if (observer.getCurrentResult() !== optimisticResult) {
+  if (!shallowEqualObjects(observer.getCurrentResult(), optimisticResult)) {
     return true
   }
 
