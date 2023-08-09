@@ -36,7 +36,7 @@ const createMockErrorPersister = (
     error,
     {
       async persistClient() {
-        // noop
+        noop
       },
       async restoreClient() {
         await sleep(10)
