@@ -185,8 +185,10 @@ export function createBaseQuery<
     () => {
       return new Promise((resolve, reject) => {
         if (isServer) unsubscribe = createServerSubscriber(resolve, reject)
-        else if (!unsubscribe) unsubscribe = createClientSubscriber()
-
+        else if (!isRestoring()) {
+          unsubscribe?.()
+          unsubscribe = createClientSubscriber()
+        }
         if (!state.isLoading) {
           const query = observer.getCurrentQuery()
           resolve(hydrateableObserverResult(query, state))
@@ -202,7 +204,6 @@ export function createBaseQuery<
       get deferStream() {
         return options().deferStream
       },
-
       /**
        * If this resource was populated on the server (either sync render, or streamed in over time), onHydrated
        * will be called. This is the point at which we can hydrate the query cache state, and setup the query subscriber.
@@ -266,12 +267,10 @@ export function createBaseQuery<
   createComputed(
     on(
       () => client().defaultQueryOptions(options()),
-      () => observer.setOptions(client().defaultQueryOptions(options())),
-      {
-        // Defer because we don't need to trigger on first render
-        // This only cares about changes to options after the observer is created
-        defer: true,
-      },
+      (opts) => observer.setOptions(opts),
+      // Defer because we don't need to trigger on first render
+      // This only cares about changes to options after the observer is created
+      { defer: true },
     ),
   )
 
