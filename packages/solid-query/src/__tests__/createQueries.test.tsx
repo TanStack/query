@@ -54,7 +54,7 @@ describe('useQueries', () => {
       }))
 
       createRenderEffect(() => {
-        results.push([...result])
+        results.push([{ ...result[0] }, { ...result[1] }])
       })
 
       return (

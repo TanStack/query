@@ -8,12 +8,14 @@ import {
   createComputed,
   createMemo,
   createResource,
+  mergeProps,
   on,
   onCleanup,
 } from 'solid-js'
 import { createStore, reconcile, unwrap } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
 import { shouldThrowError } from './utils'
+import { useIsRestoring } from './isRestoring'
 import type { CreateBaseQueryOptions } from './types'
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
@@ -104,18 +106,22 @@ export function createBaseQuery<
     | QueryObserverResult<TData, TError>
 
   const client = createMemo(() => useQueryClient(queryClient?.()))
+  const isRestoring = useIsRestoring()
 
-  const defaultedOptions = client().defaultQueryOptions(options())
-  defaultedOptions._optimisticResults = 'optimistic'
-  defaultedOptions.structuralSharing = false
-  if (isServer) {
-    defaultedOptions.retry = false
-    defaultedOptions.throwOnError = true
-  }
-  const observer = new Observer(client(), defaultedOptions)
+  const getDefaultedOptions = createMemo(() =>
+    mergeProps(client().defaultQueryOptions(options()), {
+      get _optimisticResults() {
+        return isRestoring() ? 'isRestoring' : 'optimistic'
+      },
+      retry: isServer ? false : undefined,
+      throwOnError: isServer ? true : undefined,
+    }),
+  )
+
+  const observer = new Observer(client(), getDefaultedOptions())
 
   const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
-    observer.getOptimisticResult(defaultedOptions),
+    observer.getOptimisticResult(getDefaultedOptions()),
   )
 
   const createServerSubscriber = (
@@ -125,47 +131,37 @@ export function createBaseQuery<
     reject: (reason?: any) => void,
   ) => {
     return observer.subscribe((result) => {
-      notifyManager.batchCalls(() => {
+      const batchedCalls = notifyManager.batchCalls(() => {
         const query = observer.getCurrentQuery()
         const unwrappedResult = hydrateableObserverResult(query, result)
 
-        if (unwrappedResult.isError) {
-          reject(unwrappedResult.error)
-        } else {
-          resolve(unwrappedResult)
-        }
-      })()
+        if (unwrappedResult.isError) reject(unwrappedResult.error)
+        else resolve(unwrappedResult)
+      })
+      batchedCalls()
     })
   }
 
   const createClientSubscriber = () => {
     return observer.subscribe((result) => {
-      notifyManager.batchCalls(() => {
+      const batchedCalls = notifyManager.batchCalls(() => {
         // @ts-expect-error - This will error because the reconcile option does not
         // exist on the query-core QueryObserverResult type
         const reconcileOptions = observer.options.reconcile
         // If the query has data we dont suspend but instead mutate the resource
         // This could happen when placeholderData/initialData is defined
-        if (queryResource()?.data && result.data && !queryResource.loading) {
-          setState((store) => {
-            return reconcileFn(
-              store,
-              result,
-              reconcileOptions === undefined ? 'id' : reconcileOptions,
-            )
-          })
+        setState((store) => {
+          return reconcileFn(
+            store,
+            result,
+            reconcileOptions === undefined ? 'id' : reconcileOptions,
+          )
+        })
+        if (queryResource()?.data && result.data && !queryResource.loading)
           mutate(state)
-        } else {
-          setState((store) => {
-            return reconcileFn(
-              store,
-              result,
-              reconcileOptions === undefined ? 'id' : reconcileOptions,
-            )
-          })
-          refetch()
-        }
-      })()
+        else refetch()
+      })
+      batchedCalls()
     })
   }
 
@@ -212,6 +208,7 @@ export function createBaseQuery<
        * Note that this is only invoked on the client, for queries that were originally run on the server.
        */
       onHydrated(_k, info) {
+        const defaultedOptions = getDefaultedOptions()
         if (info.value) {
           hydrate(client(), {
             queries: [
@@ -243,6 +240,18 @@ export function createBaseQuery<
     },
   )
 
+  createComputed(
+    on(
+      isRestoring,
+      () => {
+        // cleanup needs to be scheduled after synchronous effects take place
+        queueMicrotask(() => unsubscribe?.())
+        refetch()
+      },
+      { defer: true },
+    ),
+  )
+
   onCleanup(() => {
     if (unsubscribe) {
       unsubscribe()
@@ -263,21 +272,19 @@ export function createBaseQuery<
   )
 
   createComputed(
-    on(
-      () => state.status,
-      () => {
-        if (
-          state.isError &&
-          !state.isFetching &&
-          shouldThrowError(observer.options.throwOnError, [
-            state.error,
-            observer.getCurrentQuery(),
-          ])
-        ) {
-          throw state.error
-        }
-      },
-    ),
+    on([() => state.status, isRestoring], () => {
+      if (
+        state.isError &&
+        !state.isFetching &&
+        !isRestoring() &&
+        shouldThrowError(observer.options.throwOnError, [
+          state.error,
+          observer.getCurrentQuery(),
+        ])
+      ) {
+        throw state.error
+      }
+    }),
   )
 
   const handler = {

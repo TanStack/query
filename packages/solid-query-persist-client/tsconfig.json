@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "./src",
+    "outDir": "./build/lib",
+    "declarationDir": "./build/lib",
+    "tsBuildInfoFile": "./build/.tsbuildinfo",
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+    "emitDeclarationOnly": false
+  },
+  "include": ["src"],
+  "references": [
+    { "path": "../query-persist-client-core" },
+    { "path": "../solid-query" }
+  ]
+}

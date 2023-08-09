@@ -1641,6 +1641,19 @@ importers:
         specifier: ^2.7.0
         version: 2.7.0(solid-js@1.7.8)(vite@4.4.4)
 
+  packages/solid-query-persist-client:
+    dependencies:
+      '@tanstack/query-persist-client-core':
+        specifier: workspace:*
+        version: link:../query-persist-client-core
+    devDependencies:
+      '@tanstack/solid-query':
+        specifier: workspace:*
+        version: link:../solid-query
+      solid-js:
+        specifier: ^1.5.7
+        version: 1.5.7
+
   packages/svelte-query:
     dependencies:
       '@tanstack/query-core':
@@ -24951,6 +24964,12 @@ packages:
       uuid: 8.3.2
       websocket-driver: 0.7.4
     dev: false
+
+  /solid-js@1.5.7:
+    resolution: {integrity: sha512-L1UuyMuZZARAwzXo5NZDhE6yxc14aqNbVOUoGzvlcxRZo1Cm4ExhPV0diEfwDyiKG/igqNNLkNurHkXiI5sVEg==}
+    dependencies:
+      csstype: 3.1.2
+    dev: true
 
   /solid-js@1.7.8:
     resolution: {integrity: sha512-XHBWk1FvFd0JMKljko7FfhefJMTSgYEuVKcQ2a8hzRXfiuSJAGsrPPafqEo+f6l+e8Oe3cROSpIL6kbzjC1fjQ==}
