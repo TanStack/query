@@ -16,6 +16,7 @@ import {
   QueryKey,
 } from '@tanstack/query-core'
 import { createQueryClient } from './useQueryClient'
+import { QueryStore } from './types'
 
 export enum ObserverType {
   base,
@@ -37,7 +38,7 @@ export const useBaseQuery = (
   if (initialState) {
     hydrate(queryClient, initialState)
   }
-  const store = useStore<any>({
+  const store = useStore<QueryStore>({
     result: initialState
       ? queryClient.getQueryState(options.queryKey || [])
       : undefined,
@@ -71,7 +72,7 @@ export const useBaseQuery = (
 }
 
 const createQueryObserver = (
-  store: any,
+  store: QueryStore,
   options: DefaultedQueryObserverOptions<
     unknown,
     Error,

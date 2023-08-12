@@ -2,6 +2,7 @@
 
 import type {
   DefaultError,
+  DefaultedQueryObserverOptions,
   DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   InfiniteQueryObserverOptions,
@@ -165,3 +166,14 @@ export type UseMutationResult<
 > = UseBaseMutationResult<TData, TError, TVariables, TContext>
 
 type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }
+
+export type QueryStore = {
+  result: any
+  options: DefaultedQueryObserverOptions<
+    unknown,
+    Error,
+    unknown,
+    unknown,
+    QueryKey
+  >
+}
