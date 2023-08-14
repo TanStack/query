@@ -1,12 +1,12 @@
+import { QueryObserver, focusManager } from '..'
 import {
-  sleep,
-  queryKey,
+  createQueryClient,
   expectType,
   mockLogger,
-  createQueryClient,
+  queryKey,
+  sleep,
 } from './utils'
 import type { QueryClient, QueryObserverResult } from '..'
-import { QueryObserver, focusManager } from '..'
 
 describe('queryObserver', () => {
   let queryClient: QueryClient

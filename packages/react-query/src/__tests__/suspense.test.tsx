@@ -1,7 +1,6 @@
 import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import type { UseInfiniteQueryResult, UseQueryResult } from '..'
 import {
   QueryCache,
   QueryErrorResetBoundary,
@@ -11,6 +10,7 @@ import {
   useQueryErrorResetBoundary,
 } from '..'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import type { UseInfiniteQueryResult, UseQueryResult } from '..'
 
 describe("useQuery's in Suspense mode", () => {
   const queryCache = new QueryCache()
@@ -509,7 +509,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => rendered.getByText(`data: ${key2}`))
     expect(
       // @ts-expect-error
-      queryClient.getQueryCache().find(key2)!.observers[0].listeners.length,
+      queryClient.getQueryCache().find(key2)!.observers[0].listeners.size,
     ).toBe(1)
   })
 

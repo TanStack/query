@@ -88,7 +88,7 @@ createSyncStoragePersister(options: CreateSyncStoragePersisterOptions)
 ```tsx
 interface CreateSyncStoragePersisterOptions {
   /** The storage client used for setting an retrieving items from cache (window.localStorage or window.sessionStorage) */
-  storage: Storage
+  storage: Storage | undefined | null
   /** The key to use when storing the cache */
   key?: string
   /** To avoid spamming,
@@ -128,8 +128,8 @@ import { compress, decompress } from 'lz-string';
 const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity } } });
 
 persistQueryClient({
-  queryClient: connectionsQueryClient,
-  persistor: createSyncStoragePersister({
+  queryClient: queryClient,
+  persister: createSyncStoragePersister({
     storage: window.localStorage,
     serialize: data => compress(JSON.stringify(data)),
     deserialize: data => JSON.parse(decompress(data)),

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { QueryKey, MutationKey } from '@tanstack/query-core'
 import { isRef, unref } from 'vue-demi'
+import type { MutationKey, QueryKey } from '@tanstack/query-core'
 import type { UnwrapRef } from 'vue-demi'
 
 export const VUE_QUERY_CLIENT = 'VUE_QUERY_CLIENT'
@@ -68,4 +68,16 @@ function isPlainObject(value: unknown): value is Object {
 
   const prototype = Object.getPrototypeOf(value)
   return prototype === null || prototype === Object.prototype
+}
+
+export function shouldThrowError<T extends (...args: any[]) => boolean>(
+  _useErrorBoundary: boolean | T | undefined,
+  params: Parameters<T>,
+): boolean {
+  // Allow useErrorBoundary function to override throwing behavior on a per-error basis
+  if (typeof _useErrorBoundary === 'function') {
+    return _useErrorBoundary(...params)
+  }
+
+  return !!_useErrorBoundary
 }

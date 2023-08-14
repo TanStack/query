@@ -1,21 +1,29 @@
 import * as React from 'react'
-import { fireEvent, screen, waitFor, act } from '@testing-library/react'
+import { act, fireEvent, screen, waitFor } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import '@testing-library/jest-dom'
-import type { QueryClient } from '@tanstack/react-query'
 import { useQuery } from '@tanstack/react-query'
+import UserEvent from '@testing-library/user-event'
 import { defaultPanelSize, sortFns } from '../utils'
 import {
+  createQueryClient,
   getByTextContent,
   renderWithClient,
   sleep,
-  createQueryClient,
 } from './utils'
+import type { QueryClient } from '@tanstack/react-query'
 
 // TODO: This should be removed with the types for react-error-boundary get updated.
 declare module 'react-error-boundary' {
   interface ErrorBoundaryPropsWithFallback {
     children: any
+  }
+}
+
+class CustomError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'CustomError'
   }
 }
 
@@ -653,6 +661,43 @@ describe('ReactQueryDevtools', () => {
     expect(filterInput.value).toEqual('posts')
   })
 
+  it('should not show queries after clear', async () => {
+    const { queryClient, queryCache } = createQueryClient()
+
+    function Page() {
+      const query1Result = useQuery(['query-1'], async () => {
+        return 'query-1-result'
+      })
+      const query2Result = useQuery(['query-2'], async () => {
+        return 'query-2-result'
+      })
+      const query3Result = useQuery(['query-3'], async () => {
+        return 'query-3-result'
+      })
+
+      return (
+        <div>
+          <h1>
+            {query1Result.data} {query2Result.data} {query3Result.data}{' '}
+          </h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /open react query devtools/i }),
+    )
+
+    expect(queryCache.getAll()).toHaveLength(3)
+
+    const clearButton = screen.getByLabelText(/clear/i)
+    fireEvent.click(clearButton)
+
+    expect(queryCache.getAll()).toHaveLength(0)
+  })
+
   it('style should have a nonce', async () => {
     const { queryClient } = createQueryClient()
 
@@ -914,5 +959,188 @@ describe('ReactQueryDevtools', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /^close$/i }))
     expect(parentElement).toHaveStyle(parentPaddings)
+  })
+
+  it('should simulate loading state', async () => {
+    const { queryClient } = createQueryClient()
+    let count = 0
+    function App() {
+      const { data, fetchStatus } = useQuery(['key'], () => {
+        count++
+        return Promise.resolve('test')
+      })
+
+      return (
+        <div>
+          <h1>
+            {data ?? 'No data'}, {fetchStatus}
+          </h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <App />, {
+      initialIsOpen: true,
+    })
+
+    await screen.findByRole('heading', { name: /test/i })
+
+    const loadingButton = await screen.findByRole('button', {
+      name: 'Trigger loading',
+    })
+    fireEvent.click(loadingButton)
+
+    await waitFor(() => {
+      expect(screen.getByText('Restore loading')).toBeInTheDocument()
+    })
+
+    await waitFor(() => {
+      expect(screen.getByText('No data, fetching')).toBeInTheDocument()
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: /restore loading/i }))
+
+    await waitFor(() => {
+      expect(screen.getByText('test, idle')).toBeInTheDocument()
+    })
+
+    expect(count).toBe(2)
+  })
+
+  it('should simulate error state', async () => {
+    const { queryClient } = createQueryClient()
+    function App() {
+      const { status, error } = useQuery(['key'], () => {
+        return Promise.resolve('test')
+      })
+
+      return (
+        <div>
+          <h1>
+            {!!error ? 'Some error' : 'No error'}, {status}
+          </h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <App />, {
+      initialIsOpen: true,
+    })
+
+    const errorButton = await screen.findByRole('button', {
+      name: 'Trigger error',
+    })
+    fireEvent.click(errorButton)
+
+    await waitFor(() => {
+      expect(screen.getByText('Restore error')).toBeInTheDocument()
+    })
+
+    await waitFor(() => {
+      expect(screen.getByText('Some error, error')).toBeInTheDocument()
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: /Restore error/i }))
+
+    await waitFor(() => {
+      expect(screen.getByText('No error, success')).toBeInTheDocument()
+    })
+  })
+
+  it('should can simulate a specific error', async () => {
+    const { queryClient } = createQueryClient()
+
+    function App() {
+      const { status, error } = useQuery(['key'], () => {
+        return Promise.resolve('test')
+      })
+
+      return (
+        <div data-testid="test">
+          <h1>
+            {error instanceof CustomError
+              ? error.message.toString()
+              : 'No error'}
+            , {status}
+          </h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <App />, {
+      initialIsOpen: true,
+      errorTypes: [
+        {
+          name: 'error1',
+          initializer: () => new CustomError('error1'),
+        },
+      ],
+    })
+
+    const errorOption = await screen.findByLabelText('Trigger error:')
+
+    UserEvent.selectOptions(errorOption, 'error1')
+
+    await waitFor(() => {
+      expect(screen.getByText('error1, error')).toBeInTheDocument()
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: /Restore error/i }))
+
+    await waitFor(() => {
+      expect(screen.getByText('No error, success')).toBeInTheDocument()
+    })
+  })
+
+  it('should not refetch when already restoring a query', async () => {
+    const { queryClient } = createQueryClient()
+
+    let count = 0
+    let resolvePromise: (value: unknown) => void = () => undefined
+
+    function App() {
+      const { data } = useQuery(['key'], () => {
+        count++
+
+        // Resolve the promise immediately when
+        // the query is fetched for the first time
+        if (count === 1) {
+          return Promise.resolve('test')
+        }
+
+        return new Promise((resolve) => {
+          // Do not resolve immediately and store the
+          // resolve function to resolve the promise later
+          resolvePromise = resolve
+        })
+      })
+
+      return (
+        <div>
+          <h1>{typeof data === 'string' ? data : 'No data'}</h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <App />, {
+      initialIsOpen: true,
+    })
+
+    const loadingButton = await screen.findByRole('button', {
+      name: 'Trigger loading',
+    })
+    fireEvent.click(loadingButton)
+
+    await waitFor(() => {
+      expect(screen.getByText('Restore loading')).toBeInTheDocument()
+    })
+
+    // Click the restore loading button twice and only resolve query promise
+    // after the second click.
+    fireEvent.click(screen.getByRole('button', { name: /restore loading/i }))
+    fireEvent.click(screen.getByRole('button', { name: /restore loading/i }))
+    resolvePromise('test')
+
+    expect(count).toBe(2)
   })
 })

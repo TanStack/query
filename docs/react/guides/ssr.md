@@ -20,7 +20,7 @@ The exact implementation of these mechanisms may vary from platform to platform,
 
 React Query supports both of these forms of pre-rendering regardless of what platform you may be using.
 
-> Note: For notes about how to integrate with the new beta `/app`-folder in Next.js, see further down in this guide.
+> Note: For notes about how to integrate with the new `/app`-folder in Next.js, see further down in this guide.
 
 ### Using `initialData`
 
@@ -317,11 +317,7 @@ ReactDOM.hydrate(
 )
 ```
 
-## Using Experimental `app` Directory in Next.js 13
-
-> **WARNING:** The `app` directory introduced in Next.js 13 is currently in beta, and it is not recommended for use in production. The API is not stable.
->
-> This guide is provided as is to supply a quick start for early exploration of Next.js 13's experimental features and does not represent the final APIs.
+## Using the `app` Directory in Next.js 13
 
 Both prefetching approaches, using `initialData` or `<Hydrate>`, are available within the `app` directory.
 
@@ -421,7 +417,7 @@ Fetch your data in a Server Component higher up in the component tree than the C
 - Wrap the component tree that needs the prefetched queries inside `<Hydrate>`, and provide it with the dehydrated state
 - You can fetch inside multiple Server Components and use `<Hydrate>` in multiple places
 
-> NOTE: TypeScript currently complains of a type error when using async Server Components. As a temporary workaround, use `{/* @ts-expect-error Server Component */}` when calling this component inside another. For more information, see [End-to-End Type Safety](https://beta.nextjs.org/docs/configuring/typescript#end-to-end-type-safety) in the Next.js 13 beta docs.
+> NOTE: If you encounter a type error while using async Server Components with TypeScript versions lower than `5.1.3` and `@types/react` versions lower than `18.2.8`, it is recommended to update to the latest versions of both. Alternatively, you can use the temporary workaround of adding `{/* @ts-expect-error Server Component */}` when calling this component inside another. For more information, see [Async Server Component TypeScript Error](https://nextjs.org/docs/app/building-your-application/configuring/typescript#async-server-component-typescript-error) in the Next.js 13 docs.
 
 ```tsx
 // app/hydratedPosts.jsx

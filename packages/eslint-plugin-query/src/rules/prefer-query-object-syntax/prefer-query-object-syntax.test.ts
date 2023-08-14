@@ -1,6 +1,6 @@
-import { rule, name } from './prefer-query-object-syntax'
-import { normalizeIndent } from '../../utils/test-utils'
 import { ESLintUtils } from '@typescript-eslint/utils'
+import { normalizeIndent } from '../../utils/test-utils'
+import { name, rule } from './prefer-query-object-syntax'
 
 const ruleTester = new ESLintUtils.RuleTester({
   parser: '@typescript-eslint/parser',

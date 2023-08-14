@@ -1,15 +1,15 @@
-import type { Action, Mutation } from './mutation'
 import { getDefaultState } from './mutation'
 import { notifyManager } from './notifyManager'
-import type { QueryClient } from './queryClient'
 import { Subscribable } from './subscribable'
+import { shallowEqualObjects } from './utils'
+import type { QueryClient } from './queryClient'
 import type {
   MutateOptions,
   MutationObserverBaseResult,
-  MutationObserverResult,
   MutationObserverOptions,
+  MutationObserverResult,
 } from './types'
-import { shallowEqualObjects } from './utils'
+import type { Action, Mutation } from './mutation'
 
 // TYPES
 
@@ -74,10 +74,11 @@ export class MutationObserver<
         observer: this,
       })
     }
+    this.currentMutation?.setOptions(this.options)
   }
 
   protected onUnsubscribe(): void {
-    if (!this.listeners.length) {
+    if (!this.hasListeners()) {
       this.currentMutation?.removeObserver(this)
     }
   }
@@ -196,7 +197,7 @@ export class MutationObserver<
 
       // Then trigger the listeners
       if (options.listeners) {
-        this.listeners.forEach((listener) => {
+        this.listeners.forEach(({ listener }) => {
           listener(this.currentResult)
         })
       }

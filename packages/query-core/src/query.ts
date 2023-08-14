@@ -1,23 +1,23 @@
 import { getAbortController, noop, replaceData, timeUntilStale } from './utils'
+import { defaultLogger } from './logger'
+import { notifyManager } from './notifyManager'
+import { canFetch, createRetryer, isCancelledError } from './retryer'
+import { Removable } from './removable'
 import type {
+  CancelOptions,
+  FetchStatus,
   InitialDataFunction,
+  QueryFunctionContext,
   QueryKey,
+  QueryMeta,
   QueryOptions,
   QueryStatus,
-  QueryFunctionContext,
-  QueryMeta,
-  CancelOptions,
   SetDataOptions,
-  FetchStatus,
 } from './types'
 import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
 import type { Logger } from './logger'
-import { defaultLogger } from './logger'
-import { notifyManager } from './notifyManager'
 import type { Retryer } from './retryer'
-import { isCancelledError, canFetch, createRetryer } from './retryer'
-import { Removable } from './removable'
 
 // TYPES
 
@@ -118,7 +118,7 @@ interface ContinueAction {
 
 interface SetStateAction<TData, TError> {
   type: 'setState'
-  state: QueryState<TData, TError>
+  state: Partial<QueryState<TData, TError>>
   setStateOptions?: SetStateOptions
 }
 
@@ -212,7 +212,7 @@ export class Query<
   }
 
   setState(
-    state: QueryState<TData, TError>,
+    state: Partial<QueryState<TData, TError>>,
     setStateOptions?: SetStateOptions,
   ): void {
     this.dispatch({ type: 'setState', state, setStateOptions })
@@ -282,7 +282,7 @@ export class Query<
   }
 
   addObserver(observer: QueryObserver<any, any, any, any, any>): void {
-    if (this.observers.indexOf(observer) === -1) {
+    if (!this.observers.includes(observer)) {
       this.observers.push(observer)
 
       // Stop the query from being garbage collected
@@ -293,7 +293,7 @@ export class Query<
   }
 
   removeObserver(observer: QueryObserver<any, any, any, any, any>): void {
-    if (this.observers.indexOf(observer) !== -1) {
+    if (this.observers.includes(observer)) {
       this.observers = this.observers.filter((x) => x !== observer)
 
       if (!this.observers.length) {
@@ -392,7 +392,9 @@ export class Query<
     // Create fetch function
     const fetchFn = () => {
       if (!this.options.queryFn) {
-        return Promise.reject('Missing queryFn')
+        return Promise.reject(
+          `Missing queryFn for queryKey '${this.options.queryHash}'`,
+        )
       }
       this.abortSignalConsumed = false
       return this.options.queryFn(queryFnContext)
@@ -434,6 +436,11 @@ export class Query<
       if (!isCancelledError(error)) {
         // Notify cache callback
         this.cache.config.onError?.(error, this as Query<any, any, any, any>)
+        this.cache.config.onSettled?.(
+          this.state.data,
+          error,
+          this as Query<any, any, any, any>,
+        )
 
         if (process.env.NODE_ENV !== 'production') {
           this.logger.error(error)
@@ -458,7 +465,7 @@ export class Query<
               `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ${this.queryHash}`,
             )
           }
-          onError(new Error('undefined') as any)
+          onError(new Error(`${this.queryHash} data is undefined`) as any)
           return
         }
 
@@ -466,6 +473,11 @@ export class Query<
 
         // Notify cache callback
         this.cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
+        this.cache.config.onSettled?.(
+          data,
+          this.state.error,
+          this as Query<any, any, any, any>,
+        )
 
         if (!this.isFetchingOptimistic) {
           // Schedule query gc after fetching

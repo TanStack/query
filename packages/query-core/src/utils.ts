@@ -88,7 +88,7 @@ export function isValidTimeout(value: unknown): value is number {
 }
 
 export function difference<T>(array1: T[], array2: T[]): T[] {
-  return array1.filter((x) => array2.indexOf(x) === -1)
+  return array1.filter((x) => !array2.includes(x))
 }
 
 export function replaceAt<T>(array: T[], index: number, value: T): T[] {

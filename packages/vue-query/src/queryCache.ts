@@ -1,7 +1,7 @@
 import { QueryCache as QC } from '@tanstack/query-core'
-import type { Query, QueryKey, QueryFilters } from '@tanstack/query-core'
-import type { MaybeRefDeep } from './types'
 import { cloneDeepUnref, isQueryKey } from './utils'
+import type { Query, QueryFilters, QueryKey } from '@tanstack/query-core'
+import type { MaybeRefDeep } from './types'
 
 export class QueryCache extends QC {
   find<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData>(

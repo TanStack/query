@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte'
+  import { onDestroy, onMount } from 'svelte'
   import { QueryClient } from '@tanstack/query-core'
   import { setQueryClientContext } from './context'
 

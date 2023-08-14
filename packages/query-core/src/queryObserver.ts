@@ -1,4 +1,3 @@
-import type { DefaultedQueryObserverOptions, RefetchPageFilters } from './types'
 import {
   isServer,
   isValidTimeout,
@@ -8,6 +7,9 @@ import {
   timeUntilStale,
 } from './utils'
 import { notifyManager } from './notifyManager'
+import { focusManager } from './focusManager'
+import { Subscribable } from './subscribable'
+import { canFetch, isCancelledError } from './retryer'
 import type {
   PlaceholderDataFunction,
   QueryKey,
@@ -17,11 +19,9 @@ import type {
   QueryOptions,
   RefetchOptions,
 } from './types'
-import type { Query, QueryState, Action, FetchOptions } from './query'
+import type { Action, FetchOptions, Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
-import { focusManager } from './focusManager'
-import { Subscribable } from './subscribable'
-import { canFetch, isCancelledError } from './retryer'
+import type { DefaultedQueryObserverOptions, RefetchPageFilters } from './types'
 
 type QueryObserverListener<TData, TError> = (
   result: QueryObserverResult<TData, TError>,
@@ -100,7 +100,7 @@ export class QueryObserver<
   }
 
   protected onSubscribe(): void {
-    if (this.listeners.length === 1) {
+    if (this.listeners.size === 1) {
       this.currentQuery.addObserver(this)
 
       if (shouldFetchOnMount(this.currentQuery, this.options)) {
@@ -112,7 +112,7 @@ export class QueryObserver<
   }
 
   protected onUnsubscribe(): void {
-    if (!this.listeners.length) {
+    if (!this.hasListeners()) {
       this.destroy()
     }
   }
@@ -134,7 +134,7 @@ export class QueryObserver<
   }
 
   destroy(): void {
-    this.listeners = []
+    this.listeners = new Set()
     this.clearStaleTimeout()
     this.clearRefetchInterval()
     this.currentQuery.removeObserver(this)
@@ -240,7 +240,30 @@ export class QueryObserver<
   ): QueryObserverResult<TData, TError> {
     const query = this.client.getQueryCache().build(this.client, options)
 
-    return this.createResult(query, options)
+    const result = this.createResult(query, options)
+
+    if (shouldAssignObserverCurrentProperties(this, result, options)) {
+      // this assigns the optimistic result to the current Observer
+      // because if the query function changes, useQuery will be performing
+      // an effect where it would fetch again.
+      // When the fetch finishes, we perform a deep data cloning in order
+      // to reuse objects references. This deep data clone is performed against
+      // the `observer.currentResult.data` property
+      // When QueryKey changes, we refresh the query and get new `optimistic`
+      // result, while we leave the `observer.currentResult`, so when new data
+      // arrives, it finds the old `observer.currentResult` which is related
+      // to the old QueryKey. Which means that currentResult and selectData are
+      // out of sync already.
+      // To solve this, we move the cursor of the currentResult everytime
+      // an observer reads an optimistic value.
+
+      // When keeping the previous data, the result doesn't change until new
+      // data arrives.
+      this.currentResult = result
+      this.currentResultOptions = this.options
+      this.currentResultState = this.currentQuery.state
+    }
+    return result
   }
 
   getCurrentResult(): QueryObserverResult<TData, TError> {
@@ -614,15 +637,21 @@ export class QueryObserver<
       }
 
       const { notifyOnChangeProps } = this.options
+      const notifyOnChangePropsValue =
+        typeof notifyOnChangeProps === 'function'
+          ? notifyOnChangeProps()
+          : notifyOnChangeProps
 
       if (
-        notifyOnChangeProps === 'all' ||
-        (!notifyOnChangeProps && !this.trackedProps.size)
+        notifyOnChangePropsValue === 'all' ||
+        (!notifyOnChangePropsValue && !this.trackedProps.size)
       ) {
         return true
       }
 
-      const includedProps = new Set(notifyOnChangeProps ?? this.trackedProps)
+      const includedProps = new Set(
+        notifyOnChangePropsValue ?? this.trackedProps,
+      )
 
       if (this.options.useErrorBoundary) {
         includedProps.add('error')
@@ -691,7 +720,7 @@ export class QueryObserver<
 
       // Then trigger the listeners
       if (notifyOptions.listeners) {
-        this.listeners.forEach((listener) => {
+        this.listeners.forEach(({ listener }) => {
           listener(this.currentResult)
         })
       }
@@ -763,4 +792,52 @@ function isStale(
   options: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
   return query.isStaleByTime(options.staleTime)
+}
+
+// this function would decide if we will update the observer's 'current'
+// properties after an optimistic reading via getOptimisticResult
+function shouldAssignObserverCurrentProperties<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+  optimisticResult: QueryObserverResult<TData, TError>,
+  options: DefaultedQueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  >,
+) {
+  // it is important to keep this condition like this for three reasons:
+  // 1. It will get removed in the v5
+  // 2. it reads: don't update the properties if we want to keep the previous
+  // data.
+  // 3. The opposite condition (!options.keepPreviousData) would fallthrough
+  // and will result in a bad decision
+  if (options.keepPreviousData) {
+    return false
+  }
+
+  // this means we want to put some placeholder data when pending and queryKey
+  // changed.
+  if (options.placeholderData !== undefined) {
+    // re-assign properties only if current data is placeholder data
+    // which means that data did not arrive yet, so, if there is some cached data
+    // we need to "prepare" to receive it
+    return optimisticResult.isPlaceholderData
+  }
+
+  // if the newly created result isn't what the observer is holding as current,
+  // then we'll need to update the properties as well
+  if (!shallowEqualObjects(observer.getCurrentResult(), optimisticResult)) {
+    return true
+  }
+
+  // basically, just keep previous properties if nothing changed
+  return false
 }

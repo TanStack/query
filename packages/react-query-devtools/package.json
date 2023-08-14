@@ -1,10 +1,14 @@
 {
   "name": "@tanstack/react-query-devtools",
-  "version": "4.24.10",
+  "version": "4.32.6",
   "description": "Developer tools to interact with and visualize the TanStack/react-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
-  "repository": "tanstack/query",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TanStack/query.git",
+    "directory": "packages/react-query-devtools"
+  },
   "homepage": "https://tanstack.com/query",
   "funding": {
     "type": "github",
@@ -64,6 +68,6 @@
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0",
-    "@tanstack/react-query": "workspace:*"
+    "@tanstack/react-query": "workspace:^"
   }
 }

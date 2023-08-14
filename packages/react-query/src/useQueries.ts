@@ -1,10 +1,9 @@
+'use client'
 import * as React from 'react'
-import { useSyncExternalStore } from './useSyncExternalStore'
 
-import type { QueryKey, QueryFunction } from '@tanstack/query-core'
-import { notifyManager, QueriesObserver } from '@tanstack/query-core'
+import { QueriesObserver, notifyManager } from '@tanstack/query-core'
+import { useSyncExternalStore } from './useSyncExternalStore'
 import { useQueryClient } from './QueryClientProvider'
-import type { UseQueryOptions, UseQueryResult } from './types'
 import { useIsRestoring } from './isRestoring'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
@@ -14,10 +13,12 @@ import {
 } from './errorBoundaryUtils'
 import {
   ensureStaleTime,
-  shouldSuspend,
   fetchOptimistic,
+  shouldSuspend,
   willFetch,
 } from './suspense'
+import type { QueryFunction, QueryKey } from '@tanstack/query-core'
+import type { UseQueryOptions, UseQueryResult } from './types'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
@@ -156,6 +157,7 @@ export function useQueries<T extends any[]>({
 }): QueriesResults<T> {
   const queryClient = useQueryClient({ context })
   const isRestoring = useIsRestoring()
+  const errorResetBoundary = useQueryErrorResetBoundary()
 
   const defaultedQueries = React.useMemo(
     () =>
@@ -171,6 +173,13 @@ export function useQueries<T extends any[]>({
       }),
     [queries, queryClient, isRestoring],
   )
+
+  defaultedQueries.forEach((query) => {
+    ensureStaleTime(query)
+    ensurePreventErrorBoundaryRetry(query, errorResetBoundary)
+  })
+
+  useClearResetErrorBoundary(errorResetBoundary)
 
   const [observer] = React.useState(
     () => new QueriesObserver(queryClient, defaultedQueries),
@@ -196,15 +205,6 @@ export function useQueries<T extends any[]>({
     observer.setQueries(defaultedQueries, { listeners: false })
   }, [defaultedQueries, observer])
 
-  const errorResetBoundary = useQueryErrorResetBoundary()
-
-  defaultedQueries.forEach((query) => {
-    ensurePreventErrorBoundaryRetry(query, errorResetBoundary)
-    ensureStaleTime(query)
-  })
-
-  useClearResetErrorBoundary(errorResetBoundary)
-
   const shouldAtLeastOneSuspend = optimisticResult.some((result, index) =>
     shouldSuspend(defaultedQueries[index], result, isRestoring),
   )
@@ -228,14 +228,14 @@ export function useQueries<T extends any[]>({
   if (suspensePromises.length > 0) {
     throw Promise.all(suspensePromises)
   }
-
+  const observerQueries = observer.getQueries()
   const firstSingleResultWhichShouldThrow = optimisticResult.find(
     (result, index) =>
       getHasError({
         result,
         errorResetBoundary,
         useErrorBoundary: defaultedQueries[index]?.useErrorBoundary ?? false,
-        query: observer.getQueries()[index]!,
+        query: observerQueries[index]!,
       }),
   )
 

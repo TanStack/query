@@ -30,8 +30,8 @@ Enjoy this library? Try the entire [TanStack](https://tanstack.com)! [TanStack T
 
 ## Visit [tanstack.com/query](https://tanstack.com/query) for docs, guides, API and more!
 
-Still on **React Query v2**? No problem! Check out the v2 docs here: https://react-query-v2.tanstack.com/. <br />
-Still on **React Query v3**? No problem! Check out the v3 docs here: https://react-query-v3.tanstack.com/.
+Still on **React Query v2**? No problem! Check out the v2 docs here: https://github.com/TanStack/query/tree/2.x/docs/src/pages/docs. <br />
+Still on **React Query v3**? No problem! Check out the v3 docs here: https://tanstack.com/query/v3/docs/.
 
 ## Quick Features
 
@@ -43,7 +43,7 @@ Still on **React Query v3**? No problem! Check out the v3 docs here: https://rea
 - Paginated + Cursor-based Queries
 - Load-More + Infinite Scroll Queries w/ Scroll Recovery
 - Request Cancellation
-- [React Suspense](https://reactjs.org/docs/concurrent-mode-suspense.html) + Fetch-As-You-Render Query Prefetching
+- [React Suspense](https://react.dev/reference/react/Suspense) + Fetch-As-You-Render Query Prefetching
 - Dedicated Devtools
 - <a href="https://bundlephobia.com/package/@tanstack/react-query@latest" target="\_parent">
   <img alt="" src="https://badgen.net/bundlephobia/minzip/@tanstack/react-query" />

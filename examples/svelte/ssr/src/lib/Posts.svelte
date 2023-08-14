@@ -1,6 +1,6 @@
 <script lang="ts">
   import { useQueryClient, createQuery } from '@tanstack/svelte-query'
-  import { getPosts } from './data'
+  import { api } from './api'
 
   const client = useQueryClient()
 
@@ -11,7 +11,7 @@
     Error
   >({
     queryKey: ['posts', limit],
-    queryFn: () => getPosts(limit),
+    queryFn: () => api().getPosts(limit),
   })
 </script>
 

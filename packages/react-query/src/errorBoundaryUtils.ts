@@ -1,3 +1,6 @@
+'use client'
+import * as React from 'react'
+import { shouldThrowError } from './utils'
 import type {
   DefaultedQueryObserverOptions,
   Query,
@@ -6,8 +9,6 @@ import type {
   UseErrorBoundary,
 } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
-import * as React from 'react'
-import { shouldThrowError } from './utils'
 
 export const ensurePreventErrorBoundaryRetry = <
   TQueryFnData,

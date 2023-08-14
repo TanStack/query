@@ -1,16 +1,6 @@
-import {
-  branchConfigs,
-  examplesDirs,
-  latestBranch,
-  packages,
-  rootDir,
-} from './config'
-import type { BranchConfig, Commit, Package } from './types'
-
 // Originally ported to TS from https://github.com/remix-run/react-router/tree/main/scripts/{version,publish}.js
 import path from 'path'
-import { exec, execSync } from 'child_process'
-import fsp from 'fs/promises'
+import { execSync } from 'child_process'
 import chalk from 'chalk'
 import jsonfile from 'jsonfile'
 import semver from 'semver'
@@ -20,6 +10,8 @@ import log from 'git-log-parser'
 import streamToArray from 'stream-to-array'
 import axios from 'axios'
 import { DateTime } from 'luxon'
+import { branchConfigs, latestBranch, packages, rootDir } from './config'
+import type { BranchConfig, Commit, Package } from './types'
 
 import type { PackageJson } from 'type-fest'
 
@@ -31,20 +23,8 @@ async function run() {
     // (process.env.PR_NUMBER ? `pr-${process.env.PR_NUMBER}` : currentGitBranch())
     currentGitBranch()
 
-  const branchConfig: BranchConfig | undefined = branchConfigs[branchName]
-
-  if (!branchConfig) {
-    console.log(`No publish config found for branch: ${branchName}`)
-    console.log('Exiting...')
-    process.exit(0)
-  }
-
-  const isLatestBranch = branchName === latestBranch
-  const npmTag = isLatestBranch ? 'latest' : branchName
-
-  let remoteURL = execSync('git config --get remote.origin.url').toString()
-
-  remoteURL = remoteURL.substring(0, remoteURL.indexOf('.git'))
+  const isMainBranch = branchName === 'main'
+  const npmTag = isMainBranch ? 'latest' : branchName
 
   // Get tags
   let tags: string[] = execSync('git tag').toString().split('\n')
@@ -53,11 +33,11 @@ async function run() {
   tags = tags
     .filter((tag) => semver.valid(tag))
     .filter((tag) => {
-      if (isLatestBranch) {
-        return semver.prerelease(tag) == null
+      if (semver.prerelease(tag) === null) {
+        return isMainBranch
+      } else {
+        return !isMainBranch
       }
-
-      return tag.includes(`-${branchName}`)
     })
     // sort by latest
     .sort(semver.compare)
@@ -135,20 +115,22 @@ async function run() {
   // Pares the commit messsages, log them, and determine the type of release needed
   let recommendedReleaseLevel: number = commitsSinceLatestTag.reduce(
     (releaseLevel, commit) => {
-      if (['fix', 'refactor', 'perf'].includes(commit.parsed.type!)) {
-        releaseLevel = Math.max(releaseLevel, 0)
-      }
-      if (['feat'].includes(commit.parsed.type!)) {
-        releaseLevel = Math.max(releaseLevel, 1)
-      }
-      if (commit.body.includes('BREAKING CHANGE')) {
-        releaseLevel = Math.max(releaseLevel, 2)
-      }
-      if (
-        commit.subject.includes('RELEASE_ALL') ||
-        commit.body.includes('RELEASE_ALL')
-      ) {
-        RELEASE_ALL = true
+      if (commit.parsed.type) {
+        if (['fix', 'refactor', 'perf'].includes(commit.parsed.type!)) {
+          releaseLevel = Math.max(releaseLevel, 0)
+        }
+        if (['feat'].includes(commit.parsed.type!)) {
+          releaseLevel = Math.max(releaseLevel, 1)
+        }
+        if (commit.body.includes('BREAKING CHANGE')) {
+          releaseLevel = Math.max(releaseLevel, 2)
+        }
+        if (
+          commit.subject.includes('RELEASE_ALL') ||
+          commit.body.includes('RELEASE_ALL')
+        ) {
+          RELEASE_ALL = true
+        }
       }
 
       return releaseLevel
@@ -165,15 +147,16 @@ async function run() {
 
   const changedPackages = RELEASE_ALL
     ? packages
-    : changedFiles.reduce((changedPackages, file) => {
-        const pkg = packages.find((p) =>
-          file.startsWith(path.join('packages', p.packageDir, p.srcDir)),
+    : packages.filter((pkg) => {
+        const changed = changedFiles.some(
+          (file) =>
+            file.startsWith(path.join('packages', pkg.packageDir, 'src')) ||
+            file.startsWith(
+              path.join('packages', pkg.packageDir, 'package.json'),
+            ),
         )
-        if (pkg && !changedPackages.find((d) => d.name === pkg.name)) {
-          changedPackages.push(pkg)
-        }
-        return changedPackages
-      }, [] as Package[])
+        return changed
+      })
 
   // If a package has a dependency that has been updated, we need to update the
   // package that depends on it as well.
@@ -224,28 +207,6 @@ async function run() {
     }
   }
 
-  function getSorterFn<TItem>(sorters: ((d: TItem) => any)[]) {
-    return (a: TItem, b: TItem) => {
-      let i = 0
-
-      sorters.some((sorter) => {
-        const sortedA = sorter(a)
-        const sortedB = sorter(b)
-        if (sortedA > sortedB) {
-          i = 1
-          return true
-        }
-        if (sortedA < sortedB) {
-          i = -1
-          return true
-        }
-        return false
-      })
-
-      return i
-    }
-  }
-
   const changelogCommitsMd = process.env.TAG
     ? `Manual Release: ${process.env.TAG}`
     : await Promise.all(
@@ -282,7 +243,7 @@ async function run() {
 
                 if (process.env.GH_TOKEN) {
                   const query = `${
-                    commit.author.email ?? commit.committer.email
+                    commit.author.email || commit.committer.email
                   }`
 
                   const res = await axios.get(
@@ -303,16 +264,15 @@ async function run() {
                 const scope = commit.parsed.scope
                   ? `${commit.parsed.scope}: `
                   : ''
-                const subject = commit.parsed.subject ?? commit.subject
-                // const commitUrl = `${remoteURL}/commit/${commit.commit.long}`;
+                const subject = commit.parsed.subject || commit.subject
 
                 return `- ${scope}${subject} (${commit.commit.short}) ${
                   username
                     ? `by @${username}`
-                    : `by ${commit.author.name ?? commit.author.email}`
+                    : `by ${commit.author.name || commit.author.email}`
                 }`
               }),
-            ).then((commits) => [type, commits] as const)
+            ).then((c) => [type, c] as const)
           }),
       ).then((groups) => {
         return groups
@@ -324,6 +284,14 @@ async function run() {
 
   if (process.env.TAG && recommendedReleaseLevel === -1) {
     recommendedReleaseLevel = 0
+  }
+
+  const branchConfig: BranchConfig | undefined = branchConfigs[branchName]
+
+  if (!branchConfig) {
+    console.log(`No publish config found for branch: ${branchName}`)
+    console.log('Exiting...')
+    process.exit(0)
   }
 
   const releaseType = branchConfig.prerelease
@@ -369,57 +337,14 @@ async function run() {
   }
 
   console.info('Building packages...')
-  execSync(`pnpm run build`, { encoding: 'utf8', stdio: 'inherit' })
+  execSync(`pnpm run build --skip-nx-cache`, {
+    encoding: 'utf8',
+    stdio: 'inherit',
+  })
   console.info('')
 
   console.info('Validating packages...')
-  const failedValidations: string[] = []
-
-  await Promise.all(
-    packages.map(async (pkg) => {
-      const pkgJson = await readPackageJson(
-        path.resolve(rootDir, 'packages', pkg.packageDir, 'package.json'),
-      )
-
-      const entries =
-        pkg.name === '@tanstack/eslint-plugin-query'
-          ? (['main'] as const)
-          : pkg.name === '@tanstack/svelte-query'
-          ? (['types', 'module'] as const)
-          : (['main', 'types', 'module'] as const)
-
-      await Promise.all(
-        entries.map(async (entryKey) => {
-          const entry = pkgJson[entryKey] as string
-
-          if (!entry) {
-            throw new Error(
-              `Missing entry for "${entryKey}" in ${pkg.packageDir}/package.json!`,
-            )
-          }
-
-          const filePath = path.resolve(
-            rootDir,
-            'packages',
-            pkg.packageDir,
-            entry,
-          )
-
-          try {
-            await fsp.access(filePath)
-          } catch (err) {
-            failedValidations.push(`Missing build file: ${filePath}`)
-          }
-        }),
-      )
-    }),
-  )
-  console.info('')
-  if (failedValidations.length > 0) {
-    throw new Error(
-      'Some packages failed validation:\n\n' + failedValidations.join('\n'),
-    )
-  }
+  execSync(`pnpm run validatePackages`, { encoding: 'utf8', stdio: 'inherit' })
 
   console.info(`Updating all changed packages to version ${version}...`)
   // Update each package to the new version
@@ -441,22 +366,11 @@ async function run() {
     return
   }
 
-  // Tag and commit
-  console.info(`Creating new git tag v${version}`)
-  execSync(`git tag -a -m "v${version}" v${version}`)
-
-  const taggedVersion = getTaggedVersion()
-  if (!taggedVersion) {
-    throw new Error(
-      'Missing the tagged release version. Something weird is afoot!',
-    )
-  }
-
   console.info()
   console.info(`Publishing all packages to npm with tag "${npmTag}"`)
 
   // Publish each package
-  changedPackages.map((pkg) => {
+  changedPackages.forEach((pkg) => {
     const packageDir = path.join(rootDir, 'packages', pkg.packageDir)
     const cmd = `cd ${packageDir} && pnpm publish --tag ${npmTag} --access=public --no-git-checks`
     console.info(
@@ -469,36 +383,33 @@ async function run() {
 
   console.info()
 
-  console.info(`Pushing new tags to branch.`)
-  execSync(`git push --tags`)
-  console.info(`  Pushed tags to branch.`)
+  console.info(`Committing changes...`)
+  execSync(`git add -A && git commit -m "${releaseCommitMsg(version)}"`)
+  console.info()
+  console.info(`  Committed Changes.`)
 
-  if (branchConfig.ghRelease) {
-    console.info(`Creating github release...`)
-    // Stringify the markdown to excape any quotes
-    execSync(
-      `gh release create v${version} ${
-        !isLatestBranch ? '--prerelease' : ''
-      } --notes '${changelogMd.replace(/'/g, '"')}'`,
-    )
-    console.info(`  Github release created.`)
+  console.info(`Pushing changes...`)
+  execSync(`git push`)
+  console.info()
+  console.info(`  Changes pushed.`)
 
-    console.info(`Committing changes...`)
-    execSync(`git add -A && git commit -m "${releaseCommitMsg(version)}"`)
-    console.info()
-    console.info(`  Committed Changes.`)
-    console.info(`Pushing changes...`)
-    execSync(`git push`)
-    console.info()
-    console.info(`  Changes pushed.`)
-  } else {
-    console.info(`Skipping github release and change commit.`)
-  }
+  console.info(`Creating new git tag v${version}`)
+  execSync(`git tag -a -m "v${version}" v${version}`)
 
   console.info(`Pushing tags...`)
   execSync(`git push --tags`)
   console.info()
   console.info(`  Tags pushed.`)
+
+  console.info(`Creating github release...`)
+  // Stringify the markdown to excape any quotes
+  execSync(
+    `gh release create v${version} ${
+      !isMainBranch ? '--prerelease' : ''
+    } --notes '${changelogMd.replace(/'/g, '"')}'`,
+  )
+  console.info(`  Github release created.`)
+
   console.info(`All done!`)
 }
 
@@ -526,7 +437,24 @@ async function updatePackageJson(
   })
 }
 
-function getTaggedVersion() {
-  const output = execSync('git tag --list --points-at HEAD').toString()
-  return output.replace(/^v|\n+$/g, '')
+function getSorterFn<TItem>(sorters: ((d: TItem) => any)[]) {
+  return (a: TItem, b: TItem) => {
+    let i = 0
+
+    sorters.some((sorter) => {
+      const sortedA = sorter(a)
+      const sortedB = sorter(b)
+      if (sortedA > sortedB) {
+        i = 1
+        return true
+      }
+      if (sortedA < sortedB) {
+        i = -1
+        return true
+      }
+      return false
+    })
+
+    return i
+  }
 }

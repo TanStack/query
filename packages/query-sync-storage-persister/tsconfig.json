@@ -7,7 +7,5 @@
     "tsBuildInfoFile": "./build/.tsbuildinfo"
   },
   "include": ["src"],
-  "references": [
-    { "path": "../query-persist-client-core" }
-  ]
+  "references": [{ "path": "../query-persist-client-core" }]
 }

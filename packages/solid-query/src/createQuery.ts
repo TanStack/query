@@ -1,15 +1,15 @@
-import type { QueryFunction, QueryOptions } from '@tanstack/query-core'
 import { QueryObserver } from '@tanstack/query-core'
+import { createComputed } from 'solid-js'
+import { createStore } from 'solid-js/store'
+import { parseQueryArgs } from './utils'
+import { createBaseQuery } from './createBaseQuery'
 import type {
   CreateQueryOptions,
   CreateQueryResult,
   DefinedCreateQueryResult,
   SolidQueryKey,
 } from './types'
-import { createComputed } from 'solid-js'
-import { createStore } from 'solid-js/store'
-import { parseQueryArgs } from './utils'
-import { createBaseQuery } from './createBaseQuery'
+import type { QueryFunction, QueryOptions } from '@tanstack/query-core'
 
 // There are several ways to create a query.
 // 1. createQuery(options: CreateQueryOptions)

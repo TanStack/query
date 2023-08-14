@@ -1,21 +1,21 @@
 import { fireEvent, render, screen, waitFor } from 'solid-testing-library'
 
 import {
-  createRenderEffect,
-  createSignal,
   ErrorBoundary,
-  on,
   Show,
   Suspense,
+  createRenderEffect,
+  createSignal,
+  on,
 } from 'solid-js'
-import type { CreateInfiniteQueryResult, CreateQueryResult } from '..'
 import {
-  createInfiniteQuery,
-  createQuery,
   QueryCache,
   QueryClientProvider,
+  createInfiniteQuery,
+  createQuery,
 } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
+import type { CreateInfiniteQueryResult, CreateQueryResult } from '..'
 
 describe("useQuery's in Suspense mode", () => {
   const queryCache = new QueryCache()
@@ -549,7 +549,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => screen.getByText(`data: ${key2()}`))
     expect(
       // @ts-expect-error
-      queryClient.getQueryCache().find(key2())!.observers[0].listeners.length,
+      queryClient.getQueryCache().find(key2())!.observers[0].listeners.size,
     ).toBe(1)
   })
 

@@ -1,3 +1,7 @@
 {
-  "extends": ["react-app", "prettier", "plugin:@tanstack/eslint-plugin-query/recommended"]
+  "extends": [
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:@tanstack/eslint-plugin-query/recommended"
+  ]
 }

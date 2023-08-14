@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 import {
   Typography,
   Link,
@@ -9,33 +9,33 @@ import {
   TableHead,
   TableRow,
   Paper,
-} from "@material-ui/core";
-import { Link as RouterLink } from "react-router-dom";
-import { withRouter } from "react-router";
-import { useQuery } from "@tanstack/react-query";
-import fetch from "./fetch";
+} from '@material-ui/core'
+import { Link as RouterLink } from 'react-router-dom'
+import { withRouter } from 'react-router'
+import { useQuery } from '@tanstack/react-query'
+import fetch from './fetch'
 
 function Character(props) {
-  const characterId = props.match.params.characterId;
+  const characterId = props.match.params.characterId
   const { status, error, data } = useQuery({
-    queryKey: ["character", characterId],
+    queryKey: ['character', characterId],
     queryFn: () => fetch(`https://swapi.dev/api/people/${characterId}/`),
-  });
+  })
 
-  if (status === "loading") return <p>Loading...</p>;
-  if (status === "error") return <p>Error :(</p>;
+  if (status === 'loading') return <p>Loading...</p>
+  if (status === 'error') return <p>Error :(</p>
 
-  console.info({ data, status, error });
-  const homeworldUrlParts = data.homeworld.split("/").filter(Boolean);
-  const homeworldId = homeworldUrlParts[homeworldUrlParts.length - 1];
+  console.info({ data, status, error })
+  const homeworldUrlParts = data.homeworld.split('/').filter(Boolean)
+  const homeworldId = homeworldUrlParts[homeworldUrlParts.length - 1]
 
-  if (status !== "success") {
-    return null;
+  if (status !== 'success') {
+    return null
   }
   return (
     <div>
       <Typography variant="h2">{data.name}</Typography>
-      <TableContainer component={Paper} style={{ maxWidth: "400px" }}>
+      <TableContainer component={Paper} style={{ maxWidth: '400px' }}>
         <Table size="small" aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -76,23 +76,23 @@ function Character(props) {
       <br />
       <Typography variant="h4">Films</Typography>
       {data.films.map((film) => {
-        const filmUrlParts = film.split("/").filter(Boolean);
-        const filmId = filmUrlParts[filmUrlParts.length - 1];
-        return <Film id={filmId} key={`Film-${filmId}`} />;
+        const filmUrlParts = film.split('/').filter(Boolean)
+        const filmId = filmUrlParts[filmUrlParts.length - 1]
+        return <Film id={filmId} key={`Film-${filmId}`} />
       })}
     </div>
-  );
+  )
 }
 
 function Film(props) {
-  const { id } = props;
+  const { id } = props
   const { data, status } = useQuery({
-    queryKey: ["film", id],
+    queryKey: ['film', id],
     queryFn: () => fetch(`https://swapi.dev/api/films/${id}/`),
-  });
+  })
 
-  if (status !== "success") {
-    return null;
+  if (status !== 'success') {
+    return null
   }
   return (
     <article key={id}>
@@ -102,21 +102,21 @@ function Film(props) {
         </Typography>
       </Link>
     </article>
-  );
+  )
 }
 
 function Homeworld(props) {
-  const { id } = props;
+  const { id } = props
   const { data, status } = useQuery({
-    queryKey: ["homeworld", id],
+    queryKey: ['homeworld', id],
     queryFn: () => fetch(`https://swapi.dev/api/planets/${id}/`),
-  });
+  })
 
-  if (status !== "success") {
-    return null;
+  if (status !== 'success') {
+    return null
   }
 
-  return data.name;
+  return data.name
 }
 
-export default withRouter(Character);
+export default withRouter(Character)

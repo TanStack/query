@@ -1,7 +1,7 @@
 import { reactive, ref } from 'vue-demi'
-import { errorMutator, flushPromises, successMutator } from './test-utils'
 import { parseMutationArgs, useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
+import { errorMutator, flushPromises, successMutator } from './test-utils'
 
 jest.mock('../useQueryClient')
 
@@ -308,6 +308,26 @@ describe('useMutation', () => {
         data: { value: undefined },
         error: { value: Error('Some error') },
       })
+    })
+  })
+
+  describe('errorBoundary', () => {
+    test('should evaluate useErrorBoundary when mutation is expected to throw', async () => {
+      const err = new Error('Expected mock error. All is well!')
+      const boundaryFn = jest.fn()
+      const { mutate } = useMutation(
+        () => {
+          return Promise.reject(err)
+        },
+        { useErrorBoundary: boundaryFn },
+      )
+
+      mutate()
+
+      await flushPromises()
+
+      expect(boundaryFn).toHaveBeenCalledTimes(1)
+      expect(boundaryFn).toHaveBeenCalledWith(err)
     })
   })
 

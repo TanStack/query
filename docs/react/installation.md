@@ -41,9 +41,21 @@ React Query is optimized for modern browsers. It is compatible with the followin
 Chrome >= 73
 Firefox >= 78
 Edge >= 79
-Safari >= 12.0
-iOS >= 12.0
+Safari >= 12.1
+iOS >= 12.2
 opera >= 53
 ```
 
 > Depending on your environment, you might need to add polyfills. If you want to support older browsers, you need to transpile the library from `node_modules` yourselves.
+
+### Recommendations
+
+It is recommended to also use our [ESLint Plugin Query](./eslint/eslint-plugin-query) to help you catch bugs and inconsistencies while you code. You can install it via:
+
+```bash
+$ npm i -D @tanstack/eslint-plugin-query
+# or
+$ pnpm add -D @tanstack/eslint-plugin-query
+# or
+$ yarn add -D @tanstack/eslint-plugin-query
+```

@@ -1,23 +1,22 @@
 import { fireEvent, render, screen, waitFor } from 'solid-testing-library'
 
-import { createQueryClient, sleep } from './utils'
-
 import {
-  createEffect,
-  createRenderEffect,
-  createSignal,
   For,
   Index,
   Match,
   Switch,
+  createEffect,
+  createRenderEffect,
+  createSignal,
 } from 'solid-js'
+import { QueryCache, QueryClientProvider, createInfiniteQuery } from '..'
+import { createQueryClient, sleep } from './utils'
+import { Blink, queryKey, setActTimeout } from './utils'
 import type {
   CreateInfiniteQueryResult,
   InfiniteData,
   QueryFunctionContext,
 } from '..'
-import { createInfiniteQuery, QueryCache, QueryClientProvider } from '..'
-import { Blink, queryKey, setActTimeout } from './utils'
 
 interface Result {
   items: number[]

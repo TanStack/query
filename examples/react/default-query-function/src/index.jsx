@@ -1,22 +1,22 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from "react";
-import ReactDOM from "react-dom/client";
-import axios from "axios";
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import axios from 'axios'
 import {
   useQuery,
   useQueryClient,
   QueryClient,
   QueryClientProvider,
-} from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+} from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 // Define a default query function that will receive the query key
 const defaultQueryFn = async ({ queryKey }) => {
   const { data } = await axios.get(
-    `https://jsonplaceholder.typicode.com${queryKey[0]}`
-  );
-  return data;
-};
+    `https://jsonplaceholder.typicode.com${queryKey[0]}`,
+  )
+  return data
+}
 
 // provide the default query function to your app via the query client
 const queryClient = new QueryClient({
@@ -25,10 +25,10 @@ const queryClient = new QueryClient({
       queryFn: defaultQueryFn,
     },
   },
-});
+})
 
 function App() {
-  const [postId, setPostId] = React.useState(-1);
+  const [postId, setPostId] = React.useState(-1)
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -36,7 +36,7 @@ function App() {
         As you visit the posts below, you will notice them in a loading state
         the first time you load them. However, after you return to this list and
         click on any posts you have already visited again, you will see them
-        load instantly and background refresh right before your eyes!{" "}
+        load instantly and background refresh right before your eyes!{' '}
         <strong>
           (You may need to throttle your network speed to simulate longer
           loading sequences)
@@ -49,24 +49,24 @@ function App() {
       )}
       <ReactQueryDevtools initialIsOpen />
     </QueryClientProvider>
-  );
+  )
 }
 
 function Posts({ setPostId }) {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   // All you have to do now is pass a key!
   const { status, data, error, isFetching } = useQuery({
-    queryKey: ["/posts"],
-  });
+    queryKey: ['/posts'],
+  })
 
   return (
     <div>
       <h1>Posts</h1>
       <div>
-        {status === "loading" ? (
-          "Loading..."
-        ) : status === "error" ? (
+        {status === 'loading' ? (
+          'Loading...'
+        ) : status === 'error' ? (
           <span>Error: {error.message}</span>
         ) : (
           <>
@@ -79,10 +79,10 @@ function Posts({ setPostId }) {
                     style={
                       // We can use the queryCache here to show bold links for
                       // ones that are cached
-                      queryClient.getQueryData(["post", post.id])
+                      queryClient.getQueryData(['post', post.id])
                         ? {
-                            fontWeight: "bold",
-                            color: "green",
+                            fontWeight: 'bold',
+                            color: 'green',
                           }
                         : {}
                     }
@@ -92,12 +92,12 @@ function Posts({ setPostId }) {
                 </p>
               ))}
             </div>
-            <div>{isFetching ? "Background Updating..." : " "}</div>
+            <div>{isFetching ? 'Background Updating...' : ' '}</div>
           </>
         )}
       </div>
     </div>
-  );
+  )
 }
 
 function Post({ postId, setPostId }) {
@@ -105,7 +105,7 @@ function Post({ postId, setPostId }) {
   const { status, data, error, isFetching } = useQuery({
     queryKey: [`/posts/${postId}`],
     enabled: !!postId,
-  });
+  })
 
   return (
     <div>
@@ -114,9 +114,9 @@ function Post({ postId, setPostId }) {
           Back
         </a>
       </div>
-      {!postId || status === "loading" ? (
-        "Loading..."
-      ) : status === "error" ? (
+      {!postId || status === 'loading' ? (
+        'Loading...'
+      ) : status === 'error' ? (
         <span>Error: {error.message}</span>
       ) : (
         <>
@@ -124,12 +124,12 @@ function Post({ postId, setPostId }) {
           <div>
             <p>{data.body}</p>
           </div>
-          <div>{isFetching ? "Background Updating..." : " "}</div>
+          <div>{isFetching ? 'Background Updating...' : ' '}</div>
         </>
       )}
     </div>
-  );
+  )
 }
 
-const rootElement = document.getElementById("root");
-ReactDOM.createRoot(rootElement).render(<App />);
+const rootElement = document.getElementById('root')
+ReactDOM.createRoot(rootElement).render(<App />)

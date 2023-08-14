@@ -1,1 +1,6 @@
-/packages/svelte-query/.svelte-kit
+**/.next
+**/.svelte-kit
+**/build
+**/coverage
+**/dist
+**/codemods/**/__testfixtures__

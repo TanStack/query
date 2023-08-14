@@ -1,20 +1,20 @@
 import {
   computed,
+  getCurrentInstance,
+  onScopeDispose,
   reactive,
   ref,
-  onScopeDispose,
-  getCurrentInstance,
 } from 'vue-demi'
 import { QueryObserver } from '@tanstack/query-core'
 
-import {
-  flushPromises,
-  rejectFetcher,
-  simpleFetcher,
-  getSimpleFetcherWithReturnData,
-} from './test-utils'
 import { useQuery } from '../useQuery'
 import { parseQueryArgs, useBaseQuery } from '../useBaseQuery'
+import {
+  flushPromises,
+  getSimpleFetcherWithReturnData,
+  rejectFetcher,
+  simpleFetcher,
+} from './test-utils'
 
 jest.mock('../useQueryClient')
 jest.mock('../useBaseQuery')
@@ -231,6 +231,26 @@ describe('useQuery', () => {
     await flushPromises()
 
     expect(status.value).toStrictEqual('loading')
+  })
+
+  describe('errorBoundary', () => {
+    test('should evaluate useErrorBoundary when query is expected to throw', async () => {
+      const boundaryFn = jest.fn()
+      useQuery(['key0'], rejectFetcher, {
+        retry: false,
+        useErrorBoundary: boundaryFn,
+      })
+
+      await flushPromises()
+
+      expect(boundaryFn).toHaveBeenCalledTimes(1)
+      expect(boundaryFn).toHaveBeenCalledWith(
+        Error('Some error'),
+        expect.objectContaining({
+          state: expect.objectContaining({ status: 'error' }),
+        }),
+      )
+    })
   })
 
   describe('parseQueryArgs', () => {

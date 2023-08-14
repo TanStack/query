@@ -2,17 +2,17 @@
 const UnprocessableKeyError = require('../unprocessable-key-error')
 
 module.exports = ({ jscodeshift, root, filePath, keyName = 'queryKey' }) => {
-  const isArrayExpression = node =>
+  const isArrayExpression = (node) =>
     jscodeshift.match(node, { type: jscodeshift.ArrayExpression.name })
 
-  const isStringLiteral = node =>
+  const isStringLiteral = (node) =>
     jscodeshift.match(node, { type: jscodeshift.StringLiteral.name }) ||
     jscodeshift.match(node, { type: jscodeshift.Literal.name })
 
-  const isTemplateLiteral = node =>
+  const isTemplateLiteral = (node) =>
     jscodeshift.match(node, { type: jscodeshift.TemplateLiteral.name })
 
-  const findVariableDeclaration = node => {
+  const findVariableDeclaration = (node) => {
     const declarations = root
       .find(jscodeshift.VariableDeclarator, {
         id: {
@@ -25,7 +25,7 @@ module.exports = ({ jscodeshift, root, filePath, keyName = 'queryKey' }) => {
     return declarations.length > 0 ? declarations[0] : null
   }
 
-  const createKeyValue = node => {
+  const createKeyValue = (node) => {
     // When the node is a string literal we convert it into an array of strings.
     if (isStringLiteral(node)) {
       return jscodeshift.arrayExpression([
@@ -47,7 +47,7 @@ module.exports = ({ jscodeshift, root, filePath, keyName = 'queryKey' }) => {
 
       if (!variableDeclaration) {
         throw new UnprocessableKeyError(
-          `In file ${filePath} at line ${node.loc.start.line} the type of identifier \`${node.name}\` couldn't be recognized, so the codemod couldn't be applied. Please migrate manually.`
+          `In file ${filePath} at line ${node.loc.start.line} the type of identifier \`${node.name}\` couldn't be recognized, so the codemod couldn't be applied. Please migrate manually.`,
         )
       }
 
@@ -60,20 +60,20 @@ module.exports = ({ jscodeshift, root, filePath, keyName = 'queryKey' }) => {
     }
 
     throw new UnprocessableKeyError(
-      `In file ${filePath} at line ${node.loc.start.line} the type of the \`${keyName}\` couldn't be recognized, so the codemod couldn't be applied. Please migrate manually.`
+      `In file ${filePath} at line ${node.loc.start.line} the type of the \`${keyName}\` couldn't be recognized, so the codemod couldn't be applied. Please migrate manually.`,
     )
   }
 
-  const createKeyProperty = node =>
+  const createKeyProperty = (node) =>
     jscodeshift.property(
       'init',
       jscodeshift.identifier(keyName),
-      createKeyValue(node)
+      createKeyValue(node),
     )
 
   const getPropertyFromObjectExpression = (objectExpression, propertyName) =>
     objectExpression.properties.find(
-      property => property.key.name === propertyName
+      (property) => property.key.name === propertyName,
     ) ?? null
 
   const buildWithTypeArguments = (node, builder) => {
@@ -110,27 +110,27 @@ module.exports = ({ jscodeshift, root, filePath, keyName = 'queryKey' }) => {
       ) {
         const originalKey = getPropertyFromObjectExpression(
           firstArgument,
-          keyName
+          keyName,
         )
 
         if (!originalKey) {
           throw new UnprocessableKeyError(
-            `In file ${filePath} at line ${node.loc.start.line} the \`${keyName}\` couldn't be found. Did you forget to add it?`
+            `In file ${filePath} at line ${node.loc.start.line} the \`${keyName}\` couldn't be found. Did you forget to add it?`,
           )
         }
 
         const restOfTheProperties = firstArgument.properties.filter(
-          item => item.key.name !== keyName
+          (item) => item.key.name !== keyName,
         )
 
-        return buildWithTypeArguments(node, originalNode =>
+        return buildWithTypeArguments(node, (originalNode) =>
           jscodeshift.callExpression(originalNode.original.callee, [
             jscodeshift.objectExpression([
               createKeyProperty(originalKey.value),
               ...restOfTheProperties,
             ]),
             ...restOfTheArguments,
-          ])
+          ]),
         )
       }
 
@@ -139,11 +139,11 @@ module.exports = ({ jscodeshift, root, filePath, keyName = 'queryKey' }) => {
         return node
       }
 
-      return buildWithTypeArguments(node, originalNode =>
+      return buildWithTypeArguments(node, (originalNode) =>
         jscodeshift.callExpression(originalNode.original.callee, [
           createKeyValue(firstArgument),
           ...restOfTheArguments,
-        ])
+        ]),
       )
     } catch (error) {
       if (error.name === 'UnprocessableKeyError') {

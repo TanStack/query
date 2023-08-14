@@ -11,7 +11,7 @@ The recommended way to achieve this is to use the `browser` module from SvelteKi
 
 **src/routes/+layout.svelte**
 
-```markdown
+```svelte
 <script lang="ts">
   import { browser } from '$app/environment'
   import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query'
@@ -52,7 +52,7 @@ export const load: PageLoad = async () => {
 ```
 
 **src/routes/+page.svelte**
-```markdown
+```svelte
 <script>
   import { createQuery } from '@tanstack/svelte-query'
   import type { PageData } from './$types'
@@ -104,7 +104,7 @@ export const load: LayoutLoad = async () => {
 
 **src/routes/+layout.svelte**
 
-```markdown
+```svelte
 <script lang="ts">
   import { QueryClientProvider } from '@tanstack/svelte-query'
   import type { LayoutData } from './$types'
@@ -122,25 +122,27 @@ export const load: LayoutLoad = async () => {
 ```ts
 import type { PageLoad } from './$types'
 
-export const load: PageLoad = async ({ parent }) => {
+export const load: PageLoad = async ({ parent, fetch }) => {
   const { queryClient } = await parent()
+
+  // You need to use the SvelteKit fetch function here
   await queryClient.prefetchQuery({
     queryKey: ['posts'],
-    queryFn: getPosts
+    queryFn: async () => (await fetch('/api/posts')).json()
   })
 }
 ```
 
 **src/routes/+page.svelte**
 
-```markdown
+```svelte
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
 
   // This data is cached by prefetchQuery in +page.ts so no fetch actually happens here
   const query = createQuery({
     queryKey: ['posts'],
-    queryFn: getPosts
+    queryFn: async () => (await fetch('/api/posts')).json()
   })
 </script>
 ```

@@ -1,12 +1,12 @@
+import { notifyManager } from './notifyManager'
+import { Mutation } from './mutation'
+import { matchMutation, noop } from './utils'
+import { Subscribable } from './subscribable'
 import type { MutationObserver } from './mutationObserver'
 import type { MutationOptions, NotifyEvent } from './types'
 import type { QueryClient } from './queryClient'
-import { notifyManager } from './notifyManager'
 import type { Action, MutationState } from './mutation'
-import { Mutation } from './mutation'
 import type { MutationFilters } from './utils'
-import { matchMutation, noop } from './utils'
-import { Subscribable } from './subscribable'
 
 // TYPES
 
@@ -25,7 +25,14 @@ interface MutationCacheConfig {
   ) => Promise<unknown> | unknown
   onMutate?: (
     variables: unknown,
-    mutation: Mutation<unknown, unknown, unknown, unknown>,
+    mutation: Mutation<unknown, unknown, unknown>,
+  ) => Promise<unknown> | unknown
+  onSettled?: (
+    data: unknown | undefined,
+    error: unknown | null,
+    variables: unknown,
+    context: unknown,
+    mutation: Mutation<unknown, unknown, unknown>,
   ) => Promise<unknown> | unknown
 }
 
@@ -147,7 +154,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 
   notify(event: MutationCacheNotifyEvent) {
     notifyManager.batch(() => {
-      this.listeners.forEach((listener) => {
+      this.listeners.forEach(({ listener }) => {
         listener(event)
       })
     })
