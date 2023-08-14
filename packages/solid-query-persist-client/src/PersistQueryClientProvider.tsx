@@ -42,9 +42,8 @@ export const PersistQueryClientProvider = (
   })
 
   onCleanup(() => unsub?.())
-
   return (
-    <QueryClientProvider {...props}>
+    <QueryClientProvider client={props.client}>
       <IsRestoringProvider value={isRestoring}>
         {props.children}
       </IsRestoringProvider>

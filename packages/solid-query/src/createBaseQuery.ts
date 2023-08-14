@@ -189,6 +189,7 @@ export function createBaseQuery<
           unsubscribe?.()
           unsubscribe = createClientSubscriber()
         }
+        observer.updateResult()
         if (!state.isLoading) {
           const query = observer.getCurrentQuery()
           resolve(hydrateableObserverResult(query, state))
