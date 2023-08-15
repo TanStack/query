@@ -10,13 +10,17 @@ export type UndefinedInitialDataOptions<
   initialData?: undefined
 }
 
+type NonUndefinedGuard<T> = T extends undefined ? never : T
+
 export type DefinedInitialDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
-  initialData: TQueryFnData | (() => TQueryFnData)
+  initialData:
+    | NonUndefinedGuard<TQueryFnData>
+    | (() => NonUndefinedGuard<TQueryFnData>)
 }
 
 export function queryOptions<
