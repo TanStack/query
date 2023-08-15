@@ -2446,6 +2446,10 @@ describe('createQuery', () => {
   it('should set status to error if queryFn throws', async () => {
     const key = queryKey()
 
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
     function Page() {
       const state = createQuery(() => ({
         queryKey: key,
@@ -2471,10 +2475,16 @@ describe('createQuery', () => {
 
     await waitFor(() => screen.getByText('error'))
     await waitFor(() => screen.getByText('Error test jaylen'))
+
+    consoleMock.mockRestore()
   })
 
   it('should throw error if queryFn throws and throwOnError is in use', async () => {
     const key = queryKey()
+
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
 
     function Page() {
       const state = createQuery(() => ({
@@ -2501,6 +2511,8 @@ describe('createQuery', () => {
     ))
 
     await waitFor(() => screen.getByText('error boundary'))
+
+    consoleMock.mockRestore()
   })
 
   it('should update with data if we observe no properties and throwOnError', async () => {
