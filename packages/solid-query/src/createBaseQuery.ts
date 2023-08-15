@@ -108,19 +108,19 @@ export function createBaseQuery<
   const client = createMemo(() => useQueryClient(queryClient?.()))
   const isRestoring = useIsRestoring()
 
-  const getDefaultedOptions = createMemo(() =>
-    mergeProps(client().defaultQueryOptions(options()), {
+  const getDefaultedOptions = createMemo(() => {
+    const opts = mergeProps(client().defaultQueryOptions(options()), {
       get _optimisticResults() {
         return isRestoring() ? 'isRestoring' : 'optimistic'
       },
-      ...(isServer
-        ? {
-            retry: false,
-            throwOnError: true,
-          }
-        : {}),
-    }),
-  )
+      structuralSharing: false,
+    })
+    if (isServer) {
+      opts.retry = false
+      opts.refetchOnMount = false
+    }
+    return opts
+  })
 
   const observer = new Observer(client(), getDefaultedOptions())
 
@@ -185,11 +185,10 @@ export function createBaseQuery<
     () => {
       return new Promise((resolve, reject) => {
         if (isServer) unsubscribe = createServerSubscriber(resolve, reject)
-        else if (!isRestoring()) {
-          unsubscribe?.()
+        else if (!isRestoring() && !unsubscribe) {
           unsubscribe = createClientSubscriber()
         }
-        observer.updateResult()
+        if (isRestoring()) observer.updateResult()
         if (!state.isLoading) {
           const query = observer.getCurrentQuery()
           resolve(hydrateableObserverResult(query, state))
@@ -276,19 +275,22 @@ export function createBaseQuery<
   )
 
   createComputed(
-    on([() => state.status, isRestoring], () => {
-      if (
-        state.isError &&
-        !state.isFetching &&
-        !isRestoring() &&
-        shouldThrowError(observer.options.throwOnError, [
-          state.error,
-          observer.getCurrentQuery(),
-        ])
-      ) {
-        throw state.error
-      }
-    }),
+    on(
+      () => state.status,
+      () => {
+        if (
+          state.isError &&
+          !state.isFetching &&
+          !isRestoring() &&
+          shouldThrowError(observer.options.throwOnError, [
+            state.error,
+            observer.getCurrentQuery(),
+          ])
+        ) {
+          throw state.error
+        }
+      },
+    ),
   )
 
   const handler = {
