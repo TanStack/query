@@ -111,6 +111,26 @@ describe('initialData', () => {
         return result
       })
     })
+
+    it('TData should be narrowed after an isSuccess check when initialData is provided as a function which can return undefined', () => {
+      doNotExecute(() => {
+        const { data, isSuccess } = useQuery({
+          queryKey: ['key'],
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          initialData: () => undefined as { wow: boolean } | undefined,
+        })
+
+        if (isSuccess) {
+          const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
+          return result
+        }
+        return false
+      })
+    })
   })
 
   describe('custom hook', () => {
