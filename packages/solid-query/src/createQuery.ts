@@ -39,18 +39,26 @@ export function queryOptions<
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
->(
-  options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  TOptions extends UndefinedInitialDataOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey
+  > = UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+>(options: TOptions): TOptions
 
 export function queryOptions<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
->(
-  options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  TOptions extends DefinedInitialDataOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey
+  > = DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+>(options: TOptions): TOptions
 
 export function queryOptions(options: unknown) {
   return options

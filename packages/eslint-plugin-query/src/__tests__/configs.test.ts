@@ -1,4 +1,4 @@
-import { configs } from './index'
+import { configs } from '../configs'
 
 describe('configs', () => {
   it('should match snapshot', () => {

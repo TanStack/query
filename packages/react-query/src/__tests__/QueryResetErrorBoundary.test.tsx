@@ -3,7 +3,14 @@ import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
 
 import { vi } from 'vitest'
-import { QueryCache, QueryErrorResetBoundary, useQueries, useQuery } from '..'
+import {
+  QueryCache,
+  QueryErrorResetBoundary,
+  useQueries,
+  useQuery,
+  useSuspenseQueries,
+  useSuspenseQuery,
+} from '..'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 
 // TODO: This should be removed with the types for react-error-boundary get updated.
@@ -522,7 +529,7 @@ describe('QueryErrorResetBoundary', () => {
       let renders = 0
 
       function Page() {
-        const { data } = useQuery({
+        const { data } = useSuspenseQuery({
           queryKey: key,
           queryFn: async () => {
             fetchCount++
@@ -534,7 +541,6 @@ describe('QueryErrorResetBoundary', () => {
             }
           },
           retry: false,
-          suspense: true,
         })
         renders++
         return <div>{data}</div>
@@ -735,7 +741,7 @@ describe('QueryErrorResetBoundary', () => {
       let succeed = false
 
       function Page() {
-        const [{ data }] = useQueries({
+        const [{ data }] = useSuspenseQueries({
           queries: [
             {
               queryKey: key,
@@ -748,9 +754,7 @@ describe('QueryErrorResetBoundary', () => {
                 }
               },
               retry: false,
-              throwOnError: true,
               retryOnMount: true,
-              suspense: true,
             },
           ],
         })

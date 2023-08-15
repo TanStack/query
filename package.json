@@ -1,6 +1,9 @@
 {
   "name": "query",
-  "repository": "https://github.com/tanstack/query.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TanStack/query.git"
+  },
   "packageManager": "pnpm@8.5.1",
   "type": "module",
   "scripts": {

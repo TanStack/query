@@ -332,4 +332,24 @@ describe('useMutation', () => {
       })
     })
   })
+
+  describe('throwOnError', () => {
+    test('should evaluate throwOnError when mutation is expected to throw', async () => {
+      const err = new Error('Expected mock error. All is well!')
+      const boundaryFn = vi.fn()
+      const { mutate } = useMutation({
+        mutationFn: () => {
+          return Promise.reject(err)
+        },
+        throwOnError: boundaryFn,
+      })
+
+      mutate()
+
+      await flushPromises()
+
+      expect(boundaryFn).toHaveBeenCalledTimes(1)
+      expect(boundaryFn).toHaveBeenCalledWith(err)
+    })
+  })
 })

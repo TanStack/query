@@ -78,18 +78,18 @@ export type GetPreviousPageParamFunction<TPageParam, TQueryFnData = unknown> = (
   allPages: TQueryFnData[],
   firstPageParam: TPageParam,
   allPageParams: TPageParam[],
-) => TPageParam | undefined
+) => TPageParam | undefined | null
 
 export type GetNextPageParamFunction<TPageParam, TQueryFnData = unknown> = (
   lastPage: TQueryFnData,
   allPages: TQueryFnData[],
   lastPageParam: TPageParam,
   allPageParams: TPageParam[],
-) => TPageParam | undefined
+) => TPageParam | undefined | null
 
-export interface InfiniteData<TData> {
+export interface InfiniteData<TData, TPageParam = unknown> {
   pages: TData[]
-  pageParams: unknown[]
+  pageParams: TPageParam[]
 }
 
 export type QueryMeta<
@@ -335,7 +335,7 @@ export interface InfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
-      InfiniteData<TQueryData>,
+      InfiniteData<TQueryData, TPageParam>,
       TQueryKey,
       TPageParam
     >,
@@ -393,7 +393,7 @@ export type FetchInfiniteQueryOptions<
 > = FetchQueryOptions<
   TQueryFnData,
   TError,
-  InfiniteData<TData>,
+  InfiniteData<TData, TPageParam>,
   TQueryKey,
   TPageParam
 > &

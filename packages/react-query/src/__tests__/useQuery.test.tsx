@@ -2410,6 +2410,9 @@ describe('useQuery', () => {
         )
         fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
 
+        await waitFor(() => {
+          rendered.getByText('fetch counter: 3')
+        })
         // sleep is required to make sure no additional renders happen after click
         await sleep(20)
 
@@ -2885,6 +2888,9 @@ describe('useQuery', () => {
   })
 
   it('should set status to error if queryFn throws', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
     const key = queryKey()
 
     function Page() {
@@ -2908,6 +2914,8 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('error'))
     await waitFor(() => rendered.getByText('Error test jaylen'))
+
+    consoleMock.mockRestore()
   })
 
   it('should throw error if queryFn throws and throwOnError is in use', async () => {
@@ -6224,5 +6232,26 @@ describe('useQuery', () => {
     fireEvent.click(rendered.getByRole('button', { name: /2/ }))
     await waitFor(() => rendered.getByText('Rendered Id: 2'))
     expect(spy).toHaveBeenCalledTimes(1)
+  })
+  it('should not cause an infinite render loop when using unstable callback ref', async () => {
+    const key = queryKey()
+
+    function Test() {
+      const [_, setRef] = React.useState<HTMLDivElement | null>()
+
+      const { data } = useQuery({
+        queryKey: [key],
+        queryFn: async () => {
+          await sleep(5)
+          return 'Works'
+        },
+      })
+
+      return <div ref={(value) => setRef(value)}>{data}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Test />)
+
+    await waitFor(() => rendered.getByText('Works'))
   })
 })

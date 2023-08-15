@@ -235,6 +235,28 @@ describe('useQuery', () => {
     expect(status.value).toStrictEqual('pending')
   })
 
+  describe('throwOnError', () => {
+    test('should evaluate throwOnError when query is expected to throw', async () => {
+      const boundaryFn = vi.fn()
+      useQuery({
+        queryKey: ['key0'],
+        queryFn: rejectFetcher,
+        retry: false,
+        throwOnError: boundaryFn,
+      })
+
+      await flushPromises()
+
+      expect(boundaryFn).toHaveBeenCalledTimes(1)
+      expect(boundaryFn).toHaveBeenCalledWith(
+        Error('Some error'),
+        expect.objectContaining({
+          state: expect.objectContaining({ status: 'error' }),
+        }),
+      )
+    })
+  })
+
   describe('suspense', () => {
     test('should return a Promise', () => {
       const getCurrentInstanceSpy = getCurrentInstance as Mock
