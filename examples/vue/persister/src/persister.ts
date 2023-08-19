@@ -85,14 +85,11 @@ export function createPersister<T, QC extends QueryClient>(
           if (expired || busted) {
             await storage.removeItem(queryHash)
           } else {
-            queryClient.getQueryCache().build(
-              queryClient,
-              {
-                queryKey: context.queryKey,
-                queryHash: queryHash,
-              },
-              persistedQuery.state,
-            )
+            // Just after restoring we want to get fresh data from the server
+            // Maybe add an option for this?
+            setTimeout(() => {
+              queryClient.invalidateQueries({queryKey: context.queryKey, exact: true})
+            }, 0)
             return Promise.resolve(persistedQuery.state.data as T)
           }
         } else {
