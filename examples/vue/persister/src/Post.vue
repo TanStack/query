@@ -22,7 +22,7 @@ export default defineComponent({
   emits: ['setPostId'],
   setup(props) {
     const queryClient = useQueryClient()
-    
+
     const { isPending, isError, isFetching, data, error } = useQuery({
       queryKey: ['post', props.postId],
       queryFn: () => fetcher(props.postId),

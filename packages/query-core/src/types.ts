@@ -31,7 +31,15 @@ export type QueryPersister<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
-> = (queryFn: QueryFunction<T, TQueryKey, TPageParam>, context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>
+> = [TPageParam] extends [never]
+  ? (
+      queryFn: QueryFunction<T, TQueryKey, never>,
+      context: QueryFunctionContext<TQueryKey>,
+    ) => T | Promise<T>
+  : (
+      queryFn: QueryFunction<T, TQueryKey, TPageParam>,
+      context: QueryFunctionContext<TQueryKey>,
+    ) => T | Promise<T>
 
 export type QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,
@@ -124,7 +132,7 @@ export interface QueryOptions<
   networkMode?: NetworkMode
   gcTime?: number
   queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam>
-  persister?: QueryPersister<TQueryFnData, TQueryKey>
+  persister?: QueryPersister<TQueryFnData, TQueryKey, TPageParam>
   queryHash?: string
   queryKey?: TQueryKey
   queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>

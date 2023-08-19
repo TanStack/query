@@ -60,20 +60,22 @@ export interface StoragePersisterOptions<QC extends QueryClient> {
   maxAge?: number
 }
 
-export function createPersister<T, QC extends QueryClient>(
-  {
-    queryClient,
-    storage,
-    buster = '',
-    maxAge = 1000 * 60 * 60 * 24,
-    serialize = JSON.stringify,
-    deserialize = JSON.parse,
-  }: StoragePersisterOptions<QC>,
-) {
-  return async (queryFn: (context: QueryFunctionContext) => T | Promise<T>, context: QueryFunctionContext) => {
+export function createPersister<T, QC extends QueryClient>({
+  queryClient,
+  storage,
+  buster = '',
+  maxAge = 1000 * 60 * 60 * 24,
+  serialize = JSON.stringify,
+  deserialize = JSON.parse,
+}: StoragePersisterOptions<QC>) {
+  return async (
+    queryFn: (context: QueryFunctionContext) => T | Promise<T>,
+    context: QueryFunctionContext,
+  ) => {
     const queryHash = hashKey(context.queryKey)
     const queryState = queryClient.getQueryState(context.queryKey)
 
+    // Try to restore only if we do not have any data in the cache and we have persister defined
     if (!queryState?.data && storage != null) {
       const storedData = await storage.getItem(queryHash)
       if (storedData) {
@@ -88,8 +90,12 @@ export function createPersister<T, QC extends QueryClient>(
             // Just after restoring we want to get fresh data from the server
             // Maybe add an option for this?
             setTimeout(() => {
-              queryClient.invalidateQueries({queryKey: context.queryKey, exact: true})
+              queryClient.invalidateQueries({
+                queryKey: context.queryKey,
+                exact: true,
+              })
             }, 0)
+            // We must resolve the promise here, as otherwise we will have `loading` state in the app until `queryFn` resolves
             return Promise.resolve(persistedQuery.state.data as T)
           }
         } else {
@@ -98,9 +104,11 @@ export function createPersister<T, QC extends QueryClient>(
       }
     }
 
+    // If we did not restore, or restoration failed - fetch
     const queryFnResult = await queryFn(context)
 
     if (storage != null) {
+      // Persist if we have storage defined
       storage.setItem(
         queryHash,
         serialize({

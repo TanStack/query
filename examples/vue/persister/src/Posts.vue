@@ -6,8 +6,11 @@ import { Post } from './types'
 import { createPersister } from './persister'
 
 const fetcher = async (): Promise<Post[]> =>
-  await fetch('https://jsonplaceholder.typicode.com/posts').then((response) =>
-    new Promise((resolve) => setTimeout(() => resolve(response.json()), 2000)),
+  await fetch('https://jsonplaceholder.typicode.com/posts').then(
+    (response) =>
+      new Promise((resolve) =>
+        setTimeout(() => resolve(response.json()), 1000),
+      ),
   )
 
 export default defineComponent({
@@ -22,16 +25,32 @@ export default defineComponent({
   setup() {
     const queryClient = useQueryClient()
 
-    const { isPending, isError, isFetching, isRefetching, data, error, refetch, isLoading } = useQuery({
+    const {
+      isPending,
+      isError,
+      isFetching,
+      isRefetching,
+      data,
+      error,
+      refetch,
+    } = useQuery({
       queryKey: ['posts'],
       queryFn: fetcher,
       persister: createPersister({
         storage: localStorage,
         queryClient,
-      })
+      }),
     })
 
-    return { isPending, isLoading, isRefetching, isError, isFetching, data, error, refetch }
+    return {
+      isPending,
+      isRefetching,
+      isError,
+      isFetching,
+      data,
+      error,
+      refetch,
+    }
   },
 })
 </script>
@@ -39,8 +58,7 @@ export default defineComponent({
 <template>
   <h1>Posts</h1>
   <div v-if="isRefetching">Refetching...</div>
-  <div v-if="isPending">Pending...</div>
-  <div v-if="isLoading">Loading...</div>
+  <div v-if="isPending">Loading...</div>
   <div v-else-if="isError">An error has occurred: {{ error }}</div>
   <div v-else-if="data">
     <ul>
