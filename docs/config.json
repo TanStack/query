@@ -579,8 +579,8 @@
               "to": "vue/guides/custom-logger"
             },
             {
-              "label": "Testing",
-              "to": "vue/guides/testing"
+              "label": "Custom Client",
+              "to": "vue/guides/custom-client"
             },
             {
               "label": "Does this replace [Vuex, Pinia]?",
