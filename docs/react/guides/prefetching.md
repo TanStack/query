@@ -34,7 +34,7 @@ const prefetchTodos = async () => {
   await queryClient.prefetchInfiniteQuery({
     queryKey: ['projects'],
     queryFn: fetchProjects,
-    defaultPageParam: 0,
+    initialPageParam: 0,
     getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
     pages: 3 // prefetch the first 3 pages
   })
