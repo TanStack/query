@@ -584,7 +584,7 @@ describe('queryClient', () => {
           StrictData,
           StrictQueryKey,
           number
-        >({ queryKey: key, queryFn: fetchFn, defaultPageParam: 0 }),
+        >({ queryKey: key, queryFn: fetchFn, initialPageParam: 0 }),
       ).resolves.toEqual(data)
     })
 
@@ -592,7 +592,7 @@ describe('queryClient', () => {
       const key = queryKey()
       const result = await queryClient.fetchInfiniteQuery({
         queryKey: key,
-        defaultPageParam: 10,
+        initialPageParam: 10,
         queryFn: ({ pageParam }) => Number(pageParam),
       })
       const result2 = queryClient.getQueryData(key)
@@ -622,7 +622,7 @@ describe('queryClient', () => {
         StrictData,
         StrictQueryKey,
         number
-      >({ queryKey: key, queryFn: fetchFn, defaultPageParam: 0 })
+      >({ queryKey: key, queryFn: fetchFn, initialPageParam: 0 })
 
       const result = queryClient.getQueryData(key)
 
@@ -638,7 +638,7 @@ describe('queryClient', () => {
       await queryClient.prefetchInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) => Number(pageParam),
-        defaultPageParam: 10,
+        initialPageParam: 10,
       })
 
       const result = queryClient.getQueryData(key)
@@ -657,7 +657,7 @@ describe('queryClient', () => {
         queryFn: ({ pageParam }) => String(pageParam),
         getNextPageParam: (_lastPage, _pages, lastPageParam) =>
           lastPageParam + 5,
-        defaultPageParam: 10,
+        initialPageParam: 10,
         pages: 3,
       })
 
@@ -677,7 +677,7 @@ describe('queryClient', () => {
         queryFn: ({ pageParam }) => String(pageParam),
         getNextPageParam: (_lastPage, _pages, lastPageParam) =>
           lastPageParam >= 20 ? undefined : lastPageParam + 5,
-        defaultPageParam: 10,
+        initialPageParam: 10,
         pages: 5,
       })
 

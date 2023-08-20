@@ -100,7 +100,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           // Fetch first page
           result = await fetchPage(
             empty,
-            oldPageParams[0] ?? options.defaultPageParam,
+            oldPageParams[0] ?? options.initialPageParam,
           )
 
           const remainingPages = pages ?? oldPages.length

@@ -321,18 +321,18 @@ The options you can pass to dehydrate have been simplified. Queries and Mutation
 - dehydrateQueries?: boolean
 ```
 
-### Infinite queries now need a `defaultPageParam`
+### Infinite queries now need a `initialPageParam`
 
 Previously, we've passed `undefined` to the `queryFn` as `pageParam`, and you could assign a default value to the `pageParam` parameter in the `queryFn` function signature. This had the drawback of storing `undefined` in the `queryCache`, which is not serializable.
 
-Instead, you now have to pass an explicit `defaultPageParam` to the infinite query options. This will be used as the `pageParam` for the first page:
+Instead, you now have to pass an explicit `initialPageParam` to the infinite query options. This will be used as the `pageParam` for the first page:
 
 ```diff
 useInfiniteQuery({
    queryKey,
 -  queryFn: ({ pageParam = 0 }) => fetchSomething(pageParam),
 +  queryFn: ({ pageParam }) => fetchSomething(pageParam),
-+  defaultPageParam: 0,
++  initialPageParam: 0,
    getNextPageParam: (lastPage) => lastPage.next,
 })
 ```

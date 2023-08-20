@@ -82,7 +82,7 @@ describe('useSuspenseQuery', () => {
           await sleep(10)
           return Number(pageParam * multiplier)
         },
-        defaultPageParam: 1,
+        initialPageParam: 1,
         getNextPageParam: (lastPage) => lastPage + 1,
       })
       states.push(state)
