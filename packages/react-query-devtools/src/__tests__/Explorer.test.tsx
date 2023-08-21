@@ -1,7 +1,7 @@
-import { fireEvent, render, screen, act } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import * as React from 'react'
 
-import { chunkArray, CopyButton, DefaultRenderer } from '../Explorer'
+import { CopyButton, DefaultRenderer, chunkArray } from '../Explorer'
 import { displayValue } from '../utils'
 
 describe('Explorer', () => {

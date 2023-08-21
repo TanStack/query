@@ -1,12 +1,12 @@
 import {
-  replaceEqualDeep,
-  partialDeepEqual,
+  isPlainArray,
   isPlainObject,
-  parseMutationArgs,
   matchMutation,
+  parseMutationArgs,
+  partialDeepEqual,
+  replaceEqualDeep,
   scheduleMicrotask,
   sleep,
-  isPlainArray,
 } from '../utils'
 import { Mutation } from '../mutation'
 import { createQueryClient } from './utils'

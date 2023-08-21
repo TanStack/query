@@ -1,21 +1,21 @@
 import { fireEvent, render, screen, waitFor } from 'solid-testing-library'
 
 import {
-  createRenderEffect,
-  createSignal,
   ErrorBoundary,
-  on,
   Show,
   Suspense,
+  createRenderEffect,
+  createSignal,
+  on,
 } from 'solid-js'
-import type { CreateInfiniteQueryResult, CreateQueryResult } from '..'
 import {
-  createInfiniteQuery,
-  createQuery,
   QueryCache,
   QueryClientProvider,
+  createInfiniteQuery,
+  createQuery,
 } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
+import type { CreateInfiniteQueryResult, CreateQueryResult } from '..'
 
 describe("useQuery's in Suspense mode", () => {
   const queryCache = new QueryCache()

@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { QueriesObserver } from '@tanstack/query-core'
 import { computed, onScopeDispose, reactive, readonly, watch } from 'vue-demi'
+import { useQueryClient } from './useQueryClient'
+import { cloneDeepUnref } from './utils'
 import type { Ref } from 'vue-demi'
 
 import type { QueryFunction, QueryObserverResult } from '@tanstack/query-core'
 
-import { useQueryClient } from './useQueryClient'
-import { cloneDeepUnref } from './utils'
 import type { UseQueryOptions } from './useQuery'
 import type { QueryClient } from './queryClient'
 
@@ -191,14 +191,10 @@ export function useQueries<T extends any[]>({
     { immediate: true },
   )
 
-  watch(
-    unreffedQueries,
-    () => {
-      observer.setQueries(defaultedQueries.value)
-      state.splice(0, state.length, ...observer.getCurrentResult())
-    },
-    { deep: true },
-  )
+  watch(defaultedQueries, () => {
+    observer.setQueries(defaultedQueries.value)
+    state.splice(0, state.length, ...observer.getCurrentResult())
+  })
 
   onScopeDispose(() => {
     unsubscribe()

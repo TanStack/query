@@ -2,6 +2,7 @@ import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
+import { QueryCache, useIsFetching, useQuery } from '..'
 import {
   createQueryClient,
   queryKey,
@@ -10,7 +11,6 @@ import {
   sleep,
 } from './utils'
 import type { QueryClient } from '..'
-import { QueryCache, useIsFetching, useQuery } from '..'
 
 describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105

@@ -1,9 +1,9 @@
 import { onScopeDispose, reactive, ref } from 'vue-demi'
 
-import { flushPromises, successMutator } from './test-utils'
 import { useMutation } from '../useMutation'
 import { parseFilterArgs, useIsMutating } from '../useIsMutating'
 import { useQueryClient } from '../useQueryClient'
+import { flushPromises, successMutator } from './test-utils'
 
 jest.mock('../useQueryClient')
 

@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { render, waitFor } from '@testing-library/svelte'
 import CreateQueries from './CreateQueries.svelte'
 import { sleep } from './utils'

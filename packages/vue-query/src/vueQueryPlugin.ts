@@ -1,10 +1,10 @@
 import { isVue2 } from 'vue-demi'
 import { isServer } from '@tanstack/query-core'
-import type { QueryClientConfig } from '@tanstack/query-core'
 
 import { QueryClient } from './queryClient'
 import { getClientKey } from './utils'
 import { setupDevtools } from './devtools/devtools'
+import type { QueryClientConfig } from '@tanstack/query-core'
 import type { MaybeRefDeep } from './types'
 
 declare global {
@@ -19,6 +19,7 @@ interface CommonOptions {
   queryClientKey?: string
   contextSharing?: boolean
   clientPersister?: ClientPersister
+  clientPersisterOnSuccess?: (client: QueryClient) => void
 }
 
 interface ConfigOptions extends CommonOptions {
@@ -71,6 +72,7 @@ export const VueQueryPlugin = {
       persisterUnmount = unmount
       promise.then(() => {
         client.isRestoring.value = false
+        options.clientPersisterOnSuccess?.(client)
       })
     }
 

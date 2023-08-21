@@ -1,10 +1,14 @@
 {
   "name": "@tanstack/query-async-storage-persister",
-  "version": "4.29.19",
+  "version": "4.33.0",
   "description": "A persister for asynchronous storages, to be used with TanStack/Query",
   "author": "tannerlinsley",
   "license": "MIT",
-  "repository": "tanstack/query",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TanStack/query.git",
+    "directory": "packages/query-async-storage-persister"
+  },
   "homepage": "https://tanstack.com/query",
   "funding": {
     "type": "github",

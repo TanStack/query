@@ -1,30 +1,35 @@
 import {
+  computed,
   onScopeDispose,
   reactive,
   readonly,
   toRefs,
-  watch,
-  computed,
   unref,
+  watch,
 } from 'vue-demi'
+import { MutationObserver } from '@tanstack/query-core'
+import {
+  cloneDeepUnref,
+  isMutationKey,
+  shouldThrowError,
+  updateState,
+} from './utils'
+import { useQueryClient } from './useQueryClient'
 import type { ToRefs } from 'vue-demi'
 import type {
+  MutateFunction,
   MutateOptions,
   MutationFunction,
   MutationKey,
-  MutateFunction,
-  MutationObserverResult,
   MutationObserverOptions,
+  MutationObserverResult,
 } from '@tanstack/query-core'
 import type {
-  WithQueryClientKey,
+  DistributiveOmit,
   MaybeRef,
   MaybeRefDeep,
-  DistributiveOmit,
+  WithQueryClientKey,
 } from './types'
-import { MutationObserver } from '@tanstack/query-core'
-import { cloneDeepUnref, updateState, isMutationKey } from './utils'
-import { useQueryClient } from './useQueryClient'
 
 type MutationResult<TData, TError, TVariables, TContext> = DistributiveOmit<
   MutationObserverResult<TData, TError, TVariables, TContext>,
@@ -167,13 +172,9 @@ export function useMutation<
     })
   }
 
-  watch(
-    options,
-    () => {
-      observer.setOptions(queryClient.defaultMutationOptions(options.value))
-    },
-    { deep: true },
-  )
+  watch(options, () => {
+    observer.setOptions(queryClient.defaultMutationOptions(options.value))
+  })
 
   onScopeDispose(() => {
     unsubscribe()
@@ -182,6 +183,18 @@ export function useMutation<
   const resultRefs = toRefs(readonly(state)) as unknown as ToRefs<
     Readonly<MutationResult<TData, TError, TVariables, TContext>>
   >
+
+  watch(
+    () => state.error,
+    (error) => {
+      if (
+        error &&
+        shouldThrowError(options.value.useErrorBoundary, [error as TError])
+      ) {
+        throw error
+      }
+    },
+  )
 
   return {
     ...resultRefs,

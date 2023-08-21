@@ -2,14 +2,14 @@ import * as React from 'react'
 import { render, waitFor } from '@testing-library/react'
 import { renderToString } from 'react-dom/server'
 
-import { sleep, queryKey, createQueryClient } from './utils'
 import {
+  QueryCache,
   QueryClient,
   QueryClientProvider,
-  QueryCache,
   useQuery,
   useQueryClient,
 } from '..'
+import { createQueryClient, queryKey, sleep } from './utils'
 
 describe('QueryClientProvider', () => {
   test('sets a specific cache for all queries to use', async () => {
