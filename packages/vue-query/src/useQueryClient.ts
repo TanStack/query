@@ -5,7 +5,7 @@ import { getClientKey } from './utils'
 
 export function useQueryClient(id = ''): QueryClient {
   const key = getClientKey(id)
-  const queryClient = inject<QueryClient>(key)
+  const queryClient = inject<QueryClient | null>(key, null)
 
   if (!queryClient) {
     const vm = getCurrentInstance()?.proxy
