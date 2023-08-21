@@ -207,20 +207,16 @@ export function useQueries<
     { immediate: true },
   )
 
-  watch(
-    [defaultedQueries],
-    () => {
-      observer.setQueries(
-        defaultedQueries.value,
-        options as QueriesObserverOptions<TCombinedResult>,
-      )
-      const [, getCombinedResultPersisted] = observer.getOptimisticResult(
-        defaultedQueries.value,
-      )
-      state.value = getCombinedResultPersisted()
-    },
-    { deep: true },
-  )
+  watch(defaultedQueries, () => {
+    observer.setQueries(
+      defaultedQueries.value,
+      options as QueriesObserverOptions<TCombinedResult>,
+    )
+    const [, getCombinedResultPersisted] = observer.getOptimisticResult(
+      defaultedQueries.value,
+    )
+    state.value = getCombinedResultPersisted()
+  })
 
   onScopeDispose(() => {
     unsubscribe()

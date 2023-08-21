@@ -65,13 +65,9 @@ export function useMutationState<TResult = MutationState>(
     state.value = result
   })
 
-  watch(
-    filters,
-    () => {
-      state.value = getResult(mutationCache, options)
-    },
-    { deep: true },
-  )
+  watch(filters, () => {
+    state.value = getResult(mutationCache, options)
+  })
 
   onScopeDispose(() => {
     unsubscribe()
