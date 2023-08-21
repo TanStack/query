@@ -15,7 +15,7 @@ const {
 } = useInfiniteQuery({
   queryKey,
   queryFn: ({ pageParam }) => fetchPage(pageParam),
-  defaultPageParam: 1,
+  initialPageParam: 1,
   ...options,
   getNextPageParam: (lastPage, allPages, lastPageParam, allPageParams) =>
     lastPage.nextCursor,
@@ -33,7 +33,7 @@ The options for `useInfiniteQuery` are identical to the [`useQuery` hook](../ref
   - The function that the query will use to request data.
   - Receives a [QueryFunctionContext](../guides/query-functions#queryfunctioncontext)
   - Must return a promise that will either resolve data or throw an error.
-- `defaultPageParam: TPageParam`
+- `initialPageParam: TPageParam`
   - **Required**
   - The default page param to use when fetching the first page.
 - `getNextPageParam: (lastPage, allPages, lastPageParam, allPageParams) => TPageParam | undefined | null`

@@ -54,7 +54,7 @@ describe('useInfiniteQuery', () => {
         queryKey: key,
         queryFn: ({ pageParam }) => Number(pageParam),
         getNextPageParam: (lastPage) => lastPage + 1,
-        defaultPageParam: 0,
+        initialPageParam: 0,
       })
       states.push(state)
       return null
@@ -149,7 +149,7 @@ describe('useInfiniteQuery', () => {
         retry: 1,
         retryDelay: 10,
         getNextPageParam: (lastPage) => lastPage + 1,
-        defaultPageParam: start,
+        initialPageParam: start,
       })
 
       const { fetchNextPage } = state
@@ -186,7 +186,7 @@ describe('useInfiniteQuery', () => {
           return `${pageParam}-${order}`
         },
         getNextPageParam: () => 1,
-        defaultPageParam: 0,
+        initialPageParam: 0,
         placeholderData: keepPreviousData,
         notifyOnChangeProps: 'all',
       })
@@ -273,7 +273,7 @@ describe('useInfiniteQuery', () => {
           pageParams: data.pageParams,
         }),
         getNextPageParam: () => undefined,
-        defaultPageParam: 0,
+        initialPageParam: 0,
       })
       states.push(state)
 
@@ -316,7 +316,7 @@ describe('useInfiniteQuery', () => {
           }
         }, []),
         getNextPageParam: () => undefined,
-        defaultPageParam: 0,
+        initialPageParam: 0,
       })
       states.push(state)
 
@@ -364,7 +364,7 @@ describe('useInfiniteQuery', () => {
         }),
         notifyOnChangeProps: 'all',
         getNextPageParam: () => 1,
-        defaultPageParam: 0,
+        initialPageParam: 0,
       })
 
       states.push(state)
@@ -416,7 +416,7 @@ describe('useInfiniteQuery', () => {
           await sleep(10)
           return Number(pageParam)
         },
-        defaultPageParam: start,
+        initialPageParam: start,
         getNextPageParam: (lastPage) => lastPage + 1,
         getPreviousPageParam: (firstPage) => firstPage - 1,
         notifyOnChangeProps: 'all',
@@ -498,7 +498,7 @@ describe('useInfiniteQuery', () => {
           await sleep(10)
           return Number(pageParam)
         },
-        defaultPageParam: 10,
+        initialPageParam: 10,
         getPreviousPageParam: (firstPage) => firstPage - 1,
         getNextPageParam: (lastPage) => lastPage + 1,
         notifyOnChangeProps: 'all',
@@ -608,7 +608,7 @@ describe('useInfiniteQuery', () => {
             await sleep(50)
             return Number(pageParam)
           },
-          defaultPageParam: start,
+          initialPageParam: start,
           getNextPageParam: (lastPage) => lastPage + 1,
         })
 
@@ -664,7 +664,7 @@ describe('useInfiniteQuery', () => {
       const { fetchNextPage } = useInfiniteQuery({
         queryKey: key,
         queryFn: fetchPage,
-        defaultPageParam: start,
+        initialPageParam: start,
         getNextPageParam: (lastPage) => lastPage + 1,
       })
 
@@ -741,7 +741,7 @@ describe('useInfiniteQuery', () => {
       const { fetchNextPage } = useInfiniteQuery({
         queryKey: key,
         queryFn: fetchPage,
-        defaultPageParam: start,
+        initialPageParam: start,
         getNextPageParam: (lastPage) => lastPage + 1,
       })
 
@@ -797,7 +797,7 @@ describe('useInfiniteQuery', () => {
           await sleep(50)
           return Number(pageParam)
         },
-        defaultPageParam: start,
+        initialPageParam: start,
         getNextPageParam: (lastPage) => lastPage + 1,
         notifyOnChangeProps: 'all',
       })
@@ -851,7 +851,7 @@ describe('useInfiniteQuery', () => {
           return Number(pageParam) * 10
         },
         initialData,
-        defaultPageParam: 0,
+        initialPageParam: 0,
         getNextPageParam: (_, allPages) => {
           return allPages.length === 4 ? undefined : allPages.length
         },
@@ -898,7 +898,7 @@ describe('useInfiniteQuery', () => {
           return Number(pageParam)
         },
         getNextPageParam: (lastPage) => lastPage + 1,
-        defaultPageParam: firstPage,
+        initialPageParam: firstPage,
         notifyOnChangeProps: 'all',
       })
 
@@ -979,7 +979,7 @@ describe('useInfiniteQuery', () => {
         },
         initialData: { pages: [1], pageParams: [1] },
         getNextPageParam: (lastPage) => lastPage + 1,
-        defaultPageParam: 0,
+        initialPageParam: 0,
         notifyOnChangeProps: 'all',
       })
 
@@ -1040,7 +1040,7 @@ describe('useInfiniteQuery', () => {
         queryKey: key,
         queryFn: ({ pageParam }) => Number(pageParam),
         getNextPageParam: () => undefined,
-        defaultPageParam: 1,
+        initialPageParam: 1,
       })
 
       states.push(state)
@@ -1079,7 +1079,7 @@ describe('useInfiniteQuery', () => {
         queryFn: ({ pageParam }): number => pageParam,
         initialData: { pages: [10], pageParams: [10] },
         getNextPageParam: (lastPage) => (lastPage === 10 ? 11 : undefined),
-        defaultPageParam: 10,
+        initialPageParam: 10,
       })
 
       states.push(state)
@@ -1116,7 +1116,7 @@ describe('useInfiniteQuery', () => {
       const state = useInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }): number => pageParam,
-        defaultPageParam: 10,
+        initialPageParam: 10,
         initialData: { pages: [10], pageParams: [10] },
         getNextPageParam: () => undefined,
       })
@@ -1160,7 +1160,7 @@ describe('useInfiniteQuery', () => {
           pages: data.pages.map((x) => x.toString()),
           pageParams: data.pageParams,
         }),
-        defaultPageParam: 1,
+        initialPageParam: 1,
       })
 
       states.push(state)
@@ -1220,7 +1220,7 @@ describe('useInfiniteQuery', () => {
         queryKey: key,
         queryFn: ({ pageParam }) =>
           fetchItemsWithLimit(pageParam, fetchCountRef.current++),
-        defaultPageParam: 0,
+        initialPageParam: 0,
         getNextPageParam: (lastPage) => lastPage.nextId,
       })
 
@@ -1350,7 +1350,7 @@ describe('useInfiniteQuery', () => {
             pageParam === MAX || (pageParam === MAX - 1 && isRemovedLastPage),
           ),
         getNextPageParam: (lastPage) => lastPage.nextId,
-        defaultPageParam: 0,
+        initialPageParam: 0,
       })
 
       return (
@@ -1472,7 +1472,7 @@ describe('useInfiniteQuery', () => {
         queryKey: key,
         queryFn,
         getNextPageParam: () => undefined,
-        defaultPageParam: 0,
+        initialPageParam: 0,
       })
       return (
         <div>
@@ -1516,7 +1516,7 @@ describe('useInfiniteQuery', () => {
           queryKey: key,
           queryFn,
           getNextPageParam: () => undefined,
-          defaultPageParam: 0,
+          initialPageParam: 0,
         },
         queryClient,
       )

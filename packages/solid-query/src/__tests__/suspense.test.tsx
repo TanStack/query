@@ -94,7 +94,7 @@ describe("useQuery's in Suspense mode", () => {
           await sleep(10)
           return Number(pageParam * multiplier())
         },
-        defaultPageParam: 1,
+        initialPageParam: 1,
         suspense: true,
         getNextPageParam: (lastPage) => lastPage + 1,
       }))

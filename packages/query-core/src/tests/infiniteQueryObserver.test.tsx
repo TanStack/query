@@ -24,7 +24,7 @@ describe('InfiniteQueryObserver', () => {
         pages: data.pages.map((x) => `${x}`),
         pageParams: data.pageParams,
       }),
-      defaultPageParam: 1,
+      initialPageParam: 1,
       getNextPageParam: () => 2,
     })
     let observerResult
@@ -53,7 +53,7 @@ describe('InfiniteQueryObserver', () => {
         pages: data.pages.map((x) => `${x}`),
         pageParams: data.pageParams,
       }),
-      defaultPageParam: 1,
+      initialPageParam: 1,
       getNextPageParam: () => 2,
     })
     let observerResult
@@ -75,7 +75,7 @@ describe('InfiniteQueryObserver', () => {
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       queryFn: ({ pageParam }) => String(pageParam),
-      defaultPageParam: 1,
+      initialPageParam: 1,
       getNextPageParam: (_, __, lastPageParam, allPageParams) => {
         single.push('next' + lastPageParam)
         all.push('next' + allPageParams.join(','))
@@ -110,7 +110,7 @@ describe('InfiniteQueryObserver', () => {
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       queryFn,
-      defaultPageParam: 1,
+      initialPageParam: 1,
       getNextPageParam: () => next,
     })
 
@@ -137,7 +137,7 @@ describe('InfiniteQueryObserver', () => {
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       queryFn,
-      defaultPageParam: 1,
+      initialPageParam: 1,
       getNextPageParam: () => next,
     })
 
