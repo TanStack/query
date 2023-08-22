@@ -89,12 +89,14 @@ export type SuspenseQueriesOptions<
   ? T
   : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
   // use this to infer the param types in the case of Array.map() argument
-  T extends Array<UseSuspenseQueryOptions<
-      infer TQueryFnData,
-      infer TError,
-      infer TData,
-      infer TQueryKey
-    >>
+  T extends Array<
+      UseSuspenseQueryOptions<
+        infer TQueryFnData,
+        infer TError,
+        infer TData,
+        infer TQueryKey
+      >
+    >
   ? Array<UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>>
   : // Fallback
     Array<UseSuspenseQueryOptions>
@@ -118,17 +120,21 @@ export type SuspenseQueriesResults<
       [...Result, GetSuspenseResults<Head>],
       [...Depth, 1]
     >
-  : T extends Array<UseSuspenseQueryOptions<
-      infer TQueryFnData,
-      infer TError,
-      infer TData,
-      any
-    >>
+  : T extends Array<
+      UseSuspenseQueryOptions<
+        infer TQueryFnData,
+        infer TError,
+        infer TData,
+        any
+      >
+    >
   ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-    Array<UseSuspenseQueryResult<
-      unknown extends TData ? TQueryFnData : TData,
-      unknown extends TError ? DefaultError : TError
-    >>
+    Array<
+      UseSuspenseQueryResult<
+        unknown extends TData ? TQueryFnData : TData,
+        unknown extends TError ? DefaultError : TError
+      >
+    >
   : // Fallback
     Array<UseSuspenseQueryResult>
 

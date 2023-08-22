@@ -89,24 +89,24 @@ describe('useQueries', () => {
     // @ts-expect-error (Page component is not rendered)
     // eslint-disable-next-line
     function Page() {
-      const result1 = createQueries<[[number], [string], [Array<string>, boolean]]>(
-        () => ({
-          queries: [
-            {
-              queryKey: key1,
-              queryFn: () => 1,
-            },
-            {
-              queryKey: key2,
-              queryFn: () => 'string',
-            },
-            {
-              queryKey: key3,
-              queryFn: () => ['string[]'],
-            },
-          ],
-        }),
-      )
+      const result1 = createQueries<
+        [[number], [string], [Array<string>, boolean]]
+      >(() => ({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () => 1,
+          },
+          {
+            queryKey: key2,
+            queryFn: () => 'string',
+          },
+          {
+            queryKey: key3,
+            queryFn: () => ['string[]'],
+          },
+        ],
+      }))
       expectType<QueryObserverResult<number, unknown>>(result1[0])
       expectType<QueryObserverResult<string, unknown>>(result1[1])
       expectType<QueryObserverResult<Array<string>, boolean>>(result1[2])
@@ -582,7 +582,9 @@ describe('useQueries', () => {
       TError,
       TData,
       TQueryKey extends QueryKey,
-    >(queries: Array<SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>>) {
+    >(
+      queries: Array<SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
+    ) {
       return createQueries(() => ({
         queries: queries.map(
           // no need to type the mapped query

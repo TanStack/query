@@ -125,7 +125,9 @@ describe('useQueries', () => {
     // @ts-expect-error (Page component is not rendered)
     // eslint-disable-next-line
     function Page() {
-      const result1 = useQueries<[[number], [string], [Array<string>, boolean]]>({
+      const result1 = useQueries<
+        [[number], [string], [Array<string>, boolean]]
+      >({
         queries: [
           {
             queryKey: key1,

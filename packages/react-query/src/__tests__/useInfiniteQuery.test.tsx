@@ -299,9 +299,9 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to select a new result and not cause infinite renders', async () => {
     const key = queryKey()
-    const states: Array<UseInfiniteQueryResult<
-      InfiniteData<{ count: number; id: number }>
-    >> = []
+    const states: Array<
+      UseInfiniteQueryResult<InfiniteData<{ count: number; id: number }>>
+    > = []
     let selectCalled = 0
 
     function Page() {

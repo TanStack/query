@@ -242,7 +242,9 @@ export const ASTUtils = {
 
     return resolvedNode.init
   },
-  getNestedReturnStatements(node: TSESTree.Node): Array<TSESTree.ReturnStatement> {
+  getNestedReturnStatements(
+    node: TSESTree.Node,
+  ): Array<TSESTree.ReturnStatement> {
     const returnStatements: Array<TSESTree.ReturnStatement> = []
 
     if (node.type === AST_NODE_TYPES.ReturnStatement) {

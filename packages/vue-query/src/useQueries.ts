@@ -108,12 +108,14 @@ export type UseQueriesOptions<
   ? T
   : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
   // use this to infer the param types in the case of Array.map() argument
-  T extends Array<UseQueryOptionsForUseQueries<
-      infer TQueryFnData,
-      infer TError,
-      infer TData,
-      infer TQueryKey
-    >>
+  T extends Array<
+      UseQueryOptionsForUseQueries<
+        infer TQueryFnData,
+        infer TError,
+        infer TData,
+        infer TQueryKey
+      >
+    >
   ? Array<UseQueryOptionsForUseQueries<TQueryFnData, TError, TData, TQueryKey>>
   : // Fallback
     Array<UseQueryOptionsForUseQueries>
@@ -133,18 +135,24 @@ export type UseQueriesResults<
   ? [...Result, GetResults<Head>]
   : T extends [infer Head, ...infer Tail]
   ? UseQueriesResults<[...Tail], [...Result, GetResults<Head>], [...Depth, 1]>
-  : T extends Array<UseQueryOptionsForUseQueries<
-      infer TQueryFnData,
-      infer TError,
-      infer TData,
-      any
-    >>
+  : T extends Array<
+      UseQueryOptionsForUseQueries<
+        infer TQueryFnData,
+        infer TError,
+        infer TData,
+        any
+      >
+    >
   ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-    Array<QueryObserverResult<unknown extends TData ? TQueryFnData : TData, TError>>
+    Array<
+      QueryObserverResult<unknown extends TData ? TQueryFnData : TData, TError>
+    >
   : // Fallback
     Array<QueryObserverResult>
 
-type UseQueriesOptionsArg<T extends Array<any>> = readonly [...UseQueriesOptions<T>]
+type UseQueriesOptionsArg<T extends Array<any>> = readonly [
+  ...UseQueriesOptions<T>,
+]
 
 export function useQueries<
   T extends Array<any>,

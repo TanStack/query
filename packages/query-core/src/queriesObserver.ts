@@ -218,14 +218,13 @@ export class QueriesObserver<
       )
     }
 
-    const newOrReusedObservers: Array<QueryObserverMatch> = unmatchedQueries.map(
-      (options) => {
+    const newOrReusedObservers: Array<QueryObserverMatch> =
+      unmatchedQueries.map((options) => {
         return {
           defaultedQueryOptions: options,
           observer: getObserver(options),
         }
-      },
-    )
+      })
 
     const sortMatchesByOrderOfQueries = (
       a: QueryObserverMatch,

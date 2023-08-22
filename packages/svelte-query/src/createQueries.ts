@@ -117,18 +117,22 @@ export type QueriesOptions<
   ? T
   : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
   // use this to infer the param types in the case of Array.map() argument
-  T extends Array<QueryObserverOptionsForCreateQueries<
-      infer TQueryFnData,
-      infer TError,
-      infer TData,
-      infer TQueryKey
-    >>
-  ? Array<QueryObserverOptionsForCreateQueries<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey
-    >>
+  T extends Array<
+      QueryObserverOptionsForCreateQueries<
+        infer TQueryFnData,
+        infer TError,
+        infer TData,
+        infer TQueryKey
+      >
+    >
+  ? Array<
+      QueryObserverOptionsForCreateQueries<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey
+      >
+    >
   : // Fallback
     Array<QueryObserverOptionsForCreateQueries>
 
@@ -147,17 +151,21 @@ export type QueriesResults<
   ? [...Result, GetResults<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesResults<[...Tail], [...Result, GetResults<Head>], [...Depth, 1]>
-  : T extends Array<QueryObserverOptionsForCreateQueries<
-      infer TQueryFnData,
-      infer TError,
-      infer TData,
-      any
-    >>
+  : T extends Array<
+      QueryObserverOptionsForCreateQueries<
+        infer TQueryFnData,
+        infer TError,
+        infer TData,
+        any
+      >
+    >
   ? // Dynamic-size (homogenous) CreateQueryOptions array: map directly to array of results
-    Array<QueryObserverResult<
-      unknown extends TData ? TQueryFnData : TData,
-      unknown extends TError ? DefaultError : TError
-    >>
+    Array<
+      QueryObserverResult<
+        unknown extends TData ? TQueryFnData : TData,
+        unknown extends TError ? DefaultError : TError
+      >
+    >
   : // Fallback
     Array<QueryObserverResult>
 

@@ -199,8 +199,9 @@ describe('useInfiniteQuery', () => {
 
   it('should keep the previous data when placeholderData is set', async () => {
     const key = queryKey()
-    const states: Array<Partial<CreateInfiniteQueryResult<InfiniteData<string>>>> =
-      []
+    const states: Array<
+      Partial<CreateInfiniteQueryResult<InfiniteData<string>>>
+    > = []
 
     function Page() {
       const [order, setOrder] = createSignal('desc')
@@ -344,9 +345,9 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to select a new result and not cause infinite renders', async () => {
     const key = queryKey()
-    const states: Array<CreateInfiniteQueryResult<
-      InfiniteData<{ count: number; id: number }>
-    >> = []
+    const states: Array<
+      CreateInfiniteQueryResult<InfiniteData<{ count: number; id: number }>>
+    > = []
     let selectCalled = 0
 
     function Page() {
@@ -391,8 +392,9 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to reverse the data', async () => {
     const key = queryKey()
-    const states: Array<Partial<CreateInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<
+      Partial<CreateInfiniteQueryResult<InfiniteData<number>>>
+    > = []
 
     function Page() {
       const state = createInfiniteQuery(() => ({
@@ -466,8 +468,9 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to fetch a previous page', async () => {
     const key = queryKey()
-    const states: Array<Partial<CreateInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<
+      Partial<CreateInfiniteQueryResult<InfiniteData<number>>>
+    > = []
 
     function Page() {
       const start = 10
@@ -554,8 +557,9 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to refetch when providing page params automatically', async () => {
     const key = queryKey()
-    const states: Array<Partial<CreateInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<
+      Partial<CreateInfiniteQueryResult<InfiniteData<number>>>
+    > = []
 
     function Page() {
       const state = createInfiniteQuery(() => ({
@@ -675,8 +679,9 @@ describe('useInfiniteQuery', () => {
 
   it('should silently cancel any ongoing fetch when fetching more', async () => {
     const key = queryKey()
-    const states: Array<Partial<CreateInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<
+      Partial<CreateInfiniteQueryResult<InfiniteData<number>>>
+    > = []
 
     function Page() {
       const start = 10
@@ -1028,8 +1033,9 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to set new pages with the query client', async () => {
     const key = queryKey()
-    const states: Array<Partial<CreateInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<
+      Partial<CreateInfiniteQueryResult<InfiniteData<number>>>
+    > = []
 
     function Page() {
       const [firstPage, setFirstPage] = createSignal(0)
@@ -1123,8 +1129,9 @@ describe('useInfiniteQuery', () => {
 
   it('should only refetch the first page when initialData is provided', async () => {
     const key = queryKey()
-    const states: Array<Partial<CreateInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<
+      Partial<CreateInfiniteQueryResult<InfiniteData<number>>>
+    > = []
 
     function Page() {
       const state = createInfiniteQuery(() => ({
