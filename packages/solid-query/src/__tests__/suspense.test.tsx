@@ -28,7 +28,7 @@ describe("useQuery's in Suspense mode", () => {
 
   it('should render the correct amount of times in Suspense mode', async () => {
     const key = queryKey()
-    const states: CreateQueryResult<number>[] = []
+    const states: Array<CreateQueryResult<number>> = []
 
     let count = 0
     let renders = 0
@@ -84,7 +84,7 @@ describe("useQuery's in Suspense mode", () => {
 
   it('should return the correct states for a successful infinite query', async () => {
     const key = queryKey()
-    const states: CreateInfiniteQueryResult<InfiniteData<number>>[] = []
+    const states: Array<CreateInfiniteQueryResult<InfiniteData<number>>> = []
 
     function Page() {
       const [multiplier, setMultiplier] = createSignal(1)
@@ -143,7 +143,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn twice when used in Suspense mode', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<unknown[], string>()
+    const queryFn = vi.fn<Array<unknown>, string>()
     queryFn.mockImplementation(() => {
       sleep(10)
       return 'data'
@@ -663,7 +663,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn when not enabled', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<unknown[], Promise<string>>()
+    const queryFn = vi.fn<Array<unknown>, Promise<string>>()
     queryFn.mockImplementation(async () => {
       await sleep(10)
       return '23'

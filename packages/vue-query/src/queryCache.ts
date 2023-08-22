@@ -15,7 +15,7 @@ export class QueryCache extends QC {
     return super.find(cloneDeepUnref(filters))
   }
 
-  findAll(filters: MaybeRefDeep<QueryFilters> = {}): Query[] {
+  findAll(filters: MaybeRefDeep<QueryFilters> = {}): Array<Query> {
     return super.findAll(cloneDeepUnref(filters))
   }
 }

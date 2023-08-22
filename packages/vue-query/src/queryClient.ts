@@ -57,7 +57,7 @@ export class QueryClient extends QC {
 
   getQueriesData<TData = unknown>(
     filters: MaybeRefDeep<QueryFilters>,
-  ): [QueryKey, TData | undefined][] {
+  ): Array<[QueryKey, TData | undefined]> {
     return super.getQueriesData(cloneDeepUnref(filters))
   }
 
@@ -77,7 +77,7 @@ export class QueryClient extends QC {
     filters: MaybeRefDeep<QueryFilters>,
     updater: Updater<TData | undefined, TData | undefined>,
     options: MaybeRefDeep<SetDataOptions> = {},
-  ): [QueryKey, TData | undefined][] {
+  ): Array<[QueryKey, TData | undefined]> {
     return super.setQueriesData(
       cloneDeepUnref(filters),
       updater,

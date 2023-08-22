@@ -38,8 +38,8 @@ interface DehydratedQuery {
 }
 
 export interface DehydratedState {
-  mutations: DehydratedMutation[]
-  queries: DehydratedQuery[]
+  mutations: Array<DehydratedMutation>
+  queries: Array<DehydratedQuery>
 }
 
 // FUNCTIONS

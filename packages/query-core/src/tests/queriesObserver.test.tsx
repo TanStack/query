@@ -68,7 +68,7 @@ describe('queriesObserver', () => {
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
     ])
-    const results: QueryObserverResult[][] = []
+    const results: Array<Array<QueryObserverResult>> = []
     results.push(observer.getCurrentResult())
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
@@ -113,7 +113,7 @@ describe('queriesObserver', () => {
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
     ])
-    const results: QueryObserverResult[][] = []
+    const results: Array<Array<QueryObserverResult>> = []
     results.push(observer.getCurrentResult())
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
@@ -160,7 +160,7 @@ describe('queriesObserver', () => {
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
     ])
-    const results: QueryObserverResult[][] = []
+    const results: Array<Array<QueryObserverResult>> = []
     results.push(observer.getCurrentResult())
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
@@ -208,7 +208,7 @@ describe('queriesObserver', () => {
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
     ])
-    const results: QueryObserverResult[][] = []
+    const results: Array<Array<QueryObserverResult>> = []
     results.push(observer.getCurrentResult())
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)

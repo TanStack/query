@@ -13,7 +13,7 @@ import type { MutationState, MutationStatus } from '@tanstack/query-core'
 
 describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {
-    const isMutatings: number[] = []
+    const isMutatings: Array<number> = []
     const queryClient = createQueryClient()
 
     function IsMutating() {
@@ -62,7 +62,7 @@ describe('useIsMutating', () => {
   })
 
   it('should filter correctly by mutationKey', async () => {
-    const isMutatings: number[] = []
+    const isMutatings: Array<number> = []
     const queryClient = createQueryClient()
 
     function IsMutating() {
@@ -100,7 +100,7 @@ describe('useIsMutating', () => {
   })
 
   it('should filter correctly by predicate', async () => {
-    const isMutatings: number[] = []
+    const isMutatings: Array<number> = []
     const queryClient = createQueryClient()
 
     function IsMutating() {
@@ -197,7 +197,7 @@ describe('useMutationState', () => {
   })
   it('should return variables after calling mutate', async () => {
     const queryClient = createQueryClient()
-    const variables: unknown[][] = []
+    const variables: Array<Array<unknown>> = []
     const mutationKey = ['mutation']
 
     function Variables() {

@@ -70,8 +70,8 @@ describe('InfiniteQueryObserver', () => {
 
   test('getNextPagParam and getPreviousPageParam should receive current pageParams', async () => {
     const key = queryKey()
-    let single: string[] = []
-    let all: string[] = []
+    let single: Array<string> = []
+    let all: Array<string> = []
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       queryFn: ({ pageParam }) => String(pageParam),

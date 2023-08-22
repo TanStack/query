@@ -851,7 +851,7 @@ describe('queryClient', () => {
   describe('refetchQueries', () => {
     test('should not refetch if all observers are disabled', async () => {
       const key = queryKey()
-      const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
+      const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
       await queryClient.fetchQuery({ queryKey: key, queryFn })
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key,
@@ -865,7 +865,7 @@ describe('queryClient', () => {
     })
     test('should refetch if at least one observer is enabled', async () => {
       const key = queryKey()
-      const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
+      const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
       await queryClient.fetchQuery({ queryKey: key, queryFn })
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key,
@@ -887,8 +887,8 @@ describe('queryClient', () => {
     test('should refetch all queries when no arguments are given', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
-      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<Array<unknown>, string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<Array<unknown>, string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer1 = new QueryObserver(queryClient, {
@@ -913,8 +913,8 @@ describe('queryClient', () => {
     test('should be able to refetch all fresh queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
-      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<Array<unknown>, string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<Array<unknown>, string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -932,8 +932,8 @@ describe('queryClient', () => {
     test('should be able to refetch all stale queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
-      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<Array<unknown>, string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<Array<unknown>, string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -952,8 +952,8 @@ describe('queryClient', () => {
     test('should be able to refetch all stale and active queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
-      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<Array<unknown>, string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<Array<unknown>, string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       queryClient.invalidateQueries({ queryKey: key1 })
@@ -974,8 +974,8 @@ describe('queryClient', () => {
     test('should be able to refetch all active and inactive queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
-      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<Array<unknown>, string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<Array<unknown>, string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -993,8 +993,8 @@ describe('queryClient', () => {
     test('should be able to refetch all active and inactive queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
-      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<Array<unknown>, string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<Array<unknown>, string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -1012,8 +1012,8 @@ describe('queryClient', () => {
     test('should be able to refetch only active queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
-      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<Array<unknown>, string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<Array<unknown>, string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -1031,8 +1031,8 @@ describe('queryClient', () => {
     test('should be able to refetch only inactive queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
-      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<Array<unknown>, string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<Array<unknown>, string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -1071,7 +1071,7 @@ describe('queryClient', () => {
 
     test('should resolve Promise immediately if query is paused', async () => {
       const key1 = queryKey()
-      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
+      const queryFn1 = vi.fn<Array<unknown>, string>().mockReturnValue('data1')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       const onlineMock = mockOnlineManagerIsOnline(false)
 
@@ -1085,7 +1085,7 @@ describe('queryClient', () => {
     test('should refetch if query we are offline but query networkMode is always', async () => {
       const key1 = queryKey()
       queryClient.setQueryDefaults(key1, { networkMode: 'always' })
-      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
+      const queryFn1 = vi.fn<Array<unknown>, string>().mockReturnValue('data1')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       const onlineMock = mockOnlineManagerIsOnline(false)
 
@@ -1101,8 +1101,8 @@ describe('queryClient', () => {
     test('should refetch active queries by default', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
-      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<Array<unknown>, string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<Array<unknown>, string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -1120,8 +1120,8 @@ describe('queryClient', () => {
     test('should not refetch inactive queries by default', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
-      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<Array<unknown>, string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<Array<unknown>, string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -1139,8 +1139,8 @@ describe('queryClient', () => {
     test('should not refetch active queries when "refetch" is "none"', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
-      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<Array<unknown>, string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<Array<unknown>, string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -1161,8 +1161,8 @@ describe('queryClient', () => {
     test('should refetch inactive queries when "refetch" is "inactive"', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
-      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<Array<unknown>, string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<Array<unknown>, string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -1185,8 +1185,8 @@ describe('queryClient', () => {
     test('should refetch active and inactive queries when "refetch" is "all"', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
-      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<Array<unknown>, string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<Array<unknown>, string>().mockReturnValue('data2')
       await queryClient.fetchQuery({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer = new QueryObserver(queryClient, {
@@ -1307,8 +1307,8 @@ describe('queryClient', () => {
     test('should refetch all active queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = vi.fn<unknown[], string>().mockReturnValue('data1')
-      const queryFn2 = vi.fn<unknown[], string>().mockReturnValue('data2')
+      const queryFn1 = vi.fn<Array<unknown>, string>().mockReturnValue('data1')
+      const queryFn2 = vi.fn<Array<unknown>, string>().mockReturnValue('data2')
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,

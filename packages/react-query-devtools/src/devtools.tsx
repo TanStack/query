@@ -34,7 +34,7 @@ export interface DevtoolsOptions {
   /**
    * Use this so you can define custom errors that can be shown in the devtools.
    */
-  errorTypes?: DevToolsErrorType[]
+  errorTypes?: Array<DevToolsErrorType>
 }
 
 export function ReactQueryDevtools(
