@@ -4678,7 +4678,7 @@ describe('createQuery', () => {
     }
 
     function Page() {
-      const state = createQuery(() => ({
+      createQuery(() => ({
         queryKey: key,
         queryFn: () => 'test',
         queryKeyHashFn,
