@@ -23,7 +23,7 @@ describe('useSuspenseQuery', () => {
 
   it('should render the correct amount of times in Suspense mode', async () => {
     const key = queryKey()
-    const states: UseSuspenseQueryResult<number>[] = []
+    const states: Array<UseSuspenseQueryResult<number>> = []
 
     let count = 0
     let renders = 0
@@ -72,7 +72,8 @@ describe('useSuspenseQuery', () => {
 
   it('should return the correct states for a successful infinite query', async () => {
     const key = queryKey()
-    const states: UseSuspenseInfiniteQueryResult<InfiniteData<number>>[] = []
+    const states: Array<UseSuspenseInfiniteQueryResult<InfiniteData<number>>> =
+      []
 
     function Page() {
       const [multiplier, setMultiplier] = React.useState(1)
@@ -122,7 +123,7 @@ describe('useSuspenseQuery', () => {
   it('should not call the queryFn twice when used in Suspense mode', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<unknown[], string>()
+    const queryFn = vi.fn<Array<unknown>, string>()
     queryFn.mockImplementation(() => {
       sleep(10)
       return 'data'
@@ -718,7 +719,7 @@ describe('useSuspenseQueries', () => {
   it('should suspend all queries in parallel', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const results: string[] = []
+    const results: Array<string> = []
 
     function Fallback() {
       results.push('loading')
@@ -769,8 +770,8 @@ describe('useSuspenseQueries', () => {
   it("shouldn't unmount before all promises fetched", async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const results: string[] = []
-    const refs: number[] = []
+    const results: Array<string> = []
+    const refs: Array<number> = []
 
     function Fallback() {
       results.push('loading')

@@ -2,10 +2,10 @@ import * as React from 'react'
 import { useQueries, useQuery, useQueryClient } from 'react-query'
 
 type Todos = {
-  items: readonly {
+  items: ReadonlyArray<{
     id: string
     text: string
-  }[]
+  }>
   ts: number
 }
 

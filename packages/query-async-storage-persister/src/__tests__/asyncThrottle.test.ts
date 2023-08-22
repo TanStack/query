@@ -5,7 +5,7 @@ import { sleep as delay } from './utils'
 describe('asyncThrottle', () => {
   test('basic', async () => {
     const interval = 10
-    const execTimeStamps: number[] = []
+    const execTimeStamps: Array<number> = []
     const mockFunc = vi.fn(
       async (id: number, complete?: (value?: unknown) => void) => {
         await delay(1)
@@ -33,7 +33,7 @@ describe('asyncThrottle', () => {
 
   test('Bug #3331 case 1: Special timing', async () => {
     const interval = 1000
-    const execTimeStamps: number[] = []
+    const execTimeStamps: Array<number> = []
     const mockFunc = vi.fn(
       async (id: number, complete?: (value?: unknown) => void) => {
         await delay(30)
@@ -62,7 +62,7 @@ describe('asyncThrottle', () => {
 
   test('Bug #3331 case 2: "func" execution time is greater than the interval.', async () => {
     const interval = 1000
-    const execTimeStamps: number[] = []
+    const execTimeStamps: Array<number> = []
     const mockFunc = vi.fn(
       async (id: number, complete?: (value?: unknown) => void) => {
         await delay(interval + 10)

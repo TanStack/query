@@ -318,7 +318,7 @@ describe('createMutation', () => {
   })
 
   it('should be able to override the useMutation success callbacks', async () => {
-    const callbacks: string[] = []
+    const callbacks: Array<string> = []
 
     function Page() {
       const mutation = createMutation(() => ({
@@ -369,7 +369,7 @@ describe('createMutation', () => {
   })
 
   it('should be able to override the error callbacks when using mutateAsync', async () => {
-    const callbacks: string[] = []
+    const callbacks: Array<string> = []
 
     function Page() {
       const mutation = createMutation(() => ({
@@ -431,7 +431,7 @@ describe('createMutation', () => {
       },
     })
 
-    const states: CreateMutationResult<any, any, any, any>[] = []
+    const states: Array<CreateMutationResult<any, any, any, any>> = []
 
     function Page() {
       const mutation = createMutation<string, unknown, string>(() => ({
@@ -676,7 +676,7 @@ describe('createMutation', () => {
     const onlineMock = mockOnlineManagerIsOnline(false)
 
     let count = 0
-    const states: CreateMutationResult<any, any, any, any>[] = []
+    const states: Array<CreateMutationResult<any, any, any, any>> = []
 
     function Page() {
       const mutation = createMutation(() => ({

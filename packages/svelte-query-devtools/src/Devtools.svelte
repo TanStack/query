@@ -14,7 +14,7 @@
   export let buttonPosition: DevtoolsButtonPosition = 'bottom-left'
   export let position: DevtoolsPosition = 'bottom'
   export let client: QueryClient = useQueryClient()
-  export let errorTypes: DevToolsErrorType[] = []
+  export let errorTypes: Array<DevToolsErrorType> = []
 
   let ref: HTMLDivElement
   let devtools: TanstackQueryDevtools | undefined

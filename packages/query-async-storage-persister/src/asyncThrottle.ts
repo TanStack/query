@@ -7,7 +7,7 @@ const noop = () => {
   /* do nothing */
 }
 
-export function asyncThrottle<Args extends readonly unknown[]>(
+export function asyncThrottle<Args extends ReadonlyArray<unknown>>(
   func: (...args: Args) => Promise<void>,
   { interval = 1000, onError = noop }: AsyncThrottleOptions = {},
 ) {
