@@ -11,7 +11,7 @@ When using `useInfiniteQuery`, you'll notice a few things are different:
 - `data.pages` array containing the fetched pages
 - `data.pageParams` array containing the page params used to fetch the pages
 - The `fetchNextPage` and `fetchPreviousPage` functions are now available (`fetchNextPage` is required)
-- The `defaultPageParam` option is now available (and required) to specify the initial page param
+- The `initialPageParam` option is now available (and required) to specify the initial page param
 - The `getNextPageParam` and `getPreviousPageParam` options are available for both determining if there is more data to load and the information to fetch it. This information is supplied as an additional parameter in the query function
 - A `hasNextPage` boolean is now available and is `true` if `getNextPageParam` returns a value other than `null` or `undefined`
 - A `hasPreviousPage` boolean is now available and is `true` if `getPreviousPageParam` returns a value other than `null` or `undefined`
@@ -62,7 +62,7 @@ function Projects() {
   } = useInfiniteQuery({
     queryKey: ['projects'],
     queryFn: fetchProjects,
-    defaultPageParam: 0,
+    initialPageParam: 0,
     getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   })
 
@@ -113,7 +113,7 @@ Bi-directional lists can be implemented by using the `getPreviousPageParam`, `fe
 useInfiniteQuery({
   queryKey: ['projects'],
   queryFn: fetchProjects,
-  defaultPageParam: 0,
+  initialPageParam: 0,
   getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
 })
@@ -208,7 +208,7 @@ In the following example only 3 pages are kept in the query data pages array. If
 useInfiniteQuery({
   queryKey: ['projects'],
   queryFn: fetchProjects,
-  defaultPageParam: 0,
+  initialPageParam: 0,
   getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
   maxPages: 3,
@@ -225,7 +225,7 @@ If your API doesn't return a cursor, you can use the `pageParam` as a cursor. Be
 return useInfiniteQuery({
   queryKey: ['projects'],
   queryFn: fetchProjects,
-  defaultPageParam: 0,
+  initialPageParam: 0,
   getNextPageParam: (lastPage, allPages, lastPageParam) => {
     if (lastPage.length === 0) {
         return undefined
