@@ -1,5 +1,6 @@
 import {
   computed,
+  getCurrentScope,
   onScopeDispose,
   reactive,
   readonly,
@@ -58,6 +59,14 @@ export function useBaseQuery<
     | UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey> = {},
   arg3: UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey> = {},
 ): UseQueryReturnType<TData, TError> {
+  if (process.env.NODE_ENV === 'development') {
+    if (!getCurrentScope()) {
+      console.warn(
+        'vue-query composables like "uesQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+      )
+    }
+  }
+
   const options = computed(() => parseQueryArgs(arg1, arg2, arg3))
 
   const queryClient =
