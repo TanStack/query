@@ -146,7 +146,7 @@ export function setupDevtools(app: any, queryClient: QueryClient) {
         api.sendInspectorTree(pluginId)
         api.sendInspectorState(pluginId)
 
-        const queryEvents: QueryCacheNotifyEvent['type'][] = [
+        const queryEvents: Array<QueryCacheNotifyEvent['type']> = [
           'added',
           'removed',
           'updated',
@@ -189,7 +189,7 @@ export function setupDevtools(app: any, queryClient: QueryClient) {
             (a, b) => sortFns[settings.sortFn]!(a, b) * settings.baseSort,
           )
 
-          const nodes: CustomInspectorNode[] = sorted.map((query) => {
+          const nodes: Array<CustomInspectorNode> = sorted.map((query) => {
             const stateLabel = getQueryStateLabel(query)
 
             return {

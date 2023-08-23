@@ -88,7 +88,7 @@ export class Mutation<
   options!: MutationOptions<TData, TError, TVariables, TContext>
   readonly mutationId: number
 
-  #observers: MutationObserver<TData, TError, TVariables, TContext>[]
+  #observers: Array<MutationObserver<TData, TError, TVariables, TContext>>
   #defaultOptions?: MutationOptions<TData, TError, TVariables, TContext>
   #mutationCache: MutationCache
   #retryer?: Retryer<TData>

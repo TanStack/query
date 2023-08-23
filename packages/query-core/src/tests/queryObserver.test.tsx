@@ -17,7 +17,7 @@ describe('queryObserver', () => {
 
   test('should trigger a fetch when subscribed', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
+    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
     const observer = new QueryObserver(queryClient, { queryKey: key, queryFn })
     const unsubscribe = observer.subscribe(() => undefined)
     await sleep(1)
@@ -28,7 +28,7 @@ describe('queryObserver', () => {
   test('should notify when switching query', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const results: QueryObserverResult[] = []
+    const results: Array<QueryObserverResult> = []
     const observer = new QueryObserver(queryClient, {
       queryKey: key1,
       queryFn: () => 1,
@@ -113,7 +113,7 @@ describe('queryObserver', () => {
   test('should run the selector again if the selector changed', async () => {
     const key = queryKey()
     let count = 0
-    const results: QueryObserverResult[] = []
+    const results: Array<QueryObserverResult> = []
     const queryFn = () => ({ count: 1 })
     const select1 = (data: ReturnType<typeof queryFn>) => {
       count++
@@ -172,7 +172,7 @@ describe('queryObserver', () => {
   test('should not run the selector again if the data and selector did not change', async () => {
     const key = queryKey()
     let count = 0
-    const results: QueryObserverResult[] = []
+    const results: Array<QueryObserverResult> = []
     const queryFn = () => ({ count: 1 })
     const select = (data: ReturnType<typeof queryFn>) => {
       count++
@@ -239,7 +239,7 @@ describe('queryObserver', () => {
 
   test('should always run the selector again if selector throws an error and selector is not referentially stable', async () => {
     const key = queryKey()
-    const results: QueryObserverResult[] = []
+    const results: Array<QueryObserverResult> = []
     const queryFn = async () => {
       await sleep(10)
       return { count: 1 }
@@ -281,7 +281,7 @@ describe('queryObserver', () => {
 
   test('should return stale data if selector throws an error', async () => {
     const key = queryKey()
-    const results: QueryObserverResult[] = []
+    const results: Array<QueryObserverResult> = []
     let shouldError = false
     const error = new Error('select error')
     const observer = new QueryObserver(queryClient, {
@@ -349,7 +349,7 @@ describe('queryObserver', () => {
 
   test('should not trigger a fetch when subscribed and disabled', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
+    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
@@ -363,7 +363,7 @@ describe('queryObserver', () => {
 
   test('should not trigger a fetch when not subscribed', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
+    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
     new QueryObserver(queryClient, { queryKey: key, queryFn })
     await sleep(1)
     expect(queryFn).toHaveBeenCalledTimes(0)
@@ -371,7 +371,7 @@ describe('queryObserver', () => {
 
   test('should be able to watch a query without defining a query function', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
+    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
     const callback = vi.fn()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -386,12 +386,12 @@ describe('queryObserver', () => {
 
   test('should accept unresolved query config in update function', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
+    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       enabled: false,
     })
-    const results: QueryObserverResult<unknown>[] = []
+    const results: Array<QueryObserverResult<unknown>> = []
     const unsubscribe = observer.subscribe((x) => {
       results.push(x)
     })
@@ -408,13 +408,13 @@ describe('queryObserver', () => {
 
   test('should be able to handle multiple subscribers', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
+    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
     const observer = new QueryObserver<string>(queryClient, {
       queryKey: key,
       enabled: false,
     })
-    const results1: QueryObserverResult<string>[] = []
-    const results2: QueryObserverResult<string>[] = []
+    const results1: Array<QueryObserverResult<string>> = []
+    const results2: Array<QueryObserverResult<string>> = []
     const unsubscribe1 = observer.subscribe((x) => {
       results1.push(x)
     })
@@ -490,7 +490,7 @@ describe('queryObserver', () => {
       data: 'placeholder',
     })
 
-    const results: QueryObserverResult<unknown>[] = []
+    const results: Array<QueryObserverResult<unknown>> = []
 
     const unsubscribe = observer.subscribe((x) => {
       results.push(x)
@@ -568,7 +568,7 @@ describe('queryObserver', () => {
 
   test('should not refetch in background if refetchIntervalInBackground is false', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
+    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
 
     focusManager.setFocused(false)
     const observer = new QueryObserver(queryClient, {
@@ -692,8 +692,8 @@ describe('queryObserver', () => {
   })
 
   test('should pass the correct previous queryKey (from prevQuery) to placeholderData function params with select', async () => {
-    const results: QueryObserverResult[] = []
-    const keys: Array<readonly unknown[] | null> = []
+    const results: Array<QueryObserverResult> = []
+    const keys: Array<ReadonlyArray<unknown> | null> = []
 
     const key1 = queryKey()
     const key2 = queryKey()
@@ -758,7 +758,7 @@ describe('queryObserver', () => {
   })
 
   test('should pass the correct previous data to placeholderData function params when select function is used in conjunction', async () => {
-    const results: QueryObserverResult[] = []
+    const results: Array<QueryObserverResult> = []
 
     const key1 = queryKey()
     const key2 = queryKey()

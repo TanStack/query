@@ -59,7 +59,7 @@ export function useMutationState<TResult = MutationState>(
 ): DeepReadonly<Ref<Array<TResult>>> {
   const filters = computed(() => cloneDeepUnref(options.filters))
   const mutationCache = (queryClient || useQueryClient()).getMutationCache()
-  const state = ref(getResult(mutationCache, options)) as Ref<TResult[]>
+  const state = ref(getResult(mutationCache, options)) as Ref<Array<TResult>>
   const unsubscribe = mutationCache.subscribe(() => {
     const result = getResult(mutationCache, options)
     state.value = result

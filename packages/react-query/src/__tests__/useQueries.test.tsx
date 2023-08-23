@@ -28,7 +28,7 @@ describe('useQueries', () => {
   it('should return the correct states', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const results: UseQueryResult[][] = []
+    const results: Array<Array<UseQueryResult>> = []
 
     function Page() {
       const result = useQueries({
@@ -73,7 +73,7 @@ describe('useQueries', () => {
 
   it('should track results', async () => {
     const key1 = queryKey()
-    const results: UseQueryResult[][] = []
+    const results: Array<Array<UseQueryResult>> = []
     let count = 0
 
     function Page() {
@@ -125,7 +125,9 @@ describe('useQueries', () => {
     // @ts-expect-error (Page component is not rendered)
     // eslint-disable-next-line
     function Page() {
-      const result1 = useQueries<[[number], [string], [string[], boolean]]>({
+      const result1 = useQueries<
+        [[number], [string], [Array<string>, boolean]]
+      >({
         queries: [
           {
             queryKey: key1,
@@ -143,10 +145,10 @@ describe('useQueries', () => {
       })
       expectType<QueryObserverResult<number, unknown>>(result1[0])
       expectType<QueryObserverResult<string, unknown>>(result1[1])
-      expectType<QueryObserverResult<string[], boolean>>(result1[2])
+      expectType<QueryObserverResult<Array<string>, boolean>>(result1[2])
       expectType<number | undefined>(result1[0].data)
       expectType<string | undefined>(result1[1].data)
-      expectType<string[] | undefined>(result1[2].data)
+      expectType<Array<string> | undefined>(result1[2].data)
       expectType<boolean | null>(result1[2].error)
 
       // TData (3rd element) takes precedence over TQueryFnData (1st element)
@@ -235,7 +237,7 @@ describe('useQueries', () => {
         [
           { queryFnData: number },
           { queryFnData: string },
-          { queryFnData: string[]; error: boolean },
+          { queryFnData: Array<string>; error: boolean },
         ]
       >({
         queries: [
@@ -255,10 +257,10 @@ describe('useQueries', () => {
       })
       expectType<QueryObserverResult<number, unknown>>(result1[0])
       expectType<QueryObserverResult<string, unknown>>(result1[1])
-      expectType<QueryObserverResult<string[], boolean>>(result1[2])
+      expectType<QueryObserverResult<Array<string>, boolean>>(result1[2])
       expectType<number | undefined>(result1[0].data)
       expectType<string | undefined>(result1[1].data)
-      expectType<string[] | undefined>(result1[2].data)
+      expectType<Array<string> | undefined>(result1[2].data)
       expectType<boolean | null>(result1[2].error)
 
       // TData (data prop) takes precedence over TQueryFnData (queryFnData prop)
@@ -387,7 +389,7 @@ describe('useQueries', () => {
           queryFn: () => i + 10,
         })),
       })
-      expectType<QueryObserverResult<number, unknown>[]>(result1)
+      expectType<Array<QueryObserverResult<number, unknown>>>(result1)
       expectType<number | undefined>(result1[0]?.data)
 
       // Array.map preserves TData
@@ -398,7 +400,7 @@ describe('useQueries', () => {
           select: (data: number) => data.toString(),
         })),
       })
-      expectType<QueryObserverResult<string, unknown>[]>(result2)
+      expectType<Array<QueryObserverResult<string, unknown>>>(result2)
 
       const result3 = useQueries({
         queries: [
@@ -616,7 +618,7 @@ describe('useQueries', () => {
       TError,
       TData,
       TQueryKey extends QueryKey,
-    >(queries: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[]) {
+    >(queries: Array<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>>) {
       return useQueries({
         queries: queries.map(
           // no need to type the mapped query
@@ -684,7 +686,7 @@ describe('useQueries', () => {
         })),
       )
 
-      expectType<QueryObserverResult<number | undefined, unknown>[]>(
+      expectType<Array<QueryObserverResult<number | undefined, unknown>>>(
         withWrappedQueries,
       )
     }

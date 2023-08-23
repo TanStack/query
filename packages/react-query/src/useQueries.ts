@@ -103,62 +103,68 @@ type GetResults<T> =
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
  */
 export type QueriesOptions<
-  T extends any[],
-  Result extends any[] = [],
+  T extends Array<any>,
+  Result extends Array<any> = [],
   Depth extends ReadonlyArray<number> = [],
 > = Depth['length'] extends MAXIMUM_DEPTH
-  ? UseQueryOptionsForUseQueries[]
+  ? Array<UseQueryOptionsForUseQueries>
   : T extends []
   ? []
   : T extends [infer Head]
   ? [...Result, GetOptions<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesOptions<[...Tail], [...Result, GetOptions<Head>], [...Depth, 1]>
-  : unknown[] extends T
+  : Array<unknown> extends T
   ? T
   : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
   // use this to infer the param types in the case of Array.map() argument
-  T extends UseQueryOptionsForUseQueries<
-      infer TQueryFnData,
-      infer TError,
-      infer TData,
-      infer TQueryKey
-    >[]
-  ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData, TQueryKey>[]
+  T extends Array<
+      UseQueryOptionsForUseQueries<
+        infer TQueryFnData,
+        infer TError,
+        infer TData,
+        infer TQueryKey
+      >
+    >
+  ? Array<UseQueryOptionsForUseQueries<TQueryFnData, TError, TData, TQueryKey>>
   : // Fallback
-    UseQueryOptionsForUseQueries[]
+    Array<UseQueryOptionsForUseQueries>
 
 /**
  * QueriesResults reducer recursively maps type param to results
  */
 export type QueriesResults<
-  T extends any[],
-  Result extends any[] = [],
+  T extends Array<any>,
+  Result extends Array<any> = [],
   Depth extends ReadonlyArray<number> = [],
 > = Depth['length'] extends MAXIMUM_DEPTH
-  ? UseQueryResult[]
+  ? Array<UseQueryResult>
   : T extends []
   ? []
   : T extends [infer Head]
   ? [...Result, GetResults<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesResults<[...Tail], [...Result, GetResults<Head>], [...Depth, 1]>
-  : T extends UseQueryOptionsForUseQueries<
-      infer TQueryFnData,
-      infer TError,
-      infer TData,
-      any
-    >[]
+  : T extends Array<
+      UseQueryOptionsForUseQueries<
+        infer TQueryFnData,
+        infer TError,
+        infer TData,
+        any
+      >
+    >
   ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-    UseQueryResult<
-      unknown extends TData ? TQueryFnData : TData,
-      unknown extends TError ? DefaultError : TError
-    >[]
+    Array<
+      UseQueryResult<
+        unknown extends TData ? TQueryFnData : TData,
+        unknown extends TError ? DefaultError : TError
+      >
+    >
   : // Fallback
-    UseQueryResult[]
+    Array<UseQueryResult>
 
 export function useQueries<
-  T extends any[],
+  T extends Array<any>,
   TCombinedResult = QueriesResults<T>,
 >(
   {

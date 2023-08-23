@@ -70,11 +70,11 @@ type GetSuspenseResults<T> =
  * SuspenseQueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
  */
 export type SuspenseQueriesOptions<
-  T extends any[],
-  Result extends any[] = [],
+  T extends Array<any>,
+  Result extends Array<any> = [],
   Depth extends ReadonlyArray<number> = [],
 > = Depth['length'] extends MAXIMUM_DEPTH
-  ? UseSuspenseQueryOptions[]
+  ? Array<UseSuspenseQueryOptions>
   : T extends []
   ? []
   : T extends [infer Head]
@@ -85,29 +85,31 @@ export type SuspenseQueriesOptions<
       [...Result, GetSuspenseOptions<Head>],
       [...Depth, 1]
     >
-  : unknown[] extends T
+  : Array<unknown> extends T
   ? T
   : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
   // use this to infer the param types in the case of Array.map() argument
-  T extends UseSuspenseQueryOptions<
-      infer TQueryFnData,
-      infer TError,
-      infer TData,
-      infer TQueryKey
-    >[]
-  ? UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[]
+  T extends Array<
+      UseSuspenseQueryOptions<
+        infer TQueryFnData,
+        infer TError,
+        infer TData,
+        infer TQueryKey
+      >
+    >
+  ? Array<UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>>
   : // Fallback
-    UseSuspenseQueryOptions[]
+    Array<UseSuspenseQueryOptions>
 
 /**
  * SuspenseQueriesResults reducer recursively maps type param to results
  */
 export type SuspenseQueriesResults<
-  T extends any[],
-  Result extends any[] = [],
+  T extends Array<any>,
+  Result extends Array<any> = [],
   Depth extends ReadonlyArray<number> = [],
 > = Depth['length'] extends MAXIMUM_DEPTH
-  ? UseSuspenseQueryResult[]
+  ? Array<UseSuspenseQueryResult>
   : T extends []
   ? []
   : T extends [infer Head]
@@ -118,22 +120,26 @@ export type SuspenseQueriesResults<
       [...Result, GetSuspenseResults<Head>],
       [...Depth, 1]
     >
-  : T extends UseSuspenseQueryOptions<
-      infer TQueryFnData,
-      infer TError,
-      infer TData,
-      any
-    >[]
+  : T extends Array<
+      UseSuspenseQueryOptions<
+        infer TQueryFnData,
+        infer TError,
+        infer TData,
+        any
+      >
+    >
   ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-    UseSuspenseQueryResult<
-      unknown extends TData ? TQueryFnData : TData,
-      unknown extends TError ? DefaultError : TError
-    >[]
+    Array<
+      UseSuspenseQueryResult<
+        unknown extends TData ? TQueryFnData : TData,
+        unknown extends TError ? DefaultError : TError
+      >
+    >
   : // Fallback
-    UseSuspenseQueryResult[]
+    Array<UseSuspenseQueryResult>
 
 export function useSuspenseQueries<
-  T extends any[],
+  T extends Array<any>,
   TCombinedResult = SuspenseQueriesResults<T>,
 >(
   options: {
