@@ -26,8 +26,9 @@ export const PersistQueryClientProvider = (
     })
 
     promise.then(async () => {
+      if (isStale) return
       try {
-        if (!isStale) await props.onSuccess?.()
+        await props.onSuccess?.()
       } finally {
         setIsRestoring(false)
       }

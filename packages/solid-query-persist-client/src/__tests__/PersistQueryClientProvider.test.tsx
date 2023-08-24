@@ -50,11 +50,11 @@ const createMockErrorPersister = (
 describe('PersistQueryClientProvider', () => {
   test('restores cache from persister', async () => {
     const key = queryKey()
-    const states: {
+    const states: Array<{
       status: string
       fetchStatus: string
       data: string | undefined
-    }[] = []
+    }> = []
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
@@ -128,11 +128,11 @@ describe('PersistQueryClientProvider', () => {
 
   test('should also put useQueries into idle state', async () => {
     const key = queryKey()
-    const states: {
+    const states: Array<{
       status: string
       fetchStatus: string
       data: string | undefined
-    }[] = []
+    }> = []
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
@@ -211,11 +211,11 @@ describe('PersistQueryClientProvider', () => {
 
   test('should show initialData while restoring', async () => {
     const key = queryKey()
-    const states: {
+    const states: Array<{
       status: string
       fetchStatus: string
       data: string | undefined
-    }[] = []
+    }> = []
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
@@ -294,11 +294,11 @@ describe('PersistQueryClientProvider', () => {
 
   test('should not refetch after restoring when data is fresh', async () => {
     const key = queryKey()
-    const states: {
+    const states: Array<{
       status: string
       fetchStatus: string
       data: string | undefined
-    }[] = []
+    }> = []
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
@@ -468,11 +468,11 @@ describe('PersistQueryClientProvider', () => {
 
   test('should be able to persist into multiple clients', async () => {
     const key = queryKey()
-    const states: {
+    const states: Array<{
       status: string
       fetchStatus: string
       data: string | undefined
-    }[] = []
+    }> = []
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
