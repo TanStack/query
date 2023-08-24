@@ -15,13 +15,13 @@ export function useIsFetching(
 
   const isFetching = ref()
 
-  const callback = () => {
+  const listener = () => {
     isFetching.value = client.isFetching(fetchingFilters)
   }
 
-  const unsubscribe = client.getQueryCache().subscribe(callback)
+  const unsubscribe = client.getQueryCache().subscribe(listener)
 
-  watchEffect(callback, {
+  watchEffect(listener, {
     flush: 'sync',
   })
 
