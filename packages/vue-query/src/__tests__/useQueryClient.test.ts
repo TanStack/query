@@ -18,7 +18,7 @@ describe('useQueryClient', () => {
 
     expect(queryClient).toStrictEqual(queryClientMock)
     expect(injectSpy).toHaveBeenCalledTimes(1)
-    expect(injectSpy).toHaveBeenCalledWith(VUE_QUERY_CLIENT)
+    expect(injectSpy).toHaveBeenCalledWith(VUE_QUERY_CLIENT, null)
   })
 
   test('should throw an error when queryClient does not exist in the context', () => {
@@ -26,7 +26,7 @@ describe('useQueryClient', () => {
 
     expect(useQueryClient).toThrowError()
     expect(injectSpy).toHaveBeenCalledTimes(1)
-    expect(injectSpy).toHaveBeenCalledWith(VUE_QUERY_CLIENT)
+    expect(injectSpy).toHaveBeenCalledWith(VUE_QUERY_CLIENT, null)
   })
 
   test('should throw an error when used outside of setup function', () => {
@@ -44,6 +44,6 @@ describe('useQueryClient', () => {
 
     useQueryClient(queryClientKey)
 
-    expect(injectSpy).toHaveBeenCalledWith(expectedKeyParameter)
+    expect(injectSpy).toHaveBeenCalledWith(expectedKeyParameter, null)
   })
 })
