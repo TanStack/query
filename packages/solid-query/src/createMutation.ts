@@ -25,7 +25,7 @@ export function createMutation<
   const client = useQueryClient(queryClient?.())
 
   const observer = new MutationObserver<TData, TError, TVariables, TContext>(
-    client,
+    client(),
     options(),
   )
 

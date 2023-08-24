@@ -179,7 +179,7 @@ export function createQueries<
   }>,
   queryClient?: Accessor<QueryClient>,
 ): TCombinedResult {
-  const client = createMemo(() => useQueryClient(queryClient?.()))
+  const client = createMemo(() => useQueryClient(queryClient?.())())
   const isRestoring = useIsRestoring()
 
   const defaultedQueries = createMemo(() =>

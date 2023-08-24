@@ -8,9 +8,11 @@ import {
   createComputed,
   createMemo,
   createResource,
+  createSignal,
   mergeProps,
   on,
   onCleanup,
+  untrack,
 } from 'solid-js'
 import { createStore, reconcile, unwrap } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
@@ -105,7 +107,7 @@ export function createBaseQuery<
     | HydrateableQueryState<TData, TError>
     | QueryObserverResult<TData, TError>
 
-  const client = createMemo(() => useQueryClient(queryClient?.()))
+  const client = createMemo(() => useQueryClient(queryClient?.())())
   const isRestoring = useIsRestoring()
 
   const defaultedOptions = createMemo(() =>
@@ -118,10 +120,19 @@ export function createBaseQuery<
     }),
   )
 
-  const observer = new Observer(client(), defaultedOptions())
+  const [observer, setObserver] = createSignal(
+    new Observer(client(), untrack(defaultedOptions)),
+  )
+  // we set the value in a computed because `createMemo`
+  // returns undefined during transitions
+  createComputed(
+    on(client, (c) => setObserver(new Observer(c, defaultedOptions())), {
+      defer: true,
+    }),
+  )
 
   const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
-    observer.getOptimisticResult(defaultedOptions()),
+    observer().getOptimisticResult(defaultedOptions()),
   )
 
   const createServerSubscriber = (
@@ -130,9 +141,9 @@ export function createBaseQuery<
     ) => void,
     reject: (reason?: any) => void,
   ) => {
-    return observer.subscribe((result) => {
+    return observer().subscribe((result) => {
       notifyManager.batchCalls(() => {
-        const query = observer.getCurrentQuery()
+        const query = observer().getCurrentQuery()
         const unwrappedResult = hydrateableObserverResult(query, result)
 
         if (unwrappedResult.isError) {
@@ -145,11 +156,12 @@ export function createBaseQuery<
   }
 
   const createClientSubscriber = () => {
-    return observer.subscribe((result) => {
+    const obs = observer()
+    return obs.subscribe((result) => {
       notifyManager.batchCalls(() => {
         // @ts-expect-error - This will error because the reconcile option does not
         // exist on the query-core QueryObserverResult type
-        const reconcileOptions = observer.options.reconcile
+        const reconcileOptions = obs.options.reconcile
 
         setState((store) => {
           return reconcileFn(
@@ -181,15 +193,16 @@ export function createBaseQuery<
     ResourceData | undefined
   >(
     () => {
+      const obs = observer()
       return new Promise((resolve, reject) => {
         if (isServer) unsubscribe = createServerSubscriber(resolve, reject)
         else if (!unsubscribe && !isRestoring())
           unsubscribe = createClientSubscriber()
 
-        observer.updateResult()
+        obs.updateResult()
 
         if (!state.isLoading && !isRestoring()) {
-          const query = observer.getCurrentQuery()
+          const query = obs.getCurrentQuery()
           resolve(hydrateableObserverResult(query, state))
         }
       })
@@ -239,8 +252,8 @@ export function createBaseQuery<
         }
         // Setting the options as an immutable object to prevent
         // wonky behavior with observer subscriptions
-        observer.setOptions(newOptions)
-        setState(observer.getOptimisticResult(newOptions))
+        observer().setOptions(newOptions)
+        setState(observer().getOptimisticResult(newOptions))
         unsubscribe = createClientSubscriber()
       },
     },
@@ -248,8 +261,8 @@ export function createBaseQuery<
 
   createComputed(
     on(
-      isRestoring,
-      (restoring) => {
+      [isRestoring, observer],
+      ([restoring]) => {
         const unsub = unsubscribe
         queueMicrotask(() => unsub?.())
         unsubscribe = null
@@ -268,10 +281,10 @@ export function createBaseQuery<
 
   createComputed(
     on(
-      defaultedOptions,
-      (opts) => {
-        observer.setOptions(opts)
-        setState(observer.getOptimisticResult(opts))
+      [observer, defaultedOptions],
+      ([obs, opts]) => {
+        obs.setOptions(opts)
+        setState(obs.getOptimisticResult(opts))
       },
       {
         // Defer because we don't need to trigger on first render
@@ -282,19 +295,23 @@ export function createBaseQuery<
   )
 
   createComputed(
-    on([() => state.status], () => {
-      if (
-        state.isError &&
-        !state.isFetching &&
-        !isRestoring() &&
-        shouldThrowError(observer.options.throwOnError, [
-          state.error,
-          observer.getCurrentQuery(),
-        ])
-      ) {
-        throw state.error
-      }
-    }),
+    on(
+      () => state.status,
+      () => {
+        const obs = observer()
+        if (
+          state.isError &&
+          !state.isFetching &&
+          !isRestoring() &&
+          shouldThrowError(obs.options.throwOnError, [
+            state.error,
+            obs.getCurrentQuery(),
+          ])
+        ) {
+          throw state.error
+        }
+      },
+    ),
   )
 
   const handler = {
