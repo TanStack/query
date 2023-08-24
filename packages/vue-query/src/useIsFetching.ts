@@ -1,4 +1,4 @@
-import { computed, onScopeDispose, ref, unref, watch } from 'vue-demi'
+import { computed, onScopeDispose, ref, unref, watchSyncEffect } from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref, isQueryKey } from './utils'
 import type { Ref } from 'vue-demi'
@@ -21,15 +21,15 @@ export function useIsFetching(
   const queryClient =
     filters.value.queryClient ?? useQueryClient(filters.value.queryClientKey)
 
-  const isFetching = ref(queryClient.isFetching(filters))
+  const isFetching = ref()
 
-  const unsubscribe = queryClient.getQueryCache().subscribe(() => {
+  const listener = () => {
     isFetching.value = queryClient.isFetching(filters)
-  })
+  }
 
-  watch(filters, () => {
-    isFetching.value = queryClient.isFetching(filters)
-  })
+  const unsubscribe = queryClient.getQueryCache().subscribe(listener)
+
+  watchSyncEffect(listener)
 
   onScopeDispose(() => {
     unsubscribe()

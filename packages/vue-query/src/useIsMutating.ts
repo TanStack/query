@@ -1,4 +1,4 @@
-import { computed, onScopeDispose, ref, unref, watch } from 'vue-demi'
+import { computed, onScopeDispose, ref, unref, watchSyncEffect } from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref, isQueryKey } from './utils'
 import type { Ref } from 'vue-demi'
@@ -21,15 +21,15 @@ export function useIsMutating(
   const queryClient =
     filters.value.queryClient ?? useQueryClient(filters.value.queryClientKey)
 
-  const isMutating = ref(queryClient.isMutating(filters))
+  const isMutating = ref()
 
-  const unsubscribe = queryClient.getMutationCache().subscribe(() => {
+  const listener = () => {
     isMutating.value = queryClient.isMutating(filters)
-  })
+  }
 
-  watch(filters, () => {
-    isMutating.value = queryClient.isMutating(filters)
-  })
+  const unsubscribe = queryClient.getMutationCache().subscribe(listener)
+
+  watchSyncEffect(listener)
 
   onScopeDispose(() => {
     unsubscribe()
