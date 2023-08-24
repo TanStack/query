@@ -11,6 +11,19 @@
   "commitConvention": "none",
   "contributors": [
     {
+      "login": "ilhamfat04",
+      "name": "Ilham Fathullah",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/5580297?v=4",
+      "profile": "https://tannerlinsley.com",
+      "contributions": [
+        "code",
+        "ideas",
+        "example",
+        "maintenance",
+        "review"
+      ]
+    },
+    {
       "login": "tannerlinsley",
       "name": "Tanner Linsley",
       "avatar_url": "https://avatars0.githubusercontent.com/u/5580297?v=4",
