@@ -133,16 +133,22 @@ export class QueryClient extends QC {
     TError = DefaultError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
-    TPageParam = never
+    TPageParam = never,
   >(
-    options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
+    options: FetchQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
   ): Promise<TData>
   fetchQuery<
     TQueryFnData,
     TError = DefaultError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
-    TPageParam = never
+    TPageParam = never,
   >(
     options: MaybeRefDeep<
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>

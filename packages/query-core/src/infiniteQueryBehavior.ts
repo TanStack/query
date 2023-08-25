@@ -119,7 +119,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           return context.options.persister?.(fetchFn as any, {
             queryKey: context.queryKey,
             meta: context.options.meta,
-            signal: context.signal
+            signal: context.signal,
           })
         }
       } else {
