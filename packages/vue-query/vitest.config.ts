@@ -9,5 +9,10 @@ export default defineConfig({
     globals: true,
     setupFiles: ['test-setup.ts'],
     coverage: { provider: 'istanbul' },
+    onConsoleLog: function (log) {
+      if (log.includes('Download the Vue Devtools extension')) {
+        return false
+      }
+    },
   },
 })
