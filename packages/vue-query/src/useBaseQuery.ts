@@ -54,7 +54,7 @@ export function useBaseQuery<
     | MaybeRef<TQueryKey>
     | MaybeRef<UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>>,
   arg2:
-    | MaybeRef<QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>>
+    | QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>
     | MaybeRef<
         UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>
       > = {},
@@ -170,7 +170,7 @@ export function parseQueryArgs<
     | MaybeRef<TQueryKey>
     | MaybeRef<UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>>,
   arg2:
-    | MaybeRef<QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>>
+    | QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>
     | MaybeRef<
         UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>
       > = {},
