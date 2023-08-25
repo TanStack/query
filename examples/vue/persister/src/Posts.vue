@@ -1,9 +1,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { useQuery, useQueryClient } from '@tanstack/vue-query'
+import { createPersister } from '@tanstack/query-persist-client-core'
 
 import { Post } from './types'
-import { createPersister } from './persister'
 
 const fetcher = async (): Promise<Post[]> =>
   await fetch('https://jsonplaceholder.typicode.com/posts').then(
@@ -35,7 +35,7 @@ export default defineComponent({
       refetch,
     } = useQuery({
       queryKey: ['posts'],
-      queryFn: fetcher,
+      queryFn: () => fetcher(),
       persister: createPersister({
         storage: localStorage,
         queryClient,

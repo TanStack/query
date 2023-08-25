@@ -4,7 +4,7 @@ import { defineComponent } from 'vue'
 import { useQuery, useQueryClient } from '@tanstack/vue-query'
 
 import { Post } from './types'
-import { createPersister } from './persister'
+import { createPersister } from '@tanstack/query-persist-client-core'
 
 const fetcher = async (id: number): Promise<Post> =>
   await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then(

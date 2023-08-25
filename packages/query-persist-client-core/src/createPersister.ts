@@ -1,12 +1,10 @@
+import { hashKey } from '@tanstack/query-core'
 import type {
   QueryClient,
   QueryFunctionContext,
   QueryKey,
   QueryState,
 } from '@tanstack/query-core'
-import { hashKey } from '@tanstack/query-core'
-
-export type Promisable<T> = T | PromiseLike<T>
 
 export interface PersistedQuery {
   buster: string
@@ -15,12 +13,6 @@ export interface PersistedQuery {
   queryKey: QueryKey
   state: QueryState
 }
-
-export type PersistRetryer = (props: {
-  persistedQuery: PersistedQuery
-  error: Error
-  errorCount: number
-}) => Promisable<PersistedQuery | undefined>
 
 export interface AsyncStorage {
   getItem: (key: string) => Promise<string | undefined | null>
@@ -60,6 +52,22 @@ export interface StoragePersisterOptions<QC extends QueryClient> {
   maxAge?: number
 }
 
+/**
+ * Warning: experimental feature.
+ * This utility function enables fine-grained query persistance.
+ * Simple add it as a `persister` parameter to `useQuery` or `defaultOptions` on `queryClient`.
+ * 
+ * ```
+ * useQuery({
+     queryKey: ['myKey'],
+     queryFn: fetcher,
+     persister: createPersister({
+       storage: localStorage,
+       queryClient,
+     }),
+   })
+   ```
+ */
 export function createPersister<T, QC extends QueryClient>({
   queryClient,
   storage,
@@ -79,7 +87,7 @@ export function createPersister<T, QC extends QueryClient>({
     if (!queryState?.data && storage != null) {
       const storedData = await storage.getItem(queryHash)
       if (storedData) {
-        const persistedQuery = deserialize(storedData) as PersistedQuery
+        const persistedQuery = deserialize(storedData)
 
         if (persistedQuery.timestamp) {
           const expired = Date.now() - persistedQuery.timestamp > maxAge

@@ -12,7 +12,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
 ): QueryBehavior<TQueryFnData, TError, InfiniteData<TData, TPageParam>> {
   return {
     onFetch: (context) => {
-      context.fetchFn = async () => {
+      const fetchFn = async () => {
         const options = context.options as InfiniteQueryPageParamsOptions<TData>
         const direction = context.fetchOptions?.meta?.fetchMore?.direction
         const oldPages = context.state.data?.pages || []
@@ -113,6 +113,17 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
         }
 
         return result
+      }
+      if (context.options.persister) {
+        context.fetchFn = () => {
+          return context.options.persister?.(fetchFn as any, {
+            queryKey: context.queryKey,
+            meta: context.options.meta,
+            signal: context.signal
+          })
+        }
+      } else {
+        context.fetchFn = fetchFn
       }
     },
   }
