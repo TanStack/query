@@ -1,12 +1,12 @@
 import type {
-  DefaultedQueryObserverOptions,
   DehydratedState,
-  QueryKey,
+  InfiniteQueryObserverOptions,
+  QueryKey
 } from '@tanstack/query-core'
 import { ObserverType, useBaseQuery } from './useBaseQuery'
 
 export const useInfiniteQuery = (
-  options: DefaultedQueryObserverOptions<
+  options: InfiniteQueryObserverOptions<
     unknown,
     Error,
     unknown,

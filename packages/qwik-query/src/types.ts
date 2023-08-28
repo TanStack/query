@@ -169,11 +169,7 @@ type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }
 
 export type QueryStore = {
   result: any
-  options: DefaultedQueryObserverOptions<
-    unknown,
-    Error,
-    unknown,
-    unknown,
-    QueryKey
-  >
+  options:
+    | DefaultedQueryObserverOptions<unknown, Error, unknown, unknown, QueryKey>
+    | InfiniteQueryObserverOptions<unknown, Error, unknown, unknown, QueryKey>
 }

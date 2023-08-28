@@ -6,17 +6,17 @@ import {
   type NoSerialize,
 } from '@builder.io/qwik'
 import {
+  DefaultedQueryObserverOptions,
   InfiniteQueryObserver,
   QueryClient,
+  QueryKey,
   QueryObserver,
   hydrate,
   notifyManager,
-  type DehydratedState,
-  DefaultedQueryObserverOptions,
-  QueryKey,
+  type DehydratedState
 } from '@tanstack/query-core'
-import { createQueryClient } from './useQueryClient'
 import { QueryStore } from './types'
+import { createQueryClient } from './useQueryClient'
 
 export enum ObserverType {
   base,
@@ -25,20 +25,16 @@ export enum ObserverType {
 
 export const useBaseQuery = (
   observerType: ObserverType,
-  options: DefaultedQueryObserverOptions<
-    unknown,
-    Error,
-    unknown,
-    unknown,
-    QueryKey
-  >,
+  options: any,
+  // | DefaultedQueryObserverOptions<unknown, Error, unknown, unknown, QueryKey>
+  // | InfiniteQueryObserverOptions<unknown, Error, unknown, unknown, QueryKey>,
   initialState?: DehydratedState,
 ) => {
   const queryClient = new QueryClient()
   if (initialState) {
     hydrate(queryClient, initialState)
   }
-  const store = useStore<QueryStore>({
+  const store = useStore<any>({ //QueryStore
     result: initialState
       ? queryClient.getQueryState(options.queryKey || [])
       : undefined,

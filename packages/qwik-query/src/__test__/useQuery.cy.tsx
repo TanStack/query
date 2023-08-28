@@ -3,7 +3,7 @@ import QueryClientProvider from '../QueryClientProvider'
 import { queryKey, sleep } from './utils'
 import { useQuery } from '../useQuery'
 
-describe('useIsFetching', () => {
+describe('useQuery', () => {
   it('should allow to set default data value', async () => {
     const UseQueryTest1 = component$(() => {
       const queryStore = useQuery({
