@@ -1713,8 +1713,8 @@ importers:
         specifier: ^6.5.0
         version: 6.5.0
       vue-demi:
-        specifier: ^0.14.5
-        version: 0.14.5(@vue/composition-api@1.7.2)(vue@3.3.0)
+        specifier: ^0.14.6
+        version: 0.14.6(@vue/composition-api@1.7.2)(vue@3.3.0)
     devDependencies:
       '@vue/composition-api':
         specifier: 1.7.2
@@ -27478,8 +27478,8 @@ packages:
     resolution: {integrity: sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==}
     dev: false
 
-  /vue-demi@0.14.5(@vue/composition-api@1.7.2)(vue@3.3.0):
-    resolution: {integrity: sha512-o9NUVpl/YlsGJ7t+xuqJKx8EBGf1quRhCiT6D/J0pfwmk9zUwYkC7yrF4SZCe6fETvSM3UNL2edcbYrSyc4QHA==}
+  /vue-demi@0.14.6(@vue/composition-api@1.7.2)(vue@3.3.0):
+    resolution: {integrity: sha512-8QA7wrYSHKaYgUxDA5ZC24w+eHm3sYCbp0EzcDwKqN3p6HqtTCGR/GVsPyZW92unff4UlcSh++lmqDWN3ZIq4w==}
     engines: {node: '>=12'}
     hasBin: true
     requiresBuild: true

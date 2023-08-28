@@ -61,7 +61,7 @@
     "@tanstack/match-sorter-utils": "^8.8.4",
     "@tanstack/query-core": "workspace:*",
     "@vue/devtools-api": "^6.5.0",
-    "vue-demi": "^0.14.5"
+    "vue-demi": "^0.14.6"
   },
   "devDependencies": {
     "@vue/composition-api": "1.7.2",
