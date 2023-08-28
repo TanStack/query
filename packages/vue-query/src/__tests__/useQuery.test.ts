@@ -146,8 +146,6 @@ describe('useQuery', () => {
     })
 
     secondKeyRef.value = 'key8'
-    await flushPromises()
-
     expect(query).toMatchObject({
       status: { value: 'loading' },
       data: { value: undefined },
@@ -172,9 +170,6 @@ describe('useQuery', () => {
     })
 
     enabled.value = true
-
-    await flushPromises()
-
     expect(query).toMatchObject({
       fetchStatus: { value: 'fetching' },
       data: { value: undefined },
@@ -231,6 +226,34 @@ describe('useQuery', () => {
     await flushPromises()
 
     expect(status.value).toStrictEqual('loading')
+  })
+
+  test('should use the current value for the queryKey when refetch is called', async () => {
+    const fetchFn = jest.fn()
+    const keyRef = ref('key11')
+    const query = useQuery({
+      queryKey: ['key10', keyRef],
+      queryFn: fetchFn,
+      enabled: false,
+    })
+
+    expect(fetchFn).not.toHaveBeenCalled()
+    await query.refetch()
+    expect(fetchFn).toHaveBeenCalledTimes(1)
+    expect(fetchFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        queryKey: ['key10', 'key11'],
+      }),
+    )
+
+    keyRef.value = 'key12'
+    await query.refetch()
+    expect(fetchFn).toHaveBeenCalledTimes(2)
+    expect(fetchFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        queryKey: ['key10', 'key12'],
+      }),
+    )
   })
 
   describe('errorBoundary', () => {
