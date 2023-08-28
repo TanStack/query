@@ -1,0 +1,39 @@
+<script lang="ts">
+  import { onDestroy } from 'svelte'
+  import { persistQueryClient } from '@tanstack/query-persist-client-core'
+  import { QueryClientProvider, QueryClient, setIsRestoringContext } from '@tanstack/svelte-query'
+  import { writable } from 'svelte/store'
+  import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
+
+  export let client = new QueryClient()
+  export let onSuccess: (() =>  Promise<unknown> | unknown) = () => undefined;
+  export let persistOptions: Omit<PersistQueryClientOptions, 'queryClient'>;
+
+  const isRestoring = writable(true)
+  setIsRestoringContext(isRestoring)
+  $: {
+    let isStale = false
+    const [unsubscribe, promise] = persistQueryClient({
+      ...persistOptions,
+      queryClient: client,
+    })
+    promise.then(async () => {
+      if (!isStale) {
+        try {
+          await onSuccess()
+        } finally {
+          isRestoring.set(false)
+        }
+      }
+    })
+    onDestroy(() => {
+      isStale = true
+      unsubscribe()
+    })
+  }
+</script>
+
+<QueryClientProvider client={client}>
+  <slot />
+</QueryClientProvider>
+
