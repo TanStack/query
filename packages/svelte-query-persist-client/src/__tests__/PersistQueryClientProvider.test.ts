@@ -1,19 +1,19 @@
 import { render, waitFor } from '@testing-library/svelte'
-import { vi } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 
-import { QueryClient, useQueries, useQuery } from '@tanstack/svelte-query'
+import { QueryClient, createQueries, createQuery } from '@tanstack/svelte-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 
-import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
+import PersistQueryClientProvider from '../PersistQueryClientProvider.svelte'
 import { createQueryClient, queryKey, sleep } from './utils'
 import type {
   PersistedClient,
   Persister,
 } from '@tanstack/query-persist-client-core'
 import type {
-  DefinedUseQueryResult,
-  UseQueryResult,
-} from '@tanstack/react-query'
+  DefinedCreateQueryResult,
+  CreateQueryResult,
+} from '@tanstack/svelte-query'
 
 const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined
@@ -54,7 +54,7 @@ const createMockErrorPersister = (
 describe('PersistQueryClientProvider', () => {
   test('restores cache from persister', async () => {
     const key = queryKey()
-    const states: Array<UseQueryResult<string>> = []
+    const states: Array<CreateQueryResult<string>> = []
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
@@ -129,7 +129,7 @@ describe('PersistQueryClientProvider', () => {
 
   test('should also put useQueries into idle state', async () => {
     const key = queryKey()
-    const states: Array<UseQueryResult> = []
+    const states: Array<CreateQueryResult> = []
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
@@ -208,7 +208,7 @@ describe('PersistQueryClientProvider', () => {
 
   test('should show initialData while restoring', async () => {
     const key = queryKey()
-    const states: Array<DefinedUseQueryResult<string>> = []
+    const states: Array<DefinedCreateQueryResult<string>> = []
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
@@ -288,7 +288,7 @@ describe('PersistQueryClientProvider', () => {
 
   test('should not refetch after restoring when data is fresh', async () => {
     const key = queryKey()
-    const states: Array<UseQueryResult<string>> = []
+    const states: Array<CreateQueryResult<string>> = []
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
