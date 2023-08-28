@@ -1,7 +1,17 @@
 ---
 id: prefetching
-title: Prefetching
+title: Prefetching & Router Integration
 ---
+
+// TODO: Explain prefetching, give "in-component" example
+
+## Router Integration
+
+// TODO: Give example of client side router integration with React Router
+
+// TODO: Add link to SSR guide "Next lets look at prefetching on the server, blahblah"
+
+## Old prefetching
 
 If you're lucky enough, you may know enough about what your users will do to be able to prefetch the data they need before it's needed! If this is the case, you can use the `prefetchQuery` method to prefetch the results of a query to be placed into the cache:
 
@@ -28,6 +38,7 @@ const prefetchTodos = async () => {
 Infinite Queries can be prefetched like regular Queries. Per default, only the first page of the Query will be prefetched and will be stored under the given QueryKey. If you want to prefetch more than one page, you can use the `pages` option, in which case you also have to provide a `getNextPageParam` function:
 
 [//]: # 'ExampleInfiniteQuery'
+
 ```tsx
 const prefetchTodos = async () => {
   // The results of this query will be cached like a normal query
@@ -36,10 +47,11 @@ const prefetchTodos = async () => {
     queryFn: fetchProjects,
     initialPageParam: 0,
     getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-    pages: 3 // prefetch the first 3 pages
+    pages: 3, // prefetch the first 3 pages
   })
 }
 ```
+
 [//]: # 'ExampleInfiniteQuery'
 
 The above code will try to prefetch 3 pages in order, and `getNextPageParam` will be executed for each page to determine the next page to prefetch. If `getNextPageParam` returns `undefined`, the prefetching will stop.
@@ -55,7 +67,6 @@ queryClient.setQueryData(['todos'], todos)
 ```
 
 [//]: # 'ExampleSetQueryData'
-
 [//]: # 'Materials'
 
 ## Further reading

@@ -1,6 +1,6 @@
 ---
 id: ssr
-title: SSR
+title: Server Rendering & Hydration
 ---
 
 React Query supports two ways of prefetching data on the server and passing that to the queryClient.
@@ -61,7 +61,11 @@ To support caching queries on the server and set up hydration:
 
 ```tsx
 // _app.jsx
-import { HydrationBoundary, QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import {
+  HydrationBoundary,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 
 export default function MyApp({ Component, pageProps }) {
   const [queryClient] = React.useState(() => new QueryClient())
@@ -174,7 +178,11 @@ yarn add use-dehydrated-state
 
 ```tsx
 // root.tsx
-import { HydrationBoundary, QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import {
+  HydrationBoundary,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 
 import { useDehydratedState } from 'use-dehydrated-state'
 
@@ -247,7 +255,12 @@ This guide is at-best, a high level overview of how SSR with React Query should 
 > SECURITY NOTE: Serializing data with `JSON.stringify` can put you at risk for XSS-vulnerabilities, [this blog post explains why and how to solve it](https://medium.com/node-security/the-most-common-xss-vulnerability-in-react-js-applications-2bdffbcc1fa0)
 
 ```tsx
-import { dehydrate, HydrationBoundary, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 
 async function handleRequest(req, res) {
   const queryClient = new QueryClient()
@@ -259,7 +272,7 @@ async function handleRequest(req, res) {
       <HydrationBoundary state={dehydratedState}>
         <App />
       </HydrationBoundary>
-    </QueryClientProvider>
+    </QueryClientProvider>,
   )
 
   res.send(`
@@ -284,7 +297,11 @@ async function handleRequest(req, res) {
 - Render your app with the client provider and also **using the dehydrated state. This is extremely important! You must render both server and client using the same dehydrated state to ensure hydration on the client produces the exact same markup as the server.**
 
 ```tsx
-import { HydrationBoundary, QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import {
+  HydrationBoundary,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 
 const dehydratedState = window.__REACT_QUERY_STATE__
 
@@ -409,10 +426,10 @@ import getQueryClient from './getQueryClient'
 
 export default async function HydratedPosts() {
   const queryClient = getQueryClient()
-  
-  await queryClient.prefetchQuery({querykey:['posts'], queryFn:getPosts})
+
+  await queryClient.prefetchQuery({ querykey: ['posts'], queryFn: getPosts })
   // for infinite queries with useInfiniteQuery use
-    // await queryClient.prefetchInfiniteQuery({queryKey:['posts'], queryFn:getPosts,...})
+  // await queryClient.prefetchInfiniteQuery({queryKey:['posts'], queryFn:getPosts,...})
   const dehydratedState = dehydrate(queryClient)
 
   return (
