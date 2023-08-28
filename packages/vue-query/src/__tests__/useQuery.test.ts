@@ -187,9 +187,10 @@ describe('useQuery', () => {
 
     const enabled = computed(() => !!data.value)
 
+    const dependentQueryFn = jest.fn().mockResolvedValue('Some data')
     const { fetchStatus, status } = useQuery(
       ['dependant2'],
-      simpleFetcher,
+      dependentQueryFn,
       reactive({
         enabled,
       }),
@@ -197,6 +198,7 @@ describe('useQuery', () => {
 
     expect(data.value).toStrictEqual(undefined)
     expect(fetchStatus.value).toStrictEqual('idle')
+    expect(dependentQueryFn).not.toHaveBeenCalled()
 
     await flushPromises()
 
