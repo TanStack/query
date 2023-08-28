@@ -6,7 +6,7 @@ import type { Equal, Expect } from './utils'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('pageParam', () => {
-  it('defaultPageParam should define type of param passed to queryFunctionContext', () => {
+  it('initialPageParam should define type of param passed to queryFunctionContext', () => {
     doNotExecute(() => {
       useInfiniteQuery({
         queryKey: ['key'],
@@ -14,7 +14,7 @@ describe('pageParam', () => {
           const result: Expect<Equal<number, typeof pageParam>> = true
           return result
         },
-        defaultPageParam: 1,
+        initialPageParam: 1,
         getNextPageParam: () => undefined,
       })
     })
@@ -30,7 +30,7 @@ describe('pageParam', () => {
           > = true
           return result
         },
-        defaultPageParam: 1,
+        initialPageParam: 1,
         getNextPageParam: () => undefined,
       })
     })
@@ -60,7 +60,7 @@ describe('pageParam', () => {
     })
   })
 
-  it('defaultPageParam should define type of param passed to queryFunctionContext for fetchInfiniteQuery', () => {
+  it('initialPageParam should define type of param passed to queryFunctionContext for fetchInfiniteQuery', () => {
     doNotExecute(() => {
       const queryClient = new QueryClient()
       queryClient.fetchInfiniteQuery({
@@ -69,12 +69,12 @@ describe('pageParam', () => {
           const result: Expect<Equal<number, typeof pageParam>> = true
           return result
         },
-        defaultPageParam: 1,
+        initialPageParam: 1,
       })
     })
   })
 
-  it('defaultPageParam should define type of param passed to queryFunctionContext for prefetchInfiniteQuery', () => {
+  it('initialPageParam should define type of param passed to queryFunctionContext for prefetchInfiniteQuery', () => {
     doNotExecute(() => {
       const queryClient = new QueryClient()
       queryClient.prefetchInfiniteQuery({
@@ -83,7 +83,7 @@ describe('pageParam', () => {
           const result: Expect<Equal<number, typeof pageParam>> = true
           return result
         },
-        defaultPageParam: 1,
+        initialPageParam: 1,
       })
     })
   })
@@ -96,7 +96,7 @@ describe('select', () => {
         queryFn: ({ pageParam }) => {
           return pageParam * 5
         },
-        defaultPageParam: 1,
+        initialPageParam: 1,
         getNextPageParam: () => undefined,
       })
 
@@ -119,7 +119,7 @@ describe('select', () => {
         queryFn: ({ pageParam }) => {
           return pageParam * 5
         },
-        defaultPageParam: 1,
+        initialPageParam: 1,
         getNextPageParam: () => undefined,
         select: (data) => {
           const result: Expect<
@@ -144,7 +144,7 @@ describe('getNextPageParam / getPreviousPageParam', () => {
         queryFn: ({ pageParam }) => {
           return String(pageParam)
         },
-        defaultPageParam: 1,
+        initialPageParam: 1,
         getNextPageParam: (
           lastPage,
           allPages,

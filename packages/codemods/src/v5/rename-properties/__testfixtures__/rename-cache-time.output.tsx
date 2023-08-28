@@ -35,7 +35,7 @@ export function useAlgolia<TData>({
     queryKey: ['algolia', indexName, query, hitsPerPage],
     queryFn: ({ pageParam }) =>
       search<TData>({ indexName, query, pageParam, hitsPerPage }),
-    defaultPageParam: 0,
+    initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage?.nextPage,
     staleTime,
     gcTime,

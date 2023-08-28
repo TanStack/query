@@ -66,7 +66,7 @@ function isPlainObject(value: unknown): value is Object {
   return prototype === null || prototype === Object.prototype
 }
 
-export function shouldThrowError<T extends (...args: any[]) => boolean>(
+export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
   throwOnError: boolean | T | undefined,
   params: Parameters<T>,
 ): boolean {

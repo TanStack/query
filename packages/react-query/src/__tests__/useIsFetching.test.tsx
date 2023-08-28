@@ -61,7 +61,7 @@ describe('useIsFetching', () => {
     const key1 = queryKey()
     const key2 = queryKey()
 
-    const isFetchings: number[] = []
+    const isFetchings: Array<number> = []
 
     function IsFetching() {
       const isFetching = useIsFetching()
@@ -118,7 +118,7 @@ describe('useIsFetching', () => {
     const key1 = queryKey()
     const key2 = queryKey()
 
-    const isFetchings: number[] = []
+    const isFetchings: Array<number> = []
 
     function One() {
       useQuery({

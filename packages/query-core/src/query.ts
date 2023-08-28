@@ -159,7 +159,7 @@ export class Query<
   #cache: QueryCache
   #promise?: Promise<TData>
   #retryer?: Retryer<TData>
-  #observers: QueryObserver<any, any, any, any, any>[]
+  #observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
 

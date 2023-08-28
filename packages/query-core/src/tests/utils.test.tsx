@@ -173,8 +173,8 @@ describe('core/utils', () => {
     })
 
     it('should return the previous value when the next value is an equal empty array', () => {
-      const prev: any[] = []
-      const next: any[] = []
+      const prev: Array<any> = []
+      const next: Array<any> = []
       expect(replaceEqualDeep(prev, next)).toBe(prev)
     })
 

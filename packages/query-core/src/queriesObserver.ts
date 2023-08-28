@@ -10,37 +10,37 @@ import type {
 import type { QueryClient } from './queryClient'
 import type { NotifyOptions } from './queryObserver'
 
-function difference<T>(array1: T[], array2: T[]): T[] {
+function difference<T>(array1: Array<T>, array2: Array<T>): Array<T> {
   return array1.filter((x) => !array2.includes(x))
 }
 
-function replaceAt<T>(array: T[], index: number, value: T): T[] {
+function replaceAt<T>(array: Array<T>, index: number, value: T): Array<T> {
   const copy = array.slice(0)
   copy[index] = value
   return copy
 }
 
-type QueriesObserverListener = (result: QueryObserverResult[]) => void
+type QueriesObserverListener = (result: Array<QueryObserverResult>) => void
 
 export interface QueriesObserverOptions<
-  TCombinedResult = QueryObserverResult[],
+  TCombinedResult = Array<QueryObserverResult>,
 > {
-  combine?: (result: QueryObserverResult[]) => TCombinedResult
+  combine?: (result: Array<QueryObserverResult>) => TCombinedResult
 }
 
 export class QueriesObserver<
-  TCombinedResult = QueryObserverResult[],
+  TCombinedResult = Array<QueryObserverResult>,
 > extends Subscribable<QueriesObserverListener> {
   #client: QueryClient
-  #result!: QueryObserverResult[]
-  #queries: QueryObserverOptions[]
-  #observers: QueryObserver[]
+  #result!: Array<QueryObserverResult>
+  #queries: Array<QueryObserverOptions>
+  #observers: Array<QueryObserver>
   #options?: QueriesObserverOptions<TCombinedResult>
   #combinedResult!: TCombinedResult
 
   constructor(
     client: QueryClient,
-    queries: QueryObserverOptions[],
+    queries: Array<QueryObserverOptions>,
     options?: QueriesObserverOptions<TCombinedResult>,
   ) {
     super()
@@ -53,7 +53,7 @@ export class QueriesObserver<
     this.setQueries(queries, options)
   }
 
-  #setResult(value: QueryObserverResult[]) {
+  #setResult(value: Array<QueryObserverResult>) {
     this.#result = value
     this.#combinedResult = this.#combineResult(value)
   }
@@ -82,7 +82,7 @@ export class QueriesObserver<
   }
 
   setQueries(
-    queries: QueryObserverOptions[],
+    queries: Array<QueryObserverOptions>,
     options?: QueriesObserverOptions<TCombinedResult>,
     notifyOptions?: NotifyOptions,
   ): void {
@@ -145,11 +145,11 @@ export class QueriesObserver<
   }
 
   getOptimisticResult(
-    queries: QueryObserverOptions[],
+    queries: Array<QueryObserverOptions>,
   ): [
-    rawResult: QueryObserverResult[],
-    combineResult: (r?: QueryObserverResult[]) => TCombinedResult,
-    trackResult: () => QueryObserverResult[],
+    rawResult: Array<QueryObserverResult>,
+    combineResult: (r?: Array<QueryObserverResult>) => TCombinedResult,
+    trackResult: () => Array<QueryObserverResult>,
   ] {
     const matches = this.#findMatchingObservers(queries)
     const result = matches.map((match) =>
@@ -158,7 +158,7 @@ export class QueriesObserver<
 
     return [
       result,
-      (r?: QueryObserverResult[]) => {
+      (r?: Array<QueryObserverResult>) => {
         return this.#combineResult(r ?? result)
       },
       () => {
@@ -172,7 +172,7 @@ export class QueriesObserver<
     ]
   }
 
-  #combineResult(input: QueryObserverResult[]): TCombinedResult {
+  #combineResult(input: Array<QueryObserverResult>): TCombinedResult {
     const combine = this.#options?.combine
     if (combine) {
       return replaceEqualDeep(this.#combinedResult, combine(input))
@@ -181,8 +181,8 @@ export class QueriesObserver<
   }
 
   #findMatchingObservers(
-    queries: QueryObserverOptions[],
-  ): QueryObserverMatch[] {
+    queries: Array<QueryObserverOptions>,
+  ): Array<QueryObserverMatch> {
     const prevObservers = this.#observers
     const prevObserversMap = new Map(
       prevObservers.map((observer) => [observer.options.queryHash, observer]),
@@ -192,7 +192,7 @@ export class QueriesObserver<
       this.#client.defaultQueryOptions(options),
     )
 
-    const matchingObservers: QueryObserverMatch[] =
+    const matchingObservers: Array<QueryObserverMatch> =
       defaultedQueryOptions.flatMap((defaultedOptions) => {
         const match = prevObserversMap.get(defaultedOptions.queryHash)
         if (match != null) {
@@ -218,14 +218,13 @@ export class QueriesObserver<
       )
     }
 
-    const newOrReusedObservers: QueryObserverMatch[] = unmatchedQueries.map(
-      (options) => {
+    const newOrReusedObservers: Array<QueryObserverMatch> =
+      unmatchedQueries.map((options) => {
         return {
           defaultedQueryOptions: options,
           observer: getObserver(options),
         }
-      },
-    )
+      })
 
     const sortMatchesByOrderOfQueries = (
       a: QueryObserverMatch,

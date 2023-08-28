@@ -95,62 +95,70 @@ type GetResults<T> =
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
  */
 export type QueriesOptions<
-  T extends any[],
-  Result extends any[] = [],
+  T extends Array<any>,
+  Result extends Array<any> = [],
   Depth extends ReadonlyArray<number> = [],
 > = Depth['length'] extends MAXIMUM_DEPTH
-  ? CreateQueryOptionsForCreateQueries[]
+  ? Array<CreateQueryOptionsForCreateQueries>
   : T extends []
   ? []
   : T extends [infer Head]
   ? [...Result, GetOptions<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesOptions<[...Tail], [...Result, GetOptions<Head>], [...Depth, 1]>
-  : unknown[] extends T
+  : Array<unknown> extends T
   ? T
   : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
   // use this to infer the param types in the case of Array.map() argument
-  T extends CreateQueryOptionsForCreateQueries<
-      infer TQueryFnData,
-      infer TError,
-      infer TData,
-      infer TQueryKey
-    >[]
-  ? CreateQueryOptionsForCreateQueries<TQueryFnData, TError, TData, TQueryKey>[]
+  T extends Array<
+      CreateQueryOptionsForCreateQueries<
+        infer TQueryFnData,
+        infer TError,
+        infer TData,
+        infer TQueryKey
+      >
+    >
+  ? Array<
+      CreateQueryOptionsForCreateQueries<TQueryFnData, TError, TData, TQueryKey>
+    >
   : // Fallback
-    CreateQueryOptionsForCreateQueries[]
+    Array<CreateQueryOptionsForCreateQueries>
 
 /**
  * QueriesResults reducer recursively maps type param to results
  */
 export type QueriesResults<
-  T extends any[],
-  Result extends any[] = [],
+  T extends Array<any>,
+  Result extends Array<any> = [],
   Depth extends ReadonlyArray<number> = [],
 > = Depth['length'] extends MAXIMUM_DEPTH
-  ? CreateQueryResult[]
+  ? Array<CreateQueryResult>
   : T extends []
   ? []
   : T extends [infer Head]
   ? [...Result, GetResults<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesResults<[...Tail], [...Result, GetResults<Head>], [...Depth, 1]>
-  : T extends CreateQueryOptionsForCreateQueries<
-      infer TQueryFnData,
-      infer TError,
-      infer TData,
-      any
-    >[]
+  : T extends Array<
+      CreateQueryOptionsForCreateQueries<
+        infer TQueryFnData,
+        infer TError,
+        infer TData,
+        any
+      >
+    >
   ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-    CreateQueryResult<
-      unknown extends TData ? TQueryFnData : TData,
-      unknown extends TError ? DefaultError : TError
-    >[]
+    Array<
+      CreateQueryResult<
+        unknown extends TData ? TQueryFnData : TData,
+        unknown extends TError ? DefaultError : TError
+      >
+    >
   : // Fallback
-    CreateQueryResult[]
+    Array<CreateQueryResult>
 
 export function createQueries<
-  T extends any[],
+  T extends Array<any>,
   TCombinedResult = QueriesResults<T>,
 >(
   queriesOptions: Accessor<{

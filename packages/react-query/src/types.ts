@@ -58,8 +58,8 @@ export interface UseInfiniteQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends Omit<
-    WithRequired<
+> extends WithRequired<
+    Omit<
       InfiniteQueryObserverOptions<
         TQueryFnData,
         TError,
@@ -68,9 +68,9 @@ export interface UseInfiniteQueryOptions<
         TQueryKey,
         TPageParam
       >,
-      'queryKey'
+      'suspense'
     >,
-    'suspense'
+    'queryKey'
   > {}
 
 export interface UseSuspenseInfiniteQueryOptions<

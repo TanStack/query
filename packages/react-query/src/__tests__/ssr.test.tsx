@@ -132,7 +132,7 @@ describe('Server Side Rendering', () => {
         queryKey: key,
         queryFn,
         getNextPageParam: () => undefined,
-        defaultPageParam: 0,
+        initialPageParam: 0,
       })
       return (
         <ul>
@@ -146,7 +146,7 @@ describe('Server Side Rendering', () => {
     await queryClient.prefetchInfiniteQuery({
       queryKey: key,
       queryFn,
-      defaultPageParam: 0,
+      initialPageParam: 0,
     })
 
     const markup = renderToString(

@@ -19,7 +19,7 @@ export type DefaultError = Register extends {
   ? TError
   : Error
 
-export type QueryKey = readonly unknown[]
+export type QueryKey = ReadonlyArray<unknown>
 
 export type QueryFunction<
   T = unknown,
@@ -68,21 +68,21 @@ export type QueryKeyHashFunction<TQueryKey extends QueryKey> = (
 
 export type GetPreviousPageParamFunction<TPageParam, TQueryFnData = unknown> = (
   firstPage: TQueryFnData,
-  allPages: TQueryFnData[],
+  allPages: Array<TQueryFnData>,
   firstPageParam: TPageParam,
-  allPageParams: TPageParam[],
+  allPageParams: Array<TPageParam>,
 ) => TPageParam | undefined | null
 
 export type GetNextPageParamFunction<TPageParam, TQueryFnData = unknown> = (
   lastPage: TQueryFnData,
-  allPages: TQueryFnData[],
+  allPages: Array<TQueryFnData>,
   lastPageParam: TPageParam,
-  allPageParams: TPageParam[],
+  allPageParams: Array<TPageParam>,
 ) => TPageParam | undefined | null
 
 export interface InfiniteData<TData, TPageParam = unknown> {
-  pages: TData[]
-  pageParams: TPageParam[]
+  pages: Array<TData>
+  pageParams: Array<TPageParam>
 }
 
 export type QueryMeta = Register extends {
@@ -144,14 +144,14 @@ export interface QueryOptions<
   maxPages?: number
 }
 
-export interface DefaultPageParam<TPageParam = unknown> {
-  defaultPageParam: TPageParam
+export interface InitialPageParam<TPageParam = unknown> {
+  initialPageParam: TPageParam
 }
 
 export interface InfiniteQueryPageParamsOptions<
   TQueryFnData = unknown,
   TPageParam = unknown,
-> extends DefaultPageParam<TPageParam> {
+> extends InitialPageParam<TPageParam> {
   /**
    * This function can be set to automatically get the previous cursor for infinite queries.
    * The result will also be used to determine the value of `hasPreviousPage`.
@@ -384,7 +384,7 @@ export type FetchInfiniteQueryOptions<
   TQueryKey,
   TPageParam
 > &
-  DefaultPageParam<TPageParam> &
+  InitialPageParam<TPageParam> &
   FetchInfiniteQueryPages<TQueryFnData, TPageParam>
 
 export interface ResultOptions {
@@ -606,7 +606,7 @@ export type InfiniteQueryObserverResult<
   | InfiniteQueryObserverLoadingResult<TData, TError>
   | DefinedInfiniteQueryObserverResult<TData, TError>
 
-export type MutationKey = readonly unknown[]
+export type MutationKey = ReadonlyArray<unknown>
 
 export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
 
