@@ -91,18 +91,66 @@ const createQueryObserver = (
   const observer = new Observer(client, defaultedOptions)
   if (!store.result) {
     const result = observer.getOptimisticResult(defaultedOptions)
-    store.result = !defaultedOptions.notifyOnChangeProps
-      ? noSerialize(observer.trackResult(result))
-      : noSerialize(result)
+    patchAndAssignResult(
+			observerType,
+			store,
+			result,
+			defaultedOptions,
+			observer
+		)
   }
 
   const unsubscribe = observer.subscribe(
     notifyManager.batchCalls((result: any) => {
-      store.result = !defaultedOptions.notifyOnChangeProps
-        ? noSerialize(observer.trackResult(result))
-        : noSerialize(result)
+      patchAndAssignResult(
+				observerType,
+				store,
+				result,
+				defaultedOptions,
+				observer
+			)
     }),
   )
 
   return { observer: noSerialize(observer), unsubscribe, defaultedOptions }
+}
+
+const patchAndAssignResult = async (
+	observerType,
+	store,
+	result,
+	defaultedOptions,
+	observer
+) => {
+	if (observerType === ObserverType.inifinite) {
+		result.hasPreviousPage = await hasPage(
+			store.options,
+			result.data.pages,
+			'PREV'
+		)
+		result.hasNextPage = await hasPage(
+			store.options,
+			result.data.pages,
+			'NEXT'
+		)
+	}
+	store.result = !defaultedOptions.notifyOnChangeProps
+		? noSerialize(observer.trackResult(result))
+		: noSerialize(result)
+}
+
+const hasPage = async (options, pages, dicrection: 'PREV' | 'NEXT') => {
+	const getPageParam =
+		dicrection === 'PREV'
+			? options.getPreviousPageParam
+			: options.getNextPageParam
+	if (getPageParam && Array.isArray(pages)) {
+		const pageParam = await getPageParam(options, pages)
+		return (
+			typeof pageParam !== 'undefined' &&
+			pageParam !== null &&
+			pageParam !== false
+		)
+	}
+	return
 }
