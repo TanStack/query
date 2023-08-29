@@ -48,7 +48,7 @@
     "@vitest/coverage-istanbul": "^0.27.1",
     "eslint-plugin-svelte": "^2.14.1",
     "jsdom": "^20.0.3",
-    "svelte": "^3.54.0",
+    "svelte": "^4.0.0",
     "svelte-check": "^2.9.2",
     "tslib": "^2.4.1",
     "typescript": "^4.7.4",
