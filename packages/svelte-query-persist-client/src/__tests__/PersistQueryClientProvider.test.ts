@@ -1,9 +1,12 @@
 import { render, waitFor } from '@testing-library/svelte'
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import { get, writable } from 'svelte/store'
+import AwaitOnSuccess from './AwaitOnSuccess/Provider.svelte'
 import FreshData from './FreshData/Provider.svelte'
+import OnSuccess from './OnSuccess/Provider.svelte'
 import InitialData from './InitialData/Provider.svelte'
+import RemoveCache from './RemoveCache/Provider.svelte'
 import RestoreCache from './RestoreCache/Provider.svelte'
 import UseQueries from './UseQueries/Provider.svelte'
 import { createQueryClient, queryKey, sleep } from './utils'
@@ -273,158 +276,102 @@ describe('PersistQueryClientProvider', () => {
     })
   })
 
-  // test('should call onSuccess after successful restoring', async () => {
-  //   const key = queryKey()
+  test('should call onSuccess after successful restoring', async () => {
+    const key = queryKey()
 
-  //   const queryClient = createQueryClient()
-  //   await queryClient.prefetchQuery({
-  //     queryKey: key,
-  //     queryFn: () => Promise.resolve('hydrated'),
-  //   })
+    const queryClient = createQueryClient()
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
 
-  //   const persister = createMockPersister()
+    const persister = createMockPersister()
 
-  //   await persistQueryClientSave({ queryClient, persister })
+    await persistQueryClientSave({ queryClient, persister })
 
-  //   queryClient.clear()
+    queryClient.clear()
 
-  //   function Page() {
-  //     const state = useQuery({
-  //       queryKey: key,
-  //       queryFn: async () => {
-  //         await sleep(10)
-  //         return 'fetched'
-  //       },
-  //     })
+    const onSuccess = vi.fn()
 
-  //     // return (
-  //     //   <div>
-  //     //     <h1>{state.data}</h1>
-  //     //     <h2>fetchStatus: {state.fetchStatus}</h2>
-  //     //   </div>
-  //     // )
-  //   }
+    const rendered = render(OnSuccess, {
+      props: {
+        queryClient,
+        persistOptions: { persister },
+        key,
+        onSuccess,
+      },
+    })
 
-  //   const onSuccess = vi.fn()
+    expect(onSuccess).toHaveBeenCalledTimes(0)
 
-  //   const rendered = render
-  //   // <PersistQueryClientProvider
-  //   //   client={queryClient}
-  //   //   persistOptions={{ persister }}
-  //   //   onSuccess={onSuccess}
-  //   // >
-  //   //   <Page />
-  //   // </PersistQueryClientProvider>,
+    await waitFor(() => rendered.getByText('hydrated'))
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    await waitFor(() => rendered.getByText('fetched'))
+  })
 
-  //   expect(onSuccess).toHaveBeenCalledTimes(0)
+  test('should await onSuccess after successful restoring', async () => {
+    const key = queryKey()
 
-  //   await waitFor(() => rendered.getByText('hydrated'))
-  //   expect(onSuccess).toHaveBeenCalledTimes(1)
-  //   await waitFor(() => rendered.getByText('fetched'))
-  // })
+    const queryClient = createQueryClient()
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
 
-  // test('should await onSuccess after successful restoring', async () => {
-  //   const key = queryKey()
+    const persister = createMockPersister()
 
-  //   const queryClient = createQueryClient()
-  //   await queryClient.prefetchQuery({
-  //     queryKey: key,
-  //     queryFn: () => Promise.resolve('hydrated'),
-  //   })
+    await persistQueryClientSave({ queryClient, persister })
 
-  //   const persister = createMockPersister()
+    queryClient.clear()
 
-  //   await persistQueryClientSave({ queryClient, persister })
+    const states: Writable<Array<string>> = writable([])
 
-  //   queryClient.clear()
+    const rendered = render(AwaitOnSuccess, {
+      props: {
+        queryClient,
+        persistOptions: { persister },
+        key,
+        states,
+        onSuccess: async () => {
+          states.update((s) => [...s, 'onSuccess'])
+          await sleep(20)
+          states.update((s) => [...s, 'onSuccess done'])
+        },
+      },
+    })
 
-  //   const states: Array<string> = []
+    await waitFor(() => rendered.getByText('hydrated'))
+    await waitFor(() => rendered.getByText('fetched'))
+    expect(get(states)).toEqual([
+      'onSuccess',
+      'onSuccess done',
+      'fetching',
+      'fetched',
+    ])
+  })
 
-  //   function Page() {
-  //     const { data, fetchStatus } = useQuery({
-  //       queryKey: key,
-  //       queryFn: async () => {
-  //         states.push('fetching')
-  //         await sleep(10)
-  //         states.push('fetched')
-  //         return 'fetched'
-  //       },
-  //     })
+  test('should remove cache after non-successful restoring', async () => {
+    const key = queryKey()
+    const consoleMock = vi.spyOn(console, 'error')
+    const consoleWarn = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined)
+    consoleMock.mockImplementation(() => undefined)
 
-  //     // return (
-  //     // <div>
-  //     // <h1>{data}</h1>
-  //     // <h2>fetchStatus: {fetchStatus}</h2>
-  //     // </div>
-  //     // )
-  //   }
+    const queryClient = createQueryClient()
+    const removeClient = vi.fn()
 
-  //   const rendered = render
-  //   // <PersistQueryClientProvider
-  //   //   client={queryClient}
-  //   //   persistOptions={{ persister }}
-  //   //   onSuccess={async () => {
-  //   //     states.push('onSuccess')
-  //   //     await sleep(20)
-  //   //     states.push('onSuccess done')
-  //   //   }}
-  //   // >
-  //   //   <Page />
-  //   // </PersistQueryClientProvider>,
+    const [error, persister] = createMockErrorPersister(removeClient)
 
-  //   await waitFor(() => rendered.getByText('hydrated'))
-  //   await waitFor(() => rendered.getByText('fetched'))
-  //   expect(states).toEqual([
-  //     'onSuccess',
-  //     'onSuccess done',
-  //     'fetching',
-  //     'fetched',
-  //   ])
-  // })
+    const rendered = render(RemoveCache, {
+      props: { queryClient, persistOptions: { persister }, key },
+    })
 
-  // test('should remove cache after non-successful restoring', async () => {
-  //   const key = queryKey()
-  //   const consoleMock = vi.spyOn(console, 'error')
-  //   const consoleWarn = vi
-  //     .spyOn(console, 'warn')
-  //     .mockImplementation(() => undefined)
-  //   consoleMock.mockImplementation(() => undefined)
-
-  //   const queryClient = createQueryClient()
-  //   const removeClient = vi.fn()
-
-  //   const [error, persister] = createMockErrorPersister(removeClient)
-
-  //   function Page() {
-  //     const state = useQuery({
-  //       queryKey: key,
-  //       queryFn: async () => {
-  //         await sleep(10)
-  //         return 'fetched'
-  //       },
-  //     })
-
-  //     // return (
-  //     //   <div>
-  //     //     <h1>{state.data}</h1>
-  //     //     <h2>fetchStatus: {state.fetchStatus}</h2>
-  //     //   </div>
-  //     // )
-  //   }
-
-  //   const rendered = render
-  //   // <PersistQueryClientProvider
-  //   // client={queryClient}
-  //   // persistOptions={{ persister }}
-  //   // >
-  //   // <Page />
-  //   // </PersistQueryClientProvider>,
-
-  //   await waitFor(() => rendered.getByText('fetched'))
-  //   expect(removeClient).toHaveBeenCalledTimes(1)
-  //   expect(consoleMock).toHaveBeenCalledTimes(1)
-  //   expect(consoleMock).toHaveBeenNthCalledWith(1, error)
-  //   consoleMock.mockRestore()
-  //   consoleWarn.mockRestore()
-  // })
+    await waitFor(() => rendered.getByText('fetched'))
+    expect(removeClient).toHaveBeenCalledTimes(1)
+    expect(consoleMock).toHaveBeenCalledTimes(1)
+    expect(consoleMock).toHaveBeenNthCalledWith(1, error)
+    consoleMock.mockRestore()
+    consoleWarn.mockRestore()
+  })
 })

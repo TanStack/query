@@ -6,7 +6,7 @@
   import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
 
   export let client: QueryClient
-  export let onSuccess: (() =>  Promise<unknown> | unknown) = () => undefined 
+  export let onSuccess: (() =>  Promise<unknown> | unknown)
   export let persistOptions: Omit<PersistQueryClientOptions, 'queryClient'>
 
   const isRestoring = writable(true)
@@ -21,7 +21,7 @@
     promise.then(async () => {
       if (!isStale) {
         try {
-          await onSuccess()
+          await onSuccess?.()
         } finally {
           isRestoring.set(false)
         }
