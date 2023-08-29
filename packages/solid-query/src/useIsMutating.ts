@@ -8,7 +8,7 @@ export function useIsMutating(
   filters?: Accessor<MutationFilters>,
   queryClient?: Accessor<QueryClient>,
 ): Accessor<number> {
-  const client = createMemo(() => useQueryClient(queryClient?.())())
+  const client = createMemo(() => useQueryClient(queryClient?.()))
   const mutationCache = createMemo(() => client().getMutationCache())
 
   const [mutations, setMutations] = createSignal(

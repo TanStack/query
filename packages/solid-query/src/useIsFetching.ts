@@ -8,7 +8,7 @@ export function useIsFetching(
   filters?: Accessor<QueryFilters>,
   queryClient?: Accessor<QueryClient>,
 ): Accessor<number> {
-  const client = createMemo(() => useQueryClient(queryClient?.())())
+  const client = createMemo(() => useQueryClient(queryClient?.()))
   const queryCache = createMemo(() => client().getQueryCache())
 
   const [fetches, setFetches] = createSignal(client().isFetching(filters?.()))

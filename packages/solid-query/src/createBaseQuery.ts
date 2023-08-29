@@ -107,7 +107,7 @@ export function createBaseQuery<
     | HydrateableQueryState<TData, TError>
     | QueryObserverResult<TData, TError>
 
-  const client = createMemo(() => useQueryClient(queryClient?.())())
+  const client = createMemo(() => useQueryClient(queryClient?.()))
   const isRestoring = useIsRestoring()
 
   const defaultedOptions = createMemo(() =>
