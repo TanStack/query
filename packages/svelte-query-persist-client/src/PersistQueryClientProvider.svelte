@@ -1,12 +1,16 @@
 <script lang="ts">
   import { onDestroy } from 'svelte'
   import { persistQueryClient } from '@tanstack/query-persist-client-core'
-  import { QueryClientProvider, QueryClient, setIsRestoringContext } from '@tanstack/svelte-query'
+  import {
+    QueryClientProvider,
+    setIsRestoringContext,
+  } from '@tanstack/svelte-query'
   import { writable } from 'svelte/store'
   import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
+  import type { QueryClient } from '@tanstack/svelte-query'
 
   export let client: QueryClient
-  export let onSuccess: (() =>  Promise<unknown> | unknown)
+  export let onSuccess: (() => Promise<unknown> | unknown) | undefined
   export let persistOptions: Omit<PersistQueryClientOptions, 'queryClient'>
 
   const isRestoring = writable(true)
@@ -34,7 +38,6 @@
   }
 </script>
 
-<QueryClientProvider client={client}>
+<QueryClientProvider {client}>
   <slot />
 </QueryClientProvider>
-

@@ -1,12 +1,11 @@
-<script lang='ts'>
+<script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
   import { get } from 'svelte/store'
-  import {  sleep } from '../utils'
+  import { sleep } from '../utils'
   import type { StatusResult } from '../utils'
 
-
-  export let key: string[]
-  export let states: Writable<StatusResult<string>[]> 
+  export let key: Array<string>
+  export let states: Writable<Array<StatusResult<string>>>
 
   const state = createQuery({
     queryKey: key,
@@ -24,8 +23,8 @@
     data = s.data
     fetchStatus = s.fetchStatus
   })
-  
 </script>
+
 <div>
   <h1>{data}</h1>
   <h2>fetchStatus: {fetchStatus}</h2>

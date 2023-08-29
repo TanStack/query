@@ -1,7 +1,7 @@
+import { QueryClient } from '@tanstack/svelte-query'
 import { act } from '@testing-library/svelte'
 
 import type { QueryClientConfig } from '@tanstack/svelte-query'
-import { QueryClient } from '@tanstack/svelte-query'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
   return new QueryClient(config)
