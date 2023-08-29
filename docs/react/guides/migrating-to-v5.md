@@ -108,7 +108,7 @@ If you want to run it against `.js` or `.jsx` files, please use the command belo
 ```
 npx jscodeshift ./path/to/src/ \
   --extensions=js,jsx \
-  --transform=./node_modules/@tanstack/react-query/build/codemods/v5/remove-overloads/remove-overloads.js
+  --transform=./node_modules/@tanstack/react-query/build/codemods/src/v5/remove-overloads/remove-overloads.js
 ```
 
 If you want to run it against `.ts` or `.tsx` files, please use the command below:
@@ -117,7 +117,7 @@ If you want to run it against `.ts` or `.tsx` files, please use the command belo
 npx jscodeshift ./path/to/src/ \
   --extensions=ts,tsx \
   --parser=tsx \
-  --transform=./node_modules/@tanstack/react-query/build/codemods/v5/remove-overloads/remove-overloads.js
+  --transform=./node_modules/@tanstack/react-query/build/codemods/src/v5/remove-overloads/remove-overloads.js
 ```
 
 Please note in the case of `TypeScript` you need to use `tsx` as the parser; otherwise, the codemod won't be applied properly!
@@ -321,18 +321,18 @@ The options you can pass to dehydrate have been simplified. Queries and Mutation
 - dehydrateQueries?: boolean
 ```
 
-### Infinite queries now need a `defaultPageParam`
+### Infinite queries now need a `initialPageParam`
 
 Previously, we've passed `undefined` to the `queryFn` as `pageParam`, and you could assign a default value to the `pageParam` parameter in the `queryFn` function signature. This had the drawback of storing `undefined` in the `queryCache`, which is not serializable.
 
-Instead, you now have to pass an explicit `defaultPageParam` to the infinite query options. This will be used as the `pageParam` for the first page:
+Instead, you now have to pass an explicit `initialPageParam` to the infinite query options. This will be used as the `pageParam` for the first page:
 
 ```diff
 useInfiniteQuery({
    queryKey,
 -  queryFn: ({ pageParam = 0 }) => fetchSomething(pageParam),
 +  queryFn: ({ pageParam }) => fetchSomething(pageParam),
-+  defaultPageParam: 0,
++  initialPageParam: 0,
    getNextPageParam: (lastPage) => lastPage.next,
 })
 ```
@@ -340,6 +340,14 @@ useInfiniteQuery({
 ### Manual mode for infinite queries has been removed
 
 Previously, we've allowed to overwrite the `pageParams` that would be returned from `getNextPageParam` or `getPreviousPageParam` by passing a `pageParam` value directly to `fetchNextPage` or `fetchPreviousPage`. This feature didn't work at all with refetches and wasn't widely known or used. This also means that `getNextPageParam` is now required for infinite queries.
+
+### Returning `null` from `getNextPageParam` or `getPreviousPageParam` now indicates that there is no further page available
+
+In v4, you needed to explicitly return `undefined` to indicate that there is no further page available. We've widened this check to include `null`.
+
+### No retries on the server
+
+On the server, `retry` now defaults to `0` instead of `3`. For prefetching, we have always defaulted to `0` retries, but since queries that have `suspense` enabled can now execute directly on the server as well (since React18), we have to make sure that we don't retry on the server at all.
 
 [//]: # 'FrameworkBreakingChanges'
 
@@ -392,13 +400,11 @@ The `loading` status has been renamed to `pending`, and similarly the derived `i
 
 For mutations as well the `status` has been changed from `loading` to `pending` and the `isLoading` flag has been changed to `isPending`.
 
-Lastly the a new derived `isLoading` flag has been added to the queries that is implemented as `isPending && isFetching`. This means that `isLoading` and `isInitialLoading` have the same thing, but `isInitialLoading` is deprecated now and will be removed in the next major version.
+Lastly, a new derived `isLoading` flag has been added to the queries that is implemented as `isPending && isFetching`. This means that `isLoading` and `isInitialLoading` have the same thing, but `isInitialLoading` is deprecated now and will be removed in the next major version.
 
 To understand the reasoning behing this change checkout the [v5 roadmap discussion](https://github.com/TanStack/query/discussions/4252).
 
 [//]: # 'FrameworkBreakingChanges'
-
-
 [//]: # 'NewFeatures'
 
 ## New Features 🚀
@@ -410,29 +416,26 @@ v5 also comes with new features:
 We have a new, simplified way to perform optimistic updates by leveraging the returned `variables` from `useMutation`:
 
 ```tsx
-  const queryInfo = useTodos()
-  const addTodoMutation = useMutation({
-    mutationFn: (newTodo: string) => axios.post('/api/data', { text: newTodo }),
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
-  })
+const queryInfo = useTodos()
+const addTodoMutation = useMutation({
+  mutationFn: (newTodo: string) => axios.post('/api/data', { text: newTodo }),
+  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+})
 
-  if (queryInfo.data) {
-    return (
-      <ul>
-        {queryInfo.data.items.map((todo) => (
-          <li key={todo.id}>{todo.text}</li>
-        ))}
-        {addTodoMutation.isPending && (
-          <li
-            key={String(addTodoMutation.submittedAt)}
-            style={{opacity: 0.5}}
-          >
-            {addTodoMutation.variables}
-          </li>
-        )}
-      </ul>
-    )
-  }
+if (queryInfo.data) {
+  return (
+    <ul>
+      {queryInfo.data.items.map((todo) => (
+        <li key={todo.id}>{todo.text}</li>
+      ))}
+      {addTodoMutation.isPending && (
+        <li key={String(addTodoMutation.submittedAt)} style={{ opacity: 0.5 }}>
+          {addTodoMutation.variables}
+        </li>
+      )}
+    </ul>
+  )
+}
 ```
 
 Here, we are only changing how the UI looks when the mutation is running instead of writing data directly to the cache. This works best if we only have one place where we need to show the optimistic update. For more details, have a look at the [optimistic updates documentation](../guides/optimistic-updates).
@@ -458,5 +461,21 @@ See the [TypeScript docs](../typescript#typing-query-options) for more details.
 ### New `combine` option for `useQueries`
 
 See the [useQueries docs](../reference/useQueries#combine) for more details.
+
+### new hooks for suspense
+
+With v5, suspense for data fetching finally becomes "stable". We've added dedicated `useSuspenseQuery`, `useSuspenseInfiniteQuery` and `useSuspenseQueries` hooks. With these hooks, `data` will never be potentially `undefined` on type level:
+
+```js
+const {data: post} = useSuspenseQuery({
+    // ^? const post: Post
+  queryKey: ['post', postId],
+  queryFn: () => fetchPost(postId),
+})
+```
+
+The experimental `suspense: boolean` flag on the query hooks has been removed.
+
+You can read more about them in the [suspense docs](../guides/suspense).
 
 [//]: # 'NewFeatures'

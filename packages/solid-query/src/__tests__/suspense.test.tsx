@@ -28,7 +28,7 @@ describe("useQuery's in Suspense mode", () => {
 
   it('should render the correct amount of times in Suspense mode', async () => {
     const key = queryKey()
-    const states: CreateQueryResult<number>[] = []
+    const states: Array<CreateQueryResult<number>> = []
 
     let count = 0
     let renders = 0
@@ -84,7 +84,7 @@ describe("useQuery's in Suspense mode", () => {
 
   it('should return the correct states for a successful infinite query', async () => {
     const key = queryKey()
-    const states: CreateInfiniteQueryResult<InfiniteData<number>>[] = []
+    const states: Array<CreateInfiniteQueryResult<InfiniteData<number>>> = []
 
     function Page() {
       const [multiplier, setMultiplier] = createSignal(1)
@@ -94,7 +94,7 @@ describe("useQuery's in Suspense mode", () => {
           await sleep(10)
           return Number(pageParam * multiplier())
         },
-        defaultPageParam: 1,
+        initialPageParam: 1,
         suspense: true,
         getNextPageParam: (lastPage) => lastPage + 1,
       }))
@@ -143,7 +143,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn twice when used in Suspense mode', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<unknown[], string>()
+    const queryFn = vi.fn<Array<unknown>, string>()
     queryFn.mockImplementation(() => {
       sleep(10)
       return 'data'
@@ -453,6 +453,10 @@ describe("useQuery's in Suspense mode", () => {
   it('should throw errors to the error boundary by default', async () => {
     const key = queryKey()
 
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
     function Page() {
       const state = createQuery(() => ({
         queryKey: key,
@@ -497,6 +501,8 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => screen.getByText('Loading...'))
     await waitFor(() => screen.getByText('error boundary'))
+
+    consoleMock.mockRestore()
   })
 
   it('should not throw errors to the error boundary when throwOnError: false', async () => {
@@ -551,6 +557,10 @@ describe("useQuery's in Suspense mode", () => {
   it('should throw errors to the error boundary when a throwOnError function returns true', async () => {
     const key = queryKey()
 
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
     function Page() {
       const state = createQuery(() => ({
         queryKey: key,
@@ -595,6 +605,8 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => screen.getByText('Loading...'))
     await waitFor(() => screen.getByText('error boundary'))
+
+    consoleMock.mockRestore()
   })
 
   it('should not throw errors to the error boundary when a throwOnError function returns false', async () => {
@@ -651,7 +663,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn when not enabled', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<unknown[], Promise<string>>()
+    const queryFn = vi.fn<Array<unknown>, Promise<string>>()
     queryFn.mockImplementation(async () => {
       await sleep(10)
       return '23'
@@ -695,6 +707,10 @@ describe("useQuery's in Suspense mode", () => {
 
   it('should error catched in error boundary without infinite loop', async () => {
     const key = queryKey()
+
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
 
     let succeed = true
 
@@ -756,10 +772,16 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(screen.getByLabelText('fail'))
     // render error boundary fallback (error boundary)
     await waitFor(() => screen.getByText('error boundary'))
+
+    consoleMock.mockRestore()
   })
 
   it('should error catched in error boundary without infinite loop when query keys changed', async () => {
     let succeed = true
+
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
 
     function Page() {
       const [key, setKey] = createSignal(0)
@@ -814,9 +836,15 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(screen.getByLabelText('fail'))
     // render error boundary fallback (error boundary)
     await waitFor(() => screen.getByText('error boundary'))
+
+    consoleMock.mockRestore()
   })
 
   it('should error catched in error boundary without infinite loop when enabled changed', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
     function Page() {
       const queryKeys = '1'
       const [enabled, setEnabled] = createSignal(false)
@@ -874,6 +902,8 @@ describe("useQuery's in Suspense mode", () => {
 
     // render error boundary fallback (error boundary)
     await waitFor(() => screen.getByText('error boundary'))
+
+    consoleMock.mockRestore()
   })
 
   it('should render the correct amount of times in Suspense mode when gcTime is set to 0', async () => {

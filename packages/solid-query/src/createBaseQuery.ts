@@ -18,9 +18,11 @@ import type { CreateBaseQueryOptions } from './types'
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
+  Query,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
+  QueryState,
 } from '@tanstack/query-core'
 
 function reconcileFn<TData, TError>(
@@ -40,6 +42,49 @@ function reconcileFn<TData, TError>(
   return { ...result, data: newData } as typeof result
 }
 
+type HydrateableQueryState<TData, TError> = QueryObserverResult<TData, TError> &
+  QueryState<TData, TError>
+
+/**
+ * Solid's `onHydrated` functionality will silently "fail" (hydrate with an empty object)
+ * if the resource data is not serializable.
+ */
+const hydrateableObserverResult = <
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey extends QueryKey,
+  T2,
+>(
+  query: Query<TQueryFnData, TError, TData, TQueryKey>,
+  result: QueryObserverResult<T2, TError>,
+): HydrateableQueryState<T2, TError> => {
+  // Including the extra properties is only relevant on the server
+  if (!isServer) return result as HydrateableQueryState<T2, TError>
+
+  return {
+    ...unwrap(result),
+
+    // cast to refetch function should be safe, since we only remove it on the server,
+    // and refetch is not relevant on the server
+    refetch: undefined as unknown as HydrateableQueryState<
+      T2,
+      TError
+    >['refetch'],
+
+    // hydrate() expects a QueryState object, which is similar but not
+    // quite the same as a QueryObserverResult object. Thus, for now, we're
+    // copying over the missing properties from state in order to support hydration
+    dataUpdateCount: query.state.dataUpdateCount,
+    fetchFailureCount: query.state.fetchFailureCount,
+    isInvalidated: query.state.isInvalidated,
+
+    // Unsetting these properties on the server since they might not be serializable
+    fetchFailureReason: null,
+    fetchMeta: null,
+  }
+}
+
 // Base Query Function that is used to create the query.
 export function createBaseQuery<
   TQueryFnData,
@@ -54,6 +99,10 @@ export function createBaseQuery<
   Observer: typeof QueryObserver,
   queryClient?: Accessor<QueryClient>,
 ) {
+  type ResourceData =
+    | HydrateableQueryState<TData, TError>
+    | QueryObserverResult<TData, TError>
+
   const client = createMemo(() => useQueryClient(queryClient?.()))
 
   const defaultedOptions = client().defaultQueryOptions(options())
@@ -71,41 +120,19 @@ export function createBaseQuery<
 
   const createServerSubscriber = (
     resolve: (
-      data:
-        | QueryObserverResult<TData, TError>
-        | PromiseLike<QueryObserverResult<TData, TError> | undefined>
-        | undefined,
+      data: ResourceData | PromiseLike<ResourceData | undefined> | undefined,
     ) => void,
     reject: (reason?: any) => void,
   ) => {
     return observer.subscribe((result) => {
       notifyManager.batchCalls(() => {
         const query = observer.getCurrentQuery()
-        const { refetch, ...rest } = unwrap(result)
-        const unwrappedResult = {
-          ...rest,
-
-          // hydrate() expects a QueryState object, which is similar but not
-          // quite the same as a QueryObserverResult object. Thus, for now, we're
-          // copying over the missing properties from state in order to support hydration
-          dataUpdateCount: query.state.dataUpdateCount,
-          fetchFailureCount: query.state.fetchFailureCount,
-          // Removing these properties since they might not be serializable
-          // fetchFailureReason: query.state.fetchFailureReason,
-          // fetchMeta: query.state.fetchMeta,
-          isInvalidated: query.state.isInvalidated,
-        }
+        const unwrappedResult = hydrateableObserverResult(query, result)
 
         if (unwrappedResult.isError) {
-          if (process.env['NODE_ENV'] === 'development') {
-            console.error(unwrappedResult.error)
-          }
           reject(unwrappedResult.error)
-        }
-        if (unwrappedResult.isSuccess) {
-          // Use of any here is fine
-          // We cannot include refetch since it is not serializable
-          resolve(unwrappedResult as any)
+        } else {
+          resolve(unwrappedResult)
         }
       })()
     })
@@ -148,7 +175,7 @@ export function createBaseQuery<
   let unsubscribe: (() => void) | null = null
 
   const [queryResource, { refetch, mutate }] = createResource<
-    QueryObserverResult<TData, TError> | undefined
+    ResourceData | undefined
   >(
     () => {
       return new Promise((resolve, reject) => {
@@ -159,8 +186,10 @@ export function createBaseQuery<
             unsubscribe = createClientSubscriber()
           }
         }
+
         if (!state.isLoading) {
-          resolve(state)
+          const query = observer.getCurrentQuery()
+          resolve(hydrateableObserverResult(query, state))
         }
       })
     },

@@ -29,9 +29,9 @@ export type Parsed = {
   header: string
   body?: null
   footer?: null
-  notes?: null[] | null
-  references?: null[] | null
-  mentions?: null[] | null
+  notes?: Array<null> | null
+  references?: Array<null> | null
+  mentions?: Array<null> | null
   revert?: null
   raw: string
 }

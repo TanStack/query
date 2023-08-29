@@ -10,8 +10,21 @@ export type { QueriesResults, QueriesOptions } from './useQueries'
 export { useQuery } from './useQuery'
 export { useSuspenseQuery } from './useSuspenseQuery'
 export { useSuspenseInfiniteQuery } from './useSuspenseInfiniteQuery'
+export { useSuspenseQueries } from './useSuspenseQueries'
+export type {
+  SuspenseQueriesResults,
+  SuspenseQueriesOptions,
+} from './useSuspenseQueries'
 export { queryOptions } from './queryOptions'
+export type {
+  DefinedInitialDataOptions,
+  UndefinedInitialDataOptions,
+} from './queryOptions'
 export { infiniteQueryOptions } from './infiniteQueryOptions'
+export type {
+  DefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
+} from './infiniteQueryOptions'
 export {
   QueryClientContext,
   QueryClientProvider,

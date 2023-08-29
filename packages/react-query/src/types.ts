@@ -33,9 +33,12 @@ export interface UseQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends WithRequired<
-    UseBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
-    'queryKey'
+> extends Omit<
+    WithRequired<
+      UseBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
+      'queryKey'
+    >,
+    'suspense'
   > {}
 
 export interface UseSuspenseQueryOptions<
@@ -45,7 +48,7 @@ export interface UseSuspenseQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'enabled' | 'suspense' | 'throwOnError' | 'placeholderData'
+    'enabled' | 'throwOnError' | 'placeholderData'
   > {}
 
 export interface UseInfiniteQueryOptions<
@@ -56,13 +59,16 @@ export interface UseInfiniteQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends WithRequired<
-    InfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey,
-      TPageParam
+    Omit<
+      InfiniteQueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey,
+        TPageParam
+      >,
+      'suspense'
     >,
     'queryKey'
   > {}
@@ -83,7 +89,7 @@ export interface UseSuspenseInfiniteQueryOptions<
       TQueryKey,
       TPageParam
     >,
-    'enabled' | 'suspense' | 'throwOnError' | 'placeholderData'
+    'enabled' | 'throwOnError' | 'placeholderData'
   > {}
 
 export type UseBaseQueryResult<

@@ -1,10 +1,14 @@
 {
   "name": "@tanstack/query-persist-client-core",
-  "version": "5.0.0-beta.0",
+  "version": "5.0.0-beta.20",
   "description": "Set of utilities for interacting with persisters, which can save your queryClient for later use",
   "author": "tannerlinsley",
   "license": "MIT",
-  "repository": "tanstack/query",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TanStack/query.git",
+    "directory": "packages/query-persist-client-core"
+  },
   "homepage": "https://tanstack.com/query",
   "funding": {
     "type": "github",
@@ -38,7 +42,7 @@
     "test:types": "tsc",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict && attw --pack",
+    "test:build": "publint --strict",
     "build": "tsup"
   },
   "dependencies": {

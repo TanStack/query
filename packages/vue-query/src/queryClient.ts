@@ -57,7 +57,7 @@ export class QueryClient extends QC {
 
   getQueriesData<TData = unknown>(
     filters: MaybeRefDeep<QueryFilters>,
-  ): [QueryKey, TData | undefined][] {
+  ): Array<[QueryKey, TData | undefined]> {
     return super.getQueriesData(cloneDeepUnref(filters))
   }
 
@@ -77,7 +77,7 @@ export class QueryClient extends QC {
     filters: MaybeRefDeep<QueryFilters>,
     updater: Updater<TData | undefined, TData | undefined>,
     options: MaybeRefDeep<SetDataOptions> = {},
-  ): [QueryKey, TData | undefined][] {
+  ): Array<[QueryKey, TData | undefined]> {
     return super.setQueriesData(
       cloneDeepUnref(filters),
       updater,
@@ -185,7 +185,7 @@ export class QueryClient extends QC {
       TQueryKey,
       TPageParam
     >,
-  ): Promise<InfiniteData<TData>>
+  ): Promise<InfiniteData<TData, TPageParam>>
   fetchInfiniteQuery<
     TQueryFnData,
     TError = DefaultError,
@@ -202,7 +202,7 @@ export class QueryClient extends QC {
         TPageParam
       >
     >,
-  ): Promise<InfiniteData<TData>> {
+  ): Promise<InfiniteData<TData, TPageParam>> {
     return super.fetchInfiniteQuery(cloneDeepUnref(options))
   }
 

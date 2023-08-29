@@ -128,7 +128,7 @@ export class QueryClient {
 
   getQueriesData<TQueryFnData = unknown>(
     filters: QueryFilters,
-  ): [QueryKey, TQueryFnData | undefined][] {
+  ): Array<[QueryKey, TQueryFnData | undefined]> {
     return this.getQueryCache()
       .findAll(filters)
       .map(({ queryKey, state }) => {
@@ -167,7 +167,7 @@ export class QueryClient {
     filters: QueryFilters,
     updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
     options?: SetDataOptions,
-  ): [QueryKey, TQueryFnData | undefined][] {
+  ): Array<[QueryKey, TQueryFnData | undefined]> {
     return notifyManager.batch(() =>
       this.getQueryCache()
         .findAll(filters)
@@ -324,10 +324,13 @@ export class QueryClient {
       TQueryKey,
       TPageParam
     >,
-  ): Promise<InfiniteData<TData>> {
-    options.behavior = infiniteQueryBehavior<TQueryFnData, TError, TData>(
-      options.pages,
-    )
+  ): Promise<InfiniteData<TData, TPageParam>> {
+    options.behavior = infiniteQueryBehavior<
+      TQueryFnData,
+      TError,
+      TData,
+      TPageParam
+    >(options.pages)
     return this.fetchQuery(options)
   }
 

@@ -82,7 +82,7 @@ type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
 // CLASS
 
 export class MutationCache extends Subscribable<MutationCacheListener> {
-  #mutations: Mutation<any, any, any, any>[]
+  #mutations: Array<Mutation<any, any, any, any>>
   #mutationId: number
   #resuming: Promise<unknown> | undefined
 
@@ -127,7 +127,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     })
   }
 
-  getAll(): Mutation[] {
+  getAll(): Array<Mutation> {
     return this.#mutations
   }
 
@@ -146,7 +146,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     )
   }
 
-  findAll(filters: MutationFilters = {}): Mutation[] {
+  findAll(filters: MutationFilters = {}): Array<Mutation> {
     return this.#mutations.filter((mutation) =>
       matchMutation(filters, mutation),
     )

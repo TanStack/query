@@ -26,7 +26,7 @@ export interface QueryDevtoolsProps {
   buttonPosition?: DevtoolsButtonPosition
   position?: DevtoolsPosition
   initialIsOpen?: boolean
-  errorTypes?: DevToolsErrorType[]
+  errorTypes?: Array<DevToolsErrorType>
 }
 
 export const QueryDevtoolsContext = createContext<QueryDevtoolsProps>({

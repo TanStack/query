@@ -64,6 +64,10 @@ describe('createMutation', () => {
   })
 
   it('should be able to reset `error`', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
     function Page() {
       const mutation = createMutation<string, Error>(() => ({
         mutationFn: () => {
@@ -105,6 +109,8 @@ describe('createMutation', () => {
     await waitFor(() => {
       expect(screen.queryByRole('heading')).toBeNull()
     })
+
+    consoleMock.mockRestore()
   })
 
   it('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
@@ -312,7 +318,7 @@ describe('createMutation', () => {
   })
 
   it('should be able to override the useMutation success callbacks', async () => {
-    const callbacks: string[] = []
+    const callbacks: Array<string> = []
 
     function Page() {
       const mutation = createMutation(() => ({
@@ -363,7 +369,7 @@ describe('createMutation', () => {
   })
 
   it('should be able to override the error callbacks when using mutateAsync', async () => {
-    const callbacks: string[] = []
+    const callbacks: Array<string> = []
 
     function Page() {
       const mutation = createMutation(() => ({
@@ -425,7 +431,7 @@ describe('createMutation', () => {
       },
     })
 
-    const states: CreateMutationResult<any, any, any, any>[] = []
+    const states: Array<CreateMutationResult<any, any, any, any>> = []
 
     function Page() {
       const mutation = createMutation<string, unknown, string>(() => ({
@@ -670,7 +676,7 @@ describe('createMutation', () => {
     const onlineMock = mockOnlineManagerIsOnline(false)
 
     let count = 0
-    const states: CreateMutationResult<any, any, any, any>[] = []
+    const states: Array<CreateMutationResult<any, any, any, any>> = []
 
     function Page() {
       const mutation = createMutation(() => ({
@@ -781,6 +787,10 @@ describe('createMutation', () => {
   })
 
   it('should be able to throw an error when throwOnError is set to true', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
     function Page() {
       const mutation = createMutation<string, Error>(() => ({
         mutationFn: () => {
@@ -817,9 +827,15 @@ describe('createMutation', () => {
     await waitFor(() => {
       expect(screen.queryByText('error')).not.toBeNull()
     })
+
+    consoleMock.mockRestore()
   })
 
   it('should be able to throw an error when throwOnError is a function that returns true', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
     let boundary = false
     function Page() {
       const mutation = createMutation<string, Error>(() => ({
@@ -867,6 +883,8 @@ describe('createMutation', () => {
     await waitFor(() => {
       expect(screen.queryByText('error boundary')).not.toBeNull()
     })
+
+    consoleMock.mockRestore()
   })
 
   it('should pass meta to mutation', async () => {

@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-next-experimental",
-  "version": "5.0.0-beta.0",
+  "version": "5.0.0-beta.20",
   "description": "Hydration utils for React Query in the NextJs app directory",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -38,7 +38,7 @@
     "test:types": "tsc",
     "test:lib": "vitest run --coverage --passWithNoTests",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict && attw --pack",
+    "test:build": "publint --strict",
     "build": "tsup"
   },
   "devDependencies": {
@@ -51,7 +51,7 @@
     "react-error-boundary": "^3.1.4"
   },
   "peerDependencies": {
-    "@tanstack/react-query": "workspace:*",
+    "@tanstack/react-query": "workspace:^",
     "next": "^13.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"

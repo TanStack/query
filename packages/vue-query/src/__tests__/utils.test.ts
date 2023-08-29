@@ -79,7 +79,7 @@ describe('utils', () => {
       expect(cp).not.toBe(val)
       expect(cp[3]).toBe(val[3]) // Set([3, 4])
       expect(cp[4]).not.toBe(val[4]) // [5, 6, { a: 1 }]
-      expect((cp[4] as number[])[2]).not.toBe((val[4] as number[])[2]) // { a : 1 }
+      expect((cp[4] as Array<number>)[2]).not.toBe((val[4] as Array<number>)[2]) // { a : 1 }
     })
 
     test('should deeply copy object', () => {

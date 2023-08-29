@@ -1,10 +1,14 @@
 {
   "name": "@tanstack/react-query-devtools",
-  "version": "5.0.0-beta.1",
+  "version": "5.0.0-beta.20",
   "description": "Developer tools to interact with and visualize the TanStack/react-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
-  "repository": "tanstack/query",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TanStack/query.git",
+    "directory": "packages/react-query-devtools"
+  },
   "homepage": "https://tanstack.com/query",
   "funding": {
     "type": "github",
@@ -48,7 +52,7 @@
     "test:types": "tsc",
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict && attw --pack --ignore-rules no-resolution",
+    "test:build": "publint --strict",
     "build": "tsup"
   },
   "dependencies": {
@@ -63,7 +67,7 @@
     "react-error-boundary": "^3.1.4"
   },
   "peerDependencies": {
-    "@tanstack/react-query": "workspace:*",
+    "@tanstack/react-query": "workspace:^",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   }

@@ -79,7 +79,7 @@ describe('mutations', () => {
       submittedAt: 0,
     })
 
-    const states: MutationState<string, unknown, string, string>[] = []
+    const states: Array<MutationState<string, unknown, string, string>> = []
 
     mutation.subscribe((state) => {
       states.push(state)
@@ -159,7 +159,7 @@ describe('mutations', () => {
       retryDelay: 1,
     })
 
-    const states: MutationState<string, unknown, string, string>[] = []
+    const states: Array<MutationState<string, unknown, string, string>> = []
 
     mutation.subscribe((state) => {
       states.push(state)

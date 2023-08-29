@@ -12,12 +12,13 @@ describe('Discriminated union return type', () => {
           queryKey: ['infiniteQuery'],
           queryFn: simpleFetcher,
           getNextPageParam: () => undefined,
-          defaultPageParam: 0,
+          initialPageParam: 0,
         }),
       )
 
+      // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
       const result: Expect<
-        Equal<InfiniteData<string> | undefined, typeof query.data>
+        Equal<InfiniteData<string, unknown> | undefined, typeof query.data>
       > = true
       return result
     })
@@ -30,13 +31,15 @@ describe('Discriminated union return type', () => {
           queryKey: ['infiniteQuery'],
           queryFn: simpleFetcher,
           getNextPageParam: () => undefined,
-          defaultPageParam: 0,
+          initialPageParam: 0,
         }),
       )
 
       if (query.isSuccess) {
-        const result: Expect<Equal<InfiniteData<string>, typeof query.data>> =
-          true
+        // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
+        const result: Expect<
+          Equal<InfiniteData<string, unknown>, typeof query.data>
+        > = true
         return result
       }
       return
@@ -50,7 +53,7 @@ describe('Discriminated union return type', () => {
           queryKey: ['infiniteQuery'],
           queryFn: simpleFetcher,
           getNextPageParam: () => undefined,
-          defaultPageParam: 0,
+          initialPageParam: 0,
         }),
       )
 
@@ -69,7 +72,7 @@ describe('Discriminated union return type', () => {
           queryKey: ['infiniteQuery'],
           queryFn: simpleFetcher,
           getNextPageParam: () => undefined,
-          defaultPageParam: 0,
+          initialPageParam: 0,
         }),
       )
 
@@ -88,7 +91,7 @@ describe('Discriminated union return type', () => {
           queryKey: ['infiniteQuery'],
           queryFn: simpleFetcher,
           getNextPageParam: () => undefined,
-          defaultPageParam: 0,
+          initialPageParam: 0,
         }),
       )
 
