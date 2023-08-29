@@ -1,7 +1,19 @@
-import { QueriesObserver, notifyManager } from '@tanstack/query-core'
-import { createComputed, onCleanup } from 'solid-js'
+import { QueriesObserver } from '@tanstack/query-core'
 import { createStore, unwrap } from 'solid-js/store'
+import {
+  batch,
+  createComputed,
+  createMemo,
+  createRenderEffect,
+  createResource,
+  mergeProps,
+  on,
+  onCleanup,
+  onMount,
+} from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
+import { useIsRestoring } from './isRestoring'
+import type { CreateQueryResult, SolidQueryOptions } from './types'
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
@@ -10,8 +22,8 @@ import type {
   QueriesPlaceholderDataFunction,
   QueryFunction,
   QueryKey,
+  QueryObserverResult,
 } from '@tanstack/query-core'
-import type { CreateQueryResult, SolidQueryOptions } from './types'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter
@@ -159,7 +171,7 @@ export type QueriesResults<
 
 export function createQueries<
   T extends Array<any>,
-  TCombinedResult = QueriesResults<T>,
+  TCombinedResult extends QueriesResults<T> = QueriesResults<T>,
 >(
   queriesOptions: Accessor<{
     queries: readonly [...QueriesOptions<T>]
@@ -167,17 +179,22 @@ export function createQueries<
   }>,
   queryClient?: Accessor<QueryClient>,
 ): TCombinedResult {
-  const client = useQueryClient(queryClient?.())
+  const client = createMemo(() => useQueryClient(queryClient?.()))
+  const isRestoring = useIsRestoring()
 
-  const defaultedQueries = queriesOptions().queries.map((options) => {
-    const defaultedOptions = client.defaultQueryOptions(options)
-    defaultedOptions._optimisticResults = 'optimistic'
-    return defaultedOptions
-  })
+  const defaultedQueries = createMemo(() =>
+    queriesOptions().queries.map((options) =>
+      mergeProps(client().defaultQueryOptions(options), {
+        get _optimisticResults() {
+          return isRestoring() ? 'isRestoring' : 'optimistic'
+        },
+      }),
+    ),
+  )
 
   const observer = new QueriesObserver(
-    client,
-    defaultedQueries,
+    client(),
+    defaultedQueries(),
     queriesOptions().combine
       ? ({
           combine: queriesOptions().combine,
@@ -185,27 +202,77 @@ export function createQueries<
       : undefined,
   )
 
-  // @ts-expect-error - Types issue with solid-js createStore
   const [state, setState] = createStore<TCombinedResult>(
-    observer.getOptimisticResult(defaultedQueries)[1](),
+    observer.getOptimisticResult(defaultedQueries())[1](),
   )
 
-  const unsubscribe = observer.subscribe((result) => {
-    notifyManager.batchCalls(() => {
-      setState(unwrap(result) as unknown as TCombinedResult)
-    })()
+  createRenderEffect(
+    on(
+      () => queriesOptions().queries.length,
+      () => setState(observer.getOptimisticResult(defaultedQueries())[1]()),
+    ),
+  )
+
+  const dataResources = createMemo(
+    on(
+      () => state.length,
+      () =>
+        state.map((queryRes) => {
+          const dataPromise = () =>
+            new Promise((resolve) => {
+              if (queryRes.isFetching && queryRes.isLoading) return
+              resolve(unwrap(queryRes.data))
+            })
+          return createResource(dataPromise)
+        }),
+    ),
+  )
+
+  batch(() => {
+    const dataResources_ = dataResources()
+    for (let index = 0; index < dataResources_.length; index++) {
+      const dataResource = dataResources_[index]!
+      dataResource[1].mutate(() => unwrap(state[index]!.data))
+      dataResource[1].refetch()
+    }
   })
 
+  let taskQueue: Array<() => void> = []
+  const subscribeToObserver = () =>
+    observer.subscribe((result) => {
+      taskQueue.push(() => {
+        batch(() => {
+          const dataResources_ = dataResources()
+          for (let index = 0; index < dataResources_.length; index++) {
+            const dataResource = dataResources_[index]!
+            const unwrappedResult = { ...unwrap(result[index]!) }
+            // @ts-expect-error typescript pedantry regarding the possible range of index
+            setState(index, unwrap(unwrappedResult))
+            dataResource[1].mutate(() => unwrap(state[index]!.data))
+            dataResource[1].refetch()
+          }
+        })
+      })
+
+      queueMicrotask(() => {
+        const taskToRun = taskQueue.pop()
+        if (taskToRun) taskToRun()
+        taskQueue = []
+      })
+    })
+
+  let unsubscribe: () => void = () => undefined
+  createComputed<() => void>((cleanup) => {
+    cleanup?.()
+    unsubscribe = isRestoring() ? () => undefined : subscribeToObserver()
+    // cleanup needs to be scheduled after synchronous effects take place
+    return () => queueMicrotask(unsubscribe)
+  })
   onCleanup(unsubscribe)
 
-  createComputed(() => {
-    const updatedQueries = queriesOptions().queries.map((options) => {
-      const defaultedOptions = client.defaultQueryOptions(options)
-      defaultedOptions._optimisticResults = 'optimistic'
-      return defaultedOptions
-    })
+  onMount(() => {
     observer.setQueries(
-      updatedQueries,
+      defaultedQueries(),
       queriesOptions().combine
         ? ({
             combine: queriesOptions().combine,
@@ -215,5 +282,34 @@ export function createQueries<
     )
   })
 
-  return state
+  createComputed(() => {
+    observer.setQueries(
+      defaultedQueries(),
+      queriesOptions().combine
+        ? ({
+            combine: queriesOptions().combine,
+          } as QueriesObserverOptions<TCombinedResult>)
+        : undefined,
+      { listeners: false },
+    )
+  })
+
+  const handler = (index: number) => ({
+    get(target: QueryObserverResult, prop: keyof QueryObserverResult): any {
+      if (prop === 'data') {
+        return dataResources()[index]![0]()
+      }
+      return Reflect.get(target, prop)
+    },
+  })
+
+  const getProxies = () =>
+    state.map((s, index) => {
+      return new Proxy(s, handler(index))
+    })
+
+  const [proxifiedState, setProxifiedState] = createStore(getProxies())
+  createRenderEffect(() => setProxifiedState(getProxies()))
+
+  return proxifiedState as TCombinedResult
 }

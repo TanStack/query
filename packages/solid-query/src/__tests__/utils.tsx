@@ -7,7 +7,7 @@ import type { ParentProps } from 'solid-js'
 import type { SpyInstance } from 'vitest'
 
 let queryKeyCount = 0
-export function queryKey(): Array<string> {
+export function queryKey() {
   queryKeyCount++
   return [`query_${queryKeyCount}`]
 }
