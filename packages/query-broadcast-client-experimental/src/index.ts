@@ -1,14 +1,17 @@
 import { BroadcastChannel } from 'broadcast-channel'
+import type { BroadcastChannelOptions } from 'broadcast-channel'
 import type { QueryClient } from '@tanstack/query-core'
 
 interface BroadcastQueryClientOptions {
   queryClient: QueryClient
   broadcastChannel?: string
+  type?: BroadcastChannelOptions['type']
 }
 
 export function broadcastQueryClient({
   queryClient,
   broadcastChannel = 'tanstack-query',
+  type,
 }: BroadcastQueryClientOptions) {
   let transaction = false
   const tx = (cb: () => void) => {
@@ -18,6 +21,7 @@ export function broadcastQueryClient({
   }
 
   const channel = new BroadcastChannel(broadcastChannel, {
+    type,
     webWorkerSupport: false,
   })
 
