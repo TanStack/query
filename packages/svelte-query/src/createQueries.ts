@@ -217,22 +217,40 @@ export function createQueries<
     )
   })
 
-  const [, getCombinedResult] = observer.getOptimisticResult(
+  const [, getCombinedResult, trackResult] = observer.getOptimisticResult(
     get(defaultedQueriesStore),
   )
 
-  const { subscribe } = readable(getCombinedResult() as any, (set) => {
-    const unsubscribe = observer.subscribe(
-      notifyManager.batchCalls((val) => {
-        if (get(isRestoring)) return
-        set(val)
-      }),
-    )
-    return () => {
-      if (get(isRestoring)) return
-      unsubscribe()
-    }
-  })
+  const result = derived<
+    typeof isRestoring,
+    | Parameters<Parameters<typeof observer.subscribe>[0]>[0]
+    | ReturnType<typeof getCombinedResult>
+  >(
+    isRestoring,
+    ($isRestoring, set) => {
+      const unsubscribe = $isRestoring
+        ? () => undefined
+        : observer.subscribe(notifyManager.batchCalls(set))
 
+      return () => unsubscribe()
+    },
+    getCombinedResult(trackResult()),
+  )
+
+  const { subscribe } = derived(
+    [result, defaultedQueriesStore],
+    ([$result, $defaultedQueries]) => {
+      $result = observer.getOptimisticResult($defaultedQueries)[0]
+      const observers = observer.getObservers()
+      return $defaultedQueries.map((query, index) =>
+        query.notifyOnChangeProps
+          ? // @ts-expect-error TCombinedResult should be an array
+            $result[index]
+          : // @ts-expect-error TCombinedResult should be an array
+            observers[index]!.trackResult($result[index]),
+      )
+    },
+  )
+  // @ts-expect-error TCombinedResult should be an array
   return { subscribe }
 }

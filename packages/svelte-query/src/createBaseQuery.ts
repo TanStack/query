@@ -3,7 +3,12 @@ import { notifyManager } from '@tanstack/query-core'
 import { useIsRestoring } from './useIsRestoring'
 import { useQueryClient } from './useQueryClient'
 import { isSvelteStore } from './utils'
-import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
+import type {
+  QueryClient,
+  QueryKey,
+  QueryObserver,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
 
 export function createBaseQuery<
@@ -56,17 +61,15 @@ export function createBaseQuery<
     observer.setOptions($defaultedOptions, { listeners: false })
   })
 
-  const result = readable(observer.getCurrentResult(), (set) => {
-    const unsubscribe = observer.subscribe(
-      notifyManager.batchCalls((val) => {
-        if (get(isRestoring)) return
-        set(val)
-      }),
-    )
-    return () => {
-      if (get(isRestoring)) return
-      unsubscribe()
-    }
+  const result = derived<
+    typeof isRestoring,
+    QueryObserverResult<TData, TError>
+  >(isRestoring, ($isRestoring, set) => {
+    const unsubscribe = $isRestoring
+      ? () => undefined
+      : observer.subscribe(notifyManager.batchCalls(set))
+    observer.updateResult()
+    return unsubscribe
   })
 
   /** Subscribe to changes in result and defaultedOptionsStore */

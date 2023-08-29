@@ -1,7 +1,7 @@
 import { act } from '@testing-library/svelte'
 
-import { QueryClient } from '@tanstack/svelte-query'
 import type { QueryClientConfig } from '@tanstack/svelte-query'
+import { QueryClient } from '@tanstack/svelte-query'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
   return new QueryClient(config)
@@ -25,4 +25,10 @@ export function setActTimeout(fn: () => void, ms?: number) {
       fn()
     })
   }, ms)
+}
+
+export type StatusResult<T = unknown> = {
+  status: string
+  fetchStatus: string
+  data: T | undefined
 }
