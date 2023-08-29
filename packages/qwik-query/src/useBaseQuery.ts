@@ -145,7 +145,7 @@ const hasPage = async (options, pages, dicrection: 'PREV' | 'NEXT') => {
 			? options.getPreviousPageParam
 			: options.getNextPageParam
 	if (getPageParam && Array.isArray(pages)) {
-		const pageParam = await getPageParam(options, pages)
+		const pageParam = await getPageParam(dicrection === 'PREV' ? pages[0] : pages[pages.length - 1], pages);
 		return (
 			typeof pageParam !== 'undefined' &&
 			pageParam !== null &&
