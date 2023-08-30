@@ -101,7 +101,7 @@ function Projects() {
 
 It's essential to understand that calling `fetchNextPage` while an ongoing fetch is in progress runs the risk of overwriting data refreshes happening in the background. This situation becomes particularly critical when rendering a list and triggering `fetchNextPage` simultaneously.
 
-Remember, there can only be a single ongoing fetch for an InfiniteQuery. Despite having a single cache entry spread across multiple pages, attempting to fetch two pages simultaneously might lead to data overwrites.
+Remember, there can only be a single ongoing fetch for an InfiniteQuery. A single cache entry is shared for all pages, attempting to fetch twice simultaneously might lead to data overwrites.
 
 If you intend to enable simultaneous fetching, you can utilize the `{ cancelRefetch: false }` option (default: true) within `fetchNextPage`.
 
