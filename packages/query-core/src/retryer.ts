@@ -40,7 +40,7 @@ type RetryDelayFunction<TError = unknown> = (
   error: TError,
 ) => number
 
-function defaultRetryDelay(failureCount: number) {
+function defaultRetryDelay(failureCount: number): number {
   return Math.min(1000 * 2 ** failureCount, 30000)
 }
 
