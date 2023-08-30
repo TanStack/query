@@ -61,17 +61,17 @@
     "@tanstack/match-sorter-utils": "^8.8.4",
     "@tanstack/query-core": "workspace:*",
     "@vue/devtools-api": "^6.5.0",
-    "vue-demi": "^0.13.11"
+    "vue-demi": "^0.14.6"
   },
   "devDependencies": {
-    "@vue/composition-api": "1.7.1",
-    "vue": "^3.2.47",
+    "@vue/composition-api": "1.7.2",
+    "vue": "^3.3.0",
     "vue2": "npm:vue@2.6",
     "vue2.7": "npm:vue@2.7"
   },
   "peerDependencies": {
     "@vue/composition-api": "^1.1.2",
-    "vue": "^2.5.0 || ^3.0.0"
+    "vue": "^2.6.0 || ^3.3.0"
   },
   "peerDependenciesMeta": {
     "@vue/composition-api": {
