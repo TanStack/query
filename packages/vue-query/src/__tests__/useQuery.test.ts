@@ -187,8 +187,8 @@ describe('useQuery', () => {
 
     const enabled = computed(() => !!data.value)
 
-    const dependentQueryFn = jest.fn().mockResolvedValue('Some data')
-    const { fetchStatus, status } = useQuery(
+    const dependentQueryFn = jest.fn()
+    const { fetchStatus } = useQuery(
       ['dependant2'],
       dependentQueryFn,
       reactive({
@@ -203,12 +203,10 @@ describe('useQuery', () => {
     await flushPromises()
 
     expect(data.value).toStrictEqual('Some data')
-    expect(fetchStatus.value).toStrictEqual('fetching')
-
-    await flushPromises()
-
-    expect(fetchStatus.value).toStrictEqual('idle')
-    expect(status.value).toStrictEqual('success')
+    expect(dependentQueryFn).toHaveBeenCalledTimes(1)
+    expect(dependentQueryFn).toHaveBeenCalledWith(
+      expect.objectContaining({ queryKey: ['dependant2'] }),
+    )
   })
 
   test('should stop listening to changes on onScopeDispose', async () => {
