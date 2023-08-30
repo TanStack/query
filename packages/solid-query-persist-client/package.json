@@ -1,13 +1,13 @@
 {
-  "name": "@tanstack/solid-query",
+  "name": "@tanstack/solid-query-persist-client",
   "version": "5.0.0-beta.21",
-  "description": "Primitives for managing, caching and syncing asynchronous and remote data in Solid",
+  "description": "Solid.js bindings to work with persisters in TanStack/solid-query",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/TanStack/query.git",
-    "directory": "packages/solid-query"
+    "directory": "packages/solid-query-persist-client"
   },
   "homepage": "https://tanstack.com/query",
   "funding": {
@@ -15,10 +15,9 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "type": "module",
+  "types": "./build/index.d.ts",
   "main": "./build/index.cjs",
   "module": "./build/index.js",
-  "types": "./build/index.d.ts",
-  "browser": {},
   "exports": {
     "development": {
       "import": {
@@ -39,8 +38,10 @@
       "default": "./build/index.cjs"
     }
   },
-  "sideEffects": [
-    "./src/setBatchUpdatesFn.ts"
+  "sideEffects": false,
+  "files": [
+    "build",
+    "src"
   ],
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
@@ -51,19 +52,16 @@
     "test:build": "publint --strict",
     "build": "tsup"
   },
-  "files": [
-    "build",
-    "src"
-  ],
   "dependencies": {
-    "@tanstack/query-core": "workspace:*",
-    "solid-js": "^1.7.8"
+    "@tanstack/query-persist-client-core": "workspace:*"
   },
   "devDependencies": {
     "tsup-preset-solid": "^2.0.1",
-    "vite-plugin-solid": "^2.7.0"
+    "vite-plugin-solid": "^2.7.0",
+    "solid-js": "^1.7.8"
   },
   "peerDependencies": {
+    "@tanstack/solid-query": "workspace:*",
     "solid-js": "^1.6.0"
   }
 }

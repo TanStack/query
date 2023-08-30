@@ -69,6 +69,11 @@ export const packages = [
     entries: ['main', 'module', 'types'],
   },
   {
+    name: '@tanstack/solid-query-persist-client',
+    packageDir: 'packages/solid-query-persist-client',
+    entries: ['main', 'module', 'types'],
+  },
+  {
     name: '@tanstack/svelte-query',
     packageDir: 'packages/svelte-query',
     entries: ['module', 'svelte', 'types'],

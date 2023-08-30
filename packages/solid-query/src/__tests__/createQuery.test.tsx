@@ -898,7 +898,7 @@ describe('createQuery', () => {
 
   it('should throw an error when a selector throws', async () => {
     const key = queryKey()
-    const states: Array<CreateQueryResult<string>> = []
+    const states: Array<{ status: string; data?: unknown; error?: Error }> = []
     const error = new Error('Select Error')
 
     function Page() {
@@ -910,7 +910,10 @@ describe('createQuery', () => {
         },
       }))
       createRenderEffect(() => {
-        states.push({ ...state })
+        if (state.status === 'pending')
+          states.push({ status: 'pending', data: undefined })
+        else if (state.status === 'error')
+          states.push({ status: 'error', error: state.error })
       })
       return null
     }
@@ -4666,11 +4669,10 @@ describe('createQuery', () => {
     })
   })
 
-  it('should only call the query hash function once each render', async () => {
+  it('should only call the query hash function once', async () => {
     const key = queryKey()
 
     let hashes = 0
-    let renders = 0
 
     function queryKeyHashFn(x: any) {
       hashes++
@@ -4678,20 +4680,12 @@ describe('createQuery', () => {
     }
 
     function Page() {
-      const state = createQuery(() => ({
+      createQuery(() => ({
         queryKey: key,
         queryFn: () => 'test',
         queryKeyHashFn,
       }))
 
-      createEffect(
-        on(
-          () => state.status,
-          () => {
-            renders++
-          },
-        ),
-      )
       return null
     }
 
@@ -4702,8 +4696,7 @@ describe('createQuery', () => {
     ))
 
     await sleep(10)
-
-    expect(renders).toBe(hashes)
+    expect(hashes).toBe(1)
   })
 
   it('should refetch when changed enabled to true in error state', async () => {
