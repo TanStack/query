@@ -2,7 +2,6 @@
   import { createQuery } from '@tanstack/svelte-query'
   import { get } from 'svelte/store'
   import { sleep } from '../utils'
-  import type { StatusResult } from '../utils'
 
   export let key: Array<string>
 

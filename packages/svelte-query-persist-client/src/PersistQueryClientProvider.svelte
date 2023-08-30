@@ -10,7 +10,7 @@
   import type { QueryClient } from '@tanstack/svelte-query'
 
   export let client: QueryClient
-  export let onSuccess: (() => Promise<unknown> | unknown) | undefined
+  export let onSuccess: (() => Promise<unknown> | unknown) = () => undefined 
   export let persistOptions: Omit<PersistQueryClientOptions, 'queryClient'>
 
   const isRestoring = writable(true)
@@ -25,7 +25,7 @@
     promise.then(async () => {
       if (!isStale) {
         try {
-          await onSuccess?.()
+          await onSuccess()
         } finally {
           isRestoring.set(false)
         }

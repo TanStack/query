@@ -3,8 +3,6 @@
   import OnSuccess from './OnSuccess.svelte'
   import type { QueryClient } from '@tanstack/svelte-query'
   import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
-  import type { Writable } from 'svelte/store'
-  import type { StatusResult } from '../utils'
 
   export let queryClient: QueryClient
   export let persistOptions: Omit<PersistQueryClientOptions, 'queryClient'>

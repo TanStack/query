@@ -2,10 +2,10 @@
   import { createQuery } from '@tanstack/svelte-query'
   import { get } from 'svelte/store'
   import { sleep } from '../utils'
-  import type { StatusResult } from '../utils'
+  import type { Writable } from 'svelte/store'
 
   export let key: Array<string>
-  export let states: Writable<Array<StatusResult<string>>>
+  export let states: Writable<Array<string>>
 
   const state = createQuery({
     queryKey: key,
