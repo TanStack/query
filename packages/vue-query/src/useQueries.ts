@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { QueriesObserver } from '@tanstack/query-core'
-import { computed, onScopeDispose, readonly, ref, watch } from 'vue-demi'
+import {
+  computed,
+  getCurrentScope,
+  onScopeDispose,
+  readonly,
+  ref,
+  watch,
+} from 'vue-demi'
 
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
@@ -167,6 +174,14 @@ export function useQueries<
   },
   queryClient?: QueryClient,
 ): Readonly<Ref<TCombinedResult>> {
+  if (process.env.NODE_ENV === 'development') {
+    if (!getCurrentScope()) {
+      console.warn(
+        'vue-query composables like "uesQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+      )
+    }
+  }
+
   const client = queryClient || useQueryClient()
 
   const defaultedQueries = computed(() =>
