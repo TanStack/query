@@ -187,7 +187,7 @@ describe('useQuery', () => {
 
     const enabled = computed(() => !!data.value)
 
-    const dependentQueryFn = jest.fn()
+    const dependentQueryFn = jest.fn().mockImplementation(simpleFetcher)
     const { fetchStatus } = useQuery(
       ['dependant2'],
       dependentQueryFn,
