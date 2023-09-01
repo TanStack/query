@@ -8,7 +8,7 @@ import type {
 import type { Ref, UnwrapRef } from 'vue-demi'
 import type { QueryClient } from './queryClient'
 
-export type MaybeRef<T> = Ref<T> | T
+type Primitive = string | number | boolean | bigint | symbol | undefined | null
 
 export type MaybeRefDeep<T> = MaybeRef<
   T extends Function
@@ -19,6 +19,18 @@ export type MaybeRefDeep<T> = MaybeRef<
       }
     : T
 >
+
+export type MaybeRef<T> = Ref<T> | T
+
+export type DeepUnwrapRef<T> = T extends Primitive
+  ? T
+  : T extends Ref<infer U>
+  ? DeepUnwrapRef<U>
+  : T extends {}
+  ? {
+      [Property in keyof T]: DeepUnwrapRef<T[Property]>
+    }
+  : UnwrapRef<T>
 
 export type WithQueryClientKey<T> = T & {
   queryClientKey?: string
@@ -46,7 +58,7 @@ export type VueQueryObserverOptions<
         TError,
         TData,
         TQueryData,
-        UnwrapRef<TQueryKey>
+        DeepUnwrapRef<TQueryKey>
       >[Property]
     : MaybeRef<
         QueryObserverOptions<
@@ -80,7 +92,7 @@ export type VueInfiniteQueryObserverOptions<
         TError,
         TData,
         TQueryData,
-        UnwrapRef<TQueryKey>
+        DeepUnwrapRef<TQueryKey>
       >[Property]
     : MaybeRef<
         InfiniteQueryObserverOptions<

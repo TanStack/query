@@ -15,7 +15,7 @@ import {
   shouldThrowError,
   updateState,
 } from './utils'
-import type { ToRefs, UnwrapRef } from 'vue-demi'
+import type { ToRefs } from 'vue-demi'
 import type {
   QueryFunction,
   QueryKey,
@@ -23,7 +23,7 @@ import type {
   QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { MaybeRef, WithQueryClientKey } from './types'
+import type { DeepUnwrapRef, MaybeRef, WithQueryClientKey } from './types'
 import type { UseQueryOptions } from './useQuery'
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 
@@ -55,7 +55,7 @@ export function useBaseQuery<
     | TQueryKey
     | UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>,
   arg2:
-    | QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>
+    | QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>
     | UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey> = {},
   arg3: UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey> = {},
 ): UseQueryReturnType<TData, TError> {
@@ -179,7 +179,7 @@ export function parseQueryArgs<
     | MaybeRef<TQueryKey>
     | MaybeRef<UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>>,
   arg2:
-    | MaybeRef<QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>>
+    | MaybeRef<QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>>
     | MaybeRef<
         UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>
       > = {},
