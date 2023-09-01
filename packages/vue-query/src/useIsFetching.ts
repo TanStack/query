@@ -42,9 +42,13 @@ export function useIsFetching(
     isFetching.value = queryClient.isFetching(filters)
   })
 
-  watch(filters, () => {
-    isFetching.value = queryClient.isFetching(filters)
-  })
+  watch(
+    filters,
+    () => {
+      isFetching.value = queryClient.isFetching(filters)
+    },
+    { flush: 'sync' },
+  )
 
   onScopeDispose(() => {
     unsubscribe()
