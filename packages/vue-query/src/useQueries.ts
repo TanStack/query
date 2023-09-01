@@ -206,10 +206,14 @@ export function useQueries<T extends any[]>({
     { immediate: true },
   )
 
-  watch(defaultedQueries, () => {
-    observer.setQueries(defaultedQueries.value)
-    state.splice(0, state.length, ...observer.getCurrentResult())
-  })
+  watch(
+    defaultedQueries,
+    () => {
+      observer.setQueries(defaultedQueries.value)
+      state.splice(0, state.length, ...observer.getCurrentResult())
+    },
+    { flush: 'sync' },
+  )
 
   onScopeDispose(() => {
     unsubscribe()

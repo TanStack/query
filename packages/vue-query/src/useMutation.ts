@@ -181,9 +181,13 @@ export function useMutation<
     })
   }
 
-  watch(options, () => {
-    observer.setOptions(queryClient.defaultMutationOptions(options.value))
-  })
+  watch(
+    options,
+    () => {
+      observer.setOptions(queryClient.defaultMutationOptions(options.value))
+    },
+    { flush: 'sync' },
+  )
 
   onScopeDispose(() => {
     unsubscribe()
