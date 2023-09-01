@@ -8,7 +8,6 @@ import type {
 
 export interface PersistedQuery {
   buster: string
-  timestamp: number
   queryHash: string
   queryKey: QueryKey
   state: QueryState
@@ -68,7 +67,7 @@ export interface StoragePersisterOptions<QC extends QueryClient> {
    })
    ```
  */
-export function createPersister<T, QC extends QueryClient>({
+export function experimental_createPersister<T, QC extends QueryClient>({
   queryClient,
   storage,
   buster = '',
@@ -84,30 +83,44 @@ export function createPersister<T, QC extends QueryClient>({
     const queryState = queryClient.getQueryState(context.queryKey)
 
     // Try to restore only if we do not have any data in the cache and we have persister defined
-    if (!queryState?.data && storage != null) {
-      const storedData = await storage.getItem(queryHash)
-      if (storedData) {
-        const persistedQuery = deserialize(storedData)
 
-        if (persistedQuery.timestamp) {
-          const expired = Date.now() - persistedQuery.timestamp > maxAge
-          const busted = persistedQuery.buster !== buster
-          if (expired || busted) {
-            await storage.removeItem(queryHash)
+    if (queryState?.data === undefined && storage != null) {
+      try {
+        const storedData = await storage.getItem(queryHash)
+        if (storedData) {
+          const persistedQuery = deserialize(storedData)
+
+          if (persistedQuery.state.dataUpdatedAt) {
+            const queryAge = Date.now() - persistedQuery.state.dataUpdatedAt
+            const expired = queryAge > maxAge
+            const busted = persistedQuery.buster !== buster
+            if (expired || busted) {
+              await storage.removeItem(queryHash)
+            } else {
+              // TODO: how do we get staleTime here?
+              const isStale = queryAge > 5000
+              // Just after restoring we want to get fresh data from the server if it's stale
+              if (isStale) {
+                setTimeout(() => {
+                  queryClient.refetchQueries({
+                    queryKey: context.queryKey,
+                    exact: true,
+                  })
+                }, 0)
+              }
+              // We must resolve the promise here, as otherwise we will have `loading` state in the app until `queryFn` resolves
+              return Promise.resolve(persistedQuery.state.data as T)
+            }
           } else {
-            // Just after restoring we want to get fresh data from the server
-            // Maybe add an option for this?
-            setTimeout(() => {
-              queryClient.invalidateQueries({
-                queryKey: context.queryKey,
-                exact: true,
-              })
-            }, 0)
-            // We must resolve the promise here, as otherwise we will have `loading` state in the app until `queryFn` resolves
-            return Promise.resolve(persistedQuery.state.data as T)
+            await storage.removeItem(queryHash)
           }
-        } else {
-          await storage.removeItem(queryHash)
+        }
+      } catch (err) {
+        if (process.env.NODE_ENV !== 'production') {
+          console.error(err)
+          console.warn(
+            'Encountered an error attempting to restore query cache from persisted location.',
+          )
         }
       }
     }
@@ -116,30 +129,28 @@ export function createPersister<T, QC extends QueryClient>({
     const queryFnResult = await queryFn(context)
 
     if (storage != null) {
-      // Persist if we have storage defined
-      storage.setItem(
-        queryHash,
-        serialize({
-          state: {
-            data: queryFnResult,
-            dataUpdateCount: 0,
-            dataUpdatedAt: Date.now(),
-            status: 'success',
-            error: null,
-            errorUpdateCount: 0,
-            errorUpdatedAt: 0,
-            fetchFailureCount: 0,
-            fetchFailureReason: null,
-            fetchMeta: null,
-            fetchStatus: 'idle',
-            isInvalidated: false,
-          },
-          queryKey: context.queryKey,
-          queryHash: queryHash,
-          timestamp: Date.now(),
-          buster: buster,
-        }),
-      )
+      // Persist if we have storage defined, we use timeout to get proper state to be persisted
+      setTimeout(() => {
+        const newState = queryClient.getQueryState(context.queryKey)
+
+        if (newState) {
+          storage.setItem(
+            queryHash,
+            serialize({
+              state: newState,
+              queryKey: context.queryKey,
+              queryHash: queryHash,
+              buster: buster,
+            }),
+          )
+        } else {
+          if (process.env.NODE_ENV !== 'production') {
+            console.warn(
+              'Could not persist query to storage, cause query state was not found in cache.',
+            )
+          }
+        }
+      }, 0)
     }
 
     return Promise.resolve(queryFnResult)
