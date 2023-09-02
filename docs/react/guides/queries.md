@@ -66,7 +66,8 @@ function Todos() {
   }
 
   if (isError) {
-    return <span>Error: {error.message}</span>
+     const queryError = error as Error;
+    return <span>Error: {queryError.message}</span>
   }
 
   // We can assume by this point that `isSuccess === true`
