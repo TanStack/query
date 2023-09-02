@@ -19,6 +19,7 @@ interface CommonOptions {
   queryClientKey?: string
   contextSharing?: boolean
   clientPersister?: ClientPersister
+  clientPersisterOnSuccess?: (client: QueryClient) => void
 }
 
 interface ConfigOptions extends CommonOptions {
@@ -71,6 +72,7 @@ export const VueQueryPlugin = {
       persisterUnmount = unmount
       promise.then(() => {
         client.isRestoring.value = false
+        options.clientPersisterOnSuccess?.(client)
       })
     }
 

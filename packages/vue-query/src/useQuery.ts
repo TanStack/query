@@ -1,6 +1,6 @@
 import { QueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
-import type { ToRefs, UnwrapRef } from 'vue-demi'
+import type { ToRefs } from 'vue-demi'
 import type {
   DefinedQueryObserverResult,
   QueryFunction,
@@ -9,6 +9,7 @@ import type {
 } from '@tanstack/query-core'
 import type { UseQueryReturnType as UQRT } from './useBaseQuery'
 import type {
+  DeepUnwrapRef,
   DistributiveOmit,
   MaybeRef,
   VueQueryObserverOptions,
@@ -127,7 +128,7 @@ export function useQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   queryKey: MaybeRef<TQueryKey>,
-  queryFn: MaybeRef<QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>>,
+  queryFn: MaybeRef<QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>>,
   options?: MaybeRef<
     Omit<
       UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
@@ -143,7 +144,7 @@ export function useQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   queryKey: MaybeRef<TQueryKey>,
-  queryFn: MaybeRef<QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>>,
+  queryFn: MaybeRef<QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>>,
   options?: MaybeRef<
     Omit<
       UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
@@ -159,7 +160,7 @@ export function useQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   queryKey: MaybeRef<TQueryKey>,
-  queryFn: MaybeRef<QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>>,
+  queryFn: MaybeRef<QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>>,
   options?: MaybeRef<
     Omit<
       UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
@@ -178,7 +179,7 @@ export function useQuery<
     | MaybeRef<TQueryKey>
     | MaybeRef<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
   arg2?:
-    | MaybeRef<QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>>
+    | MaybeRef<QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>>
     | MaybeRef<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
   arg3?: MaybeRef<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>>,
 ):
