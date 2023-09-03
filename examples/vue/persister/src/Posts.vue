@@ -33,11 +33,11 @@ export default defineComponent({
       refetch,
     } = useQuery({
       queryKey: ['posts'] as const,
-      queryFn: ({queryKey}) => fetcher(),
+      queryFn: ({ queryKey }) => fetcher(),
       persister: experimental_createPersister({
         storage: localStorage,
       }),
-      staleTime: 5000
+      staleTime: 5000,
     })
 
     return {
