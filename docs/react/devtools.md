@@ -22,6 +22,7 @@ $ pnpm add @tanstack/react-query-devtools
 # or
 $ yarn add @tanstack/react-query-devtools
 ```
+For Next 13+ App Dir you must install it as a dev dependency for it to work.
 
 You can import the devtools like this:
 
@@ -30,6 +31,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 ```
 
 By default, React Query Devtools are only included in bundles when `process.env.NODE_ENV === 'development'`, so you don't need to worry about excluding them during a production build.
+
 
 ## Floating Mode
 
