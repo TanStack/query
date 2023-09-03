@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { useQuery, useQueryClient } from '@tanstack/vue-query'
-import { createPersister } from '@tanstack/query-persist-client-core'
+import { experimental_createPersister } from '@tanstack/query-persist-client-core'
 
 import { Post } from './types'
 
@@ -23,8 +23,6 @@ export default defineComponent({
   },
   emits: ['setPostId'],
   setup() {
-    const queryClient = useQueryClient()
-
     const {
       isPending,
       isError,
@@ -34,12 +32,12 @@ export default defineComponent({
       error,
       refetch,
     } = useQuery({
-      queryKey: ['posts'],
-      queryFn: () => fetcher(),
-      persister: createPersister({
+      queryKey: ['posts'] as const,
+      queryFn: ({queryKey}) => fetcher(),
+      persister: experimental_createPersister({
         storage: localStorage,
-        queryClient,
       }),
+      staleTime: 5000
     })
 
     return {

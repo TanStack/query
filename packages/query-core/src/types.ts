@@ -114,6 +114,9 @@ export type NotifyOnChangeProps =
   | 'all'
   | (() => Array<keyof InfiniteQueryObserverResult> | 'all')
 
+export type NoInfer<T> = T & {[K in keyof T]: T[K]};
+type NoInfer2<T> = [T][T extends any ? 0 : never];
+
 export interface QueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -132,7 +135,7 @@ export interface QueryOptions<
   networkMode?: NetworkMode
   gcTime?: number
   queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam>
-  persister?: QueryPersister<TQueryFnData, TQueryKey, TPageParam>
+  persister?: QueryPersister<NoInfer2<TQueryFnData>, NoInfer2<TQueryKey>, NoInfer2<TPageParam>>
   queryHash?: string
   queryKey?: TQueryKey
   queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>
