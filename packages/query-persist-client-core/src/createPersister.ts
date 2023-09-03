@@ -75,17 +75,14 @@ export function experimental_createPersister({
   prefix = 'tanstack-query-',
 }: StoragePersisterOptions) {
   return async function persisterFn<T, TQueryKey extends QueryKey>(
-    this: Query,
     queryFn: (context: QueryFunctionContext<TQueryKey>) => T | Promise<T>,
     context: QueryFunctionContext<TQueryKey>,
+    query: Query,
   ) {
-    // We bind this function when used, so we can access `query` instance here without `queryClient`
-    const query = this
     const storageKey = `${prefix}-${query.queryHash}`
 
     // Try to restore only if we do not have any data in the cache and we have persister defined
-
-    if (query.state?.data === undefined && storage != null) {
+    if (query.state.data === undefined && storage != null) {
       try {
         const storedData = await storage.getItem(storageKey)
         if (storedData) {

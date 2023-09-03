@@ -35,10 +35,12 @@ export type QueryPersister<
   ? (
       queryFn: QueryFunction<T, TQueryKey, never>,
       context: QueryFunctionContext<TQueryKey>,
+      query: Query,
     ) => T | Promise<T>
   : (
       queryFn: QueryFunction<T, TQueryKey, TPageParam>,
       context: QueryFunctionContext<TQueryKey>,
+      query: Query,
     ) => T | Promise<T>
 
 export type QueryFunctionContext<

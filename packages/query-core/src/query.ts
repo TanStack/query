@@ -71,6 +71,7 @@ export interface QueryBehavior<
 > {
   onFetch: (
     context: FetchContext<TQueryFnData, TError, TData, TQueryKey>,
+    query: Query,
   ) => void
 }
 
@@ -393,10 +394,10 @@ export class Query<
       }
       this.#abortSignalConsumed = false
       if (this.options.persister) {
-        return this.options.persister.call(
-          this,
+        return this.options.persister(
           this.options.queryFn,
           queryFnContext as QueryFunctionContext<TQueryKey>,
+          this as any,
         )
       }
 
@@ -421,6 +422,7 @@ export class Query<
 
     this.options.behavior?.onFetch(
       context as FetchContext<TQueryFnData, TError, TData, TQueryKey>,
+      this as any,
     )
 
     // Store state in case the current fetch needs to be reverted
