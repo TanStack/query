@@ -15,5 +15,5 @@ export const useInfiniteQuery = (
   >,
   initialState?: DehydratedState,
 ) => {
-  return useBaseQuery(ObserverType.base, options, initialState)
+  return useBaseQuery(ObserverType.inifinite, options, initialState)
 }

@@ -15,9 +15,9 @@ describe('useInfiniteQuery', () => {
         getPreviousPageParam: $((firstPage: any) => {
           return firstPage.previousId ?? undefined
         }),
-        getNextPageParam: $((allPages) => {
-          console.log('getNextPageParam', allPages)
-          return allPages + 1
+        getNextPageParam: $((lastPages, pages) => {
+          console.log('getNextPageParam', pages)
+          return pages.length < 3 ? pages.length : undefined
         }),
         maxPages: 3,
       })
@@ -26,7 +26,7 @@ describe('useInfiniteQuery', () => {
           <p>{JSON.stringify(queryStore.result?.data)}</p>
           <button
             onClick$={() => {
-              queryStore.options.getNextPageParam(queryStore.options.maxPages)
+              queryStore.result.fetchNextPage()
             }}
           >
             Test
