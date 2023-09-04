@@ -119,15 +119,22 @@ export const rule: TSESLint.RuleModule<MessageKey, readonly unknown[]> =
           }
 
           if (firstArgument.type === AST_NODE_TYPES.Identifier) {
-            const referencedNode = ASTUtils.getReferencedExpressionByIdentifier(
-              {
-                context,
-                node: firstArgument,
-              },
-            )
+            let referencedNode = ASTUtils.getReferencedExpressionByIdentifier({
+              context,
+              node: firstArgument,
+            })
 
             if (referencedNode == null && node.arguments.length === 1) {
               return
+            }
+
+            // unwrap typescript nodes
+            while (
+              referencedNode != null &&
+              (referencedNode.type === AST_NODE_TYPES.TSSatisfiesExpression ||
+                referencedNode.type === AST_NODE_TYPES.TSAsExpression)
+            ) {
+              referencedNode = referencedNode.expression
             }
 
             if (referencedNode?.type === AST_NODE_TYPES.ObjectExpression) {

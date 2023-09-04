@@ -158,6 +158,16 @@ ruleTester.run(name, rule, {
         const usePosts = () => useMutation(postsQuery);
       `,
     },
+    {
+      code: normalizeIndent`
+        import { useQuery } from "@tanstack/react-query";
+        const queryOptions = {
+          queryKey: ["queryKey"],
+          queryFn: () => Promise.resolve([]),
+        } as const satisfies QueryOptions;
+        useQuery(queryOptions);
+      `,
+    },
   ],
 
   invalid: [
