@@ -9,7 +9,7 @@ import type { Ref, UnwrapRef } from 'vue-demi'
 import type { QueryClient } from './queryClient'
 
 type Primitive = string | number | boolean | bigint | symbol | undefined | null
-type Builtin = Primitive | Function | Date | Error | RegExp;
+type Builtin = Primitive | Function | Date | Error | RegExp
 
 export type MaybeRefDeep<T> = MaybeRef<
   T extends Function
