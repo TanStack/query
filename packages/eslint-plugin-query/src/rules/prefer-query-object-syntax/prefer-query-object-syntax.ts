@@ -126,6 +126,10 @@ export const rule: TSESLint.RuleModule<MessageKey, readonly unknown[]> =
               },
             )
 
+            if (referencedNode == null && node.arguments.length === 1) {
+              return
+            }
+
             if (referencedNode?.type === AST_NODE_TYPES.ObjectExpression) {
               return runCheckOnNode({
                 context: context,

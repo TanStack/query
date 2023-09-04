@@ -55,6 +55,13 @@ ruleTester.run(name, rule, {
     {
       code: normalizeIndent`
         import { useQuery } from "@tanstack/react-query";
+        import { postsQuery } from "somewhere-else";
+        const usePosts = useQuery(postsQuery);
+      `,
+    },
+    {
+      code: normalizeIndent`
+        import { useQuery } from "@tanstack/react-query";
         const getQuery = () => ({ queryKey: ['foo'], queryFn: () => Promise.resolve(5) })
         useQuery(getQuery())
       `,
@@ -91,6 +98,13 @@ ruleTester.run(name, rule, {
             return { queryKey: ['foo'], queryFn: () => Promise.resolve(5) };
           }
         }
+        useQuery(getQuery())
+      `,
+    },
+    {
+      code: normalizeIndent`
+        import { useQuery } from "@tanstack/react-query";
+        import { getQuery } from "somewhere-else";
         useQuery(getQuery())
       `,
     },
@@ -149,17 +163,6 @@ ruleTester.run(name, rule, {
       output: normalizeIndent`
         import { useQuery } from "@tanstack/react-query";
         useQuery({ queryKey: ['data'] });
-      `,
-    },
-    {
-      code: normalizeIndent`
-        import { useQuery } from "@tanstack/react-query";
-        useQuery(queryKey);
-      `,
-      errors: [{ messageId: 'preferObjectSyntax' }],
-      output: normalizeIndent`
-        import { useQuery } from "@tanstack/react-query";
-        useQuery({ queryKey });
       `,
     },
     {
