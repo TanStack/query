@@ -3,7 +3,14 @@ import { normalizeIndent } from '../../utils/test-utils'
 import { name, rule } from './prefer-query-object-syntax'
 
 const ruleTester = new ESLintUtils.RuleTester({
-  parser: '@typescript-eslint/parser',
+  /** HACK
+   * We are using a newer version of typescript than the one at the repository root,
+   * to be able to test code that uses newer typescript features.
+   * To prevent RuleTester from using the typescript version at the root
+   * we resolve '@typescript-eslint/parser' here instead of letting it do it internally.
+   * Once the version at the root is updated to >=4.9 this can be replaced by just "@typescript-eslint/parser"
+   */
+  parser: require.resolve('@typescript-eslint/parser') as any,
   settings: {},
 })
 
