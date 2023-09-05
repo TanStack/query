@@ -72,6 +72,12 @@ const Example = () => {
 
 Now, we can concentrate component as any fetching will be always success in component.
 
-### More Information
+### useSuspenseQuery is Official API now! (from v5)
+
+@suspensive/react-query provides not only [useSuspenseQuery](https://suspensive.org/docs/react-query/src/useSuspenseQuery.i18n), also [useSuspenseQueries](https://suspensive.org/docs/react-query/src/useSuspenseQueries.i18n), [useSuspenseInfiniteQuery](https://suspensive.org/docs/react-query/src/useSuspenseInfiniteQuery.i18n). From @tanstack/react-query v5 provides [official public hook apis for suspense](https://tanstack.com/query/v5/docs/react/guides/suspense) like @suspensive/react-query's hooks. If want to use them early in v4, use this @suspensive/react-query first.
 
 Check the complete documentation on [Suspensive Official Docs Site](https://suspensive.org/) and also welcome Pull Request on [Suspensive GitHub](https://github.com/suspensive/react)
+
+
+
+
