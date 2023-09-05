@@ -1,6 +1,6 @@
 import { QueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
-import type { ToRefs, UnwrapRef } from 'vue-demi'
+import type { ToRefs } from 'vue-demi'
 import type {
   DefinedQueryObserverResult,
   QueryFunction,
@@ -9,6 +9,7 @@ import type {
 } from '@tanstack/query-core'
 import type { UseQueryReturnType as UQRT } from './useBaseQuery'
 import type {
+  DeepUnwrapRef,
   DistributiveOmit,
   VueQueryObserverOptions,
   WithQueryClientKey,
@@ -119,7 +120,7 @@ export function useQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   queryKey: TQueryKey,
-  queryFn: QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>,
+  queryFn: QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>,
   options?: Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'queryFn' | 'initialData'
@@ -133,7 +134,7 @@ export function useQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   queryKey: TQueryKey,
-  queryFn: QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>,
+  queryFn: QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>,
   options?: Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'queryFn' | 'initialData'
@@ -147,7 +148,7 @@ export function useQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   queryKey: TQueryKey,
-  queryFn: QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>,
+  queryFn: QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>,
   options?: Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'queryFn'
@@ -162,7 +163,7 @@ export function useQuery<
 >(
   arg1: TQueryKey | UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   arg2?:
-    | QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>
+    | QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>
     | UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   arg3?: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
 ):
