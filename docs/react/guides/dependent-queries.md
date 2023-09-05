@@ -69,7 +69,7 @@ const { data: users } = useQuery({
 
 const usersId = users?.filter(user => user?.id)
 
-// Then get the user's messages
+// Then get the users messages
 const usersMessages = useQueries({
   queries: users
     ? usersId.map(id => {
