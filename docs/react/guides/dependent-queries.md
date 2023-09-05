@@ -3,6 +3,8 @@ id: dependent-queries
 title: Dependent Queries
 ---
 
+## useQuery dependent Query
+
 Dependent (or serial) queries depend on previous ones to finish before they can execute. To achieve this, it's as easy as using the `enabled` option to tell a query when it is ready to run:
 
 [//]: # 'Example'
@@ -51,3 +53,33 @@ Once we have the projects, it will go to:
 status: 'success'
 fetchStatus: 'idle'
 ```
+
+## useQueries dependent Query
+
+Dynamic parallel query - `useQueries` can depend on a previous query also, here's how to achieve this:
+
+[//]: # 'Example'
+
+```tsx
+// Get the users Data
+const { data: users } = useQuery({
+  queryKey: ['users'],
+  queryFn: getUsersData,
+})
+
+const usersId = users?.filter(user => user?.id)
+
+// Then get the user's messages
+const usersMessages = useQueries({
+  queries: users
+    ? usersId.map(id => {
+        return {
+          queryKey: ['messages', id],
+          queryFn: () => getMessagesByUsers(id),
+        };
+      })
+  : [], // if users is underfined and empty array will be returned
+})
+```
+
+**Note** that `useQueries` return an **array of query results**
