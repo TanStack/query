@@ -16,12 +16,12 @@ import { CopiedCopier, Copier, ErrorCopier } from './icons'
  * chunkArray(['a','b', 'c', 'd', 'e'], 2) // returns [['a','b'], ['c', 'd'], ['e']]
  */
 export function chunkArray<T extends { label: string; value: unknown }>(
-  array: T[],
+  array: Array<T>,
   size: number,
-): T[][] {
+): Array<Array<T>> {
   if (size < 1) return []
   let i = 0
-  const result: T[][] = []
+  const result: Array<Array<T>> = []
   while (i < array.length) {
     result.push(array.slice(i, i + size))
     i = i + size
@@ -115,7 +115,7 @@ type ExplorerProps = {
   copyable?: boolean
   label: string
   value: unknown
-  defaultExpanded?: string[]
+  defaultExpanded?: Array<string>
 }
 
 function isIterable(x: any): x is Iterable<unknown> {
@@ -129,7 +129,7 @@ export default function Explorer(props: ExplorerProps) {
     (props.defaultExpanded || []).includes(props.label),
   )
   const toggleExpanded = () => setExpanded((old) => !old)
-  const [expandedPages, setExpandedPages] = createSignal<number[]>([])
+  const [expandedPages, setExpandedPages] = createSignal<Array<number>>([])
 
   const subEntries = createMemo(() => {
     if (Array.isArray(props.value)) {

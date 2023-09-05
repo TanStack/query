@@ -1,4 +1,4 @@
-import { getCurrentInstance, inject } from 'vue-demi'
+import { hasInjectionContext, inject } from 'vue-demi'
 import { vi } from 'vitest'
 import { useQueryClient } from '../useQueryClient'
 import { VUE_QUERY_CLIENT } from '../utils'
@@ -6,7 +6,7 @@ import type { Mock } from 'vitest'
 
 describe('useQueryClient', () => {
   const injectSpy = inject as Mock
-  const getCurrentInstanceSpy = getCurrentInstance as Mock
+  const hasInjectionContextSpy = hasInjectionContext as Mock
 
   beforeEach(() => {
     vi.restoreAllMocks()
@@ -32,10 +32,10 @@ describe('useQueryClient', () => {
   })
 
   test('should throw an error when used outside of setup function', () => {
-    getCurrentInstanceSpy.mockReturnValueOnce(undefined)
+    hasInjectionContextSpy.mockReturnValueOnce(false)
 
     expect(useQueryClient).toThrowError()
-    expect(getCurrentInstanceSpy).toHaveBeenCalledTimes(1)
+    expect(hasInjectionContextSpy).toHaveBeenCalledTimes(1)
   })
 
   test('should call inject with a custom key as a suffix', () => {

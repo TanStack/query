@@ -325,7 +325,7 @@ describe('query', () => {
   test('should not continue if explicitly cancelled', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<unknown[], unknown>()
+    const queryFn = vi.fn<Array<unknown>, unknown>()
 
     queryFn.mockImplementation(async () => {
       await sleep(10)
@@ -357,7 +357,7 @@ describe('query', () => {
   test('should not error if reset while pending', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<unknown[], unknown>()
+    const queryFn = vi.fn<Array<unknown>, unknown>()
 
     queryFn.mockImplementation(async () => {
       await sleep(10)
@@ -384,7 +384,7 @@ describe('query', () => {
   test('should be able to refetch a cancelled query', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<unknown[], unknown>()
+    const queryFn = vi.fn<Array<unknown>, unknown>()
 
     queryFn.mockImplementation(async () => {
       await sleep(50)

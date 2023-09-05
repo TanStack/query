@@ -11,7 +11,7 @@ React Query can also be used with React's Suspense for Data Fetching API's. For 
 
 When using suspense mode, `status` states and `error` objects are not needed and are then replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors). Please read the [Resetting Error Boundaries](#resetting-error-boundaries) and look at the [Suspense Example](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/main/examples/react/suspense) for more information on how to set up suspense mode.
 
-In addition to queries behaving differently in suspense mode, mutations also behave a bit differently. By default, instead of supplying the `error` variable when a mutation fails, it will be thrown during the next render of the component it's used in and propagate to the nearest error boundary, similar to query errors. If you wish to disable this, you can set the `throwOnError` option to `false`. If you wish that errors are not thrown at all, you can set the `throwOnError` option to `false` as well!
+If you want mutations to propagate errors to the nearest error boundary (similar to queries), you can set the `throwOnError` option to `true` as well.
 
 Enabling suspense mode for a query:
 

@@ -25,7 +25,7 @@ class TanstackQueryDevtools {
   buttonPosition: Signal<DevtoolsButtonPosition | undefined>
   position: Signal<DevtoolsPosition | undefined>
   initialIsOpen: Signal<boolean | undefined>
-  errorTypes: Signal<DevToolsErrorType[] | undefined>
+  errorTypes: Signal<Array<DevToolsErrorType> | undefined>
   Component: typeof DevtoolsComponent | undefined
   dispose?: () => void
 
@@ -62,7 +62,7 @@ class TanstackQueryDevtools {
     this.initialIsOpen[1](isOpen)
   }
 
-  setErrorTypes(errorTypes: DevToolsErrorType[]) {
+  setErrorTypes(errorTypes: Array<DevToolsErrorType>) {
     this.errorTypes[1](errorTypes)
   }
 

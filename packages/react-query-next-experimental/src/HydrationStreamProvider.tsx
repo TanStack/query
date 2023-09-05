@@ -25,7 +25,7 @@ interface HydrationStreamContext<TShape> {
      * Push a new entry to the stream
      * Will be ignored on the client
      */
-    push: (...shape: TShape[]) => void
+    push: (...shape: Array<TShape>) => void
   }
 }
 
@@ -40,12 +40,12 @@ export interface HydrationStreamProviderProps<TShape> {
    * **Client method**
    * Called in the browser when new entries are received
    */
-  onEntries: (entries: TShape[]) => void
+  onEntries: (entries: Array<TShape>) => void
   /**
    * **Server method**
    * onFlush is called on the server when the cache is flushed
    */
-  onFlush?: () => TShape[]
+  onFlush?: () => Array<TShape>
 }
 
 export function createHydrationStreamProvider<TShape>() {
@@ -72,12 +72,12 @@ export function createHydrationStreamProvider<TShape>() {
      * **Client method**
      * Called in the browser when new entries are received
      */
-    onEntries: (entries: TShape[]) => void
+    onEntries: (entries: Array<TShape>) => void
     /**
      * **Server method**
      * onFlush is called on the server when the cache is flushed
      */
-    onFlush?: () => TShape[]
+    onFlush?: () => Array<TShape>
   }) {
     // unique id for the cache provider
     const id = `__RQ${React.useId()}`
@@ -93,13 +93,13 @@ export function createHydrationStreamProvider<TShape>() {
     )
 
     // <server stuff>
-    const [stream] = React.useState<TShape[]>(() => {
+    const [stream] = React.useState<Array<TShape>>(() => {
       if (typeof window !== 'undefined') {
         return {
           push() {
             // no-op on the client
           },
-        } as unknown as TShape[]
+        } as unknown as Array<TShape>
       }
       return []
     })
@@ -120,7 +120,7 @@ export function createHydrationStreamProvider<TShape>() {
       // Flush stream
       stream.length = 0
 
-      const html: string[] = [
+      const html: Array<string> = [
         `window[${idJSON}] = window[${idJSON}] || [];`,
         `window[${idJSON}].push(${serializedCacheArgs});`,
       ]
@@ -143,7 +143,7 @@ export function createHydrationStreamProvider<TShape>() {
 
     React.useEffect(() => {
       // Client: consume cache:
-      const onEntries = (...serializedEntries: Serialized<TShape>[]) => {
+      const onEntries = (...serializedEntries: Array<Serialized<TShape>>) => {
         const entries = serializedEntries.map((serialized) =>
           transformer.deserialize(serialized),
         )

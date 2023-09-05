@@ -592,7 +592,7 @@
             },
             {
               "label": "Migrating to v5",
-              "to": "react/guides/migrating-to-v5"
+              "to": "vue/guides/migrating-to-v5"
             }
           ]
         },

@@ -99,7 +99,7 @@ describe('useMutation', () => {
         name: string
       }
     }
-    const mutationKey = ref<MutationKeyTest[]>([
+    const mutationKey = ref<Array<MutationKeyTest>>([
       {
         entity: 'test',
         otherObject: { name: 'objectName' },
@@ -128,13 +128,13 @@ describe('useMutation', () => {
     })
 
     expect(
-      (relevantMutation?.options.mutationKey as MutationKeyTest[])[0]
+      (relevantMutation?.options.mutationKey as Array<MutationKeyTest>)[0]
         ?.otherObject.name === 'someOtherObjectName',
     )
   })
 
   test('should allow for non-options object (mutationFn or mutationKey) passed as arg1 & arg2 to trigger reactive updates', async () => {
-    const mutationKey = ref<string[]>(['foo2'])
+    const mutationKey = ref<Array<string>>(['foo2'])
     const mutationFn = ref((params: string) => successMutator(params))
     const queryClient = useQueryClient()
     const mutationCache = queryClient.getMutationCache()

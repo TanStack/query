@@ -92,7 +92,7 @@ export function createSyncStoragePersister({
   }
 }
 
-function throttle<TArgs extends any[]>(
+function throttle<TArgs extends Array<any>>(
   func: (...args: TArgs) => any,
   wait = 100,
 ) {

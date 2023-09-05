@@ -114,7 +114,7 @@ describe('createQuery', () => {
   })
 
   test('Keep previous data when returned as placeholder data', async () => {
-    const writableStore = writable<number[]>([1])
+    const writableStore = writable<Array<number>>([1])
 
     const derivedStore = derived(writableStore, ($store) => ({
       queryKey: ['test', $store],

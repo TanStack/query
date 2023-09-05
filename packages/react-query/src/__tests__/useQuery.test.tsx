@@ -206,7 +206,7 @@ describe('useQuery', () => {
 
   it('should return the correct states for a successful query', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     function Page() {
       const state = useQuery<string, Error>({
@@ -300,7 +300,7 @@ describe('useQuery', () => {
   it('should return the correct states for an unsuccessful query', async () => {
     const key = queryKey()
 
-    const states: UseQueryResult[] = []
+    const states: Array<UseQueryResult> = []
 
     function Page() {
       const state = useQuery({
@@ -549,7 +549,7 @@ describe('useQuery', () => {
 
   it('should be able to watch a query without providing a query function', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     queryClient.setQueryDefaults(key, { queryFn: () => 'data' })
 
@@ -570,7 +570,7 @@ describe('useQuery', () => {
 
   it('should pick up a query when re-mounting with gcTime 0', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     function Page() {
       const [toggle, setToggle] = React.useState(false)
@@ -643,7 +643,7 @@ describe('useQuery', () => {
 
   it('should not get into an infinite loop when removing a query with gcTime 0 and rerendering', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     function Page() {
       const [, rerender] = React.useState({})
@@ -705,7 +705,7 @@ describe('useQuery', () => {
 
   it('should fetch when refetchOnMount is false and nothing has been fetched yet', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     function Page() {
       const state = useQuery({
@@ -728,7 +728,7 @@ describe('useQuery', () => {
 
   it('should not fetch when refetchOnMount is false and data has been fetched already', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     queryClient.setQueryData(key, 'prefetched')
 
@@ -752,7 +752,7 @@ describe('useQuery', () => {
 
   it('should be able to select a part of the data with select', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     function Page() {
       const state = useQuery({
@@ -778,7 +778,7 @@ describe('useQuery', () => {
 
   it('should be able to select a part of the data with select in object syntax', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     function Page() {
       const state = useQuery({
@@ -804,7 +804,7 @@ describe('useQuery', () => {
 
   it('should throw an error when a selector throws', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
     const error = new Error('Select Error')
 
     function Page() {
@@ -871,7 +871,7 @@ describe('useQuery', () => {
 
   it('should track properties and only re-render when a tracked property changes', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     function Page() {
       const state = useQuery({
@@ -913,7 +913,7 @@ describe('useQuery', () => {
   it('should always re-render if we are tracking props but not using any', async () => {
     const key = queryKey()
     let renderCount = 0
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     function Page() {
       const state = useQuery({ queryKey: key, queryFn: () => 'test' })
@@ -948,7 +948,7 @@ describe('useQuery', () => {
 
   it('should be able to remove a query', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
     let count = 0
 
     function Page() {
@@ -994,7 +994,7 @@ describe('useQuery', () => {
 
   it('should create a new query when refetching a removed query', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
     let count = 0
 
     function Page() {
@@ -1055,7 +1055,7 @@ describe('useQuery', () => {
       { id: '2', done: true },
     ]
 
-    const states: UseQueryResult<typeof result1>[] = []
+    const states: Array<UseQueryResult<typeof result1>> = []
 
     let count = 0
 
@@ -1110,7 +1110,7 @@ describe('useQuery', () => {
 
   it('should use query function from hook when the existing query does not have a query function', async () => {
     const key = queryKey()
-    const results: DefinedUseQueryResult<string>[] = []
+    const results: Array<DefinedUseQueryResult<string>> = []
 
     queryClient.setQueryData(key, 'set')
 
@@ -1154,7 +1154,7 @@ describe('useQuery', () => {
 
   it('should update query stale state and refetch when invalidated with invalidateQueries', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
     let count = 0
 
     function Page() {
@@ -1223,7 +1223,7 @@ describe('useQuery', () => {
 
   it('should not update disabled query when refetched with refetchQueries', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
     let count = 0
 
     function Page() {
@@ -1263,7 +1263,7 @@ describe('useQuery', () => {
 
   it('should not refetch disabled query when invalidated with invalidateQueries', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
     let count = 0
 
     function Page() {
@@ -1303,7 +1303,7 @@ describe('useQuery', () => {
 
   it('should not fetch when switching to a disabled query', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
 
     function Page() {
       const [count, setCount] = React.useState(0)
@@ -1366,7 +1366,7 @@ describe('useQuery', () => {
 
   it('should keep the previous data when placeholderData is set', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
 
     function Page() {
       const [count, setCount] = React.useState(0)
@@ -1430,7 +1430,7 @@ describe('useQuery', () => {
 
   it('should keep the previous data when placeholderData is set and select fn transform is used', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
 
     function Page() {
       const [count, setCount] = React.useState(0)
@@ -1498,9 +1498,9 @@ describe('useQuery', () => {
   })
 
   it('should keep the previous queryKey (from prevQuery) between multiple pending queries when placeholderData is set and select fn transform is used', async () => {
-    const keys: Array<readonly unknown[] | null> = []
+    const keys: Array<ReadonlyArray<unknown> | null> = []
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
 
     function Page() {
       const [count, setCount] = React.useState(0)
@@ -1553,7 +1553,7 @@ describe('useQuery', () => {
 
   it('should show placeholderData between multiple pending queries when select fn transform is used', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
 
     function Page() {
       const [count, setCount] = React.useState(0)
@@ -1637,7 +1637,7 @@ describe('useQuery', () => {
 
   it('should transition to error state when placeholderData is set', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
 
     function Page({ count }: { count: number }) {
       const state = useQuery<number, Error>({
@@ -1724,7 +1724,7 @@ describe('useQuery', () => {
 
   it('should not show initial data from next query if placeholderData is set', async () => {
     const key = queryKey()
-    const states: DefinedUseQueryResult<number>[] = []
+    const states: Array<DefinedUseQueryResult<number>> = []
 
     function Page() {
       const [count, setCount] = React.useState(0)
@@ -1798,7 +1798,7 @@ describe('useQuery', () => {
 
   it('should keep the previous data on disabled query when placeholderData is set', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
 
     function Page() {
       const [count, setCount] = React.useState(0)
@@ -1900,7 +1900,7 @@ describe('useQuery', () => {
 
   it('should keep the previous data on disabled query when placeholderData is set and switching query key multiple times', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
 
     queryClient.setQueryData([key, 10], 10)
 
@@ -1984,7 +1984,7 @@ describe('useQuery', () => {
 
   it('should use the correct query function when components use different configurations', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
 
     function FirstComponent() {
       const state = useQuery({
@@ -2045,8 +2045,8 @@ describe('useQuery', () => {
 
   it('should be able to set different stale times for a query', async () => {
     const key = queryKey()
-    const states1: UseQueryResult<string>[] = []
-    const states2: UseQueryResult<string>[] = []
+    const states1: Array<UseQueryResult<string>> = []
+    const states2: Array<UseQueryResult<string>> = []
 
     await queryClient.prefetchQuery({
       queryKey: key,
@@ -2146,7 +2146,7 @@ describe('useQuery', () => {
 
   it('should re-render when a query becomes stale', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     function Page() {
       const state = useQuery({
@@ -2171,7 +2171,7 @@ describe('useQuery', () => {
   describe('notifyOnChangeProps', () => {
     it('should not re-render when it should only re-render only data change and the selected data did not change', async () => {
       const key = queryKey()
-      const states: UseQueryResult<string>[] = []
+      const states: Array<UseQueryResult<string>> = []
 
       function Page() {
         const state = useQuery({
@@ -2212,7 +2212,7 @@ describe('useQuery', () => {
     })
     it('should not re-render when it should only re-render on data changes and the data did not change', async () => {
       const key = queryKey()
-      const states: UseQueryResult<string>[] = []
+      const states: Array<UseQueryResult<string>> = []
 
       function Page() {
         const state = useQuery({
@@ -2270,7 +2270,7 @@ describe('useQuery', () => {
     describe('function', () => {
       it('should not re-render when it should only re-render on data changes and the data did not change', async () => {
         const key = queryKey()
-        const states: UseQueryResult<string>[] = []
+        const states: Array<UseQueryResult<string>> = []
 
         function Page() {
           const state = useQuery({
@@ -2325,7 +2325,7 @@ describe('useQuery', () => {
 
       it('should not re-render when change props are not actively being tracked', async () => {
         const key = queryKey()
-        const states: UseQueryResult<string>[] = []
+        const states: Array<UseQueryResult<string>> = []
 
         function Page() {
           const fetchCounterRef = React.useRef(0)
@@ -2603,7 +2603,7 @@ describe('useQuery', () => {
 
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
+    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
 
     function Page() {
       const { data = 'default' } = useQuery({
@@ -2632,7 +2632,7 @@ describe('useQuery', () => {
 
   it('should not refetch stale query on focus when `refetchOnWindowFocus` is set to `false`', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
     let count = 0
 
     function Page() {
@@ -2663,7 +2663,7 @@ describe('useQuery', () => {
 
   it('should not refetch stale query on focus when `refetchOnWindowFocus` is set to a function that returns `false`', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
     let count = 0
 
     function Page() {
@@ -2694,7 +2694,7 @@ describe('useQuery', () => {
 
   it('should not refetch fresh query on focus when `refetchOnWindowFocus` is set to `true`', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
     let count = 0
 
     function Page() {
@@ -2725,7 +2725,7 @@ describe('useQuery', () => {
 
   it('should refetch fresh query on focus when `refetchOnWindowFocus` is set to `always`', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
     let count = 0
 
     function Page() {
@@ -2762,7 +2762,7 @@ describe('useQuery', () => {
 
   it('should calculate focus behaviour for `refetchOnWindowFocus` depending on function', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
     let count = 0
 
     function Page() {
@@ -2813,7 +2813,7 @@ describe('useQuery', () => {
 
   it('should refetch fresh query when refetchOnMount is set to always', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     await queryClient.prefetchQuery({
       queryKey: key,
@@ -2850,7 +2850,7 @@ describe('useQuery', () => {
 
   it('should refetch stale query when refetchOnMount is set to true', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     await queryClient.prefetchQuery({
       queryKey: key,
@@ -3159,7 +3159,7 @@ describe('useQuery', () => {
 
   it('should always fetch if refetchOnMount is set to always', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     await queryClient.prefetchQuery({
       queryKey: key,
@@ -3207,7 +3207,7 @@ describe('useQuery', () => {
 
   it('should fetch if initial data is set', async () => {
     const key = queryKey()
-    const states: DefinedUseQueryResult<string>[] = []
+    const states: Array<DefinedUseQueryResult<string>> = []
 
     function Page() {
       const state = useQuery({
@@ -3239,7 +3239,7 @@ describe('useQuery', () => {
 
   it('should not fetch if initial data is set with a stale time', async () => {
     const key = queryKey()
-    const states: DefinedUseQueryResult<string>[] = []
+    const states: Array<DefinedUseQueryResult<string>> = []
 
     function Page() {
       const state = useQuery({
@@ -3271,7 +3271,7 @@ describe('useQuery', () => {
 
   it('should fetch if initial data updated at is older than stale time', async () => {
     const key = queryKey()
-    const states: DefinedUseQueryResult<string>[] = []
+    const states: Array<DefinedUseQueryResult<string>> = []
 
     const oneSecondAgo = Date.now() - 1000
 
@@ -3311,7 +3311,7 @@ describe('useQuery', () => {
 
   it('should fetch if "initial data updated at" is exactly 0', async () => {
     const key = queryKey()
-    const states: DefinedUseQueryResult<string>[] = []
+    const states: Array<DefinedUseQueryResult<string>> = []
 
     function Page() {
       const state = useQuery({
@@ -3344,7 +3344,7 @@ describe('useQuery', () => {
 
   it('should keep initial data when the query key changes', async () => {
     const key = queryKey()
-    const states: DefinedUseQueryResult<{ count: number }>[] = []
+    const states: Array<DefinedUseQueryResult<{ count: number }>> = []
 
     function Page() {
       const [count, setCount] = React.useState(0)
@@ -3379,7 +3379,7 @@ describe('useQuery', () => {
   it('should retry specified number of times', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<unknown[], unknown>()
+    const queryFn = vi.fn<Array<unknown>, unknown>()
     queryFn.mockImplementation(() => {
       return Promise.reject(new Error('Error test Barrett'))
     })
@@ -3416,7 +3416,7 @@ describe('useQuery', () => {
   it('should not retry if retry function `false`', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<unknown[], unknown>()
+    const queryFn = vi.fn<Array<unknown>, unknown>()
 
     queryFn.mockImplementationOnce(() => {
       return Promise.reject(new Error('Error test Tanner'))
@@ -3462,7 +3462,7 @@ describe('useQuery', () => {
 
     type DelayError = { delay: number }
 
-    const queryFn = vi.fn<unknown[], unknown>()
+    const queryFn = vi.fn<Array<unknown>, unknown>()
     queryFn.mockImplementation(() => {
       return Promise.reject({ delay: 50 })
     })
@@ -3559,7 +3559,7 @@ describe('useQuery', () => {
 
   it('should fetch on mount when a query was already created with setQueryData', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     queryClient.setQueryData(key, 'prefetched')
 
@@ -3590,7 +3590,7 @@ describe('useQuery', () => {
 
   it('should refetch after focus regain', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     // make page unfocused
     const visibilityMock = mockVisibilityState('hidden')
@@ -3653,12 +3653,12 @@ describe('useQuery', () => {
   // See https://github.com/tannerlinsley/react-query/issues/195
   it('should refetch if stale after a prefetch', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
-    const queryFn = vi.fn<unknown[], string>()
+    const queryFn = vi.fn<Array<unknown>, string>()
     queryFn.mockImplementation(() => 'data')
 
-    const prefetchQueryFn = vi.fn<unknown[], string>()
+    const prefetchQueryFn = vi.fn<Array<unknown>, string>()
     prefetchQueryFn.mockImplementation(() => 'not yet...')
 
     await queryClient.prefetchQuery({
@@ -3686,10 +3686,10 @@ describe('useQuery', () => {
   it('should not refetch if not stale after a prefetch', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<unknown[], string>()
+    const queryFn = vi.fn<Array<unknown>, string>()
     queryFn.mockImplementation(() => 'data')
 
-    const prefetchQueryFn = vi.fn<unknown[], Promise<string>>()
+    const prefetchQueryFn = vi.fn<Array<unknown>, Promise<string>>()
     prefetchQueryFn.mockImplementation(async () => {
       await sleep(10)
       return 'not yet...'
@@ -3841,7 +3841,7 @@ describe('useQuery', () => {
 
   it('should mark query as fetching, when using initialData', async () => {
     const key = queryKey()
-    const results: DefinedUseQueryResult<string>[] = []
+    const results: Array<DefinedUseQueryResult<string>> = []
 
     function Page() {
       const result = useQuery({
@@ -3868,7 +3868,7 @@ describe('useQuery', () => {
 
   it('should initialize state properly, when initialData is falsy', async () => {
     const key = queryKey()
-    const results: DefinedUseQueryResult<number>[] = []
+    const results: Array<DefinedUseQueryResult<number>> = []
 
     function Page() {
       const result = useQuery({
@@ -3945,7 +3945,7 @@ describe('useQuery', () => {
   // // See https://github.com/tannerlinsley/react-query/issues/214
   it('data should persist when enabled is changed to false', async () => {
     const key = queryKey()
-    const results: DefinedUseQueryResult<string>[] = []
+    const results: Array<DefinedUseQueryResult<string>> = []
 
     function Page() {
       const [shouldFetch, setShouldFetch] = React.useState(true)
@@ -3996,7 +3996,7 @@ describe('useQuery', () => {
 
   it('it should support enabled:false in query object syntax', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<unknown[], string>()
+    const queryFn = vi.fn<Array<unknown>, string>()
     queryFn.mockImplementation(() => 'data')
 
     function Page() {
@@ -4090,7 +4090,7 @@ describe('useQuery', () => {
 
   it('should not cause memo churn when data does not change', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
+    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
     const memoFn = vi.fn()
 
     function Page() {
@@ -4165,7 +4165,7 @@ describe('useQuery', () => {
   it('should refetch in an interval depending on function result', async () => {
     const key = queryKey()
     let count = 0
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
 
     function Page() {
       const queryInfo = useQuery({
@@ -4231,7 +4231,7 @@ describe('useQuery', () => {
 
   it('should not interval fetch with a refetchInterval of 0', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
 
     function Page() {
       const queryInfo = useQuery({
@@ -4298,7 +4298,7 @@ describe('useQuery', () => {
   it('should refetch if any query instance becomes enabled', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<unknown[], string>().mockReturnValue('data')
+    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
 
     function Disabled() {
       useQuery({ queryKey: key, queryFn, enabled: false })
@@ -4327,7 +4327,7 @@ describe('useQuery', () => {
   it('should use placeholder data while the query loads', async () => {
     const key1 = queryKey()
 
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     function Page() {
       const state = useQuery({
@@ -4366,7 +4366,7 @@ describe('useQuery', () => {
   it('should use placeholder data even for disabled queries', async () => {
     const key1 = queryKey()
 
-    const states: { state: UseQueryResult<string>; count: number }[] = []
+    const states: Array<{ state: UseQueryResult<string>; count: number }> = []
 
     function Page() {
       const [count, setCount] = React.useState(0)
@@ -4426,7 +4426,7 @@ describe('useQuery', () => {
   it('placeholder data should run through select', async () => {
     const key1 = queryKey()
 
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     function Page() {
       const state = useQuery({
@@ -4466,7 +4466,7 @@ describe('useQuery', () => {
   it('placeholder data function result should run through select', async () => {
     const key1 = queryKey()
 
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
     let placeholderFunctionRunCount = 0
 
     function Page() {
@@ -4692,7 +4692,7 @@ describe('useQuery', () => {
 
   it('should cancel the query if the signal was consumed and there are no more subscriptions', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     const queryFn: QueryFunction<string, [typeof key, number]> = async (
       ctx,
@@ -4757,7 +4757,7 @@ describe('useQuery', () => {
 
   it('should refetch when quickly switching to a failed query', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     const queryFn = async () => {
       await sleep(50)
@@ -4808,7 +4808,7 @@ describe('useQuery', () => {
 
   it('should update query state and refetch when reset with resetQueries', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
     let count = 0
 
     function Page() {
@@ -4878,7 +4878,7 @@ describe('useQuery', () => {
 
   it('should update query state and not refetch when resetting a disabled query with resetQueries', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
     let count = 0
 
     function Page() {
@@ -4980,7 +4980,7 @@ describe('useQuery', () => {
   })
 
   it('should refetch when changed enabled to true in error state', async () => {
-    const queryFn = vi.fn<unknown[], unknown>()
+    const queryFn = vi.fn<Array<unknown>, unknown>()
     queryFn.mockImplementation(async () => {
       await sleep(10)
       return Promise.reject(new Error('Suspense Error Bingo'))
@@ -5152,7 +5152,7 @@ describe('useQuery', () => {
 
   it('should have no error in pending state when refetching after error occurred', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: Array<UseQueryResult<number>> = []
     const error = new Error('oops')
 
     let count = 0
@@ -5962,7 +5962,7 @@ describe('useQuery', () => {
 
   it('it should have status=error on mount when a query has failed', async () => {
     const key = queryKey()
-    const states: UseQueryResult<unknown>[] = []
+    const states: Array<UseQueryResult<unknown>> = []
     const error = new Error('oops')
 
     const queryFn = async (): Promise<unknown> => {
