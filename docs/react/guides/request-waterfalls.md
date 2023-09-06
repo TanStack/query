@@ -7,11 +7,11 @@ Application performance is a broad and complex area and while React Query can't 
 
 The biggest performance footgun when using React Query, or indeed any data fetching library that lets you fetch data inside of components, is request waterfalls. The rest of this page will explain what they are, how you can spot them and how you can restructure your application or APIs to avoid them.
 
-The [Prefetching & Router Integration guide](../guides/prefetching.md) builds on this and teaches you how to prefetch data ahead of time when it's not possible or feasible to restructure your application or APIs.
+The [Prefetching & Router Integration guide](../guides/prefetching) builds on this and teaches you how to prefetch data ahead of time when it's not possible or feasible to restructure your application or APIs.
 
-The [Server Rendering & Hydration guide](../guides/ssr.md) teaches you how to prefetch data on the server and pass that data down to the client so you don't have to fetch it again.
+The [Server Rendering & Hydration guide](../guides/ssr) teaches you how to prefetch data on the server and pass that data down to the client so you don't have to fetch it again.
 
-The [Advanced Server Rendering guide](../guides/advanced-ssr.md) further teaches you how to apply these patterns to Server Components and Streaming Server Rendering.
+The [Advanced Server Rendering guide](../guides/advanced-ssr) further teaches you how to apply these patterns to Server Components and Streaming Server Rendering.
 
 ## What is a Request Waterfall?
 
@@ -91,7 +91,7 @@ const {
 
 While not always feasible, for optimal performance it's better to restructure your API so you can fetch both of these in a single query. In the example above, instead of first fetching `getUserByEmail` to be able to `getProjectsByUser`, introducing a new `getProjectsByUserEmail` query would flatten the waterfall.
 
-> Another way to mitigate dependent queries without restructuring your API is to move the waterfall to the server where latency is lower. This is the idea behind Server Components which are covered in the [Advanced Server Rendering guide](../guides/advanced-ssr.md).
+> Another way to mitigate dependent queries without restructuring your API is to move the waterfall to the server where latency is lower. This is the idea behind Server Components which are covered in the [Advanced Server Rendering guide](../guides/advanced-ssr).
 
 Another example of serial queries is when you use React Query with Suspense:
 
@@ -112,6 +112,16 @@ Note that with regular `useQuery` these would happen in parallel.
 
 Luckily, this is easy to fix, by always using the hook `useSuspenseQueries` when you have multiple suspenseful queries in a component.
 
+```tsx
+const [usersQuery, teamsQuery, projectsQuery] = useSuspenseQueries({
+  queries: [
+    { queryKey: ['users'], queryFn: fetchUsers },
+    { queryKey: ['teams'], queryFn: fetchTeams },
+    { queryKey: ['projects'], queryFn: fetchProjects },
+  ]
+}
+```
+
 ### Nested Component Waterfalls
 
 Nested Component Waterfalls is when both a parent and a child component contains queries, and the parent does not render the child until its query is done. This can happen both with `useQuery` and `useSuspenseQuery`.
@@ -123,12 +133,12 @@ Let's first look at an example where the child is **not** dependent on the paren
 ```tsx
 function Article({ id }) {
   const { data: articleData, isPending } = useQuery({
-    queryKey: ["article", id],
+    queryKey: ['article', id],
     queryFn: getArticleById,
-  });
+  })
 
   if (isPending) {
-    return "Loading article...";
+    return 'Loading article...'
   }
 
   return (
@@ -137,15 +147,15 @@ function Article({ id }) {
       <ArticleBody articleData={articleData} />
       <Comments id={id} />
     </>
-  );
+  )
 
 }
 
 function Comments({ id }) {
   const { data, isPending } = useQuery({
-    queryKey: ["article-comments", id],
+    queryKey: ['article-comments', id],
     queryFn: getArticleCommentsById,
-  });
+  })
 
   ...
 }
@@ -185,7 +195,7 @@ function Article({ id }) {
 
 The two queries will now fetch in parallel. Note that if you are using suspense, you'd want to combine these two queries into a single `useSuspenseQueries` instead.
 
-Another way to flatten this waterfall would be to prefetch the comments in the `<Article>` component, or prefetch both of these queries at the router level on page load or page navigations, read more about this in the [Prefetching & Router Integration guide](../guides/prefetching.md).
+Another way to flatten this waterfall would be to prefetch the comments in the `<Article>` component, or prefetch both of these queries at the router level on page load or page navigations, read more about this in the [Prefetching & Router Integration guide](../guides/prefetching).
 
 Next, let's look at a _Dependent Nested Component Waterfall_.
 
@@ -230,7 +240,7 @@ The second query `getGraphDataById` is dependent on it's parent in two different
 2.   |> getGraphDataById()
 ```
 
-In this example, we can't trivially flatten the waterfall by just hoisting the query to the parent, or even adding prefetching. Just like the dependent query example at the beginning of this guide, one option is to refactor our API to include the graph data in the `getFeed` query. Another more advanced solution is to leverage Server Components to move the waterfall to the server where latency is lower (read more about this in the [Advanced Server Rendering guide](../guides/advanced-ssr.md)) but note that this can be a very big architectural change.
+In this example, we can't trivially flatten the waterfall by just hoisting the query to the parent, or even adding prefetching. Just like the dependent query example at the beginning of this guide, one option is to refactor our API to include the graph data in the `getFeed` query. Another more advanced solution is to leverage Server Components to move the waterfall to the server where latency is lower (read more about this in the [Advanced Server Rendering guide](../guides/advanced-ssr)) but note that this can be a very big architectural change.
 
 You can have good performance even with a few query waterfalls here and there, just know they are a common performance concern and be mindful about them. An especially insidious version is when Code Splitting is involved, let's take a look at this next.
 
@@ -243,7 +253,7 @@ Consider this a slightly modified version of the Feed example.
 ```tsx
 // This lazy loads the GraphFeedItem component, meaning
 // it wont start loading until something renders it
-const GraphFeedItem = React.lazy(() => import("./GraphFeedItem"));
+const GraphFeedItem = React.lazy(() => import('./GraphFeedItem'))
 
 function Feed() {
   const { data, isPending } = useQuery({
@@ -297,7 +307,7 @@ But that's just looking at the code from the example, if we consider what the fi
 5.         |> getGraphDataById()
 ```
 
-Note that this looks a bit different when server rendering, we will explore that further in the [Server Rendering & Hydration guide](../guides/ssr.md). Also note that it's not uncommon for the route that contains `<Feed>` to also be code split, which could add yet another hop.
+Note that this looks a bit different when server rendering, we will explore that further in the [Server Rendering & Hydration guide](../guides/ssr). Also note that it's not uncommon for the route that contains `<Feed>` to also be code split, which could add yet another hop.
 
 In the code split case, it might actually help to hoist the `getGraphDataById` query to the `<Feed>` component and make it conditional, or add a conditional prefetch. That query could then be fetched in parallel with the code, turning the example part into this:
 
@@ -307,14 +317,14 @@ In the code split case, it might actually help to hoist the `getGraphDataById` q
 2.   |> JS for <GraphFeedItem>
 ```
 
-This is very much a tradeoff however. You are now including the data fetching code for `getGraphDataById` in the same bundle as `<Feed>`, so evaluate what is best for your case.
+This is very much a tradeoff however. You are now including the data fetching code for `getGraphDataById` in the same bundle as `<Feed>`, so evaluate what is best for your case. Read more about how to do this in the [Prefetching & Router Integration guide](../guides/prefetching).
 
 > The tradeoff between:
 >
 > - Include all data fetching code in the main bundle, even if we seldom use it
 > - Put the data fetching code in the code split bundle, but with a request waterfall
 >
-> is not great and has been one of the motivations for Server Components. With Server Components, it's possible to avoid both, read more about how this applies to React Query in the [Advanced Server Rendering guide](../guides/advanced-ssr.md).
+> is not great and has been one of the motivations for Server Components. With Server Components, it's possible to avoid both, read more about how this applies to React Query in the [Advanced Server Rendering guide](../guides/advanced-ssr).
 
 ## Summary and takeaways
 
@@ -327,4 +337,4 @@ Request Waterfalls are a very common and complex performance concern with many t
 
 Because of this accidental complexity, it pays off to be mindful of waterfalls and regularly examine your application looking for them (a good way is to examine the Network tab every now and then!). You don't necessarily have to flatten them all to have good performance, but keep an eye out for the high impact ones.
 
-In the next guide, we'll look at more ways to flatten waterfalls, by leveraging [Prefetching & Router Integration](../guides/prefetching.md).
+In the next guide, we'll look at more ways to flatten waterfalls, by leveraging [Prefetching & Router Integration](../guides/prefetching).
