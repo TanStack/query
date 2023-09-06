@@ -78,7 +78,7 @@ const usersMessages = useQueries({
           queryFn: () => getMessagesByUsers(id),
         };
       })
-  : [], // if users is underfined an empty array will be returned
+  : [], // if users is undefined, an empty array will be returned
 })
 ```
 
