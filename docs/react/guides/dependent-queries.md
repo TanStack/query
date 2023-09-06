@@ -61,13 +61,12 @@ Dynamic parallel query - `useQueries` can depend on a previous query also, here'
 [//]: # 'Example'
 
 ```tsx
-// Get the users Data
-const { data: users } = useQuery({
+// Get the users ids
+const { data: userIds } = useQuery({
   queryKey: ['users'],
   queryFn: getUsersData,
+  select: users => users.map(user => user.id),
 })
-
-const usersId = users?.filter(user => user?.id)
 
 // Then get the users messages
 const usersMessages = useQueries({
