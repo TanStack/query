@@ -100,7 +100,7 @@ ruleTester.run(name, rule, {
         import { useQuery } from "@tanstack/react-query";
         const getQuery = () => {
           try {
-            return { queryKey: ['foo'], queryFn: () => Promise.resolve(5) };  
+            return { queryKey: ['foo'], queryFn: () => Promise.resolve(5) };
           } finally {
             return { queryKey: ['foo'], queryFn: () => Promise.resolve(5) };
           }
@@ -165,6 +165,26 @@ ruleTester.run(name, rule, {
           queryKey: ["queryKey"],
           queryFn: () => Promise.resolve([]),
         } as const satisfies QueryOptions;
+        useQuery(queryOptions);
+      `,
+    },
+    {
+      code: normalizeIndent`
+        import { useQuery } from "@tanstack/react-query";
+        const queryOptions = {
+          queryKey: ["queryKey"],
+          queryFn: () => Promise.resolve([]),
+        } as const;
+        useQuery(queryOptions);
+      `,
+    },
+    {
+      code: normalizeIndent`
+        import { useQuery } from "@tanstack/react-query";
+        const queryOptions = {
+          queryKey: ["queryKey"],
+          queryFn: () => Promise.resolve([]),
+        } satisfies QueryOptions;
         useQuery(queryOptions);
       `,
     },
