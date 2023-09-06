@@ -58,7 +58,7 @@ fetchStatus: 'idle'
 
 Dynamic parallel query - `useQueries` can depend on a previous query also, here's how to achieve this:
 
-[//]: # 'Example'
+[//]: # 'Example2'
 
 ```tsx
 // Get the users ids
@@ -80,5 +80,7 @@ const usersMessages = useQueries({
   : [], // if users is undefined, an empty array will be returned
 })
 ```
+
+[//]: # 'Example2'
 
 **Note** that `useQueries` return an **array of query results**
