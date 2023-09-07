@@ -11,6 +11,7 @@ on:
       - 'main'
       - 'alpha'
       - 'beta'
+      - 'rc'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -22,7 +23,7 @@ env:
 
 jobs:
   test-and-publish:
-    if: github.repository == 'TanStack/query' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/beta')
+    if: github.repository == 'TanStack/query' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/beta' || github.ref == 'refs/heads/rc')
     name: 'Test & Publish'
     runs-on: ubuntu-latest
     steps:

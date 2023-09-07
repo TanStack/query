@@ -1,6 +1,6 @@
 import { QueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
-import type { ToRefs, UnwrapRef } from 'vue-demi'
+import type { ToRefs } from 'vue-demi'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
@@ -10,7 +10,12 @@ import type {
   WithRequired,
 } from '@tanstack/query-core'
 import type { UseBaseQueryReturnType } from './useBaseQuery'
-import type { DistributiveOmit, MaybeRefDeep } from './types'
+import type {
+  DeepUnwrapRef,
+  DistributiveOmit,
+  MaybeRef,
+  MaybeRefDeep,
+} from './types'
 import type { QueryClient } from './queryClient'
 
 export type UseQueryOptions<
@@ -19,7 +24,7 @@ export type UseQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = {
+> = MaybeRef<{
   [Property in keyof QueryObserverOptions<
     TQueryFnData,
     TError,
@@ -32,7 +37,7 @@ export type UseQueryOptions<
         TError,
         TData,
         TQueryData,
-        UnwrapRef<TQueryKey>
+        DeepUnwrapRef<TQueryKey>
       >[Property]
     : MaybeRefDeep<
         WithRequired<
@@ -46,7 +51,7 @@ export type UseQueryOptions<
           'queryKey'
         >[Property]
       >
-}
+}>
 
 export type UseQueryReturnType<TData, TError> = DistributiveOmit<
   UseBaseQueryReturnType<TData, TError>,
