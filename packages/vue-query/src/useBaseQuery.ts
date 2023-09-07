@@ -144,7 +144,7 @@ export function useBaseQuery<
 
         run()
 
-        stopWatch = watch(defaultedOptions, run, { deep: true })
+        stopWatch = watch(defaultedOptions, run)
       },
     )
   }
