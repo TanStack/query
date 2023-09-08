@@ -1,5 +1,6 @@
 'use client'
 import { useQueries } from './useQueries'
+import { defaultThrowOnError } from './suspense'
 import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
 import type {
   DefaultError,
@@ -154,7 +155,7 @@ export function useSuspenseQueries<
       queries: options.queries.map((query) => ({
         ...query,
         suspense: true,
-        throwOnError: true,
+        throwOnError: defaultThrowOnError,
         enabled: true,
       })),
     } as any,
