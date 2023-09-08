@@ -1,10 +1,22 @@
+import type { DefaultError } from '@tanstack/query-core/src'
 import type {
   DefaultedQueryObserverOptions,
+  Query,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
+
+export const defaultThrowOnError = <
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  _error: TError,
+  query: Query<TQueryFnData, TError, TData, TQueryKey>,
+) => typeof query.state.data === 'undefined'
 
 export const ensureStaleTime = (
   defaultedOptions: DefaultedQueryObserverOptions<any, any, any, any, any>,
