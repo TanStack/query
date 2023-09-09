@@ -1,13 +1,13 @@
 'use client'
+import { QueryObserver, parseQueryArgs } from '@tanstack/query-core'
+import { useMemo } from "react";
+import { useBaseQuery } from './useBaseQuery'
 import type { QueryFunction, QueryKey } from '@tanstack/query-core'
-import { parseQueryArgs, QueryObserver } from '@tanstack/query-core'
 import type {
   DefinedUseQueryResult,
   UseQueryOptions,
   UseQueryResult,
 } from './types'
-import { useBaseQuery } from './useBaseQuery'
-import {useMemo} from "react";
 
 // HOOK
 

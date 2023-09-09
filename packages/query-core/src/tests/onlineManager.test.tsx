@@ -145,4 +145,25 @@ describe('onlineManager', () => {
 
     unsubscribe2()
   })
+
+  test('should call listeners when setOnline is called', () => {
+    const listener = jest.fn()
+
+    onlineManager.subscribe(listener)
+
+    onlineManager.setOnline(true)
+    onlineManager.setOnline(true)
+
+    expect(listener).toHaveBeenCalledTimes(1)
+
+    onlineManager.setOnline(false)
+    onlineManager.setOnline(false)
+
+    expect(listener).toHaveBeenCalledTimes(2)
+
+    onlineManager.setOnline(undefined)
+    onlineManager.setOnline(undefined)
+
+    expect(listener).toHaveBeenCalledTimes(3)
+  })
 })

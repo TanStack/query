@@ -1,15 +1,14 @@
+import { QueriesObserver, notifyManager } from '@tanstack/query-core'
+import { type Readable, readable } from 'svelte/store'
+
+import { useQueryClient } from './useQueryClient'
+import type { CreateQueryOptions } from './types'
 import type {
-  QueryKey,
-  QueryFunction,
   QueryClient,
+  QueryFunction,
+  QueryKey,
   QueryObserverResult,
 } from '@tanstack/query-core'
-
-import { notifyManager, QueriesObserver } from '@tanstack/query-core'
-import { readable, type Readable } from 'svelte/store'
-
-import type { CreateQueryOptions } from './types'
-import { useQueryClient } from './useQueryClient'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // - `context` is omitted as it is passed as a root-level option to `createQueries` instead.

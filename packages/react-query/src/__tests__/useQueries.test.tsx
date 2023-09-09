@@ -4,6 +4,7 @@ import { ErrorBoundary } from 'react-error-boundary'
 
 import * as QueriesObserverModule from '../../../query-core/src/queriesObserver'
 
+import { QueriesObserver, QueryCache, useQueries } from '..'
 import {
   createQueryClient,
   expectType,
@@ -20,7 +21,6 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from '..'
-import { QueriesObserver, QueryCache, useQueries } from '..'
 import type { QueryFunctionContext } from '@tanstack/query-core'
 
 describe('useQueries', () => {

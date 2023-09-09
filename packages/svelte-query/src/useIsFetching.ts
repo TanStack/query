@@ -1,9 +1,9 @@
 import {
+  type QueryClient,
   type QueryFilters,
   type QueryKey,
-  type QueryClient,
-  parseFilterArgs,
   notifyManager,
+  parseFilterArgs,
 } from '@tanstack/query-core'
 import { type Readable, readable } from 'svelte/store'
 import { useQueryClient } from './useQueryClient'

@@ -63,9 +63,10 @@ export class OnlineManager extends Subscribable {
   }
 
   setOnline(online?: boolean): void {
-    this.online = online
+    const changed = this.online !== online
 
-    if (online) {
+    if (changed) {
+      this.online = online
       this.onOnline()
     }
   }

@@ -71,18 +71,3 @@ const skipToCursor50 = () => fetchNextPage({ pageParam: 50 })
 ```
 
 [//]: # 'Example3'
-[//]: # 'Example7'
-
-```tsx
-const newPagesArray =
-  oldPagesArray?.pages.map((page) =>
-    page.filter((val) => val.id !== updatedId),
-  ) ?? []
-
-queryClient.setQueryData(['projects'], (data) => ({
-  pages: newPagesArray,
-  pageParams: data.pageParams,
-}))
-```
-
-[//]: # 'Example7'

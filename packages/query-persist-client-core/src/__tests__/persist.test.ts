@@ -1,10 +1,10 @@
+import { QueriesObserver } from '@tanstack/query-core'
+import { persistQueryClientSubscribe } from '../persist'
 import {
+  createMockPersister,
   createQueryClient,
   createSpyablePersister,
-  createMockPersister,
 } from './utils'
-import { persistQueryClientSubscribe } from '../persist'
-import { QueriesObserver } from '@tanstack/query-core'
 
 describe('persistQueryClientSubscribe', () => {
   test('should persist mutations', async () => {

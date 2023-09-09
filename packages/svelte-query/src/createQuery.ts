@@ -1,10 +1,10 @@
 import { QueryObserver, parseQueryArgs } from '@tanstack/query-core'
-import type { QueryFunction, QueryKey } from '@tanstack/query-core'
 import { createBaseQuery } from './createBaseQuery'
+import type { QueryFunction, QueryKey } from '@tanstack/query-core'
 import type {
-  DefinedCreateQueryResult,
   CreateQueryOptions,
   CreateQueryResult,
+  DefinedCreateQueryResult,
 } from './types'
 
 export function createQuery<

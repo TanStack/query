@@ -1,6 +1,9 @@
 import { act, fireEvent, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import * as React from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
+import { useEffect, useState } from "react";
+import { QueryCache, useQuery } from '..'
 import {
   Blink,
   createQueryClient,
@@ -20,9 +23,6 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from '..'
-import { QueryCache, useQuery } from '..'
-import { ErrorBoundary } from 'react-error-boundary'
-import {useEffect, useState} from "react";
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
@@ -3626,6 +3626,7 @@ describe('useQuery', () => {
           )
           act(() => setPrefetched(true))
         }
+
         prefetch()
       }, [])
 
@@ -5883,6 +5884,7 @@ describe('useQuery', () => {
         </div>
       )
     }
+
     const rendered = renderWithClient(queryClient, <Page />)
     const fetchBtn = rendered.getByRole('button', { name: 'refetch' })
     await waitFor(() => rendered.getByText('data: 1'))
@@ -5920,8 +5922,132 @@ describe('useQuery', () => {
         </div>
       )
     }
+
     const rendered = renderWithClient(queryClient, <Page />)
     await waitFor(() => rendered.getByText('status: success'))
     await waitFor(() => rendered.getByText('data: 1'))
+  })
+  it('should reuse same data object reference when queryKey changes back to some cached data', async () => {
+    const spy = jest.fn()
+    const key = queryKey()
+
+    async function fetchNumber(id: number) {
+      await sleep(5)
+      return { numbers: { current: { id } } }
+    }
+    function Test() {
+      const [id, setId] = React.useState(1)
+
+      const { data } = useQuery({
+        select: selector,
+        queryKey: [key, 'user', id],
+        queryFn: () => fetchNumber(id),
+      })
+
+      React.useEffect(() => {
+        spy(data)
+      }, [data])
+
+      return (
+        <div>
+          <button name="1" onClick={() => setId(1)}>
+            1
+          </button>
+          <button name="2" onClick={() => setId(2)}>
+            2
+          </button>
+          <span>Rendered Id: {data?.id}</span>
+        </div>
+      )
+    }
+
+    function selector(data: any) {
+      return data.numbers.current
+    }
+
+    const rendered = renderWithClient(queryClient, <Test />)
+    expect(spy).toHaveBeenCalledTimes(1)
+
+    spy.mockClear()
+    await waitFor(() => rendered.getByText('Rendered Id: 1'))
+    expect(spy).toHaveBeenCalledTimes(1)
+
+    spy.mockClear()
+    fireEvent.click(rendered.getByRole('button', { name: /2/ }))
+    await waitFor(() => rendered.getByText('Rendered Id: 2'))
+    expect(spy).toHaveBeenCalledTimes(2) // called with undefined because id changed
+
+    spy.mockClear()
+    fireEvent.click(rendered.getByRole('button', { name: /1/ }))
+    await waitFor(() => rendered.getByText('Rendered Id: 1'))
+    expect(spy).toHaveBeenCalledTimes(1)
+
+    spy.mockClear()
+    fireEvent.click(rendered.getByRole('button', { name: /2/ }))
+    await waitFor(() => rendered.getByText('Rendered Id: 2'))
+    expect(spy).toHaveBeenCalledTimes(1)
+  })
+  it('should reuse same data object reference when queryKey changes and placeholderData is present', async () => {
+    const spy = jest.fn()
+    const key = queryKey()
+
+    async function fetchNumber(id: number) {
+      await sleep(5)
+      return { numbers: { current: { id } } }
+    }
+    function Test() {
+      const [id, setId] = React.useState(1)
+
+      const { data } = useQuery({
+        select: selector,
+        queryKey: [key, 'user', id],
+        queryFn: () => fetchNumber(id),
+        placeholderData: { numbers: { current: { id: 99 } } },
+      })
+
+      React.useEffect(() => {
+        spy(data)
+      }, [data])
+
+      return (
+        <div>
+          <button name="1" onClick={() => setId(1)}>
+            1
+          </button>
+          <button name="2" onClick={() => setId(2)}>
+            2
+          </button>
+          <span>Rendered Id: {data?.id}</span>
+        </div>
+      )
+    }
+
+    function selector(data: any) {
+      return data.numbers.current
+    }
+
+    const rendered = renderWithClient(queryClient, <Test />)
+    expect(spy).toHaveBeenCalledTimes(1)
+
+    spy.mockClear()
+    await waitFor(() => rendered.getByText('Rendered Id: 99'))
+    await waitFor(() => rendered.getByText('Rendered Id: 1'))
+    expect(spy).toHaveBeenCalledTimes(1)
+
+    spy.mockClear()
+    fireEvent.click(rendered.getByRole('button', { name: /2/ }))
+    await waitFor(() => rendered.getByText('Rendered Id: 99'))
+    await waitFor(() => rendered.getByText('Rendered Id: 2'))
+    expect(spy).toHaveBeenCalledTimes(2) // called with undefined because id changed
+
+    spy.mockClear()
+    fireEvent.click(rendered.getByRole('button', { name: /1/ }))
+    await waitFor(() => rendered.getByText('Rendered Id: 1'))
+    expect(spy).toHaveBeenCalledTimes(1)
+
+    spy.mockClear()
+    fireEvent.click(rendered.getByRole('button', { name: /2/ }))
+    await waitFor(() => rendered.getByText('Rendered Id: 2'))
+    expect(spy).toHaveBeenCalledTimes(1)
   })
 })

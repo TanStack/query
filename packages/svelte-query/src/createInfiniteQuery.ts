@@ -1,15 +1,15 @@
 import {
   InfiniteQueryObserver,
-  parseQueryArgs,
-  type QueryObserver,
   type QueryFunction,
   type QueryKey,
+  type QueryObserver,
+  parseQueryArgs,
 } from '@tanstack/query-core'
+import { createBaseQuery } from './createBaseQuery'
 import type {
   CreateInfiniteQueryOptions,
   CreateInfiniteQueryResult,
 } from './types'
-import { createBaseQuery } from './createBaseQuery'
 
 export function createInfiniteQuery<
   TQueryFnData = unknown,
