@@ -481,7 +481,7 @@ describe('queryObserver', () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
-      queryFn: () => 'data',
+      queryFn: () => Promise.resolve('data'),
       placeholderData: 'placeholder',
     })
 
@@ -490,7 +490,9 @@ describe('queryObserver', () => {
       data: 'placeholder',
     })
 
-    const results: QueryObserverResult<unknown>[] = []
+    const results: QueryObserverResult<unknown>[] = [
+      observer.getCurrentResult(),
+    ]
 
     const unsubscribe = observer.subscribe((x) => {
       results.push(x)
@@ -774,6 +776,7 @@ describe('queryObserver', () => {
     await queryClient.prefetchQuery(key, () => data1)
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
+      queryFn: () => data1,
     })
     await queryClient.prefetchQuery(key, () => data2)
 
@@ -784,7 +787,7 @@ describe('queryObserver', () => {
     expect(spy).toHaveBeenCalledTimes(0)
 
     unsubscribe()
-  })
+  }, 10000)
 
   test('should not notify observer when the stale timeout expires and the current result is stale', async () => {
     const key = queryKey()

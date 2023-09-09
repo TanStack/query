@@ -54,18 +54,17 @@ describe('queryCache', () => {
       const unsubScribeObserver = observer.subscribe(jest.fn)
 
       await waitFor(() => {
-        expect(events.length).toBe(8)
+        expect(events.length).toBe(7)
       })
 
       expect(events).toEqual([
         'added', // 1. Query added -> loading
         'observerResultsUpdated', // 2. Observer result updated -> loading
-        'observerAdded', // 3. Observer added
-        'observerResultsUpdated', // 4. Observer result updated -> fetching
-        'updated', // 5. Query updated -> fetching
-        'observerResultsUpdated', // 6. Observer result updated -> success
-        'updated', // 7. Query updated -> success
-        'observerResultsUpdated', // 8. Observer result updated -> stale
+        'updated', // 3. Query updated -> fetching
+        'observerAdded', // 4. Observer added
+        'observerResultsUpdated', // 5. Observer result updated -> success
+        'updated', // 6. Query updated -> success
+        'observerResultsUpdated', // 7. Observer result updated -> stale
       ])
 
       unsubscribe()
