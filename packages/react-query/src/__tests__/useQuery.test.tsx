@@ -22,6 +22,7 @@ import type {
 } from '..'
 import { QueryCache, useQuery } from '..'
 import { ErrorBoundary } from 'react-error-boundary'
+import {useEffect, useState} from "react";
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
@@ -4813,6 +4814,34 @@ describe('useQuery', () => {
     // // change to enabled to true
     fireEvent.click(rendered.getByLabelText('retry'))
     expect(queryFn).toBeCalledTimes(2)
+  })
+
+  it('should re-use the same result when when sending the same args', async () => {
+    const queryFn = jest.fn<unknown, unknown[]>()
+    const effectFn = jest.fn<void, unknown[]>()
+    queryFn.mockReturnValue(2);
+
+    function App() {
+      const value = useQuery(['key'], queryFn)
+      const [, setState] = useState<void>();
+
+      useEffect(() => {
+        setState()
+        effectFn();
+      }, [value]);
+
+      return <div>rendered</div>
+    }
+
+    renderWithClient(queryClient, <App />)
+
+    expect(queryFn).toBeCalledTimes(1)
+    expect(effectFn).toBeCalledTimes(1)
+
+    await new Promise(res => setTimeout(res, 100));
+
+    expect(queryFn).toBeCalledTimes(1)
+    expect(effectFn).toBeCalledTimes(1)
   })
 
   it('should refetch when query key changed when previous status is error', async () => {

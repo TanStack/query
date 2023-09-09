@@ -550,7 +550,7 @@ export class QueryObserver<
     this.currentResultState = this.currentQuery.state
     this.currentResultOptions = this.options
 
-    // Only notify and update result if sometfhing has changed
+    // Only notify and update result if something has changed
     if (shallowEqualObjects(nextResult, prevResult)) {
       return
     }

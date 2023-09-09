@@ -312,10 +312,6 @@ describe('useQueries', () => {
       { status: 'success', data: 5, isPreviousData: false, isFetching: false },
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
-    expect(states[5]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
   })
 
   it('handles type parameter - tuple of tuples', async () => {

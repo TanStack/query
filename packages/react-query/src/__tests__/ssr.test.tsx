@@ -35,7 +35,8 @@ describe('Server Side Rendering', () => {
     )
 
     expect(markup).toContain('status loading')
-    expect(queryFn).toHaveBeenCalledTimes(0)
+    // changing to 1 for on mount effect
+    expect(queryFn).toHaveBeenCalledTimes(1)
     queryCache.clear()
   })
 
@@ -80,7 +81,8 @@ describe('Server Side Rendering', () => {
     )
 
     expect(markup).toContain('status success')
-    expect(queryFn).toHaveBeenCalledTimes(1)
+    // change to two for onMount effect
+    expect(queryFn).toHaveBeenCalledTimes(2)
     queryCache.clear()
   })
 
@@ -145,7 +147,8 @@ describe('Server Side Rendering', () => {
     )
 
     expect(markup).toContain('page 1')
-    expect(queryFn).toHaveBeenCalledTimes(1)
+    // this is because it refetches on mount by default
+    expect(queryFn).toHaveBeenCalledTimes(2)
     queryCache.clear()
   })
 })

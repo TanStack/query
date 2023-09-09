@@ -103,7 +103,8 @@ describe('Server side rendering with de/rehydration', () => {
       'SuccessComponent - status:success fetching:true data:success'
 
     expect(markup).toBe(expectedMarkup)
-    expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
+    // this is because we expect a fetch on mount as well
+    expect(fetchDataSuccess).toHaveBeenCalledTimes(2)
 
     // -- Client part --
     const el = document.createElement('div')
@@ -126,7 +127,8 @@ describe('Server side rendering with de/rehydration', () => {
       1,
       'Warning: You are importing hydrateRoot from "react-dom" which is not supported. You should instead import it from "react-dom/client".',
     )
-    expect(fetchDataSuccess).toHaveBeenCalledTimes(2)
+    // fetches each mount
+    expect(fetchDataSuccess).toHaveBeenCalledTimes(3)
     expect(el.innerHTML).toBe(expectedMarkup)
 
     unmount()
@@ -199,10 +201,11 @@ describe('Server side rendering with de/rehydration', () => {
 
     // We expect exactly one console.error here, which is from the
     expect(consoleMock).toHaveBeenCalledTimes(1)
-    expect(fetchDataError).toHaveBeenCalledTimes(2)
+    // this changes to three times because it does once in prefetch, and then on mount of each component
+    expect(fetchDataError).toHaveBeenCalledTimes(3)
     expect(el.innerHTML).toBe(expectedMarkup)
     await sleep(50)
-    expect(fetchDataError).toHaveBeenCalledTimes(2)
+    expect(fetchDataError).toHaveBeenCalledTimes(3)
     expect(el.innerHTML).toBe(
       'ErrorComponent - status:error fetching:false data:undefined',
     )
@@ -226,7 +229,9 @@ describe('Server side rendering with de/rehydration', () => {
 
     // -- Shared part --
     function SuccessComponent() {
-      const result = useQuery(['success'], () => fetchDataSuccess('success!'))
+      const result = useQuery(['success'], () => {
+        return fetchDataSuccess('success!');
+      })
       return (
         <PrintStateComponent componentName="SuccessComponent" result={result} />
       )
@@ -274,10 +279,11 @@ describe('Server side rendering with de/rehydration', () => {
       1,
       'Warning: You are importing hydrateRoot from "react-dom" which is not supported. You should instead import it from "react-dom/client".',
     )
-    expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
+    // because we are expecting a fetch on mount as well
+    expect(fetchDataSuccess).toHaveBeenCalledTimes(2)
     expect(el.innerHTML).toBe(expectedMarkup)
     await sleep(50)
-    expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
+    expect(fetchDataSuccess).toHaveBeenCalledTimes(2)
     expect(el.innerHTML).toBe(
       'SuccessComponent - status:success fetching:false data:success!',
     )

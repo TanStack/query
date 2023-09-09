@@ -7,6 +7,7 @@ import type {
   UseQueryResult,
 } from './types'
 import { useBaseQuery } from './useBaseQuery'
+import {useMemo} from "react";
 
 // HOOK
 
@@ -136,6 +137,8 @@ export function useQuery<
     | UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   arg3?: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): UseQueryResult<TData, TError> {
-  const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
+  const parsedOptions = useMemo(() => {
+    return parseQueryArgs(arg1, arg2, arg3)
+  }, [arg1, arg2, arg3]);
   return useBaseQuery(parsedOptions, QueryObserver)
 }
