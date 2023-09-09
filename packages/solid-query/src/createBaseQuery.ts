@@ -33,7 +33,6 @@ export function createBaseQuery<
   const queryClient = useQueryClient({ context: options.context })
   const emptyData = Symbol('empty')
   const defaultedOptions = queryClient.defaultQueryOptions(options)
-  defaultedOptions._optimisticResults = 'optimistic'
   const observer = new Observer(queryClient, defaultedOptions)
 
   const [state, setState] = createStore<QueryObserverResult<TData, TError>>(

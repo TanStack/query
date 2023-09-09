@@ -172,10 +172,7 @@ export function useQueries<T extends any[]>({
   const defaultedQueries = computed(() =>
     unreffedQueries.value.map((options) => {
       const defaulted = queryClient.defaultQueryOptions(options)
-      defaulted._optimisticResults = queryClient.isRestoring.value
-        ? 'isRestoring'
-        : 'optimistic'
-
+      defaulted._isRestoring = queryClient.isRestoring.value
       return defaulted
     }),
   )
@@ -183,37 +180,18 @@ export function useQueries<T extends any[]>({
   const observer = new QueriesObserver(queryClient, defaultedQueries.value)
   const state = reactive(observer.getCurrentResult())
 
-  let unsubscribe = () => {
-    // noop
-  }
-
   watch(
-    queryClient.isRestoring,
-    (isRestoring) => {
-      if (!isRestoring) {
-        unsubscribe()
-        unsubscribe = observer.subscribe((result) => {
-          state.splice(0, result.length, ...result)
-        })
-        // Subscription would not fire for persisted results
-        state.splice(
-          0,
-          state.length,
-          ...observer.getOptimisticResult(defaultedQueries.value),
-        )
-      }
+    defaultedQueries,
+    () => {
+      observer.setQueries(defaultedQueries.value, { listeners: false })
+      state.splice(0, state.length, ...observer.getCurrentResult())
     },
     { immediate: true },
   )
 
-  watch(
-    defaultedQueries,
-    () => {
-      observer.setQueries(defaultedQueries.value)
-      state.splice(0, state.length, ...observer.getCurrentResult())
-    },
-    { flush: 'sync' },
-  )
+  const unsubscribe = observer.subscribe((result) => {
+    state.splice(0, result.length, ...result)
+  })
 
   onScopeDispose(() => {
     unsubscribe()

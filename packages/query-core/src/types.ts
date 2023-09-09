@@ -263,7 +263,7 @@ export interface QueryObserverOptions<
    */
   placeholderData?: TQueryData | PlaceholderDataFunction<TQueryData>
 
-  _optimisticResults?: 'optimistic' | 'isRestoring'
+  _isRestoring?: boolean
 }
 
 export type WithRequired<T, K extends keyof T> = T & { [_ in K]: {} }

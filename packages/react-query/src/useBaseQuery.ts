@@ -36,7 +36,7 @@ export function useBaseQuery<
   const errorResetBoundary = useQueryErrorResetBoundary()
 
   const defaultedOptions = React.useMemo(() => {
-    const newDefaultOptions = queryClient.defaultQueryOptions(options);
+    const newDefaultOptions = queryClient.defaultQueryOptions(options)
 
     // Include callbacks in batch renders
     if (newDefaultOptions.onError) {
@@ -57,13 +57,11 @@ export function useBaseQuery<
       )
     }
 
-    return newDefaultOptions;
-  }, [queryClient, options]);
+    return newDefaultOptions
+  }, [queryClient, options])
 
   // Make sure results are optimistically set in fetching state before subscribing or updating options
-  defaultedOptions._optimisticResults = isRestoring
-    ? 'isRestoring'
-    : 'optimistic'
+  defaultedOptions._isRestoring = isRestoring
 
   ensureStaleTime(defaultedOptions)
   ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary)
@@ -74,32 +72,34 @@ export function useBaseQuery<
     () => {
       return new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
         queryClient,
-        defaultedOptions
-      );
+        defaultedOptions,
+      )
     }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [queryClient]
+    [queryClient],
   )
 
   // This is a use memo here, so it applies to the useSyncExternalStore
   React.useMemo(() => {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
-    observer.setOptions(defaultedOptions, { listeners: false, })
+    observer.setOptions(defaultedOptions, { listeners: false })
   }, [defaultedOptions, observer])
 
-
   const result = useSyncExternalStore(
-    React.useCallback((onStoreChange) => {
-      const unsubscribe = isRestoring
-        ? () => undefined
-        : observer.subscribe(notifyManager.batchCalls(onStoreChange))
+    React.useCallback(
+      (onStoreChange) => {
+        const unsubscribe = isRestoring
+          ? () => undefined
+          : observer.subscribe(notifyManager.batchCalls(onStoreChange))
 
-      // Update result to make sure we did not miss any query updates
-      // between creating the observer and subscribing to it.
-      observer.updateResult()
+        // Update result to make sure we did not miss any query updates
+        // between creating the observer and subscribing to it.
+        observer.updateResult()
 
-      return unsubscribe
-    }, [observer, isRestoring]),
+        return unsubscribe
+      },
+      [observer, isRestoring],
+    ),
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult(),
   )

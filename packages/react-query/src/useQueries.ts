@@ -164,15 +164,13 @@ export function useQueries<T extends any[]>({
       queries.map((options) => {
         return queryClient.defaultQueryOptions(options)
       }),
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [...queries, queryClient],
   )
 
   defaultedQueries.forEach((query) => {
     // Make sure the results are already in fetching state before subscribing or updating options
-    query._optimisticResults = isRestoring
-      ? 'isRestoring'
-      : 'optimistic'
+    query._isRestoring = isRestoring
 
     ensureStaleTime(query)
     ensurePreventErrorBoundaryRetry(query, errorResetBoundary)
@@ -183,7 +181,7 @@ export function useQueries<T extends any[]>({
   const observer = React.useMemo(
     () => new QueriesObserver(queryClient, defaultedQueries),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [queryClient]
+    [queryClient],
   )
 
   React.useMemo(() => {
@@ -228,14 +226,13 @@ export function useQueries<T extends any[]>({
     throw Promise.all(suspensePromises)
   }
   const observerQueries = observer.getQueries()
-  const firstSingleResultWhichShouldThrow = results.find(
-    (result, index) =>
-      getHasError({
-        result,
-        errorResetBoundary,
-        useErrorBoundary: defaultedQueries[index]?.useErrorBoundary ?? false,
-        query: observerQueries[index]!,
-      }),
+  const firstSingleResultWhichShouldThrow = results.find((result, index) =>
+    getHasError({
+      result,
+      errorResetBoundary,
+      useErrorBoundary: defaultedQueries[index]?.useErrorBoundary ?? false,
+      query: observerQueries[index]!,
+    }),
   )
 
   if (firstSingleResultWhichShouldThrow?.error) {

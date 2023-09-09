@@ -78,42 +78,26 @@ export function useBaseQuery<
 
   const defaultedOptions = computed(() => {
     const defaulted = queryClient.defaultQueryOptions(options.value)
-    defaulted._optimisticResults = queryClient.isRestoring.value
-      ? 'isRestoring'
-      : 'optimistic'
-
+    defaulted._isRestoring = queryClient.isRestoring.value
     return defaulted
   })
 
   const observer = new Observer(queryClient, defaultedOptions.value)
+
   const state = reactive(observer.getCurrentResult())
-
-  let unsubscribe = () => {
-    // noop
-  }
-
-  watch(
-    queryClient.isRestoring,
-    (isRestoring) => {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      if (!isRestoring) {
-        unsubscribe()
-        unsubscribe = observer.subscribe((result) => {
-          updateState(state, result)
-        })
-      }
-    },
-    { immediate: true },
-  )
 
   watch(
     defaultedOptions,
     () => {
-      observer.setOptions(defaultedOptions.value)
+      observer.setOptions(defaultedOptions.value, { listeners: false })
       updateState(state, observer.getCurrentResult())
     },
-    { flush: 'sync' },
+    { flush: 'sync', immediate: true },
   )
+
+  const unsubscribe = observer.subscribe((result) => {
+    updateState(state, result)
+  })
 
   onScopeDispose(() => {
     unsubscribe()
@@ -127,17 +111,13 @@ export function useBaseQuery<
         }
         const run = () => {
           if (defaultedOptions.value.enabled !== false) {
-            const optimisticResult = observer.getOptimisticResult(
-              defaultedOptions.value,
-            )
-            if (optimisticResult.isStale) {
+            const result = observer.getCurrentResult()
+            if (result.isStale) {
               stopWatch()
-              observer
-                .fetchOptimistic(defaultedOptions.value)
-                .then(resolve, reject)
+              observer.refetch().then(resolve, reject)
             } else {
               stopWatch()
-              resolve(optimisticResult)
+              resolve(result)
             }
           }
         }

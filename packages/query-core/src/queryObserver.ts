@@ -65,8 +65,7 @@ export class QueryObserver<
     TQueryData,
     TQueryKey
   >
-  private previousOptions?: DefaultedQueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>;
-  private previousQuery?: Query<TQueryFnData, TError, TQueryData, TQueryKey>;
+  private previousQuery?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
   private previousQueryResult?: QueryObserverResult<TData, TError>
   private selectError: TError | null
   private selectFn?: (data: TQueryData) => TData
@@ -89,11 +88,11 @@ export class QueryObserver<
     super()
 
     this.client = client
-    this.options = client.defaultQueryOptions(options);
+    this.options = client.defaultQueryOptions(options)
     this.trackedProps = new Set()
     this.selectError = null
     this.bindMethods()
-    this.setOptions(this.options, {listeners: false})
+    this.setOptions(this.options, { listeners: false })
   }
 
   protected bindMethods(): void {
@@ -104,11 +103,6 @@ export class QueryObserver<
   protected onSubscribe(): void {
     if (this.listeners.size === 1) {
       this.currentQuery.addObserver(this)
-
-      if (shouldFetchOnMount(this.currentQuery, this.options)) {
-        this.executeFetch()
-      }
-
       this.updateTimers()
     }
   }
@@ -152,7 +146,7 @@ export class QueryObserver<
     >,
     notifyOptions?: NotifyOptions,
   ): void {
-    this.previousOptions = this.options;
+    const previousOptions = this.options
     this.options = this.client.defaultQueryOptions(options)
 
     if (
@@ -166,7 +160,7 @@ export class QueryObserver<
         )
     }
 
-    if (!shallowEqualObjects(this.previousOptions, this.options)) {
+    if (!shallowEqualObjects(previousOptions, this.options)) {
       this.client.getQueryCache().notify({
         type: 'observerOptionsUpdated',
         query: this.currentQuery,
@@ -183,7 +177,7 @@ export class QueryObserver<
 
     // Keep previous query key if the user does not supply one
     if (!this.options.queryKey) {
-      this.options.queryKey = this.previousOptions.queryKey
+      this.options.queryKey = previousOptions.queryKey
     }
 
     this.updateQuery()
@@ -202,8 +196,8 @@ export class QueryObserver<
     if (
       mounted &&
       (this.currentQuery !== this.previousQuery ||
-        this.options.enabled !== this.previousOptions.enabled ||
-        this.options.staleTime !== this.previousOptions.staleTime)
+        this.options.enabled !== previousOptions.enabled ||
+        this.options.staleTime !== previousOptions.staleTime)
     ) {
       this.updateStaleTimeout()
     }
@@ -214,7 +208,7 @@ export class QueryObserver<
     if (
       mounted &&
       (this.currentQuery !== this.previousQuery ||
-        this.options.enabled !== this.previousOptions.enabled ||
+        this.options.enabled !== previousOptions.enabled ||
         nextRefetchInterval !== this.currentRefetchInterval)
     ) {
       this.updateRefetchInterval(nextRefetchInterval)
@@ -372,10 +366,9 @@ export class QueryObserver<
   }
 
   protected createResult(): QueryObserverResult<TData, TError> {
-    const query = this.currentQuery;
-    const options = this.options;
+    const query = this.currentQuery
+    const options = this.options
     const prevQuery = this.previousQuery
-    const prevOptions = this.previousOptions
     const prevResult = this.currentResult as
       | QueryObserverResult<TData, TError>
       | undefined
@@ -396,13 +389,16 @@ export class QueryObserver<
     let data: TData | undefined
 
     // Optimistically set result in fetching state if needed
-    if (options._optimisticResults) {
+    if (options._isRestoring) {
+      fetchStatus = 'idle'
+    } else {
       const mounted = this.hasListeners()
 
       const fetchOnMount = !mounted && shouldFetchOnMount(query, options)
 
       const fetchOptionally =
-        mounted && shouldFetchOptionally(query, prevQuery, options, prevOptions)
+        mounted &&
+        shouldFetchOptionally(query, prevQuery, options, prevResultOptions)
 
       if (fetchOnMount || fetchOptionally) {
         fetchStatus = canFetch(query.options.networkMode)
@@ -411,9 +407,6 @@ export class QueryObserver<
         if (!dataUpdatedAt) {
           status = 'loading'
         }
-      }
-      if (options._optimisticResults === 'isRestoring') {
-        fetchStatus = 'idle'
       }
     }
 
@@ -603,7 +596,7 @@ export class QueryObserver<
   private updateQuery(): void {
     const query = this.client.getQueryCache().build(this.client, this.options)
 
-    this.previousQuery = this.currentQuery;
+    this.previousQuery = this.currentQuery
 
     if (query === this.currentQuery) {
       return

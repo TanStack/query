@@ -3,12 +3,12 @@ import { QueriesObserver } from '@tanstack/query-core'
 import { createStore, unwrap } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
 import { scheduleMicrotask } from './utils'
+import type { QueryFunction } from '@tanstack/query-core'
 import type {
   CreateQueryOptions,
   CreateQueryResult,
   SolidQueryKey,
 } from './types'
-import type { QueryFunction } from '@tanstack/query-core'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
@@ -155,9 +155,7 @@ export function createQueries<T extends any[]>(queriesOptions: {
     options: ArrType<typeof queriesOptions.queries>,
   ) => {
     const normalizedOptions = { ...options, queryKey: options.queryKey?.() }
-    const defaultedOptions = queryClient.defaultQueryOptions(normalizedOptions)
-    defaultedOptions._optimisticResults = 'optimistic'
-    return defaultedOptions
+    return queryClient.defaultQueryOptions(normalizedOptions)
   }
 
   const defaultedQueries = queriesOptions.queries.map((options) =>
@@ -166,9 +164,7 @@ export function createQueries<T extends any[]>(queriesOptions: {
 
   const observer = new QueriesObserver(queryClient, defaultedQueries)
 
-  const [state, setState] = createStore(
-    observer.getOptimisticResult(defaultedQueries),
-  )
+  const [state, setState] = createStore(observer.getCurrentResult())
 
   const taskQueue: Array<() => void> = []
 
