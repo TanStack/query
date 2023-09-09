@@ -372,10 +372,18 @@ export class QueryClient {
     this.#defaultOptions = options
   }
 
-  setQueryDefaults(
+  setQueryDefaults<
+    TData = unknown,
+    TError = DefaultError,
+    TVariables = void,
+    TContext = unknown,
+  >(
     queryKey: QueryKey,
     options: Partial<
-      Omit<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>
+      Omit<
+        QueryObserverOptions<TData, TError, TVariables, TContext>,
+        'queryKey'
+      >
     >,
   ): void {
     this.#queryDefaults.set(hashKey(queryKey), {
@@ -399,9 +407,17 @@ export class QueryClient {
     return result
   }
 
-  setMutationDefaults(
+  setMutationDefaults<
+    TData = unknown,
+    TError = DefaultError,
+    TVariables = void,
+    TContext = unknown,
+  >(
     mutationKey: MutationKey,
-    options: Omit<MutationObserverOptions<any, any, any, any>, 'mutationKey'>,
+    options: Omit<
+      MutationObserverOptions<TData, TError, TVariables, TContext>,
+      'mutationKey'
+    >,
   ): void {
     this.#mutationDefaults.set(hashKey(mutationKey), {
       mutationKey,
