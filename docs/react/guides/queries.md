@@ -48,6 +48,7 @@ Beyond those primary states, more information is available depending on the stat
 
 - `error` - If the query is in an `isError` state, the error is available via the `error` property.
 - `data` - If the query is in an `isSuccess` state, the data is available via the `data` property.
+- `isFetching` - In any state, if the query is fetching at any time (including background refetching) `isFetching` will be `true`.
 
 For **most** queries, it's usually sufficient to check for the `isLoading` state, then the `isError` state, then finally, assume that the data is available and render the successful state:
 
@@ -117,7 +118,7 @@ TypeScript will also narrow the type of `data` correctly if you've checked for `
 
 ### FetchStatus
 
-In addition to the `status` field, the `result` object, you will also get an additional `fetchStatus`property with the following options:
+In addition to the `status` field and the `result` object, you will also get an additional `fetchStatus` property with the following options:
 
 - `fetchStatus === 'fetching'` - The query is currently fetching.
 - `fetchStatus === 'paused'` - The query wanted to fetch, but it is paused. Read more about this in the [Network Mode](../guides/network-mode) guide.

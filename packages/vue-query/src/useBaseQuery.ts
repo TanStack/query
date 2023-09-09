@@ -1,5 +1,6 @@
 import {
   computed,
+  getCurrentScope,
   onScopeDispose,
   reactive,
   readonly,
@@ -8,8 +9,13 @@ import {
   watch,
 } from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
-import { cloneDeepUnref, isQueryKey, updateState } from './utils'
-import type { ToRefs, UnwrapRef } from 'vue-demi'
+import {
+  cloneDeepUnref,
+  isQueryKey,
+  shouldThrowError,
+  updateState,
+} from './utils'
+import type { ToRefs } from 'vue-demi'
 import type {
   QueryFunction,
   QueryKey,
@@ -17,7 +23,7 @@ import type {
   QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { MaybeRef, WithQueryClientKey } from './types'
+import type { DeepUnwrapRef, MaybeRef, WithQueryClientKey } from './types'
 import type { UseQueryOptions } from './useQuery'
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 
@@ -46,13 +52,25 @@ export function useBaseQuery<
 >(
   Observer: typeof QueryObserver,
   arg1:
-    | TQueryKey
-    | UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>,
+    | MaybeRef<TQueryKey>
+    | MaybeRef<UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>>,
   arg2:
-    | QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>
-    | UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey> = {},
-  arg3: UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey> = {},
+    | MaybeRef<QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>>
+    | MaybeRef<
+        UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>
+      > = {},
+  arg3: MaybeRef<
+    UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>
+  > = {},
 ): UseQueryReturnType<TData, TError> {
+  if (process.env.NODE_ENV === 'development') {
+    if (!getCurrentScope()) {
+      console.warn(
+        'vue-query composables like "uesQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+      )
+    }
+  }
+
   const options = computed(() => parseQueryArgs(arg1, arg2, arg3))
 
   const queryClient =
@@ -94,7 +112,7 @@ export function useBaseQuery<
       observer.setOptions(defaultedOptions.value)
       updateState(state, observer.getCurrentResult())
     },
-    { deep: true },
+    { flush: 'sync' },
   )
 
   onScopeDispose(() => {
@@ -102,30 +120,51 @@ export function useBaseQuery<
   })
 
   const suspense = () => {
-    return new Promise<QueryObserverResult<TData, TError>>((resolve) => {
-      let stopWatch = () => {
-        //noop
-      }
-      const run = () => {
-        if (defaultedOptions.value.enabled !== false) {
-          const optimisticResult = observer.getOptimisticResult(
-            defaultedOptions.value,
-          )
-          if (optimisticResult.isStale) {
-            stopWatch()
-            resolve(observer.fetchOptimistic(defaultedOptions.value))
-          } else {
-            stopWatch()
-            resolve(optimisticResult)
+    return new Promise<QueryObserverResult<TData, TError>>(
+      (resolve, reject) => {
+        let stopWatch = () => {
+          //noop
+        }
+        const run = () => {
+          if (defaultedOptions.value.enabled !== false) {
+            const optimisticResult = observer.getOptimisticResult(
+              defaultedOptions.value,
+            )
+            if (optimisticResult.isStale) {
+              stopWatch()
+              observer
+                .fetchOptimistic(defaultedOptions.value)
+                .then(resolve, reject)
+            } else {
+              stopWatch()
+              resolve(optimisticResult)
+            }
           }
         }
-      }
 
-      run()
+        run()
 
-      stopWatch = watch(defaultedOptions, run, { deep: true })
-    })
+        stopWatch = watch(defaultedOptions, run)
+      },
+    )
   }
+
+  // Handle error boundary
+  watch(
+    () => state.error,
+    (error) => {
+      if (
+        state.isError &&
+        !state.isFetching &&
+        shouldThrowError(defaultedOptions.value.useErrorBoundary, [
+          error as TError,
+          observer.getCurrentQuery(),
+        ])
+      ) {
+        throw error
+      }
+    },
+  )
 
   return {
     ...(toRefs(readonly(state)) as UseQueryReturnType<TData, TError>),
@@ -144,7 +183,7 @@ export function parseQueryArgs<
     | MaybeRef<TQueryKey>
     | MaybeRef<UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>>,
   arg2:
-    | MaybeRef<QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>>
+    | MaybeRef<QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>>
     | MaybeRef<
         UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>
       > = {},

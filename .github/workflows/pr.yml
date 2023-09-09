@@ -27,8 +27,9 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16.14.2
-          cache: 'pnpm'
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - name: Get appropriate base and head commits for `nx affected` commands
@@ -68,8 +69,9 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16.14.2
-          cache: 'pnpm'
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - name: Start Nx Agent ${{ matrix.agent }}
@@ -88,8 +90,9 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16.14.2
-          cache: 'pnpm'
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - name: Run prettier
@@ -108,8 +111,9 @@ jobs:
           version: 8
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.14.2
-          cache: 'pnpm'
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - name: Derive appropriate SHAs for base and head for `nx affected` commands

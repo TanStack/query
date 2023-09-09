@@ -1,10 +1,14 @@
 {
   "name": "@tanstack/react-query-persist-client",
-  "version": "4.29.25",
+  "version": "4.35.0",
   "description": "React bindings to work with persisters in TanStack/react-query",
   "author": "tannerlinsley",
   "license": "MIT",
-  "repository": "tanstack/query",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TanStack/query.git",
+    "directory": "packages/react-query-persist-client"
+  },
   "homepage": "https://tanstack.com/query",
   "funding": {
     "type": "github",
@@ -48,6 +52,6 @@
     "@tanstack/query-persist-client-core": "workspace:*"
   },
   "peerDependencies": {
-    "@tanstack/react-query": "workspace:*"
+    "@tanstack/react-query": "workspace:^"
   }
 }

@@ -1,4 +1,11 @@
-import { computed, onScopeDispose, ref, unref, watch } from 'vue-demi'
+import {
+  computed,
+  getCurrentScope,
+  onScopeDispose,
+  ref,
+  unref,
+  watchSyncEffect,
+} from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref, isQueryKey } from './utils'
 import type { Ref } from 'vue-demi'
@@ -17,23 +24,27 @@ export function useIsFetching(
   arg1?: MaybeRef<QueryKey> | QueryFilters,
   arg2?: Omit<QueryFilters, 'queryKey'>,
 ): Ref<number> {
+  if (process.env.NODE_ENV === 'development') {
+    if (!getCurrentScope()) {
+      console.warn(
+        'vue-query composables like "uesQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+      )
+    }
+  }
+
   const filters = computed(() => parseFilterArgs(arg1, arg2))
   const queryClient =
     filters.value.queryClient ?? useQueryClient(filters.value.queryClientKey)
 
-  const isFetching = ref(queryClient.isFetching(filters))
+  const isFetching = ref()
 
-  const unsubscribe = queryClient.getQueryCache().subscribe(() => {
+  const listener = () => {
     isFetching.value = queryClient.isFetching(filters)
-  })
+  }
 
-  watch(
-    filters,
-    () => {
-      isFetching.value = queryClient.isFetching(filters)
-    },
-    { deep: true },
-  )
+  const unsubscribe = queryClient.getQueryCache().subscribe(listener)
+
+  watchSyncEffect(listener)
 
   onScopeDispose(() => {
     unsubscribe()

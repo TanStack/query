@@ -1,10 +1,14 @@
 {
   "name": "@tanstack/eslint-plugin-query",
-  "version": "4.29.25",
+  "version": "4.34.1",
   "description": "ESLint plugin for TanStack Query",
   "author": "Eliya Cohen",
   "license": "MIT",
-  "repository": "tanstack/query",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TanStack/query.git",
+    "directory": "packages/eslint-plugin-query"
+  },
   "homepage": "https://tanstack.com/query",
   "funding": {
     "type": "github",
@@ -47,5 +51,8 @@
     "@typescript-eslint/utils": "^5.41.0",
     "eslint": "^8.26.0",
     "tsup": "^6.3.0"
+  },
+  "peerDependencies": {
+    "eslint": "^6.0.0 || ^7.0.0 || ^8.0.0"
   }
 }

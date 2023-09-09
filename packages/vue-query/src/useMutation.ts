@@ -1,5 +1,6 @@
 import {
   computed,
+  getCurrentScope,
   onScopeDispose,
   reactive,
   readonly,
@@ -8,7 +9,12 @@ import {
   watch,
 } from 'vue-demi'
 import { MutationObserver } from '@tanstack/query-core'
-import { cloneDeepUnref, isMutationKey, updateState } from './utils'
+import {
+  cloneDeepUnref,
+  isMutationKey,
+  shouldThrowError,
+  updateState,
+} from './utils'
 import { useQueryClient } from './useQueryClient'
 import type { ToRefs } from 'vue-demi'
 import type {
@@ -143,6 +149,14 @@ export function useMutation<
     VueMutationObserverOptions<TData, TError, TVariables, TContext>
   >,
 ): UseMutationReturnType<TData, TError, TVariables, TContext> {
+  if (process.env.NODE_ENV === 'development') {
+    if (!getCurrentScope()) {
+      console.warn(
+        'vue-query composables like "uesQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+      )
+    }
+  }
+
   const options = computed(() => {
     return parseMutationArgs(arg1, arg2, arg3)
   })
@@ -172,7 +186,7 @@ export function useMutation<
     () => {
       observer.setOptions(queryClient.defaultMutationOptions(options.value))
     },
-    { deep: true },
+    { flush: 'sync' },
   )
 
   onScopeDispose(() => {
@@ -182,6 +196,18 @@ export function useMutation<
   const resultRefs = toRefs(readonly(state)) as unknown as ToRefs<
     Readonly<MutationResult<TData, TError, TVariables, TContext>>
   >
+
+  watch(
+    () => state.error,
+    (error) => {
+      if (
+        error &&
+        shouldThrowError(options.value.useErrorBoundary, [error as TError])
+      ) {
+        throw error
+      }
+    },
+  )
 
   return {
     ...resultRefs,

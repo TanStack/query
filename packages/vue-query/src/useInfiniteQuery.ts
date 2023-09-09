@@ -1,6 +1,5 @@
 import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
-import type { UnwrapRef } from 'vue-demi'
 import type {
   InfiniteQueryObserverResult,
   QueryFunction,
@@ -11,6 +10,7 @@ import type {
 import type { UseQueryReturnType } from './useBaseQuery'
 
 import type {
+  DeepUnwrapRef,
   DistributiveOmit,
   VueInfiniteQueryObserverOptions,
   WithQueryClientKey,
@@ -78,7 +78,7 @@ export function useInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   queryKey: TQueryKey,
-  queryFn: QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>,
+  queryFn: QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>,
   options?: Omit<
     UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'queryFn'
@@ -95,7 +95,7 @@ export function useInfiniteQuery<
     | TQueryKey
     | UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   arg2?:
-    | QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>
+    | QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>
     | UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   arg3?: UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): UseInfiniteQueryReturnType<TData, TError> {

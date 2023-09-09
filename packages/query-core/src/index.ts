@@ -34,7 +34,8 @@ export {
 
 // Types
 export * from './types'
-export type { Query, QueryState } from './query'
+export type { QueryState } from './query'
+export { Query } from './query'
 export type { Mutation } from './mutation'
 export type { Logger } from './logger'
 export type {

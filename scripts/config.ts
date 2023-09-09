@@ -92,6 +92,9 @@ export const branchConfigs: Record<string, BranchConfig> = {
   alpha: {
     prerelease: true,
   },
+  rc: {
+    prerelease: true,
+  },
 }
 
 export const rootDir = path.resolve(__dirname, '..')
