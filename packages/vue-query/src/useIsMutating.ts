@@ -6,8 +6,9 @@ import {
   unref,
   watchSyncEffect,
 } from 'vue-demi'
+import { parseMutationFilterArgs } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
-import { cloneDeepUnref, isQueryKey } from './utils'
+import { cloneDeepUnref } from './utils'
 import type { Ref } from 'vue-demi'
 import type { MutationFilters as MF, MutationKey } from '@tanstack/query-core'
 
@@ -32,7 +33,16 @@ export function useIsMutating(
     }
   }
 
-  const filters = computed(() => parseFilterArgs(arg1, arg2))
+  const filters = computed(
+    () =>
+      cloneDeepUnref(
+        parseMutationFilterArgs(
+          // @ts-expect-error this is fine
+          unref(arg1),
+          unref(arg2),
+        )[0],
+      ) as WithQueryClientKey<MF>,
+  )
   const queryClient =
     filters.value.queryClient ?? useQueryClient(filters.value.queryClientKey)
 
@@ -53,21 +63,21 @@ export function useIsMutating(
   return isMutating
 }
 
-export function parseFilterArgs(
-  arg1?: MaybeRef<MutationKey> | MutationFilters,
-  arg2: MutationFilters = {},
-) {
-  const plainArg1 = unref(arg1)
-  const plainArg2 = unref(arg2)
+// export function parseFilterArgs(
+//   arg1?: MaybeRef<MutationKey> | MutationFilters,
+//   arg2: MutationFilters = {},
+// ) {
+//   const plainArg1 = unref(arg1)
+//   const plainArg2 = unref(arg2)
 
-  let options = plainArg1
+//   let options = plainArg1
 
-  if (isQueryKey(plainArg1)) {
-    options = { ...plainArg2, mutationKey: plainArg1 }
-  } else {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    options = plainArg1 || {}
-  }
+//   if (isQueryKey(plainArg1)) {
+//     options = { ...plainArg2, mutationKey: plainArg1 }
+//   } else {
+//     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+//     options = plainArg1 || {}
+//   }
 
-  return cloneDeepUnref(options) as WithQueryClientKey<MF>
-}
+//   return cloneDeepUnref(options) as WithQueryClientKey<MF>
+// }

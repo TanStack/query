@@ -6,8 +6,9 @@ import {
   unref,
   watchSyncEffect,
 } from 'vue-demi'
+import { parseFilterArgs } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
-import { cloneDeepUnref, isQueryKey } from './utils'
+import { cloneDeepUnref } from './utils'
 import type { Ref } from 'vue-demi'
 import type { QueryFilters as QF, QueryKey } from '@tanstack/query-core'
 
@@ -32,7 +33,16 @@ export function useIsFetching(
     }
   }
 
-  const filters = computed(() => parseFilterArgs(arg1, arg2))
+  const filters = computed(
+    () =>
+      cloneDeepUnref(
+        parseFilterArgs(
+          // @ts-expect-error this is fine
+          unref(arg1),
+          unref(arg2),
+        )[0],
+      ) as WithQueryClientKey<QF>,
+  )
   const queryClient =
     filters.value.queryClient ?? useQueryClient(filters.value.queryClientKey)
 
@@ -53,21 +63,21 @@ export function useIsFetching(
   return isFetching
 }
 
-export function parseFilterArgs(
-  arg1?: MaybeRef<QueryKey> | QueryFilters,
-  arg2: QueryFilters = {},
-) {
-  const plainArg1 = unref(arg1)
-  const plainArg2 = unref(arg2)
+// export function parseFilterArgs(
+//   arg1?: MaybeRef<QueryKey> | QueryFilters,
+//   arg2: QueryFilters = {},
+// ) {
+//   const plainArg1 = unref(arg1)
+//   const plainArg2 = unref(arg2)
 
-  let options = plainArg1
+//   let options = plainArg1
 
-  if (isQueryKey(plainArg1)) {
-    options = { ...plainArg2, queryKey: plainArg1 }
-  } else {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    options = plainArg1 || {}
-  }
+//   if (isQueryKey(plainArg1)) {
+//     options = { ...plainArg2, queryKey: plainArg1 }
+//   } else {
+//     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+//     options = plainArg1 || {}
+//   }
 
-  return cloneDeepUnref(options) as WithQueryClientKey<QF>
-}
+//   return cloneDeepUnref(options) as WithQueryClientKey<QF>
+// }

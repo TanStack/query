@@ -8,13 +8,8 @@ import {
   unref,
   watch,
 } from 'vue-demi'
-import { MutationObserver } from '@tanstack/query-core'
-import {
-  cloneDeepUnref,
-  isMutationKey,
-  shouldThrowError,
-  updateState,
-} from './utils'
+import { MutationObserver, parseMutationArgs } from '@tanstack/query-core'
+import { cloneDeepUnref, shouldThrowError, updateState } from './utils'
 import { useQueryClient } from './useQueryClient'
 import type { ToRefs } from 'vue-demi'
 import type {
@@ -158,7 +153,14 @@ export function useMutation<
   }
 
   const options = computed(() => {
-    return parseMutationArgs(arg1, arg2, arg3)
+    return cloneDeepUnref(
+      parseMutationArgs(
+        // @ts-expect-error this is fine
+        unref(arg1),
+        unref(arg2),
+        unref(arg3),
+      ),
+    ) as UseMutationOptions<TData, TError, TVariables, TContext>
   })
   const queryClient =
     options.value.queryClient ?? useQueryClient(options.value.queryClientKey)
@@ -215,47 +217,4 @@ export function useMutation<
     mutateAsync: state.mutate,
     reset: state.reset,
   }
-}
-
-export function parseMutationArgs<
-  TData = unknown,
-  TError = unknown,
-  TVariables = void,
-  TContext = unknown,
->(
-  arg1:
-    | MaybeRef<MutationKey>
-    | MaybeRef<MutationFunction<TData, TVariables>>
-    | MaybeRef<VueMutationObserverOptions<TData, TError, TVariables, TContext>>,
-  arg2?:
-    | MaybeRef<MutationFunction<TData, TVariables>>
-    | MaybeRef<VueMutationObserverOptions<TData, TError, TVariables, TContext>>,
-  arg3?: MaybeRef<
-    VueMutationObserverOptions<TData, TError, TVariables, TContext>
-  >,
-): WithQueryClientKey<
-  MutationObserverOptions<TData, TError, TVariables, TContext>
-> {
-  const plainArg1 = unref(arg1)
-  const plainArg2 = unref(arg2)
-  let options = plainArg1
-  if (isMutationKey(plainArg1)) {
-    if (typeof plainArg2 === 'function') {
-      const plainArg3 = unref(arg3)
-      options = { ...plainArg3, mutationKey: plainArg1, mutationFn: plainArg2 }
-    } else {
-      options = { ...plainArg2, mutationKey: plainArg1 }
-    }
-  }
-
-  if (typeof plainArg1 === 'function') {
-    options = { ...plainArg2, mutationFn: plainArg1 }
-  }
-
-  return cloneDeepUnref(options) as UseMutationOptions<
-    TData,
-    TError,
-    TVariables,
-    TContext
-  >
 }

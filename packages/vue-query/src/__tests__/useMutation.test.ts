@@ -1,5 +1,5 @@
 import { reactive, ref } from 'vue-demi'
-import { parseMutationArgs, useMutation } from '../useMutation'
+import { useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
 import { errorMutator, flushPromises, successMutator } from './test-utils'
 
@@ -328,58 +328,6 @@ describe('useMutation', () => {
 
       expect(boundaryFn).toHaveBeenCalledTimes(1)
       expect(boundaryFn).toHaveBeenCalledWith(err)
-    })
-  })
-
-  describe('parseMutationArgs', () => {
-    test('should return the same instance of options', () => {
-      const options = { retry: false }
-      const result = parseMutationArgs(options)
-
-      expect(result).toEqual(options)
-    })
-
-    test('should merge query key with options', () => {
-      const options = { retry: false }
-      const result = parseMutationArgs(['key'], options)
-      const expected = { ...options, mutationKey: ['key'] }
-
-      expect(result).toEqual(expected)
-    })
-
-    test('should merge query fn with options', () => {
-      const options = { retry: false }
-      const result = parseMutationArgs(successMutator, options)
-      const expected = { ...options, mutationFn: successMutator }
-
-      expect(result).toEqual(expected)
-    })
-
-    test('should merge query key and fn with options', () => {
-      const options = { retry: false }
-      const result = parseMutationArgs(['key'], successMutator, options)
-      const expected = {
-        ...options,
-        mutationKey: ['key'],
-        mutationFn: successMutator,
-      }
-
-      expect(result).toEqual(expected)
-    })
-
-    test('should unwrap refs arguments', () => {
-      const key = ref(['key'])
-      const mutationFn = ref(successMutator)
-      const options = ref({ retry: ref(12) })
-
-      const result = parseMutationArgs(key, mutationFn, options)
-      const expected = {
-        mutationKey: ['key'],
-        mutationFn: successMutator,
-        retry: 12,
-      }
-
-      expect(result).toEqual(expected)
     })
   })
 })

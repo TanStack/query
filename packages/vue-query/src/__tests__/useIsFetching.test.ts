@@ -1,7 +1,7 @@
-import { onScopeDispose, reactive, ref } from 'vue-demi'
+import { onScopeDispose, reactive } from 'vue-demi'
 
 import { useQuery } from '../useQuery'
-import { parseFilterArgs, useIsFetching } from '../useIsFetching'
+import { useIsFetching } from '../useIsFetching'
 import { flushPromises, simpleFetcher } from './test-utils'
 
 jest.mock('../useQueryClient')
@@ -70,32 +70,5 @@ describe('useIsFetching', () => {
     expect(isFetching.value).toStrictEqual(1)
 
     await flushPromises(100)
-  })
-
-  describe('parseFilterArgs', () => {
-    test('should default to empty filters', () => {
-      const result = parseFilterArgs(undefined)
-
-      expect(result).toEqual({})
-    })
-
-    test('should merge query key with filters', () => {
-      const filters = { stale: true }
-
-      const result = parseFilterArgs(['key'], filters)
-      const expected = { ...filters, queryKey: ['key'] }
-
-      expect(result).toEqual(expected)
-    })
-
-    test('should unwrap refs arguments', () => {
-      const key = ref(['key'])
-      const filters = ref({ stale: ref(true) })
-
-      const result = parseFilterArgs(key, filters)
-      const expected = { queryKey: ['key'], stale: true }
-
-      expect(result).toEqual(expected)
-    })
   })
 })

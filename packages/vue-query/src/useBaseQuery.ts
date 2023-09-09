@@ -8,13 +8,9 @@ import {
   unref,
   watch,
 } from 'vue-demi'
+import { parseQueryArgs } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
-import {
-  cloneDeepUnref,
-  isQueryKey,
-  shouldThrowError,
-  updateState,
-} from './utils'
+import { cloneDeepUnref, shouldThrowError, updateState } from './utils'
 import type { ToRefs } from 'vue-demi'
 import type {
   QueryFunction,
@@ -54,14 +50,12 @@ export function useBaseQuery<
   arg1:
     | MaybeRef<TQueryKey>
     | MaybeRef<UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>>,
-  arg2:
+  arg2?:
     | MaybeRef<QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>>
-    | MaybeRef<
-        UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>
-      > = {},
-  arg3: MaybeRef<
+    | MaybeRef<UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>>,
+  arg3?: MaybeRef<
     UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>
-  > = {},
+  >,
 ): UseQueryReturnType<TData, TError> {
   if (process.env.NODE_ENV === 'development') {
     if (!getCurrentScope()) {
@@ -71,7 +65,18 @@ export function useBaseQuery<
     }
   }
 
-  const options = computed(() => parseQueryArgs(arg1, arg2, arg3))
+  const options = computed(() => {
+    return cloneDeepUnref(
+      parseQueryArgs(
+        // @ts-expect-error this is fine
+        unref(arg1),
+        unref(arg2),
+        unref(arg3),
+      ),
+    ) as WithQueryClientKey<
+      QueryObserverOptions<TQueryFnData, TError, TData, TData, TQueryKey>
+    >
+  })
 
   const queryClient =
     options.value.queryClient ?? useQueryClient(options.value.queryClientKey)
@@ -170,44 +175,4 @@ export function useBaseQuery<
     ...(toRefs(readonly(state)) as UseQueryReturnType<TData, TError>),
     suspense,
   }
-}
-
-export function parseQueryArgs<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  arg1:
-    | MaybeRef<TQueryKey>
-    | MaybeRef<UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>>,
-  arg2:
-    | MaybeRef<QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>>
-    | MaybeRef<
-        UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>
-      > = {},
-  arg3: MaybeRef<
-    UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>
-  > = {},
-): WithQueryClientKey<
-  QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
-> {
-  const plainArg1 = unref(arg1)
-  const plainArg2 = unref(arg2)
-  const plainArg3 = unref(arg3)
-
-  let options = plainArg1
-
-  if (!isQueryKey(plainArg1)) {
-    options = plainArg1
-  } else if (typeof plainArg2 === 'function') {
-    options = { ...plainArg3, queryKey: plainArg1, queryFn: plainArg2 }
-  } else {
-    options = { ...plainArg2, queryKey: plainArg1 }
-  }
-
-  return cloneDeepUnref(options) as WithQueryClientKey<
-    QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
-  >
 }

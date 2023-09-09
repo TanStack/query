@@ -8,7 +8,7 @@ import {
 import { QueryObserver } from '@tanstack/query-core'
 
 import { useQuery } from '../useQuery'
-import { parseQueryArgs, useBaseQuery } from '../useBaseQuery'
+import { useBaseQuery } from '../useBaseQuery'
 import {
   flushPromises,
   getSimpleFetcherWithReturnData,
@@ -279,53 +279,6 @@ describe('useQuery', () => {
           state: expect.objectContaining({ status: 'error' }),
         }),
       )
-    })
-  })
-
-  describe('parseQueryArgs', () => {
-    test('should unwrap refs arguments', () => {
-      const key = ref(['key'])
-      const fn = ref(simpleFetcher)
-      const options = ref({ enabled: ref(true) })
-
-      const result = parseQueryArgs(key, fn, options)
-      const expected = {
-        queryKey: ['key'],
-        queryFn: simpleFetcher,
-        enabled: true,
-      }
-
-      expect(result).toEqual(expected)
-    })
-
-    test('should unwrap refs with fn in options', () => {
-      const key = ref(['key'])
-      const fn = ref(simpleFetcher)
-      const options = ref({ queryFn: fn, enabled: ref(true) })
-
-      const result = parseQueryArgs(key, options)
-      const expected = {
-        queryKey: ['key'],
-        queryFn: simpleFetcher,
-        enabled: true,
-      }
-
-      expect(result).toEqual(expected)
-    })
-
-    test('should unwrap refs in options', () => {
-      const key = ref(['key'])
-      const fn = ref(simpleFetcher)
-      const options = ref({ queryKey: key, queryFn: fn, enabled: ref(true) })
-
-      const result = parseQueryArgs(options)
-      const expected = {
-        queryKey: ['key'],
-        queryFn: simpleFetcher,
-        enabled: true,
-      }
-
-      expect(result).toEqual(expected)
     })
   })
 
