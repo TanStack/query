@@ -587,6 +587,10 @@
               "to": "vue/guides/testing"
             },
             {
+              "label": "Custom Client",
+              "to": "vue/guides/custom-client"
+            },
+            {
               "label": "Does this replace [Vuex, Pinia]?",
               "to": "vue/guides/does-this-replace-client-state"
             },

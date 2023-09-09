@@ -93,9 +93,13 @@ export function useMutation<
     })
   }
 
-  watch(options, () => {
-    observer.setOptions(options.value)
-  })
+  watch(
+    options,
+    () => {
+      observer.setOptions(options.value)
+    },
+    { flush: 'sync' },
+  )
 
   onScopeDispose(() => {
     unsubscribe()

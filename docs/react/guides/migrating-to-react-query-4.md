@@ -248,8 +248,8 @@ refetchInactive: Boolean
 For the same reason, those have also been combined:
 
 ```diff
-- active?: boolean
-- inactive?: boolean
+- refetchActive?: boolean
+- refetchInactive?: boolean
 + refetchType?: 'active' | 'inactive' | 'all' | 'none'
 ```
 

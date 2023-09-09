@@ -624,6 +624,11 @@ describe('useSuspenseQuery', () => {
         },
         retry: false,
       })
+
+      if (result.error) {
+        throw result.error
+      }
+
       return (
         <div>
           <span>rendered</span> <span>{result.data}</span>
@@ -711,6 +716,68 @@ describe('useSuspenseQuery', () => {
 
     expect(renders).toBe(2)
     expect(rendered.queryByText('rendered')).not.toBeNull()
+  })
+
+  it('should not throw background errors to the error boundary', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    let succeed = true
+    const key = queryKey()
+
+    function Page() {
+      const result = useSuspenseQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          if (!succeed) {
+            throw new Error('Suspense Error Bingo')
+          } else {
+            return 'data'
+          }
+        },
+        retry: false,
+      })
+
+      return (
+        <div>
+          <span>
+            rendered {result.data} {result.status}
+          </span>
+          <button onClick={() => result.refetch()}>refetch</button>
+        </div>
+      )
+    }
+
+    function App() {
+      const { reset } = useQueryErrorResetBoundary()
+      return (
+        <ErrorBoundary
+          onReset={reset}
+          fallbackRender={() => <div>error boundary</div>}
+        >
+          <React.Suspense fallback="Loading...">
+            <Page />
+          </React.Suspense>
+        </ErrorBoundary>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    // render suspense fallback (Loading...)
+    await waitFor(() => rendered.getByText('Loading...'))
+    // resolve promise -> render Page (rendered)
+    await waitFor(() => rendered.getByText('rendered data success'))
+
+    // change promise result to error
+    succeed = false
+    // refetch
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+    // we are now in error state but still have data to show
+    await waitFor(() => rendered.getByText('rendered data error'))
+
+    consoleMock.mockRestore()
   })
 })
 

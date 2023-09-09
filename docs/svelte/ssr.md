@@ -87,9 +87,8 @@ Svelte Query supports prefetching queries on the server. Using this setup below,
 ```ts
 import { browser } from '$app/environment'
 import { QueryClient } from '@tanstack/svelte-query'
-import type { LayoutLoad } from './$types'
 
-export const load: LayoutLoad = async () => {
+export const load = async () => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {

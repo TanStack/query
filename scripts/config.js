@@ -112,6 +112,9 @@ export const branchConfigs = {
   alpha: {
     prerelease: true,
   },
+  rc: {
+    prerelease: true,
+  },
 }
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
