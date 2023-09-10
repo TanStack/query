@@ -4,9 +4,9 @@ import {
   PERSISTER_KEY_PREFIX,
   experimental_createPersister,
 } from '../createPersister'
+import { sleep } from './utils'
 import type { StoragePersisterOptions } from '../createPersister'
 import type { QueryKey } from '@tanstack/query-core'
-import { sleep } from './utils'
 
 function getFreshStorage() {
   const storage = new Map()
