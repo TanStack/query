@@ -62,22 +62,3 @@ export function useIsMutating(
 
   return isMutating
 }
-
-// export function parseFilterArgs(
-//   arg1?: MaybeRef<MutationKey> | MutationFilters,
-//   arg2: MutationFilters = {},
-// ) {
-//   const plainArg1 = unref(arg1)
-//   const plainArg2 = unref(arg2)
-
-//   let options = plainArg1
-
-//   if (isQueryKey(plainArg1)) {
-//     options = { ...plainArg2, mutationKey: plainArg1 }
-//   } else {
-//     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-//     options = plainArg1 || {}
-//   }
-
-//   return cloneDeepUnref(options) as WithQueryClientKey<MF>
-// }

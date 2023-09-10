@@ -62,22 +62,3 @@ export function useIsFetching(
 
   return isFetching
 }
-
-// export function parseFilterArgs(
-//   arg1?: MaybeRef<QueryKey> | QueryFilters,
-//   arg2: QueryFilters = {},
-// ) {
-//   const plainArg1 = unref(arg1)
-//   const plainArg2 = unref(arg2)
-
-//   let options = plainArg1
-
-//   if (isQueryKey(plainArg1)) {
-//     options = { ...plainArg2, queryKey: plainArg1 }
-//   } else {
-//     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-//     options = plainArg1 || {}
-//   }
-
-//   return cloneDeepUnref(options) as WithQueryClientKey<QF>
-// }
