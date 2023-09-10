@@ -51,6 +51,8 @@ export interface StoragePersisterOptions {
   prefix?: string
 }
 
+export const PERSISTER_KEY_PREFIX = 'tanstack-query'
+
 /**
  * Warning: experimental feature.
  * This utility function enables fine-grained query persistance.
@@ -72,7 +74,7 @@ export function experimental_createPersister({
   maxAge = 1000 * 60 * 60 * 24,
   serialize = JSON.stringify,
   deserialize = JSON.parse,
-  prefix = 'tanstack-query-',
+  prefix = PERSISTER_KEY_PREFIX,
 }: StoragePersisterOptions) {
   return async function persisterFn<T, TQueryKey extends QueryKey>(
     queryFn: (context: QueryFunctionContext<TQueryKey>) => T | Promise<T>,
@@ -115,12 +117,13 @@ export function experimental_createPersister({
           }
         }
       } catch (err) {
-        if (process.env.NODE_ENV !== 'production') {
+        if (process.env.NODE_ENV === 'development') {
           console.error(err)
           console.warn(
             'Encountered an error attempting to restore query cache from persisted location.',
           )
         }
+        await storage.removeItem(storageKey)
       }
     }
 
