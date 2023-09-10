@@ -5,7 +5,6 @@ import { QueryClient } from './queryClient'
 import { getClientKey } from './utils'
 import { setupDevtools } from './devtools/devtools'
 import type { QueryClientConfig } from '@tanstack/query-core'
-import type { MaybeRefDeep } from './types'
 
 type ClientPersister = (client: QueryClient) => [() => void, Promise<void>]
 
@@ -16,7 +15,7 @@ interface CommonOptions {
 }
 
 interface ConfigOptions extends CommonOptions {
-  queryClientConfig?: MaybeRefDeep<QueryClientConfig>
+  queryClientConfig?: QueryClientConfig
 }
 
 interface ClientOptions extends CommonOptions {
