@@ -397,7 +397,7 @@ export class Query<
         return this.options.persister(
           this.options.queryFn,
           queryFnContext as QueryFunctionContext<TQueryKey>,
-          this as any,
+          this as unknown as Query,
         )
       }
 
@@ -422,7 +422,7 @@ export class Query<
 
     this.options.behavior?.onFetch(
       context as FetchContext<TQueryFnData, TError, TData, TQueryKey>,
-      this as any,
+      this as unknown as Query,
     )
 
     // Store state in case the current fetch needs to be reverted

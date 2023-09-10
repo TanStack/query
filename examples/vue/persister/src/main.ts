@@ -1,7 +1,5 @@
 import { createApp } from 'vue'
 import { VueQueryPlugin } from '@tanstack/vue-query'
-import { persistQueryClient } from '@tanstack/query-persist-client-core'
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import type { VueQueryPluginOptions } from '@tanstack/vue-query'
 
 import App from './App.vue'
@@ -15,12 +13,6 @@ const vueQueryOptions: VueQueryPluginOptions = {
       },
     },
   },
-  // clientPersister: (queryClient) => {
-  //   return persistQueryClient({
-  //     queryClient,
-  //     persister: createSyncStoragePersister({ storage: localStorage }),
-  //   })
-  // },
 }
 
 createApp(App).use(VueQueryPlugin, vueQueryOptions).mount('#app')

@@ -97,7 +97,7 @@ export function experimental_createPersister({
             } else {
               // Just after restoring we want to get fresh data from the server if it's stale
               setTimeout(() => {
-                // Set proper updatedAt
+                // Set proper updatedAt, since resolving in the first pass overrides those values
                 query.setState({
                   dataUpdatedAt: persistedQuery.state.dataUpdatedAt,
                   errorUpdatedAt: persistedQuery.state.errorUpdatedAt,

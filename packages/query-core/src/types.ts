@@ -7,6 +7,8 @@ import type { QueryFilters, QueryTypeFilter } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
 
+type NoInfer<T> = [T][T extends any ? 0 : never]
+
 export interface Register {
   // defaultError: Error
   // queryMeta: Record<string, unknown>
@@ -116,9 +118,6 @@ export type NotifyOnChangeProps =
   | 'all'
   | (() => Array<keyof InfiniteQueryObserverResult> | 'all')
 
-export type NoInfer<T> = T & { [K in keyof T]: T[K] }
-type NoInfer2<T> = [T][T extends any ? 0 : never]
-
 export interface QueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -138,9 +137,9 @@ export interface QueryOptions<
   gcTime?: number
   queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam>
   persister?: QueryPersister<
-    NoInfer2<TQueryFnData>,
-    NoInfer2<TQueryKey>,
-    NoInfer2<TPageParam>
+    NoInfer<TQueryFnData>,
+    NoInfer<TQueryKey>,
+    NoInfer<TPageParam>
   >
   queryHash?: string
   queryKey?: TQueryKey

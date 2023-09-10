@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { useQuery, useQueryClient } from '@tanstack/vue-query'
+import { useQuery } from '@tanstack/vue-query'
 import { experimental_createPersister } from '@tanstack/query-persist-client-core'
 
 import { Post } from './types'
@@ -33,7 +33,7 @@ export default defineComponent({
       refetch,
     } = useQuery({
       queryKey: ['posts'] as const,
-      queryFn: ({ queryKey }) => fetcher(),
+      queryFn: () => fetcher(),
       persister: experimental_createPersister({
         storage: localStorage,
       }),

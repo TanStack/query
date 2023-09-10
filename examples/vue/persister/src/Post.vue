@@ -1,7 +1,7 @@
 <script lang="ts">
 import { get, set, del } from 'idb-keyval'
 import { defineComponent } from 'vue'
-import { useQuery, useQueryClient } from '@tanstack/vue-query'
+import { useQuery } from '@tanstack/vue-query'
 
 import { Post } from './types'
 import { experimental_createPersister } from '@tanstack/query-persist-client-core'
@@ -23,7 +23,7 @@ export default defineComponent({
   setup(props) {
     const { isPending, isError, isFetching, data, error } = useQuery({
       queryKey: ['post', props.postId] as const,
-      queryFn: ({ queryKey }) => fetcher(props.postId),
+      queryFn: () => fetcher(props.postId),
       persister: experimental_createPersister({
         storage: {
           getItem: (key: string) => get(key),
