@@ -39,8 +39,8 @@ export default defineComponent({
 
     const { data: author } = useQuery({
       queryKey: ['author', authorId],
-      queryFn: () => fetchAuthor(authorId.value),
-      enabled: computed(() => !!post.value?.userId),
+      queryFn: ({ queryKey: [, id] }) => fetchAuthor(id),
+      enabled: computed(() => !!authorId.value),
     })
 
     return { isPending, isError, isFetching, post, error, author }
