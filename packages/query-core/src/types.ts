@@ -23,13 +23,11 @@ export type DefaultError = Register extends {
 
 export type QueryKey = ReadonlyArray<unknown>
 
-type NonUndefined<T> = undefined extends T ? never : T
-
 export type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
-> = (context: QueryFunctionContext<TQueryKey, TPageParam>) => NonUndefined<T> | Promise<NonUndefined<T>>
+> = (context: QueryFunctionContext<TQueryKey, TPageParam>) => unknown extends T ? unknown : undefined extends T ? never : T | Promise<T>
 
 export type QueryPersister<
   T = unknown,

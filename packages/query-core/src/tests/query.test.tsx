@@ -779,7 +779,8 @@ describe('query', () => {
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
-      queryFn: () => undefined,
+      // Disallowed at the type-level, so we have added non-null assertion
+      queryFn: () => undefined!,
       retry: false,
     })
 
