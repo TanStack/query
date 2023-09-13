@@ -148,9 +148,17 @@ export function useQueries<T extends any[]>({
     }
   }
 
-  const unreffedQueries = computed(
-    () => cloneDeepUnref(queries) as UseQueriesOptionsArg<T>,
-  )
+  const unreffedQueries = computed(() => {
+    const clonedQueries = cloneDeepUnref(queries)
+
+    ;(clonedQueries as any[]).map((query) => {
+      if (typeof query.enabled === 'function') {
+        query.enabled = query.enabled()
+      }
+    })
+
+    return clonedQueries as UseQueriesOptionsArg<T>
+  })
 
   const queryClientKey = unreffedQueries.value[0]?.queryClientKey
   const optionsQueryClient = unreffedQueries.value[0]?.queryClient as

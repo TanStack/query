@@ -116,6 +116,16 @@ export type VueInfiniteQueryObserverOptions<
         TQueryData,
         DeepUnwrapRef<TQueryKey>
       >[Property]
+    : Property extends 'enabled'
+    ? MaybeRefOrGetter<
+        QueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          TQueryKey
+        >[Property]
+      >
     : MaybeRef<
         InfiniteQueryObserverOptions<
           TQueryFnData,
