@@ -3237,6 +3237,38 @@ describe('useQuery', () => {
     })
   })
 
+  it('should fetch if initial data is a function returning undefined', async () => {
+    const key = queryKey()
+    const states: Array<DefinedUseQueryResult<string>> = []
+
+    function Page() {
+      const state = useQuery({
+        queryKey: key,
+        queryFn: () => 'data',
+        initialData: () => undefined,
+      })
+      states.push(state)
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(50)
+
+    expect(states.length).toBe(2)
+
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isStale: true,
+      isFetching: true,
+    })
+    expect(states[1]).toMatchObject({
+      data: 'data',
+      isStale: true,
+      isFetching: false,
+    })
+  })
+
   it('should not fetch if initial data is set with a stale time', async () => {
     const key = queryKey()
     const states: Array<DefinedUseQueryResult<string>> = []
