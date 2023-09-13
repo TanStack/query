@@ -14,7 +14,7 @@ export interface PersistedQuery {
 
 export interface AsyncStorage {
   getItem: (key: string) => Promise<string | undefined | null>
-  setItem: (key: string, value: string) => Promise<void>
+  setItem: (key: string, value: string) => Promise<unknown>
   removeItem: (key: string) => Promise<void>
 }
 
@@ -27,7 +27,7 @@ export interface StoragePersisterOptions {
    * How to serialize the data to storage.
    * @default `JSON.stringify`
    */
-  serialize?: (client: PersistedQuery) => string
+  serialize?: (persistedQuery: PersistedQuery) => string
   /**
    * How to deserialize the data from storage.
    * @default `JSON.parse`
@@ -42,11 +42,13 @@ export interface StoragePersisterOptions {
    * The max-allowed age of the cache in milliseconds.
    * If a persisted cache is found that is older than this
    * time, it will be discarded
+   * @default 24 hours
    */
   maxAge?: number
   /**
    * Prefix to be used for storage key.
    * Storage key is a combination of prefix and query hash in a form of `prefix-queryHash`.
+   * @default 'tanstack-query'
    */
   prefix?: string
   /**
