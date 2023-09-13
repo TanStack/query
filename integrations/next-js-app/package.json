@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "test:bundle": "next build"
+    "test:bundle": "next build",
+    "dev": "next dev"
   },
   "dependencies": {
     "@tanstack/react-query": "workspace:*",
