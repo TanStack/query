@@ -2947,6 +2947,44 @@ describe('createQuery', () => {
     })
   })
 
+  it('should fetch if initial data is a function returning undefined', async () => {
+    const key = queryKey()
+    const states: Array<DefinedCreateQueryResult<string>> = []
+
+    function Page() {
+      const state = createQuery(() => ({
+        queryKey: key,
+        queryFn: () => 'data',
+        initialData: () => undefined,
+      }))
+      createRenderEffect(() => {
+        states.push({ ...state })
+      })
+      return null
+    }
+
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await sleep(50)
+
+    expect(states.length).toBe(2)
+
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isStale: true,
+      isFetching: true,
+    })
+    expect(states[1]).toMatchObject({
+      data: 'data',
+      isStale: true,
+      isFetching: false,
+    })
+  })
+
   it('should keep initial data when the query key changes', async () => {
     const key = queryKey()
     const states: Array<Partial<DefinedCreateQueryResult<{ count: number }>>> =

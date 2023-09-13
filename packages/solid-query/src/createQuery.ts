@@ -30,7 +30,7 @@ type DefinedInitialDataOptions<
   TQueryKey extends QueryKey = QueryKey,
 > = FunctionedParams<
   SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
-    initialData: TQueryFnData | (() => TQueryFnData)
+    initialData: TQueryFnData | (() => TQueryFnData | undefined)
   }
 >
 
