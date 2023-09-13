@@ -156,3 +156,24 @@ describe('initialData', () => {
     })
   })
 })
+
+describe('placeholderData', () => {
+  it('should receive contextual parameter type', () => {
+    doNotExecute(() => {
+      const options = {
+        queryKey: ['foo'] as const,
+        queryFn: () => Promise.resolve(5),
+        staleTime: 10 * 1000,
+      }
+
+      return useQuery({
+        ...options,
+        placeholderData: (previousData) => {
+          const result: Expect<Equal<number | undefined, typeof previousData>> =
+            true
+          return result && previousData
+        },
+      })
+    })
+  })
+})

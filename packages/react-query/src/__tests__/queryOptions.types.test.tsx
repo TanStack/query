@@ -28,4 +28,13 @@ describe('queryOptions', () => {
       })
     })
   })
+  it('should not infer implicit any for the parameter of placeholderData', () => {
+    doNotExecute(() => {
+      return queryOptions({
+        queryKey: ['foo'],
+        queryFn: () => Promise.resolve(5),
+        placeholderData: (previousData) => previousData,
+      })
+    })
+  })
 })
