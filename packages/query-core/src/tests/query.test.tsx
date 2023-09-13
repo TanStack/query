@@ -912,8 +912,7 @@ describe('query', () => {
     unsubscribe()
   })
 
-  // TODO: use a better title
-  test('#5968', async () => {
+  test('should always revert to idle state (#5958)', async () => {
     let mockedData = [1]
 
     const key = queryKey()
