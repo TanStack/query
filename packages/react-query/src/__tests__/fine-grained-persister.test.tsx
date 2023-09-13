@@ -7,7 +7,7 @@ import { useQuery } from '..'
 import {
   PERSISTER_KEY_PREFIX,
   experimental_createPersister,
-} from '../../../query-persist-client-core'
+} from '../../../query-persist-client-core/src'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 
 describe('fine grained persister', () => {
