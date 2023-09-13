@@ -49,6 +49,10 @@ export interface StoragePersisterOptions {
    * Storage key is a combination of prefix and query hash in a form of `prefix-queryHash`.
    */
   prefix?: string
+  /**
+   * Filter function returning whether current query should be run trough persister.
+   */
+  queryFilter?: (queryKey: QueryKey, query: Query) => boolean
 }
 
 export const PERSISTER_KEY_PREFIX = 'tanstack-query'
@@ -75,6 +79,7 @@ export function experimental_createPersister({
   serialize = JSON.stringify,
   deserialize = JSON.parse,
   prefix = PERSISTER_KEY_PREFIX,
+  queryFilter,
 }: StoragePersisterOptions) {
   return async function persisterFn<T, TQueryKey extends QueryKey>(
     queryFn: (context: QueryFunctionContext<TQueryKey>) => T | Promise<T>,
@@ -82,9 +87,13 @@ export function experimental_createPersister({
     query: Query,
   ) {
     const storageKey = `${prefix}-${query.queryHash}`
+    const matchesFilter =
+      queryFilter && typeof queryFilter === 'function'
+        ? queryFilter(query.queryKey, query)
+        : true
 
     // Try to restore only if we do not have any data in the cache and we have persister defined
-    if (query.state.data === undefined && storage != null) {
+    if (matchesFilter && query.state.data === undefined && storage != null) {
       try {
         const storedData = await storage.getItem(storageKey)
         if (storedData) {
@@ -130,7 +139,7 @@ export function experimental_createPersister({
     // If we did not restore, or restoration failed - fetch
     const queryFnResult = await queryFn(context)
 
-    if (storage != null) {
+    if (matchesFilter && storage != null) {
       // Persist if we have storage defined, we use timeout to get proper state to be persisted
       setTimeout(() => {
         storage.setItem(

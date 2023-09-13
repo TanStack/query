@@ -276,4 +276,35 @@ describe('createPersister', () => {
       },
     })
   })
+
+  test('should skip stored item if not matched by queryFilter', async () => {
+    const storage = getFreshStorage()
+    const { context, persisterFn, query, queryFn, storageKey } = setupPersister(
+      ['foo'],
+      {
+        storage,
+        queryFilter: () => {
+          return false
+        },
+      },
+    )
+
+    const dataUpdatedAt = Date.now()
+
+    await storage.setItem(
+      storageKey,
+      JSON.stringify({
+        buster: '',
+        state: { dataUpdatedAt },
+      }),
+    )
+
+    await persisterFn(queryFn, context, query)
+    query.fetch = vi.fn()
+
+    await sleep(0)
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(query.fetch).toHaveBeenCalledTimes(0)
+  })
 })
