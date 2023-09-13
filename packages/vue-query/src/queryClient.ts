@@ -29,12 +29,11 @@ import type {
 } from '@tanstack/query-core'
 
 export class QueryClient extends QC {
-  constructor(config: MaybeRefDeep<QueryClientConfig> = {}) {
-    const unreffedConfig = cloneDeepUnref(config)
-    const vueQueryConfig: QueryClientConfig = {
-      defaultOptions: unreffedConfig.defaultOptions,
-      queryCache: unreffedConfig.queryCache || new QueryCache(),
-      mutationCache: unreffedConfig.mutationCache || new MutationCache(),
+  constructor(config: QueryClientConfig = {}) {
+    const vueQueryConfig = {
+      defaultOptions: config.defaultOptions,
+      queryCache: config.queryCache || new QueryCache(),
+      mutationCache: config.mutationCache || new MutationCache(),
     }
     super(vueQueryConfig)
   }
@@ -57,7 +56,7 @@ export class QueryClient extends QC {
 
   getQueriesData<TData = unknown>(
     filters: MaybeRefDeep<QueryFilters>,
-  ): [QueryKey, TData | undefined][] {
+  ): Array<[QueryKey, TData | undefined]> {
     return super.getQueriesData(cloneDeepUnref(filters))
   }
 
@@ -77,7 +76,7 @@ export class QueryClient extends QC {
     filters: MaybeRefDeep<QueryFilters>,
     updater: Updater<TData | undefined, TData | undefined>,
     options: MaybeRefDeep<SetDataOptions> = {},
-  ): [QueryKey, TData | undefined][] {
+  ): Array<[QueryKey, TData | undefined]> {
     return super.setQueriesData(
       cloneDeepUnref(filters),
       updater,

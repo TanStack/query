@@ -24,7 +24,7 @@ describe('InfiniteQueryBehavior', () => {
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       retry: false,
-      defaultPageParam: 1,
+      initialPageParam: 1,
       getNextPageParam: () => 2,
     })
 
@@ -62,7 +62,7 @@ describe('InfiniteQueryBehavior', () => {
       getNextPageParam: (lastPage) => lastPage + 1,
       getPreviousPageParam: (firstPage) => firstPage - 1,
       maxPages: 2,
-      defaultPageParam: 1,
+      initialPageParam: 1,
     })
 
     let observerResult:
@@ -204,7 +204,7 @@ describe('InfiniteQueryBehavior', () => {
       queryFn: queryFnSpy,
       getNextPageParam: (lastPage) => lastPage + 1,
       getPreviousPageParam: (firstPage) => firstPage - 1,
-      defaultPageParam: 1,
+      initialPageParam: 1,
     })
 
     let observerResult:
@@ -255,7 +255,7 @@ describe('InfiniteQueryBehavior', () => {
       queryFn: queryFnSpy,
       getNextPageParam: (lastPage) => lastPage + 1,
       getPreviousPageParam: (firstPage) => firstPage - 1,
-      defaultPageParam: 1,
+      initialPageParam: 1,
     })
 
     let observerResult:

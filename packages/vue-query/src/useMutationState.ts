@@ -1,4 +1,11 @@
-import { computed, onScopeDispose, readonly, ref, watch } from 'vue-demi'
+import {
+  computed,
+  getCurrentScope,
+  onScopeDispose,
+  readonly,
+  ref,
+  watch,
+} from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
 import type { DeepReadonly, Ref } from 'vue-demi'
@@ -18,6 +25,14 @@ export function useIsMutating(
   filters: MutationFilters = {},
   queryClient?: QueryClient,
 ): Ref<number> {
+  if (process.env.NODE_ENV === 'development') {
+    if (!getCurrentScope()) {
+      console.warn(
+        'vue-query composables like "uesQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+      )
+    }
+  }
+
   const client = queryClient || useQueryClient()
   const unreffedFilters = computed(() => ({
     ...cloneDeepUnref(filters),
@@ -59,19 +74,15 @@ export function useMutationState<TResult = MutationState>(
 ): DeepReadonly<Ref<Array<TResult>>> {
   const filters = computed(() => cloneDeepUnref(options.filters))
   const mutationCache = (queryClient || useQueryClient()).getMutationCache()
-  const state = ref(getResult(mutationCache, options)) as Ref<TResult[]>
+  const state = ref(getResult(mutationCache, options)) as Ref<Array<TResult>>
   const unsubscribe = mutationCache.subscribe(() => {
     const result = getResult(mutationCache, options)
     state.value = result
   })
 
-  watch(
-    filters,
-    () => {
-      state.value = getResult(mutationCache, options)
-    },
-    { deep: true },
-  )
+  watch(filters, () => {
+    state.value = getResult(mutationCache, options)
+  })
 
   onScopeDispose(() => {
     unsubscribe()

@@ -39,7 +39,7 @@ function Example() {
       const res = await axios.get('/api/projects?cursor=' + pageParam)
       return res.data
     },
-    defaultPageParam: 0,
+    initialPageParam: 0,
     getPreviousPageParam: (firstPage) => firstPage.previousId ?? undefined,
     getNextPageParam: (lastPage) => lastPage.nextId ?? undefined,
   })

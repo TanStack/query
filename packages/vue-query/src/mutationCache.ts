@@ -19,7 +19,7 @@ export class MutationCache extends MC {
     return super.find(cloneDeepUnref(filters))
   }
 
-  findAll(filters: MaybeRefDeep<MutationFilters> = {}): Mutation[] {
+  findAll(filters: MaybeRefDeep<MutationFilters> = {}): Array<Mutation> {
     return super.findAll(cloneDeepUnref(filters))
   }
 }

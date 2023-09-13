@@ -11,7 +11,7 @@ When using `useInfiniteQuery`, you'll notice a few things are different:
 - `data.pages` array containing the fetched pages
 - `data.pageParams` array containing the page params used to fetch the pages
 - The `fetchNextPage` and `fetchPreviousPage` functions are now available (`fetchNextPage` is required)
-- The `defaultPageParam` option is now available (and required) to specify the initial page param
+- The `initialPageParam` option is now available (and required) to specify the initial page param
 - The `getNextPageParam` and `getPreviousPageParam` options are available for both determining if there is more data to load and the information to fetch it. This information is supplied as an additional parameter in the query function
 - A `hasNextPage` boolean is now available and is `true` if `getNextPageParam` returns a value other than `null` or `undefined`
 - A `hasPreviousPage` boolean is now available and is `true` if `getPreviousPageParam` returns a value other than `null` or `undefined`
@@ -62,7 +62,7 @@ function Projects() {
   } = useInfiniteQuery({
     queryKey: ['projects'],
     queryFn: fetchProjects,
-    defaultPageParam: 0,
+    initialPageParam: 0,
     getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   })
 
@@ -99,6 +99,24 @@ function Projects() {
 
 [//]: # 'Example'
 
+It's essential to understand that calling `fetchNextPage` while an ongoing fetch is in progress runs the risk of overwriting data refreshes happening in the background. This situation becomes particularly critical when rendering a list and triggering `fetchNextPage` simultaneously.
+
+Remember, there can only be a single ongoing fetch for an InfiniteQuery. A single cache entry is shared for all pages, attempting to fetch twice simultaneously might lead to data overwrites.
+
+If you intend to enable simultaneous fetching, you can utilize the `{ cancelRefetch: false }` option (default: true) within `fetchNextPage`.
+
+To ensure a seamless querying process without conflicts, it's highly recommended to verify that the query is not in an `isFetching` state, especially if the user won't directly control that call.
+
+[//]: # 'Example1'
+
+```jsx
+<List
+  onEndReached={() => !isFetching && fetchNextPage()}
+/>
+```
+
+[//]: # 'Example1'
+
 ## What happens when an infinite query needs to be refetched?
 
 When an infinite query becomes `stale` and needs to be refetched, each group is fetched `sequentially`, starting from the first one. This ensures that even if the underlying data is mutated, we're not using stale cursors and potentially getting duplicates or skipping records. If an infinite query's results are ever removed from the queryCache, the pagination restarts at the initial state with only the initial group being requested.
@@ -113,7 +131,7 @@ Bi-directional lists can be implemented by using the `getPreviousPageParam`, `fe
 useInfiniteQuery({
   queryKey: ['projects'],
   queryFn: fetchProjects,
-  defaultPageParam: 0,
+  initialPageParam: 0,
   getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
 })
@@ -208,7 +226,7 @@ In the following example only 3 pages are kept in the query data pages array. If
 useInfiniteQuery({
   queryKey: ['projects'],
   queryFn: fetchProjects,
-  defaultPageParam: 0,
+  initialPageParam: 0,
   getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
   maxPages: 3,
@@ -225,7 +243,7 @@ If your API doesn't return a cursor, you can use the `pageParam` as a cursor. Be
 return useInfiniteQuery({
   queryKey: ['projects'],
   queryFn: fetchProjects,
-  defaultPageParam: 0,
+  initialPageParam: 0,
   getNextPageParam: (lastPage, allPages, lastPageParam) => {
     if (lastPage.length === 0) {
         return undefined

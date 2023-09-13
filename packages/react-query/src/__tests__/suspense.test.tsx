@@ -23,7 +23,7 @@ describe('useSuspenseQuery', () => {
 
   it('should render the correct amount of times in Suspense mode', async () => {
     const key = queryKey()
-    const states: UseSuspenseQueryResult<number>[] = []
+    const states: Array<UseSuspenseQueryResult<number>> = []
 
     let count = 0
     let renders = 0
@@ -72,7 +72,8 @@ describe('useSuspenseQuery', () => {
 
   it('should return the correct states for a successful infinite query', async () => {
     const key = queryKey()
-    const states: UseSuspenseInfiniteQueryResult<InfiniteData<number>>[] = []
+    const states: Array<UseSuspenseInfiniteQueryResult<InfiniteData<number>>> =
+      []
 
     function Page() {
       const [multiplier, setMultiplier] = React.useState(1)
@@ -82,7 +83,7 @@ describe('useSuspenseQuery', () => {
           await sleep(10)
           return Number(pageParam * multiplier)
         },
-        defaultPageParam: 1,
+        initialPageParam: 1,
         getNextPageParam: (lastPage) => lastPage + 1,
       })
       states.push(state)
@@ -122,7 +123,7 @@ describe('useSuspenseQuery', () => {
   it('should not call the queryFn twice when used in Suspense mode', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<unknown[], string>()
+    const queryFn = vi.fn<Array<unknown>, string>()
     queryFn.mockImplementation(() => {
       sleep(10)
       return 'data'
@@ -623,6 +624,11 @@ describe('useSuspenseQuery', () => {
         },
         retry: false,
       })
+
+      if (result.error) {
+        throw result.error
+      }
+
       return (
         <div>
           <span>rendered</span> <span>{result.data}</span>
@@ -711,6 +717,68 @@ describe('useSuspenseQuery', () => {
     expect(renders).toBe(2)
     expect(rendered.queryByText('rendered')).not.toBeNull()
   })
+
+  it('should not throw background errors to the error boundary', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    let succeed = true
+    const key = queryKey()
+
+    function Page() {
+      const result = useSuspenseQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          if (!succeed) {
+            throw new Error('Suspense Error Bingo')
+          } else {
+            return 'data'
+          }
+        },
+        retry: false,
+      })
+
+      return (
+        <div>
+          <span>
+            rendered {result.data} {result.status}
+          </span>
+          <button onClick={() => result.refetch()}>refetch</button>
+        </div>
+      )
+    }
+
+    function App() {
+      const { reset } = useQueryErrorResetBoundary()
+      return (
+        <ErrorBoundary
+          onReset={reset}
+          fallbackRender={() => <div>error boundary</div>}
+        >
+          <React.Suspense fallback="Loading...">
+            <Page />
+          </React.Suspense>
+        </ErrorBoundary>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    // render suspense fallback (Loading...)
+    await waitFor(() => rendered.getByText('Loading...'))
+    // resolve promise -> render Page (rendered)
+    await waitFor(() => rendered.getByText('rendered data success'))
+
+    // change promise result to error
+    succeed = false
+    // refetch
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+    // we are now in error state but still have data to show
+    await waitFor(() => rendered.getByText('rendered data error'))
+
+    consoleMock.mockRestore()
+  })
 })
 
 describe('useSuspenseQueries', () => {
@@ -718,7 +786,7 @@ describe('useSuspenseQueries', () => {
   it('should suspend all queries in parallel', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const results: string[] = []
+    const results: Array<string> = []
 
     function Fallback() {
       results.push('loading')
@@ -769,8 +837,8 @@ describe('useSuspenseQueries', () => {
   it("shouldn't unmount before all promises fetched", async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const results: string[] = []
-    const refs: number[] = []
+    const results: Array<string> = []
+    const refs: Array<number> = []
 
     function Fallback() {
       results.push('loading')

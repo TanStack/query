@@ -55,7 +55,7 @@ const createMockErrorPersister = (
 describe('PersistQueryClientProvider', () => {
   test('restores cache from persister', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
@@ -130,7 +130,7 @@ describe('PersistQueryClientProvider', () => {
 
   test('should also put useQueries into idle state', async () => {
     const key = queryKey()
-    const states: UseQueryResult[] = []
+    const states: Array<UseQueryResult> = []
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
@@ -209,7 +209,7 @@ describe('PersistQueryClientProvider', () => {
 
   test('should show initialData while restoring', async () => {
     const key = queryKey()
-    const states: DefinedUseQueryResult<string>[] = []
+    const states: Array<DefinedUseQueryResult<string>> = []
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
@@ -289,7 +289,7 @@ describe('PersistQueryClientProvider', () => {
 
   test('should not refetch after restoring when data is fresh', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: Array<UseQueryResult<string>> = []
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
@@ -515,7 +515,7 @@ describe('PersistQueryClientProvider', () => {
 
   test('should be able to persist into multiple clients', async () => {
     const key = queryKey()
-    const states: UseQueryResult[] = []
+    const states: Array<UseQueryResult> = []
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({

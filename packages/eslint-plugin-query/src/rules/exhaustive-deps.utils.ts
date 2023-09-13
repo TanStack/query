@@ -4,7 +4,7 @@ import type { TSESLint } from '@typescript-eslint/utils'
 
 export const ExhaustiveDepsUtils = {
   isRelevantReference(params: {
-    context: Readonly<TSESLint.RuleContext<string, readonly unknown[]>>
+    context: Readonly<TSESLint.RuleContext<string, ReadonlyArray<unknown>>>
     reference: TSESLint.Scope.Reference
     scopeManager: TSESLint.Scope.ScopeManager
   }) {
