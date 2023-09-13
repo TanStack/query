@@ -90,7 +90,7 @@ type GetResults<T> =
     ? UseQueryResult<TQueryFnData>
     : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
     T extends {
-        queryFn?: QueryFunction<unknown, any>
+        queryFn?: QueryFunction<any, any>
         select: (data: any) => infer TData
       }
     ? UseQueryResult<TData>

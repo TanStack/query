@@ -144,7 +144,7 @@ describe('useQuery', () => {
           obj: TQueryKey[1],
           token: string,
           // return type must be wrapped with TQueryFnReturn
-        ) => Promise<TQueryFnData>,
+        ) => ReturnType<QueryFunction<TQueryFnData>>,
         options?: Omit<
           UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
           'queryKey' | 'queryFn' | 'initialData'
@@ -166,7 +166,7 @@ describe('useQuery', () => {
         TData = TQueryFnData,
       >(
         qk: TQueryKey,
-        fetcher: () => Promise<TQueryFnData>,
+        fetcher: () => ReturnType<QueryFunction<TQueryFnData>>,
         options?: Omit<
           UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
           'queryKey' | 'queryFn' | 'initialData'

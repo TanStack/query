@@ -161,7 +161,7 @@ describe('createQuery', () => {
           obj: TQueryKey[1],
           token: string,
           // return type must be wrapped with TQueryFnReturn
-        ) => Promise<TQueryFnData>,
+        ) => ReturnType<QueryFunction<TQueryFnData>>,
         options?: Omit<
           CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
           'queryKey' | 'queryFn' | 'initialData'
@@ -183,7 +183,7 @@ describe('createQuery', () => {
         TData = TQueryFnData,
       >(
         qk: TQueryKey,
-        fetcher: () => Promise<TQueryFnData>,
+        fetcher: () => ReturnType<QueryFunction<TQueryFnData>>,
         options?: Omit<
           CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
           'queryKey' | 'queryFn' | 'initialData'
