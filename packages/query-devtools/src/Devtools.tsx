@@ -1,11 +1,3 @@
-import { css, cx } from '@emotion/css'
-import { Key } from '@solid-primitives/keyed'
-import { createResizeObserver } from '@solid-primitives/resize-observer'
-import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
-import { createLocalStorage } from '@solid-primitives/storage'
-import { rankItem } from '@tanstack/match-sorter-utils'
-import type { Query, QueryCache, QueryState } from '@tanstack/query-core'
-import type { Accessor, Component, JSX, Setter } from 'solid-js'
 import {
   For,
   Show,
@@ -16,26 +8,12 @@ import {
   onCleanup,
   onMount,
 } from 'solid-js'
+import { rankItem } from '@tanstack/match-sorter-utils'
+import { css, cx } from '@emotion/css'
 import { TransitionGroup } from 'solid-transition-group'
-import type {
-  DevToolsErrorType,
-  DevtoolsButtonPosition,
-  DevtoolsPosition,
-  QueryDevtoolsProps,
-} from './Context'
-import { QueryDevtoolsContext, useQueryDevtoolsContext } from './Context'
-import Explorer from './Explorer'
-import { loadFonts } from './fonts'
-import {
-  ArrowDown,
-  ArrowUp,
-  ChevronDown,
-  Offline,
-  Search,
-  Settings,
-  TanstackLogo,
-  Wifi,
-} from './icons'
+import { Key } from '@solid-primitives/keyed'
+import { createLocalStorage } from '@solid-primitives/storage'
+import { createResizeObserver } from '@solid-primitives/resize-observer'
 import { tokens } from './theme'
 import {
   convertRemToPixels,
@@ -46,6 +24,28 @@ import {
   getSidedProp,
   sortFns,
 } from './utils'
+import {
+  ArrowDown,
+  ArrowUp,
+  ChevronDown,
+  Offline,
+  Search,
+  Settings,
+  TanstackLogo,
+  Wifi,
+} from './icons'
+import Explorer from './Explorer'
+import { QueryDevtoolsContext, useQueryDevtoolsContext } from './Context'
+import { loadFonts } from './fonts'
+import type {
+  DevToolsErrorType,
+  DevtoolsButtonPosition,
+  DevtoolsPosition,
+  QueryDevtoolsProps,
+} from './Context'
+import type { Query, QueryCache, QueryState } from '@tanstack/query-core'
+import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
+import type { Accessor, Component, JSX, Setter } from 'solid-js'
 
 interface DevtoolsPanelProps {
   localStore: StorageObject<string>
