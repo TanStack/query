@@ -11,7 +11,9 @@ import type {
 
 export interface HydrationBoundaryProps {
   state?: unknown
-  options?: HydrateOptions
+  options?: Omit<HydrateOptions, 'defaultOptions'> & {
+    defaultOptions?: Omit<HydrateOptions['defaultOptions'], 'mutations'>
+  }
   children?: React.ReactNode
   queryClient?: QueryClient
 }
