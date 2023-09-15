@@ -27,6 +27,7 @@
       },
       "require": {
         "types": "./build/modern/index.d.cts",
+        "react-server": "./build/modern/server.cjs",
         "default": "./build/modern/index.cjs"
       }
     },
