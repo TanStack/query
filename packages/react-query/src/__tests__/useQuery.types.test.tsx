@@ -154,5 +154,27 @@ describe('initialData', () => {
         return result
       })
     })
+
+    it('should not allow to return undefined from the QueryFn', () => {
+      doNotExecute(() => {
+        // @ts-expect-error Type 'undefined' is not assignable to type 'never'.
+        const { data } = useQuery(['key'], () => {
+          return undefined
+        })
+
+        const result: Expect<Equal<unknown, typeof data>> = true
+        return result
+      })
+
+      doNotExecute(() => {
+        // @ts-expect-error Type 'undefined' is not assignable to type 'never'.
+        const { data } = useQuery(['key'], () => {
+          return Math.random() > 0.5 ? undefined : { wow: true }
+        })
+
+        const result: Expect<Equal<unknown, typeof data>> = true
+        return result
+      })
+    })
   })
 })
