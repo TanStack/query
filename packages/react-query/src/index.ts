@@ -15,6 +15,8 @@ export {
   useQueryClient,
 } from './QueryClientProvider'
 
+export { HydrationBoundary } from './HydrationBoundary'
+
 export {
   QueryErrorResetBoundary,
   useQueryErrorResetBoundary,

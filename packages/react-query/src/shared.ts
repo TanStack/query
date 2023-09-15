@@ -22,5 +22,4 @@ export type {
 } from './infiniteQueryOptions'
 export type { QueryClientProviderProps } from './QueryClientProvider'
 export type { QueryErrorResetBoundaryProps } from './QueryErrorResetBoundary'
-export { HydrationBoundary } from './HydrationBoundary'
 export type { HydrationBoundaryProps } from './HydrationBoundary'
