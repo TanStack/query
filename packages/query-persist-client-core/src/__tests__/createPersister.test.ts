@@ -277,14 +277,16 @@ describe('createPersister', () => {
     })
   })
 
-  test('should skip stored item if not matched by queryFilter', async () => {
+  test('should skip stored item if not matched by filters', async () => {
     const storage = getFreshStorage()
     const { context, persisterFn, query, queryFn, storageKey } = setupPersister(
       ['foo'],
       {
         storage,
-        queryFilter: () => {
-          return false
+        filters: {
+          predicate: () => {
+            return false
+          },
         },
       },
     )

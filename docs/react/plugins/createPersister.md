@@ -23,11 +23,18 @@ or
 yarn add @tanstack/query-persist-client-core
 ```
 
+> Note: This util is also included in the `@tanstack/react-query-persist-client` package, so you do not need to install it separately if you are using that package.
+
 ## Usage
 
 - Import the `experimental_createPersister` function
 - Create a new `experimental_createPersister`
-  - you can pass any `storage` to it that adheres to the `AsyncStorage` or `Storage` interface - the example below uses the async-storage from React Native
+  - you can pass any `storage` to it that adheres to the `AsyncStorage` or `Storage` interface - the example below uses the async-storage from React Native.
+- Pass that `persister` as an option to your Query. This can be done either by passing it to the `defaultOptions` of the `QueryClient` or to any `useQuery` hook instance.
+  - If you pass this `persister` as `defaultOptions`, all queries will be persisted to the provided `storage`. You can additionally narrow this down by passing `filters`. In contrast to the `persistClient` plugin, this will not persist the whole query client as a single item, but each query separately. As a key, the query hash is used.
+  - If you provide this `persister` to a single `useQuery` hook, only this Query will be persisted.
+
+This way, you do not need to store whole `QueryClient`, but choose what is worth to be persisted in your application. Each query is lazily restored (when the Query is first used) and persisted (after each run of the `queryFn`), so it does not need to be throttled. `staleTime` is also respected after restoring the Query, so if data is considered `stale`, it will be refetched immediately after restoring. If data is `fresh`, the `queryFn` will not run.
 
 ```tsx
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -50,17 +57,11 @@ const queryClient = new QueryClient({
 
 ### `experimental_createPersister`
 
-Call this function to create a `persister` that you can pass to `defaultOptions` of `QueryClient` or to any `useQuery` hook.  
-If you pass this `persister` as `defaultOptions`, all queries will be persisted to provided `storage`.  
-If you provide this `persister` to `useQuery` hook, currently active `query` will be persisted.  
-This way, you do not need to store whole query client, but choose what is worth to be persisted in your application.  
-Each query is lazily restored and persisted, so it does not need to be throttled.
-
 ```tsx
 experimental_createPersister(options: StoragePersisterOptions)
 ```
 
-### `Options`
+#### `Options`
 
 ```tsx
 export interface StoragePersisterOptions {
@@ -95,9 +96,9 @@ export interface StoragePersisterOptions {
    */
   prefix?: string
   /**
-   * Filter function returning whether current query should be restored/persisted.
+   * Filters to narrow down which Queries should be persisted.
    */
-  queryFilter?: (queryKey: QueryKey, query: Query) => boolean
+  filters?: QueryFilters
 }
 
 interface AsyncStorage {

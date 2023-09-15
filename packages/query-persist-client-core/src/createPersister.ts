@@ -1,3 +1,5 @@
+import { matchQuery } from '@tanstack/query-core'
+import type { QueryFilters } from '@tanstack/query-core'
 import type {
   Query,
   QueryFunctionContext,
@@ -52,9 +54,9 @@ export interface StoragePersisterOptions {
    */
   prefix?: string
   /**
-   * Filter function returning whether current query should be run trough persister.
+   * Filters to narrow down which Queries should be persisted.
    */
-  queryFilter?: (queryKey: QueryKey, query: Query) => boolean
+  filters?: QueryFilters
 }
 
 export const PERSISTER_KEY_PREFIX = 'tanstack-query'
@@ -63,7 +65,7 @@ export const PERSISTER_KEY_PREFIX = 'tanstack-query'
  * Warning: experimental feature.
  * This utility function enables fine-grained query persistance.
  * Simple add it as a `persister` parameter to `useQuery` or `defaultOptions` on `queryClient`.
- * 
+ *
  * ```
  * useQuery({
      queryKey: ['myKey'],
@@ -81,7 +83,7 @@ export function experimental_createPersister({
   serialize = JSON.stringify,
   deserialize = JSON.parse,
   prefix = PERSISTER_KEY_PREFIX,
-  queryFilter,
+  filters,
 }: StoragePersisterOptions) {
   return async function persisterFn<T, TQueryKey extends QueryKey>(
     queryFn: (context: QueryFunctionContext<TQueryKey>) => T | Promise<T>,
@@ -89,10 +91,7 @@ export function experimental_createPersister({
     query: Query,
   ) {
     const storageKey = `${prefix}-${query.queryHash}`
-    const matchesFilter =
-      queryFilter && typeof queryFilter === 'function'
-        ? queryFilter(query.queryKey, query)
-        : true
+    const matchesFilter = filters ? matchQuery(filters, query) : true
 
     // Try to restore only if we do not have any data in the cache and we have persister defined
     if (matchesFilter && query.state.data === undefined && storage != null) {
