@@ -84,6 +84,11 @@ export const packages = [
     entries: ['module', 'svelte', 'types'],
   },
   {
+    name: '@tanstack/svelte-query-persist-client',
+    packageDir: 'packages/svelte-query-persist-client',
+    entries: ['module', 'svelte', 'types'],
+  },
+  {
     name: '@tanstack/vue-query',
     packageDir: 'packages/vue-query',
     entries: ['main', 'module', 'types'],
