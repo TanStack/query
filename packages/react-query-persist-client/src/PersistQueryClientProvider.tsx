@@ -35,13 +35,13 @@ export const PersistQueryClientProvider = ({
         queryClient: client,
       })
 
-    promise.then(async () => {
+      promise.then(async () => {
         try {
           await refs.current.onSuccess?.()
         } finally {
           setIsRestoring(false)
         }
-    })
+      })
 
       return () => {
         unsubscribe()
