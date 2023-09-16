@@ -26,8 +26,13 @@
     "skipLibCheck": true,
     "strict": true,
     "strictNullChecks": true,
-    "target": "ES2020",
-    "types": ["bun-types"]
+    "target": "ES2020"
   },
-  "include": [".eslintrc.cjs", "rollup.config.js", "scripts", "setup-test.ts", "dom-types.d.ts"]
+  "include": [
+    ".eslintrc.cjs",
+    "rollup.config.js",
+    "scripts",
+    "setup-test.ts",
+    "dom-types.d.ts"
+  ]
 }
