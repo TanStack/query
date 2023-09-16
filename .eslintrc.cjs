@@ -59,7 +59,7 @@ const config = {
     'import/no-cycle': 'error',
     'import/no-duplicates': 'off',
     'import/no-named-as-default-member': 'off',
-    'import/no-unresolved': ['error', { ignore: ['^@tanstack/'] }],
+    'import/no-unresolved': ['error', { ignore: ['^@tanstack/', 'bun:test'] }],
     'import/no-unused-modules': ['off', { unusedExports: true }],
     'import/order': [
       'error',
