@@ -1,5 +1,6 @@
 import { QueriesObserver } from '@tanstack/query-core'
-import { vi } from 'vitest'
+import { describe, expect, mock, test } from 'bun:test'
+
 import { persistQueryClientSubscribe } from '../persist'
 import {
   createMockPersister,
@@ -43,9 +44,9 @@ describe('persistQueryClientSave', () => {
     })
 
     const queryKey = ['test']
-    const queryFn = vi.fn().mockReturnValue(1)
+    const queryFn = mock(() => 1)
     const observer = new QueriesObserver(queryClient, [{ queryKey, queryFn }])
-    const unsubscribeObserver = observer.subscribe(vi.fn())
+    const unsubscribeObserver = observer.subscribe(mock(() => null))
     observer.getObservers()[0]?.setOptions({ refetchOnWindowFocus: false })
     unsubscribeObserver()
 

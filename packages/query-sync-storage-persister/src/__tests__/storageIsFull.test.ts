@@ -5,6 +5,7 @@ import {
   dehydrate,
 } from '@tanstack/query-core'
 import { removeOldestQuery } from '@tanstack/query-persist-client-core'
+import { describe, expect, test } from 'bun:test'
 import { createSyncStoragePersister } from '../index'
 import { sleep } from './utils'
 

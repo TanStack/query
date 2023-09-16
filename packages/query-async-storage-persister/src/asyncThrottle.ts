@@ -11,8 +11,6 @@ export function asyncThrottle<Args extends ReadonlyArray<unknown>>(
   func: (...args: Args) => Promise<void>,
   { interval = 1000, onError = noop }: AsyncThrottleOptions = {},
 ) {
-  if (typeof func !== 'function') throw new Error('argument is not function.')
-
   let running = false
   let lastTime = 0
   let timeout: ReturnType<typeof setTimeout>

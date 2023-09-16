@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { render, waitFor } from '@testing-library/react'
-import { vi } from 'vitest'
-
+import { describe, expect, mock, spyOn, test } from 'bun:test'
 import { QueryClient, useQueries, useQuery } from '@tanstack/react-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 
@@ -388,7 +387,7 @@ describe('PersistQueryClientProvider', () => {
       )
     }
 
-    const onSuccess = vi.fn()
+    const onSuccess = mock(() => null)
 
     const rendered = render(
       <PersistQueryClientProvider
@@ -468,14 +467,12 @@ describe('PersistQueryClientProvider', () => {
 
   test('should remove cache after non-successful restoring', async () => {
     const key = queryKey()
-    const consoleMock = vi.spyOn(console, 'error')
-    const consoleWarn = vi
-      .spyOn(console, 'warn')
-      .mockImplementation(() => undefined)
-    consoleMock.mockImplementation(() => undefined)
+    const consoleMock = spyOn(console, 'error')
+    const consoleWarn = spyOn(console, 'warn').mockReturnValue(() => null)
+    consoleMock.mockReturnValue(() => null)
 
     const queryClient = createQueryClient()
-    const removeClient = vi.fn()
+    const removeClient = mock(async () => undefined)
 
     const [error, persister] = createMockErrorPersister(removeClient)
 
@@ -508,7 +505,7 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('fetched'))
     expect(removeClient).toHaveBeenCalledTimes(1)
     expect(consoleMock).toHaveBeenCalledTimes(1)
-    expect(consoleMock).toHaveBeenNthCalledWith(1, error)
+    expect(consoleMock.mock.calls[0]).toEqual([error])
     consoleMock.mockRestore()
     consoleWarn.mockRestore()
   })
@@ -529,13 +526,13 @@ describe('PersistQueryClientProvider', () => {
 
     queryClient.clear()
 
-    const onSuccess = vi.fn()
+    const onSuccess = mock(() => undefined)
 
-    const queryFn1 = vi.fn().mockImplementation(async () => {
+    const queryFn1 = mock(async () => {
       await sleep(10)
       return 'queryFn1'
     })
-    const queryFn2 = vi.fn().mockImplementation(async () => {
+    const queryFn2 = mock(async () => {
       await sleep(10)
       return 'queryFn2'
     })

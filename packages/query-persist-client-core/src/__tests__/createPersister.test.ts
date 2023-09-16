@@ -1,5 +1,5 @@
 import { Query, QueryCache, hashKey } from '@tanstack/query-core'
-import { vi } from 'vitest'
+import { describe, expect, mock, test } from 'bun:test'
 import {
   PERSISTER_KEY_PREFIX,
   experimental_createPersister,
@@ -34,7 +34,7 @@ function setupPersister(
   const queryHash = hashKey(queryKey)
   const storageKey = `${PERSISTER_KEY_PREFIX}-${queryHash}`
 
-  const queryFn = vi.fn()
+  const queryFn = mock(async () => null)
 
   const persisterFn = experimental_createPersister(persisterOptions)
 
@@ -63,8 +63,8 @@ describe('createPersister', () => {
 
     await persisterFn(queryFn, context, query)
 
-    expect(queryFn).toHaveBeenCalledOnce()
-    expect(queryFn).toHaveBeenCalledWith(context)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(queryFn.mock.calls[0]).toEqual([context])
   })
 
   test('should fetch if there is no stored data', async () => {
@@ -75,8 +75,8 @@ describe('createPersister', () => {
 
     await persisterFn(queryFn, context, query)
 
-    expect(queryFn).toHaveBeenCalledOnce()
-    expect(queryFn).toHaveBeenCalledWith(context)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(queryFn.mock.calls[0]).toEqual([context])
   })
 
   test('should fetch if query already has data', async () => {
@@ -88,8 +88,8 @@ describe('createPersister', () => {
 
     await persisterFn(queryFn, context, query)
 
-    expect(queryFn).toHaveBeenCalledOnce()
-    expect(queryFn).toHaveBeenCalledWith(context)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(queryFn.mock.calls[0]).toEqual([context])
   })
 
   test('should fetch if deserialization fails', async () => {
@@ -107,8 +107,8 @@ describe('createPersister', () => {
 
     expect(await storage.getItem(storageKey)).toBeUndefined()
 
-    expect(queryFn).toHaveBeenCalledOnce()
-    expect(queryFn).toHaveBeenCalledWith(context)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(queryFn.mock.calls[0]).toEqual([context])
   })
 
   test('should remove stored item if `dataUpdatedAt` is empty', async () => {
@@ -132,8 +132,8 @@ describe('createPersister', () => {
 
     expect(await storage.getItem(storageKey)).toBeUndefined()
 
-    expect(queryFn).toHaveBeenCalledOnce()
-    expect(queryFn).toHaveBeenCalledWith(context)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(queryFn.mock.calls[0]).toEqual([context])
   })
 
   test('should remove stored item if its expired', async () => {
@@ -158,8 +158,8 @@ describe('createPersister', () => {
 
     expect(await storage.getItem(storageKey)).toBeUndefined()
 
-    expect(queryFn).toHaveBeenCalledOnce()
-    expect(queryFn).toHaveBeenCalledWith(context)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(queryFn.mock.calls[0]).toEqual([context])
   })
 
   test('should remove stored item if its busted', async () => {
@@ -183,8 +183,8 @@ describe('createPersister', () => {
 
     expect(await storage.getItem(storageKey)).toBeUndefined()
 
-    expect(queryFn).toHaveBeenCalledOnce()
-    expect(queryFn).toHaveBeenCalledWith(context)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(queryFn.mock.calls[0]).toEqual([context])
   })
 
   test('should restore item from the storage and set proper `updatedAt` values', async () => {
@@ -208,7 +208,7 @@ describe('createPersister', () => {
 
     await persisterFn(queryFn, context, query)
     query.state.dataUpdatedAt = 0
-    query.fetch = vi.fn()
+    query.fetch = mock(async () => null)
     expect(query.state.dataUpdatedAt).toEqual(0)
 
     await sleep(0)
@@ -237,7 +237,7 @@ describe('createPersister', () => {
 
     await persisterFn(queryFn, context, query)
     query.state.isInvalidated = true
-    query.fetch = vi.fn()
+    query.fetch = mock(async () => null)
 
     await sleep(0)
 
@@ -264,8 +264,8 @@ describe('createPersister', () => {
 
     await sleep(0)
 
-    expect(queryFn).toHaveBeenCalledOnce()
-    expect(queryFn).toHaveBeenCalledWith(context)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(queryFn.mock.calls[0]).toEqual([context])
 
     expect(JSON.parse(await storage.getItem(storageKey))).toMatchObject({
       buster: '',
@@ -302,7 +302,7 @@ describe('createPersister', () => {
     )
 
     await persisterFn(queryFn, context, query)
-    query.fetch = vi.fn()
+    query.fetch = mock(async () => null)
 
     await sleep(0)
 

@@ -1,4 +1,4 @@
-import { vi } from 'vitest'
+import { describe, expect, mock, test } from 'bun:test'
 import { asyncThrottle } from '../asyncThrottle'
 import { sleep as delay } from './utils'
 
@@ -6,7 +6,7 @@ describe('asyncThrottle', () => {
   test('basic', async () => {
     const interval = 10
     const execTimeStamps: Array<number> = []
-    const mockFunc = vi.fn(
+    const mockFunc = mock(
       async (id: number, complete?: (value?: unknown) => void) => {
         await delay(1)
         execTimeStamps.push(Date.now())
@@ -23,7 +23,7 @@ describe('asyncThrottle', () => {
     await delay(1)
     await new Promise((resolve) => testFunc(3, resolve))
 
-    expect(mockFunc).toBeCalledTimes(2)
+    expect(mockFunc.mock.calls.length).toBe(2)
     expect(mockFunc.mock.calls[1]?.[0]).toBe(3)
     expect(execTimeStamps.length).toBe(2)
     expect(execTimeStamps[1]! - execTimeStamps[0]!).toBeGreaterThanOrEqual(
@@ -32,11 +32,11 @@ describe('asyncThrottle', () => {
   })
 
   test('Bug #3331 case 1: Special timing', async () => {
-    const interval = 1000
+    const interval = 10
     const execTimeStamps: Array<number> = []
-    const mockFunc = vi.fn(
+    const mockFunc = mock(
       async (id: number, complete?: (value?: unknown) => void) => {
-        await delay(30)
+        await delay(3)
         execTimeStamps.push(Date.now())
         if (complete) {
           complete(id)
@@ -47,12 +47,12 @@ describe('asyncThrottle', () => {
 
     testFunc(1)
     testFunc(2)
-    await delay(35)
+    await delay(4)
     testFunc(3)
-    await delay(35)
+    await delay(4)
     await new Promise((resolve) => testFunc(4, resolve))
 
-    expect(mockFunc).toBeCalledTimes(2)
+    expect(mockFunc.mock.calls.length).toBe(2)
     expect(mockFunc.mock.calls[1]?.[0]).toBe(4)
     expect(execTimeStamps.length).toBe(2)
     expect(execTimeStamps[1]! - execTimeStamps[0]!).toBeGreaterThanOrEqual(
@@ -61,9 +61,9 @@ describe('asyncThrottle', () => {
   })
 
   test('Bug #3331 case 2: "func" execution time is greater than the interval.', async () => {
-    const interval = 1000
+    const interval = 10
     const execTimeStamps: Array<number> = []
-    const mockFunc = vi.fn(
+    const mockFunc = mock(
       async (id: number, complete?: (value?: unknown) => void) => {
         await delay(interval + 10)
         execTimeStamps.push(Date.now())
@@ -78,7 +78,7 @@ describe('asyncThrottle', () => {
     testFunc(2)
     await new Promise((resolve) => testFunc(3, resolve))
 
-    expect(mockFunc).toBeCalledTimes(2)
+    expect(mockFunc.mock.calls.length).toBe(2)
     expect(mockFunc.mock.calls[1]?.[0]).toBe(3)
     expect(execTimeStamps.length).toBe(2)
     expect(execTimeStamps[1]! - execTimeStamps[0]!).toBeGreaterThanOrEqual(
@@ -87,7 +87,7 @@ describe('asyncThrottle', () => {
   })
 
   test('"func" throw error not break next invoke', async () => {
-    const mockFunc = vi.fn(
+    const mockFunc = mock(
       async (id: number, complete?: (value?: unknown) => void) => {
         if (id === 1) throw new Error('error')
         await delay(1)
@@ -102,7 +102,7 @@ describe('asyncThrottle', () => {
     await delay(1)
     await new Promise((resolve) => testFunc(2, resolve))
 
-    expect(mockFunc).toBeCalledTimes(2)
+    expect(mockFunc.mock.calls.length).toBe(2)
     expect(mockFunc.mock.calls[1]?.[0]).toBe(2)
   })
 
@@ -119,9 +119,5 @@ describe('asyncThrottle', () => {
       { onError: handleError },
     )
     testFunc()
-  })
-
-  test('should throw error when "func" is not a function', () => {
-    expect(() => asyncThrottle(1 as any)).toThrowError()
   })
 })
