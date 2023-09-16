@@ -570,7 +570,7 @@ export class Query<
           const error = action.error as unknown
 
           if (isCancelledError(error) && error.revert && this.#revertState) {
-            return { ...this.#revertState }
+            return { ...this.#revertState, fetchStatus: 'idle' }
           }
 
           return {
