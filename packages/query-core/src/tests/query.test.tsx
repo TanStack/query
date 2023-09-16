@@ -865,4 +865,56 @@ describe('query', () => {
 
     unsubscribe()
   })
+
+  test('should always revert to idle state (#5958)', async () => {
+    let mockedData = [1]
+
+    const key = queryKey()
+
+    const queryFn = vi
+      .fn<
+        [QueryFunctionContext<ReturnType<typeof queryKey>>],
+        Promise<unknown>
+      >()
+      .mockImplementation(({ signal }) => {
+        return new Promise((resolve, reject) => {
+          const abortListener = () => {
+            clearTimeout(timerId)
+            reject(signal.reason)
+          }
+          signal.addEventListener('abort', abortListener)
+
+          const timerId = setTimeout(() => {
+            signal.removeEventListener('abort', abortListener)
+            resolve(mockedData.join(' - '))
+          }, 50)
+        })
+      })
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+    })
+    const unsubscribe = observer.subscribe(() => undefined)
+    await sleep(60) // let it resolve
+
+    mockedData = [1, 2] // update "server" state in the background
+
+    queryClient.invalidateQueries({ queryKey: key })
+    await sleep(1)
+    queryClient.invalidateQueries({ queryKey: key })
+    await sleep(1)
+    unsubscribe() // unsubscribe to simulate unmount
+
+    // set up a new observer to simulate a mount of new component
+    const newObserver = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+    })
+
+    const spy = vi.fn()
+    newObserver.subscribe(({ data }) => spy(data))
+    await sleep(60) // let it resolve
+    expect(spy).toHaveBeenCalledWith('1 - 2')
+  })
 })

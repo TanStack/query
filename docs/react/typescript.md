@@ -88,6 +88,8 @@ The type for error defaults to `Error`, because that is what most users expect.
 
 [//]: # 'TypingError'
 
+[//]: # 'TypingError'
+
 ```tsx
 const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 //      ^? const error: Error
