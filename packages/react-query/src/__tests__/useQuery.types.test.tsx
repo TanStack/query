@@ -157,22 +157,77 @@ describe('initialData', () => {
 
     it('should not allow to return undefined from the QueryFn', () => {
       doNotExecute(() => {
-        // @ts-expect-error Type 'undefined' is not assignable to type 'never'.
-        const { data } = useQuery(['key'], () => {
-          return undefined
+        useQuery({
+          queryKey: ['key'],
+          // @ts-expect-error Type 'undefined' is not assignable to type 'never'.
+          queryFn: () => {
+            return undefined
+          },
+        })
+      })
+
+      doNotExecute(() => {
+        useQuery({
+          queryKey: ['key'],
+          // @ts-expect-error Type 'undefined' is not assignable to type 'never'.
+          queryFn: () => {
+            return Math.random() > 0.5 ? undefined : { wow: true }
+          },
+        })
+      })
+    })
+
+    it('allows null as the only nullish return value from the queryFn', () => {
+      doNotExecute(() => {
+        const { data } = useQuery({
+          queryKey: ['key'],
+          queryFn: () => {
+            return null
+          },
         })
 
-        const result: Expect<Equal<unknown, typeof data>> = true
+        const result: Expect<Equal<null | undefined, typeof data>> = true
         return result
       })
 
       doNotExecute(() => {
-        // @ts-expect-error Type 'undefined' is not assignable to type 'never'.
-        const { data } = useQuery(['key'], () => {
-          return Math.random() > 0.5 ? undefined : { wow: true }
+        const { data } = useQuery({
+          queryKey: ['key'],
+          queryFn: () => {
+            return null
+          },
+          initialData: 'test',
         })
 
-        const result: Expect<Equal<unknown, typeof data>> = true
+        const result: Expect<Equal<null | string, typeof data>> = true
+        return result
+      })
+
+      doNotExecute(() => {
+        const { data } = useQuery({
+          queryKey: ['key'],
+          queryFn: () => {
+            return null
+          },
+          initialData: undefined,
+        })
+
+        const result: Expect<Equal<null | undefined, typeof data>> = true
+        return result
+      })
+
+      doNotExecute(() => {
+        const { data } = useQuery({
+          queryKey: ['key'],
+          queryFn: () => {
+            return Math.random() > 0.5 ? null : { wow: true }
+          },
+          initialData: undefined,
+        })
+
+        const result: Expect<
+          Equal<null | undefined | { wow: boolean }, typeof data>
+        > = true
         return result
       })
     })

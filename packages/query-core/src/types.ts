@@ -29,7 +29,7 @@ export type QueryFunction<
   TPageParam = never,
 > = (
   context: QueryFunctionContext<TQueryKey, TPageParam>,
-) => unknown extends T ? unknown : undefined extends T ? never : T | Promise<T>
+) => unknown extends T ? T : undefined extends T ? never : T | Promise<T>
 
 export type QueryPersister<
   T = unknown,
