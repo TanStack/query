@@ -40,7 +40,7 @@
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
-    "test:lib": "bun test --preload ../../setup-test.ts",
+    "test:lib": "bun test --coverage --preload ../../setup-test.ts",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
     "build": "tsup"
