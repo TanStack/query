@@ -7,6 +7,8 @@ import type { QueryFilters, QueryTypeFilter } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
 
+type NoInfer<T> = [T][T extends any ? 0 : never]
+
 export interface Register {
   // defaultError: Error
   // queryMeta: Record<string, unknown>
@@ -26,6 +28,22 @@ export type QueryFunction<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > = (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>
+
+export type QueryPersister<
+  T = unknown,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = never,
+> = [TPageParam] extends [never]
+  ? (
+      queryFn: QueryFunction<T, TQueryKey, never>,
+      context: QueryFunctionContext<TQueryKey>,
+      query: Query,
+    ) => T | Promise<T>
+  : (
+      queryFn: QueryFunction<T, TQueryKey, TPageParam>,
+      context: QueryFunctionContext<TQueryKey>,
+      query: Query,
+    ) => T | Promise<T>
 
 export type QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,
@@ -118,6 +136,11 @@ export interface QueryOptions<
   networkMode?: NetworkMode
   gcTime?: number
   queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam>
+  persister?: QueryPersister<
+    NoInfer<TQueryFnData>,
+    NoInfer<TQueryKey>,
+    NoInfer<TPageParam>
+  >
   queryHash?: string
   queryKey?: TQueryKey
   queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>
