@@ -186,6 +186,10 @@ export function useQueries<
 
   const defaultedQueries = computed(() =>
     cloneDeepUnref(queries).map((queryOptions) => {
+      if (typeof queryOptions.enabled === 'function') {
+        queryOptions.enabled = queryOptions.enabled()
+      }
+
       const defaulted = client.defaultQueryOptions(queryOptions)
       defaulted._optimisticResults = client.isRestoring.value
         ? 'isRestoring'
