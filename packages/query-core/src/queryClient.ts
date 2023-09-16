@@ -115,7 +115,7 @@ export class QueryClient {
 
   ensureQueryData<
     TQueryFnData,
-    TError,
+    TError = DefaultError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(

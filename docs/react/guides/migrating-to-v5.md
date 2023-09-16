@@ -455,6 +455,10 @@ Infinite Queries can be prefetched like regular Queries. Per default, only the f
 
 See the [useQueries docs](../reference/useQueries#combine) for more details.
 
+### Experimental `fine grained storage persister`
+
+See the [experimental_createPersister docs](../plugins/createPersister) for more details.
+
 [//]: # 'FrameworkSpecificNewFeatures'
 
 ### Typesafe way to create Query Options
