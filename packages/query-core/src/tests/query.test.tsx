@@ -870,25 +870,25 @@ describe('query', () => {
 
     const key = queryKey()
 
-    const queryFn = jest.fn<
-      Promise<unknown>,
-      [QueryFunctionContext<ReturnType<typeof queryKey>>]
-    >()
+    const queryFn = vi
+      .fn<
+        [QueryFunctionContext<ReturnType<typeof queryKey>>],
+        Promise<unknown>
+      >()
+      .mockImplementation(({ signal }) => {
+        return new Promise((resolve, reject) => {
+          const abortListener = () => {
+            clearTimeout(timerId)
+            reject(signal.reason)
+          }
+          signal.addEventListener('abort', abortListener)
 
-    queryFn.mockImplementation(({ signal }) => {
-      return new Promise((resolve, reject) => {
-        const abortListener = () => {
-          clearTimeout(timerId)
-          reject(signal!.reason)
-        }
-        signal!.addEventListener('abort', abortListener)
-
-        const timerId = setTimeout(() => {
-          signal!.removeEventListener('abort', abortListener)
-          resolve(mockedData.join(' - '))
-        }, 50)
+          const timerId = setTimeout(() => {
+            signal.removeEventListener('abort', abortListener)
+            resolve(mockedData.join(' - '))
+          }, 50)
+        })
       })
-    })
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -899,9 +899,9 @@ describe('query', () => {
 
     mockedData = [1, 2] // update "server" state in the background
 
-    queryClient.invalidateQueries(key)
+    queryClient.invalidateQueries({ queryKey: key })
     await sleep(1)
-    queryClient.invalidateQueries(key)
+    queryClient.invalidateQueries({ queryKey: key })
     await sleep(1)
     unsubscribe() // unsubscribe to simulate unmount
 
@@ -911,7 +911,7 @@ describe('query', () => {
       queryFn,
     })
 
-    const spy = jest.fn()
+    const spy = vi.fn()
     newObserver.subscribe(({ data }) => spy(data))
     await sleep(60) // let it resolve
     expect(spy).toHaveBeenCalledWith('1 - 2')
