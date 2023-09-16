@@ -4,5 +4,11 @@
     "jsx": "react",
     "types": ["bun-types"]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", ".eslintrc.cjs", "tsup.config.js", "happydom.ts"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".eslintrc.cjs",
+    "tsup.config.js",
+    "happydom.ts"
+  ]
 }
