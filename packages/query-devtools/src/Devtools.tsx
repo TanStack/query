@@ -1034,7 +1034,7 @@ const QueryDetails = () => {
                 background-color: ${tokens.colors.cyan[400]};
               `}
             ></span>
-            {restoringLoading() ? 'Restore' : 'Trigger'} Loading
+            {queryStatus() === 'pending' ? 'Restore' : 'Trigger'} Loading
           </button>
           <Show when={errorTypes().length === 0 || queryStatus() === 'error'}>
             <button
