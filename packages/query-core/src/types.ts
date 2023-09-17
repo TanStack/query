@@ -152,9 +152,7 @@ export interface QueryOptions<
    * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic.
    * Defaults to `true`.
    */
-  structuralSharing?:
-    | boolean
-    | ((oldData: TData | undefined, newData: TData) => TData)
+  structuralSharing?: boolean | (<T>(oldData: T | undefined, newData: T) => T)
   _defaulted?: boolean
   /**
    * Additional payload to be stored on each query.
