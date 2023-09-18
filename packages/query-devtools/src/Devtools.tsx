@@ -1061,6 +1061,7 @@ const QueryDetails = () => {
               'tsqd-query-details-action-invalidate',
             )}
             onClick={() => queryClient.invalidateQueries(activeQuery())}
+            disabled={queryStatus() === 'pending'}
           >
             <span
               class={css`
@@ -1078,6 +1079,7 @@ const QueryDetails = () => {
               'tsqd-query-details-action-reset',
             )}
             onClick={() => queryClient.resetQueries(activeQuery())}
+            disabled={queryStatus() === 'pending'}
           >
             <span
               class={css`
@@ -1130,7 +1132,7 @@ const QueryDetails = () => {
                 background-color: ${tokens.colors.cyan[400]};
               `}
             ></span>
-            {statusLabel() === 'fetching' ? 'Restore' : 'Trigger'} Loading
+            {queryStatus() === 'pending' ? 'Restore' : 'Trigger'} Loading
           </button>
           <Show when={errorTypes().length === 0 || queryStatus() === 'error'}>
             <button
@@ -1148,6 +1150,7 @@ const QueryDetails = () => {
                   queryClient.resetQueries(activeQuery())
                 }
               }}
+              disabled={queryStatus() === 'pending'}
             >
               <span
                 class={css`
