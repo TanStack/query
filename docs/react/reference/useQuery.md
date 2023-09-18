@@ -155,7 +155,7 @@ const {
   - If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `pending` state.
   - `placeholderData` is **not persisted** to the cache
   - If you provide a function for `placeholderData`, as a first argument you will receive previously watched query data if available, and the second argument will be the complete previousQuery instance.
-- `structuralSharing: boolean | ((oldData: TData | undefined, newData: TData) => TData)`
+- `structuralSharing: boolean | (<T>(oldData: T | undefined, newData: T) => T)`
   - Optional
   - Defaults to `true`
   - If set to `false`, structural sharing between query results will be disabled.
