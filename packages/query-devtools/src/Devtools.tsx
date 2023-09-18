@@ -973,6 +973,7 @@ const QueryDetails = () => {
               color: ${tokens.colors.yellow[400]};
             `}
             onClick={() => queryClient.invalidateQueries(activeQuery())}
+            disabled={queryStatus() === 'pending'}
           >
             <span
               class={css`
@@ -986,6 +987,7 @@ const QueryDetails = () => {
               color: ${tokens.colors.gray[300]};
             `}
             onClick={() => queryClient.resetQueries(activeQuery())}
+            disabled={queryStatus() === 'pending'}
           >
             <span
               class={css`
