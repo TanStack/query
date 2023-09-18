@@ -182,7 +182,7 @@ describe('PersistQueryClientProvider', () => {
 
     const state = await persister.restoreClient()
 
-    expect(state.clientState.queries[0].state.data).toBe('updated')
+    expect(state?.clientState.queries[0]?.state.data).toBe('updated')
   })
 
   test('should also put useQueries into idle state', async () => {
