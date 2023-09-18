@@ -1048,6 +1048,7 @@ const QueryDetails = () => {
                   queryClient.resetQueries(activeQuery())
                 }
               }}
+              disabled={queryStatus() === 'pending'}
             >
               <span
                 class={css`
