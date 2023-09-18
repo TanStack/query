@@ -34,21 +34,19 @@ export const PersistQueryClientProvider = ({
       ...refs.current.persistOptions,
       queryClient: client,
     }
-    let unsubscribe: (() => void) | undefined
     if (!didRestore.current) {
       didRestore.current = true
       setIsRestoring(true)
       persistQueryClientRestore(options).then(async () => {
         try {
           await refs.current.onSuccess?.()
-          unsubscribe = persistQueryClientSubscribe(options)
         } finally {
           setIsRestoring(false)
         }
       })
     }
-    return unsubscribe?.()
-  }, [client])
+    return isRestoring ? undefined : persistQueryClientSubscribe(options)
+  }, [client, isRestoring])
 
   return (
     <QueryClientProvider client={client} {...props}>
