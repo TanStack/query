@@ -973,6 +973,7 @@ const QueryDetails = () => {
               color: ${tokens.colors.yellow[400]};
             `}
             onClick={() => queryClient.invalidateQueries(activeQuery())}
+            disabled={queryStatus() === 'pending'}
           >
             <span
               class={css`
@@ -986,6 +987,7 @@ const QueryDetails = () => {
               color: ${tokens.colors.gray[300]};
             `}
             onClick={() => queryClient.resetQueries(activeQuery())}
+            disabled={queryStatus() === 'pending'}
           >
             <span
               class={css`
@@ -1034,7 +1036,7 @@ const QueryDetails = () => {
                 background-color: ${tokens.colors.cyan[400]};
               `}
             ></span>
-            {statusLabel() === 'fetching' ? 'Restore' : 'Trigger'} Loading
+            {queryStatus() === 'pending' ? 'Restore' : 'Trigger'} Loading
           </button>
           <Show when={errorTypes().length === 0 || queryStatus() === 'error'}>
             <button
@@ -1048,6 +1050,7 @@ const QueryDetails = () => {
                   queryClient.resetQueries(activeQuery())
                 }
               }}
+              disabled={queryStatus() === 'pending'}
             >
               <span
                 class={css`
