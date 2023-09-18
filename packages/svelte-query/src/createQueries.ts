@@ -1,5 +1,6 @@
 import { QueriesObserver, notifyManager } from '@tanstack/query-core'
 import { derived, get, readable } from 'svelte/store'
+import { useIsRestoring } from './useIsRestoring'
 import { useQueryClient } from './useQueryClient'
 import { isSvelteStore } from './utils'
 import type { Readable } from 'svelte/store'
@@ -183,19 +184,23 @@ export function createQueries<
   queryClient?: QueryClient,
 ): Readable<TCombinedResult> {
   const client = useQueryClient(queryClient)
-  // const isRestoring = useIsRestoring()
+  const isRestoring = useIsRestoring()
 
   const queriesStore = isSvelteStore(queries) ? queries : readable(queries)
 
-  const defaultedQueriesStore = derived(queriesStore, ($queries) => {
-    return $queries.map((opts) => {
-      const defaultedOptions = client.defaultQueryOptions(opts)
-      // Make sure the results are already in fetching state before subscribing or updating options
-      defaultedOptions._optimisticResults = 'optimistic'
-
-      return defaultedOptions
-    })
-  })
+  const defaultedQueriesStore = derived(
+    [queriesStore, isRestoring],
+    ([$queries, $isRestoring]) => {
+      return $queries.map((opts) => {
+        const defaultedOptions = client.defaultQueryOptions(opts)
+        // Make sure the results are already in fetching state before subscribing or updating options
+        defaultedOptions._optimisticResults = $isRestoring
+          ? 'isRestoring'
+          : 'optimistic'
+        return defaultedOptions
+      })
+    },
+  )
   const observer = new QueriesObserver<TCombinedResult>(
     client,
     get(defaultedQueriesStore),
@@ -212,13 +217,40 @@ export function createQueries<
     )
   })
 
-  const [, getCombinedResult] = observer.getOptimisticResult(
+  const [, getCombinedResult, trackResult] = observer.getOptimisticResult(
     get(defaultedQueriesStore),
   )
 
-  const { subscribe } = readable(getCombinedResult() as any, (set) => {
-    return observer.subscribe(notifyManager.batchCalls(set))
-  })
+  const result = derived<
+    typeof isRestoring,
+    | Parameters<Parameters<typeof observer.subscribe>[0]>[0]
+    | ReturnType<typeof getCombinedResult>
+  >(
+    isRestoring,
+    ($isRestoring, set) => {
+      const unsubscribe = $isRestoring
+        ? () => undefined
+        : observer.subscribe(notifyManager.batchCalls(set))
 
+      return () => unsubscribe()
+    },
+    getCombinedResult(trackResult()),
+  )
+
+  const { subscribe } = derived(
+    [result, defaultedQueriesStore],
+    ([$result, $defaultedQueries]) => {
+      $result = observer.getOptimisticResult($defaultedQueries)[0]
+      const observers = observer.getObservers()
+      return $defaultedQueries.map((query, index) =>
+        query.notifyOnChangeProps
+          ? // @ts-expect-error TCombinedResult should be an array
+            $result[index]
+          : // @ts-expect-error TCombinedResult should be an array
+            observers[index]!.trackResult($result[index]),
+      )
+    },
+  )
+  // @ts-expect-error TCombinedResult should be an array
   return { subscribe }
 }

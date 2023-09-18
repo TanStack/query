@@ -629,4 +629,77 @@ describe('PersistQueryClientProvider', () => {
       data: 'queryFn2',
     })
   })
+
+  test('should only restore once in StrictMode', async () => {
+    let restoreCount = 0
+    const createPersister = (): Persister => {
+      let storedState: PersistedClient | undefined
+
+      return {
+        async persistClient(persistClient) {
+          storedState = persistClient
+        },
+        async restoreClient() {
+          restoreCount++
+          await sleep(10)
+          return storedState
+        },
+        removeClient() {
+          storedState = undefined
+        },
+      }
+    }
+
+    const key = queryKey()
+
+    const queryClient = createQueryClient()
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
+
+    const persister = createPersister()
+
+    const onSuccess = vi.fn()
+
+    await persistQueryClientSave({ queryClient, persister })
+
+    queryClient.clear()
+
+    function Page() {
+      const state = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 'fetched'
+        },
+      })
+
+      return (
+        <div>
+          <h1>{state.data}</h1>
+          <h2>fetchStatus: {state.fetchStatus}</h2>
+        </div>
+      )
+    }
+
+    const rendered = render(
+      <React.StrictMode>
+        <PersistQueryClientProvider
+          client={queryClient}
+          persistOptions={{ persister }}
+          onSuccess={onSuccess}
+        >
+          <Page />
+        </PersistQueryClientProvider>
+      </React.StrictMode>,
+    )
+
+    await waitFor(() => rendered.getByText('fetchStatus: idle'))
+    await waitFor(() => rendered.getByText('hydrated'))
+    await waitFor(() => rendered.getByText('fetched'))
+
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    expect(restoreCount).toBe(1)
+  })
 })

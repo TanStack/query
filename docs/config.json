@@ -331,6 +331,10 @@
             {
               "label": "broadcastQueryClient (Experimental)",
               "to": "react/plugins/broadcastQueryClient"
+            },
+            {
+              "label": "createPersister (Experimental)",
+              "to": "react/plugins/createPersister"
             }
           ]
         },

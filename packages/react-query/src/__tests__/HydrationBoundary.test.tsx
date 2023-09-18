@@ -137,8 +137,8 @@ describe('React hydration', () => {
         queryFn: () => dataQuery(['should change']),
       })
       await intermediateClient.prefetchQuery({
-        queryKey: ['added string'],
-        queryFn: () => dataQuery(['added string']),
+        queryKey: ['added'],
+        queryFn: () => dataQuery(['added']),
       })
       const dehydrated = dehydrate(intermediateClient)
       intermediateClient.clear()
@@ -147,17 +147,121 @@ describe('React hydration', () => {
         <QueryClientProvider client={queryClient}>
           <HydrationBoundary state={dehydrated}>
             <Page queryKey={['string']} />
-            <Page queryKey={['added string']} />
+            <Page queryKey={['added']} />
           </HydrationBoundary>
         </QueryClientProvider>,
       )
 
-      // Existing query data should be overwritten if older,
-      // so this should have changed
-      await sleep(10)
-      rendered.getByText('should change')
+      // Existing observer should not have updated at this point,
+      // as that would indicate a side effect in the render phase
+      rendered.getByText('string')
       // New query data should be available immediately
-      rendered.getByText('added string')
+      rendered.getByText('added')
+
+      await sleep(10)
+      // After effects phase has had time to run, the observer should have updated
+      expect(rendered.queryByText('string')).toBeNull()
+      rendered.getByText('should change')
+
+      queryClient.clear()
+    })
+
+    // When we hydrate in transitions that are later aborted, it could be
+    // confusing to both developers and users if we suddenly updated existing
+    // state on the screen (why did this update when it was not stale, nothing
+    // remounted, I didn't change tabs etc?).
+    // Any queries that does not exist in the cache yet can still be hydrated
+    // since they don't have any observers on the current page that would update.
+    test('should hydrate new but not existing queries if transition is aborted', async () => {
+      const initialDehydratedState = JSON.parse(stringifiedState)
+      const queryCache = new QueryCache()
+      const queryClient = createQueryClient({ queryCache })
+
+      function Page({ queryKey }: { queryKey: [string] }) {
+        const { data } = useQuery({
+          queryKey,
+          queryFn: () => dataQuery(queryKey),
+        })
+        return (
+          <div>
+            <h1>{data}</h1>
+          </div>
+        )
+      }
+
+      const rendered = render(
+        <QueryClientProvider client={queryClient}>
+          <HydrationBoundary state={initialDehydratedState}>
+            <Page queryKey={['string']} />
+          </HydrationBoundary>
+        </QueryClientProvider>,
+      )
+
+      await rendered.findByText('string')
+
+      const intermediateCache = new QueryCache()
+      const intermediateClient = createQueryClient({
+        queryCache: intermediateCache,
+      })
+      await intermediateClient.prefetchQuery({
+        queryKey: ['string'],
+        queryFn: () => dataQuery(['should not change']),
+      })
+      await intermediateClient.prefetchQuery({
+        queryKey: ['added'],
+        queryFn: () => dataQuery(['added']),
+      })
+      const newDehydratedState = dehydrate(intermediateClient)
+      intermediateClient.clear()
+
+      function Thrower() {
+        throw new Promise(() => {
+          // Never resolve
+        })
+
+        // @ts-ignore
+        return null
+      }
+
+      React.startTransition(() => {
+        rendered.rerender(
+          <React.Suspense fallback="loading">
+            <QueryClientProvider client={queryClient}>
+              <HydrationBoundary state={newDehydratedState}>
+                <Page queryKey={['string']} />
+                <Page queryKey={['added']} />
+                <Thrower />
+              </HydrationBoundary>
+            </QueryClientProvider>
+          </React.Suspense>,
+        )
+
+        rendered.getByText('loading')
+      })
+
+      React.startTransition(() => {
+        rendered.rerender(
+          <QueryClientProvider client={queryClient}>
+            <HydrationBoundary state={initialDehydratedState}>
+              <Page queryKey={['string']} />
+              <Page queryKey={['added']} />
+            </HydrationBoundary>
+          </QueryClientProvider>,
+        )
+
+        // This query existed before the transition so it should stay the same
+        rendered.getByText('string')
+        expect(rendered.queryByText('should not change')).toBeNull()
+        // New query data should be available immediately because it was
+        // hydrated in the previous transition, even though the new dehydrated
+        // state did not contain it
+        rendered.getByText('added')
+      })
+
+      await sleep(10)
+      // It should stay the same even after effects have had a chance to run
+      rendered.getByText('string')
+      expect(rendered.queryByText('should not change')).toBeNull()
 
       queryClient.clear()
     })
