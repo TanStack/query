@@ -245,10 +245,18 @@ export class QueryClient extends QC {
     super.setDefaultOptions(cloneDeepUnref(options))
   }
 
-  setQueryDefaults(
+  setQueryDefaults<
+    TData = unknown,
+    TError = DefaultError,
+    TVariables = void,
+    TContext = unknown,
+  >(
     queryKey: MaybeRefDeep<QueryKey>,
     options: MaybeRefDeep<
-      Omit<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>
+      Omit<
+        QueryObserverOptions<TData, TError, TVariables, TContext>,
+        'queryKey'
+      >
     >,
   ): void {
     super.setQueryDefaults(cloneDeepUnref(queryKey), cloneDeepUnref(options))
@@ -260,9 +268,16 @@ export class QueryClient extends QC {
     return super.getQueryDefaults(cloneDeepUnref(queryKey))
   }
 
-  setMutationDefaults(
+  setMutationDefaults<
+    TData = unknown,
+    TError = DefaultError,
+    TVariables = void,
+    TContext = unknown,
+  >(
     mutationKey: MaybeRefDeep<MutationKey>,
-    options: MaybeRefDeep<MutationObserverOptions<any, any, any, any>>,
+    options: MaybeRefDeep<
+      MutationObserverOptions<TData, TError, TVariables, TContext>
+    >,
   ): void {
     super.setMutationDefaults(
       cloneDeepUnref(mutationKey),
