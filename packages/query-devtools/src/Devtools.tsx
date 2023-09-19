@@ -9,7 +9,8 @@ import {
   onMount,
 } from 'solid-js'
 import { rankItem } from '@tanstack/match-sorter-utils'
-import { css, cx } from '@emotion/css'
+import { css } from 'goober'
+import { clsx as cx } from 'clsx'
 import { TransitionGroup } from 'solid-transition-group'
 import { Key } from '@solid-primitives/keyed'
 import { createLocalStorage } from '@solid-primitives/storage'
@@ -110,50 +111,56 @@ export const Devtools = () => {
     return localStore.position || useQueryDevtoolsContext().position || POSITION
   })
 
+  createEffect(() => {
+    const root = document.querySelector('.tsqd-parent-container') as HTMLElement
+    const height = localStore.height || DEFAULT_HEIGHT
+    const width = localStore.width || DEFAULT_WIDTH
+    const panelPosition = position()
+    root.style.setProperty(
+      '--tsqd-panel-height',
+      `${panelPosition === 'top' ? '-' : ''}${height}px`,
+    )
+    root.style.setProperty(
+      '--tsqd-panel-width',
+      `${panelPosition === 'left' ? '-' : ''}${width}px`,
+    )
+  })
+
   return (
     <div
       // styles for animating the panel in and out
-      class={css`
-        & .TSQD-panel-exit-active,
-        & .TSQD-panel-enter-active {
-          transition: opacity 0.3s, transform 0.3s;
-        }
+      class={cx(
+        css`
+          & .tsqd-panel-transition-exit-active,
+          & .tsqd-panel-transition-enter-active {
+            transition: opacity 0.3s, transform 0.3s;
+          }
 
-        & .TSQD-panel-exit-to,
-        & .TSQD-panel-enter {
-          ${position() === 'top'
-            ? `transform: translateY(-${Number(
-                localStore.height || DEFAULT_HEIGHT,
-              )}px);`
-            : position() === 'left'
-            ? `transform: translateX(-${Number(
-                localStore.width || DEFAULT_WIDTH,
-              )}px);`
-            : position() === 'right'
-            ? `transform: translateX(${Number(
-                localStore.width || DEFAULT_WIDTH,
-              )}px);`
-            : `transform: translateY(${Number(
-                localStore.height || DEFAULT_HEIGHT,
-              )}px);`}
-        }
+          & .tsqd-panel-transition-exit-to,
+          & .tsqd-panel-transition-enter {
+            ${position() === 'top' || position() === 'bottom'
+              ? `transform: translateY(var(--tsqd-panel-height));`
+              : `transform: translateX(var(--tsqd-panel-width));`}
+          }
 
-        & .TSQD-button-exit-active,
-        & .TSQD-button-enter-active {
-          transition: opacity 0.3s, transform 0.3s;
-        }
+          & .tsqd-button-transition-exit-active,
+          & .tsqd-button-transition-enter-active {
+            transition: opacity 0.3s, transform 0.3s;
+          }
 
-        & .TSQD-button-exit-to,
-        & .TSQD-button-enter {
-          transform: ${buttonPosition() === 'top-left'
-            ? `translateX(-72px);`
-            : buttonPosition() === 'top-right'
-            ? `translateX(72px);`
-            : `translateY(72px);`};
-        }
-      `}
+          & .tsqd-button-transition-exit-to,
+          & .tsqd-button-transition-enter {
+            transform: ${buttonPosition() === 'top-left'
+              ? `translateX(-72px);`
+              : buttonPosition() === 'top-right'
+              ? `translateX(72px);`
+              : `translateY(72px);`};
+          }
+        `,
+        'tsqd-transitions-container',
+      )}
     >
-      <TransitionGroup name="TSQD-panel">
+      <TransitionGroup name="tsqd-panel-transition">
         <Show when={isOpen()}>
           <DevtoolsPanel
             localStore={localStore}
@@ -161,7 +168,7 @@ export const Devtools = () => {
           />
         </Show>
       </TransitionGroup>
-      <TransitionGroup name="TSQD-button">
+      <TransitionGroup name="tsqd-button-transition">
         <Show when={!isOpen()}>
           <div
             class={cx(
@@ -361,18 +368,24 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
       // -
       // min-width - When the panel is in the left or right position, the panel
       // width is set to min-content to allow the panel to shrink to the lowest possible width
-      class={`${styles.panel} ${styles[`panel-position-${position()}`]} ${css`
-        flex-direction: ${panelWidth() < secondBreakpoint ? 'column' : 'row'};
-        background-color: ${panelWidth() < secondBreakpoint
-          ? tokens.colors.gray[600]
-          : tokens.colors.darkGray[900]};
-        ${panelWidth() < thirdBreakpoint &&
-        (position() === 'right' || position() === 'left')
-          ? `
+      class={cx(
+        styles.panel,
+        styles[`panel-position-${position()}`],
+        css`
+          flex-direction: ${panelWidth() < secondBreakpoint ? 'column' : 'row'};
+          background-color: ${panelWidth() < secondBreakpoint
+            ? tokens.colors.gray[600]
+            : tokens.colors.darkGray[900]};
+        `,
+        {
+          [css`
             min-width: min-content;
-          `
-          : ''}
-      `}`}
+          `]:
+            panelWidth() < thirdBreakpoint &&
+            (position() === 'right' || position() === 'left'),
+        },
+        'tsqd-main-panel',
+      )}
       style={{
         height:
           position() === 'bottom' || position() === 'top'
@@ -390,12 +403,17 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
         class={cx(
           styles.dragHandle,
           styles[`dragHandle-position-${position()}`],
+          'tsqd-drag-handle',
         )}
         onMouseDown={handleDragStart}
       ></div>
       <button
         aria-label="Close tanstack query devtools"
-        class={cx(styles.closeBtn, styles[`closeBtn-position-${position()}`])}
+        class={cx(
+          styles.closeBtn,
+          styles[`closeBtn-position-${position()}`],
+          'tsqd-minimize-btn',
+        )}
         onClick={() => props.setLocalStore('open', 'false')}
       >
         <ChevronDown />
@@ -404,23 +422,29 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
         ref={queriesContainerRef}
         // When the panels are stacked we use the height style
         // to divide the panels into two equal parts
-        class={`${styles.queriesContainer} ${css`
-          ${panelWidth() < secondBreakpoint && selectedQueryHash()
-            ? `
-          height: 50%;
-          max-height: 50%;
-          `
-            : ''}
-        `}`}
+        class={cx(
+          styles.queriesContainer,
+          panelWidth() < secondBreakpoint &&
+            selectedQueryHash() &&
+            css`
+              height: 50%;
+              max-height: 50%;
+            `,
+          'tsqd-queries-container',
+        )}
       >
-        <div class={cx(styles.row)}>
+        <div class={cx(styles.row, 'tsqd-header')}>
           <button
-            class={styles.logo}
+            class={cx(styles.logo, 'tsqd-text-logo-container')}
             onClick={() => props.setLocalStore('open', 'false')}
             aria-label="Close Tanstack query devtools"
           >
-            <span class={styles.tanstackLogo}>TANSTACK</span>
-            <span class={styles.queryFlavorLogo}>
+            <span class={cx(styles.tanstackLogo, 'tsqd-text-logo-tanstack')}>
+              TANSTACK
+            </span>
+            <span
+              class={cx(styles.queryFlavorLogo, 'tsqd-text-logo-query-flavor')}
+            >
               {useQueryDevtoolsContext().queryFlavor} v
               {useQueryDevtoolsContext().version}
             </span>
@@ -433,10 +457,16 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
             css`
               gap: ${tokens.size[2.5]};
             `,
+            'tsqd-filters-actions-container',
           )}
         >
-          <div class={styles.filtersContainer}>
-            <div class={styles.filterInput}>
+          <div class={cx(styles.filtersContainer, 'tsqd-filters-container')}>
+            <div
+              class={cx(
+                styles.filterInput,
+                'tsqd-query-filter-textfield-container',
+              )}
+            >
               <Search />
               <input
                 aria-label="Filter queries by query key"
@@ -445,10 +475,16 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                 onInput={(e) =>
                   props.setLocalStore('filter', e.currentTarget.value)
                 }
+                class="tsqd-query-filter-textfield"
                 value={props.localStore.filter || ''}
               />
             </div>
-            <div class={styles.filterSelect}>
+            <div
+              class={cx(
+                styles.filterSelect,
+                'tsqd-query-filter-sort-container',
+              )}
+            >
               <select
                 value={sort()}
                 onChange={(e) =>
@@ -469,6 +505,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                 sortOrder() === -1 ? 'descending' : 'ascending'
               }`}
               aria-pressed={sortOrder() === -1}
+              class="tsqd-query-filter-sort-order-btn"
             >
               <Show when={sortOrder() === 1}>
                 <span>Asc</span>
@@ -481,7 +518,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
             </button>
           </div>
 
-          <div class={styles.actionsContainer}>
+          <div class={cx(styles.actionsContainer, 'tsqd-actions-container')}>
             <button
               onClick={() => {
                 if (offline()) {
@@ -492,7 +529,11 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                   setOffline(true)
                 }
               }}
-              class={styles.actionsBtn}
+              class={cx(
+                styles.actionsBtn,
+                'tsqd-actions-btn',
+                'tsqd-action-mock-offline-behavior',
+              )}
               aria-label={`${
                 offline()
                   ? 'Unset offline mocking behavior'
@@ -505,13 +546,17 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
             <div style={{ position: 'relative' }}>
               <button
                 onClick={() => setSettingsOpen((prev) => !prev)}
-                class={styles.actionsBtn}
-                id="TSQD-settings-menu-btn"
+                class={cx(
+                  styles.actionsBtn,
+                  'tsqd-actions-btn',
+                  'tsqd-action-settings',
+                )}
+                id="tsqd-settings-menu-btn"
                 aria-label={`${
                   settingsOpen() ? 'Close' : 'Open'
                 } settings menu`}
                 aria-haspopup="true"
-                aria-controls="TSQD-settings-menu"
+                aria-controls="tsqd-settings-menu"
               >
                 <Settings />
               </button>
@@ -519,17 +564,30 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                 <div
                   role="menu"
                   tabindex="-1"
-                  aria-labelledby="TSQD-settings-menu-btn"
-                  id="TSQD-settings-menu"
-                  class={styles.settingsMenu}
+                  aria-labelledby="tsqd-settings-menu-btn"
+                  id="tsqd-settings-menu"
+                  class={cx(styles.settingsMenu, 'tsqd-settings-menu')}
                 >
-                  <div class={styles.settingsMenuHeader}>Position</div>
-                  <div class={styles.settingsMenuSection}>
+                  <div
+                    class={cx(
+                      styles.settingsMenuHeader,
+                      'tsqd-settings-menu-header',
+                    )}
+                  >
+                    Position
+                  </div>
+                  <div
+                    class={cx(
+                      styles.settingsMenuSection,
+                      'tsqd-settings-menu-section',
+                    )}
+                  >
                     <button
                       onClick={() => {
                         setDevtoolsPosition('top')
                       }}
                       aria-label="Position top"
+                      class="tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-top"
                     >
                       <ArrowUp />
                       <span>Top</span>
@@ -539,6 +597,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                         setDevtoolsPosition('bottom')
                       }}
                       aria-label="Position bottom"
+                      class="tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-bottom"
                     >
                       <ArrowDown />
                       <span>Bottom</span>
@@ -548,6 +607,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                         setDevtoolsPosition('left')
                       }}
                       aria-label="Position left"
+                      class="tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-left"
                     >
                       <ArrowDown />
                       <span>Left</span>
@@ -557,6 +617,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                         setDevtoolsPosition('right')
                       }}
                       aria-label="Position right"
+                      class="tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-right"
                     >
                       <ArrowDown />
                       <span>Right</span>
@@ -567,8 +628,13 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
             </div>
           </div>
         </div>
-        <div class={styles.overflowQueryContainer}>
-          <div>
+        <div
+          class={cx(
+            styles.overflowQueryContainer,
+            'tsqd-queries-overflow-container',
+          )}
+        >
+          <div class="tsqd-queries-container">
             <Key by={(q) => q.queryHash} each={queries()}>
               {(query) => <QueryRow query={query()} />}
             </Key>
@@ -641,12 +707,12 @@ export const QueryRow: Component<{ query: Query }> = (props) => {
           styles.queryRow,
           selectedQueryHash() === props.query.queryHash &&
             styles.selectedQueryRow,
+          'tsqd-query-row',
         )}
         aria-label={`Query key ${props.query.queryHash}`}
       >
         <div
           class={cx(
-            'TSQDObserverCount',
             color() === 'gray'
               ? css`
                   background-color: ${tokens.colors[color()][700]};
@@ -654,15 +720,16 @@ export const QueryRow: Component<{ query: Query }> = (props) => {
                 `
               : css`
                   background-color: ${tokens.colors[color()][900]};
-                  color: ${tokens.colors[color()][300]} !important;
+                  color: ${tokens.colors[color()][300]};
                 `,
+            'tsqd-query-observer-count',
           )}
         >
           {observers()}
         </div>
-        <code class="TSQDQueryHash">{props.query.queryHash}</code>
+        <code class="tsqd-query-hash">{props.query.queryHash}</code>
         <Show when={isDisabled()}>
-          <div class="TSQDQueryDisabled">disabled</div>
+          <div class="tsqd-query-disabled-indicator">disabled</div>
         </Show>
       </button>
     </Show>
@@ -708,7 +775,7 @@ export const QueryStatusCount: Component = () => {
   const styles = getStyles()
 
   return (
-    <div class={styles.queryStatusContainer}>
+    <div class={cx(styles.queryStatusContainer, 'tsqd-query-status-container')}>
       <QueryStatus label="Fresh" color="green" count={fresh()} />
       <QueryStatus label="Fetching" color="blue" count={fetching()} />
       <QueryStatus label="Paused" color="purple" count={paused()} />
@@ -752,40 +819,44 @@ export const QueryStatus: Component<QueryStatusProps> = (props) => {
       ref={tagRef}
       class={cx(
         styles.queryStatusTag,
-        !showLabel()
-          ? css`
-              cursor: pointer;
-              &:hover {
-                background: ${tokens.colors.darkGray[400]}${tokens.alpha[80]};
-              }
-            `
-          : null,
+        !showLabel() &&
+          css`
+            cursor: pointer;
+            &:hover {
+              background: ${tokens.colors.darkGray[400]}${tokens.alpha[80]};
+            }
+          `,
+        'tsqd-query-status-tag',
+        `tsqd-query-status-tag-${props.label.toLowerCase()}`,
       )}
       {...(mouseOver() || focused()
         ? {
-            'aria-describedby': 'TSQD-status-tooltip',
+            'aria-describedby': 'tsqd-status-tooltip',
           }
         : {})}
     >
       <Show when={!showLabel() && (mouseOver() || focused())}>
         <div
           role="tooltip"
-          id="TSQD-status-tooltip"
-          class={cx(styles.statusTooltip)}
+          id="tsqd-status-tooltip"
+          class={cx(styles.statusTooltip, 'tsqd-query-status-tooltip')}
         >
           {props.label}
         </div>
       </Show>
       <span
-        class={css`
-          width: ${tokens.size[2]};
-          height: ${tokens.size[2]};
-          border-radius: ${tokens.border.radius.full};
-          background-color: ${tokens.colors[props.color][500]};
-        `}
+        class={cx(
+          css`
+            width: ${tokens.size[2]};
+            height: ${tokens.size[2]};
+            border-radius: ${tokens.border.radius.full};
+            background-color: ${tokens.colors[props.color][500]};
+          `,
+          'tsqd-query-status-tag-dot',
+        )}
       />
       <Show when={showLabel()}>
-        <span>{props.label}</span>
+        <span class="tsqd-query-status-tag-label">{props.label}</span>
       </Show>
       <span
         class={cx(
@@ -793,11 +864,12 @@ export const QueryStatus: Component<QueryStatusProps> = (props) => {
           props.count > 0 && props.color !== 'gray'
             ? css`
                 background-color: ${tokens.colors[props.color][900]};
-                color: ${tokens.colors[props.color][300]} !important;
+                color: ${tokens.colors[props.color][300]};
               `
             : css`
-                color: ${tokens.colors['gray'][400]} !important;
+                color: ${tokens.colors['gray'][400]};
               `,
+          'tsqd-query-status-tag-count',
         )}
       >
         {props.count}
@@ -915,10 +987,14 @@ const QueryDetails = () => {
 
   return (
     <Show when={activeQuery() && activeQueryState()}>
-      <div class={styles.detailsContainer}>
-        <div class={styles.detailsHeader}>Query Details</div>
-        <div class={styles.detailsBody}>
-          <div>
+      <div class={cx(styles.detailsContainer, 'tsqd-query-details-container')}>
+        <div class={cx(styles.detailsHeader, 'tsqd-query-details-header')}>
+          Query Details
+        </div>
+        <div
+          class={cx(styles.detailsBody, 'tsqd-query-details-summary-container')}
+        >
+          <div class="tsqd-query-details-summary">
             <pre>
               <code>{displayValue(activeQuery()!.queryKey, true)}</code>
             </pre>
@@ -941,23 +1017,31 @@ const QueryDetails = () => {
               {statusLabel()}
             </span>
           </div>
-          <div>
+          <div class="tsqd-query-details-observers-count">
             <span>Observers:</span>
             <span>{observerCount()}</span>
           </div>
-          <div>
+          <div class="tsqd-query-details-last-updated">
             <span>Last Updated:</span>
             <span>
               {new Date(activeQueryState()!.dataUpdatedAt).toLocaleTimeString()}
             </span>
           </div>
         </div>
-        <div class={styles.detailsHeader}>Actions</div>
-        <div class={styles.actionsBody}>
+        <div class={cx(styles.detailsHeader, 'tsqd-query-details-header')}>
+          Actions
+        </div>
+        <div
+          class={cx(styles.actionsBody, 'tsqd-query-details-actions-container')}
+        >
           <button
-            class={css`
-              color: ${tokens.colors.blue[400]};
-            `}
+            class={cx(
+              css`
+                color: ${tokens.colors.blue[400]};
+              `,
+              'tsqd-query-details-actions-btn',
+              'tsqd-query-details-action-refetch',
+            )}
             onClick={handleRefetch}
             disabled={statusLabel() === 'fetching'}
           >
@@ -969,9 +1053,13 @@ const QueryDetails = () => {
             Refetch
           </button>
           <button
-            class={css`
-              color: ${tokens.colors.yellow[400]};
-            `}
+            class={cx(
+              css`
+                color: ${tokens.colors.yellow[400]};
+              `,
+              'tsqd-query-details-actions-btn',
+              'tsqd-query-details-action-invalidate',
+            )}
             onClick={() => queryClient.invalidateQueries(activeQuery())}
             disabled={queryStatus() === 'pending'}
           >
@@ -983,9 +1071,13 @@ const QueryDetails = () => {
             Invalidate
           </button>
           <button
-            class={css`
-              color: ${tokens.colors.gray[300]};
-            `}
+            class={cx(
+              css`
+                color: ${tokens.colors.gray[300]};
+              `,
+              'tsqd-query-details-actions-btn',
+              'tsqd-query-details-action-reset',
+            )}
             onClick={() => queryClient.resetQueries(activeQuery())}
             disabled={queryStatus() === 'pending'}
           >
@@ -997,9 +1089,13 @@ const QueryDetails = () => {
             Reset
           </button>
           <button
-            class={css`
-              color: ${tokens.colors.cyan[400]};
-            `}
+            class={cx(
+              css`
+                color: ${tokens.colors.cyan[400]};
+              `,
+              'tsqd-query-details-actions-btn',
+              'tsqd-query-details-action-loading',
+            )}
             disabled={restoringLoading()}
             onClick={() => {
               if (activeQuery()?.state.data === undefined) {
@@ -1040,9 +1136,13 @@ const QueryDetails = () => {
           </button>
           <Show when={errorTypes().length === 0 || queryStatus() === 'error'}>
             <button
-              class={css`
-                color: ${tokens.colors.red[400]};
-              `}
+              class={cx(
+                css`
+                  color: ${tokens.colors.red[400]};
+                `,
+                'tsqd-query-details-actions-btn',
+                'tsqd-query-details-action-error',
+              )}
               onClick={() => {
                 if (!activeQuery()!.state.error) {
                   triggerError()
@@ -1063,7 +1163,13 @@ const QueryDetails = () => {
           <Show
             when={!(errorTypes().length === 0 || queryStatus() === 'error')}
           >
-            <div class={styles.actionsSelect}>
+            <div
+              class={cx(
+                styles.actionsSelect,
+                'tsqd-query-details-actions-btn',
+                'tsqd-query-details-action-error-multiple',
+              )}
+            >
               <span
                 class={css`
                   background-color: ${tokens.colors.red[400]};
@@ -1091,11 +1197,14 @@ const QueryDetails = () => {
             </div>
           </Show>
         </div>
-        <div class={styles.detailsHeader}>Data Explorer</div>
+        <div class={cx(styles.detailsHeader, 'tsqd-query-details-header')}>
+          Data Explorer
+        </div>
         <div
           style={{
             padding: '0.5rem',
           }}
+          class="tsqd-query-details-explorer-container tsqd-query-details-data-explorer"
         >
           <Explorer
             label="Data"
@@ -1104,11 +1213,14 @@ const QueryDetails = () => {
             copyable={true}
           />
         </div>
-        <div class={styles.detailsHeader}>Query Explorer</div>
+        <div class={cx(styles.detailsHeader, 'tsqd-query-details-header')}>
+          Query Explorer
+        </div>
         <div
           style={{
             padding: '0.5rem',
           }}
+          class="tsqd-query-details-explorer-container tsqd-query-details-query-explorer"
         >
           <Explorer
             label="Query"
@@ -1182,6 +1294,7 @@ const getStyles = () => {
       z-index: 100000;
       position: fixed;
       padding: 4px;
+      text-align: left;
 
       display: flex;
       align-items: center;
@@ -1473,6 +1586,7 @@ const getStyles = () => {
       font-size: ${font.size.sm};
       background: linear-gradient(to right, #dd524b, #e9a03b);
       background-clip: text;
+      -webkit-background-clip: text;
       line-height: ${font.lineHeight.xs};
       -webkit-text-fill-color: transparent;
       white-space: nowrap;
@@ -1656,8 +1770,8 @@ const getStyles = () => {
     actionsBtn: css`
       border-radius: ${tokens.border.radius.md};
       background-color: ${colors.darkGray[400]};
-      width: 2.125rem; // 34px
-      height: 2.125rem; // 34px
+      width: 2.125rem;
+      height: 2.125rem;
       justify-content: center;
       display: flex;
       align-items: center;
@@ -1694,20 +1808,23 @@ const getStyles = () => {
       background-color: inherit;
       border: none;
       cursor: pointer;
+      &:focus {
+        outline: none;
+      }
       &:focus-visible {
         outline-offset: -2px;
         border-radius: ${border.radius.xs};
         outline: 2px solid ${colors.blue[800]};
       }
-      &:hover .TSQDQueryHash {
+      &:hover .tsqd-query-hash {
         background-color: ${colors.darkGray[600]};
       }
 
-      & .TSQDObserverCount {
+      & .tsqd-query-observer-count {
         padding: 0 ${tokens.size[1]};
         user-select: none;
         min-width: ${tokens.size[8]};
-        align-self: stretch !important;
+        align-self: stretch;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1715,7 +1832,7 @@ const getStyles = () => {
         font-weight: ${font.weight.medium};
         border-bottom: 1px solid ${colors.darkGray[700]};
       }
-      & .TSQDQueryHash {
+      & .tsqd-query-hash {
         user-select: text;
         font-size: ${font.size.sm};
         display: flex;
@@ -1723,16 +1840,15 @@ const getStyles = () => {
         min-height: ${tokens.size[8]};
         flex: 1;
         padding: ${tokens.size[1]} ${tokens.size[2]};
-        font-family: 'Menlo', 'Fira Code', monospace !important;
+        font-family: 'Menlo', 'Fira Code', monospace;
         border-bottom: 1px solid ${colors.darkGray[400]};
         text-align: left;
         text-overflow: clip;
         word-break: break-word;
       }
 
-      & .TSQDQueryDisabled {
+      & .tsqd-query-disabled-indicator {
         align-self: stretch;
-        align-self: stretch !important;
         display: flex;
         align-items: center;
         padding: 0 ${tokens.size[3]};
@@ -1749,6 +1865,7 @@ const getStyles = () => {
       flex-direction: column;
       overflow-y: auto;
       display: flex;
+      text-align: left;
     `,
     detailsHeader: css`
       position: sticky;
@@ -1758,6 +1875,7 @@ const getStyles = () => {
       padding: ${tokens.size[2]} ${tokens.size[2]};
       font-weight: ${font.weight.medium};
       font-size: ${font.size.sm};
+      text-align: left;
     `,
     detailsBody: css`
       margin: ${tokens.size[2]} 0px ${tokens.size[3]} 0px;
@@ -1780,7 +1898,7 @@ const getStyles = () => {
       }
 
       & code {
-        font-family: 'Menlo', 'Fira Code', monospace !important;
+        font-family: 'Menlo', 'Fira Code', monospace;
         margin: 0;
         font-size: ${font.size.sm};
         line-height: ${font.lineHeight.sm};
@@ -1873,7 +1991,7 @@ const getStyles = () => {
       }
 
       & svg path {
-        stroke: ${tokens.colors.red[400]} !important;
+        stroke: ${tokens.colors.red[400]};
       }
     `,
     settingsMenu: css`
