@@ -20,11 +20,14 @@ One specific use of prefetching is to avoid Request Waterfalls, for an in-depth 
 
 Before jumping into the different specific prefetch patterns, let's look at the `prefetchQuery` and `prefetchInfiniteQuery` functions. First a few basics:
 
-- If **fresh** data for this query is already in the cache, the data will not be fetched
-- If a `staleTime` is passed eg. `prefetchQuery({ queryKey: ['todos'], queryFn: fn, staleTime: 5000 })` and the data is older than the specified `staleTime`, the query will be fetched
-  - (If you want to ignore `staleTime` and instead always return data if it's available in the cache, you can use the `ensureQueryData` function.)
+- Out of the box, these functions use the default `staleTime` configured for the `queryClient` to determine wether existing data in the cache is fresh or needs to be fetched again
+- You can also pass a specific `staleTime` like this: `prefetchQuery({ queryKey: ['todos'], queryFn: fn, staleTime: 5000 })`
+  - This `staleTime` is only used for the prefetch, you still need to set it for any `useQuery` call as well
+  - If you want to ignore `staleTime` and instead always return data if it's available in the cache, you can use the `ensureQueryData` function.
+  - Tip: If you are prefetching on the server, set a default `staleTime` higher than `0` for that `queryClient` to avoid having to pass in a specific `staleTime` to each prefetch call
 - If no instances of `useQuery` appear for a prefetched query, it will be deleted and garbage collected after the time specified in `gcTime`
-- These functions does not return the query data. If that's something you need, use `fetchQuery`/`fetchInfiniteQuery` instead.
+- These functions returns `Promise<void>` and thus never return query data. If that's something you need, use `fetchQuery`/`fetchInfiniteQuery` instead.
+- The prefetch functions never throws errors because they usually try to fetch again in a `useQuery` which is a nice graceful fallback. If you need to catch errors, use `fetchQuery`/`fetchInfiniteQuery` instead.
 
 This is how you use `prefetchQuery`:
 
@@ -63,7 +66,7 @@ A straightforward form of prefetching is doing it when the user interacts with s
 function ShowDetailsButton() {
   const queryClient = useQueryClient()
 
-  const prefetch = useCallback(() => {
+  const prefetch = () => {
     queryClient.prefetchQuery({
       queryKey: ['details'],
       queryFn: getDetailsData,
@@ -71,7 +74,7 @@ function ShowDetailsButton() {
       // so in a case like this you definitely want to set one
       staleTime: 60000,
     })
-  }, [queryClient])
+  }
 
   return (
     <button onMouseEnter={prefetch} onFocus={prefetch} onClick={...}>
@@ -122,7 +125,7 @@ This results in a request waterfall looking like this:
 2.   |> getArticleCommentsById()
 ```
 
-As mentioned in that guide, one way to flatten this waterfall and improve performance is to hoist the `getArticleCommentsById` query to the parent and pass down the result as a prop, but what if this is not feasible or desirable, for example when the components are unrelated and has multiple levels between them?
+As mentioned in that guide, one way to flatten this waterfall and improve performance is to hoist the `getArticleCommentsById` query to the parent and pass down the result as a prop, but what if this is not feasible or desirable, for example when the components are unrelated and have multiple levels between them?
 
 In that case, we can instead prefetch the query in the parent. The simplest way to do this is to use a query but ignore the result:
 
@@ -137,6 +140,8 @@ function Article({ id }) {
   useQuery({
     queryKey: ['article-comments', id],
     queryFn: getArticleCommentsById,
+    // Optional optimization to avoid rerenders when this query changes:
+    notifyOnChangeProps: [],
   })
 
   if (isPending) {
@@ -315,7 +320,7 @@ In this approach, you explicitly declare for each _route_ what data is going to 
 
 For now, let's focus on the client side case and look at an example of how you can make this work with [Tanstack Router](https://tanstack.com/router). These examples leave out a lot of setup and boilerplate to stay concise, you can check out a [full React Query example](https://tanstack.com/router/v1/docs/examples/react/with-react-query?file=src%2Fmain.tsx) over in the [Tanstack Router docs](https://tanstack.com/router/v1/docs).
 
-When integrating at the router level, you can choose to either _block_ rendering of that route until all data is present, or you can start a prefetch but not await the result, that way, you can start rendering the route as soon as possible. You can also mix these two approaches and await some critical data, but start rendering before all the secondary data has finished loading. In this example, we'll configure an `/article` route to not render until the article data has finished loading, as well as start prefetching comments as soon as possible, but not block rendering the route if comments haven't finished loading yet.
+When integrating at the router level, you can choose to either _block_ rendering of that route until all data is present, or you can start a prefetch but not await the result. That way, you can start rendering the route as soon as possible. You can also mix these two approaches and await some critical data, but start rendering before all the secondary data has finished loading. In this example, we'll configure an `/article` route to not render until the article data has finished loading, as well as start prefetching comments as soon as possible, but not block rendering the route if comments haven't finished loading yet.
 
 ```tsx
 const queryClient = new QueryClient()
