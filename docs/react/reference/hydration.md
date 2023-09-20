@@ -30,7 +30,7 @@ const dehydratedState = dehydrate(queryClient, {
       - Return `true` to include this mutation in dehydration, or `false` otherwise
     - Defaults to only including paused mutations
     - If you would like to extend the function while retaining the default behavior, import and execute `defaultShouldDehydrateMutation` as part of the return statement
-  - `shouldDehydrateQuery: boolean | (query: Query) => boolean`
+  - `shouldDehydrateQuery: (query: Query) => boolean`
     - Optional
     - Whether to dehydrate queries.
     - The function, it is called for each query in the cache
@@ -90,8 +90,8 @@ hydrate(queryClient, dehydratedState, options)
 
 If the queries included in dehydration already exist in the queryCache, `hydrate` does not overwrite them and they will be **silently** discarded.
 
-
 [//]: # 'HydrationBoundary'
+
 ## `HydrationBoundary`
 
 `HydrationBoundary` adds a previously dehydrated state into the `queryClient` that would be returned by `useQueryClient()`. If the client already contains data, the new queries will be intelligently merged based on update timestamp.
