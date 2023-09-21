@@ -1,3 +1,4 @@
+import { log } from 'console'
 import { QueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type { ToRefs } from 'vue-demi'
@@ -187,9 +188,5 @@ export function useQuery<
   | UseQueryDefinedReturnType<TData, TError> {
   const result = useBaseQuery(QueryObserver, arg1, arg2, arg3)
 
-  return {
-    ...result,
-    refetch: result.refetch.value,
-    remove: result.remove.value,
-  }
+  return result
 }
