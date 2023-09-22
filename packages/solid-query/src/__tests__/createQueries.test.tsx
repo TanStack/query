@@ -9,12 +9,7 @@ import {
   QueryClientProvider,
   createQueries,
 } from '..'
-import {
-  createQueryClient,
-  expectTypeNotAny,
-  queryKey,
-  sleep,
-} from './utils'
+import { createQueryClient, expectTypeNotAny, queryKey, sleep } from './utils'
 import type { QueryFunctionContext, QueryKey } from '@tanstack/query-core'
 import type {
   CreateQueryResult,
