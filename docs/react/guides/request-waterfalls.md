@@ -45,7 +45,7 @@ If that CSS uses a background image, it's a triple waterfall:
 
 The best way to spot and analyze your request waterfalls is usually by opening your browsers devtools "Network" tab.
 
-Because each waterfall represents a roundtrip to the server (unless the resource is locally cached), the negative effects of request waterfalls are highly dependent on the users latency. Consider the example of the triple waterfall, which actually represents 4 server roundtrips. With 250ms latency, which is not uncommon on 3g networks or in bad network conditions, we end up with a total time of 4\*250=1000ms _only_ counting latency. If we were able to flatten that to the first example with only 2 roundtrips, we get 500ms instead, possibly loading that background image in _half_ the time!
+Each waterfall represents at least one roundtrip to the server, unless the resource is locally cached (in practice, some of these waterfalls might represent more than one roundtrip because the browser needs to establish a connection which requires some back and forth, but let's ignore that here). Because of this, the negative effects of request waterfalls are highly dependent on the users latency. Consider the example of the triple waterfall, which actually represents 4 server roundtrips. With 250ms latency, which is not uncommon on 3g networks or in bad network conditions, we end up with a total time of 4\*250=1000ms **only counting latency**. If we were able to flatten that to the first example with only 2 roundtrips, we get 500ms instead, possibly loading that background image in half the time!
 
 ## Request Waterfalls & React Query
 
@@ -126,7 +126,7 @@ const [usersQuery, teamsQuery, projectsQuery] = useSuspenseQueries({
 
 Nested Component Waterfalls is when both a parent and a child component contains queries, and the parent does not render the child until its query is done. This can happen both with `useQuery` and `useSuspenseQuery`.
 
-If the child renders conditionally based on the data in the parent, or if the child relies on some part of the result being passed down as a prop from the parent to make its query, we have a _dependent_ nested component watefall.
+If the child renders conditionally based on the data in the parent, or if the child relies on some part of the result being passed down as a prop from the parent to make its query, we have a _dependent_ nested component waterfall.
 
 Let's first look at an example where the child is **not** dependent on the parent.
 
@@ -195,7 +195,7 @@ function Article({ id }) {
 
 The two queries will now fetch in parallel. Note that if you are using suspense, you'd want to combine these two queries into a single `useSuspenseQueries` instead.
 
-Another way to flatten this waterfall would be to prefetch the comments in the `<Article>` component, or prefetch both of these queries at the router level on page load or page navigations, read more about this in the [Prefetching & Router Integration guide](../guides/prefetching).
+Another way to flatten this waterfall would be to prefetch the comments in the `<Article>` component, or prefetch both of these queries at the router level on page load or page navigation, read more about this in the [Prefetching & Router Integration guide](../guides/prefetching).
 
 Next, let's look at a _Dependent Nested Component Waterfall_.
 
