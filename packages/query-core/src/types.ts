@@ -76,6 +76,9 @@ export interface QueryOptions<
   retryDelay?: RetryDelayValue<TError>
   networkMode?: NetworkMode
   cacheTime?: number
+  /**
+   * @deprecated This callback will be removed in the next major version. You can achieve the same functionality by passing a function to `structuralSharing` instead.
+   */
   isDataEqual?: (oldData: TData | undefined, newData: TData) => boolean
   queryFn?: QueryFunction<TQueryFnData, TQueryKey>
   queryHash?: string

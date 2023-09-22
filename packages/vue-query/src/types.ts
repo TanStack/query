@@ -9,6 +9,16 @@ import type { Ref, UnwrapRef } from 'vue-demi'
 import type { QueryClient } from './queryClient'
 
 type Primitive = string | number | boolean | bigint | symbol | undefined | null
+type UnwrapLeaf =
+  | Primitive
+  | Function
+  | Date
+  | Error
+  | RegExp
+  | Map<any, any>
+  | WeakMap<any, any>
+  | Set<any>
+  | WeakSet<any>
 
 export type MaybeRefDeep<T> = MaybeRef<
   T extends Function
@@ -22,7 +32,7 @@ export type MaybeRefDeep<T> = MaybeRef<
 
 export type MaybeRef<T> = Ref<T> | T
 
-export type DeepUnwrapRef<T> = T extends Primitive
+export type DeepUnwrapRef<T> = T extends UnwrapLeaf
   ? T
   : T extends Ref<infer U>
   ? DeepUnwrapRef<U>

@@ -354,8 +354,8 @@ export class Query<
       }
     }
 
-    if (!Array.isArray(this.options.queryKey)) {
-      if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== 'production') {
+      if (!Array.isArray(this.options.queryKey)) {
         this.logger.error(
           `As of v4, queryKey needs to be an Array. If you are using a string like 'repoData', please change it to an Array, e.g. ['repoData']`,
         )
@@ -559,7 +559,7 @@ export class Query<
           const error = action.error as unknown
 
           if (isCancelledError(error) && error.revert && this.revertState) {
-            return { ...this.revertState }
+            return { ...this.revertState, fetchStatus: 'idle' }
           }
 
           return {
