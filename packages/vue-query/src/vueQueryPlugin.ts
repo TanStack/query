@@ -5,17 +5,17 @@ import { QueryClient } from './queryClient'
 import { getClientKey } from './utils'
 import { setupDevtools } from './devtools/devtools'
 import type { QueryClientConfig } from '@tanstack/query-core'
-import type { MaybeRefDeep } from './types'
 
 type ClientPersister = (client: QueryClient) => [() => void, Promise<void>]
 
 interface CommonOptions {
   queryClientKey?: string
   clientPersister?: ClientPersister
+  clientPersisterOnSuccess?: (client: QueryClient) => void
 }
 
 interface ConfigOptions extends CommonOptions {
-  queryClientConfig?: MaybeRefDeep<QueryClientConfig>
+  queryClientConfig?: QueryClientConfig
 }
 
 interface ClientOptions extends CommonOptions {
@@ -51,6 +51,7 @@ export const VueQueryPlugin = {
       persisterUnmount = unmount
       promise.then(() => {
         client.isRestoring.value = false
+        options.clientPersisterOnSuccess?.(client)
       })
     }
 

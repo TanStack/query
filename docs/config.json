@@ -339,6 +339,10 @@
             {
               "label": "broadcastQueryClient (Experimental)",
               "to": "react/plugins/broadcastQueryClient"
+            },
+            {
+              "label": "createPersister (Experimental)",
+              "to": "react/plugins/createPersister"
             }
           ]
         },
@@ -595,12 +599,16 @@
               "to": "vue/guides/testing"
             },
             {
+              "label": "Custom Client",
+              "to": "vue/guides/custom-client"
+            },
+            {
               "label": "Does this replace [Vuex, Pinia]?",
               "to": "vue/guides/does-this-replace-client-state"
             },
             {
               "label": "Migrating to v5",
-              "to": "react/guides/migrating-to-v5"
+              "to": "vue/guides/migrating-to-v5"
             }
           ]
         },

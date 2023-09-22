@@ -3,7 +3,7 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
-    name: 'solid-query',
+    name: 'query-devtools',
     dir: './src',
     watch: false,
     setupFiles: [],

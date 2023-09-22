@@ -1,5 +1,6 @@
 import { stringify } from 'superjson'
-import { css, cx } from '@emotion/css'
+import { css } from 'goober'
+import { clsx as cx } from 'clsx'
 import { Index, Match, Show, Switch, createMemo, createSignal } from 'solid-js'
 import { Key } from '@solid-primitives/keyed'
 import { tokens } from './theme'

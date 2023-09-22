@@ -898,7 +898,7 @@ describe('createQuery', () => {
 
   it('should throw an error when a selector throws', async () => {
     const key = queryKey()
-    const states: Array<CreateQueryResult<string>> = []
+    const states: Array<{ status: string; data?: unknown; error?: Error }> = []
     const error = new Error('Select Error')
 
     function Page() {
@@ -910,7 +910,10 @@ describe('createQuery', () => {
         },
       }))
       createRenderEffect(() => {
-        states.push({ ...state })
+        if (state.status === 'pending')
+          states.push({ status: 'pending', data: undefined })
+        else if (state.status === 'error')
+          states.push({ status: 'error', error: state.error })
       })
       return null
     }
@@ -1501,98 +1504,6 @@ describe('createQuery', () => {
     })
     // New data
     expect(states[3]).toMatchObject({
-      data: 1,
-      isFetching: false,
-      isSuccess: true,
-      isPlaceholderData: false,
-    })
-  })
-
-  it('should keep the previous data on disabled query when placeholderData is set to identity function', async () => {
-    const key = queryKey()
-    const states: Array<CreateQueryResult<number>> = []
-
-    function Page() {
-      const [count, setCount] = createSignal(0)
-
-      const state = createQuery(() => ({
-        queryKey: [key, count()],
-        queryFn: async () => {
-          await sleep(10)
-          return count()
-        },
-        enabled: false,
-        placeholderData: keepPreviousData,
-        notifyOnChangeProps: 'all',
-      }))
-
-      createRenderEffect(() => {
-        states.push({ ...state })
-      })
-
-      createEffect(() => {
-        const refetch = state.refetch
-        refetch()
-
-        setActTimeout(() => {
-          setCount(1)
-        }, 20)
-
-        setActTimeout(() => {
-          refetch()
-        }, 30)
-      })
-
-      return null
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
-
-    await sleep(100)
-
-    expect(states.length).toBe(6)
-
-    // Disabled query
-    expect(states[0]).toMatchObject({
-      data: undefined,
-      isFetching: false,
-      isSuccess: false,
-      isPlaceholderData: false,
-    })
-    // Fetching query
-    expect(states[1]).toMatchObject({
-      data: undefined,
-      isFetching: true,
-      isSuccess: false,
-      isPlaceholderData: false,
-    })
-    // Fetched query
-    expect(states[2]).toMatchObject({
-      data: 0,
-      isFetching: false,
-      isSuccess: true,
-      isPlaceholderData: false,
-    })
-    // Set state
-    expect(states[3]).toMatchObject({
-      data: 0,
-      isFetching: false,
-      isSuccess: true,
-      isPlaceholderData: true,
-    })
-    // Fetching new query
-    expect(states[4]).toMatchObject({
-      data: 0,
-      isFetching: true,
-      isSuccess: true,
-      isPlaceholderData: true,
-    })
-    // Fetched new query
-    expect(states[5]).toMatchObject({
       data: 1,
       isFetching: false,
       isSuccess: true,
@@ -4666,11 +4577,10 @@ describe('createQuery', () => {
     })
   })
 
-  it('should only call the query hash function once each render', async () => {
+  it('should only call the query hash function once', async () => {
     const key = queryKey()
 
     let hashes = 0
-    let renders = 0
 
     function queryKeyHashFn(x: any) {
       hashes++
@@ -4678,20 +4588,12 @@ describe('createQuery', () => {
     }
 
     function Page() {
-      const state = createQuery(() => ({
+      createQuery(() => ({
         queryKey: key,
         queryFn: () => 'test',
         queryKeyHashFn,
       }))
 
-      createEffect(
-        on(
-          () => state.status,
-          () => {
-            renders++
-          },
-        ),
-      )
       return null
     }
 
@@ -4702,8 +4604,7 @@ describe('createQuery', () => {
     ))
 
     await sleep(10)
-
-    expect(renders).toBe(hashes)
+    expect(hashes).toBe(1)
   })
 
   it('should refetch when changed enabled to true in error state', async () => {

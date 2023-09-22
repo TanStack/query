@@ -29,12 +29,11 @@ import type {
 } from '@tanstack/query-core'
 
 export class QueryClient extends QC {
-  constructor(config: MaybeRefDeep<QueryClientConfig> = {}) {
-    const unreffedConfig = cloneDeepUnref(config)
-    const vueQueryConfig: QueryClientConfig = {
-      defaultOptions: unreffedConfig.defaultOptions,
-      queryCache: unreffedConfig.queryCache || new QueryCache(),
-      mutationCache: unreffedConfig.mutationCache || new MutationCache(),
+  constructor(config: QueryClientConfig = {}) {
+    const vueQueryConfig = {
+      defaultOptions: config.defaultOptions,
+      queryCache: config.queryCache || new QueryCache(),
+      mutationCache: config.mutationCache || new MutationCache(),
     }
     super(vueQueryConfig)
   }
@@ -134,17 +133,25 @@ export class QueryClient extends QC {
     TError = DefaultError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
   >(
-    options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options: FetchQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
   ): Promise<TData>
   fetchQuery<
     TQueryFnData,
     TError = DefaultError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
   >(
     options: MaybeRefDeep<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
     >,
   ): Promise<TData> {
     return super.fetchQuery(cloneDeepUnref(options))

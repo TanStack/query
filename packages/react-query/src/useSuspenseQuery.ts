@@ -1,6 +1,7 @@
 'use client'
 import { QueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
+import { defaultThrowOnError } from './suspense'
 import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
 import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
 
@@ -18,7 +19,7 @@ export function useSuspenseQuery<
       ...options,
       enabled: true,
       suspense: true,
-      throwOnError: true,
+      throwOnError: defaultThrowOnError,
     },
     QueryObserver,
     queryClient,
