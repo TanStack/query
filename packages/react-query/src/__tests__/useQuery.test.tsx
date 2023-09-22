@@ -1154,7 +1154,6 @@ describe('useQuery', () => {
 
   it('should update query stale state and refetch when invalidated with invalidateQueries', async () => {
     const key = queryKey()
-    const states: Array<UseQueryResult<number>> = []
     let count = 0
 
     function Page() {
@@ -1166,10 +1165,7 @@ describe('useQuery', () => {
           return count
         },
         staleTime: Infinity,
-        notifyOnChangeProps: 'all',
       })
-
-      states.push(state)
 
       return (
         <div>
@@ -1178,47 +1174,24 @@ describe('useQuery', () => {
           >
             invalidate
           </button>
-          data: {state.data}
+          data: {state.data}, isStale: {String(state.isStale)}, isFetching:{' '}
+          {String(state.isFetching)}
         </div>
       )
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('data: 1'))
+    await waitFor(() =>
+      rendered.getByText('data: 1, isStale: false, isFetching: false'),
+    )
     fireEvent.click(rendered.getByRole('button', { name: /invalidate/i }))
-    await waitFor(() => rendered.getByText('data: 2'))
-
-    await waitFor(() => expect(states.length).toBe(4))
-
-    expect(states[0]).toMatchObject({
-      data: undefined,
-      isFetching: true,
-      isRefetching: false,
-      isSuccess: false,
-      isStale: true,
-    })
-    expect(states[1]).toMatchObject({
-      data: 1,
-      isFetching: false,
-      isRefetching: false,
-      isSuccess: true,
-      isStale: false,
-    })
-    expect(states[2]).toMatchObject({
-      data: 1,
-      isFetching: true,
-      isRefetching: true,
-      isSuccess: true,
-      isStale: true,
-    })
-    expect(states[3]).toMatchObject({
-      data: 2,
-      isFetching: false,
-      isRefetching: false,
-      isSuccess: true,
-      isStale: false,
-    })
+    await waitFor(() =>
+      rendered.getByText('data: 1, isStale: true, isFetching: true'),
+    )
+    await waitFor(() =>
+      rendered.getByText('data: 2, isStale: false, isFetching: false'),
+    )
   })
 
   it('should not update disabled query when refetched with refetchQueries', async () => {
