@@ -1108,7 +1108,7 @@ const QueryDetails = () => {
                 color: ${tokens.colors.pink[400]};
               `,
               'tsqd-query-details-actions-btn',
-              'tsqd-query-details-action-refetch',
+              'tsqd-query-details-action-remove',
             )}
             onClick={() => {
               queryClient.removeQueries(activeQuery())
