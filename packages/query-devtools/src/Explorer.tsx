@@ -118,6 +118,31 @@ const CopyButton = (props: { value: unknown }) => {
   )
 }
 
+type ClearArrayButtonProps = {
+  dataPath: Array<string>
+  activeQuery?: Query<unknown, Error, unknown, QueryKey> | undefined
+}
+const ClearArrayButton = (props: ClearArrayButtonProps) => {
+  const styles = getStyles()
+
+  return (
+    <button
+      class={styles.actionButton}
+      title={'Remove all items'}
+      aria-label={'Remove all items'}
+      onClick={() => {
+        const oldData = props.activeQuery?.state.data
+
+        const newData = updatedNestedDataByPath(oldData, props.dataPath, [])
+
+        props.activeQuery?.setData(newData)
+      }}
+    >
+      <List />
+    </button>
+  )
+}
+
 type DeleteButtonProps = {
   dataPath: Array<string>
   activeQuery?: Query<unknown, Error, unknown, QueryKey> | undefined
@@ -242,24 +267,10 @@ export default function Explorer(props: ExplorerProps) {
             </Show>
 
             <Show when={type() === 'array'}>
-              <button
-                class={styles.actionButton}
-                title={'Remove all items'}
-                aria-label={'Remove all items'}
-                onClick={() => {
-                  const oldData = props.activeQuery?.state.data
-
-                  const newData = updatedNestedDataByPath(
-                    oldData,
-                    props.dataPath,
-                    [],
-                  )
-
-                  props.activeQuery?.setData(newData)
-                }}
-              >
-                <List />
-              </button>
+              <ClearArrayButton
+                activeQuery={props.activeQuery}
+                dataPath={props.dataPath}
+              />
             </Show>
           </div>
         </Show>
