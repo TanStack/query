@@ -4,8 +4,12 @@ import { clsx as cx } from 'clsx'
 import { Index, Match, Show, Switch, createMemo, createSignal } from 'solid-js'
 import { Key } from '@solid-primitives/keyed'
 import { tokens } from './theme'
-import { displayValue, updatedNestedDataByPath } from './utils'
-import { CopiedCopier, Copier, ErrorCopier, List } from './icons'
+import {
+  deleteNestedDataByPath,
+  displayValue,
+  updatedNestedDataByPath,
+} from './utils'
+import { CopiedCopier, Copier, ErrorCopier, List, Trash } from './icons'
 import type { Query, QueryKey } from '@tanstack/query-core'
 
 /**
@@ -114,6 +118,36 @@ const CopyButton = (props: { value: unknown }) => {
   )
 }
 
+type DeleteButtonProps = {
+  dataPath: Array<string>
+  activeQuery?: Query<unknown, Error, unknown, QueryKey> | undefined
+  inline?: boolean
+}
+const DeleteItemButton = (props: DeleteButtonProps) => {
+  const styles = getStyles()
+
+  return (
+    <button
+      class={cx(
+        styles.actionButton,
+        props.inline &&
+          css`
+            left: 0;
+          `,
+      )}
+      title={'Delete item'}
+      aria-label={'Delete item'}
+      onClick={() => {
+        const oldData = props.activeQuery?.state.data
+        const newData = deleteNestedDataByPath(oldData, props.dataPath)
+        props.activeQuery?.setData(newData)
+      }}
+    >
+      <Trash />
+    </button>
+  )
+}
+
 type ExplorerProps = {
   editable?: boolean
   label: string
@@ -121,6 +155,7 @@ type ExplorerProps = {
   defaultExpanded?: Array<string>
   dataPath: Array<string>
   activeQuery?: Query<unknown, Error, unknown, QueryKey> | undefined
+  itemsDeletable?: boolean
 }
 
 function isIterable(x: any): x is Iterable<unknown> {
@@ -199,6 +234,13 @@ export default function Explorer(props: ExplorerProps) {
           <div class={styles.actions}>
             <CopyButton value={props.value} />
 
+            <Show when={props.itemsDeletable}>
+              <DeleteItemButton
+                activeQuery={props.activeQuery}
+                dataPath={props.dataPath}
+              />
+            </Show>
+
             <Show when={type() === 'array'}>
               <button
                 class={styles.actionButton}
@@ -234,6 +276,7 @@ export default function Explorer(props: ExplorerProps) {
                       editable={props.editable}
                       dataPath={[...props.dataPath, entry().label]}
                       activeQuery={props.activeQuery}
+                      itemsDeletable={type() === 'array'}
                     />
                   )
                 }}
@@ -312,6 +355,14 @@ export default function Explorer(props: ExplorerProps) {
 
                 props.activeQuery?.setData(newData)
               }}
+            />
+          </Show>
+
+          <Show when={props.editable && props.itemsDeletable}>
+            <DeleteItemButton
+              activeQuery={props.activeQuery}
+              dataPath={props.dataPath}
+              inline={true}
             />
           </Show>
         </div>

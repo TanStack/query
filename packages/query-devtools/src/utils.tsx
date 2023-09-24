@@ -144,3 +144,23 @@ export const updatedNestedDataByPath = (
 
   return newData
 }
+export const deleteNestedDataByPath = (
+  oldData: unknown,
+  updatePath: Array<string>,
+): any => {
+  // @ts-ignore
+  const newData = Array.isArray(oldData) ? [...oldData] : { ...oldData }
+
+  if (updatePath.length === 1) {
+    // @ts-ignore
+    newData[updatePath[0]] = undefined
+    return newData.filter(Boolean)
+  }
+
+  const [head, ...tail] = updatePath
+
+  // @ts-ignore
+  newData[head] = deleteNestedDataByPath(newData[head], tail)
+
+  return newData
+}
