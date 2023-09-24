@@ -5,7 +5,7 @@ import { Index, Match, Show, Switch, createMemo, createSignal } from 'solid-js'
 import { Key } from '@solid-primitives/keyed'
 import { tokens } from './theme'
 import { displayValue, updatedNestedDataByPath } from './utils'
-import { CopiedCopier, Copier, ErrorCopier, Trashcan } from './icons'
+import { CopiedCopier, Copier, ErrorCopier, List } from './icons'
 import type { Query, QueryKey } from '@tanstack/query-core'
 
 /**
@@ -69,6 +69,7 @@ const CopyButton = (props: { value: unknown }) => {
   return (
     <button
       class={styles.actionButton}
+      title="Copy object to clipboard"
       aria-label={`${
         copyState() === 'NoCopy'
           ? 'Copy object to clipboard'
@@ -201,7 +202,8 @@ export default function Explorer(props: ExplorerProps) {
             <Show when={type() === 'array'}>
               <button
                 class={styles.actionButton}
-                aria-label={'Remove all array items'}
+                title={'Remove all items'}
+                aria-label={'Remove all items'}
                 onClick={() => {
                   const oldData = props.activeQuery?.state.data
 
@@ -214,7 +216,7 @@ export default function Explorer(props: ExplorerProps) {
                   props.activeQuery?.setData(newData)
                 }}
               >
-                <Trashcan />
+                <List />
               </button>
             </Show>
           </div>
@@ -406,8 +408,15 @@ const getStyles = () => {
       left: ${size[2]};
       z-index: 1;
 
-      &:hover svg .copier {
-        stroke: ${colors.gray[500]} !important;
+      &:hover svg {
+        .copier,
+        .list {
+          stroke: ${colors.gray[500]} !important;
+        }
+
+        .list-item {
+          stroke: ${colors.gray[700]};
+        }
       }
 
       &:focus-visible {
