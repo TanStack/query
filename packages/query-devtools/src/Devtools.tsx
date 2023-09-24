@@ -1242,7 +1242,6 @@ const QueryDetails = () => {
           class="tsqd-query-details-explorer-container tsqd-query-details-data-explorer"
         >
           <Explorer
-            root={true}
             label="Data"
             defaultExpanded={['Data']}
             value={activeQueryStateData()}

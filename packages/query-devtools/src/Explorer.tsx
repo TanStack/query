@@ -68,7 +68,7 @@ const CopyButton = (props: { value: unknown }) => {
 
   return (
     <button
-      class={styles.copyButton}
+      class={styles.actionButton}
       aria-label={`${
         copyState() === 'NoCopy'
           ? 'Copy object to clipboard'
@@ -113,25 +113,8 @@ const CopyButton = (props: { value: unknown }) => {
   )
 }
 
-const DeleteButton = (props: { value: unknown; type: string }) => {
-  const styles = getStyles()
-
-  return (
-    <button
-      class={styles.copyButton}
-      aria-label={'Delete object'}
-      onClick={() => {
-        console.log(props.type)
-      }}
-    >
-      <Trashcan />
-    </button>
-  )
-}
-
 type ExplorerProps = {
   editable?: boolean
-  root?: boolean
   label: string
   value: unknown
   defaultExpanded?: Array<string>
@@ -214,8 +197,25 @@ export default function Explorer(props: ExplorerProps) {
         <Show when={props.editable}>
           <div class={styles.actions}>
             <CopyButton value={props.value} />
-            <Show when={!props.root}>
-              <DeleteButton value={props.value} type={type()} />
+
+            <Show when={type() === 'array'}>
+              <button
+                class={styles.actionButton}
+                aria-label={'Remove all array items'}
+                onClick={() => {
+                  const oldData = props.activeQuery?.state.data
+
+                  const newData = updatedNestedDataByPath(
+                    oldData,
+                    props.dataPath,
+                    [],
+                  )
+
+                  props.activeQuery?.setData(newData)
+                }}
+              >
+                <Trashcan />
+              </button>
             </Show>
           </div>
         </Show>
@@ -391,7 +391,7 @@ const getStyles = () => {
         background-color: ${colors.gray[800]};
       }
     `,
-    copyButton: css`
+    actionButton: css`
       background-color: transparent;
       border: none;
       display: inline-flex;
