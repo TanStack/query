@@ -33,6 +33,7 @@ import {
   Search,
   Settings,
   TanstackLogo,
+  Trash,
   Wifi,
 } from './icons'
 import Explorer from './Explorer'
@@ -519,6 +520,19 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
           </div>
 
           <div class={cx(styles.actionsContainer, 'tsqd-actions-container')}>
+            <button
+              onClick={() => {
+                cache().clear()
+              }}
+              class={cx(
+                styles.actionsBtn,
+                'tsqd-actions-btn',
+                'tsqd-action-clear-cache',
+              )}
+              aria-label="Clear query cache"
+            >
+              <Trash />
+            </button>
             <button
               onClick={() => {
                 if (offline()) {
@@ -1091,6 +1105,27 @@ const QueryDetails = () => {
           <button
             class={cx(
               css`
+                color: ${tokens.colors.pink[400]};
+              `,
+              'tsqd-query-details-actions-btn',
+              'tsqd-query-details-action-remove',
+            )}
+            onClick={() => {
+              queryClient.removeQueries(activeQuery())
+              setSelectedQueryHash(null)
+            }}
+            disabled={statusLabel() === 'fetching'}
+          >
+            <span
+              class={css`
+                background-color: ${tokens.colors.pink[400]};
+              `}
+            ></span>
+            Remove
+          </button>
+          <button
+            class={cx(
+              css`
                 color: ${tokens.colors.cyan[400]};
               `,
               'tsqd-query-details-actions-btn',
@@ -1613,9 +1648,6 @@ const getStyles = () => {
       &:focus-visible {
         outline-offset: 2px;
         outline: 2px solid ${colors.blue[800]};
-      }
-      & span:nth-child(2) {
-        color: ${colors.gray[300]}${alpha[80]};
       }
     `,
     statusTooltip: css`
