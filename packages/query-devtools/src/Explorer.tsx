@@ -288,22 +288,26 @@ export default function Explorer(props: ExplorerProps) {
         <div class={styles.row}>
           <span class={styles.label}>{props.label}:</span>
           <Show
-            when={props.editable && type() === 'string'}
+            when={
+              props.editable && (type() === 'string' || type() === 'number')
+            }
             fallback={
               <span class={styles.value}>{displayValue(props.value)}</span>
             }
           >
             <input
-              type="text"
+              type={type() === 'number' ? 'number' : 'text'}
               class={cx(styles.value, styles.editableInput)}
               value={props.value as string} // TODO? can we avoid this?
-              onInput={(inputEvent) => {
+              onChange={(changeEvent) => {
                 const oldData = props.activeQuery?.state.data
 
                 const newData = updatedNestedDataByPath(
                   oldData,
                   props.dataPath,
-                  inputEvent.target.value,
+                  type() === 'number'
+                    ? changeEvent.target.valueAsNumber
+                    : changeEvent.target.value,
                 )
 
                 props.activeQuery?.setData(newData)
