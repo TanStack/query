@@ -225,6 +225,10 @@ export function ErrorCopier() {
   )
 }
 
+export function Trashcan() {
+  return <div style={{ color: '#98A2B3' }}>x</div>
+}
+
 export function TanstackLogo() {
   return (
     <svg version="1.0" viewBox="0 0 633 633">

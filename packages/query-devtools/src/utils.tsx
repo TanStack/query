@@ -111,3 +111,36 @@ export const convertRemToPixels = (rem: number) => {
 }
 
 export const convertPixelsToRem = (px: number) => px / convertRemToPixels(1)
+
+/**
+ * updates nested data by path
+ *
+ * @param {unknown} oldData Data to be updated
+ * @param {Array<string>} updatePath Path to the data to be updated
+ * @param {unknown} value New value
+ */
+export const updatedNestedDataByPath = (
+  oldData: unknown,
+  updatePath: Array<string>,
+  value: unknown,
+): any => {
+  if (updatePath.length === 0) {
+    return value
+  }
+
+  // @ts-ignore
+  const newData = Array.isArray(oldData) ? [...oldData] : { ...oldData }
+
+  if (updatePath.length === 1) {
+    // @ts-ignore
+    newData[updatePath[0]] = value
+    return newData
+  }
+
+  const [head, ...tail] = updatePath
+
+  // @ts-ignore
+  newData[head] = updatedNestedDataByPath(newData[head], tail, value)
+
+  return newData
+}

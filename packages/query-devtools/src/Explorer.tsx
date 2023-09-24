@@ -4,8 +4,9 @@ import { clsx as cx } from 'clsx'
 import { Index, Match, Show, Switch, createMemo, createSignal } from 'solid-js'
 import { Key } from '@solid-primitives/keyed'
 import { tokens } from './theme'
-import { displayValue } from './utils'
-import { CopiedCopier, Copier, ErrorCopier } from './icons'
+import { displayValue, updatedNestedDataByPath } from './utils'
+import { CopiedCopier, Copier, ErrorCopier, Trashcan } from './icons'
+import type { Query, QueryKey } from '@tanstack/query-core'
 
 /**
  * Chunk elements in the array by size
@@ -112,11 +113,30 @@ const CopyButton = (props: { value: unknown }) => {
   )
 }
 
+const DeleteButton = (props: { value: unknown; type: string }) => {
+  const styles = getStyles()
+
+  return (
+    <button
+      class={styles.copyButton}
+      aria-label={'Delete object'}
+      onClick={() => {
+        console.log(props.type)
+      }}
+    >
+      <Trashcan />
+    </button>
+  )
+}
+
 type ExplorerProps = {
-  copyable?: boolean
+  editable?: boolean
+  root?: boolean
   label: string
   value: unknown
   defaultExpanded?: Array<string>
+  dataPath: Array<string>
+  activeQuery?: Query<unknown, Error, unknown, QueryKey> | undefined
 }
 
 function isIterable(x: any): x is Iterable<unknown> {
@@ -191,8 +211,13 @@ export default function Explorer(props: ExplorerProps) {
             {subEntries().length} {subEntries().length > 1 ? `items` : `item`}
           </span>
         </button>
-        <Show when={props.copyable}>
-          <CopyButton value={props.value} />
+        <Show when={props.editable}>
+          <div class={styles.actions}>
+            <CopyButton value={props.value} />
+            <Show when={!props.root}>
+              <DeleteButton value={props.value} type={type()} />
+            </Show>
+          </div>
         </Show>
         <Show when={expanded()}>
           <Show when={subEntryPages().length === 1}>
@@ -204,7 +229,9 @@ export default function Explorer(props: ExplorerProps) {
                       defaultExpanded={props.defaultExpanded}
                       label={entry().label}
                       value={entry().value}
-                      copyable={props.copyable}
+                      editable={props.editable}
+                      dataPath={[...props.dataPath, entry().label]}
+                      activeQuery={props.activeQuery}
                     />
                   )
                 }}
@@ -239,7 +266,9 @@ export default function Explorer(props: ExplorerProps) {
                                 defaultExpanded={props.defaultExpanded}
                                 label={entry().label}
                                 value={entry().value}
-                                copyable={props.copyable}
+                                editable={props.editable}
+                                dataPath={[...props.dataPath, entry().label]}
+                                activeQuery={props.activeQuery}
                               />
                             )}
                           </Key>
@@ -254,8 +283,32 @@ export default function Explorer(props: ExplorerProps) {
         </Show>
       </Show>
       <Show when={subEntryPages().length === 0}>
-        <span class={styles.label}>{props.label}:</span>{' '}
-        <span class={styles.value}>{displayValue(props.value)}</span>
+        <div class={styles.row}>
+          <span class={styles.label}>{props.label}:</span>
+          <Show
+            when={props.editable && type() === 'string'}
+            fallback={
+              <span class={styles.value}>{displayValue(props.value)}</span>
+            }
+          >
+            <input
+              type="text"
+              class={cx(styles.value, styles.editableInput)}
+              value={props.value as string} // TODO? can we avoid this?
+              onInput={(inputEvent) => {
+                const oldData = props.activeQuery?.state.data
+
+                const newData = updatedNestedDataByPath(
+                  oldData,
+                  props.dataPath,
+                  inputEvent.target.value,
+                )
+
+                props.activeQuery?.setData(newData)
+              }}
+            />
+          </Show>
+        </div>
       </Show>
     </div>
   )
@@ -317,6 +370,26 @@ const getStyles = () => {
     `,
     value: css`
       color: ${colors.purple[400]};
+    `,
+    actions: css`
+      display: inline-flex;
+      gap: ${size[2]};
+    `,
+    row: css`
+      display: inline-flex;
+      gap: ${size[2]};
+      width: 100%;
+      margin-bottom: ${size[0.5]};
+    `,
+    editableInput: css`
+      border: none;
+      padding: 0px ${size[1]};
+      flex-grow: 1;
+      background-color: ${colors.gray[900]};
+
+      &:hover {
+        background-color: ${colors.gray[800]};
+      }
     `,
     copyButton: css`
       background-color: transparent;

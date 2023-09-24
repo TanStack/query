@@ -1242,10 +1242,13 @@ const QueryDetails = () => {
           class="tsqd-query-details-explorer-container tsqd-query-details-data-explorer"
         >
           <Explorer
+            root={true}
             label="Data"
             defaultExpanded={['Data']}
             value={activeQueryStateData()}
-            copyable={true}
+            editable={true}
+            dataPath={[]}
+            activeQuery={activeQuery()}
           />
         </div>
         <div class={cx(styles.detailsHeader, 'tsqd-query-details-header')}>
@@ -1261,6 +1264,7 @@ const QueryDetails = () => {
             label="Query"
             defaultExpanded={['Query', 'queryKey']}
             value={activeQueryFresh()}
+            dataPath={[]}
           />
         </div>
       </div>
