@@ -41,11 +41,6 @@ export function setActTimeout(fn: () => void, ms?: number) {
   }, ms)
 }
 
-/**
- * Assert the parameter is of a specific type.
- */
-export const expectType = <T>(_: T): void => undefined
-
 export const executeMutation = <TVariables>(
   queryClient: QueryClient,
   options: MutationOptions<any, any, TVariables, any>,
