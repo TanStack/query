@@ -1486,7 +1486,7 @@ const getStyles = () => {
     `,
     'closeBtn-position-top': css`
       bottom: 0;
-      right: ${size[3]};
+      right: ${size[2]};
       transform: translate(0, 100%);
       background-color: ${colors.darkGray[700]};
       border-right: ${colors.darkGray[300]} 1px solid;
@@ -1494,7 +1494,7 @@ const getStyles = () => {
       border-top: none;
       border-bottom: ${colors.darkGray[300]} 1px solid;
       border-radius: 0px 0px ${border.radius.sm} ${border.radius.sm};
-      padding: ${size[1]} ${size[2]} 0.3rem ${size[2]};
+      padding: ${size[0.5]} ${size[1.5]} ${size[1]} ${size[1.5]};
 
       &::after {
         content: ' ';
@@ -1511,7 +1511,7 @@ const getStyles = () => {
     `,
     'closeBtn-position-bottom': css`
       top: 0;
-      right: ${size[3]};
+      right: ${size[2]};
       transform: translate(0, -100%);
       background-color: ${colors.darkGray[700]};
       border-right: ${colors.darkGray[300]} 1px solid;
@@ -1519,7 +1519,7 @@ const getStyles = () => {
       border-top: ${colors.darkGray[300]} 1px solid;
       border-bottom: none;
       border-radius: ${border.radius.sm} ${border.radius.sm} 0px 0px;
-      padding: 0.3rem ${size[2]} ${size[1]} ${size[2]};
+      padding: ${size[1]} ${size[1.5]} ${size[0.5]} ${size[1.5]};
 
       &::after {
         content: ' ';
@@ -1531,7 +1531,7 @@ const getStyles = () => {
       }
     `,
     'closeBtn-position-right': css`
-      bottom: ${size[3]};
+      bottom: ${size[2]};
       left: 0;
       transform: translate(-100%, 0);
       background-color: ${colors.darkGray[700]};
@@ -1540,7 +1540,7 @@ const getStyles = () => {
       border-top: ${colors.darkGray[300]} 1px solid;
       border-bottom: ${colors.darkGray[300]} 1px solid;
       border-radius: ${border.radius.sm} 0px 0px ${border.radius.sm};
-      padding: ${size[2]} ${size[1]} ${size[2]} 0.3rem;
+      padding: ${size[1.5]} ${size[0.5]} ${size[1.5]} ${size[1]};
 
       &::after {
         content: ' ';
@@ -1555,7 +1555,7 @@ const getStyles = () => {
       }
     `,
     'closeBtn-position-left': css`
-      bottom: ${size[3]};
+      bottom: ${size[2]};
       right: 0;
       transform: translate(100%, 0);
       background-color: ${colors.darkGray[700]};
@@ -1564,7 +1564,7 @@ const getStyles = () => {
       border-top: ${colors.darkGray[300]} 1px solid;
       border-bottom: ${colors.darkGray[300]} 1px solid;
       border-radius: 0px ${border.radius.sm} ${border.radius.sm} 0px;
-      padding: ${size[2.5]} ${size[1.5]} ${size[2.5]} ${size[1]};
+      padding: ${size[1.5]} ${size[1]} ${size[1.5]} ${size[0.5]};
 
       &::after {
         content: ' ';
@@ -2072,6 +2072,9 @@ const getStyles = () => {
     `,
     settingsMenu: css`
       display: flex;
+      & * {
+        font-family: 'Inter', sans-serif;
+      }
       flex-direction: column;
       gap: ${size[0.5]};
       border-radius: ${tokens.border.radius.sm};
@@ -2120,6 +2123,7 @@ const getStyles = () => {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      color: ${colors.gray[300]};
       border-radius: ${tokens.border.radius.xs};
       padding: ${tokens.size[0.5]} ${tokens.size[1]};
       cursor: pointer;
