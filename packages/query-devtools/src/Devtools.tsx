@@ -579,6 +579,14 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                 <DropdownMenu.Content
                   class={cx(styles.settingsMenu, 'tsqd-settings-menu')}
                 >
+                  <div
+                    class={cx(
+                      styles.settingsMenuHeader,
+                      'tsqd-settings-menu-header',
+                    )}
+                  >
+                    Settings
+                  </div>
                   <DropdownMenu.Sub overlap gutter={8} shift={-4}>
                     <DropdownMenu.SubTrigger
                       class={cx(
@@ -2100,6 +2108,13 @@ const getStyles = () => {
         opacity: 0.6;
         cursor: not-allowed;
       }
+    `,
+    settingsMenuHeader: css`
+      padding: ${tokens.size[0.5]} ${tokens.size[1]};
+      font-weight: ${font.weight.medium};
+      border-bottom: 1px solid ${colors.darkGray[400]};
+      color: ${colors.gray[400]};
+      font-size: ${font.size['xs']};
     `,
     settingsSubButton: css`
       display: flex;
