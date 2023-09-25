@@ -18,8 +18,8 @@ export default function App() {
 }
 
 function Example() {
-  const state = createQuery({
-    queryKey: () => ['repoData'],
+  const state = createQuery(() => ({
+    queryKey: ['repoData'],
     queryFn: async () => {
       const response = await fetch(
         'https://api.github.com/repos/tannerlinsley/react-query',
@@ -29,11 +29,11 @@ function Example() {
       )
       return response.json()
     },
-  })
+  }))
 
   return (
     <Switch>
-      <Match when={state.isLoading}>Loading...</Match>
+      <Match when={state.isPending}>Loading...</Match>
       <Match when={state.error}>
         {'An error has occurred: ' + (state.error as Error).message}
       </Match>

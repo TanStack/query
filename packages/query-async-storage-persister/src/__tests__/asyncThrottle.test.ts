@@ -1,11 +1,12 @@
+import { vi } from 'vitest'
 import { asyncThrottle } from '../asyncThrottle'
 import { sleep as delay } from './utils'
 
 describe('asyncThrottle', () => {
   test('basic', async () => {
     const interval = 10
-    const execTimeStamps: number[] = []
-    const mockFunc = jest.fn(
+    const execTimeStamps: Array<number> = []
+    const mockFunc = vi.fn(
       async (id: number, complete?: (value?: unknown) => void) => {
         await delay(1)
         execTimeStamps.push(Date.now())
@@ -32,8 +33,8 @@ describe('asyncThrottle', () => {
 
   test('Bug #3331 case 1: Special timing', async () => {
     const interval = 1000
-    const execTimeStamps: number[] = []
-    const mockFunc = jest.fn(
+    const execTimeStamps: Array<number> = []
+    const mockFunc = vi.fn(
       async (id: number, complete?: (value?: unknown) => void) => {
         await delay(30)
         execTimeStamps.push(Date.now())
@@ -61,8 +62,8 @@ describe('asyncThrottle', () => {
 
   test('Bug #3331 case 2: "func" execution time is greater than the interval.', async () => {
     const interval = 1000
-    const execTimeStamps: number[] = []
-    const mockFunc = jest.fn(
+    const execTimeStamps: Array<number> = []
+    const mockFunc = vi.fn(
       async (id: number, complete?: (value?: unknown) => void) => {
         await delay(interval + 10)
         execTimeStamps.push(Date.now())
@@ -86,7 +87,7 @@ describe('asyncThrottle', () => {
   })
 
   test('"func" throw error not break next invoke', async () => {
-    const mockFunc = jest.fn(
+    const mockFunc = vi.fn(
       async (id: number, complete?: (value?: unknown) => void) => {
         if (id === 1) throw new Error('error')
         await delay(1)
@@ -105,11 +106,10 @@ describe('asyncThrottle', () => {
     expect(mockFunc.mock.calls[1]?.[0]).toBe(2)
   })
 
-  test('"onError" should be called when "func" throw error', (done) => {
+  test('"onError" should be called when "func" throw error', () => {
     const err = new Error('error')
     const handleError = (e: unknown) => {
       expect(e).toBe(err)
-      done()
     }
 
     const testFunc = asyncThrottle(

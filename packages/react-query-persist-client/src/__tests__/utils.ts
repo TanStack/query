@@ -1,17 +1,10 @@
 import { act } from '@testing-library/react'
 
-import { QueryClient } from '@tanstack/query-core'
-import type { QueryClientConfig } from '@tanstack/query-core'
+import { QueryClient } from '@tanstack/react-query'
+import type { QueryClientConfig } from '@tanstack/react-query'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
-  jest.spyOn(console, 'error').mockImplementation(() => undefined)
-  return new QueryClient({ logger: mockLogger, ...config })
-}
-
-export const mockLogger = {
-  log: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
+  return new QueryClient(config)
 }
 
 let queryKeyCount = 0

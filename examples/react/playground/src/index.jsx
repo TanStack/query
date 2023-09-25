@@ -31,7 +31,7 @@ const queryClient = new QueryClient()
 
 function Root() {
   const [staleTime, setStaleTime] = React.useState(1000)
-  const [cacheTime, setCacheTime] = React.useState(3000)
+  const [gcTime, setgcTime] = React.useState(3000)
   const [localErrorRate, setErrorRate] = React.useState(errorRate)
   const [localFetchTimeMin, setLocalFetchTimeMin] = React.useState(queryTimeMin)
   const [localFetchTimeMax, setLocalFetchTimeMax] = React.useState(queryTimeMax)
@@ -46,17 +46,16 @@ function Root() {
     queryClient.setDefaultOptions({
       queries: {
         staleTime,
-        cacheTime,
+        gcTime,
       },
     })
-  }, [cacheTime, staleTime])
+  }, [gcTime, staleTime])
 
   return (
     <QueryClientProvider client={queryClient}>
       <p>
-        The "staleTime" and "cacheTime" durations have been altered in this
-        example to show how query stale-ness and query caching work on a
-        granular level
+        The "staleTime" and "gcTime" durations have been altered in this example
+        to show how query stale-ness and query caching work on a granular level
       </p>
       <div>
         Stale Time:{' '}
@@ -70,13 +69,13 @@ function Root() {
         />
       </div>
       <div>
-        Cache Time:{' '}
+        Garbage collection Time:{' '}
         <input
           type="number"
           min="0"
           step="1000"
-          value={cacheTime}
-          onChange={(e) => setCacheTime(parseFloat(e.target.value, 10))}
+          value={gcTime}
+          onChange={(e) => setgcTime(parseFloat(e.target.value, 10))}
           style={{ width: '100px' }}
         />
       </div>
@@ -188,7 +187,7 @@ function Todos({ initialFilter = '', setEditingIndex }) {
           <input value={filter} onChange={(e) => setFilter(e.target.value)} />
         </label>
       </div>
-      {status === 'loading' ? (
+      {status === 'pending' ? (
         <span>Loading... (Attempt: {failureCount + 1})</span>
       ) : status === 'error' ? (
         <span>
@@ -259,7 +258,7 @@ function EditTodo({ editingIndex, setEditingIndex }) {
   }
 
   const disableEditSave =
-    status === 'loading' || saveMutation.status === 'loading'
+    status === 'pending' || saveMutation.status === 'pending'
 
   return (
     <div>
@@ -272,7 +271,7 @@ function EditTodo({ editingIndex, setEditingIndex }) {
           </>
         ) : null}
       </div>
-      {status === 'loading' ? (
+      {status === 'pending' ? (
         <span>Loading... (Attempt: {failureCount + 1})</span>
       ) : error ? (
         <span>
@@ -308,7 +307,7 @@ function EditTodo({ editingIndex, setEditingIndex }) {
             </button>
           </div>
           <div>
-            {saveMutation.status === 'loading'
+            {saveMutation.status === 'pending'
               ? 'Saving...'
               : saveMutation.status === 'error'
               ? saveMutation.error.message
@@ -345,18 +344,18 @@ function AddTodo() {
       <input
         value={name}
         onChange={(e) => setName(e.target.value)}
-        disabled={addMutation.status === 'loading'}
+        disabled={addMutation.status === 'pending'}
       />
       <button
         onClick={() => {
           addMutation.mutate({ name })
         }}
-        disabled={addMutation.status === 'loading' || !name}
+        disabled={addMutation.status === 'pending' || !name}
       >
         Add Todo
       </button>
       <div>
-        {addMutation.status === 'loading'
+        {addMutation.status === 'pending'
           ? 'Saving...'
           : addMutation.status === 'error'
           ? addMutation.error.message

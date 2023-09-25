@@ -1,8 +1,10 @@
 <script lang="ts">
+import { get, set, del } from 'idb-keyval'
 import { defineComponent } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 
 import { Post } from './types'
+import { experimental_createPersister } from '@tanstack/query-persist-client-core'
 
 const fetcher = async (id: number): Promise<Post> =>
   await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then(
@@ -19,12 +21,19 @@ export default defineComponent({
   },
   emits: ['setPostId'],
   setup(props) {
-    const { isLoading, isError, isFetching, data, error } = useQuery({
-      queryKey: ['post', props.postId],
+    const { isPending, isError, isFetching, data, error } = useQuery({
+      queryKey: ['post', props.postId] as const,
       queryFn: () => fetcher(props.postId),
+      persister: experimental_createPersister({
+        storage: {
+          getItem: (key: string) => get(key),
+          setItem: (key: string, value: string) => set(key, value),
+          removeItem: (key: string) => del(key),
+        },
+      }),
     })
 
-    return { isLoading, isError, isFetching, data, error }
+    return { isPending, isError, isFetching, data, error }
   },
 })
 </script>
@@ -32,7 +41,7 @@ export default defineComponent({
 <template>
   <h1>Post {{ postId }}</h1>
   <a @click="$emit('setPostId', -1)" href="#"> Back </a>
-  <div v-if="isLoading" class="update">Loading...</div>
+  <div v-if="isPending" class="update">Loading...</div>
   <div v-else-if="isError">An error has occurred: {{ error }}</div>
   <div v-else-if="data">
     <h1>{{ data.title }}</h1>

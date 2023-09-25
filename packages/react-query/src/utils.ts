@@ -1,11 +1,11 @@
-export function shouldThrowError<T extends (...args: any[]) => boolean>(
-  _useErrorBoundary: boolean | T | undefined,
+export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
+  throwError: boolean | T | undefined,
   params: Parameters<T>,
 ): boolean {
-  // Allow useErrorBoundary function to override throwing behavior on a per-error basis
-  if (typeof _useErrorBoundary === 'function') {
-    return _useErrorBoundary(...params)
+  // Allow throwError function to override throwing behavior on a per-error basis
+  if (typeof throwError === 'function') {
+    return throwError(...params)
   }
 
-  return !!_useErrorBoundary
+  return !!throwError
 }

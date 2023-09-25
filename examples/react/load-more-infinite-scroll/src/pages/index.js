@@ -33,28 +33,27 @@ function Example() {
     fetchPreviousPage,
     hasNextPage,
     hasPreviousPage,
-  } = useInfiniteQuery(
-    ['projects'],
-    async ({ pageParam = 0 }) => {
+  } = useInfiniteQuery({
+    queryKey: ['projects'],
+    queryFn: async ({ pageParam }) => {
       const res = await axios.get('/api/projects?cursor=' + pageParam)
       return res.data
     },
-    {
-      getPreviousPageParam: (firstPage) => firstPage.previousId ?? undefined,
-      getNextPageParam: (lastPage) => lastPage.nextId ?? undefined,
-    },
-  )
+    initialPageParam: 0,
+    getPreviousPageParam: (firstPage) => firstPage.previousId ?? undefined,
+    getNextPageParam: (lastPage) => lastPage.nextId ?? undefined,
+  })
 
   React.useEffect(() => {
     if (inView) {
       fetchNextPage()
     }
-  }, [inView])
+  }, [fetchNextPage, inView])
 
   return (
     <div>
       <h1>Infinite Loading</h1>
-      {status === 'loading' ? (
+      {status === 'pending' ? (
         <p>Loading...</p>
       ) : status === 'error' ? (
         <span>Error: {error.message}</span>
@@ -110,9 +109,7 @@ function Example() {
         </>
       )}
       <hr />
-      <Link href="/about">
-        <a>Go to another page</a>
-      </Link>
+      <Link href="/about">Go to another page</Link>
       <ReactQueryDevtools initialIsOpen />
     </div>
   )

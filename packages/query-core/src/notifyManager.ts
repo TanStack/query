@@ -8,10 +8,10 @@ type NotifyFunction = (callback: () => void) => void
 
 type BatchNotifyFunction = (callback: () => void) => void
 
-type BatchCallsCallback<T extends unknown[]> = (...args: T) => void
+type BatchCallsCallback<T extends Array<unknown>> = (...args: T) => void
 
 export function createNotifyManager() {
-  let queue: NotifyCallback[] = []
+  let queue: Array<NotifyCallback> = []
   let transactions = 0
   let notifyFn: NotifyFunction = (callback) => {
     callback()
@@ -47,7 +47,7 @@ export function createNotifyManager() {
   /**
    * All calls to the wrapped function will be batched.
    */
-  const batchCalls = <T extends unknown[]>(
+  const batchCalls = <T extends Array<unknown>>(
     callback: BatchCallsCallback<T>,
   ): BatchCallsCallback<T> => {
     return (...args) => {

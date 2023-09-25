@@ -1,21 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { isRef, unref } from 'vue-demi'
-import type { MutationKey, QueryKey } from '@tanstack/query-core'
-import type { UnwrapRef } from 'vue-demi'
+import type { MaybeRefDeep } from './types'
 
 export const VUE_QUERY_CLIENT = 'VUE_QUERY_CLIENT'
 
 export function getClientKey(key?: string) {
   const suffix = key ? `:${key}` : ''
   return `${VUE_QUERY_CLIENT}${suffix}`
-}
-
-export function isQueryKey(value: unknown): value is QueryKey {
-  return Array.isArray(value)
-}
-
-export function isMutationKey(value: unknown): value is MutationKey {
-  return Array.isArray(value)
 }
 
 export function updateState(
@@ -28,18 +18,22 @@ export function updateState(
 }
 
 export function cloneDeep<T>(
-  value: T,
-  customizer?: (val: unknown) => unknown | void,
+  value: MaybeRefDeep<T>,
+  customizer?: (val: MaybeRefDeep<T>) => T | undefined,
 ): T {
   if (customizer) {
     const result = customizer(value)
-    if (result !== undefined || isRef(value)) {
-      return result as typeof value
+    // If it's a ref of undefined, return undefined
+    if (result === undefined && isRef(value)) {
+      return result as T
+    }
+    if (result !== undefined) {
+      return result
     }
   }
 
   if (Array.isArray(value)) {
-    return value.map((val) => cloneDeep(val, customizer)) as typeof value
+    return value.map((val) => cloneDeep(val, customizer)) as unknown as T
   }
 
   if (typeof value === 'object' && isPlainObject(value)) {
@@ -50,15 +44,17 @@ export function cloneDeep<T>(
     return Object.fromEntries(entries)
   }
 
-  return value
+  return value as T
 }
 
-export function cloneDeepUnref<T>(obj: T): UnwrapRef<T> {
+export function cloneDeepUnref<T>(obj: MaybeRefDeep<T>): T {
   return cloneDeep(obj, (val) => {
     if (isRef(val)) {
       return cloneDeepUnref(unref(val))
     }
-  }) as UnwrapRef<typeof obj>
+
+    return undefined
+  })
 }
 
 function isPlainObject(value: unknown): value is Object {
@@ -70,14 +66,14 @@ function isPlainObject(value: unknown): value is Object {
   return prototype === null || prototype === Object.prototype
 }
 
-export function shouldThrowError<T extends (...args: any[]) => boolean>(
-  _useErrorBoundary: boolean | T | undefined,
+export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
+  throwOnError: boolean | T | undefined,
   params: Parameters<T>,
 ): boolean {
-  // Allow useErrorBoundary function to override throwing behavior on a per-error basis
-  if (typeof _useErrorBoundary === 'function') {
-    return _useErrorBoundary(...params)
+  // Allow throwOnError function to override throwing behavior on a per-error basis
+  if (typeof throwOnError === 'function') {
+    return throwOnError(...params)
   }
 
-  return !!_useErrorBoundary
+  return !!throwOnError
 }

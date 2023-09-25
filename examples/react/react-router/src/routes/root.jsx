@@ -37,7 +37,7 @@ export const action = (queryClient) => async () => {
 export default function Root() {
   const { q } = useLoaderData()
   const { data: contacts } = useQuery(contactListQuery(q))
-  const searching = useIsFetching(['contacts', 'list']) > 0
+  const searching = useIsFetching({ queryKey: ['contacts', 'list'] }) > 0
   const navigation = useNavigation()
   const submit = useSubmit()
 

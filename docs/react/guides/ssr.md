@@ -57,24 +57,20 @@ To support caching queries on the server and set up hydration:
 
 - Create a new `QueryClient` instance **inside of your app, and on an instance ref (or in React state). This ensures that data is not shared between different users and requests, while still only creating the QueryClient once per component lifecycle.**
 - Wrap your app component with `<QueryClientProvider>` and pass it the client instance
-- Wrap your app component with `<Hydrate>` and pass it the `dehydratedState` prop from `pageProps`
+- Wrap your app component with `<HydrationBoundary>` and pass it the `dehydratedState` prop from `pageProps`
 
 ```tsx
 // _app.jsx
-import {
-  Hydrate,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
+import { HydrationBoundary, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 export default function MyApp({ Component, pageProps }) {
   const [queryClient] = React.useState(() => new QueryClient())
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Hydrate state={pageProps.dehydratedState}>
+      <HydrationBoundary state={pageProps.dehydratedState}>
         <Component {...pageProps} />
-      </Hydrate>
+      </HydrationBoundary>
     </QueryClientProvider>
   )
 }
@@ -166,7 +162,7 @@ To support caching queries on the server and set up hydration:
 
 - Create a new `QueryClient` instance **inside of your app, and on an instance ref (or in React state). This ensures that data is not shared between different users and requests, while still only creating the QueryClient once per component lifecycle.**
 - Wrap your app component with `<QueryClientProvider>` and pass it the client instance
-- Wrap your app component with `<Hydrate>` and pass it the `dehydratedState` prop from `useDehydratedState()`
+- Wrap your app component with `<HydrationBoundary>` and pass it the `dehydratedState` prop from `useDehydratedState()`
 
 ```bash
 npm i use-dehydrated-state
@@ -178,11 +174,7 @@ yarn add use-dehydrated-state
 
 ```tsx
 // root.tsx
-import {
-  Hydrate,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
+import { HydrationBoundary, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import { useDehydratedState } from 'use-dehydrated-state'
 
@@ -193,9 +185,9 @@ export default function MyApp() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Hydrate state={dehydratedState}>
+      <HydrationBoundary state={dehydratedState}>
         <Outlet />
-      </Hydrate>
+      </HydrationBoundary>
     </QueryClientProvider>
   )
 }
@@ -255,12 +247,7 @@ This guide is at-best, a high level overview of how SSR with React Query should 
 > SECURITY NOTE: Serializing data with `JSON.stringify` can put you at risk for XSS-vulnerabilities, [this blog post explains why and how to solve it](https://medium.com/node-security/the-most-common-xss-vulnerability-in-react-js-applications-2bdffbcc1fa0)
 
 ```tsx
-import {
-  dehydrate,
-  Hydrate,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
+import { dehydrate, HydrationBoundary, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 async function handleRequest(req, res) {
   const queryClient = new QueryClient()
@@ -269,10 +256,10 @@ async function handleRequest(req, res) {
 
   const html = ReactDOM.renderToString(
     <QueryClientProvider client={queryClient}>
-      <Hydrate state={dehydratedState}>
+      <HydrationBoundary state={dehydratedState}>
         <App />
-      </Hydrate>
-    </QueryClientProvider>,
+      </HydrationBoundary>
+    </QueryClientProvider>
   )
 
   res.send(`
@@ -297,11 +284,7 @@ async function handleRequest(req, res) {
 - Render your app with the client provider and also **using the dehydrated state. This is extremely important! You must render both server and client using the same dehydrated state to ensure hydration on the client produces the exact same markup as the server.**
 
 ```tsx
-import {
-  Hydrate,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
+import { HydrationBoundary, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const dehydratedState = window.__REACT_QUERY_STATE__
 
@@ -309,9 +292,9 @@ const queryClient = new QueryClient()
 
 ReactDOM.hydrate(
   <QueryClientProvider client={queryClient}>
-    <Hydrate state={dehydratedState}>
+    <HydrationBoundary state={dehydratedState}>
       <App />
-    </Hydrate>
+    </HydrationBoundary>
   </QueryClientProvider>,
   document.getElementById('root'),
 )
@@ -319,19 +302,19 @@ ReactDOM.hydrate(
 
 ## Using the `app` Directory in Next.js 13
 
-Both prefetching approaches, using `initialData` or `<Hydrate>`, are available within the `app` directory.
+Both prefetching approaches, using `initialData` or `<HydrationBoundary>`, are available within the `app` directory.
 
 - Prefetch the data in a Server Component and prop drill `initialData` to Client Components
   - Quick to set up for simple cases
   - May need to prop drill through multiple layers of Client Components
   - May need to prop drill to multiple Client Components using the same query
   - Query refetching is based on when the page loads instead of when the data was prefetched on the server
-- Prefetch the query on the server, dehydrate the cache and rehydrate it on the client with `<Hydrate>`
+- Prefetch the query on the server, dehydrate the cache and rehydrate it on the client with `<HydrationBoundary>`
   - Requires slightly more setup up front
   - No need to prop drill
   - Query refetching is based on when the query was prefetched on the server
 
-### `<QueryClientProvider>` is required by both the `initialData` and `<Hydrate>` prefetching approaches
+### `<QueryClientProvider>` is required by both the `initialData` and `<HydrationBoundary>` prefetching approaches
 
 The hooks provided by the `react-query` package need to retrieve a `QueryClient` from their context. Wrap your component tree with `<QueryClientProvider>` and pass it an instance of `QueryClient`.
 
@@ -396,7 +379,7 @@ export function Posts(props) {
 }
 ```
 
-### Using `<Hydrate>`
+### Using `<HydrationBoundary>`
 
 Create a request-scoped singleton instance of `QueryClient`. **This ensures that data is not shared between different users and requests, while still only creating the QueryClient once per request.**
 
@@ -414,30 +397,33 @@ Fetch your data in a Server Component higher up in the component tree than the C
 - Retrieve the `QueryClient` singleton instance
 - Prefetch the data using the client's prefetchQuery method and wait for it to complete
 - Use `dehydrate` to obtain the dehydrated state of the prefetched queries from the query cache
-- Wrap the component tree that needs the prefetched queries inside `<Hydrate>`, and provide it with the dehydrated state
-- You can fetch inside multiple Server Components and use `<Hydrate>` in multiple places
+- Wrap the component tree that needs the prefetched queries inside `<HydrationBoundary>`, and provide it with the dehydrated state
+- You can fetch inside multiple Server Components and use `<HydrationBoundary>` in multiple places
 
 > NOTE: If you encounter a type error while using async Server Components with TypeScript versions lower than `5.1.3` and `@types/react` versions lower than `18.2.8`, it is recommended to update to the latest versions of both. Alternatively, you can use the temporary workaround of adding `{/* @ts-expect-error Server Component */}` when calling this component inside another. For more information, see [Async Server Component TypeScript Error](https://nextjs.org/docs/app/building-your-application/configuring/typescript#async-server-component-typescript-error) in the Next.js 13 docs.
 
 ```tsx
 // app/hydratedPosts.jsx
-import { dehydrate, Hydrate } from '@tanstack/react-query'
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import getQueryClient from './getQueryClient'
 
 export default async function HydratedPosts() {
   const queryClient = getQueryClient()
-  await queryClient.prefetchQuery(['posts'], getPosts)
+  
+  await queryClient.prefetchQuery({querykey:['posts'], queryFn:getPosts})
+  // for infinite queries with useInfiniteQuery use
+    // await queryClient.prefetchInfiniteQuery({queryKey:['posts'], queryFn:getPosts,...})
   const dehydratedState = dehydrate(queryClient)
 
   return (
-    <Hydrate state={dehydratedState}>
+    <HydrationBoundary state={dehydratedState}>
       <Posts />
-    </Hydrate>
+    </HydrationBoundary>
   )
 }
 ```
 
-During server rendering, calls to `useQuery` nested within the `<Hydrate>` Client Component will have access to prefetched data provided in the state property.
+During server rendering, calls to `useQuery` nested within the `<HydrationBoundary>` Client Component will have access to prefetched data provided in the state property.
 
 ```tsx
 // app/posts.jsx
@@ -541,10 +527,10 @@ This refetching of stale queries is a perfect match when caching markup in a CDN
 
 ### High memory consumption on server
 
-In case you are creating the `QueryClient` for every request, React Query creates the isolated cache for this client, which is preserved in memory for the `cacheTime` period. That may lead to high memory consumption on server in case of high number of requests during that period.
+In case you are creating the `QueryClient` for every request, React Query creates the isolated cache for this client, which is preserved in memory for the `gcTime` period. That may lead to high memory consumption on server in case of high number of requests during that period.
 
-On the server, `cacheTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `cacheTime` then you will be responsible for clearing the cache early.
+On the server, `gcTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `gcTime` then you will be responsible for clearing the cache early.
 
 To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../reference/QueryClient#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
 
-Alternatively, you can set a smaller `cacheTime`.
+Alternatively, you can set a smaller `gcTime`.

@@ -24,7 +24,7 @@ export default function SearchResults({ query = '' }: SearchResultsProps) {
     query,
     hitsPerPage: 5,
     staleTime: 1000 * 30, // 30s
-    cacheTime: 1000 * 60 * 15, // 15m
+    gcTime: 1000 * 60 * 15, // 15m
     enabled: !!query,
   })
 

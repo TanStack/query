@@ -4,9 +4,9 @@ import Film from './Film'
 import Characters from './Characters'
 import Character from './Character'
 import Home from './Home'
-import { Link, Button } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import { Switch, Route, Link as RouterLink } from 'react-router-dom'
+import { Link, Button } from '@mui/material'
+import { makeStyles } from '@mui/styles'
+import { Routes, Route, Link as RouterLink } from 'react-router-dom'
 
 export default function Layout(props) {
   const classes = useStyles()
@@ -25,23 +25,17 @@ export default function Layout(props) {
         </Link>
       </nav>
       <main className={classes.main}>
-        <Switch>
-          <Route exact path="/films">
-            <Films />
-          </Route>
-          <Route exact path="/films/:filmId">
-            <Film />
-          </Route>
-          <Route exact path="/characters">
-            <Characters />
-          </Route>
-          <Route exact path="/characters/:characterId">
-            <Character />
-          </Route>
-          <Route path="/">
-            <Home />
-          </Route>
-        </Switch>
+        <Routes>
+          <Route exact path="/films" element={<Films />} />
+          <Route exact path="/films/:filmId" element={<Film />} />
+          <Route exact path="/characters" element={<Characters />} />
+          <Route
+            exact
+            path="/characters/:characterId"
+            element={<Character />}
+          />
+          <Route path="/" element={<Home />} />
+        </Routes>
       </main>
     </div>
   )

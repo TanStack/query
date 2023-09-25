@@ -1,8 +1,8 @@
 import { waitFor } from '@testing-library/react'
-import { QueriesObserver, QueryObserver } from '..'
-import { createQueryClient, mockLogger, queryKey, sleep } from './utils'
+import { vi } from 'vitest'
+import { QueriesObserver } from '..'
+import { createQueryClient, queryKey, sleep } from './utils'
 import type { QueryClient, QueryObserverResult } from '..'
-import type { QueryKey } from '..'
 
 describe('queriesObserver', () => {
   let queryClient: QueryClient
@@ -19,8 +19,8 @@ describe('queriesObserver', () => {
   test('should return an array with all query results', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const queryFn1 = jest.fn().mockReturnValue(1)
-    const queryFn2 = jest.fn().mockReturnValue(2)
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
@@ -35,9 +35,11 @@ describe('queriesObserver', () => {
   })
 
   test('should still return value for undefined query key', async () => {
+    const consoleMock = vi.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
     const key1 = queryKey()
-    const queryFn1 = jest.fn().mockReturnValue(1)
-    const queryFn2 = jest.fn().mockReturnValue(2)
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: undefined, queryFn: queryFn2 },
@@ -50,25 +52,23 @@ describe('queriesObserver', () => {
     unsubscribe()
     expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
 
-    expect(mockLogger.error).toHaveBeenCalledTimes(2)
-    expect(mockLogger.error).toHaveBeenCalledWith(
-      'Passing a custom logger has been deprecated and will be removed in the next major version.',
+    expect(consoleMock).toHaveBeenCalledTimes(1)
+    expect(consoleMock).toHaveBeenCalledWith(
+      "As of v4, queryKey needs to be an Array. If you are using a string like 'repoData', please change it to an Array, e.g. ['repoData']",
     )
-    expect(mockLogger.error).toHaveBeenCalledWith(
-      'Passing a custom logger has been deprecated and will be removed in the next major version.',
-    )
+    consoleMock.mockRestore()
   })
 
   test('should update when a query updates', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const queryFn1 = jest.fn().mockReturnValue(1)
-    const queryFn2 = jest.fn().mockReturnValue(2)
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
     ])
-    const results: QueryObserverResult[][] = []
+    const results: Array<Array<QueryObserverResult>> = []
     results.push(observer.getCurrentResult())
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
@@ -79,20 +79,20 @@ describe('queriesObserver', () => {
     unsubscribe()
     expect(results.length).toBe(6)
     expect(results[0]).toMatchObject([
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[1]).toMatchObject([
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[2]).toMatchObject([
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[3]).toMatchObject([
       { status: 'success', data: 1 },
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[4]).toMatchObject([
       { status: 'success', data: 1 },
@@ -107,13 +107,13 @@ describe('queriesObserver', () => {
   test('should update when a query is removed', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const queryFn1 = jest.fn().mockReturnValue(1)
-    const queryFn2 = jest.fn().mockReturnValue(2)
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
     ])
-    const results: QueryObserverResult[][] = []
+    const results: Array<Array<QueryObserverResult>> = []
     results.push(observer.getCurrentResult())
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
@@ -122,27 +122,27 @@ describe('queriesObserver', () => {
     observer.setQueries([{ queryKey: key2, queryFn: queryFn2 }])
     await sleep(1)
     const queryCache = queryClient.getQueryCache()
-    expect(queryCache.find(key1, { type: 'active' })).toBeUndefined()
-    expect(queryCache.find(key2, { type: 'active' })).toBeDefined()
+    expect(queryCache.find({ queryKey: key1, type: 'active' })).toBeUndefined()
+    expect(queryCache.find({ queryKey: key2, type: 'active' })).toBeDefined()
     unsubscribe()
-    expect(queryCache.find(key1, { type: 'active' })).toBeUndefined()
-    expect(queryCache.find(key2, { type: 'active' })).toBeUndefined()
+    expect(queryCache.find({ queryKey: key1, type: 'active' })).toBeUndefined()
+    expect(queryCache.find({ queryKey: key2, type: 'active' })).toBeUndefined()
     expect(results.length).toBe(6)
     expect(results[0]).toMatchObject([
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[1]).toMatchObject([
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[2]).toMatchObject([
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[3]).toMatchObject([
       { status: 'success', data: 1 },
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[4]).toMatchObject([
       { status: 'success', data: 1 },
@@ -154,13 +154,13 @@ describe('queriesObserver', () => {
   test('should update when a query changed position', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const queryFn1 = jest.fn().mockReturnValue(1)
-    const queryFn2 = jest.fn().mockReturnValue(2)
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
     ])
-    const results: QueryObserverResult[][] = []
+    const results: Array<Array<QueryObserverResult>> = []
     results.push(observer.getCurrentResult())
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
@@ -174,20 +174,20 @@ describe('queriesObserver', () => {
     unsubscribe()
     expect(results.length).toBe(6)
     expect(results[0]).toMatchObject([
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[1]).toMatchObject([
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[2]).toMatchObject([
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[3]).toMatchObject([
       { status: 'success', data: 1 },
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[4]).toMatchObject([
       { status: 'success', data: 1 },
@@ -202,13 +202,13 @@ describe('queriesObserver', () => {
   test('should not update when nothing has changed', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const queryFn1 = jest.fn().mockReturnValue(1)
-    const queryFn2 = jest.fn().mockReturnValue(2)
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
     ])
-    const results: QueryObserverResult[][] = []
+    const results: Array<Array<QueryObserverResult>> = []
     results.push(observer.getCurrentResult())
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
@@ -222,20 +222,20 @@ describe('queriesObserver', () => {
     unsubscribe()
     expect(results.length).toBe(5)
     expect(results[0]).toMatchObject([
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[1]).toMatchObject([
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
-      { status: 'loading', fetchStatus: 'idle', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[2]).toMatchObject([
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[3]).toMatchObject([
       { status: 'success', data: 1 },
-      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'pending', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[4]).toMatchObject([
       { status: 'success', data: 1 },
@@ -246,8 +246,8 @@ describe('queriesObserver', () => {
   test('should trigger all fetches when subscribed', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const queryFn1 = jest.fn().mockReturnValue(1)
-    const queryFn2 = jest.fn().mockReturnValue(2)
+    const queryFn1 = vi.fn().mockReturnValue(1)
+    const queryFn2 = vi.fn().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
@@ -271,8 +271,8 @@ describe('queriesObserver', () => {
       },
     ])
 
-    const subscription1Handler = jest.fn()
-    const subscription2Handler = jest.fn()
+    const subscription1Handler = vi.fn()
+    const subscription2Handler = vi.fn()
 
     const unsubscribe1 = observer.subscribe(subscription1Handler)
     const unsubscribe2 = observer.subscribe(subscription2Handler)
@@ -280,7 +280,7 @@ describe('queriesObserver', () => {
     unsubscribe1()
 
     await waitFor(() => {
-      // 1 call: loading
+      // 1 call: pending
       expect(subscription1Handler).toBeCalledTimes(1)
       // 1 call: success
       expect(subscription2Handler).toBeCalledTimes(1)
@@ -288,40 +288,5 @@ describe('queriesObserver', () => {
 
     // Clean-up
     unsubscribe2()
-  })
-
-  test('onUpdate should not update the result for an unknown observer', async () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-
-    const queriesObserver = new QueriesObserver(queryClient, [
-      {
-        queryKey: key1,
-        queryFn: () => 1,
-      },
-    ])
-
-    const newQueryObserver = new QueryObserver<
-      unknown,
-      unknown,
-      unknown,
-      unknown,
-      QueryKey
-    >(queryClient, {
-      queryKey: key2,
-      queryFn: () => 2,
-    })
-
-    // Force onUpdate with an unknown QueryObserver
-    // because no existing use case has been found in the lib
-    queriesObserver['onUpdate'](
-      newQueryObserver,
-      // The current queries observer result is re-used here
-      // to use a typescript friendly result
-      queriesObserver.getCurrentResult()[0]!,
-    )
-
-    // Should not alter the result
-    expect(queriesObserver.getCurrentResult()[-1]).toBeUndefined()
   })
 })

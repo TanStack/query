@@ -4,7 +4,7 @@ title: Placeholder Query Data
 ref: docs/react/guides/placeholder-query-data.md
 ---
 
-[//]: # 'Example'
+[//]: # 'ExampleValue'
 
 ```tsx
 const result = useQuery({
@@ -14,12 +14,10 @@ const result = useQuery({
 })
 ```
 
-[//]: # 'Example'
+[//]: # 'ExampleValue'
 [//]: # 'Memoization'
 [//]: # 'Memoization'
-[//]: # 'Example2'
-[//]: # 'Example2'
-[//]: # 'Example3'
+[//]: # 'ExampleCache'
 
 ```tsx
 const result = useQuery({
@@ -35,6 +33,6 @@ const result = useQuery({
 })
 ```
 
-[//]: # 'Example3'
+[//]: # 'ExampleCache'
 [//]: # 'Materials'
 [//]: # 'Materials'

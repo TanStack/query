@@ -7,13 +7,14 @@ export const Header = () => {
 
   return (
     <header>
-      <Link href="/">
-        <a className={pathname === '/' ? 'is-active' : ''}>Home</a>
+      <Link href="/" className={pathname === '/' ? 'is-active' : ''}>
+        Home
       </Link>
-      <Link href="/client-only">
-        <a className={pathname === '/client-only' ? 'is-active' : ''}>
-          Client-Only
-        </a>
+      <Link
+        href="/client-only"
+        className={pathname === '/client-only' ? 'is-active' : ''}
+      >
+        Client-Only
       </Link>
       <style jsx>{`
         header {

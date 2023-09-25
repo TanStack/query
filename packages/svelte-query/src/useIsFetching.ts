@@ -1,25 +1,17 @@
 import {
   type QueryClient,
   type QueryFilters,
-  type QueryKey,
   notifyManager,
-  parseFilterArgs,
 } from '@tanstack/query-core'
-import { type Readable, readable } from 'svelte/store'
+import { readable } from 'svelte/store'
 import { useQueryClient } from './useQueryClient'
+import type { Readable } from 'svelte/store'
 
-export function useIsFetching(filters?: QueryFilters): Readable<number>
 export function useIsFetching(
-  queryKey?: QueryKey,
   filters?: QueryFilters,
-): Readable<number>
-
-export function useIsFetching(
-  arg1?: QueryKey | QueryFilters,
-  arg2?: QueryFilters,
+  queryClient?: QueryClient,
 ): Readable<number> {
-  const [filters] = parseFilterArgs(arg1, arg2)
-  const client: QueryClient = useQueryClient()
+  const client = useQueryClient(queryClient)
   const cache = client.getQueryCache()
   // isFetching is the prev value initialized on mount *
   let isFetching = client.isFetching(filters)

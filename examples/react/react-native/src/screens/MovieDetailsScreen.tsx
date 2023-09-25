@@ -5,11 +5,11 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import { RouteProp } from '@react-navigation/native'
 import { useQuery } from '@tanstack/react-query'
 
-import { LoadingIndicator } from '@app/components/LoadingIndicator'
-import { ErrorMessage } from '@app/components/ErrorMessage'
-import { useRefreshByUser } from '@app/hooks/useRefreshByUser'
-import { fetchMovie, MovieDetails } from '@app/lib/api'
-import type { MoviesStackNavigator } from '@app/navigation/types'
+import { LoadingIndicator } from '../components/LoadingIndicator'
+import { ErrorMessage } from '../components/ErrorMessage'
+import { useRefreshByUser } from '../hooks/useRefreshByUser'
+import { fetchMovie, MovieDetails } from '../lib/api'
+import type { MoviesStackNavigator } from '../navigation/types'
 
 type MoviesDetailsScreenNavigationProp = StackNavigationProp<
   MoviesStackNavigator,
@@ -22,15 +22,15 @@ type Props = {
 }
 
 export function MovieDetailsScreen({ route }: Props) {
-  const { isLoading, error, data, refetch } = useQuery<MovieDetails, Error>(
-    ['movie', route.params.movie.title],
-    () => fetchMovie(route.params.movie.title),
-    { initialData: route.params.movie as MovieDetails },
-  )
+  const { isPending, error, data, refetch } = useQuery<MovieDetails, Error>({
+    queryKey: ['movie', route.params.movie.title],
+    queryFn: () => fetchMovie(route.params.movie.title),
+    initialData: route.params.movie as MovieDetails,
+  })
 
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch)
 
-  if (isLoading) return <LoadingIndicator />
+  if (isPending) return <LoadingIndicator />
   if (error) return <ErrorMessage message={error.message}></ErrorMessage>
   if (!data) return null
 

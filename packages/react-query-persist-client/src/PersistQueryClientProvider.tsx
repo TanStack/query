@@ -11,7 +11,7 @@ import type { QueryClientProviderProps } from '@tanstack/react-query'
 
 export type PersistQueryClientProviderProps = QueryClientProviderProps & {
   persistOptions: Omit<PersistQueryClientOptions, 'queryClient'>
-  onSuccess?: () => void
+  onSuccess?: () => Promise<unknown> | unknown
 }
 
 export const PersistQueryClientProvider = ({

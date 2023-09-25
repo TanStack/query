@@ -1,7 +1,7 @@
 import React from 'react'
-import { Typography } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import { Link } from '@material-ui/core'
+import { Typography } from '@mui/material'
+import { makeStyles } from '@mui/styles'
+import { Link } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
 
 export default function Home() {

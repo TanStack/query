@@ -1,90 +1,32 @@
 'use client'
 import * as React from 'react'
-import {
-  MutationObserver,
-  notifyManager,
-  parseMutationArgs,
-} from '@tanstack/query-core'
-import { useSyncExternalStore } from './useSyncExternalStore'
-
+import { MutationObserver, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { shouldThrowError } from './utils'
-import type { MutationFunction, MutationKey } from '@tanstack/query-core'
 import type {
   UseMutateFunction,
   UseMutationOptions,
   UseMutationResult,
 } from './types'
+import type { DefaultError, QueryClient } from '@tanstack/query-core'
 
 // HOOK
 
 export function useMutation<
   TData = unknown,
-  TError = unknown,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 >(
   options: UseMutationOptions<TData, TError, TVariables, TContext>,
-): UseMutationResult<TData, TError, TVariables, TContext>
-export function useMutation<
-  TData = unknown,
-  TError = unknown,
-  TVariables = void,
-  TContext = unknown,
->(
-  mutationFn: MutationFunction<TData, TVariables>,
-  options?: Omit<
-    UseMutationOptions<TData, TError, TVariables, TContext>,
-    'mutationFn'
-  >,
-): UseMutationResult<TData, TError, TVariables, TContext>
-export function useMutation<
-  TData = unknown,
-  TError = unknown,
-  TVariables = void,
-  TContext = unknown,
->(
-  mutationKey: MutationKey,
-  options?: Omit<
-    UseMutationOptions<TData, TError, TVariables, TContext>,
-    'mutationKey'
-  >,
-): UseMutationResult<TData, TError, TVariables, TContext>
-export function useMutation<
-  TData = unknown,
-  TError = unknown,
-  TVariables = void,
-  TContext = unknown,
->(
-  mutationKey: MutationKey,
-  mutationFn?: MutationFunction<TData, TVariables>,
-  options?: Omit<
-    UseMutationOptions<TData, TError, TVariables, TContext>,
-    'mutationKey' | 'mutationFn'
-  >,
-): UseMutationResult<TData, TError, TVariables, TContext>
-export function useMutation<
-  TData = unknown,
-  TError = unknown,
-  TVariables = void,
-  TContext = unknown,
->(
-  arg1:
-    | MutationKey
-    | MutationFunction<TData, TVariables>
-    | UseMutationOptions<TData, TError, TVariables, TContext>,
-  arg2?:
-    | MutationFunction<TData, TVariables>
-    | UseMutationOptions<TData, TError, TVariables, TContext>,
-  arg3?: UseMutationOptions<TData, TError, TVariables, TContext>,
+  queryClient?: QueryClient,
 ): UseMutationResult<TData, TError, TVariables, TContext> {
-  const options = parseMutationArgs(arg1, arg2, arg3)
-  const queryClient = useQueryClient({ context: options.context })
+  const client = useQueryClient(queryClient)
 
   const [observer] = React.useState(
     () =>
       new MutationObserver<TData, TError, TVariables, TContext>(
-        queryClient,
+        client,
         options,
       ),
   )
@@ -93,7 +35,7 @@ export function useMutation<
     observer.setOptions(options)
   }, [observer, options])
 
-  const result = useSyncExternalStore(
+  const result = React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
         observer.subscribe(notifyManager.batchCalls(onStoreChange)),
@@ -114,7 +56,7 @@ export function useMutation<
 
   if (
     result.error &&
-    shouldThrowError(observer.options.useErrorBoundary, [result.error])
+    shouldThrowError(observer.options.throwOnError, [result.error])
   ) {
     throw result.error
   }

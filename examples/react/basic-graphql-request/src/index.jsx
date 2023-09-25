@@ -71,7 +71,7 @@ function Posts({ setPostId }) {
     <div>
       <h1>Posts</h1>
       <div>
-        {status === 'loading' ? (
+        {status === 'pending' ? (
           'Loading...'
         ) : status === 'error' ? (
           <span>Error: {error.message}</span>
@@ -142,7 +142,7 @@ function Post({ postId, setPostId }) {
           Back
         </a>
       </div>
-      {!postId || status === 'loading' ? (
+      {!postId || status === 'pending' ? (
         'Loading...'
       ) : status === 'error' ? (
         <span>Error: {error.message}</span>

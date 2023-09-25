@@ -2,7 +2,7 @@
   import { useQueryClient } from '@tanstack/svelte-query'
   import {
     staleTime,
-    cacheTime,
+    gcTime,
     errorRate,
     queryTimeMin,
     queryTimeMax,
@@ -14,13 +14,13 @@
   queryClient.setDefaultOptions({
     queries: {
       staleTime: $staleTime,
-      cacheTime: $cacheTime,
+      gcTime: $gcTime,
     },
   })
 </script>
 
 <p>
-  The "staleTime" and "cacheTime" durations have been altered in this example to
+  The "staleTime" and "gcTime" durations have been altered in this example to
   show how query stale-ness and query caching work on a granular level
 </p>
 <div>
@@ -34,12 +34,12 @@
   />
 </div>
 <div>
-  Cache Time:{' '}
+  GcTime:{' '}
   <input
     type="number"
     min="0"
     step="1000"
-    bind:value={$cacheTime}
+    bind:value={$gcTime}
     style="width: 100px"
   />
 </div>

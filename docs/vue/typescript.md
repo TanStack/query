@@ -49,10 +49,12 @@ const { data } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 [//]: # 'TypeNarrowing'
 
 ```tsx
-const { data, isSuccess } = reactive(useQuery({
-  queryKey: ['test'],
-  queryFn: () => Promise.resolve(5),
-}))
+const { data, isSuccess } = reactive(
+  useQuery({
+    queryKey: ['test'],
+    queryFn: () => Promise.resolve(5),
+  }),
+)
 
 if (isSuccess) {
   data
@@ -75,10 +77,16 @@ if (error.value instanceof Error) {
 }
 ```
 
-[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPQBuOAtAEcc+KgFgAUKEiw49AB7AIqUuUpV5i1GPESYeMOjgBxcsjBwAvIjjAAJgC44jZCABGuIhImsIzeCXQYVgALEwgzZSsACgBKRwAFVWAMAB4wswBtAF0APks8jSUAOgBzQKiqThLTMC0Yophg9EYoqHRUSGZDCzy2jt8MItt6BhivcR8-a1xyKCJLFAxsXDwopCEVgGl0PEcMqmrw2qosgBo4DfwAMUZHAKDQmuVCMfFOTjhPr4A9AH44SYsOAzaCOABK6BIKWQjHYjAgAHdGDlxsASHAoiCoEVuPQADY4Gx+JisdAQdEAUSgsxiiAknyxOPxOHpcHeX0+fwBA3gWMcVNmEkIQA)
+[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPRTr2swBaAI458VALAAoUJFhx6AD2ARUpcpSqLlqCZKkw8YdHADi5ZGDgBeRHGAATAFxxGyEACNcRKVNYRm8CToMKwAFmYQFqo2ABQAlM4ACurAGAA8ERYA2gC6AHzWBVoqAHQA5sExVJxl5mA6cSUwoeiMMTyokMzGVgUdXRgl9vQMcT6SfgG2uORQRNYoGNi4eDFIIisA0uh4zllUtZH1VDkANHAb+ABijM5BIeF1qoRjkpyccJ9fAHoA-OPAEhwGLFVAlVIAQSUKgAolBZjEZtA4nFEFJPkioOi4O84H8pIQgA)
 
 [//]: # 'TypingError'
 [//]: # 'TypingError2'
 [//]: # 'TypingError2'
+[//]: # 'TypingError3'
+[//]: # 'TypingError3'
+[//]: # 'RegisterErrorType'
+[//]: # 'RegisterErrorType'
+[//]: # 'TypingQueryOptions'
+[//]: # 'TypingQueryOptions'
 [//]: # 'Materials'
 [//]: # 'Materials'

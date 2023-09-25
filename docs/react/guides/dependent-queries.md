@@ -36,14 +36,16 @@ const {
 The `projects` query will start in:
 
 ```tsx
-status: 'loading'
+status: 'pending'
+isPending: false
 fetchStatus: 'idle'
 ```
 
 As soon as the `user` is available, the `projects` query will be `enabled` and will then transition to:
 
 ```tsx
-status: 'loading'
+status: 'pending'
+isPending: true
 fetchStatus: 'fetching'
 ```
 
@@ -51,6 +53,7 @@ Once we have the projects, it will go to:
 
 ```tsx
 status: 'success'
+isPending: false
 fetchStatus: 'idle'
 ```
 
