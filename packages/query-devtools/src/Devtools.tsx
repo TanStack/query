@@ -2124,6 +2124,7 @@ const getStyles = () => {
       align-items: center;
       justify-content: space-between;
       color: ${colors.gray[300]};
+      font-size: ${font.size['xs']};
       border-radius: ${tokens.border.radius.xs};
       padding: ${tokens.size[0.5]} ${tokens.size[1]};
       cursor: pointer;
