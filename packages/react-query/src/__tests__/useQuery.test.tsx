@@ -7,7 +7,6 @@ import { QueryCache, keepPreviousData, useQuery } from '..'
 import {
   Blink,
   createQueryClient,
-  expectType,
   mockOnlineManagerIsOnline,
   mockVisibilityState,
   queryKey,
@@ -35,29 +34,29 @@ describe('useQuery', () => {
     function Page() {
       // unspecified query function should default to unknown
       const noQueryFn = useQuery({ queryKey: key })
-      expectType<unknown>(noQueryFn.data)
-      expectType<unknown>(noQueryFn.error)
+      expectTypeOf<unknown>(noQueryFn.data)
+      expectTypeOf<unknown>(noQueryFn.error)
 
       // it should infer the result type from the query function
       const fromQueryFn = useQuery({ queryKey: key, queryFn: () => 'test' })
-      expectType<string | undefined>(fromQueryFn.data)
-      expectType<unknown>(fromQueryFn.error)
+      expectTypeOf<string | undefined>(fromQueryFn.data)
+      expectTypeOf<unknown>(fromQueryFn.error)
 
       // it should be possible to specify the result type
       const withResult = useQuery<string>({
         queryKey: key,
         queryFn: () => 'test',
       })
-      expectType<string | undefined>(withResult.data)
-      expectType<unknown | null>(withResult.error)
+      expectTypeOf<string | undefined>(withResult.data)
+      expectTypeOf<unknown | null>(withResult.error)
 
       // it should be possible to specify the error type
       const withError = useQuery<string, Error>({
         queryKey: key,
         queryFn: () => 'test',
       })
-      expectType<string | undefined>(withError.data)
-      expectType<Error | null>(withError.error)
+      expectTypeOf<string | undefined>(withError.data)
+      expectTypeOf<Error | null>(withError.error)
 
       // it should provide the result type in the configuration
       useQuery({
@@ -70,12 +69,12 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn: () => (Math.random() > 0.5 ? 'a' : 'b'),
       })
-      expectType<'a' | 'b' | undefined>(unionTypeSync.data)
+      expectTypeOf<'a' | 'b' | undefined>(unionTypeSync.data)
       const unionTypeAsync = useQuery<'a' | 'b'>({
         queryKey: key,
         queryFn: () => Promise.resolve(Math.random() > 0.5 ? 'a' : 'b'),
       })
-      expectType<'a' | 'b' | undefined>(unionTypeAsync.data)
+      expectTypeOf<'a' | 'b' | undefined>(unionTypeAsync.data)
 
       // should error when the query function result does not match with the specified type
       // @ts-expect-error
@@ -90,15 +89,15 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn: () => queryFn(),
       })
-      expectType<string | undefined>(fromGenericQueryFn.data)
-      expectType<unknown>(fromGenericQueryFn.error)
+      expectTypeOf<string | undefined>(fromGenericQueryFn.data)
+      expectTypeOf<unknown>(fromGenericQueryFn.error)
 
       const fromGenericOptionsQueryFn = useQuery({
         queryKey: key,
         queryFn: () => queryFn(),
       })
-      expectType<string | undefined>(fromGenericOptionsQueryFn.data)
-      expectType<unknown>(fromGenericOptionsQueryFn.error)
+      expectTypeOf<string | undefined>(fromGenericOptionsQueryFn.data)
+      expectTypeOf<unknown>(fromGenericOptionsQueryFn.error)
 
       type MyData = number
       type MyQueryKey = readonly ['my-data', number]
@@ -117,7 +116,7 @@ describe('useQuery', () => {
       const getMyDataStringKey: QueryFunction<MyData, ['1']> = async (
         context,
       ) => {
-        expectType<['1']>(context.queryKey)
+        expectTypeOf<['1']>(context.queryKey)
         return Number(context.queryKey[0]) + 42
       }
 
@@ -156,7 +155,7 @@ describe('useQuery', () => {
           ...options,
         })
       const test = useWrappedQuery([''], async () => '1')
-      expectType<string | undefined>(test.data)
+      expectTypeOf<string | undefined>(test.data)
 
       // handles wrapped queries with custom fetcher passed directly to useQuery
       const useWrappedFuncStyleQuery = <
@@ -173,7 +172,7 @@ describe('useQuery', () => {
         >,
       ) => useQuery({ queryKey: qk, queryFn: fetcher, ...options })
       const testFuncStyle = useWrappedFuncStyleQuery([''], async () => true)
-      expectType<boolean | undefined>(testFuncStyle.data)
+      expectTypeOf<boolean | undefined>(testFuncStyle.data)
     }
   })
 
@@ -220,19 +219,19 @@ describe('useQuery', () => {
       states.push(state)
 
       if (state.isPending) {
-        expectType<undefined>(state.data)
-        expectType<null>(state.error)
+        expectTypeOf<undefined>(state.data)
+        expectTypeOf<null>(state.error)
         return <span>pending</span>
       }
 
       if (state.isLoadingError) {
-        expectType<undefined>(state.data)
-        expectType<Error>(state.error)
+        expectTypeOf<undefined>(state.data)
+        expectTypeOf<Error>(state.error)
         return <span>{state.error.message}</span>
       }
 
-      expectType<string>(state.data)
-      expectType<Error | null>(state.error)
+      expectTypeOf<string>(state.data)
+      expectTypeOf<Error | null>(state.error)
       return <span>{state.data}</span>
     }
 
