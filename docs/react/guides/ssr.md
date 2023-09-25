@@ -38,7 +38,9 @@ Read on to learn how to implement these three steps with React Query.
 
 ## A quick note on Suspense
 
-This guide uses the regular `useQuery` API, but as long as you are prefetching your queries you can replace this with `useSuspenseQuery` freely if you wish and things will work the same, but you get to use `<Suspense>` for loading states on the client. In the [advanced guide](../guides/advanced-ssr) we'll switch this around and use `useSuspenseQuery` as the default, as Suspenseful data fetching is necessary for the advanced patterns.
+This guide uses the regular `useQuery` API. While we don't necessarily recommend it, it is possible to replace this with `useSuspenseQuery` instead **as long as you always prefetch all your queries**. The upside is that you get to use `<Suspense>` for loading states on the client.
+
+If you do forget to prefetch a query when you are using `useSuspenseQuery`, the consequences will depend on the framework you are using. In some cases, the data will Suspend and get fetched on the server but never be hydrated to the client, where it will fetch again. In these cases you will get a markup hydration mismatch, because the server and the client tried to render different things.
 
 ## Initial setup
 
@@ -156,7 +158,8 @@ The setup is minimal and this can be a quick solution for some cases, but there 
 - If you are calling `useQuery` in a component deeper down in the tree you need to pass the `initialData` down to that point
 - If you are calling `useQuery` with the same query in multiple locations, passing `initialData` to only one of them can be brittle and break when your app changes since. If you remove or move the component that has the `useQuery` with `initialData`, the more deeply nested `useQuery` might no longer have any data. Passing `initialData` to **all** queries that needs it can also be cumbersome.
 - There is no way to know at what time the query was fetched on the server, so `dataUpdatedAt` and determining if the query needs refetching is based on when the page loaded instead
-- If there is already data in the cache for a query, `initialData` will never overwrite this data, even if the new data is fresher than the old one
+- If there is already data in the cache for a query, `initialData` will never overwrite this data, **even if the new data is fresher than the old one**.
+  - To understand why this is especially bad, consider the `getServerSideProps` example above. If you navigate back and forth to a page several times, `getServerSideProps` would get called each time and fetch new data, but because we are using the `initialData` option, the client cache and data would never be updated.
 
 Setting up the full hydration solution is straightforward and does not have these drawbacks, this will be the focus for the rest of the documentation.
 
@@ -165,14 +168,14 @@ Setting up the full hydration solution is straightforward and does not have thes
 With just a little more setup, you can use a `queryClient` to prefetch queries during a preload phase, pass a serialized version of that `queryClient` to the rendering part of the app and reuse it there. This avoid the drawbacks above. Feel free to skip ahead for full Next.js pages router and Remix examples, but at a general level these are the extra steps:
 
 - In the framework loader function, create a `const queryClient = new QueryClient(options)`
-- In the loader function, do `queryClient.prefetchQuery(...)` for each query you want to prefetch, and await them
+- In the loader function, do `await queryClient.prefetchQuery(...)` for each query you want to prefetch
   - You want to use `await Promise.all(...)` to fetch the queries in parallel when possible
   - It's fine to have queries that aren't prefetched. These wont be server rendered, instead they will be fetched on the client after the application is interactive. This can be great for content that are shown only after user interaction, or is far down on the page to avoid blocking more critical content.
 - From the loader, return `dehydrate(queryClient)`, note that the exact syntax to return this differs between frameworks
 - Wrap your tree with `<HydrationBoundary state={dehydratedState}>` where `dehydratedState` comes from the framework loader. How you get `dehydratedState` also differs between frameworks.
   - This can be done for each route, or at the top of the application to avoid boilerplate, see examples
 
-> An interesting detail is that there are actually _three_ `queryClient` involved. The framework loaders are a form of "preloading" phase that happens before rendering, and this phase has it's own `queryClient` that does the prefetching. The dehydrated result of this phase gets passed to **both** the server rendering process **and** the client rendering process which each has it's own `queryClient`. This ensures they both start with the same data so they can return the same markup.
+> An interesting detail is that there are actually _three_ `queryClient`s involved. The framework loaders are a form of "preloading" phase that happens before rendering, and this phase has it's own `queryClient` that does the prefetching. The dehydrated result of this phase gets passed to **both** the server rendering process **and** the client rendering process which each has it's own `queryClient`. This ensures they both start with the same data so they can return the same markup.
 
 > Server Components are another form of "preloading" phase, that can also "preload" (pre-render) parts of a React component tree. Read more in the [Advanced Server Rendering guide](../guides/advanced-ssr).
 
@@ -409,7 +412,7 @@ How would we prefetch this so it can be server rendered? Here's an example:
 export async function getServerSideProps() {
   const queryClient = new QueryClient()
 
-  const user = queryClient.fetchQuery({
+  const user = await queryClient.fetchQuery({
     queryKey: ['user', email],
     queryFn: getUserByEmail,
   })
@@ -468,7 +471,7 @@ dehydrate(queryClient, {
 
 When doing `return { props: { dehydratedState: dehydrate(queryClient) } }` in Next.js, or `return json({ dehydratedState: dehydrate(queryClient) })` in Remix, what happens is that the `dehydratedState` representation of the `queryClient` is serialized by the framework so it can be embedded into the markup and transported to the client.
 
-By default, these frameworks only supports returning things that are safely serializable/parsable, and therefor does not support `undefined`, `Date`, `Map`, `Set`, `BigInt`, `Infinity`, `NaN`, `-0`, regular expressions etc. This also means that you can not return any of these things from your queries. If returning these values is something you want, check out [superjson](https://github.com/blitz-js/superjson) or similar packages.
+By default, these frameworks only supports returning things that are safely serializable/parsable, and therefor does not support `undefined`, `Error`, `Date`, `Map`, `Set`, `BigInt`, `Infinity`, `NaN`, `-0`, regular expressions etc. This also means that you can not return any of these things from your queries. If returning these values is something you want, check out [superjson](https://github.com/blitz-js/superjson) or similar packages.
 
 If you are using a custom SSR setup, you need to take care of this step yourself. Your first instinct might be to use `JSON.stringify(dehydratedState)`, but because this doesn't escape things like `<script>alert('Oh no..')</script>` by default, this can easily lead to **XSS-vulnerabilities** in your application. [superjson](https://github.com/blitz-js/superjson) also **does not** escape values and is unsafe to use by itself in a custom SSR setup (unless you add an extra step for escaping the output). Instead we recommend using a library like [Serialize JavaScript](https://github.com/yahoo/serialize-javascript) or [devalue](https://github.com/Rich-Harris/devalue) which are both safe against XSS injections out of the box.
 
@@ -510,7 +513,7 @@ Amazing, we've mostly flattened our waterfalls! There's a catch though. Let's ca
 4.       |> getGraphDataById()
 ```
 
-This is because with SPA's server rendering only works for the initial page load, not for any subsequent navigation.
+This is because with SPA's, server rendering only works for the initial page load, not for any subsequent navigation.
 
 Modern frameworks often tries to solve this by fetching the initial code and data in parallel, so if you were using Next.js or Remix with the prefetching patterns we outlined in this guide, including how to prefetch dependent queries, it would actually look like this instead:
 

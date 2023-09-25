@@ -174,15 +174,28 @@ This starts fetching `'article-comments'` immediately and flattens the waterfall
 1. |> getArticleCommentsById()
 ```
 
-You can also do this with suspense queries, but instead of using two `useSuspenseQuery` you'll have to use `useSuspenseQueries` to group the queries instead, just ignore the result from the query you are prefetching:
+If you want to prefetch together with Suspense, make sure the prefetches still use `useQuery` so you don't suspend and unnecessarily wait for that data, and that those prefetches happen before any suspenseful query so they can start as early as possible.
+
+You can still use `useSuspenseQuery` in the component that actually needs the data. You _might_ want to wrap this later component in its own `<Suspense>` boundary so the "secondary" query we are prefetching does not block rendering of the "primary" data.
 
 ```tsx
-const [articleResult] = useSuspenseQueries({
-  queries: [
-    { queryKey: ['article', id], queryFn: getArticleById },
-    // Prefetch
-    { queryKey: ['article-comments', id], queryFn: getArticleCommentsById },
-  ],
+// Prefetch
+useQuery({
+  queryKey: ['article-comments', id],
+  queryFn: getArticleCommentsById,
+  // Optional optimization to avoid rerenders when this query changes:
+  notifyOnChangeProps: [],
+})
+
+const { data: articleResult } = useSuspenseQuery({
+  queryKey: ['article', id],
+  queryFn: getArticleById,
+})
+
+// In nested component:
+const { data: commentsResult } = useSuspenseQuery({
+  queryKey: ['article-comments', id],
+  queryFn: getArticleCommentsById,
 })
 ```
 

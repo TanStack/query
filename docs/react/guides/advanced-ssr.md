@@ -7,21 +7,19 @@ Welcome to the Advanced Server Rendering guide, where you will learn all about u
 
 You might want to read the [Server Rendering & Hydration guide](../guides/ssr) before this one as it teaches the basics for using React Query with SSR, and [Performance & Request Waterfalls](../guides/request-waterfalls) as well as [Prefetching & Router Integration](../guides/prefetching) also contains valuable background.
 
-We'll be using `useSuspenseQuery` here, so also check out the [Suspense guide](../guides/suspense).
-
 Before we start, let's note that while the `initialData` approach outlined in the SSR guide also works with Server Components, we'll focus this guide on the hydration APIs.
 
 ## Server Components & Next.js app router
 
-We won't cover Server Components in depth here, but the short version is that they are components that are guaranteed to always run on the server, not only on the initial page view but **also on page transitions**. This is similar to how Next.js `getServerSideProps`/`getStaticProps` and Remix `loader` works, as these also always run on the server but while those can only return data, Server Components can do a lot more. The data part is central to React Query however, so let's focus on that.
+We won't cover Server Components in depth here, but the short version is that they are components that are guaranteed to _only_ run on the server, both for the initial page view and **also on page transitions**. This is similar to how Next.js `getServerSideProps`/`getStaticProps` and Remix `loader` works, as these also always run on the server but while those can only return data, Server Components can do a lot more. The data part is central to React Query however, so let's focus on that.
 
 How do we take what we learned in the Server Rendering guide about [passing data prefetched in framework loaders to the app](../guides/ssr#using-the-hydration-apis) and apply that to Server Components and the Next.js app router? The best way to start thinking about this is to consider Server Components as "just" another framework loader.
 
 ### A quick note on terminology
 
-So far in these guides, we've been talking about the _server_ and the _client_. It's important to note that confusingly enough this does not match 1-1 with _Server Components_ and _Client Components_. Server Components are guaranteed to always run on the server, but Client Components actually runs in both places. The reason for this being that they are also rendered during the initial _server rendering_ pass.
+So far in these guides, we've been talking about the _server_ and the _client_. It's important to note that confusingly enough this does not match 1-1 with _Server Components_ and _Client Components_. Server Components are guaranteed to only run on the server, but Client Components can actually run in both places. The reason for this is that they can also render during the initial _server rendering_ pass.
 
-One way to think of this is that even though Server Components also _render_, they happen during a "loader phase" (always happens on the server), while Client Components run during the "application phase", and that application can run both on the server during SSR, and in for example a browser.
+One way to think of this is that even though Server Components also _render_, they happen during a "loader phase" (always happens on the server), while Client Components run during the "application phase". That application can run both on the server during SSR, and in for example a browser. Where exactly that application runs and if it runs during SSR or not might differ between frameworks.
 
 ### Initial setup
 
@@ -101,6 +99,12 @@ export async function getStaticProps() {
 function Posts() {
   // This useQuery could just as well happen in some deeper child to
   // the <PostsRoute>, data will be available immediately either way
+  //
+  // Note that we are using useQuery here instead of useSuspenseQuery.
+  // Because this data has already been prefetched, there is no need to
+  // ever suspend in the component itself. If we forget or remove the
+  // prefetch, this will instead fetch the data on the client, while
+  // using useSuspenseQuery would have had worse side effects.
   const { data } = useQuery({ queryKey: ['posts'], queryFn: getPosts })
 
   // This query was not prefetched on the server and will not start
@@ -158,17 +162,12 @@ Next, we'll look at what the Client Component part looks like:
 'use client'
 
 export default function Posts() {
-  // This useSuspenseQuery could just as well happen in some deeper
+  // This useQuery could just as well happen in some deeper
   // child to <Posts>, data will be available immediately either way
-  const { data } = useSuspenseQuery({ queryKey: ['posts'], queryFn: getPosts })
+  const { data } = useQuery({ queryKey: ['posts'], queryFn: getPosts })
 
   // This query was not prefetched on the server and will not start
   // fetching until on the client, both patterns are fine to mix.
-  //
-  // Note that we are using useQuery and not useSuspenseQuery here,
-  // if you were to useSuspenseQuery, this would actually start
-  // fetching during the server rendering pass which would lead to
-  // problems.
   const { data: commentsData } = useQuery({
     queryKey: ['posts-comments'],
     queryFn: getComments,
@@ -327,9 +326,9 @@ Of course, it's fine to have Server Components own some data, and Client Compone
 
 ## Streaming with Server Components
 
-The Next.js app router automatically streams any part of the application that is ready to be displayed to the browser as soon as possible, so finished content can be displayed immediately without waiting for still pending content. It does this along `<Suspense>` boundary lines, which is why we encourage using `useSuspenseQuery` when using the app router. Note that if you create a file `loading.tsx`, this automatically creates a `<Suspense>` boundary behind the scenes.
+The Next.js app router automatically streams any part of the application that is ready to be displayed to the browser as soon as possible, so finished content can be displayed immediately without waiting for still pending content. It does this along `<Suspense>` boundary lines. Note that if you create a file `loading.tsx`, this automatically creates a `<Suspense>` boundary behind the scenes.
 
-With the prefetching patterns described above, React Query is perfectly compatible with this form of streaming. As the data for each Suspense boundary resolves, Next.js can render and stream the finished content to the browser.
+With the prefetching patterns described above, React Query is perfectly compatible with this form of streaming. As the data for each Suspense boundary resolves, Next.js can render and stream the finished content to the browser. This works even if you are using `useQuery` as outlined above because the suspending actually happens when you `await` the prefetch.
 
 Note that right now, you have to await all prefetches for this to work. This means all prefetches are considered critical content and will block that Suspense boundary.
 
