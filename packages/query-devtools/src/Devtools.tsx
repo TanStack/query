@@ -1696,6 +1696,7 @@ const getStyles = () => {
       background-color: ${colors.darkGray[300]};
       border-radius: 2px;
       font-variant-numeric: tabular-nums;
+      height: ${tokens.size[4.5]};
     `,
     statusTooltip: css`
       position: absolute;
