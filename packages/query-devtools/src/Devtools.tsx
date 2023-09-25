@@ -15,6 +15,7 @@ import { TransitionGroup } from 'solid-transition-group'
 import { Key } from '@solid-primitives/keyed'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { createResizeObserver } from '@solid-primitives/resize-observer'
+import { DropdownMenu } from '@kobalte/core'
 import { tokens } from './theme'
 import {
   convertRemToPixels,
@@ -27,6 +28,8 @@ import {
 } from './utils'
 import {
   ArrowDown,
+  ArrowLeft,
+  ArrowRight,
   ArrowUp,
   ChevronDown,
   Offline,
@@ -203,7 +206,6 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
   ) as () => 1 | -1
 
   const [offline, setOffline] = createSignal(false)
-  const [settingsOpen, setSettingsOpen] = createSignal(false)
 
   const position = createMemo(
     () =>
@@ -323,7 +325,6 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
 
   const setDevtoolsPosition = (pos: DevtoolsPosition) => {
     props.setLocalStore('position', pos)
-    setSettingsOpen(false)
   }
 
   createEffect(() => {
@@ -530,6 +531,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                 'tsqd-action-clear-cache',
               )}
               aria-label="Clear query cache"
+              title="Clear query cache"
             >
               <Trash />
             </button>
@@ -554,32 +556,27 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                   : 'Mock offline behavior'
               }`}
               aria-pressed={offline()}
+              title={`${
+                offline()
+                  ? 'Unset offline mocking behavior'
+                  : 'Mock offline behavior'
+              }`}
             >
               {offline() ? <Offline /> : <Wifi />}
             </button>
-            <div style={{ position: 'relative' }}>
-              <button
-                onClick={() => setSettingsOpen((prev) => !prev)}
+
+            <DropdownMenu.Root gutter={4}>
+              <DropdownMenu.Trigger
                 class={cx(
                   styles.actionsBtn,
                   'tsqd-actions-btn',
                   'tsqd-action-settings',
                 )}
-                id="tsqd-settings-menu-btn"
-                aria-label={`${
-                  settingsOpen() ? 'Close' : 'Open'
-                } settings menu`}
-                aria-haspopup="true"
-                aria-controls="tsqd-settings-menu"
               >
                 <Settings />
-              </button>
-              <Show when={settingsOpen()}>
-                <div
-                  role="menu"
-                  tabindex="-1"
-                  aria-labelledby="tsqd-settings-menu-btn"
-                  id="tsqd-settings-menu"
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content
                   class={cx(styles.settingsMenu, 'tsqd-settings-menu')}
                 >
                   <div
@@ -588,58 +585,85 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                       'tsqd-settings-menu-header',
                     )}
                   >
-                    Position
+                    Settings
                   </div>
-                  <div
-                    class={cx(
-                      styles.settingsMenuSection,
-                      'tsqd-settings-menu-section',
-                    )}
-                  >
-                    <button
-                      onClick={() => {
-                        setDevtoolsPosition('top')
-                      }}
-                      aria-label="Position top"
-                      class="tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-top"
+                  <DropdownMenu.Sub overlap gutter={8} shift={-4}>
+                    <DropdownMenu.SubTrigger
+                      class={cx(
+                        styles.settingsSubTrigger,
+                        'tsqd-settings-menu-sub-trigger',
+                        'tsqd-settings-menu-sub-trigger-position',
+                      )}
                     >
-                      <ArrowUp />
-                      <span>Top</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        setDevtoolsPosition('bottom')
-                      }}
-                      aria-label="Position bottom"
-                      class="tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-bottom"
-                    >
-                      <ArrowDown />
-                      <span>Bottom</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        setDevtoolsPosition('left')
-                      }}
-                      aria-label="Position left"
-                      class="tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-left"
-                    >
-                      <ArrowDown />
-                      <span>Left</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        setDevtoolsPosition('right')
-                      }}
-                      aria-label="Position right"
-                      class="tsqd-settings-menu-position-btn tsqd-settings-menu-position-btn-right"
-                    >
-                      <ArrowDown />
-                      <span>Right</span>
-                    </button>
-                  </div>
-                </div>
-              </Show>
-            </div>
+                      <span>Position</span>
+                      <ChevronDown />
+                    </DropdownMenu.SubTrigger>
+                    <DropdownMenu.Portal>
+                      <DropdownMenu.SubContent
+                        class={cx(styles.settingsMenu, 'tsqd-settings-submenu')}
+                      >
+                        <DropdownMenu.Item
+                          onSelect={() => {
+                            setDevtoolsPosition('top')
+                          }}
+                          as="button"
+                          class={cx(
+                            styles.settingsSubButton,
+                            'tsqd-settings-menu-position-btn',
+                            'tsqd-settings-menu-position-btn-top',
+                          )}
+                        >
+                          <span>Top</span>
+                          <ArrowUp />
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          onSelect={() => {
+                            setDevtoolsPosition('bottom')
+                          }}
+                          as="button"
+                          class={cx(
+                            styles.settingsSubButton,
+                            'tsqd-settings-menu-position-btn',
+                            'tsqd-settings-menu-position-btn-bottom',
+                          )}
+                        >
+                          <span>Bottom</span>
+                          <ArrowDown />
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          onSelect={() => {
+                            setDevtoolsPosition('left')
+                          }}
+                          as="button"
+                          class={cx(
+                            styles.settingsSubButton,
+                            'tsqd-settings-menu-position-btn',
+                            'tsqd-settings-menu-position-btn-left',
+                          )}
+                        >
+                          <span>Left</span>
+                          <ArrowLeft />
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          onSelect={() => {
+                            setDevtoolsPosition('right')
+                          }}
+                          as="button"
+                          class={cx(
+                            styles.settingsSubButton,
+                            'tsqd-settings-menu-position-btn',
+                            'tsqd-settings-menu-position-btn-right',
+                          )}
+                        >
+                          <span>Right</span>
+                          <ArrowRight />
+                        </DropdownMenu.Item>
+                      </DropdownMenu.SubContent>
+                    </DropdownMenu.Portal>
+                  </DropdownMenu.Sub>
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
           </div>
         </div>
         <div
@@ -861,8 +885,8 @@ export const QueryStatus: Component<QueryStatusProps> = (props) => {
       <span
         class={cx(
           css`
-            width: ${tokens.size[2]};
-            height: ${tokens.size[2]};
+            width: ${tokens.size[1.5]};
+            height: ${tokens.size[1.5]};
             border-radius: ${tokens.border.radius.full};
             background-color: ${tokens.colors[props.color][500]};
           `,
@@ -870,7 +894,11 @@ export const QueryStatus: Component<QueryStatusProps> = (props) => {
         )}
       />
       <Show when={showLabel()}>
-        <span class="tsqd-query-status-tag-label">{props.label}</span>
+        <span
+          class={cx(styles.queryStatusTagLabel, 'tsqd-query-status-tag-label')}
+        >
+          {props.label}
+        </span>
       </Show>
       <span
         class={cx(
@@ -1451,10 +1479,14 @@ const getStyles = () => {
       &:focus-visible {
         outline: 2px solid ${colors.blue[600]};
       }
+      & svg {
+        width: ${size[2]};
+        height: ${size[2]};
+      }
     `,
     'closeBtn-position-top': css`
       bottom: 0;
-      right: ${size[3]};
+      right: ${size[2]};
       transform: translate(0, 100%);
       background-color: ${colors.darkGray[700]};
       border-right: ${colors.darkGray[300]} 1px solid;
@@ -1462,7 +1494,7 @@ const getStyles = () => {
       border-top: none;
       border-bottom: ${colors.darkGray[300]} 1px solid;
       border-radius: 0px 0px ${border.radius.sm} ${border.radius.sm};
-      padding: ${size[1.5]} ${size[2.5]} ${size[2]} ${size[2.5]};
+      padding: ${size[0.5]} ${size[1.5]} ${size[1]} ${size[1.5]};
 
       &::after {
         content: ' ';
@@ -1479,7 +1511,7 @@ const getStyles = () => {
     `,
     'closeBtn-position-bottom': css`
       top: 0;
-      right: ${size[3]};
+      right: ${size[2]};
       transform: translate(0, -100%);
       background-color: ${colors.darkGray[700]};
       border-right: ${colors.darkGray[300]} 1px solid;
@@ -1487,7 +1519,7 @@ const getStyles = () => {
       border-top: ${colors.darkGray[300]} 1px solid;
       border-bottom: none;
       border-radius: ${border.radius.sm} ${border.radius.sm} 0px 0px;
-      padding: ${size[2]} ${size[2.5]} ${size[1.5]} ${size[2.5]};
+      padding: ${size[1]} ${size[1.5]} ${size[0.5]} ${size[1.5]};
 
       &::after {
         content: ' ';
@@ -1499,7 +1531,7 @@ const getStyles = () => {
       }
     `,
     'closeBtn-position-right': css`
-      bottom: ${size[3]};
+      bottom: ${size[2]};
       left: 0;
       transform: translate(-100%, 0);
       background-color: ${colors.darkGray[700]};
@@ -1508,7 +1540,7 @@ const getStyles = () => {
       border-top: ${colors.darkGray[300]} 1px solid;
       border-bottom: ${colors.darkGray[300]} 1px solid;
       border-radius: ${border.radius.sm} 0px 0px ${border.radius.sm};
-      padding: ${size[2.5]} ${size[1]} ${size[2.5]} ${size[1.5]};
+      padding: ${size[1.5]} ${size[0.5]} ${size[1.5]} ${size[1]};
 
       &::after {
         content: ' ';
@@ -1523,7 +1555,7 @@ const getStyles = () => {
       }
     `,
     'closeBtn-position-left': css`
-      bottom: ${size[3]};
+      bottom: ${size[2]};
       right: 0;
       transform: translate(100%, 0);
       background-color: ${colors.darkGray[700]};
@@ -1532,7 +1564,7 @@ const getStyles = () => {
       border-top: ${colors.darkGray[300]} 1px solid;
       border-bottom: ${colors.darkGray[300]} 1px solid;
       border-radius: 0px ${border.radius.sm} ${border.radius.sm} 0px;
-      padding: ${size[2.5]} ${size[1.5]} ${size[2.5]} ${size[1]};
+      padding: ${size[1.5]} ${size[1]} ${size[1.5]} ${size[0.5]};
 
       &::after {
         content: ' ';
@@ -1556,39 +1588,40 @@ const getStyles = () => {
       position: absolute;
       transition: background-color 0.125s ease;
       &:hover {
-        background-color: ${colors.gray[400]}${alpha[90]};
+        background-color: ${colors.purple[400]}${alpha[90]};
       }
       z-index: 4;
     `,
     'dragHandle-position-top': css`
       bottom: 0;
       width: 100%;
-      height: ${tokens.size[1]};
+      height: 3px;
       cursor: ns-resize;
     `,
     'dragHandle-position-bottom': css`
       top: 0;
       width: 100%;
-      height: ${tokens.size[1]};
+      height: 3px;
       cursor: ns-resize;
     `,
     'dragHandle-position-right': css`
       left: 0;
-      width: ${tokens.size[1]};
+      width: 3px;
       height: 100%;
       cursor: ew-resize;
     `,
     'dragHandle-position-left': css`
       right: 0;
-      width: ${tokens.size[1]};
+      width: 3px;
       height: 100%;
       cursor: ew-resize;
     `,
     row: css`
       display: flex;
       justify-content: space-between;
-      padding: ${tokens.size[2.5]} ${tokens.size[3]};
-      gap: ${tokens.size[4]};
+      align-items: center;
+      padding: ${tokens.size[2]} ${tokens.size[2.5]};
+      gap: ${tokens.size[3]};
       border-bottom: ${colors.darkGray[500]} 1px solid;
       align-items: center;
       & > button {
@@ -1596,6 +1629,7 @@ const getStyles = () => {
         background: transparent;
         border: none;
         display: flex;
+        gap: ${size[0.5]};
         flex-direction: column;
       }
     `,
@@ -1611,18 +1645,18 @@ const getStyles = () => {
       }
     `,
     tanstackLogo: css`
-      font-size: ${font.size.lg};
-      font-weight: ${font.weight.extrabold};
-      line-height: ${font.lineHeight.sm};
+      font-size: ${font.size.md};
+      font-weight: ${font.weight.bold};
+      line-height: ${font.lineHeight.xs};
       white-space: nowrap;
     `,
     queryFlavorLogo: css`
       font-weight: ${font.weight.semibold};
-      font-size: ${font.size.sm};
+      font-size: ${font.size.xs};
       background: linear-gradient(to right, #dd524b, #e9a03b);
       background-clip: text;
       -webkit-background-clip: text;
-      line-height: ${font.lineHeight.xs};
+      line-height: 1;
       -webkit-text-fill-color: transparent;
       white-space: nowrap;
     `,
@@ -1635,12 +1669,11 @@ const getStyles = () => {
       display: flex;
       gap: ${tokens.size[1.5]};
       background: ${colors.darkGray[500]};
-      border-radius: ${tokens.border.radius.md};
+      border-radius: ${tokens.border.radius.sm};
       font-size: ${font.size.sm};
       padding: ${tokens.size[1]};
-      padding-left: ${tokens.size[2.5]};
+      padding-left: ${tokens.size[2]};
       align-items: center;
-      line-height: ${font.lineHeight.md};
       font-weight: ${font.weight.medium};
       border: none;
       user-select: none;
@@ -1650,6 +1683,21 @@ const getStyles = () => {
         outline: 2px solid ${colors.blue[800]};
       }
     `,
+    queryStatusTagLabel: css`
+      font-size: ${font.size.xs};
+    `,
+    queryStatusCount: css`
+      font-size: ${font.size.xs};
+      padding: 0 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: ${colors.gray[400]};
+      background-color: ${colors.darkGray[300]};
+      border-radius: 2px;
+      font-variant-numeric: tabular-nums;
+      height: ${tokens.size[4.5]};
+    `,
     statusTooltip: css`
       position: absolute;
       z-index: 1;
@@ -1657,10 +1705,10 @@ const getStyles = () => {
       top: 100%;
       left: 50%;
       transform: translate(-50%, calc(${tokens.size[2]}));
-      padding: ${tokens.size[0.5]} ${tokens.size[3]};
+      padding: ${tokens.size[0.5]} ${tokens.size[2]};
       border-radius: ${tokens.border.radius.md};
-      font-size: ${font.size.sm};
-      border: 2px solid ${colors.gray[600]};
+      font-size: ${font.size.xs};
+      border: 1px solid ${colors.gray[600]};
       color: ${tokens.colors['gray'][300]};
 
       &::before {
@@ -1692,26 +1740,16 @@ const getStyles = () => {
     selectedQueryRow: css`
       background-color: ${colors.darkGray[500]};
     `,
-    queryStatusCount: css`
-      padding: 0 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: ${colors.gray[400]};
-      background-color: ${colors.darkGray[300]};
-      border-radius: 3px;
-      font-variant-numeric: tabular-nums;
-    `,
     filtersContainer: css`
       display: flex;
-      gap: ${tokens.size[2.5]};
+      gap: ${tokens.size[2]};
       & > button {
         cursor: pointer;
-        padding: ${tokens.size[1.5]} ${tokens.size[2.5]};
+        padding: ${tokens.size[0.5]} ${tokens.size[2]};
         padding-right: ${tokens.size[1.5]};
-        border-radius: ${tokens.border.radius.md};
+        border-radius: ${tokens.border.radius.sm};
         background-color: ${colors.darkGray[400]};
-        font-size: ${font.size.sm};
+        font-size: ${font.size.xs};
         display: flex;
         align-items: center;
         line-height: ${font.lineHeight.sm};
@@ -1726,8 +1764,8 @@ const getStyles = () => {
       }
     `,
     filterInput: css`
-      padding: ${tokens.size[1.5]} ${tokens.size[2.5]};
-      border-radius: ${tokens.border.radius.md};
+      padding: ${tokens.size[0.5]} ${tokens.size[2]};
+      border-radius: ${tokens.border.radius.sm};
       background-color: ${colors.darkGray[400]};
       display: flex;
       box-sizing: content-box;
@@ -1738,11 +1776,11 @@ const getStyles = () => {
       border: 1px solid ${colors.darkGray[200]};
       height: min-content;
       & > svg {
-        width: ${tokens.size[3.5]};
-        height: ${tokens.size[3.5]};
+        width: ${tokens.size[3]};
+        height: ${tokens.size[3]};
       }
       & input {
-        font-size: ${font.size.sm};
+        font-size: ${font.size.xs};
         width: 100%;
         background-color: ${colors.darkGray[400]};
         border: none;
@@ -1764,8 +1802,8 @@ const getStyles = () => {
       }
     `,
     filterSelect: css`
-      padding: ${tokens.size[1.5]} ${tokens.size[2.5]};
-      border-radius: ${tokens.border.radius.md};
+      padding: ${tokens.size[0.5]} ${tokens.size[2]};
+      border-radius: ${tokens.border.radius.sm};
       background-color: ${colors.darkGray[400]};
       display: flex;
       align-items: center;
@@ -1775,14 +1813,14 @@ const getStyles = () => {
       border: 1px solid ${colors.darkGray[200]};
       height: min-content;
       & > svg {
-        width: ${tokens.size[3]};
-        height: ${tokens.size[3]};
+        width: ${tokens.size[2]};
+        height: ${tokens.size[2]};
       }
       & > select {
         appearance: none;
         min-width: 100px;
         line-height: ${font.lineHeight.sm};
-        font-size: ${font.size.sm};
+        font-size: ${font.size.xs};
         background-color: ${colors.darkGray[400]};
         border: none;
         &:focus {
@@ -1797,13 +1835,13 @@ const getStyles = () => {
     `,
     actionsContainer: css`
       display: flex;
-      gap: ${tokens.size[2.5]};
+      gap: ${tokens.size[2]};
     `,
     actionsBtn: css`
-      border-radius: ${tokens.border.radius.md};
+      border-radius: ${tokens.border.radius.sm};
       background-color: ${colors.darkGray[400]};
-      width: 2.125rem;
-      height: 2.125rem;
+      width: 1.625rem;
+      height: 1.625rem;
       justify-content: center;
       display: flex;
       align-items: center;
@@ -1816,8 +1854,8 @@ const getStyles = () => {
         background-color: ${colors.darkGray[500]};
       }
       & svg {
-        width: ${tokens.size[4]};
-        height: ${tokens.size[4]};
+        width: ${tokens.size[3]};
+        height: ${tokens.size[3]};
       }
       &:focus-visible {
         outline-offset: 2px;
@@ -1855,21 +1893,23 @@ const getStyles = () => {
       & .tsqd-query-observer-count {
         padding: 0 ${tokens.size[1]};
         user-select: none;
-        min-width: ${tokens.size[8]};
+        min-width: ${tokens.size[6.5]};
         align-self: stretch;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: ${font.size.sm};
+        font-size: ${font.size.xs};
         font-weight: ${font.weight.medium};
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
         border-bottom: 1px solid ${colors.darkGray[700]};
       }
       & .tsqd-query-hash {
         user-select: text;
-        font-size: ${font.size.sm};
+        font-size: ${font.size.xs};
         display: flex;
         align-items: center;
-        min-height: ${tokens.size[8]};
+        min-height: ${tokens.size[6]};
         flex: 1;
         padding: ${tokens.size[1]} ${tokens.size[2]};
         font-family: 'Menlo', 'Fira Code', monospace;
@@ -1883,11 +1923,11 @@ const getStyles = () => {
         align-self: stretch;
         display: flex;
         align-items: center;
-        padding: 0 ${tokens.size[3]};
+        padding: 0 ${tokens.size[2]};
         color: ${colors.gray[300]};
         background-color: ${colors.darkGray[600]};
         border-bottom: 1px solid ${colors.darkGray[400]};
-        font-size: ${font.size.sm};
+        font-size: ${font.size.xs};
       }
     `,
     detailsContainer: css`
@@ -1904,13 +1944,14 @@ const getStyles = () => {
       top: 0;
       z-index: 2;
       background-color: ${colors.darkGray[600]};
-      padding: ${tokens.size[2]} ${tokens.size[2]};
+      padding: ${tokens.size[1.5]} ${tokens.size[2]};
       font-weight: ${font.weight.medium};
-      font-size: ${font.size.sm};
+      font-size: ${font.size.xs};
+      line-height: ${font.lineHeight.xs};
       text-align: left;
     `,
     detailsBody: css`
-      margin: ${tokens.size[2]} 0px ${tokens.size[3]} 0px;
+      margin: ${tokens.size[1.5]} 0px ${tokens.size[2]} 0px;
       & > div {
         display: flex;
         align-items: stretch;
@@ -1918,7 +1959,7 @@ const getStyles = () => {
         line-height: ${font.lineHeight.sm};
         justify-content: space-between;
         & > span {
-          font-size: ${font.size.sm};
+          font-size: ${font.size.xs};
         }
         & > span:nth-child(2) {
           font-variant-numeric: tabular-nums;
@@ -1926,39 +1967,39 @@ const getStyles = () => {
       }
 
       & > div:first-child {
-        margin-bottom: ${tokens.size[2]};
+        margin-bottom: ${tokens.size[1.5]};
       }
 
       & code {
         font-family: 'Menlo', 'Fira Code', monospace;
         margin: 0;
-        font-size: ${font.size.sm};
-        line-height: ${font.lineHeight.sm};
+        font-size: ${font.size.xs};
+        line-height: ${font.lineHeight.xs};
       }
     `,
     queryDetailsStatus: css`
       border: 1px solid ${colors.darkGray[200]};
-      border-radius: ${tokens.border.radius.md};
+      border-radius: ${tokens.border.radius.sm};
       font-weight: ${font.weight.medium};
       padding: ${tokens.size[1]} ${tokens.size[2.5]};
     `,
     actionsBody: css`
       flex-wrap: wrap;
-      margin: ${tokens.size[3]} 0px ${tokens.size[3]} 0px;
+      margin: ${tokens.size[2]} 0px ${tokens.size[2]} 0px;
       display: flex;
       gap: ${tokens.size[2]};
       padding: 0px ${tokens.size[2]};
       & > button {
-        font-size: ${font.size.sm};
-        padding: ${tokens.size[2]} ${tokens.size[2]};
+        font-size: ${font.size.xs};
+        padding: ${tokens.size[1]} ${tokens.size[2]};
         display: flex;
-        border-radius: ${tokens.border.radius.md};
+        border-radius: ${tokens.border.radius.sm};
         border: 1px solid ${colors.darkGray[400]};
         background-color: ${colors.darkGray[600]};
         align-items: center;
         gap: ${tokens.size[2]};
         font-weight: ${font.weight.medium};
-        line-height: ${font.lineHeight.sm};
+        line-height: ${font.lineHeight.xs};
         cursor: pointer;
         &:focus-visible {
           outline-offset: 2px;
@@ -1975,17 +2016,17 @@ const getStyles = () => {
         }
 
         & > span {
-          width: ${size[2]};
-          height: ${size[2]};
+          width: ${size[1.5]};
+          height: ${size[1.5]};
           border-radius: ${tokens.border.radius.full};
         }
       }
     `,
     actionsSelect: css`
-      font-size: ${font.size.sm};
-      padding: ${tokens.size[2]} ${tokens.size[2]};
+      font-size: ${font.size.xs};
+      padding: ${tokens.size[0.5]} ${tokens.size[2]};
       display: flex;
-      border-radius: ${tokens.border.radius.md};
+      border-radius: ${tokens.border.radius.sm};
       overflow: hidden;
       border: 1px solid ${colors.darkGray[400]};
       background-color: ${colors.darkGray[600]};
@@ -2000,8 +2041,8 @@ const getStyles = () => {
         background-color: ${colors.darkGray[500]};
       }
       & > span {
-        width: ${size[2]};
-        height: ${size[2]};
+        width: ${size[1.5]};
+        height: ${size[1.5]};
         border-radius: ${tokens.border.radius.full};
       }
       &:focus-within {
@@ -2025,57 +2066,77 @@ const getStyles = () => {
       & svg path {
         stroke: ${tokens.colors.red[400]};
       }
+      & svg {
+        width: ${tokens.size[2]};
+        height: ${tokens.size[2]};
+      }
     `,
     settingsMenu: css`
-      position: absolute;
-      top: calc(100% + ${tokens.size[2]});
-      border-radius: ${tokens.border.radius.lg};
-      border: 1px solid ${colors.gray[600]};
-      right: 0;
-      min-width: ${tokens.size[44]};
-      background-color: ${colors.darkGray[400]};
-      font-size: ${font.size.sm};
-      color: ${colors.gray[500]};
-      z-index: 7;
+      display: flex;
+      & * {
+        font-family: 'Inter', sans-serif;
+      }
+      flex-direction: column;
+      gap: ${size[0.5]};
+      border-radius: ${tokens.border.radius.sm};
+      border: 1px solid ${colors.gray[700]};
+      background-color: ${colors.darkGray[600]};
+      font-size: ${font.size.xs};
+      color: ${colors.gray[300]};
+      z-index: 99999;
+      min-width: 120px;
+      padding: ${size[0.5]};
+    `,
+    settingsSubTrigger: css`
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: ${tokens.border.radius.xs};
+      padding: ${tokens.size[0.5]} ${tokens.size[1]};
+      cursor: pointer;
+      background-color: transparent;
+      border: none;
+      & svg {
+        transform: rotate(-90deg);
+        width: ${tokens.size[2]};
+        height: ${tokens.size[2]};
+      }
+      &:hover {
+        background-color: ${colors.darkGray[500]};
+      }
+      &:focus-visible {
+        outline-offset: 2px;
+        outline: 2px solid ${colors.blue[800]};
+      }
+      &.data-disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
     `,
     settingsMenuHeader: css`
-      padding: ${tokens.size[1.5]} ${tokens.size[2.5]};
-      color: ${colors.gray[300]};
+      padding: ${tokens.size[0.5]} ${tokens.size[1]};
       font-weight: ${font.weight.medium};
+      border-bottom: 1px solid ${colors.darkGray[400]};
+      color: ${colors.gray[400]};
+      font-size: ${font.size['xs']};
     `,
-    settingsMenuSection: css`
-      border-top: 1px solid ${colors.gray[600]};
+    settingsSubButton: css`
       display: flex;
-      flex-direction: column;
-      padding: ${tokens.size[1]} ${tokens.size[1]};
-
-      & > button {
-        cursor: pointer;
-        background-color: transparent;
-        border: none;
-        padding: ${tokens.size[2]} ${tokens.size[1.5]};
-        font-size: ${font.size.sm};
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        gap: ${tokens.size[2]};
-        border-radius: ${tokens.border.radius.md};
-        &:hover {
-          background-color: ${colors.darkGray[500]};
-        }
-
-        &:focus-visible {
-          outline-offset: 2px;
-          outline: 2px solid ${colors.blue[800]};
-        }
+      align-items: center;
+      justify-content: space-between;
+      color: ${colors.gray[300]};
+      font-size: ${font.size['xs']};
+      border-radius: ${tokens.border.radius.xs};
+      padding: ${tokens.size[0.5]} ${tokens.size[1]};
+      cursor: pointer;
+      background-color: transparent;
+      border: none;
+      &:hover {
+        background-color: ${colors.darkGray[500]};
       }
-
-      & button:nth-child(4) svg {
-        transform: rotate(-90deg);
-      }
-
-      & button:nth-child(3) svg {
-        transform: rotate(90deg);
+      &:focus-visible {
+        outline-offset: 2px;
+        outline: 2px solid ${colors.blue[800]};
       }
     `,
   }
