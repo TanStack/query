@@ -155,4 +155,18 @@ describe('initialData', () => {
       })
     })
   })
+
+  describe('structuralSharing', () => {
+    it('should restrict to same types', () => {
+      doNotExecute(() => {
+        useQuery({
+          queryKey: ['key'],
+          queryFn: () => 5,
+          structuralSharing: (_oldData, newData) => {
+            return newData
+          },
+        })
+      })
+    })
+  })
 })

@@ -505,6 +505,13 @@ export class QueryClient {
       defaultedOptions.throwOnError = !!defaultedOptions.suspense
     }
 
+    if (
+      typeof defaultedOptions.networkMode === 'undefined' &&
+      defaultedOptions.persister
+    ) {
+      defaultedOptions.networkMode = 'offlineFirst'
+    }
+
     return defaultedOptions as DefaultedQueryObserverOptions<
       TQueryFnData,
       TError,

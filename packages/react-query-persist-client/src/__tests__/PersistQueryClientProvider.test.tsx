@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { render, waitFor } from '@testing-library/react'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 import { vi } from 'vitest'
 
 import { QueryClient, useQueries, useQuery } from '@tanstack/react-query'
@@ -126,6 +126,70 @@ describe('PersistQueryClientProvider', () => {
       fetchStatus: 'idle',
       data: 'fetched',
     })
+  })
+
+  test('should subscribe correctly in StrictMode', async () => {
+    const key = queryKey()
+
+    const queryClient = createQueryClient()
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
+
+    const persister = createMockPersister()
+
+    await persistQueryClientSave({ queryClient, persister })
+
+    queryClient.clear()
+
+    function Page() {
+      const state = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 'fetched'
+        },
+      })
+
+      return (
+        <div>
+          <h1>{state.data}</h1>
+          <h2>fetchStatus: {state.fetchStatus}</h2>
+          <button
+            onClick={() => {
+              queryClient.setQueryData(key, 'updated')
+            }}
+          >
+            update
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = render(
+      <React.StrictMode>
+        <PersistQueryClientProvider
+          client={queryClient}
+          persistOptions={{ persister }}
+        >
+          <Page />
+        </PersistQueryClientProvider>
+        ,
+      </React.StrictMode>,
+    )
+
+    await waitFor(() => rendered.getByText('fetchStatus: idle'))
+    await waitFor(() => rendered.getByText('hydrated'))
+    await waitFor(() => rendered.getByText('fetched'))
+
+    fireEvent.click(rendered.getByRole('button', { name: /update/i }))
+
+    await waitFor(() => rendered.getByText('updated'))
+
+    const state = await persister.restoreClient()
+
+    expect(state?.clientState.queries[0]?.state.data).toBe('updated')
   })
 
   test('should also put useQueries into idle state', async () => {
