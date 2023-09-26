@@ -5,16 +5,16 @@ title: Installation
 
 You can install Vue Query via [NPM](https://npmjs.com).
 
-> v5 is currently in beta. We don't anticipate any major API changes from here on out, but we do expect some minor changes and fixes. We encourage you to try it out and report any issues you find.
+> v5 is currently available as a release-candidate. We don't anticipate any major API changes from here on out. We encourage you to try it out and report any issues you find.
 
 ### NPM
 
 ```bash
-$ npm i @tanstack/vue-query@beta
+$ npm i @tanstack/vue-query@rc
 # or
-$ pnpm add @tanstack/vue-query@beta
+$ pnpm add @tanstack/vue-query@rc
 # or
-$ yarn add @tanstack/vue-query@beta
+$ yarn add @tanstack/vue-query@rc
 ```
 
 > Wanna give it a spin before you download? Try out the [basic](../examples/vue/basic) example!

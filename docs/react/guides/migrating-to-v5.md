@@ -187,7 +187,7 @@ Almost everyone gets `cacheTime` wrong. It sounds like "the amount of time that 
 
 `cacheTime` does nothing as long as a query is still in used. It only kicks in as soon as the query becomes unused. After the time has passed, data will be "garbage collected" to avoid the cache from growing.
 
-`gc` is referring to "garbage collect" time. It's a bit more technical, but also a quite [well known abbreviation](https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)) in computer science.
+`gc` is referring to "garbage collect" time. It's a bit more technical, but also a quite [well known abbreviation](<https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)>) in computer science.
 
 ```diff
 const MINUTE = 1000 * 60;
@@ -312,9 +312,9 @@ However, refetching all pages might lead to UI inconsistencies. Also, this optio
 
 The v5 includes a new `maxPages` option for infinite queries to limit the number of pages to store in the query data and to refetch. This new feature handles the use cases initially identified for the `refetchPage` page feature without the related issues.
 
-### New hydration API
+### New `dehydrate` API
 
-The options you can pass to dehydrate have been simplified. Queries and Mutations are always dehydrated (according to the default function implementation). To change this behaviour, you can implement `shouldDehydrateQuery` or `shouldDehydrateMutation`.
+The options you can pass to `dehydrate` have been simplified. Queries and Mutations are always dehydrated (according to the default function implementation). To change this behaviour, instead of using the removed boolean options `dehydrateMutations` and `dehydrateQueries` you can implement the function equivalents `shouldDehydrateQuery` or `shouldDehydrateMutation` instead. To get the old behaviour of not hydrating queries/mutations at all, pass in `() => false`.
 
 ```diff
 - dehydrateMutations?: boolean
@@ -349,9 +349,17 @@ In v4, you needed to explicitly return `undefined` to indicate that there is no 
 
 On the server, `retry` now defaults to `0` instead of `3`. For prefetching, we have always defaulted to `0` retries, but since queries that have `suspense` enabled can now execute directly on the server as well (since React18), we have to make sure that we don't retry on the server at all.
 
-[//]: # 'FrameworkBreakingChanges'
+### `status: loading` has been changed to `status: pending` and `isLoading` has been changed to `isPending` and `isInitialLoading` has now been renamed to `isLoading`
 
-## React Query Breaking Changes
+The `loading` status has been renamed to `pending`, and similarly the derived `isLoading` flag has been renamed to `isPending`.
+
+For mutations as well the `status` has been changed from `loading` to `pending` and the `isLoading` flag has been changed to `isPending`.
+
+Lastly, a new derived `isLoading` flag has been added to the queries that is implemented as `isPending && isFetching`. This means that `isLoading` and `isInitialLoading` have the same thing, but `isInitialLoading` is deprecated now and will be removed in the next major version.
+
+To understand the reasoning behing this change checkout the [v5 roadmap discussion](https://github.com/TanStack/query/discussions/4252).
+
+[//]: # 'FrameworkSpecificBreakingChanges'
 
 ### The minimum required React version is now 18.0
 
@@ -378,9 +386,15 @@ import { batch } from 'solid-js'
 notifyManager.setBatchNotifyFunction(batch)
 ```
 
-### `Hydrate` has been renamed to `HydrationBoundary` and the `useHydrate` hook has been removed
+### Hydration API changes
 
-The `Hydrate` component has been renamed to `HydrationBoundary`. The `Hydrate` component was also a wrapper over `useHydrate` hook, which has been removed.
+To better support concurrent features and transitions we've made some changes to the hydration APIs. The `Hydrate` component has been renamed to `HydrationBoundary` and the `useHydrate` hook has been removed.
+
+The `HydrationBoundary` no longer hydrates mutations, only queries. To hydrate mutations, use the low level `hydrate` API or the `persistQueryClient` plugin.
+
+Finally, as a technical detail, the timing for when queries are hydrated have changed slightly. New queries are still hydrated in the render phase so that SSR works as usual, but any queries that already exist in the cache are now hydrated in an effect instead (as long as their data is fresher than what is in the cache). If you are hydrating just once at the start of your application as is common, this wont affect you, but if you are using Server Components and pass down fresh data for hydration on a page navigation, you might notice a flash of the old data before the page immediately rerenders.
+
+This last change is technically a breaking one, and was made so we don't prematurely update content on the _existing_ page before a page transition has been fully committed. No action is required on your part.
 
 ```diff
 - import { Hydrate } from '@tanstack/react-query'
@@ -394,18 +408,7 @@ The `Hydrate` component has been renamed to `HydrationBoundary`. The `Hydrate` c
 + </HydrationBoundary>
 ```
 
-### `status: loading` has been changed to `status: pending` and `isLoading` has been changed to `isPending` and `isInitialLoading` has now been renamed to `isLoading`
-
-The `loading` status has been renamed to `pending`, and similarly the derived `isLoading` flag has been renamed to `isPending`.
-
-For mutations as well the `status` has been changed from `loading` to `pending` and the `isLoading` flag has been changed to `isPending`.
-
-Lastly, a new derived `isLoading` flag has been added to the queries that is implemented as `isPending && isFetching`. This means that `isLoading` and `isInitialLoading` have the same thing, but `isInitialLoading` is deprecated now and will be removed in the next major version.
-
-To understand the reasoning behing this change checkout the [v5 roadmap discussion](https://github.com/TanStack/query/discussions/4252).
-
-[//]: # 'FrameworkBreakingChanges'
-[//]: # 'NewFeatures'
+[//]: # 'FrameworkSpecificBreakingChanges'
 
 ## New Features 🚀
 
@@ -454,21 +457,27 @@ Note that the infinite list must be bi-directional, which requires both `getNext
 
 Infinite Queries can be prefetched like regular Queries. Per default, only the first page of the Query will be prefetched and will be stored under the given QueryKey. If you want to prefetch more than one page, you can use the `pages` option. Read the [prefetching guide](../guides/prefetching) for more information.
 
-### Typesafe way to create Query Options
-
-See the [TypeScript docs](../typescript#typing-query-options) for more details.
-
 ### New `combine` option for `useQueries`
 
 See the [useQueries docs](../reference/useQueries#combine) for more details.
+
+### Experimental `fine grained storage persister`
+
+See the [experimental_createPersister docs](../plugins/createPersister) for more details.
+
+[//]: # 'FrameworkSpecificNewFeatures'
+
+### Typesafe way to create Query Options
+
+See the [TypeScript docs](../typescript#typing-query-options) for more details.
 
 ### new hooks for suspense
 
 With v5, suspense for data fetching finally becomes "stable". We've added dedicated `useSuspenseQuery`, `useSuspenseInfiniteQuery` and `useSuspenseQueries` hooks. With these hooks, `data` will never be potentially `undefined` on type level:
 
 ```js
-const {data: post} = useSuspenseQuery({
-    // ^? const post: Post
+const { data: post } = useSuspenseQuery({
+  // ^? const post: Post
   queryKey: ['post', postId],
   queryFn: () => fetchPost(postId),
 })
@@ -478,4 +487,4 @@ The experimental `suspense: boolean` flag on the query hooks has been removed.
 
 You can read more about them in the [suspense docs](../guides/suspense).
 
-[//]: # 'NewFeatures'
+[//]: # 'FrameworkSpecificNewFeatures'

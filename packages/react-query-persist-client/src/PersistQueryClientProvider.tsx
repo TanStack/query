@@ -1,7 +1,10 @@
 'use client'
 import * as React from 'react'
 
-import { persistQueryClient } from '@tanstack/query-persist-client-core'
+import {
+  persistQueryClientRestore,
+  persistQueryClientSubscribe,
+} from '@tanstack/query-persist-client-core'
 import { IsRestoringProvider, QueryClientProvider } from '@tanstack/react-query'
 import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
 import type { QueryClientProviderProps } from '@tanstack/react-query'
@@ -20,34 +23,30 @@ export const PersistQueryClientProvider = ({
 }: PersistQueryClientProviderProps): JSX.Element => {
   const [isRestoring, setIsRestoring] = React.useState(true)
   const refs = React.useRef({ persistOptions, onSuccess })
+  const didRestore = React.useRef(false)
 
   React.useEffect(() => {
     refs.current = { persistOptions, onSuccess }
   })
 
   React.useEffect(() => {
-    let isStale = false
-    setIsRestoring(true)
-    const [unsubscribe, promise] = persistQueryClient({
+    const options = {
       ...refs.current.persistOptions,
       queryClient: client,
-    })
-
-    promise.then(async () => {
-      if (!isStale) {
+    }
+    if (!didRestore.current) {
+      didRestore.current = true
+      setIsRestoring(true)
+      persistQueryClientRestore(options).then(async () => {
         try {
           await refs.current.onSuccess?.()
         } finally {
           setIsRestoring(false)
         }
-      }
-    })
-
-    return () => {
-      isStale = true
-      unsubscribe()
+      })
     }
-  }, [client])
+    return isRestoring ? undefined : persistQueryClientSubscribe(options)
+  }, [client, isRestoring])
 
   return (
     <QueryClientProvider client={client} {...props}>

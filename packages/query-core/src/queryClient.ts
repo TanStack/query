@@ -115,7 +115,7 @@ export class QueryClient {
 
   ensureQueryData<
     TQueryFnData,
-    TError,
+    TError = DefaultError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -487,6 +487,13 @@ export class QueryClient {
     }
     if (typeof defaultedOptions.throwOnError === 'undefined') {
       defaultedOptions.throwOnError = !!defaultedOptions.suspense
+    }
+
+    if (
+      typeof defaultedOptions.networkMode === 'undefined' &&
+      defaultedOptions.persister
+    ) {
+      defaultedOptions.networkMode = 'offlineFirst'
     }
 
     return defaultedOptions as DefaultedQueryObserverOptions<

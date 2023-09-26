@@ -7,7 +7,7 @@ import type { ParentProps } from 'solid-js'
 import type { SpyInstance } from 'vitest'
 
 let queryKeyCount = 0
-export function queryKey(): Array<string> {
+export function queryKey() {
   queryKeyCount++
   return [`query_${queryKeyCount}`]
 }
@@ -58,13 +58,6 @@ export function setActTimeout(fn: () => void, ms?: number) {
   return setTimeout(() => {
     fn()
   }, ms)
-}
-
-/**
- * Assert the parameter is of a specific type.
- */
-export function expectType<T>(_: T): void {
-  return undefined
 }
 
 /**

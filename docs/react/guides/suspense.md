@@ -23,7 +23,32 @@ const { data } = useSuspenseQuery({ queryKey, queryFn })
 
 This works nicely in TypeScript, because `data` is guaranteed to be defined (as errors and loading states are handled by Suspense- and ErrorBoundaries).
 
-On the flip side, you therefore can't conditionally enable / disable the Query. `placeholderData` also doesn't exist for this Query. To prevent the UI from being replaced by a fallback during an update, wrap your updates that change the QueryKey into [startTransition](https://react.dev/reference/react/Suspense#preventing-unwanted-fallbacks).
+On the flip side, you therefore can't conditionally enable / disable the Query. This generally shouldn't be necessary for dependent Queries because with suspense, all your Queries inside one component are fetched in serial.
+
+`placeholderData` also doesn't exist for this Query. To prevent the UI from being replaced by a fallback during an update, wrap your updates that change the QueryKey into [startTransition](https://react.dev/reference/react/Suspense#preventing-unwanted-fallbacks).
+
+### throwOnError default
+
+Not all errors are thrown to the nearest Error Boundary per default - we're only throwing errors if there is no other data to show. That means if a Query ever successfully got data in the cache, the component will render, even if data is `stale`. Thus, the default for `throwOnError` is:
+
+```
+throwOnError: (error, query) => typeof query.state.data === 'undefined'
+```
+
+Since you can't change `throwOnError` (because it would allow for `data` to become potentially `undefined`), you have to throw errors manually if you want all errors to be handled by Error Boundaries:
+
+```tsx
+import { useSuspenseQuery } from '@tanstack/react-query'
+
+const { data, error } = useSuspenseQuery({ queryKey, queryFn })
+
+if (error) {
+    throw error
+}
+
+// continue rendering data
+
+```
 
 ## Resetting Error Boundaries
 

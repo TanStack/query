@@ -1,5 +1,6 @@
 import {
   computed,
+  getCurrentScope,
   onScopeDispose,
   reactive,
   readonly,
@@ -64,6 +65,14 @@ export function useMutation<
   >,
   queryClient?: QueryClient,
 ): UseMutationReturnType<TData, TError, TVariables, TContext> {
+  if (process.env.NODE_ENV === 'development') {
+    if (!getCurrentScope()) {
+      console.warn(
+        'vue-query composables like "uesQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+      )
+    }
+  }
+
   const client = queryClient || useQueryClient()
   const options = computed(() => {
     return client.defaultMutationOptions(cloneDeepUnref(mutationOptions))
@@ -84,9 +93,13 @@ export function useMutation<
     })
   }
 
-  watch(options, () => {
-    observer.setOptions(options.value)
-  })
+  watch(
+    options,
+    () => {
+      observer.setOptions(options.value)
+    },
+    { flush: 'sync' },
+  )
 
   onScopeDispose(() => {
     unsubscribe()
