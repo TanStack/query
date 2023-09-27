@@ -1,4 +1,3 @@
-import { log } from 'console'
 import { QueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type { ToRefs } from 'vue-demi'
