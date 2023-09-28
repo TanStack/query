@@ -52,7 +52,7 @@ A mutation can only be in one of the following states at any given moment:
 - `isError` or `status === 'error'` - The mutation encountered an error
 - `isSuccess` or `status === 'success'` - The mutation was successful and mutation data is available
 
-Beyond those primary states, more information is available deloading on the state of the mutation:
+Beyond those primary states, more information is available depending on the state of the mutation:
 
 - `error` - If the mutation is in an `error` state, the error is available via the `error` property.
 - `data` - If the mutation is in a `success` state, the data is available via the `data` property.
