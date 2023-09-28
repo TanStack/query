@@ -11,6 +11,7 @@ describe('configs', () => {
           "rules": {
             "@tanstack/query/exhaustive-deps": "error",
             "@tanstack/query/prefer-query-object-syntax": "error",
+            "@tanstack/query/stable-query-client": "error",
           },
         },
       }
