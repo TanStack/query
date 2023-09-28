@@ -1,4 +1,4 @@
-import { getCurrentScope, onScopeDispose, ref, watchSyncEffect } from 'vue-demi'
+import { getCurrentScope, onScopeDispose, ref, watchEffect } from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
 import type { Ref } from 'vue-demi'
 import type { QueryFilters as QF } from '@tanstack/query-core'
@@ -29,7 +29,7 @@ export function useIsFetching(
 
   const unsubscribe = client.getQueryCache().subscribe(listener)
 
-  watchSyncEffect(listener)
+  watchEffect(listener)
 
   onScopeDispose(() => {
     unsubscribe()

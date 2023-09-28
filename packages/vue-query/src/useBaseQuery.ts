@@ -9,7 +9,7 @@ import {
 } from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref, shouldThrowError, updateState } from './utils'
-import type { ToRefs } from 'vue-demi'
+import type { ToRef } from 'vue-demi'
 import type {
   DefaultedQueryObserverOptions,
   QueryKey,
@@ -24,7 +24,11 @@ export type UseBaseQueryReturnType<
   TData,
   TError,
   Result = QueryObserverResult<TData, TError>,
-> = ToRefs<Readonly<Result>> & {
+> = {
+  [K in keyof Result]: Result[K] extends (...args: Array<any>) => any
+    ? Result[K]
+    : ToRef<Readonly<Result[K]>>
+} & {
   suspense: () => Promise<Result>
 }
 
@@ -112,18 +116,22 @@ export function useBaseQuery<
     { immediate: true },
   )
 
-  watch(
-    defaultedOptions,
-    () => {
-      observer.setOptions(defaultedOptions.value)
-      updateState(state, observer.getCurrentResult())
-    },
-    { flush: 'sync' },
-  )
+  const updater = () => {
+    observer.setOptions(defaultedOptions.value)
+    updateState(state, observer.getCurrentResult())
+  }
+
+  watch(defaultedOptions, updater)
 
   onScopeDispose(() => {
     unsubscribe()
   })
+
+  // fix #5910
+  const refetch = (...args: Parameters<(typeof state)['refetch']>) => {
+    updater()
+    return state.refetch(...args)
+  }
 
   const suspense = () => {
     return new Promise<QueryObserverResult<TData, TError>>(
@@ -172,10 +180,15 @@ export function useBaseQuery<
     },
   )
 
-  return {
-    ...(toRefs(readonly(state)) as ToRefs<
-      Readonly<QueryObserverResult<TData, TError>>
-    >),
-    suspense,
+  const object: any = toRefs(readonly(state))
+  for (const key in state) {
+    if (typeof state[key as keyof typeof state] === 'function') {
+      object[key] = state[key as keyof typeof state]
+    }
   }
+
+  object.suspense = suspense
+  object.refetch = refetch
+
+  return object
 }
