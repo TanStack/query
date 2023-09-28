@@ -57,32 +57,30 @@ export const rule = createRule({
           return
         }
 
-        const fixer = (() => {
-          const { parent } = node
-
-          if (
-            parent === undefined ||
-            parent.type !== AST_NODE_TYPES.VariableDeclarator ||
-            parent.id.type !== AST_NODE_TYPES.Identifier
-          ) {
-            return
-          }
-
-          const nodeText = context.getSourceCode().getText(node)
-          const variableName = parent.id.name
-
-          return (fixer: TSESLint.RuleFixer) => {
-            return fixer.replaceTextRange(
-              [parent.range[0], parent.range[1]],
-              `[${variableName}] = React.useState(() => ${nodeText})`,
-            )
-          }
-        })()
-
         context.report({
           node: node.parent ?? node,
           messageId: 'unstable',
-          fix: fixer,
+          fix: (() => {
+            const { parent } = node
+
+            if (
+              parent === undefined ||
+              parent.type !== AST_NODE_TYPES.VariableDeclarator ||
+              parent.id.type !== AST_NODE_TYPES.Identifier
+            ) {
+              return
+            }
+
+            const nodeText = context.getSourceCode().getText(node)
+            const variableName = parent.id.name
+
+            return (fixer: TSESLint.RuleFixer) => {
+              return fixer.replaceTextRange(
+                [parent.range[0], parent.range[1]],
+                `[${variableName}] = React.useState(() => ${nodeText})`,
+              )
+            }
+          })(),
         })
       },
     }
