@@ -104,7 +104,7 @@ export class QueryClient {
   }
 
   isMutating(filters?: MutationFilters): number {
-    return this.#mutationCache.findAll({ ...filters, status: 'pending' }).length
+    return this.#mutationCache.findAll({ ...filters, status: 'loading' }).length
   }
 
   getQueryData<TQueryFnData = unknown>(
