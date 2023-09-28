@@ -96,7 +96,7 @@ describe('useMutationState', () => {
     mutate(variables)
 
     const mutationState = useMutationState({
-      filters: { mutationKey, status: 'pending' },
+      filters: { mutationKey, status: 'loading' },
       select: (mutation) => mutation.state.variables,
     })
 
