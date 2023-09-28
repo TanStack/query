@@ -234,7 +234,7 @@ Since the only supported syntax now is the object syntax, this rule is no longer
 
 We have removed the `keepPreviousData` option and `isPreviousData` flag as they were doing mostly the same thing as `placeholderData` and `isPlaceholderData` flag.
 
-To achieve the same functionality as `keepPreviousData`, we have added previous query `data` as an argument to `placeholderData` which accepts an identity function. Therefore you just need to provide an identity function to `placeholderData` or use the included `keepPreviousData` function exported from Tanstack Query.
+To achieve the same functionality as `keepPreviousData`, we have added previous query `data` as an argument to `placeholderData` which accepts an identity function. Therefore you just need to provide an identity function to `placeholderData` or use the included `keepPreviousData` function from Tanstack Query.
 
 > A note here is that `useQueries` would not receive `previousData` in the `placeholderData` function as argument. This is due to a dynamic nature of queries passed in the array, which may lead to a different shape of result from placeholder and queryFn.
 
