@@ -36,7 +36,7 @@ export function useIsMutating(
   const client = queryClient || useQueryClient()
   const unreffedFilters = computed(() => ({
     ...cloneDeepUnref(filters),
-    status: 'pending' as const,
+    status: 'loading' as const,
   }))
 
   const mutationState = useMutationState({ filters: unreffedFilters }, client)

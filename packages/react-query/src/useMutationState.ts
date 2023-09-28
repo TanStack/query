@@ -18,7 +18,7 @@ export function useIsMutating(
 ): number {
   const client = useQueryClient(queryClient)
   return useMutationState(
-    { filters: { ...filters, status: 'pending' } },
+    { filters: { ...filters, status: 'loading' } },
     client,
   ).length
 }

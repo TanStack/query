@@ -14,7 +14,7 @@ describe('useMutation', () => {
 
     expect(mutation).toMatchObject({
       isIdle: { value: true },
-      isPending: { value: false },
+      isLoading: { value: false },
       isError: { value: false },
       isSuccess: { value: false },
     })
@@ -30,7 +30,7 @@ describe('useMutation', () => {
 
     expect(mutation).toMatchObject({
       isIdle: { value: false },
-      isPending: { value: true },
+      isLoading: { value: true },
       isError: { value: false },
       isSuccess: { value: false },
       data: { value: undefined },
@@ -44,7 +44,7 @@ describe('useMutation', () => {
     await flushPromises(10)
     expect(mutation).toMatchObject({
       isIdle: { value: false },
-      isPending: { value: false },
+      isLoading: { value: false },
       isError: { value: true },
       isSuccess: { value: false },
       data: { value: undefined },
@@ -64,7 +64,7 @@ describe('useMutation', () => {
 
     expect(mutation).toMatchObject({
       isIdle: { value: false },
-      isPending: { value: false },
+      isLoading: { value: false },
       isError: { value: false },
       isSuccess: { value: true },
       data: { value: 'Mock data' },
@@ -169,7 +169,7 @@ describe('useMutation', () => {
 
     expect(mutation).toMatchObject({
       isIdle: { value: true },
-      isPending: { value: false },
+      isLoading: { value: false },
       isError: { value: false },
       isSuccess: { value: false },
       data: { value: undefined },
@@ -309,7 +309,7 @@ describe('useMutation', () => {
 
       expect(mutation).toMatchObject({
         isIdle: { value: false },
-        isPending: { value: false },
+        isLoading: { value: false },
         isError: { value: false },
         isSuccess: { value: true },
         data: { value: 'Mock data' },
@@ -324,7 +324,7 @@ describe('useMutation', () => {
 
       expect(mutation).toMatchObject({
         isIdle: { value: false },
-        isPending: { value: false },
+        isLoading: { value: false },
         isError: { value: true },
         isSuccess: { value: false },
         data: { value: undefined },

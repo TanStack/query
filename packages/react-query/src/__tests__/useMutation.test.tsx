@@ -190,7 +190,7 @@ describe('useMutation', () => {
     await waitFor(() => rendered.getByText('Failed because Error test Jonas'))
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-    await waitFor(() => rendered.getByText('Status pending'))
+    await waitFor(() => rendered.getByText('Status loading'))
     await waitFor(() => rendered.getByText('Status success'))
     await waitFor(() => rendered.getByText('Data 2'))
     await waitFor(() => rendered.getByText('Failed 0 times'))
@@ -392,9 +392,9 @@ describe('useMutation', () => {
     await sleep(100)
 
     expect(states.length).toBe(3)
-    expect(states[0]).toMatchObject({ data: undefined, isPending: false })
-    expect(states[1]).toMatchObject({ data: undefined, isPending: true })
-    expect(states[2]).toMatchObject({ data: 'todo', isPending: false })
+    expect(states[0]).toMatchObject({ data: undefined, isLoading: false })
+    expect(states[1]).toMatchObject({ data: undefined, isLoading: true })
+    expect(states[2]).toMatchObject({ data: 'todo', isLoading: false })
   })
 
   it('should be able to retry a failed mutation', async () => {
@@ -467,7 +467,7 @@ describe('useMutation', () => {
 
     await waitFor(() => {
       expect(
-        rendered.getByText('error: null, status: pending, isPaused: true'),
+        rendered.getByText('error: null, status: loading, isPaused: true'),
       ).toBeInTheDocument()
     })
 
@@ -521,7 +521,7 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
-    await rendered.findByText('data: null, status: pending, isPaused: true')
+    await rendered.findByText('data: null, status: loading, isPaused: true')
 
     expect(onMutate).toHaveBeenCalledTimes(1)
     expect(onMutate).toHaveBeenCalledWith('todo')
@@ -570,11 +570,11 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
-    await rendered.findByText('data: null, status: pending, isPaused: true')
+    await rendered.findByText('data: null, status: loading, isPaused: true')
 
-    // no intermediate 'pending, false' state is expected because we don't start mutating!
+    // no intermediate 'loading, false' state is expected because we don't start mutating!
     expect(states[0]).toBe('idle, false')
-    expect(states[1]).toBe('pending, true')
+    expect(states[1]).toBe('loading, true')
 
     onlineMock.mockRestore()
     window.dispatchEvent(new Event('online'))
@@ -622,25 +622,25 @@ describe('useMutation', () => {
 
     expect(states.length).toBe(4)
     expect(states[0]).toMatchObject({
-      isPending: false,
+      isLoading: false,
       isPaused: false,
       failureCount: 0,
       failureReason: null,
     })
     expect(states[1]).toMatchObject({
-      isPending: true,
+      isLoading: true,
       isPaused: false,
       failureCount: 0,
       failureReason: null,
     })
     expect(states[2]).toMatchObject({
-      isPending: true,
+      isLoading: true,
       isPaused: false,
       failureCount: 1,
       failureReason: new Error('oops'),
     })
     expect(states[3]).toMatchObject({
-      isPending: true,
+      isLoading: true,
       isPaused: true,
       failureCount: 1,
       failureReason: new Error('oops'),
@@ -653,13 +653,13 @@ describe('useMutation', () => {
 
     expect(states.length).toBe(6)
     expect(states[4]).toMatchObject({
-      isPending: true,
+      isLoading: true,
       isPaused: false,
       failureCount: 1,
       failureReason: new Error('oops'),
     })
     expect(states[5]).toMatchObject({
-      isPending: false,
+      isLoading: false,
       isPaused: false,
       failureCount: 0,
       failureReason: null,

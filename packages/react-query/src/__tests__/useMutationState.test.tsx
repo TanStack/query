@@ -178,7 +178,7 @@ describe('useMutationState', () => {
     it('should default to QueryState', () => {
       doNotExecute(() => {
         const result = useMutationState({
-          filters: { status: 'pending' },
+          filters: { status: 'loading' },
         })
 
         expectTypeOf(result).toEqualTypeOf<Array<MutationState>>()
@@ -187,7 +187,7 @@ describe('useMutationState', () => {
     it('should infer with select', () => {
       doNotExecute(() => {
         const result = useMutationState({
-          filters: { status: 'pending' },
+          filters: { status: 'loading' },
           select: (mutation) => mutation.state.status,
         })
 
@@ -203,7 +203,7 @@ describe('useMutationState', () => {
     function Variables() {
       variables.push(
         useMutationState({
-          filters: { mutationKey, status: 'pending' },
+          filters: { mutationKey, status: 'loading' },
           select: (mutation) => mutation.state.variables,
         }),
       )

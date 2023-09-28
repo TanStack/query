@@ -9,7 +9,7 @@ title: useMutationState
 import { useMutationState } from '@tanstack/react-query'
 // Get all variables of all running mutations
 const variables = useMutationState({
-  filters: { status: 'pending' },
+  filters: { status: 'loading' },
   select: (mutation) => mutation.state.variables,
 })
 
