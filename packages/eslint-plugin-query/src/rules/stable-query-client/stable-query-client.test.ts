@@ -32,6 +32,28 @@ ruleTester.run('stable-query-client', rule, {
       `,
     },
     {
+      name: 'QueryClient is stable when wrapped in React.useMemo',
+      code: normalizeIndent`
+          import { QueryClient } from "@tanstack/react-query";
+  
+          function Component() {
+            const [queryClient] = React.useMemo(() => new QueryClient(), []);
+            return;
+          }
+        `,
+    },
+    {
+      name: 'QueryClient is stable when wrapped in useAnything',
+      code: normalizeIndent`
+          import { QueryClient } from "@tanstack/react-query";
+  
+          function Component() {
+            const [queryClient] = useAnything(() => new QueryClient());
+            return;
+          }
+        `,
+    },
+    {
       name: 'QueryClient is imported from a non-tanstack package',
       code: normalizeIndent`
         import { QueryClient } from "other-library";

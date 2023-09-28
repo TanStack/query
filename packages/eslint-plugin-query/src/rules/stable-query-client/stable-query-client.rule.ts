@@ -32,6 +32,7 @@ export const rule = createRule({
         if (
           node.callee.type !== AST_NODE_TYPES.Identifier ||
           node.callee.name !== 'QueryClient' ||
+          node.parent?.type !== AST_NODE_TYPES.VariableDeclarator ||
           !helpers.isSpecificTanstackQueryImport(
             node.callee,
             '@tanstack/react-query',
@@ -46,28 +47,13 @@ export const rule = createRule({
           return
         }
 
-        const declarator = ASTUtils.getClosestVariableDeclarator(node)
-
-        if (
-          declarator?.init?.type === AST_NODE_TYPES.CallExpression &&
-          ['useState', 'React.useState'].includes(
-            context.getSourceCode().getText(declarator.init.callee),
-          )
-        ) {
-          return
-        }
-
         context.report({
-          node: node.parent ?? node,
+          node: node.parent,
           messageId: 'unstable',
           fix: (() => {
             const { parent } = node
 
-            if (
-              parent === undefined ||
-              parent.type !== AST_NODE_TYPES.VariableDeclarator ||
-              parent.id.type !== AST_NODE_TYPES.Identifier
-            ) {
+            if (parent.id.type !== AST_NODE_TYPES.Identifier) {
               return
             }
 
