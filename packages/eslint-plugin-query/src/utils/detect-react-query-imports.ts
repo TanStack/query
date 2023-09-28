@@ -1,4 +1,4 @@
-import type { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils'
+import { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils'
 
 type Create = Parameters<
   ReturnType<typeof ESLintUtils.RuleCreator>
@@ -7,6 +7,10 @@ type Create = Parameters<
 type Context = Parameters<Create>[0]
 type Options = Parameters<Create>[1]
 type Helpers = {
+  isSpecificTanstackQueryImport: (
+    node: TSESTree.Identifier,
+    source: string,
+  ) => boolean
   isTanstackQueryImport: (node: TSESTree.Identifier) => boolean
 }
 
@@ -21,9 +25,23 @@ export function detectTanstackQueryImports(create: EnhancedCreate): Create {
     const tanstackQueryImportSpecifiers: TSESTree.ImportClause[] = []
 
     const helpers: Helpers = {
+      isSpecificTanstackQueryImport(node, source) {
+        return !!tanstackQueryImportSpecifiers.find((specifier) => {
+          if (
+            specifier.type === TSESTree.AST_NODE_TYPES.ImportSpecifier &&
+            specifier.parent?.type ===
+              TSESTree.AST_NODE_TYPES.ImportDeclaration &&
+            specifier.parent.source.value === source
+          ) {
+            return node.name === specifier.local.name
+          }
+
+          return false
+        })
+      },
       isTanstackQueryImport(node) {
         return !!tanstackQueryImportSpecifiers.find((specifier) => {
-          if (specifier.type === 'ImportSpecifier') {
+          if (specifier.type === TSESTree.AST_NODE_TYPES.ImportSpecifier) {
             return node.name === specifier.local.name
           }
 
