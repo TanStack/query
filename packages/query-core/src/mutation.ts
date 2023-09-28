@@ -44,8 +44,8 @@ interface FailedAction<TError> {
   error: TError | null
 }
 
-interface PendingAction<TVariables, TContext> {
-  type: 'pending'
+interface LoadingAction<TVariables, TContext> {
+  type: 'loading'
   variables?: TVariables
   context?: TContext
 }
@@ -72,7 +72,7 @@ export type Action<TData, TError, TVariables, TContext> =
   | ContinueAction
   | ErrorAction<TError>
   | FailedAction<TError>
-  | PendingAction<TVariables, TContext>
+  | LoadingAction<TVariables, TContext>
   | PauseAction
   | SuccessAction<TData>
 
@@ -147,7 +147,7 @@ export class Mutation<
 
   protected optionalRemove() {
     if (!this.#observers.length) {
-      if (this.state.status === 'pending') {
+      if (this.state.status === 'loading') {
         this.scheduleGc()
       } else {
         this.#mutationCache.remove(this)
@@ -189,11 +189,11 @@ export class Mutation<
       return this.#retryer.promise
     }
 
-    const restored = this.state.status === 'pending'
+    const restored = this.state.status === 'loading'
 
     try {
       if (!restored) {
-        this.#dispatch({ type: 'pending', variables })
+        this.#dispatch({ type: 'loading', variables })
         // Notify cache callback
         await this.#mutationCache.config.onMutate?.(
           variables,
@@ -202,7 +202,7 @@ export class Mutation<
         const context = await this.options.onMutate?.(variables)
         if (context !== this.state.context) {
           this.#dispatch({
-            type: 'pending',
+            type: 'loading',
             context,
             variables,
           })
@@ -292,7 +292,7 @@ export class Mutation<
             ...state,
             isPaused: false,
           }
-        case 'pending':
+        case 'loading':
           return {
             ...state,
             context: action.context,
@@ -301,7 +301,7 @@ export class Mutation<
             failureReason: null,
             error: null,
             isPaused: !canFetch(this.options.networkMode),
-            status: 'pending',
+            status: 'loading',
             variables: action.variables,
             submittedAt: Date.now(),
           }

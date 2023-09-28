@@ -328,7 +328,7 @@ describe('mutationCache', () => {
       })
     })
 
-    test('should be garbage collected later when unsubscribed and mutation is pending', async () => {
+    test('should be garbage collected later when unsubscribed and mutation is loading', async () => {
       const queryClient = createQueryClient()
       const onSuccess = vi.fn()
       const observer = new MutationObserver(queryClient, {
@@ -344,7 +344,7 @@ describe('mutationCache', () => {
       unsubscribe()
       expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
       await sleep(10)
-      // unsubscribe should not remove even though gcTime has elapsed b/c mutation is still pending
+      // unsubscribe should not remove even though gcTime has elapsed b/c mutation is still loading
       expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
       await sleep(10)
       // should be removed after an additional gcTime wait
@@ -354,7 +354,7 @@ describe('mutationCache', () => {
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
 
-    test('should call callbacks even with gcTime 0 and mutation still pending', async () => {
+    test('should call callbacks even with gcTime 0 and mutation still loading', async () => {
       const queryClient = createQueryClient()
       const onSuccess = vi.fn()
       const observer = new MutationObserver(queryClient, {

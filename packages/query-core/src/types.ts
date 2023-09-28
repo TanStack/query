@@ -629,7 +629,7 @@ export type InfiniteQueryObserverResult<
 
 export type MutationKey = ReadonlyArray<unknown>
 
-export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
+export type MutationStatus = 'idle' | 'loading' | 'success' | 'error'
 
 export type MutationMeta = Register extends {
   mutationMeta: infer TMutationMeta
@@ -723,7 +723,7 @@ export interface MutationObserverBaseResult<
 > extends MutationState<TData, TError, TVariables, TContext> {
   isError: boolean
   isIdle: boolean
-  isPending: boolean
+  isLoading: boolean
   isSuccess: boolean
   mutate: MutateFunction<TData, TError, TVariables, TContext>
   reset: () => void
@@ -740,7 +740,7 @@ export interface MutationObserverIdleResult<
   error: null
   isError: false
   isIdle: true
-  isPending: false
+  isLoading: false
   isSuccess: false
   status: 'idle'
 }
@@ -756,9 +756,9 @@ export interface MutationObserverLoadingResult<
   error: null
   isError: false
   isIdle: false
-  isPending: true
+  isLoading: true
   isSuccess: false
-  status: 'pending'
+  status: 'loading'
 }
 
 export interface MutationObserverErrorResult<
@@ -772,7 +772,7 @@ export interface MutationObserverErrorResult<
   variables: TVariables
   isError: true
   isIdle: false
-  isPending: false
+  isLoading: false
   isSuccess: false
   status: 'error'
 }
@@ -788,7 +788,7 @@ export interface MutationObserverSuccessResult<
   variables: TVariables
   isError: false
   isIdle: false
-  isPending: false
+  isLoading: false
   isSuccess: true
   status: 'success'
 }
