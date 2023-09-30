@@ -42,8 +42,12 @@ export const rule = createRule({
         }
 
         const fnAncestor = ASTUtils.getFunctionAncestor(context)
+        const isReactServerComponent = fnAncestor?.async === true
 
-        if (!ASTUtils.isValidReactComponentOrHookName(fnAncestor?.id)) {
+        if (
+          !ASTUtils.isValidReactComponentOrHookName(fnAncestor?.id) ||
+          isReactServerComponent
+        ) {
           return
         }
 

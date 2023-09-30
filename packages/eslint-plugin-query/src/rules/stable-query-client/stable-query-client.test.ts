@@ -78,7 +78,7 @@ ruleTester.run('stable-query-client', rule, {
     {
       name: 'QueryClient is invoked outside of a function',
       code: normalizeIndent`
-        import { QueryClient } from "other-library";
+        import { QueryClient } from "@tanstack/solid-query";
 
         const queryClient = new QueryClient();
 
@@ -90,9 +90,20 @@ ruleTester.run('stable-query-client', rule, {
     {
       name: 'QueryClient is invoked in a non-component function',
       code: normalizeIndent`
-        import { QueryClient } from "other-library";
+        import { QueryClient } from "@tanstack/solid-query";
 
         function someFn() {
+          const queryClient = new QueryClient();
+          return;
+        }
+      `,
+    },
+    {
+      name: 'QueryClient is invoked in an async (react server) component',
+      code: normalizeIndent`
+        import { QueryClient } from "@tanstack/solid-query";
+
+        async function AsyncComponent() {
           const queryClient = new QueryClient();
           return;
         }
