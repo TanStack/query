@@ -7,7 +7,7 @@ TanStack Query (FKA React Query) is often described as the missing data-fetching
 
 ## Motivation
 
-Most core web frameworks **do not** come with an opinionated way of fetching or updating data in a holistic way. Because of this developers end up building either meta-frameworks which encapsulate strict opinions about data-fetching, or they invent their own ways of fetching data. This usually means cobbling together component-based state and side-effects, or using more general purpose state management libraries to store and provide asynchronous data throughout their apps.
+Most core web frameworks **do not** come with an opinionated way of fetching or updating data in a holistic way. Because of this, developers end up building either meta-frameworks which encapsulate strict opinions about data-fetching, or they invent their own ways of fetching data. This usually means cobbling together component-based state and side-effects, or using more general purpose state management libraries to store and provide asynchronous data throughout their apps.
 
 While most traditional state management libraries are great for working with client state, they are **not so great at working with async or server state**. This is because **server state is totally different**. For starters, server state:
 
@@ -27,7 +27,7 @@ Once you grasp the nature of server state in your application, **even more chall
 - Managing memory and garbage collection of server state
 - Memoizing query results with structural sharing
 
-If you're not overwhelmed by that list, then that must mean that you've probably solved all of your server state problems already and deserve an award. However, if you are like a vast majority of people, you either have yet to tackle all or most of these challenges and we're only scratching the surface!
+If you're not overwhelmed by that list, then that must mean that you've probably solved all of your server state problems already and deserve an award. However, if you are like a vast majority of people, you either are yet to tackle all or most of these challenges and we're only scratching the surface!
 
 React Query is hands down one of the _best_ libraries for managing server state. It works amazingly well **out-of-the-box, with zero-config, and can be customized** to your liking as your application grows.
 
