@@ -187,9 +187,5 @@ export function useQuery<
   | UseQueryDefinedReturnType<TData, TError> {
   const result = useBaseQuery(QueryObserver, arg1, arg2, arg3)
 
-  return {
-    ...result,
-    refetch: result.refetch.value,
-    remove: result.remove.value,
-  }
+  return result
 }

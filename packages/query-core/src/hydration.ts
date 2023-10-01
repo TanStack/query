@@ -139,19 +139,15 @@ export function hydrate(
     )
   })
 
-  queries.forEach((dehydratedQuery) => {
-    const query = queryCache.get(dehydratedQuery.queryHash)
-
-    // Reset fetch status to idle in the dehydrated state to avoid
-    // query being stuck in fetching state upon hydration
-    const dehydratedQueryState = {
-      ...dehydratedQuery.state,
-      fetchStatus: 'idle' as const,
-    }
+  queries.forEach(({ queryKey, state, queryHash }) => {
+    const query = queryCache.get(queryHash)
 
     // Do not hydrate if an existing query exists with newer data
     if (query) {
-      if (query.state.dataUpdatedAt < dehydratedQueryState.dataUpdatedAt) {
+      if (query.state.dataUpdatedAt < state.dataUpdatedAt) {
+        // omit fetchStatus from dehydrated state
+        // so that query stays in its current fetchStatus
+        const { fetchStatus: _ignored, ...dehydratedQueryState } = state
         query.setState(dehydratedQueryState)
       }
       return
@@ -162,10 +158,15 @@ export function hydrate(
       client,
       {
         ...options?.defaultOptions?.queries,
-        queryKey: dehydratedQuery.queryKey,
-        queryHash: dehydratedQuery.queryHash,
+        queryKey,
+        queryHash,
       },
-      dehydratedQueryState,
+      // Reset fetch status to idle to avoid
+      // query being stuck in fetching state upon hydration
+      {
+        ...state,
+        fetchStatus: 'idle',
+      },
     )
   })
 }
