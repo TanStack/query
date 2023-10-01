@@ -373,15 +373,15 @@ export class QueryClient {
   }
 
   setQueryDefaults<
-    TData = unknown,
+    TQueryFnData = unknown,
     TError = DefaultError,
-    TVariables = void,
-    TContext = unknown,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
   >(
     queryKey: QueryKey,
     options: Partial<
       Omit<
-        QueryObserverOptions<TData, TError, TVariables, TContext>,
+        QueryObserverOptions<TQueryFnData, TError, TData, TQueryData>,
         'queryKey'
       >
     >,
