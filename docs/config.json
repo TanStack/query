@@ -306,6 +306,10 @@
             {
               "label": "Prefer object syntax",
               "to": "react/eslint/prefer-query-object-syntax"
+            },
+            {
+              "label": "Stable Query Client",
+              "to": "react/eslint/stable-query-client"
             }
           ]
         },
