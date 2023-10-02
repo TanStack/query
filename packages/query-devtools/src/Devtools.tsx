@@ -1274,7 +1274,6 @@ const QueryDetails = () => {
             defaultExpanded={['Data']}
             value={activeQueryStateData()}
             editable={true}
-            dataPath={[]}
             activeQuery={activeQuery()}
           />
         </div>
@@ -1291,7 +1290,6 @@ const QueryDetails = () => {
             label="Query"
             defaultExpanded={['Query', 'queryKey']}
             value={activeQueryFresh()}
-            dataPath={[]}
           />
         </div>
       </div>

@@ -180,7 +180,7 @@ type ExplorerProps = {
   label: string
   value: unknown
   defaultExpanded?: Array<string>
-  dataPath: Array<string>
+  dataPath?: Array<string>
   activeQuery?: Query
   itemsDeletable?: boolean
 }
@@ -247,6 +247,8 @@ export default function Explorer(props: ExplorerProps) {
 
   const subEntryPages = createMemo(() => chunkArray(subEntries(), 100))
 
+  const currentDataPath = props.dataPath ?? []
+
   return (
     <div class={styles.entry}>
       <Show when={subEntryPages().length}>
@@ -268,14 +270,14 @@ export default function Explorer(props: ExplorerProps) {
               <Show when={props.itemsDeletable}>
                 <DeleteItemButton
                   activeQuery={props.activeQuery}
-                  dataPath={props.dataPath}
+                  dataPath={currentDataPath}
                 />
               </Show>
 
               <Show when={type() === 'array'}>
                 <ClearArrayButton
                   activeQuery={props.activeQuery}
-                  dataPath={props.dataPath}
+                  dataPath={currentDataPath}
                 />
               </Show>
             </div>
@@ -292,7 +294,7 @@ export default function Explorer(props: ExplorerProps) {
                       label={entry().label}
                       value={entry().value}
                       editable={props.editable}
-                      dataPath={[...props.dataPath, entry().label]}
+                      dataPath={[...currentDataPath, entry().label]}
                       activeQuery={props.activeQuery}
                       itemsDeletable={type() === 'array'}
                     />
@@ -330,7 +332,7 @@ export default function Explorer(props: ExplorerProps) {
                                 label={entry().label}
                                 value={entry().value}
                                 editable={props.editable}
-                                dataPath={[...props.dataPath, entry().label]}
+                                dataPath={[...currentDataPath, entry().label]}
                                 activeQuery={props.activeQuery}
                               />
                             )}
@@ -365,7 +367,7 @@ export default function Explorer(props: ExplorerProps) {
 
                 const newData = updateNestedDataByPath(
                   oldData,
-                  props.dataPath,
+                  currentDataPath,
                   type() === 'number'
                     ? changeEvent.target.valueAsNumber
                     : changeEvent.target.value,
@@ -379,7 +381,7 @@ export default function Explorer(props: ExplorerProps) {
           <Show when={props.editable && props.itemsDeletable}>
             <DeleteItemButton
               activeQuery={props.activeQuery}
-              dataPath={props.dataPath}
+              dataPath={currentDataPath}
               inline={true}
             />
           </Show>
