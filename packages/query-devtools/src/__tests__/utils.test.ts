@@ -1,4 +1,4 @@
-import { updateNestedDataByPath } from '../utils'
+import { deleteNestedDataByPath, updateNestedDataByPath } from '../utils'
 
 describe('Utils tests', () => {
   describe('updatedNestedDataByPath', () => {
@@ -80,5 +80,60 @@ describe('Utils tests', () => {
         expect(newData[1]['createdAt']).toEqual('2023-05-01')
       })
     })
+  })
+
+  describe('deleteNestedDataByPath', () => {
+    it('should delete item from array correctly', async () => {
+      const oldData = ['one', 'two', 'three']
+
+      const newData = deleteNestedDataByPath(oldData, ['1'])
+
+      expect(newData).not.toBe(oldData) // should not be the same reference
+
+      expect(newData[0]).toEqual('one')
+      expect(newData[1]).toEqual('three')
+      expect(newData).toHaveLength(2)
+    })
+  })
+
+  it('should delete nested item from array correctly', async () => {
+    const oldData = [
+      {
+        title: 'Pumpkin pie',
+        id: 1,
+        ingredients: ['pumpkin', 'pie crust', 'sugar', 'spices'],
+      },
+      {
+        title: 'Spaghetti bolonese',
+        id: 2,
+        ingredients: ['spaghetti', 'tomato sauce', 'minced meat'],
+      },
+    ]
+    const newData = deleteNestedDataByPath(oldData, ['1', 'ingredients', '0'])
+
+    expect(newData).not.toBe(oldData) // should not be the same reference
+
+    expect(newData).toMatchInlineSnapshot(`
+      [
+        {
+          "id": 1,
+          "ingredients": [
+            "pumpkin",
+            "pie crust",
+            "sugar",
+            "spices",
+          ],
+          "title": "Pumpkin pie",
+        },
+        {
+          "id": 2,
+          "ingredients": [
+            "tomato sauce",
+            "minced meat",
+          ],
+          "title": "Spaghetti bolonese",
+        },
+      ]
+    `)
   })
 })
