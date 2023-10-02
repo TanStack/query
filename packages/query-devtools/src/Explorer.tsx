@@ -45,6 +45,12 @@ const Expander = (props: { expanded: boolean }) => {
         css`
           transform: rotate(${props.expanded ? 90 : 0}deg);
         `,
+        props.expanded &&
+          css`
+            & svg {
+              top: -1px;
+            }
+          `,
       )}
     >
       <svg
@@ -246,32 +252,37 @@ export default function Explorer(props: ExplorerProps) {
   return (
     <div class={styles.entry}>
       <Show when={subEntryPages().length}>
-        <button class={styles.expanderButton} onClick={() => toggleExpanded()}>
-          <Expander expanded={expanded()} /> <span>{props.label}</span>{' '}
-          <span class={styles.info}>
-            {String(type()).toLowerCase() === 'iterable' ? '(Iterable) ' : ''}
-            {subEntries().length} {subEntries().length > 1 ? `items` : `item`}
-          </span>
-        </button>
-        <Show when={props.editable}>
-          <div class={styles.actions}>
-            <CopyButton value={props.value} />
+        <div class={styles.expanderButtonContainer}>
+          <button
+            class={styles.expanderButton}
+            onClick={() => toggleExpanded()}
+          >
+            <Expander expanded={expanded()} /> <span>{props.label}</span>{' '}
+            <span class={styles.info}>
+              {String(type()).toLowerCase() === 'iterable' ? '(Iterable) ' : ''}
+              {subEntries().length} {subEntries().length > 1 ? `items` : `item`}
+            </span>
+          </button>
+          <Show when={props.editable}>
+            <div class={styles.actions}>
+              <CopyButton value={props.value} />
 
-            <Show when={props.itemsDeletable}>
-              <DeleteItemButton
-                activeQuery={props.activeQuery}
-                dataPath={props.dataPath}
-              />
-            </Show>
+              <Show when={props.itemsDeletable}>
+                <DeleteItemButton
+                  activeQuery={props.activeQuery}
+                  dataPath={props.dataPath}
+                />
+              </Show>
 
-            <Show when={type() === 'array'}>
-              <ClearArrayButton
-                activeQuery={props.activeQuery}
-                dataPath={props.dataPath}
-              />
-            </Show>
-          </div>
-        </Show>
+              <Show when={type() === 'array'}>
+                <ClearArrayButton
+                  activeQuery={props.activeQuery}
+                  dataPath={props.dataPath}
+                />
+              </Show>
+            </div>
+          </Show>
+        </div>
         <Show when={expanded()}>
           <Show when={subEntryPages().length === 1}>
             <div class={styles.subEntry}>
@@ -386,9 +397,8 @@ const getStyles = () => {
   return {
     entry: css`
       & * {
-        font-size: ${font.size.sm};
+        font-size: ${font.size.xs};
         font-family: 'Menlo', 'Fira Code', monospace;
-        line-height: 1.7;
       }
       position: relative;
       outline: none;
@@ -398,38 +408,57 @@ const getStyles = () => {
       margin: 0 0 0 0.5em;
       padding-left: 0.75em;
       border-left: 2px solid ${colors.darkGray[400]};
+      /* outline: 1px solid ${colors.teal[400]}; */
     `,
     expander: css`
       & path {
         stroke: ${colors.gray[400]};
       }
+      & svg {
+        width: ${size[3]};
+        height: ${size[3]};
+      }
       display: inline-flex;
       align-items: center;
       transition: all 0.1s ease;
+      /* outline: 1px solid ${colors.blue[400]}; */
+    `,
+    expanderButtonContainer: css`
+      display: flex;
+      align-items: center;
+      line-height: 1.125rem;
+      min-height: 1.125rem;
     `,
     expanderButton: css`
       cursor: pointer;
       color: inherit;
       font: inherit;
       outline: inherit;
-      line-height: ${font.size.sm};
+      height: 1rem;
       background: transparent;
       border: none;
       padding: 0;
       display: inline-flex;
       align-items: center;
       gap: ${size[1]};
+      position: relative;
+      /* outline: 1px solid ${colors.green[400]}; */
 
       &:focus-visible {
         border-radius: ${border.radius.xs};
         outline: 2px solid ${colors.blue[800]};
       }
+
+      & svg {
+        position: relative;
+        left: 1px;
+      }
     `,
     info: css`
       color: ${colors.gray[500]};
       font-size: ${font.size.xs};
-      line-height: ${font.size.xs};
       margin-left: ${size[1]};
+      /* outline: 1px solid ${colors.yellow[400]}; */
     `,
     label: css`
       color: ${colors.gray[300]};
@@ -446,6 +475,7 @@ const getStyles = () => {
       gap: ${size[2]};
       width: 100%;
       margin-bottom: ${size[0.5]};
+      line-height: 1.125rem;
     `,
     editableInput: css`
       border: none;
@@ -465,10 +495,9 @@ const getStyles = () => {
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      width: ${size[3.5]};
-      height: ${size[3.5]};
+      width: ${size[3]};
+      height: ${size[3]};
       position: relative;
-      top: 4px;
       left: ${size[2]};
       z-index: 1;
 
