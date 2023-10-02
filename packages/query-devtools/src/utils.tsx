@@ -119,7 +119,7 @@ export const convertPixelsToRem = (px: number) => px / convertRemToPixels(1)
  * @param {Array<string>} updatePath Path to the data to be updated
  * @param {unknown} value New value
  */
-export const updatedNestedDataByPath = (
+export const updateNestedDataByPath = (
   oldData: unknown,
   updatePath: Array<string>,
   value: unknown,
@@ -140,7 +140,7 @@ export const updatedNestedDataByPath = (
   const [head, ...tail] = updatePath
 
   // @ts-ignore
-  newData[head] = updatedNestedDataByPath(newData[head], tail, value)
+  newData[head] = updateNestedDataByPath(newData[head], tail, value)
 
   return newData
 }

@@ -1,4 +1,4 @@
-import { updatedNestedDataByPath } from '../utils'
+import { updateNestedDataByPath } from '../utils'
 
 describe('Utils tests', () => {
   describe('updatedNestedDataByPath', () => {
@@ -6,7 +6,7 @@ describe('Utils tests', () => {
       it('should update data correctly', async () => {
         const oldData = ['one', 'two', 'three']
 
-        const newData = updatedNestedDataByPath(oldData, ['1'], 'new')
+        const newData = updateNestedDataByPath(oldData, ['1'], 'new')
 
         expect(newData).not.toBe(oldData) // should not be the same reference
 
@@ -24,7 +24,7 @@ describe('Utils tests', () => {
       it('should update data correctly', async () => {
         const oldData = { title: 'Hello world', id: 1, createdAt: '2021-01-01' }
 
-        const newData = updatedNestedDataByPath(
+        const newData = updateNestedDataByPath(
           oldData,
           ['title'],
           'Brave new world',
@@ -57,7 +57,7 @@ describe('Utils tests', () => {
           },
         ]
 
-        const newData = updatedNestedDataByPath(
+        const newData = updateNestedDataByPath(
           oldData,
           ['1', 'createdAt'],
           '2023-05-01',

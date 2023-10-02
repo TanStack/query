@@ -7,10 +7,10 @@ import { tokens } from './theme'
 import {
   deleteNestedDataByPath,
   displayValue,
-  updatedNestedDataByPath,
+  updateNestedDataByPath,
 } from './utils'
 import { CopiedCopier, Copier, ErrorCopier, List, Trash } from './icons'
-import type { Query, QueryKey } from '@tanstack/query-core'
+import type { Query } from '@tanstack/query-core'
 
 /**
  * Chunk elements in the array by size
@@ -120,7 +120,7 @@ const CopyButton = (props: { value: unknown }) => {
 
 type ClearArrayButtonProps = {
   dataPath: Array<string>
-  activeQuery?: Query<unknown, Error, unknown, QueryKey> | undefined
+  activeQuery?: Query | undefined
 }
 const ClearArrayButton = (props: ClearArrayButtonProps) => {
   const styles = getStyles()
@@ -132,9 +132,7 @@ const ClearArrayButton = (props: ClearArrayButtonProps) => {
       aria-label={'Remove all items'}
       onClick={() => {
         const oldData = props.activeQuery?.state.data
-
-        const newData = updatedNestedDataByPath(oldData, props.dataPath, [])
-
+        const newData = updateNestedDataByPath(oldData, props.dataPath, [])
         props.activeQuery?.setData(newData)
       }}
     >
@@ -145,7 +143,7 @@ const ClearArrayButton = (props: ClearArrayButtonProps) => {
 
 type DeleteButtonProps = {
   dataPath: Array<string>
-  activeQuery?: Query<unknown, Error, unknown, QueryKey> | undefined
+  activeQuery?: Query | undefined
   inline?: boolean
 }
 const DeleteItemButton = (props: DeleteButtonProps) => {
@@ -179,7 +177,7 @@ type ExplorerProps = {
   value: unknown
   defaultExpanded?: Array<string>
   dataPath: Array<string>
-  activeQuery?: Query<unknown, Error, unknown, QueryKey> | undefined
+  activeQuery?: Query
   itemsDeletable?: boolean
 }
 
@@ -356,7 +354,7 @@ export default function Explorer(props: ExplorerProps) {
               onChange={(changeEvent) => {
                 const oldData = props.activeQuery?.state.data
 
-                const newData = updatedNestedDataByPath(
+                const newData = updateNestedDataByPath(
                   oldData,
                   props.dataPath,
                   type() === 'number'
