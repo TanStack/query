@@ -126,7 +126,7 @@ const CopyButton = (props: { value: unknown }) => {
 
 const ClearArrayButton = (props: {
   dataPath: Array<string>
-  activeQuery?: Query
+  activeQuery: Query
 }) => {
   const styles = getStyles()
 
@@ -136,9 +136,9 @@ const ClearArrayButton = (props: {
       title={'Remove all items'}
       aria-label={'Remove all items'}
       onClick={() => {
-        const oldData = props.activeQuery?.state.data
+        const oldData = props.activeQuery.state.data
         const newData = updateNestedDataByPath(oldData, props.dataPath, [])
-        props.activeQuery?.setData(newData)
+        props.activeQuery.setData(newData)
       }}
     >
       <List />
@@ -148,26 +148,19 @@ const ClearArrayButton = (props: {
 
 const DeleteItemButton = (props: {
   dataPath: Array<string>
-  activeQuery?: Query
-  inline?: boolean
+  activeQuery: Query
 }) => {
   const styles = getStyles()
 
   return (
     <button
-      class={cx(
-        styles.actionButton,
-        props.inline &&
-          css`
-            left: 0;
-          `,
-      )}
+      class={cx(styles.actionButton)}
       title={'Delete item'}
       aria-label={'Delete item'}
       onClick={() => {
-        const oldData = props.activeQuery?.state.data
+        const oldData = props.activeQuery.state.data
         const newData = deleteNestedDataByPath(oldData, props.dataPath)
-        props.activeQuery?.setData(newData)
+        props.activeQuery.setData(newData)
       }}
     >
       <Trash />
@@ -267,16 +260,20 @@ export default function Explorer(props: ExplorerProps) {
             <div class={styles.actions}>
               <CopyButton value={props.value} />
 
-              <Show when={props.itemsDeletable}>
+              <Show
+                when={props.itemsDeletable && props.activeQuery !== undefined}
+              >
                 <DeleteItemButton
-                  activeQuery={props.activeQuery}
+                  activeQuery={props.activeQuery!}
                   dataPath={currentDataPath}
                 />
               </Show>
 
-              <Show when={type() === 'array'}>
+              <Show
+                when={type() === 'array' && props.activeQuery !== undefined}
+              >
                 <ClearArrayButton
-                  activeQuery={props.activeQuery}
+                  activeQuery={props.activeQuery!}
                   dataPath={currentDataPath}
                 />
               </Show>
@@ -378,11 +375,16 @@ export default function Explorer(props: ExplorerProps) {
             />
           </Show>
 
-          <Show when={props.editable && props.itemsDeletable}>
+          <Show
+            when={
+              props.editable &&
+              props.itemsDeletable &&
+              props.activeQuery !== undefined
+            }
+          >
             <DeleteItemButton
-              activeQuery={props.activeQuery}
+              activeQuery={props.activeQuery!}
               dataPath={currentDataPath}
-              inline={true}
             />
           </Show>
         </div>
@@ -428,6 +430,7 @@ const getStyles = () => {
       align-items: center;
       line-height: 1.125rem;
       min-height: 1.125rem;
+      gap: ${size[2]};
     `,
     expanderButton: css`
       cursor: pointer;
@@ -498,7 +501,6 @@ const getStyles = () => {
       width: ${size[3]};
       height: ${size[3]};
       position: relative;
-      left: ${size[2]};
       z-index: 1;
 
       &:hover svg {
