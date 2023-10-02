@@ -124,11 +124,10 @@ const CopyButton = (props: { value: unknown }) => {
   )
 }
 
-type ClearArrayButtonProps = {
+const ClearArrayButton = (props: {
   dataPath: Array<string>
-  activeQuery?: Query | undefined
-}
-const ClearArrayButton = (props: ClearArrayButtonProps) => {
+  activeQuery?: Query
+}) => {
   const styles = getStyles()
 
   return (
@@ -147,12 +146,11 @@ const ClearArrayButton = (props: ClearArrayButtonProps) => {
   )
 }
 
-type DeleteButtonProps = {
+const DeleteItemButton = (props: {
   dataPath: Array<string>
-  activeQuery?: Query | undefined
+  activeQuery?: Query
   inline?: boolean
-}
-const DeleteItemButton = (props: DeleteButtonProps) => {
+}) => {
   const styles = getStyles()
 
   return (
