@@ -123,8 +123,5 @@ export function useQuery<
   | UseQueryDefinedReturnType<TData, TError> {
   const result = useBaseQuery(QueryObserver, options, queryClient)
 
-  return {
-    ...result,
-    refetch: result.refetch.value,
-  }
+  return result
 }

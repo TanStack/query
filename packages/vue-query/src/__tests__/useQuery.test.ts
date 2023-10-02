@@ -138,6 +138,8 @@ describe('useQuery', () => {
     })
 
     secondKeyRef.value = 'key8'
+    await flushPromises()
+
     expect(query).toMatchObject({
       status: { value: 'pending' },
       data: { value: undefined },
@@ -166,6 +168,9 @@ describe('useQuery', () => {
     })
 
     enabled.value = true
+
+    await flushPromises()
+
     expect(query).toMatchObject({
       fetchStatus: { value: 'fetching' },
       data: { value: undefined },

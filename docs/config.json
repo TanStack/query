@@ -318,6 +318,10 @@
             {
               "label": "Exhaustive Deps",
               "to": "react/eslint/exhaustive-deps"
+            },
+            {
+              "label": "Stable Query Client",
+              "to": "react/eslint/stable-query-client"
             }
           ]
         },

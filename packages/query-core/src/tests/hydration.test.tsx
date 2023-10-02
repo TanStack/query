@@ -514,7 +514,7 @@ describe('dehydration and rehydration', () => {
     queryClient.clear()
   })
 
-  test('should set the fetchStatus to idle in all cases when dehydrating', async () => {
+  test('should set the fetchStatus to idle when creating a query with dehydrate', async () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
 
@@ -667,5 +667,41 @@ describe('dehydration and rehydration', () => {
     expect(hydrationCache.find({ mutationKey: ['no-meta'] })?.meta).toEqual(
       undefined,
     )
+  })
+
+  test('should not change fetchStatus when updating a query with dehydrate', async () => {
+    const queryClient = createQueryClient()
+
+    const options = {
+      queryKey: ['string'],
+      queryFn: async () => {
+        await sleep(10)
+        return 'string'
+      },
+    } as const
+
+    await queryClient.prefetchQuery(options)
+
+    const dehydrated = dehydrate(queryClient)
+    expect(
+      dehydrated.queries.find((q) => q.queryHash === '["string"]')?.state
+        .fetchStatus,
+    ).toBe('idle')
+    const stringified = JSON.stringify(dehydrated)
+
+    // ---
+    const parsed = JSON.parse(stringified)
+    const hydrationCache = new QueryCache()
+    const hydrationClient = createQueryClient({ queryCache: hydrationCache })
+
+    const promise = hydrationClient.prefetchQuery(options)
+    hydrate(hydrationClient, parsed)
+    expect(
+      hydrationCache.find({ queryKey: ['string'] })?.state.fetchStatus,
+    ).toBe('fetching')
+    await promise
+    expect(
+      hydrationCache.find({ queryKey: ['string'] })?.state.fetchStatus,
+    ).toBe('idle')
   })
 })
