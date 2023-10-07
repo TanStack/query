@@ -174,17 +174,29 @@ This starts fetching `'article-comments'` immediately and flattens the waterfall
 1. |> getArticleCommentsById()
 ```
 
-If you want to prefetch together with Suspense, make sure the prefetches still use `useQuery` so you don't suspend and unnecessarily wait for that data, and that those prefetches happen before any suspenseful query so they can start as early as possible.
+If you want to prefetch together with Suspense, you will have to do things a bit differently. You can't use `useSuspenseQueries` to prefetch, since the prefetch would block the component from rendering. You also can not use `useQuery` for the prefetch, because that wouldn't start the prefetch until after suspenseful query had resolved. What you can do is add a small `usePrefetchQuery` function (we might add this to the library itself at a later point):
 
-You can still use `useSuspenseQuery` in the component that actually needs the data. You _might_ want to wrap this later component in its own `<Suspense>` boundary so the "secondary" query we are prefetching does not block rendering of the "primary" data.
+```tsx
+const usePrefetchQuery = (...args) => {
+  const queryClient = useQueryClient()
+
+  // This happens in render, but is safe to do because ensureQueryData
+  // only fetches if there is no data in the cache for this query. This
+  // means we know no observers are watching the data so the side effect
+  // is not observable, which is safe.
+  queryClient.ensureQueryData(...args)
+}
+```
+
+This approach works with both `useQuery` and `useSuspenseQuery`, so feel free to use it as an alternative to the `useQuery({ ..., notifyOnChangeProps: [] })` approach as well. The only tradeoff is that the above function will never fetch and _update_ existing data in the cache if it's stale, but this will usually happen in the later query anyway.
+
+You can now use `useSuspenseQuery` in the component that actually needs the data. You _might_ want to wrap this later component in its own `<Suspense>` boundary so the "secondary" query we are prefetching does not block rendering of the "primary" data.
 
 ```tsx
 // Prefetch
-useQuery({
+usePrefetchQuery({
   queryKey: ['article-comments', id],
   queryFn: getArticleCommentsById,
-  // Optional optimization to avoid rerenders when this query changes:
-  notifyOnChangeProps: [],
 })
 
 const { data: articleResult } = useSuspenseQuery({
