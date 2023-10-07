@@ -10,6 +10,7 @@ import {
   updateNestedDataByPath,
 } from './utils'
 import { CopiedCopier, Copier, ErrorCopier, List, Trash } from './icons'
+import { useQueryDevtoolsContext } from './Context'
 import type { Query } from '@tanstack/query-core'
 
 /**
@@ -129,6 +130,7 @@ const ClearArrayButton = (props: {
   activeQuery: Query
 }) => {
   const styles = getStyles()
+  const queryClient = useQueryDevtoolsContext().client
 
   return (
     <button
@@ -138,7 +140,7 @@ const ClearArrayButton = (props: {
       onClick={() => {
         const oldData = props.activeQuery.state.data
         const newData = updateNestedDataByPath(oldData, props.dataPath, [])
-        props.activeQuery.setData(newData)
+        queryClient.setQueryData(props.activeQuery.queryKey, newData)
       }}
     >
       <List />
@@ -151,6 +153,7 @@ const DeleteItemButton = (props: {
   activeQuery: Query
 }) => {
   const styles = getStyles()
+  const queryClient = useQueryDevtoolsContext().client
 
   return (
     <button
@@ -160,7 +163,7 @@ const DeleteItemButton = (props: {
       onClick={() => {
         const oldData = props.activeQuery.state.data
         const newData = deleteNestedDataByPath(oldData, props.dataPath)
-        props.activeQuery.setData(newData)
+        queryClient.setQueryData(props.activeQuery.queryKey, newData)
       }}
     >
       <Trash />
@@ -184,6 +187,7 @@ function isIterable(x: any): x is Iterable<unknown> {
 
 export default function Explorer(props: ExplorerProps) {
   const styles = getStyles()
+  const queryClient = useQueryDevtoolsContext().client
 
   const [expanded, setExpanded] = createSignal(
     (props.defaultExpanded || []).includes(props.label),
@@ -349,7 +353,9 @@ export default function Explorer(props: ExplorerProps) {
           <span class={styles.label}>{props.label}:</span>
           <Show
             when={
-              props.editable && (type() === 'string' || type() === 'number')
+              props.editable &&
+              props.activeQuery !== undefined &&
+              (type() === 'string' || type() === 'number')
             }
             fallback={
               <span class={styles.value}>{displayValue(props.value)}</span>
@@ -358,9 +364,9 @@ export default function Explorer(props: ExplorerProps) {
             <input
               type={type() === 'number' ? 'number' : 'text'}
               class={cx(styles.value, styles.editableInput)}
-              value={props.value as string} // TODO? can we avoid this?
+              value={props.value as string | number}
               onChange={(changeEvent) => {
-                const oldData = props.activeQuery?.state.data
+                const oldData = props.activeQuery!.state.data
 
                 const newData = updateNestedDataByPath(
                   oldData,
@@ -370,7 +376,7 @@ export default function Explorer(props: ExplorerProps) {
                     : changeEvent.target.value,
                 )
 
-                props.activeQuery?.setData(newData)
+                queryClient.setQueryData(props.activeQuery!.queryKey, newData)
               }}
             />
           </Show>
