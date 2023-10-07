@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@tanstack/solid-query": "^5.0.0-beta.0",
+    "@tanstack/solid-query": "^5.0.0-rc.1",
     "solid-js": "^1.7.8"
   },
   "devDependencies": {
