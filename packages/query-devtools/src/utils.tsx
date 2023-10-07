@@ -128,18 +128,18 @@ export const updateNestedDataByPath = (
     return value
   }
 
-  // @ts-ignore
+  // @ts-expect-error
   const newData = Array.isArray(oldData) ? [...oldData] : { ...oldData }
 
   if (updatePath.length === 1) {
-    // @ts-ignore
+    // @ts-expect-error
     newData[updatePath[0]] = value
     return newData
   }
 
   const [head, ...tail] = updatePath
 
-  // @ts-ignore
+  // @ts-expect-error
   newData[head] = updateNestedDataByPath(newData[head], tail, value)
 
   return newData
@@ -148,18 +148,18 @@ export const deleteNestedDataByPath = (
   oldData: unknown,
   updatePath: Array<string>,
 ): any => {
-  // @ts-ignore
+  // @ts-expect-error
   const newData = Array.isArray(oldData) ? [...oldData] : { ...oldData }
 
   if (updatePath.length === 1) {
-    // @ts-ignore
+    // @ts-expect-error
     newData[updatePath[0]] = undefined
     return newData.filter(Boolean)
   }
 
   const [head, ...tail] = updatePath
 
-  // @ts-ignore
+  // @ts-expect-error
   newData[head] = deleteNestedDataByPath(newData[head], tail)
 
   return newData
