@@ -10,13 +10,20 @@ describe('Utils tests', () => {
 
         expect(newData).not.toBe(oldData) // should not be the same reference
 
-        expect(oldData[0]).toEqual('one')
-        expect(oldData[1]).toEqual('two')
-        expect(oldData[2]).toEqual('three')
-
-        expect(newData[0]).toEqual('one')
-        expect(newData[1]).toEqual('new')
-        expect(newData[2]).toEqual('three')
+        expect(oldData).toMatchInlineSnapshot(`
+          [
+            "one",
+            "two",
+            "three",
+          ]
+        `)
+        expect(newData).toMatchInlineSnapshot(`
+          [
+            "one",
+            "new",
+            "three",
+          ]
+        `)
       })
     })
 
@@ -32,13 +39,20 @@ describe('Utils tests', () => {
 
         expect(newData).not.toBe(oldData) // should not be the same reference
 
-        expect(oldData['title']).toEqual('Hello world')
-        expect(oldData['id']).toEqual(1)
-        expect(oldData['createdAt']).toEqual('2021-01-01')
-
-        expect(newData['title']).toEqual('Brave new world')
-        expect(newData['id']).toEqual(1)
-        expect(newData['createdAt']).toEqual('2021-01-01')
+        expect(oldData).toMatchInlineSnapshot(`
+          {
+            "createdAt": "2021-01-01",
+            "id": 1,
+            "title": "Hello world",
+          }
+        `)
+        expect(newData).toMatchInlineSnapshot(`
+          {
+            "createdAt": "2021-01-01",
+            "id": 1,
+            "title": "Brave new world",
+          }
+        `)
       })
     })
 
@@ -65,19 +79,34 @@ describe('Utils tests', () => {
 
         expect(newData).not.toBe(oldData) // should not be the same reference
 
-        expect(oldData[0]!['title']).toEqual('Hello world')
-        expect(oldData[0]!['id']).toEqual(1)
-        expect(oldData[0]!['createdAt']).toEqual('2021-01-01')
-        expect(oldData[1]!['title']).toEqual('Second post')
-        expect(oldData[1]!['id']).toEqual(2)
-        expect(oldData[1]!['createdAt']).toEqual('2023-04-02')
-
-        expect(newData[0]['title']).toEqual('Hello world')
-        expect(newData[0]['id']).toEqual(1)
-        expect(newData[0]['createdAt']).toEqual('2021-01-01')
-        expect(newData[1]['title']).toEqual('Second post')
-        expect(newData[1]['id']).toEqual(2)
-        expect(newData[1]['createdAt']).toEqual('2023-05-01')
+        expect(oldData).toMatchInlineSnapshot(`
+          [
+            {
+              "createdAt": "2021-01-01",
+              "id": 1,
+              "title": "Hello world",
+            },
+            {
+              "createdAt": "2023-04-02",
+              "id": 2,
+              "title": "Second post",
+            },
+          ]
+        `)
+        expect(newData).toMatchInlineSnapshot(`
+          [
+            {
+              "createdAt": "2021-01-01",
+              "id": 1,
+              "title": "Hello world",
+            },
+            {
+              "createdAt": "2023-05-01",
+              "id": 2,
+              "title": "Second post",
+            },
+          ]
+        `)
       })
     })
   })
@@ -90,9 +119,19 @@ describe('Utils tests', () => {
 
       expect(newData).not.toBe(oldData) // should not be the same reference
 
-      expect(newData[0]).toEqual('one')
-      expect(newData[1]).toEqual('three')
-      expect(newData).toHaveLength(2)
+      expect(oldData).toMatchInlineSnapshot(`
+        [
+          "one",
+          "two",
+          "three",
+        ]
+      `)
+      expect(newData).toMatchInlineSnapshot(`
+        [
+          "one",
+          "three",
+        ]
+      `)
     })
   })
 
@@ -109,10 +148,34 @@ describe('Utils tests', () => {
         ingredients: ['spaghetti', 'tomato sauce', 'minced meat'],
       },
     ]
+
     const newData = deleteNestedDataByPath(oldData, ['1', 'ingredients', '0'])
 
     expect(newData).not.toBe(oldData) // should not be the same reference
 
+    expect(oldData).toMatchInlineSnapshot(`
+      [
+        {
+          "id": 1,
+          "ingredients": [
+            "pumpkin",
+            "pie crust",
+            "sugar",
+            "spices",
+          ],
+          "title": "Pumpkin pie",
+        },
+        {
+          "id": 2,
+          "ingredients": [
+            "spaghetti",
+            "tomato sauce",
+            "minced meat",
+          ],
+          "title": "Spaghetti bolonese",
+        },
+      ]
+    `)
     expect(newData).toMatchInlineSnapshot(`
       [
         {
