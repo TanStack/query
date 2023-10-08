@@ -128,28 +128,69 @@ export const updateNestedDataByPath = (
     return value
   }
 
-  // @ts-expect-error
-  const newData = Array.isArray(oldData) ? [...oldData] : { ...oldData }
+  if (oldData instanceof Map) {
+    const newData = new Map(oldData)
 
-  if (updatePath.length === 1) {
-    // @ts-expect-error
-    newData[updatePath[0]] = value
+    if (updatePath.length === 1) {
+      newData.set(updatePath[0], value)
+      return newData
+    }
+
+    const [head, ...tail] = updatePath
+    newData.set(head, updateNestedDataByPath(newData.get(head), tail, value))
     return newData
   }
 
-  const [head, ...tail] = updatePath
+  if (oldData instanceof Set) {
+    const setAsArray = updateNestedDataByPath(
+      Array.from(oldData),
+      updatePath,
+      value,
+    )
 
-  // @ts-expect-error
-  newData[head] = updateNestedDataByPath(newData[head], tail, value)
+    return new Set(setAsArray)
+  }
 
-  return newData
+  if (Array.isArray(oldData)) {
+    const newData = [...oldData]
+
+    if (updatePath.length === 1) {
+      // @ts-expect-error
+      newData[updatePath[0]] = value
+      return newData
+    }
+
+    const [head, ...tail] = updatePath
+    // @ts-expect-error
+    newData[head] = updateNestedDataByPath(newData[head], tail, value)
+
+    return newData
+  }
+
+  if (oldData instanceof Object) {
+    const newData = { ...oldData }
+
+    if (updatePath.length === 1) {
+      // @ts-expect-error
+      newData[updatePath[0]] = value
+      return newData
+    }
+
+    const [head, ...tail] = updatePath
+    // @ts-expect-error
+    newData[head] = updateNestedDataByPath(newData[head], tail, value)
+
+    return newData
+  }
+
+  return oldData
 }
 
 /**
  * Deletes nested data by path
  *
- * @param oldData
- * @param deletePath
+ * @param {unknown} oldData Data to be updated
+ * @param {Array<string>} deletePath Path to the data to be deleted
  * @returns newData without the deleted items by path
  */
 export const deleteNestedDataByPath = (

@@ -56,56 +56,316 @@ describe('Utils tests', () => {
       })
     })
 
-    describe('nested data', () => {
+    describe('set', () => {
       it('should update data correctly', async () => {
-        const oldData = [
-          {
-            title: 'Hello world',
-            id: 1,
-            createdAt: '2021-01-01',
-          },
-          {
-            title: 'Second post',
-            id: 2,
-            createdAt: '2023-04-02',
-          },
-        ]
+        const oldData = new Set([123, 321, 'hello', 'world'])
 
-        const newData = updateNestedDataByPath(
-          oldData,
-          ['1', 'createdAt'],
-          '2023-05-01',
-        )
+        const newData = updateNestedDataByPath(oldData, ['2'], 'hi')
 
         expect(newData).not.toBe(oldData) // should not be the same reference
 
         expect(oldData).toMatchInlineSnapshot(`
-          [
-            {
-              "createdAt": "2021-01-01",
-              "id": 1,
-              "title": "Hello world",
-            },
-            {
-              "createdAt": "2023-04-02",
-              "id": 2,
-              "title": "Second post",
-            },
-          ]
+          Set {
+            123,
+            321,
+            "hello",
+            "world",
+          }
         `)
         expect(newData).toMatchInlineSnapshot(`
+          Set {
+            123,
+            321,
+            "hi",
+            "world",
+          }
+        `)
+      })
+    })
+
+    describe('map', () => {
+      it('should update data correctly', async () => {
+        const oldData = new Map([
+          ['en', 'hello'],
+          ['fr', 'bonjour'],
+        ])
+
+        const newData = updateNestedDataByPath(oldData, ['fr'], 'salut')
+
+        expect(newData).not.toBe(oldData) // should not be the same reference
+
+        expect(oldData).toMatchInlineSnapshot(`
+          Map {
+            "en" => "hello",
+            "fr" => "bonjour",
+          }
+        `)
+        expect(newData).toMatchInlineSnapshot(`
+          Map {
+            "en" => "hello",
+            "fr" => "salut",
+          }
+        `)
+      })
+    })
+
+    describe('nested data', () => {
+      it('should update data correctly', async () => {
+        const oldData = new Map([
           [
+            'pumpkin-pie',
             {
-              "createdAt": "2021-01-01",
+              id: 1,
+              title: 'Pumpkin pie',
+              ingredients: new Set(['pumpkin', 'sugar', 'spices']),
+              steps: ['mix', 'bake', 'eat'],
+              translations: new Map([
+                ['en', 'Pumpkin pie'],
+                ['fr', 'Tarte à la citrouille'],
+              ]),
+            },
+          ],
+          [
+            'spaghetti-bolonese',
+            {
+              id: 2,
+              title: 'Spaghetti bolonese',
+              ingredients: new Set([
+                'spaghetti',
+                'tomato sauce',
+                'minced meat',
+              ]),
+              steps: ['cook', 'eat'],
+              translations: new Map([
+                ['en', 'Spaghetti bolonese'],
+                ['fr', 'Spaghetti bolonaise'],
+              ]),
+            },
+          ],
+        ])
+
+        const updatedObject = updateNestedDataByPath(
+          oldData,
+          ['pumpkin-pie', 'title'],
+          'Pumpkin pie with whipped cream',
+        )
+
+        const updatedArray = updateNestedDataByPath(
+          oldData,
+          ['spaghetti-bolonese', 'steps', '0'],
+          'prepare',
+        )
+
+        const updatedSet = updateNestedDataByPath(
+          oldData,
+          ['pumpkin-pie', 'ingredients', '1'],
+          'honey',
+        )
+
+        const updatedMap = updateNestedDataByPath(
+          oldData,
+          ['pumpkin-pie', 'translations', 'en'],
+          'Best pie ever',
+        )
+
+        expect(oldData).toMatchInlineSnapshot(`
+          Map {
+            "pumpkin-pie" => {
               "id": 1,
-              "title": "Hello world",
+              "ingredients": Set {
+                "pumpkin",
+                "sugar",
+                "spices",
+              },
+              "steps": [
+                "mix",
+                "bake",
+                "eat",
+              ],
+              "title": "Pumpkin pie",
+              "translations": Map {
+                "en" => "Pumpkin pie",
+                "fr" => "Tarte à la citrouille",
+              },
             },
-            {
-              "createdAt": "2023-05-01",
+            "spaghetti-bolonese" => {
               "id": 2,
-              "title": "Second post",
+              "ingredients": Set {
+                "spaghetti",
+                "tomato sauce",
+                "minced meat",
+              },
+              "steps": [
+                "cook",
+                "eat",
+              ],
+              "title": "Spaghetti bolonese",
+              "translations": Map {
+                "en" => "Spaghetti bolonese",
+                "fr" => "Spaghetti bolonaise",
+              },
             },
-          ]
+          }
+        `)
+
+        expect(updatedObject).toMatchInlineSnapshot(`
+          Map {
+            "pumpkin-pie" => {
+              "id": 1,
+              "ingredients": Set {
+                "pumpkin",
+                "sugar",
+                "spices",
+              },
+              "steps": [
+                "mix",
+                "bake",
+                "eat",
+              ],
+              "title": "Pumpkin pie with whipped cream",
+              "translations": Map {
+                "en" => "Pumpkin pie",
+                "fr" => "Tarte à la citrouille",
+              },
+            },
+            "spaghetti-bolonese" => {
+              "id": 2,
+              "ingredients": Set {
+                "spaghetti",
+                "tomato sauce",
+                "minced meat",
+              },
+              "steps": [
+                "cook",
+                "eat",
+              ],
+              "title": "Spaghetti bolonese",
+              "translations": Map {
+                "en" => "Spaghetti bolonese",
+                "fr" => "Spaghetti bolonaise",
+              },
+            },
+          }
+        `)
+
+        expect(updatedArray).toMatchInlineSnapshot(`
+          Map {
+            "pumpkin-pie" => {
+              "id": 1,
+              "ingredients": Set {
+                "pumpkin",
+                "sugar",
+                "spices",
+              },
+              "steps": [
+                "mix",
+                "bake",
+                "eat",
+              ],
+              "title": "Pumpkin pie",
+              "translations": Map {
+                "en" => "Pumpkin pie",
+                "fr" => "Tarte à la citrouille",
+              },
+            },
+            "spaghetti-bolonese" => {
+              "id": 2,
+              "ingredients": Set {
+                "spaghetti",
+                "tomato sauce",
+                "minced meat",
+              },
+              "steps": [
+                "prepare",
+                "eat",
+              ],
+              "title": "Spaghetti bolonese",
+              "translations": Map {
+                "en" => "Spaghetti bolonese",
+                "fr" => "Spaghetti bolonaise",
+              },
+            },
+          }
+        `)
+
+        expect(updatedSet).toMatchInlineSnapshot(`
+          Map {
+            "pumpkin-pie" => {
+              "id": 1,
+              "ingredients": Set {
+                "pumpkin",
+                "honey",
+                "spices",
+              },
+              "steps": [
+                "mix",
+                "bake",
+                "eat",
+              ],
+              "title": "Pumpkin pie",
+              "translations": Map {
+                "en" => "Pumpkin pie",
+                "fr" => "Tarte à la citrouille",
+              },
+            },
+            "spaghetti-bolonese" => {
+              "id": 2,
+              "ingredients": Set {
+                "spaghetti",
+                "tomato sauce",
+                "minced meat",
+              },
+              "steps": [
+                "cook",
+                "eat",
+              ],
+              "title": "Spaghetti bolonese",
+              "translations": Map {
+                "en" => "Spaghetti bolonese",
+                "fr" => "Spaghetti bolonaise",
+              },
+            },
+          }
+        `)
+
+        expect(updatedMap).toMatchInlineSnapshot(`
+          Map {
+            "pumpkin-pie" => {
+              "id": 1,
+              "ingredients": Set {
+                "pumpkin",
+                "sugar",
+                "spices",
+              },
+              "steps": [
+                "mix",
+                "bake",
+                "eat",
+              ],
+              "title": "Pumpkin pie",
+              "translations": Map {
+                "en" => "Best pie ever",
+                "fr" => "Tarte à la citrouille",
+              },
+            },
+            "spaghetti-bolonese" => {
+              "id": 2,
+              "ingredients": Set {
+                "spaghetti",
+                "tomato sauce",
+                "minced meat",
+              },
+              "steps": [
+                "cook",
+                "eat",
+              ],
+              "title": "Spaghetti bolonese",
+              "translations": Map {
+                "en" => "Spaghetti bolonese",
+                "fr" => "Spaghetti bolonaise",
+              },
+            },
+          }
         `)
       })
     })
