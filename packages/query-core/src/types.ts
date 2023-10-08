@@ -23,6 +23,11 @@ export type DefaultError = Register extends {
 
 export type QueryKey = ReadonlyArray<unknown>
 
+export declare const queryKeySymbol: unique symbol
+export type TaggedQueryKey<Type, Value> = Type & {
+  [queryKeySymbol]: Value
+}
+
 export type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,

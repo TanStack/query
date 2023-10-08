@@ -1,10 +1,9 @@
-import type { DefaultError, QueryKey } from '@tanstack/query-core'
+import type {
+  DefaultError,
+  QueryKey,
+  TaggedQueryKey,
+} from '@tanstack/query-core'
 import type { UseQueryOptions } from './types'
-
-declare const queryKeySymbol: unique symbol
-type DataTag<Type, Value> = Type & {
-  [queryKeySymbol]: Value
-}
 
 export type UndefinedInitialDataOptions<
   TQueryFnData = unknown,
@@ -46,7 +45,7 @@ export function queryOptions<
 >(
   options: ValidateQueryOptions<TOptions>,
 ): Omit<TOptions, 'queryKey'> & {
-  queryKey: DataTag<
+  queryKey: TaggedQueryKey<
     TOptions['queryKey'],
     TOptions['queryFn'] extends () => any
       ? Awaited<ReturnType<NonNullable<TOptions['queryFn']>>>
@@ -68,7 +67,7 @@ export function queryOptions<
 >(
   options: ValidateQueryOptions<TOptions>,
 ): Omit<TOptions, 'queryKey'> & {
-  queryKey: DataTag<
+  queryKey: TaggedQueryKey<
     TOptions['queryKey'],
     TOptions['queryFn'] extends () => any
       ? Awaited<ReturnType<NonNullable<TOptions['queryFn']>>>
