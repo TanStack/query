@@ -1,12 +1,12 @@
 import { QueryClient } from '../queryClient'
 import { doNotExecute } from './utils'
 import type { Equal, Expect } from './utils'
-import type { DataTag, InfiniteData } from '../types'
+import type { TaggedQueryKey } from '../types'
 
 describe('getQueryData', () => {
   it('should be typed if key is tagged', () => {
     doNotExecute(() => {
-      const queryKey = ['key'] as DataTag<Array<string>, number>
+      const queryKey = ['key'] as TaggedQueryKey<Array<string>, number>
       const queryClient = new QueryClient()
       const data = queryClient.getQueryData(queryKey)
 
@@ -57,7 +57,7 @@ describe('setQueryData', () => {
         return result ? prev : 1
       })
 
-      const result: Expect<Equal<typeof data, number | undefined>> = true
+      const result: Expect<Equal<typeof data, number>> = true
       return result
     })
   })
