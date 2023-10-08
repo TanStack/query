@@ -297,7 +297,11 @@ export default function Explorer(props: ExplorerProps) {
                       editable={props.editable}
                       dataPath={[...currentDataPath, entry().label]}
                       activeQuery={props.activeQuery}
-                      itemsDeletable={type() === 'array'}
+                      itemsDeletable={
+                        type() === 'array' ||
+                        type() === 'Iterable' ||
+                        type() === 'object'
+                      }
                     />
                   )
                 }}
@@ -474,6 +478,7 @@ const getStyles = () => {
     `,
     value: css`
       color: ${colors.purple[400]};
+      flex-grow: 1;
     `,
     actions: css`
       display: inline-flex;

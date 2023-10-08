@@ -144,23 +144,66 @@ export const updateNestedDataByPath = (
 
   return newData
 }
+
+/**
+ * Deletes nested data by path
+ *
+ * @param oldData
+ * @param deletePath
+ * @returns newData without the deleted items by path
+ */
 export const deleteNestedDataByPath = (
   oldData: unknown,
-  updatePath: Array<string>,
+  deletePath: Array<string>,
 ): any => {
-  // @ts-expect-error
-  const newData = Array.isArray(oldData) ? [...oldData] : { ...oldData }
+  if (oldData instanceof Map) {
+    const newData = new Map(oldData)
 
-  if (updatePath.length === 1) {
-    // @ts-expect-error
-    newData[updatePath[0]] = undefined
-    return newData.filter(Boolean)
+    if (deletePath.length === 1) {
+      newData.delete(deletePath[0])
+      return newData
+    }
+
+    const [head, ...tail] = deletePath
+    newData.set(head, deleteNestedDataByPath(newData.get(head), tail))
+    return newData
   }
 
-  const [head, ...tail] = updatePath
+  if (oldData instanceof Set) {
+    const setAsArray = deleteNestedDataByPath(Array.from(oldData), deletePath)
+    return new Set(setAsArray)
+  }
 
-  // @ts-expect-error
-  newData[head] = deleteNestedDataByPath(newData[head], tail)
+  if (Array.isArray(oldData)) {
+    const newData = [...oldData]
 
-  return newData
+    if (deletePath.length === 1) {
+      return newData.filter((_, idx) => idx.toString() !== deletePath[0])
+    }
+
+    const [head, ...tail] = deletePath
+
+    // @ts-expect-error
+    newData[head] = deleteNestedDataByPath(newData[head], tail)
+
+    return newData
+  }
+
+  if (oldData instanceof Object) {
+    const newData = { ...oldData }
+
+    if (deletePath.length === 1) {
+      // @ts-expect-error
+      delete newData[deletePath[0]]
+      return newData
+    }
+
+    const [head, ...tail] = deletePath
+    // @ts-expect-error
+    newData[head] = deleteNestedDataByPath(newData[head], tail)
+
+    return newData
+  }
+
+  return oldData
 }
