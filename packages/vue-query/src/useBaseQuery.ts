@@ -32,9 +32,13 @@ export type UseQueryReturnType<
   TError,
   Result = QueryObserverResult<TData, TError>,
 > = {
-  [K in keyof Result]: Result[K] extends (...args: any[]) => any
+  [K in keyof Result]: K extends
+    | 'fetchNextPage'
+    | 'fetchPreviousPage'
+    | 'refetch'
+    | 'remove'
     ? Result[K]
-    : ToRef<Result[K]>
+    : ToRef<Readonly<Result>[K]>
 } & {
   suspense: () => Promise<Result>
 }
