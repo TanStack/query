@@ -40,14 +40,11 @@ export function queryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: ValidateQueryOptions<TOptions>,
-): Omit<TOptions, 'queryKey'> & {
-  queryKey: DataTag<
-    TOptions['queryKey'],
-    TOptions['queryFn'] extends () => any
-      ? Awaited<ReturnType<NonNullable<TOptions['queryFn']>>>
-      : unknown
-  >
+  options: ValidateQueryOptions<
+    UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  >,
+): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  queryKey: DataTag<TQueryKey, TData>
 }
 
 export function queryOptions<
@@ -55,21 +52,12 @@ export function queryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-  TOptions extends DefinedInitialDataOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey
-  > = DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
 >(
-  options: ValidateQueryOptions<TOptions>,
-): Omit<TOptions, 'queryKey'> & {
-  queryKey: DataTag<
-    TOptions['queryKey'],
-    TOptions['queryFn'] extends () => any
-      ? Awaited<ReturnType<NonNullable<TOptions['queryFn']>>>
-      : unknown
-  >
+  options: ValidateQueryOptions<
+    DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  >,
+): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  queryKey: DataTag<TQueryKey, TData>
 }
 
 export function queryOptions(options: unknown) {
