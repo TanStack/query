@@ -11,7 +11,7 @@ import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
-import type { DataTag, NoInfer } from './types'
+import type { TaggedQueryKey, queryKeySymbol } from './types'
 import type { QueryState } from './query'
 import type {
   CancelOptions,
@@ -108,16 +108,12 @@ export class QueryClient {
     return this.#mutationCache.findAll({ ...filters, status: 'pending' }).length
   }
 
-  getQueryData<
-    TQueryFnData = unknown,
-    TaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = TaggedQueryKey extends DataTag<
-      unknown,
-      infer TaggedValue
-    >
-      ? TaggedValue
-      : TQueryFnData,
-  >(queryKey: TaggedQueryKey): TInferredQueryFnData | undefined
+  getQueryData<TaggedKey extends TaggedQueryKey<unknown, unknown>>(
+    queryKey: TaggedKey,
+  ): TaggedKey[typeof queryKeySymbol] | undefined
+  getQueryData<TQueryFnData = unknown>(
+    queryKey: QueryKey,
+  ): TQueryFnData | undefined
   getQueryData(queryKey: QueryKey) {
     return this.#queryCache.find({ queryKey })?.state.data
   }
@@ -146,21 +142,22 @@ export class QueryClient {
       })
   }
 
-  setQueryData<
-    TQueryFnData = unknown,
-    TaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = TaggedQueryKey extends DataTag<
-      unknown,
-      infer TaggedValue
-    >
-      ? TaggedValue
-      : TQueryFnData,
-  >(
-    queryKey: TaggedQueryKey,
+  setQueryData<TaggedKey extends TaggedQueryKey<unknown, unknown>>(
+    queryKey: TaggedKey,
     updater: Updater<
-      NoInfer<TInferredQueryFnData> | undefined,
-      NoInfer<TInferredQueryFnData> | undefined
+      TaggedKey[typeof queryKeySymbol] | undefined,
+      TaggedKey[typeof queryKeySymbol] | undefined
     >,
+    options?: SetDataOptions,
+  ): TaggedKey[typeof queryKeySymbol]
+  setQueryData<TQueryFnData>(
+    queryKey: QueryKey,
+    updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
+    options?: SetDataOptions,
+  ): TQueryFnData | undefined
+  setQueryData<TQueryFnData>(
+    queryKey: QueryKey,
+    updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
     options?: SetDataOptions,
   ): TInferredQueryFnData | undefined {
     const query = this.#queryCache.find<TInferredQueryFnData>({ queryKey })
