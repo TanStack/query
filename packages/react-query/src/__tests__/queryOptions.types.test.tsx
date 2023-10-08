@@ -5,7 +5,7 @@ import { useQuery } from '../useQuery'
 import { useQueries } from '../useQueries'
 import { useSuspenseQuery } from '../useSuspenseQuery'
 import { doNotExecute } from './utils'
-import type { queryKeySymbol } from '@tanstack/query-core'
+import type { dataTagSymbol } from '@tanstack/query-core'
 import type { Equal, Expect } from './utils'
 
 describe('queryOptions', () => {
@@ -94,7 +94,7 @@ describe('queryOptions', () => {
       })
 
       const result: Expect<
-        Equal<(typeof queryKey)[typeof queryKeySymbol], number>
+        Equal<(typeof queryKey)[typeof dataTagSymbol], number>
       > = true
       return result
     })
@@ -107,7 +107,7 @@ describe('queryOptions', () => {
         })
 
         const result: Expect<
-          Equal<(typeof queryKey)[typeof queryKeySymbol], number>
+          Equal<(typeof queryKey)[typeof dataTagSymbol], number>
         > = true
         return result
       })
@@ -120,7 +120,7 @@ describe('queryOptions', () => {
         })
 
         const result: Expect<
-          Equal<(typeof queryKey)[typeof queryKeySymbol], unknown>
+          Equal<(typeof queryKey)[typeof dataTagSymbol], unknown>
         > = true
         return result
       })
