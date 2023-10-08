@@ -23,9 +23,9 @@ export type DefaultError = Register extends {
 
 export type QueryKey = ReadonlyArray<unknown>
 
-export declare const queryKeySymbol: unique symbol
-export type TaggedQueryKey<Type, Value> = Type & {
-  [queryKeySymbol]: Value
+export declare const dataTagSymbol: unique symbol
+export type DataTag<Type, Value> = Type & {
+  [dataTagSymbol]: Value
 }
 
 export type QueryFunction<
