@@ -1,7 +1,7 @@
 import type {
   DefaultError,
   QueryKey,
-  TypedQueryKey,
+  TaggedQueryKey,
 } from '@tanstack/query-core'
 import type { UseQueryOptions } from './types'
 
@@ -44,9 +44,36 @@ export function queryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
-  queryKey: TypedQueryKey<TQueryFnData>
+  options: ValidateQueryOptions<TOptions>,
+): Omit<TOptions, 'queryKey'> & {
+  queryKey: TaggedQueryKey<
+    TOptions['queryKey'],
+    TOptions['queryFn'] extends () => any
+      ? Awaited<ReturnType<NonNullable<TOptions['queryFn']>>>
+      : unknown
+  >
+}
+
+export function queryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TOptions extends DefinedInitialDataOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey
+  > = DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+>(
+  options: ValidateQueryOptions<TOptions>,
+): Omit<TOptions, 'queryKey'> & {
+  queryKey: TaggedQueryKey<
+    TOptions['queryKey'],
+    TOptions['queryFn'] extends () => any
+      ? Awaited<ReturnType<NonNullable<TOptions['queryFn']>>>
+      : unknown
+  >
 }
 
 export function queryOptions(options: unknown) {
