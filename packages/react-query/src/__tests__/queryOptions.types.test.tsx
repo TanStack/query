@@ -1,5 +1,7 @@
 import { QueryClient } from '@tanstack/query-core'
 import { queryOptions } from '../queryOptions'
+import { useQuery } from '../useQuery'
+import { useQueries } from '../useQueries'
 import { doNotExecute } from './utils'
 import type { dataTagSymbol } from '@tanstack/query-core'
 import type { Equal, Expect } from './utils'
@@ -26,6 +28,47 @@ describe('queryOptions', () => {
           return result
         },
       })
+    })
+  })
+  it('should work when passed to useQuery', () => {
+    doNotExecute(() => {
+      const options = queryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve(5),
+      })
+
+      const { data } = useQuery(options)
+
+      const result: Expect<Equal<typeof data, number | undefined>> = true
+      return result
+    })
+  })
+  it('should work when passed to fetchQuery', () => {
+    doNotExecute(async () => {
+      const options = queryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve(5),
+      })
+
+      const data = await new QueryClient().fetchQuery(options)
+
+      const result: Expect<Equal<typeof data, number>> = true
+      return result
+    })
+  })
+  it('should work when passed to useQueries', () => {
+    doNotExecute(() => {
+      const options = queryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve(5),
+      })
+
+      const [{ data }] = useQueries({
+        queries: [options],
+      })
+
+      const result: Expect<Equal<typeof data, number | undefined>> = true
+      return result
     })
   })
   it('should tag the queryKey with the result type of the QueryFn', () => {

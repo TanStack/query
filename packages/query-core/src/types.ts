@@ -81,9 +81,10 @@ export type PlaceholderDataFunction<
   previousQuery: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined,
 ) => TQueryData | undefined
 
-export type QueriesPlaceholderDataFunction<TQueryData> = () =>
-  | TQueryData
-  | undefined
+export type QueriesPlaceholderDataFunction<TQueryData> = (
+  previousData: undefined,
+  previousQuery: undefined,
+) => TQueryData | undefined
 
 export type QueryKeyHashFunction<TQueryKey extends QueryKey> = (
   queryKey: TQueryKey,
