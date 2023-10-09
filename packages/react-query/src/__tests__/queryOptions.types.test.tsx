@@ -141,7 +141,7 @@ describe('queryOptions', () => {
       })
     })
 
-    it('should properly type when passed to setQueryData', () => {
+    it('should properly type updaterFn when passed to setQueryData', () => {
       doNotExecute(() => {
         const { queryKey } = queryOptions({
           queryKey: ['key'],
@@ -176,6 +176,25 @@ describe('queryOptions', () => {
         const data = queryClient.setQueryData(queryKey, 5)
 
         const result: Expect<Equal<typeof data, number | undefined>> = true
+        return result
+      })
+    })
+
+    it('should properly type value when passed to setQueryData', () => {
+      doNotExecute(() => {
+        const { queryKey } = queryOptions({
+          queryKey: ['key'],
+          queryFn: () => Promise.resolve(5),
+        })
+
+        const queryClient = new QueryClient()
+
+        // @ts-expect-error value should be a number
+        queryClient.setQueryData(queryKey, '5')
+
+        const data = queryClient.setQueryData(queryKey, 5)
+
+        const result: Expect<Equal<typeof data, number>> = true
         return result
       })
     })
