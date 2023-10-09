@@ -392,7 +392,7 @@ export interface FetchQueryOptions<
 }
 
 type FetchInfiniteQueryPages<TQueryFnData = unknown, TPageParam = unknown> =
-  | { pages?: never; getNextPageParam?: never }
+  | { pages?: never }
   | {
       pages: number
       getNextPageParam: GetNextPageParamFunction<TPageParam, TQueryFnData>
