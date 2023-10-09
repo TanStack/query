@@ -2,6 +2,7 @@ import { QueryClient } from '@tanstack/query-core'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
 import { useQueries } from '../useQueries'
+import { useSuspenseQuery } from '../useSuspenseQuery'
 import { doNotExecute } from './utils'
 import type { dataTagSymbol } from '@tanstack/query-core'
 import type { Equal, Expect } from './utils'
@@ -40,6 +41,19 @@ describe('queryOptions', () => {
       const { data } = useQuery(options)
 
       const result: Expect<Equal<typeof data, number | undefined>> = true
+      return result
+    })
+  })
+  it('should work when passed to useSuspenseQuery', () => {
+    doNotExecute(() => {
+      const options = queryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve(5),
+      })
+
+      const { data } = useSuspenseQuery(options)
+
+      const result: Expect<Equal<typeof data, number>> = true
       return result
     })
   })

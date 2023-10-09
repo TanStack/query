@@ -1,94 +1,101 @@
+import type { DataTag } from '@tanstack/query-core'
 import type { InfiniteData } from '@tanstack/query-core'
 import type { UseInfiniteQueryOptions } from './types'
 import type { DefaultError, QueryKey } from '@tanstack/query-core'
 
 export type UndefinedInitialDataInfiniteOptions<
-  TQueryFnData = unknown,
+  TQueryFnData,
   TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryData = TQueryFnData,
+  TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = UseInfiniteQueryOptions<
   TQueryFnData,
   TError,
   TData,
-  TQueryData,
+  TQueryFnData,
   TQueryKey,
   TPageParam
 > & {
   initialData?: undefined
 }
 
+type NonUndefinedGuard<T> = T extends undefined ? never : T
+
 export type DefinedInitialDataInfiniteOptions<
-  TQueryFnData = unknown,
+  TQueryFnData,
   TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryData = TQueryFnData,
+  TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = UseInfiniteQueryOptions<
   TQueryFnData,
   TError,
   TData,
-  TQueryData,
+  TQueryFnData,
   TQueryKey,
   TPageParam
 > & {
   initialData:
-    | InfiniteData<TQueryData, TPageParam>
-    | (() => InfiniteData<TQueryData, TPageParam>)
+    | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+    | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
+}
+
+type ValidateInfiniteQueryOptions<T> = {
+  [K in keyof T]: K extends keyof UseInfiniteQueryOptions ? T[K] : never
 }
 
 export function infiniteQueryOptions<
-  TQueryFnData = unknown,
+  TQueryFnData,
   TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryData = TQueryFnData,
+  TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: UndefinedInitialDataInfiniteOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey,
-    TPageParam
+  options: ValidateInfiniteQueryOptions<
+    UndefinedInitialDataInfiniteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >
   >,
 ): UndefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError,
   TData,
-  TQueryFnData,
   TQueryKey,
   TPageParam
->
+> & {
+  queryKey: DataTag<TQueryKey, TData>
+}
 
 export function infiniteQueryOptions<
-  TQueryFnData = unknown,
+  TQueryFnData,
   TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryData = TQueryFnData,
+  TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: DefinedInitialDataInfiniteOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey,
-    TPageParam
+  options: ValidateInfiniteQueryOptions<
+    DefinedInitialDataInfiniteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >
   >,
 ): DefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError,
   TData,
-  TQueryFnData,
   TQueryKey,
   TPageParam
->
+> & {
+  queryKey: DataTag<TQueryKey, TData>
+}
 
 export function infiniteQueryOptions(options: unknown) {
   return options
