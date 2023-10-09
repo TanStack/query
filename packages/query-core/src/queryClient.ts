@@ -11,7 +11,6 @@ import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
-import type { DataTag, NoInfer } from './types'
 import type { QueryState } from './query'
 import type {
   CancelOptions,
@@ -34,6 +33,7 @@ import type {
   RefetchQueryFilters,
   ResetOptions,
   SetDataOptions,
+  TypedQueryKey,
 } from './types'
 import type { MutationFilters, QueryFilters, Updater } from './utils'
 
@@ -108,16 +108,9 @@ export class QueryClient {
     return this.#mutationCache.findAll({ ...filters, status: 'pending' }).length
   }
 
-  getQueryData<
-    TQueryFnData = unknown,
-    TaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = TaggedQueryKey extends DataTag<
-      unknown,
-      infer TaggedValue
-    >
-      ? TaggedValue
-      : TQueryFnData,
-  >(queryKey: TaggedQueryKey): TInferredQueryFnData | undefined
+  getQueryData<TQueryFnData = unknown>(
+    queryKey: TypedQueryKey<TQueryFnData> | QueryKey,
+  ): TQueryFnData | undefined
   getQueryData(queryKey: QueryKey) {
     return this.#queryCache.find({ queryKey })?.state.data
   }
@@ -146,24 +139,12 @@ export class QueryClient {
       })
   }
 
-  setQueryData<
-    TQueryFnData = unknown,
-    TaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = TaggedQueryKey extends DataTag<
-      unknown,
-      infer TaggedValue
-    >
-      ? TaggedValue
-      : TQueryFnData,
-  >(
-    queryKey: TaggedQueryKey,
-    updater: Updater<
-      NoInfer<TInferredQueryFnData> | undefined,
-      NoInfer<TInferredQueryFnData> | undefined
-    >,
+  setQueryData<TQueryFnData>(
+    queryKey: TypedQueryKey<TQueryFnData> | QueryKey,
+    updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
     options?: SetDataOptions,
-  ): TInferredQueryFnData | undefined {
-    const query = this.#queryCache.find<TInferredQueryFnData>({ queryKey })
+  ): TQueryFnData | undefined {
+    const query = this.#queryCache.find<TQueryFnData>({ queryKey })
     const prevData = query?.state.data
     const data = functionalUpdate(updater, prevData)
 

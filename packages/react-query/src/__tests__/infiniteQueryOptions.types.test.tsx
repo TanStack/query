@@ -4,7 +4,7 @@ import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
 import { doNotExecute } from './utils'
-import type { InfiniteData, dataTagSymbol } from '@tanstack/query-core'
+import type { InfiniteData, TypedQueryKey } from '@tanstack/query-core'
 import type { Equal, Expect } from './utils'
 
 describe('queryOptions', () => {
@@ -97,7 +97,7 @@ describe('queryOptions', () => {
       })
 
       const result: Expect<
-        Equal<(typeof queryKey)[typeof dataTagSymbol], InfiniteData<string>>
+        Equal<typeof queryKey, TypedQueryKey<InfiniteData<string>>>
       > = true
       return result
     })
@@ -112,7 +112,7 @@ describe('queryOptions', () => {
         })
 
         const result: Expect<
-          Equal<(typeof queryKey)[typeof dataTagSymbol], InfiniteData<string>>
+          Equal<typeof queryKey, TypedQueryKey<InfiniteData<string>>>
         > = true
         return result
       })

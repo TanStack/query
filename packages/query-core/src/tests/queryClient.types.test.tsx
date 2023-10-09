@@ -2,12 +2,12 @@ import { describe, it } from 'vitest'
 import { QueryClient } from '../queryClient'
 import { doNotExecute } from './utils'
 import type { Equal, Expect } from './utils'
-import type { DataTag, InfiniteData } from '../types'
+import type { InfiniteData, TypedQueryKey } from '../types'
 
 describe('getQueryData', () => {
   it('should be typed if key is tagged', () => {
     doNotExecute(() => {
-      const queryKey = ['key'] as DataTag<Array<string>, number>
+      const queryKey = ['key'] as TypedQueryKey<number>
       const queryClient = new QueryClient()
       const data = queryClient.getQueryData(queryKey)
 
@@ -51,7 +51,7 @@ describe('getQueryData', () => {
 describe('setQueryData', () => {
   it('updater should be typed if key is tagged', () => {
     doNotExecute(() => {
-      const queryKey = ['key'] as DataTag<Array<string>, number>
+      const queryKey = ['key'] as TypedQueryKey<number>
       const queryClient = new QueryClient()
       const data = queryClient.setQueryData(queryKey, (prev) => {
         const result: Expect<Equal<typeof prev, number | undefined>> = true
