@@ -5975,11 +5975,11 @@ describe('useQuery', () => {
           <div>data: {state.data}</div>
           <div>dataUpdatedAt: {state.dataUpdatedAt}</div>
           <button
-            onClick={() =>
+            onClick={() => {
               queryClient.setQueryData(key, 'newData', {
                 updatedAt: 100,
               })
-            }
+            }}
           >
             setQueryData
           </button>

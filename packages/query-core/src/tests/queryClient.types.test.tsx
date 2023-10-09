@@ -72,10 +72,15 @@ describe('setQueryData', () => {
 
       // @ts-expect-error value should be a number
       queryClient.setQueryData(queryKey, () => '1')
+
+      const data = queryClient.setQueryData(queryKey, 1)
+
+      const result: Expect<Equal<typeof data, number | undefined>> = true
+      return result
     })
   })
 
-  it('should infer unknown if key is not tagged', () => {
+  it('should infer unknown for updater if key is not tagged', () => {
     doNotExecute(() => {
       const queryKey = ['key'] as const
       const queryClient = new QueryClient()
@@ -83,6 +88,17 @@ describe('setQueryData', () => {
         const result: Expect<Equal<typeof prev, unknown>> = true
         return result ? prev : 1
       })
+
+      const result: Expect<Equal<typeof data, unknown>> = true
+      return result
+    })
+  })
+
+  it('should infer unknown for value if key is not tagged', () => {
+    doNotExecute(() => {
+      const queryKey = ['key'] as const
+      const queryClient = new QueryClient()
+      const data = queryClient.setQueryData(queryKey, 'foo')
 
       const result: Expect<Equal<typeof data, unknown>> = true
       return result
@@ -97,6 +113,17 @@ describe('setQueryData', () => {
         const result: Expect<Equal<typeof prev, string | undefined>> = true
         return result ? prev : '1'
       })
+
+      const result: Expect<Equal<typeof data, string | undefined>> = true
+      return result
+    })
+  })
+
+  it('should infer passed generic for value', () => {
+    doNotExecute(() => {
+      const queryKey = ['key'] as const
+      const queryClient = new QueryClient()
+      const data = queryClient.setQueryData<string>(queryKey, 'foo')
 
       const result: Expect<Equal<typeof data, string | undefined>> = true
       return result
