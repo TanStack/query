@@ -4,8 +4,14 @@ import { clsx as cx } from 'clsx'
 import { Index, Match, Show, Switch, createMemo, createSignal } from 'solid-js'
 import { Key } from '@solid-primitives/keyed'
 import { tokens } from './theme'
-import { displayValue } from './utils'
-import { CopiedCopier, Copier, ErrorCopier } from './icons'
+import {
+  deleteNestedDataByPath,
+  displayValue,
+  updateNestedDataByPath,
+} from './utils'
+import { CopiedCopier, Copier, ErrorCopier, List, Trash } from './icons'
+import { useQueryDevtoolsContext } from './Context'
+import type { Query } from '@tanstack/query-core'
 
 /**
  * Chunk elements in the array by size
@@ -73,7 +79,8 @@ const CopyButton = (props: { value: unknown }) => {
 
   return (
     <button
-      class={styles.copyButton}
+      class={styles.actionButton}
+      title="Copy object to clipboard"
       aria-label={`${
         copyState() === 'NoCopy'
           ? 'Copy object to clipboard'
@@ -118,11 +125,60 @@ const CopyButton = (props: { value: unknown }) => {
   )
 }
 
+const ClearArrayButton = (props: {
+  dataPath: Array<string>
+  activeQuery: Query
+}) => {
+  const styles = getStyles()
+  const queryClient = useQueryDevtoolsContext().client
+
+  return (
+    <button
+      class={styles.actionButton}
+      title={'Remove all items'}
+      aria-label={'Remove all items'}
+      onClick={() => {
+        const oldData = props.activeQuery.state.data
+        const newData = updateNestedDataByPath(oldData, props.dataPath, [])
+        queryClient.setQueryData(props.activeQuery.queryKey, newData)
+      }}
+    >
+      <List />
+    </button>
+  )
+}
+
+const DeleteItemButton = (props: {
+  dataPath: Array<string>
+  activeQuery: Query
+}) => {
+  const styles = getStyles()
+  const queryClient = useQueryDevtoolsContext().client
+
+  return (
+    <button
+      class={cx(styles.actionButton)}
+      title={'Delete item'}
+      aria-label={'Delete item'}
+      onClick={() => {
+        const oldData = props.activeQuery.state.data
+        const newData = deleteNestedDataByPath(oldData, props.dataPath)
+        queryClient.setQueryData(props.activeQuery.queryKey, newData)
+      }}
+    >
+      <Trash />
+    </button>
+  )
+}
+
 type ExplorerProps = {
-  copyable?: boolean
+  editable?: boolean
   label: string
   value: unknown
   defaultExpanded?: Array<string>
+  dataPath?: Array<string>
+  activeQuery?: Query
+  itemsDeletable?: boolean
 }
 
 function isIterable(x: any): x is Iterable<unknown> {
@@ -131,6 +187,7 @@ function isIterable(x: any): x is Iterable<unknown> {
 
 export default function Explorer(props: ExplorerProps) {
   const styles = getStyles()
+  const queryClient = useQueryDevtoolsContext().client
 
   const [expanded, setExpanded] = createSignal(
     (props.defaultExpanded || []).includes(props.label),
@@ -187,6 +244,8 @@ export default function Explorer(props: ExplorerProps) {
 
   const subEntryPages = createMemo(() => chunkArray(subEntries(), 100))
 
+  const currentDataPath = props.dataPath ?? []
+
   return (
     <div class={styles.entry}>
       <Show when={subEntryPages().length}>
@@ -201,8 +260,28 @@ export default function Explorer(props: ExplorerProps) {
               {subEntries().length} {subEntries().length > 1 ? `items` : `item`}
             </span>
           </button>
-          <Show when={props.copyable}>
-            <CopyButton value={props.value} />
+          <Show when={props.editable}>
+            <div class={styles.actions}>
+              <CopyButton value={props.value} />
+
+              <Show
+                when={props.itemsDeletable && props.activeQuery !== undefined}
+              >
+                <DeleteItemButton
+                  activeQuery={props.activeQuery!}
+                  dataPath={currentDataPath}
+                />
+              </Show>
+
+              <Show
+                when={type() === 'array' && props.activeQuery !== undefined}
+              >
+                <ClearArrayButton
+                  activeQuery={props.activeQuery!}
+                  dataPath={currentDataPath}
+                />
+              </Show>
+            </div>
           </Show>
         </div>
         <Show when={expanded()}>
@@ -215,7 +294,14 @@ export default function Explorer(props: ExplorerProps) {
                       defaultExpanded={props.defaultExpanded}
                       label={entry().label}
                       value={entry().value}
-                      copyable={props.copyable}
+                      editable={props.editable}
+                      dataPath={[...currentDataPath, entry().label]}
+                      activeQuery={props.activeQuery}
+                      itemsDeletable={
+                        type() === 'array' ||
+                        type() === 'Iterable' ||
+                        type() === 'object'
+                      }
                     />
                   )
                 }}
@@ -250,7 +336,9 @@ export default function Explorer(props: ExplorerProps) {
                                 defaultExpanded={props.defaultExpanded}
                                 label={entry().label}
                                 value={entry().value}
-                                copyable={props.copyable}
+                                editable={props.editable}
+                                dataPath={[...currentDataPath, entry().label]}
+                                activeQuery={props.activeQuery}
                               />
                             )}
                           </Key>
@@ -265,13 +353,50 @@ export default function Explorer(props: ExplorerProps) {
         </Show>
       </Show>
       <Show when={subEntryPages().length === 0}>
-        <div
-          style={{
-            'line-height': '1.125rem',
-          }}
-        >
-          <span class={styles.label}>{props.label}:</span>{' '}
-          <span class={styles.value}>{displayValue(props.value)}</span>
+        <div class={styles.row}>
+          <span class={styles.label}>{props.label}:</span>
+          <Show
+            when={
+              props.editable &&
+              props.activeQuery !== undefined &&
+              (type() === 'string' || type() === 'number')
+            }
+            fallback={
+              <span class={styles.value}>{displayValue(props.value)}</span>
+            }
+          >
+            <input
+              type={type() === 'number' ? 'number' : 'text'}
+              class={cx(styles.value, styles.editableInput)}
+              value={props.value as string | number}
+              onChange={(changeEvent) => {
+                const oldData = props.activeQuery!.state.data
+
+                const newData = updateNestedDataByPath(
+                  oldData,
+                  currentDataPath,
+                  type() === 'number'
+                    ? changeEvent.target.valueAsNumber
+                    : changeEvent.target.value,
+                )
+
+                queryClient.setQueryData(props.activeQuery!.queryKey, newData)
+              }}
+            />
+          </Show>
+
+          <Show
+            when={
+              props.editable &&
+              props.itemsDeletable &&
+              props.activeQuery !== undefined
+            }
+          >
+            <DeleteItemButton
+              activeQuery={props.activeQuery!}
+              dataPath={currentDataPath}
+            />
+          </Show>
         </div>
       </Show>
     </div>
@@ -315,6 +440,7 @@ const getStyles = () => {
       align-items: center;
       line-height: 1.125rem;
       min-height: 1.125rem;
+      gap: ${size[2]};
     `,
     expanderButton: css`
       cursor: pointer;
@@ -352,8 +478,30 @@ const getStyles = () => {
     `,
     value: css`
       color: ${colors.purple[400]};
+      flex-grow: 1;
     `,
-    copyButton: css`
+    actions: css`
+      display: inline-flex;
+      gap: ${size[2]};
+    `,
+    row: css`
+      display: inline-flex;
+      gap: ${size[2]};
+      width: 100%;
+      margin-bottom: ${size[0.5]};
+      line-height: 1.125rem;
+    `,
+    editableInput: css`
+      border: none;
+      padding: 0px ${size[1]};
+      flex-grow: 1;
+      background-color: ${colors.gray[900]};
+
+      &:hover {
+        background-color: ${colors.gray[800]};
+      }
+    `,
+    actionButton: css`
       background-color: transparent;
       border: none;
       display: inline-flex;
@@ -364,11 +512,17 @@ const getStyles = () => {
       width: ${size[3]};
       height: ${size[3]};
       position: relative;
-      left: ${size[2]};
       z-index: 1;
 
-      &:hover svg .copier {
-        stroke: ${colors.gray[500]} !important;
+      &:hover svg {
+        .copier,
+        .list {
+          stroke: ${colors.gray[500]} !important;
+        }
+
+        .list-item {
+          stroke: ${colors.gray[700]};
+        }
       }
 
       &:focus-visible {

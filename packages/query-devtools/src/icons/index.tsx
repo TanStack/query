@@ -271,6 +271,25 @@ export function ErrorCopier() {
   )
 }
 
+export function List() {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#98A2B3"
+      stroke-width="2"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect class="list" width="20" height="20" y="2" x="2" rx="2" />
+      <line class="list-item" y1="7" y2="7" x1="6" x2="18" />
+      <line class="list-item" y2="12" y1="12" x1="6" x2="18" />
+      <line class="list-item" y1="17" y2="17" x1="6" x2="18" />
+    </svg>
+  )
+}
+
 export function TanstackLogo() {
   return (
     <svg version="1.0" viewBox="0 0 633 633">

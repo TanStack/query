@@ -1273,7 +1273,8 @@ const QueryDetails = () => {
             label="Data"
             defaultExpanded={['Data']}
             value={activeQueryStateData()}
-            copyable={true}
+            editable={true}
+            activeQuery={activeQuery()}
           />
         </div>
         <div class={cx(styles.detailsHeader, 'tsqd-query-details-header')}>
