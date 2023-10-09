@@ -41,6 +41,10 @@ export type DefinedInitialDataInfiniteOptions<
     | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
 }
 
+type ValidateInfiniteQueryOptions<T> = {
+  [K in keyof T]: K extends keyof UseInfiniteQueryOptions ? T[K] : never
+}
+
 export function infiniteQueryOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -48,12 +52,14 @@ export function infiniteQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: UndefinedInitialDataInfiniteOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey,
-    TPageParam
+  options: ValidateInfiniteQueryOptions<
+    UndefinedInitialDataInfiniteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >
   >,
 ): UndefinedInitialDataInfiniteOptions<
   TQueryFnData,
@@ -72,12 +78,14 @@ export function infiniteQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: DefinedInitialDataInfiniteOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey,
-    TPageParam
+  options: ValidateInfiniteQueryOptions<
+    DefinedInitialDataInfiniteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >
   >,
 ): DefinedInitialDataInfiniteOptions<
   TQueryFnData,
