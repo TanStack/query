@@ -65,7 +65,7 @@ describe('setQueryData', () => {
 
   it('value should be typed if key is tagged', () => {
     doNotExecute(() => {
-      const queryKey = ['key'] as DataTag<Array<string>, number>
+      const queryKey = ['key'] as TypedQueryKey<number>
       const queryClient = new QueryClient()
 
       // @ts-expect-error value should be a number
@@ -95,13 +95,13 @@ describe('setQueryData', () => {
     })
   })
 
-  it('should infer unknown for value if key is not tagged', () => {
+  it('should infer literal value if key is not tagged', () => {
     doNotExecute(() => {
       const queryKey = ['key'] as const
       const queryClient = new QueryClient()
       const data = queryClient.setQueryData(queryKey, 'foo')
 
-      const result: Expect<Equal<typeof data, unknown>> = true
+      const result: Expect<Equal<typeof data, 'foo' | undefined>> = true
       return result
     })
   })
