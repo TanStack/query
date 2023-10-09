@@ -7,7 +7,7 @@ import type { QueryFilters, QueryTypeFilter } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
 
-type NoInfer<T> = [T][T extends any ? 0 : never]
+export type NoInfer<T> = [T][T extends any ? 0 : never]
 
 export interface Register {
   // defaultError: Error

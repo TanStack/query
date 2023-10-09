@@ -36,10 +36,19 @@ describe('getQueryData', () => {
       return result
     })
   })
+
+  it('should only allow Arrays to be passed', () => {
+    doNotExecute(() => {
+      const queryKey = 'key' as const
+      const queryClient = new QueryClient()
+      // @ts-expect-error TS2345: Argument of type 'string' is not assignable to parameter of type 'QueryKey'
+      return queryClient.getQueryData(queryKey)
+    })
+  })
 })
 
 describe('setQueryData', () => {
-  it('should be typed if key is tagged', () => {
+  it('updater should be typed if key is tagged', () => {
     doNotExecute(() => {
       const queryKey = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
@@ -48,8 +57,21 @@ describe('setQueryData', () => {
         return result ? prev : 1
       })
 
-      const result: Expect<Equal<typeof data, number>> = true
+      const result: Expect<Equal<typeof data, number | undefined>> = true
       return result
+    })
+  })
+
+  it('value should be typed if key is tagged', () => {
+    doNotExecute(() => {
+      const queryKey = ['key'] as DataTag<Array<string>, number>
+      const queryClient = new QueryClient()
+
+      // @ts-expect-error value should be a number
+      queryClient.setQueryData(queryKey, '1')
+
+      // @ts-expect-error value should be a number
+      queryClient.setQueryData(queryKey, () => '1')
     })
   })
 
