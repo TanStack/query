@@ -23,19 +23,13 @@ export type DefinedInitialDataOptions<
     | (() => NonUndefinedGuard<TQueryFnData>)
 }
 
-type ValidateQueryOptions<T> = {
-  [K in keyof T]: K extends keyof UseQueryOptions ? T[K] : never
-}
-
 export function queryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: ValidateQueryOptions<
-    UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
-  >,
+  options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
   queryKey: DataTag<TQueryKey, TData>
 }
@@ -46,9 +40,7 @@ export function queryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: ValidateQueryOptions<
-    DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
-  >,
+  options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
   queryKey: DataTag<TQueryKey, TData>
 }
