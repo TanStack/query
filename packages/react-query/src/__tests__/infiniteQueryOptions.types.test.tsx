@@ -155,7 +155,7 @@ describe('queryOptions', () => {
         })
 
         const result: Expect<
-          Equal<typeof data, InfiniteData<string, unknown> | undefined>
+          Equal<typeof data, InfiniteData<string, unknown>>
         > = true
         return result
       })
