@@ -1,0 +1,49 @@
+{
+  "name": "@tanstack/angular-query-devtools",
+  "version": "5.0.0-rc.5",
+  "description": "Developer tools to interact with and visualize the TanStack/angular-query cache",
+  "author": "Arnoud de Vries",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tanstack/query.git"
+  },
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "clean": "rimraf ./build && rimraf ./coverage",
+    "test:eslint": "eslint --ext .ts,.tsx ./src",
+    "test:types": "tsc",
+    "test:lib": "vitest run --coverage",
+    "test:lib:dev": "vitest watch --coverage",
+    "test:build": "publint --strict",
+    "build": "ng-packagr -p ng-package.json"
+  },
+  "dependencies": {
+    "@tanstack/query-devtools": "workspace:*",
+    "tslib": "^2.6.2"
+  },
+  "devDependencies": {
+    "@angular/cli": "^16.2.5",
+    "@angular/common": "^16.2.8",
+    "@angular/compiler": "^16.2.8",
+    "@angular/compiler-cli": "^16.2.8",
+    "@angular/core": "^16.2.8",
+    "@angular/platform-browser": "^16.2.8",
+    "@angular/platform-browser-dynamic": "^16.2.8",
+    "@tanstack/angular-query": "workspace:*",
+    "ng-packagr": "^16.2.3",
+    "reflect-metadata": "^0.1.13",
+    "typescript": "5.1.6",
+    "zone.js": "^0.14.0"
+  },
+  "peerDependencies": {
+    "@angular/core": "^16 <17",
+    "@tanstack/angular-query": "workspace:^"
+  }
+}
