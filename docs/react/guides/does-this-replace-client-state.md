@@ -12,7 +12,7 @@ With those points in mind, the short answer is that TanStack Query **replaces th
 
 For a vast majority of applications, the truly **globally accessible client state** that is left over after migrating all of your async code to TanStack Query is usually very tiny.
 
-> There are still some circumstances where an application might indeed have a massive amount of synchronous client-only state (like a visual designer or music production application), in which case, you will probably still want a client state manager. In this situation it's important to note that **TanStack Query is not a replacement for local/client state management**. However, you can use TanStack Query along side most client state managers with zero issues.
+> There are still some circumstances where an application might indeed have a massive amount of synchronous client-only state (like a visual designer or music production application), in which case, you will probably still want a client state manager. In this situation it's important to note that **TanStack Query is not a replacement for local/client state management**. However, you can use TanStack Query alongside most client state managers with zero issues.
 
 ## A Contrived Example
 
@@ -38,7 +38,7 @@ const globalState = {
 }
 ```
 
-This also means that with a few hook calls to `useQuery` and `useMutation`, we also get to remove any boilerplate code that was used to manage our server state eg.
+This also means that with a few hook calls to `useQuery` and `useMutation`, we also get to remove any boilerplate code that was used to manage our server state e.g.
 
 - Connectors
 - Action Creators
