@@ -157,12 +157,10 @@ export class QueryClient {
       : TQueryFnData,
   >(
     queryKey: TaggedQueryKey,
-    updater:
-      | NoInfer<TInferredQueryFnData>
-      | undefined
-      | ((
-          prev: TInferredQueryFnData | undefined,
-        ) => NoInfer<TInferredQueryFnData> | undefined),
+    updater: Updater<
+      NoInfer<TInferredQueryFnData> | undefined,
+      NoInfer<TInferredQueryFnData> | undefined
+    >,
     options?: SetDataOptions,
   ): TInferredQueryFnData | undefined {
     const query = this.#queryCache.find<TInferredQueryFnData>({ queryKey })
