@@ -58,7 +58,7 @@ describe('setQueryData', () => {
         return result ? prev : 1
       })
 
-      const result: Expect<Equal<typeof data, number>> = true
+      const result: Expect<Equal<typeof data, number | undefined>> = true
       return result
     })
   })

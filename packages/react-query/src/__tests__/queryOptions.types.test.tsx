@@ -191,10 +191,12 @@ describe('queryOptions', () => {
 
         // @ts-expect-error value should be a number
         queryClient.setQueryData(queryKey, '5')
+        // @ts-expect-error value should be a number
+        queryClient.setQueryData(queryKey, () => '5')
 
         const data = queryClient.setQueryData(queryKey, 5)
 
-        const result: Expect<Equal<typeof data, number>> = true
+        const result: Expect<Equal<typeof data, number | undefined>> = true
         return result
       })
     })
