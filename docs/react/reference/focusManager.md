@@ -37,7 +37,7 @@ focusManager.setEventListener(handleFocus => {
 
 ## `focusManager.setFocused`
 
-`setFocused` can be used to manually set the focus state. Set `undefined` to fallback to the default focus check.
+`setFocused` can be used to manually set the focus state. Set `undefined` to fall back to the default focus check.
 
 ```tsx
 import { focusManager } from '@tanstack/react-query'
