@@ -237,7 +237,6 @@ export interface QueryObserverOptions<
     | number
     | false
     | ((
-        data: TData | undefined,
         query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
       ) => number | false | undefined)
   /**
