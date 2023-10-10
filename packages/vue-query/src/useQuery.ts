@@ -1,37 +1,25 @@
 import { QueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
-import type { ToRefs } from 'vue-demi'
 import type {
   DefinedQueryObserverResult,
   QueryFunction,
   QueryKey,
-  QueryObserverResult,
 } from '@tanstack/query-core'
 import type { UseQueryReturnType as UQRT } from './useBaseQuery'
 import type {
   DeepUnwrapRef,
-  DistributiveOmit,
   MaybeRef,
   VueQueryObserverOptions,
   WithQueryClientKey,
 } from './types'
 
-export type UseQueryReturnType<TData, TError> = DistributiveOmit<
-  UQRT<TData, TError>,
-  'refetch' | 'remove'
-> & {
-  refetch: QueryObserverResult<TData, TError>['refetch']
-  remove: QueryObserverResult<TData, TError>['remove']
-}
+export type UseQueryReturnType<TData, TError> = UQRT<TData, TError>
 
-export type UseQueryDefinedReturnType<TData, TError> = DistributiveOmit<
-  ToRefs<Readonly<DefinedQueryObserverResult<TData, TError>>>,
-  'refetch' | 'remove'
-> & {
-  suspense: () => Promise<QueryObserverResult<TData, TError>>
-  refetch: QueryObserverResult<TData, TError>['refetch']
-  remove: QueryObserverResult<TData, TError>['remove']
-}
+export type UseQueryDefinedReturnType<TData, TError> = UQRT<
+  TData,
+  TError,
+  DefinedQueryObserverResult<TData, TError>
+>
 
 export type UseQueryOptions<
   TQueryFnData = unknown,

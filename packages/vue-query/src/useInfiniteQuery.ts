@@ -11,7 +11,6 @@ import type { UseQueryReturnType } from './useBaseQuery'
 
 import type {
   DeepUnwrapRef,
-  DistributiveOmit,
   VueInfiniteQueryObserverOptions,
   WithQueryClientKey,
 } from './types'
@@ -31,23 +30,11 @@ export type UseInfiniteQueryOptions<
   >
 >
 
-type InfiniteQueryReturnType<TData, TError> = UseQueryReturnType<
+export type UseInfiniteQueryReturnType<TData, TError> = UseQueryReturnType<
   TData,
   TError,
   InfiniteQueryObserverResult<TData, TError>
 >
-export type UseInfiniteQueryReturnType<TData, TError> = DistributiveOmit<
-  InfiniteQueryReturnType<TData, TError>,
-  'fetchNextPage' | 'fetchPreviousPage' | 'refetch' | 'remove'
-> & {
-  fetchNextPage: InfiniteQueryObserverResult<TData, TError>['fetchNextPage']
-  fetchPreviousPage: InfiniteQueryObserverResult<
-    TData,
-    TError
-  >['fetchPreviousPage']
-  refetch: InfiniteQueryObserverResult<TData, TError>['refetch']
-  remove: InfiniteQueryObserverResult<TData, TError>['remove']
-}
 
 export function useInfiniteQuery<
   TQueryFnData = unknown,
@@ -104,7 +91,7 @@ export function useInfiniteQuery<
     arg1,
     arg2,
     arg3,
-  ) as InfiniteQueryReturnType<TData, TError>
+  ) as UseInfiniteQueryReturnType<TData, TError>
 
   return result
 }
