@@ -136,6 +136,17 @@ A few notes about how codemod works:
 
 `onSuccess`, `onError` and `onSettled` have been removed from Queries. They haven't been touched for Mutations. Please see [this RFC](https://github.com/TanStack/query/discussions/5279) for motivations behind this change and what to do instead.
 
+### The `refetchInteval` callback function only gets `query` passed
+
+This streamlines how callbacks are invoked (the `refetchOnWindowFocus`, `refetchOnMount` and `refetchOnReconnect` callbacks all only get the query passed as well), and it fixes some typing issues when callbacks get data transformed by `select`.
+
+```diff
+- refetchInterval: number | false | ((data: TData | undefined, query: Query) => number | false | undefined)
++ refetchInterval: number | false | ((query: Query) => number | false | undefined)
+```
+
+You can still access data with `query.state.data`, however, it will not be data that has been transformed by `select`. If you need to access the transformed data, you can call the transformation again on `query.state.data`.
+
 ### The `remove` method has been removed from useQuery
 
 Previously, remove method used to remove the query from the queryCache without informing observers about it. It was best used to remove data imperatively that is no longer needed, e.g. when logging a user out.
