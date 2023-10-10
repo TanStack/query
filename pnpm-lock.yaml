@@ -1686,6 +1686,25 @@ importers:
         specifier: ^2.7.0
         version: 2.7.0(solid-js@1.7.8)(vite@4.4.4)
 
+  packages/solid-query-devtools:
+    dependencies:
+      '@tanstack/query-devtools':
+        specifier: workspace:*
+        version: link:../query-devtools
+    devDependencies:
+      '@tanstack/solid-query':
+        specifier: workspace:^
+        version: link:../solid-query
+      solid-js:
+        specifier: ^1.7.8
+        version: 1.7.8
+      tsup-preset-solid:
+        specifier: ^2.0.1
+        version: 2.0.1(esbuild@0.18.13)(solid-js@1.7.8)(tsup@7.1.0)
+      vite-plugin-solid:
+        specifier: ^2.7.0
+        version: 2.7.0(solid-js@1.7.8)(vite@4.4.4)
+
   packages/solid-query-persist-client:
     dependencies:
       '@tanstack/query-persist-client-core':
@@ -8727,7 +8746,7 @@ packages:
       ignore: 5.2.0
       natural-compare-lite: 1.4.0
       regexpp: 3.2.0
-      semver: 7.5.1
+      semver: 7.5.4
       tsutils: 3.21.0(typescript@5.1.6)
       typescript: 5.1.6
     transitivePeerDependencies:
