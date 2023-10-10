@@ -27,7 +27,7 @@ import type {
 } from '@tanstack/query-core'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
-// `placeholderData` function does not have a parameter
+// `placeholderData` function always gets undefined passed
 type UseQueryOptionsForUseQueries<
   TQueryFnData = unknown,
   TError = DefaultError,
