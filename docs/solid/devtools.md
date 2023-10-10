@@ -33,7 +33,7 @@ By default, Solid Query Devtools are only included in bundles when `process.env.
 
 Floating Mode will mount the devtools as a fixed, floating element in your app and provide a toggle in the corner of the screen to show and hide the devtools. This toggle state will be stored and remembered in localStorage across reloads.
 
-Place the following code as high in your React app as you can. The closer it is to the root of the page, the better it will work!
+Place the following code as high in your Solid app as you can. The closer it is to the root of the page, the better it will work!
 
 ```tsx
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
@@ -54,10 +54,10 @@ function App() {
   - Set this `true` if you want the dev tools to default to being open
 - `buttonPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right"`
   - Defaults to `bottom-left`
-  - The position of the React Query logo to open and close the devtools panel
+  - The position of the Solid Query logo to open and close the devtools panel
 - `position?: "top" | "bottom" | "left" | "right"`
   - Defaults to `bottom`
-  - The position of the React Query devtools panel
+  - The position of the Solid Query devtools panel
 - `client?: QueryClient`,
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 - `errorTypes?: { name: string; initializer: (query: Query) => TError}`
