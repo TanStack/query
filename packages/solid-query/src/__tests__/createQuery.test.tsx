@@ -1046,6 +1046,7 @@ describe('createQuery', () => {
           count++
           return count === 1 ? result1 : result2
         },
+        reconcile: 'id',
       }))
 
       createRenderEffect(() => {
