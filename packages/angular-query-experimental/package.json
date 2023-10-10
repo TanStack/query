@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/angular-query",
+  "name": "@tanstack/angular-query-experimental",
   "version": "5.0.0-rc.5",
   "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
   "author": "Arnoud de Vries",

@@ -2,7 +2,7 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
-    name: 'angular-query-devtools',
+    name: 'angular-query-devtools-experimental',
     dir: './src',
     watch: false,
     environment: 'jsdom',

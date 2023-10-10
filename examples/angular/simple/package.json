@@ -15,8 +15,8 @@
     "@angular/compiler": "^16.2.8",
     "@angular/core": "^16.2.8",
     "@angular/platform-browser": "^16.2.8",
-    "@tanstack/angular-query": "^5.0.0-rc.5",
-    "@tanstack/angular-query-devtools": "^5.0.0-rc.5",
+    "@tanstack/angular-query-experimental": "^5.0.0-rc.5",
+    "@tanstack/angular-query-devtools-experimental": "^5.0.0-rc.5",
     "axios": "^1.4.0",
     "zone.js": "^0.14.0"
   },

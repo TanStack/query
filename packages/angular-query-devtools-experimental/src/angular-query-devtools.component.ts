@@ -9,8 +9,11 @@ import {
   booleanAttribute,
 } from '@angular/core'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
-import { UseQueryClient, onlineManager } from '@tanstack/angular-query'
-import type { QueryClient } from '@tanstack/angular-query'
+import {
+  UseQueryClient,
+  onlineManager,
+} from '@tanstack/angular-query-experimental'
+import type { QueryClient } from '@tanstack/angular-query-experimental'
 import type { AfterViewInit, OnDestroy } from '@angular/core'
 import type {
   DevToolsErrorType as DevToolsErrorTypeOriginal,

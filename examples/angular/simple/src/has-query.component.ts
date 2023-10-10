@@ -4,7 +4,7 @@ import {
   CreateQuery,
   UseIsFetching,
   UseQueryClient,
-} from '@tanstack/angular-query'
+} from '@tanstack/angular-query-experimental'
 import axios from 'axios'
 import {
   ChangeDetectionStrategy,
@@ -16,7 +16,7 @@ import { JsonPipe } from '@angular/common'
 import type {
   CreateMutationOptions,
   CreateQueryOptions,
-} from '@tanstack/angular-query'
+} from '@tanstack/angular-query-experimental'
 
 type SignalValue<T extends () => unknown> = ReturnType<T>
 

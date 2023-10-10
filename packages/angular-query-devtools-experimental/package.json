@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/angular-query-devtools",
+  "name": "@tanstack/angular-query-devtools-experimental",
   "version": "5.0.0-rc.5",
   "description": "Developer tools to interact with and visualize the TanStack/angular-query cache",
   "author": "Arnoud de Vries",
@@ -36,7 +36,7 @@
     "@angular/core": "^16.2.8",
     "@angular/platform-browser": "^16.2.8",
     "@angular/platform-browser-dynamic": "^16.2.8",
-    "@tanstack/angular-query": "workspace:*",
+    "@tanstack/angular-query-experimental": "workspace:*",
     "ng-packagr": "^16.2.3",
     "reflect-metadata": "^0.1.13",
     "typescript": "5.1.6",
@@ -44,6 +44,6 @@
   },
   "peerDependencies": {
     "@angular/core": "^16 <17",
-    "@tanstack/angular-query": "workspace:^"
+    "@tanstack/angular-query-experimental": "workspace:^"
   }
 }

@@ -1,16 +1,8 @@
 import { defineConfig } from 'vitest/config'
 
-// globals: true,
-//   environment: 'jsdom',
-//   setupFiles: ['src/test-setup.ts'],
-//   include: ['**/*.spec.ts'],
-//   cache: {
-//   dir: `../../node_modules/.vitest`,
-// },
-
 export default defineConfig({
   test: {
-    name: 'angular-query',
+    name: 'angular-query-experimental',
     dir: './src',
     watch: false,
     environment: 'jsdom',

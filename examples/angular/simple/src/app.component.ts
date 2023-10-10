@@ -1,7 +1,7 @@
 import { NgIf } from '@angular/common'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
-import { UseQueryClient } from '@tanstack/angular-query'
-import { AngularQueryDevtoolsComponent } from '@tanstack/angular-query-devtools'
+import { UseQueryClient } from '@tanstack/angular-query-experimental'
+import { AngularQueryDevtoolsComponent } from '@tanstack/angular-query-devtools-experimental'
 import { HasQueryComponent } from './has-query.component'
 import { NoQueryComponent } from './no-query.component'
 
@@ -18,8 +18,8 @@ import { NoQueryComponent } from './no-query.component'
     <button (click)="showsQueryComponent = !showsQueryComponent">
       Toggle component with query
     </button>
-    <no-query *ngIf="!showsQueryComponent"></no-query>
-    <has-query *ngIf="showsQueryComponent"></has-query>`,
+    <no-query *ngIf="!showsQueryComponent" />
+    <has-query *ngIf="showsQueryComponent" />`,
   styles: [
     `
       :host {

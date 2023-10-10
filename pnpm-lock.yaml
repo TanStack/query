@@ -195,12 +195,12 @@ importers:
       '@angular/platform-browser':
         specifier: ^16.2.8
         version: 16.2.8(@angular/common@16.2.8)(@angular/core@16.2.8)
-      '@tanstack/angular-query':
+      '@tanstack/angular-query-devtools-experimental':
         specifier: ^5.0.0-rc.5
-        version: link:../../../packages/angular-query/build
-      '@tanstack/angular-query-devtools':
+        version: link:../../../packages/angular-query-devtools-experimental/build
+      '@tanstack/angular-query-experimental':
         specifier: ^5.0.0-rc.5
-        version: link:../../../packages/angular-query-devtools/build
+        version: link:../../../packages/angular-query-experimental/build
       axios:
         specifier: ^1.4.0
         version: 1.4.0
@@ -1518,7 +1518,68 @@ importers:
         specifier: ^3.3.0
         version: 3.3.0
 
-  packages/angular-query:
+  packages/angular-query-devtools-experimental:
+    dependencies:
+      '@tanstack/query-devtools':
+        specifier: workspace:*
+        version: link:../query-devtools
+      tslib:
+        specifier: ^2.6.2
+        version: 2.6.2
+    devDependencies:
+      '@angular/cli':
+        specifier: ^16.2.5
+        version: 16.2.5
+      '@angular/common':
+        specifier: ^16.2.8
+        version: 16.2.8(@angular/core@16.2.8)(rxjs@7.8.1)
+      '@angular/compiler':
+        specifier: ^16.2.8
+        version: 16.2.8(@angular/core@16.2.8)
+      '@angular/compiler-cli':
+        specifier: ^16.2.8
+        version: 16.2.8(@angular/compiler@16.2.8)(typescript@5.1.6)
+      '@angular/core':
+        specifier: ^16.2.8
+        version: 16.2.8(rxjs@7.8.1)(zone.js@0.14.0)
+      '@angular/platform-browser':
+        specifier: ^16.2.8
+        version: 16.2.8(@angular/common@16.2.8)(@angular/core@16.2.8)
+      '@angular/platform-browser-dynamic':
+        specifier: ^16.2.8
+        version: 16.2.8(@angular/common@16.2.8)(@angular/compiler@16.2.8)(@angular/core@16.2.8)(@angular/platform-browser@16.2.8)
+      '@tanstack/angular-query-experimental':
+        specifier: workspace:*
+        version: link:../angular-query-experimental/build
+      ng-packagr:
+        specifier: ^16.2.3
+        version: 16.2.3(@angular/compiler-cli@16.2.8)(tslib@2.6.2)(typescript@5.1.6)
+      reflect-metadata:
+        specifier: ^0.1.13
+        version: 0.1.13
+      typescript:
+        specifier: 5.1.6
+        version: 5.1.6
+      zone.js:
+        specifier: ^0.14.0
+        version: 0.14.0
+
+  packages/angular-query-devtools-experimental/build:
+    dependencies:
+      '@angular/core':
+        specifier: ^16 <17
+        version: 16.2.8(rxjs@7.8.1)(zone.js@0.13.3)
+      '@tanstack/angular-query-experimental':
+        specifier: workspace:^
+        version: link:../../angular-query-experimental/build
+      '@tanstack/query-devtools':
+        specifier: workspace:*
+        version: link:../../query-devtools
+      tslib:
+        specifier: ^2.6.2
+        version: 2.6.2
+
+  packages/angular-query-experimental:
     dependencies:
       '@tanstack/query-core':
         specifier: workspace:*
@@ -1567,68 +1628,7 @@ importers:
         specifier: ^0.14.0
         version: 0.14.0
 
-  packages/angular-query-devtools:
-    dependencies:
-      '@tanstack/query-devtools':
-        specifier: workspace:*
-        version: link:../query-devtools
-      tslib:
-        specifier: ^2.6.2
-        version: 2.6.2
-    devDependencies:
-      '@angular/cli':
-        specifier: ^16.2.5
-        version: 16.2.5
-      '@angular/common':
-        specifier: ^16.2.8
-        version: 16.2.8(@angular/core@16.2.8)(rxjs@7.8.1)
-      '@angular/compiler':
-        specifier: ^16.2.8
-        version: 16.2.8(@angular/core@16.2.8)
-      '@angular/compiler-cli':
-        specifier: ^16.2.8
-        version: 16.2.8(@angular/compiler@16.2.8)(typescript@5.1.6)
-      '@angular/core':
-        specifier: ^16.2.8
-        version: 16.2.8(rxjs@7.8.1)(zone.js@0.14.0)
-      '@angular/platform-browser':
-        specifier: ^16.2.8
-        version: 16.2.8(@angular/common@16.2.8)(@angular/core@16.2.8)
-      '@angular/platform-browser-dynamic':
-        specifier: ^16.2.8
-        version: 16.2.8(@angular/common@16.2.8)(@angular/compiler@16.2.8)(@angular/core@16.2.8)(@angular/platform-browser@16.2.8)
-      '@tanstack/angular-query':
-        specifier: workspace:*
-        version: link:../angular-query/build
-      ng-packagr:
-        specifier: ^16.2.3
-        version: 16.2.3(@angular/compiler-cli@16.2.8)(tslib@2.6.2)(typescript@5.1.6)
-      reflect-metadata:
-        specifier: ^0.1.13
-        version: 0.1.13
-      typescript:
-        specifier: 5.1.6
-        version: 5.1.6
-      zone.js:
-        specifier: ^0.14.0
-        version: 0.14.0
-
-  packages/angular-query-devtools/build:
-    dependencies:
-      '@angular/core':
-        specifier: ^16 <17
-        version: 16.2.8(rxjs@7.8.1)(zone.js@0.13.3)
-      '@tanstack/angular-query':
-        specifier: workspace:^
-        version: link:../../angular-query/build
-      '@tanstack/query-devtools':
-        specifier: workspace:*
-        version: link:../../query-devtools
-      tslib:
-        specifier: ^2.6.2
-        version: 2.6.2
-
-  packages/angular-query/build:
+  packages/angular-query-experimental/build:
     dependencies:
       '@angular/core':
         specifier: '>=16 <17'
@@ -2779,6 +2779,7 @@ packages:
       '@jridgewell/gen-mapping': 0.3.2
       '@jridgewell/trace-mapping': 0.3.18
       jsesc: 2.5.2
+    dev: true
 
   /@babel/generator@7.23.0:
     resolution: {integrity: sha512-lN85QRR+5IbYrMWM6Y4pE/noaQtg4pNiqeNGX60eqOfo6gtEj6uw/JagelB8vVztSd7R6M5n1+PQkDbHbBRU4g==}
@@ -3108,8 +3109,8 @@ packages:
       '@babel/helper-simple-access': 7.22.5
       '@babel/helper-split-export-declaration': 7.22.6
       '@babel/helper-validator-identifier': 7.22.20
-      '@babel/template': 7.22.5
-      '@babel/traverse': 7.22.8
+      '@babel/template': 7.22.15
+      '@babel/traverse': 7.23.0
       '@babel/types': 7.23.0
     transitivePeerDependencies:
       - supports-color
@@ -3353,8 +3354,8 @@ packages:
     resolution: {integrity: sha512-pSXRmfE1vzcUIDFQcSGA5Mr+GxBV9oiRKDuDxXvWQQBCh8HoIjs/2DlDB7H8smac1IVrB9/xdXj2N3Wol9Cr+Q==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/template': 7.22.5
-      '@babel/traverse': 7.22.8
+      '@babel/template': 7.22.15
+      '@babel/traverse': 7.23.0
       '@babel/types': 7.23.0
     transitivePeerDependencies:
       - supports-color
@@ -7031,7 +7032,7 @@ packages:
     resolution: {integrity: sha512-X7yV7eiwAxdj9k94NEylvbVHLiVG1nvzCV2EAowhxLTwODV1jl9UzZ48leOC0sH7OnuHrIkllaBgneUykIcZaw==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/code-frame': 7.22.5
+      '@babel/code-frame': 7.22.13
       '@babel/parser': 7.23.0
       '@babel/types': 7.23.0
 
@@ -7039,27 +7040,10 @@ packages:
     resolution: {integrity: sha512-7DuIjPgERaNo6r+PZwItpjCZEa5vyw4eJGufeLxrPdBXBoLcCJCIasvK6pK/9DVNrLZTLFhUGqaC6X/PA007TQ==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/code-frame': 7.22.5
-      '@babel/generator': 7.22.9
-      '@babel/helper-environment-visitor': 7.22.5
-      '@babel/helper-function-name': 7.22.5
-      '@babel/helper-hoist-variables': 7.22.5
-      '@babel/helper-split-export-declaration': 7.22.6
-      '@babel/parser': 7.23.0
-      '@babel/types': 7.23.0
-      debug: 4.3.4(supports-color@6.1.0)
-      globals: 11.12.0
-    transitivePeerDependencies:
-      - supports-color
-
-  /@babel/traverse@7.22.8:
-    resolution: {integrity: sha512-y6LPR+wpM2I3qJrsheCTwhIinzkETbplIgPBbwvqPKc+uljeA5gP+3nP8irdYt1mjQaDnlIcG+dw8OjAco4GXw==}
-    engines: {node: '>=6.9.0'}
-    dependencies:
       '@babel/code-frame': 7.22.13
       '@babel/generator': 7.23.0
-      '@babel/helper-environment-visitor': 7.22.20
-      '@babel/helper-function-name': 7.23.0
+      '@babel/helper-environment-visitor': 7.22.5
+      '@babel/helper-function-name': 7.22.5
       '@babel/helper-hoist-variables': 7.22.5
       '@babel/helper-split-export-declaration': 7.22.6
       '@babel/parser': 7.23.0
@@ -9885,7 +9869,7 @@ packages:
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
     dependencies:
       cross-spawn: 7.0.3
-      fast-glob: 3.2.12
+      fast-glob: 3.3.1
       is-glob: 4.0.3
       open: 9.1.0
       picocolors: 1.0.0
@@ -13307,6 +13291,7 @@ packages:
       picocolors: 1.0.0
       postcss: 8.4.26
       postcss-value-parser: 4.2.0
+    dev: false
 
   /autoprefixer@10.4.14(postcss@8.4.31):
     resolution: {integrity: sha512-FQzyfOsTlwVzjHxKEqRIAdJx9niO6VCBCoEwax/VLSoQF29ggECcPuBqUMZ+u8jCZOPSy8b8/8KnuFbp0SaFZQ==}
@@ -17667,7 +17652,7 @@ packages:
     peerDependencies:
       eslint: ^3.17.0 || ^4 || ^5 || ^6 || ^7 || ^8
     dependencies:
-      '@babel/traverse': 7.22.8
+      '@babel/traverse': 7.23.0
       eslint: 8.34.0
       eslint-plugin-react-native-globals: 0.1.2
     transitivePeerDependencies:
@@ -18267,7 +18252,7 @@ packages:
     dependencies:
       chalk: 4.1.2
       commander: 7.2.0
-      fast-glob: 3.2.12
+      fast-glob: 3.3.1
       find-up: 5.0.0
       fs-extra: 9.1.0
     dev: false
@@ -18442,7 +18427,6 @@ packages:
       glob-parent: 5.1.2
       merge2: 1.4.1
       micromatch: 4.0.5
-    dev: true
 
   /fast-json-stable-stringify@2.1.0:
     resolution: {integrity: sha512-lhd/wF+Lk98HZoTCtlVraHtfh5XYijIjalXck7saUtuanSDyLMxnHhSXEDJqHxD7msR8D0uCmqlkwjCV8xvwHw==}
@@ -19235,7 +19219,7 @@ packages:
     dependencies:
       array-union: 2.1.0
       dir-glob: 3.0.1
-      fast-glob: 3.2.12
+      fast-glob: 3.3.1
       ignore: 5.2.0
       merge2: 1.4.1
       slash: 3.0.0
@@ -19895,7 +19879,7 @@ packages:
     resolution: {integrity: sha512-C7FfFoTA+bI10qfeydT8aZbvr91vAEU+2W5BZUlzPec47oNb07SsOfwYrtxuvOYdUApPP/Qlh4DtAO51Ekk2QA==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     dependencies:
-      minimatch: 9.0.2
+      minimatch: 9.0.3
     dev: true
 
   /ignore@5.2.0:
@@ -24037,7 +24021,7 @@ packages:
       '@rollup/plugin-node-resolve': 15.2.3(rollup@3.26.0)
       ajv: 8.12.0
       ansi-colors: 4.1.3
-      autoprefixer: 10.4.14(postcss@8.4.26)
+      autoprefixer: 10.4.14(postcss@8.4.31)
       browserslist: 4.21.9
       cacache: 18.0.0
       chokidar: 3.5.3
@@ -24045,15 +24029,15 @@ packages:
       convert-source-map: 2.0.0
       dependency-graph: 0.11.0
       esbuild-wasm: 0.19.4
-      fast-glob: 3.2.12
+      fast-glob: 3.3.1
       find-cache-dir: 3.3.2
       injection-js: 2.4.0
       jsonc-parser: 3.2.0
       less: 4.2.0
       ora: 5.4.1
       piscina: 4.1.0
-      postcss: 8.4.26
-      postcss-url: 10.1.3(postcss@8.4.26)
+      postcss: 8.4.31
+      postcss-url: 10.1.3(postcss@8.4.31)
       rollup: 3.26.0
       rxjs: 7.8.1
       sass: 1.69.0
@@ -24083,7 +24067,7 @@ packages:
       '@rollup/plugin-node-resolve': 15.2.3(rollup@3.26.0)
       ajv: 8.12.0
       ansi-colors: 4.1.3
-      autoprefixer: 10.4.14(postcss@8.4.26)
+      autoprefixer: 10.4.14(postcss@8.4.31)
       browserslist: 4.21.9
       cacache: 18.0.0
       chokidar: 3.5.3
@@ -24091,15 +24075,15 @@ packages:
       convert-source-map: 2.0.0
       dependency-graph: 0.11.0
       esbuild-wasm: 0.19.4
-      fast-glob: 3.2.12
+      fast-glob: 3.3.1
       find-cache-dir: 3.3.2
       injection-js: 2.4.0
       jsonc-parser: 3.2.0
       less: 4.2.0
       ora: 5.4.1
       piscina: 4.1.0
-      postcss: 8.4.26
-      postcss-url: 10.1.3(postcss@8.4.26)
+      postcss: 8.4.31
+      postcss-url: 10.1.3(postcss@8.4.31)
       rollup: 3.26.0
       rxjs: 7.8.1
       sass: 1.69.0
@@ -26846,7 +26830,7 @@ packages:
       postcss-selector-parser: 6.0.11
     dev: false
 
-  /postcss-url@10.1.3(postcss@8.4.26):
+  /postcss-url@10.1.3(postcss@8.4.31):
     resolution: {integrity: sha512-FUzyxfI5l2tKmXdYc6VTu3TWZsInayEKPbiyW+P6vmmIrrb4I6CGX0BFoewgYHLK+oIL5FECEK02REYRpBvUCw==}
     engines: {node: '>=10'}
     peerDependencies:
@@ -26855,7 +26839,7 @@ packages:
       make-dir: 3.1.0
       mime: 2.5.2
       minimatch: 3.0.5
-      postcss: 8.4.26
+      postcss: 8.4.31
       xxhashjs: 0.2.2
     dev: true
 

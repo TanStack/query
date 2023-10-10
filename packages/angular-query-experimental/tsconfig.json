@@ -15,9 +15,7 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "module": "esnext",
-    "types": [
-      "vitest/globals"
-    ]
+    "types": ["vitest/globals"]
   },
   "angularCompilerOptions": {
     "allowJs": false,

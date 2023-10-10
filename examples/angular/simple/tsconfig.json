@@ -14,8 +14,8 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "skipLibCheck": true,
-    "types": ["vite/client"], // for vite
-    "experimentalDecorators": true, // for angular
+    "types": ["vite/client"],
+    "experimentalDecorators": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
