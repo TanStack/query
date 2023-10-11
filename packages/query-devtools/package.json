@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-devtools",
-  "version": "5.0.0-rc.5",
+  "version": "5.0.0-rc.10",
   "description": "Developer tools to interact with and visualize the TanStack Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -17,8 +17,8 @@
   "browser": {},
   "exports": {
     "solid": {
-      "development": "./build/dev.jsx",
-      "import": "./build/index.jsx"
+      "development": "./build/index.js",
+      "import": "./build/index.js"
     },
     "development": {
       "import": {

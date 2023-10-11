@@ -12,6 +12,7 @@ import {
   Scripts,
   Title,
 } from 'solid-start'
+import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import './root.css'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
@@ -35,6 +36,7 @@ export default function Root() {
       </Head>
       <Body>
         <QueryClientProvider client={queryClient}>
+          <SolidQueryDevtools />
           <ErrorBoundary>
             <Suspense
               fallback={<div>loading... [root.tsx suspense boundary]</div>}

@@ -290,6 +290,42 @@ export function List() {
   )
 }
 
+export function Check(props: { checked: boolean }) {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#98A2B3"
+      stroke-width="2"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect x="2" y="2" width="20" height="20" rx="2" class="check" />
+      {props.checked && (
+        <g>
+          <line
+            transform="rotate(45 7.18873 14.6316)"
+            x1="3.56453"
+            y1="14.63158"
+            x2="10.81294"
+            y2="14.63158"
+            class="check"
+          />
+          <line
+            transform="rotate(-45 13.9674 11.5826)"
+            x1="6.02012"
+            y1="11.58263"
+            x2="21.91469"
+            y2="11.58263"
+            class="check"
+          />
+        </g>
+      )}
+    </svg>
+  )
+}
+
 export function TanstackLogo() {
   return (
     <svg version="1.0" viewBox="0 0 633 633">

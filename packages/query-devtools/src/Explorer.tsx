@@ -9,7 +9,7 @@ import {
   displayValue,
   updateNestedDataByPath,
 } from './utils'
-import { CopiedCopier, Copier, ErrorCopier, List, Trash } from './icons'
+import { Check, CopiedCopier, Copier, ErrorCopier, List, Trash } from './icons'
 import { useQueryDevtoolsContext } from './Context'
 import type { Query } from '@tanstack/query-core'
 
@@ -167,6 +167,34 @@ const DeleteItemButton = (props: {
       }}
     >
       <Trash />
+    </button>
+  )
+}
+
+const ToggleValueButton = (props: {
+  dataPath: Array<string>
+  activeQuery: Query
+  value: boolean
+}) => {
+  const styles = getStyles()
+  const queryClient = useQueryDevtoolsContext().client
+
+  return (
+    <button
+      class={cx(styles.actionButton)}
+      title={'Toggle value'}
+      aria-label={'Toggle value'}
+      onClick={() => {
+        const oldData = props.activeQuery.state.data
+        const newData = updateNestedDataByPath(
+          oldData,
+          props.dataPath,
+          !props.value,
+        )
+        queryClient.setQueryData(props.activeQuery.queryKey, newData)
+      }}
+    >
+      <Check checked={props.value} />
     </button>
   )
 }
@@ -359,30 +387,53 @@ export default function Explorer(props: ExplorerProps) {
             when={
               props.editable &&
               props.activeQuery !== undefined &&
-              (type() === 'string' || type() === 'number')
+              (type() === 'string' ||
+                type() === 'number' ||
+                type() === 'boolean')
             }
             fallback={
               <span class={styles.value}>{displayValue(props.value)}</span>
             }
           >
-            <input
-              type={type() === 'number' ? 'number' : 'text'}
-              class={cx(styles.value, styles.editableInput)}
-              value={props.value as string | number}
-              onChange={(changeEvent) => {
-                const oldData = props.activeQuery!.state.data
+            <Show
+              when={
+                props.editable &&
+                props.activeQuery !== undefined &&
+                (type() === 'string' || type() === 'number')
+              }
+            >
+              <input
+                type={type() === 'number' ? 'number' : 'text'}
+                class={cx(styles.value, styles.editableInput)}
+                value={props.value as string | number}
+                onChange={(changeEvent) => {
+                  const oldData = props.activeQuery!.state.data
 
-                const newData = updateNestedDataByPath(
-                  oldData,
-                  currentDataPath,
-                  type() === 'number'
-                    ? changeEvent.target.valueAsNumber
-                    : changeEvent.target.value,
-                )
+                  const newData = updateNestedDataByPath(
+                    oldData,
+                    currentDataPath,
+                    type() === 'number'
+                      ? changeEvent.target.valueAsNumber
+                      : changeEvent.target.value,
+                  )
 
-                queryClient.setQueryData(props.activeQuery!.queryKey, newData)
-              }}
-            />
+                  queryClient.setQueryData(props.activeQuery!.queryKey, newData)
+                }}
+              />
+            </Show>
+
+            <Show when={type() === 'boolean'}>
+              <span
+                class={cx(styles.value, styles.actions, styles.editableInput)}
+              >
+                <ToggleValueButton
+                  activeQuery={props.activeQuery!}
+                  dataPath={currentDataPath}
+                  value={props.value as boolean}
+                />
+                {displayValue(props.value)}
+              </span>
+            </Show>
           </Show>
 
           <Show
@@ -483,6 +534,7 @@ const getStyles = () => {
     actions: css`
       display: inline-flex;
       gap: ${size[2]};
+      align-items: center;
     `,
     row: css`
       display: inline-flex;
@@ -490,10 +542,11 @@ const getStyles = () => {
       width: 100%;
       margin-bottom: ${size[0.5]};
       line-height: 1.125rem;
+      align-items: center;
     `,
     editableInput: css`
       border: none;
-      padding: 0px ${size[1]};
+      padding: ${size[0.5]} ${size[1]};
       flex-grow: 1;
       background-color: ${colors.gray[900]};
 
@@ -516,6 +569,7 @@ const getStyles = () => {
 
       &:hover svg {
         .copier,
+        .check,
         .list {
           stroke: ${colors.gray[500]} !important;
         }

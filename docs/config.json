@@ -446,6 +446,35 @@
             {
               "label": "Overview",
               "to": "solid/overview"
+            },
+            {
+              "label": "Devtools",
+              "to": "solid/devtools"
+            }
+          ]
+        },
+        {
+          "label": "Examples",
+          "children": [
+            {
+              "label": "Simple",
+              "to": "solid/examples/solid/simple"
+            },
+            {
+              "label": "Basic",
+              "to": "solid/examples/solid/basic-typescript"
+            },
+            {
+              "label": "Basic w/ GraphQL-Request",
+              "to": "solid/examples/solid/basic-graphql-request"
+            },
+            {
+              "label": "Default Query Function",
+              "to": "solid/examples/solid/default-query-function"
+            },
+            {
+              "label": "Solid Start",
+              "to": "solid/examples/solid/solid-start-streaming"
             }
           ]
         }
