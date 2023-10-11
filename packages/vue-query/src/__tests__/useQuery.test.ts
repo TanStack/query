@@ -269,6 +269,25 @@ describe('useQuery', () => {
     )
   })
 
+  test('should be `enabled` to accept getter function', async () => {
+    const fetchFn = vi.fn()
+    const checked = ref(false)
+
+    useQuery({
+      queryKey: ['enabled'],
+      queryFn: fetchFn,
+      enabled: () => checked.value,
+    })
+
+    expect(fetchFn).not.toHaveBeenCalled()
+
+    checked.value = true
+
+    await flushPromises()
+
+    expect(fetchFn).toHaveBeenCalled()
+  })
+
   describe('throwOnError', () => {
     test('should evaluate throwOnError when query is expected to throw', async () => {
       const boundaryFn = vi.fn()
