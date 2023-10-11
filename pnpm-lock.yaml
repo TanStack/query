@@ -897,6 +897,9 @@ importers:
       '@tanstack/solid-query':
         specifier: ^5.0.0-rc.1
         version: link:../../../packages/solid-query
+      '@tanstack/solid-query-devtools':
+        specifier: ^5.0.0-rc.9
+        version: link:../../../packages/solid-query-devtools
       graphql:
         specifier: ^16.6.0
         version: 16.6.0
@@ -922,6 +925,9 @@ importers:
       '@tanstack/solid-query':
         specifier: ^5.0.0-rc.1
         version: link:../../../packages/solid-query
+      '@tanstack/solid-query-devtools':
+        specifier: ^5.0.0-rc.9
+        version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.7.8
         version: 1.7.8
@@ -941,6 +947,9 @@ importers:
       '@tanstack/solid-query':
         specifier: ^5.0.0-rc.1
         version: link:../../../packages/solid-query
+      '@tanstack/solid-query-devtools':
+        specifier: ^5.0.0-rc.9
+        version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.7.8
         version: 1.7.8
@@ -960,6 +969,9 @@ importers:
       '@tanstack/solid-query':
         specifier: ^5.0.0-rc.1
         version: link:../../../packages/solid-query
+      '@tanstack/solid-query-devtools':
+        specifier: ^5.0.0-rc.9
+        version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.7.8
         version: 1.7.8
@@ -988,6 +1000,9 @@ importers:
       '@tanstack/solid-query':
         specifier: ^5.0.0-rc.1
         version: link:../../../packages/solid-query
+      '@tanstack/solid-query-devtools':
+        specifier: ^5.0.0-rc.9
+        version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.7.8
         version: 1.7.8
@@ -1435,6 +1450,9 @@ importers:
       '@tanstack/solid-query':
         specifier: workspace:*
         version: link:../../packages/solid-query
+      '@tanstack/solid-query-devtools':
+        specifier: workspace:*
+        version: link:../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.7.8
         version: 1.7.8
