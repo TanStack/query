@@ -267,6 +267,25 @@ describe('useQuery', () => {
     )
   })
 
+  test('should be `enabled` to accept getter function', async () => {
+    const fetchFn = jest.fn()
+    const checked = ref(false)
+
+    useQuery({
+      queryKey: ['enabled'],
+      queryFn: fetchFn,
+      enabled: () => checked.value,
+    })
+
+    expect(fetchFn).not.toHaveBeenCalled()
+
+    checked.value = true
+
+    await flushPromises()
+
+    expect(fetchFn).toHaveBeenCalled()
+  })
+
   describe('errorBoundary', () => {
     test('should evaluate useErrorBoundary when query is expected to throw', async () => {
       const boundaryFn = jest.fn()

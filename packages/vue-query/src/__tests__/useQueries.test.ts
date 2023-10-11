@@ -1,4 +1,4 @@
-import { onScopeDispose, reactive } from 'vue-demi'
+import { onScopeDispose, reactive, ref } from 'vue-demi'
 
 import { useQueries } from '../useQueries'
 import { useQueryClient } from '../useQueryClient'
@@ -230,5 +230,29 @@ describe('useQueries', () => {
     await flushPromises()
 
     expect(useQueryClient).toHaveBeenCalledTimes(0)
+  })
+
+  test('should be `enabled` to accept getter function', async () => {
+    const fetchFn = jest.fn()
+
+    const checked = ref(false)
+
+    useQueries({
+      queries: [
+        {
+          queryKey: ['enabled'],
+          queryFn: fetchFn,
+          enabled: () => checked.value,
+        },
+      ],
+    })
+
+    expect(fetchFn).not.toHaveBeenCalled()
+
+    checked.value = true
+
+    await flushPromises()
+
+    expect(fetchFn).toHaveBeenCalled()
   })
 })

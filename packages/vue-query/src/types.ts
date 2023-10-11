@@ -32,6 +32,8 @@ export type MaybeRefDeep<T> = MaybeRef<
 
 export type MaybeRef<T> = Ref<T> | T
 
+export type MaybeRefOrGetter<T> = MaybeRef<T> | (() => T)
+
 export type DeepUnwrapRef<T> = T extends UnwrapLeaf
   ? T
   : T extends Ref<infer U>
@@ -70,6 +72,16 @@ export type VueQueryObserverOptions<
         TQueryData,
         DeepUnwrapRef<TQueryKey>
       >[Property]
+    : Property extends 'enabled'
+    ? MaybeRefOrGetter<
+        QueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          TQueryKey
+        >[Property]
+      >
     : MaybeRef<
         QueryObserverOptions<
           TQueryFnData,
@@ -104,6 +116,16 @@ export type VueInfiniteQueryObserverOptions<
         TQueryData,
         DeepUnwrapRef<TQueryKey>
       >[Property]
+    : Property extends 'enabled'
+    ? MaybeRefOrGetter<
+        QueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          TQueryKey
+        >[Property]
+      >
     : MaybeRef<
         InfiniteQueryObserverOptions<
           TQueryFnData,

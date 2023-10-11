@@ -226,7 +226,13 @@ export function parseQueryArgs<
     options = { ...plainArg2, queryKey: plainArg1 }
   }
 
-  return cloneDeepUnref(options) as WithQueryClientKey<
+  const clondedOptions = cloneDeepUnref(options)
+
+  if (typeof clondedOptions.enabled === 'function') {
+    clondedOptions.enabled = clondedOptions.enabled()
+  }
+
+  return clondedOptions as WithQueryClientKey<
     QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
   >
 }
