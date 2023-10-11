@@ -4,6 +4,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/solid-query'
+import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import type { Accessor, Setter } from 'solid-js'
 import { createSignal, For, Match, Switch } from 'solid-js'
 import { render } from 'solid-js/web'
@@ -18,6 +19,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <SolidQueryDevtools />
       <p>
         As you visit the posts below, you will notice them in a loading state
         the first time you load them. However, after you return to this list and

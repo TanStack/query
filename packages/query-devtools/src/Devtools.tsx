@@ -9,11 +9,13 @@ import {
   onMount,
 } from 'solid-js'
 import { rankItem } from '@tanstack/match-sorter-utils'
-import { css, cx } from '@emotion/css'
+import { css } from 'goober'
+import { clsx as cx } from 'clsx'
 import { TransitionGroup } from 'solid-transition-group'
 import { Key } from '@solid-primitives/keyed'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { createResizeObserver } from '@solid-primitives/resize-observer'
+import { DropdownMenu } from '@kobalte/core'
 import { tokens } from './theme'
 import {
   convertRemToPixels,
@@ -26,12 +28,15 @@ import {
 } from './utils'
 import {
   ArrowDown,
+  ArrowLeft,
+  ArrowRight,
   ArrowUp,
   ChevronDown,
   Offline,
   Search,
   Settings,
   TanstackLogo,
+  Trash,
   Wifi,
 } from './icons'
 import Explorer from './Explorer'
@@ -110,50 +115,56 @@ export const Devtools = () => {
     return localStore.position || useQueryDevtoolsContext().position || POSITION
   })
 
+  createEffect(() => {
+    const root = document.querySelector('.tsqd-parent-container') as HTMLElement
+    const height = localStore.height || DEFAULT_HEIGHT
+    const width = localStore.width || DEFAULT_WIDTH
+    const panelPosition = position()
+    root.style.setProperty(
+      '--tsqd-panel-height',
+      `${panelPosition === 'top' ? '-' : ''}${height}px`,
+    )
+    root.style.setProperty(
+      '--tsqd-panel-width',
+      `${panelPosition === 'left' ? '-' : ''}${width}px`,
+    )
+  })
+
   return (
     <div
       // styles for animating the panel in and out
-      class={css`
-        & .TSQD-panel-exit-active,
-        & .TSQD-panel-enter-active {
-          transition: opacity 0.3s, transform 0.3s;
-        }
+      class={cx(
+        css`
+          & .tsqd-panel-transition-exit-active,
+          & .tsqd-panel-transition-enter-active {
+            transition: opacity 0.3s, transform 0.3s;
+          }
 
-        & .TSQD-panel-exit-to,
-        & .TSQD-panel-enter {
-          ${position() === 'top'
-            ? `transform: translateY(-${Number(
-                localStore.height || DEFAULT_HEIGHT,
-              )}px);`
-            : position() === 'left'
-            ? `transform: translateX(-${Number(
-                localStore.width || DEFAULT_WIDTH,
-              )}px);`
-            : position() === 'right'
-            ? `transform: translateX(${Number(
-                localStore.width || DEFAULT_WIDTH,
-              )}px);`
-            : `transform: translateY(${Number(
-                localStore.height || DEFAULT_HEIGHT,
-              )}px);`}
-        }
+          & .tsqd-panel-transition-exit-to,
+          & .tsqd-panel-transition-enter {
+            ${position() === 'top' || position() === 'bottom'
+              ? `transform: translateY(var(--tsqd-panel-height));`
+              : `transform: translateX(var(--tsqd-panel-width));`}
+          }
 
-        & .TSQD-button-exit-active,
-        & .TSQD-button-enter-active {
-          transition: opacity 0.3s, transform 0.3s;
-        }
+          & .tsqd-button-transition-exit-active,
+          & .tsqd-button-transition-enter-active {
+            transition: opacity 0.3s, transform 0.3s;
+          }
 
-        & .TSQD-button-exit-to,
-        & .TSQD-button-enter {
-          transform: ${buttonPosition() === 'top-left'
-            ? `translateX(-72px);`
-            : buttonPosition() === 'top-right'
-            ? `translateX(72px);`
-            : `translateY(72px);`};
-        }
-      `}
+          & .tsqd-button-transition-exit-to,
+          & .tsqd-button-transition-enter {
+            transform: ${buttonPosition() === 'top-left'
+              ? `translateX(-72px);`
+              : buttonPosition() === 'top-right'
+              ? `translateX(72px);`
+              : `translateY(72px);`};
+          }
+        `,
+        'tsqd-transitions-container',
+      )}
     >
-      <TransitionGroup name="TSQD-panel">
+      <TransitionGroup name="tsqd-panel-transition">
         <Show when={isOpen()}>
           <DevtoolsPanel
             localStore={localStore}
@@ -161,7 +172,7 @@ export const Devtools = () => {
           />
         </Show>
       </TransitionGroup>
-      <TransitionGroup name="TSQD-button">
+      <TransitionGroup name="tsqd-button-transition">
         <Show when={!isOpen()}>
           <div
             class={cx(
@@ -195,7 +206,6 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
   ) as () => 1 | -1
 
   const [offline, setOffline] = createSignal(false)
-  const [settingsOpen, setSettingsOpen] = createSignal(false)
 
   const position = createMemo(
     () =>
@@ -315,7 +325,6 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
 
   const setDevtoolsPosition = (pos: DevtoolsPosition) => {
     props.setLocalStore('position', pos)
-    setSettingsOpen(false)
   }
 
   createEffect(() => {
@@ -361,18 +370,24 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
       // -
       // min-width - When the panel is in the left or right position, the panel
       // width is set to min-content to allow the panel to shrink to the lowest possible width
-      class={`${styles.panel} ${styles[`panel-position-${position()}`]} ${css`
-        flex-direction: ${panelWidth() < secondBreakpoint ? 'column' : 'row'};
-        background-color: ${panelWidth() < secondBreakpoint
-          ? tokens.colors.gray[600]
-          : tokens.colors.darkGray[900]};
-        ${panelWidth() < thirdBreakpoint &&
-        (position() === 'right' || position() === 'left')
-          ? `
+      class={cx(
+        styles.panel,
+        styles[`panel-position-${position()}`],
+        css`
+          flex-direction: ${panelWidth() < secondBreakpoint ? 'column' : 'row'};
+          background-color: ${panelWidth() < secondBreakpoint
+            ? tokens.colors.gray[600]
+            : tokens.colors.darkGray[900]};
+        `,
+        {
+          [css`
             min-width: min-content;
-          `
-          : ''}
-      `}`}
+          `]:
+            panelWidth() < thirdBreakpoint &&
+            (position() === 'right' || position() === 'left'),
+        },
+        'tsqd-main-panel',
+      )}
       style={{
         height:
           position() === 'bottom' || position() === 'top'
@@ -390,12 +405,17 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
         class={cx(
           styles.dragHandle,
           styles[`dragHandle-position-${position()}`],
+          'tsqd-drag-handle',
         )}
         onMouseDown={handleDragStart}
       ></div>
       <button
         aria-label="Close tanstack query devtools"
-        class={cx(styles.closeBtn, styles[`closeBtn-position-${position()}`])}
+        class={cx(
+          styles.closeBtn,
+          styles[`closeBtn-position-${position()}`],
+          'tsqd-minimize-btn',
+        )}
         onClick={() => props.setLocalStore('open', 'false')}
       >
         <ChevronDown />
@@ -404,23 +424,29 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
         ref={queriesContainerRef}
         // When the panels are stacked we use the height style
         // to divide the panels into two equal parts
-        class={`${styles.queriesContainer} ${css`
-          ${panelWidth() < secondBreakpoint && selectedQueryHash()
-            ? `
-          height: 50%;
-          max-height: 50%;
-          `
-            : ''}
-        `}`}
+        class={cx(
+          styles.queriesContainer,
+          panelWidth() < secondBreakpoint &&
+            selectedQueryHash() &&
+            css`
+              height: 50%;
+              max-height: 50%;
+            `,
+          'tsqd-queries-container',
+        )}
       >
-        <div class={cx(styles.row)}>
+        <div class={cx(styles.row, 'tsqd-header')}>
           <button
-            class={styles.logo}
+            class={cx(styles.logo, 'tsqd-text-logo-container')}
             onClick={() => props.setLocalStore('open', 'false')}
             aria-label="Close Tanstack query devtools"
           >
-            <span class={styles.tanstackLogo}>TANSTACK</span>
-            <span class={styles.queryFlavorLogo}>
+            <span class={cx(styles.tanstackLogo, 'tsqd-text-logo-tanstack')}>
+              TANSTACK
+            </span>
+            <span
+              class={cx(styles.queryFlavorLogo, 'tsqd-text-logo-query-flavor')}
+            >
               {useQueryDevtoolsContext().queryFlavor} v
               {useQueryDevtoolsContext().version}
             </span>
@@ -433,10 +459,16 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
             css`
               gap: ${tokens.size[2.5]};
             `,
+            'tsqd-filters-actions-container',
           )}
         >
-          <div class={styles.filtersContainer}>
-            <div class={styles.filterInput}>
+          <div class={cx(styles.filtersContainer, 'tsqd-filters-container')}>
+            <div
+              class={cx(
+                styles.filterInput,
+                'tsqd-query-filter-textfield-container',
+              )}
+            >
               <Search />
               <input
                 aria-label="Filter queries by query key"
@@ -445,10 +477,16 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                 onInput={(e) =>
                   props.setLocalStore('filter', e.currentTarget.value)
                 }
+                class="tsqd-query-filter-textfield"
                 value={props.localStore.filter || ''}
               />
             </div>
-            <div class={styles.filterSelect}>
+            <div
+              class={cx(
+                styles.filterSelect,
+                'tsqd-query-filter-sort-container',
+              )}
+            >
               <select
                 value={sort()}
                 onChange={(e) =>
@@ -469,6 +507,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                 sortOrder() === -1 ? 'descending' : 'ascending'
               }`}
               aria-pressed={sortOrder() === -1}
+              class="tsqd-query-filter-sort-order-btn"
             >
               <Show when={sortOrder() === 1}>
                 <span>Asc</span>
@@ -481,7 +520,21 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
             </button>
           </div>
 
-          <div class={styles.actionsContainer}>
+          <div class={cx(styles.actionsContainer, 'tsqd-actions-container')}>
+            <button
+              onClick={() => {
+                cache().clear()
+              }}
+              class={cx(
+                styles.actionsBtn,
+                'tsqd-actions-btn',
+                'tsqd-action-clear-cache',
+              )}
+              aria-label="Clear query cache"
+              title="Clear query cache"
+            >
+              <Trash />
+            </button>
             <button
               onClick={() => {
                 if (offline()) {
@@ -492,83 +545,134 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                   setOffline(true)
                 }
               }}
-              class={styles.actionsBtn}
+              class={cx(
+                styles.actionsBtn,
+                'tsqd-actions-btn',
+                'tsqd-action-mock-offline-behavior',
+              )}
               aria-label={`${
                 offline()
                   ? 'Unset offline mocking behavior'
                   : 'Mock offline behavior'
               }`}
               aria-pressed={offline()}
+              title={`${
+                offline()
+                  ? 'Unset offline mocking behavior'
+                  : 'Mock offline behavior'
+              }`}
             >
               {offline() ? <Offline /> : <Wifi />}
             </button>
-            <div style={{ position: 'relative' }}>
-              <button
-                onClick={() => setSettingsOpen((prev) => !prev)}
-                class={styles.actionsBtn}
-                id="TSQD-settings-menu-btn"
-                aria-label={`${
-                  settingsOpen() ? 'Close' : 'Open'
-                } settings menu`}
-                aria-haspopup="true"
-                aria-controls="TSQD-settings-menu"
+
+            <DropdownMenu.Root gutter={4}>
+              <DropdownMenu.Trigger
+                class={cx(
+                  styles.actionsBtn,
+                  'tsqd-actions-btn',
+                  'tsqd-action-settings',
+                )}
               >
                 <Settings />
-              </button>
-              <Show when={settingsOpen()}>
-                <div
-                  role="menu"
-                  tabindex="-1"
-                  aria-labelledby="TSQD-settings-menu-btn"
-                  id="TSQD-settings-menu"
-                  class={styles.settingsMenu}
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content
+                  class={cx(styles.settingsMenu, 'tsqd-settings-menu')}
                 >
-                  <div class={styles.settingsMenuHeader}>Position</div>
-                  <div class={styles.settingsMenuSection}>
-                    <button
-                      onClick={() => {
-                        setDevtoolsPosition('top')
-                      }}
-                      aria-label="Position top"
-                    >
-                      <ArrowUp />
-                      <span>Top</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        setDevtoolsPosition('bottom')
-                      }}
-                      aria-label="Position bottom"
-                    >
-                      <ArrowDown />
-                      <span>Bottom</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        setDevtoolsPosition('left')
-                      }}
-                      aria-label="Position left"
-                    >
-                      <ArrowDown />
-                      <span>Left</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        setDevtoolsPosition('right')
-                      }}
-                      aria-label="Position right"
-                    >
-                      <ArrowDown />
-                      <span>Right</span>
-                    </button>
+                  <div
+                    class={cx(
+                      styles.settingsMenuHeader,
+                      'tsqd-settings-menu-header',
+                    )}
+                  >
+                    Settings
                   </div>
-                </div>
-              </Show>
-            </div>
+                  <DropdownMenu.Sub overlap gutter={8} shift={-4}>
+                    <DropdownMenu.SubTrigger
+                      class={cx(
+                        styles.settingsSubTrigger,
+                        'tsqd-settings-menu-sub-trigger',
+                        'tsqd-settings-menu-sub-trigger-position',
+                      )}
+                    >
+                      <span>Position</span>
+                      <ChevronDown />
+                    </DropdownMenu.SubTrigger>
+                    <DropdownMenu.Portal>
+                      <DropdownMenu.SubContent
+                        class={cx(styles.settingsMenu, 'tsqd-settings-submenu')}
+                      >
+                        <DropdownMenu.Item
+                          onSelect={() => {
+                            setDevtoolsPosition('top')
+                          }}
+                          as="button"
+                          class={cx(
+                            styles.settingsSubButton,
+                            'tsqd-settings-menu-position-btn',
+                            'tsqd-settings-menu-position-btn-top',
+                          )}
+                        >
+                          <span>Top</span>
+                          <ArrowUp />
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          onSelect={() => {
+                            setDevtoolsPosition('bottom')
+                          }}
+                          as="button"
+                          class={cx(
+                            styles.settingsSubButton,
+                            'tsqd-settings-menu-position-btn',
+                            'tsqd-settings-menu-position-btn-bottom',
+                          )}
+                        >
+                          <span>Bottom</span>
+                          <ArrowDown />
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          onSelect={() => {
+                            setDevtoolsPosition('left')
+                          }}
+                          as="button"
+                          class={cx(
+                            styles.settingsSubButton,
+                            'tsqd-settings-menu-position-btn',
+                            'tsqd-settings-menu-position-btn-left',
+                          )}
+                        >
+                          <span>Left</span>
+                          <ArrowLeft />
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          onSelect={() => {
+                            setDevtoolsPosition('right')
+                          }}
+                          as="button"
+                          class={cx(
+                            styles.settingsSubButton,
+                            'tsqd-settings-menu-position-btn',
+                            'tsqd-settings-menu-position-btn-right',
+                          )}
+                        >
+                          <span>Right</span>
+                          <ArrowRight />
+                        </DropdownMenu.Item>
+                      </DropdownMenu.SubContent>
+                    </DropdownMenu.Portal>
+                  </DropdownMenu.Sub>
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
           </div>
         </div>
-        <div class={styles.overflowQueryContainer}>
-          <div>
+        <div
+          class={cx(
+            styles.overflowQueryContainer,
+            'tsqd-queries-overflow-container',
+          )}
+        >
+          <div class="tsqd-queries-container">
             <Key by={(q) => q.queryHash} each={queries()}>
               {(query) => <QueryRow query={query()} />}
             </Key>
@@ -641,12 +745,12 @@ export const QueryRow: Component<{ query: Query }> = (props) => {
           styles.queryRow,
           selectedQueryHash() === props.query.queryHash &&
             styles.selectedQueryRow,
+          'tsqd-query-row',
         )}
         aria-label={`Query key ${props.query.queryHash}`}
       >
         <div
           class={cx(
-            'TSQDObserverCount',
             color() === 'gray'
               ? css`
                   background-color: ${tokens.colors[color()][700]};
@@ -654,15 +758,16 @@ export const QueryRow: Component<{ query: Query }> = (props) => {
                 `
               : css`
                   background-color: ${tokens.colors[color()][900]};
-                  color: ${tokens.colors[color()][300]} !important;
+                  color: ${tokens.colors[color()][300]};
                 `,
+            'tsqd-query-observer-count',
           )}
         >
           {observers()}
         </div>
-        <code class="TSQDQueryHash">{props.query.queryHash}</code>
+        <code class="tsqd-query-hash">{props.query.queryHash}</code>
         <Show when={isDisabled()}>
-          <div class="TSQDQueryDisabled">disabled</div>
+          <div class="tsqd-query-disabled-indicator">disabled</div>
         </Show>
       </button>
     </Show>
@@ -708,7 +813,7 @@ export const QueryStatusCount: Component = () => {
   const styles = getStyles()
 
   return (
-    <div class={styles.queryStatusContainer}>
+    <div class={cx(styles.queryStatusContainer, 'tsqd-query-status-container')}>
       <QueryStatus label="Fresh" color="green" count={fresh()} />
       <QueryStatus label="Fetching" color="blue" count={fetching()} />
       <QueryStatus label="Paused" color="purple" count={paused()} />
@@ -752,40 +857,48 @@ export const QueryStatus: Component<QueryStatusProps> = (props) => {
       ref={tagRef}
       class={cx(
         styles.queryStatusTag,
-        !showLabel()
-          ? css`
-              cursor: pointer;
-              &:hover {
-                background: ${tokens.colors.darkGray[400]}${tokens.alpha[80]};
-              }
-            `
-          : null,
+        !showLabel() &&
+          css`
+            cursor: pointer;
+            &:hover {
+              background: ${tokens.colors.darkGray[400]}${tokens.alpha[80]};
+            }
+          `,
+        'tsqd-query-status-tag',
+        `tsqd-query-status-tag-${props.label.toLowerCase()}`,
       )}
       {...(mouseOver() || focused()
         ? {
-            'aria-describedby': 'TSQD-status-tooltip',
+            'aria-describedby': 'tsqd-status-tooltip',
           }
         : {})}
     >
       <Show when={!showLabel() && (mouseOver() || focused())}>
         <div
           role="tooltip"
-          id="TSQD-status-tooltip"
-          class={cx(styles.statusTooltip)}
+          id="tsqd-status-tooltip"
+          class={cx(styles.statusTooltip, 'tsqd-query-status-tooltip')}
         >
           {props.label}
         </div>
       </Show>
       <span
-        class={css`
-          width: ${tokens.size[2]};
-          height: ${tokens.size[2]};
-          border-radius: ${tokens.border.radius.full};
-          background-color: ${tokens.colors[props.color][500]};
-        `}
+        class={cx(
+          css`
+            width: ${tokens.size[1.5]};
+            height: ${tokens.size[1.5]};
+            border-radius: ${tokens.border.radius.full};
+            background-color: ${tokens.colors[props.color][500]};
+          `,
+          'tsqd-query-status-tag-dot',
+        )}
       />
       <Show when={showLabel()}>
-        <span>{props.label}</span>
+        <span
+          class={cx(styles.queryStatusTagLabel, 'tsqd-query-status-tag-label')}
+        >
+          {props.label}
+        </span>
       </Show>
       <span
         class={cx(
@@ -793,11 +906,12 @@ export const QueryStatus: Component<QueryStatusProps> = (props) => {
           props.count > 0 && props.color !== 'gray'
             ? css`
                 background-color: ${tokens.colors[props.color][900]};
-                color: ${tokens.colors[props.color][300]} !important;
+                color: ${tokens.colors[props.color][300]};
               `
             : css`
-                color: ${tokens.colors['gray'][400]} !important;
+                color: ${tokens.colors['gray'][400]};
               `,
+          'tsqd-query-status-tag-count',
         )}
       >
         {props.count}
@@ -915,10 +1029,14 @@ const QueryDetails = () => {
 
   return (
     <Show when={activeQuery() && activeQueryState()}>
-      <div class={styles.detailsContainer}>
-        <div class={styles.detailsHeader}>Query Details</div>
-        <div class={styles.detailsBody}>
-          <div>
+      <div class={cx(styles.detailsContainer, 'tsqd-query-details-container')}>
+        <div class={cx(styles.detailsHeader, 'tsqd-query-details-header')}>
+          Query Details
+        </div>
+        <div
+          class={cx(styles.detailsBody, 'tsqd-query-details-summary-container')}
+        >
+          <div class="tsqd-query-details-summary">
             <pre>
               <code>{displayValue(activeQuery()!.queryKey, true)}</code>
             </pre>
@@ -941,23 +1059,31 @@ const QueryDetails = () => {
               {statusLabel()}
             </span>
           </div>
-          <div>
+          <div class="tsqd-query-details-observers-count">
             <span>Observers:</span>
             <span>{observerCount()}</span>
           </div>
-          <div>
+          <div class="tsqd-query-details-last-updated">
             <span>Last Updated:</span>
             <span>
               {new Date(activeQueryState()!.dataUpdatedAt).toLocaleTimeString()}
             </span>
           </div>
         </div>
-        <div class={styles.detailsHeader}>Actions</div>
-        <div class={styles.actionsBody}>
+        <div class={cx(styles.detailsHeader, 'tsqd-query-details-header')}>
+          Actions
+        </div>
+        <div
+          class={cx(styles.actionsBody, 'tsqd-query-details-actions-container')}
+        >
           <button
-            class={css`
-              color: ${tokens.colors.blue[400]};
-            `}
+            class={cx(
+              css`
+                color: ${tokens.colors.blue[400]};
+              `,
+              'tsqd-query-details-actions-btn',
+              'tsqd-query-details-action-refetch',
+            )}
             onClick={handleRefetch}
             disabled={statusLabel() === 'fetching'}
           >
@@ -969,10 +1095,15 @@ const QueryDetails = () => {
             Refetch
           </button>
           <button
-            class={css`
-              color: ${tokens.colors.yellow[400]};
-            `}
+            class={cx(
+              css`
+                color: ${tokens.colors.yellow[400]};
+              `,
+              'tsqd-query-details-actions-btn',
+              'tsqd-query-details-action-invalidate',
+            )}
             onClick={() => queryClient.invalidateQueries(activeQuery())}
+            disabled={queryStatus() === 'pending'}
           >
             <span
               class={css`
@@ -982,10 +1113,15 @@ const QueryDetails = () => {
             Invalidate
           </button>
           <button
-            class={css`
-              color: ${tokens.colors.gray[300]};
-            `}
+            class={cx(
+              css`
+                color: ${tokens.colors.gray[300]};
+              `,
+              'tsqd-query-details-actions-btn',
+              'tsqd-query-details-action-reset',
+            )}
             onClick={() => queryClient.resetQueries(activeQuery())}
+            disabled={queryStatus() === 'pending'}
           >
             <span
               class={css`
@@ -995,9 +1131,34 @@ const QueryDetails = () => {
             Reset
           </button>
           <button
-            class={css`
-              color: ${tokens.colors.cyan[400]};
-            `}
+            class={cx(
+              css`
+                color: ${tokens.colors.pink[400]};
+              `,
+              'tsqd-query-details-actions-btn',
+              'tsqd-query-details-action-remove',
+            )}
+            onClick={() => {
+              queryClient.removeQueries(activeQuery())
+              setSelectedQueryHash(null)
+            }}
+            disabled={statusLabel() === 'fetching'}
+          >
+            <span
+              class={css`
+                background-color: ${tokens.colors.pink[400]};
+              `}
+            ></span>
+            Remove
+          </button>
+          <button
+            class={cx(
+              css`
+                color: ${tokens.colors.cyan[400]};
+              `,
+              'tsqd-query-details-actions-btn',
+              'tsqd-query-details-action-loading',
+            )}
             disabled={restoringLoading()}
             onClick={() => {
               if (activeQuery()?.state.data === undefined) {
@@ -1034,13 +1195,17 @@ const QueryDetails = () => {
                 background-color: ${tokens.colors.cyan[400]};
               `}
             ></span>
-            {statusLabel() === 'fetching' ? 'Restore' : 'Trigger'} Loading
+            {queryStatus() === 'pending' ? 'Restore' : 'Trigger'} Loading
           </button>
           <Show when={errorTypes().length === 0 || queryStatus() === 'error'}>
             <button
-              class={css`
-                color: ${tokens.colors.red[400]};
-              `}
+              class={cx(
+                css`
+                  color: ${tokens.colors.red[400]};
+                `,
+                'tsqd-query-details-actions-btn',
+                'tsqd-query-details-action-error',
+              )}
               onClick={() => {
                 if (!activeQuery()!.state.error) {
                   triggerError()
@@ -1048,6 +1213,7 @@ const QueryDetails = () => {
                   queryClient.resetQueries(activeQuery())
                 }
               }}
+              disabled={queryStatus() === 'pending'}
             >
               <span
                 class={css`
@@ -1060,7 +1226,13 @@ const QueryDetails = () => {
           <Show
             when={!(errorTypes().length === 0 || queryStatus() === 'error')}
           >
-            <div class={styles.actionsSelect}>
+            <div
+              class={cx(
+                styles.actionsSelect,
+                'tsqd-query-details-actions-btn',
+                'tsqd-query-details-action-error-multiple',
+              )}
+            >
               <span
                 class={css`
                   background-color: ${tokens.colors.red[400]};
@@ -1088,24 +1260,31 @@ const QueryDetails = () => {
             </div>
           </Show>
         </div>
-        <div class={styles.detailsHeader}>Data Explorer</div>
+        <div class={cx(styles.detailsHeader, 'tsqd-query-details-header')}>
+          Data Explorer
+        </div>
         <div
           style={{
             padding: '0.5rem',
           }}
+          class="tsqd-query-details-explorer-container tsqd-query-details-data-explorer"
         >
           <Explorer
             label="Data"
             defaultExpanded={['Data']}
             value={activeQueryStateData()}
-            copyable={true}
+            editable={true}
+            activeQuery={activeQuery()}
           />
         </div>
-        <div class={styles.detailsHeader}>Query Explorer</div>
+        <div class={cx(styles.detailsHeader, 'tsqd-query-details-header')}>
+          Query Explorer
+        </div>
         <div
           style={{
             padding: '0.5rem',
           }}
+          class="tsqd-query-details-explorer-container tsqd-query-details-query-explorer"
         >
           <Explorer
             label="Query"
@@ -1179,6 +1358,7 @@ const getStyles = () => {
       z-index: 100000;
       position: fixed;
       padding: 4px;
+      text-align: left;
 
       display: flex;
       align-items: center;
@@ -1300,10 +1480,14 @@ const getStyles = () => {
       &:focus-visible {
         outline: 2px solid ${colors.blue[600]};
       }
+      & svg {
+        width: ${size[2]};
+        height: ${size[2]};
+      }
     `,
     'closeBtn-position-top': css`
       bottom: 0;
-      right: ${size[3]};
+      right: ${size[2]};
       transform: translate(0, 100%);
       background-color: ${colors.darkGray[700]};
       border-right: ${colors.darkGray[300]} 1px solid;
@@ -1311,7 +1495,7 @@ const getStyles = () => {
       border-top: none;
       border-bottom: ${colors.darkGray[300]} 1px solid;
       border-radius: 0px 0px ${border.radius.sm} ${border.radius.sm};
-      padding: ${size[1.5]} ${size[2.5]} ${size[2]} ${size[2.5]};
+      padding: ${size[0.5]} ${size[1.5]} ${size[1]} ${size[1.5]};
 
       &::after {
         content: ' ';
@@ -1328,7 +1512,7 @@ const getStyles = () => {
     `,
     'closeBtn-position-bottom': css`
       top: 0;
-      right: ${size[3]};
+      right: ${size[2]};
       transform: translate(0, -100%);
       background-color: ${colors.darkGray[700]};
       border-right: ${colors.darkGray[300]} 1px solid;
@@ -1336,7 +1520,7 @@ const getStyles = () => {
       border-top: ${colors.darkGray[300]} 1px solid;
       border-bottom: none;
       border-radius: ${border.radius.sm} ${border.radius.sm} 0px 0px;
-      padding: ${size[2]} ${size[2.5]} ${size[1.5]} ${size[2.5]};
+      padding: ${size[1]} ${size[1.5]} ${size[0.5]} ${size[1.5]};
 
       &::after {
         content: ' ';
@@ -1348,7 +1532,7 @@ const getStyles = () => {
       }
     `,
     'closeBtn-position-right': css`
-      bottom: ${size[3]};
+      bottom: ${size[2]};
       left: 0;
       transform: translate(-100%, 0);
       background-color: ${colors.darkGray[700]};
@@ -1357,7 +1541,7 @@ const getStyles = () => {
       border-top: ${colors.darkGray[300]} 1px solid;
       border-bottom: ${colors.darkGray[300]} 1px solid;
       border-radius: ${border.radius.sm} 0px 0px ${border.radius.sm};
-      padding: ${size[2.5]} ${size[1]} ${size[2.5]} ${size[1.5]};
+      padding: ${size[1.5]} ${size[0.5]} ${size[1.5]} ${size[1]};
 
       &::after {
         content: ' ';
@@ -1372,7 +1556,7 @@ const getStyles = () => {
       }
     `,
     'closeBtn-position-left': css`
-      bottom: ${size[3]};
+      bottom: ${size[2]};
       right: 0;
       transform: translate(100%, 0);
       background-color: ${colors.darkGray[700]};
@@ -1381,7 +1565,7 @@ const getStyles = () => {
       border-top: ${colors.darkGray[300]} 1px solid;
       border-bottom: ${colors.darkGray[300]} 1px solid;
       border-radius: 0px ${border.radius.sm} ${border.radius.sm} 0px;
-      padding: ${size[2.5]} ${size[1.5]} ${size[2.5]} ${size[1]};
+      padding: ${size[1.5]} ${size[1]} ${size[1.5]} ${size[0.5]};
 
       &::after {
         content: ' ';
@@ -1405,39 +1589,40 @@ const getStyles = () => {
       position: absolute;
       transition: background-color 0.125s ease;
       &:hover {
-        background-color: ${colors.gray[400]}${alpha[90]};
+        background-color: ${colors.purple[400]}${alpha[90]};
       }
       z-index: 4;
     `,
     'dragHandle-position-top': css`
       bottom: 0;
       width: 100%;
-      height: ${tokens.size[1]};
+      height: 3px;
       cursor: ns-resize;
     `,
     'dragHandle-position-bottom': css`
       top: 0;
       width: 100%;
-      height: ${tokens.size[1]};
+      height: 3px;
       cursor: ns-resize;
     `,
     'dragHandle-position-right': css`
       left: 0;
-      width: ${tokens.size[1]};
+      width: 3px;
       height: 100%;
       cursor: ew-resize;
     `,
     'dragHandle-position-left': css`
       right: 0;
-      width: ${tokens.size[1]};
+      width: 3px;
       height: 100%;
       cursor: ew-resize;
     `,
     row: css`
       display: flex;
       justify-content: space-between;
-      padding: ${tokens.size[2.5]} ${tokens.size[3]};
-      gap: ${tokens.size[4]};
+      align-items: center;
+      padding: ${tokens.size[2]} ${tokens.size[2.5]};
+      gap: ${tokens.size[3]};
       border-bottom: ${colors.darkGray[500]} 1px solid;
       align-items: center;
       & > button {
@@ -1445,6 +1630,7 @@ const getStyles = () => {
         background: transparent;
         border: none;
         display: flex;
+        gap: ${size[0.5]};
         flex-direction: column;
       }
     `,
@@ -1460,17 +1646,18 @@ const getStyles = () => {
       }
     `,
     tanstackLogo: css`
-      font-size: ${font.size.lg};
-      font-weight: ${font.weight.extrabold};
-      line-height: ${font.lineHeight.sm};
+      font-size: ${font.size.md};
+      font-weight: ${font.weight.bold};
+      line-height: ${font.lineHeight.xs};
       white-space: nowrap;
     `,
     queryFlavorLogo: css`
       font-weight: ${font.weight.semibold};
-      font-size: ${font.size.sm};
+      font-size: ${font.size.xs};
       background: linear-gradient(to right, #dd524b, #e9a03b);
       background-clip: text;
-      line-height: ${font.lineHeight.xs};
+      -webkit-background-clip: text;
+      line-height: 1;
       -webkit-text-fill-color: transparent;
       white-space: nowrap;
     `,
@@ -1483,12 +1670,11 @@ const getStyles = () => {
       display: flex;
       gap: ${tokens.size[1.5]};
       background: ${colors.darkGray[500]};
-      border-radius: ${tokens.border.radius.md};
+      border-radius: ${tokens.border.radius.sm};
       font-size: ${font.size.sm};
       padding: ${tokens.size[1]};
-      padding-left: ${tokens.size[2.5]};
+      padding-left: ${tokens.size[2]};
       align-items: center;
-      line-height: ${font.lineHeight.md};
       font-weight: ${font.weight.medium};
       border: none;
       user-select: none;
@@ -1497,9 +1683,21 @@ const getStyles = () => {
         outline-offset: 2px;
         outline: 2px solid ${colors.blue[800]};
       }
-      & span:nth-child(2) {
-        color: ${colors.gray[300]}${alpha[80]};
-      }
+    `,
+    queryStatusTagLabel: css`
+      font-size: ${font.size.xs};
+    `,
+    queryStatusCount: css`
+      font-size: ${font.size.xs};
+      padding: 0 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: ${colors.gray[400]};
+      background-color: ${colors.darkGray[300]};
+      border-radius: 2px;
+      font-variant-numeric: tabular-nums;
+      height: ${tokens.size[4.5]};
     `,
     statusTooltip: css`
       position: absolute;
@@ -1508,10 +1706,10 @@ const getStyles = () => {
       top: 100%;
       left: 50%;
       transform: translate(-50%, calc(${tokens.size[2]}));
-      padding: ${tokens.size[0.5]} ${tokens.size[3]};
+      padding: ${tokens.size[0.5]} ${tokens.size[2]};
       border-radius: ${tokens.border.radius.md};
-      font-size: ${font.size.sm};
-      border: 2px solid ${colors.gray[600]};
+      font-size: ${font.size.xs};
+      border: 1px solid ${colors.gray[600]};
       color: ${tokens.colors['gray'][300]};
 
       &::before {
@@ -1543,26 +1741,16 @@ const getStyles = () => {
     selectedQueryRow: css`
       background-color: ${colors.darkGray[500]};
     `,
-    queryStatusCount: css`
-      padding: 0 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: ${colors.gray[400]};
-      background-color: ${colors.darkGray[300]};
-      border-radius: 3px;
-      font-variant-numeric: tabular-nums;
-    `,
     filtersContainer: css`
       display: flex;
-      gap: ${tokens.size[2.5]};
+      gap: ${tokens.size[2]};
       & > button {
         cursor: pointer;
-        padding: ${tokens.size[1.5]} ${tokens.size[2.5]};
+        padding: ${tokens.size[0.5]} ${tokens.size[2]};
         padding-right: ${tokens.size[1.5]};
-        border-radius: ${tokens.border.radius.md};
+        border-radius: ${tokens.border.radius.sm};
         background-color: ${colors.darkGray[400]};
-        font-size: ${font.size.sm};
+        font-size: ${font.size.xs};
         display: flex;
         align-items: center;
         line-height: ${font.lineHeight.sm};
@@ -1577,8 +1765,8 @@ const getStyles = () => {
       }
     `,
     filterInput: css`
-      padding: ${tokens.size[1.5]} ${tokens.size[2.5]};
-      border-radius: ${tokens.border.radius.md};
+      padding: ${tokens.size[0.5]} ${tokens.size[2]};
+      border-radius: ${tokens.border.radius.sm};
       background-color: ${colors.darkGray[400]};
       display: flex;
       box-sizing: content-box;
@@ -1589,11 +1777,11 @@ const getStyles = () => {
       border: 1px solid ${colors.darkGray[200]};
       height: min-content;
       & > svg {
-        width: ${tokens.size[3.5]};
-        height: ${tokens.size[3.5]};
+        width: ${tokens.size[3]};
+        height: ${tokens.size[3]};
       }
       & input {
-        font-size: ${font.size.sm};
+        font-size: ${font.size.xs};
         width: 100%;
         background-color: ${colors.darkGray[400]};
         border: none;
@@ -1615,8 +1803,8 @@ const getStyles = () => {
       }
     `,
     filterSelect: css`
-      padding: ${tokens.size[1.5]} ${tokens.size[2.5]};
-      border-radius: ${tokens.border.radius.md};
+      padding: ${tokens.size[0.5]} ${tokens.size[2]};
+      border-radius: ${tokens.border.radius.sm};
       background-color: ${colors.darkGray[400]};
       display: flex;
       align-items: center;
@@ -1626,14 +1814,14 @@ const getStyles = () => {
       border: 1px solid ${colors.darkGray[200]};
       height: min-content;
       & > svg {
-        width: ${tokens.size[3]};
-        height: ${tokens.size[3]};
+        width: ${tokens.size[2]};
+        height: ${tokens.size[2]};
       }
       & > select {
         appearance: none;
         min-width: 100px;
         line-height: ${font.lineHeight.sm};
-        font-size: ${font.size.sm};
+        font-size: ${font.size.xs};
         background-color: ${colors.darkGray[400]};
         border: none;
         &:focus {
@@ -1648,13 +1836,13 @@ const getStyles = () => {
     `,
     actionsContainer: css`
       display: flex;
-      gap: ${tokens.size[2.5]};
+      gap: ${tokens.size[2]};
     `,
     actionsBtn: css`
-      border-radius: ${tokens.border.radius.md};
+      border-radius: ${tokens.border.radius.sm};
       background-color: ${colors.darkGray[400]};
-      width: 2.125rem; // 34px
-      height: 2.125rem; // 34px
+      width: 1.625rem;
+      height: 1.625rem;
       justify-content: center;
       display: flex;
       align-items: center;
@@ -1667,8 +1855,8 @@ const getStyles = () => {
         background-color: ${colors.darkGray[500]};
       }
       & svg {
-        width: ${tokens.size[4]};
-        height: ${tokens.size[4]};
+        width: ${tokens.size[3]};
+        height: ${tokens.size[3]};
       }
       &:focus-visible {
         outline-offset: 2px;
@@ -1691,52 +1879,56 @@ const getStyles = () => {
       background-color: inherit;
       border: none;
       cursor: pointer;
+      &:focus {
+        outline: none;
+      }
       &:focus-visible {
         outline-offset: -2px;
         border-radius: ${border.radius.xs};
         outline: 2px solid ${colors.blue[800]};
       }
-      &:hover .TSQDQueryHash {
+      &:hover .tsqd-query-hash {
         background-color: ${colors.darkGray[600]};
       }
 
-      & .TSQDObserverCount {
+      & .tsqd-query-observer-count {
         padding: 0 ${tokens.size[1]};
         user-select: none;
-        min-width: ${tokens.size[8]};
-        align-self: stretch !important;
+        min-width: ${tokens.size[6.5]};
+        align-self: stretch;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: ${font.size.sm};
+        font-size: ${font.size.xs};
         font-weight: ${font.weight.medium};
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
         border-bottom: 1px solid ${colors.darkGray[700]};
       }
-      & .TSQDQueryHash {
+      & .tsqd-query-hash {
         user-select: text;
-        font-size: ${font.size.sm};
+        font-size: ${font.size.xs};
         display: flex;
         align-items: center;
-        min-height: ${tokens.size[8]};
+        min-height: ${tokens.size[6]};
         flex: 1;
         padding: ${tokens.size[1]} ${tokens.size[2]};
-        font-family: 'Menlo', 'Fira Code', monospace !important;
+        font-family: 'Menlo', 'Fira Code', monospace;
         border-bottom: 1px solid ${colors.darkGray[400]};
         text-align: left;
         text-overflow: clip;
         word-break: break-word;
       }
 
-      & .TSQDQueryDisabled {
+      & .tsqd-query-disabled-indicator {
         align-self: stretch;
-        align-self: stretch !important;
         display: flex;
         align-items: center;
-        padding: 0 ${tokens.size[3]};
+        padding: 0 ${tokens.size[2]};
         color: ${colors.gray[300]};
         background-color: ${colors.darkGray[600]};
         border-bottom: 1px solid ${colors.darkGray[400]};
-        font-size: ${font.size.sm};
+        font-size: ${font.size.xs};
       }
     `,
     detailsContainer: css`
@@ -1746,18 +1938,21 @@ const getStyles = () => {
       flex-direction: column;
       overflow-y: auto;
       display: flex;
+      text-align: left;
     `,
     detailsHeader: css`
       position: sticky;
       top: 0;
       z-index: 2;
       background-color: ${colors.darkGray[600]};
-      padding: ${tokens.size[2]} ${tokens.size[2]};
+      padding: ${tokens.size[1.5]} ${tokens.size[2]};
       font-weight: ${font.weight.medium};
-      font-size: ${font.size.sm};
+      font-size: ${font.size.xs};
+      line-height: ${font.lineHeight.xs};
+      text-align: left;
     `,
     detailsBody: css`
-      margin: ${tokens.size[2]} 0px ${tokens.size[3]} 0px;
+      margin: ${tokens.size[1.5]} 0px ${tokens.size[2]} 0px;
       & > div {
         display: flex;
         align-items: stretch;
@@ -1765,7 +1960,7 @@ const getStyles = () => {
         line-height: ${font.lineHeight.sm};
         justify-content: space-between;
         & > span {
-          font-size: ${font.size.sm};
+          font-size: ${font.size.xs};
         }
         & > span:nth-child(2) {
           font-variant-numeric: tabular-nums;
@@ -1773,39 +1968,39 @@ const getStyles = () => {
       }
 
       & > div:first-child {
-        margin-bottom: ${tokens.size[2]};
+        margin-bottom: ${tokens.size[1.5]};
       }
 
       & code {
-        font-family: 'Menlo', 'Fira Code', monospace !important;
+        font-family: 'Menlo', 'Fira Code', monospace;
         margin: 0;
-        font-size: ${font.size.sm};
-        line-height: ${font.lineHeight.sm};
+        font-size: ${font.size.xs};
+        line-height: ${font.lineHeight.xs};
       }
     `,
     queryDetailsStatus: css`
       border: 1px solid ${colors.darkGray[200]};
-      border-radius: ${tokens.border.radius.md};
+      border-radius: ${tokens.border.radius.sm};
       font-weight: ${font.weight.medium};
       padding: ${tokens.size[1]} ${tokens.size[2.5]};
     `,
     actionsBody: css`
       flex-wrap: wrap;
-      margin: ${tokens.size[3]} 0px ${tokens.size[3]} 0px;
+      margin: ${tokens.size[2]} 0px ${tokens.size[2]} 0px;
       display: flex;
       gap: ${tokens.size[2]};
       padding: 0px ${tokens.size[2]};
       & > button {
-        font-size: ${font.size.sm};
-        padding: ${tokens.size[2]} ${tokens.size[2]};
+        font-size: ${font.size.xs};
+        padding: ${tokens.size[1]} ${tokens.size[2]};
         display: flex;
-        border-radius: ${tokens.border.radius.md};
+        border-radius: ${tokens.border.radius.sm};
         border: 1px solid ${colors.darkGray[400]};
         background-color: ${colors.darkGray[600]};
         align-items: center;
         gap: ${tokens.size[2]};
         font-weight: ${font.weight.medium};
-        line-height: ${font.lineHeight.sm};
+        line-height: ${font.lineHeight.xs};
         cursor: pointer;
         &:focus-visible {
           outline-offset: 2px;
@@ -1822,17 +2017,17 @@ const getStyles = () => {
         }
 
         & > span {
-          width: ${size[2]};
-          height: ${size[2]};
+          width: ${size[1.5]};
+          height: ${size[1.5]};
           border-radius: ${tokens.border.radius.full};
         }
       }
     `,
     actionsSelect: css`
-      font-size: ${font.size.sm};
-      padding: ${tokens.size[2]} ${tokens.size[2]};
+      font-size: ${font.size.xs};
+      padding: ${tokens.size[0.5]} ${tokens.size[2]};
       display: flex;
-      border-radius: ${tokens.border.radius.md};
+      border-radius: ${tokens.border.radius.sm};
       overflow: hidden;
       border: 1px solid ${colors.darkGray[400]};
       background-color: ${colors.darkGray[600]};
@@ -1847,8 +2042,8 @@ const getStyles = () => {
         background-color: ${colors.darkGray[500]};
       }
       & > span {
-        width: ${size[2]};
-        height: ${size[2]};
+        width: ${size[1.5]};
+        height: ${size[1.5]};
         border-radius: ${tokens.border.radius.full};
       }
       &:focus-within {
@@ -1870,59 +2065,79 @@ const getStyles = () => {
       }
 
       & svg path {
-        stroke: ${tokens.colors.red[400]} !important;
+        stroke: ${tokens.colors.red[400]};
+      }
+      & svg {
+        width: ${tokens.size[2]};
+        height: ${tokens.size[2]};
       }
     `,
     settingsMenu: css`
-      position: absolute;
-      top: calc(100% + ${tokens.size[2]});
-      border-radius: ${tokens.border.radius.lg};
-      border: 1px solid ${colors.gray[600]};
-      right: 0;
-      min-width: ${tokens.size[44]};
-      background-color: ${colors.darkGray[400]};
-      font-size: ${font.size.sm};
-      color: ${colors.gray[500]};
-      z-index: 7;
+      display: flex;
+      & * {
+        font-family: 'Inter', sans-serif;
+      }
+      flex-direction: column;
+      gap: ${size[0.5]};
+      border-radius: ${tokens.border.radius.sm};
+      border: 1px solid ${colors.gray[700]};
+      background-color: ${colors.darkGray[600]};
+      font-size: ${font.size.xs};
+      color: ${colors.gray[300]};
+      z-index: 99999;
+      min-width: 120px;
+      padding: ${size[0.5]};
+    `,
+    settingsSubTrigger: css`
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: ${tokens.border.radius.xs};
+      padding: ${tokens.size[0.5]} ${tokens.size[1]};
+      cursor: pointer;
+      background-color: transparent;
+      border: none;
+      & svg {
+        transform: rotate(-90deg);
+        width: ${tokens.size[2]};
+        height: ${tokens.size[2]};
+      }
+      &:hover {
+        background-color: ${colors.darkGray[500]};
+      }
+      &:focus-visible {
+        outline-offset: 2px;
+        outline: 2px solid ${colors.blue[800]};
+      }
+      &.data-disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
     `,
     settingsMenuHeader: css`
-      padding: ${tokens.size[1.5]} ${tokens.size[2.5]};
-      color: ${colors.gray[300]};
+      padding: ${tokens.size[0.5]} ${tokens.size[1]};
       font-weight: ${font.weight.medium};
+      border-bottom: 1px solid ${colors.darkGray[400]};
+      color: ${colors.gray[400]};
+      font-size: ${font.size['xs']};
     `,
-    settingsMenuSection: css`
-      border-top: 1px solid ${colors.gray[600]};
+    settingsSubButton: css`
       display: flex;
-      flex-direction: column;
-      padding: ${tokens.size[1]} ${tokens.size[1]};
-
-      & > button {
-        cursor: pointer;
-        background-color: transparent;
-        border: none;
-        padding: ${tokens.size[2]} ${tokens.size[1.5]};
-        font-size: ${font.size.sm};
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        gap: ${tokens.size[2]};
-        border-radius: ${tokens.border.radius.md};
-        &:hover {
-          background-color: ${colors.darkGray[500]};
-        }
-
-        &:focus-visible {
-          outline-offset: 2px;
-          outline: 2px solid ${colors.blue[800]};
-        }
+      align-items: center;
+      justify-content: space-between;
+      color: ${colors.gray[300]};
+      font-size: ${font.size['xs']};
+      border-radius: ${tokens.border.radius.xs};
+      padding: ${tokens.size[0.5]} ${tokens.size[1]};
+      cursor: pointer;
+      background-color: transparent;
+      border: none;
+      &:hover {
+        background-color: ${colors.darkGray[500]};
       }
-
-      & button:nth-child(4) svg {
-        transform: rotate(-90deg);
-      }
-
-      & button:nth-child(3) svg {
-        transform: rotate(90deg);
+      &:focus-visible {
+        outline-offset: 2px;
+        outline: 2px solid ${colors.blue[800]};
       }
     `,
   }

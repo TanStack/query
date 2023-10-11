@@ -61,13 +61,6 @@ export function setActTimeout(fn: () => void, ms?: number) {
 }
 
 /**
- * Assert the parameter is of a specific type.
- */
-export function expectType<T>(_: T): void {
-  return undefined
-}
-
-/**
  * Assert the parameter is not typed as `any`
  */
 export function expectTypeNotAny<T>(_: 0 extends 1 & T ? never : T): void {

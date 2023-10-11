@@ -21,7 +21,6 @@ import {
 import {
   Blink,
   createQueryClient,
-  expectType,
   mockOnlineManagerIsOnline,
   mockVisibilityState,
   queryKey,
@@ -49,32 +48,32 @@ describe('createQuery', () => {
     function Page() {
       // unspecified query function should default to unknown
       const noQueryFn = createQuery(() => ({ queryKey: key }))
-      expectType<unknown>(noQueryFn.data)
-      expectType<unknown>(noQueryFn.error)
+      expectTypeOf<unknown>(noQueryFn.data)
+      expectTypeOf<unknown>(noQueryFn.error)
 
       // it should infer the result type from the query function
       const fromQueryFn = createQuery(() => ({
         queryKey: key,
         queryFn: () => 'test',
       }))
-      expectType<string | undefined>(fromQueryFn.data)
-      expectType<unknown>(fromQueryFn.error)
+      expectTypeOf<string | undefined>(fromQueryFn.data)
+      expectTypeOf<unknown>(fromQueryFn.error)
 
       // it should be possible to specify the result type
       const withResult = createQuery<string>(() => ({
         queryKey: key,
         queryFn: () => 'test',
       }))
-      expectType<string | undefined>(withResult.data)
-      expectType<unknown | null>(withResult.error)
+      expectTypeOf<string | undefined>(withResult.data)
+      expectTypeOf<unknown | null>(withResult.error)
 
       // it should be possible to specify the error type
       const withError = createQuery<string, Error>(() => ({
         queryKey: key,
         queryFn: () => 'test',
       }))
-      expectType<string | undefined>(withError.data)
-      expectType<Error | null>(withError.error)
+      expectTypeOf<string | undefined>(withError.data)
+      expectTypeOf<Error | null>(withError.error)
 
       // it should provide the result type in the configuration
       createQuery(() => ({
@@ -87,12 +86,12 @@ describe('createQuery', () => {
         queryKey: key,
         queryFn: () => (Math.random() > 0.5 ? 'a' : 'b'),
       }))
-      expectType<'a' | 'b' | undefined>(unionTypeSync.data)
+      expectTypeOf<'a' | 'b' | undefined>(unionTypeSync.data)
       const unionTypeAsync = createQuery<'a' | 'b'>(() => ({
         queryKey: key,
         queryFn: () => Promise.resolve(Math.random() > 0.5 ? 'a' : 'b'),
       }))
-      expectType<'a' | 'b' | undefined>(unionTypeAsync.data)
+      expectTypeOf<'a' | 'b' | undefined>(unionTypeAsync.data)
 
       // should error when the query function result does not match with the specified type
       // @ts-expect-error
@@ -107,15 +106,15 @@ describe('createQuery', () => {
         queryKey: key,
         queryFn: () => queryFn(),
       }))
-      expectType<string | undefined>(fromGenericQueryFn.data)
-      expectType<unknown>(fromGenericQueryFn.error)
+      expectTypeOf<string | undefined>(fromGenericQueryFn.data)
+      expectTypeOf<unknown>(fromGenericQueryFn.error)
 
       const fromGenericOptionsQueryFn = createQuery(() => ({
         queryKey: key,
         queryFn: () => queryFn(),
       }))
-      expectType<string | undefined>(fromGenericOptionsQueryFn.data)
-      expectType<unknown>(fromGenericOptionsQueryFn.error)
+      expectTypeOf<string | undefined>(fromGenericOptionsQueryFn.data)
+      expectTypeOf<unknown>(fromGenericOptionsQueryFn.error)
 
       type MyData = number
       type MyQueryKey = readonly ['my-data', number]
@@ -134,7 +133,7 @@ describe('createQuery', () => {
       const getMyDataStringKey: QueryFunction<MyData, ['1']> = async (
         context,
       ) => {
-        expectType<['1']>(context.queryKey)
+        expectTypeOf<['1']>(context.queryKey)
         return Number(context.queryKey[0]) + 42
       }
 
@@ -173,7 +172,7 @@ describe('createQuery', () => {
           ...options,
         }))
       const test = useWrappedQuery([''], async () => '1')
-      expectType<string | undefined>(test.data)
+      expectTypeOf<string | undefined>(test.data)
 
       // handles wrapped queries with custom fetcher passed directly to createQuery
       const useWrappedFuncStyleQuery = <
@@ -190,7 +189,7 @@ describe('createQuery', () => {
         >,
       ) => createQuery(() => ({ queryKey: qk, queryFn: fetcher, ...options }))
       const testFuncStyle = useWrappedFuncStyleQuery([''], async () => true)
-      expectType<boolean | undefined>(testFuncStyle.data)
+      expectTypeOf<boolean | undefined>(testFuncStyle.data)
     }
   })
 
@@ -243,14 +242,14 @@ describe('createQuery', () => {
       })
 
       if (state.isPending) {
-        expectType<undefined>(state.data)
-        expectType<null>(state.error)
+        expectTypeOf<undefined>(state.data)
+        expectTypeOf<null>(state.error)
       } else if (state.isLoadingError) {
-        expectType<undefined>(state.data)
-        expectType<Error>(state.error)
+        expectTypeOf<undefined>(state.data)
+        expectTypeOf<Error>(state.error)
       } else {
-        expectType<string>(state.data)
-        expectType<Error | null>(state.error)
+        expectTypeOf<string>(state.data)
+        expectTypeOf<Error | null>(state.error)
       }
 
       return (
@@ -1047,6 +1046,7 @@ describe('createQuery', () => {
           count++
           return count === 1 ? result1 : result2
         },
+        reconcile: 'id',
       }))
 
       createRenderEffect(() => {
@@ -1504,98 +1504,6 @@ describe('createQuery', () => {
     })
     // New data
     expect(states[3]).toMatchObject({
-      data: 1,
-      isFetching: false,
-      isSuccess: true,
-      isPlaceholderData: false,
-    })
-  })
-
-  it('should keep the previous data on disabled query when placeholderData is set to identity function', async () => {
-    const key = queryKey()
-    const states: Array<CreateQueryResult<number>> = []
-
-    function Page() {
-      const [count, setCount] = createSignal(0)
-
-      const state = createQuery(() => ({
-        queryKey: [key, count()],
-        queryFn: async () => {
-          await sleep(10)
-          return count()
-        },
-        enabled: false,
-        placeholderData: keepPreviousData,
-        notifyOnChangeProps: 'all',
-      }))
-
-      createRenderEffect(() => {
-        states.push({ ...state })
-      })
-
-      createEffect(() => {
-        const refetch = state.refetch
-        refetch()
-
-        setActTimeout(() => {
-          setCount(1)
-        }, 20)
-
-        setActTimeout(() => {
-          refetch()
-        }, 30)
-      })
-
-      return null
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
-
-    await sleep(100)
-
-    expect(states.length).toBe(6)
-
-    // Disabled query
-    expect(states[0]).toMatchObject({
-      data: undefined,
-      isFetching: false,
-      isSuccess: false,
-      isPlaceholderData: false,
-    })
-    // Fetching query
-    expect(states[1]).toMatchObject({
-      data: undefined,
-      isFetching: true,
-      isSuccess: false,
-      isPlaceholderData: false,
-    })
-    // Fetched query
-    expect(states[2]).toMatchObject({
-      data: 0,
-      isFetching: false,
-      isSuccess: true,
-      isPlaceholderData: false,
-    })
-    // Set state
-    expect(states[3]).toMatchObject({
-      data: 0,
-      isFetching: false,
-      isSuccess: true,
-      isPlaceholderData: true,
-    })
-    // Fetching new query
-    expect(states[4]).toMatchObject({
-      data: 0,
-      isFetching: true,
-      isSuccess: true,
-      isPlaceholderData: true,
-    })
-    // Fetched new query
-    expect(states[5]).toMatchObject({
       data: 1,
       isFetching: false,
       isSuccess: true,
@@ -5804,11 +5712,11 @@ describe('createQuery', () => {
           <div>data: {state.data}</div>
           <div>dataUpdatedAt: {state.dataUpdatedAt}</div>
           <button
-            onClick={() =>
+            onClick={() => {
               queryClient.setQueryData(key, 'newData', {
                 updatedAt: 100,
               })
-            }
+            }}
           >
             setQueryData
           </button>

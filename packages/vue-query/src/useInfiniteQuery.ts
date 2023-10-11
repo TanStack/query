@@ -110,10 +110,6 @@ export function useInfiniteQuery<
     options,
     queryClient,
   ) as InfiniteQueryReturnType<TData, TError>
-  return {
-    ...result,
-    fetchNextPage: result.fetchNextPage.value,
-    fetchPreviousPage: result.fetchPreviousPage.value,
-    refetch: result.refetch.value,
-  }
+
+  return result
 }

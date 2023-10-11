@@ -111,7 +111,7 @@ export function createBaseQuery<
   const isRestoring = useIsRestoring()
 
   const defaultedOptions = createMemo(() =>
-    mergeProps(client().defaultQueryOptions(options()), {
+    mergeProps(client()?.defaultQueryOptions(options()) || {}, {
       get _optimisticResults() {
         return isRestoring() ? 'isRestoring' : 'optimistic'
       },
@@ -167,7 +167,7 @@ export function createBaseQuery<
           return reconcileFn(
             store,
             result,
-            reconcileOptions === undefined ? 'id' : reconcileOptions,
+            reconcileOptions === undefined ? false : reconcileOptions,
           )
         })
         // If the query has data we dont suspend but instead mutate the resource

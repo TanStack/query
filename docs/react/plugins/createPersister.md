@@ -36,6 +36,8 @@ yarn add @tanstack/query-persist-client-core
 
 This way, you do not need to store whole `QueryClient`, but choose what is worth to be persisted in your application. Each query is lazily restored (when the Query is first used) and persisted (after each run of the `queryFn`), so it does not need to be throttled. `staleTime` is also respected after restoring the Query, so if data is considered `stale`, it will be refetched immediately after restoring. If data is `fresh`, the `queryFn` will not run.
 
+Garbage collecting a Query from memory **does not** affect the persisted data. That means Queries can be kept in memory for a shorter period of time to be more **memory efficient**. If they are used the next time, they will just be restored from the persistent storage again.
+
 ```tsx
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { QueryClient } from '@tanstack/react-query'
@@ -44,14 +46,19 @@ import { experimental_createPersister } from '@tanstack/query-persist-client-cor
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 1000 * 30, // 30 seconds
       persister: experimental_createPersister({
         storage: AsyncStorage,
+        maxAge: 1000 * 60 * 60 * 12 // 12 hours
       }),
     },
   },
 })
 ```
+
+### Adapted defaults
+
+The `createPersister` plugin technically wraps the `queryFn`, so it doesn't restore if the `queryFn` doesn't run. In that way, it acts as a caching layer between the Query and the network. Thus, the `networkMode` defaults to `'offlineFirst'` when a persister is used, so that restoring from the persistent storage can also happen even if there is no network connection.
 
 ## API
 
@@ -88,6 +95,7 @@ export interface StoragePersisterOptions {
    * The max-allowed age of the cache in milliseconds.
    * If a persisted cache is found that is older than this
    * time, it will be discarded
+   * @default 24 hours
    */
   maxAge?: number
   /**

@@ -11,6 +11,7 @@ import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
+import type { DataTag, NoInfer } from './types'
 import type { QueryState } from './query'
 import type {
   CancelOptions,
@@ -107,10 +108,18 @@ export class QueryClient {
     return this.#mutationCache.findAll({ ...filters, status: 'pending' }).length
   }
 
-  getQueryData<TQueryFnData = unknown>(
-    queryKey: QueryKey,
-  ): TQueryFnData | undefined {
-    return this.#queryCache.find<TQueryFnData>({ queryKey })?.state.data
+  getQueryData<
+    TQueryFnData = unknown,
+    TaggedQueryKey extends QueryKey = QueryKey,
+    TInferredQueryFnData = TaggedQueryKey extends DataTag<
+      unknown,
+      infer TaggedValue
+    >
+      ? TaggedValue
+      : TQueryFnData,
+  >(queryKey: TaggedQueryKey): TInferredQueryFnData | undefined
+  getQueryData(queryKey: QueryKey) {
+    return this.#queryCache.find({ queryKey })?.state.data
   }
 
   ensureQueryData<
@@ -137,12 +146,24 @@ export class QueryClient {
       })
   }
 
-  setQueryData<TQueryFnData>(
-    queryKey: QueryKey,
-    updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
+  setQueryData<
+    TQueryFnData = unknown,
+    TaggedQueryKey extends QueryKey = QueryKey,
+    TInferredQueryFnData = TaggedQueryKey extends DataTag<
+      unknown,
+      infer TaggedValue
+    >
+      ? TaggedValue
+      : TQueryFnData,
+  >(
+    queryKey: TaggedQueryKey,
+    updater: Updater<
+      NoInfer<TInferredQueryFnData> | undefined,
+      NoInfer<TInferredQueryFnData> | undefined
+    >,
     options?: SetDataOptions,
-  ): TQueryFnData | undefined {
-    const query = this.#queryCache.find<TQueryFnData>({ queryKey })
+  ): TInferredQueryFnData | undefined {
+    const query = this.#queryCache.find<TInferredQueryFnData>({ queryKey })
     const prevData = query?.state.data
     const data = functionalUpdate(updater, prevData)
 
@@ -487,6 +508,13 @@ export class QueryClient {
     }
     if (typeof defaultedOptions.throwOnError === 'undefined') {
       defaultedOptions.throwOnError = !!defaultedOptions.suspense
+    }
+
+    if (
+      typeof defaultedOptions.networkMode === 'undefined' &&
+      defaultedOptions.persister
+    ) {
+      defaultedOptions.networkMode = 'offlineFirst'
     }
 
     return defaultedOptions as DefaultedQueryObserverOptions<

@@ -1,6 +1,6 @@
 <img src="https://static.scarf.sh/a.png?x-pxid=be2d8a11-9712-4c1d-9963-580b2d4fb133" />
 
-![TanStack Query Header](https://github.com/TanStack/query/raw/beta/media/repo-header.png)
+![TanStack Query Header](https://github.com/TanStack/query/raw/rc/media/repo-header.png)
 
 Hooks for fetching, caching and updating asynchronous data in React
 

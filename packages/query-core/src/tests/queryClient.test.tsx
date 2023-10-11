@@ -150,6 +150,45 @@ describe('queryClient', () => {
     })
   })
 
+  describe('defaultQueryOptions', () => {
+    test('should default networkMode when persister is present', async () => {
+      expect(
+        createQueryClient({
+          defaultOptions: {
+            queries: {
+              persister: 'ignore' as any,
+            },
+          },
+        }).defaultQueryOptions({ queryKey: queryKey() }).networkMode,
+      ).toBe('offlineFirst')
+    })
+
+    test('should not default networkMode without persister', async () => {
+      expect(
+        createQueryClient({
+          defaultOptions: {
+            queries: {
+              staleTime: 1000,
+            },
+          },
+        }).defaultQueryOptions({ queryKey: queryKey() }).networkMode,
+      ).toBe(undefined)
+    })
+
+    test('should not default networkMode when already present', async () => {
+      expect(
+        createQueryClient({
+          defaultOptions: {
+            queries: {
+              persister: 'ignore' as any,
+              networkMode: 'always',
+            },
+          },
+        }).defaultQueryOptions({ queryKey: queryKey() }).networkMode,
+      ).toBe('always')
+    })
+  })
+
   describe('setQueryData', () => {
     test('should not crash if query could not be found', () => {
       const key = queryKey()

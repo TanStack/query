@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-devtools",
-  "version": "5.0.0-beta.20",
+  "version": "5.0.0-rc.10",
   "description": "Developer tools to interact with and visualize the TanStack Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -17,8 +17,8 @@
   "browser": {},
   "exports": {
     "solid": {
-      "development": "./build/dev.jsx",
-      "import": "./build/index.jsx"
+      "development": "./build/index.js",
+      "import": "./build/index.js"
     },
     "development": {
       "import": {
@@ -40,19 +40,22 @@
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
-    "build": "tsup"
+    "build": "tsup",
+    "build:dev": "tsup --watch"
   },
   "files": [
     "build",
     "src"
   ],
   "devDependencies": {
-    "@emotion/css": "^11.11.0",
+    "@kobalte/core": "^0.11.0",
     "@solid-primitives/keyed": "^1.2.0",
     "@solid-primitives/resize-observer": "^2.0.18",
     "@solid-primitives/storage": "^1.3.11",
     "@tanstack/match-sorter-utils": "^8.8.4",
     "@tanstack/query-core": "workspace:*",
+    "clsx": "^2.0.0",
+    "goober": "^2.1.13",
     "solid-js": "^1.7.8",
     "solid-transition-group": "^0.2.2",
     "superjson": "^1.12.4",

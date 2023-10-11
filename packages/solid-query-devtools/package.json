@@ -1,0 +1,61 @@
+{
+  "name": "@tanstack/solid-query-devtools",
+  "version": "5.0.0-rc.10",
+  "description": "Developer tools to interact with and visualize the TanStack/solid-query Query cache",
+  "author": "tannerlinsley",
+  "license": "MIT",
+  "repository": "tanstack/query",
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "type": "module",
+  "main": "./build/index.cjs",
+  "module": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "browser": {},
+  "exports": {
+    "solid": {
+      "development": "./build/dev.jsx",
+      "import": "./build/index.jsx"
+    },
+    "development": {
+      "import": {
+        "types": "./build/index.d.ts",
+        "default": "./build/dev.js"
+      },
+      "require": "./build/dev.cjs"
+    },
+    "import": {
+      "types": "./build/index.d.ts",
+      "default": "./build/index.js"
+    },
+    "require": "./build/index.cjs"
+  },
+  "scripts": {
+    "clean": "rimraf ./build && rimraf ./coverage",
+    "test:eslint": "eslint --ext .ts,.tsx ./src",
+    "test:types": "tsc",
+    "test:build": "publint --strict",
+    "build": "tsup",
+    "build:dev": "tsup --watch"
+  },
+  "files": [
+    "build",
+    "src"
+  ],
+  "dependencies": {
+    "@tanstack/query-devtools": "workspace:*"
+  },
+  "peerDependencies": {
+    "solid-js": "^1.7.8",
+    "@tanstack/solid-query": "workspace:^"
+  },
+  "devDependencies": {
+    "solid-js": "^1.7.8",
+    "@tanstack/solid-query": "workspace:^",
+    "tsup-preset-solid": "^2.0.1",
+    "vite-plugin-solid": "^2.7.0"
+  }
+}

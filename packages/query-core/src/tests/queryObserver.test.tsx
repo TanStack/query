@@ -1,6 +1,6 @@
 import { vi } from 'vitest'
 import { QueryObserver, focusManager } from '..'
-import { createQueryClient, expectType, queryKey, sleep } from './utils'
+import { createQueryClient, queryKey, sleep } from './utils'
 import type { QueryClient, QueryObserverResult } from '..'
 
 describe('queryObserver', () => {
@@ -56,7 +56,7 @@ describe('queryObserver', () => {
     })
     let observerResult
     const unsubscribe = observer.subscribe((result) => {
-      expectType<QueryObserverResult<{ myCount: number }>>(result)
+      expectTypeOf<QueryObserverResult<{ myCount: number }>>(result)
       observerResult = result
     })
     await sleep(1)
@@ -72,7 +72,7 @@ describe('queryObserver', () => {
       select: (data) => ({ myCount: data.count }),
     })
     const observerResult = await observer.refetch()
-    expectType<{ myCount: number } | undefined>(observerResult.data)
+    expectTypeOf<{ myCount: number } | undefined>(observerResult.data)
     expect(observerResult.data).toMatchObject({ myCount: 1 })
   })
 

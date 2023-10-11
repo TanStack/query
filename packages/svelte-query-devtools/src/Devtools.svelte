@@ -54,4 +54,4 @@
   }
 </script>
 
-<div bind:this={ref} />
+<div class="tsqd-parent-container" bind:this={ref} />

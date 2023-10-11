@@ -79,13 +79,6 @@ export function setActTimeout(fn: () => void, ms?: number) {
   }, ms)
 }
 
-/**
- * Assert the parameter is of a specific type.
- */
-export function expectType<T>(_: T): void {
-  return undefined
-}
-
 export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
   T,
 >() => T extends Y ? 1 : 2

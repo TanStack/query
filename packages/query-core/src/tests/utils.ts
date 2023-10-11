@@ -41,11 +41,6 @@ export function setActTimeout(fn: () => void, ms?: number) {
   }, ms)
 }
 
-/**
- * Assert the parameter is of a specific type.
- */
-export const expectType = <T>(_: T): void => undefined
-
 export const executeMutation = <TVariables>(
   queryClient: QueryClient,
   options: MutationOptions<any, any, TVariables, any>,
@@ -71,3 +66,13 @@ export function setIsServer(isServer: boolean) {
     })
   }
 }
+
+export const doNotExecute = (_func: () => void) => true
+
+export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
+  T,
+>() => T extends Y ? 1 : 2
+  ? true
+  : false
+
+export type Expect<T extends true> = T

@@ -1,6 +1,7 @@
 'use client'
 import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
+import { defaultThrowOnError } from './suspense'
 import type {
   InfiniteQueryObserverSuccessResult,
   QueryObserver,
@@ -38,7 +39,7 @@ export function useSuspenseInfiniteQuery<
       ...options,
       enabled: true,
       suspense: true,
-      throwOnError: true,
+      throwOnError: defaultThrowOnError,
     },
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     InfiniteQueryObserver as typeof QueryObserver,

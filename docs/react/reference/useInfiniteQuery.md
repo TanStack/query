@@ -80,3 +80,5 @@ The returned properties for `useInfiniteQuery` are identical to the [`useQuery` 
 - `isRefetching: boolean`
   - Is `true` whenever a background refetch is in-flight, which _does not_ include initial `pending` or fetching of next or previous page
   - Is the same as `isFetching && !isPending && !isFetchingNextPage && !isFetchingPreviousPage`
+
+Keep in mind that imperative fetch calls, such as `fetchNextPage`, may interfere with the default refetch behaviour, resulting in outdated data. Make sure to call these functions only in response to user actions, or add conditions like `hasNextPage && !isFetching`.

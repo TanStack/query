@@ -7,7 +7,7 @@ import type { QueryFilters, QueryTypeFilter } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
 
-type NoInfer<T> = [T][T extends any ? 0 : never]
+export type NoInfer<T> = [T][T extends any ? 0 : never]
 
 export interface Register {
   // defaultError: Error
@@ -22,6 +22,11 @@ export type DefaultError = Register extends {
   : Error
 
 export type QueryKey = ReadonlyArray<unknown>
+
+export declare const dataTagSymbol: unique symbol
+export type DataTag<Type, Value> = Type & {
+  [dataTagSymbol]: Value
+}
 
 export type QueryFunction<
   T = unknown,
@@ -76,9 +81,10 @@ export type PlaceholderDataFunction<
   previousQuery: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined,
 ) => TQueryData | undefined
 
-export type QueriesPlaceholderDataFunction<TQueryData> = () =>
-  | TQueryData
-  | undefined
+export type QueriesPlaceholderDataFunction<TQueryData> = (
+  previousData: undefined,
+  previousQuery: undefined,
+) => TQueryData | undefined
 
 export type QueryKeyHashFunction<TQueryKey extends QueryKey> = (
   queryKey: TQueryKey,
@@ -152,9 +158,7 @@ export interface QueryOptions<
    * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic.
    * Defaults to `true`.
    */
-  structuralSharing?:
-    | boolean
-    | ((oldData: TData | undefined, newData: TData) => TData)
+  structuralSharing?: boolean | (<T>(oldData: T | undefined, newData: T) => T)
   _defaulted?: boolean
   /**
    * Additional payload to be stored on each query.
@@ -388,7 +392,7 @@ export interface FetchQueryOptions<
 }
 
 type FetchInfiniteQueryPages<TQueryFnData = unknown, TPageParam = unknown> =
-  | { pages?: never; getNextPageParam?: never }
+  | { pages?: never }
   | {
       pages: number
       getNextPageParam: GetNextPageParamFunction<TPageParam, TQueryFnData>

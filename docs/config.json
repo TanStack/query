@@ -113,10 +113,6 @@
               "to": "react/guides/placeholder-query-data"
             },
             {
-              "label": "Prefetching",
-              "to": "react/guides/prefetching"
-            },
-            {
               "label": "Mutations",
               "to": "react/guides/mutations"
             },
@@ -149,8 +145,20 @@
               "to": "react/guides/filters"
             },
             {
-              "label": "SSR & Next.js",
+              "label": "Performance & Request Waterfalls",
+              "to": "react/guides/request-waterfalls"
+            },
+            {
+              "label": "Prefetching & Router Integration",
+              "to": "react/guides/prefetching"
+            },
+            {
+              "label": "Server Rendering & Hydration",
               "to": "react/guides/ssr"
+            },
+            {
+              "label": "Advanced Server Rendering",
+              "to": "react/guides/advanced-ssr"
             },
             {
               "label": "Caching",
@@ -310,6 +318,10 @@
             {
               "label": "Exhaustive Deps",
               "to": "react/eslint/exhaustive-deps"
+            },
+            {
+              "label": "Stable Query Client",
+              "to": "react/eslint/stable-query-client"
             }
           ]
         },
@@ -434,6 +446,35 @@
             {
               "label": "Overview",
               "to": "solid/overview"
+            },
+            {
+              "label": "Devtools",
+              "to": "solid/devtools"
+            }
+          ]
+        },
+        {
+          "label": "Examples",
+          "children": [
+            {
+              "label": "Simple",
+              "to": "solid/examples/solid/simple"
+            },
+            {
+              "label": "Basic",
+              "to": "solid/examples/solid/basic-typescript"
+            },
+            {
+              "label": "Basic w/ GraphQL-Request",
+              "to": "solid/examples/solid/basic-graphql-request"
+            },
+            {
+              "label": "Default Query Function",
+              "to": "solid/examples/solid/default-query-function"
+            },
+            {
+              "label": "Solid Start",
+              "to": "solid/examples/solid/solid-start-streaming"
             }
           ]
         }

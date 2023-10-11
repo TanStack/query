@@ -7,16 +7,16 @@ You can install React Query via [NPM](https://npmjs.com/),
 or a good ol' `<script>` via
 [ESM.sh](https://esm.sh/).
 
-> v5 is currently in beta. We don't anticipate any major API changes from here on out, but we do expect some minor changes and fixes. We encourage you to try it out and report any issues you find.
+> v5 is currently available as a release-candidate. We don't anticipate any major API changes from here on out. We encourage you to try it out and report any issues you find.
 
 ### NPM
 
 ```bash
-$ npm i @tanstack/react-query@beta
+$ npm i @tanstack/react-query@rc
 # or
-$ pnpm add @tanstack/react-query@beta
+$ pnpm add @tanstack/react-query@rc
 # or
-$ yarn add @tanstack/react-query@beta
+$ yarn add @tanstack/react-query@rc
 ```
 
 React Query is compatible with React v18+ and works with ReactDOM and React Native.
@@ -31,7 +31,7 @@ If you're not using a module bundler or package manager, you can also use this l
 <script type="module">
   import React from 'https://esm.sh/react@18.2.0'
   import ReactDOM from 'https://esm.sh/react-dom@18.2.0'
-  import { QueryClient } from 'https://esm.sh/@tanstack/react-query@beta'
+  import { QueryClient } from 'https://esm.sh/@tanstack/react-query@rc'
 </script>
 ```
 
@@ -57,9 +57,9 @@ opera >= 77
 It is recommended to also use our [ESLint Plugin Query](./eslint/eslint-plugin-query) to help you catch bugs and inconsistencies while you code. You can install it via:
 
 ```bash
-$ npm i -D @tanstack/eslint-plugin-query@beta
+$ npm i -D @tanstack/eslint-plugin-query@rc
 # or
-$ pnpm add -D @tanstack/eslint-plugin-query@beta
+$ pnpm add -D @tanstack/eslint-plugin-query@rc
 # or
-$ yarn add -D @tanstack/eslint-plugin-query@beta
+$ yarn add -D @tanstack/eslint-plugin-query@rc
 ```
