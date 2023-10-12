@@ -84,13 +84,19 @@ export function useBaseQuery<
   const client = queryClient || useQueryClient()
 
   const defaultedOptions = computed(() => {
+    const clonedOptions = cloneDeepUnref(options as any)
+
+    if (typeof clonedOptions.enabled === 'function') {
+      clonedOptions.enabled = clonedOptions.enabled()
+    }
+
     const defaulted: DefaultedQueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
       TQueryData,
       TQueryKey
-    > = client.defaultQueryOptions(cloneDeepUnref(options as any))
+    > = client.defaultQueryOptions(clonedOptions)
 
     defaulted._optimisticResults = client.isRestoring.value
       ? 'isRestoring'
