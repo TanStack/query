@@ -29,7 +29,7 @@ export {
 } from './hydration'
 
 // Types
-export * from './types'
+export type * from './types'
 export type { QueryState } from './query'
 export { Query } from './query'
 export type { Mutation, MutationState } from './mutation'

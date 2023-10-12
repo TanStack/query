@@ -4,7 +4,8 @@
 export * from '@tanstack/query-core'
 
 // React Query
-export * from './types'
+export type * from './types'
+
 export { useQueries } from './useQueries'
 export type { QueriesResults, QueriesOptions } from './useQueries'
 export { useQuery } from './useQuery'

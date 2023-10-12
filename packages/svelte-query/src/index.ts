@@ -4,7 +4,7 @@
 export * from '@tanstack/query-core'
 
 // Svelte Query
-export * from './types'
+export type * from './types'
 export * from './context'
 export { createQuery } from './createQuery'
 export { createQueries } from './createQueries'
