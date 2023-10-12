@@ -1,12 +1,13 @@
 {
   "name": "@tanstack/angular-query-experimental",
-  "version": "5.0.0-rc.5",
+  "version": "5.0.0-rc.12",
   "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
   "author": "Arnoud de Vries",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tanstack/query.git"
+    "url": "https://github.com/TanStack/query.git",
+    "directory": "packages/angular-query-experimental"
   },
   "homepage": "https://tanstack.com/query",
   "funding": {
