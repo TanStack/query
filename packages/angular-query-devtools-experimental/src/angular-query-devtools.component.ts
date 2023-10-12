@@ -46,34 +46,73 @@ export class AngularQueryDevtoolsComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('ref') ref!: ElementRef
 
+  #initialIsOpen = false
   /**
-   * Set this true if you want the dev tools to default to being open
+   * Add this attribute if you want the dev tools to default to being open
    */
-  @Input({ transform: booleanAttribute }) initialIsOpen = false
+  @Input({ transform: booleanAttribute })
+  set initialIsOpen(value: boolean) {
+    this.#initialIsOpen = value
+    this.#devtools?.setInitialIsOpen(value)
+  }
+  get initialIsOpen() {
+    return this.#initialIsOpen
+  }
 
+  #buttonPosition: DevtoolsButtonPosition = 'bottom-left'
   /**
    * The position of the TanStack logo to open and close the devtools panel.
    * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
    * Defaults to 'bottom-left'.
    */
-  @Input() buttonPosition: DevtoolsButtonPosition = 'bottom-left'
+  @Input()
+  set buttonPosition(value: DevtoolsButtonPosition) {
+    this.#buttonPosition = value
+    this.#devtools?.setButtonPosition(value)
+  }
+  get buttonPosition() {
+    return this.#buttonPosition
+  }
 
+  #position: DevtoolsPosition = 'bottom'
   /**
    * The position of the Angular Query devtools panel.
    * 'top' | 'bottom' | 'left' | 'right'
    * Defaults to 'bottom'.
    */
-  @Input() position: DevtoolsPosition = 'bottom'
+  @Input()
+  set position(value: DevtoolsPosition) {
+    this.#position = value
+    this.#devtools?.setPosition(value)
+  }
+  get position() {
+    return this.#position
+  }
 
   /**
    * Custom instance of QueryClient
    */
-  @Input() client: QueryClient | undefined
+  @Input()
+  set client(client: QueryClient | undefined) {
+    if (!client) return
+    this.#devtools?.setClient(client)
+  }
+  get client(): QueryClient | undefined {
+    return this.#injectedClient
+  }
 
+  #errorTypes: Array<DevToolsErrorType> = []
   /**
    * Use this so you can define custom errors that can be shown in the devtools.
    */
-  @Input() errorTypes: Array<DevToolsErrorType> = []
+  @Input()
+  set errorTypes(value: Array<DevToolsErrorType>) {
+    this.#errorTypes = value
+    this.#devtools?.setErrorTypes(value)
+  }
+  get errorTypes(): Array<DevToolsErrorType> {
+    return this.#errorTypes
+  }
 
   ngAfterViewInit() {
     const client = this.client || this.#injectedClient
