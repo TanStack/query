@@ -6,14 +6,12 @@ import type {
   DefinedQueryObserverResult,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
-  InfiniteQueryObserverSuccessResult,
   MutateFunction,
   MutationObserverOptions,
   MutationObserverResult,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
-  QueryObserverSuccessResult,
   WithRequired,
 } from '@tanstack/query-core'
 
@@ -105,7 +103,7 @@ export type UseQueryResult<
 export type UseSuspenseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = Omit<QueryObserverSuccessResult<TData, TError>, 'isPlaceholderData'>
+> = Omit<DefinedQueryObserverResult<TData, TError>, 'isPlaceholderData'>
 
 export type DefinedUseQueryResult<
   TData = unknown,
@@ -125,7 +123,7 @@ export type DefinedUseInfiniteQueryResult<
 export type UseSuspenseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = Omit<InfiniteQueryObserverSuccessResult<TData, TError>, 'isPlaceholderData'>
+> = Omit<DefinedInfiniteQueryObserverResult<TData, TError>, 'isPlaceholderData'>
 
 export interface UseMutationOptions<
   TData = unknown,

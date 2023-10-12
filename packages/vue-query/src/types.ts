@@ -14,6 +14,8 @@ type UnwrapLeaf =
 
 export type MaybeRef<T> = Ref<T> | T
 
+export type MaybeRefOrGetter<T> = MaybeRef<T> | (() => T)
+
 export type MaybeRefDeep<T> = MaybeRef<
   T extends Function
     ? T

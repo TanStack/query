@@ -169,6 +169,27 @@ useQuery(groupOptions())
 queryClient.prefetchQuery(groupOptions())
 ```
 
+Further, the `queryKey` returned from `queryOptions` knows about the `queryFn` associated with it, and we can leverage that type information to make functions like `queryClient.getQueryData` aware of those types as well:
+
+```ts
+function groupOptions() {
+  return queryOptions({
+    queryKey: ['groups'],
+    queryFn: fetchGroups,
+    staleTime: 5 * 1000,
+  })
+}
+
+const data = queryClient.getQueryData(groupOptions().queryKey)
+//     ^? const data: Group[] | undefined
+```
+
+Without `queryOptions`, the type of `data` would be `unknown`, unless we'd pass a generic to it:
+
+```ts
+const data = queryClient.getQueryData<Group[]>(['groups'])
+```
+
 [//]: # 'TypingQueryOptions'
 [//]: # 'Materials'
 

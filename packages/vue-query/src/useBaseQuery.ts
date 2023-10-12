@@ -25,9 +25,13 @@ export type UseBaseQueryReturnType<
   TError,
   Result = QueryObserverResult<TData, TError>,
 > = {
-  [K in keyof Result]: Result[K] extends (...args: Array<any>) => any
+  [K in keyof Result]: K extends
+    | 'fetchNextPage'
+    | 'fetchPreviousPage'
+    | 'refetch'
+    | 'remove'
     ? Result[K]
-    : ToRef<Result[K]>
+    : ToRef<Readonly<Result>[K]>
 } & {
   suspense: () => Promise<Result>
 }
@@ -80,13 +84,19 @@ export function useBaseQuery<
   const client = queryClient || useQueryClient()
 
   const defaultedOptions = computed(() => {
+    const clonedOptions = cloneDeepUnref(options as any)
+
+    if (typeof clonedOptions.enabled === 'function') {
+      clonedOptions.enabled = clonedOptions.enabled()
+    }
+
     const defaulted: DefaultedQueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
       TQueryData,
       TQueryKey
-    > = client.defaultQueryOptions(cloneDeepUnref(options as any))
+    > = client.defaultQueryOptions(clonedOptions)
 
     defaulted._optimisticResults = client.isRestoring.value
       ? 'isRestoring'

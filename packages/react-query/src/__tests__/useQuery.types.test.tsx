@@ -51,10 +51,16 @@ describe('initialData', () => {
           queryKey: ['key'],
           queryFn: () => Promise.resolve(1),
         })
-        useQuery({
+
+        const query = useQuery({
           ...options,
           select: (data) => data > 1,
         })
+
+        const result: Expect<
+          Equal<boolean | undefined, (typeof query)['data']>
+        > = true
+        return result
       })
     })
 

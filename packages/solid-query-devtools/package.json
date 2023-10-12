@@ -1,14 +1,10 @@
 {
-  "name": "@tanstack/solid-query",
+  "name": "@tanstack/solid-query-devtools",
   "version": "5.0.0-rc.12",
-  "description": "Primitives for managing, caching and syncing asynchronous and remote data in Solid",
+  "description": "Developer tools to interact with and visualize the TanStack/solid-query Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/TanStack/query.git",
-    "directory": "packages/solid-query"
-  },
+  "repository": "tanstack/query",
   "homepage": "https://tanstack.com/query",
   "funding": {
     "type": "github",
@@ -20,50 +16,46 @@
   "types": "./build/index.d.ts",
   "browser": {},
   "exports": {
+    "solid": {
+      "development": "./build/dev.jsx",
+      "import": "./build/index.jsx"
+    },
     "development": {
       "import": {
         "types": "./build/index.d.ts",
         "default": "./build/dev.js"
       },
-      "require": {
-        "types": "./build/index.d.cts",
-        "default": "./build/dev.cjs"
-      }
+      "require": "./build/dev.cjs"
     },
     "import": {
       "types": "./build/index.d.ts",
       "default": "./build/index.js"
     },
-    "require": {
-      "types": "./build/index.d.cts",
-      "default": "./build/index.cjs"
-    }
+    "require": "./build/index.cjs"
   },
-  "sideEffects": [
-    "./src/setBatchUpdatesFn.ts"
-  ],
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
-    "test:lib": "vitest run --coverage",
-    "test:lib:dev": "vitest watch --coverage",
     "test:build": "publint --strict",
-    "build": "tsup"
+    "build": "tsup",
+    "build:dev": "tsup --watch"
   },
   "files": [
     "build",
     "src"
   ],
   "dependencies": {
-    "@tanstack/query-core": "workspace:*",
-    "solid-js": "^1.7.8"
-  },
-  "devDependencies": {
-    "tsup-preset-solid": "^2.0.1",
-    "vite-plugin-solid": "^2.7.0"
+    "@tanstack/query-devtools": "workspace:*"
   },
   "peerDependencies": {
-    "solid-js": "^1.6.0"
+    "solid-js": "^1.7.8",
+    "@tanstack/solid-query": "workspace:^"
+  },
+  "devDependencies": {
+    "solid-js": "^1.7.8",
+    "@tanstack/solid-query": "workspace:^",
+    "tsup-preset-solid": "^2.0.1",
+    "vite-plugin-solid": "^2.7.0"
   }
 }

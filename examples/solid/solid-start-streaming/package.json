@@ -14,6 +14,7 @@
     "@solidjs/meta": "^0.28.2",
     "@solidjs/router": "^0.7.0",
     "@tanstack/solid-query": "^5.0.0-rc.1",
+    "@tanstack/solid-query-devtools": "^5.0.0-rc.9",
     "solid-js": "^1.7.8",
     "solid-start": "^0.2.23",
     "undici": "^5.22.1"
