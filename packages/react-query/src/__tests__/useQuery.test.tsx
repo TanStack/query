@@ -4146,7 +4146,7 @@ describe('useQuery', () => {
           await sleep(10)
           return count++
         },
-        refetchInterval: (data = 0) => (data < 2 ? 10 : false),
+        refetchInterval: ({ state: { data = 0 } }) => (data < 2 ? 10 : false),
       })
 
       states.push(queryInfo)

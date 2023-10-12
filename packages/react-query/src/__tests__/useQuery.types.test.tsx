@@ -47,13 +47,15 @@ describe('initialData', () => {
 
     it('it should be possible to define a different TData than TQueryFnData using select with queryOptions spread into useQuery', () => {
       doNotExecute(() => {
-        const options = <TData = number,>(select?: (data: number) => TData) =>
-          queryOptions({
-            queryKey: ['key'],
-            queryFn: () => Promise.resolve(1),
-            select,
-          })
-        const query = useQuery(options((data) => data > 1))
+        const options = queryOptions({
+          queryKey: ['key'],
+          queryFn: () => Promise.resolve(1),
+        })
+
+        const query = useQuery({
+          ...options,
+          select: (data) => data > 1,
+        })
 
         const result: Expect<
           Equal<boolean | undefined, (typeof query)['data']>
