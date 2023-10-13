@@ -1185,9 +1185,9 @@ const QueryDetails = () => {
   const getQueryStatusColors = () => {
     if (color() === 'gray') {
       return css`
-        background-color: ${t(colors[color()][700], colors[color()][700])};
-        color: ${t(colors[color()][300], colors[color()][300])};
-        border-color: ${t(colors[color()][600], colors[color()][600])};
+        background-color: ${t(colors[color()][200], colors[color()][700])};
+        color: ${t(colors[color()][700], colors[color()][300])};
+        border-color: ${t(colors[color()][400], colors[color()][600])};
       `
     }
     return css`
