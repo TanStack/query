@@ -1,4 +1,5 @@
 import { serialize } from 'superjson'
+import { createSignal, onCleanup, onMount } from 'solid-js'
 import type { Query } from '@tanstack/query-core'
 import type { DevtoolsPosition } from './Context'
 
@@ -111,6 +112,22 @@ export const convertRemToPixels = (rem: number) => {
 }
 
 export const convertPixelsToRem = (px: number) => px / convertRemToPixels(1)
+
+export const getPreferredColorScheme = () => {
+  const [colorScheme, setColorScheme] = createSignal<'light' | 'dark'>('dark')
+
+  onMount(() => {
+    const query = window.matchMedia('(prefers-color-scheme: dark)')
+    setColorScheme(query.matches ? 'dark' : 'light')
+    const listener = (e: MediaQueryListEvent) => {
+      setColorScheme(e.matches ? 'dark' : 'light')
+    }
+    query.addEventListener('change', listener)
+    onCleanup(() => query.removeEventListener('change', listener))
+  })
+
+  return colorScheme
+}
 
 /**
  * updates nested data by path

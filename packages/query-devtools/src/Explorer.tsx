@@ -10,7 +10,7 @@ import {
   updateNestedDataByPath,
 } from './utils'
 import { Check, CopiedCopier, Copier, ErrorCopier, List, Trash } from './icons'
-import { useQueryDevtoolsContext } from './Context'
+import { useQueryDevtoolsContext, useTheme } from './Context'
 import type { Query } from '@tanstack/query-core'
 
 /**
@@ -37,12 +37,15 @@ export function chunkArray<T extends { label: string; value: unknown }>(
 }
 
 const Expander = (props: { expanded: boolean }) => {
-  const styles = getStyles()
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
 
   return (
     <span
       class={cx(
-        styles.expander,
+        styles().expander,
         css`
           transform: rotate(${props.expanded ? 90 : 0}deg);
         `,
@@ -74,12 +77,15 @@ const Expander = (props: { expanded: boolean }) => {
 
 type CopyState = 'NoCopy' | 'SuccessCopy' | 'ErrorCopy'
 const CopyButton = (props: { value: unknown }) => {
-  const styles = getStyles()
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
   const [copyState, setCopyState] = createSignal<CopyState>('NoCopy')
 
   return (
     <button
-      class={styles.actionButton}
+      class={styles().actionButton}
       title="Copy object to clipboard"
       aria-label={`${
         copyState() === 'NoCopy'
@@ -115,7 +121,7 @@ const CopyButton = (props: { value: unknown }) => {
           <Copier />
         </Match>
         <Match when={copyState() === 'SuccessCopy'}>
-          <CopiedCopier />
+          <CopiedCopier theme={theme()} />
         </Match>
         <Match when={copyState() === 'ErrorCopy'}>
           <ErrorCopier />
@@ -129,12 +135,15 @@ const ClearArrayButton = (props: {
   dataPath: Array<string>
   activeQuery: Query
 }) => {
-  const styles = getStyles()
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
   const queryClient = useQueryDevtoolsContext().client
 
   return (
     <button
-      class={styles.actionButton}
+      class={styles().actionButton}
       title={'Remove all items'}
       aria-label={'Remove all items'}
       onClick={() => {
@@ -152,12 +161,15 @@ const DeleteItemButton = (props: {
   dataPath: Array<string>
   activeQuery: Query
 }) => {
-  const styles = getStyles()
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
   const queryClient = useQueryDevtoolsContext().client
 
   return (
     <button
-      class={cx(styles.actionButton)}
+      class={cx(styles().actionButton)}
       title={'Delete item'}
       aria-label={'Delete item'}
       onClick={() => {
@@ -176,12 +188,21 @@ const ToggleValueButton = (props: {
   activeQuery: Query
   value: boolean
 }) => {
-  const styles = getStyles()
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
   const queryClient = useQueryDevtoolsContext().client
 
   return (
     <button
-      class={cx(styles.actionButton)}
+      class={cx(
+        styles().actionButton,
+        css`
+          width: ${tokens.size[3.5]};
+          height: ${tokens.size[3.5]};
+        `,
+      )}
       title={'Toggle value'}
       aria-label={'Toggle value'}
       onClick={() => {
@@ -194,7 +215,7 @@ const ToggleValueButton = (props: {
         queryClient.setQueryData(props.activeQuery.queryKey, newData)
       }}
     >
-      <Check checked={props.value} />
+      <Check theme={theme()} checked={props.value} />
     </button>
   )
 }
@@ -214,7 +235,10 @@ function isIterable(x: any): x is Iterable<unknown> {
 }
 
 export default function Explorer(props: ExplorerProps) {
-  const styles = getStyles()
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
   const queryClient = useQueryDevtoolsContext().client
 
   const [expanded, setExpanded] = createSignal(
@@ -275,21 +299,21 @@ export default function Explorer(props: ExplorerProps) {
   const currentDataPath = props.dataPath ?? []
 
   return (
-    <div class={styles.entry}>
+    <div class={styles().entry}>
       <Show when={subEntryPages().length}>
-        <div class={styles.expanderButtonContainer}>
+        <div class={styles().expanderButtonContainer}>
           <button
-            class={styles.expanderButton}
+            class={styles().expanderButton}
             onClick={() => toggleExpanded()}
           >
             <Expander expanded={expanded()} /> <span>{props.label}</span>{' '}
-            <span class={styles.info}>
+            <span class={styles().info}>
               {String(type()).toLowerCase() === 'iterable' ? '(Iterable) ' : ''}
               {subEntries().length} {subEntries().length > 1 ? `items` : `item`}
             </span>
           </button>
           <Show when={props.editable}>
-            <div class={styles.actions}>
+            <div class={styles().actions}>
               <CopyButton value={props.value} />
 
               <Show
@@ -314,7 +338,7 @@ export default function Explorer(props: ExplorerProps) {
         </div>
         <Show when={expanded()}>
           <Show when={subEntryPages().length === 1}>
-            <div class={styles.subEntry}>
+            <div class={styles().subEntry}>
               <Key each={subEntries()} by={(item) => item.label}>
                 {(entry) => {
                   return (
@@ -337,11 +361,11 @@ export default function Explorer(props: ExplorerProps) {
             </div>
           </Show>
           <Show when={subEntryPages().length > 1}>
-            <div class={styles.subEntry}>
+            <div class={styles().subEntry}>
               <Index each={subEntryPages()}>
                 {(entries, index) => (
                   <div>
-                    <div class={styles.entry}>
+                    <div class={styles().entry}>
                       <button
                         onClick={() =>
                           setExpandedPages((old) =>
@@ -350,14 +374,14 @@ export default function Explorer(props: ExplorerProps) {
                               : [...old, index],
                           )
                         }
-                        class={styles.expanderButton}
+                        class={styles().expanderButton}
                       >
                         <Expander expanded={expandedPages().includes(index)} />{' '}
                         [{index * 100}...
                         {index * 100 + 100 - 1}]
                       </button>
                       <Show when={expandedPages().includes(index)}>
-                        <div class={styles.subEntry}>
+                        <div class={styles().subEntry}>
                           <Key each={entries()} by={(entry) => entry.label}>
                             {(entry) => (
                               <Explorer
@@ -381,8 +405,8 @@ export default function Explorer(props: ExplorerProps) {
         </Show>
       </Show>
       <Show when={subEntryPages().length === 0}>
-        <div class={styles.row}>
-          <span class={styles.label}>{props.label}:</span>
+        <div class={styles().row}>
+          <span class={styles().label}>{props.label}:</span>
           <Show
             when={
               props.editable &&
@@ -392,7 +416,7 @@ export default function Explorer(props: ExplorerProps) {
                 type() === 'boolean')
             }
             fallback={
-              <span class={styles.value}>{displayValue(props.value)}</span>
+              <span class={styles().value}>{displayValue(props.value)}</span>
             }
           >
             <Show
@@ -404,7 +428,7 @@ export default function Explorer(props: ExplorerProps) {
             >
               <input
                 type={type() === 'number' ? 'number' : 'text'}
-                class={cx(styles.value, styles.editableInput)}
+                class={cx(styles().value, styles().editableInput)}
                 value={props.value as string | number}
                 onChange={(changeEvent) => {
                   const oldData = props.activeQuery!.state.data
@@ -424,7 +448,11 @@ export default function Explorer(props: ExplorerProps) {
 
             <Show when={type() === 'boolean'}>
               <span
-                class={cx(styles.value, styles.actions, styles.editableInput)}
+                class={cx(
+                  styles().value,
+                  styles().actions,
+                  styles().editableInput,
+                )}
               >
                 <ToggleValueButton
                   activeQuery={props.activeQuery!}
@@ -454,9 +482,9 @@ export default function Explorer(props: ExplorerProps) {
   )
 }
 
-const getStyles = () => {
+const stylesFactory = (theme: 'light' | 'dark') => {
   const { colors, font, size, border } = tokens
-
+  const t = (light: string, dark: string) => (theme === 'light' ? light : dark)
   return {
     entry: css`
       & * {
@@ -470,7 +498,7 @@ const getStyles = () => {
     subEntry: css`
       margin: 0 0 0 0.5em;
       padding-left: 0.75em;
-      border-left: 2px solid ${colors.darkGray[400]};
+      border-left: 2px solid ${t(colors.gray[300], colors.darkGray[400])};
       /* outline: 1px solid ${colors.teal[400]}; */
     `,
     expander: css`
@@ -519,16 +547,16 @@ const getStyles = () => {
       }
     `,
     info: css`
-      color: ${colors.gray[500]};
+      color: ${t(colors.gray[500], colors.gray[500])};
       font-size: ${font.size.xs};
       margin-left: ${size[1]};
       /* outline: 1px solid ${colors.yellow[400]}; */
     `,
     label: css`
-      color: ${colors.gray[300]};
+      color: ${t(colors.gray[700], colors.gray[300])};
     `,
     value: css`
-      color: ${colors.purple[400]};
+      color: ${t(colors.purple[600], colors.purple[400])};
       flex-grow: 1;
     `,
     actions: css`
@@ -546,16 +574,18 @@ const getStyles = () => {
     `,
     editableInput: css`
       border: none;
-      padding: ${size[0.5]} ${size[1]};
+      padding: ${size[0.5]} ${size[1]} ${size[0.5]} ${size[1.5]};
       flex-grow: 1;
-      background-color: ${colors.gray[900]};
+      border-radius: ${border.radius.xs};
+      background-color: ${t(colors.gray[200], colors.darkGray[500])};
 
       &:hover {
-        background-color: ${colors.gray[800]};
+        background-color: ${t(colors.gray[300], colors.darkGray[600])};
       }
     `,
     actionButton: css`
       background-color: transparent;
+      color: ${t(colors.gray[500], colors.gray[500])};
       border: none;
       display: inline-flex;
       padding: 0px;
@@ -568,15 +598,7 @@ const getStyles = () => {
       z-index: 1;
 
       &:hover svg {
-        .copier,
-        .check,
-        .list {
-          stroke: ${colors.gray[500]} !important;
-        }
-
-        .list-item {
-          stroke: ${colors.gray[700]};
-        }
+        color: ${t(colors.gray[600], colors.gray[400])};
       }
 
       &:focus-visible {
@@ -587,3 +609,6 @@ const getStyles = () => {
     `,
   }
 }
+
+const lightStyles = stylesFactory('light')
+const darkStyles = stylesFactory('dark')
