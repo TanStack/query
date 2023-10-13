@@ -20,6 +20,7 @@ import { tokens } from './theme'
 import {
   convertRemToPixels,
   displayValue,
+  getPreferredColorScheme,
   getQueryStatusColor,
   getQueryStatusColorByLabel,
   getQueryStatusLabel,
@@ -32,15 +33,23 @@ import {
   ArrowRight,
   ArrowUp,
   ChevronDown,
+  Monitor,
+  Moon,
   Offline,
   Search,
   Settings,
+  Sun,
   TanstackLogo,
   Trash,
   Wifi,
 } from './icons'
 import Explorer from './Explorer'
-import { QueryDevtoolsContext, useQueryDevtoolsContext } from './Context'
+import {
+  QueryDevtoolsContext,
+  ThemeContext,
+  useQueryDevtoolsContext,
+  useTheme,
+} from './Context'
 import { loadFonts } from './fonts'
 import type {
   DevToolsErrorType,
@@ -69,6 +78,7 @@ const thirdBreakpoint = 700
 
 const BUTTON_POSITION: DevtoolsButtonPosition = 'bottom-right'
 const POSITION: DevtoolsPosition = 'bottom'
+const THEME_PREFERENCE = 'system'
 const INITIAL_IS_OPEN = false
 const DEFAULT_HEIGHT = 500
 const DEFAULT_WIDTH = 500
@@ -81,22 +91,38 @@ const [selectedQueryHash, setSelectedQueryHash] = createSignal<string | null>(
 const [panelWidth, setPanelWidth] = createSignal(0)
 
 export const DevtoolsComponent: Component<QueryDevtoolsProps> = (props) => {
+  const [localStore, setLocalStore] = createLocalStorage({
+    prefix: 'TanstackQueryDevtools',
+  })
+
+  const colorScheme = getPreferredColorScheme()
+
+  const theme = createMemo(() => {
+    const preference = (localStore.theme_preference || THEME_PREFERENCE) as
+      | 'system'
+      | 'dark'
+      | 'light'
+    if (preference !== 'system') return preference
+    return colorScheme()
+  })
+
   return (
     <QueryDevtoolsContext.Provider value={props}>
-      <Devtools />
+      <ThemeContext.Provider value={theme}>
+        <Devtools localStore={localStore} setLocalStore={setLocalStore} />
+      </ThemeContext.Provider>
     </QueryDevtoolsContext.Provider>
   )
 }
 
 export default DevtoolsComponent
 
-export const Devtools = () => {
+export const Devtools: Component<DevtoolsPanelProps> = (props) => {
   loadFonts()
 
-  const styles = getStyles()
-
-  const [localStore, setLocalStore] = createLocalStorage({
-    prefix: 'TanstackQueryDevtools',
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
   })
 
   const buttonPosition = createMemo(() => {
@@ -104,21 +130,25 @@ export const Devtools = () => {
   })
 
   const isOpen = createMemo(() => {
-    return localStore.open === 'true'
+    return props.localStore.open === 'true'
       ? true
-      : localStore.open === 'false'
+      : props.localStore.open === 'false'
       ? false
       : useQueryDevtoolsContext().initialIsOpen || INITIAL_IS_OPEN
   })
 
   const position = createMemo(() => {
-    return localStore.position || useQueryDevtoolsContext().position || POSITION
+    return (
+      props.localStore.position ||
+      useQueryDevtoolsContext().position ||
+      POSITION
+    )
   })
 
   createEffect(() => {
     const root = document.querySelector('.tsqd-parent-container') as HTMLElement
-    const height = localStore.height || DEFAULT_HEIGHT
-    const width = localStore.width || DEFAULT_WIDTH
+    const height = props.localStore.height || DEFAULT_HEIGHT
+    const width = props.localStore.width || DEFAULT_WIDTH
     const panelPosition = position()
     root.style.setProperty(
       '--tsqd-panel-height',
@@ -167,8 +197,8 @@ export const Devtools = () => {
       <TransitionGroup name="tsqd-panel-transition">
         <Show when={isOpen()}>
           <DevtoolsPanel
-            localStore={localStore}
-            setLocalStore={setLocalStore}
+            localStore={props.localStore}
+            setLocalStore={props.setLocalStore}
           />
         </Show>
       </TransitionGroup>
@@ -176,8 +206,8 @@ export const Devtools = () => {
         <Show when={!isOpen()}>
           <div
             class={cx(
-              styles.devtoolsBtn,
-              styles[`devtoolsBtn-position-${buttonPosition()}`],
+              styles().devtoolsBtn,
+              styles()[`devtoolsBtn-position-${buttonPosition()}`],
             )}
           >
             <div aria-hidden="true">
@@ -185,7 +215,7 @@ export const Devtools = () => {
             </div>
             <button
               aria-label="Open Tanstack query devtools"
-              onClick={() => setLocalStore('open', 'true')}
+              onClick={() => props.setLocalStore('open', 'true')}
             >
               <TanstackLogo />
             </button>
@@ -197,7 +227,11 @@ export const Devtools = () => {
 }
 
 export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
-  const styles = getStyles()
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
+
   const [isResizing, setIsResizing] = createSignal(false)
 
   const sort = createMemo(() => props.localStore.sort || DEFAULT_SORT_FN_NAME)
@@ -362,6 +396,22 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
     })
   })
 
+  const getPanelDynamicStyles = () => {
+    const { colors } = tokens
+    const t = (light: string, dark: string) =>
+      theme() === 'dark' ? dark : light
+    if (panelWidth() < secondBreakpoint) {
+      return css`
+        flex-direction: column;
+        background-color: ${t(colors.gray[300], colors.gray[600])};
+      `
+    }
+    return css`
+      flex-direction: row;
+      background-color: ${t(colors.gray[200], colors.darkGray[900])};
+    `
+  }
+
   return (
     <aside
       // Some context for styles here
@@ -371,14 +421,9 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
       // min-width - When the panel is in the left or right position, the panel
       // width is set to min-content to allow the panel to shrink to the lowest possible width
       class={cx(
-        styles.panel,
-        styles[`panel-position-${position()}`],
-        css`
-          flex-direction: ${panelWidth() < secondBreakpoint ? 'column' : 'row'};
-          background-color: ${panelWidth() < secondBreakpoint
-            ? tokens.colors.gray[600]
-            : tokens.colors.darkGray[900]};
-        `,
+        styles().panel,
+        styles()[`panel-position-${position()}`],
+        getPanelDynamicStyles(),
         {
           [css`
             min-width: min-content;
@@ -403,8 +448,8 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
     >
       <div
         class={cx(
-          styles.dragHandle,
-          styles[`dragHandle-position-${position()}`],
+          styles().dragHandle,
+          styles()[`dragHandle-position-${position()}`],
           'tsqd-drag-handle',
         )}
         onMouseDown={handleDragStart}
@@ -412,8 +457,8 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
       <button
         aria-label="Close tanstack query devtools"
         class={cx(
-          styles.closeBtn,
-          styles[`closeBtn-position-${position()}`],
+          styles().closeBtn,
+          styles()[`closeBtn-position-${position()}`],
           'tsqd-minimize-btn',
         )}
         onClick={() => props.setLocalStore('open', 'false')}
@@ -425,7 +470,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
         // When the panels are stacked we use the height style
         // to divide the panels into two equal parts
         class={cx(
-          styles.queriesContainer,
+          styles().queriesContainer,
           panelWidth() < secondBreakpoint &&
             selectedQueryHash() &&
             css`
@@ -435,17 +480,20 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
           'tsqd-queries-container',
         )}
       >
-        <div class={cx(styles.row, 'tsqd-header')}>
+        <div class={cx(styles().row, 'tsqd-header')}>
           <button
-            class={cx(styles.logo, 'tsqd-text-logo-container')}
+            class={cx(styles().logo, 'tsqd-text-logo-container')}
             onClick={() => props.setLocalStore('open', 'false')}
             aria-label="Close Tanstack query devtools"
           >
-            <span class={cx(styles.tanstackLogo, 'tsqd-text-logo-tanstack')}>
+            <span class={cx(styles().tanstackLogo, 'tsqd-text-logo-tanstack')}>
               TANSTACK
             </span>
             <span
-              class={cx(styles.queryFlavorLogo, 'tsqd-text-logo-query-flavor')}
+              class={cx(
+                styles().queryFlavorLogo,
+                'tsqd-text-logo-query-flavor',
+              )}
             >
               {useQueryDevtoolsContext().queryFlavor} v
               {useQueryDevtoolsContext().version}
@@ -455,17 +503,17 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
         </div>
         <div
           class={cx(
-            styles.row,
+            styles().row,
             css`
               gap: ${tokens.size[2.5]};
             `,
             'tsqd-filters-actions-container',
           )}
         >
-          <div class={cx(styles.filtersContainer, 'tsqd-filters-container')}>
+          <div class={cx(styles().filtersContainer, 'tsqd-filters-container')}>
             <div
               class={cx(
-                styles.filterInput,
+                styles().filterInput,
                 'tsqd-query-filter-textfield-container',
               )}
             >
@@ -483,7 +531,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
             </div>
             <div
               class={cx(
-                styles.filterSelect,
+                styles().filterSelect,
                 'tsqd-query-filter-sort-container',
               )}
             >
@@ -520,13 +568,13 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
             </button>
           </div>
 
-          <div class={cx(styles.actionsContainer, 'tsqd-actions-container')}>
+          <div class={cx(styles().actionsContainer, 'tsqd-actions-container')}>
             <button
               onClick={() => {
                 cache().clear()
               }}
               class={cx(
-                styles.actionsBtn,
+                styles().actionsBtn,
                 'tsqd-actions-btn',
                 'tsqd-action-clear-cache',
               )}
@@ -546,7 +594,8 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                 }
               }}
               class={cx(
-                styles.actionsBtn,
+                styles().actionsBtn,
+                offline() && styles().actionsBtnOffline,
                 'tsqd-actions-btn',
                 'tsqd-action-mock-offline-behavior',
               )}
@@ -568,7 +617,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
             <DropdownMenu.Root gutter={4}>
               <DropdownMenu.Trigger
                 class={cx(
-                  styles.actionsBtn,
+                  styles().actionsBtn,
                   'tsqd-actions-btn',
                   'tsqd-action-settings',
                 )}
@@ -577,11 +626,11 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
               </DropdownMenu.Trigger>
               <DropdownMenu.Portal>
                 <DropdownMenu.Content
-                  class={cx(styles.settingsMenu, 'tsqd-settings-menu')}
+                  class={cx(styles().settingsMenu, 'tsqd-settings-menu')}
                 >
                   <div
                     class={cx(
-                      styles.settingsMenuHeader,
+                      styles().settingsMenuHeader,
                       'tsqd-settings-menu-header',
                     )}
                   >
@@ -590,7 +639,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                   <DropdownMenu.Sub overlap gutter={8} shift={-4}>
                     <DropdownMenu.SubTrigger
                       class={cx(
-                        styles.settingsSubTrigger,
+                        styles().settingsSubTrigger,
                         'tsqd-settings-menu-sub-trigger',
                         'tsqd-settings-menu-sub-trigger-position',
                       )}
@@ -600,7 +649,10 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                     </DropdownMenu.SubTrigger>
                     <DropdownMenu.Portal>
                       <DropdownMenu.SubContent
-                        class={cx(styles.settingsMenu, 'tsqd-settings-submenu')}
+                        class={cx(
+                          styles().settingsMenu,
+                          'tsqd-settings-submenu',
+                        )}
                       >
                         <DropdownMenu.Item
                           onSelect={() => {
@@ -608,7 +660,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                           }}
                           as="button"
                           class={cx(
-                            styles.settingsSubButton,
+                            styles().settingsSubButton,
                             'tsqd-settings-menu-position-btn',
                             'tsqd-settings-menu-position-btn-top',
                           )}
@@ -622,7 +674,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                           }}
                           as="button"
                           class={cx(
-                            styles.settingsSubButton,
+                            styles().settingsSubButton,
                             'tsqd-settings-menu-position-btn',
                             'tsqd-settings-menu-position-btn-bottom',
                           )}
@@ -636,7 +688,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                           }}
                           as="button"
                           class={cx(
-                            styles.settingsSubButton,
+                            styles().settingsSubButton,
                             'tsqd-settings-menu-position-btn',
                             'tsqd-settings-menu-position-btn-left',
                           )}
@@ -650,13 +702,82 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                           }}
                           as="button"
                           class={cx(
-                            styles.settingsSubButton,
+                            styles().settingsSubButton,
                             'tsqd-settings-menu-position-btn',
                             'tsqd-settings-menu-position-btn-right',
                           )}
                         >
                           <span>Right</span>
                           <ArrowRight />
+                        </DropdownMenu.Item>
+                      </DropdownMenu.SubContent>
+                    </DropdownMenu.Portal>
+                  </DropdownMenu.Sub>
+                  <DropdownMenu.Sub overlap gutter={8} shift={-4}>
+                    <DropdownMenu.SubTrigger
+                      class={cx(
+                        styles().settingsSubTrigger,
+                        'tsqd-settings-menu-sub-trigger',
+                        'tsqd-settings-menu-sub-trigger-position',
+                      )}
+                    >
+                      <span>Theme</span>
+                      <ChevronDown />
+                    </DropdownMenu.SubTrigger>
+                    <DropdownMenu.Portal>
+                      <DropdownMenu.SubContent
+                        class={cx(
+                          styles().settingsMenu,
+                          'tsqd-settings-submenu',
+                        )}
+                      >
+                        <DropdownMenu.Item
+                          onSelect={() => {
+                            props.setLocalStore('theme_preference', 'light')
+                          }}
+                          as="button"
+                          class={cx(
+                            styles().settingsSubButton,
+                            props.localStore.theme_preference === 'light' &&
+                              styles().themeSelectedButton,
+                            'tsqd-settings-menu-position-btn',
+                            'tsqd-settings-menu-position-btn-top',
+                          )}
+                        >
+                          <span>Light</span>
+                          <Sun />
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          onSelect={() => {
+                            props.setLocalStore('theme_preference', 'dark')
+                          }}
+                          as="button"
+                          class={cx(
+                            styles().settingsSubButton,
+                            props.localStore.theme_preference === 'dark' &&
+                              styles().themeSelectedButton,
+                            'tsqd-settings-menu-position-btn',
+                            'tsqd-settings-menu-position-btn-bottom',
+                          )}
+                        >
+                          <span>Dark</span>
+                          <Moon />
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          onSelect={() => {
+                            props.setLocalStore('theme_preference', 'system')
+                          }}
+                          as="button"
+                          class={cx(
+                            styles().settingsSubButton,
+                            props.localStore.theme_preference === 'system' &&
+                              styles().themeSelectedButton,
+                            'tsqd-settings-menu-position-btn',
+                            'tsqd-settings-menu-position-btn-left',
+                          )}
+                        >
+                          <span>System</span>
+                          <Monitor />
                         </DropdownMenu.Item>
                       </DropdownMenu.SubContent>
                     </DropdownMenu.Portal>
@@ -668,7 +789,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
         </div>
         <div
           class={cx(
-            styles.overflowQueryContainer,
+            styles().overflowQueryContainer,
             'tsqd-queries-overflow-container',
           )}
         >
@@ -687,7 +808,13 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
 }
 
 export const QueryRow: Component<{ query: Query }> = (props) => {
-  const styles = getStyles()
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
+
+  const { colors, alpha } = tokens
+  const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
 
   const queryState = createSubscribeToQueryCacheBatcher(
     (queryCache) =>
@@ -731,6 +858,23 @@ export const QueryRow: Component<{ query: Query }> = (props) => {
     }),
   )
 
+  const getObserverCountColorStyles = () => {
+    if (color() === 'gray') {
+      return css`
+        background-color: ${t(colors[color()][200], colors[color()][700])};
+        color: ${t(colors[color()][700], colors[color()][300])};
+      `
+    }
+
+    return css`
+      background-color: ${t(
+        colors[color()][200] + alpha[80],
+        colors[color()][900],
+      )};
+      color: ${t(colors[color()][800], colors[color()][300])};
+    `
+  }
+
   return (
     <Show when={queryState()}>
       <button
@@ -742,26 +886,15 @@ export const QueryRow: Component<{ query: Query }> = (props) => {
           )
         }
         class={cx(
-          styles.queryRow,
+          styles().queryRow,
           selectedQueryHash() === props.query.queryHash &&
-            styles.selectedQueryRow,
+            styles().selectedQueryRow,
           'tsqd-query-row',
         )}
         aria-label={`Query key ${props.query.queryHash}`}
       >
         <div
-          class={cx(
-            color() === 'gray'
-              ? css`
-                  background-color: ${tokens.colors[color()][700]};
-                  color: ${tokens.colors[color()][300]};
-                `
-              : css`
-                  background-color: ${tokens.colors[color()][900]};
-                  color: ${tokens.colors[color()][300]};
-                `,
-            'tsqd-query-observer-count',
-          )}
+          class={cx(getObserverCountColorStyles(), 'tsqd-query-observer-count')}
         >
           {observers()}
         </div>
@@ -810,10 +943,15 @@ export const QueryStatusCount: Component = () => {
         .filter((q) => getQueryStatusLabel(q) === 'inactive').length,
   )
 
-  const styles = getStyles()
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
 
   return (
-    <div class={cx(styles.queryStatusContainer, 'tsqd-query-status-container')}>
+    <div
+      class={cx(styles().queryStatusContainer, 'tsqd-query-status-container')}
+    >
       <QueryStatus label="Fresh" color="green" count={fresh()} />
       <QueryStatus label="Fetching" color="blue" count={fetching()} />
       <QueryStatus label="Paused" color="purple" count={paused()} />
@@ -824,7 +962,13 @@ export const QueryStatusCount: Component = () => {
 }
 
 export const QueryStatus: Component<QueryStatusProps> = (props) => {
-  const styles = getStyles()
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
+
+  const { colors, alpha } = tokens
+  const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
 
   let tagRef!: HTMLButtonElement
 
@@ -856,12 +1000,12 @@ export const QueryStatus: Component<QueryStatusProps> = (props) => {
       disabled={showLabel()}
       ref={tagRef}
       class={cx(
-        styles.queryStatusTag,
+        styles().queryStatusTag,
         !showLabel() &&
           css`
             cursor: pointer;
             &:hover {
-              background: ${tokens.colors.darkGray[400]}${tokens.alpha[80]};
+              background: ${t(colors.gray[200], colors.darkGray[400])}${alpha[80]};
             }
           `,
         'tsqd-query-status-tag',
@@ -877,7 +1021,7 @@ export const QueryStatus: Component<QueryStatusProps> = (props) => {
         <div
           role="tooltip"
           id="tsqd-status-tooltip"
-          class={cx(styles.statusTooltip, 'tsqd-query-status-tooltip')}
+          class={cx(styles().statusTooltip, 'tsqd-query-status-tooltip')}
         >
           {props.label}
         </div>
@@ -895,22 +1039,26 @@ export const QueryStatus: Component<QueryStatusProps> = (props) => {
       />
       <Show when={showLabel()}>
         <span
-          class={cx(styles.queryStatusTagLabel, 'tsqd-query-status-tag-label')}
+          class={cx(
+            styles().queryStatusTagLabel,
+            'tsqd-query-status-tag-label',
+          )}
         >
           {props.label}
         </span>
       </Show>
       <span
         class={cx(
-          styles.queryStatusCount,
-          props.count > 0 && props.color !== 'gray'
-            ? css`
-                background-color: ${tokens.colors[props.color][900]};
-                color: ${tokens.colors[props.color][300]};
-              `
-            : css`
-                color: ${tokens.colors['gray'][400]};
-              `,
+          styles().queryStatusCount,
+          props.count > 0 &&
+            props.color !== 'gray' &&
+            css`
+              background-color: ${t(
+                colors[props.color][100],
+                colors[props.color][900],
+              )};
+              color: ${t(colors[props.color][700], colors[props.color][300])};
+            `,
           'tsqd-query-status-tag-count',
         )}
       >
@@ -921,7 +1069,14 @@ export const QueryStatus: Component<QueryStatusProps> = (props) => {
 }
 
 const QueryDetails = () => {
-  const styles = getStyles()
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
+
+  const { colors } = tokens
+  const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
+
   const queryClient = useQueryDevtoolsContext().client
 
   const [restoringLoading, setRestoringLoading] = createSignal(false)
@@ -1027,34 +1182,41 @@ const QueryDetails = () => {
     }
   })
 
+  const getQueryStatusColors = () => {
+    if (color() === 'gray') {
+      return css`
+        background-color: ${t(colors[color()][200], colors[color()][700])};
+        color: ${t(colors[color()][700], colors[color()][300])};
+        border-color: ${t(colors[color()][400], colors[color()][600])};
+      `
+    }
+    return css`
+      background-color: ${t(colors[color()][100], colors[color()][900])};
+      color: ${t(colors[color()][700], colors[color()][300])};
+      border-color: ${t(colors[color()][400], colors[color()][600])};
+    `
+  }
+
   return (
     <Show when={activeQuery() && activeQueryState()}>
-      <div class={cx(styles.detailsContainer, 'tsqd-query-details-container')}>
-        <div class={cx(styles.detailsHeader, 'tsqd-query-details-header')}>
+      <div
+        class={cx(styles().detailsContainer, 'tsqd-query-details-container')}
+      >
+        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
           Query Details
         </div>
         <div
-          class={cx(styles.detailsBody, 'tsqd-query-details-summary-container')}
+          class={cx(
+            styles().detailsBody,
+            'tsqd-query-details-summary-container',
+          )}
         >
           <div class="tsqd-query-details-summary">
             <pre>
               <code>{displayValue(activeQuery()!.queryKey, true)}</code>
             </pre>
             <span
-              class={cx(
-                styles.queryDetailsStatus,
-                color() === 'gray'
-                  ? css`
-                      background-color: ${tokens.colors[color()][700]};
-                      color: ${tokens.colors[color()][300]};
-                      border-color: ${tokens.colors[color()][600]};
-                    `
-                  : css`
-                      background-color: ${tokens.colors[color()][900]};
-                      color: ${tokens.colors[color()][300]};
-                      border-color: ${tokens.colors[color()][600]};
-                    `,
-              )}
+              class={cx(styles().queryDetailsStatus, getQueryStatusColors())}
             >
               {statusLabel()}
             </span>
@@ -1070,16 +1232,19 @@ const QueryDetails = () => {
             </span>
           </div>
         </div>
-        <div class={cx(styles.detailsHeader, 'tsqd-query-details-header')}>
+        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
           Actions
         </div>
         <div
-          class={cx(styles.actionsBody, 'tsqd-query-details-actions-container')}
+          class={cx(
+            styles().actionsBody,
+            'tsqd-query-details-actions-container',
+          )}
         >
           <button
             class={cx(
               css`
-                color: ${tokens.colors.blue[400]};
+                color: ${t(colors.blue[600], colors.blue[400])};
               `,
               'tsqd-query-details-actions-btn',
               'tsqd-query-details-action-refetch',
@@ -1089,7 +1254,7 @@ const QueryDetails = () => {
           >
             <span
               class={css`
-                background-color: ${tokens.colors.blue[400]};
+                background-color: ${t(colors.blue[600], colors.blue[400])};
               `}
             ></span>
             Refetch
@@ -1097,7 +1262,7 @@ const QueryDetails = () => {
           <button
             class={cx(
               css`
-                color: ${tokens.colors.yellow[400]};
+                color: ${t(colors.yellow[600], colors.yellow[400])};
               `,
               'tsqd-query-details-actions-btn',
               'tsqd-query-details-action-invalidate',
@@ -1107,7 +1272,7 @@ const QueryDetails = () => {
           >
             <span
               class={css`
-                background-color: ${tokens.colors.yellow[400]};
+                background-color: ${t(colors.yellow[600], colors.yellow[400])};
               `}
             ></span>
             Invalidate
@@ -1115,7 +1280,7 @@ const QueryDetails = () => {
           <button
             class={cx(
               css`
-                color: ${tokens.colors.gray[300]};
+                color: ${t(colors.gray[600], colors.gray[300])};
               `,
               'tsqd-query-details-actions-btn',
               'tsqd-query-details-action-reset',
@@ -1125,7 +1290,7 @@ const QueryDetails = () => {
           >
             <span
               class={css`
-                background-color: ${tokens.colors.gray[400]};
+                background-color: ${t(colors.gray[600], colors.gray[400])};
               `}
             ></span>
             Reset
@@ -1133,7 +1298,7 @@ const QueryDetails = () => {
           <button
             class={cx(
               css`
-                color: ${tokens.colors.pink[400]};
+                color: ${t(colors.pink[500], colors.pink[400])};
               `,
               'tsqd-query-details-actions-btn',
               'tsqd-query-details-action-remove',
@@ -1146,7 +1311,7 @@ const QueryDetails = () => {
           >
             <span
               class={css`
-                background-color: ${tokens.colors.pink[400]};
+                background-color: ${t(colors.pink[500], colors.pink[400])};
               `}
             ></span>
             Remove
@@ -1154,7 +1319,7 @@ const QueryDetails = () => {
           <button
             class={cx(
               css`
-                color: ${tokens.colors.cyan[400]};
+                color: ${t(colors.cyan[500], colors.cyan[400])};
               `,
               'tsqd-query-details-actions-btn',
               'tsqd-query-details-action-loading',
@@ -1192,7 +1357,7 @@ const QueryDetails = () => {
           >
             <span
               class={css`
-                background-color: ${tokens.colors.cyan[400]};
+                background-color: ${t(colors.cyan[500], colors.cyan[400])};
               `}
             ></span>
             {queryStatus() === 'pending' ? 'Restore' : 'Trigger'} Loading
@@ -1201,7 +1366,7 @@ const QueryDetails = () => {
             <button
               class={cx(
                 css`
-                  color: ${tokens.colors.red[400]};
+                  color: ${t(colors.red[500], colors.red[400])};
                 `,
                 'tsqd-query-details-actions-btn',
                 'tsqd-query-details-action-error',
@@ -1217,7 +1382,7 @@ const QueryDetails = () => {
             >
               <span
                 class={css`
-                  background-color: ${tokens.colors.red[400]};
+                  background-color: ${t(colors.red[500], colors.red[400])};
                 `}
               ></span>
               {queryStatus() === 'error' ? 'Restore' : 'Trigger'} Error
@@ -1228,7 +1393,7 @@ const QueryDetails = () => {
           >
             <div
               class={cx(
-                styles.actionsSelect,
+                styles().actionsSelect,
                 'tsqd-query-details-actions-btn',
                 'tsqd-query-details-action-error-multiple',
               )}
@@ -1243,7 +1408,7 @@ const QueryDetails = () => {
                 disabled={queryStatus() === 'pending'}
                 onChange={(e) => {
                   const errorType = errorTypes().find(
-                    (t) => t.name === e.currentTarget.value,
+                    (et) => et.name === e.currentTarget.value,
                   )
 
                   triggerError(errorType)
@@ -1260,7 +1425,7 @@ const QueryDetails = () => {
             </div>
           </Show>
         </div>
-        <div class={cx(styles.detailsHeader, 'tsqd-query-details-header')}>
+        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
           Data Explorer
         </div>
         <div
@@ -1277,7 +1442,7 @@ const QueryDetails = () => {
             activeQuery={activeQuery()}
           />
         </div>
-        <div class={cx(styles.detailsHeader, 'tsqd-query-details-header')}>
+        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
           Query Explorer
         </div>
         <div
@@ -1350,8 +1515,10 @@ const createSubscribeToQueryCacheBatcher = <T,>(
   return value
 }
 
-const getStyles = () => {
+const stylesFactory = (theme: 'light' | 'dark') => {
   const { colors, font, size, alpha, shadow, border } = tokens
+
+  const t = (light: string, dark: string) => (theme === 'light' ? light : dark)
 
   return {
     devtoolsBtn: css`
@@ -1414,8 +1581,6 @@ const getStyles = () => {
       display: flex;
       gap: ${tokens.size[0.5]};
       & * {
-        font-family: 'Inter', sans-serif;
-        color: ${colors.gray[300]};
         box-sizing: border-box;
         text-transform: none;
       }
@@ -1442,7 +1607,7 @@ const getStyles = () => {
       left: 0;
       max-height: 90%;
       min-height: 3.5rem;
-      border-bottom: ${colors.darkGray[300]} 1px solid;
+      border-bottom: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
     `,
     'panel-position-bottom': css`
       bottom: 0;
@@ -1450,20 +1615,20 @@ const getStyles = () => {
       left: 0;
       max-height: 90%;
       min-height: 3.5rem;
-      border-top: ${colors.darkGray[300]} 1px solid;
+      border-top: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
     `,
     'panel-position-right': css`
       bottom: 0;
       right: 0;
       top: 0;
-      border-left: ${colors.darkGray[300]} 1px solid;
+      border-left: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
       max-width: 90%;
     `,
     'panel-position-left': css`
       bottom: 0;
       left: 0;
       top: 0;
-      border-right: ${colors.darkGray[300]} 1px solid;
+      border-right: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
       max-width: 90%;
     `,
     closeBtn: css`
@@ -1474,13 +1639,15 @@ const getStyles = () => {
       align-items: center;
       justify-content: center;
       outline: none;
+      background-color: ${t(colors.gray[50], colors.darkGray[700])};
       &:hover {
-        background-color: ${colors.darkGray[500]};
+        background-color: ${t(colors.gray[200], colors.darkGray[500])};
       }
       &:focus-visible {
         outline: 2px solid ${colors.blue[600]};
       }
       & svg {
+        color: ${t(colors.gray[600], colors.gray[400])};
         width: ${size[2]};
         height: ${size[2]};
       }
@@ -1489,11 +1656,10 @@ const getStyles = () => {
       bottom: 0;
       right: ${size[2]};
       transform: translate(0, 100%);
-      background-color: ${colors.darkGray[700]};
-      border-right: ${colors.darkGray[300]} 1px solid;
-      border-left: ${colors.darkGray[300]} 1px solid;
+      border-right: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
+      border-left: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
       border-top: none;
-      border-bottom: ${colors.darkGray[300]} 1px solid;
+      border-bottom: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
       border-radius: 0px 0px ${border.radius.sm} ${border.radius.sm};
       padding: ${size[0.5]} ${size[1.5]} ${size[1]} ${size[1.5]};
 
@@ -1514,10 +1680,9 @@ const getStyles = () => {
       top: 0;
       right: ${size[2]};
       transform: translate(0, -100%);
-      background-color: ${colors.darkGray[700]};
-      border-right: ${colors.darkGray[300]} 1px solid;
-      border-left: ${colors.darkGray[300]} 1px solid;
-      border-top: ${colors.darkGray[300]} 1px solid;
+      border-right: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
+      border-left: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
+      border-top: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
       border-bottom: none;
       border-radius: ${border.radius.sm} ${border.radius.sm} 0px 0px;
       padding: ${size[1]} ${size[1.5]} ${size[0.5]} ${size[1.5]};
@@ -1535,11 +1700,10 @@ const getStyles = () => {
       bottom: ${size[2]};
       left: 0;
       transform: translate(-100%, 0);
-      background-color: ${colors.darkGray[700]};
       border-right: none;
-      border-left: ${colors.darkGray[300]} 1px solid;
-      border-top: ${colors.darkGray[300]} 1px solid;
-      border-bottom: ${colors.darkGray[300]} 1px solid;
+      border-left: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
+      border-top: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
+      border-bottom: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
       border-radius: ${border.radius.sm} 0px 0px ${border.radius.sm};
       padding: ${size[1.5]} ${size[0.5]} ${size[1.5]} ${size[1]};
 
@@ -1559,11 +1723,10 @@ const getStyles = () => {
       bottom: ${size[2]};
       right: 0;
       transform: translate(100%, 0);
-      background-color: ${colors.darkGray[700]};
       border-left: none;
-      border-right: ${colors.darkGray[300]} 1px solid;
-      border-top: ${colors.darkGray[300]} 1px solid;
-      border-bottom: ${colors.darkGray[300]} 1px solid;
+      border-right: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
+      border-top: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
+      border-bottom: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
       border-radius: 0px ${border.radius.sm} ${border.radius.sm} 0px;
       padding: ${size[1.5]} ${size[1]} ${size[1.5]} ${size[0.5]};
 
@@ -1581,15 +1744,18 @@ const getStyles = () => {
     `,
     queriesContainer: css`
       flex: 1 1 700px;
-      background-color: ${colors.darkGray[700]};
+      background-color: ${t(colors.gray[50], colors.darkGray[700])};
       display: flex;
       flex-direction: column;
+      & * {
+        font-family: 'Inter', sans-serif;
+      }
     `,
     dragHandle: css`
       position: absolute;
       transition: background-color 0.125s ease;
       &:hover {
-        background-color: ${colors.purple[400]}${alpha[90]};
+        background-color: ${colors.purple[400]}${t('', alpha[90])};
       }
       z-index: 4;
     `,
@@ -1623,7 +1789,7 @@ const getStyles = () => {
       align-items: center;
       padding: ${tokens.size[2]} ${tokens.size[2.5]};
       gap: ${tokens.size[3]};
-      border-bottom: ${colors.darkGray[500]} 1px solid;
+      border-bottom: ${t(colors.gray[300], colors.darkGray[500])} 1px solid;
       align-items: center;
       & > button {
         padding: 0;
@@ -1650,11 +1816,15 @@ const getStyles = () => {
       font-weight: ${font.weight.bold};
       line-height: ${font.lineHeight.xs};
       white-space: nowrap;
+      color: ${t(colors.gray[600], colors.gray[300])};
     `,
     queryFlavorLogo: css`
       font-weight: ${font.weight.semibold};
       font-size: ${font.size.xs};
-      background: linear-gradient(to right, #dd524b, #e9a03b);
+      background: linear-gradient(
+        to right,
+        ${t('#ea4037, #ff9b11', '#dd524b, #e9a03b')}
+      );
       background-clip: text;
       -webkit-background-clip: text;
       line-height: 1;
@@ -1669,14 +1839,17 @@ const getStyles = () => {
     queryStatusTag: css`
       display: flex;
       gap: ${tokens.size[1.5]};
-      background: ${colors.darkGray[500]};
+      box-sizing: border-box;
+      height: ${tokens.size[6.5]};
+      background: ${t(colors.gray[50], colors.darkGray[500])};
+      color: ${t(colors.gray[700], colors.gray[300])};
       border-radius: ${tokens.border.radius.sm};
       font-size: ${font.size.sm};
       padding: ${tokens.size[1]};
-      padding-left: ${tokens.size[2]};
+      padding-left: ${tokens.size[1.5]};
       align-items: center;
       font-weight: ${font.weight.medium};
-      border: none;
+      border: ${t('1px solid ' + colors.gray[300], '1px solid transparent')};
       user-select: none;
       position: relative;
       &:focus-visible {
@@ -1693,8 +1866,8 @@ const getStyles = () => {
       display: flex;
       align-items: center;
       justify-content: center;
-      color: ${colors.gray[400]};
-      background-color: ${colors.darkGray[300]};
+      color: ${t(colors.gray[500], colors.gray[400])};
+      background-color: ${t(colors.gray[200], colors.darkGray[300])};
       border-radius: 2px;
       font-variant-numeric: tabular-nums;
       height: ${tokens.size[4.5]};
@@ -1702,15 +1875,15 @@ const getStyles = () => {
     statusTooltip: css`
       position: absolute;
       z-index: 1;
-      background-color: ${colors.darkGray[500]};
+      background-color: ${t(colors.gray[50], colors.darkGray[500])};
       top: 100%;
       left: 50%;
       transform: translate(-50%, calc(${tokens.size[2]}));
       padding: ${tokens.size[0.5]} ${tokens.size[2]};
-      border-radius: ${tokens.border.radius.md};
+      border-radius: ${tokens.border.radius.sm};
       font-size: ${font.size.xs};
-      border: 1px solid ${colors.gray[600]};
-      color: ${tokens.colors['gray'][300]};
+      border: 1px solid ${t(colors.gray[400], colors.gray[600])};
+      color: ${t(colors['gray'][600], colors['gray'][300])};
 
       &::before {
         top: 0px;
@@ -1719,7 +1892,8 @@ const getStyles = () => {
         left: 50%;
         transform: translate(-50%, -100%);
         position: absolute;
-        border-color: transparent transparent ${colors.gray[600]} transparent;
+        border-color: transparent transparent
+          ${t(colors.gray[400], colors.gray[600])} transparent;
         border-style: solid;
         border-width: 7px;
         /* transform: rotate(180deg); */
@@ -1730,16 +1904,13 @@ const getStyles = () => {
         content: ' ';
         display: block;
         left: 50%;
-        transform: translate(-50%, calc(-100% + 2.5px));
+        transform: translate(-50%, calc(-100% + 2px));
         position: absolute;
-        border-color: transparent transparent ${colors.darkGray[500]}
-          transparent;
+        border-color: transparent transparent
+          ${t(colors.gray[100], colors.darkGray[500])} transparent;
         border-style: solid;
         border-width: 7px;
       }
-    `,
-    selectedQueryRow: css`
-      background-color: ${colors.darkGray[500]};
     `,
     filtersContainer: css`
       display: flex;
@@ -1749,47 +1920,52 @@ const getStyles = () => {
         padding: ${tokens.size[0.5]} ${tokens.size[2]};
         padding-right: ${tokens.size[1.5]};
         border-radius: ${tokens.border.radius.sm};
-        background-color: ${colors.darkGray[400]};
+        background-color: ${t(colors.gray[100], colors.darkGray[400])};
+        border: 1px solid ${t(colors.gray[300], colors.darkGray[200])};
+        color: ${t(colors.gray[700], colors.gray[300])};
         font-size: ${font.size.xs};
         display: flex;
         align-items: center;
         line-height: ${font.lineHeight.sm};
         gap: ${tokens.size[1.5]};
         max-width: 160px;
-        border: 1px solid ${colors.darkGray[200]};
         &:focus-visible {
           outline-offset: 2px;
           border-radius: ${border.radius.xs};
           outline: 2px solid ${colors.blue[800]};
         }
+        & svg {
+          color: ${t(colors.gray[500], colors.gray[400])};
+        }
       }
     `,
     filterInput: css`
-      padding: ${tokens.size[0.5]} ${tokens.size[2]};
+      padding: ${size[0.5]} ${size[2]};
       border-radius: ${tokens.border.radius.sm};
-      background-color: ${colors.darkGray[400]};
+      background-color: ${t(colors.gray[100], colors.darkGray[400])};
       display: flex;
       box-sizing: content-box;
       align-items: center;
       gap: ${tokens.size[1.5]};
       max-width: 160px;
       min-width: 100px;
-      border: 1px solid ${colors.darkGray[200]};
+      border: 1px solid ${t(colors.gray[300], colors.darkGray[200])};
       height: min-content;
+      color: ${t(colors.gray[600], colors.gray[400])};
       & > svg {
-        width: ${tokens.size[3]};
-        height: ${tokens.size[3]};
+        width: ${size[3]};
+        height: ${size[3]};
       }
       & input {
         font-size: ${font.size.xs};
         width: 100%;
-        background-color: ${colors.darkGray[400]};
+        background-color: ${t(colors.gray[100], colors.darkGray[400])};
         border: none;
         padding: 0;
         line-height: ${font.lineHeight.sm};
-        color: ${colors.gray[300]};
+        color: ${t(colors.gray[700], colors.gray[300])};
         &::placeholder {
-          color: ${colors.gray[300]};
+          color: ${t(colors.gray[700], colors.gray[300])};
         }
         &:focus {
           outline: none;
@@ -1805,24 +1981,26 @@ const getStyles = () => {
     filterSelect: css`
       padding: ${tokens.size[0.5]} ${tokens.size[2]};
       border-radius: ${tokens.border.radius.sm};
-      background-color: ${colors.darkGray[400]};
+      background-color: ${t(colors.gray[100], colors.darkGray[400])};
       display: flex;
       align-items: center;
       gap: ${tokens.size[1.5]};
       box-sizing: content-box;
       max-width: 160px;
-      border: 1px solid ${colors.darkGray[200]};
+      border: 1px solid ${t(colors.gray[300], colors.darkGray[200])};
       height: min-content;
       & > svg {
+        color: ${t(colors.gray[600], colors.gray[400])};
         width: ${tokens.size[2]};
         height: ${tokens.size[2]};
       }
       & > select {
         appearance: none;
+        color: ${t(colors.gray[700], colors.gray[300])};
         min-width: 100px;
         line-height: ${font.lineHeight.sm};
         font-size: ${font.size.xs};
-        background-color: ${colors.darkGray[400]};
+        background-color: ${t(colors.gray[100], colors.darkGray[400])};
         border: none;
         &:focus {
           outline: none;
@@ -1840,7 +2018,8 @@ const getStyles = () => {
     `,
     actionsBtn: css`
       border-radius: ${tokens.border.radius.sm};
-      background-color: ${colors.darkGray[400]};
+      background-color: ${t(colors.gray[100], colors.darkGray[400])};
+      border: 1px solid ${t(colors.gray[300], colors.darkGray[200])};
       width: 1.625rem;
       height: 1.625rem;
       justify-content: center;
@@ -1848,13 +2027,13 @@ const getStyles = () => {
       align-items: center;
       gap: ${tokens.size[1.5]};
       max-width: 160px;
-      border: 1px solid ${colors.darkGray[200]};
       cursor: pointer;
       padding: 0;
       &:hover {
-        background-color: ${colors.darkGray[500]};
+        background-color: ${t(colors.gray[200], colors.darkGray[500])};
       }
       & svg {
+        color: ${t(colors.gray[700], colors.gray[300])};
         width: ${tokens.size[3]};
         height: ${tokens.size[3]};
       }
@@ -1862,6 +2041,12 @@ const getStyles = () => {
         outline-offset: 2px;
         border-radius: ${border.radius.xs};
         outline: 2px solid ${colors.blue[800]};
+      }
+    `,
+    actionsBtnOffline: css`
+      & svg {
+        stroke: ${t(colors.yellow[700], colors.yellow[500])};
+        fill: ${t(colors.yellow[700], colors.yellow[500])};
       }
     `,
     overflowQueryContainer: css`
@@ -1876,9 +2061,11 @@ const getStyles = () => {
       display: flex;
       align-items: center;
       padding: 0;
-      background-color: inherit;
       border: none;
       cursor: pointer;
+      color: ${t(colors.gray[700], colors.gray[300])};
+      background-color: ${t(colors.gray[50], colors.darkGray[700])};
+      line-height: 1;
       &:focus {
         outline: none;
       }
@@ -1888,7 +2075,7 @@ const getStyles = () => {
         outline: 2px solid ${colors.blue[800]};
       }
       &:hover .tsqd-query-hash {
-        background-color: ${colors.darkGray[600]};
+        background-color: ${t(colors.gray[200], colors.darkGray[600])};
       }
 
       & .tsqd-query-observer-count {
@@ -1903,7 +2090,7 @@ const getStyles = () => {
         font-weight: ${font.weight.medium};
         border-bottom-width: 1px;
         border-bottom-style: solid;
-        border-bottom: 1px solid ${colors.darkGray[700]};
+        border-bottom: 1px solid ${t(colors.gray[300], colors.darkGray[700])};
       }
       & .tsqd-query-hash {
         user-select: text;
@@ -1914,7 +2101,7 @@ const getStyles = () => {
         flex: 1;
         padding: ${tokens.size[1]} ${tokens.size[2]};
         font-family: 'Menlo', 'Fira Code', monospace;
-        border-bottom: 1px solid ${colors.darkGray[400]};
+        border-bottom: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
         text-align: left;
         text-overflow: clip;
         word-break: break-word;
@@ -1925,15 +2112,20 @@ const getStyles = () => {
         display: flex;
         align-items: center;
         padding: 0 ${tokens.size[2]};
-        color: ${colors.gray[300]};
-        background-color: ${colors.darkGray[600]};
-        border-bottom: 1px solid ${colors.darkGray[400]};
+        color: ${t(colors.gray[800], colors.gray[300])};
+        background-color: ${t(colors.gray[300], colors.darkGray[600])};
+        border-bottom: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
         font-size: ${font.size.xs};
       }
     `,
+    selectedQueryRow: css`
+      background-color: ${t(colors.gray[200], colors.darkGray[500])};
+    `,
     detailsContainer: css`
       flex: 1 1 700px;
-      background-color: ${colors.darkGray[700]};
+      background-color: ${t(colors.gray[50], colors.darkGray[700])};
+      color: ${t(colors.gray[700], colors.gray[300])};
+      font-family: 'Inter', sans-serif;
       display: flex;
       flex-direction: column;
       overflow-y: auto;
@@ -1941,10 +2133,11 @@ const getStyles = () => {
       text-align: left;
     `,
     detailsHeader: css`
+      font-family: 'Inter', sans-serif;
       position: sticky;
       top: 0;
       z-index: 2;
-      background-color: ${colors.darkGray[600]};
+      background-color: ${t(colors.gray[200], colors.darkGray[600])};
       padding: ${tokens.size[1.5]} ${tokens.size[2]};
       font-weight: ${font.weight.medium};
       font-size: ${font.size.xs};
@@ -1977,6 +2170,10 @@ const getStyles = () => {
         font-size: ${font.size.xs};
         line-height: ${font.lineHeight.xs};
       }
+
+      & pre {
+        margin: 0;
+      }
     `,
     queryDetailsStatus: css`
       border: 1px solid ${colors.darkGray[200]};
@@ -1991,12 +2188,13 @@ const getStyles = () => {
       gap: ${tokens.size[2]};
       padding: 0px ${tokens.size[2]};
       & > button {
+        font-family: 'Inter', sans-serif;
         font-size: ${font.size.xs};
         padding: ${tokens.size[1]} ${tokens.size[2]};
         display: flex;
         border-radius: ${tokens.border.radius.sm};
-        border: 1px solid ${colors.darkGray[400]};
-        background-color: ${colors.darkGray[600]};
+        background-color: ${t(colors.gray[100], colors.darkGray[600])};
+        border: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
         align-items: center;
         gap: ${tokens.size[2]};
         font-weight: ${font.weight.medium};
@@ -2008,7 +2206,7 @@ const getStyles = () => {
           outline: 2px solid ${colors.blue[800]};
         }
         &:hover {
-          background-color: ${colors.darkGray[500]};
+          background-color: ${t(colors.gray[200], colors.darkGray[500])};
         }
 
         &:disabled {
@@ -2029,17 +2227,17 @@ const getStyles = () => {
       display: flex;
       border-radius: ${tokens.border.radius.sm};
       overflow: hidden;
-      border: 1px solid ${colors.darkGray[400]};
-      background-color: ${colors.darkGray[600]};
+      background-color: ${t(colors.gray[100], colors.darkGray[600])};
+      border: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
       align-items: center;
       gap: ${tokens.size[2]};
       font-weight: ${font.weight.medium};
       line-height: ${font.lineHeight.sm};
-      color: ${tokens.colors.red[400]};
+      color: ${t(colors.red[500], colors.red[400])};
       cursor: pointer;
       position: relative;
       &:hover {
-        background-color: ${colors.darkGray[500]};
+        background-color: ${t(colors.gray[200], colors.darkGray[500])};
       }
       & > span {
         width: ${size[1.5]};
@@ -2080,10 +2278,10 @@ const getStyles = () => {
       flex-direction: column;
       gap: ${size[0.5]};
       border-radius: ${tokens.border.radius.sm};
-      border: 1px solid ${colors.gray[700]};
-      background-color: ${colors.darkGray[600]};
+      border: 1px solid ${t(colors.gray[300], colors.gray[700])};
+      background-color: ${t(colors.gray[50], colors.darkGray[600])};
       font-size: ${font.size.xs};
-      color: ${colors.gray[300]};
+      color: ${t(colors.gray[700], colors.gray[300])};
       z-index: 99999;
       min-width: 120px;
       padding: ${size[0.5]};
@@ -2093,17 +2291,19 @@ const getStyles = () => {
       align-items: center;
       justify-content: space-between;
       border-radius: ${tokens.border.radius.xs};
-      padding: ${tokens.size[0.5]} ${tokens.size[1]};
+      padding: ${tokens.size[1]} ${tokens.size[1]};
       cursor: pointer;
       background-color: transparent;
       border: none;
+      color: ${t(colors.gray[700], colors.gray[300])};
       & svg {
+        color: ${t(colors.gray[600], colors.gray[400])};
         transform: rotate(-90deg);
         width: ${tokens.size[2]};
         height: ${tokens.size[2]};
       }
       &:hover {
-        background-color: ${colors.darkGray[500]};
+        background-color: ${t(colors.gray[200], colors.darkGray[500])};
       }
       &:focus-visible {
         outline-offset: 2px;
@@ -2115,30 +2315,46 @@ const getStyles = () => {
       }
     `,
     settingsMenuHeader: css`
-      padding: ${tokens.size[0.5]} ${tokens.size[1]};
+      padding: ${tokens.size[1]} ${tokens.size[1]};
       font-weight: ${font.weight.medium};
-      border-bottom: 1px solid ${colors.darkGray[400]};
-      color: ${colors.gray[400]};
+      border-bottom: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
+      color: ${t(colors.gray[500], colors.gray[400])};
       font-size: ${font.size['xs']};
     `,
     settingsSubButton: css`
       display: flex;
       align-items: center;
       justify-content: space-between;
-      color: ${colors.gray[300]};
+      color: ${t(colors.gray[700], colors.gray[300])};
       font-size: ${font.size['xs']};
       border-radius: ${tokens.border.radius.xs};
-      padding: ${tokens.size[0.5]} ${tokens.size[1]};
+      padding: ${tokens.size[1]} ${tokens.size[1]};
       cursor: pointer;
       background-color: transparent;
       border: none;
+      & svg {
+        color: ${t(colors.gray[600], colors.gray[400])};
+      }
       &:hover {
-        background-color: ${colors.darkGray[500]};
+        background-color: ${t(colors.gray[200], colors.darkGray[500])};
       }
       &:focus-visible {
         outline-offset: 2px;
         outline: 2px solid ${colors.blue[800]};
       }
     `,
+    themeSelectedButton: css`
+      background-color: ${t(colors.purple[100], colors.purple[900])};
+      color: ${t(colors.purple[700], colors.purple[300])};
+      & svg {
+        color: ${t(colors.purple[700], colors.purple[300])};
+      }
+      &:hover {
+        background-color: ${t(colors.purple[100], colors.purple[900])};
+      }
+    `,
   }
 }
+
+const lightStyles = stylesFactory('light')
+const darkStyles = stylesFactory('dark')
