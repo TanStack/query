@@ -23,7 +23,7 @@
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "vitest watch --coverage",
     "test:build": "publint --strict",
-    "build": "ng-packagr -p ng-package.json"
+    "build": "ng-packagr -p ng-package.json -c tsconfig.build.json"
   },
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
