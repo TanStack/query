@@ -24,6 +24,7 @@ import type {
   QueryClient,
   QueryFunction,
   QueryKey,
+  ThrowOnError,
 } from '@tanstack/query-core'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
@@ -65,11 +66,10 @@ type GetOptions<T> =
     : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
     T extends {
         queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
-        select: (data: any) => infer TData
+        select?: (data: any) => infer TData
+        throwOnError?: ThrowOnError<any, infer TError, any, any>
       }
-    ? UseQueryOptionsForUseQueries<TQueryFnData, Error, TData, TQueryKey>
-    : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
-    ? UseQueryOptionsForUseQueries<TQueryFnData, Error, TQueryFnData, TQueryKey>
+    ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData, TQueryKey>
     : // Fallback
       UseQueryOptionsForUseQueries
 
@@ -92,10 +92,18 @@ type GetResults<T> =
     T extends {
         queryFn?: QueryFunction<unknown, any>
         select: (data: any) => infer TData
+        throwOnError?: ThrowOnError<any, infer TError, any, any>
       }
-    ? UseQueryResult<TData>
-    : T extends { queryFn?: QueryFunction<infer TQueryFnData, any> }
-    ? UseQueryResult<TQueryFnData>
+    ? void extends T['throwOnError']
+      ? UseQueryResult<TData>
+      : UseQueryResult<TData, TError>
+    : T extends {
+        queryFn?: QueryFunction<infer TQueryFnData, any>
+        throwOnError?: ThrowOnError<any, infer TError, any, any>
+      }
+    ? void extends T['throwOnError']
+      ? UseQueryResult<TQueryFnData>
+      : UseQueryResult<TQueryFnData, TError>
     : // Fallback
       UseQueryResult
 

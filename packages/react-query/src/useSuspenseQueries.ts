@@ -6,6 +6,7 @@ import type {
   DefaultError,
   QueryClient,
   QueryFunction,
+  ThrowOnError,
 } from '@tanstack/query-core'
 
 // Avoid TS depth-limit error in case of large array literal
@@ -33,11 +34,10 @@ type GetSuspenseOptions<T> =
     : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
     T extends {
         queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
-        select: (data: any) => infer TData
+        select?: (data: any) => infer TData
+        throwOnError?: ThrowOnError<any, infer TError, any, any>
       }
-    ? UseSuspenseQueryOptions<TQueryFnData, Error, TData, TQueryKey>
-    : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
-    ? UseSuspenseQueryOptions<TQueryFnData, Error, TQueryFnData, TQueryKey>
+    ? UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>
     : // Fallback
       UseSuspenseQueryOptions
 
@@ -60,10 +60,18 @@ type GetSuspenseResults<T> =
     T extends {
         queryFn?: QueryFunction<unknown, any>
         select: (data: any) => infer TData
+        throwOnError?: ThrowOnError<any, infer TError, any, any>
       }
-    ? UseSuspenseQueryResult<TData>
-    : T extends { queryFn?: QueryFunction<infer TQueryFnData, any> }
-    ? UseSuspenseQueryResult<TQueryFnData>
+    ? void extends T['throwOnError']
+      ? UseSuspenseQueryResult<TData>
+      : UseSuspenseQueryResult<TData, TError>
+    : T extends {
+        queryFn?: QueryFunction<infer TQueryFnData, any>
+        throwOnError?: ThrowOnError<any, infer TError, any, any>
+      }
+    ? void extends T['throwOnError']
+      ? UseSuspenseQueryResult<TQueryFnData>
+      : UseSuspenseQueryResult<TQueryFnData, TError>
     : // Fallback
       UseSuspenseQueryResult
 
