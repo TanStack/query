@@ -17,17 +17,17 @@ export type { DevtoolsButtonPosition, DevtoolsPosition, DevToolsErrorType }
 export interface TanstackQueryDevtoolsConfig extends QueryDevtoolsProps {}
 
 class TanstackQueryDevtools {
-  client: Signal<QueryClient>
-  onlineManager: typeof TonlineManager
-  queryFlavor: string
-  version: string
-  isMounted = false
-  buttonPosition: Signal<DevtoolsButtonPosition | undefined>
-  position: Signal<DevtoolsPosition | undefined>
-  initialIsOpen: Signal<boolean | undefined>
-  errorTypes: Signal<Array<DevToolsErrorType> | undefined>
-  Component: typeof DevtoolsComponent | undefined
-  dispose?: () => void
+  #client: Signal<QueryClient>
+  #onlineManager: typeof TonlineManager
+  #queryFlavor: string
+  #version: string
+  #isMounted = false
+  #buttonPosition: Signal<DevtoolsButtonPosition | undefined>
+  #position: Signal<DevtoolsPosition | undefined>
+  #initialIsOpen: Signal<boolean | undefined>
+  #errorTypes: Signal<Array<DevToolsErrorType> | undefined>
+  #Component: typeof DevtoolsComponent | undefined
+  #dispose?: () => void
 
   constructor(config: TanstackQueryDevtoolsConfig) {
     const {
@@ -40,61 +40,61 @@ class TanstackQueryDevtools {
       initialIsOpen,
       errorTypes,
     } = config
-    this.client = createSignal(client)
-    this.queryFlavor = queryFlavor
-    this.version = version
-    this.onlineManager = onlineManager
-    this.buttonPosition = createSignal(buttonPosition)
-    this.position = createSignal(position)
-    this.initialIsOpen = createSignal(initialIsOpen)
-    this.errorTypes = createSignal(errorTypes)
+    this.#client = createSignal(client)
+    this.#queryFlavor = queryFlavor
+    this.#version = version
+    this.#onlineManager = onlineManager
+    this.#buttonPosition = createSignal(buttonPosition)
+    this.#position = createSignal(position)
+    this.#initialIsOpen = createSignal(initialIsOpen)
+    this.#errorTypes = createSignal(errorTypes)
   }
 
   setButtonPosition(position: DevtoolsButtonPosition) {
-    this.buttonPosition[1](position)
+    this.#buttonPosition[1](position)
   }
 
   setPosition(position: DevtoolsPosition) {
-    this.position[1](position)
+    this.#position[1](position)
   }
 
   setInitialIsOpen(isOpen: boolean) {
-    this.initialIsOpen[1](isOpen)
+    this.#initialIsOpen[1](isOpen)
   }
 
   setErrorTypes(errorTypes: Array<DevToolsErrorType>) {
-    this.errorTypes[1](errorTypes)
+    this.#errorTypes[1](errorTypes)
   }
 
   setClient(client: QueryClient) {
-    this.client[1](client)
+    this.#client[1](client)
   }
 
   mount<T extends HTMLElement>(el: T) {
-    if (this.isMounted) {
+    if (this.#isMounted) {
       throw new Error('Devtools is already mounted')
     }
     const dispose = render(() => {
-      const [btnPosition] = this.buttonPosition
-      const [pos] = this.position
-      const [isOpen] = this.initialIsOpen
-      const [errors] = this.errorTypes
-      const [queryClient] = this.client
+      const [btnPosition] = this.#buttonPosition
+      const [pos] = this.#position
+      const [isOpen] = this.#initialIsOpen
+      const [errors] = this.#errorTypes
+      const [queryClient] = this.#client
 
       let Devtools: typeof DevtoolsComponent
 
-      if (this.Component) {
-        Devtools = this.Component
+      if (this.#Component) {
+        Devtools = this.#Component
       } else {
         Devtools = lazy(() => import('./Devtools'))
-        this.Component = Devtools
+        this.#Component = Devtools
       }
 
       return (
         <Devtools
-          queryFlavor={this.queryFlavor}
-          version={this.version}
-          onlineManager={this.onlineManager}
+          queryFlavor={this.#queryFlavor}
+          version={this.#version}
+          onlineManager={this.#onlineManager}
           {...{
             get client() {
               return queryClient()
@@ -115,16 +115,16 @@ class TanstackQueryDevtools {
         />
       )
     }, el)
-    this.isMounted = true
-    this.dispose = dispose
+    this.#isMounted = true
+    this.#dispose = dispose
   }
 
   unmount() {
-    if (!this.isMounted) {
+    if (!this.#isMounted) {
       throw new Error('Devtools is not mounted')
     }
-    this.dispose?.()
-    this.isMounted = false
+    this.#dispose?.()
+    this.#isMounted = false
   }
 }
 
