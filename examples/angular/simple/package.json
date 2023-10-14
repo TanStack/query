@@ -1,6 +1,7 @@
 {
   "name": "@tanstack/query-example-angular-simple",
   "private": true,
+  "type": "module",
   "version": "0.0.0",
   "description": "",
   "scripts": {
@@ -15,8 +16,8 @@
     "@angular/compiler": "^16.2.8",
     "@angular/core": "^16.2.8",
     "@angular/platform-browser": "^16.2.8",
-    "@tanstack/angular-query-experimental": "^5.0.0-rc.5",
-    "@tanstack/angular-query-devtools-experimental": "^5.0.0-rc.5",
+    "@tanstack/angular-query-experimental": "^5.0.0-rc.12",
+    "@tanstack/angular-query-devtools-experimental": "^5.0.0-rc.14",
     "axios": "^1.4.0",
     "rxjs": "^7.4.0",
     "zone.js": "^0.14.0"

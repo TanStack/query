@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-devtools-experimental",
-  "version": "5.0.0-rc.12",
+  "version": "5.0.0-rc.14",
   "description": "Developer tools to interact with and visualize the TanStack/angular-query cache",
   "author": "Arnoud de Vries",
   "license": "MIT",
