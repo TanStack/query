@@ -34,10 +34,15 @@ type GetSuspenseOptions<T> =
     : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
     T extends {
         queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
-        select?: (data: any) => infer TData
+        select: (data: any) => infer TData
         throwOnError?: ThrowOnError<any, infer TError, any, any>
       }
     ? UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+    : T extends {
+        queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
+        throwOnError?: ThrowOnError<any, infer TError, any, any>
+      }
+    ? UseSuspenseQueryOptions<TQueryFnData, TError, TQueryFnData, TQueryKey>
     : // Fallback
       UseSuspenseQueryOptions
 
@@ -62,16 +67,18 @@ type GetSuspenseResults<T> =
         select: (data: any) => infer TData
         throwOnError?: ThrowOnError<any, infer TError, any, any>
       }
-    ? void extends T['throwOnError']
-      ? UseSuspenseQueryResult<TData>
-      : UseSuspenseQueryResult<TData, TError>
+    ? UseSuspenseQueryResult<
+        TData,
+        unknown extends TError ? DefaultError : TError
+      >
     : T extends {
         queryFn?: QueryFunction<infer TQueryFnData, any>
         throwOnError?: ThrowOnError<any, infer TError, any, any>
       }
-    ? void extends T['throwOnError']
-      ? UseSuspenseQueryResult<TQueryFnData>
-      : UseSuspenseQueryResult<TQueryFnData, TError>
+    ? UseSuspenseQueryResult<
+        TQueryFnData,
+        unknown extends TError ? DefaultError : TError
+      >
     : // Fallback
       UseSuspenseQueryResult
 

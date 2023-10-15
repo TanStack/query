@@ -13,11 +13,13 @@ import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
 import type { Ref } from 'vue-demi'
 import type {
+  DefaultError,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
   QueryFunction,
   QueryKey,
   QueryObserverResult,
+  ThrowOnError,
 } from '@tanstack/query-core'
 import type { UseQueryOptions } from './useQuery'
 import type { QueryClient } from './queryClient'
@@ -63,10 +65,19 @@ type GetOptions<T> =
     T extends {
         queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
         select: (data: any) => infer TData
+        throwOnError?: ThrowOnError<any, infer TError, any, any>
       }
-    ? UseQueryOptionsForUseQueries<TQueryFnData, Error, TData, TQueryKey>
-    : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
-    ? UseQueryOptionsForUseQueries<TQueryFnData, Error, TQueryFnData, TQueryKey>
+    ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData, TQueryKey>
+    : T extends {
+        queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
+        throwOnError?: ThrowOnError<any, infer TError, any, any>
+      }
+    ? UseQueryOptionsForUseQueries<
+        TQueryFnData,
+        TError,
+        TQueryFnData,
+        TQueryKey
+      >
     : // Fallback
       UseQueryOptionsForUseQueries
 
@@ -89,10 +100,17 @@ type GetResults<T> =
     T extends {
         queryFn?: QueryFunction<unknown, any>
         select: (data: any) => infer TData
+        throwOnError?: ThrowOnError<any, infer TError, any, any>
       }
-    ? QueryObserverResult<TData>
-    : T extends { queryFn?: QueryFunction<infer TQueryFnData, any> }
-    ? QueryObserverResult<TQueryFnData>
+    ? QueryObserverResult<TData, unknown extends TError ? DefaultError : TError>
+    : T extends {
+        queryFn?: QueryFunction<infer TQueryFnData, any>
+        throwOnError?: ThrowOnError<any, infer TError, any, any>
+      }
+    ? QueryObserverResult<
+        TQueryFnData,
+        unknown extends TError ? DefaultError : TError
+      >
     : // Fallback
       QueryObserverResult
 

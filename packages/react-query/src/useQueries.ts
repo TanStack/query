@@ -66,10 +66,20 @@ type GetOptions<T> =
     : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
     T extends {
         queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
-        select?: (data: any) => infer TData
+        select: (data: any) => infer TData
         throwOnError?: ThrowOnError<any, infer TError, any, any>
       }
     ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData, TQueryKey>
+    : T extends {
+        queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
+        throwOnError?: ThrowOnError<any, infer TError, any, any>
+      }
+    ? UseQueryOptionsForUseQueries<
+        TQueryFnData,
+        TError,
+        TQueryFnData,
+        TQueryKey
+      >
     : // Fallback
       UseQueryOptionsForUseQueries
 
@@ -94,16 +104,15 @@ type GetResults<T> =
         select: (data: any) => infer TData
         throwOnError?: ThrowOnError<any, infer TError, any, any>
       }
-    ? void extends T['throwOnError']
-      ? UseQueryResult<TData>
-      : UseQueryResult<TData, TError>
+    ? UseQueryResult<TData, unknown extends TError ? DefaultError : TError>
     : T extends {
         queryFn?: QueryFunction<infer TQueryFnData, any>
         throwOnError?: ThrowOnError<any, infer TError, any, any>
       }
-    ? void extends T['throwOnError']
-      ? UseQueryResult<TQueryFnData>
-      : UseQueryResult<TQueryFnData, TError>
+    ? UseQueryResult<
+        TQueryFnData,
+        unknown extends TError ? DefaultError : TError
+      >
     : // Fallback
       UseQueryResult
 
