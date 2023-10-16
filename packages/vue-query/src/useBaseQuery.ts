@@ -151,6 +151,8 @@ export function useBaseQuery<
         }
         const run = () => {
           if (defaultedOptions.value.enabled !== false) {
+            // fix #6133
+            observer.setOptions(defaultedOptions.value)
             const optimisticResult = observer.getOptimisticResult(
               defaultedOptions.value,
             )
