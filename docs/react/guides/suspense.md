@@ -111,7 +111,7 @@ Out of the box, React Query in `suspense` mode works really well as a **Fetch-on
 
 ## Suspense on the Server with streaming
 
-If you are using `NextJs`, you can use our **experimental** integration for Suspense on the Server: `@tanstack/react-query-next-experimental`. This package will allow you to fetch data on the server (in a client component) by just calling `useQuery` (with `suspense: true`) or `useSuspenseQuery` in your component. Results will then be streamed from the server to the client as SuspenseBoundaries resolve.
+If you are using `NextJs`, you can use our **experimental** integration for Suspense on the Server: `@tanstack/react-query-next-experimental`. This package will allow you to fetch data on the server (in a client component) by just calling `useSuspenseQuery` in your component. Results will then be streamed from the server to the client as SuspenseBoundaries resolve.
 
 To achieve this, wrap your app in the `ReactQueryStreamedHydration` component:
 
