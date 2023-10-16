@@ -52,8 +52,7 @@
     "!build/codemods/**/__tests__"
   ],
   "dependencies": {
-    "@tanstack/query-core": "workspace:*",
-    "client-only": "0.0.1"
+    "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^18.2.4",
