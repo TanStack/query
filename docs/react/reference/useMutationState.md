@@ -5,17 +5,35 @@ title: useMutationState
 
 `useMutationState` is a hook that gives you access to all mutations in the `MutationCache`. You can pass `filters` to it to narrow down your mutations, and `select` to transform the mutation state.
 
+**Example 1: Get all variables of all running mutations**
+
 ```tsx
 import { useMutationState } from '@tanstack/react-query'
-// Get all variables of all running mutations
+
 const variables = useMutationState({
   filters: { status: 'pending' },
   select: (mutation) => mutation.state.variables,
 })
+```
 
-// Get all data of all "post" mutations
+**Example 2: Get all data for specific mutations via the `mutationKey`**
+
+```tsx
+import { useMutation, useMutationState } from '@tanstack/react-query'
+
+const mutationKey = ['posts']
+
+// Some mutation that we want to get the state for
+const mutation = useMutation({
+  mutationKey,
+  mutationFn: (newPost) => {
+    return axios.post('/posts', newPost)
+  },
+})
+
 const data = useMutationState({
-  filters: { mutationKey: ['posts'] },
+  // this mutation key needs to match the mutation key of the given mutation (see above)
+  filters: { mutationKey },
   select: (mutation) => mutation.state.data,
 })
 ```
