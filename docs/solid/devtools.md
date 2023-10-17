@@ -14,11 +14,11 @@ When you begin your Solid Query journey, you'll want these devtools by your side
 The devtools are a separate package that you need to install:
 
 ```bash
-$ npm i @tanstack/solid-query-devtools@rc
+$ npm i @tanstack/solid-query-devtools
 # or
-$ pnpm add @tanstack/solid-query-devtools@rc
+$ pnpm add @tanstack/solid-query-devtools
 # or
-$ yarn add @tanstack/solid-query-devtools@rc
+$ yarn add @tanstack/solid-query-devtools
 ```
 
 You can import the devtools like this:

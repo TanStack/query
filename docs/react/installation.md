@@ -12,11 +12,11 @@ or a good ol' `<script>` via
 ### NPM
 
 ```bash
-$ npm i @tanstack/react-query@rc
+$ npm i @tanstack/react-query
 # or
-$ pnpm add @tanstack/react-query@rc
+$ pnpm add @tanstack/react-query
 # or
-$ yarn add @tanstack/react-query@rc
+$ yarn add @tanstack/react-query
 ```
 
 React Query is compatible with React v18+ and works with ReactDOM and React Native.
@@ -31,7 +31,7 @@ If you're not using a module bundler or package manager, you can also use this l
 <script type="module">
   import React from 'https://esm.sh/react@18.2.0'
   import ReactDOM from 'https://esm.sh/react-dom@18.2.0'
-  import { QueryClient } from 'https://esm.sh/@tanstack/react-query@rc'
+  import { QueryClient } from 'https://esm.sh/@tanstack/react-query'
 </script>
 ```
 
@@ -57,9 +57,9 @@ opera >= 77
 It is recommended to also use our [ESLint Plugin Query](./eslint/eslint-plugin-query) to help you catch bugs and inconsistencies while you code. You can install it via:
 
 ```bash
-$ npm i -D @tanstack/eslint-plugin-query@rc
+$ npm i -D @tanstack/eslint-plugin-query
 # or
-$ pnpm add -D @tanstack/eslint-plugin-query@rc
+$ pnpm add -D @tanstack/eslint-plugin-query
 # or
-$ yarn add -D @tanstack/eslint-plugin-query@rc
+$ yarn add -D @tanstack/eslint-plugin-query
 ```

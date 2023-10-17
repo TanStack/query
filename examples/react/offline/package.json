@@ -8,11 +8,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/query-sync-storage-persister": "^5.0.0-rc.1",
+    "@tanstack/query-sync-storage-persister": "^5.0.0",
     "@tanstack/react-location": "^3.7.0",
-    "@tanstack/react-query": "^5.0.0-rc.1",
-    "@tanstack/react-query-devtools": "^5.0.0-rc.1",
-    "@tanstack/react-query-persist-client": "^5.0.0-rc.1",
+    "@tanstack/react-query": "^5.0.0",
+    "@tanstack/react-query-devtools": "^5.0.0",
+    "@tanstack/react-query-persist-client": "^5.0.0",
     "ky": "^0.33.3",
     "msw": "^0.39.2",
     "react": "^18.2.0",

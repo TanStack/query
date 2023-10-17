@@ -4,8 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "@tanstack/react-query": "^5.0.0-rc.1",
-    "@tanstack/react-query-devtools": "^5.0.0-rc.1",
+    "@tanstack/react-query": "^5.0.0",
+    "@tanstack/react-query-devtools": "^5.0.0",
     "axios": "^1.4.0",
     "isomorphic-unfetch": "4.0.2",
     "next": "^13.4.4",

@@ -10,11 +10,11 @@ You can install Vue Query via [NPM](https://npmjs.com).
 ### NPM
 
 ```bash
-$ npm i @tanstack/vue-query@rc
+$ npm i @tanstack/vue-query
 # or
-$ pnpm add @tanstack/vue-query@rc
+$ pnpm add @tanstack/vue-query
 # or
-$ yarn add @tanstack/vue-query@rc
+$ yarn add @tanstack/vue-query
 ```
 
 > Wanna give it a spin before you download? Try out the [basic](../examples/vue/basic) example!
