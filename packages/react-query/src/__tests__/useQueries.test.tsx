@@ -377,6 +377,10 @@ describe('useQueries', () => {
     const key2 = queryKey()
     const key3 = queryKey()
     const key4 = queryKey()
+    const key5 = queryKey()
+
+    type BizError = { code: number }
+    const throwOnError = (_error: BizError) => true
 
     // @ts-expect-error (Page component is not rendered)
     // eslint-disable-next-line
@@ -391,6 +395,18 @@ describe('useQueries', () => {
       expectTypeOf<Array<QueryObserverResult<number, unknown>>>(result1)
       expectTypeOf<number | undefined>(result1[0]?.data)
 
+      // Array.map preserves TError
+      const result1_err = useQueries({
+        queries: Array(50).map((_, i) => ({
+          queryKey: ['key', i] as const,
+          queryFn: () => i + 10,
+          throwOnError,
+        })),
+      })
+      expectTypeOf<Array<QueryObserverResult<number, unknown>>>(result1_err)
+      expectTypeOf<number | undefined>(result1_err[0]?.data)
+      expectTypeOf<BizError | null | undefined>(result1_err[0]?.error)
+
       // Array.map preserves TData
       const result2 = useQueries({
         queries: Array(50).map((_, i) => ({
@@ -400,6 +416,16 @@ describe('useQueries', () => {
         })),
       })
       expectTypeOf<Array<QueryObserverResult<string, unknown>>>(result2)
+
+      const result2_err = useQueries({
+        queries: Array(50).map((_, i) => ({
+          queryKey: ['key', i] as const,
+          queryFn: () => i + 10,
+          select: (data: number) => data.toString(),
+          throwOnError,
+        })),
+      })
+      expectTypeOf<Array<QueryObserverResult<string, BizError>>>(result2_err)
 
       const result3 = useQueries({
         queries: [
@@ -416,6 +442,11 @@ describe('useQueries', () => {
             queryFn: () => ['string[]'],
             select: () => 123,
           },
+          {
+            queryKey: key5,
+            queryFn: () => 'string',
+            throwOnError,
+          },
         ],
       })
       expectTypeOf<QueryObserverResult<number, unknown>>(result3[0])
@@ -423,8 +454,11 @@ describe('useQueries', () => {
       expectTypeOf<QueryObserverResult<number, unknown>>(result3[2])
       expectTypeOf<number | undefined>(result3[0].data)
       expectTypeOf<string | undefined>(result3[1].data)
+      expectTypeOf<string | undefined>(result3[3].data)
       // select takes precedence over queryFn
       expectTypeOf<number | undefined>(result3[2].data)
+      // infer TError from throwOnError
+      expectTypeOf<BizError | null | undefined>(result3[3].error)
 
       // initialData/placeholderData are enforced
       useQueries({
@@ -446,7 +480,7 @@ describe('useQueries', () => {
         ],
       })
 
-      // select params are "indirectly" enforced
+      // select and throwOnError params are "indirectly" enforced
       useQueries({
         queries: [
           // unfortunately TS will not suggest the type for you
@@ -468,6 +502,11 @@ describe('useQueries', () => {
             queryKey: key4,
             queryFn: () => 'string',
             select: (a: string) => parseInt(a),
+          },
+          {
+            queryKey: key5,
+            queryFn: () => 'string',
+            throwOnError,
           },
         ],
       })
@@ -504,11 +543,18 @@ describe('useQueries', () => {
             queryFn: () => 'string',
             select: (a: string) => parseInt(a),
           },
+          {
+            queryKey: key5,
+            queryFn: () => 'string',
+            select: (a: string) => parseInt(a),
+            throwOnError,
+          },
         ],
       })
       expectTypeOf<QueryObserverResult<string, unknown>>(result4[0])
       expectTypeOf<QueryObserverResult<string, unknown>>(result4[1])
       expectTypeOf<QueryObserverResult<number, unknown>>(result4[2])
+      expectTypeOf<QueryObserverResult<number, BizError>>(result4[3])
 
       // handles when queryFn returns a Promise
       const result5 = useQueries({
@@ -532,10 +578,16 @@ describe('useQueries', () => {
             queryKey: ['key1'],
             queryFn: () => 123,
           },
+          {
+            queryKey: key5,
+            queryFn: () => 'string',
+            throwOnError,
+          },
         ],
       } as const)
       expectTypeOf<QueryObserverResult<string, unknown>>(result6[0])
       expectTypeOf<QueryObserverResult<number, unknown>>(result6[1])
+      expectTypeOf<QueryObserverResult<string, BizError>>(result6[2])
 
       // field names should be enforced - array literal
       useQueries({

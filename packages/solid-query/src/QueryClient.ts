@@ -30,7 +30,7 @@ export interface QueryObserverOptions<
    * Set this to a reconciliation key to enable reconciliation between query results.
    * Set this to `false` to disable reconciliation between query results.
    * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom reconciliation logic.
-   * Defaults reconciliation key to `id`.
+   * Defaults reconciliation to false.
    */
   reconcile?:
     | string
@@ -60,7 +60,7 @@ export interface InfiniteQueryObserverOptions<
    * Set this to a reconciliation key to enable reconciliation between query results.
    * Set this to `false` to disable reconciliation between query results.
    * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom reconciliation logic.
-   * Defaults reconciliation key to `id`.
+   * Defaults reconciliation to false.
    */
   reconcile?:
     | string

@@ -138,6 +138,8 @@ describe('useQuery', () => {
     })
 
     secondKeyRef.value = 'key8'
+    await flushPromises()
+
     expect(query).toMatchObject({
       status: { value: 'pending' },
       data: { value: undefined },
@@ -166,6 +168,9 @@ describe('useQuery', () => {
     })
 
     enabled.value = true
+
+    await flushPromises()
+
     expect(query).toMatchObject({
       fetchStatus: { value: 'fetching' },
       data: { value: undefined },
@@ -262,6 +267,25 @@ describe('useQuery', () => {
         queryKey: ['key10', 'key12'],
       }),
     )
+  })
+
+  test('should be `enabled` to accept getter function', async () => {
+    const fetchFn = vi.fn()
+    const checked = ref(false)
+
+    useQuery({
+      queryKey: ['enabled'],
+      queryFn: fetchFn,
+      enabled: () => checked.value,
+    })
+
+    expect(fetchFn).not.toHaveBeenCalled()
+
+    checked.value = true
+
+    await flushPromises()
+
+    expect(fetchFn).toHaveBeenCalled()
   })
 
   describe('throwOnError', () => {

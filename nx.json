@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "affected": {
-    "defaultBase": "beta"
+    "defaultBase": "rc"
   },
   "tasksRunnerOptions": {
     "default": {

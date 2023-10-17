@@ -68,7 +68,7 @@ export function useMutation<
   if (process.env.NODE_ENV === 'development') {
     if (!getCurrentScope()) {
       console.warn(
-        'vue-query composables like "uesQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+        'vue-query composables like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
       )
     }
   }
@@ -93,13 +93,9 @@ export function useMutation<
     })
   }
 
-  watch(
-    options,
-    () => {
-      observer.setOptions(options.value)
-    },
-    { flush: 'sync' },
-  )
+  watch(options, () => {
+    observer.setOptions(options.value)
+  })
 
   onScopeDispose(() => {
     unsubscribe()

@@ -4146,7 +4146,7 @@ describe('useQuery', () => {
           await sleep(10)
           return count++
         },
-        refetchInterval: (data = 0) => (data < 2 ? 10 : false),
+        refetchInterval: ({ state: { data = 0 } }) => (data < 2 ? 10 : false),
       })
 
       states.push(queryInfo)
@@ -5975,11 +5975,11 @@ describe('useQuery', () => {
           <div>data: {state.data}</div>
           <div>dataUpdatedAt: {state.dataUpdatedAt}</div>
           <button
-            onClick={() =>
+            onClick={() => {
               queryClient.setQueryData(key, 'newData', {
                 updatedAt: 100,
               })
-            }
+            }}
           >
             setQueryData
           </button>

@@ -18,7 +18,7 @@ If you have been assigned to fix an issue or develop a new feature, please follo
 
 - Fork this repository.
 - Install dependencies by running `$ pnpm install`.
-  - We use [pnpm](https://pnpm.io/) v7 for package management.
+  - We use [pnpm](https://pnpm.io/) v8 for package management.
   - We use [nvm](https://github.com/nvm-sh/nvm) to manage node versions - please make sure to use the version mentioned in `.nvmrc`.
 - Run development server using `pnpm run watch`.
 - Implement your changes and tests to files in the `src/` directory and corresponding test files.
@@ -82,7 +82,7 @@ Must be one of the following:
 - **fix**: A bug fix
 - **docs**: Documentation only changes
 - **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing
-  semi-colons, etc)
+  semicolons, etc.)
 - **refactor**: A code change that neither fixes a bug nor adds a feature
 - **perf**: A code change that improves performance
 - **test**: Adding missing or correcting existing tests

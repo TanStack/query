@@ -15,6 +15,7 @@ import type {
   DistributiveOmit,
   MaybeRef,
   MaybeRefDeep,
+  MaybeRefOrGetter,
 } from './types'
 import type { QueryClient } from './queryClient'
 
@@ -39,6 +40,16 @@ export type UseQueryOptions<
         TQueryData,
         DeepUnwrapRef<TQueryKey>
       >[Property]
+    : Property extends 'enabled'
+    ? MaybeRefOrGetter<
+        QueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          TQueryKey
+        >[Property]
+      >
     : MaybeRefDeep<
         WithRequired<
           QueryObserverOptions<
@@ -123,8 +134,5 @@ export function useQuery<
   | UseQueryDefinedReturnType<TData, TError> {
   const result = useBaseQuery(QueryObserver, options, queryClient)
 
-  return {
-    ...result,
-    refetch: result.refetch.value,
-  }
+  return result
 }

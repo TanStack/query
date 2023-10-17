@@ -4,8 +4,14 @@ import { clsx as cx } from 'clsx'
 import { Index, Match, Show, Switch, createMemo, createSignal } from 'solid-js'
 import { Key } from '@solid-primitives/keyed'
 import { tokens } from './theme'
-import { displayValue } from './utils'
-import { CopiedCopier, Copier, ErrorCopier } from './icons'
+import {
+  deleteNestedDataByPath,
+  displayValue,
+  updateNestedDataByPath,
+} from './utils'
+import { Check, CopiedCopier, Copier, ErrorCopier, List, Trash } from './icons'
+import { useQueryDevtoolsContext, useTheme } from './Context'
+import type { Query } from '@tanstack/query-core'
 
 /**
  * Chunk elements in the array by size
@@ -31,12 +37,15 @@ export function chunkArray<T extends { label: string; value: unknown }>(
 }
 
 const Expander = (props: { expanded: boolean }) => {
-  const styles = getStyles()
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
 
   return (
     <span
       class={cx(
-        styles.expander,
+        styles().expander,
         css`
           transform: rotate(${props.expanded ? 90 : 0}deg);
         `,
@@ -68,12 +77,16 @@ const Expander = (props: { expanded: boolean }) => {
 
 type CopyState = 'NoCopy' | 'SuccessCopy' | 'ErrorCopy'
 const CopyButton = (props: { value: unknown }) => {
-  const styles = getStyles()
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
   const [copyState, setCopyState] = createSignal<CopyState>('NoCopy')
 
   return (
     <button
-      class={styles.copyButton}
+      class={styles().actionButton}
+      title="Copy object to clipboard"
       aria-label={`${
         copyState() === 'NoCopy'
           ? 'Copy object to clipboard'
@@ -108,7 +121,7 @@ const CopyButton = (props: { value: unknown }) => {
           <Copier />
         </Match>
         <Match when={copyState() === 'SuccessCopy'}>
-          <CopiedCopier />
+          <CopiedCopier theme={theme()} />
         </Match>
         <Match when={copyState() === 'ErrorCopy'}>
           <ErrorCopier />
@@ -118,11 +131,103 @@ const CopyButton = (props: { value: unknown }) => {
   )
 }
 
+const ClearArrayButton = (props: {
+  dataPath: Array<string>
+  activeQuery: Query
+}) => {
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
+  const queryClient = useQueryDevtoolsContext().client
+
+  return (
+    <button
+      class={styles().actionButton}
+      title={'Remove all items'}
+      aria-label={'Remove all items'}
+      onClick={() => {
+        const oldData = props.activeQuery.state.data
+        const newData = updateNestedDataByPath(oldData, props.dataPath, [])
+        queryClient.setQueryData(props.activeQuery.queryKey, newData)
+      }}
+    >
+      <List />
+    </button>
+  )
+}
+
+const DeleteItemButton = (props: {
+  dataPath: Array<string>
+  activeQuery: Query
+}) => {
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
+  const queryClient = useQueryDevtoolsContext().client
+
+  return (
+    <button
+      class={cx(styles().actionButton)}
+      title={'Delete item'}
+      aria-label={'Delete item'}
+      onClick={() => {
+        const oldData = props.activeQuery.state.data
+        const newData = deleteNestedDataByPath(oldData, props.dataPath)
+        queryClient.setQueryData(props.activeQuery.queryKey, newData)
+      }}
+    >
+      <Trash />
+    </button>
+  )
+}
+
+const ToggleValueButton = (props: {
+  dataPath: Array<string>
+  activeQuery: Query
+  value: boolean
+}) => {
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
+  const queryClient = useQueryDevtoolsContext().client
+
+  return (
+    <button
+      class={cx(
+        styles().actionButton,
+        css`
+          width: ${tokens.size[3.5]};
+          height: ${tokens.size[3.5]};
+        `,
+      )}
+      title={'Toggle value'}
+      aria-label={'Toggle value'}
+      onClick={() => {
+        const oldData = props.activeQuery.state.data
+        const newData = updateNestedDataByPath(
+          oldData,
+          props.dataPath,
+          !props.value,
+        )
+        queryClient.setQueryData(props.activeQuery.queryKey, newData)
+      }}
+    >
+      <Check theme={theme()} checked={props.value} />
+    </button>
+  )
+}
+
 type ExplorerProps = {
-  copyable?: boolean
+  editable?: boolean
   label: string
   value: unknown
   defaultExpanded?: Array<string>
+  dataPath?: Array<string>
+  activeQuery?: Query
+  itemsDeletable?: boolean
 }
 
 function isIterable(x: any): x is Iterable<unknown> {
@@ -130,7 +235,11 @@ function isIterable(x: any): x is Iterable<unknown> {
 }
 
 export default function Explorer(props: ExplorerProps) {
-  const styles = getStyles()
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
+  const queryClient = useQueryDevtoolsContext().client
 
   const [expanded, setExpanded] = createSignal(
     (props.defaultExpanded || []).includes(props.label),
@@ -187,27 +296,49 @@ export default function Explorer(props: ExplorerProps) {
 
   const subEntryPages = createMemo(() => chunkArray(subEntries(), 100))
 
+  const currentDataPath = props.dataPath ?? []
+
   return (
-    <div class={styles.entry}>
+    <div class={styles().entry}>
       <Show when={subEntryPages().length}>
-        <div class={styles.expanderButtonContainer}>
+        <div class={styles().expanderButtonContainer}>
           <button
-            class={styles.expanderButton}
+            class={styles().expanderButton}
             onClick={() => toggleExpanded()}
           >
             <Expander expanded={expanded()} /> <span>{props.label}</span>{' '}
-            <span class={styles.info}>
+            <span class={styles().info}>
               {String(type()).toLowerCase() === 'iterable' ? '(Iterable) ' : ''}
               {subEntries().length} {subEntries().length > 1 ? `items` : `item`}
             </span>
           </button>
-          <Show when={props.copyable}>
-            <CopyButton value={props.value} />
+          <Show when={props.editable}>
+            <div class={styles().actions}>
+              <CopyButton value={props.value} />
+
+              <Show
+                when={props.itemsDeletable && props.activeQuery !== undefined}
+              >
+                <DeleteItemButton
+                  activeQuery={props.activeQuery!}
+                  dataPath={currentDataPath}
+                />
+              </Show>
+
+              <Show
+                when={type() === 'array' && props.activeQuery !== undefined}
+              >
+                <ClearArrayButton
+                  activeQuery={props.activeQuery!}
+                  dataPath={currentDataPath}
+                />
+              </Show>
+            </div>
           </Show>
         </div>
         <Show when={expanded()}>
           <Show when={subEntryPages().length === 1}>
-            <div class={styles.subEntry}>
+            <div class={styles().subEntry}>
               <Key each={subEntries()} by={(item) => item.label}>
                 {(entry) => {
                   return (
@@ -215,7 +346,14 @@ export default function Explorer(props: ExplorerProps) {
                       defaultExpanded={props.defaultExpanded}
                       label={entry().label}
                       value={entry().value}
-                      copyable={props.copyable}
+                      editable={props.editable}
+                      dataPath={[...currentDataPath, entry().label]}
+                      activeQuery={props.activeQuery}
+                      itemsDeletable={
+                        type() === 'array' ||
+                        type() === 'Iterable' ||
+                        type() === 'object'
+                      }
                     />
                   )
                 }}
@@ -223,11 +361,11 @@ export default function Explorer(props: ExplorerProps) {
             </div>
           </Show>
           <Show when={subEntryPages().length > 1}>
-            <div class={styles.subEntry}>
+            <div class={styles().subEntry}>
               <Index each={subEntryPages()}>
                 {(entries, index) => (
                   <div>
-                    <div class={styles.entry}>
+                    <div class={styles().entry}>
                       <button
                         onClick={() =>
                           setExpandedPages((old) =>
@@ -236,21 +374,23 @@ export default function Explorer(props: ExplorerProps) {
                               : [...old, index],
                           )
                         }
-                        class={styles.expanderButton}
+                        class={styles().expanderButton}
                       >
                         <Expander expanded={expandedPages().includes(index)} />{' '}
                         [{index * 100}...
                         {index * 100 + 100 - 1}]
                       </button>
                       <Show when={expandedPages().includes(index)}>
-                        <div class={styles.subEntry}>
+                        <div class={styles().subEntry}>
                           <Key each={entries()} by={(entry) => entry.label}>
                             {(entry) => (
                               <Explorer
                                 defaultExpanded={props.defaultExpanded}
                                 label={entry().label}
                                 value={entry().value}
-                                copyable={props.copyable}
+                                editable={props.editable}
+                                dataPath={[...currentDataPath, entry().label]}
+                                activeQuery={props.activeQuery}
                               />
                             )}
                           </Key>
@@ -265,22 +405,86 @@ export default function Explorer(props: ExplorerProps) {
         </Show>
       </Show>
       <Show when={subEntryPages().length === 0}>
-        <div
-          style={{
-            'line-height': '1.125rem',
-          }}
-        >
-          <span class={styles.label}>{props.label}:</span>{' '}
-          <span class={styles.value}>{displayValue(props.value)}</span>
+        <div class={styles().row}>
+          <span class={styles().label}>{props.label}:</span>
+          <Show
+            when={
+              props.editable &&
+              props.activeQuery !== undefined &&
+              (type() === 'string' ||
+                type() === 'number' ||
+                type() === 'boolean')
+            }
+            fallback={
+              <span class={styles().value}>{displayValue(props.value)}</span>
+            }
+          >
+            <Show
+              when={
+                props.editable &&
+                props.activeQuery !== undefined &&
+                (type() === 'string' || type() === 'number')
+              }
+            >
+              <input
+                type={type() === 'number' ? 'number' : 'text'}
+                class={cx(styles().value, styles().editableInput)}
+                value={props.value as string | number}
+                onChange={(changeEvent) => {
+                  const oldData = props.activeQuery!.state.data
+
+                  const newData = updateNestedDataByPath(
+                    oldData,
+                    currentDataPath,
+                    type() === 'number'
+                      ? changeEvent.target.valueAsNumber
+                      : changeEvent.target.value,
+                  )
+
+                  queryClient.setQueryData(props.activeQuery!.queryKey, newData)
+                }}
+              />
+            </Show>
+
+            <Show when={type() === 'boolean'}>
+              <span
+                class={cx(
+                  styles().value,
+                  styles().actions,
+                  styles().editableInput,
+                )}
+              >
+                <ToggleValueButton
+                  activeQuery={props.activeQuery!}
+                  dataPath={currentDataPath}
+                  value={props.value as boolean}
+                />
+                {displayValue(props.value)}
+              </span>
+            </Show>
+          </Show>
+
+          <Show
+            when={
+              props.editable &&
+              props.itemsDeletable &&
+              props.activeQuery !== undefined
+            }
+          >
+            <DeleteItemButton
+              activeQuery={props.activeQuery!}
+              dataPath={currentDataPath}
+            />
+          </Show>
         </div>
       </Show>
     </div>
   )
 }
 
-const getStyles = () => {
+const stylesFactory = (theme: 'light' | 'dark') => {
   const { colors, font, size, border } = tokens
-
+  const t = (light: string, dark: string) => (theme === 'light' ? light : dark)
   return {
     entry: css`
       & * {
@@ -294,7 +498,7 @@ const getStyles = () => {
     subEntry: css`
       margin: 0 0 0 0.5em;
       padding-left: 0.75em;
-      border-left: 2px solid ${colors.darkGray[400]};
+      border-left: 2px solid ${t(colors.gray[300], colors.darkGray[400])};
       /* outline: 1px solid ${colors.teal[400]}; */
     `,
     expander: css`
@@ -315,6 +519,7 @@ const getStyles = () => {
       align-items: center;
       line-height: 1.125rem;
       min-height: 1.125rem;
+      gap: ${size[2]};
     `,
     expanderButton: css`
       cursor: pointer;
@@ -342,19 +547,45 @@ const getStyles = () => {
       }
     `,
     info: css`
-      color: ${colors.gray[500]};
+      color: ${t(colors.gray[500], colors.gray[500])};
       font-size: ${font.size.xs};
       margin-left: ${size[1]};
       /* outline: 1px solid ${colors.yellow[400]}; */
     `,
     label: css`
-      color: ${colors.gray[300]};
+      color: ${t(colors.gray[700], colors.gray[300])};
     `,
     value: css`
-      color: ${colors.purple[400]};
+      color: ${t(colors.purple[600], colors.purple[400])};
+      flex-grow: 1;
     `,
-    copyButton: css`
+    actions: css`
+      display: inline-flex;
+      gap: ${size[2]};
+      align-items: center;
+    `,
+    row: css`
+      display: inline-flex;
+      gap: ${size[2]};
+      width: 100%;
+      margin-bottom: ${size[0.5]};
+      line-height: 1.125rem;
+      align-items: center;
+    `,
+    editableInput: css`
+      border: none;
+      padding: ${size[0.5]} ${size[1]} ${size[0.5]} ${size[1.5]};
+      flex-grow: 1;
+      border-radius: ${border.radius.xs};
+      background-color: ${t(colors.gray[200], colors.darkGray[500])};
+
+      &:hover {
+        background-color: ${t(colors.gray[300], colors.darkGray[600])};
+      }
+    `,
+    actionButton: css`
       background-color: transparent;
+      color: ${t(colors.gray[500], colors.gray[500])};
       border: none;
       display: inline-flex;
       padding: 0px;
@@ -364,11 +595,10 @@ const getStyles = () => {
       width: ${size[3]};
       height: ${size[3]};
       position: relative;
-      left: ${size[2]};
       z-index: 1;
 
-      &:hover svg .copier {
-        stroke: ${colors.gray[500]} !important;
+      &:hover svg {
+        color: ${t(colors.gray[600], colors.gray[400])};
       }
 
       &:focus-visible {
@@ -379,3 +609,6 @@ const getStyles = () => {
     `,
   }
 }
+
+const lightStyles = stylesFactory('light')
+const darkStyles = stylesFactory('dark')

@@ -253,4 +253,27 @@ describe('useQueries', () => {
       res: [firstResult, secondResult],
     })
   })
+
+  test('should be `enabled` to accept getter function', async () => {
+    const fetchFn = vi.fn()
+    const checked = ref(false)
+
+    useQueries({
+      queries: [
+        {
+          queryKey: ['enabled'],
+          queryFn: fetchFn,
+          enabled: () => checked.value,
+        },
+      ],
+    })
+
+    expect(fetchFn).not.toHaveBeenCalled()
+
+    checked.value = true
+
+    await flushPromises()
+
+    expect(fetchFn).toHaveBeenCalled()
+  })
 })

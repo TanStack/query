@@ -31,10 +31,7 @@ you will then have access to `addTodoMutation.variables`, which contain the adde
     <li key={todo.id}>{todo.text}</li>
   ))}
   {isPending && (
-    <li
-      key={String(submittedAt)}
-      style={{ opacity: 0.5 }}
-    >
+    <li style={{ opacity: 0.5 }}>
       {variables}
     </li>
   )}
@@ -42,7 +39,7 @@ you will then have access to `addTodoMutation.variables`, which contain the adde
 ```
 [//]: # 'ExampleUI2'
 
-The `submittedAt` property is a timestamp that is set when `mutate` is invoked. This is useful to create a unique key for the pending todo item. We've also added an `opacity` to indicate that this item is only temporarily here. Once the mutation completes, the item will be removed because the mutation is no longer `pending`. Given that the refetch succeeded, we should see the item as a "normal item" in our list.
+We're rendering a temporary item with a different `opacity` as long as the mutation is pending. Once it completes, the item will automatically no longer be rendered. Given that the refetch succeeded, we should see the item as a "normal item" in our list.
 
 If the mutation errors, the item will also disappear. But we could continue to show it, if we want, by checking for the `isError` state of the mutation. `variables` are _not_ cleared when the mutation errors, so we can still access them, maybe even show a retry button:
 
@@ -50,7 +47,6 @@ If the mutation errors, the item will also disappear. But we could continue to s
 ```tsx
 {isError && (
   <li
-    key={String(submittedAt)}
     style={{ color: 'red' }}
   >
     {variables}
@@ -83,11 +79,11 @@ const variables = useMutationState<string>({
 ```
 [//]: # 'ExampleUI4'
 
-`variables` will be an `Array`, because there might be multiple mutations running at the same time. This will even make displaying concurrent optimistic updates a breeze.
+`variables` will be an `Array`, because there might be multiple mutations running at the same time. If we need a uniqe key for the items, we can also select `mutation.state.submittedAt`. This will even make displaying concurrent optimistic updates a breeze.
 
 ## Via the cache
 
-When you optimistically update your state before performing a mutation, there is a chance that the mutation will fail. In most of these failure cases, you can just trigger a refetch for your optimistic queries to revert them to their true server state. In some circumstances though, refetching may not work correctly and the mutation error could represent some type of server issue that won't make it possible to refetch. In this event, you can instead choose to rollback your update.
+When you optimistically update your state before performing a mutation, there is a chance that the mutation will fail. In most of these failure cases, you can just trigger a refetch for your optimistic queries to revert them to their true server state. In some circumstances though, refetching may not work correctly and the mutation error could represent some type of server issue that won't make it possible to refetch. In this event, you can instead choose to roll back your update.
 
 To do this, `useMutation`'s `onMutate` handler option allows you to return a value that will later be passed to both `onError` and `onSettled` handlers as the last argument. In most cases, it is most useful to pass a rollback function.
 

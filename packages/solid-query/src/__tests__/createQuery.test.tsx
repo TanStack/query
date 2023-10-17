@@ -1046,6 +1046,7 @@ describe('createQuery', () => {
           count++
           return count === 1 ? result1 : result2
         },
+        reconcile: 'id',
       }))
 
       createRenderEffect(() => {
@@ -3714,7 +3715,7 @@ describe('createQuery', () => {
           await sleep(10)
           return count++
         },
-        refetchInterval: (data = 0) => (data < 2 ? 10 : false),
+        refetchInterval: ({ state: { data = 0 } }) => (data < 2 ? 10 : false),
       }))
 
       createRenderEffect(() => {
@@ -5711,11 +5712,11 @@ describe('createQuery', () => {
           <div>data: {state.data}</div>
           <div>dataUpdatedAt: {state.dataUpdatedAt}</div>
           <button
-            onClick={() =>
+            onClick={() => {
               queryClient.setQueryData(key, 'newData', {
                 updatedAt: 100,
               })
-            }
+            }}
           >
             setQueryData
           </button>

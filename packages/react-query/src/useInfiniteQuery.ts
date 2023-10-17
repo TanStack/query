@@ -29,7 +29,6 @@ export function useInfiniteQuery<
     TQueryFnData,
     TError,
     TData,
-    TQueryFnData,
     TQueryKey,
     TPageParam
   >,
@@ -47,7 +46,6 @@ export function useInfiniteQuery<
     TQueryFnData,
     TError,
     TData,
-    TQueryFnData,
     TQueryKey,
     TPageParam
   >,

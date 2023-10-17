@@ -12,7 +12,12 @@ import type {
 
 import type { UseBaseQueryReturnType } from './useBaseQuery'
 
-import type { DeepUnwrapRef, DistributiveOmit, MaybeRefDeep } from './types'
+import type {
+  DeepUnwrapRef,
+  DistributiveOmit,
+  MaybeRefDeep,
+  MaybeRefOrGetter,
+} from './types'
 import type { QueryClient } from './queryClient'
 
 export type UseInfiniteQueryOptions<
@@ -39,6 +44,16 @@ export type UseInfiniteQueryOptions<
         DeepUnwrapRef<TQueryKey>,
         TPageParam
       >[Property]
+    : Property extends 'enabled'
+    ? MaybeRefOrGetter<
+        InfiniteQueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          TQueryKey
+        >[Property]
+      >
     : MaybeRefDeep<
         WithRequired<
           InfiniteQueryObserverOptions<
@@ -95,10 +110,6 @@ export function useInfiniteQuery<
     options,
     queryClient,
   ) as InfiniteQueryReturnType<TData, TError>
-  return {
-    ...result,
-    fetchNextPage: result.fetchNextPage.value,
-    fetchPreviousPage: result.fetchPreviousPage.value,
-    refetch: result.refetch.value,
-  }
+
+  return result
 }

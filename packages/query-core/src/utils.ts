@@ -56,11 +56,7 @@ export interface MutationFilters {
   status?: MutationStatus
 }
 
-export type DataUpdateFunction<TInput, TOutput> = (input: TInput) => TOutput
-
-export type Updater<TInput, TOutput> =
-  | TOutput
-  | DataUpdateFunction<TInput, TOutput>
+export type Updater<TInput, TOutput> = TOutput | ((input: TInput) => TOutput)
 
 export type QueryTypeFilter = 'all' | 'active' | 'inactive'
 
@@ -77,7 +73,7 @@ export function functionalUpdate<TInput, TOutput>(
   input: TInput,
 ): TOutput {
   return typeof updater === 'function'
-    ? (updater as DataUpdateFunction<TInput, TOutput>)(input)
+    ? (updater as (_: TInput) => TOutput)(input)
     : updater
 }
 

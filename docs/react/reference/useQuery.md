@@ -98,10 +98,10 @@ const {
 - `queryKeyHashFn: (queryKey: QueryKey) => string`
   - Optional
   - If specified, this function is used to hash the `queryKey` to a string.
-- `refetchInterval: number | false | ((data: TData | undefined, query: Query) => number | false | undefined)`
+- `refetchInterval: number | false | ((query: Query) => number | false | undefined)`
   - Optional
   - If set to a number, all queries will continuously refetch at this frequency in milliseconds
-  - If set to a function, the function will be executed with the latest data and query to compute a frequency
+  - If set to a function, the function will be executed with the query to compute a frequency
 - `refetchIntervalInBackground: boolean`
   - Optional
   - If set to `true`, queries that are set to continuously refetch with a `refetchInterval` will continue to refetch while their tab/window is in the background
