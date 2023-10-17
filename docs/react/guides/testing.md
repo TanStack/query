@@ -82,9 +82,9 @@ const wrapper = ({ children }) => (
 
 This will set the defaults for all queries in the component tree to "no retries". It is important to know that this will only work if your actual useQuery has no explicit retries set. If you have a query that wants 5 retries, this will still take precedence, because defaults are only taken as a fallback.
 
-## Set cacheTime to Infinity with Jest
+## Set gcTime to Infinity with Jest
 
-If you use Jest, you can set the `cacheTime` to `Infinity` to prevent "Jest did not exit one second after the test run completed" error message. This is the default behavior on the server, and is only necessary to set if you are explicitly setting a `cacheTime`.
+If you use Jest, you can set the `gcTime` to `Infinity` to prevent "Jest did not exit one second after the test run completed" error message. This is the default behavior on the server, and is only necessary to set if you are explicitly setting a `gcTime`.
 
 ## Testing Network Calls
 
