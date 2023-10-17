@@ -530,7 +530,7 @@ importers:
         specifier: ^4.4.4
         version: 4.4.4(@types/node@18.16.0)
 
-  examples/react/optimistic-updates-typescript:
+  examples/react/optimistic-updates-cache:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0-rc.1
@@ -546,7 +546,7 @@ importers:
         version: 4.0.2
       next:
         specifier: ^13.4.4
-        version: 13.4.4(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)
+        version: 13.4.19(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -565,7 +565,44 @@ importers:
         version: 18.2.4
       typescript:
         specifier: ^5.0.4
-        version: 5.0.4
+        version: 5.1.6
+
+  examples/react/optimistic-updates-ui:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.0.0-rc.1
+        version: link:../../../packages/react-query
+      '@tanstack/react-query-devtools':
+        specifier: ^5.0.0-rc.1
+        version: link:../../../packages/react-query-devtools
+      axios:
+        specifier: ^1.4.0
+        version: 1.4.0
+      isomorphic-unfetch:
+        specifier: 4.0.2
+        version: 4.0.2
+      next:
+        specifier: ^13.4.4
+        version: 13.4.19(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+    devDependencies:
+      '@types/node':
+        specifier: ^18.16.0
+        version: 18.16.0
+      '@types/react':
+        specifier: ^18.2.4
+        version: 18.2.4
+      '@types/react-dom':
+        specifier: ^18.2.4
+        version: 18.2.4
+      typescript:
+        specifier: ^5.0.4
+        version: 5.1.6
 
   examples/react/pagination:
     dependencies:
@@ -8536,7 +8573,7 @@ packages:
   /@types/react-native@0.71.0:
     resolution: {integrity: sha512-4MAoseGM8zv5PKQyc2SvKldvOmCJX4mNqj+mDqh0J9yJMzWQnGenk2vQCi+jxMXa3xWYIgx+ewaCSw0XiiGGSw==}
     dependencies:
-      '@types/react': 18.2.8
+      '@types/react': 18.2.15
     dev: true
 
   /@types/react-transition-group@4.4.6:

@@ -32,7 +32,7 @@ function useTodos() {
 function Example() {
   const queryClient = useQueryClient()
   const [text, setText] = React.useState('')
-  const { isFetching, ...queryInfo } = useTodos()
+  const todoQuery = useTodos()
 
   const addTodoMutation = useMutation({
     mutationFn: (newTodo: string) => axios.post('/api/data', { text: newTodo }),
@@ -64,29 +64,21 @@ function Example() {
         <button disabled={addTodoMutation.isPending}>Create</button>
       </form>
       <br />
-      {queryInfo.isSuccess && (
+      {todoQuery.isSuccess && (
         <>
           <div>
             {/* The type of queryInfo.data will be narrowed because we check for isSuccess first */}
-            Updated At: {new Date(queryInfo.data.ts).toLocaleTimeString()}
+            Updated At: {new Date(todoQuery.data.ts).toLocaleTimeString()}
           </div>
           <ul>
-            {queryInfo.data.items.map((todo) => (
+            {todoQuery.data.items.map((todo) => (
               <li key={todo.id}>{todo.text}</li>
             ))}
             {addTodoMutation.isPending && (
-              <li
-                key={String(addTodoMutation.submittedAt)}
-                style={{ opacity: 0.5 }}
-              >
-                {addTodoMutation.variables}
-              </li>
+              <li style={{ opacity: 0.5 }}>{addTodoMutation.variables}</li>
             )}
             {addTodoMutation.isError && (
-              <li
-                key={String(addTodoMutation.submittedAt)}
-                style={{ color: 'red' }}
-              >
+              <li style={{ color: 'red' }}>
                 {addTodoMutation.variables}
                 <button
                   onClick={() =>
@@ -98,11 +90,11 @@ function Example() {
               </li>
             )}
           </ul>
-          {isFetching && <div>Updating in background...</div>}
+          {todoQuery.isFetching && <div>Updating in background...</div>}
         </>
       )}
-      {queryInfo.isPending && 'Loading'}
-      {queryInfo.error instanceof Error && queryInfo.error.message}
+      {todoQuery.isPending && 'Loading'}
+      {todoQuery.error instanceof Error && todoQuery.error.message}
     </div>
   )
 }

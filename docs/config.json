@@ -243,8 +243,12 @@
               "to": "react/examples/react/auto-refetching"
             },
             {
-              "label": "Optimistic Updates in TypeScript",
-              "to": "react/examples/react/optimistic-updates-typescript"
+              "label": "Optimistic Updates (UI)",
+              "to": "react/examples/react/optimistic-updates-ui"
+            },
+            {
+              "label": "Optimistic Updates (Cache)",
+              "to": "react/examples/react/optimistic-updates-cache"
             },
             {
               "label": "Pagination",

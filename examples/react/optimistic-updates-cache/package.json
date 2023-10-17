@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-react-optimistic-updates-typescript",
+  "name": "@tanstack/query-example-react-optimistic-updates-cache",
   "private": true,
   "main": "pages/index.tsx",
   "license": "MIT",
