@@ -1,4 +1,4 @@
-import { type RenderOptions, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import * as React from 'react'
 import {
   QueryCache,
@@ -6,6 +6,7 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '../devtools'
+import type { RenderOptions } from '@testing-library/react'
 
 export function renderWithClient(
   client: QueryClient,
@@ -14,7 +15,7 @@ export function renderWithClient(
   renderOptions?: RenderOptions,
 ): ReturnType<typeof render> {
   const { rerender, ...result } = render(
-    <QueryClientProvider client={client} context={devtoolsOptions.context}>
+    <QueryClientProvider client={client}>
       <ReactQueryDevtools {...devtoolsOptions} />
       {ui}
     </QueryClientProvider>,
@@ -24,7 +25,7 @@ export function renderWithClient(
     ...result,
     rerender: (rerenderUi: React.ReactElement) =>
       rerender(
-        <QueryClientProvider client={client} context={devtoolsOptions.context}>
+        <QueryClientProvider client={client}>
           <ReactQueryDevtools {...devtoolsOptions} />
           {rerenderUi}
         </QueryClientProvider>,

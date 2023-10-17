@@ -1,0 +1,33 @@
+{
+  "name": "@tanstack/query-example-solid-solid-start-streaming",
+  "private": true,
+  "scripts": {
+    "dev": "solid-start dev",
+    "build": "solid-start build",
+    "start": "solid-start start"
+  },
+  "type": "module",
+  "resolutions": {
+    "solid-js": "^1.7.7"
+  },
+  "dependencies": {
+    "@solidjs/meta": "^0.28.2",
+    "@solidjs/router": "^0.7.0",
+    "@tanstack/solid-query": "^5.0.0-rc.1",
+    "@tanstack/solid-query-devtools": "^5.0.0-rc.9",
+    "solid-js": "^1.7.8",
+    "solid-start": "^0.2.23",
+    "undici": "^5.22.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.16.0",
+    "esbuild": "^0.14.54",
+    "postcss": "^8.4.23",
+    "solid-start-node": "^0.2.0",
+    "typescript": "^5.0.4",
+    "vite": "^4.4.4"
+  },
+  "engines": {
+    "node": ">=16.8"
+  }
+}

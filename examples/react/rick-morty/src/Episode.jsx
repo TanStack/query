@@ -1,7 +1,6 @@
 import React from 'react'
-import { Typography, Link } from '@material-ui/core'
-import { Link as RouterLink } from 'react-router-dom'
-import { useParams } from 'react-router'
+import { Typography, Link } from '@mui/material'
+import { useParams, Link as RouterLink } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import fetch from './fetch'
 
@@ -13,7 +12,7 @@ function Episode() {
       fetch(`https://rickandmortyapi.com/api/episode/${episodeId}`),
   })
 
-  if (status === 'loading') return <p>Loading...</p>
+  if (status === 'pending') return <p>Loading...</p>
   if (status === 'error') return <p>Error :(</p>
 
   return (
@@ -37,7 +36,7 @@ function Character({ id }) {
     queryFn: () => fetch(`https://rickandmortyapi.com/api/character/${id}`),
   })
 
-  if (status === 'loading') return <p>Loading...</p>
+  if (status === 'pending') return <p>Loading...</p>
   if (status === 'error') return <p>Error :(</p>
 
   return (

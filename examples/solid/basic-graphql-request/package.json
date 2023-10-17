@@ -9,14 +9,15 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@tanstack/solid-query": "^4.3.9",
+    "@tanstack/solid-query": "^5.0.0-rc.1",
+    "@tanstack/solid-query-devtools": "^5.0.0-rc.9",
     "graphql": "^16.6.0",
-    "graphql-request": "^5.0.0",
-    "solid-js": "^1.5.1"
+    "graphql-request": "^6.1.0",
+    "solid-js": "^1.7.8"
   },
   "devDependencies": {
-    "typescript": "^4.8.2",
-    "vite": "^3.0.9",
-    "vite-plugin-solid": "^2.3.9"
+    "typescript": "^5.0.4",
+    "vite": "^4.4.4",
+    "vite-plugin-solid": "^2.7.0"
   }
 }

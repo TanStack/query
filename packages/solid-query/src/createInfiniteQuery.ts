@@ -1,116 +1,39 @@
 import { InfiniteQueryObserver } from '@tanstack/query-core'
-import { createComputed } from 'solid-js'
-import { createStore } from 'solid-js/store'
+import { createMemo } from 'solid-js'
 import { createBaseQuery } from './createBaseQuery'
-import { parseQueryArgs } from './utils'
+import type {
+  DefaultError,
+  InfiniteData,
+  QueryKey,
+  QueryObserver,
+} from '@tanstack/query-core'
+import type { QueryClient } from './QueryClient'
 import type {
   CreateInfiniteQueryOptions,
   CreateInfiniteQueryResult,
-  SolidQueryKey,
 } from './types'
-import type {
-  QueryFunction,
-  QueryObserver,
-  QueryOptions,
-} from '@tanstack/query-core'
+import type { Accessor } from 'solid-js'
 
 export function createInfiniteQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends SolidQueryKey = SolidQueryKey,
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 >(
   options: CreateInfiniteQueryOptions<
     TQueryFnData,
     TError,
     TData,
-    TQueryFnData,
-    TQueryKey
+    TQueryKey,
+    TPageParam
   >,
-): CreateInfiniteQueryResult<TData, TError>
-export function createInfiniteQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends SolidQueryKey = SolidQueryKey,
->(
-  queryKey: TQueryKey,
-  options?: Omit<
-    CreateInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryFnData,
-      TQueryKey
-    >,
-    'queryKey'
-  >,
-): CreateInfiniteQueryResult<TData, TError>
-export function createInfiniteQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends SolidQueryKey = SolidQueryKey,
->(
-  queryKey: TQueryKey,
-  queryFn: QueryFunction<TQueryFnData, ReturnType<TQueryKey>>,
-  options?: Omit<
-    CreateInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryFnData,
-      TQueryKey
-    >,
-    'queryKey' | 'queryFn'
-  >,
-): CreateInfiniteQueryResult<TData, TError>
-export function createInfiniteQuery<
-  TQueryFnData,
-  TError,
-  TData = TQueryFnData,
-  TQueryKey extends SolidQueryKey = SolidQueryKey,
->(
-  arg1:
-    | TQueryKey
-    | CreateInfiniteQueryOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryFnData,
-        TQueryKey
-      >,
-  arg2?:
-    | QueryFunction<TQueryFnData, ReturnType<TQueryKey>>
-    | CreateInfiniteQueryOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryFnData,
-        TQueryKey
-      >,
-  arg3?: CreateInfiniteQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey
-  >,
+  queryClient?: Accessor<QueryClient>,
 ): CreateInfiniteQueryResult<TData, TError> {
-  // The parseQuery Args functions helps normalize the arguments into the correct form.
-  // Whatever the parameters are, they are normalized into the correct form.
-  const [parsedOptions, setParsedOptions] = createStore(
-    parseQueryArgs(arg1, arg2, arg3),
-  )
-
-  // Watch for changes in the options and update the parsed options.
-  createComputed(() => {
-    const newParsedOptions = parseQueryArgs(arg1, arg2, arg3)
-    setParsedOptions(newParsedOptions)
-  })
-
   return createBaseQuery(
-    parsedOptions as QueryOptions<any, any, any, ReturnType<TQueryKey>>,
+    createMemo(() => options()),
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     InfiniteQueryObserver as typeof QueryObserver,
+    queryClient,
   ) as CreateInfiniteQueryResult<TData, TError>
 }

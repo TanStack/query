@@ -33,7 +33,6 @@ Then configure the rules you want to use under the rules section:
 {
   "rules": {
     "@tanstack/query/exhaustive-deps": "error",
-    "@tanstack/query/prefer-query-object-syntax": "error",
     "@tanstack/query/stable-query-client": "error"
   }
 }

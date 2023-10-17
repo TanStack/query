@@ -5,45 +5,39 @@ title: useQuery
 
 ```tsx
 const {
-	data,
-	dataUpdatedAt,
-	error,
-	errorUpdateCount,
-	errorUpdatedAt,
-	failureCount,
-	failureReason,
-	fetchStatus,
-	isError,
-	isFetched,
-	isFetchedAfterMount,
-	isFetching,
-	isInitialLoading,
-	isLoading,
-	isLoadingError,
-	isPaused,
-	isPlaceholderData,
-	isPreviousData,
-	isRefetchError,
-	isRefetching,
-	isStale,
-	isSuccess,
-	refetch,
-	remove,
-	status
+  data,
+  dataUpdatedAt,
+  error,
+  errorUpdatedAt,
+  failureCount,
+  failureReason,
+  fetchStatus,
+  isError,
+  isFetched,
+  isFetchedAfterMount,
+  isFetching,
+  isInitialLoading,
+  isLoading,
+  isLoadingError,
+  isPaused,
+  isPending,
+  isPlaceholderData,
+  isRefetchError,
+  isRefetching,
+  isStale,
+  isSuccess,
+  refetch,
+  status,
 } = useQuery({
   queryKey,
   queryFn,
-  cacheTime,
+  gcTime,
   enabled,
   networkMode,
   initialData,
   initialDataUpdatedAt,
-  keepPreviousData,
   meta,
   notifyOnChangeProps,
-  onError,
-  onSettled,
-  onSuccess,
   placeholderData,
   queryKeyHashFn,
   refetchInterval,
@@ -58,7 +52,7 @@ const {
   staleTime,
   structuralSharing,
   suspense,
-  useErrorBoundary,
+  throwOnError,
 })
 ```
 
@@ -85,6 +79,7 @@ const {
   - If `false`, failed queries will not retry by default.
   - If `true`, failed queries will retry infinitely.
   - If set to a `number`, e.g. `3`, failed queries will retry until the failed query count meets that number.
+  - defaults to `3` on the client and `0` on the server
 - `retryOnMount: boolean`
   - If set to `false`, the query will not be retried on mount if it contains an error. Defaults to `true`.
 - `retryDelay: number | (retryAttempt: number, error: TError) => number`
@@ -96,17 +91,17 @@ const {
   - Defaults to `0`
   - The time in milliseconds after data is considered stale. This value only applies to the hook it is defined on.
   - If set to `Infinity`, the data will never be considered stale
-- `cacheTime: number | Infinity`
+- `gcTime: number | Infinity`
   - Defaults to `5 * 60 * 1000` (5 minutes) or `Infinity` during SSR
-  - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different cache times are specified, the longest one will be used.
+  - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different garbage collection times are specified, the longest one will be used.
   - If set to `Infinity`, will disable garbage collection
 - `queryKeyHashFn: (queryKey: QueryKey) => string`
   - Optional
   - If specified, this function is used to hash the `queryKey` to a string.
-- `refetchInterval: number | false | ((data: TData | undefined, query: Query) => number | false)`
+- `refetchInterval: number | false | ((query: Query) => number | false | undefined)`
   - Optional
   - If set to a number, all queries will continuously refetch at this frequency in milliseconds
-  - If set to a function, the function will be executed with the latest data and query to compute a frequency
+  - If set to a function, the function will be executed with the query to compute a frequency
 - `refetchIntervalInBackground: boolean`
   - Optional
   - If set to `true`, queries that are set to continuously refetch with a `refetchInterval` will continue to refetch while their tab/window is in the background
@@ -138,25 +133,13 @@ const {
   - If set to `"all"`, the component will opt-out of smart tracking and re-render whenever a query is updated.
   - If set to a function, the function will be executed to compute the list of properties.
   - By default, access to properties will be tracked, and the component will only re-render when one of the tracked properties change.
-- `onSuccess: (data: TData) => void`
-  - **Deprecated** - this callback will be removed in the next major version
-  - Optional
-  - This function will fire any time the query successfully fetches new data.
-- `onError: (error: TError) => void`
-  - **Deprecated** - this callback will be removed in the next major version
-  - Optional
-  - This function will fire if the query encounters an error and will be passed the error.
-- `onSettled: (data?: TData, error?: TError) => void`
-  - **Deprecated** - this callback will be removed in the next major version
-  - Optional
-  - This function will fire any time the query is either successfully fetched or errors and be passed either the data or error.
 - `select: (data: TData) => unknown`
   - Optional
   - This option can be used to transform or select a part of the data returned by the query function. It affects the returned `data` value, but does not affect what gets stored in the query cache.
 - `suspense: boolean`
   - Optional
   - Set this to `true` to enable suspense mode.
-  - When `true`, `useQuery` will suspend when `status === 'loading'`
+  - When `true`, `useQuery` will suspend when `status === 'pending'`
   - When `true`, `useQuery` will throw runtime errors when `status === 'error'`
 - `initialData: TData | () => TData`
   - Optional
@@ -167,43 +150,35 @@ const {
 - `initialDataUpdatedAt: number | (() => number | undefined)`
   - Optional
   - If set, this value will be used as the time (in milliseconds) of when the `initialData` itself was last updated.
-- `placeholderData: TData | () => TData`
+- `placeholderData: TData | (previousValue: TData | undefined; previousQuery: Query | undefined,) => TData`
   - Optional
-  - If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `loading` data and no initialData has been provided.
+  - If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `pending` state.
   - `placeholderData` is **not persisted** to the cache
-- `keepPreviousData: boolean`
-  - Optional
-  - Defaults to `false`
-  - If set, any previous `data` will be kept when fetching new data because the query key changed.
-- `isDataEqual: (oldData: TData | undefined, newData: TData) => boolean`
-  - **Deprecated**. You can achieve the same functionality by passing a function to `structuralSharing` instead:
-    - structuralSharing: (oldData, newData) => isDataEqual(oldData, newData) ? oldData : replaceEqualDeep(oldData, newData)
-  - Optional
-  - This function should return boolean indicating whether to use previous `data` (`true`) or new data (`false`) as a resolved data for the query.
-- `structuralSharing: boolean | ((oldData: TData | undefined, newData: TData) => TData)`
+  - If you provide a function for `placeholderData`, as a first argument you will receive previously watched query data if available, and the second argument will be the complete previousQuery instance.
+- `structuralSharing: boolean | (<T>(oldData: T | undefined, newData: T) => T)`
   - Optional
   - Defaults to `true`
   - If set to `false`, structural sharing between query results will be disabled.
   - If set to a function, the old and new data values will be passed through this function, which should combine them into resolved data for the query. This way, you can retain references from the old data to improve performance even when that data contains non-serializable values.
-- `useErrorBoundary: undefined | boolean | (error: TError, query: Query) => boolean`
-  - Defaults to the global query config's `useErrorBoundary` value, which is `undefined`
+- `throwOnError: undefined | boolean | (error: TError, query: Query) => boolean`
+  - Defaults to the global query config's `throwOnError` value, which is `undefined`
   - Set this to `true` if you want errors to be thrown in the render phase and propagate to the nearest error boundary
   - Set this to `false` to disable `suspense`'s default behavior of throwing errors to the error boundary.
   - If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`)
 - `meta: Record<string, unknown>`
   - Optional
   - If set, stores additional information on the query cache entry that can be used as needed. It will be accessible wherever the `query` is available, and is also part of the `QueryFunctionContext` provided to the `queryFn`.
-- `context?: React.Context<QueryClient | undefined>`
-  - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.
+- `queryClient?: QueryClient`,
+  - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
 **Returns**
 
 - `status: String`
   - Will be:
-    - `loading` if there's no cached data and no query attempt was finished yet.
+    - `pending` if there's no cached data and no query attempt was finished yet.
     - `error` if the query attempt resulted in an error. The corresponding `error` property has the error received from the attempted fetch
     - `success` if the query has received a response with no errors and is ready to display its data. The corresponding `data` property on the query is the data received from the successful fetch or if the query's `enabled` property is set to `false` and has not been fetched yet `data` is the first `initialData` supplied to the query on initialization.
-- `isLoading: boolean`
+- `isPending: boolean`
   - A derived boolean from the `status` variable above, provided for convenience.
 - `isSuccess: boolean`
   - A derived boolean from the `status` variable above, provided for convenience.
@@ -227,15 +202,13 @@ const {
   - Will be `true` if the data in the cache is invalidated or if the data is older than the given `staleTime`.
 - `isPlaceholderData: boolean`
   - Will be `true` if the data shown is the placeholder data.
-- `isPreviousData: boolean`
-  - Will be `true` when `keepPreviousData` is set and data from the previous query is returned.
 - `isFetched: boolean`
   - Will be `true` if the query has been fetched.
 - `isFetchedAfterMount: boolean`
   - Will be `true` if the query has been fetched after the component mounted.
   - This property can be used to not show any previously cached data.
 - `fetchStatus: FetchStatus`
-  - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `loading` as well as background refetches.
+  - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `pending` as well as background refetches.
   - `paused`: The query wanted to fetch, but has been `paused`.
   - `idle`: The query is not fetching.
   - see [Network Mode](../guides/network-mode) for more information.
@@ -244,11 +217,14 @@ const {
 - `isPaused: boolean`
   - A derived boolean from the `fetchStatus` variable above, provided for convenience.
 - `isRefetching: boolean`
-  - Is `true` whenever a background refetch is in-flight, which _does not_ include initial `loading`
-  - Is the same as `isFetching && !isLoading`
-- `isInitialLoading: boolean`
+  - Is `true` whenever a background refetch is in-flight, which _does not_ include initial `pending`
+  - Is the same as `isFetching && !isPending`
+- `isLoading: boolean`
   - Is `true` whenever the first fetch for a query is in-flight
-  - Is the same as `isFetching && isLoading`
+  - Is the same as `isFetching && isPending`
+- `isInitialLoading: boolean`
+  - **deprecated**
+  - An alias for `isLoading`, will be removed in the next major version.
 - `failureCount: number`
   - The failure count for the query.
   - Incremented every time the query fails.
@@ -265,5 +241,3 @@ const {
     - Defaults to `true`
       - Per default, a currently running request will be cancelled before a new request is made
     - When set to `false`, no refetch will be made if there is already a request running.
-- `remove: () => void`
-  - A function to remove the query from the cache.

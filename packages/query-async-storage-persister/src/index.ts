@@ -1,15 +1,10 @@
 import { asyncThrottle } from './asyncThrottle'
 import type {
+  AsyncStorage,
   PersistedClient,
   Persister,
   Promisable,
 } from '@tanstack/query-persist-client-core'
-
-interface AsyncStorage {
-  getItem: (key: string) => Promise<string | null>
-  setItem: (key: string, value: string) => Promise<unknown>
-  removeItem: (key: string) => Promise<void>
-}
 
 export type AsyncPersistRetryer = (props: {
   persistedClient: PersistedClient
@@ -90,7 +85,7 @@ export const createAsyncStoragePersister = ({
           return
         }
 
-        return deserialize(cacheString) as PersistedClient
+        return deserialize(cacheString)
       },
       removeClient: () => storage.removeItem(key),
     }

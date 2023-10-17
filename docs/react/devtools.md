@@ -16,11 +16,11 @@ When you begin your React Query journey, you'll want these devtools by your side
 The devtools are a separate package that you need to install:
 
 ```bash
-$ npm i @tanstack/react-query-devtools
+$ npm i @tanstack/react-query-devtools@rc
 # or
-$ pnpm add @tanstack/react-query-devtools
+$ pnpm add @tanstack/react-query-devtools@rc
 # or
-$ yarn add @tanstack/react-query-devtools
+$ yarn add @tanstack/react-query-devtools@rc
 ```
 
 You can import the devtools like this:
@@ -54,52 +54,16 @@ function App() {
 
 - `initialIsOpen: Boolean`
   - Set this `true` if you want the dev tools to default to being open
-- `panelProps: PropsObject`
-  - Use this to add props to the panel. For example, you can add `className`, `style` (merge and override default style), etc.
-- `closeButtonProps: PropsObject`
-  - Use this to add props to the close button. For example, you can add `className`, `style` (merge and override default style), `onClick` (extend default handler), etc.
-- `toggleButtonProps: PropsObject`
-  - Use this to add props to the toggle button. For example, you can add `className`, `style` (merge and override default style), `onClick` (extend default handler), etc.
-- `position?: "top-left" | "top-right" | "bottom-left" | "bottom-right"`
+- `buttonPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right"`
   - Defaults to `bottom-left`
   - The position of the React Query logo to open and close the devtools panel
-- `panelPosition?: "top" | "bottom" | "left" | "right"`
+- `position?: "top" | "bottom" | "left" | "right"`
   - Defaults to `bottom`
   - The position of the React Query devtools panel
-- `context?: React.Context<QueryClient | undefined>`
-  - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.
-- `errorTypes?: { name: string; initializer: (query: Query) => { toString(): string }}`
-  - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an item that can be stringified so we can check for its presence on any given query.
-
-## Embedded Mode
-
-Embedded Mode will embed the devtools as a regular component in your application. You can style it however you'd like after that!
-
-```tsx
-import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
-
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      {/* The rest of your application */}
-      <ReactQueryDevtoolsPanel style={styles} className={className} />
-    </QueryClientProvider>
-  )
-}
-```
-
-### Options
-
-Use these options to style the dev tools.
-
-- `style: StyleObject`
-  - The standard React style object used to style a component with inline styles
-- `className: string`
-  - The standard React className property used to style a component with classes
-- `showCloseButton?: boolean`
-  - Show a close button inside the devtools panel
-- `closeButtonProps: PropsObject`
-  - Use this to add props to the close button. For example, you can add `className`, `style` (merge and override default style), `onClick` (extend default handler), etc.
+- `client?: QueryClient`,
+  - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
+- `errorTypes?: { name: string; initializer: (query: Query) => TError}`
+  - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
 
 ## Devtools in production
 

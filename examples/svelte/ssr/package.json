@@ -9,15 +9,16 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
-    "@tanstack/svelte-query": "^4.20.0"
+    "@tanstack/svelte-query": "^5.0.0-rc.1",
+    "@tanstack/svelte-query-devtools": "^5.0.0-rc.1"
   },
   "devDependencies": {
-    "@sveltejs/adapter-auto": "^2.0.0",
-    "@sveltejs/kit": "^1.15.0",
-    "svelte": "^3.54.0",
-    "svelte-check": "^2.9.2",
-    "tslib": "^2.4.1",
-    "typescript": "^4.7.4",
-    "vite": "^4.0.0"
+    "@sveltejs/adapter-auto": "^2.1.0",
+    "@sveltejs/kit": "^1.19.0",
+    "svelte": "^4.0.0",
+    "svelte-check": "^3.4.4",
+    "tslib": "^2.5.2",
+    "typescript": "^5.0.4",
+    "vite": "^4.4.4"
   }
 }

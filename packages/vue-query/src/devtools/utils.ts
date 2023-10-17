@@ -1,5 +1,3 @@
-/* istanbul ignore file */
-
 import type { Query } from '@tanstack/query-core'
 
 type SortFn = (a: Query, b: Query) => number

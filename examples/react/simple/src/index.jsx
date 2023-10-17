@@ -20,7 +20,7 @@ export default function App() {
 }
 
 function Example() {
-  const { isLoading, error, data, isFetching } = useQuery({
+  const { isPending, error, data, isFetching } = useQuery({
     queryKey: ['repoData'],
     queryFn: () =>
       axios
@@ -28,7 +28,7 @@ function Example() {
         .then((res) => res.data),
   })
 
-  if (isLoading) return 'Loading...'
+  if (isPending) return 'Loading...'
 
   if (error) return 'An error has occurred: ' + error.message
 

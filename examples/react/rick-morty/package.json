@@ -8,17 +8,20 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@material-ui/core": "^4.9.7",
-    "@tanstack/react-query": "^4.7.1",
-    "@tanstack/react-query-devtools": "^4.7.1",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "react-router": "^5.1.2",
-    "react-router-dom": "^5.1.2"
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.13.2",
+    "@mui/styles": "^5.13.2",
+    "@tanstack/react-query": "^5.0.0-rc.1",
+    "@tanstack/react-query-devtools": "^5.0.0-rc.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router": "^6.11.2",
+    "react-router-dom": "^6.11.2"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^2.0.0",
-    "vite": "^3.0.0"
+    "@vitejs/plugin-react": "^4.0.0",
+    "vite": "^4.4.4"
   },
   "browserslist": {
     "production": [

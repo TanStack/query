@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { waitFor } from '@testing-library/react'
 import { MutationObserver } from '../mutationObserver'
 import { createQueryClient, executeMutation, queryKey, sleep } from './utils'
@@ -16,15 +17,6 @@ describe('mutations', () => {
     queryClient.clear()
   })
 
-  test('mutate should trigger a mutation', async () => {
-    const result = await executeMutation(queryClient, {
-      mutationFn: async (text: string) => text,
-      variables: 'todo',
-    })
-
-    expect(result).toBe(result)
-  })
-
   test('mutate should accept null values', async () => {
     let variables
 
@@ -35,26 +27,29 @@ describe('mutations', () => {
       },
     })
 
-    mutation.mutate(null)
-
-    await sleep(10)
+    await mutation.mutate(null)
 
     expect(variables).toBe(null)
   })
 
   test('setMutationDefaults should be able to set defaults', async () => {
     const key = queryKey()
+    const fn = vi.fn()
 
     queryClient.setMutationDefaults(key, {
-      mutationFn: async (text: string) => text,
+      mutationFn: fn,
     })
 
-    const result = await executeMutation(queryClient, {
-      mutationKey: key,
-      variables: 'todo',
-    })
+    await executeMutation(
+      queryClient,
+      {
+        mutationKey: key,
+      },
+      'vars',
+    )
 
-    expect(result).toBe(result)
+    expect(fn).toHaveBeenCalledTimes(1)
+    expect(fn).toHaveBeenCalledWith('vars')
   })
 
   test('mutation should set correct success states', async () => {
@@ -64,7 +59,6 @@ describe('mutations', () => {
         return text
       },
       onMutate: (text) => text,
-      variables: 'todo',
     })
 
     expect(mutation.getCurrentResult()).toEqual({
@@ -75,22 +69,23 @@ describe('mutations', () => {
       failureReason: null,
       isError: false,
       isIdle: true,
-      isLoading: false,
+      isPending: false,
       isPaused: false,
       isSuccess: false,
       mutate: expect.any(Function),
       reset: expect.any(Function),
       status: 'idle',
       variables: undefined,
+      submittedAt: 0,
     })
 
-    const states: MutationState<string, unknown, string, string>[] = []
+    const states: Array<MutationState<string, unknown, string, string>> = []
 
     mutation.subscribe((state) => {
       states.push(state)
     })
 
-    mutation.mutate()
+    mutation.mutate('todo')
 
     await sleep(0)
 
@@ -102,13 +97,14 @@ describe('mutations', () => {
       failureReason: null,
       isError: false,
       isIdle: false,
-      isLoading: true,
+      isPending: true,
       isPaused: false,
       isSuccess: false,
       mutate: expect.any(Function),
       reset: expect.any(Function),
-      status: 'loading',
+      status: 'pending',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
 
     await sleep(5)
@@ -121,13 +117,14 @@ describe('mutations', () => {
       failureReason: null,
       isError: false,
       isIdle: false,
-      isLoading: true,
+      isPending: true,
       isPaused: false,
       isSuccess: false,
       mutate: expect.any(Function),
       reset: expect.any(Function),
-      status: 'loading',
+      status: 'pending',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
 
     await sleep(20)
@@ -140,35 +137,35 @@ describe('mutations', () => {
       failureReason: null,
       isError: false,
       isIdle: false,
-      isLoading: false,
+      isPending: false,
       isPaused: false,
       isSuccess: true,
       mutate: expect.any(Function),
       reset: expect.any(Function),
       status: 'success',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
   })
 
   test('mutation should set correct error states', async () => {
     const mutation = new MutationObserver(queryClient, {
-      mutationFn: async () => {
+      mutationFn: async (_: string) => {
         await sleep(20)
-        return Promise.reject('err')
+        return Promise.reject(new Error('err'))
       },
       onMutate: (text) => text,
-      variables: 'todo',
       retry: 1,
       retryDelay: 1,
     })
 
-    const states: MutationState<string, unknown, string, string>[] = []
+    const states: Array<MutationState<string, unknown, string, string>> = []
 
     mutation.subscribe((state) => {
       states.push(state)
     })
 
-    mutation.mutate().catch(() => undefined)
+    mutation.mutate('todo').catch(() => undefined)
 
     await sleep(0)
 
@@ -180,13 +177,14 @@ describe('mutations', () => {
       failureReason: null,
       isError: false,
       isIdle: false,
-      isLoading: true,
+      isPending: true,
       isPaused: false,
       isSuccess: false,
       mutate: expect.any(Function),
       reset: expect.any(Function),
-      status: 'loading',
+      status: 'pending',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
 
     await sleep(10)
@@ -199,13 +197,14 @@ describe('mutations', () => {
       failureReason: null,
       isError: false,
       isIdle: false,
-      isLoading: true,
+      isPending: true,
       isPaused: false,
       isSuccess: false,
       mutate: expect.any(Function),
       reset: expect.any(Function),
-      status: 'loading',
+      status: 'pending',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
 
     await sleep(20)
@@ -215,16 +214,17 @@ describe('mutations', () => {
       data: undefined,
       error: null,
       failureCount: 1,
-      failureReason: 'err',
+      failureReason: new Error('err'),
       isError: false,
       isIdle: false,
-      isLoading: true,
+      isPending: true,
       isPaused: false,
       isSuccess: false,
       mutate: expect.any(Function),
       reset: expect.any(Function),
-      status: 'loading',
+      status: 'pending',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
 
     await sleep(30)
@@ -232,27 +232,28 @@ describe('mutations', () => {
     expect(states[3]).toEqual({
       context: 'todo',
       data: undefined,
-      error: 'err',
+      error: new Error('err'),
       failureCount: 2,
-      failureReason: 'err',
+      failureReason: new Error('err'),
       isError: true,
       isIdle: false,
-      isLoading: false,
+      isPending: false,
       isPaused: false,
       isSuccess: false,
       mutate: expect.any(Function),
       reset: expect.any(Function),
       status: 'error',
       variables: 'todo',
+      submittedAt: expect.any(Number),
     })
   })
 
   test('should be able to restore a mutation', async () => {
     const key = queryKey()
 
-    const onMutate = jest.fn()
-    const onSuccess = jest.fn()
-    const onSettled = jest.fn()
+    const onMutate = vi.fn()
+    const onSuccess = vi.fn()
+    const onSettled = vi.fn()
 
     queryClient.setMutationDefaults(key, {
       mutationFn: async (text: string) => text,
@@ -275,8 +276,9 @@ describe('mutations', () => {
           failureCount: 1,
           failureReason: 'err',
           isPaused: true,
-          status: 'loading',
+          status: 'pending',
           variables: 'todo',
+          submittedAt: 1,
         },
       )
 
@@ -287,8 +289,9 @@ describe('mutations', () => {
       failureCount: 1,
       failureReason: 'err',
       isPaused: true,
-      status: 'loading',
+      status: 'pending',
       variables: 'todo',
+      submittedAt: 1,
     })
 
     await queryClient.resumePausedMutations()
@@ -302,6 +305,7 @@ describe('mutations', () => {
       isPaused: false,
       status: 'success',
       variables: 'todo',
+      submittedAt: 1,
     })
 
     expect(onMutate).not.toHaveBeenCalled()
@@ -314,7 +318,7 @@ describe('mutations', () => {
     const observer = new MutationObserver(queryClient, {})
     const currentMutation = mutationCache.build(queryClient, {})
 
-    const fn = jest.fn()
+    const fn = vi.fn()
 
     const unsubscribe = mutationCache.subscribe((event) => {
       fn(event.type)
@@ -341,12 +345,28 @@ describe('mutations', () => {
     } catch (err) {
       error = err
     }
-    expect(error).toEqual('No mutationFn found')
+    expect(error).toEqual(new Error('No mutationFn found'))
   })
 
   test('mutate update the mutation state even without an active subscription', async () => {
-    const onSuccess = jest.fn()
-    const onSettled = jest.fn()
+    const onSuccess = vi.fn()
+    const onSettled = vi.fn()
+
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: async () => {
+        return 'update'
+      },
+    })
+
+    await mutation.mutate(undefined, { onSuccess, onSettled })
+    expect(mutation.getCurrentResult().data).toEqual('update')
+    expect(onSuccess).not.toHaveBeenCalled()
+    expect(onSettled).not.toHaveBeenCalled()
+  })
+
+  test('mutate update the mutation state even without an active subscription', async () => {
+    const onSuccess = vi.fn()
+    const onSettled = vi.fn()
 
     const mutation = new MutationObserver(queryClient, {
       mutationFn: async () => {
@@ -361,7 +381,7 @@ describe('mutations', () => {
   })
 
   test('mutation callbacks should see updated options', async () => {
-    const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
 
     const mutation = new MutationObserver(queryClient, {
       mutationFn: async () => {

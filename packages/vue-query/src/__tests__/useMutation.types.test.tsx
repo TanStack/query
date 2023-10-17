@@ -1,6 +1,7 @@
 import { reactive } from 'vue'
 import { useMutation } from '../useMutation'
-import { doNotExecute, Equal, Expect, successMutator } from './test-utils'
+import { doNotExecute, successMutator } from './test-utils'
+import type { Equal, Expect } from './test-utils'
 
 describe('Discriminated union return type', () => {
   it('data should be possibly undefined by default', () => {
@@ -43,13 +44,13 @@ describe('Discriminated union return type', () => {
     })
   })
 
-  it('data should be undefined when mutation is loading', () => {
+  it('data should be undefined when mutation is pending', () => {
     doNotExecute(() => {
       const mutation = reactive(
         useMutation({ mutationFn: successMutator<string> }),
       )
 
-      if (mutation.isLoading) {
+      if (mutation.isPending) {
         const result: Expect<Equal<undefined, typeof mutation.data>> = true
         return result
       }
@@ -64,10 +65,33 @@ describe('Discriminated union return type', () => {
       )
 
       if (mutation.isError) {
-        const result: Expect<Equal<unknown, typeof mutation.error>> = true
+        const result: Expect<Equal<Error, typeof mutation.error>> = true
         return result
       }
       return
+    })
+  })
+
+  it('should narrow variables', () => {
+    doNotExecute(() => {
+      const mutation = reactive(
+        useMutation({ mutationFn: successMutator<string> }),
+      )
+
+      if (mutation.isIdle) {
+        const result: Expect<Equal<undefined, typeof mutation.variables>> = true
+        return result
+      }
+      if (mutation.isPending) {
+        const result: Expect<Equal<string, typeof mutation.variables>> = true
+        return result
+      }
+      if (mutation.isSuccess) {
+        const result: Expect<Equal<string, typeof mutation.variables>> = true
+        return result
+      }
+      const result: Expect<Equal<string, typeof mutation.variables>> = true
+      return result
     })
   })
 })

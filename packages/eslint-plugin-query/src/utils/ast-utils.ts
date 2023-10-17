@@ -7,7 +7,7 @@ import type { RuleContext } from '@typescript-eslint/utils/dist/ts-eslint'
 export const ASTUtils = {
   isNodeOfOneOf<T extends AST_NODE_TYPES>(
     node: TSESTree.Node,
-    types: readonly T[],
+    types: ReadonlyArray<T>,
   ): node is TSESTree.Node & { type: T } {
     return types.includes(node.type as T)
   },
@@ -20,7 +20,7 @@ export const ASTUtils = {
   ): node is TSESTree.Identifier {
     return ASTUtils.isIdentifier(node) && node.name === name
   },
-  isIdentifierWithOneOfNames<T extends string[]>(
+  isIdentifierWithOneOfNames<T extends Array<string>>(
     node: TSESTree.Node,
     name: T,
   ): node is TSESTree.Identifier & { name: T[number] } {
@@ -41,15 +41,15 @@ export const ASTUtils = {
     )
   },
   findPropertyWithIdentifierKey(
-    properties: TSESTree.ObjectLiteralElement[],
+    properties: Array<TSESTree.ObjectLiteralElement>,
     key: string,
   ): TSESTree.Property | undefined {
     return properties.find((x) =>
       ASTUtils.isPropertyWithIdentifierKey(x, key),
     ) as TSESTree.Property | undefined
   },
-  getNestedIdentifiers(node: TSESTree.Node): TSESTree.Identifier[] {
-    const identifiers: TSESTree.Identifier[] = []
+  getNestedIdentifiers(node: TSESTree.Node): Array<TSESTree.Identifier> {
+    const identifiers: Array<TSESTree.Identifier> = []
 
     if (ASTUtils.isIdentifier(node)) {
       identifiers.push(node)
@@ -131,7 +131,7 @@ export const ASTUtils = {
   },
   traverseUpOnly(
     identifier: TSESTree.Node,
-    allowedNodeTypes: AST_NODE_TYPES[],
+    allowedNodeTypes: Array<AST_NODE_TYPES>,
   ): TSESTree.Node {
     const parent = identifier.parent
 
@@ -159,7 +159,7 @@ export const ASTUtils = {
     scopeManager: TSESLint.Scope.ScopeManager
     sourceCode: Readonly<TSESLint.SourceCode>
     node: TSESTree.Node
-  }): TSESLint.Scope.Reference[] {
+  }): Array<TSESLint.Scope.Reference> {
     const { scopeManager, sourceCode, node } = params
     const scope = scopeManager.acquire(node)
 
@@ -213,7 +213,7 @@ export const ASTUtils = {
     )
   },
   getFunctionAncestor(
-    context: Readonly<RuleContext<string, readonly unknown[]>>,
+    context: Readonly<RuleContext<string, ReadonlyArray<unknown>>>,
   ) {
     for (const ancestor of context.getAncestors()) {
       if (ancestor.type === AST_NODE_TYPES.FunctionDeclaration) {
@@ -237,7 +237,7 @@ export const ASTUtils = {
   },
   getReferencedExpressionByIdentifier(params: {
     node: TSESTree.Node
-    context: Readonly<RuleContext<string, readonly unknown[]>>
+    context: Readonly<RuleContext<string, ReadonlyArray<unknown>>>
   }) {
     const { node, context } = params
 
@@ -268,8 +268,10 @@ export const ASTUtils = {
 
     return undefined
   },
-  getNestedReturnStatements(node: TSESTree.Node): TSESTree.ReturnStatement[] {
-    const returnStatements: TSESTree.ReturnStatement[] = []
+  getNestedReturnStatements(
+    node: TSESTree.Node,
+  ): Array<TSESTree.ReturnStatement> {
+    const returnStatements: Array<TSESTree.ReturnStatement> = []
 
     if (node.type === AST_NODE_TYPES.ReturnStatement) {
       returnStatements.push(node)

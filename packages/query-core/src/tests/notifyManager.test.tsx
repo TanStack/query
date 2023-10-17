@@ -1,10 +1,11 @@
+import { vi } from 'vitest'
 import { createNotifyManager } from '../notifyManager'
 import { sleep } from './utils'
 
 describe('notifyManager', () => {
   it('should use default notifyFn', async () => {
     const notifyManagerTest = createNotifyManager()
-    const callbackSpy = jest.fn()
+    const callbackSpy = vi.fn()
     notifyManagerTest.schedule(callbackSpy)
     await sleep(1)
     expect(callbackSpy).toHaveBeenCalled()
@@ -12,13 +13,13 @@ describe('notifyManager', () => {
 
   it('should use default batchNotifyFn', async () => {
     const notifyManagerTest = createNotifyManager()
-    const callbackScheduleSpy = jest
+    const callbackScheduleSpy = vi
       .fn()
       .mockImplementation(async () => await sleep(20))
-    const callbackBatchLevel2Spy = jest.fn().mockImplementation(async () => {
+    const callbackBatchLevel2Spy = vi.fn().mockImplementation(async () => {
       notifyManagerTest.schedule(callbackScheduleSpy)
     })
-    const callbackBatchLevel1Spy = jest.fn().mockImplementation(async () => {
+    const callbackBatchLevel1Spy = vi.fn().mockImplementation(async () => {
       notifyManagerTest.batch(callbackBatchLevel2Spy)
     })
 
@@ -32,13 +33,13 @@ describe('notifyManager', () => {
 
   it('should notify if error is thrown', async () => {
     const notifyManagerTest = createNotifyManager()
-    const notifySpy = jest.fn()
+    const notifySpy = vi.fn()
 
     notifyManagerTest.setNotifyFunction(notifySpy)
 
     try {
       notifyManagerTest.batch(() => {
-        notifyManagerTest.schedule(jest.fn)
+        notifyManagerTest.schedule(vi.fn)
         throw new Error('Foo')
       })
     } catch {}

@@ -66,7 +66,10 @@ console.log(usePost.getKey(variables)) //  ['/posts', { id: 1 }]
 export async function getStaticProps() {
   const queryClient = new QueryClient()
 
-  await queryClient.prefetchQuery(usePost.getKey(variables), usePost.queryFn)
+  await queryClient.prefetchQuery({ 
+    queryKey: usePost.getKey(variables), 
+    queryFn: usePost.queryFn
+  })
 
   return {
     props: {

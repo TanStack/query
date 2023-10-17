@@ -3,7 +3,7 @@ id: QueryErrorResetBoundary
 title: QueryErrorResetBoundary
 ---
 
-When using **suspense** or **useErrorBoundaries** in your queries, you need a way to let queries know that you want to try again when re-rendering after some error occurred. With the `QueryErrorResetBoundary` component you can reset any query errors within the boundaries of the component.
+When using **suspense** or **throwOnError** in your queries, you need a way to let queries know that you want to try again when re-rendering after some error occurred. With the `QueryErrorResetBoundary` component you can reset any query errors within the boundaries of the component.
 
 ```tsx
 import { QueryErrorResetBoundary } from '@tanstack/react-query'

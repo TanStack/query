@@ -1,26 +1,24 @@
 import * as React from 'react'
 import { act, render } from '@testing-library/react'
+
 import * as utils from '@tanstack/query-core'
-import { QueryClient, QueryClientProvider } from '..'
-import type { ContextOptions, MutationOptions, QueryClientConfig } from '..'
+import { vi } from 'vitest'
+import { QueryClient, QueryClientProvider, onlineManager } from '..'
+import type { QueryClientConfig } from '..'
+import type { SpyInstance } from 'vitest'
 
 export function renderWithClient(
   client: QueryClient,
   ui: React.ReactElement,
-  options: ContextOptions = {},
 ): ReturnType<typeof render> {
   const { rerender, ...result } = render(
-    <QueryClientProvider client={client} context={options.context}>
-      {ui}
-    </QueryClientProvider>,
+    <QueryClientProvider client={client}>{ui}</QueryClientProvider>,
   )
   return {
     ...result,
     rerender: (rerenderUi: React.ReactElement) =>
       rerender(
-        <QueryClientProvider client={client} context={options.context}>
-          {rerenderUi}
-        </QueryClientProvider>,
+        <QueryClientProvider client={client}>{rerenderUi}</QueryClientProvider>,
       ),
   } as any
 }
@@ -46,22 +44,19 @@ export const Blink = ({
 }
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
-  jest.spyOn(console, 'error').mockImplementation(() => undefined)
-  return new QueryClient({ logger: mockLogger, ...config })
+  return new QueryClient(config)
 }
 
-export function mockVisibilityState(value: DocumentVisibilityState) {
-  return jest.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
+export function mockVisibilityState(
+  value: DocumentVisibilityState,
+): SpyInstance<[], DocumentVisibilityState> {
+  return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
-export function mockNavigatorOnLine(value: boolean) {
-  return jest.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
-}
-
-export const mockLogger = {
-  log: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
+export function mockOnlineManagerIsOnline(
+  value: boolean,
+): SpyInstance<[], boolean> {
+  return vi.spyOn(onlineManager, 'isOnline').mockReturnValue(value)
 }
 
 let queryKeyCount = 0
@@ -84,25 +79,19 @@ export function setActTimeout(fn: () => void, ms?: number) {
   }, ms)
 }
 
-/**
- * Assert the parameter is of a specific type.
- */
-export function expectType<T>(_: T): void {
-  return undefined
-}
+export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
+  T,
+>() => T extends Y ? 1 : 2
+  ? true
+  : false
+
+export type Expect<T extends true> = T
 
 /**
  * Assert the parameter is not typed as `any`
  */
 export function expectTypeNotAny<T>(_: 0 extends 1 & T ? never : T): void {
   return undefined
-}
-
-export function executeMutation(
-  queryClient: QueryClient,
-  options: MutationOptions<any, any, any, any>,
-): Promise<unknown> {
-  return queryClient.getMutationCache().build(queryClient, options).execute()
 }
 
 // This monkey-patches the isServer-value from utils,
@@ -119,3 +108,5 @@ export function setIsServer(isServer: boolean) {
     })
   }
 }
+
+export const doNotExecute = (_func: () => void) => true

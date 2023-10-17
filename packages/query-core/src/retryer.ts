@@ -1,11 +1,11 @@
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
-import { sleep } from './utils'
-import type { CancelOptions, NetworkMode } from './types'
+import { isServer, sleep } from './utils'
+import type { CancelOptions, DefaultError, NetworkMode } from './types'
 
 // TYPES
 
-interface RetryerConfig<TData = unknown, TError = unknown> {
+interface RetryerConfig<TData = unknown, TError = DefaultError> {
   fn: () => TData | Promise<TData>
   abort?: () => void
   onError?: (error: TError) => void
@@ -28,14 +28,14 @@ export interface Retryer<TData = unknown> {
 
 export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
 
-type ShouldRetryFunction<TError> = (
+type ShouldRetryFunction<TError = DefaultError> = (
   failureCount: number,
   error: TError,
 ) => boolean
 
 export type RetryDelayValue<TError> = number | RetryDelayFunction<TError>
 
-type RetryDelayFunction<TError = unknown> = (
+type RetryDelayFunction<TError = DefaultError> = (
   failureCount: number,
   error: TError,
 ) => number
@@ -63,7 +63,7 @@ export function isCancelledError(value: any): value is CancelledError {
   return value instanceof CancelledError
 }
 
-export function createRetryer<TData = unknown, TError = unknown>(
+export function createRetryer<TData = unknown, TError = DefaultError>(
   config: RetryerConfig<TData, TError>,
 ): Retryer<TData> {
   let isRetryCancelled = false
@@ -158,7 +158,7 @@ export function createRetryer<TData = unknown, TError = unknown>(
         }
 
         // Do we need to retry the request?
-        const retry = config.retry ?? 3
+        const retry = config.retry ?? (isServer ? 0 : 3)
         const retryDelay = config.retryDelay ?? defaultRetryDelay
         const delay =
           typeof retryDelay === 'function'

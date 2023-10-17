@@ -10,6 +10,7 @@ It can be used to change the default event listeners or to manually change the f
 Its available methods are:
 
 - [`setEventListener`](#focusmanagerseteventlistener)
+- [`subscribe`](#focusmanagersubscribe)
 - [`setFocused`](#focusmanagersetfocused)
 - [`isFocused`](#focusmanagerisfocused)
 
@@ -20,18 +21,28 @@ Its available methods are:
 ```tsx
 import { focusManager } from '@tanstack/react-query'
 
-focusManager.setEventListener(handleFocus => {
-  // Listen to visibilitychange and focus
+focusManager.setEventListener((handleFocus) => {
+  // Listen to visibilitychange
   if (typeof window !== 'undefined' && window.addEventListener) {
     window.addEventListener('visibilitychange', handleFocus, false)
-    window.addEventListener('focus', handleFocus, false)
   }
 
   return () => {
     // Be sure to unsubscribe if a new handler is set
     window.removeEventListener('visibilitychange', handleFocus)
-    window.removeEventListener('focus', handleFocus)
   }
+})
+```
+
+## `focusManager.subscribe`
+
+`subscribe` can be used to subscribe to changes in the visibility state. It returns an unsubscribe function:
+
+```tsx
+import { focusManager } from '@tanstack/react-query'
+
+const unsubscribe = focusManager.subscribe(isVisible => {
+  console.log('isVisible', isVisible)
 })
 ```
 

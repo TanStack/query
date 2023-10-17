@@ -19,19 +19,19 @@ export default defineComponent({
   },
   emits: ['setPostId'],
   setup() {
-    const { isLoading, isError, isFetching, data, error, refetch } = useQuery({
+    const { isPending, isError, isFetching, data, error, refetch } = useQuery({
       queryKey: ['posts'],
       queryFn: fetcher,
     })
 
-    return { isLoading, isError, isFetching, data, error, refetch }
+    return { isPending, isError, isFetching, data, error, refetch }
   },
 })
 </script>
 
 <template>
   <h1>Posts</h1>
-  <div v-if="isLoading">Loading...</div>
+  <div v-if="isPending">Loading...</div>
   <div v-else-if="isError">An error has occurred: {{ error }}</div>
   <div v-else-if="data">
     <ul>

@@ -1,4 +1,5 @@
 import { QueriesObserver } from '@tanstack/query-core'
+import { vi } from 'vitest'
 import { persistQueryClientSubscribe } from '../persist'
 import {
   createMockPersister,
@@ -20,7 +21,6 @@ describe('persistQueryClientSubscribe', () => {
 
     queryClient.getMutationCache().build(queryClient, {
       mutationFn: async (text: string) => text,
-      variables: 'todo',
     })
 
     const result = await persister.restoreClient()
@@ -43,9 +43,9 @@ describe('persistQueryClientSave', () => {
     })
 
     const queryKey = ['test']
-    const queryFn = jest.fn().mockReturnValue(1)
+    const queryFn = vi.fn().mockReturnValue(1)
     const observer = new QueriesObserver(queryClient, [{ queryKey, queryFn }])
-    const unsubscribeObserver = observer.subscribe(jest.fn())
+    const unsubscribeObserver = observer.subscribe(vi.fn())
     observer.getObservers()[0]?.setOptions({ refetchOnWindowFocus: false })
     unsubscribeObserver()
 

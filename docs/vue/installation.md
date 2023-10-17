@@ -5,17 +5,19 @@ title: Installation
 
 You can install Vue Query via [NPM](https://npmjs.com).
 
+> v5 is currently available as a release-candidate. We don't anticipate any major API changes from here on out. We encourage you to try it out and report any issues you find.
+
 ### NPM
 
 ```bash
-$ npm i @tanstack/vue-query
+$ npm i @tanstack/vue-query@rc
 # or
-$ pnpm add @tanstack/vue-query
+$ pnpm add @tanstack/vue-query@rc
 # or
-$ yarn add @tanstack/vue-query
+$ yarn add @tanstack/vue-query@rc
 ```
 
-> Wanna give it a spin before you download? Try out the [basic](/query/v4/docs/vue/examples/vue/basic) example!
+> Wanna give it a spin before you download? Try out the [basic](../examples/vue/basic) example!
 
 Vue Query is compatible with Vue 2.x and 3.x
 
@@ -43,7 +45,7 @@ If you are not a fan of `<script setup>` syntax, you can easily translate all th
 <script setup>
 import { useQuery } from "@tanstack/vue-query";
 
-const { isLoading, isFetching, isError, data, error } = useQuery({
+const { isPending, isFetching, isError, data, error } = useQuery({
   queryKey: ['todos'],
   queryFn: getTodos,
 })

@@ -1,24 +1,25 @@
 import { ref } from 'vue-demi'
 import { QueryCache as QueryCacheOrigin } from '@tanstack/query-core'
 
+import { vi } from 'vitest'
 import { QueryCache } from '../queryCache'
 
 describe('QueryCache', () => {
   beforeAll(() => {
-    jest.spyOn(QueryCacheOrigin.prototype, 'find')
-    jest.spyOn(QueryCacheOrigin.prototype, 'findAll')
+    vi.spyOn(QueryCacheOrigin.prototype, 'find')
+    vi.spyOn(QueryCacheOrigin.prototype, 'findAll')
   })
 
   describe('find', () => {
     test('should properly unwrap parameters', async () => {
       const queryCache = new QueryCache()
 
-      queryCache.find(['foo', ref('bar')], {
-        queryKey: ref(['baz']),
+      queryCache.find({
+        queryKey: ['foo', ref('bar')],
       })
 
-      expect(QueryCacheOrigin.prototype.find).toBeCalledWith(['foo', 'bar'], {
-        queryKey: ['baz'],
+      expect(QueryCacheOrigin.prototype.find).toBeCalledWith({
+        queryKey: ['foo', 'bar'],
       })
     })
   })
@@ -27,28 +28,21 @@ describe('QueryCache', () => {
     test('should properly unwrap two parameters', async () => {
       const queryCache = new QueryCache()
 
-      queryCache.findAll(['foo', ref('bar')], {
-        queryKey: ref(['baz']),
-      })
-
-      expect(QueryCacheOrigin.prototype.findAll).toBeCalledWith(
-        ['foo', 'bar'],
-        {
-          queryKey: ['baz'],
-        },
-      )
-    })
-
-    test('should properly unwrap one parameter', async () => {
-      const queryCache = new QueryCache()
-
       queryCache.findAll({
-        queryKey: ref(['baz']),
+        queryKey: ['foo', ref('bar')],
       })
 
       expect(QueryCacheOrigin.prototype.findAll).toBeCalledWith({
-        queryKey: ['baz'],
+        queryKey: ['foo', 'bar'],
       })
+    })
+
+    test('should default to empty filters', async () => {
+      const queryCache = new QueryCache()
+
+      queryCache.findAll()
+
+      expect(QueryCacheOrigin.prototype.findAll).toBeCalledWith({})
     })
   })
 })

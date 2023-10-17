@@ -9,7 +9,7 @@ Since TanStack Query is most often used for data fetching in combination with da
 
 ## Network Mode: online
 
-In this mode, Queries and Mutations will not fire unless you have network connection. This is the default mode. If a fetch is initiated for a query, it will always stay in the `state` (`loading`, `error`, `success`) it is in if the fetch cannot be made because there is no network connection. However, a [fetchStatus](../guides/queries#fetchstatus) is exposed additionally. This can be either:
+In this mode, Queries and Mutations will not fire unless you have network connection. This is the default mode. If a fetch is initiated for a query, it will always stay in the `state` (`pending`, `error`, `success`) it is in if the fetch cannot be made because there is no network connection. However, a [fetchStatus](../guides/queries#fetchstatus) is exposed additionally. This can be either:
 
 - `fetching`: The `queryFn` is really executing - a request is in-flight.
 - `paused`: The query is not executing - it is `paused` until you have connection again
@@ -17,7 +17,7 @@ In this mode, Queries and Mutations will not fire unless you have network connec
 
 The flags `isFetching` and `isPaused` are derived from this state and exposed for convenience.
 
-> Keep in mind that it might not be enough to check for `loading` state to show a loading spinner. Queries can be in `state: 'loading'`, but `fetchStatus: 'paused'` if they are mounting for the first time, and you have no network connection.
+> Keep in mind that it might not be enough to check for `pending` state to show a loading spinner. Queries can be in `state: 'pending'`, but `fetchStatus: 'paused'` if they are mounting for the first time, and you have no network connection.
 
 If a query runs because you are online, but you go offline while the fetch is still happening, TanStack Query will also pause the retry mechanism. Paused queries will then continue to run once you re-gain network connection. This is independent of `refetchOnReconnect` (which also defaults to `true` in this mode), because it is not a `refetch`, but rather a `continue`. If the query has been [cancelled](../guides/query-cancellation) in the meantime, it will not continue.
 

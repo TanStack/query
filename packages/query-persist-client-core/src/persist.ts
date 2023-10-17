@@ -3,9 +3,9 @@ import type {
   DehydrateOptions,
   DehydratedState,
   HydrateOptions,
+  NotifyEventType,
   QueryClient,
 } from '@tanstack/query-core'
-import type { NotifyEventType } from '@tanstack/query-core'
 
 export type Promisable<T> = T | PromiseLike<T>
 
@@ -98,12 +98,10 @@ export async function persistQueryClientRestore({
     }
   } catch (err) {
     if (process.env.NODE_ENV !== 'production') {
-      queryClient.getLogger().error(err)
-      queryClient
-        .getLogger()
-        .warn(
-          'Encountered an error attempting to restore client cache from persisted location. As a precaution, the persisted cache will be discarded.',
-        )
+      console.error(err)
+      console.warn(
+        'Encountered an error attempting to restore client cache from persisted location. As a precaution, the persisted cache will be discarded.',
+      )
     }
     persister.removeClient()
   }

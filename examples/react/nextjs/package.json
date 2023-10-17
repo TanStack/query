@@ -8,11 +8,11 @@
     "start": "next start"
   },
   "dependencies": {
-    "@tanstack/react-query": "^4.7.1",
-    "@tanstack/react-query-devtools": "^4.7.1",
-    "ky": "^0.23.0",
-    "ky-universal": "^0.8.2",
-    "next": "12.2.2",
+    "@tanstack/react-query": "^5.0.0-rc.1",
+    "@tanstack/react-query-devtools": "^5.0.0-rc.1",
+    "ky": "^0.33.3",
+    "ky-universal": "^0.11.0",
+    "next": "^13.4.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "resolve-from": "^5.0.0",

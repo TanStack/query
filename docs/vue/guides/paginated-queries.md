@@ -17,7 +17,7 @@ const fetcher = (page: Ref<number>) =>
   ).then((response) => response.json())
 
 const page = ref(1)
-const { isLoading, isError, data, error, isFetching, isPreviousData } =
+const { isPending, isError, data, error, isFetching, isPreviousData } =
   useQuery({
     queryKey: ['projects', page],
     queryFn: () => fetcher(page),
@@ -38,7 +38,7 @@ const nextPage = () => {
   <p>Current Page: {{ page }} | Previous data: {{ isPreviousData }}</p>
   <button @click="prevPage">Prev Page</button>
   <button @click="nextPage">Next Page</button>
-  <div v-if="isLoading">Loading...</div>
+  <div v-if="isPending">Loading...</div>
   <div v-else-if="isError">An error has occurred: {{ error }}</div>
   <div v-else-if="data">
     <ul>

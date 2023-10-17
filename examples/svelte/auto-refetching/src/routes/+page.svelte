@@ -12,23 +12,23 @@
 
   const endpoint = 'http://localhost:5173/api/data'
 
-  $: todos = createQuery<{ items: string[] }, Error>({
+  $: todos = createQuery<{ items: string[] }>({
     queryKey: ['refetch'],
     queryFn: async () => await fetch(endpoint).then((r) => r.json()),
     // Refetch the data every second
     refetchInterval: intervalMs,
   })
 
-  const addMutation = createMutation(
-    (value: string) => fetch(`${endpoint}?add=${value}`).then((r) => r.json()),
-    { onSuccess: () => client.invalidateQueries(['refetch']) },
-  )
-  const clearMutation = createMutation(
-    () => fetch(`${endpoint}?clear=1`).then((r) => r.json()),
-    {
-      onSuccess: () => client.invalidateQueries(['refetch']),
-    },
-  )
+  const addMutation = createMutation({
+    mutationFn: (value: string) =>
+      fetch(`${endpoint}?add=${value}`).then((r) => r.json()),
+    onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
+  })
+
+  const clearMutation = createMutation({
+    mutationFn: () => fetch(`${endpoint}?clear=1`).then((r) => r.json()),
+    onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
+  })
 </script>
 
 <h1>Auto Refetch with stale-time set to 1s</h1>
@@ -69,7 +69,7 @@
   <input placeholder="enter something" bind:value />
 </form>
 
-{#if $todos.isLoading}
+{#if $todos.isPending}
   Loading...
 {/if}
 {#if $todos.error}

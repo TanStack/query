@@ -1,5 +1,9 @@
-const { useBaseQuery: originImpl, parseQueryArgs: originalParse } =
-  jest.requireActual('../useBaseQuery')
+import { vi } from 'vitest'
+import type { Mock } from 'vitest'
 
-export const useBaseQuery = jest.fn(originImpl)
-export const parseQueryArgs = originalParse
+const { useBaseQuery: originImpl, unrefQueryArgs: originalParse } =
+  // @ts-expect-error - vitest uses esmodules; tsconfig is not set to use them
+  (await vi.importActual('../useBaseQuery')) as any
+
+export const useBaseQuery: Mock<Array<any>, any> = vi.fn(originImpl)
+export const unrefQueryArgs = originalParse

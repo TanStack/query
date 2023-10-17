@@ -23,7 +23,7 @@ export type EnhancedCreate = (
 
 export function detectTanstackQueryImports(create: EnhancedCreate): Create {
   return (context, optionsWithDefault) => {
-    const tanstackQueryImportSpecifiers: TSESTree.ImportClause[] = []
+    const tanstackQueryImportSpecifiers: Array<TSESTree.ImportClause> = []
 
     const helpers: Helpers = {
       isSpecificTanstackQueryImport(node, source) {

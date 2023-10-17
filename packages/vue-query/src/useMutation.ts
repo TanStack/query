@@ -5,62 +5,37 @@ import {
   reactive,
   readonly,
   toRefs,
-  unref,
   watch,
 } from 'vue-demi'
 import { MutationObserver } from '@tanstack/query-core'
-import {
-  cloneDeepUnref,
-  isMutationKey,
-  shouldThrowError,
-  updateState,
-} from './utils'
+import { cloneDeepUnref, shouldThrowError, updateState } from './utils'
 import { useQueryClient } from './useQueryClient'
 import type { ToRefs } from 'vue-demi'
 import type {
+  DefaultError,
   MutateFunction,
   MutateOptions,
-  MutationFunction,
-  MutationKey,
   MutationObserverOptions,
   MutationObserverResult,
 } from '@tanstack/query-core'
-import type {
-  DistributiveOmit,
-  MaybeRef,
-  MaybeRefDeep,
-  WithQueryClientKey,
-} from './types'
+import type { DistributiveOmit, MaybeRefDeep } from './types'
+import type { QueryClient } from './queryClient'
 
 type MutationResult<TData, TError, TVariables, TContext> = DistributiveOmit<
   MutationObserverResult<TData, TError, TVariables, TContext>,
   'mutate' | 'reset'
 >
 
-export type UseMutationOptions<TData, TError, TVariables, TContext> =
-  WithQueryClientKey<
-    MutationObserverOptions<TData, TError, TVariables, TContext>
-  >
-
-export type VueMutationObserverOptions<
+export type UseMutationOptions<
   TData = unknown,
-  TError = unknown,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> = {
-  [Property in keyof UseMutationOptions<
-    TData,
-    TError,
-    TVariables,
-    TContext
-  >]: MaybeRefDeep<
-    UseMutationOptions<TData, TError, TVariables, TContext>[Property]
-  >
-}
+> = MaybeRefDeep<MutationObserverOptions<TData, TError, TVariables, TContext>>
 
 type MutateSyncFunction<
   TData = unknown,
-  TError = unknown,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 > = (
@@ -81,73 +56,14 @@ export type UseMutationReturnType<
 
 export function useMutation<
   TData = unknown,
-  TError = unknown,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 >(
-  options: MaybeRef<
-    VueMutationObserverOptions<TData, TError, TVariables, TContext>
+  mutationOptions: MaybeRefDeep<
+    MutationObserverOptions<TData, TError, TVariables, TContext>
   >,
-): UseMutationReturnType<TData, TError, TVariables, TContext>
-export function useMutation<
-  TData = unknown,
-  TError = unknown,
-  TVariables = void,
-  TContext = unknown,
->(
-  mutationFn: MaybeRef<MutationFunction<TData, TVariables>>,
-  options?: MaybeRef<
-    Omit<
-      VueMutationObserverOptions<TData, TError, TVariables, TContext>,
-      'mutationFn'
-    >
-  >,
-): UseMutationReturnType<TData, TError, TVariables, TContext>
-export function useMutation<
-  TData = unknown,
-  TError = unknown,
-  TVariables = void,
-  TContext = unknown,
->(
-  mutationKey: MaybeRef<MutationKey>,
-  options?: MaybeRef<
-    Omit<
-      VueMutationObserverOptions<TData, TError, TVariables, TContext>,
-      'mutationKey'
-    >
-  >,
-): UseMutationReturnType<TData, TError, TVariables, TContext>
-export function useMutation<
-  TData = unknown,
-  TError = unknown,
-  TVariables = void,
-  TContext = unknown,
->(
-  mutationKey: MaybeRef<MutationKey>,
-  mutationFn?: MaybeRef<MutationFunction<TData, TVariables>>,
-  options?: MaybeRef<
-    Omit<
-      VueMutationObserverOptions<TData, TError, TVariables, TContext>,
-      'mutationKey' | 'mutationFn'
-    >
-  >,
-): UseMutationReturnType<TData, TError, TVariables, TContext>
-export function useMutation<
-  TData = unknown,
-  TError = unknown,
-  TVariables = void,
-  TContext = unknown,
->(
-  arg1:
-    | MaybeRef<MutationKey>
-    | MaybeRef<MutationFunction<TData, TVariables>>
-    | MaybeRef<VueMutationObserverOptions<TData, TError, TVariables, TContext>>,
-  arg2?:
-    | MaybeRef<MutationFunction<TData, TVariables>>
-    | MaybeRef<VueMutationObserverOptions<TData, TError, TVariables, TContext>>,
-  arg3?: MaybeRef<
-    VueMutationObserverOptions<TData, TError, TVariables, TContext>
-  >,
+  queryClient?: QueryClient,
 ): UseMutationReturnType<TData, TError, TVariables, TContext> {
   if (process.env.NODE_ENV === 'development') {
     if (!getCurrentScope()) {
@@ -157,15 +73,11 @@ export function useMutation<
     }
   }
 
+  const client = queryClient || useQueryClient()
   const options = computed(() => {
-    return parseMutationArgs(arg1, arg2, arg3)
+    return client.defaultMutationOptions(cloneDeepUnref(mutationOptions))
   })
-  const queryClient =
-    options.value.queryClient ?? useQueryClient(options.value.queryClientKey)
-  const observer = new MutationObserver(
-    queryClient,
-    queryClient.defaultMutationOptions(options.value),
-  )
+  const observer = new MutationObserver(client, options.value)
   const state = reactive(observer.getCurrentResult())
 
   const unsubscribe = observer.subscribe((result) => {
@@ -182,7 +94,7 @@ export function useMutation<
   }
 
   watch(options, () => {
-    observer.setOptions(queryClient.defaultMutationOptions(options.value))
+    observer.setOptions(options.value)
   })
 
   onScopeDispose(() => {
@@ -198,7 +110,7 @@ export function useMutation<
     (error) => {
       if (
         error &&
-        shouldThrowError(options.value.useErrorBoundary, [error as TError])
+        shouldThrowError(options.value.throwOnError, [error as TError])
       ) {
         throw error
       }
@@ -211,47 +123,4 @@ export function useMutation<
     mutateAsync: state.mutate,
     reset: state.reset,
   }
-}
-
-export function parseMutationArgs<
-  TData = unknown,
-  TError = unknown,
-  TVariables = void,
-  TContext = unknown,
->(
-  arg1:
-    | MaybeRef<MutationKey>
-    | MaybeRef<MutationFunction<TData, TVariables>>
-    | MaybeRef<VueMutationObserverOptions<TData, TError, TVariables, TContext>>,
-  arg2?:
-    | MaybeRef<MutationFunction<TData, TVariables>>
-    | MaybeRef<VueMutationObserverOptions<TData, TError, TVariables, TContext>>,
-  arg3?: MaybeRef<
-    VueMutationObserverOptions<TData, TError, TVariables, TContext>
-  >,
-): WithQueryClientKey<
-  MutationObserverOptions<TData, TError, TVariables, TContext>
-> {
-  const plainArg1 = unref(arg1)
-  const plainArg2 = unref(arg2)
-  let options = plainArg1
-  if (isMutationKey(plainArg1)) {
-    if (typeof plainArg2 === 'function') {
-      const plainArg3 = unref(arg3)
-      options = { ...plainArg3, mutationKey: plainArg1, mutationFn: plainArg2 }
-    } else {
-      options = { ...plainArg2, mutationKey: plainArg1 }
-    }
-  }
-
-  if (typeof plainArg1 === 'function') {
-    options = { ...plainArg2, mutationFn: plainArg1 }
-  }
-
-  return cloneDeepUnref(options) as UseMutationOptions<
-    TData,
-    TError,
-    TVariables,
-    TContext
-  >
 }
