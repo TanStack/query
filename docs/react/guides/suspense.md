@@ -136,8 +136,4 @@ export function Providers(props: { children: React.ReactNode }) {
 }
 ```
 
-For more information, check out the [NextJs Suspense Streaming Example](../examples/react/nextjs-suspense-streaming).
-
-## Further reading
-
-For tips on using suspense option, check the [Suspensive React Query Package](../community/suspensive-react-query) from the Community Resources.
+For more information, check out the [NextJs Suspense Streaming Example](../examples/react/nextjs-suspense-streaming) and the [Advanced Rendering & Hydration](../guides/advanced-ssr) guide.
