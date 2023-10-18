@@ -79,7 +79,7 @@ const variables = useMutationState<string>({
 ```
 [//]: # 'ExampleUI4'
 
-`variables` will be an `Array`, because there might be multiple mutations running at the same time. If we need a uniqe key for the items, we can also select `mutation.state.submittedAt`. This will even make displaying concurrent optimistic updates a breeze.
+`variables` will be an `Array`, because there might be multiple mutations running at the same time. If we need a unique key for the items, we can also select `mutation.state.submittedAt`. This will even make displaying concurrent optimistic updates a breeze.
 
 ## Via the cache
 
