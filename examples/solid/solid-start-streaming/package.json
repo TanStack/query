@@ -11,21 +11,21 @@
     "solid-js": "^1.7.7"
   },
   "dependencies": {
-    "@solidjs/meta": "^0.28.2",
-    "@solidjs/router": "^0.7.0",
+    "@solidjs/meta": "^0.28.6",
+    "@solidjs/router": "^0.8.3",
     "@tanstack/solid-query": "^5.0.0",
     "@tanstack/solid-query-devtools": "^5.0.0",
-    "solid-js": "^1.7.8",
-    "solid-start": "^0.2.23",
-    "undici": "^5.22.1"
+    "solid-js": "^1.8.1",
+    "solid-start": "^0.3.7",
+    "undici": "^5.26.3"
   },
   "devDependencies": {
-    "@types/node": "^18.16.0",
-    "esbuild": "^0.14.54",
-    "postcss": "^8.4.23",
-    "solid-start-node": "^0.2.0",
-    "typescript": "^5.0.4",
-    "vite": "^4.4.4"
+    "@types/node": "^20.8.6",
+    "esbuild": "^0.19.5",
+    "postcss": "^8.4.31",
+    "solid-start-node": "^0.3.7",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.11"
   },
   "engines": {
     "node": ">=16.8"
