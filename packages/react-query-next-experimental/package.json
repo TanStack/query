@@ -11,7 +11,7 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "type": "module",
-  "types": "build/legacy/index.d.ts",
+  "types": "build/legacy/index.d.cts",
   "main": "build/legacy/index.cjs",
   "module": "build/legacy/index.js",
   "exports": {

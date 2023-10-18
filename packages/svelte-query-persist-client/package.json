@@ -11,7 +11,7 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "type": "module",
-  "types": "dist/index.d.ts",
+  "types": "dist/index.d.cts",
   "module": "dist/index.js",
   "svelte": "./dist/index.js",
   "exports": {

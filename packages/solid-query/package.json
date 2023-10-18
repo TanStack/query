@@ -17,7 +17,7 @@
   "type": "module",
   "main": "./build/index.cjs",
   "module": "./build/index.js",
-  "types": "./build/index.d.ts",
+  "types": "./build/index.d.cts",
   "browser": {},
   "exports": {
     "development": {
