@@ -123,11 +123,11 @@ const transformFilterAwareUsages = ({
         }
       }
 
-      const parameters = [jscodeshift.objectExpression([keyProperty])]
+      const functionArguments = [jscodeshift.objectExpression([keyProperty])]
       const secondParameter = node.arguments[1]
 
       if (secondParameter) {
-        const createdObjectExpression = parameters[0]
+        const createdObjectExpression = functionArguments[0]
 
         /**
          * If it has a second argument, and it's an object expression, then we get the properties from it
@@ -148,10 +148,10 @@ const transformFilterAwareUsages = ({
         }
       }
 
-      // The rest of the parameters can be simply pushed to the parameters object so all will be kept.
-      parameters.push(...node.arguments.slice(2))
+      // The rest of the function arguments can be simply pushed to the function arguments object so all will be kept.
+      functionArguments.push(...node.arguments.slice(2))
 
-      return jscodeshift.callExpression(node.original.callee, parameters)
+      return jscodeshift.callExpression(node.original.callee, functionArguments)
     } catch (error) {
       utils.warn(
         error.name === UnknownUsageError.name
