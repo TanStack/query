@@ -78,7 +78,7 @@ import { Example } from './Example'
 const queryClient = new QueryClient()
 
 const ReactQueryDevtoolsProduction = React.lazy(() =>
-  import('@tanstack/react-query-devtools/build/lib/index.prod.js').then(
+  import('@tanstack/react-query-devtools/build/modern/production.js').then(
     (d) => ({
       default: d.ReactQueryDevtools,
     }),
