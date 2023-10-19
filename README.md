@@ -30,9 +30,9 @@ Enjoy this library? Try the entire [TanStack](https://tanstack.com)! [TanStack T
 
 ## Visit [tanstack.com/query](https://tanstack.com/query) for docs, guides, API and more!
 
-Still on **React Query v2**? No problem! Check out the v2 docs here: https://github.com/TanStack/query/tree/2.x/docs/src/pages/docs. <br />
-Still on **React Query v3**? No problem! Check out the v3 docs here: https://tanstack.com/query/v3/docs/.
-Still on **React Query v4**? No problem! Check out the v3 docs here: https://tanstack.com/query/v4/docs/.
+Still on **React Query v2**? No problem! Check out the v2 docs here: https://github.com/TanStack/query/tree/2.x/docs/src/pages/docs.<br />
+Still on **React Query v3**? No problem! Check out the v3 docs here: https://tanstack.com/query/v3/docs/.<br />
+Still on **React Query v4**? No problem! Check out the v4 docs here: https://tanstack.com/query/v4/docs/.
 
 ## Quick Features
 
