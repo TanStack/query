@@ -1,8 +1,8 @@
 import * as React from 'react'
 import {
-  useQuery,
   useIsFetching,
   useIsMutating,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
 import { queryKeysFromAnotherModule } from '../another/module'
