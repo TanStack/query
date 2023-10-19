@@ -94,7 +94,33 @@ const transformFilterAwareUsages = ({
        * it will notify the consumers that they need to rewrite this usage manually.
        */
       if (!keyProperty) {
-        throw new UnknownUsageError(node, filePath)
+        const secondArgument =
+          node.arguments.length > 1 ? node.arguments[1] : null
+
+        if (!secondArgument) {
+          throw new UnknownUsageError(node, filePath)
+        }
+
+        if (utils.isFunctionDefinition(secondArgument)) {
+          const originalArguments = node.arguments
+          const firstArgument = jscodeshift.objectExpression([
+            jscodeshift.property(
+              'init',
+              jscodeshift.identifier('queryKey'),
+              originalArguments[0],
+            ),
+            jscodeshift.property(
+              'init',
+              jscodeshift.identifier('queryFn'),
+              secondArgument,
+            ),
+          ])
+
+          return jscodeshift.callExpression(node.original.callee, [
+            firstArgument,
+            ...originalArguments.slice(2),
+          ])
+        }
       }
 
       const parameters = [jscodeshift.objectExpression([keyProperty])]

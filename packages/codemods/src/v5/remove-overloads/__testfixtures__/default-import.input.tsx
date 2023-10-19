@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {
+  useQuery,
   useIsFetching,
   useIsMutating,
   useQueryClient,
@@ -196,4 +197,14 @@ export const WithIdentifiers = () => {
   queryClient.fetchQuery(queryKeysFromAnotherModule)
   queryClient.fetchQuery(queryKeysFromAnotherModule, fetchOptions)
   queryClient.fetchQuery(queryKeysFromAnotherModule, queryFn, fetchOptions)
+}
+
+export const SecondArgumentIsAFunctionExample = () => {
+  useQuery(ordersCacheKeys.groupOrders(ouuid), () => api.getPatientGroupOrders(ouuid).then((r) => r.data))
+
+  const rest = 'rest'
+  const of = 1
+  const functionArguments = { foo: 'bar' }
+
+  useQuery(ordersCacheKeys.groupOrders(ouuid), () => api.getPatientGroupOrders(ouuid).then((r) => r.data), rest, of, functionArguments)
 }
