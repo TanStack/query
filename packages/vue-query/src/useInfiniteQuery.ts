@@ -35,7 +35,7 @@ export type UseInfiniteQueryOptions<
     TQueryData,
     TQueryKey,
     TPageParam
-  >]: Property extends 'queryFn'
+  >]: Property extends 'queryFn' | 'getPreviousPageParam' | 'getNextPageParam'
     ? InfiniteQueryObserverOptions<
         TQueryFnData,
         TError,
@@ -103,9 +103,7 @@ export function useInfiniteQuery<
   >,
   queryClient?: QueryClient,
 ): UseInfiniteQueryReturnType<TData, TError> {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
   const result = useBaseQuery(
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     InfiniteQueryObserver as typeof QueryObserver,
     options,
     queryClient,
