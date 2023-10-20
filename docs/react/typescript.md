@@ -148,6 +148,28 @@ const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 ```
 
 [//]: # 'RegisterErrorType'
+
+[//]: # 'TypingMeta'
+
+## Typing meta
+
+[//]: # 'RegisterMetaType'
+
+### Registering global Meta
+
+Similarly to registering a [global error type](#registering-a-global-error) you can also register a global `Meta` type. This ensures the optional `meta` field on [queries](./reference/useQuery.md) and [mutations](./reference/useMutation.md) stays consistent and is type-safe.
+
+```ts
+declare module '@tanstack/react-query' {
+  interface Register {
+    queryMeta: MyMeta,
+    mutationMeta: MyMeta
+  }
+}
+```
+[//]: # 'RegisterMetaType'
+[//]: # 'TypingMeta'
+
 [//]: # 'TypingQueryOptions'
 
 ## Typing Query Options
