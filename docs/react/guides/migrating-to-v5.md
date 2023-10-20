@@ -384,6 +384,10 @@ Lastly, a new derived `isLoading` flag has been added to the queries that is imp
 
 To understand the reasoning behing this change checkout the [v5 roadmap discussion](https://github.com/TanStack/query/discussions/4252).
 
+### `hashQueryKey` has been renamed to `hashKey`
+
+because it also hashes mutation keys and can be used inside the `predicate` functions of `useIsMutating` and `useMutationState`, which gets mutations passed.
+
 [//]: # 'FrameworkSpecificBreakingChanges'
 
 ### The minimum required React version is now 18.0
