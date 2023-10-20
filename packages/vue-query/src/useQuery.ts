@@ -19,6 +19,8 @@ import type {
 } from './types'
 import type { QueryClient } from './queryClient'
 
+type NonUndefinedGuard<T> = T extends undefined ? never : T
+
 export type UseQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -64,6 +66,26 @@ export type UseQueryOptions<
       >
 }>
 
+export type UndefinedInitialQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
+  initialData?: undefined
+}
+
+export type DefinedInitialQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & {
+  initialData:
+    | NonUndefinedGuard<TQueryFnData>
+    | (() => NonUndefinedGuard<TQueryFnData>)
+}
+
 export type UseQueryReturnType<TData, TError> = DistributiveOmit<
   UseBaseQueryReturnType<TData, TError>,
   'refetch'
@@ -85,17 +107,19 @@ export function useQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: UseQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey
-  > & {
-    initialData?: undefined
-  },
+  options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
 ): UseQueryReturnType<TData, TError>
+
+export function useQuery<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  queryClient?: QueryClient,
+): UseQueryDefinedReturnType<TData, TError>
 
 export function useQuery<
   TQueryFnData = unknown,
@@ -109,11 +133,9 @@ export function useQuery<
     TData,
     TQueryFnData,
     TQueryKey
-  > & {
-    initialData: TQueryFnData | (() => TQueryFnData)
-  },
+  >,
   queryClient?: QueryClient,
-): UseQueryDefinedReturnType<TData, TError>
+): UseQueryReturnType<TData, TError>
 
 export function useQuery<
   TQueryFnData,

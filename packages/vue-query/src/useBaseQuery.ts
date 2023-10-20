@@ -17,7 +17,7 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 import type { QueryClient } from './queryClient'
-import type { UseQueryOptions, UseQueryReturnType } from './useQuery'
+import type { UseQueryOptions } from './useQuery'
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 
 export type UseBaseQueryReturnType<
@@ -202,5 +202,5 @@ export function useBaseQuery<
   object.suspense = suspense
   object.refetch = refetch
 
-  return object as UseQueryReturnType<TData, TError>
+  return object as UseBaseQueryReturnType<TData, TError>
 }
