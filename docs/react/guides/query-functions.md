@@ -104,7 +104,7 @@ The `QueryFunctionContext` is the object passed to each query function. It consi
   - [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) instance provided by TanStack Query
   - Can be used for [Query Cancellation](../guides/query-cancellation)
 - `meta: Record<string, unknown> | undefined`
-  - an optional field you can fill with additional information about your query#
+  - an optional field you can fill with additional information about your query
 
 Additionally, [Infinite Queries](../guides/infinite-queries) get the following options passed:
 
