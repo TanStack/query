@@ -9,7 +9,14 @@ Use @suspensive/react-query, delegate loading and error handling to the outside 
 
 You don't even need to use the isSuccess flag.
 
-## Installation
+## useSuspenseQuery, useSuspenseQueries, useSuspenseInfiniteQuery is Official API now! (from v5)
+
+From @tanstack/react-query v5 provides [official public hook apis for suspense](https://tanstack.com/query/v5/docs/react/guides/suspense) like @suspensive/react-query's hooks. so if you're using @tanstack/react-query v5, Migrate our hooks to hooks of official @tanstack/react-query please.
+
+### But if you are still using @tanstack/react-query v4 because of unavoidable reasons
+
+There is lot of projects can't update our @tanstack/react-query version to v5.
+If you want to experience early useSuspenseQuery, useSuspenseQueries, useSuspenseInfiniteQuery in also v4, You can use them with @suspensive/react-query first
 
 You can install @suspensive/react-query via [NPM](https://www.npmjs.com/package/@suspensive/react-query).
 
@@ -23,10 +30,10 @@ $ yarn add @suspensive/react-query
 
 ### Motivation
 
-If you turn suspense mode on in @tanstack/react-query, You can use useQuery with Suspense and ErrorBoundary.
+If you turn suspense mode on in @tanstack/react-query v4, You can use useQuery with Suspense and ErrorBoundary.
 
 ```tsx
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query' // this is v4
 
 const Example = () => {
   const query = useQuery({
@@ -55,13 +62,13 @@ Return type of this hook have no isLoading, isError property. because Suspense a
 In addition, this hook's options have default suspense: true. and you can provide new options to this hook like useQuery of @tanstack/react-query.
 
 ```tsx
-import { useSuspenseQuery } from '@suspensive/react-query'
+import { useSuspenseQuery } from '@suspensive/react-query' // this is v4
 
 const Example = () => {
   const query = useSuspenseQuery({
     queryKey,
     queryFn,
-  }) // suspense:true is default.
+  }) // suspense:true is default. @tanstack/react-query v5 also removed useQuery's suspense option to promote using useSuspenseQuery, so if you want to migrate @tanstack/react-query with using suspense gradually, @suspensive/react-query will be good choice
 
   // No need to do type narrowing by isSuccess
   query.data // TData
@@ -77,7 +84,3 @@ Now, we can concentrate component as any fetching will be always success in comp
 @suspensive/react-query provides not only [useSuspenseQuery](https://suspensive.org/docs/react-query/useSuspenseQuery), also [useSuspenseQueries](https://suspensive.org/docs/react-query/useSuspenseQueries), [useSuspenseInfiniteQuery](https://suspensive.org/docs/react-query/useSuspenseInfiniteQuery). From @tanstack/react-query v5 provides [official public hook apis for suspense](https://tanstack.com/query/v5/docs/react/guides/suspense) like @suspensive/react-query's hooks. If want to use them early in v4, use this @suspensive/react-query first.
 
 Check the complete documentation on [Suspensive Official Docs Site](https://suspensive.org/) and also welcome Pull Request on [Suspensive GitHub](https://github.com/suspensive/react)
-
-
-
-
