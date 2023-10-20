@@ -2,6 +2,7 @@ import * as React from 'react'
 import {
   useIsFetching,
   useIsMutating,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
 import { queryKeysFromAnotherModule } from '../another/module'
@@ -481,4 +482,20 @@ export const WithIdentifiers = () => {
   queryClient.fetchQuery(queryKeysFromAnotherModule)
   queryClient.fetchQuery(queryKeysFromAnotherModule, fetchOptions)
   queryClient.fetchQuery(queryKeysFromAnotherModule, queryFn, fetchOptions)
+}
+
+export const SecondArgumentIsAFunctionExample = () => {
+  useQuery({
+    queryKey: ordersCacheKeys.groupOrders(ouuid),
+    queryFn: () => api.getPatientGroupOrders(ouuid).then((r) => r.data)
+  })
+
+  const rest = 'rest'
+  const of = 1
+  const functionArguments = { foo: 'bar' }
+
+  useQuery({
+    queryKey: ordersCacheKeys.groupOrders(ouuid),
+    queryFn: () => api.getPatientGroupOrders(ouuid).then((r) => r.data)
+  }, rest, of, functionArguments)
 }
