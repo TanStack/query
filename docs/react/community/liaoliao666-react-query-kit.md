@@ -11,7 +11,7 @@ title: React Query Kit
 - Manage `queryKey` in a type-safe way
 - Generate a custom ReactQuery hook quickly
 - Make `queryClient`'s operations clearly associated with custom ReactQuery hooks
-- Set defaultOptions for custom ReactQuery hooks easier and clearer
+- Middleware
 
 ## Installation
 
@@ -41,16 +41,15 @@ const usePost = createQuery<Response, Variables, Error>({
   primaryKey: '/posts',
   queryFn: ({ queryKey: [primaryKey, variables] }) => {
     // primaryKey equals to '/posts'
-    return fetch(`${primaryKey}/${variables.id}`).then(res => res.json())
+    return fetch(`${primaryKey}/${variables.id}`).then((res) => res.json())
   },
-  suspense: true
 })
 
 const variables = { id: 1 }
 
 export default function Page() {
   // queryKey equals to ['/posts', { id: 1 }]
-  const { data } = usePost({ variables, suspense: true })
+  const { data } = usePost({ variables })
 
   return (
     <div>
@@ -62,14 +61,12 @@ export default function Page() {
 
 console.log(usePost.getKey()) //  ['/posts']
 console.log(usePost.getKey(variables)) //  ['/posts', { id: 1 }]
+console.log(queryClient.getQueryData(usePost.getKey(variables))) // Response | undefined
 
 export async function getStaticProps() {
   const queryClient = new QueryClient()
 
-  await queryClient.prefetchQuery({ 
-    queryKey: usePost.getKey(variables), 
-    queryFn: usePost.queryFn
-  })
+  await queryClient.prefetchQuery(usePost.getFetchOptions(variables))
 
   return {
     props: {
@@ -77,6 +74,34 @@ export async function getStaticProps() {
     },
   }
 }
+```
+
+## Middleware
+
+You can also execute logic before and after hooks via middleware. [See details](https://github.com/liaoliao666/react-query-kit#middleware)
+
+```ts
+import { createQuery, Middleware } from 'react-query-kit'
+
+const disabledIfHasData: Middleware<QueryHook<Response, Variables>> = (
+  useQueryNext,
+) => {
+  return (options) => {
+    const client = useQueryClient()
+    const hasData = () =>
+      !!client.getQueryData(useUser.getKey(options.variables))
+
+    return useQueryNext({
+      ...options,
+      enabled: options.enabled ?? !hasData(),
+    })
+  }
+}
+
+createQuery<Response, Variables>({
+  // ...
+  use: [disabledIfHasData],
+})
 ```
 
 Check the complete documentation on [GitHub](https://github.com/liaoliao666/react-query-kit).
