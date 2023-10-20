@@ -7,12 +7,7 @@ on:
         description: override release tag
         required: false
   push:
-    branches:
-      - 'main'
-      - 'alpha'
-      - 'beta'
-      - 'rc'
-      - 'v4'
+    branches: ['main', 'alpha', 'beta', 'rc']
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -24,8 +19,7 @@ env:
 
 jobs:
   test-and-publish:
-    if: github.repository == 'TanStack/query'
-    name: 'Test & Publish'
+    name: Test & Publish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
