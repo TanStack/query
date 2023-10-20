@@ -527,6 +527,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                 }
                 class="tsqd-query-filter-textfield"
                 value={props.localStore.filter || ''}
+                name="query-filter-input"
               />
             </div>
             <div
@@ -540,6 +541,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                 onChange={(e) =>
                   props.setLocalStore('sort', e.currentTarget.value)
                 }
+                name="query-filter-sort"
               >
                 {Object.keys(sortFns).map((key) => (
                   <option value={key}>Sort by {key}</option>
