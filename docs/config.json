@@ -466,7 +466,7 @@
             },
             {
               "label": "Basic",
-              "to": "solid/examples/solid/basic-typescript"
+              "to": "solid/examples/solid/basic"
             },
             {
               "label": "Basic w/ GraphQL-Request",

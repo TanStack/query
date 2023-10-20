@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-solid-basic-typescript",
+  "name": "@tanstack/query-example-solid-basic",
   "private": true,
   "scripts": {
     "start": "vite",
