@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom/vitest'
 import * as React from 'react'
 import { QueryCache, hashKey } from '@tanstack/query-core'
 import { vi } from 'vitest'
