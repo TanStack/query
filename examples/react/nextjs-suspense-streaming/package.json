@@ -17,8 +17,8 @@
     "superjson": "^1.12.4"
   },
   "devDependencies": {
-    "@types/node": "^18.16.0",
-    "@types/react": "^18.2.4",
+    "@types/node": "^18.18.0",
+    "@types/react": "^18.2.31",
     "typescript": "^5.1.3"
   }
 }
