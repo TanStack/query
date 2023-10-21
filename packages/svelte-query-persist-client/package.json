@@ -40,7 +40,7 @@
     "@tanstack/query-persist-client-core": "workspace:*"
   },
   "devDependencies": {
-    "@sveltejs/package": "^2.2.0",
+    "@sveltejs/package": "^2.2.2",
     "@sveltejs/vite-plugin-svelte": "^2.4.6",
     "@tanstack/svelte-query": "workspace:*",
     "@testing-library/svelte": "^4.0.4",
