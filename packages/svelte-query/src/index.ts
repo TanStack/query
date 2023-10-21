@@ -6,9 +6,16 @@ export * from '@tanstack/query-core'
 // Svelte Query
 export * from './types'
 export * from './context'
+
 export { createQuery } from './createQuery'
+export type {
+  DefinedInitialDataOptions,
+  UndefinedInitialDataOptions,
+} from './queryOptions'
+export { queryOptions } from './queryOptions'
 export { createQueries } from './createQueries'
 export { createInfiniteQuery } from './createInfiniteQuery'
+export { infiniteQueryOptions } from './infiniteQueryOptions'
 export { createMutation } from './createMutation'
 export { useQueryClient } from './useQueryClient'
 export { useIsFetching } from './useIsFetching'

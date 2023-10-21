@@ -6,24 +6,10 @@ import type {
   CreateQueryResult,
   DefinedCreateQueryResult,
 } from './types'
-
-type UndefinedInitialDataOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-> = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
-  initialData?: undefined
-}
-
-type DefinedInitialDataOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-> = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
-  initialData: TQueryFnData | (() => TQueryFnData)
-}
+import type {
+  DefinedInitialDataOptions,
+  UndefinedInitialDataOptions,
+} from './queryOptions'
 
 export function createQuery<
   TQueryFnData = unknown,
