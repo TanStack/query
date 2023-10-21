@@ -1,5 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { waitFor } from '@testing-library/react'
-import { vi } from 'vitest'
 import { QueryObserver, isCancelledError, onlineManager } from '..'
 import {
   createQueryClient,

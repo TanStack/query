@@ -1,4 +1,4 @@
-import { vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, expectTypeOf, test, vi } from 'vitest'
 import { QueryObserver, focusManager } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
 import type { QueryClient, QueryObserverResult } from '..'
