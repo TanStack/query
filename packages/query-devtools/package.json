@@ -59,7 +59,7 @@
     "solid-js": "^1.7.8",
     "solid-transition-group": "^0.2.2",
     "superjson": "^1.12.4",
-    "tsup-preset-solid": "^2.0.1",
+    "tsup-preset-solid": "^2.1.0",
     "vite-plugin-solid": "^2.7.0"
   }
 }

@@ -81,7 +81,7 @@
     "semver": "^7.5.1",
     "solid-js": "^1.7.8",
     "stream-to-array": "^2.3.0",
-    "tsup": "^7.1.0",
+    "tsup": "^7.2.0",
     "ts-node": "^10.7.0",
     "type-fest": "^3.13.0",
     "typescript": "^5.0.4",
