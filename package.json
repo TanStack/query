@@ -51,7 +51,7 @@
     "@types/stream-to-array": "^2.3.0",
     "@typescript-eslint/eslint-plugin": "^5.54.0",
     "@typescript-eslint/parser": "^5.54.0",
-    "@vitest/coverage-istanbul": "^0.34.6",
+    "@vitest/coverage-istanbul": "^0.33.0",
     "axios": "^1.4.0",
     "chalk": "^5.2.0",
     "concurrently": "^8.0.1",
@@ -86,7 +86,7 @@
     "type-fest": "^3.13.0",
     "typescript": "^5.0.4",
     "vite": "^4.4.4",
-    "vitest": "^0.34.6",
+    "vitest": "^0.33.0",
     "vue": "^3.3.0"
   }
 }
