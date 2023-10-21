@@ -5,7 +5,6 @@ export default defineConfig({
     name: 'eslint-plugin-query',
     dir: './src',
     watch: false,
-    globals: true,
     coverage: { provider: 'istanbul' },
   },
 })

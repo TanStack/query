@@ -8,7 +8,6 @@ export default defineConfig({
     watch: false,
     setupFiles: [],
     environment: 'jsdom',
-    globals: true,
     coverage: { provider: 'istanbul' },
   },
   plugins: [solid()],
