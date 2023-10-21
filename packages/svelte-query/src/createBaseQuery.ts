@@ -9,7 +9,11 @@ import type {
   QueryObserver,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
+import type {
+  CreateBaseQueryOptions,
+  CreateBaseQueryResult,
+  StoreOrVal,
+} from './types'
 
 export function createBaseQuery<
   TQueryFnData,
@@ -18,12 +22,8 @@ export function createBaseQuery<
   TQueryData,
   TQueryKey extends QueryKey,
 >(
-  options: CreateBaseQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
+  options: StoreOrVal<
+    CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
   >,
   Observer: typeof QueryObserver,
   queryClient?: QueryClient,
