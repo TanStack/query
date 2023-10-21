@@ -35,7 +35,7 @@
   "namespace": "@tanstack",
   "devDependencies": {
     "@commitlint/parse": "^17.6.5",
-    "@solidjs/testing-library": "^0.8.4",
+    "@solidjs/testing-library": "^0.5.1",
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.0.0",
     "@testing-library/react-hooks": "^8.0.1",
@@ -67,7 +67,7 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "git-log-parser": "^1.2.0",
-    "jsdom": "^22.0.0",
+    "jsdom": "^22.1.0",
     "jsonfile": "^6.1.0",
     "luxon": "^3.3.0",
     "nx": "^16.5.2",

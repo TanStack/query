@@ -8,8 +8,8 @@ importers:
         specifier: ^17.6.5
         version: 17.6.5
       '@solidjs/testing-library':
-        specifier: ^0.8.4
-        version: 0.8.4(@solidjs/router@0.8.3)(solid-js@1.8.1)
+        specifier: ^0.5.1
+        version: 0.5.1(solid-js@1.8.1)
       '@testing-library/jest-dom':
         specifier: ^6.1.4
         version: 6.1.4(vitest@0.34.6)
@@ -104,8 +104,8 @@ importers:
         specifier: ^1.2.0
         version: 1.2.0
       jsdom:
-        specifier: ^22.0.0
-        version: 22.0.0
+        specifier: ^22.1.0
+        version: 22.1.0
       jsonfile:
         specifier: ^6.1.0
         version: 6.1.0
@@ -162,7 +162,7 @@ importers:
         version: 4.4.11(@types/node@18.16.0)
       vitest:
         specifier: ^0.34.6
-        version: 0.34.6(jsdom@22.0.0)
+        version: 0.34.6(jsdom@22.1.0)
       vue:
         specifier: ^3.3.0
         version: 3.3.0
@@ -7992,15 +7992,13 @@ packages:
     dependencies:
       solid-js: 1.8.1
 
-  /@solidjs/testing-library@0.8.4(@solidjs/router@0.8.3)(solid-js@1.8.1):
-    resolution: {integrity: sha512-HHCAlBd4P4TY03tXmoBwTO6FFM7w33LeT8Skab941eLO9l5RN7OxKEBw2fiMYvSFL2h2U7L4+W5N03iC8GbB6Q==}
+  /@solidjs/testing-library@0.5.1(solid-js@1.8.1):
+    resolution: {integrity: sha512-UVwYzSTRHwxiW7jdgKFP3NERbMtA748MIOQFzF1f4tg1XYl8ACybwlrVPqaiKnPevUCcM2ED+Wsp6Yd5JA//yg==}
     engines: {node: '>= 14'}
     peerDependencies:
-      '@solidjs/router': '>=0.6.0'
       solid-js: '>=1.0.0'
     dependencies:
-      '@solidjs/router': 0.8.3(solid-js@1.8.1)
-      '@testing-library/dom': 9.3.3
+      '@testing-library/dom': 8.20.1
       solid-js: 1.8.1
     dev: true
 
@@ -8249,6 +8247,20 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
+  /@testing-library/dom@8.20.1:
+    resolution: {integrity: sha512-/DiOQ5xBxgdYRC8LNk7U+RWat0S3qRLeIw3ZIkMQ9kkVlRmwD/Eg8k8CqIpD6GW7u20JIUOfMKbxtiLutpjQ4g==}
+    engines: {node: '>=12'}
+    dependencies:
+      '@babel/code-frame': 7.22.13
+      '@babel/runtime': 7.23.2
+      '@types/aria-query': 5.0.3
+      aria-query: 5.1.3
+      chalk: 4.1.2
+      dom-accessibility-api: 0.5.16
+      lz-string: 1.5.0
+      pretty-format: 27.5.1
+    dev: true
+
   /@testing-library/dom@9.3.3:
     resolution: {integrity: sha512-fB0R+fa3AUqbLHWyxXa2kGVtf1Fe1ZZFr0Zp6AIbIAzXb2mKbEXl+PCQNUOaq5lbTab5tfctfXRNsWXxa2f7Aw==}
     engines: {node: '>=14'}
@@ -8289,7 +8301,7 @@ packages:
       dom-accessibility-api: 0.5.16
       lodash: 4.17.21
       redent: 3.0.0
-      vitest: 0.34.6(jsdom@22.0.0)
+      vitest: 0.34.6(jsdom@22.1.0)
     dev: true
 
   /@testing-library/react-hooks@8.0.1(@types/react@18.2.4)(react-dom@18.2.0)(react@18.2.0):
@@ -9197,7 +9209,7 @@ packages:
       istanbul-reports: 3.1.6
       picocolors: 1.0.0
       test-exclude: 6.0.0
-      vitest: 0.34.6(jsdom@22.0.0)
+      vitest: 0.34.6(jsdom@22.1.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -17998,8 +18010,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /jsdom@22.0.0:
-    resolution: {integrity: sha512-p5ZTEb5h+O+iU02t0GfEjAnkdYPrQSkfuTSMkMYyIoMvUNEHsbG0bHHbfXIcfTqD2UfvjQX7mmgiFsyRwGscVw==}
+  /jsdom@22.1.0:
+    resolution: {integrity: sha512-/9AVW7xNbsBv6GfWho4TTNjEo9fe6Zhf9O7s0Fhhr3u+awPwAJMKwAMXnkk5vBxflqLW9hTHX/0cs+P3gW+cQw==}
     engines: {node: '>=16'}
     peerDependencies:
       canvas: ^2.5.0
@@ -26571,7 +26583,7 @@ packages:
     dependencies:
       vite: 4.4.11(@types/node@18.16.0)
 
-  /vitest@0.34.6(jsdom@22.0.0):
+  /vitest@0.34.6(jsdom@22.1.0):
     resolution: {integrity: sha512-+5CALsOvbNKnS+ZHMXtuUC7nL8/7F1F2DnHGjSsszX8zCjWSSviphCb/NuS9Nzf4Q03KyyDRBAXhF/8lffME4Q==}
     engines: {node: '>=v14.18.0'}
     hasBin: true
@@ -26615,7 +26627,7 @@ packages:
       cac: 6.7.14
       chai: 4.3.10
       debug: 4.3.4(supports-color@6.1.0)
-      jsdom: 22.0.0
+      jsdom: 22.1.0
       local-pkg: 0.4.3
       magic-string: 0.30.5
       pathe: 1.1.1
