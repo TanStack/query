@@ -125,8 +125,8 @@ importers:
         specifier: ^2.10.1
         version: 2.10.1(prettier@2.8.8)(svelte@4.0.0)
       publint:
-        specifier: ^0.2.0
-        version: 0.2.0
+        specifier: ^0.2.5
+        version: 0.2.5
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -15427,7 +15427,7 @@ packages:
       fs.realpath: 1.0.0
       inflight: 1.0.6
       inherits: 2.0.4
-      minimatch: 3.0.5
+      minimatch: 3.1.2
       once: 1.4.0
       path-is-absolute: 1.0.1
     dev: true
@@ -22526,8 +22526,8 @@ packages:
       safe-buffer: 5.2.1
     dev: false
 
-  /publint@0.2.0:
-    resolution: {integrity: sha512-h8lxdjhQjpDw+A4BgY4sE7Z4CU3x5tCGGpERVdKGDQmWMtr1P7kvptJS2P10HhmNnS7Yeny37zfQE5+xRZ6nig==}
+  /publint@0.2.5:
+    resolution: {integrity: sha512-eoQiP0WXkxkpth1fMLoS1I/6BQoxKNZxTAAnFjPgURFrJulC5D5Uifk49a9kfNCYmcza9E/ZkbFhQQdjkmKAbg==}
     engines: {node: '>=16'}
     hasBin: true
     dependencies:
