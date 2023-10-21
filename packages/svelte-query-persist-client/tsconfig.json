@@ -5,6 +5,7 @@
     "src/**/*.ts",
     "src/**/*.svelte",
     ".eslintrc.cjs",
-    "vite.config.ts"
+    "vite.config.ts",
+    "vitest-setup.ts"
   ]
 }
