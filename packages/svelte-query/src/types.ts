@@ -10,10 +10,10 @@ import type {
   QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { Readable, Writable } from 'svelte/store'
+import type { Readable } from 'svelte/store'
 
 /** Allows a type to be either the base object or a store of that object */
-export type StoreOrVal<T> = T | Readable<T> | Writable<T>
+export type StoreOrVal<T> = T | Readable<T>
 
 /** Options for createBaseQuery */
 export type CreateBaseQueryOptions<
