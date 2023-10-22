@@ -561,7 +561,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
         class={cx(
           styles().queriesContainer,
           panelWidth() < secondBreakpoint &&
-            selectedQueryHash() &&
+            (selectedQueryHash() || selectedMutationId()) &&
             css`
               height: 50%;
               max-height: 50%;
