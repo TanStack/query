@@ -1539,8 +1539,8 @@ importers:
         specifier: workspace:*
         version: link:../query-core
       broadcast-channel:
-        specifier: ^5.1.0
-        version: 5.1.0
+        specifier: ^5.5.0
+        version: 5.5.0
 
   packages/query-core: {}
 
@@ -4771,13 +4771,6 @@ packages:
 
   /@babel/regjsgen@0.8.0:
     resolution: {integrity: sha512-x/rqGMdzj+fWZvCOYForTghzbtqPDZ5gPwaoNGHdgDfF2QA/XZbCBp4Moo5scrkAMPhB7z26XM/AaHuIJdgauA==}
-
-  /@babel/runtime@7.21.0:
-    resolution: {integrity: sha512-xwII0//EObnq89Ji5AKYQaRYiW/nZ3llSv29d49IuxPhKbtJoLP+9QUUZ4nVragQVtaVGeZrpB+ZtG/Pdy/POw==}
-    engines: {node: '>=6.9.0'}
-    dependencies:
-      regenerator-runtime: 0.13.11
-    dev: false
 
   /@babel/runtime@7.23.2:
     resolution: {integrity: sha512-mM8eg4yl5D6i3lu2QKPuPH4FArvJ8KhTofbE7jwMUv9KX5mBvwPAqnV3MlyBNqdp9RyRKP6Yck8TrfYrPvX3bg==}
@@ -11231,13 +11224,12 @@ packages:
     dependencies:
       fill-range: 7.0.1
 
-  /broadcast-channel@5.1.0:
-    resolution: {integrity: sha512-wAbP+mtQ28N+iX3scX6Q97UN39ER5jRWOtM3r1BNPLWFOMt3AGmwN9kS3fqwgaUW0tbWHRSfTpsT+pAvrzQz0Q==}
+  /broadcast-channel@5.5.0:
+    resolution: {integrity: sha512-boNO+pUV0LzTlUV9AVhgJnOG43dJ0X/H4H4b5mrEduy1PoGMris1oNFgywzHCyXNe7UPdXiN21sp/hFyImvJ0A==}
     dependencies:
-      '@babel/runtime': 7.21.0
+      '@babel/runtime': 7.23.2
       oblivious-set: 1.1.1
       p-queue: 6.6.2
-      rimraf: 3.0.2
       unload: 2.4.1
     dev: false
 
