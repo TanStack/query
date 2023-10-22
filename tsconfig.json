@@ -14,7 +14,7 @@
     "isolatedModules": true,
     "lib": ["DOM", "DOM.Iterable", "ES2020"],
     "module": "ES2020",
-    "moduleResolution": "Node", // TODO change this to Node16 or Bundler
+    "moduleResolution": "Bundler",
     "noEmit": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
