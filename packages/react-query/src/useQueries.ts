@@ -19,8 +19,8 @@ import {
 import type { UseQueryOptions, UseQueryResult } from './types'
 import type {
   DefaultError,
+  PlaceholderDataFunctionWithoutPreviousData,
   QueriesObserverOptions,
-  QueriesPlaceholderDataFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
@@ -38,7 +38,9 @@ type UseQueryOptionsForUseQueries<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'placeholderData' | 'suspense'
 > & {
-  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+  placeholderData?:
+    | TQueryFnData
+    | PlaceholderDataFunctionWithoutPreviousData<TQueryFnData>
 }
 
 // Avoid TS depth-limit error in case of large array literal

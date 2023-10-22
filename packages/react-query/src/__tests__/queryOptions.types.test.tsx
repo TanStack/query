@@ -50,6 +50,7 @@ describe('queryOptions', () => {
       const options = queryOptions({
         queryKey: ['key'],
         queryFn: () => Promise.resolve(5),
+        placeholderData: () => 1,
       })
 
       const { data } = useSuspenseQuery(options)
@@ -76,6 +77,7 @@ describe('queryOptions', () => {
       const options = queryOptions({
         queryKey: ['key'],
         queryFn: () => Promise.resolve(5),
+        placeholderData: 1,
       })
 
       const [{ data }] = useQueries({

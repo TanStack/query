@@ -14,8 +14,8 @@ import { cloneDeepUnref } from './utils'
 import type { Ref } from 'vue-demi'
 import type {
   DefaultError,
+  PlaceholderDataFunctionWithoutPreviousData,
   QueriesObserverOptions,
-  QueriesPlaceholderDataFunction,
   QueryFunction,
   QueryKey,
   QueryObserverResult,
@@ -36,7 +36,9 @@ type UseQueryOptionsForUseQueries<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'placeholderData'
 > & {
-  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+  placeholderData?:
+    | TQueryFnData
+    | PlaceholderDataFunctionWithoutPreviousData<TQueryFnData>
 }
 
 // Avoid TS depth-limit error in case of large array literal

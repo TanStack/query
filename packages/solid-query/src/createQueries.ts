@@ -18,8 +18,8 @@ import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
   DefaultError,
+  PlaceholderDataFunctionWithoutPreviousData,
   QueriesObserverOptions,
-  QueriesPlaceholderDataFunction,
   QueryFunction,
   QueryKey,
   QueryObserverResult,
@@ -37,7 +37,9 @@ type CreateQueryOptionsForCreateQueries<
   SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'placeholderData'
 > & {
-  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+  placeholderData?:
+    | TQueryFnData
+    | PlaceholderDataFunctionWithoutPreviousData<TQueryFnData>
 }
 
 // Avoid TS depth-limit error in case of large array literal

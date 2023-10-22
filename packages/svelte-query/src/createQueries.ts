@@ -7,8 +7,8 @@ import type { Readable } from 'svelte/store'
 import type { StoreOrVal } from './types'
 import type {
   DefaultError,
+  PlaceholderDataFunctionWithoutPreviousData,
   QueriesObserverOptions,
-  QueriesPlaceholderDataFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
@@ -28,7 +28,9 @@ type QueryObserverOptionsForCreateQueries<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
   'placeholderData'
 > & {
-  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+  placeholderData?:
+    | TQueryFnData
+    | PlaceholderDataFunctionWithoutPreviousData<TQueryFnData>
 }
 
 // Avoid TS depth-limit error in case of large array literal
