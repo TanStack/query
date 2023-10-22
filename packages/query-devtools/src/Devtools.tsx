@@ -1841,8 +1841,6 @@ const MutationDetails = () => {
   const { colors } = tokens
   const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
 
-  const queryClient = useQueryDevtoolsContext().client
-
   const isPaused = createSubscribeToMutationCacheBatcher((mutationCache) => {
     const mutations = mutationCache().getAll()
     const mutation = mutations.find(
