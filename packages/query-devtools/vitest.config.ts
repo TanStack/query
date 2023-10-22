@@ -6,7 +6,6 @@ export default defineConfig({
     name: 'query-devtools',
     dir: './src',
     watch: false,
-    setupFiles: [],
     environment: 'jsdom',
     coverage: { provider: 'istanbul' },
   },
