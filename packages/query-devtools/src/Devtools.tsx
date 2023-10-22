@@ -726,14 +726,18 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
                 <RadioGroup.ItemControl>
                   <RadioGroup.ItemIndicator />
                 </RadioGroup.ItemControl>
-                <RadioGroup.ItemLabel>Queries</RadioGroup.ItemLabel>
+                <RadioGroup.ItemLabel title="Toggle Queries View">
+                  {panelWidth() < thirdBreakpoint ? 'Q' : 'Queries'}
+                </RadioGroup.ItemLabel>
               </RadioGroup.Item>
               <RadioGroup.Item value="mutations" class="tsqd-radio-toggle">
                 <RadioGroup.ItemInput />
                 <RadioGroup.ItemControl>
                   <RadioGroup.ItemIndicator />
                 </RadioGroup.ItemControl>
-                <RadioGroup.ItemLabel>Mutations</RadioGroup.ItemLabel>
+                <RadioGroup.ItemLabel title="Toggle Mutations View">
+                  {panelWidth() < thirdBreakpoint ? 'M' : 'Mutations'}
+                </RadioGroup.ItemLabel>
               </RadioGroup.Item>
             </RadioGroup.Root>
 
