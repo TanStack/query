@@ -69,7 +69,7 @@ export type QueryFunctionContext<
 
 export type InitialDataFunction<T> = () => T | undefined
 
-type NonFunctionGuard<T> = T extends Function ? never : T
+export type NonFunctionGuard<T> = T extends Function ? never : T
 
 export type PlaceholderDataFunction<
   TQueryFnData = unknown,

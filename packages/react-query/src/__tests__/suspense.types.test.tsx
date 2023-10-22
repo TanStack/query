@@ -30,16 +30,8 @@ describe('useSuspenseQuery', () => {
     })
   })
 
-  it('should not allow placeholderData, enabled or throwOnError props', () => {
+  it('should not allow enabled or throwOnError props', () => {
     doNotExecute(() => {
-      useSuspenseQuery({
-        queryKey: ['key'],
-        queryFn: () => Promise.resolve(5),
-        // @ts-expect-error TS2345
-        placeholderData: 5,
-        enabled: true,
-      })
-
       useSuspenseQuery({
         queryKey: ['key'],
         queryFn: () => Promise.resolve(5),
@@ -101,16 +93,6 @@ describe('useSuspenseInfiniteQuery', () => {
 
   it('should not allow placeholderData, enabled or throwOnError props', () => {
     doNotExecute(() => {
-      useSuspenseInfiniteQuery({
-        queryKey: ['key'],
-        queryFn: () => Promise.resolve(5),
-        initialPageParam: 1,
-        getNextPageParam: () => 1,
-        // @ts-expect-error TS2345
-        placeholderData: 5,
-        enabled: true,
-      })
-
       useSuspenseInfiniteQuery({
         queryKey: ['key'],
         queryFn: () => Promise.resolve(5),

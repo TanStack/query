@@ -9,6 +9,8 @@ import type {
   MutateFunction,
   MutationObserverOptions,
   MutationObserverResult,
+  NonFunctionGuard,
+  PlaceholderDataFunctionWithoutPreviousData,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
@@ -47,7 +49,11 @@ export interface UseSuspenseQueryOptions<
 > extends Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'enabled' | 'throwOnError' | 'placeholderData'
-  > {}
+  > {
+  placeholderData?:
+    | NonFunctionGuard<TQueryFnData>
+    | PlaceholderDataFunctionWithoutPreviousData<TQueryFnData>
+}
 
 export interface UseInfiniteQueryOptions<
   TQueryFnData = unknown,
@@ -88,7 +94,11 @@ export interface UseSuspenseInfiniteQueryOptions<
       TPageParam
     >,
     'enabled' | 'throwOnError' | 'placeholderData'
-  > {}
+  > {
+  placeholderData?:
+    | NonFunctionGuard<TQueryData>
+    | PlaceholderDataFunctionWithoutPreviousData<TQueryData>
+}
 
 export type UseBaseQueryResult<
   TData = unknown,
