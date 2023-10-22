@@ -2954,7 +2954,6 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       color: ${t(colors.gray[700], colors.gray[300])};
       overflow: hidden;
 
-      &:focus-within,
       &:focus-visible {
         outline: 2px solid ${colors.blue[800]};
       }
