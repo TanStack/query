@@ -1,15 +1,15 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
-  import { setQueryClientContext } from '../context'
   import { createQueries } from '../createQueries'
-  import type { QueriesOptions } from '../createQueries'
+  import type { QueriesOptions, QueriesResults } from '../createQueries'
 
-  export let options: { queries: [...QueriesOptions<any>] }
+  export let options: {
+    queries: [...QueriesOptions<any>]
+    combine?: (result: QueriesResults<any[]>) => any
+  }
+  export let queryClient: QueryClient
 
-  const queryClient = new QueryClient()
-  setQueryClientContext(queryClient)
-
-  const queries = createQueries(options)
+  const queries = createQueries(options, queryClient)
 </script>
 
 {#each $queries as query, index}

@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { render, waitFor } from '@testing-library/svelte'
+import { QueryClient } from '@tanstack/query-core'
 import CreateQueries from './CreateQueries.svelte'
 import { sleep } from './utils'
+import type { QueriesResults } from "../createQueries"
 
 describe('createQueries', () => {
   it('Render and wait for success', async () => {
@@ -25,6 +27,7 @@ describe('createQueries', () => {
             },
           ],
         },
+        queryClient: new QueryClient(),
       },
     })
 
@@ -37,5 +40,36 @@ describe('createQueries', () => {
       expect(rendered.getByText('Success 1')).toBeInTheDocument()
       expect(rendered.getByText('Success 2')).toBeInTheDocument()
     })
+  })
+
+  it('should combine queries', async () => {
+    const ids = [1, 2, 3]
+
+    const rendered = render(CreateQueries, {
+      props: {
+        options: {
+          queries: ids.map(id => (
+            {
+              queryKey: [id],
+              queryFn: async () => {
+                await sleep(10)
+                return id
+              }
+            }
+          )),
+          combine: (results: QueriesResults<Array<number>>) => {
+            return {
+              combined: true,
+              res: results.map((res) => res.data).join(','),
+            }
+          },
+        },
+        queryClient: new QueryClient(),
+      }
+    })
+
+    await waitFor(() =>
+      expect(rendered.getByText('1,2,3')).toBeInTheDocument()
+    )
   })
 })
