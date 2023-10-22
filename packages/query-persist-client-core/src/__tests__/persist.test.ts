@@ -1,5 +1,5 @@
+import { describe, expect, test, vi } from 'vitest'
 import { QueriesObserver } from '@tanstack/query-core'
-import { vi } from 'vitest'
 import { persistQueryClientSubscribe } from '../persist'
 import {
   createMockPersister,
