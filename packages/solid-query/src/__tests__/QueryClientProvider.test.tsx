@@ -1,7 +1,6 @@
+import { describe, expect, it, vi } from 'vitest'
 import { render, screen, waitFor } from '@solidjs/testing-library'
-
 import { QueryCache } from '@tanstack/query-core'
-import { vi } from 'vitest'
 import { QueryClientProvider, createQuery, useQueryClient } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
 

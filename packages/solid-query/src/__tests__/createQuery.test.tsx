@@ -1,4 +1,4 @@
-import '@testing-library/jest-dom/vitest'
+import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import {
   ErrorBoundary,
   Match,
@@ -10,7 +10,6 @@ import {
   on,
 } from 'solid-js'
 import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
-import { vi } from 'vitest'
 import { reconcile } from 'solid-js/store'
 import {
   QueryCache,
