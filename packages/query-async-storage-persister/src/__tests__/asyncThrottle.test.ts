@@ -1,4 +1,4 @@
-import { vi } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { asyncThrottle } from '../asyncThrottle'
 import { sleep as delay } from './utils'
 
