@@ -6,7 +6,7 @@ export default defineConfig({
     name: 'solid-query-persist-client',
     dir: './src',
     watch: false,
-    setupFiles: [],
+    setupFiles: ['test-setup.ts'],
     environment: 'jsdom',
     coverage: { provider: 'istanbul' },
   },
