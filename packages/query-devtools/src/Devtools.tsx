@@ -15,16 +15,18 @@ import { TransitionGroup } from 'solid-transition-group'
 import { Key } from '@solid-primitives/keyed'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { createResizeObserver } from '@solid-primitives/resize-observer'
-import { DropdownMenu } from '@kobalte/core'
+import { DropdownMenu, RadioGroup } from '@kobalte/core'
 import { tokens } from './theme'
 import {
   convertRemToPixels,
   displayValue,
+  getMutationStatusColor,
   getPreferredColorScheme,
   getQueryStatusColor,
   getQueryStatusColorByLabel,
   getQueryStatusLabel,
   getSidedProp,
+  mutationSortFns,
   sortFns,
 } from './utils'
 import {
@@ -32,16 +34,20 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUp,
+  CheckCircle,
   ChevronDown,
+  LoadingCircle,
   Monitor,
   Moon,
   Offline,
+  PauseCircle,
   Search,
   Settings,
   Sun,
   TanstackLogo,
   Trash,
   Wifi,
+  XCircle,
 } from './icons'
 import Explorer from './Explorer'
 import {
@@ -57,7 +63,13 @@ import type {
   DevtoolsPosition,
   QueryDevtoolsProps,
 } from './Context'
-import type { Query, QueryCache, QueryState } from '@tanstack/query-core'
+import type {
+  Mutation,
+  MutationCache,
+  Query,
+  QueryCache,
+  QueryState,
+} from '@tanstack/query-core'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
 import type { Accessor, Component, JSX, Setter } from 'solid-js'
 
@@ -68,7 +80,7 @@ interface DevtoolsPanelProps {
 
 interface QueryStatusProps {
   label: string
-  color: 'green' | 'yellow' | 'gray' | 'blue' | 'purple'
+  color: 'green' | 'yellow' | 'gray' | 'blue' | 'purple' | 'red'
   count: number
 }
 
@@ -84,8 +96,12 @@ const DEFAULT_HEIGHT = 500
 const DEFAULT_WIDTH = 500
 const DEFAULT_SORT_FN_NAME = Object.keys(sortFns)[0]
 const DEFAULT_SORT_ORDER = 1
+const DEFAULT_MUTATION_SORT_FN_NAME = Object.keys(mutationSortFns)[0]
 
 const [selectedQueryHash, setSelectedQueryHash] = createSignal<string | null>(
+  null,
+)
+const [selectedMutationId, setSelectedMutationId] = createSignal<number | null>(
   null,
 )
 const [panelWidth, setPanelWidth] = createSignal(0)
@@ -234,53 +250,11 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
 
   const [isResizing, setIsResizing] = createSignal(false)
 
-  const sort = createMemo(() => props.localStore.sort || DEFAULT_SORT_FN_NAME)
-  const sortOrder = createMemo(
-    () => Number(props.localStore.sortOrder) || DEFAULT_SORT_ORDER,
-  ) as () => 1 | -1
-
-  const [offline, setOffline] = createSignal(false)
-
   const position = createMemo(
     () =>
       (props.localStore.position ||
         useQueryDevtoolsContext().position ||
         POSITION) as DevtoolsPosition,
-  )
-
-  const sortFn = createMemo(() => sortFns[sort() as string])
-
-  const onlineManager = createMemo(
-    () => useQueryDevtoolsContext().onlineManager,
-  )
-
-  const cache = createMemo(() => {
-    return useQueryDevtoolsContext().client.getQueryCache()
-  })
-
-  const queryCount = createSubscribeToQueryCacheBatcher((queryCache) => {
-    return queryCache().getAll().length
-  }, false)
-
-  const queries = createMemo(
-    on(
-      () => [queryCount(), props.localStore.filter, sort(), sortOrder()],
-      () => {
-        const curr = cache().getAll()
-
-        const filtered = props.localStore.filter
-          ? curr.filter(
-              (item) =>
-                rankItem(item.queryHash, props.localStore.filter || '').passed,
-            )
-          : [...curr]
-
-        const sorted = sortFn()
-          ? filtered.sort((a, b) => sortFn()!(a, b) * sortOrder())
-          : filtered
-        return sorted
-      },
-    ),
   )
 
   const handleDragStart: JSX.EventHandler<HTMLDivElement, MouseEvent> = (
@@ -344,9 +318,6 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
     document.addEventListener('mouseup', unsub, false)
   }
 
-  setupQueryCacheSubscription()
-
-  let queriesContainerRef!: HTMLDivElement
   let panelRef!: HTMLDivElement
 
   onMount(() => {
@@ -356,10 +327,6 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
       }
     })
   })
-
-  const setDevtoolsPosition = (pos: DevtoolsPosition) => {
-    props.setLocalStore('position', pos)
-  }
 
   createEffect(() => {
     const rootContainer = panelRef.parentElement?.parentElement?.parentElement
@@ -465,8 +432,130 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
       >
         <ChevronDown />
       </button>
+      <ContentView
+        localStore={props.localStore}
+        setLocalStore={props.setLocalStore}
+      />
+    </aside>
+  )
+}
+
+const ContentView: Component<DevtoolsPanelProps> = (props) => {
+  setupQueryCacheSubscription()
+  setupMutationCacheSubscription()
+
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
+
+  const [selectedView, setSelectedView] = createSignal<'queries' | 'mutations'>(
+    'queries',
+  )
+
+  const sort = createMemo(() => props.localStore.sort || DEFAULT_SORT_FN_NAME)
+  const sortOrder = createMemo(
+    () => Number(props.localStore.sortOrder) || DEFAULT_SORT_ORDER,
+  ) as () => 1 | -1
+
+  const mutationSort = createMemo(
+    () => props.localStore.mutationSort || DEFAULT_MUTATION_SORT_FN_NAME,
+  )
+  const mutationSortOrder = createMemo(
+    () => Number(props.localStore.mutationSortOrder) || DEFAULT_SORT_ORDER,
+  ) as () => 1 | -1
+
+  const [offline, setOffline] = createSignal(false)
+
+  const sortFn = createMemo(() => sortFns[sort() as string])
+  const mutationSortFn = createMemo(
+    () => mutationSortFns[mutationSort() as string],
+  )
+
+  const onlineManager = createMemo(
+    () => useQueryDevtoolsContext().onlineManager,
+  )
+
+  const query_cache = createMemo(() => {
+    return useQueryDevtoolsContext().client.getQueryCache()
+  })
+
+  const mutation_cache = createMemo(() => {
+    return useQueryDevtoolsContext().client.getMutationCache()
+  })
+
+  const queryCount = createSubscribeToQueryCacheBatcher((queryCache) => {
+    return queryCache().getAll().length
+  }, false)
+
+  const queries = createMemo(
+    on(
+      () => [queryCount(), props.localStore.filter, sort(), sortOrder()],
+      () => {
+        const curr = query_cache().getAll()
+
+        const filtered = props.localStore.filter
+          ? curr.filter(
+              (item) =>
+                rankItem(item.queryHash, props.localStore.filter || '').passed,
+            )
+          : [...curr]
+
+        const sorted = sortFn()
+          ? filtered.sort((a, b) => sortFn()!(a, b) * sortOrder())
+          : filtered
+        return sorted
+      },
+    ),
+  )
+
+  const mutationCount = createSubscribeToMutationCacheBatcher(
+    (mutationCache) => {
+      return mutationCache().getAll().length
+    },
+    false,
+  )
+
+  const mutations = createMemo(
+    on(
+      () => [
+        mutationCount(),
+        props.localStore.mutationFilter,
+        mutationSort(),
+        mutationSortOrder(),
+      ],
+      () => {
+        const curr = mutation_cache().getAll()
+
+        const filtered = props.localStore.mutationFilter
+          ? curr.filter((item) => {
+              const value = `${
+                item.options.mutationKey
+                  ? JSON.stringify(item.options.mutationKey) + ' - '
+                  : ''
+              }${new Date(item.state.submittedAt).toLocaleString()}`
+              return rankItem(value, props.localStore.mutationFilter || '')
+                .passed
+            })
+          : [...curr]
+
+        const sorted = mutationSortFn()
+          ? filtered.sort(
+              (a, b) => mutationSortFn()!(a, b) * mutationSortOrder(),
+            )
+          : filtered
+        return sorted
+      },
+    ),
+  )
+
+  const setDevtoolsPosition = (pos: DevtoolsPosition) => {
+    props.setLocalStore('position', pos)
+  }
+
+  return (
+    <>
       <div
-        ref={queriesContainerRef}
         // When the panels are stacked we use the height style
         // to divide the panels into two equal parts
         class={cx(
@@ -499,7 +588,12 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
               {useQueryDevtoolsContext().version}
             </span>
           </button>
-          <QueryStatusCount />
+          <Show when={selectedView() === 'queries'}>
+            <QueryStatusCount />
+          </Show>
+          <Show when={selectedView() === 'mutations'}>
+            <MutationStatusCount />
+          </Show>
         </div>
         <div
           class={cx(
@@ -522,11 +616,19 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                 aria-label="Filter queries by query key"
                 type="text"
                 placeholder="Filter"
-                onInput={(e) =>
-                  props.setLocalStore('filter', e.currentTarget.value)
-                }
+                onInput={(e) => {
+                  if (selectedView() === 'queries') {
+                    props.setLocalStore('filter', e.currentTarget.value)
+                  } else {
+                    props.setLocalStore('mutationFilter', e.currentTarget.value)
+                  }
+                }}
                 class="tsqd-query-filter-textfield"
-                value={props.localStore.filter || ''}
+                value={
+                  selectedView() === 'queries'
+                    ? props.localStore.filter || ''
+                    : props.localStore.mutationFilter || ''
+                }
               />
             </div>
             <div
@@ -535,33 +637,74 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                 'tsqd-query-filter-sort-container',
               )}
             >
-              <select
-                value={sort()}
-                onChange={(e) =>
-                  props.setLocalStore('sort', e.currentTarget.value)
-                }
-              >
-                {Object.keys(sortFns).map((key) => (
-                  <option value={key}>Sort by {key}</option>
-                ))}
-              </select>
+              <Show when={selectedView() === 'queries'}>
+                <select
+                  value={sort()}
+                  onChange={(e) => {
+                    props.setLocalStore('sort', e.currentTarget.value)
+                  }}
+                >
+                  {Object.keys(sortFns).map((key) => (
+                    <option value={key}>Sort by {key}</option>
+                  ))}
+                </select>
+              </Show>
+              <Show when={selectedView() === 'mutations'}>
+                <select
+                  value={mutationSort()}
+                  onChange={(e) => {
+                    props.setLocalStore('mutationSort', e.currentTarget.value)
+                  }}
+                >
+                  {Object.keys(mutationSortFns).map((key) => (
+                    <option value={key}>Sort by {key}</option>
+                  ))}
+                </select>
+              </Show>
               <ChevronDown />
             </div>
             <button
               onClick={() => {
-                props.setLocalStore('sortOrder', String(sortOrder() * -1))
+                if (selectedView() === 'queries') {
+                  props.setLocalStore('sortOrder', String(sortOrder() * -1))
+                } else {
+                  props.setLocalStore(
+                    'mutationSortOrder',
+                    String(mutationSortOrder() * -1),
+                  )
+                }
               }}
               aria-label={`Sort order ${
-                sortOrder() === -1 ? 'descending' : 'ascending'
+                (selectedView() === 'queries'
+                  ? sortOrder()
+                  : mutationSortOrder()) === -1
+                  ? 'descending'
+                  : 'ascending'
               }`}
-              aria-pressed={sortOrder() === -1}
+              aria-pressed={
+                (selectedView() === 'queries'
+                  ? sortOrder()
+                  : mutationSortOrder()) === -1
+              }
               class="tsqd-query-filter-sort-order-btn"
             >
-              <Show when={sortOrder() === 1}>
+              <Show
+                when={
+                  (selectedView() === 'queries'
+                    ? sortOrder()
+                    : mutationSortOrder()) === 1
+                }
+              >
                 <span>Asc</span>
                 <ArrowUp />
               </Show>
-              <Show when={sortOrder() === -1}>
+              <Show
+                when={
+                  (selectedView() === 'queries'
+                    ? sortOrder()
+                    : mutationSortOrder()) === -1
+                }
+              >
                 <span>Desc</span>
                 <ArrowDown />
               </Show>
@@ -569,9 +712,38 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
           </div>
 
           <div class={cx(styles().actionsContainer, 'tsqd-actions-container')}>
+            <RadioGroup.Root
+              class={cx(styles().viewToggle)}
+              value={selectedView()}
+              onChange={(value) => {
+                setSelectedView(value as 'queries' | 'mutations')
+                setSelectedQueryHash(null)
+                setSelectedMutationId(null)
+              }}
+            >
+              <RadioGroup.Item value="queries" class="tsqd-radio-toggle">
+                <RadioGroup.ItemInput />
+                <RadioGroup.ItemControl>
+                  <RadioGroup.ItemIndicator />
+                </RadioGroup.ItemControl>
+                <RadioGroup.ItemLabel>Queries</RadioGroup.ItemLabel>
+              </RadioGroup.Item>
+              <RadioGroup.Item value="mutations" class="tsqd-radio-toggle">
+                <RadioGroup.ItemInput />
+                <RadioGroup.ItemControl>
+                  <RadioGroup.ItemIndicator />
+                </RadioGroup.ItemControl>
+                <RadioGroup.ItemLabel>Mutations</RadioGroup.ItemLabel>
+              </RadioGroup.Item>
+            </RadioGroup.Root>
+
             <button
               onClick={() => {
-                cache().clear()
+                if (selectedView() === 'queries') {
+                  query_cache().clear()
+                } else {
+                  mutation_cache().clear()
+                }
               }}
               class={cx(
                 styles().actionsBtn,
@@ -579,7 +751,7 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
                 'tsqd-action-clear-cache',
               )}
               aria-label="Clear query cache"
-              title="Clear query cache"
+              title={`Clear ${selectedView()} cache`}
             >
               <Trash />
             </button>
@@ -787,23 +959,43 @@ export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
             </DropdownMenu.Root>
           </div>
         </div>
-        <div
-          class={cx(
-            styles().overflowQueryContainer,
-            'tsqd-queries-overflow-container',
-          )}
-        >
-          <div class="tsqd-queries-container">
-            <Key by={(q) => q.queryHash} each={queries()}>
-              {(query) => <QueryRow query={query()} />}
-            </Key>
+        <Show when={selectedView() === 'queries'}>
+          <div
+            class={cx(
+              styles().overflowQueryContainer,
+              'tsqd-queries-overflow-container',
+            )}
+          >
+            <div class="tsqd-queries-container">
+              <Key by={(q) => q.queryHash} each={queries()}>
+                {(query) => <QueryRow query={query()} />}
+              </Key>
+            </div>
           </div>
-        </div>
+        </Show>
+        <Show when={selectedView() === 'mutations'}>
+          <div
+            class={cx(
+              styles().overflowQueryContainer,
+              'tsqd-mutations-overflow-container',
+            )}
+          >
+            <div class="tsqd-mutations-container">
+              <Key by={(m) => m.mutationId} each={mutations()}>
+                {(mutation) => <MutationRow mutation={mutation()} />}
+              </Key>
+            </div>
+          </div>
+        </Show>
       </div>
-      <Show when={selectedQueryHash()}>
+      <Show when={selectedView() === 'queries' && selectedQueryHash()}>
         <QueryDetails />
       </Show>
-    </aside>
+
+      <Show when={selectedView() === 'mutations' && selectedMutationId()}>
+        <MutationDetails />
+      </Show>
+    </>
   )
 }
 
@@ -907,6 +1099,114 @@ export const QueryRow: Component<{ query: Query }> = (props) => {
   )
 }
 
+export const MutationRow: Component<{ mutation: Mutation }> = (props) => {
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
+
+  const { colors, alpha } = tokens
+  const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
+
+  const mutationState = createSubscribeToMutationCacheBatcher(
+    (mutationCache) => {
+      const mutations = mutationCache().getAll()
+      const mutation = mutations.find(
+        (m) => m.mutationId === props.mutation.mutationId,
+      )
+      return mutation?.state
+    },
+  )
+
+  const isPaused = createSubscribeToMutationCacheBatcher((mutationCache) => {
+    const mutations = mutationCache().getAll()
+    const mutation = mutations.find(
+      (m) => m.mutationId === props.mutation.mutationId,
+    )
+    if (!mutation) return false
+    return mutation.state.isPaused
+  })
+
+  const status = createSubscribeToMutationCacheBatcher((mutationCache) => {
+    const mutations = mutationCache().getAll()
+    const mutation = mutations.find(
+      (m) => m.mutationId === props.mutation.mutationId,
+    )
+    if (!mutation) return 'idle'
+    return mutation.state.status
+  })
+
+  const color = createMemo(() =>
+    getMutationStatusColor({
+      isPaused: isPaused(),
+      status: status(),
+    }),
+  )
+
+  const getObserverCountColorStyles = () => {
+    if (color() === 'gray') {
+      return css`
+        background-color: ${t(colors[color()][200], colors[color()][700])};
+        color: ${t(colors[color()][700], colors[color()][300])};
+      `
+    }
+
+    return css`
+      background-color: ${t(
+        colors[color()][200] + alpha[80],
+        colors[color()][900],
+      )};
+      color: ${t(colors[color()][800], colors[color()][300])};
+    `
+  }
+
+  return (
+    <Show when={mutationState()}>
+      <button
+        onClick={() => {
+          setSelectedMutationId(
+            props.mutation.mutationId === selectedMutationId()
+              ? null
+              : props.mutation.mutationId,
+          )
+        }}
+        class={cx(
+          styles().queryRow,
+          selectedMutationId() === props.mutation.mutationId &&
+            styles().selectedQueryRow,
+          'tsqd-query-row',
+        )}
+        aria-label={`Mutation submitted at ${new Date(
+          props.mutation.state.submittedAt,
+        ).toLocaleString()}`}
+      >
+        <div
+          class={cx(getObserverCountColorStyles(), 'tsqd-query-observer-count')}
+        >
+          <Show when={color() === 'purple'}>
+            <PauseCircle />
+          </Show>
+          <Show when={color() === 'green'}>
+            <CheckCircle />
+          </Show>
+          <Show when={color() === 'red'}>
+            <XCircle />
+          </Show>
+          <Show when={color() === 'yellow'}>
+            <LoadingCircle />
+          </Show>
+        </div>
+        <code class="tsqd-query-hash">
+          <Show when={props.mutation.options.mutationKey}>
+            {JSON.stringify(props.mutation.options.mutationKey)} -{' '}
+          </Show>
+          {new Date(props.mutation.state.submittedAt).toLocaleString()}
+        </code>
+      </button>
+    </Show>
+  )
+}
+
 export const QueryStatusCount: Component = () => {
   const stale = createSubscribeToQueryCacheBatcher(
     (queryCache) =>
@@ -957,6 +1257,76 @@ export const QueryStatusCount: Component = () => {
       <QueryStatus label="Paused" color="purple" count={paused()} />
       <QueryStatus label="Stale" color="yellow" count={stale()} />
       <QueryStatus label="Inactive" color="gray" count={inactive()} />
+    </div>
+  )
+}
+
+export const MutationStatusCount: Component = () => {
+  const success = createSubscribeToMutationCacheBatcher(
+    (mutationCache) =>
+      mutationCache()
+        .getAll()
+        .filter(
+          (m) =>
+            getMutationStatusColor({
+              isPaused: m.state.isPaused,
+              status: m.state.status,
+            }) === 'green',
+        ).length,
+  )
+
+  const pending = createSubscribeToMutationCacheBatcher(
+    (mutationCache) =>
+      mutationCache()
+        .getAll()
+        .filter(
+          (m) =>
+            getMutationStatusColor({
+              isPaused: m.state.isPaused,
+              status: m.state.status,
+            }) === 'yellow',
+        ).length,
+  )
+
+  const paused = createSubscribeToMutationCacheBatcher(
+    (mutationCache) =>
+      mutationCache()
+        .getAll()
+        .filter(
+          (m) =>
+            getMutationStatusColor({
+              isPaused: m.state.isPaused,
+              status: m.state.status,
+            }) === 'purple',
+        ).length,
+  )
+
+  const error = createSubscribeToMutationCacheBatcher(
+    (mutationCache) =>
+      mutationCache()
+        .getAll()
+        .filter(
+          (m) =>
+            getMutationStatusColor({
+              isPaused: m.state.isPaused,
+              status: m.state.status,
+            }) === 'red',
+        ).length,
+  )
+
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
+
+  return (
+    <div
+      class={cx(styles().queryStatusContainer, 'tsqd-query-status-container')}
+    >
+      <QueryStatus label="Paused" color="purple" count={paused()} />
+      <QueryStatus label="Pending" color="yellow" count={pending()} />
+      <QueryStatus label="Success" color="green" count={success()} />
+      <QueryStatus label="Error" color="red" count={error()} />
     </div>
   )
 }
@@ -1462,7 +1832,172 @@ const QueryDetails = () => {
   )
 }
 
-const signalsMap = new Map<(q: Accessor<QueryCache>) => any, Setter<any>>()
+const MutationDetails = () => {
+  const theme = useTheme()
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles : lightStyles
+  })
+
+  const { colors } = tokens
+  const t = (light: string, dark: string) => (theme() === 'dark' ? dark : light)
+
+  const queryClient = useQueryDevtoolsContext().client
+
+  const isPaused = createSubscribeToMutationCacheBatcher((mutationCache) => {
+    const mutations = mutationCache().getAll()
+    const mutation = mutations.find(
+      (m) => m.mutationId === selectedMutationId(),
+    )
+    if (!mutation) return false
+    return mutation.state.isPaused
+  })
+
+  const status = createSubscribeToMutationCacheBatcher((mutationCache) => {
+    const mutations = mutationCache().getAll()
+    const mutation = mutations.find(
+      (m) => m.mutationId === selectedMutationId(),
+    )
+    if (!mutation) return 'idle'
+    return mutation.state.status
+  })
+
+  const color = createMemo(() =>
+    getMutationStatusColor({
+      isPaused: isPaused(),
+      status: status(),
+    }),
+  )
+
+  const activeMutation = createSubscribeToMutationCacheBatcher(
+    (mutationCache) =>
+      mutationCache()
+        .getAll()
+        .find((mutation) => mutation.mutationId === selectedMutationId()),
+    false,
+  )
+
+  const getQueryStatusColors = () => {
+    if (color() === 'gray') {
+      return css`
+        background-color: ${t(colors[color()][200], colors[color()][700])};
+        color: ${t(colors[color()][700], colors[color()][300])};
+        border-color: ${t(colors[color()][400], colors[color()][600])};
+      `
+    }
+    return css`
+      background-color: ${t(colors[color()][100], colors[color()][900])};
+      color: ${t(colors[color()][700], colors[color()][300])};
+      border-color: ${t(colors[color()][400], colors[color()][600])};
+    `
+  }
+
+  return (
+    <Show when={activeMutation()}>
+      <div
+        class={cx(styles().detailsContainer, 'tsqd-query-details-container')}
+      >
+        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+          Mutation Details
+        </div>
+        <div
+          class={cx(
+            styles().detailsBody,
+            'tsqd-query-details-summary-container',
+          )}
+        >
+          <div class="tsqd-query-details-summary">
+            <pre>
+              <code>
+                <Show
+                  when={activeMutation()!.options.mutationKey}
+                  fallback={'No mutationKey found'}
+                >
+                  {displayValue(activeMutation()!.options.mutationKey, true)}
+                </Show>
+              </code>
+            </pre>
+            <span
+              class={cx(styles().queryDetailsStatus, getQueryStatusColors())}
+            >
+              <Show when={color() === 'purple'}>pending</Show>
+              <Show when={color() !== 'purple'}>{status()}</Show>
+            </span>
+          </div>
+          <div class="tsqd-query-details-last-updated">
+            <span>Submitted At:</span>
+            <span>
+              {new Date(
+                activeMutation()!.state.submittedAt,
+              ).toLocaleTimeString()}
+            </span>
+          </div>
+        </div>
+        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+          Variables Details
+        </div>
+        <div
+          style={{
+            padding: '0.5rem',
+          }}
+          class="tsqd-query-details-explorer-container tsqd-query-details-query-explorer"
+        >
+          <Explorer
+            label="Variables"
+            defaultExpanded={['Variables']}
+            value={activeMutation()!.state.variables}
+          />
+        </div>
+        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+          Context Details
+        </div>
+        <div
+          style={{
+            padding: '0.5rem',
+          }}
+          class="tsqd-query-details-explorer-container tsqd-query-details-query-explorer"
+        >
+          <Explorer
+            label="Context"
+            defaultExpanded={['Context']}
+            value={activeMutation()!.state.context}
+          />
+        </div>
+        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+          Data Explorer
+        </div>
+        <div
+          style={{
+            padding: '0.5rem',
+          }}
+          class="tsqd-query-details-explorer-container tsqd-query-details-query-explorer"
+        >
+          <Explorer
+            label="Data"
+            defaultExpanded={['Data']}
+            value={activeMutation()!.state.data}
+          />
+        </div>
+        <div class={cx(styles().detailsHeader, 'tsqd-query-details-header')}>
+          Mutations Explorer
+        </div>
+        <div
+          style={{
+            padding: '0.5rem',
+          }}
+          class="tsqd-query-details-explorer-container tsqd-query-details-query-explorer"
+        >
+          <Explorer
+            label="Mutation"
+            defaultExpanded={['Mutation']}
+            value={activeMutation()}
+          />
+        </div>
+      </div>
+    </Show>
+  )
+}
+
+const queryCacheMap = new Map<(q: Accessor<QueryCache>) => any, Setter<any>>()
 
 const setupQueryCacheSubscription = () => {
   const queryCache = createMemo(() => {
@@ -1471,7 +2006,7 @@ const setupQueryCacheSubscription = () => {
   })
 
   const unsub = queryCache().subscribe(() => {
-    for (const [callback, setter] of signalsMap.entries()) {
+    for (const [callback, setter] of queryCacheMap.entries()) {
       queueMicrotask(() => {
         setter(callback(queryCache))
       })
@@ -1479,7 +2014,7 @@ const setupQueryCacheSubscription = () => {
   })
 
   onCleanup(() => {
-    signalsMap.clear()
+    queryCacheMap.clear()
     unsub()
   })
 
@@ -1505,11 +2040,67 @@ const createSubscribeToQueryCacheBatcher = <T,>(
   })
 
   // @ts-ignore
-  signalsMap.set(callback, setValue)
+  queryCacheMap.set(callback, setValue)
 
   onCleanup(() => {
     // @ts-ignore
-    signalsMap.delete(callback)
+    queryCacheMap.delete(callback)
+  })
+
+  return value
+}
+
+const mutationCacheMap = new Map<
+  (q: Accessor<MutationCache>) => any,
+  Setter<any>
+>()
+
+const setupMutationCacheSubscription = () => {
+  const mutationCache = createMemo(() => {
+    const client = useQueryDevtoolsContext().client
+    return client.getMutationCache()
+  })
+
+  const unsub = mutationCache().subscribe(() => {
+    for (const [callback, setter] of mutationCacheMap.entries()) {
+      queueMicrotask(() => {
+        setter(callback(mutationCache))
+      })
+    }
+  })
+
+  onCleanup(() => {
+    mutationCacheMap.clear()
+    unsub()
+  })
+
+  return unsub
+}
+
+const createSubscribeToMutationCacheBatcher = <T,>(
+  callback: (queryCache: Accessor<MutationCache>) => Exclude<T, Function>,
+  equalityCheck: boolean = true,
+) => {
+  const mutationCache = createMemo(() => {
+    const client = useQueryDevtoolsContext().client
+    return client.getMutationCache()
+  })
+
+  const [value, setValue] = createSignal<T>(
+    callback(mutationCache),
+    !equalityCheck ? { equals: false } : undefined,
+  )
+
+  createEffect(() => {
+    setValue(callback(mutationCache))
+  })
+
+  // @ts-ignore
+  mutationCacheMap.set(callback, setValue)
+
+  onCleanup(() => {
+    // @ts-ignore
+    mutationCacheMap.delete(callback)
   })
 
   return value
@@ -2173,6 +2764,8 @@ const stylesFactory = (theme: 'light' | 'dark') => {
 
       & pre {
         margin: 0;
+        display: flex;
+        align-items: center;
       }
     `,
     queryDetailsStatus: css`
@@ -2351,6 +2944,56 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       }
       &:hover {
         background-color: ${t(colors.purple[100], colors.purple[900])};
+      }
+    `,
+    viewToggle: css`
+      border-radius: ${tokens.border.radius.sm};
+      background-color: ${t(colors.gray[200], colors.darkGray[600])};
+      border: 1px solid ${t(colors.gray[300], colors.darkGray[200])};
+      display: flex;
+      padding: 0;
+      font-size: ${font.size.xs};
+      color: ${t(colors.gray[700], colors.gray[300])};
+      overflow: hidden;
+
+      &:focus-within,
+      &:focus-visible {
+        outline: 2px solid ${colors.blue[800]};
+      }
+
+      & .tsqd-radio-toggle {
+        opacity: 0.5;
+        display: flex;
+        & label {
+          display: flex;
+          align-items: center;
+          cursor: pointer;
+        }
+
+        & label:hover {
+          background-color: ${t(colors.gray[100], colors.darkGray[500])};
+        }
+      }
+
+      & > [data-checked] {
+        opacity: 1;
+        background-color: ${t(colors.gray[100], colors.darkGray[400])};
+        & label:hover {
+          background-color: ${t(colors.gray[100], colors.darkGray[400])};
+        }
+      }
+
+      & .tsqd-radio-toggle:first-child {
+        & label {
+          padding: 0 ${tokens.size[1.5]} 0 ${tokens.size[2]};
+        }
+        border-right: 1px solid ${t(colors.gray[300], colors.darkGray[200])};
+      }
+
+      & .tsqd-radio-toggle:nth-child(2) {
+        & label {
+          padding: 0 ${tokens.size[2]} 0 ${tokens.size[1.5]};
+        }
       }
     `,
   }
