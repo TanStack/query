@@ -1,7 +1,6 @@
+import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
-
-import { vi } from 'vitest'
 import { QueryCache, keepPreviousData, useInfiniteQuery } from '..'
 import {
   createQueryClient,

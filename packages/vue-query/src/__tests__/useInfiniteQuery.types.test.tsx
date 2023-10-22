@@ -1,3 +1,4 @@
+import { describe, it } from 'vitest'
 import { reactive } from 'vue'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { doNotExecute, simpleFetcher } from './test-utils'

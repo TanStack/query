@@ -1,8 +1,7 @@
+import { vi } from 'vitest'
 import * as React from 'react'
 import { act, render } from '@testing-library/react'
-
 import * as utils from '@tanstack/query-core'
-import { vi } from 'vitest'
 import { QueryClient, QueryClientProvider, onlineManager } from '..'
 import type { QueryClientConfig } from '..'
 import type { SpyInstance } from 'vitest'

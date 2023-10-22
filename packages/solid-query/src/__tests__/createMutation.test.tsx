@@ -1,4 +1,4 @@
-import '@testing-library/jest-dom/vitest'
+import { describe, expect, it, vi } from 'vitest'
 import {
   ErrorBoundary,
   createEffect,
@@ -6,7 +6,6 @@ import {
   createSignal,
 } from 'solid-js'
 import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
-import { vi } from 'vitest'
 import {
   MutationCache,
   QueryCache,

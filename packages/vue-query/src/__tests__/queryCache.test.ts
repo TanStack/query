@@ -1,7 +1,6 @@
+import { beforeAll, describe, expect, test, vi } from 'vitest'
 import { ref } from 'vue-demi'
 import { QueryCache as QueryCacheOrigin } from '@tanstack/query-core'
-
-import { vi } from 'vitest'
 import { QueryCache } from '../queryCache'
 
 describe('QueryCache', () => {

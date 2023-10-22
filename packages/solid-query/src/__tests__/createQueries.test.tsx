@@ -1,8 +1,8 @@
+import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
 import * as QueryCore from '@tanstack/query-core'
 
 import { createRenderEffect, createSignal } from 'solid-js'
-import { vi } from 'vitest'
 import {
   QueriesObserver,
   QueryCache,

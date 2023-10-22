@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest'
 import { fireEvent, waitFor } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'

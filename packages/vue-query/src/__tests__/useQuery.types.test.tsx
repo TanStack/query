@@ -1,3 +1,4 @@
+import { describe, it } from 'vitest'
 import { reactive } from 'vue'
 import { useQuery } from '../useQuery'
 import { doNotExecute, simpleFetcher } from './test-utils'

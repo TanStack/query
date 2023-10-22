@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest'
 import { deleteNestedDataByPath, updateNestedDataByPath } from '../utils'
 
 describe('Utils tests', () => {
