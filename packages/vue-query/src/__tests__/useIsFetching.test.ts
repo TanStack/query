@@ -1,6 +1,5 @@
+import { describe, expect, test, vi } from 'vitest'
 import { onScopeDispose, reactive } from 'vue-demi'
-
-import { vi } from 'vitest'
 import { useQuery } from '../useQuery'
 import { useIsFetching } from '../useIsFetching'
 import { flushPromises, simpleFetcher } from './test-utils'

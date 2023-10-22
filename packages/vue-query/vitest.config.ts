@@ -6,7 +6,6 @@ export default defineConfig({
     dir: './src',
     watch: false,
     environment: 'jsdom',
-    globals: true,
     setupFiles: ['test-setup.ts'],
     coverage: { provider: 'istanbul' },
     onConsoleLog: function (log) {

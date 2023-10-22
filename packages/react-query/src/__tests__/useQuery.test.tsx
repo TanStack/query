@@ -1,8 +1,7 @@
+import { describe, expect, expectTypeOf, it, test, vi } from 'vitest'
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { vi } from 'vitest'
 import { QueryCache, keepPreviousData, useQuery } from '..'
 import {
   Blink,
@@ -154,8 +153,8 @@ describe('useQuery', () => {
           queryFn: () => fetcher(qk[1], 'token'),
           ...options,
         })
-      const test = useWrappedQuery([''], async () => '1')
-      expectTypeOf<string | undefined>(test.data)
+      const testQuery = useWrappedQuery([''], async () => '1')
+      expectTypeOf<string | undefined>(testQuery.data)
 
       // handles wrapped queries with custom fetcher passed directly to useQuery
       const useWrappedFuncStyleQuery = <

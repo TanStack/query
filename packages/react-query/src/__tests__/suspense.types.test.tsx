@@ -1,3 +1,4 @@
+import { describe, it } from 'vitest'
 import { useSuspenseQuery } from '../useSuspenseQuery'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
 import { doNotExecute } from './utils'

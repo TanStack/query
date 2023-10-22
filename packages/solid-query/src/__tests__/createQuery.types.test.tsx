@@ -1,3 +1,4 @@
+import { describe, it } from 'vitest'
 import { createQuery, queryOptions } from '../index'
 
 export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
