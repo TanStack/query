@@ -1,3 +1,4 @@
+import { describe, it } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { useInfiniteQuery } from '../useInfiniteQuery'

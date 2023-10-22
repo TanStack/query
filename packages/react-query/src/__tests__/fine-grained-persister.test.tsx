@@ -1,8 +1,7 @@
+import { describe, expect, it, vi } from 'vitest'
 import { waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom/vitest'
 import * as React from 'react'
 import { QueryCache, hashKey } from '@tanstack/query-core'
-import { vi } from 'vitest'
 import { useQuery } from '..'
 import {
   PERSISTER_KEY_PREFIX,

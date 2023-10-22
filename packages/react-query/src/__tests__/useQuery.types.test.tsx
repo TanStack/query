@@ -1,3 +1,4 @@
+import { describe, it } from 'vitest'
 import { useQuery } from '../useQuery'
 import { queryOptions } from '../queryOptions'
 import { doNotExecute } from './utils'
