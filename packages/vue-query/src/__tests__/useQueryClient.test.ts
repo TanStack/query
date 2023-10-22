@@ -1,5 +1,5 @@
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { hasInjectionContext, inject } from 'vue-demi'
-import { vi } from 'vitest'
 import { useQueryClient } from '../useQueryClient'
 import { VUE_QUERY_CLIENT } from '../utils'
 import type { Mock } from 'vitest'
