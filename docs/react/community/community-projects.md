@@ -7,18 +7,86 @@ There are lots of community projects that build on top of React Query and use it
 
 > Please note that these projects are entirely community maintained. If you have questions about these projects, please reach out to the project maintainers.
 
-| Project Name | Description |
-[batshit](https://github.com/yornaath/batshit) | A batch manager that will deduplicate and batch requests for a certain data type made within a window
-[Blitz](https://blitzjs.com/) | The Missing Fullstack Toolkit for Next.js
-[GraphQL Code Generator](https://the-guild.dev/graphql/codegen) | Generate React Query hooks from your GraphQL schema
-[Kubb](https://www.kubb.dev/) | Generate SDKs for all your APIs
-[NgQuery](https://ngneat.github.io/query/) | Query adapter for Angular
-[Normy](https://github.com/klis87/normy) | Automatic normalization and data updates for data fetching libraries
-[OpenAPI codgen](https://github.com/fabien0102/openapi-codegen) | A tool for generating code based on an OpenAPI schema.
-[OpenAPI React Query codegen](https://github.com/7nohe/openapi-react-query-codegen) | Generate TanStack Query hooks based on an OpenAPI specification file.
-[Orval](https://orval.dev/) | Generate TypeScript client from OpenAPI specifications
-[Query Key factory](https://github.com/lukemorales/query-key-factory) | A library for creating typesafe standardized query keys, useful for cache management in @tanstack/query
-[React Query Kit](https://github.com/liaoliao666/react-query-kit) | 🕊️ A toolkit for ReactQuery that makes ReactQuery hooks reusable and typesafe
-[React Query Swagger](https://github.com/Shaddix/react-query-swagger) | Generate React Query hooks based on Swagger API definitions
-[tRPC](https://trpc.io/) | End-to-end typesafe APIs made easy
-[zodios](https://www.zodios.org/) | End-to-end typesafe REST API toolbox
+## batshit
+
+A batch manager that will deduplicate and batch requests for a certain data type made within a window
+
+Link: https://github.com/yornaath/batshit
+
+## Blitz
+
+The Missing Fullstack Toolkit for Next.js
+
+Link: https://blitzjs.com/
+
+## GraphQL Code Generator
+
+Generate React Query hooks from your GraphQL schema
+
+Link: https://the-guild.dev/graphql/codegen
+
+## Kubb
+
+Generate SDKs for all your APIs
+
+Link: https://www.kubb.dev/
+
+## NgQuery
+
+Query adapter for Angular
+
+Link: https://ngneat.github.io/query/
+
+## Normy
+
+Automatic normalization and data updates for data fetching libraries
+
+Link: https://github.com/klis87/normy
+
+## OpenAPI codegen
+
+A tool for generating code based on an OpenAPI schema.
+
+Link: https://github.com/fabien0102/openapi-codegen
+
+## OpenAPI React Query codegen
+
+Generate TanStack Query hooks based on an OpenAPI specification file.
+
+Link: https://github.com/7nohe/openapi-react-query-codegen
+
+## Orval
+
+Generate TypeScript client from OpenAPI specifications
+
+Link: https://orval.dev/
+
+## Query Key factory
+
+A library for creating typesafe standardized query keys, useful for cache management in `@tanstack/query`
+
+Link: https://github.com/lukemorales/query-key-factory
+
+## React Query Kit
+
+🕊️ A toolkit for ReactQuery that makes ReactQuery hooks reusable and typesafe
+
+Link: https://github.com/liaoliao666/react-query-kit
+
+## React Query Swagger
+
+Generate React Query hooks based on Swagger API definitions
+
+Link: https://github.com/Shaddix/react-query-swagger
+
+## tRPC
+
+End-to-end typesafe APIs made easy
+
+Link: https://trpc.io/
+
+## zodios
+
+End-to-end typesafe REST API toolbox
+
+Link: https://www.zodios.org/
