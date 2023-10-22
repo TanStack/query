@@ -13,6 +13,7 @@ There are lots of community projects that build on top of React Query and use it
 [GraphQL Code Generator](https://the-guild.dev/graphql/codegen) | Generate React Query hooks from your GraphQL schema
 [Kubb](https://www.kubb.dev/) | Generate SDKs for all your APIs
 [NgQuery](https://ngneat.github.io/query/) | Query adapter for Angular
+[Normy](https://github.com/klis87/normy) | Automatic normalization and data updates for data fetching libraries
 [OpenAPI codgen](https://github.com/fabien0102/openapi-codegen) | A tool for generating code based on an OpenAPI schema.
 [OpenAPI React Query codegen](https://github.com/7nohe/openapi-react-query-codegen) | Generate TanStack Query hooks based on an OpenAPI specification file.
 [Orval](https://orval.dev/) | Generate TypeScript client from OpenAPI specifications
