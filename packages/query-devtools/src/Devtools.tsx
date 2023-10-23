@@ -628,15 +628,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
             <MutationStatusCount />
           </Show>
         </div>
-        <div
-          class={cx(
-            styles().row,
-            css`
-              gap: ${tokens.size[2.5]};
-            `,
-            'tsqd-filters-actions-container',
-          )}
-        >
+        <div class={cx(styles().row, 'tsqd-filters-actions-container')}>
           <div class={cx(styles().filtersContainer, 'tsqd-filters-container')}>
             <div
               class={cx(
@@ -2385,7 +2377,7 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       justify-content: space-between;
       align-items: center;
       padding: ${tokens.size[2]} ${tokens.size[2.5]};
-      gap: ${tokens.size[3]};
+      gap: ${tokens.size[2.5]};
       border-bottom: ${t(colors.gray[300], colors.darkGray[500])} 1px solid;
       align-items: center;
       & > button {
@@ -2399,7 +2391,7 @@ const stylesFactory = (theme: 'light' | 'dark') => {
     `,
     logoAndToggleContainer: css`
       display: flex;
-      gap: ${tokens.size[2.5]};
+      gap: ${tokens.size[3]};
       align-items: center;
     `,
     logo: css`
