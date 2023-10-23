@@ -2399,12 +2399,17 @@ const stylesFactory = (theme: 'light' | 'dark') => {
     `,
     logoAndToggleContainer: css`
       display: flex;
-      gap: ${tokens.size[3]};
+      gap: ${tokens.size[2.5]};
+      align-items: center;
     `,
     logo: css`
       cursor: pointer;
       display: flex;
       flex-direction: column;
+      background-color: transparent;
+      border: none;
+      gap: ${tokens.size[0.5]};
+      padding: 0px;
       &:hover {
         opacity: 0.7;
       }
@@ -2979,6 +2984,7 @@ const stylesFactory = (theme: 'light' | 'dark') => {
           display: flex;
           align-items: center;
           cursor: pointer;
+          line-height: ${font.lineHeight.md};
         }
 
         & label:hover {
