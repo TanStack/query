@@ -3,7 +3,7 @@ import { render, waitFor } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
 import CreateQueries from './CreateQueries.svelte'
 import { sleep } from './utils'
-import type { QueriesResults } from "../createQueries"
+import type { QueriesResults } from '../createQueries'
 
 describe('createQueries', () => {
   it('Render and wait for success', async () => {
@@ -48,28 +48,23 @@ describe('createQueries', () => {
     const rendered = render(CreateQueries, {
       props: {
         options: {
-          queries: ids.map(id => (
-            {
-              queryKey: [id],
-              queryFn: async () => {
-                await sleep(10)
-                return id
-              }
-            }
-          )),
+          queries: ids.map((id) => ({
+            queryKey: [id],
+            queryFn: async () => {
+              await sleep(10)
+              return id
+            },
+          })),
           combine: (results: QueriesResults<Array<number>>) => {
             return {
-              combined: true,
-              res: results.map((res) => res.data).join(','),
+              data: results.map((res) => res.data).join(','),
             }
           },
         },
         queryClient: new QueryClient(),
-      }
+      },
     })
 
-    await waitFor(() =>
-      expect(rendered.getByText('1,2,3')).toBeInTheDocument()
-    )
+    await waitFor(() => expect(rendered.getByText('1,2,3')).toBeInTheDocument())
   })
 })

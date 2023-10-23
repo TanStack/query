@@ -252,7 +252,8 @@ export function createQueries<
   const { subscribe } = derived(
     [result, defaultedQueriesStore],
     ([$result, $defaultedQueries]) => {
-      const [raw, getCombined, track] = observer.getOptimisticResult($defaultedQueries)
+      const [raw, getCombined, track] =
+        observer.getOptimisticResult($defaultedQueries)
       $result = raw
       return getCombined(track())
     },

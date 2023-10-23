@@ -12,10 +12,14 @@
   const queries = createQueries(options, queryClient)
 </script>
 
-{#each $queries as query, index}
-  {#if query.isPending}
-    <p>Loading {index + 1}</p>
-  {:else if query.isSuccess}
-    <p>{query.data}</p>
-  {/if}
-{/each}
+{#if Array.isArray($queries)}
+  {#each $queries as query, index}
+    {#if query.isPending}
+      <p>Loading {index + 1}</p>
+    {:else if query.isSuccess}
+      <p>{query.data}</p>
+    {/if}
+  {/each}
+{:else if $queries.data}
+  <p>{$queries.data}</p>
+{/if}
