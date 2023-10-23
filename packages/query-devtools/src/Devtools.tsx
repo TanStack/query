@@ -570,24 +570,57 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
         )}
       >
         <div class={cx(styles().row, 'tsqd-header')}>
-          <button
-            class={cx(styles().logo, 'tsqd-text-logo-container')}
-            onClick={() => props.setLocalStore('open', 'false')}
-            aria-label="Close Tanstack query devtools"
-          >
-            <span class={cx(styles().tanstackLogo, 'tsqd-text-logo-tanstack')}>
-              TANSTACK
-            </span>
-            <span
-              class={cx(
-                styles().queryFlavorLogo,
-                'tsqd-text-logo-query-flavor',
-              )}
+          <div class={styles().logoAndToggleContainer}>
+            <button
+              class={cx(styles().logo, 'tsqd-text-logo-container')}
+              onClick={() => props.setLocalStore('open', 'false')}
+              aria-label="Close Tanstack query devtools"
             >
-              {useQueryDevtoolsContext().queryFlavor} v
-              {useQueryDevtoolsContext().version}
-            </span>
-          </button>
+              <span
+                class={cx(styles().tanstackLogo, 'tsqd-text-logo-tanstack')}
+              >
+                TANSTACK
+              </span>
+              <span
+                class={cx(
+                  styles().queryFlavorLogo,
+                  'tsqd-text-logo-query-flavor',
+                )}
+              >
+                {useQueryDevtoolsContext().queryFlavor} v
+                {useQueryDevtoolsContext().version}
+              </span>
+            </button>
+            <RadioGroup.Root
+              class={cx(styles().viewToggle)}
+              value={selectedView()}
+              onChange={(value) => {
+                setSelectedView(value as 'queries' | 'mutations')
+                setSelectedQueryHash(null)
+                setSelectedMutationId(null)
+              }}
+            >
+              <RadioGroup.Item value="queries" class="tsqd-radio-toggle">
+                <RadioGroup.ItemInput />
+                <RadioGroup.ItemControl>
+                  <RadioGroup.ItemIndicator />
+                </RadioGroup.ItemControl>
+                <RadioGroup.ItemLabel title="Toggle Queries View">
+                  Queries
+                </RadioGroup.ItemLabel>
+              </RadioGroup.Item>
+              <RadioGroup.Item value="mutations" class="tsqd-radio-toggle">
+                <RadioGroup.ItemInput />
+                <RadioGroup.ItemControl>
+                  <RadioGroup.ItemIndicator />
+                </RadioGroup.ItemControl>
+                <RadioGroup.ItemLabel title="Toggle Mutations View">
+                  Mutations
+                </RadioGroup.ItemLabel>
+              </RadioGroup.Item>
+            </RadioGroup.Root>
+          </div>
+
           <Show when={selectedView() === 'queries'}>
             <QueryStatusCount />
           </Show>
@@ -712,35 +745,6 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
           </div>
 
           <div class={cx(styles().actionsContainer, 'tsqd-actions-container')}>
-            <RadioGroup.Root
-              class={cx(styles().viewToggle)}
-              value={selectedView()}
-              onChange={(value) => {
-                setSelectedView(value as 'queries' | 'mutations')
-                setSelectedQueryHash(null)
-                setSelectedMutationId(null)
-              }}
-            >
-              <RadioGroup.Item value="queries" class="tsqd-radio-toggle">
-                <RadioGroup.ItemInput />
-                <RadioGroup.ItemControl>
-                  <RadioGroup.ItemIndicator />
-                </RadioGroup.ItemControl>
-                <RadioGroup.ItemLabel title="Toggle Queries View">
-                  {panelWidth() < thirdBreakpoint ? 'Q' : 'Queries'}
-                </RadioGroup.ItemLabel>
-              </RadioGroup.Item>
-              <RadioGroup.Item value="mutations" class="tsqd-radio-toggle">
-                <RadioGroup.ItemInput />
-                <RadioGroup.ItemControl>
-                  <RadioGroup.ItemIndicator />
-                </RadioGroup.ItemControl>
-                <RadioGroup.ItemLabel title="Toggle Mutations View">
-                  {panelWidth() < thirdBreakpoint ? 'M' : 'Mutations'}
-                </RadioGroup.ItemLabel>
-              </RadioGroup.Item>
-            </RadioGroup.Root>
-
             <button
               onClick={() => {
                 if (selectedView() === 'queries') {
@@ -2393,8 +2397,14 @@ const stylesFactory = (theme: 'light' | 'dark') => {
         flex-direction: column;
       }
     `,
+    logoAndToggleContainer: css`
+      display: flex;
+      gap: ${tokens.size[3]};
+    `,
     logo: css`
       cursor: pointer;
+      display: flex;
+      flex-direction: column;
       &:hover {
         opacity: 0.7;
       }
@@ -2958,7 +2968,7 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       color: ${t(colors.gray[700], colors.gray[300])};
       overflow: hidden;
 
-      &:focus-visible {
+      &:has(:focus-visible) {
         outline: 2px solid ${colors.blue[800]};
       }
 
