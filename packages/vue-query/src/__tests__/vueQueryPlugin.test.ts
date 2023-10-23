@@ -1,6 +1,5 @@
+import { describe, expect, test, vi } from 'vitest'
 import { isVue2, isVue3, ref } from 'vue-demi'
-
-import { vi } from 'vitest'
 import { QueryClient } from '../queryClient'
 import { VueQueryPlugin } from '../vueQueryPlugin'
 import { VUE_QUERY_CLIENT } from '../utils'

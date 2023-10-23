@@ -1,5 +1,5 @@
-import { QueryClient } from '@tanstack/query-core'
 import { vi } from 'vitest'
+import { QueryClient } from '@tanstack/query-core'
 import type { QueryClientConfig } from '@tanstack/query-core'
 import type { PersistedClient, Persister } from '../persist'
 

@@ -1,4 +1,4 @@
-import { expect, vi } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
 import { MutationCache } from '../mutationCache'

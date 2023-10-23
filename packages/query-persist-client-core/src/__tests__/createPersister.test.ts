@@ -1,5 +1,5 @@
+import { describe, expect, test, vi } from 'vitest'
 import { Query, QueryCache, hashKey } from '@tanstack/query-core'
-import { vi } from 'vitest'
 import {
   PERSISTER_KEY_PREFIX,
   experimental_createPersister,

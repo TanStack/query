@@ -1,7 +1,7 @@
+import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { vi } from 'vitest'
 import {
   QueryCache,
   QueryErrorResetBoundary,
@@ -816,7 +816,7 @@ describe('useSuspenseQueries', () => {
       })
       return (
         <div>
-          <h1>data: {result.map((it) => it.data ?? 'null').join(',')}</h1>
+          <h1>data: {result.map((item) => item.data ?? 'null').join(',')}</h1>
         </div>
       )
     }
@@ -871,7 +871,7 @@ describe('useSuspenseQueries', () => {
       })
       return (
         <div>
-          <h1>data: {result.map((it) => it.data ?? 'null').join(',')}</h1>
+          <h1>data: {result.map((item) => item.data ?? 'null').join(',')}</h1>
         </div>
       )
     }

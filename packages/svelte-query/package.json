@@ -46,9 +46,9 @@
     "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
-    "@sveltejs/package": "^2.2.0",
+    "@sveltejs/package": "^2.2.2",
     "@sveltejs/vite-plugin-svelte": "^2.4.6",
-    "@testing-library/svelte": "^4.0.3",
+    "@testing-library/svelte": "^4.0.4",
     "eslint-plugin-svelte": "^2.32.0",
     "svelte": "^4.0.0",
     "svelte-check": "^3.4.4"

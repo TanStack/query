@@ -27,10 +27,10 @@ jobs:
     name: 'Test & Publish'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: '0'
-      - uses: pnpm/action-setup@v2.2.4
+      - uses: pnpm/action-setup@v2
         with:
           version: 8
       - uses: actions/setup-node@v3
