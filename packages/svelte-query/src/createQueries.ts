@@ -229,16 +229,13 @@ export function createQueries<
     )
   })
 
-  const result = derived(
-    isRestoring,
-    ($isRestoring, set) => {
-      const unsubscribe = $isRestoring
-        ? () => undefined
-        : observer.subscribe(notifyManager.batchCalls(set))
+  const result = derived([isRestoring], ([$isRestoring], set) => {
+    const unsubscribe = $isRestoring
+      ? () => undefined
+      : observer.subscribe(notifyManager.batchCalls(set))
 
-      return () => unsubscribe()
-    },
-  )
+    return () => unsubscribe()
+  })
 
   const { subscribe } = derived(
     [result, defaultedQueriesStore],

@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { QueryClient } from '@tanstack/query-core'
   import { createQueries } from '../createQueries'
+  import type { QueryClient } from '@tanstack/query-core'
   import type { QueriesOptions, QueriesResults } from '../createQueries'
 
   export let options: {
     queries: [...QueriesOptions<any>]
-    combine?: (result: QueriesResults<any[]>) => any
+    combine?: (result: QueriesResults<Array<any>>) => any
   }
   export let queryClient: QueryClient
 
@@ -20,10 +20,8 @@
       <p>{query.data}</p>
     {/if}
   {/each}
-{:else}
-  {#if $queries.isPending}
-    <p>Loading</p>
-  {:else if $queries.isSuccess}
-    <p>{$queries.data}</p>
-  {/if}
+{:else if $queries.isPending}
+  <p>Loading</p>
+{:else if $queries.isSuccess}
+  <p>{$queries.data}</p>
 {/if}

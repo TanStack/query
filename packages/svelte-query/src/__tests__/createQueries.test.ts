@@ -56,8 +56,8 @@ describe('createQueries', () => {
           })),
           combine: (results) => {
             return {
-              isPending: results.some(result => result.isPending),
-              isSuccess: results.every(result => result.isSuccess),
+              isPending: results.some((result) => result.isPending),
+              isSuccess: results.every((result) => result.isSuccess),
               data: results.map((res) => res.data).join(','),
             }
           },
