@@ -241,8 +241,9 @@ export function createQueries<
     [result, defaultedQueriesStore],
     // @ts-expect-error Need to subscribe to result but it doesn't need to be used
     ([$result, $defaultedQueriesStore]) => {
-      const [, combineResult, trackResult] =
-        observer.getOptimisticResult($defaultedQueriesStore)
+      const [, combineResult, trackResult] = observer.getOptimisticResult(
+        $defaultedQueriesStore,
+      )
       return combineResult(trackResult())
     },
   )
