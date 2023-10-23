@@ -1,6 +1,6 @@
 import { serialize } from 'superjson'
 import { createSignal, onCleanup, onMount } from 'solid-js'
-import type { Query } from '@tanstack/query-core'
+import type { Mutation, Query } from '@tanstack/query-core'
 import type { DevtoolsPosition } from './Context'
 
 export function getQueryStatusLabel(query: Query) {
@@ -51,6 +51,24 @@ export function getQueryStatusColor({
     : isStale
     ? 'yellow'
     : 'green'
+}
+
+export function getMutationStatusColor({
+  status,
+  isPaused,
+}: {
+  status: Mutation['state']['status']
+  isPaused: boolean
+}) {
+  return isPaused
+    ? 'purple'
+    : status === 'error'
+    ? 'red'
+    : status === 'pending'
+    ? 'yellow'
+    : status === 'success'
+    ? 'green'
+    : 'gray'
 }
 
 export function getQueryStatusColorByLabel(label: IQueryStatusLabel) {
@@ -105,6 +123,33 @@ export const sortFns: Record<string, SortFn> = {
   status: statusAndDateSort,
   'query hash': queryHashSort,
   'last updated': dateSort,
+}
+
+type MutationSortFn = (a: Mutation, b: Mutation) => number
+
+const getMutationStatusRank = (m: Mutation) =>
+  m.state.isPaused
+    ? 0
+    : m.state.status === 'error'
+    ? 2
+    : m.state.status === 'pending'
+    ? 1
+    : 3
+
+const mutationDateSort: MutationSortFn = (a, b) =>
+  a.state.submittedAt < b.state.submittedAt ? 1 : -1
+
+const mutationStatusSort: MutationSortFn = (a, b) => {
+  if (getMutationStatusRank(a) === getMutationStatusRank(b)) {
+    return mutationDateSort(a, b)
+  }
+
+  return getMutationStatusRank(a) > getMutationStatusRank(b) ? 1 : -1
+}
+
+export const mutationSortFns: Record<string, MutationSortFn> = {
+  status: mutationStatusSort,
+  'last updated': mutationDateSort,
 }
 
 export const convertRemToPixels = (rem: number) => {
