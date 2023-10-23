@@ -239,10 +239,10 @@ export function createQueries<
 
   const { subscribe } = derived(
     [result, defaultedQueriesStore],
+    // @ts-ignore Need to subscribe to result but it doesn't need to be used
     ([$result, $defaultedQueriesStore]) => {
-      const [rawResult, combineResult, trackResult] =
+      const [, combineResult, trackResult] =
         observer.getOptimisticResult($defaultedQueriesStore)
-      $result = rawResult
       return combineResult(trackResult())
     },
   )
