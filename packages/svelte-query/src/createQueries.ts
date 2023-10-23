@@ -252,17 +252,11 @@ export function createQueries<
   const { subscribe } = derived(
     [result, defaultedQueriesStore],
     ([$result, $defaultedQueries]) => {
-      $result = observer.getOptimisticResult($defaultedQueries)[0]
-      const observers = observer.getObservers()
-      return $defaultedQueries.map((query, index) =>
-        query.notifyOnChangeProps
-          ? // @ts-expect-error TCombinedResult should be an array
-            $result[index]
-          : // @ts-expect-error TCombinedResult should be an array
-            observers[index]!.trackResult($result[index]),
-      )
+      const [raw, getCombined, track] = observer.getOptimisticResult($defaultedQueries)
+      $result = raw
+      return getCombined(track())
     },
   )
-  // @ts-expect-error TCombinedResult should be an array
+
   return { subscribe }
 }
