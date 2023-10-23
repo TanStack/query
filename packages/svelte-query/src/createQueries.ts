@@ -239,7 +239,7 @@ export function createQueries<
 
   const { subscribe } = derived(
     [result, defaultedQueriesStore],
-    // @ts-ignore Need to subscribe to result but it doesn't need to be used
+    // @ts-expect-error Need to subscribe to result but it doesn't need to be used
     ([$result, $defaultedQueriesStore]) => {
       const [, combineResult, trackResult] =
         observer.getOptimisticResult($defaultedQueriesStore)
