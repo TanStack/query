@@ -1,5 +1,5 @@
 import { describe, it } from 'vitest'
-import { reactive } from 'vue'
+import { reactive } from 'vue-demi'
 import { useMutation } from '../useMutation'
 import { doNotExecute, successMutator } from './test-utils'
 import type { Equal, Expect } from './test-utils'
