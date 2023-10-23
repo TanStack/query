@@ -136,7 +136,7 @@ A few notes about how codemod works:
 
 `onSuccess`, `onError` and `onSettled` have been removed from Queries. They haven't been touched for Mutations. Please see [this RFC](https://github.com/TanStack/query/discussions/5279) for motivations behind this change and what to do instead.
 
-### The `refetchInteval` callback function only gets `query` passed
+### The `refetchInterval` callback function only gets `query` passed
 
 This streamlines how callbacks are invoked (the `refetchOnWindowFocus`, `refetchOnMount` and `refetchOnReconnect` callbacks all only get the query passed as well), and it fixes some typing issues when callbacks get data transformed by `select`.
 
