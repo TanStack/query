@@ -1,4 +1,4 @@
-import type { InfiniteData, DefaultError, QueryKey } from '@tanstack/query-core'
+import type { DefaultError, InfiniteData, QueryKey } from '@tanstack/query-core'
 import type { CreateInfiniteQueryOptions } from './types'
 
 export function infiniteQueryOptions<
