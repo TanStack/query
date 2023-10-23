@@ -239,11 +239,12 @@ export function createQueries<
 
   const { subscribe } = derived(
     [result, defaultedQueriesStore],
-    // @ts-expect-error Need to subscribe to result but it doesn't need to be used
+    // @ts-ignore svelte-check thinks this is unused
     ([$result, $defaultedQueriesStore]) => {
-      const [, combineResult, trackResult] = observer.getOptimisticResult(
+      const [rawResult, combineResult, trackResult] = observer.getOptimisticResult(
         $defaultedQueriesStore,
       )
+      $result = rawResult
       return combineResult(trackResult())
     },
   )
