@@ -20,6 +20,10 @@
       <p>{query.data}</p>
     {/if}
   {/each}
-{:else if $queries.data}
-  <p>{$queries.data}</p>
+{:else}
+  {#if $queries.isPending}
+    <p>Loading</p>
+  {:else if $queries.isSuccess}
+    <p>{$queries.data}</p>
+  {/if}
 {/if}

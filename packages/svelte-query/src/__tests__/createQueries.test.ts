@@ -3,7 +3,6 @@ import { render, waitFor } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
 import CreateQueries from './CreateQueries.svelte'
 import { sleep } from './utils'
-import type { QueriesResults } from '../createQueries'
 
 describe('createQueries', () => {
   it('Render and wait for success', async () => {
@@ -55,8 +54,10 @@ describe('createQueries', () => {
               return id
             },
           })),
-          combine: (results: QueriesResults<Array<number>>) => {
+          combine: (results) => {
             return {
+              isPending: results.some(result => result.isPending),
+              isSuccess: results.every(result => result.isSuccess),
               data: results.map((res) => res.data).join(','),
             }
           },
@@ -65,6 +66,12 @@ describe('createQueries', () => {
       },
     })
 
-    await waitFor(() => expect(rendered.getByText('1,2,3')).toBeInTheDocument())
+    await waitFor(() => {
+      expect(rendered.getByText('Loading')).toBeInTheDocument()
+    })
+
+    await waitFor(() => {
+      expect(rendered.getByText('1,2,3')).toBeInTheDocument()
+    })
   })
 })
