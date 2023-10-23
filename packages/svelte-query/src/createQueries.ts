@@ -229,15 +229,7 @@ export function createQueries<
     )
   })
 
-  const [, getCombinedResult, trackResult] = observer.getOptimisticResult(
-    get(defaultedQueriesStore),
-  )
-
-  const result = derived<
-    typeof isRestoring,
-    | Parameters<Parameters<typeof observer.subscribe>[0]>[0]
-    | ReturnType<typeof getCombinedResult>
-  >(
+  const result = derived(
     isRestoring,
     ($isRestoring, set) => {
       const unsubscribe = $isRestoring
@@ -246,16 +238,15 @@ export function createQueries<
 
       return () => unsubscribe()
     },
-    getCombinedResult(trackResult()),
   )
 
   const { subscribe } = derived(
     [result, defaultedQueriesStore],
-    ([$result, $defaultedQueries]) => {
-      const [raw, getCombined, track] =
-        observer.getOptimisticResult($defaultedQueries)
-      $result = raw
-      return getCombined(track())
+    ([$result, $defaultedQueriesStore]) => {
+      const [rawResult, combineResult, trackResult] =
+        observer.getOptimisticResult($defaultedQueriesStore)
+      $result = rawResult
+      return combineResult(trackResult())
     },
   )
 
