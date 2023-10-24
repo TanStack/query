@@ -55,6 +55,12 @@ Generate TanStack Query hooks based on an OpenAPI specification file.
 
 Link: https://github.com/7nohe/openapi-react-query-codegen
 
+### OpenAPI zod client
+
+Generate a zodios client from an OpenAPI specification
+
+Link: https://github.com/astahmer/openapi-zod-client
+
 ## Orval
 
 Generate TypeScript client from OpenAPI specifications
@@ -84,6 +90,12 @@ Link: https://github.com/Shaddix/react-query-swagger
 End-to-end typesafe APIs made easy
 
 Link: https://trpc.io/
+
+## ts-rest
+
+Incrementally adoptable type-safety for your new and existing APIs
+
+Link: https://ts-rest.com/
 
 ## zodios
 
