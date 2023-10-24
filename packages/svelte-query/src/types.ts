@@ -10,10 +10,10 @@ import type {
   QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { Readable, Writable } from 'svelte/store'
+import type { Readable } from 'svelte/store'
 
 /** Allows a type to be either the base object or a store of that object */
-export type StoreOrVal<T> = T | Readable<T> | Writable<T>
+export type StoreOrVal<T> = T | Readable<T>
 
 /** Options for createBaseQuery */
 export type CreateBaseQueryOptions<
@@ -22,9 +22,7 @@ export type CreateBaseQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = StoreOrVal<
-  QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
->
+> = QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
 
 /** Result from createBaseQuery */
 export type CreateBaseQueryResult<
@@ -54,15 +52,13 @@ export type CreateInfiniteQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> = StoreOrVal<
-  InfiniteQueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey,
-    TPageParam
-  >
+> = InfiniteQueryObserverOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryData,
+  TQueryKey,
+  TPageParam
 >
 
 /** Result from createInfiniteQuery */

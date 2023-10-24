@@ -5,25 +5,12 @@ import type {
   CreateQueryOptions,
   CreateQueryResult,
   DefinedCreateQueryResult,
+  StoreOrVal,
 } from './types'
-
-type UndefinedInitialDataOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-> = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
-  initialData?: undefined
-}
-
-type DefinedInitialDataOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-> = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
-  initialData: TQueryFnData | (() => TQueryFnData)
-}
+import type {
+  DefinedInitialDataOptions,
+  UndefinedInitialDataOptions,
+} from './queryOptions'
 
 export function createQuery<
   TQueryFnData = unknown,
@@ -31,7 +18,9 @@ export function createQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: StoreOrVal<
+    UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  >,
   queryClient?: QueryClient,
 ): CreateQueryResult<TData, TError>
 
@@ -41,7 +30,9 @@ export function createQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: StoreOrVal<
+    DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  >,
   queryClient?: QueryClient,
 ): DefinedCreateQueryResult<TData, TError>
 
@@ -51,7 +42,9 @@ export function createQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: StoreOrVal<
+    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+  >,
   queryClient?: QueryClient,
 ) {
   return createBaseQuery(options, QueryObserver, queryClient)
