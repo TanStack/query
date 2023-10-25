@@ -463,6 +463,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
   setupQueryCacheSubscription()
   setupMutationCacheSubscription()
 
+  let containerRef!: HTMLDivElement
   const theme = useTheme()
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles : lightStyles
@@ -572,6 +573,13 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
     props.setLocalStore('position', pos)
   }
 
+  // Sets the Font Size variable on portal menu elements since they will be outside
+  // the main panel container
+  const setComputedVariables = (el: HTMLDivElement) => {
+    const computedStyle = getComputedStyle(containerRef)
+    const variable = computedStyle.getPropertyValue('--tsqd-font-size')
+    el.style.setProperty('--tsqd-font-size', variable)
+  }
   return (
     <>
       <div
@@ -587,6 +595,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
             `,
           'tsqd-queries-container',
         )}
+        ref={containerRef}
       >
         <div class={cx(styles().row, 'tsqd-header')}>
           <div class={styles().logoAndToggleContainer}>
@@ -815,7 +824,9 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
               >
                 <Settings />
               </DropdownMenu.Trigger>
-              <DropdownMenu.Portal>
+              <DropdownMenu.Portal
+                ref={(el) => setComputedVariables(el as HTMLDivElement)}
+              >
                 <DropdownMenu.Content
                   class={cx(styles().settingsMenu, 'tsqd-settings-menu')}
                 >
@@ -838,7 +849,9 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
                       <span>Position</span>
                       <ChevronDown />
                     </DropdownMenu.SubTrigger>
-                    <DropdownMenu.Portal>
+                    <DropdownMenu.Portal
+                      ref={(el) => setComputedVariables(el as HTMLDivElement)}
+                    >
                       <DropdownMenu.SubContent
                         class={cx(
                           styles().settingsMenu,
@@ -915,7 +928,9 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
                       <span>Theme</span>
                       <ChevronDown />
                     </DropdownMenu.SubTrigger>
-                    <DropdownMenu.Portal>
+                    <DropdownMenu.Portal
+                      ref={(el) => setComputedVariables(el as HTMLDivElement)}
+                    >
                       <DropdownMenu.SubContent
                         class={cx(
                           styles().settingsMenu,
