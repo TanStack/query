@@ -371,15 +371,14 @@ async function run() {
   }
 
   console.info()
-  console.info(`Publishing all packages to npm with tag "${npmTag}"`)
+  console.info(`Publishing all packages to npm`)
 
   // Publish each package
   changedPackages.forEach((pkg) => {
     const packageDir = path.join(rootDir, 'packages', pkg.packageDir)
-    const cmd = `cd ${packageDir} && pnpm publish --tag ${npmTag} --access=public --no-git-checks`
-    console.info(
-      `  Publishing ${pkg.name}@${version} to npm with tag "${npmTag}"...`,
-    )
+    const tagParam = branchConfig.previousVersion ? `--tag ${npmTag}` : ''
+    const cmd = `cd ${packageDir} && pnpm publish ${tagParam} --access=public --no-git-checks`
+    console.info(`  Publishing ${pkg.name}@${version} to npm "${tagParam}"...`)
     execSync(cmd, {
       stdio: [process.stdin, process.stdout, process.stderr],
     })

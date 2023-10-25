@@ -24,7 +24,7 @@ env:
 
 jobs:
   test-and-publish:
-    if: github.repository == 'TanStack/query' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/beta' || github.ref == 'refs/heads/rc' || github.ref == 'refs/heads/v4')
+    if: github.repository == 'TanStack/query'
     name: 'Test & Publish'
     runs-on: ubuntu-latest
     steps:
