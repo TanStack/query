@@ -376,7 +376,7 @@ async function run() {
   // Publish each package
   changedPackages.forEach((pkg) => {
     const packageDir = path.join(rootDir, 'packages', pkg.packageDir)
-    const tagParam = branchConfig.previousVersion ? `--tag ${npmTag}` : ''
+    const tagParam = branchConfig.previousVersion ? `` : `--tag ${npmTag}`
     const cmd = `cd ${packageDir} && pnpm publish ${tagParam} --access=public --no-git-checks`
     console.info(`  Publishing ${pkg.name}@${version} to npm "${tagParam}"...`)
     execSync(cmd, {
