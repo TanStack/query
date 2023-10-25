@@ -10,8 +10,8 @@ import log from 'git-log-parser'
 import streamToArray from 'stream-to-array'
 import axios from 'axios'
 import { DateTime } from 'luxon'
-import { branchConfigs, latestBranch, packages, rootDir } from './config'
-import type { BranchConfig, Commit, Package } from './types'
+import { branchConfigs, packages, rootDir } from './config'
+import type { BranchConfig, Commit } from './types'
 
 import type { PackageJson } from 'type-fest'
 
@@ -22,8 +22,10 @@ async function run() {
     process.env.BRANCH ??
     // (process.env.PR_NUMBER ? `pr-${process.env.PR_NUMBER}` : currentGitBranch())
     currentGitBranch()
+  const branchConfig: BranchConfig | undefined = branchConfigs[branchName]
 
   const isMainBranch = branchName === 'main'
+  const isPreviousRelease = branchConfig?.previousVersion
   const npmTag = isMainBranch ? 'latest' : branchName
 
   // Get tags
@@ -33,6 +35,10 @@ async function run() {
   tags = tags
     .filter((tag) => semver.valid(tag))
     .filter((tag) => {
+      // If this is an older release, filter to only include that version
+      if (isPreviousRelease) {
+        return tag.startsWith(branchName)
+      }
       if (semver.prerelease(tag) === null) {
         return isMainBranch
       } else {
@@ -286,8 +292,6 @@ async function run() {
     recommendedReleaseLevel = 0
   }
 
-  const branchConfig: BranchConfig | undefined = branchConfigs[branchName]
-
   if (!branchConfig) {
     console.log(`No publish config found for branch: ${branchName}`)
     console.log('Exiting...')
@@ -405,7 +409,7 @@ async function run() {
   // Stringify the markdown to excape any quotes
   execSync(
     `gh release create v${version} ${
-      !isMainBranch ? '--prerelease' : ''
+      branchConfig.prerelease ? '--prerelease' : ''
     } --notes '${changelogMd.replace(/'/g, '"')}'`,
   )
   console.info(`  Github release created.`)
