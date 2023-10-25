@@ -29,7 +29,6 @@ export type UseBaseQueryReturnType<
     | 'fetchNextPage'
     | 'fetchPreviousPage'
     | 'refetch'
-    | 'remove'
     ? Result[K]
     : ToRef<Readonly<Result>[K]>
 } & {
