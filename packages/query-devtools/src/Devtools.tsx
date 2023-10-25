@@ -161,8 +161,9 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
     )
   })
 
+  let transitionsContainerRef!: HTMLDivElement
   createEffect(() => {
-    const root = document.querySelector('.tsqd-parent-container') as HTMLElement
+    const root = transitionsContainerRef.parentElement as HTMLElement
     const height = props.localStore.height || DEFAULT_HEIGHT
     const width = props.localStore.width || DEFAULT_WIDTH
     const panelPosition = position()
@@ -174,6 +175,23 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
       '--tsqd-panel-width',
       `${panelPosition === 'left' ? '-' : ''}${width}px`,
     )
+  })
+
+  // Calculates the inherited font size of the parent and sets it as a CSS variable
+  // All the design tokens are calculated based on this variable
+  onMount(() => {
+    // This is to make sure that the font size is updated when the stylesheet is updated
+    // and the user focuses back on the window
+    const onFocus = () => {
+      const root = transitionsContainerRef.parentElement as HTMLElement
+      const fontSize = getComputedStyle(root).fontSize
+      root.style.setProperty('--tsqd-font-size', fontSize)
+    }
+    onFocus()
+    window.addEventListener('focus', onFocus)
+    onCleanup(() => {
+      window.removeEventListener('focus', onFocus)
+    })
   })
 
   return (
@@ -209,6 +227,7 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
         `,
         'tsqd-transitions-container',
       )}
+      ref={transitionsContainerRef}
     >
       <TransitionGroup name="tsqd-panel-transition">
         <Show when={isOpen()}>
@@ -1800,7 +1819,7 @@ const QueryDetails = () => {
         </div>
         <div
           style={{
-            padding: '0.5rem',
+            padding: tokens.size[2],
           }}
           class="tsqd-query-details-explorer-container tsqd-query-details-data-explorer"
         >
@@ -1817,7 +1836,7 @@ const QueryDetails = () => {
         </div>
         <div
           style={{
-            padding: '0.5rem',
+            padding: tokens.size[2],
           }}
           class="tsqd-query-details-explorer-container tsqd-query-details-query-explorer"
         >
@@ -1935,7 +1954,7 @@ const MutationDetails = () => {
         </div>
         <div
           style={{
-            padding: '0.5rem',
+            padding: tokens.size[2],
           }}
           class="tsqd-query-details-explorer-container tsqd-query-details-query-explorer"
         >
@@ -1950,7 +1969,7 @@ const MutationDetails = () => {
         </div>
         <div
           style={{
-            padding: '0.5rem',
+            padding: tokens.size[2],
           }}
           class="tsqd-query-details-explorer-container tsqd-query-details-query-explorer"
         >
@@ -1965,7 +1984,7 @@ const MutationDetails = () => {
         </div>
         <div
           style={{
-            padding: '0.5rem',
+            padding: tokens.size[2],
           }}
           class="tsqd-query-details-explorer-container tsqd-query-details-query-explorer"
         >
@@ -1980,7 +1999,7 @@ const MutationDetails = () => {
         </div>
         <div
           style={{
-            padding: '0.5rem',
+            padding: tokens.size[2],
           }}
           class="tsqd-query-details-explorer-container tsqd-query-details-query-explorer"
         >
@@ -2195,7 +2214,7 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       right: 0;
       left: 0;
       max-height: 90%;
-      min-height: 3.5rem;
+      min-height: ${size[14]};
       border-bottom: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
     `,
     'panel-position-bottom': css`
@@ -2203,7 +2222,7 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       right: 0;
       left: 0;
       max-height: 90%;
-      min-height: 3.5rem;
+      min-height: ${size[14]};
       border-top: ${t(colors.gray[400], colors.darkGray[300])} 1px solid;
     `,
     'panel-position-right': css`
@@ -2535,6 +2554,8 @@ const stylesFactory = (theme: 'light' | 'dark') => {
           outline: 2px solid ${colors.blue[800]};
         }
         & svg {
+          width: ${tokens.size[3]};
+          height: ${tokens.size[3]};
           color: ${t(colors.gray[500], colors.gray[400])};
         }
       }
@@ -2620,8 +2641,8 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       border-radius: ${tokens.border.radius.sm};
       background-color: ${t(colors.gray[100], colors.darkGray[400])};
       border: 1px solid ${t(colors.gray[300], colors.darkGray[200])};
-      width: 1.625rem;
-      height: 1.625rem;
+      width: ${tokens.size[6.5]};
+      height: ${tokens.size[6.5]};
       justify-content: center;
       display: flex;
       align-items: center;
