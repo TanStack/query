@@ -132,7 +132,9 @@ export class QueryClient {
   ): Promise<TData> {
     const cachedData = this.getQueryData<TData>(options.queryKey)
 
-    return cachedData ? Promise.resolve(cachedData) : this.fetchQuery(options)
+    return cachedData !== undefined
+      ? Promise.resolve(cachedData)
+      : this.fetchQuery(options)
   }
 
   getQueriesData<TQueryFnData = unknown>(
