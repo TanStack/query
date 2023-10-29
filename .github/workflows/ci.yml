@@ -7,7 +7,7 @@ on:
         description: override release tag
         required: false
   push:
-    branches: ['main', 'alpha', 'beta', 'rc']
+    branches: ['main', 'alpha', 'beta', 'rc', 'v4']
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
