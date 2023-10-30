@@ -129,6 +129,58 @@ const transformFilterAwareUsages = ({
       if (secondParameter) {
         const createdObjectExpression = functionArguments[0]
 
+        if (utils.isIdentifier(secondParameter)) {
+          const binding = v5Utils.getBindingFromScope(
+            path,
+            secondParameter.name,
+            filePath,
+          )
+
+          const isVariableDeclarator = jscodeshift.match(binding, {
+            type: jscodeshift.VariableDeclarator.name,
+          })
+
+          if (
+            isVariableDeclarator &&
+            utils.isFunctionDefinition(binding.init)
+          ) {
+            const objectExpression = jscodeshift.objectExpression([
+              jscodeshift.property(
+                'init',
+                jscodeshift.identifier('queryKey'),
+                node.arguments[0],
+              ),
+              jscodeshift.property(
+                'init',
+                jscodeshift.identifier('queryFn'),
+                secondParameter,
+              ),
+            ])
+
+            const thirdArgument = node.arguments[2]
+
+            if (thirdArgument) {
+              // If it's an object expression, we can copy the properties from it to the newly created object expression.
+              if (utils.isObjectExpression(thirdArgument)) {
+                v5Utils.copyPropertiesFromSource(
+                  thirdArgument,
+                  objectExpression,
+                  predicate,
+                )
+              } else {
+                // Otherwise, we simply spread the third argument in the newly created object expression.
+                objectExpression.properties.push(
+                  jscodeshift.spreadElement(thirdArgument),
+                )
+              }
+            }
+
+            return jscodeshift.callExpression(node.original.callee, [
+              objectExpression,
+            ])
+          }
+        }
+
         /**
          * If it has a second argument, and it's an object expression, then we get the properties from it
          * (except the "queryKey" or "mutationKey" properties), because these arguments will also be moved to the
