@@ -11,7 +11,7 @@ The recommended way to achieve this is to use the `browser` module from SvelteKi
 
 **src/routes/+layout.svelte**
 
-```html
+```svelte
 <script lang="ts">
   import { browser } from '$app/environment'
   import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query'
@@ -52,7 +52,7 @@ export async function load() {
 
 **src/routes/+page.svelte**
 
-```html
+```svelte
 <script>
   import { createQuery } from '@tanstack/svelte-query'
   import type { PageData } from './$types'
@@ -103,7 +103,7 @@ export async function load() {
 
 **src/routes/+layout.svelte**
 
-```html
+```svelte
 <script lang="ts">
   import { QueryClientProvider } from '@tanstack/svelte-query'
   import type { LayoutData } from './$types'
@@ -132,7 +132,7 @@ export async function load({ parent, fetch }) {
 
 **src/routes/+page.svelte**
 
-```html
+```svelte
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
 
