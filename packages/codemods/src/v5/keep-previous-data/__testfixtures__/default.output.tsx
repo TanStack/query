@@ -35,7 +35,7 @@ export const Example2 = () => {
     queryKey: ['posts'],
     queryFn: queryFn,
     keepPreviousData: true,
-    placeholderData: (previousData) => previousData
+    placeholderData: () => previousData
   })
 
   return <div>{JSON.stringify(data)}</div>
