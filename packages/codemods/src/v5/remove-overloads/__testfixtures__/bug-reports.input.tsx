@@ -1,4 +1,4 @@
-// these custom query hooks required me to change some variable names and use the single object syntax
+// From: https://github.com/TanStack/query/issues/6204
 export function useDetails({ groupId }: { groupId?: string }): any {
   const cacheKey = ["details", groupId];
   const query = () => fetch(`/group/${groupId}`);
@@ -8,10 +8,20 @@ export function useDetails({ groupId }: { groupId?: string }): any {
   return queryObject;
 }
 
-export function useDetails2({ groupId }: { groupId?: string }): any {
+// Based on: https://github.com/TanStack/query/issues/6204
+export function useDetailsContainsIdentifierAsThirdArgument({ groupId }: { groupId?: string }): any {
   const cacheKey = ["details", groupId];
   const query = () => fetch(`/group/${groupId}`);
   const opts = { enabled: !!groupId }
   const queryObject = useQuery(cacheKey, query, opts);
   return queryObject;
+}
+
+// From: https://twitter.com/samcook_/status/1715063150184132902
+export function useWhatever({ thing }: { thing: string }) {
+  return useQuery(
+    ['some-string', someVar],
+    async () => {},
+    { enabled: Boolean(thing) },
+  );
 }

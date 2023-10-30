@@ -70,6 +70,26 @@ const transformFilterAwareUsages = ({
   const replacer = (path) => {
     const node = path.node
 
+    const isFunctionDefinition = (functionArgument) => {
+      if (utils.isFunctionDefinition(functionArgument)) {
+        return true
+      }
+
+      if (utils.isIdentifier(functionArgument)) {
+        const binding = v5Utils.getBindingFromScope(
+          path,
+          functionArgument.name,
+          filePath,
+        )
+
+        const isVariableDeclarator = jscodeshift.match(binding, {
+          type: jscodeshift.VariableDeclarator.name,
+        })
+
+        return isVariableDeclarator && utils.isFunctionDefinition(binding.init)
+      }
+    }
+
     try {
       // If the given method/function call matches certain criteria, the node doesn't need to be replaced, this step can be skipped.
       if (canSkipReplacement(node, config.keyName)) {
@@ -129,56 +149,41 @@ const transformFilterAwareUsages = ({
       if (secondParameter) {
         const createdObjectExpression = functionArguments[0]
 
-        if (utils.isIdentifier(secondParameter)) {
-          const binding = v5Utils.getBindingFromScope(
-            path,
-            secondParameter.name,
-            filePath,
-          )
+        if (isFunctionDefinition(secondParameter)) {
+          const objectExpression = jscodeshift.objectExpression([
+            jscodeshift.property(
+              'init',
+              jscodeshift.identifier('queryKey'),
+              node.arguments[0],
+            ),
+            jscodeshift.property(
+              'init',
+              jscodeshift.identifier('queryFn'),
+              secondParameter,
+            ),
+          ])
 
-          const isVariableDeclarator = jscodeshift.match(binding, {
-            type: jscodeshift.VariableDeclarator.name,
-          })
+          const thirdArgument = node.arguments[2]
 
-          if (
-            isVariableDeclarator &&
-            utils.isFunctionDefinition(binding.init)
-          ) {
-            const objectExpression = jscodeshift.objectExpression([
-              jscodeshift.property(
-                'init',
-                jscodeshift.identifier('queryKey'),
-                node.arguments[0],
-              ),
-              jscodeshift.property(
-                'init',
-                jscodeshift.identifier('queryFn'),
-                secondParameter,
-              ),
-            ])
-
-            const thirdArgument = node.arguments[2]
-
-            if (thirdArgument) {
-              // If it's an object expression, we can copy the properties from it to the newly created object expression.
-              if (utils.isObjectExpression(thirdArgument)) {
-                v5Utils.copyPropertiesFromSource(
-                  thirdArgument,
-                  objectExpression,
-                  predicate,
-                )
-              } else {
-                // Otherwise, we simply spread the third argument in the newly created object expression.
-                objectExpression.properties.push(
-                  jscodeshift.spreadElement(thirdArgument),
-                )
-              }
+          if (thirdArgument) {
+            // If it's an object expression, we can copy the properties from it to the newly created object expression.
+            if (utils.isObjectExpression(thirdArgument)) {
+              v5Utils.copyPropertiesFromSource(
+                thirdArgument,
+                objectExpression,
+                predicate,
+              )
+            } else {
+              // Otherwise, we simply spread the third argument in the newly created object expression.
+              objectExpression.properties.push(
+                jscodeshift.spreadElement(thirdArgument),
+              )
             }
-
-            return jscodeshift.callExpression(node.original.callee, [
-              objectExpression,
-            ])
           }
+
+          return jscodeshift.callExpression(node.original.callee, [
+            objectExpression,
+          ])
         }
 
         /**
