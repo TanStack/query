@@ -40,3 +40,20 @@ export const Example2 = () => {
 
   return <div>{JSON.stringify(data)}</div>
 }
+
+export const Example3 = () => {
+  const queryFn = async (): Promise<Array<Post>> => {
+    const { data } = await axios.get(
+      'https://jsonplaceholder.typicode.com/posts',
+    )
+    return data
+  }
+  const { data } = useQueries({
+    queryKey: ['posts'],
+    queryFn: queryFn,
+    keepPreviousData: true,
+    placeholderData: "somePlaceholderData"
+  })
+
+  return <div>{JSON.stringify(data)}</div>
+}
