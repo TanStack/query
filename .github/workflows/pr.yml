@@ -1,6 +1,11 @@
 name: pr
 
-on: [pull_request]
+on:
+  pull_request:
+    paths-ignore:
+      - "docs/**"
+      - "media/**"
+      - "**/*.md"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
