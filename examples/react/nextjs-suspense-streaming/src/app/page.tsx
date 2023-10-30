@@ -2,7 +2,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense } from 'react'
 
-// export const runtime = "edge"; // 'nodejs' (default) | 'edge'
+export const runtime = 'edge' // 'nodejs' (default) | 'edge'
 
 function getBaseURL() {
   if (typeof window !== 'undefined') {
