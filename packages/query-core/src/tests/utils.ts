@@ -1,5 +1,5 @@
-import { act } from '@testing-library/react'
 import { vi } from 'vitest'
+import { act } from '@testing-library/react'
 import { QueryClient, onlineManager } from '..'
 import * as utils from '../utils'
 import type { SpyInstance } from 'vitest'

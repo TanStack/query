@@ -229,40 +229,24 @@ export function createQueries<
     )
   })
 
-  const [, getCombinedResult, trackResult] = observer.getOptimisticResult(
-    get(defaultedQueriesStore),
-  )
+  const result = derived([isRestoring], ([$isRestoring], set) => {
+    const unsubscribe = $isRestoring
+      ? () => undefined
+      : observer.subscribe(notifyManager.batchCalls(set))
 
-  const result = derived<
-    typeof isRestoring,
-    | Parameters<Parameters<typeof observer.subscribe>[0]>[0]
-    | ReturnType<typeof getCombinedResult>
-  >(
-    isRestoring,
-    ($isRestoring, set) => {
-      const unsubscribe = $isRestoring
-        ? () => undefined
-        : observer.subscribe(notifyManager.batchCalls(set))
-
-      return () => unsubscribe()
-    },
-    getCombinedResult(trackResult()),
-  )
+    return () => unsubscribe()
+  })
 
   const { subscribe } = derived(
     [result, defaultedQueriesStore],
-    ([$result, $defaultedQueries]) => {
-      $result = observer.getOptimisticResult($defaultedQueries)[0]
-      const observers = observer.getObservers()
-      return $defaultedQueries.map((query, index) =>
-        query.notifyOnChangeProps
-          ? // @ts-expect-error TCombinedResult should be an array
-            $result[index]
-          : // @ts-expect-error TCombinedResult should be an array
-            observers[index]!.trackResult($result[index]),
-      )
+    // @ts-ignore svelte-check thinks this is unused
+    ([$result, $defaultedQueriesStore]) => {
+      const [rawResult, combineResult, trackResult] =
+        observer.getOptimisticResult($defaultedQueriesStore)
+      $result = rawResult
+      return combineResult(trackResult())
     },
   )
-  // @ts-expect-error TCombinedResult should be an array
+
   return { subscribe }
 }

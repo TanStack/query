@@ -1,3 +1,4 @@
+import { describe, expect, test, vi } from 'vitest'
 import {
   computed,
   getCurrentInstance,
@@ -6,8 +7,6 @@ import {
   ref,
 } from 'vue-demi'
 import { QueryObserver } from '@tanstack/query-core'
-
-import { vi } from 'vitest'
 import { useQuery } from '../useQuery'
 import { useBaseQuery } from '../useBaseQuery'
 import {

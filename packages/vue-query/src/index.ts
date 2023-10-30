@@ -5,6 +5,7 @@ export { VueQueryPlugin } from './vueQueryPlugin'
 
 export { QueryClient } from './queryClient'
 export { QueryCache } from './queryCache'
+export { queryOptions } from './queryOptions'
 export { MutationCache } from './mutationCache'
 export { useQuery } from './useQuery'
 export { useQueries } from './useQueries'

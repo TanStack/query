@@ -1,4 +1,4 @@
-import { Show } from 'solid-js'
+import { Show, createUniqueId } from 'solid-js'
 
 export function Search() {
   return (
@@ -389,11 +389,101 @@ export function Check(props: { checked: boolean; theme: 'light' | 'dark' }) {
   )
 }
 
+export function CheckCircle() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M7.5 12L10.5 15L16.5 9M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  )
+}
+
+export function LoadingCircle() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12 2V6M12 18V22M6 12H2M22 12H18M19.0784 19.0784L16.25 16.25M19.0784 4.99994L16.25 7.82837M4.92157 19.0784L7.75 16.25M4.92157 4.99994L7.75 7.82837"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <animateTransform
+        attributeName="transform"
+        attributeType="XML"
+        type="rotate"
+        from="0"
+        to="360"
+        dur="2s"
+        repeatCount="indefinite"
+      />
+    </svg>
+  )
+}
+
+export function XCircle() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M15 9L9 15M9 9L15 15M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  )
+}
+
+export function PauseCircle() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M9.5 15V9M14.5 15V9M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  )
+}
+
 export function TanstackLogo() {
+  const id = createUniqueId()
   return (
     <svg version="1.0" viewBox="0 0 633 633">
       <linearGradient
-        id="a"
+        id={`a-${id}`}
         x1="-666.45"
         x2="-666.45"
         y1="163.28"
@@ -406,11 +496,11 @@ export function TanstackLogo() {
         <stop stop-color="#FFA770" offset=".71" />
         <stop stop-color="#FF7373" offset="1" />
       </linearGradient>
-      <circle cx="316.5" cy="316.5" r="316.5" fill="url(#a)" />
+      <circle cx="316.5" cy="316.5" r="316.5" fill={`url(#a-${id})`} />
 
       <defs>
         <filter
-          id="am"
+          id={`am-${id}`}
           x="-137.5"
           y="412"
           width="454"
@@ -422,18 +512,18 @@ export function TanstackLogo() {
       </defs>
 
       <mask
-        id="b"
+        id={`b-${id}`}
         x="-137.5"
         y="412"
         width="454"
         height="396.9"
         maskUnits="userSpaceOnUse"
       >
-        <g filter="url(#am)">
+        <g filter={`url(#am-${id})`}>
           <circle cx="316.5" cy="316.5" r="316.5" fill="#fff" />
         </g>
       </mask>
-      <g mask="url(#b)">
+      <g mask={`url(#b-${id})`}>
         <ellipse
           cx="89.5"
           cy="610.5"
@@ -446,7 +536,7 @@ export function TanstackLogo() {
       </g>
       <defs>
         <filter
-          id="ah"
+          id={`ah-${id}`}
           x="316.5"
           y="412"
           width="454"
@@ -458,18 +548,18 @@ export function TanstackLogo() {
       </defs>
 
       <mask
-        id="k"
+        id={`k-${id}`}
         x="316.5"
         y="412"
         width="454"
         height="396.9"
         maskUnits="userSpaceOnUse"
       >
-        <g filter="url(#ah)">
+        <g filter={`url(#ah-${id})`}>
           <circle cx="316.5" cy="316.5" r="316.5" fill="#fff" />
         </g>
       </mask>
-      <g mask="url(#k)">
+      <g mask={`url(#k-${id})`}>
         <ellipse
           cx="543.5"
           cy="610.5"
@@ -482,7 +572,7 @@ export function TanstackLogo() {
       </g>
       <defs>
         <filter
-          id="ae"
+          id={`ae-${id}`}
           x="-137.5"
           y="450"
           width="454"
@@ -494,18 +584,18 @@ export function TanstackLogo() {
       </defs>
 
       <mask
-        id="j"
+        id={`j-${id}`}
         x="-137.5"
         y="450"
         width="454"
         height="396.9"
         maskUnits="userSpaceOnUse"
       >
-        <g filter="url(#ae)">
+        <g filter={`url(#ae-${id})`}>
           <circle cx="316.5" cy="316.5" r="316.5" fill="#fff" />
         </g>
       </mask>
-      <g mask="url(#j)">
+      <g mask={`url(#j-${id})`}>
         <ellipse
           cx="89.5"
           cy="648.5"
@@ -518,7 +608,7 @@ export function TanstackLogo() {
       </g>
       <defs>
         <filter
-          id="ai"
+          id={`ai-${id}`}
           x="316.5"
           y="450"
           width="454"
@@ -530,18 +620,18 @@ export function TanstackLogo() {
       </defs>
 
       <mask
-        id="i"
+        id={`i-${id}`}
         x="316.5"
         y="450"
         width="454"
         height="396.9"
         maskUnits="userSpaceOnUse"
       >
-        <g filter="url(#ai)">
+        <g filter={`url(#ai-${id})`}>
           <circle cx="316.5" cy="316.5" r="316.5" fill="#fff" />
         </g>
       </mask>
-      <g mask="url(#i)">
+      <g mask={`url(#i-${id})`}>
         <ellipse
           cx="543.5"
           cy="648.5"
@@ -554,7 +644,7 @@ export function TanstackLogo() {
       </g>
       <defs>
         <filter
-          id="aj"
+          id={`aj-${id}`}
           x="-137.5"
           y="486"
           width="454"
@@ -566,18 +656,18 @@ export function TanstackLogo() {
       </defs>
 
       <mask
-        id="h"
+        id={`h-${id}`}
         x="-137.5"
         y="486"
         width="454"
         height="396.9"
         maskUnits="userSpaceOnUse"
       >
-        <g filter="url(#aj)">
+        <g filter={`url(#aj-${id})`}>
           <circle cx="316.5" cy="316.5" r="316.5" fill="#fff" />
         </g>
       </mask>
-      <g mask="url(#h)">
+      <g mask={`url(#h-${id})`}>
         <ellipse
           cx="89.5"
           cy="684.5"
@@ -590,7 +680,7 @@ export function TanstackLogo() {
       </g>
       <defs>
         <filter
-          id="ag"
+          id={`ag-${id}`}
           x="316.5"
           y="486"
           width="454"
@@ -602,18 +692,18 @@ export function TanstackLogo() {
       </defs>
 
       <mask
-        id="g"
+        id={`g-${id}`}
         x="316.5"
         y="486"
         width="454"
         height="396.9"
         maskUnits="userSpaceOnUse"
       >
-        <g filter="url(#ag)">
+        <g filter={`url(#ag-${id})`}>
           <circle cx="316.5" cy="316.5" r="316.5" fill="#fff" />
         </g>
       </mask>
-      <g mask="url(#g)">
+      <g mask={`url(#g-${id})`}>
         <ellipse
           cx="543.5"
           cy="684.5"
@@ -626,7 +716,7 @@ export function TanstackLogo() {
       </g>
       <defs>
         <filter
-          id="af"
+          id={`af-${id}`}
           x="272.2"
           y="308"
           width="176.9"
@@ -638,18 +728,18 @@ export function TanstackLogo() {
       </defs>
 
       <mask
-        id="f"
+        id={`f-${id}`}
         x="272.2"
         y="308"
         width="176.9"
         height="129.3"
         maskUnits="userSpaceOnUse"
       >
-        <g filter="url(#af)">
+        <g filter={`url(#af-${id})`}>
           <circle cx="316.5" cy="316.5" r="316.5" fill="#fff" />
         </g>
       </mask>
-      <g mask="url(#f)">
+      <g mask={`url(#f-${id})`}>
         <line
           x1="436"
           x2="431"
@@ -687,7 +777,7 @@ export function TanstackLogo() {
         />
 
         <linearGradient
-          id="m"
+          id={`m-${id}`}
           x1="-670.75"
           x2="-671.59"
           y1="164.4"
@@ -702,7 +792,7 @@ export function TanstackLogo() {
         <path
           d="m344.1 363 97.7 17.2c5.8 2.1 8.2 6.1 7.1 12.1s-4.7 9.2-11 9.9l-106-18.7-57.5-59.2c-3.2-4.8-2.9-9.1 0.8-12.8s8.3-4.4 13.7-2.1l55.2 53.6z"
           clip-rule="evenodd"
-          fill="url(#m)"
+          fill={`url(#m-${id})`}
           fill-rule="evenodd"
         />
 
@@ -768,7 +858,7 @@ export function TanstackLogo() {
       </g>
       <defs>
         <filter
-          id="ak"
+          id={`ak-${id}`}
           x="73.2"
           y="113.8"
           width="280.6"
@@ -780,20 +870,20 @@ export function TanstackLogo() {
       </defs>
 
       <mask
-        id="e"
+        id={`e-${id}`}
         x="73.2"
         y="113.8"
         width="280.6"
         height="317.4"
         maskUnits="userSpaceOnUse"
       >
-        <g filter="url(#ak)">
+        <g filter={`url(#ak-${id})`}>
           <circle cx="316.5" cy="316.5" r="316.5" fill="#fff" />
         </g>
       </mask>
-      <g mask="url(#e)">
+      <g mask={`url(#e-${id})`}>
         <linearGradient
-          id="n"
+          id={`n-${id}`}
           x1="-672.16"
           x2="-672.16"
           y1="165.03"
@@ -808,12 +898,12 @@ export function TanstackLogo() {
         <path
           d="m192.3 203c8.1 37.3 14 73.6 17.8 109.1 3.8 35.4 2.8 75.1-3 119.2l61.2-16.7c-15.6-59-25.2-97.9-28.6-116.6s-10.8-51.9-22.1-99.6l-25.3 4.6"
           clip-rule="evenodd"
-          fill="url(#n)"
+          fill={`url(#n-${id})`}
           fill-rule="evenodd"
         />
         <g stroke="#2F8A00">
           <linearGradient
-            id="r"
+            id={`r-${id}`}
             x1="-660.23"
             x2="-660.23"
             y1="166.72"
@@ -828,13 +918,13 @@ export function TanstackLogo() {
           <path
             d="m195 183.9s-12.6-22.1-36.5-29.9c-15.9-5.2-34.4-1.5-55.5 11.1 15.9 14.3 29.5 22.6 40.7 24.9 16.8 3.6 51.3-6.1 51.3-6.1z"
             clip-rule="evenodd"
-            fill="url(#r)"
+            fill={`url(#r-${id})`}
             fill-rule="evenodd"
             stroke-width="13"
           />
 
           <linearGradient
-            id="s"
+            id={`s-${id}`}
             x1="-661.36"
             x2="-661.36"
             y1="164.18"
@@ -849,13 +939,13 @@ export function TanstackLogo() {
           <path
             d="m194.9 184.5s-47.5-8.5-83.2 15.7c-23.8 16.2-34.3 49.3-31.6 99.4 30.3-27.8 52.1-48.5 65.2-61.9 19.8-20.2 49.6-53.2 49.6-53.2z"
             clip-rule="evenodd"
-            fill="url(#s)"
+            fill={`url(#s-${id})`}
             fill-rule="evenodd"
             stroke-width="13"
           />
 
           <linearGradient
-            id="q"
+            id={`q-${id}`}
             x1="-656.79"
             x2="-656.79"
             y1="165.15"
@@ -870,13 +960,13 @@ export function TanstackLogo() {
           <path
             d="m195 183.9c-0.8-21.9 6-38 20.6-48.2s29.8-15.4 45.5-15.3c-6.1 21.4-14.5 35.8-25.2 43.4s-24.4 14.2-40.9 20.1z"
             clip-rule="evenodd"
-            fill="url(#q)"
+            fill={`url(#q-${id})`}
             fill-rule="evenodd"
             stroke-width="13"
           />
 
           <linearGradient
-            id="p"
+            id={`p-${id}`}
             x1="-663.07"
             x2="-663.07"
             y1="165.44"
@@ -891,13 +981,13 @@ export function TanstackLogo() {
           <path
             d="m194.9 184.5c31.9-30 64.1-39.7 96.7-29s50.8 30.4 54.6 59.1c-35.2-5.5-60.4-9.6-75.8-12.1-15.3-2.6-40.5-8.6-75.5-18z"
             clip-rule="evenodd"
-            fill="url(#p)"
+            fill={`url(#p-${id})`}
             fill-rule="evenodd"
             stroke-width="13"
           />
 
           <linearGradient
-            id="o"
+            id={`o-${id}`}
             x1="-662.57"
             x2="-662.57"
             y1="164.44"
@@ -912,13 +1002,13 @@ export function TanstackLogo() {
           <path
             d="m194.9 184.5c35.8-7.6 65.6-0.2 89.2 22s37.7 49 42.3 80.3c-39.8-9.7-68.3-23.8-85.5-42.4s-32.5-38.5-46-59.9z"
             clip-rule="evenodd"
-            fill="url(#o)"
+            fill={`url(#o-${id})`}
             fill-rule="evenodd"
             stroke-width="13"
           />
 
           <linearGradient
-            id="l"
+            id={`l-${id}`}
             x1="-656.43"
             x2="-656.43"
             y1="163.86"
@@ -933,7 +1023,7 @@ export function TanstackLogo() {
           <path
             d="m194.9 184.5c-33.6 13.8-53.6 35.7-60.1 65.6s-3.6 63.1 8.7 99.6c27.4-40.3 43.2-69.6 47.4-88s5.6-44.1 4-77.2z"
             clip-rule="evenodd"
-            fill="url(#l)"
+            fill={`url(#l-${id})`}
             fill-rule="evenodd"
             stroke-width="13"
           />
@@ -965,7 +1055,7 @@ export function TanstackLogo() {
       </g>
       <defs>
         <filter
-          id="al"
+          id={`al-${id}`}
           x="50.5"
           y="399"
           width="532"
@@ -977,20 +1067,20 @@ export function TanstackLogo() {
       </defs>
 
       <mask
-        id="d"
+        id={`d-${id}`}
         x="50.5"
         y="399"
         width="532"
         height="633"
         maskUnits="userSpaceOnUse"
       >
-        <g filter="url(#al)">
+        <g filter={`url(#al-${id})`}>
           <circle cx="316.5" cy="316.5" r="316.5" fill="#fff" />
         </g>
       </mask>
-      <g mask="url(#d)">
+      <g mask={`url(#d-${id})`}>
         <linearGradient
-          id="u"
+          id={`u-${id}`}
           x1="-666.06"
           x2="-666.23"
           y1="163.36"
@@ -1002,11 +1092,17 @@ export function TanstackLogo() {
           <stop stop-color="#3C8700" offset="1" />
         </linearGradient>
 
-        <ellipse cx="316.5" cy="715.5" rx="266" ry="316.5" fill="url(#u)" />
+        <ellipse
+          cx="316.5"
+          cy="715.5"
+          rx="266"
+          ry="316.5"
+          fill={`url(#u-${id})`}
+        />
       </g>
       <defs>
         <filter
-          id="ad"
+          id={`ad-${id}`}
           x="391"
           y="-24"
           width="288"
@@ -1018,20 +1114,20 @@ export function TanstackLogo() {
       </defs>
 
       <mask
-        id="c"
+        id={`c-${id}`}
         x="391"
         y="-24"
         width="288"
         height="283"
         maskUnits="userSpaceOnUse"
       >
-        <g filter="url(#ad)">
+        <g filter={`url(#ad-${id})`}>
           <circle cx="316.5" cy="316.5" r="316.5" fill="#fff" />
         </g>
       </mask>
-      <g mask="url(#c)">
+      <g mask={`url(#c-${id})`}>
         <linearGradient
-          id="t"
+          id={`t-${id}`}
           x1="-664.56"
           x2="-664.56"
           y1="163.79"
@@ -1042,10 +1138,10 @@ export function TanstackLogo() {
           <stop stop-color="#FFDF00" offset="0" />
           <stop stop-color="#FF9D00" offset="1" />
         </linearGradient>
-        <circle cx="565.5" cy="89.5" r="113.5" fill="url(#t)" />
+        <circle cx="565.5" cy="89.5" r="113.5" fill={`url(#t-${id})`} />
 
         <linearGradient
-          id="v"
+          id={`v-${id}`}
           x1="-644.5"
           x2="-645.77"
           y1="342"
@@ -1063,14 +1159,14 @@ export function TanstackLogo() {
           y1="89"
           y2="89"
           fill="none"
-          stroke="url(#v)"
+          stroke={`url(#v-${id})`}
           stroke-linecap="round"
           stroke-linejoin="bevel"
           stroke-width="12"
         />
 
         <linearGradient
-          id="aa"
+          id={`aa-${id}`}
           x1="-641.56"
           x2="-642.83"
           y1="196.02"
@@ -1088,14 +1184,14 @@ export function TanstackLogo() {
           y1="55.5"
           y2="50"
           fill="none"
-          stroke="url(#aa)"
+          stroke={`url(#aa-${id})`}
           stroke-linecap="round"
           stroke-linejoin="bevel"
           stroke-width="12"
         />
 
         <linearGradient
-          id="w"
+          id={`w-${id}`}
           x1="-643.73"
           x2="-645"
           y1="185.83"
@@ -1113,14 +1209,14 @@ export function TanstackLogo() {
           y1="122"
           y2="130"
           fill="none"
-          stroke="url(#w)"
+          stroke={`url(#w-${id})`}
           stroke-linecap="round"
           stroke-linejoin="bevel"
           stroke-width="12"
         />
 
         <linearGradient
-          id="ac"
+          id={`ac-${id}`}
           x1="-638.94"
           x2="-640.22"
           y1="177.09"
@@ -1138,14 +1234,14 @@ export function TanstackLogo() {
           y1="153"
           y2="166"
           fill="none"
-          stroke="url(#ac)"
+          stroke={`url(#ac-${id})`}
           stroke-linecap="round"
           stroke-linejoin="bevel"
           stroke-width="12"
         />
 
         <linearGradient
-          id="ab"
+          id={`ab-${id}`}
           x1="-633.42"
           x2="-634.7"
           y1="172.41"
@@ -1163,14 +1259,14 @@ export function TanstackLogo() {
           y1="180"
           y2="199"
           fill="none"
-          stroke="url(#ab)"
+          stroke={`url(#ab-${id})`}
           stroke-linecap="round"
           stroke-linejoin="bevel"
           stroke-width="12"
         />
 
         <linearGradient
-          id="y"
+          id={`y-${id}`}
           x1="-619.05"
           x2="-619.52"
           y1="170.82"
@@ -1188,14 +1284,14 @@ export function TanstackLogo() {
           y1="203"
           y2="225.9"
           fill="none"
-          stroke="url(#y)"
+          stroke={`url(#y-${id})`}
           stroke-linecap="round"
           stroke-linejoin="bevel"
           stroke-width="12"
         />
 
         <linearGradient
-          id="x"
+          id={`x-${id}`}
           x1="-578.5"
           x2="-578.63"
           y1="170.31"
@@ -1213,14 +1309,14 @@ export function TanstackLogo() {
           y1="219.5"
           y2="244"
           fill="none"
-          stroke="url(#x)"
+          stroke={`url(#x-${id})`}
           stroke-linecap="round"
           stroke-linejoin="bevel"
           stroke-width="12"
         />
 
         <linearGradient
-          id="z"
+          id={`z-${id}`}
           x1="666.5"
           x2="666.5"
           y1="170.31"
@@ -1238,7 +1334,7 @@ export function TanstackLogo() {
           y1="228.5"
           y2="253"
           fill="none"
-          stroke="url(#z)"
+          stroke={`url(#z-${id})`}
           stroke-linecap="round"
           stroke-linejoin="bevel"
           stroke-width="12"

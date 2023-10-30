@@ -94,14 +94,40 @@ const transformFilterAwareUsages = ({
        * it will notify the consumers that they need to rewrite this usage manually.
        */
       if (!keyProperty) {
-        throw new UnknownUsageError(node, filePath)
+        const secondArgument =
+          node.arguments.length > 1 ? node.arguments[1] : null
+
+        if (!secondArgument) {
+          throw new UnknownUsageError(node, filePath)
+        }
+
+        if (utils.isFunctionDefinition(secondArgument)) {
+          const originalArguments = node.arguments
+          const firstArgument = jscodeshift.objectExpression([
+            jscodeshift.property(
+              'init',
+              jscodeshift.identifier('queryKey'),
+              originalArguments[0],
+            ),
+            jscodeshift.property(
+              'init',
+              jscodeshift.identifier('queryFn'),
+              secondArgument,
+            ),
+          ])
+
+          return jscodeshift.callExpression(node.original.callee, [
+            firstArgument,
+            ...originalArguments.slice(2),
+          ])
+        }
       }
 
-      const parameters = [jscodeshift.objectExpression([keyProperty])]
+      const functionArguments = [jscodeshift.objectExpression([keyProperty])]
       const secondParameter = node.arguments[1]
 
       if (secondParameter) {
-        const createdObjectExpression = parameters[0]
+        const createdObjectExpression = functionArguments[0]
 
         /**
          * If it has a second argument, and it's an object expression, then we get the properties from it
@@ -122,10 +148,10 @@ const transformFilterAwareUsages = ({
         }
       }
 
-      // The rest of the parameters can be simply pushed to the parameters object so all will be kept.
-      parameters.push(...node.arguments.slice(2))
+      // The rest of the function arguments can be simply pushed to the function arguments object so all will be kept.
+      functionArguments.push(...node.arguments.slice(2))
 
-      return jscodeshift.callExpression(node.original.callee, parameters)
+      return jscodeshift.callExpression(node.original.callee, functionArguments)
     } catch (error) {
       utils.warn(
         error.name === UnknownUsageError.name

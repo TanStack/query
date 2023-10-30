@@ -27,7 +27,7 @@ module.exports = (file, api) => {
         'resetQueries',
         // 'setQueriesData',
       ],
-      hooks: ['useIsFetching'],
+      hooks: ['useIsFetching', 'useQuery'],
     },
   })
 

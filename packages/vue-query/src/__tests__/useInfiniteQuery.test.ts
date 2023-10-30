@@ -1,4 +1,4 @@
-import { vi } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { flushPromises, infiniteFetcher } from './test-utils'
 

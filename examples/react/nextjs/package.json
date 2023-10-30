@@ -12,7 +12,7 @@
     "@tanstack/react-query-devtools": "^5.0.0",
     "ky": "^0.33.3",
     "ky-universal": "^0.11.0",
-    "next": "^13.4.4",
+    "next": "^14.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "resolve-from": "^5.0.0",

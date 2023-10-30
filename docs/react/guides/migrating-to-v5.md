@@ -136,7 +136,7 @@ A few notes about how codemod works:
 
 `onSuccess`, `onError` and `onSettled` have been removed from Queries. They haven't been touched for Mutations. Please see [this RFC](https://github.com/TanStack/query/discussions/5279) for motivations behind this change and what to do instead.
 
-### The `refetchInteval` callback function only gets `query` passed
+### The `refetchInterval` callback function only gets `query` passed
 
 This streamlines how callbacks are invoked (the `refetchOnWindowFocus`, `refetchOnMount` and `refetchOnReconnect` callbacks all only get the query passed as well), and it fixes some typing issues when callbacks get data transformed by `select`.
 
@@ -383,6 +383,10 @@ For mutations as well the `status` has been changed from `loading` to `pending` 
 Lastly, a new derived `isLoading` flag has been added to the queries that is implemented as `isPending && isFetching`. This means that `isLoading` and `isInitialLoading` have the same thing, but `isInitialLoading` is deprecated now and will be removed in the next major version.
 
 To understand the reasoning behing this change checkout the [v5 roadmap discussion](https://github.com/TanStack/query/discussions/4252).
+
+### `hashQueryKey` has been renamed to `hashKey`
+
+because it also hashes mutation keys and can be used inside the `predicate` functions of `useIsMutating` and `useMutationState`, which gets mutations passed.
 
 [//]: # 'FrameworkSpecificBreakingChanges'
 
