@@ -149,8 +149,6 @@ const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
       )
 
       return node
-
-      return node
     } catch (error) {
       utils.warn(
         error.name === AlreadyHasPlaceholderDataProperty.name
