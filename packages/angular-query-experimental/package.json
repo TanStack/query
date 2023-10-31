@@ -1,0 +1,50 @@
+{
+  "name": "@tanstack/angular-query-experimental",
+  "version": "5.4.3",
+  "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
+  "author": "Arnoud de Vries",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TanStack/query.git",
+    "directory": "packages/angular-query-experimental"
+  },
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "clean": "rimraf ./build && rimraf ./coverage",
+    "test:eslint": "eslint --ext .ts,.tsx ./src",
+    "test:types": "tsc",
+    "test:lib": "vitest run --coverage",
+    "test:lib:dev": "vitest watch --coverage",
+    "test:build": "publint --strict",
+    "build": "ng-packagr -p ng-package.json -c tsconfig.build.json"
+  },
+  "dependencies": {
+    "@tanstack/query-core": "workspace:*",
+    "tslib": "^2.6.2"
+  },
+  "devDependencies": {
+    "@analogjs/vite-plugin-angular": "^0.2.15",
+    "@angular/animations": "^17.0.0-rc.1",
+    "@angular/cli": "^17.0.0-next.9",
+    "@angular/common": "^17.0.0-next.8",
+    "@angular/compiler": "^17.0.0-next.8",
+    "@angular/compiler-cli": "^17.0.0-rc.1",
+    "@angular/core": "^17.0.0-next.8",
+    "@angular/platform-browser": "^17.0.0-rc.1",
+    "@angular/platform-browser-dynamic": "^17.0.0-rc.1",
+    "ng-packagr": "^16.2.3",
+    "reflect-metadata": "^0.1.13",
+    "typescript": "5.2.2",
+    "zone.js": "^0.14.0"
+  },
+  "peerDependencies": {
+    "@angular/core": ">=16"
+  }
+}
