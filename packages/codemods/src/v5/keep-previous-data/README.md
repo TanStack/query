@@ -9,10 +9,10 @@ Please note, this code mod transforms usages only where the first argument is an
 The following usage should be transformed by the code mod:
 
 ```ts
-const {data} = useQuery({
-    queryKey: ['posts'],
-    queryFn: queryFn,
-    keepPreviousData: true,
+const { data } = useQuery({
+  queryKey: ['posts'],
+  queryFn: queryFn,
+  keepPreviousData: true,
 })
 ```
 
@@ -24,7 +24,7 @@ const hookArgument = {
   queryFn: queryFn,
   keepPreviousData: true,
 }
-const {data} = useQuery(hookArgument)
+const { data } = useQuery(hookArgument)
 ```
 
 ### Troubleshooting
