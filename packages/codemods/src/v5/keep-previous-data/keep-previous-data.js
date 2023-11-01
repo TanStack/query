@@ -3,6 +3,8 @@ const createUtilsObject = require('../../utils')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const createUseQueryLikeTransformer = require('../../utils/transformers/use-query-like-transformer')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
+const createQueryClientTransformer = require('../../utils/transformers/query-client-transformer')
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const AlreadyHasPlaceholderDataProperty = require('./utils/already-has-placeholder-data-property')
 
 /**
@@ -89,24 +91,23 @@ const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
 
   let isKeepPreviousDataInUse = false
 
-  const replacer = (path) => {
+  const replacer = (path, resolveTargetArgument, transformNode) => {
     const node = path.node
-    const functionArguments = []
     const { start, end } = getCallExpressionLocation(node)
 
     try {
-      const firstArgument = node.arguments[0] ?? null
+      const targetArgument = resolveTargetArgument(node)
 
-      if (firstArgument && utils.isObjectExpression(firstArgument)) {
+      if (targetArgument && utils.isObjectExpression(targetArgument)) {
         const isPlaceholderDataPropertyPresent =
-          hasPlaceholderDataProperty(firstArgument)
+          hasPlaceholderDataProperty(targetArgument)
 
-        if (hasPlaceholderDataProperty(firstArgument)) {
+        if (hasPlaceholderDataProperty(targetArgument)) {
           throw new AlreadyHasPlaceholderDataProperty(node, filePath)
         }
 
         const keepPreviousDataProperty =
-          getKeepPreviousDataProperty(firstArgument)
+          getKeepPreviousDataProperty(targetArgument)
 
         const keepPreviousDataPropertyHasTrueValue =
           isObjectPropertyHasTrueBooleanLiteralValue(keepPreviousDataProperty)
@@ -122,7 +123,7 @@ const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
         if (keepPreviousDataPropertyHasTrueValue) {
           // Removing the `keepPreviousData` property from the object.
           const mutableObjectExpressionProperties =
-            filterKeepPreviousDataProperty(firstArgument)
+            filterKeepPreviousDataProperty(targetArgument)
 
           if (!isPlaceholderDataPropertyPresent) {
             isKeepPreviousDataInUse = true
@@ -133,13 +134,9 @@ const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
             )
           }
 
-          functionArguments.push(
+          return transformNode(
+            node,
             jscodeshift.objectExpression(mutableObjectExpressionProperties),
-          )
-
-          return jscodeshift.callExpression(
-            node.original.callee,
-            functionArguments,
           )
         }
       }
@@ -162,7 +159,29 @@ const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
 
   createUseQueryLikeTransformer({ jscodeshift, utils, root }).execute(
     config.hooks,
-    replacer,
+    (path) => {
+      const resolveTargetArgument = (node) => node.arguments[0] ?? null
+      const transformNode = (node, transformedArgument) =>
+        jscodeshift.callExpression(node.original.callee, [transformedArgument])
+
+      return replacer(path, resolveTargetArgument, transformNode)
+    },
+  )
+
+  createQueryClientTransformer({ jscodeshift, utils, root }).execute(
+    config.queryClientMethods,
+    (path) => {
+      const resolveTargetArgument = (node) => node.arguments[1] ?? null
+      const transformNode = (node, transformedArgument) => {
+        return jscodeshift.callExpression(node.original.callee, [
+          node.arguments[0],
+          transformedArgument,
+          ...node.arguments.slice(2, 0),
+        ])
+      }
+
+      return replacer(path, resolveTargetArgument, transformNode)
+    },
   )
 
   return { isKeepPreviousDataInUse }
@@ -180,6 +199,7 @@ module.exports = (file, api) => {
     ...dependencies,
     config: {
       hooks: ['useInfiniteQuery', 'useQueries', 'useQuery'],
+      queryClientMethods: ['setQueryDefaults'],
     },
   })
 
