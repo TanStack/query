@@ -89,7 +89,7 @@ const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
     return objectExpression.properties.find(isKeepPreviousDataObjectProperty)
   }
 
-  let isKeepPreviousDataInUse = false
+  let shouldAddKeepPreviousDataImport = false
 
   const replacer = (path, resolveTargetArgument, transformNode) => {
     const node = path.node
@@ -126,7 +126,7 @@ const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
             filterKeepPreviousDataProperty(targetArgument)
 
           if (!isPlaceholderDataPropertyPresent) {
-            isKeepPreviousDataInUse = true
+            shouldAddKeepPreviousDataImport = true
 
             // When the `placeholderData` property is not present, the `placeholderData: keepPreviousData` property will be added.
             mutableObjectExpressionProperties.push(
@@ -184,7 +184,7 @@ const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
     },
   )
 
-  return { isKeepPreviousDataInUse }
+  return { shouldAddKeepPreviousDataImport }
 }
 
 module.exports = (file, api) => {
@@ -195,7 +195,7 @@ module.exports = (file, api) => {
 
   const dependencies = { jscodeshift, utils, root, filePath }
 
-  const { isKeepPreviousDataInUse } = transformUsages({
+  const { shouldAddKeepPreviousDataImport } = transformUsages({
     ...dependencies,
     config: {
       hooks: ['useInfiniteQuery', 'useQueries', 'useQuery'],
@@ -203,7 +203,7 @@ module.exports = (file, api) => {
     },
   })
 
-  if (isKeepPreviousDataInUse) {
+  if (shouldAddKeepPreviousDataImport) {
     root
       .find(jscodeshift.ImportDeclaration, {
         source: {
