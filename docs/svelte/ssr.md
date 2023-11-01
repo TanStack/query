@@ -42,16 +42,16 @@ If you wish to view the ideal SSR setup, please have a look at the [SSR example]
 Together with SvelteKit's [`load`](https://kit.svelte.dev/docs/load), you can pass the data loaded server-side into `createQuery`'s' `initialData` option:
 
 **src/routes/+page.ts**
-```ts
-import type { PageLoad } from './$types'
 
-export const load: PageLoad = async () => {
+```ts
+export async function load() {
   const posts = await getPosts()
   return { posts }
 }
 ```
 
 **src/routes/+page.svelte**
+
 ```svelte
 <script>
   import { createQuery } from '@tanstack/svelte-query'
@@ -88,7 +88,7 @@ Svelte Query supports prefetching queries on the server. Using this setup below,
 import { browser } from '$app/environment'
 import { QueryClient } from '@tanstack/svelte-query'
 
-export const load = async () => {
+export async function load() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -119,9 +119,7 @@ export const load = async () => {
 **src/routes/+page.ts**
 
 ```ts
-import type { PageLoad } from './$types'
-
-export const load: PageLoad = async ({ parent, fetch }) => {
+export async function load({ parent, fetch }) {
   const { queryClient } = await parent()
 
   // You need to use the SvelteKit fetch function here
