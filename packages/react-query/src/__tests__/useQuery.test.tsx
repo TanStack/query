@@ -6225,4 +6225,24 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('Works'))
   })
+
+  // For Project without TS, when migrating from v4 to v5, make sure invalid calls due to bad parameters are tracked.
+  it('should throw in case of bad arguments to enhance DevX', async () => {
+    // Mock console error to avoid noise when test is run
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    const key = queryKey()
+    const queryFn = () => 'data'
+
+    function Page() {
+      // Invalid call on purpose
+      const { data } = useQuery(key, { queryFn })
+      return <div>Does not matter</div>
+    }
+
+    expect(() => render(<Page />)).toThrow('Bad argument type')
+    consoleMock.mockRestore()
+  })
 })
