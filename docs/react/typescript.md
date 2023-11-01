@@ -137,6 +137,8 @@ TanStack Query v5 allows for a way to set a global Error type for everything, wi
 [//]: # 'RegisterErrorType'
 
 ```tsx
+import '@tanstack/react-query';
+
 declare module '@tanstack/react-query' {
   interface Register {
     defaultError: AxiosError
@@ -160,6 +162,8 @@ const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 Similarly to registering a [global error type](#registering-a-global-error) you can also register a global `Meta` type. This ensures the optional `meta` field on [queries](./reference/useQuery.md) and [mutations](./reference/useMutation.md) stays consistent and is type-safe.
 
 ```ts
+import '@tanstack/react-query';
+
 declare module '@tanstack/react-query' {
   interface Register {
     queryMeta: MyMeta,
