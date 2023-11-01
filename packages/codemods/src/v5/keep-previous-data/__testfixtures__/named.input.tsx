@@ -1,10 +1,10 @@
 import * as React from 'react'
 import axios from 'axios'
 import {
+  QueryClient as RenamedQueryClient,
   useQueries as useRenamedUseQueries,
   useQuery as useRenamedUseQuery,
-  useQueryClient as useRenamedUseQueryClient,
-  QueryClient as RenamedQueryClient
+  useQueryClient as useRenamedUseQueryClient
 } from '@tanstack/react-query'
 
 type Post = {

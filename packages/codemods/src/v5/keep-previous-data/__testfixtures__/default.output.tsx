@@ -1,6 +1,6 @@
 import * as React from 'react'
 import axios from 'axios'
-import { keepPreviousData, useQueries, useQuery, useQueryClient, QueryClient } from '@tanstack/react-query';
+import { keepPreviousData, QueryClient, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 
 type Post = {
   id: number
