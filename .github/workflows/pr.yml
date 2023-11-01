@@ -1,6 +1,11 @@
 name: pr
 
-on: [pull_request]
+on:
+  pull_request:
+    paths-ignore:
+      - "docs/**"
+      - "media/**"
+      - "**/*.md"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -17,11 +22,11 @@ jobs:
     name: Nx Cloud - Main Job
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2.2.4
+        uses: pnpm/action-setup@v2
         with:
           version: 8
       - name: Setup Node
@@ -46,7 +51,7 @@ jobs:
         with:
           timeout_minutes: 5
           max_attempts: 3
-          command: npx nx affected --targets=test:eslint,test:lib,test:types,test:build
+          command: npx nx affected --targets=test:eslint,test:lib,test:types,test:build,test:bundle
       - name: Stop Agents
         run: npx nx-cloud stop-all-agents
       - name: Upload coverage to Codecov
@@ -59,11 +64,11 @@ jobs:
       matrix:
         agent: [1, 2, 3]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2.2.4
+        uses: pnpm/action-setup@v2
         with:
           version: 8
       - name: Setup Node
@@ -80,11 +85,11 @@ jobs:
     name: Format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2.2.4
+        uses: pnpm/action-setup@v2
         with:
           version: 8
       - name: Setup Node
@@ -97,33 +102,3 @@ jobs:
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - name: Run prettier
         run: pnpm run test:format
-  test-react-17:
-    name: 'Test React 17'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          ref: ${{ github.head_ref }}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
-      - uses: pnpm/action-setup@v2.2.4
-        with:
-          version: 8
-      - uses: actions/setup-node@v3
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
-      - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v2
-      - name: Run Tests
-        uses: nick-fields/retry@v2.8.3
-        with:
-          timeout_minutes: 5
-          max_attempts: 3
-          command: npx nx affected --targets=test:lib --base=${{ github.event.pull_request.base.sha }}
-        env:
-          NX_CLOUD_DISTRIBUTED_EXECUTION: false
-          REACTJS_VERSION: 17

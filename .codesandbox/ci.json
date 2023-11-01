@@ -1,5 +1,6 @@
 {
   "installCommand": "install:csb",
+  "buildCommand": "build:all",
   "sandboxes": [
     "/examples/react/basic-typescript",
     "/examples/solid/basic-typescript",
@@ -7,5 +8,5 @@
     "/examples/vue/basic"
   ],
   "packages": ["packages/**"],
-  "node": "16"
+  "node": "18"
 }

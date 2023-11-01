@@ -12,9 +12,8 @@
           "test:eslint",
           "test:types",
           "test:build",
-          "build:types",
-          "build",
-          "rollup"
+          "test:bundle",
+          "build"
         ],
         "parallel": 5,
         "accessToken": "ZDdkNDA4MGEtYjNmYi00MWI4LWE1N2QtYTdlNmYxMGJlZWM2fHJlYWQ="
@@ -28,61 +27,51 @@
     }
   },
   "namedInputs": {
-    "globalBuildAffectingConfig": [
-      "{workspaceRoot}/babel.config.js",
-      "{workspaceRoot}/rollup.config.js",
-      "{workspaceRoot}/rollup.config.ts",
-      "{workspaceRoot}/tsconfig.json",
-      "{workspaceRoot}/tsconfig.base.json",
-      "{workspaceRoot}/package.json"
-    ],
-    "globalNonBuildAffectingConfig": [
-      "{workspaceRoot}/.eslintrc",
-      "{workspaceRoot}/jest-preset.js"
+    "sharedGlobals": [
+      "{workspaceRoot}/.eslintrc.cjs",
+      "{workspaceRoot}/package.json",
+      "{workspaceRoot}/scripts/getTsupConfig.js",
+      "{workspaceRoot}/tsconfig.json"
     ],
     "default": [
+      "sharedGlobals",
       "{projectRoot}/**/*",
-      "globalBuildAffectingConfig",
-      "globalNonBuildAffectingConfig",
-      "!{projectRoot}/**/*.md",
-      "!{projectRoot}/**/build/**/*"
+      "!{projectRoot}/**/*.md"
     ],
     "public": [
       "default",
-      "!{workspaceRoot}/.eslintrc",
-      "!{workspaceRoot}/jest-preset.js",
-      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
-      "!{projectRoot}/.eslintrc",
-      "!{projectRoot}/jest.config.js"
+      "{projectRoot}/build",
+      "{projectRoot}/dist",
+      "!{projectRoot}/.eslintrc.cjs",
+      "!{projectRoot}/tsconfig.eslint.json"
     ]
   },
   "targetDefaults": {
     "test:lib": {
-      "outputs": ["{projectRoot}/coverage"],
-      "inputs": ["default", "^public"]
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^public"],
+      "outputs": ["{projectRoot}/coverage"]
     },
     "test:eslint": {
+      "dependsOn": ["^build"],
       "inputs": ["default", "^public"]
     },
     "test:types": {
-      "outputs": [
-        "{projectRoot}/build/**/*.d.ts",
-        "{projectRoot}/build/.tsbuildinfo"
-      ],
-      "inputs": ["default", "^public"],
-      "dependsOn": ["^test:types"]
-    },
-    "build:types": {
-      "outputs": [
-        "{projectRoot}/build/**/*.d.ts",
-        "{projectRoot}/build/.tsbuildinfo"
-      ],
-      "inputs": ["default", "^public"],
-      "dependsOn": ["^build:types"]
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^public"]
     },
     "test:build": {
       "dependsOn": ["build"],
-      "inputs": ["^public"]
+      "inputs": ["default", "^public"]
+    },
+    "test:bundle": {
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^public"]
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^public"],
+      "outputs": ["{projectRoot}/build", "{projectRoot}/dist"]
     }
   }
 }

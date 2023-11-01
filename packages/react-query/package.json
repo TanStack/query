@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query",
-  "version": "4.32.6",
+  "version": "5.4.3",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -14,56 +14,56 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "types": "build/lib/index.d.ts",
-  "main": "build/lib/index.js",
-  "module": "build/lib/index.esm.js",
+  "type": "module",
+  "types": "build/legacy/index.d.ts",
+  "main": "build/legacy/index.cjs",
+  "module": "build/legacy/index.js",
   "exports": {
     ".": {
-      "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.mjs",
-      "default": "./build/lib/index.js"
+      "import": {
+        "types": "./build/modern/index.d.ts",
+        "default": "./build/modern/index.js"
+      },
+      "require": {
+        "types": "./build/modern/index.d.cts",
+        "default": "./build/modern/index.cjs"
+      }
     },
     "./package.json": "./package.json"
   },
-  "sideEffects": [
-    "./src/setBatchUpdatesFn.ts"
-  ],
+  "sideEffects": false,
   "scripts": {
-    "clean": "rimraf ./build",
+    "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
-    "test:lib": "jest --config ./jest.config.ts",
+    "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "build:types": "tsc --build"
+    "test:build": "publint --strict",
+    "build": "pnpm build:tsup && pnpm build:codemods",
+    "build:tsup": "tsup",
+    "build:codemods": "cpy ../codemods/* ./build/codemods"
   },
   "files": [
-    "build/lib/*",
-    "build/umd/*",
+    "build",
     "src",
-    "codemods",
-    "!codemods/jest.config.js",
-    "!codemods/**/__testfixtures__",
-    "!codemods/**/__tests__"
+    "!build/codemods/node_modules",
+    "!build/codemods/vitest.config.ts",
+    "!build/codemods/**/__testfixtures__",
+    "!build/codemods/**/__tests__"
   ],
+  "dependencies": {
+    "@tanstack/query-core": "workspace:*"
+  },
   "devDependencies": {
-    "@types/jscodeshift": "^0.11.3",
-    "@types/react": "^18.0.14",
-    "@types/react-dom": "^18.0.5",
-    "@types/use-sync-external-store": "^0.0.3",
+    "@types/react": "^18.2.31",
+    "@types/react-dom": "^18.2.14",
     "react": "^18.2.0",
-    "react-17": "npm:react@^17.0.2",
     "react-dom": "^18.2.0",
-    "react-dom-17": "npm:react-dom@^17.0.2",
-    "jscodeshift": "^0.13.1",
     "react-error-boundary": "^3.1.4"
   },
-  "dependencies": {
-    "@tanstack/query-core": "workspace:*",
-    "use-sync-external-store": "^1.2.0"
-  },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
-    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "react-native": "*"
   },
   "peerDependenciesMeta": {

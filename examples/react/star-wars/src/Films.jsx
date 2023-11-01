@@ -1,5 +1,5 @@
 import React from 'react'
-import { Typography, Link } from '@material-ui/core'
+import { Typography, Link } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import fetch from './fetch'
@@ -10,7 +10,7 @@ export default function Films(props) {
     queryFn: () => fetch('https://swapi.dev/api/films/'),
   })
 
-  if (status === 'loading') {
+  if (status === 'pending') {
     return <p>Loading...</p>
   }
   if (status === 'error') {

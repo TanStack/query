@@ -9,20 +9,20 @@ import {
   TableHead,
   TableRow,
   Paper,
-} from '@material-ui/core'
-import { Link as RouterLink } from 'react-router-dom'
-import { withRouter } from 'react-router'
+} from '@mui/material'
+import { useParams, Link as RouterLink } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import fetch from './fetch'
 
-function Character(props) {
-  const characterId = props.match.params.characterId
+function Character() {
+  let params = useParams()
+  const characterId = params.characterId
   const { status, error, data } = useQuery({
     queryKey: ['character', characterId],
     queryFn: () => fetch(`https://swapi.dev/api/people/${characterId}/`),
   })
 
-  if (status === 'loading') return <p>Loading...</p>
+  if (status === 'pending') return <p>Loading...</p>
   if (status === 'error') return <p>Error :(</p>
 
   console.info({ data, status, error })
@@ -119,4 +119,4 @@ function Homeworld(props) {
   return data.name
 }
 
-export default withRouter(Character)
+export default Character

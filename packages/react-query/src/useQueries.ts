@@ -2,7 +2,6 @@
 import * as React from 'react'
 
 import { QueriesObserver, notifyManager } from '@tanstack/query-core'
-import { useSyncExternalStore } from './useSyncExternalStore'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
@@ -17,17 +16,30 @@ import {
   shouldSuspend,
   willFetch,
 } from './suspense'
-import type { QueryFunction, QueryKey } from '@tanstack/query-core'
 import type { UseQueryOptions, UseQueryResult } from './types'
+import type {
+  DefaultError,
+  QueriesObserverOptions,
+  QueriesPlaceholderDataFunction,
+  QueryClient,
+  QueryFunction,
+  QueryKey,
+  ThrowOnError,
+} from '@tanstack/query-core'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
-// - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
+// `placeholderData` function always gets undefined passed
 type UseQueryOptionsForUseQueries<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'context'>
+> = Omit<
+  UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'placeholderData' | 'suspense'
+> & {
+  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+}
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
@@ -55,12 +67,16 @@ type GetOptions<T> =
     T extends {
         queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
         select: (data: any) => infer TData
+        throwOnError?: ThrowOnError<any, infer TError, any, any>
       }
-    ? UseQueryOptionsForUseQueries<TQueryFnData, unknown, TData, TQueryKey>
-    : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
+    ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData, TQueryKey>
+    : T extends {
+        queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
+        throwOnError?: ThrowOnError<any, infer TError, any, any>
+      }
     ? UseQueryOptionsForUseQueries<
         TQueryFnData,
-        unknown,
+        TError,
         TQueryFnData,
         TQueryKey
       >
@@ -86,10 +102,17 @@ type GetResults<T> =
     T extends {
         queryFn?: QueryFunction<unknown, any>
         select: (data: any) => infer TData
+        throwOnError?: ThrowOnError<any, infer TError, any, any>
       }
-    ? UseQueryResult<TData>
-    : T extends { queryFn?: QueryFunction<infer TQueryFnData, any> }
-    ? UseQueryResult<TQueryFnData>
+    ? UseQueryResult<TData, unknown extends TError ? DefaultError : TError>
+    : T extends {
+        queryFn?: QueryFunction<infer TQueryFnData, any>
+        throwOnError?: ThrowOnError<any, infer TError, any, any>
+      }
+    ? UseQueryResult<
+        TQueryFnData,
+        unknown extends TError ? DefaultError : TError
+      >
     : // Fallback
       UseQueryResult
 
@@ -97,72 +120,87 @@ type GetResults<T> =
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
  */
 export type QueriesOptions<
-  T extends any[],
-  Result extends any[] = [],
+  T extends Array<any>,
+  Result extends Array<any> = [],
   Depth extends ReadonlyArray<number> = [],
 > = Depth['length'] extends MAXIMUM_DEPTH
-  ? UseQueryOptionsForUseQueries[]
+  ? Array<UseQueryOptionsForUseQueries>
   : T extends []
   ? []
   : T extends [infer Head]
   ? [...Result, GetOptions<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesOptions<[...Tail], [...Result, GetOptions<Head>], [...Depth, 1]>
-  : unknown[] extends T
+  : Array<unknown> extends T
   ? T
   : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
   // use this to infer the param types in the case of Array.map() argument
-  T extends UseQueryOptionsForUseQueries<
-      infer TQueryFnData,
-      infer TError,
-      infer TData,
-      infer TQueryKey
-    >[]
-  ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData, TQueryKey>[]
+  T extends Array<
+      UseQueryOptionsForUseQueries<
+        infer TQueryFnData,
+        infer TError,
+        infer TData,
+        infer TQueryKey
+      >
+    >
+  ? Array<UseQueryOptionsForUseQueries<TQueryFnData, TError, TData, TQueryKey>>
   : // Fallback
-    UseQueryOptionsForUseQueries[]
+    Array<UseQueryOptionsForUseQueries>
 
 /**
  * QueriesResults reducer recursively maps type param to results
  */
 export type QueriesResults<
-  T extends any[],
-  Result extends any[] = [],
+  T extends Array<any>,
+  Result extends Array<any> = [],
   Depth extends ReadonlyArray<number> = [],
 > = Depth['length'] extends MAXIMUM_DEPTH
-  ? UseQueryResult[]
+  ? Array<UseQueryResult>
   : T extends []
   ? []
   : T extends [infer Head]
   ? [...Result, GetResults<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesResults<[...Tail], [...Result, GetResults<Head>], [...Depth, 1]>
-  : T extends UseQueryOptionsForUseQueries<
-      infer TQueryFnData,
-      infer TError,
-      infer TData,
-      any
-    >[]
+  : T extends Array<
+      UseQueryOptionsForUseQueries<
+        infer TQueryFnData,
+        infer TError,
+        infer TData,
+        any
+      >
+    >
   ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-    UseQueryResult<unknown extends TData ? TQueryFnData : TData, TError>[]
+    Array<
+      UseQueryResult<
+        unknown extends TData ? TQueryFnData : TData,
+        unknown extends TError ? DefaultError : TError
+      >
+    >
   : // Fallback
-    UseQueryResult[]
+    Array<UseQueryResult>
 
-export function useQueries<T extends any[]>({
-  queries,
-  context,
-}: {
-  queries: readonly [...QueriesOptions<T>]
-  context?: UseQueryOptions['context']
-}): QueriesResults<T> {
-  const queryClient = useQueryClient({ context })
+export function useQueries<
+  T extends Array<any>,
+  TCombinedResult = QueriesResults<T>,
+>(
+  {
+    queries,
+    ...options
+  }: {
+    queries: readonly [...QueriesOptions<T>]
+    combine?: (result: QueriesResults<T>) => TCombinedResult
+  },
+  queryClient?: QueryClient,
+): TCombinedResult {
+  const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
 
   const defaultedQueries = React.useMemo(
     () =>
-      queries.map((options) => {
-        const defaultedOptions = queryClient.defaultQueryOptions(options)
+      queries.map((opts) => {
+        const defaultedOptions = client.defaultQueryOptions(opts)
 
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = isRestoring
@@ -171,7 +209,7 @@ export function useQueries<T extends any[]>({
 
         return defaultedOptions
       }),
-    [queries, queryClient, isRestoring],
+    [queries, client, isRestoring],
   )
 
   defaultedQueries.forEach((query) => {
@@ -182,12 +220,18 @@ export function useQueries<T extends any[]>({
   useClearResetErrorBoundary(errorResetBoundary)
 
   const [observer] = React.useState(
-    () => new QueriesObserver(queryClient, defaultedQueries),
+    () =>
+      new QueriesObserver<TCombinedResult>(
+        client,
+        defaultedQueries,
+        options as QueriesObserverOptions<TCombinedResult>,
+      ),
   )
 
-  const optimisticResult = observer.getOptimisticResult(defaultedQueries)
+  const [optimisticResult, getCombinedResult, trackResult] =
+    observer.getOptimisticResult(defaultedQueries)
 
-  useSyncExternalStore(
+  React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
         isRestoring
@@ -202,8 +246,14 @@ export function useQueries<T extends any[]>({
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
-    observer.setQueries(defaultedQueries, { listeners: false })
-  }, [defaultedQueries, observer])
+    observer.setQueries(
+      defaultedQueries,
+      options as QueriesObserverOptions<TCombinedResult>,
+      {
+        listeners: false,
+      },
+    )
+  }, [defaultedQueries, options, observer])
 
   const shouldAtLeastOneSuspend = optimisticResult.some((result, index) =>
     shouldSuspend(defaultedQueries[index], result, isRestoring),
@@ -211,14 +261,14 @@ export function useQueries<T extends any[]>({
 
   const suspensePromises = shouldAtLeastOneSuspend
     ? optimisticResult.flatMap((result, index) => {
-        const options = defaultedQueries[index]
+        const opts = defaultedQueries[index]
         const queryObserver = observer.getObservers()[index]
 
-        if (options && queryObserver) {
-          if (shouldSuspend(options, result, isRestoring)) {
-            return fetchOptimistic(options, queryObserver, errorResetBoundary)
+        if (opts && queryObserver) {
+          if (shouldSuspend(opts, result, isRestoring)) {
+            return fetchOptimistic(opts, queryObserver, errorResetBoundary)
           } else if (willFetch(result, isRestoring)) {
-            void fetchOptimistic(options, queryObserver, errorResetBoundary)
+            void fetchOptimistic(opts, queryObserver, errorResetBoundary)
           }
         }
         return []
@@ -234,7 +284,7 @@ export function useQueries<T extends any[]>({
       getHasError({
         result,
         errorResetBoundary,
-        useErrorBoundary: defaultedQueries[index]?.useErrorBoundary ?? false,
+        throwOnError: defaultedQueries[index]?.throwOnError ?? false,
         query: observerQueries[index]!,
       }),
   )
@@ -243,5 +293,5 @@ export function useQueries<T extends any[]>({
     throw firstSingleResultWhichShouldThrow.error
   }
 
-  return optimisticResult as QueriesResults<T>
+  return getCombinedResult(trackResult())
 }

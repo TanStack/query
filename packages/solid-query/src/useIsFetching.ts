@@ -1,58 +1,23 @@
-import { createComputed, createMemo, createSignal, onCleanup } from 'solid-js'
+import { createMemo, createSignal, onCleanup } from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
-import { parseFilterArgs } from './utils'
 import type { QueryFilters } from '@tanstack/query-core'
-
-import type { ContextOptions, SolidQueryFilters, SolidQueryKey } from './types'
+import type { QueryClient } from './QueryClient'
 import type { Accessor } from 'solid-js'
 
-interface Options extends ContextOptions {}
-
 export function useIsFetching(
-  filters?: SolidQueryFilters,
-  options?: Options,
-): Accessor<number>
-export function useIsFetching(
-  queryKey?: SolidQueryKey,
-  filters?: SolidQueryFilters,
-  options?: Options,
-): Accessor<number>
-export function useIsFetching(
-  arg1?: SolidQueryKey | SolidQueryFilters,
-  arg2?: SolidQueryFilters | Options,
-  arg3?: Options,
+  filters?: Accessor<QueryFilters>,
+  queryClient?: Accessor<QueryClient>,
 ): Accessor<number> {
-  const [filtersObj, optionsObj = {}] = parseFilterArgs(arg1, arg2, arg3)
+  const client = createMemo(() => useQueryClient(queryClient?.()))
+  const queryCache = createMemo(() => client().getQueryCache())
 
-  const [filters, setFilters] = createSignal(filtersObj)
-  const [options, setOptions] = createSignal(optionsObj)
-
-  const queryClient = createMemo(() =>
-    useQueryClient({ context: options().context }),
-  )
-  const queryCache = createMemo(() => queryClient().getQueryCache())
-
-  const [fetches, setFetches] = createSignal(
-    queryClient().isFetching(filters as QueryFilters),
-  )
-
-  createComputed(() => {
-    const [newFiltersObj, newOptionsObj = {}] = parseFilterArgs(
-      arg1,
-      arg2,
-      arg3,
-    )
-    setFilters(newFiltersObj)
-    setOptions(newOptionsObj)
-  })
+  const [fetches, setFetches] = createSignal(client().isFetching(filters?.()))
 
   const unsubscribe = queryCache().subscribe(() => {
-    setFetches(queryClient().isFetching(filters() as QueryFilters))
+    setFetches(client().isFetching(filters?.()))
   })
 
-  onCleanup(() => {
-    unsubscribe()
-  })
+  onCleanup(unsubscribe)
 
   return fetches
 }

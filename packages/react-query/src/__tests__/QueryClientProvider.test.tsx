@@ -1,14 +1,9 @@
+import { describe, expect, test } from 'vitest'
 import * as React from 'react'
 import { render, waitFor } from '@testing-library/react'
-import { renderToString } from 'react-dom/server'
 
-import {
-  QueryCache,
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-  useQueryClient,
-} from '..'
+import { vi } from 'vitest'
+import { QueryCache, QueryClientProvider, useQuery, useQueryClient } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
 
 describe('QueryClientProvider', () => {
@@ -19,9 +14,12 @@ describe('QueryClientProvider', () => {
     const queryClient = createQueryClient({ queryCache })
 
     function Page() {
-      const { data } = useQuery(key, async () => {
-        await sleep(10)
-        return 'test'
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 'test'
+        },
       })
 
       return (
@@ -39,7 +37,7 @@ describe('QueryClientProvider', () => {
 
     await waitFor(() => rendered.getByText('test'))
 
-    expect(queryCache.find(key)).toBeDefined()
+    expect(queryCache.find({ queryKey: key })).toBeDefined()
   })
 
   test('allows multiple caches to be partitioned', async () => {
@@ -53,9 +51,12 @@ describe('QueryClientProvider', () => {
     const queryClient2 = createQueryClient({ queryCache: queryCache2 })
 
     function Page1() {
-      const { data } = useQuery(key1, async () => {
-        await sleep(10)
-        return 'test1'
+      const { data } = useQuery({
+        queryKey: key1,
+        queryFn: async () => {
+          await sleep(10)
+          return 'test1'
+        },
       })
 
       return (
@@ -65,9 +66,12 @@ describe('QueryClientProvider', () => {
       )
     }
     function Page2() {
-      const { data } = useQuery(key2, async () => {
-        await sleep(10)
-        return 'test2'
+      const { data } = useQuery({
+        queryKey: key2,
+        queryFn: async () => {
+          await sleep(10)
+          return 'test2'
+        },
       })
 
       return (
@@ -91,10 +95,10 @@ describe('QueryClientProvider', () => {
     await waitFor(() => rendered.getByText('test1'))
     await waitFor(() => rendered.getByText('test2'))
 
-    expect(queryCache1.find(key1)).toBeDefined()
-    expect(queryCache1.find(key2)).not.toBeDefined()
-    expect(queryCache2.find(key1)).not.toBeDefined()
-    expect(queryCache2.find(key2)).toBeDefined()
+    expect(queryCache1.find({ queryKey: key1 })).toBeDefined()
+    expect(queryCache1.find({ queryKey: key2 })).not.toBeDefined()
+    expect(queryCache2.find({ queryKey: key1 })).not.toBeDefined()
+    expect(queryCache2.find({ queryKey: key2 })).toBeDefined()
   })
 
   test("uses defaultOptions for queries when they don't provide their own config", async () => {
@@ -105,15 +109,18 @@ describe('QueryClientProvider', () => {
       queryCache,
       defaultOptions: {
         queries: {
-          cacheTime: Infinity,
+          gcTime: Infinity,
         },
       },
     })
 
     function Page() {
-      const { data } = useQuery(key, async () => {
-        await sleep(10)
-        return 'test'
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 'test'
+        },
       })
 
       return (
@@ -131,78 +138,13 @@ describe('QueryClientProvider', () => {
 
     await waitFor(() => rendered.getByText('test'))
 
-    expect(queryCache.find(key)).toBeDefined()
-    expect(queryCache.find(key)?.options.cacheTime).toBe(Infinity)
-  })
-
-  describe('with custom context', () => {
-    it('uses the correct context', async () => {
-      const key = queryKey()
-
-      const contextOuter = React.createContext<QueryClient | undefined>(
-        undefined,
-      )
-      const contextInner = React.createContext<QueryClient | undefined>(
-        undefined,
-      )
-
-      const queryCacheOuter = new QueryCache()
-      const queryClientOuter = new QueryClient({ queryCache: queryCacheOuter })
-
-      const queryCacheInner = new QueryCache()
-      const queryClientInner = new QueryClient({ queryCache: queryCacheInner })
-
-      const queryCacheInnerInner = new QueryCache()
-      const queryClientInnerInner = new QueryClient({
-        queryCache: queryCacheInnerInner,
-      })
-
-      function Page() {
-        const { data: testOuter } = useQuery(key, async () => 'testOuter', {
-          context: contextOuter,
-        })
-        const { data: testInner } = useQuery(key, async () => 'testInner', {
-          context: contextInner,
-        })
-        const { data: testInnerInner } = useQuery(
-          key,
-          async () => 'testInnerInner',
-        )
-
-        return (
-          <div>
-            <h1>
-              {testOuter} {testInner} {testInnerInner}
-            </h1>
-          </div>
-        )
-      }
-
-      // contextSharing should be ignored when passing a custom context.
-      const contextSharing = true
-
-      const rendered = render(
-        <QueryClientProvider client={queryClientOuter} context={contextOuter}>
-          <QueryClientProvider client={queryClientInner} context={contextInner}>
-            <QueryClientProvider
-              client={queryClientInnerInner}
-              contextSharing={contextSharing}
-            >
-              <Page />
-            </QueryClientProvider>
-          </QueryClientProvider>
-        </QueryClientProvider>,
-      )
-
-      await waitFor(() =>
-        rendered.getByText('testOuter testInner testInnerInner'),
-      )
-    })
+    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })?.options.gcTime).toBe(Infinity)
   })
 
   describe('useQueryClient', () => {
     test('should throw an error if no query client has been set', () => {
-      const consoleMock = jest
+      const consoleMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
 
@@ -216,60 +158,6 @@ describe('QueryClientProvider', () => {
       )
 
       consoleMock.mockRestore()
-    })
-
-    test('should use window to get the context when contextSharing is true', () => {
-      const queryCache = new QueryCache()
-      const queryClient = createQueryClient({ queryCache })
-
-      let queryClientFromHook: QueryClient | undefined
-      let queryClientFromWindow: QueryClient | undefined
-
-      function Page() {
-        queryClientFromHook = useQueryClient()
-        queryClientFromWindow = React.useContext(
-          window.ReactQueryClientContext as React.Context<
-            QueryClient | undefined
-          >,
-        )
-        return null
-      }
-
-      render(
-        <QueryClientProvider client={queryClient} contextSharing={true}>
-          <Page />
-        </QueryClientProvider>,
-      )
-
-      expect(queryClientFromHook).toEqual(queryClient)
-      expect(queryClientFromWindow).toEqual(queryClient)
-    })
-
-    test('should not use window to get the context when contextSharing is true and window does not exist', () => {
-      const queryCache = new QueryCache()
-      const queryClient = createQueryClient({ queryCache })
-
-      // Mock a non web browser environment
-      const windowSpy = jest
-        .spyOn(window, 'window', 'get')
-        .mockImplementation(undefined)
-
-      let queryClientFromHook: QueryClient | undefined
-
-      function Page() {
-        queryClientFromHook = useQueryClient()
-        return null
-      }
-
-      renderToString(
-        <QueryClientProvider client={queryClient} contextSharing={true}>
-          <Page />
-        </QueryClientProvider>,
-      )
-
-      expect(queryClientFromHook).toEqual(queryClient)
-
-      windowSpy.mockRestore()
     })
   })
 })

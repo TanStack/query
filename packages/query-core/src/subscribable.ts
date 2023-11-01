@@ -1,7 +1,7 @@
 type Listener = () => void
 
 export class Subscribable<TListener extends Function = Listener> {
-  protected listeners: Set<{ listener: TListener }>
+  protected listeners: Set<TListener>
 
   constructor() {
     this.listeners = new Set()
@@ -9,13 +9,12 @@ export class Subscribable<TListener extends Function = Listener> {
   }
 
   subscribe(listener: TListener): () => void {
-    const identity = { listener }
-    this.listeners.add(identity)
+    this.listeners.add(listener)
 
     this.onSubscribe()
 
     return () => {
-      this.listeners.delete(identity)
+      this.listeners.delete(listener)
       this.onUnsubscribe()
     }
   }

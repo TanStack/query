@@ -1,115 +1,95 @@
 import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
-import type { UnwrapRef } from 'vue-demi'
 import type {
+  DefaultError,
+  InfiniteData,
+  InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
-  QueryFunction,
   QueryKey,
   QueryObserver,
+  WithRequired,
 } from '@tanstack/query-core'
 
-import type { UseQueryReturnType } from './useBaseQuery'
+import type { UseBaseQueryReturnType } from './useBaseQuery'
 
-import type {
-  DistributiveOmit,
-  VueInfiniteQueryObserverOptions,
-  WithQueryClientKey,
-} from './types'
+import type { DeepUnwrapRef, MaybeRefDeep, MaybeRefOrGetter } from './types'
+import type { QueryClient } from './queryClient'
 
 export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = DefaultError,
   TData = TQueryFnData,
+  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = WithQueryClientKey<
-  VueInfiniteQueryObserverOptions<
+  TPageParam = unknown,
+> = {
+  [Property in keyof InfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
-    TQueryFnData,
-    TQueryKey
-  >
->
+    TQueryData,
+    TQueryKey,
+    TPageParam
+  >]: Property extends 'queryFn' | 'getPreviousPageParam' | 'getNextPageParam'
+    ? InfiniteQueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        DeepUnwrapRef<TQueryKey>,
+        TPageParam
+      >[Property]
+    : Property extends 'enabled'
+    ? MaybeRefOrGetter<
+        InfiniteQueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          TQueryKey
+        >[Property]
+      >
+    : MaybeRefDeep<
+        WithRequired<
+          InfiniteQueryObserverOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryData,
+            TQueryKey,
+            TPageParam
+          >,
+          'queryKey'
+        >[Property]
+      >
+}
 
-type InfiniteQueryReturnType<TData, TError> = UseQueryReturnType<
+export type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<
   TData,
   TError,
   InfiniteQueryObserverResult<TData, TError>
 >
-export type UseInfiniteQueryReturnType<TData, TError> = DistributiveOmit<
-  InfiniteQueryReturnType<TData, TError>,
-  'fetchNextPage' | 'fetchPreviousPage' | 'refetch' | 'remove'
-> & {
-  fetchNextPage: InfiniteQueryObserverResult<TData, TError>['fetchNextPage']
-  fetchPreviousPage: InfiniteQueryObserverResult<
-    TData,
-    TError
-  >['fetchPreviousPage']
-  refetch: InfiniteQueryObserverResult<TData, TError>['refetch']
-  remove: InfiniteQueryObserverResult<TData, TError>['remove']
-}
-
-export function useInfiniteQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  options: UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-): UseInfiniteQueryReturnType<TData, TError>
-
-export function useInfiniteQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  queryKey: TQueryKey,
-  options?: Omit<
-    UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryKey'
-  >,
-): UseInfiniteQueryReturnType<TData, TError>
-
-export function useInfiniteQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  queryKey: TQueryKey,
-  queryFn: QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>,
-  options?: Omit<
-    UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryKey' | 'queryFn'
-  >,
-): UseInfiniteQueryReturnType<TData, TError>
 
 export function useInfiniteQuery<
   TQueryFnData,
-  TError,
-  TData = TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 >(
-  arg1:
-    | TQueryKey
-    | UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  arg2?:
-    | QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>
-    | UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  arg3?: UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: UseInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryFnData,
+    TQueryKey,
+    TPageParam
+  >,
+  queryClient?: QueryClient,
 ): UseInfiniteQueryReturnType<TData, TError> {
-  const result = useBaseQuery(
+  return useBaseQuery(
     InfiniteQueryObserver as typeof QueryObserver,
-    arg1,
-    arg2,
-    arg3,
-  ) as InfiniteQueryReturnType<TData, TError>
-  return {
-    ...result,
-    fetchNextPage: result.fetchNextPage.value,
-    fetchPreviousPage: result.fetchPreviousPage.value,
-    refetch: result.refetch.value,
-    remove: result.remove.value,
-  }
+    options,
+    queryClient,
+  ) as UseInfiniteQueryReturnType<TData, TError>
 }

@@ -1,4 +1,5 @@
 import type {
+  DefaultError,
   DefinedQueryObserverResult,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
@@ -9,87 +10,91 @@ import type {
   QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { QueryClient } from '@tanstack/query-core'
 import type { Readable } from 'svelte/store'
 
-export interface ContextOptions {
-  /**
-   * Use this to pass your Svelte Query context. Otherwise, `defaultContext` will be used.
-   */
-  context?: QueryClient | undefined
-}
+/** Allows a type to be either the base object or a store of that object */
+export type StoreOrVal<T> = T | Readable<T>
 
-export interface CreateBaseQueryOptions<
+/** Options for createBaseQuery */
+export type CreateBaseQueryOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends ContextOptions,
-    QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {}
+> = QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
 
-export interface CreateBaseQueryResult<TData = unknown, TError = unknown>
-  extends Readable<QueryObserverResult<TData, TError>> {}
+/** Result from createBaseQuery */
+export type CreateBaseQueryResult<
+  TData = unknown,
+  TError = DefaultError,
+> = Readable<QueryObserverResult<TData, TError>>
 
-export interface CreateQueryOptions<
+/** Options for createQuery */
+export type CreateQueryOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends CreateBaseQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey
-  > {}
+> = CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>
 
-export interface CreateQueryResult<TData = unknown, TError = unknown>
-  extends CreateBaseQueryResult<TData, TError> {}
+/** Result from createQuery */
+export type CreateQueryResult<
+  TData = unknown,
+  TError = DefaultError,
+> = CreateBaseQueryResult<TData, TError>
 
-export interface CreateInfiniteQueryOptions<
+/** Options for createInfiniteQuery */
+export type CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = DefaultError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends InfiniteQueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  > {}
+  TPageParam = unknown,
+> = InfiniteQueryObserverOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryData,
+  TQueryKey,
+  TPageParam
+>
 
+/** Result from createInfiniteQuery */
 export type CreateInfiniteQueryResult<
   TData = unknown,
-  TError = unknown,
+  TError = DefaultError,
 > = Readable<InfiniteQueryObserverResult<TData, TError>>
 
+/** Options for createBaseQuery with initialData */
 export type DefinedCreateBaseQueryResult<
   TData = unknown,
-  TError = unknown,
+  TError = DefaultError,
 > = Readable<DefinedQueryObserverResult<TData, TError>>
 
+/** Options for createQuery with initialData */
 export type DefinedCreateQueryResult<
   TData = unknown,
-  TError = unknown,
+  TError = DefaultError,
 > = DefinedCreateBaseQueryResult<TData, TError>
 
-export interface CreateMutationOptions<
+/** Options for createMutation */
+export type CreateMutationOptions<
   TData = unknown,
-  TError = unknown,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> extends ContextOptions,
-    Omit<
-      MutationObserverOptions<TData, TError, TVariables, TContext>,
-      '_defaulted' | 'variables'
-    > {}
+> = StoreOrVal<
+  Omit<
+    MutationObserverOptions<TData, TError, TVariables, TContext>,
+    '_defaulted' | 'variables'
+  >
+>
 
 export type CreateMutateFunction<
   TData = unknown,
-  TError = unknown,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 > = (
@@ -98,14 +103,14 @@ export type CreateMutateFunction<
 
 export type CreateMutateAsyncFunction<
   TData = unknown,
-  TError = unknown,
+  TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 > = MutateFunction<TData, TError, TVariables, TContext>
 
 export type CreateBaseMutationResult<
   TData = unknown,
-  TError = unknown,
+  TError = DefaultError,
   TVariables = unknown,
   TContext = unknown,
 > = Override<
@@ -115,13 +120,12 @@ export type CreateBaseMutationResult<
   mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext>
 }
 
-export interface CreateMutationResult<
+/** Result from createMutation */
+export type CreateMutationResult<
   TData = unknown,
-  TError = unknown,
+  TError = DefaultError,
   TVariables = unknown,
   TContext = unknown,
-> extends Readable<
-    CreateBaseMutationResult<TData, TError, TVariables, TContext>
-  > {}
+> = Readable<CreateBaseMutationResult<TData, TError, TVariables, TContext>>
 
 type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }

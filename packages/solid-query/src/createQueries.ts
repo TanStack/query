@@ -1,23 +1,44 @@
-import { createComputed, onCleanup, onMount } from 'solid-js'
 import { QueriesObserver } from '@tanstack/query-core'
 import { createStore, unwrap } from 'solid-js/store'
+import {
+  batch,
+  createComputed,
+  createMemo,
+  createRenderEffect,
+  createResource,
+  mergeProps,
+  on,
+  onCleanup,
+  onMount,
+} from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
-import { scheduleMicrotask } from './utils'
+import { useIsRestoring } from './isRestoring'
+import type { CreateQueryResult, SolidQueryOptions } from './types'
+import type { Accessor } from 'solid-js'
+import type { QueryClient } from './QueryClient'
 import type {
-  CreateQueryOptions,
-  CreateQueryResult,
-  SolidQueryKey,
-} from './types'
-import type { QueryFunction } from '@tanstack/query-core'
+  DefaultError,
+  QueriesObserverOptions,
+  QueriesPlaceholderDataFunction,
+  QueryFunction,
+  QueryKey,
+  QueryObserverResult,
+  ThrowOnError,
+} from '@tanstack/query-core'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
-// - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
+// `placeholderData` function does not have a parameter
 type CreateQueryOptionsForCreateQueries<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = DefaultError,
   TData = TQueryFnData,
-  TQueryKey extends SolidQueryKey = SolidQueryKey,
-> = Omit<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'context'>
+  TQueryKey extends QueryKey = QueryKey,
+> = Omit<
+  SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'placeholderData'
+> & {
+  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+}
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
@@ -45,19 +66,18 @@ type GetOptions<T> =
     T extends {
         queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
         select: (data: any) => infer TData
+        throwOnError?: ThrowOnError<any, infer TError, any, any>
+      }
+    ? CreateQueryOptionsForCreateQueries<TQueryFnData, TError, TData, TQueryKey>
+    : T extends {
+        queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
+        throwOnError?: ThrowOnError<any, infer TError, any, any>
       }
     ? CreateQueryOptionsForCreateQueries<
         TQueryFnData,
-        unknown,
-        TData,
-        () => TQueryKey
-      >
-    : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
-    ? CreateQueryOptionsForCreateQueries<
+        TError,
         TQueryFnData,
-        unknown,
-        TQueryFnData,
-        () => TQueryKey
+        TQueryKey
       >
     : // Fallback
       CreateQueryOptionsForCreateQueries
@@ -81,10 +101,17 @@ type GetResults<T> =
     T extends {
         queryFn?: QueryFunction<unknown, any>
         select: (data: any) => infer TData
+        throwOnError?: ThrowOnError<any, infer TError, any, any>
       }
-    ? CreateQueryResult<TData>
-    : T extends { queryFn?: QueryFunction<infer TQueryFnData, any> }
-    ? CreateQueryResult<TQueryFnData>
+    ? CreateQueryResult<TData, unknown extends TError ? DefaultError : TError>
+    : T extends {
+        queryFn?: QueryFunction<infer TQueryFnData, any>
+        throwOnError?: ThrowOnError<any, infer TError, any, any>
+      }
+    ? CreateQueryResult<
+        TQueryFnData,
+        unknown extends TError ? DefaultError : TError
+      >
     : // Fallback
       CreateQueryResult
 
@@ -92,112 +119,209 @@ type GetResults<T> =
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
  */
 export type QueriesOptions<
-  T extends any[],
-  Result extends any[] = [],
+  T extends Array<any>,
+  Result extends Array<any> = [],
   Depth extends ReadonlyArray<number> = [],
 > = Depth['length'] extends MAXIMUM_DEPTH
-  ? CreateQueryOptionsForCreateQueries[]
+  ? Array<CreateQueryOptionsForCreateQueries>
   : T extends []
   ? []
   : T extends [infer Head]
   ? [...Result, GetOptions<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesOptions<[...Tail], [...Result, GetOptions<Head>], [...Depth, 1]>
-  : unknown[] extends T
+  : Array<unknown> extends T
   ? T
   : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
   // use this to infer the param types in the case of Array.map() argument
-  T extends CreateQueryOptionsForCreateQueries<
-      infer TQueryFnData,
-      infer TError,
-      infer TData,
-      infer TQueryKey
-    >[]
-  ? CreateQueryOptionsForCreateQueries<TQueryFnData, TError, TData, TQueryKey>[]
+  T extends Array<
+      CreateQueryOptionsForCreateQueries<
+        infer TQueryFnData,
+        infer TError,
+        infer TData,
+        infer TQueryKey
+      >
+    >
+  ? Array<
+      CreateQueryOptionsForCreateQueries<TQueryFnData, TError, TData, TQueryKey>
+    >
   : // Fallback
-    CreateQueryOptionsForCreateQueries[]
+    Array<CreateQueryOptionsForCreateQueries>
 
 /**
  * QueriesResults reducer recursively maps type param to results
  */
 export type QueriesResults<
-  T extends any[],
-  Result extends any[] = [],
+  T extends Array<any>,
+  Result extends Array<any> = [],
   Depth extends ReadonlyArray<number> = [],
 > = Depth['length'] extends MAXIMUM_DEPTH
-  ? CreateQueryResult[]
+  ? Array<CreateQueryResult>
   : T extends []
   ? []
   : T extends [infer Head]
   ? [...Result, GetResults<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesResults<[...Tail], [...Result, GetResults<Head>], [...Depth, 1]>
-  : T extends CreateQueryOptionsForCreateQueries<
-      infer TQueryFnData,
-      infer TError,
-      infer TData,
-      any
-    >[]
+  : T extends Array<
+      CreateQueryOptionsForCreateQueries<
+        infer TQueryFnData,
+        infer TError,
+        infer TData,
+        any
+      >
+    >
   ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-    CreateQueryResult<unknown extends TData ? TQueryFnData : TData, TError>[]
+    Array<
+      CreateQueryResult<
+        unknown extends TData ? TQueryFnData : TData,
+        unknown extends TError ? DefaultError : TError
+      >
+    >
   : // Fallback
-    CreateQueryResult[]
+    Array<CreateQueryResult>
 
-type ArrType<T> = T extends (infer U)[] ? U : never
+export function createQueries<
+  T extends Array<any>,
+  TCombinedResult extends QueriesResults<T> = QueriesResults<T>,
+>(
+  queriesOptions: Accessor<{
+    queries: readonly [...QueriesOptions<T>]
+    combine?: (result: QueriesResults<T>) => TCombinedResult
+  }>,
+  queryClient?: Accessor<QueryClient>,
+): TCombinedResult {
+  const client = createMemo(() => useQueryClient(queryClient?.()))
+  const isRestoring = useIsRestoring()
 
-export function createQueries<T extends any[]>(queriesOptions: {
-  queries: readonly [...QueriesOptions<T>]
-  context?: CreateQueryOptions['context']
-}): QueriesResults<T> {
-  const queryClient = useQueryClient({ context: queriesOptions.context })
-
-  const normalizeOptions = (
-    options: ArrType<typeof queriesOptions.queries>,
-  ) => {
-    const normalizedOptions = { ...options, queryKey: options.queryKey?.() }
-    const defaultedOptions = queryClient.defaultQueryOptions(normalizedOptions)
-    defaultedOptions._optimisticResults = 'optimistic'
-    return defaultedOptions
-  }
-
-  const defaultedQueries = queriesOptions.queries.map((options) =>
-    normalizeOptions(options),
+  const defaultedQueries = createMemo(() =>
+    queriesOptions().queries.map((options) =>
+      mergeProps(client().defaultQueryOptions(options), {
+        get _optimisticResults() {
+          return isRestoring() ? 'isRestoring' : 'optimistic'
+        },
+      }),
+    ),
   )
 
-  const observer = new QueriesObserver(queryClient, defaultedQueries)
-
-  const [state, setState] = createStore(
-    observer.getOptimisticResult(defaultedQueries),
+  const observer = new QueriesObserver(
+    client(),
+    defaultedQueries(),
+    queriesOptions().combine
+      ? ({
+          combine: queriesOptions().combine,
+        } as QueriesObserverOptions<TCombinedResult>)
+      : undefined,
   )
 
-  const taskQueue: Array<() => void> = []
+  const [state, setState] = createStore<TCombinedResult>(
+    observer.getOptimisticResult(defaultedQueries())[1](),
+  )
 
-  const unsubscribe = observer.subscribe((result) => {
-    taskQueue.push(() => {
-      setState(unwrap(result))
-    })
+  createRenderEffect(
+    on(
+      () => queriesOptions().queries.length,
+      () => setState(observer.getOptimisticResult(defaultedQueries())[1]()),
+    ),
+  )
 
-    scheduleMicrotask(() => {
-      const taskToRun = taskQueue.pop()
-      if (taskToRun) {
-        taskToRun()
-        taskQueue.splice(0, taskQueue.length)
-      }
-    })
+  const dataResources = createMemo(
+    on(
+      () => state.length,
+      () =>
+        state.map((queryRes) => {
+          const dataPromise = () =>
+            new Promise((resolve) => {
+              if (queryRes.isFetching && queryRes.isLoading) return
+              resolve(unwrap(queryRes.data))
+            })
+          return createResource(dataPromise)
+        }),
+    ),
+  )
+
+  batch(() => {
+    const dataResources_ = dataResources()
+    for (let index = 0; index < dataResources_.length; index++) {
+      const dataResource = dataResources_[index]!
+      dataResource[1].mutate(() => unwrap(state[index]!.data))
+      dataResource[1].refetch()
+    }
   })
 
+  let taskQueue: Array<() => void> = []
+  const subscribeToObserver = () =>
+    observer.subscribe((result) => {
+      taskQueue.push(() => {
+        batch(() => {
+          const dataResources_ = dataResources()
+          for (let index = 0; index < dataResources_.length; index++) {
+            const dataResource = dataResources_[index]!
+            const unwrappedResult = { ...unwrap(result[index]!) }
+            // @ts-expect-error typescript pedantry regarding the possible range of index
+            setState(index, unwrap(unwrappedResult))
+            dataResource[1].mutate(() => unwrap(state[index]!.data))
+            dataResource[1].refetch()
+          }
+        })
+      })
+
+      queueMicrotask(() => {
+        const taskToRun = taskQueue.pop()
+        if (taskToRun) taskToRun()
+        taskQueue = []
+      })
+    })
+
+  let unsubscribe: () => void = () => undefined
+  createComputed<() => void>((cleanup) => {
+    cleanup?.()
+    unsubscribe = isRestoring() ? () => undefined : subscribeToObserver()
+    // cleanup needs to be scheduled after synchronous effects take place
+    return () => queueMicrotask(unsubscribe)
+  })
   onCleanup(unsubscribe)
 
   onMount(() => {
-    observer.setQueries(defaultedQueries, { listeners: false })
+    observer.setQueries(
+      defaultedQueries(),
+      queriesOptions().combine
+        ? ({
+            combine: queriesOptions().combine,
+          } as QueriesObserverOptions<TCombinedResult>)
+        : undefined,
+      { listeners: false },
+    )
   })
 
   createComputed(() => {
-    const updateDefaultedQueries = queriesOptions.queries.map((options) =>
-      normalizeOptions(options),
+    observer.setQueries(
+      defaultedQueries(),
+      queriesOptions().combine
+        ? ({
+            combine: queriesOptions().combine,
+          } as QueriesObserverOptions<TCombinedResult>)
+        : undefined,
+      { listeners: false },
     )
-    observer.setQueries(updateDefaultedQueries)
   })
 
-  return state as QueriesResults<T>
+  const handler = (index: number) => ({
+    get(target: QueryObserverResult, prop: keyof QueryObserverResult): any {
+      if (prop === 'data') {
+        return dataResources()[index]![0]()
+      }
+      return Reflect.get(target, prop)
+    },
+  })
+
+  const getProxies = () =>
+    state.map((s, index) => {
+      return new Proxy(s, handler(index))
+    })
+
+  const [proxifiedState, setProxifiedState] = createStore(getProxies())
+  createRenderEffect(() => setProxifiedState(getProxies()))
+
+  return proxifiedState as TCombinedResult
 }

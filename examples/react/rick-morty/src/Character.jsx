@@ -9,9 +9,8 @@ import {
   TableHead,
   TableRow,
   Paper,
-} from '@material-ui/core'
-import { Link as RouterLink } from 'react-router-dom'
-import { useParams } from 'react-router'
+} from '@mui/material'
+import { useParams, Link as RouterLink } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import fetch from './fetch'
 
@@ -23,7 +22,7 @@ function Character() {
       fetch(`https://rickandmortyapi.com/api/character/${characterId}`),
   })
 
-  if (status === 'loading') return <p>Loading...</p>
+  if (status === 'pending') return <p>Loading...</p>
   if (status === 'error') return <p>Error :(</p>
 
   const locationUrlPars = data.location.url.split('/').filter(Boolean)
@@ -105,7 +104,7 @@ function Location({ id }) {
     queryFn: () => fetch(`https://rickandmortyapi.com/api/location/${id}`),
   })
 
-  if (status === 'loading') return <p>Loading...</p>
+  if (status === 'pending') return <p>Loading...</p>
   if (status === 'error') return <p>Error :(</p>
 
   return (

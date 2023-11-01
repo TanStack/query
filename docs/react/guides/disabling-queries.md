@@ -8,7 +8,7 @@ If you ever want to disable a query from automatically running, you can use the 
 When `enabled` is `false`:
 
 - If the query has cached data, then the query will be initialized in the `status === 'success'` or `isSuccess` state.
-- If the query does not have cached data, then the query will start in the `status === 'loading'` and `fetchStatus === 'idle'` state.
+- If the query does not have cached data, then the query will start in the `status === 'pending'` and `fetchStatus === 'idle'` state.
 - The query will not automatically fetch on mount.
 - The query will not automatically refetch in the background.
 - The query will ignore query client `invalidateQueries` and `refetchQueries` calls that would normally result in the query refetching.
@@ -18,7 +18,7 @@ When `enabled` is `false`:
 
 ```tsx
 function Todos() {
-  const { isInitialLoading, isError, data, error, refetch, isFetching } =
+  const { isLoading, isError, data, error, refetch, isFetching } =
     useQuery({
       queryKey: ['todos'],
       queryFn: fetchTodoList,
@@ -39,7 +39,7 @@ function Todos() {
         </>
       ) : isError ? (
         <span>Error: {error.message}</span>
-      ) : isInitialLoading ? (
+      ) : isLoading ? (
         <span>Loading...</span>
       ) : (
         <span>Not ready ...</span>
@@ -84,12 +84,12 @@ function Todos() {
 
 [//]: # 'Example2'
 
-### isInitialLoading
+### isLoading (Previously: `isInitialLoading`)
 
-Lazy queries will be in `status: 'loading'` right from the start because `loading` means that there is no data yet. This is technically true, however, since we are not currently fetching any data (as the query is not _enabled_), it also means you likely cannot use this flag to show a loading spinner.
+Lazy queries will be in `status: 'pending'` right from the start because `pending` means that there is no data yet. This is technically true, however, since we are not currently fetching any data (as the query is not _enabled_), it also means you likely cannot use this flag to show a loading spinner.
 
-If you are using disabled or lazy queries, you can use the `isInitialLoading` flag instead. It's a derived flag that is computed from:
+If you are using disabled or lazy queries, you can use the `isLoading` flag instead. It's a derived flag that is computed from:
 
-`isLoading && isFetching`
+`isPending && isFetching`
 
 so it will only be true if the query is currently fetching for the first time.

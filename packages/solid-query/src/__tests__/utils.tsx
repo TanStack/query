@@ -1,12 +1,15 @@
-import { QueryClient } from '@tanstack/query-core'
+import { vi } from 'vitest'
 import { Show, createEffect, createSignal, onCleanup } from 'solid-js'
+import { onlineManager } from '@tanstack/query-core'
+import { QueryClient } from '../QueryClient'
 import type { QueryClientConfig } from '@tanstack/query-core'
 import type { ParentProps } from 'solid-js'
+import type { SpyInstance } from 'vitest'
 
 let queryKeyCount = 0
-export function queryKey(): () => Array<string> {
-  const localQueryKeyCount = queryKeyCount++
-  return () => [`query_${localQueryKeyCount}`]
+export function queryKey() {
+  queryKeyCount++
+  return [`query_${queryKeyCount}`]
 }
 
 export const Blink = (
@@ -30,22 +33,19 @@ export const Blink = (
 }
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
-  jest.spyOn(console, 'error').mockImplementation(() => undefined)
-  return new QueryClient({ logger: mockLogger, ...config })
+  return new QueryClient(config)
 }
 
-export function mockVisibilityState(value: DocumentVisibilityState) {
-  return jest.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
+export function mockVisibilityState(
+  value: DocumentVisibilityState,
+): SpyInstance<[], DocumentVisibilityState> {
+  return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
-export function mockNavigatorOnLine(value: boolean) {
-  return jest.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
-}
-
-export const mockLogger = {
-  log: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
+export function mockOnlineManagerIsOnline(
+  value: boolean,
+): SpyInstance<[], boolean> {
+  return vi.spyOn(onlineManager, 'isOnline').mockReturnValue(value)
 }
 
 export function sleep(timeout: number): Promise<void> {
@@ -61,15 +61,10 @@ export function setActTimeout(fn: () => void, ms?: number) {
 }
 
 /**
- * Assert the parameter is of a specific type.
- */
-export function expectType<T>(_: T): void {
-  return undefined
-}
-
-/**
  * Assert the parameter is not typed as `any`
  */
 export function expectTypeNotAny<T>(_: 0 extends 1 & T ? never : T): void {
   return undefined
 }
+
+export const doNotExecute = (_func: () => void) => true

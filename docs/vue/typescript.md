@@ -6,35 +6,87 @@ replace:
   { 'React': 'Vue', 'react-query package version': 'vue-query package version' }
 ---
 
-[//]: # 'Playground1'
+[//]: # 'TypeInference1'
 
-[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPQBuOAtAEcc+KgFgAUBNYRm8JABN6DInAC8KDNlx4AFAG0qjZCABGuKgF0ANHB0BKNQD44ABXIhgGAHRR0qCAA23Og6AKx2dhKcnHCxcQB6APwSQA)
+```tsx
+const { data } = useQuery({
+  //    ^? const data: Ref<number> | Ref<undefined>
+  queryKey: ['test'],
+  queryFn: () => Promise.resolve(5),
+})
+```
 
-[//]: # 'Playground1'
-[//]: # 'Playground2'
+[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPQBuOAtAEcc+KgFgAUBNYRm8JABN6DInAC8KDNlx4AFAglw4nTocMA9APwG4Q7QGl0eAFxwA2lRjoWVALoAaa1t8ADFGFx0ASjUAPjgABXIQYAwAOigvCAAbbnQdAFYIgPFCCKA)
 
-[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPQBuOAtAEcc+KgFgAUBNYRm8JABN6DInAC8KDNlx4AFAG0qMdCyoBdADRwdASjUA+OAAVyIYBgB0UYxAA23dDoArNaWSBg+6KwwAFxwisqqDvH07jAQAMowUMCMAOY2hNYSnJxwZeUAegD8EkA)
+[//]: # 'TypeInference1'
+[//]: # 'TypeInference2'
 
-[//]: # 'Playground2'
-[//]: # 'Playground3'
+```tsx
+const { data } = useQuery({
+  //      ^? const data: Ref<string> | Ref<undefined>
+  queryKey: ['test'],
+  queryFn: () => Promise.resolve(5),
+  select: (data) => data.toString(),
+})
+```
 
-[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPQBuOAtAEcc+KgFgAUKEiw49AB7AIqUuUpV5i1GPESYeMOjgBxcsjBwAvIjjAAJgC44jZCABGuIhImsIzeCXQYVgALEwgzZSsACgBKRwAFVWAMAB4wswBtAF0APks8jSUAOgBzQKiqThLTMC0Yophg9EYoqHRUSGZDCzy2jt8MItt6BhivcR8-a2GGIksUDGxcPCiMqmrw2qosgBpSQJD02rHxTk44C8uAPQB+CSA)
+[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPQBuOAtAEcc+KgFgAUBNYRm8JABN6DInAC8KDNlx4AFAglw4nTodNwAegH4DcIdoDS6PAC44AbSox0LKgF0ANDZ2+ABijK46AJRqAHxwAArkIMAYAHRQ3hAANtzoOgCskYHihhhZ6KwwEYoM0apxNfSpMBAAyjBQwIwA5lHFhJFAA)
 
-[//]: # 'Playground3'
-[//]: # 'Playground4'
+[//]: # 'TypeInference2'
+[//]: # 'TypeInference3'
+
+```tsx
+const fetchGroups = (): Promise<Group[]> =>
+  axios.get('/groups').then((response) => response.data)
+
+const { data } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
+//      ^? const data: Ref<Group[]> | Ref<undefined>
+```
+
+[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPQBuOAtAEcc+KgFgAUKEiw49AB7AIqUuUpV5i1GPESYeMOjgBxcsjBwAvIjjAAJgC44jZCABGuIhImsIzeCXQYVgALEwgzZSsACgBKRwAFVWAMAB4wswBtAF0APksciThZBSUAOgBzQKiqTnLTMC0Y0phg9EYoqKh0VEhmdBj8uC6e3wxS23oGGK9xHz9rCYYiSxQMbFw8KKQhDYBpdDxHDKo68IaqLIAaOB38ADFGRwCg0PrlQmnxTk4i37gAPQA-EA)
+
+[//]: # 'TypeInference3'
+[//]: # 'TypeNarrowing'
+
+```tsx
+const { data, isSuccess } = reactive(
+  useQuery({
+    queryKey: ['test'],
+    queryFn: () => Promise.resolve(5),
+  }),
+)
+
+if (isSuccess) {
+  data
+  // ^? const data: number
+}
+```
 
 [typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPQBuOAtAEcc+KgFgAUKEixEcKOnqsYwbuiKlylKr3RUA3BImsIzeEgAm9BgBo4wVAGVkrVulSp1AXjkKlK9AAUaFjCeAEA2lQwbjBUALq2AQCUcJ4AfHAACpr26AB08qgQADaqAQCsSVWGkiRwAfZOLm6oKQgScJ1wlgwSnJydAHoA-BKEEkA)
 
-[//]: # 'Playground4'
-[//]: # 'Playground5'
+[//]: # 'TypeNarrowing'
+[//]: # 'TypingError'
 
-[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPQBuOAtAEcc+KgFgAUKEiw49AB7AIqUuUpV5i1GPESYeMOjgBxcsjBwAvIjjAAJgC44jZCABGuIhImsIzeCXQYVgALEwgzZSsACgBKRwAFVWAMAB4wswBtAF0APks8jSUAOgBzQKiqThLTMC0Yophg9EYoqHRUSGZDCzy2jt8MItt6BhivcR8-a1xyKCJLFAxsXDwojKpq8NqqLIAaUkCQ9Nqx8U5OOEurgD0AfnHgEjgomegbPyZWdAgngFEoWYxRASS6vKASc5wO4SQhAA)
+```tsx
+const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
+//      ^? const error: Ref<unknown>
 
-[//]: # 'Playground5'
-[//]: # 'Playground6'
+if (error.value instanceof Error) {
+  error.value
+  //     ^? const error: Error
+}
+```
 
-[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPQBuOAtAEcc+KgFgAUKEiw49AB7AIqUuUpV5i1GPESYeMOjgBxcsjBwAvIjjAAJgC44jZCABGuIhImsIzeCXQYVgALEwgzZSsACgBKRwAFVWAMAB4wswBtAF0APks8jSUAOgBzQKiqThLTMC0Yophg9EYoqHRUSGZDCzy2jt8MItt6BhivcR8-a1xyKCJLFAxsXDw0muyAGjgAUShZnKiMqmrw2qosrYCg0JrUMfFOTjhnl4A9AH4JIA)
+[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPRTr2swBaAI458VALAAoUJFhx6AD2ARUpcpSqLlqCZKkw8YdHADi5ZGDgBeRHGAATAFxxGyEACNcRKVNYRm8CToMKwAFmYQFqo2ABQAlM4ACurAGAA8ERYA2gC6AHzWBVoqAHQA5sExVJxl5mA6cSUwoeiMMTyokMzGVgUdXRgl9vQMcT6SfgG2uORQRNYoGNi4eDFIIisA0uh4zllUtZH1VDkANHAb+ABijM5BIeF1qoRjkpyccJ9fAHoA-OPAEhwGLFVAlVIAQSUKgAolBZjEZtA4nFEFJPkioOi4O84H8pIQgA)
 
-[//]: # 'Playground6'
+[//]: # 'TypingError'
+[//]: # 'TypingError2'
+[//]: # 'TypingError2'
+[//]: # 'TypingError3'
+[//]: # 'TypingError3'
+[//]: # 'RegisterErrorType'
+[//]: # 'RegisterErrorType'
+[//]: # 'TypingQueryOptions'
+[//]: # 'TypingQueryOptions'
 [//]: # 'Materials'
 [//]: # 'Materials'

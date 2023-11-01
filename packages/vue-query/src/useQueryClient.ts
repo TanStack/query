@@ -1,13 +1,14 @@
-import { getCurrentInstance, inject } from 'vue-demi'
+import { hasInjectionContext, inject } from 'vue-demi'
 
 import { getClientKey } from './utils'
 import type { QueryClient } from './queryClient'
 
 export function useQueryClient(id = ''): QueryClient {
-  const vm = getCurrentInstance()?.proxy
-
-  if (!vm) {
-    throw new Error('vue-query hooks can only be used inside setup() function.')
+  // ensures that `inject()` can be used
+  if (!hasInjectionContext()) {
+    throw new Error(
+      'vue-query hooks can only be used inside setup() function or functions that support injection context.',
+    )
   }
 
   const key = getClientKey(id)

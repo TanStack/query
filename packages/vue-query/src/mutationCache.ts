@@ -1,16 +1,25 @@
 import { MutationCache as MC } from '@tanstack/query-core'
 import { cloneDeepUnref } from './utils'
-import type { Mutation, MutationFilters } from '@tanstack/query-core'
+import type {
+  DefaultError,
+  Mutation,
+  MutationFilters,
+} from '@tanstack/query-core'
 import type { MaybeRefDeep } from './types'
 
 export class MutationCache extends MC {
-  find<TData = unknown, TError = unknown, TVariables = any, TContext = unknown>(
+  find<
+    TData = unknown,
+    TError = DefaultError,
+    TVariables = any,
+    TContext = unknown,
+  >(
     filters: MaybeRefDeep<MutationFilters>,
   ): Mutation<TData, TError, TVariables, TContext> | undefined {
-    return super.find(cloneDeepUnref(filters) as MutationFilters)
+    return super.find(cloneDeepUnref(filters))
   }
 
-  findAll(filters: MaybeRefDeep<MutationFilters>): Mutation[] {
-    return super.findAll(cloneDeepUnref(filters) as MutationFilters)
+  findAll(filters: MaybeRefDeep<MutationFilters> = {}): Array<Mutation> {
+    return super.findAll(cloneDeepUnref(filters))
   }
 }

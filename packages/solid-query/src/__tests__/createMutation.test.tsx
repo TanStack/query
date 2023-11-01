@@ -1,12 +1,11 @@
-import '@testing-library/jest-dom'
+import { describe, expect, it, vi } from 'vitest'
 import {
   ErrorBoundary,
-  createContext,
   createEffect,
   createRenderEffect,
   createSignal,
 } from 'solid-js'
-import { fireEvent, render, screen, waitFor } from 'solid-testing-library'
+import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
 import {
   MutationCache,
   QueryCache,
@@ -15,22 +14,23 @@ import {
 } from '..'
 import {
   createQueryClient,
-  mockNavigatorOnLine,
+  mockOnlineManagerIsOnline,
   queryKey,
   setActTimeout,
   sleep,
 } from './utils'
-import type { QueryClient } from '..'
 import type { CreateMutationResult } from '../types'
 
-describe('useMutation', () => {
+describe('createMutation', () => {
   const queryCache = new QueryCache()
   const mutationCache = new MutationCache()
   const queryClient = createQueryClient({ queryCache, mutationCache })
 
   it('should be able to reset `data`', async () => {
     function Page() {
-      const mutation = createMutation(() => Promise.resolve('mutation'))
+      const mutation = createMutation(() => ({
+        mutationFn: () => Promise.resolve('mutation'),
+      }))
 
       return (
         <div>
@@ -63,12 +63,18 @@ describe('useMutation', () => {
   })
 
   it('should be able to reset `error`', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
     function Page() {
-      const mutation = createMutation<string, Error>(() => {
-        const err = new Error('Expected mock error. All is well!')
-        err.stack = ''
-        return Promise.reject(err)
-      })
+      const mutation = createMutation<string, Error>(() => ({
+        mutationFn: () => {
+          const err = new Error('Expected mock error. All is well!')
+          err.stack = ''
+          return Promise.reject(err)
+        },
+      }))
 
       return (
         <div>
@@ -102,25 +108,25 @@ describe('useMutation', () => {
     await waitFor(() => {
       expect(screen.queryByRole('heading')).toBeNull()
     })
+
+    consoleMock.mockRestore()
   })
 
   it('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
     const [count, setCount] = createSignal(0)
-    const onSuccessMock = jest.fn()
-    const onSettledMock = jest.fn()
+    const onSuccessMock = vi.fn()
+    const onSettledMock = vi.fn()
 
     function Page() {
-      const mutation = createMutation(
-        (vars: { count: number }) => Promise.resolve(vars.count),
-        {
-          onSuccess: (data) => {
-            onSuccessMock(data)
-          },
-          onSettled: (data) => {
-            onSettledMock(data)
-          },
+      const mutation = createMutation(() => ({
+        mutationFn: (vars: { count: number }) => Promise.resolve(vars.count),
+        onSuccess: (data) => {
+          onSuccessMock(data)
         },
-      )
+        onSettled: (data) => {
+          onSettledMock(data)
+        },
+      }))
 
       return (
         <div>
@@ -174,10 +180,10 @@ describe('useMutation', () => {
     const [count, setCount] = createSignal(0)
     type Value = { count: number }
 
-    const mutateFn = jest.fn<Promise<Value>, [value: Value]>()
+    const mutateFn = vi.fn<[value: Value], Promise<Value>>()
 
     mutateFn.mockImplementationOnce(() => {
-      return Promise.reject('Error test Jonas')
+      return Promise.reject(new Error('Error test Jonas'))
     })
 
     mutateFn.mockImplementation(async (value) => {
@@ -186,14 +192,16 @@ describe('useMutation', () => {
     })
 
     function Page() {
-      const mutation = createMutation<Value, string, Value>(mutateFn)
+      const mutation = createMutation(() => ({
+        mutationFn: mutateFn,
+      }))
 
       return (
         <div>
           <h1>Data {mutation.data?.count}</h1>
           <h2>Status {mutation.status}</h2>
           <h2>Failed {mutation.failureCount} times</h2>
-          <h2>Failed because {mutation.failureReason ?? 'null'}</h2>
+          <h2>Failed because {mutation.failureReason?.message ?? 'null'}</h2>
           <button
             onClick={() => {
               setCount((c) => c + 1)
@@ -221,7 +229,7 @@ describe('useMutation', () => {
     await waitFor(() => screen.getByText('Failed because Error test Jonas'))
 
     fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
-    await waitFor(() => screen.getByText('Status loading'))
+    await waitFor(() => screen.getByText('Status pending'))
     await waitFor(() => screen.getByText('Status success'))
     await waitFor(() => screen.getByText('Data 2'))
     await waitFor(() => screen.getByText('Failed 0 times'))
@@ -229,28 +237,26 @@ describe('useMutation', () => {
   })
 
   it('should be able to call `onError` and `onSettled` after each failed mutate', async () => {
-    const onErrorMock = jest.fn()
-    const onSettledMock = jest.fn()
+    const onErrorMock = vi.fn()
+    const onSettledMock = vi.fn()
     const [count, setCount] = createSignal(0)
 
     function Page() {
-      const mutation = createMutation(
-        (vars: { count: number }) => {
+      const mutation = createMutation(() => ({
+        mutationFn: (vars: { count: number }) => {
           const error = new Error(
             `Expected mock error. All is well! ${vars.count}`,
           )
           error.stack = ''
           return Promise.reject(error)
         },
-        {
-          onError: (error: Error) => {
-            onErrorMock(error.message)
-          },
-          onSettled: (_data, error) => {
-            onSettledMock(error?.message)
-          },
+        onError: (error: Error) => {
+          onErrorMock(error.message)
         },
-      )
+        onSettled: (_data, error) => {
+          onSettledMock(error?.message)
+        },
+      }))
 
       return (
         <div>
@@ -311,17 +317,18 @@ describe('useMutation', () => {
   })
 
   it('should be able to override the useMutation success callbacks', async () => {
-    const callbacks: string[] = []
+    const callbacks: Array<string> = []
 
     function Page() {
-      const mutation = createMutation(async (text: string) => text, {
+      const mutation = createMutation(() => ({
+        mutationFn: async (text: string) => text,
         onSuccess: async () => {
           callbacks.push('useMutation.onSuccess')
         },
         onSettled: async () => {
           callbacks.push('useMutation.onSettled')
         },
-      })
+      }))
 
       createEffect(() => {
         const { mutateAsync } = mutation
@@ -361,20 +368,19 @@ describe('useMutation', () => {
   })
 
   it('should be able to override the error callbacks when using mutateAsync', async () => {
-    const callbacks: string[] = []
+    const callbacks: Array<string> = []
 
     function Page() {
-      const mutation = createMutation(
-        async (_text: string) => Promise.reject('oops'),
-        {
-          onError: async () => {
-            callbacks.push('useMutation.onError')
-          },
-          onSettled: async () => {
-            callbacks.push('useMutation.onSettled')
-          },
+      const mutation = createMutation(() => ({
+        mutationFn: async (_text: string) => Promise.reject(new Error('oops')),
+
+        onError: async () => {
+          callbacks.push('useMutation.onError')
         },
-      )
+        onSettled: async () => {
+          callbacks.push('useMutation.onSettled')
+        },
+      }))
 
       createEffect(() => {
         const { mutateAsync } = mutation
@@ -389,7 +395,7 @@ describe('useMutation', () => {
               },
             })
           } catch (error) {
-            callbacks.push(`mutateAsync.error:${error}`)
+            callbacks.push(`mutateAsync.error:${(error as Error).message}`)
           }
         }, 10)
       })
@@ -417,17 +423,19 @@ describe('useMutation', () => {
   it('should be able to use mutation defaults', async () => {
     const key = queryKey()
 
-    queryClient.setMutationDefaults(key(), {
+    queryClient.setMutationDefaults(key, {
       mutationFn: async (text: string) => {
         await sleep(10)
         return text
       },
     })
 
-    const states: CreateMutationResult<any, any, any, any>[] = []
+    const states: Array<CreateMutationResult<any, any, any, any>> = []
 
     function Page() {
-      const mutation = createMutation<string, unknown, string>(key())
+      const mutation = createMutation<string, unknown, string>(() => ({
+        mutationKey: key,
+      }))
 
       createRenderEffect(() => {
         states.push({ ...mutation })
@@ -452,25 +460,23 @@ describe('useMutation', () => {
     await sleep(100)
 
     expect(states.length).toBe(3)
-    expect(states[0]).toMatchObject({ data: undefined, isLoading: false })
-    expect(states[1]).toMatchObject({ data: undefined, isLoading: true })
-    expect(states[2]).toMatchObject({ data: 'todo', isLoading: false })
+    expect(states[0]).toMatchObject({ data: undefined, isPending: false })
+    expect(states[1]).toMatchObject({ data: undefined, isPending: true })
+    expect(states[2]).toMatchObject({ data: 'todo', isPending: false })
   })
 
   it('should be able to retry a failed mutation', async () => {
     let count = 0
 
     function Page() {
-      const mutation = createMutation(
-        (_text: string) => {
+      const mutation = createMutation(() => ({
+        mutationFn: (_text: string) => {
           count++
-          return Promise.reject('oops')
+          return Promise.reject(new Error('oops'))
         },
-        {
-          retry: 1,
-          retryDelay: 5,
-        },
-      )
+        retry: 1,
+        retryDelay: 5,
+      }))
 
       createEffect(() => {
         const { mutate } = mutation
@@ -494,21 +500,19 @@ describe('useMutation', () => {
   })
 
   it('should not retry mutations while offline', async () => {
-    const onlineMock = mockNavigatorOnLine(false)
+    const onlineMock = mockOnlineManagerIsOnline(false)
 
     let count = 0
 
     function Page() {
-      const mutation = createMutation(
-        (_text: string) => {
+      const mutation = createMutation(() => ({
+        mutationFn: (_text: string) => {
           count++
           return Promise.reject(new Error('oops'))
         },
-        {
-          retry: 1,
-          retryDelay: 5,
-        },
-      )
+        retry: 1,
+        retryDelay: 5,
+      }))
 
       return (
         <div>
@@ -536,17 +540,19 @@ describe('useMutation', () => {
       ).toBeInTheDocument()
     })
 
+    window.dispatchEvent(new Event('offline'))
+
     fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
 
     await waitFor(() => {
       expect(
-        screen.getByText('error: null, status: loading, isPaused: true'),
+        screen.getByText('error: null, status: pending, isPaused: true'),
       ).toBeInTheDocument()
     })
 
     expect(count).toBe(0)
 
-    onlineMock.mockReturnValue(true)
+    onlineMock.mockRestore()
     window.dispatchEvent(new Event('online'))
 
     await sleep(100)
@@ -558,26 +564,22 @@ describe('useMutation', () => {
     })
 
     expect(count).toBe(2)
-
-    onlineMock.mockRestore()
   })
 
   it('should call onMutate even if paused', async () => {
-    const onlineMock = mockNavigatorOnLine(false)
-    const onMutate = jest.fn()
+    const onlineMock = mockOnlineManagerIsOnline(false)
+    const onMutate = vi.fn()
     let count = 0
 
     function Page() {
-      const mutation = createMutation(
-        async (_text: string) => {
+      const mutation = createMutation(() => ({
+        mutationFn: async (_text: string) => {
           count++
           await sleep(10)
           return count
         },
-        {
-          onMutate,
-        },
-      )
+        onMutate,
+      }))
 
       return (
         <div>
@@ -598,35 +600,37 @@ describe('useMutation', () => {
 
     await screen.findByText('data: null, status: idle, isPaused: false')
 
+    window.dispatchEvent(new Event('offline'))
+
     fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
 
-    await screen.findByText('data: null, status: loading, isPaused: true')
+    await screen.findByText('data: null, status: pending, isPaused: true')
 
     expect(onMutate).toHaveBeenCalledTimes(1)
     expect(onMutate).toHaveBeenCalledWith('todo')
 
-    onlineMock.mockReturnValue(true)
+    onlineMock.mockRestore()
     window.dispatchEvent(new Event('online'))
 
     await screen.findByText('data: 1, status: success, isPaused: false')
 
     expect(onMutate).toHaveBeenCalledTimes(1)
     expect(count).toBe(1)
-
-    onlineMock.mockRestore()
   })
 
   it('should optimistically go to paused state if offline', async () => {
-    const onlineMock = mockNavigatorOnLine(false)
+    const onlineMock = mockOnlineManagerIsOnline(false)
     let count = 0
     const states: Array<string> = []
 
     function Page() {
-      const mutation = createMutation(async (_text: string) => {
-        count++
-        await sleep(10)
-        return count
-      })
+      const mutation = createMutation(() => ({
+        mutationFn: async (_text: string) => {
+          count++
+          await sleep(10)
+          return count
+        },
+      }))
 
       createRenderEffect(() => {
         states.push(`${mutation.status}, ${mutation.isPaused}`)
@@ -653,11 +657,11 @@ describe('useMutation', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
 
-    await screen.findByText('data: null, status: loading, isPaused: true')
+    await screen.findByText('data: null, status: pending, isPaused: true')
 
-    // no intermediate 'loading, false' state is expected because we don't start mutating!
+    // no intermediate 'pending, false' state is expected because we don't start mutating!
     expect(states[0]).toBe('idle, false')
-    expect(states[1]).toBe('loading, true')
+    expect(states[1]).toBe('pending, true')
 
     onlineMock.mockReturnValue(true)
     window.dispatchEvent(new Event('online'))
@@ -668,24 +672,24 @@ describe('useMutation', () => {
   })
 
   it('should be able to retry a mutation when online', async () => {
-    const onlineMock = mockNavigatorOnLine(false)
+    const onlineMock = mockOnlineManagerIsOnline(false)
 
     let count = 0
-    const states: CreateMutationResult<any, any, any, any>[] = []
+    const states: Array<CreateMutationResult<any, any, any, any>> = []
 
     function Page() {
-      const mutation = createMutation(
-        async (_text: string) => {
+      const mutation = createMutation(() => ({
+        mutationFn: async (_text: string) => {
           await sleep(1)
           count++
-          return count > 1 ? Promise.resolve('data') : Promise.reject('oops')
+          return count > 1
+            ? Promise.resolve('data')
+            : Promise.reject(new Error('oops'))
         },
-        {
-          retry: 1,
-          retryDelay: 5,
-          networkMode: 'offlineFirst',
-        },
-      )
+        retry: 1,
+        retryDelay: 5,
+        networkMode: 'offlineFirst',
+      }))
 
       createRenderEffect(() => {
         states.push({ ...mutation })
@@ -694,6 +698,7 @@ describe('useMutation', () => {
       createEffect(() => {
         const { mutate } = mutation
         setActTimeout(() => {
+          window.dispatchEvent(new Event('offline'))
           mutate('todo')
         }, 10)
       })
@@ -711,56 +716,54 @@ describe('useMutation', () => {
 
     expect(states.length).toBe(4)
     expect(states[0]).toMatchObject({
-      isLoading: false,
+      isPending: false,
       isPaused: false,
       failureCount: 0,
       failureReason: null,
     })
     expect(states[1]).toMatchObject({
-      isLoading: true,
+      isPending: true,
       isPaused: false,
       failureCount: 0,
       failureReason: null,
     })
     expect(states[2]).toMatchObject({
-      isLoading: true,
+      isPending: true,
       isPaused: false,
       failureCount: 1,
-      failureReason: 'oops',
+      failureReason: new Error('oops'),
     })
     expect(states[3]).toMatchObject({
-      isLoading: true,
+      isPending: true,
       isPaused: true,
       failureCount: 1,
-      failureReason: 'oops',
+      failureReason: new Error('oops'),
     })
 
-    onlineMock.mockReturnValue(true)
+    onlineMock.mockRestore()
     window.dispatchEvent(new Event('online'))
 
     await sleep(50)
 
     expect(states.length).toBe(6)
     expect(states[4]).toMatchObject({
-      isLoading: true,
+      isPending: true,
       isPaused: false,
       failureCount: 1,
-      failureReason: 'oops',
+      failureReason: new Error('oops'),
     })
     expect(states[5]).toMatchObject({
-      isLoading: false,
+      isPending: false,
       isPaused: false,
       failureCount: 0,
       failureReason: null,
       data: 'data',
     })
-
-    onlineMock.mockRestore()
   })
 
   it('should not change state if unmounted', async () => {
     function Mutates() {
-      const mutation = createMutation(() => sleep(10))
+      const mutation = createMutation(() => ({ mutationFn: () => sleep(10) }))
       return <button onClick={() => mutation.mutate()}>mutate</button>
     }
     function Page() {
@@ -782,16 +785,20 @@ describe('useMutation', () => {
     fireEvent.click(screen.getByText('unmount'))
   })
 
-  it('should be able to throw an error when useErrorBoundary is set to true', async () => {
+  it('should be able to throw an error when throwOnError is set to true', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
     function Page() {
-      const mutation = createMutation<string, Error>(
-        () => {
+      const mutation = createMutation<string, Error>(() => ({
+        mutationFn: () => {
           const err = new Error('Expected mock error. All is well!')
           err.stack = ''
           return Promise.reject(err)
         },
-        { useErrorBoundary: true },
-      )
+        throwOnError: true,
+      }))
 
       return (
         <div>
@@ -819,24 +826,28 @@ describe('useMutation', () => {
     await waitFor(() => {
       expect(screen.queryByText('error')).not.toBeNull()
     })
+
+    consoleMock.mockRestore()
   })
 
-  it('should be able to throw an error when useErrorBoundary is a function that returns true', async () => {
+  it('should be able to throw an error when throwOnError is a function that returns true', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
     let boundary = false
     function Page() {
-      const mutation = createMutation<string, Error>(
-        () => {
+      const mutation = createMutation<string, Error>(() => ({
+        mutationFn: () => {
           const err = new Error('mock error')
           err.stack = ''
           return Promise.reject(err)
         },
-        {
-          useErrorBoundary: () => {
-            boundary = !boundary
-            return !boundary
-          },
+        throwOnError: () => {
+          boundary = !boundary
+          return !boundary
         },
-      )
+      }))
 
       return (
         <div>
@@ -871,11 +882,13 @@ describe('useMutation', () => {
     await waitFor(() => {
       expect(screen.queryByText('error boundary')).not.toBeNull()
     })
+
+    consoleMock.mockRestore()
   })
 
   it('should pass meta to mutation', async () => {
-    const errorMock = jest.fn()
-    const successMock = jest.fn()
+    const errorMock = vi.fn()
+    const successMock = vi.fn()
 
     const queryClientMutationMeta = createQueryClient({
       mutationCache: new MutationCache({
@@ -892,17 +905,16 @@ describe('useMutation', () => {
     const metaErrorMessage = 'mutation failed'
 
     function Page() {
-      const mutationSucceed = createMutation(async () => '', {
+      const mutationSucceed = createMutation(() => ({
+        mutationFn: async () => '',
         meta: { metaSuccessMessage },
-      })
-      const mutationError = createMutation(
-        async () => {
+      }))
+      const mutationError = createMutation(() => ({
+        mutationFn: async () => {
           throw new Error('')
         },
-        {
-          meta: { metaErrorMessage },
-        },
-      )
+        meta: { metaErrorMessage },
+      }))
 
       return (
         <div>
@@ -935,10 +947,10 @@ describe('useMutation', () => {
   })
 
   it('should call cache callbacks when unmounted', async () => {
-    const onSuccess = jest.fn()
-    const onSuccessMutate = jest.fn()
-    const onSettled = jest.fn()
-    const onSettledMutate = jest.fn()
+    const onSuccess = vi.fn()
+    const onSuccessMutate = vi.fn()
+    const onSettled = vi.fn()
+    const onSettledMutate = vi.fn()
     const mutationKey = queryKey()
     let count = 0
 
@@ -953,19 +965,17 @@ describe('useMutation', () => {
     }
 
     function Component() {
-      const mutation = createMutation(
-        async (_text: string) => {
+      const mutation = createMutation(() => ({
+        mutationFn: async (_text: string) => {
           count++
           await sleep(10)
           return count
         },
-        {
-          mutationKey: mutationKey(),
-          cacheTime: 0,
-          onSuccess,
-          onSettled,
-        },
-      )
+        mutationKey: mutationKey,
+        gcTime: 0,
+        onSuccess,
+        onSettled,
+      }))
 
       return (
         <div>
@@ -1000,7 +1010,7 @@ describe('useMutation', () => {
 
     await waitFor(() => {
       expect(
-        queryClient.getMutationCache().findAll({ mutationKey: mutationKey() }),
+        queryClient.getMutationCache().findAll({ mutationKey: mutationKey }),
       ).toHaveLength(0)
     })
 
@@ -1012,90 +1022,23 @@ describe('useMutation', () => {
     expect(onSettledMutate).toHaveBeenCalledTimes(0)
   })
 
-  describe('with custom context', () => {
-    it('should be able to reset `data`', async () => {
-      const context = createContext<QueryClient | undefined>(undefined)
-
-      function Page() {
-        const mutation = createMutation(() => Promise.resolve('mutation'), {
-          context,
-        })
-
-        return (
-          <div>
-            <h1>{mutation.data ?? 'empty'}</h1>
-            <button onClick={() => mutation.reset()}>reset</button>
-            <button onClick={() => mutation.mutate()}>mutate</button>
-          </div>
-        )
-      }
-
-      render(() => (
-        <QueryClientProvider client={queryClient} context={context}>
-          <Page />
-        </QueryClientProvider>
-      ))
-
-      expect(screen.getByRole('heading').textContent).toBe('empty')
-
-      fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
-
-      await waitFor(() => {
-        expect(screen.getByRole('heading').textContent).toBe('mutation')
-      })
-
-      fireEvent.click(screen.getByRole('button', { name: /reset/i }))
-
-      await waitFor(() => {
-        expect(screen.getByRole('heading').textContent).toBe('empty')
-      })
-    })
-
-    it('should throw if the context is not passed to useMutation', async () => {
-      const context = createContext<QueryClient | undefined>(undefined)
-
-      function Page() {
-        const { data = '' } = createMutation(() => Promise.resolve('mutation'))
-
-        return (
-          <div>
-            <h1 data-testid="title">{data}</h1>
-          </div>
-        )
-      }
-
-      render(() => (
-        <QueryClientProvider client={queryClient} context={context}>
-          <ErrorBoundary fallback={() => <div>error boundary</div>}>
-            <Page />
-          </ErrorBoundary>
-          ,
-        </QueryClientProvider>
-      ))
-
-      await waitFor(() => screen.getByText('error boundary'))
-    })
-  })
-
   it('should call mutate callbacks only for the last observer', async () => {
-    const onSuccess = jest.fn()
-    const onSuccessMutate = jest.fn()
-    const onSettled = jest.fn()
-    const onSettledMutate = jest.fn()
+    const onSuccess = vi.fn()
+    const onSuccessMutate = vi.fn()
+    const onSettled = vi.fn()
+    const onSettledMutate = vi.fn()
     let count = 0
 
     function Page() {
-      const mutation = createMutation(
-        async (_text: string) => {
+      const mutation = createMutation(() => ({
+        mutationFn: async (_text: string) => {
           count++
           await sleep(10)
           return `result${count}`
         },
-        {
-          onSuccess,
-          onSettled,
-        },
-      )
+        onSuccess,
+        onSettled,
+      }))
 
       return (
         <div>
@@ -1146,19 +1089,17 @@ describe('useMutation', () => {
 
   it('should go to error state if onSuccess callback errors', async () => {
     const error = new Error('error from onSuccess')
-    const onError = jest.fn()
+    const onError = vi.fn()
 
     function Page() {
-      const mutation = createMutation(
-        async (_text: string) => {
+      const mutation = createMutation(() => ({
+        mutationFn: async (_text: string) => {
           await sleep(10)
           return 'result'
         },
-        {
-          onSuccess: () => Promise.reject(error),
-          onError,
-        },
-      )
+        onSuccess: () => Promise.reject(error),
+        onError,
+      }))
 
       return (
         <div>
@@ -1188,15 +1129,13 @@ describe('useMutation', () => {
     const mutateFnError = new Error('mutateFnError')
 
     function Page() {
-      const mutation = createMutation(
-        async (_text: string) => {
+      const mutation = createMutation(() => ({
+        mutationFn: async (_text: string) => {
           await sleep(10)
           throw mutateFnError
         },
-        {
-          onError: () => Promise.reject(error),
-        },
-      )
+        onError: () => Promise.reject(error),
+      }))
 
       return (
         <div>
@@ -1226,19 +1165,17 @@ describe('useMutation', () => {
   it('should go to error state if onSettled callback errors', async () => {
     const error = new Error('error from onSettled')
     const mutateFnError = new Error('mutateFnError')
-    const onError = jest.fn()
+    const onError = vi.fn()
 
     function Page() {
-      const mutation = createMutation(
-        async (_text: string) => {
+      const mutation = createMutation(() => ({
+        mutationFn: async (_text: string) => {
           await sleep(10)
           throw mutateFnError
         },
-        {
-          onSettled: () => Promise.reject(error),
-          onError,
-        },
-      )
+        onSettled: () => Promise.reject(error),
+        onError,
+      }))
 
       return (
         <div>
@@ -1265,5 +1202,37 @@ describe('useMutation', () => {
     await screen.findByText('error: mutateFnError, status: error')
 
     expect(onError).toHaveBeenCalledWith(mutateFnError, 'todo', undefined)
+  })
+
+  it('should use provided custom queryClient', async () => {
+    function Page() {
+      const mutation = createMutation(
+        () => ({
+          mutationFn: async (text: string) => {
+            return Promise.resolve(text)
+          },
+        }),
+        () => queryClient,
+      )
+
+      return (
+        <div>
+          <button onClick={() => mutation.mutate('custom client')}>
+            mutate
+          </button>
+          <div>
+            data: {mutation.data ?? 'null'}, status: {mutation.status}
+          </div>
+        </div>
+      )
+    }
+
+    render(() => <Page></Page>)
+
+    await screen.findByText('data: null, status: idle')
+
+    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
+
+    await screen.findByText('data: custom client, status: success')
   })
 })

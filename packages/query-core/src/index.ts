@@ -13,34 +13,29 @@ export { notifyManager } from './notifyManager'
 export { focusManager } from './focusManager'
 export { onlineManager } from './onlineManager'
 export {
-  hashQueryKey,
+  hashKey,
   replaceEqualDeep,
-  isError,
   isServer,
   matchQuery,
-  parseQueryArgs,
-  parseFilterArgs,
-  parseMutationFilterArgs,
-  parseMutationArgs,
+  keepPreviousData,
 } from './utils'
 export type { MutationFilters, QueryFilters, Updater } from './utils'
 export { isCancelledError } from './retryer'
 export {
   dehydrate,
   hydrate,
-  defaultShouldDehydrateMutation,
   defaultShouldDehydrateQuery,
+  defaultShouldDehydrateMutation,
 } from './hydration'
 
 // Types
 export * from './types'
-export type { Query, QueryState } from './query'
-export type { Mutation } from './mutation'
-export type { Logger } from './logger'
+export type { QueryState } from './query'
+export { Query } from './query'
+export type { Mutation, MutationState } from './mutation'
 export type {
   DehydrateOptions,
   DehydratedState,
   HydrateOptions,
-  ShouldDehydrateMutationFunction,
-  ShouldDehydrateQueryFunction,
 } from './hydration'
+export type { QueriesObserverOptions } from './queriesObserver'

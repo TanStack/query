@@ -1,26 +1,24 @@
+import { vi } from 'vitest'
 import { act } from '@testing-library/react'
-
-import { QueryClient } from '@tanstack/query-core'
+import { QueryClient, onlineManager } from '..'
 import * as utils from '../utils'
-import type { MutationOptions, QueryClientConfig } from '@tanstack/query-core'
+import type { SpyInstance } from 'vitest'
+import type { MutationOptions, QueryClientConfig } from '..'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
-  jest.spyOn(console, 'error').mockImplementation(() => undefined)
-  return new QueryClient({ logger: mockLogger, ...config })
+  return new QueryClient(config)
 }
 
-export function mockVisibilityState(value: DocumentVisibilityState) {
-  return jest.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
+export function mockVisibilityState(
+  value: DocumentVisibilityState,
+): SpyInstance<[], DocumentVisibilityState> {
+  return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
-export function mockNavigatorOnLine(value: boolean) {
-  return jest.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
-}
-
-export const mockLogger = {
-  log: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
+export function mockOnlineManagerIsOnline(
+  value: boolean,
+): SpyInstance<[], boolean> {
+  return vi.spyOn(onlineManager, 'isOnline').mockReturnValue(value)
 }
 
 let queryKeyCount = 0
@@ -43,22 +41,15 @@ export function setActTimeout(fn: () => void, ms?: number) {
   }, ms)
 }
 
-/**
- * Assert the parameter is of a specific type.
- */
-export const expectType = <T>(_: T): void => undefined
-
-/**
- * Assert the parameter is not typed as `any`
- */
-export const expectTypeNotAny = <T>(_: 0 extends 1 & T ? never : T): void =>
-  undefined
-
-export const executeMutation = (
+export const executeMutation = <TVariables>(
   queryClient: QueryClient,
-  options: MutationOptions<any, any, any, any>,
-): Promise<unknown> => {
-  return queryClient.getMutationCache().build(queryClient, options).execute()
+  options: MutationOptions<any, any, TVariables, any>,
+  variables: TVariables,
+) => {
+  return queryClient
+    .getMutationCache()
+    .build(queryClient, options)
+    .execute(variables)
 }
 
 // This monkey-patches the isServer-value from utils,
@@ -75,3 +66,13 @@ export function setIsServer(isServer: boolean) {
     })
   }
 }
+
+export const doNotExecute = (_func: () => void) => true
+
+export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
+  T,
+>() => T extends Y ? 1 : 2
+  ? true
+  : false
+
+export type Expect<T extends true> = T

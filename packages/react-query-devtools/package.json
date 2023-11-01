@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-devtools",
-  "version": "4.32.6",
+  "version": "5.4.3",
   "description": "Developer tools to interact with and visualize the TanStack/react-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -14,60 +14,71 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "types": "build/lib/index.d.ts",
-  "main": "build/lib/index.js",
-  "module": "build/lib/index.esm.js",
+  "type": "module",
+  "types": "build/legacy/index.d.ts",
+  "main": "build/legacy/index.cjs",
+  "module": "build/legacy/index.js",
   "exports": {
     ".": {
-      "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.mjs",
-      "default": "./build/lib/index.js"
+      "import": {
+        "types": "./build/modern/index.d.ts",
+        "default": "./build/modern/index.js"
+      },
+      "require": {
+        "types": "./build/modern/index.d.cts",
+        "default": "./build/modern/index.cjs"
+      }
     },
     "./production": {
-      "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.prod.mjs",
-      "default": "./build/lib/index.prod.js"
+      "import": {
+        "types": "./build/modern/production.d.ts",
+        "default": "./build/modern/production.js"
+      },
+      "require": {
+        "types": "./build/modern/production.d.cts",
+        "default": "./build/modern/production.cjs"
+      }
     },
-    "./build/lib/index.prod.js": {
-      "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.prod.mjs",
-      "default": "./build/lib/index.prod.js"
+    "./build/modern/production.js": {
+      "import": {
+        "types": "./build/modern/production.d.ts",
+        "default": "./build/modern/production.js"
+      },
+      "require": {
+        "types": "./build/modern/production.d.cts",
+        "default": "./build/modern/production.cjs"
+      }
     },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "files": [
-    "build/lib/*",
-    "build/umd/*",
+    "build",
     "src"
   ],
   "scripts": {
-    "clean": "rimraf ./build",
+    "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
-    "test:lib": "jest --config ./jest.config.ts",
+    "test:lib": "vitest run --coverage",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "build:types": "tsc --build && cp build/lib/index.d.ts build/lib/index.prod.d.ts"
-  },
-  "devDependencies": {
-    "@types/react": "^18.0.14",
-    "@types/react-dom": "^18.0.5",
-    "@types/use-sync-external-store": "^0.0.3",
-    "react": "^18.2.0",
-    "react-17": "npm:react@^17.0.2",
-    "react-dom": "^18.2.0",
-    "react-dom-17": "npm:react-dom@^17.0.2",
-    "react-error-boundary": "^3.1.4",
-    "@tanstack/react-query": "workspace:*"
+    "test:build": "publint --strict",
+    "build": "tsup"
   },
   "dependencies": {
-    "@tanstack/match-sorter-utils": "^8.7.0",
-    "superjson": "^1.10.0",
-    "use-sync-external-store": "^1.2.0"
+    "@tanstack/query-devtools": "workspace:*"
+  },
+  "devDependencies": {
+    "@tanstack/react-query": "workspace:*",
+    "@types/react": "^18.2.31",
+    "@types/react-dom": "^18.2.14",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-error-boundary": "^3.1.4"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
-    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0",
-    "@tanstack/react-query": "workspace:^"
+    "@tanstack/react-query": "workspace:^",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   }
 }

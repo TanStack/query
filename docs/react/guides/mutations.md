@@ -19,7 +19,7 @@ function App() {
 
   return (
     <div>
-      {mutation.isLoading ? (
+      {mutation.isPending ? (
         'Adding todo...'
       ) : (
         <>
@@ -48,7 +48,7 @@ function App() {
 A mutation can only be in one of the following states at any given moment:
 
 - `isIdle` or `status === 'idle'` - The mutation is currently idle or in a fresh/reset state
-- `isLoading` or `status === 'loading'` - The mutation is currently running
+- `isPending` or `status === 'pending'` - The mutation is currently running
 - `isError` or `status === 'error'` - The mutation encountered an error
 - `isSuccess` or `status === 'success'` - The mutation was successful and mutation data is available
 
@@ -355,7 +355,7 @@ const persister = createSyncStoragePersister({
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      cacheTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 1000 * 60 * 60 * 24, // 24 hours
     },
   },
 })

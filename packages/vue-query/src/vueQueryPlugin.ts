@@ -5,24 +5,17 @@ import { QueryClient } from './queryClient'
 import { getClientKey } from './utils'
 import { setupDevtools } from './devtools/devtools'
 import type { QueryClientConfig } from '@tanstack/query-core'
-import type { MaybeRefDeep } from './types'
-
-declare global {
-  interface Window {
-    __VUE_QUERY_CONTEXT__?: QueryClient
-  }
-}
 
 type ClientPersister = (client: QueryClient) => [() => void, Promise<void>]
 
 interface CommonOptions {
   queryClientKey?: string
-  contextSharing?: boolean
   clientPersister?: ClientPersister
+  clientPersisterOnSuccess?: (client: QueryClient) => void
 }
 
 interface ConfigOptions extends CommonOptions {
-  queryClientConfig?: MaybeRefDeep<QueryClientConfig>
+  queryClientConfig?: QueryClientConfig
 }
 
 interface ClientOptions extends CommonOptions {
@@ -39,22 +32,9 @@ export const VueQueryPlugin = {
     if ('queryClient' in options && options.queryClient) {
       client = options.queryClient
     } else {
-      if (options.contextSharing && typeof window !== 'undefined') {
-        if (!window.__VUE_QUERY_CONTEXT__) {
-          const clientConfig =
-            'queryClientConfig' in options
-              ? options.queryClientConfig
-              : undefined
-          client = new QueryClient(clientConfig)
-          window.__VUE_QUERY_CONTEXT__ = client
-        } else {
-          client = window.__VUE_QUERY_CONTEXT__
-        }
-      } else {
-        const clientConfig =
-          'queryClientConfig' in options ? options.queryClientConfig : undefined
-        client = new QueryClient(clientConfig)
-      }
+      const clientConfig =
+        'queryClientConfig' in options ? options.queryClientConfig : undefined
+      client = new QueryClient(clientConfig)
     }
 
     if (!isServer) {
@@ -71,15 +51,8 @@ export const VueQueryPlugin = {
       persisterUnmount = unmount
       promise.then(() => {
         client.isRestoring.value = false
+        options.clientPersisterOnSuccess?.(client)
       })
-    }
-
-    if (process.env.NODE_ENV !== 'production' && options.contextSharing) {
-      client
-        .getLogger()
-        .error(
-          `The contextSharing option has been deprecated and will be removed in the next major version`,
-        )
     }
 
     const cleanup = () => {
@@ -97,7 +70,6 @@ export const VueQueryPlugin = {
       }
     }
 
-    /* istanbul ignore next */
     if (isVue2) {
       app.mixin({
         beforeCreate() {

@@ -7,7 +7,7 @@ TanStack Query maintainer [TkDodo](https://twitter.com/tkdodo) has a series of b
 
 ## [#1: Practical React Query](https://tkdodo.eu/blog/practical-react-query)
 
-> An advanced introduction to React Query, showing practical tips that go beyond the docs. It covers explaining the defaults (`staleTime` vs. `cacheTime`), concepts like keeping server and client state separate, handling dependencies and creating custom hooks, as well as outlining why the `enabled` option is very powerful. [Read more...](https://tkdodo.eu/blog/practical-react-query)
+> An advanced introduction to React Query, showing practical tips that go beyond the docs. It covers explaining the defaults (`staleTime` vs. `gcTime`), concepts like keeping server and client state separate, handling dependencies and creating custom hooks, as well as outlining why the `enabled` option is very powerful. [Read more...](https://tkdodo.eu/blog/practical-react-query)
 
 ## [#2: React Query Data Transformations](https://tkdodo.eu/blog/react-query-data-transformations)
 
@@ -19,7 +19,7 @@ TanStack Query maintainer [TkDodo](https://twitter.com/tkdodo) has a series of b
 
 ## [#4: Status Checks in React Query](https://tkdodo.eu/blog/status-checks-in-react-query)
 
-> We usually check for `isLoading` first before checking for `isError` , but sometimes, checking if `data` is available should be the first thing to do. This article shows how the wrong status check order can negatively impact user experience. [Read more...](https://tkdodo.eu/blog/status-checks-in-react-query)
+> We usually check for `isPending` first before checking for `isError` , but sometimes, checking if `data` is available should be the first thing to do. This article shows how the wrong status check order can negatively impact user experience. [Read more...](https://tkdodo.eu/blog/status-checks-in-react-query)
 
 ## [#5: Testing React Query](https://tkdodo.eu/blog/testing-react-query)
 

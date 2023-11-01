@@ -3,7 +3,7 @@ id: background-fetching-indicators
 title: Background Fetching Indicators
 ---
 
-A query's `status === 'loading'` state is sufficient enough to show the initial hard-loading state for a query, but sometimes you may want to display an additional indicator that a query is refetching in the background. To do this, queries also supply you with an `isFetching` boolean that you can use to show that it's in a fetching state, regardless of the state of the `status` variable:
+A query's `status === 'pending'` state is sufficient enough to show the initial hard-loading state for a query, but sometimes you may want to display an additional indicator that a query is refetching in the background. To do this, queries also supply you with an `isFetching` boolean that you can use to show that it's in a fetching state, regardless of the state of the `status` variable:
 
 [//]: # 'Example'
 
@@ -19,7 +19,7 @@ function Todos() {
     queryFn: fetchTodos,
   })
 
-  return status === 'loading' ? (
+  return status === 'pending' ? (
     <span>Loading...</span>
   ) : status === 'error' ? (
     <span>Error: {error.message}</span>

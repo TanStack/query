@@ -40,7 +40,6 @@ Its available methods are:
 - [`queryClient.resetQueries`](#queryclientresetqueries)
 - [`queryClient.isFetching`](#queryclientisfetching)
 - [`queryClient.isMutating`](#queryclientismutating)
-- [`queryClient.getLogger`](#queryclientgetlogger)
 - [`queryClient.getDefaultOptions`](#queryclientgetdefaultoptions)
 - [`queryClient.setDefaultOptions`](#queryclientsetdefaultoptions)
 - [`queryClient.getQueryDefaults`](#queryclientgetquerydefaults)
@@ -60,9 +59,6 @@ Its available methods are:
 - `mutationCache?: MutationCache`
   - Optional
   - The mutation cache this client is connected to.
-- `logger?: Logger`
-  - Optional
-  - The logger this client uses to log debugging information, warnings and errors. If not set, `console` is the default logger.
 - `defaultOptions?: DefaultOptions`
   - Optional
   - Define defaults for all queries and mutations using this queryClient.
@@ -95,7 +91,7 @@ try {
 
 **Options**
 
-The options for `fetchQuery` are exactly the same as those of [`useQuery`](../reference/useQuery), except the following: `enabled, refetchInterval, refetchIntervalInBackground, refetchOnWindowFocus, refetchOnReconnect, notifyOnChangeProps, onSuccess, onError, onSettled, useErrorBoundary, select, suspense, keepPreviousData, placeholderData`; which are strictly for useQuery and useInfiniteQuery. You can check the [source code](https://github.com/tannerlinsley/react-query/blob/361935a12cec6f36d0bd6ba12e84136c405047c5/src/core/types.ts#L83) for more clarity.
+The options for `fetchQuery` are exactly the same as those of [`useQuery`](../reference/useQuery), except the following: `enabled, refetchInterval, refetchIntervalInBackground, refetchOnWindowFocus, refetchOnReconnect, refetchOnMount, notifyOnChangeProps, throwOnError, select, suspense, placeholderData`; which are strictly for useQuery and useInfiniteQuery. You can check the [source code](https://github.com/TanStack/query/blob/7cd2d192e6da3df0b08e334ea1cf04cd70478827/packages/query-core/src/types.ts#L119) for more clarity.
 
 **Returns**
 
@@ -120,7 +116,7 @@ The options for `fetchInfiniteQuery` are exactly the same as those of [`fetchQue
 
 **Returns**
 
-- `Promise<InfiniteData<TData>>`
+- `Promise<InfiniteData<TData, TPageParam>>`
 
 ## `queryClient.prefetchQuery`
 
@@ -172,7 +168,7 @@ const data = queryClient.getQueryData(queryKey)
 
 **Options**
 
-- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
+- `queryKey: QueryKey`: [Query Keys](../guides/query-keys)
 
 **Returns**
 
@@ -221,7 +217,7 @@ This distinction is more a "convenience" for ts devs that know which structure w
 
 ## `queryClient.setQueryData`
 
-`setQueryData` is a synchronous function that can be used to immediately update a query's cached data. If the query does not exist, it will be created. **If the query is not utilized by a query hook in the default `cacheTime` of 5 minutes, the query will be garbage collected**. To update multiple queries at once and match query keys partially, you need to use [`queryClient.setQueriesData`](#queryclientsetqueriesdata) instead.
+`setQueryData` is a synchronous function that can be used to immediately update a query's cached data. If the query does not exist, it will be created. **If the query is not utilized by a query hook in the default `gcTime` of 5 minutes, the query will be garbage collected**. To update multiple queries at once and match query keys partially, you need to use [`queryClient.setQueriesData`](#queryclientsetqueriesdata) instead.
 
 > The difference between using `setQueryData` and `fetchQuery` is that `setQueryData` is sync and assumes that you already synchronously have the data available. If you need to fetch the data asynchronously, it's suggested that you either refetch the query key or use `fetchQuery` to handle the asynchronous fetch.
 
@@ -263,13 +259,13 @@ Updates via `setQueryData` must be performed in an _immuatable_ way. **DO NOT** 
 `getQueryState` is a synchronous function that can be used to get an existing query's state. If the query does not exist, `undefined` will be returned.
 
 ```tsx
-const state = queryClient.getQueryState({ queryKey })
+const state = queryClient.getQueryState(queryKey)
 console.log(state.dataUpdatedAt)
 ```
 
 **Options**
 
-- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
+- `queryKey: QueryKey`: [Query Keys](../guides/query-keys)
 
 ## `queryClient.setQueriesData`
 
@@ -311,9 +307,6 @@ await queryClient.invalidateQueries({
     - When set to `inactive`, only queries that match the refetch predicate and are NOT actively being rendered via `useQuery` and friends will be refetched in the background.
     - When set to `all`, all queries that match the refetch predicate will be refetched in the background.
     - When set to `none`, no queries will be refetched, and those that match the refetch predicate will be marked as invalid only.
-  - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
-    - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
-    - Use this function to specify which pages should be refetched
 - `options?: InvalidateOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
@@ -345,9 +338,6 @@ await queryClient.refetchQueries({ queryKey: ['posts', 1], type: 'active', exact
 **Options**
 
 - `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
-  - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
-    - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
-    - Use this function to specify which pages should be refetched
 - `options?: RefetchOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
@@ -412,9 +402,6 @@ queryClient.resetQueries({ queryKey, exact: true })
 **Options**
 
 - `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
-  - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
-    - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
-    - Use this function to specify which pages should be refetched
 - `options?: ResetOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
@@ -466,13 +453,6 @@ TanStack Query also exports a handy [`useIsMutating`](../reference/useIsMutating
 **Returns**
 
 This method returns the number of fetching mutations.
-## `queryClient.getLogger`
-
-The `getLogger` method returns the logger which have been set when creating the client.
-
-```tsx
-const logger = queryClient.getLogger()
-```
 
 ## `queryClient.getDefaultOptions`
 

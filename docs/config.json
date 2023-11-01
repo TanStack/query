@@ -113,10 +113,6 @@
               "to": "react/guides/placeholder-query-data"
             },
             {
-              "label": "Prefetching",
-              "to": "react/guides/prefetching"
-            },
-            {
               "label": "Mutations",
               "to": "react/guides/mutations"
             },
@@ -149,8 +145,20 @@
               "to": "react/guides/filters"
             },
             {
-              "label": "SSR & Next.js",
+              "label": "Performance & Request Waterfalls",
+              "to": "react/guides/request-waterfalls"
+            },
+            {
+              "label": "Prefetching & Router Integration",
+              "to": "react/guides/prefetching"
+            },
+            {
+              "label": "Server Rendering & Hydration",
               "to": "react/guides/ssr"
+            },
+            {
+              "label": "Advanced Server Rendering",
+              "to": "react/guides/advanced-ssr"
             },
             {
               "label": "Caching",
@@ -165,10 +173,6 @@
               "to": "react/guides/suspense"
             },
             {
-              "label": "Custom Logger",
-              "to": "react/guides/custom-logger"
-            },
-            {
               "label": "Testing",
               "to": "react/guides/testing"
             },
@@ -177,12 +181,16 @@
               "to": "react/guides/does-this-replace-client-state"
             },
             {
-              "label": "Migrating to React Query 3",
+              "label": "Migrating to v3",
               "to": "react/guides/migrating-to-react-query-3"
             },
             {
-              "label": "Migrating to React Query 4",
+              "label": "Migrating to v4",
               "to": "react/guides/migrating-to-react-query-4"
+            },
+            {
+              "label": "Migrating to v5",
+              "to": "react/guides/migrating-to-v5"
             }
           ]
         },
@@ -194,24 +202,8 @@
               "to": "react/community/tkdodos-blog"
             },
             {
-              "label": "Batching Requests",
-              "to": "react/community/batching-requests-using-bathshit"
-            },
-            {
-              "label": "Query Key Factory",
-              "to": "react/community/lukemorales-query-key-factory"
-            },
-            {
-              "label": "React Query Kit",
-              "to": "react/community/liaoliao666-react-query-kit"
-            },
-            {
-              "label": "Angular Query",
-              "to": "react/community/angular-query"
-            },
-            {
-              "label": "Suspensive React Query",
-              "to": "react/community/suspensive-react-query"
+              "label": "Community Projects",
+              "to": "react/community/community-projects"
             }
           ]
         },
@@ -235,8 +227,12 @@
               "to": "react/examples/react/auto-refetching"
             },
             {
-              "label": "Optimistic Updates in TypeScript",
-              "to": "react/examples/react/optimistic-updates-typescript"
+              "label": "Optimistic Updates (UI)",
+              "to": "react/examples/react/optimistic-updates-ui"
+            },
+            {
+              "label": "Optimistic Updates (Cache)",
+              "to": "react/examples/react/optimistic-updates-cache"
             },
             {
               "label": "Pagination",
@@ -245,6 +241,10 @@
             {
               "label": "Load-More & Infinite Scroll",
               "to": "react/examples/react/load-more-infinite-scroll"
+            },
+            {
+              "label": "Infinite query with Max pages",
+              "to": "react/examples/react/infinite-query-with-max-pages"
             },
             {
               "label": "Suspense",
@@ -273,6 +273,10 @@
             {
               "label": "Next.js",
               "to": "react/examples/react/nextjs"
+            },
+            {
+              "label": "Next.js app with streaming",
+              "to": "react/examples/react/nextjs-suspense-streaming"
             },
             {
               "label": "React Native",
@@ -304,8 +308,8 @@
               "to": "react/eslint/exhaustive-deps"
             },
             {
-              "label": "Prefer object syntax",
-              "to": "react/eslint/prefer-query-object-syntax"
+              "label": "Stable Query Client",
+              "to": "react/eslint/stable-query-client"
             }
           ]
         },
@@ -327,6 +331,10 @@
             {
               "label": "broadcastQueryClient (Experimental)",
               "to": "react/plugins/broadcastQueryClient"
+            },
+            {
+              "label": "createPersister (Experimental)",
+              "to": "react/plugins/createPersister"
             }
           ]
         },
@@ -356,6 +364,10 @@
             {
               "label": "useIsMutating",
               "to": "react/reference/useIsMutating"
+            },
+            {
+              "label": "useMutationState",
+              "to": "react/reference/useMutationState"
             },
             {
               "label": "QueryClient",
@@ -422,6 +434,35 @@
             {
               "label": "Overview",
               "to": "solid/overview"
+            },
+            {
+              "label": "Devtools",
+              "to": "solid/devtools"
+            }
+          ]
+        },
+        {
+          "label": "Examples",
+          "children": [
+            {
+              "label": "Simple",
+              "to": "solid/examples/solid/simple"
+            },
+            {
+              "label": "Basic",
+              "to": "solid/examples/solid/basic-typescript"
+            },
+            {
+              "label": "Basic w/ GraphQL-Request",
+              "to": "solid/examples/solid/basic-graphql-request"
+            },
+            {
+              "label": "Default Query Function",
+              "to": "solid/examples/solid/default-query-function"
+            },
+            {
+              "label": "Solid Start",
+              "to": "solid/examples/solid/solid-start-streaming"
             }
           ]
         }
@@ -575,16 +616,20 @@
               "to": "vue/guides/suspense"
             },
             {
-              "label": "Custom Logger",
-              "to": "vue/guides/custom-logger"
-            },
-            {
               "label": "Testing",
               "to": "vue/guides/testing"
             },
             {
+              "label": "Custom Client",
+              "to": "vue/guides/custom-client"
+            },
+            {
               "label": "Does this replace [Vuex, Pinia]?",
               "to": "vue/guides/does-this-replace-client-state"
+            },
+            {
+              "label": "Migrating to v5",
+              "to": "vue/guides/migrating-to-v5"
             }
           ]
         },

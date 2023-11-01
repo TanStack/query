@@ -3,8 +3,8 @@ import {
   createQuery,
   QueryClient,
   QueryClientProvider,
-  useQueryClient,
 } from '@tanstack/solid-query'
+import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import type { Component, Setter } from 'solid-js'
 import { createSignal, For, Match, Switch } from 'solid-js'
 import { render } from 'solid-js/web'
@@ -12,7 +12,7 @@ import { render } from 'solid-js/web'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      cacheTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 1000 * 60 * 60 * 24, // 24 hours
     },
   },
 })
@@ -24,8 +24,8 @@ type Post = {
 }
 
 function createPosts() {
-  return createQuery({
-    queryKey: () => ['posts'],
+  return createQuery(() => ({
+    queryKey: ['posts'],
     queryFn: async (): Promise<Array<Post>> => {
       const response = await fetch(
         'https://jsonplaceholder.typicode.com/posts',
@@ -35,11 +35,10 @@ function createPosts() {
       )
       return response.json()
     },
-  })
+  }))
 }
 
 function Posts(props: { setPostId: Setter<number> }) {
-  const queryClient = useQueryClient()
   const state = createPosts()
 
   return (
@@ -47,7 +46,7 @@ function Posts(props: { setPostId: Setter<number> }) {
       <h1>Posts</h1>
       <div>
         <Switch>
-          <Match when={state.status === 'loading'}>Loading...</Match>
+          <Match when={state.status === 'pending'}>Loading...</Match>
           <Match when={state.error instanceof Error}>
             <span>Error: {(state.error as Error).message}</span>
           </Match>
@@ -97,13 +96,11 @@ const getPostById = async (id: number): Promise<Post> => {
 }
 
 function createPost(postId: number) {
-  return createQuery(
-    () => ['post', postId],
-    () => getPostById(postId),
-    {
-      enabled: !!postId,
-    },
-  )
+  return createQuery(() => ({
+    queryKey: ['post', postId],
+    queryFn: () => getPostById(postId),
+    enabled: !!postId,
+  }))
 }
 
 function Post(props: { postId: number; setPostId: Setter<number> }) {
@@ -117,7 +114,7 @@ function Post(props: { postId: number; setPostId: Setter<number> }) {
         </a>
       </div>
       <Switch>
-        <Match when={!props.postId || state.status === 'loading'}>
+        <Match when={!props.postId || state.status === 'pending'}>
           Loading...
         </Match>
         <Match when={state.error instanceof Error}>
@@ -142,6 +139,7 @@ const App: Component = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <SolidQueryDevtools />
       <p>
         As you visit the posts below, you will notice them in a loading state
         the first time you load them. However, after you return to this list and

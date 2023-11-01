@@ -47,6 +47,8 @@ interface broadcastQueryClient {
   /** This is the unique channel name that will be used
    * to communicate between tabs and windows */
   broadcastChannel?: string
+  /** Options for the BroadcastChannel API */
+  options?: BroadcastChannelOptions
 }
 ```
 
