@@ -16,11 +16,11 @@ const AlreadyHasPlaceholderDataProperty = require('./utils/already-has-placehold
  */
 const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
   /**
-   * @param {import('jscodeshift').CallExpression} callExpression
+   * @param {import('jscodeshift').CallExpression | import('jscodeshift').ExpressionStatement} node
    * @returns {{start: number, end: number}}
    */
-  const getCallExpressionLocation = (callExpression) => {
-    const location = callExpression.callee.loc
+  const getNodeLocation = (node) => {
+    const location = utils.isCallExpression(node) ? node.callee.loc : node.loc
     const start = location.start.line
     const end = location.end.line
 
@@ -93,7 +93,7 @@ const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
 
   const replacer = (path, resolveTargetArgument, transformNode) => {
     const node = path.node
-    const { start, end } = getCallExpressionLocation(node)
+    const { start, end } = getNodeLocation(node)
 
     try {
       const targetArgument = resolveTargetArgument(node)
@@ -183,6 +183,55 @@ const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
       return replacer(path, resolveTargetArgument, transformNode)
     },
   )
+
+  const importIdentifierOfQueryClient = utils.getSelectorByImports(
+    utils.locateImports(['QueryClient']),
+    'QueryClient',
+  )
+
+  root
+    .find(jscodeshift.ExpressionStatement, {
+      expression: {
+        type: jscodeshift.NewExpression.name,
+        callee: {
+          type: jscodeshift.Identifier.name,
+          name: importIdentifierOfQueryClient,
+        },
+      },
+    })
+    .filter((path) => path.node.expression)
+    .replaceWith((path) => {
+      const resolveTargetArgument = (node) => {
+        const paths = jscodeshift(node)
+          .find(jscodeshift.ObjectProperty, {
+            key: {
+              type: jscodeshift.Identifier.name,
+              name: 'keepPreviousData',
+            },
+          })
+          .paths()
+
+        return paths.length > 0 ? paths[0].parent.node : null
+      }
+      const transformNode = (node, transformedArgument) => {
+        jscodeshift(node.expression)
+          .find(jscodeshift.ObjectProperty, {
+            key: {
+              type: jscodeshift.Identifier.name,
+              name: 'queries',
+            },
+          })
+          .replaceWith(({ node: mutableNode }) => {
+            mutableNode.value.properties = transformedArgument.properties
+
+            return mutableNode
+          })
+
+        return node
+      }
+
+      return replacer(path, resolveTargetArgument, transformNode)
+    })
 
   return { shouldAddKeepPreviousDataImport }
 }

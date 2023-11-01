@@ -208,3 +208,77 @@ export const Example10 = () => {
     placeholderData: () => previousData
   })
 }
+
+/**
+ * The object expression has a `keepPreviousData` property with value `true`, so the codemod should transform
+ * this usage.
+ */
+export const Example11 = () => {
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        placeholderData: keepPreviousData
+      }
+    }
+  })
+}
+
+/**
+ * The object expression has a `keepPreviousData` property with value `true`, but the `placeholderData` is a function.
+ * The codemod shouldn't transform this case, only warn the user about the manual migration.
+ */
+export const Example12 = () => {
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        keepPreviousData: true,
+        placeholderData: () => previousData
+      }
+    }
+  })
+}
+
+/**
+ * The object expression has a `keepPreviousData` property with value `true`, but the `placeholderData` is a string.
+ * The codemod shouldn't transform this case, only warn the user about the manual migration.
+ */
+export const Example13 = () => {
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        keepPreviousData: true,
+        placeholderData: 'somePlaceholderData'
+      }
+    }
+  })
+}
+
+/**
+ * The object expression has a `keepPreviousData` property with value `false`.
+ * The codemod shouldn't transform this case, only warn the user about the manual migration.
+ */
+export const Example14 = () => {
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        keepPreviousData: false,
+      }
+    }
+  })
+}
+
+/**
+ * The object expression has a `keepPreviousData` property with which is an identifier.
+ * The codemod shouldn't transform this case, only warn the user about the manual migration.
+ */
+export const Example15 = () => {
+  const keepPreviousDataIdentifier = false
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        keepPreviousData: keepPreviousDataIdentifier,
+        placeholderData: () => previousData
+      }
+    }
+  })
+}
