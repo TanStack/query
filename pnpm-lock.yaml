@@ -1527,6 +1527,40 @@ importers:
         specifier: ^4.4.4
         version: 4.4.11(@types/node@18.18.0)
 
+  integrations/angular-vite:
+    dependencies:
+      '@angular/common':
+        specifier: ^16.2.11
+        version: 16.2.11(@angular/core@16.2.11)(rxjs@7.8.1)
+      '@angular/compiler':
+        specifier: ^16.2.11
+        version: 16.2.11(@angular/core@16.2.11)
+      '@angular/core':
+        specifier: ^16.2.11
+        version: 16.2.11(rxjs@7.8.1)(zone.js@0.14.1)
+      '@angular/platform-browser':
+        specifier: ^16.2.11
+        version: 16.2.11(@angular/common@16.2.11)(@angular/core@16.2.11)
+      '@tanstack/angular-query-devtools-experimental':
+        specifier: ^5.4.3
+        version: link:../../packages/angular-query-devtools-experimental/build
+      '@tanstack/angular-query-experimental':
+        specifier: ^5.4.3
+        version: link:../../packages/angular-query-experimental/build
+      rxjs:
+        specifier: ^7.4.0
+        version: 7.8.1
+      zone.js:
+        specifier: ^0.14.0
+        version: 0.14.1
+    devDependencies:
+      typescript:
+        specifier: ^5.2.2
+        version: 5.2.2
+      vite:
+        specifier: ^4.4.4
+        version: 4.4.11(@types/node@18.18.0)
+
   integrations/next-js-app:
     dependencies:
       '@tanstack/react-query':
