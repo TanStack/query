@@ -9,14 +9,13 @@ import type { QueryClient } from '@tanstack/query-core'
  */
 @Injectable()
 export class QueryClientService implements OnDestroy {
-  readonly #queryClient: QueryClient | undefined
+  // Explicit typing here because inject() with optional: true does not result in nullable type
+  readonly #queryClient: QueryClient | null = inject(QUERY_CLIENT, {
+    optional: true,
+  })
 
   constructor() {
-    const queryClient = inject(QUERY_CLIENT, { optional: true })
-    if (queryClient) {
-      this.#queryClient = queryClient
-      queryClient.mount()
-    }
+    this.#queryClient?.mount()
   }
 
   useQueryClient(queryClient?: QueryClient) {
