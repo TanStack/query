@@ -1,4 +1,9 @@
-module.exports = ({ jscodeshift, utils, root }) => {
+module.exports = ({
+  jscodeshift,
+  utils,
+  root,
+  packageName = '@tanstack/react-query',
+}) => {
   const isGetQueryCacheMethodCall = (
     initializer,
     importIdentifiers,
@@ -106,7 +111,10 @@ module.exports = ({ jscodeshift, utils, root }) => {
 
   const execute = (replacer) => {
     findQueryCacheMethodCalls(
-      utils.locateImports(['QueryCache', 'QueryClient', 'useQueryClient']),
+      utils.locateImports(
+        ['QueryCache', 'QueryClient', 'useQueryClient'],
+        packageName,
+      ),
     ).replaceWith(replacer)
   }
 
