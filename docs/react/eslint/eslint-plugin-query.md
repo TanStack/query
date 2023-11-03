@@ -19,7 +19,18 @@ $ yarn add -D @tanstack/eslint-plugin-query
 
 ## Usage
 
-Add `@tanstack/eslint-plugin-query` to the plugins section of your `.eslintrc` configuration file:
+To enable all of the recommended rules for our plugin, add `plugin:@tanstack/eslint-plugin-query/recommended` in extends:
+
+```json
+{
+  "extends": ["plugin:@tanstack/eslint-plugin-query/recommended"]
+}
+```
+
+
+### Alternative config
+
+Alternatively, add `@tanstack/eslint-plugin-query` to the plugins section of your `.eslintrc` configuration file:
 
 ```json
 {
@@ -35,15 +46,5 @@ Then configure the rules you want to use under the rules section:
     "@tanstack/query/exhaustive-deps": "error",
     "@tanstack/query/stable-query-client": "error"
   }
-}
-```
-
-### Recommended config
-
-You can also enable all the recommended rules for our plugin. Add `plugin:@tanstack/eslint-plugin-query/recommended` in extends:
-
-```json
-{
-  "extends": ["plugin:@tanstack/eslint-plugin-query/recommended"]
 }
 ```
