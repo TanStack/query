@@ -63,11 +63,7 @@ export function provideAngularQuery(
     { provide: CreateQuery, useValue: createQuery },
     { provide: CreateMutation, useValue: createMutation },
     { provide: CreateQueries, useValue: createQueries },
-    {
-      provide: QueryClientService,
-      useClass: QueryClientService,
-      deps: [QUERY_CLIENT],
-    },
+    QueryClientService,
     {
       // Named this UseQueryClient as UseQuery would conflict with the type name
       // also, it is consistent with React Query's useQueryClient hook

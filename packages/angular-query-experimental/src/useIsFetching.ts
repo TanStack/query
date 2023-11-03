@@ -17,6 +17,9 @@ export function useIsFetching(
   queryClient?: QueryClient,
 ): Signal<number> {
   assertInInjectionContext(useIsFetching)
+
+  const destroyRef = inject(DestroyRef)
+
   /** Load query client */
   if (!queryClient) {
     queryClient = inject(QueryClientService).useQueryClient()
@@ -36,7 +39,7 @@ export function useIsFetching(
       }
     }),
   )
-  const destroyRef = inject(DestroyRef)
+
   destroyRef.onDestroy(unsubscribe)
   return result
 }
