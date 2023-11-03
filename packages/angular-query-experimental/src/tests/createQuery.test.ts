@@ -20,7 +20,10 @@ describe('CreateQuery', () => {
 
   it('should return pending status initially', fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
-      return createQuery(signal({ queryKey: ['key1'], queryFn: simpleFetcher }))
+      return createQuery(() => ({
+        queryKey: ['key1'],
+        queryFn: simpleFetcher,
+      }))
     })
 
     expect(query()).toMatchObject({
@@ -35,12 +38,10 @@ describe('CreateQuery', () => {
 
   it('should resolve to success and update signal: createQuery', fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
-      return createQuery(
-        signal({
-          queryKey: ['key2'],
-          queryFn: getSimpleFetcherWithReturnData('result2'),
-        }),
-      )
+      return createQuery(() => ({
+        queryKey: ['key2'],
+        queryFn: getSimpleFetcherWithReturnData('result2'),
+      }))
     })
 
     flush()
@@ -57,13 +58,11 @@ describe('CreateQuery', () => {
 
   it('should reject and update signal', fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
-      return createQuery(
-        signal({
-          retry: false,
-          queryKey: ['key3'],
-          queryFn: rejectFetcher,
-        }),
-      )
+      return createQuery(() => ({
+        retry: false,
+        queryKey: ['key3'],
+        queryFn: rejectFetcher,
+      }))
     })
 
     flush()
@@ -81,30 +80,27 @@ describe('CreateQuery', () => {
     })
   }))
 
-  it('should update query on options signal change', fakeAsync(() => {
-    const options = signal({
-      queryKey: ['key6', 'key7'],
-      queryFn: simpleFetcher,
-    })
+  it('should update query on options contained signal change', fakeAsync(() => {
+    const key = signal(['key6', 'key7'])
+    const spy = vi.fn(simpleFetcher)
 
     const query = TestBed.runInInjectionContext(() => {
-      return createQuery(options)
+      return createQuery(() => ({
+        queryKey: key(),
+        queryFn: spy,
+      }))
     })
     flush()
+    expect(spy).toHaveBeenCalledTimes(1)
 
     expect(query()).toMatchObject({
       status: 'success',
     })
 
-    const spy = vi.fn()
-
-    options.set({
-      queryKey: ['key8'],
-      queryFn: spy,
-    })
+    key.set(['key8'])
     TestBed.flushEffects()
 
-    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveBeenCalledTimes(2)
 
     flush()
   }))
@@ -112,14 +108,13 @@ describe('CreateQuery', () => {
   it('should only run query once enabled is set to true', fakeAsync(() => {
     const spy = vi.fn(simpleFetcher)
     const enabled = signal(false)
-    const options = computed(() => ({
-      queryKey: ['key9'],
-      queryFn: spy,
-      enabled: enabled(),
-    }))
 
     const query = TestBed.runInInjectionContext(() => {
-      return createQuery(options)
+      return createQuery(() => ({
+        queryKey: ['key9'],
+        queryFn: spy,
+        enabled: enabled(),
+      }))
     })
 
     expect(spy).not.toHaveBeenCalled()
@@ -138,15 +133,11 @@ describe('CreateQuery', () => {
 
   it('should properly execute dependant queries', fakeAsync(() => {
     const query1 = TestBed.runInInjectionContext(() => {
-      return createQuery(
-        signal({
-          queryKey: ['dependant1'],
-          queryFn: simpleFetcher,
-        }),
-      )
+      return createQuery(() => ({
+        queryKey: ['dependant1'],
+        queryFn: simpleFetcher,
+      }))
     })
-
-    const enabled = computed(() => !!query1().data)
 
     const dependentQueryFn = vi.fn().mockImplementation(delayedFetcher(1000))
 
@@ -155,7 +146,7 @@ describe('CreateQuery', () => {
         computed(() => ({
           queryKey: ['dependant2'],
           queryFn: dependentQueryFn,
-          enabled: enabled(),
+          enabled: !!query1().data,
         })),
       )
     })
@@ -185,13 +176,11 @@ describe('CreateQuery', () => {
     const keySignal = signal('key11')
 
     const query = TestBed.runInInjectionContext(() => {
-      return createQuery(
-        computed(() => ({
-          queryKey: ['key10', keySignal()],
-          queryFn: fetchFn,
-          enabled: false,
-        })),
-      )
+      return createQuery(() => ({
+        queryKey: ['key10', keySignal()],
+        queryFn: fetchFn,
+        enabled: false,
+      }))
     })
 
     expect(fetchFn).not.toHaveBeenCalled()
@@ -229,13 +218,11 @@ describe('CreateQuery', () => {
 
   it('should set state to error when queryFn returns reject promise', fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
-      return createQuery(
-        signal({
-          retry: false,
-          queryKey: ['key13'],
-          queryFn: rejectFetcher,
-        }),
-      )
+      return createQuery(() => ({
+        retry: false,
+        queryKey: ['key13'],
+        queryFn: rejectFetcher,
+      }))
     })
 
     expect(query().status).toBe('pending')
@@ -247,13 +234,11 @@ describe('CreateQuery', () => {
 
   it('should not update signal when notifyOnChangeProps is set without the changed property being in notifyOnChangeProps', fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
-      return createQuery(
-        signal({
-          queryKey: ['key14'],
-          queryFn: simpleFetcher,
-          notifyOnChangeProps: 'all',
-        }),
-      )
+      return createQuery(() => ({
+        queryKey: ['key14'],
+        queryFn: simpleFetcher,
+        notifyOnChangeProps: 'all',
+      }))
     })
 
     flush()
@@ -272,7 +257,7 @@ describe('CreateQuery', () => {
 
     const query = TestBed.runInInjectionContext(() => {
       return createQuery(
-        signal({
+        () => ({
           queryKey: ['key15'],
         }),
         queryClient,

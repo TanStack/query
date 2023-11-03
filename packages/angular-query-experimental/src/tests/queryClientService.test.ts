@@ -40,7 +40,7 @@ describe('QueryClientService', () => {
     expect(spy).toHaveBeenCalledTimes(1)
   })
 
-  it('when passing a queryclient as parameter, useQueryClient should return it', () => {
+  it('when passing a query client as parameter, useQueryClient should return it', () => {
     const queryClient2 = new QueryClient()
     queryClientService = TestBed.inject(QueryClientService)
     const useQueryClient = queryClientService.useQueryClient(queryClient2)

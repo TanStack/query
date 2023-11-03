@@ -1,4 +1,3 @@
-import { signal } from '@angular/core'
 import { TestBed, fakeAsync, flush } from '@angular/core/testing'
 import { QueryClient } from '@tanstack/query-core'
 import { vi } from 'vitest'
@@ -17,11 +16,9 @@ describe('CreateMutation', () => {
     const mutationFn = vi.fn()
 
     const mutation = TestBed.runInInjectionContext(() => {
-      return createMutation(
-        signal({
-          mutationFn,
-        }),
-      )
+      return createMutation(() => ({
+        mutationFn,
+      }))
     })
 
     mutation().mutate({
@@ -43,7 +40,7 @@ describe('CreateMutation', () => {
     })
 
     const mutation = TestBed.runInInjectionContext(() => {
-      return createMutation(signal({}), queryClient)
+      return createMutation(() => ({}), queryClient)
     })
 
     mutation().mutate()

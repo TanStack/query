@@ -1,4 +1,3 @@
-import { signal } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { QueryClient } from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
@@ -25,21 +24,17 @@ describe('useIsFetching', () => {
 
   test('allows passing query client', async () => {
     const isFetching1 = TestBed.runInInjectionContext(() => {
-      createQuery(
-        signal({
-          queryKey: ['isFetching1'],
-          queryFn: simpleFetcher,
-        }),
-      )
+      createQuery(() => ({
+        queryKey: ['isFetching1'],
+        queryFn: simpleFetcher,
+      }))
       return useIsFetching()
     })
     const isFetching2 = TestBed.runInInjectionContext(() => {
-      createQuery(
-        signal({
-          queryKey: ['isFetching2'],
-          queryFn: simpleFetcher,
-        }),
-      )
+      createQuery(() => ({
+        queryKey: ['isFetching2'],
+        queryFn: simpleFetcher,
+      }))
       return useIsFetching({}, new QueryClient())
     })
     expect(isFetching1()).toStrictEqual(1)

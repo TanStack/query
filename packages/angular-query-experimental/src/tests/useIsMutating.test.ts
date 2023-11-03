@@ -1,4 +1,4 @@
-import { inject, signal } from '@angular/core'
+import { inject } from '@angular/core'
 import { QueryClient } from '@tanstack/query-core'
 import { afterEach, beforeEach, describe } from 'vitest'
 import { TestBed, fakeAsync, tick } from '@angular/core/testing'
@@ -28,12 +28,10 @@ describe('useIsMutating', () => {
   it('should properly return isMutating state', fakeAsync(() => {
     TestBed.runInInjectionContext(() => {
       const isMutating = inject(UseIsMutating)()
-      const mutation = inject(CreateMutation)(
-        signal({
-          mutationKey: ['isMutating1'],
-          mutationFn: successMutator<{ par1: string }>,
-        }),
-      )
+      const mutation = inject(CreateMutation)(() => ({
+        mutationKey: ['isMutating1'],
+        mutationFn: successMutator<{ par1: string }>,
+      }))
 
       expect(isMutating()).toBe(0)
 
