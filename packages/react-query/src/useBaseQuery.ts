@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { isPlainObject, notifyManager } from '@tanstack/query-core'
+import { notifyManager } from '@tanstack/query-core'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
@@ -32,7 +32,7 @@ export function useBaseQuery<
   queryClient?: QueryClient,
 ) {
   if (process.env.NODE_ENV !== 'production') {
-    if (!isPlainObject(options)) {
+    if (typeof options !== 'object' || Array.isArray(options)) {
       throw new Error(
         'Bad argument type. Starting with v5, only the "Object" form is allowed when calling query related functions. Please use the error stack to find the culprit call. More info here: https://tanstack.com/query/latest/docs/react/guides/migrating-to-v5#supports-a-single-signature-one-object',
       )

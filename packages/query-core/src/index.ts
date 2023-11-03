@@ -18,7 +18,6 @@ export {
   isServer,
   matchQuery,
   keepPreviousData,
-  isPlainObject,
 } from './utils'
 export type { MutationFilters, QueryFilters, Updater } from './utils'
 export { isCancelledError } from './retryer'
