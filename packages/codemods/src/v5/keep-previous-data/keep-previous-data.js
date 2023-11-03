@@ -3,6 +3,8 @@ const createUtilsObject = require('../../utils')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const createUseQueryLikeTransformer = require('../../utils/transformers/use-query-like-transformer')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
+const createQueryClientTransformer = require('../../utils/transformers/query-client-transformer')
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const AlreadyHasPlaceholderDataProperty = require('./utils/already-has-placeholder-data-property')
 
 /**
@@ -14,11 +16,11 @@ const AlreadyHasPlaceholderDataProperty = require('./utils/already-has-placehold
  */
 const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
   /**
-   * @param {import('jscodeshift').CallExpression} callExpression
+   * @param {import('jscodeshift').CallExpression | import('jscodeshift').ExpressionStatement} node
    * @returns {{start: number, end: number}}
    */
-  const getCallExpressionLocation = (callExpression) => {
-    const location = callExpression.callee.loc
+  const getNodeLocation = (node) => {
+    const location = utils.isCallExpression(node) ? node.callee.loc : node.loc
     const start = location.start.line
     const end = location.end.line
 
@@ -87,26 +89,25 @@ const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
     return objectExpression.properties.find(isKeepPreviousDataObjectProperty)
   }
 
-  let isKeepPreviousDataInUse = false
+  let shouldAddKeepPreviousDataImport = false
 
-  const replacer = (path) => {
+  const replacer = (path, resolveTargetArgument, transformNode) => {
     const node = path.node
-    const functionArguments = []
-    const { start, end } = getCallExpressionLocation(node)
+    const { start, end } = getNodeLocation(node)
 
     try {
-      const firstArgument = node.arguments[0] ?? null
+      const targetArgument = resolveTargetArgument(node)
 
-      if (firstArgument && utils.isObjectExpression(firstArgument)) {
+      if (targetArgument && utils.isObjectExpression(targetArgument)) {
         const isPlaceholderDataPropertyPresent =
-          hasPlaceholderDataProperty(firstArgument)
+          hasPlaceholderDataProperty(targetArgument)
 
-        if (hasPlaceholderDataProperty(firstArgument)) {
+        if (hasPlaceholderDataProperty(targetArgument)) {
           throw new AlreadyHasPlaceholderDataProperty(node, filePath)
         }
 
         const keepPreviousDataProperty =
-          getKeepPreviousDataProperty(firstArgument)
+          getKeepPreviousDataProperty(targetArgument)
 
         const keepPreviousDataPropertyHasTrueValue =
           isObjectPropertyHasTrueBooleanLiteralValue(keepPreviousDataProperty)
@@ -122,10 +123,10 @@ const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
         if (keepPreviousDataPropertyHasTrueValue) {
           // Removing the `keepPreviousData` property from the object.
           const mutableObjectExpressionProperties =
-            filterKeepPreviousDataProperty(firstArgument)
+            filterKeepPreviousDataProperty(targetArgument)
 
           if (!isPlaceholderDataPropertyPresent) {
-            isKeepPreviousDataInUse = true
+            shouldAddKeepPreviousDataImport = true
 
             // When the `placeholderData` property is not present, the `placeholderData: keepPreviousData` property will be added.
             mutableObjectExpressionProperties.push(
@@ -133,13 +134,9 @@ const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
             )
           }
 
-          functionArguments.push(
+          return transformNode(
+            node,
             jscodeshift.objectExpression(mutableObjectExpressionProperties),
-          )
-
-          return jscodeshift.callExpression(
-            node.original.callee,
-            functionArguments,
           )
         }
       }
@@ -147,8 +144,6 @@ const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
       utils.warn(
         `The usage in file "${filePath}" at line ${start}:${end} could not be transformed, because the first parameter is not an object expression. Please migrate this usage manually.`,
       )
-
-      return node
 
       return node
     } catch (error) {
@@ -164,10 +159,81 @@ const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
 
   createUseQueryLikeTransformer({ jscodeshift, utils, root }).execute(
     config.hooks,
-    replacer,
+    (path) => {
+      const resolveTargetArgument = (node) => node.arguments[0] ?? null
+      const transformNode = (node, transformedArgument) =>
+        jscodeshift.callExpression(node.original.callee, [transformedArgument])
+
+      return replacer(path, resolveTargetArgument, transformNode)
+    },
   )
 
-  return { isKeepPreviousDataInUse }
+  createQueryClientTransformer({ jscodeshift, utils, root }).execute(
+    config.queryClientMethods,
+    (path) => {
+      const resolveTargetArgument = (node) => node.arguments[1] ?? null
+      const transformNode = (node, transformedArgument) => {
+        return jscodeshift.callExpression(node.original.callee, [
+          node.arguments[0],
+          transformedArgument,
+          ...node.arguments.slice(2, 0),
+        ])
+      }
+
+      return replacer(path, resolveTargetArgument, transformNode)
+    },
+  )
+
+  const importIdentifierOfQueryClient = utils.getSelectorByImports(
+    utils.locateImports(['QueryClient']),
+    'QueryClient',
+  )
+
+  root
+    .find(jscodeshift.ExpressionStatement, {
+      expression: {
+        type: jscodeshift.NewExpression.name,
+        callee: {
+          type: jscodeshift.Identifier.name,
+          name: importIdentifierOfQueryClient,
+        },
+      },
+    })
+    .filter((path) => path.node.expression)
+    .replaceWith((path) => {
+      const resolveTargetArgument = (node) => {
+        const paths = jscodeshift(node)
+          .find(jscodeshift.ObjectProperty, {
+            key: {
+              type: jscodeshift.Identifier.name,
+              name: 'keepPreviousData',
+            },
+          })
+          .paths()
+
+        return paths.length > 0 ? paths[0].parent.node : null
+      }
+      const transformNode = (node, transformedArgument) => {
+        jscodeshift(node.expression)
+          .find(jscodeshift.ObjectProperty, {
+            key: {
+              type: jscodeshift.Identifier.name,
+              name: 'queries',
+            },
+          })
+          .replaceWith(({ node: mutableNode }) => {
+            mutableNode.value.properties = transformedArgument.properties
+
+            return mutableNode
+          })
+
+        return node
+      }
+
+      return replacer(path, resolveTargetArgument, transformNode)
+    })
+
+  return { shouldAddKeepPreviousDataImport }
 }
 
 module.exports = (file, api) => {
@@ -178,14 +244,15 @@ module.exports = (file, api) => {
 
   const dependencies = { jscodeshift, utils, root, filePath }
 
-  const { isKeepPreviousDataInUse } = transformUsages({
+  const { shouldAddKeepPreviousDataImport } = transformUsages({
     ...dependencies,
     config: {
       hooks: ['useInfiniteQuery', 'useQueries', 'useQuery'],
+      queryClientMethods: ['setQueryDefaults'],
     },
   })
 
-  if (isKeepPreviousDataInUse) {
+  if (shouldAddKeepPreviousDataImport) {
     root
       .find(jscodeshift.ImportDeclaration, {
         source: {
