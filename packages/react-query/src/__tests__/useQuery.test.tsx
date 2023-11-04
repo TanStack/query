@@ -6238,7 +6238,8 @@ describe('useQuery', () => {
 
     function Page() {
       // Invalid call on purpose
-      const { data } = useQuery(key, { queryFn })
+      // @ts-expect-error
+      useQuery(key, { queryFn })
       return <div>Does not matter</div>
     }
 
