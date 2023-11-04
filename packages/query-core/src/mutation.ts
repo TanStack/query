@@ -4,7 +4,6 @@ import { canFetch, createRetryer } from './retryer'
 import type {
   DefaultError,
   MutationAction,
-  MutationActionType,
   MutationMeta,
   MutationOptions,
   MutationStatus,
@@ -41,33 +40,33 @@ export interface MutationState<
 }
 
 interface FailedAction<TError> extends MutationAction {
-  type: Extract<MutationActionType, 'failed'>
+  type: 'failed'
   failureCount: number
   error: TError | null
 }
 
 interface PendingAction<TVariables, TContext> extends MutationAction {
-  type: Extract<MutationActionType, 'pending'>
+  type: 'pending'
   variables?: TVariables
   context?: TContext
 }
 
 interface SuccessAction<TData> extends MutationAction {
-  type: Extract<MutationActionType, 'success'>
+  type: 'success'
   data: TData
 }
 
 interface ErrorAction<TError> extends MutationAction {
-  type: Extract<MutationActionType, 'error'>
+  type: 'error'
   error: TError
 }
 
 interface PauseAction extends MutationAction {
-  type: Extract<MutationActionType, 'pause'>
+  type: 'pause'
 }
 
 interface ContinueAction extends MutationAction {
-  type: Extract<MutationActionType, 'continue'>
+  type: 'continue'
 }
 
 export type Action<TData, TError, TVariables, TContext> =
@@ -239,7 +238,7 @@ export class Mutation<
       try {
         // Notify cache callback
         await this.#mutationCache.config.onError?.(
-          error as Error,
+          error as any,
           variables,
           this.state.context,
           this as Mutation<unknown, unknown, unknown, unknown>,
@@ -254,7 +253,7 @@ export class Mutation<
         // Notify cache callback
         await this.#mutationCache.config.onSettled?.(
           undefined,
-          error as Error,
+          error as any,
           this.state.variables,
           this.state.context,
           this as Mutation<unknown, unknown, unknown, unknown>,

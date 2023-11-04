@@ -559,6 +559,7 @@ export interface InfiniteQueryObserverBaseResult<
   hasPreviousPage: boolean
   isFetchingNextPage: boolean
   isFetchingPreviousPage: boolean
+  status: QueryStatus
 }
 
 export interface InfiniteQueryObserverLoadingResult<
@@ -732,6 +733,7 @@ export interface MutationObserverBaseResult<
   isSuccess: boolean
   mutate: MutateFunction<TData, TError, TVariables, TContext>
   reset: () => void
+  status: MutationStatus
 }
 
 export interface MutationObserverIdleResult<

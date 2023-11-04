@@ -8,7 +8,6 @@ import type {
   FetchStatus,
   InitialDataFunction,
   QueryAction,
-  QueryActionType,
   QueryFunctionContext,
   QueryKey,
   QueryMeta,
@@ -89,42 +88,42 @@ export interface FetchOptions {
 }
 
 interface FailedAction<TError> extends QueryAction {
-  type: Extract<QueryActionType, 'failed'>
+  type: 'failed'
   failureCount: number
   error: TError
 }
 
 interface FetchAction extends QueryAction {
-  type: Extract<QueryActionType, 'fetch'>
+  type: 'fetch'
   meta?: FetchMeta
 }
 
 interface SuccessAction<TData> extends QueryAction {
   data: TData | undefined
-  type: Extract<QueryActionType, 'success'>
+  type: 'success'
   dataUpdatedAt?: number
   manual?: boolean
 }
 
 interface ErrorAction<TError> extends QueryAction {
-  type: Extract<QueryActionType, 'error'>
+  type: 'error'
   error: TError
 }
 
 interface InvalidateAction extends QueryAction {
-  type: Extract<QueryActionType, 'invalidate'>
+  type: 'invalidate'
 }
 
 interface PauseAction extends QueryAction {
-  type: Extract<QueryActionType, 'pause'>
+  type: 'pause'
 }
 
 interface ContinueAction extends QueryAction {
-  type: Extract<QueryActionType, 'continue'>
+  type: 'continue'
 }
 
 interface SetStateAction<TData, TError> extends QueryAction {
-  type: Extract<QueryActionType, 'setState'>
+  type: 'setState'
   state: Partial<QueryState<TData, TError>>
   setStateOptions?: SetStateOptions
 }
