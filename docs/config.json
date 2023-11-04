@@ -310,6 +310,10 @@
             {
               "label": "Stable Query Client",
               "to": "react/eslint/stable-query-client"
+            },
+            {
+              "label": "No Rest Destructuring",
+              "to": "react/eslint/no-rest-destructuring"
             }
           ]
         },
