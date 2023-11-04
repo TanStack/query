@@ -114,6 +114,42 @@ ruleTester.run('no-rest-desctructuring', rule, {
           }
         `,
     },
+    {
+      name: 'useQuery is destructured with rest but not from tanstack query',
+      code: normalizeIndent`
+        import { useQuery } from 'other-package'
+
+        function Component() {
+          const { data, ...rest } = useQuery()
+          return
+        }
+      `,
+    },
+    {
+      name: 'useInfiniteQuery is destructured with rest but not from tanstack query',
+      code: normalizeIndent`
+        import { useInfiniteQuery } from 'other-package'
+
+        function Component() {
+          const { data, ...rest } = useInfiniteQuery()
+          return
+        }
+      `,
+    },
+    {
+      name: 'useQueries array has rest destructured element but not from tanstack query',
+      code: normalizeIndent`
+          import { useQueries } from 'other-package'
+
+          function Component() {
+            const [query1, { data, ...rest }] = useQueries([
+              { queryKey: ['key1'], queryFn: () => {} },
+              { queryKey: ['key2'], queryFn: () => {} },
+            ])
+            return
+          }
+        `,
+    },
   ],
   invalid: [
     {
