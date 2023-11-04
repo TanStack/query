@@ -1,6 +1,5 @@
+import { describe, expect, it, test, vi } from 'vitest'
 import { onScopeDispose, reactive } from 'vue-demi'
-
-import { vi } from 'vitest'
 import { useMutation } from '../useMutation'
 import { useIsMutating, useMutationState } from '../useMutationState'
 import { useQueryClient } from '../useQueryClient'

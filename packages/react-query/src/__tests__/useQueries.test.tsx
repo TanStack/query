@@ -1,8 +1,7 @@
+import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-
-import { vi } from 'vitest'
 import { QueryCache, useQueries } from '..'
 import {
   createQueryClient,

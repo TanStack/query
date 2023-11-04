@@ -11,21 +11,24 @@ module.exports = ({ root, jscodeshift }) => {
     return jscodeshift.identifier(identifier)
   }
 
-  const findImportSpecifiers = () =>
+  const findImportSpecifiers = (packageName) =>
     root
       .find(jscodeshift.ImportDeclaration, {
         source: {
-          value: 'react-query',
+          value: packageName,
         },
       })
       .find(jscodeshift.ImportSpecifier, {})
 
-  const locateImports = (identifiers) => {
+  const locateImports = (
+    identifiers,
+    packageName = '@tanstack/react-query',
+  ) => {
     const findNamespaceImportIdentifier = () => {
       const specifier = root
         .find(jscodeshift.ImportDeclaration, {
           source: {
-            value: 'react-query',
+            value: packageName,
           },
         })
         .find(jscodeshift.ImportNamespaceSpecifier)
@@ -53,7 +56,7 @@ module.exports = ({ root, jscodeshift }) => {
       }
     }
 
-    const importSpecifiers = findImportSpecifiers()
+    const importSpecifiers = findImportSpecifiers(packageName)
     const identifierMap = {}
 
     for (const identifier of identifiers) {

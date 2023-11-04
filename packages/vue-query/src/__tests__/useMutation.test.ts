@@ -1,5 +1,5 @@
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { reactive, ref } from 'vue-demi'
-import { vi } from 'vitest'
 import { useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
 import { errorMutator, flushPromises, successMutator } from './test-utils'

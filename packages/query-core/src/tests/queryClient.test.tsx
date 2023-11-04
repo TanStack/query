@@ -1,5 +1,5 @@
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom'
 
 import {
   MutationObserver,
@@ -431,6 +431,17 @@ describe('queryClient', () => {
       await expect(
         queryClient.ensureQueryData({ queryKey: [key, 'id'], queryFn }),
       ).resolves.toEqual('bar')
+    })
+
+    test('should return the cached query data if the query is found and cached query data is falsey', async () => {
+      const key = queryKey()
+      const queryFn = () => Promise.resolve(0)
+
+      queryClient.setQueryData([key, 'id'], null)
+
+      await expect(
+        queryClient.ensureQueryData({ queryKey: [key, 'id'], queryFn }),
+      ).resolves.toEqual(null)
     })
 
     test('should call fetchQuery and return its results if the query is not found', async () => {

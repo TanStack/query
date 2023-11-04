@@ -6,16 +6,16 @@
   "dependencies": {
     "@tanstack/react-query": "^5.0.0",
     "@tanstack/react-query-devtools": "^5.0.0",
-    "axios": "^1.4.0",
+    "axios": "^1.5.1",
     "isomorphic-unfetch": "4.0.2",
-    "next": "^13.4.4",
+    "next": "^14.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/node": "^18.16.0",
-    "@types/react": "^18.2.4",
-    "@types/react-dom": "^18.2.4",
+    "@types/node": "^18.18.0",
+    "@types/react": "^18.2.31",
+    "@types/react-dom": "^18.2.14",
     "typescript": "^5.0.4"
   },
   "scripts": {

@@ -1,4 +1,9 @@
-module.exports = ({ jscodeshift, utils, root }) => {
+module.exports = ({
+  jscodeshift,
+  utils,
+  root,
+  packageName = '@tanstack/react-query',
+}) => {
   const filterUseQueryLikeHookCalls = (node, importIdentifiers, hooks) => {
     for (const hook of hooks) {
       const selector = utils.getSelectorByImports(importIdentifiers, hook)
@@ -21,9 +26,10 @@ module.exports = ({ jscodeshift, utils, root }) => {
       )
 
   const execute = (hooks, replacer) => {
-    findUseQueryLikeHookCalls(utils.locateImports(hooks), hooks).replaceWith(
-      replacer,
-    )
+    findUseQueryLikeHookCalls(
+      utils.locateImports(hooks, packageName),
+      hooks,
+    ).replaceWith(replacer)
   }
 
   return {

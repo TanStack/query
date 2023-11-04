@@ -1,6 +1,6 @@
+import { describe, expect, it } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
-
 import { QueryCache, useIsFetching, useQuery } from '..'
 import {
   createQueryClient,

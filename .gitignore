@@ -8,6 +8,7 @@ yarn.lock
 
 # builds
 types
+*/**/.svelte-kit
 */**/build
 */**/dist
 */**/lib

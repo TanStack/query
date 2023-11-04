@@ -202,24 +202,8 @@
               "to": "react/community/tkdodos-blog"
             },
             {
-              "label": "Batching Requests",
-              "to": "react/community/batching-requests-using-bathshit"
-            },
-            {
-              "label": "Query Key Factory",
-              "to": "react/community/lukemorales-query-key-factory"
-            },
-            {
-              "label": "React Query Kit",
-              "to": "react/community/liaoliao666-react-query-kit"
-            },
-            {
-              "label": "Angular Query",
-              "to": "react/community/angular-query"
-            },
-            {
-              "label": "Suspensive React Query",
-              "to": "react/community/suspensive-react-query"
+              "label": "Community Projects",
+              "to": "react/community/community-projects"
             }
           ]
         },
@@ -326,6 +310,10 @@
             {
               "label": "Stable Query Client",
               "to": "react/eslint/stable-query-client"
+            },
+            {
+              "label": "No Rest Destructuring",
+              "to": "react/eslint/no-rest-destructuring"
             }
           ]
         },

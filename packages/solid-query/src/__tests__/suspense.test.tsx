@@ -1,3 +1,4 @@
+import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
 
 import {
@@ -8,7 +9,6 @@ import {
   createSignal,
   on,
 } from 'solid-js'
-import { vi } from 'vitest'
 import {
   QueryCache,
   QueryClientProvider,

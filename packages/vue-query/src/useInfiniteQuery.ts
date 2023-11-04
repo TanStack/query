@@ -12,12 +12,7 @@ import type {
 
 import type { UseBaseQueryReturnType } from './useBaseQuery'
 
-import type {
-  DeepUnwrapRef,
-  DistributiveOmit,
-  MaybeRefDeep,
-  MaybeRefOrGetter,
-} from './types'
+import type { DeepUnwrapRef, MaybeRefDeep, MaybeRefOrGetter } from './types'
 import type { QueryClient } from './queryClient'
 
 export type UseInfiniteQueryOptions<
@@ -35,7 +30,7 @@ export type UseInfiniteQueryOptions<
     TQueryData,
     TQueryKey,
     TPageParam
-  >]: Property extends 'queryFn'
+  >]: Property extends 'queryFn' | 'getPreviousPageParam' | 'getNextPageParam'
     ? InfiniteQueryObserverOptions<
         TQueryFnData,
         TError,
@@ -69,22 +64,11 @@ export type UseInfiniteQueryOptions<
       >
 }
 
-type InfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<
+export type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<
   TData,
   TError,
   InfiniteQueryObserverResult<TData, TError>
 >
-export type UseInfiniteQueryReturnType<TData, TError> = DistributiveOmit<
-  InfiniteQueryReturnType<TData, TError>,
-  'fetchNextPage' | 'fetchPreviousPage' | 'refetch'
-> & {
-  fetchNextPage: InfiniteQueryObserverResult<TData, TError>['fetchNextPage']
-  fetchPreviousPage: InfiniteQueryObserverResult<
-    TData,
-    TError
-  >['fetchPreviousPage']
-  refetch: InfiniteQueryObserverResult<TData, TError>['refetch']
-}
 
 export function useInfiniteQuery<
   TQueryFnData,
@@ -103,13 +87,9 @@ export function useInfiniteQuery<
   >,
   queryClient?: QueryClient,
 ): UseInfiniteQueryReturnType<TData, TError> {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-  const result = useBaseQuery(
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+  return useBaseQuery(
     InfiniteQueryObserver as typeof QueryObserver,
     options,
     queryClient,
-  ) as InfiniteQueryReturnType<TData, TError>
-
-  return result
+  ) as UseInfiniteQueryReturnType<TData, TError>
 }

@@ -1,5 +1,5 @@
+import { describe, it } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
-
 import { Show, Suspense, createSignal, startTransition } from 'solid-js'
 import { QueryCache, QueryClientProvider, createQuery } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
