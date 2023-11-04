@@ -103,11 +103,12 @@ ruleTester.run('no-rest-desctructuring', rule, {
           import { useQueries } from '@tanstack/react-query'
 
           function Component() {
-            const [query1, { data, isLoading }, ...others] = useQueries([
+            const [query1, { data, isLoading },, ...others] = useQueries([
               { queryKey: ['key1'], queryFn: () => {} },
               { queryKey: ['key2'], queryFn: () => {} },
               { queryKey: ['key3'], queryFn: () => {} },
               { queryKey: ['key4'], queryFn: () => {} },
+              { queryKey: ['key5'], queryFn: () => {} },
             ])
             return
           }
