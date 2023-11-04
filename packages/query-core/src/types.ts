@@ -559,7 +559,6 @@ export interface InfiniteQueryObserverBaseResult<
   hasPreviousPage: boolean
   isFetchingNextPage: boolean
   isFetchingPreviousPage: boolean
-  status: QueryStatus
 }
 
 export interface InfiniteQueryObserverLoadingResult<
