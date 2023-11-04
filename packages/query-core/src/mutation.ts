@@ -3,6 +3,7 @@ import { Removable } from './removable'
 import { canFetch, createRetryer } from './retryer'
 import type {
   DefaultError,
+  MutationAction,
   MutationActionType,
   MutationMeta,
   MutationOptions,
@@ -39,33 +40,33 @@ export interface MutationState<
   submittedAt: number
 }
 
-interface FailedAction<TError> {
+interface FailedAction<TError> extends MutationAction {
   type: Extract<MutationActionType, 'failed'>
   failureCount: number
   error: TError | null
 }
 
-interface PendingAction<TVariables, TContext> {
+interface PendingAction<TVariables, TContext> extends MutationAction {
   type: Extract<MutationActionType, 'pending'>
   variables?: TVariables
   context?: TContext
 }
 
-interface SuccessAction<TData> {
+interface SuccessAction<TData> extends MutationAction {
   type: Extract<MutationActionType, 'success'>
   data: TData
 }
 
-interface ErrorAction<TError> {
+interface ErrorAction<TError> extends MutationAction {
   type: Extract<MutationActionType, 'error'>
   error: TError
 }
 
-interface PauseAction {
+interface PauseAction extends MutationAction {
   type: Extract<MutationActionType, 'pause'>
 }
 
-interface ContinueAction {
+interface ContinueAction extends MutationAction {
   type: Extract<MutationActionType, 'continue'>
 }
 

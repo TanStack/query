@@ -859,3 +859,11 @@ export type QueryActionType =
   | 'pause'
   | 'continue'
   | 'setState'
+
+export interface MutationAction {
+  type: MutationActionType
+}
+
+export interface QueryAction {
+  type: QueryActionType
+}
