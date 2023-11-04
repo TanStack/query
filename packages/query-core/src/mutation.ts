@@ -3,6 +3,7 @@ import { Removable } from './removable'
 import { canFetch, createRetryer } from './retryer'
 import type {
   DefaultError,
+  MutationActionType,
   MutationMeta,
   MutationOptions,
   MutationStatus,
@@ -39,33 +40,33 @@ export interface MutationState<
 }
 
 interface FailedAction<TError> {
-  type: 'failed'
+  type: Extract<MutationActionType, 'failed'>
   failureCount: number
   error: TError | null
 }
 
 interface PendingAction<TVariables, TContext> {
-  type: 'pending'
+  type: Extract<MutationActionType, 'pending'>
   variables?: TVariables
   context?: TContext
 }
 
 interface SuccessAction<TData> {
-  type: 'success'
+  type: Extract<MutationActionType, 'success'>
   data: TData
 }
 
 interface ErrorAction<TError> {
-  type: 'error'
+  type: Extract<MutationActionType, 'error'>
   error: TError
 }
 
 interface PauseAction {
-  type: 'pause'
+  type: Extract<MutationActionType, 'pause'>
 }
 
 interface ContinueAction {
-  type: 'continue'
+  type: Extract<MutationActionType, 'continue'>
 }
 
 export type Action<TData, TError, TVariables, TContext> =
@@ -237,7 +238,7 @@ export class Mutation<
       try {
         // Notify cache callback
         await this.#mutationCache.config.onError?.(
-          error as any,
+          error as Error,
           variables,
           this.state.context,
           this as Mutation<unknown, unknown, unknown, unknown>,
@@ -252,7 +253,7 @@ export class Mutation<
         // Notify cache callback
         await this.#mutationCache.config.onSettled?.(
           undefined,
-          error as any,
+          error as Error,
           this.state.variables,
           this.state.context,
           this as Mutation<unknown, unknown, unknown, unknown>,

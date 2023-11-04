@@ -841,3 +841,21 @@ export type NotifyEventType =
 export interface NotifyEvent {
   type: NotifyEventType
 }
+
+export type MutationActionType =
+  | 'failed'
+  | 'pending'
+  | 'success'
+  | 'error'
+  | 'pause'
+  | 'continue'
+
+export type QueryActionType =
+  | 'failed'
+  | 'fetch'
+  | 'success'
+  | 'error'
+  | 'invalidate'
+  | 'pause'
+  | 'continue'
+  | 'setState'
