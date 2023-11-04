@@ -37,7 +37,7 @@ ruleTester.run('no-rest-desctructuring', rule, {
           import { useQuery } from '@tanstack/react-query'
 
           function Component() {
-            const { data, isLoading, isError }= useQuery()
+            const { data, isLoading, isError } = useQuery()
             return
           }
         `,
@@ -70,7 +70,7 @@ ruleTester.run('no-rest-desctructuring', rule, {
           import { useInfiniteQuery } from '@tanstack/react-query'
 
           function Component() {
-            const { data, isLoading, isError }= useInfiniteQuery()
+            const { data, isLoading, isError } = useInfiniteQuery()
             return
           }
         `,
