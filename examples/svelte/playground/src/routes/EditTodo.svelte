@@ -10,9 +10,9 @@
     queryTimeMax,
     list,
     editingIndex,
-  } from '../lib/stores'
-
-  type Todo = { id: number; name: string; notes: string }
+    type Todo,
+  } from '$lib/stores'
+  import { derived } from "svelte/store"
 
   const queryClient = useQueryClient()
 
@@ -59,11 +59,13 @@
     })
   }
 
-  const query = createQuery({
-    queryKey: ['todo', { id: $editingIndex }],
-    queryFn: () => fetchTodoById({ id: $editingIndex || 0 }),
-    enabled: $editingIndex !== null,
-  })
+  const query = createQuery(
+    derived(editingIndex, ($editingIndex) => ({
+      queryKey: ['todo', { id: $editingIndex }],
+      queryFn: () => fetchTodoById({ id: $editingIndex || 0 }),
+      enabled: $editingIndex !== null,
+    }))
+  )
 
   const saveMutation = createMutation({
     mutationFn: patchTodo,

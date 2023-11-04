@@ -6,15 +6,15 @@
     queryTimeMax,
     list,
     editingIndex,
-  } from '../lib/stores'
+    type Todos,
+  } from '$lib/stores'
+  import { derived, writable } from "svelte/store"
 
   export let initialFilter: string
 
-  let filter = initialFilter
+  let filter = writable(initialFilter)
 
-  const fetchTodos = async ({ filter }: { filter: string }) => {
-    console.info('fetchTodos', { filter })
-
+  const fetchTodos = async ({ filter }: { filter: string }): Promise<Todos> => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         if (Math.random() < $errorRate) {
@@ -27,16 +27,18 @@
     })
   }
 
-  const query = createQuery<any>({
-    queryKey: ['todos', { filter }],
-    queryFn: () => fetchTodos({ filter }),
-  })
+  const query = createQuery(
+    derived(filter, ($filter) => ({
+      queryKey: ['todos', { filter: $filter }],
+      queryFn: () => fetchTodos({ filter: $filter }),
+    }))
+  )
 </script>
 
 <div>
   <label>
     Filter:{' '}
-    <input bind:value={filter} />
+    <input bind:value={$filter} />
   </label>
 </div>
 
