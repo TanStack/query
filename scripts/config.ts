@@ -77,8 +77,6 @@ export const packages: Package[] = [
   },
 ]
 
-export const latestBranch = 'main'
-
 export const branchConfigs: Record<string, BranchConfig> = {
   main: {
     prerelease: false,
@@ -94,6 +92,10 @@ export const branchConfigs: Record<string, BranchConfig> = {
   },
   rc: {
     prerelease: true,
+  },
+  v4: {
+    prerelease: false,
+    previousVersion: true,
   },
 }
 

@@ -43,4 +43,5 @@ export type Package = {
 
 export type BranchConfig = {
   prerelease: boolean
+  previousVersion?: boolean
 }
