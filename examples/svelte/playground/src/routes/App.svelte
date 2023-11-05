@@ -1,6 +1,6 @@
 <script lang="ts">
   import { useQueryClient } from '@tanstack/svelte-query'
-  import Todos from './Todos.svelte'
+  import TodosList from './TodosList.svelte'
   import EditTodo from './EditTodo.svelte'
   import AddTodo from './AddTodo.svelte'
   import { views, editingIndex } from '../lib/stores'
@@ -19,7 +19,7 @@
 
   {#each $views as view}
     <div>
-      <Todos initialFilter={view} />
+      <TodosList initialFilter={view} />
       <br />
     </div>
   {/each}

@@ -9,8 +9,19 @@ const createQueryClientTransformer = require('../utils/transformers/query-client
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const createQueryCacheTransformer = require('../utils/transformers/query-cache-transformer')
 
-const transformQueryClientUsages = ({ jscodeshift, utils, root, filePath }) => {
-  const transformer = createQueryClientTransformer({ jscodeshift, utils, root })
+const transformQueryClientUsages = ({
+  jscodeshift,
+  utils,
+  root,
+  filePath,
+  packageName,
+}) => {
+  const transformer = createQueryClientTransformer({
+    jscodeshift,
+    utils,
+    root,
+    packageName,
+  })
   const replacer = createKeyReplacer({ jscodeshift, root, filePath })
 
   transformer.execute(
@@ -41,11 +52,17 @@ const transformQueryClientUsages = ({ jscodeshift, utils, root, filePath }) => {
   )
 }
 
-const transformUseQueriesUsages = ({ jscodeshift, utils, root }) => {
+const transformUseQueriesUsages = ({
+  jscodeshift,
+  utils,
+  root,
+  packageName,
+}) => {
   const transformer = createUseQueryLikeTransformer({
     jscodeshift,
     utils,
     root,
+    packageName,
   })
   const replacer = ({ node }) => {
     /**
@@ -82,11 +99,13 @@ const transformUseQueryLikeUsages = ({
   utils,
   root,
   filePath,
+  packageName,
 }) => {
   const transformer = createUseQueryLikeTransformer({
     jscodeshift,
     utils,
     root,
+    packageName,
   })
 
   transformer.execute(
@@ -109,8 +128,19 @@ const transformUseQueryLikeUsages = ({
   )
 }
 
-const transformQueryCacheUsages = ({ jscodeshift, utils, root, filePath }) => {
-  const transformer = createQueryCacheTransformer({ jscodeshift, utils, root })
+const transformQueryCacheUsages = ({
+  jscodeshift,
+  utils,
+  root,
+  filePath,
+  packageName,
+}) => {
+  const transformer = createQueryCacheTransformer({
+    jscodeshift,
+    utils,
+    root,
+    packageName,
+  })
   const replacer = createKeyReplacer({ jscodeshift, root, filePath })
 
   transformer.execute(replacer)
@@ -124,15 +154,33 @@ module.exports = (file, api) => {
 
   const utils = createUtilsObject({ root, jscodeshift })
   const filePath = file.path
+  const packageName = 'react-query'
 
   // This function transforms usages like `useQuery` and `useMutation`.
-  transformUseQueryLikeUsages({ jscodeshift, utils, root, filePath })
+  transformUseQueryLikeUsages({
+    jscodeshift,
+    utils,
+    root,
+    filePath,
+    packageName,
+  })
   // This function transforms usages of `useQueries`.
-  transformUseQueriesUsages({ jscodeshift, utils, root })
+  transformUseQueriesUsages({
+    jscodeshift,
+    utils,
+    root,
+    packageName,
+  })
   // This function transforms usages of `QueryClient`.
-  transformQueryClientUsages({ jscodeshift, utils, root, filePath })
+  transformQueryClientUsages({
+    jscodeshift,
+    utils,
+    root,
+    filePath,
+    packageName,
+  })
   // This function transforms usages of `QueryCache`.
-  transformQueryCacheUsages({ jscodeshift, utils, root, filePath })
+  transformQueryCacheUsages({ jscodeshift, utils, root, filePath, packageName })
 
   return root.toSource({ quote: 'single', lineTerminator: '\n' })
 }

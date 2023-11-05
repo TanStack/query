@@ -6,13 +6,14 @@
     queryTimeMax,
     list,
     id,
+    type Todo,
   } from '../lib/stores'
 
   const queryClient = useQueryClient()
 
   let name = ''
 
-  const postTodo = async ({ name, notes }: { name: string; notes: string }) => {
+  const postTodo = async ({ name, notes }: Omit<Todo, 'id'>) => {
     console.info('postTodo', { name, notes })
     return new Promise((resolve, reject) => {
       setTimeout(() => {
