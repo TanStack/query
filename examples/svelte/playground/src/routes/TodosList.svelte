@@ -8,7 +8,7 @@
     editingIndex,
     type Todos,
   } from '$lib/stores'
-  import { derived, writable } from "svelte/store"
+  import { derived, writable } from 'svelte/store'
 
   export let initialFilter: string
 
@@ -31,7 +31,7 @@
     derived(filter, ($filter) => ({
       queryKey: ['todos', { filter: $filter }],
       queryFn: () => fetchTodos({ filter: $filter }),
-    }))
+    })),
   )
 </script>
 

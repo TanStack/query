@@ -12,7 +12,7 @@
     editingIndex,
     type Todo,
   } from '$lib/stores'
-  import { derived } from "svelte/store"
+  import { derived } from 'svelte/store'
 
   const queryClient = useQueryClient()
 
@@ -64,7 +64,7 @@
       queryKey: ['todo', { id: $editingIndex }],
       queryFn: () => fetchTodoById({ id: $editingIndex || 0 }),
       enabled: $editingIndex !== null,
-    }))
+    })),
   )
 
   const saveMutation = createMutation({
