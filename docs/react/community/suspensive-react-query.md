@@ -5,7 +5,7 @@ title: Suspensive React Query
 
 Typesafe useQuery, useQueries, useInfiniteQuery with default suspense option.
 
-Use @suspensive/react-query, delegate loading and error handling to the outside of the component with [useSuspenseQuery](https://suspensive.org/docs/react-query/src/useSuspenseQuery.i18n), [useSuspenseQueries](https://suspensive.org/docs/react-query/src/useSuspenseQueries.i18n) and [useSuspenseInfiniteQuery](https://suspensive.org/docs/react-query/src/useSuspenseInfiniteQuery.i18n), and focus on success inside the component.
+Use @suspensive/react-query, delegate loading and error handling to the outside of the component with [useSuspenseQuery](https://suspensive.org/docs/react-query/useSuspenseQuery), [useSuspenseQueries](https://suspensive.org/docs/react-query/useSuspenseQueries) and [useSuspenseInfiniteQuery](https://suspensive.org/docs/react-query/useSuspenseInfiniteQuery), and focus on success inside the component.
 
 You don't even need to use the isSuccess flag.
 
@@ -44,7 +44,7 @@ const Example = () => {
 ```
 
 Typically query.data will be `TData | undefined` like this code example.
-But actual useQuery's return type:query.data will be always fulfilled because of [Suspense](https://suspensive.org/docs/react/src/Suspense.i18n) and [ErrorBoundary](https://suspensive.org/docs/react/src/ErrorBoundary.i18n) as parent of this component.
+But actual useQuery's return type:query.data will be always fulfilled because of [Suspense](https://suspensive.org/docs/react/Suspense) and [ErrorBoundary](https://suspensive.org/docs/react/ErrorBoundary) as parent of this component.
 
 This is why @suspensive/react-query provide **useSuspenseQuery**
 
@@ -74,7 +74,7 @@ Now, we can concentrate component as any fetching will be always success in comp
 
 ### useSuspenseQuery is Official API now! (from v5)
 
-@suspensive/react-query provides not only [useSuspenseQuery](https://suspensive.org/docs/react-query/src/useSuspenseQuery.i18n), also [useSuspenseQueries](https://suspensive.org/docs/react-query/src/useSuspenseQueries.i18n), [useSuspenseInfiniteQuery](https://suspensive.org/docs/react-query/src/useSuspenseInfiniteQuery.i18n). From @tanstack/react-query v5 provides [official public hook apis for suspense](https://tanstack.com/query/v5/docs/react/guides/suspense) like @suspensive/react-query's hooks. If want to use them early in v4, use this @suspensive/react-query first.
+@suspensive/react-query provides not only [useSuspenseQuery](https://suspensive.org/docs/react-query/useSuspenseQuery), also [useSuspenseQueries](https://suspensive.org/docs/react-query/useSuspenseQueries), [useSuspenseInfiniteQuery](https://suspensive.org/docs/react-query/useSuspenseInfiniteQuery). From @tanstack/react-query v5 provides [official public hook apis for suspense](https://tanstack.com/query/v5/docs/react/guides/suspense) like @suspensive/react-query's hooks. If want to use them early in v4, use this @suspensive/react-query first.
 
 Check the complete documentation on [Suspensive Official Docs Site](https://suspensive.org/) and also welcome Pull Request on [Suspensive GitHub](https://github.com/suspensive/react)
 
