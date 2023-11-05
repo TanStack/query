@@ -1,19 +1,25 @@
-import { InfiniteData } from '@tanstack/query-core'
-import { reactive } from 'vue'
+import { describe, it } from 'vitest'
+import { reactive } from 'vue-demi'
 import { useInfiniteQuery } from '../useInfiniteQuery'
-import { doNotExecute, Equal, Expect, simpleFetcher } from './test-utils'
+import { doNotExecute, simpleFetcher } from './test-utils'
+import type { Equal, Expect } from './test-utils'
+import type { InfiniteData } from '@tanstack/query-core'
 
 describe('Discriminated union return type', () => {
   it('data should be possibly undefined by default', () => {
     doNotExecute(() => {
       const query = reactive(
         useInfiniteQuery({
+          queryKey: ['infiniteQuery'],
           queryFn: simpleFetcher,
+          getNextPageParam: () => undefined,
+          initialPageParam: 0,
         }),
       )
 
+      // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
       const result: Expect<
-        Equal<InfiniteData<string> | undefined, typeof query.data>
+        Equal<InfiniteData<string, unknown> | undefined, typeof query.data>
       > = true
       return result
     })
@@ -23,13 +29,18 @@ describe('Discriminated union return type', () => {
     doNotExecute(() => {
       const query = reactive(
         useInfiniteQuery({
+          queryKey: ['infiniteQuery'],
           queryFn: simpleFetcher,
+          getNextPageParam: () => undefined,
+          initialPageParam: 0,
         }),
       )
 
       if (query.isSuccess) {
-        const result: Expect<Equal<InfiniteData<string>, typeof query.data>> =
-          true
+        // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
+        const result: Expect<
+          Equal<InfiniteData<string, unknown>, typeof query.data>
+        > = true
         return result
       }
       return
@@ -40,7 +51,10 @@ describe('Discriminated union return type', () => {
     doNotExecute(() => {
       const query = reactive(
         useInfiniteQuery({
+          queryKey: ['infiniteQuery'],
           queryFn: simpleFetcher,
+          getNextPageParam: () => undefined,
+          initialPageParam: 0,
         }),
       )
 
@@ -52,15 +66,18 @@ describe('Discriminated union return type', () => {
     })
   })
 
-  it('data should be undefined when query is loading', () => {
+  it('data should be undefined when query is pending', () => {
     doNotExecute(() => {
       const query = reactive(
         useInfiniteQuery({
+          queryKey: ['infiniteQuery'],
           queryFn: simpleFetcher,
+          getNextPageParam: () => undefined,
+          initialPageParam: 0,
         }),
       )
 
-      if (query.isLoading) {
+      if (query.isPending) {
         const result: Expect<Equal<undefined, typeof query.data>> = true
         return result
       }
@@ -72,12 +89,15 @@ describe('Discriminated union return type', () => {
     doNotExecute(() => {
       const query = reactive(
         useInfiniteQuery({
+          queryKey: ['infiniteQuery'],
           queryFn: simpleFetcher,
+          getNextPageParam: () => undefined,
+          initialPageParam: 0,
         }),
       )
 
       if (query.isError) {
-        const result: Expect<Equal<unknown, typeof query.error>> = true
+        const result: Expect<Equal<Error, typeof query.error>> = true
         return result
       }
       return

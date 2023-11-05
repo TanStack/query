@@ -1,9 +1,8 @@
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import * as React from 'react'
 import ReactDOM from 'react-dom'
-import ReactDOMTestUtils from 'react-dom/test-utils'
-import ReactDOMServer from 'react-dom/server'
-// eslint-disable-next-line import/no-unresolved -- types only for module augmentation
-import type {} from 'react-dom/next'
+import * as ReactDOMTestUtils from 'react-dom/test-utils'
+import * as ReactDOMServer from 'react-dom/server'
 
 import {
   QueryCache,
@@ -14,23 +13,14 @@ import {
 } from '..'
 import { createQueryClient, setIsServer, sleep } from './utils'
 
-const isReact18 = () => (process.env.REACTJS_VERSION || '18') === '18'
-
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
-  if (isReact18()) {
-    let root: any
-    ReactDOMTestUtils.act(() => {
-      // @ts-expect-error
-      root = ReactDOM.hydrateRoot(container, element)
-    })
-    return () => {
-      root.unmount()
-    }
-  }
-
-  ReactDOM.hydrate(element, container)
+  let root: any
+  ReactDOMTestUtils.act(() => {
+    // @ts-expect-error
+    root = ReactDOM.hydrateRoot(container, element)
+  })
   return () => {
-    ReactDOM.unmountComponentAtNode(container)
+    root.unmount()
   }
 }
 
@@ -55,20 +45,20 @@ describe('Server side rendering with de/rehydration', () => {
     globalThis.IS_REACT_ACT_ENVIRONMENT = previousIsReactActEnvironment
   })
   it('should not mismatch on success', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
+    const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 
-    if (!isReact18()) {
-      return
-    }
-    const fetchDataSuccess = jest.fn<
-      ReturnType<typeof fetchData>,
-      Parameters<typeof fetchData>
+    const fetchDataSuccess = vi.fn<
+      Parameters<typeof fetchData>,
+      ReturnType<typeof fetchData>
     >(fetchData)
 
     // -- Shared part --
     function SuccessComponent() {
-      const result = useQuery(['success'], () => fetchDataSuccess('success!'))
+      const result = useQuery({
+        queryKey: ['success'],
+        queryFn: () => fetchDataSuccess('success!'),
+      })
       return (
         <PrintStateComponent componentName="SuccessComponent" result={result} />
       )
@@ -81,9 +71,10 @@ describe('Server side rendering with de/rehydration', () => {
     const prefetchClient = createQueryClient({
       queryCache: prefetchCache,
     })
-    await prefetchClient.prefetchQuery(['success'], () =>
-      fetchDataSuccess('success'),
-    )
+    await prefetchClient.prefetchQuery({
+      queryKey: ['success'],
+      queryFn: () => fetchDataSuccess('success'),
+    })
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
     const renderClient = createQueryClient({
@@ -135,19 +126,18 @@ describe('Server side rendering with de/rehydration', () => {
   })
 
   it('should not mismatch on error', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
+    const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 
-    if (!isReact18()) {
-      return
-    }
-    const fetchDataError = jest.fn(() => {
+    const fetchDataError = vi.fn(() => {
       throw new Error('fetchDataError')
     })
 
     // -- Shared part --
     function ErrorComponent() {
-      const result = useQuery(['error'], () => fetchDataError(), {
+      const result = useQuery({
+        queryKey: ['error'],
+        queryFn: () => fetchDataError(),
         retry: false,
       })
       return (
@@ -161,7 +151,10 @@ describe('Server side rendering with de/rehydration', () => {
     const prefetchClient = createQueryClient({
       queryCache: prefetchCache,
     })
-    await prefetchClient.prefetchQuery(['error'], () => fetchDataError())
+    await prefetchClient.prefetchQuery({
+      queryKey: ['error'],
+      queryFn: () => fetchDataError(),
+    })
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
     const renderClient = createQueryClient({
@@ -178,7 +171,7 @@ describe('Server side rendering with de/rehydration', () => {
     setIsServer(false)
 
     const expectedMarkup =
-      'ErrorComponent - status:loading fetching:true data:undefined'
+      'ErrorComponent - status:pending fetching:true data:undefined'
 
     expect(markup).toBe(expectedMarkup)
 
@@ -213,20 +206,20 @@ describe('Server side rendering with de/rehydration', () => {
   })
 
   it('should not mismatch on queries that were not prefetched', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
+    const consoleMock = vi.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 
-    if (!isReact18()) {
-      return
-    }
-    const fetchDataSuccess = jest.fn<
-      ReturnType<typeof fetchData>,
-      Parameters<typeof fetchData>
+    const fetchDataSuccess = vi.fn<
+      Parameters<typeof fetchData>,
+      ReturnType<typeof fetchData>
     >(fetchData)
 
     // -- Shared part --
     function SuccessComponent() {
-      const result = useQuery(['success'], () => fetchDataSuccess('success!'))
+      const result = useQuery({
+        queryKey: ['success'],
+        queryFn: () => fetchDataSuccess('success!'),
+      })
       return (
         <PrintStateComponent componentName="SuccessComponent" result={result} />
       )
@@ -249,7 +242,7 @@ describe('Server side rendering with de/rehydration', () => {
     setIsServer(false)
 
     const expectedMarkup =
-      'SuccessComponent - status:loading fetching:true data:undefined'
+      'SuccessComponent - status:pending fetching:true data:undefined'
 
     expect(markup).toBe(expectedMarkup)
 

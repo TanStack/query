@@ -10,11 +10,13 @@
     queryTimeMax,
     list,
     editingIndex,
-  } from '../lib/stores'
+    type Todo,
+  } from '$lib/stores'
+  import { derived } from 'svelte/store'
 
   const queryClient = useQueryClient()
 
-  const fetchTodoById = async ({ id }: { id: number }) => {
+  const fetchTodoById = async ({ id }: { id: number }): Promise<Todo> => {
     console.info('fetchTodoById', { id })
     return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -23,16 +25,25 @@
             new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
           )
         }
-        resolve($list.find((d) => d.id === id))
+        const todo = $list.find((d) => d.id === id)
+        if (!todo) {
+          return reject(
+            new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
+          )
+        }
+        resolve(todo)
       }, $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin))
     })
   }
 
-  function patchTodo(todo) {
+  function patchTodo(todo?: Todo): Promise<Todo> {
     console.info('patchTodo', todo)
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         if (Math.random() < $errorRate) {
+          return reject(new Error(JSON.stringify({ patchTodo: todo }, null, 2)))
+        }
+        if (!todo) {
           return reject(new Error(JSON.stringify({ patchTodo: todo }, null, 2)))
         }
         list.set(
@@ -48,11 +59,13 @@
     })
   }
 
-  const query = createQuery({
-    queryKey: ['todo', { id: $editingIndex }],
-    queryFn: () => fetchTodoById({ id: $editingIndex || 0 }),
-    enabled: $editingIndex !== null,
-  })
+  const query = createQuery(
+    derived(editingIndex, ($editingIndex) => ({
+      queryKey: ['todo', { id: $editingIndex }],
+      queryFn: () => fetchTodoById({ id: $editingIndex || 0 }),
+      enabled: $editingIndex !== null,
+    })),
+  )
 
   const saveMutation = createMutation({
     mutationFn: patchTodo,
@@ -70,7 +83,7 @@
   }
 
   $: disableEditSave =
-    $query.status === 'loading' || $saveMutation.status === 'loading'
+    $query.status === 'pending' || $saveMutation.status === 'pending'
 </script>
 
 <div>
@@ -80,13 +93,13 @@
       "{$query.data.name}" (#{$editingIndex})
     {/if}
   </div>
-  {#if $query.status === 'loading'}
+  {#if $query.status === 'pending'}
     <span>Loading... (Attempt: {$query.failureCount + 1})</span>
   {:else if $query.error}
     <span>
       Error! <button on:click={() => $query.refetch()}>Retry</button>
     </span>
-  {:else}
+  {:else if todo}
     <label>
       Name:{' '}
       <input bind:value={todo.name} disabled={disableEditSave} />
@@ -99,7 +112,7 @@
       <button on:click={onSave} disabled={disableEditSave}> Save </button>
     </div>
     <div>
-      {$saveMutation.status === 'loading'
+      {$saveMutation.status === 'pending'
         ? 'Saving...'
         : $saveMutation.status === 'error'
         ? $saveMutation.error.message

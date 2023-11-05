@@ -1,101 +1,83 @@
 'use client'
-import { InfiniteQueryObserver, parseQueryArgs } from '@tanstack/query-core'
+import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type {
-  QueryFunction,
+  DefaultError,
+  InfiniteData,
+  QueryClient,
   QueryKey,
   QueryObserver,
 } from '@tanstack/query-core'
-import type { UseInfiniteQueryOptions, UseInfiniteQueryResult } from './types'
-
-// HOOK
+import type {
+  DefinedUseInfiniteQueryResult,
+  UseInfiniteQueryOptions,
+  UseInfiniteQueryResult,
+} from './types'
+import type {
+  DefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
+} from './infiniteQueryOptions'
 
 export function useInfiniteQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: UndefinedInitialDataInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError>
+
+export function useInfiniteQuery<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: DefinedInitialDataInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+  queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError>
+
+export function useInfiniteQuery<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 >(
   options: UseInfiniteQueryOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryFnData,
-    TQueryKey
+    TQueryKey,
+    TPageParam
   >,
+  queryClient?: QueryClient,
 ): UseInfiniteQueryResult<TData, TError>
-export function useInfiniteQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  queryKey: TQueryKey,
-  options?: Omit<
-    UseInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryFnData,
-      TQueryKey
-    >,
-    'queryKey'
-  >,
-): UseInfiniteQueryResult<TData, TError>
-export function useInfiniteQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  queryKey: TQueryKey,
-  queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-  options?: Omit<
-    UseInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryFnData,
-      TQueryKey
-    >,
-    'queryKey' | 'queryFn'
-  >,
-): UseInfiniteQueryResult<TData, TError>
-export function useInfiniteQuery<
-  TQueryFnData,
-  TError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  arg1:
-    | TQueryKey
-    | UseInfiniteQueryOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryFnData,
-        TQueryKey
-      >,
-  arg2?:
-    | QueryFunction<TQueryFnData, TQueryKey>
-    | UseInfiniteQueryOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryFnData,
-        TQueryKey
-      >,
-  arg3?: UseInfiniteQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey
-  >,
-): UseInfiniteQueryResult<TData, TError> {
-  const options = parseQueryArgs(arg1, arg2, arg3)
+
+export function useInfiniteQuery(
+  options: UseInfiniteQueryOptions,
+  queryClient?: QueryClient,
+) {
   return useBaseQuery(
     options,
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     InfiniteQueryObserver as typeof QueryObserver,
-  ) as UseInfiniteQueryResult<TData, TError>
+    queryClient,
+  )
 }

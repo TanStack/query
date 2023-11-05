@@ -1,19 +1,31 @@
 /* istanbul ignore file */
 
+// Side Effects
+import './setBatchUpdatesFn'
+
 // Re-export core
 export * from '@tanstack/query-core'
 
 // Solid Query
 export * from './types'
-export { createQuery } from './createQuery'
+export { QueryClient } from './QueryClient'
+export type {
+  QueryObserverOptions,
+  DefaultOptions,
+  QueryClientConfig,
+  InfiniteQueryObserverOptions,
+} from './QueryClient'
+export { createQuery, queryOptions } from './createQuery'
 export {
-  defaultContext,
+  QueryClientContext,
   QueryClientProvider,
   useQueryClient,
 } from './QueryClientProvider'
 export type { QueryClientProviderProps } from './QueryClientProvider'
 export { useIsFetching } from './useIsFetching'
-export { useIsMutating } from './useIsMutating'
-export { createMutation } from './createMutation'
 export { createInfiniteQuery } from './createInfiniteQuery'
+export { createMutation } from './createMutation'
+export { useIsMutating } from './useIsMutating'
+export { useMutationState } from './useMutationState'
 export { createQueries } from './createQueries'
+export { useIsRestoring, IsRestoringProvider } from './isRestoring'

@@ -2,7 +2,6 @@
 import * as React from 'react'
 
 import { notifyManager } from '@tanstack/query-core'
-import { useSyncExternalStore } from './useSyncExternalStore'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
@@ -12,8 +11,8 @@ import {
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
 import { ensureStaleTime, fetchOptimistic, shouldSuspend } from './suspense'
-import type { QueryKey, QueryObserver } from '@tanstack/query-core'
 import type { UseBaseQueryOptions } from './types'
+import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
 
 export function useBaseQuery<
   TQueryFnData,
@@ -30,35 +29,25 @@ export function useBaseQuery<
     TQueryKey
   >,
   Observer: typeof QueryObserver,
+  queryClient?: QueryClient,
 ) {
-  const queryClient = useQueryClient({ context: options.context })
+  if (process.env.NODE_ENV !== 'production') {
+    if (typeof options !== 'object' || Array.isArray(options)) {
+      throw new Error(
+        'Bad argument type. Starting with v5, only the "Object" form is allowed when calling query related functions. Please use the error stack to find the culprit call. More info here: https://tanstack.com/query/latest/docs/react/guides/migrating-to-v5#supports-a-single-signature-one-object',
+      )
+    }
+  }
+
+  const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
-  const defaultedOptions = queryClient.defaultQueryOptions(options)
+  const defaultedOptions = client.defaultQueryOptions(options)
 
   // Make sure results are optimistically set in fetching state before subscribing or updating options
   defaultedOptions._optimisticResults = isRestoring
     ? 'isRestoring'
     : 'optimistic'
-
-  // Include callbacks in batch renders
-  if (defaultedOptions.onError) {
-    defaultedOptions.onError = notifyManager.batchCalls(
-      defaultedOptions.onError,
-    )
-  }
-
-  if (defaultedOptions.onSuccess) {
-    defaultedOptions.onSuccess = notifyManager.batchCalls(
-      defaultedOptions.onSuccess,
-    )
-  }
-
-  if (defaultedOptions.onSettled) {
-    defaultedOptions.onSettled = notifyManager.batchCalls(
-      defaultedOptions.onSettled,
-    )
-  }
 
   ensureStaleTime(defaultedOptions)
   ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary)
@@ -68,14 +57,14 @@ export function useBaseQuery<
   const [observer] = React.useState(
     () =>
       new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
-        queryClient,
+        client,
         defaultedOptions,
       ),
   )
 
   const result = observer.getOptimisticResult(defaultedOptions)
 
-  useSyncExternalStore(
+  React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) => {
         const unsubscribe = isRestoring
@@ -110,7 +99,7 @@ export function useBaseQuery<
     getHasError({
       result,
       errorResetBoundary,
-      useErrorBoundary: defaultedOptions.useErrorBoundary,
+      throwOnError: defaultedOptions.throwOnError,
       query: observer.getCurrentQuery(),
     })
   ) {

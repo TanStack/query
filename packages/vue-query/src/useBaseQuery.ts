@@ -5,33 +5,33 @@ import {
   reactive,
   readonly,
   toRefs,
-  unref,
   watch,
 } from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
-import {
-  cloneDeepUnref,
-  isQueryKey,
-  shouldThrowError,
-  updateState,
-} from './utils'
-import type { ToRefs } from 'vue-demi'
+import { cloneDeepUnref, shouldThrowError, updateState } from './utils'
+import type { ToRef } from 'vue-demi'
 import type {
-  QueryFunction,
+  DefaultedQueryObserverOptions,
   QueryKey,
   QueryObserver,
-  QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { DeepUnwrapRef, MaybeRef, WithQueryClientKey } from './types'
+import type { QueryClient } from './queryClient'
 import type { UseQueryOptions } from './useQuery'
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 
-export type UseQueryReturnType<
+export type UseBaseQueryReturnType<
   TData,
   TError,
   Result = QueryObserverResult<TData, TError>,
-> = ToRefs<Readonly<Result>> & {
+> = {
+  [K in keyof Result]: K extends
+    | 'fetchNextPage'
+    | 'fetchPreviousPage'
+    | 'refetch'
+    ? Result[K]
+    : ToRef<Readonly<Result>[K]>
+} & {
   suspense: () => Promise<Result>
 }
 
@@ -39,53 +39,72 @@ type UseQueryOptionsGeneric<
   TQueryFnData,
   TError,
   TData,
+  TQueryData,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
 > =
-  | UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>
-  | UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+  | UseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+  | UseInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
+    >
 
 export function useBaseQuery<
   TQueryFnData,
   TError,
   TData,
+  TQueryData,
   TQueryKey extends QueryKey,
+  TPageParam,
 >(
   Observer: typeof QueryObserver,
-  arg1:
-    | MaybeRef<TQueryKey>
-    | MaybeRef<UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>>,
-  arg2:
-    | MaybeRef<QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>>
-    | MaybeRef<
-        UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>
-      > = {},
-  arg3: MaybeRef<
-    UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>
-  > = {},
-): UseQueryReturnType<TData, TError> {
+  options: UseQueryOptionsGeneric<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey,
+    TPageParam
+  >,
+  queryClient?: QueryClient,
+): UseBaseQueryReturnType<TData, TError> {
   if (process.env.NODE_ENV === 'development') {
     if (!getCurrentScope()) {
       console.warn(
-        'vue-query composables like "uesQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+        'vue-query composables like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
       )
     }
   }
 
-  const options = computed(() => parseQueryArgs(arg1, arg2, arg3))
-
-  const queryClient =
-    options.value.queryClient ?? useQueryClient(options.value.queryClientKey)
+  const client = queryClient || useQueryClient()
 
   const defaultedOptions = computed(() => {
-    const defaulted = queryClient.defaultQueryOptions(options.value)
-    defaulted._optimisticResults = queryClient.isRestoring.value
+    const clonedOptions = cloneDeepUnref(options as any)
+
+    if (typeof clonedOptions.enabled === 'function') {
+      clonedOptions.enabled = clonedOptions.enabled()
+    }
+
+    const defaulted: DefaultedQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    > = client.defaultQueryOptions(clonedOptions)
+
+    defaulted._optimisticResults = client.isRestoring.value
       ? 'isRestoring'
       : 'optimistic'
 
     return defaulted
   })
 
-  const observer = new Observer(queryClient, defaultedOptions.value)
+  const observer = new Observer(client, defaultedOptions.value)
   const state = reactive(observer.getCurrentResult())
 
   let unsubscribe = () => {
@@ -93,7 +112,7 @@ export function useBaseQuery<
   }
 
   watch(
-    queryClient.isRestoring,
+    client.isRestoring,
     (isRestoring) => {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (!isRestoring) {
@@ -106,18 +125,22 @@ export function useBaseQuery<
     { immediate: true },
   )
 
-  watch(
-    defaultedOptions,
-    () => {
-      observer.setOptions(defaultedOptions.value)
-      updateState(state, observer.getCurrentResult())
-    },
-    { flush: 'sync' },
-  )
+  const updater = () => {
+    observer.setOptions(defaultedOptions.value)
+    updateState(state, observer.getCurrentResult())
+  }
+
+  watch(defaultedOptions, updater)
 
   onScopeDispose(() => {
     unsubscribe()
   })
+
+  // fix #5910
+  const refetch = (...args: Parameters<(typeof state)['refetch']>) => {
+    updater()
+    return state.refetch(...args)
+  }
 
   const suspense = () => {
     return new Promise<QueryObserverResult<TData, TError>>(
@@ -127,6 +150,8 @@ export function useBaseQuery<
         }
         const run = () => {
           if (defaultedOptions.value.enabled !== false) {
+            // fix #6133
+            observer.setOptions(defaultedOptions.value)
             const optimisticResult = observer.getOptimisticResult(
               defaultedOptions.value,
             )
@@ -156,7 +181,7 @@ export function useBaseQuery<
       if (
         state.isError &&
         !state.isFetching &&
-        shouldThrowError(defaultedOptions.value.useErrorBoundary, [
+        shouldThrowError(defaultedOptions.value.throwOnError, [
           error as TError,
           observer.getCurrentQuery(),
         ])
@@ -166,48 +191,15 @@ export function useBaseQuery<
     },
   )
 
-  return {
-    ...(toRefs(readonly(state)) as UseQueryReturnType<TData, TError>),
-    suspense,
-  }
-}
-
-export function parseQueryArgs<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  arg1:
-    | MaybeRef<TQueryKey>
-    | MaybeRef<UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>>,
-  arg2:
-    | MaybeRef<QueryFunction<TQueryFnData, DeepUnwrapRef<TQueryKey>>>
-    | MaybeRef<
-        UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>
-      > = {},
-  arg3: MaybeRef<
-    UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>
-  > = {},
-): WithQueryClientKey<
-  QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
-> {
-  const plainArg1 = unref(arg1)
-  const plainArg2 = unref(arg2)
-  const plainArg3 = unref(arg3)
-
-  let options = plainArg1
-
-  if (!isQueryKey(plainArg1)) {
-    options = plainArg1
-  } else if (typeof plainArg2 === 'function') {
-    options = { ...plainArg3, queryKey: plainArg1, queryFn: plainArg2 }
-  } else {
-    options = { ...plainArg2, queryKey: plainArg1 }
+  const object: any = toRefs(readonly(state))
+  for (const key in state) {
+    if (typeof state[key as keyof typeof state] === 'function') {
+      object[key] = state[key as keyof typeof state]
+    }
   }
 
-  return cloneDeepUnref(options) as WithQueryClientKey<
-    QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
-  >
+  object.suspense = suspense
+  object.refetch = refetch
+
+  return object as UseBaseQueryReturnType<TData, TError>
 }

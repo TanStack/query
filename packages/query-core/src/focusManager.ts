@@ -6,26 +6,24 @@ type SetupFn = (
 ) => (() => void) | undefined
 
 export class FocusManager extends Subscribable {
-  private focused?: boolean
-  private cleanup?: () => void
+  #focused?: boolean
+  #cleanup?: () => void
 
-  private setup: SetupFn
+  #setup: SetupFn
 
   constructor() {
     super()
-    this.setup = (onFocus) => {
+    this.#setup = (onFocus) => {
       // addEventListener does not exist in React Native, but window does
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (!isServer && window.addEventListener) {
         const listener = () => onFocus()
-        // Listen to visibillitychange and focus
+        // Listen to visibilitychange
         window.addEventListener('visibilitychange', listener, false)
-        window.addEventListener('focus', listener, false)
 
         return () => {
           // Be sure to unsubscribe if a new handler is set
           window.removeEventListener('visibilitychange', listener)
-          window.removeEventListener('focus', listener)
         }
       }
       return
@@ -33,22 +31,22 @@ export class FocusManager extends Subscribable {
   }
 
   protected onSubscribe(): void {
-    if (!this.cleanup) {
-      this.setEventListener(this.setup)
+    if (!this.#cleanup) {
+      this.setEventListener(this.#setup)
     }
   }
 
   protected onUnsubscribe() {
     if (!this.hasListeners()) {
-      this.cleanup?.()
-      this.cleanup = undefined
+      this.#cleanup?.()
+      this.#cleanup = undefined
     }
   }
 
   setEventListener(setup: SetupFn): void {
-    this.setup = setup
-    this.cleanup?.()
-    this.cleanup = setup((focused) => {
+    this.#setup = setup
+    this.#cleanup?.()
+    this.#cleanup = setup((focused) => {
       if (typeof focused === 'boolean') {
         this.setFocused(focused)
       } else {
@@ -58,32 +56,27 @@ export class FocusManager extends Subscribable {
   }
 
   setFocused(focused?: boolean): void {
-    const changed = this.focused !== focused
+    const changed = this.#focused !== focused
     if (changed) {
-      this.focused = focused
+      this.#focused = focused
       this.onFocus()
     }
   }
 
   onFocus(): void {
-    this.listeners.forEach(({ listener }) => {
+    this.listeners.forEach((listener) => {
       listener()
     })
   }
 
   isFocused(): boolean {
-    if (typeof this.focused === 'boolean') {
-      return this.focused
+    if (typeof this.#focused === 'boolean') {
+      return this.#focused
     }
 
     // document global can be unavailable in react native
-    if (typeof document === 'undefined') {
-      return true
-    }
-
-    return [undefined, 'visible', 'prerender'].includes(
-      document.visibilityState,
-    )
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    return globalThis.document?.visibilityState !== 'hidden'
   }
 }
 

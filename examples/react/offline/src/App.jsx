@@ -32,7 +32,7 @@ const location = new ReactLocation()
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      cacheTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 1000 * 60 * 60 * 24, // 24 hours
       staleTime: 2000,
       retry: 0,
     },
@@ -114,7 +114,7 @@ function List() {
     queryFn: api.fetchMovies,
   })
 
-  if (moviesQuery.isLoading && moviesQuery.isFetching) {
+  if (moviesQuery.isLoading) {
     return 'Loading...'
   }
 
@@ -166,7 +166,7 @@ function Detail() {
   } = useMatch()
   const { comment, setComment, updateMovie, movieQuery } = useMovie(movieId)
 
-  if (movieQuery.isLoading && movieQuery.isFetching) {
+  if (movieQuery.isLoading) {
     return 'Loading...'
   }
 
@@ -211,7 +211,7 @@ function Detail() {
         <div>
           {updateMovie.isPaused
             ? 'mutation paused - offline'
-            : updateMovie.isLoading && 'updating...'}
+            : updateMovie.isPending && 'updating...'}
         </div>
       </form>
     )

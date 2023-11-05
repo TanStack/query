@@ -17,7 +17,7 @@ import { useQueryClient, useQuery, useMutation } from '@tanstack/vue-query'
 const queryClient = useQueryClient()
 
 // Query
-const { isLoading, isError, data, error } = useQuery({
+const { isPending, isError, data, error } = useQuery({
   queryKey: ['todos'],
   queryFn: getTodos,
 })
@@ -40,7 +40,7 @@ function onButtonClick() {
 </script>
 
 <template>
-  <span v-if="isLoading">Loading...</span>
+  <span v-if="isPending">Loading...</span>
   <span v-else-if="isError">Error: {{ error.message }}</span>
   <!-- We can assume by this point that `isSuccess === true` -->
   <ul v-else>

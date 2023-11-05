@@ -7,11 +7,7 @@ on:
         description: override release tag
         required: false
   push:
-    branches:
-      - 'main'
-      - 'alpha'
-      - 'beta'
-      - 'rc'
+    branches: ['main', 'alpha', 'beta', 'rc', 'v4']
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -23,14 +19,13 @@ env:
 
 jobs:
   test-and-publish:
-    if: github.repository == 'TanStack/query' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/beta' || github.ref == 'refs/heads/rc')
-    name: 'Test & Publish'
+    name: Test & Publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: '0'
-      - uses: pnpm/action-setup@v2.2.4
+      - uses: pnpm/action-setup@v2
         with:
           version: 8
       - uses: actions/setup-node@v3
@@ -44,7 +39,7 @@ jobs:
       - name: Run Tests
         uses: nick-fields/retry@v2.8.3
         with:
-          command: pnpm run test:ci --base=${{ github.event.before }}
+          command: pnpm run test:ci
           timeout_minutes: 10
           max_attempts: 3
       - name: Publish

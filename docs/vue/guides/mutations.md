@@ -10,7 +10,7 @@ ref: docs/react/guides/mutations.md
 <script setup>
 import { useMutation } from '@tanstack/vue-query'
 
-const { isLoading, isError, error, isSuccess, mutate } = useMutation({
+const { isPending, isError, error, isSuccess, mutate } = useMutation({
   mutationFn: (newTodo) => axios.post('/todos', newTodo),
 })
 
@@ -20,7 +20,7 @@ function addTodo() {
 </script>
 
 <template>
-  <span v-if="isLoading">Adding todo...</span>
+  <span v-if="isPending">Adding todo...</span>
   <span v-else-if="isError">An error occurred: {{ error.message }}</span>
   <span v-else-if="isSuccess">Todo added!</span>
   <button @click="addTodo">Create Todo</button>
@@ -63,7 +63,7 @@ function addTodo() {
 const client = new QueryClient({
   defaultOptions: {
     queries: {
-      cacheTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 1000 * 60 * 60 * 24, // 24 hours
     },
   },
 })

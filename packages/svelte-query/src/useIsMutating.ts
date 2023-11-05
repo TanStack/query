@@ -1,25 +1,17 @@
 import {
   type MutationFilters,
-  type MutationKey,
   type QueryClient,
   notifyManager,
-  parseMutationFilterArgs,
 } from '@tanstack/query-core'
-import { type Readable, readable } from 'svelte/store'
+import { readable } from 'svelte/store'
 import { useQueryClient } from './useQueryClient'
-
-export function useIsMutating(filters?: MutationFilters): Readable<number>
-export function useIsMutating(
-  mutationKey?: MutationKey,
-  filters?: Omit<MutationFilters, 'mutationKey'>,
-): Readable<number>
+import type { Readable } from 'svelte/store'
 
 export function useIsMutating(
-  arg1?: MutationKey | MutationFilters,
-  arg2?: Omit<MutationFilters, 'mutationKey'>,
+  filters?: MutationFilters,
+  queryClient?: QueryClient,
 ): Readable<number> {
-  const [filters] = parseMutationFilterArgs(arg1, arg2)
-  const client: QueryClient = useQueryClient()
+  const client = useQueryClient(queryClient)
   const cache = client.getMutationCache()
   // isMutating is the prev value initialized on mount *
   let isMutating = client.isMutating(filters)

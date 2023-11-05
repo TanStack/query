@@ -16,7 +16,7 @@ type SearchOptions = {
 export async function search<TData>({
   indexName,
   query,
-  pageParam = 0,
+  pageParam,
   hitsPerPage = 10,
 }: SearchOptions): Promise<{
   hits: Hit<TData>[]

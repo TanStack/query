@@ -55,7 +55,7 @@ function Example() {
         character will show their stats below immediately.
       </p>
       <h2>Characters</h2>
-      {charactersQuery.isLoading ? (
+      {charactersQuery.isPending ? (
         'Loading...'
       ) : (
         <>
@@ -94,7 +94,7 @@ function Example() {
           </ul>
 
           <h3>Selected Character</h3>
-          {characterQuery.isLoading ? (
+          {characterQuery.isPending ? (
             'Loading...'
           ) : (
             <>

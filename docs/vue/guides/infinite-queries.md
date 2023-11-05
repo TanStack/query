@@ -22,7 +22,7 @@ const {
   hasNextPage,
   isFetching,
   isFetchingNextPage,
-  isLoading,
+  isPending,
   isError,
 } = useInfiniteQuery({
   queryKey: ['projects'],
@@ -32,7 +32,7 @@ const {
 </script>
 
 <template>
-  <span v-if="isLoading">Loading...</span>
+  <span v-if="isPending">Loading...</span>
   <span v-else-if="isError">Error: {{ error.message }}</span>
   <div v-else-if="data">
     <span v-if="isFetching && !isFetchingNextPage">Fetching...</span>
@@ -54,20 +54,3 @@ const {
 ```
 
 [//]: # 'Example'
-[//]: # 'Example3'
-
-```tsx
-const fetchProjects = ({ pageParam = 0 }) =>
-  fetch('/api/projects?cursor=' + pageParam)
-
-const { fetchNextPage } = useInfiniteQuery({
-  queryKey: ['projects'],
-  queryFn: fetchProjects,
-  getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-})
-
-// Pass your own page param
-const skipToCursor50 = () => fetchNextPage({ pageParam: 50 })
-```
-
-[//]: # 'Example3'

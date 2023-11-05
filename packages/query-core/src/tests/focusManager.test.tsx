@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { sleep } from '../utils'
 import { FocusManager } from '../focusManager'
 import { setIsServer } from './utils'
@@ -5,13 +6,13 @@ import { setIsServer } from './utils'
 describe('focusManager', () => {
   let focusManager: FocusManager
   beforeEach(() => {
-    jest.resetModules()
+    vi.resetModules()
     focusManager = new FocusManager()
   })
 
   it('should call previous remove handler when replacing an event listener', () => {
-    const remove1Spy = jest.fn()
-    const remove2Spy = jest.fn()
+    const remove1Spy = vi.fn()
+    const remove2Spy = vi.fn()
 
     focusManager.setEventListener(() => remove1Spy)
     focusManager.setEventListener(() => remove2Spy)
@@ -49,80 +50,77 @@ describe('focusManager', () => {
     globalThis.document = document
   })
 
-  test('cleanup should still be undefined if window is not defined', async () => {
+  test('cleanup (removeEventListener) should not be called if window is not defined', async () => {
     const restoreIsServer = setIsServer(true)
 
+    const removeEventListenerSpy = vi.spyOn(globalThis, 'removeEventListener')
+
     const unsubscribe = focusManager.subscribe(() => undefined)
-    expect(focusManager['cleanup']).toBeUndefined()
 
     unsubscribe()
+
+    expect(removeEventListenerSpy).not.toHaveBeenCalled()
+
     restoreIsServer()
   })
 
-  test('cleanup should still be undefined if window.addEventListener is not defined', async () => {
+  test('cleanup (removeEventListener) should not be called if window.addEventListener is not defined', async () => {
     const { addEventListener } = globalThis.window
 
     // @ts-expect-error
     globalThis.window.addEventListener = undefined
 
+    const removeEventListenerSpy = vi.spyOn(globalThis, 'removeEventListener')
+
     const unsubscribe = focusManager.subscribe(() => undefined)
-    expect(focusManager['cleanup']).toBeUndefined()
 
     unsubscribe()
+
+    expect(removeEventListenerSpy).not.toHaveBeenCalled()
+
     globalThis.window.addEventListener = addEventListener
   })
 
   it('should replace default window listener when a new event listener is set', async () => {
-    const addEventListenerSpy = jest.spyOn(
-      globalThis.window,
-      'addEventListener',
-    )
+    const unsubscribeSpy = vi.fn().mockImplementation(() => undefined)
+    const handlerSpy = vi.fn().mockImplementation(() => unsubscribeSpy)
 
-    const removeEventListenerSpy = jest.spyOn(
-      globalThis.window,
-      'removeEventListener',
-    )
+    focusManager.setEventListener(() => handlerSpy())
 
-    // Should set the default event listener with window event listeners
     const unsubscribe = focusManager.subscribe(() => undefined)
-    expect(addEventListenerSpy).toHaveBeenCalledTimes(2)
 
-    // Should replace the window default event listener by a new one
-    // and it should call window.removeEventListener twice
-    focusManager.setEventListener(() => {
-      return () => void 0
-    })
-
-    expect(removeEventListenerSpy).toHaveBeenCalledTimes(2)
+    // Should call the custom event once
+    expect(handlerSpy).toHaveBeenCalledTimes(1)
 
     unsubscribe()
-    addEventListenerSpy.mockRestore()
-    removeEventListenerSpy.mockRestore()
+
+    // Should unsubscribe our event event
+    expect(unsubscribeSpy).toHaveBeenCalledTimes(1)
+
+    handlerSpy.mockRestore()
+    unsubscribeSpy.mockRestore()
   })
 
   test('should call removeEventListener when last listener unsubscribes', () => {
-    const addEventListenerSpy = jest.spyOn(
-      globalThis.window,
-      'addEventListener',
-    )
+    const addEventListenerSpy = vi.spyOn(globalThis.window, 'addEventListener')
 
-    const removeEventListenerSpy = jest.spyOn(
+    const removeEventListenerSpy = vi.spyOn(
       globalThis.window,
       'removeEventListener',
     )
 
     const unsubscribe1 = focusManager.subscribe(() => undefined)
     const unsubscribe2 = focusManager.subscribe(() => undefined)
-    expect(addEventListenerSpy).toHaveBeenCalledTimes(2) // visibilitychange + focus
+    expect(addEventListenerSpy).toHaveBeenCalledTimes(1) // visibilitychange event
 
     unsubscribe1()
     expect(removeEventListenerSpy).toHaveBeenCalledTimes(0)
     unsubscribe2()
-    expect(removeEventListenerSpy).toHaveBeenCalledTimes(2) // visibilitychange + focus
+    expect(removeEventListenerSpy).toHaveBeenCalledTimes(1) // visibilitychange event
   })
 
   test('should keep setup function even if last listener unsubscribes', () => {
-    const setupSpy = jest.fn().mockImplementation(() => () => undefined)
+    const setupSpy = vi.fn().mockImplementation(() => () => undefined)
 
     focusManager.setEventListener(setupSpy)
 
@@ -140,7 +138,7 @@ describe('focusManager', () => {
   })
 
   test('should call listeners when setFocused is called', () => {
-    const listener = jest.fn()
+    const listener = vi.fn()
 
     focusManager.subscribe(listener)
 

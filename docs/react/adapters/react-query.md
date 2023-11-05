@@ -16,7 +16,7 @@ function Example() {
 
   return (
     <div>
-      {query.isLoading
+      {query.isPending
         ? 'Loading...'
         : query.isError
         ? 'Error!'

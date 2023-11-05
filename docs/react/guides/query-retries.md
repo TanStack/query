@@ -12,6 +12,8 @@ You can configure retries both on a global level and an individual query level.
 - Setting `retry = true` will infinitely retry failing requests.
 - Setting `retry = (failureCount, error) => ...` allows for custom logic based on why the request failed.
 
+> On the server, retries default to `0` to make server rendering as fast as possible.
+
 [//]: # 'Example'
 
 ```tsx
@@ -26,6 +28,8 @@ const result = useQuery({
 ```
 
 [//]: # 'Example'
+
+> Info: Contents of the `error` property will be part of `failureReason` response property of `useQuery` until the last retry attempt. So in above example any error contents will be part of `failureReason` property for first 9 retry attempts (Overall 10 attempts) and finally they will be part of `error` after last attempt if error persists after all retry attempts.
 
 ## Retry Delay
 

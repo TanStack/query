@@ -7,9 +7,9 @@ import {
   focusManager,
 } from '@tanstack/react-query'
 
-import { useAppState } from '@app/hooks/useAppState'
-import { MoviesStack } from '@app/navigation/MoviesStack'
-import { useOnlineManager } from '@app/hooks/useOnlineManager'
+import { useAppState } from './src/hooks/useAppState'
+import { MoviesStack } from './src/navigation/MoviesStack'
+import { useOnlineManager } from './src/hooks/useOnlineManager'
 
 function onAppStateChange(status: AppStateStatus) {
   // React Query already supports in web browser refetch on window focus by default

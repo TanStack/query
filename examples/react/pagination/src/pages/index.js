@@ -5,6 +5,7 @@ import {
   useQueryClient,
   QueryClient,
   QueryClientProvider,
+  keepPreviousData,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
@@ -27,22 +28,22 @@ function Example() {
   const queryClient = useQueryClient()
   const [page, setPage] = React.useState(0)
 
-  const { status, data, error, isFetching, isPreviousData } = useQuery({
+  const { status, data, error, isFetching, isPlaceholderData } = useQuery({
     queryKey: ['projects', page],
     queryFn: () => fetchProjects(page),
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     staleTime: 5000,
   })
 
   // Prefetch the next page!
   React.useEffect(() => {
-    if (!isPreviousData && data?.hasMore) {
+    if (!isPlaceholderData && data?.hasMore) {
       queryClient.prefetchQuery({
         queryKey: ['projects', page + 1],
         queryFn: () => fetchProjects(page + 1),
       })
     }
-  }, [data, isPreviousData, page, queryClient])
+  }, [data, isPlaceholderData, page, queryClient])
 
   return (
     <div>
@@ -54,7 +55,7 @@ function Example() {
         instantaneously while they are also refetched invisibly in the
         background.
       </p>
-      {status === 'loading' ? (
+      {status === 'pending' ? (
         <div>Loading...</div>
       ) : status === 'error' ? (
         <div>Error: {error.message}</div>
@@ -78,14 +79,14 @@ function Example() {
         onClick={() => {
           setPage((old) => (data?.hasMore ? old + 1 : old))
         }}
-        disabled={isPreviousData || !data?.hasMore}
+        disabled={isPlaceholderData || !data?.hasMore}
       >
         Next Page
       </button>
       {
         // Since the last page's data potentially sticks around between page requests,
         // we can use `isFetching` to show a background loading
-        // indicator since our `status === 'loading'` state won't be triggered
+        // indicator since our `status === 'pending'` state won't be triggered
         isFetching ? <span> Loading...</span> : null
       }{' '}
       <ReactQueryDevtools initialIsOpen />

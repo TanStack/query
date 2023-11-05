@@ -1,3 +1,6 @@
+// @ts-check
+
+/** @type {import('eslint').Linter.Config} */
 const config = {
   root: true,
   parser: '@typescript-eslint/parser',
@@ -15,7 +18,7 @@ const config = {
   },
   parserOptions: {
     tsconfigRootDir: __dirname,
-    project: './tsconfig.base.json',
+    project: './tsconfig.json',
     sourceType: 'module',
     ecmaVersion: 2020,
   },
@@ -31,6 +34,7 @@ const config = {
     },
   },
   rules: {
+    '@typescript-eslint/array-type': ['error', { default: 'generic', readonly: 'generic' }],
     '@typescript-eslint/ban-types': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/consistent-type-imports': [
@@ -42,6 +46,7 @@ const config = {
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-unnecessary-condition': 'error',
+    '@typescript-eslint/no-unnecessary-type-assertion': 'error',
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-inferrable-types': [
       'error',

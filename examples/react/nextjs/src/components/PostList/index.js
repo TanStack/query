@@ -3,9 +3,9 @@ import { usePosts } from '../../hooks/usePosts'
 
 export const PostList = () => {
   const [postCount, setPostCount] = useState(10)
-  const { data, isLoading, isFetching } = usePosts(postCount)
+  const { data, isPending, isFetching } = usePosts(postCount)
 
-  if (isLoading) return <div>Loading</div>
+  if (isPending) return <div>Loading</div>
 
   return (
     <section>

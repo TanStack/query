@@ -9,7 +9,7 @@ const {
   error,
   isError,
   isIdle,
-  isLoading,
+  isPending,
   isPaused,
   isSuccess,
   failureCount,
@@ -18,9 +18,11 @@ const {
   mutateAsync,
   reset,
   status,
+  submittedAt,
+  variables,
 } = useMutation({
   mutationFn,
-  cacheTime,
+  gcTime,
   mutationKey,
   networkMode,
   onError,
@@ -29,8 +31,8 @@ const {
   onSuccess,
   retry,
   retryDelay,
-  useErrorBoundary,
-  meta
+  throwOnError,
+  meta,
 })
 
 mutate(variables, {
@@ -46,7 +48,7 @@ mutate(variables, {
   - **Required, but only if no default mutation function has been defined**
   - A function that performs an asynchronous task and returns a promise.
   - `variables` is an object that `mutate` will pass to your `mutationFn`
-- `cacheTime: number | Infinity`
+- `gcTime: number | Infinity`
   - The time in milliseconds that unused/inactive cache data remains in memory. When a mutation's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different cache times are specified, the longest one will be used.
   - If set to `Infinity`, will disable garbage collection
 - `mutationKey: unknown[]`
@@ -82,16 +84,16 @@ mutate(variables, {
   - This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the next attempt in milliseconds.
   - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff.
   - A function like `attempt => attempt * 1000` applies linear backoff.
-- `useErrorBoundary: undefined | boolean | (error: TError) => boolean`
-  - Defaults to the global query config's `useErrorBoundary` value, which is `undefined`
+- `throwOnError: undefined | boolean | (error: TError) => boolean`
+  - Defaults to the global query config's `throwOnError` value, which is `undefined`
   - Set this to `true` if you want mutation errors to be thrown in the render phase and propagate to the nearest error boundary
   - Set this to `false` to disable the behavior of throwing errors to the error boundary.
   - If set to a function, it will be passed the error and should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`)
 - `meta: Record<string, unknown>`
   - Optional
   - If set, stores additional information on the mutation cache entry that can be used as needed. It will be accessible wherever the `mutation` is available (eg. `onError`, `onSuccess` functions of the `MutationCache`).
-- `context?: React.Context<QueryClient | undefined>`
-  - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.
+- `queryClient?: QueryClient`,
+  - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 
 **Returns**
 
@@ -118,10 +120,10 @@ mutate(variables, {
 - `status: string`
   - Will be:
     - `idle` initial status prior to the mutation function executing.
-    - `loading` if the mutation is currently executing.
+    - `pending` if the mutation is currently executing.
     - `error` if the last mutation attempt resulted in an error.
     - `success` if the last mutation attempt was successful.
-- `isIdle`, `isLoading`, `isSuccess`, `isError`: boolean variables derived from `status`
+- `isIdle`, `isPending`, `isSuccess`, `isError`: boolean variables derived from `status`
 - `isPaused: boolean`
   - will be `true` if the mutation has been `paused`
   - see [Network Mode](../guides/network-mode) for more information.
@@ -139,4 +141,9 @@ mutate(variables, {
 - `failureReason: null | TError`
   - The failure reason for the mutation retry.
   - Reset to `null` when the mutation succeeds.
-
+- `submittedAt: number`
+  - The timestamp for when the mutation was submitted.
+  - Defaults to `0`.
+- `variables: undefined | TVariables`
+  - The `variables` object passed to the `mutationFn`.
+  - Defaults to `undefined`.

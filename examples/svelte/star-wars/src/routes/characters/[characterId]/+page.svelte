@@ -19,7 +19,7 @@
   })
 </script>
 
-{#if $query.status === 'loading'}
+{#if $query.status === 'pending'}
   <p>Loading...</p>
 {/if}
 

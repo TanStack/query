@@ -1,0 +1,53 @@
+{
+  "name": "@tanstack/svelte-query-devtools",
+  "version": "5.6.1",
+  "description": "Developer tools to interact with and visualize the TanStack/svelte-query cache",
+  "author": "Lachlan Collins",
+  "license": "MIT",
+  "repository": "tanstack/query",
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.js",
+  "svelte": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "clean": "rimraf ./dist && rimraf ./coverage",
+    "test:types": "svelte-check --tsconfig ./tsconfig.json",
+    "test:eslint": "eslint --ext .svelte,.ts ./src",
+    "test:build": "publint --strict",
+    "build": "svelte-package --input ./src --output ./dist"
+  },
+  "dependencies": {
+    "@tanstack/query-devtools": "workspace:*",
+    "esm-env": "^1.0.0"
+  },
+  "devDependencies": {
+    "@sveltejs/package": "^2.2.2",
+    "@sveltejs/vite-plugin-svelte": "^2.4.6",
+    "@tanstack/svelte-query": "workspace:*",
+    "eslint-plugin-svelte": "^2.32.0",
+    "svelte": "^4.0.0",
+    "svelte-check": "^3.4.4"
+  },
+  "peerDependencies": {
+    "@tanstack/svelte-query": "workspace:^",
+    "svelte": ">=3 <5"
+  }
+}
