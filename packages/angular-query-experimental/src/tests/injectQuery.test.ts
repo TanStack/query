@@ -2,7 +2,7 @@ import { computed, signal } from '@angular/core'
 import { TestBed, fakeAsync, flush, tick } from '@angular/core/testing'
 import { QueryClient } from '@tanstack/query-core'
 import { expect, vi } from 'vitest'
-import { createQuery } from '../createQuery'
+import { injectQuery } from '../injectQuery'
 import { provideAngularQuery } from '../providers'
 import {
   delayedFetcher,
@@ -11,7 +11,7 @@ import {
   simpleFetcher,
 } from './test-utils'
 
-describe('CreateQuery', () => {
+describe('injectQuery', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [provideAngularQuery(new QueryClient())],
@@ -20,7 +20,7 @@ describe('CreateQuery', () => {
 
   it('should return pending status initially', fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
-      return createQuery(() => ({
+      return injectQuery(() => ({
         queryKey: ['key1'],
         queryFn: simpleFetcher,
       }))
@@ -38,7 +38,7 @@ describe('CreateQuery', () => {
 
   it('should resolve to success and update signal: createQuery', fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
-      return createQuery(() => ({
+      return injectQuery(() => ({
         queryKey: ['key2'],
         queryFn: getSimpleFetcherWithReturnData('result2'),
       }))
@@ -58,7 +58,7 @@ describe('CreateQuery', () => {
 
   it('should reject and update signal', fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
-      return createQuery(() => ({
+      return injectQuery(() => ({
         retry: false,
         queryKey: ['key3'],
         queryFn: rejectFetcher,
@@ -85,7 +85,7 @@ describe('CreateQuery', () => {
     const spy = vi.fn(simpleFetcher)
 
     const query = TestBed.runInInjectionContext(() => {
-      return createQuery(() => ({
+      return injectQuery(() => ({
         queryKey: key(),
         queryFn: spy,
       }))
@@ -110,7 +110,7 @@ describe('CreateQuery', () => {
     const enabled = signal(false)
 
     const query = TestBed.runInInjectionContext(() => {
-      return createQuery(() => ({
+      return injectQuery(() => ({
         queryKey: ['key9'],
         queryFn: spy,
         enabled: enabled(),
@@ -133,7 +133,7 @@ describe('CreateQuery', () => {
 
   it('should properly execute dependant queries', fakeAsync(() => {
     const query1 = TestBed.runInInjectionContext(() => {
-      return createQuery(() => ({
+      return injectQuery(() => ({
         queryKey: ['dependant1'],
         queryFn: simpleFetcher,
       }))
@@ -142,7 +142,7 @@ describe('CreateQuery', () => {
     const dependentQueryFn = vi.fn().mockImplementation(delayedFetcher(1000))
 
     const query2 = TestBed.runInInjectionContext(() => {
-      return createQuery(
+      return injectQuery(
         computed(() => ({
           queryKey: ['dependant2'],
           queryFn: dependentQueryFn,
@@ -176,7 +176,7 @@ describe('CreateQuery', () => {
     const keySignal = signal('key11')
 
     const query = TestBed.runInInjectionContext(() => {
-      return createQuery(() => ({
+      return injectQuery(() => ({
         queryKey: ['key10', keySignal()],
         queryFn: fetchFn,
         enabled: false,
@@ -218,7 +218,7 @@ describe('CreateQuery', () => {
 
   it('should set state to error when queryFn returns reject promise', fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
-      return createQuery(() => ({
+      return injectQuery(() => ({
         retry: false,
         queryKey: ['key13'],
         queryFn: rejectFetcher,
@@ -234,7 +234,7 @@ describe('CreateQuery', () => {
 
   it('should not update signal when notifyOnChangeProps is set without the changed property being in notifyOnChangeProps', fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
-      return createQuery(() => ({
+      return injectQuery(() => ({
         queryKey: ['key14'],
         queryFn: simpleFetcher,
         notifyOnChangeProps: 'all',
@@ -244,28 +244,5 @@ describe('CreateQuery', () => {
     flush()
 
     expect(query().status).toBe('success')
-  }))
-
-  it('should allow passing a different queryClient', fakeAsync(() => {
-    const queryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          queryFn: simpleFetcher,
-        },
-      },
-    })
-
-    const query = TestBed.runInInjectionContext(() => {
-      return createQuery(
-        () => ({
-          queryKey: ['key15'],
-        }),
-        queryClient,
-      )
-    })
-
-    flush()
-
-    expect(query().data).toBe('Some data')
   }))
 })

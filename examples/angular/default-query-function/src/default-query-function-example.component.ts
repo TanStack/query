@@ -5,13 +5,12 @@ import {
   EventEmitter,
   Input,
   Output,
-  inject,
   signal,
 } from '@angular/core'
 import { CommonModule, NgIf } from '@angular/common'
 import {
-  CreateQuery,
-  UseQueryClient,
+  injectQuery,
+  injectQueryClient,
 } from '@tanstack/angular-query-experimental'
 
 type Post = {
@@ -57,12 +56,12 @@ export class PostComponent {
   postIdSignal = signal<number>(0)
 
   // You can even leave out the queryFn and just go straight into options
-  postQuery = inject(CreateQuery)<Post>(() => ({
+  postQuery = injectQuery<Post>(() => ({
     enabled: this.postIdSignal() > 0,
     queryKey: [`/posts/${this.postIdSignal()}`],
   }))
 
-  queryClient = inject(UseQueryClient)
+  queryClient = injectQueryClient
 }
 
 @Component({
@@ -104,11 +103,11 @@ export class PostsComponent {
   @Output() setPostId = new EventEmitter<number>()
 
   // All you have to do now is pass a key!
-  postsQuery = inject(CreateQuery)<Array<Post>>(() => ({
+  postsQuery = injectQuery<Array<Post>>(() => ({
     queryKey: ['/posts'],
   }))
 
-  queryClient = inject(UseQueryClient)
+  queryClient = injectQueryClient()
 }
 
 @Component({

@@ -183,20 +183,20 @@ importers:
   examples/angular/basic:
     dependencies:
       '@angular/common':
-        specifier: ^16.2.11
-        version: 16.2.11(@angular/core@16.2.11)(rxjs@7.8.1)
+        specifier: ^16.2.12
+        version: 16.2.12(@angular/core@16.2.12)(rxjs@7.8.1)
       '@angular/compiler':
-        specifier: ^16.2.11
-        version: 16.2.11(@angular/core@16.2.11)
+        specifier: ^16.2.12
+        version: 16.2.12(@angular/core@16.2.12)
       '@angular/core':
-        specifier: ^16.2.11
-        version: 16.2.11(rxjs@7.8.1)(zone.js@0.14.1)
+        specifier: ^16.2.12
+        version: 16.2.12(rxjs@7.8.1)(zone.js@0.14.1)
       '@angular/language-service':
-        specifier: ^16.2.11
-        version: 16.2.11
+        specifier: ^16.2.12
+        version: 16.2.12
       '@angular/platform-browser':
-        specifier: ^16.2.11
-        version: 16.2.11(@angular/common@16.2.11)(@angular/core@16.2.11)
+        specifier: ^16.2.12
+        version: 16.2.12(@angular/common@16.2.12)(@angular/core@16.2.12)
       '@tanstack/angular-query-devtools-experimental':
         specifier: ^5.4.3
         version: link:../../../packages/angular-query-devtools-experimental/build
@@ -300,14 +300,14 @@ importers:
         specifier: ^16.2.11
         version: 16.2.11(@angular/core@16.2.11)(rxjs@7.8.1)
       '@angular/compiler':
-        specifier: ^16.2.11
-        version: 16.2.11(@angular/core@16.2.11)
+        specifier: ^16.2.12
+        version: 16.2.12(@angular/core@16.2.11)
       '@angular/core':
         specifier: ^16.2.11
         version: 16.2.11(rxjs@7.8.1)(zone.js@0.14.1)
       '@angular/platform-browser':
-        specifier: ^16.2.11
-        version: 16.2.11(@angular/common@16.2.11)(@angular/core@16.2.11)
+        specifier: ^16.2.12
+        version: 16.2.12(@angular/common@16.2.11)(@angular/core@16.2.11)
       '@tanstack/angular-query-devtools-experimental':
         specifier: ^5.4.3
         version: link:../../../packages/angular-query-devtools-experimental/build
@@ -328,8 +328,8 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.4.4
-        version: 4.4.11(@types/node@18.18.0)
+        specifier: ^4.5.0
+        version: 4.5.0(@types/node@18.18.0)
 
   examples/react/algolia:
     dependencies:
@@ -341,10 +341,10 @@ importers:
         version: 4.17.1
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       algoliasearch:
         specifier: 4.17.1
         version: 4.17.1
@@ -357,7 +357,7 @@ importers:
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.0.0
-        version: link:../../../packages/eslint-plugin-query
+        version: 5.6.0(eslint@8.34.0)(typescript@5.1.6)
       '@types/react':
         specifier: ^18.2.31
         version: 18.2.31
@@ -378,10 +378,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -402,10 +402,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -418,7 +418,7 @@ importers:
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.0.0
-        version: link:../../../packages/eslint-plugin-query
+        version: 5.6.0(eslint@8.34.0)(typescript@5.2.2)
       '@vitejs/plugin-react':
         specifier: ^4.0.0
         version: 4.0.0(vite@4.4.11)
@@ -430,10 +430,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       graphql:
         specifier: ^16.6.0
         version: 16.8.1
@@ -458,16 +458,16 @@ importers:
     dependencies:
       '@tanstack/query-sync-storage-persister':
         specifier: ^5.0.0
-        version: link:../../../packages/query-sync-storage-persister
+        version: 5.7.2
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query-persist-client':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-persist-client
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -480,7 +480,7 @@ importers:
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.0.0
-        version: link:../../../packages/eslint-plugin-query
+        version: 5.6.0(eslint@8.34.0)(typescript@5.1.6)
       '@types/react':
         specifier: ^18.2.31
         version: 18.2.31
@@ -507,10 +507,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -532,10 +532,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -559,10 +559,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -586,10 +586,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       ky:
         specifier: ^0.33.3
         version: 0.33.3
@@ -616,13 +616,13 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query-next-experimental':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-next-experimental
+        version: 5.7.1(@tanstack/react-query@5.7.1)(next@14.0.0)(react-dom@18.2.0)(react@18.2.0)
       next:
         specifier: ^14.0.0
         version: 14.0.0(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
@@ -650,19 +650,19 @@ importers:
     dependencies:
       '@tanstack/query-sync-storage-persister':
         specifier: ^5.0.0
-        version: link:../../../packages/query-sync-storage-persister
+        version: 5.7.2
       '@tanstack/react-location':
         specifier: ^3.7.0
         version: 3.7.0(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query-persist-client':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-persist-client
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       ky:
         specifier: ^0.33.3
         version: 0.33.3
@@ -690,10 +690,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -727,10 +727,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -764,10 +764,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -788,10 +788,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -810,10 +810,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -843,10 +843,10 @@ importers:
         version: 6.3.16(@react-navigation/native@6.1.6)(react-native-gesture-handler@2.9.0)(react-native-safe-area-context@4.5.0)(react-native-screens@3.20.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       expo:
         specifier: ^48.0.17
         version: 48.0.17(@babel/core@7.21.8)
@@ -916,10 +916,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       localforage:
         specifier: ^1.10.0
         version: 1.10.0
@@ -968,10 +968,10 @@ importers:
         version: 5.13.2(@types/react@18.2.31)(react@18.2.0)
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -996,10 +996,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -1033,10 +1033,10 @@ importers:
         version: 5.13.2(@types/react@18.2.31)(react@18.2.0)
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -1061,10 +1061,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -1089,10 +1089,10 @@ importers:
     dependencies:
       '@tanstack/solid-query':
         specifier: ^5.0.0
-        version: link:../../../packages/solid-query
+        version: 5.7.2(solid-js@1.8.1)
       '@tanstack/solid-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/solid-query-devtools
+        version: 5.7.2(@tanstack/solid-query@5.7.2)(solid-js@1.8.1)
       graphql:
         specifier: ^16.8.1
         version: 16.8.1
@@ -1117,10 +1117,10 @@ importers:
     dependencies:
       '@tanstack/solid-query':
         specifier: ^5.0.0
-        version: link:../../../packages/solid-query
+        version: 5.7.2(solid-js@1.8.1)
       '@tanstack/solid-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/solid-query-devtools
+        version: 5.7.2(@tanstack/solid-query@5.7.2)(solid-js@1.8.1)
       solid-js:
         specifier: ^1.8.1
         version: 1.8.1
@@ -1139,10 +1139,10 @@ importers:
     dependencies:
       '@tanstack/solid-query':
         specifier: ^5.0.0
-        version: link:../../../packages/solid-query
+        version: 5.7.2(solid-js@1.8.1)
       '@tanstack/solid-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/solid-query-devtools
+        version: 5.7.2(@tanstack/solid-query@5.7.2)(solid-js@1.8.1)
       solid-js:
         specifier: ^1.8.1
         version: 1.8.1
@@ -1161,17 +1161,17 @@ importers:
     dependencies:
       '@tanstack/solid-query':
         specifier: ^5.0.0
-        version: link:../../../packages/solid-query
+        version: 5.7.2(solid-js@1.8.1)
       '@tanstack/solid-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/solid-query-devtools
+        version: 5.7.2(@tanstack/solid-query@5.7.2)(solid-js@1.8.1)
       solid-js:
         specifier: ^1.8.1
         version: 1.8.1
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.0.0
-        version: link:../../../packages/eslint-plugin-query
+        version: 5.6.0(eslint@8.34.0)(typescript@5.2.2)
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
@@ -1192,10 +1192,10 @@ importers:
         version: 0.8.3(solid-js@1.8.1)
       '@tanstack/solid-query':
         specifier: ^5.0.0
-        version: link:../../../packages/solid-query
+        version: 5.7.2(solid-js@1.8.1)
       '@tanstack/solid-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/solid-query-devtools
+        version: 5.7.2(@tanstack/solid-query@5.7.2)(solid-js@1.8.1)
       solid-js:
         specifier: ^1.8.1
         version: 1.8.1
@@ -1229,10 +1229,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query
+        version: 5.6.1(svelte@4.0.0)
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query-devtools
+        version: 5.6.1(@tanstack/svelte-query@5.6.1)(svelte@4.0.0)
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1257,10 +1257,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query
+        version: 5.6.1(svelte@4.0.0)
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query-devtools
+        version: 5.6.1(@tanstack/svelte-query@5.6.1)(svelte@4.0.0)
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1285,10 +1285,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query
+        version: 5.6.1(svelte@4.0.0)
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query-devtools
+        version: 5.6.1(@tanstack/svelte-query@5.6.1)(svelte@4.0.0)
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1313,10 +1313,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query
+        version: 5.6.1(svelte@4.0.0)
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query-devtools
+        version: 5.6.1(@tanstack/svelte-query@5.6.1)(svelte@4.0.0)
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1341,10 +1341,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query
+        version: 5.6.1(svelte@4.0.0)
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query-devtools
+        version: 5.6.1(@tanstack/svelte-query@5.6.1)(svelte@4.0.0)
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1369,10 +1369,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query
+        version: 5.6.1(svelte@4.0.0)
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query-devtools
+        version: 5.6.1(@tanstack/svelte-query@5.6.1)(svelte@4.0.0)
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^2.4.2
@@ -1397,10 +1397,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query
+        version: 5.6.1(svelte@4.0.0)
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query-devtools
+        version: 5.6.1(@tanstack/svelte-query@5.6.1)(svelte@4.0.0)
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1425,10 +1425,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query
+        version: 5.6.1(svelte@4.0.0)
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query-devtools
+        version: 5.6.1(@tanstack/svelte-query@5.6.1)(svelte@4.0.0)
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1462,7 +1462,7 @@ importers:
     dependencies:
       '@tanstack/vue-query':
         specifier: ^5.0.0
-        version: link:../../../packages/vue-query
+        version: 5.7.2(vue@3.3.0)
       vue:
         specifier: ^3.3.0
         version: 3.3.0
@@ -1481,7 +1481,7 @@ importers:
     dependencies:
       '@tanstack/vue-query':
         specifier: ^5.0.0
-        version: link:../../../packages/vue-query
+        version: 5.7.2(vue@3.3.0)
       vue:
         specifier: ^3.3.0
         version: 3.3.0
@@ -1500,16 +1500,16 @@ importers:
     dependencies:
       '@tanstack/query-core':
         specifier: ^5.0.0
-        version: link:../../../packages/query-core
+        version: 5.7.2
       '@tanstack/query-persist-client-core':
         specifier: ^5.0.0
-        version: link:../../../packages/query-persist-client-core
+        version: 5.7.2
       '@tanstack/query-sync-storage-persister':
         specifier: ^5.0.0
-        version: link:../../../packages/query-sync-storage-persister
+        version: 5.7.2
       '@tanstack/vue-query':
         specifier: ^5.0.0
-        version: link:../../../packages/vue-query
+        version: 5.7.2(vue@3.3.0)
       idb-keyval:
         specifier: ^6.2.0
         version: 6.2.0
@@ -1762,16 +1762,19 @@ importers:
       '@tanstack/query-core':
         specifier: workspace:*
         version: link:../query-core
+      ngxtension:
+        specifier: ^0.14.1
+        version: 0.14.1(@angular/common@17.0.0-rc.1)(@angular/core@17.0.0-rc.1)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1)
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
     devDependencies:
       '@analogjs/vite-plugin-angular':
-        specifier: ^0.2.15
+        specifier: ^0.2.18
         version: 0.2.18(@angular-devkit/build-angular@16.2.8)
       '@angular/animations':
-        specifier: ^17.0.0-rc.1
-        version: 17.0.0-rc.1(@angular/core@17.0.0-rc.1)
+        specifier: ^17.0.0-rc.2
+        version: 17.0.0-rc.2(@angular/core@17.0.0-rc.1)
       '@angular/cli':
         specifier: ^17.0.0-next.9
         version: 17.0.0-rc.2
@@ -1782,20 +1785,20 @@ importers:
         specifier: ^17.0.0-next.8
         version: 17.0.0-rc.1(@angular/core@17.0.0-rc.1)
       '@angular/compiler-cli':
-        specifier: ^17.0.0-rc.1
-        version: 17.0.0-rc.1(@angular/compiler@17.0.0-rc.1)(typescript@5.2.2)
+        specifier: ^17.0.0-rc.2
+        version: 17.0.0-rc.2(@angular/compiler@17.0.0-rc.1)(typescript@5.2.2)
       '@angular/core':
         specifier: ^17.0.0-next.8
-        version: 17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.1)
+        version: 17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.2)
       '@angular/platform-browser':
-        specifier: ^17.0.0-rc.1
-        version: 17.0.0-rc.1(@angular/animations@17.0.0-rc.1)(@angular/common@17.0.0-rc.1)(@angular/core@17.0.0-rc.1)
+        specifier: ^17.0.0-rc.2
+        version: 17.0.0-rc.2(@angular/animations@17.0.0-rc.2)(@angular/common@17.0.0-rc.1)(@angular/core@17.0.0-rc.1)
       '@angular/platform-browser-dynamic':
-        specifier: ^17.0.0-rc.1
-        version: 17.0.0-rc.1(@angular/common@17.0.0-rc.1)(@angular/compiler@17.0.0-rc.1)(@angular/core@17.0.0-rc.1)(@angular/platform-browser@17.0.0-rc.1)
+        specifier: ^17.0.0-rc.2
+        version: 17.0.0-rc.2(@angular/common@17.0.0-rc.1)(@angular/compiler@17.0.0-rc.1)(@angular/core@17.0.0-rc.1)(@angular/platform-browser@17.0.0-rc.2)
       ng-packagr:
         specifier: ^16.2.3
-        version: 16.2.3(@angular/compiler-cli@17.0.0-rc.1)(tslib@2.6.2)(typescript@5.2.2)
+        version: 16.2.3(@angular/compiler-cli@17.0.0-rc.2)(tslib@2.6.2)(typescript@5.2.2)
       reflect-metadata:
         specifier: ^0.1.13
         version: 0.1.13
@@ -1803,8 +1806,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       zone.js:
-        specifier: ^0.14.0
-        version: 0.14.1
+        specifier: ^0.14.2
+        version: 0.14.2
 
   packages/angular-query-experimental/build:
     dependencies:
@@ -1814,6 +1817,9 @@ importers:
       '@tanstack/query-core':
         specifier: workspace:*
         version: link:../../query-core
+      ngxtension:
+        specifier: ^0.14.1
+        version: 0.14.1(@angular/common@16.2.12)(@angular/core@16.2.11)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1)
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -1894,7 +1900,7 @@ importers:
         version: 2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.2.0)
       vite-plugin-solid:
         specifier: ^2.7.0
-        version: 2.7.2(solid-js@1.8.1)(vite@4.4.11)
+        version: 2.7.2(solid-js@1.8.1)(vite@4.5.0)
 
   packages/query-persist-client-core:
     dependencies:
@@ -2021,7 +2027,7 @@ importers:
         version: 2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.2.0)
       vite-plugin-solid:
         specifier: ^2.7.0
-        version: 2.7.2(solid-js@1.8.1)(vite@4.4.11)
+        version: 2.7.2(solid-js@1.8.1)(vite@4.5.0)
 
   packages/solid-query-devtools:
     dependencies:
@@ -2040,7 +2046,7 @@ importers:
         version: 2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.2.0)
       vite-plugin-solid:
         specifier: ^2.7.0
-        version: 2.7.2(solid-js@1.8.1)(vite@4.4.11)
+        version: 2.7.2(solid-js@1.8.1)(vite@4.5.0)
 
   packages/solid-query-persist-client:
     dependencies:
@@ -2059,7 +2065,7 @@ importers:
         version: 2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.2.0)
       vite-plugin-solid:
         specifier: ^2.7.0
-        version: 2.7.2(solid-js@1.8.1)(vite@4.4.11)
+        version: 2.7.2(solid-js@1.8.1)(vite@4.5.0)
 
   packages/svelte-query:
     dependencies:
@@ -2072,7 +2078,7 @@ importers:
         version: 2.2.2(svelte@4.0.0)(typescript@5.2.2)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^2.4.6
-        version: 2.4.6(svelte@4.0.0)(vite@4.4.11)
+        version: 2.4.6(svelte@4.0.0)(vite@4.5.0)
       '@testing-library/svelte':
         specifier: ^4.0.4
         version: 4.0.4(svelte@4.0.0)
@@ -2100,7 +2106,7 @@ importers:
         version: 2.2.2(svelte@4.0.0)(typescript@5.2.2)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^2.4.6
-        version: 2.4.6(svelte@4.0.0)(vite@4.4.11)
+        version: 2.4.6(svelte@4.0.0)(vite@4.5.0)
       '@tanstack/svelte-query':
         specifier: workspace:*
         version: link:../svelte-query
@@ -2125,7 +2131,7 @@ importers:
         version: 2.2.2(svelte@4.0.0)(typescript@5.2.2)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^2.4.6
-        version: 2.4.6(svelte@4.0.0)(vite@4.4.11)
+        version: 2.4.6(svelte@4.0.0)(vite@4.5.0)
       '@tanstack/svelte-query':
         specifier: workspace:*
         version: link:../svelte-query
@@ -2286,7 +2292,7 @@ packages:
     peerDependencies:
       '@angular-devkit/build-angular': ^15.0.0 || >=16.0.0
     dependencies:
-      '@angular-devkit/build-angular': 16.2.8(@angular/compiler-cli@17.0.0-rc.1)(@types/node@18.18.0)(ng-packagr@16.2.3)(typescript@5.2.2)
+      '@angular-devkit/build-angular': 16.2.8(@angular/compiler-cli@17.0.0-rc.2)(@types/node@18.18.0)(ng-packagr@16.2.3)(typescript@5.2.2)
     dev: true
 
   /@angular-devkit/architect@0.1602.8(chokidar@3.5.3):
@@ -2309,7 +2315,7 @@ packages:
       - chokidar
     dev: true
 
-  /@angular-devkit/build-angular@16.2.8(@angular/compiler-cli@17.0.0-rc.1)(@types/node@18.18.0)(ng-packagr@16.2.3)(typescript@5.2.2):
+  /@angular-devkit/build-angular@16.2.8(@angular/compiler-cli@17.0.0-rc.2)(@types/node@18.18.0)(ng-packagr@16.2.3)(typescript@5.2.2):
     resolution: {integrity: sha512-PgTaWerhDO3JjHjgJl/VWB1y1awN8eHrm7sqdpIsgKbVpi26oyByjtPS1gKKhinps9Che66lCbnxrkx2X3rWTg==}
     engines: {node: ^16.14.0 || >=18.10.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     peerDependencies:
@@ -2348,7 +2354,7 @@ packages:
       '@angular-devkit/architect': 0.1602.8(chokidar@3.5.3)
       '@angular-devkit/build-webpack': 0.1602.8(chokidar@3.5.3)(webpack-dev-server@4.15.1)(webpack@5.88.2)
       '@angular-devkit/core': 16.2.8(chokidar@3.5.3)
-      '@angular/compiler-cli': 17.0.0-rc.1(@angular/compiler@17.0.0-rc.1)(typescript@5.2.2)
+      '@angular/compiler-cli': 17.0.0-rc.2(@angular/compiler@17.0.0-rc.1)(typescript@5.2.2)
       '@babel/core': 7.22.9
       '@babel/generator': 7.22.9
       '@babel/helper-annotate-as-pure': 7.22.5
@@ -2360,7 +2366,7 @@ packages:
       '@babel/runtime': 7.22.6
       '@babel/template': 7.22.5
       '@discoveryjs/json-ext': 0.5.7
-      '@ngtools/webpack': 16.2.8(@angular/compiler-cli@17.0.0-rc.1)(typescript@5.2.2)(webpack@5.88.2)
+      '@ngtools/webpack': 16.2.8(@angular/compiler-cli@17.0.0-rc.2)(typescript@5.2.2)(webpack@5.88.2)
       '@vitejs/plugin-basic-ssl': 1.0.1(vite@4.4.7)
       ansi-colors: 4.1.3
       autoprefixer: 10.4.14(postcss@8.4.31)
@@ -2385,7 +2391,7 @@ packages:
       magic-string: 0.30.1
       mini-css-extract-plugin: 2.7.6(webpack@5.88.2)
       mrmime: 1.0.1
-      ng-packagr: 16.2.3(@angular/compiler-cli@17.0.0-rc.1)(tslib@2.6.2)(typescript@5.2.2)
+      ng-packagr: 16.2.3(@angular/compiler-cli@17.0.0-rc.2)(tslib@2.6.2)(typescript@5.2.2)
       open: 8.4.2
       ora: 5.4.1
       parse5-html-rewriting-stream: 7.0.0
@@ -2508,13 +2514,13 @@ packages:
       - chokidar
     dev: true
 
-  /@angular/animations@17.0.0-rc.1(@angular/core@17.0.0-rc.1):
-    resolution: {integrity: sha512-eCrE4n+hOpgZXthjv9iR3Ao/J6hAbuQTqhFpSVAauMuSO9dRFOwMBG6rmx7Rk8Icro9M/LQZ8lPRTwh6b36vuw==}
-    engines: {node: '>=18.13.0'}
+  /@angular/animations@17.0.0-rc.2(@angular/core@17.0.0-rc.1):
+    resolution: {integrity: sha512-g6Nzcfls89fYdi6LQcZr1rOZots7667QDUtfbkhlt5UMC8MNbKSuSLjIpl7JwZtRl352HnhwhWM4bMchOQ7VDg==}
+    engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
-      '@angular/core': 17.0.0-rc.1
+      '@angular/core': 17.0.0-rc.2
     dependencies:
-      '@angular/core': 17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.1)
+      '@angular/core': 17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.2)
       tslib: 2.6.2
     dev: true
 
@@ -2587,6 +2593,30 @@ packages:
       rxjs: 7.8.1
       tslib: 2.6.2
 
+  /@angular/common@16.2.12(@angular/core@16.2.11)(rxjs@7.8.1):
+    resolution: {integrity: sha512-B+WY/cT2VgEaz9HfJitBmgdk4I333XG/ybC98CMC4Wz8E49T8yzivmmxXB3OD6qvjcOB6ftuicl6WBqLbZNg2w==}
+    engines: {node: ^16.14.0 || >=18.10.0}
+    peerDependencies:
+      '@angular/core': 16.2.12
+      rxjs: ^6.5.3 || ^7.4.0
+    dependencies:
+      '@angular/core': 16.2.11(rxjs@7.8.1)(zone.js@0.13.3)
+      rxjs: 7.8.1
+      tslib: 2.6.2
+    dev: false
+
+  /@angular/common@16.2.12(@angular/core@16.2.12)(rxjs@7.8.1):
+    resolution: {integrity: sha512-B+WY/cT2VgEaz9HfJitBmgdk4I333XG/ybC98CMC4Wz8E49T8yzivmmxXB3OD6qvjcOB6ftuicl6WBqLbZNg2w==}
+    engines: {node: ^16.14.0 || >=18.10.0}
+    peerDependencies:
+      '@angular/core': 16.2.12
+      rxjs: ^6.5.3 || ^7.4.0
+    dependencies:
+      '@angular/core': 16.2.12(rxjs@7.8.1)(zone.js@0.14.1)
+      rxjs: 7.8.1
+      tslib: 2.6.2
+    dev: false
+
   /@angular/common@17.0.0-rc.1(@angular/core@17.0.0-rc.1)(rxjs@7.8.1):
     resolution: {integrity: sha512-E51n8DdHY6WvP2OCBK9saIeGOjqCsekTxJ9Dx52kD/ZSI5JyQHUmxnCiGbp6rbxPBSli/0CS/6OabX7tVYq2Mg==}
     engines: {node: '>=18.13.0'}
@@ -2594,10 +2624,9 @@ packages:
       '@angular/core': 17.0.0-rc.1
       rxjs: ^6.5.3 || ^7.4.0
     dependencies:
-      '@angular/core': 17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.1)
+      '@angular/core': 17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.2)
       rxjs: 7.8.1
       tslib: 2.6.2
-    dev: true
 
   /@angular/compiler-cli@16.2.11(@angular/compiler@16.2.11)(typescript@5.1.6):
     resolution: {integrity: sha512-ZtZCXfkVBH78HUm2Byf+WX3Y6WzQK9EXYXNU/ni1rvSZ1vLNwieLDfWb/xwiO7QojrHZTym1RJ10jTMinTguqw==}
@@ -2621,12 +2650,12 @@ packages:
       - supports-color
     dev: true
 
-  /@angular/compiler-cli@17.0.0-rc.1(@angular/compiler@17.0.0-rc.1)(typescript@5.2.2):
-    resolution: {integrity: sha512-qGom6m5NXj8mB2laXm/xv5th2Vo5iwR0eSOW5VbvU7mCAhwx6WwlWd/jNaf58w1GygrU9p0ay8CHOv4yIK26Kw==}
-    engines: {node: '>=18.13.0'}
+  /@angular/compiler-cli@17.0.0-rc.2(@angular/compiler@17.0.0-rc.1)(typescript@5.2.2):
+    resolution: {integrity: sha512-PEQxfzi63GzNdyaJcD1p9mAHhguC8mNvmoh53Bl69z6urgnCtIQRVq/AZ3aOYdEbt6LwFC8xOUeQ9Cj8Ti28jA==}
+    engines: {node: ^18.13.0 || >=20.9.0}
     hasBin: true
     peerDependencies:
-      '@angular/compiler': 17.0.0-rc.1
+      '@angular/compiler': 17.0.0-rc.2
       typescript: '>=5.2 <5.3'
     dependencies:
       '@angular/compiler': 17.0.0-rc.1(@angular/core@17.0.0-rc.1)
@@ -2655,6 +2684,32 @@ packages:
       '@angular/core': 16.2.11(rxjs@7.8.1)(zone.js@0.14.1)
       tslib: 2.6.2
 
+  /@angular/compiler@16.2.12(@angular/core@16.2.11):
+    resolution: {integrity: sha512-6SMXUgSVekGM7R6l1Z9rCtUGtlg58GFmgbpMCsGf+VXxP468Njw8rjT2YZkf5aEPxEuRpSHhDYjqz7n14cwCXQ==}
+    engines: {node: ^16.14.0 || >=18.10.0}
+    peerDependencies:
+      '@angular/core': 16.2.12
+    peerDependenciesMeta:
+      '@angular/core':
+        optional: true
+    dependencies:
+      '@angular/core': 16.2.11(rxjs@7.8.1)(zone.js@0.14.1)
+      tslib: 2.6.2
+    dev: false
+
+  /@angular/compiler@16.2.12(@angular/core@16.2.12):
+    resolution: {integrity: sha512-6SMXUgSVekGM7R6l1Z9rCtUGtlg58GFmgbpMCsGf+VXxP468Njw8rjT2YZkf5aEPxEuRpSHhDYjqz7n14cwCXQ==}
+    engines: {node: ^16.14.0 || >=18.10.0}
+    peerDependencies:
+      '@angular/core': 16.2.12
+    peerDependenciesMeta:
+      '@angular/core':
+        optional: true
+    dependencies:
+      '@angular/core': 16.2.12(rxjs@7.8.1)(zone.js@0.14.1)
+      tslib: 2.6.2
+    dev: false
+
   /@angular/compiler@17.0.0-rc.1(@angular/core@17.0.0-rc.1):
     resolution: {integrity: sha512-h1HNvTNbroMo2YUtn6K/i0LKQUlAPQJb/Bq+nz1TyxnDI5nYGbRJ8WycQyGwRVrfvLkghkkCGzQqIHEUmZ3rSw==}
     engines: {node: '>=18.13.0'}
@@ -2664,7 +2719,7 @@ packages:
       '@angular/core':
         optional: true
     dependencies:
-      '@angular/core': 17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.1)
+      '@angular/core': 17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.2)
       tslib: 2.6.2
     dev: true
 
@@ -2691,7 +2746,19 @@ packages:
       tslib: 2.6.2
       zone.js: 0.14.1
 
-  /@angular/core@17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.1):
+  /@angular/core@16.2.12(rxjs@7.8.1)(zone.js@0.14.1):
+    resolution: {integrity: sha512-GLLlDeke/NjroaLYOks0uyzFVo6HyLl7VOm0K1QpLXnYvW63W9Ql/T3yguRZa7tRkOAeFZ3jw+1wnBD4O8MoUA==}
+    engines: {node: ^16.14.0 || >=18.10.0}
+    peerDependencies:
+      rxjs: ^6.5.3 || ^7.4.0
+      zone.js: ~0.13.0
+    dependencies:
+      rxjs: 7.8.1
+      tslib: 2.6.2
+      zone.js: 0.14.1
+    dev: false
+
+  /@angular/core@17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.2):
     resolution: {integrity: sha512-qz5Xjye2XkmBp+4vSxpPVM6yXs/36oXx/FUQa6PDP/DrW9wrCxSELf2g9PHT84xDgq6BhBqca0a4fq+QFURTqg==}
     engines: {node: '>=18.13.0'}
     peerDependencies:
@@ -2700,11 +2767,15 @@ packages:
     dependencies:
       rxjs: 7.8.1
       tslib: 2.6.2
-      zone.js: 0.14.1
-    dev: true
+      zone.js: 0.14.2
 
   /@angular/language-service@16.2.11:
     resolution: {integrity: sha512-rzZcqeBvgByu27gZk/f0K1VuwIYbScOG3sJYyWXBdSMmjqnl3ARwEEI/zyQT7I6uU6I9SwmoJhy44pQlrDDD7g==}
+    engines: {node: ^16.14.0 || >=18.10.0}
+    dev: false
+
+  /@angular/language-service@16.2.12:
+    resolution: {integrity: sha512-sZwB+ZEjChx9EYcqPaS4OnhC/q5RcedZjIdM9mCxuU/MtseURRYRI/8Hnm1RHo9qyc5PmsQpg7p9Vp/5hXLUjw==}
     engines: {node: ^16.14.0 || >=18.10.0}
     dev: false
 
@@ -2724,19 +2795,19 @@ packages:
       tslib: 2.6.2
     dev: true
 
-  /@angular/platform-browser-dynamic@17.0.0-rc.1(@angular/common@17.0.0-rc.1)(@angular/compiler@17.0.0-rc.1)(@angular/core@17.0.0-rc.1)(@angular/platform-browser@17.0.0-rc.1):
-    resolution: {integrity: sha512-cfrfruJ+OgSIBlnRFM0KPcStJlFHjiokwzkigScBMYXjeqMk9jGbUMsQZYHP4yG5JaXvJUsU2ngFDdYlULUXxQ==}
-    engines: {node: '>=18.13.0'}
+  /@angular/platform-browser-dynamic@17.0.0-rc.2(@angular/common@17.0.0-rc.1)(@angular/compiler@17.0.0-rc.1)(@angular/core@17.0.0-rc.1)(@angular/platform-browser@17.0.0-rc.2):
+    resolution: {integrity: sha512-U3aq/uVp8DeT96uhZWORqR4p+9Z9V1LzqwPXGebmJflSnBXns5iZGAeDK8izuT4LWKljB49Pf45DfPfhcuJJ+w==}
+    engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
-      '@angular/common': 17.0.0-rc.1
-      '@angular/compiler': 17.0.0-rc.1
-      '@angular/core': 17.0.0-rc.1
-      '@angular/platform-browser': 17.0.0-rc.1
+      '@angular/common': 17.0.0-rc.2
+      '@angular/compiler': 17.0.0-rc.2
+      '@angular/core': 17.0.0-rc.2
+      '@angular/platform-browser': 17.0.0-rc.2
     dependencies:
       '@angular/common': 17.0.0-rc.1(@angular/core@17.0.0-rc.1)(rxjs@7.8.1)
       '@angular/compiler': 17.0.0-rc.1(@angular/core@17.0.0-rc.1)
-      '@angular/core': 17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.1)
-      '@angular/platform-browser': 17.0.0-rc.1(@angular/animations@17.0.0-rc.1)(@angular/common@17.0.0-rc.1)(@angular/core@17.0.0-rc.1)
+      '@angular/core': 17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.2)
+      '@angular/platform-browser': 17.0.0-rc.2(@angular/animations@17.0.0-rc.2)(@angular/common@17.0.0-rc.1)(@angular/core@17.0.0-rc.1)
       tslib: 2.6.2
     dev: true
 
@@ -2755,20 +2826,52 @@ packages:
       '@angular/core': 16.2.11(rxjs@7.8.1)(zone.js@0.14.1)
       tslib: 2.6.2
 
-  /@angular/platform-browser@17.0.0-rc.1(@angular/animations@17.0.0-rc.1)(@angular/common@17.0.0-rc.1)(@angular/core@17.0.0-rc.1):
-    resolution: {integrity: sha512-y1YzN36AmvWMKNjJ0P8OVcnymCuc16xt/hHmEgDDu7ky5TfBO5OTm26DVySdGVuJdkz0M1sTbyyRuGDrhxRu7A==}
-    engines: {node: '>=18.13.0'}
+  /@angular/platform-browser@16.2.12(@angular/common@16.2.11)(@angular/core@16.2.11):
+    resolution: {integrity: sha512-NnH7ju1iirmVEsUq432DTm0nZBGQsBrU40M3ZeVHMQ2subnGiyUs3QyzDz8+VWLL/T5xTxWLt9BkDn65vgzlIQ==}
+    engines: {node: ^16.14.0 || >=18.10.0}
     peerDependencies:
-      '@angular/animations': 17.0.0-rc.1
-      '@angular/common': 17.0.0-rc.1
-      '@angular/core': 17.0.0-rc.1
+      '@angular/animations': 16.2.12
+      '@angular/common': 16.2.12
+      '@angular/core': 16.2.12
     peerDependenciesMeta:
       '@angular/animations':
         optional: true
     dependencies:
-      '@angular/animations': 17.0.0-rc.1(@angular/core@17.0.0-rc.1)
+      '@angular/common': 16.2.11(@angular/core@16.2.11)(rxjs@7.8.1)
+      '@angular/core': 16.2.11(rxjs@7.8.1)(zone.js@0.14.1)
+      tslib: 2.6.2
+    dev: false
+
+  /@angular/platform-browser@16.2.12(@angular/common@16.2.12)(@angular/core@16.2.12):
+    resolution: {integrity: sha512-NnH7ju1iirmVEsUq432DTm0nZBGQsBrU40M3ZeVHMQ2subnGiyUs3QyzDz8+VWLL/T5xTxWLt9BkDn65vgzlIQ==}
+    engines: {node: ^16.14.0 || >=18.10.0}
+    peerDependencies:
+      '@angular/animations': 16.2.12
+      '@angular/common': 16.2.12
+      '@angular/core': 16.2.12
+    peerDependenciesMeta:
+      '@angular/animations':
+        optional: true
+    dependencies:
+      '@angular/common': 16.2.12(@angular/core@16.2.12)(rxjs@7.8.1)
+      '@angular/core': 16.2.12(rxjs@7.8.1)(zone.js@0.14.1)
+      tslib: 2.6.2
+    dev: false
+
+  /@angular/platform-browser@17.0.0-rc.2(@angular/animations@17.0.0-rc.2)(@angular/common@17.0.0-rc.1)(@angular/core@17.0.0-rc.1):
+    resolution: {integrity: sha512-eFtHNkkRx3GVLTEd5NlIa8d59BNmbVMejHW8ZWZsG9317wW7HM19REORS0JisvkuBkoUoHurqo5DBliDYeTUzw==}
+    engines: {node: ^18.13.0 || >=20.9.0}
+    peerDependencies:
+      '@angular/animations': 17.0.0-rc.2
+      '@angular/common': 17.0.0-rc.2
+      '@angular/core': 17.0.0-rc.2
+    peerDependenciesMeta:
+      '@angular/animations':
+        optional: true
+    dependencies:
+      '@angular/animations': 17.0.0-rc.2(@angular/core@17.0.0-rc.1)
       '@angular/common': 17.0.0-rc.1(@angular/core@17.0.0-rc.1)(rxjs@7.8.1)
-      '@angular/core': 17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.1)
+      '@angular/core': 17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.2)
       tslib: 2.6.2
     dev: true
 
@@ -9115,7 +9218,7 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@ngtools/webpack@16.2.8(@angular/compiler-cli@17.0.0-rc.1)(typescript@5.2.2)(webpack@5.88.2):
+  /@ngtools/webpack@16.2.8(@angular/compiler-cli@17.0.0-rc.2)(typescript@5.2.2)(webpack@5.88.2):
     resolution: {integrity: sha512-GeblhLBwXe3qPYa4YHxbo0xujRl1FKkfIusU1mTIhkQBRtZY4Xgz4iMnPIEMJTU3XXGMkS+SCx34lqbwwMhR5A==}
     engines: {node: ^16.14.0 || >=18.10.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     peerDependencies:
@@ -9123,7 +9226,7 @@ packages:
       typescript: '>=4.9.3 <5.2'
       webpack: ^5.54.0
     dependencies:
-      '@angular/compiler-cli': 17.0.0-rc.1(@angular/compiler@17.0.0-rc.1)(typescript@5.2.2)
+      '@angular/compiler-cli': 17.0.0-rc.2(@angular/compiler@17.0.0-rc.1)(typescript@5.2.2)
       typescript: 5.2.2
       webpack: 5.88.2(esbuild@0.18.17)
     dev: true
@@ -9291,6 +9394,14 @@ packages:
       - supports-color
     dev: true
 
+  /@nrwl/devkit@16.10.0(nx@16.5.2):
+    resolution: {integrity: sha512-fRloARtsDQoQgQ7HKEy0RJiusg/HSygnmg4gX/0n/Z+SUS+4KoZzvHjXc6T5ZdEiSjvLypJ+HBM8dQzIcVACPQ==}
+    dependencies:
+      '@nx/devkit': 16.10.0(nx@16.5.2)
+    transitivePeerDependencies:
+      - nx
+    dev: false
+
   /@nrwl/nx-cloud@16.5.2:
     resolution: {integrity: sha512-oHO5T1HRJsR9mbRd8eUqMBPCgqVZLSbAh3zJoPFmhEmjbM4YB9ePRpgYFT8dRNeZUOUd/8Yt7Pb6EVWOHvpD/w==}
     dependencies:
@@ -9308,7 +9419,21 @@ packages:
       - '@swc-node/register'
       - '@swc/core'
       - debug
-    dev: true
+
+  /@nx/devkit@16.10.0(nx@16.5.2):
+    resolution: {integrity: sha512-IvKQqRJFDDiaj33SPfGd3ckNHhHi6ceEoqCbAP4UuMXOPPVOX6H0KVk+9tknkPb48B7jWIw6/AgOeWkBxPRO5w==}
+    peerDependencies:
+      nx: '>= 15 <= 17'
+    dependencies:
+      '@nrwl/devkit': 16.10.0(nx@16.5.2)
+      ejs: 3.1.9
+      enquirer: 2.3.6
+      ignore: 5.2.4
+      nx: 16.5.2
+      semver: 7.5.3
+      tmp: 0.2.1
+      tslib: 2.6.2
+    dev: false
 
   /@nx/nx-darwin-arm64@16.5.2:
     resolution: {integrity: sha512-myiNbDJLhhVHRLo6z3TeiaUeYTWdvBR3RdHQq4szTgb82Bnn8ruzteRGGJwKZd551YlttRcieBysxzUzHkmVBg==}
@@ -9316,7 +9441,6 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@nx/nx-darwin-x64@16.5.2:
@@ -9325,7 +9449,6 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@nx/nx-freebsd-x64@16.5.2:
@@ -9334,7 +9457,6 @@ packages:
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@nx/nx-linux-arm-gnueabihf@16.5.2:
@@ -9343,7 +9465,6 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@nx/nx-linux-arm64-gnu@16.5.2:
@@ -9352,7 +9473,6 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@nx/nx-linux-arm64-musl@16.5.2:
@@ -9361,7 +9481,6 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@nx/nx-linux-x64-gnu@16.5.2:
@@ -9370,7 +9489,6 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@nx/nx-linux-x64-musl@16.5.2:
@@ -9379,7 +9497,6 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@nx/nx-win32-arm64-msvc@16.5.2:
@@ -9388,7 +9505,6 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@nx/nx-win32-x64-msvc@16.5.2:
@@ -9397,7 +9513,6 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@open-draft/until@1.0.3:
@@ -9411,7 +9526,6 @@ packages:
     dependencies:
       node-addon-api: 3.2.1
       node-gyp-build: 4.6.1
-    dev: true
 
   /@pkgjs/parseargs@0.11.0:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -10391,6 +10505,22 @@ packages:
       - supports-color
     dev: true
 
+  /@sveltejs/vite-plugin-svelte-inspector@1.0.4(@sveltejs/vite-plugin-svelte@2.4.6)(svelte@4.0.0)(vite@4.5.0):
+    resolution: {integrity: sha512-zjiuZ3yydBtwpF3bj0kQNV0YXe+iKE545QGZVTaylW3eAzFr+pJ/cwK8lZEaRp4JtaJXhD5DyWAV4AxLh6DgaQ==}
+    engines: {node: ^14.18.0 || >= 16}
+    peerDependencies:
+      '@sveltejs/vite-plugin-svelte': ^2.2.0
+      svelte: ^3.54.0 || ^4.0.0
+      vite: ^4.0.0
+    dependencies:
+      '@sveltejs/vite-plugin-svelte': 2.4.6(svelte@4.0.0)(vite@4.5.0)
+      debug: 4.3.4(supports-color@6.1.0)
+      svelte: 4.0.0
+      vite: 4.5.0(@types/node@18.18.0)
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /@sveltejs/vite-plugin-svelte@2.4.6(svelte@4.0.0)(vite@4.4.11):
     resolution: {integrity: sha512-zO79p0+DZnXPnF0ltIigWDx/ux7Ni+HRaFOw720Qeivc1azFUrJxTl0OryXVibYNx1hCboGia1NRV3x8RNv4cA==}
     engines: {node: ^14.18.0 || >= 16}
@@ -10407,6 +10537,26 @@ packages:
       svelte-hmr: 0.15.3(svelte@4.0.0)
       vite: 4.4.11(@types/node@18.18.0)
       vitefu: 0.2.5(vite@4.4.11)
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@sveltejs/vite-plugin-svelte@2.4.6(svelte@4.0.0)(vite@4.5.0):
+    resolution: {integrity: sha512-zO79p0+DZnXPnF0ltIigWDx/ux7Ni+HRaFOw720Qeivc1azFUrJxTl0OryXVibYNx1hCboGia1NRV3x8RNv4cA==}
+    engines: {node: ^14.18.0 || >= 16}
+    peerDependencies:
+      svelte: ^3.54.0 || ^4.0.0
+      vite: ^4.0.0
+    dependencies:
+      '@sveltejs/vite-plugin-svelte-inspector': 1.0.4(@sveltejs/vite-plugin-svelte@2.4.6)(svelte@4.0.0)(vite@4.5.0)
+      debug: 4.3.4(supports-color@6.1.0)
+      deepmerge: 4.3.1
+      kleur: 4.1.5
+      magic-string: 0.30.5
+      svelte: 4.0.0
+      svelte-hmr: 0.15.3(svelte@4.0.0)
+      vite: 4.5.0(@types/node@18.18.0)
+      vitefu: 0.2.5(vite@4.5.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -10531,11 +10681,66 @@ packages:
       tslib: 2.6.2
     dev: true
 
+  /@tanstack/eslint-plugin-query@5.6.0(eslint@8.34.0)(typescript@5.1.6):
+    resolution: {integrity: sha512-A0D8fXIh6fuHcT7e+VaL+QnlLhY9V5QmiaLOTLOIcyVKCpWVZLSHrLP6ghZV6CB+JLalHWCAUF0QW0UaEyyz7g==}
+    peerDependencies:
+      eslint: ^8.0.0
+    dependencies:
+      '@typescript-eslint/utils': 5.62.0(eslint@8.34.0)(typescript@5.1.6)
+      eslint: 8.34.0
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+    dev: true
+
+  /@tanstack/eslint-plugin-query@5.6.0(eslint@8.34.0)(typescript@5.2.2):
+    resolution: {integrity: sha512-A0D8fXIh6fuHcT7e+VaL+QnlLhY9V5QmiaLOTLOIcyVKCpWVZLSHrLP6ghZV6CB+JLalHWCAUF0QW0UaEyyz7g==}
+    peerDependencies:
+      eslint: ^8.0.0
+    dependencies:
+      '@typescript-eslint/utils': 5.62.0(eslint@8.34.0)(typescript@5.2.2)
+      eslint: 8.34.0
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+    dev: true
+
   /@tanstack/match-sorter-utils@8.8.4:
     resolution: {integrity: sha512-rKH8LjZiszWEvmi01NR72QWZ8m4xmXre0OOwlRGnjU01Eqz/QnN+cqpty2PJ0efHblq09+KilvyR7lsbzmXVEw==}
     engines: {node: '>=12'}
     dependencies:
       remove-accents: 0.4.2
+
+  /@tanstack/query-core@5.4.3:
+    resolution: {integrity: sha512-fnI9ORjcuLGm1sNrKatKIosRQUpuqcD4SV7RqRSVmj8JSicX2aoMyKryHEBpVQvf6N4PaBVgBxQomjsbsGPssQ==}
+    dev: false
+
+  /@tanstack/query-core@5.7.2:
+    resolution: {integrity: sha512-vPYoNCOI8W+jFLnyEAYQL7/qURE7XzVE/TvkmNSko8LU55jFshee342p4GNFOTsYFgJty7Da5bw4m2P3vaKWMw==}
+    dev: false
+
+  /@tanstack/query-devtools@5.4.2:
+    resolution: {integrity: sha512-EXdaMXi8CxZuMp97J5mq6wy1RduOfoWFv5vtA1U+hyqb8Wst6M8kkkjDSdFvGZIRpYY4K8mKLlEFHNUZDG5dtw==}
+    dev: false
+
+  /@tanstack/query-persist-client-core@5.4.3:
+    resolution: {integrity: sha512-0MZazQMVXmmVyf/ce2ug0CoSkT02VA4ZhkT3F1/tIINxGuH2KlhKWQc9puqJzTazUpXfRdBK9+lMPqpkA16FEQ==}
+    dependencies:
+      '@tanstack/query-core': 5.4.3
+    dev: false
+
+  /@tanstack/query-persist-client-core@5.7.2:
+    resolution: {integrity: sha512-MrQeL/iwG2jbzXQhiSjkmATeerCVIW5vJhaBTOnKPYrGmhzRt8CSOOGRjSSEyO3RjLCA+0OlirjdWKDDc4Od6w==}
+    dependencies:
+      '@tanstack/query-core': 5.7.2
+    dev: false
+
+  /@tanstack/query-sync-storage-persister@5.7.2:
+    resolution: {integrity: sha512-B+jKPGPlqsgIDBnxezZpLhh5L2O3pbXXJgeB5CRwTG5RBJn35AhTLhz5WmEVhQ1PgrXxVqmVD4xWjW6LrXDoPg==}
+    dependencies:
+      '@tanstack/query-core': 5.7.2
+      '@tanstack/query-persist-client-core': 5.7.2
+    dev: false
 
   /@tanstack/react-location@3.7.0(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-baeAHlQ3F/D9GlV4x9LQAXFRj4PeTBxvKrDFPrdZDRPfG18LGzQhuwn0CNpOTuyHDF90qiUBPbIbEYSz2YZvkg==}
@@ -10548,6 +10753,121 @@ packages:
       history: 5.3.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@tanstack/react-query-devtools@5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-my9rj3MpCc5+AbZyX/gLAKIJnPaPhwV/IFgvUT5W7uTMCE8x5DdswQnLNX0PLkcf5t8zrqoLAk9mJny+p/XfgA==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.7.1
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    dependencies:
+      '@tanstack/query-devtools': 5.4.2
+      '@tanstack/react-query': 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@tanstack/react-query-next-experimental@5.7.1(@tanstack/react-query@5.7.1)(next@14.0.0)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-J401WaKBXtQp9O8/VOD3RT4yf++eDVuaNz5KxrAqYN6+7DOM0tKtf8Kc8l99n1slDMEnfM+DWtEp3605r0s/Ng==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.7.1
+      next: ^13 || ^14
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    dependencies:
+      '@tanstack/react-query': 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+      next: 14.0.0(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@tanstack/react-query-persist-client@5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-Vt7fPPNTtP8mRqtor3zBN1y8M2WAgOXiYajP2bYQJPT5L4sPw5sLwky+pv/W0j827pMYS6KY8qaYQqXVE2FkgA==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.7.1
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    dependencies:
+      '@tanstack/query-persist-client-core': 5.4.3
+      '@tanstack/react-query': 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@tanstack/react-query@5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0):
+    resolution: {integrity: sha512-7onwx519jOKh7/nspf70dOSejJSYfhFRnVsSicuPrmO8L6Iw05G1wwDpp1PjqFLsm7suixlHDXhcNfK0sy0kWg==}
+    peerDependencies:
+      react: ^18.0.0
+      react-dom: ^18.0.0
+      react-native: '*'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      '@tanstack/query-core': 5.4.3
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-native: 0.71.8(@babel/core@7.21.8)(@babel/preset-env@7.23.2)(react@18.2.0)
+    dev: false
+
+  /@tanstack/solid-query-devtools@5.7.2(@tanstack/solid-query@5.7.2)(solid-js@1.8.1):
+    resolution: {integrity: sha512-7YQHWk21JiI9QqTZVYpzIrKzfqVp/CAvA+4fiBYgm4+MNre9rE961HOfhpACPARC0hyNIZCUZKl9X++m4SWHrA==}
+    peerDependencies:
+      '@tanstack/solid-query': ^5.7.2
+      solid-js: ^1.7.8
+    dependencies:
+      '@tanstack/query-devtools': 5.4.2
+      '@tanstack/solid-query': 5.7.2(solid-js@1.8.1)
+      solid-js: 1.8.1
+    dev: false
+
+  /@tanstack/solid-query@5.7.2(solid-js@1.8.1):
+    resolution: {integrity: sha512-fvd/SzFU6EZkr83tn+guhUr3YEROY6JtqMcJVL9uJxQkgD9iu5cSUO1xP0ynpg4V53VF3WM7JHPc+bQOTcvZ4A==}
+    peerDependencies:
+      solid-js: ^1.6.0
+    dependencies:
+      '@tanstack/query-core': 5.7.2
+      solid-js: 1.8.1
+    dev: false
+
+  /@tanstack/svelte-query-devtools@5.6.1(@tanstack/svelte-query@5.6.1)(svelte@4.0.0):
+    resolution: {integrity: sha512-aNVXUxfJGevZT/uxzwCaex1OR0yfC09dtAggKatOeeRCAEYkztjAXDtivDRS+kP+Q3C9/8ZpzeOOBOMryl01vg==}
+    peerDependencies:
+      '@tanstack/svelte-query': ^5.6.1
+      svelte: '>=3 <5'
+    dependencies:
+      '@tanstack/query-devtools': 5.4.2
+      '@tanstack/svelte-query': 5.6.1(svelte@4.0.0)
+      esm-env: 1.0.0
+      svelte: 4.0.0
+    dev: false
+
+  /@tanstack/svelte-query@5.6.1(svelte@4.0.0):
+    resolution: {integrity: sha512-BfoWKne5BKDYVau37yE+E6g9foMHstTiWWRI5OkuhJdjNxA00Fv1IHsIUPOuS/lElGyCZ+7D3pGUvq1YDZBMYA==}
+    peerDependencies:
+      svelte: '>=3 <5'
+    dependencies:
+      '@tanstack/query-core': 5.4.3
+      svelte: 4.0.0
+    dev: false
+
+  /@tanstack/vue-query@5.7.2(vue@3.3.0):
+    resolution: {integrity: sha512-XTKeVZvXg2s8hBjqJFLUGX7fdEV6AntgfnUK3SWjn4r4QgZF+Sycb2TMDdln2dNzrxH3s01QVlliQ16B3BapyA==}
+    peerDependencies:
+      '@vue/composition-api': ^1.1.2
+      vue: ^2.6.0 || ^3.3.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      '@tanstack/match-sorter-utils': 8.8.4
+      '@tanstack/query-core': 5.7.2
+      '@vue/devtools-api': 6.5.0
+      vue: 3.3.0
+      vue-demi: 0.14.6(@vue/composition-api@1.7.2)(vue@3.3.0)
     dev: false
 
   /@testing-library/dom@8.20.1:
@@ -11329,7 +11649,6 @@ packages:
     dependencies:
       '@typescript-eslint/types': 5.62.0
       '@typescript-eslint/visitor-keys': 5.62.0
-    dev: false
 
   /@typescript-eslint/type-utils@5.54.0(eslint@8.34.0)(typescript@5.1.6):
     resolution: {integrity: sha512-WI+WMJ8+oS+LyflqsD4nlXMsVdzTMYTxl16myXPaCXnSgc7LWwMsjxQFZCK/rVmTZ3FN71Ct78ehO9bRC7erYQ==}
@@ -11388,7 +11707,6 @@ packages:
   /@typescript-eslint/types@5.62.0:
     resolution: {integrity: sha512-87NVngcbVXUahrRTqIK27gD2t5Cu1yuCXxbLcFtCzZGlfyVWWh8mLHkoxzjsB6DDNnvdL+fW8MiwPEJyGJQDgQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    dev: false
 
   /@typescript-eslint/typescript-estree@3.10.1(typescript@5.2.2):
     resolution: {integrity: sha512-QbcXOuq6WYvnB3XPsZpIwztBoquEYLXh2MtwVU+kO8jgYCiv4G5xrSP/1wg4tkvrEE+esZVquIPX/dxPlePk1w==}
@@ -11474,6 +11792,27 @@ packages:
       - supports-color
     dev: false
 
+  /@typescript-eslint/typescript-estree@5.62.0(typescript@5.1.6):
+    resolution: {integrity: sha512-CmcQ6uY7b9y694lKdRB8FEel7JbU/40iSAPomu++SjLMntB+2Leay2LO6i8VnJk58MtE9/nQSFIH6jpyRWyYzA==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      '@typescript-eslint/types': 5.62.0
+      '@typescript-eslint/visitor-keys': 5.62.0
+      debug: 4.3.4(supports-color@6.1.0)
+      globby: 11.1.0
+      is-glob: 4.0.3
+      semver: 7.5.4
+      tsutils: 3.21.0(typescript@5.1.6)
+      typescript: 5.1.6
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /@typescript-eslint/typescript-estree@5.62.0(typescript@5.2.2):
     resolution: {integrity: sha512-CmcQ6uY7b9y694lKdRB8FEel7JbU/40iSAPomu++SjLMntB+2Leay2LO6i8VnJk58MtE9/nQSFIH6jpyRWyYzA==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
@@ -11493,7 +11832,6 @@ packages:
       typescript: 5.2.2
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /@typescript-eslint/utils@5.54.0(eslint@8.34.0)(typescript@5.1.6):
     resolution: {integrity: sha512-cuwm8D/Z/7AuyAeJ+T0r4WZmlnlxQ8wt7C7fLpFlKMR+dY6QO79Cq1WpJhvZbMA4ZeZGHiRWnht7ZJ8qkdAunw==}
@@ -11535,6 +11873,26 @@ packages:
       - typescript
     dev: false
 
+  /@typescript-eslint/utils@5.62.0(eslint@8.34.0)(typescript@5.1.6):
+    resolution: {integrity: sha512-n8oxjeb5aIbPFEtmQxQYOLI0i9n5ySBEY/ZEHHZqKQSFnxio1rv6dthascc9dLuwrL0RC5mPCxB7vnAVGAYWAQ==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    peerDependencies:
+      eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
+    dependencies:
+      '@eslint-community/eslint-utils': 4.4.0(eslint@8.34.0)
+      '@types/json-schema': 7.0.14
+      '@types/semver': 7.5.4
+      '@typescript-eslint/scope-manager': 5.62.0
+      '@typescript-eslint/types': 5.62.0
+      '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.1.6)
+      eslint: 8.34.0
+      eslint-scope: 5.1.1
+      semver: 7.5.4
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+    dev: true
+
   /@typescript-eslint/utils@5.62.0(eslint@8.34.0)(typescript@5.2.2):
     resolution: {integrity: sha512-n8oxjeb5aIbPFEtmQxQYOLI0i9n5ySBEY/ZEHHZqKQSFnxio1rv6dthascc9dLuwrL0RC5mPCxB7vnAVGAYWAQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
@@ -11553,7 +11911,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
       - typescript
-    dev: false
 
   /@typescript-eslint/visitor-keys@3.10.1:
     resolution: {integrity: sha512-9JgC82AaQeglebjZMgYR5wgmfUdUc+EitGUUMW8u2nDckaeimzW+VsoLV6FoimPv2id3VQzfjwBxEMVz08ameQ==}
@@ -11583,7 +11940,6 @@ packages:
     dependencies:
       '@typescript-eslint/types': 5.62.0
       eslint-visitor-keys: 3.4.3
-    dev: false
 
   /@urql/core@2.3.6(graphql@15.8.0):
     resolution: {integrity: sha512-PUxhtBh7/8167HJK6WqBv6Z0piuiaZHQGYbhwpNL9aIQmLROPEdaUYkY4wh45wPQXcTpnd11l0q3Pw+TI11pdw==}
@@ -11603,6 +11959,16 @@ packages:
       '@urql/core': 2.3.6(graphql@15.8.0)
       graphql: 15.8.0
       wonka: 4.0.15
+    dev: false
+
+  /@use-gesture/core@10.3.0:
+    resolution: {integrity: sha512-rh+6MND31zfHcy9VU3dOZCqGY511lvGcfyJenN4cWZe0u1BH6brBpBddLVXhF2r4BMqWbvxfsbL7D287thJU2A==}
+    dev: false
+
+  /@use-gesture/vanilla@10.3.0:
+    resolution: {integrity: sha512-hehZWLaNyNc+TWAbhJpj84yumD8ZBp/eet6HGg3xztPcchuNNTGEu5LEEdSg69SXHzS7exWE6j5VnsZ3VXVFxQ==}
+    dependencies:
+      '@use-gesture/core': 10.3.0
     dev: false
 
   /@vitejs/plugin-basic-ssl@1.0.1(vite@4.4.7):
@@ -12037,7 +12403,6 @@ packages:
 
   /@yarnpkg/lockfile@1.1.0:
     resolution: {integrity: sha512-GpSwvyXOcOOlV70vbnzjj4fW5xW/FdUF6nQEt1ENy7m4ZCczi1+/buVUPAqmGfqznsORNFzUMjctTIp8a9tuCQ==}
-    dev: true
 
   /@yarnpkg/parsers@3.0.0-rc.46:
     resolution: {integrity: sha512-aiATs7pSutzda/rq8fnuPwTglyVwjM22bNnK2ZgjrpAjQHSSl3lztd2f9evst1W/qnC58DRz7T7QndUDumAR4Q==}
@@ -12045,14 +12410,12 @@ packages:
     dependencies:
       js-yaml: 3.14.1
       tslib: 2.6.2
-    dev: true
 
   /@zkochan/js-yaml@0.0.6:
     resolution: {integrity: sha512-nzvgl3VfhcELQ8LyVrYOru+UtAy1nrygk2+AGbTm8a5YcO6o8lSjAT+pfg3vJWxIoZKOUhrK6UU7xW/+00kQrg==}
     hasBin: true
     dependencies:
       argparse: 2.0.1
-    dev: true
 
   /JSONStream@1.3.5:
     resolution: {integrity: sha512-E+iruNOY8VV9s4JEbe1aNEm6MiszPRr/UfcHMz0TQh1BXSxHK+ASV1R6W4HpjBhSeS+54PIsAMCBmwD06LLsqQ==}
@@ -14147,7 +14510,6 @@ packages:
   /cli-spinners@2.6.1:
     resolution: {integrity: sha512-x/5fWmGMnbKQAaNwN+UZlV79qBLM9JFnJuJ03gIi5whrob0xV0ofNVHy9DhwGdsMJQc2OKv0oGmLzvaqvAVv+g==}
     engines: {node: '>=6'}
-    dev: true
 
   /cli-spinners@2.9.1:
     resolution: {integrity: sha512-jHgecW0pxkonBJdrKsqxgRX9AcG+u/5k0Q7WPDfi8AogLAdwxEkyYYNWwZ5GvVFoFx2uiY1eNcSK00fh+1+FyQ==}
@@ -14244,7 +14606,6 @@ packages:
       acorn: 8.10.0
       estree-walker: 3.0.3
       periscopic: 3.1.0
-    dev: true
 
   /collect-v8-coverage@1.0.2:
     resolution: {integrity: sha512-lHl4d5/ONEbLlJvaJNtsF/Lz+WvB07u2ycqTYbdrq7UypDXailES4valYb2eWiJFxZlVmpGekfqoxQhzyFdT4Q==}
@@ -15027,7 +15388,6 @@ packages:
     dependencies:
       mdn-data: 2.0.30
       source-map-js: 1.0.2
-    dev: true
 
   /css-vendor@2.0.8:
     resolution: {integrity: sha512-x9Aq0XTInxrkuFeHKbYC7zWY8ai7qJ04Kxd9MnvbC1uO5DagxoHQjm4JvG+vCdXOoFtCjbL2XSZfxmoYa9uQVQ==}
@@ -16644,7 +17004,7 @@ packages:
         optional: true
     dependencies:
       '@typescript-eslint/eslint-plugin': 5.54.0(@typescript-eslint/parser@5.54.0)(eslint@8.34.0)(typescript@5.1.6)
-      '@typescript-eslint/utils': 5.54.0(eslint@8.34.0)(typescript@5.1.6)
+      '@typescript-eslint/utils': 5.62.0(eslint@8.34.0)(typescript@5.1.6)
       eslint: 8.34.0
     transitivePeerDependencies:
       - supports-color
@@ -17130,7 +17490,6 @@ packages:
     resolution: {integrity: sha512-7RUKfXgSMMkzt6ZuXmqapOurLGPPfgj6l9uRZ7lRGolvk0y2yocc35LdcxKC5PQZdn2DMqioAQ2NoWcrTKmm6g==}
     dependencies:
       '@types/estree': 1.0.3
-    dev: true
 
   /esutils@2.0.3:
     resolution: {integrity: sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==}
@@ -17529,7 +17888,6 @@ packages:
       glob-parent: 5.1.2
       merge2: 1.4.1
       micromatch: 4.0.5
-    dev: true
 
   /fast-glob@3.3.1:
     resolution: {integrity: sha512-kNFPyjhh5cKjrUltxs+wFx+ZkbRaxxmZ+X0ZU31SOsxCEtP9VPgtq2teZw1DebupL5GmDaNQ6yKMMVcM41iqDg==}
@@ -17811,7 +18169,6 @@ packages:
   /flat@5.0.2:
     resolution: {integrity: sha512-b6suED+5/3rTpUBdG1gupIl8MPFCAMA0QXwmljLhvCUKcUvdE4gWky9zpuGCcXHOsz4J9wPGNWq6OKpmIzz3hQ==}
     hasBin: true
-    dev: true
 
   /flatted@3.2.9:
     resolution: {integrity: sha512-36yxDn5H7OFZQla0/jFJmbIKTdZAQHngCedGxiMmpNfEZM0sdEeT+WczLQrjK6D7o2aiyLYDnkw0R3JK0Qv1RQ==}
@@ -17986,7 +18343,6 @@ packages:
 
   /fs-constants@1.0.0:
     resolution: {integrity: sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow==}
-    dev: true
 
   /fs-extra@10.1.0:
     resolution: {integrity: sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==}
@@ -18270,7 +18626,6 @@ packages:
       minimatch: 3.1.2
       once: 1.4.0
       path-is-absolute: 1.0.1
-    dev: true
 
   /glob@7.1.6:
     resolution: {integrity: sha512-LwaxwyZ72Lk7vZINtNNrywX0ZuLyStrdDtabefZKAY5ZGJhVtgdznluResxNmPitE0SAO+O26sWTHeKSI2wMBA==}
@@ -19610,7 +19965,6 @@ packages:
     resolution: {integrity: sha512-v3rht/LgVcsdZa3O2Nqs+NMowLOxeOm7Ay9+/ARQ2F+qEoANRcqrjAZKGN0v8ymUetZGgkp26LTnGT7H0Qo9Pg==}
     dependencies:
       '@types/estree': 1.0.3
-    dev: true
 
   /is-regex@1.1.4:
     resolution: {integrity: sha512-kvRdxDsxZjhzUX07ZnLydzS1TU/TJlTUHHY4YLL87e37oUA49DfkLqgy+VjFocowy29cKvcSiu+kIv728jTTVg==}
@@ -21215,7 +21569,6 @@ packages:
 
   /jsonc-parser@3.2.0:
     resolution: {integrity: sha512-gfFQZrcTc8CnKXp6Y4/CBT3fTc0OVuDofpre4aEeEpSBPV5X5v4+Vmx+8snU7RLPrNHPKSgLxGo9YuQzz20o+w==}
-    dev: true
 
   /jsonfile@4.0.0:
     resolution: {integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==}
@@ -21526,7 +21879,6 @@ packages:
   /lines-and-columns@2.0.3:
     resolution: {integrity: sha512-cNOjgCnLB+FnvWWtyRTzmB3POJ+cXxTA81LoW7u8JdmhfXzriropYwpjShnz1QLLWsQwY7nIxoDmcPTwphDK9w==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
-    dev: true
 
   /load-tsconfig@0.2.5:
     resolution: {integrity: sha512-IXO6OCs9yg8tMKzfPZ1YmheJbZCiEsnBdcB03l0OcfK9prKnJb96siuHCr5Fl37/yo9DnKU+TLpxzTUspw9shg==}
@@ -21585,7 +21937,6 @@ packages:
 
   /locate-character@3.0.0:
     resolution: {integrity: sha512-SW13ws7BjaeJ6p7Q6CO2nchbYEc3X3J6WrmTTDto7yMPqVSZTUyY5Tjbid+Ab8gLnATtygYtiDIJGQRRn2ZOiA==}
-    dev: true
 
   /locate-path@3.0.0:
     resolution: {integrity: sha512-7AO748wWnIhNqAuaty2ZWHkQHRSNfPVIsPIfwEOWO22AmaoVrWavlOcMR5nzTLNYvp36X220/maaRsrec1G65A==}
@@ -21936,7 +22287,6 @@ packages:
 
   /mdn-data@2.0.30:
     resolution: {integrity: sha512-GaqWWShW4kv/G9IEucWScBx9G1/vsFZZJUO+tD26M8J8z3Kw5RDQjaoZe03YAClgeS/SWPOcb4nkFBTEi5DUEA==}
-    dev: true
 
   /mdn-data@2.0.4:
     resolution: {integrity: sha512-iV3XNKw06j5Q7mi6h+9vbx23Tv7JkjEVgKHW4pimwyDGWm0OIQntJJ+u1C6mg6mK1EaTv42XQ7w76yuzH7M2cA==}
@@ -22692,7 +23042,6 @@ packages:
     resolution: {integrity: sha512-tUpxzX0VAzJHjLu0xUfFv1gwVp9ba3IOuRAVH2EGuRW8a5emA2FlACLqiT/lDVtS1W+TGNwqz3sWaNyLgDJWuw==}
     dependencies:
       brace-expansion: 1.1.11
-    dev: true
 
   /minimatch@3.1.2:
     resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
@@ -23120,7 +23469,7 @@ packages:
       - supports-color
     dev: true
 
-  /ng-packagr@16.2.3(@angular/compiler-cli@17.0.0-rc.1)(tslib@2.6.2)(typescript@5.2.2):
+  /ng-packagr@16.2.3(@angular/compiler-cli@17.0.0-rc.2)(tslib@2.6.2)(typescript@5.2.2):
     resolution: {integrity: sha512-VTJ7Qtge52+1subkhmF5nOqLNbVutA8/igJ0A5vH6Mgpb8Z/3HeZomtD1SHzZF5Dqp+p+QPHE548FWYu1MdMSQ==}
     engines: {node: ^16.14.0 || >=18.10.0}
     hasBin: true
@@ -23133,7 +23482,7 @@ packages:
       tailwindcss:
         optional: true
     dependencies:
-      '@angular/compiler-cli': 17.0.0-rc.1(@angular/compiler@17.0.0-rc.1)(typescript@5.2.2)
+      '@angular/compiler-cli': 17.0.0-rc.2(@angular/compiler@17.0.0-rc.1)(typescript@5.2.2)
       '@rollup/plugin-json': 6.0.1(rollup@3.29.4)
       '@rollup/plugin-node-resolve': 15.2.3(rollup@3.29.4)
       ajv: 8.12.0
@@ -23166,6 +23515,50 @@ packages:
       - supports-color
     dev: true
 
+  /ngxtension@0.14.1(@angular/common@16.2.12)(@angular/core@16.2.11)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1):
+    resolution: {integrity: sha512-aSRdajOzEWSF6YbZEMrqTjoE/Pc0kB2aXFaBzhDcRJNSyuOLDA1/+aQiW1A4JJy29yFaUQYQ7xc1xLWdkFE+8Q==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      '@angular/common': ^16.0.0
+      '@angular/core': ^16.0.0
+      '@use-gesture/vanilla': ^10.0.0
+      rxjs: ^6.0.0 || ^7.0.0
+    dependencies:
+      '@angular/common': 16.2.12(@angular/core@16.2.11)(rxjs@7.8.1)
+      '@angular/core': 16.2.11(rxjs@7.8.1)(zone.js@0.13.3)
+      '@nx/devkit': 16.10.0(nx@16.5.2)
+      '@use-gesture/vanilla': 10.3.0
+      nx: 16.5.2
+      rxjs: 7.8.1
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - '@swc-node/register'
+      - '@swc/core'
+      - debug
+    dev: false
+
+  /ngxtension@0.14.1(@angular/common@17.0.0-rc.1)(@angular/core@17.0.0-rc.1)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1):
+    resolution: {integrity: sha512-aSRdajOzEWSF6YbZEMrqTjoE/Pc0kB2aXFaBzhDcRJNSyuOLDA1/+aQiW1A4JJy29yFaUQYQ7xc1xLWdkFE+8Q==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      '@angular/common': ^16.0.0
+      '@angular/core': ^16.0.0
+      '@use-gesture/vanilla': ^10.0.0
+      rxjs: ^6.0.0 || ^7.0.0
+    dependencies:
+      '@angular/common': 17.0.0-rc.1(@angular/core@17.0.0-rc.1)(rxjs@7.8.1)
+      '@angular/core': 17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.2)
+      '@nx/devkit': 16.10.0(nx@16.5.2)
+      '@use-gesture/vanilla': 10.3.0
+      nx: 16.5.2
+      rxjs: 7.8.1
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - '@swc-node/register'
+      - '@swc/core'
+      - debug
+    dev: false
+
   /nice-napi@1.0.2:
     resolution: {integrity: sha512-px/KnJAJZf5RuBGcfD+Sp2pAKq0ytz8j+1NehvgIGFkvtvFrDM3T8E4x/JJODXK9WZow8RRGrbA9QQ3hs+pDhA==}
     os: ['!win32']
@@ -23193,7 +23586,6 @@ packages:
 
   /node-addon-api@3.2.1:
     resolution: {integrity: sha512-mmcei9JghVNDYydghQmeDX8KoAm0FAiYyIcUt/N4nhyAipB17pllZQDOJD2fotxABnt4Mdz+dKTO7eftLg4d0A==}
-    dev: true
 
   /node-dir@0.1.17:
     resolution: {integrity: sha512-tmPX422rYgofd4epzrNoOXiE8XFZYOcCq1vD7MAXCDO+O+zndlA2ztdKKMa+EeuBG5tHETpr4ml4RGgpqDCCAg==}
@@ -23239,7 +23631,6 @@ packages:
   /node-gyp-build@4.6.1:
     resolution: {integrity: sha512-24vnklJmyRS8ViBNI8KbtK/r/DmXQMRiOMXTNz2nrTnAYUwjmEEbnnpB/+kt+yWRv73bPsSPRFddrcIbAxSiMQ==}
     hasBin: true
-    dev: true
 
   /node-gyp@10.0.0:
     resolution: {integrity: sha512-LkaKUbjyacJGRHiuhUeUblzZNxTF1/XNooyAl6aiaJ6ZpeurR4Mk9sjxncGNSI7pETqyqM+hLAER0788oSxt0A==}
@@ -23698,7 +24089,6 @@ packages:
       '@nx/nx-win32-x64-msvc': 16.5.2
     transitivePeerDependencies:
       - debug
-    dev: true
 
   /ob1@0.73.10:
     resolution: {integrity: sha512-aO6EYC+QRRCkZxVJhCWhLKgVjhNuD6Gu1riGjxrIm89CqLsmKgxzYDDEsktmKsoDeRdWGQM5EdMzXDl5xcVfsw==}
@@ -24373,7 +24763,6 @@ packages:
       '@types/estree': 1.0.3
       estree-walker: 3.0.3
       is-reference: 3.0.2
-    dev: true
 
   /picocolors@0.2.1:
     resolution: {integrity: sha512-cMlDqaLEqfSaW8Z7N5Jw+lyIW869EzT73/F5lhtY9cLGoVxSXznfgfXMO0Z5K0o0Q2TkTXq+0KFsdnSe3jDViA==}
@@ -27916,7 +28305,6 @@ packages:
     hasBin: true
     dependencies:
       lru-cache: 6.0.0
-    dev: true
 
   /semver@7.5.4:
     resolution: {integrity: sha512-1bCSESV6Pv+i21Hvpxp3Dx+pSD8lIPt8uVjRrxAUt/nbswYc+tK6Y2btiULjd4+fnq15PX+nqQDC7Oft7WkwcA==}
@@ -28932,7 +29320,6 @@ packages:
       duplexer: 0.1.2
       minimist: 1.2.8
       through: 2.3.8
-    dev: true
 
   /structured-headers@0.4.1:
     resolution: {integrity: sha512-0MP/Cxx5SzeeZ10p/bZI0S6MpgD+yxAhi1BOQ34jgnMXsCq3j1t6tQnZu+KdlL7dvJTLT3g9xN8tl10TqgFMcg==}
@@ -29201,7 +29588,6 @@ packages:
       locate-character: 3.0.0
       magic-string: 0.30.5
       periscopic: 3.1.0
-    dev: true
 
   /svg-parser@2.0.4:
     resolution: {integrity: sha512-e4hG1hRwoOdRb37cIMSgzNsxyzKfayW6VOflrwvR+/bzrkyxY/31WkbgnQpgtrNp1SdpJvpUAGTa/ZoiPNDuRQ==}
@@ -29317,7 +29703,6 @@ packages:
       fs-constants: 1.0.0
       inherits: 2.0.4
       readable-stream: 3.6.2
-    dev: true
 
   /tar@6.1.11:
     resolution: {integrity: sha512-an/KZQzQUkZCkuoAA64hM92X0Urb6VpRhAFllDzz44U2mcD5scmT3zBc4VgVpkugF580+DQn8eAFSyoQt0tznA==}
@@ -29627,7 +30012,6 @@ packages:
     engines: {node: '>=8.17.0'}
     dependencies:
       rimraf: 3.0.2
-    dev: true
 
   /tmpl@1.0.5:
     resolution: {integrity: sha512-3f0uOEAQwIqGuWW2MVzYg8fV/QNnc/IpuJNG837rLuczAaLVHslWHZQj4IGiEl5Hs3kkbhwL9Ab7Hrsmuj+Smw==}
@@ -29794,14 +30178,12 @@ packages:
       json5: 2.2.3
       minimist: 1.2.8
       strip-bom: 3.0.0
-    dev: true
 
   /tslib@1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
 
   /tslib@2.5.2:
     resolution: {integrity: sha512-5svOrSA2w3iGFDs1HibEVBGbDrAY82bFQ3HZ3ixB+88nsbsWQoKqDRb5UBYAUPEzbBn6dAp5gRNXglySbx1MlA==}
-    dev: true
 
   /tslib@2.6.1:
     resolution: {integrity: sha512-t0hLfiEKfMUoqhG+U1oid7Pva4bbDPHYfJNiB7BiIjRkj1pyC++4N3huJfqY6aRH6VTB0rvtzQwjM4K6qpfOig==}
@@ -29876,7 +30258,6 @@ packages:
     dependencies:
       tslib: 1.14.1
       typescript: 5.2.2
-    dev: false
 
   /tty-browserify@0.0.0:
     resolution: {integrity: sha512-JVa5ijo+j/sOoHGjw0sxw734b1LhBkQ3bvUGNdxnVXDCX81Yx7TFgnZygxrIIWn23hbfTaMYLwRmAxFyDuFmIw==}
@@ -30428,7 +30809,7 @@ packages:
       mlly: 1.4.2
       pathe: 1.1.1
       picocolors: 1.0.0
-      vite: 4.4.11(@types/node@18.18.0)
+      vite: 4.5.0(@types/node@18.18.0)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -30480,6 +30861,25 @@ packages:
       vitefu: 0.2.5(vite@4.4.11)
     transitivePeerDependencies:
       - supports-color
+
+  /vite-plugin-solid@2.7.2(solid-js@1.8.1)(vite@4.5.0):
+    resolution: {integrity: sha512-GV2SMLAibOoXe76i02AsjAg7sbm/0lngBlERvJKVN67HOrJsHcWgkt0R6sfGLDJuFkv2aBe14Zm4vJcNME+7zw==}
+    peerDependencies:
+      solid-js: ^1.7.2
+      vite: ^3.0.0 || ^4.0.0
+    dependencies:
+      '@babel/core': 7.23.2
+      '@babel/preset-typescript': 7.23.2(@babel/core@7.23.2)
+      '@types/babel__core': 7.20.3
+      babel-preset-solid: 1.8.2(@babel/core@7.23.2)
+      merge-anything: 5.1.7
+      solid-js: 1.8.1
+      solid-refresh: 0.5.3(solid-js@1.8.1)
+      vite: 4.5.0(@types/node@18.18.0)
+      vitefu: 0.2.5(vite@4.5.0)
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /vite@4.4.11(@types/node@18.18.0):
     resolution: {integrity: sha512-ksNZJlkcU9b0lBwAGZGGaZHCMqHsc8OpgtoYhsQ4/I2v5cnpmmmqe5pM4nv/4Hn6G/2GhTdj0DhZh2e+Er1q5A==}
@@ -30555,6 +30955,42 @@ packages:
       fsevents: 2.3.3
     dev: true
 
+  /vite@4.5.0(@types/node@18.18.0):
+    resolution: {integrity: sha512-ulr8rNLA6rkyFAlVWw2q5YJ91v098AFQ2R0PRFwPzREXOUJQPtFUG0t+/ZikhaOCDqFoDhN6/v8Sq0o4araFAw==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': '>= 14'
+      less: '*'
+      lightningcss: ^1.21.0
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      lightningcss:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      '@types/node': 18.18.0
+      esbuild: 0.18.20
+      postcss: 8.4.31
+      rollup: 3.29.4
+    optionalDependencies:
+      fsevents: 2.3.3
+    dev: true
+
   /vitefu@0.2.5(vite@4.4.11):
     resolution: {integrity: sha512-SgHtMLoqaeeGnd2evZ849ZbACbnwQCIwRH57t18FxcXoZop0uQu0uzlIhJBlF/eWVzuce0sHeqPcDo+evVcg8Q==}
     peerDependencies:
@@ -30564,6 +31000,17 @@ packages:
         optional: true
     dependencies:
       vite: 4.4.11(@types/node@18.18.0)
+
+  /vitefu@0.2.5(vite@4.5.0):
+    resolution: {integrity: sha512-SgHtMLoqaeeGnd2evZ849ZbACbnwQCIwRH57t18FxcXoZop0uQu0uzlIhJBlF/eWVzuce0sHeqPcDo+evVcg8Q==}
+    peerDependencies:
+      vite: ^3.0.0 || ^4.0.0 || ^5.0.0
+    peerDependenciesMeta:
+      vite:
+        optional: true
+    dependencies:
+      vite: 4.5.0(@types/node@18.18.0)
+    dev: true
 
   /vitest@0.34.6(jsdom@22.1.0):
     resolution: {integrity: sha512-+5CALsOvbNKnS+ZHMXtuUC7nL8/7F1F2DnHGjSsszX8zCjWSSviphCb/NuS9Nzf4Q03KyyDRBAXhF/8lffME4Q==}
@@ -31859,5 +32306,10 @@ packages:
 
   /zone.js@0.14.1:
     resolution: {integrity: sha512-R3t9Nwl/LJnnpmwx0+Q7YcHtE6xUObnowwNskWCiqEMQXYYlkZiOOhF+N2R18PMILv8+fbzCLKAJvpvyxzafpQ==}
+    dependencies:
+      tslib: 2.6.2
+
+  /zone.js@0.14.2:
+    resolution: {integrity: sha512-X4U7J1isDhoOmHmFWiLhloWc2lzMkdnumtfQ1LXzf/IOZp5NQYuMUTaviVzG/q1ugMBIXzin2AqeVJUoSEkNyQ==}
     dependencies:
       tslib: 2.6.2

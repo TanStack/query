@@ -7,7 +7,6 @@ import {
   signal,
 } from '@angular/core'
 import { notifyManager } from '@tanstack/query-core'
-import { QueryClientService } from './QueryClientService'
 import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
 import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
 
@@ -30,17 +29,13 @@ export function createBaseQuery<
     TQueryKey
   >,
   Observer: typeof QueryObserver,
-  queryClient?: QueryClient,
+  queryClient: QueryClient,
 ): CreateBaseQueryResult<TData, TError> {
   assertInInjectionContext(createBaseQuery)
-  /** Load query client */
-  if (!queryClient) {
-    queryClient = inject(QueryClientService).useQueryClient()
-  }
 
   /** Creates a signal that has the default options applied */
   const defaultedOptionsSignal = computed(() => {
-    const defaultedOptions = queryClient!.defaultQueryOptions(options())
+    const defaultedOptions = queryClient.defaultQueryOptions(options())
     defaultedOptions._optimisticResults = 'optimistic'
     return defaultedOptions
   })

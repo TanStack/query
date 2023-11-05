@@ -1,7 +1,7 @@
 import { AngularQueryDevtoolsComponent } from '@tanstack/angular-query-devtools-experimental'
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
+import { ChangeDetectionStrategy, Component } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { CreateQuery } from '@tanstack/angular-query-experimental'
+import { injectQuery } from '@tanstack/angular-query-experimental'
 import axios from 'axios'
 
 type Response = {
@@ -33,7 +33,7 @@ type Response = {
   imports: [AngularQueryDevtoolsComponent, CommonModule],
 })
 export class SimpleExampleComponent {
-  query = inject(CreateQuery)(() => ({
+  query = injectQuery(() => ({
     queryKey: ['repoData'],
     queryFn: () =>
       axios

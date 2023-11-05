@@ -1,16 +1,14 @@
+import { TanstackQueryDevtools } from '@tanstack/query-devtools'
 import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  Inject,
   Input,
-  Optional,
   ViewChild,
   booleanAttribute,
 } from '@angular/core'
-import { TanstackQueryDevtools } from '@tanstack/query-devtools'
 import {
-  UseQueryClient,
+  injectQueryClient,
   onlineManager,
 } from '@tanstack/angular-query-experimental'
 import type { QueryClient } from '@tanstack/angular-query-experimental'
@@ -33,15 +31,14 @@ type DevToolsErrorType = DevToolsErrorTypeOriginal
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AngularQueryDevtoolsComponent implements AfterViewInit, OnDestroy {
-  readonly #injectedClient: QueryClient | undefined
+  readonly #injectedClient: QueryClient | null
+  #clientFromAttribute: QueryClient | null = null
   #devtools: TanstackQueryDevtools | undefined
 
-  constructor(
-    @Optional() @Inject(UseQueryClient) queryClient: QueryClient | undefined,
-  ) {
-    if (queryClient) {
-      this.#injectedClient = queryClient
-    }
+  constructor() {
+    this.#injectedClient = injectQueryClient({
+      optional: true,
+    })
   }
 
   @ViewChild('ref') ref!: ElementRef
@@ -94,11 +91,8 @@ export class AngularQueryDevtoolsComponent implements AfterViewInit, OnDestroy {
    */
   @Input()
   set client(client: QueryClient | undefined) {
-    if (!client) return
-    this.#devtools?.setClient(client)
-  }
-  get client(): QueryClient | undefined {
-    return this.#injectedClient
+    this.#clientFromAttribute = client ?? null
+    this.#devtools?.setClient(this.#getAppliedQueryClient())
   }
 
   #errorTypes: Array<DevToolsErrorType> = []
@@ -115,12 +109,7 @@ export class AngularQueryDevtoolsComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    const client = this.client || this.#injectedClient
-    if (!client) {
-      throw new Error(
-        `No query client found. Make sure to call provideAngularQuery or use the client attribute on <angular-query-devtools>`,
-      )
-    }
+    const client = this.#getAppliedQueryClient()
 
     const { buttonPosition, position, initialIsOpen, errorTypes } = this
     this.#devtools = new TanstackQueryDevtools({
@@ -138,5 +127,14 @@ export class AngularQueryDevtoolsComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.#devtools?.unmount()
+  }
+
+  #getAppliedQueryClient() {
+    if (!this.#clientFromAttribute && !this.#injectedClient) {
+      throw new Error(
+        `You must either provide a client via 'provideAngularQuery' or pass it to the 'client' attribute of angular-query-devtools.`,
+      )
+    }
+    return this.#clientFromAttribute ?? this.#injectedClient!
   }
 }

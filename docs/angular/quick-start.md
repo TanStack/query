@@ -17,7 +17,7 @@ bootstrapApplication(AppComponent, {
 })
 ```
 
-### Component with signals, query and mutation
+### Component with query and mutation
 
 ```typescript
 import {
@@ -53,22 +53,17 @@ export class TodosComponent {
   // Access the client
   useQueryClient = inject(UseQueryClient)
 
-  // Signals
-  queryOptions = signal({ queryKey: ['todos'], queryFn: getTodos })
+  // Queries
+  query = this.createQuery({ queryKey: ['todos'], queryFn: getTodos })
 
-  mutationOptions = signal({
+  // Mutations
+  mutation = this.createMutation({
     mutationFn: postTodo,
     onSuccess: () => {
       // Invalidate and refetch
       this.useQueryClient.invalidateQueries({ queryKey: ['todos'] })
     },
   })
-
-  // Queries
-  query = this.createQuery(this.queryOptions)
-
-  // Mutations
-  mutation = this.createMutation(this.mutationOptions)
 
   onAddTodo() {
     this.mutation().mutate({

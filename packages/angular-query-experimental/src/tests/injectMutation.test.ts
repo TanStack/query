@@ -2,10 +2,10 @@ import { TestBed, fakeAsync, flush } from '@angular/core/testing'
 import { QueryClient } from '@tanstack/query-core'
 import { vi } from 'vitest'
 import { expect } from 'vitest'
-import { createMutation } from '../createMutation'
+import { injectMutation } from '../injectMutation'
 import { provideAngularQuery } from '../providers'
 
-describe('CreateMutation', () => {
+describe('injectMutation', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [provideAngularQuery(new QueryClient())],
@@ -16,7 +16,7 @@ describe('CreateMutation', () => {
     const mutationFn = vi.fn()
 
     const mutation = TestBed.runInInjectionContext(() => {
-      return createMutation(() => ({
+      return injectMutation(() => ({
         mutationFn,
       }))
     })
@@ -25,25 +25,6 @@ describe('CreateMutation', () => {
       par1: 'par1',
     })
 
-    flush()
-    expect(mutation().status).toBe('pending')
-  }))
-
-  it('should allow passing a different queryClient', fakeAsync(() => {
-    const mutationFn = vi.fn()
-    const queryClient = new QueryClient({
-      defaultOptions: {
-        mutations: {
-          mutationFn,
-        },
-      },
-    })
-
-    const mutation = TestBed.runInInjectionContext(() => {
-      return createMutation(() => ({}), queryClient)
-    })
-
-    mutation().mutate()
     flush()
     expect(mutation().status).toBe('pending')
   }))

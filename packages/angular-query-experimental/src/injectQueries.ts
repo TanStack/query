@@ -1,12 +1,21 @@
 import { QueriesObserver, notifyManager } from '@tanstack/query-core'
-import { DestroyRef, computed, effect, inject, signal } from '@angular/core'
-import { QueryClientService } from './QueryClientService'
+import {
+  DestroyRef,
+  Injector,
+  assertInInjectionContext,
+  computed,
+  effect,
+  inject,
+  runInInjectionContext,
+  signal,
+} from '@angular/core'
+import { injectQuery } from './injectQuery'
+import { QUERY_CLIENT } from './injectQueryClient'
 import type { Signal } from '@angular/core'
 import type {
   DefaultError,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
-  QueryClient,
   QueryFunction,
   QueryKey,
   QueryObserverOptions,
@@ -179,7 +188,7 @@ export type QueriesResults<
   : // Fallback
     Array<QueryObserverResult>
 
-export function createQueries<
+export function injectQueries<
   T extends Array<any>,
   TCombinedResult = QueriesResults<T>,
 >(
@@ -190,44 +199,47 @@ export function createQueries<
     queries: Signal<[...QueriesOptions<T>]>
     combine?: (result: QueriesResults<T>) => TCombinedResult
   },
-  queryClient?: QueryClient,
+  injector?: Injector,
 ): Signal<TCombinedResult> {
-  const client = inject(QueryClientService).useQueryClient(queryClient)
-  // const isRestoring = useIsRestoring()
+  !injector && assertInInjectionContext(injectQuery)
+  const assertedInjector = injector ?? inject(Injector)
+  return runInInjectionContext(assertedInjector, () => {
+    const queryClient = inject(QUERY_CLIENT)
 
-  // const queriesStore = isSvelteStore(queries) ? queries : readable(queries)
+    const defaultedQueries = computed(() => {
+      return queries().map((opts) => {
+        const defaultedOptions = queryClient.defaultQueryOptions(opts)
+        // Make sure the results are already in fetching state before subscribing or updating options
+        defaultedOptions._optimisticResults = 'optimistic'
 
-  const defaultedQueries = computed(() => {
-    return queries().map((opts) => {
-      const defaultedOptions = client.defaultQueryOptions(opts)
-      // Make sure the results are already in fetching state before subscribing or updating options
-      defaultedOptions._optimisticResults = 'optimistic'
-
-      return defaultedOptions
+        return defaultedOptions
+      })
     })
-  })
 
-  const observer = new QueriesObserver<TCombinedResult>(
-    client,
-    defaultedQueries(),
-    options as QueriesObserverOptions<TCombinedResult>,
-  )
-
-  // Do not notify on updates because of changes in the options because
-  // these changes should already be reflected in the optimistic result.
-  effect(() => {
-    observer.setQueries(
+    const observer = new QueriesObserver<TCombinedResult>(
+      queryClient,
       defaultedQueries(),
       options as QueriesObserverOptions<TCombinedResult>,
-      { listeners: false },
     )
+
+    // Do not notify on updates because of changes in the options because
+    // these changes should already be reflected in the optimistic result.
+    effect(() => {
+      observer.setQueries(
+        defaultedQueries(),
+        options as QueriesObserverOptions<TCombinedResult>,
+        { listeners: false },
+      )
+    })
+
+    const [, getCombinedResult] = observer.getOptimisticResult(
+      defaultedQueries(),
+    )
+
+    const result = signal(getCombinedResult() as any)
+    const unsubscribe = observer.subscribe(notifyManager.batchCalls(result.set))
+    const destroyRef = inject(DestroyRef)
+    destroyRef.onDestroy(unsubscribe)
+    return result
   })
-
-  const [, getCombinedResult] = observer.getOptimisticResult(defaultedQueries())
-
-  const result = signal(getCombinedResult() as any)
-  const unsubscribe = observer.subscribe(notifyManager.batchCalls(result.set))
-  const destroyRef = inject(DestroyRef)
-  destroyRef.onDestroy(unsubscribe)
-  return result
 }

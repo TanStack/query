@@ -5,13 +5,12 @@ import {
   EventEmitter,
   Input,
   Output,
-  inject,
   signal,
 } from '@angular/core'
 import { CommonModule, NgIf } from '@angular/common'
 import {
-  CreateQuery,
-  UseQueryClient,
+  injectQuery,
+  injectQueryClient,
 } from '@tanstack/angular-query-experimental'
 import axios from 'axios'
 
@@ -56,7 +55,7 @@ export class PostComponent {
     this.postIdSignal.set(value)
   }
   postIdSignal = signal<number>(0)
-  postQuery = inject(CreateQuery)(() => ({
+  postQuery = injectQuery(() => ({
     enabled: this.postIdSignal() > 0,
     queryKey: ['post', this.postIdSignal()],
     queryFn: async (): Promise<Post> => {
@@ -67,7 +66,7 @@ export class PostComponent {
     },
   }))
 
-  queryClient = inject(UseQueryClient)
+  queryClient = injectQueryClient()
 }
 
 @Component({
@@ -108,7 +107,7 @@ export class PostComponent {
 export class PostsComponent {
   @Output() setPostId = new EventEmitter<number>()
 
-  postsQuery = inject(CreateQuery)(() => ({
+  postsQuery = injectQuery(() => ({
     queryKey: ['posts'],
     queryFn: async (): Promise<Array<Post>> => {
       const { data } = await axios.get(
@@ -118,7 +117,7 @@ export class PostsComponent {
     },
   }))
 
-  queryClient = inject(UseQueryClient)
+  queryClient = injectQueryClient()
 }
 
 @Component({

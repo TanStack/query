@@ -1,6 +1,13 @@
+import {
+  assertInInjectionContext,
+  inject,
+  runInInjectionContext,
+} from '@angular/core'
 import { QueryObserver } from '@tanstack/query-core'
+import { Injector } from '@angular/core'
 import { createBaseQuery } from './createBaseQuery'
-import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
+import { QUERY_CLIENT } from './injectQueryClient'
+import type { DefaultError, QueryKey } from '@tanstack/query-core'
 import type {
   CreateQueryOptions,
   CreateQueryResult,
@@ -15,9 +22,9 @@ import type {
 /**
  * Create a Query.
  * @param options
- * @param queryClient
+ * @param injector
  */
-export function createQuery<
+export function injectQuery<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -29,10 +36,10 @@ export function createQuery<
     TData,
     TQueryKey
   >,
-  queryClient?: QueryClient,
+  injector?: Injector,
 ): CreateQueryResult<TData, TError>
 
-export function createQuery<
+export function injectQuery<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -44,17 +51,22 @@ export function createQuery<
     TData,
     TQueryKey
   >,
-  queryClient?: QueryClient,
+  injector?: Injector,
 ): DefinedCreateQueryResult<TData, TError>
 
-export function createQuery<
+export function injectQuery<
   TQueryFnData,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: () => CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  queryClient?: QueryClient,
+  injector?: Injector,
 ) {
-  return createBaseQuery(options, QueryObserver, queryClient)
+  !injector && assertInInjectionContext(injectQuery)
+  const assertedInjector = injector ?? inject(Injector)
+  return runInInjectionContext(assertedInjector, () => {
+    const queryClient = inject(QUERY_CLIENT)
+    return createBaseQuery(options, QueryObserver, queryClient)
+  })
 }

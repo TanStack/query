@@ -13,9 +13,9 @@
   "license": "MIT",
   "dependencies": {
     "@angular/common": "^16.2.11",
-    "@angular/compiler": "^16.2.11",
+    "@angular/compiler": "^16.2.12",
     "@angular/core": "^16.2.11",
-    "@angular/platform-browser": "^16.2.11",
+    "@angular/platform-browser": "^16.2.12",
     "@tanstack/angular-query-experimental": "^5.4.3",
     "@tanstack/angular-query-devtools-experimental": "^5.4.3",
     "axios": "^1.4.0",
@@ -24,6 +24,6 @@
   },
   "devDependencies": {
     "typescript": "^5.2.2",
-    "vite": "^4.4.4"
+    "vite": "^4.5.0"
   }
 }
