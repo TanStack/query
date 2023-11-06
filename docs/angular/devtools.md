@@ -1,8 +1,6 @@
 ---
 id: devtools
 title: Devtools
-ref: docs/react/devtools.md
-replace: { 'React': 'Angular' }
 ---
 
 ## Install and Import the Devtools
@@ -12,36 +10,35 @@ The devtools are a separate package that you need to install:
 ```bash
 $ npm i @tanstack/angular-query-devtools-experimental
 # or
-$ pnpm add @tanstack/react-query-devtools-experimental
+$ pnpm add @tanstack/angular-query-devtools-experimental
 # or
-$ yarn add @tanstack/react-query-devtools-experimental
+$ yarn add @tanstack/angular-query-devtools-experimental
 ```
 
 You can import the devtools like this:
 
-```tsx
+```typescript
 import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
 ```
-
-By default, React Query Devtools are only included in bundles when `process.env.NODE_ENV === 'development'`, so you don't need to worry about excluding them during a production build.
 
 ## Floating Mode
 
 Floating Mode will mount the devtools as a fixed, floating element in your app and provide a toggle in the corner of the screen to show and hide the devtools. This toggle state will be stored and remembered in localStorage across reloads.
 
-Place the following code as high in your React app as you can. The closer it is to the root of the page, the better it will work!
+Place the following code as high in your Angular app as you can. The closer it is to the root of the page, the better it will work!
 
-```tsx
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+```typescript
+import { AngularQueryDevtoolsComponent } from '@tanstack/angular-query-devtools-experimental'
+import { Component } from '@angular/core';
 
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      {/* The rest of your application */}
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
-  )
-}
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [AngularQueryDevtoolsComponent],
+  template: `
+   <angular-query-devtools initialIsOpen />
+  `,
+})
 ```
 
 ### Options
@@ -50,71 +47,9 @@ function App() {
   - Set this `true` if you want the dev tools to default to being open
 - `buttonPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right"`
   - Defaults to `bottom-left`
-  - The position of the React Query logo to open and close the devtools panel
+  - The position of the TanStack logo to open and close the devtools panel
 - `position?: "top" | "bottom" | "left" | "right"`
   - Defaults to `bottom`
-  - The position of the React Query devtools panel
+  - The position of the Angular Query devtools panel
 - `client?: QueryClient`,
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
-- `errorTypes?: { name: string; initializer: (query: Query) => TError}`
-  - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
-
-## Devtools in production
-
-Devtools are excluded in production builds. However, it might be desirable to lazy load the devtools in production:
-
-```tsx
-import * as React from 'react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { Example } from './Example'
-
-const queryClient = new QueryClient()
-
-const ReactQueryDevtoolsProduction = React.lazy(() =>
-  import('@tanstack/react-query-devtools/build/modern/production.js').then(
-    (d) => ({
-      default: d.ReactQueryDevtools,
-    }),
-  ),
-)
-
-function App() {
-  const [showDevtools, setShowDevtools] = React.useState(false)
-
-  React.useEffect(() => {
-    // @ts-ignore
-    window.toggleDevtools = () => setShowDevtools((old) => !old)
-  }, [])
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Example />
-      <ReactQueryDevtools initialIsOpen />
-      {showDevtools && (
-        <React.Suspense fallback={null}>
-          <ReactQueryDevtoolsProduction />
-        </React.Suspense>
-      )}
-    </QueryClientProvider>
-  )
-}
-
-export default App
-```
-
-With this, calling `window.toggleDevtools()` will download the devtools bundle and show them.
-
-### Modern bundlers
-
-If your bundler supports package exports, you can use the following import path:
-
-```tsx
-const ReactQueryDevtoolsProduction = React.lazy(() =>
-  import('@tanstack/react-query-devtools/production').then((d) => ({
-    default: d.ReactQueryDevtools,
-  })),
-)
-```
-
-For TypeScript, you would need to set `moduleResolution: 'nodenext'` in your tsconfig, which requires at least TypeScript v4.7.

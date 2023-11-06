@@ -14,7 +14,7 @@ import {
 import type { QueryClient } from '@tanstack/angular-query-experimental'
 import type { AfterViewInit, OnDestroy } from '@angular/core'
 import type {
-  DevToolsErrorType as DevToolsErrorTypeOriginal,
+  // DevToolsErrorType as DevToolsErrorTypeOriginal,
   DevtoolsButtonPosition as DevtoolsButtonPositionOriginal,
   DevtoolsPosition as DevtoolsPositionOriginal,
 } from '@tanstack/query-devtools'
@@ -22,7 +22,7 @@ import type {
 // Alias types for decorators
 type DevtoolsButtonPosition = DevtoolsButtonPositionOriginal
 type DevtoolsPosition = DevtoolsPositionOriginal
-type DevToolsErrorType = DevToolsErrorTypeOriginal
+// type DevToolsErrorType = DevToolsErrorTypeOriginal
 
 @Component({
   selector: 'angular-query-devtools',
@@ -95,23 +95,24 @@ export class AngularQueryDevtoolsComponent implements AfterViewInit, OnDestroy {
     this.#devtools?.setClient(this.#getAppliedQueryClient())
   }
 
-  #errorTypes: Array<DevToolsErrorType> = []
+  // TODO: needs to tested. When re-adding don't forget to re-add to devtools.md too
+  // #errorTypes: Array<DevToolsErrorType> = []
   /**
    * Use this so you can define custom errors that can be shown in the devtools.
    */
-  @Input()
-  set errorTypes(value: Array<DevToolsErrorType>) {
-    this.#errorTypes = value
-    this.#devtools?.setErrorTypes(value)
-  }
-  get errorTypes(): Array<DevToolsErrorType> {
-    return this.#errorTypes
-  }
+  // @Input()
+  // set errorTypes(value: Array<DevToolsErrorType>) {
+  //   this.#errorTypes = value
+  //   this.#devtools?.setErrorTypes(value)
+  // }
+  // get errorTypes(): Array<DevToolsErrorType> {
+  //   return this.#errorTypes
+  // }
 
   ngAfterViewInit() {
     const client = this.#getAppliedQueryClient()
 
-    const { buttonPosition, position, initialIsOpen, errorTypes } = this
+    const { buttonPosition, position, initialIsOpen } = this
     this.#devtools = new TanstackQueryDevtools({
       client,
       queryFlavor: 'Angular Query',
@@ -120,7 +121,7 @@ export class AngularQueryDevtoolsComponent implements AfterViewInit, OnDestroy {
       buttonPosition,
       position,
       initialIsOpen,
-      errorTypes,
+      // errorTypes,
     })
     this.#devtools.mount(this.ref.nativeElement)
   }

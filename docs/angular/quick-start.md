@@ -1,9 +1,9 @@
 ---
 id: quick-start
 title: Quick Start
-ref: docs/react/quick-start.md
-replace: { 'React': 'Angular' }
 ---
+
+> VERY IMPORTANT: This library is currently in an experimental stage. This means that breaking changes will happen in minor AND patch releases. Use at your own risk. If you choose to rely on this in production in an experimental stage, please lock your version to a patch-level version to avoid unexpected breakages.
 
 [//]: # 'Example'
 
@@ -21,9 +21,9 @@ bootstrapApplication(AppComponent, {
 
 ```typescript
 import {
-  CreateMutation,
-  CreateQuery,
-  UseQueryClient,
+  injectMutation,
+  injectQuery,
+  injectQueryClient
 } from '@tanstack/angular-query-experimental'
 import { getTodos, postTodo } from '../my-api'
 
@@ -47,23 +47,20 @@ import { getTodos, postTodo } from '../my-api'
   `,
 })
 export class TodosComponent {
-  createQuery = inject(CreateQuery)
-  createMutation = inject(CreateMutation)
+  queryClient = injectQueryClient()
 
-  // Access the client
-  useQueryClient = inject(UseQueryClient)
+  query = injectQuery(() => ({
+    queryKey: ['todos'],
+    queryFn: getTodos
+  }))
 
-  // Queries
-  query = this.createQuery({ queryKey: ['todos'], queryFn: getTodos })
-
-  // Mutations
-  mutation = this.createMutation({
+  mutation = injectMutation(() => ({
     mutationFn: postTodo,
     onSuccess: () => {
       // Invalidate and refetch
-      this.useQueryClient.invalidateQueries({ queryKey: ['todos'] })
-    },
-  })
+      this.queryClient.invalidateQueries({ queryKey: ['todos'] })
+    }
+  }))
 
   onAddTodo() {
     this.mutation().mutate({
