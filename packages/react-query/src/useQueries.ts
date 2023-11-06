@@ -1,7 +1,11 @@
 'use client'
 import * as React from 'react'
 
-import { QueriesObserver, notifyManager } from '@tanstack/query-core'
+import {
+  QueriesObserver,
+  QueryObserver,
+  notifyManager,
+} from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
@@ -262,9 +266,9 @@ export function useQueries<
   const suspensePromises = shouldAtLeastOneSuspend
     ? optimisticResult.flatMap((result, index) => {
         const opts = defaultedQueries[index]
-        const queryObserver = observer.getObservers()[index]
 
-        if (opts && queryObserver) {
+        if (opts) {
+          const queryObserver = new QueryObserver(client, opts)
           if (shouldSuspend(opts, result, isRestoring)) {
             return fetchOptimistic(opts, queryObserver, errorResetBoundary)
           } else if (willFetch(result, isRestoring)) {

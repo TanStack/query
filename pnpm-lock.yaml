@@ -190,7 +190,7 @@ importers:
         version: 16.2.12(@angular/core@16.2.12)
       '@angular/core':
         specifier: ^16.2.12
-        version: 16.2.12(rxjs@7.8.1)(zone.js@0.14.1)
+        version: 16.2.12(rxjs@7.8.1)(zone.js@0.14.2)
       '@angular/language-service':
         specifier: ^16.2.12
         version: 16.2.12
@@ -211,29 +211,29 @@ importers:
         version: 7.8.1
       zone.js:
         specifier: ^0.14.0
-        version: 0.14.1
+        version: 0.14.2
     devDependencies:
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
       vite:
         specifier: ^4.4.4
-        version: 4.4.11(@types/node@18.18.0)
+        version: 4.5.0(@types/node@18.18.0)
 
   examples/angular/basic-http-client:
     dependencies:
       '@angular/common':
         specifier: ^16.2.8
-        version: 16.2.11(@angular/core@16.2.11)(rxjs@7.8.1)
+        version: 16.2.12(@angular/core@16.2.12)(rxjs@7.8.1)
       '@angular/compiler':
         specifier: ^16.2.8
-        version: 16.2.11(@angular/core@16.2.11)
+        version: 16.2.12(@angular/core@16.2.12)
       '@angular/core':
         specifier: ^16.2.8
-        version: 16.2.11(rxjs@7.8.1)(zone.js@0.14.1)
+        version: 16.2.12(rxjs@7.8.1)(zone.js@0.14.2)
       '@angular/platform-browser':
         specifier: ^16.2.8
-        version: 16.2.11(@angular/common@16.2.11)(@angular/core@16.2.11)
+        version: 16.2.12(@angular/common@16.2.12)(@angular/core@16.2.12)
       '@tanstack/angular-query-devtools-experimental':
         specifier: ^5.0.0-rc.14
         version: link:../../../packages/angular-query-devtools-experimental/build
@@ -245,32 +245,32 @@ importers:
         version: 7.8.1
       zone.js:
         specifier: ^0.14.0
-        version: 0.14.1
+        version: 0.14.2
     devDependencies:
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
       vite:
         specifier: ^4.4.4
-        version: 4.4.11(@types/node@18.18.0)
+        version: 4.5.0(@types/node@18.18.0)
 
   examples/angular/default-query-function:
     dependencies:
       '@angular/common':
         specifier: ^16.2.11
-        version: 16.2.11(@angular/core@16.2.11)(rxjs@7.8.1)
+        version: 16.2.12(@angular/core@16.2.12)(rxjs@7.8.1)
       '@angular/compiler':
         specifier: ^16.2.11
-        version: 16.2.11(@angular/core@16.2.11)
+        version: 16.2.12(@angular/core@16.2.12)
       '@angular/core':
         specifier: ^16.2.11
-        version: 16.2.11(rxjs@7.8.1)(zone.js@0.14.1)
+        version: 16.2.12(rxjs@7.8.1)(zone.js@0.14.2)
       '@angular/language-service':
         specifier: ^16.2.11
-        version: 16.2.11
+        version: 16.2.12
       '@angular/platform-browser':
         specifier: ^16.2.11
-        version: 16.2.11(@angular/common@16.2.11)(@angular/core@16.2.11)
+        version: 16.2.12(@angular/common@16.2.12)(@angular/core@16.2.12)
       '@tanstack/angular-query-devtools-experimental':
         specifier: ^5.4.3
         version: link:../../../packages/angular-query-devtools-experimental/build
@@ -285,29 +285,29 @@ importers:
         version: 7.8.1
       zone.js:
         specifier: ^0.14.0
-        version: 0.14.1
+        version: 0.14.2
     devDependencies:
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
       vite:
         specifier: ^4.4.4
-        version: 4.4.11(@types/node@18.18.0)
+        version: 4.5.0(@types/node@18.18.0)
 
   examples/angular/simple:
     dependencies:
       '@angular/common':
         specifier: ^16.2.11
-        version: 16.2.11(@angular/core@16.2.11)(rxjs@7.8.1)
+        version: 16.2.12(@angular/core@16.2.12)(rxjs@7.8.1)
       '@angular/compiler':
         specifier: ^16.2.12
-        version: 16.2.12(@angular/core@16.2.11)
+        version: 16.2.12(@angular/core@16.2.12)
       '@angular/core':
         specifier: ^16.2.11
-        version: 16.2.11(rxjs@7.8.1)(zone.js@0.14.1)
+        version: 16.2.12(rxjs@7.8.1)(zone.js@0.14.2)
       '@angular/platform-browser':
         specifier: ^16.2.12
-        version: 16.2.12(@angular/common@16.2.11)(@angular/core@16.2.11)
+        version: 16.2.12(@angular/common@16.2.12)(@angular/core@16.2.12)
       '@tanstack/angular-query-devtools-experimental':
         specifier: ^5.4.3
         version: link:../../../packages/angular-query-devtools-experimental/build
@@ -322,7 +322,7 @@ importers:
         version: 7.8.1
       zone.js:
         specifier: ^0.14.0
-        version: 0.14.1
+        version: 0.14.2
     devDependencies:
       typescript:
         specifier: ^5.2.2
@@ -341,10 +341,10 @@ importers:
         version: 4.17.1
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       algoliasearch:
         specifier: 4.17.1
         version: 4.17.1
@@ -357,7 +357,7 @@ importers:
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.0.0
-        version: 5.6.0(eslint@8.34.0)(typescript@5.1.6)
+        version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^18.2.31
         version: 18.2.31
@@ -378,10 +378,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -402,10 +402,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -418,7 +418,7 @@ importers:
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.0.0
-        version: 5.6.0(eslint@8.34.0)(typescript@5.2.2)
+        version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-react':
         specifier: ^4.0.0
         version: 4.0.0(vite@4.4.11)
@@ -430,10 +430,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       graphql:
         specifier: ^16.6.0
         version: 16.8.1
@@ -458,16 +458,16 @@ importers:
     dependencies:
       '@tanstack/query-sync-storage-persister':
         specifier: ^5.0.0
-        version: 5.7.2
+        version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-persist-client
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -480,7 +480,7 @@ importers:
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.0.0
-        version: 5.6.0(eslint@8.34.0)(typescript@5.1.6)
+        version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^18.2.31
         version: 18.2.31
@@ -507,10 +507,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -532,10 +532,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -559,10 +559,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -586,10 +586,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       ky:
         specifier: ^0.33.3
         version: 0.33.3
@@ -616,13 +616,13 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-next-experimental':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(next@14.0.0)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-next-experimental
       next:
         specifier: ^14.0.0
         version: 14.0.0(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
@@ -650,19 +650,19 @@ importers:
     dependencies:
       '@tanstack/query-sync-storage-persister':
         specifier: ^5.0.0
-        version: 5.7.2
+        version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-location':
         specifier: ^3.7.0
         version: 3.7.0(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-persist-client
       ky:
         specifier: ^0.33.3
         version: 0.33.3
@@ -690,10 +690,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -727,10 +727,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -764,10 +764,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -788,10 +788,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -810,10 +810,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -843,10 +843,10 @@ importers:
         version: 6.3.16(@react-navigation/native@6.1.6)(react-native-gesture-handler@2.9.0)(react-native-safe-area-context@4.5.0)(react-native-screens@3.20.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       expo:
         specifier: ^48.0.17
         version: 48.0.17(@babel/core@7.21.8)
@@ -916,10 +916,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       localforage:
         specifier: ^1.10.0
         version: 1.10.0
@@ -968,10 +968,10 @@ importers:
         version: 5.13.2(@types/react@18.2.31)(react@18.2.0)
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -996,10 +996,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -1033,10 +1033,10 @@ importers:
         version: 5.13.2(@types/react@18.2.31)(react@18.2.0)
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -1061,10 +1061,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+        version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0)
+        version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -1089,10 +1089,10 @@ importers:
     dependencies:
       '@tanstack/solid-query':
         specifier: ^5.0.0
-        version: 5.7.2(solid-js@1.8.1)
+        version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.2(@tanstack/solid-query@5.7.2)(solid-js@1.8.1)
+        version: link:../../../packages/solid-query-devtools
       graphql:
         specifier: ^16.8.1
         version: 16.8.1
@@ -1117,10 +1117,10 @@ importers:
     dependencies:
       '@tanstack/solid-query':
         specifier: ^5.0.0
-        version: 5.7.2(solid-js@1.8.1)
+        version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.2(@tanstack/solid-query@5.7.2)(solid-js@1.8.1)
+        version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.1
         version: 1.8.1
@@ -1139,10 +1139,10 @@ importers:
     dependencies:
       '@tanstack/solid-query':
         specifier: ^5.0.0
-        version: 5.7.2(solid-js@1.8.1)
+        version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.2(@tanstack/solid-query@5.7.2)(solid-js@1.8.1)
+        version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.1
         version: 1.8.1
@@ -1161,17 +1161,17 @@ importers:
     dependencies:
       '@tanstack/solid-query':
         specifier: ^5.0.0
-        version: 5.7.2(solid-js@1.8.1)
+        version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.2(@tanstack/solid-query@5.7.2)(solid-js@1.8.1)
+        version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.1
         version: 1.8.1
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.0.0
-        version: 5.6.0(eslint@8.34.0)(typescript@5.2.2)
+        version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
@@ -1192,10 +1192,10 @@ importers:
         version: 0.8.3(solid-js@1.8.1)
       '@tanstack/solid-query':
         specifier: ^5.0.0
-        version: 5.7.2(solid-js@1.8.1)
+        version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
         specifier: ^5.0.0
-        version: 5.7.2(@tanstack/solid-query@5.7.2)(solid-js@1.8.1)
+        version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.1
         version: 1.8.1
@@ -1229,10 +1229,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: 5.6.1(svelte@4.0.0)
+        version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: 5.6.1(@tanstack/svelte-query@5.6.1)(svelte@4.0.0)
+        version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1257,10 +1257,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: 5.6.1(svelte@4.0.0)
+        version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: 5.6.1(@tanstack/svelte-query@5.6.1)(svelte@4.0.0)
+        version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1285,10 +1285,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: 5.6.1(svelte@4.0.0)
+        version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: 5.6.1(@tanstack/svelte-query@5.6.1)(svelte@4.0.0)
+        version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1313,10 +1313,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: 5.6.1(svelte@4.0.0)
+        version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: 5.6.1(@tanstack/svelte-query@5.6.1)(svelte@4.0.0)
+        version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1341,10 +1341,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: 5.6.1(svelte@4.0.0)
+        version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: 5.6.1(@tanstack/svelte-query@5.6.1)(svelte@4.0.0)
+        version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1369,10 +1369,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: 5.6.1(svelte@4.0.0)
+        version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: 5.6.1(@tanstack/svelte-query@5.6.1)(svelte@4.0.0)
+        version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^2.4.2
@@ -1397,10 +1397,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: 5.6.1(svelte@4.0.0)
+        version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: 5.6.1(@tanstack/svelte-query@5.6.1)(svelte@4.0.0)
+        version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1425,10 +1425,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: 5.6.1(svelte@4.0.0)
+        version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: 5.6.1(@tanstack/svelte-query@5.6.1)(svelte@4.0.0)
+        version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1462,7 +1462,7 @@ importers:
     dependencies:
       '@tanstack/vue-query':
         specifier: ^5.0.0
-        version: 5.7.2(vue@3.3.0)
+        version: link:../../../packages/vue-query
       vue:
         specifier: ^3.3.0
         version: 3.3.0
@@ -1481,7 +1481,7 @@ importers:
     dependencies:
       '@tanstack/vue-query':
         specifier: ^5.0.0
-        version: 5.7.2(vue@3.3.0)
+        version: link:../../../packages/vue-query
       vue:
         specifier: ^3.3.0
         version: 3.3.0
@@ -1500,16 +1500,16 @@ importers:
     dependencies:
       '@tanstack/query-core':
         specifier: ^5.0.0
-        version: 5.7.2
+        version: link:../../../packages/query-core
       '@tanstack/query-persist-client-core':
         specifier: ^5.0.0
-        version: 5.7.2
+        version: link:../../../packages/query-persist-client-core
       '@tanstack/query-sync-storage-persister':
         specifier: ^5.0.0
-        version: 5.7.2
+        version: link:../../../packages/query-sync-storage-persister
       '@tanstack/vue-query':
         specifier: ^5.0.0
-        version: 5.7.2(vue@3.3.0)
+        version: link:../../../packages/vue-query
       idb-keyval:
         specifier: ^6.2.0
         version: 6.2.0
@@ -1531,16 +1531,16 @@ importers:
     dependencies:
       '@angular/common':
         specifier: ^16.2.11
-        version: 16.2.11(@angular/core@16.2.11)(rxjs@7.8.1)
+        version: 16.2.12(@angular/core@16.2.12)(rxjs@7.8.1)
       '@angular/compiler':
         specifier: ^16.2.11
-        version: 16.2.11(@angular/core@16.2.11)
+        version: 16.2.12(@angular/core@16.2.12)
       '@angular/core':
         specifier: ^16.2.11
-        version: 16.2.11(rxjs@7.8.1)(zone.js@0.14.1)
+        version: 16.2.12(rxjs@7.8.1)(zone.js@0.14.2)
       '@angular/platform-browser':
         specifier: ^16.2.11
-        version: 16.2.11(@angular/common@16.2.11)(@angular/core@16.2.11)
+        version: 16.2.12(@angular/common@16.2.12)(@angular/core@16.2.12)
       '@tanstack/angular-query-devtools-experimental':
         specifier: ^5.4.3
         version: link:../../packages/angular-query-devtools-experimental/build
@@ -1552,44 +1552,14 @@ importers:
         version: 7.8.1
       zone.js:
         specifier: ^0.14.0
-        version: 0.14.1
+        version: 0.14.2
     devDependencies:
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
       vite:
         specifier: ^4.4.4
-        version: 4.4.11(@types/node@18.18.0)
-
-  integrations/next-js-app:
-    dependencies:
-      '@tanstack/react-query':
-        specifier: workspace:*
-        version: link:../../packages/react-query
-      '@tanstack/react-query-devtools':
-        specifier: workspace:*
-        version: link:../../packages/react-query-devtools
-      '@types/node':
-        specifier: ^18.18.0
-        version: 18.18.0
-      '@types/react':
-        specifier: ^18.2.31
-        version: 18.2.31
-      '@types/react-dom':
-        specifier: ^18.2.14
-        version: 18.2.14
-      next:
-        specifier: ^14.0.0
-        version: 14.0.0(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
-      typescript:
-        specifier: ^5.1.6
-        version: 5.2.2
+        version: 4.5.0(@types/node@18.18.0)
 
   integrations/react-cra4:
     dependencies:
@@ -1626,6 +1596,36 @@ importers:
       react-scripts:
         specifier: ^5.0.1
         version: 5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.5.5)(eslint@8.34.0)(react@18.2.0)(ts-node@10.7.0)(type-fest@4.5.0)(typescript@5.2.2)
+
+  integrations/react-next:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: workspace:*
+        version: link:../../packages/react-query
+      '@tanstack/react-query-devtools':
+        specifier: workspace:*
+        version: link:../../packages/react-query-devtools
+      '@types/node':
+        specifier: ^18.18.0
+        version: 18.18.0
+      '@types/react':
+        specifier: ^18.2.31
+        version: 18.2.31
+      '@types/react-dom':
+        specifier: ^18.2.14
+        version: 18.2.14
+      next:
+        specifier: ^14.0.0
+        version: 14.0.0(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+      typescript:
+        specifier: ^5.1.6
+        version: 5.2.2
 
   integrations/react-vite:
     dependencies:
@@ -1710,31 +1710,31 @@ importers:
     devDependencies:
       '@angular/cli':
         specifier: ^16.2.8
-        version: 16.2.8
+        version: 16.2.9
       '@angular/common':
         specifier: ^16.2.11
-        version: 16.2.11(@angular/core@16.2.11)(rxjs@7.8.1)
+        version: 16.2.12(@angular/core@16.2.12)(rxjs@7.8.1)
       '@angular/compiler':
         specifier: ^16.2.11
-        version: 16.2.11(@angular/core@16.2.11)
+        version: 16.2.12(@angular/core@16.2.12)
       '@angular/compiler-cli':
         specifier: ^16.2.11
-        version: 16.2.11(@angular/compiler@16.2.11)(typescript@5.1.6)
+        version: 16.2.12(@angular/compiler@16.2.12)(typescript@5.1.6)
       '@angular/core':
         specifier: ^16.2.11
-        version: 16.2.11(rxjs@7.8.1)(zone.js@0.14.1)
+        version: 16.2.12(rxjs@7.8.1)(zone.js@0.14.2)
       '@angular/platform-browser':
         specifier: ^16.2.11
-        version: 16.2.11(@angular/common@16.2.11)(@angular/core@16.2.11)
+        version: 16.2.12(@angular/common@16.2.12)(@angular/core@16.2.12)
       '@angular/platform-browser-dynamic':
         specifier: ^16.2.11
-        version: 16.2.11(@angular/common@16.2.11)(@angular/compiler@16.2.11)(@angular/core@16.2.11)(@angular/platform-browser@16.2.11)
+        version: 16.2.12(@angular/common@16.2.12)(@angular/compiler@16.2.12)(@angular/core@16.2.12)(@angular/platform-browser@16.2.12)
       '@tanstack/angular-query-experimental':
         specifier: workspace:*
         version: link:../angular-query-experimental/build
       ng-packagr:
         specifier: ^16.2.3
-        version: 16.2.3(@angular/compiler-cli@16.2.11)(tslib@2.6.2)(typescript@5.1.6)
+        version: 16.2.3(@angular/compiler-cli@16.2.12)(tslib@2.6.2)(typescript@5.1.6)
       reflect-metadata:
         specifier: ^0.1.13
         version: 0.1.13
@@ -1743,13 +1743,13 @@ importers:
         version: 5.1.6
       zone.js:
         specifier: ^0.14.0
-        version: 0.14.1
+        version: 0.14.2
 
   packages/angular-query-devtools-experimental/build:
     dependencies:
       '@angular/core':
         specifier: ^16 <17
-        version: 16.2.11(rxjs@7.8.1)(zone.js@0.13.3)
+        version: 16.2.12(rxjs@7.8.1)(zone.js@0.13.3)
       '@tanstack/query-devtools':
         specifier: workspace:*
         version: link:../../query-devtools
@@ -1764,38 +1764,38 @@ importers:
         version: link:../query-core
       ngxtension:
         specifier: ^0.14.1
-        version: 0.14.1(@angular/common@17.0.0-rc.1)(@angular/core@17.0.0-rc.1)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1)
+        version: 0.14.1(@angular/common@17.0.0-rc.2)(@angular/core@17.0.0-rc.2)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1)
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
     devDependencies:
       '@analogjs/vite-plugin-angular':
         specifier: ^0.2.18
-        version: 0.2.18(@angular-devkit/build-angular@16.2.8)
+        version: 0.2.18(@angular-devkit/build-angular@16.2.9)
       '@angular/animations':
         specifier: ^17.0.0-rc.2
-        version: 17.0.0-rc.2(@angular/core@17.0.0-rc.1)
+        version: 17.0.0-rc.2(@angular/core@17.0.0-rc.2)
       '@angular/cli':
         specifier: ^17.0.0-next.9
-        version: 17.0.0-rc.2
+        version: 17.0.0-rc.3
       '@angular/common':
         specifier: ^17.0.0-next.8
-        version: 17.0.0-rc.1(@angular/core@17.0.0-rc.1)(rxjs@7.8.1)
+        version: 17.0.0-rc.2(@angular/core@17.0.0-rc.2)(rxjs@7.8.1)
       '@angular/compiler':
         specifier: ^17.0.0-next.8
-        version: 17.0.0-rc.1(@angular/core@17.0.0-rc.1)
+        version: 17.0.0-rc.2(@angular/core@17.0.0-rc.2)
       '@angular/compiler-cli':
         specifier: ^17.0.0-rc.2
-        version: 17.0.0-rc.2(@angular/compiler@17.0.0-rc.1)(typescript@5.2.2)
+        version: 17.0.0-rc.2(@angular/compiler@17.0.0-rc.2)(typescript@5.2.2)
       '@angular/core':
         specifier: ^17.0.0-next.8
-        version: 17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.2)
+        version: 17.0.0-rc.2(rxjs@7.8.1)(zone.js@0.14.2)
       '@angular/platform-browser':
         specifier: ^17.0.0-rc.2
-        version: 17.0.0-rc.2(@angular/animations@17.0.0-rc.2)(@angular/common@17.0.0-rc.1)(@angular/core@17.0.0-rc.1)
+        version: 17.0.0-rc.2(@angular/animations@17.0.0-rc.2)(@angular/common@17.0.0-rc.2)(@angular/core@17.0.0-rc.2)
       '@angular/platform-browser-dynamic':
         specifier: ^17.0.0-rc.2
-        version: 17.0.0-rc.2(@angular/common@17.0.0-rc.1)(@angular/compiler@17.0.0-rc.1)(@angular/core@17.0.0-rc.1)(@angular/platform-browser@17.0.0-rc.2)
+        version: 17.0.0-rc.2(@angular/common@17.0.0-rc.2)(@angular/compiler@17.0.0-rc.2)(@angular/core@17.0.0-rc.2)(@angular/platform-browser@17.0.0-rc.2)
       ng-packagr:
         specifier: ^16.2.3
         version: 16.2.3(@angular/compiler-cli@17.0.0-rc.2)(tslib@2.6.2)(typescript@5.2.2)
@@ -1813,13 +1813,13 @@ importers:
     dependencies:
       '@angular/core':
         specifier: '>=16'
-        version: 16.2.11(rxjs@7.8.1)(zone.js@0.13.3)
+        version: 16.2.12(rxjs@7.8.1)(zone.js@0.13.3)
       '@tanstack/query-core':
         specifier: workspace:*
         version: link:../../query-core
       ngxtension:
         specifier: ^0.14.1
-        version: 0.14.1(@angular/common@16.2.12)(@angular/core@16.2.11)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1)
+        version: 0.14.1(@angular/common@16.2.12)(@angular/core@16.2.12)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1)
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -2287,36 +2287,36 @@ packages:
       '@jridgewell/gen-mapping': 0.3.3
       '@jridgewell/trace-mapping': 0.3.20
 
-  /@analogjs/vite-plugin-angular@0.2.18(@angular-devkit/build-angular@16.2.8):
+  /@analogjs/vite-plugin-angular@0.2.18(@angular-devkit/build-angular@16.2.9):
     resolution: {integrity: sha512-lBnq4CW9KP6gdKgPA5cqN8KlScEeLIwYK083NPyQw5N8/icHgmRYEY4d0F//HnLGkL4XMwFGFJt7nvCxJBaDpg==}
     peerDependencies:
       '@angular-devkit/build-angular': ^15.0.0 || >=16.0.0
     dependencies:
-      '@angular-devkit/build-angular': 16.2.8(@angular/compiler-cli@17.0.0-rc.2)(@types/node@18.18.0)(ng-packagr@16.2.3)(typescript@5.2.2)
+      '@angular-devkit/build-angular': 16.2.9(@angular/compiler-cli@17.0.0-rc.2)(@types/node@18.18.0)(ng-packagr@16.2.3)(typescript@5.2.2)
     dev: true
 
-  /@angular-devkit/architect@0.1602.8(chokidar@3.5.3):
-    resolution: {integrity: sha512-bNdu2tF29Y/jOxMXlu9pmNbIlyZs9hRjLmi/tcfcMFay+3AhpNO59DWlUmI4gpvWu8CEXdQHSMuJTDHaNR+Ctg==}
+  /@angular-devkit/architect@0.1602.9(chokidar@3.5.3):
+    resolution: {integrity: sha512-U3vfb/e2sFfg0D9FyyRBXRPP7g4FBFtGK8Q3JPmvAVsHHwi5AUFRNR7YBChB/T5TMNY077HcTyEirVh2FeUpdA==}
     engines: {node: ^16.14.0 || >=18.10.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     dependencies:
-      '@angular-devkit/core': 16.2.8(chokidar@3.5.3)
+      '@angular-devkit/core': 16.2.9(chokidar@3.5.3)
       rxjs: 7.8.1
     transitivePeerDependencies:
       - chokidar
     dev: true
 
-  /@angular-devkit/architect@0.1700.0-rc.2:
-    resolution: {integrity: sha512-+1GpG59fHgHNdqnDxXDa801vunrxSHDQohtS2s9ltuWDrl29vptdHLXCAWpP7OD+MD7+gab5jQqIDNCXats8gw==}
-    engines: {node: '>=18.13.0', npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
+  /@angular-devkit/architect@0.1700.0-rc.3:
+    resolution: {integrity: sha512-bXnqMmZBlRxpQOIsk+HHELGu/kKHRFlhs8JSiJpwvj16jWEDcRCKwXE5yTr6Q1YqVieMpnYzYTkdAVNCtpfk2A==}
+    engines: {node: ^18.13.0 || >=20.9.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     dependencies:
-      '@angular-devkit/core': 17.0.0-rc.2
+      '@angular-devkit/core': 17.0.0-rc.3
       rxjs: 7.8.1
     transitivePeerDependencies:
       - chokidar
     dev: true
 
-  /@angular-devkit/build-angular@16.2.8(@angular/compiler-cli@17.0.0-rc.2)(@types/node@18.18.0)(ng-packagr@16.2.3)(typescript@5.2.2):
-    resolution: {integrity: sha512-PgTaWerhDO3JjHjgJl/VWB1y1awN8eHrm7sqdpIsgKbVpi26oyByjtPS1gKKhinps9Che66lCbnxrkx2X3rWTg==}
+  /@angular-devkit/build-angular@16.2.9(@angular/compiler-cli@17.0.0-rc.2)(@types/node@18.18.0)(ng-packagr@16.2.3)(typescript@5.2.2):
+    resolution: {integrity: sha512-S1C4UYxRVyNt3C0wCxbT2jZ1dN5i37kS0mol3PQjbR8gQ0GQzHmzhjTBl1oImo8aouET9yhrk9etk65oat4mBQ==}
     engines: {node: ^16.14.0 || >=18.10.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     peerDependencies:
       '@angular/compiler-cli': ^16.0.0
@@ -2351,10 +2351,10 @@ packages:
         optional: true
     dependencies:
       '@ampproject/remapping': 2.2.1
-      '@angular-devkit/architect': 0.1602.8(chokidar@3.5.3)
-      '@angular-devkit/build-webpack': 0.1602.8(chokidar@3.5.3)(webpack-dev-server@4.15.1)(webpack@5.88.2)
-      '@angular-devkit/core': 16.2.8(chokidar@3.5.3)
-      '@angular/compiler-cli': 17.0.0-rc.2(@angular/compiler@17.0.0-rc.1)(typescript@5.2.2)
+      '@angular-devkit/architect': 0.1602.9(chokidar@3.5.3)
+      '@angular-devkit/build-webpack': 0.1602.9(chokidar@3.5.3)(webpack-dev-server@4.15.1)(webpack@5.88.2)
+      '@angular-devkit/core': 16.2.9(chokidar@3.5.3)
+      '@angular/compiler-cli': 17.0.0-rc.2(@angular/compiler@17.0.0-rc.2)(typescript@5.2.2)
       '@babel/core': 7.22.9
       '@babel/generator': 7.22.9
       '@babel/helper-annotate-as-pure': 7.22.5
@@ -2366,7 +2366,7 @@ packages:
       '@babel/runtime': 7.22.6
       '@babel/template': 7.22.5
       '@discoveryjs/json-ext': 0.5.7
-      '@ngtools/webpack': 16.2.8(@angular/compiler-cli@17.0.0-rc.2)(typescript@5.2.2)(webpack@5.88.2)
+      '@ngtools/webpack': 16.2.9(@angular/compiler-cli@17.0.0-rc.2)(typescript@5.2.2)(webpack@5.88.2)
       '@vitejs/plugin-basic-ssl': 1.0.1(vite@4.4.7)
       ansi-colors: 4.1.3
       autoprefixer: 10.4.14(postcss@8.4.31)
@@ -2438,14 +2438,14 @@ packages:
       - webpack-cli
     dev: true
 
-  /@angular-devkit/build-webpack@0.1602.8(chokidar@3.5.3)(webpack-dev-server@4.15.1)(webpack@5.88.2):
-    resolution: {integrity: sha512-wGE2R6hnhSVpH7jvqtkZ63IX9oMRd+uh7sC65hGgzajPqThQcNdnGG3+79QGWapgkoHuZHpDlKOBFt0IOMAaMA==}
+  /@angular-devkit/build-webpack@0.1602.9(chokidar@3.5.3)(webpack-dev-server@4.15.1)(webpack@5.88.2):
+    resolution: {integrity: sha512-+3IxovfBPR2Vy730mGa0SVKkd5LQVom85gjXOs7WcnnnZmfc1q/BtFlqTgW1UWvTxP8IQdm7UYWVclQfL/WExw==}
     engines: {node: ^16.14.0 || >=18.10.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     peerDependencies:
       webpack: ^5.30.0
       webpack-dev-server: ^4.0.0
     dependencies:
-      '@angular-devkit/architect': 0.1602.8(chokidar@3.5.3)
+      '@angular-devkit/architect': 0.1602.9(chokidar@3.5.3)
       rxjs: 7.8.1
       webpack: 5.88.2(esbuild@0.18.17)
       webpack-dev-server: 4.15.1(webpack@5.89.0)
@@ -2453,8 +2453,8 @@ packages:
       - chokidar
     dev: true
 
-  /@angular-devkit/core@16.2.8(chokidar@3.5.3):
-    resolution: {integrity: sha512-PTGozYvh1Bin5lB15PwcXa26Ayd17bWGLS3H8Rs0s+04mUDvfNofmweaX1LgumWWy3nCUTDuwHxX10M3G0wE2g==}
+  /@angular-devkit/core@16.2.9(chokidar@3.5.3):
+    resolution: {integrity: sha512-dcHWjHBNGm3yCeNz19y8A1At4KgyC6XHNnbFL0y+nnZYiaESXjUoXJYKASedI6A+Bpl0HNq2URhH6bL6Af3+4w==}
     engines: {node: ^16.14.0 || >=18.10.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     peerDependencies:
       chokidar: ^3.5.2
@@ -2471,9 +2471,9 @@ packages:
       source-map: 0.7.4
     dev: true
 
-  /@angular-devkit/core@17.0.0-rc.2:
-    resolution: {integrity: sha512-z68Y+JhcDsTv9TVOX5tmuR7bRrTMLCP/3AxUeJ9kZW4UdCeZA77ya0k7F1XpkyCb2JTM/5+yYXTigxMh6Jhr8g==}
-    engines: {node: '>=18.13.0', npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
+  /@angular-devkit/core@17.0.0-rc.3:
+    resolution: {integrity: sha512-cPSWBXm7CSpSG+JLR2khKEFLWfkfZKgKsAZVlHdpXgICc3fmtSG/01ZSAD84oq5Ch5l1+6P62P+4fjwex9joZA==}
+    engines: {node: ^18.13.0 || >=20.9.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     peerDependencies:
       chokidar: ^3.5.2
     peerDependenciesMeta:
@@ -2483,16 +2483,16 @@ packages:
       ajv: 8.12.0
       ajv-formats: 2.1.1(ajv@8.12.0)
       jsonc-parser: 3.2.0
-      picomatch: 2.3.1
+      picomatch: 3.0.1
       rxjs: 7.8.1
       source-map: 0.7.4
     dev: true
 
-  /@angular-devkit/schematics@16.2.8:
-    resolution: {integrity: sha512-MBiKZOlR9/YMdflALr7/7w/BGAfo/BGTrlkqsIB6rDWV1dYiCgxI+033HsiNssLS6RQyCFx/e7JA2aBBzu9zEg==}
+  /@angular-devkit/schematics@16.2.9:
+    resolution: {integrity: sha512-lB51CGCILpcSI37CwKUAGDLxMqh7zmuRbiPo9s9mSkCM4ccqxFlaL+VFTq2/laneARD6aikpOHnkVm5myNzQPw==}
     engines: {node: ^16.14.0 || >=18.10.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     dependencies:
-      '@angular-devkit/core': 16.2.8(chokidar@3.5.3)
+      '@angular-devkit/core': 16.2.9(chokidar@3.5.3)
       jsonc-parser: 3.2.0
       magic-string: 0.30.1
       ora: 5.4.1
@@ -2501,11 +2501,11 @@ packages:
       - chokidar
     dev: true
 
-  /@angular-devkit/schematics@17.0.0-rc.2:
-    resolution: {integrity: sha512-WW4mQdCGZ2YA6g2r10571hKxCMwkiVEoOF69GjBzLfIr4YBF6bcXcczqgGyeOtbTT3xy7FbTcdNZ7/l9K4XLDQ==}
-    engines: {node: '>=18.13.0', npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
+  /@angular-devkit/schematics@17.0.0-rc.3:
+    resolution: {integrity: sha512-QewQ15pdnvWTAvcf3oWvFv+El6DWOYrvaNs+r4lzikx9dYIM4L/NruD32AEYt4xM1livy3ndRxnQQ8A7DM/BrQ==}
+    engines: {node: ^18.13.0 || >=20.9.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     dependencies:
-      '@angular-devkit/core': 17.0.0-rc.2
+      '@angular-devkit/core': 17.0.0-rc.3
       jsonc-parser: 3.2.0
       magic-string: 0.30.5
       ora: 5.4.1
@@ -2514,25 +2514,25 @@ packages:
       - chokidar
     dev: true
 
-  /@angular/animations@17.0.0-rc.2(@angular/core@17.0.0-rc.1):
+  /@angular/animations@17.0.0-rc.2(@angular/core@17.0.0-rc.2):
     resolution: {integrity: sha512-g6Nzcfls89fYdi6LQcZr1rOZots7667QDUtfbkhlt5UMC8MNbKSuSLjIpl7JwZtRl352HnhwhWM4bMchOQ7VDg==}
     engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
       '@angular/core': 17.0.0-rc.2
     dependencies:
-      '@angular/core': 17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.2)
+      '@angular/core': 17.0.0-rc.2(rxjs@7.8.1)(zone.js@0.14.2)
       tslib: 2.6.2
     dev: true
 
-  /@angular/cli@16.2.8:
-    resolution: {integrity: sha512-iPrDv+SemRb6ZhayxwLsEdykHpV2TYSgH5Smg8GqSaIR/KUiemuzBrIKEUEaIG4n2dVEOtcsuh2JRHQndF7wmw==}
+  /@angular/cli@16.2.9:
+    resolution: {integrity: sha512-wkpV/Ni26LUeDmhee2TPXXEq3feEdZMSG8+nkfUK9kqIcxm0IjI1GLPeiVOX7aQobuKNe2cCAFNwsrXWjj+2og==}
     engines: {node: ^16.14.0 || >=18.10.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     hasBin: true
     dependencies:
-      '@angular-devkit/architect': 0.1602.8(chokidar@3.5.3)
-      '@angular-devkit/core': 16.2.8(chokidar@3.5.3)
-      '@angular-devkit/schematics': 16.2.8
-      '@schematics/angular': 16.2.8
+      '@angular-devkit/architect': 0.1602.9(chokidar@3.5.3)
+      '@angular-devkit/core': 16.2.9(chokidar@3.5.3)
+      '@angular-devkit/schematics': 16.2.9
+      '@schematics/angular': 16.2.9
       '@yarnpkg/lockfile': 1.1.0
       ansi-colors: 4.1.3
       ini: 4.1.1
@@ -2553,15 +2553,15 @@ packages:
       - supports-color
     dev: true
 
-  /@angular/cli@17.0.0-rc.2:
-    resolution: {integrity: sha512-2Xl2e5PzD3MyNpf3Urbs1esHBqY5faPcqsRwFvHC2yo+X0M1n64D6uuKQ5+gbPnEbUc5KKi04QiFEsCbPIW/mw==}
-    engines: {node: '>=18.13.0', npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
+  /@angular/cli@17.0.0-rc.3:
+    resolution: {integrity: sha512-7R/o1N0YuEWeFpK5w5JzXQTSu4HuAu7EtzOF9aDf1Qay1A/fDtk1QAjpMZDmXpbqg3xYDY7LqWqGuc1CCgaQZg==}
+    engines: {node: ^18.13.0 || >=20.9.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     hasBin: true
     dependencies:
-      '@angular-devkit/architect': 0.1700.0-rc.2
-      '@angular-devkit/core': 17.0.0-rc.2
-      '@angular-devkit/schematics': 17.0.0-rc.2
-      '@schematics/angular': 17.0.0-rc.2
+      '@angular-devkit/architect': 0.1700.0-rc.3
+      '@angular-devkit/core': 17.0.0-rc.3
+      '@angular-devkit/schematics': 17.0.0-rc.3
+      '@schematics/angular': 17.0.0-rc.3
       '@yarnpkg/lockfile': 1.1.0
       ansi-colors: 4.1.3
       ini: 4.1.1
@@ -2582,29 +2582,6 @@ packages:
       - supports-color
     dev: true
 
-  /@angular/common@16.2.11(@angular/core@16.2.11)(rxjs@7.8.1):
-    resolution: {integrity: sha512-h80WUR2OYlqxQy+4XgNtWT2vB+vZ6oCrFX/q8cU5jAvbvGQfJuH0zfcbSlUflStmAhk5/OT25F0mt96cqapEAw==}
-    engines: {node: ^16.14.0 || >=18.10.0}
-    peerDependencies:
-      '@angular/core': 16.2.11
-      rxjs: ^6.5.3 || ^7.4.0
-    dependencies:
-      '@angular/core': 16.2.11(rxjs@7.8.1)(zone.js@0.14.1)
-      rxjs: 7.8.1
-      tslib: 2.6.2
-
-  /@angular/common@16.2.12(@angular/core@16.2.11)(rxjs@7.8.1):
-    resolution: {integrity: sha512-B+WY/cT2VgEaz9HfJitBmgdk4I333XG/ybC98CMC4Wz8E49T8yzivmmxXB3OD6qvjcOB6ftuicl6WBqLbZNg2w==}
-    engines: {node: ^16.14.0 || >=18.10.0}
-    peerDependencies:
-      '@angular/core': 16.2.12
-      rxjs: ^6.5.3 || ^7.4.0
-    dependencies:
-      '@angular/core': 16.2.11(rxjs@7.8.1)(zone.js@0.13.3)
-      rxjs: 7.8.1
-      tslib: 2.6.2
-    dev: false
-
   /@angular/common@16.2.12(@angular/core@16.2.12)(rxjs@7.8.1):
     resolution: {integrity: sha512-B+WY/cT2VgEaz9HfJitBmgdk4I333XG/ybC98CMC4Wz8E49T8yzivmmxXB3OD6qvjcOB6ftuicl6WBqLbZNg2w==}
     engines: {node: ^16.14.0 || >=18.10.0}
@@ -2612,31 +2589,30 @@ packages:
       '@angular/core': 16.2.12
       rxjs: ^6.5.3 || ^7.4.0
     dependencies:
-      '@angular/core': 16.2.12(rxjs@7.8.1)(zone.js@0.14.1)
+      '@angular/core': 16.2.12(rxjs@7.8.1)(zone.js@0.14.2)
       rxjs: 7.8.1
       tslib: 2.6.2
-    dev: false
 
-  /@angular/common@17.0.0-rc.1(@angular/core@17.0.0-rc.1)(rxjs@7.8.1):
-    resolution: {integrity: sha512-E51n8DdHY6WvP2OCBK9saIeGOjqCsekTxJ9Dx52kD/ZSI5JyQHUmxnCiGbp6rbxPBSli/0CS/6OabX7tVYq2Mg==}
-    engines: {node: '>=18.13.0'}
+  /@angular/common@17.0.0-rc.2(@angular/core@17.0.0-rc.2)(rxjs@7.8.1):
+    resolution: {integrity: sha512-q+9LwLvSUJXjI+CYqC1BJLxSSy2NIN1B2k/iyROhLje+V8jPdZyA5MZjRGMwqL8QXeH0qvIh/tetmf0QXahXSA==}
+    engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
-      '@angular/core': 17.0.0-rc.1
+      '@angular/core': 17.0.0-rc.2
       rxjs: ^6.5.3 || ^7.4.0
     dependencies:
-      '@angular/core': 17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.2)
+      '@angular/core': 17.0.0-rc.2(rxjs@7.8.1)(zone.js@0.14.2)
       rxjs: 7.8.1
       tslib: 2.6.2
 
-  /@angular/compiler-cli@16.2.11(@angular/compiler@16.2.11)(typescript@5.1.6):
-    resolution: {integrity: sha512-ZtZCXfkVBH78HUm2Byf+WX3Y6WzQK9EXYXNU/ni1rvSZ1vLNwieLDfWb/xwiO7QojrHZTym1RJ10jTMinTguqw==}
+  /@angular/compiler-cli@16.2.12(@angular/compiler@16.2.12)(typescript@5.1.6):
+    resolution: {integrity: sha512-pWSrr152562ujh6lsFZR8NfNc5Ljj+zSTQO44DsuB0tZjwEpnRcjJEgzuhGXr+CoiBf+jTSPZKemtSktDk5aaA==}
     engines: {node: ^16.14.0 || >=18.10.0}
     hasBin: true
     peerDependencies:
-      '@angular/compiler': 16.2.11
+      '@angular/compiler': 16.2.12
       typescript: '>=4.9.3 <5.2'
     dependencies:
-      '@angular/compiler': 16.2.11(@angular/core@16.2.11)
+      '@angular/compiler': 16.2.12(@angular/core@16.2.12)
       '@babel/core': 7.23.2
       '@jridgewell/sourcemap-codec': 1.4.15
       chokidar: 3.5.3
@@ -2650,7 +2626,7 @@ packages:
       - supports-color
     dev: true
 
-  /@angular/compiler-cli@17.0.0-rc.2(@angular/compiler@17.0.0-rc.1)(typescript@5.2.2):
+  /@angular/compiler-cli@17.0.0-rc.2(@angular/compiler@17.0.0-rc.2)(typescript@5.2.2):
     resolution: {integrity: sha512-PEQxfzi63GzNdyaJcD1p9mAHhguC8mNvmoh53Bl69z6urgnCtIQRVq/AZ3aOYdEbt6LwFC8xOUeQ9Cj8Ti28jA==}
     engines: {node: ^18.13.0 || >=20.9.0}
     hasBin: true
@@ -2658,7 +2634,7 @@ packages:
       '@angular/compiler': 17.0.0-rc.2
       typescript: '>=5.2 <5.3'
     dependencies:
-      '@angular/compiler': 17.0.0-rc.1(@angular/core@17.0.0-rc.1)
+      '@angular/compiler': 17.0.0-rc.2(@angular/core@17.0.0-rc.2)
       '@babel/core': 7.23.2
       '@jridgewell/sourcemap-codec': 1.4.15
       chokidar: 3.5.3
@@ -2672,31 +2648,6 @@ packages:
       - supports-color
     dev: true
 
-  /@angular/compiler@16.2.11(@angular/core@16.2.11):
-    resolution: {integrity: sha512-9q/E3uurvoQbdTTWDyWCLpzmfJ4+et7SUca1/EljD/X7Xg2FNU5GpTMutBtWFL7wDyWk1oswivuq9/C4GVW7fA==}
-    engines: {node: ^16.14.0 || >=18.10.0}
-    peerDependencies:
-      '@angular/core': 16.2.11
-    peerDependenciesMeta:
-      '@angular/core':
-        optional: true
-    dependencies:
-      '@angular/core': 16.2.11(rxjs@7.8.1)(zone.js@0.14.1)
-      tslib: 2.6.2
-
-  /@angular/compiler@16.2.12(@angular/core@16.2.11):
-    resolution: {integrity: sha512-6SMXUgSVekGM7R6l1Z9rCtUGtlg58GFmgbpMCsGf+VXxP468Njw8rjT2YZkf5aEPxEuRpSHhDYjqz7n14cwCXQ==}
-    engines: {node: ^16.14.0 || >=18.10.0}
-    peerDependencies:
-      '@angular/core': 16.2.12
-    peerDependenciesMeta:
-      '@angular/core':
-        optional: true
-    dependencies:
-      '@angular/core': 16.2.11(rxjs@7.8.1)(zone.js@0.14.1)
-      tslib: 2.6.2
-    dev: false
-
   /@angular/compiler@16.2.12(@angular/core@16.2.12):
     resolution: {integrity: sha512-6SMXUgSVekGM7R6l1Z9rCtUGtlg58GFmgbpMCsGf+VXxP468Njw8rjT2YZkf5aEPxEuRpSHhDYjqz7n14cwCXQ==}
     engines: {node: ^16.14.0 || >=18.10.0}
@@ -2706,25 +2657,24 @@ packages:
       '@angular/core':
         optional: true
     dependencies:
-      '@angular/core': 16.2.12(rxjs@7.8.1)(zone.js@0.14.1)
+      '@angular/core': 16.2.12(rxjs@7.8.1)(zone.js@0.14.2)
       tslib: 2.6.2
-    dev: false
 
-  /@angular/compiler@17.0.0-rc.1(@angular/core@17.0.0-rc.1):
-    resolution: {integrity: sha512-h1HNvTNbroMo2YUtn6K/i0LKQUlAPQJb/Bq+nz1TyxnDI5nYGbRJ8WycQyGwRVrfvLkghkkCGzQqIHEUmZ3rSw==}
-    engines: {node: '>=18.13.0'}
+  /@angular/compiler@17.0.0-rc.2(@angular/core@17.0.0-rc.2):
+    resolution: {integrity: sha512-E8URFYjTReFU1AUOJjomnYfxmF77JcpskfCtgYCl5aKCV7Yick01mnNFn/g7XoSCH1+cKjCbVOAr2JgRfoOIhg==}
+    engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
-      '@angular/core': 17.0.0-rc.1
+      '@angular/core': 17.0.0-rc.2
     peerDependenciesMeta:
       '@angular/core':
         optional: true
     dependencies:
-      '@angular/core': 17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.2)
+      '@angular/core': 17.0.0-rc.2(rxjs@7.8.1)(zone.js@0.14.2)
       tslib: 2.6.2
     dev: true
 
-  /@angular/core@16.2.11(rxjs@7.8.1)(zone.js@0.13.3):
-    resolution: {integrity: sha512-Jb+7/p1vczQRQ3iC1QxUS5cE4X1hPVAvbrFnyMpSx6Pq5o274v/lK6PvhUZrfKrp9FxFp9pN+WHjUqNFqOuJZg==}
+  /@angular/core@16.2.12(rxjs@7.8.1)(zone.js@0.13.3):
+    resolution: {integrity: sha512-GLLlDeke/NjroaLYOks0uyzFVo6HyLl7VOm0K1QpLXnYvW63W9Ql/T3yguRZa7tRkOAeFZ3jw+1wnBD4O8MoUA==}
     engines: {node: ^16.14.0 || >=18.10.0}
     peerDependencies:
       rxjs: ^6.5.3 || ^7.4.0
@@ -2735,18 +2685,7 @@ packages:
       zone.js: 0.13.3
     dev: false
 
-  /@angular/core@16.2.11(rxjs@7.8.1)(zone.js@0.14.1):
-    resolution: {integrity: sha512-Jb+7/p1vczQRQ3iC1QxUS5cE4X1hPVAvbrFnyMpSx6Pq5o274v/lK6PvhUZrfKrp9FxFp9pN+WHjUqNFqOuJZg==}
-    engines: {node: ^16.14.0 || >=18.10.0}
-    peerDependencies:
-      rxjs: ^6.5.3 || ^7.4.0
-      zone.js: ~0.13.0
-    dependencies:
-      rxjs: 7.8.1
-      tslib: 2.6.2
-      zone.js: 0.14.1
-
-  /@angular/core@16.2.12(rxjs@7.8.1)(zone.js@0.14.1):
+  /@angular/core@16.2.12(rxjs@7.8.1)(zone.js@0.14.2):
     resolution: {integrity: sha512-GLLlDeke/NjroaLYOks0uyzFVo6HyLl7VOm0K1QpLXnYvW63W9Ql/T3yguRZa7tRkOAeFZ3jw+1wnBD4O8MoUA==}
     engines: {node: ^16.14.0 || >=18.10.0}
     peerDependencies:
@@ -2755,12 +2694,11 @@ packages:
     dependencies:
       rxjs: 7.8.1
       tslib: 2.6.2
-      zone.js: 0.14.1
-    dev: false
+      zone.js: 0.14.2
 
-  /@angular/core@17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.2):
-    resolution: {integrity: sha512-qz5Xjye2XkmBp+4vSxpPVM6yXs/36oXx/FUQa6PDP/DrW9wrCxSELf2g9PHT84xDgq6BhBqca0a4fq+QFURTqg==}
-    engines: {node: '>=18.13.0'}
+  /@angular/core@17.0.0-rc.2(rxjs@7.8.1)(zone.js@0.14.2):
+    resolution: {integrity: sha512-EULe5FUEjtkoUwAAh9j08bRUhpV+vvtF6sCAun5iXl/RR1dO3Tdz4TZG9+zXwpMvyUVuMWUt8RsvCTbv6m2KRw==}
+    engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
       rxjs: ^6.5.3 || ^7.4.0
       zone.js: ~0.14.0
@@ -2769,33 +2707,28 @@ packages:
       tslib: 2.6.2
       zone.js: 0.14.2
 
-  /@angular/language-service@16.2.11:
-    resolution: {integrity: sha512-rzZcqeBvgByu27gZk/f0K1VuwIYbScOG3sJYyWXBdSMmjqnl3ARwEEI/zyQT7I6uU6I9SwmoJhy44pQlrDDD7g==}
-    engines: {node: ^16.14.0 || >=18.10.0}
-    dev: false
-
   /@angular/language-service@16.2.12:
     resolution: {integrity: sha512-sZwB+ZEjChx9EYcqPaS4OnhC/q5RcedZjIdM9mCxuU/MtseURRYRI/8Hnm1RHo9qyc5PmsQpg7p9Vp/5hXLUjw==}
     engines: {node: ^16.14.0 || >=18.10.0}
     dev: false
 
-  /@angular/platform-browser-dynamic@16.2.11(@angular/common@16.2.11)(@angular/compiler@16.2.11)(@angular/core@16.2.11)(@angular/platform-browser@16.2.11):
-    resolution: {integrity: sha512-e+A7z6MUJaqC4Fdq7XQfIhAox3ZPM1lczM6G08fUKPbFDEe+c9i7C8YRLL+69BXDuG790btugIeOQcn5lnJcFg==}
+  /@angular/platform-browser-dynamic@16.2.12(@angular/common@16.2.12)(@angular/compiler@16.2.12)(@angular/core@16.2.12)(@angular/platform-browser@16.2.12):
+    resolution: {integrity: sha512-ya54jerNgreCVAR278wZavwjrUWImMr2F8yM5n9HBvsMBbFaAQ83anwbOEiHEF2BlR+gJiEBLfpuPRMw20pHqw==}
     engines: {node: ^16.14.0 || >=18.10.0}
     peerDependencies:
-      '@angular/common': 16.2.11
-      '@angular/compiler': 16.2.11
-      '@angular/core': 16.2.11
-      '@angular/platform-browser': 16.2.11
+      '@angular/common': 16.2.12
+      '@angular/compiler': 16.2.12
+      '@angular/core': 16.2.12
+      '@angular/platform-browser': 16.2.12
     dependencies:
-      '@angular/common': 16.2.11(@angular/core@16.2.11)(rxjs@7.8.1)
-      '@angular/compiler': 16.2.11(@angular/core@16.2.11)
-      '@angular/core': 16.2.11(rxjs@7.8.1)(zone.js@0.14.1)
-      '@angular/platform-browser': 16.2.11(@angular/common@16.2.11)(@angular/core@16.2.11)
+      '@angular/common': 16.2.12(@angular/core@16.2.12)(rxjs@7.8.1)
+      '@angular/compiler': 16.2.12(@angular/core@16.2.12)
+      '@angular/core': 16.2.12(rxjs@7.8.1)(zone.js@0.14.2)
+      '@angular/platform-browser': 16.2.12(@angular/common@16.2.12)(@angular/core@16.2.12)
       tslib: 2.6.2
     dev: true
 
-  /@angular/platform-browser-dynamic@17.0.0-rc.2(@angular/common@17.0.0-rc.1)(@angular/compiler@17.0.0-rc.1)(@angular/core@17.0.0-rc.1)(@angular/platform-browser@17.0.0-rc.2):
+  /@angular/platform-browser-dynamic@17.0.0-rc.2(@angular/common@17.0.0-rc.2)(@angular/compiler@17.0.0-rc.2)(@angular/core@17.0.0-rc.2)(@angular/platform-browser@17.0.0-rc.2):
     resolution: {integrity: sha512-U3aq/uVp8DeT96uhZWORqR4p+9Z9V1LzqwPXGebmJflSnBXns5iZGAeDK8izuT4LWKljB49Pf45DfPfhcuJJ+w==}
     engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
@@ -2804,43 +2737,12 @@ packages:
       '@angular/core': 17.0.0-rc.2
       '@angular/platform-browser': 17.0.0-rc.2
     dependencies:
-      '@angular/common': 17.0.0-rc.1(@angular/core@17.0.0-rc.1)(rxjs@7.8.1)
-      '@angular/compiler': 17.0.0-rc.1(@angular/core@17.0.0-rc.1)
-      '@angular/core': 17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.2)
-      '@angular/platform-browser': 17.0.0-rc.2(@angular/animations@17.0.0-rc.2)(@angular/common@17.0.0-rc.1)(@angular/core@17.0.0-rc.1)
+      '@angular/common': 17.0.0-rc.2(@angular/core@17.0.0-rc.2)(rxjs@7.8.1)
+      '@angular/compiler': 17.0.0-rc.2(@angular/core@17.0.0-rc.2)
+      '@angular/core': 17.0.0-rc.2(rxjs@7.8.1)(zone.js@0.14.2)
+      '@angular/platform-browser': 17.0.0-rc.2(@angular/animations@17.0.0-rc.2)(@angular/common@17.0.0-rc.2)(@angular/core@17.0.0-rc.2)
       tslib: 2.6.2
     dev: true
-
-  /@angular/platform-browser@16.2.11(@angular/common@16.2.11)(@angular/core@16.2.11):
-    resolution: {integrity: sha512-gUptbI3lbaRg+L8rcTlxKtFunYmR/M/mm9/l9uRd+5qk2mnFI0+s/tzRoaq7K0XaRGKZiWLNTz6FTkviO1zo2g==}
-    engines: {node: ^16.14.0 || >=18.10.0}
-    peerDependencies:
-      '@angular/animations': 16.2.11
-      '@angular/common': 16.2.11
-      '@angular/core': 16.2.11
-    peerDependenciesMeta:
-      '@angular/animations':
-        optional: true
-    dependencies:
-      '@angular/common': 16.2.11(@angular/core@16.2.11)(rxjs@7.8.1)
-      '@angular/core': 16.2.11(rxjs@7.8.1)(zone.js@0.14.1)
-      tslib: 2.6.2
-
-  /@angular/platform-browser@16.2.12(@angular/common@16.2.11)(@angular/core@16.2.11):
-    resolution: {integrity: sha512-NnH7ju1iirmVEsUq432DTm0nZBGQsBrU40M3ZeVHMQ2subnGiyUs3QyzDz8+VWLL/T5xTxWLt9BkDn65vgzlIQ==}
-    engines: {node: ^16.14.0 || >=18.10.0}
-    peerDependencies:
-      '@angular/animations': 16.2.12
-      '@angular/common': 16.2.12
-      '@angular/core': 16.2.12
-    peerDependenciesMeta:
-      '@angular/animations':
-        optional: true
-    dependencies:
-      '@angular/common': 16.2.11(@angular/core@16.2.11)(rxjs@7.8.1)
-      '@angular/core': 16.2.11(rxjs@7.8.1)(zone.js@0.14.1)
-      tslib: 2.6.2
-    dev: false
 
   /@angular/platform-browser@16.2.12(@angular/common@16.2.12)(@angular/core@16.2.12):
     resolution: {integrity: sha512-NnH7ju1iirmVEsUq432DTm0nZBGQsBrU40M3ZeVHMQ2subnGiyUs3QyzDz8+VWLL/T5xTxWLt9BkDn65vgzlIQ==}
@@ -2854,11 +2756,10 @@ packages:
         optional: true
     dependencies:
       '@angular/common': 16.2.12(@angular/core@16.2.12)(rxjs@7.8.1)
-      '@angular/core': 16.2.12(rxjs@7.8.1)(zone.js@0.14.1)
+      '@angular/core': 16.2.12(rxjs@7.8.1)(zone.js@0.14.2)
       tslib: 2.6.2
-    dev: false
 
-  /@angular/platform-browser@17.0.0-rc.2(@angular/animations@17.0.0-rc.2)(@angular/common@17.0.0-rc.1)(@angular/core@17.0.0-rc.1):
+  /@angular/platform-browser@17.0.0-rc.2(@angular/animations@17.0.0-rc.2)(@angular/common@17.0.0-rc.2)(@angular/core@17.0.0-rc.2):
     resolution: {integrity: sha512-eFtHNkkRx3GVLTEd5NlIa8d59BNmbVMejHW8ZWZsG9317wW7HM19REORS0JisvkuBkoUoHurqo5DBliDYeTUzw==}
     engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
@@ -2869,9 +2770,9 @@ packages:
       '@angular/animations':
         optional: true
     dependencies:
-      '@angular/animations': 17.0.0-rc.2(@angular/core@17.0.0-rc.1)
-      '@angular/common': 17.0.0-rc.1(@angular/core@17.0.0-rc.1)(rxjs@7.8.1)
-      '@angular/core': 17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.2)
+      '@angular/animations': 17.0.0-rc.2(@angular/core@17.0.0-rc.2)
+      '@angular/common': 17.0.0-rc.2(@angular/core@17.0.0-rc.2)(rxjs@7.8.1)
+      '@angular/core': 17.0.0-rc.2(rxjs@7.8.1)(zone.js@0.14.2)
       tslib: 2.6.2
     dev: true
 
@@ -9218,15 +9119,15 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@ngtools/webpack@16.2.8(@angular/compiler-cli@17.0.0-rc.2)(typescript@5.2.2)(webpack@5.88.2):
-    resolution: {integrity: sha512-GeblhLBwXe3qPYa4YHxbo0xujRl1FKkfIusU1mTIhkQBRtZY4Xgz4iMnPIEMJTU3XXGMkS+SCx34lqbwwMhR5A==}
+  /@ngtools/webpack@16.2.9(@angular/compiler-cli@17.0.0-rc.2)(typescript@5.2.2)(webpack@5.88.2):
+    resolution: {integrity: sha512-rOclD7FfT4OSwVA0nDnULbJS6TORJ0+sQiuT2ebaNFErYr3LOm6Zut05tnmzFw8q1cePrILbG+xpnbggNr9Pyw==}
     engines: {node: ^16.14.0 || >=18.10.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     peerDependencies:
       '@angular/compiler-cli': ^16.0.0
       typescript: '>=4.9.3 <5.2'
       webpack: ^5.54.0
     dependencies:
-      '@angular/compiler-cli': 17.0.0-rc.2(@angular/compiler@17.0.0-rc.1)(typescript@5.2.2)
+      '@angular/compiler-cli': 17.0.0-rc.2(@angular/compiler@17.0.0-rc.2)(typescript@5.2.2)
       typescript: 5.2.2
       webpack: 5.88.2(esbuild@0.18.17)
     dev: true
@@ -9387,7 +9288,7 @@ packages:
     dependencies:
       '@npmcli/node-gyp': 3.0.0
       '@npmcli/promise-spawn': 7.0.0
-      node-gyp: 10.0.0
+      node-gyp: 10.0.1
       read-package-json-fast: 3.0.2
       which: 4.0.0
     transitivePeerDependencies:
@@ -10128,23 +10029,23 @@ packages:
     resolution: {integrity: sha512-6i/8UoL0P5y4leBIGzvkZdS85RDMG9y1ihZzmTZQ5LdHUYmZ7pKFoj8X0236s3lusPs1Fa5HTQUpwI+UfTcmeA==}
     dev: false
 
-  /@schematics/angular@16.2.8:
-    resolution: {integrity: sha512-yxfxJ2IMRIt+dQcqyJR30qd/osb5NwRsi9US3gFIHP1jfjOAs1Nk8ENNd5ycYV+yykCa78KWhmbOw4G1zpR56Q==}
+  /@schematics/angular@16.2.9:
+    resolution: {integrity: sha512-uiU2YbZRVHgk1N1DDsek/5CKhfpZ8myJYNJk8eHV5LswnXOP3aqvH23VhneaAgOYwK5fISC7eMG0pLVKMvFfZQ==}
     engines: {node: ^16.14.0 || >=18.10.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     dependencies:
-      '@angular-devkit/core': 16.2.8(chokidar@3.5.3)
-      '@angular-devkit/schematics': 16.2.8
+      '@angular-devkit/core': 16.2.9(chokidar@3.5.3)
+      '@angular-devkit/schematics': 16.2.9
       jsonc-parser: 3.2.0
     transitivePeerDependencies:
       - chokidar
     dev: true
 
-  /@schematics/angular@17.0.0-rc.2:
-    resolution: {integrity: sha512-ZkQiiz2r8onJJEZlxJl9j2X12Tm7ZJaZlnxmbSryT8vkHX8g6xtB9RgLfSAoojrHj0n/io314fFnu9C0tBWsRQ==}
-    engines: {node: '>=18.13.0', npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
+  /@schematics/angular@17.0.0-rc.3:
+    resolution: {integrity: sha512-gRafyBMgnzc3QEHUIX+lrGrH6HcnmxwKeNiIXyFPlvoqMr1U5KazFNSqImF9VHg4dboIOVEJFJCHP8sadaejHQ==}
+    engines: {node: ^18.13.0 || >=20.9.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     dependencies:
-      '@angular-devkit/core': 17.0.0-rc.2
-      '@angular-devkit/schematics': 17.0.0-rc.2
+      '@angular-devkit/core': 17.0.0-rc.3
+      '@angular-devkit/schematics': 17.0.0-rc.3
       jsonc-parser: 3.2.0
     transitivePeerDependencies:
       - chokidar
@@ -10681,66 +10582,11 @@ packages:
       tslib: 2.6.2
     dev: true
 
-  /@tanstack/eslint-plugin-query@5.6.0(eslint@8.34.0)(typescript@5.1.6):
-    resolution: {integrity: sha512-A0D8fXIh6fuHcT7e+VaL+QnlLhY9V5QmiaLOTLOIcyVKCpWVZLSHrLP6ghZV6CB+JLalHWCAUF0QW0UaEyyz7g==}
-    peerDependencies:
-      eslint: ^8.0.0
-    dependencies:
-      '@typescript-eslint/utils': 5.62.0(eslint@8.34.0)(typescript@5.1.6)
-      eslint: 8.34.0
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
-    dev: true
-
-  /@tanstack/eslint-plugin-query@5.6.0(eslint@8.34.0)(typescript@5.2.2):
-    resolution: {integrity: sha512-A0D8fXIh6fuHcT7e+VaL+QnlLhY9V5QmiaLOTLOIcyVKCpWVZLSHrLP6ghZV6CB+JLalHWCAUF0QW0UaEyyz7g==}
-    peerDependencies:
-      eslint: ^8.0.0
-    dependencies:
-      '@typescript-eslint/utils': 5.62.0(eslint@8.34.0)(typescript@5.2.2)
-      eslint: 8.34.0
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
-    dev: true
-
   /@tanstack/match-sorter-utils@8.8.4:
     resolution: {integrity: sha512-rKH8LjZiszWEvmi01NR72QWZ8m4xmXre0OOwlRGnjU01Eqz/QnN+cqpty2PJ0efHblq09+KilvyR7lsbzmXVEw==}
     engines: {node: '>=12'}
     dependencies:
       remove-accents: 0.4.2
-
-  /@tanstack/query-core@5.4.3:
-    resolution: {integrity: sha512-fnI9ORjcuLGm1sNrKatKIosRQUpuqcD4SV7RqRSVmj8JSicX2aoMyKryHEBpVQvf6N4PaBVgBxQomjsbsGPssQ==}
-    dev: false
-
-  /@tanstack/query-core@5.7.2:
-    resolution: {integrity: sha512-vPYoNCOI8W+jFLnyEAYQL7/qURE7XzVE/TvkmNSko8LU55jFshee342p4GNFOTsYFgJty7Da5bw4m2P3vaKWMw==}
-    dev: false
-
-  /@tanstack/query-devtools@5.4.2:
-    resolution: {integrity: sha512-EXdaMXi8CxZuMp97J5mq6wy1RduOfoWFv5vtA1U+hyqb8Wst6M8kkkjDSdFvGZIRpYY4K8mKLlEFHNUZDG5dtw==}
-    dev: false
-
-  /@tanstack/query-persist-client-core@5.4.3:
-    resolution: {integrity: sha512-0MZazQMVXmmVyf/ce2ug0CoSkT02VA4ZhkT3F1/tIINxGuH2KlhKWQc9puqJzTazUpXfRdBK9+lMPqpkA16FEQ==}
-    dependencies:
-      '@tanstack/query-core': 5.4.3
-    dev: false
-
-  /@tanstack/query-persist-client-core@5.7.2:
-    resolution: {integrity: sha512-MrQeL/iwG2jbzXQhiSjkmATeerCVIW5vJhaBTOnKPYrGmhzRt8CSOOGRjSSEyO3RjLCA+0OlirjdWKDDc4Od6w==}
-    dependencies:
-      '@tanstack/query-core': 5.7.2
-    dev: false
-
-  /@tanstack/query-sync-storage-persister@5.7.2:
-    resolution: {integrity: sha512-B+jKPGPlqsgIDBnxezZpLhh5L2O3pbXXJgeB5CRwTG5RBJn35AhTLhz5WmEVhQ1PgrXxVqmVD4xWjW6LrXDoPg==}
-    dependencies:
-      '@tanstack/query-core': 5.7.2
-      '@tanstack/query-persist-client-core': 5.7.2
-    dev: false
 
   /@tanstack/react-location@3.7.0(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-baeAHlQ3F/D9GlV4x9LQAXFRj4PeTBxvKrDFPrdZDRPfG18LGzQhuwn0CNpOTuyHDF90qiUBPbIbEYSz2YZvkg==}
@@ -10753,121 +10599,6 @@ packages:
       history: 5.3.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-    dev: false
-
-  /@tanstack/react-query-devtools@5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-my9rj3MpCc5+AbZyX/gLAKIJnPaPhwV/IFgvUT5W7uTMCE8x5DdswQnLNX0PLkcf5t8zrqoLAk9mJny+p/XfgA==}
-    peerDependencies:
-      '@tanstack/react-query': ^5.7.1
-      react: ^18.0.0
-      react-dom: ^18.0.0
-    dependencies:
-      '@tanstack/query-devtools': 5.4.2
-      '@tanstack/react-query': 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-    dev: false
-
-  /@tanstack/react-query-next-experimental@5.7.1(@tanstack/react-query@5.7.1)(next@14.0.0)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-J401WaKBXtQp9O8/VOD3RT4yf++eDVuaNz5KxrAqYN6+7DOM0tKtf8Kc8l99n1slDMEnfM+DWtEp3605r0s/Ng==}
-    peerDependencies:
-      '@tanstack/react-query': ^5.7.1
-      next: ^13 || ^14
-      react: ^18.0.0
-      react-dom: ^18.0.0
-    dependencies:
-      '@tanstack/react-query': 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
-      next: 14.0.0(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-    dev: false
-
-  /@tanstack/react-query-persist-client@5.7.1(@tanstack/react-query@5.7.1)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-Vt7fPPNTtP8mRqtor3zBN1y8M2WAgOXiYajP2bYQJPT5L4sPw5sLwky+pv/W0j827pMYS6KY8qaYQqXVE2FkgA==}
-    peerDependencies:
-      '@tanstack/react-query': ^5.7.1
-      react: ^18.0.0
-      react-dom: ^18.0.0
-    dependencies:
-      '@tanstack/query-persist-client-core': 5.4.3
-      '@tanstack/react-query': 5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-    dev: false
-
-  /@tanstack/react-query@5.7.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0):
-    resolution: {integrity: sha512-7onwx519jOKh7/nspf70dOSejJSYfhFRnVsSicuPrmO8L6Iw05G1wwDpp1PjqFLsm7suixlHDXhcNfK0sy0kWg==}
-    peerDependencies:
-      react: ^18.0.0
-      react-dom: ^18.0.0
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-    dependencies:
-      '@tanstack/query-core': 5.4.3
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      react-native: 0.71.8(@babel/core@7.21.8)(@babel/preset-env@7.23.2)(react@18.2.0)
-    dev: false
-
-  /@tanstack/solid-query-devtools@5.7.2(@tanstack/solid-query@5.7.2)(solid-js@1.8.1):
-    resolution: {integrity: sha512-7YQHWk21JiI9QqTZVYpzIrKzfqVp/CAvA+4fiBYgm4+MNre9rE961HOfhpACPARC0hyNIZCUZKl9X++m4SWHrA==}
-    peerDependencies:
-      '@tanstack/solid-query': ^5.7.2
-      solid-js: ^1.7.8
-    dependencies:
-      '@tanstack/query-devtools': 5.4.2
-      '@tanstack/solid-query': 5.7.2(solid-js@1.8.1)
-      solid-js: 1.8.1
-    dev: false
-
-  /@tanstack/solid-query@5.7.2(solid-js@1.8.1):
-    resolution: {integrity: sha512-fvd/SzFU6EZkr83tn+guhUr3YEROY6JtqMcJVL9uJxQkgD9iu5cSUO1xP0ynpg4V53VF3WM7JHPc+bQOTcvZ4A==}
-    peerDependencies:
-      solid-js: ^1.6.0
-    dependencies:
-      '@tanstack/query-core': 5.7.2
-      solid-js: 1.8.1
-    dev: false
-
-  /@tanstack/svelte-query-devtools@5.6.1(@tanstack/svelte-query@5.6.1)(svelte@4.0.0):
-    resolution: {integrity: sha512-aNVXUxfJGevZT/uxzwCaex1OR0yfC09dtAggKatOeeRCAEYkztjAXDtivDRS+kP+Q3C9/8ZpzeOOBOMryl01vg==}
-    peerDependencies:
-      '@tanstack/svelte-query': ^5.6.1
-      svelte: '>=3 <5'
-    dependencies:
-      '@tanstack/query-devtools': 5.4.2
-      '@tanstack/svelte-query': 5.6.1(svelte@4.0.0)
-      esm-env: 1.0.0
-      svelte: 4.0.0
-    dev: false
-
-  /@tanstack/svelte-query@5.6.1(svelte@4.0.0):
-    resolution: {integrity: sha512-BfoWKne5BKDYVau37yE+E6g9foMHstTiWWRI5OkuhJdjNxA00Fv1IHsIUPOuS/lElGyCZ+7D3pGUvq1YDZBMYA==}
-    peerDependencies:
-      svelte: '>=3 <5'
-    dependencies:
-      '@tanstack/query-core': 5.4.3
-      svelte: 4.0.0
-    dev: false
-
-  /@tanstack/vue-query@5.7.2(vue@3.3.0):
-    resolution: {integrity: sha512-XTKeVZvXg2s8hBjqJFLUGX7fdEV6AntgfnUK3SWjn4r4QgZF+Sycb2TMDdln2dNzrxH3s01QVlliQ16B3BapyA==}
-    peerDependencies:
-      '@vue/composition-api': ^1.1.2
-      vue: ^2.6.0 || ^3.3.0
-    peerDependenciesMeta:
-      '@vue/composition-api':
-        optional: true
-    dependencies:
-      '@tanstack/match-sorter-utils': 8.8.4
-      '@tanstack/query-core': 5.7.2
-      '@vue/devtools-api': 6.5.0
-      vue: 3.3.0
-      vue-demi: 0.14.6(@vue/composition-api@1.7.2)(vue@3.3.0)
     dev: false
 
   /@testing-library/dom@8.20.1:
@@ -11649,6 +11380,7 @@ packages:
     dependencies:
       '@typescript-eslint/types': 5.62.0
       '@typescript-eslint/visitor-keys': 5.62.0
+    dev: false
 
   /@typescript-eslint/type-utils@5.54.0(eslint@8.34.0)(typescript@5.1.6):
     resolution: {integrity: sha512-WI+WMJ8+oS+LyflqsD4nlXMsVdzTMYTxl16myXPaCXnSgc7LWwMsjxQFZCK/rVmTZ3FN71Ct78ehO9bRC7erYQ==}
@@ -11707,6 +11439,7 @@ packages:
   /@typescript-eslint/types@5.62.0:
     resolution: {integrity: sha512-87NVngcbVXUahrRTqIK27gD2t5Cu1yuCXxbLcFtCzZGlfyVWWh8mLHkoxzjsB6DDNnvdL+fW8MiwPEJyGJQDgQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    dev: false
 
   /@typescript-eslint/typescript-estree@3.10.1(typescript@5.2.2):
     resolution: {integrity: sha512-QbcXOuq6WYvnB3XPsZpIwztBoquEYLXh2MtwVU+kO8jgYCiv4G5xrSP/1wg4tkvrEE+esZVquIPX/dxPlePk1w==}
@@ -11792,27 +11525,6 @@ packages:
       - supports-color
     dev: false
 
-  /@typescript-eslint/typescript-estree@5.62.0(typescript@5.1.6):
-    resolution: {integrity: sha512-CmcQ6uY7b9y694lKdRB8FEel7JbU/40iSAPomu++SjLMntB+2Leay2LO6i8VnJk58MtE9/nQSFIH6jpyRWyYzA==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    peerDependencies:
-      typescript: '*'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-    dependencies:
-      '@typescript-eslint/types': 5.62.0
-      '@typescript-eslint/visitor-keys': 5.62.0
-      debug: 4.3.4(supports-color@6.1.0)
-      globby: 11.1.0
-      is-glob: 4.0.3
-      semver: 7.5.4
-      tsutils: 3.21.0(typescript@5.1.6)
-      typescript: 5.1.6
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
   /@typescript-eslint/typescript-estree@5.62.0(typescript@5.2.2):
     resolution: {integrity: sha512-CmcQ6uY7b9y694lKdRB8FEel7JbU/40iSAPomu++SjLMntB+2Leay2LO6i8VnJk58MtE9/nQSFIH6jpyRWyYzA==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
@@ -11832,6 +11544,7 @@ packages:
       typescript: 5.2.2
     transitivePeerDependencies:
       - supports-color
+    dev: false
 
   /@typescript-eslint/utils@5.54.0(eslint@8.34.0)(typescript@5.1.6):
     resolution: {integrity: sha512-cuwm8D/Z/7AuyAeJ+T0r4WZmlnlxQ8wt7C7fLpFlKMR+dY6QO79Cq1WpJhvZbMA4ZeZGHiRWnht7ZJ8qkdAunw==}
@@ -11873,26 +11586,6 @@ packages:
       - typescript
     dev: false
 
-  /@typescript-eslint/utils@5.62.0(eslint@8.34.0)(typescript@5.1.6):
-    resolution: {integrity: sha512-n8oxjeb5aIbPFEtmQxQYOLI0i9n5ySBEY/ZEHHZqKQSFnxio1rv6dthascc9dLuwrL0RC5mPCxB7vnAVGAYWAQ==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    peerDependencies:
-      eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-    dependencies:
-      '@eslint-community/eslint-utils': 4.4.0(eslint@8.34.0)
-      '@types/json-schema': 7.0.14
-      '@types/semver': 7.5.4
-      '@typescript-eslint/scope-manager': 5.62.0
-      '@typescript-eslint/types': 5.62.0
-      '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.1.6)
-      eslint: 8.34.0
-      eslint-scope: 5.1.1
-      semver: 7.5.4
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
-    dev: true
-
   /@typescript-eslint/utils@5.62.0(eslint@8.34.0)(typescript@5.2.2):
     resolution: {integrity: sha512-n8oxjeb5aIbPFEtmQxQYOLI0i9n5ySBEY/ZEHHZqKQSFnxio1rv6dthascc9dLuwrL0RC5mPCxB7vnAVGAYWAQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
@@ -11911,6 +11604,7 @@ packages:
     transitivePeerDependencies:
       - supports-color
       - typescript
+    dev: false
 
   /@typescript-eslint/visitor-keys@3.10.1:
     resolution: {integrity: sha512-9JgC82AaQeglebjZMgYR5wgmfUdUc+EitGUUMW8u2nDckaeimzW+VsoLV6FoimPv2id3VQzfjwBxEMVz08ameQ==}
@@ -11940,6 +11634,7 @@ packages:
     dependencies:
       '@typescript-eslint/types': 5.62.0
       eslint-visitor-keys: 3.4.3
+    dev: false
 
   /@urql/core@2.3.6(graphql@15.8.0):
     resolution: {integrity: sha512-PUxhtBh7/8167HJK6WqBv6Z0piuiaZHQGYbhwpNL9aIQmLROPEdaUYkY4wh45wPQXcTpnd11l0q3Pw+TI11pdw==}
@@ -14606,6 +14301,7 @@ packages:
       acorn: 8.10.0
       estree-walker: 3.0.3
       periscopic: 3.1.0
+    dev: true
 
   /collect-v8-coverage@1.0.2:
     resolution: {integrity: sha512-lHl4d5/ONEbLlJvaJNtsF/Lz+WvB07u2ycqTYbdrq7UypDXailES4valYb2eWiJFxZlVmpGekfqoxQhzyFdT4Q==}
@@ -15388,6 +15084,7 @@ packages:
     dependencies:
       mdn-data: 2.0.30
       source-map-js: 1.0.2
+    dev: true
 
   /css-vendor@2.0.8:
     resolution: {integrity: sha512-x9Aq0XTInxrkuFeHKbYC7zWY8ai7qJ04Kxd9MnvbC1uO5DagxoHQjm4JvG+vCdXOoFtCjbL2XSZfxmoYa9uQVQ==}
@@ -17004,7 +16701,7 @@ packages:
         optional: true
     dependencies:
       '@typescript-eslint/eslint-plugin': 5.54.0(@typescript-eslint/parser@5.54.0)(eslint@8.34.0)(typescript@5.1.6)
-      '@typescript-eslint/utils': 5.62.0(eslint@8.34.0)(typescript@5.1.6)
+      '@typescript-eslint/utils': 5.54.0(eslint@8.34.0)(typescript@5.1.6)
       eslint: 8.34.0
     transitivePeerDependencies:
       - supports-color
@@ -17490,6 +17187,7 @@ packages:
     resolution: {integrity: sha512-7RUKfXgSMMkzt6ZuXmqapOurLGPPfgj6l9uRZ7lRGolvk0y2yocc35LdcxKC5PQZdn2DMqioAQ2NoWcrTKmm6g==}
     dependencies:
       '@types/estree': 1.0.3
+    dev: true
 
   /esutils@2.0.3:
     resolution: {integrity: sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==}
@@ -19965,6 +19663,7 @@ packages:
     resolution: {integrity: sha512-v3rht/LgVcsdZa3O2Nqs+NMowLOxeOm7Ay9+/ARQ2F+qEoANRcqrjAZKGN0v8ymUetZGgkp26LTnGT7H0Qo9Pg==}
     dependencies:
       '@types/estree': 1.0.3
+    dev: true
 
   /is-regex@1.1.4:
     resolution: {integrity: sha512-kvRdxDsxZjhzUX07ZnLydzS1TU/TJlTUHHY4YLL87e37oUA49DfkLqgy+VjFocowy29cKvcSiu+kIv728jTTVg==}
@@ -21937,6 +21636,7 @@ packages:
 
   /locate-character@3.0.0:
     resolution: {integrity: sha512-SW13ws7BjaeJ6p7Q6CO2nchbYEc3X3J6WrmTTDto7yMPqVSZTUyY5Tjbid+Ab8gLnATtygYtiDIJGQRRn2ZOiA==}
+    dev: true
 
   /locate-path@3.0.0:
     resolution: {integrity: sha512-7AO748wWnIhNqAuaty2ZWHkQHRSNfPVIsPIfwEOWO22AmaoVrWavlOcMR5nzTLNYvp36X220/maaRsrec1G65A==}
@@ -22287,6 +21987,7 @@ packages:
 
   /mdn-data@2.0.30:
     resolution: {integrity: sha512-GaqWWShW4kv/G9IEucWScBx9G1/vsFZZJUO+tD26M8J8z3Kw5RDQjaoZe03YAClgeS/SWPOcb4nkFBTEi5DUEA==}
+    dev: true
 
   /mdn-data@2.0.4:
     resolution: {integrity: sha512-iV3XNKw06j5Q7mi6h+9vbx23Tv7JkjEVgKHW4pimwyDGWm0OIQntJJ+u1C6mg6mK1EaTv42XQ7w76yuzH7M2cA==}
@@ -23423,7 +23124,7 @@ packages:
       - '@babel/core'
       - babel-plugin-macros
 
-  /ng-packagr@16.2.3(@angular/compiler-cli@16.2.11)(tslib@2.6.2)(typescript@5.1.6):
+  /ng-packagr@16.2.3(@angular/compiler-cli@16.2.12)(tslib@2.6.2)(typescript@5.1.6):
     resolution: {integrity: sha512-VTJ7Qtge52+1subkhmF5nOqLNbVutA8/igJ0A5vH6Mgpb8Z/3HeZomtD1SHzZF5Dqp+p+QPHE548FWYu1MdMSQ==}
     engines: {node: ^16.14.0 || >=18.10.0}
     hasBin: true
@@ -23436,7 +23137,7 @@ packages:
       tailwindcss:
         optional: true
     dependencies:
-      '@angular/compiler-cli': 16.2.11(@angular/compiler@16.2.11)(typescript@5.1.6)
+      '@angular/compiler-cli': 16.2.12(@angular/compiler@16.2.12)(typescript@5.1.6)
       '@rollup/plugin-json': 6.0.1(rollup@3.29.4)
       '@rollup/plugin-node-resolve': 15.2.3(rollup@3.29.4)
       ajv: 8.12.0
@@ -23482,7 +23183,7 @@ packages:
       tailwindcss:
         optional: true
     dependencies:
-      '@angular/compiler-cli': 17.0.0-rc.2(@angular/compiler@17.0.0-rc.1)(typescript@5.2.2)
+      '@angular/compiler-cli': 17.0.0-rc.2(@angular/compiler@17.0.0-rc.2)(typescript@5.2.2)
       '@rollup/plugin-json': 6.0.1(rollup@3.29.4)
       '@rollup/plugin-node-resolve': 15.2.3(rollup@3.29.4)
       ajv: 8.12.0
@@ -23515,7 +23216,7 @@ packages:
       - supports-color
     dev: true
 
-  /ngxtension@0.14.1(@angular/common@16.2.12)(@angular/core@16.2.11)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1):
+  /ngxtension@0.14.1(@angular/common@16.2.12)(@angular/core@16.2.12)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1):
     resolution: {integrity: sha512-aSRdajOzEWSF6YbZEMrqTjoE/Pc0kB2aXFaBzhDcRJNSyuOLDA1/+aQiW1A4JJy29yFaUQYQ7xc1xLWdkFE+8Q==}
     engines: {node: '>=16'}
     peerDependencies:
@@ -23524,8 +23225,8 @@ packages:
       '@use-gesture/vanilla': ^10.0.0
       rxjs: ^6.0.0 || ^7.0.0
     dependencies:
-      '@angular/common': 16.2.12(@angular/core@16.2.11)(rxjs@7.8.1)
-      '@angular/core': 16.2.11(rxjs@7.8.1)(zone.js@0.13.3)
+      '@angular/common': 16.2.12(@angular/core@16.2.12)(rxjs@7.8.1)
+      '@angular/core': 16.2.12(rxjs@7.8.1)(zone.js@0.13.3)
       '@nx/devkit': 16.10.0(nx@16.5.2)
       '@use-gesture/vanilla': 10.3.0
       nx: 16.5.2
@@ -23537,7 +23238,7 @@ packages:
       - debug
     dev: false
 
-  /ngxtension@0.14.1(@angular/common@17.0.0-rc.1)(@angular/core@17.0.0-rc.1)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1):
+  /ngxtension@0.14.1(@angular/common@17.0.0-rc.2)(@angular/core@17.0.0-rc.2)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1):
     resolution: {integrity: sha512-aSRdajOzEWSF6YbZEMrqTjoE/Pc0kB2aXFaBzhDcRJNSyuOLDA1/+aQiW1A4JJy29yFaUQYQ7xc1xLWdkFE+8Q==}
     engines: {node: '>=16'}
     peerDependencies:
@@ -23546,8 +23247,8 @@ packages:
       '@use-gesture/vanilla': ^10.0.0
       rxjs: ^6.0.0 || ^7.0.0
     dependencies:
-      '@angular/common': 17.0.0-rc.1(@angular/core@17.0.0-rc.1)(rxjs@7.8.1)
-      '@angular/core': 17.0.0-rc.1(rxjs@7.8.1)(zone.js@0.14.2)
+      '@angular/common': 17.0.0-rc.2(@angular/core@17.0.0-rc.2)(rxjs@7.8.1)
+      '@angular/core': 17.0.0-rc.2(rxjs@7.8.1)(zone.js@0.14.2)
       '@nx/devkit': 16.10.0(nx@16.5.2)
       '@use-gesture/vanilla': 10.3.0
       nx: 16.5.2
@@ -23632,8 +23333,8 @@ packages:
     resolution: {integrity: sha512-24vnklJmyRS8ViBNI8KbtK/r/DmXQMRiOMXTNz2nrTnAYUwjmEEbnnpB/+kt+yWRv73bPsSPRFddrcIbAxSiMQ==}
     hasBin: true
 
-  /node-gyp@10.0.0:
-    resolution: {integrity: sha512-LkaKUbjyacJGRHiuhUeUblzZNxTF1/XNooyAl6aiaJ6ZpeurR4Mk9sjxncGNSI7pETqyqM+hLAER0788oSxt0A==}
+  /node-gyp@10.0.1:
+    resolution: {integrity: sha512-gg3/bHehQfZivQVfqIyy8wTdSymF9yTyP4CJifK73imyNMU8AIGQE2pUa7dNWfmMeG9cDVF2eehiRMv0LC1iAg==}
     engines: {node: ^16.14.0 || >=18.0.0}
     hasBin: true
     dependencies:
@@ -24763,6 +24464,7 @@ packages:
       '@types/estree': 1.0.3
       estree-walker: 3.0.3
       is-reference: 3.0.2
+    dev: true
 
   /picocolors@0.2.1:
     resolution: {integrity: sha512-cMlDqaLEqfSaW8Z7N5Jw+lyIW869EzT73/F5lhtY9cLGoVxSXznfgfXMO0Z5K0o0Q2TkTXq+0KFsdnSe3jDViA==}
@@ -24774,6 +24476,11 @@ packages:
   /picomatch@2.3.1:
     resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
     engines: {node: '>=8.6'}
+
+  /picomatch@3.0.1:
+    resolution: {integrity: sha512-I3EurrIQMlRc9IaAZnqRR044Phh2DXY+55o7uJ0V+hYZAcQYSuFWsc9q5PvyDHUSCe1Qxn/iBz+78s86zWnGag==}
+    engines: {node: '>=10'}
+    dev: true
 
   /pify@2.3.0:
     resolution: {integrity: sha512-udgsAY+fTnvv7kI7aaxbqwWNb0AHiB0qBO89PZKPkoTmGOgdbrHDKD+0B2X4uTfJ/FT1R09r9gTsjUjNJotuog==}
@@ -26532,7 +26239,6 @@ packages:
 
   /prr@1.0.1:
     resolution: {integrity: sha512-yPw4Sng1gWghHQWj0B3ZggWUm4qVbPwPFcRG8KyxiU7J2OHFSoEHKS+EZ3fv5l1t9CyCiop6l/ZYeWbrgoQejw==}
-    requiresBuild: true
 
   /pseudomap@1.0.2:
     resolution: {integrity: sha512-b/YwNhb8lk1Zz2+bXXpS/LK9OisiZZ1SNsSLxN1x2OXVEhW2Ckr/7mWE5vrC1ZTiJlD9g19jWszTmJsB+oEpFQ==}
@@ -29588,6 +29294,7 @@ packages:
       locate-character: 3.0.0
       magic-string: 0.30.5
       periscopic: 3.1.0
+    dev: true
 
   /svg-parser@2.0.4:
     resolution: {integrity: sha512-e4hG1hRwoOdRb37cIMSgzNsxyzKfayW6VOflrwvR+/bzrkyxY/31WkbgnQpgtrNp1SdpJvpUAGTa/ZoiPNDuRQ==}
@@ -30258,6 +29965,7 @@ packages:
     dependencies:
       tslib: 1.14.1
       typescript: 5.2.2
+    dev: false
 
   /tty-browserify@0.0.0:
     resolution: {integrity: sha512-JVa5ijo+j/sOoHGjw0sxw734b1LhBkQ3bvUGNdxnVXDCX81Yx7TFgnZygxrIIWn23hbfTaMYLwRmAxFyDuFmIw==}
@@ -31065,7 +30773,7 @@ packages:
       strip-literal: 1.3.0
       tinybench: 2.5.1
       tinypool: 0.7.0
-      vite: 4.4.11(@types/node@18.18.0)
+      vite: 4.5.0(@types/node@18.18.0)
       vite-node: 0.34.6(@types/node@18.18.0)
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
@@ -32303,11 +32011,6 @@ packages:
     dependencies:
       tslib: 2.6.2
     dev: false
-
-  /zone.js@0.14.1:
-    resolution: {integrity: sha512-R3t9Nwl/LJnnpmwx0+Q7YcHtE6xUObnowwNskWCiqEMQXYYlkZiOOhF+N2R18PMILv8+fbzCLKAJvpvyxzafpQ==}
-    dependencies:
-      tslib: 2.6.2
 
   /zone.js@0.14.2:
     resolution: {integrity: sha512-X4U7J1isDhoOmHmFWiLhloWc2lzMkdnumtfQ1LXzf/IOZp5NQYuMUTaviVzG/q1ugMBIXzin2AqeVJUoSEkNyQ==}
