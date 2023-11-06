@@ -17,6 +17,7 @@
   "type": "module",
   "types": "dist/index.d.ts",
   "module": "dist/index.js",
+  "main": "dist/index.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -26,7 +27,7 @@
       "types": "./dist/production.d.ts",
       "default": "./dist/production.js"
     },
-    "./build/production.js": {
+    "./dist/production.js": {
       "types": "./dist/production.d.ts",
       "default": "./dist/production.js"
     },
