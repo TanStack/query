@@ -153,6 +153,17 @@ export class QueryClient extends QC {
     options: MaybeRefDeep<
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
     >,
+  ): Promise<TData>
+  fetchQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: MaybeRefDeep<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
+    >,
   ): Promise<TData> {
     return super.fetchQuery(cloneDeepUnref(options))
   }
@@ -164,6 +175,16 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
   >(
     options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  ): Promise<void>
+  prefetchQuery<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    options: MaybeRefDeep<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+    >,
   ): Promise<void>
   prefetchQuery<
     TQueryFnData = unknown,
@@ -209,12 +230,29 @@ export class QueryClient extends QC {
         TPageParam
       >
     >,
+  ): Promise<InfiniteData<TData, TPageParam>>
+  fetchInfiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: MaybeRefDeep<
+      FetchInfiniteQueryOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >
+    >,
   ): Promise<InfiniteData<TData, TPageParam>> {
     return super.fetchInfiniteQuery(cloneDeepUnref(options))
   }
 
   prefetchInfiniteQuery<
-    TQueryFnData = unknown,
+    TQueryFnData,
     TError = DefaultError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
@@ -226,6 +264,23 @@ export class QueryClient extends QC {
       TData,
       TQueryKey,
       TPageParam
+    >,
+  ): Promise<void>
+  prefetchInfiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: MaybeRefDeep<
+      FetchInfiniteQueryOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >
     >,
   ): Promise<void>
   prefetchInfiniteQuery<
