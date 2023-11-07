@@ -2,15 +2,15 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { asyncThrottle } from '../asyncThrottle'
 import { sleep as delay } from './utils'
 
-beforeEach(() => {
-  vi.useFakeTimers()
-})
-
-afterEach(() => {
-  vi.useRealTimers()
-})
-
 describe('asyncThrottle', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   test('basic', async () => {
     const interval = 10
 
