@@ -252,7 +252,7 @@ If the updater function returns `undefined`, the query data will not be updated.
 
 **Immutability**
 
-Updates via `setQueryData` must be performed in an _immuatable_ way. **DO NOT** attempt to write directly to the cache by mutating `oldData` or data that you retrieved via `getQueryData` in place.
+Updates via `setQueryData` must be performed in an _immutable_ way. **DO NOT** attempt to write directly to the cache by mutating `oldData` or data that you retrieved via `getQueryData` in place.
 
 ## `queryClient.getQueryState`
 
