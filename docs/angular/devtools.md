@@ -52,4 +52,4 @@ import { Component } from '@angular/core';
   - Defaults to `bottom`
   - The position of the Angular Query devtools panel
 - `client?: QueryClient`,
-  - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
+  - Use this to use a custom QueryClient. Otherwise, the QueryClient provided through provideAngularQuery() will be injected.
