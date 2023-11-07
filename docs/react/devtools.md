@@ -22,6 +22,7 @@ $ pnpm add @tanstack/react-query-devtools
 # or
 $ yarn add @tanstack/react-query-devtools
 ```
+
 For Next 13+ App Dir you must install it as a dev dependency for it to work.
 
 You can import the devtools like this:
@@ -31,7 +32,6 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 ```
 
 By default, React Query Devtools are only included in bundles when `process.env.NODE_ENV === 'development'`, so you don't need to worry about excluding them during a production build.
-
 
 ## Floating Mode
 
@@ -66,6 +66,8 @@ function App() {
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
 - `errorTypes?: { name: string; initializer: (query: Query) => TError}`
   - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
+- `styleNonce?: string`
+  - Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
 
 ## Devtools in production
 
