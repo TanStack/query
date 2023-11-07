@@ -1,6 +1,10 @@
-import { afterEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { asyncThrottle } from '../asyncThrottle'
 import { sleep as delay } from './utils'
+
+beforeEach(() => {
+  vi.useFakeTimers()
+})
 
 afterEach(() => {
   vi.useRealTimers()
@@ -8,8 +12,6 @@ afterEach(() => {
 
 describe('asyncThrottle', () => {
   test('basic', async () => {
-    vi.useFakeTimers()
-
     const interval = 10
 
     const execTimeStamps: Array<number> = []
@@ -44,8 +46,6 @@ describe('asyncThrottle', () => {
   })
 
   test('Bug #3331 case 1: Special timing', async () => {
-    vi.useFakeTimers()
-
     const interval = 1000
     const execTimeStamps: Array<number> = []
     const mockFunc = vi.fn(
@@ -78,8 +78,6 @@ describe('asyncThrottle', () => {
   })
 
   test('Bug #3331 case 2: "func" execution time is greater than the interval.', async () => {
-    vi.useFakeTimers()
-
     const interval = 1000
     const execTimeStamps: Array<number> = []
     const mockFunc = vi.fn(
@@ -110,8 +108,6 @@ describe('asyncThrottle', () => {
   })
 
   test('"func" throw error not break next invoke', async () => {
-    vi.useFakeTimers()
-
     const interval = 10
 
     const mockFunc = vi.fn(
