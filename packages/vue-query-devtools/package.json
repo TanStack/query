@@ -1,0 +1,61 @@
+{
+  "name": "@tanstack/vue-query-devtools",
+  "version": "5.8.0",
+  "description": "Developer tools to interact with and visualize the TanStack/vue-query cache",
+  "author": "tannerlinsley",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TanStack/query.git",
+    "directory": "packages/vue-query-devtools"
+  },
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./production": {
+      "types": "./dist/production.d.ts",
+      "default": "./dist/production.js"
+    },
+    "./dist/production.js": {
+      "types": "./dist/production.d.ts",
+      "default": "./dist/production.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "clean": "rimraf ./build && rimraf ./coverage",
+    "test:eslint": "eslint --ext .ts,.tsx ./src",
+    "test:types": "tsc",
+    "test:build": "publint --strict",
+    "build": "vite build && vue-tsc"
+  },
+  "dependencies": {
+    "@tanstack/query-devtools": "workspace:*"
+  },
+  "devDependencies": {
+    "@tanstack/vue-query": "workspace:*",
+    "@vitejs/plugin-vue": "^4.4.0",
+    "vue": "^3.3.0",
+    "vue-tsc": "^1.8.21",
+    "vite": "^4.4.4"
+  },
+  "peerDependencies": {
+    "vue": "^3.3.0"
+  }
+}

@@ -99,8 +99,8 @@ export const packages = [
     entries: ['main', 'module', 'types'],
   },
   {
-    name: '@tanstack/angular-query-experimental',
-    packageDir: 'packages/angular-query-experimental/build',
+    name: '@tanstack/vue-query-devtools',
+    packageDir: 'packages/vue-query-devtools',
     entries: ['main', 'module', 'types'],
   },
   {
