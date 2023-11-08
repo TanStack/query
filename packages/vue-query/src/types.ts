@@ -26,6 +26,14 @@ export type MaybeRefDeep<T> = MaybeRef<
     : T
 >
 
+export type NoUnknown<T> = Equal<unknown, T> extends true ? never : T
+
+export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
+  T,
+>() => T extends Y ? 1 : 2
+  ? true
+  : false
+
 export type DeepUnwrapRef<T> = T extends UnwrapLeaf
   ? T
   : T extends Ref<infer U>
