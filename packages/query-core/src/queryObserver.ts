@@ -103,6 +103,8 @@ export class QueryObserver<
 
       if (shouldFetchOnMount(this.#currentQuery, this.options)) {
         this.#executeFetch()
+      } else {
+        this.updateResult()
       }
 
       this.#updateTimers()
