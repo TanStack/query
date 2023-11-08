@@ -7,6 +7,7 @@ import {
   test,
   vi,
 } from 'vitest'
+import { waitFor } from '@testing-library/react'
 import { QueryObserver, focusManager } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
 import type { QueryClient, QueryObserverResult } from '..'
@@ -31,6 +32,61 @@ describe('queryObserver', () => {
     await sleep(1)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
+  test('should be able to read latest data after subscribing', async () => {
+    const key = queryKey()
+    queryClient.setQueryData(key, 'data')
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      enabled: false,
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: 'data',
+    })
+
+    unsubscribe()
+  })
+
+  test('should be able to read latest data when re-subscribing (but not re-fetching)', async () => {
+    const key = queryKey()
+    let count = 0
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      staleTime: Infinity,
+      queryFn: async () => {
+        await sleep(10)
+        count++
+        return 'data'
+      },
+    })
+
+    let unsubscribe = observer.subscribe(vi.fn())
+
+    // unsubscribe before data comes in
+    unsubscribe()
+    expect(count).toBe(0)
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      data: undefined,
+    })
+
+    await waitFor(() => expect(count).toBe(1))
+
+    // re-subscribe after data comes in
+    unsubscribe = observer.subscribe(vi.fn())
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: 'data',
+    })
+
+    unsubscribe()
   })
 
   test('should notify when switching query', async () => {
