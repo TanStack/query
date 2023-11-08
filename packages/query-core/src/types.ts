@@ -142,8 +142,8 @@ export interface QueryOptions<
   networkMode?: NetworkMode
    /**
    * The time in milliseconds that unused/inactive cache data remains in memory.
-   * When a query's cache becomes unused or inactive, 
-   * that cache data will be garbage collected after this duration. When different garbage collection times are specified, the longest one will be used.
+   * When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
+   * When different garbage collection times are specified, the longest one will be used.
    * If set to `Infinity`, will disable garbage collection.
    */
   gcTime?: number
