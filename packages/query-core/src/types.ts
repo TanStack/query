@@ -319,7 +319,12 @@ export interface QueryObserverOptions<
    */
   placeholderData?:
     | NonFunctionGuard<TQueryData>
-    | PlaceholderDataFunction<NonFunctionGuard<TQueryData>>
+    | PlaceholderDataFunction<
+        NonFunctionGuard<TQueryData>,
+        TError,
+        NonFunctionGuard<TQueryData>,
+        TQueryKey
+      >
 
   _optimisticResults?: 'optimistic' | 'isRestoring'
 }
