@@ -169,7 +169,7 @@ describe('initialData', () => {
         useQuery({
           queryKey: ['key'],
           queryFn: () => 5,
-          structuralSharing: (_oldData, newData) => {
+          structuralSharing: (_oldData: number | undefined, newData: number) => {
             return newData
           },
         })
