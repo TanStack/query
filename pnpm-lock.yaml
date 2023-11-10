@@ -911,6 +911,9 @@ importers:
       axios:
         specifier: ^1.5.1
         version: 1.5.1
+      font-awesome:
+        specifier: ^4.7.0
+        version: 4.7.0
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -15360,6 +15363,11 @@ packages:
         optional: true
     dependencies:
       debug: 4.3.4(supports-color@6.1.0)
+
+  /font-awesome@4.7.0:
+    resolution: {integrity: sha512-U6kGnykA/6bFmg1M/oT9EkFeIYv7JlX3bozwQJWiiLz6L0w3F5vBVPxHlwyX/vtNq1ckcpRKOB9f2Qal/VtFpg==}
+    engines: {node: '>=0.10.3'}
+    dev: false
 
   /fontfaceobserver@2.3.0:
     resolution: {integrity: sha512-6FPvD/IVyT4ZlNe7Wcn5Fb/4ChigpucKYSvD6a+0iMoLn2inpo711eyIcKjmDtE5XNcgAkSH9uN/nfAeZzHEfg==}
