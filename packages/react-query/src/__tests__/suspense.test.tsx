@@ -2,11 +2,9 @@ import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { onlineManager } from '@tanstack/query-core'
 import {
   QueryCache,
   QueryErrorResetBoundary,
-  useQuery,
   useQueryErrorResetBoundary,
   useSuspenseInfiniteQuery,
   useSuspenseQueries,
@@ -893,19 +891,13 @@ describe('useSuspenseQueries', () => {
   // this addresses the following issue:
   // https://github.com/TanStack/query/issues/6344
   it('should suspend when offline', async () => {
-    const onlineMangerSpy = vi.spyOn(onlineManager, 'isOnline')
-    onlineMangerSpy.mockImplementation(() => false)
-
+    let currentQueryReturnValue = 1
     const key = queryKey()
     function Fallback() {
-      const { isPaused } = useQuery({
-        queryKey: key,
-        queryFn: query,
-      })
-      return <div>{`loading, isPaused ${String(isPaused)}`}</div>
+      return <div>loading</div>
     }
     function query() {
-      return Promise.resolve(5)
+      return Promise.resolve(currentQueryReturnValue)
     }
 
     function Page() {
@@ -913,7 +905,21 @@ describe('useSuspenseQueries', () => {
         queryKey: key,
         queryFn: query,
       })
-      return <div>data is {data}</div>
+      return (
+        <>
+          <div>data is {data}</div>
+          <button
+            onClick={() => {
+              currentQueryReturnValue = 2
+              queryClient.fetchQuery({
+                queryKey: key,
+              })
+            }}
+          >
+            fetch
+          </button>
+        </>
+      )
     }
 
     const rendered = renderWithClient(
@@ -923,7 +929,8 @@ describe('useSuspenseQueries', () => {
       </React.Suspense>,
     )
 
-    await waitFor(() => rendered.getByText('loading, isPaused true'))
+    await waitFor(() => rendered.getByText('loading'))
+    await waitFor(() => rendered.getByText('data is 1'))
 
     document.dispatchEvent(
       new CustomEvent('offline', {
@@ -932,7 +939,9 @@ describe('useSuspenseQueries', () => {
       }),
     )
 
-    onlineMangerSpy.mockRestore()
+    fireEvent.click(rendered.getByText("fetch"))
+
+    await waitFor(() => rendered.getByText('loading'))
 
     document.dispatchEvent(
       new CustomEvent('online', {
@@ -941,6 +950,7 @@ describe('useSuspenseQueries', () => {
       }),
     )
 
+    // this would fail, needs to be 2
     await waitFor(() => rendered.getByText('data is 5'))
   })
 })
