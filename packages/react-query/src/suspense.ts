@@ -41,7 +41,12 @@ export const shouldSuspend = (
     | undefined,
   result: QueryObserverResult<any, any>,
   isRestoring: boolean,
-) => defaultedOptions?.suspense && willFetch(result, isRestoring)
+) => {
+  if (defaultedOptions?.suspense && result.isPaused && !isRestoring) {
+    return true;
+  }
+  return defaultedOptions?.suspense && willFetch(result, isRestoring);
+}
 
 export const fetchOptimistic = <
   TQueryFnData,

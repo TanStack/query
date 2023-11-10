@@ -6,6 +6,7 @@ import { onlineManager } from '@tanstack/query-core'
 import {
   QueryCache,
   QueryErrorResetBoundary,
+  useQuery,
   useQueryErrorResetBoundary,
   useSuspenseInfiniteQuery,
   useSuspenseQueries,
@@ -892,32 +893,54 @@ describe('useSuspenseQueries', () => {
   // this addresses the following issue:
   // https://github.com/TanStack/query/issues/6344
   it('should suspend when offline', async () => {
-    const onlineMangerSpy = vi.spyOn(onlineManager, "isOnline");
+    const onlineMangerSpy = vi.spyOn(onlineManager, 'isOnline')
     onlineMangerSpy.mockImplementation(() => false)
 
     const key = queryKey()
     function Fallback() {
-      return <div>loading</div>
-    }
-    function query() {
-      throw new Error('This is irrelevant for this case')
-    }
-
-    function Page() {
-      useSuspenseQuery({
+      const { isPaused } = useQuery({
         queryKey: key,
         queryFn: query,
       })
-      throw new Error('Should not reach this')
+      return <div>{`loading, isPaused ${String(isPaused)}`}</div>
+    }
+    function query() {
+      return Promise.resolve(5)
     }
 
-    expect(() => renderWithClient(
+    function Page() {
+      const { data } = useSuspenseQuery({
+        queryKey: key,
+        queryFn: query,
+      })
+      return <div>data is {data}</div>
+    }
+
+    const rendered = renderWithClient(
       queryClient,
       <React.Suspense fallback={<Fallback />}>
         <Page />
       </React.Suspense>,
-    )).toThrow("Should not reach this")
+    )
+
+    await waitFor(() => rendered.getByText('loading, isPaused true'))
+
+    document.dispatchEvent(
+      new CustomEvent('offline', {
+        bubbles: true,
+        cancelable: true,
+      }),
+    )
 
     onlineMangerSpy.mockRestore()
+
+    document.dispatchEvent(
+      new CustomEvent('online', {
+        bubbles: true,
+        cancelable: true,
+      }),
+    )
+
+    await waitFor(() => rendered.getByText('data is 5'))
   })
 })
