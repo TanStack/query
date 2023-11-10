@@ -6,9 +6,10 @@ import {
   Input,
   ViewChild,
   booleanAttribute,
+  inject,
 } from '@angular/core'
 import {
-  injectQueryClient,
+  QUERY_CLIENT,
   onlineManager,
 } from '@tanstack/angular-query-experimental'
 import type { QueryClient } from '@tanstack/angular-query-experimental'
@@ -31,15 +32,12 @@ type DevtoolsPosition = DevtoolsPositionOriginal
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AngularQueryDevtoolsComponent implements AfterViewInit, OnDestroy {
-  readonly #injectedClient: QueryClient | null
+  readonly #injectedClient = inject<QueryClient>(QUERY_CLIENT, {
+    optional: true,
+  })
+
   #clientFromAttribute: QueryClient | null = null
   #devtools: TanstackQueryDevtools | undefined
-
-  constructor() {
-    this.#injectedClient = injectQueryClient({
-      optional: true,
-    })
-  }
 
   @ViewChild('ref') ref!: ElementRef
 
@@ -136,6 +134,6 @@ export class AngularQueryDevtoolsComponent implements AfterViewInit, OnDestroy {
         `You must either provide a client via 'provideAngularQuery' or pass it to the 'client' attribute of angular-query-devtools.`,
       )
     }
-    return this.#clientFromAttribute ?? this.#injectedClient!
+    return this.#clientFromAttribute ?? this.#injectedClient
   }
 }

@@ -29,20 +29,15 @@ import { getTodos, postTodo } from '../my-api'
 
 @Component({
   standalone: true,
-  imports: [CommonModule],
   template: `
     <div>
       <ul>
-        <li *ngFor="let todo of query().data">
-          {{ todo.title }}
-        </li>
+        @for (todo of query().data) {
+          <li>{{ todo.title }}</li>
+        }
       </ul>
 
-      <button
-        (click)="onAddTodo()"
-      >
-        Add Todo
-      </button>
+      <button (click)="onAddTodo()">Add Todo</button>
     </div>
   `,
 })
@@ -54,10 +49,13 @@ export class TodosComponent {
     queryFn: getTodos
   }))
 
-  mutation = injectMutation(() => ({
+  mutation = injectMutation((client) => ({
     mutationFn: postTodo,
     onSuccess: () => {
-      // Invalidate and refetch
+      // Invalidate and refetch by using the client directly
+      client.invalidateQueries({ queryKey: ['todos'] })
+
+      // OR use the queryClient that is injected into the component
       this.queryClient.invalidateQueries({ queryKey: ['todos'] })
     }
   }))

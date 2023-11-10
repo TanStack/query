@@ -21,7 +21,9 @@ export function createBaseQuery<
   TQueryData,
   TQueryKey extends QueryKey,
 >(
-  options: () => CreateBaseQueryOptions<
+  options: (
+    queryClient: QueryClient,
+  ) => CreateBaseQueryOptions<
     TQueryFnData,
     TError,
     TData,
@@ -32,10 +34,13 @@ export function createBaseQuery<
   queryClient: QueryClient,
 ): CreateBaseQueryResult<TData, TError> {
   assertInInjectionContext(createBaseQuery)
+  const destroyRef = inject(DestroyRef)
 
   /** Creates a signal that has the default options applied */
   const defaultedOptionsSignal = computed(() => {
-    const defaultedOptions = queryClient.defaultQueryOptions(options())
+    const defaultedOptions = queryClient.defaultQueryOptions(
+      options(queryClient),
+    )
     defaultedOptions._optimisticResults = 'optimistic'
     return defaultedOptions
   })
@@ -61,7 +66,7 @@ export function createBaseQuery<
       result.set(val)
     }),
   )
-  const destroyRef = inject(DestroyRef)
+
   destroyRef.onDestroy(unsubscribe)
 
   /** Subscribe to changes in result and defaultedOptionsStore */
