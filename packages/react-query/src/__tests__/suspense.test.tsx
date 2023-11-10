@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
+import { onlineManager } from '@tanstack/query-core'
 import {
   QueryCache,
   QueryErrorResetBoundary,
@@ -886,5 +887,37 @@ describe('useSuspenseQueries', () => {
     expect(refs.length).toBe(2)
     await waitFor(() => rendered.getByText('data: 1,2'))
     expect(refs[0]).toBe(refs[1])
+  })
+
+  // this addresses the following issue:
+  // https://github.com/TanStack/query/issues/6344
+  it('should suspend when offline', async () => {
+    const onlineMangerSpy = vi.spyOn(onlineManager, "isOnline");
+    onlineMangerSpy.mockImplementation(() => false)
+
+    const key = queryKey()
+    function Fallback() {
+      return <div>loading</div>
+    }
+    function query() {
+      throw new Error('This is irrelevant for this case')
+    }
+
+    function Page() {
+      useSuspenseQuery({
+        queryKey: key,
+        queryFn: query,
+      })
+      throw new Error('Should not reach this')
+    }
+
+    expect(() => renderWithClient(
+      queryClient,
+      <React.Suspense fallback={<Fallback />}>
+        <Page />
+      </React.Suspense>,
+    )).toThrow("Should not reach this")
+
+    onlineMangerSpy.mockRestore()
   })
 })
