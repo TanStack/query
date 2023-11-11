@@ -147,7 +147,7 @@ importers:
         specifier: ^7.5.4
         version: 7.5.4
       solid-js:
-        specifier: ^1.7.8
+        specifier: ^1.8.1
         version: 1.8.1
       stream-to-array:
         specifier: ^2.3.0
@@ -165,7 +165,7 @@ importers:
         specifier: ^5.0.4
         version: 5.1.6
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
       vitest:
         specifier: ^0.33.0
@@ -214,7 +214,7 @@ importers:
         specifier: ^5.0.4
         version: 5.1.6
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/react/auto-refetching:
@@ -266,7 +266,7 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(vite@4.4.11)
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/react/basic-graphql-request:
@@ -278,7 +278,7 @@ importers:
         specifier: ^5.0.0
         version: link:../../../packages/react-query-devtools
       graphql:
-        specifier: ^16.6.0
+        specifier: ^16.8.1
         version: 16.8.1
       graphql-request:
         specifier: ^6.1.0
@@ -294,7 +294,7 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(vite@4.4.11)
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/react/basic-typescript:
@@ -343,7 +343,7 @@ importers:
         specifier: ^5.0.4
         version: 5.1.6
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/react/default-query-function:
@@ -368,7 +368,7 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(vite@4.4.11)
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/react/infinite-query-with-max-pages:
@@ -526,7 +526,7 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(vite@4.4.11)
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/react/optimistic-updates-cache:
@@ -646,7 +646,7 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(vite@4.4.11)
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/react/prefetching:
@@ -792,7 +792,7 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(vite@4.4.11)
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/react/rick-morty:
@@ -832,7 +832,7 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(vite@4.4.11)
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/react/simple:
@@ -857,7 +857,7 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(vite@4.4.11)
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/react/star-wars:
@@ -897,7 +897,7 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(vite@4.4.11)
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/react/suspense:
@@ -928,7 +928,7 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(vite@4.4.11)
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/solid/basic-graphql-request:
@@ -1096,7 +1096,7 @@ importers:
         specifier: ^5.0.4
         version: 5.1.6
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/svelte/basic:
@@ -1124,7 +1124,7 @@ importers:
         specifier: ^5.0.4
         version: 5.1.6
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/svelte/load-more-infinite-scroll:
@@ -1152,7 +1152,7 @@ importers:
         specifier: ^5.0.4
         version: 5.1.6
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/svelte/optimistic-updates-typescript:
@@ -1180,7 +1180,7 @@ importers:
         specifier: ^5.0.4
         version: 5.1.6
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/svelte/playground:
@@ -1208,7 +1208,7 @@ importers:
         specifier: ^5.0.4
         version: 5.1.6
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/svelte/simple:
@@ -1221,7 +1221,7 @@ importers:
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^2.4.2
+        specifier: ^2.4.6
         version: 2.4.6(svelte@4.0.0)(vite@4.4.11)
       '@tsconfig/svelte':
         specifier: ^5.0.2
@@ -1236,7 +1236,7 @@ importers:
         specifier: ^5.0.4
         version: 5.1.6
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/svelte/ssr:
@@ -1264,7 +1264,7 @@ importers:
         specifier: ^5.0.4
         version: 5.1.6
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/svelte/star-wars:
@@ -1286,7 +1286,7 @@ importers:
         specifier: ^10.4.14
         version: 10.4.14(postcss@8.4.31)
       postcss:
-        specifier: ^8.4.23
+        specifier: ^8.4.31
         version: 8.4.31
       svelte:
         specifier: ^4.0.0
@@ -1301,7 +1301,7 @@ importers:
         specifier: ^5.0.4
         version: 5.1.6
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/vue/basic:
@@ -1317,13 +1317,13 @@ importers:
         version: 3.3.0
     devDependencies:
       '@vitejs/plugin-vue':
-        specifier: ^4.2.3
-        version: 4.2.3(vite@4.4.11)(vue@3.3.0)
+        specifier: ^4.4.0
+        version: 4.4.0(vite@4.4.11)(vue@3.3.0)
       typescript:
         specifier: ^5.0.4
         version: 5.1.6
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/vue/dependent-queries:
@@ -1336,13 +1336,13 @@ importers:
         version: 3.3.0
     devDependencies:
       '@vitejs/plugin-vue':
-        specifier: ^4.2.3
-        version: 4.2.3(vite@4.4.11)(vue@3.3.0)
+        specifier: ^4.4.0
+        version: 4.4.0(vite@4.4.11)(vue@3.3.0)
       typescript:
         specifier: ^5.0.4
         version: 5.1.6
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   examples/vue/persister:
@@ -1367,13 +1367,13 @@ importers:
         version: 3.3.0
     devDependencies:
       '@vitejs/plugin-vue':
-        specifier: ^4.2.3
-        version: 4.2.3(vite@4.4.11)(vue@3.3.0)
+        specifier: ^4.4.0
+        version: 4.4.0(vite@4.4.11)(vue@3.3.0)
       typescript:
         specifier: ^5.0.4
         version: 5.1.6
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   integrations/react-cra4:
@@ -1420,15 +1420,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: workspace:*
         version: link:../../packages/react-query-devtools
-      '@types/node':
-        specifier: ^18.18.0
-        version: 18.18.0
-      '@types/react':
-        specifier: ^18.2.31
-        version: 18.2.31
-      '@types/react-dom':
-        specifier: ^18.2.14
-        version: 18.2.14
       next:
         specifier: ^14.0.0
         version: 14.0.0(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
@@ -1438,6 +1429,16 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+    devDependencies:
+      '@types/node':
+        specifier: ^18.18.0
+        version: 18.18.0
+      '@types/react':
+        specifier: ^18.2.31
+        version: 18.2.31
+      '@types/react-dom':
+        specifier: ^18.2.14
+        version: 18.2.14
       typescript:
         specifier: ^5.1.6
         version: 5.2.2
@@ -1460,7 +1461,7 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   integrations/solid-vite:
@@ -1472,19 +1473,19 @@ importers:
         specifier: workspace:*
         version: link:../../packages/solid-query-devtools
       solid-js:
-        specifier: ^1.7.8
+        specifier: ^1.8.1
         version: 1.8.1
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
       vite-plugin-solid:
-        specifier: ^2.7.0
+        specifier: ^2.7.2
         version: 2.7.2(solid-js@1.8.1)(vite@4.4.11)
 
   integrations/svelte-vite:
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^2.4.2
+        specifier: ^2.4.6
         version: 2.4.6(svelte@4.0.0)(vite@4.4.11)
       '@tanstack/svelte-query':
         specifier: workspace:*
@@ -1496,7 +1497,7 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
 
   integrations/vue-vite:
@@ -1505,10 +1506,10 @@ importers:
         specifier: workspace:*
         version: link:../../packages/vue-query
       '@vitejs/plugin-vue':
-        specifier: ^4.2.3
-        version: 4.2.3(vite@4.4.11)(vue@3.3.0)
+        specifier: ^4.4.0
+        version: 4.4.0(vite@4.4.11)(vue@3.3.0)
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
       vue:
         specifier: ^3.3.0
@@ -1577,7 +1578,7 @@ importers:
         specifier: ^2.1.13
         version: 2.1.13(csstype@3.1.2)
       solid-js:
-        specifier: ^1.7.8
+        specifier: ^1.8.1
         version: 1.8.1
       solid-transition-group:
         specifier: ^0.2.2
@@ -1589,7 +1590,7 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.2.0)
       vite-plugin-solid:
-        specifier: ^2.7.0
+        specifier: ^2.7.2
         version: 2.7.2(solid-js@1.8.1)(vite@4.4.11)
 
   packages/query-persist-client-core:
@@ -1709,14 +1710,14 @@ importers:
         specifier: workspace:*
         version: link:../query-core
       solid-js:
-        specifier: ^1.7.8
+        specifier: ^1.8.1
         version: 1.8.1
     devDependencies:
       tsup-preset-solid:
         specifier: ^2.1.0
         version: 2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.2.0)
       vite-plugin-solid:
-        specifier: ^2.7.0
+        specifier: ^2.7.2
         version: 2.7.2(solid-js@1.8.1)(vite@4.4.11)
 
   packages/solid-query-devtools:
@@ -1729,13 +1730,13 @@ importers:
         specifier: workspace:^
         version: link:../solid-query
       solid-js:
-        specifier: ^1.7.8
+        specifier: ^1.8.1
         version: 1.8.1
       tsup-preset-solid:
         specifier: ^2.1.0
         version: 2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.2.0)
       vite-plugin-solid:
-        specifier: ^2.7.0
+        specifier: ^2.7.2
         version: 2.7.2(solid-js@1.8.1)(vite@4.4.11)
 
   packages/solid-query-persist-client:
@@ -1748,13 +1749,13 @@ importers:
         version: link:../solid-query
     devDependencies:
       solid-js:
-        specifier: ^1.7.8
+        specifier: ^1.8.1
         version: 1.8.1
       tsup-preset-solid:
         specifier: ^2.1.0
         version: 2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.2.0)
       vite-plugin-solid:
-        specifier: ^2.7.0
+        specifier: ^2.7.2
         version: 2.7.2(solid-js@1.8.1)(vite@4.4.11)
 
   packages/svelte-query:
@@ -1879,7 +1880,7 @@ importers:
         specifier: ^4.4.0
         version: 4.4.0(vite@4.4.11)(vue@3.3.0)
       vite:
-        specifier: ^4.4.4
+        specifier: ^4.4.11
         version: 4.4.11(@types/node@18.18.0)
       vue:
         specifier: ^3.3.0
@@ -8745,6 +8746,7 @@ packages:
     resolution: {integrity: sha512-V835xgdSVmyQmI1KLV2BEIUgqEuinxp9O4G6g3FqO/SqLac049E53aysv0oEFD2kHfejeKU+ZqL2bcFWj9gLAQ==}
     dependencies:
       '@types/react': 18.2.31
+    dev: true
 
   /@types/react-native@0.71.0:
     resolution: {integrity: sha512-4MAoseGM8zv5PKQyc2SvKldvOmCJX4mNqj+mDqh0J9yJMzWQnGenk2vQCi+jxMXa3xWYIgx+ewaCSw0XiiGGSw==}
@@ -9398,16 +9400,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /@vitejs/plugin-vue@4.2.3(vite@4.4.11)(vue@3.3.0):
-    resolution: {integrity: sha512-R6JDUfiZbJA9cMiguQ7jxALsgiprjBeHL5ikpXfJCH62pPHtI+JdJ5xWj6Ev73yXSlYl86+blXn1kZHQ7uElxw==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    peerDependencies:
-      vite: ^4.0.0
-      vue: ^3.2.25
-    dependencies:
-      vite: 4.4.11(@types/node@18.18.0)
-      vue: 3.3.0
-
   /@vitejs/plugin-vue@4.4.0(vite@4.4.11)(vue@3.3.0):
     resolution: {integrity: sha512-xdguqb+VUwiRpSg+nsc2HtbAUSGak25DXYvpQQi4RVU1Xq1uworyoH/md9Rfd8zMmPR/pSghr309QNcftUVseg==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -9417,7 +9409,6 @@ packages:
     dependencies:
       vite: 4.4.11(@types/node@18.18.0)
       vue: 3.3.0
-    dev: true
 
   /@vitest/coverage-istanbul@0.33.0(vitest@0.33.0):
     resolution: {integrity: sha512-DGv6ybomCbLFGlNOGHgVCsaqHPWJWLp8JPrwzZo8I4vZ/O3muqTyZq5R52CZl0ENqgjFGWjra7yNPFUgxKf5pw==}
