@@ -374,6 +374,18 @@
               "to": "react/reference/useMutationState"
             },
             {
+              "label": "useSuspenseQuery",
+              "to": "react/reference/useSuspenseQuery"
+            },
+            {
+              "label": "useSuspenseInfiniteQuery",
+              "to": "react/reference/useSuspenseInfiniteQuery"
+            },
+            {
+              "label": "useSuspenseQueries",
+              "to": "react/reference/useSuspenseQueries"
+            },
+            {
               "label": "QueryClient",
               "to": "react/reference/QueryClient"
             },
