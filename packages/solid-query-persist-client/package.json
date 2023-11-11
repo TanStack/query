@@ -57,8 +57,8 @@
   },
   "devDependencies": {
     "tsup-preset-solid": "^2.1.0",
-    "vite-plugin-solid": "^2.7.0",
-    "solid-js": "^1.7.8"
+    "vite-plugin-solid": "^2.7.2",
+    "solid-js": "^1.8.1"
   },
   "peerDependencies": {
     "@tanstack/solid-query": "workspace:*",

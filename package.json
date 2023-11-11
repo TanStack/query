@@ -1,5 +1,6 @@
 {
   "name": "query",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/TanStack/query.git"
@@ -80,13 +81,13 @@
     "react-dom": "^18.2.0",
     "rimraf": "^5.0.5",
     "semver": "^7.5.4",
-    "solid-js": "^1.7.8",
+    "solid-js": "^1.8.1",
     "stream-to-array": "^2.3.0",
     "ts-node": "^10.7.0",
     "tsup": "^7.2.0",
     "type-fest": "^4.5.0",
     "typescript": "^5.0.4",
-    "vite": "^4.4.4",
+    "vite": "^4.4.11",
     "vitest": "^0.33.0",
     "vue": "^3.3.0"
   }
