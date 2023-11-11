@@ -218,7 +218,7 @@ export class Mutation<
         this as Mutation<unknown, unknown, unknown, unknown>,
       )
 
-      await this.options.onSuccess?.(data, variables, this.state.context)
+      await this.options.onSuccess?.(data, variables, this.state.context!)
 
       // Notify cache callback
       await this.#mutationCache.config.onSettled?.(
