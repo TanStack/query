@@ -890,67 +890,49 @@ describe('useSuspenseQueries', () => {
 
   // this addresses the following issue:
   // https://github.com/TanStack/query/issues/6344
-  it('should suspend when offline', async () => {
-    let currentQueryReturnValue = 1
-    const key = queryKey()
-    function Fallback() {
-      return <div>loading</div>
-    }
-    function query() {
-      return Promise.resolve(currentQueryReturnValue)
-    }
-
+  it('should suspend on offline when query changes, and data should not be undefined', async () => {
     function Page() {
+      const [id, setId] = React.useState(0)
+
       const { data } = useSuspenseQuery({
-        queryKey: key,
-        queryFn: query,
+        queryKey: [id],
+        queryFn: () => Promise.resolve(`Data ${id}`),
       })
+
+      // defensive guard here
+      if (data === undefined) {
+        throw new Error('data cannot be undefined')
+      }
+
       return (
         <>
-          <div>data is {data}</div>
-          <button
-            onClick={() => {
-              currentQueryReturnValue = 2
-              queryClient.fetchQuery({
-                queryKey: key,
-              })
-            }}
-          >
-            fetch
-          </button>
+          <div>{data}</div>
+          <button onClick={() => setId(id + 1)}>fetch</button>
         </>
       )
     }
 
     const rendered = renderWithClient(
       queryClient,
-      <React.Suspense fallback={<Fallback />}>
+      <React.Suspense fallback={<div>loading</div>}>
         <Page />
       </React.Suspense>,
     )
 
     await waitFor(() => rendered.getByText('loading'))
-    await waitFor(() => rendered.getByText('data is 1'))
+    await waitFor(() => rendered.getByText('Data 0'))
 
-    document.dispatchEvent(
-      new CustomEvent('offline', {
-        bubbles: true,
-        cancelable: true,
-      }),
-    )
+    // go offline
+    document.dispatchEvent(new CustomEvent('offline'))
 
-    fireEvent.click(rendered.getByText("fetch"))
+    fireEvent.click(rendered.getByText('fetch'))
+    await waitFor(() => rendered.getByText('Data 0'))
 
-    await waitFor(() => rendered.getByText('loading'))
+    // go back online
+    document.dispatchEvent(new CustomEvent('online'))
+    fireEvent.click(rendered.getByText('fetch'))
 
-    document.dispatchEvent(
-      new CustomEvent('online', {
-        bubbles: true,
-        cancelable: true,
-      }),
-    )
-
-    // this would fail, needs to be 2
-    await waitFor(() => rendered.getByText('data is 5'))
+    // query should resume
+    await waitFor(() => rendered.getByText('Data 1'))
   })
 })

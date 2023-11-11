@@ -42,10 +42,10 @@ export const shouldSuspend = (
   result: QueryObserverResult<any, any>,
   isRestoring: boolean,
 ) => {
-  if (defaultedOptions?.suspense && result.isPaused && !isRestoring) {
-    return true;
+  if (defaultedOptions?.suspense && result.isPending && !isRestoring) {
+    return true
   }
-  return defaultedOptions?.suspense && willFetch(result, isRestoring);
+  return defaultedOptions?.suspense && willFetch(result, isRestoring)
 }
 
 export const fetchOptimistic = <
