@@ -20,7 +20,7 @@ import { AngularQueryDevtoolsComponent } from '@tanstack/angular-query-devtools-
 import { ChangeDetectionStrategy, Component } from '@angular/core'
 import { injectQuery } from '@tanstack/angular-query-experimental'
 import { HttpClient } from '@angular/common/http'
-import { lastValueFrom } from 'rxjs/src'
+import { lastValueFrom } from 'rxjs'
 
 type Response = {
   name: string
