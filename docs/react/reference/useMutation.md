@@ -102,7 +102,7 @@ mutate(variables, {
   - `variables: TVariables`
     - Optional
     - The variables object to pass to the `mutationFn`.
-  - `onSuccess: (data: TData, variables: TVariables, context: TContext) => void`
+  - `onSuccess: (data: TData, variables: TVariables, context: TContext | undefined) => void`
     - Optional
     - This function will fire when the mutation is successful and will be passed the mutation's result.
     - Void function, the returned value will be ignored
