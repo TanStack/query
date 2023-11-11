@@ -1,5 +1,5 @@
 import { notifyManager } from './notifyManager'
-import { Removable } from './removable'
+import { GarbageCollectable } from './garbageCollectable'
 import { canFetch, createRetryer } from './retryer'
 import type {
   DefaultError,
@@ -83,7 +83,7 @@ export class Mutation<
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> extends Removable {
+> extends GarbageCollectable {
   state: MutationState<TData, TError, TVariables, TContext>
   options!: MutationOptions<TData, TError, TVariables, TContext>
   readonly mutationId: number
@@ -145,7 +145,7 @@ export class Mutation<
     })
   }
 
-  protected optionalRemove() {
+  protected optionalGc() {
     if (!this.#observers.length) {
       if (this.state.status === 'pending') {
         this.scheduleGc()

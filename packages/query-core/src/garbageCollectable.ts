@@ -1,6 +1,6 @@
 import { isServer, isValidTimeout } from './utils'
 
-export abstract class Removable {
+export abstract class GarbageCollectable {
   gcTime!: number
   #gcTimeout?: ReturnType<typeof setTimeout>
 
@@ -13,7 +13,7 @@ export abstract class Removable {
 
     if (isValidTimeout(this.gcTime)) {
       this.#gcTimeout = setTimeout(() => {
-        this.optionalRemove()
+        this.optionalGc()
       }, this.gcTime)
     }
   }
@@ -33,5 +33,5 @@ export abstract class Removable {
     }
   }
 
-  protected abstract optionalRemove(): void
+  protected abstract optionalGc(): void
 }

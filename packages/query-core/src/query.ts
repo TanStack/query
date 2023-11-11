@@ -1,7 +1,7 @@
 import { noop, replaceData, timeUntilStale } from './utils'
 import { notifyManager } from './notifyManager'
 import { canFetch, createRetryer, isCancelledError } from './retryer'
-import { Removable } from './removable'
+import { GarbageCollectable } from './garbageCollectable'
 import type {
   CancelOptions,
   DefaultError,
@@ -148,7 +148,7 @@ export class Query<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends Removable {
+> extends GarbageCollectable {
   queryKey: TQueryKey
   queryHash: string
   options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
@@ -190,7 +190,7 @@ export class Query<
     this.updateGcTime(this.options.gcTime)
   }
 
-  protected optionalRemove() {
+  protected optionalGc() {
     if (!this.#observers.length && this.state.fetchStatus === 'idle') {
       this.#cache.remove(this)
     }
