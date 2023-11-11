@@ -25,6 +25,12 @@ Generate React Query hooks from your GraphQL schema
 
 Link: https://the-guild.dev/graphql/codegen
 
+## Http-wizard
+
+End-to-end type-safe Fastify API with typecript magic ✨
+
+Link: https://http-wizard.com
+
 ## Kubb
 
 Generate SDKs for all your APIs
