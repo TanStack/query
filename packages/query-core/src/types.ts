@@ -140,7 +140,7 @@ export interface QueryOptions<
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   networkMode?: NetworkMode
-   /**
+  /**
    * The time in milliseconds that unused/inactive cache data remains in memory.
    * When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
    * When different garbage collection times are specified, the longest one will be used.
