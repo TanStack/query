@@ -144,7 +144,7 @@ export interface QueryOptions<
    * The time in milliseconds that unused/inactive cache data remains in memory.
    * When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
    * When different garbage collection times are specified, the longest one will be used.
-   * If set to `Infinity`, will disable garbage collection.
+   * Setting it to `Infinity` will disable garbage collection.
    */
   gcTime?: number
   queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam>
