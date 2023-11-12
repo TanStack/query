@@ -90,7 +90,7 @@ export class AngularQueryDevtoolsComponent implements AfterViewInit, OnDestroy {
   @Input()
   set client(client: QueryClient | undefined) {
     this.#clientFromAttribute = client ?? null
-    this.#devtools?.setClient(this.#getAppliedQueryClient())
+    this.#devtools?.setClient(this.#getAppliedQueryClient()!)
   }
 
   // TODO: needs to tested. When re-adding don't forget to re-add to devtools.md too
@@ -108,7 +108,7 @@ export class AngularQueryDevtoolsComponent implements AfterViewInit, OnDestroy {
   // }
 
   ngAfterViewInit() {
-    const client = this.#getAppliedQueryClient()
+    const client = this.#getAppliedQueryClient()!
 
     const { buttonPosition, position, initialIsOpen } = this
     this.#devtools = new TanstackQueryDevtools({

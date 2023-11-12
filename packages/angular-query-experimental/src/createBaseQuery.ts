@@ -5,9 +5,16 @@ import {
   effect,
   inject,
   signal,
+  Signal,
 } from '@angular/core'
 import { notifyManager } from '@tanstack/query-core'
-import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
+import { createResultStateSignalProxy } from './query-proxy'
+import type {
+  QueryClient,
+  QueryKey,
+  QueryObserver,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
 
 /**
@@ -61,19 +68,20 @@ export function createBaseQuery<
   })
 
   const result = signal(observer.getCurrentResult())
-  const unsubscribe = observer.subscribe(
-    notifyManager.batchCalls((val) => {
-      result.set(val)
-    }),
-  )
 
+  const unsubscribe = observer.subscribe(
+    notifyManager.batchCalls((val) => result.set(val)),
+  )
   destroyRef.onDestroy(unsubscribe)
 
   /** Subscribe to changes in result and defaultedOptionsStore */
-  return computed(() => {
-    // result.set(observer.getOptimisticResult(defaultedOptionsSignal()))
-    return !defaultedOptionsSignal().notifyOnChangeProps
-      ? observer.trackResult(result())
-      : result()
-  })
+  const resultSignal: Signal<QueryObserverResult<TData, TError>> = computed(
+    () => {
+      return !defaultedOptionsSignal().notifyOnChangeProps
+        ? observer.trackResult(result())
+        : result()
+    },
+  )
+
+  return createResultStateSignalProxy<TData, TError>(resultSignal)
 }

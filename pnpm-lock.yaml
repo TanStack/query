@@ -1714,8 +1714,8 @@ importers:
   packages/angular-query-devtools-experimental/build:
     dependencies:
       '@angular/core':
-        specifier: ^16.2.0
-        version: 16.2.12(rxjs@7.8.1)(zone.js@0.13.3)
+        specifier: ^17.0.0
+        version: 17.0.2(rxjs@7.8.1)(zone.js@0.14.2)
       '@tanstack/query-devtools':
         specifier: workspace:*
         version: link:../../query-devtools
@@ -1778,14 +1778,14 @@ importers:
   packages/angular-query-experimental/build:
     dependencies:
       '@angular/core':
-        specifier: ^16.2.0
-        version: 16.2.12(rxjs@7.8.1)(zone.js@0.13.3)
+        specifier: ^17.0.0
+        version: 17.0.2(rxjs@7.8.1)(zone.js@0.14.2)
       '@tanstack/query-core':
         specifier: workspace:*
         version: link:../../query-core
       ngxtension:
         specifier: ^1.0.3
-        version: 1.0.3(@angular/common@16.2.12)(@angular/core@16.2.12)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1)
+        version: 1.0.3(@angular/common@16.2.12)(@angular/core@17.0.2)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1)
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -2539,6 +2539,18 @@ packages:
       tslib: 2.6.2
     dev: false
 
+  /@angular/common@16.2.12(@angular/core@17.0.2)(rxjs@7.8.1):
+    resolution: {integrity: sha512-B+WY/cT2VgEaz9HfJitBmgdk4I333XG/ybC98CMC4Wz8E49T8yzivmmxXB3OD6qvjcOB6ftuicl6WBqLbZNg2w==}
+    engines: {node: ^16.14.0 || >=18.10.0}
+    peerDependencies:
+      '@angular/core': 16.2.12
+      rxjs: ^6.5.3 || ^7.4.0
+    dependencies:
+      '@angular/core': 17.0.2(rxjs@7.8.1)(zone.js@0.14.2)
+      rxjs: 7.8.1
+      tslib: 2.6.2
+    dev: false
+
   /@angular/common@17.0.2(@angular/core@17.0.2)(rxjs@7.8.1):
     resolution: {integrity: sha512-hCW0njHgrcwTWNoKZDwf02DnhYLVWNXM2FMw66MKpfxTp7McSyaXjGBU9/hchW3dZJ0xTwyxoyoqJFoHYvg0yg==}
     engines: {node: ^18.13.0 || >=20.9.0}
@@ -2596,18 +2608,6 @@ packages:
     dependencies:
       '@angular/core': 17.0.2(rxjs@7.8.1)(zone.js@0.14.2)
       tslib: 2.6.2
-
-  /@angular/core@16.2.12(rxjs@7.8.1)(zone.js@0.13.3):
-    resolution: {integrity: sha512-GLLlDeke/NjroaLYOks0uyzFVo6HyLl7VOm0K1QpLXnYvW63W9Ql/T3yguRZa7tRkOAeFZ3jw+1wnBD4O8MoUA==}
-    engines: {node: ^16.14.0 || >=18.10.0}
-    peerDependencies:
-      rxjs: ^6.5.3 || ^7.4.0
-      zone.js: ~0.13.0
-    dependencies:
-      rxjs: 7.8.1
-      tslib: 2.6.2
-      zone.js: 0.13.3
-    dev: false
 
   /@angular/core@16.2.12(rxjs@7.8.1)(zone.js@0.14.2):
     resolution: {integrity: sha512-GLLlDeke/NjroaLYOks0uyzFVo6HyLl7VOm0K1QpLXnYvW63W9Ql/T3yguRZa7tRkOAeFZ3jw+1wnBD4O8MoUA==}
@@ -23300,7 +23300,7 @@ packages:
       - supports-color
     dev: true
 
-  /ngxtension@1.0.3(@angular/common@16.2.12)(@angular/core@16.2.12)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1):
+  /ngxtension@1.0.3(@angular/common@16.2.12)(@angular/core@17.0.2)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1):
     resolution: {integrity: sha512-Wng7Y+l0Y9QJll7ggopuhDkd7xcF6nLM/kLGf+3qh29nuwjhlVmXoDalzCszbzcHOFszQLQthVY2jFVggO/gxw==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -23309,8 +23309,8 @@ packages:
       '@use-gesture/vanilla': ^10.0.0
       rxjs: ^6.0.0 || ^7.0.0
     dependencies:
-      '@angular/common': 16.2.12(@angular/core@16.2.12)(rxjs@7.8.1)
-      '@angular/core': 16.2.12(rxjs@7.8.1)(zone.js@0.13.3)
+      '@angular/common': 16.2.12(@angular/core@17.0.2)(rxjs@7.8.1)
+      '@angular/core': 17.0.2(rxjs@7.8.1)(zone.js@0.14.2)
       '@nx/devkit': 17.1.1(nx@17.1.1)
       '@use-gesture/vanilla': 10.3.0
       nx: 17.1.1
@@ -31983,12 +31983,6 @@ packages:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
     dev: true
-
-  /zone.js@0.13.3:
-    resolution: {integrity: sha512-MKPbmZie6fASC/ps4dkmIhaT5eonHkEt6eAy80K42tAm0G2W+AahLJjbfi6X9NPdciOE9GRFTTM8u2IiF6O3ww==}
-    dependencies:
-      tslib: 2.6.2
-    dev: false
 
   /zone.js@0.14.2:
     resolution: {integrity: sha512-X4U7J1isDhoOmHmFWiLhloWc2lzMkdnumtfQ1LXzf/IOZp5NQYuMUTaviVzG/q1ugMBIXzin2AqeVJUoSEkNyQ==}

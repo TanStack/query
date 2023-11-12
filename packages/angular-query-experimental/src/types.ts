@@ -26,7 +26,10 @@ export type CreateBaseQueryOptions<
 export type CreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = Signal<QueryObserverResult<TData, TError>>
+  State = QueryObserverResult<TData, TError>,
+> = {
+  [K in keyof State]: State[K] extends Function ? State[K] : Signal<State[K]>
+}
 /** Result from createBaseQuery */
 
 /** Options for createQuery */
@@ -70,7 +73,12 @@ export type CreateInfiniteQueryResult<
 export type DefinedCreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = Signal<DefinedQueryObserverResult<TData, TError>>
+  DefinedQueryObserver = DefinedQueryObserverResult<TData, TError>,
+> = {
+  [K in keyof DefinedQueryObserver]: DefinedQueryObserver[K] extends Function
+    ? DefinedQueryObserver[K]
+    : Signal<DefinedQueryObserver[K]>
+}
 
 /** Options for createQuery with initialData */
 export type DefinedCreateQueryResult<
