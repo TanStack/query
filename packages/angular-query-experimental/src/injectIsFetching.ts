@@ -1,8 +1,8 @@
-import { DestroyRef, Injector, inject, signal } from '@angular/core'
+import { DestroyRef, inject, signal } from '@angular/core'
 import { type QueryFilters, notifyManager } from '@tanstack/query-core'
-import { injectQueryClient } from './injectQueryClient'
-import type { Signal } from '@angular/core'
 import { assertInjector } from 'ngxtension/assert-injector'
+import { injectQueryClient } from './injectQueryClient'
+import type { Injector, Signal } from '@angular/core'
 
 export function injectIsFetching(
   filters?: QueryFilters,

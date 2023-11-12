@@ -1,14 +1,8 @@
 import { QueriesObserver, notifyManager } from '@tanstack/query-core'
-import {
-  DestroyRef,
-  Injector,
-  computed,
-  effect,
-  inject,
-  signal,
-} from '@angular/core'
+import { DestroyRef, computed, effect, inject, signal } from '@angular/core'
+import { assertInjector } from 'ngxtension/assert-injector'
 import { injectQueryClient } from './injectQueryClient'
-import type { Signal } from '@angular/core'
+import type { Injector, Signal } from '@angular/core'
 import type {
   DefaultError,
   QueriesObserverOptions,
@@ -19,7 +13,6 @@ import type {
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
-import { assertInjector } from 'ngxtension/assert-injector'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter

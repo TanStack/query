@@ -1,8 +1,9 @@
 import { AngularQueryDevtoolsComponent } from '@tanstack/angular-query-devtools-experimental'
-import { ChangeDetectionStrategy, Component } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { injectQuery } from '@tanstack/angular-query-experimental'
-import axios from 'axios'
+import { HttpClient } from '@angular/common/http'
+import { lastValueFrom, tap } from 'rxjs'
 
 type Response = {
   name: string
@@ -28,16 +29,23 @@ type Response = {
       <strong>✨ {{ data.stargazers_count }}</strong>
       <strong>🍴 {{ data.forks_count }}</strong>
     </div>
+
     <angular-query-devtools initialIsOpen />
   `,
   imports: [AngularQueryDevtoolsComponent, CommonModule],
 })
 export class SimpleExampleComponent {
-  query = injectQuery(() => ({
+  http = inject(HttpClient)
+
+  query = injectQuery((client) => ({
     queryKey: ['repoData'],
     queryFn: () =>
-      axios
-        .get('https://api.github.com/repos/tannerlinsley/react-query')
-        .then((res) => res.data as Response),
+      lastValueFrom(
+        this.http
+          .get<Response>(
+            'https://api.github.com/repos/tannerlinsley/react-query',
+          )
+          .pipe(tap((x) => console.log(x, client))),
+      ),
   }))
 }

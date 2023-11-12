@@ -22,7 +22,7 @@ export function createBaseQuery<
   TQueryKey extends QueryKey,
 >(
   options: (
-    queryClient: QueryClient,
+    client: QueryClient,
   ) => CreateBaseQueryOptions<
     TQueryFnData,
     TError,

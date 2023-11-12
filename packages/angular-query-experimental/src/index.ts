@@ -23,4 +23,4 @@ export {
   provideQueryClient,
   QUERY_CLIENT,
 } from './injectQueryClient'
-export * from './providers'
+export { provideAngularQuery } from './providers'

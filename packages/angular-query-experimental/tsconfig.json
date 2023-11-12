@@ -14,11 +14,10 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "module": "esnext",
+    "module": "ES2022",
     "types": ["vitest/globals"]
   },
   "angularCompilerOptions": {
-    "allowJs": false,
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,

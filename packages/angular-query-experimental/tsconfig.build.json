@@ -9,7 +9,7 @@
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true,
+    "strictInputAccessModifiers": true
   },
   "include": ["src/**/*.ts", ".eslintrc.cjs"]
 }

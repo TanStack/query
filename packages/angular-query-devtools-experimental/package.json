@@ -30,20 +30,20 @@
     "tslib": "^2.6.2"
   },
   "devDependencies": {
-    "@angular/cli": "^16.2.8",
-    "@angular/common": "^16.2.11",
-    "@angular/compiler": "^16.2.11",
-    "@angular/compiler-cli": "^16.2.11",
-    "@angular/core": "^16.2.11",
-    "@angular/platform-browser": "^16.2.11",
-    "@angular/platform-browser-dynamic": "^16.2.11",
+    "@angular/cli": "^17.0.0",
+    "@angular/common": "^17.0.2",
+    "@angular/compiler": "^17.0.2",
+    "@angular/compiler-cli": "^17.0.2",
+    "@angular/core": "^17.0.2",
+    "@angular/platform-browser": "^17.0.2",
+    "@angular/platform-browser-dynamic": "^17.0.2",
     "@tanstack/angular-query-experimental": "workspace:*",
-    "ng-packagr": "^16.2.3",
+    "ng-packagr": "^17.0.0",
     "reflect-metadata": "^0.1.13",
-    "typescript": "5.1.6",
-    "zone.js": "^0.14.0"
+    "typescript": "5.2.2",
+    "zone.js": "^0.14.2"
   },
   "peerDependencies": {
-    "@angular/core": "^16 <17"
+    "@angular/core": "^16.2.0"
   }
 }
