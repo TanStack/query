@@ -17,9 +17,10 @@ The adapter works with signals, which means it only supports Angular 16+
 
 ```typescript
 import { AngularQueryDevtoolsComponent } from '@tanstack/angular-query-devtools-experimental'
-import { ChangeDetectionStrategy, Component } from '@angular/core'
-import { injectQuery } from '@tanstack/angular-query-experimental'
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
+import { CommonModule } from '@angular/common'
+import { injectQuery } from '@tanstack/angular-query-experimental'
 import { lastValueFrom } from 'rxjs'
 
 type Response = {
@@ -35,18 +36,18 @@ type Response = {
   selector: 'simple-example',
   standalone: true,
   template: `
-    @if (query().isPending) {
+    @if (query.isPending()) {
       Loading...
-    } @else if (query().error) {
-      An error has occurred: {{ query().error?.message }}
-    } @else {
-      @if (query().data; as data) {
-        <h1>{{ data.name }}</h1>
-        <p>{{ data.description }}</p>
-        <strong>👀 {{ data.subscribers_count }}</strong>
-        <strong>✨ {{ data.stargazers_count }}</strong>
-        <strong>🍴 {{ data.forks_count }}</strong>
-      }
+    }
+    @if (query.error()) {
+      An error has occurred: {{ query.error().message }}
+    }
+    @if (query.data(); as data) {
+      <h1>{{ data.name }}</h1>
+      <p>{{ data.description }}</p>
+      <strong>👀 {{ data.subscribers_count }}</strong>
+      <strong>✨ {{ data.stargazers_count }}</strong>
+      <strong>🍴 {{ data.forks_count }}</strong>
     }
 
     <angular-query-devtools initialIsOpen />
@@ -54,14 +55,14 @@ type Response = {
   imports: [AngularQueryDevtoolsComponent],
 })
 export class SimpleExampleComponent {
-  private http = inject(HttpClient)
+  http = inject(HttpClient)
 
   query = injectQuery(() => ({
     queryKey: ['repoData'],
-    queryFn: () => lastValueFrom(
-      this.http.get('https://api.github.com/repos/tannerlinsley/react-query')
-        .pipe(map((res) => res.data as Response),),
-    )
+    queryFn: () =>
+      lastValueFrom(
+        this.http.get<Response>('https://api.github.com/repos/tannerlinsley/react-query')
+      ),
   }))
 }
 ```

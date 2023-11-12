@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { injectQuery } from '@tanstack/angular-query-experimental'
 import { HttpClient } from '@angular/common/http'
-import { lastValueFrom, tap } from 'rxjs'
+import { lastValueFrom } from 'rxjs'
 
 type Response = {
   name: string
@@ -18,14 +18,18 @@ type Response = {
   selector: 'simple-example',
   standalone: true,
   template: `
-    @if (query.isPending()) { Loading... } @if (query.error()) { An error has
-    occurred: {{ query.error().message }}
-    } @if (query.data(); as data) {
-    <h1>{{ data.name }}</h1>
-    <p>{{ data.description }}</p>
-    <strong>👀 {{ data.subscribers_count }}</strong>
-    <strong>✨ {{ data.stargazers_count }}</strong>
-    <strong>🍴 {{ data.forks_count }}</strong>
+    @if (query.isPending()) {
+      Loading...
+    }
+    @if (query.error()) {
+      An error has occurred: {{ query.error().message }}
+    }
+    @if (query.data(); as data) {
+      <h1>{{ data.name }}</h1>
+      <p>{{ data.description }}</p>
+      <strong>👀 {{ data.subscribers_count }}</strong>
+      <strong>✨ {{ data.stargazers_count }}</strong>
+      <strong>🍴 {{ data.forks_count }}</strong>
     }
 
     <angular-query-devtools initialIsOpen />
@@ -35,15 +39,11 @@ type Response = {
 export class SimpleExampleComponent {
   http = inject(HttpClient)
 
-  query = injectQuery((client) => ({
+  query = injectQuery(() => ({
     queryKey: ['repoData'],
     queryFn: () =>
       lastValueFrom(
-        this.http
-          .get<Response>(
-            'https://api.github.com/repos/tannerlinsley/react-query',
-          )
-          .pipe(tap((x) => console.log(x, client))),
+        this.http.get<Response>('https://api.github.com/repos/tannerlinsley/react-query')
       ),
   }))
 }
