@@ -23,10 +23,8 @@ export function createResultStateSignalProxy<
       if (typeof targetField === 'function') return targetField
 
       // finally, create a computed field, store it and return it
-      const newComputed = computed(() => resultState()[prop as Key])
       // @ts-ignore
-      target[prop] = newComputed
-      return newComputed
+      return (target[prop] = computed(() => resultState()[prop as Key]))
     },
     has<K extends keyof State>(
       target: CreateBaseQueryResult<TData, TError, State>,
