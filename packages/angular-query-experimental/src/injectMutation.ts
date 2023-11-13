@@ -1,16 +1,8 @@
-import {
-  DestroyRef,
-  computed,
-  effect,
-  inject,
-  runInInjectionContext,
-  signal,
-} from '@angular/core'
+import { DestroyRef, computed, effect, inject, signal } from '@angular/core'
 import { MutationObserver, notifyManager } from '@tanstack/query-core'
 import { assertInjector } from 'ngxtension/assert-injector'
-import { injectQuery } from './injectQuery'
-import { QUERY_CLIENT } from './injectQueryClient'
-import type { DefaultError } from '@tanstack/query-core'
+import { injectQueryClient } from './injectQueryClient'
+import type { DefaultError, QueryClient } from '@tanstack/query-core'
 import type { Injector } from '@angular/core'
 
 import type {
@@ -25,16 +17,18 @@ export function injectMutation<
   TVariables = void,
   TContext = unknown,
 >(
-  options: () => CreateMutationOptions<TData, TError, TVariables, TContext>,
+  options: (
+    client: QueryClient,
+  ) => CreateMutationOptions<TData, TError, TVariables, TContext>,
   injector?: Injector,
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
-  injector = assertInjector(injectQuery, injector)
-  return runInInjectionContext(injector, () => {
-    const queryClient = inject(QUERY_CLIENT)
+  return assertInjector(injectMutation, injector, () => {
+    const queryClient = injectQueryClient()
+    const destroyRef = inject(DestroyRef)
 
     const observer = new MutationObserver<TData, TError, TVariables, TContext>(
       queryClient,
-      options(),
+      options(queryClient),
     )
     const mutate: CreateMutateFunction<TData, TError, TVariables, TContext> = (
       variables,
@@ -44,16 +38,17 @@ export function injectMutation<
     }
 
     effect(() => {
-      observer.setOptions(options())
+      observer.setOptions(options(queryClient))
     })
 
     const result = signal(observer.getCurrentResult())
+
     const unsubscribe = observer.subscribe(
       notifyManager.batchCalls((val) => {
         result.set(val)
       }),
     )
-    const destroyRef = inject(DestroyRef)
+
     destroyRef.onDestroy(unsubscribe)
 
     return computed(() => ({

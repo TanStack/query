@@ -14,12 +14,14 @@ We are in the process of getting to a stable API for Angular Query. If you have 
 The adapter works with signals, which means it only supports Angular 16+
 
 ## Example
+
 ```typescript
 import { AngularQueryDevtoolsComponent } from '@tanstack/angular-query-devtools-experimental'
-import { ChangeDetectionStrategy, Component } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
+import { HttpClient } from '@angular/common/http'
 import { CommonModule } from '@angular/common'
 import { injectQuery } from '@tanstack/angular-query-experimental'
-import axios from 'axios'
+import { lastValueFrom } from 'rxjs'
 
 type Response = {
   name: string
@@ -34,28 +36,33 @@ type Response = {
   selector: 'simple-example',
   standalone: true,
   template: `
-    <ng-container *ngIf="query().isPending">Loading...</ng-container>
-    <ng-container *ngIf="query().error as error">
-      An error has occurred: {{ error?.message }}
-    </ng-container>
-    <div *ngIf="query().data as data">
+    @if (query.isPending()) {
+      Loading...
+    }
+    @if (query.error()) {
+      An error has occurred: {{ query.error().message }}
+    }
+    @if (query.data(); as data) {
       <h1>{{ data.name }}</h1>
       <p>{{ data.description }}</p>
       <strong>👀 {{ data.subscribers_count }}</strong>
       <strong>✨ {{ data.stargazers_count }}</strong>
       <strong>🍴 {{ data.forks_count }}</strong>
-    </div>
+    }
+
     <angular-query-devtools initialIsOpen />
   `,
-  imports: [AngularQueryDevtoolsComponent, CommonModule],
+  imports: [AngularQueryDevtoolsComponent],
 })
 export class SimpleExampleComponent {
+  http = inject(HttpClient)
+
   query = injectQuery(() => ({
     queryKey: ['repoData'],
     queryFn: () =>
-      axios
-        .get('https://api.github.com/repos/tannerlinsley/react-query')
-        .then((res) => res.data as Response),
+      lastValueFrom(
+        this.http.get<Response>('https://api.github.com/repos/tannerlinsley/react-query')
+      ),
   }))
 }
 ```

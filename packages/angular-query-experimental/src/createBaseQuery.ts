@@ -5,9 +5,16 @@ import {
   effect,
   inject,
   signal,
+  Signal,
 } from '@angular/core'
 import { notifyManager } from '@tanstack/query-core'
-import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
+import { createResultStateSignalProxy } from './query-proxy'
+import type {
+  QueryClient,
+  QueryKey,
+  QueryObserver,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
 
 /**
@@ -21,7 +28,9 @@ export function createBaseQuery<
   TQueryData,
   TQueryKey extends QueryKey,
 >(
-  options: () => CreateBaseQueryOptions<
+  options: (
+    client: QueryClient,
+  ) => CreateBaseQueryOptions<
     TQueryFnData,
     TError,
     TData,
@@ -32,10 +41,13 @@ export function createBaseQuery<
   queryClient: QueryClient,
 ): CreateBaseQueryResult<TData, TError> {
   assertInInjectionContext(createBaseQuery)
+  const destroyRef = inject(DestroyRef)
 
   /** Creates a signal that has the default options applied */
   const defaultedOptionsSignal = computed(() => {
-    const defaultedOptions = queryClient.defaultQueryOptions(options())
+    const defaultedOptions = queryClient.defaultQueryOptions(
+      options(queryClient),
+    )
     defaultedOptions._optimisticResults = 'optimistic'
     return defaultedOptions
   })
@@ -56,19 +68,20 @@ export function createBaseQuery<
   })
 
   const result = signal(observer.getCurrentResult())
+
   const unsubscribe = observer.subscribe(
-    notifyManager.batchCalls((val) => {
-      result.set(val)
-    }),
+    notifyManager.batchCalls((val) => result.set(val)),
   )
-  const destroyRef = inject(DestroyRef)
   destroyRef.onDestroy(unsubscribe)
 
   /** Subscribe to changes in result and defaultedOptionsStore */
-  return computed(() => {
-    // result.set(observer.getOptimisticResult(defaultedOptionsSignal()))
-    return !defaultedOptionsSignal().notifyOnChangeProps
-      ? observer.trackResult(result())
-      : result()
-  })
+  const resultSignal: Signal<QueryObserverResult<TData, TError>> = computed(
+    () => {
+      return !defaultedOptionsSignal().notifyOnChangeProps
+        ? observer.trackResult(result())
+        : result()
+    },
+  )
+
+  return createResultStateSignalProxy<TData, TError>(resultSignal)
 }

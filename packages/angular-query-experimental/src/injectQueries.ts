@@ -1,17 +1,8 @@
 import { QueriesObserver, notifyManager } from '@tanstack/query-core'
-import {
-  DestroyRef,
-  Injector,
-  assertInInjectionContext,
-  computed,
-  effect,
-  inject,
-  runInInjectionContext,
-  signal,
-} from '@angular/core'
-import { injectQuery } from './injectQuery'
-import { QUERY_CLIENT } from './injectQueryClient'
-import type { Signal } from '@angular/core'
+import { DestroyRef, computed, effect, inject, signal } from '@angular/core'
+import { assertInjector } from 'ngxtension/assert-injector'
+import { injectQueryClient } from './injectQueryClient'
+import type { Injector, Signal } from '@angular/core'
 import type {
   DefaultError,
   QueriesObserverOptions,
@@ -201,10 +192,9 @@ export function injectQueries<
   },
   injector?: Injector,
 ): Signal<TCombinedResult> {
-  !injector && assertInInjectionContext(injectQuery)
-  const assertedInjector = injector ?? inject(Injector)
-  return runInInjectionContext(assertedInjector, () => {
-    const queryClient = inject(QUERY_CLIENT)
+  return assertInjector(injectQueries, injector, () => {
+    const queryClient = injectQueryClient()
+    const destroyRef = inject(DestroyRef)
 
     const defaultedQueries = computed(() => {
       return queries().map((opts) => {
@@ -237,9 +227,10 @@ export function injectQueries<
     )
 
     const result = signal(getCombinedResult() as any)
+
     const unsubscribe = observer.subscribe(notifyManager.batchCalls(result.set))
-    const destroyRef = inject(DestroyRef)
     destroyRef.onDestroy(unsubscribe)
+
     return result
   })
 }

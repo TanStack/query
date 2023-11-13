@@ -220,40 +220,6 @@ importers:
         specifier: ^4.4.4
         version: 4.5.0(@types/node@18.18.0)
 
-  examples/angular/basic-http-client:
-    dependencies:
-      '@angular/common':
-        specifier: ^16.2.8
-        version: 16.2.12(@angular/core@16.2.12)(rxjs@7.8.1)
-      '@angular/compiler':
-        specifier: ^16.2.8
-        version: 16.2.12(@angular/core@16.2.12)
-      '@angular/core':
-        specifier: ^16.2.8
-        version: 16.2.12(rxjs@7.8.1)(zone.js@0.14.2)
-      '@angular/platform-browser':
-        specifier: ^16.2.8
-        version: 16.2.12(@angular/common@16.2.12)(@angular/core@16.2.12)
-      '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.0.0-rc.14
-        version: link:../../../packages/angular-query-devtools-experimental/build
-      '@tanstack/angular-query-experimental':
-        specifier: ^5.0.0-rc.12
-        version: link:../../../packages/angular-query-experimental/build
-      rxjs:
-        specifier: ^7.4.0
-        version: 7.8.1
-      zone.js:
-        specifier: ^0.14.0
-        version: 0.14.2
-    devDependencies:
-      typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
-      vite:
-        specifier: ^4.4.4
-        version: 4.5.0(@types/node@18.18.0)
-
   examples/angular/default-query-function:
     dependencies:
       '@angular/common':
@@ -297,26 +263,23 @@ importers:
   examples/angular/simple:
     dependencies:
       '@angular/common':
-        specifier: ^16.2.11
-        version: 16.2.12(@angular/core@16.2.12)(rxjs@7.8.1)
+        specifier: ^17.0.2
+        version: 17.0.2(@angular/core@17.0.2)(rxjs@7.8.1)
       '@angular/compiler':
-        specifier: ^16.2.12
-        version: 16.2.12(@angular/core@16.2.12)
+        specifier: ^17.0.2
+        version: 17.0.2(@angular/core@17.0.2)
       '@angular/core':
-        specifier: ^16.2.11
-        version: 16.2.12(rxjs@7.8.1)(zone.js@0.14.2)
+        specifier: ^17.0.2
+        version: 17.0.2(rxjs@7.8.1)(zone.js@0.14.2)
       '@angular/platform-browser':
-        specifier: ^16.2.12
-        version: 16.2.12(@angular/common@16.2.12)(@angular/core@16.2.12)
+        specifier: ^17.0.2
+        version: 17.0.2(@angular/animations@17.0.2)(@angular/common@17.0.2)(@angular/core@17.0.2)
       '@tanstack/angular-query-devtools-experimental':
         specifier: ^5.4.3
         version: link:../../../packages/angular-query-devtools-experimental/build
       '@tanstack/angular-query-experimental':
         specifier: ^5.4.3
         version: link:../../../packages/angular-query-experimental/build
-      axios:
-        specifier: ^1.4.0
-        version: 1.5.1
       rxjs:
         specifier: ^7.4.0
         version: 7.8.1
@@ -341,10 +304,10 @@ importers:
         version: 4.17.1
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       algoliasearch:
         specifier: 4.17.1
         version: 4.17.1
@@ -378,10 +341,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -402,10 +365,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -430,10 +393,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       graphql:
         specifier: ^16.6.0
         version: 16.8.1
@@ -458,16 +421,16 @@ importers:
     dependencies:
       '@tanstack/query-sync-storage-persister':
         specifier: ^5.0.0
-        version: link:../../../packages/query-sync-storage-persister
+        version: 5.8.1
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query-persist-client':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-persist-client
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -507,10 +470,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -532,10 +495,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -559,10 +522,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -586,10 +549,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       ky:
         specifier: ^0.33.3
         version: 0.33.3
@@ -616,13 +579,13 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query-next-experimental':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-next-experimental
+        version: 5.8.1(@tanstack/react-query@5.8.1)(next@14.0.0)(react-dom@18.2.0)(react@18.2.0)
       next:
         specifier: ^14.0.0
         version: 14.0.0(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
@@ -650,19 +613,19 @@ importers:
     dependencies:
       '@tanstack/query-sync-storage-persister':
         specifier: ^5.0.0
-        version: link:../../../packages/query-sync-storage-persister
+        version: 5.8.1
       '@tanstack/react-location':
         specifier: ^3.7.0
         version: 3.7.0(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query-persist-client':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-persist-client
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       ky:
         specifier: ^0.33.3
         version: 0.33.3
@@ -690,10 +653,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -727,10 +690,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -764,10 +727,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -788,10 +751,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -810,10 +773,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -843,10 +806,10 @@ importers:
         version: 6.3.16(@react-navigation/native@6.1.6)(react-native-gesture-handler@2.9.0)(react-native-safe-area-context@4.5.0)(react-native-screens@3.20.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       expo:
         specifier: ^48.0.17
         version: 48.0.17(@babel/core@7.21.8)
@@ -916,10 +879,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       localforage:
         specifier: ^1.10.0
         version: 1.10.0
@@ -968,10 +931,10 @@ importers:
         version: 5.13.2(@types/react@18.2.31)(react@18.2.0)
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -996,10 +959,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -1033,10 +996,10 @@ importers:
         version: 5.13.2(@types/react@18.2.31)(react@18.2.0)
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -1061,10 +1024,10 @@ importers:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query
+        version: 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/react-query-devtools
+        version: 5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0)
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -1089,10 +1052,10 @@ importers:
     dependencies:
       '@tanstack/solid-query':
         specifier: ^5.0.0
-        version: link:../../../packages/solid-query
+        version: 5.8.1(solid-js@1.8.1)
       '@tanstack/solid-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/solid-query-devtools
+        version: 5.8.1(@tanstack/solid-query@5.8.1)(solid-js@1.8.1)
       graphql:
         specifier: ^16.8.1
         version: 16.8.1
@@ -1117,10 +1080,10 @@ importers:
     dependencies:
       '@tanstack/solid-query':
         specifier: ^5.0.0
-        version: link:../../../packages/solid-query
+        version: 5.8.1(solid-js@1.8.1)
       '@tanstack/solid-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/solid-query-devtools
+        version: 5.8.1(@tanstack/solid-query@5.8.1)(solid-js@1.8.1)
       solid-js:
         specifier: ^1.8.1
         version: 1.8.1
@@ -1139,10 +1102,10 @@ importers:
     dependencies:
       '@tanstack/solid-query':
         specifier: ^5.0.0
-        version: link:../../../packages/solid-query
+        version: 5.8.1(solid-js@1.8.1)
       '@tanstack/solid-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/solid-query-devtools
+        version: 5.8.1(@tanstack/solid-query@5.8.1)(solid-js@1.8.1)
       solid-js:
         specifier: ^1.8.1
         version: 1.8.1
@@ -1161,10 +1124,10 @@ importers:
     dependencies:
       '@tanstack/solid-query':
         specifier: ^5.0.0
-        version: link:../../../packages/solid-query
+        version: 5.8.1(solid-js@1.8.1)
       '@tanstack/solid-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/solid-query-devtools
+        version: 5.8.1(@tanstack/solid-query@5.8.1)(solid-js@1.8.1)
       solid-js:
         specifier: ^1.8.1
         version: 1.8.1
@@ -1192,10 +1155,10 @@ importers:
         version: 0.8.3(solid-js@1.8.1)
       '@tanstack/solid-query':
         specifier: ^5.0.0
-        version: link:../../../packages/solid-query
+        version: 5.8.1(solid-js@1.8.1)
       '@tanstack/solid-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/solid-query-devtools
+        version: 5.8.1(@tanstack/solid-query@5.8.1)(solid-js@1.8.1)
       solid-js:
         specifier: ^1.8.1
         version: 1.8.1
@@ -1229,10 +1192,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query
+        version: 5.8.1(svelte@4.0.0)
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query-devtools
+        version: 5.8.1(@tanstack/svelte-query@5.8.1)(svelte@4.0.0)
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1257,10 +1220,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query
+        version: 5.8.1(svelte@4.0.0)
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query-devtools
+        version: 5.8.1(@tanstack/svelte-query@5.8.1)(svelte@4.0.0)
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1285,10 +1248,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query
+        version: 5.8.1(svelte@4.0.0)
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query-devtools
+        version: 5.8.1(@tanstack/svelte-query@5.8.1)(svelte@4.0.0)
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1313,10 +1276,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query
+        version: 5.8.1(svelte@4.0.0)
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query-devtools
+        version: 5.8.1(@tanstack/svelte-query@5.8.1)(svelte@4.0.0)
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1341,10 +1304,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query
+        version: 5.8.1(svelte@4.0.0)
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query-devtools
+        version: 5.8.1(@tanstack/svelte-query@5.8.1)(svelte@4.0.0)
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1369,10 +1332,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query
+        version: 5.8.1(svelte@4.0.0)
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query-devtools
+        version: 5.8.1(@tanstack/svelte-query@5.8.1)(svelte@4.0.0)
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^2.4.2
@@ -1397,10 +1360,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query
+        version: 5.8.1(svelte@4.0.0)
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query-devtools
+        version: 5.8.1(@tanstack/svelte-query@5.8.1)(svelte@4.0.0)
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1425,10 +1388,10 @@ importers:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query
+        version: 5.8.1(svelte@4.0.0)
       '@tanstack/svelte-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/svelte-query-devtools
+        version: 5.8.1(@tanstack/svelte-query@5.8.1)(svelte@4.0.0)
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.0
@@ -1462,10 +1425,10 @@ importers:
     dependencies:
       '@tanstack/vue-query':
         specifier: ^5.0.0
-        version: link:../../../packages/vue-query
+        version: 5.8.1(vue@3.3.0)
       '@tanstack/vue-query-devtools':
         specifier: ^5.0.0
-        version: link:../../../packages/vue-query-devtools
+        version: 5.8.2(vue@3.3.0)
       vue:
         specifier: ^3.3.0
         version: 3.3.0
@@ -1484,7 +1447,7 @@ importers:
     dependencies:
       '@tanstack/vue-query':
         specifier: ^5.0.0
-        version: link:../../../packages/vue-query
+        version: 5.8.1(vue@3.3.0)
       vue:
         specifier: ^3.3.0
         version: 3.3.0
@@ -1503,16 +1466,16 @@ importers:
     dependencies:
       '@tanstack/query-core':
         specifier: ^5.0.0
-        version: link:../../../packages/query-core
+        version: 5.8.1
       '@tanstack/query-persist-client-core':
         specifier: ^5.0.0
-        version: link:../../../packages/query-persist-client-core
+        version: 5.8.1
       '@tanstack/query-sync-storage-persister':
         specifier: ^5.0.0
-        version: link:../../../packages/query-sync-storage-persister
+        version: 5.8.1
       '@tanstack/vue-query':
         specifier: ^5.0.0
-        version: link:../../../packages/vue-query
+        version: 5.8.1(vue@3.3.0)
       idb-keyval:
         specifier: ^6.2.0
         version: 6.2.0
@@ -1712,47 +1675,47 @@ importers:
         version: 2.6.2
     devDependencies:
       '@angular/cli':
-        specifier: ^16.2.8
-        version: 16.2.9
+        specifier: ^17.0.0
+        version: 17.0.0
       '@angular/common':
-        specifier: ^16.2.11
-        version: 16.2.12(@angular/core@16.2.12)(rxjs@7.8.1)
+        specifier: ^17.0.2
+        version: 17.0.2(@angular/core@17.0.2)(rxjs@7.8.1)
       '@angular/compiler':
-        specifier: ^16.2.11
-        version: 16.2.12(@angular/core@16.2.12)
+        specifier: ^17.0.2
+        version: 17.0.2(@angular/core@17.0.2)
       '@angular/compiler-cli':
-        specifier: ^16.2.11
-        version: 16.2.12(@angular/compiler@16.2.12)(typescript@5.1.6)
+        specifier: ^17.0.2
+        version: 17.0.2(@angular/compiler@17.0.2)(typescript@5.2.2)
       '@angular/core':
-        specifier: ^16.2.11
-        version: 16.2.12(rxjs@7.8.1)(zone.js@0.14.2)
+        specifier: ^17.0.2
+        version: 17.0.2(rxjs@7.8.1)(zone.js@0.14.2)
       '@angular/platform-browser':
-        specifier: ^16.2.11
-        version: 16.2.12(@angular/common@16.2.12)(@angular/core@16.2.12)
+        specifier: ^17.0.2
+        version: 17.0.2(@angular/animations@17.0.2)(@angular/common@17.0.2)(@angular/core@17.0.2)
       '@angular/platform-browser-dynamic':
-        specifier: ^16.2.11
-        version: 16.2.12(@angular/common@16.2.12)(@angular/compiler@16.2.12)(@angular/core@16.2.12)(@angular/platform-browser@16.2.12)
+        specifier: ^17.0.2
+        version: 17.0.2(@angular/common@17.0.2)(@angular/compiler@17.0.2)(@angular/core@17.0.2)(@angular/platform-browser@17.0.2)
       '@tanstack/angular-query-experimental':
         specifier: workspace:*
         version: link:../angular-query-experimental/build
       ng-packagr:
-        specifier: ^16.2.3
-        version: 16.2.3(@angular/compiler-cli@16.2.12)(tslib@2.6.2)(typescript@5.1.6)
+        specifier: ^17.0.0
+        version: 17.0.0(@angular/compiler-cli@17.0.2)(tslib@2.6.2)(typescript@5.2.2)
       reflect-metadata:
         specifier: ^0.1.13
         version: 0.1.13
       typescript:
-        specifier: 5.1.6
-        version: 5.1.6
+        specifier: 5.2.2
+        version: 5.2.2
       zone.js:
-        specifier: ^0.14.0
+        specifier: ^0.14.2
         version: 0.14.2
 
   packages/angular-query-devtools-experimental/build:
     dependencies:
       '@angular/core':
-        specifier: ^16 <17
-        version: 16.2.12(rxjs@7.8.1)(zone.js@0.13.3)
+        specifier: ^17.0.0
+        version: 17.0.2(rxjs@7.8.1)(zone.js@0.14.2)
       '@tanstack/query-devtools':
         specifier: workspace:*
         version: link:../../query-devtools
@@ -1766,8 +1729,8 @@ importers:
         specifier: workspace:*
         version: link:../query-core
       ngxtension:
-        specifier: ^0.14.1
-        version: 0.14.1(@angular/common@17.0.0-rc.3)(@angular/core@17.0.0-rc.3)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1)
+        specifier: ^1.0.3
+        version: 1.0.3(@angular/common@17.0.2)(@angular/core@17.0.2)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1)
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -1776,32 +1739,32 @@ importers:
         specifier: ^0.2.18
         version: 0.2.18(@angular-devkit/build-angular@16.2.9)
       '@angular/animations':
-        specifier: ^17.0.0-rc.2
-        version: 17.0.0-rc.3(@angular/core@17.0.0-rc.3)
+        specifier: ^17.0.2
+        version: 17.0.2(@angular/core@17.0.2)
       '@angular/cli':
-        specifier: ^17.0.0-next.9
-        version: 17.0.0-rc.4
+        specifier: ^17.0.0
+        version: 17.0.0
       '@angular/common':
-        specifier: ^17.0.0-next.8
-        version: 17.0.0-rc.3(@angular/core@17.0.0-rc.3)(rxjs@7.8.1)
+        specifier: ^17.0.2
+        version: 17.0.2(@angular/core@17.0.2)(rxjs@7.8.1)
       '@angular/compiler':
-        specifier: ^17.0.0-next.8
-        version: 17.0.0-rc.3(@angular/core@17.0.0-rc.3)
+        specifier: ^17.0.2
+        version: 17.0.2(@angular/core@17.0.2)
       '@angular/compiler-cli':
-        specifier: ^17.0.0-rc.2
-        version: 17.0.0-rc.3(@angular/compiler@17.0.0-rc.3)(typescript@5.2.2)
+        specifier: ^17.0.2
+        version: 17.0.2(@angular/compiler@17.0.2)(typescript@5.2.2)
       '@angular/core':
-        specifier: ^17.0.0-next.8
-        version: 17.0.0-rc.3(rxjs@7.8.1)(zone.js@0.14.2)
+        specifier: ^17.0.2
+        version: 17.0.2(rxjs@7.8.1)(zone.js@0.14.2)
       '@angular/platform-browser':
-        specifier: ^17.0.0-rc.2
-        version: 17.0.0-rc.3(@angular/animations@17.0.0-rc.3)(@angular/common@17.0.0-rc.3)(@angular/core@17.0.0-rc.3)
+        specifier: ^17.0.2
+        version: 17.0.2(@angular/animations@17.0.2)(@angular/common@17.0.2)(@angular/core@17.0.2)
       '@angular/platform-browser-dynamic':
-        specifier: ^17.0.0-rc.2
-        version: 17.0.0-rc.3(@angular/common@17.0.0-rc.3)(@angular/compiler@17.0.0-rc.3)(@angular/core@17.0.0-rc.3)(@angular/platform-browser@17.0.0-rc.3)
+        specifier: ^17.0.2
+        version: 17.0.2(@angular/common@17.0.2)(@angular/compiler@17.0.2)(@angular/core@17.0.2)(@angular/platform-browser@17.0.2)
       ng-packagr:
-        specifier: ^16.2.3
-        version: 16.2.3(@angular/compiler-cli@17.0.0-rc.3)(tslib@2.6.2)(typescript@5.2.2)
+        specifier: ^17.0.0
+        version: 17.0.0(@angular/compiler-cli@17.0.2)(tslib@2.6.2)(typescript@5.2.2)
       reflect-metadata:
         specifier: ^0.1.13
         version: 0.1.13
@@ -1815,14 +1778,14 @@ importers:
   packages/angular-query-experimental/build:
     dependencies:
       '@angular/core':
-        specifier: '>=16'
-        version: 16.2.12(rxjs@7.8.1)(zone.js@0.13.3)
+        specifier: ^17.0.0
+        version: 17.0.2(rxjs@7.8.1)(zone.js@0.14.2)
       '@tanstack/query-core':
         specifier: workspace:*
         version: link:../../query-core
       ngxtension:
-        specifier: ^0.14.1
-        version: 0.14.1(@angular/common@16.2.12)(@angular/core@16.2.12)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1)
+        specifier: ^1.0.3
+        version: 1.0.3(@angular/common@16.2.12)(@angular/core@17.0.2)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1)
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -2317,7 +2280,7 @@ packages:
     peerDependencies:
       '@angular-devkit/build-angular': ^15.0.0 || >=16.0.0
     dependencies:
-      '@angular-devkit/build-angular': 16.2.9(@angular/compiler-cli@17.0.0-rc.3)(@types/node@18.18.0)(ng-packagr@16.2.3)(typescript@5.2.2)
+      '@angular-devkit/build-angular': 16.2.9(@angular/compiler-cli@17.0.2)(@types/node@18.18.0)(ng-packagr@17.0.0)(typescript@5.2.2)
     dev: true
 
   /@angular-devkit/architect@0.1602.9(chokidar@3.5.3):
@@ -2330,17 +2293,17 @@ packages:
       - chokidar
     dev: true
 
-  /@angular-devkit/architect@0.1700.0-rc.4:
-    resolution: {integrity: sha512-jciusWICU3CKBBxoYZ+hlKfoAOB+rvvpyj5qBCIcSPXkslWQ8yG4Zu4K3sTwqpkinOhjdcyKhF6lvqHoi1q7Fg==}
+  /@angular-devkit/architect@0.1700.0:
+    resolution: {integrity: sha512-whi7HvOjv1J3He9f+H8xNJWKyjAmWuWNl8gxNW6EZP/XLcrOu+/5QT4bPtXQBRIL/avZuc++5sNQS+kReaNCig==}
     engines: {node: ^18.13.0 || >=20.9.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     dependencies:
-      '@angular-devkit/core': 17.0.0-rc.4
+      '@angular-devkit/core': 17.0.0
       rxjs: 7.8.1
     transitivePeerDependencies:
       - chokidar
     dev: true
 
-  /@angular-devkit/build-angular@16.2.9(@angular/compiler-cli@17.0.0-rc.3)(@types/node@18.18.0)(ng-packagr@16.2.3)(typescript@5.2.2):
+  /@angular-devkit/build-angular@16.2.9(@angular/compiler-cli@17.0.2)(@types/node@18.18.0)(ng-packagr@17.0.0)(typescript@5.2.2):
     resolution: {integrity: sha512-S1C4UYxRVyNt3C0wCxbT2jZ1dN5i37kS0mol3PQjbR8gQ0GQzHmzhjTBl1oImo8aouET9yhrk9etk65oat4mBQ==}
     engines: {node: ^16.14.0 || >=18.10.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     peerDependencies:
@@ -2379,7 +2342,7 @@ packages:
       '@angular-devkit/architect': 0.1602.9(chokidar@3.5.3)
       '@angular-devkit/build-webpack': 0.1602.9(chokidar@3.5.3)(webpack-dev-server@4.15.1)(webpack@5.88.2)
       '@angular-devkit/core': 16.2.9(chokidar@3.5.3)
-      '@angular/compiler-cli': 17.0.0-rc.3(@angular/compiler@17.0.0-rc.3)(typescript@5.2.2)
+      '@angular/compiler-cli': 17.0.2(@angular/compiler@17.0.2)(typescript@5.2.2)
       '@babel/core': 7.22.9
       '@babel/generator': 7.22.9
       '@babel/helper-annotate-as-pure': 7.22.5
@@ -2391,7 +2354,7 @@ packages:
       '@babel/runtime': 7.22.6
       '@babel/template': 7.22.5
       '@discoveryjs/json-ext': 0.5.7
-      '@ngtools/webpack': 16.2.9(@angular/compiler-cli@17.0.0-rc.3)(typescript@5.2.2)(webpack@5.88.2)
+      '@ngtools/webpack': 16.2.9(@angular/compiler-cli@17.0.2)(typescript@5.2.2)(webpack@5.88.2)
       '@vitejs/plugin-basic-ssl': 1.0.1(vite@4.4.7)
       ansi-colors: 4.1.3
       autoprefixer: 10.4.14(postcss@8.4.31)
@@ -2416,7 +2379,7 @@ packages:
       magic-string: 0.30.1
       mini-css-extract-plugin: 2.7.6(webpack@5.88.2)
       mrmime: 1.0.1
-      ng-packagr: 16.2.3(@angular/compiler-cli@17.0.0-rc.3)(tslib@2.6.2)(typescript@5.2.2)
+      ng-packagr: 17.0.0(@angular/compiler-cli@17.0.2)(tslib@2.6.2)(typescript@5.2.2)
       open: 8.4.2
       ora: 5.4.1
       parse5-html-rewriting-stream: 7.0.0
@@ -2496,8 +2459,8 @@ packages:
       source-map: 0.7.4
     dev: true
 
-  /@angular-devkit/core@17.0.0-rc.4:
-    resolution: {integrity: sha512-APokMStYvRW55LU4+0uHzsa+X0o4/JqX0D6Vj6ryBmXz7LSwHOMq2lbuvs1zyMLSWRFESBvhV2GfNQx96SZNoQ==}
+  /@angular-devkit/core@17.0.0:
+    resolution: {integrity: sha512-QUu3LnEi4A8t733v2+I0sLtyBJx3Q7zdTAhaauCbxbFhDid0cbYm8hYsyG/njor1irTPxSJbn6UoetVkwUQZxg==}
     engines: {node: ^18.13.0 || >=20.9.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     peerDependencies:
       chokidar: ^3.5.2
@@ -2513,24 +2476,11 @@ packages:
       source-map: 0.7.4
     dev: true
 
-  /@angular-devkit/schematics@16.2.9:
-    resolution: {integrity: sha512-lB51CGCILpcSI37CwKUAGDLxMqh7zmuRbiPo9s9mSkCM4ccqxFlaL+VFTq2/laneARD6aikpOHnkVm5myNzQPw==}
-    engines: {node: ^16.14.0 || >=18.10.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
-    dependencies:
-      '@angular-devkit/core': 16.2.9(chokidar@3.5.3)
-      jsonc-parser: 3.2.0
-      magic-string: 0.30.1
-      ora: 5.4.1
-      rxjs: 7.8.1
-    transitivePeerDependencies:
-      - chokidar
-    dev: true
-
-  /@angular-devkit/schematics@17.0.0-rc.4:
-    resolution: {integrity: sha512-xQN906533P4D1ifF4Q3cEgFko8FpnPMw7CmDH5GstwN0wBTiCGp9121Oc4FQ6AwNYoG5ilF7LpEG8VfaWSEk+w==}
+  /@angular-devkit/schematics@17.0.0:
+    resolution: {integrity: sha512-LD7fjDORuBf139/oJ/gSwbIzQPfsm6Y67s1FD+XLi0QXaRt6dw4r7BMD08l1r//oPQofNgbEH4coGVO4NdCL/A==}
     engines: {node: ^18.13.0 || >=20.9.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     dependencies:
-      '@angular-devkit/core': 17.0.0-rc.4
+      '@angular-devkit/core': 17.0.0
       jsonc-parser: 3.2.0
       magic-string: 0.30.5
       ora: 5.4.1
@@ -2539,54 +2489,24 @@ packages:
       - chokidar
     dev: true
 
-  /@angular/animations@17.0.0-rc.3(@angular/core@17.0.0-rc.3):
-    resolution: {integrity: sha512-E/olSVtlQZyhaWyurnamuJMFo7GbH4RwIBAsDOjWLLbWpPa0YAeQKcGhQCkv5VvEsvJ4LHmf6NP+cNrKbwBmnw==}
+  /@angular/animations@17.0.2(@angular/core@17.0.2):
+    resolution: {integrity: sha512-32RHWhTgFLMonI3kRdstACay/nvetfxXjdwcTtABjcvBoND7nD9GMhkISQdgS+hcR/IhgXxaPidq8f2UAY5DBw==}
     engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
-      '@angular/core': 17.0.0-rc.3
+      '@angular/core': 17.0.2
     dependencies:
-      '@angular/core': 17.0.0-rc.3(rxjs@7.8.1)(zone.js@0.14.2)
+      '@angular/core': 17.0.2(rxjs@7.8.1)(zone.js@0.14.2)
       tslib: 2.6.2
-    dev: true
 
-  /@angular/cli@16.2.9:
-    resolution: {integrity: sha512-wkpV/Ni26LUeDmhee2TPXXEq3feEdZMSG8+nkfUK9kqIcxm0IjI1GLPeiVOX7aQobuKNe2cCAFNwsrXWjj+2og==}
-    engines: {node: ^16.14.0 || >=18.10.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
-    hasBin: true
-    dependencies:
-      '@angular-devkit/architect': 0.1602.9(chokidar@3.5.3)
-      '@angular-devkit/core': 16.2.9(chokidar@3.5.3)
-      '@angular-devkit/schematics': 16.2.9
-      '@schematics/angular': 16.2.9
-      '@yarnpkg/lockfile': 1.1.0
-      ansi-colors: 4.1.3
-      ini: 4.1.1
-      inquirer: 8.2.4
-      jsonc-parser: 3.2.0
-      npm-package-arg: 10.1.0
-      npm-pick-manifest: 8.0.1
-      open: 8.4.2
-      ora: 5.4.1
-      pacote: 15.2.0
-      resolve: 1.22.2
-      semver: 7.5.4
-      symbol-observable: 4.0.0
-      yargs: 17.7.2
-    transitivePeerDependencies:
-      - bluebird
-      - chokidar
-      - supports-color
-    dev: true
-
-  /@angular/cli@17.0.0-rc.4:
-    resolution: {integrity: sha512-noK/n1vn0rWaRj5NrtMWnanxyTAajFmDCDjgrMA3N73DWemu0hXubi5fe5ONVrNYKJObqPv/P4C/Nluz4Sollw==}
+  /@angular/cli@17.0.0:
+    resolution: {integrity: sha512-VzKYmN+1wSE2wLBEFu/NHSrRQbeaKkEDO9aZxd7nAnxC5T1Zcva7dfqZIXMHXH2HESYAZCvOS8ikBE/7DCtWWw==}
     engines: {node: ^18.13.0 || >=20.9.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     hasBin: true
     dependencies:
-      '@angular-devkit/architect': 0.1700.0-rc.4
-      '@angular-devkit/core': 17.0.0-rc.4
-      '@angular-devkit/schematics': 17.0.0-rc.4
-      '@schematics/angular': 17.0.0-rc.4
+      '@angular-devkit/architect': 0.1700.0
+      '@angular-devkit/core': 17.0.0
+      '@angular-devkit/schematics': 17.0.0
+      '@schematics/angular': 17.0.0
       '@yarnpkg/lockfile': 1.1.0
       ansi-colors: 4.1.3
       ini: 4.1.1
@@ -2617,49 +2537,40 @@ packages:
       '@angular/core': 16.2.12(rxjs@7.8.1)(zone.js@0.14.2)
       rxjs: 7.8.1
       tslib: 2.6.2
+    dev: false
 
-  /@angular/common@17.0.0-rc.3(@angular/core@17.0.0-rc.3)(rxjs@7.8.1):
-    resolution: {integrity: sha512-ZWykfQCDNR6qEsI219j/F5cZzig7EaarYxk7qdXMESEzD1RYcsxWuBEcv3I0zbmej1otZzS2FE+Z8kOMW/3aMg==}
-    engines: {node: ^18.13.0 || >=20.9.0}
+  /@angular/common@16.2.12(@angular/core@17.0.2)(rxjs@7.8.1):
+    resolution: {integrity: sha512-B+WY/cT2VgEaz9HfJitBmgdk4I333XG/ybC98CMC4Wz8E49T8yzivmmxXB3OD6qvjcOB6ftuicl6WBqLbZNg2w==}
+    engines: {node: ^16.14.0 || >=18.10.0}
     peerDependencies:
-      '@angular/core': 17.0.0-rc.3
+      '@angular/core': 16.2.12
       rxjs: ^6.5.3 || ^7.4.0
     dependencies:
-      '@angular/core': 17.0.0-rc.3(rxjs@7.8.1)(zone.js@0.14.2)
+      '@angular/core': 17.0.2(rxjs@7.8.1)(zone.js@0.14.2)
+      rxjs: 7.8.1
+      tslib: 2.6.2
+    dev: false
+
+  /@angular/common@17.0.2(@angular/core@17.0.2)(rxjs@7.8.1):
+    resolution: {integrity: sha512-hCW0njHgrcwTWNoKZDwf02DnhYLVWNXM2FMw66MKpfxTp7McSyaXjGBU9/hchW3dZJ0xTwyxoyoqJFoHYvg0yg==}
+    engines: {node: ^18.13.0 || >=20.9.0}
+    peerDependencies:
+      '@angular/core': 17.0.2
+      rxjs: ^6.5.3 || ^7.4.0
+    dependencies:
+      '@angular/core': 17.0.2(rxjs@7.8.1)(zone.js@0.14.2)
       rxjs: 7.8.1
       tslib: 2.6.2
 
-  /@angular/compiler-cli@16.2.12(@angular/compiler@16.2.12)(typescript@5.1.6):
-    resolution: {integrity: sha512-pWSrr152562ujh6lsFZR8NfNc5Ljj+zSTQO44DsuB0tZjwEpnRcjJEgzuhGXr+CoiBf+jTSPZKemtSktDk5aaA==}
-    engines: {node: ^16.14.0 || >=18.10.0}
-    hasBin: true
-    peerDependencies:
-      '@angular/compiler': 16.2.12
-      typescript: '>=4.9.3 <5.2'
-    dependencies:
-      '@angular/compiler': 16.2.12(@angular/core@16.2.12)
-      '@babel/core': 7.23.2
-      '@jridgewell/sourcemap-codec': 1.4.15
-      chokidar: 3.5.3
-      convert-source-map: 1.9.0
-      reflect-metadata: 0.1.13
-      semver: 7.5.4
-      tslib: 2.6.2
-      typescript: 5.1.6
-      yargs: 17.7.2
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
-  /@angular/compiler-cli@17.0.0-rc.3(@angular/compiler@17.0.0-rc.3)(typescript@5.2.2):
-    resolution: {integrity: sha512-FSis4qfPj7dcwXArfT0/bfK7sevgITEte7dCqS8CeFz0Depfg6v/aRQv8eDkzu0BgNy1Ivt8l76XuS+XW0fbLw==}
+  /@angular/compiler-cli@17.0.2(@angular/compiler@17.0.2)(typescript@5.2.2):
+    resolution: {integrity: sha512-IUYL3Yz5RbR0Z0/x7it4GK3sMb2qVihxu0tlgfUW53P1Vi6nU/Zda0bCJTu6Z64qEtS8zwCwF1Ekomuq6UaiKg==}
     engines: {node: ^18.13.0 || >=20.9.0}
     hasBin: true
     peerDependencies:
-      '@angular/compiler': 17.0.0-rc.3
+      '@angular/compiler': 17.0.2
       typescript: '>=5.2 <5.3'
     dependencies:
-      '@angular/compiler': 17.0.0-rc.3(@angular/core@17.0.0-rc.3)
+      '@angular/compiler': 17.0.2(@angular/core@17.0.2)
       '@babel/core': 7.23.2
       '@jridgewell/sourcemap-codec': 1.4.15
       chokidar: 3.5.3
@@ -2684,31 +2595,19 @@ packages:
     dependencies:
       '@angular/core': 16.2.12(rxjs@7.8.1)(zone.js@0.14.2)
       tslib: 2.6.2
+    dev: false
 
-  /@angular/compiler@17.0.0-rc.3(@angular/core@17.0.0-rc.3):
-    resolution: {integrity: sha512-D2+kuKQvis+fEzmfsjP9dHnVgk3RosXn+q/b8Bo8yb7fZ7JutwA11eIpn6YopRwCvVi/eeZPut7nmmVuLJc9vw==}
+  /@angular/compiler@17.0.2(@angular/core@17.0.2):
+    resolution: {integrity: sha512-ewUFbKhMEhAmw2dGfk0ImhTlyrO2y4pJSKIZdFrkR1d0HiJX8bCHUdTiiR/2jeP7w2eamjXj15Rptb+iZZes2Q==}
     engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
-      '@angular/core': 17.0.0-rc.3
+      '@angular/core': 17.0.2
     peerDependenciesMeta:
       '@angular/core':
         optional: true
     dependencies:
-      '@angular/core': 17.0.0-rc.3(rxjs@7.8.1)(zone.js@0.14.2)
+      '@angular/core': 17.0.2(rxjs@7.8.1)(zone.js@0.14.2)
       tslib: 2.6.2
-    dev: true
-
-  /@angular/core@16.2.12(rxjs@7.8.1)(zone.js@0.13.3):
-    resolution: {integrity: sha512-GLLlDeke/NjroaLYOks0uyzFVo6HyLl7VOm0K1QpLXnYvW63W9Ql/T3yguRZa7tRkOAeFZ3jw+1wnBD4O8MoUA==}
-    engines: {node: ^16.14.0 || >=18.10.0}
-    peerDependencies:
-      rxjs: ^6.5.3 || ^7.4.0
-      zone.js: ~0.13.0
-    dependencies:
-      rxjs: 7.8.1
-      tslib: 2.6.2
-      zone.js: 0.13.3
-    dev: false
 
   /@angular/core@16.2.12(rxjs@7.8.1)(zone.js@0.14.2):
     resolution: {integrity: sha512-GLLlDeke/NjroaLYOks0uyzFVo6HyLl7VOm0K1QpLXnYvW63W9Ql/T3yguRZa7tRkOAeFZ3jw+1wnBD4O8MoUA==}
@@ -2720,9 +2619,10 @@ packages:
       rxjs: 7.8.1
       tslib: 2.6.2
       zone.js: 0.14.2
+    dev: false
 
-  /@angular/core@17.0.0-rc.3(rxjs@7.8.1)(zone.js@0.14.2):
-    resolution: {integrity: sha512-v0X80CV611NuMZ1H/dbufEg1UTw2f4aGPhOtU2JRpAFfdYQ2PQRYseE77ts5zkdERgq1dW00DPTp7rBZS2st9Q==}
+  /@angular/core@17.0.2(rxjs@7.8.1)(zone.js@0.14.2):
+    resolution: {integrity: sha512-MjDxWeyn3Txi0qo/V/I+B/gndh0uptQ0XWgBRwOx6Wcr5zRGeZIFlXBxPpyXnGTlJkeyErsTN7FfFCZ4C3kCPA==}
     engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
       rxjs: ^6.5.3 || ^7.4.0
@@ -2737,35 +2637,19 @@ packages:
     engines: {node: ^16.14.0 || >=18.10.0}
     dev: false
 
-  /@angular/platform-browser-dynamic@16.2.12(@angular/common@16.2.12)(@angular/compiler@16.2.12)(@angular/core@16.2.12)(@angular/platform-browser@16.2.12):
-    resolution: {integrity: sha512-ya54jerNgreCVAR278wZavwjrUWImMr2F8yM5n9HBvsMBbFaAQ83anwbOEiHEF2BlR+gJiEBLfpuPRMw20pHqw==}
-    engines: {node: ^16.14.0 || >=18.10.0}
-    peerDependencies:
-      '@angular/common': 16.2.12
-      '@angular/compiler': 16.2.12
-      '@angular/core': 16.2.12
-      '@angular/platform-browser': 16.2.12
-    dependencies:
-      '@angular/common': 16.2.12(@angular/core@16.2.12)(rxjs@7.8.1)
-      '@angular/compiler': 16.2.12(@angular/core@16.2.12)
-      '@angular/core': 16.2.12(rxjs@7.8.1)(zone.js@0.14.2)
-      '@angular/platform-browser': 16.2.12(@angular/common@16.2.12)(@angular/core@16.2.12)
-      tslib: 2.6.2
-    dev: true
-
-  /@angular/platform-browser-dynamic@17.0.0-rc.3(@angular/common@17.0.0-rc.3)(@angular/compiler@17.0.0-rc.3)(@angular/core@17.0.0-rc.3)(@angular/platform-browser@17.0.0-rc.3):
-    resolution: {integrity: sha512-CqSg2TvvmDxXHM6NQOXccUTErR7UBDob0j8FhWBlRojSiNgoU43QYIlyOL+E29AW5gv+spVf+ody1n6MLORXiQ==}
+  /@angular/platform-browser-dynamic@17.0.2(@angular/common@17.0.2)(@angular/compiler@17.0.2)(@angular/core@17.0.2)(@angular/platform-browser@17.0.2):
+    resolution: {integrity: sha512-clcHqHcfD00/TlTixDbJ3q4EQxpm0t2ZFG76rRFmGrmE5tKYUPfaofIa3hQCxy3q269MAYuF16wALhUtrEWyUA==}
     engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
-      '@angular/common': 17.0.0-rc.3
-      '@angular/compiler': 17.0.0-rc.3
-      '@angular/core': 17.0.0-rc.3
-      '@angular/platform-browser': 17.0.0-rc.3
+      '@angular/common': 17.0.2
+      '@angular/compiler': 17.0.2
+      '@angular/core': 17.0.2
+      '@angular/platform-browser': 17.0.2
     dependencies:
-      '@angular/common': 17.0.0-rc.3(@angular/core@17.0.0-rc.3)(rxjs@7.8.1)
-      '@angular/compiler': 17.0.0-rc.3(@angular/core@17.0.0-rc.3)
-      '@angular/core': 17.0.0-rc.3(rxjs@7.8.1)(zone.js@0.14.2)
-      '@angular/platform-browser': 17.0.0-rc.3(@angular/animations@17.0.0-rc.3)(@angular/common@17.0.0-rc.3)(@angular/core@17.0.0-rc.3)
+      '@angular/common': 17.0.2(@angular/core@17.0.2)(rxjs@7.8.1)
+      '@angular/compiler': 17.0.2(@angular/core@17.0.2)
+      '@angular/core': 17.0.2(rxjs@7.8.1)(zone.js@0.14.2)
+      '@angular/platform-browser': 17.0.2(@angular/animations@17.0.2)(@angular/common@17.0.2)(@angular/core@17.0.2)
       tslib: 2.6.2
     dev: true
 
@@ -2783,23 +2667,23 @@ packages:
       '@angular/common': 16.2.12(@angular/core@16.2.12)(rxjs@7.8.1)
       '@angular/core': 16.2.12(rxjs@7.8.1)(zone.js@0.14.2)
       tslib: 2.6.2
+    dev: false
 
-  /@angular/platform-browser@17.0.0-rc.3(@angular/animations@17.0.0-rc.3)(@angular/common@17.0.0-rc.3)(@angular/core@17.0.0-rc.3):
-    resolution: {integrity: sha512-F8HkhdtZMA9KM8RbgiB/rDzgJRYei/6N6bP95UDs7xOkhTAz+fbmmTLKTwAQ1YkRY0T7S7Z1OxgEtAeFh6pEFQ==}
+  /@angular/platform-browser@17.0.2(@angular/animations@17.0.2)(@angular/common@17.0.2)(@angular/core@17.0.2):
+    resolution: {integrity: sha512-eTnPILEA/eAMkVUR/+g6fWhhMTmnmOzcZSGX/bBgQcvOhayZrDDxA6/Qf+jIB4RwC0wd3KA9zT5BCMmNojoUsg==}
     engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
-      '@angular/animations': 17.0.0-rc.3
-      '@angular/common': 17.0.0-rc.3
-      '@angular/core': 17.0.0-rc.3
+      '@angular/animations': 17.0.2
+      '@angular/common': 17.0.2
+      '@angular/core': 17.0.2
     peerDependenciesMeta:
       '@angular/animations':
         optional: true
     dependencies:
-      '@angular/animations': 17.0.0-rc.3(@angular/core@17.0.0-rc.3)
-      '@angular/common': 17.0.0-rc.3(@angular/core@17.0.0-rc.3)(rxjs@7.8.1)
-      '@angular/core': 17.0.0-rc.3(rxjs@7.8.1)(zone.js@0.14.2)
+      '@angular/animations': 17.0.2(@angular/core@17.0.2)
+      '@angular/common': 17.0.2(@angular/core@17.0.2)(rxjs@7.8.1)
+      '@angular/core': 17.0.2(rxjs@7.8.1)(zone.js@0.14.2)
       tslib: 2.6.2
-    dev: true
 
   /@antfu/utils@0.7.6:
     resolution: {integrity: sha512-pvFiLP2BeOKA/ZOS6jxx4XhKzdVLHDhGlFEaZ2flWWYf2xOqVniqpk38I04DFRyz+L0ASggl7SkItTc+ZLju4w==}
@@ -8185,6 +8069,7 @@ packages:
 
   /@gar/promisify@1.1.3:
     resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}
+    dev: false
 
   /@graphql-typed-document-node/core@3.2.0(graphql@15.8.0):
     resolution: {integrity: sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==}
@@ -9144,7 +9029,7 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@ngtools/webpack@16.2.9(@angular/compiler-cli@17.0.0-rc.3)(typescript@5.2.2)(webpack@5.88.2):
+  /@ngtools/webpack@16.2.9(@angular/compiler-cli@17.0.2)(typescript@5.2.2)(webpack@5.88.2):
     resolution: {integrity: sha512-rOclD7FfT4OSwVA0nDnULbJS6TORJ0+sQiuT2ebaNFErYr3LOm6Zut05tnmzFw8q1cePrILbG+xpnbggNr9Pyw==}
     engines: {node: ^16.14.0 || >=18.10.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     peerDependencies:
@@ -9152,7 +9037,7 @@ packages:
       typescript: '>=4.9.3 <5.2'
       webpack: ^5.54.0
     dependencies:
-      '@angular/compiler-cli': 17.0.0-rc.3(@angular/compiler@17.0.0-rc.3)(typescript@5.2.2)
+      '@angular/compiler-cli': 17.0.2(@angular/compiler@17.0.2)(typescript@5.2.2)
       typescript: 5.2.2
       webpack: 5.88.2(esbuild@0.18.17)
     dev: true
@@ -9200,35 +9085,11 @@ packages:
       semver: 7.5.4
     dev: false
 
-  /@npmcli/fs@2.1.2:
-    resolution: {integrity: sha512-yOJKRvohFOaLqipNtwYB9WugyZKhC/DZC4VYPmpaCzDBrA8YpK3qHZ8/HGscMnE4GqbkLNuVcCnxkeQEdGt6LQ==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
-    dependencies:
-      '@gar/promisify': 1.1.3
-      semver: 7.5.4
-    dev: true
-
   /@npmcli/fs@3.1.0:
     resolution: {integrity: sha512-7kZUAaLscfgbwBQRbvdMYaZOWyMEcPTH/tJjnyAWJ/dvvs9Ef+CERx/qJb9GExJpl1qipaDGn7KqHnFGGixd0w==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     dependencies:
       semver: 7.5.4
-    dev: true
-
-  /@npmcli/git@4.1.0:
-    resolution: {integrity: sha512-9hwoB3gStVfa0N31ymBmrX+GuDGdVA/QWShZVqE0HK2Af+7QGGrCTbZia/SW0ImUTjTne7SP91qxDmtXvDHRPQ==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    dependencies:
-      '@npmcli/promise-spawn': 6.0.2
-      lru-cache: 7.18.3
-      npm-pick-manifest: 8.0.1
-      proc-log: 3.0.0
-      promise-inflight: 1.0.1(bluebird@3.7.2)
-      promise-retry: 2.0.1
-      semver: 7.5.4
-      which: 3.0.1
-    transitivePeerDependencies:
-      - bluebird
     dev: true
 
   /@npmcli/git@5.0.3:
@@ -9265,25 +9126,9 @@ packages:
       rimraf: 3.0.2
     dev: false
 
-  /@npmcli/move-file@2.0.1:
-    resolution: {integrity: sha512-mJd2Z5TjYWq/ttPLLGqArdtnC74J6bOzg4rMDnN+p1xTacZ2yPRCk2y0oSWQtygLR9YVQXgOcONrwtnk3JupxQ==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
-    deprecated: This functionality has been moved to @npmcli/fs
-    dependencies:
-      mkdirp: 1.0.4
-      rimraf: 3.0.2
-    dev: true
-
   /@npmcli/node-gyp@3.0.0:
     resolution: {integrity: sha512-gp8pRXC2oOxu0DUE1/M3bYtb1b3/DbJ5aM113+XJBgfXdussRAsX0YOrOhdd8WvnAR6auDBvJomGAkLKA5ydxA==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    dev: true
-
-  /@npmcli/promise-spawn@6.0.2:
-    resolution: {integrity: sha512-gGq0NJkIGSwdbUt4yhdF8ZrmkGKVz9vAdVzpOfnom+V8PLSmSOVhZwbNvZZS1EYcJN5hzzKBxmmVVAInM6HQLg==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    dependencies:
-      which: 3.0.1
     dev: true
 
   /@npmcli/promise-spawn@7.0.0:
@@ -9291,20 +9136,6 @@ packages:
     engines: {node: ^16.14.0 || >=18.0.0}
     dependencies:
       which: 4.0.0
-    dev: true
-
-  /@npmcli/run-script@6.0.2:
-    resolution: {integrity: sha512-NCcr1uQo1k5U+SYlnIrbAh3cxy+OQT1VtqiAbxdymSlptbzBb62AjH2xXgjNCoP073hoa1CfCAcwoZ8k96C4nA==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    dependencies:
-      '@npmcli/node-gyp': 3.0.0
-      '@npmcli/promise-spawn': 6.0.2
-      node-gyp: 9.4.1
-      read-package-json-fast: 3.0.2
-      which: 3.0.1
-    transitivePeerDependencies:
-      - bluebird
-      - supports-color
     dev: true
 
   /@npmcli/run-script@7.0.2:
@@ -9320,10 +9151,10 @@ packages:
       - supports-color
     dev: true
 
-  /@nrwl/devkit@16.10.0(nx@16.5.2):
-    resolution: {integrity: sha512-fRloARtsDQoQgQ7HKEy0RJiusg/HSygnmg4gX/0n/Z+SUS+4KoZzvHjXc6T5ZdEiSjvLypJ+HBM8dQzIcVACPQ==}
+  /@nrwl/devkit@17.1.1(nx@17.1.1):
+    resolution: {integrity: sha512-zLq/Sje4XqcZdrL7SYqylFD3Wo9KoiZtj+4CFSphME67TshN8qqEYVa6ePHFdM/CHIEuKHeWK4CHbebyPGvtyg==}
     dependencies:
-      '@nx/devkit': 16.10.0(nx@16.5.2)
+      '@nx/devkit': 17.1.1(nx@17.1.1)
     transitivePeerDependencies:
       - nx
     dev: false
@@ -9345,17 +9176,30 @@ packages:
       - '@swc-node/register'
       - '@swc/core'
       - debug
+    dev: true
 
-  /@nx/devkit@16.10.0(nx@16.5.2):
-    resolution: {integrity: sha512-IvKQqRJFDDiaj33SPfGd3ckNHhHi6ceEoqCbAP4UuMXOPPVOX6H0KVk+9tknkPb48B7jWIw6/AgOeWkBxPRO5w==}
-    peerDependencies:
-      nx: '>= 15 <= 17'
+  /@nrwl/tao@17.1.1:
+    resolution: {integrity: sha512-d0hNAK5pdJLTkSJYFPZZfbwu0S6OZ/1DM0ieATujGlIQeR8zC8jctpIxZDgCZX5Nbw1OOqZkPaIQJQl9gW05sg==}
+    hasBin: true
     dependencies:
-      '@nrwl/devkit': 16.10.0(nx@16.5.2)
+      nx: 17.1.1
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - '@swc-node/register'
+      - '@swc/core'
+      - debug
+    dev: false
+
+  /@nx/devkit@17.1.1(nx@17.1.1):
+    resolution: {integrity: sha512-fOIaVRu51eG4AvnysWW0vTH9ZhjXlt/xm1uinfjfa8n+F2yVmCfT8erZaW4XsiodfJcCfs3ICwkcVCtF9aCeAQ==}
+    peerDependencies:
+      nx: '>= 16 <= 18'
+    dependencies:
+      '@nrwl/devkit': 17.1.1(nx@17.1.1)
       ejs: 3.1.9
       enquirer: 2.3.6
       ignore: 5.2.4
-      nx: 16.5.2
+      nx: 17.1.1
       semver: 7.5.3
       tmp: 0.2.1
       tslib: 2.6.2
@@ -9367,6 +9211,16 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
+    dev: true
+    optional: true
+
+  /@nx/nx-darwin-arm64@17.1.1:
+    resolution: {integrity: sha512-HWrXte+e5XfXkv0SuaoLOu3Ct0rq9UoEb1/+X/1xuIljs5serFiwW7aQ0sxhVgWQBLSucYmecbjyjTBxBEJLSA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+    requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-darwin-x64@16.5.2:
@@ -9375,6 +9229,16 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
+    dev: true
+    optional: true
+
+  /@nx/nx-darwin-x64@17.1.1:
+    resolution: {integrity: sha512-AiOBWB2ulEFDUoGqkIy0egyc7exhD8Veig59l4Q6JiKverLgZpYVMLKG7hhRaYuwvsoUraWGRoteNRbAMHQacA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-freebsd-x64@16.5.2:
@@ -9383,6 +9247,16 @@ packages:
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
+    dev: true
+    optional: true
+
+  /@nx/nx-freebsd-x64@17.1.1:
+    resolution: {integrity: sha512-px5s3ZC6Sl36eSPzWuMSmhA+mqN3jUiWgzbU6wIqfLBOVhLN0C2/lBKVNMS3JJVpMPfI245/EHlDyZobdOIheA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [freebsd]
+    requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-linux-arm-gnueabihf@16.5.2:
@@ -9391,6 +9265,16 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
+    dev: true
+    optional: true
+
+  /@nx/nx-linux-arm-gnueabihf@17.1.1:
+    resolution: {integrity: sha512-gDlJuCqWsu4WEjmkM5GwpeB+odXPPGQikBzVwMgBPFjqjsJkYnkrYOy2TWvBfNIYp+5jmOi0lZHAfPnCIniyww==}
+    engines: {node: '>= 10'}
+    cpu: [arm]
+    os: [linux]
+    requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-linux-arm64-gnu@16.5.2:
@@ -9399,6 +9283,16 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
+    dev: true
+    optional: true
+
+  /@nx/nx-linux-arm64-gnu@17.1.1:
+    resolution: {integrity: sha512-7349vYv3OnrCO5bwk5XHNCVjU0GFMh0d0xIDJjeRsCItyi3t+z0vCJ4vSzAwfAcUNzBehM7dz3ah/rJaUDD1qg==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-linux-arm64-musl@16.5.2:
@@ -9407,6 +9301,16 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
+    dev: true
+    optional: true
+
+  /@nx/nx-linux-arm64-musl@17.1.1:
+    resolution: {integrity: sha512-UZ9STF2Q/2Jh9icTqSU+zoU3XZKOJBj1OV4NtdWRAh3YwXK+A2+AMI38IxGoYZYyPmDEmEDu9MFCuTzLJtjOww==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-linux-x64-gnu@16.5.2:
@@ -9415,6 +9319,16 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
+    dev: true
+    optional: true
+
+  /@nx/nx-linux-x64-gnu@17.1.1:
+    resolution: {integrity: sha512-9nwZ5t3tgqIyPJaxFop3+OrEbh85mp7bGGOubamcAhxoDI49vYig04igUBMcO0LbF1o1YFdW2KDKFF53phJxJw==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-linux-x64-musl@16.5.2:
@@ -9423,6 +9337,16 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
+    dev: true
+    optional: true
+
+  /@nx/nx-linux-x64-musl@17.1.1:
+    resolution: {integrity: sha512-2OKfB8w8u2q6JwjEHx39U3ekn+tvQkiwF7LedRQbf+2IY9IsGpZrgaRIuY9D/aDWHmHSOl3jvITP0cykgAfq7g==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-win32-arm64-msvc@16.5.2:
@@ -9431,6 +9355,16 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
+    dev: true
+    optional: true
+
+  /@nx/nx-win32-arm64-msvc@17.1.1:
+    resolution: {integrity: sha512-dXBnbIxK6MHTirgKRSxJfwUX9xfnD7W9T4/C0NGkbIe3VZBiY0RIUPvEps4EJkucEva9pTkaowkz5lHBxVi4Iw==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [win32]
+    requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-win32-x64-msvc@16.5.2:
@@ -9439,6 +9373,16 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
+    dev: true
+    optional: true
+
+  /@nx/nx-win32-x64-msvc@17.1.1:
+    resolution: {integrity: sha512-1j3UO/FfjzptXcTGL56oAFLnpYP6EyVYyAYT/3aayky8xqiPeL5DfRjV2kJ91VA0nIeKhAx0T25oSTvMHfZNEw==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [win32]
+    requiresBuild: true
+    dev: false
     optional: true
 
   /@open-draft/until@1.0.3:
@@ -9452,6 +9396,7 @@ packages:
     dependencies:
       node-addon-api: 3.2.1
       node-gyp-build: 4.6.1
+    dev: true
 
   /@pkgjs/parseargs@0.11.0:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -9946,6 +9891,19 @@ packages:
       '@rollup/pluginutils': 5.0.5(rollup@3.29.4)
       rollup: 3.29.4
 
+  /@rollup/plugin-json@6.0.1(rollup@4.4.0):
+    resolution: {integrity: sha512-RgVfl5hWMkxN1h/uZj8FVESvPuBJ/uf6ly6GTj0GONnkfoBN5KC0MSz+PN2OLDgYXMhtG0mWpTrkiOjoxAIevw==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      '@rollup/pluginutils': 5.0.5(rollup@4.4.0)
+      rollup: 4.4.0
+    dev: true
+
   /@rollup/plugin-node-resolve@11.2.1(rollup@2.79.1):
     resolution: {integrity: sha512-yc2n43jcqVyGE2sqV5/YCmocy9ArjVAP/BeXyTtADTBBX6V0e5UMqwO8CdQ0kzjb6zu5P1qMzsScCMRvE9OlVg==}
     engines: {node: '>= 10.0.0'}
@@ -9977,6 +9935,24 @@ packages:
       is-module: 1.0.0
       resolve: 1.22.8
       rollup: 3.29.4
+
+  /@rollup/plugin-node-resolve@15.2.3(rollup@4.4.0):
+    resolution: {integrity: sha512-j/lym8nf5E21LwBT4Df1VD6hRO2L2iwUeUmP7litikRsVp1H6NWx20NEp0Y7su+7XGc476GnXXc4kFeZNGmaSQ==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^2.78.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      '@rollup/pluginutils': 5.0.5(rollup@4.4.0)
+      '@types/resolve': 1.20.2
+      deepmerge: 4.3.1
+      is-builtin-module: 3.2.1
+      is-module: 1.0.0
+      resolve: 1.22.8
+      rollup: 4.4.0
+    dev: true
 
   /@rollup/plugin-node-resolve@7.1.3(rollup@1.32.1):
     resolution: {integrity: sha512-RxtSL3XmdTAE2byxekYLnx+98kEUOrPHF/KRVjLH+DEIHy6kjIw7YINQzn+NXiH/NTrQLAwYs0GWB+csWygA9Q==}
@@ -10050,27 +10026,127 @@ packages:
       picomatch: 2.3.1
       rollup: 3.29.4
 
+  /@rollup/pluginutils@5.0.5(rollup@4.4.0):
+    resolution: {integrity: sha512-6aEYR910NyP73oHiJglti74iRyOwgFU4x3meH/H8OJx6Ry0j6cOVZ5X/wTvub7G7Ao6qaHBEaNsV3GLJkSsF+Q==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      '@types/estree': 1.0.3
+      estree-walker: 2.0.2
+      picomatch: 2.3.1
+      rollup: 4.4.0
+    dev: true
+
+  /@rollup/rollup-android-arm-eabi@4.4.0:
+    resolution: {integrity: sha512-AD30wtT58hZZsXIeiksytR6Gm2gofUxn5KqrDBdyzekgxXB9bXN9dqWIEcPfYo9lA9MVRm0lC42LuYGsscRxiA==}
+    cpu: [arm]
+    os: [android]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-android-arm64@4.4.0:
+    resolution: {integrity: sha512-PlqvhzFxy5FRTB3wLSsGgPhiakv9jrgfu8tjSojLJFP0CdhfZSRDOFvQ2emWLUEBOSCnjpL63XSuFVMwg59ZtA==}
+    cpu: [arm64]
+    os: [android]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-darwin-arm64@4.4.0:
+    resolution: {integrity: sha512-BYmhn1Hebmkmdyn5mBFy7HptowyjtMALyTpywNSNZYigWwyv4L8WQVr0XvOQE7eE6WoKrupSVxtIcGZW8MgZUA==}
+    cpu: [arm64]
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-darwin-x64@4.4.0:
+    resolution: {integrity: sha512-7GXsMiX/giTDBMs/gL3rePLBRC6gV7DT7JQ0lNqoNDe5hm+Gm4NEWky9fwEmer64fIUbOsTiLUsyQ5fDXUbXPA==}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-linux-arm-gnueabihf@4.4.0:
+    resolution: {integrity: sha512-kavnkaV50Gu6vESlOAwUad92wYY9mUrcaPmhzOQZKlNFnzWAUYyD/uhHmWvY7Z2chtwhWlng0LvCRBF5QiPO7w==}
+    cpu: [arm]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-linux-arm64-gnu@4.4.0:
+    resolution: {integrity: sha512-2hBHEtCjnBTeuLvDAlHRCqsuFQSyAhTQs9vbZEVBTV8ap35pDI1ukPbIVFFCWNvL/KE7xRor5YZFvfyGCfvLnA==}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-linux-arm64-musl@4.4.0:
+    resolution: {integrity: sha512-u7zy0Ygzl7O5Gvr9TSNSQj+DBzvMJC7rXfyQNgZ13KwkhgJ8z0z+gt2AO4RPd01rZioMQ2/TA24XGGg4xqhd0Q==}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-linux-x64-gnu@4.4.0:
+    resolution: {integrity: sha512-VvpAdh5SgewmWo8sa5QPYG8aSKH9hU2Kr5+3of0GzBI/8n8PBqhLyvF0DbO+zDW8j5IM8NDebv82MpHrZaD0Cw==}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-linux-x64-musl@4.4.0:
+    resolution: {integrity: sha512-3g6jaXxXVFaDnFoMn2+E3ludGcXFfEr6lDn+S1lh9Qe0JcL9sPt1wGh0g2cKIlb6OakNOFopZqJ5Yub9F7gQlA==}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-win32-arm64-msvc@4.4.0:
+    resolution: {integrity: sha512-jnoDRkg5Ve6Y1qx2m1+ehouOLQ4ddc15/iQSfFjcDUL6bqLdJJ5c4CKfUy/C6W1oCU4la+hMkveE9GG7ECN7dg==}
+    cpu: [arm64]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-win32-ia32-msvc@4.4.0:
+    resolution: {integrity: sha512-SoLQmJanozFow8o50ul2a3R+J7nk4pEhrp83PzTSXs5OzOmIZbPSp5kihtQ3f6ypo4MCbmh0V8Ev0bJIEp4Azw==}
+    cpu: [ia32]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-win32-x64-msvc@4.4.0:
+    resolution: {integrity: sha512-Zaz6itfQ5sQF5Cia49YDW1ZTr+YfIKzTSb9npLyvQn346n7ulRDOv2J7GnL0zcOJ3cqW7HzG/ZisyO6fH43J9g==}
+    cpu: [x64]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
+
   /@rushstack/eslint-patch@1.5.1:
     resolution: {integrity: sha512-6i/8UoL0P5y4leBIGzvkZdS85RDMG9y1ihZzmTZQ5LdHUYmZ7pKFoj8X0236s3lusPs1Fa5HTQUpwI+UfTcmeA==}
     dev: false
 
-  /@schematics/angular@16.2.9:
-    resolution: {integrity: sha512-uiU2YbZRVHgk1N1DDsek/5CKhfpZ8myJYNJk8eHV5LswnXOP3aqvH23VhneaAgOYwK5fISC7eMG0pLVKMvFfZQ==}
-    engines: {node: ^16.14.0 || >=18.10.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
-    dependencies:
-      '@angular-devkit/core': 16.2.9(chokidar@3.5.3)
-      '@angular-devkit/schematics': 16.2.9
-      jsonc-parser: 3.2.0
-    transitivePeerDependencies:
-      - chokidar
-    dev: true
-
-  /@schematics/angular@17.0.0-rc.4:
-    resolution: {integrity: sha512-PRZJRaebPxgMQtBYYZDH1j6eJRSjjNfbaa3Uca6/U5pLGIaILUGdsHHwlSC3F6ItV6b4Mj9C8fL5zylHerN0EQ==}
+  /@schematics/angular@17.0.0:
+    resolution: {integrity: sha512-9jKU5x/WzaBsfSkUowK1X74FqtMXa6+A60XgW4ACO8i6fwKfPeS+tIrAieeYOX80/njBh7I5CvcpHmWA2SbcXQ==}
     engines: {node: ^18.13.0 || >=20.9.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     dependencies:
-      '@angular-devkit/core': 17.0.0-rc.4
-      '@angular-devkit/schematics': 17.0.0-rc.4
+      '@angular-devkit/core': 17.0.0
+      '@angular-devkit/schematics': 17.0.0
       jsonc-parser: 3.2.0
     transitivePeerDependencies:
       - chokidar
@@ -10094,13 +10170,6 @@ packages:
   /@sideway/pinpoint@2.0.0:
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
 
-  /@sigstore/bundle@1.1.0:
-    resolution: {integrity: sha512-PFutXEy0SmQxYI4texPw3dd2KewuNqv7OuK1ZFtY2fM754yhvG2KdgwIhRnoEE2uHdtdGNQ8s0lb94dW9sELog==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    dependencies:
-      '@sigstore/protobuf-specs': 0.2.1
-    dev: true
-
   /@sigstore/bundle@2.1.0:
     resolution: {integrity: sha512-89uOo6yh/oxaU8AeOUnVrTdVMcGk9Q1hJa7Hkvalc6G3Z3CupWk4Xe9djSgJm9fMkH69s0P0cVHUoKSOemLdng==}
     engines: {node: ^16.14.0 || >=18.0.0}
@@ -10113,17 +10182,6 @@ packages:
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     dev: true
 
-  /@sigstore/sign@1.0.0:
-    resolution: {integrity: sha512-INxFVNQteLtcfGmcoldzV6Je0sbbfh9I16DM4yJPw3j5+TFP8X6uIiA18mvpEa9yyeycAKgPmOA3X9hVdVTPUA==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    dependencies:
-      '@sigstore/bundle': 1.1.0
-      '@sigstore/protobuf-specs': 0.2.1
-      make-fetch-happen: 11.1.1
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
   /@sigstore/sign@2.2.0:
     resolution: {integrity: sha512-AAbmnEHDQv6CSfrWA5wXslGtzLPtAtHZleKOgxdQYvx/s76Fk6T6ZVt7w2IGV9j1UrFeBocTTQxaXG2oRrDhYA==}
     engines: {node: ^16.14.0 || >=18.0.0}
@@ -10131,16 +10189,6 @@ packages:
       '@sigstore/bundle': 2.1.0
       '@sigstore/protobuf-specs': 0.2.1
       make-fetch-happen: 13.0.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
-  /@sigstore/tuf@1.0.3:
-    resolution: {integrity: sha512-2bRovzs0nJZFlCN3rXirE4gwxCn97JNjMmwpecqlbgV9WcxX7WRuIrgzx/X7Ib7MYRbyUTpBYE0s2x6AmZXnlg==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    dependencies:
-      '@sigstore/protobuf-specs': 0.2.1
-      tuf-js: 1.1.7
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -10613,6 +10661,31 @@ packages:
     dependencies:
       remove-accents: 0.4.2
 
+  /@tanstack/query-core@5.8.1:
+    resolution: {integrity: sha512-Y0enatz2zQXBAsd7XmajlCs+WaitdR7dIFkqz9Xd7HL4KV04JOigWVreYseTmNH7YFSBSC/BJ9uuNp1MAf+GfA==}
+    dev: false
+
+  /@tanstack/query-devtools@5.7.4:
+    resolution: {integrity: sha512-wx+gwRZUZq7ISXKFJgaAYvVPt+DwTaLKlzaVLB9SLBFIzcL8Jz8jDQGR9ZQp7/O7SVj0TohS8aFuiiGzQUvWyg==}
+    dev: false
+
+  /@tanstack/query-devtools@5.8.2:
+    resolution: {integrity: sha512-xzI5LpmCSed2/plSu1ujfYadkOay9AADTzQ7U3aGYXHgBkKJ5pZrcTVuK3SHHpuqsD+mNmpzq8jU8omfOsFLxg==}
+    dev: false
+
+  /@tanstack/query-persist-client-core@5.8.1:
+    resolution: {integrity: sha512-V7Nt1V3jTgoPt2l0/XgHAHyMrbGynx4Wzo8EGkDjxv8ih/jDQt8yMvyk99ZqvtU80ch1DCElqIM8n3CHcV/KrA==}
+    dependencies:
+      '@tanstack/query-core': 5.8.1
+    dev: false
+
+  /@tanstack/query-sync-storage-persister@5.8.1:
+    resolution: {integrity: sha512-zzOgg9eFvXVUoJXEhVFYRjXlEd9KBjOoAE3uJUSFEDvL56T3jfPslOlc1W6yDM5H86k3NYZJYEDWO4v70kxCpQ==}
+    dependencies:
+      '@tanstack/query-core': 5.8.1
+      '@tanstack/query-persist-client-core': 5.8.1
+    dev: false
+
   /@tanstack/react-location@3.7.0(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-baeAHlQ3F/D9GlV4x9LQAXFRj4PeTBxvKrDFPrdZDRPfG18LGzQhuwn0CNpOTuyHDF90qiUBPbIbEYSz2YZvkg==}
     engines: {node: '>=12'}
@@ -10624,6 +10697,130 @@ packages:
       history: 5.3.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@tanstack/react-query-devtools@5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-sE6El2Yj98LlPDzf2Ju9IjWPZvqh2RgoQZ+Jomrfm80uA1HlHUvhXuOB0mOcyc706ZpNpL54no59JbgpHcMuUg==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.8.1
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    dependencies:
+      '@tanstack/query-devtools': 5.7.4
+      '@tanstack/react-query': 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@tanstack/react-query-next-experimental@5.8.1(@tanstack/react-query@5.8.1)(next@14.0.0)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-qk1VnkGl17Ypmj1ydyWSVDipoQV4UK+8HXsllIVLus+eLEmg0kzpV4xNzuzKKIAtto5V+0S6BjFy1o+q0BWe4w==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.8.1
+      next: ^13 || ^14
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    dependencies:
+      '@tanstack/react-query': 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+      next: 14.0.0(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@tanstack/react-query-persist-client@5.8.1(@tanstack/react-query@5.8.1)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-rH562Zgox1RBFu7UEaaBgNcJjETGeGwZa/T+pktul6aPdbCG0rTV6XBq0Uda227bTi4V1o/s3RLXKIBZs2j21A==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.8.1
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    dependencies:
+      '@tanstack/query-persist-client-core': 5.8.1
+      '@tanstack/react-query': 5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@tanstack/react-query@5.8.1(react-dom@18.2.0)(react-native@0.71.8)(react@18.2.0):
+    resolution: {integrity: sha512-YMagxS8iNPOLg0pK6WOjdSDlAvWKOf69udLOwQrBVmkC2SRLNLko7elo5Ro3ptlJkXvTVHidxC/h5KGi5bH1XQ==}
+    peerDependencies:
+      react: ^18.0.0
+      react-dom: ^18.0.0
+      react-native: '*'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      '@tanstack/query-core': 5.8.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-native: 0.71.8(@babel/core@7.21.8)(@babel/preset-env@7.23.2)(react@18.2.0)
+    dev: false
+
+  /@tanstack/solid-query-devtools@5.8.1(@tanstack/solid-query@5.8.1)(solid-js@1.8.1):
+    resolution: {integrity: sha512-wBv6mxnXP2aYOB7JNNPfI3KIhsHAflOGc601U7SHjCKJ+lyfpA2eQmKqQ6kk2S6Ba7eGmZDVT3ndGoIB8+oKZw==}
+    peerDependencies:
+      '@tanstack/solid-query': ^5.8.1
+      solid-js: ^1.7.8
+    dependencies:
+      '@tanstack/query-devtools': 5.7.4
+      '@tanstack/solid-query': 5.8.1(solid-js@1.8.1)
+      solid-js: 1.8.1
+    dev: false
+
+  /@tanstack/solid-query@5.8.1(solid-js@1.8.1):
+    resolution: {integrity: sha512-l8b0ZPHGjiRHmAjVoElL0pQzs4OKv/F28dJE5GllOodi2o2Vym1rAdc/xV1KVIevvREkQ1tiWY01AYN9cZWG/g==}
+    peerDependencies:
+      solid-js: ^1.6.0
+    dependencies:
+      '@tanstack/query-core': 5.8.1
+      solid-js: 1.8.1
+    dev: false
+
+  /@tanstack/svelte-query-devtools@5.8.1(@tanstack/svelte-query@5.8.1)(svelte@4.0.0):
+    resolution: {integrity: sha512-86IxpA+bnut0LOXieMDwPYbGDYp+79F/QmG5sEKHFeIiqOUwBzsVz+hay/O7hvlVIgipkOuHa46JHHO8ODjQ+A==}
+    peerDependencies:
+      '@tanstack/svelte-query': ^5.8.1
+      svelte: '>=3 <5'
+    dependencies:
+      '@tanstack/query-devtools': 5.7.4
+      '@tanstack/svelte-query': 5.8.1(svelte@4.0.0)
+      esm-env: 1.0.0
+      svelte: 4.0.0
+    dev: false
+
+  /@tanstack/svelte-query@5.8.1(svelte@4.0.0):
+    resolution: {integrity: sha512-6+HMLdVSRWu2Dv9U/lSAFc8B5qYIGkbgLI7XJu3r8A+BqddviFv9vNtopYKE9xSnJ2Vm8zmnEzJ3TlfODUP5Ng==}
+    peerDependencies:
+      svelte: '>=3 <5'
+    dependencies:
+      '@tanstack/query-core': 5.8.1
+      svelte: 4.0.0
+    dev: false
+
+  /@tanstack/vue-query-devtools@5.8.2(vue@3.3.0):
+    resolution: {integrity: sha512-9XrZufE5bTGsnLg3xbZXGfKAZ4N6gUXitBi+RTXkKNbtbwIqWhtLsXRXXn/48GynDDNgyuNoqmdCrixQwPWltQ==}
+    peerDependencies:
+      vue: ^3.3.0
+    dependencies:
+      '@tanstack/query-devtools': 5.8.2
+      vue: 3.3.0
+    dev: false
+
+  /@tanstack/vue-query@5.8.1(vue@3.3.0):
+    resolution: {integrity: sha512-gPgEp+9U8NWdX4ZFA25aQEUoAybrqAYmu1ZKg+5U44sZRAZSA+ShUV3N3LYX8Tixs6dTqIXTL/crIyMMSchCyg==}
+    peerDependencies:
+      '@vue/composition-api': ^1.1.2
+      vue: ^2.6.0 || ^3.3.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      '@tanstack/match-sorter-utils': 8.8.4
+      '@tanstack/query-core': 5.8.1
+      '@vue/devtools-api': 6.5.0
+      vue: 3.3.0
+      vue-demi: 0.14.6(@vue/composition-api@1.7.2)(vue@3.3.0)
     dev: false
 
   /@testing-library/dom@8.20.1:
@@ -10769,22 +10966,9 @@ packages:
     resolution: {integrity: sha512-BRbo1fOtyVbhfLyuCWw6wAWp+U8UQle+ZXu84MYYWzYSEB28dyfnRBIE99eoG+qdAC0po6L2ScIEivcT07UaMA==}
     dev: true
 
-  /@tufjs/canonical-json@1.0.0:
-    resolution: {integrity: sha512-QTnf++uxunWvG2z3UFNzAoQPHxnSXOwtaI3iJ+AohhV+5vONuArPjJE7aPXPVXfXJsqrVbZBu9b81AJoSd09IQ==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    dev: true
-
   /@tufjs/canonical-json@2.0.0:
     resolution: {integrity: sha512-yVtV8zsdo8qFHe+/3kw81dSLyF7D576A5cCFCi4X7B39tWT7SekaEFUnvnWJHz+9qO7qJTah1JbrDjWKqFtdWA==}
     engines: {node: ^16.14.0 || >=18.0.0}
-    dev: true
-
-  /@tufjs/models@1.0.4:
-    resolution: {integrity: sha512-qaGV9ltJP0EO25YfFUPhxRVK0evXFIAGicsVXuRim4Ed9cjPxYhNnNJ49SFmbeLgtxpslIkX317IgpfcHPVj/A==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    dependencies:
-      '@tufjs/canonical-json': 1.0.0
-      minimatch: 9.0.3
     dev: true
 
   /@tufjs/models@2.0.0:
@@ -12197,10 +12381,6 @@ packages:
   /abab@2.0.6:
     resolution: {integrity: sha512-j2afSsaIENvHZN2B8GOpF566vZ5WVk5opAiMTvWgaQT8DkbOqsTfvNAvHoRGU2zzP8cPoqys+xHTRDWW8L+/BA==}
 
-  /abbrev@1.1.1:
-    resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
-    dev: true
-
   /abbrev@2.0.0:
     resolution: {integrity: sha512-6/mh1E2u2YgEsCHdY0Yx5oW+61gZU+1vXaoiHHrpKeuRNNgFvS+/jrwHiQhB5apAf5oB7UB7E19ol2R2LKH8hQ==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
@@ -12316,13 +12496,6 @@ packages:
       debug: 4.3.4(supports-color@6.1.0)
     transitivePeerDependencies:
       - supports-color
-    dev: true
-
-  /agentkeepalive@4.5.0:
-    resolution: {integrity: sha512-5GG/5IbQQpC9FpkRGsSvZI5QYeSCzlJHdpBQntCsuTOxhKD8lqKhrleg2Yi7yvMIf82Ycmmqln9U8V9qwEiJew==}
-    engines: {node: '>= 8.0.0'}
-    dependencies:
-      humanize-ms: 1.2.1
     dev: true
 
   /aggregate-error@3.1.0:
@@ -12518,14 +12691,7 @@ packages:
 
   /aproba@1.2.0:
     resolution: {integrity: sha512-Y9J6ZjXtoYh8RnXVCMOU/ttDmk1aBjunq9vO0ta5x85WDQiQfUF9sIPBITdbiiIVcBo03Hi3jMxigBtsddlXRw==}
-
-  /are-we-there-yet@3.0.1:
-    resolution: {integrity: sha512-QZW4EDmGwlYur0Yyf/b2uGucHQMa8aFUP7eu9ddR73vvhFyt4V0Vl3QHPcTNJ8l6qYOBdxgXdnBXQrHilfRQBg==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
-    dependencies:
-      delegates: 1.0.0
-      readable-stream: 3.6.2
-    dev: true
+    dev: false
 
   /arg@4.1.0:
     resolution: {integrity: sha512-ZWc51jO3qegGkVh8Hwpv636EkbesNV5ZNQPCtRa+0qytRYPEs9IYT9qITY9buezqUH5uqyzlWLcufrzU2rffdg==}
@@ -12798,6 +12964,22 @@ packages:
 
   /autoprefixer@10.4.14(postcss@8.4.31):
     resolution: {integrity: sha512-FQzyfOsTlwVzjHxKEqRIAdJx9niO6VCBCoEwax/VLSoQF29ggECcPuBqUMZ+u8jCZOPSy8b8/8KnuFbp0SaFZQ==}
+    engines: {node: ^10 || ^12 || >=14}
+    hasBin: true
+    peerDependencies:
+      postcss: ^8.1.0
+    dependencies:
+      browserslist: 4.22.1
+      caniuse-lite: 1.0.30001551
+      fraction.js: 4.3.7
+      normalize-range: 0.1.2
+      picocolors: 1.0.0
+      postcss: 8.4.31
+      postcss-value-parser: 4.2.0
+    dev: true
+
+  /autoprefixer@10.4.16(postcss@8.4.31):
+    resolution: {integrity: sha512-7vd3UC6xKp0HLfua5IjZlcXvGAGy7cBAXTg2lyQ/8WpNhd6SiZ8Be+xm3FyBSYJx5GKcpRCzBh7RH4/0dnY+uQ==}
     engines: {node: ^10 || ^12 || >=14}
     hasBin: true
     peerDependencies:
@@ -13917,50 +14099,6 @@ packages:
       - bluebird
     dev: false
 
-  /cacache@16.1.3:
-    resolution: {integrity: sha512-/+Emcj9DAXxX4cwlLmRI9c166RuL3w30zp4R7Joiv2cQTtTtA+jeuCAjH3ZlGnYS3tKENSrKhAzVVP9GVyzeYQ==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
-    dependencies:
-      '@npmcli/fs': 2.1.2
-      '@npmcli/move-file': 2.0.1
-      chownr: 2.0.0
-      fs-minipass: 2.1.0
-      glob: 8.1.0
-      infer-owner: 1.0.4
-      lru-cache: 7.18.3
-      minipass: 3.3.6
-      minipass-collect: 1.0.2
-      minipass-flush: 1.0.5
-      minipass-pipeline: 1.2.4
-      mkdirp: 1.0.4
-      p-map: 4.0.0
-      promise-inflight: 1.0.1(bluebird@3.7.2)
-      rimraf: 3.0.2
-      ssri: 9.0.1
-      tar: 6.2.0
-      unique-filename: 2.0.1
-    transitivePeerDependencies:
-      - bluebird
-    dev: true
-
-  /cacache@17.1.4:
-    resolution: {integrity: sha512-/aJwG2l3ZMJ1xNAnqbMpA40of9dj/pIH3QfiuQSqjfPJF747VR0J/bHn+/KdNnHKc6XQcWt/AfRSBft82W1d2A==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    dependencies:
-      '@npmcli/fs': 3.1.0
-      fs-minipass: 3.0.3
-      glob: 10.3.10
-      lru-cache: 7.18.3
-      minipass: 7.0.4
-      minipass-collect: 1.0.2
-      minipass-flush: 1.0.5
-      minipass-pipeline: 1.2.4
-      p-map: 4.0.0
-      ssri: 10.0.5
-      tar: 6.2.0
-      unique-filename: 3.0.0
-    dev: true
-
   /cacache@18.0.0:
     resolution: {integrity: sha512-I7mVOPl3PUCeRub1U8YoGz2Lqv9WOBpobZ8RyWFXmReuILz+3OAyTa5oH3QPdtKZD7N0Yk00aLfzn0qvp8dZ1w==}
     engines: {node: ^16.14.0 || >=18.0.0}
@@ -14375,7 +14513,6 @@ packages:
       acorn: 8.10.0
       estree-walker: 3.0.3
       periscopic: 3.1.0
-    dev: true
 
   /collect-v8-coverage@1.0.2:
     resolution: {integrity: sha512-lHl4d5/ONEbLlJvaJNtsF/Lz+WvB07u2ycqTYbdrq7UypDXailES4valYb2eWiJFxZlVmpGekfqoxQhzyFdT4Q==}
@@ -14412,11 +14549,6 @@ packages:
       color-name: 1.1.4
       simple-swizzle: 0.2.2
     dev: false
-
-  /color-support@1.1.3:
-    resolution: {integrity: sha512-qiBjkpbMLO/HL68y+lh4q0/O1MZFj2RX6X/KmMa3+gJD3z+WwI1ZzDHysvqHGS3mP6mznPckpXmw1nI9cJjyRg==}
-    hasBin: true
-    dev: true
 
   /color@3.2.1:
     resolution: {integrity: sha512-aBl7dZI9ENN6fUGC7mWpMTPNHmWUSNan9tuWN6ahh5ZLNk9baLJOnSMlrQkHcrfFgz2/RigjUVAjdx36VcemKA==}
@@ -14601,10 +14733,6 @@ packages:
   /console-browserify@1.2.0:
     resolution: {integrity: sha512-ZMkYO/LkF17QvCPqM0gxw8yUzigAOZOSWSHg91FH6orS7vcEj5dVZTidN2fQ14yBSdg97RqhSNwLUXInd52OTA==}
     dev: false
-
-  /console-control-strings@1.1.0:
-    resolution: {integrity: sha512-ty/fTekppD2fIwRvnZAVdeOiGd1c7YXEixbgJTNzqcxJWKQnjJ/V1bNEEE6hygpM3WjwHFUVK6HTjWSzV4a8sQ==}
-    dev: true
 
   /constants-browserify@1.0.0:
     resolution: {integrity: sha512-xFxOwqIzR/e1k1gLiWEophSCMqXcwVHIH7akf7b/vxcUeGunlj3hvZaaqxwHsTgn+IndtkQJgSztIDWeumWJDQ==}
@@ -15162,7 +15290,6 @@ packages:
     dependencies:
       mdn-data: 2.0.30
       source-map-js: 1.0.2
-    dev: true
 
   /css-vendor@2.0.8:
     resolution: {integrity: sha512-x9Aq0XTInxrkuFeHKbYC7zWY8ai7qJ04Kxd9MnvbC1uO5DagxoHQjm4JvG+vCdXOoFtCjbL2XSZfxmoYa9uQVQ==}
@@ -15668,10 +15795,6 @@ packages:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
 
-  /delegates@1.0.0:
-    resolution: {integrity: sha512-bd2L678uiWATM6m5Z1VzNCErI3jiGzt6HGY8OVICs40JQq/HALfbyNJmp0UDakEY4pMMaN0Ly5om/B1VI/+xfQ==}
-    dev: true
-
   /denodeify@1.2.1:
     resolution: {integrity: sha512-KNTihKNmQENUZeKu5fzfpzRqR5S2VMp4gl9RFHiWzj9DfvYQPMJ6XHKNaQxaGCXwPk6y9yme3aUoaiAe+KX+vg==}
     dev: false
@@ -15756,7 +15879,6 @@ packages:
   /diff-sequences@29.6.3:
     resolution: {integrity: sha512-EjePK1srD3P08o2j4f0ExnylqRs5B9tJjcp9t1krH2qRi8CCdsYfwe9JgSLurFBWwq4uOlipzfk5fHNvwFKr8Q==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-    dev: true
 
   /diff@4.0.2:
     resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
@@ -15927,6 +16049,11 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       is-obj: 2.0.0
+
+  /dotenv-expand@10.0.0:
+    resolution: {integrity: sha512-GopVGCpVS1UKH75VKHGuQFqS1Gusej0z4FyQkPdwjil2gNIv+LNsqBlboOzpJFZKVT95GkCyWJbBSdFEFUWI2A==}
+    engines: {node: '>=12'}
+    dev: false
 
   /dotenv-expand@5.1.0:
     resolution: {integrity: sha512-YXQl1DSa4/PQyRfgrv6aoNjhasp/p4qs9FjJ4q4cQk+8m4r6k4ZSiEyytKG8f8W9gi8WsQtIObNmKd+tMzNTmA==}
@@ -17269,7 +17396,6 @@ packages:
     resolution: {integrity: sha512-7RUKfXgSMMkzt6ZuXmqapOurLGPPfgj6l9uRZ7lRGolvk0y2yocc35LdcxKC5PQZdn2DMqioAQ2NoWcrTKmm6g==}
     dependencies:
       '@types/estree': 1.0.3
-    dev: true
 
   /esutils@2.0.3:
     resolution: {integrity: sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==}
@@ -17668,6 +17794,7 @@ packages:
       glob-parent: 5.1.2
       merge2: 1.4.1
       micromatch: 4.0.5
+    dev: true
 
   /fast-glob@3.3.1:
     resolution: {integrity: sha512-kNFPyjhh5cKjrUltxs+wFx+ZkbRaxxmZ+X0ZU31SOsxCEtP9VPgtq2teZw1DebupL5GmDaNQ6yKMMVcM41iqDg==}
@@ -18245,20 +18372,6 @@ packages:
   /functions-have-names@1.2.3:
     resolution: {integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==}
 
-  /gauge@4.0.4:
-    resolution: {integrity: sha512-f9m+BEN5jkg6a0fZjleidjN51VE1X+mPFQ2DJ0uv1V39oCLCbsGe6yjbBnp7eK7z/+GAon99a3nHuqbuuthyPg==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
-    dependencies:
-      aproba: 1.2.0
-      color-support: 1.1.3
-      console-control-strings: 1.1.0
-      has-unicode: 2.0.1
-      signal-exit: 3.0.7
-      string-width: 4.2.3
-      strip-ansi: 6.0.1
-      wide-align: 1.1.5
-    dev: true
-
   /gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
     engines: {node: '>=6.9.0'}
@@ -18648,10 +18761,6 @@ packages:
     dependencies:
       has-symbols: 1.0.3
 
-  /has-unicode@2.0.1:
-    resolution: {integrity: sha512-8Rf9Y83NBReMnx0gFzA8JImQACstCYWUplepDa9xprwwtmgEZUF0h/i5xSA625zB/I37EtrswSST6OXxwaaIJQ==}
-    dev: true
-
   /has-value@0.3.1:
     resolution: {integrity: sha512-gpG936j8/MzaeID5Yif+577c17TxaDmhuyVgSwtnL/q8UUTySg8Mecb+8Cf1otgLoD7DDH75axp86ER7LFsf3Q==}
     engines: {node: '>=0.10.0'}
@@ -18784,13 +18893,6 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       lru-cache: 6.0.0
-    dev: true
-
-  /hosted-git-info@6.1.1:
-    resolution: {integrity: sha512-r0EI+HBMcXadMrugk0GCQ+6BQV39PiWAZVfq7oIckeGiN7sjRGyQxPdft3nQekFTCQbYxLBH+/axZMeH8UX6+w==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    dependencies:
-      lru-cache: 7.18.3
     dev: true
 
   /hosted-git-info@7.0.1:
@@ -19057,12 +19159,6 @@ packages:
     resolution: {integrity: sha512-nZXjEF2nbo7lIw3mgYjItAfgQXog3OjJogSbKa2CQIIvSGWcKgeJnQlNXip6NglNzYH45nSRiEVimMvYL8DDqQ==}
     engines: {node: '>=14.18.0'}
 
-  /humanize-ms@1.2.1:
-    resolution: {integrity: sha512-Fl70vYtsAFb/C06PTS9dZBo7ihau+Tu/DNCk/OyHhea07S+aeMWpFFkUaXRa8fI+ScZbEI8dfSxwY7gxZ9SAVQ==}
-    dependencies:
-      ms: 2.1.3
-    dev: true
-
   /hyphenate-style-name@1.0.4:
     resolution: {integrity: sha512-ygGZLjmXfPHj+ZWh6LwbC37l43MhfztxetbFCoYTM2VjkIUpeHgSNn7QIyVFj7YQ1Wl9Cbw5sholVJPzWvC2MQ==}
     dev: false
@@ -19241,6 +19337,7 @@ packages:
 
   /infer-owner@1.0.4:
     resolution: {integrity: sha512-IClj+Xz94+d7irH5qRyfJonOdfTzuDaifE6ZPWfx0N0+/ATZCbuTPq2prFl526urkQd90WyUKIh1DfBQ2hMz9A==}
+    dev: false
 
   /inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
@@ -19744,7 +19841,6 @@ packages:
     resolution: {integrity: sha512-v3rht/LgVcsdZa3O2Nqs+NMowLOxeOm7Ay9+/ARQ2F+qEoANRcqrjAZKGN0v8ymUetZGgkp26LTnGT7H0Qo9Pg==}
     dependencies:
       '@types/estree': 1.0.3
-    dev: true
 
   /is-regex@1.1.4:
     resolution: {integrity: sha512-kvRdxDsxZjhzUX07ZnLydzS1TU/TJlTUHHY4YLL87e37oUA49DfkLqgy+VjFocowy29cKvcSiu+kIv728jTTVg==}
@@ -20208,6 +20304,16 @@ packages:
       pretty-format: 27.5.1
     dev: false
 
+  /jest-diff@29.7.0:
+    resolution: {integrity: sha512-LMIgiIrhigmPrs03JHpxUh2yISK3vLFPkAodPeo0+BuF7wA2FoQbkEg1u8gBYBThncu7e1oEDUfIXVuTqLRUjw==}
+    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
+    dependencies:
+      chalk: 4.1.2
+      diff-sequences: 29.6.3
+      jest-get-type: 29.6.3
+      pretty-format: 29.7.0
+    dev: false
+
   /jest-docblock@26.0.0:
     resolution: {integrity: sha512-RDZ4Iz3QbtRWycd8bUEPxQsTlYazfYn/h5R65Fc6gOfwozFhoImx+affzky/FFBuqISPTqjXomoIGJVKBWoo0w==}
     engines: {node: '>= 10.14.2'}
@@ -20324,6 +20430,11 @@ packages:
   /jest-get-type@27.5.1:
     resolution: {integrity: sha512-2KY95ksYSaK7DMBWQn6dQz3kqAf3BB64y2udeG+hv4KfSOb9qwcYQstTJc1KCbsix+wLZWZYN8t7nwX3GOBLRw==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
+    dev: false
+
+  /jest-get-type@29.6.3:
+    resolution: {integrity: sha512-zrteXnqYxfQh7l5FHyL38jL39di8H8rHoecLH3JNxH3BwOrBsNeabdap5e0I23lD4HHI8W5VFBZqG4Eaq5LNcw==}
+    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dev: false
 
   /jest-haste-map@26.6.2:
@@ -21717,7 +21828,6 @@ packages:
 
   /locate-character@3.0.0:
     resolution: {integrity: sha512-SW13ws7BjaeJ6p7Q6CO2nchbYEc3X3J6WrmTTDto7yMPqVSZTUyY5Tjbid+Ab8gLnATtygYtiDIJGQRRn2ZOiA==}
-    dev: true
 
   /locate-path@3.0.0:
     resolution: {integrity: sha512-7AO748wWnIhNqAuaty2ZWHkQHRSNfPVIsPIfwEOWO22AmaoVrWavlOcMR5nzTLNYvp36X220/maaRsrec1G65A==}
@@ -21862,11 +21972,6 @@ packages:
     dependencies:
       yallist: 4.0.0
 
-  /lru-cache@7.18.3:
-    resolution: {integrity: sha512-jumlc0BIUrS3qJGgIkWZsyfAM7NCWiBcCDhnd+3NNM5KbBmLTgHVfWBcg6W+rLUsIpzpERPsvwUP7CckAQSOoA==}
-    engines: {node: '>=12'}
-    dev: true
-
   /luxon@3.4.3:
     resolution: {integrity: sha512-tFWBiv3h7z+T/tDaoxA8rqTxy1CHV6gHS//QdaH4pulbq/JuBSGgQspQQqcgnwdAx6pNI7cmvz5Sv/addzHmUg==}
     engines: {node: '>=12'}
@@ -21923,54 +22028,6 @@ packages:
 
   /make-error@1.3.6:
     resolution: {integrity: sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==}
-
-  /make-fetch-happen@10.2.1:
-    resolution: {integrity: sha512-NgOPbRiaQM10DYXvN3/hhGVI2M5MtITFryzBGxHM5p4wnFxsVCbxkrBrDsk+EZ5OB4jEOT7AjDxtdF+KVEFT7w==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
-    dependencies:
-      agentkeepalive: 4.5.0
-      cacache: 16.1.3
-      http-cache-semantics: 4.1.1
-      http-proxy-agent: 5.0.0
-      https-proxy-agent: 5.0.1
-      is-lambda: 1.0.1
-      lru-cache: 7.18.3
-      minipass: 3.3.6
-      minipass-collect: 1.0.2
-      minipass-fetch: 2.1.2
-      minipass-flush: 1.0.5
-      minipass-pipeline: 1.2.4
-      negotiator: 0.6.3
-      promise-retry: 2.0.1
-      socks-proxy-agent: 7.0.0
-      ssri: 9.0.1
-    transitivePeerDependencies:
-      - bluebird
-      - supports-color
-    dev: true
-
-  /make-fetch-happen@11.1.1:
-    resolution: {integrity: sha512-rLWS7GCSTcEujjVBs2YqG7Y4643u8ucvCJeSRqiLYhesrDuzeuFIk37xREzAsfQaqzl8b9rNCE4m6J8tvX4Q8w==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    dependencies:
-      agentkeepalive: 4.5.0
-      cacache: 17.1.4
-      http-cache-semantics: 4.1.1
-      http-proxy-agent: 5.0.0
-      https-proxy-agent: 5.0.1
-      is-lambda: 1.0.1
-      lru-cache: 7.18.3
-      minipass: 5.0.0
-      minipass-fetch: 3.0.4
-      minipass-flush: 1.0.5
-      minipass-pipeline: 1.2.4
-      negotiator: 0.6.3
-      promise-retry: 2.0.1
-      socks-proxy-agent: 7.0.0
-      ssri: 10.0.5
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
 
   /make-fetch-happen@13.0.0:
     resolution: {integrity: sha512-7ThobcL8brtGo9CavByQrQi+23aIfgYU++wg4B87AIS8Rb2ZBt/MEaDqzA00Xwv/jUjAjYkLHjVolYuTLKda2A==}
@@ -22068,7 +22125,6 @@ packages:
 
   /mdn-data@2.0.30:
     resolution: {integrity: sha512-GaqWWShW4kv/G9IEucWScBx9G1/vsFZZJUO+tD26M8J8z3Kw5RDQjaoZe03YAClgeS/SWPOcb4nkFBTEi5DUEA==}
-    dev: true
 
   /mdn-data@2.0.4:
     resolution: {integrity: sha512-iV3XNKw06j5Q7mi6h+9vbx23Tv7JkjEVgKHW4pimwyDGWm0OIQntJJ+u1C6mg6mK1EaTv42XQ7w76yuzH7M2cA==}
@@ -22861,17 +22917,6 @@ packages:
     dependencies:
       minipass: 3.3.6
 
-  /minipass-fetch@2.1.2:
-    resolution: {integrity: sha512-LT49Zi2/WMROHYoqGgdlQIZh8mLPZmOrN2NdJjMXxYe4nkN6FUyuPuOAOedNJDrx0IRGg9+4guZewtp8hE6TxA==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
-    dependencies:
-      minipass: 3.3.6
-      minipass-sized: 1.0.3
-      minizlib: 2.1.2
-    optionalDependencies:
-      encoding: 0.1.13
-    dev: true
-
   /minipass-fetch@3.0.4:
     resolution: {integrity: sha512-jHAqnA728uUpIaFm7NWsCnqKT6UqZz7GcI/bDpPATuwYyKwJwW0remxSCxUlKiEty+eopHGa3oc8WxgQ1FFJqg==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
@@ -23209,25 +23254,25 @@ packages:
       - '@babel/core'
       - babel-plugin-macros
 
-  /ng-packagr@16.2.3(@angular/compiler-cli@16.2.12)(tslib@2.6.2)(typescript@5.1.6):
-    resolution: {integrity: sha512-VTJ7Qtge52+1subkhmF5nOqLNbVutA8/igJ0A5vH6Mgpb8Z/3HeZomtD1SHzZF5Dqp+p+QPHE548FWYu1MdMSQ==}
-    engines: {node: ^16.14.0 || >=18.10.0}
+  /ng-packagr@17.0.0(@angular/compiler-cli@17.0.2)(tslib@2.6.2)(typescript@5.2.2):
+    resolution: {integrity: sha512-nNE4RkuyjDY3SFWCdFGhO/atvi81M1lrU99qdec0unQQTpgwlSpxpk7fwxlDSyIL5kJOBAUa+BJrctx1MA928Q==}
+    engines: {node: ^18.13.0 || >=20.9.0}
     hasBin: true
     peerDependencies:
-      '@angular/compiler-cli': ^16.0.0 || ^16.2.0-next.0
+      '@angular/compiler-cli': ^17.0.0 || ^17.0.0-next.0
       tailwindcss: ^2.0.0 || ^3.0.0
       tslib: ^2.3.0
-      typescript: '>=4.9.3 <5.2'
+      typescript: '>=5.2 <5.3'
     peerDependenciesMeta:
       tailwindcss:
         optional: true
     dependencies:
-      '@angular/compiler-cli': 16.2.12(@angular/compiler@16.2.12)(typescript@5.1.6)
-      '@rollup/plugin-json': 6.0.1(rollup@3.29.4)
-      '@rollup/plugin-node-resolve': 15.2.3(rollup@3.29.4)
+      '@angular/compiler-cli': 17.0.2(@angular/compiler@17.0.2)(typescript@5.2.2)
+      '@rollup/plugin-json': 6.0.1(rollup@4.4.0)
+      '@rollup/plugin-node-resolve': 15.2.3(rollup@4.4.0)
       ajv: 8.12.0
       ansi-colors: 4.1.3
-      autoprefixer: 10.4.14(postcss@8.4.31)
+      autoprefixer: 10.4.16(postcss@8.4.31)
       browserslist: 4.22.1
       cacache: 18.0.0
       chokidar: 3.5.3
@@ -23244,53 +23289,7 @@ packages:
       piscina: 4.1.0
       postcss: 8.4.31
       postcss-url: 10.1.3(postcss@8.4.31)
-      rollup: 3.29.4
-      rxjs: 7.8.1
-      sass: 1.69.5
-      tslib: 2.6.2
-      typescript: 5.1.6
-    optionalDependencies:
-      esbuild: 0.19.5
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
-  /ng-packagr@16.2.3(@angular/compiler-cli@17.0.0-rc.3)(tslib@2.6.2)(typescript@5.2.2):
-    resolution: {integrity: sha512-VTJ7Qtge52+1subkhmF5nOqLNbVutA8/igJ0A5vH6Mgpb8Z/3HeZomtD1SHzZF5Dqp+p+QPHE548FWYu1MdMSQ==}
-    engines: {node: ^16.14.0 || >=18.10.0}
-    hasBin: true
-    peerDependencies:
-      '@angular/compiler-cli': ^16.0.0 || ^16.2.0-next.0
-      tailwindcss: ^2.0.0 || ^3.0.0
-      tslib: ^2.3.0
-      typescript: '>=4.9.3 <5.2'
-    peerDependenciesMeta:
-      tailwindcss:
-        optional: true
-    dependencies:
-      '@angular/compiler-cli': 17.0.0-rc.3(@angular/compiler@17.0.0-rc.3)(typescript@5.2.2)
-      '@rollup/plugin-json': 6.0.1(rollup@3.29.4)
-      '@rollup/plugin-node-resolve': 15.2.3(rollup@3.29.4)
-      ajv: 8.12.0
-      ansi-colors: 4.1.3
-      autoprefixer: 10.4.14(postcss@8.4.31)
-      browserslist: 4.22.1
-      cacache: 18.0.0
-      chokidar: 3.5.3
-      commander: 11.1.0
-      convert-source-map: 2.0.0
-      dependency-graph: 0.11.0
-      esbuild-wasm: 0.19.5
-      fast-glob: 3.3.1
-      find-cache-dir: 3.3.2
-      injection-js: 2.4.0
-      jsonc-parser: 3.2.0
-      less: 4.2.0
-      ora: 5.4.1
-      piscina: 4.1.0
-      postcss: 8.4.31
-      postcss-url: 10.1.3(postcss@8.4.31)
-      rollup: 3.29.4
+      rollup: 4.4.0
       rxjs: 7.8.1
       sass: 1.69.5
       tslib: 2.6.2
@@ -23301,20 +23300,20 @@ packages:
       - supports-color
     dev: true
 
-  /ngxtension@0.14.1(@angular/common@16.2.12)(@angular/core@16.2.12)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1):
-    resolution: {integrity: sha512-aSRdajOzEWSF6YbZEMrqTjoE/Pc0kB2aXFaBzhDcRJNSyuOLDA1/+aQiW1A4JJy29yFaUQYQ7xc1xLWdkFE+8Q==}
-    engines: {node: '>=16'}
+  /ngxtension@1.0.3(@angular/common@16.2.12)(@angular/core@17.0.2)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1):
+    resolution: {integrity: sha512-Wng7Y+l0Y9QJll7ggopuhDkd7xcF6nLM/kLGf+3qh29nuwjhlVmXoDalzCszbzcHOFszQLQthVY2jFVggO/gxw==}
+    engines: {node: '>=18'}
     peerDependencies:
-      '@angular/common': ^16.0.0
-      '@angular/core': ^16.0.0
+      '@angular/common': '>= 16.0.0'
+      '@angular/core': '>= 16.0.0'
       '@use-gesture/vanilla': ^10.0.0
       rxjs: ^6.0.0 || ^7.0.0
     dependencies:
-      '@angular/common': 16.2.12(@angular/core@16.2.12)(rxjs@7.8.1)
-      '@angular/core': 16.2.12(rxjs@7.8.1)(zone.js@0.13.3)
-      '@nx/devkit': 16.10.0(nx@16.5.2)
+      '@angular/common': 16.2.12(@angular/core@17.0.2)(rxjs@7.8.1)
+      '@angular/core': 17.0.2(rxjs@7.8.1)(zone.js@0.14.2)
+      '@nx/devkit': 17.1.1(nx@17.1.1)
       '@use-gesture/vanilla': 10.3.0
-      nx: 16.5.2
+      nx: 17.1.1
       rxjs: 7.8.1
       tslib: 2.6.2
     transitivePeerDependencies:
@@ -23323,20 +23322,20 @@ packages:
       - debug
     dev: false
 
-  /ngxtension@0.14.1(@angular/common@17.0.0-rc.3)(@angular/core@17.0.0-rc.3)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1):
-    resolution: {integrity: sha512-aSRdajOzEWSF6YbZEMrqTjoE/Pc0kB2aXFaBzhDcRJNSyuOLDA1/+aQiW1A4JJy29yFaUQYQ7xc1xLWdkFE+8Q==}
-    engines: {node: '>=16'}
+  /ngxtension@1.0.3(@angular/common@17.0.2)(@angular/core@17.0.2)(@use-gesture/vanilla@10.3.0)(rxjs@7.8.1):
+    resolution: {integrity: sha512-Wng7Y+l0Y9QJll7ggopuhDkd7xcF6nLM/kLGf+3qh29nuwjhlVmXoDalzCszbzcHOFszQLQthVY2jFVggO/gxw==}
+    engines: {node: '>=18'}
     peerDependencies:
-      '@angular/common': ^16.0.0
-      '@angular/core': ^16.0.0
+      '@angular/common': '>= 16.0.0'
+      '@angular/core': '>= 16.0.0'
       '@use-gesture/vanilla': ^10.0.0
       rxjs: ^6.0.0 || ^7.0.0
     dependencies:
-      '@angular/common': 17.0.0-rc.3(@angular/core@17.0.0-rc.3)(rxjs@7.8.1)
-      '@angular/core': 17.0.0-rc.3(rxjs@7.8.1)(zone.js@0.14.2)
-      '@nx/devkit': 16.10.0(nx@16.5.2)
+      '@angular/common': 17.0.2(@angular/core@17.0.2)(rxjs@7.8.1)
+      '@angular/core': 17.0.2(rxjs@7.8.1)(zone.js@0.14.2)
+      '@nx/devkit': 17.1.1(nx@17.1.1)
       '@use-gesture/vanilla': 10.3.0
-      nx: 16.5.2
+      nx: 17.1.1
       rxjs: 7.8.1
       tslib: 2.6.2
     transitivePeerDependencies:
@@ -23372,6 +23371,7 @@ packages:
 
   /node-addon-api@3.2.1:
     resolution: {integrity: sha512-mmcei9JghVNDYydghQmeDX8KoAm0FAiYyIcUt/N4nhyAipB17pllZQDOJD2fotxABnt4Mdz+dKTO7eftLg4d0A==}
+    dev: true
 
   /node-dir@0.1.17:
     resolution: {integrity: sha512-tmPX422rYgofd4epzrNoOXiE8XFZYOcCq1vD7MAXCDO+O+zndlA2ztdKKMa+EeuBG5tHETpr4ml4RGgpqDCCAg==}
@@ -23417,6 +23417,7 @@ packages:
   /node-gyp-build@4.6.1:
     resolution: {integrity: sha512-24vnklJmyRS8ViBNI8KbtK/r/DmXQMRiOMXTNz2nrTnAYUwjmEEbnnpB/+kt+yWRv73bPsSPRFddrcIbAxSiMQ==}
     hasBin: true
+    dev: true
 
   /node-gyp@10.0.1:
     resolution: {integrity: sha512-gg3/bHehQfZivQVfqIyy8wTdSymF9yTyP4CJifK73imyNMU8AIGQE2pUa7dNWfmMeG9cDVF2eehiRMv0LC1iAg==}
@@ -23434,27 +23435,6 @@ packages:
       tar: 6.2.0
       which: 4.0.0
     transitivePeerDependencies:
-      - supports-color
-    dev: true
-
-  /node-gyp@9.4.1:
-    resolution: {integrity: sha512-OQkWKbjQKbGkMf/xqI1jjy3oCTgMKJac58G2+bjZb3fza6gW2YrCSdMQYaoTb70crvE//Gngr4f0AgVHmqHvBQ==}
-    engines: {node: ^12.13 || ^14.13 || >=16}
-    hasBin: true
-    dependencies:
-      env-paths: 2.2.1
-      exponential-backoff: 3.1.1
-      glob: 7.2.3
-      graceful-fs: 4.2.11
-      make-fetch-happen: 10.2.1
-      nopt: 6.0.0
-      npmlog: 6.0.2
-      rimraf: 3.0.2
-      semver: 7.5.4
-      tar: 6.2.0
-      which: 2.0.2
-    transitivePeerDependencies:
-      - bluebird
       - supports-color
     dev: true
 
@@ -23492,7 +23472,6 @@ packages:
 
   /node-machine-id@1.1.12:
     resolution: {integrity: sha512-QNABxbrPa3qEIfrE6GOJ7BYIuignnJw7iQ2YPbc3Nla1HzRJjXzZOiikfF8m7eAMfichLt3M4VgLOetqgDmgGQ==}
-    dev: true
 
   /node-notifier@8.0.2:
     resolution: {integrity: sha512-oJP/9NAdd9+x2Q+rfphB2RJCHjod70RcRLjosiPMMu5gjIfwVnOUGq2nbTjTUbmy0DJ/tFIVT30+Qe3nzl4TJg==}
@@ -23519,14 +23498,6 @@ packages:
     engines: {node: '>=0.12.0'}
     dev: false
 
-  /nopt@6.0.0:
-    resolution: {integrity: sha512-ZwLpbTgdhuZUnZzjd7nb1ZV+4DoiC6/sfiVKok72ym/4Tlf+DFdlHYmT2JPmcNNWV6Pi3SDf1kT+A4r9RTuT9g==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
-    hasBin: true
-    dependencies:
-      abbrev: 1.1.1
-    dev: true
-
   /nopt@7.2.0:
     resolution: {integrity: sha512-CVDtwCdhYIvnAzFoJ6NJ6dX3oga9/HyciQDnG1vQDjSLMeKLJ4A93ZqYKDrgYSr1FBY5/hMYC+2VCi24pgpkGA==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
@@ -23552,16 +23523,6 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       hosted-git-info: 4.1.0
-      is-core-module: 2.13.0
-      semver: 7.5.4
-      validate-npm-package-license: 3.0.4
-    dev: true
-
-  /normalize-package-data@5.0.0:
-    resolution: {integrity: sha512-h9iPVIfrVZ9wVYQnxFgtw1ugSvGEMOlyPWWtm8BMJhnwyEL/FLbYbTY3V3PpjI/BUK67n9PEWDu6eHzu1fB15Q==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    dependencies:
-      hosted-git-info: 6.1.1
       is-core-module: 2.13.0
       semver: 7.5.4
       validate-npm-package-license: 3.0.4
@@ -23643,16 +23604,6 @@ packages:
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     dev: true
 
-  /npm-package-arg@10.1.0:
-    resolution: {integrity: sha512-uFyyCEmgBfZTtrKk/5xDfHp6+MdrqGotX/VoOyEEl3mBwiEE5FlBaePanazJSVMPT7vKepcjYBY2ztg9A3yPIA==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    dependencies:
-      hosted-git-info: 6.1.1
-      proc-log: 3.0.0
-      semver: 7.5.4
-      validate-npm-package-name: 5.0.0
-    dev: true
-
   /npm-package-arg@11.0.1:
     resolution: {integrity: sha512-M7s1BD4NxdAvBKUPqqRW957Xwcl/4Zvo8Aj+ANrzvIPzGJZElrH7Z//rSaec2ORcND6FHHLnZeY8qgTpXDMFQQ==}
     engines: {node: ^16.14.0 || >=18.0.0}
@@ -23683,28 +23634,11 @@ packages:
       npm-normalize-package-bin: 2.0.0
     dev: true
 
-  /npm-packlist@7.0.4:
-    resolution: {integrity: sha512-d6RGEuRrNS5/N84iglPivjaJPxhDbZmlbTwTDX2IbcRHG5bZCdtysYMhwiPvcF4GisXHGn7xsxv+GQ7T/02M5Q==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    dependencies:
-      ignore-walk: 6.0.3
-    dev: true
-
   /npm-packlist@8.0.0:
     resolution: {integrity: sha512-ErAGFB5kJUciPy1mmx/C2YFbvxoJ0QJ9uwkCZOeR6CqLLISPZBOiFModAbSXnjjlwW5lOhuhXva+fURsSGJqyw==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     dependencies:
       ignore-walk: 6.0.3
-    dev: true
-
-  /npm-pick-manifest@8.0.1:
-    resolution: {integrity: sha512-mRtvlBjTsJvfCCdmPtiu2bdlx8d/KXtF7yNXNWe7G0Z36qWA9Ny5zXsI2PfBZEv7SXgoxTmNaTzGSbbzDZChoA==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    dependencies:
-      npm-install-checks: 6.3.0
-      npm-normalize-package-bin: 3.0.1
-      npm-package-arg: 10.1.0
-      semver: 7.5.4
     dev: true
 
   /npm-pick-manifest@9.0.0:
@@ -23715,21 +23649,6 @@ packages:
       npm-normalize-package-bin: 3.0.1
       npm-package-arg: 11.0.1
       semver: 7.5.4
-    dev: true
-
-  /npm-registry-fetch@14.0.5:
-    resolution: {integrity: sha512-kIDMIo4aBm6xg7jOttupWZamsZRkAqMqwqqbVXnUqstY5+tapvv6bkH/qMR76jdgV+YljEUCyWx3hRYMrJiAgA==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    dependencies:
-      make-fetch-happen: 11.1.1
-      minipass: 5.0.0
-      minipass-fetch: 3.0.4
-      minipass-json-stream: 1.0.1
-      minizlib: 2.1.2
-      npm-package-arg: 10.1.0
-      proc-log: 3.0.0
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   /npm-registry-fetch@16.1.0:
@@ -23764,16 +23683,6 @@ packages:
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     dependencies:
       path-key: 4.0.0
-
-  /npmlog@6.0.2:
-    resolution: {integrity: sha512-/vBvz5Jfr9dT/aFWd0FIRf+T/Q2WBsLENygUaFUqstqsycmZAP/t5BvFJTK0viFmSUxiUKTUplWy5vt+rvKIxg==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
-    dependencies:
-      are-we-there-yet: 3.0.1
-      console-control-strings: 1.1.0
-      gauge: 4.0.4
-      set-blocking: 2.0.0
-    dev: true
 
   /nth-check@1.0.2:
     resolution: {integrity: sha512-WeBOdju8SnzPN5vTUJYxYUxLeXpCaVP5i5e0LF8fg7WORF2Wd7wFX/pk0tYZk7s8T+J7VLy0Da6J1+wCT0AtHg==}
@@ -23875,6 +23784,70 @@ packages:
       '@nx/nx-win32-x64-msvc': 16.5.2
     transitivePeerDependencies:
       - debug
+    dev: true
+
+  /nx@17.1.1:
+    resolution: {integrity: sha512-anOPutP3N5sI+yT1+UV24XuFkBFnQAERysSGcMu7ZofyIThzKxT26QtHI3U/Oqqtuug0cNxold2UhTvEhSXBwA==}
+    hasBin: true
+    requiresBuild: true
+    peerDependencies:
+      '@swc-node/register': ^1.6.7
+      '@swc/core': ^1.3.85
+    peerDependenciesMeta:
+      '@swc-node/register':
+        optional: true
+      '@swc/core':
+        optional: true
+    dependencies:
+      '@nrwl/tao': 17.1.1
+      '@yarnpkg/lockfile': 1.1.0
+      '@yarnpkg/parsers': 3.0.0-rc.46
+      '@zkochan/js-yaml': 0.0.6
+      axios: 1.5.1
+      chalk: 4.1.2
+      cli-cursor: 3.1.0
+      cli-spinners: 2.6.1
+      cliui: 8.0.1
+      dotenv: 16.3.1
+      dotenv-expand: 10.0.0
+      enquirer: 2.3.6
+      figures: 3.2.0
+      flat: 5.0.2
+      fs-extra: 11.1.1
+      glob: 7.1.4
+      ignore: 5.2.4
+      jest-diff: 29.7.0
+      js-yaml: 4.1.0
+      jsonc-parser: 3.2.0
+      lines-and-columns: 2.0.3
+      minimatch: 3.0.5
+      node-machine-id: 1.1.12
+      npm-run-path: 4.0.1
+      open: 8.4.2
+      semver: 7.5.3
+      string-width: 4.2.3
+      strong-log-transformer: 2.1.0
+      tar-stream: 2.2.0
+      tmp: 0.2.1
+      tsconfig-paths: 4.2.0
+      tslib: 2.6.2
+      v8-compile-cache: 2.3.0
+      yargs: 17.7.2
+      yargs-parser: 21.1.1
+    optionalDependencies:
+      '@nx/nx-darwin-arm64': 17.1.1
+      '@nx/nx-darwin-x64': 17.1.1
+      '@nx/nx-freebsd-x64': 17.1.1
+      '@nx/nx-linux-arm-gnueabihf': 17.1.1
+      '@nx/nx-linux-arm64-gnu': 17.1.1
+      '@nx/nx-linux-arm64-musl': 17.1.1
+      '@nx/nx-linux-x64-gnu': 17.1.1
+      '@nx/nx-linux-x64-musl': 17.1.1
+      '@nx/nx-win32-arm64-msvc': 17.1.1
+      '@nx/nx-win32-x64-msvc': 17.1.1
+    transitivePeerDependencies:
+      - debug
+    dev: false
 
   /ob1@0.73.10:
     resolution: {integrity: sha512-aO6EYC+QRRCkZxVJhCWhLKgVjhNuD6Gu1riGjxrIm89CqLsmKgxzYDDEsktmKsoDeRdWGQM5EdMzXDl5xcVfsw==}
@@ -24286,34 +24259,6 @@ packages:
     resolution: {integrity: sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==}
     engines: {node: '>=6'}
 
-  /pacote@15.2.0:
-    resolution: {integrity: sha512-rJVZeIwHTUta23sIZgEIM62WYwbmGbThdbnkt81ravBplQv+HjyroqnLRNH2+sLJHcGZmLRmhPwACqhfTcOmnA==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    hasBin: true
-    dependencies:
-      '@npmcli/git': 4.1.0
-      '@npmcli/installed-package-contents': 2.0.2
-      '@npmcli/promise-spawn': 6.0.2
-      '@npmcli/run-script': 6.0.2
-      cacache: 17.1.4
-      fs-minipass: 3.0.3
-      minipass: 5.0.0
-      npm-package-arg: 10.1.0
-      npm-packlist: 7.0.4
-      npm-pick-manifest: 8.0.1
-      npm-registry-fetch: 14.0.5
-      proc-log: 3.0.0
-      promise-retry: 2.0.1
-      read-package-json: 6.0.4
-      read-package-json-fast: 3.0.2
-      sigstore: 1.9.0
-      ssri: 10.0.5
-      tar: 6.2.0
-    transitivePeerDependencies:
-      - bluebird
-      - supports-color
-    dev: true
-
   /pacote@17.0.4:
     resolution: {integrity: sha512-eGdLHrV/g5b5MtD5cTPyss+JxOlaOloSMG3UwPMAvL8ywaLJ6beONPF40K4KKl/UI6q5hTKCJq5rCu8tkF+7Dg==}
     engines: {node: ^16.14.0 || >=18.0.0}
@@ -24548,7 +24493,6 @@ packages:
       '@types/estree': 1.0.3
       estree-walker: 3.0.3
       is-reference: 3.0.2
-    dev: true
 
   /picocolors@0.2.1:
     resolution: {integrity: sha512-cMlDqaLEqfSaW8Z7N5Jw+lyIW869EzT73/F5lhtY9cLGoVxSXznfgfXMO0Z5K0o0Q2TkTXq+0KFsdnSe3jDViA==}
@@ -25871,7 +25815,7 @@ packages:
       '@csstools/postcss-text-decoration-shorthand': 1.0.0(postcss@8.4.31)
       '@csstools/postcss-trigonometric-functions': 1.0.2(postcss@8.4.31)
       '@csstools/postcss-unset-value': 1.0.2(postcss@8.4.31)
-      autoprefixer: 10.4.14(postcss@8.4.31)
+      autoprefixer: 10.4.16(postcss@8.4.31)
       browserslist: 4.22.1
       css-blank-pseudo: 3.0.3(postcss@8.4.31)
       css-has-pseudo: 3.0.4(postcss@8.4.31)
@@ -27171,16 +27115,6 @@ packages:
       npm-normalize-package-bin: 3.0.1
     dev: true
 
-  /read-package-json@6.0.4:
-    resolution: {integrity: sha512-AEtWXYfopBj2z5N5PbkAOeNHRPUg5q+Nen7QLxV8M2zJq1ym6/lCz3fYNTCXe19puu2d06jfHhrP7v/S2PtMMw==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    dependencies:
-      glob: 10.3.10
-      json-parse-even-better-errors: 3.0.0
-      normalize-package-data: 5.0.0
-      npm-normalize-package-bin: 3.0.1
-    dev: true
-
   /read-package-json@7.0.0:
     resolution: {integrity: sha512-uL4Z10OKV4p6vbdvIXB+OzhInYtIozl/VxUBPgNkBuUi2DeRonnuspmaVAMcrkmfjKGNmRndyQAbE7/AmzGwFg==}
     engines: {node: ^16.14.0 || >=18.0.0}
@@ -27540,15 +27474,6 @@ packages:
       path-parse: 1.0.7
     dev: false
 
-  /resolve@1.22.2:
-    resolution: {integrity: sha512-Sb+mjNHOULsBv818T40qSPeRiuWLyaGMa5ewydRLFimneixmVy2zdivRl+AF6jaYPC8ERxGDmFSiqui6SfPd+g==}
-    hasBin: true
-    dependencies:
-      is-core-module: 2.13.0
-      path-parse: 1.0.7
-      supports-preserve-symlinks-flag: 1.0.0
-    dev: true
-
   /resolve@1.22.8:
     resolution: {integrity: sha512-oKWePCxqpd6FlLvGV1VU0x7bkPmmCNolxzjMf4NczoDnQcIWrAF+cPtZn5i6n+RfD2d9i0tzpKnG6Yk168yIyw==}
     hasBin: true
@@ -27757,6 +27682,26 @@ packages:
     hasBin: true
     optionalDependencies:
       fsevents: 2.3.3
+
+  /rollup@4.4.0:
+    resolution: {integrity: sha512-3L67ubCc1Qm49wUodsQ72FM6JmJ9M37d63rGPjxbcKrzNJrwFipl+lDNHeWd6BId09S6Tb9KiBgYKbWhIuqVyg==}
+    engines: {node: '>=18.0.0', npm: '>=8.0.0'}
+    hasBin: true
+    optionalDependencies:
+      '@rollup/rollup-android-arm-eabi': 4.4.0
+      '@rollup/rollup-android-arm64': 4.4.0
+      '@rollup/rollup-darwin-arm64': 4.4.0
+      '@rollup/rollup-darwin-x64': 4.4.0
+      '@rollup/rollup-linux-arm-gnueabihf': 4.4.0
+      '@rollup/rollup-linux-arm64-gnu': 4.4.0
+      '@rollup/rollup-linux-arm64-musl': 4.4.0
+      '@rollup/rollup-linux-x64-gnu': 4.4.0
+      '@rollup/rollup-linux-x64-musl': 4.4.0
+      '@rollup/rollup-win32-arm64-msvc': 4.4.0
+      '@rollup/rollup-win32-ia32-msvc': 4.4.0
+      '@rollup/rollup-win32-x64-msvc': 4.4.0
+      fsevents: 2.3.3
+    dev: true
 
   /rooks@7.14.1(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-oPuLNGm3OaFm3WfZHzmDvJvRit8QrXGm9/Kn49Bz8lJUjkThSBtERWzuQ9wb5DveqrpUZvmNyBXjBE0KWVt13w==}
@@ -28183,6 +28128,7 @@ packages:
 
   /set-blocking@2.0.0:
     resolution: {integrity: sha512-KiKBS8AnWGEyLzofFfmvKwpdPzqiy16LvQfK3yv/fVH7Bj13/wl3JSR1J+rfgRE9q7xUJK4qvgS8raSOeLUehw==}
+    dev: false
 
   /set-cookie-parser@2.6.0:
     resolution: {integrity: sha512-RVnVQxTXuerk653XfuliOxBP81Sf0+qfQE73LIYKcyMYHG94AuH0kgrQpRDuTZnSmjpysHmzxJXKNfa6PjFhyQ==}
@@ -28279,20 +28225,6 @@ packages:
   /signal-exit@4.1.0:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
-    dev: true
-
-  /sigstore@1.9.0:
-    resolution: {integrity: sha512-0Zjz0oe37d08VeOtBIuB6cRriqXse2e8w+7yIy2XSXjshRKxbc2KkhXjL229jXSxEm7UbcjS76wcJDGQddVI9A==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    hasBin: true
-    dependencies:
-      '@sigstore/bundle': 1.1.0
-      '@sigstore/protobuf-specs': 0.2.1
-      '@sigstore/sign': 1.0.0
-      '@sigstore/tuf': 1.0.3
-      make-fetch-happen: 11.1.1
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   /sigstore@2.1.0:
@@ -28418,17 +28350,6 @@ packages:
       faye-websocket: 0.11.4
       uuid: 8.3.2
       websocket-driver: 0.7.4
-
-  /socks-proxy-agent@7.0.0:
-    resolution: {integrity: sha512-Fgl0YPZ902wEsAyiQ+idGd1A7rSFx/ayC1CQVMw5P+EQx2V0SgpGtf6OKFhVjPflPUl9YMmEOnmfjCdMUsygww==}
-    engines: {node: '>= 10'}
-    dependencies:
-      agent-base: 6.0.2
-      debug: 4.3.4(supports-color@6.1.0)
-      socks: 2.7.1
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
 
   /socks-proxy-agent@8.0.2:
     resolution: {integrity: sha512-8zuqoLv1aP/66PHF5TqwJ7Czm3Yv32urJQHrVyhD7mmA6d61Zv8cIXQYPTWwmg6qlupnPvs/QKDmfa4P/qct2g==}
@@ -28773,13 +28694,6 @@ packages:
     dependencies:
       minipass: 3.3.6
     dev: false
-
-  /ssri@9.0.1:
-    resolution: {integrity: sha512-o57Wcn66jMQvfHG1FlYbWeZWW/dHZhJXjpIcTfXldXEk5nz5lStPo3mK0OJQfGR3RbZUlbISexbljkJzuEj/8Q==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
-    dependencies:
-      minipass: 3.3.6
-    dev: true
 
   /stable@0.1.8:
     resolution: {integrity: sha512-ji9qxRnOVfcuLDySj9qzhGSEFVobyt1kIOSkj1qZzYLzq7Tos/oUUWvotUPQLlrsidqsK6tBH89Bc9kL5zHA6w==}
@@ -29378,7 +29292,6 @@ packages:
       locate-character: 3.0.0
       magic-string: 0.30.5
       periscopic: 3.1.0
-    dev: true
 
   /svg-parser@2.0.4:
     resolution: {integrity: sha512-e4hG1hRwoOdRb37cIMSgzNsxyzKfayW6VOflrwvR+/bzrkyxY/31WkbgnQpgtrNp1SdpJvpUAGTa/ZoiPNDuRQ==}
@@ -29975,6 +29888,7 @@ packages:
 
   /tslib@2.5.2:
     resolution: {integrity: sha512-5svOrSA2w3iGFDs1HibEVBGbDrAY82bFQ3HZ3ixB+88nsbsWQoKqDRb5UBYAUPEzbBn6dAp5gRNXglySbx1MlA==}
+    dev: true
 
   /tslib@2.6.1:
     resolution: {integrity: sha512-t0hLfiEKfMUoqhG+U1oid7Pva4bbDPHYfJNiB7BiIjRkj1pyC++4N3huJfqY6aRH6VTB0rvtzQwjM4K6qpfOig==}
@@ -30054,17 +29968,6 @@ packages:
   /tty-browserify@0.0.0:
     resolution: {integrity: sha512-JVa5ijo+j/sOoHGjw0sxw734b1LhBkQ3bvUGNdxnVXDCX81Yx7TFgnZygxrIIWn23hbfTaMYLwRmAxFyDuFmIw==}
     dev: false
-
-  /tuf-js@1.1.7:
-    resolution: {integrity: sha512-i3P9Kgw3ytjELUfpuKVDNBJvk4u5bXL6gskv572mcevPbSKCV3zt3djhmlEQ65yERjIbOSncy7U4cQJaB1CBCg==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    dependencies:
-      '@tufjs/models': 1.0.4
-      debug: 4.3.4(supports-color@6.1.0)
-      make-fetch-happen: 11.1.1
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
 
   /tuf-js@2.1.0:
     resolution: {integrity: sha512-eD7YPPjVlMzdggrOeE8zwoegUaG/rt6Bt3jwoQPunRiNVzgcCE009UDFJKJjG+Gk9wFu6W/Vi+P5d/5QpdD9jA==}
@@ -30300,13 +30203,6 @@ packages:
       unique-slug: 2.0.2
     dev: false
 
-  /unique-filename@2.0.1:
-    resolution: {integrity: sha512-ODWHtkkdx3IAR+veKxFV+VBkUMcN+FaqzUUd7IZzt+0zhDZFPFxhlqwPF3YQvMHx1TD0tdgYl+kuPnJ8E6ql7A==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
-    dependencies:
-      unique-slug: 3.0.0
-    dev: true
-
   /unique-filename@3.0.0:
     resolution: {integrity: sha512-afXhuC55wkAmZ0P18QsVE6kp8JaxrEokN2HGIoIVv2ijHQd419H0+6EigAFcIzXeMIkcIkNBpB3L/DXB3cTS/g==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
@@ -30319,13 +30215,6 @@ packages:
     dependencies:
       imurmurhash: 0.1.4
     dev: false
-
-  /unique-slug@3.0.0:
-    resolution: {integrity: sha512-8EyMynh679x/0gqE9fT9oilG+qEt+ibFyqjuVTsZn1+CMxH+XLlpvr2UZx4nVcCwTpx81nICr2JQFkM+HPLq4w==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
-    dependencies:
-      imurmurhash: 0.1.4
-    dev: true
 
   /unique-slug@4.0.0:
     resolution: {integrity: sha512-WrcA6AyEfqDX5bWige/4NQfPZMtASNVxdmWR76WESYQVAACSgWcR6e9i0mofqqBxYFtL4oAxPIptY73/0YE1DQ==}
@@ -31486,14 +31375,6 @@ packages:
     dependencies:
       isexe: 2.0.0
 
-  /which@3.0.1:
-    resolution: {integrity: sha512-XA1b62dzQzLfaEOSQFTCOd5KFf/1VSzZo7/7TUjnya6u0vGGKzU96UQBZTAThCb2j4/xjBAyii1OhRLJEivHvg==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    hasBin: true
-    dependencies:
-      isexe: 2.0.0
-    dev: true
-
   /which@4.0.0:
     resolution: {integrity: sha512-GlaYyEb07DPxYCKhKzplCWBJtvxZcZMrL+4UkrTSJHHPyZU4mYYTv3qaOe77H7EODLSSopAUFAc6W8U4yqvscg==}
     engines: {node: ^16.13.0 || >=18.0.0}
@@ -31509,12 +31390,6 @@ packages:
     dependencies:
       siginfo: 2.0.0
       stackback: 0.0.2
-    dev: true
-
-  /wide-align@1.1.5:
-    resolution: {integrity: sha512-eDMORYaPNZ4sQIuuYPDHdQvf4gyCF9rEEV/yPxGfwPkRodwEgiMUUXTx/dex+Me0wxx53S+NgUHaP7y3MGlDmg==}
-    dependencies:
-      string-width: 4.2.3
     dev: true
 
   /wildcard@2.0.1:
@@ -32108,12 +31983,6 @@ packages:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
     dev: true
-
-  /zone.js@0.13.3:
-    resolution: {integrity: sha512-MKPbmZie6fASC/ps4dkmIhaT5eonHkEt6eAy80K42tAm0G2W+AahLJjbfi6X9NPdciOE9GRFTTM8u2IiF6O3ww==}
-    dependencies:
-      tslib: 2.6.2
-    dev: false
 
   /zone.js@0.14.2:
     resolution: {integrity: sha512-X4U7J1isDhoOmHmFWiLhloWc2lzMkdnumtfQ1LXzf/IOZp5NQYuMUTaviVzG/q1ugMBIXzin2AqeVJUoSEkNyQ==}

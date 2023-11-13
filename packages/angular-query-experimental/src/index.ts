@@ -18,5 +18,9 @@ export * from './injectIsMutating'
 export * from './injectMutation'
 export * from './injectQueries'
 export * from './injectQuery'
-export { injectQueryClient, provideQueryClient } from './injectQueryClient'
-export * from './providers'
+export {
+  injectQueryClient,
+  provideQueryClient,
+  QUERY_CLIENT,
+} from './injectQueryClient'
+export { provideAngularQuery } from './providers'

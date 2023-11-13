@@ -26,12 +26,11 @@ describe('injectQuery', () => {
       }))
     })
 
-    expect(query()).toMatchObject({
-      status: 'pending',
-      isPending: true,
-      isFetching: true,
-      isStale: true,
-    })
+    expect(query.status()).toBe('pending')
+    expect(query.isPending()).toBe(true)
+    expect(query.isFetching()).toBe(true)
+    expect(query.isStale()).toBe(true)
+    expect(query.isFetched()).toBe(false)
 
     flush()
   }))
@@ -46,14 +45,12 @@ describe('injectQuery', () => {
 
     flush()
 
-    expect(query()).toMatchObject({
-      status: 'success',
-      data: 'result2',
-      isPending: false,
-      isFetching: false,
-      isFetched: true,
-      isSuccess: true,
-    })
+    expect(query.status()).toBe('success')
+    expect(query.data()).toBe('result2')
+    expect(query.isPending()).toBe(false)
+    expect(query.isFetching()).toBe(false)
+    expect(query.isFetched()).toBe(true)
+    expect(query.isSuccess()).toBe(true)
   }))
 
   it('should reject and update signal', fakeAsync(() => {
@@ -67,17 +64,14 @@ describe('injectQuery', () => {
 
     flush()
 
-    expect(query()).toMatchObject({
-      status: 'error',
-      data: undefined,
-      error: { message: 'Some error' },
-      isPending: false,
-      isFetching: false,
-      isFetched: true,
-      isError: true,
-      failureCount: 1,
-      failureReason: { message: 'Some error' },
-    })
+    expect(query.status()).toBe('error')
+    expect(query.data()).toBe(undefined)
+    expect(query.error()).toMatchObject({ message: 'Some error' })
+    expect(query.isPending()).toBe(false)
+    expect(query.isFetching()).toBe(false)
+    expect(query.isError()).toBe(true)
+    expect(query.failureCount()).toBe(1)
+    expect(query.failureReason()).toMatchObject({ message: 'Some error' })
   }))
 
   it('should update query on options contained signal change', fakeAsync(() => {
@@ -93,9 +87,7 @@ describe('injectQuery', () => {
     flush()
     expect(spy).toHaveBeenCalledTimes(1)
 
-    expect(query()).toMatchObject({
-      status: 'success',
-    })
+    expect(query.status()).toBe('success')
 
     key.set(['key8'])
     TestBed.flushEffects()
@@ -118,17 +110,13 @@ describe('injectQuery', () => {
     })
 
     expect(spy).not.toHaveBeenCalled()
-    expect(query()).toMatchObject({
-      status: 'pending',
-    })
+    expect(query.status()).toBe('pending')
 
     enabled.set(true)
     TestBed.flushEffects()
     flush()
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(query()).toMatchObject({
-      status: 'success',
-    })
+    expect(query.status()).toBe('success')
   }))
 
   it('should properly execute dependant queries', fakeAsync(() => {
@@ -146,25 +134,25 @@ describe('injectQuery', () => {
         computed(() => ({
           queryKey: ['dependant2'],
           queryFn: dependentQueryFn,
-          enabled: !!query1().data,
+          enabled: !!query1.data(),
         })),
       )
     })
 
-    expect(query1().data).toStrictEqual(undefined)
-    expect(query2().fetchStatus).toStrictEqual('idle')
+    expect(query1.data()).toStrictEqual(undefined)
+    expect(query2.fetchStatus()).toStrictEqual('idle')
     expect(dependentQueryFn).not.toHaveBeenCalled()
 
     tick()
     TestBed.flushEffects()
 
-    expect(query1().data).toStrictEqual('Some data')
+    expect(query1.data()).toStrictEqual('Some data')
     // expect(query2().fetchStatus).toStrictEqual('fetching') // TODO: is this working correctly?
 
     flush()
 
-    expect(query2().fetchStatus).toStrictEqual('idle')
-    expect(query2().status).toStrictEqual('success')
+    expect(query2.fetchStatus()).toStrictEqual('idle')
+    expect(query2.status()).toStrictEqual('success')
     expect(dependentQueryFn).toHaveBeenCalledTimes(1)
     expect(dependentQueryFn).toHaveBeenCalledWith(
       expect.objectContaining({ queryKey: ['dependant2'] }),
@@ -185,16 +173,14 @@ describe('injectQuery', () => {
 
     expect(fetchFn).not.toHaveBeenCalled()
 
-    query()
-      .refetch()
-      .then(() => {
-        expect(fetchFn).toHaveBeenCalledTimes(1)
-        expect(fetchFn).toHaveBeenCalledWith(
-          expect.objectContaining({
-            queryKey: ['key10', 'key11'],
-          }),
-        )
-      })
+    query.refetch().then(() => {
+      expect(fetchFn).toHaveBeenCalledTimes(1)
+      expect(fetchFn).toHaveBeenCalledWith(
+        expect.objectContaining({
+          queryKey: ['key10', 'key11'],
+        }),
+      )
+    })
 
     flush()
 
@@ -202,16 +188,14 @@ describe('injectQuery', () => {
 
     TestBed.flushEffects()
 
-    query()
-      .refetch()
-      .then(() => {
-        expect(fetchFn).toHaveBeenCalledTimes(2)
-        expect(fetchFn).toHaveBeenCalledWith(
-          expect.objectContaining({
-            queryKey: ['key10', 'key12'],
-          }),
-        )
-      })
+    query.refetch().then(() => {
+      expect(fetchFn).toHaveBeenCalledTimes(2)
+      expect(fetchFn).toHaveBeenCalledWith(
+        expect.objectContaining({
+          queryKey: ['key10', 'key12'],
+        }),
+      )
+    })
 
     flush()
   }))
@@ -225,11 +209,11 @@ describe('injectQuery', () => {
       }))
     })
 
-    expect(query().status).toBe('pending')
+    expect(query.status()).toBe('pending')
 
     flush()
 
-    expect(query().status).toBe('error')
+    expect(query.status()).toBe('error')
   }))
 
   it('should not update signal when notifyOnChangeProps is set without the changed property being in notifyOnChangeProps', fakeAsync(() => {
@@ -243,6 +227,6 @@ describe('injectQuery', () => {
 
     flush()
 
-    expect(query().status).toBe('success')
+    expect(query.status()).toBe('success')
   }))
 })

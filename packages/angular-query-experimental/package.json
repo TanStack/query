@@ -27,25 +27,25 @@
   },
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
-    "ngxtension": "^0.14.1",
+    "ngxtension": "^1.0.3",
     "tslib": "^2.6.2"
   },
   "devDependencies": {
     "@analogjs/vite-plugin-angular": "^0.2.18",
-    "@angular/animations": "^17.0.0-rc.2",
-    "@angular/cli": "^17.0.0-next.9",
-    "@angular/common": "^17.0.0-next.8",
-    "@angular/compiler": "^17.0.0-next.8",
-    "@angular/compiler-cli": "^17.0.0-rc.2",
-    "@angular/core": "^17.0.0-next.8",
-    "@angular/platform-browser": "^17.0.0-rc.2",
-    "@angular/platform-browser-dynamic": "^17.0.0-rc.2",
-    "ng-packagr": "^16.2.3",
+    "@angular/animations": "^17.0.2",
+    "@angular/cli": "^17.0.0",
+    "@angular/common": "^17.0.2",
+    "@angular/compiler": "^17.0.2",
+    "@angular/compiler-cli": "^17.0.2",
+    "@angular/core": "^17.0.2",
+    "@angular/platform-browser": "^17.0.2",
+    "@angular/platform-browser-dynamic": "^17.0.2",
+    "ng-packagr": "^17.0.0",
     "reflect-metadata": "^0.1.13",
     "typescript": "5.2.2",
     "zone.js": "^0.14.2"
   },
   "peerDependencies": {
-    "@angular/core": ">=16"
+    "@angular/core": "^17.0.0"
   }
 }
