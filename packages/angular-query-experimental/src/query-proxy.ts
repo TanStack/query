@@ -19,7 +19,7 @@ export function createResultStateSignalProxy<
       if (computedField) return computedField
 
       // then, check if it's a function on the resultState and return it
-      const targetField = resultState()[prop as Key]
+      const targetField = untracked(resultState)[prop as Key]
       if (typeof targetField === 'function') return targetField
 
       // finally, create a computed field, store it and return it
