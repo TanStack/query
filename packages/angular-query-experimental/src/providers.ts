@@ -17,10 +17,10 @@ export function provideAngularQuery(
       provide: ENVIRONMENT_INITIALIZER,
       multi: true,
       useValue: () => {
-        queryClient.mount();
+        queryClient.mount()
         // Unmount the query client on application destroy
-        inject(DestroyRef).onDestroy(() => queryClient.unmount());
-      }
+        inject(DestroyRef).onDestroy(() => queryClient.unmount())
+      },
     },
   ])
 }

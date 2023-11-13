@@ -8,14 +8,12 @@ import { injectQuery } from '@tanstack/angular-query-experimental'
   selector: 'app-root',
   standalone: true,
   template: `
-      <div *ngIf="query.isPending()">Loading...</div>
-      <div *ngIf="query.error()">
-          An error has occurred!
-      </div>
-      <div *ngIf="query.data()">
-          {{query.data()}}
-      </div>
-      <angular-query-devtools initialIsOpen />
+    <div *ngIf="query.isPending()">Loading...</div>
+    <div *ngIf="query.error()">An error has occurred!</div>
+    <div *ngIf="query.data()">
+      {{ query.data() }}
+    </div>
+    <angular-query-devtools initialIsOpen />
   `,
   imports: [AngularQueryDevtoolsComponent, CommonModule],
 })

@@ -5,4 +5,3 @@ const [injectQueryClient, provideQueryClient, QUERY_CLIENT] =
   createNoopInjectionToken<QueryClient>('QueryClientToken')
 
 export { injectQueryClient, provideQueryClient, QUERY_CLIENT }
-

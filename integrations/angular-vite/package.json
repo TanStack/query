@@ -6,17 +6,17 @@
     "test:bundle": "vite build"
   },
   "dependencies": {
-    "@angular/common": "^16.2.11",
-    "@angular/compiler": "^16.2.11",
-    "@angular/core": "^16.2.11",
-    "@angular/platform-browser": "^16.2.11",
-    "@tanstack/angular-query-experimental": "^5.4.3",
-    "@tanstack/angular-query-devtools-experimental": "^5.4.3",
+    "@angular/common": "^17.0.2",
+    "@angular/compiler": "^17.0.2",
+    "@angular/core": "^17.0.2",
+    "@angular/platform-browser": "^17.0.2",
+    "@tanstack/angular-query-experimental": "workspace:*",
+    "@tanstack/angular-query-devtools-experimental": "workspace:*",
     "rxjs": "^7.4.0",
-    "zone.js": "^0.14.0"
+    "zone.js": "^0.14.2"
   },
   "devDependencies": {
     "typescript": "^5.2.2",
-    "vite": "^4.4.4"
+    "vite": "^4.5.0"
   }
 }

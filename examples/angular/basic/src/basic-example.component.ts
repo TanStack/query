@@ -30,18 +30,18 @@ type Post = {
       <div>
         <a (click)="setPostId.emit(-1)" href="#"> Back </a>
       </div>
-      <ng-container *ngIf="postQuery().status === 'pending'">
+      <ng-container *ngIf="postQuery.status() === 'pending'">
         Loading...
       </ng-container>
-      <ng-container *ngIf="postQuery().status === 'error'">
-        Error: {{ postQuery().error?.message }}
+      <ng-container *ngIf="postQuery.status() === 'error'">
+        Error: {{ postQuery.error()?.message }}
       </ng-container>
-      <ng-container *ngIf="postQuery().data as post">
+      <ng-container *ngIf="postQuery.data() as post">
         <h1>{{ post.title }}</h1>
         <div>
           <p>{{ post.body }}</p>
         </div>
-        <div *ngIf="postQuery().isFetching">Background Updating...</div>
+        <div *ngIf="postQuery.isFetching()">Background Updating...</div>
       </ng-container>
     </div>
   `,
@@ -75,13 +75,13 @@ export class PostComponent {
   standalone: true,
   template: `<div>
     <h1>Posts</h1>
-    <div [ngSwitch]="postsQuery().status">
+    <div [ngSwitch]="postsQuery.status()">
       <div *ngSwitchCase="'pending'">Loading...</div>
       <div *ngSwitchCase="'error'">
-        Error: {{ postsQuery().error?.message }}
+        Error: {{ postsQuery.error()?.message }}
       </div>
       <ng-container *ngSwitchDefault>
-        <p *ngFor="let post of postsQuery().data">
+        <p *ngFor="let post of postsQuery.data()">
           <!--          We can access the query data here to show bold links for-->
           <!--          ones that are cached-->
           <a
@@ -99,7 +99,7 @@ export class PostComponent {
         </p>
       </ng-container>
 
-      <div *ngIf="postsQuery().isFetching">Background Updating...</div>
+      <div *ngIf="postsQuery.isFetching()">Background Updating...</div>
     </div>
   </div>`,
   imports: [CommonModule],

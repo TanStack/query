@@ -5,10 +5,10 @@ import {
   effect,
   inject,
   signal,
-  Signal,
 } from '@angular/core'
 import { notifyManager } from '@tanstack/query-core'
 import { createResultStateSignalProxy } from './query-proxy'
+import type { Signal } from '@angular/core'
 import type {
   QueryClient,
   QueryKey,

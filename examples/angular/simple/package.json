@@ -19,7 +19,7 @@
     "@tanstack/angular-query-experimental": "^5.4.3",
     "@tanstack/angular-query-devtools-experimental": "^5.4.3",
     "rxjs": "^7.4.0",
-    "zone.js": "^0.14.0"
+    "zone.js": "^0.14.2"
   },
   "devDependencies": {
     "typescript": "^5.2.2",
