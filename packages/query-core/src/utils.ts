@@ -297,9 +297,9 @@ function hasObjectPrototype(o: any): boolean {
   return Object.prototype.toString.call(o) === '[object Object]'
 }
 
-export function sleep(timeout: number): Promise<void> {
+export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
-    setTimeout(resolve, timeout)
+    setTimeout(resolve, ms)
   })
 }
 
