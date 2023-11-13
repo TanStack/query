@@ -1,4 +1,4 @@
-import { computed, type Signal } from '@angular/core'
+import { computed, type Signal, untracked } from '@angular/core'
 import type { DefaultError, QueryObserverResult } from '@tanstack/query-core'
 import { CreateBaseQueryResult } from './types'
 
