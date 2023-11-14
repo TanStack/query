@@ -2,11 +2,7 @@
   "name": "angular-cli-standalone-17",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "test:bundle": "ng build",
-    "watch": "ng build --watch --configuration development"
+    "test:bundle": "ng build"
   },
   "private": true,
   "dependencies": {
