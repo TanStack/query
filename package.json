@@ -12,9 +12,10 @@
     "preinstall": "node -e \"if(process.env.CI == 'true') {console.log('Skipping preinstall...'); process.exit(1)}\" || npx -y only-allow pnpm",
     "install:csb": "corepack enable && pnpm install --frozen-lockfile",
     "test": "pnpm run test:ci",
-    "test:ci": "nx run-many --exclude=examples/** --targets=test:format,test:eslint,test:lib,test:types,test:build,test:bundle,build",
+    "test:ci": "nx run-many --exclude=examples/** --targets=test:format,test:sherif,test:eslint,test:lib,test:types,test:build,test:bundle,build",
     "test:eslint": "nx affected --target=test:eslint",
     "test:format": "pnpm run prettier --check",
+    "test:sherif": "sherif -i react-scripts",
     "test:lib": "nx affected --target=test:lib",
     "test:lib:dev": "pnpm --filter \"./packages/**\" run test:lib:dev",
     "test:build": "nx affected --target=test:build",
@@ -30,7 +31,8 @@
   },
   "nx": {
     "includedScripts": [
-      "test:format"
+      "test:format",
+      "test:sherif"
     ]
   },
   "namespace": "@tanstack",
@@ -81,14 +83,22 @@
     "react-dom": "^18.2.0",
     "rimraf": "^5.0.5",
     "semver": "^7.5.4",
+    "sherif": "^0.5.0",
     "solid-js": "^1.8.1",
     "stream-to-array": "^2.3.0",
     "ts-node": "^10.7.0",
     "tsup": "^7.2.0",
     "type-fest": "^4.5.0",
-    "typescript": "^5.2.2",
+    "typescript": "5.1.6",
     "vite": "^4.4.11",
     "vitest": "^0.33.0",
     "vue": "^3.3.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "@typescript-eslint/eslint-plugin": "$@typescript-eslint/eslint-plugin",
+      "@typescript-eslint/parser": "$@typescript-eslint/parser",
+      "eslint": "$eslint"
+    }
   }
 }
