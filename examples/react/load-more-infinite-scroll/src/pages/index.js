@@ -67,8 +67,8 @@ function Example() {
               {isFetchingPreviousPage
                 ? 'Loading more...'
                 : hasPreviousPage
-                ? 'Load Older'
-                : 'Nothing more to load'}
+                  ? 'Load Older'
+                  : 'Nothing more to load'}
             </button>
           </div>
           {data.pages.map((page) => (
@@ -97,8 +97,8 @@ function Example() {
               {isFetchingNextPage
                 ? 'Loading more...'
                 : hasNextPage
-                ? 'Load Newer'
-                : 'Nothing more to load'}
+                  ? 'Load Newer'
+                  : 'Nothing more to load'}
             </button>
           </div>
           <div>

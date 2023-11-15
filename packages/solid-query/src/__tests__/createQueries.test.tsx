@@ -495,7 +495,7 @@ describe('useQueries', () => {
                 queryFn: () => 123,
               },
             ],
-          } as const),
+          }) as const,
       )
       expectTypeOf<QueryObserverResult<string, unknown>>(result6[0])
       expectTypeOf<QueryObserverResult<number, unknown>>(result6[1])

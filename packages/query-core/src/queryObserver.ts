@@ -592,14 +592,15 @@ export class QueryObserver<
     this.#currentResultState = this.#currentQuery.state
     this.#currentResultOptions = this.options
 
+    if (this.#currentResultState.data !== undefined) {
+      this.#lastQueryWithDefinedData = this.#currentQuery
+    }
+
     // Only notify and update result if something has changed
     if (shallowEqualObjects(nextResult, prevResult)) {
       return
     }
 
-    if (this.#currentResultState.data !== undefined) {
-      this.#lastQueryWithDefinedData = this.#currentQuery
-    }
     this.#currentResult = nextResult
 
     // Determine which callbacks to trigger

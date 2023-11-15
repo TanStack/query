@@ -140,6 +140,12 @@ export interface QueryOptions<
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   networkMode?: NetworkMode
+  /**
+   * The time in milliseconds that unused/inactive cache data remains in memory.
+   * When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
+   * When different garbage collection times are specified, the longest one will be used.
+   * Setting it to `Infinity` will disable garbage collection.
+   */
   gcTime?: number
   queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam>
   persister?: QueryPersister<
@@ -319,7 +325,12 @@ export interface QueryObserverOptions<
    */
   placeholderData?:
     | NonFunctionGuard<TQueryData>
-    | PlaceholderDataFunction<NonFunctionGuard<TQueryData>>
+    | PlaceholderDataFunction<
+        NonFunctionGuard<TQueryData>,
+        TError,
+        NonFunctionGuard<TQueryData>,
+        TQueryKey
+      >
 
   _optimisticResults?: 'optimistic' | 'isRestoring'
 }
