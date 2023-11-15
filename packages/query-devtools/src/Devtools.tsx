@@ -149,8 +149,8 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
     return props.localStore.open === 'true'
       ? true
       : props.localStore.open === 'false'
-      ? false
-      : useQueryDevtoolsContext().initialIsOpen || INITIAL_IS_OPEN
+        ? false
+        : useQueryDevtoolsContext().initialIsOpen || INITIAL_IS_OPEN
   })
 
   const position = createMemo(() => {
@@ -201,7 +201,9 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
         css`
           & .tsqd-panel-transition-exit-active,
           & .tsqd-panel-transition-enter-active {
-            transition: opacity 0.3s, transform 0.3s;
+            transition:
+              opacity 0.3s,
+              transform 0.3s;
           }
 
           & .tsqd-panel-transition-exit-to,
@@ -213,7 +215,9 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
 
           & .tsqd-button-transition-exit-active,
           & .tsqd-button-transition-enter-active {
-            transition: opacity 0.3s, transform 0.3s;
+            transition:
+              opacity 0.3s,
+              transform 0.3s;
           }
 
           & .tsqd-button-transition-exit-to,
@@ -221,8 +225,8 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
             transform: ${buttonPosition() === 'top-left'
               ? `translateX(-72px);`
               : buttonPosition() === 'top-right'
-              ? `translateX(72px);`
-              : `translateY(72px);`};
+                ? `translateX(72px);`
+                : `translateY(72px);`};
           }
         `,
         'tsqd-transitions-container',

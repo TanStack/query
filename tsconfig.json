@@ -28,5 +28,5 @@
     "strictNullChecks": true,
     "target": "ES2020"
   },
-  "include": [".eslintrc.cjs", "rollup.config.js", "scripts"]
+  "include": [".eslintrc.cjs", "prettier.config.js", "scripts"]
 }
