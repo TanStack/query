@@ -91,8 +91,8 @@ const CopyButton = (props: { value: unknown }) => {
         copyState() === 'NoCopy'
           ? 'Copy object to clipboard'
           : copyState() === 'SuccessCopy'
-          ? 'Object copied to clipboard'
-          : 'Error copying object to clipboard'
+            ? 'Object copied to clipboard'
+            : 'Error copying object to clipboard'
       }`}
       onClick={
         copyState() === 'NoCopy'

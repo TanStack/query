@@ -19,43 +19,53 @@
   const fetchTodoById = async ({ id }: { id: number }): Promise<Todo> => {
     console.info('fetchTodoById', { id })
     return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (Math.random() < $errorRate) {
-          return reject(
-            new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
-          )
-        }
-        const todo = $list.find((d) => d.id === id)
-        if (!todo) {
-          return reject(
-            new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
-          )
-        }
-        resolve(todo)
-      }, $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin))
+      setTimeout(
+        () => {
+          if (Math.random() < $errorRate) {
+            return reject(
+              new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
+            )
+          }
+          const todo = $list.find((d) => d.id === id)
+          if (!todo) {
+            return reject(
+              new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
+            )
+          }
+          resolve(todo)
+        },
+        $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin),
+      )
     })
   }
 
   function patchTodo(todo?: Todo): Promise<Todo> {
     console.info('patchTodo', todo)
     return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (Math.random() < $errorRate) {
-          return reject(new Error(JSON.stringify({ patchTodo: todo }, null, 2)))
-        }
-        if (!todo) {
-          return reject(new Error(JSON.stringify({ patchTodo: todo }, null, 2)))
-        }
-        list.set(
-          $list.map((d) => {
-            if (d.id === todo.id) {
-              return todo
-            }
-            return d
-          }),
-        )
-        resolve(todo)
-      }, $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin))
+      setTimeout(
+        () => {
+          if (Math.random() < $errorRate) {
+            return reject(
+              new Error(JSON.stringify({ patchTodo: todo }, null, 2)),
+            )
+          }
+          if (!todo) {
+            return reject(
+              new Error(JSON.stringify({ patchTodo: todo }, null, 2)),
+            )
+          }
+          list.set(
+            $list.map((d) => {
+              if (d.id === todo.id) {
+                return todo
+              }
+              return d
+            }),
+          )
+          resolve(todo)
+        },
+        $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin),
+      )
     })
   }
 
@@ -115,8 +125,8 @@
       {$saveMutation.status === 'pending'
         ? 'Saving...'
         : $saveMutation.status === 'error'
-        ? $saveMutation.error.message
-        : 'Saved!'}
+          ? $saveMutation.error.message
+          : 'Saved!'}
     </div>
     <div>
       {#if $query.isFetching}
