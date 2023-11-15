@@ -23,7 +23,7 @@
     "@vitejs/plugin-react": "^4.0.0",
     "eslint": "^8.34.0",
     "eslint-config-prettier": "^8.8.0",
-    "typescript": "^5.0.4",
+    "typescript": "^5.2.2",
     "vite": "^4.4.11"
   },
   "browserslist": {

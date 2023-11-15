@@ -86,7 +86,7 @@
     "ts-node": "^10.7.0",
     "tsup": "^7.2.0",
     "type-fest": "^4.5.0",
-    "typescript": "^5.0.4",
+    "typescript": "^5.2.2",
     "vite": "^4.4.11",
     "vitest": "^0.33.0",
     "vue": "^3.3.0"
