@@ -286,7 +286,7 @@ export function useQueries<
   }, [defaultedQueries, options, observer])
 
   const shouldAtLeastOneSuspend = optimisticResult.some((result, index) =>
-    shouldSuspend(defaultedQueries[index], result, isRestoring),
+    shouldSuspend(defaultedQueries[index], result),
   )
 
   const suspensePromises = shouldAtLeastOneSuspend
@@ -295,7 +295,7 @@ export function useQueries<
 
         if (opts) {
           const queryObserver = new QueryObserver(client, opts)
-          if (shouldSuspend(opts, result, isRestoring)) {
+          if (shouldSuspend(opts, result)) {
             return fetchOptimistic(opts, queryObserver, errorResetBoundary)
           } else if (willFetch(result, isRestoring)) {
             void fetchOptimistic(opts, queryObserver, errorResetBoundary)
