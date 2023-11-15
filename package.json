@@ -25,7 +25,7 @@
     "build:all": "nx run-many --exclude=examples/** --target=build",
     "watch": "pnpm run build:all && nx watch --all -- pnpm run build:all",
     "dev": "pnpm run watch",
-    "prettier": "prettier \"{examples,integrations,packages,scripts}/**/*.{md,js,jsx,cjs,ts,tsx,json,vue,svelte}\"",
+    "prettier": "prettier --ignore-unknown \"{examples,integrations,packages,scripts}/**/*\"",
     "prettier:write": "pnpm run prettier --write",
     "cipublish": "node scripts/publish.js"
   },
