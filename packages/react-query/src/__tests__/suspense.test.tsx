@@ -887,4 +887,52 @@ describe('useSuspenseQueries', () => {
     await waitFor(() => rendered.getByText('data: 1,2'))
     expect(refs[0]).toBe(refs[1])
   })
+
+  // this addresses the following issue:
+  // https://github.com/TanStack/query/issues/6344
+  it('should suspend on offline when query changes, and data should not be undefined', async () => {
+    function Page() {
+      const [id, setId] = React.useState(0)
+
+      const { data } = useSuspenseQuery({
+        queryKey: [id],
+        queryFn: () => Promise.resolve(`Data ${id}`),
+      })
+
+      // defensive guard here
+      if (data === undefined) {
+        throw new Error('data cannot be undefined')
+      }
+
+      return (
+        <>
+          <div>{data}</div>
+          <button onClick={() => setId(id + 1)}>fetch</button>
+        </>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback={<div>loading</div>}>
+        <Page />
+      </React.Suspense>,
+    )
+
+    await waitFor(() => rendered.getByText('loading'))
+    await waitFor(() => rendered.getByText('Data 0'))
+
+    // go offline
+    document.dispatchEvent(new CustomEvent('offline'))
+
+    fireEvent.click(rendered.getByText('fetch'))
+    await waitFor(() => rendered.getByText('Data 0'))
+
+    // go back online
+    document.dispatchEvent(new CustomEvent('online'))
+    fireEvent.click(rendered.getByText('fetch'))
+
+    // query should resume
+    await waitFor(() => rendered.getByText('Data 1'))
+  })
 })
