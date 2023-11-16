@@ -50,10 +50,10 @@ In rare circumstances, you may want to manage your own window focus events that 
 focusManager.setEventListener((handleFocus) => {
   // Listen to visibilitychange
   if (typeof window !== 'undefined' && window.addEventListener) {
-    window.addEventListener('visibilitychange', handleFocus, false)
+    window.addEventListener('visibilitychange', () => handleFocus(), false)
     return () => {
       // Be sure to unsubscribe if a new handler is set
-      window.removeEventListener('visibilitychange', handleFocus)
+      window.removeEventListener('visibilitychange', () => handleFocus())
     }
   }
 })
