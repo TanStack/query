@@ -37,9 +37,32 @@ export class AngularQueryDevtools implements AfterViewInit, OnDestroy {
   })
 
   #clientFromAttribute: QueryClient | null = null
-  #devtools: TanstackQueryDevtools | undefined
+
+  #getAppliedQueryClient() {
+    if (!this.#clientFromAttribute && !this.#injectedClient) {
+      throw new Error(
+        `You must either provide a client via 'provideAngularQuery' or pass it to the 'client' attribute of angular-query-devtools.`,
+      )
+    }
+    return this.#clientFromAttribute ?? this.#injectedClient
+  }
 
   @ViewChild('ref') ref!: ElementRef
+
+  #devtools: TanstackQueryDevtools
+
+  constructor() {
+    this.#devtools = new TanstackQueryDevtools({
+      client: this.#getAppliedQueryClient()!,
+      queryFlavor: 'Angular Query',
+      version: '5',
+      onlineManager,
+      buttonPosition: this.buttonPosition,
+      position: this.position,
+      initialIsOpen: this.initialIsOpen,
+      // errorTypes,
+    })
+  }
 
   #initialIsOpen = false
   /**
@@ -48,7 +71,7 @@ export class AngularQueryDevtools implements AfterViewInit, OnDestroy {
   @Input({ transform: booleanAttribute })
   set initialIsOpen(value: boolean) {
     this.#initialIsOpen = value
-    this.#devtools?.setInitialIsOpen(value)
+    this.#devtools.setInitialIsOpen(value)
   }
   get initialIsOpen() {
     return this.#initialIsOpen
@@ -63,7 +86,7 @@ export class AngularQueryDevtools implements AfterViewInit, OnDestroy {
   @Input()
   set buttonPosition(value: DevtoolsButtonPosition) {
     this.#buttonPosition = value
-    this.#devtools?.setButtonPosition(value)
+    this.#devtools.setButtonPosition(value)
   }
   get buttonPosition() {
     return this.#buttonPosition
@@ -78,7 +101,7 @@ export class AngularQueryDevtools implements AfterViewInit, OnDestroy {
   @Input()
   set position(value: DevtoolsPosition) {
     this.#position = value
-    this.#devtools?.setPosition(value)
+    this.#devtools.setPosition(value)
   }
   get position() {
     return this.#position
@@ -90,7 +113,7 @@ export class AngularQueryDevtools implements AfterViewInit, OnDestroy {
   @Input()
   set client(client: QueryClient | undefined) {
     this.#clientFromAttribute = client ?? null
-    this.#devtools?.setClient(this.#getAppliedQueryClient()!)
+    this.#devtools.setClient(this.#getAppliedQueryClient()!)
   }
 
   // TODO: needs to tested. When re-adding don't forget to re-add to devtools.md too
@@ -108,32 +131,10 @@ export class AngularQueryDevtools implements AfterViewInit, OnDestroy {
   // }
 
   ngAfterViewInit() {
-    const client = this.#getAppliedQueryClient()!
-
-    const { buttonPosition, position, initialIsOpen } = this
-    this.#devtools = new TanstackQueryDevtools({
-      client,
-      queryFlavor: 'Angular Query',
-      version: '5',
-      onlineManager,
-      buttonPosition,
-      position,
-      initialIsOpen,
-      // errorTypes,
-    })
     this.#devtools.mount(this.ref.nativeElement)
   }
 
   ngOnDestroy() {
-    this.#devtools?.unmount()
-  }
-
-  #getAppliedQueryClient() {
-    if (!this.#clientFromAttribute && !this.#injectedClient) {
-      throw new Error(
-        `You must either provide a client via 'provideAngularQuery' or pass it to the 'client' attribute of angular-query-devtools.`,
-      )
-    }
-    return this.#clientFromAttribute ?? this.#injectedClient
+    this.#devtools.unmount()
   }
 }
