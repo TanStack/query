@@ -16,6 +16,9 @@
   },
   "type": "module",
   "sideEffects": false,
+  "types": "build/esm2022/index.d.ts",
+  "main": "build/esm2022/index.mjs",
+  "module": "build/esm2022/index.mjs",
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
