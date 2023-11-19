@@ -20,8 +20,6 @@
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
-    "test:lib": "vitest run --coverage",
-    "test:lib:dev": "vitest watch --coverage",
     "test:build": "publint --strict",
     "build": "ng-packagr -p ng-package.json -c tsconfig.build.json"
   },
