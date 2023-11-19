@@ -8,16 +8,16 @@ html {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-  "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-  sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-  monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
 }
 
 html,
@@ -35,7 +35,9 @@ button {
   border: none;
   border-radius: 8px;
   padding: 0.5rem 0.75rem;
-  box-shadow: 0 0px 1px hsla(0, 0%, 0%, 0.2), 0 1px 2px hsla(0, 0%, 0%, 0.2);
+  box-shadow:
+    0 0px 1px hsla(0, 0%, 0%, 0.2),
+    0 1px 2px hsla(0, 0%, 0%, 0.2);
   background-color: white;
   line-height: 1.5;
   margin: 0;
@@ -48,7 +50,9 @@ button {
 textarea:hover,
 input:hover,
 button:hover {
-  box-shadow: 0 0px 1px hsla(0, 0%, 0%, 0.6), 0 1px 2px hsla(0, 0%, 0%, 0.2);
+  box-shadow:
+    0 0px 1px hsla(0, 0%, 0%, 0.6),
+    0 1px 2px hsla(0, 0%, 0%, 0.2);
 }
 
 button:active {
@@ -72,15 +76,15 @@ button:active {
   font-weight: 400;
   padding: 0;
 }
-#contact h1 form button[value="true"] {
+#contact h1 form button[value='true'] {
   color: #a4a4a4;
 }
-#contact h1 form button[value="true"]:hover,
-#contact h1 form button[value="false"] {
+#contact h1 form button[value='true']:hover,
+#contact h1 form button[value='false'] {
   color: #eeb004;
 }
 
-form[action$="destroy"] button {
+form[action$='destroy'] button {
   color: #f44250;
 }
 
@@ -147,7 +151,7 @@ form[action$="destroy"] button {
   position: relative;
 }
 
-#sidebar > div form input[type="search"] {
+#sidebar > div form input[type='search'] {
   width: 100%;
   padding-left: 2rem;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='%23999' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' /%3E%3C/svg%3E");
@@ -157,7 +161,7 @@ form[action$="destroy"] button {
   position: relative;
 }
 
-#sidebar > div form input[type="search"].loading {
+#sidebar > div form input[type='search'].loading {
   background-image: none;
 }
 
@@ -275,13 +279,13 @@ i {
   color: hsl(224, 98%, 58%);
 }
 
-#contact a[href*="twitter"] {
+#contact a[href*='twitter'] {
   display: flex;
   font-size: 1.5rem;
   color: #3992ff;
   text-decoration: none;
 }
-#contact a[href*="twitter"]:hover {
+#contact a[href*='twitter']:hover {
   text-decoration: underline;
 }
 
@@ -349,7 +353,7 @@ i {
   margin: 0 0 0 8rem;
 }
 
-#contact-form p:last-child button[type="button"] {
+#contact-form p:last-child button[type='button'] {
   color: inherit;
 }
 

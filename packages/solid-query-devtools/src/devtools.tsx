@@ -44,6 +44,10 @@ export interface DevtoolsOptions {
    * Use this so you can define custom errors that can be shown in the devtools.
    */
   errorTypes?: Array<DevToolsErrorType>
+  /**
+   * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+   */
+  styleNonce?: string
 }
 
 export default function SolidQueryDevtools(props: DevtoolsOptions) {
@@ -59,6 +63,7 @@ export default function SolidQueryDevtools(props: DevtoolsOptions) {
     position: props.position,
     initialIsOpen: props.initialIsOpen,
     errorTypes: props.errorTypes,
+    styleNonce: props.styleNonce,
   })
 
   createEffect(() => {

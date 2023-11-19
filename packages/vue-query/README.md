@@ -13,7 +13,7 @@ Support for Vue 2.x via [vue-demi](https://github.com/vueuse/vue-demi)
 
 # Documentation
 
-Visit https://tanstack.com/query/v4/docs/adapters/vue-query
+Visit https://tanstack.com/query/latest/docs/vue/overview
 
 # Quick Features
 

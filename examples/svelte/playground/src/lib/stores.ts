@@ -21,3 +21,6 @@ const initialList = [
 
 export const list = writable(initialList)
 export const id = writable(initialId)
+
+export type Todos = typeof initialList
+export type Todo = Todos[0]

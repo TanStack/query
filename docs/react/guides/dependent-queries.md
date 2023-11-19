@@ -37,7 +37,7 @@ The `projects` query will start in:
 
 ```tsx
 status: 'pending'
-isPending: false
+isPending: true
 fetchStatus: 'idle'
 ```
 
