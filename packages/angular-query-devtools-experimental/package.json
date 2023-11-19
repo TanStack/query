@@ -45,5 +45,11 @@
   },
   "peerDependencies": {
     "@angular/core": "^17"
+  },
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "default": "./build/fesm2022/tanstack-angular-query-devtools-experimental.mjs"
+    }
   }
 }

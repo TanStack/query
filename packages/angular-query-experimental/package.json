@@ -16,9 +16,6 @@
   },
   "type": "module",
   "sideEffects": false,
-  "types": "build/esm2022/index.d.ts",
-  "main": "build/esm2022/index.mjs",
-  "module": "build/esm2022/index.mjs",
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
@@ -50,5 +47,11 @@
   },
   "peerDependencies": {
     "@angular/core": "^17"
+  },
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "default": "./build/fesm2022/tanstack-angular-query-experimental.mjs"
+    }
   }
 }
