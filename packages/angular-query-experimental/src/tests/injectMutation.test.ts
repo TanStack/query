@@ -39,11 +39,12 @@ describe('injectMutation', () => {
       return injectMutation((client) => ({
         mutationFn: () => {
           expect(client).toBe(queryClient)
+          return Promise.resolve()
         },
       }))
     })
 
-    mutation().mutate({ par1: 'par1' })
+    mutation().mutate()
 
     flush()
     expect(mutation().status).toBe('pending')

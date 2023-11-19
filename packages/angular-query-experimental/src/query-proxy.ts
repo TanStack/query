@@ -1,6 +1,6 @@
-import { computed, type Signal, untracked } from '@angular/core'
+import { type Signal, computed, untracked } from '@angular/core'
 import type { DefaultError, QueryObserverResult } from '@tanstack/query-core'
-import { CreateBaseQueryResult } from './types'
+import type { CreateBaseQueryResult } from './types'
 
 export function createResultStateSignalProxy<
   TData = unknown,
@@ -16,6 +16,9 @@ export function createResultStateSignalProxy<
     ) {
       // first check if we have it in our internal state and return it
       const computedField = target[prop as Key]
+
+      // TODO: check if this if statement is necessary
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (computedField) return computedField
 
       // then, check if it's a function on the resultState and return it
