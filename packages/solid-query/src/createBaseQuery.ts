@@ -314,12 +314,16 @@ export function createBaseQuery<
     ),
   )
 
+  const shouldSuspend = defaultedOptions()?.suspense !== false
   const handler = {
     get(
       target: QueryObserverResult<TData, TError>,
       prop: keyof QueryObserverResult<TData, TError>,
     ): any {
-      const val = queryResource()?.[prop]
+      // we should suspend unless user specifically says not to
+      const val = shouldSuspend
+        ? queryResource()?.[prop]
+        : queryResource.latest?.[prop]
       return val !== undefined ? val : Reflect.get(target, prop)
     },
   }

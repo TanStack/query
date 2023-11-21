@@ -317,7 +317,8 @@ export interface QueryObserverOptions<
   /**
    * If set to `true`, the query will suspend when `status === 'pending'`
    * and throw errors when `status === 'error'`.
-   * Defaults to `false`.
+   * Defaults to `false` for React.
+   * Defaults to `true` for Solid.
    */
   suspense?: boolean
   /**
