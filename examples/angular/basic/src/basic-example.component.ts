@@ -87,13 +87,14 @@ export class PostComponent {
           <a
             href="#"
             (click)="setPostId.emit(post.id)"
-            [style]="queryClient.getQueryData(['post', post.id])
-                        ? {
-                            fontWeight: 'bold',
-                            color: 'green',
-                          }
-                        : {}
-                    "
+            [style]="
+              queryClient.getQueryData(['post', post.id])
+                ? {
+                    fontWeight: 'bold',
+                    color: 'green'
+                  }
+                : {}
+            "
             >{{ post.title }}</a
           >
         </p>
