@@ -955,4 +955,46 @@ describe("useQuery's in Suspense mode", () => {
     expect(renders).toBe(2)
     expect(screen.queryByText('rendered')).not.toBeNull()
   })
+
+  it('should not suspend when suspense is set as false', async () => {
+    const key1 = queryKey()
+
+    function Component() {
+      const result = createQuery(() => ({
+        queryKey: key1,
+        queryFn: async () => {
+          await sleep(100)
+          return key1
+        },
+        retry: false,
+        suspense: false,
+      }))
+      return (
+        <>
+          {result.isLoading ? (
+            <div>No suspense loading...</div>
+          ) : (
+            <div>data: {result.data}</div>
+          )}
+        </>
+      )
+    }
+
+    function Page() {
+      return (
+        <Suspense fallback="Suspense loading...">
+          <Component />
+        </Suspense>
+      )
+    }
+
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await waitFor(() => screen.getByText('No suspense loading...'))
+    await waitFor(() => screen.getByText(`data: ${key1}`))
+  })
 })
