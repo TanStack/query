@@ -35,7 +35,7 @@
     "@angular/core": "^17.0.2",
     "@angular/platform-browser": "^17.0.2",
     "@angular/platform-browser-dynamic": "^17.0.2",
-    "@tanstack/angular-query-experimental": "workspace:*",
+    "@tanstack/angular-query-experimental": "workspace:../angular-query-experimental/build",
     "ng-packagr": "^17.0.0",
     "reflect-metadata": "^0.1.13",
     "typescript": "5.2.2",
@@ -43,11 +43,5 @@
   },
   "peerDependencies": {
     "@angular/core": "^17"
-  },
-  "exports": {
-    ".": {
-      "types": "./build/index.d.ts",
-      "default": "./build/fesm2022/tanstack-angular-query-devtools-experimental.mjs"
-    }
   }
 }
