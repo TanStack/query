@@ -1,0 +1,78 @@
+{
+  "Qwik component (simple)": {
+    "scope": "javascriptreact,typescriptreact",
+    "prefix": "qcomponent$",
+    "description": "Simple Qwik component",
+    "body": [
+      "export const ${1:${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/}} = component$(() => {",
+      "  return <${2:div}>$4</$2>",
+      "});"
+    ]
+  },
+  "Qwik component (props)": {
+    "scope": "typescriptreact",
+    "prefix": "qcomponent$ + props",
+    "description": "Qwik component w/ props",
+    "body": [
+      "export interface ${1:${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/}}Props {",
+      "  $2",
+      "}",
+      "",
+      "export const $1 = component$<$1Props>((props) => {",
+      "  const ${2:count} = useSignal(0);",
+      "  return (",
+      "    <${3:div} on${4:Click}$={(ev) => {$5}}>",
+      "      $6",
+      "    </${3}>",
+      "  );",
+      "});"
+    ]
+  },
+  "Qwik signal": {
+    "scope": "javascriptreact,typescriptreact",
+    "prefix": "quseSignal",
+    "description": "useSignal() declaration",
+    "body": ["const ${1:foo} = useSignal($2);", "$0"]
+  },
+  "Qwik store": {
+    "scope": "javascriptreact,typescriptreact",
+    "prefix": "quseStore",
+    "description": "useStore() declaration",
+    "body": ["const ${1:state} = useStore({", "  $2", "});", "$0"]
+  },
+  "$ hook": {
+    "scope": "javascriptreact,typescriptreact",
+    "prefix": "q$",
+    "description": "$() function hook",
+    "body": ["$(() => {", "  $0", "});", ""]
+  },
+  "useVisibleTask": {
+    "scope": "javascriptreact,typescriptreact",
+    "prefix": "quseVisibleTask",
+    "description": "useVisibleTask$() function hook",
+    "body": ["useVisibleTask$(({ track }) => {", "  $0", "});", ""]
+  },
+  "useTask": {
+    "scope": "javascriptreact,typescriptreact",
+    "prefix": "quseTask$",
+    "description": "useTask$() function hook",
+    "body": [
+      "useTask$(({ track }) => {",
+      "  track(() => $1);",
+      "  $0",
+      "});",
+      ""
+    ]
+  },
+  "useResource": {
+    "scope": "javascriptreact,typescriptreact",
+    "prefix": "quseResource$",
+    "description": "useResource$() declaration",
+    "body": [
+      "const $1 = useResource$(({ track, cleanup }) => {",
+      "  $0",
+      "});",
+      ""
+    ]
+  }
+}
