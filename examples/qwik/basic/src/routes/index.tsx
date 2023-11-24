@@ -1,12 +1,12 @@
 import { $, component$ } from '@builder.io/qwik'
-import { Link, routeLoader$ } from '@builder.io/qwik-city'
+import { routeLoader$ } from '@builder.io/qwik-city'
 import { QueryClient } from '@tanstack/query-core'
 import {
-  useIsFetching,
-  queryClientState,
-  useQuery,
-  useMutation,
   createQueryClient,
+  queryClientState,
+  useIsFetching,
+  useMutation,
+  useQuery,
 } from '@tanstack/qwik-query'
 
 export const queryFunction = $(async () => {
@@ -53,7 +53,7 @@ export default component$(() => {
     <div>
       <button
         onClick$={() => {
-          // queryStore.options = { ...queryStore.options, refetchInterval: 5000 }
+          queryStore.options = { ...queryStore.options, refetchInterval: 5000 }
         }}
       >
         change refetchInterval

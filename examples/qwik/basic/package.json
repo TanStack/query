@@ -40,6 +40,6 @@
   },
   "dependencies": {
     "@tanstack/query-core": "latest",
-    "@tanstack/qwik-query": "workspace:*"
+    "@tanstack/qwik-query": "file:../../../packages/qwik-query"
   }
 }

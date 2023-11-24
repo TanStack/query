@@ -9,19 +9,17 @@ import type {
 } from './queryOptions'
 import type {
   DefinedUseQueryResult,
-  UseQueryOptions,
-  UseQueryResult,
+  UseQueryOptions
 } from './types'
 import { ObserverType, useBaseQuery } from './useBaseQuery'
 
-export function useQuery
-/*<
+export function useQuery(
+  /*<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >*/
-(
   options: any /*UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,*/,
   initialState?: DehydratedState,
 ): any /*UseQueryResult<
@@ -52,11 +50,12 @@ export function useQuery<
 >(
   options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   initialState?: DehydratedState,
-): UseQueryResult<
+): any
+/*UseQueryResult<
   TData,
   TError,
   UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
->
+>*/
 
 export function useQuery(
   options: UseQueryOptions,
