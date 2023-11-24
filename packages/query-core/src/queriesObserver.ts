@@ -33,7 +33,7 @@ export class QueriesObserver<
 > extends Subscribable<QueriesObserverListener> {
   #client: QueryClient
   #result!: Array<QueryObserverResult>
-  #queries!: Array<QueryObserverOptions>
+  #queries: Array<QueryObserverOptions>
   #observers: Array<QueryObserver>
   #options?: QueriesObserverOptions<TCombinedResult>
   #combinedResult!: TCombinedResult
@@ -46,10 +46,12 @@ export class QueriesObserver<
     super()
 
     this.#client = client
+    this.#queries = queries
+    this.#options = options
     this.#observers = []
 
-    this.setQueries(queries, options)
     this.#setResult([])
+    this.setQueries(queries, options)
   }
 
   #setResult(value: Array<QueryObserverResult>) {
