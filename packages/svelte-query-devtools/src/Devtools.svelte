@@ -15,7 +15,7 @@
   export let position: DevtoolsPosition = 'bottom'
   export let client: QueryClient = useQueryClient()
   export let errorTypes: Array<DevToolsErrorType> = []
-  export let styleNonce: string | undefined
+  export let styleNonce: string | undefined = undefined
 
   let ref: HTMLDivElement
   let devtools: TanstackQueryDevtools | undefined
