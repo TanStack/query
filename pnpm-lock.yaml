@@ -1701,9 +1701,6 @@ importers:
       eslint-plugin-qwik:
         specifier: 1.2.19
         version: 1.2.19(eslint@8.53.0)
-      prettier:
-        specifier: 3.1.0
-        version: 3.1.0
       typescript:
         specifier: 5.1.6
         version: 5.1.6
