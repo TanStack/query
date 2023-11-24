@@ -1,0 +1,59 @@
+{
+  "name": "@tanstack/qwik-query",
+  "version": "0.0.1",
+  "description": "Primitives for managing, caching and syncing asynchronous and remote data in Qwik",
+  "main": "./lib/index.qwik.mjs",
+  "qwik": "./lib/index.qwik.mjs",
+  "types": "./lib-types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./lib/index.qwik.mjs",
+      "require": "./lib/index.qwik.cjs",
+      "types": "./lib-types/index.d.ts"
+    }
+  },
+  "files": [
+    "lib",
+    "lib-types"
+  ],
+  "engines": {
+    "node": ">=15.0.0"
+  },
+  "private": false,
+  "type": "module",
+  "scripts": {
+    "build": "qwik build",
+    "build.lib": "vite build --mode lib",
+    "build.types": "tsc --emitDeclarationOnly",
+    "cypress.open": "cypress open --component",
+    "cypress.run": "cypress run --component",
+    "dev": "vite --mode ssr",
+    "dev.debug": "node --inspect-brk ./node_modules/vite/bin/vite.js --mode ssr --force",
+    "fmt": "prettier --write .",
+    "fmt.check": "prettier --check .",
+    "lint": "eslint \"src/**/*.ts*\"",
+    "release": "np",
+    "start": "vite --open --mode ssr",
+    "qwik": "qwik"
+  },
+  "devDependencies": {
+    "@builder.io/qwik": "1.2.19",
+    "@types/eslint": "^8.44.7",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "6.7.5",
+    "@typescript-eslint/parser": "6.7.5",
+    "cypress-ct-qwik": "~0.3.0",
+    "cypress": "~13.6.0",
+    "eslint-plugin-qwik": "1.2.19",
+    "eslint": "8.51.0",
+    "prettier": "3.1.0",
+    "typescript": "5.1.6",
+    "undici": "5.28.0",
+    "vite-tsconfig-paths": "4.2.1",
+    "vite": "^4.5.0"
+  },
+  "dependencies": {
+    "@tanstack/query-core": "latest"
+  }
+}

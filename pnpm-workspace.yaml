@@ -5,6 +5,7 @@ packages:
   - 'examples/solid/**'
   - 'examples/svelte/**'
   - 'examples/vue/**'
+  - 'examples/qwik/**'
   - '!examples/vue/2*'
   - '!examples/vue/nuxt*'
   - '!packages/react-query/build/**'
