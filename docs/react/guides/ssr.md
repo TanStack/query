@@ -93,7 +93,7 @@ import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query'
 export async function getStaticProps() {
   const queryClient = new QueryClient()
 
-  await queryClient.prefetchQuery(['posts'], getPosts)
+  await queryClient.prefetchQuery({ queryKey: ['posts'], queryFn: getPosts })
 
   return {
     props: {
@@ -214,7 +214,7 @@ import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query'
 export async function loader() {
   const queryClient = new QueryClient()
 
-  await queryClient.prefetchQuery(['posts'], getPosts)
+  await queryClient.prefetchQuery({ queryKey: ['posts'], queryFn: getPosts })
 
   return json({ dehydratedState: dehydrate(queryClient) })
 }
@@ -264,7 +264,7 @@ import {
 
 async function handleRequest(req, res) {
   const queryClient = new QueryClient()
-  await queryClient.prefetchQuery(['key'], fn)
+  await queryClient.prefetchQuery({ queryKey: ['key'], queryFn: fn })
   const dehydratedState = dehydrate(queryClient)
 
   const html = ReactDOM.renderToString(
@@ -426,7 +426,7 @@ import getQueryClient from './getQueryClient'
 
 export default async function HydratedPosts() {
   const queryClient = getQueryClient()
-  await queryClient.prefetchQuery(['posts'], getPosts)
+  await queryClient.prefetchQuery({ queryKey: ['posts'], queryFn: getPosts })
   const dehydratedState = dehydrate(queryClient)
 
   return (
