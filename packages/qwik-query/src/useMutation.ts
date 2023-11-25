@@ -1,6 +1,5 @@
 import type { NoSerialize } from '@builder.io/qwik'
 import {
-  $,
   noSerialize,
   useSignal,
   useStore,
