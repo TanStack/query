@@ -1674,8 +1674,8 @@ importers:
         version: 5.8.7
     devDependencies:
       '@builder.io/qwik':
-        specifier: 1.2.19
-        version: 1.2.19(@types/node@20.10.0)(undici@5.28.0)
+        specifier: 1.2.12
+        version: 1.2.12(undici@5.28.0)
       '@types/eslint':
         specifier: ^8.44.7
         version: 8.44.7
@@ -1696,13 +1696,13 @@ importers:
         version: 13.6.0
       cypress-ct-qwik:
         specifier: ~0.3.0
-        version: 0.3.0(@builder.io/qwik@1.2.19)(cypress@13.6.0)
+        version: 0.3.0(@builder.io/qwik@1.2.12)(cypress@13.6.0)
       eslint:
         specifier: ^8.34.0
         version: 8.53.0
       eslint-plugin-qwik:
-        specifier: 1.2.19
-        version: 1.2.19(eslint@8.53.0)
+        specifier: 1.2.12
+        version: 1.2.12(eslint@8.53.0)
       typescript:
         specifier: 5.1.6
         version: 5.1.6
@@ -4971,26 +4971,6 @@ packages:
     dependencies:
       csstype: 3.1.2
       undici: 5.28.0
-    dev: true
-
-  /@builder.io/qwik@1.2.19(@types/node@20.10.0)(undici@5.28.0):
-    resolution: {integrity: sha512-nmext30MPih1vSgsNpdx2jzBbeBKpsWjsLFI0Shs9+ec3z2QUrE9NJO+2P7cduxNt87hyul+twJ3UlJJ6pKxUQ==}
-    engines: {node: '>=16.8.0 <18.0.0 || >=18.11'}
-    hasBin: true
-    peerDependencies:
-      undici: ^5.14.0
-    dependencies:
-      csstype: 3.1.2
-      undici: 5.28.0
-      vite: 4.5.0(@types/node@20.10.0)
-    transitivePeerDependencies:
-      - '@types/node'
-      - less
-      - lightningcss
-      - sass
-      - stylus
-      - sugarss
-      - terser
     dev: true
 
   /@callstack/eslint-config@13.0.2(eslint-import-resolver-typescript@3.5.5)(eslint@8.53.0)(typescript@5.1.6):
@@ -13239,13 +13219,13 @@ packages:
     resolution: {integrity: sha512-0sVXIohTfLqVIW3kb/0n6IiWF3Ifj5nm2XaSrLq2DI6fKIGa2fYAZdk917rUneaeLVpYfFcyXE2ft0fe3remsA==}
     dev: false
 
-  /cypress-ct-qwik@0.3.0(@builder.io/qwik@1.2.19)(cypress@13.6.0):
+  /cypress-ct-qwik@0.3.0(@builder.io/qwik@1.2.12)(cypress@13.6.0):
     resolution: {integrity: sha512-S1PcR6BbZMHprTYmYvYcZODNFy+WOQewUIWCGRA2ruq4H6I2zJSVLy0VxynKuxgSx3OKp5GYUIXSTmdxkTdk4Q==}
     peerDependencies:
       '@builder.io/qwik': '>0.23.0'
       cypress: '>=12.8.1'
     dependencies:
-      '@builder.io/qwik': 1.2.19(@types/node@20.10.0)(undici@5.28.0)
+      '@builder.io/qwik': 1.2.12(undici@5.28.0)
       '@cypress/mount-utils': 4.0.0
       cypress: 13.6.0
     dev: true
@@ -14699,6 +14679,16 @@ packages:
       eslint: ^8.34.0
     dependencies:
       eslint: 8.53.0
+    dev: true
+
+  /eslint-plugin-qwik@1.2.12(eslint@8.53.0):
+    resolution: {integrity: sha512-BdwXm3UcBlufWOvOFJSoqxImHa9LcM3k44/oTshcuNa4+iOuiR8FFb/pFn7kk5BcugH7gUOsOyhQlvpKauOqXw==}
+    engines: {node: '>=16.8.0 <18.0.0 || >=18.11'}
+    peerDependencies:
+      eslint: ^8.34.0
+    dependencies:
+      eslint: 8.53.0
+      jsx-ast-utils: 3.3.5
     dev: true
 
   /eslint-plugin-qwik@1.2.19(eslint@8.53.0):
