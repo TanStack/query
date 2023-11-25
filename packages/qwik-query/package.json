@@ -30,7 +30,7 @@
     "qwik": "qwik"
   },
   "devDependencies": {
-    "@builder.io/qwik": "1.2.19",
+    "@builder.io/qwik": "1.2.12",
     "@types/eslint": "^8.44.7",
     "@types/mocha": "^10.0.6",
     "@types/node": "^20.10.0",
@@ -38,7 +38,7 @@
     "@typescript-eslint/parser": "6.7.5",
     "cypress-ct-qwik": "~0.3.0",
     "cypress": "~13.6.0",
-    "eslint-plugin-qwik": "1.2.19",
+    "eslint-plugin-qwik": "1.2.12",
     "eslint": "8.51.0",
     "typescript": "5.1.6",
     "undici": "5.28.0",
