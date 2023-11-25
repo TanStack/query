@@ -32,7 +32,7 @@ export default component$(() => {
     {
       queryKey,
       queryFn: queryFunction,
-      refetchInterval: 1000,
+      refetchInterval: 1000 * 30,
     },
     useRouteLoader().value,
   )
@@ -60,11 +60,11 @@ export default component$(() => {
       </button>
       <button
         onClick$={() => {
-          // mutationStore.options = {
-          // 	...mutationStore.options,
-          // 	onError: $(() => { }),
-          // };
-          // mutationStore.mutate();
+          mutationStore.options = {
+            ...mutationStore.options,
+            onError: $(() => {}),
+          }
+          mutationStore.mutate({ a: 'a' }, { b: 'b' })
         }}
       >
         mutation

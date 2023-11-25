@@ -192,11 +192,11 @@ importers:
         version: file:packages/qwik-query
     devDependencies:
       '@builder.io/qwik':
-        specifier: ^1.2.19
-        version: 1.2.19(@types/node@20.10.0)(undici@5.28.0)
+        specifier: 1.2.12
+        version: 1.2.12(undici@5.28.0)
       '@builder.io/qwik-city':
-        specifier: ^1.2.19
-        version: 1.2.19(@types/node@20.10.0)
+        specifier: 1.2.12
+        version: 1.2.12
       '@types/eslint':
         specifier: ^8.44.7
         version: 8.44.7
@@ -230,6 +230,8 @@ importers:
       vite-tsconfig-paths:
         specifier: ^4.2.1
         version: 4.2.1(typescript@5.1.6)(vite@4.5.0)
+
+  examples/qwik/basic/server: {}
 
   examples/react/algolia:
     dependencies:
@@ -4944,29 +4946,31 @@ packages:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
     dev: false
 
-  /@builder.io/qwik-city@1.2.19(@types/node@20.10.0):
-    resolution: {integrity: sha512-RAjS1HRuRgi2YX8Gj54MIpnXtpaJyS8RrOH34ujfOlcSg9V17gcdceS24E8+llcEAYikAU6GP7T9bC5tSIRaPg==}
+  /@builder.io/qwik-city@1.2.12:
+    resolution: {integrity: sha512-gi8QXd9TohBDjG+xsIdkln+6iMjUFWO6PXe3CTNTpqacTcX0vN7mQkPUcPWj5alo8aSE+Mog8xnZYHx3qsQzwg==}
     engines: {node: '>=16.8.0 <18.0.0 || >=18.11'}
     dependencies:
       '@mdx-js/mdx': 2.3.0
-      '@types/mdx': 2.0.10
+      '@types/mdx': 2.0.5
       source-map: 0.7.4
       svgo: 3.0.4
-      undici: 5.28.0
       vfile: 6.0.1
-      vite: 4.5.0(@types/node@20.10.0)
       vite-imagetools: 5.1.2
       zod: 3.22.4
     transitivePeerDependencies:
-      - '@types/node'
-      - less
-      - lightningcss
       - rollup
-      - sass
-      - stylus
-      - sugarss
       - supports-color
-      - terser
+    dev: true
+
+  /@builder.io/qwik@1.2.12(undici@5.28.0):
+    resolution: {integrity: sha512-17dwM9BR0NJtrWLPlDygdYMlRkBAMEp8nkPIhhApSH5c/ESQMlbVg7Rm665WkBTf87+Epd+b7cC7Ky+8iYGjmA==}
+    engines: {node: '>=16.8.0 <18.0.0 || >=18.11'}
+    hasBin: true
+    peerDependencies:
+      undici: ^5.14.0
+    dependencies:
+      csstype: 3.1.2
+      undici: 5.28.0
     dev: true
 
   /@builder.io/qwik@1.2.19(@types/node@20.10.0)(undici@5.28.0):
@@ -9083,6 +9087,10 @@ packages:
 
   /@types/mdx@2.0.10:
     resolution: {integrity: sha512-Rllzc5KHk0Al5/WANwgSPl1/CwjqCy+AZrGd78zuK+jO9aDM6ffblZ+zIjgPNAaEBmlO0RYDvLNh7wD0zKVgEg==}
+    dev: true
+
+  /@types/mdx@2.0.5:
+    resolution: {integrity: sha512-76CqzuD6Q7LC+AtbPqrvD9AqsN0k8bsYo2bM2J8pmNldP1aIPAbzUQ7QbobyXL4eLr1wK5x8FZFe8eF/ubRuBg==}
     dev: true
 
   /@types/mime@1.3.4:
