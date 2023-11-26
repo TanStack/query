@@ -79,14 +79,6 @@ now we only support the object format.
 + queryCache.findAll({ queryKey, ...filters })
 ```
 
-### `queryClient.getQueryData` now accepts queryKey only as an Argument
-
-`queryClient.getQueryData` argument is changed to accept only a `queryKey`
-
-```diff
-- queryClient.getQueryData(queryKey, filters)
-+ queryClient.getQueryData(queryKey)
-```
 
 ### `queryClient.getQueryState` now accepts queryKey only as an Argument
 
@@ -106,7 +98,7 @@ To make the remove overloads migration easier, v5 comes with a codemod.
 If you want to run it against `.js` or `.jsx` files, please use the command below:
 
 ```
-npx jscodeshift@lastest ./path/to/src/ \
+npx jscodeshift@latest ./path/to/src/ \
   --extensions=js,jsx \
   --transform=./node_modules/@tanstack/react-query/build/codemods/src/v5/remove-overloads/remove-overloads.js
 ```
@@ -114,7 +106,7 @@ npx jscodeshift@lastest ./path/to/src/ \
 If you want to run it against `.ts` or `.tsx` files, please use the command below:
 
 ```
-npx jscodeshift@lastest ./path/to/src/ \
+npx jscodeshift@latest ./path/to/src/ \
   --extensions=ts,tsx \
   --parser=tsx \
   --transform=./node_modules/@tanstack/react-query/build/codemods/src/v5/remove-overloads/remove-overloads.js
