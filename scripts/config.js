@@ -44,6 +44,11 @@ export const packages = [
     entries: ['main', 'module', 'types'],
   },
   {
+    name: '@tanstack/qwik-query',
+    packageDir: 'packages/qwik-query',
+    entries: ['main', 'module', 'types'],
+  },
+  {
     name: '@tanstack/react-query',
     packageDir: 'packages/react-query',
     entries: ['main', 'module', 'types'],
