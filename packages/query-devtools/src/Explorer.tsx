@@ -554,6 +554,7 @@ const stylesFactory = (theme: 'light' | 'dark') => {
     `,
     label: css`
       color: ${t(colors.gray[700], colors.gray[300])};
+      white-space: nowrap;
     `,
     value: css`
       color: ${t(colors.purple[600], colors.purple[400])};
