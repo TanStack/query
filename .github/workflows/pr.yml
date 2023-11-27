@@ -16,6 +16,7 @@ env:
   NX_CLOUD_DISTRIBUTED_EXECUTION_AGENT_COUNT: 3
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   NX_CLOUD_AUTH_TOKEN: ${{ secrets.NX_CLOUD_AUTH_TOKEN }}
+  NC_VERBOSE_LOGGING: true
 
 jobs:
   main:
@@ -53,6 +54,7 @@ jobs:
           max_attempts: 3
           command: npx nx affected --targets=test:eslint,test:lib,test:types,test:build,test:bundle
       - name: Stop Agents
+        if: ${{ always() }}
         run: npx nx-cloud stop-all-agents
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
