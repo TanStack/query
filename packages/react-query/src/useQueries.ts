@@ -306,6 +306,13 @@ export function useQueries<
     : []
 
   if (suspensePromises.length > 0) {
+    observer.setQueries(
+      defaultedQueries,
+      options as QueriesObserverOptions<TCombinedResult>,
+      {
+        listeners: false,
+      },
+    )
     throw Promise.all(suspensePromises)
   }
   const observerQueries = observer.getQueries()

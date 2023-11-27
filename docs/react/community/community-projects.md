@@ -103,6 +103,12 @@ Incrementally adoptable type-safety for your new and existing APIs
 
 Link: https://ts-rest.com/
 
+## wagmi
+
+React Hooks for Ethereum based on `@tanstack/react-query`
+
+Link: https://wagmi.sh/
+
 ## zodios
 
 End-to-end typesafe REST API toolbox

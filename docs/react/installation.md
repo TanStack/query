@@ -7,8 +7,6 @@ You can install React Query via [NPM](https://npmjs.com/),
 or a good ol' `<script>` via
 [ESM.sh](https://esm.sh/).
 
-> v5 is currently available as a release-candidate. We don't anticipate any major API changes from here on out. We encourage you to try it out and report any issues you find.
-
 ### NPM
 
 ```bash
