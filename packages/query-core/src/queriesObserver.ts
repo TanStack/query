@@ -46,7 +46,8 @@ export class QueriesObserver<
     super()
 
     this.#client = client
-    this.#queries = []
+    this.#queries = queries
+    this.#options = options
     this.#observers = []
 
     this.#setResult([])
