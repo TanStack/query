@@ -46,6 +46,6 @@
     "vite": "^4.5.0"
   },
   "dependencies": {
-    "@tanstack/query-core": "latest"
+    "@tanstack/query-core": "workspace:*"
   }
 }
