@@ -1,4 +1,9 @@
-module.exports = ({ jscodeshift, utils, root }) => {
+module.exports = ({
+  jscodeshift,
+  utils,
+  root,
+  packageName = '@tanstack/react-query',
+}) => {
   const filterQueryClientMethodCalls = (node, methods) =>
     utils.isIdentifier(node) && methods.includes(node.name)
 
@@ -37,7 +42,7 @@ module.exports = ({ jscodeshift, utils, root }) => {
 
   const execute = (methods, replacer) => {
     findQueryClientMethodCalls(
-      utils.locateImports(['QueryClient', 'useQueryClient']),
+      utils.locateImports(['QueryClient', 'useQueryClient'], packageName),
       methods,
     ).replaceWith(replacer)
   }

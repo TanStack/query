@@ -30,6 +30,9 @@ Consider the following example where we would ideally want to increment a pageIn
 
 [//]: # 'Example2'
 ```tsx
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import React from "react";
+
 function Todos() {
   const [page, setPage] = React.useState(0)
 

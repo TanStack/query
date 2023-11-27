@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import fetch from '../../libs/fetch'
+import fetch from '../../../libs/fetch'
 
 import { useQuery } from '@tanstack/react-query'
 

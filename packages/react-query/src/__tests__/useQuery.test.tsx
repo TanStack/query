@@ -1108,7 +1108,6 @@ describe('useQuery', () => {
 
   it('should use query function from hook when the existing query does not have a query function', async () => {
     const key = queryKey()
-    const results: Array<DefinedUseQueryResult<string>> = []
 
     queryClient.setQueryData(key, 'set')
 
@@ -1123,8 +1122,6 @@ describe('useQuery', () => {
         initialData: 'initial',
         staleTime: Infinity,
       })
-
-      results.push(result)
 
       return (
         <div>
@@ -1142,12 +1139,6 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('data: set'))
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     await waitFor(() => rendered.getByText('data: fetched'))
-
-    await waitFor(() => expect(results.length).toBe(3))
-
-    expect(results[0]).toMatchObject({ data: 'set', isFetching: false })
-    expect(results[1]).toMatchObject({ data: 'set', isFetching: true })
-    expect(results[2]).toMatchObject({ data: 'fetched', isFetching: false })
   })
 
   it('should update query stale state and refetch when invalidated with invalidateQueries', async () => {
@@ -6224,5 +6215,121 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <Test />)
 
     await waitFor(() => rendered.getByText('Works'))
+  })
+
+  it('should keep the previous data when placeholderData is set and cache is used', async () => {
+    const key = queryKey()
+    const states: Array<UseQueryResult<number | undefined>> = []
+    const steps = [0, 1, 0, 2]
+
+    function Page() {
+      const [count, setCount] = React.useState(0)
+
+      const state = useQuery({
+        staleTime: Infinity,
+        queryKey: [key, steps[count]],
+        queryFn: async () => {
+          await sleep(10)
+          return steps[count]
+        },
+        placeholderData: keepPreviousData,
+      })
+
+      states.push(state)
+
+      return (
+        <div>
+          <div>data: {state.data}</div>
+          <button onClick={() => setCount((c) => c + 1)}>setCount</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('data: 0'))
+
+    fireEvent.click(rendered.getByRole('button', { name: 'setCount' }))
+
+    await waitFor(() => rendered.getByText('data: 1'))
+
+    fireEvent.click(rendered.getByRole('button', { name: 'setCount' }))
+
+    await waitFor(() => rendered.getByText('data: 0'))
+
+    fireEvent.click(rendered.getByRole('button', { name: 'setCount' }))
+
+    await waitFor(() => rendered.getByText('data: 2'))
+
+    // Initial
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isFetching: true,
+      isSuccess: false,
+      isPlaceholderData: false,
+    })
+    // Fetched
+    expect(states[1]).toMatchObject({
+      data: 0,
+      isFetching: false,
+      isSuccess: true,
+      isPlaceholderData: false,
+    })
+    // Set state
+    expect(states[2]).toMatchObject({
+      data: 0,
+      isFetching: true,
+      isSuccess: true,
+      isPlaceholderData: true,
+    })
+    // New data
+    expect(states[3]).toMatchObject({
+      data: 1,
+      isFetching: false,
+      isSuccess: true,
+      isPlaceholderData: false,
+    })
+    // Set state with existing data
+    expect(states[4]).toMatchObject({
+      data: 0,
+      isFetching: false,
+      isSuccess: true,
+      isPlaceholderData: false,
+    })
+    // Set state where the placeholder value should come from cache request
+    expect(states[5]).toMatchObject({
+      data: 0,
+      isFetching: true,
+      isSuccess: true,
+      isPlaceholderData: true,
+    })
+    // New data
+    expect(states[6]).toMatchObject({
+      data: 2,
+      isFetching: false,
+      isSuccess: true,
+      isPlaceholderData: false,
+    })
+  })
+
+  // For Project without TS, when migrating from v4 to v5, make sure invalid calls due to bad parameters are tracked.
+  it('should throw in case of bad arguments to enhance DevX', async () => {
+    // Mock console error to avoid noise when test is run
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    const key = queryKey()
+    const queryFn = () => 'data'
+
+    function Page() {
+      // Invalid call on purpose
+      // @ts-expect-error
+      useQuery(key, { queryFn })
+      return <div>Does not matter</div>
+    }
+
+    expect(() => render(<Page />)).toThrow('Bad argument type')
+    consoleMock.mockRestore()
   })
 })

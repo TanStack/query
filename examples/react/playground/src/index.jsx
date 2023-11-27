@@ -310,8 +310,8 @@ function EditTodo({ editingIndex, setEditingIndex }) {
             {saveMutation.status === 'pending'
               ? 'Saving...'
               : saveMutation.status === 'error'
-              ? saveMutation.error.message
-              : 'Saved!'}
+                ? saveMutation.error.message
+                : 'Saved!'}
           </div>
           <div>
             {isFetching ? (
@@ -358,8 +358,8 @@ function AddTodo() {
         {addMutation.status === 'pending'
           ? 'Saving...'
           : addMutation.status === 'error'
-          ? addMutation.error.message
-          : 'Saved!'}
+            ? addMutation.error.message
+            : 'Saved!'}
       </div>
     </div>
   )
@@ -375,62 +375,74 @@ function fetchTodos({ signal, queryKey: [, { filter }] }) {
   }
 
   return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (Math.random() < errorRate) {
-        return reject(
-          new Error(JSON.stringify({ fetchTodos: { filter } }, null, 2)),
-        )
-      }
-      resolve(list.filter((d) => d.name.includes(filter)))
-    }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin))
+    setTimeout(
+      () => {
+        if (Math.random() < errorRate) {
+          return reject(
+            new Error(JSON.stringify({ fetchTodos: { filter } }, null, 2)),
+          )
+        }
+        resolve(list.filter((d) => d.name.includes(filter)))
+      },
+      queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin),
+    )
   })
 }
 
 function fetchTodoById({ id }) {
   console.info('fetchTodoById', { id })
   return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (Math.random() < errorRate) {
-        return reject(
-          new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
-        )
-      }
-      resolve(list.find((d) => d.id === id))
-    }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin))
+    setTimeout(
+      () => {
+        if (Math.random() < errorRate) {
+          return reject(
+            new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
+          )
+        }
+        resolve(list.find((d) => d.id === id))
+      },
+      queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin),
+    )
   })
 }
 
 function postTodo({ name, notes }) {
   console.info('postTodo', { name, notes })
   return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (Math.random() < errorRate) {
-        return reject(
-          new Error(JSON.stringify({ postTodo: { name, notes } }, null, 2)),
-        )
-      }
-      const todo = { name, notes, id: id++ }
-      list = [...list, todo]
-      resolve(todo)
-    }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin))
+    setTimeout(
+      () => {
+        if (Math.random() < errorRate) {
+          return reject(
+            new Error(JSON.stringify({ postTodo: { name, notes } }, null, 2)),
+          )
+        }
+        const todo = { name, notes, id: id++ }
+        list = [...list, todo]
+        resolve(todo)
+      },
+      queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin),
+    )
   })
 }
 
 function patchTodo(todo) {
   console.info('patchTodo', todo)
   return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (Math.random() < errorRate) {
-        return reject(new Error(JSON.stringify({ patchTodo: todo }, null, 2)))
-      }
-      list = list.map((d) => {
-        if (d.id === todo.id) {
-          return todo
+    setTimeout(
+      () => {
+        if (Math.random() < errorRate) {
+          return reject(new Error(JSON.stringify({ patchTodo: todo }, null, 2)))
         }
-        return d
-      })
-      resolve(todo)
-    }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin))
+        list = list.map((d) => {
+          if (d.id === todo.id) {
+            return todo
+          }
+          return d
+        })
+        resolve(todo)
+      },
+      queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin),
+    )
   })
 }
 

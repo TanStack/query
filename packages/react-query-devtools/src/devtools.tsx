@@ -35,6 +35,10 @@ export interface DevtoolsOptions {
    * Use this so you can define custom errors that can be shown in the devtools.
    */
   errorTypes?: Array<DevToolsErrorType>
+  /**
+   * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+   */
+  styleNonce?: string
 }
 
 export function ReactQueryDevtools(
@@ -43,7 +47,8 @@ export function ReactQueryDevtools(
   const queryClient = useQueryClient()
   const client = props.client || queryClient
   const ref = useRef<HTMLDivElement>(null)
-  const { buttonPosition, position, initialIsOpen, errorTypes } = props
+  const { buttonPosition, position, initialIsOpen, errorTypes, styleNonce } =
+    props
   const [devtools] = useState(
     new TanstackQueryDevtools({
       client: client,
@@ -54,6 +59,7 @@ export function ReactQueryDevtools(
       position,
       initialIsOpen,
       errorTypes,
+      styleNonce,
     }),
   )
 
