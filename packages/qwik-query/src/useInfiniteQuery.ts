@@ -1,6 +1,4 @@
-import type {
-  DehydratedState
-} from '@tanstack/query-core'
+import type { DehydratedState } from '@tanstack/query-core'
 import { ObserverType, useBaseQuery } from './useBaseQuery'
 
 export const useInfiniteQuery = (

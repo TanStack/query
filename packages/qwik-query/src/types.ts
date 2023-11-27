@@ -1,5 +1,22 @@
-import type { QRL } from "@builder.io/qwik";
-import { QueryKey, QueryFunctionContext, DefaultError, QueryObserverOptions, WithRequired, InfiniteQueryObserverOptions, QueryObserverResult, QueryObserverSuccessResult, DefinedQueryObserverResult, InfiniteQueryObserverResult, DefinedInfiniteQueryObserverResult, InfiniteQueryObserverSuccessResult, MutationObserverOptions, MutateFunction, MutationObserverResult, DefaultedQueryObserverOptions } from "@tanstack/query-core";
+import type { QRL } from '@builder.io/qwik'
+import {
+  QueryKey,
+  QueryFunctionContext,
+  DefaultError,
+  QueryObserverOptions,
+  WithRequired,
+  InfiniteQueryObserverOptions,
+  QueryObserverResult,
+  QueryObserverSuccessResult,
+  DefinedQueryObserverResult,
+  InfiniteQueryObserverResult,
+  DefinedInfiniteQueryObserverResult,
+  InfiniteQueryObserverSuccessResult,
+  MutationObserverOptions,
+  MutateFunction,
+  MutationObserverResult,
+  DefaultedQueryObserverOptions,
+} from '@tanstack/query-core'
 
 type QwikQueryFunction<
   T = unknown,
@@ -7,7 +24,7 @@ type QwikQueryFunction<
   TPageParam = any,
 > = QRL<
   (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>
->;
+>
 
 type QwikQueryObserverOptions<
   TQueryFnData = unknown,
@@ -17,10 +34,10 @@ type QwikQueryObserverOptions<
   TQueryKey extends QueryKey = QueryKey,
 > = Omit<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
-  "queryFn"
+  'queryFn'
 > & {
-  queryFn: QwikQueryFunction<TQueryFnData, TQueryKey>;
-};
+  queryFn: QwikQueryFunction<TQueryFnData, TQueryKey>
+}
 
 export interface QwikUseBaseQueryOptions<
   TQueryFnData = unknown,
@@ -36,7 +53,7 @@ export interface QwikUseBaseQueryOptions<
       TQueryData,
       TQueryKey
     >,
-    "queryKey"
+    'queryKey'
   > {}
 
 export interface UseQueryOptions<
@@ -53,9 +70,9 @@ export interface UseQueryOptions<
         TQueryFnData,
         TQueryKey
       >,
-      "queryKey"
+      'queryKey'
     >,
-    "suspense"
+    'suspense'
   > {}
 
 export interface UseSuspenseQueryOptions<
@@ -65,7 +82,7 @@ export interface UseSuspenseQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    "enabled" | "throwOnError" | "placeholderData"
+    'enabled' | 'throwOnError' | 'placeholderData'
   > {}
 
 export interface UseInfiniteQueryOptions<
@@ -83,9 +100,9 @@ export interface UseInfiniteQueryOptions<
         TQueryData,
         TQueryKey
       >,
-      "suspense"
+      'suspense'
     >,
-    "queryKey"
+    'queryKey'
   > {}
 
 export interface UseSuspenseInfiniteQueryOptions<
@@ -96,54 +113,51 @@ export interface UseSuspenseInfiniteQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
     UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
-    "enabled" | "throwOnError" | "placeholderData"
+    'enabled' | 'throwOnError' | 'placeholderData'
   > {}
 
 export type UseBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = QueryObserverResult<TData, TError>;
+> = QueryObserverResult<TData, TError>
 
 export type UseQueryResult<
   TData = unknown,
   TError = DefaultError,
   TOptions = UseQueryOptions,
 > = {
-  options: TOptions;
-  result: UseBaseQueryResult<TData, TError>;
-};
+  options: TOptions
+  result: UseBaseQueryResult<TData, TError>
+}
 
 export type UseSuspenseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = Omit<QueryObserverSuccessResult<TData, TError>, "isPlaceholderData">;
+> = Omit<QueryObserverSuccessResult<TData, TError>, 'isPlaceholderData'>
 
 export type DefinedUseQueryResult<
   TData = unknown,
   TError = DefaultError,
   TOptions = UseQueryOptions,
 > = {
-  options: TOptions;
-  result: DefinedQueryObserverResult<TData, TError>;
-};
+  options: TOptions
+  result: DefinedQueryObserverResult<TData, TError>
+}
 
 export type UseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = InfiniteQueryObserverResult<TData, TError>;
+> = InfiniteQueryObserverResult<TData, TError>
 
 export type DefinedUseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = DefinedInfiniteQueryObserverResult<TData, TError>;
+> = DefinedInfiniteQueryObserverResult<TData, TError>
 
 export type UseSuspenseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = Omit<
-  InfiniteQueryObserverSuccessResult<TData, TError>,
-  "isPlaceholderData"
->;
+> = Omit<InfiniteQueryObserverSuccessResult<TData, TError>, 'isPlaceholderData'>
 
 export interface UseMutationOptions<
   TData = unknown,
@@ -152,7 +166,7 @@ export interface UseMutationOptions<
   TContext = unknown,
 > extends Omit<
     MutationObserverOptions<TData, TError, TVariables, TContext>,
-    "_defaulted" | "variables"
+    '_defaulted' | 'variables'
   > {}
 
 export type UseMutateFunction<
@@ -162,14 +176,14 @@ export type UseMutateFunction<
   TContext = unknown,
 > = (
   ...args: Parameters<MutateFunction<TData, TError, TVariables, TContext>>
-) => void;
+) => void
 
 export type UseMutateAsyncFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> = MutateFunction<TData, TError, TVariables, TContext>;
+> = MutateFunction<TData, TError, TVariables, TContext>
 
 export type UseBaseMutationResult<
   TData = unknown,
@@ -180,21 +194,21 @@ export type UseBaseMutationResult<
   MutationObserverResult<TData, TError, TVariables, TContext>,
   { mutate: UseMutateFunction<TData, TError, TVariables, TContext> }
 > & {
-  mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext>;
-};
+  mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext>
+}
 
 export type UseMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
   TContext = unknown,
-> = UseBaseMutationResult<TData, TError, TVariables, TContext>;
+> = UseBaseMutationResult<TData, TError, TVariables, TContext>
 
 export type QueryStore = {
-  result: any;
+  result: any
   options:
     | DefaultedQueryObserverOptions<unknown, Error, unknown, unknown, QueryKey>
-    | InfiniteQueryObserverOptions<unknown, Error, unknown, unknown, QueryKey>;
-};
+    | InfiniteQueryObserverOptions<unknown, Error, unknown, unknown, QueryKey>
+}
 
-type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] };
+type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }

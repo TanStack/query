@@ -7,10 +7,7 @@ import type {
   DefinedInitialDataOptions,
   UndefinedInitialDataOptions,
 } from './queryOptions'
-import type {
-  DefinedUseQueryResult,
-  UseQueryOptions
-} from './types'
+import type { DefinedUseQueryResult, UseQueryOptions } from './types'
 import { ObserverType, useBaseQuery } from './useBaseQuery'
 
 export function useQuery(

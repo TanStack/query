@@ -73,7 +73,7 @@ export const UseIsFetchingTest3 = component$(() => {
     queryFn: $(async () => {
       await sleep(30)
       return 'test'
-    })
+    }),
   })
   const isFetching = useIsFetching()
 

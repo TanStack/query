@@ -13,7 +13,11 @@ describe('useQuery', () => {
           return 'test'
         }),
       })
-      return queryStore.result.status === 'pending' ? <div>default</div> : <div>{JSON.stringify(queryStore.result.data)}</div>
+      return queryStore.result.status === 'pending' ? (
+        <div>default</div>
+      ) : (
+        <div>{JSON.stringify(queryStore.result.data)}</div>
+      )
     })
 
     cy.mount(
