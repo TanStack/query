@@ -1,0 +1,28 @@
+{
+  "name": "qwik-basic",
+  "description": "App with Routing built-in ready to create your app",
+  "engines": {
+    "node": ">=15.0.0"
+  },
+  "private": true,
+  "trustedDependencies": [
+    "sharp"
+  ],
+  "scripts": {
+    "test:bundle": "qwik build",
+    "build.client": "vite build",
+    "build.preview": "vite build --ssr src/entry.preview.tsx",
+    "build.types": "tsc --incremental --noEmit"
+  },
+  "devDependencies": {
+    "@builder.io/qwik": "1.2.12",
+    "@builder.io/qwik-city": "1.2.12",
+    "typescript": "5.1.6",
+    "vite": "^4.5.0",
+    "vite-tsconfig-paths": "^4.2.1"
+  },
+  "dependencies": {
+    "@tanstack/query-core": "workspace:*",
+    "@tanstack/qwik-query": "workspace:*"
+  }
+}

@@ -44,3 +44,4 @@ stats.html
 .idea
 
 nx-cloud.env
+integrations/qwik-vite/tmp/*
