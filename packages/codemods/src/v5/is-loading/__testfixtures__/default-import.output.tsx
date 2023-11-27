@@ -69,7 +69,7 @@ export const WithCombinations = () => {
       queryFn: () => ['anotherData'],
     })
 
-    return rest
+    return { isLoading: rest.isPending, ...rest };
   }
 
   const { isError, isPending: isLoadingRenamed, isSuccess, status } = useQuery({

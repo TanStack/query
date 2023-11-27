@@ -32,6 +32,16 @@ const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
    * @param {import('jscodeshift').ASTNode} node
    * @returns {boolean}
    */
+  const isObjectExpression = (node) => {
+    return jscodeshift.match(node, {
+      type: jscodeshift.ObjectExpression.name,
+    })
+  }
+
+  /**
+   * @param {import('jscodeshift').ASTNode} node
+   * @returns {boolean}
+   */
   const isObjectPattern = (node) => {
     return jscodeshift.match(node, {
       type: jscodeshift.ObjectPattern.name,
@@ -117,13 +127,49 @@ const transformUsages = ({ jscodeshift, utils, root, filePath, config }) => {
 
         if (isLoadingObjectProperty) {
           jscodeshift(lookupNode)
-            .find(jscodeshift.Identifier, {
-              name: originalName,
+            .find(jscodeshift.ObjectProperty, {
+              key: {
+                type: jscodeshift.Identifier.name,
+                name: originalName,
+              },
             })
-            .replaceWith(({ node: mutableNode }) => {
-              mutableNode.name = newName
+            .replaceWith((mutablePath) => {
+              if (isObjectPattern(mutablePath.parent)) {
+                const affectedProperty = mutablePath.value.value.shorthand
+                  ? 'value'
+                  : 'key'
 
-              return mutableNode
+                mutablePath.value[affectedProperty].name = newName
+
+                return mutablePath.value
+              }
+
+              if (isObjectExpression(mutablePath.parent)) {
+                const affectedProperty = mutablePath.value.value.shorthand
+                  ? 'key'
+                  : 'value'
+
+                mutablePath.value[affectedProperty].name = newName
+
+                return mutablePath.value
+              }
+
+              return mutablePath.value
+            })
+
+          // Renaming all other 'isLoading' references that are object properties.
+          jscodeshift(lookupNode)
+            .find(jscodeshift.Identifier, { name: originalName })
+            .replaceWith((mutablePath) => {
+              if (
+                !jscodeshift.match(mutablePath.parent, {
+                  type: jscodeshift.ObjectProperty.name,
+                })
+              ) {
+                mutablePath.value.name = newName
+              }
+
+              return mutablePath.value
             })
         }
 
