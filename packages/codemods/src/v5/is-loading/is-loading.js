@@ -238,7 +238,7 @@ module.exports = (file, api) => {
   transformUsages({
     ...dependencies,
     config: {
-      hooks: ['useQuery'],
+      hooks: ['useQuery', 'useMutation'],
       queryClientMethods: [],
     },
   })
