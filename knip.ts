@@ -5,6 +5,7 @@ const vueCompiler = /<script\b[^>]*>([\s\S]*?)<\/script>/gm
 export default {
   $schema: 'https://unpkg.com/knip@2/schema.json',
   ignoreWorkspaces: ['examples/**'],
+  ignore: ['**/react-app-env.d.ts', '**/vite-env.d.ts'],
   workspaces: {
     'packages/codemods': {
       entry: ['src/v4/*.js', 'src/v5/*/*.js'],
