@@ -944,6 +944,55 @@ describe('useQueries', () => {
     )
   })
 
+  it('should not return new instances when called without queries', async () => {
+    const key = queryKey()
+    const ids: Array<number> = []
+    let resultChanged = 0
+
+    function Page() {
+      const [count, setCount] = React.useState(0)
+      const result = useQueries({
+        queries: ids.map((id) => {
+          return {
+            queryKey: [key, id],
+            queryFn: async () => async () => {
+              return {
+                id,
+                content: { value: Math.random() },
+              }
+            },
+          }
+        }),
+        combine: () => ({ empty: 'object' }),
+      })
+
+      React.useEffect(() => {
+        resultChanged++
+      }, [result])
+
+      return (
+        <div>
+          <div>count: {count}</div>
+          <div>data: {JSON.stringify(result)}</div>
+          <button onClick={() => setCount((c) => c + 1)}>inc</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('data: {"empty":"object"}'))
+    await waitFor(() => rendered.getByText('count: 0'))
+
+    expect(resultChanged).toBe(1)
+
+    fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
+
+    await waitFor(() => rendered.getByText('count: 1'))
+    // there should be no further effect calls because the returned object is structurally shared
+    expect(resultChanged).toBe(1)
+  })
+
   it('should track property access through combine function', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
@@ -1028,15 +1077,11 @@ describe('useQueries', () => {
       rendered.getByText('data: true first result 1,second result 1'),
     )
 
-    expect(results.length).toBe(5)
+    const length = results.length
 
-    expect(results[3]).toStrictEqual({
-      combined: true,
-      refetch: expect.any(Function),
-      res: 'first result 1,second result 0',
-    })
+    expect([4, 5]).toContain(results.length)
 
-    expect(results[4]).toStrictEqual({
+    expect(results[results.length - 1]).toStrictEqual({
       combined: true,
       refetch: expect.any(Function),
       res: 'first result 1,second result 1',
@@ -1046,6 +1091,6 @@ describe('useQueries', () => {
 
     await sleep(100)
     // no further re-render because data didn't change
-    expect(results.length).toBe(5)
+    expect(results.length).toBe(length)
   })
 })

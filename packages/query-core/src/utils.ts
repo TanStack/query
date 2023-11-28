@@ -272,7 +272,7 @@ export function isPlainObject(o: any): o is Object {
     return false
   }
 
-  // If has modified constructor
+  // If has no constructor
   const ctor = o.constructor
   if (typeof ctor === 'undefined') {
     return true

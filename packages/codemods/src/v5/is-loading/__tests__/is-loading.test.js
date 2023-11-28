@@ -1,10 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const defineTest = require('jscodeshift/dist/testUtils').defineTest
 
-defineTest(__dirname, 'remove-overloads', null, 'default-import', {
+defineTest(__dirname, 'is-loading', null, 'default-import', {
   parser: 'tsx',
 })
 
-defineTest(__dirname, 'remove-overloads', null, 'bug-reports', {
+defineTest(__dirname, 'is-loading', null, 'named-import', {
   parser: 'tsx',
 })

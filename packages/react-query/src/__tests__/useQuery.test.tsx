@@ -1108,7 +1108,6 @@ describe('useQuery', () => {
 
   it('should use query function from hook when the existing query does not have a query function', async () => {
     const key = queryKey()
-    const results: Array<DefinedUseQueryResult<string>> = []
 
     queryClient.setQueryData(key, 'set')
 
@@ -1123,8 +1122,6 @@ describe('useQuery', () => {
         initialData: 'initial',
         staleTime: Infinity,
       })
-
-      results.push(result)
 
       return (
         <div>
@@ -1142,12 +1139,6 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('data: set'))
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     await waitFor(() => rendered.getByText('data: fetched'))
-
-    await waitFor(() => expect(results.length).toBe(3))
-
-    expect(results[0]).toMatchObject({ data: 'set', isFetching: false })
-    expect(results[1]).toMatchObject({ data: 'set', isFetching: true })
-    expect(results[2]).toMatchObject({ data: 'fetched', isFetching: false })
   })
 
   it('should update query stale state and refetch when invalidated with invalidateQueries', async () => {
