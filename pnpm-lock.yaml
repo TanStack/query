@@ -1546,9 +1546,6 @@ importers:
 
   packages/eslint-plugin-query:
     dependencies:
-      '@typescript-eslint/scope-manager':
-        specifier: ^5.54.0
-        version: 5.62.0
       '@typescript-eslint/utils':
         specifier: ^5.54.0
         version: 5.54.0(eslint@8.53.0)(typescript@5.1.6)

@@ -46,8 +46,7 @@
     "src"
   ],
   "dependencies": {
-    "@typescript-eslint/utils": "^5.54.0",
-    "@typescript-eslint/scope-manager": "^5.54.0"
+    "@typescript-eslint/utils": "^5.54.0"
   },
   "devDependencies": {
     "eslint": "^8.34.0"
