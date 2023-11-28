@@ -106,7 +106,9 @@ const [selectedMutationId, setSelectedMutationId] = createSignal<number | null>(
 )
 const [panelWidth, setPanelWidth] = createSignal(0)
 
-export const DevtoolsComponent: Component<QueryDevtoolsProps> = (props) => {
+export type DevtoolsComponentType = Component<QueryDevtoolsProps>
+
+const DevtoolsComponent: DevtoolsComponentType = (props) => {
   const [localStore, setLocalStore] = createLocalStorage({
     prefix: 'TanstackQueryDevtools',
   })
