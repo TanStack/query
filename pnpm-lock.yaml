@@ -1546,6 +1546,9 @@ importers:
 
   packages/eslint-plugin-query:
     dependencies:
+      '@typescript-eslint/scope-manager':
+        specifier: ^5.54.0
+        version: 5.62.0
       '@typescript-eslint/utils':
         specifier: ^5.54.0
         version: 5.54.0(eslint@8.53.0)(typescript@5.1.6)
@@ -1796,6 +1799,9 @@ importers:
       svelte-check:
         specifier: ^3.4.4
         version: 3.4.4(@babel/core@7.23.2)(postcss@8.4.31)(svelte@4.0.0)
+      svelte-eslint-parser:
+        specifier: ^0.32.2
+        version: 0.32.2(svelte@4.0.0)
 
   packages/svelte-query-devtools:
     dependencies:
@@ -1824,6 +1830,9 @@ importers:
       svelte-check:
         specifier: ^3.4.4
         version: 3.4.4(@babel/core@7.23.2)(postcss@8.4.31)(svelte@4.0.0)
+      svelte-eslint-parser:
+        specifier: ^0.32.2
+        version: 0.32.2(svelte@4.0.0)
 
   packages/svelte-query-persist-client:
     dependencies:
@@ -1852,6 +1861,9 @@ importers:
       svelte-check:
         specifier: ^3.4.4
         version: 3.4.4(@babel/core@7.23.2)(postcss@8.4.31)(svelte@4.0.0)
+      svelte-eslint-parser:
+        specifier: ^0.32.2
+        version: 0.32.2(svelte@4.0.0)
 
   packages/vue-query:
     dependencies:
