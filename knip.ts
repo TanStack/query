@@ -1,5 +1,5 @@
 // These aren't actual compilers, but performant & avoids root dependencies
-const svelteCompiler = (text: string) => text.matchAll(/import[^;]+/g)
+const svelteCompiler = (text: string) => text.matchAll(/import[^]*?'.*?'\n/gs)
 const vueCompiler = /<script\b[^>]*>([\s\S]*?)<\/script>/gm
 
 export default {

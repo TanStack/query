@@ -113,8 +113,8 @@ importers:
         specifier: ^6.1.0
         version: 6.1.0
       knip:
-        specifier: ^3.2.0
-        version: 3.2.0(typescript@5.1.6)
+        specifier: ^3.3.0
+        version: 3.3.0(typescript@5.1.6)
       luxon:
         specifier: ^3.4.3
         version: 3.4.3
@@ -19453,8 +19453,8 @@ packages:
     engines: {node: '>= 8'}
     dev: false
 
-  /knip@3.2.0(typescript@5.1.6):
-    resolution: {integrity: sha512-poRxmptcAmXJ8hdNxxSeh0hKExli0BC8WDtMYbk1eai6GnNdvHl33reRCdmPwCbxTqpjBl4LsNeirY/jGpzgjg==}
+  /knip@3.3.0(typescript@5.1.6):
+    resolution: {integrity: sha512-90Bbh3X18Jub5eEPvbjyTH1v0yo2Qp+Lz5qx31spUWGGs3LNCTd4IeWDaBZlfqCHrEyT4WjeiOuknxayY3QEbA==}
     engines: {node: '>=18.6.0'}
     hasBin: true
     peerDependencies:
