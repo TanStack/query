@@ -4,6 +4,7 @@
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Qwik",
   "main": "./lib/index.qwik.mjs",
   "qwik": "./lib/index.qwik.mjs",
+  "module": "./lib/index.qwik.mjs",
   "types": "./lib-types/index.d.ts",
   "exports": {
     ".": {
