@@ -341,7 +341,7 @@ The hooks provided by the `react-query` package need to retrieve a `QueryClient`
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-export default function Providers({ children }) {
+export default function Providers({ children }:{ children: React.ReactNode }) {
   const [queryClient] = React.useState(() => new QueryClient())
 
   return (
@@ -354,7 +354,7 @@ export default function Providers({ children }) {
 // app/layout.jsx
 import Providers from './providers'
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children } : { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head />
