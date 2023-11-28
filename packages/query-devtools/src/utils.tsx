@@ -7,12 +7,12 @@ export function getQueryStatusLabel(query: Query) {
   return query.state.fetchStatus === 'fetching'
     ? 'fetching'
     : !query.getObserversCount()
-    ? 'inactive'
-    : query.state.fetchStatus === 'paused'
-    ? 'paused'
-    : query.isStale()
-    ? 'stale'
-    : 'fresh'
+      ? 'inactive'
+      : query.state.fetchStatus === 'paused'
+        ? 'paused'
+        : query.isStale()
+          ? 'stale'
+          : 'fresh'
 }
 
 export const queryStatusLabels = [
@@ -45,12 +45,12 @@ export function getQueryStatusColor({
   return queryState.fetchStatus === 'fetching'
     ? 'blue'
     : !observerCount
-    ? 'gray'
-    : queryState.fetchStatus === 'paused'
-    ? 'purple'
-    : isStale
-    ? 'yellow'
-    : 'green'
+      ? 'gray'
+      : queryState.fetchStatus === 'paused'
+        ? 'purple'
+        : isStale
+          ? 'yellow'
+          : 'green'
 }
 
 export function getMutationStatusColor({
@@ -63,24 +63,24 @@ export function getMutationStatusColor({
   return isPaused
     ? 'purple'
     : status === 'error'
-    ? 'red'
-    : status === 'pending'
-    ? 'yellow'
-    : status === 'success'
-    ? 'green'
-    : 'gray'
+      ? 'red'
+      : status === 'pending'
+        ? 'yellow'
+        : status === 'success'
+          ? 'green'
+          : 'gray'
 }
 
 export function getQueryStatusColorByLabel(label: IQueryStatusLabel) {
   return label === 'fresh'
     ? 'green'
     : label === 'stale'
-    ? 'yellow'
-    : label === 'paused'
-    ? 'purple'
-    : label === 'inactive'
-    ? 'gray'
-    : 'blue'
+      ? 'yellow'
+      : label === 'paused'
+        ? 'purple'
+        : label === 'inactive'
+          ? 'gray'
+          : 'blue'
 }
 
 /**
@@ -101,10 +101,10 @@ const getStatusRank = (q: Query) =>
   q.state.fetchStatus !== 'idle'
     ? 0
     : !q.getObserversCount()
-    ? 3
-    : q.isStale()
-    ? 2
-    : 1
+      ? 3
+      : q.isStale()
+        ? 2
+        : 1
 
 const queryHashSort: SortFn = (a, b) => a.queryHash.localeCompare(b.queryHash)
 
@@ -131,10 +131,10 @@ const getMutationStatusRank = (m: Mutation) =>
   m.state.isPaused
     ? 0
     : m.state.status === 'error'
-    ? 2
-    : m.state.status === 'pending'
-    ? 1
-    : 3
+      ? 2
+      : m.state.status === 'pending'
+        ? 1
+        : 3
 
 const mutationDateSort: MutationSortFn = (a, b) =>
   a.state.submittedAt < b.state.submittedAt ? 1 : -1

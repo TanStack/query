@@ -1578,8 +1578,8 @@ describe('useInfiniteQuery', () => {
                     {state.isFetchingNextPage
                       ? 'Loading more...'
                       : state.hasNextPage
-                      ? 'Load More'
-                      : 'Nothing more to load'}
+                        ? 'Load More'
+                        : 'Nothing more to load'}
                   </button>
                   <button onClick={() => state.refetch()}>Refetch</button>
                   <button onClick={() => setIsRemovedLastPage(true)}>

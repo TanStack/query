@@ -21,7 +21,7 @@
     "esbuild": "^0.19.5",
     "postcss": "^8.4.31",
     "solid-start-node": "^0.3.7",
-    "typescript": "^5.2.2",
+    "typescript": "5.1.6",
     "vite": "^4.4.11"
   },
   "engines": {

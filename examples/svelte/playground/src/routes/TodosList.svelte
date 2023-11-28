@@ -16,14 +16,17 @@
 
   const fetchTodos = async ({ filter }: { filter: string }): Promise<Todos> => {
     return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (Math.random() < $errorRate) {
-          return reject(
-            new Error(JSON.stringify({ fetchTodos: { filter } }, null, 2)),
-          )
-        }
-        resolve($list.filter((d) => d.name.includes(filter)))
-      }, $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin))
+      setTimeout(
+        () => {
+          if (Math.random() < $errorRate) {
+            return reject(
+              new Error(JSON.stringify({ fetchTodos: { filter } }, null, 2)),
+            )
+          }
+          resolve($list.filter((d) => d.name.includes(filter)))
+        },
+        $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin),
+      )
     })
   }
 
