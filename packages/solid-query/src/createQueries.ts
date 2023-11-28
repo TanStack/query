@@ -129,7 +129,7 @@ type GetResults<T> =
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
  */
-export type QueriesOptions<
+type QueriesOptions<
   T extends Array<any>,
   Result extends Array<any> = [],
   Depth extends ReadonlyArray<number> = [],
@@ -171,7 +171,7 @@ export type QueriesOptions<
 /**
  * QueriesResults reducer recursively maps type param to results
  */
-export type QueriesResults<
+type QueriesResults<
   T extends Array<any>,
   Result extends Array<any> = [],
   Depth extends ReadonlyArray<number> = [],
