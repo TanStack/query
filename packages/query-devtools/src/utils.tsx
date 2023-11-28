@@ -22,7 +22,8 @@ export const queryStatusLabels = [
   'inactive',
   'fetching',
 ] as const
-export type IQueryStatusLabel = (typeof queryStatusLabels)[number]
+
+type QueryStatusLabel = (typeof queryStatusLabels)[number]
 
 export function getSidedProp<T extends string>(
   prop: T,
@@ -71,7 +72,7 @@ export function getMutationStatusColor({
           : 'gray'
 }
 
-export function getQueryStatusColorByLabel(label: IQueryStatusLabel) {
+export function getQueryStatusColorByLabel(label: QueryStatusLabel) {
   return label === 'fresh'
     ? 'green'
     : label === 'stale'
