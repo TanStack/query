@@ -17,7 +17,7 @@ interface CreateAsyncStoragePersisterOptions {
    * For SSR pass in `undefined`. Note that window.localStorage can be
    * `null` in Android WebViews depending on how they are configured.
    */
-  storage: AsyncStorage | undefined | null
+  storage: AsyncStorage<string> | undefined | null
   /** The key to use when storing the cache */
   key?: string
   /** To avoid spamming,
