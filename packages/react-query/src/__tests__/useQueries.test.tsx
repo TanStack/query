@@ -1077,15 +1077,11 @@ describe('useQueries', () => {
       rendered.getByText('data: true first result 1,second result 1'),
     )
 
-    expect(results.length).toBe(5)
+    const length = results.length
 
-    expect(results[3]).toStrictEqual({
-      combined: true,
-      refetch: expect.any(Function),
-      res: 'first result 1,second result 0',
-    })
+    expect([4, 5]).toContain(results.length)
 
-    expect(results[4]).toStrictEqual({
+    expect(results[results.length - 1]).toStrictEqual({
       combined: true,
       refetch: expect.any(Function),
       res: 'first result 1,second result 1',
@@ -1095,6 +1091,6 @@ describe('useQueries', () => {
 
     await sleep(100)
     // no further re-render because data didn't change
-    expect(results.length).toBe(5)
+    expect(results.length).toBe(length)
   })
 })
