@@ -100,3 +100,24 @@ jobs:
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - name: Run prettier
         run: pnpm run test:format
+  knip:
+    name: Knip
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install dependencies
+        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+      - name: Run Knip
+        run: pnpm knip
