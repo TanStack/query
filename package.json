@@ -83,7 +83,7 @@
     "sherif": "^0.5.0",
     "solid-js": "^1.8.1",
     "stream-to-array": "^2.3.0",
-    "tsup": "^7.2.0",
+    "tsup": "^7.3.0",
     "type-fest": "^4.5.0",
     "typescript": "5.1.6",
     "vite": "^4.4.11",

@@ -152,8 +152,8 @@ importers:
         specifier: ^2.3.0
         version: 2.3.0
       tsup:
-        specifier: ^7.2.0
-        version: 7.2.0(typescript@5.1.6)
+        specifier: ^7.3.0
+        version: 7.3.0(typescript@5.1.6)
       type-fest:
         specifier: ^4.5.0
         version: 4.5.0
@@ -1403,7 +1403,7 @@ importers:
         version: 18.2.0(react@18.2.0)
       react-scripts:
         specifier: ^5.0.1
-        version: 5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.5.5)(eslint@8.53.0)(react@18.2.0)(type-fest@4.5.0)(typescript@5.1.6)
+        version: 5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(esbuild@0.19.5)(eslint-import-resolver-typescript@3.5.5)(eslint@8.53.0)(react@18.2.0)(type-fest@4.5.0)(typescript@5.1.6)
 
   integrations/react-next:
     dependencies:
@@ -1602,7 +1602,7 @@ importers:
         version: 1.12.4
       tsup-preset-solid:
         specifier: ^2.1.0
-        version: 2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.2.0)
+        version: 2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.3.0)
       vite-plugin-solid:
         specifier: ^2.7.2
         version: 2.7.2(solid-js@1.8.1)(vite@4.4.11)
@@ -1723,7 +1723,7 @@ importers:
     devDependencies:
       tsup-preset-solid:
         specifier: ^2.1.0
-        version: 2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.2.0)
+        version: 2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.3.0)
       vite-plugin-solid:
         specifier: ^2.7.2
         version: 2.7.2(solid-js@1.8.1)(vite@4.4.11)
@@ -1742,7 +1742,7 @@ importers:
         version: 1.8.1
       tsup-preset-solid:
         specifier: ^2.1.0
-        version: 2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.2.0)
+        version: 2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.3.0)
       vite-plugin-solid:
         specifier: ^2.7.2
         version: 2.7.2(solid-js@1.8.1)(vite@4.4.11)
@@ -1761,7 +1761,7 @@ importers:
         version: 1.8.1
       tsup-preset-solid:
         specifier: ^2.1.0
-        version: 2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.2.0)
+        version: 2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.3.0)
       vite-plugin-solid:
         specifier: ^2.7.2
         version: 2.7.2(solid-js@1.8.1)(vite@4.4.11)
@@ -8082,7 +8082,7 @@ packages:
       schema-utils: 3.3.0
       source-map: 0.7.4
       type-fest: 4.5.0
-      webpack: 5.89.0(esbuild@0.18.20)
+      webpack: 5.89.0(esbuild@0.19.5)
       webpack-dev-server: 4.15.1(webpack@5.89.0)
     dev: false
 
@@ -8715,7 +8715,6 @@ packages:
     cpu: [arm]
     os: [android]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@rollup/rollup-android-arm64@4.6.0:
@@ -8723,7 +8722,6 @@ packages:
     cpu: [arm64]
     os: [android]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@rollup/rollup-darwin-arm64@4.6.0:
@@ -8731,7 +8729,6 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@rollup/rollup-darwin-x64@4.6.0:
@@ -8739,7 +8736,6 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@rollup/rollup-linux-arm-gnueabihf@4.6.0:
@@ -8747,7 +8743,6 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@rollup/rollup-linux-arm64-gnu@4.6.0:
@@ -8755,7 +8750,6 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@rollup/rollup-linux-arm64-musl@4.6.0:
@@ -8763,7 +8757,6 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@rollup/rollup-linux-x64-gnu@4.6.0:
@@ -8771,7 +8764,6 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@rollup/rollup-linux-x64-musl@4.6.0:
@@ -8779,7 +8771,6 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@rollup/rollup-win32-arm64-msvc@4.6.0:
@@ -8787,7 +8778,6 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@rollup/rollup-win32-ia32-msvc@4.6.0:
@@ -8795,7 +8785,6 @@ packages:
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@rollup/rollup-win32-x64-msvc@4.6.0:
@@ -8803,7 +8792,6 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@rushstack/eslint-patch@1.5.1:
@@ -11456,7 +11444,7 @@ packages:
       loader-utils: 2.0.4
       make-dir: 3.1.0
       schema-utils: 2.7.1
-      webpack: 5.89.0(esbuild@0.18.20)
+      webpack: 5.89.0(esbuild@0.19.5)
     dev: false
 
   /babel-plugin-add-module-exports@0.2.1:
@@ -12325,13 +12313,13 @@ packages:
     dependencies:
       run-applescript: 5.0.0
 
-  /bundle-require@4.0.2(esbuild@0.18.20):
+  /bundle-require@4.0.2(esbuild@0.19.5):
     resolution: {integrity: sha512-jwzPOChofl67PSTW2SGubV9HBQAhhR2i6nskiOThauo9dzwDUgOWQScFVaJkjEfYX+UXiD+LEx8EblQMc2wIag==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     peerDependencies:
       esbuild: '>=0.17'
     dependencies:
-      esbuild: 0.18.20
+      esbuild: 0.19.5
       load-tsconfig: 0.2.5
     dev: true
 
@@ -13385,10 +13373,10 @@ packages:
       postcss-modules-values: 4.0.0(postcss@8.4.31)
       postcss-value-parser: 4.2.0
       semver: 7.5.4
-      webpack: 5.89.0(esbuild@0.18.20)
+      webpack: 5.89.0(esbuild@0.19.5)
     dev: false
 
-  /css-minimizer-webpack-plugin@3.4.1(esbuild@0.18.20)(webpack@5.89.0):
+  /css-minimizer-webpack-plugin@3.4.1(esbuild@0.19.5)(webpack@5.89.0):
     resolution: {integrity: sha512-1u6D71zeIfgngN2XNRJefc/hY7Ybsxd74Jm4qngIXyUEk7fss3VUzuHxLAq/R8NAba4QU9OUSaMZlbpRc7bM4Q==}
     engines: {node: '>= 12.13.0'}
     peerDependencies:
@@ -13408,13 +13396,13 @@ packages:
         optional: true
     dependencies:
       cssnano: 5.1.15(postcss@8.4.31)
-      esbuild: 0.18.20
+      esbuild: 0.19.5
       jest-worker: 27.5.1
       postcss: 8.4.31
       schema-utils: 4.2.0
       serialize-javascript: 6.0.1
       source-map: 0.6.1
-      webpack: 5.89.0(esbuild@0.18.20)
+      webpack: 5.89.0(esbuild@0.19.5)
     dev: false
 
   /css-prefers-color-scheme@3.1.1:
@@ -15226,7 +15214,7 @@ packages:
       micromatch: 4.0.5
       normalize-path: 3.0.0
       schema-utils: 4.2.0
-      webpack: 5.89.0(esbuild@0.18.20)
+      webpack: 5.89.0(esbuild@0.19.5)
     dev: false
 
   /eslint@8.53.0:
@@ -15872,7 +15860,7 @@ packages:
     dependencies:
       loader-utils: 2.0.4
       schema-utils: 3.3.0
-      webpack: 5.89.0(esbuild@0.18.20)
+      webpack: 5.89.0(esbuild@0.19.5)
     dev: false
 
   /file-uri-to-path@1.0.0:
@@ -16138,7 +16126,7 @@ packages:
       semver: 7.5.4
       tapable: 1.1.3
       typescript: 5.1.6
-      webpack: 5.89.0(esbuild@0.18.20)
+      webpack: 5.89.0(esbuild@0.19.5)
     dev: false
 
   /form-data@3.0.1:
@@ -16545,7 +16533,7 @@ packages:
     dependencies:
       array-union: 2.1.0
       dir-glob: 3.0.1
-      fast-glob: 3.3.1
+      fast-glob: 3.3.2
       ignore: 5.2.4
       merge2: 1.4.1
       slash: 3.0.0
@@ -16932,7 +16920,7 @@ packages:
       lodash: 4.17.21
       pretty-error: 4.0.0
       tapable: 2.2.1
-      webpack: 5.89.0(esbuild@0.18.20)
+      webpack: 5.89.0(esbuild@0.19.5)
     dev: false
 
   /htmlparser2@6.1.0:
@@ -20709,7 +20697,7 @@ packages:
       webpack: ^5.0.0
     dependencies:
       schema-utils: 4.2.0
-      webpack: 5.89.0(esbuild@0.18.20)
+      webpack: 5.89.0(esbuild@0.19.5)
     dev: false
 
   /minimalistic-assert@1.0.1:
@@ -22740,7 +22728,7 @@ packages:
       klona: 2.0.6
       postcss: 8.4.31
       semver: 7.5.4
-      webpack: 5.89.0(esbuild@0.18.20)
+      webpack: 5.89.0(esbuild@0.19.5)
     dev: false
 
   /postcss-logical@3.0.0:
@@ -24063,7 +24051,7 @@ packages:
       strip-ansi: 6.0.1
       text-table: 0.2.0
       typescript: 5.1.6
-      webpack: 5.89.0(esbuild@0.18.20)
+      webpack: 5.89.0(esbuild@0.19.5)
     transitivePeerDependencies:
       - eslint
       - supports-color
@@ -24498,7 +24486,7 @@ packages:
       - webpack-plugin-serve
     dev: false
 
-  /react-scripts@5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.5.5)(eslint@8.53.0)(react@18.2.0)(type-fest@4.5.0)(typescript@5.1.6):
+  /react-scripts@5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(esbuild@0.19.5)(eslint-import-resolver-typescript@3.5.5)(eslint@8.53.0)(react@18.2.0)(type-fest@4.5.0)(typescript@5.1.6):
     resolution: {integrity: sha512-8VAmEm/ZAwQzJ+GOMLbBsTdDKOpuZh7RPs0UymvBR2vRk4iZWCskjbFnxqjrzoIvlNNRZ3QJFx6/qDSi6zSnaQ==}
     engines: {node: '>=14.0.0'}
     hasBin: true
@@ -24522,7 +24510,7 @@ packages:
       camelcase: 6.3.0
       case-sensitive-paths-webpack-plugin: 2.4.0
       css-loader: 6.8.1(webpack@5.89.0)
-      css-minimizer-webpack-plugin: 3.4.1(esbuild@0.18.20)(webpack@5.89.0)
+      css-minimizer-webpack-plugin: 3.4.1(esbuild@0.19.5)(webpack@5.89.0)
       dotenv: 10.0.0
       dotenv-expand: 5.1.0
       eslint: 8.53.0
@@ -24553,9 +24541,9 @@ packages:
       source-map-loader: 3.0.2(webpack@5.89.0)
       style-loader: 3.3.3(webpack@5.89.0)
       tailwindcss: 3.3.2
-      terser-webpack-plugin: 5.3.9(esbuild@0.18.20)(webpack@5.89.0)
+      terser-webpack-plugin: 5.3.9(esbuild@0.19.5)(webpack@5.89.0)
       typescript: 5.1.6
-      webpack: 5.89.0(esbuild@0.18.20)
+      webpack: 5.89.0(esbuild@0.19.5)
       webpack-dev-server: 4.15.1(webpack@5.89.0)
       webpack-manifest-plugin: 4.1.1(webpack@5.89.0)
       workbox-webpack-plugin: 6.6.0(webpack@5.89.0)
@@ -25215,7 +25203,6 @@ packages:
       '@rollup/rollup-win32-ia32-msvc': 4.6.0
       '@rollup/rollup-win32-x64-msvc': 4.6.0
       fsevents: 2.3.3
-    dev: false
 
   /rooks@7.14.1(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-oPuLNGm3OaFm3WfZHzmDvJvRit8QrXGm9/Kn49Bz8lJUjkThSBtERWzuQ9wb5DveqrpUZvmNyBXjBE0KWVt13w==}
@@ -25400,7 +25387,7 @@ packages:
     dependencies:
       klona: 2.0.6
       neo-async: 2.6.2
-      webpack: 5.89.0(esbuild@0.18.20)
+      webpack: 5.89.0(esbuild@0.19.5)
     dev: false
 
   /sax@1.2.4:
@@ -26035,7 +26022,7 @@ packages:
       abab: 2.0.6
       iconv-lite: 0.6.3
       source-map-js: 1.0.2
-      webpack: 5.89.0(esbuild@0.18.20)
+      webpack: 5.89.0(esbuild@0.19.5)
     dev: false
 
   /source-map-resolve@0.5.3:
@@ -26546,7 +26533,7 @@ packages:
     peerDependencies:
       webpack: ^5.0.0
     dependencies:
-      webpack: 5.89.0(esbuild@0.18.20)
+      webpack: 5.89.0(esbuild@0.19.5)
     dev: false
 
   /styled-jsx@5.1.1(@babel/core@7.23.2)(react@18.2.0):
@@ -27023,7 +27010,7 @@ packages:
       - bluebird
     dev: false
 
-  /terser-webpack-plugin@5.3.9(esbuild@0.18.20)(webpack@5.89.0):
+  /terser-webpack-plugin@5.3.9(esbuild@0.19.5)(webpack@5.89.0):
     resolution: {integrity: sha512-ZuXsqE07EcggTWQjXUj+Aot/OMcD0bMKGgF63f7UxYcu5/AJF53aIpK1YoP5xR9l6s/Hy2b+t1AM0bLNPRuhwA==}
     engines: {node: '>= 10.13.0'}
     peerDependencies:
@@ -27040,12 +27027,12 @@ packages:
         optional: true
     dependencies:
       '@jridgewell/trace-mapping': 0.3.20
-      esbuild: 0.18.20
+      esbuild: 0.19.5
       jest-worker: 27.5.1
       schema-utils: 3.3.0
       serialize-javascript: 6.0.1
       terser: 5.22.0
-      webpack: 5.89.0(esbuild@0.18.20)
+      webpack: 5.89.0(esbuild@0.19.5)
     dev: false
 
   /terser@4.8.1:
@@ -27342,27 +27329,28 @@ packages:
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
 
-  /tsup-preset-solid@2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.2.0):
+  /tsup-preset-solid@2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.3.0):
     resolution: {integrity: sha512-4b63QsUz/1+PDkcQQmBnIUjW+GzlktBjclgAinfQ5DNbQiCBBbcY7tn+0xYykb/MB6rHDoc4b+rHGdgPv51AtQ==}
     peerDependencies:
       tsup: ^7.0.0
     dependencies:
       esbuild-plugin-solid: 0.5.0(esbuild@0.19.5)(solid-js@1.8.1)
-      tsup: 7.2.0(typescript@5.1.6)
+      tsup: 7.3.0(typescript@5.1.6)
     transitivePeerDependencies:
       - esbuild
       - solid-js
       - supports-color
     dev: true
 
-  /tsup@7.2.0(typescript@5.1.6):
-    resolution: {integrity: sha512-vDHlczXbgUvY3rWvqFEbSqmC1L7woozbzngMqTtL2PGBODTtWlRwGDDawhvWzr5c1QjKe4OAKqJGfE1xeXUvtQ==}
-    engines: {node: '>=16.14'}
+  /tsup@7.3.0(typescript@5.1.6):
+    resolution: {integrity: sha512-Ja1eaSRrE+QarmATlNO5fse2aOACYMBX+IZRKy1T+gpyH+jXgRrl5l4nHIQJQ1DoDgEjHDTw8cpE085UdBZuWQ==}
+    engines: {node: '>=18'}
+    deprecated: Breaking node 16
     hasBin: true
     peerDependencies:
       '@swc/core': ^1
       postcss: ^8.4.12
-      typescript: '>=4.1.0'
+      typescript: '>=4.5.0'
     peerDependenciesMeta:
       '@swc/core':
         optional: true
@@ -27371,17 +27359,17 @@ packages:
       typescript:
         optional: true
     dependencies:
-      bundle-require: 4.0.2(esbuild@0.18.20)
+      bundle-require: 4.0.2(esbuild@0.19.5)
       cac: 6.7.14
       chokidar: 3.5.3
       debug: 4.3.4(supports-color@6.1.0)
-      esbuild: 0.18.20
+      esbuild: 0.19.5
       execa: 5.1.1
       globby: 11.1.0
       joycon: 3.1.1
       postcss-load-config: 4.0.1(postcss@8.4.31)
       resolve-from: 5.0.0
-      rollup: 3.29.4
+      rollup: 4.6.0
       source-map: 0.8.0-beta.0
       sucrase: 3.34.0
       tree-kill: 1.2.2
@@ -28312,7 +28300,7 @@ packages:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.89.0(esbuild@0.18.20)
+      webpack: 5.89.0(esbuild@0.19.5)
     dev: false
 
   /webpack-dev-server@3.11.1(webpack@4.44.2):
@@ -28406,7 +28394,7 @@ packages:
       serve-index: 1.9.1(supports-color@6.1.0)
       sockjs: 0.3.24
       spdy: 4.0.2(supports-color@6.1.0)
-      webpack: 5.89.0(esbuild@0.18.20)
+      webpack: 5.89.0(esbuild@0.19.5)
       webpack-dev-middleware: 5.3.3(webpack@5.89.0)
       ws: 8.14.2
     transitivePeerDependencies:
@@ -28444,7 +28432,7 @@ packages:
       webpack: ^4.44.2 || ^5.47.0
     dependencies:
       tapable: 2.2.1
-      webpack: 5.89.0(esbuild@0.18.20)
+      webpack: 5.89.0(esbuild@0.19.5)
       webpack-sources: 2.3.1
     dev: false
 
@@ -28508,7 +28496,7 @@ packages:
       - supports-color
     dev: false
 
-  /webpack@5.89.0(esbuild@0.18.20):
+  /webpack@5.89.0(esbuild@0.19.5):
     resolution: {integrity: sha512-qyfIC10pOr70V+jkmud8tMfajraGCZMBWJtrmuBymQKCrLTRejBI8STDp1MCyZu/QTdZSeacCQYpYNQVOzX5kw==}
     engines: {node: '>=10.13.0'}
     hasBin: true
@@ -28539,7 +28527,7 @@ packages:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.9(esbuild@0.18.20)(webpack@5.89.0)
+      terser-webpack-plugin: 5.3.9(esbuild@0.19.5)(webpack@5.89.0)
       watchpack: 2.4.0
       webpack-sources: 3.2.3
     transitivePeerDependencies:
@@ -28971,7 +28959,7 @@ packages:
       fast-json-stable-stringify: 2.1.0
       pretty-bytes: 5.6.0
       upath: 1.2.0
-      webpack: 5.89.0(esbuild@0.18.20)
+      webpack: 5.89.0(esbuild@0.19.5)
       webpack-sources: 1.4.3
       workbox-build: 6.6.0
     transitivePeerDependencies:
