@@ -13,6 +13,7 @@ export default {
     },
     'packages/vue-query': {
       ignore: ['**/__mocks__/**'],
+      ignoreDependencies: ['vue2', 'vue2.7'],
     },
   },
   compilers: {

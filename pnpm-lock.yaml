@@ -169,9 +169,6 @@ importers:
       vitest:
         specifier: ^0.33.0
         version: 0.33.0(jsdom@22.1.0)
-      vue:
-        specifier: ^3.3.0
-        version: 3.3.0
 
   examples/react/algolia:
     dependencies:
