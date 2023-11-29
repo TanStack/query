@@ -113,8 +113,8 @@ importers:
         specifier: ^6.1.0
         version: 6.1.0
       knip:
-        specifier: ^3.3.0
-        version: 3.3.0(typescript@5.1.6)
+        specifier: ^3.3.1
+        version: 3.3.1(typescript@5.1.6)
       luxon:
         specifier: ^3.4.3
         version: 3.4.3
@@ -8007,7 +8007,7 @@ packages:
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
     dependencies:
       cross-spawn: 7.0.3
-      fast-glob: 3.3.1
+      fast-glob: 3.3.2
       is-glob: 4.0.3
       open: 9.1.0
       picocolors: 1.0.0
@@ -15755,7 +15755,6 @@ packages:
       glob-parent: 5.1.2
       merge2: 1.4.1
       micromatch: 4.0.5
-    dev: true
 
   /fast-json-stable-stringify@2.1.0:
     resolution: {integrity: sha512-lhd/wF+Lk98HZoTCtlVraHtfh5XYijIjalXck7saUtuanSDyLMxnHhSXEDJqHxD7msR8D0uCmqlkwjCV8xvwHw==}
@@ -16540,7 +16539,7 @@ packages:
     dependencies:
       array-union: 2.1.0
       dir-glob: 3.0.1
-      fast-glob: 3.3.1
+      fast-glob: 3.3.2
       ignore: 5.2.4
       merge2: 1.4.1
       slash: 3.0.0
@@ -19453,8 +19452,8 @@ packages:
     engines: {node: '>= 8'}
     dev: false
 
-  /knip@3.3.0(typescript@5.1.6):
-    resolution: {integrity: sha512-90Bbh3X18Jub5eEPvbjyTH1v0yo2Qp+Lz5qx31spUWGGs3LNCTd4IeWDaBZlfqCHrEyT4WjeiOuknxayY3QEbA==}
+  /knip@3.3.1(typescript@5.1.6):
+    resolution: {integrity: sha512-TP9HOHxkZZ9WflGsdHH3ysJkd5bRqD3+5dbdTAp3vrb2z5nP5P9B6llNiG50lMRBBkJkC0kYE25u/HyhVWozsQ==}
     engines: {node: '>=18.6.0'}
     hasBin: true
     peerDependencies:
