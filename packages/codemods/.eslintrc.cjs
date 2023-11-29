@@ -13,6 +13,7 @@ const config = {
         'import/no-unresolved': 'off',
         'sort-imports': 'off',
         '@typescript-eslint/no-unused-vars': 'off',
+        '@typescript-eslint/no-unnecessary-condition': 'off',
       },
     },
   ],
