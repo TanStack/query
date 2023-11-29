@@ -1,6 +1,7 @@
 import { asyncThrottle } from './asyncThrottle'
 import type {
   AsyncStorage,
+  MaybePromise,
   PersistedClient,
   Persister,
   Promisable,
@@ -27,12 +28,12 @@ interface CreateAsyncStoragePersisterOptions {
    * How to serialize the data to storage.
    * @default `JSON.stringify`
    */
-  serialize?: (client: PersistedClient) => string
+  serialize?: (client: PersistedClient) => MaybePromise<string>
   /**
    * How to deserialize the data from storage.
    * @default `JSON.parse`
    */
-  deserialize?: (cachedString: string) => PersistedClient
+  deserialize?: (cachedString: string) => MaybePromise<PersistedClient>
 
   retry?: AsyncPersistRetryer
 }
@@ -50,7 +51,8 @@ export const createAsyncStoragePersister = ({
       persistedClient: PersistedClient,
     ): Promise<Error | undefined> => {
       try {
-        await storage.setItem(key, serialize(persistedClient))
+        const serialized = await serialize(persistedClient)
+        await storage.setItem(key, serialized)
         return
       } catch (error) {
         return error as Error
@@ -85,7 +87,7 @@ export const createAsyncStoragePersister = ({
           return
         }
 
-        return deserialize(cacheString)
+        return await deserialize(cacheString)
       },
       removeClient: () => storage.removeItem(key),
     }

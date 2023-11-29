@@ -14,29 +14,29 @@ export interface PersistedQuery {
   state: QueryState
 }
 
-type MaybePromise<T> = T | Promise<T>
+export type MaybePromise<T> = T | Promise<T>
 
-export interface AsyncStorage<StorageValue = string> {
-  getItem: (key: string) => MaybePromise<StorageValue | undefined | null>
-  setItem: (key: string, value: StorageValue) => MaybePromise<unknown>
+export interface AsyncStorage<TStorageValue = string> {
+  getItem: (key: string) => MaybePromise<TStorageValue | undefined | null>
+  setItem: (key: string, value: TStorageValue) => MaybePromise<unknown>
   removeItem: (key: string) => MaybePromise<void>
 }
 
-export interface StoragePersisterOptions<StorageValue = string> {
+export interface StoragePersisterOptions<TStorageValue = string> {
   /** The storage client used for setting and retrieving items from cache.
    * For SSR pass in `undefined`.
    */
-  storage: AsyncStorage<StorageValue> | undefined | null
+  storage: AsyncStorage<TStorageValue> | undefined | null
   /**
    * How to serialize the data to storage.
    * @default `JSON.stringify`
    */
-  serialize?: (persistedQuery: PersistedQuery) => MaybePromise<StorageValue>
+  serialize?: (persistedQuery: PersistedQuery) => MaybePromise<TStorageValue>
   /**
    * How to deserialize the data from storage.
    * @default `JSON.parse`
    */
-  deserialize?: (cachedString: StorageValue) => MaybePromise<PersistedQuery>
+  deserialize?: (cachedString: TStorageValue) => MaybePromise<PersistedQuery>
   /**
    * A unique string that can be used to forcefully invalidate existing caches,
    * if they do not share the same buster string
@@ -78,15 +78,19 @@ export const PERSISTER_KEY_PREFIX = 'tanstack-query'
    })
    ```
  */
-export function experimental_createPersister<StorageValue = string>({
+export function experimental_createPersister<TStorageValue = string>({
   storage,
   buster = '',
   maxAge = 1000 * 60 * 60 * 24,
-  serialize = JSON.stringify as Required<StoragePersisterOptions<StorageValue>>['serialize'],
-  deserialize = JSON.parse as Required<StoragePersisterOptions<StorageValue>>['deserialize'],
+  serialize = JSON.stringify as Required<
+    StoragePersisterOptions<TStorageValue>
+  >['serialize'],
+  deserialize = JSON.parse as Required<
+    StoragePersisterOptions<TStorageValue>
+  >['deserialize'],
   prefix = PERSISTER_KEY_PREFIX,
   filters,
-}: StoragePersisterOptions<StorageValue>) {
+}: StoragePersisterOptions<TStorageValue>) {
   return async function persisterFn<T, TQueryKey extends QueryKey>(
     queryFn: (context: QueryFunctionContext<TQueryKey>) => T | Promise<T>,
     context: QueryFunctionContext<TQueryKey>,
