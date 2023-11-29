@@ -2,7 +2,7 @@ import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { QueryCache, useQueries } from '..'
+import { QueryCache, queryOptions, useQueries } from '..'
 import {
   createQueryClient,
   expectTypeNotAny,
@@ -368,6 +368,40 @@ describe('useQueries', () => {
           },
         ],
       })
+    }
+  })
+
+  it('correctly returns types when passing through queryOptions ', () => {
+    // @ts-expect-error (Page component is not rendered)
+    // eslint-disable-next-line
+    function Page() {
+      // data and results types are correct when using queryOptions
+      const result4 = useQueries({
+        queries: [
+          queryOptions({
+            queryKey: ['key1'],
+            queryFn: () => 'string',
+            select: (a) => {
+              expectTypeOf<string>(a)
+              expectTypeNotAny(a)
+              return a.toLowerCase()
+            },
+          }),
+          queryOptions({
+            queryKey: ['key2'],
+            queryFn: () => 'string',
+            select: (a) => {
+              expectTypeOf<string>(a)
+              expectTypeNotAny(a)
+              return parseInt(a)
+            },
+          }),
+        ],
+      })
+      expectTypeOf<QueryObserverResult<string, unknown>>(result4[0])
+      expectTypeOf<QueryObserverResult<number, unknown>>(result4[1])
+      expectTypeOf<string | undefined>(result4[0].data)
+      expectTypeOf<number | undefined>(result4[1].data)
     }
   })
 
