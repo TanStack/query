@@ -1656,15 +1656,9 @@ importers:
       '@types/react':
         specifier: ^18.2.31
         version: 18.2.31
-      '@types/react-dom':
-        specifier: ^18.2.14
-        version: 18.2.14
       react:
         specifier: ^18.2.0
         version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
 
   packages/react-query-next-experimental:
     devDependencies:
@@ -1674,18 +1668,12 @@ importers:
       '@types/react':
         specifier: ^18.2.31
         version: 18.2.31
-      '@types/react-dom':
-        specifier: ^18.2.14
-        version: 18.2.14
       next:
         specifier: ^14.0.0
         version: 14.0.0(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
 
   packages/react-query-persist-client:
     dependencies:
@@ -1699,15 +1687,9 @@ importers:
       '@types/react':
         specifier: ^18.2.31
         version: 18.2.31
-      '@types/react-dom':
-        specifier: ^18.2.14
-        version: 18.2.14
       react:
         specifier: ^18.2.0
         version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
 
   packages/solid-query:
     dependencies:
