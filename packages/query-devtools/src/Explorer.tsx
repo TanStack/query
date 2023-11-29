@@ -22,7 +22,7 @@ import type { Query } from '@tanstack/query-core'
  * @example
  * chunkArray(['a','b', 'c', 'd', 'e'], 2) // returns [['a','b'], ['c', 'd'], ['e']]
  */
-export function chunkArray<T extends { label: string; value: unknown }>(
+function chunkArray<T extends { label: string; value: unknown }>(
   array: Array<T>,
   size: number,
 ): Array<Array<T>> {

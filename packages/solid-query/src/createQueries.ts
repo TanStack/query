@@ -65,7 +65,7 @@ type GetOptions<T> =
               : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
                 T extends {
                     queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
-                    select: (data: any) => infer TData
+                    select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? CreateQueryOptionsForCreateQueries<
@@ -107,12 +107,12 @@ type GetResults<T> =
               ? CreateQueryResult<TQueryFnData>
               : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
                 T extends {
-                    queryFn?: QueryFunction<unknown, any>
-                    select: (data: any) => infer TData
+                    queryFn?: QueryFunction<infer TQueryFnData, any>
+                    select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? CreateQueryResult<
-                    TData,
+                    unknown extends TData ? TQueryFnData : TData,
                     unknown extends TError ? DefaultError : TError
                   >
                 : T extends {
@@ -129,7 +129,7 @@ type GetResults<T> =
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
  */
-export type QueriesOptions<
+type QueriesOptions<
   T extends Array<any>,
   Result extends Array<any> = [],
   Depth extends ReadonlyArray<number> = [],
@@ -171,7 +171,7 @@ export type QueriesOptions<
 /**
  * QueriesResults reducer recursively maps type param to results
  */
-export type QueriesResults<
+type QueriesResults<
   T extends Array<any>,
   Result extends Array<any> = [],
   Depth extends ReadonlyArray<number> = [],

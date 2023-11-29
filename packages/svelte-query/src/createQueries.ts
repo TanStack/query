@@ -56,7 +56,7 @@ type GetOptions<T> =
               : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
                 T extends {
                     queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
-                    select: (data: any) => infer TData
+                    select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? QueryObserverOptionsForCreateQueries<
@@ -98,12 +98,12 @@ type GetResults<T> =
               ? QueryObserverResult<TQueryFnData>
               : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
                 T extends {
-                    queryFn?: QueryFunction<unknown, any>
-                    select: (data: any) => infer TData
+                    queryFn?: QueryFunction<infer TQueryFnData, any>
+                    select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? QueryObserverResult<
-                    TData,
+                    unknown extends TData ? TQueryFnData : TData,
                     unknown extends TError ? DefaultError : TError
                   >
                 : T extends {
