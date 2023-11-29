@@ -59,7 +59,6 @@
     "cpy-cli": "^5.0.0",
     "cross-env": "^7.0.3",
     "current-git-branch": "^1.1.0",
-    "esbuild": "^0.18.20",
     "esbuild-plugin-file-path-extensions": "^1.0.0",
     "eslint": "^8.34.0",
     "eslint-config-prettier": "^8.8.0",

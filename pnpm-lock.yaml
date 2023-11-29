@@ -79,9 +79,6 @@ importers:
       current-git-branch:
         specifier: ^1.1.0
         version: 1.1.0
-      esbuild:
-        specifier: ^0.18.20
-        version: 0.18.20
       esbuild-plugin-file-path-extensions:
         specifier: ^1.0.0
         version: 1.0.0
