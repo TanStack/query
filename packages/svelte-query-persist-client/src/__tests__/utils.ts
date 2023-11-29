@@ -1,5 +1,4 @@
 import { QueryClient } from '@tanstack/svelte-query'
-import { act } from '@testing-library/svelte'
 
 import type { QueryClientConfig } from '@tanstack/svelte-query'
 
@@ -17,14 +16,6 @@ export function sleep(timeout: number): Promise<void> {
   return new Promise((resolve, _reject) => {
     setTimeout(resolve, timeout)
   })
-}
-
-export function setActTimeout(fn: () => void, ms?: number) {
-  return setTimeout(() => {
-    act(() => {
-      fn()
-    })
-  }, ms)
 }
 
 export type StatusResult<T = unknown> = {
