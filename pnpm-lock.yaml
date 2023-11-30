@@ -64,12 +64,6 @@ importers:
       '@vitest/coverage-istanbul':
         specifier: ^0.33.0
         version: 0.33.0(vitest@0.33.0)
-      '@vitest/runner':
-        specifier: ^0.34.6
-        version: 0.34.6
-      '@vitest/snapshot':
-        specifier: ^0.34.6
-        version: 0.34.6
       axios:
         specifier: ^1.5.1
         version: 1.5.1
@@ -1497,21 +1491,12 @@ importers:
       '@angular/common':
         specifier: ^17.0.2
         version: 17.0.5(@angular/core@17.0.5)(rxjs@7.8.1)
-      '@angular/compiler':
-        specifier: ^17.0.2
-        version: 17.0.5(@angular/core@17.0.5)
       '@angular/core':
         specifier: ^17.0.2
         version: 17.0.5(rxjs@7.8.1)(zone.js@0.14.2)
-      '@angular/forms':
-        specifier: ^17.0.2
-        version: 17.0.5(@angular/common@17.0.5)(@angular/core@17.0.5)(@angular/platform-browser@17.0.5)(rxjs@7.8.1)
       '@angular/platform-browser':
         specifier: ^17.0.2
         version: 17.0.5(@angular/animations@17.0.5)(@angular/common@17.0.5)(@angular/core@17.0.5)
-      '@angular/platform-browser-dynamic':
-        specifier: ^17.0.2
-        version: 17.0.5(@angular/common@17.0.5)(@angular/compiler@17.0.5)(@angular/core@17.0.5)(@angular/platform-browser@17.0.5)
       '@tanstack/angular-query-devtools-experimental':
         specifier: workspace:../../packages/angular-query-devtools-experimental/build
         version: link:../../packages/angular-query-devtools-experimental/build
@@ -1710,36 +1695,18 @@ importers:
         specifier: ^2.6.2
         version: 2.6.2
     devDependencies:
-      '@angular/cli':
-        specifier: ^17.0.0
-        version: 17.0.4
-      '@angular/common':
-        specifier: ^17.0.2
-        version: 17.0.5(@angular/core@17.0.5)(rxjs@7.8.1)
-      '@angular/compiler':
-        specifier: ^17.0.2
-        version: 17.0.5(@angular/core@17.0.5)
       '@angular/compiler-cli':
         specifier: ^17.0.2
         version: 17.0.5(@angular/compiler@17.0.5)(typescript@5.2.2)
       '@angular/core':
         specifier: ^17.0.2
         version: 17.0.5(rxjs@7.8.1)(zone.js@0.14.2)
-      '@angular/platform-browser':
-        specifier: ^17.0.2
-        version: 17.0.5(@angular/animations@17.0.5)(@angular/common@17.0.5)(@angular/core@17.0.5)
-      '@angular/platform-browser-dynamic':
-        specifier: ^17.0.2
-        version: 17.0.5(@angular/common@17.0.5)(@angular/compiler@17.0.5)(@angular/core@17.0.5)(@angular/platform-browser@17.0.5)
       '@tanstack/angular-query-experimental':
         specifier: workspace:../angular-query-experimental/build
         version: link:../angular-query-experimental/build
       ng-packagr:
         specifier: ^17.0.0
         version: 17.0.2(@angular/compiler-cli@17.0.5)(tslib@2.6.2)(typescript@5.2.2)
-      reflect-metadata:
-        specifier: ^0.1.13
-        version: 0.1.13
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -1762,12 +1729,6 @@ importers:
       '@analogjs/vite-plugin-angular':
         specifier: ^0.2.18
         version: 0.2.22(@angular-devkit/build-angular@17.0.4)
-      '@angular/animations':
-        specifier: ^17.0.2
-        version: 17.0.5(@angular/core@17.0.5)
-      '@angular/cli':
-        specifier: ^17.0.0
-        version: 17.0.4
       '@angular/common':
         specifier: ^17.0.2
         version: 17.0.5(@angular/core@17.0.5)(rxjs@7.8.1)
@@ -1789,9 +1750,6 @@ importers:
       ng-packagr:
         specifier: ^17.0.0
         version: 17.0.2(@angular/compiler-cli@17.0.5)(tslib@2.6.2)(typescript@5.2.2)
-      reflect-metadata:
-        specifier: ^0.1.13
-        version: 0.1.13
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -2548,22 +2506,6 @@ packages:
       tslib: 2.6.2
       zone.js: 0.14.2
 
-  /@angular/forms@17.0.5(@angular/common@17.0.5)(@angular/core@17.0.5)(@angular/platform-browser@17.0.5)(rxjs@7.8.1):
-    resolution: {integrity: sha512-d91Rre/NK+SgamF1OJmDJUx+Zs8M7qFmrKu7c+hNsXPe8J/fkMNoWFikne/WSsegwY929E1xpeqvu/KXQt90ug==}
-    engines: {node: ^18.13.0 || >=20.9.0}
-    peerDependencies:
-      '@angular/common': 17.0.5
-      '@angular/core': 17.0.5
-      '@angular/platform-browser': 17.0.5
-      rxjs: ^6.5.3 || ^7.4.0
-    dependencies:
-      '@angular/common': 17.0.5(@angular/core@17.0.5)(rxjs@7.8.1)
-      '@angular/core': 17.0.5(rxjs@7.8.1)(zone.js@0.14.2)
-      '@angular/platform-browser': 17.0.5(@angular/animations@17.0.5)(@angular/common@17.0.5)(@angular/core@17.0.5)
-      rxjs: 7.8.1
-      tslib: 2.6.2
-    dev: false
-
   /@angular/language-service@17.0.5:
     resolution: {integrity: sha512-tVXYamdjkAYYv4YCiMKxCYqLgvI/g2y2Ny6fUUVPti9xFqiF88q8V7j3N8FeLdSNvgok1LSdfFjJAgQonJ4Sxw==}
     engines: {node: ^18.13.0 || >=20.9.0}
@@ -2583,6 +2525,7 @@ packages:
       '@angular/core': 17.0.5(rxjs@7.8.1)(zone.js@0.14.2)
       '@angular/platform-browser': 17.0.5(@angular/animations@17.0.5)(@angular/common@17.0.5)(@angular/core@17.0.5)
       tslib: 2.6.2
+    dev: true
 
   /@angular/platform-browser@17.0.5(@angular/animations@17.0.5)(@angular/common@17.0.5)(@angular/core@17.0.5):
     resolution: {integrity: sha512-VJQ6bVS40xJLNGNcX59/QFPrZesIm2zETOqAc6K04onuWF1EnJqvcDog9eYJsm0sLWhQeCdWVmAFRenTkDoqng==}
@@ -11649,24 +11592,8 @@ packages:
       pathe: 1.1.1
     dev: true
 
-  /@vitest/runner@0.34.6:
-    resolution: {integrity: sha512-1CUQgtJSLF47NnhN+F9X2ycxUP0kLHQ/JWvNHbeBfwW8CzEGgeskzNnHDyv1ieKTltuR6sdIHV+nmR6kPxQqzQ==}
-    dependencies:
-      '@vitest/utils': 0.34.6
-      p-limit: 4.0.0
-      pathe: 1.1.1
-    dev: true
-
   /@vitest/snapshot@0.33.0:
     resolution: {integrity: sha512-tJjrl//qAHbyHajpFvr8Wsk8DIOODEebTu7pgBrP07iOepR5jYkLFiqLq2Ltxv+r0uptUb4izv1J8XBOwKkVYA==}
-    dependencies:
-      magic-string: 0.30.5
-      pathe: 1.1.1
-      pretty-format: 29.7.0
-    dev: true
-
-  /@vitest/snapshot@0.34.6:
-    resolution: {integrity: sha512-B3OZqYn6k4VaN011D+ve+AA4whM4QkcwcrwaKwAbyyvS/NB1hCWjFIBQxAQQSQir9/RtyAAGuq+4RJmbn2dH4w==}
     dependencies:
       magic-string: 0.30.5
       pathe: 1.1.1
@@ -11681,14 +11608,6 @@ packages:
 
   /@vitest/utils@0.33.0:
     resolution: {integrity: sha512-pF1w22ic965sv+EN6uoePkAOTkAPWM03Ri/jXNyMIKBb/XHLDPfhLvf/Fa9g0YECevAIz56oVYXhodLvLQ/awA==}
-    dependencies:
-      diff-sequences: 29.6.3
-      loupe: 2.3.7
-      pretty-format: 29.7.0
-    dev: true
-
-  /@vitest/utils@0.34.6:
-    resolution: {integrity: sha512-IG5aDD8S6zlvloDsnzHw0Ut5xczlF+kv2BOTo+iXfPr54Yhi5qbVOgGB1hZaVq4iJ4C/MZ2J0y15IlsV/ZcI0A==}
     dependencies:
       diff-sequences: 29.6.3
       loupe: 2.3.7

@@ -32,8 +32,6 @@
   },
   "devDependencies": {
     "@analogjs/vite-plugin-angular": "^0.2.18",
-    "@angular/animations": "^17.0.2",
-    "@angular/cli": "^17.0.0",
     "@angular/common": "^17.0.2",
     "@angular/compiler": "^17.0.2",
     "@angular/compiler-cli": "^17.0.2",
@@ -41,7 +39,6 @@
     "@angular/platform-browser": "^17.0.2",
     "@angular/platform-browser-dynamic": "^17.0.2",
     "ng-packagr": "^17.0.0",
-    "reflect-metadata": "^0.1.13",
     "typescript": "5.2.2",
     "zone.js": "^0.14.2"
   },

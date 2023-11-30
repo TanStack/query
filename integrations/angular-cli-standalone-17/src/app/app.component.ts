@@ -18,6 +18,9 @@ import { injectQuery } from '@tanstack/angular-query-experimental'
   imports: [AngularQueryDevtoolsComponent, CommonModule],
 })
 export class AppComponent {
+  /**
+   * @public
+   */
   query = injectQuery(() => ({
     queryKey: ['test'],
     queryFn: async () => {
