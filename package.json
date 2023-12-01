@@ -15,7 +15,7 @@
     "test:ci": "nx run-many --exclude=examples/** --targets=test:format,test:sherif,test:eslint,test:lib,test:types,test:build,test:bundle,build",
     "test:eslint": "nx affected --target=test:eslint",
     "test:format": "pnpm run prettier --check",
-    "test:sherif": "sherif -i react-scripts --ignore-package react-vite5 --ignore-package react-vite4",
+    "test:sherif": "sherif -i react-scripts -i typescript --ignore-package react-vite5 --ignore-package react-vite4",
     "test:lib": "nx affected --target=test:lib",
     "test:lib:dev": "pnpm --filter \"./packages/**\" run test:lib:dev",
     "test:build": "nx affected --target=test:build",
@@ -86,7 +86,7 @@
     "tsup": "^7.3.0",
     "type-fest": "^4.5.0",
     "typescript": "5.1.6",
-    "vite": "^4.4.11",
+    "vite": "^4.5.0",
     "vitest": "^0.33.0"
   },
   "pnpm": {

@@ -15,10 +15,13 @@ export default {
       ignore: ['**/__mocks__/**'],
       ignoreDependencies: ['vue2', 'vue2.7'],
     },
+    'integrations/angular-cli-standalone-17': {
+      entry: ['src/main.ts'],
+    },
   },
   compilers: {
     svelte: (text: string) => [...svelteCompiler(text)].join('\n'),
-    vue: (text) => {
+    vue: (text: string) => {
       const scripts = []
       let match
       while ((match = vueCompiler.exec(text))) scripts.push(match[1])

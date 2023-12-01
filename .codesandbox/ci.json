@@ -2,11 +2,12 @@
   "installCommand": "install:csb",
   "buildCommand": "build:all",
   "sandboxes": [
+    "/examples/angular/basic",
     "/examples/react/basic-typescript",
     "/examples/solid/basic-typescript",
     "/examples/svelte/basic",
     "/examples/vue/basic"
   ],
-  "packages": ["packages/**"],
+  "packages": ["packages/**", "!packages/angular*", "packages/angular-query-devtools-experimental/build", "packages/angular-query-experimental/build"],
   "node": "18"
 }
