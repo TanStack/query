@@ -53,7 +53,7 @@
   "types": "build/index.d.ts",
   "exports": {
     "./package.json": {
-      "default": "./build/package.json"
+      "default": "./package.json"
     },
     ".": {
       "types": "./build/index.d.ts",
