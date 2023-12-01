@@ -123,7 +123,7 @@ const result = useQuery({
 
 ### Initial Data from the cache with `initialDataUpdatedAt`
 
-Getting initial data from the cache means the source query you're using to look up the initial data from is likely old, but `initialData`. Instead of using an artificial `staleTime` to keep your query from refetching immediately, it's suggested that you pass the source query's `dataUpdatedAt` to `initialDataUpdatedAt`. This provides the query instance with all the information it needs to determine if and when the query needs to be refetched, regardless of initial data being provided.
+Getting initial data from the cache means the source query you're using to look up the initial data from is likely old. Instead of using an artificial `staleTime` to keep your query from refetching immediately, it's suggested that you pass the source query's `dataUpdatedAt` to `initialDataUpdatedAt`. This provides the query instance with all the information it needs to determine if and when the query needs to be refetched, regardless of initial data being provided.
 
 [//]: # 'Example7'
 
