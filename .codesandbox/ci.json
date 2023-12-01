@@ -8,6 +8,6 @@
     "/examples/svelte/basic",
     "/examples/vue/basic"
   ],
-  "packages": ["packages/**", "!packages/angular*", "packages/angular-query-devtools-experimental/build", "packages/angular-query-experimental/build"],
+  "packages": ["packages/**"],
   "node": "18"
 }
