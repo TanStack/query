@@ -9,7 +9,7 @@ ref: docs/react/guides/paginated-queries.md
 ```vue
 <script setup lang="ts">
 import { ref, Ref } from 'vue'
-import { useQuery } from '@tanstack/vue-query'
+import { useQuery, keepPreviousData } from '@tanstack/vue-query'
 
 const fetcher = (page: Ref<number>) =>
   fetch(
@@ -17,17 +17,17 @@ const fetcher = (page: Ref<number>) =>
   ).then((response) => response.json())
 
 const page = ref(1)
-const { isPending, isError, data, error, isFetching, isPreviousData } =
+const { isPending, isError, data, error, isFetching, isPlaceholderData } =
   useQuery({
     queryKey: ['projects', page],
     queryFn: () => fetcher(page),
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   })
 const prevPage = () => {
   page.value = Math.max(page.value - 1, 1)
 }
 const nextPage = () => {
-  if (!isPreviousData.value) {
+  if (!isPlaceholderData.value) {
     page.value = page.value + 1
   }
 }
@@ -35,7 +35,7 @@ const nextPage = () => {
 
 <template>
   <h1>Posts</h1>
-  <p>Current Page: {{ page }} | Previous data: {{ isPreviousData }}</p>
+  <p>Current Page: {{ page }} | Previous data: {{ isPlaceholderData }}</p>
   <button @click="prevPage">Prev Page</button>
   <button @click="nextPage">Next Page</button>
   <div v-if="isPending">Loading...</div>
