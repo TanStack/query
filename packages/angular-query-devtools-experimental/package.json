@@ -21,7 +21,7 @@
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
     "test:build": "publint --strict",
-    "build": "ng-packagr -p ng-package.json -c tsconfig.build.json && rm ./build/package.json"
+    "build": "ng-packagr -p ng-package.json -c tsconfig.build.json && rimraf ./build/package.json"
   },
   "dependencies": {
     "@tanstack/query-devtools": "workspace:*",
