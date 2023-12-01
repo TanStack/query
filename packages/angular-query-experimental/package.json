@@ -23,7 +23,7 @@
     "test:lib": "vitest run --coverage",
     "test:lib:dev": "vitest watch --coverage",
     "test:build": "publint --strict",
-    "build": "ng-packagr -p ng-package.json -c tsconfig.build.json && mv ./build/package.json package.json"
+    "build": "ng-packagr -p ng-package.json -c tsconfig.build.json && rm ./build/package.json"
   },
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
@@ -44,5 +44,18 @@
   },
   "peerDependencies": {
     "@angular/core": "^17"
+  },
+  "module": "build/fesm2022/tanstack-angular-query-experimental.mjs",
+  "types": "build/index.d.ts",
+  "exports": {
+    "./package.json": {
+      "default": "./build/package.json"
+    },
+    ".": {
+      "types": "./build/index.d.ts",
+      "esm2022": "./build/esm2022/tanstack-angular-query-experimental.mjs",
+      "esm": "./build/esm2022/tanstack-angular-query-experimental.mjs",
+      "default": "./build/fesm2022/tanstack-angular-query-experimental.mjs"
+    }
   }
 }
