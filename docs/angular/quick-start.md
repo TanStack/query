@@ -20,24 +20,28 @@ bootstrapApplication(AppComponent, {
 ### Component with query and mutation
 
 ```typescript
+import { Component, Injectable, inject } from '@angular/core'
+import { HttpClient } from '@angular/common/http'
+import { lastValueFrom } from 'rxjs'
+
 import {
   injectMutation,
   injectQuery,
   injectQueryClient
 } from '@tanstack/angular-query-experimental'
-import { getTodos, postTodo } from '../my-api'
+
 
 @Component({
   standalone: true,
   template: `
     <div>
+      <button (click)="onAddTodo()">Add Todo</button>
+
       <ul>
-        @for (todo of query().data) {
+        @for (todo of query.data(); track todo.title) {
           <li>{{ todo.title }}</li>
         }
       </ul>
-
-      <button (click)="onAddTodo()">Add Todo</button>
     </div>
   `,
 })
@@ -46,26 +50,43 @@ export class TodosComponent {
 
   query = injectQuery(() => ({
     queryKey: ['todos'],
-    queryFn: getTodos
+    queryFn: () => this.todoService.getTodos(),
   }))
 
   mutation = injectMutation((client) => ({
-    mutationFn: postTodo,
+    mutationFn: (todo: Todo) => this.todoService.addTodo(todo),
     onSuccess: () => {
       // Invalidate and refetch by using the client directly
       client.invalidateQueries({ queryKey: ['todos'] })
 
       // OR use the queryClient that is injected into the component
-      this.queryClient.invalidateQueries({ queryKey: ['todos'] })
+      // this.queryClient.invalidateQueries({ queryKey: ['todos'] })
     }
   }))
 
   onAddTodo() {
     this.mutation().mutate({
-      id: Date.now(),
+      id: Date.now().toString(),
       title: 'Do Laundry',
     })
   }
+  
+@Injectable({providedIn: 'root'})
+export class TodoService {
+  private http = inject(HttpClient);
+
+  getTodos(): Promise<Todo[]> {
+    return lastValueFrom(this.http.get<Todo[]>('https://jsonplaceholder.typicode.com/todos'))
+  }
+
+  addTodo(todo: Todo): Promise<Todo> {
+    return lastValueFrom(this.http.post<Todo>('https://jsonplaceholder.typicode.com/todos', todo))
+  }
+}
+
+interface Todo {
+  id: string;
+  title: string;
 }
 ```
 

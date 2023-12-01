@@ -18,7 +18,7 @@ $ yarn add @tanstack/angular-query-devtools-experimental
 You can import the devtools like this:
 
 ```typescript
-import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
+import { AngularQueryDevtoolsComponent } from '@tanstack/angular-query-devtools-experimental'
 ```
 
 ## Floating Mode

@@ -23,14 +23,6 @@ import { CommonModule } from '@angular/common'
 import { injectQuery } from '@tanstack/angular-query-experimental'
 import { lastValueFrom } from 'rxjs'
 
-type Response = {
-  name: string
-  description: string
-  subscribers_count: number
-  stargazers_count: number
-  forks_count: number
-}
-
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'simple-example',
@@ -64,5 +56,13 @@ export class SimpleExampleComponent {
         this.http.get<Response>('https://api.github.com/repos/tannerlinsley/react-query')
       ),
   }))
+}
+
+type Response = {
+  name: string
+  description: string
+  subscribers_count: number
+  stargazers_count: number
+  forks_count: number
 }
 ```
