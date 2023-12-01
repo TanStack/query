@@ -213,9 +213,6 @@ const {
 - `isRefetching: boolean`
   - Is `true` whenever a background refetch is in-flight, which _does not_ include initial `pending`
   - Is the same as `isFetching && !isPending`
-- `isLoading: boolean`
-  - Is `true` whenever the first fetch for a query is in-flight
-  - Is the same as `isFetching && isPending`
 - `isInitialLoading: boolean`
   - **deprecated**
   - An alias for `isLoading`, will be removed in the next major version.
