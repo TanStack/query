@@ -1,5 +1,3 @@
-import type { RollupOptions } from 'rollup'
-
 export type Commit = {
   commit: CommitOrTree
   tree: CommitOrTree

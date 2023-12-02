@@ -309,4 +309,67 @@ describe('createPersister', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(query.fetch).toHaveBeenCalledTimes(0)
   })
+
+  test('should restore item from the storage with async deserializer', async () => {
+    const storage = getFreshStorage()
+    const { context, persisterFn, query, queryFn, storageKey } = setupPersister(
+      ['foo'],
+      {
+        storage,
+        deserialize: (cachedString: string) =>
+          new Promise((resolve) => resolve(JSON.parse(cachedString))),
+      },
+    )
+
+    await storage.setItem(
+      storageKey,
+      JSON.stringify({
+        buster: '',
+        state: { dataUpdatedAt: Date.now() },
+      }),
+    )
+
+    await persisterFn(queryFn, context, query)
+    query.state.isInvalidated = true
+    query.fetch = vi.fn()
+
+    await sleep(0)
+
+    expect(queryFn).toHaveBeenCalledTimes(0)
+    expect(query.fetch).toHaveBeenCalledTimes(1)
+  })
+
+  test('should store item after successfull fetch with async serializer', async () => {
+    const storage = getFreshStorage()
+    const {
+      context,
+      persisterFn,
+      query,
+      queryFn,
+      queryHash,
+      queryKey,
+      storageKey,
+    } = setupPersister(['foo'], {
+      storage,
+      serialize: (persistedQuery) =>
+        new Promise((resolve) => resolve(JSON.stringify(persistedQuery))),
+    })
+
+    await persisterFn(queryFn, context, query)
+    query.setData('baz')
+
+    await sleep(0)
+
+    expect(queryFn).toHaveBeenCalledOnce()
+    expect(queryFn).toHaveBeenCalledWith(context)
+
+    expect(JSON.parse(await storage.getItem(storageKey))).toMatchObject({
+      buster: '',
+      queryHash,
+      queryKey,
+      state: {
+        data: 'baz',
+      },
+    })
+  })
 })

@@ -2,6 +2,7 @@
   "installCommand": "install:csb",
   "buildCommand": "build:all",
   "sandboxes": [
+    "/examples/angular/basic",
     "/examples/react/basic-typescript",
     "/examples/solid/basic-typescript",
     "/examples/svelte/basic",
