@@ -20,7 +20,11 @@ import {
   shouldSuspend,
   willFetch,
 } from './suspense'
-import type { UseQueryOptions, UseQueryResult } from './types'
+import type {
+  DefinedUseQueryResult,
+  UseQueryOptions,
+  UseQueryResult,
+} from './types'
 import type {
   DefaultError,
   QueriesObserverOptions,
@@ -95,28 +99,46 @@ type GetOptions<T> =
                   : // Fallback
                     UseQueryOptionsForUseQueries
 
+// A defined initialData setting should return a DefinedUseQueryResult rather than UseQueryResult
+type GetDefinedOrUndefinedQueryResult<T, TData, TError = unknown> = T extends {
+  initialData?: infer TInitialData
+}
+  ? unknown extends TInitialData
+    ? UseQueryResult<TData, TError>
+    : TInitialData extends TData
+      ? DefinedUseQueryResult<TData, TError>
+      : TInitialData extends () => infer TInitialDataResult
+        ? unknown extends TInitialDataResult
+          ? UseQueryResult<TData, TError>
+          : TInitialDataResult extends TData
+            ? DefinedUseQueryResult<TData, TError>
+            : UseQueryResult<TData, TError>
+        : UseQueryResult<TData, TError>
+  : UseQueryResult<TData, TError>
+
 type GetResults<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
   T extends { queryFnData: any; error?: infer TError; data: infer TData }
-    ? UseQueryResult<TData, TError>
+    ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
     : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
-      ? UseQueryResult<TQueryFnData, TError>
+      ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData, TError>
       : T extends { data: infer TData; error?: infer TError }
-        ? UseQueryResult<TData, TError>
+        ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
         : // Part 2: responsible for mapping explicit type parameter to function result, if tuple
           T extends [any, infer TError, infer TData]
-          ? UseQueryResult<TData, TError>
+          ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
           : T extends [infer TQueryFnData, infer TError]
-            ? UseQueryResult<TQueryFnData, TError>
+            ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData, TError>
             : T extends [infer TQueryFnData]
-              ? UseQueryResult<TQueryFnData>
+              ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData>
               : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
                 T extends {
                     queryFn?: QueryFunction<infer TQueryFnData, any>
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
-                ? UseQueryResult<
+                ? GetDefinedOrUndefinedQueryResult<
+                    T,
                     unknown extends TData ? TQueryFnData : TData,
                     unknown extends TError ? DefaultError : TError
                   >
@@ -124,7 +146,8 @@ type GetResults<T> =
                       queryFn?: QueryFunction<infer TQueryFnData, any>
                       throwOnError?: ThrowOnError<any, infer TError, any, any>
                     }
-                  ? UseQueryResult<
+                  ? GetDefinedOrUndefinedQueryResult<
+                      T,
                       TQueryFnData,
                       unknown extends TError ? DefaultError : TError
                     >
