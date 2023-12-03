@@ -70,7 +70,8 @@ export class TodosComponent {
       title: 'Do Laundry',
     })
   }
-  
+}
+
 @Injectable({providedIn: 'root'})
 export class TodoService {
   private http = inject(HttpClient);

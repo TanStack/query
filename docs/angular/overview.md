@@ -10,13 +10,13 @@ The `@tanstack/angular-query-experimental` package offers a 1st-class API for us
 ## Feedback very welcome
 We are in the process of getting to a stable API for Angular Query. If you have any feedback, please contact us at the [TanStack Discord](https://tlinz.com/discord) server or [visit this discussion](https://github.com/TanStack/query/discussions/6293) on Github.
 
-## Versions of Angular supported
-The adapter works with signals, which means it only supports Angular 16+
+## Supported Angular Versions
+Angular Query is compatible with Angular version 17.
 
 ## Example
 
 ```typescript
-import { AngularQueryDevtoolsComponent } from '@tanstack/angular-query-devtools-experimental'
+import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { CommonModule } from '@angular/common'
@@ -44,7 +44,7 @@ import { lastValueFrom } from 'rxjs'
 
     <angular-query-devtools initialIsOpen />
   `,
-  imports: [AngularQueryDevtoolsComponent],
+  imports: [AngularQueryDevtools],
 })
 export class SimpleExampleComponent {
   http = inject(HttpClient)

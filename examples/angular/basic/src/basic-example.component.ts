@@ -1,4 +1,4 @@
-import { AngularQueryDevtoolsComponent } from '@tanstack/angular-query-devtools-experimental'
+import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
 import {
   ChangeDetectionStrategy,
   Component,
@@ -144,7 +144,7 @@ export class PostsComponent {
       <posts (setPostId)="postId.set($event)" />
     </ng-template>
   `,
-  imports: [AngularQueryDevtoolsComponent, NgIf, PostComponent, PostsComponent],
+  imports: [AngularQueryDevtools, NgIf, PostComponent, PostsComponent],
 })
 export class BasicExampleComponent {
   postId = signal(-1)
