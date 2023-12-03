@@ -1,4 +1,4 @@
-import { AngularQueryDevtoolsComponent } from '@tanstack/angular-query-devtools-experimental'
+import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { injectQuery } from '@tanstack/angular-query-experimental'
@@ -34,7 +34,7 @@ type Response = {
 
     <angular-query-devtools initialIsOpen />
   `,
-  imports: [AngularQueryDevtoolsComponent, CommonModule],
+  imports: [AngularQueryDevtools, CommonModule],
 })
 export class SimpleExampleComponent {
   http = inject(HttpClient)
