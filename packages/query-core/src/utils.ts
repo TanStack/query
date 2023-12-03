@@ -221,6 +221,10 @@ export function replaceEqualDeep(a: any, b: any): any {
     return a
   }
 
+  if (a instanceof Date && b instanceof Date) {
+    return a.getTime() === b.getTime() ? a : b;
+  }
+
   const array = isPlainArray(a) && isPlainArray(b)
 
   if (array || (isPlainObject(a) && isPlainObject(b))) {
