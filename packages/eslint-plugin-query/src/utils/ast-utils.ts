@@ -1,7 +1,6 @@
 import { AST_NODE_TYPES } from '@typescript-eslint/utils'
 import { uniqueBy } from './unique-by'
 import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
-import type TSESLintScopeManager from '@typescript-eslint/scope-manager'
 import type { RuleContext } from '@typescript-eslint/utils/dist/ts-eslint'
 
 export const ASTUtils = {
@@ -143,7 +142,7 @@ export const ASTUtils = {
   },
   isDeclaredInNode(params: {
     functionNode: TSESTree.Node
-    reference: TSESLintScopeManager.Reference
+    reference: TSESLint.Scope.Reference
     scopeManager: TSESLint.Scope.ScopeManager
   }) {
     const { functionNode, reference, scopeManager } = params
@@ -243,8 +242,8 @@ export const ASTUtils = {
 
     const resolvedNode = context
       .getScope()
-      .references.find((ref) => ref.identifier === node)?.resolved
-      ?.defs[0]?.node
+      .references.find((ref) => ref.identifier === node)?.resolved?.defs[0]
+      ?.node
 
     if (resolvedNode?.type !== AST_NODE_TYPES.VariableDeclarator) {
       return null

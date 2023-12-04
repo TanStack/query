@@ -25,6 +25,12 @@ Generate React Query hooks from your GraphQL schema
 
 Link: https://the-guild.dev/graphql/codegen
 
+## Http-wizard
+
+End-to-end type-safe Fastify API with typecript magic ✨
+
+Link: https://http-wizard.com
+
 ## Kubb
 
 Generate SDKs for all your APIs
@@ -96,6 +102,12 @@ Link: https://trpc.io/
 Incrementally adoptable type-safety for your new and existing APIs
 
 Link: https://ts-rest.com/
+
+## wagmi
+
+React Hooks for Ethereum based on `@tanstack/react-query`
+
+Link: https://wagmi.sh/
 
 ## zodios
 

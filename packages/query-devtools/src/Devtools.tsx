@@ -106,7 +106,9 @@ const [selectedMutationId, setSelectedMutationId] = createSignal<number | null>(
 )
 const [panelWidth, setPanelWidth] = createSignal(0)
 
-export const DevtoolsComponent: Component<QueryDevtoolsProps> = (props) => {
+export type DevtoolsComponentType = Component<QueryDevtoolsProps>
+
+const DevtoolsComponent: DevtoolsComponentType = (props) => {
   const [localStore, setLocalStore] = createLocalStorage({
     prefix: 'TanstackQueryDevtools',
   })
@@ -133,7 +135,7 @@ export const DevtoolsComponent: Component<QueryDevtoolsProps> = (props) => {
 
 export default DevtoolsComponent
 
-export const Devtools: Component<DevtoolsPanelProps> = (props) => {
+const Devtools: Component<DevtoolsPanelProps> = (props) => {
   loadFonts()
 
   const theme = useTheme()
@@ -149,8 +151,8 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
     return props.localStore.open === 'true'
       ? true
       : props.localStore.open === 'false'
-      ? false
-      : useQueryDevtoolsContext().initialIsOpen || INITIAL_IS_OPEN
+        ? false
+        : useQueryDevtoolsContext().initialIsOpen || INITIAL_IS_OPEN
   })
 
   const position = createMemo(() => {
@@ -201,7 +203,9 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
         css`
           & .tsqd-panel-transition-exit-active,
           & .tsqd-panel-transition-enter-active {
-            transition: opacity 0.3s, transform 0.3s;
+            transition:
+              opacity 0.3s,
+              transform 0.3s;
           }
 
           & .tsqd-panel-transition-exit-to,
@@ -213,7 +217,9 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
 
           & .tsqd-button-transition-exit-active,
           & .tsqd-button-transition-enter-active {
-            transition: opacity 0.3s, transform 0.3s;
+            transition:
+              opacity 0.3s,
+              transform 0.3s;
           }
 
           & .tsqd-button-transition-exit-to,
@@ -221,8 +227,8 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
             transform: ${buttonPosition() === 'top-left'
               ? `translateX(-72px);`
               : buttonPosition() === 'top-right'
-              ? `translateX(72px);`
-              : `translateY(72px);`};
+                ? `translateX(72px);`
+                : `translateY(72px);`};
           }
         `,
         'tsqd-transitions-container',
@@ -261,7 +267,7 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
   )
 }
 
-export const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
+const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
   const theme = useTheme()
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles : lightStyles
@@ -1033,7 +1039,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
   )
 }
 
-export const QueryRow: Component<{ query: Query }> = (props) => {
+const QueryRow: Component<{ query: Query }> = (props) => {
   const theme = useTheme()
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles : lightStyles
@@ -1133,7 +1139,7 @@ export const QueryRow: Component<{ query: Query }> = (props) => {
   )
 }
 
-export const MutationRow: Component<{ mutation: Mutation }> = (props) => {
+const MutationRow: Component<{ mutation: Mutation }> = (props) => {
   const theme = useTheme()
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles : lightStyles
@@ -1241,7 +1247,7 @@ export const MutationRow: Component<{ mutation: Mutation }> = (props) => {
   )
 }
 
-export const QueryStatusCount: Component = () => {
+const QueryStatusCount: Component = () => {
   const stale = createSubscribeToQueryCacheBatcher(
     (queryCache) =>
       queryCache()
@@ -1295,7 +1301,7 @@ export const QueryStatusCount: Component = () => {
   )
 }
 
-export const MutationStatusCount: Component = () => {
+const MutationStatusCount: Component = () => {
   const success = createSubscribeToMutationCacheBatcher(
     (mutationCache) =>
       mutationCache()
@@ -1365,7 +1371,7 @@ export const MutationStatusCount: Component = () => {
   )
 }
 
-export const QueryStatus: Component<QueryStatusProps> = (props) => {
+const QueryStatus: Component<QueryStatusProps> = (props) => {
   const theme = useTheme()
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles : lightStyles

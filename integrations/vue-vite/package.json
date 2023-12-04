@@ -7,8 +7,8 @@
   },
   "dependencies": {
     "@tanstack/vue-query": "workspace:*",
-    "@vitejs/plugin-vue": "^4.2.3",
+    "@vitejs/plugin-vue": "^4.4.0",
     "vue": "^3.3.0",
-    "vite": "^4.4.4"
+    "vite": "^4.5.0"
   }
 }

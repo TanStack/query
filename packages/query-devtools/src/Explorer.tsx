@@ -22,7 +22,7 @@ import type { Query } from '@tanstack/query-core'
  * @example
  * chunkArray(['a','b', 'c', 'd', 'e'], 2) // returns [['a','b'], ['c', 'd'], ['e']]
  */
-export function chunkArray<T extends { label: string; value: unknown }>(
+function chunkArray<T extends { label: string; value: unknown }>(
   array: Array<T>,
   size: number,
 ): Array<Array<T>> {
@@ -91,8 +91,8 @@ const CopyButton = (props: { value: unknown }) => {
         copyState() === 'NoCopy'
           ? 'Copy object to clipboard'
           : copyState() === 'SuccessCopy'
-          ? 'Object copied to clipboard'
-          : 'Error copying object to clipboard'
+            ? 'Object copied to clipboard'
+            : 'Error copying object to clipboard'
       }`}
       onClick={
         copyState() === 'NoCopy'
@@ -554,6 +554,7 @@ const stylesFactory = (theme: 'light' | 'dark') => {
     `,
     label: css`
       color: ${t(colors.gray[700], colors.gray[300])};
+      white-space: nowrap;
     `,
     value: css`
       color: ${t(colors.purple[600], colors.purple[400])};

@@ -374,6 +374,18 @@
               "to": "react/reference/useMutationState"
             },
             {
+              "label": "useSuspenseQuery",
+              "to": "react/reference/useSuspenseQuery"
+            },
+            {
+              "label": "useSuspenseInfiniteQuery",
+              "to": "react/reference/useSuspenseInfiniteQuery"
+            },
+            {
+              "label": "useSuspenseQueries",
+              "to": "react/reference/useSuspenseQueries"
+            },
+            {
               "label": "QueryClient",
               "to": "react/reference/QueryClient"
             },
@@ -804,6 +816,30 @@
           ]
         }
       ]
+    },
+    {"framework": "angular", "menuItems":[
+      {
+        "label": "Getting Started",
+        "children": [
+          {
+            "label": "Overview",
+            "to": "angular/overview"
+          },
+          {
+            "label": "Installation",
+            "to": "angular/installation"
+          },
+          {
+            "label": "Quick Start",
+            "to": "angular/quick-start"
+          },
+          {
+            "label": "Devtools",
+            "to": "angular/devtools"
+          }
+        ]
+      }
+    ]
     }
   ],
   "users": [

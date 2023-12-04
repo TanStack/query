@@ -90,7 +90,11 @@ export function useBaseQuery<
   }, [defaultedOptions, observer])
 
   // Handle suspense
-  if (shouldSuspend(defaultedOptions, result, isRestoring)) {
+  if (shouldSuspend(defaultedOptions, result)) {
+    // Do the same thing as the effect right above because the effect won't run
+    // when we suspend but also, the component won't re-mount so our observer would
+    // be out of date.
+    observer.setOptions(defaultedOptions, { listeners: false })
     throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
   }
 

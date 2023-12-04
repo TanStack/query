@@ -20,10 +20,10 @@ export type MaybeRefDeep<T> = MaybeRef<
   T extends Function
     ? T
     : T extends object
-    ? {
-        [Property in keyof T]: MaybeRefDeep<T[Property]>
-      }
-    : T
+      ? {
+          [Property in keyof T]: MaybeRefDeep<T[Property]>
+        }
+      : T
 >
 
 export type NoUnknown<T> = Equal<unknown, T> extends true ? never : T
@@ -37,12 +37,12 @@ export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
 export type DeepUnwrapRef<T> = T extends UnwrapLeaf
   ? T
   : T extends Ref<infer U>
-  ? DeepUnwrapRef<U>
-  : T extends {}
-  ? {
-      [Property in keyof T]: DeepUnwrapRef<T[Property]>
-    }
-  : UnwrapRef<T>
+    ? DeepUnwrapRef<U>
+    : T extends {}
+      ? {
+          [Property in keyof T]: DeepUnwrapRef<T[Property]>
+        }
+      : UnwrapRef<T>
 
 export type DistributiveOmit<T, K extends keyof any> = T extends any
   ? Omit<T, K>

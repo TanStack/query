@@ -309,15 +309,3 @@ export const tokens = {
     tooltip: 1800,
   },
 }
-
-export type ThemeConfigType = typeof tokens
-export type ThemeColorsAll = {
-  [key in keyof ThemeConfigType['colors']]: key
-}[keyof ThemeConfigType['colors']]
-export type AtomicThemeColors =
-  | 'white'
-  | 'black'
-  | 'transparent'
-  | 'current'
-  | 'inherit'
-export type ThemeColors = Exclude<ThemeColorsAll, AtomicThemeColors>

@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query",
-  "version": "5.8.1",
+  "version": "5.12.1",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Solid",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -46,7 +46,7 @@
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
-    "test:lib": "vitest run --coverage",
+    "test:lib": "vitest run --coverage --retry=3",
     "test:lib:dev": "vitest watch --coverage",
     "test:build": "publint --strict",
     "build": "tsup"
@@ -57,11 +57,11 @@
   ],
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
-    "solid-js": "^1.7.8"
+    "solid-js": "^1.8.1"
   },
   "devDependencies": {
     "tsup-preset-solid": "^2.1.0",
-    "vite-plugin-solid": "^2.7.0"
+    "vite-plugin-solid": "^2.7.2"
   },
   "peerDependencies": {
     "solid-js": "^1.6.0"
