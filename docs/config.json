@@ -69,6 +69,10 @@
               "to": "react/guides/query-functions"
             },
             {
+              "label": "Query Options",
+              "to": "react/guides/query-options"
+            },
+            {
               "label": "Network Mode",
               "to": "react/guides/network-mode"
             },
@@ -396,6 +400,14 @@
             {
               "label": "useQueryClient",
               "to": "react/reference/useQueryClient"
+            },
+            {
+              "label": "queryOptions",
+              "to": "react/reference/queryOptions"
+            },
+            {
+              "label": "infiniteQueryOptions",
+              "to": "react/reference/infiniteQueryOptions"
             },
             {
               "label": "QueryCache",
@@ -817,29 +829,31 @@
         }
       ]
     },
-    {"framework": "angular", "menuItems":[
-      {
-        "label": "Getting Started",
-        "children": [
-          {
-            "label": "Overview",
-            "to": "angular/overview"
-          },
-          {
-            "label": "Installation",
-            "to": "angular/installation"
-          },
-          {
-            "label": "Quick Start",
-            "to": "angular/quick-start"
-          },
-          {
-            "label": "Devtools",
-            "to": "angular/devtools"
-          }
-        ]
-      }
-    ]
+    {
+      "framework": "angular",
+      "menuItems": [
+        {
+          "label": "Getting Started",
+          "children": [
+            {
+              "label": "Overview",
+              "to": "angular/overview"
+            },
+            {
+              "label": "Installation",
+              "to": "angular/installation"
+            },
+            {
+              "label": "Quick Start",
+              "to": "angular/quick-start"
+            },
+            {
+              "label": "Devtools",
+              "to": "angular/devtools"
+            }
+          ]
+        }
+      ]
     }
   ],
   "users": [
