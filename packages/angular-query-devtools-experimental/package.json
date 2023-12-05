@@ -1,0 +1,58 @@
+{
+  "name": "@tanstack/angular-query-devtools-experimental",
+  "version": "5.13.0",
+  "description": "Developer tools to interact with and visualize the TanStack/angular-query cache",
+  "author": "Arnoud de Vries",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TanStack/query.git",
+    "directory": "packages/angular-query-devtools-experimental"
+  },
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "build",
+    "src"
+  ],
+  "scripts": {
+    "clean": "rimraf ./build && rimraf ./coverage",
+    "test:eslint": "eslint --ext .ts,.tsx ./src",
+    "test:types": "tsc",
+    "test:build": "publint --strict",
+    "build": "ng-packagr -p ng-package.json -c tsconfig.build.json && rimraf ./build/package.json"
+  },
+  "dependencies": {
+    "@tanstack/query-devtools": "workspace:*",
+    "tslib": "^2.6.2"
+  },
+  "devDependencies": {
+    "@angular/compiler-cli": "^17.0.2",
+    "@angular/core": "^17.0.2",
+    "@tanstack/angular-query-experimental": "workspace:*",
+    "ng-packagr": "^17.0.0",
+    "typescript": "5.2.2",
+    "zone.js": "^0.14.2"
+  },
+  "peerDependencies": {
+    "@angular/core": "^17"
+  },
+  "module": "build/fesm2022/tanstack-angular-query-devtools-experimental.mjs",
+  "types": "build/index.d.ts",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./build/index.d.ts",
+      "esm2022": "./build/esm2022/tanstack-angular-query-devtools-experimental.mjs",
+      "esm": "./build/esm2022/tanstack-angular-query-devtools-experimental.mjs",
+      "default": "./build/fesm2022/tanstack-angular-query-devtools-experimental.mjs"
+    }
+  }
+}
