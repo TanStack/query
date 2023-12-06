@@ -1,6 +1,7 @@
 import {
   For,
   Show,
+  batch,
   createEffect,
   createMemo,
   createSignal,
@@ -68,6 +69,7 @@ import type {
   MutationCache,
   Query,
   QueryCache,
+  QueryCacheNotifyEvent,
   QueryState,
 } from '@tanstack/query-core'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
@@ -1053,6 +1055,8 @@ const QueryRow: Component<{ query: Query }> = (props) => {
       queryCache().find({
         queryKey: props.query.queryKey,
       })?.state,
+    true,
+    (e) => e.query.queryHash === props.query.queryHash,
   )
 
   const isDisabled = createSubscribeToQueryCacheBatcher(
@@ -1062,6 +1066,8 @@ const QueryRow: Component<{ query: Query }> = (props) => {
           queryKey: props.query.queryKey,
         })
         ?.isDisabled() ?? false,
+    true,
+    (e) => e.query.queryHash === props.query.queryHash,
   )
 
   const isStale = createSubscribeToQueryCacheBatcher(
@@ -1071,6 +1077,8 @@ const QueryRow: Component<{ query: Query }> = (props) => {
           queryKey: props.query.queryKey,
         })
         ?.isStale() ?? false,
+    true,
+    (e) => e.query.queryHash === props.query.queryHash,
   )
 
   const observers = createSubscribeToQueryCacheBatcher(
@@ -1080,6 +1088,8 @@ const QueryRow: Component<{ query: Query }> = (props) => {
           queryKey: props.query.queryKey,
         })
         ?.getObserversCount() ?? 0,
+    true,
+    (e) => e.query.queryHash === props.query.queryHash,
   )
 
   const color = createMemo(() =>
@@ -2035,7 +2045,13 @@ const MutationDetails = () => {
   )
 }
 
-const queryCacheMap = new Map<(q: Accessor<QueryCache>) => any, Setter<any>>()
+const queryCacheMap = new Map<
+  (q: Accessor<QueryCache>) => any,
+  {
+    setter: Setter<any>
+    shouldUpdate: (event: QueryCacheNotifyEvent) => boolean
+  }
+>()
 
 const setupQueryCacheSubscription = () => {
   const queryCache = createMemo(() => {
@@ -2043,12 +2059,16 @@ const setupQueryCacheSubscription = () => {
     return client.getQueryCache()
   })
 
-  const unsub = queryCache().subscribe(() => {
-    for (const [callback, setter] of queryCacheMap.entries()) {
-      queueMicrotask(() => {
-        setter(callback(queryCache))
-      })
-    }
+  const unsub = queryCache().subscribe((q) => {
+    let count = 0
+    batch(() => {
+      for (const [callback, value] of queryCacheMap.entries()) {
+        if (!value.shouldUpdate(q)) continue
+        count++
+        value.setter(callback(queryCache))
+      }
+    })
+    console.log('batched', count)
   })
 
   onCleanup(() => {
@@ -2062,6 +2082,7 @@ const setupQueryCacheSubscription = () => {
 const createSubscribeToQueryCacheBatcher = <T,>(
   callback: (queryCache: Accessor<QueryCache>) => Exclude<T, Function>,
   equalityCheck: boolean = true,
+  shouldUpdate: (event: QueryCacheNotifyEvent) => boolean = () => true,
 ) => {
   const queryCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
@@ -2077,8 +2098,10 @@ const createSubscribeToQueryCacheBatcher = <T,>(
     setValue(callback(queryCache))
   })
 
-  // @ts-ignore
-  queryCacheMap.set(callback, setValue)
+  queryCacheMap.set(callback, {
+    setter: setValue,
+    shouldUpdate: shouldUpdate,
+  })
 
   onCleanup(() => {
     // @ts-ignore
