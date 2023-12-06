@@ -2060,15 +2060,12 @@ const setupQueryCacheSubscription = () => {
   })
 
   const unsub = queryCache().subscribe((q) => {
-    let count = 0
     batch(() => {
       for (const [callback, value] of queryCacheMap.entries()) {
         if (!value.shouldUpdate(q)) continue
-        count++
         value.setter(callback(queryCache))
       }
     })
-    console.log('batched', count)
   })
 
   onCleanup(() => {
