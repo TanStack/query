@@ -54,6 +54,37 @@ export class QueryClient extends QC {
     return super.getQueryData(cloneDeepUnref(queryKey))
   }
 
+  ensureQueryData<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  ): Promise<TData>
+  ensureQueryData<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    options: MaybeRefDeep<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+    >,
+  ): Promise<TData>
+  ensureQueryData<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    options: MaybeRefDeep<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+    >,
+  ): Promise<TData> {
+    return super.ensureQueryData(cloneDeepUnref(options))
+  }
+
   getQueriesData<TData = unknown>(
     filters: MaybeRefDeep<QueryFilters>,
   ): Array<[QueryKey, TData | undefined]> {
