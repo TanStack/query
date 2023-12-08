@@ -15,9 +15,10 @@ const {
 } = useInfiniteQuery({
   queryKey,
   queryFn: ({ pageParam = 1 }) => fetchPage(pageParam),
-  ...options,
-  getNextPageParam: (lastPage, allPages) => lastPage.nextCursor,
-  getPreviousPageParam: (firstPage, allPages) => firstPage.prevCursor,
+  options: {
+    getNextPageParam: (lastPage, allPages) => lastPage.nextCursor,
+    getPreviousPageParam: (firstPage, allPages) => firstPage.prevCursor,
+  },
 })
 ```
 
