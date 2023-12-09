@@ -89,6 +89,9 @@ export class MutationObserver<
   }
 
   reset(): void {
+    // reset needs to remove the observer from the mutation because there is no way to "get it back"
+    // another mutate call will yield a new mutation!
+    this.#currentMutation?.removeObserver(this)
     this.#currentMutation = undefined
     this.#updateResult()
     this.#notify()
