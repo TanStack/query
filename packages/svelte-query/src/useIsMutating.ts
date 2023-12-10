@@ -10,7 +10,7 @@ import type { Readable } from 'svelte/store'
 export function useIsMutating(
   filters?: MutationFilters,
   queryClient?: QueryClient,
-): Readable<number> {
+): Readable<boolean> {
   const client = useQueryClient(queryClient)
   const cache = client.getMutationCache()
   // isMutating is the prev value initialized on mount *

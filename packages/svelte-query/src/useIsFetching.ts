@@ -10,7 +10,7 @@ import type { Readable } from 'svelte/store'
 export function useIsFetching(
   filters?: QueryFilters,
   queryClient?: QueryClient,
-): Readable<number> {
+): Readable<boolean> {
   const client = useQueryClient(queryClient)
   const cache = client.getQueryCache()
   // isFetching is the prev value initialized on mount *
