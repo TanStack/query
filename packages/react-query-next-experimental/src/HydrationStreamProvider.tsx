@@ -97,6 +97,7 @@ export function createHydrationStreamProvider<TShape>() {
     })
     const count = React.useRef(0)
     props.useInjectServerHTML(() => {
+      console.log('injecting html')
       // This only happens on the server
       stream.push(...(props.onFlush?.() ?? []))
 

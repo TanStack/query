@@ -11,10 +11,9 @@ import {
   useRouter,
 } from '@tanstack/react-router'
 import { Suspense, useState } from 'react'
-
 import { ReactQueryStreamedHydration } from '@tanstack/react-query-next-experimental'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { TanStackRouterDevtools } from '@tanstack/router-devtools'
+import { DehydrateRouter } from '@tanstack/react-router-server/client'
 
 function WaitComponent(props: { wait: number }) {
   const { data } = useSuspenseQuery({
@@ -34,11 +33,14 @@ function WaitComponent(props: { wait: number }) {
 
 function useInjectHTML(cb: () => React.ReactNode) {
   const router = useRouter()
-  // TODO: can we change type in TSR so we can return ReactNode instead of just string?
-  router.injectHtml(cb as any)
+  console.log('dehydrateddata', router.dehydratedData)
+  router // TODO: can we change type in TSR so we can return ReactNode instead of just string?
+    .injectHtml(cb as any)
 }
 
-const rootRoute = rootRouteWithContext()({
+const rootRoute = rootRouteWithContext<{
+  head: string
+}>()({
   component: RootComponent,
 })
 function RootComponent() {
@@ -47,25 +49,47 @@ function RootComponent() {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 5 * 1000,
+            staleTime: 5000,
           },
         },
       }),
   )
 
   return (
-    <div>
-      <h1>TSR + TSQ Automatic Streaming Hydration</h1>
-      <Suspense fallback={'Global suspense boundary yeyo'}>
+    <html lang="en">
+      <head>
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Vite App</title>
+        <script
+          type="module"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{
+            __html: `
+              import RefreshRuntime from "/@react-refresh"
+              RefreshRuntime.injectIntoGlobalHook(window)
+              window.$RefreshReg$ = () => {}
+              window.$RefreshSig$ = () => (type) => type
+              window.__vite_plugin_react_preamble_installed__ = true
+            `,
+          }}
+        />
+        <script type="module" src="/@vite/client" />
+        <script type="module" src="/src/entry-client.tsx" />
+      </head>
+      <body>
+        <h1>TSR + TSQ Automatic Streaming Hydration</h1>
         <QueryClientProvider client={queryClient}>
           <ReactQueryStreamedHydration useInjectServerHTML={useInjectHTML}>
-            <Outlet />
+            <Suspense fallback={'Global suspense boundary yeyo'}>
+              <Outlet />
+            </Suspense>
           </ReactQueryStreamedHydration>
-          <ReactQueryDevtools buttonPosition="top-right" />
-          <TanStackRouterDevtools position="bottom-right" />
+          <ReactQueryDevtools />
         </QueryClientProvider>
-      </Suspense>
-    </div>
+        <DehydrateRouter />
+      </body>
+    </html>
   )
 }
 
@@ -124,6 +148,9 @@ function IndexRouteComponent() {
 export function createRouter() {
   return new Router({
     routeTree: rootRoute.addChildren([indexRoute]),
+    context: {
+      head: '',
+    },
   })
 }
 

@@ -1,5 +1,4 @@
-import * as React from 'react'
-import ReactDOM from 'react-dom/client'
+import { hydrateRoot } from 'react-dom/client'
 
 import { StartClient } from '@tanstack/react-router-server/client'
 import { createRouter } from './router'
@@ -7,4 +6,4 @@ import { createRouter } from './router'
 const router = createRouter()
 router.hydrate()
 
-ReactDOM.hydrateRoot(document, <StartClient router={router} />)
+hydrateRoot(document, <StartClient router={router} />)
