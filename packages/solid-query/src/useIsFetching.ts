@@ -7,7 +7,7 @@ import type { Accessor } from 'solid-js'
 export function useIsFetching(
   filters?: Accessor<QueryFilters>,
   queryClient?: Accessor<QueryClient>,
-): Accessor<number> {
+): Accessor<boolean> {
   const client = createMemo(() => useQueryClient(queryClient?.()))
   const queryCache = createMemo(() => client().getQueryCache())
 

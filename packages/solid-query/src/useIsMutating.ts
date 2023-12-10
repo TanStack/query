@@ -7,7 +7,7 @@ import type { Accessor } from 'solid-js'
 export function useIsMutating(
   filters?: Accessor<MutationFilters>,
   queryClient?: Accessor<QueryClient>,
-): Accessor<number> {
+): Accessor<boolean> {
   const client = createMemo(() => useQueryClient(queryClient?.()))
   const mutationCache = createMemo(() => client().getMutationCache())
 
