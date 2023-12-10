@@ -8,7 +8,7 @@ import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 export function useIsFetching(
   filters?: QueryFilters,
   queryClient?: QueryClient,
-): number {
+): boolean {
   const client = useQueryClient(queryClient)
   const queryCache = client.getQueryCache()
 
