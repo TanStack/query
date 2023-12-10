@@ -99,13 +99,16 @@ export class QueryClient {
     this.#unsubscribeOnline = undefined
   }
 
-  isFetching(filters?: QueryFilters): number {
-    return this.#queryCache.findAll({ ...filters, fetchStatus: 'fetching' })
-      .length
+  isFetching(filters?: QueryFilters): boolean {
+    return this.#queryCache
+      .findAll({ ...filters, fetchStatus: 'fetching' })
+      .some(Boolean)
   }
 
-  isMutating(filters?: MutationFilters): number {
-    return this.#mutationCache.findAll({ ...filters, status: 'pending' }).length
+  isMutating(filters?: MutationFilters): boolean {
+    return this.#mutationCache
+      .findAll({ ...filters, status: 'pending' })
+      .some(Boolean)
   }
 
   getQueryData<
