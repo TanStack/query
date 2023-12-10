@@ -7,7 +7,7 @@ import type { Injector, Signal } from '@angular/core'
 export function injectIsFetching(
   filters?: QueryFilters,
   injector?: Injector,
-): Signal<number> {
+): Signal<boolean> {
   return assertInjector(injectIsFetching, injector, () => {
     const queryClient = injectQueryClient()
     const destroyRef = inject(DestroyRef)

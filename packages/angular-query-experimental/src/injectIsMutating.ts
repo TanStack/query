@@ -7,7 +7,7 @@ import type { Injector, Signal } from '@angular/core'
 export function injectIsMutating(
   filters?: MutationFilters,
   injector?: Injector,
-): Signal<number> {
+): Signal<boolean> {
   return assertInjector(injectIsMutating, injector, () => {
     const queryClient = injectQueryClient()
     const destroyRef = inject(DestroyRef)
