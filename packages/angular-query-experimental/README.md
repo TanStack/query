@@ -48,10 +48,8 @@ Visit https://tanstack.com/query/latest/docs/angular/overview
    import { QueryClient } from '@tanstack/angular-query-experimental'
 
    bootstrapApplication(AppComponent, {
-     providers: [
-       provideAngularQuery(new QueryClient())
-     ]
-   });
+     providers: [provideAngularQuery(new QueryClient())],
+   })
    ```
 
 3. Inject query
