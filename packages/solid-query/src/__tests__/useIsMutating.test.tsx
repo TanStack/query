@@ -7,7 +7,7 @@ import { createQueryClient, setActTimeout, sleep } from './utils'
 
 describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {
-    const isMutatings: Array<number> = []
+    const isMutatings: Array<boolean> = []
     const queryClient = createQueryClient()
 
     function IsMutating() {
@@ -62,7 +62,7 @@ describe('useIsMutating', () => {
   })
 
   it('should filter correctly by mutationKey', async () => {
-    const isMutatings: Array<number> = []
+    const isMutatings: Array<boolean> = []
     const queryClient = createQueryClient()
 
     function IsMutating() {
@@ -107,7 +107,7 @@ describe('useIsMutating', () => {
   })
 
   it('should filter correctly by predicate', async () => {
-    const isMutatings: Array<number> = []
+    const isMutatings: Array<boolean> = []
     const queryClient = createQueryClient()
 
     function IsMutating() {
