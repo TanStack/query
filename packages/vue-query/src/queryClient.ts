@@ -40,11 +40,11 @@ export class QueryClient extends QC {
 
   isRestoring = ref(false)
 
-  isFetching(filters: MaybeRefDeep<QueryFilters> = {}): number {
+  isFetching(filters: MaybeRefDeep<QueryFilters> = {}): boolean {
     return super.isFetching(cloneDeepUnref(filters))
   }
 
-  isMutating(filters: MaybeRefDeep<MutationFilters> = {}): number {
+  isMutating(filters: MaybeRefDeep<MutationFilters> = {}): boolean {
     return super.isMutating(cloneDeepUnref(filters))
   }
 

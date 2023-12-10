@@ -10,7 +10,7 @@ export type QueryFilters = MaybeRefDeep<QF>
 export function useIsFetching(
   fetchingFilters: MaybeRefDeep<QF> = {},
   queryClient?: QueryClient,
-): Ref<number> {
+): Ref<boolean> {
   if (process.env.NODE_ENV === 'development') {
     if (!getCurrentScope()) {
       console.warn(
