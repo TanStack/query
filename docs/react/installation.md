@@ -43,7 +43,7 @@ Firefox >= 78
 Edge >= 79
 Safari >= 12.1
 iOS >= 12.2
-opera >= 53
+Opera >= 53
 ```
 
 > Depending on your environment, you might need to add polyfills. If you want to support older browsers, you need to transpile the library from `node_modules` yourselves.
