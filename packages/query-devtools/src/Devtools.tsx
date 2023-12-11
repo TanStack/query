@@ -601,6 +601,12 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
               height: 50%;
               max-height: 50%;
             `,
+          panelWidth() < secondBreakpoint &&
+            !(selectedQueryHash() || selectedMutationId()) &&
+            css`
+              height: 100%;
+              max-height: 100%;
+            `,
           'tsqd-queries-container',
         )}
         ref={containerRef}
@@ -2232,6 +2238,22 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       & * {
         box-sizing: border-box;
         text-transform: none;
+      }
+
+      & *::-webkit-scrollbar {
+        width: 7px;
+      }
+
+      & *::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      & *::-webkit-scrollbar-thumb {
+        background: ${t(colors.gray[300], colors.darkGray[200])};
+      }
+
+      & *::-webkit-scrollbar-thumb:hover {
+        background: ${t(colors.gray[400], colors.darkGray[300])};
       }
     `,
     'devtoolsBtn-position-bottom-right': css`
