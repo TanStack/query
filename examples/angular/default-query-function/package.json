@@ -17,8 +17,8 @@
     "@angular/core": "^17.0.2",
     "@angular/language-service": "^17.0.2",
     "@angular/platform-browser": "^17.0.2",
-    "@tanstack/angular-query-experimental": "^5.0.0",
-    "@tanstack/angular-query-devtools-experimental": "^5.0.0",
+    "@tanstack/angular-query-experimental": "^5.13",
+    "@tanstack/angular-query-devtools-experimental": "^5.13",
     "axios": "^1.5.1",
     "rxjs": "^7.8.1",
     "zone.js": "^0.14.2"
