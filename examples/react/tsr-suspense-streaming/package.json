@@ -1,0 +1,32 @@
+{
+  "name": "@tanstack/query-example-tsr-suspense-streaming",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node server",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "vite build src/entry-client.tsx --outDir dist/client",
+    "build:server": "vite build --ssr src/entry-server.tsx --outDir dist/server",
+    "serve": "NODE_ENV=production node server"
+  },
+  "dependencies": {
+    "@tanstack/react-router": "0.0.1-beta.248",
+    "@tanstack/react-router-server": "0.0.1-beta.248",
+    "@tanstack/router-devtools": "0.0.1-beta.248",
+    "@tanstack/react-query-next-experimental": "workspace:*",
+    "@tanstack/react-query": "workspace:*",
+    "@tanstack/react-query-devtools": "workspace:*",
+    "compression": "^1.7.4",
+    "express": "^4.18.2",
+    "get-port": "^7.0.0",
+    "isbot": "^3.7.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.0.7"
+  }
+}

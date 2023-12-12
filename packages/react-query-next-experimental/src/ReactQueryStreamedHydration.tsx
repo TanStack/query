@@ -25,6 +25,7 @@ const stream = createHydrationStreamProvider<DehydratedState>()
  */
 export function ReactQueryStreamedHydration(props: {
   children: React.ReactNode
+  useInjectServerHTML: HydrationStreamProviderProps<DehydratedState>['useInjectServerHTML']
   queryClient?: QueryClient
   options?: {
     hydrate?: HydrateOptions
@@ -55,6 +56,7 @@ export function ReactQueryStreamedHydration(props: {
 
   return (
     <stream.Provider
+      useInjectServerHTML={props.useInjectServerHTML}
       // Happens on server:
       onFlush={() => {
         /**

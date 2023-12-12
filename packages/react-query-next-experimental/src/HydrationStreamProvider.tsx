@@ -1,6 +1,5 @@
 'use client'
 
-import { useServerInsertedHTML } from 'next/navigation'
 import * as React from 'react'
 
 const serializedSymbol = Symbol('serialized')
@@ -34,6 +33,12 @@ interface HydrationStreamContext<TShape> {
 export interface HydrationStreamProviderProps<TShape> {
   children: React.ReactNode
   /**
+   * The function that is used to inject HTML when a `Suspense`-boundary completes
+   * @example`useServerInsertedHTML()` from `next/navigation`
+   * @example hook wrapping `router.injectHtml()` from `@tanstack/react-router`
+   */
+  useInjectServerHTML: (callback: () => React.ReactNode) => void
+  /**
    * Optional transformer to serialize/deserialize the data
    * Example devalue, superjson et al
    */
@@ -63,24 +68,9 @@ export function createHydrationStreamProvider<TShape>() {
    *   - We check if `window[id]` is set to an array and call `push()` on all the entries which will call `onEntries()` with the new entries
    *   - We replace `window[id]` with a `push()`-method that will be called whenever new entries are received
    **/
-  function UseClientHydrationStreamProvider(props: {
-    children: React.ReactNode
-    /**
-     * Optional transformer to serialize/deserialize the data
-     * Example devalue, superjson et al
-     */
-    transformer?: DataTransformer
-    /**
-     * **Client method**
-     * Called in the browser when new entries are received
-     */
-    onEntries: (entries: Array<TShape>) => void
-    /**
-     * **Server method**
-     * onFlush is called on the server when the cache is flushed
-     */
-    onFlush?: () => Array<TShape>
-  }) {
+  function UseClientHydrationStreamProvider(
+    props: HydrationStreamProviderProps<TShape>,
+  ) {
     // unique id for the cache provider
     const id = `__RQ${React.useId()}`
     const idJSON = JSON.stringify(id)
@@ -106,7 +96,8 @@ export function createHydrationStreamProvider<TShape>() {
       return []
     })
     const count = React.useRef(0)
-    useServerInsertedHTML(() => {
+    props.useInjectServerHTML(() => {
+      console.log('injecting html')
       // This only happens on the server
       stream.push(...(props.onFlush?.() ?? []))
 
