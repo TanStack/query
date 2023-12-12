@@ -39,7 +39,7 @@
     "@angular/common": "^17.0.2",
     "@angular/compiler": "^17.0.2",
     "@angular/compiler-cli": "^17.0.2",
-    "@angular/core": "^17.0.6",
+    "@angular/core": "^17.0.2",
     "@angular/platform-browser": "^17.0.2",
     "@angular/platform-browser-dynamic": "^17.0.2",
     "ng-packagr": "^17.0.0",
