@@ -36,12 +36,12 @@
   },
   "devDependencies": {
     "@analogjs/vite-plugin-angular": "^0.2.18",
-    "@angular/common": "^17.0.2",
-    "@angular/compiler": "^17.0.2",
-    "@angular/compiler-cli": "^17.0.2",
-    "@angular/core": "^17.0.2",
-    "@angular/platform-browser": "^17.0.2",
-    "@angular/platform-browser-dynamic": "^17.0.2",
+    "@angular/common": "^17.0.6",
+    "@angular/compiler": "^17.0.6",
+    "@angular/compiler-cli": "^17.0.6",
+    "@angular/core": "^17.0.6",
+    "@angular/platform-browser": "^17.0.6",
+    "@angular/platform-browser-dynamic": "^17.0.6",
     "ng-packagr": "^17.0.0",
     "typescript": "5.2.2",
     "zone.js": "^0.14.2"
