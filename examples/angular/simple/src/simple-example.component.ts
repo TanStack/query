@@ -1,6 +1,5 @@
 import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import { injectQuery } from '@tanstack/angular-query-experimental'
 import { HttpClient } from '@angular/common/http'
 import { lastValueFrom } from 'rxjs'
@@ -34,7 +33,7 @@ type Response = {
 
     <angular-query-devtools initialIsOpen />
   `,
-  imports: [AngularQueryDevtools, CommonModule],
+  imports: [AngularQueryDevtools],
 })
 export class SimpleExampleComponent {
   http = inject(HttpClient)
@@ -43,9 +42,7 @@ export class SimpleExampleComponent {
     queryKey: ['repoData'],
     queryFn: () =>
       lastValueFrom(
-        this.http.get<Response>(
-          'https://api.github.com/repos/tannerlinsley/react-query',
-        ),
+        this.http.get<Response>('https://api.github.com/repos/tanstack/query'),
       ),
   }))
 }
