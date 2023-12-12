@@ -45,7 +45,7 @@ Firefox >= 90
 Edge >= 91
 Safari >= 15
 iOS >= 15
-opera >= 77
+Opera >= 77
 ```
 
 > Depending on your environment, you might need to add polyfills. If you want to support older browsers, you need to transpile the library from `node_modules` yourselves.
