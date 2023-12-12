@@ -32,8 +32,8 @@
     "tslib": "^2.6.2"
   },
   "devDependencies": {
-    "@angular/compiler-cli": "^17.0.6",
-    "@angular/core": "^17.0.6",
+    "@angular/compiler-cli": "^17.0.2",
+    "@angular/core": "^17.0.2",
     "@tanstack/angular-query-experimental": "workspace:*",
     "ng-packagr": "^17.0.0",
     "typescript": "5.2.2",
