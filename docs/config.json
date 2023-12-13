@@ -852,6 +852,103 @@
               "to": "angular/devtools"
             }
           ]
+        },
+        {
+          "label": "Guides & Concepts",
+          "children": [
+            {
+              "label": "Important Defaults",
+              "to": "angular/guides/important-defaults"
+            },
+            {
+              "label": "Queries",
+              "to": "angular/guides/queries"
+            },
+            {
+              "label": "Query Keys",
+              "to": "angular/guides/query-keys"
+            },
+            {
+              "label": "Query Functions",
+              "to": "angular/guides/query-functions"
+            },
+            {
+              "label": "Query Options",
+              "to": "angular/guides/query-options"
+            },
+            {
+              "label": "Network Mode",
+              "to": "angular/guides/network-mode"
+            },
+            {
+              "label": "Parallel Queries",
+              "to": "angular/guides/parallel-queries"
+            },
+            {
+              "label": "Dependent Queries",
+              "to": "angular/guides/dependent-queries"
+            },
+            {
+              "label": "Background Fetching Indicators",
+              "to": "angular/guides/background-fetching-indicators"
+            },
+            {
+              "label": "Window Focus Refetching",
+              "to": "angular/guides/window-focus-refetching"
+            },
+            {
+              "label": "Disabling/Pausing Queries",
+              "to": "angular/guides/disabling-queries"
+            },
+            {
+              "label": "Query Retries",
+              "to": "angular/guides/query-retries"
+            },
+            {
+              "label": "Paginated Queries",
+              "to": "angular/guides/paginated-queries"
+            },
+            {
+              "label": "Placeholder Query Data",
+              "to": "angular/guides/placeholder-query-data"
+            },
+            {
+              "label": "Query Invalidation",
+              "to": "angular/guides/query-invalidation"
+            },
+            {
+              "label": "Invalidation from Mutations",
+              "to": "angular/guides/invalidations-from-mutations"
+            },
+            {
+              "label": "Optimistic Updates",
+              "to": "angular/guides/optimistic-updates"
+            },
+            {
+              "label": "Query Cancellation",
+              "to": "angular/guides/query-cancellation"
+            },
+            {
+              "label": "Scroll Restoration",
+              "to": "angular/guides/scroll-restoration"
+            },
+            {
+              "label": "Filters",
+              "to": "angular/guides/filters"
+            },
+            {
+              "label": "Caching",
+              "to": "angular/guides/caching"
+            },
+            {
+              "label": "Default Query Fn",
+              "to": "angular/guides/default-query-function"
+            },
+            {
+              "label": "Does this replace state managers?",
+              "to": "angular/guides/does-this-replace-client-state"
+            }
+          ]
         }
       ]
     }

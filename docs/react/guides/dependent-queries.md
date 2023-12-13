@@ -86,7 +86,7 @@ const usersMessages = useQueries({
 
 [//]: # 'Example2'
 
-**Note** that `useQueries` return an **array of query results**
+**Note** that `useQueries` returns an **array of query results**
 
 ## A note about performance
 
