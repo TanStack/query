@@ -913,6 +913,10 @@
               "to": "angular/guides/placeholder-query-data"
             },
             {
+              "label": "Mutations",
+              "to": "angular/guides/mutations"
+            },
+            {
               "label": "Query Invalidation",
               "to": "angular/guides/query-invalidation"
             },
