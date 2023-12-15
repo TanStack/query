@@ -1,4 +1,4 @@
-import { AngularQueryDevtoolsComponent } from '@tanstack/angular-query-devtools-experimental'
+import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
 import { ChangeDetectionStrategy, Component } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { injectQuery } from '@tanstack/angular-query-experimental'
@@ -15,7 +15,7 @@ import { injectQuery } from '@tanstack/angular-query-experimental'
     </div>
     <angular-query-devtools initialIsOpen />
   `,
-  imports: [AngularQueryDevtoolsComponent, CommonModule],
+  imports: [AngularQueryDevtools, CommonModule],
 })
 export class AppComponent {
   /**

@@ -11,7 +11,7 @@ If you're looking for a fully functioning example, please have a look at our [ba
 
 ### Provide the client to your App
 
-```typescript
+```ts
 bootstrapApplication(AppComponent, {
   providers: [provideAngularQuery(new QueryClient())],
 })
@@ -19,7 +19,7 @@ bootstrapApplication(AppComponent, {
 
 ### Component with query and mutation
 
-```typescript
+```ts
 import { Component, Injectable, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { lastValueFrom } from 'rxjs'
@@ -27,9 +27,8 @@ import { lastValueFrom } from 'rxjs'
 import {
   injectMutation,
   injectQuery,
-  injectQueryClient
+  injectQueryClient,
 } from '@tanstack/angular-query-experimental'
-
 
 @Component({
   standalone: true,
@@ -61,7 +60,7 @@ export class TodosComponent {
 
       // OR use the queryClient that is injected into the component
       // this.queryClient.invalidateQueries({ queryKey: ['todos'] })
-    }
+    },
   }))
 
   onAddTodo() {
@@ -70,23 +69,28 @@ export class TodosComponent {
       title: 'Do Laundry',
     })
   }
-  
-@Injectable({providedIn: 'root'})
+}
+
+@Injectable({ providedIn: 'root' })
 export class TodoService {
-  private http = inject(HttpClient);
+  private http = inject(HttpClient)
 
   getTodos(): Promise<Todo[]> {
-    return lastValueFrom(this.http.get<Todo[]>('https://jsonplaceholder.typicode.com/todos'))
+    return lastValueFrom(
+      this.http.get<Todo[]>('https://jsonplaceholder.typicode.com/todos'),
+    )
   }
 
   addTodo(todo: Todo): Promise<Todo> {
-    return lastValueFrom(this.http.post<Todo>('https://jsonplaceholder.typicode.com/todos', todo))
+    return lastValueFrom(
+      this.http.post<Todo>('https://jsonplaceholder.typicode.com/todos', todo),
+    )
   }
 }
 
 interface Todo {
-  id: string;
-  title: string;
+  id: string
+  title: string
 }
 ```
 

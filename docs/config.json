@@ -1,8 +1,8 @@
 {
   "docSearch": {
-    "appId": "ZFKQRGRQA8",
-    "apiKey": "93e0b83eb0b5af4549b6bf47f90af3f7",
-    "indexName": "tanstack-query"
+    "appId": "20TOVD6LOE",
+    "apiKey": "35bc6c51aa322700d1383e17c4f669f4",
+    "indexName": "tanstackquery"
   },
   "menu": [
     {
@@ -67,6 +67,10 @@
             {
               "label": "Query Functions",
               "to": "react/guides/query-functions"
+            },
+            {
+              "label": "Query Options",
+              "to": "react/guides/query-options"
             },
             {
               "label": "Network Mode",
@@ -396,6 +400,14 @@
             {
               "label": "useQueryClient",
               "to": "react/reference/useQueryClient"
+            },
+            {
+              "label": "queryOptions",
+              "to": "react/reference/queryOptions"
+            },
+            {
+              "label": "infiniteQueryOptions",
+              "to": "react/reference/infiniteQueryOptions"
             },
             {
               "label": "QueryCache",
@@ -817,29 +829,31 @@
         }
       ]
     },
-    {"framework": "angular", "menuItems":[
-      {
-        "label": "Getting Started",
-        "children": [
-          {
-            "label": "Overview",
-            "to": "angular/overview"
-          },
-          {
-            "label": "Installation",
-            "to": "angular/installation"
-          },
-          {
-            "label": "Quick Start",
-            "to": "angular/quick-start"
-          },
-          {
-            "label": "Devtools",
-            "to": "angular/devtools"
-          }
-        ]
-      }
-    ]
+    {
+      "framework": "angular",
+      "menuItems": [
+        {
+          "label": "Getting Started",
+          "children": [
+            {
+              "label": "Overview",
+              "to": "angular/overview"
+            },
+            {
+              "label": "Installation",
+              "to": "angular/installation"
+            },
+            {
+              "label": "Quick Start",
+              "to": "angular/quick-start"
+            },
+            {
+              "label": "Devtools",
+              "to": "angular/devtools"
+            }
+          ]
+        }
+      ]
     }
   ],
   "users": [

@@ -31,7 +31,7 @@ type DevtoolsPosition = DevtoolsPositionOriginal
   template: `<div class="tsqd-parent-container" #ref></div>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AngularQueryDevtoolsComponent implements AfterViewInit, OnDestroy {
+export class AngularQueryDevtools implements AfterViewInit, OnDestroy {
   readonly #injectedClient = inject<QueryClient>(QUERY_CLIENT, {
     optional: true,
   })

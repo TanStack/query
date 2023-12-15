@@ -17,8 +17,8 @@ $ yarn add @tanstack/angular-query-devtools-experimental
 
 You can import the devtools like this:
 
-```typescript
-import { AngularQueryDevtoolsComponent } from '@tanstack/angular-query-devtools-experimental'
+```ts
+import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
 ```
 
 ## Floating Mode
@@ -27,14 +27,14 @@ Floating Mode will mount the devtools as a fixed, floating element in your app a
 
 Place the following code as high in your Angular app as you can. The closer it is to the root of the page, the better it will work!
 
-```typescript
-import { AngularQueryDevtoolsComponent } from '@tanstack/angular-query-devtools-experimental'
+```ts
+import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
 import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [AngularQueryDevtoolsComponent],
+  imports: [AngularQueryDevtools],
   template: `
    <angular-query-devtools initialIsOpen />
   `,
