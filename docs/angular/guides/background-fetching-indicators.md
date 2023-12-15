@@ -44,9 +44,11 @@ import { injectIsFetching } from '@tanstack/angular-query-experimental'
 
 @Component({
   selector: 'global-loading-indicator',
-  template: `@if (isFetching()) {
-    <div>Queries are fetching in the background...</div>
-  }`,
+  template: `
+    @if (isFetching()) {
+      <div>Queries are fetching in the background...</div>
+    }
+  `,
 })
 export class GlobalLoadingIndicatorComponent {
   isFetching = injectIsFetching()

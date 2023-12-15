@@ -10,8 +10,27 @@ replace: { 'useQuery': 'injectQuery' }
 ```ts
 @Component({
   selector: 'todos',
-  templateUrl: './todos.component.html',
-  imports: [CommonModule],
+  template: `<div>
+    <button (click)="query.refetch()">Fetch Todos</button>
+
+    @if (query.data()) {
+      <ul>
+        @for (todo of query.data(); track todo.id) {
+          <li>{{ todo.title }}</li>
+        }
+      </ul>
+    } @else {
+      @if (query.isError()) {
+        <span>Error: {{ query.error().message }}</span>
+      } @else if (query.isLoading()) {
+        <span>Loading...</span>
+      } @else if (!query.isLoading() && !query.isError()) {
+        <span>Not ready ...</span>
+      }
+    }
+
+    <div>{{ query.isLoading() ? 'Fetching...' : '' }}</div>
+  </div>`,
 })
 export class TodosComponent {
   query = injectQuery(() => ({
@@ -20,26 +39,6 @@ export class TodosComponent {
     enabled: false,
   }))
 }
-```
-
-```html
-<div>
-  <button (click)="query.refetch()">Fetch Todos</button>
-
-  <ng-container *ngIf="query.data(); else loadingOrError">
-    <ul>
-      <li *ngFor="let todo of query.data()">{{ todo.title }}</li>
-    </ul>
-  </ng-container>
-
-  <ng-template #loadingOrError>
-    <span *ngIf="query.isError()">Error: {{ query.error().message }}</span>
-    <span *ngIf="query.isLoading()">Loading...</span>
-    <span *ngIf="!query.isLoading() && !query.isError()"> Not ready ... </span>
-  </ng-template>
-
-  <div>{{ query.isLoading() ? 'Fetching...' : '' }}</div>
-</div>
 ```
 
 [//]: # 'Example'
