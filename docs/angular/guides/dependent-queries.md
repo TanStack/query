@@ -18,8 +18,8 @@ userQuery = injectQuery(() => ({
 projectsQuery = injectQuery(() => ({
   queryKey: ['projects', this.userQuery.data()?.id],
   queryFn: getProjectsByUser,
-  // The query will not execute until the userId exists
-  enabled: !!userId,
+  // The query will not execute until the user id exists
+  enabled: !!this.userQuery.data()?.id,
 }))
 ```
 

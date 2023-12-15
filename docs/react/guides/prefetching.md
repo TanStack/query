@@ -34,8 +34,6 @@ This is how you use `prefetchQuery`:
 [//]: # 'ExamplePrefetchQuery'
 
 ```tsx
-
-```tsx
 const prefetchTodos = async () => {
   // The results of this query will be cached like a normal query
   await queryClient.prefetchQuery({
@@ -437,7 +435,6 @@ queryClient.setQueryData(['todos'], todos)
 ```
 
 [//]: # 'ExampleManualPriming'
-
 [//]: # 'Materials'
 
 ## Further reading
