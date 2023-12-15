@@ -909,6 +909,10 @@
               "to": "angular/guides/paginated-queries"
             },
             {
+              "label": "Initial Query Data",
+              "to": "angular/guides/initial-query-data"
+            },
+            {
               "label": "Placeholder Query Data",
               "to": "angular/guides/placeholder-query-data"
             },
@@ -939,6 +943,10 @@
             {
               "label": "Filters",
               "to": "angular/guides/filters"
+            },
+            {
+              "label": "Prefetching & Router Integration",
+              "to": "angular/guides/prefetching"
             },
             {
               "label": "Caching",
