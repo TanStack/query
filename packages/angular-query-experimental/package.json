@@ -10,6 +10,18 @@
     "directory": "packages/angular-query-experimental"
   },
   "homepage": "https://tanstack.com/query",
+  "keywords": [
+    "angular query",
+    "angular",
+    "cache",
+    "performance",
+    "reactive",
+    "rxjs",
+    "signals",
+    "state management",
+    "state",
+    "tanstack"
+  ],
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
