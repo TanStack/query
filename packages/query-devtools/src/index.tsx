@@ -5,7 +5,7 @@ import type {
   QueryClient,
   onlineManager as TonlineManager,
 } from '@tanstack/query-core'
-import type { DevtoolsComponent } from './Devtools'
+import type { DevtoolsComponentType } from './Devtools'
 import type {
   DevToolsErrorType,
   DevtoolsButtonPosition,
@@ -30,7 +30,7 @@ class TanstackQueryDevtools {
   #position: Signal<DevtoolsPosition | undefined>
   #initialIsOpen: Signal<boolean | undefined>
   #errorTypes: Signal<Array<DevToolsErrorType> | undefined>
-  #Component: typeof DevtoolsComponent | undefined
+  #Component: DevtoolsComponentType | undefined
   #dispose?: () => void
 
   constructor(config: TanstackQueryDevtoolsConfig) {
@@ -86,7 +86,7 @@ class TanstackQueryDevtools {
       const [isOpen] = this.#initialIsOpen
       const [errors] = this.#errorTypes
       const [queryClient] = this.#client
-      let Devtools: typeof DevtoolsComponent
+      let Devtools: DevtoolsComponentType
 
       if (this.#Component) {
         Devtools = this.#Component

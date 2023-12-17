@@ -4,3 +4,7 @@ const defineTest = require('jscodeshift/dist/testUtils').defineTest
 defineTest(__dirname, 'remove-overloads', null, 'default-import', {
   parser: 'tsx',
 })
+
+defineTest(__dirname, 'remove-overloads', null, 'bug-reports', {
+  parser: 'tsx',
+})

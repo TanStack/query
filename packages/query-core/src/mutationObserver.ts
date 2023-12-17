@@ -1,7 +1,7 @@
 import { getDefaultState } from './mutation'
 import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
-import { shallowEqualObjects } from './utils'
+import { hashKey, shallowEqualObjects } from './utils'
 import type { QueryClient } from './queryClient'
 import type {
   DefaultError,
@@ -53,9 +53,11 @@ export class MutationObserver<
   }
 
   setOptions(
-    options?: MutationObserverOptions<TData, TError, TVariables, TContext>,
+    options: MutationObserverOptions<TData, TError, TVariables, TContext>,
   ) {
-    const prevOptions = this.options
+    const prevOptions = this.options as
+      | MutationObserverOptions<TData, TError, TVariables, TContext>
+      | undefined
     this.options = this.#client.defaultMutationOptions(options)
     if (!shallowEqualObjects(prevOptions, this.options)) {
       this.#client.getMutationCache().notify({
@@ -65,6 +67,14 @@ export class MutationObserver<
       })
     }
     this.#currentMutation?.setOptions(this.options)
+
+    if (
+      prevOptions?.mutationKey &&
+      this.options.mutationKey &&
+      hashKey(prevOptions.mutationKey) !== hashKey(this.options.mutationKey)
+    ) {
+      this.reset()
+    }
   }
 
   protected onUnsubscribe(): void {
@@ -89,6 +99,9 @@ export class MutationObserver<
   }
 
   reset(): void {
+    // reset needs to remove the observer from the mutation because there is no way to "get it back"
+    // another mutate call will yield a new mutation!
+    this.#currentMutation?.removeObserver(this)
     this.#currentMutation = undefined
     this.#updateResult()
     this.#notify()

@@ -7,8 +7,6 @@ You can install React Query via [NPM](https://npmjs.com/),
 or a good ol' `<script>` via
 [ESM.sh](https://esm.sh/).
 
-> v5 is currently available as a release-candidate. We don't anticipate any major API changes from here on out. We encourage you to try it out and report any issues you find.
-
 ### NPM
 
 ```bash
@@ -47,7 +45,7 @@ Firefox >= 90
 Edge >= 91
 Safari >= 15
 iOS >= 15
-opera >= 77
+Opera >= 77
 ```
 
 > Depending on your environment, you might need to add polyfills. If you want to support older browsers, you need to transpile the library from `node_modules` yourselves.

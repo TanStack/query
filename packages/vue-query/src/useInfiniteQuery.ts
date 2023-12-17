@@ -40,28 +40,28 @@ export type UseInfiniteQueryOptions<
         TPageParam
       >[Property]
     : Property extends 'enabled'
-    ? MaybeRefOrGetter<
-        InfiniteQueryObserverOptions<
-          TQueryFnData,
-          TError,
-          TData,
-          TQueryData,
-          TQueryKey
-        >[Property]
-      >
-    : MaybeRefDeep<
-        WithRequired<
+      ? MaybeRefOrGetter<
           InfiniteQueryObserverOptions<
             TQueryFnData,
             TError,
             TData,
             TQueryData,
-            TQueryKey,
-            TPageParam
-          >,
-          'queryKey'
-        >[Property]
-      >
+            TQueryKey
+          >[Property]
+        >
+      : MaybeRefDeep<
+          WithRequired<
+            InfiniteQueryObserverOptions<
+              TQueryFnData,
+              TError,
+              TData,
+              TQueryData,
+              TQueryKey,
+              TPageParam
+            >,
+            'queryKey'
+          >[Property]
+        >
 }
 
 export type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<

@@ -1,0 +1,26 @@
+{
+  "name": "@tanstack/query-example-angular-basic",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@angular/common": "^17.0.2",
+    "@angular/compiler": "^17.0.2",
+    "@angular/core": "^17.0.2",
+    "@angular/platform-browser": "^17.0.2",
+    "@tanstack/angular-query-experimental": "^5.13.4",
+    "@tanstack/angular-query-devtools-experimental": "^5.13.3",
+    "rxjs": "^7.8.1",
+    "zone.js": "^0.14.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "vite": "^4.5.0"
+  }
+}

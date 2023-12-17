@@ -16,6 +16,7 @@ env:
   NX_CLOUD_DISTRIBUTED_EXECUTION_AGENT_COUNT: 3
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   NX_CLOUD_AUTH_TOKEN: ${{ secrets.NX_CLOUD_AUTH_TOKEN }}
+  NX_VERBOSE_LOGGING: true
 
 jobs:
   main:
@@ -47,12 +48,9 @@ jobs:
       - name: Start CI Orchestrator
         run: npx nx-cloud start-ci-run
       - name: Run Tests
-        uses: nick-fields/retry@v2.8.3
-        with:
-          timeout_minutes: 5
-          max_attempts: 3
-          command: npx nx affected --targets=test:eslint,test:lib,test:types,test:build,test:bundle
+        run: npx nx affected --targets=test:eslint,test:lib,test:types,test:build,test:bundle
       - name: Stop Agents
+        if: ${{ always() }}
         run: npx nx-cloud stop-all-agents
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
@@ -102,3 +100,24 @@ jobs:
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - name: Run prettier
         run: pnpm run test:format
+  knip:
+    name: Knip
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install dependencies
+        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+      - name: Run Knip
+        run: pnpm knip

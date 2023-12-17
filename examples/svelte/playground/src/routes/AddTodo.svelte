@@ -16,17 +16,20 @@
   const postTodo = async ({ name, notes }: Omit<Todo, 'id'>) => {
     console.info('postTodo', { name, notes })
     return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (Math.random() < $errorRate) {
-          return reject(
-            new Error(JSON.stringify({ postTodo: { name, notes } }, null, 2)),
-          )
-        }
-        const todo = { name, notes, id: $id }
-        id.set($id + 1)
-        list.set([...$list, todo])
-        resolve(todo)
-      }, $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin))
+      setTimeout(
+        () => {
+          if (Math.random() < $errorRate) {
+            return reject(
+              new Error(JSON.stringify({ postTodo: { name, notes } }, null, 2)),
+            )
+          }
+          const todo = { name, notes, id: $id }
+          id.set($id + 1)
+          list.set([...$list, todo])
+          resolve(todo)
+        },
+        $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin),
+      )
     })
   }
 
@@ -52,7 +55,7 @@
     {$addMutation.status === 'pending'
       ? 'Saving...'
       : $addMutation.status === 'error'
-      ? $addMutation.error.message
-      : 'Saved!'}
+        ? $addMutation.error.message
+        : 'Saved!'}
   </div>
 </div>

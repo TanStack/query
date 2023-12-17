@@ -272,7 +272,7 @@ export function isPlainObject(o: any): o is Object {
     return false
   }
 
-  // If has modified constructor
+  // If has no constructor
   const ctor = o.constructor
   if (typeof ctor === 'undefined') {
     return true
@@ -297,9 +297,9 @@ function hasObjectPrototype(o: any): boolean {
   return Object.prototype.toString.call(o) === '[object Object]'
 }
 
-export function sleep(timeout: number): Promise<void> {
+export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
-    setTimeout(resolve, timeout)
+    setTimeout(resolve, ms)
   })
 }
 

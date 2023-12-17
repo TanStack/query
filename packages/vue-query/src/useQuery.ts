@@ -40,27 +40,27 @@ export type UseQueryOptions<
         DeepUnwrapRef<TQueryKey>
       >[Property]
     : Property extends 'enabled'
-    ? MaybeRefOrGetter<
-        QueryObserverOptions<
-          TQueryFnData,
-          TError,
-          TData,
-          TQueryData,
-          TQueryKey
-        >[Property]
-      >
-    : MaybeRefDeep<
-        WithRequired<
+      ? MaybeRefOrGetter<
           QueryObserverOptions<
             TQueryFnData,
             TError,
             TData,
             TQueryData,
             TQueryKey
-          >,
-          'queryKey'
-        >[Property]
-      >
+          >[Property]
+        >
+      : MaybeRefDeep<
+          WithRequired<
+            QueryObserverOptions<
+              TQueryFnData,
+              TError,
+              TData,
+              TQueryData,
+              TQueryKey
+            >,
+            'queryKey'
+          >[Property]
+        >
 }>
 
 export type UndefinedInitialQueryOptions<
