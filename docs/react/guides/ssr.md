@@ -543,7 +543,7 @@ On the server, `gcTime` defaults to `Infinity` which disables manual garbage col
 
 To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../reference/QueryClient#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
 
-Alternatively, you can set a smaller `gcTime`.
+Alternatively, you can set a smaller `gcTime`. Avoid setting `gcTime` to `0`, as doing so may lead to a hydration error.
 
 ### Caveat for Next.js rewrites
 
