@@ -1,8 +1,7 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import * as React from 'react'
 import { onlineManager, useQueryClient } from '@tanstack/react-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
-import React from 'react'
 import type {
   DevToolsErrorType,
   DevtoolsButtonPosition,
@@ -46,10 +45,10 @@ export function ReactQueryDevtools(
 ): React.ReactElement | null {
   const queryClient = useQueryClient()
   const client = props.client || queryClient
-  const ref = useRef<HTMLDivElement>(null)
+  const ref = React.useRef<HTMLDivElement>(null)
   const { buttonPosition, position, initialIsOpen, errorTypes, styleNonce } =
     props
-  const [devtools] = useState(
+  const [devtools] = React.useState(
     new TanstackQueryDevtools({
       client: client,
       queryFlavor: 'React Query',
@@ -63,31 +62,31 @@ export function ReactQueryDevtools(
     }),
   )
 
-  useEffect(() => {
+  React.useEffect(() => {
     devtools.setClient(client)
   }, [client, devtools])
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (buttonPosition) {
       devtools.setButtonPosition(buttonPosition)
     }
   }, [buttonPosition, devtools])
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (position) {
       devtools.setPosition(position)
     }
   }, [position, devtools])
 
-  useEffect(() => {
+  React.useEffect(() => {
     devtools.setInitialIsOpen(initialIsOpen || false)
   }, [initialIsOpen, devtools])
 
-  useEffect(() => {
+  React.useEffect(() => {
     devtools.setErrorTypes(errorTypes || [])
   }, [errorTypes, devtools])
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (ref.current) {
       devtools.mount(ref.current)
     }

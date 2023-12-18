@@ -8,7 +8,7 @@ import {
   vi,
 } from 'vitest'
 import { act, render } from '@testing-library/react'
-import React from 'react'
+import * as React from 'react'
 import { useSuspenseQueries } from '..'
 import { createQueryClient, sleep } from './utils'
 import type { UseSuspenseQueryOptions } from '..'
