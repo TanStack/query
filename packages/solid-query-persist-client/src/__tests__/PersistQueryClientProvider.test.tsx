@@ -325,14 +325,12 @@ describe('PersistQueryClientProvider', () => {
         staleTime: Infinity,
       }))
 
-      createEffect(
-        () =>
-          states.push({
-            status: state.status,
-            fetchStatus: state.fetchStatus,
-            data: state.data,
-          }),
-        console.log(state.data),
+      createEffect(() =>
+        states.push({
+          status: state.status,
+          fetchStatus: state.fetchStatus,
+          data: state.data,
+        }),
       )
 
       return (
