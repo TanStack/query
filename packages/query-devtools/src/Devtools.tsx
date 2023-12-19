@@ -1,6 +1,7 @@
 import {
   For,
   Show,
+  batch,
   createEffect,
   createMemo,
   createSignal,
@@ -68,6 +69,7 @@ import type {
   MutationCache,
   Query,
   QueryCache,
+  QueryCacheNotifyEvent,
   QueryState,
 } from '@tanstack/query-core'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
@@ -599,6 +601,12 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
               height: 50%;
               max-height: 50%;
             `,
+          panelWidth() < secondBreakpoint &&
+            !(selectedQueryHash() || selectedMutationId()) &&
+            css`
+              height: 100%;
+              max-height: 100%;
+            `,
           'tsqd-queries-container',
         )}
         ref={containerRef}
@@ -1053,6 +1061,8 @@ const QueryRow: Component<{ query: Query }> = (props) => {
       queryCache().find({
         queryKey: props.query.queryKey,
       })?.state,
+    true,
+    (e) => e.query.queryHash === props.query.queryHash,
   )
 
   const isDisabled = createSubscribeToQueryCacheBatcher(
@@ -1062,6 +1072,8 @@ const QueryRow: Component<{ query: Query }> = (props) => {
           queryKey: props.query.queryKey,
         })
         ?.isDisabled() ?? false,
+    true,
+    (e) => e.query.queryHash === props.query.queryHash,
   )
 
   const isStale = createSubscribeToQueryCacheBatcher(
@@ -1071,6 +1083,8 @@ const QueryRow: Component<{ query: Query }> = (props) => {
           queryKey: props.query.queryKey,
         })
         ?.isStale() ?? false,
+    true,
+    (e) => e.query.queryHash === props.query.queryHash,
   )
 
   const observers = createSubscribeToQueryCacheBatcher(
@@ -1080,6 +1094,8 @@ const QueryRow: Component<{ query: Query }> = (props) => {
           queryKey: props.query.queryKey,
         })
         ?.getObserversCount() ?? 0,
+    true,
+    (e) => e.query.queryHash === props.query.queryHash,
   )
 
   const color = createMemo(() =>
@@ -2035,7 +2051,13 @@ const MutationDetails = () => {
   )
 }
 
-const queryCacheMap = new Map<(q: Accessor<QueryCache>) => any, Setter<any>>()
+const queryCacheMap = new Map<
+  (q: Accessor<QueryCache>) => any,
+  {
+    setter: Setter<any>
+    shouldUpdate: (event: QueryCacheNotifyEvent) => boolean
+  }
+>()
 
 const setupQueryCacheSubscription = () => {
   const queryCache = createMemo(() => {
@@ -2043,12 +2065,13 @@ const setupQueryCacheSubscription = () => {
     return client.getQueryCache()
   })
 
-  const unsub = queryCache().subscribe(() => {
-    for (const [callback, setter] of queryCacheMap.entries()) {
-      queueMicrotask(() => {
-        setter(callback(queryCache))
-      })
-    }
+  const unsub = queryCache().subscribe((q) => {
+    batch(() => {
+      for (const [callback, value] of queryCacheMap.entries()) {
+        if (!value.shouldUpdate(q)) continue
+        value.setter(callback(queryCache))
+      }
+    })
   })
 
   onCleanup(() => {
@@ -2062,6 +2085,7 @@ const setupQueryCacheSubscription = () => {
 const createSubscribeToQueryCacheBatcher = <T,>(
   callback: (queryCache: Accessor<QueryCache>) => Exclude<T, Function>,
   equalityCheck: boolean = true,
+  shouldUpdate: (event: QueryCacheNotifyEvent) => boolean = () => true,
 ) => {
   const queryCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
@@ -2077,8 +2101,10 @@ const createSubscribeToQueryCacheBatcher = <T,>(
     setValue(callback(queryCache))
   })
 
-  // @ts-ignore
-  queryCacheMap.set(callback, setValue)
+  queryCacheMap.set(callback, {
+    setter: setValue,
+    shouldUpdate: shouldUpdate,
+  })
 
   onCleanup(() => {
     // @ts-ignore
@@ -2212,6 +2238,22 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       & * {
         box-sizing: border-box;
         text-transform: none;
+      }
+
+      & *::-webkit-scrollbar {
+        width: 7px;
+      }
+
+      & *::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      & *::-webkit-scrollbar-thumb {
+        background: ${t(colors.gray[300], colors.darkGray[200])};
+      }
+
+      & *::-webkit-scrollbar-thumb:hover {
+        background: ${t(colors.gray[400], colors.darkGray[300])};
       }
     `,
     'devtoolsBtn-position-bottom-right': css`

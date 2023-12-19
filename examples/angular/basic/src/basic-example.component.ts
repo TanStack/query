@@ -5,14 +5,15 @@ import {
   EventEmitter,
   Input,
   Output,
+  inject,
   signal,
 } from '@angular/core'
-import { CommonModule, NgIf } from '@angular/common'
 import {
   injectQuery,
   injectQueryClient,
 } from '@tanstack/angular-query-experimental'
-import axios from 'axios'
+import { HttpClient } from '@angular/common/http'
+import { fromEvent, lastValueFrom, takeUntil } from 'rxjs'
 
 type Post = {
   id: number
@@ -24,25 +25,25 @@ type Post = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'post',
   standalone: true,
-  imports: [NgIf],
   template: `
     <div>
       <div>
         <a (click)="setPostId.emit(-1)" href="#"> Back </a>
       </div>
-      <ng-container *ngIf="postQuery.status() === 'pending'">
+      @if (postQuery.status() === 'pending') {
         Loading...
-      </ng-container>
-      <ng-container *ngIf="postQuery.status() === 'error'">
+      } @else if (postQuery.status() === 'error') {
         Error: {{ postQuery.error()?.message }}
-      </ng-container>
-      <ng-container *ngIf="postQuery.data() as post">
+      }
+      @if (postQuery.data(); as post) {
         <h1>{{ post.title }}</h1>
         <div>
           <p>{{ post.body }}</p>
         </div>
-        <div *ngIf="postQuery.isFetching()">Background Updating...</div>
-      </ng-container>
+        @if (postQuery.isFetching()) {
+          Background Updating...
+        }
+      }
     </div>
   `,
 })
@@ -50,19 +51,26 @@ export class PostComponent {
   @Output() setPostId = new EventEmitter<number>()
 
   // Until Angular supports signal-based inputs, we have to set a signal
-  @Input({ required: true })
-  set postId(value: number) {
-    this.postIdSignal.set(value)
+  @Input({ required: true, alias: 'postId' })
+  set _postId(value: number) {
+    this.postId.set(value)
   }
-  postIdSignal = signal<number>(0)
+  postId = signal(0)
+  httpClient = inject(HttpClient)
+
+  getPost$ = (postId: number) => {
+    return this.httpClient.get<Post>(
+      `https://jsonplaceholder.typicode.com/posts/${postId}`,
+    )
+  }
+
   postQuery = injectQuery(() => ({
-    enabled: this.postIdSignal() > 0,
-    queryKey: ['post', this.postIdSignal()],
-    queryFn: async (): Promise<Post> => {
-      const { data } = await axios.get(
-        `https://jsonplaceholder.typicode.com/posts/${this.postIdSignal()}`,
-      )
-      return data
+    enabled: this.postId() > 0,
+    queryKey: ['post', this.postId()],
+    queryFn: async (context): Promise<Post> => {
+      // Cancels the request when component is destroyed before the request finishes
+      const abort$ = fromEvent(context.signal, 'abort')
+      return lastValueFrom(this.getPost$(this.postId()).pipe(takeUntil(abort$)))
     },
   }))
 
@@ -75,47 +83,54 @@ export class PostComponent {
   standalone: true,
   template: `<div>
     <h1>Posts</h1>
-    <div [ngSwitch]="postsQuery.status()">
-      <div *ngSwitchCase="'pending'">Loading...</div>
-      <div *ngSwitchCase="'error'">
+    @switch (postsQuery.status()) {
+      @case ('pending') {
+        Loading...
+      }
+      @case ('error') {
         Error: {{ postsQuery.error()?.message }}
-      </div>
-      <ng-container *ngSwitchDefault>
-        <p *ngFor="let post of postsQuery.data()">
-          <!--          We can access the query data here to show bold links for-->
-          <!--          ones that are cached-->
-          <a
-            href="#"
-            (click)="setPostId.emit(post.id)"
-            [style]="
-              queryClient.getQueryData(['post', post.id])
-                ? {
-                    fontWeight: 'bold',
-                    color: 'green'
-                  }
-                : {}
-            "
-            >{{ post.title }}</a
-          >
-        </p>
-      </ng-container>
-
-      <div *ngIf="postsQuery.isFetching()">Background Updating...</div>
+      }
+      @default {
+        <div class="todo-container">
+          @for (post of postsQuery.data(); track post.id) {
+            <p>
+              <!--          We can access the query data here to show bold links for-->
+              <!--          ones that are cached-->
+              <a
+                href="#"
+                (click)="setPostId.emit(post.id)"
+                [style]="
+                  queryClient.getQueryData(['post', post.id])
+                    ? {
+                        fontWeight: 'bold',
+                        color: 'green'
+                      }
+                    : {}
+                "
+                >{{ post.title }}</a
+              >
+            </p>
+          }
+        </div>
+      }
+    }
+    <div>
+      @if (postsQuery.isFetching()) {
+        Background Updating...
+      }
     </div>
-  </div>`,
-  imports: [CommonModule],
+  </div> `,
 })
 export class PostsComponent {
   @Output() setPostId = new EventEmitter<number>()
 
+  posts$ = inject(HttpClient).get<Array<Post>>(
+    'https://jsonplaceholder.typicode.com/posts',
+  )
+
   postsQuery = injectQuery(() => ({
     queryKey: ['posts'],
-    queryFn: async (): Promise<Array<Post>> => {
-      const { data } = await axios.get(
-        'https://jsonplaceholder.typicode.com/posts',
-      )
-      return data
-    },
+    queryFn: () => lastValueFrom(this.posts$),
   }))
 
   queryClient = injectQueryClient()
@@ -137,14 +152,13 @@ export class PostsComponent {
       </strong>
     </p>
     <angular-query-devtools initialIsOpen />
-    <div *ngIf="postId() > -1; else posts">
+    @if (postId() > -1) {
       <post [postId]="postId()" (setPostId)="postId.set($event)"></post>
-    </div>
-    <ng-template #posts>
+    } @else {
       <posts (setPostId)="postId.set($event)" />
-    </ng-template>
+    }
   `,
-  imports: [AngularQueryDevtools, NgIf, PostComponent, PostsComponent],
+  imports: [AngularQueryDevtools, PostComponent, PostsComponent],
 })
 export class BasicExampleComponent {
   postId = signal(-1)

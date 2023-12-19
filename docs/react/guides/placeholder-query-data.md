@@ -56,6 +56,8 @@ function Todos() {
 
 `placeholderData` can also be a function, where you can get access to the data and Query meta information of a "previous" successful Query. This is useful for situations where you want to use the data from one query as the placeholder data for another query. When the QueryKey changes, e.g. from `['todos', 1]` to `['todos', 2]`, we can keep displaying "old" data instead of having to show a loading spinner while data is _transitioning_ from one Query to the next. For more information, see [Paginated Queries](../guides/paginated-queries).
 
+[//]: # 'ExampleFunction'
+
 ```tsx
 const result = useQuery({
   queryKey: ['todos', id],
@@ -63,6 +65,8 @@ const result = useQuery({
   placeholderData: (previousData, previousQuery) => previousData,
 })
 ```
+
+[//]: # 'ExampleFunction'
 
 ### Placeholder Data from Cache
 

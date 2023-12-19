@@ -8,7 +8,7 @@ import { DefaultQueryFunctionExampleComponent } from './default-query-function-e
 import type { QueryFunction } from '@tanstack/angular-query-experimental'
 
 // Define a default query function that will receive the query key
-const defaultQueryFn: QueryFunction<unknown> = async ({ queryKey }) => {
+const defaultQueryFn: QueryFunction = async ({ queryKey }) => {
   const { data } = await axios.get(
     `https://jsonplaceholder.typicode.com${queryKey[0]}`,
   )
