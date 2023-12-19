@@ -945,10 +945,6 @@
               "to": "angular/guides/filters"
             },
             {
-              "label": "Prefetching & Router Integration",
-              "to": "angular/guides/prefetching"
-            },
-            {
               "label": "Caching",
               "to": "angular/guides/caching"
             },
