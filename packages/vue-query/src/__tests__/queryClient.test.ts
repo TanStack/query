@@ -2,6 +2,7 @@ import { describe, expect, test, vi } from 'vitest'
 import { ref } from 'vue-demi'
 import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
 import { QueryClient } from '../queryClient'
+import { flushPromises } from './test-utils'
 
 vi.mock('@tanstack/query-core')
 
@@ -195,6 +196,8 @@ describe('QueryCache', () => {
         },
         { cancelRefetch: ref(false) },
       )
+
+      await flushPromises()
 
       expect(QueryClientOrigin.prototype.invalidateQueries).toBeCalledWith(
         {
