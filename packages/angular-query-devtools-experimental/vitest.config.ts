@@ -2,11 +2,11 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
-    name: 'vue-query-devtools',
+    name: 'angular-query-devtools-experimental',
     dir: './src',
     watch: false,
-    setupFiles: ['test-setup.ts'],
     environment: 'jsdom',
+    setupFiles: [],
     coverage: { provider: 'istanbul' },
   },
 })

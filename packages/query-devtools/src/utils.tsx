@@ -15,14 +15,7 @@ export function getQueryStatusLabel(query: Query) {
           : 'fresh'
 }
 
-export const queryStatusLabels = [
-  'fresh',
-  'stale',
-  'paused',
-  'inactive',
-  'fetching',
-] as const
-export type IQueryStatusLabel = (typeof queryStatusLabels)[number]
+type QueryStatusLabel = 'fresh' | 'stale' | 'paused' | 'inactive' | 'fetching'
 
 export function getSidedProp<T extends string>(
   prop: T,
@@ -71,7 +64,7 @@ export function getMutationStatusColor({
           : 'gray'
 }
 
-export function getQueryStatusColorByLabel(label: IQueryStatusLabel) {
+export function getQueryStatusColorByLabel(label: QueryStatusLabel) {
   return label === 'fresh'
     ? 'green'
     : label === 'stale'
@@ -155,8 +148,6 @@ export const mutationSortFns: Record<string, MutationSortFn> = {
 export const convertRemToPixels = (rem: number) => {
   return rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
 }
-
-export const convertPixelsToRem = (px: number) => px / convertRemToPixels(1)
 
 export const getPreferredColorScheme = () => {
   const [colorScheme, setColorScheme] = createSignal<'light' | 'dark'>('dark')

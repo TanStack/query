@@ -1,0 +1,77 @@
+{
+  "name": "@tanstack/angular-query-experimental",
+  "version": "5.14.1",
+  "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
+  "author": "Arnoud de Vries",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TanStack/query.git",
+    "directory": "packages/angular-query-experimental"
+  },
+  "homepage": "https://tanstack.com/query",
+  "keywords": [
+    "angular query",
+    "angular",
+    "cache",
+    "performance",
+    "reactive",
+    "rxjs",
+    "signals",
+    "state management",
+    "state",
+    "tanstack"
+  ],
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "build",
+    "src"
+  ],
+  "scripts": {
+    "clean": "rimraf ./build && rimraf ./coverage",
+    "test:eslint": "eslint --ext .ts,.tsx ./src",
+    "test:types": "tsc",
+    "test:lib": "vitest run --coverage",
+    "test:lib:dev": "vitest watch --coverage",
+    "test:build": "publint --strict",
+    "build": "ng-packagr -p ng-package.json -c tsconfig.build.json && rimraf ./build/package.json"
+  },
+  "dependencies": {
+    "@tanstack/query-core": "workspace:*",
+    "ngxtension": "^1.0.3",
+    "tslib": "^2.6.2"
+  },
+  "devDependencies": {
+    "@analogjs/vite-plugin-angular": "^0.2.18",
+    "@angular/common": "^17.0.2",
+    "@angular/compiler": "^17.0.2",
+    "@angular/compiler-cli": "^17.0.2",
+    "@angular/core": "^17.0.2",
+    "@angular/platform-browser": "^17.0.2",
+    "@angular/platform-browser-dynamic": "^17.0.2",
+    "ng-packagr": "^17.0.0",
+    "typescript": "5.2.2",
+    "zone.js": "^0.14.2"
+  },
+  "peerDependencies": {
+    "@angular/core": "^17"
+  },
+  "module": "build/fesm2022/tanstack-angular-query-experimental.mjs",
+  "types": "build/index.d.ts",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./build/index.d.ts",
+      "esm2022": "./build/esm2022/tanstack-angular-query-experimental.mjs",
+      "esm": "./build/esm2022/tanstack-angular-query-experimental.mjs",
+      "default": "./build/fesm2022/tanstack-angular-query-experimental.mjs"
+    }
+  }
+}

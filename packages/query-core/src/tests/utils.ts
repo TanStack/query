@@ -1,5 +1,4 @@
 import { vi } from 'vitest'
-import { act } from '@testing-library/react'
 import { QueryClient, onlineManager } from '..'
 import * as utils from '../utils'
 import type { SpyInstance } from 'vitest'
@@ -31,14 +30,6 @@ export function sleep(timeout: number): Promise<void> {
   return new Promise((resolve, _reject) => {
     setTimeout(resolve, timeout)
   })
-}
-
-export function setActTimeout(fn: () => void, ms?: number) {
-  return setTimeout(() => {
-    act(() => {
-      fn()
-    })
-  }, ms)
 }
 
 export const executeMutation = <TVariables>(
