@@ -43,7 +43,6 @@
   },
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
-    "ngxtension": "^1.0.3",
     "tslib": "^2.6.2"
   },
   "devDependencies": {

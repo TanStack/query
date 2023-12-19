@@ -1,5 +1,5 @@
 import { QueryObserver } from '@tanstack/query-core'
-import { assertInjector } from 'ngxtension/assert-injector'
+import { assertInjector } from './util/assert-injector/assert-injector'
 import { injectQueryClient } from './injectQueryClient'
 import { createBaseQuery } from './createBaseQuery'
 import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
