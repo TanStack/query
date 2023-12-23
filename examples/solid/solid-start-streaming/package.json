@@ -14,15 +14,15 @@
     "@tanstack/solid-query-devtools": "^5.0.0",
     "solid-js": "^1.8.1",
     "solid-start": "^0.3.7",
-    "undici": "^5.26.3"
+    "undici": "^5.28.2"
   },
   "devDependencies": {
-    "@types/node": "^18.18.0",
+    "@types/node": "^18.19.3",
     "esbuild": "^0.19.5",
-    "postcss": "^8.4.31",
+    "postcss": "^8.4.32",
     "solid-start-node": "^0.3.7",
     "typescript": "5.1.6",
-    "vite": "^4.5.0"
+    "vite": "^4.5.1"
   },
   "engines": {
     "node": ">=16.8"
