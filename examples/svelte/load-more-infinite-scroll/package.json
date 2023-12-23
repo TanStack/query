@@ -17,7 +17,7 @@
     "@sveltejs/kit": "^1.30.3",
     "svelte": "^4.2.8",
     "svelte-check": "^3.6.2",
-    "typescript": "5.1.6",
+    "typescript": "5.2.2",
     "vite": "^4.5.1"
   }
 }

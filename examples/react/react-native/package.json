@@ -44,6 +44,6 @@
     "eslint-plugin-flowtype": "^8.0.3",
     "eslint-plugin-prettier": "^4.0.0",
     "prettier": "^2.8.8",
-    "typescript": "5.1.6"
+    "typescript": "5.2.2"
   }
 }

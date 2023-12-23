@@ -85,7 +85,7 @@
     "stream-to-array": "^2.3.0",
     "tsup": "^7.3.0",
     "type-fest": "^4.8.3",
-    "typescript": "5.1.6",
+    "typescript": "5.2.2",
     "vite": "^4.5.1",
     "vitest": "^0.33.0"
   },
