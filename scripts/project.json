@@ -3,6 +3,8 @@
   "name": "scripts",
   "sourceRoot": "scripts",
   "targets": {
-    "test:eslint": { "command": "eslint ./scripts" }
+    "test:eslint": {
+      "command": "eslint ./scripts"
+    }
   }
 }

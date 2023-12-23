@@ -43,4 +43,4 @@ stats.html
 .cache
 .idea
 
-nx-cloud.env
+.nx/cache
