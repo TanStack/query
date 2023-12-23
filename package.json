@@ -5,7 +5,7 @@
     "type": "git",
     "url": "https://github.com/TanStack/query.git"
   },
-  "packageManager": "pnpm@8.9.2",
+  "packageManager": "pnpm@8.12.1",
   "type": "module",
   "scripts": {
     "clean": "pnpm --filter \"./packages/**\" run clean",
