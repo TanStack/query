@@ -116,7 +116,7 @@ importers:
         specifier: ^3.4.4
         version: 3.4.4
       nx:
-        specifier: 17.2.7
+        specifier: ^17.2.7
         version: 17.2.7
       prettier:
         specifier: ^4.0.0-alpha.3
