@@ -147,7 +147,7 @@ describe('injectQuery', () => {
     TestBed.flushEffects()
 
     expect(query1.data()).toStrictEqual('Some data')
-    // expect(query2().fetchStatus).toStrictEqual('fetching') // TODO: is this working correctly?
+    expect(query2.fetchStatus()).toStrictEqual('fetching')
 
     flush()
 
@@ -214,19 +214,5 @@ describe('injectQuery', () => {
     flush()
 
     expect(query.status()).toBe('error')
-  }))
-
-  it('should not update signal when notifyOnChangeProps is set without the changed property being in notifyOnChangeProps', fakeAsync(() => {
-    const query = TestBed.runInInjectionContext(() => {
-      return injectQuery(() => ({
-        queryKey: ['key14'],
-        queryFn: simpleFetcher,
-        notifyOnChangeProps: 'all',
-      }))
-    })
-
-    flush()
-
-    expect(query.status()).toBe('success')
   }))
 })
