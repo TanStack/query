@@ -8,13 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "lint:check": "eslint --ext '.js,.ts,.tsx' .",
-    "lint:fix": "pnpm lint --fix",
-    "type:check": "tsc --noEmit",
-    "prettier": "prettier \"{.,src,src/**}/*.{md,js,jsx,ts,tsx,json}\"",
-    "prettier:check": "pnpm prettier -c",
-    "prettier:fix": "pnpm prettier -w",
-    "dev:check": "pnpm prettier:check & pnpm lint:check & pnpm type:check"
+    "type:check": "tsc --noEmit"
   },
   "dependencies": {
     "@react-native-community/netinfo": "^9.3.10",
@@ -36,14 +30,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.23.6",
-    "@callstack/eslint-config": "^13.0.2",
     "@expo/config": "^8.1.2",
     "@types/react-native": "^0.72.0",
-    "eslint": "^8.56.0",
-    "eslint-import-resolver-alias": "^1.1.2",
-    "eslint-plugin-flowtype": "^8.0.3",
-    "eslint-plugin-prettier": "^5.1.1",
-    "prettier": "^2.8.8",
     "typescript": "5.2.2"
   }
 }
