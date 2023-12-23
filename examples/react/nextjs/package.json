@@ -16,6 +16,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "resolve-from": "^5.0.0",
-    "web-streams-polyfill": "^3.0.3"
+    "web-streams-polyfill": "^3.2.1"
   }
 }

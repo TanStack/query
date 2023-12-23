@@ -12,7 +12,7 @@
     "@tanstack/query-persist-client-core": "^5.0.0",
     "@tanstack/query-sync-storage-persister": "^5.0.0",
     "@tanstack/vue-query": "^5.0.0",
-    "idb-keyval": "^6.2.0",
+    "idb-keyval": "^6.2.1",
     "vue": "^3.3.0"
   },
   "devDependencies": {

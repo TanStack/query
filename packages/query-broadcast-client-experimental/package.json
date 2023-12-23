@@ -45,6 +45,6 @@
   },
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
-    "broadcast-channel": "^5.5.1"
+    "broadcast-channel": "^7.0.0"
   }
 }
