@@ -8,11 +8,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@algolia/client-search": "4.17.1",
-    "@algolia/transporter": "4.17.1",
+    "@algolia/client-search": "4.22.0",
+    "@algolia/transporter": "4.22.0",
     "@tanstack/react-query": "^5.0.0",
     "@tanstack/react-query-devtools": "^5.0.0",
-    "algoliasearch": "4.17.1",
+    "algoliasearch": "4.22.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
