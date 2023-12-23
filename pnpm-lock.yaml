@@ -128,8 +128,8 @@ importers:
         specifier: ^3.1.0
         version: 3.1.0(prettier@4.0.0-alpha.3)(svelte@4.0.0)
       publint:
-        specifier: ^0.2.5
-        version: 0.2.5
+        specifier: ^0.2.7
+        version: 0.2.7
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -26139,8 +26139,8 @@ packages:
       safe-buffer: 5.2.1
     dev: false
 
-  /publint@0.2.5:
-    resolution: {integrity: sha512-eoQiP0WXkxkpth1fMLoS1I/6BQoxKNZxTAAnFjPgURFrJulC5D5Uifk49a9kfNCYmcza9E/ZkbFhQQdjkmKAbg==}
+  /publint@0.2.7:
+    resolution: {integrity: sha512-tLU4ee3110BxWfAmCZggJmCUnYWgPTr0QLnx08sqpLYa8JHRiOudd+CgzdpfU5x5eOaW2WMkpmOrFshRFYK7Mw==}
     engines: {node: '>=16'}
     hasBin: true
     dependencies:
