@@ -39,7 +39,7 @@
     "@callstack/eslint-config": "^13.0.2",
     "@expo/config": "^8.0.2",
     "@types/react-native": "^0.71.0",
-    "eslint": "^8.34.0",
+    "eslint": "^8.56.0",
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-flowtype": "^8.0.3",
     "eslint-plugin-prettier": "^4.0.0",

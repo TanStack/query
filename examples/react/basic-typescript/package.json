@@ -21,8 +21,8 @@
     "@types/react": "^18.2.31",
     "@types/react-dom": "^18.2.14",
     "@vitejs/plugin-react": "^4.0.0",
-    "eslint": "^8.34.0",
-    "eslint-config-prettier": "^8.8.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^8.10.0",
     "typescript": "5.1.6",
     "vite": "^4.5.0"
   },
