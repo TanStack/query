@@ -6,19 +6,12 @@ import {
   inject,
   signal,
 } from '@angular/core'
-import { notifyManager } from '@tanstack/query-core'
 import { createResultStateSignalProxy } from './query-proxy'
-import type { Signal } from '@angular/core'
-import type {
-  QueryClient,
-  QueryKey,
-  QueryObserver,
-  QueryObserverResult,
-} from '@tanstack/query-core'
+import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
 import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
 
 /**
- * Base implementation for `createQuery` and `createInfiniteQuery`.
+ * Base implementation for `injectQuery` and `injectInfiniteQuery`.
  * @internal
  */
 export function createBaseQuery<
@@ -43,7 +36,12 @@ export function createBaseQuery<
   assertInInjectionContext(createBaseQuery)
   const destroyRef = inject(DestroyRef)
 
-  /** Creates a signal that has the default options applied */
+  /**
+   * Signal that has the default options from query client applied
+   * computed() is used so signals can be inserted into the options
+   * making it reactive. Wrapping options in a function ensures embedded expressions
+   * are preserved and can keep being applied after signal changes
+   */
   const defaultedOptionsSignal = computed(() => {
     const defaultedOptions = queryClient.defaultQueryOptions(
       options(queryClient),
@@ -52,7 +50,6 @@ export function createBaseQuery<
     return defaultedOptions
   })
 
-  /** Creates the observer */
   const observer = new Observer<
     TQueryFnData,
     TError,
@@ -61,27 +58,28 @@ export function createBaseQuery<
     TQueryKey
   >(queryClient, defaultedOptionsSignal())
 
-  effect(() => {
-    // Do not notify on updates because of changes in the options because
-    // these changes should already be reflected in the optimistic result.
-    observer.setOptions(defaultedOptionsSignal(), { listeners: false })
-  })
-
-  const result = signal(observer.getCurrentResult())
-
-  const unsubscribe = observer.subscribe(
-    notifyManager.batchCalls((val) => result.set(val)),
+  const resultSignal = signal(
+    observer.getOptimisticResult(
+      queryClient.defaultQueryOptions(defaultedOptionsSignal()),
+    ),
   )
-  destroyRef.onDestroy(unsubscribe)
 
-  /** Subscribe to changes in result and defaultedOptionsStore */
-  const resultSignal: Signal<QueryObserverResult<TData, TError>> = computed(
+  effect(
     () => {
-      return !defaultedOptionsSignal().notifyOnChangeProps
-        ? observer.trackResult(result())
-        : result()
+      // Do not notify on updates because of changes in the options because
+      // these changes should already be reflected in the optimistic result.
+      const defaultedOptions = defaultedOptionsSignal()
+      observer.setOptions(defaultedOptions, {
+        listeners: false,
+      })
+      resultSignal.set(observer.getOptimisticResult(defaultedOptions))
     },
+    { allowSignalWrites: true },
   )
+
+  // observer.trackResult is not used as this optimization is not needed for Angular
+  const unsubscribe = observer.subscribe(resultSignal.set)
+  destroyRef.onDestroy(unsubscribe)
 
   return createResultStateSignalProxy<TData, TError>(resultSignal)
 }
