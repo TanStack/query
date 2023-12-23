@@ -48,7 +48,7 @@
     "src"
   ],
   "devDependencies": {
-    "@kobalte/core": "^0.11.0",
+    "@kobalte/core": "^0.11.2",
     "@solid-primitives/keyed": "^1.2.0",
     "@solid-primitives/resize-observer": "^2.0.22",
     "@solid-primitives/storage": "^1.3.11",
@@ -57,7 +57,7 @@
     "clsx": "^2.0.0",
     "goober": "^2.1.13",
     "solid-js": "^1.8.1",
-    "solid-transition-group": "^0.2.2",
+    "solid-transition-group": "^0.2.3",
     "superjson": "^1.13.3",
     "tsup-preset-solid": "^2.1.0",
     "vite-plugin-solid": "^2.7.2"
