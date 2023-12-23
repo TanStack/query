@@ -10,8 +10,7 @@
   "dependencies": {
     "@tanstack/react-query": "^5.0.0",
     "@tanstack/react-query-devtools": "^5.0.0",
-    "ky": "^0.33.3",
-    "ky-universal": "^0.11.0",
+    "ky": "^1.1.3",
     "next": "^14.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

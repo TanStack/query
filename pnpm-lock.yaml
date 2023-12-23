@@ -532,11 +532,8 @@ importers:
         specifier: ^5.0.0
         version: link:../../../packages/react-query-devtools
       ky:
-        specifier: ^0.33.3
-        version: 0.33.3
-      ky-universal:
-        specifier: ^0.11.0
-        version: 0.11.0(ky@0.33.3)(web-streams-polyfill@3.2.1)
+        specifier: ^1.1.3
+        version: 1.1.3
       next:
         specifier: ^14.0.0
         version: 14.0.0(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
@@ -605,8 +602,8 @@ importers:
         specifier: ^5.0.0
         version: link:../../../packages/react-query-persist-client
       ky:
-        specifier: ^0.33.3
-        version: 0.33.3
+        specifier: ^1.1.3
+        version: 1.1.3
       msw:
         specifier: ^0.39.2
         version: 0.39.2
@@ -21387,25 +21384,9 @@ packages:
     resolution: {integrity: sha512-Ne7wqW7/9Cz54PDt4I3tcV+hAyat8ypyOGzYRJQfdxnnjeWsTxt1cy8pjvvKeI5kfXuyvULyeeAvwvvtAX3ayQ==}
     dev: true
 
-  /ky-universal@0.11.0(ky@0.33.3)(web-streams-polyfill@3.2.1):
-    resolution: {integrity: sha512-65KyweaWvk+uKKkCrfAf+xqN2/epw1IJDtlyCPxYffFCMR8u1sp2U65NtWpnozYfZxQ6IUzIlvUcw+hQ82U2Xw==}
-    engines: {node: '>=14.16'}
-    peerDependencies:
-      ky: '>=0.31.4'
-      web-streams-polyfill: '>=3.2.1'
-    peerDependenciesMeta:
-      web-streams-polyfill:
-        optional: true
-    dependencies:
-      abort-controller: 3.0.0
-      ky: 0.33.3
-      node-fetch: 3.3.2
-      web-streams-polyfill: 3.2.1
-    dev: false
-
-  /ky@0.33.3:
-    resolution: {integrity: sha512-CasD9OCEQSFIam2U8efFK81Yeg8vNMTBUqtMOHlrcWQHqUX3HeCl9Dr31u4toV7emlH8Mymk5+9p0lL6mKb/Xw==}
-    engines: {node: '>=14.16'}
+  /ky@1.1.3:
+    resolution: {integrity: sha512-t7q8sJfazzHbfYxiCtuLIH4P+pWoCgunDll17O/GBZBqMt2vHjGSx5HzSxhOc2BDEg3YN/EmeA7VKrHnwuWDag==}
+    engines: {node: '>=18'}
     dev: false
 
   /language-subtag-registry@0.3.22:
