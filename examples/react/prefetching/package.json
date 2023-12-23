@@ -6,7 +6,7 @@
   "dependencies": {
     "@tanstack/react-query": "^5.0.0",
     "@tanstack/react-query-devtools": "^5.0.0",
-    "axios": "^1.5.1",
+    "axios": "^1.6.2",
     "isomorphic-unfetch": "4.0.2",
     "next": "^14.0.0",
     "react": "^18.2.0",

@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@tanstack/react-query": "workspace:*",
-    "@types/react": "^18.2.31",
+    "@types/react": "^18.2.45",
     "next": "^14.0.0",
     "react": "^18.2.0"
   },
