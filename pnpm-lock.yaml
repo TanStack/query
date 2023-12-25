@@ -80,8 +80,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0
       esbuild-plugin-file-path-extensions:
-        specifier: ^1.0.0
-        version: 1.0.0
+        specifier: ^2.0.0
+        version: 2.0.0
       eslint:
         specifier: ^8.56.0
         version: 8.56.0
@@ -14323,8 +14323,8 @@ packages:
       ext: 1.7.0
     dev: false
 
-  /esbuild-plugin-file-path-extensions@1.0.0:
-    resolution: {integrity: sha512-v5LpSkml+CbsC0+xAaETEGDECdvKp1wKkD4aXMdI4zLjXP0EYfK4GjGhphumt4N+kjR3A8Q+DIkpgxX1XTqO4Q==}
+  /esbuild-plugin-file-path-extensions@2.0.0:
+    resolution: {integrity: sha512-VzVJhuegxLeg8VhsHmxRXtz1Kxf3QMQb1xIuKWivGHoOmZdU6O6xJ5iHhfCDyR+Vs+JE5GrvSpCsZ3GvaqlkUA==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
     dev: true
 
