@@ -56,7 +56,7 @@
     "@tanstack/query-persist-client-core": "workspace:*"
   },
   "devDependencies": {
-    "tsup-preset-solid": "^2.1.0",
+    "tsup-preset-solid": "^2.2.0",
     "vite-plugin-solid": "^2.7.2",
     "solid-js": "^1.8.1"
   },

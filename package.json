@@ -82,7 +82,7 @@
     "sherif": "^0.7.0",
     "solid-js": "^1.8.1",
     "stream-to-array": "^2.3.0",
-    "tsup": "^7.3.0",
+    "tsup": "^8.0.1",
     "type-fest": "^4.8.3",
     "typescript": "5.2.2",
     "vite": "^4.5.1",
