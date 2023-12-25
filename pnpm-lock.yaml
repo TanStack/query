@@ -80,8 +80,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0
       esbuild-plugin-file-path-extensions:
-        specifier: ^1.0.0
-        version: 1.0.0
+        specifier: ^2.0.0
+        version: 2.0.0
       eslint:
         specifier: ^8.56.0
         version: 8.56.0
@@ -149,8 +149,8 @@ importers:
         specifier: ^2.3.0
         version: 2.3.0
       tsup:
-        specifier: ^7.3.0
-        version: 7.3.0(typescript@5.2.2)
+        specifier: ^8.0.1
+        version: 8.0.1(typescript@5.2.2)
       type-fest:
         specifier: ^4.8.3
         version: 4.8.3
@@ -1796,8 +1796,8 @@ importers:
         specifier: ^1.13.3
         version: 1.13.3
       tsup-preset-solid:
-        specifier: ^2.1.0
-        version: 2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.3.0)
+        specifier: ^2.2.0
+        version: 2.2.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@8.0.1)
       vite-plugin-solid:
         specifier: ^2.7.2
         version: 2.7.2(solid-js@1.8.1)(vite@4.5.1)
@@ -1896,8 +1896,8 @@ importers:
         version: 1.8.1
     devDependencies:
       tsup-preset-solid:
-        specifier: ^2.1.0
-        version: 2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.3.0)
+        specifier: ^2.2.0
+        version: 2.2.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@8.0.1)
       vite-plugin-solid:
         specifier: ^2.7.2
         version: 2.7.2(solid-js@1.8.1)(vite@4.5.1)
@@ -1915,8 +1915,8 @@ importers:
         specifier: ^1.8.1
         version: 1.8.1
       tsup-preset-solid:
-        specifier: ^2.1.0
-        version: 2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.3.0)
+        specifier: ^2.2.0
+        version: 2.2.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@8.0.1)
       vite-plugin-solid:
         specifier: ^2.7.2
         version: 2.7.2(solid-js@1.8.1)(vite@4.5.1)
@@ -1934,8 +1934,8 @@ importers:
         specifier: ^1.8.1
         version: 1.8.1
       tsup-preset-solid:
-        specifier: ^2.1.0
-        version: 2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.3.0)
+        specifier: ^2.2.0
+        version: 2.2.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@8.0.1)
       vite-plugin-solid:
         specifier: ^2.7.2
         version: 2.7.2(solid-js@1.8.1)(vite@4.5.1)
@@ -14323,8 +14323,8 @@ packages:
       ext: 1.7.0
     dev: false
 
-  /esbuild-plugin-file-path-extensions@1.0.0:
-    resolution: {integrity: sha512-v5LpSkml+CbsC0+xAaETEGDECdvKp1wKkD4aXMdI4zLjXP0EYfK4GjGhphumt4N+kjR3A8Q+DIkpgxX1XTqO4Q==}
+  /esbuild-plugin-file-path-extensions@2.0.0:
+    resolution: {integrity: sha512-VzVJhuegxLeg8VhsHmxRXtz1Kxf3QMQb1xIuKWivGHoOmZdU6O6xJ5iHhfCDyR+Vs+JE5GrvSpCsZ3GvaqlkUA==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
     dev: true
 
@@ -16302,7 +16302,7 @@ packages:
       array-union: 2.1.0
       dir-glob: 3.0.1
       fast-glob: 3.3.2
-      ignore: 5.2.4
+      ignore: 5.3.0
       merge2: 1.4.1
       slash: 3.0.0
 
@@ -16939,6 +16939,7 @@ packages:
   /ignore@5.2.4:
     resolution: {integrity: sha512-MAb38BcSbH0eHNBxn7ql2NH/kX33OkB3lZ1BNdh7ENeRChHTYsTvWrMubiIAMNS2llXEEgZ1MUOBtXChP3kaFQ==}
     engines: {node: '>= 4'}
+    dev: true
 
   /ignore@5.3.0:
     resolution: {integrity: sha512-g7dmpshy+gD7mh88OC9NwSGTKoc3kyLAZQRU1mt53Aw/vnvfXnbC+F/7F7QoYVKbV+KNvJx8wArewKy1vXMtlg==}
@@ -27634,29 +27635,31 @@ packages:
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
 
-  /tsup-preset-solid@2.1.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@7.3.0):
-    resolution: {integrity: sha512-4b63QsUz/1+PDkcQQmBnIUjW+GzlktBjclgAinfQ5DNbQiCBBbcY7tn+0xYykb/MB6rHDoc4b+rHGdgPv51AtQ==}
+  /tsup-preset-solid@2.2.0(esbuild@0.19.5)(solid-js@1.8.1)(tsup@8.0.1):
+    resolution: {integrity: sha512-sPAzeArmYkVAZNRN+m4tkiojdd0GzW/lCwd4+TQDKMENe8wr2uAuro1s0Z59ASmdBbkXoxLgCiNcuQMyiidMZg==}
     peerDependencies:
-      tsup: ^7.0.0
+      tsup: ^8.0.0
     dependencies:
       esbuild-plugin-solid: 0.5.0(esbuild@0.19.5)(solid-js@1.8.1)
-      tsup: 7.3.0(typescript@5.2.2)
+      tsup: 8.0.1(typescript@5.2.2)
     transitivePeerDependencies:
       - esbuild
       - solid-js
       - supports-color
     dev: true
 
-  /tsup@7.3.0(typescript@5.2.2):
-    resolution: {integrity: sha512-Ja1eaSRrE+QarmATlNO5fse2aOACYMBX+IZRKy1T+gpyH+jXgRrl5l4nHIQJQ1DoDgEjHDTw8cpE085UdBZuWQ==}
+  /tsup@8.0.1(typescript@5.2.2):
+    resolution: {integrity: sha512-hvW7gUSG96j53ZTSlT4j/KL0q1Q2l6TqGBFc6/mu/L46IoNWqLLUzLRLP1R8Q7xrJTmkDxxDoojV5uCVs1sVOg==}
     engines: {node: '>=18'}
-    deprecated: Breaking node 16
     hasBin: true
     peerDependencies:
+      '@microsoft/api-extractor': ^7.36.0
       '@swc/core': ^1
       postcss: ^8.4.12
       typescript: '>=4.5.0'
     peerDependenciesMeta:
+      '@microsoft/api-extractor':
+        optional: true
       '@swc/core':
         optional: true
       postcss:
