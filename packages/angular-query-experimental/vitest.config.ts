@@ -7,10 +7,7 @@ export default defineConfig({
     watch: false,
     environment: 'jsdom',
     setupFiles: ['src/test-setup.ts'],
-    coverage: {
-      provider: 'istanbul',
-      exclude: ['src/tests/**'],
-    },
+    coverage: { provider: 'istanbul', include: ['src/**/*'] },
     globals: true,
     include: ['**/*.test.ts'],
     cache: {
