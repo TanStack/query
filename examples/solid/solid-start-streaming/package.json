@@ -1,5 +1,6 @@
 {
-  "name": "solid-start-streaming-new",
+  "name": "@tanstack/query-example-solid-solid-start-streaming",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vinxi dev",
