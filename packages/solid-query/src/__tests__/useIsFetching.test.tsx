@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
+import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import { QueryCache, QueryClientProvider, createQuery, useIsFetching } from '..'
 import { createQueryClient, queryKey, setActTimeout, sleep } from './utils'
@@ -40,16 +40,16 @@ describe('useIsFetching', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    await screen.findByText('isFetching: 0')
-    fireEvent.click(screen.getByRole('button', { name: /setReady/i }))
-    await screen.findByText('isFetching: 1')
-    await screen.findByText('isFetching: 0')
+    await rendered.findByText('isFetching: 0')
+    fireEvent.click(rendered.getByRole('button', { name: /setReady/i }))
+    await rendered.findByText('isFetching: 1')
+    await rendered.findByText('isFetching: 0')
   })
 
   it('should not update state while rendering', async () => {
@@ -173,16 +173,16 @@ describe('useIsFetching', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    await screen.findByText('isFetching: 0')
-    fireEvent.click(screen.getByRole('button', { name: /setStarted/i }))
-    await screen.findByText('isFetching: 1')
-    await screen.findByText('isFetching: 0')
+    await rendered.findByText('isFetching: 0')
+    fireEvent.click(rendered.getByRole('button', { name: /setStarted/i }))
+    await rendered.findByText('isFetching: 1')
+    await rendered.findByText('isFetching: 0')
     // at no point should we have isFetching: 2
     expect(isFetchings).toEqual(expect.not.arrayContaining([2]))
   })
@@ -209,14 +209,14 @@ describe('useIsFetching', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    await screen.findByText('isFetching: 1')
-    await screen.findByText('isFetching: 0')
+    await rendered.findByText('isFetching: 1')
+    await rendered.findByText('isFetching: 0')
   })
 
   it('should use provided custom queryClient', async () => {
@@ -244,8 +244,8 @@ describe('useIsFetching', () => {
       )
     }
 
-    render(() => <Page></Page>)
+    const rendered = render(() => <Page></Page>)
 
-    await screen.findByText('isFetching: 1')
+    await rendered.findByText('isFetching: 1')
   })
 })
