@@ -28,6 +28,8 @@ export function createNotifyManager() {
       scheduleFn = queueMicrotask
     } else if (method.type === "raf") {
       scheduleFn = requestAnimationFrame
+      // Disable because condition is necessary for typescript to detect method.timeout
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     } else if (method.type === "timer") {
       scheduleFn = (cb) => setTimeout(cb, method.timeout ?? 0)
     }
