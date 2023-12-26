@@ -6,7 +6,7 @@ import {
   inject,
   signal,
 } from '@angular/core'
-import { createResultStateSignalProxy } from './query-proxy'
+import { signalProxy } from './signal-proxy'
 import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
 import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
 
@@ -81,5 +81,5 @@ export function createBaseQuery<
   const unsubscribe = observer.subscribe(resultSignal.set)
   destroyRef.onDestroy(unsubscribe)
 
-  return createResultStateSignalProxy<TData, TError>(resultSignal)
+  return signalProxy(resultSignal)
 }
