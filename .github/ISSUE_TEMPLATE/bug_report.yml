@@ -106,6 +106,7 @@ body:
         - solid-query
         - svelte-query
         - vue-query
+        - angular-query
         - vanilla
   - type: input
     id: rq-version
