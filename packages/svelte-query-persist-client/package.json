@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@sveltejs/package": "^2.2.4",
-    "@sveltejs/vite-plugin-svelte": "^2.5.3",
+    "@sveltejs/vite-plugin-svelte": "^3.0.1",
     "@tanstack/svelte-query": "workspace:*",
     "@testing-library/svelte": "^4.0.5",
     "eslint-plugin-svelte": "^2.35.1",
