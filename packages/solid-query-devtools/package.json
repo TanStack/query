@@ -56,6 +56,6 @@
     "solid-js": "^1.8.1",
     "@tanstack/solid-query": "workspace:^",
     "tsup-preset-solid": "^2.2.0",
-    "vite-plugin-solid": "^2.7.2"
+    "vite-plugin-solid": "^2.8.0"
   }
 }

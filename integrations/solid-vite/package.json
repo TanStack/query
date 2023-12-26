@@ -10,6 +10,6 @@
     "@tanstack/solid-query-devtools": "workspace:*",
     "solid-js": "^1.8.1",
     "vite": "^5.0.10",
-    "vite-plugin-solid": "^2.7.2"
+    "vite-plugin-solid": "^2.8.0"
   }
 }
