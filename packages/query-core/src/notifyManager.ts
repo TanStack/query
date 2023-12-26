@@ -1,5 +1,3 @@
-import { scheduleMicrotask } from './utils'
-
 // TYPES
 
 type NotifyCallback = () => void
