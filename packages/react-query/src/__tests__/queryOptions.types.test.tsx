@@ -98,86 +98,81 @@ describe('queryOptions', () => {
       > = true
       return result
     })
-
-    it('should tag the queryKey even if no promise is returned', () => {
-      doNotExecute(() => {
-        const { queryKey } = queryOptions({
-          queryKey: ['key'],
-          queryFn: () => 5,
-        })
-
-        const result: Expect<
-          Equal<(typeof queryKey)[typeof dataTagSymbol], number>
-        > = true
-        return result
+  })
+  it('should tag the queryKey even if no promise is returned', () => {
+    doNotExecute(() => {
+      const { queryKey } = queryOptions({
+        queryKey: ['key'],
+        queryFn: () => 5,
       })
+
+      const result: Expect<
+        Equal<(typeof queryKey)[typeof dataTagSymbol], number>
+      > = true
+      return result
     })
-
-    it('should tag the queryKey with unknown if there is no queryFn', () => {
-      doNotExecute(() => {
-        const { queryKey } = queryOptions({
-          queryKey: ['key'],
-        })
-
-        const result: Expect<
-          Equal<(typeof queryKey)[typeof dataTagSymbol], unknown>
-        > = true
-        return result
+  })
+  it('should tag the queryKey with unknown if there is no queryFn', () => {
+    doNotExecute(() => {
+      const { queryKey } = queryOptions({
+        queryKey: ['key'],
       })
+
+      const result: Expect<
+        Equal<(typeof queryKey)[typeof dataTagSymbol], unknown>
+      > = true
+      return result
     })
-
-    it('should return the proper type when passed to getQueryData', () => {
-      doNotExecute(() => {
-        const { queryKey } = queryOptions({
-          queryKey: ['key'],
-          queryFn: () => Promise.resolve(5),
-        })
-
-        const queryClient = new QueryClient()
-        const data = queryClient.getQueryData(queryKey)
-
-        const result: Expect<Equal<typeof data, number | undefined>> = true
-        return result
+  })
+  it('should return the proper type when passed to getQueryData', () => {
+    doNotExecute(() => {
+      const { queryKey } = queryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve(5),
       })
+
+      const queryClient = new QueryClient()
+      const data = queryClient.getQueryData(queryKey)
+
+      const result: Expect<Equal<typeof data, number | undefined>> = true
+      return result
     })
-
-    it('should properly type updaterFn when passed to setQueryData', () => {
-      doNotExecute(() => {
-        const { queryKey } = queryOptions({
-          queryKey: ['key'],
-          queryFn: () => Promise.resolve(5),
-        })
-
-        const queryClient = new QueryClient()
-        const data = queryClient.setQueryData(queryKey, (prev) => {
-          const result: Expect<Equal<typeof prev, number | undefined>> = true
-          return result ? prev : 1
-        })
-
-        const result: Expect<Equal<typeof data, number | undefined>> = true
-        return result
+  })
+  it('should properly type updaterFn when passed to setQueryData', () => {
+    doNotExecute(() => {
+      const { queryKey } = queryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve(5),
       })
+
+      const queryClient = new QueryClient()
+      const data = queryClient.setQueryData(queryKey, (prev) => {
+        const result: Expect<Equal<typeof prev, number | undefined>> = true
+        return result ? prev : 1
+      })
+
+      const result: Expect<Equal<typeof data, number | undefined>> = true
+      return result
     })
-
-    it('should properly type value when passed to setQueryData', () => {
-      doNotExecute(() => {
-        const { queryKey } = queryOptions({
-          queryKey: ['key'],
-          queryFn: () => Promise.resolve(5),
-        })
-
-        const queryClient = new QueryClient()
-
-        // @ts-expect-error value should be a number
-        queryClient.setQueryData(queryKey, '5')
-        // @ts-expect-error value should be a number
-        queryClient.setQueryData(queryKey, () => '5')
-
-        const data = queryClient.setQueryData(queryKey, 5)
-
-        const result: Expect<Equal<typeof data, number | undefined>> = true
-        return result
+  })
+  it('should properly type value when passed to setQueryData', () => {
+    doNotExecute(() => {
+      const { queryKey } = queryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve(5),
       })
+
+      const queryClient = new QueryClient()
+
+      // @ts-expect-error value should be a number
+      queryClient.setQueryData(queryKey, '5')
+      // @ts-expect-error value should be a number
+      queryClient.setQueryData(queryKey, () => '5')
+
+      const data = queryClient.setQueryData(queryKey, 5)
+
+      const result: Expect<Equal<typeof data, number | undefined>> = true
+      return result
     })
   })
 })
