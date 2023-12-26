@@ -86,7 +86,7 @@
     "type-fest": "^4.8.3",
     "typescript": "5.2.2",
     "vite": "^4.5.1",
-    "vitest": "0.34.0"
+    "vitest": "0.34.2"
   },
   "pnpm": {
     "overrides": {
