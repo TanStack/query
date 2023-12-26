@@ -10,6 +10,10 @@ type BatchNotifyFunction = (callback: () => void) => void
 
 type BatchCallsCallback<T extends Array<unknown>> = (...args: T) => void
 
+type ScheduleFunction = (callback: () => void) => void
+
+type BatchMethod = { type: 'raf' | 'tick' } | { type: 'timer', timeout?: number }
+
 export function createNotifyManager() {
   let queue: Array<NotifyCallback> = []
   let transactions = 0
@@ -19,6 +23,19 @@ export function createNotifyManager() {
   let batchNotifyFn: BatchNotifyFunction = (callback: () => void) => {
     callback()
   }
+  let scheduleFn: ScheduleFunction
+
+  const setBatchMethod = (method: BatchMethod) => {
+    if (method.type === "tick") {
+      scheduleFn = queueMicrotask
+    } else if (method.type === "raf") {
+      scheduleFn = requestAnimationFrame
+    } else if (method.type === "timer") {
+      scheduleFn = (cb) => setTimeout(cb, method.timeout ?? 0)
+    }
+  }
+
+  setBatchMethod({ type: 'timer', timeout: 0 })
 
   const batch = <T>(callback: () => T): T => {
     let result
@@ -38,7 +55,7 @@ export function createNotifyManager() {
     if (transactions) {
       queue.push(callback)
     } else {
-      scheduleMicrotask(() => {
+      scheduleFn(() => {
         notifyFn(callback)
       })
     }
@@ -61,7 +78,7 @@ export function createNotifyManager() {
     const originalQueue = queue
     queue = []
     if (originalQueue.length) {
-      scheduleMicrotask(() => {
+      scheduleFn(() => {
         batchNotifyFn(() => {
           originalQueue.forEach((callback) => {
             notifyFn(callback)
@@ -93,6 +110,7 @@ export function createNotifyManager() {
     schedule,
     setNotifyFunction,
     setBatchNotifyFunction,
+    setBatchMethod
   } as const
 }
 
