@@ -1055,6 +1055,21 @@ importers:
         specifier: ^2.8.0
         version: 2.8.0(solid-js@1.8.7)(vite@5.0.10)
 
+  examples/solid/bug-test:
+    dependencies:
+      '@solidjs/start':
+        specifier: ^0.4.2
+        version: 0.4.2(solid-js@1.8.7)(vinxi@0.0.54)(vite@4.5.1)
+      '@tanstack/solid-query':
+        specifier: ^5.14.7
+        version: link:../../../packages/solid-query
+      solid-js:
+        specifier: ^1.8.7
+        version: 1.8.7
+      vinxi:
+        specifier: 0.0.54
+        version: 0.0.54(@types/node@18.19.3)
+
   examples/solid/default-query-function:
     dependencies:
       '@tanstack/solid-query':
@@ -1778,7 +1793,7 @@ importers:
         version: 1.13.3
       tsup-preset-solid:
         specifier: ^2.2.0
-        version: 2.2.0(esbuild@0.19.5)(solid-js@1.8.7)(tsup@8.0.1)
+        version: 2.2.0(esbuild@0.19.10)(solid-js@1.8.7)(tsup@8.0.1)
       vite-plugin-solid:
         specifier: ^2.8.0
         version: 2.8.0(solid-js@1.8.7)(vite@5.0.10)
@@ -1878,7 +1893,7 @@ importers:
     devDependencies:
       tsup-preset-solid:
         specifier: ^2.2.0
-        version: 2.2.0(esbuild@0.19.5)(solid-js@1.8.7)(tsup@8.0.1)
+        version: 2.2.0(esbuild@0.19.10)(solid-js@1.8.7)(tsup@8.0.1)
       vite-plugin-solid:
         specifier: ^2.8.0
         version: 2.8.0(solid-js@1.8.7)(vite@5.0.10)
@@ -1897,7 +1912,7 @@ importers:
         version: 1.8.7
       tsup-preset-solid:
         specifier: ^2.2.0
-        version: 2.2.0(esbuild@0.19.5)(solid-js@1.8.7)(tsup@8.0.1)
+        version: 2.2.0(esbuild@0.19.10)(solid-js@1.8.7)(tsup@8.0.1)
       vite-plugin-solid:
         specifier: ^2.8.0
         version: 2.8.0(solid-js@1.8.7)(vite@5.0.10)
@@ -1916,7 +1931,7 @@ importers:
         version: 1.8.7
       tsup-preset-solid:
         specifier: ^2.2.0
-        version: 2.2.0(esbuild@0.19.5)(solid-js@1.8.7)(tsup@8.0.1)
+        version: 2.2.0(esbuild@0.19.10)(solid-js@1.8.7)(tsup@8.0.1)
       vite-plugin-solid:
         specifier: ^2.8.0
         version: 2.8.0(solid-js@1.8.7)(vite@5.0.10)
@@ -5580,7 +5595,6 @@ packages:
     cpu: [ppc64]
     os: [aix]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/android-arm64@0.18.20:
@@ -5597,7 +5611,6 @@ packages:
     cpu: [arm64]
     os: [android]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/android-arm64@0.19.5:
@@ -5622,7 +5635,6 @@ packages:
     cpu: [arm]
     os: [android]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/android-arm@0.19.5:
@@ -5647,7 +5659,6 @@ packages:
     cpu: [x64]
     os: [android]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/android-x64@0.19.5:
@@ -5672,7 +5683,6 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/darwin-arm64@0.19.5:
@@ -5697,7 +5707,6 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/darwin-x64@0.19.5:
@@ -5722,7 +5731,6 @@ packages:
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/freebsd-arm64@0.19.5:
@@ -5747,7 +5755,6 @@ packages:
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/freebsd-x64@0.19.5:
@@ -5772,7 +5779,6 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-arm64@0.19.5:
@@ -5797,7 +5803,6 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-arm@0.19.5:
@@ -5822,7 +5827,6 @@ packages:
     cpu: [ia32]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-ia32@0.19.5:
@@ -5847,7 +5851,6 @@ packages:
     cpu: [loong64]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-loong64@0.19.5:
@@ -5872,7 +5875,6 @@ packages:
     cpu: [mips64el]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-mips64el@0.19.5:
@@ -5897,7 +5899,6 @@ packages:
     cpu: [ppc64]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-ppc64@0.19.5:
@@ -5922,7 +5923,6 @@ packages:
     cpu: [riscv64]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-riscv64@0.19.5:
@@ -5947,7 +5947,6 @@ packages:
     cpu: [s390x]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-s390x@0.19.5:
@@ -5972,7 +5971,6 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-x64@0.19.5:
@@ -5997,7 +5995,6 @@ packages:
     cpu: [x64]
     os: [netbsd]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/netbsd-x64@0.19.5:
@@ -6022,7 +6019,6 @@ packages:
     cpu: [x64]
     os: [openbsd]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/openbsd-x64@0.19.5:
@@ -6047,7 +6043,6 @@ packages:
     cpu: [x64]
     os: [sunos]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/sunos-x64@0.19.5:
@@ -6072,7 +6067,6 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/win32-arm64@0.19.5:
@@ -6097,7 +6091,6 @@ packages:
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/win32-ia32@0.19.5:
@@ -6122,7 +6115,6 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/win32-x64@0.19.5:
@@ -7880,6 +7872,7 @@ packages:
     dependencies:
       is-glob: 4.0.3
       micromatch: 4.0.5
+      napi-wasm: 1.1.0
     dev: false
     bundledDependencies:
       - napi-wasm
@@ -10190,10 +10183,10 @@ packages:
       vinxi: ^0.0.54
     dependencies:
       '@babel/parser': 7.23.6
-      acorn: 8.10.0
-      acorn-jsx: 5.3.2(acorn@8.10.0)
+      acorn: 8.11.2
+      acorn-jsx: 5.3.2(acorn@8.11.2)
       acorn-loose: 8.4.0
-      acorn-typescript: 1.4.12(acorn@8.10.0)
+      acorn-typescript: 1.4.12(acorn@8.11.2)
       astring: 1.8.6
       magicast: 0.2.11
       recast: 0.23.4
@@ -10207,9 +10200,9 @@ packages:
       vinxi: ^0.0.54
     dependencies:
       '@vinxi/plugin-directives': 0.0.50(vinxi@0.0.54)
-      acorn: 8.10.0
+      acorn: 8.11.2
       acorn-loose: 8.4.0
-      acorn-typescript: 1.4.12(acorn@8.10.0)
+      acorn-typescript: 1.4.12(acorn@8.11.2)
       astring: 1.8.6
       magicast: 0.2.11
       recast: 0.23.4
@@ -10222,9 +10215,9 @@ packages:
       vinxi: ^0.0.54
     dependencies:
       '@vinxi/plugin-directives': 0.0.50(vinxi@0.0.54)
-      acorn: 8.10.0
+      acorn: 8.11.2
       acorn-loose: 8.4.0
-      acorn-typescript: 1.4.12(acorn@8.10.0)
+      acorn-typescript: 1.4.12(acorn@8.11.2)
       astring: 1.8.6
       magicast: 0.2.11
       recast: 0.23.4
@@ -10789,6 +10782,14 @@ packages:
     dependencies:
       acorn: 8.10.0
 
+  /acorn-jsx@5.3.2(acorn@8.11.2):
+    resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
+    peerDependencies:
+      acorn: ^6.0.0 || ^7.0.0 || ^8.0.0
+    dependencies:
+      acorn: 8.11.2
+    dev: false
+
   /acorn-loose@8.4.0:
     resolution: {integrity: sha512-M0EUka6rb+QC4l9Z3T0nJEzNOO7JcoJlYMrBlyBCiFSXRyxjLKayd4TbQs2FDRWQU1h9FR7QVNHt+PEaoNL5rQ==}
     engines: {node: '>=0.4.0'}
@@ -10796,12 +10797,12 @@ packages:
       acorn: 8.11.2
     dev: false
 
-  /acorn-typescript@1.4.12(acorn@8.10.0):
+  /acorn-typescript@1.4.12(acorn@8.11.2):
     resolution: {integrity: sha512-G/oj3oiBmYlc+6SJZYMRz+SPgSgBWqEXPzhO55dYvT4x8SJM+HkxU5o5OPFstxsMMk1tXPYtYCyd7jUdHZy8Eg==}
     peerDependencies:
       acorn: '>=8.9.0'
     dependencies:
-      acorn: 8.10.0
+      acorn: 8.11.2
     dev: false
 
   /acorn-walk@7.2.0:
@@ -15015,7 +15016,7 @@ packages:
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
     dev: true
 
-  /esbuild-plugin-solid@0.5.0(esbuild@0.19.5)(solid-js@1.8.7):
+  /esbuild-plugin-solid@0.5.0(esbuild@0.19.10)(solid-js@1.8.7):
     resolution: {integrity: sha512-ITK6n+0ayGFeDVUZWNMxX+vLsasEN1ILrg4pISsNOQ+mq4ljlJJiuXotInd+HE0MzwTcA9wExT1yzDE2hsqPsg==}
     peerDependencies:
       esbuild: '>=0.12'
@@ -15024,7 +15025,7 @@ packages:
       '@babel/core': 7.23.6
       '@babel/preset-typescript': 7.23.2(@babel/core@7.23.6)
       babel-preset-solid: 1.8.2(@babel/core@7.23.6)
-      esbuild: 0.19.5
+      esbuild: 0.19.10
       solid-js: 1.8.7
     transitivePeerDependencies:
       - supports-color
@@ -15100,7 +15101,6 @@ packages:
       '@esbuild/win32-arm64': 0.19.10
       '@esbuild/win32-ia32': 0.19.10
       '@esbuild/win32-x64': 0.19.10
-    dev: false
 
   /esbuild@0.19.5:
     resolution: {integrity: sha512-bUxalY7b1g8vNhQKdB24QDmHeY4V4tw/s6Ak5z+jJX9laP5MoQseTOMemAr0gxssjNcH0MCViG8ONI2kksvfFQ==}
@@ -19500,7 +19500,7 @@ packages:
     dependencies:
       '@babel/core': 7.23.6
       '@babel/generator': 7.23.6
-      '@babel/plugin-syntax-typescript': 7.22.5(@babel/core@7.23.6)
+      '@babel/plugin-syntax-typescript': 7.23.3(@babel/core@7.23.6)
       '@babel/traverse': 7.23.6
       '@babel/types': 7.23.6
       '@jest/transform': 27.5.1
@@ -19872,7 +19872,7 @@ packages:
         optional: true
     dependencies:
       abab: 2.0.6
-      acorn: 8.10.0
+      acorn: 8.11.2
       acorn-globals: 6.0.0
       cssom: 0.4.4
       cssstyle: 2.3.0
@@ -21655,6 +21655,10 @@ packages:
       - supports-color
     dev: false
 
+  /napi-wasm@1.1.0:
+    resolution: {integrity: sha512-lHwIAJbmLSjF9VDRm9GoVOy9AGp3aIvkjv+Kvz9h16QR3uSVYH78PNQUnT2U4X53mhlnV2M7wrhibQ3GHicDmg==}
+    dev: false
+
   /native-url@0.2.6:
     resolution: {integrity: sha512-k4bDC87WtgrdD362gZz6zoiXQrl40kYlBmpfmSjwRO1VU0V5ccwJTlxuE72F6m3V0vc1xOf6n3UCP9QyerRqmA==}
     dependencies:
@@ -21797,7 +21801,7 @@ packages:
       tslib: 2.6.2
       typescript: 5.2.2
     optionalDependencies:
-      esbuild: 0.19.5
+      esbuild: 0.19.10
       rollup: 4.6.0
     transitivePeerDependencies:
       - supports-color
@@ -21859,7 +21863,7 @@ packages:
       '@rollup/plugin-replace': 5.0.5(rollup@4.6.0)
       '@rollup/plugin-terser': 0.4.4(rollup@4.6.0)
       '@rollup/plugin-wasm': 6.2.2(rollup@4.6.0)
-      '@rollup/pluginutils': 5.0.5(rollup@4.6.0)
+      '@rollup/pluginutils': 5.1.0(rollup@4.6.0)
       '@types/http-proxy': 1.17.14
       '@vercel/nft': 0.24.4
       archiver: 6.0.1
@@ -26097,7 +26101,7 @@ packages:
     resolution: {integrity: sha512-oKWePCxqpd6FlLvGV1VU0x7bkPmmCNolxzjMf4NczoDnQcIWrAF+cPtZn5i6n+RfD2d9i0tzpKnG6Yk168yIyw==}
     hasBin: true
     dependencies:
-      is-core-module: 2.13.0
+      is-core-module: 2.13.1
       path-parse: 1.0.7
       supports-preserve-symlinks-flag: 1.0.0
 
@@ -26269,22 +26273,6 @@ packages:
       open: 8.4.2
       picomatch: 2.3.1
       rollup: 4.6.0
-      source-map: 0.7.4
-      yargs: 17.7.2
-    dev: false
-
-  /rollup-plugin-visualizer@5.9.2:
-    resolution: {integrity: sha512-waHktD5mlWrYFrhOLbti4YgQCn1uR24nYsNuXxg7LkPH8KdTXVWR9DNY1WU0QqokyMixVXJS4J04HNrVTMP01A==}
-    engines: {node: '>=14'}
-    hasBin: true
-    peerDependencies:
-      rollup: 2.x || 3.x
-    peerDependenciesMeta:
-      rollup:
-        optional: true
-    dependencies:
-      open: 8.4.2
-      picomatch: 2.3.1
       source-map: 0.7.4
       yargs: 17.7.2
     dev: false
@@ -28655,12 +28643,12 @@ packages:
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
 
-  /tsup-preset-solid@2.2.0(esbuild@0.19.5)(solid-js@1.8.7)(tsup@8.0.1):
+  /tsup-preset-solid@2.2.0(esbuild@0.19.10)(solid-js@1.8.7)(tsup@8.0.1):
     resolution: {integrity: sha512-sPAzeArmYkVAZNRN+m4tkiojdd0GzW/lCwd4+TQDKMENe8wr2uAuro1s0Z59ASmdBbkXoxLgCiNcuQMyiidMZg==}
     peerDependencies:
       tsup: ^8.0.0
     dependencies:
-      esbuild-plugin-solid: 0.5.0(esbuild@0.19.5)(solid-js@1.8.7)
+      esbuild-plugin-solid: 0.5.0(esbuild@0.19.10)(solid-js@1.8.7)
       tsup: 8.0.1(typescript@5.2.2)
     transitivePeerDependencies:
       - esbuild
@@ -29150,7 +29138,7 @@ packages:
       mri: 1.2.0
       node-fetch-native: 1.6.1
       ofetch: 1.3.3
-      ufo: 1.3.1
+      ufo: 1.3.2
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -29399,8 +29387,8 @@ packages:
     hasBin: true
     dependencies:
       '@babel/core': 7.23.6
-      '@babel/plugin-syntax-jsx': 7.22.5(@babel/core@7.23.6)
-      '@babel/plugin-syntax-typescript': 7.22.5(@babel/core@7.23.6)
+      '@babel/plugin-syntax-jsx': 7.23.3(@babel/core@7.23.6)
+      '@babel/plugin-syntax-typescript': 7.23.3(@babel/core@7.23.6)
       '@types/micromatch': 4.0.6
       '@types/serve-static': 1.15.4
       '@types/ws': 8.5.8
@@ -29430,10 +29418,10 @@ packages:
       perfect-debounce: 1.0.0
       radix3: 1.1.0
       resolve: 1.22.8
-      rollup-plugin-visualizer: 5.9.2
+      rollup-plugin-visualizer: 5.11.0(rollup@4.6.0)
       serve-placeholder: 2.0.1
       serve-static: 1.15.0(supports-color@6.1.0)
-      ufo: 1.3.1
+      ufo: 1.3.2
       unenv: 1.8.0
       unimport: 3.7.0(rollup@4.6.0)
       unstorage: 1.10.1

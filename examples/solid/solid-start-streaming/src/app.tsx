@@ -31,6 +31,7 @@ export default function App() {
             <a href="/with-error">With Error</a>
             <a href="/hydration">Hydration</a>
             <a href="/prefetch">Prefetch</a>
+            <a href="/batch-methods">Batching Methods</a>
             <Suspense>{props.children}</Suspense>
           </MetaProvider>
         )}
