@@ -15,7 +15,7 @@ const observer = new InfiniteQueryObserver(queryClient, {
   getPreviousPageParam: (firstPage, allPages) => firstPage.prevCursor,
 })
 
-const unsubscribe = observer.subscribe(result => {
+const unsubscribe = observer.subscribe((result) => {
   console.log(result)
   unsubscribe()
 })

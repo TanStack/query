@@ -83,7 +83,11 @@ Specify a `staleTime` to only fetch when the data is older than a certain amount
 
 ```tsx
 try {
-  const data = await queryClient.fetchQuery({ queryKey, queryFn, staleTime: 10000 })
+  const data = await queryClient.fetchQuery({
+    queryKey,
+    queryFn,
+    staleTime: 10000,
+  })
 } catch (error) {
   console.log(error)
 }
@@ -245,7 +249,7 @@ If the value is `undefined`, the query data is not updated.
 For convenience in syntax, you can also pass an updater function which receives the current data value and returns the new one:
 
 ```tsx
-setQueryData(queryKey, oldData => newData)
+setQueryData(queryKey, (oldData) => newData)
 ```
 
 If the updater function returns `undefined`, the query data will not be updated. If the updater function receives `undefined` as input, you can return `undefined` to bail out of the update and thus _not_ create a new cache entry.
@@ -290,11 +294,14 @@ The `invalidateQueries` method can be used to invalidate and refetch single or m
 - If you **want inactive queries to refetch** as well, use the `refetchType: 'all'` option
 
 ```tsx
-await queryClient.invalidateQueries({
-  queryKey: ['posts'],
-  exact,
-  refetchType: 'active',
-}, { throwOnError, cancelRefetch })
+await queryClient.invalidateQueries(
+  {
+    queryKey: ['posts'],
+    exact,
+    refetchType: 'active',
+  },
+  { throwOnError, cancelRefetch },
+)
 ```
 
 **Options**
@@ -332,7 +339,11 @@ await queryClient.refetchQueries({ stale: true })
 await queryClient.refetchQueries({ queryKey: ['posts'], type: 'active' })
 
 // refetch all active queries exactly matching a query key:
-await queryClient.refetchQueries({ queryKey: ['posts', 1], type: 'active', exact: true })
+await queryClient.refetchQueries({
+  queryKey: ['posts', 1],
+  type: 'active',
+  exact: true,
+})
 ```
 
 **Options**

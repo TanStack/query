@@ -27,7 +27,6 @@ To enable all of the recommended rules for our plugin, add `plugin:@tanstack/esl
 }
 ```
 
-
 ### Alternative config
 
 Alternatively, add `@tanstack/eslint-plugin-query` to the plugins section of your `.eslintrc` configuration file:

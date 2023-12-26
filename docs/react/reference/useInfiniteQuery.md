@@ -66,10 +66,10 @@ The returned properties for `useInfiniteQuery` are identical to the [`useQuery` 
   - Will be `true` while fetching the previous page with `fetchPreviousPage`.
 - `fetchNextPage: (options?: FetchNextPageOptions) => Promise<UseInfiniteQueryResult>`
   - This function allows you to fetch the next "page" of results.
-`getNextPageParam`.
+    `getNextPageParam`.
   - `options.cancelRefetch: boolean` if set to `true`, calling `fetchNextPage` repeatedly will invoke `fetchPage` every time, whether the previous
-  invocation has resolved or not. Also, the result from previous invocations will be ignored. If set to `false`, calling `fetchNextPage`
-  repeatedly won't have any effect until the first invocation has resolved. Default is `true`.
+    invocation has resolved or not. Also, the result from previous invocations will be ignored. If set to `false`, calling `fetchNextPage`
+    repeatedly won't have any effect until the first invocation has resolved. Default is `true`.
 - `fetchPreviousPage: (options?: FetchPreviousPageOptions) => Promise<UseInfiniteQueryResult>`
   - This function allows you to fetch the previous "page" of results.
   - `options.cancelRefetch: boolean` same as for `fetchNextPage`.

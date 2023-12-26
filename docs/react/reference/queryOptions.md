@@ -6,7 +6,7 @@ title: queryOptions
 ```tsx
 queryOptions({
   queryKey,
-  ...options
+  ...options,
 })
 ```
 

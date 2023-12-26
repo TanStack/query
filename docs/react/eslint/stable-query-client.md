@@ -24,7 +24,6 @@ function App() {
 }
 ```
 
-
 Examples of **correct** code for this rule:
 
 ```tsx
