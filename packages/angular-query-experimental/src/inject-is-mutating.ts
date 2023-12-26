@@ -1,7 +1,7 @@
 import { DestroyRef, inject, signal } from '@angular/core'
 import { type MutationFilters, notifyManager } from '@tanstack/query-core'
 import { assertInjector } from 'ngxtension/assert-injector'
-import { injectQueryClient } from './injectQueryClient'
+import { injectQueryClient } from './inject-query-client'
 import type { Injector, Signal } from '@angular/core'
 
 export function injectIsMutating(

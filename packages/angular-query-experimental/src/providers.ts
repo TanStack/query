@@ -4,7 +4,7 @@ import {
   inject,
   makeEnvironmentProviders,
 } from '@angular/core'
-import { provideQueryClient } from './injectQueryClient'
+import { provideQueryClient } from './inject-query-client'
 import type { EnvironmentProviders } from '@angular/core'
 import type { QueryClient } from '@tanstack/query-core'
 
