@@ -307,9 +307,6 @@ export function sleep(ms: number): Promise<void> {
  * Schedules a microtask.
  * This can be useful to schedule state updates after rendering.
  */
-export function scheduleMicrotask(callback: () => void) {
-  sleep(0).then(callback)
-}
 
 export function replaceData<
   TData,

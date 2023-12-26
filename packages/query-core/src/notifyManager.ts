@@ -1,5 +1,3 @@
-import { scheduleMicrotask } from './utils'
-
 // TYPES
 
 type NotifyCallback = () => void
@@ -38,7 +36,7 @@ export function createNotifyManager() {
     if (transactions) {
       queue.push(callback)
     } else {
-      scheduleMicrotask(() => {
+      queueMicrotask(() => {
         notifyFn(callback)
       })
     }
@@ -61,7 +59,7 @@ export function createNotifyManager() {
     const originalQueue = queue
     queue = []
     if (originalQueue.length) {
-      scheduleMicrotask(() => {
+      queueMicrotask(() => {
         batchNotifyFn(() => {
           originalQueue.forEach((callback) => {
             notifyFn(callback)
