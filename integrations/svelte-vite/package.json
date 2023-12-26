@@ -6,10 +6,10 @@
     "test:bundle": "vite build"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^2.5.3",
+    "@sveltejs/vite-plugin-svelte": "^3.0.1",
     "@tanstack/svelte-query": "workspace:*",
     "@tanstack/svelte-query-devtools": "workspace:*",
     "svelte": "^4.2.8",
-    "vite": "^4.5.1"
+    "vite": "^5.0.10"
   }
 }

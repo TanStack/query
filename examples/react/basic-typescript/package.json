@@ -24,7 +24,7 @@
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "typescript": "5.2.2",
-    "vite": "^4.5.1"
+    "vite": "^5.0.10"
   },
   "browserslist": {
     "production": [

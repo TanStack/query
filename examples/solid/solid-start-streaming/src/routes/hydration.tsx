@@ -3,7 +3,7 @@ import { createQuery } from '@tanstack/solid-query'
 import { createSignal, Suspense } from 'solid-js'
 import { fetchUser } from '~/utils/api'
 import { NoHydration } from 'solid-js/web'
-import { Title } from 'solid-start'
+import { Title } from '@solidjs/meta'
 
 export default function Hydration() {
   const query = createQuery(() => ({

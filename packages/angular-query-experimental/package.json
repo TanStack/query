@@ -43,18 +43,18 @@
   },
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
-    "ngxtension": "^1.0.3",
+    "ngxtension": "^1.6.2",
     "tslib": "^2.6.2"
   },
   "devDependencies": {
-    "@analogjs/vite-plugin-angular": "^0.2.18",
-    "@angular/common": "^17.0.2",
-    "@angular/compiler": "^17.0.2",
-    "@angular/compiler-cli": "^17.0.2",
-    "@angular/core": "^17.0.2",
-    "@angular/platform-browser": "^17.0.2",
-    "@angular/platform-browser-dynamic": "^17.0.2",
-    "ng-packagr": "^17.0.0",
+    "@analogjs/vite-plugin-angular": "^0.2.29",
+    "@angular/common": "^17.0.8",
+    "@angular/compiler": "^17.0.8",
+    "@angular/compiler-cli": "^17.0.8",
+    "@angular/core": "^17.0.8",
+    "@angular/platform-browser": "^17.0.8",
+    "@angular/platform-browser-dynamic": "^17.0.8",
+    "ng-packagr": "^17.0.3",
     "typescript": "5.2.2",
     "zone.js": "^0.14.2"
   },

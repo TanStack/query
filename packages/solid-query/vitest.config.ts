@@ -9,6 +9,12 @@ export default defineConfig({
     setupFiles: ['test-setup.ts'],
     environment: 'jsdom',
     coverage: { provider: 'istanbul', include: ['src/**/*'] },
+    server: {
+      deps: {
+        // https://github.com/solidjs/solid-testing-library#known-issues
+        inline: [/solid-js/],
+      },
+    },
   },
   plugins: [solid()],
 })
