@@ -5,6 +5,6 @@ export default defineConfig({
     name: 'query-sync-storage-persister',
     dir: './src',
     watch: false,
-    coverage: { provider: 'istanbul' },
+    coverage: { provider: 'istanbul', include: ['src/**/*'] },
   },
 })

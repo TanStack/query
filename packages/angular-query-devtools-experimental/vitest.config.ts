@@ -7,6 +7,6 @@ export default defineConfig({
     watch: false,
     environment: 'jsdom',
     setupFiles: [],
-    coverage: { provider: 'istanbul' },
+    coverage: { provider: 'istanbul', include: ['src/**/*'] },
   },
 })
