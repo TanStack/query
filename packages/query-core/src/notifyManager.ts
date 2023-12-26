@@ -10,7 +10,7 @@ type BatchCallsCallback<T extends Array<unknown>> = (...args: T) => void
 
 type ScheduleFunction = (callback: () => void) => void
 
-type BatchMethod = { type: 'raf' | 'tick' } | { type: 'timer', timeout?: number }
+type BatchMethod = { type: "raf" | "tick" } | { type: "timer", timeout?: number } | { type: "custom", fn: ScheduleFunction }
 
 export function createNotifyManager() {
   let queue: Array<NotifyCallback> = []
@@ -28,14 +28,16 @@ export function createNotifyManager() {
       scheduleFn = queueMicrotask
     } else if (method.type === "raf") {
       scheduleFn = requestAnimationFrame
-      // Disable because condition is necessary for typescript to detect method.timeout
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     } else if (method.type === "timer") {
       scheduleFn = (cb) => setTimeout(cb, method.timeout ?? 0)
+      // Disable because condition is necessary for typescript to detect method.fn
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    } else if (method.type === "custom") {
+      scheduleFn = method.fn
     }
   }
 
-  setBatchMethod({ type: 'timer', timeout: 0 })
+  setBatchMethod({ type: "timer", timeout: 0 })
 
   const batch = <T>(callback: () => T): T => {
     let result
