@@ -1,7 +1,7 @@
 import { QueryObserver } from '@tanstack/query-core'
 import { assertInjector } from 'ngxtension/assert-injector'
-import { injectQueryClient } from './injectQueryClient'
-import { createBaseQuery } from './createBaseQuery'
+import { injectQueryClient } from './inject-query-client'
+import { createBaseQuery } from './create-base-query'
 import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
 import type { Injector } from '@angular/core'
 import type {
@@ -12,7 +12,7 @@ import type {
 import type {
   DefinedInitialDataOptions,
   UndefinedInitialDataOptions,
-} from './queryOptions'
+} from './query-options'
 
 /**
  * Create a Query.

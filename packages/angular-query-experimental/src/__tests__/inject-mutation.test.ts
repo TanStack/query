@@ -2,9 +2,9 @@ import { TestBed, fakeAsync, flush } from '@angular/core/testing'
 import { QueryClient } from '@tanstack/query-core'
 import { vi } from 'vitest'
 import { expect } from 'vitest'
-import { injectMutation } from '../injectMutation'
+import { injectMutation } from '../inject-mutation'
 import { provideAngularQuery } from '../providers'
-import { QUERY_CLIENT } from '../injectQueryClient'
+import { QUERY_CLIENT } from '../inject-query-client'
 
 describe('injectMutation', () => {
   let queryClient: QueryClient

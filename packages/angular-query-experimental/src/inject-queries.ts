@@ -1,7 +1,7 @@
 import { QueriesObserver, notifyManager } from '@tanstack/query-core'
 import { DestroyRef, computed, effect, inject, signal } from '@angular/core'
 import { assertInjector } from 'ngxtension/assert-injector'
-import { injectQueryClient } from './injectQueryClient'
+import { injectQueryClient } from './inject-query-client'
 import type { Injector, Signal } from '@angular/core'
 import type {
   DefaultError,
