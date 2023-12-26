@@ -11,9 +11,10 @@ export default defineConfig({
     coverage: { provider: 'istanbul', include: ['src/**/*'] },
     server: {
       deps: {
+        // https://github.com/solidjs/solid-testing-library#known-issues
         inline: [/solid-js/],
       },
-    }, // HACK: Magically fixes issues with @solidjs/testing-library
+    },
   },
   plugins: [solid()],
 })
