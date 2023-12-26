@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
+import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import * as QueryCore from '@tanstack/query-core'
 import { QueryClientProvider, createMutation, useIsMutating } from '..'
@@ -157,6 +157,7 @@ describe('useIsMutating', () => {
 
   it('should use provided custom queryClient', async () => {
     const queryClient = createQueryClient()
+
     function Page() {
       const isMutating = useIsMutating(undefined, () => queryClient)
       const { mutate } = createMutation(
@@ -178,8 +179,10 @@ describe('useIsMutating', () => {
         </div>
       )
     }
-    render(() => <Page></Page>)
-    await waitFor(() => screen.findByText('mutating: 1'))
+
+    const rendered = render(() => <Page></Page>)
+
+    await waitFor(() => rendered.findByText('mutating: 1'))
   })
 
   it('should not change state if unmounted', async () => {
@@ -229,12 +232,12 @@ describe('useIsMutating', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
-    fireEvent.click(screen.getByText('unmount'))
+    fireEvent.click(rendered.getByText('unmount'))
 
     // Should not display the console error
     // "Warning: Can't perform a React state update on an unmounted component"
