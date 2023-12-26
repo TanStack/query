@@ -6,12 +6,14 @@ title: Paginated / Lagged Queries
 Rendering paginated data is a very common UI pattern and in TanStack Query, it "just works" by including the page information in the query key:
 
 [//]: # 'Example'
+
 ```tsx
 const result = useQuery({
   queryKey: ['projects', page],
-  queryFn: fetchProjects
+  queryFn: fetchProjects,
 })
 ```
+
 [//]: # 'Example'
 
 However, if you run this simple example, you might notice something strange:
@@ -29,27 +31,23 @@ Consider the following example where we would ideally want to increment a pageIn
 - `isPlaceholderData` is made available to know what data the query is currently providing you
 
 [//]: # 'Example2'
+
 ```tsx
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import React from "react";
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import React from 'react'
 
 function Todos() {
   const [page, setPage] = React.useState(0)
 
-  const fetchProjects = (page = 0) => fetch('/api/projects?page=' + page).then((res) => res.json())
+  const fetchProjects = (page = 0) =>
+    fetch('/api/projects?page=' + page).then((res) => res.json())
 
-  const {
-    isPending,
-    isError,
-    error,
-    data,
-    isFetching,
-    isPlaceholderData,
-  } = useQuery({
-    queryKey: ['projects', page],
-    queryFn: () => fetchProjects(page),
-    placeholderData: keepPreviousData,
-  })
+  const { isPending, isError, error, data, isFetching, isPlaceholderData } =
+    useQuery({
+      queryKey: ['projects', page],
+      queryFn: () => fetchProjects(page),
+      placeholderData: keepPreviousData,
+    })
 
   return (
     <div>
@@ -59,14 +57,14 @@ function Todos() {
         <div>Error: {error.message}</div>
       ) : (
         <div>
-          {data.projects.map(project => (
+          {data.projects.map((project) => (
             <p key={project.id}>{project.name}</p>
           ))}
         </div>
       )}
       <span>Current Page: {page + 1}</span>
       <button
-        onClick={() => setPage(old => Math.max(old - 1, 0))}
+        onClick={() => setPage((old) => Math.max(old - 1, 0))}
         disabled={page === 0}
       >
         Previous Page
@@ -74,7 +72,7 @@ function Todos() {
       <button
         onClick={() => {
           if (!isPlaceholderData && data.hasMore) {
-            setPage(old => old + 1)
+            setPage((old) => old + 1)
           }
         }}
         // Disable the Next Page button until we know a next page is available
@@ -87,6 +85,7 @@ function Todos() {
   )
 }
 ```
+
 [//]: # 'Example2'
 
 ## Lagging Infinite Query results with `placeholderData`

@@ -28,8 +28,8 @@ Its available methods are:
 import NetInfo from '@react-native-community/netinfo'
 import { onlineManager } from '@tanstack/react-query'
 
-onlineManager.setEventListener(setOnline => {
-  return NetInfo.addEventListener(state => {
+onlineManager.setEventListener((setOnline) => {
+  return NetInfo.addEventListener((state) => {
     setOnline(!!state.isConnected)
   })
 })
@@ -42,7 +42,7 @@ onlineManager.setEventListener(setOnline => {
 ```tsx
 import { onlineManager } from '@tanstack/react-query'
 
-const unsubscribe = onlineManager.subscribe(isOnline => {
+const unsubscribe = onlineManager.subscribe((isOnline) => {
   console.log('isOnline', isOnline)
 })
 ```

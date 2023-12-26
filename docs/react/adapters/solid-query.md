@@ -1,21 +1,25 @@
 ---
-title: Solid Query 
+title: Solid Query
 ---
 
-The `@tanstack/solid-query` package provides a 1st-class API for using TanStack Query with SolidJS. 
+The `@tanstack/solid-query` package provides a 1st-class API for using TanStack Query with SolidJS.
 
 ## Example
 
 ```tsx
-import { QueryClient, QueryClientProvider, createQuery } from '@tanstack/solid-query'
+import {
+  QueryClient,
+  QueryClientProvider,
+  createQuery,
+} from '@tanstack/solid-query'
 import { Switch, Match, For } from 'solid-js'
 
 const queryClient = new QueryClient()
 
 function Example() {
   const query = createQuery({
-    queryKey: () => ['todos'], 
-    queryFn: fetchTodos
+    queryKey: () => ['todos'],
+    queryFn: fetchTodos,
   })
 
   return (
@@ -28,9 +32,7 @@ function Example() {
           <p>Error: {query.error.message}</p>
         </Match>
         <Match when={query.isSuccess}>
-          <For each={query.data}>
-            {(todo) => <p>{todo.title}</p>}
-          </For>
+          <For each={query.data}>{(todo) => <p>{todo.title}</p>}</For>
         </Match>
       </Switch>
     </div>
@@ -44,7 +46,6 @@ function App() {
     </QueryClientProvider>
   )
 }
-
 ```
 
 ## Available Functions
@@ -61,26 +62,23 @@ Solid Query offers useful primitives and functions that will make managing serve
 - `QueryClient`
 - `QueryClientProvider`
 
-
-
-
 ## Important Differences between Solid Query & React Query
 
-Solid Query offers an API similar to  React Query, but there are some key differences to be mindful of.
+Solid Query offers an API similar to React Query, but there are some key differences to be mindful of.
 
 - To maintain their reactivity, Query keys need to be wrapped inside a function while using `createQuery`, `createQueries`, `createInfiniteQuery` and `useIsFetching`.
 
 ```tsx
 // ❌ react version
 useQuery({
-  queryKey: ["todos", todo], 
-  queryFn: fetchTodos
+  queryKey: ['todos', todo],
+  queryFn: fetchTodos,
 })
 
 // ✅ solid version
 createQuery({
-  queryKey: () => ["todos", todo()], 
-  queryFn: fetchTodos
+  queryKey: () => ['todos', todo()],
+  queryFn: fetchTodos,
 })
 ```
 
@@ -91,14 +89,14 @@ import { For, Suspense } from 'solid-js'
 
 function Example() {
   const query = createQuery({
-    queryKey: () => ['todos'], 
-    queryFn: fetchTodos
+    queryKey: () => ['todos'],
+    queryFn: fetchTodos,
   })
 
   return (
     <div>
       {/* ✅ Will trigger loading fallback, data accessed in a suspense context. */}
-      <Suspense fallback={"Loading..."}>
+      <Suspense fallback={'Loading...'}>
         <For each={query.data}>{(todo) => <div>{todo.title}</div>}</For>
       </Suspense>
       {/* ❌ Will not trigger loading fallback, data not accessed in a suspense context. */}
@@ -111,7 +109,11 @@ function Example() {
 - Solid Query primitives (`createX`) do not support destructuring. The return value from these functions is a store, and their properties are only tracked in a reactive context.
 
 ```tsx
-import { QueryClient, QueryClientProvider, createQuery } from '@tanstack/solid-query'
+import {
+  QueryClient,
+  QueryClientProvider,
+  createQuery,
+} from '@tanstack/solid-query'
 import { Match, Switch } from 'solid-js'
 
 const queryClient = new QueryClient()
@@ -175,7 +177,7 @@ const queryClient = new QueryClient()
 
 function Example() {
   const [enabled, setEnabled] = createSignal(false)
-  const query = createQuery({ 
+  const query = createQuery({
     queryKey: () => ['todos'],
     queryFn: fetchTodos,
     // ❌ passing a signal directly is not reactive
@@ -197,9 +199,7 @@ function Example() {
           <p>Error: {query.error.message}</p>
         </Match>
         <Match when={query.isSuccess}>
-          <For each={query.data}>
-            {(todo) => <p>{todo.title}</p>}
-          </For>
+          <For each={query.data}>{(todo) => <p>{todo.title}</p>}</For>
         </Match>
       </Switch>
       <button onClick={() => setEnabled(!enabled())}>Toggle enabled</button>

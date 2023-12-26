@@ -17,7 +17,6 @@ You can configure retries both on a global level and an individual query level.
 > On the server, retries default to `0` to make server rendering as fast as possible.
 
 [//]: # 'Info'
-
 [//]: # 'Example'
 
 ```tsx

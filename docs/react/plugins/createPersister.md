@@ -49,7 +49,7 @@ const queryClient = new QueryClient({
       gcTime: 1000 * 30, // 30 seconds
       persister: experimental_createPersister({
         storage: AsyncStorage,
-        maxAge: 1000 * 60 * 60 * 12 // 12 hours
+        maxAge: 1000 * 60 * 60 * 12, // 12 hours
       }),
     },
   },

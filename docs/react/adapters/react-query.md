@@ -7,7 +7,11 @@ The `react-query` package offers a 1st-class API for using TanStack Query via Re
 ## Example
 
 ```tsx
-import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from '@tanstack/react-query'
 
 const queryClient = new QueryClient()
 
@@ -19,15 +23,15 @@ function Example() {
       {query.isPending
         ? 'Loading...'
         : query.isError
-        ? 'Error!'
-        : query.data
-        ? query.data.map((todo) => <div key={todo.id}>{todo.title}</div>)
-        : null}
+          ? 'Error!'
+          : query.data
+            ? query.data.map((todo) => <div key={todo.id}>{todo.title}</div>)
+            : null}
     </div>
   )
 }
 
-function App () {
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Example />

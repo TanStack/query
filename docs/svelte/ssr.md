@@ -36,7 +36,6 @@ Svelte Query supports two ways of prefetching data on the server and passing tha
 
 If you wish to view the ideal SSR setup, please have a look at the [SSR example](../examples/svelte/ssr).
 
-
 ### Using `initialData`
 
 Together with SvelteKit's [`load`](https://kit.svelte.dev/docs/load), you can pass the data loaded server-side into `createQuery`'s' `initialData` option:
@@ -62,7 +61,7 @@ export async function load() {
   const query = createQuery({
     queryKey: ['posts'],
     queryFn: getPosts,
-    initialData: data.posts
+    initialData: data.posts,
   })
 </script>
 ```
@@ -125,7 +124,7 @@ export async function load({ parent, fetch }) {
   // You need to use the SvelteKit fetch function here
   await queryClient.prefetchQuery({
     queryKey: ['posts'],
-    queryFn: async () => (await fetch('/api/posts')).json()
+    queryFn: async () => (await fetch('/api/posts')).json(),
   })
 }
 ```
@@ -139,7 +138,7 @@ export async function load({ parent, fetch }) {
   // This data is cached by prefetchQuery in +page.ts so no fetch actually happens here
   const query = createQuery({
     queryKey: ['posts'],
-    queryFn: async () => (await fetch('/api/posts')).json()
+    queryFn: async () => (await fetch('/api/posts')).json(),
   })
 </script>
 ```
