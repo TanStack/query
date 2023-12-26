@@ -1,8 +1,8 @@
 import { QueryClient } from '@tanstack/query-core'
 import { beforeEach, describe } from 'vitest'
 import { TestBed, fakeAsync, tick } from '@angular/core/testing'
-import { injectIsMutating } from '../injectIsMutating'
-import { injectMutation } from '../injectMutation'
+import { injectIsMutating } from '../inject-is-mutating'
+import { injectMutation } from '../inject-mutation'
 import { provideAngularQuery } from '../providers'
 import { successMutator } from './test-utils'
 
