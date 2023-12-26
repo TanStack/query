@@ -158,8 +158,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
       vitest:
         specifier: ^0.33.0
         version: 0.33.0(jsdom@23.0.1)
@@ -195,8 +195,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/angular/default-query-function:
     dependencies:
@@ -232,8 +232,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/angular/simple:
     dependencies:
@@ -266,8 +266,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/algolia:
     dependencies:
@@ -304,13 +304,13 @@ importers:
         version: 18.2.18
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@4.5.1)
+        version: 4.2.1(vite@5.0.10)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/auto-refetching:
     dependencies:
@@ -359,10 +359,10 @@ importers:
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@4.5.1)
+        version: 4.2.1(vite@5.0.10)
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/basic-graphql-request:
     dependencies:
@@ -387,10 +387,10 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@4.5.1)
+        version: 4.2.1(vite@5.0.10)
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/basic-typescript:
     dependencies:
@@ -427,7 +427,7 @@ importers:
         version: 18.2.18
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@4.5.1)
+        version: 4.2.1(vite@5.0.10)
       eslint:
         specifier: ^8.56.0
         version: 8.56.0
@@ -438,8 +438,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/default-query-function:
     dependencies:
@@ -461,10 +461,10 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@4.5.1)
+        version: 4.2.1(vite@5.0.10)
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/infinite-query-with-max-pages:
     dependencies:
@@ -616,10 +616,10 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@4.5.1)
+        version: 4.2.1(vite@5.0.10)
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/optimistic-updates-cache:
     dependencies:
@@ -736,10 +736,10 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@4.5.1)
+        version: 4.2.1(vite@5.0.10)
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/prefetching:
     dependencies:
@@ -864,10 +864,10 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@4.5.1)
+        version: 4.2.1(vite@5.0.10)
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/rick-morty:
     dependencies:
@@ -904,10 +904,10 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@4.5.1)
+        version: 4.2.1(vite@5.0.10)
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/simple:
     dependencies:
@@ -929,10 +929,10 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@4.5.1)
+        version: 4.2.1(vite@5.0.10)
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/star-wars:
     dependencies:
@@ -969,10 +969,10 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@4.5.1)
+        version: 4.2.1(vite@5.0.10)
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/suspense:
     dependencies:
@@ -1000,10 +1000,10 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@4.5.1)
+        version: 4.2.1(vite@5.0.10)
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/solid/basic-graphql-request:
     dependencies:
@@ -1027,11 +1027,11 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
       vite-plugin-solid:
         specifier: ^2.7.2
-        version: 2.7.2(solid-js@1.8.1)(vite@4.5.1)
+        version: 2.7.2(solid-js@1.8.1)(vite@5.0.10)
 
   examples/solid/basic-typescript:
     dependencies:
@@ -1049,11 +1049,11 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
       vite-plugin-solid:
         specifier: ^2.7.2
-        version: 2.7.2(solid-js@1.8.1)(vite@4.5.1)
+        version: 2.7.2(solid-js@1.8.1)(vite@5.0.10)
 
   examples/solid/default-query-function:
     dependencies:
@@ -1071,11 +1071,11 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
       vite-plugin-solid:
         specifier: ^2.7.2
-        version: 2.7.2(solid-js@1.8.1)(vite@4.5.1)
+        version: 2.7.2(solid-js@1.8.1)(vite@5.0.10)
 
   examples/solid/simple:
     dependencies:
@@ -1096,11 +1096,11 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
       vite-plugin-solid:
         specifier: ^2.7.2
-        version: 2.7.2(solid-js@1.8.1)(vite@4.5.1)
+        version: 2.7.2(solid-js@1.8.1)(vite@5.0.10)
 
   examples/solid/solid-start-streaming:
     dependencies:
@@ -1155,11 +1155,11 @@ importers:
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
-        specifier: ^2.1.1
-        version: 2.1.1(@sveltejs/kit@1.30.3)
+        specifier: ^3.0.1
+        version: 3.0.1(@sveltejs/kit@2.0.6)
       '@sveltejs/kit':
-        specifier: ^1.30.3
-        version: 1.30.3(svelte@4.2.8)(vite@4.5.1)
+        specifier: ^2.0.6
+        version: 2.0.6(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.10)
       svelte:
         specifier: ^4.2.8
         version: 4.2.8
@@ -1170,8 +1170,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/svelte/basic:
     dependencies:
@@ -1183,11 +1183,11 @@ importers:
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
-        specifier: ^2.1.1
-        version: 2.1.1(@sveltejs/kit@1.30.3)
+        specifier: ^3.0.1
+        version: 3.0.1(@sveltejs/kit@2.0.6)
       '@sveltejs/kit':
-        specifier: ^1.30.3
-        version: 1.30.3(svelte@4.2.8)(vite@4.5.1)
+        specifier: ^2.0.6
+        version: 2.0.6(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.10)
       svelte:
         specifier: ^4.2.8
         version: 4.2.8
@@ -1198,8 +1198,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/svelte/load-more-infinite-scroll:
     dependencies:
@@ -1211,11 +1211,11 @@ importers:
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
-        specifier: ^2.1.1
-        version: 2.1.1(@sveltejs/kit@1.30.3)
+        specifier: ^3.0.1
+        version: 3.0.1(@sveltejs/kit@2.0.6)
       '@sveltejs/kit':
-        specifier: ^1.30.3
-        version: 1.30.3(svelte@4.2.8)(vite@4.5.1)
+        specifier: ^2.0.6
+        version: 2.0.6(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.10)
       svelte:
         specifier: ^4.2.8
         version: 4.2.8
@@ -1226,8 +1226,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/svelte/optimistic-updates-typescript:
     dependencies:
@@ -1239,11 +1239,11 @@ importers:
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
-        specifier: ^2.1.1
-        version: 2.1.1(@sveltejs/kit@1.30.3)
+        specifier: ^3.0.1
+        version: 3.0.1(@sveltejs/kit@2.0.6)
       '@sveltejs/kit':
-        specifier: ^1.30.3
-        version: 1.30.3(svelte@4.2.8)(vite@4.5.1)
+        specifier: ^2.0.6
+        version: 2.0.6(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.10)
       svelte:
         specifier: ^4.2.8
         version: 4.2.8
@@ -1254,8 +1254,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/svelte/playground:
     dependencies:
@@ -1267,11 +1267,11 @@ importers:
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
-        specifier: ^2.1.1
-        version: 2.1.1(@sveltejs/kit@1.30.3)
+        specifier: ^3.0.1
+        version: 3.0.1(@sveltejs/kit@2.0.6)
       '@sveltejs/kit':
-        specifier: ^1.30.3
-        version: 1.30.3(svelte@4.2.8)(vite@4.5.1)
+        specifier: ^2.0.6
+        version: 2.0.6(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.10)
       svelte:
         specifier: ^4.2.8
         version: 4.2.8
@@ -1282,8 +1282,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/svelte/simple:
     dependencies:
@@ -1296,7 +1296,7 @@ importers:
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^2.5.3
-        version: 2.5.3(svelte@4.2.8)(vite@4.5.1)
+        version: 2.5.3(svelte@4.2.8)(vite@5.0.10)
       '@tsconfig/svelte':
         specifier: ^5.0.2
         version: 5.0.2
@@ -1310,8 +1310,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/svelte/ssr:
     dependencies:
@@ -1323,11 +1323,11 @@ importers:
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
-        specifier: ^2.1.1
-        version: 2.1.1(@sveltejs/kit@1.30.3)
+        specifier: ^3.0.1
+        version: 3.0.1(@sveltejs/kit@2.0.6)
       '@sveltejs/kit':
-        specifier: ^1.30.3
-        version: 1.30.3(svelte@4.2.8)(vite@4.5.1)
+        specifier: ^2.0.6
+        version: 2.0.6(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.10)
       svelte:
         specifier: ^4.2.8
         version: 4.2.8
@@ -1338,8 +1338,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/svelte/star-wars:
     dependencies:
@@ -1351,11 +1351,11 @@ importers:
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
-        specifier: ^2.1.1
-        version: 2.1.1(@sveltejs/kit@1.30.3)
+        specifier: ^3.0.1
+        version: 3.0.1(@sveltejs/kit@2.0.6)
       '@sveltejs/kit':
-        specifier: ^1.30.3
-        version: 1.30.3(svelte@4.2.8)(vite@4.5.1)
+        specifier: ^2.0.6
+        version: 2.0.6(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.10)
       autoprefixer:
         specifier: ^10.4.16
         version: 10.4.16(postcss@8.4.32)
@@ -1375,8 +1375,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/vue/basic:
     dependencies:
@@ -1392,13 +1392,13 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^4.5.2
-        version: 4.5.2(vite@4.5.1)(vue@3.3.0)
+        version: 4.5.2(vite@5.0.10)(vue@3.3.0)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/vue/dependent-queries:
     dependencies:
@@ -1411,13 +1411,13 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^4.5.2
-        version: 4.5.2(vite@4.5.1)(vue@3.3.0)
+        version: 4.5.2(vite@5.0.10)(vue@3.3.0)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/vue/persister:
     dependencies:
@@ -1442,13 +1442,13 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^4.5.2
-        version: 4.5.2(vite@4.5.1)(vue@3.3.0)
+        version: 4.5.2(vite@5.0.10)(vue@3.3.0)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   integrations/angular-cli-standalone-17:
     dependencies:
@@ -1614,17 +1614,17 @@ importers:
         specifier: ^1.8.1
         version: 1.8.1
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
       vite-plugin-solid:
         specifier: ^2.7.2
-        version: 2.7.2(solid-js@1.8.1)(vite@4.5.1)
+        version: 2.7.2(solid-js@1.8.1)(vite@5.0.10)
 
   integrations/svelte-vite:
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^2.5.3
-        version: 2.5.3(svelte@4.2.8)(vite@4.5.1)
+        version: 2.5.3(svelte@4.2.8)(vite@5.0.10)
       '@tanstack/svelte-query':
         specifier: workspace:*
         version: link:../../packages/svelte-query
@@ -1635,8 +1635,8 @@ importers:
         specifier: ^4.2.8
         version: 4.2.8
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   integrations/vue-vite:
     dependencies:
@@ -1645,10 +1645,10 @@ importers:
         version: link:../../packages/vue-query
       '@vitejs/plugin-vue':
         specifier: ^4.5.2
-        version: 4.5.2(vite@4.5.1)(vue@3.3.0)
+        version: 4.5.2(vite@5.0.10)(vue@3.3.0)
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
       vue:
         specifier: ^3.3.0
         version: 3.3.0
@@ -2069,10 +2069,10 @@ importers:
         version: link:../vue-query
       '@vitejs/plugin-vue':
         specifier: ^4.5.2
-        version: 4.5.2(vite@4.5.1)(vue@3.3.0)
+        version: 4.5.2(vite@5.0.10)(vue@3.3.0)
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
       vue:
         specifier: ^3.3.0
         version: 3.3.0
@@ -7888,6 +7888,10 @@ packages:
   /@polka/url@1.0.0-next.23:
     resolution: {integrity: sha512-C16M+IYz0rgRhWZdCmK+h58JMv8vijAA61gmz2rspCSwKwzBebpdcsiUmwrtJRdphuY30i6BSLEOP8ppbNLyLg==}
 
+  /@polka/url@1.0.0-next.24:
+    resolution: {integrity: sha512-2LuNTFBIO0m7kKIQvvPHN6UE63VjpmL9rnEEaOOaiSPbZK+zUOYIzBAWcED+3XYzhYsd/0mD57VdxAEqqV52CQ==}
+    dev: true
+
   /@popperjs/core@2.11.8:
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
     dev: false
@@ -8779,41 +8783,39 @@ packages:
       string.prototype.matchall: 4.0.10
     dev: false
 
-  /@sveltejs/adapter-auto@2.1.1(@sveltejs/kit@1.30.3):
-    resolution: {integrity: sha512-nzi6x/7/3Axh5VKQ8Eed3pYxastxoa06Y/bFhWb7h3Nu+nGRVxKAy3+hBJgmPCwWScy8n0TsstZjSVKfyrIHkg==}
+  /@sveltejs/adapter-auto@3.0.1(@sveltejs/kit@2.0.6):
+    resolution: {integrity: sha512-OpilmvRN136lUgOa9F0zpSI6g+PouOmk+YvJQrB+/hAtllLghjjYuoyfUsrF7U6oJ52cxCtAJTPXgZdyyCffrQ==}
     peerDependencies:
-      '@sveltejs/kit': ^1.0.0
+      '@sveltejs/kit': ^2.0.0
     dependencies:
-      '@sveltejs/kit': 1.30.3(svelte@4.2.8)(vite@4.5.1)
+      '@sveltejs/kit': 2.0.6(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.10)
       import-meta-resolve: 4.0.0
     dev: true
 
-  /@sveltejs/kit@1.30.3(svelte@4.2.8)(vite@4.5.1):
-    resolution: {integrity: sha512-0DzVXfU4h+tChFvoc8C61IqErCyskD4ydSIDjpKS2lYlEzIYrtYrY7juSqACFxqcvZAnOEXvSY+zZ8br0+ZMMg==}
-    engines: {node: ^16.14 || >=18}
+  /@sveltejs/kit@2.0.6(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.10):
+    resolution: {integrity: sha512-dnHtyjBLGXx+hrZQ9GuqLlSfTBixewJaByUVWai7LmB4dgV3FwkK155OltEgONDQW6KW64hLNS/uojdx3uC2/g==}
+    engines: {node: '>=18.13'}
     hasBin: true
     requiresBuild: true
     peerDependencies:
-      svelte: ^3.54.0 || ^4.0.0-next.0 || ^5.0.0-next.0
-      vite: ^4.0.0
+      '@sveltejs/vite-plugin-svelte': ^3.0.0
+      svelte: ^4.0.0 || ^5.0.0-next.0
+      vite: ^5.0.3
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 2.5.3(svelte@4.2.8)(vite@4.5.1)
-      '@types/cookie': 0.5.3
-      cookie: 0.5.0
+      '@sveltejs/vite-plugin-svelte': 3.0.1(svelte@4.2.8)(vite@5.0.10)
+      '@types/cookie': 0.6.0
+      cookie: 0.6.0
       devalue: 4.3.2
       esm-env: 1.0.0
       kleur: 4.1.5
       magic-string: 0.30.5
-      mrmime: 1.0.1
+      mrmime: 2.0.0
       sade: 1.8.1
       set-cookie-parser: 2.6.0
-      sirv: 2.0.3
+      sirv: 2.0.4
       svelte: 4.2.8
       tiny-glob: 0.2.9
-      undici: 5.26.3
-      vite: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
-    transitivePeerDependencies:
-      - supports-color
+      vite: 5.0.10(@types/node@18.19.3)
     dev: true
 
   /@sveltejs/package@2.2.4(svelte@4.2.8)(typescript@5.2.2):
@@ -8849,6 +8851,38 @@ packages:
       - supports-color
     dev: true
 
+  /@sveltejs/vite-plugin-svelte-inspector@1.0.4(@sveltejs/vite-plugin-svelte@2.5.3)(svelte@4.2.8)(vite@5.0.10):
+    resolution: {integrity: sha512-zjiuZ3yydBtwpF3bj0kQNV0YXe+iKE545QGZVTaylW3eAzFr+pJ/cwK8lZEaRp4JtaJXhD5DyWAV4AxLh6DgaQ==}
+    engines: {node: ^14.18.0 || >= 16}
+    peerDependencies:
+      '@sveltejs/vite-plugin-svelte': ^2.2.0
+      svelte: ^3.54.0 || ^4.0.0
+      vite: ^4.0.0
+    dependencies:
+      '@sveltejs/vite-plugin-svelte': 2.5.3(svelte@4.2.8)(vite@5.0.10)
+      debug: 4.3.4(supports-color@6.1.0)
+      svelte: 4.2.8
+      vite: 5.0.10(@types/node@18.19.3)
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@sveltejs/vite-plugin-svelte-inspector@2.0.0(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.10):
+    resolution: {integrity: sha512-gjr9ZFg1BSlIpfZ4PRewigrvYmHWbDrq2uvvPB1AmTWKuM+dI1JXQSUu2pIrYLb/QncyiIGkFDFKTwJ0XqQZZg==}
+    engines: {node: ^18.0.0 || >=20}
+    peerDependencies:
+      '@sveltejs/vite-plugin-svelte': ^3.0.0
+      svelte: ^4.0.0 || ^5.0.0-next.0
+      vite: ^5.0.0
+    dependencies:
+      '@sveltejs/vite-plugin-svelte': 3.0.1(svelte@4.2.8)(vite@5.0.10)
+      debug: 4.3.4(supports-color@6.1.0)
+      svelte: 4.2.8
+      vite: 5.0.10(@types/node@18.19.3)
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /@sveltejs/vite-plugin-svelte@2.5.3(svelte@4.2.8)(vite@4.5.1):
     resolution: {integrity: sha512-erhNtXxE5/6xGZz/M9eXsmI7Pxa6MS7jyTy06zN3Ck++ldrppOnOlJwHHTsMC7DHDQdgUp4NAc4cDNQ9eGdB/w==}
     engines: {node: ^14.18.0 || >= 16}
@@ -8865,6 +8899,46 @@ packages:
       svelte-hmr: 0.15.3(svelte@4.2.8)
       vite: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
       vitefu: 0.2.5(vite@4.5.1)
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@sveltejs/vite-plugin-svelte@2.5.3(svelte@4.2.8)(vite@5.0.10):
+    resolution: {integrity: sha512-erhNtXxE5/6xGZz/M9eXsmI7Pxa6MS7jyTy06zN3Ck++ldrppOnOlJwHHTsMC7DHDQdgUp4NAc4cDNQ9eGdB/w==}
+    engines: {node: ^14.18.0 || >= 16}
+    peerDependencies:
+      svelte: ^3.54.0 || ^4.0.0 || ^5.0.0-next.0
+      vite: ^4.0.0
+    dependencies:
+      '@sveltejs/vite-plugin-svelte-inspector': 1.0.4(@sveltejs/vite-plugin-svelte@2.5.3)(svelte@4.2.8)(vite@5.0.10)
+      debug: 4.3.4(supports-color@6.1.0)
+      deepmerge: 4.3.1
+      kleur: 4.1.5
+      magic-string: 0.30.5
+      svelte: 4.2.8
+      svelte-hmr: 0.15.3(svelte@4.2.8)
+      vite: 5.0.10(@types/node@18.19.3)
+      vitefu: 0.2.5(vite@5.0.10)
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@sveltejs/vite-plugin-svelte@3.0.1(svelte@4.2.8)(vite@5.0.10):
+    resolution: {integrity: sha512-CGURX6Ps+TkOovK6xV+Y2rn8JKa8ZPUHPZ/NKgCxAmgBrXReavzFl8aOSCj3kQ1xqT7yGJj53hjcV/gqwDAaWA==}
+    engines: {node: ^18.0.0 || >=20}
+    peerDependencies:
+      svelte: ^4.0.0 || ^5.0.0-next.0
+      vite: ^5.0.0
+    dependencies:
+      '@sveltejs/vite-plugin-svelte-inspector': 2.0.0(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.10)
+      debug: 4.3.4(supports-color@6.1.0)
+      deepmerge: 4.3.1
+      kleur: 4.1.5
+      magic-string: 0.30.5
+      svelte: 4.2.8
+      svelte-hmr: 0.15.3(svelte@4.2.8)
+      vite: 5.0.10(@types/node@18.19.3)
+      vitefu: 0.2.5(vite@5.0.10)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -9191,6 +9265,10 @@ packages:
 
   /@types/cookie@0.5.3:
     resolution: {integrity: sha512-SLg07AS9z1Ab2LU+QxzU8RCmzsja80ywjf/t5oqw+4NSH20gIGlhLOrBDm1L3PBWzPa4+wkgFQVZAjE6Ioj2ug==}
+
+  /@types/cookie@0.6.0:
+    resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
+    dev: true
 
   /@types/cors@2.8.17:
     resolution: {integrity: sha512-8CGDvrBj1zgo2qE+oS3pOCyYNqCPryMWY2bGfwA0dcfopWGgxs+78df0Rs3rc9THP4JkOhLsAa+15VdpAqkcUA==}
@@ -9831,6 +9909,7 @@ packages:
       vite: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
     transitivePeerDependencies:
       - supports-color
+    dev: false
 
   /@vitejs/plugin-react@4.2.1(vite@5.0.10):
     resolution: {integrity: sha512-oojO9IDc4nCUUi8qIR11KoQm0XFFLIwsRBwHRR4d/88IWghn1y6ckz/bJ8GHDCsYEJee8mDzqtJxh15/cisJNQ==}
@@ -9846,16 +9925,15 @@ packages:
       vite: 5.0.10(@types/node@18.19.3)
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
-  /@vitejs/plugin-vue@4.5.2(vite@4.5.1)(vue@3.3.0):
+  /@vitejs/plugin-vue@4.5.2(vite@5.0.10)(vue@3.3.0):
     resolution: {integrity: sha512-UGR3DlzLi/SaVBPX0cnSyE37vqxU3O6chn8l0HJNzQzDia6/Au2A4xKv+iIJW8w2daf80G7TYHhi1pAUjdZ0bQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
       vite: ^4.0.0 || ^5.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+      vite: 5.0.10(@types/node@18.19.3)
       vue: 3.3.0
 
   /@vitest/coverage-istanbul@0.33.0(vitest@0.33.0):
@@ -12674,6 +12752,11 @@ packages:
   /cookie@0.5.0:
     resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
     engines: {node: '>= 0.6'}
+
+  /cookie@0.6.0:
+    resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
+    engines: {node: '>= 0.6'}
+    dev: true
 
   /copy-anything@2.0.6:
     resolution: {integrity: sha512-1j20GZTsvKNkc4BY3NpMOM8tt///wY3FpIzozTOFO2ffuZcV61nojHXVKIy3WM+7ADCy5FVhdZYHYDdgTU0yJw==}
@@ -20654,6 +20737,11 @@ packages:
     resolution: {integrity: sha512-hzzEagAgDyoU1Q6yg5uI+AorQgdvMCur3FcKf7NhMKWsaYg+RnbTyHRa/9IlLF9rf455MOCtcqqrQQ83pPP7Uw==}
     engines: {node: '>=10'}
 
+  /mrmime@2.0.0:
+    resolution: {integrity: sha512-eu38+hdgojoyq63s+yTpN4XMBdt5l8HhMhc4VKLO9KM5caLIBvUm4thi7fFaxyTmCKeNnXZ5pAlBwCUnhA09uw==}
+    engines: {node: '>=10'}
+    dev: true
+
   /ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
 
@@ -25930,6 +26018,15 @@ packages:
       mrmime: 1.0.1
       totalist: 3.0.1
 
+  /sirv@2.0.4:
+    resolution: {integrity: sha512-94Bdh3cC2PKrbgSOUqTiGPWVZeSiXfKOVZNJniWoqrWrRkB1CJzBU3NEbiTsPcYy1lDsANA/THzS+9WBiy5nfQ==}
+    engines: {node: '>= 10'}
+    dependencies:
+      '@polka/url': 1.0.0-next.24
+      mrmime: 2.0.0
+      totalist: 3.0.1
+    dev: true
+
   /sisteransi@1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
 
@@ -27875,13 +27972,6 @@ packages:
   /undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
 
-  /undici@5.26.3:
-    resolution: {integrity: sha512-H7n2zmKEWgOllKkIUkLvFmsJQj062lSm3uA4EYApG8gLuiOM0/go9bIoC3HVaSnfg4xunowDE2i9p8drkXuvDw==}
-    engines: {node: '>=14.0'}
-    dependencies:
-      '@fastify/busboy': 2.0.0
-    dev: true
-
   /undici@5.27.2:
     resolution: {integrity: sha512-iS857PdOEy/y3wlM3yRp+6SNQQ6xU0mmZcwRSriqk+et/cwWAtwmIGf6WkoDN2EK/AMdCO/dfXzIwi+rFMrjjQ==}
     engines: {node: '>=14.0'}
@@ -28307,6 +28397,24 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
+  /vite-plugin-solid@2.7.2(solid-js@1.8.1)(vite@5.0.10):
+    resolution: {integrity: sha512-GV2SMLAibOoXe76i02AsjAg7sbm/0lngBlERvJKVN67HOrJsHcWgkt0R6sfGLDJuFkv2aBe14Zm4vJcNME+7zw==}
+    peerDependencies:
+      solid-js: ^1.7.2
+      vite: ^3.0.0 || ^4.0.0
+    dependencies:
+      '@babel/core': 7.23.6
+      '@babel/preset-typescript': 7.23.2(@babel/core@7.23.6)
+      '@types/babel__core': 7.20.3
+      babel-preset-solid: 1.8.2(@babel/core@7.23.6)
+      merge-anything: 5.1.7
+      solid-js: 1.8.1
+      solid-refresh: 0.5.3(solid-js@1.8.1)
+      vite: 5.0.10(@types/node@18.19.3)
+      vitefu: 0.2.5(vite@5.0.10)
+    transitivePeerDependencies:
+      - supports-color
+
   /vite@4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0):
     resolution: {integrity: sha512-AXXFaAJ8yebyqzoNB9fu2pHoo/nWX+xZlaRwoeYUxEqBO+Zj4msE5G+BhGBll9lYEKv9Hfks52PAF2X7qDYXQA==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -28379,7 +28487,6 @@ packages:
       rollup: 4.6.0
     optionalDependencies:
       fsevents: 2.3.3
-    dev: false
 
   /vitefu@0.2.5(vite@4.5.1):
     resolution: {integrity: sha512-SgHtMLoqaeeGnd2evZ849ZbACbnwQCIwRH57t18FxcXoZop0uQu0uzlIhJBlF/eWVzuce0sHeqPcDo+evVcg8Q==}
@@ -28390,6 +28497,16 @@ packages:
         optional: true
     dependencies:
       vite: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
+
+  /vitefu@0.2.5(vite@5.0.10):
+    resolution: {integrity: sha512-SgHtMLoqaeeGnd2evZ849ZbACbnwQCIwRH57t18FxcXoZop0uQu0uzlIhJBlF/eWVzuce0sHeqPcDo+evVcg8Q==}
+    peerDependencies:
+      vite: ^3.0.0 || ^4.0.0 || ^5.0.0
+    peerDependenciesMeta:
+      vite:
+        optional: true
+    dependencies:
+      vite: 5.0.10(@types/node@18.19.3)
 
   /vitest@0.33.0(jsdom@23.0.1):
     resolution: {integrity: sha512-1CxaugJ50xskkQ0e969R/hW47za4YXDUfWJDxip1hwbnhUjYolpfUn2AMOulqG/Dtd9WYAtkHmM/m3yKVrEejQ==}
