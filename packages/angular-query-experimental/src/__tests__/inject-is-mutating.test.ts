@@ -27,7 +27,7 @@ describe('injectIsMutating', () => {
 
       expect(isMutating()).toBe(0)
 
-      mutation().mutate({
+      mutation.mutate({
         par1: 'par1',
       })
 

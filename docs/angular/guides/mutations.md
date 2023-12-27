@@ -14,24 +14,23 @@ replace:
 
 [//]: # 'Example'
 
-> Note that the `injectMutation` result currently is one signal. For better development experience and performance it will be split into multiple signals in a future release.
-
 ```ts
 @Component({
   template: `
     <div>
-      @if (updateTodo().isPending) {
+      @if (mutation.isPending()) {
         <span>Adding todo...</span>
-      } @else if (updateTodo().isError) {
-        <div>An error occurred: {{ updateTodo().error.message }}</div>
-      } @else if (updateTodo().isSuccess) {
+      } @else if (mutation.isError()) {
+        <div>An error occurred: {{ mutation.error()?.message }}</div>
+      } @else if (mutation.isSuccess()) {
         <div>Todo added!</div>
       }
-      <button (click)="createTodo({})">Create Todo</button>
+      <button (click)="mutation.mutate(1)">Create Todo</button>
     </div>
   `,
 })
 export class TodosComponent {
+  todoService = inject(TodoService)
   mutation = injectMutation(() => ({
     mutationFn: (todoId: number) =>
       lastValueFrom(this.todoService.create(todoId)),
@@ -53,8 +52,8 @@ export class TodosComponent {
   imports: [ReactiveFormsModule],
   template: `
     <form [formGroup]="todoForm" (ngSubmit)="onCreateTodo()">
-      @if (mutation().error) {
-        <h5 (click)="mutation().reset()">{{ mutation().error }}</h5>
+      @if (mutation.error()) {
+        <h5 (click)="mutation.reset()">{{ mutation.error() }}</h5>
       }
       <input type="text" formControlName="title" />
       <br />
@@ -80,7 +79,7 @@ export class TodosComponent {
   })
 
   onCreateTodo = () => {
-    this.mutation().mutate(this.title())
+    this.mutation.mutate(this.title())
   }
 }
 ```
@@ -169,7 +168,7 @@ export class Example {
 
   doMutations() {
     ;['Todo 1', 'Todo 2', 'Todo 3'].forEach((todo) => {
-      this.mutation().mutate(todo, {
+      this.mutation.mutate(todo, {
         onSuccess: (data, variables, context) => {
           // Will execute only once, for the last mutation (Todo 3),
           // regardless which mutation resolves first

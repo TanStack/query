@@ -26,12 +26,12 @@ describe('injectMutation', () => {
       }))
     })
 
-    mutation().mutate({
+    mutation.mutate({
       par1: 'par1',
     })
 
     flush()
-    expect(mutation().status).toBe('pending')
+    expect(mutation.status()).toBe('pending')
   }))
 
   it('can access client from options callback', fakeAsync(() => {
@@ -44,9 +44,9 @@ describe('injectMutation', () => {
       }))
     })
 
-    mutation().mutate()
+    mutation.mutate()
 
     flush()
-    expect(mutation().status).toBe('pending')
+    expect(mutation.status()).toBe('pending')
   }))
 })
