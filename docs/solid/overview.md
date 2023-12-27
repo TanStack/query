@@ -141,7 +141,7 @@ function Example() {
     queryKey: ['repoData'],
     queryFn: () =>
       fetch('https://api.github.com/repos/tannerlinsley/react-query').then(
-        (res) => res.json()
+        (res) => res.json(),
       ),
   }))
 

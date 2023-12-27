@@ -2,7 +2,7 @@ import { computed, signal } from '@angular/core'
 import { TestBed, fakeAsync, flush, tick } from '@angular/core/testing'
 import { QueryClient } from '@tanstack/query-core'
 import { expect, vi } from 'vitest'
-import { injectQuery } from '../injectQuery'
+import { injectQuery } from '../inject-query'
 import { provideAngularQuery } from '../providers'
 import {
   delayedFetcher,

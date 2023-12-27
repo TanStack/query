@@ -43,11 +43,10 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 const { data, error } = useSuspenseQuery({ queryKey, queryFn })
 
 if (error) {
-    throw error
+  throw error
 }
 
 // continue rendering data
-
 ```
 
 ## Resetting Error Boundaries

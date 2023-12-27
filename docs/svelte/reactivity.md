@@ -41,7 +41,7 @@ To solve this, we can convert `intervalMs` into a writable store. The query opti
       queryKey: ['refetch'],
       queryFn: async () => await fetch(endpoint).then((r) => r.json()),
       refetchInterval: $intervalMs,
-    }))
+    })),
   )
 </script>
 
