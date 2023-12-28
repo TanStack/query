@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "test:types": "vue-tsc",
-    "test:bundle": "vite build"
+    "build": "vite build"
   },
   "dependencies": {
     "@tanstack/vue-query": "workspace:*",
