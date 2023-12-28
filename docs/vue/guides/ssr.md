@@ -55,7 +55,10 @@ Now you are ready to prefetch some data in your pages with `onServerPrefetch`.
 ```ts
 export default defineComponent({
   setup() {
-    const { data, suspense } = useQuery('test', fetcher)
+      const { data, suspense } = useQuery({
+    queryKey: ['test'],
+    queryFn: fetcher,
+  })
 
     onServerPrefetch(async () => {
       await suspense()
@@ -201,7 +204,11 @@ Then, call VueQuery from any component using Vue's `onServerPrefetch`:
   import { onServerPrefetch } from 'vue'
 
   // This will be prefetched and sent from the server
-  const { refetch, data, suspense } = useQuery('todos', getTodos)
+  const { refetch, data, suspense } = useQuery({
+    queryKey: ['todos'],
+    queryFn: getTodos,
+  })
+
   onServerPrefetch(suspense)
 </script>
 ```
