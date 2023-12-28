@@ -1,6 +1,6 @@
 {
   "installCommand": "install:csb",
-  "buildCommand": "build:all",
+  "buildCommand": "build:all --exclude=integrations/**",
   "sandboxes": [
     "/examples/angular/basic",
     "/examples/react/basic-typescript",
