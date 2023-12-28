@@ -55,10 +55,10 @@ Now you are ready to prefetch some data in your pages with `onServerPrefetch`.
 ```ts
 export default defineComponent({
   setup() {
-      const { data, suspense } = useQuery({
-    queryKey: ['test'],
-    queryFn: fetcher,
-  })
+    const { data, suspense } = useQuery({
+      queryKey: ['test'],
+      queryFn: fetcher,
+    })
 
     onServerPrefetch(async () => {
       await suspense()
