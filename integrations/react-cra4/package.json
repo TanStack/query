@@ -2,7 +2,7 @@
   "name": "react-cra4",
   "private": true,
   "scripts": {
-    "test:bundle": "cross-env DISABLE_ESLINT_PLUGIN=true SKIP_PREFLIGHT_CHECK=true NODE_OPTIONS=--openssl-legacy-provider react-scripts build"
+    "build": "cross-env DISABLE_ESLINT_PLUGIN=true SKIP_PREFLIGHT_CHECK=true NODE_OPTIONS=--openssl-legacy-provider react-scripts build"
   },
   "dependencies": {
     "@tanstack/react-query": "workspace:*",
