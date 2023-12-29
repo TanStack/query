@@ -1817,6 +1817,9 @@ importers:
       '@types/react-dom':
         specifier: ^18.2.18
         version: 18.2.18
+      '@vitejs/plugin-react':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@5.0.10)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -1839,6 +1842,9 @@ importers:
       '@types/react':
         specifier: ^18.2.45
         version: 18.2.45
+      '@vitejs/plugin-react':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@5.0.10)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -1851,6 +1857,9 @@ importers:
       '@types/react':
         specifier: ^18.2.45
         version: 18.2.45
+      '@vitejs/plugin-react':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@5.0.10)
       next:
         specifier: ^14.0.0
         version: 14.0.0(@babel/core@7.23.6)(react-dom@18.2.0)(react@18.2.0)
@@ -1870,6 +1879,9 @@ importers:
       '@types/react':
         specifier: ^18.2.45
         version: 18.2.45
+      '@vitejs/plugin-react':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@5.0.10)
       react:
         specifier: ^18.2.0
         version: 18.2.0
