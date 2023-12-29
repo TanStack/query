@@ -1,42 +1,52 @@
 // @ts-check
 
-import { copyFileSync } from 'node:fs'
+import { readdirSync, renameSync } from 'node:fs'
 import { externalizeDeps } from 'vite-plugin-externalize-deps'
 import dts from 'vite-plugin-dts'
+import { defineConfig } from 'vite'
 
 /**
  * @param {import("vite").UserConfig} config
- * @returns {import('vite').UserConfig} */
+ * @returns {import('vite').UserConfig}
+ */
 export const tanstackBundler = (config) => {
-  config.plugins = [
+  /** @type {import("vite").PluginOption[]} */
+  const plugins = [
     dts({
       entryRoot: `./src`,
-      outDir: `./dist/mjs`,
+      outDir: `./dist/esm`,
       exclude: './src/__tests__',
-      afterBuild: () => {
-        // To pass publint (`npm x publint@latest`) and ensure the
-        // package is supported by all consumers, we must export types that are
-        // read as ESM. To do this, there must be duplicate types with the
-        // correct extension supplied in the package.json exports field.
-        copyFileSync(`./dist/mjs/index.d.ts`, `./dist/mjs/index.d.mts`)
-      },
       compilerOptions: {
+        // @ts-expect-error
         module: 'esnext',
+        declarationMap: true,
       },
     }),
     dts({
       entryRoot: `./src`,
       outDir: `./dist/cjs`,
       exclude: './src/__tests__',
-      afterBuild: () => {
-        copyFileSync(`./dist/cjs/index.d.ts`, `./dist/cjs/index.d.cts`)
-      },
       compilerOptions: {
+        // @ts-expect-error
         module: 'commonjs',
+        declarationMap: false,
+      },
+      afterBuild: () => {
+        const path = './dist/cjs'
+        readdirSync(path).forEach((file) => {
+          if (file.includes('.d.ts')) {
+            renameSync(
+              `${path}/${file}`,
+              `${path}/${file.replace('.d.ts', '.d.cts')}`,
+            )
+          }
+        })
       },
     }),
     externalizeDeps(),
   ]
+
+  config.plugins = config.plugins ? config.plugins.concat(plugins) : plugins
 
   config.build = {
     outDir: `./dist`,
@@ -47,7 +57,7 @@ export const tanstackBundler = (config) => {
       formats: ['es', 'cjs'],
       fileName: (format) => {
         if (format === 'cjs') return `cjs/[name].cjs`
-        return `mjs/[name].mjs`
+        return `esm/[name].js`
       },
     },
     rollupOptions: {
@@ -57,7 +67,7 @@ export const tanstackBundler = (config) => {
     },
   }
 
-  return config
+  return defineConfig(config)
 }
 
 export default tanstackBundler({
