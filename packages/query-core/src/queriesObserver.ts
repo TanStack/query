@@ -108,13 +108,16 @@ export class QueriesObserver<
         (observer, index) => observer !== prevObservers[index],
       )
 
-      this.#setResult(newResult)
-
-      if (prevObservers.length === newObservers.length && !hasIndexChange) {
+      if (
+        prevObservers.length === newObservers.length &&
+        !hasIndexChange &&
+        newObservers.length > 0
+      ) {
         return
       }
 
       this.#observers = newObservers
+      this.#setResult(newResult)
 
       if (!this.hasListeners()) {
         return
