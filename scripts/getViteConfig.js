@@ -40,7 +40,7 @@ export const getViteConfig = (config) => {
         afterBuild: () => {
           const path = './dist/cjs'
           readdirSync(path, { recursive: true }).forEach((file) => {
-            if (file.includes('.d.ts')) {
+            if (typeof file === 'string' && file.includes('.d.ts')) {
               renameSync(
                 `${path}/${file}`,
                 `${path}/${file.replace('.d.ts', '.d.cts')}`,
