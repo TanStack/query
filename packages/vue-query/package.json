@@ -64,6 +64,7 @@
     "vue-demi": "^0.14.6"
   },
   "devDependencies": {
+    "@vitejs/plugin-vue": "^4.5.2",
     "@vue/composition-api": "1.7.2",
     "vue": "^3.3.0",
     "vue2": "npm:vue@2.6",
