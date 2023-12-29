@@ -1624,15 +1624,22 @@ importers:
       '@tanstack/vue-query':
         specifier: workspace:*
         version: link:../../packages/vue-query
-      '@vitejs/plugin-vue':
-        specifier: ^4.5.2
-        version: 4.5.2(vite@5.0.10)(vue@3.3.0)
-      vite:
-        specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)
       vue:
         specifier: ^3.3.0
         version: 3.3.0
+    devDependencies:
+      '@vitejs/plugin-vue':
+        specifier: ^4.5.2
+        version: 4.5.2(vite@5.0.10)(vue@3.3.0)
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+      vite:
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
+      vue-tsc:
+        specifier: ^1.8.26
+        version: 1.8.26(typescript@5.2.2)
 
   packages/angular-query-devtools-experimental:
     dependencies:
@@ -1810,6 +1817,9 @@ importers:
       '@types/react-dom':
         specifier: ^18.2.18
         version: 18.2.18
+      '@vitejs/plugin-react':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@5.0.10)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -1832,6 +1842,9 @@ importers:
       '@types/react':
         specifier: ^18.2.45
         version: 18.2.45
+      '@vitejs/plugin-react':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@5.0.10)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -1844,6 +1857,9 @@ importers:
       '@types/react':
         specifier: ^18.2.45
         version: 18.2.45
+      '@vitejs/plugin-react':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@5.0.10)
       next:
         specifier: ^14.0.0
         version: 14.0.0(@babel/core@7.23.6)(react-dom@18.2.0)(react@18.2.0)
@@ -1863,6 +1879,9 @@ importers:
       '@types/react':
         specifier: ^18.2.45
         version: 18.2.45
+      '@vitejs/plugin-react':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@5.0.10)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -2026,6 +2045,9 @@ importers:
         specifier: ^0.14.6
         version: 0.14.6(@vue/composition-api@1.7.2)(vue@3.3.0)
     devDependencies:
+      '@vitejs/plugin-vue':
+        specifier: ^4.5.2
+        version: 4.5.2(vite@5.0.10)(vue@3.3.0)
       '@vue/composition-api':
         specifier: 1.7.2
         version: 1.7.2(vue@3.3.0)
@@ -10267,6 +10289,7 @@ packages:
     dependencies:
       vite: 5.0.10(@types/node@18.19.3)
       vue: 3.3.0
+    dev: true
 
   /@vitest/coverage-istanbul@1.1.0(vitest@1.1.0):
     resolution: {integrity: sha512-sjHGQQu7lkJUYSBMOR3f9AyOlK1LBVr0v7LMar/4i167ltabRWlQ2STBDM4P6Wl659NAcHlZ/RXxrAgJPavDMA==}

@@ -40,7 +40,7 @@ Its available methods are:
 - `onSuccess?: (data: unknown, query: Query) => void`
   - Optional
   - This function will be called if some query is successful.
-- `onSettled?:` (data: unknown | undefined, error: unknown | null, query: Query) => void
+- `onSettled?: (data: unknown | undefined, error: unknown | null, query: Query) => void`
   - Optional
   - This function will be called if some query is settled (either successful or errored).
 

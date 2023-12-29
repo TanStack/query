@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:bundle": "vite build"
+    "build": "vite build"
   },
   "dependencies": {
     "@tanstack/react-query": "workspace:*",

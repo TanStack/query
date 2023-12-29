@@ -53,11 +53,6 @@
       "inputs": ["default", "^public"],
       "cache": true
     },
-    "test:bundle": {
-      "dependsOn": ["^build"],
-      "inputs": ["default", "^public"],
-      "cache": true
-    },
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["default", "^public"],

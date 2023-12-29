@@ -2,7 +2,7 @@
   "name": "angular-cli-standalone-17",
   "version": "0.0.0",
   "scripts": {
-    "test:bundle": "ng build"
+    "build": "ng build"
   },
   "private": true,
   "dependencies": {
