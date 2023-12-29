@@ -7,7 +7,7 @@ import { defineConfig } from 'vite'
 
 /**
  * @param {object} config
- * @param {string} config.entry
+ * @param {string | string[]} config.entry
  * @param {string} config.srcDir
  * @param {string[]} [config.exclude]
  * @returns {import('vite').UserConfig}
