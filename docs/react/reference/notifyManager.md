@@ -81,7 +81,7 @@ Sets the method for batching. There are four methods:
 - `{ type: 'timer', timeout?: number }`:
   The default is to use setTimeout with a timeout of 0. This has the effect of
   scheduling a javascript task in the event loop some time later.
-- `{ type: 'raf' }`: This batches all updates in a requestAnimationFrame, so
+- `{ type: 'raf' }`: This batches all updates in a [requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame), so
   that it runs before the next frame is rendered by the browser.
 - `{ type: 'tick' }`: This uses queueMicrotask to schedule a microtask to batch updates, which runs immediately after the current task is done.
 - `{ type: 'custom', fn: (() => void) => void}`: The custom method allows you to specify your own way of scheduling batches
