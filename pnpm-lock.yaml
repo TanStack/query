@@ -119,11 +119,11 @@ importers:
         specifier: ^17.2.7
         version: 17.2.7
       prettier:
-        specifier: ^4.0.0-alpha.8
-        version: 4.0.0-alpha.8
+        specifier: ^4.0.0-alpha.3
+        version: 4.0.0-alpha.3
       prettier-plugin-svelte:
         specifier: ^3.1.2
-        version: 3.1.2(prettier@4.0.0-alpha.8)(svelte@4.2.8)
+        version: 3.1.2(prettier@4.0.0-alpha.3)(svelte@4.2.8)
       publint:
         specifier: ^0.2.7
         version: 0.2.7
@@ -6621,10 +6621,6 @@ packages:
   /@humanwhocodes/object-schema@2.0.1:
     resolution: {integrity: sha512-dvuCeX5fC9dXgJn9t+X5atfmgQAzUOWqS1254Gh0m6i8wKd10ebXkfNKiRK+1GWi/yTvvLDHpoxLr0xxxeslWw==}
 
-  /@iarna/toml@2.2.5:
-    resolution: {integrity: sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==}
-    dev: true
-
   /@internationalized/date@3.5.0:
     resolution: {integrity: sha512-nw0Q+oRkizBWMioseI8+2TeUPEyopJVz5YxoYVzR0W1v+2YytiYah7s/ot35F149q/xAg4F1gT/6eTd+tsUpFQ==}
     dependencies:
@@ -8152,30 +8148,25 @@ packages:
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
     dev: false
 
-  /@prettier/cli@0.3.0(prettier@4.0.0-alpha.8):
-    resolution: {integrity: sha512-8qq527QT5n8paE9eoHeulmGw7a3MroVk5+8ITf+xoWJn1gcVaZiOP6vb9OlwZv49hhdRZ1WX+0MyisSSXL/4fA==}
+  /@prettier/cli@0.1.5(prettier@4.0.0-alpha.3):
+    resolution: {integrity: sha512-oROlnMsTedet/cIsmRNrMHsGFcIAr4Frt0N+/bqRAfuRcUpHDN+G/qxqbtbCpOb6TzhG9n3yAa+jt7L51nQuNw==}
     hasBin: true
     peerDependencies:
       prettier: ^3.1.0 || ^4.0.0
     dependencies:
-      '@iarna/toml': 2.2.5
       atomically: 2.0.2
-      fast-ignore: 1.1.1
-      find-up-json: 2.0.2
-      import-meta-resolve: 4.0.0
+      ignore: 5.3.0
       is-binary-path: 2.1.0
       js-yaml: 4.1.0
       json-sorted-stringify: 1.0.0
-      json5: 2.2.3
-      kasi: 1.1.0
       pioppo: 1.1.0
-      prettier: 4.0.0-alpha.8
-      specialist: 1.4.0
+      prettier: 4.0.0-alpha.3
+      specialist: 1.3.0
       tiny-editorconfig: 1.0.0
       tiny-jsonc: 1.0.1
-      tiny-readdir-glob: 1.2.1
+      tiny-readdir-glob: 1.1.0
       tiny-spinner: 2.0.3
-      worktank: 2.6.0
+      worktank: 2.5.2
       zeptomatch: 1.2.2
     dev: true
 
@@ -16145,12 +16136,6 @@ packages:
       merge2: 1.4.1
       micromatch: 4.0.5
 
-  /fast-ignore@1.1.1:
-    resolution: {integrity: sha512-Gnvido88waUVtlDv/6VBeXv0TAlQK5lheknMwzHx9948B7uOFjyyLXsYBXixDScEXJB5fMjy4G1OOTH59VKvUA==}
-    dependencies:
-      grammex: 3.1.2
-    dev: true
-
   /fast-json-stable-stringify@2.1.0:
     resolution: {integrity: sha512-lhd/wF+Lk98HZoTCtlVraHtfh5XYijIjalXck7saUtuanSDyLMxnHhSXEDJqHxD7msR8D0uCmqlkwjCV8xvwHw==}
 
@@ -20143,10 +20128,6 @@ packages:
     resolution: {integrity: sha512-RsBECncGO17KAoJCYXjv+ckIz+Ii9NCi+9enk+rq6XC81ezYkb4/RHE6CTXdA7IOJqoF3wcaLfVG0CPmE5ca6A==}
     dependencies:
       source-map-support: 0.5.21
-    dev: true
-
-  /kasi@1.1.0:
-    resolution: {integrity: sha512-SvmC8+vhkDariSTz2182qyQ+mhwZ4W8TWaIHJcz358bYBeccQ8WBYj7uTtzHoCmpPHaoCm3PaOhzRg7Z8F4Lww==}
     dev: true
 
   /keyv@4.5.4:
@@ -24755,22 +24736,22 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
-  /prettier-plugin-svelte@3.1.2(prettier@4.0.0-alpha.8)(svelte@4.2.8):
+  /prettier-plugin-svelte@3.1.2(prettier@4.0.0-alpha.3)(svelte@4.2.8):
     resolution: {integrity: sha512-7xfMZtwgAWHMT0iZc8jN4o65zgbAQ3+O32V6W7pXrqNvKnHnkoyQCGCbKeUyXKZLbYE0YhFRnamfxfkEGxm8qA==}
     peerDependencies:
       prettier: ^3.0.0
       svelte: ^3.2.0 || ^4.0.0-next.0 || ^5.0.0-next.0
     dependencies:
-      prettier: 4.0.0-alpha.8
+      prettier: 4.0.0-alpha.3
       svelte: 4.2.8
     dev: true
 
-  /prettier@4.0.0-alpha.8:
-    resolution: {integrity: sha512-7FFBkQb0Eg0wJRYzA7ucc31nqTjWgoSpmS0ey9OATHU6WiV0z53Uzo5hA3tZs/pbhhIG7YvOIBNmkRQ7Dr/k5A==}
+  /prettier@4.0.0-alpha.3:
+    resolution: {integrity: sha512-RsN0kg8rG+NJYl9NHZrWfQS6zmShwOLHqu3O5FDDZzaihAcYq0uRHI7QqX+EBWNBpGvmwQCs1rpNwWFXurvQHQ==}
     engines: {node: '>=14'}
     hasBin: true
     dependencies:
-      '@prettier/cli': 0.3.0(prettier@4.0.0-alpha.8)
+      '@prettier/cli': 0.1.5(prettier@4.0.0-alpha.3)
     dev: true
 
   /pretty-bytes@5.6.0:
@@ -27358,12 +27339,12 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /specialist@1.4.0:
-    resolution: {integrity: sha512-RO76zlzjdw4acNYH2oiDqmSc3jQTymiJapNI6w47XB1iOKOaWIYA+eZ07b8pCPCsHZPwNdxHTJihS0LHFelFOA==}
+  /specialist@1.3.0:
+    resolution: {integrity: sha512-mC+yxH/dAuRJKJXr8w+ovbi/Llgw+Gnl2EJ7nYUPSQsOCeShm26/CnP5RipvfsfbYIntHT1rl7ijbK86H4cBaw==}
     dependencies:
-      tiny-bin: 1.7.0
+      tiny-bin: 1.6.3
       tiny-colors: 2.1.2
-      tiny-parse-argv: 2.4.0
+      tiny-parse-argv: 2.3.0
       tiny-updater: 3.5.1
     dev: true
 
@@ -28390,14 +28371,14 @@ packages:
     resolution: {integrity: sha512-qsdtZH+vMoCARQtyod4imc2nIJwg9Cc7lPRrw9CzF8ZKR0khdr8+2nX80PBhET3tcyTtJDxAffGh2rXH4tyU8A==}
     dev: false
 
-  /tiny-bin@1.7.0:
-    resolution: {integrity: sha512-6zK6sJysdpFy+5cYzYtbsaLTcTBBRAzsFKIHUBeo/UPhWqV/lyRqWNvndWRk4jeXidYPsRz7d8YDSs49jv8M2w==}
+  /tiny-bin@1.6.3:
+    resolution: {integrity: sha512-pH4mflBOxaCDuB6Uhte3m9xWjdr/6oDIccIx6FaJzbeChV1AWxkPjB0uUf5Yu0YKsX1EwIgaBLqOKR+E9q20yw==}
     dependencies:
       ansi-purge: 1.0.0
       get-current-package: 1.0.0
       tiny-colors: 2.1.2
       tiny-levenshtein: 1.0.0
-      tiny-parse-argv: 2.4.0
+      tiny-parse-argv: 2.3.0
       tiny-updater: 3.5.1
     dev: true
 
@@ -28432,19 +28413,19 @@ packages:
     resolution: {integrity: sha512-27KxXZhuXCP+xol3k4jMWms8+B6H2qEUlBMTmB5YT3uvFXFNft4Hw/MqurrHkDdC01nx1HIADcE1wR40byJf4Q==}
     dev: true
 
-  /tiny-parse-argv@2.4.0:
-    resolution: {integrity: sha512-WTEsnmeHNr99hLQIDA+gnsS+fDsCDITlqgI+zEhx9M6ErPt0heoNZ1PGvql6wcf95sIx40J0MLYXaPveGwtpoA==}
+  /tiny-parse-argv@2.3.0:
+    resolution: {integrity: sha512-sGkM4tiAfLIzWf8Zm+Gx9FEpoBskrRV8zWVyLbfZqJPr7w3+2PW5gnAkKR9dOl7ZWSl/pMZ0Mjp9l5AY8HYZvQ==}
     dev: true
 
-  /tiny-readdir-glob@1.2.1:
-    resolution: {integrity: sha512-KOjDu6u9iDSDr8+dUrkiDGohND70RMd9Iu6ZPu+HFZZktXQ9h+wbMWcrpCwcmo1QkE5+4ujuU8sXb8HgD3+IKA==}
+  /tiny-readdir-glob@1.1.0:
+    resolution: {integrity: sha512-ZZpNaYKBV/lVskBginGKYOamOBpwEhnh1UQ6jiTl1ndRPxcNPBbIt9zsmE2B5ZXsC3azxy4wL4BW7eEssTHFgw==}
     dependencies:
-      tiny-readdir: 2.4.0
+      tiny-readdir: 2.3.0
       zeptomatch: 1.2.2
     dev: true
 
-  /tiny-readdir@2.4.0:
-    resolution: {integrity: sha512-LS7NQKLyLy/EepnIbOWDdkR4k8KPwPYkYCMZzQOttE5PhmXBbKqGdRk6ndIsTpB54hL208gREAtMftlb+aELrw==}
+  /tiny-readdir@2.3.0:
+    resolution: {integrity: sha512-MEp9nzly4ps44xibXacCQ76pgx2DjSLNUbJGJRT6ERkBZCuOVF4TMRGwexkNA0nO6LcCI9j2XQOsDOLZHhA7wQ==}
     dependencies:
       promise-make-naked: 2.1.1
     dev: true
@@ -30741,8 +30722,8 @@ packages:
       microevent.ts: 0.1.1
     dev: false
 
-  /worktank@2.6.0:
-    resolution: {integrity: sha512-bHqVyWbviQlUV7+wbd1yoZhjPXXk7ENVCNrlBARfVAg69AfOtnEMLc0hWo9ihaqmlO8WggdYGy/K+avWFSgBBQ==}
+  /worktank@2.5.2:
+    resolution: {integrity: sha512-fjZFArxfaY40ygvNV7kom0Axr5P4ZjryJh8EGebpjuRXbWbqoA2SASbdOXK5jLLHjtfM0xMMZNZUs1UCnzywwQ==}
     dependencies:
       promise-make-naked: 2.1.1
       webworker-shim: 1.1.0
