@@ -1650,9 +1650,6 @@ importers:
         specifier: ^2.6.2
         version: 2.6.2
     devDependencies:
-      '@analogjs/vite-plugin-angular':
-        specifier: ^0.2.29
-        version: 0.2.29(@angular-devkit/build-angular@17.0.8)
       '@angular/compiler-cli':
         specifier: ^17.0.8
         version: 17.0.8(@angular/compiler@17.0.8)(typescript@5.2.2)
