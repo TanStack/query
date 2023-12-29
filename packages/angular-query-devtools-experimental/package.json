@@ -32,6 +32,7 @@
     "tslib": "^2.6.2"
   },
   "devDependencies": {
+    "@analogjs/vite-plugin-angular": "^0.2.29",
     "@angular/compiler-cli": "^17.0.8",
     "@angular/core": "^17.0.8",
     "@tanstack/angular-query-experimental": "workspace:*",
