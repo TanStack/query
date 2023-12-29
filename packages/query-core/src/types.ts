@@ -345,7 +345,7 @@ export type DefaultedQueryObserverOptions<
   TQueryKey extends QueryKey = QueryKey,
 > = WithRequired<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
-  'throwOnError' | 'refetchOnReconnect'
+  'throwOnError' | 'refetchOnReconnect' | 'queryHash'
 >
 
 export interface InfiniteQueryObserverOptions<
@@ -381,7 +381,7 @@ export type DefaultedInfiniteQueryObserverOptions<
     TQueryKey,
     TPageParam
   >,
-  'throwOnError' | 'refetchOnReconnect'
+  'throwOnError' | 'refetchOnReconnect' | 'queryHash'
 >
 
 export interface FetchQueryOptions<
