@@ -1,9 +1,9 @@
 import { defineConfig, mergeConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { getViteConfig } from '../../scripts/getViteConfig.js'
+import { viteBuildConfig } from '../../scripts/getViteConfig.js'
 
 export default mergeConfig(
-  getViteConfig({
+  viteBuildConfig({
     entry: './src/index.ts',
     srcDir: './src',
     exclude: ['./src/__tests__'],

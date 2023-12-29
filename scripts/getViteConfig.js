@@ -12,7 +12,7 @@ import { defineConfig } from 'vite'
  * @param {string[]} [config.exclude]
  * @returns {import('vite').UserConfig}
  */
-export const getViteConfig = (config) => {
+export const viteBuildConfig = (config) => {
   return defineConfig({
     plugins: [
       externalizeDeps(),

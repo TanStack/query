@@ -1,9 +1,9 @@
 import { defineConfig, mergeConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { getViteConfig } from '../../scripts/getViteConfig.js'
+import { viteBuildConfig } from '../../scripts/getViteConfig.js'
 
 export default mergeConfig(
-  getViteConfig({
+  viteBuildConfig({
     entry: ['./src/index.ts', './src/production.ts'],
     srcDir: './src',
   }),
