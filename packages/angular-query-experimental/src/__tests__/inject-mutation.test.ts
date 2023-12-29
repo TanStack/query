@@ -1,3 +1,4 @@
+import { signal } from '@angular/core'
 import { QueryClient } from '@tanstack/query-core'
 import { TestBed } from '@angular/core/testing'
 import { expect, test, vi } from 'vitest'
@@ -108,12 +109,39 @@ describe('injectMutation', () => {
 
     await resolveMutations()
 
-    expect(mutation.isIdle()).toBe(false)
-    expect(mutation.isPending()).toBe(false)
-    expect(mutation.isError()).toBe(false)
-    expect(mutation.isSuccess()).toBe(true)
-    expect(mutation.data()).toBe(result)
-    expect(mutation.error()).toBe(null)
+    expectSignals(mutation, {
+      isIdle: false,
+      isPending: false,
+      isError: false,
+      isSuccess: true,
+      data: result,
+      error: null,
+    })
+  })
+
+  test('reactive options should update mutation', async () => {
+    const mutationCache = queryClient.getMutationCache()
+    const mutationKey = signal(['foo'])
+    const mutation = TestBed.runInInjectionContext(() => {
+      return injectMutation(() => ({
+        mutationKey: mutationKey(),
+        mutationFn: (params: string) => successMutator(params),
+      }))
+    })
+
+    mutationKey.set(['bar'])
+
+    TestBed.flushEffects()
+
+    await resolveMutations()
+
+    mutation.mutate('xyz')
+
+    await resolveMutations()
+
+    const mutations = mutationCache.find({ mutationKey: ['bar'] })
+
+    expect(mutations?.options.mutationKey).toEqual(['bar'])
   })
 
   test('should reset state after invoking mutation.reset', async () => {

@@ -1,4 +1,5 @@
 import { untracked } from '@angular/core'
+import { isReactive } from '@angular/core/primitives/signals'
 
 export function simpleFetcher(): Promise<string> {
   return new Promise((resolve) => {
@@ -50,7 +51,11 @@ function evaluateSignals<T extends Record<string, any>>(
 
   untracked(() => {
     for (const key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      if (
+        Object.prototype.hasOwnProperty.call(obj, key) &&
+        // Only evaluate signals, not normal functions
+        isReactive(obj[key])
+      ) {
         const func = obj[key]
         result[key] = func()
       }
