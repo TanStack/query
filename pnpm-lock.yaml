@@ -10177,10 +10177,10 @@ packages:
       vinxi: ^0.0.54
     dependencies:
       '@babel/parser': 7.23.6
-      acorn: 8.11.2
-      acorn-jsx: 5.3.2(acorn@8.11.2)
+      acorn: 8.10.0
+      acorn-jsx: 5.3.2(acorn@8.10.0)
       acorn-loose: 8.4.0
-      acorn-typescript: 1.4.12(acorn@8.11.2)
+      acorn-typescript: 1.4.12(acorn@8.10.0)
       astring: 1.8.6
       magicast: 0.2.11
       recast: 0.23.4
@@ -10194,9 +10194,9 @@ packages:
       vinxi: ^0.0.54
     dependencies:
       '@vinxi/plugin-directives': 0.0.50(vinxi@0.0.54)
-      acorn: 8.11.2
+      acorn: 8.10.0
       acorn-loose: 8.4.0
-      acorn-typescript: 1.4.12(acorn@8.11.2)
+      acorn-typescript: 1.4.12(acorn@8.10.0)
       astring: 1.8.6
       magicast: 0.2.11
       recast: 0.23.4
@@ -10209,9 +10209,9 @@ packages:
       vinxi: ^0.0.54
     dependencies:
       '@vinxi/plugin-directives': 0.0.50(vinxi@0.0.54)
-      acorn: 8.11.2
+      acorn: 8.10.0
       acorn-loose: 8.4.0
-      acorn-typescript: 1.4.12(acorn@8.11.2)
+      acorn-typescript: 1.4.12(acorn@8.10.0)
       astring: 1.8.6
       magicast: 0.2.11
       recast: 0.23.4
@@ -10776,14 +10776,6 @@ packages:
     dependencies:
       acorn: 8.10.0
 
-  /acorn-jsx@5.3.2(acorn@8.11.2):
-    resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
-    peerDependencies:
-      acorn: ^6.0.0 || ^7.0.0 || ^8.0.0
-    dependencies:
-      acorn: 8.11.2
-    dev: false
-
   /acorn-loose@8.4.0:
     resolution: {integrity: sha512-M0EUka6rb+QC4l9Z3T0nJEzNOO7JcoJlYMrBlyBCiFSXRyxjLKayd4TbQs2FDRWQU1h9FR7QVNHt+PEaoNL5rQ==}
     engines: {node: '>=0.4.0'}
@@ -10791,12 +10783,12 @@ packages:
       acorn: 8.11.2
     dev: false
 
-  /acorn-typescript@1.4.12(acorn@8.11.2):
+  /acorn-typescript@1.4.12(acorn@8.10.0):
     resolution: {integrity: sha512-G/oj3oiBmYlc+6SJZYMRz+SPgSgBWqEXPzhO55dYvT4x8SJM+HkxU5o5OPFstxsMMk1tXPYtYCyd7jUdHZy8Eg==}
     peerDependencies:
       acorn: '>=8.9.0'
     dependencies:
-      acorn: 8.11.2
+      acorn: 8.10.0
     dev: false
 
   /acorn-walk@7.2.0:
@@ -19500,7 +19492,7 @@ packages:
     dependencies:
       '@babel/core': 7.23.6
       '@babel/generator': 7.23.6
-      '@babel/plugin-syntax-typescript': 7.23.3(@babel/core@7.23.6)
+      '@babel/plugin-syntax-typescript': 7.22.5(@babel/core@7.23.6)
       '@babel/traverse': 7.23.6
       '@babel/types': 7.23.6
       '@jest/transform': 27.5.1
@@ -19872,7 +19864,7 @@ packages:
         optional: true
     dependencies:
       abab: 2.0.6
-      acorn: 8.11.2
+      acorn: 8.10.0
       acorn-globals: 6.0.0
       cssom: 0.4.4
       cssstyle: 2.3.0
@@ -21867,7 +21859,7 @@ packages:
       '@rollup/plugin-replace': 5.0.5(rollup@4.6.0)
       '@rollup/plugin-terser': 0.4.4(rollup@4.6.0)
       '@rollup/plugin-wasm': 6.2.2(rollup@4.6.0)
-      '@rollup/pluginutils': 5.1.0(rollup@4.6.0)
+      '@rollup/pluginutils': 5.0.5(rollup@4.6.0)
       '@types/http-proxy': 1.17.14
       '@vercel/nft': 0.24.4
       archiver: 6.0.1
@@ -26105,7 +26097,7 @@ packages:
     resolution: {integrity: sha512-oKWePCxqpd6FlLvGV1VU0x7bkPmmCNolxzjMf4NczoDnQcIWrAF+cPtZn5i6n+RfD2d9i0tzpKnG6Yk168yIyw==}
     hasBin: true
     dependencies:
-      is-core-module: 2.13.1
+      is-core-module: 2.13.0
       path-parse: 1.0.7
       supports-preserve-symlinks-flag: 1.0.0
 
@@ -26277,6 +26269,22 @@ packages:
       open: 8.4.2
       picomatch: 2.3.1
       rollup: 4.6.0
+      source-map: 0.7.4
+      yargs: 17.7.2
+    dev: false
+
+  /rollup-plugin-visualizer@5.9.2:
+    resolution: {integrity: sha512-waHktD5mlWrYFrhOLbti4YgQCn1uR24nYsNuXxg7LkPH8KdTXVWR9DNY1WU0QqokyMixVXJS4J04HNrVTMP01A==}
+    engines: {node: '>=14'}
+    hasBin: true
+    peerDependencies:
+      rollup: 2.x || 3.x
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      open: 8.4.2
+      picomatch: 2.3.1
       source-map: 0.7.4
       yargs: 17.7.2
     dev: false
@@ -29142,7 +29150,7 @@ packages:
       mri: 1.2.0
       node-fetch-native: 1.6.1
       ofetch: 1.3.3
-      ufo: 1.3.2
+      ufo: 1.3.1
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -29391,8 +29399,8 @@ packages:
     hasBin: true
     dependencies:
       '@babel/core': 7.23.6
-      '@babel/plugin-syntax-jsx': 7.23.3(@babel/core@7.23.6)
-      '@babel/plugin-syntax-typescript': 7.23.3(@babel/core@7.23.6)
+      '@babel/plugin-syntax-jsx': 7.22.5(@babel/core@7.23.6)
+      '@babel/plugin-syntax-typescript': 7.22.5(@babel/core@7.23.6)
       '@types/micromatch': 4.0.6
       '@types/serve-static': 1.15.4
       '@types/ws': 8.5.8
@@ -29422,10 +29430,10 @@ packages:
       perfect-debounce: 1.0.0
       radix3: 1.1.0
       resolve: 1.22.8
-      rollup-plugin-visualizer: 5.11.0(rollup@4.6.0)
+      rollup-plugin-visualizer: 5.9.2
       serve-placeholder: 2.0.1
       serve-static: 1.15.0(supports-color@6.1.0)
-      ufo: 1.3.2
+      ufo: 1.3.1
       unenv: 1.8.0
       unimport: 3.7.0(rollup@4.6.0)
       unstorage: 1.10.1
