@@ -6,7 +6,7 @@ import dts from 'vite-plugin-dts'
 import { defineConfig } from 'vite'
 
 /**
- * @param {import("vite").UserConfig} config
+ * @param {Omit<import("vite").UserConfig, 'build'>} config
  * @returns {import('vite').UserConfig}
  */
 export const getViteConfig = (config) => {
@@ -46,26 +46,26 @@ export const getViteConfig = (config) => {
     externalizeDeps(),
   ]
 
-  config.plugins = config.plugins ? config.plugins.concat(plugins) : plugins
-
-  config.build = {
-    outDir: `./dist`,
-    minify: false,
-    sourcemap: true,
-    lib: {
-      entry: './src/index.ts',
-      formats: ['es', 'cjs'],
-      fileName: (format) => {
-        if (format === 'cjs') return `cjs/[name].cjs`
-        return `esm/[name].js`
+  return defineConfig({
+    ...config,
+    plugins: config.plugins ? config.plugins.concat(plugins) : plugins,
+    build: {
+      outDir: `./dist`,
+      minify: false,
+      sourcemap: true,
+      lib: {
+        entry: './src/index.ts',
+        formats: ['es', 'cjs'],
+        fileName: (format) => {
+          if (format === 'cjs') return `cjs/[name].cjs`
+          return `esm/[name].js`
+        },
+      },
+      rollupOptions: {
+        output: {
+          preserveModules: true,
+        },
       },
     },
-    rollupOptions: {
-      output: {
-        preserveModules: true,
-      },
-    },
-  }
-
-  return defineConfig(config)
+  })
 }
