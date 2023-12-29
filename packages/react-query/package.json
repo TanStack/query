@@ -39,9 +39,9 @@
     "test:lib": "vitest run --coverage --retry=3",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
-    "build": "pnpm build:tsup && pnpm build:codemods",
-    "build:tsup": "tsup",
-    "build:codemods": "cpy ../codemods/* ./build/codemods"
+    "build": "pnpm build:vite && pnpm build:codemods",
+    "build:vite": "vite build",
+    "build:codemods": "cpy ../codemods/* ./dist/codemods"
   },
   "files": [
     "dist",
