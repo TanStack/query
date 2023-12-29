@@ -2045,6 +2045,9 @@ importers:
         specifier: ^0.14.6
         version: 0.14.6(@vue/composition-api@1.7.2)(vue@3.3.0)
     devDependencies:
+      '@vitejs/plugin-vue':
+        specifier: ^4.5.2
+        version: 4.5.2(vite@5.0.10)(vue@3.3.0)
       '@vue/composition-api':
         specifier: 1.7.2
         version: 1.7.2(vue@3.3.0)

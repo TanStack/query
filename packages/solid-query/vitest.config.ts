@@ -1,7 +1,8 @@
-import solid from 'vite-plugin-solid'
 import { defineConfig } from 'vitest/config'
+import solid from 'vite-plugin-solid'
 
 export default defineConfig({
+  plugins: [solid()],
   test: {
     name: 'solid-query',
     dir: './src',
@@ -16,5 +17,4 @@ export default defineConfig({
       },
     },
   },
-  plugins: [solid()],
 })

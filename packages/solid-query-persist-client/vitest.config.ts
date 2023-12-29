@@ -1,7 +1,8 @@
-import solid from 'vite-plugin-solid'
 import { defineConfig } from 'vitest/config'
+import solid from 'vite-plugin-solid'
 
 export default defineConfig({
+  plugins: [solid()],
   test: {
     name: 'solid-query-persist-client',
     dir: './src',
@@ -10,5 +11,4 @@ export default defineConfig({
     environment: 'jsdom',
     coverage: { provider: 'istanbul', include: ['src/**/*'] },
   },
-  plugins: [solid()],
 })
