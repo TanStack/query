@@ -8,6 +8,8 @@ import { defineConfig } from 'vite'
 /**
  * @param {object} config
  * @param {string} config.entry
+ * @param {string} config.srcDir
+ * @param {string[]} [config.exclude]
  * @returns {import('vite').UserConfig}
  */
 export const getViteConfig = (config) => {
@@ -15,9 +17,10 @@ export const getViteConfig = (config) => {
     plugins: [
       externalizeDeps(),
       dts({
-        entryRoot: `./src`,
         outDir: `./dist/esm`,
-        exclude: './src/__tests__',
+        entryRoot: config.srcDir,
+        include: config.srcDir,
+        exclude: config.exclude,
         compilerOptions: {
           // @ts-expect-error
           module: 'esnext',
@@ -25,9 +28,10 @@ export const getViteConfig = (config) => {
         },
       }),
       dts({
-        entryRoot: `./src`,
         outDir: `./dist/cjs`,
-        exclude: './src/__tests__',
+        entryRoot: config.srcDir,
+        include: config.srcDir,
+        exclude: config.exclude,
         compilerOptions: {
           // @ts-expect-error
           module: 'commonjs',

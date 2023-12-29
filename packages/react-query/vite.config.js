@@ -1,10 +1,14 @@
 // @ts-check
 
-import { mergeConfig, defineConfig } from 'vite'
+import { defineConfig, mergeConfig } from 'vite'
 import { getViteConfig } from '../../scripts/getViteConfig.js'
 
 export default mergeConfig(
-  getViteConfig({ entry: './src/index.ts' }),
+  getViteConfig({
+    entry: './src/index.ts',
+    srcDir: './src',
+    exclude: ['./src/__tests__'],
+  }),
   defineConfig({
     test: {
       name: 'react-query',
