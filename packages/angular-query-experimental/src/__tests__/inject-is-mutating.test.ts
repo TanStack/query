@@ -33,11 +33,7 @@ describe('injectIsMutating', () => {
 
       tick()
 
-      TestBed.flushEffects()
-
       expect(isMutating()).toBe(1)
-
-      tick()
     })
   }))
 })
