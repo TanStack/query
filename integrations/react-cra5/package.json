@@ -2,7 +2,7 @@
   "name": "react-cra5",
   "private": true,
   "scripts": {
-    "test:bundle": "cross-env DISABLE_ESLINT_PLUGIN=true react-scripts build"
+    "build": "cross-env DISABLE_ESLINT_PLUGIN=true react-scripts build"
   },
   "dependencies": {
     "@tanstack/react-query": "workspace:*",

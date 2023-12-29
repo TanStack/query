@@ -10,6 +10,7 @@ pnpm-lock.yaml
 # builds
 types
 */**/.svelte-kit
+*/**/.tsup
 */**/build
 */**/dist
 */**/lib

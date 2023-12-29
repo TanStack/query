@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query'
 
 const { isPending, isError, data } = useQuery({

@@ -1,17 +1,14 @@
 import { defineConfig } from 'vitest/config'
+import react from '@vitejs/plugin-react'
 
 export default defineConfig({
+  plugins: [react()],
   test: {
-    name: 'vue-query',
+    name: 'react-query-persist-client',
     dir: './src',
     watch: false,
-    environment: 'jsdom',
     setupFiles: ['test-setup.ts'],
+    environment: 'jsdom',
     coverage: { provider: 'istanbul', include: ['src/**/*'] },
-    onConsoleLog: function (log) {
-      if (log.includes('Download the Vue Devtools extension')) {
-        return false
-      }
-    },
   },
 })

@@ -2,7 +2,7 @@
   "name": "react-next",
   "private": true,
   "scripts": {
-    "test:bundle": "next build"
+    "build": "next build"
   },
   "dependencies": {
     "@tanstack/react-query": "workspace:*",

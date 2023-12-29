@@ -1,14 +1,14 @@
-import solid from 'vite-plugin-solid'
 import { defineConfig } from 'vitest/config'
+import react from '@vitejs/plugin-react'
 
 export default defineConfig({
+  plugins: [react()],
   test: {
-    name: 'solid-query-devtools',
+    name: 'react-query-next-experimental',
     dir: './src',
     watch: false,
     setupFiles: ['test-setup.ts'],
     environment: 'jsdom',
     coverage: { provider: 'istanbul', include: ['src/**/*'] },
   },
-  plugins: [solid()],
 })
