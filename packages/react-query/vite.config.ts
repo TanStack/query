@@ -1,6 +1,5 @@
-// @ts-check
-
 import { defineConfig, mergeConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 import { getViteConfig } from '../../scripts/getViteConfig.js'
 
 export default mergeConfig(
@@ -10,6 +9,7 @@ export default mergeConfig(
     exclude: ['./src/__tests__'],
   }),
   defineConfig({
+    plugins: [react()],
     test: {
       name: 'react-query',
       dir: './src',

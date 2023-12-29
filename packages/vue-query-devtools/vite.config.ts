@@ -1,9 +1,9 @@
-import { resolve } from 'path'
+import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
-import vuePlugin from '@vitejs/plugin-vue'
+import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
-  plugins: [vuePlugin()],
+  plugins: [vue()],
   build: {
     lib: {
       // Could also be a dictionary or array of multiple entry points
