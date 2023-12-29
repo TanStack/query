@@ -47,7 +47,7 @@
     "build",
     "src",
     "!build/codemods/node_modules",
-    "!build/codemods/vitest.config.ts",
+    "!build/codemods/vite.config.ts",
     "!build/codemods/**/__testfixtures__",
     "!build/codemods/**/__tests__"
   ],
