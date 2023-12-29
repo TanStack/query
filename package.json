@@ -86,6 +86,8 @@
     "type-fest": "^4.8.3",
     "typescript": "5.2.2",
     "vite": "^5.0.10",
+    "vite-plugin-dts": "^3.7.0",
+    "vite-plugin-externalize-deps": "^0.8.0",
     "vitest": "^1.1.0"
   },
   "pnpm": {
