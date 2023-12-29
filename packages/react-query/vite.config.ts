@@ -4,9 +4,9 @@ import { viteBuildConfig } from '../../scripts/getViteConfig.js'
 
 export default mergeConfig(
   viteBuildConfig({
-    entry: './src/index.ts',
-    srcDir: './src',
-    exclude: ['./src/__tests__'],
+    entry: 'src/index.ts',
+    srcDir: 'src',
+    exclude: ['src/__tests__'],
   }),
   defineConfig({
     plugins: [react()],

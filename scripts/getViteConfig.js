@@ -17,7 +17,7 @@ export const viteBuildConfig = (config) => {
     plugins: [
       externalizeDeps(),
       dts({
-        outDir: `./dist/esm`,
+        outDir: 'dist/esm',
         entryRoot: config.srcDir,
         include: config.srcDir,
         exclude: config.exclude,
@@ -28,7 +28,7 @@ export const viteBuildConfig = (config) => {
         },
       }),
       dts({
-        outDir: `./dist/cjs`,
+        outDir: 'dist/cjs',
         entryRoot: config.srcDir,
         include: config.srcDir,
         exclude: config.exclude,
@@ -38,7 +38,7 @@ export const viteBuildConfig = (config) => {
           declarationMap: false,
         },
         afterBuild: () => {
-          const path = './dist/cjs'
+          const path = 'dist/cjs'
           readdirSync(path, { recursive: true }).forEach((file) => {
             if (typeof file === 'string' && file.includes('.d.ts')) {
               renameSync(
@@ -51,15 +51,15 @@ export const viteBuildConfig = (config) => {
       }),
     ],
     build: {
-      outDir: `./dist`,
+      outDir: 'dist',
       minify: false,
       sourcemap: true,
       lib: {
         entry: config.entry,
         formats: ['es', 'cjs'],
         fileName: (format) => {
-          if (format === 'cjs') return `cjs/[name].cjs`
-          return `esm/[name].js`
+          if (format === 'cjs') return 'cjs/[name].cjs'
+          return 'esm/[name].js'
         },
       },
       rollupOptions: {

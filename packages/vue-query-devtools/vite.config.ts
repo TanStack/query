@@ -4,8 +4,8 @@ import { viteBuildConfig } from '../../scripts/getViteConfig.js'
 
 export default mergeConfig(
   viteBuildConfig({
-    entry: ['./src/index.ts', './src/production.ts'],
-    srcDir: './src',
+    entry: ['src/index.ts', 'src/production.ts'],
+    srcDir: 'src',
   }),
   defineConfig({
     plugins: [vue()],
