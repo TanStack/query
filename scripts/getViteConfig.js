@@ -6,55 +6,52 @@ import dts from 'vite-plugin-dts'
 import { defineConfig } from 'vite'
 
 /**
- * @param {Omit<import("vite").UserConfig, 'build'>} config
+ * @param {object} config
+ * @param {string} config.entry
  * @returns {import('vite').UserConfig}
  */
 export const getViteConfig = (config) => {
-  /** @type {import("vite").PluginOption[]} */
-  const plugins = [
-    dts({
-      entryRoot: `./src`,
-      outDir: `./dist/esm`,
-      exclude: './src/__tests__',
-      compilerOptions: {
-        // @ts-expect-error
-        module: 'esnext',
-        declarationMap: true,
-      },
-    }),
-    dts({
-      entryRoot: `./src`,
-      outDir: `./dist/cjs`,
-      exclude: './src/__tests__',
-      compilerOptions: {
-        // @ts-expect-error
-        module: 'commonjs',
-        declarationMap: false,
-      },
-      afterBuild: () => {
-        const path = './dist/cjs'
-        readdirSync(path, { recursive: true }).forEach((file) => {
-          if (file.includes('.d.ts')) {
-            renameSync(
-              `${path}/${file}`,
-              `${path}/${file.replace('.d.ts', '.d.cts')}`,
-            )
-          }
-        })
-      },
-    }),
-    externalizeDeps(),
-  ]
-
   return defineConfig({
-    ...config,
-    plugins: config.plugins ? config.plugins.concat(plugins) : plugins,
+    plugins: [
+      externalizeDeps(),
+      dts({
+        entryRoot: `./src`,
+        outDir: `./dist/esm`,
+        exclude: './src/__tests__',
+        compilerOptions: {
+          // @ts-expect-error
+          module: 'esnext',
+          declarationMap: true,
+        },
+      }),
+      dts({
+        entryRoot: `./src`,
+        outDir: `./dist/cjs`,
+        exclude: './src/__tests__',
+        compilerOptions: {
+          // @ts-expect-error
+          module: 'commonjs',
+          declarationMap: false,
+        },
+        afterBuild: () => {
+          const path = './dist/cjs'
+          readdirSync(path, { recursive: true }).forEach((file) => {
+            if (file.includes('.d.ts')) {
+              renameSync(
+                `${path}/${file}`,
+                `${path}/${file.replace('.d.ts', '.d.cts')}`,
+              )
+            }
+          })
+        },
+      }),
+    ],
     build: {
       outDir: `./dist`,
       minify: false,
       sourcemap: true,
       lib: {
-        entry: './src/index.ts',
+        entry: config.entry,
         formats: ['es', 'cjs'],
         fileName: (format) => {
           if (format === 'cjs') return `cjs/[name].cjs`
