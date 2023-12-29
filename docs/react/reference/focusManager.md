@@ -41,7 +41,7 @@ focusManager.setEventListener((handleFocus) => {
 ```tsx
 import { focusManager } from '@tanstack/react-query'
 
-const unsubscribe = focusManager.subscribe(isVisible => {
+const unsubscribe = focusManager.subscribe((isVisible) => {
   console.log('isVisible', isVisible)
 })
 ```

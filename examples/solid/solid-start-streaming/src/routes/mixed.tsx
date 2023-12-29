@@ -1,4 +1,4 @@
-import { Title } from 'solid-start'
+import { Title } from '@solidjs/meta'
 import { PostViewer } from '~/components/post-viewer'
 import { UserInfo } from '~/components/user-info'
 

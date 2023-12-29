@@ -34,7 +34,10 @@ const config = {
     },
   },
   rules: {
-    '@typescript-eslint/array-type': ['error', { default: 'generic', readonly: 'generic' }],
+    '@typescript-eslint/array-type': [
+      'error',
+      { default: 'generic', readonly: 'generic' },
+    ],
     '@typescript-eslint/ban-types': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/consistent-type-imports': [

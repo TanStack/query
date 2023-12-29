@@ -6,14 +6,19 @@ title: createAsyncStoragePersister
 ## Installation
 
 This utility comes as a separate package and is available under the `'@tanstack/query-async-storage-persister'` import.
+
 ```bash
 npm install @tanstack/query-async-storage-persister @tanstack/react-query-persist-client
 ```
+
 or
+
 ```bash
 pnpm add @tanstack/query-async-storage-persister @tanstack/react-query-persist-client
 ```
+
 or
+
 ```bash
 yarn add @tanstack/query-async-storage-persister @tanstack/react-query-persist-client
 ```
@@ -40,7 +45,7 @@ const queryClient = new QueryClient({
 })
 
 const asyncStoragePersister = createAsyncStoragePersister({
-  storage: AsyncStorage
+  storage: AsyncStorage,
 })
 
 const Root = () => (
@@ -50,9 +55,9 @@ const Root = () => (
   >
     <App />
   </PersistQueryClientProvider>
-);
+)
 
-export default Root;
+export default Root
 ```
 
 ## Retries
@@ -89,9 +94,9 @@ interface CreateAsyncStoragePersisterOptions {
 }
 
 interface AsyncStorage {
-   getItem: (key: string) => Promise<string | null>
-   setItem: (key: string, value: string) => Promise<unknown>
-   removeItem: (key: string) => Promise<void>
+  getItem: (key: string) => Promise<string | null>
+  setItem: (key: string, value: string) => Promise<unknown>
+  removeItem: (key: string) => Promise<void>
 }
 ```
 

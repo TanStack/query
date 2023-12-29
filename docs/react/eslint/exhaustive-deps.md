@@ -14,26 +14,25 @@ Examples of **incorrect** code for this rule:
 /* eslint "@tanstack/query/exhaustive-deps": "error" */
 
 useQuery({
-    queryKey: ["todo"],
-    queryFn: () => api.getTodo(todoId)
+  queryKey: ['todo'],
+  queryFn: () => api.getTodo(todoId),
 })
 
 const todoQueries = {
-    detail: (id) => ({ queryKey: ["todo"], queryFn: () => api.getTodo(id) })
+  detail: (id) => ({ queryKey: ['todo'], queryFn: () => api.getTodo(id) }),
 }
 ```
-
 
 Examples of **correct** code for this rule:
 
 ```tsx
 useQuery({
-    queryKey: ["todo", todoId],
-    queryFn: () => api.getTodo(todoId)
+  queryKey: ['todo', todoId],
+  queryFn: () => api.getTodo(todoId),
 })
 
 const todoQueries = {
-    detail: (id) => ({ queryKey: ["todo", id], queryFn: () => api.getTodo(id) })
+  detail: (id) => ({ queryKey: ['todo', id], queryFn: () => api.getTodo(id) }),
 }
 ```
 

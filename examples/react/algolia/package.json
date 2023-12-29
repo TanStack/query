@@ -8,21 +8,21 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@algolia/client-search": "4.17.1",
-    "@algolia/transporter": "4.17.1",
+    "@algolia/client-search": "4.22.0",
+    "@algolia/transporter": "4.22.0",
     "@tanstack/react-query": "^5.0.0",
     "@tanstack/react-query-devtools": "^5.0.0",
-    "algoliasearch": "4.17.1",
+    "algoliasearch": "4.22.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.0.0",
-    "@types/react": "^18.2.31",
-    "@types/react-dom": "^18.2.14",
-    "@vitejs/plugin-react": "^4.0.0",
-    "typescript": "5.1.6",
-    "vite": "^4.5.0"
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@vitejs/plugin-react": "^4.2.1",
+    "typescript": "5.2.2",
+    "vite": "^5.0.10"
   },
   "browserslist": {
     "production": [

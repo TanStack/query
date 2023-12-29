@@ -14,28 +14,31 @@ This example very briefly illustrates the 3 core concepts of Vue Query:
 
 ```vue
 <script setup>
-import { useQueryClient, useQuery, useMutation } from "@tanstack/vue-query";
+import { useQueryClient, useQuery, useMutation } from '@tanstack/vue-query'
 
 // Access QueryClient instance
-const queryClient = useQueryClient();
+const queryClient = useQueryClient()
 
 // Query
-const { isPending, isError, data, error } = useQuery({ queryKey: ['todos'], queryFn: getTodos });
+const { isPending, isError, data, error } = useQuery({
+  queryKey: ['todos'],
+  queryFn: getTodos,
+})
 
 // Mutation
 const mutation = useMutation({
   mutationFn: postTodo,
   onSuccess: () => {
     // Invalidate and refetch
-    queryClient.invalidateQueries({ queryKey: ["todos"] });
+    queryClient.invalidateQueries({ queryKey: ['todos'] })
   },
-});
+})
 
 function onButtonClick() {
   mutation.mutate({
     id: Date.now(),
-    title: "Do Laundry",
-  });
+    title: 'Do Laundry',
+  })
 }
 </script>
 

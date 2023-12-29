@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
+import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 
 import {
   For,
@@ -242,20 +242,20 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('data: 0-desc'))
-    fireEvent.click(screen.getByRole('button', { name: /fetchNextPage/i }))
+    await waitFor(() => rendered.getByText('data: 0-desc'))
+    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
-    await waitFor(() => screen.getByText('data: 0-desc,1-desc'))
-    fireEvent.click(screen.getByRole('button', { name: /order/i }))
+    await waitFor(() => rendered.getByText('data: 0-desc,1-desc'))
+    fireEvent.click(rendered.getByRole('button', { name: /order/i }))
 
-    await waitFor(() => screen.getByText('data: 0-asc'))
-    await waitFor(() => screen.getByText('isFetching: false'))
+    await waitFor(() => rendered.getByText('data: 0-asc'))
+    await waitFor(() => rendered.getByText('isFetching: false'))
     await waitFor(() => expect(states.length).toBe(6))
 
     expect(states[0]).toMatchObject({
@@ -436,16 +436,16 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('data: 0'))
-    fireEvent.click(screen.getByRole('button', { name: /fetchNextPage/i }))
+    await waitFor(() => rendered.getByText('data: 0'))
+    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
-    await waitFor(() => screen.getByText('data: 1,0'))
+    await waitFor(() => rendered.getByText('data: 1,0'))
 
     await waitFor(() => expect(states.length).toBe(4))
     expect(states[0]).toMatchObject({
@@ -598,21 +598,23 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('data: 10'))
-    fireEvent.click(screen.getByRole('button', { name: /fetchNextPage/i }))
+    await waitFor(() => rendered.getByText('data: 10'))
+    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
-    await waitFor(() => screen.getByText('data: 10,11'))
-    fireEvent.click(screen.getByRole('button', { name: /fetchPreviousPage/i }))
-    await waitFor(() => screen.getByText('data: 9,10,11'))
-    fireEvent.click(screen.getByRole('button', { name: /refetch/i }))
+    await waitFor(() => rendered.getByText('data: 10,11'))
+    fireEvent.click(
+      rendered.getByRole('button', { name: /fetchPreviousPage/i }),
+    )
+    await waitFor(() => rendered.getByText('data: 9,10,11'))
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
 
-    await waitFor(() => screen.getByText('isFetching: false'))
+    await waitFor(() => rendered.getByText('isFetching: false'))
     await waitFor(() => expect(states.length).toBe(8))
 
     // Initial fetch
@@ -1476,55 +1478,55 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    screen.getByText('Loading...')
+    rendered.getByText('Loading...')
 
-    await waitFor(() => screen.getByText('Item: 2'))
-    await waitFor(() => screen.getByText('Page 0: 0'))
+    await waitFor(() => rendered.getByText('Item: 2'))
+    await waitFor(() => rendered.getByText('Page 0: 0'))
 
-    fireEvent.click(screen.getByText('Load More'))
+    fireEvent.click(rendered.getByText('Load More'))
 
-    await waitFor(() => screen.getByText('Loading more...'))
-    await waitFor(() => screen.getByText('Item: 5'))
-    await waitFor(() => screen.getByText('Page 0: 0'))
-    await waitFor(() => screen.getByText('Page 1: 1'))
+    await waitFor(() => rendered.getByText('Loading more...'))
+    await waitFor(() => rendered.getByText('Item: 5'))
+    await waitFor(() => rendered.getByText('Page 0: 0'))
+    await waitFor(() => rendered.getByText('Page 1: 1'))
 
-    fireEvent.click(screen.getByText('Load More'))
+    fireEvent.click(rendered.getByText('Load More'))
 
-    await waitFor(() => screen.getByText('Loading more...'))
-    await waitFor(() => screen.getByText('Item: 8'))
-    await waitFor(() => screen.getByText('Page 0: 0'))
-    await waitFor(() => screen.getByText('Page 1: 1'))
-    await waitFor(() => screen.getByText('Page 2: 2'))
+    await waitFor(() => rendered.getByText('Loading more...'))
+    await waitFor(() => rendered.getByText('Item: 8'))
+    await waitFor(() => rendered.getByText('Page 0: 0'))
+    await waitFor(() => rendered.getByText('Page 1: 1'))
+    await waitFor(() => rendered.getByText('Page 2: 2'))
 
-    fireEvent.click(screen.getByText('Refetch'))
+    fireEvent.click(rendered.getByText('Refetch'))
 
-    await waitFor(() => screen.getByText('Background Updating...'))
-    await waitFor(() => screen.getByText('Item: 8'))
-    await waitFor(() => screen.getByText('Page 0: 3'))
-    await waitFor(() => screen.getByText('Page 1: 4'))
-    await waitFor(() => screen.getByText('Page 2: 5'))
+    await waitFor(() => rendered.getByText('Background Updating...'))
+    await waitFor(() => rendered.getByText('Item: 8'))
+    await waitFor(() => rendered.getByText('Page 0: 3'))
+    await waitFor(() => rendered.getByText('Page 1: 4'))
+    await waitFor(() => rendered.getByText('Page 2: 5'))
 
     // ensure that Item: 4 is rendered before removing it
-    expect(screen.queryAllByText('Item: 4')).toHaveLength(1)
+    expect(rendered.queryAllByText('Item: 4')).toHaveLength(1)
 
     // remove Item: 4
-    fireEvent.click(screen.getByText('Remove item'))
+    fireEvent.click(rendered.getByText('Remove item'))
 
-    await waitFor(() => screen.getByText('Background Updating...'))
+    await waitFor(() => rendered.getByText('Background Updating...'))
     // ensure that an additional item is rendered (it means that cursors were properly rebuilt)
-    await waitFor(() => screen.getByText('Item: 9'))
-    await waitFor(() => screen.getByText('Page 0: 6'))
-    await waitFor(() => screen.getByText('Page 1: 7'))
-    await waitFor(() => screen.getByText('Page 2: 8'))
+    await waitFor(() => rendered.getByText('Item: 9'))
+    await waitFor(() => rendered.getByText('Page 0: 6'))
+    await waitFor(() => rendered.getByText('Page 1: 7'))
+    await waitFor(() => rendered.getByText('Page 2: 8'))
 
     // ensure that Item: 4 is no longer rendered
-    expect(screen.queryAllByText('Item: 4')).toHaveLength(0)
+    expect(rendered.queryAllByText('Item: 4')).toHaveLength(0)
   })
 
   it('should compute hasNextPage correctly for falsy getFetchMore return value on refetching', async () => {
@@ -1603,59 +1605,59 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    screen.getByText('Loading...')
+    rendered.getByText('Loading...')
 
     await waitFor(() => {
-      screen.getByText('Item: 9')
-      screen.getByText('Page 0: 0')
+      rendered.getByText('Item: 9')
+      rendered.getByText('Page 0: 0')
     })
 
-    fireEvent.click(screen.getByText('Load More'))
+    fireEvent.click(rendered.getByText('Load More'))
 
-    await waitFor(() => screen.getByText('Loading more...'))
+    await waitFor(() => rendered.getByText('Loading more...'))
 
     await waitFor(() => {
-      screen.getByText('Item: 19')
-      screen.getByText('Page 0: 0')
-      screen.getByText('Page 1: 1')
+      rendered.getByText('Item: 19')
+      rendered.getByText('Page 0: 0')
+      rendered.getByText('Page 1: 1')
     })
 
-    fireEvent.click(screen.getByText('Load More'))
+    fireEvent.click(rendered.getByText('Load More'))
 
-    await waitFor(() => screen.getByText('Loading more...'))
+    await waitFor(() => rendered.getByText('Loading more...'))
 
     await waitFor(() => {
-      screen.getByText('Item: 29')
-      screen.getByText('Page 0: 0')
-      screen.getByText('Page 1: 1')
-      screen.getByText('Page 2: 2')
+      rendered.getByText('Item: 29')
+      rendered.getByText('Page 0: 0')
+      rendered.getByText('Page 1: 1')
+      rendered.getByText('Page 2: 2')
     })
 
-    screen.getByText('Nothing more to load')
+    rendered.getByText('Nothing more to load')
 
-    fireEvent.click(screen.getByText('Remove Last Page'))
+    fireEvent.click(rendered.getByText('Remove Last Page'))
 
     await sleep(10)
 
-    fireEvent.click(screen.getByText('Refetch'))
+    fireEvent.click(rendered.getByText('Refetch'))
 
-    await waitFor(() => screen.getByText('Background Updating...'))
+    await waitFor(() => rendered.getByText('Background Updating...'))
 
     await waitFor(() => {
-      screen.getByText('Page 0: 3')
-      screen.getByText('Page 1: 4')
+      rendered.getByText('Page 0: 3')
+      rendered.getByText('Page 1: 4')
     })
 
-    expect(screen.queryByText('Item: 29')).toBeNull()
-    expect(screen.queryByText('Page 2: 5')).toBeNull()
+    expect(rendered.queryByText('Item: 29')).toBeNull()
+    expect(rendered.queryByText('Page 2: 5')).toBeNull()
 
-    screen.getByText('Nothing more to load')
+    rendered.getByText('Nothing more to load')
   })
 
   it('should cancel the query function when there are no more subscriptions', async () => {
@@ -1686,7 +1688,7 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Blink duration={5}>
           <Page />
@@ -1694,7 +1696,7 @@ describe('useInfiniteQuery', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('off'))
+    await waitFor(() => rendered.getByText('off'))
 
     expect(cancelFn).toHaveBeenCalled()
   })
@@ -1722,8 +1724,8 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    render(() => <Page />)
+    const rendered = render(() => <Page />)
 
-    await waitFor(() => screen.getByText('Status: custom client'))
+    await waitFor(() => rendered.getByText('Status: custom client'))
   })
 })

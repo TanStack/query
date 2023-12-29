@@ -117,6 +117,6 @@ describe('useMutationState', () => {
 
     const mutationState = useMutationState()
 
-    expect(mutationState.value[0]).toContain({ variables: variables })
+    expect(mutationState.value[0]?.variables).toEqual(variables)
   })
 })

@@ -3,9 +3,9 @@ name: pr
 on:
   pull_request:
     paths-ignore:
-      - "docs/**"
-      - "media/**"
-      - "**/*.md"
+      - 'docs/**'
+      - 'media/**'
+      - '**/*.md'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -48,7 +48,7 @@ jobs:
       - name: Start CI Orchestrator
         run: npx nx-cloud start-ci-run
       - name: Run Tests
-        run: npx nx affected --targets=test:eslint,test:lib,test:types,test:build,test:bundle
+        run: pnpm run test:pr
       - name: Stop Agents
         if: ${{ always() }}
         run: npx nx-cloud stop-all-agents

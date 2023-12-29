@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { render, screen, waitFor } from '@solidjs/testing-library'
+import { render, waitFor } from '@solidjs/testing-library'
 import { QueryCache } from '@tanstack/query-core'
 import { QueryClientProvider, createQuery, useQueryClient } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
@@ -27,14 +27,14 @@ describe('QueryClientProvider', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
     await waitFor(() => {
-      return screen.getByText('test')
+      return rendered.getByText('test')
     })
 
     expect(queryCache.find({ queryKey: key })).toBeDefined()
@@ -81,7 +81,7 @@ describe('QueryClientProvider', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <>
         <QueryClientProvider client={queryClient1}>
           <Page1 />
@@ -92,8 +92,8 @@ describe('QueryClientProvider', () => {
       </>
     ))
 
-    await waitFor(() => screen.getByText('test1'))
-    await waitFor(() => screen.getByText('test2'))
+    await waitFor(() => rendered.getByText('test1'))
+    await waitFor(() => rendered.getByText('test2'))
 
     expect(queryCache1.find({ queryKey: key1 })).toBeDefined()
     expect(queryCache1.find({ queryKey: key2 })).not.toBeDefined()
@@ -130,13 +130,13 @@ describe('QueryClientProvider', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('test'))
+    await waitFor(() => rendered.getByText('test'))
 
     expect(queryCache.find({ queryKey: key })).toBeDefined()
     expect(queryCache.find({ queryKey: key })?.options.gcTime).toBe(Infinity)

@@ -87,8 +87,8 @@ function Projects() {
           {isFetchingNextPage
             ? 'Loading more...'
             : hasNextPage
-            ? 'Load More'
-            : 'Nothing more to load'}
+              ? 'Load More'
+              : 'Nothing more to load'}
         </button>
       </div>
       <div>{isFetching && !isFetchingNextPage ? 'Fetching...' : null}</div>
@@ -110,9 +110,7 @@ To ensure a seamless querying process without conflicts, it's highly recommended
 [//]: # 'Example1'
 
 ```jsx
-<List
-  onEndReached={() => !isFetching && fetchNextPage()}
-/>
+<List onEndReached={() => !isFetching && fetchNextPage()} />
 ```
 
 [//]: # 'Example1'
@@ -197,15 +195,14 @@ queryClient.setQueryData(['projects'], (data) => ({
 
 ```tsx
 queryClient.setQueryData(['projects'], (data) => ({
-  pages: data.pages.slice(0,1),
-  pageParams: data.pageParams.slice(0,1),
+  pages: data.pages.slice(0, 1),
+  pageParams: data.pageParams.slice(0, 1),
 }))
 ```
 
 [//]: # 'Example7'
 
 Make sure to always keep the same data structure of pages and pageParams!
-
 
 [//]: # 'Example8'
 
@@ -235,7 +232,7 @@ useInfiniteQuery({
 
 ## What if my API doesn't return a cursor?
 
-If your API doesn't return a cursor, you can use the `pageParam` as a cursor. Because  `getNextPageParam` and `getPreviousPageParam` also get the `pageParam`of the current page, you can use it to calculate the next / previous page param.
+If your API doesn't return a cursor, you can use the `pageParam` as a cursor. Because `getNextPageParam` and `getPreviousPageParam` also get the `pageParam`of the current page, you can use it to calculate the next / previous page param.
 
 [//]: # 'Example9'
 
@@ -246,13 +243,13 @@ return useInfiniteQuery({
   initialPageParam: 0,
   getNextPageParam: (lastPage, allPages, lastPageParam) => {
     if (lastPage.length === 0) {
-        return undefined
+      return undefined
     }
     return lastPageParam + 1
   },
   getPreviousPageParam: (firstPage, allPages, firstPageParam) => {
     if (firstPageParam <= 1) {
-        return undefined
+      return undefined
     }
     return firstPageParam - 1
   },
