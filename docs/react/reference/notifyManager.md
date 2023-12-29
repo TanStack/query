@@ -32,8 +32,8 @@ All calls to the wrapped function schedule the callback to be run on the next ba
 type BatchCallsCallback<T extends Array<unknown>> = (...args: T) => void
 
 function batchCalls<T extends Array<unknown>>(
-    callback: BatchCallsCallback<T>,
-  ): BatchCallsCallback<T>
+  callback: BatchCallsCallback<T>,
+): BatchCallsCallback<T>
 ```
 
 ## `notifyManager.schedule`
@@ -54,7 +54,7 @@ This can be used to for example wrap notifications with `React.act` while runnin
 
 ```ts
 import { notifyManager } from '@tanstack/react-query'
-import { act } from 'react-dom/test-utils';
+import { act } from 'react-dom/test-utils'
 
 notifyManager.setNotifyFunction(act)
 ```
