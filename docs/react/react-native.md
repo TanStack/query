@@ -20,8 +20,8 @@ To add this behavior in React Native you have to use React Query `onlineManager`
 import NetInfo from '@react-native-community/netinfo'
 import { onlineManager } from '@tanstack/react-query'
 
-onlineManager.setEventListener(setOnline => {
-  return NetInfo.addEventListener(state => {
+onlineManager.setEventListener((setOnline) => {
+  return NetInfo.addEventListener((state) => {
     setOnline(!!state.isConnected)
   })
 })
@@ -32,9 +32,9 @@ onlineManager.setEventListener(setOnline => {
 Instead of event listeners on `window`, React Native provides focus information through the [`AppState` module](https://reactnative.dev/docs/appstate#app-states). You can use the `AppState` "change" event to trigger an update when the app state changes to "active":
 
 ```tsx
-import { useEffect } from "react"
+import { useEffect } from 'react'
 import { AppState, Platform } from 'react-native'
-import type { AppStateStatus } from "react-native"
+import type { AppStateStatus } from 'react-native'
 import { focusManager } from '@tanstack/react-query'
 
 function onAppStateChange(status: AppStateStatus) {
@@ -65,12 +65,12 @@ export function useRefreshOnFocus<T>(refetch: () => Promise<T>) {
   useFocusEffect(
     React.useCallback(() => {
       if (firstTimeRef.current) {
-         firstTimeRef.current = false;
-         return;
+        firstTimeRef.current = false
+        return
       }
 
       refetch()
-    }, [refetch])
+    }, [refetch]),
   )
 }
 ```
@@ -88,7 +88,9 @@ import React from 'react'
 import { NotifyOnChangeProps } from '@tanstack/query-core'
 import { useFocusEffect } from '@react-navigation/native'
 
-export function useFocusNotifyOnChangeProps(notifyOnChangeProps?: NotifyOnChangeProps) {
+export function useFocusNotifyOnChangeProps(
+  notifyOnChangeProps?: NotifyOnChangeProps,
+) {
   const focusedRef = React.useRef(true)
 
   useFocusEffect(
@@ -98,7 +100,7 @@ export function useFocusNotifyOnChangeProps(notifyOnChangeProps?: NotifyOnChange
       return () => {
         focusedRef.current = false
       }
-    }, [])
+    }, []),
   )
 
   return () => {
@@ -123,17 +125,19 @@ Example usage:
 
 ```tsx
 function MyComponent() {
-  const notifyOnChangeProps = useFocusNotifyOnChangeProps();
+  const notifyOnChangeProps = useFocusNotifyOnChangeProps()
 
   const { dataUpdatedAt } = useQuery({
     queryKey: ['myKey'],
     queryFn: async () => {
-      const response = await fetch('https://api.github.com/repos/tannerlinsley/react-query');
-      return response.json();
+      const response = await fetch(
+        'https://api.github.com/repos/tannerlinsley/react-query',
+      )
+      return response.json()
     },
     notifyOnChangeProps,
-  });
+  })
 
-  return <div>DataUpdatedAt: {dataUpdatedAt}</div>;
-};
+  return <div>DataUpdatedAt: {dataUpdatedAt}</div>
+}
 ```

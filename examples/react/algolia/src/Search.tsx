@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import * as React from 'react'
 
 import SearchResults from './SearchResults'
 
 export default function Search() {
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = React.useState('')
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault()

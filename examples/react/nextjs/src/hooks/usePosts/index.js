@@ -1,4 +1,4 @@
-import ky from 'ky-universal'
+import ky from 'ky'
 import { useQuery } from '@tanstack/react-query'
 
 const fetchPosts = async (limit = 10) => {

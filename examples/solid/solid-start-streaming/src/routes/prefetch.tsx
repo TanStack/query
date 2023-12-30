@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/solid-query'
 import { isServer } from 'solid-js/web'
-import { Title } from 'solid-start'
+import { Title } from '@solidjs/meta'
 import { UserInfo, userInfoQueryOpts } from '~/components/user-info'
 
 export default function Prefetch() {

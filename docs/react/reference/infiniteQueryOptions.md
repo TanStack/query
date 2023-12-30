@@ -6,7 +6,7 @@ title: infiniteQueryOptions
 ```tsx
 infiniteQueryOptions({
   queryKey,
-  ...options
+  ...options,
 })
 ```
 

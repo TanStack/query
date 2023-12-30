@@ -30,7 +30,11 @@ export type UseInfiniteQueryOptions<
     TQueryData,
     TQueryKey,
     TPageParam
-  >]: Property extends 'queryFn' | 'getPreviousPageParam' | 'getNextPageParam'
+  >]: Property extends
+    | 'queryFn'
+    | 'getPreviousPageParam'
+    | 'getNextPageParam'
+    | 'select'
     ? InfiniteQueryObserverOptions<
         TQueryFnData,
         TError,

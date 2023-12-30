@@ -31,7 +31,7 @@ export type UseQueryOptions<
     TData,
     TQueryData,
     TQueryKey
-  >]: Property extends 'queryFn'
+  >]: Property extends 'queryFn' | 'select'
     ? QueryObserverOptions<
         TQueryFnData,
         TError,

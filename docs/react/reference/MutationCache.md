@@ -11,10 +11,10 @@ The `MutationCache` is the storage for mutations.
 import { MutationCache } from '@tanstack/react-query'
 
 const mutationCache = new MutationCache({
-  onError: error => {
+  onError: (error) => {
     console.log(error)
   },
-  onSuccess: data => {
+  onSuccess: (data) => {
     console.log(data)
   },
 })
@@ -72,7 +72,7 @@ const mutations = mutationCache.getAll()
 The `subscribe` method can be used to subscribe to the mutation cache as a whole and be informed of safe/known updates to the cache like mutation states changing or mutations being updated, added or removed.
 
 ```tsx
-const callback = event => {
+const callback = (event) => {
   console.log(event.type, event.mutation)
 }
 

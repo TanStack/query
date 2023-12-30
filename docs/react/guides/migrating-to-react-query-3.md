@@ -137,7 +137,7 @@ useQuery(['post', id], () => fetchPost(id))
 If you still insist on not using inline functions, you can use the newly passed `QueryFunctionContext`:
 
 ```tsx
-useQuery(['post', id], context => fetchPost(context.queryKey[1]))
+useQuery(['post', id], (context) => fetchPost(context.queryKey[1]))
 ```
 
 ### Infinite Query Page params are now passed via `QueryFunctionContext.pageParam`
@@ -183,18 +183,14 @@ The `useInfiniteQuery()` interface has changed to fully support bi-directional i
 One direction:
 
 ```tsx
-const {
-  data,
-  fetchNextPage,
-  hasNextPage,
-  isFetchingNextPage,
-} = useInfiniteQuery(
-  'projects',
-  ({ pageParam = 0 }) => fetchProjects(pageParam),
-  {
-    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-  }
-)
+const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  useInfiniteQuery(
+    'projects',
+    ({ pageParam = 0 }) => fetchProjects(pageParam),
+    {
+      getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+    },
+  )
 ```
 
 Both directions:
@@ -214,29 +210,25 @@ const {
   {
     getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
     getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
-  }
+  },
 )
 ```
 
 One direction reversed:
 
 ```tsx
-const {
-  data,
-  fetchNextPage,
-  hasNextPage,
-  isFetchingNextPage,
-} = useInfiniteQuery(
-  'projects',
-  ({ pageParam = 0 }) => fetchProjects(pageParam),
-  {
-    select: data => ({
-      pages: [...data.pages].reverse(),
-      pageParams: [...data.pageParams].reverse(),
-    }),
-    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-  }
-)
+const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  useInfiniteQuery(
+    'projects',
+    ({ pageParam = 0 }) => fetchProjects(pageParam),
+    {
+      select: (data) => ({
+        pages: [...data.pages].reverse(),
+        pageParams: [...data.pageParams].reverse(),
+      }),
+      getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+    },
+  )
 ```
 
 ### Infinite Query data now contains the array of pages and pageParams used to fetch those pages.
@@ -244,7 +236,7 @@ const {
 This allows for easier manipulation of the data and the page params, like, for example, removing the first page of data along with it's params:
 
 ```tsx
-queryClient.setQueryData(['projects'], data => ({
+queryClient.setQueryData(['projects'], (data) => ({
   pages: data.pages.slice(1),
   pageParams: data.pageParams.slice(1),
 }))
@@ -277,10 +269,10 @@ The `mutate` function can be used when using callbacks:
 const { mutate } = useMutation({ mutationFn: addTodo })
 
 mutate('todo', {
-  onSuccess: data => {
+  onSuccess: (data) => {
     console.log(data)
   },
-  onError: error => {
+  onError: (error) => {
     console.error(error)
   },
   onSettled: () => {
@@ -393,7 +385,7 @@ import { setLogger } from 'react-query'
 
 // Log with Sentry
 setLogger({
-  error: error => {
+  error: (error) => {
     Sentry.captureException(error)
   },
 })
@@ -418,13 +410,14 @@ setConsole({
 
 In version 3 **this is done automatically when React Query is used in React Native**.
 
-
 ### Typescript
+
 #### `QueryStatus` has been changed from an [enum](https://www.typescriptlang.org/docs/handbook/enums.html#string-enums) to a [union type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#union-types)
 
 So, if you were checking the status property of a query or mutation against a QueryStatus enum property you will have to check it now against the string literal the enum previously held for each property.
 
 Therefore you have to change the enum properties to their equivalent string literal, like this:
+
 - `QueryStatus.Idle` -> `'idle'`
 - `QueryStatus.Loading` -> `'loading'`
 - `QueryStatus.Error` -> `'error'`
@@ -460,7 +453,7 @@ import { useQuery } from 'react-query'
 
 function User() {
   const { data } = useQuery(['user'], fetchUser, {
-    select: user => user.username,
+    select: (user) => user.username,
   })
   return <div>Username: {data}</div>
 }
@@ -512,7 +505,7 @@ A `QueryObserver` can be used to create and/or watch a query:
 ```tsx
 const observer = new QueryObserver(queryClient, { queryKey: 'posts' })
 
-const unsubscribe = observer.subscribe(result => {
+const unsubscribe = observer.subscribe((result) => {
   console.log(result)
   unsubscribe()
 })
@@ -530,7 +523,7 @@ const observer = new InfiniteQueryObserver(queryClient, {
   getPreviousPageParam: (firstPage, allPages) => firstPage.prevCursor,
 })
 
-const unsubscribe = observer.subscribe(result => {
+const unsubscribe = observer.subscribe((result) => {
   console.log(result)
   unsubscribe()
 })
@@ -546,7 +539,7 @@ const observer = new QueriesObserver(queryClient, [
   { queryKey: ['post', 2], queryFn: fetchPost },
 ])
 
-const unsubscribe = observer.subscribe(result => {
+const unsubscribe = observer.subscribe((result) => {
   console.log(result)
   unsubscribe()
 })

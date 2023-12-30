@@ -15,7 +15,7 @@ npm install @testing-library/react-hooks react-test-renderer --save-dev
 
 (The `react-test-renderer` library is needed as a peer dependency of `@testing-library/react-hooks`, and needs to correspond to the version of React that you are using.)
 
-*Note*: when using React 18 or later, `renderHook` is available directly through the `@testing-library/react` package, and `@testing-library/react-hooks` is no longer required.
+_Note_: when using React 18 or later, `renderHook` is available directly through the `@testing-library/react` package, and `@testing-library/react-hooks` is no longer required.
 
 ## Our First Test
 
@@ -23,25 +23,23 @@ Once installed, a simple test can be written. Given the following custom hook:
 
 ```tsx
 export function useCustomHook() {
-  return useQuery({ queryKey: ['customHook'], queryFn: () => 'Hello' });
+  return useQuery({ queryKey: ['customHook'], queryFn: () => 'Hello' })
 }
 ```
 
 Using React 17 or earlier, we can write a test for this as follows:
 
 ```tsx
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 const wrapper = ({ children }) => (
-  <QueryClientProvider client={queryClient}>
-    {children}
-  </QueryClientProvider>
-);
+  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+)
 
-const { result, waitFor } = renderHook(() => useCustomHook(), { wrapper });
+const { result, waitFor } = renderHook(() => useCustomHook(), { wrapper })
 
-await waitFor(() => result.current.isSuccess);
+await waitFor(() => result.current.isSuccess)
 
-expect(result.current.data).toEqual("Hello");
+expect(result.current.data).toEqual('Hello')
 ```
 
 Using React 18 or later, the semantics of `waitFor` have changed, and the above test needs to be modified as follows:
@@ -74,10 +72,8 @@ const queryClient = new QueryClient({
   },
 })
 const wrapper = ({ children }) => (
-  <QueryClientProvider client={queryClient}>
-    {children}
-  </QueryClientProvider>
-);
+  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+)
 ```
 
 This will set the defaults for all queries in the component tree to "no retries". It is important to know that this will only work if your actual useQuery has no explicit retries set. If you have a query that wants 5 retries, this will still take precedence, because defaults are only taken as a fallback.
@@ -99,36 +95,32 @@ function useFetchData() {
   return useQuery({
     queryKey: ['fetchData'],
     queryFn: () => request('/api/data'),
-  });
+  })
 }
 ```
 
 We can write a test for this as follows:
 
 ```tsx
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 const wrapper = ({ children }) => (
-  <QueryClientProvider client={queryClient}>
-    {children}
-  </QueryClientProvider>
-);
+  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+)
 
-const expectation = nock('http://example.com')
-  .get('/api/data')
-  .reply(200, {
-    answer: 42
-  });
+const expectation = nock('http://example.com').get('/api/data').reply(200, {
+  answer: 42,
+})
 
-const { result, waitFor } = renderHook(() => useFetchData(), { wrapper });
+const { result, waitFor } = renderHook(() => useFetchData(), { wrapper })
 
 await waitFor(() => {
-  return result.current.isSuccess;
-});
+  return result.current.isSuccess
+})
 
-expect(result.current.data).toEqual({answer: 42});
+expect(result.current.data).toEqual({ answer: 42 })
 ```
 
-Here we are making use of `waitFor` and waiting until the query status indicates that the request has succeeded. This way we know that our hook has finished and should have the correct data. *Note*: when using React 18, the semantics of `waitFor` have changed as noted above.
+Here we are making use of `waitFor` and waiting until the query status indicates that the request has succeeded. This way we know that our hook has finished and should have the correct data. _Note_: when using React 18, the semantics of `waitFor` have changed as noted above.
 
 ## Testing Load More / Infinite Scroll
 
@@ -152,10 +144,10 @@ const expectation = nock('http://example.com')
   .query(true)
   .get('/api/data')
   .reply(200, (uri) => {
-    const url = new URL(`http://example.com${uri}`);
-    const { page } = Object.fromEntries(url.searchParams);
-    return generateMockedResponse(page);
-  });
+    const url = new URL(`http://example.com${uri}`)
+    const { page } = Object.fromEntries(url.searchParams)
+    return generateMockedResponse(page)
+  })
 ```
 
 (Notice the `.persist()`, because we'll be calling from this endpoint multiple times)
@@ -163,28 +155,27 @@ const expectation = nock('http://example.com')
 Now we can safely run our tests, the trick here is to await for the data assertion to pass:
 
 ```tsx
-const { result, waitFor } = renderHook(
-  () => useInfiniteQueryCustomHook(),
-  { wrapper },
-);
+const { result, waitFor } = renderHook(() => useInfiniteQueryCustomHook(), {
+  wrapper,
+})
 
-await waitFor(() => result.current.isSuccess);
+await waitFor(() => result.current.isSuccess)
 
-expect(result.current.data.pages).toStrictEqual(generateMockedResponse(1));
+expect(result.current.data.pages).toStrictEqual(generateMockedResponse(1))
 
-result.current.fetchNextPage();
+result.current.fetchNextPage()
 
 await waitFor(() =>
   expect(result.current.data.pages).toStrictEqual([
     ...generateMockedResponse(1),
     ...generateMockedResponse(2),
   ]),
-);
+)
 
-expectation.done();
+expectation.done()
 ```
 
-*Note*: when using React 18, the semantics of `waitFor` have changed as noted above.
+_Note_: when using React 18, the semantics of `waitFor` have changed as noted above.
 
 ## Further reading
 

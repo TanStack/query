@@ -14,14 +14,14 @@
     "match-sorter": "^6.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router": "^6.11.2",
-    "react-router-dom": "^6.11.2",
+    "react-router": "^6.21.1",
+    "react-router-dom": "^6.21.1",
     "rooks": "^7.14.1",
     "sort-by": "^1.2.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.0.0",
-    "vite": "^4.5.0"
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.0.10"
   },
   "browserslist": {
     "production": [

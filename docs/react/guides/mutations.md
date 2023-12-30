@@ -231,7 +231,8 @@ useMutation({
   },
 })
 
-[('Todo 1', 'Todo 2', 'Todo 3')].forEach((todo) => {
+const todos = ['Todo 1', 'Todo 2', 'Todo 3']
+todos.forEach((todo) => {
   mutate(todo, {
     onSuccess: (data, error, variables, context) => {
       // Will execute only once, for the last mutation (Todo 3),

@@ -5,5 +5,5 @@
     "emitDeclarationOnly": true,
     "outDir": "dist"
   },
-  "include": ["src/**/*.ts", "src/**/*.vue", "shims-vue.d.ts"]
+  "include": ["src/**/*.ts", "src/**/*.vue"]
 }

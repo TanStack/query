@@ -76,7 +76,7 @@ In some circumstances, you may be able to provide the placeholder data for a que
 
 ```tsx
 function Todo({ blogPostId }) {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
   const result = useQuery({
     queryKey: ['blogPost', blogPostId],
     queryFn: () => fetch(`/blogPosts/${blogPostId}`),

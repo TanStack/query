@@ -57,7 +57,6 @@ import {
   useQueryDevtoolsContext,
   useTheme,
 } from './Context'
-import { loadFonts } from './fonts'
 import type {
   DevToolsErrorType,
   DevtoolsButtonPosition,
@@ -138,8 +137,6 @@ const DevtoolsComponent: DevtoolsComponentType = (props) => {
 export default DevtoolsComponent
 
 const Devtools: Component<DevtoolsPanelProps> = (props) => {
-  loadFonts()
-
   const theme = useTheme()
   const styles = createMemo(() => {
     return theme() === 'dark' ? darkStyles : lightStyles

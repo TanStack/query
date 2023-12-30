@@ -13,7 +13,7 @@ const observer = new QueriesObserver(queryClient, [
   { queryKey: ['post', 2], queryFn: fetchPost },
 ])
 
-const unsubscribe = observer.subscribe(result => {
+const unsubscribe = observer.subscribe((result) => {
   console.log(result)
   unsubscribe()
 })

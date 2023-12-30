@@ -52,7 +52,7 @@ A mutation filter is an object with certain conditions to match a mutation with:
 await queryClient.isMutating()
 
 // Filter mutations by mutationKey
-await queryClient.isMutating({ mutationKey: ["post"] })
+await queryClient.isMutating({ mutationKey: ['post'] })
 
 // Filter mutations using a predicate function
 await queryClient.isMutating({
