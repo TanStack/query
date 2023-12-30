@@ -252,7 +252,7 @@ export function createNoopInjectionToken<
   type TReturn = TMulti extends true ? Array<TValue> : TValue;
 
   const token =
-    (options as CreateInjectionTokenOptions<() => void, []>).token ||
+    (options as CreateInjectionTokenOptions<() => void, []>)?.token ||
     new InjectionToken<TReturn>(description);
   return [
     createInjectFn(token) as CreateInjectionTokenReturn<TReturn, true>[0],
