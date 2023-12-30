@@ -1,4 +1,4 @@
-import { defineConfig, mergeConfig } from 'vite'
+import { defineConfig, mergeConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import { viteBuildConfig } from '../../scripts/getViteConfig.js'
 
@@ -12,7 +12,7 @@ export default mergeConfig(
     plugins: [react()],
     test: {
       name: 'react-query',
-      dir: './src',
+      include: './build.test.ts',
       watch: false,
       environment: 'jsdom',
       setupFiles: ['test-setup.ts'],
