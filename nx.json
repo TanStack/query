@@ -14,6 +14,7 @@
   "namedInputs": {
     "sharedGlobals": [
       "{workspaceRoot}/.eslintrc.cjs",
+      "{workspaceRoot}/.nvmrc",
       "{workspaceRoot}/package.json",
       "{workspaceRoot}/scripts/getTsupConfig.js",
       "{workspaceRoot}/tsconfig.json"
