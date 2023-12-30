@@ -31,52 +31,12 @@ describe('notifyManager', () => {
     expect(callbackScheduleSpy).toHaveBeenCalledTimes(1)
   })
 
-  it('should schedule a microTask when configured', async () => {
-    const notifyManagerTest = createNotifyManager()
-    const notifySpy = vi.fn()
-    notifyManagerTest.setBatchMethod({ type: 'tick' })
-    notifyManagerTest.setNotifyFunction(notifySpy)
-
-    notifyManagerTest.batch(() => notifyManagerTest.schedule(vi.fn))
-
-    expect(notifySpy).toHaveBeenCalledTimes(0)
-
-    // wait until the microtask has run
-    await new Promise<void>((res) => queueMicrotask(res))
-
-    expect(notifySpy).toHaveBeenCalledTimes(1)
-  })
-
-  it('should use requestAnimationFrame when configured', async () => {
-    // mock requestAnimationFrame global with queueMicrotask
-    const requestAnimationFrameMock = vi.fn((cb: (ts: number) => void) => {
-      queueMicrotask(() => cb(performance.now()))
-    })
-    vi.stubGlobal('requestAnimationFrame', requestAnimationFrameMock)
-
-    const notifyManagerTest = createNotifyManager()
-    const notifySpy = vi.fn()
-    notifyManagerTest.setBatchMethod({ type: 'raf' })
-    notifyManagerTest.setNotifyFunction(notifySpy)
-
-    notifyManagerTest.batch(() => notifyManagerTest.schedule(vi.fn))
-
-    expect(notifySpy).toHaveBeenCalledTimes(0)
-    expect(requestAnimationFrameMock).toHaveBeenCalledOnce()
-
-    // wait until the microtask has run
-    await new Promise<void>((res) => queueMicrotask(res))
-
-    expect(notifySpy).toHaveBeenCalledTimes(1)
-    vi.unstubAllGlobals()
-  })
-
-  it('should use a custom callback when configured', async () => {
+  it('should use a custom scheduler when configured', async () => {
     const customCallback = vi.fn((cb) => queueMicrotask(cb))
 
     const notifyManagerTest = createNotifyManager()
     const notifySpy = vi.fn()
-    notifyManagerTest.setBatchMethod({ type: 'custom', fn: customCallback })
+    notifyManagerTest.setScheduler(customCallback)
     notifyManagerTest.setNotifyFunction(notifySpy)
 
     notifyManagerTest.batch(() => notifyManagerTest.schedule(vi.fn))
@@ -87,52 +47,6 @@ describe('notifyManager', () => {
     await new Promise<void>((res) => queueMicrotask(res))
 
     expect(notifySpy).toHaveBeenCalledTimes(1)
-  })
-
-  it('should use timeout when configured', async () => {
-    const setTimeoutMock = vi.fn((cb: () => void, _delay: number) =>
-      queueMicrotask(cb),
-    )
-    vi.stubGlobal('setTimeout', setTimeoutMock)
-
-    const notifyManagerTest = createNotifyManager()
-    const notifySpy = vi.fn()
-    notifyManagerTest.setBatchMethod({ type: 'timer' })
-    notifyManagerTest.setNotifyFunction(notifySpy)
-
-    notifyManagerTest.batch(() => notifyManagerTest.schedule(vi.fn))
-
-    expect(setTimeoutMock).toHaveBeenCalledOnce()
-    expect(setTimeoutMock).toHaveBeenCalledWith(expect.anything(), 0)
-
-    // wait until the microtask has run
-    await new Promise<void>((res) => queueMicrotask(res))
-    expect(notifySpy).toHaveBeenCalledOnce()
-
-    vi.unstubAllGlobals()
-  })
-
-  it('should use timeout with configured delay', async () => {
-    const setTimeoutMock = vi.fn((cb: () => void, _delay: number) =>
-      queueMicrotask(cb),
-    )
-    vi.stubGlobal('setTimeout', setTimeoutMock)
-
-    const notifyManagerTest = createNotifyManager()
-    const notifySpy = vi.fn()
-    notifyManagerTest.setBatchMethod({ type: 'timer', timeout: 42 })
-    notifyManagerTest.setNotifyFunction(notifySpy)
-
-    notifyManagerTest.batch(() => notifyManagerTest.schedule(vi.fn))
-
-    expect(setTimeoutMock).toHaveBeenCalledOnce()
-    expect(setTimeoutMock).toHaveBeenCalledWith(expect.anything(), 42)
-
-    // wait until the microtask has run
-    await new Promise<void>((res) => queueMicrotask(res))
-    expect(notifySpy).toHaveBeenCalledOnce()
-
-    vi.unstubAllGlobals()
   })
 
   it('should notify if error is thrown', async () => {

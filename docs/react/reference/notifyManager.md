@@ -12,12 +12,12 @@ It exposes the following methods:
 - [schedule](#notifymanagerschedule)
 - [setNotifyFunction](#notifymanagersetnotifyfunction)
 - [setBatchNotifyFunction](#notifymanagersetbatchnotifyfunction)
-- [setBatchMethod](#notifymanagersetbatchmethod)
+- [setScheduler](#notifymanagersetscheduler)
 
 ## `notifyManager.batch`
 
-`batch` can be used to batch all updates scheduled in the closure.
-This is mainly used internally to optimize queryClient updating
+`batch` can be used to batch all updates scheduled inside the passed callback.
+This is mainly used internally to optimize queryClient updating.
 
 ```ts
 function batch<T>(callback: () => T): T
@@ -74,16 +74,20 @@ import { batch } from 'solid-js'
 notifyManager.setBatchNotifyFunction(batch)
 ```
 
-## `notifyManager.setBatchMethod`
+## `notifyManager.setScheduler`
 
-Sets the method for batching. There are four methods:
+`setScheduler` configures a custom callback that should schedules when the next
+batch runs. The default behaviour is `setTimeout(callback, 0)`.
 
-- `{ type: 'timer', timeout?: number }`:
-  The default is to use setTimeout with a timeout of 0. This has the effect of
-  scheduling a javascript task in the event loop some time later.
-- `{ type: 'raf' }`: This batches all updates in a [requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame), so
-  that it runs before the next frame is rendered by the browser.
-- `{ type: 'tick' }`: This uses queueMicrotask to schedule a microtask to batch updates, which runs immediately after the current task is done.
-- `{ type: 'custom', fn: (() => void) => void}`: The custom method allows you to specify your own way of scheduling batches
+```ts
+import { notifyManager } from '@tanstack/react-query'
 
-This API was inspired by the [redux autoBatchEnhancer API](https://redux-toolkit.js.org/api/autoBatchEnhancer#autobatchenhancer-1)
+// Schedule batches in the next microtask
+notifyManager.setScheduler(queueMicrotask)
+
+// Schedule batches before the next frame is rendered
+notifyManager.setScheduler(requestAnimationFrame)
+
+// Schedule batches some time in the future
+notifyManager.setScheduler((cb) => setTimeout(cb, 10))
+```
