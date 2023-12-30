@@ -37,7 +37,6 @@ export type Parsed = {
 export type Package = {
   name: string
   packageDir: string
-  entries: Array<'main' | 'module' | 'svelte' | 'types'>
 }
 
 export type BranchConfig = {

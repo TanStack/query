@@ -46,8 +46,7 @@ export class QueriesObserver<
     super()
 
     this.#client = client
-    this.#queries = queries
-    this.#options = options
+    this.#queries = []
     this.#observers = []
 
     this.#setResult([])
@@ -108,7 +107,12 @@ export class QueriesObserver<
       const hasIndexChange = newObservers.some(
         (observer, index) => observer !== prevObservers[index],
       )
-      if (prevObservers.length === newObservers.length && !hasIndexChange) {
+
+      if (
+        prevObservers.length === newObservers.length &&
+        !hasIndexChange &&
+        newObservers.length > 0
+      ) {
         return
       }
 

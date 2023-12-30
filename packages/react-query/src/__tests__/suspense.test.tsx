@@ -1033,4 +1033,61 @@ describe('useSuspenseQueries', () => {
 
     await waitFor(() => rendered.getByText('data1'))
   })
+
+  it('should not request old data inside transitions (issue #6486)', async () => {
+    const key = queryKey()
+    let queryFnCount = 0
+
+    function App() {
+      const [count, setCount] = React.useState(0)
+
+      return (
+        <div>
+          <button
+            onClick={() => React.startTransition(() => setCount(count + 1))}
+          >
+            inc
+          </button>
+          <React.Suspense fallback={'Loading...'}>
+            <Page count={count} />
+          </React.Suspense>
+        </div>
+      )
+    }
+
+    function Page({ count }: { count: number }) {
+      const { data } = useSuspenseQuery({
+        queryKey: [key, count],
+        queryFn: async () => {
+          queryFnCount++
+          await sleep(10)
+          return 'data' + count
+        },
+      })
+
+      return (
+        <div>
+          <div>{String(data)}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+
+      <App />,
+    )
+
+    await waitFor(() => rendered.getByText('Loading...'))
+
+    await waitFor(() => rendered.getByText('data0'))
+
+    fireEvent.click(rendered.getByText('inc'))
+
+    await waitFor(() => rendered.getByText('data1'))
+
+    await sleep(20)
+
+    expect(queryFnCount).toBe(2)
+  })
 })

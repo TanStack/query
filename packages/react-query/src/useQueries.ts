@@ -329,24 +329,21 @@ export function useQueries<
     : []
 
   if (suspensePromises.length > 0) {
-    observer.setQueries(
-      defaultedQueries,
-      options as QueriesObserverOptions<TCombinedResult>,
-      {
-        listeners: false,
-      },
-    )
     throw Promise.all(suspensePromises)
   }
-  const observerQueries = observer.getQueries()
   const firstSingleResultWhichShouldThrow = optimisticResult.find(
-    (result, index) =>
-      getHasError({
-        result,
-        errorResetBoundary,
-        throwOnError: defaultedQueries[index]?.throwOnError ?? false,
-        query: observerQueries[index]!,
-      }),
+    (result, index) => {
+      const query = defaultedQueries[index]
+      return (
+        query &&
+        getHasError({
+          result,
+          errorResetBoundary,
+          throwOnError: query.throwOnError,
+          query: client.getQueryCache().get(query.queryHash),
+        })
+      )
+    },
   )
 
   if (firstSingleResultWhichShouldThrow?.error) {
