@@ -44,7 +44,7 @@ type CreateInjectionTokenDeps<
       ]
 } & { length: TFactoryDeps['length'] }
 
-export type CreateInjectionTokenOptions<
+type CreateInjectionTokenOptions<
   TFactory extends (...args: Array<any>) => any,
   TFactoryDeps extends Parameters<TFactory> = Parameters<TFactory>,
 > =
@@ -89,7 +89,7 @@ type ProvideFn<
     ? (value: TReturn | (() => TReturn), isFunctionValue: boolean) => Provider
     : (value: TReturn | (() => TReturn)) => Provider)
 
-export type CreateInjectionTokenReturn<
+type CreateInjectionTokenReturn<
   TFactoryReturn,
   TNoop extends boolean = false,
 > = [
