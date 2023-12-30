@@ -3,7 +3,7 @@
   "lib": {
     "entryFile": "src/index.ts"
   },
-  "allowedNonPeerDependencies": ["@tanstack/query-core", "ngxtension"],
+  "allowedNonPeerDependencies": ["@tanstack/query-core"],
   "dest": "build",
   "deleteDestPath": false
 }
