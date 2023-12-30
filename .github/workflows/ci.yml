@@ -20,6 +20,7 @@ env:
 jobs:
   test-and-publish:
     name: Test & Publish
+    if: github.repository == 'TanStack/query'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,10 +31,8 @@ jobs:
           version: 8
       - uses: actions/setup-node@v4
         with:
-          registry-url: https://registry.npmjs.org/
           node-version-file: .nvmrc
           cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - name: Run Tests
