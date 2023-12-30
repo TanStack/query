@@ -1,11 +1,20 @@
+/**
+ * The code in this file is adapted from NG Extension Platform at https://ngxtension.netlify.app.
+ *
+ * Original Author: Chau Tran
+ *
+ * NG Extension Platform is an open-source project licensed under the MIT license.
+ *
+ * For more information about the original code, see
+ * https://github.com/nartc/ngxtension-platform
+ */
+
 import {
   Injector,
   assertInInjectionContext,
   inject,
   runInInjectionContext,
 } from '@angular/core';
-
-// original source and credits to https://github.com/nartc/ngxtension-platform/blob/main/libs/ngxtension/assert-injector/src/assert-injector.ts
 
 /**
  * `assertInjector` extends `assertInInjectionContext` with an optional `Injector`

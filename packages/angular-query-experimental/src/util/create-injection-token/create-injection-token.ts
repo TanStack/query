@@ -1,5 +1,15 @@
+/**
+ * The code in this file is adapted from NG Extension Platform at https://ngxtension.netlify.app.
+ *
+ * Original Author: Chau Tran
+ *
+ * NG Extension Platform is an open-source project licensed under the MIT license.
+ *
+ * For more information about the original code, see
+ * https://github.com/nartc/ngxtension-platform
+ */
+
 import {
-  ENVIRONMENT_INITIALIZER,
   type EnvironmentProviders,
   type FactoryProvider,
   type Host,
@@ -15,8 +25,6 @@ import {
   runInInjectionContext,
 } from '@angular/core';
 import { assertInjector } from '../assert-injector/assert-injector';
-
-// original source and credits to https://github.com/nartc/ngxtension-platform/blob/main/libs/ngxtension/create-injection-token/src/create-injection-token.ts
 
 type CreateInjectionTokenDep<TTokenType> =
   | Type<TTokenType>
@@ -144,100 +152,6 @@ function createProvideFn<
 
     return [extraProviders, provider];
   };
-}
-
-/**
- * `createInjectionToken` accepts a factory function and returns a tuple of `injectFn`, `provideFn`, and the `InjectionToken`
- * that the factory function is for.
- *
- * @param {Function} factory - Factory Function that returns the value for the `InjectionToken`
- * @param {CreateInjectionTokenOptions} options - object to control how the `InjectionToken` behaves
- * @returns {CreateInjectionTokenReturn}
- *
- * @example
- * ```ts
- * const [injectCounter, provideCounter, COUNTER] = createInjectionToken(() => signal(0));
- *
- * export class Counter {
- *  counter = injectCounter(); // WritableSignal<number>
- * }
- * ```
- */
-export function createInjectionToken<
-  TFactory extends (...args: Array<any>) => any,
-  TFactoryDeps extends Parameters<TFactory> = Parameters<TFactory>,
-  TOptions extends CreateInjectionTokenOptions<
-    TFactory,
-    TFactoryDeps
-  > = CreateInjectionTokenOptions<TFactory, TFactoryDeps>,
-  TFactoryReturn = TOptions['multi'] extends true
-    ? Array<ReturnType<TFactory>>
-    : ReturnType<TFactory>,
->(
-  factory: TFactory,
-  options?: TOptions,
-): CreateInjectionTokenReturn<TFactoryReturn> {
-  const tokenName = factory.name || factory.toString();
-  const opts =
-    options ??
-    ({ isRoot: true } as CreateInjectionTokenOptions<TFactory, TFactoryDeps>);
-
-  opts.isRoot ??= true;
-
-  // NOTE: multi tokens cannot be a root token. It has to be provided (provideFn needs to be invoked)
-  // for the 'multi' flag to work properly
-  if (opts.multi) {
-    opts.isRoot = false;
-  }
-
-  if (opts.isRoot) {
-    if (opts.token) {
-      throw new Error(`\
-createInjectionToken is creating a root InjectionToken but an external token is passed in.
-`);
-    }
-
-    const token = new InjectionToken<TFactoryReturn>(`Token for ${tokenName}`, {
-      factory: () => {
-        if (opts.deps && Array.isArray(opts.deps)) {
-          return factory(...opts.deps.map((dep) => inject(dep)));
-        }
-        return factory();
-      },
-    });
-
-    const injectFn = createInjectFn(
-      token,
-    ) as CreateInjectionTokenReturn<TFactoryReturn>[0];
-
-    return [
-      injectFn,
-      createProvideFn(
-        token,
-        factory,
-        opts as CreateProvideFnOptions<TFactory, TFactoryDeps>,
-      ) as CreateInjectionTokenReturn<TFactoryReturn>[1],
-      token,
-      () => ({
-        provide: ENVIRONMENT_INITIALIZER,
-        useValue: () => injectFn(),
-        multi: true,
-      }),
-    ];
-  }
-
-  const token =
-    opts.token || new InjectionToken<TFactoryReturn>(`Token for ${tokenName}`);
-  return [
-    createInjectFn(token) as CreateInjectionTokenReturn<TFactoryReturn>[0],
-    createProvideFn(
-      token,
-      factory,
-      opts as CreateProvideFnOptions<TFactory, TFactoryDeps>,
-    ) as CreateInjectionTokenReturn<TFactoryReturn>[1],
-    token,
-    () => [],
-  ];
 }
 
 export function createNoopInjectionToken<

@@ -1,3 +1,14 @@
+/**
+ * The code in this file is adapted from NG Extension Platform at https://ngxtension.netlify.app.
+ *
+ * Original Author: Chau Tran
+ *
+ * NG Extension Platform is an open-source project licensed under the MIT license.
+ *
+ * For more information about the original code, see
+ * https://github.com/nartc/ngxtension-platform
+ */
+
 import {
   InjectionToken,
   Injector,
