@@ -14,7 +14,7 @@ import {
   assertInInjectionContext,
   inject,
   runInInjectionContext,
-} from '@angular/core';
+} from '@angular/core'
 
 /**
  * `assertInjector` extends `assertInInjectionContext` with an optional `Injector`
@@ -41,7 +41,7 @@ export function assertInjector<Runner extends () => any>(
   fn: Function,
   injector: Injector | undefined | null,
   runner: Runner,
-): ReturnType<Runner>;
+): ReturnType<Runner>
 /**
  * `assertInjector` extends `assertInInjectionContext` with an optional `Injector`
  * After assertion, `assertInjector` returns a guaranteed `Injector` whether it is the default `Injector`
@@ -65,15 +65,15 @@ export function assertInjector<Runner extends () => any>(
 export function assertInjector(
   fn: Function,
   injector: Injector | undefined | null,
-): Injector;
+): Injector
 export function assertInjector(
   fn: Function,
   injector: Injector | undefined | null,
   runner?: () => any,
 ) {
-  !injector && assertInInjectionContext(fn);
-  const assertedInjector = injector ?? inject(Injector);
+  !injector && assertInInjectionContext(fn)
+  const assertedInjector = injector ?? inject(Injector)
 
-  if (!runner) return assertedInjector;
-  return runInInjectionContext(assertedInjector, runner);
+  if (!runner) return assertedInjector
+  return runInInjectionContext(assertedInjector, runner)
 }
