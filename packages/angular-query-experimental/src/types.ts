@@ -12,6 +12,7 @@ import type {
   QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
+import type { MapToSignals } from './signal-proxy'
 
 /** Options for createBaseQuery */
 export type CreateBaseQueryOptions<
@@ -27,9 +28,7 @@ export type CreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
   State = QueryObserverResult<TData, TError>,
-> = {
-  [K in keyof State]: State[K] extends Function ? State[K] : Signal<State[K]>
-}
+> = MapToSignals<State>
 /** Result from createBaseQuery */
 
 /** Options for createQuery */
@@ -74,11 +73,7 @@ export type DefinedCreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
   DefinedQueryObserver = DefinedQueryObserverResult<TData, TError>,
-> = {
-  [K in keyof DefinedQueryObserver]: DefinedQueryObserver[K] extends Function
-    ? DefinedQueryObserver[K]
-    : Signal<DefinedQueryObserver[K]>
-}
+> = MapToSignals<DefinedQueryObserver>
 
 /** Options for createQuery with initialData */
 export type DefinedCreateQueryResult<
@@ -131,6 +126,6 @@ export type CreateMutationResult<
   TError = DefaultError,
   TVariables = unknown,
   TContext = unknown,
-> = Signal<CreateBaseMutationResult<TData, TError, TVariables, TContext>>
+> = MapToSignals<CreateBaseMutationResult<TData, TError, TVariables, TContext>>
 
 type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }

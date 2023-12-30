@@ -27,17 +27,13 @@ describe('injectIsMutating', () => {
 
       expect(isMutating()).toBe(0)
 
-      mutation().mutate({
+      mutation.mutate({
         par1: 'par1',
       })
 
       tick()
 
-      TestBed.flushEffects()
-
       expect(isMutating()).toBe(1)
-
-      tick()
     })
   }))
 })
