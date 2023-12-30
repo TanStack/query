@@ -42,9 +42,10 @@ export default function BatchMethods() {
         ref={(el) => (el.value = 'timer')} // browser caches form input
         onInput={(e) => {
           const type = e.currentTarget.value
-          if (type === 'raf' || type === 'timer' || type === 'tick') {
-            notifyManager.setBatchMethod({ type })
-          }
+          if (type === 'raf') notifyManager.setScheduler(requestAnimationFrame)
+          if (type === 'tick') notifyManager.setScheduler(queueMicrotask)
+          if (type === 'timer')
+            notifyManager.setScheduler((cb) => setTimeout(cb, 0))
         }}
       >
         <option value="raf">requestAnimationFrame</option>
