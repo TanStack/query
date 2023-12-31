@@ -72,7 +72,6 @@ addTodo = injectMutation(() => ({
 
 // access variables somewhere else
 
-// Note: injectMutationState is not available yet in Angular Query
 mutationState = injectMutationState<string>(() => ({
   filters: { mutationKey: ['addTodo'], status: 'pending' },
   select: (mutation) => mutation.state.variables,

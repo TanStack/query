@@ -72,6 +72,8 @@ export function createBaseQuery<
       observer.setOptions(defaultedOptions, {
         listeners: false,
       })
+      // Setting the signal from an effect because it's both 'computed' from options()
+      // and needs to be set imperatively in the query observer listener.
       resultSignal.set(observer.getOptimisticResult(defaultedOptions))
     },
     { allowSignalWrites: true },

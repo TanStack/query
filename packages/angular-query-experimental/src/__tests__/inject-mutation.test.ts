@@ -121,7 +121,9 @@ describe('injectMutation', () => {
 
   test('reactive options should update mutation', async () => {
     const mutationCache = queryClient.getMutationCache()
-    const mutationKey = signal(['foo'])
+    // Signal will be updated before the mutation is called
+    // this test confirms that the mutation uses the updated value
+    const mutationKey = signal(['1'])
     const mutation = TestBed.runInInjectionContext(() => {
       return injectMutation(() => ({
         mutationKey: mutationKey(),
@@ -129,19 +131,14 @@ describe('injectMutation', () => {
       }))
     })
 
-    mutationKey.set(['bar'])
-
+    mutationKey.set(['2'])
     TestBed.flushEffects()
-
-    await resolveMutations()
 
     mutation.mutate('xyz')
 
-    await resolveMutations()
+    const mutations = mutationCache.find({ mutationKey: ['2'] })
 
-    const mutations = mutationCache.find({ mutationKey: ['bar'] })
-
-    expect(mutations?.options.mutationKey).toEqual(['bar'])
+    expect(mutations?.options.mutationKey).toEqual(['2'])
   })
 
   test('should reset state after invoking mutation.reset', async () => {
