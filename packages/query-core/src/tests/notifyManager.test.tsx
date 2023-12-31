@@ -31,6 +31,24 @@ describe('notifyManager', () => {
     expect(callbackScheduleSpy).toHaveBeenCalledTimes(1)
   })
 
+  it('should use a custom scheduler when configured', async () => {
+    const customCallback = vi.fn((cb) => queueMicrotask(cb))
+
+    const notifyManagerTest = createNotifyManager()
+    const notifySpy = vi.fn()
+    notifyManagerTest.setScheduler(customCallback)
+    notifyManagerTest.setNotifyFunction(notifySpy)
+
+    notifyManagerTest.batch(() => notifyManagerTest.schedule(vi.fn))
+
+    expect(customCallback).toHaveBeenCalledOnce()
+
+    // wait until the microtask has run
+    await new Promise<void>((res) => queueMicrotask(res))
+
+    expect(notifySpy).toHaveBeenCalledTimes(1)
+  })
+
   it('should notify if error is thrown', async () => {
     const notifyManagerTest = createNotifyManager()
     const notifySpy = vi.fn()
@@ -44,7 +62,7 @@ describe('notifyManager', () => {
       })
     } catch {}
 
-    // needed for scheduleMicroTask to kick in
+    // needed for setTimeout to kick in
     await sleep(1)
 
     expect(notifySpy).toHaveBeenCalledTimes(1)

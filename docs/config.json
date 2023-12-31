@@ -446,6 +446,10 @@
               "to": "react/reference/onlineManager"
             },
             {
+              "label": "notifyManager",
+              "to": "react/reference/notifyManager"
+            },
+            {
               "label": "hydration",
               "to": "react/reference/hydration"
             }
@@ -753,6 +757,10 @@
             {
               "label": "focusManager",
               "to": "vue/reference/focusManager"
+            },
+            {
+              "label": "notifyManager",
+              "to": "vue/reference/notifyManager"
             },
             {
               "label": "onlineManager",

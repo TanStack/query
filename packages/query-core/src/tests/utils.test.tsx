@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
   addToEnd,
   addToStart,
@@ -7,8 +7,6 @@ import {
   matchMutation,
   partialMatchKey,
   replaceEqualDeep,
-  scheduleMicrotask,
-  sleep,
 } from '../utils'
 import { Mutation } from '../mutation'
 import { createQueryClient } from './utils'
@@ -339,17 +337,6 @@ describe('core/utils', () => {
         options: {},
       })
       expect(matchMutation(filters, mutation)).toBeFalsy()
-    })
-  })
-
-  describe('scheduleMicrotask', () => {
-    it('should defer execution of callback', async () => {
-      const callback = vi.fn()
-
-      scheduleMicrotask(callback)
-      expect(callback).not.toHaveBeenCalled()
-      await sleep(0)
-      expect(callback).toHaveBeenCalledTimes(1)
     })
   })
 
