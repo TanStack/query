@@ -12,11 +12,11 @@ export default mergeConfig(
     plugins: [react()],
     test: {
       name: 'react-query',
-      include: './build.test.ts',
+      include: ['./build.test.ts'],
       watch: false,
       environment: 'jsdom',
       setupFiles: ['test-setup.ts'],
-      coverage: { provider: 'istanbul', include: ['src/**/*'] },
+      coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
     },
   }),
 )
