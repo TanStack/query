@@ -28,5 +28,5 @@
     "strictNullChecks": true,
     "target": "ES2020"
   },
-  "include": ["knip.ts"]
+  "include": [".eslintrc.cjs", "prettier.config.js", "scripts"]
 }
