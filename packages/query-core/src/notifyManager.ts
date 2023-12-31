@@ -19,13 +19,11 @@ export function createNotifyManager() {
   let batchNotifyFn: BatchNotifyFunction = (callback: () => void) => {
     callback()
   }
-  let scheduleFn: ScheduleFunction
+  let scheduleFn: ScheduleFunction = (cb) => setTimeout(cb, 0)
 
   const setScheduler = (fn: ScheduleFunction) => {
     scheduleFn = fn
   }
-
-  setScheduler((cb) => setTimeout(cb, 0))
 
   const batch = <T>(callback: () => T): T => {
     let result
