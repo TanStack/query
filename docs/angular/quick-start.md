@@ -64,7 +64,7 @@ export class TodosComponent {
   }))
 
   onAddTodo() {
-    this.mutation().mutate({
+    this.mutation.mutate({
       id: Date.now().toString(),
       title: 'Do Laundry',
     })

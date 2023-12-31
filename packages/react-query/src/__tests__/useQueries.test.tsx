@@ -1027,6 +1027,46 @@ describe('useQueries', () => {
     expect(resultChanged).toBe(1)
   })
 
+  it('should only call combine with query results', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    function Page() {
+      const result = useQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: async () => {
+              await sleep(5)
+              return Promise.resolve('query1')
+            },
+          },
+          {
+            queryKey: key2,
+            queryFn: async () => {
+              await sleep(20)
+              return Promise.resolve('query2')
+            },
+          },
+        ],
+        combine: ([query1, query2]) => {
+          return {
+            data: { query1: query1.data, query2: query2.data },
+          }
+        },
+      })
+
+      return <div>data: {JSON.stringify(result)}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() =>
+      rendered.getByText(
+        'data: {"data":{"query1":"query1","query2":"query2"}}',
+      ),
+    )
+  })
+
   it('should track property access through combine function', async () => {
     const key1 = queryKey()
     const key2 = queryKey()

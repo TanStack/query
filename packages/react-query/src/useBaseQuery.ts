@@ -94,7 +94,6 @@ export function useBaseQuery<
     // Do the same thing as the effect right above because the effect won't run
     // when we suspend but also, the component won't re-mount so our observer would
     // be out of date.
-    observer.setOptions(defaultedOptions, { listeners: false })
     throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
   }
 
@@ -104,7 +103,14 @@ export function useBaseQuery<
       result,
       errorResetBoundary,
       throwOnError: defaultedOptions.throwOnError,
-      query: observer.getCurrentQuery(),
+      query: client
+        .getQueryCache()
+        .get<
+          TQueryFnData,
+          TError,
+          TQueryData,
+          TQueryKey
+        >(defaultedOptions.queryHash),
     })
   ) {
     throw result.error

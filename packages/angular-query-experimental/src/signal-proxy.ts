@@ -1,7 +1,7 @@
 import { computed, untracked } from '@angular/core'
 import type { Signal } from '@angular/core'
 
-type MapToSignals<T> = {
+export type MapToSignals<T> = {
   [K in keyof T]: T[K] extends Function ? T[K] : Signal<T[K]>
 }
 

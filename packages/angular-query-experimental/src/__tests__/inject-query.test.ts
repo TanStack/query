@@ -35,7 +35,7 @@ describe('injectQuery', () => {
     flush()
   }))
 
-  it('should resolve to success and update signal: createQuery', fakeAsync(() => {
+  it('should resolve to success and update signal: injectQuery()', fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
         queryKey: ['key2'],
@@ -97,7 +97,7 @@ describe('injectQuery', () => {
     flush()
   }))
 
-  it('should only run query once enabled is set to true', fakeAsync(() => {
+  it('should only run query once enabled signal is set to true', fakeAsync(() => {
     const spy = vi.fn(simpleFetcher)
     const enabled = signal(false)
 
@@ -160,7 +160,7 @@ describe('injectQuery', () => {
   }))
 
   it('should use the current value for the queryKey when refetch is called', fakeAsync(() => {
-    const fetchFn = vi.fn()
+    const fetchFn = vi.fn(simpleFetcher)
     const keySignal = signal('key11')
 
     const query = TestBed.runInInjectionContext(() => {

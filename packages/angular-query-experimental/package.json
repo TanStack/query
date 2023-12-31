@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-experimental",
-  "version": "5.15.2",
+  "version": "5.16.1",
   "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -43,7 +43,6 @@
   },
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
-    "ngxtension": "^1.6.2",
     "tslib": "^2.6.2"
   },
   "devDependencies": {
