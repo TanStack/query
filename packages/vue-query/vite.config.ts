@@ -9,7 +9,8 @@ export default defineConfig({
     watch: false,
     environment: 'jsdom',
     setupFiles: ['test-setup.ts'],
-    coverage: { provider: 'istanbul', include: ['src/**/*'] },
+    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
+    typecheck: { enabled: true },
     onConsoleLog: function (log) {
       if (log.includes('Download the Vue Devtools extension')) {
         return false

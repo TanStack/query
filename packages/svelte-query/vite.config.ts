@@ -5,10 +5,11 @@ export default defineConfig({
   plugins: [svelte()],
   test: {
     name: 'svelte-query',
+    dir: './src',
     watch: false,
-    coverage: { provider: 'istanbul', include: ['src/**/*'] },
     environment: 'jsdom',
-    include: ['src/**/*.{test,spec}.{js,ts}'],
     setupFiles: ['test-setup.ts'],
+    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
+    typecheck: { enabled: true },
   },
 })

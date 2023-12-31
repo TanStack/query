@@ -5,6 +5,7 @@ export default defineConfig({
     name: 'query-persist-client-core',
     dir: './src',
     watch: false,
-    coverage: { provider: 'istanbul', include: ['src/**/*'] },
+    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
+    typecheck: { enabled: true },
   },
 })

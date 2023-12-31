@@ -6,6 +6,7 @@ export default defineConfig({
     dir: './src',
     watch: false,
     globals: true,
-    coverage: { provider: 'istanbul', include: ['src/**/*'] },
+    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
+    typecheck: { enabled: true },
   },
 })
