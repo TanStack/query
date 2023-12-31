@@ -10,6 +10,7 @@ describe('configs', () => {
           ],
           "rules": {
             "@tanstack/query/exhaustive-deps": "error",
+            "@tanstack/query/no-callbacks": "error",
             "@tanstack/query/prefer-query-object-syntax": "error",
             "@tanstack/query/stable-query-client": "error",
           },
