@@ -12,6 +12,7 @@ test('basic dev works', async ({ page }) => {
 test('first link should show "loading" indicator first time, but not subsequent times', async ({
   page,
 }) => {
+  // re-used functions for some common steps
   const clickFirstLinkToGetToDetailPage = async () => {
     const firstLink = page.locator('a', {
       hasText:
@@ -24,10 +25,7 @@ test('first link should show "loading" indicator first time, but not subsequent 
     })
     expect(await disclaimer.count()).toBe(1)
   }
-  await clickFirstLinkToGetToDetailPage()
-  const loadingIndicator = page.locator('post div', { hasText: 'Loading...' })
-  expect(await loadingIndicator.count()).toBe(1)
-  const checkForPageContents = async () => {
+  const assertDetailPageContents = async () => {
     const firstLinkTitle = page.locator('post div h1')
     expect(await firstLinkTitle.innerText()).toContain(
       'sunt aut facere repellat provident occaecati excepturi optio reprehenderit',
@@ -37,12 +35,21 @@ test('first link should show "loading" indicator first time, but not subsequent 
       'quia et suscipit suscipit recusandae consequuntur expedita et cum reprehenderit molestiae ut ut quas totam nostrum rerum est autem sunt rem eveniet architecto',
     )
   }
-  await checkForPageContents()
+
+  // loading indicator should be present on first detail load
+  await clickFirstLinkToGetToDetailPage()
+  const loadingIndicator = page.locator('post div', { hasText: 'Loading...' })
+  expect(await loadingIndicator.count()).toBe(1)
+  await assertDetailPageContents()
+
+  // back to main page (without browser reload!)
   const backLink = page.locator('a', { hasText: 'Back' })
   await backLink.click()
   const title = page.locator('h1')
   expect(await title.innerText()).toContain('Posts')
+
+  // loading indicator should not be present on second detail load
   await clickFirstLinkToGetToDetailPage()
   expect(await loadingIndicator.count()).toBe(0)
-  await checkForPageContents()
+  await assertDetailPageContents()
 })
