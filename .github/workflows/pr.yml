@@ -77,6 +77,8 @@ jobs:
           cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install
       - name: Start Nx Agent ${{ matrix.agent }}
         run: npx nx-cloud start-agent
   format:
