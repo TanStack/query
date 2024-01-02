@@ -38,6 +38,8 @@ jobs:
           cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install
       - name: Get appropriate base and head commits for `nx affected` commands
         uses: nrwl/nx-set-shas@v3
         with:
