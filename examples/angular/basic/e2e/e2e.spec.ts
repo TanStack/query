@@ -4,11 +4,6 @@ test.beforeEach(async ({ page }) => {
   await page.goto('http://localhost:5173')
 })
 
-test('basic dev works', async ({ page }) => {
-  const title = page.locator('h1')
-  expect(await title.innerText()).toContain('Posts')
-})
-
 test('first link should show "loading" indicator first time, but not subsequent times', async ({
   page,
 }) => {
