@@ -6,7 +6,9 @@
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "test": "playwright test",
+    "test:report": "playwright show-report"
   },
   "license": "MIT",
   "dependencies": {

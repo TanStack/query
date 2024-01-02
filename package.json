@@ -38,6 +38,7 @@
   "namespace": "@tanstack",
   "devDependencies": {
     "@commitlint/parse": "^18.4.3",
+    "@playwright/test": "^1.40.1",
     "@solidjs/testing-library": "^0.8.5",
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.1.2",
