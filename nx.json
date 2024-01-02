@@ -59,6 +59,11 @@
       "inputs": ["default", "^public"],
       "outputs": ["{projectRoot}/build", "{projectRoot}/dist"],
       "cache": true
+    },
+    "test:example": {
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^public", "{projectRoot}/e2e"],
+      "cache": true
     }
   }
 }
