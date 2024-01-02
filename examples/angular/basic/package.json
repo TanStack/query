@@ -5,10 +5,10 @@
   "scripts": {
     "start": "vite",
     "dev": "vite",
-    "build": "vite build",
+    "build:example": "vite build",
     "serve": "vite preview",
-    "test": "playwright test",
-    "test:report": "playwright show-report"
+    "test:example": "CI=true playwright test",
+    "test:example:report": "playwright show-report"
   },
   "license": "MIT",
   "dependencies": {
