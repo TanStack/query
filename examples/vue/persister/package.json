@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build:example": "vite build",
     "build:dev": "vite build -m development",
     "serve": "vite preview"
   },

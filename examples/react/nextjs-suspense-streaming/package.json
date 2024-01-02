@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build:example": "next build",
     "start": "next start"
   },
   "dependencies": {

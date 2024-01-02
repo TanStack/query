@@ -4,7 +4,7 @@
   "scripts": {
     "start": "vite",
     "dev": "vite",
-    "build": "vite build",
+    "build:example": "vite build",
     "serve": "vite preview"
   },
   "license": "MIT",

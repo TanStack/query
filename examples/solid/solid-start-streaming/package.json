@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vinxi dev",
-    "build": "vinxi build",
+    "build:example": "vinxi build",
     "start": "node ./.output/server/index.mjs"
   },
   "dependencies": {

@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "nuxi dev",
-    "build": "nuxi build",
+    "build:example": "nuxi build",
     "start": "node .output/server/index.mjs"
   },
   "dependencies": {

@@ -4,7 +4,7 @@
   "main": "src/index.tsx",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build:example": "tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
