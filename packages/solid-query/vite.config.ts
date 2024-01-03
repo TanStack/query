@@ -7,9 +7,10 @@ export default defineConfig({
     name: 'solid-query',
     dir: './src',
     watch: false,
-    setupFiles: ['test-setup.ts'],
     environment: 'jsdom',
-    coverage: { provider: 'istanbul', include: ['src/**/*'] },
+    setupFiles: ['test-setup.ts'],
+    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
+    typecheck: { enabled: true },
     server: {
       deps: {
         // https://github.com/solidjs/solid-testing-library#known-issues
