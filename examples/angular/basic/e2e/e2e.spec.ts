@@ -1,7 +1,14 @@
 import { test, expect } from '@playwright/test'
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page, context }) => {
+  const cdpSession = await context.newCDPSession(page)
   await page.goto('http://localhost:5173')
+  await cdpSession.send('Network.emulateNetworkConditions', {
+    downloadThroughput: ((1.6 * 1000 * 1000) / 8) * 0.9,
+    uploadThroughput: ((750 * 1000) / 8) * 0.9,
+    latency: 150 * 3.75,
+    offline: false,
+  })
 })
 
 test('first link should show "loading" indicator first time, but not subsequent times', async ({
