@@ -1,4 +1,4 @@
-import { defineConfig, mergeConfig } from 'vitest/config'
+import { defineConfig, mergeConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { tanstackBuildConfig } from '@tanstack/config/build'
 

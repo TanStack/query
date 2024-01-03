@@ -6,7 +6,7 @@ const config = defineConfig({
   plugins: [react()],
   test: {
     name: 'react-query',
-    include: ['./src'],
+    dir: './src',
     watch: false,
     environment: 'jsdom',
     setupFiles: ['test-setup.ts'],
