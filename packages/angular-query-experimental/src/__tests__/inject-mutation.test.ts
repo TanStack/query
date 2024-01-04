@@ -37,6 +37,7 @@ describe('injectMutation', () => {
       })
 
       mutation.mutate()
+      vi.advanceTimersByTime(1)
       expect(mutation.status()).toBe('pending')
     })
   })
@@ -56,7 +57,7 @@ describe('injectMutation', () => {
     })
   })
 
-  test('should change state after invoking mutate', () => {
+  test('should change state after invoking mutate', async () => {
     const result = 'Mock data'
 
     const mutation = TestBed.runInInjectionContext(() => {
@@ -66,6 +67,7 @@ describe('injectMutation', () => {
     })
 
     mutation.mutate(result)
+    vi.advanceTimersByTime(1)
 
     expectSignals(mutation, {
       isIdle: false,
@@ -158,6 +160,8 @@ describe('injectMutation', () => {
     expect(mutation.isError()).toBe(true)
 
     mutation.reset()
+
+    await resolveMutations()
 
     expectSignals(mutation, {
       isIdle: true,

@@ -6,6 +6,7 @@ import {
   inject,
   signal,
 } from '@angular/core'
+import { notifyManager } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
 import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
 import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
@@ -78,7 +79,9 @@ export function createBaseQuery<
   )
 
   // observer.trackResult is not used as this optimization is not needed for Angular
-  const unsubscribe = observer.subscribe(resultSignal.set)
+  const unsubscribe = observer.subscribe(
+    notifyManager.batchCalls((val) => resultSignal.set(val)),
+  )
   destroyRef.onDestroy(unsubscribe)
 
   return signalProxy(resultSignal)

@@ -1,5 +1,5 @@
 import { DestroyRef, computed, effect, inject, signal } from '@angular/core'
-import { MutationObserver } from '@tanstack/query-core'
+import { MutationObserver, notifyManager } from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { signalProxy } from './signal-proxy'
 import { injectQueryClient } from './inject-query-client'
@@ -44,7 +44,9 @@ export function injectMutation<
 
     const result = signal(observer.getCurrentResult())
 
-    const unsubscribe = observer.subscribe(result.set)
+    const unsubscribe = observer.subscribe(
+      notifyManager.batchCalls((val) => result.set(val)),
+    )
 
     destroyRef.onDestroy(unsubscribe)
 
