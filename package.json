@@ -39,7 +39,7 @@
   "devDependencies": {
     "@commitlint/parse": "^18.4.3",
     "@solidjs/testing-library": "^0.8.5",
-    "@tanstack/config": "^0.1.1",
+    "@tanstack/config": "^0.1.2",
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.1.2",
     "@types/current-git-branch": "^1.1.6",

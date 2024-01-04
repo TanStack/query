@@ -20,8 +20,8 @@ importers:
         specifier: ^0.8.5
         version: 0.8.5(@solidjs/router@0.10.5)(solid-js@1.8.7)
       '@tanstack/config':
-        specifier: ^0.1.1
-        version: 0.1.1(@types/node@18.19.3)(esbuild@0.19.10)(typescript@5.2.2)(vite@5.0.10)
+        specifier: ^0.1.2
+        version: 0.1.2(@types/node@18.19.3)(esbuild@0.19.10)(typescript@5.2.2)(vite@5.0.10)
       '@testing-library/jest-dom':
         specifier: ^6.1.5
         version: 6.1.5(vitest@1.1.0)
@@ -9394,8 +9394,8 @@ packages:
       tslib: 2.6.2
     dev: true
 
-  /@tanstack/config@0.1.1(@types/node@18.19.3)(esbuild@0.19.10)(typescript@5.2.2)(vite@5.0.10):
-    resolution: {integrity: sha512-g/2SPXGWh6jZ3mHoT1Kq/fXqvZx/q9pmhGYSKxwXqGR0isAm3BKbuB8/hrD5XBTdPoRqBUDQA81RUUGfegK1xw==}
+  /@tanstack/config@0.1.2(@types/node@18.19.3)(esbuild@0.19.10)(typescript@5.2.2)(vite@5.0.10):
+    resolution: {integrity: sha512-Ygd9dA+zN0YG5B/ZplileTPS1DExtahUhYHRQvr+TBRJRRaO7uL7GujJbJEL7QPgbUUmRKTbPh8WA37k0eiDyA==}
     engines: {node: '>=18'}
     hasBin: true
     dependencies:
