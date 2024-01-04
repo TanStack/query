@@ -24,3 +24,7 @@ Same structure as [useQueries](../reference/useQueries), except that for each `q
 - `isPlaceholderData` is missing
 - `status` is always `success`
   - the derived flags are set accordingly.
+
+**Caveat**
+
+Keep in mind that only after all the queries have finished will the suspended component re-mount. Hence, if a query has gone stale in the time it took for all the queries to complete, this will be fetched again at re-mount. To avoid this make sure to set a high enough `staleTime`.
