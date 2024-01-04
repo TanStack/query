@@ -25,7 +25,6 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "strictNullChecks": true,
     "target": "ES2020"
   },
   "include": [".eslintrc.cjs", "prettier.config.js", "scripts"]
