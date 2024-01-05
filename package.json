@@ -38,7 +38,7 @@
   "namespace": "@tanstack",
   "devDependencies": {
     "@solidjs/testing-library": "^0.8.5",
-    "@tanstack/config": "^0.1.6",
+    "@tanstack/config": "^0.1.7",
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.1.2",
     "@types/eslint": "^8.56.0",
