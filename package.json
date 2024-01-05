@@ -69,7 +69,6 @@
     "sherif": "^0.7.0",
     "solid-js": "^1.8.7",
     "tsup": "^8.0.1",
-    "type-fest": "^4.8.3",
     "typescript": "5.2.2",
     "vite": "^5.0.10",
     "vitest": "^1.1.0"

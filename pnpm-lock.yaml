@@ -109,9 +109,6 @@ importers:
       tsup:
         specifier: ^8.0.1
         version: 8.0.1(typescript@5.2.2)
-      type-fest:
-        specifier: ^4.8.3
-        version: 4.8.3
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -1448,7 +1445,7 @@ importers:
         version: 18.2.0(react@18.2.0)
       react-scripts:
         specifier: ^4.0.3
-        version: 4.0.3(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(react@18.2.0)(type-fest@4.8.3)(typescript@5.2.2)
+        version: 4.0.3(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(react@18.2.0)(typescript@5.2.2)
 
   integrations/react-cra5:
     dependencies:
@@ -1466,7 +1463,7 @@ importers:
         version: 18.2.0(react@18.2.0)
       react-scripts:
         specifier: ^5.0.1
-        version: 5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(esbuild@0.19.10)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(react@18.2.0)(type-fest@4.8.3)(typescript@5.2.2)
+        version: 5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(esbuild@0.19.10)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(react@18.2.0)(typescript@5.2.2)
 
   integrations/react-next:
     dependencies:
@@ -7930,7 +7927,7 @@ packages:
     requiresBuild: true
     dev: true
 
-  /@pmmmwh/react-refresh-webpack-plugin@0.4.3(react-refresh@0.8.3)(type-fest@4.8.3)(webpack-dev-server@3.11.1)(webpack@4.44.2):
+  /@pmmmwh/react-refresh-webpack-plugin@0.4.3(react-refresh@0.8.3)(webpack-dev-server@3.11.1)(webpack@4.44.2):
     resolution: {integrity: sha512-br5Qwvh8D2OQqSXpd1g/xqXKnK0r+Jz6qVKBbWmpUcrbGOxUrf39V5oZ1876084CGn18uMdR5uvPqBv9UqtBjQ==}
     engines: {node: '>= 10.x'}
     peerDependencies:
@@ -7963,12 +7960,11 @@ packages:
       react-refresh: 0.8.3
       schema-utils: 2.7.1
       source-map: 0.7.4
-      type-fest: 4.8.3
       webpack: 4.44.2
       webpack-dev-server: 3.11.1(webpack@4.44.2)
     dev: false
 
-  /@pmmmwh/react-refresh-webpack-plugin@0.5.11(react-refresh@0.11.0)(type-fest@4.8.3)(webpack-dev-server@4.15.1)(webpack@5.89.0):
+  /@pmmmwh/react-refresh-webpack-plugin@0.5.11(react-refresh@0.11.0)(webpack-dev-server@4.15.1)(webpack@5.89.0):
     resolution: {integrity: sha512-7j/6vdTym0+qZ6u4XbSAxrWBGYSdCfTzySkj7WAFgDLmSyWlOrWvpyzxlFh5jtw9dn0oL/jtW+06XfFiisN3JQ==}
     engines: {node: '>= 10.13'}
     peerDependencies:
@@ -8004,7 +8000,6 @@ packages:
       react-refresh: 0.11.0
       schema-utils: 3.3.0
       source-map: 0.7.4
-      type-fest: 4.8.3
       webpack: 5.89.0(esbuild@0.19.10)
       webpack-dev-server: 4.15.1(webpack@5.89.0)
     dev: false
@@ -25718,7 +25713,7 @@ packages:
       react: 18.2.0
     dev: false
 
-  /react-scripts@4.0.3(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(react@18.2.0)(type-fest@4.8.3)(typescript@5.2.2):
+  /react-scripts@4.0.3(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(react@18.2.0)(typescript@5.2.2):
     resolution: {integrity: sha512-S5eO4vjUzUisvkIPB7jVsKtuH2HhWcASREYWHAQ1FP5HyCv3xgn+wpILAEWkmy+A+tTNbSZClhxjT3qz6g4L1A==}
     engines: {node: ^10.12.0 || >=12.0.0}
     hasBin: true
@@ -25731,7 +25726,7 @@ packages:
         optional: true
     dependencies:
       '@babel/core': 7.12.3
-      '@pmmmwh/react-refresh-webpack-plugin': 0.4.3(react-refresh@0.8.3)(type-fest@4.8.3)(webpack-dev-server@3.11.1)(webpack@4.44.2)
+      '@pmmmwh/react-refresh-webpack-plugin': 0.4.3(react-refresh@0.8.3)(webpack-dev-server@3.11.1)(webpack@4.44.2)
       '@svgr/webpack': 5.5.0
       '@typescript-eslint/eslint-plugin': 5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.56.0)(typescript@5.2.2)
       '@typescript-eslint/parser': 5.62.0(eslint@8.56.0)(typescript@5.2.2)
@@ -25814,7 +25809,7 @@ packages:
       - webpack-plugin-serve
     dev: false
 
-  /react-scripts@5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(esbuild@0.19.10)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(react@18.2.0)(type-fest@4.8.3)(typescript@5.2.2):
+  /react-scripts@5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(esbuild@0.19.10)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(react@18.2.0)(typescript@5.2.2):
     resolution: {integrity: sha512-8VAmEm/ZAwQzJ+GOMLbBsTdDKOpuZh7RPs0UymvBR2vRk4iZWCskjbFnxqjrzoIvlNNRZ3QJFx6/qDSi6zSnaQ==}
     engines: {node: '>=14.0.0'}
     hasBin: true
@@ -25827,7 +25822,7 @@ packages:
         optional: true
     dependencies:
       '@babel/core': 7.23.6
-      '@pmmmwh/react-refresh-webpack-plugin': 0.5.11(react-refresh@0.11.0)(type-fest@4.8.3)(webpack-dev-server@4.15.1)(webpack@5.89.0)
+      '@pmmmwh/react-refresh-webpack-plugin': 0.5.11(react-refresh@0.11.0)(webpack-dev-server@4.15.1)(webpack@5.89.0)
       '@svgr/webpack': 5.5.0
       babel-jest: 27.5.1(@babel/core@7.23.6)
       babel-loader: 8.3.0(@babel/core@7.23.6)(webpack@5.89.0)
@@ -29069,10 +29064,6 @@ packages:
     resolution: {integrity: sha512-tLq3bSNx+xSpwvAJnzrK0Ep5CLNWjvFTOp71URMaAEWBfRb9nnJiBoUe0tF8bI4ZFO3omgBR6NvnbzVUT3Ly4g==}
     engines: {node: '>=14.16'}
     dev: false
-
-  /type-fest@4.8.3:
-    resolution: {integrity: sha512-//BaTm14Q/gHBn09xlnKNqfI8t6bmdzx2DXYfPBNofN0WUybCEUDcbCWcTa0oF09lzLjZgPphXAsvRiMK0V6Bw==}
-    engines: {node: '>=16'}
 
   /type-is@1.6.18:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}
