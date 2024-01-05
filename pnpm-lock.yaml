@@ -8503,7 +8503,7 @@ packages:
       rollup:
         optional: true
     dependencies:
-      '@rollup/pluginutils': 5.1.0(rollup@4.6.0)
+      '@rollup/pluginutils': 5.0.5(rollup@4.6.0)
       commondir: 1.0.1
       estree-walker: 2.0.2
       glob: 8.1.0
@@ -8521,7 +8521,7 @@ packages:
       rollup:
         optional: true
     dependencies:
-      '@rollup/pluginutils': 5.1.0(rollup@4.6.0)
+      '@rollup/pluginutils': 5.0.5(rollup@4.6.0)
       estree-walker: 2.0.2
       magic-string: 0.30.5
       rollup: 4.6.0
@@ -8536,7 +8536,7 @@ packages:
       rollup:
         optional: true
     dependencies:
-      '@rollup/pluginutils': 5.1.0(rollup@4.6.0)
+      '@rollup/pluginutils': 5.0.5(rollup@4.6.0)
       rollup: 4.6.0
 
   /@rollup/plugin-node-resolve@11.2.1(rollup@2.79.1):
@@ -8563,7 +8563,7 @@ packages:
       rollup:
         optional: true
     dependencies:
-      '@rollup/pluginutils': 5.1.0(rollup@4.6.0)
+      '@rollup/pluginutils': 5.0.5(rollup@4.6.0)
       '@types/resolve': 1.20.2
       deepmerge: 4.3.1
       is-builtin-module: 3.2.1
@@ -8614,7 +8614,7 @@ packages:
       rollup:
         optional: true
     dependencies:
-      '@rollup/pluginutils': 5.1.0(rollup@4.6.0)
+      '@rollup/pluginutils': 5.0.5(rollup@4.6.0)
       magic-string: 0.30.5
       rollup: 4.6.0
     dev: false
@@ -8643,7 +8643,7 @@ packages:
       rollup:
         optional: true
     dependencies:
-      '@rollup/pluginutils': 5.1.0(rollup@4.6.0)
+      '@rollup/pluginutils': 5.0.5(rollup@4.6.0)
       rollup: 4.6.0
     dev: false
 
@@ -8692,7 +8692,6 @@ packages:
       estree-walker: 2.0.2
       picomatch: 2.3.1
       rollup: 4.6.0
-    dev: false
 
   /@rollup/pluginutils@5.1.0(rollup@4.6.0):
     resolution: {integrity: sha512-XTIWOPPcpvyKI6L1NHo0lFlCyznUEyPmPY1mc3KpPVDYulHSTvyeLNVW00QTLIAFNhR3kYnJTQHeGqU4M3n09g==}
