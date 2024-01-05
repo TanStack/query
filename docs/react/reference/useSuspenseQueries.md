@@ -27,4 +27,4 @@ Same structure as [useQueries](../reference/useQueries), except that for each `q
 
 **Caveat**
 
-Keep in mind that only after all the queries have finished will the suspended component re-mount. Hence, if a query has gone stale in the time it took for all the queries to complete, this will be fetched again at re-mount. To avoid this make sure to set a high enough `staleTime`.
+Keep in mind that the component will only re-mount after **all queries** have finished loading. Hence, if a query has gone stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid this, make sure to set a high enough `staleTime`.
