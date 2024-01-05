@@ -236,8 +236,10 @@ export function injectQueries<
       )
     })
 
-    const [, getCombinedResult] =
-      observer.getOptimisticResult(defaultedQueries())
+    const [, getCombinedResult] = observer.getOptimisticResult(
+      defaultedQueries(),
+      (options as QueriesObserverOptions<TCombinedResult>).combine,
+    )
 
     const result = signal(getCombinedResult() as any)
 

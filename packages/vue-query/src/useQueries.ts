@@ -292,6 +292,7 @@ export function useQueries<
   )
   const [, getCombinedResult] = observer.getOptimisticResult(
     defaultedQueries.value,
+    (options as QueriesObserverOptions<TCombinedResult>).combine,
   )
   const state = ref(getCombinedResult()) as Ref<TCombinedResult>
 
@@ -307,12 +308,14 @@ export function useQueries<
         unsubscribe = observer.subscribe(() => {
           const [, getCombinedResultRestoring] = observer.getOptimisticResult(
             defaultedQueries.value,
+            (options as QueriesObserverOptions<TCombinedResult>).combine,
           )
           state.value = getCombinedResultRestoring()
         })
         // Subscription would not fire for persisted results
         const [, getCombinedResultPersisted] = observer.getOptimisticResult(
           defaultedQueries.value,
+          (options as QueriesObserverOptions<TCombinedResult>).combine,
         )
         state.value = getCombinedResultPersisted()
       }
@@ -329,6 +332,7 @@ export function useQueries<
       )
       const [, getCombinedResultPersisted] = observer.getOptimisticResult(
         defaultedQueries.value,
+        (options as QueriesObserverOptions<TCombinedResult>).combine,
       )
       state.value = getCombinedResultPersisted()
     },
