@@ -65,8 +65,8 @@ You can use this to explicitly persist the cache at the moment(s) you choose.
 persistQueryClientSave({
   queryClient,
   persister,
-  buster = '',
-  dehydrateOptions = undefined,
+  buster: '',
+  dehydrateOptions: undefined,
 })
 ```
 
@@ -81,8 +81,8 @@ Runs `persistQueryClientSave` whenever the cache changes for your `queryClient`.
 persistQueryClientSubscribe({
   queryClient,
   persister,
-  buster = '',
-  dehydrateOptions = undefined,
+  buster: '',
+  dehydrateOptions: undefined,
 })
 ```
 
@@ -97,9 +97,9 @@ You can use this to restore the cache at moment(s) you choose.
 persistQueryClientRestore({
   queryClient,
   persister,
-  maxAge = 1000 * 60 * 60 * 24, // 24 hours
-  buster = '',
-  hydrateOptions = undefined,
+  maxAge: 1000 * 60 * 60 * 24, // 24 hours
+  buster: '',
+  hydrateOptions: undefined,
 })
 ```
 
@@ -116,10 +116,10 @@ This functionality is preserved from version 3.x.
 persistQueryClient({
   queryClient,
   persister,
-  maxAge = 1000 * 60 * 60 * 24, // 24 hours
-  buster = '',
-  hydrateOptions = undefined,
-  dehydrateOptions = undefined,
+  maxAge: 1000 * 60 * 60 * 24, // 24 hours
+  buster: '',
+  hydrateOptions: undefined,
+  dehydrateOptions: undefined,
 })
 ```
 
