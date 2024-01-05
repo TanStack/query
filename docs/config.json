@@ -304,6 +304,10 @@
               "to": "react/eslint/exhaustive-deps"
             },
             {
+              "label": "No deprecated options",
+              "to": "react/eslint/no-deprecated-options"
+            },
+            {
               "label": "Prefer object syntax",
               "to": "react/eslint/prefer-query-object-syntax"
             },
