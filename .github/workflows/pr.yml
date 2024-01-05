@@ -54,6 +54,8 @@ jobs:
         run: npx nx-cloud stop-all-agents
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
+        with:
+          directory: packages
   agents:
     name: Nx Cloud - Agents
     runs-on: ubuntu-latest
