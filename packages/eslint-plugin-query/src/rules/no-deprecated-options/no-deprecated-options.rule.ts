@@ -6,13 +6,19 @@ import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
 const ON_SUCCESS = 'onSuccess'
 const ON_ERROR = 'onError'
 const ON_SETTLED = 'onSettled'
+const IS_DATA_EQUAL = 'isDataEqual'
 
-const CALLBACKS = [ON_SUCCESS, ON_ERROR, ON_SETTLED]
+const DEPRECATED_OPTIONS = [
+  ON_SUCCESS,
+  ON_ERROR,
+  ON_SETTLED,
+  IS_DATA_EQUAL,
+] as const
 
-const QUERY_CALLS = ['useQuery']
+const QUERY_CALLS = ['useQuery' as const]
 
 const messages = {
-  noCallbacks: `The following callbacks will be removed in the next major version: {{callbacks}}`,
+  noDeprecatedOptions: `Option \`{{option}}\` will be removed in the next major version`,
 }
 
 type MessageKey = keyof typeof messages
@@ -25,7 +31,7 @@ export const rule: TSESLint.RuleModule<MessageKey, readonly unknown[]> =
     meta: {
       type: 'problem',
       docs: {
-        description: 'Makes sure that deprecated callbacks are not used',
+        description: 'Disallows deprecated options',
         recommended: 'error',
       },
       messages: messages,
@@ -79,7 +85,7 @@ export const rule: TSESLint.RuleModule<MessageKey, readonly unknown[]> =
                 context: context,
                 callNode: node,
                 expression: referencedCallExpression.body,
-                messageId: 'noCallbacks',
+                messageId: 'noDeprecatedOptions',
               })
             }
 
@@ -96,7 +102,7 @@ export const rule: TSESLint.RuleModule<MessageKey, readonly unknown[]> =
                 context: context,
                 callNode: node,
                 expression: stmt.argument,
-                messageId: 'noCallbacks',
+                messageId: 'noDeprecatedOptions',
               })
             }
 
@@ -116,7 +122,7 @@ export const rule: TSESLint.RuleModule<MessageKey, readonly unknown[]> =
                 context: context,
                 callNode: node,
                 expression: referencedNode,
-                messageId: 'noCallbacks',
+                messageId: 'noDeprecatedOptions',
               })
             }
           }
@@ -125,7 +131,7 @@ export const rule: TSESLint.RuleModule<MessageKey, readonly unknown[]> =
             context: context,
             callNode: node,
             expression: firstArgument,
-            messageId: 'noCallbacks',
+            messageId: 'noDeprecatedOptions',
           })
         },
       }
@@ -140,21 +146,21 @@ function runCheckOnNode(params: {
 }) {
   const { context, expression, messageId, callNode } = params
 
-  const callbacks = CALLBACKS.filter((callback) =>
-    [expression, ...callNode.arguments].some(
-      (node) =>
-        node.type === AST_NODE_TYPES.ObjectExpression &&
-        ASTUtils.findPropertyWithIdentifierKey(node.properties, callback),
-    ),
-  )
+  const nodes = new Set([expression, ...callNode.arguments])
 
-  if (callbacks.length > 0) {
-    context.report({
-      node: callNode,
-      messageId,
-      data: {
-        callbacks: callbacks.join(', '),
-      },
-    })
+  for (const node of nodes) {
+    for (const option of DEPRECATED_OPTIONS) {
+      if (node.type !== AST_NODE_TYPES.ObjectExpression) {
+        continue
+      }
+
+      const property = ASTUtils.findPropertyWithIdentifierKey(
+        node.properties,
+        option,
+      )
+      if (property) {
+        context.report({ node: property, messageId, data: { option } })
+      }
+    }
   }
 }

@@ -145,28 +145,35 @@ ruleTester.run(name, rule, {
         import { useQuery } from "@tanstack/react-query";
         useQuery({ queryKey, queryFn, enabled, onSuccess: () => {} });
       `,
-      errors: [{ messageId: 'noCallbacks' }],
+      errors: [{ messageId: 'noDeprecatedOptions' }],
     },
     {
       code: normalizeIndent`
         import { useQuery } from "@tanstack/react-query";
         useQuery({ queryKey, queryFn, enabled, onError: () => {} });
       `,
-      errors: [{ messageId: 'noCallbacks' }],
+      errors: [{ messageId: 'noDeprecatedOptions' }],
     },
     {
       code: normalizeIndent`
         import { useQuery } from "@tanstack/react-query";
         useQuery({ queryKey, queryFn, enabled, onSettled: () => {} });
       `,
-      errors: [{ messageId: 'noCallbacks' }],
+      errors: [{ messageId: 'noDeprecatedOptions' }],
+    },
+    {
+      code: normalizeIndent`
+        import { useQuery } from "@tanstack/react-query";
+        useQuery({ queryKey, queryFn, enabled, isDataEqual: () => {} });
+      `,
+      errors: [{ messageId: 'noDeprecatedOptions' }],
     },
     {
       code: normalizeIndent`
         import { useQuery } from "@tanstack/react-query";
         useQuery(queryKey, queryFn, { enabled, onSuccess: () => {} });
       `,
-      errors: [{ messageId: 'noCallbacks' }],
+      errors: [{ messageId: 'noDeprecatedOptions' }],
     },
     {
       code: normalizeIndent`
@@ -174,7 +181,7 @@ ruleTester.run(name, rule, {
         const getQuery = () => ({ queryKey: ['foo'], onSuccess: () => {} })
         useQuery(getQuery())
       `,
-      errors: [{ messageId: 'noCallbacks' }],
+      errors: [{ messageId: 'noDeprecatedOptions' }],
     },
 
     {
@@ -182,14 +189,14 @@ ruleTester.run(name, rule, {
         import { useQuery } from "@tanstack/react-query";
         useQuery(['data'], () => fetchData(), { enabled: false, onSuccess: () => {} });
       `,
-      errors: [{ messageId: 'noCallbacks' }],
+      errors: [{ messageId: 'noDeprecatedOptions' }],
     },
     {
       code: normalizeIndent`
         import { useQuery } from "@tanstack/react-query";
         useQuery(queryKey, { queryFn, enabled, onSuccess: () => {} });
       `,
-      errors: [{ messageId: 'noCallbacks' }],
+      errors: [{ messageId: 'noDeprecatedOptions' }],
     },
 
     {
@@ -208,7 +215,7 @@ ruleTester.run(name, rule, {
       };
       useQuery(getQuery(x));
       `,
-      errors: [{ messageId: 'noCallbacks' }],
+      errors: [{ messageId: 'noDeprecatedOptions' }],
     },
     {
       code: normalizeIndent`
@@ -223,7 +230,7 @@ ruleTester.run(name, rule, {
       };
       useQuery(getQuery(x));
       `,
-      errors: [{ messageId: 'noCallbacks' }],
+      errors: [{ messageId: 'noDeprecatedOptions' }],
     },
     {
       code: normalizeIndent`
@@ -243,10 +250,12 @@ ruleTester.run(name, rule, {
       `,
       errors: [
         {
-          messageId: 'noCallbacks',
-          data: {
-            callbacks: 'onSuccess, onError',
-          },
+          messageId: 'noDeprecatedOptions',
+          data: { option: 'onSuccess' },
+        },
+        {
+          messageId: 'noDeprecatedOptions',
+          data: { option: 'onError' },
         },
       ],
     },
