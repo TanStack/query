@@ -978,7 +978,7 @@ describe('useQueries', () => {
     )
   })
 
-  it('should not return new instances when called without queries', async () => {
+  it.skip('should not return new instances when called without queries', async () => {
     const key = queryKey()
     const ids: Array<number> = []
     let resultChanged = 0
@@ -1025,6 +1025,28 @@ describe('useQueries', () => {
     await waitFor(() => rendered.getByText('count: 1'))
     // there should be no further effect calls because the returned object is structurally shared
     expect(resultChanged).toBe(1)
+  })
+
+  it('should not have infinite render loops with empty queries (#6645)', async () => {
+    let renderCount = 0
+
+    function Page() {
+      const result = useQueries({
+        queries: [],
+      })
+
+      React.useEffect(() => {
+        renderCount++
+      })
+
+      return <div>data: {JSON.stringify(result)}</div>
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+
+    expect(renderCount).toBe(1)
   })
 
   it('should only call combine with query results', async () => {

@@ -112,11 +112,7 @@ export class QueriesObserver<
         (observer, index) => observer !== prevObservers[index],
       )
 
-      if (
-        prevObservers.length === newObservers.length &&
-        !hasIndexChange &&
-        newObservers.length > 0
-      ) {
+      if (prevObservers.length === newObservers.length && !hasIndexChange) {
         return
       }
 
