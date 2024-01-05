@@ -17,7 +17,7 @@ const messages = {
 
 type MessageKey = keyof typeof messages
 
-export const name = 'no-callbacks'
+export const name = 'no-deprecated-options'
 
 export const rule: TSESLint.RuleModule<MessageKey, readonly unknown[]> =
   createRule({

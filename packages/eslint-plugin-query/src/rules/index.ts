@@ -1,5 +1,5 @@
 import * as exhaustiveDeps from './exhaustive-deps/exhaustive-deps.rule'
-import * as noCallbacks from './no-callbacks/no-callbacks.rule'
+import * as noCallbacks from './no-deprecated-options/no-deprecated-options.rule'
 import * as preferObjectSyntax from './prefer-query-object-syntax/prefer-query-object-syntax'
 import * as stableQueryClient from './stable-query-client/stable-query-client.rule'
 
