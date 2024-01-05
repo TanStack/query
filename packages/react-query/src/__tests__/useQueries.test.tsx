@@ -1167,4 +1167,46 @@ describe('useQueries', () => {
     // no further re-render because data didn't change
     expect(results.length).toBe(length)
   })
+
+  it('should not have stale closures with combine (#6648)', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const [count, setCount] = React.useState(0)
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: key,
+              queryFn: () => Promise.resolve('result'),
+            },
+          ],
+          combine: (results) => {
+            return {
+              count,
+              res: results.map((res) => res.data).join(','),
+            }
+          },
+        },
+        queryClient,
+      )
+
+      return (
+        <div>
+          <div>
+            data: {String(queries.count)} {queries.res}
+          </div>
+          <button onClick={() => setCount((c) => c + 1)}>inc</button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitFor(() => rendered.getByText('data: 0 result'))
+
+    fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
+
+    await waitFor(() => rendered.getByText('data: 1 result'))
+  })
 })

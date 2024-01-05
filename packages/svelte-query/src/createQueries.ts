@@ -256,7 +256,10 @@ export function createQueries<
     // @ts-ignore svelte-check thinks this is unused
     ([$result, $defaultedQueriesStore]) => {
       const [rawResult, combineResult, trackResult] =
-        observer.getOptimisticResult($defaultedQueriesStore)
+        observer.getOptimisticResult(
+          $defaultedQueriesStore,
+          (options as QueriesObserverOptions<TCombinedResult>).combine,
+        )
       $result = rawResult
       return combineResult(trackResult())
     },

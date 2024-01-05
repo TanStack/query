@@ -239,13 +239,23 @@ export function createQueries<
   )
 
   const [state, setState] = createStore<TCombinedResult>(
-    observer.getOptimisticResult(defaultedQueries())[1](),
+    observer.getOptimisticResult(
+      defaultedQueries(),
+      (queriesOptions() as QueriesObserverOptions<TCombinedResult>).combine,
+    )[1](),
   )
 
   createRenderEffect(
     on(
       () => queriesOptions().queries.length,
-      () => setState(observer.getOptimisticResult(defaultedQueries())[1]()),
+      () =>
+        setState(
+          observer.getOptimisticResult(
+            defaultedQueries(),
+            (queriesOptions() as QueriesObserverOptions<TCombinedResult>)
+              .combine,
+          )[1](),
+        ),
     ),
   )
 

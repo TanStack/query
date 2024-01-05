@@ -22,10 +22,14 @@ function replaceAt<T>(array: Array<T>, index: number, value: T): Array<T> {
 
 type QueriesObserverListener = (result: Array<QueryObserverResult>) => void
 
+type CombineFn<TCombinedResult> = (
+  result: Array<QueryObserverResult>,
+) => TCombinedResult
+
 export interface QueriesObserverOptions<
   TCombinedResult = Array<QueryObserverResult>,
 > {
-  combine?: (result: Array<QueryObserverResult>) => TCombinedResult
+  combine?: CombineFn<TCombinedResult>
 }
 
 export class QueriesObserver<
@@ -55,7 +59,7 @@ export class QueriesObserver<
 
   #setResult(value: Array<QueryObserverResult>) {
     this.#result = value
-    this.#combinedResult = this.#combineResult(value)
+    this.#combinedResult = this.#combineResult(value, this.#options?.combine)
   }
 
   protected onSubscribe(): void {
@@ -151,6 +155,7 @@ export class QueriesObserver<
 
   getOptimisticResult(
     queries: Array<QueryObserverOptions>,
+    combine: CombineFn<TCombinedResult> | undefined,
   ): [
     rawResult: Array<QueryObserverResult>,
     combineResult: (r?: Array<QueryObserverResult>) => TCombinedResult,
@@ -164,7 +169,7 @@ export class QueriesObserver<
     return [
       result,
       (r?: Array<QueryObserverResult>) => {
-        return this.#combineResult(r ?? result)
+        return this.#combineResult(r ?? result, combine)
       },
       () => {
         return matches.map((match, index) => {
@@ -177,8 +182,10 @@ export class QueriesObserver<
     ]
   }
 
-  #combineResult(input: Array<QueryObserverResult>): TCombinedResult {
-    const combine = this.#options?.combine
+  #combineResult(
+    input: Array<QueryObserverResult>,
+    combine: CombineFn<TCombinedResult> | undefined,
+  ): TCombinedResult {
     if (combine) {
       return replaceEqualDeep(this.#combinedResult, combine(input))
     }
