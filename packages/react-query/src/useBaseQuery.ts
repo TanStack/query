@@ -12,7 +12,12 @@ import {
 } from './errorBoundaryUtils'
 import { ensureStaleTime, fetchOptimistic, shouldSuspend } from './suspense'
 import type { UseBaseQueryOptions } from './types'
-import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
+import type {
+  QueryClient,
+  QueryKey,
+  QueryObserver,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 
 export function useBaseQuery<
   TQueryFnData,
@@ -30,7 +35,7 @@ export function useBaseQuery<
   >,
   Observer: typeof QueryObserver,
   queryClient?: QueryClient,
-) {
+): QueryObserverResult<TData, TError> {
   if (process.env.NODE_ENV !== 'production') {
     if (typeof options !== 'object' || Array.isArray(options)) {
       throw new Error(
