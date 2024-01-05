@@ -12,8 +12,8 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "lib": ["DOM", "DOM.Iterable", "ES2020"],
-    "module": "ES2020",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "module": "ES2022",
     "moduleResolution": "Bundler",
     "noEmit": true,
     "noImplicitAny": true,
@@ -25,7 +25,6 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "strictNullChecks": true,
     "target": "ES2020"
   },
   "include": [".eslintrc.cjs", "prettier.config.js", "scripts"]
