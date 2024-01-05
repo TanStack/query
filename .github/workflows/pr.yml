@@ -23,7 +23,8 @@ jobs:
     name: Nx Cloud - Main Job
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Setup pnpm
@@ -35,16 +36,12 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - name: Get appropriate base and head commits for `nx affected` commands
+        run: pnpm install --frozen-lockfile --prefer-offline
+      - name: Get base and head commits for `nx affected`
         uses: nrwl/nx-set-shas@v3
         with:
           main-branch-name: 'main'
-      - run: |
-          echo "BASE: ${{ env.NX_BASE }}"
-          echo "HEAD: ${{ env.NX_HEAD }}"
       - name: Start CI Orchestrator
         run: npx nx-cloud start-ci-run
       - name: Run Tests
@@ -76,9 +73,8 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+        run: pnpm install --frozen-lockfile --prefer-offline
       - name: Start Nx Agent ${{ matrix.agent }}
         run: npx nx-cloud start-agent
   format:
@@ -97,9 +93,8 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+        run: pnpm install --frozen-lockfile --prefer-offline
       - name: Run prettier
         run: pnpm run test:format
   knip:
@@ -118,8 +113,7 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+        run: pnpm install --frozen-lockfile --prefer-offline
       - name: Run Knip
         run: pnpm knip

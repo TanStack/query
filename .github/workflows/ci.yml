@@ -23,7 +23,8 @@ jobs:
     if: github.repository == 'TanStack/query'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: '0'
       - name: Setup pnpm
@@ -36,7 +37,7 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+        run: pnpm install --frozen-lockfile --prefer-offline
       - name: Run Tests
         run: pnpm run test:ci
       - name: Publish
