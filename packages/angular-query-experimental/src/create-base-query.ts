@@ -13,7 +13,6 @@ import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
 
 /**
  * Base implementation for `injectQuery` and `injectInfiniteQuery`.
- * @internal
  */
 export function createBaseQuery<
   TQueryFnData,
@@ -60,9 +59,7 @@ export function createBaseQuery<
   >(queryClient, defaultedOptionsSignal())
 
   const resultSignal = signal(
-    observer.getOptimisticResult(
-      queryClient.defaultQueryOptions(defaultedOptionsSignal()),
-    ),
+    observer.getOptimisticResult(defaultedOptionsSignal()),
   )
 
   effect(
