@@ -11,35 +11,46 @@ import type {
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
+  WithRequired,
 } from '@tanstack/query-core'
 import type { MapToSignals } from './signal-proxy'
 
-/** Options for createBaseQuery */
-export type CreateBaseQueryOptions<
+export interface CreateBaseQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+> extends WithRequired<
+    QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+    'queryKey'
+  > {}
 
-/** Result from createBaseQuery */
 export type CreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
   State = QueryObserverResult<TData, TError>,
 > = MapToSignals<State>
-/** Result from createBaseQuery */
 
-/** Options for createQuery */
-export type CreateQueryOptions<
+export interface CreateQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>
+> extends Omit<
+    WithRequired<
+      CreateBaseQueryOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryFnData,
+        TQueryKey
+      >,
+      'queryKey'
+    >,
+    'suspense'
+  > {}
 
-/** Result from createQuery */
 export type CreateQueryResult<
   TData = unknown,
   TError = DefaultError,
@@ -62,26 +73,17 @@ export type CreateInfiniteQueryOptions<
   TPageParam
 >
 
-/** Result from createInfiniteQuery */
 export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = Signal<InfiniteQueryObserverResult<TData, TError>>
 
-/** Options for createBaseQuery with initialData */
-export type DefinedCreateBaseQueryResult<
+export type DefinedCreateQueryResult<
   TData = unknown,
   TError = DefaultError,
   DefinedQueryObserver = DefinedQueryObserverResult<TData, TError>,
 > = MapToSignals<DefinedQueryObserver>
 
-/** Options for createQuery with initialData */
-export type DefinedCreateQueryResult<
-  TData = unknown,
-  TError = DefaultError,
-> = DefinedCreateBaseQueryResult<TData, TError>
-
-/** Options for createMutation */
 export type CreateMutationOptions<
   TData = unknown,
   TError = DefaultError,
