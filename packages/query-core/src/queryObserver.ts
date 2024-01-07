@@ -43,14 +43,6 @@ export class QueryObserver<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends Subscribable<QueryObserverListener<TData, TError>> {
-  options: QueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >
-
   #client: QueryClient
   #currentQuery: Query<TQueryFnData, TError, TQueryData, TQueryKey> = undefined!
   #currentQueryInitialState: QueryState<TQueryData, TError> = undefined!
@@ -76,7 +68,7 @@ export class QueryObserver<
 
   constructor(
     client: QueryClient,
-    options: QueryObserverOptions<
+    public options: QueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
@@ -87,7 +79,6 @@ export class QueryObserver<
     super()
 
     this.#client = client
-    this.options = options
     this.#selectError = null
     this.bindMethods()
     this.setOptions(options)
