@@ -80,10 +80,10 @@ export type QueryCacheNotifyEvent =
 type QueryCacheListener = (event: QueryCacheNotifyEvent) => void
 
 export interface QueryStore {
-  has: (queryKey: string) => boolean
-  set: (queryKey: string, query: Query) => void
-  get: (queryKey: string) => Query | undefined
-  delete: (queryKey: string) => void
+  has: (queryHash: string) => boolean
+  set: (queryHash: string, query: Query) => void
+  get: (queryHash: string) => Query | undefined
+  delete: (queryHash: string) => void
   values: () => IterableIterator<Query>
 }
 
