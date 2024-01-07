@@ -10,7 +10,7 @@ describe('Discriminated union return type', () => {
       queryFn: simpleFetcher,
     }))
 
-    expectTypeOf(query.data).toEqualTypeOf<Signal<string> | Signal<undefined>>()
+    expectTypeOf(query.data).toEqualTypeOf<Signal<string | undefined>>()
   })
 
   test('data should be defined when query is success', () => {

@@ -9,9 +9,7 @@ describe('Discriminated union return type', () => {
       mutationFn: successMutator<string>,
     }))
 
-    expectTypeOf(mutation.data).toEqualTypeOf<
-      Signal<string> | Signal<undefined>
-    >()
+    expectTypeOf(mutation.data).toEqualTypeOf<Signal<string | undefined>>()
   })
 
   test('data should be defined when mutation is success', () => {
@@ -68,6 +66,6 @@ describe('Discriminated union return type', () => {
     if (mutation.isSuccess()) {
       expectTypeOf(mutation.variables).toEqualTypeOf<Signal<string>>()
     }
-    expectTypeOf(mutation.variables).toEqualTypeOf<Signal<string>>()
+    expectTypeOf(mutation.variables).toEqualTypeOf<Signal<string | undefined>>()
   })
 })
