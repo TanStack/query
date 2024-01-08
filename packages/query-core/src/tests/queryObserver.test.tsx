@@ -574,12 +574,12 @@ describe('queryObserver', () => {
       queryKey: key,
       enabled: false,
       queryFn: () => 'data',
-      placeholderData: {},
+      placeholderData: 'placeholder',
     })
 
     const firstData = observer.getCurrentResult().data
 
-    observer.setOptions({ placeholderData: {} })
+    observer.setOptions({ placeholderData: 'placeholder' })
 
     const secondData = observer.getCurrentResult().data
 

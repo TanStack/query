@@ -495,7 +495,7 @@ describe('queryClient', () => {
         Promise.resolve('data')
 
       await expect(
-        queryClient.fetchQuery<StrictData, any, StrictData, StrictQueryKey>({
+        queryClient.fetchQuery<StrictData, any, StrictQueryKey>({
           queryKey: key,
           queryFn: fetchFn,
         }),
@@ -631,7 +631,6 @@ describe('queryClient', () => {
         queryClient.fetchInfiniteQuery<
           StrictData,
           any,
-          StrictData,
           StrictQueryKey,
           number
         >({ queryKey: key, queryFn: fetchFn, initialPageParam: 0 }),
@@ -669,7 +668,6 @@ describe('queryClient', () => {
       await queryClient.prefetchInfiniteQuery<
         StrictData,
         any,
-        StrictData,
         StrictQueryKey,
         number
       >({ queryKey: key, queryFn: fetchFn, initialPageParam: 0 })
@@ -752,7 +750,6 @@ describe('queryClient', () => {
       await queryClient.prefetchQuery<
         StrictData,
         any,
-        StrictData,
         StrictQueryKey
       >({ queryKey: key, queryFn: fetchFn })
 

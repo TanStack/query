@@ -4,6 +4,28 @@ import { createQueryClient, doNotExecute } from './utils'
 import type { Equal, Expect } from './utils'
 
 describe('placeholderData', () => {
+  describe('placeholderData value', () => {
+    it('should be of the same type as query data', () => {
+      doNotExecute(() => {
+        const queryData = { foo: 'bar' }
+
+        new QueryObserver(createQueryClient(), {
+          queryFn: () => queryData,
+          // @ts-ignore-error ts fail to infer TSelectData correctly for bad placeholder assignement, this raise this unrelated error on select.
+          select: (data) => data.foo,
+          // @ts-expect-error
+          placeholderData: 1
+        })
+
+        new QueryObserver(createQueryClient(), {
+          queryFn: () => queryData,
+          select: (data) => data.foo,
+          placeholderData: { foo: 'hello' }
+        })
+      })
+    })
+  })
+
   describe('placeholderData function', () => {
     it('previousQuery should have typed queryKey', () => {
       doNotExecute(() => {
@@ -56,6 +78,21 @@ describe('placeholderData', () => {
               Equal<typeof previousData, QueryData | undefined>
             > = true
             return result ? previousData : undefined
+          },
+        })
+      })
+    })
+
+    it('should have to return the same type as query data', () => {
+      doNotExecute(() => {
+        const queryData = { foo: 'bar' }
+
+        new QueryObserver(createQueryClient(), {
+          queryFn: () => queryData,
+          select: (data) => data.foo,
+          // @ts-expect-error
+          placeholderData: (previousData) => {
+            return { foo: 1 }
           },
         })
       })
