@@ -87,7 +87,7 @@ export function timeUntilStale(updatedAt: number, staleTime?: number): number {
 
 export function matchQuery(
   filters: QueryFilters,
-  query: Query<any, any, any, any>,
+  query: Query<any, any, any>,
 ): boolean {
   const {
     type = 'all',
@@ -167,7 +167,7 @@ export function matchMutation(
 
 export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
   queryKey: TQueryKey,
-  options?: QueryOptions<any, any, any, TQueryKey>,
+  options?: QueryOptions<any, any, TQueryKey>,
 ): string {
   const hashFn = options?.queryKeyHashFn || hashKey
   return hashFn(queryKey)
@@ -305,7 +305,7 @@ export function sleep(ms: number): Promise<void> {
 
 export function replaceData<
   TData,
-  TOptions extends QueryOptions<any, any, any, any>,
+  TOptions extends QueryOptions<any, any, any>,
 >(prevData: TData | undefined, data: TData, options: TOptions): TData {
   if (typeof options.structuralSharing === 'function') {
     return options.structuralSharing(prevData, data)

@@ -37,30 +37,28 @@ export interface ObserverFetchOptions extends FetchOptions {
 }
 
 export class QueryObserver<
-  TQueryFnData = unknown,
+  TData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryData = TQueryFnData,
+  TSelectData = TData,
   TQueryKey extends QueryKey = QueryKey,
-> extends Subscribable<QueryObserverListener<TData, TError>> {
+> extends Subscribable<QueryObserverListener<TSelectData, TError>> {
   #client: QueryClient
-  #currentQuery: Query<TQueryFnData, TError, TQueryData, TQueryKey> = undefined!
-  #currentQueryInitialState: QueryState<TQueryData, TError> = undefined!
-  #currentResult: QueryObserverResult<TData, TError> = undefined!
-  #currentResultState?: QueryState<TQueryData, TError>
+  #currentQuery: Query<TData, TError, TQueryKey> = undefined!
+  #currentQueryInitialState: QueryState<TData, TError> = undefined!
+  #currentResult: QueryObserverResult<TSelectData, TError> = undefined!
+  #currentResultState?: QueryState<TData, TError>
   #currentResultOptions?: QueryObserverOptions<
-    TQueryFnData,
-    TError,
     TData,
-    TQueryData,
+    TError,
+    TSelectData,
     TQueryKey
   >
   #selectError: TError | null
-  #selectFn?: (data: TQueryData) => TData
-  #selectResult?: TData
+  #selectFn?: (data: TData) => TSelectData
+  #selectResult?: TSelectData
   // This property keeps track of the last query with defined data.
   // It will be used to pass the previous data and query to the placeholder function between renders.
-  #lastQueryWithDefinedData?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+  #lastQueryWithDefinedData?: Query<TData, TError, TQueryKey>
   #staleTimeoutId?: ReturnType<typeof setTimeout>
   #refetchIntervalId?: ReturnType<typeof setInterval>
   #currentRefetchInterval?: number | false
@@ -69,10 +67,9 @@ export class QueryObserver<
   constructor(
     client: QueryClient,
     public options: QueryObserverOptions<
-      TQueryFnData,
-      TError,
       TData,
-      TQueryData,
+      TError,
+      TSelectData,
       TQueryKey
     >,
   ) {
@@ -133,10 +130,9 @@ export class QueryObserver<
 
   setOptions(
     options?: QueryObserverOptions<
-      TQueryFnData,
-      TError,
       TData,
-      TQueryData,
+      TError,
+      TSelectData,
       TQueryKey
     >,
     notifyOptions?: NotifyOptions,
@@ -211,13 +207,12 @@ export class QueryObserver<
 
   getOptimisticResult(
     options: DefaultedQueryObserverOptions<
-      TQueryFnData,
-      TError,
       TData,
-      TQueryData,
+      TError,
+      TSelectData,
       TQueryKey
     >,
-  ): QueryObserverResult<TData, TError> {
+  ): QueryObserverResult<TSelectData, TError> {
     const query = this.#client.getQueryCache().build(this.#client, options)
 
     const result = this.createResult(query, options)
@@ -246,14 +241,14 @@ export class QueryObserver<
     return result
   }
 
-  getCurrentResult(): QueryObserverResult<TData, TError> {
+  getCurrentResult(): QueryObserverResult<TSelectData, TError> {
     return this.#currentResult
   }
 
   trackResult(
-    result: QueryObserverResult<TData, TError>,
-  ): QueryObserverResult<TData, TError> {
-    const trackedResult = {} as QueryObserverResult<TData, TError>
+    result: QueryObserverResult<TSelectData, TError>,
+  ): QueryObserverResult<TSelectData, TError> {
+    const trackedResult = {} as QueryObserverResult<TSelectData, TError>
 
     Object.keys(result).forEach((key) => {
       Object.defineProperty(trackedResult, key, {
@@ -269,12 +264,12 @@ export class QueryObserver<
     return trackedResult
   }
 
-  getCurrentQuery(): Query<TQueryFnData, TError, TQueryData, TQueryKey> {
+  getCurrentQuery(): Query<TData, TError, TQueryKey> {
     return this.#currentQuery
   }
 
   refetch({ ...options }: RefetchOptions = {}): Promise<
-    QueryObserverResult<TData, TError>
+    QueryObserverResult<TSelectData, TError>
   > {
     return this.fetch({
       ...options,
@@ -283,13 +278,12 @@ export class QueryObserver<
 
   fetchOptimistic(
     options: QueryObserverOptions<
-      TQueryFnData,
-      TError,
       TData,
-      TQueryData,
+      TError,
+      TSelectData,
       TQueryKey
     >,
-  ): Promise<QueryObserverResult<TData, TError>> {
+  ): Promise<QueryObserverResult<TSelectData, TError>> {
     const defaultedOptions = this.#client.defaultQueryOptions(options)
 
     const query = this.#client
@@ -302,7 +296,7 @@ export class QueryObserver<
 
   protected fetch(
     fetchOptions: ObserverFetchOptions,
-  ): Promise<QueryObserverResult<TData, TError>> {
+  ): Promise<QueryObserverResult<TSelectData, TError>> {
     return this.#executeFetch({
       ...fetchOptions,
       cancelRefetch: fetchOptions.cancelRefetch ?? true,
@@ -314,13 +308,13 @@ export class QueryObserver<
 
   #executeFetch(
     fetchOptions?: ObserverFetchOptions,
-  ): Promise<TQueryData | undefined> {
+  ): Promise<TData | undefined> {
     // Make sure we reference the latest query as the current one might have been removed
     this.#updateQuery()
 
     // Fetch
-    let promise: Promise<TQueryData | undefined> = this.#currentQuery.fetch(
-      this.options as QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>,
+    let promise: Promise<TData | undefined> = this.#currentQuery.fetch(
+      this.options as QueryOptions<TData, TError, TQueryKey>,
       fetchOptions,
     )
 
@@ -410,19 +404,18 @@ export class QueryObserver<
   }
 
   protected createResult(
-    query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
+    query: Query<TData, TError, TQueryKey>,
     options: QueryObserverOptions<
-      TQueryFnData,
-      TError,
       TData,
-      TQueryData,
+      TError,
+      TSelectData,
       TQueryKey
     >,
-  ): QueryObserverResult<TData, TError> {
+  ): QueryObserverResult<TSelectData, TError> {
     const prevQuery = this.#currentQuery
     const prevOptions = this.options
     const prevResult = this.#currentResult as
-      | QueryObserverResult<TData, TError>
+      | QueryObserverResult<TSelectData, TError>
       | undefined
     const prevResultState = this.#currentResultState
     const prevResultOptions = this.#currentResultOptions
@@ -434,7 +427,7 @@ export class QueryObserver<
     const { state } = query
     let { error, errorUpdatedAt, fetchStatus, status } = state
     let isPlaceholderData = false
-    let data: TData | undefined
+    let data: TSelectData | undefined
 
     // Optimistically set result in fetching state if needed
     if (options._optimisticResults) {
@@ -481,7 +474,7 @@ export class QueryObserver<
     }
     // Use query data
     else {
-      data = state.data as unknown as TData
+      data = state.data as unknown as TSelectData
     }
 
     // Show placeholder data if needed
@@ -502,7 +495,7 @@ export class QueryObserver<
         placeholderData =
           typeof options.placeholderData === 'function'
             ? (
-                options.placeholderData as unknown as PlaceholderDataFunction<TQueryData>
+                options.placeholderData as unknown as PlaceholderDataFunction<TData>
               )(
                 this.#lastQueryWithDefinedData?.state.data,
                 this.#lastQueryWithDefinedData as any,
@@ -524,7 +517,7 @@ export class QueryObserver<
           prevResult?.data,
           placeholderData as unknown,
           options,
-        ) as TData
+        ) as TSelectData
         isPlaceholderData = true
       }
     }
@@ -542,7 +535,7 @@ export class QueryObserver<
 
     const isLoading = isPending && isFetching
 
-    const result: QueryObserverBaseResult<TData, TError> = {
+    const result: QueryObserverBaseResult<TSelectData, TError> = {
       status,
       fetchStatus,
       isPending,
@@ -571,12 +564,12 @@ export class QueryObserver<
       refetch: this.refetch,
     }
 
-    return result as QueryObserverResult<TData, TError>
+    return result as QueryObserverResult<TSelectData, TError>
   }
 
   updateResult(notifyOptions?: NotifyOptions): void {
     const prevResult = this.#currentResult as
-      | QueryObserverResult<TData, TError>
+      | QueryObserverResult<TSelectData, TError>
       | undefined
 
     const nextResult = this.createResult(this.#currentQuery, this.options)
@@ -645,7 +638,7 @@ export class QueryObserver<
     }
 
     const prevQuery = this.#currentQuery as
-      | Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      | Query<TData, TError, TQueryKey>
       | undefined
     this.#currentQuery = query
     this.#currentQueryInitialState = query.state
@@ -683,8 +676,8 @@ export class QueryObserver<
 }
 
 function shouldLoadOnMount(
-  query: Query<any, any, any, any>,
-  options: QueryObserverOptions<any, any, any, any>,
+  query: Query<any, any, any>,
+  options: QueryObserverOptions<any, any, any>,
 ): boolean {
   return (
     options.enabled !== false &&
@@ -694,8 +687,8 @@ function shouldLoadOnMount(
 }
 
 function shouldFetchOnMount(
-  query: Query<any, any, any, any>,
-  options: QueryObserverOptions<any, any, any, any, any>,
+  query: Query<any, any, any>,
+  options: QueryObserverOptions<any, any, any, any>,
 ): boolean {
   return (
     shouldLoadOnMount(query, options) ||
@@ -705,8 +698,8 @@ function shouldFetchOnMount(
 }
 
 function shouldFetchOn(
-  query: Query<any, any, any, any>,
-  options: QueryObserverOptions<any, any, any, any, any>,
+  query: Query<any, any, any>,
+  options: QueryObserverOptions<any, any, any, any>,
   field: (typeof options)['refetchOnMount'] &
     (typeof options)['refetchOnWindowFocus'] &
     (typeof options)['refetchOnReconnect'],
@@ -720,10 +713,10 @@ function shouldFetchOn(
 }
 
 function shouldFetchOptionally(
-  query: Query<any, any, any, any>,
-  prevQuery: Query<any, any, any, any>,
-  options: QueryObserverOptions<any, any, any, any, any>,
-  prevOptions: QueryObserverOptions<any, any, any, any, any>,
+  query: Query<any, any, any>,
+  prevQuery: Query<any, any, any>,
+  options: QueryObserverOptions<any, any, any, any>,
+  prevOptions: QueryObserverOptions<any, any, any, any>,
 ): boolean {
   return (
     options.enabled !== false &&
@@ -734,8 +727,8 @@ function shouldFetchOptionally(
 }
 
 function isStale(
-  query: Query<any, any, any, any>,
-  options: QueryObserverOptions<any, any, any, any, any>,
+  query: Query<any, any, any>,
+  options: QueryObserverOptions<any, any, any, any>,
 ): boolean {
   return query.isStaleByTime(options.staleTime)
 }
@@ -743,14 +736,13 @@ function isStale(
 // this function would decide if we will update the observer's 'current'
 // properties after an optimistic reading via getOptimisticResult
 function shouldAssignObserverCurrentProperties<
-  TQueryFnData = unknown,
+  TData = unknown,
   TError = unknown,
-  TData = TQueryFnData,
-  TQueryData = TQueryFnData,
+  TSelectData = TData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
-  optimisticResult: QueryObserverResult<TData, TError>,
+  observer: QueryObserver<TData, TError, TSelectData, TQueryKey>,
+  optimisticResult: QueryObserverResult<TSelectData, TError>,
 ) {
   // if the newly created result isn't what the observer is holding as current,
   // then we'll need to update the properties as well

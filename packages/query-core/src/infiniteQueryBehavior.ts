@@ -7,9 +7,9 @@ import type {
   QueryKey,
 } from './types'
 
-export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
+export function infiniteQueryBehavior<TData, TError, TPageParam>(
   pages?: number,
-): QueryBehavior<TQueryFnData, TError, InfiniteData<TData, TPageParam>> {
+): QueryBehavior<InfiniteData<TData, TPageParam>, TError> {
   return {
     onFetch: (context, query) => {
       const fetchFn = async () => {

@@ -23,40 +23,37 @@ type InfiniteQueryObserverListener<TData, TError> = (
 ) => void
 
 export class InfiniteQueryObserver<
-  TQueryFnData = unknown,
+  TData = unknown,
   TError = DefaultError,
-  TData = InfiniteData<TQueryFnData>,
-  TQueryData = TQueryFnData,
+  TSelectData = TData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends QueryObserver<
-  TQueryFnData,
+  InfiniteData<TData, TPageParam>,
   TError,
-  TData,
-  InfiniteData<TQueryData, TPageParam>,
+  TSelectData,
   TQueryKey
 > {
   // Type override
   subscribe!: (
-    listener?: InfiniteQueryObserverListener<TData, TError>,
+    listener?: InfiniteQueryObserverListener<TSelectData, TError>,
   ) => () => void
 
   // Type override
-  getCurrentResult!: () => InfiniteQueryObserverResult<TData, TError>
+  getCurrentResult!: () => InfiniteQueryObserverResult<TSelectData, TError>
 
   // Type override
   protected fetch!: (
     fetchOptions: ObserverFetchOptions,
-  ) => Promise<InfiniteQueryObserverResult<TData, TError>>
+  ) => Promise<InfiniteQueryObserverResult<TSelectData, TError>>
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(
     client: QueryClient,
     options: InfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
       TData,
-      TQueryData,
+      TError,
+      TSelectData,
       TQueryKey,
       TPageParam
     >,
@@ -72,10 +69,9 @@ export class InfiniteQueryObserver<
 
   setOptions(
     options?: InfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
       TData,
-      TQueryData,
+      TError,
+      TSelectData,
       TQueryKey,
       TPageParam
     >,
@@ -92,24 +88,23 @@ export class InfiniteQueryObserver<
 
   getOptimisticResult(
     options: DefaultedInfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
       TData,
-      TQueryData,
+      TError,
+      TSelectData,
       TQueryKey,
       TPageParam
     >,
-  ): InfiniteQueryObserverResult<TData, TError> {
+  ): InfiniteQueryObserverResult<TSelectData, TError> {
     options.behavior = infiniteQueryBehavior()
     return super.getOptimisticResult(options) as InfiniteQueryObserverResult<
-      TData,
+      TSelectData,
       TError
     >
   }
 
   fetchNextPage(
     options?: FetchNextPageOptions,
-  ): Promise<InfiniteQueryObserverResult<TData, TError>> {
+  ): Promise<InfiniteQueryObserverResult<TSelectData, TError>> {
     return this.fetch({
       ...options,
       meta: {
@@ -120,7 +115,7 @@ export class InfiniteQueryObserver<
 
   fetchPreviousPage(
     options?: FetchPreviousPageOptions,
-  ): Promise<InfiniteQueryObserverResult<TData, TError>> {
+  ): Promise<InfiniteQueryObserverResult<TSelectData, TError>> {
     return this.fetch({
       ...options,
       meta: {
@@ -131,20 +126,18 @@ export class InfiniteQueryObserver<
 
   protected createResult(
     query: Query<
-      TQueryFnData,
+      InfiniteData<TData, TPageParam>,
       TError,
-      InfiniteData<TQueryData, TPageParam>,
       TQueryKey
     >,
     options: InfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
       TData,
-      TQueryData,
+      TError,
+      TSelectData,
       TQueryKey,
       TPageParam
     >,
-  ): InfiniteQueryObserverResult<TData, TError> {
+  ): InfiniteQueryObserverResult<TSelectData, TError> {
     const { state } = query
     const result = super.createResult(query, options)
 

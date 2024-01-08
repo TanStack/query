@@ -19,53 +19,53 @@ import type { QueryObserver } from './queryObserver'
 interface QueryCacheConfig {
   onError?: (
     error: DefaultError,
-    query: Query<unknown, unknown, unknown>,
+    query: Query<unknown, unknown>,
   ) => void
-  onSuccess?: (data: unknown, query: Query<unknown, unknown, unknown>) => void
+  onSuccess?: (data: unknown, query: Query<unknown, unknown>) => void
   onSettled?: (
     data: unknown | undefined,
     error: DefaultError | null,
-    query: Query<unknown, unknown, unknown>,
+    query: Query<unknown, unknown>,
   ) => void
 }
 
 interface NotifyEventQueryAdded extends NotifyEvent {
   type: 'added'
-  query: Query<any, any, any, any>
+  query: Query<any, any, any>
 }
 
 interface NotifyEventQueryRemoved extends NotifyEvent {
   type: 'removed'
-  query: Query<any, any, any, any>
+  query: Query<any, any, any>
 }
 
 interface NotifyEventQueryUpdated extends NotifyEvent {
   type: 'updated'
-  query: Query<any, any, any, any>
+  query: Query<any, any, any>
   action: Action<any, any>
 }
 
 interface NotifyEventQueryObserverAdded extends NotifyEvent {
   type: 'observerAdded'
-  query: Query<any, any, any, any>
-  observer: QueryObserver<any, any, any, any, any>
+  query: Query<any, any, any>
+  observer: QueryObserver<any, any, any, any>
 }
 
 interface NotifyEventQueryObserverRemoved extends NotifyEvent {
   type: 'observerRemoved'
-  query: Query<any, any, any, any>
-  observer: QueryObserver<any, any, any, any, any>
+  query: Query<any, any, any>
+  observer: QueryObserver<any, any, any, any>
 }
 
 interface NotifyEventQueryObserverResultsUpdated extends NotifyEvent {
   type: 'observerResultsUpdated'
-  query: Query<any, any, any, any>
+  query: Query<any, any, any>
 }
 
 interface NotifyEventQueryObserverOptionsUpdated extends NotifyEvent {
   type: 'observerOptionsUpdated'
-  query: Query<any, any, any, any>
-  observer: QueryObserver<any, any, any, any, any>
+  query: Query<any, any, any>
+  observer: QueryObserver<any, any, any, any>
 }
 
 export type QueryCacheNotifyEvent =
@@ -97,15 +97,15 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     this.#queries = new Map<string, Query>()
   }
 
-  build<TQueryFnData, TError, TData, TQueryKey extends QueryKey>(
+  build<TData, TError, TQueryKey extends QueryKey>(
     client: QueryClient,
-    options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options: QueryOptions<TData, TError, TQueryKey>,
     state?: QueryState<TData, TError>,
-  ): Query<TQueryFnData, TError, TData, TQueryKey> {
+  ): Query<TData, TError, TQueryKey> {
     const queryKey = options.queryKey!
     const queryHash =
       options.queryHash ?? hashQueryKeyByOptions(queryKey, options)
-    let query = this.get<TQueryFnData, TError, TData, TQueryKey>(queryHash)
+    let query = this.get<TData, TError, TQueryKey>(queryHash)
 
     if (!query) {
       query = new Query({
@@ -122,7 +122,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     return query
   }
 
-  add(query: Query<any, any, any, any>): void {
+  add(query: Query<any, any, any>): void {
     if (!this.#queries.has(query.queryHash)) {
       this.#queries.set(query.queryHash, query)
 
@@ -133,7 +133,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     }
   }
 
-  remove(query: Query<any, any, any, any>): void {
+  remove(query: Query<any, any, any>): void {
     const queryInMap = this.#queries.get(query.queryHash)
 
     if (queryInMap) {
@@ -156,15 +156,14 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   }
 
   get<
-    TQueryFnData = unknown,
+    TData = unknown,
     TError = DefaultError,
-    TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
     queryHash: string,
-  ): Query<TQueryFnData, TError, TData, TQueryKey> | undefined {
+  ): Query<TData, TError, TQueryKey> | undefined {
     return this.#queries.get(queryHash) as
-      | Query<TQueryFnData, TError, TData, TQueryKey>
+      | Query<TData, TError, TQueryKey>
       | undefined
   }
 
@@ -172,14 +171,14 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     return [...this.#queries.values()]
   }
 
-  find<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData>(
+  find<TData = unknown, TError = DefaultError>(
     filters: WithRequired<QueryFilters, 'queryKey'>,
-  ): Query<TQueryFnData, TError, TData> | undefined {
+  ): Query<TData, TError> | undefined {
     const defaultedFilters = { exact: true, ...filters }
 
     return this.getAll().find((query) =>
       matchQuery(defaultedFilters, query),
-    ) as Query<TQueryFnData, TError, TData> | undefined
+    ) as Query<TData, TError> | undefined
   }
 
   findAll(filters: QueryFilters = {}): Array<Query> {

@@ -72,14 +72,13 @@ export type InitialDataFunction<T> = () => T | undefined
 type NonFunctionGuard<T> = T extends Function ? never : T
 
 export type PlaceholderDataFunction<
-  TQueryFnData = unknown,
+  TData = unknown,
   TError = DefaultError,
-  TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = (
-  previousData: TQueryData | undefined,
-  previousQuery: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined,
-) => TQueryData | undefined
+  previousData: TData | undefined,
+  previousQuery: Query<TData, TError, TQueryKey> | undefined,
+) => TData | undefined
 
 export type QueriesPlaceholderDataFunction<TQueryData> = (
   previousData: undefined,
@@ -125,9 +124,8 @@ export type NotifyOnChangeProps =
   | (() => Array<keyof InfiniteQueryObserverResult> | 'all')
 
 export interface QueryOptions<
-  TQueryFnData = unknown,
+  TData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > {
@@ -147,9 +145,9 @@ export interface QueryOptions<
    * Setting it to `Infinity` will disable garbage collection.
    */
   gcTime?: number
-  queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam>
+  queryFn?: QueryFunction<TData, TQueryKey, TPageParam>
   persister?: QueryPersister<
-    NoInfer<TQueryFnData>,
+    NoInfer<TData>,
     NoInfer<TQueryKey>,
     NoInfer<TPageParam>
   >
@@ -158,7 +156,7 @@ export interface QueryOptions<
   queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>
   initialData?: TData | InitialDataFunction<TData>
   initialDataUpdatedAt?: number | (() => number | undefined)
-  behavior?: QueryBehavior<TQueryFnData, TError, TData, TQueryKey>
+  behavior?: QueryBehavior<TData, TError, TQueryKey>
   /**
    * Set this to `false` to disable structural sharing between query results.
    * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic.
@@ -198,28 +196,25 @@ export interface InfiniteQueryPageParamsOptions<
 }
 
 export type ThrowOnError<
-  TQueryFnData,
+  TData,
   TError,
-  TQueryData,
   TQueryKey extends QueryKey,
 > =
   | boolean
   | ((
       error: TError,
-      query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
+      query: Query<TData, TError, TQueryKey>,
     ) => boolean)
 
 export interface QueryObserverOptions<
-  TQueryFnData = unknown,
+  TData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryData = TQueryFnData,
+  TSelectData = TData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > extends QueryOptions<
-    TQueryFnData,
+    TData,
     TError,
-    TQueryData,
     TQueryKey,
     TPageParam
   > {
@@ -243,7 +238,7 @@ export interface QueryObserverOptions<
     | number
     | false
     | ((
-        query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
+        query: Query<TData, TError, TQueryKey>,
       ) => number | false | undefined)
   /**
    * If set to `true`, the query will continue to refetch while their tab/window is in the background.
@@ -261,7 +256,7 @@ export interface QueryObserverOptions<
     | boolean
     | 'always'
     | ((
-        query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
+        query: Query<TData, TError, TQueryKey>,
       ) => boolean | 'always')
   /**
    * If set to `true`, the query will refetch on reconnect if the data is stale.
@@ -274,7 +269,7 @@ export interface QueryObserverOptions<
     | boolean
     | 'always'
     | ((
-        query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
+        query: Query<TData, TError, TQueryKey>,
       ) => boolean | 'always')
   /**
    * If set to `true`, the query will refetch on mount if the data is stale.
@@ -287,7 +282,7 @@ export interface QueryObserverOptions<
     | boolean
     | 'always'
     | ((
-        query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
+        query: Query<TData, TError, TQueryKey>,
       ) => boolean | 'always')
   /**
    * If set to `false`, the query will not be retried on mount if it contains an error.
@@ -309,11 +304,11 @@ export interface QueryObserverOptions<
    * If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`).
    * Defaults to `false`.
    */
-  throwOnError?: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
+  throwOnError?: ThrowOnError<TData, TError, TQueryKey>
   /**
    * This option can be used to transform or select a part of the data returned by the query function.
    */
-  select?: (data: TQueryData) => TData
+  select?: (data: TData) => TSelectData
   /**
    * If set to `true`, the query will suspend when `status === 'pending'`
    * and throw errors when `status === 'error'`.
@@ -324,11 +319,10 @@ export interface QueryObserverOptions<
    * If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `loading` data and no initialData has been provided.
    */
   placeholderData?:
-    | NonFunctionGuard<TQueryData>
+    | NonFunctionGuard<TData>
     | PlaceholderDataFunction<
-        NonFunctionGuard<TQueryData>,
+        NonFunctionGuard<TData>,
         TError,
-        NonFunctionGuard<TQueryData>,
         TQueryKey
       >
 
@@ -338,46 +332,41 @@ export interface QueryObserverOptions<
 export type WithRequired<T, K extends keyof T> = T & { [_ in K]: {} }
 
 export type DefaultedQueryObserverOptions<
-  TQueryFnData = unknown,
+  TData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryData = TQueryFnData,
+  TSelectData = TData,
   TQueryKey extends QueryKey = QueryKey,
 > = WithRequired<
-  QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+  QueryObserverOptions<TData, TError, TSelectData, TQueryKey>,
   'throwOnError' | 'refetchOnReconnect' | 'queryHash'
 >
 
 export interface InfiniteQueryObserverOptions<
-  TQueryFnData = unknown,
+  TData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryData = TQueryFnData,
+  TSelectData = TData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > extends QueryObserverOptions<
-      TQueryFnData,
+      InfiniteData<TData, TPageParam>,
       TError,
-      TData,
-      InfiniteData<TQueryData, TPageParam>,
+      TSelectData,
       TQueryKey,
       TPageParam
     >,
-    InfiniteQueryPageParamsOptions<TQueryFnData, TPageParam> {}
+    InfiniteQueryPageParamsOptions<TData, TPageParam> {}
 
 export type DefaultedInfiniteQueryObserverOptions<
-  TQueryFnData = unknown,
+  TData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryData = TQueryFnData,
+  TSelectData = TData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = WithRequired<
   InfiniteQueryObserverOptions<
-    TQueryFnData,
-    TError,
     TData,
-    TQueryData,
+    TError,
+    TSelectData,
     TQueryKey,
     TPageParam
   >,
@@ -385,13 +374,12 @@ export type DefaultedInfiniteQueryObserverOptions<
 >
 
 export interface FetchQueryOptions<
-  TQueryFnData = unknown,
+  TData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > extends WithRequired<
-    QueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
+    QueryOptions<TData, TError, TQueryKey, TPageParam>,
     'queryKey'
   > {
   /**
@@ -409,20 +397,18 @@ type FetchInfiniteQueryPages<TQueryFnData = unknown, TPageParam = unknown> =
     }
 
 export type FetchInfiniteQueryOptions<
-  TQueryFnData = unknown,
+  TData = unknown,
   TError = DefaultError,
-  TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 > = FetchQueryOptions<
-  TQueryFnData,
-  TError,
   InfiniteData<TData, TPageParam>,
+  TError,
   TQueryKey,
   TPageParam
 > &
   InitialPageParam<TPageParam> &
-  FetchInfiniteQueryPages<TQueryFnData, TPageParam>
+  FetchInfiniteQueryPages<TData, TPageParam>
 
 export interface ResultOptions {
   throwOnError?: boolean
