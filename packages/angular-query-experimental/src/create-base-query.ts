@@ -81,5 +81,5 @@ export function createBaseQuery<
   )
   destroyRef.onDestroy(unsubscribe)
 
-  return signalProxy(resultSignal)
+  return signalProxy(resultSignal) as CreateBaseQueryResult<TData, TError>
 }
