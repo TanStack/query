@@ -17,7 +17,7 @@ describe('injectIsFetching', () => {
     })
   })
 
-  it('Returns number of fetching queries', fakeAsync(() => {
+  test('Returns number of fetching queries', fakeAsync(() => {
     const isFetching = TestBed.runInInjectionContext(() => {
       injectQuery(() => ({
         queryKey: ['isFetching1'],

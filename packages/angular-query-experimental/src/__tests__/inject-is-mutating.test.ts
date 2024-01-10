@@ -17,7 +17,7 @@ describe('injectIsMutating', () => {
     })
   })
 
-  it('should properly return isMutating state', fakeAsync(() => {
+  test('should properly return isMutating state', fakeAsync(() => {
     TestBed.runInInjectionContext(() => {
       const isMutating = injectIsMutating()
       const mutation = injectMutation(() => ({
