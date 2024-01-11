@@ -6,6 +6,7 @@ const config = {
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'import'],
   extends: [
+    'plugin:@cspell/recommended',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:import/recommended',
@@ -34,6 +35,7 @@ const config = {
     },
   },
   rules: {
+    '@cspell/spellchecker': ['warn', { cspell: { words: ['tanstack'] } }],
     '@typescript-eslint/array-type': [
       'error',
       { default: 'generic', readonly: 'generic' },
