@@ -45,6 +45,18 @@ const config = {
       { prefer: 'type-imports' },
     ],
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/naming-convention': [
+      'warn',
+      {
+        selector: 'typeParameter',
+        format: ['PascalCase'],
+        leadingUnderscore: 'allow',
+        custom: {
+          regex: '^(T|\\$)[A-Z][a-zA-Z]+[0-9]*$',
+          match: true,
+        },
+      },
+    ],
     '@typescript-eslint/no-empty-interface': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
