@@ -112,9 +112,7 @@ export interface InfiniteData<TData, TPageParam = unknown> {
 export type QueryMeta = Register extends {
   queryMeta: infer TQueryMeta
 }
-  ? TQueryMeta extends Record<string, unknown>
-    ? TQueryMeta
-    : Record<string, unknown>
+  ? TQueryMeta
   : Record<string, unknown>
 
 export type NetworkMode = 'online' | 'always' | 'offlineFirst'
