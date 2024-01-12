@@ -294,7 +294,7 @@ export function useQueries<
     defaultedQueries.value,
     (options as QueriesObserverOptions<TCombinedResult>).combine,
   )
-  const state = shallowRef(getCombinedResult()) 
+  const state = shallowRef(getCombinedResult())
 
   let unsubscribe = () => {
     // noop
