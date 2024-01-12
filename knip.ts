@@ -15,6 +15,9 @@ export default {
       ignore: ['**/__mocks__/**'],
       ignoreDependencies: ['vue2', 'vue2.7'],
     },
+    'packages/angular-query-experimental': {
+      ignore: ['**/*.test-d.ts'],
+    },
     'integrations/angular-cli-standalone-17': {
       entry: ['src/main.ts'],
     },

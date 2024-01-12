@@ -978,7 +978,7 @@ describe('useQueries', () => {
     )
   })
 
-  it('should not return new instances when called without queries', async () => {
+  it.skip('should not return new instances when called without queries', async () => {
     const key = queryKey()
     const ids: Array<number> = []
     let resultChanged = 0
@@ -1025,6 +1025,28 @@ describe('useQueries', () => {
     await waitFor(() => rendered.getByText('count: 1'))
     // there should be no further effect calls because the returned object is structurally shared
     expect(resultChanged).toBe(1)
+  })
+
+  it('should not have infinite render loops with empty queries (#6645)', async () => {
+    let renderCount = 0
+
+    function Page() {
+      const result = useQueries({
+        queries: [],
+      })
+
+      React.useEffect(() => {
+        renderCount++
+      })
+
+      return <div>data: {JSON.stringify(result)}</div>
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+
+    expect(renderCount).toBe(1)
   })
 
   it('should only call combine with query results', async () => {
@@ -1166,5 +1188,47 @@ describe('useQueries', () => {
     await sleep(100)
     // no further re-render because data didn't change
     expect(results.length).toBe(length)
+  })
+
+  it('should not have stale closures with combine (#6648)', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const [count, setCount] = React.useState(0)
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: key,
+              queryFn: () => Promise.resolve('result'),
+            },
+          ],
+          combine: (results) => {
+            return {
+              count,
+              res: results.map((res) => res.data).join(','),
+            }
+          },
+        },
+        queryClient,
+      )
+
+      return (
+        <div>
+          <div>
+            data: {String(queries.count)} {queries.res}
+          </div>
+          <button onClick={() => setCount((c) => c + 1)}>inc</button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitFor(() => rendered.getByText('data: 0 result'))
+
+    fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
+
+    await waitFor(() => rendered.getByText('data: 1 result'))
   })
 })

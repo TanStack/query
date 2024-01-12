@@ -11,35 +11,77 @@ import type {
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
+  WithRequired,
 } from '@tanstack/query-core'
 import type { MapToSignals } from './signal-proxy'
 
-/** Options for createBaseQuery */
-export type CreateBaseQueryOptions<
+export interface CreateBaseQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+> extends WithRequired<
+    QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+    'queryKey'
+  > {}
 
-/** Result from createBaseQuery */
+type CreateStatusBasedQueryResult<
+  TStatus extends QueryObserverResult['status'],
+  TData = unknown,
+  TError = DefaultError,
+> = Extract<QueryObserverResult<TData, TError>, { status: TStatus }>
+
+export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
+  isSuccess(
+    this: CreateBaseQueryResult<TData, TError>,
+  ): this is CreateBaseQueryResult<
+    TData,
+    TError,
+    CreateStatusBasedQueryResult<'success', TData, TError>
+  >
+  isError(
+    this: CreateBaseQueryResult<TData, TError>,
+  ): this is CreateBaseQueryResult<
+    TData,
+    TError,
+    CreateStatusBasedQueryResult<'error', TData, TError>
+  >
+  isPending(
+    this: CreateBaseQueryResult<TData, TError>,
+  ): this is CreateBaseQueryResult<
+    TData,
+    TError,
+    CreateStatusBasedQueryResult<'pending', TData, TError>
+  >
+}
+
 export type CreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
   State = QueryObserverResult<TData, TError>,
-> = MapToSignals<State>
-/** Result from createBaseQuery */
+> = BaseQueryNarrowing<TData, TError> &
+  MapToSignals<Omit<State, keyof BaseQueryNarrowing>>
 
-/** Options for createQuery */
-export type CreateQueryOptions<
+export interface CreateQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>
+> extends Omit<
+    WithRequired<
+      CreateBaseQueryOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryFnData,
+        TQueryKey
+      >,
+      'queryKey'
+    >,
+    'suspense'
+  > {}
 
-/** Result from createQuery */
 export type CreateQueryResult<
   TData = unknown,
   TError = DefaultError,
@@ -62,26 +104,17 @@ export type CreateInfiniteQueryOptions<
   TPageParam
 >
 
-/** Result from createInfiniteQuery */
 export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = Signal<InfiniteQueryObserverResult<TData, TError>>
 
-/** Options for createBaseQuery with initialData */
-export type DefinedCreateBaseQueryResult<
+export type DefinedCreateQueryResult<
   TData = unknown,
   TError = DefaultError,
   DefinedQueryObserver = DefinedQueryObserverResult<TData, TError>,
 > = MapToSignals<DefinedQueryObserver>
 
-/** Options for createQuery with initialData */
-export type DefinedCreateQueryResult<
-  TData = unknown,
-  TError = DefaultError,
-> = DefinedCreateBaseQueryResult<TData, TError>
-
-/** Options for createMutation */
 export type CreateMutationOptions<
   TData = unknown,
   TError = DefaultError,
@@ -120,12 +153,93 @@ export type CreateBaseMutationResult<
   mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext>
 }
 
+type CreateStatusBasedMutationResult<
+  TStatus extends CreateBaseMutationResult['status'],
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = unknown,
+  TContext = unknown,
+> = Extract<
+  CreateBaseMutationResult<TData, TError, TVariables, TContext>,
+  { status: TStatus }
+>
+
+export interface BaseMutationNarrowing<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = unknown,
+  TContext = unknown,
+> {
+  isSuccess(
+    this: CreateMutationResult<TData, TError, TVariables, TContext>,
+  ): this is CreateMutationResult<
+    TData,
+    TError,
+    TVariables,
+    TContext,
+    CreateStatusBasedMutationResult<
+      'success',
+      TData,
+      TError,
+      TVariables,
+      TContext
+    >
+  >
+  isError(
+    this: CreateMutationResult<TData, TError, TVariables, TContext>,
+  ): this is CreateMutationResult<
+    TData,
+    TError,
+    TVariables,
+    TContext,
+    CreateStatusBasedMutationResult<
+      'error',
+      TData,
+      TError,
+      TVariables,
+      TContext
+    >
+  >
+  isPending(
+    this: CreateMutationResult<TData, TError, TVariables, TContext>,
+  ): this is CreateMutationResult<
+    TData,
+    TError,
+    TVariables,
+    TContext,
+    CreateStatusBasedMutationResult<
+      'pending',
+      TData,
+      TError,
+      TVariables,
+      TContext
+    >
+  >
+  isIdle(
+    this: CreateMutationResult<TData, TError, TVariables, TContext>,
+  ): this is CreateMutationResult<
+    TData,
+    TError,
+    TVariables,
+    TContext,
+    CreateStatusBasedMutationResult<'idle', TData, TError, TVariables, TContext>
+  >
+}
+
 /** Result from createMutation */
 export type CreateMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
   TContext = unknown,
-> = MapToSignals<CreateBaseMutationResult<TData, TError, TVariables, TContext>>
+  State = CreateStatusBasedMutationResult<
+    CreateBaseMutationResult['status'],
+    TData,
+    TError,
+    TVariables,
+    TContext
+  >,
+> = BaseMutationNarrowing<TData, TError, TVariables, TContext> &
+  MapToSignals<Omit<State, keyof BaseMutationNarrowing>>
 
 type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }

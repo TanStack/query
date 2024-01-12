@@ -18,7 +18,7 @@ describe('injectQuery', () => {
     })
   })
 
-  it('should return pending status initially', fakeAsync(() => {
+  test('should return pending status initially', fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
         queryKey: ['key1'],
@@ -35,7 +35,7 @@ describe('injectQuery', () => {
     flush()
   }))
 
-  it('should resolve to success and update signal: injectQuery()', fakeAsync(() => {
+  test('should resolve to success and update signal: injectQuery()', fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
         queryKey: ['key2'],
@@ -53,7 +53,7 @@ describe('injectQuery', () => {
     expect(query.isSuccess()).toBe(true)
   }))
 
-  it('should reject and update signal', fakeAsync(() => {
+  test('should reject and update signal', fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
         retry: false,
@@ -74,7 +74,7 @@ describe('injectQuery', () => {
     expect(query.failureReason()).toMatchObject({ message: 'Some error' })
   }))
 
-  it('should update query on options contained signal change', fakeAsync(() => {
+  test('should update query on options contained signal change', fakeAsync(() => {
     const key = signal(['key6', 'key7'])
     const spy = vi.fn(simpleFetcher)
 
@@ -97,7 +97,7 @@ describe('injectQuery', () => {
     flush()
   }))
 
-  it('should only run query once enabled signal is set to true', fakeAsync(() => {
+  test('should only run query once enabled signal is set to true', fakeAsync(() => {
     const spy = vi.fn(simpleFetcher)
     const enabled = signal(false)
 
@@ -119,7 +119,7 @@ describe('injectQuery', () => {
     expect(query.status()).toBe('success')
   }))
 
-  it('should properly execute dependant queries', fakeAsync(() => {
+  test('should properly execute dependant queries', fakeAsync(() => {
     const query1 = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
         queryKey: ['dependant1'],
@@ -159,7 +159,7 @@ describe('injectQuery', () => {
     )
   }))
 
-  it('should use the current value for the queryKey when refetch is called', fakeAsync(() => {
+  test('should use the current value for the queryKey when refetch is called', fakeAsync(() => {
     const fetchFn = vi.fn(simpleFetcher)
     const keySignal = signal('key11')
 
@@ -200,7 +200,7 @@ describe('injectQuery', () => {
     flush()
   }))
 
-  it('should set state to error when queryFn returns reject promise', fakeAsync(() => {
+  test('should set state to error when queryFn returns reject promise', fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
         retry: false,

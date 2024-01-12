@@ -14,11 +14,6 @@ import type {
   UndefinedInitialDataOptions,
 } from './query-options'
 
-/**
- * Create a Query.
- * @param options
- * @param injector
- */
 export function injectQuery<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -44,7 +39,7 @@ export function injectQuery<
 ): DefinedCreateQueryResult<TData, TError>
 
 export function injectQuery<
-  TQueryFnData,
+  TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
@@ -52,6 +47,11 @@ export function injectQuery<
   options: (
     client: QueryClient,
   ) => CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  injector?: Injector,
+): CreateQueryResult<TData, TError>
+
+export function injectQuery(
+  options: (client: QueryClient) => CreateQueryOptions,
   injector?: Injector,
 ) {
   return assertInjector(injectQuery, injector, () => {

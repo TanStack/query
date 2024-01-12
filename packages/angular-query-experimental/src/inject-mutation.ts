@@ -56,7 +56,12 @@ export function injectMutation<
       mutateAsync: result().mutate,
     }))
 
-    return signalProxy(resultSignal)
+    return signalProxy(resultSignal) as unknown as CreateMutationResult<
+      TData,
+      TError,
+      TVariables,
+      TContext
+    >
   })
 }
 
