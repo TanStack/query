@@ -112,7 +112,9 @@ export interface InfiniteData<TData, TPageParam = unknown> {
 export type QueryMeta = Register extends {
   queryMeta: infer TQueryMeta
 }
-  ? TQueryMeta
+  ? TQueryMeta extends Record<string, unknown>
+    ? TQueryMeta
+    : Record<string, unknown>
   : Record<string, unknown>
 
 export type NetworkMode = 'online' | 'always' | 'offlineFirst'
@@ -648,7 +650,9 @@ export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
 export type MutationMeta = Register extends {
   mutationMeta: infer TMutationMeta
 }
-  ? TMutationMeta
+  ? TMutationMeta extends Record<string, unknown>
+    ? TMutationMeta
+    : Record<string, unknown>
   : Record<string, unknown>
 
 export type MutationFunction<TData = unknown, TVariables = unknown> = (
