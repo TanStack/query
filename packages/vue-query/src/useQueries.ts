@@ -5,13 +5,13 @@ import {
   getCurrentScope,
   onScopeDispose,
   readonly,
-  ref,
+  shallowRef,
   watch,
 } from 'vue-demi'
 
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
-import type { Ref } from 'vue-demi'
+import type { ShallowRef } from 'vue-demi'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
@@ -259,7 +259,7 @@ export function useQueries<
     combine?: (result: UseQueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,
-): Readonly<Ref<TCombinedResult>> {
+): Readonly<ShallowRef<TCombinedResult>> {
   if (process.env.NODE_ENV === 'development') {
     if (!getCurrentScope()) {
       console.warn(
@@ -294,7 +294,7 @@ export function useQueries<
     defaultedQueries.value,
     (options as QueriesObserverOptions<TCombinedResult>).combine,
   )
-  const state = ref(getCombinedResult()) as Ref<TCombinedResult>
+  const state = shallowRef(getCombinedResult())
 
   let unsubscribe = () => {
     // noop
@@ -343,5 +343,5 @@ export function useQueries<
     unsubscribe()
   })
 
-  return readonly(state) as Readonly<Ref<TCombinedResult>>
+  return readonly(state) as Readonly<ShallowRef<TCombinedResult>>
 }

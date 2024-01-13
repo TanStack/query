@@ -20,7 +20,7 @@ One specific use of prefetching is to avoid Request Waterfalls, for an in-depth 
 
 Before jumping into the different specific prefetch patterns, let's look at the `prefetchQuery` and `prefetchInfiniteQuery` functions. First a few basics:
 
-- Out of the box, these functions use the default `staleTime` configured for the `queryClient` to determine wether existing data in the cache is fresh or needs to be fetched again
+- Out of the box, these functions use the default `staleTime` configured for the `queryClient` to determine whether existing data in the cache is fresh or needs to be fetched again
 - You can also pass a specific `staleTime` like this: `prefetchQuery({ queryKey: ['todos'], queryFn: fn, staleTime: 5000 })`
   - This `staleTime` is only used for the prefetch, you still need to set it for any `useQuery` call as well
   - If you want to ignore `staleTime` and instead always return data if it's available in the cache, you can use the `ensureQueryData` function.

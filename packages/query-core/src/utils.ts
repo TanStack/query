@@ -234,7 +234,7 @@ export function replaceEqualDeep(a: any, b: any): any {
     for (let i = 0; i < bSize; i++) {
       const key = array ? i : bItems[i]
       copy[key] = replaceEqualDeep(a[key], b[key])
-      if (copy[key] === a[key]) {
+      if (copy[key] === a[key] && a[key] !== undefined) {
         equalItems++
       }
     }

@@ -325,6 +325,13 @@ describe('core/utils', () => {
       expect(result.todos[0]?.state.done).toBe(next.todos[0]?.state.done)
       expect(result.todos[1]).toBe(prev.todos[1])
     })
+
+    it('should correctly handle objects with the same number of properties and one property being undefined', () => {
+      const obj1 = { a: 2, c: 123 }
+      const obj2 = { a: 2, b: undefined }
+      const result = replaceEqualDeep(obj1, obj2)
+      expect(result).toStrictEqual(obj2)
+    })
   })
 
   describe('matchMutation', () => {
