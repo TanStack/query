@@ -1,9 +1,4 @@
 {
   "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "noEmit": false,
-    "emitDeclarationOnly": true,
-    "outDir": "dist"
-  },
-  "include": ["src/**/*.ts", "src/**/*.vue"]
+  "include": ["src/**/*.ts", "src/**/*.vue", ".eslintrc.cjs", "vite.config.ts"]
 }

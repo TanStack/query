@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/vue-query-devtools",
-  "version": "5.17.9",
+  "version": "5.17.10",
   "description": "Developer tools to interact with and visualize the TanStack/vue-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -15,21 +15,21 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "type": "module",
-  "types": "dist/index.d.ts",
-  "module": "dist/index.js",
-  "main": "dist/index.js",
+  "types": "dist/esm/index.d.ts",
+  "module": "dist/esm/index.js",
+  "main": "dist/esm/index.js",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "types": "./dist/esm/index.d.ts",
+      "default": "./dist/esm/index.js"
     },
     "./production": {
-      "types": "./dist/production.d.ts",
-      "default": "./dist/production.js"
+      "types": "./dist/esm/production.d.ts",
+      "default": "./dist/esm/production.js"
     },
     "./dist/production.js": {
-      "types": "./dist/production.d.ts",
-      "default": "./dist/production.js"
+      "types": "./dist/esm/production.d.ts",
+      "default": "./dist/esm/production.js"
     },
     "./package.json": "./package.json"
   },
@@ -43,7 +43,7 @@
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "vue-tsc",
     "test:build": "publint --strict",
-    "build": "vite build && vue-tsc"
+    "build": "vite build"
   },
   "dependencies": {
     "@tanstack/query-devtools": "workspace:*"
