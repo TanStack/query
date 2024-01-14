@@ -21,7 +21,7 @@ export interface PersistedClient {
   clientState: DehydratedState
 }
 
-export interface PersistQueryClienRootOptions {
+export interface PersistQueryClientRootOptions {
   /** The QueryClient to persist */
   queryClient: QueryClient
   /** The Persister interface for storing and restoring the cache
@@ -33,7 +33,7 @@ export interface PersistQueryClienRootOptions {
 }
 
 export interface PersistedQueryClientRestoreOptions
-  extends PersistQueryClienRootOptions {
+  extends PersistQueryClientRootOptions {
   /** The max-allowed age of the cache in milliseconds.
    * If a persisted cache is found that is older than this
    * time, it will be discarded */
@@ -43,7 +43,7 @@ export interface PersistedQueryClientRestoreOptions
 }
 
 export interface PersistedQueryClientSaveOptions
-  extends PersistQueryClienRootOptions {
+  extends PersistQueryClientRootOptions {
   /** The options passed to the dehydrate function */
   dehydrateOptions?: DehydrateOptions
 }
@@ -51,7 +51,7 @@ export interface PersistedQueryClientSaveOptions
 export interface PersistQueryClientOptions
   extends PersistedQueryClientRestoreOptions,
     PersistedQueryClientSaveOptions,
-    PersistQueryClienRootOptions {}
+    PersistQueryClientRootOptions {}
 
 /**
  * Checks if emitted event is about cache change and not about observers.
