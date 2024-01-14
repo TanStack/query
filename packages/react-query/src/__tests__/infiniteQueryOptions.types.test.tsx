@@ -92,8 +92,6 @@ describe('queryOptions', () => {
       const { queryKey } = infiniteQueryOptions({
         queryKey: ['key'],
         queryFn: () => Promise.resolve('string'),
-        // select to ensure type of Data in queryKey does not change
-        select: (data) => data.pages,
         getNextPageParam: () => 1,
         initialPageParam: 1,
       })
@@ -109,7 +107,21 @@ describe('queryOptions', () => {
       const { queryKey } = infiniteQueryOptions({
         queryKey: ['key'],
         queryFn: () => 'string',
-        // select to ensure type of Data in queryKey does not change
+        getNextPageParam: () => 1,
+        initialPageParam: 1,
+      })
+
+      const result: Expect<
+        Equal<(typeof queryKey)[typeof dataTagSymbol], InfiniteData<string>>
+      > = true
+      return result
+    })
+  })
+  it('should tag the queryKey with the result type of the QueryFn if select is used', () => {
+    doNotExecute(() => {
+      const { queryKey } = infiniteQueryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('string'),
         select: (data) => data.pages,
         getNextPageParam: () => 1,
         initialPageParam: 1,
@@ -126,8 +138,6 @@ describe('queryOptions', () => {
       const { queryKey } = infiniteQueryOptions({
         queryKey: ['key'],
         queryFn: () => Promise.resolve('string'),
-        // select to ensure type of Data in queryKey does not change
-        select: (data) => data.pages,
         getNextPageParam: () => 1,
         initialPageParam: 1,
       })
@@ -146,8 +156,6 @@ describe('queryOptions', () => {
       const { queryKey } = infiniteQueryOptions({
         queryKey: ['key'],
         queryFn: () => Promise.resolve('string'),
-        // select to ensure type of Data in queryKey does not change
-        select: (data) => data.pages,
         getNextPageParam: () => 1,
         initialPageParam: 1,
       })

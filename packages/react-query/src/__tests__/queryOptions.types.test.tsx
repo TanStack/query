@@ -91,8 +91,6 @@ describe('queryOptions', () => {
       const { queryKey } = queryOptions({
         queryKey: ['key'],
         queryFn: () => Promise.resolve(5),
-        // select to ensure type of Data in queryKey does not change
-        select: (data) => data.toString(),
       })
 
       const result: Expect<
@@ -106,8 +104,6 @@ describe('queryOptions', () => {
       const { queryKey } = queryOptions({
         queryKey: ['key'],
         queryFn: () => 5,
-        // select to ensure type of Data in queryKey does not change
-        select: (data) => data.toString(),
       })
 
       const result: Expect<
@@ -128,13 +124,25 @@ describe('queryOptions', () => {
       return result
     })
   })
+  it('should tag the queryKey with the result type of the QueryFn if select is used', () => {
+    doNotExecute(() => {
+      const { queryKey } = queryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve(5),
+        select: (data) => data.toString(),
+      })
+
+      const result: Expect<
+        Equal<(typeof queryKey)[typeof dataTagSymbol], number>
+      > = true
+      return result
+    })
+  })
   it('should return the proper type when passed to getQueryData', () => {
     doNotExecute(() => {
       const { queryKey } = queryOptions({
         queryKey: ['key'],
         queryFn: () => Promise.resolve(5),
-        // select to ensure type of Data in queryKey does not change
-        select: (data) => data.toString(),
       })
 
       const queryClient = new QueryClient()
@@ -149,8 +157,6 @@ describe('queryOptions', () => {
       const { queryKey } = queryOptions({
         queryKey: ['key'],
         queryFn: () => Promise.resolve(5),
-        // select to ensure type of Data in queryKey does not change
-        select: (data) => data.toString(),
       })
 
       const queryClient = new QueryClient()
@@ -168,8 +174,6 @@ describe('queryOptions', () => {
       const { queryKey } = queryOptions({
         queryKey: ['key'],
         queryFn: () => Promise.resolve(5),
-        // select to ensure type of Data in queryKey does not change
-        select: (data) => data.toString(),
       })
 
       const queryClient = new QueryClient()
