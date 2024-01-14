@@ -53,7 +53,7 @@ const config = {
         leadingUnderscore: 'forbid',
         trailingUnderscore: 'forbid',
         custom: {
-          regex: '^([A-Z]|\\$)([A-Z][a-z]+)*$',
+          regex: '^[A-Z]$|^T[A-Z][a-z]+$',
           match: true,
         },
       },
