@@ -59,9 +59,9 @@ export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
 export type CreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
-  State = QueryObserverResult<TData, TError>,
+  TState = QueryObserverResult<TData, TError>,
 > = BaseQueryNarrowing<TData, TError> &
-  MapToSignals<Omit<State, keyof BaseQueryNarrowing>>
+  MapToSignals<Omit<TState, keyof BaseQueryNarrowing>>
 
 export interface CreateQueryOptions<
   TQueryFnData = unknown,
@@ -112,8 +112,8 @@ export type CreateInfiniteQueryResult<
 export type DefinedCreateQueryResult<
   TData = unknown,
   TError = DefaultError,
-  DefinedQueryObserver = DefinedQueryObserverResult<TData, TError>,
-> = MapToSignals<DefinedQueryObserver>
+  TDefinedQueryObserver = DefinedQueryObserverResult<TData, TError>,
+> = MapToSignals<TDefinedQueryObserver>
 
 export type CreateMutationOptions<
   TData = unknown,
@@ -232,7 +232,7 @@ export type CreateMutationResult<
   TError = DefaultError,
   TVariables = unknown,
   TContext = unknown,
-  State = CreateStatusBasedMutationResult<
+  TState = CreateStatusBasedMutationResult<
     CreateBaseMutationResult['status'],
     TData,
     TError,
@@ -240,6 +240,6 @@ export type CreateMutationResult<
     TContext
   >,
 > = BaseMutationNarrowing<TData, TError, TVariables, TContext> &
-  MapToSignals<Omit<State, keyof BaseMutationNarrowing>>
+  MapToSignals<Omit<TState, keyof BaseMutationNarrowing>>
 
 type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }

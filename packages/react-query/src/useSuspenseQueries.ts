@@ -100,19 +100,19 @@ type GetSuspenseResults<T> =
  */
 export type SuspenseQueriesOptions<
   T extends Array<any>,
-  Result extends Array<any> = [],
-  Depth extends ReadonlyArray<number> = [],
-> = Depth['length'] extends MAXIMUM_DEPTH
+  TResult extends Array<any> = [],
+  TDepth extends ReadonlyArray<number> = [],
+> = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<UseSuspenseQueryOptions>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...Result, GetSuspenseOptions<Head>]
+      ? [...TResult, GetSuspenseOptions<Head>]
       : T extends [infer Head, ...infer Tail]
         ? SuspenseQueriesOptions<
             [...Tail],
-            [...Result, GetSuspenseOptions<Head>],
-            [...Depth, 1]
+            [...TResult, GetSuspenseOptions<Head>],
+            [...TDepth, 1]
           >
         : Array<unknown> extends T
           ? T
@@ -137,19 +137,19 @@ export type SuspenseQueriesOptions<
  */
 export type SuspenseQueriesResults<
   T extends Array<any>,
-  Result extends Array<any> = [],
-  Depth extends ReadonlyArray<number> = [],
-> = Depth['length'] extends MAXIMUM_DEPTH
+  TResult extends Array<any> = [],
+  TDepth extends ReadonlyArray<number> = [],
+> = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<UseSuspenseQueryResult>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...Result, GetSuspenseResults<Head>]
+      ? [...TResult, GetSuspenseResults<Head>]
       : T extends [infer Head, ...infer Tail]
         ? SuspenseQueriesResults<
             [...Tail],
-            [...Result, GetSuspenseResults<Head>],
-            [...Depth, 1]
+            [...TResult, GetSuspenseResults<Head>],
+            [...TDepth, 1]
           >
         : T extends Array<
               UseSuspenseQueryOptions<

@@ -50,10 +50,10 @@ export class QueryClient extends QC {
     return super.isMutating(cloneDeepUnref(filters))
   }
 
-  getQueryData<TData = unknown, TaggedQueryKey extends QueryKey = QueryKey>(
-    queryKey: TaggedQueryKey,
+  getQueryData<TData = unknown, TTaggedQueryKey extends QueryKey = QueryKey>(
+    queryKey: TTaggedQueryKey,
   ):
-    | (TaggedQueryKey extends DataTag<unknown, infer TaggedValue>
+    | (TTaggedQueryKey extends DataTag<unknown, infer TaggedValue>
         ? TaggedValue
         : TData)
     | undefined
@@ -105,12 +105,12 @@ export class QueryClient extends QC {
 
   setQueryData<
     TQueryFnData,
-    TaggedQueryKey extends QueryKey,
-    TData = TaggedQueryKey extends DataTag<unknown, infer TaggedValue>
+    TTaggedQueryKey extends QueryKey,
+    TData = TTaggedQueryKey extends DataTag<unknown, infer TaggedValue>
       ? TaggedValue
       : TQueryFnData,
   >(
-    queryKey: TaggedQueryKey,
+    queryKey: TTaggedQueryKey,
     updater: Updater<NoInfer<TData> | undefined, NoInfer<TData> | undefined>,
     options?: MaybeRefDeep<SetDataOptions>,
   ): TData | undefined

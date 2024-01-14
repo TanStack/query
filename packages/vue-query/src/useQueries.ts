@@ -169,19 +169,19 @@ type GetResults<T> =
  */
 export type UseQueriesOptions<
   T extends Array<any>,
-  Result extends Array<any> = [],
-  Depth extends ReadonlyArray<number> = [],
-> = Depth['length'] extends MAXIMUM_DEPTH
+  TResult extends Array<any> = [],
+  TDepth extends ReadonlyArray<number> = [],
+> = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<UseQueryOptionsForUseQueries>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...Result, GetOptions<Head>]
+      ? [...TResult, GetOptions<Head>]
       : T extends [infer Head, ...infer Tail]
         ? UseQueriesOptions<
             [...Tail],
-            [...Result, GetOptions<Head>],
-            [...Depth, 1]
+            [...TResult, GetOptions<Head>],
+            [...TDepth, 1]
           >
         : Array<unknown> extends T
           ? T
@@ -211,19 +211,19 @@ export type UseQueriesOptions<
  */
 export type UseQueriesResults<
   T extends Array<any>,
-  Result extends Array<any> = [],
-  Depth extends ReadonlyArray<number> = [],
-> = Depth['length'] extends MAXIMUM_DEPTH
+  TResult extends Array<any> = [],
+  TDepth extends ReadonlyArray<number> = [],
+> = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<QueryObserverResult>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...Result, GetResults<Head>]
+      ? [...TResult, GetResults<Head>]
       : T extends [infer Head, ...infer Tail]
         ? UseQueriesResults<
             [...Tail],
-            [...Result, GetResults<Head>],
-            [...Depth, 1]
+            [...TResult, GetResults<Head>],
+            [...TDepth, 1]
           >
         : T extends Array<
               UseQueryOptionsForUseQueries<

@@ -47,8 +47,8 @@ export type UseMutationReturnType<
   TError,
   TVariables,
   TContext,
-  Result = MutationResult<TData, TError, TVariables, TContext>,
-> = ToRefs<Readonly<Result>> & {
+  TResult = MutationResult<TData, TError, TVariables, TContext>,
+> = ToRefs<Readonly<TResult>> & {
   mutate: MutateSyncFunction<TData, TError, TVariables, TContext>
   mutateAsync: MutateFunction<TData, TError, TVariables, TContext>
   reset: MutationObserverResult<TData, TError, TVariables, TContext>['reset']
