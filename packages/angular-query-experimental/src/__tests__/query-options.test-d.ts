@@ -51,6 +51,8 @@ test('should tag the queryKey with the result type of the QueryFn', () => {
   const { queryKey } = queryOptions({
     queryKey: ['key'],
     queryFn: () => Promise.resolve(5),
+    // select to ensure type of Data in queryKey does not change
+    select: (data) => data.toString(),
   })
   assertType<number>(queryKey[dataTagSymbol])
 })
@@ -59,6 +61,8 @@ test('should tag the queryKey even if no promise is returned', () => {
   const { queryKey } = queryOptions({
     queryKey: ['key'],
     queryFn: () => 5,
+    // select to ensure type of Data in queryKey does not change
+    select: (data) => data.toString(),
   })
   assertType<number>(queryKey[dataTagSymbol])
 })
@@ -75,6 +79,8 @@ test('should return the proper type when passed to getQueryData', () => {
   const { queryKey } = queryOptions({
     queryKey: ['key'],
     queryFn: () => Promise.resolve(5),
+    // select to ensure type of Data in queryKey does not change
+    select: (data) => data.toString(),
   })
 
   const queryClient = new QueryClient()
@@ -87,6 +93,8 @@ test('should properly type updaterFn when passed to setQueryData', () => {
   const { queryKey } = queryOptions({
     queryKey: ['key'],
     queryFn: () => Promise.resolve(5),
+    // select to ensure type of Data in queryKey does not change
+    select: (data) => data.toString(),
   })
 
   const queryClient = new QueryClient()
@@ -102,6 +110,8 @@ test('should properly type value when passed to setQueryData', () => {
   const { queryKey } = queryOptions({
     queryKey: ['key'],
     queryFn: () => Promise.resolve(5),
+    // select to ensure type of Data in queryKey does not change
+    select: (data) => data.toString(),
   })
 
   const queryClient = new QueryClient()

@@ -91,6 +91,8 @@ describe('queryOptions', () => {
       const { queryKey } = queryOptions({
         queryKey: ['key'],
         queryFn: () => Promise.resolve(5),
+        // select to ensure type of Data in queryKey does not change
+        select: (data) => data.toString(),
       })
 
       const result: Expect<
@@ -104,6 +106,8 @@ describe('queryOptions', () => {
       const { queryKey } = queryOptions({
         queryKey: ['key'],
         queryFn: () => 5,
+        // select to ensure type of Data in queryKey does not change
+        select: (data) => data.toString(),
       })
 
       const result: Expect<
@@ -129,6 +133,8 @@ describe('queryOptions', () => {
       const { queryKey } = queryOptions({
         queryKey: ['key'],
         queryFn: () => Promise.resolve(5),
+        // select to ensure type of Data in queryKey does not change
+        select: (data) => data.toString(),
       })
 
       const queryClient = new QueryClient()
@@ -143,6 +149,8 @@ describe('queryOptions', () => {
       const { queryKey } = queryOptions({
         queryKey: ['key'],
         queryFn: () => Promise.resolve(5),
+        // select to ensure type of Data in queryKey does not change
+        select: (data) => data.toString(),
       })
 
       const queryClient = new QueryClient()
@@ -160,6 +168,8 @@ describe('queryOptions', () => {
       const { queryKey } = queryOptions({
         queryKey: ['key'],
         queryFn: () => Promise.resolve(5),
+        // select to ensure type of Data in queryKey does not change
+        select: (data) => data.toString(),
       })
 
       const queryClient = new QueryClient()
