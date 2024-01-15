@@ -1,6 +1,6 @@
 import { describe, it } from 'vitest'
-import { QueryClient } from '@tanstack/query-core'
 import { reactive } from 'vue-demi'
+import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
 import { doNotExecute } from './test-utils'
