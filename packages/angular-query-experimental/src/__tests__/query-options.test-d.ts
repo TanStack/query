@@ -78,7 +78,7 @@ test('should tag the queryKey with the result type of the QueryFn if select is u
     select: (data) => data.toString(),
   })
 
-  assertType<string>(queryKey[dataTagSymbol])
+  assertType<number>(queryKey[dataTagSymbol])
 })
 
 test('should return the proper type when passed to getQueryData', () => {
