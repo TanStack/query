@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query",
-  "version": "5.17.10",
+  "version": "5.17.12",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",

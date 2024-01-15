@@ -117,6 +117,22 @@ describe('queryOptions', () => {
       return result
     })
   })
+  it('should tag the queryKey with the result type of the QueryFn if select is used', () => {
+    doNotExecute(() => {
+      const { queryKey } = infiniteQueryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('string'),
+        select: (data) => data.pages,
+        getNextPageParam: () => 1,
+        initialPageParam: 1,
+      })
+
+      const result: Expect<
+        Equal<(typeof queryKey)[typeof dataTagSymbol], InfiniteData<string>>
+      > = true
+      return result
+    })
+  })
   it('should return the proper type when passed to getQueryData', () => {
     doNotExecute(() => {
       const { queryKey } = infiniteQueryOptions({

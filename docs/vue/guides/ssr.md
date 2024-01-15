@@ -87,8 +87,8 @@ export default (context) => {
   Vue.use(VueQueryPlugin, options)
 
   if (process.client) {
-    if (context.nuxtState && context.nuxtState['vue-query']) {
-      hydrate(queryClient, context.nuxtState['vue-query'])
+    if (context.nuxtState && context.nuxtState.vueQueryState) {
+      hydrate(queryClient, context.nuxtState.vueQueryState)
     }
   }
 }
@@ -134,11 +134,11 @@ export default defineComponent({
     // This won't be prefetched, it will start fetching on client side
     const { data2 } = useQuery("todos2", getTodos);
 
-    onServerPrefetch(async () => {
-     const { ssrContext } = useContext();
-      const queryClient = useQueryClient();
-      await suspense();
+    const { ssrContext } = useContext();
+    const queryClient = useQueryClient();
 
+    onServerPrefetch(async () => {
+      await suspense();
       ssrContext.nuxt.vueQueryState = dehydrate(queryClient);
     });
 
