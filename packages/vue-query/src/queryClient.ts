@@ -51,7 +51,7 @@ export class QueryClient extends QC {
   }
 
   getQueryData<TData = unknown, TaggedQueryKey extends QueryKey = QueryKey>(
-    queryKey: MaybeRefDeep<TaggedQueryKey>,
+    queryKey: TaggedQueryKey,
   ):
     | (TaggedQueryKey extends DataTag<unknown, infer TaggedValue>
         ? TaggedValue
@@ -110,7 +110,7 @@ export class QueryClient extends QC {
       ? TaggedValue
       : TQueryFnData,
   >(
-    queryKey: MaybeRefDeep<TaggedQueryKey>,
+    queryKey: TaggedQueryKey,
     updater: Updater<NoInfer<TData> | undefined, NoInfer<TData> | undefined>,
     options?: MaybeRefDeep<SetDataOptions>,
   ): TData | undefined
