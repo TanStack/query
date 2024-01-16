@@ -1,6 +1,6 @@
 import { describe, it } from 'vitest'
-import { QueryClient } from '@tanstack/query-core'
 import { reactive } from 'vue-demi'
+import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
 import { doNotExecute } from './test-utils'
@@ -79,6 +79,20 @@ describe('queryOptions', () => {
 
       const result: Expect<
         Equal<(typeof queryKey)[typeof dataTagSymbol], unknown>
+      > = true
+      return result
+    })
+  })
+  it('should tag the queryKey with the result type of the QueryFn if select is used', () => {
+    doNotExecute(() => {
+      const { queryKey } = queryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve(5),
+        select: (data) => data.toString(),
+      })
+
+      const result: Expect<
+        Equal<(typeof queryKey)[typeof dataTagSymbol], number>
       > = true
       return result
     })
