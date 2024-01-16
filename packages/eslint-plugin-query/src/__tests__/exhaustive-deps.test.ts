@@ -364,13 +364,13 @@ ruleTester.run('exhaustive-deps', rule, {
         const CONST_VAL = 1
         function useHook() {
           const queryClient = useQueryClient()
-          const kueryKlient = useQueryClient()
+          const queryClient2 = useQueryClient()
           useQuery({
             queryKey: ["foo"],
             queryFn: () => {
                 doSomething(queryClient)
                 queryClient.invalidateQueries()
-                doSomethingSus(kueryKlient)
+                doSomethingSus(queryClient2)
             }
           });
         }

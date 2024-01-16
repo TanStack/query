@@ -2722,7 +2722,7 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('data: 1, isFetching: false'))
   })
 
-  it('should calculate focus behaviour for `refetchOnWindowFocus` depending on function', async () => {
+  it('should calculate focus behavior for `refetchOnWindowFocus` depending on function', async () => {
     const key = queryKey()
     const states: Array<UseQueryResult<number>> = []
     let count = 0

@@ -142,7 +142,7 @@ export function persistQueryClientSubscribe(
       }
     })
 
-  const unusbscribeMutationCache = props.queryClient
+  const unsubscribeMutationCache = props.queryClient
     .getMutationCache()
     .subscribe((event) => {
       if (isCacheableEventType(event.type)) {
@@ -152,7 +152,7 @@ export function persistQueryClientSubscribe(
 
   return () => {
     unsubscribeQueryCache()
-    unusbscribeMutationCache()
+    unsubscribeMutationCache()
   }
 }
 

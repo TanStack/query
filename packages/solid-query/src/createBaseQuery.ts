@@ -46,14 +46,14 @@ function reconcileFn<TData, TError>(
   return { ...result, data: newData } as typeof result
 }
 
-type HydrateableQueryState<TData, TError> = QueryObserverResult<TData, TError> &
+type HydratableQueryState<TData, TError> = QueryObserverResult<TData, TError> &
   QueryState<TData, TError>
 
 /**
  * Solid's `onHydrated` functionality will silently "fail" (hydrate with an empty object)
  * if the resource data is not serializable.
  */
-const hydrateableObserverResult = <
+const hydratableObserverResult = <
   TQueryFnData,
   TError,
   TData,
@@ -62,16 +62,16 @@ const hydrateableObserverResult = <
 >(
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
   result: QueryObserverResult<T2, TError>,
-): HydrateableQueryState<T2, TError> => {
+): HydratableQueryState<T2, TError> => {
   // Including the extra properties is only relevant on the server
-  if (!isServer) return result as HydrateableQueryState<T2, TError>
+  if (!isServer) return result as HydratableQueryState<T2, TError>
 
   return {
     ...unwrap(result),
 
     // cast to refetch function should be safe, since we only remove it on the server,
     // and refetch is not relevant on the server
-    refetch: undefined as unknown as HydrateableQueryState<
+    refetch: undefined as unknown as HydratableQueryState<
       T2,
       TError
     >['refetch'],
@@ -104,7 +104,7 @@ export function createBaseQuery<
   queryClient?: Accessor<QueryClient>,
 ) {
   type ResourceData =
-    | HydrateableQueryState<TData, TError>
+    | HydratableQueryState<TData, TError>
     | QueryObserverResult<TData, TError>
 
   const client = createMemo(() => useQueryClient(queryClient?.()))
@@ -144,7 +144,7 @@ export function createBaseQuery<
     return observer().subscribe((result) => {
       notifyManager.batchCalls(() => {
         const query = observer().getCurrentQuery()
-        const unwrappedResult = hydrateableObserverResult(query, result)
+        const unwrappedResult = hydratableObserverResult(query, result)
 
         if (unwrappedResult.isError) {
           reject(unwrappedResult.error)
@@ -170,7 +170,7 @@ export function createBaseQuery<
             reconcileOptions === undefined ? false : reconcileOptions,
           )
         })
-        // If the query has data we dont suspend but instead mutate the resource
+        // If the query has data we don't suspend but instead mutate the resource
         // This could happen when placeholderData/initialData is defined
         if (
           queryResource()?.data &&
@@ -203,7 +203,7 @@ export function createBaseQuery<
 
         if (!state.isLoading && !isRestoring()) {
           const query = obs.getCurrentQuery()
-          resolve(hydrateableObserverResult(query, state))
+          resolve(hydratableObserverResult(query, state))
         }
       })
     },

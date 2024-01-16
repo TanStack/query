@@ -1941,7 +1941,7 @@ describe('createQuery', () => {
     await sleep(20)
 
     // Since components are rendered once
-    // There wiil only be one pass
+    // There will only be one pass
     expect(renders).toBe(1)
   })
 
@@ -2215,7 +2215,7 @@ describe('createQuery', () => {
     expect(states[3]).toMatchObject({ data: 1, isFetching: false })
   })
 
-  it('should calculate focus behaviour for refetchOnWindowFocus depending on function', async () => {
+  it('should calculate focus behavior for refetchOnWindowFocus depending on function', async () => {
     const key = queryKey()
     const states: Array<CreateQueryResult<number>> = []
     let count = 0
