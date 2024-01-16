@@ -894,4 +894,42 @@ describe('queryObserver', () => {
 
     unsubscribe()
   })
+
+  test('should be inferred as a correct result type', async () => {
+    const key = queryKey()
+    const data = { value: 'data' }
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => Promise.resolve(data),
+    })
+
+    const result = observer.getCurrentResult()
+
+    result.isPending &&
+      expectTypeOf<undefined>(result.data) &&
+      expectTypeOf<null>(result.error) &&
+      expectTypeOf<boolean>(result.isLoading) &&
+      expectTypeOf<'pending'>(result.status)
+
+    result.isLoading &&
+      expectTypeOf<undefined>(result.data) &&
+      expectTypeOf<null>(result.error) &&
+      expectTypeOf<true>(result.isPending) &&
+      expectTypeOf<'pending'>(result.status)
+
+    result.isLoadingError &&
+      expectTypeOf<undefined>(result.data) &&
+      expectTypeOf<Error>(result.error) &&
+      expectTypeOf<'error'>(result.status)
+
+    result.isRefetchError &&
+      expectTypeOf<{ value: string }>(result.data) &&
+      expectTypeOf<Error>(result.error) &&
+      expectTypeOf<'error'>(result.status)
+
+    result.isSuccess &&
+      expectTypeOf<{ value: string }>(result.data) &&
+      expectTypeOf<null>(result.error) &&
+      expectTypeOf<'success'>(result.status)
+  })
 })
