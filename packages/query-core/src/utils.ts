@@ -224,7 +224,8 @@ export function replaceEqualDeep(a: any, b: any): any {
   const array = isPlainArray(a) && isPlainArray(b)
 
   if (array || (isPlainObject(a) && isPlainObject(b))) {
-    const aSize = array ? a.length : Object.keys(a).length
+    const aItems = array ? a : Object.keys(a)
+    const aSize = aItems.length
     const bItems = array ? b : Object.keys(b)
     const bSize = bItems.length
     const copy: any = array ? [] : {}
@@ -233,9 +234,19 @@ export function replaceEqualDeep(a: any, b: any): any {
 
     for (let i = 0; i < bSize; i++) {
       const key = array ? i : bItems[i]
-      copy[key] = replaceEqualDeep(a[key], b[key])
-      if (copy[key] === a[key] && a[key] !== undefined) {
+      if (
+        !array &&
+        a[key] === undefined &&
+        b[key] === undefined &&
+        aItems.includes(key)
+      ) {
+        copy[key] = undefined
         equalItems++
+      } else {
+        copy[key] = replaceEqualDeep(a[key], b[key])
+        if (copy[key] === a[key] && a[key] !== undefined) {
+          equalItems++
+        }
       }
     }
 
