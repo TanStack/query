@@ -52,7 +52,7 @@ const {
   staleTime,
   structuralSharing,
   throwOnError,
-})
+}, queryClient)
 ```
 
 **Options**
