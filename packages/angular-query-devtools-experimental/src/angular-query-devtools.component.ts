@@ -1,4 +1,8 @@
-import { TanstackQueryDevtools } from '@tanstack/query-devtools'
+import * as queryDevtools from '@tanstack/query-devtools'
+import {
+  injectQueryClient,
+  onlineManager,
+} from '@tanstack/angular-query-experimental'
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,135 +10,132 @@ import {
   Input,
   ViewChild,
   booleanAttribute,
-  inject,
 } from '@angular/core'
-import {
-  QUERY_CLIENT,
-  onlineManager,
-} from '@tanstack/angular-query-experimental'
-import type { QueryClient } from '@tanstack/angular-query-experimental'
-import type { AfterViewInit, OnDestroy } from '@angular/core'
+import { QueryClient } from '@tanstack/angular-query-experimental'
 import type {
-  // DevToolsErrorType as DevToolsErrorTypeOriginal,
-  DevtoolsButtonPosition as DevtoolsButtonPositionOriginal,
-  DevtoolsPosition as DevtoolsPositionOriginal,
+  AfterViewInit,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges,
+} from '@angular/core'
+import type {
+  DevToolsErrorType,
+  TanstackQueryDevtools,
 } from '@tanstack/query-devtools'
-
-// Alias types for decorators
-type DevtoolsButtonPosition = DevtoolsButtonPositionOriginal
-type DevtoolsPosition = DevtoolsPositionOriginal
-// type DevToolsErrorType = DevToolsErrorTypeOriginal
 
 @Component({
   selector: 'angular-query-devtools',
   standalone: true,
   template: `<div class="tsqd-parent-container" #ref></div>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { ngSkipHydration: 'true' },
 })
-export class AngularQueryDevtools implements AfterViewInit, OnDestroy {
-  readonly #injectedClient = inject<QueryClient>(QUERY_CLIENT, {
-    optional: true,
-  })
+export class AngularQueryDevtools
+  implements AfterViewInit, OnChanges, OnDestroy
+{
+  /*
+   * It is intentional that there are no default values on inputs.
+   * Core devtools will set defaults when values are undefined.
+   * */
 
-  #clientFromAttribute: QueryClient | null = null
+  /**
+   * Add this attribute if you want the dev tools to default to being open
+   * @example
+   * <angular-query-devtools initialIsOpen />
+   */
+  @Input({ transform: booleanAttribute }) initialIsOpen?: boolean
 
-  #getAppliedQueryClient() {
-    if (!this.#clientFromAttribute && !this.#injectedClient) {
-      throw new Error(
-        `You must either provide a client via 'provideAngularQuery' or pass it to the 'client' attribute of angular-query-devtools.`,
-      )
-    }
-    return this.#clientFromAttribute ?? this.#injectedClient
-  }
+  /**
+   * The position of the TanStack logo to open and close the devtools panel.
+   * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
+   * Defaults to 'bottom-right'.
+   * @example
+   * <angular-query-devtools buttonPosition="top-right" />
+   */
+  @Input() buttonPosition?: queryDevtools.DevtoolsButtonPosition
+
+  /**
+   * The position of the Angular Query devtools panel.
+   * 'top' | 'bottom' | 'left' | 'right'
+   * @example
+   * <angular-query-devtools position="bottom" />
+   */
+  @Input({ alias: 'position' }) position?: queryDevtools.DevtoolsPosition
+
+  /**
+   * Custom instance of QueryClient
+   * @example
+   * <angular-query-devtools [client]="queryClient" />
+   */
+  @Input() client?: QueryClient
+
+  /**
+   * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+   * @example
+   * <angular-query-devtools styleNonce="YourRandomNonceValue" />
+   */
+  @Input() styleNonce?: string
+
+  /**
+   * Use this so you can define custom errors that can be shown in the devtools.
+   */
+  @Input() errorTypes?: Array<DevToolsErrorType>
 
   @ViewChild('ref') ref!: ElementRef
 
-  #devtools: TanstackQueryDevtools
+  #devtools?: TanstackQueryDevtools
 
-  constructor() {
-    this.#devtools = new TanstackQueryDevtools({
-      client: this.#getAppliedQueryClient()!,
+  readonly #injectedClient: QueryClient | null = injectQueryClient({
+    optional: true,
+  })
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (!this.#devtools) return
+    if (changes['client']) {
+      this.#devtools.setClient(this.#getAppliedQueryClient())
+    }
+    if (changes['buttonPosition'] && this.buttonPosition) {
+      this.#devtools.setButtonPosition(this.buttonPosition)
+    }
+    if (changes['position'] && this.position) {
+      this.#devtools.setPosition(this.position)
+    }
+    if (changes['initialIsOpen'] && this.initialIsOpen) {
+      this.#devtools.setInitialIsOpen(this.initialIsOpen)
+    }
+    if (changes['errorTypes'] && this.errorTypes) {
+      this.#devtools.setErrorTypes(this.errorTypes)
+    }
+  }
+
+  ngAfterViewInit() {
+    const devtools = new queryDevtools.TanstackQueryDevtools({
+      client: this.#getAppliedQueryClient(),
       queryFlavor: 'Angular Query',
       version: '5',
       onlineManager,
       buttonPosition: this.buttonPosition,
       position: this.position,
       initialIsOpen: this.initialIsOpen,
-      // errorTypes,
+      errorTypes: this.errorTypes,
+      styleNonce: this.styleNonce,
     })
-  }
-
-  #initialIsOpen = false
-  /**
-   * Add this attribute if you want the dev tools to default to being open
-   */
-  @Input({ transform: booleanAttribute })
-  set initialIsOpen(value: boolean) {
-    this.#initialIsOpen = value
-    this.#devtools.setInitialIsOpen(value)
-  }
-  get initialIsOpen() {
-    return this.#initialIsOpen
-  }
-
-  #buttonPosition: DevtoolsButtonPosition = 'bottom-left'
-  /**
-   * The position of the TanStack logo to open and close the devtools panel.
-   * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
-   * Defaults to 'bottom-left'.
-   */
-  @Input()
-  set buttonPosition(value: DevtoolsButtonPosition) {
-    this.#buttonPosition = value
-    this.#devtools.setButtonPosition(value)
-  }
-  get buttonPosition() {
-    return this.#buttonPosition
-  }
-
-  #position: DevtoolsPosition = 'bottom'
-  /**
-   * The position of the Angular Query devtools panel.
-   * 'top' | 'bottom' | 'left' | 'right'
-   * Defaults to 'bottom'.
-   */
-  @Input()
-  set position(value: DevtoolsPosition) {
-    this.#position = value
-    this.#devtools.setPosition(value)
-  }
-  get position() {
-    return this.#position
-  }
-
-  /**
-   * Custom instance of QueryClient
-   */
-  @Input()
-  set client(client: QueryClient | undefined) {
-    this.#clientFromAttribute = client ?? null
-    this.#devtools.setClient(this.#getAppliedQueryClient()!)
-  }
-
-  // TODO: needs to tested. When re-adding don't forget to re-add to devtools.md too
-  // #errorTypes: Array<DevToolsErrorType> = []
-  /**
-   * Use this so you can define custom errors that can be shown in the devtools.
-   */
-  // @Input()
-  // set errorTypes(value: Array<DevToolsErrorType>) {
-  //   this.#errorTypes = value
-  //   this.#devtools?.setErrorTypes(value)
-  // }
-  // get errorTypes(): Array<DevToolsErrorType> {
-  //   return this.#errorTypes
-  // }
-
-  ngAfterViewInit() {
-    this.#devtools.mount(this.ref.nativeElement)
+    devtools.mount(this.ref.nativeElement)
+    this.#devtools = devtools
   }
 
   ngOnDestroy() {
-    this.#devtools.unmount()
+    this.#devtools?.unmount()
+  }
+
+  #getAppliedQueryClient() {
+    const client = this.client ?? this.#injectedClient
+    if (!client) {
+      throw new Error(
+        'You must either provide a client via `provideAngularQuery` ' +
+          'or pass it to the `client` attribute of `<angular-query-devtools>`.',
+      )
+    }
+    return client
   }
 }
