@@ -53,7 +53,7 @@ function App() {
 - `initialIsOpen: Boolean`
   - Set this `true` if you want the dev tools to default to being open
 - `buttonPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right"`
-  - Defaults to `bottom-left`
+  - Defaults to `bottom-right`
   - The position of the Solid Query logo to open and close the devtools panel
 - `position?: "top" | "bottom" | "left" | "right"`
   - Defaults to `bottom`

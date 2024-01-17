@@ -21,7 +21,7 @@ const devtools = new TanstackQueryDevtools({
 })
 
 watchEffect(() => {
-  devtools.setButtonPosition(props.buttonPosition || 'bottom-left')
+  devtools.setButtonPosition(props.buttonPosition || 'bottom-right')
   devtools.setPosition(props.position || 'bottom')
   devtools.setInitialIsOpen(props.initialIsOpen)
   devtools.setErrorTypes(props.errorTypes || [])

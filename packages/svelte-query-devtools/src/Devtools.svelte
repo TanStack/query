@@ -11,7 +11,7 @@
   } from '@tanstack/query-devtools'
 
   export let initialIsOpen = false
-  export let buttonPosition: DevtoolsButtonPosition = 'bottom-left'
+  export let buttonPosition: DevtoolsButtonPosition = 'bottom-right'
   export let position: DevtoolsPosition = 'bottom'
   export let client: QueryClient = useQueryClient()
   export let errorTypes: Array<DevToolsErrorType> = []
