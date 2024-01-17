@@ -2,6 +2,7 @@ import { computed, signal } from '@angular/core'
 import { TestBed, fakeAsync, flush, tick } from '@angular/core/testing'
 import { QueryClient } from '@tanstack/query-core'
 import { expect, vi } from 'vitest'
+import { Subject } from 'rxjs'
 import { injectQuery } from '../inject-query'
 import { provideAngularQuery } from '../providers'
 import {
@@ -214,5 +215,52 @@ describe('injectQuery', () => {
     flush()
 
     expect(query.status()).toBe('error')
+  }))
+
+  test('should allow an observable to be passed as queryFn', fakeAsync(() => {
+    const subject$ = new Subject<string>()
+    const query = TestBed.runInInjectionContext(() => {
+      return injectQuery(() => ({
+        queryKey: ['key14'],
+        query$: () => subject$.asObservable(),
+      }))
+    })
+
+    expect(query.status()).toBe('pending')
+
+    flush()
+
+    subject$.next('Some data')
+
+    flush()
+    expect(query.status()).toBe('success')
+    expect(query.data()).toBe('Some data')
+  }))
+
+  test('should allow to error when the stream is emitting after the first time it emits', fakeAsync(() => {
+    const subject$ = new Subject<string>()
+    const query = TestBed.runInInjectionContext(() => {
+      return injectQuery(() => ({
+        queryKey: ['key14'],
+        query$: () => subject$.asObservable(),
+      }))
+    })
+
+    expect(query.status()).toBe('pending')
+
+    flush()
+
+    subject$.next('Some data')
+
+    flush()
+    expect(query.status()).toBe('success')
+    expect(query.data()).toBe('Some data')
+
+    subject$.error(new Error('Some error'))
+
+    flush()
+
+    expect(query.status()).toBe('error')
+    expect(query.error()).toMatchObject({ message: 'Some error' })
   }))
 })

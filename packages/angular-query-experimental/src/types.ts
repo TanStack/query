@@ -1,4 +1,5 @@
 import type { Signal } from '@angular/core'
+import type { Observable } from 'rxjs'
 
 import type {
   DefaultError,
@@ -8,6 +9,7 @@ import type {
   MutateFunction,
   MutationObserverOptions,
   MutationObserverResult,
+  QueryFunctionContext,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
@@ -21,10 +23,22 @@ export interface CreateBaseQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
+  TPageParam = never,
 > extends WithRequired<
-    QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+    QueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
+    >,
     'queryKey'
-  > {}
+  > {
+  query$?: (
+    context: QueryFunctionContext<TQueryKey, TPageParam>,
+  ) => Observable<TQueryFnData>
+}
 
 type CreateStatusBasedQueryResult<
   TStatus extends QueryObserverResult['status'],

@@ -54,12 +54,14 @@
     "@angular/platform-browser": "^17.0.8",
     "@angular/platform-browser-dynamic": "^17.0.8",
     "ng-packagr": "^17.0.3",
+    "rxjs": "^7.8.1",
     "typescript": "5.2.2",
     "zone.js": "^0.14.2"
   },
   "peerDependencies": {
     "@angular/core": "^17",
-    "@angular/common": "^17"
+    "@angular/common": "^17",
+    "rxjs": "^7"
   },
   "module": "build/fesm2022/tanstack-angular-query-experimental.mjs",
   "types": "build/index.d.ts",
