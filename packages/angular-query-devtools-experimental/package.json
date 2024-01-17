@@ -34,12 +34,14 @@
   "devDependencies": {
     "@angular/compiler-cli": "^17.0.8",
     "@angular/core": "^17.0.8",
+    "@angular/common": "^17.0.8",
     "@tanstack/angular-query-experimental": "workspace:*",
     "ng-packagr": "^17.0.3",
     "typescript": "5.2.2",
     "zone.js": "^0.14.2"
   },
   "peerDependencies": {
+    "@angular/common": "^17",
     "@angular/core": "^17",
     "@tanstack/angular-query-experimental": "workspace:^"
   },

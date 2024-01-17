@@ -1,3 +1,4 @@
+import { isPlatformBrowser } from '@angular/common'
 import * as queryDevtools from '@tanstack/query-devtools'
 import {
   injectQueryClient,
@@ -8,8 +9,10 @@ import {
   Component,
   ElementRef,
   Input,
+  PLATFORM_ID,
   ViewChild,
   booleanAttribute,
+  inject,
 } from '@angular/core'
 import { QueryClient } from '@tanstack/angular-query-experimental'
 import type {
@@ -57,6 +60,7 @@ export class AngularQueryDevtools
   /**
    * The position of the Angular Query devtools panel.
    * 'top' | 'bottom' | 'left' | 'right'
+   * Defaults to 'bottom'.
    * @example
    * <angular-query-devtools position="bottom" />
    */
@@ -85,30 +89,35 @@ export class AngularQueryDevtools
 
   #devtools?: TanstackQueryDevtools
 
-  readonly #injectedClient: QueryClient | null = injectQueryClient({
-    optional: true,
-  })
+  readonly #isBrowser = isPlatformBrowser(inject(PLATFORM_ID))
+
+  readonly #injectedClient: QueryClient | null = this.#isBrowser
+    ? injectQueryClient({
+        optional: true,
+      })
+    : null
 
   ngOnChanges(changes: SimpleChanges) {
     if (!this.#devtools) return
     if (changes['client']) {
       this.#devtools.setClient(this.#getAppliedQueryClient())
     }
-    if (changes['buttonPosition'] && this.buttonPosition) {
+    if (changes['buttonPosition'] && this.buttonPosition !== undefined) {
       this.#devtools.setButtonPosition(this.buttonPosition)
     }
-    if (changes['position'] && this.position) {
+    if (changes['position'] && this.position !== undefined) {
       this.#devtools.setPosition(this.position)
     }
-    if (changes['initialIsOpen'] && this.initialIsOpen) {
+    if (changes['initialIsOpen'] && this.initialIsOpen !== undefined) {
       this.#devtools.setInitialIsOpen(this.initialIsOpen)
     }
-    if (changes['errorTypes'] && this.errorTypes) {
+    if (changes['errorTypes'] && this.errorTypes !== undefined) {
       this.#devtools.setErrorTypes(this.errorTypes)
     }
   }
 
   ngAfterViewInit() {
+    if (!this.#isBrowser) return
     const devtools = new queryDevtools.TanstackQueryDevtools({
       client: this.#getAppliedQueryClient(),
       queryFlavor: 'Angular Query',

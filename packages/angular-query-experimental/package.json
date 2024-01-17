@@ -58,7 +58,8 @@
     "zone.js": "^0.14.2"
   },
   "peerDependencies": {
-    "@angular/core": "^17"
+    "@angular/core": "^17",
+    "@angular/common": "^17"
   },
   "module": "build/fesm2022/tanstack-angular-query-experimental.mjs",
   "types": "build/index.d.ts",

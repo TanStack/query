@@ -1626,6 +1626,9 @@ importers:
         specifier: ^2.6.2
         version: 2.6.2
     devDependencies:
+      '@angular/common':
+        specifier: ^17.0.8
+        version: 17.0.8(@angular/core@17.0.8)(rxjs@7.8.1)
       '@angular/compiler-cli':
         specifier: ^17.0.8
         version: 17.0.8(@angular/compiler@17.0.8)(typescript@5.2.2)
