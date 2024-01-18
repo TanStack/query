@@ -332,6 +332,24 @@ describe('core/utils', () => {
       const result = replaceEqualDeep(obj1, obj2)
       expect(result).toStrictEqual(obj2)
     })
+
+    it('should be able to share values that contain undefined', () => {
+      const current = [
+        {
+          data: undefined,
+          foo: true,
+        },
+      ]
+
+      const next = replaceEqualDeep(current, [
+        {
+          data: undefined,
+          foo: true,
+        },
+      ])
+
+      expect(current).toBe(next)
+    })
   })
 
   describe('matchMutation', () => {
