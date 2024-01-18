@@ -17,7 +17,7 @@ export interface DevtoolsOptions {
   /**
    * The position of the React Query logo to open and close the devtools panel.
    * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
-   * Defaults to 'bottom-left'.
+   * Defaults to 'bottom-right'.
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
