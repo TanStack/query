@@ -130,7 +130,7 @@ export function createHydrationStreamProvider<TShape>() {
         <script
           key={count.current++}
           dangerouslySetInnerHTML={{
-            __html: html.join(''),
+            __html: html.join('').replaceAll('</', '<\\/'),
           }}
         />
       )
