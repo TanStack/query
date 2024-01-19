@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-devtools-experimental",
-  "version": "5.17.7",
+  "version": "5.17.17",
   "description": "Developer tools to interact with and visualize the TanStack/angular-query cache",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -34,13 +34,16 @@
   "devDependencies": {
     "@angular/compiler-cli": "^17.0.8",
     "@angular/core": "^17.0.8",
+    "@angular/common": "^17.0.8",
     "@tanstack/angular-query-experimental": "workspace:*",
     "ng-packagr": "^17.0.3",
     "typescript": "5.2.2",
     "zone.js": "^0.14.2"
   },
   "peerDependencies": {
-    "@angular/core": "^17"
+    "@angular/common": "^17",
+    "@angular/core": "^17",
+    "@tanstack/angular-query-experimental": "workspace:^"
   },
   "module": "build/fesm2022/tanstack-angular-query-devtools-experimental.mjs",
   "types": "build/index.d.ts",

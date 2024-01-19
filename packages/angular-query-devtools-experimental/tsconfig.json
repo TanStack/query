@@ -23,5 +23,5 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   },
-  "include": ["src/**/*.ts", ".eslintrc.cjs"]
+  "include": ["src/**/*.ts", ".eslintrc.cjs", "vite.config.ts"]
 }

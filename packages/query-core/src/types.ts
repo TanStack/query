@@ -488,6 +488,20 @@ export interface QueryObserverBaseResult<
   fetchStatus: FetchStatus
 }
 
+export interface QueryObserverPendingResult<
+  TData = unknown,
+  TError = DefaultError,
+> extends QueryObserverBaseResult<TData, TError> {
+  data: undefined
+  error: null
+  isError: false
+  isPending: true
+  isLoadingError: false
+  isRefetchError: false
+  isSuccess: false
+  status: 'pending'
+}
+
 export interface QueryObserverLoadingResult<
   TData = unknown,
   TError = DefaultError,
@@ -496,6 +510,7 @@ export interface QueryObserverLoadingResult<
   error: null
   isError: false
   isPending: true
+  isLoading: true
   isLoadingError: false
   isRefetchError: false
   isSuccess: false
@@ -510,6 +525,7 @@ export interface QueryObserverLoadingErrorResult<
   error: TError
   isError: true
   isPending: false
+  isLoading: false
   isLoadingError: true
   isRefetchError: false
   isSuccess: false
@@ -524,6 +540,7 @@ export interface QueryObserverRefetchErrorResult<
   error: TError
   isError: true
   isPending: false
+  isLoading: false
   isLoadingError: false
   isRefetchError: true
   isSuccess: false
@@ -538,6 +555,7 @@ export interface QueryObserverSuccessResult<
   error: null
   isError: false
   isPending: false
+  isLoading: false
   isLoadingError: false
   isRefetchError: false
   isSuccess: true
@@ -555,6 +573,7 @@ export type QueryObserverResult<TData = unknown, TError = DefaultError> =
   | DefinedQueryObserverResult<TData, TError>
   | QueryObserverLoadingErrorResult<TData, TError>
   | QueryObserverLoadingResult<TData, TError>
+  | QueryObserverPendingResult<TData, TError>
 
 export interface InfiniteQueryObserverBaseResult<
   TData = unknown,
@@ -572,6 +591,20 @@ export interface InfiniteQueryObserverBaseResult<
   isFetchingPreviousPage: boolean
 }
 
+export interface InfiniteQueryObserverPendingResult<
+  TData = unknown,
+  TError = DefaultError,
+> extends InfiniteQueryObserverBaseResult<TData, TError> {
+  data: undefined
+  error: null
+  isError: false
+  isPending: true
+  isLoadingError: false
+  isRefetchError: false
+  isSuccess: false
+  status: 'pending'
+}
+
 export interface InfiniteQueryObserverLoadingResult<
   TData = unknown,
   TError = DefaultError,
@@ -580,6 +613,7 @@ export interface InfiniteQueryObserverLoadingResult<
   error: null
   isError: false
   isPending: true
+  isLoading: true
   isLoadingError: false
   isRefetchError: false
   isSuccess: false
@@ -594,6 +628,7 @@ export interface InfiniteQueryObserverLoadingErrorResult<
   error: TError
   isError: true
   isPending: false
+  isLoading: false
   isLoadingError: true
   isRefetchError: false
   isSuccess: false
@@ -608,6 +643,7 @@ export interface InfiniteQueryObserverRefetchErrorResult<
   error: TError
   isError: true
   isPending: false
+  isLoading: false
   isLoadingError: false
   isRefetchError: true
   isSuccess: false
@@ -622,6 +658,7 @@ export interface InfiniteQueryObserverSuccessResult<
   error: null
   isError: false
   isPending: false
+  isLoading: false
   isLoadingError: false
   isRefetchError: false
   isSuccess: true
@@ -639,9 +676,10 @@ export type InfiniteQueryObserverResult<
   TData = unknown,
   TError = DefaultError,
 > =
+  | DefinedInfiniteQueryObserverResult<TData, TError>
   | InfiniteQueryObserverLoadingErrorResult<TData, TError>
   | InfiniteQueryObserverLoadingResult<TData, TError>
-  | DefinedInfiniteQueryObserverResult<TData, TError>
+  | InfiniteQueryObserverPendingResult<TData, TError>
 
 export type MutationKey = ReadonlyArray<unknown>
 

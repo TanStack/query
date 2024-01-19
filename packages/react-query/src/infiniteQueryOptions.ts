@@ -62,7 +62,7 @@ export function infiniteQueryOptions<
   TQueryKey,
   TPageParam
 > & {
-  queryKey: DataTag<TQueryKey, TData>
+  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>
 }
 
 export function infiniteQueryOptions<
@@ -86,7 +86,7 @@ export function infiniteQueryOptions<
   TQueryKey,
   TPageParam
 > & {
-  queryKey: DataTag<TQueryKey, TData>
+  queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>
 }
 
 export function infiniteQueryOptions(options: unknown) {
