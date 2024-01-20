@@ -688,7 +688,9 @@ export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
 export type MutationMeta = Register extends {
   mutationMeta: infer TMutationMeta
 }
-  ? TMutationMeta
+  ? TMutationMeta extends Record<string, unknown>
+    ? TMutationMeta
+    : Record<string, unknown>
   : Record<string, unknown>
 
 export type MutationFunction<TData = unknown, TVariables = unknown> = (
