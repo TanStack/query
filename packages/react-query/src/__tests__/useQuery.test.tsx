@@ -1183,7 +1183,7 @@ describe('useQuery', () => {
     )
   })
 
-  it('should not update disabled query when refetched with refetchQueries', async () => {
+  it('should not update disabled query when refetching with refetchQueries', async () => {
     const key = queryKey()
     const states: Array<UseQueryResult<number>> = []
     let count = 0
@@ -2859,7 +2859,7 @@ describe('useQuery', () => {
       const { status, error } = useQuery({
         queryKey: key,
         queryFn: () => {
-          return Promise.reject(new Error('Error test jaylen'))
+          return Promise.reject(new Error('Error test'))
         },
         retry: false,
       })
@@ -2875,7 +2875,7 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('error'))
-    await waitFor(() => rendered.getByText('Error test jaylen'))
+    await waitFor(() => rendered.getByText('Error test'))
 
     consoleMock.mockRestore()
   })
@@ -2889,7 +2889,7 @@ describe('useQuery', () => {
     function Page() {
       const { status, error } = useQuery<unknown, string>({
         queryKey: key,
-        queryFn: () => Promise.reject(new Error('Error test jaylen')),
+        queryFn: () => Promise.reject(new Error('Error test')),
         retry: false,
         throwOnError: true,
       })

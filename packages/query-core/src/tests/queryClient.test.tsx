@@ -196,7 +196,7 @@ describe('queryClient', () => {
       expect(() => {
         queryClient.setQueryData([key, user], (prevUser?: typeof user) => ({
           ...prevUser!,
-          name: 'Edvin',
+          name: 'James',
         }))
       }).not.toThrow()
     })

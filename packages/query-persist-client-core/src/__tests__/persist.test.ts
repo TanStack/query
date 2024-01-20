@@ -4,7 +4,7 @@ import { persistQueryClientSubscribe } from '../persist'
 import {
   createMockPersister,
   createQueryClient,
-  createSpyablePersister,
+  createSpyPersister,
 } from './utils'
 
 describe('persistQueryClientSubscribe', () => {
@@ -35,7 +35,7 @@ describe('persistQueryClientSave', () => {
   test('should not be triggered on observer type events', async () => {
     const queryClient = createQueryClient()
 
-    const persister = createSpyablePersister()
+    const persister = createSpyPersister()
 
     const unsubscribe = persistQueryClientSubscribe({
       queryClient,

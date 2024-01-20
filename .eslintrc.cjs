@@ -40,40 +40,19 @@ const config = {
       {
         cspell: {
           words: [
-            'tanstack',
-            'todos',
-            'codemod',
-            'TSES',
-            'Retryer',
-            'tsqd',
-            'customizer',
-            'composables',
-            'Chau',
-            'Fetchings',
-            'Mutatings',
-            'unreffed',
-            'dosipiuk',
-            'ouuid',
-            'refetches',
-            'refetched',
-            'tsup',
-            'Edvin',
-            'salut',
-            'nums',
-            'Tarte',
-            'citrouille',
-            'bolonese',
-            'bolonaise',
-            'catched',
-            'Spyable',
-            'Promisable',
-            'Cacheable',
-            'solidjs',
-            'lukemurray',
-            'proxified',
-            'jaylen',
-            'extralight',
-            'unsub',
+            'tanstack', // Our package scope
+            'tsqd', // Our public interface (TanStack Query Devtools shorthand)
+            'retryer', // Our public interface
+            'Promisable', // Our public interface
+            'extralight', // Our public interface
+            'codemod', // We support our codemod
+
+            'TSES', // @typescript-eslint package's interface
+            'tsup', // We use tsup as builder
+            'solidjs', // Our target framework
+            'tabular-nums', // https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric
+            'todos', // Too general word to be caught as error
+            'ouuid', // codemod's variable
           ],
         },
       },

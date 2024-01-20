@@ -263,8 +263,8 @@ export function createBaseQuery<
     on(
       [isRestoring, observer],
       ([restoring]) => {
-        const unsub = unsubscribe
-        queueMicrotask(() => unsub?.())
+        const _unsubscribe = unsubscribe
+        queueMicrotask(() => _unsubscribe?.())
         unsubscribe = null
         if (!restoring) refetch()
       },

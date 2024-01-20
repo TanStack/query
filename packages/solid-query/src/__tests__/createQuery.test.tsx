@@ -1214,7 +1214,7 @@ describe('createQuery', () => {
     })
   })
 
-  it('should not update disabled query when refetched with refetchQueries', async () => {
+  it('should not update disabled query when refetch with refetchQueries', async () => {
     const key = queryKey()
     const states: Array<CreateQueryResult<number>> = []
     let count = 0
@@ -2364,7 +2364,7 @@ describe('createQuery', () => {
       const state = createQuery(() => ({
         queryKey: key,
         queryFn: () => {
-          return Promise.reject(new Error('Error test jaylen'))
+          return Promise.reject(new Error('Error test'))
         },
         retry: false,
       }))
@@ -2384,7 +2384,7 @@ describe('createQuery', () => {
     ))
 
     await waitFor(() => rendered.getByText('error'))
-    await waitFor(() => rendered.getByText('Error test jaylen'))
+    await waitFor(() => rendered.getByText('Error test'))
 
     consoleMock.mockRestore()
   })
@@ -2399,7 +2399,7 @@ describe('createQuery', () => {
     function Page() {
       const state = createQuery(() => ({
         queryKey: key,
-        queryFn: () => Promise.reject(new Error('Error test jaylen')),
+        queryFn: () => Promise.reject(new Error('Error test')),
         retry: false,
         throwOnError: true,
       }))

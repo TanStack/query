@@ -57,14 +57,10 @@ export interface PersistQueryClientOptions
  * Checks if emitted event is about cache change and not about observers.
  * Useful for persist, where we only want to trigger save when cache is changed.
  */
-const cacheableEventTypes: Array<NotifyEventType> = [
-  'added',
-  'removed',
-  'updated',
-]
+const cacheEventTypes: Array<NotifyEventType> = ['added', 'removed', 'updated']
 
-function isCacheableEventType(eventType: NotifyEventType) {
-  return cacheableEventTypes.includes(eventType)
+function isCacheEventType(eventType: NotifyEventType) {
+  return cacheEventTypes.includes(eventType)
 }
 
 /**
@@ -137,7 +133,7 @@ export function persistQueryClientSubscribe(
   const unsubscribeQueryCache = props.queryClient
     .getQueryCache()
     .subscribe((event) => {
-      if (isCacheableEventType(event.type)) {
+      if (isCacheEventType(event.type)) {
         persistQueryClientSave(props)
       }
     })
@@ -145,7 +141,7 @@ export function persistQueryClientSubscribe(
   const unsubscribeMutationCache = props.queryClient
     .getMutationCache()
     .subscribe((event) => {
-      if (isCacheableEventType(event.type)) {
+      if (isCacheEventType(event.type)) {
         persistQueryClientSave(props)
       }
     })
