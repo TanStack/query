@@ -1,6 +1,7 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig, mergeConfig } from 'vitest/config'
+import { tanstackBuildConfig } from '@tanstack/config/build'
 
-export default defineConfig({
+const config = defineConfig({
   test: {
     name: 'eslint-plugin-query',
     dir: './src',
@@ -10,3 +11,12 @@ export default defineConfig({
     typecheck: { enabled: true },
   },
 })
+
+export default mergeConfig(
+  config,
+  tanstackBuildConfig({
+    entry: './src/index.ts',
+    srcDir: './src',
+    exclude: ['./src/__tests__'],
+  }),
+)
