@@ -4,7 +4,8 @@
     "apiKey": "93e0b83eb0b5af4549b6bf47f90af3f7",
     "indexName": "tanstack-query"
   },
-  "menu": [
+  "menu": [],
+  "frameworkMenus": [
     {
       "framework": "react",
       "menuItems": [
