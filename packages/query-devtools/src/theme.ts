@@ -1,31 +1,3 @@
-const ShadowVariants = {
-  xs: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-  sm: '0 1px 3px 0 color, 0 1px 2px -1px color',
-  md: '0 4px 6px -1px color, 0 2px 4px -2px color',
-  lg: '0 10px 15px -3px color, 0 4px 6px -4px color',
-  xl: '0 20px 25px -5px color, 0 8px 10px -6px color',
-  '2xl': '0 25px 50px -12px color',
-  inner: 'inset 0 2px 4px 0 color',
-  none: 'none',
-}
-
-type ShadowVariantType = keyof typeof ShadowVariants
-
-const getShadow = (variant: ShadowVariantType, color: string = ''): string => {
-  return ShadowVariants[variant].replace(/color/g, color)
-}
-
-const Shadow = {
-  xs: (color: string = 'rgb(0 0 0 / 0.1)') => getShadow('xs', color),
-  sm: (color: string = 'rgb(0 0 0 / 0.1)') => getShadow('sm', color),
-  md: (color: string = 'rgb(0 0 0 / 0.1)') => getShadow('md', color),
-  lg: (color: string = 'rgb(0 0 0 / 0.1)') => getShadow('lg', color),
-  xl: (color: string = 'rgb(0 0 0 / 0.1)') => getShadow('xl', color),
-  '2xl': (color: string = 'rgb(0 0 0 / 0.25)') => getShadow('2xl', color),
-  inner: (color: string = 'rgb(0 0 0 / 0.05)') => getShadow('inner', color),
-  none: () => getShadow('none'),
-}
-
 export const tokens = {
   colors: {
     inherit: 'inherit',
@@ -292,7 +264,23 @@ export const tokens = {
     80: 'calc(var(--tsqd-font-size) * 20)',
     96: 'calc(var(--tsqd-font-size) * 24)',
   },
-  shadow: Shadow,
+  shadow: {
+    xs: (color: string = 'rgb(0 0 0 / 0.1)') =>
+      `0 1px 2px 0 rgb(0 0 0 / 0.05)` as const,
+    sm: (color: string = 'rgb(0 0 0 / 0.1)') =>
+      `0 1px 3px 0 ${color}, 0 1px 2px -1px ${color}` as const,
+    md: (color: string = 'rgb(0 0 0 / 0.1)') =>
+      `0 4px 6px -1px ${color}, 0 2px 4px -2px ${color}` as const,
+    lg: (color: string = 'rgb(0 0 0 / 0.1)') =>
+      `0 10px 15px -3px ${color}, 0 4px 6px -4px ${color}` as const,
+    xl: (color: string = 'rgb(0 0 0 / 0.1)') =>
+      `0 20px 25px -5px ${color}, 0 8px 10px -6px ${color}` as const,
+    '2xl': (color: string = 'rgb(0 0 0 / 0.25)') =>
+      `0 25px 50px -12px ${color}` as const,
+    inner: (color: string = 'rgb(0 0 0 / 0.05)') =>
+      `inset 0 2px 4px 0 ${color}` as const,
+    none: () => `none` as const,
+  },
   zIndices: {
     hide: -1,
     auto: 'auto',
@@ -308,4 +296,4 @@ export const tokens = {
     toast: 1700,
     tooltip: 1800,
   },
-}
+} as const
