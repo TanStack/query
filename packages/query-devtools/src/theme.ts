@@ -265,7 +265,7 @@ export const tokens = {
     96: 'calc(var(--tsqd-font-size) * 24)',
   },
   shadow: {
-    xs: (color: string = 'rgb(0 0 0 / 0.1)') =>
+    xs: (_: string = 'rgb(0 0 0 / 0.1)') =>
       `0 1px 2px 0 rgb(0 0 0 / 0.05)` as const,
     sm: (color: string = 'rgb(0 0 0 / 0.1)') =>
       `0 1px 3px 0 ${color}, 0 1px 2px -1px ${color}` as const,
