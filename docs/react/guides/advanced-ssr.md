@@ -34,19 +34,37 @@ The first step of any React Query setup is always to create a `queryClient` and 
 import { useState } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
+function makeQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        // With SSR, we usually want to set some default staleTime
+        // above 0 to avoid refetching immediately on the client
+        staleTime: 60 * 1000,
+      },
+    },
+  })
+}
+
+let browserQueryClient: QueryClient | undefined = undefined
+
+function getQueryClient() {
+  if (typeof window === 'undefined') {
+    // Server: always make a new query client
+    return makeQueryClient()
+  } else {
+    // Browser: make a new query client if we don't already have one
+    // This is very important so we don't re-make a new client if React
+    // supsends during the initial render
+    if (!browserQueryClient) browserQueryClient = makeQueryClient()
+    return browserQueryClient
+  }
+}
+
 export default function Providers({ children }) {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            // With SSR, we usually want to set some default staleTime
-            // above 0 to avoid refetching immediately on the client
-            staleTime: 60 * 1000,
-          },
-        },
-      }),
-  )
+  // NOTE: Avoid useState when initializing the query client because React
+  //       will throw away the client on the initial render if it suspends
+  const queryClient = getQueryClient()
 
   return (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
@@ -338,7 +356,7 @@ As an aside, in the future it might be possible to skip the await for "optional"
 
 While we recommend the prefetching solution detailed above because it flattens request waterfalls both on the initial page load **and** any subsequent page navigation, there is an experimental way to skip prefetching altogether and still have streaming SSR work: `@tanstack/react-query-next-experimental`
 
-This package will allow you to fetch data on the server (in a Client Component) by just calling `useSuspenseQuery` in your component. Results will then be streamed from the server to the client as SuspenseBoundaries resolve. Note that all calls to `useSuspenseQuery` must be wrapped in a `<Suspense>` boundary somewhere further up the tree to work.
+This package will allow you to fetch data on the server (in a Client Component) by just calling `useSuspenseQuery` in your component. Results will then be streamed from the server to the client as SuspenseBoundaries resolve. If you call `useSuspenseQuery` without wrapping it in a `<Suspense>` boundary, the HTML response won't start until the fetch resolves. This can be whan you want depending on the situation, but keep in mind that this will hurt your TTFB.
 
 To achieve this, wrap your app in the `ReactQueryStreamedHydration` component:
 
@@ -350,8 +368,37 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import * as React from 'react'
 import { ReactQueryStreamedHydration } from '@tanstack/react-query-next-experimental'
 
+function makeQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        // With SSR, we usually want to set some default staleTime
+        // above 0 to avoid refetching immediately on the client
+        staleTime: 60 * 1000,
+      },
+    },
+  })
+}
+
+let browserQueryClient: QueryClient | undefined = undefined
+
+function getQueryClient() {
+  if (typeof window === 'undefined') {
+    // Server: always make a new query client
+    return makeQueryClient()
+  } else {
+    // Browser: make a new query client if we don't already have one
+    // This is very important so we don't re-make a new client if React
+    // supsends during the initial render
+    if (!browserQueryClient) browserQueryClient = makeQueryClient()
+    return browserQueryClient
+  }
+}
+
 export function Providers(props: { children: React.ReactNode }) {
-  const [queryClient] = React.useState(() => new QueryClient())
+  // NOTE: Avoid useState when initializing the query client because React
+  //       will throw away the client on the initial render if it suspends
+  const queryClient = getQueryClient()
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -378,7 +425,7 @@ The downside is easiest to explain if we look back at [the complex request water
 
 This is even worse than with `getServerSideProps`/`getStaticProps`, since with those we could at least parallelize data- and code-fetching.
 
-If you value DX, iteration/shipping speed and low code complexity over performance, or don't have deeply nested queries and you know you are on top of your request waterfalls anyway, this can be a good tradeoff.
+If you value DX/iteration/shipping speed with low code complexity over performance, don't have deeply nested queries, or are on top of your request waterfalls with parallel fetching using tools like `useSuspenseQueries`, this can be a good tradeoff.
 
 > It might be possible to combine the two approaches, but even we haven't tried that out yet. If you do try this, please report back your findings, or even update these docs with some tips!
 
