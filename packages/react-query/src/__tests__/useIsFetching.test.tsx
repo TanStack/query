@@ -176,11 +176,16 @@ describe('useIsFetching', () => {
     const queryClient = createQueryClient()
     const key = queryKey()
 
+    let resolve!: () => void
+    const promise = new Promise<void>((_resolve) => {
+      resolve = _resolve
+    })
+
     function Page() {
       useQuery({
         queryKey: key,
         queryFn: async () => {
-          await sleep(10)
+          await promise
           return 'test'
         },
       })
@@ -197,6 +202,9 @@ describe('useIsFetching', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await rendered.findByText('isFetching: 1')
+
+    resolve()
+
     await rendered.findByText('isFetching: 0')
   })
 
@@ -204,12 +212,17 @@ describe('useIsFetching', () => {
     const queryClient = createQueryClient()
     const key = queryKey()
 
+    let resolve!: () => void
+    const promise = new Promise<void>((_resolve) => {
+      resolve = _resolve
+    })
+
     function Page() {
       useQuery(
         {
           queryKey: key,
           queryFn: async () => {
-            await sleep(10)
+            await promise
             return 'test'
           },
         },
@@ -228,5 +241,6 @@ describe('useIsFetching', () => {
     const rendered = render(<Page></Page>)
 
     await waitFor(() => rendered.getByText('isFetching: 1'))
+    resolve()
   })
 })
