@@ -26,11 +26,7 @@ function getResult<TResult = QueryState>(
     .findAll(options.filters)
     .map(
       (query): TResult =>
-        (options.select
-          ? options.select(
-              query as Query<unknown, DefaultError, unknown, QueryKey>,
-            )
-          : query.state) as TResult,
+        (options.select ? options.select(query) : query.state) as TResult,
     )
 }
 
@@ -52,19 +48,20 @@ export function useQueryState<TResult = QueryState>(
   return React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
-        queryCache.subscribe(() => {
-          const nextResult = replaceEqualDeep(
-            result.current,
-            getResult(queryCache, optionsRef.current),
-          )
-          if (result.current !== nextResult) {
-            result.current = nextResult
-            notifyManager.schedule(onStoreChange)
-          }
-        }),
+        queryCache.subscribe(notifyManager.batchCalls(onStoreChange)),
       [queryCache],
     ),
-    () => result.current,
+    () => {
+      const nextResult = replaceEqualDeep(
+        result.current,
+        getResult(queryCache, optionsRef.current),
+      )
+      if (result.current !== nextResult) {
+        result.current = nextResult
+      }
+
+      return result.current
+    },
     () => result.current,
   )!
 }
