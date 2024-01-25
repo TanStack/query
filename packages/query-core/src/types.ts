@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 
 import type { MutationState } from './mutation'
-import type { FetchDirection, Query, QueryBehavior } from './query'
+import type { FetchDirection, Query, QueryBehavior, QueryState } from './query'
 import type { RetryDelayValue, RetryValue } from './retryer'
 import type { QueryFilters, QueryTypeFilter } from './utils'
 import type { QueryCache } from './queryCache'
@@ -148,11 +148,23 @@ export interface QueryOptions<
    */
   gcTime?: number
   queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam>
-  persister?: QueryPersister<
-    NoInfer<TQueryFnData>,
-    NoInfer<TQueryKey>,
-    NoInfer<TPageParam>
-  >
+  persister?: {
+    persisterFn: QueryPersister<
+      NoInfer<TQueryFnData>,
+      NoInfer<TQueryKey>,
+      NoInfer<TPageParam>
+    >
+    persistQuery: (query: Query) => Promise<void>
+    restoreQuery: <T>(
+      queryHash: string,
+      afterRestoreMacroTask?: (persistedQuery: {
+        buster: string
+        queryHash: string
+        queryKey: QueryKey
+        state: QueryState
+      }) => void,
+    ) => Promise<T | undefined>
+  }
   queryHash?: string
   queryKey?: TQueryKey
   queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>

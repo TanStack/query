@@ -116,7 +116,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
       }
       if (context.options.persister) {
         context.fetchFn = () => {
-          return context.options.persister?.(
+          return context.options.persister?.persisterFn(
             fetchFn as any,
             {
               queryKey: context.queryKey,

@@ -122,7 +122,7 @@ export class QueryClient {
     return this.#queryCache.find({ queryKey })?.state.data
   }
 
-  ensureQueryData<
+  async ensureQueryData<
     TQueryFnData,
     TError = DefaultError,
     TData = TQueryFnData,
@@ -132,9 +132,27 @@ export class QueryClient {
   ): Promise<TData> {
     const cachedData = this.getQueryData<TData>(options.queryKey)
 
-    return cachedData !== undefined
-      ? Promise.resolve(cachedData)
-      : this.fetchQuery(options)
+    if (cachedData !== undefined) {
+      return Promise.resolve(cachedData)
+    }
+
+    // Check persister if defined
+    const defaultedOptions = this.defaultQueryOptions({
+      queryKey: options.queryKey,
+    })
+
+    if (defaultedOptions.persister) {
+      const persistedData =
+        await defaultedOptions.persister.restoreQuery<TData>(
+          options.queryHash || hashKey(options.queryKey),
+        )
+
+      if (persistedData != null) {
+        return Promise.resolve(persistedData)
+      }
+    }
+
+    return this.fetchQuery(options)
   }
 
   getQueriesData<TQueryFnData = unknown>(
@@ -181,9 +199,14 @@ export class QueryClient {
       QueryKey
     >({ queryKey })
 
-    return this.#queryCache
-      .build(this, defaultedOptions)
-      .setData(data, { ...options, manual: true })
+    const newQuery = this.#queryCache.build(this, defaultedOptions)
+    const result = newQuery.setData(data, { ...options, manual: true })
+
+    if (defaultedOptions.persister) {
+      defaultedOptions.persister.persistQuery(newQuery)
+    }
+
+    return result
   }
 
   setQueriesData<TQueryFnData>(

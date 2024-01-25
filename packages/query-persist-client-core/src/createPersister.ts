@@ -91,16 +91,12 @@ export function experimental_createPersister<TStorageValue = string>({
   prefix = PERSISTER_KEY_PREFIX,
   filters,
 }: StoragePersisterOptions<TStorageValue>) {
-  return async function persisterFn<T, TQueryKey extends QueryKey>(
-    queryFn: (context: QueryFunctionContext<TQueryKey>) => T | Promise<T>,
-    context: QueryFunctionContext<TQueryKey>,
-    query: Query,
+  async function restoreQuery<T>(
+    queryHash: string,
+    afterRestoreMacroTask?: (persistedQuery: PersistedQuery) => void,
   ) {
-    const storageKey = `${prefix}-${query.queryHash}`
-    const matchesFilter = filters ? matchQuery(filters, query) : true
-
-    // Try to restore only if we do not have any data in the cache and we have persister defined
-    if (matchesFilter && query.state.data === undefined && storage != null) {
+    if (storage != null) {
+      const storageKey = `${prefix}-${queryHash}`
       try {
         const storedData = await storage.getItem(storageKey)
         if (storedData) {
@@ -113,20 +109,12 @@ export function experimental_createPersister<TStorageValue = string>({
             if (expired || busted) {
               await storage.removeItem(storageKey)
             } else {
-              // Just after restoring we want to get fresh data from the server if it's stale
-              setTimeout(() => {
-                // Set proper updatedAt, since resolving in the first pass overrides those values
-                query.setState({
-                  dataUpdatedAt: persistedQuery.state.dataUpdatedAt,
-                  errorUpdatedAt: persistedQuery.state.errorUpdatedAt,
-                })
-
-                if (query.isStale()) {
-                  query.fetch()
-                }
-              }, 0)
+              if (afterRestoreMacroTask) {
+                // Just after restoring we want to get fresh data from the server if it's stale
+                setTimeout(() => afterRestoreMacroTask(persistedQuery), 0)
+              }
               // We must resolve the promise here, as otherwise we will have `loading` state in the app until `queryFn` resolves
-              return Promise.resolve(persistedQuery.state.data as T)
+              return persistedQuery.state.data as T
             }
           } else {
             await storage.removeItem(storageKey)
@@ -143,24 +131,69 @@ export function experimental_createPersister<TStorageValue = string>({
       }
     }
 
+    return
+  }
+
+  async function persistQuery(query: Query) {
+    if (storage != null) {
+      const storageKey = `${prefix}-${query.queryHash}`
+      storage.setItem(
+        storageKey,
+        await serialize({
+          state: query.state,
+          queryKey: query.queryKey,
+          queryHash: query.queryHash,
+          buster: buster,
+        }),
+      )
+    }
+  }
+
+  async function persisterFn<T, TQueryKey extends QueryKey>(
+    queryFn: (context: QueryFunctionContext<TQueryKey>) => T | Promise<T>,
+    ctx: QueryFunctionContext<TQueryKey>,
+    query: Query,
+  ) {
+    const matchesFilter = filters ? matchQuery(filters, query) : true
+
+    // Try to restore only if we do not have any data in the cache and we have persister defined
+    if (matchesFilter && query.state.data === undefined && storage != null) {
+      const restoredData = await restoreQuery(
+        query.queryHash,
+        (persistedQuery: PersistedQuery) => {
+          // Set proper updatedAt, since resolving in the first pass overrides those values
+          query.setState({
+            dataUpdatedAt: persistedQuery.state.dataUpdatedAt,
+            errorUpdatedAt: persistedQuery.state.errorUpdatedAt,
+          })
+
+          if (query.isStale()) {
+            query.fetch()
+          }
+        },
+      )
+
+      if (restoredData != null) {
+        return Promise.resolve(restoredData as T)
+      }
+    }
+
     // If we did not restore, or restoration failed - fetch
-    const queryFnResult = await queryFn(context)
+    const queryFnResult = await queryFn(ctx)
 
     if (matchesFilter && storage != null) {
       // Persist if we have storage defined, we use timeout to get proper state to be persisted
-      setTimeout(async () => {
-        storage.setItem(
-          storageKey,
-          await serialize({
-            state: query.state,
-            queryKey: query.queryKey,
-            queryHash: query.queryHash,
-            buster: buster,
-          }),
-        )
+      setTimeout(() => {
+        persistQuery(query)
       }, 0)
     }
 
     return Promise.resolve(queryFnResult)
+  }
+
+  return {
+    persisterFn,
+    persistQuery,
+    restoreQuery,
   }
 }
