@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/TanStack/tanstack.com/main/tanstack-docs-config.schema.json",
   "docSearch": {
     "appId": "ZFKQRGRQA8",
     "apiKey": "93e0b83eb0b5af4549b6bf47f90af3f7",
@@ -14,39 +15,39 @@
           "children": [
             {
               "label": "Overview",
-              "to": "react/overview"
+              "to": "framework/react/overview"
             },
             {
               "label": "Installation",
-              "to": "react/installation"
+              "to": "framework/react/installation"
             },
             {
               "label": "Quick Start",
-              "to": "react/quick-start"
+              "to": "framework/react/quick-start"
             },
             {
               "label": "Devtools",
-              "to": "react/devtools"
+              "to": "framework/react/devtools"
             },
             {
               "label": "Videos & Talks",
-              "to": "react/videos"
+              "to": "framework/react/videos"
             },
             {
               "label": "Comparison",
-              "to": "react/comparison"
+              "to": "framework/react/comparison"
             },
             {
               "label": "TypeScript",
-              "to": "react/typescript"
+              "to": "framework/react/typescript"
             },
             {
               "label": "GraphQL",
-              "to": "react/graphql"
+              "to": "framework/react/graphql"
             },
             {
               "label": "React Native",
-              "to": "react/react-native"
+              "to": "framework/react/react-native"
             }
           ]
         },
@@ -55,135 +56,135 @@
           "children": [
             {
               "label": "Important Defaults",
-              "to": "react/guides/important-defaults"
+              "to": "framework/react/guides/important-defaults"
             },
             {
               "label": "Queries",
-              "to": "react/guides/queries"
+              "to": "framework/react/guides/queries"
             },
             {
               "label": "Query Keys",
-              "to": "react/guides/query-keys"
+              "to": "framework/react/guides/query-keys"
             },
             {
               "label": "Query Functions",
-              "to": "react/guides/query-functions"
+              "to": "framework/react/guides/query-functions"
             },
             {
               "label": "Network Mode",
-              "to": "react/guides/network-mode"
+              "to": "framework/react/guides/network-mode"
             },
             {
               "label": "Parallel Queries",
-              "to": "react/guides/parallel-queries"
+              "to": "framework/react/guides/parallel-queries"
             },
             {
               "label": "Dependent Queries",
-              "to": "react/guides/dependent-queries"
+              "to": "framework/react/guides/dependent-queries"
             },
             {
               "label": "Background Fetching Indicators",
-              "to": "react/guides/background-fetching-indicators"
+              "to": "framework/react/guides/background-fetching-indicators"
             },
             {
               "label": "Window Focus Refetching",
-              "to": "react/guides/window-focus-refetching"
+              "to": "framework/react/guides/window-focus-refetching"
             },
             {
               "label": "Disabling/Pausing Queries",
-              "to": "react/guides/disabling-queries"
+              "to": "framework/react/guides/disabling-queries"
             },
             {
               "label": "Query Retries",
-              "to": "react/guides/query-retries"
+              "to": "framework/react/guides/query-retries"
             },
             {
               "label": "Paginated Queries",
-              "to": "react/guides/paginated-queries"
+              "to": "framework/react/guides/paginated-queries"
             },
             {
               "label": "Infinite Queries",
-              "to": "react/guides/infinite-queries"
+              "to": "framework/react/guides/infinite-queries"
             },
             {
               "label": "Initial Query Data",
-              "to": "react/guides/initial-query-data"
+              "to": "framework/react/guides/initial-query-data"
             },
             {
               "label": "Placeholder Query Data",
-              "to": "react/guides/placeholder-query-data"
+              "to": "framework/react/guides/placeholder-query-data"
             },
             {
               "label": "Prefetching",
-              "to": "react/guides/prefetching"
+              "to": "framework/react/guides/prefetching"
             },
             {
               "label": "Mutations",
-              "to": "react/guides/mutations"
+              "to": "framework/react/guides/mutations"
             },
             {
               "label": "Query Invalidation",
-              "to": "react/guides/query-invalidation"
+              "to": "framework/react/guides/query-invalidation"
             },
             {
               "label": "Invalidation from Mutations",
-              "to": "react/guides/invalidations-from-mutations"
+              "to": "framework/react/guides/invalidations-from-mutations"
             },
             {
               "label": "Updates from Mutation Responses",
-              "to": "react/guides/updates-from-mutation-responses"
+              "to": "framework/react/guides/updates-from-mutation-responses"
             },
             {
               "label": "Optimistic Updates",
-              "to": "react/guides/optimistic-updates"
+              "to": "framework/react/guides/optimistic-updates"
             },
             {
               "label": "Query Cancellation",
-              "to": "react/guides/query-cancellation"
+              "to": "framework/react/guides/query-cancellation"
             },
             {
               "label": "Scroll Restoration",
-              "to": "react/guides/scroll-restoration"
+              "to": "framework/react/guides/scroll-restoration"
             },
             {
               "label": "Filters",
-              "to": "react/guides/filters"
+              "to": "framework/react/guides/filters"
             },
             {
               "label": "SSR & Next.js",
-              "to": "react/guides/ssr"
+              "to": "framework/react/guides/ssr"
             },
             {
               "label": "Caching",
-              "to": "react/guides/caching"
+              "to": "framework/react/guides/caching"
             },
             {
               "label": "Default Query Fn",
-              "to": "react/guides/default-query-function"
+              "to": "framework/react/guides/default-query-function"
             },
             {
               "label": "Suspense",
-              "to": "react/guides/suspense"
+              "to": "framework/react/guides/suspense"
             },
             {
               "label": "Custom Logger",
-              "to": "react/guides/custom-logger"
+              "to": "framework/react/guides/custom-logger"
             },
             {
               "label": "Testing",
-              "to": "react/guides/testing"
+              "to": "framework/react/guides/testing"
             },
             {
               "label": "Does this replace [Redux, MobX, etc]?",
-              "to": "react/guides/does-this-replace-client-state"
+              "to": "framework/react/guides/does-this-replace-client-state"
             },
             {
               "label": "Migrating to React Query 3",
-              "to": "react/guides/migrating-to-react-query-3"
+              "to": "framework/react/guides/migrating-to-react-query-3"
             },
             {
               "label": "Migrating to React Query 4",
-              "to": "react/guides/migrating-to-react-query-4"
+              "to": "framework/react/guides/migrating-to-react-query-4"
             }
           ]
         },
@@ -192,27 +193,27 @@
           "children": [
             {
               "label": "TkDodo's Blog",
-              "to": "react/community/tkdodos-blog"
+              "to": "framework/react/community/tkdodos-blog"
             },
             {
               "label": "Batching Requests",
-              "to": "react/community/batching-requests-using-bathshit"
+              "to": "framework/react/community/batching-requests-using-bathshit"
             },
             {
               "label": "Query Key Factory",
-              "to": "react/community/lukemorales-query-key-factory"
+              "to": "framework/react/community/lukemorales-query-key-factory"
             },
             {
               "label": "React Query Kit",
-              "to": "react/community/liaoliao666-react-query-kit"
+              "to": "framework/react/community/liaoliao666-react-query-kit"
             },
             {
               "label": "Angular Query",
-              "to": "react/community/angular-query"
+              "to": "framework/react/community/angular-query"
             },
             {
               "label": "Suspensive React Query",
-              "to": "react/community/suspensive-react-query"
+              "to": "framework/react/community/suspensive-react-query"
             }
           ]
         },
@@ -221,75 +222,75 @@
           "children": [
             {
               "label": "Simple",
-              "to": "react/examples/react/simple"
+              "to": "framework/react/examples/simple"
             },
             {
               "label": "Basic",
-              "to": "react/examples/react/basic"
+              "to": "framework/react/examples/basic"
             },
             {
               "label": "Basic w/ GraphQL-Request",
-              "to": "react/examples/react/basic-graphql-request"
+              "to": "framework/react/examples/basic-graphql-request"
             },
             {
               "label": "Auto Refetching / Polling / Realtime",
-              "to": "react/examples/react/auto-refetching"
+              "to": "framework/react/examples/auto-refetching"
             },
             {
               "label": "Optimistic Updates in TypeScript",
-              "to": "react/examples/react/optimistic-updates-typescript"
+              "to": "framework/react/examples/optimistic-updates-typescript"
             },
             {
               "label": "Pagination",
-              "to": "react/examples/react/pagination"
+              "to": "framework/react/examples/pagination"
             },
             {
               "label": "Load-More & Infinite Scroll",
-              "to": "react/examples/react/load-more-infinite-scroll"
+              "to": "framework/react/examples/load-more-infinite-scroll"
             },
             {
               "label": "Suspense",
-              "to": "react/examples/react/suspense"
+              "to": "framework/react/examples/suspense"
             },
             {
               "label": "Default Query Function",
-              "to": "react/examples/react/default-query-function"
+              "to": "framework/react/examples/default-query-function"
             },
             {
               "label": "Playground",
-              "to": "react/examples/react/playground"
+              "to": "framework/react/examples/playground"
             },
             {
               "label": "Prefetching",
-              "to": "react/examples/react/prefetching"
+              "to": "framework/react/examples/prefetching"
             },
             {
               "label": "Star Wars",
-              "to": "react/examples/react/star-wars"
+              "to": "framework/react/examples/star-wars"
             },
             {
               "label": "Rick And Morty",
-              "to": "react/examples/react/rick-morty"
+              "to": "framework/react/examples/rick-morty"
             },
             {
               "label": "Next.js",
-              "to": "react/examples/react/nextjs"
+              "to": "framework/react/examples/nextjs"
             },
             {
               "label": "React Native",
-              "to": "react/examples/react/react-native"
+              "to": "framework/react/examples/react-native"
             },
             {
               "label": "React Router",
-              "to": "react/examples/react/react-router"
+              "to": "framework/react/examples/react-router"
             },
             {
               "label": "Offline Queries and Mutations",
-              "to": "react/examples/react/offline"
+              "to": "framework/react/examples/offline"
             },
             {
               "label": "Algolia",
-              "to": "react/examples/react/algolia"
+              "to": "framework/react/examples/algolia"
             }
           ]
         },
@@ -298,23 +299,23 @@
           "children": [
             {
               "label": "ESLint Plugin Query",
-              "to": "react/eslint/eslint-plugin-query"
+              "to": "framework/react/eslint/eslint-plugin-query"
             },
             {
               "label": "Exhaustive Deps",
-              "to": "react/eslint/exhaustive-deps"
+              "to": "framework/react/eslint/exhaustive-deps"
             },
             {
               "label": "No deprecated options",
-              "to": "react/eslint/no-deprecated-options"
+              "to": "framework/react/eslint/no-deprecated-options"
             },
             {
               "label": "Prefer object syntax",
-              "to": "react/eslint/prefer-query-object-syntax"
+              "to": "framework/react/eslint/prefer-query-object-syntax"
             },
             {
               "label": "Stable Query Client",
-              "to": "react/eslint/stable-query-client"
+              "to": "framework/react/eslint/stable-query-client"
             }
           ]
         },
@@ -323,19 +324,19 @@
           "children": [
             {
               "label": "persistQueryClient",
-              "to": "react/plugins/persistQueryClient"
+              "to": "framework/react/plugins/persistQueryClient"
             },
             {
               "label": "createSyncStoragePersister",
-              "to": "react/plugins/createSyncStoragePersister"
+              "to": "framework/react/plugins/createSyncStoragePersister"
             },
             {
               "label": "createAsyncStoragePersister",
-              "to": "react/plugins/createAsyncStoragePersister"
+              "to": "framework/react/plugins/createAsyncStoragePersister"
             },
             {
               "label": "broadcastQueryClient (Experimental)",
-              "to": "react/plugins/broadcastQueryClient"
+              "to": "framework/react/plugins/broadcastQueryClient"
             }
           ]
         },
@@ -344,79 +345,79 @@
           "children": [
             {
               "label": "useQuery",
-              "to": "react/reference/useQuery"
+              "to": "framework/react/reference/useQuery"
             },
             {
               "label": "useQueries",
-              "to": "react/reference/useQueries"
+              "to": "framework/react/reference/useQueries"
             },
             {
               "label": "useInfiniteQuery",
-              "to": "react/reference/useInfiniteQuery"
+              "to": "framework/react/reference/useInfiniteQuery"
             },
             {
               "label": "useMutation",
-              "to": "react/reference/useMutation"
+              "to": "framework/react/reference/useMutation"
             },
             {
               "label": "useIsFetching",
-              "to": "react/reference/useIsFetching"
+              "to": "framework/react/reference/useIsFetching"
             },
             {
               "label": "useIsMutating",
-              "to": "react/reference/useIsMutating"
+              "to": "framework/react/reference/useIsMutating"
             },
             {
               "label": "QueryClient",
-              "to": "react/reference/QueryClient"
+              "to": "framework/react/reference/QueryClient"
             },
             {
               "label": "QueryClientProvider",
-              "to": "react/reference/QueryClientProvider"
+              "to": "framework/react/reference/QueryClientProvider"
             },
             {
               "label": "useQueryClient",
-              "to": "react/reference/useQueryClient"
+              "to": "framework/react/reference/useQueryClient"
             },
             {
               "label": "QueryCache",
-              "to": "react/reference/QueryCache"
+              "to": "framework/react/reference/QueryCache"
             },
             {
               "label": "MutationCache",
-              "to": "react/reference/MutationCache"
+              "to": "framework/react/reference/MutationCache"
             },
             {
               "label": "QueryObserver",
-              "to": "react/reference/QueryObserver"
+              "to": "framework/react/reference/QueryObserver"
             },
             {
               "label": "InfiniteQueryObserver",
-              "to": "react/reference/InfiniteQueryObserver"
+              "to": "framework/react/reference/InfiniteQueryObserver"
             },
             {
               "label": "QueriesObserver",
-              "to": "react/reference/QueriesObserver"
+              "to": "framework/react/reference/QueriesObserver"
             },
             {
               "label": "QueryErrorResetBoundary",
-              "to": "react/reference/QueryErrorResetBoundary"
+              "to": "framework/react/reference/QueryErrorResetBoundary"
             },
             {
               "label": "useQueryErrorResetBoundary",
-              "to": "react/reference/useQueryErrorResetBoundary"
+              "to": "framework/react/reference/useQueryErrorResetBoundary"
             },
             {
               "label": "focusManager",
-              "to": "react/reference/focusManager"
+              "to": "framework/react/reference/focusManager"
             },
             {
               "label": "onlineManager",
-              "to": "react/reference/onlineManager"
+              "to": "framework/react/reference/onlineManager"
             },
             {
               "label": "hydration",
-              "to": "react/reference/hydration"
+              "to": "framework/react/reference/hydration"
             }
           ]
         }
@@ -430,7 +431,7 @@
           "children": [
             {
               "label": "Overview",
-              "to": "solid/overview"
+              "to": "framework/solid/overview"
             }
           ]
         }
@@ -444,27 +445,27 @@
           "children": [
             {
               "label": "Overview",
-              "to": "vue/overview"
+              "to": "framework/vue/overview"
             },
             {
               "label": "Installation",
-              "to": "vue/installation"
+              "to": "framework/vue/installation"
             },
             {
               "label": "Quick Start",
-              "to": "vue/quick-start"
+              "to": "framework/vue/quick-start"
             },
             {
               "label": "Devtools",
-              "to": "vue/devtools"
+              "to": "framework/vue/devtools"
             },
             {
               "label": "TypeScript",
-              "to": "vue/typescript"
+              "to": "framework/vue/typescript"
             },
             {
               "label": "GraphQL",
-              "to": "vue/graphql"
+              "to": "framework/vue/graphql"
             }
           ]
         },
@@ -473,127 +474,127 @@
           "children": [
             {
               "label": "Important Defaults",
-              "to": "vue/guides/important-defaults"
+              "to": "framework/vue/guides/important-defaults"
             },
             {
               "label": "Queries",
-              "to": "vue/guides/queries"
+              "to": "framework/vue/guides/queries"
             },
             {
               "label": "Query Keys",
-              "to": "vue/guides/query-keys"
+              "to": "framework/vue/guides/query-keys"
             },
             {
               "label": "Query Functions",
-              "to": "vue/guides/query-functions"
+              "to": "framework/vue/guides/query-functions"
             },
             {
               "label": "Network Mode",
-              "to": "vue/guides/network-mode"
+              "to": "framework/vue/guides/network-mode"
             },
             {
               "label": "Parallel Queries",
-              "to": "vue/guides/parallel-queries"
+              "to": "framework/vue/guides/parallel-queries"
             },
             {
               "label": "Dependent Queries",
-              "to": "vue/guides/dependent-queries"
+              "to": "framework/vue/guides/dependent-queries"
             },
             {
               "label": "Background Fetching Indicators",
-              "to": "vue/guides/background-fetching-indicators"
+              "to": "framework/vue/guides/background-fetching-indicators"
             },
             {
               "label": "Window Focus Refetching",
-              "to": "vue/guides/window-focus-refetching"
+              "to": "framework/vue/guides/window-focus-refetching"
             },
             {
               "label": "Disabling/Pausing Queries",
-              "to": "vue/guides/disabling-queries"
+              "to": "framework/vue/guides/disabling-queries"
             },
             {
               "label": "Query Retries",
-              "to": "vue/guides/query-retries"
+              "to": "framework/vue/guides/query-retries"
             },
             {
               "label": "Paginated Queries",
-              "to": "vue/guides/paginated-queries"
+              "to": "framework/vue/guides/paginated-queries"
             },
             {
               "label": "Infinite Queries",
-              "to": "vue/guides/infinite-queries"
+              "to": "framework/vue/guides/infinite-queries"
             },
             {
               "label": "Initial Query Data",
-              "to": "vue/guides/initial-query-data"
+              "to": "framework/vue/guides/initial-query-data"
             },
             {
               "label": "Placeholder Query Data",
-              "to": "vue/guides/placeholder-query-data"
+              "to": "framework/vue/guides/placeholder-query-data"
             },
             {
               "label": "Prefetching",
-              "to": "vue/guides/prefetching"
+              "to": "framework/vue/guides/prefetching"
             },
             {
               "label": "Mutations",
-              "to": "vue/guides/mutations"
+              "to": "framework/vue/guides/mutations"
             },
             {
               "label": "Query Invalidation",
-              "to": "vue/guides/query-invalidation"
+              "to": "framework/vue/guides/query-invalidation"
             },
             {
               "label": "Invalidation from Mutations",
-              "to": "vue/guides/invalidations-from-mutations"
+              "to": "framework/vue/guides/invalidations-from-mutations"
             },
             {
               "label": "Updates from Mutation",
-              "to": "vue/guides/updates-from-mutation-responses"
+              "to": "framework/vue/guides/updates-from-mutation-responses"
             },
             {
               "label": "Optimistic Updates",
-              "to": "vue/guides/optimistic-updates"
+              "to": "framework/vue/guides/optimistic-updates"
             },
             {
               "label": "Query Cancellation",
-              "to": "vue/guides/query-cancellation"
+              "to": "framework/vue/guides/query-cancellation"
             },
             {
               "label": "Scroll Restoration",
-              "to": "vue/guides/scroll-restoration"
+              "to": "framework/vue/guides/scroll-restoration"
             },
             {
               "label": "Filters",
-              "to": "vue/guides/filters"
+              "to": "framework/vue/guides/filters"
             },
             {
               "label": "SSR & Nuxt",
-              "to": "vue/guides/ssr"
+              "to": "framework/vue/guides/ssr"
             },
             {
               "label": "Caching",
-              "to": "vue/guides/caching"
+              "to": "framework/vue/guides/caching"
             },
             {
               "label": "Default Query Fn",
-              "to": "vue/guides/default-query-function"
+              "to": "framework/vue/guides/default-query-function"
             },
             {
               "label": "Suspense",
-              "to": "vue/guides/suspense"
+              "to": "framework/vue/guides/suspense"
             },
             {
               "label": "Custom Logger",
-              "to": "vue/guides/custom-logger"
+              "to": "framework/vue/guides/custom-logger"
             },
             {
               "label": "Custom Client",
-              "to": "vue/guides/custom-client"
+              "to": "framework/vue/guides/custom-client"
             },
             {
               "label": "Does this replace [Vuex, Pinia]?",
-              "to": "vue/guides/does-this-replace-client-state"
+              "to": "framework/vue/guides/does-this-replace-client-state"
             }
           ]
         },
@@ -602,11 +603,11 @@
           "children": [
             {
               "label": "TkDodo's Blog",
-              "to": "vue/community/tkdodos-blog"
+              "to": "framework/vue/community/tkdodos-blog"
             },
             {
               "label": "Query Key Factory",
-              "to": "vue/community/lukemorales-query-key-factory"
+              "to": "framework/vue/community/lukemorales-query-key-factory"
             }
           ]
         },
@@ -615,19 +616,19 @@
           "children": [
             {
               "label": "Basic",
-              "to": "vue/examples/vue/basic"
+              "to": "framework/vue/examples/basic"
             },
             {
               "label": "Vue 2.6",
-              "to": "vue/examples/vue/2.6-basic"
+              "to": "framework/vue/examples/2.6-basic"
             },
             {
               "label": "Nuxt 3",
-              "to": "vue/examples/vue/nuxt3"
+              "to": "framework/vue/examples/nuxt3"
             },
             {
               "label": "Persister",
-              "to": "vue/examples/vue/persister"
+              "to": "framework/vue/examples/persister"
             }
           ]
         },
@@ -636,67 +637,67 @@
           "children": [
             {
               "label": "useQuery",
-              "to": "vue/reference/useQuery"
+              "to": "framework/vue/reference/useQuery"
             },
             {
               "label": "useQueries",
-              "to": "vue/reference/useQueries"
+              "to": "framework/vue/reference/useQueries"
             },
             {
               "label": "useInfiniteQuery",
-              "to": "vue/reference/useInfiniteQuery"
+              "to": "framework/vue/reference/useInfiniteQuery"
             },
             {
               "label": "useMutation",
-              "to": "vue/reference/useMutation"
+              "to": "framework/vue/reference/useMutation"
             },
             {
               "label": "useIsFetching",
-              "to": "vue/reference/useIsFetching"
+              "to": "framework/vue/reference/useIsFetching"
             },
             {
               "label": "useIsMutating",
-              "to": "vue/reference/useIsMutating"
+              "to": "framework/vue/reference/useIsMutating"
             },
             {
               "label": "useQueryClient",
-              "to": "vue/reference/useQueryClient"
+              "to": "framework/vue/reference/useQueryClient"
             },
             {
               "label": "QueryClient",
-              "to": "vue/reference/QueryClient"
+              "to": "framework/vue/reference/QueryClient"
             },
             {
               "label": "QueryCache",
-              "to": "vue/reference/QueryCache"
+              "to": "framework/vue/reference/QueryCache"
             },
             {
               "label": "MutationCache",
-              "to": "vue/reference/MutationCache"
+              "to": "framework/vue/reference/MutationCache"
             },
             {
               "label": "QueryObserver",
-              "to": "vue/reference/QueryObserver"
+              "to": "framework/vue/reference/QueryObserver"
             },
             {
               "label": "InfiniteQueryObserver",
-              "to": "vue/reference/InfiniteQueryObserver"
+              "to": "framework/vue/reference/InfiniteQueryObserver"
             },
             {
               "label": "QueriesObserver",
-              "to": "vue/reference/QueriesObserver"
+              "to": "framework/vue/reference/QueriesObserver"
             },
             {
               "label": "focusManager",
-              "to": "vue/reference/focusManager"
+              "to": "framework/vue/reference/focusManager"
             },
             {
               "label": "onlineManager",
-              "to": "vue/reference/onlineManager"
+              "to": "framework/vue/reference/onlineManager"
             },
             {
               "label": "hydration",
-              "to": "vue/reference/hydration"
+              "to": "framework/vue/reference/hydration"
             }
           ]
         }
@@ -710,19 +711,19 @@
           "children": [
             {
               "label": "Overview",
-              "to": "svelte/overview"
+              "to": "framework/svelte/overview"
             },
             {
               "label": "Installation",
-              "to": "svelte/installation"
+              "to": "framework/svelte/installation"
             },
             {
               "label": "SSR & SvelteKit",
-              "to": "svelte/ssr"
+              "to": "framework/svelte/ssr"
             },
             {
               "label": "Reactivity",
-              "to": "svelte/reactivity"
+              "to": "framework/svelte/reactivity"
             }
           ]
         },
@@ -731,35 +732,35 @@
           "children": [
             {
               "label": "Simple",
-              "to": "svelte/examples/svelte/simple"
+              "to": "framework/svelte/examples/simple"
             },
             {
               "label": "Basic",
-              "to": "svelte/examples/svelte/basic"
+              "to": "framework/svelte/examples/basic"
             },
             {
               "label": "Auto Refetching / Polling / Realtime",
-              "to": "svelte/examples/svelte/auto-refetching"
+              "to": "framework/svelte/examples/auto-refetching"
             },
             {
               "label": "SSR",
-              "to": "svelte/examples/svelte/ssr"
+              "to": "framework/svelte/examples/ssr"
             },
             {
               "label": "Optimistic Updates in TypeScript",
-              "to": "svelte/examples/svelte/optimistic-updates-typescript"
+              "to": "framework/svelte/examples/optimistic-updates-typescript"
             },
             {
               "label": "Playground",
-              "to": "svelte/examples/svelte/playground"
+              "to": "framework/svelte/examples/playground"
             },
             {
               "label": "Star Wars",
-              "to": "svelte/examples/svelte/star-wars"
+              "to": "framework/svelte/examples/star-wars"
             },
             {
               "label": "Infinite Queries",
-              "to": "svelte/examples/svelte/load-more-infinite-scroll"
+              "to": "framework/svelte/examples/load-more-infinite-scroll"
             }
           ]
         }
