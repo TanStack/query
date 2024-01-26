@@ -55,7 +55,7 @@ mutate(variables, {
   - Optional
   - A mutation key can be set to inherit defaults set with `queryClient.setMutationDefaults`.
 - `networkMode: 'online' | 'always' | 'offlineFirst`
-  - optional
+  - Optional
   - defaults to `'online'`
   - see [Network Mode](../guides/network-mode) for more information.
 - `onMutate: (variables: TVariables) => Promise<TContext | void> | TContext | void`
