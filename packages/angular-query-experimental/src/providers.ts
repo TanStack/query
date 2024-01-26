@@ -9,9 +9,13 @@ import { provideQueryClient } from './inject-query-client'
 import type { EnvironmentProviders } from '@angular/core'
 
 export function provideAngularQuery(): EnvironmentProviders
-export function provideAngularQuery(queryClient: QueryClient): EnvironmentProviders
-export function provideAngularQuery(queryClient?: QueryClient): EnvironmentProviders {
-  const client =  queryClient ?? new QueryClient()
+export function provideAngularQuery(
+  queryClient: QueryClient,
+): EnvironmentProviders
+export function provideAngularQuery(
+  queryClient?: QueryClient,
+): EnvironmentProviders {
+  const client = queryClient ?? new QueryClient()
   return makeEnvironmentProviders([
     provideQueryClient(client),
     {
