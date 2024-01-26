@@ -4,22 +4,23 @@ import {
   inject,
   makeEnvironmentProviders,
 } from '@angular/core'
+import { QueryClient } from '@tanstack/query-core'
 import { provideQueryClient } from './inject-query-client'
 import type { EnvironmentProviders } from '@angular/core'
-import type { QueryClient } from '@tanstack/query-core'
 
-export function provideAngularQuery(
-  queryClient: QueryClient,
-): EnvironmentProviders {
+export function provideAngularQuery(): EnvironmentProviders
+export function provideAngularQuery(queryClient: QueryClient): EnvironmentProviders
+export function provideAngularQuery(queryClient?: QueryClient): EnvironmentProviders {
+  const client =  queryClient ?? new QueryClient()
   return makeEnvironmentProviders([
-    provideQueryClient(queryClient),
+    provideQueryClient(client),
     {
       provide: ENVIRONMENT_INITIALIZER,
       multi: true,
       useValue: () => {
-        queryClient.mount()
+        client.mount()
         // Unmount the query client on application destroy
-        inject(DestroyRef).onDestroy(() => queryClient.unmount())
+        inject(DestroyRef).onDestroy(() => client.unmount())
       },
     },
   ])
