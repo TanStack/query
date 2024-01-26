@@ -42,6 +42,31 @@
           "to": "reference/onlineManager"
         }
       ]
+    },
+    {
+      "label": "ESLint",
+      "children": [
+        {
+          "label": "ESLint Plugin Query",
+          "to": "eslint/eslint-plugin-query"
+        },
+        {
+          "label": "Exhaustive Deps",
+          "to": "eslint/exhaustive-deps"
+        },
+        {
+          "label": "No deprecated options",
+          "to": "eslint/no-deprecated-options"
+        },
+        {
+          "label": "Prefer object syntax",
+          "to": "eslint/prefer-query-object-syntax"
+        },
+        {
+          "label": "Stable Query Client",
+          "to": "eslint/stable-query-client"
+        }
+      ]
     }
   ],
   "frameworkMenus": [
@@ -329,31 +354,6 @@
             {
               "label": "Algolia",
               "to": "framework/react/examples/algolia"
-            }
-          ]
-        },
-        {
-          "label": "ESLint",
-          "children": [
-            {
-              "label": "ESLint Plugin Query",
-              "to": "framework/react/eslint/eslint-plugin-query"
-            },
-            {
-              "label": "Exhaustive Deps",
-              "to": "framework/react/eslint/exhaustive-deps"
-            },
-            {
-              "label": "No deprecated options",
-              "to": "framework/react/eslint/no-deprecated-options"
-            },
-            {
-              "label": "Prefer object syntax",
-              "to": "framework/react/eslint/prefer-query-object-syntax"
-            },
-            {
-              "label": "Stable Query Client",
-              "to": "framework/react/eslint/stable-query-client"
             }
           ]
         },
