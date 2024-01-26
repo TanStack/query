@@ -1,7 +1,7 @@
 ---
 id: paginated-queries
 title: Paginated / Lagged Queries
-ref: docs/react/guides/paginated-queries.md
+ref: docs/framework/react/guides/paginated-queries.md
 ---
 
 [//]: # 'Example2'

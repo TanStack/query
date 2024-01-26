@@ -1,7 +1,7 @@
 ---
 id: window-focus-refetching
 title: Window Focus Refetching
-ref: docs/react/guides/window-focus-refetching.md
+ref: docs/framework/react/guides/window-focus-refetching.md
 replace: { '@tanstack/react-query': '@tanstack/vue-query' }
 ---
 

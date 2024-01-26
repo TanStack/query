@@ -1,7 +1,7 @@
 ---
 id: quick-start
 title: Quick Start
-ref: docs/react/quick-start.md
+ref: docs/framework/react/quick-start.md
 replace: { 'React': 'Vue', 'react-query': 'vue-query' }
 ---
 

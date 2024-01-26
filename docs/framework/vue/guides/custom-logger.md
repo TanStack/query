@@ -1,5 +1,5 @@
 ---
 id: custom-logger
 title: Custom Logger
-ref: docs/react/guides/custom-logger.md
+ref: docs/framework/react/guides/custom-logger.md
 ---

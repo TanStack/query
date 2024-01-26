@@ -229,9 +229,7 @@ useMutation({
   onSuccess: (data, error, variables, context) => {
     // Will be called 3 times
   },
-})
-
-[('Todo 1', 'Todo 2', 'Todo 3')].forEach((todo) => {
+})[('Todo 1', 'Todo 2', 'Todo 3')].forEach((todo) => {
   mutate(todo, {
     onSuccess: (data, error, variables, context) => {
       // Will execute only once, for the last mutation (Todo 3),
@@ -385,7 +383,7 @@ export default function App() {
 
 [//]: # 'Example11'
 
-We also have an extensive [offline example](../examples/react/offline) that covers both queries and mutations.
+We also have an extensive [offline example](../examples/offline) that covers both queries and mutations.
 
 [//]: # 'Materials'
 

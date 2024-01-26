@@ -1,7 +1,7 @@
 ---
 id: placeholder-query-data
 title: Placeholder Query Data
-ref: docs/react/guides/placeholder-query-data.md
+ref: docs/framework/react/guides/placeholder-query-data.md
 ---
 
 [//]: # 'Example'

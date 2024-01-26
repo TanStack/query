@@ -1,6 +1,6 @@
 ---
 id: useQueries
 title: useQueries
-ref: docs/react/reference/useQueries.md
+ref: docs/framework/react/reference/useQueries.md
 replace: { '@tanstack/react-query': '@tanstack/vue-query' }
 ---

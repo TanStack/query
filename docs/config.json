@@ -5,7 +5,45 @@
     "apiKey": "93e0b83eb0b5af4549b6bf47f90af3f7",
     "indexName": "tanstack-query"
   },
-  "menu": [],
+  "menu": [
+    {
+      "label": "API Reference",
+      "children": [
+        {
+          "label": "QueryClient",
+          "to": "reference/QueryClient"
+        },
+        {
+          "label": "QueryCache",
+          "to": "reference/QueryCache"
+        },
+        {
+          "label": "MutationCache",
+          "to": "reference/MutationCache"
+        },
+        {
+          "label": "QueryObserver",
+          "to": "reference/QueryObserver"
+        },
+        {
+          "label": "InfiniteQueryObserver",
+          "to": "reference/InfiniteQueryObserver"
+        },
+        {
+          "label": "QueriesObserver",
+          "to": "reference/QueriesObserver"
+        },
+        {
+          "label": "focusManager",
+          "to": "reference/focusManager"
+        },
+        {
+          "label": "onlineManager",
+          "to": "reference/onlineManager"
+        }
+      ]
+    }
+  ],
   "frameworkMenus": [
     {
       "framework": "react",
@@ -368,10 +406,6 @@
               "to": "framework/react/reference/useIsMutating"
             },
             {
-              "label": "QueryClient",
-              "to": "framework/react/reference/QueryClient"
-            },
-            {
               "label": "QueryClientProvider",
               "to": "framework/react/reference/QueryClientProvider"
             },
@@ -380,40 +414,12 @@
               "to": "framework/react/reference/useQueryClient"
             },
             {
-              "label": "QueryCache",
-              "to": "framework/react/reference/QueryCache"
-            },
-            {
-              "label": "MutationCache",
-              "to": "framework/react/reference/MutationCache"
-            },
-            {
-              "label": "QueryObserver",
-              "to": "framework/react/reference/QueryObserver"
-            },
-            {
-              "label": "InfiniteQueryObserver",
-              "to": "framework/react/reference/InfiniteQueryObserver"
-            },
-            {
-              "label": "QueriesObserver",
-              "to": "framework/react/reference/QueriesObserver"
-            },
-            {
               "label": "QueryErrorResetBoundary",
               "to": "framework/react/reference/QueryErrorResetBoundary"
             },
             {
               "label": "useQueryErrorResetBoundary",
               "to": "framework/react/reference/useQueryErrorResetBoundary"
-            },
-            {
-              "label": "focusManager",
-              "to": "framework/react/reference/focusManager"
-            },
-            {
-              "label": "onlineManager",
-              "to": "framework/react/reference/onlineManager"
             },
             {
               "label": "hydration",
@@ -662,38 +668,6 @@
             {
               "label": "useQueryClient",
               "to": "framework/vue/reference/useQueryClient"
-            },
-            {
-              "label": "QueryClient",
-              "to": "framework/vue/reference/QueryClient"
-            },
-            {
-              "label": "QueryCache",
-              "to": "framework/vue/reference/QueryCache"
-            },
-            {
-              "label": "MutationCache",
-              "to": "framework/vue/reference/MutationCache"
-            },
-            {
-              "label": "QueryObserver",
-              "to": "framework/vue/reference/QueryObserver"
-            },
-            {
-              "label": "InfiniteQueryObserver",
-              "to": "framework/vue/reference/InfiniteQueryObserver"
-            },
-            {
-              "label": "QueriesObserver",
-              "to": "framework/vue/reference/QueriesObserver"
-            },
-            {
-              "label": "focusManager",
-              "to": "framework/vue/reference/focusManager"
-            },
-            {
-              "label": "onlineManager",
-              "to": "framework/vue/reference/onlineManager"
             },
             {
               "label": "hydration",

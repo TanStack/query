@@ -1,7 +1,7 @@
 ---
 id: typescript
 title: TypeScript
-ref: docs/react/typescript.md
+ref: docs/framework/react/typescript.md
 replace:
   { 'React': 'Vue', 'react-query package version': 'vue-query package version' }
 ---
@@ -49,10 +49,12 @@ const { data } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 [//]: # 'TypeNarrowing'
 
 ```tsx
-const { data, isSuccess } = reactive(useQuery({
-  queryKey: ['test'],
-  queryFn: () => Promise.resolve(5),
-}))
+const { data, isSuccess } = reactive(
+  useQuery({
+    queryKey: ['test'],
+    queryFn: () => Promise.resolve(5),
+  }),
+)
 
 if (isSuccess) {
   data

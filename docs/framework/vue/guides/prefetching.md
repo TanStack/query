@@ -1,5 +1,5 @@
 ---
 id: prefetching
 title: Prefetching
-ref: docs/react/guides/prefetching.md
+ref: docs/framework/react/guides/prefetching.md
 ---

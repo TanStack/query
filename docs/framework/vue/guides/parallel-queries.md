@@ -1,7 +1,7 @@
 ---
 id: parallel-queries
 title: Parallel Queries
-ref: docs/react/guides/parallel-queries.md
+ref: docs/framework/react/guides/parallel-queries.md
 ---
 
 [//]: # 'Example'
