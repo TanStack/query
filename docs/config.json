@@ -46,6 +46,27 @@
           "to": "reference/notifyManager"
         }
       ]
+    },
+    {
+      "label": "ESLint",
+      "children": [
+        {
+          "label": "ESLint Plugin Query",
+          "to": "eslint/eslint-plugin-query"
+        },
+        {
+          "label": "Exhaustive Deps",
+          "to": "eslint/exhaustive-deps"
+        },
+        {
+          "label": "Stable Query Client",
+          "to": "eslint/stable-query-client"
+        },
+        {
+          "label": "No Rest Destructuring",
+          "to": "eslint/no-rest-destructuring"
+        }
+      ]
     }
   ],
   "frameworkMenus": [
@@ -341,27 +362,6 @@
             {
               "label": "Algolia",
               "to": "framework/react/examples/algolia"
-            }
-          ]
-        },
-        {
-          "label": "ESLint",
-          "children": [
-            {
-              "label": "ESLint Plugin Query",
-              "to": "framework/react/eslint/eslint-plugin-query"
-            },
-            {
-              "label": "Exhaustive Deps",
-              "to": "framework/react/eslint/exhaustive-deps"
-            },
-            {
-              "label": "Stable Query Client",
-              "to": "framework/react/eslint/stable-query-client"
-            },
-            {
-              "label": "No Rest Destructuring",
-              "to": "framework/react/eslint/no-rest-destructuring"
             }
           ]
         },
