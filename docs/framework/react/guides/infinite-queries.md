@@ -87,8 +87,8 @@ function Projects() {
           {isFetchingNextPage
             ? 'Loading more...'
             : hasNextPage
-            ? 'Load More'
-            : 'Nothing more to load'}
+              ? 'Load More'
+              : 'Nothing more to load'}
         </button>
       </div>
       <div>{isFetching && !isFetchingNextPage ? 'Fetching...' : null}</div>
@@ -110,9 +110,7 @@ To ensure a seamless querying process without conflicts, it's highly recommended
 [//]: # 'Example1'
 
 ```jsx
-<List
-  onEndReached={() => !isFetching && fetchNextPage()}
-/>
+<List onEndReached={() => !isFetching && fetchNextPage()} />
 ```
 
 [//]: # 'Example1'
@@ -140,7 +138,7 @@ refetch({ refetchPage: (page, index) => index === 0 })
 
 [//]: # 'Example2'
 
-You can also pass this function as part of the 2nd argument (`queryFilters`) to [queryClient.refetchQueries](../reference/QueryClient#queryclientrefetchqueries), [queryClient.invalidateQueries](../reference/QueryClient#queryclientinvalidatequeries) or [queryClient.resetQueries](../reference/QueryClient#queryclientresetqueries).
+You can also pass this function as part of the 2nd argument (`queryFilters`) to [queryClient.refetchQueries](./reference/QueryClient#queryclientrefetchqueries), [queryClient.invalidateQueries](./reference/QueryClient#queryclientinvalidatequeries) or [queryClient.resetQueries](./reference/QueryClient#queryclientresetqueries).
 
 **Signature**
 
@@ -254,8 +252,8 @@ queryClient.setQueryData(['projects'], (data) => ({
 
 ```tsx
 queryClient.setQueryData(['projects'], (data) => ({
-  pages: data.pages.slice(0,1),
-  pageParams: data.pageParams.slice(0,1),
+  pages: data.pages.slice(0, 1),
+  pageParams: data.pageParams.slice(0, 1),
 }))
 ```
 

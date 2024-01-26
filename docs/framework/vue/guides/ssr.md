@@ -12,8 +12,16 @@ Vue Query supports prefetching multiple queries on the server and then _dehydrat
 First create `vue-query.ts` file in your `plugins` directory with the following content:
 
 ```ts
-import type { DehydratedState, VueQueryPluginOptions } from '@tanstack/vue-query'
-import { VueQueryPlugin, QueryClient, hydrate, dehydrate } from '@tanstack/vue-query'
+import type {
+  DehydratedState,
+  VueQueryPluginOptions,
+} from '@tanstack/vue-query'
+import {
+  VueQueryPlugin,
+  QueryClient,
+  hydrate,
+  dehydrate,
+} from '@tanstack/vue-query'
 // Nuxt 3 app aliases
 import { useState } from '#app'
 
@@ -152,7 +160,12 @@ Sync VueQuery client state with [vite-ssr](https://github.com/frandiox/vite-ssr)
 // main.js (entry point)
 import App from './App.vue'
 import viteSSR from 'vite-ssr/vue'
-import { QueryClient, VueQueryPlugin, hydrate, dehydrate } from '@tanstack/vue-query'
+import {
+  QueryClient,
+  VueQueryPlugin,
+  hydrate,
+  dehydrate,
+} from '@tanstack/vue-query'
 
 export default viteSSR(App, { routes: [] }, ({ app, initialState }) => {
   // -- This is Vite SSR main hook, which is called once per request
@@ -217,6 +230,6 @@ In case you are creating the `QueryClient` for every request, Vue Query creates 
 
 On the server, `cacheTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `cacheTime` then you will be responsible for clearing the cache early.
 
-To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../reference/QueryClient#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
+To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](./reference/QueryClient#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
 
 Alternatively, you can set a smaller `cacheTime`.

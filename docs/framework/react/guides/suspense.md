@@ -100,8 +100,8 @@ const App: React.FC = () => {
 
 ## Fetch-on-render vs Render-as-you-fetch
 
-Out of the box, React Query in `suspense` mode works really well as a **Fetch-on-render** solution with no additional configuration. This means that when your components attempt to mount, they will trigger query fetching and suspend, but only once you have imported them and mounted them. If you want to take it to the next level and implement a **Render-as-you-fetch** model, we recommend implementing [Prefetching](../guides/prefetching) on routing callbacks and/or user interactions events to start loading queries before they are mounted and hopefully even before you start importing or mounting their parent components.
+Out of the box, React Query in `suspense` mode works really well as a **Fetch-on-render** solution with no additional configuration. This means that when your components attempt to mount, they will trigger query fetching and suspend, but only once you have imported them and mounted them. If you want to take it to the next level and implement a **Render-as-you-fetch** model, we recommend implementing [Prefetching](./guides/prefetching) on routing callbacks and/or user interactions events to start loading queries before they are mounted and hopefully even before you start importing or mounting their parent components.
 
 ## Further reading
 
-For tips on using suspense option, check the [Suspensive React Query Package](../community/suspensive-react-query) from the Community Resources.
+For tips on using suspense option, check the [Suspensive React Query Package](./community/suspensive-react-query) from the Community Resources.

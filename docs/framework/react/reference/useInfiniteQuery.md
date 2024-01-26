@@ -23,14 +23,14 @@ const {
 
 **Options**
 
-The options for `useInfiniteQuery` are identical to the [`useQuery` hook](../reference/useQuery) with the addition of the following:
+The options for `useInfiniteQuery` are identical to the [`useQuery` hook](./reference/useQuery) with the addition of the following:
 
 - `queryFn: (context: QueryFunctionContext) => Promise<TData>`
-  - **Required, but only if no default query function has been defined** [`defaultQueryFn`](../guides/default-query-function)
+  - **Required, but only if no default query function has been defined** [`defaultQueryFn`](./guides/default-query-function)
   - The function that the query will use to request data.
-  - Receives a [QueryFunctionContext](../guides/query-functions#queryfunctioncontext)
+  - Receives a [QueryFunctionContext](./guides/query-functions#queryfunctioncontext)
   - Must return a promise that will either resolve data or throw an error.
-  - Make sure you return the data *and* the `pageParam` if needed for use in the props below.
+  - Make sure you return the data _and_ the `pageParam` if needed for use in the props below.
 - `getNextPageParam: (lastPage, allPages) => unknown | undefined`
   - When new data is received for this query, this function receives both the last page of the infinite list of data and the full array of all pages.
   - It should return a **single variable** that will be passed as the last optional parameter to your query function.
@@ -42,7 +42,7 @@ The options for `useInfiniteQuery` are identical to the [`useQuery` hook](../ref
 
 **Returns**
 
-The returned properties for `useInfiniteQuery` are identical to the [`useQuery` hook](../reference/useQuery), with the addition of the following and a small difference in `isRefetching`:
+The returned properties for `useInfiniteQuery` are identical to the [`useQuery` hook](./reference/useQuery), with the addition of the following and a small difference in `isRefetching`:
 
 - `data.pages: TData[]`
   - Array containing all pages.
@@ -56,8 +56,8 @@ The returned properties for `useInfiniteQuery` are identical to the [`useQuery` 
   - This function allows you to fetch the next "page" of results.
   - `options.pageParam: unknown` allows you to manually specify a page param instead of using `getNextPageParam`.
   - `options.cancelRefetch: boolean` if set to `true`, calling `fetchNextPage` repeatedly will invoke `fetchPage` every time, whether the previous
-  invocation has resolved or not. Also, the result from previous invocations will be ignored. If set to `false`, calling `fetchNextPage`
-  repeatedly won't have any effect until the first invocation has resolved. Default is `true`.
+    invocation has resolved or not. Also, the result from previous invocations will be ignored. If set to `false`, calling `fetchNextPage`
+    repeatedly won't have any effect until the first invocation has resolved. Default is `true`.
 - `fetchPreviousPage: (options?: FetchPreviousPageOptions) => Promise<UseInfiniteQueryResult>`
   - This function allows you to fetch the previous "page" of results.
   - `options.pageParam: unknown` allows you to manually specify a page param instead of using `getPreviousPageParam`.

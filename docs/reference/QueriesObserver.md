@@ -13,7 +13,7 @@ const observer = new QueriesObserver(queryClient, [
   { queryKey: ['post', 2], queryFn: fetchPost },
 ])
 
-const unsubscribe = observer.subscribe(result => {
+const unsubscribe = observer.subscribe((result) => {
   console.log(result)
   unsubscribe()
 })
@@ -21,4 +21,4 @@ const unsubscribe = observer.subscribe(result => {
 
 **Options**
 
-The options for the `QueriesObserver` are exactly the same as those of [`useQueries`](../reference/useQueries).
+The options for the `QueriesObserver` are exactly the same as those of [`useQueries`](./framework/react/reference/useQueries).

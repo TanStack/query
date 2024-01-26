@@ -6,14 +6,19 @@ title: createAsyncStoragePersister
 ## Installation
 
 This utility comes as a separate package and is available under the `'@tanstack/query-async-storage-persister'` import.
+
 ```bash
 npm install @tanstack/query-async-storage-persister @tanstack/react-query-persist-client
 ```
+
 or
+
 ```bash
 pnpm add @tanstack/query-async-storage-persister @tanstack/react-query-persist-client
 ```
+
 or
+
 ```bash
 yarn add @tanstack/query-async-storage-persister @tanstack/react-query-persist-client
 ```
@@ -23,7 +28,7 @@ yarn add @tanstack/query-async-storage-persister @tanstack/react-query-persist-c
 - Import the `createAsyncStoragePersister` function
 - Create a new asyncStoragePersister
   - you can pass any `storage` to it that adheres to the `AsyncStorage` interface - the example below uses the async-storage from React Native
-- Wrap your app by using [`PersistQueryClientProvider`](../plugins/persistQueryClient.md#persistqueryclientprovider) component.
+- Wrap your app by using [`PersistQueryClientProvider`](./plugins/persistQueryClient.md#persistqueryclientprovider) component.
 
 ```tsx
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -40,7 +45,7 @@ const queryClient = new QueryClient({
 })
 
 const asyncStoragePersister = createAsyncStoragePersister({
-  storage: AsyncStorage
+  storage: AsyncStorage,
 })
 
 const Root = () => (
@@ -50,14 +55,14 @@ const Root = () => (
   >
     <App />
   </PersistQueryClientProvider>
-);
+)
 
-export default Root;
+export default Root
 ```
 
 ## Retries
 
-Retries work the same as for a [SyncStoragePersister](../plugins/createSyncStoragePersister), except that they can also be asynchronous. You can also use all the predefined retry handlers.
+Retries work the same as for a [SyncStoragePersister](./plugins/createSyncStoragePersister), except that they can also be asynchronous. You can also use all the predefined retry handlers.
 
 ## API
 
@@ -89,9 +94,9 @@ interface CreateAsyncStoragePersisterOptions {
 }
 
 interface AsyncStorage {
-   getItem: (key: string) => Promise<string | null>
-   setItem: (key: string, value: string) => Promise<unknown>
-   removeItem: (key: string) => Promise<void>
+  getItem: (key: string) => Promise<string | null>
+  setItem: (key: string, value: string) => Promise<unknown>
+  removeItem: (key: string) => Promise<void>
 }
 ```
 

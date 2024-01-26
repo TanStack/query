@@ -15,7 +15,7 @@ const observer = new InfiniteQueryObserver(queryClient, {
   getPreviousPageParam: (firstPage, allPages) => firstPage.prevCursor,
 })
 
-const unsubscribe = observer.subscribe(result => {
+const unsubscribe = observer.subscribe((result) => {
   console.log(result)
   unsubscribe()
 })
@@ -23,4 +23,4 @@ const unsubscribe = observer.subscribe(result => {
 
 **Options**
 
-The options for the `InfiniteQueryObserver` are exactly the same as those of [`useInfiniteQuery`](../reference/useInfiniteQuery).
+The options for the `InfiniteQueryObserver` are exactly the same as those of [`useInfiniteQuery`](./framework/react/reference/useInfiniteQuery).

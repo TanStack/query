@@ -15,7 +15,7 @@ $ pnpm add @tanstack/vue-query
 $ yarn add @tanstack/vue-query
 ```
 
-> Wanna give it a spin before you download? Try out the [basic](/query/v4/docs/vue/examples/vue/basic) example!
+> Wanna give it a spin before you download? Try out the [basic](./examples/basic) example!
 
 Vue Query is compatible with Vue 2.x and 3.x
 
@@ -26,7 +26,7 @@ Vue Query is compatible with Vue 2.x and 3.x
 Before using Vue Query, you need to initialize it using `VueQueryPlugin`
 
 ```tsx
-import { VueQueryPlugin } from "@tanstack/vue-query";
+import { VueQueryPlugin } from '@tanstack/vue-query'
 
 app.use(VueQueryPlugin)
 ```
@@ -41,7 +41,7 @@ If you are not a fan of `<script setup>` syntax, you can easily translate all th
 
 ```vue
 <script setup>
-import { useQuery } from "@tanstack/vue-query";
+import { useQuery } from '@tanstack/vue-query'
 
 const { isLoading, isFetching, isError, data, error } = useQuery({
   queryKey: ['todos'],

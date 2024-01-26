@@ -34,14 +34,14 @@ The recommended way to achieve this is to use the `browser` module from SvelteKi
 
 Svelte Query supports two ways of prefetching data on the server and passing that to the client with SvelteKit.
 
-If you wish to view the ideal SSR setup, please have a look at the [SSR example](../examples/svelte/ssr).
-
+If you wish to view the ideal SSR setup, please have a look at the [SSR example](./examples/ssr).
 
 ### Using `initialData`
 
 Together with SvelteKit's [`load`](https://kit.svelte.dev/docs/load), you can pass the data loaded server-side into `createQuery`'s' `initialData` option:
 
 **src/routes/+page.ts**
+
 ```ts
 import type { PageLoad } from './$types'
 
@@ -52,6 +52,7 @@ export const load: PageLoad = async () => {
 ```
 
 **src/routes/+page.svelte**
+
 ```svelte
 <script>
   import { createQuery } from '@tanstack/svelte-query'
@@ -62,7 +63,7 @@ export const load: PageLoad = async () => {
   const query = createQuery({
     queryKey: ['posts'],
     queryFn: getPosts,
-    initialData: data.posts
+    initialData: data.posts,
   })
 </script>
 ```
@@ -127,7 +128,7 @@ export const load: PageLoad = async ({ parent, fetch }) => {
   // You need to use the SvelteKit fetch function here
   await queryClient.prefetchQuery({
     queryKey: ['posts'],
-    queryFn: async () => (await fetch('/api/posts')).json()
+    queryFn: async () => (await fetch('/api/posts')).json(),
   })
 }
 ```
@@ -141,7 +142,7 @@ export const load: PageLoad = async ({ parent, fetch }) => {
   // This data is cached by prefetchQuery in +page.ts so no fetch actually happens here
   const query = createQuery({
     queryKey: ['posts'],
-    queryFn: async () => (await fetch('/api/posts')).json()
+    queryFn: async () => (await fetch('/api/posts')).json(),
   })
 </script>
 ```

@@ -10,7 +10,7 @@ The `QueryObserver` can be used to observe and switch between queries.
 ```tsx
 const observer = new QueryObserver(queryClient, { queryKey: ['posts'] })
 
-const unsubscribe = observer.subscribe(result => {
+const unsubscribe = observer.subscribe((result) => {
   console.log(result)
   unsubscribe()
 })
@@ -18,4 +18,4 @@ const unsubscribe = observer.subscribe(result => {
 
 **Options**
 
-The options for the `QueryObserver` are exactly the same as those of [`useQuery`](../reference/useQuery).
+The options for the `QueryObserver` are exactly the same as those of [`useQuery`](./framework/react/reference/useQuery).

@@ -69,8 +69,8 @@ function Example() {
   const { isLoading, error, data } = useQuery({
     queryKey: ['repoData'],
     queryFn: () =>
-      fetch('https://api.github.com/repos/TanStack/query').then(
-        (res) => res.json(),
+      fetch('https://api.github.com/repos/TanStack/query').then((res) =>
+        res.json(),
       ),
   })
 
@@ -96,6 +96,6 @@ function Example() {
 ## You talked me into it, so what now?
 
 - Consider taking the official [React Query Course](https://ui.dev/react-query?from=tanstack) (or buying it for your whole team!)
-- Learn React Query at your own pace with our amazingly thorough [Walkthrough Guide](../installation) and [API Reference](../reference/useQuery)
+- Learn React Query at your own pace with our amazingly thorough [Walkthrough Guide](./installation) and [API Reference](./reference/useQuery)
 
 [//]: # 'Materials'
