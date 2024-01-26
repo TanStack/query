@@ -5,7 +5,49 @@
     "apiKey": "35bc6c51aa322700d1383e17c4f669f4",
     "indexName": "tanstackquery"
   },
-  "menu": [],
+  "menu": [
+    {
+      "label": "API Reference",
+      "children": [
+        {
+          "label": "QueryClient",
+          "to": "reference/QueryClient"
+        },
+        {
+          "label": "QueryCache",
+          "to": "reference/QueryCache"
+        },
+        {
+          "label": "MutationCache",
+          "to": "reference/MutationCache"
+        },
+        {
+          "label": "QueryObserver",
+          "to": "reference/QueryObserver"
+        },
+        {
+          "label": "InfiniteQueryObserver",
+          "to": "reference/InfiniteQueryObserver"
+        },
+        {
+          "label": "QueriesObserver",
+          "to": "reference/QueriesObserver"
+        },
+        {
+          "label": "focusManager",
+          "to": "reference/focusManager"
+        },
+        {
+          "label": "onlineManager",
+          "to": "reference/onlineManager"
+        },
+        {
+          "label": "notifyManager",
+          "to": "reference/notifyManager"
+        }
+      ]
+    }
+  ],
   "frameworkMenus": [
     {
       "framework": "react",
@@ -391,10 +433,7 @@
               "label": "useSuspenseQueries",
               "to": "framework/react/reference/useSuspenseQueries"
             },
-            {
-              "label": "QueryClient",
-              "to": "framework/react/reference/QueryClient"
-            },
+
             {
               "label": "QueryClientProvider",
               "to": "framework/react/reference/QueryClientProvider"
@@ -412,44 +451,12 @@
               "to": "framework/react/reference/infiniteQueryOptions"
             },
             {
-              "label": "QueryCache",
-              "to": "framework/react/reference/QueryCache"
-            },
-            {
-              "label": "MutationCache",
-              "to": "framework/react/reference/MutationCache"
-            },
-            {
-              "label": "QueryObserver",
-              "to": "framework/react/reference/QueryObserver"
-            },
-            {
-              "label": "InfiniteQueryObserver",
-              "to": "framework/react/reference/InfiniteQueryObserver"
-            },
-            {
-              "label": "QueriesObserver",
-              "to": "framework/react/reference/QueriesObserver"
-            },
-            {
               "label": "QueryErrorResetBoundary",
               "to": "framework/react/reference/QueryErrorResetBoundary"
             },
             {
               "label": "useQueryErrorResetBoundary",
               "to": "framework/react/reference/useQueryErrorResetBoundary"
-            },
-            {
-              "label": "focusManager",
-              "to": "framework/react/reference/focusManager"
-            },
-            {
-              "label": "onlineManager",
-              "to": "framework/react/reference/onlineManager"
-            },
-            {
-              "label": "notifyManager",
-              "to": "framework/react/reference/notifyManager"
             },
             {
               "label": "hydration",
@@ -731,42 +738,6 @@
             {
               "label": "useQueryClient",
               "to": "framework/vue/reference/useQueryClient"
-            },
-            {
-              "label": "QueryClient",
-              "to": "framework/vue/reference/QueryClient"
-            },
-            {
-              "label": "QueryCache",
-              "to": "framework/vue/reference/QueryCache"
-            },
-            {
-              "label": "MutationCache",
-              "to": "framework/vue/reference/MutationCache"
-            },
-            {
-              "label": "QueryObserver",
-              "to": "framework/vue/reference/QueryObserver"
-            },
-            {
-              "label": "InfiniteQueryObserver",
-              "to": "framework/vue/reference/InfiniteQueryObserver"
-            },
-            {
-              "label": "QueriesObserver",
-              "to": "framework/vue/reference/QueriesObserver"
-            },
-            {
-              "label": "focusManager",
-              "to": "framework/vue/reference/focusManager"
-            },
-            {
-              "label": "notifyManager",
-              "to": "framework/vue/reference/notifyManager"
-            },
-            {
-              "label": "onlineManager",
-              "to": "framework/vue/reference/onlineManager"
             },
             {
               "label": "hydration",
