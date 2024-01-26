@@ -1,5 +1,5 @@
 ---
 id: query-options
 title: Query Options
-ref: docs/react/guides/query-options.md
+ref: docs/framework/react/guides/query-options.md
 ---

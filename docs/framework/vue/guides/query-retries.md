@@ -1,7 +1,7 @@
 ---
 id: query-retries
 title: Query Retries
-ref: docs/react/guides/query-retries.md
+ref: docs/framework/react/guides/query-retries.md
 replace: { 'Provider': 'Plugin' }
 ---
 

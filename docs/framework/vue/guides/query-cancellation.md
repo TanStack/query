@@ -1,7 +1,7 @@
 ---
 id: query-cancellation
 title: Query Cancellation
-ref: docs/react/guides/query-cancellation.md
+ref: docs/framework/react/guides/query-cancellation.md
 ---
 
 [//]: # 'Example7'

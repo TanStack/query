@@ -1,7 +1,7 @@
 ---
 id: disabling-queries
 title: Disabling/Pausing Queries
-ref: docs/react/guides/disabling-queries.md
+ref: docs/framework/react/guides/disabling-queries.md
 replace: { 'useQuery': 'injectQuery' }
 ---
 

@@ -1,7 +1,7 @@
 ---
 id: invalidations-from-mutations
 title: Invalidations from Mutations
-ref: docs/react/guides/invalidations-from-mutations.md
+ref: docs/framework/react/guides/invalidations-from-mutations.md
 replace: { 'useMutation': 'injectMutation', 'hook': 'function' }
 ---
 

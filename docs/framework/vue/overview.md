@@ -1,7 +1,7 @@
 ---
 id: overview
 title: Overview
-ref: docs/react/overview.md
+ref: docs/framework/react/overview.md
 replace: { 'React': 'Vue', 'react-query': 'vue-query' }
 ---
 

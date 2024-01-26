@@ -1,5 +1,5 @@
 ---
 id: caching
 title: Caching Examples
-ref: docs/react/guides/caching.md
+ref: docs/framework/react/guides/caching.md
 ---

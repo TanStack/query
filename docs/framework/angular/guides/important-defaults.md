@@ -1,7 +1,7 @@
 ---
 id: important-defaults
 title: Important Defaults
-ref: docs/react/guides/important-defaults.md
+ref: docs/framework/react/guides/important-defaults.md
 replace:
   {
     'React': 'Angular',

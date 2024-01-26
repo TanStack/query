@@ -1,7 +1,7 @@
 ---
 id: hydration
 title: hydration
-ref: docs/react/reference/hydration.md
+ref: docs/framework/react/reference/hydration.md
 replace: { '@tanstack/react-query': '@tanstack/vue-query' }
 ---
 

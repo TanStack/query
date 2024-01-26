@@ -1,7 +1,7 @@
 ---
 id: migrating-to-tanstack-query-5
 title: Migrating to TanStack Query v5
-ref: docs/react/guides/migrating-to-v5.md
+ref: docs/framework/react/guides/migrating-to-v5.md
 ---
 
 [//]: # 'FrameworkSpecificBreakingChanges'

@@ -1,7 +1,7 @@
 ---
 id: mutations
 title: Mutations
-ref: docs/react/guides/mutations.md
+ref: docs/framework/react/guides/mutations.md
 replace:
   {
     'useMutation': 'injectMutation',

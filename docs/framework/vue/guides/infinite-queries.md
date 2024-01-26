@@ -1,7 +1,7 @@
 ---
 id: infinite-queries
 title: Infinite Queries
-ref: docs/react/guides/infinite-queries.md
+ref: docs/framework/react/guides/infinite-queries.md
 ---
 
 [//]: # 'Example'

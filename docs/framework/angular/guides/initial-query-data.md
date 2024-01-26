@@ -1,7 +1,7 @@
 ---
 id: initial-query-data
 title: Initial Query Data
-ref: docs/react/guides/initial-query-data.md
+ref: docs/framework/react/guides/initial-query-data.md
 replace:
   {
     'render': 'service or component instance',

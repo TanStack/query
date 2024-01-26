@@ -1,7 +1,7 @@
 ---
 id: query-keys
 title: Query Keys
-ref: docs/react/guides/query-keys.md
+ref: docs/framework/react/guides/query-keys.md
 ---
 
 [//]: # 'Example5'

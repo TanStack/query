@@ -1,6 +1,6 @@
 ---
 id: QueryObserver
 title: QueryObserver
-ref: docs/react/reference/QueryObserver.md
+ref: docs/framework/react/reference/QueryObserver.md
 replace: { '@tanstack/react-query': '@tanstack/vue-query' }
 ---

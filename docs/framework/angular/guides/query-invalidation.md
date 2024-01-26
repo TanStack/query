@@ -1,7 +1,7 @@
 ---
 id: query-invalidation
 title: Query Invalidation
-ref: docs/react/guides/query-invalidation.md
+ref: docs/framework/react/guides/query-invalidation.md
 replace: { 'useQuery': 'injectQuery', 'hooks': 'functions' }
 ---
 
