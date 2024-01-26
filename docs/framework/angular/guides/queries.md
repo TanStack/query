@@ -1,7 +1,7 @@
 ---
 id: queries
 title: Queries
-ref: docs/react/guides/queries.md
+ref: docs/framework/react/guides/queries.md
 replace:
   {
     'React': 'Angular',

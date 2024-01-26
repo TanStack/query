@@ -1,7 +1,7 @@
 ---
 id: dependent-queries
 title: Dependent Queries
-ref: docs/react/guides/dependent-queries.md
+ref: docs/framework/react/guides/dependent-queries.md
 replace: { 'useQuery': 'injectQuery', 'useQueries': 'injectQueries' }
 ---
 

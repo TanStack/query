@@ -1,7 +1,7 @@
 ---
 id: optimistic-updates
 title: Optimistic Updates
-ref: docs/react/guides/optimistic-updates.md
+ref: docs/framework/react/guides/optimistic-updates.md
 replace:
   {
     'React': 'Angular',

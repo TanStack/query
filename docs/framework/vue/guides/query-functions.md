@@ -1,7 +1,7 @@
 ---
 id: query-functions
 title: Query Functions
-ref: docs/react/guides/query-functions.md
+ref: docs/framework/react/guides/query-functions.md
 ---
 
 [//]: # 'Example4'

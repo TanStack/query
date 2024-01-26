@@ -1,7 +1,7 @@
 ---
 id: background-fetching-indicators
 title: Background Fetching Indicators
-ref: docs/react/guides/background-fetching-indicators.md
+ref: docs/framework/react/guides/background-fetching-indicators.md
 ---
 
 [//]: # 'Example'

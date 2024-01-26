@@ -1,5 +1,5 @@
 ---
 id: tkdodos-blog
 title: TkDodo's Blog
-ref: docs/react/community/tkdodos-blog.md
+ref: docs/framework/react/community/tkdodos-blog.md
 ---

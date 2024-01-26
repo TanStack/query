@@ -1,7 +1,7 @@
 ---
 id: typescript
 title: TypeScript
-ref: docs/react/typescript.md
+ref: docs/framework/react/typescript.md
 replace:
   { 'React': 'Vue', 'react-query package version': 'vue-query package version' }
 ---

@@ -1,7 +1,7 @@
 ---
 id: parallel-queries
 title: Parallel Queries
-ref: docs/react/guides/parallel-queries.md
+ref: docs/framework/react/guides/parallel-queries.md
 replace:
   {
     'If the number of queries you need to execute is changing from render to render, you cannot use manual querying since that would violate the rules of hooks. Instead, ': '',
