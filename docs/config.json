@@ -938,6 +938,23 @@
               "to": "framework/angular/guides/does-this-replace-client-state"
             }
           ]
+        },
+        {
+          "label": "Examples",
+          "children": [
+            {
+              "label": "Simple",
+              "to": "framework/angular/examples/simple"
+            },
+            {
+              "label": "Basic",
+              "to": "framework/angular/examples/basic"
+            },
+            {
+              "label": "Default Query Function",
+              "to": "framework/angular/examples/default-query-function"
+            }
+          ]
         }
       ]
     }
