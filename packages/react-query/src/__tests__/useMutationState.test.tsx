@@ -116,7 +116,7 @@ describe('useIsMutating', () => {
       return null
     }
 
-    const IsMutating = React.memo(IsMutatingBase);
+    const IsMutating = React.memo(IsMutatingBase)
 
     function Page() {
       const { mutate: mutate1 } = useMutation({
