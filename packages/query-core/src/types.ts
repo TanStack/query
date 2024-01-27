@@ -335,7 +335,9 @@ export interface QueryObserverOptions<
   _optimisticResults?: 'optimistic' | 'isRestoring'
 }
 
-export type WithRequired<T, K extends keyof T> = T & { [_ in K]: {} }
+export type WithRequired<TTarget, TKey extends keyof TTarget> = TTarget & {
+  [_ in TKey]: {}
+}
 
 export type DefaultedQueryObserverOptions<
   TQueryFnData = unknown,

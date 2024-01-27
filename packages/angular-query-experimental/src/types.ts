@@ -242,4 +242,8 @@ export type CreateMutationResult<
 > = BaseMutationNarrowing<TData, TError, TVariables, TContext> &
   MapToSignals<Omit<TState, keyof BaseMutationNarrowing>>
 
-type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }
+type Override<TTargetA, TTargetB> = {
+  [AKey in keyof TTargetA]: AKey extends keyof TTargetB
+    ? TTargetB[AKey]
+    : TTargetA[AKey]
+}
