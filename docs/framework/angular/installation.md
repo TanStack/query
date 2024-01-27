@@ -17,4 +17,4 @@ $ pnpm add @tanstack/angular-query-experimental
 $ yarn add @tanstack/angular-query-experimental
 ```
 
-> Wanna give it a spin before you download? Try out the [simple](../examples/angular/simple) or [basic](../examples/angular/basic) examples!
+> Wanna give it a spin before you download? Try out the [simple](./examples/simple) or [basic](./examples/basic) examples!
