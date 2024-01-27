@@ -12,8 +12,11 @@ If you're looking for a fully functioning example, please have a look at our [ba
 ### Provide the client to your App
 
 ```ts
-import {provideHttpClient} from '@angular/common/http';
-import {provideAngularQuery, QueryClient} from '@tanstack/angular-query-experimental'
+import { provideHttpClient } from '@angular/common/http'
+import {
+  provideAngularQuery,
+  QueryClient,
+} from '@tanstack/angular-query-experimental'
 
 bootstrapApplication(AppComponent, {
   providers: [provideHttpClient(), provideAngularQuery(new QueryClient())],
