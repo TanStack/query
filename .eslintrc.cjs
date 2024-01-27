@@ -52,7 +52,6 @@ const config = {
             'solidjs', // Our target framework
             'tabular-nums', // https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric
             'todos', // Too general word to be caught as error
-            'ouuid', // codemod's variable
           ],
         },
       },
