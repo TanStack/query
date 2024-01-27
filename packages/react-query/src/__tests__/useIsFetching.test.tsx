@@ -180,7 +180,7 @@ describe('useIsFetching', () => {
       useQuery({
         queryKey: key,
         queryFn: async () => {
-          await sleep(100)
+          await sleep(10)
           return 'test'
         },
       })
