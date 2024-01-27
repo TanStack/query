@@ -223,7 +223,7 @@ const data = queryClient.getQueryData<Group[]>(['groups'])
 
 ## Further Reading
 
-For tips and tricks around type inference, have a look at [React Query and TypeScript](../community/tkdodos-blog#6-react-query-and-typescript) from
-the Community Resources. To find out how to get the best possible type-safety, you can read [Type-safe React Query](../community/tkdodos-blog#19-type-safe-react-query).
+For tips and tricks around type inference, have a look at [React Query and TypeScript](./community/tkdodos-blog#6-react-query-and-typescript) from
+the Community Resources. To find out how to get the best possible type-safety, you can read [Type-safe React Query](./community/tkdodos-blog#19-type-safe-react-query).
 
 [//]: # 'Materials'

@@ -3,7 +3,7 @@ import { detectTanstackQueryImports } from './detect-react-query-imports'
 import type { EnhancedCreate } from './detect-react-query-imports'
 
 const getDocsUrl = (ruleName: string): string =>
-  `https://tanstack.com/query/v4/docs/eslint/${ruleName}`
+  `https://tanstack.com/query/latest/docs/eslint/${ruleName}`
 
 type EslintRule = Omit<
   Parameters<ReturnType<typeof ESLintUtils.RuleCreator>>[0],
