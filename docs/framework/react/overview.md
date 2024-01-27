@@ -46,7 +46,7 @@ On a more technical note, React Query will likely:
 
 In the example below, you can see React Query in its most basic and simple form being used to fetch the GitHub stats for the React Query GitHub project itself:
 
-[Open in CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/main/examples/react/simple)
+[Open in StackBlitz](https://stackblitz.com/github/TanStack/query/tree/main/examples/react/simple)
 
 ```tsx
 import {
@@ -96,6 +96,6 @@ function Example() {
 ## You talked me into it, so what now?
 
 - Consider taking the official [React Query Course](https://query.gg?s=tanstack) (or buying it for your whole team!)
-- Learn React Query at your own pace with our amazingly thorough [Walkthrough Guide](../installation) and [API Reference](../reference/useQuery)
+- Learn React Query at your own pace with our amazingly thorough [Walkthrough Guide](./installation) and [API Reference](./reference/useQuery)
 
 [//]: # 'Materials'

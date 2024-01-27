@@ -5,7 +5,70 @@
     "apiKey": "35bc6c51aa322700d1383e17c4f669f4",
     "indexName": "tanstackquery"
   },
-  "menu": [],
+  "menu": [
+    {
+      "label": "API Reference",
+      "children": [
+        {
+          "label": "QueryClient",
+          "to": "reference/QueryClient"
+        },
+        {
+          "label": "QueryCache",
+          "to": "reference/QueryCache"
+        },
+        {
+          "label": "MutationCache",
+          "to": "reference/MutationCache"
+        },
+        {
+          "label": "QueryObserver",
+          "to": "reference/QueryObserver"
+        },
+        {
+          "label": "InfiniteQueryObserver",
+          "to": "reference/InfiniteQueryObserver"
+        },
+        {
+          "label": "QueriesObserver",
+          "to": "reference/QueriesObserver"
+        },
+        {
+          "label": "focusManager",
+          "to": "reference/focusManager"
+        },
+        {
+          "label": "onlineManager",
+          "to": "reference/onlineManager"
+        },
+        {
+          "label": "notifyManager",
+          "to": "reference/notifyManager"
+        }
+      ]
+    },
+    {
+      "label": "ESLint",
+      "children": [
+        {
+          "label": "ESLint Plugin Query",
+          "to": "eslint/eslint-plugin-query"
+        },
+        {
+          "label": "Exhaustive Deps",
+          "to": "eslint/exhaustive-deps"
+        },
+        {
+          "label": "Stable Query Client",
+          "to": "eslint/stable-query-client"
+        },
+        {
+          "label": "No Rest Destructuring",
+          "to": "eslint/no-rest-destructuring"
+        }
+      ]
+    }
+  ],
   "frameworkMenus": [
     {
       "framework": "react",
@@ -303,27 +366,6 @@
           ]
         },
         {
-          "label": "ESLint",
-          "children": [
-            {
-              "label": "ESLint Plugin Query",
-              "to": "framework/react/eslint/eslint-plugin-query"
-            },
-            {
-              "label": "Exhaustive Deps",
-              "to": "framework/react/eslint/exhaustive-deps"
-            },
-            {
-              "label": "Stable Query Client",
-              "to": "framework/react/eslint/stable-query-client"
-            },
-            {
-              "label": "No Rest Destructuring",
-              "to": "framework/react/eslint/no-rest-destructuring"
-            }
-          ]
-        },
-        {
           "label": "Plugins",
           "children": [
             {
@@ -391,10 +433,7 @@
               "label": "useSuspenseQueries",
               "to": "framework/react/reference/useSuspenseQueries"
             },
-            {
-              "label": "QueryClient",
-              "to": "framework/react/reference/QueryClient"
-            },
+
             {
               "label": "QueryClientProvider",
               "to": "framework/react/reference/QueryClientProvider"
@@ -412,44 +451,12 @@
               "to": "framework/react/reference/infiniteQueryOptions"
             },
             {
-              "label": "QueryCache",
-              "to": "framework/react/reference/QueryCache"
-            },
-            {
-              "label": "MutationCache",
-              "to": "framework/react/reference/MutationCache"
-            },
-            {
-              "label": "QueryObserver",
-              "to": "framework/react/reference/QueryObserver"
-            },
-            {
-              "label": "InfiniteQueryObserver",
-              "to": "framework/react/reference/InfiniteQueryObserver"
-            },
-            {
-              "label": "QueriesObserver",
-              "to": "framework/react/reference/QueriesObserver"
-            },
-            {
               "label": "QueryErrorResetBoundary",
               "to": "framework/react/reference/QueryErrorResetBoundary"
             },
             {
               "label": "useQueryErrorResetBoundary",
               "to": "framework/react/reference/useQueryErrorResetBoundary"
-            },
-            {
-              "label": "focusManager",
-              "to": "framework/react/reference/focusManager"
-            },
-            {
-              "label": "onlineManager",
-              "to": "framework/react/reference/onlineManager"
-            },
-            {
-              "label": "notifyManager",
-              "to": "framework/react/reference/notifyManager"
             },
             {
               "label": "hydration",
@@ -733,42 +740,6 @@
               "to": "framework/vue/reference/useQueryClient"
             },
             {
-              "label": "QueryClient",
-              "to": "framework/vue/reference/QueryClient"
-            },
-            {
-              "label": "QueryCache",
-              "to": "framework/vue/reference/QueryCache"
-            },
-            {
-              "label": "MutationCache",
-              "to": "framework/vue/reference/MutationCache"
-            },
-            {
-              "label": "QueryObserver",
-              "to": "framework/vue/reference/QueryObserver"
-            },
-            {
-              "label": "InfiniteQueryObserver",
-              "to": "framework/vue/reference/InfiniteQueryObserver"
-            },
-            {
-              "label": "QueriesObserver",
-              "to": "framework/vue/reference/QueriesObserver"
-            },
-            {
-              "label": "focusManager",
-              "to": "framework/vue/reference/focusManager"
-            },
-            {
-              "label": "notifyManager",
-              "to": "framework/vue/reference/notifyManager"
-            },
-            {
-              "label": "onlineManager",
-              "to": "framework/vue/reference/onlineManager"
-            },
-            {
               "label": "hydration",
               "to": "framework/vue/reference/hydration"
             }
@@ -965,6 +936,23 @@
             {
               "label": "Does this replace state managers?",
               "to": "framework/angular/guides/does-this-replace-client-state"
+            }
+          ]
+        },
+        {
+          "label": "Examples",
+          "children": [
+            {
+              "label": "Simple",
+              "to": "framework/angular/examples/simple"
+            },
+            {
+              "label": "Basic",
+              "to": "framework/angular/examples/basic"
+            },
+            {
+              "label": "Default Query Function",
+              "to": "framework/angular/examples/default-query-function"
             }
           ]
         }
