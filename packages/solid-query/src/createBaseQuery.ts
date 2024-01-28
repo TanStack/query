@@ -64,8 +64,7 @@ const hydratableObserverResult = <
   result: QueryObserverResult<TDataHydratable, TError>,
 ): HydratableQueryState<TDataHydratable, TError> => {
   // Including the extra properties is only relevant on the server
-  if (!isServer)
-    return result as HydratableQueryState<TDataHydratable, TError>
+  if (!isServer) return result as HydratableQueryState<TDataHydratable, TError>
 
   return {
     ...unwrap(result),
