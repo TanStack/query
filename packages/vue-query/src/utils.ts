@@ -19,10 +19,10 @@ export function updateState(
 
 export function cloneDeep<T>(
   value: MaybeRefDeep<T>,
-  customizer?: (val: MaybeRefDeep<T>) => T | undefined,
+  customize?: (val: MaybeRefDeep<T>) => T | undefined,
 ): T {
-  if (customizer) {
-    const result = customizer(value)
+  if (customize) {
+    const result = customize(value)
     // If it's a ref of undefined, return undefined
     if (result === undefined && isRef(value)) {
       return result as T
@@ -33,13 +33,13 @@ export function cloneDeep<T>(
   }
 
   if (Array.isArray(value)) {
-    return value.map((val) => cloneDeep(val, customizer)) as unknown as T
+    return value.map((val) => cloneDeep(val, customize)) as unknown as T
   }
 
   if (typeof value === 'object' && isPlainObject(value)) {
     const entries = Object.entries(value).map(([key, val]) => [
       key,
-      cloneDeep(val, customizer),
+      cloneDeep(val, customize),
     ])
     return Object.fromEntries(entries)
   }

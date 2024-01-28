@@ -354,8 +354,8 @@ export function createQueries<
       return new Proxy(s, handler(index))
     })
 
-  const [proxifiedState, setProxifiedState] = createStore(getProxies())
-  createRenderEffect(() => setProxifiedState(getProxies()))
+  const [proxyState, setProxyState] = createStore(getProxies())
+  createRenderEffect(() => setProxyState(getProxies()))
 
-  return proxifiedState as TCombinedResult
+  return proxyState as TCombinedResult
 }

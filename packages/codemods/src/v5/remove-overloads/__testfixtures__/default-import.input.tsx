@@ -200,11 +200,11 @@ export const WithIdentifiers = () => {
 }
 
 export const SecondArgumentIsAFunctionExample = () => {
-  useQuery(ordersCacheKeys.groupOrders(ouuid), () => api.getPatientGroupOrders(ouuid).then((r) => r.data))
+  useQuery(ordersCacheKeys.groupOrders(id), () => api.getPatientGroupOrders(id).then((r) => r.data))
 
   const rest = 'rest'
   const of = 1
   const functionArguments = { foo: 'bar' }
 
-  useQuery(ordersCacheKeys.groupOrders(ouuid), () => api.getPatientGroupOrders(ouuid).then((r) => r.data), rest, of, functionArguments)
+  useQuery(ordersCacheKeys.groupOrders(id), () => api.getPatientGroupOrders(id).then((r) => r.data), rest, of, functionArguments)
 }

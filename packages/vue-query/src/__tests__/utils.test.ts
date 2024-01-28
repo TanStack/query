@@ -114,7 +114,7 @@ describe('utils', () => {
   describe('cloneDeepUnref', () => {
     test('should unref primitives', () => {
       expect(cloneDeepUnref(ref(34))).toBe(34)
-      expect(cloneDeepUnref(ref('mystr'))).toBe('mystr')
+      expect(cloneDeepUnref(ref('myStr'))).toBe('myStr')
     })
 
     test('should deeply unref arrays', () => {

@@ -59,12 +59,12 @@ describe('useIsFetching', () => {
     const key1 = queryKey()
     const key2 = queryKey()
 
-    const isFetchings: Array<number> = []
+    const isFetchingArray: Array<number> = []
 
     function IsFetching() {
       const isFetching = useIsFetching()
       createRenderEffect(() => {
-        isFetchings.push(isFetching())
+        isFetchingArray.push(isFetching())
       })
       return null
     }
@@ -117,7 +117,7 @@ describe('useIsFetching', () => {
       </QueryClientProvider>
     ))
     // unlike react, Updating renderSecond wont cause a rerender for FirstQuery
-    await waitFor(() => expect(isFetchings).toEqual([0, 1, 2, 1, 0]))
+    await waitFor(() => expect(isFetchingArray).toEqual([0, 1, 2, 1, 0]))
   })
 
   it('should be able to filter', async () => {
@@ -125,7 +125,7 @@ describe('useIsFetching', () => {
     const key1 = queryKey()
     const key2 = queryKey()
 
-    const isFetchings: Array<number> = []
+    const isFetchingArray: Array<number> = []
 
     function One() {
       createQuery(() => ({
@@ -156,7 +156,7 @@ describe('useIsFetching', () => {
       }))
 
       createRenderEffect(() => {
-        isFetchings.push(isFetching())
+        isFetchingArray.push(isFetching())
       })
 
       return (
@@ -184,7 +184,7 @@ describe('useIsFetching', () => {
     await rendered.findByText('isFetching: 1')
     await rendered.findByText('isFetching: 0')
     // at no point should we have isFetching: 2
-    expect(isFetchings).toEqual(expect.not.arrayContaining([2]))
+    expect(isFetchingArray).toEqual(expect.not.arrayContaining([2]))
   })
 
   it('should show the correct fetching state when mounted after a query', async () => {
