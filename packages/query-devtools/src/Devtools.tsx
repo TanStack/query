@@ -330,16 +330,16 @@ const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
       }
     }
 
-    const unsub = () => {
+    const unsubscribe = () => {
       if (isResizing()) {
         setIsResizing(false)
       }
       document.removeEventListener('mousemove', runDrag, false)
-      document.removeEventListener('mouseUp', unsub, false)
+      document.removeEventListener('mouseUp', unsubscribe, false)
     }
 
     document.addEventListener('mousemove', runDrag, false)
-    document.addEventListener('mouseup', unsub, false)
+    document.addEventListener('mouseup', unsubscribe, false)
   }
 
   let panelRef!: HTMLDivElement
@@ -2062,7 +2062,7 @@ const setupQueryCacheSubscription = () => {
     return client.getQueryCache()
   })
 
-  const unsub = queryCache().subscribe((q) => {
+  const unsubscribe = queryCache().subscribe((q) => {
     batch(() => {
       for (const [callback, value] of queryCacheMap.entries()) {
         if (!value.shouldUpdate(q)) continue
@@ -2073,10 +2073,10 @@ const setupQueryCacheSubscription = () => {
 
   onCleanup(() => {
     queryCacheMap.clear()
-    unsub()
+    unsubscribe()
   })
 
-  return unsub
+  return unsubscribe
 }
 
 const createSubscribeToQueryCacheBatcher = <T,>(
@@ -2122,7 +2122,7 @@ const setupMutationCacheSubscription = () => {
     return client.getMutationCache()
   })
 
-  const unsub = mutationCache().subscribe(() => {
+  const unsubscribe = mutationCache().subscribe(() => {
     for (const [callback, setter] of mutationCacheMap.entries()) {
       queueMicrotask(() => {
         setter(callback(mutationCache))
@@ -2132,10 +2132,10 @@ const setupMutationCacheSubscription = () => {
 
   onCleanup(() => {
     mutationCacheMap.clear()
-    unsub()
+    unsubscribe()
   })
 
-  return unsub
+  return unsubscribe
 }
 
 const createSubscribeToMutationCacheBatcher = <T,>(

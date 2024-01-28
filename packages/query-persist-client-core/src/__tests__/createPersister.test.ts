@@ -245,7 +245,7 @@ describe('createPersister', () => {
     expect(query.fetch).toHaveBeenCalledTimes(1)
   })
 
-  test('should store item after successfull fetch', async () => {
+  test('should store item after successful fetch', async () => {
     const storage = getFreshStorage()
     const {
       context,
@@ -339,7 +339,7 @@ describe('createPersister', () => {
     expect(query.fetch).toHaveBeenCalledTimes(1)
   })
 
-  test('should store item after successfull fetch with async serializer', async () => {
+  test('should store item after successful fetch with async serializer', async () => {
     const storage = getFreshStorage()
     const {
       context,

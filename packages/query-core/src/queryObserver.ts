@@ -234,7 +234,7 @@ export class QueryObserver<
       // arrives, it finds the old `observer.currentResult` which is related
       // to the old QueryKey. Which means that currentResult and selectData are
       // out of sync already.
-      // To solve this, we move the cursor of the currentResult everytime
+      // To solve this, we move the cursor of the currentResult every time
       // an observer reads an optimistic value.
 
       // When keeping the previous data, the result doesn't change until new

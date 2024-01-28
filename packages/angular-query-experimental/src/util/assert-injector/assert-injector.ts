@@ -1,3 +1,4 @@
+/* eslint-disable @cspell/spellchecker */
 /**
  * The code in this file is adapted from NG Extension Platform at https://ngxtension.netlify.app.
  *
@@ -8,6 +9,7 @@
  * For more information about the original code, see
  * https://github.com/nartc/ngxtension-platform
  */
+/* eslint-enable */
 
 import {
   Injector,

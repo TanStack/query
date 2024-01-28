@@ -171,6 +171,7 @@ export class QueryClient extends QC {
     filters: MaybeRefDeep<InvalidateQueryFilters> = {},
     options: MaybeRefDeep<InvalidateOptions> = {},
   ): Promise<void> {
+    // eslint-disable-next-line @cspell/spellchecker
     // (dosipiuk): We need to delay `invalidate` execution to next macro task for all reactive values to be updated.
     // This ensures that `context` in `queryFn` while `invalidating` along reactive variable change has correct value.
     return new Promise((resolve) => {

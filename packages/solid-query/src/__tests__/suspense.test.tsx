@@ -121,6 +121,7 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('data: 1'))
 
+    // eslint-disable-next-line @cspell/spellchecker
     // TODO(lukemurray): in react this is 1 in solid this is 2 because suspense
     // occurs on read.
     expect(states.length).toBe(2)
@@ -132,6 +133,7 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(rendered.getByText('next'))
     await waitFor(() => rendered.getByText('data: 2'))
 
+    // eslint-disable-next-line @cspell/spellchecker
     // TODO(lukemurray): in react this is 2 and in solid it is 4
     expect(states.length).toBe(4)
     expect(states[3]).toMatchObject({
@@ -705,7 +707,7 @@ describe("useQuery's in Suspense mode", () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
-  it('should error catched in error boundary without infinite loop', async () => {
+  it('should error caught in error boundary without infinite loop', async () => {
     const key = queryKey()
 
     const consoleMock = vi
@@ -776,7 +778,7 @@ describe("useQuery's in Suspense mode", () => {
     consoleMock.mockRestore()
   })
 
-  it('should error catched in error boundary without infinite loop when query keys changed', async () => {
+  it('should error caught in error boundary without infinite loop when query keys changed', async () => {
     let succeed = true
 
     const consoleMock = vi
@@ -840,7 +842,7 @@ describe("useQuery's in Suspense mode", () => {
     consoleMock.mockRestore()
   })
 
-  it('should error catched in error boundary without infinite loop when enabled changed', async () => {
+  it('should error caught in error boundary without infinite loop when enabled changed', async () => {
     const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
