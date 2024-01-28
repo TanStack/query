@@ -60,9 +60,9 @@ export function setIsServer(isServer: boolean) {
 
 export const doNotExecute = (_func: () => void) => true
 
-export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
-  T,
->() => T extends Y ? 1 : 2
+export type Equal<TTargetA, TTargetB> = (<T>() => T extends TTargetA
+  ? 1
+  : 2) extends <T>() => T extends TTargetB ? 1 : 2
   ? true
   : false
 

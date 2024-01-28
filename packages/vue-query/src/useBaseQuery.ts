@@ -23,16 +23,16 @@ import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 export type UseBaseQueryReturnType<
   TData,
   TError,
-  Result = QueryObserverResult<TData, TError>,
+  TResult = QueryObserverResult<TData, TError>,
 > = {
-  [K in keyof Result]: K extends
+  [K in keyof TResult]: K extends
     | 'fetchNextPage'
     | 'fetchPreviousPage'
     | 'refetch'
-    ? Result[K]
-    : ToRef<Readonly<Result>[K]>
+    ? TResult[K]
+    : ToRef<Readonly<TResult>[K]>
 } & {
-  suspense: () => Promise<Result>
+  suspense: () => Promise<TResult>
 }
 
 type UseQueryOptionsGeneric<

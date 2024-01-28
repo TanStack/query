@@ -58,13 +58,13 @@ const hydratableObserverResult = <
   TError,
   TData,
   TQueryKey extends QueryKey,
-  T2,
+  TDataHydratable,
 >(
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
-  result: QueryObserverResult<T2, TError>,
-): HydratableQueryState<T2, TError> => {
+  result: QueryObserverResult<TDataHydratable, TError>,
+): HydratableQueryState<TDataHydratable, TError> => {
   // Including the extra properties is only relevant on the server
-  if (!isServer) return result as HydratableQueryState<T2, TError>
+  if (!isServer) return result as HydratableQueryState<TDataHydratable, TError>
 
   return {
     ...unwrap(result),
@@ -72,7 +72,7 @@ const hydratableObserverResult = <
     // cast to refetch function should be safe, since we only remove it on the server,
     // and refetch is not relevant on the server
     refetch: undefined as unknown as HydratableQueryState<
-      T2,
+      TDataHydratable,
       TError
     >['refetch'],
 

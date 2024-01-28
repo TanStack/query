@@ -24,8 +24,8 @@ export type DefaultError = Register extends {
 export type QueryKey = ReadonlyArray<unknown>
 
 export declare const dataTagSymbol: unique symbol
-export type DataTag<Type, Value> = Type & {
-  [dataTagSymbol]: Value
+export type DataTag<TType, TValue> = TType & {
+  [dataTagSymbol]: TValue
 }
 
 export type QueryFunction<
@@ -335,7 +335,9 @@ export interface QueryObserverOptions<
   _optimisticResults?: 'optimistic' | 'isRestoring'
 }
 
-export type WithRequired<T, K extends keyof T> = T & { [_ in K]: {} }
+export type WithRequired<TTarget, TKey extends keyof TTarget> = TTarget & {
+  [_ in TKey]: {}
+}
 
 export type DefaultedQueryObserverOptions<
   TQueryFnData = unknown,

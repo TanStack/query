@@ -39,11 +39,11 @@ import {
  * injectValue(); // string
  * ```
  */
-export function assertInjector<Runner extends () => any>(
+export function assertInjector<TRunner extends () => any>(
   fn: Function,
   injector: Injector | undefined | null,
-  runner: Runner,
-): ReturnType<Runner>
+  runner: TRunner,
+): ReturnType<TRunner>
 /**
  * `assertInjector` extends `assertInInjectionContext` with an optional `Injector`
  * After assertion, `assertInjector` returns a guaranteed `Injector` whether it is the default `Injector`
