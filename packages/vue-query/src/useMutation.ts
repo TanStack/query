@@ -47,8 +47,8 @@ export type UseMutationReturnType<
   TError,
   TVariables,
   TContext,
-  Result = MutationResult<TData, TError, TVariables, TContext>,
-> = ToRefs<Readonly<Result>> & {
+  TResult = MutationResult<TData, TError, TVariables, TContext>,
+> = ToRefs<Readonly<TResult>> & {
   mutate: MutateSyncFunction<TData, TError, TVariables, TContext>
   mutateAsync: MutateFunction<TData, TError, TVariables, TContext>
   reset: MutationObserverResult<TData, TError, TVariables, TContext>['reset']
@@ -68,7 +68,7 @@ export function useMutation<
   if (process.env.NODE_ENV === 'development') {
     if (!getCurrentScope()) {
       console.warn(
-        'vue-query composables like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+        'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
       )
     }
   }

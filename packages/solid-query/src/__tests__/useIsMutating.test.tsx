@@ -7,13 +7,13 @@ import { createQueryClient, setActTimeout, sleep } from './utils'
 
 describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {
-    const isMutatings: Array<number> = []
+    const isMutatingArray: Array<number> = []
     const queryClient = createQueryClient()
 
     function IsMutating() {
       const isMutating = useIsMutating()
       createRenderEffect(() => {
-        isMutatings.push(isMutating())
+        isMutatingArray.push(isMutating())
       })
       return null
     }
@@ -58,17 +58,17 @@ describe('useIsMutating', () => {
         <Page />
       </QueryClientProvider>
     ))
-    await waitFor(() => expect(isMutatings).toEqual([0, 1, 2, 1, 0]))
+    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 2, 1, 0]))
   })
 
   it('should filter correctly by mutationKey', async () => {
-    const isMutatings: Array<number> = []
+    const isMutatingArray: Array<number> = []
     const queryClient = createQueryClient()
 
     function IsMutating() {
       const isMutating = useIsMutating(() => ({ mutationKey: ['mutation1'] }))
       createRenderEffect(() => {
-        isMutatings.push(isMutating())
+        isMutatingArray.push(isMutating())
       })
       return null
     }
@@ -103,11 +103,11 @@ describe('useIsMutating', () => {
       </QueryClientProvider>
     ))
     // Unlike React, IsMutating Wont re-render twice with mutation2
-    await waitFor(() => expect(isMutatings).toEqual([0, 1, 0]))
+    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 0]))
   })
 
   it('should filter correctly by predicate', async () => {
-    const isMutatings: Array<number> = []
+    const isMutatingArray: Array<number> = []
     const queryClient = createQueryClient()
 
     function IsMutating() {
@@ -116,7 +116,7 @@ describe('useIsMutating', () => {
           mutation.options.mutationKey?.[0] === 'mutation1',
       }))
       createRenderEffect(() => {
-        isMutatings.push(isMutating())
+        isMutatingArray.push(isMutating())
       })
       return null
     }
@@ -152,7 +152,7 @@ describe('useIsMutating', () => {
     ))
 
     // Again, No unnecessary re-renders like React
-    await waitFor(() => expect(isMutatings).toEqual([0, 1, 0]))
+    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 0]))
   })
 
   it('should use provided custom queryClient', async () => {

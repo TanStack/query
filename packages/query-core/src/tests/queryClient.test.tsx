@@ -196,7 +196,7 @@ describe('queryClient', () => {
       expect(() => {
         queryClient.setQueryData([key, user], (prevUser?: typeof user) => ({
           ...prevUser!,
-          name: 'Edvin',
+          name: 'James',
         }))
       }).not.toThrow()
     })
@@ -433,7 +433,7 @@ describe('queryClient', () => {
       ).resolves.toEqual('bar')
     })
 
-    test('should return the cached query data if the query is found and cached query data is falsey', async () => {
+    test('should return the cached query data if the query is found and cached query data is falsy', async () => {
       const key = queryKey()
       const queryFn = () => Promise.resolve(0)
 

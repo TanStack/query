@@ -24,8 +24,8 @@ export type DefaultError = Register extends {
 export type QueryKey = ReadonlyArray<unknown>
 
 export declare const dataTagSymbol: unique symbol
-export type DataTag<Type, Value> = Type & {
-  [dataTagSymbol]: Value
+export type DataTag<TType, TValue> = TType & {
+  [dataTagSymbol]: TValue
 }
 
 export type QueryFunction<
@@ -278,7 +278,7 @@ export interface QueryObserverOptions<
       ) => boolean | 'always')
   /**
    * If set to `true`, the query will refetch on mount if the data is stale.
-   * If set to `false`, will disable additional instances of a query to trigger background refetches.
+   * If set to `false`, will disable additional instances of a query to trigger background refetch.
    * If set to `'always'`, the query will always refetch on mount.
    * If set to a function, the function will be executed with the latest data and query to compute the value
    * Defaults to `true`.
@@ -335,7 +335,9 @@ export interface QueryObserverOptions<
   _optimisticResults?: 'optimistic' | 'isRestoring'
 }
 
-export type WithRequired<T, K extends keyof T> = T & { [_ in K]: {} }
+export type WithRequired<TTarget, TKey extends keyof TTarget> = TTarget & {
+  [_ in TKey]: {}
+}
 
 export type DefaultedQueryObserverOptions<
   TQueryFnData = unknown,

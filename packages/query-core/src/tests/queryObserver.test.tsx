@@ -682,7 +682,7 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  test('should not use replaceEqualDeep for select value when structuralSharing option is true and placeholderdata is defined', () => {
+  test('should not use replaceEqualDeep for select value when structuralSharing option is true and placeholderData is defined', () => {
     const key = queryKey()
 
     const data = { value: 'data' }
@@ -719,7 +719,7 @@ describe('queryObserver', () => {
     expect(observer.getCurrentResult().data).toBe(selectedData2)
   })
 
-  test('should not use an undefined value returned by select as placeholderdata', () => {
+  test('should not use an undefined value returned by select as placeholderData', () => {
     const key = queryKey()
 
     const data = { value: 'data' }

@@ -168,4 +168,8 @@ export type UseMutationResult<
   TContext = unknown,
 > = UseBaseMutationResult<TData, TError, TVariables, TContext>
 
-type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }
+type Override<TTargetA, TTargetB> = {
+  [AKey in keyof TTargetA]: AKey extends keyof TTargetB
+    ? TTargetB[AKey]
+    : TTargetA[AKey]
+}

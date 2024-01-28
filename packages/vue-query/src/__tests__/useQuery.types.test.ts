@@ -153,8 +153,8 @@ describe('initialData', () => {
     })
   })
 
-  describe('custom composables', () => {
-    it('should allow custom composables using UseQueryOptions', () => {
+  describe('custom composable', () => {
+    it('should allow custom composable using UseQueryOptions', () => {
       doNotExecute(() => {
         type Data = string
 

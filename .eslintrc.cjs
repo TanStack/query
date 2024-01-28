@@ -6,6 +6,7 @@ const config = {
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'import'],
   extends: [
+    'plugin:@cspell/recommended',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:import/recommended',
@@ -34,6 +35,27 @@ const config = {
     },
   },
   rules: {
+    '@cspell/spellchecker': [
+      'error',
+      {
+        cspell: {
+          words: [
+            'tanstack', // Our package scope
+            'tsqd', // Our public interface (TanStack Query Devtools shorthand)
+            'retryer', // Our public interface
+            'Promisable', // Our public interface
+            'extralight', // Our public interface
+            'codemod', // We support our codemod
+
+            'TSES', // @typescript-eslint package's interface
+            'tsup', // We use tsup as builder
+            'solidjs', // Our target framework
+            'tabular-nums', // https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric
+            'todos', // Too general word to be caught as error
+          ],
+        },
+      },
+    ],
     '@typescript-eslint/array-type': [
       'error',
       { default: 'generic', readonly: 'generic' },
@@ -45,6 +67,19 @@ const config = {
       { prefer: 'type-imports' },
     ],
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/naming-convention': [
+      'error',
+      {
+        selector: 'typeParameter',
+        format: ['PascalCase'],
+        leadingUnderscore: 'forbid',
+        trailingUnderscore: 'forbid',
+        custom: {
+          regex: '^(T|T[A-Z][A-Za-z]+)$',
+          match: true,
+        },
+      },
+    ],
     '@typescript-eslint/no-empty-interface': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
