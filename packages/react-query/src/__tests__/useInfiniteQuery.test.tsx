@@ -1,7 +1,6 @@
+import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
-
-import { vi } from 'vitest'
 import { QueryCache, keepPreviousData, useInfiniteQuery } from '..'
 import {
   createQueryClient,
@@ -1254,8 +1253,8 @@ describe('useInfiniteQuery', () => {
                   {isFetchingNextPage
                     ? 'Loading more...'
                     : hasNextPage
-                    ? 'Load More'
-                    : 'Nothing more to load'}
+                      ? 'Load More'
+                      : 'Nothing more to load'}
                 </button>
                 <button onClick={() => refetch()}>Refetch</button>
                 <button
@@ -1383,8 +1382,8 @@ describe('useInfiniteQuery', () => {
                   {isFetchingNextPage
                     ? 'Loading more...'
                     : hasNextPage
-                    ? 'Load More'
-                    : 'Nothing more to load'}
+                      ? 'Load More'
+                      : 'Nothing more to load'}
                 </button>
                 <button onClick={() => refetch()}>Refetch</button>
                 <button onClick={() => setIsRemovedLastPage(true)}>

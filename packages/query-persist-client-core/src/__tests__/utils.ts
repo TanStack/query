@@ -1,5 +1,5 @@
-import { QueryClient } from '@tanstack/query-core'
 import { vi } from 'vitest'
+import { QueryClient } from '@tanstack/query-core'
 import type { QueryClientConfig } from '@tanstack/query-core'
 import type { PersistedClient, Persister } from '../persist'
 
@@ -30,7 +30,7 @@ export const createMockPersister = (): Persister => {
   }
 }
 
-export const createSpyablePersister = (): Persister => {
+export const createSpyPersister = (): Persister => {
   return {
     persistClient: vi.fn(),
     restoreClient: vi.fn(),

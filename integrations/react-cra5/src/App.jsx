@@ -1,6 +1,7 @@
+import React from 'react'
 import { useQuery } from '@tanstack/react-query'
 
-export const App = () => {
+const App = () => {
   const query = useQuery({
     queryKey: ['test'],
     queryFn: async () => {

@@ -43,14 +43,6 @@ export class QueryObserver<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends Subscribable<QueryObserverListener<TData, TError>> {
-  options: QueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >
-
   #client: QueryClient
   #currentQuery: Query<TQueryFnData, TError, TQueryData, TQueryKey> = undefined!
   #currentQueryInitialState: QueryState<TQueryData, TError> = undefined!
@@ -76,7 +68,7 @@ export class QueryObserver<
 
   constructor(
     client: QueryClient,
-    options: QueryObserverOptions<
+    public options: QueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
@@ -87,7 +79,6 @@ export class QueryObserver<
     super()
 
     this.#client = client
-    this.options = options
     this.#selectError = null
     this.bindMethods()
     this.setOptions(options)
@@ -103,6 +94,8 @@ export class QueryObserver<
 
       if (shouldFetchOnMount(this.#currentQuery, this.options)) {
         this.#executeFetch()
+      } else {
+        this.updateResult()
       }
 
       this.#updateTimers()
@@ -241,7 +234,7 @@ export class QueryObserver<
       // arrives, it finds the old `observer.currentResult` which is related
       // to the old QueryKey. Which means that currentResult and selectData are
       // out of sync already.
-      // To solve this, we move the cursor of the currentResult everytime
+      // To solve this, we move the cursor of the currentResult every time
       // an observer reads an optimistic value.
 
       // When keeping the previous data, the result doesn't change until new
@@ -590,14 +583,15 @@ export class QueryObserver<
     this.#currentResultState = this.#currentQuery.state
     this.#currentResultOptions = this.options
 
+    if (this.#currentResultState.data !== undefined) {
+      this.#lastQueryWithDefinedData = this.#currentQuery
+    }
+
     // Only notify and update result if something has changed
     if (shallowEqualObjects(nextResult, prevResult)) {
       return
     }
 
-    if (this.#currentResultState.data !== undefined) {
-      this.#lastQueryWithDefinedData = this.#currentQuery
-    }
     this.#currentResult = nextResult
 
     // Determine which callbacks to trigger

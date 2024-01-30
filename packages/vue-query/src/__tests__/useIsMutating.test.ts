@@ -1,6 +1,5 @@
+import { describe, expect, it, test, vi } from 'vitest'
 import { onScopeDispose, reactive } from 'vue-demi'
-
-import { vi } from 'vitest'
 import { useMutation } from '../useMutation'
 import { useIsMutating, useMutationState } from '../useMutationState'
 import { useQueryClient } from '../useQueryClient'
@@ -118,6 +117,6 @@ describe('useMutationState', () => {
 
     const mutationState = useMutationState()
 
-    expect(mutationState.value[0]).toContain({ variables: variables })
+    expect(mutationState.value[0]?.variables).toEqual(variables)
   })
 })

@@ -1,3 +1,4 @@
+import { describe, it } from 'vitest'
 import { QueryClient } from '../queryClient'
 import { doNotExecute } from './utils'
 import type { Equal, Expect } from './utils'

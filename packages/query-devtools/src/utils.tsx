@@ -1,28 +1,21 @@
 import { serialize } from 'superjson'
 import { createSignal, onCleanup, onMount } from 'solid-js'
-import type { Query } from '@tanstack/query-core'
+import type { Mutation, Query } from '@tanstack/query-core'
 import type { DevtoolsPosition } from './Context'
 
 export function getQueryStatusLabel(query: Query) {
   return query.state.fetchStatus === 'fetching'
     ? 'fetching'
     : !query.getObserversCount()
-    ? 'inactive'
-    : query.state.fetchStatus === 'paused'
-    ? 'paused'
-    : query.isStale()
-    ? 'stale'
-    : 'fresh'
+      ? 'inactive'
+      : query.state.fetchStatus === 'paused'
+        ? 'paused'
+        : query.isStale()
+          ? 'stale'
+          : 'fresh'
 }
 
-export const queryStatusLabels = [
-  'fresh',
-  'stale',
-  'paused',
-  'inactive',
-  'fetching',
-] as const
-export type IQueryStatusLabel = (typeof queryStatusLabels)[number]
+type QueryStatusLabel = 'fresh' | 'stale' | 'paused' | 'inactive' | 'fetching'
 
 export function getSidedProp<T extends string>(
   prop: T,
@@ -45,24 +38,42 @@ export function getQueryStatusColor({
   return queryState.fetchStatus === 'fetching'
     ? 'blue'
     : !observerCount
-    ? 'gray'
-    : queryState.fetchStatus === 'paused'
-    ? 'purple'
-    : isStale
-    ? 'yellow'
-    : 'green'
+      ? 'gray'
+      : queryState.fetchStatus === 'paused'
+        ? 'purple'
+        : isStale
+          ? 'yellow'
+          : 'green'
 }
 
-export function getQueryStatusColorByLabel(label: IQueryStatusLabel) {
+export function getMutationStatusColor({
+  status,
+  isPaused,
+}: {
+  status: Mutation['state']['status']
+  isPaused: boolean
+}) {
+  return isPaused
+    ? 'purple'
+    : status === 'error'
+      ? 'red'
+      : status === 'pending'
+        ? 'yellow'
+        : status === 'success'
+          ? 'green'
+          : 'gray'
+}
+
+export function getQueryStatusColorByLabel(label: QueryStatusLabel) {
   return label === 'fresh'
     ? 'green'
     : label === 'stale'
-    ? 'yellow'
-    : label === 'paused'
-    ? 'purple'
-    : label === 'inactive'
-    ? 'gray'
-    : 'blue'
+      ? 'yellow'
+      : label === 'paused'
+        ? 'purple'
+        : label === 'inactive'
+          ? 'gray'
+          : 'blue'
 }
 
 /**
@@ -83,10 +94,10 @@ const getStatusRank = (q: Query) =>
   q.state.fetchStatus !== 'idle'
     ? 0
     : !q.getObserversCount()
-    ? 3
-    : q.isStale()
-    ? 2
-    : 1
+      ? 3
+      : q.isStale()
+        ? 2
+        : 1
 
 const queryHashSort: SortFn = (a, b) => a.queryHash.localeCompare(b.queryHash)
 
@@ -107,11 +118,36 @@ export const sortFns: Record<string, SortFn> = {
   'last updated': dateSort,
 }
 
+type MutationSortFn = (a: Mutation, b: Mutation) => number
+
+const getMutationStatusRank = (m: Mutation) =>
+  m.state.isPaused
+    ? 0
+    : m.state.status === 'error'
+      ? 2
+      : m.state.status === 'pending'
+        ? 1
+        : 3
+
+const mutationDateSort: MutationSortFn = (a, b) =>
+  a.state.submittedAt < b.state.submittedAt ? 1 : -1
+
+const mutationStatusSort: MutationSortFn = (a, b) => {
+  if (getMutationStatusRank(a) === getMutationStatusRank(b)) {
+    return mutationDateSort(a, b)
+  }
+
+  return getMutationStatusRank(a) > getMutationStatusRank(b) ? 1 : -1
+}
+
+export const mutationSortFns: Record<string, MutationSortFn> = {
+  status: mutationStatusSort,
+  'last updated': mutationDateSort,
+}
+
 export const convertRemToPixels = (rem: number) => {
   return rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
 }
-
-export const convertPixelsToRem = (px: number) => px / convertRemToPixels(1)
 
 export const getPreferredColorScheme = () => {
   const [colorScheme, setColorScheme] = createSignal<'light' | 'dark'>('dark')
@@ -264,4 +300,18 @@ export const deleteNestedDataByPath = (
   }
 
   return oldData
+}
+
+// Sets up the goober stylesheet
+// Adds a nonce to the style tag if needed
+export const setupStyleSheet = (nonce?: string) => {
+  if (!nonce) return
+  const styleExists = document.querySelector('#_goober')
+  if (styleExists) return
+  const styleTag = document.createElement('style')
+  const textNode = document.createTextNode('')
+  styleTag.appendChild(textNode)
+  styleTag.id = '_goober'
+  styleTag.setAttribute('nonce', nonce)
+  document.head.appendChild(styleTag)
 }

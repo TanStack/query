@@ -1,8 +1,13 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "jsx": "react",
-    "types": ["vitest/globals"]
+    "jsx": "react"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", ".eslintrc.cjs", "tsup.config.js"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".eslintrc.cjs",
+    "tsup.config.js",
+    "vite.config.ts"
+  ]
 }

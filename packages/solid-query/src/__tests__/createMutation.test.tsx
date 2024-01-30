@@ -1,12 +1,11 @@
-import '@testing-library/jest-dom'
+import { describe, expect, it, vi } from 'vitest'
 import {
   ErrorBoundary,
   createEffect,
   createRenderEffect,
   createSignal,
 } from 'solid-js'
-import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
-import { vi } from 'vitest'
+import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import {
   MutationCache,
   QueryCache,
@@ -42,24 +41,24 @@ describe('createMutation', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    expect(screen.getByRole('heading').textContent).toBe('empty')
+    expect(rendered.getByRole('heading').textContent).toBe('empty')
 
-    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
     await waitFor(() => {
-      expect(screen.getByRole('heading').textContent).toBe('mutation')
+      expect(rendered.getByRole('heading').textContent).toBe('mutation')
     })
 
-    fireEvent.click(screen.getByRole('button', { name: /reset/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /reset/i }))
 
     await waitFor(() => {
-      expect(screen.getByRole('heading').textContent).toBe('empty')
+      expect(rendered.getByRole('heading').textContent).toBe('empty')
     })
   })
 
@@ -86,28 +85,28 @@ describe('createMutation', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
     await waitFor(() => {
-      expect(screen.queryByRole('heading')).toBeNull()
+      expect(rendered.queryByRole('heading')).toBeNull()
     })
 
-    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
     await waitFor(() => {
-      expect(screen.getByRole('heading').textContent).toBe(
+      expect(rendered.getByRole('heading').textContent).toBe(
         'Expected mock error. All is well!',
       )
     })
 
-    fireEvent.click(screen.getByRole('button', { name: /reset/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /reset/i }))
 
     await waitFor(() => {
-      expect(screen.queryByRole('heading')).toBeNull()
+      expect(rendered.queryByRole('heading')).toBeNull()
     })
 
     consoleMock.mockRestore()
@@ -144,20 +143,20 @@ describe('createMutation', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    expect(screen.getByRole('heading').textContent).toBe('0')
+    expect(rendered.getByRole('heading').textContent).toBe('0')
 
-    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
-    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
-    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
     await waitFor(() => {
-      expect(screen.getByRole('heading').textContent).toBe('3')
+      expect(rendered.getByRole('heading').textContent).toBe('3')
     })
 
     await waitFor(() => {
@@ -215,26 +214,26 @@ describe('createMutation', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('Data'))
+    await waitFor(() => rendered.getByText('Data'))
 
-    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
-    await waitFor(() => screen.getByText('Data'))
-    await waitFor(() => screen.getByText('Status error'))
-    await waitFor(() => screen.getByText('Failed 1 times'))
-    await waitFor(() => screen.getByText('Failed because Error test Jonas'))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await waitFor(() => rendered.getByText('Data'))
+    await waitFor(() => rendered.getByText('Status error'))
+    await waitFor(() => rendered.getByText('Failed 1 times'))
+    await waitFor(() => rendered.getByText('Failed because Error test Jonas'))
 
-    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
-    await waitFor(() => screen.getByText('Status pending'))
-    await waitFor(() => screen.getByText('Status success'))
-    await waitFor(() => screen.getByText('Data 2'))
-    await waitFor(() => screen.getByText('Failed 0 times'))
-    await waitFor(() => screen.getByText('Failed because null'))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await waitFor(() => rendered.getByText('Status pending'))
+    await waitFor(() => rendered.getByText('Status success'))
+    await waitFor(() => rendered.getByText('Data 2'))
+    await waitFor(() => rendered.getByText('Failed 0 times'))
+    await waitFor(() => rendered.getByText('Failed because null'))
   })
 
   it('should be able to call `onError` and `onSettled` after each failed mutate', async () => {
@@ -274,20 +273,20 @@ describe('createMutation', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    expect(screen.getByRole('heading').textContent).toBe('0')
+    expect(rendered.getByRole('heading').textContent).toBe('0')
 
-    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
-    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
-    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
     await waitFor(() => {
-      expect(screen.getByRole('heading').textContent).toBe('3')
+      expect(rendered.getByRole('heading').textContent).toBe('3')
     })
 
     await waitFor(() => {
@@ -529,7 +528,7 @@ describe('createMutation', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
@@ -537,17 +536,17 @@ describe('createMutation', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText('error: null, status: idle, isPaused: false'),
+        rendered.getByText('error: null, status: idle, isPaused: false'),
       ).toBeInTheDocument()
     })
 
     window.dispatchEvent(new Event('offline'))
 
-    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
     await waitFor(() => {
       expect(
-        screen.getByText('error: null, status: pending, isPaused: true'),
+        rendered.getByText('error: null, status: pending, isPaused: true'),
       ).toBeInTheDocument()
     })
 
@@ -560,7 +559,7 @@ describe('createMutation', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText('error: oops, status: error, isPaused: false'),
+        rendered.getByText('error: oops, status: error, isPaused: false'),
       ).toBeInTheDocument()
     })
 
@@ -593,19 +592,19 @@ describe('createMutation', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    await screen.findByText('data: null, status: idle, isPaused: false')
+    await rendered.findByText('data: null, status: idle, isPaused: false')
 
     window.dispatchEvent(new Event('offline'))
 
-    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
-    await screen.findByText('data: null, status: pending, isPaused: true')
+    await rendered.findByText('data: null, status: pending, isPaused: true')
 
     expect(onMutate).toHaveBeenCalledTimes(1)
     expect(onMutate).toHaveBeenCalledWith('todo')
@@ -613,7 +612,7 @@ describe('createMutation', () => {
     onlineMock.mockRestore()
     window.dispatchEvent(new Event('online'))
 
-    await screen.findByText('data: 1, status: success, isPaused: false')
+    await rendered.findByText('data: 1, status: success, isPaused: false')
 
     expect(onMutate).toHaveBeenCalledTimes(1)
     expect(count).toBe(1)
@@ -648,17 +647,17 @@ describe('createMutation', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    await screen.findByText('data: null, status: idle, isPaused: false')
+    await rendered.findByText('data: null, status: idle, isPaused: false')
 
-    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
-    await screen.findByText('data: null, status: pending, isPaused: true')
+    await rendered.findByText('data: null, status: pending, isPaused: true')
 
     // no intermediate 'pending, false' state is expected because we don't start mutating!
     expect(states[0]).toBe('idle, false')
@@ -667,7 +666,7 @@ describe('createMutation', () => {
     onlineMock.mockReturnValue(true)
     window.dispatchEvent(new Event('online'))
 
-    await screen.findByText('data: 1, status: success, isPaused: false')
+    await rendered.findByText('data: 1, status: success, isPaused: false')
 
     onlineMock.mockRestore()
   })
@@ -777,13 +776,13 @@ describe('createMutation', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
-    fireEvent.click(screen.getByText('mutate'))
-    fireEvent.click(screen.getByText('unmount'))
+    fireEvent.click(rendered.getByText('mutate'))
+    fireEvent.click(rendered.getByText('unmount'))
   })
 
   it('should be able to throw an error when throwOnError is set to true', async () => {
@@ -808,7 +807,7 @@ describe('createMutation', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <ErrorBoundary
           fallback={() => (
@@ -822,10 +821,10 @@ describe('createMutation', () => {
       </QueryClientProvider>
     ))
 
-    fireEvent.click(screen.getByText('mutate'))
+    fireEvent.click(rendered.getByText('mutate'))
 
     await waitFor(() => {
-      expect(screen.queryByText('error')).not.toBeNull()
+      expect(rendered.queryByText('error')).not.toBeNull()
     })
 
     consoleMock.mockRestore()
@@ -858,7 +857,7 @@ describe('createMutation', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <ErrorBoundary
           fallback={() => (
@@ -873,15 +872,15 @@ describe('createMutation', () => {
     ))
 
     // first error goes to component
-    fireEvent.click(screen.getByText('mutate'))
+    fireEvent.click(rendered.getByText('mutate'))
     await waitFor(() => {
-      expect(screen.queryByText('mock error')).not.toBeNull()
+      expect(rendered.queryByText('mock error')).not.toBeNull()
     })
 
     // second error goes to boundary
-    fireEvent.click(screen.getByText('mutate'))
+    fireEvent.click(rendered.getByText('mutate'))
     await waitFor(() => {
-      expect(screen.queryByText('error boundary')).not.toBeNull()
+      expect(rendered.queryByText('error boundary')).not.toBeNull()
     })
 
     consoleMock.mockRestore()
@@ -927,18 +926,18 @@ describe('createMutation', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClientMutationMeta}>
         <Page />
       </QueryClientProvider>
     ))
 
-    fireEvent.click(screen.getByText('succeed'))
-    fireEvent.click(screen.getByText('error'))
+    fireEvent.click(rendered.getByText('succeed'))
+    fireEvent.click(rendered.getByText('error'))
 
     await waitFor(() => {
-      expect(screen.queryByText('successTest')).not.toBeNull()
-      expect(screen.queryByText('errorTest')).not.toBeNull()
+      expect(rendered.queryByText('successTest')).not.toBeNull()
+      expect(rendered.queryByText('errorTest')).not.toBeNull()
     })
 
     expect(successMock).toHaveBeenCalledTimes(1)
@@ -998,16 +997,16 @@ describe('createMutation', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    await screen.findByText('data: null, status: idle, isPaused: false')
+    await rendered.findByText('data: null, status: idle, isPaused: false')
 
-    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
-    fireEvent.click(screen.getByRole('button', { name: /hide/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
 
     await waitFor(() => {
       expect(
@@ -1060,18 +1059,18 @@ describe('createMutation', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    await screen.findByText('data: null, status: idle')
+    await rendered.findByText('data: null, status: idle')
 
-    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
-    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
-    await screen.findByText('data: result2, status: success')
+    await rendered.findByText('data: result2, status: success')
 
     expect(count).toBe(2)
 
@@ -1110,17 +1109,17 @@ describe('createMutation', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    await screen.findByText('status: idle')
+    await rendered.findByText('status: idle')
 
-    screen.getByRole('button', { name: /mutate/i }).click()
+    rendered.getByRole('button', { name: /mutate/i }).click()
 
-    await screen.findByText('status: error')
+    await rendered.findByText('status: error')
 
     expect(onError).toHaveBeenCalledWith(error, 'todo', undefined)
   })
@@ -1150,17 +1149,17 @@ describe('createMutation', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    await screen.findByText('error: null, status: idle')
+    await rendered.findByText('error: null, status: idle')
 
-    screen.getByRole('button', { name: /mutate/i }).click()
+    rendered.getByRole('button', { name: /mutate/i }).click()
 
-    await screen.findByText('error: mutateFnError, status: error')
+    await rendered.findByText('error: mutateFnError, status: error')
   })
 
   it('should go to error state if onSettled callback errors', async () => {
@@ -1190,17 +1189,17 @@ describe('createMutation', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    await screen.findByText('error: null, status: idle')
+    await rendered.findByText('error: null, status: idle')
 
-    screen.getByRole('button', { name: /mutate/i }).click()
+    rendered.getByRole('button', { name: /mutate/i }).click()
 
-    await screen.findByText('error: mutateFnError, status: error')
+    await rendered.findByText('error: mutateFnError, status: error')
 
     expect(onError).toHaveBeenCalledWith(mutateFnError, 'todo', undefined)
   })
@@ -1228,12 +1227,12 @@ describe('createMutation', () => {
       )
     }
 
-    render(() => <Page></Page>)
+    const rendered = render(() => <Page></Page>)
 
-    await screen.findByText('data: null, status: idle')
+    await rendered.findByText('data: null, status: idle')
 
-    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
-    await screen.findByText('data: custom client, status: success')
+    await rendered.findByText('data: custom client, status: success')
   })
 })

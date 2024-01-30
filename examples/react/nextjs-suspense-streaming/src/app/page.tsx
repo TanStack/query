@@ -2,7 +2,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense } from 'react'
 
-// export const runtime = "edge"; // 'nodejs' (default) | 'edge'
+export const runtime = 'edge' // 'nodejs' (default) | 'edge'
 
 function getBaseURL() {
   if (typeof window !== 'undefined') {
@@ -21,7 +21,6 @@ function useWaitQuery(props: { wait: number }) {
       const path = `/api/wait?wait=${props.wait}`
       const url = baseUrl + path
 
-      console.log('fetching', url)
       const res: string = await (
         await fetch(url, {
           cache: 'no-store',

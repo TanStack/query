@@ -22,7 +22,7 @@ import type { Query } from '@tanstack/query-core'
  * @example
  * chunkArray(['a','b', 'c', 'd', 'e'], 2) // returns [['a','b'], ['c', 'd'], ['e']]
  */
-export function chunkArray<T extends { label: string; value: unknown }>(
+function chunkArray<T extends { label: string; value: unknown }>(
   array: Array<T>,
   size: number,
 ): Array<Array<T>> {
@@ -91,8 +91,8 @@ const CopyButton = (props: { value: unknown }) => {
         copyState() === 'NoCopy'
           ? 'Copy object to clipboard'
           : copyState() === 'SuccessCopy'
-          ? 'Object copied to clipboard'
-          : 'Error copying object to clipboard'
+            ? 'Object copied to clipboard'
+            : 'Error copying object to clipboard'
       }`}
       onClick={
         copyState() === 'NoCopy'
@@ -517,8 +517,8 @@ const stylesFactory = (theme: 'light' | 'dark') => {
     expanderButtonContainer: css`
       display: flex;
       align-items: center;
-      line-height: 1.125rem;
-      min-height: 1.125rem;
+      line-height: ${size[4]};
+      min-height: ${size[4]};
       gap: ${size[2]};
     `,
     expanderButton: css`
@@ -526,7 +526,7 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       color: inherit;
       font: inherit;
       outline: inherit;
-      height: 1rem;
+      height: ${size[5]};
       background: transparent;
       border: none;
       padding: 0;
@@ -554,6 +554,7 @@ const stylesFactory = (theme: 'light' | 'dark') => {
     `,
     label: css`
       color: ${t(colors.gray[700], colors.gray[300])};
+      white-space: nowrap;
     `,
     value: css`
       color: ${t(colors.purple[600], colors.purple[400])};
@@ -568,8 +569,8 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       display: inline-flex;
       gap: ${size[2]};
       width: 100%;
-      margin-bottom: ${size[0.5]};
-      line-height: 1.125rem;
+      margin: ${size[0.25]} 0px;
+      line-height: ${size[4.5]};
       align-items: center;
     `,
     editableInput: css`

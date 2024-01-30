@@ -1,4 +1,4 @@
-import '@testing-library/jest-dom'
+import { describe, expect, test, vi } from 'vitest'
 import { render, screen, waitFor } from '@solidjs/testing-library'
 import { QueryClient, createQueries, createQuery } from '@tanstack/solid-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
@@ -325,14 +325,12 @@ describe('PersistQueryClientProvider', () => {
         staleTime: Infinity,
       }))
 
-      createEffect(
-        () =>
-          states.push({
-            status: state.status,
-            fetchStatus: state.fetchStatus,
-            data: state.data,
-          }),
-        console.log(state.data),
+      createEffect(() =>
+        states.push({
+          status: state.status,
+          fetchStatus: state.fetchStatus,
+          data: state.data,
+        }),
       )
 
       return (

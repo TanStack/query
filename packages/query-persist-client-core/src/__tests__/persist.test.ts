@@ -1,10 +1,10 @@
+import { describe, expect, test, vi } from 'vitest'
 import { QueriesObserver } from '@tanstack/query-core'
-import { vi } from 'vitest'
 import { persistQueryClientSubscribe } from '../persist'
 import {
   createMockPersister,
   createQueryClient,
-  createSpyablePersister,
+  createSpyPersister,
 } from './utils'
 
 describe('persistQueryClientSubscribe', () => {
@@ -35,7 +35,7 @@ describe('persistQueryClientSave', () => {
   test('should not be triggered on observer type events', async () => {
     const queryClient = createQueryClient()
 
-    const persister = createSpyablePersister()
+    const persister = createSpyPersister()
 
     const unsubscribe = persistQueryClientSubscribe({
       queryClient,

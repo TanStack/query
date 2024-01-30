@@ -1,4 +1,4 @@
-import { vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
   addToEnd,
   addToStart,
@@ -7,8 +7,6 @@ import {
   matchMutation,
   partialMatchKey,
   replaceEqualDeep,
-  scheduleMicrotask,
-  sleep,
 } from '../utils'
 import { Mutation } from '../mutation'
 import { createQueryClient } from './utils'
@@ -327,6 +325,31 @@ describe('core/utils', () => {
       expect(result.todos[0]?.state.done).toBe(next.todos[0]?.state.done)
       expect(result.todos[1]).toBe(prev.todos[1])
     })
+
+    it('should correctly handle objects with the same number of properties and one property being undefined', () => {
+      const obj1 = { a: 2, c: 123 }
+      const obj2 = { a: 2, b: undefined }
+      const result = replaceEqualDeep(obj1, obj2)
+      expect(result).toStrictEqual(obj2)
+    })
+
+    it('should be able to share values that contain undefined', () => {
+      const current = [
+        {
+          data: undefined,
+          foo: true,
+        },
+      ]
+
+      const next = replaceEqualDeep(current, [
+        {
+          data: undefined,
+          foo: true,
+        },
+      ])
+
+      expect(current).toBe(next)
+    })
   })
 
   describe('matchMutation', () => {
@@ -339,17 +362,6 @@ describe('core/utils', () => {
         options: {},
       })
       expect(matchMutation(filters, mutation)).toBeFalsy()
-    })
-  })
-
-  describe('scheduleMicrotask', () => {
-    it('should defer execution of callback', async () => {
-      const callback = vi.fn()
-
-      scheduleMicrotask(callback)
-      expect(callback).not.toHaveBeenCalled()
-      await sleep(0)
-      expect(callback).toHaveBeenCalledTimes(1)
     })
   })
 

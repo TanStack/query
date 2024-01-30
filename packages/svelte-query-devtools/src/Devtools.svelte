@@ -11,10 +11,11 @@
   } from '@tanstack/query-devtools'
 
   export let initialIsOpen = false
-  export let buttonPosition: DevtoolsButtonPosition = 'bottom-left'
+  export let buttonPosition: DevtoolsButtonPosition = 'bottom-right'
   export let position: DevtoolsPosition = 'bottom'
   export let client: QueryClient = useQueryClient()
   export let errorTypes: Array<DevToolsErrorType> = []
+  export let styleNonce: string | undefined = undefined
 
   let ref: HTMLDivElement
   let devtools: TanstackQueryDevtools | undefined
@@ -33,6 +34,7 @@
           position,
           initialIsOpen,
           errorTypes,
+          styleNonce,
         })
 
         devtools.mount(ref)

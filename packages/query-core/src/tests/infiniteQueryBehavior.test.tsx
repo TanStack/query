@@ -1,5 +1,5 @@
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { waitFor } from '@testing-library/react'
-import { vi } from 'vitest'
 import { CancelledError, InfiniteQueryObserver } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
 import type { InfiniteQueryObserverResult, QueryCache, QueryClient } from '..'
@@ -167,7 +167,7 @@ describe('InfiniteQueryBehavior', () => {
     // Refetch the infinite query
     await observer.refetch()
 
-    // Only 2 pages should be refetched
+    // Only 2 pages should refetch
     expect(queryFnSpy).toHaveBeenCalledTimes(2)
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {

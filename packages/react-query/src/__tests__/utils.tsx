@@ -1,8 +1,7 @@
+import { vi } from 'vitest'
 import * as React from 'react'
 import { act, render } from '@testing-library/react'
-
 import * as utils from '@tanstack/query-core'
-import { vi } from 'vitest'
 import { QueryClient, QueryClientProvider, onlineManager } from '..'
 import type { QueryClientConfig } from '..'
 import type { SpyInstance } from 'vitest'
@@ -79,9 +78,9 @@ export function setActTimeout(fn: () => void, ms?: number) {
   }, ms)
 }
 
-export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
-  T,
->() => T extends Y ? 1 : 2
+export type Equal<TTargetA, TTargetB> = (<T>() => T extends TTargetA
+  ? 1
+  : 2) extends <T>() => T extends TTargetB ? 1 : 2
   ? true
   : false
 

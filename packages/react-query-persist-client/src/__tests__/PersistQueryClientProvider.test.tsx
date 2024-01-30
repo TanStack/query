@@ -1,7 +1,6 @@
+import { describe, expect, test, vi } from 'vitest'
 import * as React from 'react'
 import { fireEvent, render, waitFor } from '@testing-library/react'
-import { vi } from 'vitest'
-
 import { QueryClient, useQueries, useQuery } from '@tanstack/react-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 

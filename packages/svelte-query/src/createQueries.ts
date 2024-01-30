@@ -43,144 +43,158 @@ type GetOptions<T> =
   }
     ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError, TData>
     : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
-    ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError>
-    : T extends { data: infer TData; error?: infer TError }
-    ? QueryObserverOptionsForCreateQueries<unknown, TError, TData>
-    : // Part 2: responsible for applying explicit type parameter to function arguments, if tuple [TQueryFnData, TError, TData]
-    T extends [infer TQueryFnData, infer TError, infer TData]
-    ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError, TData>
-    : T extends [infer TQueryFnData, infer TError]
-    ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError>
-    : T extends [infer TQueryFnData]
-    ? QueryObserverOptionsForCreateQueries<TQueryFnData>
-    : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
-    T extends {
-        queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
-        select: (data: any) => infer TData
-        throwOnError?: ThrowOnError<any, infer TError, any, any>
-      }
-    ? QueryObserverOptionsForCreateQueries<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryKey
-      >
-    : T extends {
-        queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
-        throwOnError?: ThrowOnError<any, infer TError, any, any>
-      }
-    ? QueryObserverOptionsForCreateQueries<
-        TQueryFnData,
-        TError,
-        TQueryFnData,
-        TQueryKey
-      >
-    : // Fallback
-      QueryObserverOptionsForCreateQueries
+      ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError>
+      : T extends { data: infer TData; error?: infer TError }
+        ? QueryObserverOptionsForCreateQueries<unknown, TError, TData>
+        : // Part 2: responsible for applying explicit type parameter to function arguments, if tuple [TQueryFnData, TError, TData]
+          T extends [infer TQueryFnData, infer TError, infer TData]
+          ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError, TData>
+          : T extends [infer TQueryFnData, infer TError]
+            ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError>
+            : T extends [infer TQueryFnData]
+              ? QueryObserverOptionsForCreateQueries<TQueryFnData>
+              : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
+                T extends {
+                    queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
+                    select?: (data: any) => infer TData
+                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                  }
+                ? QueryObserverOptionsForCreateQueries<
+                    TQueryFnData,
+                    TError,
+                    TData,
+                    TQueryKey
+                  >
+                : T extends {
+                      queryFn?: QueryFunction<
+                        infer TQueryFnData,
+                        infer TQueryKey
+                      >
+                      throwOnError?: ThrowOnError<any, infer TError, any, any>
+                    }
+                  ? QueryObserverOptionsForCreateQueries<
+                      TQueryFnData,
+                      TError,
+                      TQueryFnData,
+                      TQueryKey
+                    >
+                  : // Fallback
+                    QueryObserverOptionsForCreateQueries
 
 type GetResults<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
   T extends { queryFnData: any; error?: infer TError; data: infer TData }
     ? QueryObserverResult<TData, TError>
     : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
-    ? QueryObserverResult<TQueryFnData, TError>
-    : T extends { data: infer TData; error?: infer TError }
-    ? QueryObserverResult<TData, TError>
-    : // Part 2: responsible for mapping explicit type parameter to function result, if tuple
-    T extends [any, infer TError, infer TData]
-    ? QueryObserverResult<TData, TError>
-    : T extends [infer TQueryFnData, infer TError]
-    ? QueryObserverResult<TQueryFnData, TError>
-    : T extends [infer TQueryFnData]
-    ? QueryObserverResult<TQueryFnData>
-    : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
-    T extends {
-        queryFn?: QueryFunction<unknown, any>
-        select: (data: any) => infer TData
-        throwOnError?: ThrowOnError<any, infer TError, any, any>
-      }
-    ? QueryObserverResult<TData, unknown extends TError ? DefaultError : TError>
-    : T extends {
-        queryFn?: QueryFunction<infer TQueryFnData, any>
-        throwOnError?: ThrowOnError<any, infer TError, any, any>
-      }
-    ? QueryObserverResult<
-        TQueryFnData,
-        unknown extends TError ? DefaultError : TError
-      >
-    : // Fallback
-      QueryObserverResult
+      ? QueryObserverResult<TQueryFnData, TError>
+      : T extends { data: infer TData; error?: infer TError }
+        ? QueryObserverResult<TData, TError>
+        : // Part 2: responsible for mapping explicit type parameter to function result, if tuple
+          T extends [any, infer TError, infer TData]
+          ? QueryObserverResult<TData, TError>
+          : T extends [infer TQueryFnData, infer TError]
+            ? QueryObserverResult<TQueryFnData, TError>
+            : T extends [infer TQueryFnData]
+              ? QueryObserverResult<TQueryFnData>
+              : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
+                T extends {
+                    queryFn?: QueryFunction<infer TQueryFnData, any>
+                    select?: (data: any) => infer TData
+                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                  }
+                ? QueryObserverResult<
+                    unknown extends TData ? TQueryFnData : TData,
+                    unknown extends TError ? DefaultError : TError
+                  >
+                : T extends {
+                      queryFn?: QueryFunction<infer TQueryFnData, any>
+                      throwOnError?: ThrowOnError<any, infer TError, any, any>
+                    }
+                  ? QueryObserverResult<
+                      TQueryFnData,
+                      unknown extends TError ? DefaultError : TError
+                    >
+                  : // Fallback
+                    QueryObserverResult
 
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
  */
 export type QueriesOptions<
   T extends Array<any>,
-  Result extends Array<any> = [],
-  Depth extends ReadonlyArray<number> = [],
-> = Depth['length'] extends MAXIMUM_DEPTH
+  TResult extends Array<any> = [],
+  TDepth extends ReadonlyArray<number> = [],
+> = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<QueryObserverOptionsForCreateQueries>
   : T extends []
-  ? []
-  : T extends [infer Head]
-  ? [...Result, GetOptions<Head>]
-  : T extends [infer Head, ...infer Tail]
-  ? QueriesOptions<[...Tail], [...Result, GetOptions<Head>], [...Depth, 1]>
-  : Array<unknown> extends T
-  ? T
-  : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
-  // use this to infer the param types in the case of Array.map() argument
-  T extends Array<
-      QueryObserverOptionsForCreateQueries<
-        infer TQueryFnData,
-        infer TError,
-        infer TData,
-        infer TQueryKey
-      >
-    >
-  ? Array<
-      QueryObserverOptionsForCreateQueries<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryKey
-      >
-    >
-  : // Fallback
-    Array<QueryObserverOptionsForCreateQueries>
+    ? []
+    : T extends [infer Head]
+      ? [...TResult, GetOptions<Head>]
+      : T extends [infer Head, ...infer Tail]
+        ? QueriesOptions<
+            [...Tail],
+            [...TResult, GetOptions<Head>],
+            [...TDepth, 1]
+          >
+        : Array<unknown> extends T
+          ? T
+          : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
+            // use this to infer the param types in the case of Array.map() argument
+            T extends Array<
+                QueryObserverOptionsForCreateQueries<
+                  infer TQueryFnData,
+                  infer TError,
+                  infer TData,
+                  infer TQueryKey
+                >
+              >
+            ? Array<
+                QueryObserverOptionsForCreateQueries<
+                  TQueryFnData,
+                  TError,
+                  TData,
+                  TQueryKey
+                >
+              >
+            : // Fallback
+              Array<QueryObserverOptionsForCreateQueries>
 
 /**
  * QueriesResults reducer recursively maps type param to results
  */
 export type QueriesResults<
   T extends Array<any>,
-  Result extends Array<any> = [],
-  Depth extends ReadonlyArray<number> = [],
-> = Depth['length'] extends MAXIMUM_DEPTH
+  TResult extends Array<any> = [],
+  TDepth extends ReadonlyArray<number> = [],
+> = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<QueryObserverResult>
   : T extends []
-  ? []
-  : T extends [infer Head]
-  ? [...Result, GetResults<Head>]
-  : T extends [infer Head, ...infer Tail]
-  ? QueriesResults<[...Tail], [...Result, GetResults<Head>], [...Depth, 1]>
-  : T extends Array<
-      QueryObserverOptionsForCreateQueries<
-        infer TQueryFnData,
-        infer TError,
-        infer TData,
-        any
-      >
-    >
-  ? // Dynamic-size (homogenous) CreateQueryOptions array: map directly to array of results
-    Array<
-      QueryObserverResult<
-        unknown extends TData ? TQueryFnData : TData,
-        unknown extends TError ? DefaultError : TError
-      >
-    >
-  : // Fallback
-    Array<QueryObserverResult>
+    ? []
+    : T extends [infer Head]
+      ? [...TResult, GetResults<Head>]
+      : T extends [infer Head, ...infer Tail]
+        ? QueriesResults<
+            [...Tail],
+            [...TResult, GetResults<Head>],
+            [...TDepth, 1]
+          >
+        : T extends Array<
+              QueryObserverOptionsForCreateQueries<
+                infer TQueryFnData,
+                infer TError,
+                infer TData,
+                any
+              >
+            >
+          ? // Dynamic-size (homogenous) CreateQueryOptions array: map directly to array of results
+            Array<
+              QueryObserverResult<
+                unknown extends TData ? TQueryFnData : TData,
+                unknown extends TError ? DefaultError : TError
+              >
+            >
+          : // Fallback
+            Array<QueryObserverResult>
 
 export function createQueries<
   T extends Array<any>,
@@ -229,40 +243,27 @@ export function createQueries<
     )
   })
 
-  const [, getCombinedResult, trackResult] = observer.getOptimisticResult(
-    get(defaultedQueriesStore),
-  )
+  const result = derived([isRestoring], ([$isRestoring], set) => {
+    const unsubscribe = $isRestoring
+      ? () => undefined
+      : observer.subscribe(notifyManager.batchCalls(set))
 
-  const result = derived<
-    typeof isRestoring,
-    | Parameters<Parameters<typeof observer.subscribe>[0]>[0]
-    | ReturnType<typeof getCombinedResult>
-  >(
-    isRestoring,
-    ($isRestoring, set) => {
-      const unsubscribe = $isRestoring
-        ? () => undefined
-        : observer.subscribe(notifyManager.batchCalls(set))
-
-      return () => unsubscribe()
-    },
-    getCombinedResult(trackResult()),
-  )
+    return () => unsubscribe()
+  })
 
   const { subscribe } = derived(
     [result, defaultedQueriesStore],
-    ([$result, $defaultedQueries]) => {
-      $result = observer.getOptimisticResult($defaultedQueries)[0]
-      const observers = observer.getObservers()
-      return $defaultedQueries.map((query, index) =>
-        query.notifyOnChangeProps
-          ? // @ts-expect-error TCombinedResult should be an array
-            $result[index]
-          : // @ts-expect-error TCombinedResult should be an array
-            observers[index]!.trackResult($result[index]),
-      )
+    // @ts-ignore svelte-check thinks this is unused
+    ([$result, $defaultedQueriesStore]) => {
+      const [rawResult, combineResult, trackResult] =
+        observer.getOptimisticResult(
+          $defaultedQueriesStore,
+          (options as QueriesObserverOptions<TCombinedResult>).combine,
+        )
+      $result = rawResult
+      return combineResult(trackResult())
     },
   )
-  // @ts-expect-error TCombinedResult should be an array
+
   return { subscribe }
 }

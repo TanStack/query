@@ -1,7 +1,7 @@
 import { Match, Switch } from 'solid-js'
 import { createQuery } from '@tanstack/solid-query'
 
-export const App = () => {
+const App = () => {
   const query = createQuery(() => ({
     queryKey: ['test'],
     queryFn: async () => {

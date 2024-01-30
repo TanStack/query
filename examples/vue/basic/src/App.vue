@@ -1,12 +1,13 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
+import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
 import Posts from './Posts.vue'
 import Post from './Post.vue'
 
 export default defineComponent({
   name: 'App',
-  components: { Posts, Post },
+  components: { Posts, Post, VueQueryDevtools },
   setup() {
     const visitedPosts = ref(new Set())
     const isVisited = (id: number) => visitedPosts.value.has(id)
@@ -40,4 +41,5 @@ export default defineComponent({
   </p>
   <Post v-if="postId > -1" :postId="postId" @setPostId="setPostId" />
   <Posts v-else :isVisited="isVisited" @setPostId="setPostId" />
+  <VueQueryDevtools />
 </template>

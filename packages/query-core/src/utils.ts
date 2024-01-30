@@ -224,7 +224,8 @@ export function replaceEqualDeep(a: any, b: any): any {
   const array = isPlainArray(a) && isPlainArray(b)
 
   if (array || (isPlainObject(a) && isPlainObject(b))) {
-    const aSize = array ? a.length : Object.keys(a).length
+    const aItems = array ? a : Object.keys(a)
+    const aSize = aItems.length
     const bItems = array ? b : Object.keys(b)
     const bSize = bItems.length
     const copy: any = array ? [] : {}
@@ -233,9 +234,19 @@ export function replaceEqualDeep(a: any, b: any): any {
 
     for (let i = 0; i < bSize; i++) {
       const key = array ? i : bItems[i]
-      copy[key] = replaceEqualDeep(a[key], b[key])
-      if (copy[key] === a[key]) {
+      if (
+        !array &&
+        a[key] === undefined &&
+        b[key] === undefined &&
+        aItems.includes(key)
+      ) {
+        copy[key] = undefined
         equalItems++
+      } else {
+        copy[key] = replaceEqualDeep(a[key], b[key])
+        if (copy[key] === a[key] && a[key] !== undefined) {
+          equalItems++
+        }
       }
     }
 
@@ -272,7 +283,7 @@ export function isPlainObject(o: any): o is Object {
     return false
   }
 
-  // If has modified constructor
+  // If has no constructor
   const ctor = o.constructor
   if (typeof ctor === 'undefined') {
     return true
@@ -297,18 +308,10 @@ function hasObjectPrototype(o: any): boolean {
   return Object.prototype.toString.call(o) === '[object Object]'
 }
 
-export function sleep(timeout: number): Promise<void> {
+export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
-    setTimeout(resolve, timeout)
+    setTimeout(resolve, ms)
   })
-}
-
-/**
- * Schedules a microtask.
- * This can be useful to schedule state updates after rendering.
- */
-export function scheduleMicrotask(callback: () => void) {
-  sleep(0).then(callback)
 }
 
 export function replaceData<

@@ -21,7 +21,7 @@ export interface PersistedClient {
   clientState: DehydratedState
 }
 
-export interface PersistQueryClienRootOptions {
+export interface PersistQueryClientRootOptions {
   /** The QueryClient to persist */
   queryClient: QueryClient
   /** The Persister interface for storing and restoring the cache
@@ -33,7 +33,7 @@ export interface PersistQueryClienRootOptions {
 }
 
 export interface PersistedQueryClientRestoreOptions
-  extends PersistQueryClienRootOptions {
+  extends PersistQueryClientRootOptions {
   /** The max-allowed age of the cache in milliseconds.
    * If a persisted cache is found that is older than this
    * time, it will be discarded */
@@ -43,7 +43,7 @@ export interface PersistedQueryClientRestoreOptions
 }
 
 export interface PersistedQueryClientSaveOptions
-  extends PersistQueryClienRootOptions {
+  extends PersistQueryClientRootOptions {
   /** The options passed to the dehydrate function */
   dehydrateOptions?: DehydrateOptions
 }
@@ -51,20 +51,16 @@ export interface PersistedQueryClientSaveOptions
 export interface PersistQueryClientOptions
   extends PersistedQueryClientRestoreOptions,
     PersistedQueryClientSaveOptions,
-    PersistQueryClienRootOptions {}
+    PersistQueryClientRootOptions {}
 
 /**
  * Checks if emitted event is about cache change and not about observers.
  * Useful for persist, where we only want to trigger save when cache is changed.
  */
-const cacheableEventTypes: Array<NotifyEventType> = [
-  'added',
-  'removed',
-  'updated',
-]
+const cacheEventTypes: Array<NotifyEventType> = ['added', 'removed', 'updated']
 
-function isCacheableEventType(eventType: NotifyEventType) {
-  return cacheableEventTypes.includes(eventType)
+function isCacheEventType(eventType: NotifyEventType) {
+  return cacheEventTypes.includes(eventType)
 }
 
 /**
@@ -137,22 +133,22 @@ export function persistQueryClientSubscribe(
   const unsubscribeQueryCache = props.queryClient
     .getQueryCache()
     .subscribe((event) => {
-      if (isCacheableEventType(event.type)) {
+      if (isCacheEventType(event.type)) {
         persistQueryClientSave(props)
       }
     })
 
-  const unusbscribeMutationCache = props.queryClient
+  const unsubscribeMutationCache = props.queryClient
     .getMutationCache()
     .subscribe((event) => {
-      if (isCacheableEventType(event.type)) {
+      if (isCacheEventType(event.type)) {
         persistQueryClientSave(props)
       }
     })
 
   return () => {
     unsubscribeQueryCache()
-    unusbscribeMutationCache()
+    unsubscribeMutationCache()
   }
 }
 

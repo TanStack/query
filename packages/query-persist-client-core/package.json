@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-persist-client-core",
-  "version": "5.0.0",
+  "version": "5.17.19",
   "description": "Set of utilities for interacting with persisters, which can save your queryClient for later use",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -40,7 +40,7 @@
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
-    "test:lib": "vitest run --coverage",
+    "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
     "build": "tsup"

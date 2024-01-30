@@ -19,7 +19,7 @@ import type {
 import type { QueryClient } from '@tanstack/solid-query'
 import type { Component, ComponentProps, JSX } from 'solid-js'
 
-export interface DevtoolsOptions {
+interface DevtoolsOptions {
   /**
    * Set this true if you want the dev tools to default to being open
    */
@@ -27,7 +27,7 @@ export interface DevtoolsOptions {
   /**
    * The position of the React Query logo to open and close the devtools panel.
    * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
-   * Defaults to 'bottom-left'.
+   * Defaults to 'bottom-right'.
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
@@ -44,6 +44,10 @@ export interface DevtoolsOptions {
    * Use this so you can define custom errors that can be shown in the devtools.
    */
   errorTypes?: Array<DevToolsErrorType>
+  /**
+   * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+   */
+  styleNonce?: string
 }
 
 export default function SolidQueryDevtools(props: DevtoolsOptions) {
@@ -59,6 +63,7 @@ export default function SolidQueryDevtools(props: DevtoolsOptions) {
     position: props.position,
     initialIsOpen: props.initialIsOpen,
     errorTypes: props.errorTypes,
+    styleNonce: props.styleNonce,
   })
 
   createEffect(() => {
@@ -95,7 +100,7 @@ export default function SolidQueryDevtools(props: DevtoolsOptions) {
   return <div class="tsqd-parent-container" ref={ref}></div>
 }
 
-/* 
+/*
   This function has been taken from solid-start's codebase
   This allows the devtools to be loaded only on the client and bypasses any server side rendering
   https://github.com/solidjs/solid-start/blob/2967fc2db3f0df826f061020231dbdafdfa0746b/packages/start/islands/clientOnly.tsx

@@ -1,8 +1,7 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import * as React from 'react'
 import { onlineManager, useQueryClient } from '@tanstack/react-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
-import React from 'react'
 import type {
   DevToolsErrorType,
   DevtoolsButtonPosition,
@@ -18,7 +17,7 @@ export interface DevtoolsOptions {
   /**
    * The position of the React Query logo to open and close the devtools panel.
    * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
-   * Defaults to 'bottom-left'.
+   * Defaults to 'bottom-right'.
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
@@ -35,6 +34,10 @@ export interface DevtoolsOptions {
    * Use this so you can define custom errors that can be shown in the devtools.
    */
   errorTypes?: Array<DevToolsErrorType>
+  /**
+   * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+   */
+  styleNonce?: string
 }
 
 export function ReactQueryDevtools(
@@ -42,9 +45,10 @@ export function ReactQueryDevtools(
 ): React.ReactElement | null {
   const queryClient = useQueryClient()
   const client = props.client || queryClient
-  const ref = useRef<HTMLDivElement>(null)
-  const { buttonPosition, position, initialIsOpen, errorTypes } = props
-  const [devtools] = useState(
+  const ref = React.useRef<HTMLDivElement>(null)
+  const { buttonPosition, position, initialIsOpen, errorTypes, styleNonce } =
+    props
+  const [devtools] = React.useState(
     new TanstackQueryDevtools({
       client: client,
       queryFlavor: 'React Query',
@@ -54,34 +58,35 @@ export function ReactQueryDevtools(
       position,
       initialIsOpen,
       errorTypes,
+      styleNonce,
     }),
   )
 
-  useEffect(() => {
+  React.useEffect(() => {
     devtools.setClient(client)
   }, [client, devtools])
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (buttonPosition) {
       devtools.setButtonPosition(buttonPosition)
     }
   }, [buttonPosition, devtools])
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (position) {
       devtools.setPosition(position)
     }
   }, [position, devtools])
 
-  useEffect(() => {
+  React.useEffect(() => {
     devtools.setInitialIsOpen(initialIsOpen || false)
   }, [initialIsOpen, devtools])
 
-  useEffect(() => {
+  React.useEffect(() => {
     devtools.setErrorTypes(errorTypes || [])
   }, [errorTypes, devtools])
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (ref.current) {
       devtools.mount(ref.current)
     }

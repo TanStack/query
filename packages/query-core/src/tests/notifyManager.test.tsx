@@ -1,4 +1,4 @@
-import { vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createNotifyManager } from '../notifyManager'
 import { sleep } from './utils'
 
@@ -31,6 +31,24 @@ describe('notifyManager', () => {
     expect(callbackScheduleSpy).toHaveBeenCalledTimes(1)
   })
 
+  it('should use a custom scheduler when configured', async () => {
+    const customCallback = vi.fn((cb) => queueMicrotask(cb))
+
+    const notifyManagerTest = createNotifyManager()
+    const notifySpy = vi.fn()
+    notifyManagerTest.setScheduler(customCallback)
+    notifyManagerTest.setNotifyFunction(notifySpy)
+
+    notifyManagerTest.batch(() => notifyManagerTest.schedule(vi.fn))
+
+    expect(customCallback).toHaveBeenCalledOnce()
+
+    // wait until the microtask has run
+    await new Promise<void>((res) => queueMicrotask(res))
+
+    expect(notifySpy).toHaveBeenCalledTimes(1)
+  })
+
   it('should notify if error is thrown', async () => {
     const notifyManagerTest = createNotifyManager()
     const notifySpy = vi.fn()
@@ -44,19 +62,19 @@ describe('notifyManager', () => {
       })
     } catch {}
 
-    // needed for scheduleMicroTask to kick in
+    // needed for setTimeout to kick in
     await sleep(1)
 
     expect(notifySpy).toHaveBeenCalledTimes(1)
   })
 
-  it('typedefs should catch proper signatures', async () => {
+  it('typeDefs should catch proper signatures', async () => {
     const notifyManagerTest = createNotifyManager()
 
     // we define some fn with its signature:
     const fn: (a: string, b: number) => string = (a, b) => a + b
 
-    //now somefn expect to be called with args [a: string, b: number]
+    //now someFn expect to be called with args [a: string, b: number]
     const someFn = notifyManagerTest.batchCalls(fn)
 
     someFn('im happy', 4)

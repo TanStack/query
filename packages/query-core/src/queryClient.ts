@@ -110,14 +110,14 @@ export class QueryClient {
 
   getQueryData<
     TQueryFnData = unknown,
-    TaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = TaggedQueryKey extends DataTag<
+    TTaggedQueryKey extends QueryKey = QueryKey,
+    TInferredQueryFnData = TTaggedQueryKey extends DataTag<
       unknown,
       infer TaggedValue
     >
       ? TaggedValue
       : TQueryFnData,
-  >(queryKey: TaggedQueryKey): TInferredQueryFnData | undefined
+  >(queryKey: TTaggedQueryKey): TInferredQueryFnData | undefined
   getQueryData(queryKey: QueryKey) {
     return this.#queryCache.find({ queryKey })?.state.data
   }
@@ -132,7 +132,9 @@ export class QueryClient {
   ): Promise<TData> {
     const cachedData = this.getQueryData<TData>(options.queryKey)
 
-    return cachedData ? Promise.resolve(cachedData) : this.fetchQuery(options)
+    return cachedData !== undefined
+      ? Promise.resolve(cachedData)
+      : this.fetchQuery(options)
   }
 
   getQueriesData<TQueryFnData = unknown>(
@@ -148,15 +150,15 @@ export class QueryClient {
 
   setQueryData<
     TQueryFnData = unknown,
-    TaggedQueryKey extends QueryKey = QueryKey,
-    TInferredQueryFnData = TaggedQueryKey extends DataTag<
+    TTaggedQueryKey extends QueryKey = QueryKey,
+    TInferredQueryFnData = TTaggedQueryKey extends DataTag<
       unknown,
       infer TaggedValue
     >
       ? TaggedValue
       : TQueryFnData,
   >(
-    queryKey: TaggedQueryKey,
+    queryKey: TTaggedQueryKey,
     updater: Updater<
       NoInfer<TInferredQueryFnData> | undefined,
       NoInfer<TInferredQueryFnData> | undefined

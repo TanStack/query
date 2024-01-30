@@ -1,10 +1,11 @@
 import { render } from 'solid-js/web'
 import { createSignal, lazy } from 'solid-js'
+import { setupStyleSheet } from './utils'
 import type {
   QueryClient,
-  onlineManager as TonlineManager,
+  onlineManager as TOnlineManager,
 } from '@tanstack/query-core'
-import type { DevtoolsComponent } from './Devtools'
+import type { DevtoolsComponentType } from './Devtools'
 import type {
   DevToolsErrorType,
   DevtoolsButtonPosition,
@@ -14,19 +15,22 @@ import type {
 import type { Signal } from 'solid-js'
 
 export type { DevtoolsButtonPosition, DevtoolsPosition, DevToolsErrorType }
-export interface TanstackQueryDevtoolsConfig extends QueryDevtoolsProps {}
+export interface TanstackQueryDevtoolsConfig extends QueryDevtoolsProps {
+  styleNonce?: string
+}
 
 class TanstackQueryDevtools {
   #client: Signal<QueryClient>
-  #onlineManager: typeof TonlineManager
+  #onlineManager: typeof TOnlineManager
   #queryFlavor: string
   #version: string
   #isMounted = false
+  #styleNonce?: string
   #buttonPosition: Signal<DevtoolsButtonPosition | undefined>
   #position: Signal<DevtoolsPosition | undefined>
   #initialIsOpen: Signal<boolean | undefined>
   #errorTypes: Signal<Array<DevToolsErrorType> | undefined>
-  #Component: typeof DevtoolsComponent | undefined
+  #Component: DevtoolsComponentType | undefined
   #dispose?: () => void
 
   constructor(config: TanstackQueryDevtoolsConfig) {
@@ -39,11 +43,13 @@ class TanstackQueryDevtools {
       position,
       initialIsOpen,
       errorTypes,
+      styleNonce,
     } = config
     this.#client = createSignal(client)
     this.#queryFlavor = queryFlavor
     this.#version = version
     this.#onlineManager = onlineManager
+    this.#styleNonce = styleNonce
     this.#buttonPosition = createSignal(buttonPosition)
     this.#position = createSignal(position)
     this.#initialIsOpen = createSignal(initialIsOpen)
@@ -80,8 +86,7 @@ class TanstackQueryDevtools {
       const [isOpen] = this.#initialIsOpen
       const [errors] = this.#errorTypes
       const [queryClient] = this.#client
-
-      let Devtools: typeof DevtoolsComponent
+      let Devtools: DevtoolsComponentType
 
       if (this.#Component) {
         Devtools = this.#Component
@@ -90,6 +95,7 @@ class TanstackQueryDevtools {
         this.#Component = Devtools
       }
 
+      setupStyleSheet(this.#styleNonce)
       return (
         <Devtools
           queryFlavor={this.#queryFlavor}

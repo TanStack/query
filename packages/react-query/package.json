@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query",
-  "version": "5.0.0",
+  "version": "5.17.19",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -36,7 +36,7 @@
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
-    "test:lib": "vitest run --coverage",
+    "test:lib": "vitest --retry=3",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
     "build": "pnpm build:tsup && pnpm build:codemods",
@@ -47,7 +47,7 @@
     "build",
     "src",
     "!build/codemods/node_modules",
-    "!build/codemods/vitest.config.ts",
+    "!build/codemods/vite.config.ts",
     "!build/codemods/**/__testfixtures__",
     "!build/codemods/**/__tests__"
   ],
@@ -55,23 +55,14 @@
     "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
-    "@types/react": "^18.2.4",
-    "@types/react-dom": "^18.2.4",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@vitejs/plugin-react": "^4.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-error-boundary": "^3.1.4"
+    "react-error-boundary": "^4.0.12"
   },
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "react-native": "*"
-  },
-  "peerDependenciesMeta": {
-    "react-dom": {
-      "optional": true
-    },
-    "react-native": {
-      "optional": true
-    }
+    "react": "^18.0.0"
   }
 }

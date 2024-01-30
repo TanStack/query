@@ -1,7 +1,15 @@
-import { expect, vi } from 'vitest'
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  expectTypeOf,
+  test,
+  vi,
+} from 'vitest'
 import { InfiniteQueryObserver } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
-import type { QueryClient } from '..'
+import type { InfiniteData, QueryClient } from '..'
 
 describe('InfiniteQueryObserver', () => {
   let queryClient: QueryClient
@@ -155,5 +163,46 @@ describe('InfiniteQueryObserver', () => {
     expect(observer.getCurrentResult().data?.pages).toEqual(['1'])
     expect(queryFn).toBeCalledTimes(3)
     expect(observer.getCurrentResult().hasNextPage).toBe(false)
+  })
+
+  test('should be inferred as a correct result type', async () => {
+    const key = queryKey()
+    const next: number | undefined = 2
+    const queryFn = vi.fn(({ pageParam }) => String(pageParam))
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      initialPageParam: 1,
+      getNextPageParam: () => next,
+    })
+
+    const result = observer.getCurrentResult()
+
+    result.isPending &&
+      expectTypeOf<undefined>(result.data) &&
+      expectTypeOf<null>(result.error) &&
+      expectTypeOf<boolean>(result.isLoading) &&
+      expectTypeOf<'pending'>(result.status)
+
+    result.isLoading &&
+      expectTypeOf<undefined>(result.data) &&
+      expectTypeOf<null>(result.error) &&
+      expectTypeOf<true>(result.isPending) &&
+      expectTypeOf<'pending'>(result.status)
+
+    result.isLoadingError &&
+      expectTypeOf<undefined>(result.data) &&
+      expectTypeOf<Error>(result.error) &&
+      expectTypeOf<'error'>(result.status)
+
+    result.isRefetchError &&
+      expectTypeOf<InfiniteData<string>>(result.data) &&
+      expectTypeOf<Error>(result.error) &&
+      expectTypeOf<'error'>(result.status)
+
+    result.isSuccess &&
+      expectTypeOf<InfiniteData<string>>(result.data) &&
+      expectTypeOf<null>(result.error) &&
+      expectTypeOf<'success'>(result.status)
   })
 })

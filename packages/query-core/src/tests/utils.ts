@@ -1,4 +1,3 @@
-import { act } from '@testing-library/react'
 import { vi } from 'vitest'
 import { QueryClient, onlineManager } from '..'
 import * as utils from '../utils'
@@ -33,14 +32,6 @@ export function sleep(timeout: number): Promise<void> {
   })
 }
 
-export function setActTimeout(fn: () => void, ms?: number) {
-  return setTimeout(() => {
-    act(() => {
-      fn()
-    })
-  }, ms)
-}
-
 export const executeMutation = <TVariables>(
   queryClient: QueryClient,
   options: MutationOptions<any, any, TVariables, any>,
@@ -69,9 +60,9 @@ export function setIsServer(isServer: boolean) {
 
 export const doNotExecute = (_func: () => void) => true
 
-export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
-  T,
->() => T extends Y ? 1 : 2
+export type Equal<TTargetA, TTargetB> = (<T>() => T extends TTargetA
+  ? 1
+  : 2) extends <T>() => T extends TTargetB ? 1 : 2
   ? true
   : false
 

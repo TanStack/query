@@ -1,8 +1,8 @@
-import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
+import { describe, expect, expectTypeOf, it, vi } from 'vitest'
+import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import * as QueryCore from '@tanstack/query-core'
 
 import { createRenderEffect, createSignal } from 'solid-js'
-import { vi } from 'vitest'
 import {
   QueriesObserver,
   QueryCache,
@@ -61,13 +61,13 @@ describe('useQueries', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('data1: 1, data2: 2'))
+    await waitFor(() => rendered.getByText('data1: 1, data2: 2'))
 
     expect(results.length).toBe(3)
     expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
@@ -495,7 +495,7 @@ describe('useQueries', () => {
                 queryFn: () => 123,
               },
             ],
-          } as const),
+          }) as const,
       )
       expectTypeOf<QueryObserverResult<string, unknown>>(result6[0])
       expectTypeOf<QueryObserverResult<number, unknown>>(result6[1])
@@ -701,12 +701,13 @@ describe('useQueries', () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
-    fireEvent.click(screen.getByText('unmount'))
+
+    fireEvent.click(rendered.getByText('unmount'))
 
     // Should not display the console error
     // "Warning: Can't perform a React state update on an unmounted component"

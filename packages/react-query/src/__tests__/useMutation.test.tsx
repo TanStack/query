@@ -1,9 +1,7 @@
+import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-
-import { vi } from 'vitest'
 import { MutationCache, QueryCache, useMutation } from '..'
 import {
   createQueryClient,

@@ -1,4 +1,5 @@
-import { reactive } from 'vue'
+import { describe, it } from 'vitest'
+import { reactive } from 'vue-demi'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { doNotExecute, simpleFetcher } from './test-utils'
 import type { Equal, Expect } from './test-utils'

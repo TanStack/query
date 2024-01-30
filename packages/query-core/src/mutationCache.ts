@@ -69,7 +69,7 @@ interface NotifyEventMutationUpdated extends NotifyEvent {
   action: Action<any, any, any, any>
 }
 
-type MutationCacheNotifyEvent =
+export type MutationCacheNotifyEvent =
   | NotifyEventMutationAdded
   | NotifyEventMutationRemoved
   | NotifyEventMutationObserverAdded

@@ -2,7 +2,7 @@
 
 import type { CreateQueryResult } from '@tanstack/solid-query'
 import type { JSX } from 'solid-js'
-import { Match, Suspense, Switch } from 'solid-js'
+import { Match, Suspense, Switch, children } from 'solid-js'
 
 export interface QueryBoundaryProps<T = unknown> {
   query: CreateQueryResult<T, Error>

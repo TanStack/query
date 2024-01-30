@@ -1,7 +1,7 @@
+import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { vi } from 'vitest'
 import {
   QueryCache,
   QueryErrorResetBoundary,
@@ -530,7 +530,7 @@ describe('useSuspenseQuery', () => {
     consoleMock.mockRestore()
   })
 
-  it('should error catched in error boundary without infinite loop', async () => {
+  it('should error caught in error boundary without infinite loop', async () => {
     const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
@@ -602,7 +602,7 @@ describe('useSuspenseQuery', () => {
     consoleMock.mockRestore()
   })
 
-  it('should error catched in error boundary without infinite loop when query keys changed', async () => {
+  it('should error caught in error boundary without infinite loop when query keys changed', async () => {
     const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
@@ -816,7 +816,7 @@ describe('useSuspenseQueries', () => {
       })
       return (
         <div>
-          <h1>data: {result.map((it) => it.data ?? 'null').join(',')}</h1>
+          <h1>data: {result.map((item) => item.data ?? 'null').join(',')}</h1>
         </div>
       )
     }
@@ -871,7 +871,7 @@ describe('useSuspenseQueries', () => {
       })
       return (
         <div>
-          <h1>data: {result.map((it) => it.data ?? 'null').join(',')}</h1>
+          <h1>data: {result.map((item) => item.data ?? 'null').join(',')}</h1>
         </div>
       )
     }
@@ -886,5 +886,208 @@ describe('useSuspenseQueries', () => {
     expect(refs.length).toBe(2)
     await waitFor(() => rendered.getByText('data: 1,2'))
     expect(refs[0]).toBe(refs[1])
+  })
+
+  // this addresses the following issue:
+  // https://github.com/TanStack/query/issues/6344
+  it('should suspend on offline when query changes, and data should not be undefined', async () => {
+    function Page() {
+      const [id, setId] = React.useState(0)
+
+      const { data } = useSuspenseQuery({
+        queryKey: [id],
+        queryFn: () => Promise.resolve(`Data ${id}`),
+      })
+
+      // defensive guard here
+      if (data === undefined) {
+        throw new Error('data cannot be undefined')
+      }
+
+      return (
+        <>
+          <div>{data}</div>
+          <button onClick={() => setId(id + 1)}>fetch</button>
+        </>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback={<div>loading</div>}>
+        <Page />
+      </React.Suspense>,
+    )
+
+    await waitFor(() => rendered.getByText('loading'))
+    await waitFor(() => rendered.getByText('Data 0'))
+
+    // go offline
+    document.dispatchEvent(new CustomEvent('offline'))
+
+    fireEvent.click(rendered.getByText('fetch'))
+    await waitFor(() => rendered.getByText('Data 0'))
+
+    // go back online
+    document.dispatchEvent(new CustomEvent('online'))
+    fireEvent.click(rendered.getByText('fetch'))
+
+    // query should resume
+    await waitFor(() => rendered.getByText('Data 1'))
+  })
+
+  it('should throw error when queryKey changes and new query fails', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      const [fail, setFail] = React.useState(false)
+      const { data } = useSuspenseQuery({
+        queryKey: [key, fail],
+        queryFn: async () => {
+          await sleep(10)
+
+          if (fail) {
+            throw new Error('Suspense Error Bingo')
+          } else {
+            return 'data'
+          }
+        },
+        retry: 0,
+      })
+
+      return (
+        <div>
+          <button onClick={() => setFail(true)}>trigger fail</button>
+
+          <div>rendered: {String(data)}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+        <React.Suspense fallback={'Loading...'}>
+          <Page />
+        </React.Suspense>
+      </ErrorBoundary>,
+    )
+
+    await waitFor(() => rendered.getByText('Loading...'))
+
+    await waitFor(() => rendered.getByText('rendered: data'))
+
+    fireEvent.click(rendered.getByText('trigger fail'))
+
+    await waitFor(() => rendered.getByText('error boundary'))
+
+    expect(consoleMock).toHaveBeenCalledWith(
+      expect.objectContaining(new Error('Suspense Error Bingo')),
+    )
+
+    consoleMock.mockRestore()
+  })
+
+  it('should keep previous data when wrapped in a transition', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const [count, setCount] = React.useState(0)
+      const [isPending, startTransition] = React.useTransition()
+      const { data } = useSuspenseQuery({
+        queryKey: [key, count],
+        queryFn: async () => {
+          await sleep(10)
+          return 'data' + count
+        },
+      })
+
+      return (
+        <div>
+          <button onClick={() => startTransition(() => setCount(count + 1))}>
+            inc
+          </button>
+
+          <div>{isPending ? 'Pending...' : String(data)}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback={'Loading...'}>
+        <Page />
+      </React.Suspense>,
+    )
+
+    await waitFor(() => rendered.getByText('Loading...'))
+
+    await waitFor(() => rendered.getByText('data0'))
+
+    fireEvent.click(rendered.getByText('inc'))
+
+    await waitFor(() => rendered.getByText('Pending...'))
+
+    await waitFor(() => rendered.getByText('data1'))
+  })
+
+  it('should not request old data inside transitions (issue #6486)', async () => {
+    const key = queryKey()
+    let queryFnCount = 0
+
+    function App() {
+      const [count, setCount] = React.useState(0)
+
+      return (
+        <div>
+          <button
+            onClick={() => React.startTransition(() => setCount(count + 1))}
+          >
+            inc
+          </button>
+          <React.Suspense fallback={'Loading...'}>
+            <Page count={count} />
+          </React.Suspense>
+        </div>
+      )
+    }
+
+    function Page({ count }: { count: number }) {
+      const { data } = useSuspenseQuery({
+        queryKey: [key, count],
+        queryFn: async () => {
+          queryFnCount++
+          await sleep(10)
+          return 'data' + count
+        },
+      })
+
+      return (
+        <div>
+          <div>{String(data)}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+
+      <App />,
+    )
+
+    await waitFor(() => rendered.getByText('Loading...'))
+
+    await waitFor(() => rendered.getByText('data0'))
+
+    fireEvent.click(rendered.getByText('inc'))
+
+    await waitFor(() => rendered.getByText('data1'))
+
+    await sleep(20)
+
+    expect(queryFnCount).toBe(2)
   })
 })

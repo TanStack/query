@@ -8,6 +8,8 @@ yarn.lock
 
 # builds
 types
+*/**/.svelte-kit
+*/**/.tsup
 */**/build
 */**/dist
 */**/lib
@@ -41,4 +43,4 @@ stats.html
 .cache
 .idea
 
-nx-cloud.env
+.nx/cache

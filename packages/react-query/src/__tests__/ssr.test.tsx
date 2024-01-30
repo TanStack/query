@@ -1,8 +1,7 @@
+import { describe, expect, it, vi } from 'vitest'
 import * as React from 'react'
 // @ts-ignore
 import { renderToString } from 'react-dom/server'
-
-import { vi } from 'vitest'
 import { QueryCache, QueryClientProvider, useInfiniteQuery, useQuery } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
 
@@ -135,11 +134,7 @@ describe('Server Side Rendering', () => {
         initialPageParam: 0,
       })
       return (
-        <ul>
-          {query.data?.pages.map((page) => (
-            <li key={page}>{page}</li>
-          ))}
-        </ul>
+        <ul>{query.data?.pages.map((page) => <li key={page}>{page}</li>)}</ul>
       )
     }
 

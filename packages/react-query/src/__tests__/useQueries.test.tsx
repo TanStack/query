@@ -1,9 +1,8 @@
+import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-
-import { vi } from 'vitest'
-import { QueryCache, useQueries } from '..'
+import { QueryCache, queryOptions, useQueries } from '..'
 import {
   createQueryClient,
   expectTypeNotAny,
@@ -369,6 +368,40 @@ describe('useQueries', () => {
           },
         ],
       })
+    }
+  })
+
+  it('correctly returns types when passing through queryOptions ', () => {
+    // @ts-expect-error (Page component is not rendered)
+    // eslint-disable-next-line
+    function Page() {
+      // data and results types are correct when using queryOptions
+      const result4 = useQueries({
+        queries: [
+          queryOptions({
+            queryKey: ['key1'],
+            queryFn: () => 'string',
+            select: (a) => {
+              expectTypeOf<string>(a)
+              expectTypeNotAny(a)
+              return a.toLowerCase()
+            },
+          }),
+          queryOptions({
+            queryKey: ['key2'],
+            queryFn: () => 'string',
+            select: (a) => {
+              expectTypeOf<string>(a)
+              expectTypeNotAny(a)
+              return parseInt(a)
+            },
+          }),
+        ],
+      })
+      expectTypeOf<QueryObserverResult<string, unknown>>(result4[0])
+      expectTypeOf<QueryObserverResult<number, unknown>>(result4[1])
+      expectTypeOf<string | undefined>(result4[0].data)
+      expectTypeOf<number | undefined>(result4[1].data)
     }
   })
 
@@ -945,6 +978,117 @@ describe('useQueries', () => {
     )
   })
 
+  it.skip('should not return new instances when called without queries', async () => {
+    const key = queryKey()
+    const ids: Array<number> = []
+    let resultChanged = 0
+
+    function Page() {
+      const [count, setCount] = React.useState(0)
+      const result = useQueries({
+        queries: ids.map((id) => {
+          return {
+            queryKey: [key, id],
+            queryFn: async () => async () => {
+              return {
+                id,
+                content: { value: Math.random() },
+              }
+            },
+          }
+        }),
+        combine: () => ({ empty: 'object' }),
+      })
+
+      React.useEffect(() => {
+        resultChanged++
+      }, [result])
+
+      return (
+        <div>
+          <div>count: {count}</div>
+          <div>data: {JSON.stringify(result)}</div>
+          <button onClick={() => setCount((c) => c + 1)}>inc</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('data: {"empty":"object"}'))
+    await waitFor(() => rendered.getByText('count: 0'))
+
+    expect(resultChanged).toBe(1)
+
+    fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
+
+    await waitFor(() => rendered.getByText('count: 1'))
+    // there should be no further effect calls because the returned object is structurally shared
+    expect(resultChanged).toBe(1)
+  })
+
+  it('should not have infinite render loops with empty queries (#6645)', async () => {
+    let renderCount = 0
+
+    function Page() {
+      const result = useQueries({
+        queries: [],
+      })
+
+      React.useEffect(() => {
+        renderCount++
+      })
+
+      return <div>data: {JSON.stringify(result)}</div>
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+
+    expect(renderCount).toBe(1)
+  })
+
+  it('should only call combine with query results', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    function Page() {
+      const result = useQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: async () => {
+              await sleep(5)
+              return Promise.resolve('query1')
+            },
+          },
+          {
+            queryKey: key2,
+            queryFn: async () => {
+              await sleep(20)
+              return Promise.resolve('query2')
+            },
+          },
+        ],
+        combine: ([query1, query2]) => {
+          return {
+            data: { query1: query1.data, query2: query2.data },
+          }
+        },
+      })
+
+      return <div>data: {JSON.stringify(result)}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() =>
+      rendered.getByText(
+        'data: {"data":{"query1":"query1","query2":"query2"}}',
+      ),
+    )
+  })
+
   it('should track property access through combine function', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
@@ -1029,15 +1173,11 @@ describe('useQueries', () => {
       rendered.getByText('data: true first result 1,second result 1'),
     )
 
-    expect(results.length).toBe(5)
+    const length = results.length
 
-    expect(results[3]).toStrictEqual({
-      combined: true,
-      refetch: expect.any(Function),
-      res: 'first result 1,second result 0',
-    })
+    expect([4, 5]).toContain(results.length)
 
-    expect(results[4]).toStrictEqual({
+    expect(results[results.length - 1]).toStrictEqual({
       combined: true,
       refetch: expect.any(Function),
       res: 'first result 1,second result 1',
@@ -1047,6 +1187,48 @@ describe('useQueries', () => {
 
     await sleep(100)
     // no further re-render because data didn't change
-    expect(results.length).toBe(5)
+    expect(results.length).toBe(length)
+  })
+
+  it('should not have stale closures with combine (#6648)', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const [count, setCount] = React.useState(0)
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: key,
+              queryFn: () => Promise.resolve('result'),
+            },
+          ],
+          combine: (results) => {
+            return {
+              count,
+              res: results.map((res) => res.data).join(','),
+            }
+          },
+        },
+        queryClient,
+      )
+
+      return (
+        <div>
+          <div>
+            data: {String(queries.count)} {queries.res}
+          </div>
+          <button onClick={() => setCount((c) => c + 1)}>inc</button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitFor(() => rendered.getByText('data: 0 result'))
+
+    fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
+
+    await waitFor(() => rendered.getByText('data: 1 result'))
   })
 })

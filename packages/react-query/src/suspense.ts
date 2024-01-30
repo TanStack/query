@@ -1,4 +1,4 @@
-import type { DefaultError } from '@tanstack/query-core/src'
+import type { DefaultError } from '@tanstack/query-core'
 import type {
   DefaultedQueryObserverOptions,
   Query,
@@ -40,8 +40,7 @@ export const shouldSuspend = (
     | DefaultedQueryObserverOptions<any, any, any, any, any>
     | undefined,
   result: QueryObserverResult<any, any>,
-  isRestoring: boolean,
-) => defaultedOptions?.suspense && willFetch(result, isRestoring)
+) => defaultedOptions?.suspense && result.isPending
 
 export const fetchOptimistic = <
   TQueryFnData,

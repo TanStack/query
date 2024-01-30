@@ -1,4 +1,4 @@
-import { expect, vi } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
 import { MutationCache } from '../mutationCache'
@@ -15,7 +15,7 @@ async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
 }
 
 describe('dehydration and rehydration', () => {
-  test('should work with serializeable values', async () => {
+  test('should work with serializable values', async () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
     await queryClient.prefetchQuery({

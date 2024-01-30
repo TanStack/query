@@ -3,9 +3,10 @@ import { QueryClient as QC } from '@tanstack/query-core'
 import { cloneDeepUnref } from './utils'
 import { QueryCache } from './queryCache'
 import { MutationCache } from './mutationCache'
-import type { MaybeRefDeep } from './types'
+import type { MaybeRefDeep, NoUnknown } from './types'
 import type {
   CancelOptions,
+  DataTag,
   DefaultError,
   DefaultOptions,
   FetchInfiniteQueryOptions,
@@ -16,6 +17,7 @@ import type {
   MutationFilters,
   MutationKey,
   MutationObserverOptions,
+  NoInfer,
   QueryClientConfig,
   QueryFilters,
   QueryKey,
@@ -48,10 +50,51 @@ export class QueryClient extends QC {
     return super.isMutating(cloneDeepUnref(filters))
   }
 
+  getQueryData<TData = unknown, TTaggedQueryKey extends QueryKey = QueryKey>(
+    queryKey: TTaggedQueryKey,
+  ):
+    | (TTaggedQueryKey extends DataTag<unknown, infer TaggedValue>
+        ? TaggedValue
+        : TData)
+    | undefined
+  getQueryData<TData = unknown>(
+    queryKey: MaybeRefDeep<QueryKey>,
+  ): TData | undefined
   getQueryData<TData = unknown>(
     queryKey: MaybeRefDeep<QueryKey>,
   ): TData | undefined {
     return super.getQueryData(cloneDeepUnref(queryKey))
+  }
+
+  ensureQueryData<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  ): Promise<TData>
+  ensureQueryData<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    options: MaybeRefDeep<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+    >,
+  ): Promise<TData>
+  ensureQueryData<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    options: MaybeRefDeep<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+    >,
+  ): Promise<TData> {
+    return super.ensureQueryData(cloneDeepUnref(options))
   }
 
   getQueriesData<TData = unknown>(
@@ -60,6 +103,22 @@ export class QueryClient extends QC {
     return super.getQueriesData(cloneDeepUnref(filters))
   }
 
+  setQueryData<
+    TQueryFnData,
+    TTaggedQueryKey extends QueryKey,
+    TData = TTaggedQueryKey extends DataTag<unknown, infer TaggedValue>
+      ? TaggedValue
+      : TQueryFnData,
+  >(
+    queryKey: TTaggedQueryKey,
+    updater: Updater<NoInfer<TData> | undefined, NoInfer<TData> | undefined>,
+    options?: MaybeRefDeep<SetDataOptions>,
+  ): TData | undefined
+  setQueryData<TQueryFnData, TData = NoUnknown<TQueryFnData>>(
+    queryKey: MaybeRefDeep<QueryKey>,
+    updater: Updater<NoInfer<TData> | undefined, NoInfer<TData> | undefined>,
+    options?: MaybeRefDeep<SetDataOptions>,
+  ): TData | undefined
   setQueryData<TData>(
     queryKey: MaybeRefDeep<QueryKey>,
     updater: Updater<TData | undefined, TData | undefined>,
@@ -112,10 +171,18 @@ export class QueryClient extends QC {
     filters: MaybeRefDeep<InvalidateQueryFilters> = {},
     options: MaybeRefDeep<InvalidateOptions> = {},
   ): Promise<void> {
-    return super.invalidateQueries(
-      cloneDeepUnref(filters),
-      cloneDeepUnref(options),
-    )
+    // eslint-disable-next-line @cspell/spellchecker
+    // (dosipiuk): We need to delay `invalidate` execution to next macro task for all reactive values to be updated.
+    // This ensures that `context` in `queryFn` while `invalidating` along reactive variable change has correct value.
+    return new Promise((resolve) => {
+      setTimeout(async () => {
+        await super.invalidateQueries(
+          cloneDeepUnref(filters),
+          cloneDeepUnref(options),
+        )
+        resolve()
+      }, 0)
+    })
   }
 
   refetchQueries(
@@ -153,6 +220,17 @@ export class QueryClient extends QC {
     options: MaybeRefDeep<
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
     >,
+  ): Promise<TData>
+  fetchQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: MaybeRefDeep<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>
+    >,
   ): Promise<TData> {
     return super.fetchQuery(cloneDeepUnref(options))
   }
@@ -164,6 +242,16 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
   >(
     options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  ): Promise<void>
+  prefetchQuery<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    options: MaybeRefDeep<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+    >,
   ): Promise<void>
   prefetchQuery<
     TQueryFnData = unknown,
@@ -209,12 +297,29 @@ export class QueryClient extends QC {
         TPageParam
       >
     >,
+  ): Promise<InfiniteData<TData, TPageParam>>
+  fetchInfiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: MaybeRefDeep<
+      FetchInfiniteQueryOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >
+    >,
   ): Promise<InfiniteData<TData, TPageParam>> {
     return super.fetchInfiniteQuery(cloneDeepUnref(options))
   }
 
   prefetchInfiniteQuery<
-    TQueryFnData = unknown,
+    TQueryFnData,
     TError = DefaultError,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
@@ -226,6 +331,23 @@ export class QueryClient extends QC {
       TData,
       TQueryKey,
       TPageParam
+    >,
+  ): Promise<void>
+  prefetchInfiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: MaybeRefDeep<
+      FetchInfiniteQueryOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >
     >,
   ): Promise<void>
   prefetchInfiniteQuery<

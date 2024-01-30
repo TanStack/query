@@ -1,3 +1,4 @@
+import { describe, it } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { useInfiniteQuery } from '../useInfiniteQuery'
@@ -100,64 +101,77 @@ describe('queryOptions', () => {
       > = true
       return result
     })
-
-    it('should tag the queryKey even if no promise is returned', () => {
-      doNotExecute(() => {
-        const { queryKey } = infiniteQueryOptions({
-          queryKey: ['key'],
-          queryFn: () => 'string',
-          getNextPageParam: () => 1,
-          initialPageParam: 1,
-        })
-
-        const result: Expect<
-          Equal<(typeof queryKey)[typeof dataTagSymbol], InfiniteData<string>>
-        > = true
-        return result
+  })
+  it('should tag the queryKey even if no promise is returned', () => {
+    doNotExecute(() => {
+      const { queryKey } = infiniteQueryOptions({
+        queryKey: ['key'],
+        queryFn: () => 'string',
+        getNextPageParam: () => 1,
+        initialPageParam: 1,
       })
+
+      const result: Expect<
+        Equal<(typeof queryKey)[typeof dataTagSymbol], InfiniteData<string>>
+      > = true
+      return result
     })
-
-    it('should return the proper type when passed to getQueryData', () => {
-      doNotExecute(() => {
-        const { queryKey } = infiniteQueryOptions({
-          queryKey: ['key'],
-          queryFn: () => Promise.resolve('string'),
-          getNextPageParam: () => 1,
-          initialPageParam: 1,
-        })
-
-        const queryClient = new QueryClient()
-        const data = queryClient.getQueryData(queryKey)
-
-        const result: Expect<
-          Equal<typeof data, InfiniteData<string, unknown> | undefined>
-        > = true
-        return result
+  })
+  it('should tag the queryKey with the result type of the QueryFn if select is used', () => {
+    doNotExecute(() => {
+      const { queryKey } = infiniteQueryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('string'),
+        select: (data) => data.pages,
+        getNextPageParam: () => 1,
+        initialPageParam: 1,
       })
+
+      const result: Expect<
+        Equal<(typeof queryKey)[typeof dataTagSymbol], InfiniteData<string>>
+      > = true
+      return result
     })
-
-    it('should properly type when passed to setQueryData', () => {
-      doNotExecute(() => {
-        const { queryKey } = infiniteQueryOptions({
-          queryKey: ['key'],
-          queryFn: () => Promise.resolve('string'),
-          getNextPageParam: () => 1,
-          initialPageParam: 1,
-        })
-
-        const queryClient = new QueryClient()
-        const data = queryClient.setQueryData(queryKey, (prev) => {
-          const result: Expect<
-            Equal<typeof prev, InfiniteData<string, unknown> | undefined>
-          > = true
-          return result ? prev : { pages: ['foo'], pageParams: [1] }
-        })
-
-        const result: Expect<
-          Equal<typeof data, InfiniteData<string, unknown> | undefined>
-        > = true
-        return result
+  })
+  it('should return the proper type when passed to getQueryData', () => {
+    doNotExecute(() => {
+      const { queryKey } = infiniteQueryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('string'),
+        getNextPageParam: () => 1,
+        initialPageParam: 1,
       })
+
+      const queryClient = new QueryClient()
+      const data = queryClient.getQueryData(queryKey)
+
+      const result: Expect<
+        Equal<typeof data, InfiniteData<string, unknown> | undefined>
+      > = true
+      return result
+    })
+  })
+  it('should properly type when passed to setQueryData', () => {
+    doNotExecute(() => {
+      const { queryKey } = infiniteQueryOptions({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('string'),
+        getNextPageParam: () => 1,
+        initialPageParam: 1,
+      })
+
+      const queryClient = new QueryClient()
+      const data = queryClient.setQueryData(queryKey, (prev) => {
+        const result: Expect<
+          Equal<typeof prev, InfiniteData<string, unknown> | undefined>
+        > = true
+        return result ? prev : { pages: ['foo'], pageParams: [1] }
+      })
+
+      const result: Expect<
+        Equal<typeof data, InfiniteData<string, unknown> | undefined>
+      > = true
+      return result
     })
   })
 })

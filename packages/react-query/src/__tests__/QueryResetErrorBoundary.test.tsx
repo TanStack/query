@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest'
 import { fireEvent, waitFor } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
@@ -12,13 +13,6 @@ import {
   useSuspenseQuery,
 } from '..'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
-
-// TODO: This should be removed with the types for react-error-boundary get updated.
-declare module 'react-error-boundary' {
-  interface ErrorBoundaryPropsWithFallback {
-    children: any
-  }
-}
 
 describe('QueryErrorResetBoundary', () => {
   const queryCache = new QueryCache()
@@ -213,7 +207,7 @@ describe('QueryErrorResetBoundary', () => {
       consoleMock.mockRestore()
     })
 
-    it('should throw error if query is disabled and manually refetched', async () => {
+    it('should throw error if query is disabled and manually refetch', async () => {
       const consoleMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)

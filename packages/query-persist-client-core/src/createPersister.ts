@@ -14,27 +14,29 @@ export interface PersistedQuery {
   state: QueryState
 }
 
-export interface AsyncStorage {
-  getItem: (key: string) => Promise<string | undefined | null>
-  setItem: (key: string, value: string) => Promise<unknown>
-  removeItem: (key: string) => Promise<void>
+export type MaybePromise<T> = T | Promise<T>
+
+export interface AsyncStorage<TStorageValue = string> {
+  getItem: (key: string) => MaybePromise<TStorageValue | undefined | null>
+  setItem: (key: string, value: TStorageValue) => MaybePromise<unknown>
+  removeItem: (key: string) => MaybePromise<void>
 }
 
-export interface StoragePersisterOptions {
+export interface StoragePersisterOptions<TStorageValue = string> {
   /** The storage client used for setting and retrieving items from cache.
    * For SSR pass in `undefined`.
    */
-  storage: AsyncStorage | Storage | undefined | null
+  storage: AsyncStorage<TStorageValue> | undefined | null
   /**
    * How to serialize the data to storage.
    * @default `JSON.stringify`
    */
-  serialize?: (persistedQuery: PersistedQuery) => string
+  serialize?: (persistedQuery: PersistedQuery) => MaybePromise<TStorageValue>
   /**
    * How to deserialize the data from storage.
    * @default `JSON.parse`
    */
-  deserialize?: (cachedString: string) => PersistedQuery
+  deserialize?: (cachedString: TStorageValue) => MaybePromise<PersistedQuery>
   /**
    * A unique string that can be used to forcefully invalidate existing caches,
    * if they do not share the same buster string
@@ -76,15 +78,19 @@ export const PERSISTER_KEY_PREFIX = 'tanstack-query'
    })
    ```
  */
-export function experimental_createPersister({
+export function experimental_createPersister<TStorageValue = string>({
   storage,
   buster = '',
   maxAge = 1000 * 60 * 60 * 24,
-  serialize = JSON.stringify,
-  deserialize = JSON.parse,
+  serialize = JSON.stringify as Required<
+    StoragePersisterOptions<TStorageValue>
+  >['serialize'],
+  deserialize = JSON.parse as Required<
+    StoragePersisterOptions<TStorageValue>
+  >['deserialize'],
   prefix = PERSISTER_KEY_PREFIX,
   filters,
-}: StoragePersisterOptions) {
+}: StoragePersisterOptions<TStorageValue>) {
   return async function persisterFn<T, TQueryKey extends QueryKey>(
     queryFn: (context: QueryFunctionContext<TQueryKey>) => T | Promise<T>,
     context: QueryFunctionContext<TQueryKey>,
@@ -98,7 +104,7 @@ export function experimental_createPersister({
       try {
         const storedData = await storage.getItem(storageKey)
         if (storedData) {
-          const persistedQuery = deserialize(storedData)
+          const persistedQuery = await deserialize(storedData)
 
           if (persistedQuery.state.dataUpdatedAt) {
             const queryAge = Date.now() - persistedQuery.state.dataUpdatedAt
@@ -142,10 +148,10 @@ export function experimental_createPersister({
 
     if (matchesFilter && storage != null) {
       // Persist if we have storage defined, we use timeout to get proper state to be persisted
-      setTimeout(() => {
+      setTimeout(async () => {
         storage.setItem(
           storageKey,
-          serialize({
+          await serialize({
             state: query.state,
             queryKey: query.queryKey,
             queryHash: query.queryHash,

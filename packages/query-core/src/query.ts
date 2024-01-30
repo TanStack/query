@@ -330,7 +330,7 @@ export class Query<
   ): Promise<TData> {
     if (this.state.fetchStatus !== 'idle') {
       if (this.state.dataUpdatedAt && fetchOptions?.cancelRefetch) {
-        // Silently cancel current fetch if the user wants to cancel refetches
+        // Silently cancel current fetch if the user wants to cancel refetch
         this.cancel({ silent: true })
       } else if (this.#promise) {
         // make sure that retries that were potentially cancelled due to unmounts can continue

@@ -1,6 +1,6 @@
+import { describe, expect, it } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
-
 import { QueryCache, useIsFetching, useQuery } from '..'
 import {
   createQueryClient,
@@ -61,11 +61,11 @@ describe('useIsFetching', () => {
     const key1 = queryKey()
     const key2 = queryKey()
 
-    const isFetchings: Array<number> = []
+    const isFetchingArray: Array<number> = []
 
     function IsFetching() {
       const isFetching = useIsFetching()
-      isFetchings.push(isFetching)
+      isFetchingArray.push(isFetching)
       return null
     }
 
@@ -110,7 +110,7 @@ describe('useIsFetching', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isFetchings).toEqual([0, 1, 1, 2, 1, 0]))
+    await waitFor(() => expect(isFetchingArray).toEqual([0, 1, 1, 2, 1, 0]))
   })
 
   it('should be able to filter', async () => {
@@ -118,7 +118,7 @@ describe('useIsFetching', () => {
     const key1 = queryKey()
     const key2 = queryKey()
 
-    const isFetchings: Array<number> = []
+    const isFetchingArray: Array<number> = []
 
     function One() {
       useQuery({
@@ -146,7 +146,7 @@ describe('useIsFetching', () => {
       const [started, setStarted] = React.useState(false)
       const isFetching = useIsFetching({ queryKey: key1 })
 
-      isFetchings.push(isFetching)
+      isFetchingArray.push(isFetching)
 
       return (
         <div>
@@ -169,7 +169,7 @@ describe('useIsFetching', () => {
     await findByText('isFetching: 1')
     await findByText('isFetching: 0')
     // at no point should we have isFetching: 2
-    expect(isFetchings).toEqual(expect.not.arrayContaining([2]))
+    expect(isFetchingArray).toEqual(expect.not.arrayContaining([2]))
   })
 
   it('should show the correct fetching state when mounted after a query', async () => {

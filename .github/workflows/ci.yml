@@ -7,11 +7,7 @@ on:
         description: override release tag
         required: false
   push:
-    branches:
-      - 'main'
-      - 'alpha'
-      - 'beta'
-      - 'rc'
+    branches: ['main', 'alpha', 'beta', 'rc', 'v4']
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -23,30 +19,27 @@ env:
 
 jobs:
   test-and-publish:
-    if: github.repository == 'TanStack/query' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/beta' || github.ref == 'refs/heads/rc')
-    name: 'Test & Publish'
+    name: Test & Publish
+    if: github.repository == 'TanStack/query'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: '0'
-      - uses: pnpm/action-setup@v2.2.4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
         with:
           version: 8
-      - uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          registry-url: https://registry.npmjs.org/
           node-version-file: .nvmrc
           cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+        run: pnpm install --frozen-lockfile --prefer-offline
       - name: Run Tests
-        uses: nick-fields/retry@v2.8.3
-        with:
-          command: pnpm run test:ci
-          timeout_minutes: 10
-          max_attempts: 3
+        run: pnpm run test:ci
       - name: Publish
         run: |
           git config --global user.name 'Tanner Linsley'
@@ -61,3 +54,5 @@ jobs:
           TAG: ${{ inputs.tag }}
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
+        with:
+          directory: packages

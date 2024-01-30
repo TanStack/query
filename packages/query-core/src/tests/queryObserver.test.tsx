@@ -1,4 +1,13 @@
-import { vi } from 'vitest'
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  expectTypeOf,
+  test,
+  vi,
+} from 'vitest'
+import { waitFor } from '@testing-library/react'
 import { QueryObserver, focusManager } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
 import type { QueryClient, QueryObserverResult } from '..'
@@ -23,6 +32,61 @@ describe('queryObserver', () => {
     await sleep(1)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
+  test('should be able to read latest data after subscribing', async () => {
+    const key = queryKey()
+    queryClient.setQueryData(key, 'data')
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      enabled: false,
+    })
+
+    const unsubscribe = observer.subscribe(vi.fn())
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: 'data',
+    })
+
+    unsubscribe()
+  })
+
+  test('should be able to read latest data when re-subscribing (but not re-fetching)', async () => {
+    const key = queryKey()
+    let count = 0
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      staleTime: Infinity,
+      queryFn: async () => {
+        await sleep(10)
+        count++
+        return 'data'
+      },
+    })
+
+    let unsubscribe = observer.subscribe(vi.fn())
+
+    // unsubscribe before data comes in
+    unsubscribe()
+    expect(count).toBe(0)
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      data: undefined,
+    })
+
+    await waitFor(() => expect(count).toBe(1))
+
+    // re-subscribe after data comes in
+    unsubscribe = observer.subscribe(vi.fn())
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: 'data',
+    })
+
+    unsubscribe()
   })
 
   test('should notify when switching query', async () => {
@@ -618,7 +682,7 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  test('should not use replaceEqualDeep for select value when structuralSharing option is true and placeholderdata is defined', () => {
+  test('should not use replaceEqualDeep for select value when structuralSharing option is true and placeholderData is defined', () => {
     const key = queryKey()
 
     const data = { value: 'data' }
@@ -655,7 +719,7 @@ describe('queryObserver', () => {
     expect(observer.getCurrentResult().data).toBe(selectedData2)
   })
 
-  test('should not use an undefined value returned by select as placeholderdata', () => {
+  test('should not use an undefined value returned by select as placeholderData', () => {
     const key = queryKey()
 
     const data = { value: 'data' }
@@ -829,5 +893,43 @@ describe('queryObserver', () => {
     )
 
     unsubscribe()
+  })
+
+  test('should be inferred as a correct result type', async () => {
+    const key = queryKey()
+    const data = { value: 'data' }
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => Promise.resolve(data),
+    })
+
+    const result = observer.getCurrentResult()
+
+    result.isPending &&
+      expectTypeOf<undefined>(result.data) &&
+      expectTypeOf<null>(result.error) &&
+      expectTypeOf<boolean>(result.isLoading) &&
+      expectTypeOf<'pending'>(result.status)
+
+    result.isLoading &&
+      expectTypeOf<undefined>(result.data) &&
+      expectTypeOf<null>(result.error) &&
+      expectTypeOf<true>(result.isPending) &&
+      expectTypeOf<'pending'>(result.status)
+
+    result.isLoadingError &&
+      expectTypeOf<undefined>(result.data) &&
+      expectTypeOf<Error>(result.error) &&
+      expectTypeOf<'error'>(result.status)
+
+    result.isRefetchError &&
+      expectTypeOf<{ value: string }>(result.data) &&
+      expectTypeOf<Error>(result.error) &&
+      expectTypeOf<'error'>(result.status)
+
+    result.isSuccess &&
+      expectTypeOf<{ value: string }>(result.data) &&
+      expectTypeOf<null>(result.error) &&
+      expectTypeOf<'success'>(result.status)
   })
 })
