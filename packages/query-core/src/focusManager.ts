@@ -6,7 +6,6 @@ type SetupFn = (
 ) => (() => void) | undefined
 
 export class FocusManager {
-  #cleanup: undefined | (() => void)
   store = new Store<boolean | undefined>(undefined, {
     onSubscribe: () => {
       if (!this.#cleanup) this.setEventListener(this.#setup)
@@ -19,6 +18,8 @@ export class FocusManager {
       }
     },
   })
+
+  #cleanup?: () => void
 
   #setup: SetupFn = (onFocus) => {
     // addEventListener does not exist in React Native, but window does
@@ -39,9 +40,7 @@ export class FocusManager {
   setEventListener(setup: SetupFn): void {
     this.#setup = setup
     this.#cleanup?.()
-    this.#cleanup = this.#setup((focused) => {
-      this.setFocused(focused)
-    })
+    this.#cleanup = setup(this.setFocused.bind(this))
   }
 
   setFocused(focused?: boolean): void {
