@@ -20,8 +20,8 @@ importers:
         specifier: ^0.8.5
         version: 0.8.5(@solidjs/router@0.10.5)(solid-js@1.8.7)
       '@tanstack/config':
-        specifier: ^0.3.2
-        version: 0.3.2(@types/node@18.19.3)(esbuild@0.19.10)(rollup@4.6.0)(typescript@5.2.2)(vite@5.0.10)
+        specifier: ^0.4.2
+        version: 0.4.2(@types/node@18.19.3)(esbuild@0.19.10)(rollup@4.6.0)(typescript@5.2.2)(vite@5.0.10)
       '@testing-library/jest-dom':
         specifier: ^6.1.5
         version: 6.1.5(vitest@1.1.0)
@@ -137,10 +137,10 @@ importers:
         specifier: ^17.0.8
         version: 17.0.8(@angular/animations@17.0.8)(@angular/common@17.0.8)(@angular/core@17.0.8)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.13.3
+        specifier: ^5.18.1
         version: link:../../../packages/angular-query-devtools-experimental
       '@tanstack/angular-query-experimental':
-        specifier: ^5.13.4
+        specifier: ^5.18.1
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -171,10 +171,10 @@ importers:
         specifier: ^17.0.8
         version: 17.0.8(@angular/animations@17.0.8)(@angular/common@17.0.8)(@angular/core@17.0.8)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.13.3
+        specifier: ^5.18.1
         version: link:../../../packages/angular-query-devtools-experimental
       '@tanstack/angular-query-experimental':
-        specifier: ^5.13.4
+        specifier: ^5.18.1
         version: link:../../../packages/angular-query-experimental
       axios:
         specifier: ^1.6.2
@@ -208,10 +208,10 @@ importers:
         specifier: ^17.0.8
         version: 17.0.8(@angular/animations@17.0.8)(@angular/common@17.0.8)(@angular/core@17.0.8)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.13.3
+        specifier: ^5.18.1
         version: link:../../../packages/angular-query-devtools-experimental
       '@tanstack/angular-query-experimental':
-        specifier: ^5.13.4
+        specifier: ^5.18.1
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -236,10 +236,10 @@ importers:
         specifier: 4.22.0
         version: 4.22.0
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       algoliasearch:
         specifier: 4.22.0
@@ -252,7 +252,7 @@ importers:
         version: 18.2.0(react@18.2.0)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^18.2.45
@@ -273,10 +273,10 @@ importers:
   examples/react/auto-refetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -297,10 +297,10 @@ importers:
   examples/react/basic:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -313,7 +313,7 @@ importers:
         version: 18.2.0(react@18.2.0)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-react':
         specifier: ^4.2.1
@@ -325,10 +325,10 @@ importers:
   examples/react/basic-graphql-request:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       graphql:
         specifier: ^16.8.1
@@ -353,16 +353,16 @@ importers:
   examples/react/basic-typescript:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-persist-client
       axios:
         specifier: ^1.6.2
@@ -375,7 +375,7 @@ importers:
         version: 18.2.0(react@18.2.0)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^18.2.45
@@ -402,10 +402,10 @@ importers:
   examples/react/default-query-function:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -427,10 +427,10 @@ importers:
   examples/react/infinite-query-with-max-pages:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -454,10 +454,10 @@ importers:
   examples/react/load-more-infinite-scroll:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -481,10 +481,10 @@ importers:
   examples/react/nextjs:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       ky:
         specifier: ^1.1.3
@@ -508,13 +508,13 @@ importers:
   examples/react/nextjs-suspense-streaming:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-next-experimental':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-next-experimental
       next:
         specifier: ^14.0.0
@@ -542,19 +542,19 @@ importers:
   examples/react/offline:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-location':
         specifier: ^3.7.4
         version: 3.7.4(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-persist-client
       ky:
         specifier: ^1.1.3
@@ -582,10 +582,10 @@ importers:
   examples/react/optimistic-updates-cache:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -619,10 +619,10 @@ importers:
   examples/react/optimistic-updates-ui:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -656,10 +656,10 @@ importers:
   examples/react/pagination:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -680,10 +680,10 @@ importers:
   examples/react/playground:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -702,10 +702,10 @@ importers:
   examples/react/prefetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -735,10 +735,10 @@ importers:
         specifier: ^6.3.16
         version: 6.3.16(@react-navigation/native@6.1.6)(react-native-gesture-handler@2.12.1)(react-native-safe-area-context@4.6.3)(react-native-screens@3.22.1)(react-native@0.72.6)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       expo:
         specifier: ^49.0.21
@@ -790,10 +790,10 @@ importers:
   examples/react/react-router:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       localforage:
         specifier: ^1.10.0
@@ -842,10 +842,10 @@ importers:
         specifier: ^5.15.2
         version: 5.15.2(@types/react@18.2.45)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -870,10 +870,10 @@ importers:
   examples/react/simple:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -907,10 +907,10 @@ importers:
         specifier: ^5.15.2
         version: 5.15.2(@types/react@18.2.45)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -935,10 +935,10 @@ importers:
   examples/react/suspense:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -966,10 +966,10 @@ importers:
   examples/solid/basic-graphql-request:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/solid-query-devtools
       graphql:
         specifier: ^16.8.1
@@ -994,10 +994,10 @@ importers:
   examples/solid/basic-typescript:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.7
@@ -1016,10 +1016,10 @@ importers:
   examples/solid/default-query-function:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.7
@@ -1038,17 +1038,17 @@ importers:
   examples/solid/simple:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.7
         version: 1.8.7
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.2.2
@@ -1072,10 +1072,10 @@ importers:
         specifier: ^0.4.2
         version: 0.4.2(rollup@4.6.0)(solid-js@1.8.7)(vinxi@0.0.54)(vite@4.5.1)
       '@tanstack/solid-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.7
@@ -1087,10 +1087,10 @@ importers:
   examples/svelte/auto-refetching:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1118,10 +1118,10 @@ importers:
   examples/svelte/basic:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1149,10 +1149,10 @@ importers:
   examples/svelte/load-more-infinite-scroll:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1180,10 +1180,10 @@ importers:
   examples/svelte/optimistic-updates-typescript:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1211,10 +1211,10 @@ importers:
   examples/svelte/playground:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1242,10 +1242,10 @@ importers:
   examples/svelte/simple:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
@@ -1270,10 +1270,10 @@ importers:
   examples/svelte/ssr:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1301,10 +1301,10 @@ importers:
   examples/svelte/star-wars:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1341,10 +1341,10 @@ importers:
   examples/vue/basic:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.3.0
@@ -1363,7 +1363,7 @@ importers:
   examples/vue/dependent-queries:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/vue-query
       vue:
         specifier: ^3.3.0
@@ -1382,16 +1382,16 @@ importers:
   examples/vue/persister:
     dependencies:
       '@tanstack/query-core':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/query-core
       '@tanstack/query-persist-client-core':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/query-persist-client-core
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/vue-query':
-        specifier: ^5.0.0
+        specifier: ^5.18.1
         version: link:../../../packages/vue-query
       idb-keyval:
         specifier: ^6.2.1
@@ -9672,8 +9672,8 @@ packages:
       tslib: 2.6.2
     dev: true
 
-  /@tanstack/config@0.3.2(@types/node@18.19.3)(esbuild@0.19.10)(rollup@4.6.0)(typescript@5.2.2)(vite@5.0.10):
-    resolution: {integrity: sha512-40sqRwPX2sxq4dUOha8PdFgwKiVSjuS5ZXOwDaBKdhBHrjAvRDc+jA7bwFK1f6O9BuFqpKDbBnfPBHS25Tu3YQ==}
+  /@tanstack/config@0.4.2(@types/node@18.19.3)(esbuild@0.19.10)(rollup@4.6.0)(typescript@5.2.2)(vite@5.0.10):
+    resolution: {integrity: sha512-PHlybqEA/4cJmu5aB9Yw4/OmdBqQY8pMW9Q1f3IJymAj0hRcTTfVRHMeI9yvEEP9lO74FN2EhIAwsKiXQb+FkQ==}
     engines: {node: '>=18'}
     hasBin: true
     dependencies:
