@@ -1,5 +1,5 @@
 {
-  "name": "react-cra5",
+  "name": "@tanstack/query-example-react-create-react-app-5",
   "private": true,
   "scripts": {
     "build": "cross-env DISABLE_ESLINT_PLUGIN=true react-scripts build"
