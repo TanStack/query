@@ -8,7 +8,7 @@ module.exports = {
   ],
   parserOptions: {
     tsconfigRootDir: __dirname,
-    project: './tsconfig.json',
+    project: true,
   },
   settings: {
     react: {
