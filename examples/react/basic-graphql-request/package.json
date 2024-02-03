@@ -1,7 +1,7 @@
 {
   "name": "@tanstack/query-example-react-basic-graphql-request",
   "private": true,
-  "main": "src/index.jsx",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

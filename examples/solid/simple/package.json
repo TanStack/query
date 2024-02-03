@@ -1,6 +1,7 @@
 {
   "name": "@tanstack/query-example-solid-simple",
   "private": true,
+  "type": "module",
   "scripts": {
     "start": "vite",
     "dev": "vite",

@@ -1,7 +1,7 @@
 {
   "name": "@tanstack/query-example-react-playground",
   "private": true,
-  "main": "src/index.jsx",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
