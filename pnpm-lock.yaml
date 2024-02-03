@@ -153,49 +153,6 @@ importers:
         specifier: ^5.0.10
         version: 5.0.10(@types/node@18.19.3)
 
-  examples/angular/cli-standalone-17:
-    dependencies:
-      '@angular/animations':
-        specifier: ^17.0.8
-        version: 17.0.8(@angular/core@17.0.8)
-      '@angular/common':
-        specifier: ^17.0.8
-        version: 17.0.8(@angular/core@17.0.8)(rxjs@7.8.1)
-      '@angular/core':
-        specifier: ^17.0.8
-        version: 17.0.8(rxjs@7.8.1)(zone.js@0.14.2)
-      '@angular/platform-browser':
-        specifier: ^17.0.8
-        version: 17.0.8(@angular/animations@17.0.8)(@angular/common@17.0.8)(@angular/core@17.0.8)
-      '@tanstack/angular-query-devtools-experimental':
-        specifier: workspace:*
-        version: link:../../../packages/angular-query-devtools-experimental
-      '@tanstack/angular-query-experimental':
-        specifier: workspace:*
-        version: link:../../../packages/angular-query-experimental
-      rxjs:
-        specifier: ^7.8.1
-        version: 7.8.1
-      tslib:
-        specifier: ^2.6.2
-        version: 2.6.2
-      zone.js:
-        specifier: ^0.14.2
-        version: 0.14.2
-    devDependencies:
-      '@angular-devkit/build-angular':
-        specifier: ^17.0.8
-        version: 17.0.8(@angular/compiler-cli@17.0.8)(@types/node@18.19.3)(ng-packagr@17.0.3)(typescript@5.2.2)
-      '@angular/cli':
-        specifier: ^17.0.8
-        version: 17.0.8
-      '@angular/compiler-cli':
-        specifier: ^17.0.8
-        version: 17.0.8(@angular/compiler@17.0.8)(typescript@5.2.2)
-      typescript:
-        specifier: 5.2.2
-        version: 5.2.2
-
   examples/angular/default-query-function:
     dependencies:
       '@angular/common':
@@ -438,50 +395,6 @@ importers:
       vite:
         specifier: ^5.0.10
         version: 5.0.10(@types/node@18.19.3)
-
-  examples/react/create-react-app-4:
-    dependencies:
-      '@tanstack/react-query':
-        specifier: workspace:*
-        version: link:../../../packages/react-query
-      '@tanstack/react-query-devtools':
-        specifier: workspace:*
-        version: link:../../../packages/react-query-devtools
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
-      react-scripts:
-        specifier: ^4.0.3
-        version: 4.0.3(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(react@18.2.0)(typescript@5.2.2)
-    devDependencies:
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
-
-  examples/react/create-react-app-5:
-    dependencies:
-      '@tanstack/react-query':
-        specifier: workspace:*
-        version: link:../../../packages/react-query
-      '@tanstack/react-query-devtools':
-        specifier: workspace:*
-        version: link:../../../packages/react-query-devtools
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
-      react-scripts:
-        specifier: ^5.0.1
-        version: 5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(esbuild@0.19.10)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(react@18.2.0)(typescript@5.2.2)
-    devDependencies:
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
 
   examples/react/default-query-function:
     dependencies:
@@ -1493,6 +1406,203 @@ importers:
       vite:
         specifier: ^5.0.10
         version: 5.0.10(@types/node@18.19.3)
+
+  integrations/angular-cli-standalone-17:
+    dependencies:
+      '@angular/animations':
+        specifier: ^17.0.8
+        version: 17.0.8(@angular/core@17.0.8)
+      '@angular/common':
+        specifier: ^17.0.8
+        version: 17.0.8(@angular/core@17.0.8)(rxjs@7.8.1)
+      '@angular/core':
+        specifier: ^17.0.8
+        version: 17.0.8(rxjs@7.8.1)(zone.js@0.14.2)
+      '@angular/platform-browser':
+        specifier: ^17.0.8
+        version: 17.0.8(@angular/animations@17.0.8)(@angular/common@17.0.8)(@angular/core@17.0.8)
+      '@tanstack/angular-query-devtools-experimental':
+        specifier: workspace:*
+        version: link:../../packages/angular-query-devtools-experimental
+      '@tanstack/angular-query-experimental':
+        specifier: workspace:*
+        version: link:../../packages/angular-query-experimental
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+      tslib:
+        specifier: ^2.6.2
+        version: 2.6.2
+      zone.js:
+        specifier: ^0.14.2
+        version: 0.14.2
+    devDependencies:
+      '@angular-devkit/build-angular':
+        specifier: ^17.0.8
+        version: 17.0.8(@angular/compiler-cli@17.0.8)(@types/node@18.19.3)(ng-packagr@17.0.3)(typescript@5.2.2)
+      '@angular/cli':
+        specifier: ^17.0.8
+        version: 17.0.8
+      '@angular/compiler-cli':
+        specifier: ^17.0.8
+        version: 17.0.8(@angular/compiler@17.0.8)(typescript@5.2.2)
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+
+  integrations/react-cra4:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: workspace:*
+        version: link:../../packages/react-query
+      '@tanstack/react-query-devtools':
+        specifier: workspace:*
+        version: link:../../packages/react-query-devtools
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+      react-scripts:
+        specifier: ^4.0.3
+        version: 4.0.3(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(react@18.2.0)(typescript@5.2.2)
+    devDependencies:
+      cross-env:
+        specifier: ^7.0.3
+        version: 7.0.3
+
+  integrations/react-cra5:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: workspace:*
+        version: link:../../packages/react-query
+      '@tanstack/react-query-devtools':
+        specifier: workspace:*
+        version: link:../../packages/react-query-devtools
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+      react-scripts:
+        specifier: ^5.0.1
+        version: 5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(esbuild@0.19.10)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(react@18.2.0)(typescript@5.2.2)
+    devDependencies:
+      cross-env:
+        specifier: ^7.0.3
+        version: 7.0.3
+
+  integrations/react-next:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: workspace:*
+        version: link:../../packages/react-query
+      '@tanstack/react-query-devtools':
+        specifier: workspace:*
+        version: link:../../packages/react-query-devtools
+      next:
+        specifier: ^14.0.0
+        version: 14.0.0(@babel/core@7.23.6)(react-dom@18.2.0)(react@18.2.0)
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+    devDependencies:
+      '@types/node':
+        specifier: ^18.19.3
+        version: 18.19.3
+      '@types/react':
+        specifier: ^18.2.45
+        version: 18.2.45
+      '@types/react-dom':
+        specifier: ^18.2.18
+        version: 18.2.18
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+
+  integrations/react-vite:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: workspace:*
+        version: link:../../packages/react-query
+      '@tanstack/react-query-devtools':
+        specifier: workspace:*
+        version: link:../../packages/react-query-devtools
+      '@vitejs/plugin-react':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@5.0.10)
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+      vite:
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
+
+  integrations/solid-vite:
+    dependencies:
+      '@tanstack/solid-query':
+        specifier: workspace:*
+        version: link:../../packages/solid-query
+      '@tanstack/solid-query-devtools':
+        specifier: workspace:*
+        version: link:../../packages/solid-query-devtools
+      solid-js:
+        specifier: ^1.8.7
+        version: 1.8.7
+      vite:
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
+      vite-plugin-solid:
+        specifier: ^2.8.0
+        version: 2.8.0(solid-js@1.8.7)(vite@5.0.10)
+
+  integrations/svelte-vite:
+    devDependencies:
+      '@sveltejs/vite-plugin-svelte':
+        specifier: ^3.0.1
+        version: 3.0.1(svelte@4.2.8)(vite@5.0.10)
+      '@tanstack/svelte-query':
+        specifier: workspace:*
+        version: link:../../packages/svelte-query
+      '@tanstack/svelte-query-devtools':
+        specifier: workspace:*
+        version: link:../../packages/svelte-query-devtools
+      svelte:
+        specifier: ^4.2.8
+        version: 4.2.8
+      vite:
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
+
+  integrations/vue-vite:
+    dependencies:
+      '@tanstack/vue-query':
+        specifier: workspace:*
+        version: link:../../packages/vue-query
+      vue:
+        specifier: ^3.3.0
+        version: 3.3.0
+    devDependencies:
+      '@vitejs/plugin-vue':
+        specifier: ^4.5.2
+        version: 4.5.2(vite@5.0.10)(vue@3.3.0)
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+      vite:
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
+      vue-tsc:
+        specifier: ^1.8.26
+        version: 1.8.26(typescript@5.2.2)
 
   packages/angular-query-devtools-experimental:
     dependencies:
@@ -5775,7 +5885,6 @@ packages:
     cpu: [arm64]
     os: [android]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/android-arm@0.18.20:
@@ -5800,7 +5909,6 @@ packages:
     cpu: [arm]
     os: [android]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/android-x64@0.18.20:
@@ -5825,7 +5933,6 @@ packages:
     cpu: [x64]
     os: [android]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/darwin-arm64@0.18.20:
@@ -5850,7 +5957,6 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/darwin-x64@0.18.20:
@@ -5875,7 +5981,6 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/freebsd-arm64@0.18.20:
@@ -5900,7 +6005,6 @@ packages:
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/freebsd-x64@0.18.20:
@@ -5925,7 +6029,6 @@ packages:
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-arm64@0.18.20:
@@ -5950,7 +6053,6 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-arm@0.18.20:
@@ -5975,7 +6077,6 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-ia32@0.18.20:
@@ -6000,7 +6101,6 @@ packages:
     cpu: [ia32]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-loong64@0.18.20:
@@ -6025,7 +6125,6 @@ packages:
     cpu: [loong64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-mips64el@0.18.20:
@@ -6050,7 +6149,6 @@ packages:
     cpu: [mips64el]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-ppc64@0.18.20:
@@ -6075,7 +6173,6 @@ packages:
     cpu: [ppc64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-riscv64@0.18.20:
@@ -6100,7 +6197,6 @@ packages:
     cpu: [riscv64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-s390x@0.18.20:
@@ -6125,7 +6221,6 @@ packages:
     cpu: [s390x]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-x64@0.18.20:
@@ -6150,7 +6245,6 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/netbsd-x64@0.18.20:
@@ -6175,7 +6269,6 @@ packages:
     cpu: [x64]
     os: [netbsd]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/openbsd-x64@0.18.20:
@@ -6200,7 +6293,6 @@ packages:
     cpu: [x64]
     os: [openbsd]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/sunos-x64@0.18.20:
@@ -6225,7 +6317,6 @@ packages:
     cpu: [x64]
     os: [sunos]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/win32-arm64@0.18.20:
@@ -6250,7 +6341,6 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/win32-ia32@0.18.20:
@@ -6275,7 +6365,6 @@ packages:
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/win32-x64@0.18.20:
@@ -6300,7 +6389,6 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@eslint-community/eslint-utils@4.4.0(eslint@8.56.0):
@@ -10373,7 +10461,7 @@ packages:
     dependencies:
       '@mapbox/node-pre-gyp': 1.0.11
       '@rollup/pluginutils': 4.2.1
-      acorn: 8.10.0
+      acorn: 8.11.2
       async-sema: 3.1.1
       bindings: 1.5.0
       estree-walker: 2.0.2
@@ -10495,7 +10583,6 @@ packages:
       vite: 5.0.10(@types/node@18.19.3)
     transitivePeerDependencies:
       - supports-color
-    dev: true
 
   /@vitejs/plugin-vue@4.5.2(vite@5.0.10)(vue@3.3.0):
     resolution: {integrity: sha512-UGR3DlzLi/SaVBPX0cnSyE37vqxU3O6chn8l0HJNzQzDia6/Au2A4xKv+iIJW8w2daf80G7TYHhi1pAUjdZ0bQ==}
@@ -10660,7 +10747,7 @@ packages:
   /@vue/reactivity-transform@3.3.0:
     resolution: {integrity: sha512-Pli2ClOXOEMG2AExCfUwiPQQo7U7zcRlnZLb6FI9ns/nEiQ9KLJJYD3wAuJHSx0VXLhACaINd/1VbMeKfa8GhQ==}
     dependencies:
-      '@babel/parser': 7.23.0
+      '@babel/parser': 7.23.6
       '@vue/compiler-core': 3.3.0
       '@vue/shared': 3.3.0
       estree-walker: 2.0.2
@@ -11664,7 +11751,7 @@ packages:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.22.2
-      caniuse-lite: 1.0.30001551
+      caniuse-lite: 1.0.30001571
       fraction.js: 4.3.7
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -15521,7 +15608,6 @@ packages:
       '@esbuild/win32-arm64': 0.19.5
       '@esbuild/win32-ia32': 0.19.5
       '@esbuild/win32-x64': 0.19.5
-    dev: true
 
   /escalade@3.1.1:
     resolution: {integrity: sha512-k0er2gUkLf8O0zKJiAhmkTnJlTvINGv7ygDNPbeIsX/TJjGJZHuh9B2UxbsaEkmlEo9MfhrSzmhIlhRlI2GXnw==}
@@ -26042,7 +26128,6 @@ packages:
   /react-refresh@0.14.0:
     resolution: {integrity: sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==}
     engines: {node: '>=0.10.0'}
-    dev: true
 
   /react-refresh@0.4.3:
     resolution: {integrity: sha512-Hwln1VNuGl/6bVwnd0Xdn1e84gT/8T9aYNL+HAKDArLCS7LWjwr7StE30IEYbIkx0Vi3vs+coQxe+SQDbGbbpA==}
@@ -28412,7 +28497,7 @@ packages:
   /strip-literal@1.3.0:
     resolution: {integrity: sha512-PugKzOsyXpArk0yWmUwqOZecSO0GH0bPoctLcqNDH9J04pVW3lflYE0ujElBGTloevcxF5MofAOZ7C5l2b+wLg==}
     dependencies:
-      acorn: 8.10.0
+      acorn: 8.11.2
 
   /strnum@1.0.5:
     resolution: {integrity: sha512-J8bbNyKKXl5qYcR36TIO8W3mVGVHrmmxsd5PAItGkmyzwJvybiw2IVq5nqd0i4LSNSkB/sx9VHllbfFdr9k1JA==}
@@ -29568,7 +29653,7 @@ packages:
   /unctx@2.3.1:
     resolution: {integrity: sha512-PhKke8ZYauiqh3FEMVNm7ljvzQiph0Mt3GBRve03IJm7ukfaON2OBK795tLwhbyfzknuRRkW0+Ze+CQUmzOZ+A==}
     dependencies:
-      acorn: 8.10.0
+      acorn: 8.11.2
       estree-walker: 3.0.3
       magic-string: 0.30.5
       unplugin: 1.5.1
@@ -30286,7 +30371,6 @@ packages:
       vitefu: 0.2.5(vite@5.0.10)
     transitivePeerDependencies:
       - supports-color
-    dev: true
 
   /vite@4.5.0(@types/node@18.19.3):
     resolution: {integrity: sha512-ulr8rNLA6rkyFAlVWw2q5YJ91v098AFQ2R0PRFwPzREXOUJQPtFUG0t+/ZikhaOCDqFoDhN6/v8Sq0o4araFAw==}
@@ -30396,7 +30480,6 @@ packages:
       rollup: 4.6.0
     optionalDependencies:
       fsevents: 2.3.3
-    dev: true
 
   /vitefu@0.2.5(vite@4.5.1):
     resolution: {integrity: sha512-SgHtMLoqaeeGnd2evZ849ZbACbnwQCIwRH57t18FxcXoZop0uQu0uzlIhJBlF/eWVzuce0sHeqPcDo+evVcg8Q==}
@@ -30418,7 +30501,6 @@ packages:
         optional: true
     dependencies:
       vite: 5.0.10(@types/node@18.19.3)
-    dev: true
 
   /vitest@1.1.0(@types/node@18.19.3)(jsdom@23.0.1):
     resolution: {integrity: sha512-oDFiCrw7dd3Jf06HoMtSRARivvyjHJaTxikFxuqJjO76U436PqlVw1uLn7a8OSPrhSfMGVaRakKpA2lePdw79A==}
