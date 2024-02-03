@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.json"
+    "test:types": "svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
     "@tanstack/svelte-query": "^5.18.1",
