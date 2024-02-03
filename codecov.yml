@@ -95,4 +95,3 @@ component_management:
       name: '@tanstack/vue-query-devtools'
       paths:
         - packages/vue-query-devtools/**
-    
