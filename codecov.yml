@@ -5,6 +5,9 @@ coverage:
         target: 90%
         threshold: 1%
 
+comment:
+  layout: 'header, reach, diff, flags, components'
+
 component_management:
   individual_components:
     - component_id: angular-query-devtools-experimental
