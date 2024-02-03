@@ -45,7 +45,7 @@ function createPosts() {
     queryFn: async () => {
       const {
         posts: { data },
-      } = await request(
+      } = await request<any>(
         endpoint,
         gql`
           query {
@@ -114,7 +114,7 @@ function createPost(postId: Accessor<number>) {
   return createQuery(() => ({
     queryKey: ['post', postId()],
     queryFn: async (context) => {
-      const { post } = await request(
+      const { post } = await request<any>(
         endpoint,
         gql`
         query {

@@ -1,11 +1,11 @@
 {
   "name": "@tanstack/query-example-vue-dependent-queries",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:dev": "vite build -m development",
-    "serve": "vite preview"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@tanstack/vue-query": "^5.18.1",
