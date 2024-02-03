@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "vinxi dev",
     "build": "vinxi build",
-    "start": "node ./.output/server/index.mjs",
-    "test:types": "tsc"
+    "start": "node ./.output/server/index.mjs"
   },
   "dependencies": {
     "@solidjs/meta": "^0.29.2",
