@@ -3,7 +3,7 @@ import { createSignal, lazy } from 'solid-js'
 import { setupStyleSheet } from './utils'
 import type {
   QueryClient,
-  onlineManager as TonlineManager,
+  onlineManager as TOnlineManager,
 } from '@tanstack/query-core'
 import type { DevtoolsComponentType } from './Devtools'
 import type {
@@ -21,7 +21,7 @@ export interface TanstackQueryDevtoolsConfig extends QueryDevtoolsProps {
 
 class TanstackQueryDevtools {
   #client: Signal<QueryClient>
-  #onlineManager: typeof TonlineManager
+  #onlineManager: typeof TOnlineManager
   #queryFlavor: string
   #version: string
   #isMounted = false

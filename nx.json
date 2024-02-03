@@ -4,11 +4,6 @@
     "defaultBase": "main"
   },
   "defaultBase": "main",
-  "pluginsConfig": {
-    "@nrwl/js": {
-      "analyzeSourceFiles": false
-    }
-  },
   "nxCloudAccessToken": "ZDdkNDA4MGEtYjNmYi00MWI4LWE1N2QtYTdlNmYxMGJlZWM2fHJlYWQ=",
   "parallel": 5,
   "namedInputs": {

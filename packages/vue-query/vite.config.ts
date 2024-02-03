@@ -1,10 +1,11 @@
 import { defineConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
+import packageJson from './package.json'
 
 export default defineConfig({
   plugins: [vue()],
   test: {
-    name: 'vue-query',
+    name: packageJson.name,
     dir: './src',
     watch: false,
     environment: 'jsdom',

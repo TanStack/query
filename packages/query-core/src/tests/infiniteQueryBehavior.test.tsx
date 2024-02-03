@@ -167,7 +167,7 @@ describe('InfiniteQueryBehavior', () => {
     // Refetch the infinite query
     await observer.refetch()
 
-    // Only 2 pages should be refetched
+    // Only 2 pages should refetch
     expect(queryFnSpy).toHaveBeenCalledTimes(2)
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {

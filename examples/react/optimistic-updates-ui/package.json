@@ -1,11 +1,14 @@
 {
   "name": "@tanstack/query-example-react-optimistic-updates-ui",
   "private": true,
-  "main": "pages/index.tsx",
-  "license": "MIT",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
   "dependencies": {
-    "@tanstack/react-query": "^5.0.0",
-    "@tanstack/react-query-devtools": "^5.0.0",
+    "@tanstack/react-query": "^5.18.1",
+    "@tanstack/react-query-devtools": "^5.18.1",
     "axios": "^1.6.2",
     "isomorphic-unfetch": "4.0.2",
     "next": "^14.0.0",
@@ -17,10 +20,5 @@
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
     "typescript": "5.2.2"
-  },
-  "scripts": {
-    "dev": "next",
-    "start": "next start",
-    "build": "next build"
   }
 }

@@ -14,12 +14,12 @@ import type { MutationState, MutationStatus } from '@tanstack/query-core'
 
 describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {
-    const isMutatings: Array<number> = []
+    const isMutatingArray: Array<number> = []
     const queryClient = createQueryClient()
 
     function IsMutating() {
       const isMutating = useIsMutating()
-      isMutatings.push(isMutating)
+      isMutatingArray.push(isMutating)
       return null
     }
 
@@ -59,16 +59,16 @@ describe('useIsMutating', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isMutatings).toEqual([0, 1, 2, 1, 0]))
+    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 2, 1, 0]))
   })
 
   it('should filter correctly by mutationKey', async () => {
-    const isMutatings: Array<number> = []
+    const isMutatingArray: Array<number> = []
     const queryClient = createQueryClient()
 
     function IsMutatingBase() {
       const isMutating = useIsMutating({ mutationKey: ['mutation1'] })
-      isMutatings.push(isMutating)
+      isMutatingArray.push(isMutating)
       return null
     }
 
@@ -100,11 +100,11 @@ describe('useIsMutating', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isMutatings).toEqual([0, 1, 0]))
+    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 0]))
   })
 
   it('should filter correctly by predicate', async () => {
-    const isMutatings: Array<number> = []
+    const isMutatingArray: Array<number> = []
     const queryClient = createQueryClient()
 
     function IsMutatingBase() {
@@ -112,7 +112,7 @@ describe('useIsMutating', () => {
         predicate: (mutation) =>
           mutation.options.mutationKey?.[0] === 'mutation1',
       })
-      isMutatings.push(isMutating)
+      isMutatingArray.push(isMutating)
       return null
     }
 
@@ -143,7 +143,7 @@ describe('useIsMutating', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isMutatings).toEqual([0, 1, 0]))
+    await waitFor(() => expect(isMutatingArray).toEqual([0, 1, 0]))
   })
 
   it('should use provided custom queryClient', async () => {

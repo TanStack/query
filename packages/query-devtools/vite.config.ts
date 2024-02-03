@@ -1,10 +1,11 @@
 import solid from 'vite-plugin-solid'
 import { defineConfig } from 'vitest/config'
+import packageJson from './package.json'
 
 export default defineConfig({
   plugins: [solid()],
   test: {
-    name: 'query-devtools',
+    name: packageJson.name,
     dir: './src',
     watch: false,
     environment: 'jsdom',

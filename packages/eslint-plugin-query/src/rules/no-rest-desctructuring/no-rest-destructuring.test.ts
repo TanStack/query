@@ -7,7 +7,7 @@ const ruleTester = new ESLintUtils.RuleTester({
   settings: {},
 })
 
-ruleTester.run('no-rest-desctructuring', rule, {
+ruleTester.run('no-rest-destructuring', rule, {
   valid: [
     {
       name: 'useQuery is not captured',

@@ -2,6 +2,7 @@
 
 import { useServerInsertedHTML } from 'next/navigation'
 import * as React from 'react'
+import { htmlEscapeJsonString } from './htmlescape'
 
 const serializedSymbol = Symbol('serialized')
 
@@ -83,7 +84,7 @@ export function createHydrationStreamProvider<TShape>() {
   }) {
     // unique id for the cache provider
     const id = `__RQ${React.useId()}`
-    const idJSON = JSON.stringify(id)
+    const idJSON = htmlEscapeJsonString(JSON.stringify(id))
 
     const [transformer] = React.useState(
       () =>
@@ -124,7 +125,7 @@ export function createHydrationStreamProvider<TShape>() {
 
       const html: Array<string> = [
         `window[${idJSON}] = window[${idJSON}] || [];`,
-        `window[${idJSON}].push(${serializedCacheArgs});`,
+        `window[${idJSON}].push(${htmlEscapeJsonString(serializedCacheArgs)});`,
       ]
       return (
         <script

@@ -1,14 +1,14 @@
 {
   "name": "@tanstack/query-example-vue-2.6-basic",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:dev": "vite build -m development",
-    "serve": "vite preview"
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/vue-query": "^5.0.0",
+    "@tanstack/vue-query": "^5.18.1",
     "@vue/composition-api": "1.7.2",
     "vue": "2.6.14",
     "vue-template-compiler": "2.6.14"

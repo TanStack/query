@@ -530,7 +530,7 @@ describe('useSuspenseQuery', () => {
     consoleMock.mockRestore()
   })
 
-  it('should error catched in error boundary without infinite loop', async () => {
+  it('should error caught in error boundary without infinite loop', async () => {
     const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
@@ -602,7 +602,7 @@ describe('useSuspenseQuery', () => {
     consoleMock.mockRestore()
   })
 
-  it('should error catched in error boundary without infinite loop when query keys changed', async () => {
+  it('should error caught in error boundary without infinite loop when query keys changed', async () => {
     const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)

@@ -12,8 +12,14 @@ If you're looking for a fully functioning example, please have a look at our [ba
 ### Provide the client to your App
 
 ```ts
+import { provideHttpClient } from '@angular/common/http'
+import {
+  provideAngularQuery,
+  QueryClient,
+} from '@tanstack/angular-query-experimental'
+
 bootstrapApplication(AppComponent, {
-  providers: [provideAngularQuery(new QueryClient())],
+  providers: [provideHttpClient(), provideAngularQuery(new QueryClient())],
 })
 ```
 
@@ -45,6 +51,7 @@ import {
   `,
 })
 export class TodosComponent {
+  todoService = inject(TodoService)
   queryClient = injectQueryClient()
 
   query = injectQuery(() => ({

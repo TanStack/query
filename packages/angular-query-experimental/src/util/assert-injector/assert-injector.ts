@@ -1,3 +1,4 @@
+/* eslint-disable @cspell/spellchecker */
 /**
  * The code in this file is adapted from NG Extension Platform at https://ngxtension.netlify.app.
  *
@@ -8,6 +9,7 @@
  * For more information about the original code, see
  * https://github.com/nartc/ngxtension-platform
  */
+/* eslint-enable */
 
 import {
   Injector,
@@ -37,11 +39,11 @@ import {
  * injectValue(); // string
  * ```
  */
-export function assertInjector<Runner extends () => any>(
+export function assertInjector<TRunner extends () => any>(
   fn: Function,
   injector: Injector | undefined | null,
-  runner: Runner,
-): ReturnType<Runner>
+  runner: TRunner,
+): ReturnType<TRunner>
 /**
  * `assertInjector` extends `assertInInjectionContext` with an optional `Injector`
  * After assertion, `assertInjector` returns a guaranteed `Injector` whether it is the default `Injector`

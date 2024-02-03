@@ -207,7 +207,7 @@ describe('QueryErrorResetBoundary', () => {
       consoleMock.mockRestore()
     })
 
-    it('should throw error if query is disabled and manually refetched', async () => {
+    it('should throw error if query is disabled and manually refetch', async () => {
       const consoleMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)
