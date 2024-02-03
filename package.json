@@ -49,7 +49,6 @@
     "@typescript-eslint/parser": "^5.62.0",
     "@vitest/coverage-istanbul": "^1.1.0",
     "cpy-cli": "^5.0.0",
-    "cross-env": "^7.0.3",
     "esbuild-plugin-file-path-extensions": "^2.0.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
