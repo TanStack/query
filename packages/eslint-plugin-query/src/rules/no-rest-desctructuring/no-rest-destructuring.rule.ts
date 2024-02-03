@@ -2,12 +2,17 @@ import { AST_NODE_TYPES } from '@typescript-eslint/utils'
 import { createRule } from '../../utils/create-rule'
 import { ASTUtils } from '../../utils/ast-utils'
 import { NoRestDestructuringUtils } from './no-rest-destructuring.utils'
+import type { ESLintUtils } from '@typescript-eslint/utils'
 
 export const name = 'no-rest-destructuring'
 
 const queryHooks = ['useQuery', 'useQueries', 'useInfiniteQuery']
 
-export const rule = createRule({
+export const rule: ESLintUtils.RuleModule<
+  string,
+  any,
+  ESLintUtils.RuleListener
+> = createRule({
   name,
   meta: {
     type: 'problem',
@@ -28,7 +33,7 @@ export const rule = createRule({
         if (
           !ASTUtils.isIdentifierWithOneOfNames(node.callee, queryHooks) ||
           !helpers.isTanstackQueryImport(node.callee) ||
-          node.parent?.type !== AST_NODE_TYPES.VariableDeclarator
+          node.parent.type !== AST_NODE_TYPES.VariableDeclarator
         ) {
           return
         }

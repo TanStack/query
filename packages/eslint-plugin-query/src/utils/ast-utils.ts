@@ -253,10 +253,7 @@ export const ASTUtils = {
   getClosestVariableDeclarator(node: TSESTree.Node) {
     let currentNode: TSESTree.Node | undefined = node
 
-    while (
-      currentNode !== undefined &&
-      currentNode.type !== AST_NODE_TYPES.Program
-    ) {
+    while (currentNode.type !== AST_NODE_TYPES.Program) {
       if (currentNode.type === AST_NODE_TYPES.VariableDeclarator) {
         return currentNode
       }

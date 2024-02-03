@@ -5,6 +5,7 @@ function generateRecommendedConfig(
   allRules: Record<string, TSESLint.RuleModule<any, any>>,
 ) {
   return Object.entries(allRules).reduce(
+    // @ts-expect-error
     (memo, [name, rule]) => {
       const { recommended } = rule.meta.docs || {}
 
