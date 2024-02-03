@@ -39,8 +39,8 @@
     "@cspell/eslint-plugin": "^8.3.2",
     "@solidjs/testing-library": "^0.8.5",
     "@tanstack/config": "^0.4.2",
-    "@testing-library/jest-dom": "^6.1.5",
-    "@testing-library/react": "^14.1.2",
+    "@testing-library/jest-dom": "^6.4.1",
+    "@testing-library/react": "^14.2.1",
     "@types/eslint": "^8.56.0",
     "@types/node": "^18.19.3",
     "@types/react": "^18.2.45",
@@ -66,10 +66,10 @@
     "react-dom": "^18.2.0",
     "rimraf": "^5.0.5",
     "sherif": "^0.7.0",
-    "solid-js": "^1.8.7",
+    "solid-js": "^1.8.12",
     "tsup": "^8.0.1",
     "typescript": "5.2.2",
-    "vite": "^5.0.10",
+    "vite": "^5.0.12",
     "vitest": "^1.1.0"
   },
   "pnpm": {

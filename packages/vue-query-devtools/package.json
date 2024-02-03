@@ -51,9 +51,9 @@
   "devDependencies": {
     "@tanstack/vue-query": "workspace:*",
     "@vitejs/plugin-vue": "^4.5.2",
-    "vite": "^5.0.10",
+    "vite": "^5.0.12",
     "vue": "^3.3.0",
-    "vue-tsc": "^1.8.26"
+    "vue-tsc": "^1.8.27"
   },
   "peerDependencies": {
     "@tanstack/vue-query": "workspace:^",
