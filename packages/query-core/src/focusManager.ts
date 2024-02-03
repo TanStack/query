@@ -1,77 +1,61 @@
-import { Subscribable } from './subscribable'
+import { Store } from '@tanstack/store'
 import { isServer } from './utils'
 
 type SetupFn = (
   setFocused: (focused?: boolean) => void,
 ) => (() => void) | undefined
 
-export class FocusManager extends Subscribable {
-  #focused?: boolean
-  #cleanup?: () => void
+export class FocusManager {
+  store = new Store<boolean | undefined>(undefined, {
+    onSubscribe: () => {
+      if (!this.#cleanup) this.setEventListener(this.#setup)
 
-  #setup: SetupFn
-
-  constructor() {
-    super()
-    this.#setup = (onFocus) => {
-      // addEventListener does not exist in React Native, but window does
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      if (!isServer && window.addEventListener) {
-        const listener = () => onFocus()
-        // Listen to visibilitychange
-        window.addEventListener('visibilitychange', listener, false)
-
-        return () => {
-          // Be sure to unsubscribe if a new handler is set
-          window.removeEventListener('visibilitychange', listener)
+      return () => {
+        if (!this.store.listeners.size) {
+          this.#cleanup?.()
+          this.#cleanup = undefined;
         }
       }
-      return
-    }
-  }
+    },
+  })
 
-  protected onSubscribe(): void {
-    if (!this.#cleanup) {
-      this.setEventListener(this.#setup)
-    }
-  }
+  #cleanup?: () => void
 
-  protected onUnsubscribe() {
-    if (!this.hasListeners()) {
-      this.#cleanup?.()
-      this.#cleanup = undefined
+  #setup: SetupFn = (onFocus) => {
+    // addEventListener does not exist in React Native, but window does
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (!isServer && window.addEventListener) {
+      const listener = () => onFocus()
+      // Listen to visibilitychange
+      window.addEventListener('visibilitychange', listener, false)
+
+      return () => {
+        // Be sure to unsubscribe if a new handler is set
+        window.removeEventListener('visibilitychange', listener)
+      }
     }
+    return
   }
 
   setEventListener(setup: SetupFn): void {
     this.#setup = setup
     this.#cleanup?.()
-    this.#cleanup = setup((focused) => {
-      if (typeof focused === 'boolean') {
-        this.setFocused(focused)
-      } else {
-        this.onFocus()
-      }
-    })
+    this.#cleanup = setup(this.setFocused.bind(this))
   }
 
   setFocused(focused?: boolean): void {
-    const changed = this.#focused !== focused
-    if (changed) {
-      this.#focused = focused
-      this.onFocus()
-    }
+    const changed = this.store.state !== focused;
+    if (!changed) return;
+    this.store.setState(() => focused)
   }
 
-  onFocus(): void {
-    this.listeners.forEach((listener) => {
-      listener()
-    })
+  subscribe(fn: () => void) {
+    return this.store.subscribe(fn);
   }
 
   isFocused(): boolean {
-    if (typeof this.#focused === 'boolean') {
-      return this.#focused
+    if (typeof this.store.state === 'boolean') {
+      return this.store.state
     }
 
     // document global can be unavailable in react native
