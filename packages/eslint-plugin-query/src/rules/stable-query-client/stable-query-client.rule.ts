@@ -11,7 +11,7 @@ export const rule = createRule({
     type: 'problem',
     docs: {
       description: 'Makes sure that QueryClient is stable',
-      recommended: 'recommended',
+      recommended: 'error' as any,
     },
     messages: {
       unstable: [
