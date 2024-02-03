@@ -1,0 +1,13 @@
+{
+  "installCommand": "install:csb",
+  "buildCommand": "build:all -- --exclude=integrations/**",
+  "sandboxes": [
+    "/examples/angular/basic",
+    "/examples/react/basic-typescript",
+    "/examples/solid/basic-typescript",
+    "/examples/svelte/basic",
+    "/examples/vue/basic"
+  ],
+  "packages": ["packages/**"],
+  "node": "18"
+}
