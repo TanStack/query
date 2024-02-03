@@ -1,7 +1,6 @@
 import { AST_NODE_TYPES } from '@typescript-eslint/utils'
 import { uniqueBy } from './unique-by'
 import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
-import type { RuleContext } from '@typescript-eslint/utils/dist/ts-eslint'
 
 export const ASTUtils = {
   isNodeOfOneOf<T extends AST_NODE_TYPES>(
@@ -212,7 +211,7 @@ export const ASTUtils = {
     )
   },
   getFunctionAncestor(
-    context: Readonly<RuleContext<string, ReadonlyArray<unknown>>>,
+    context: Readonly<TSESLint.RuleContext<string, ReadonlyArray<unknown>>>,
   ) {
     for (const ancestor of context.getAncestors()) {
       if (ancestor.type === AST_NODE_TYPES.FunctionDeclaration) {
@@ -236,7 +235,7 @@ export const ASTUtils = {
   },
   getReferencedExpressionByIdentifier(params: {
     node: TSESTree.Node
-    context: Readonly<RuleContext<string, ReadonlyArray<unknown>>>
+    context: Readonly<TSESLint.RuleContext<string, ReadonlyArray<unknown>>>
   }) {
     const { node, context } = params
 

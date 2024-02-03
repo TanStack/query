@@ -13,7 +13,7 @@ export const rule = createRule({
     type: 'problem',
     docs: {
       description: 'Disallows rest destructuring in queries',
-      recommended: 'warn',
+      recommended: 'recommended',
     },
     messages: {
       objectRestDestructure: `Object rest destructuring on a query will observe all changes to the query, leading to excessive re-renders.`,

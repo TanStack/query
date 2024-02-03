@@ -16,7 +16,7 @@ export const rule = createRule({
     type: 'problem',
     docs: {
       description: 'Exhaustive deps rule for useQuery',
-      recommended: 'error',
+      recommended: 'recommended',
     },
     messages: {
       missingDeps: `The following dependencies are missing in your queryKey: {{deps}}`,
