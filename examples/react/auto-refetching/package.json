@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-react-refetch-interval",
+  "name": "@tanstack/query-example-react-auto-refetching",
   "private": true,
   "main": "index.js",
   "license": "MIT",
