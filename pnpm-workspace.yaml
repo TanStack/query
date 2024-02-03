@@ -1,6 +1,5 @@
 packages:
   - 'packages/*'
-  - 'integrations/*'
   - 'examples/angular/*'
   - 'examples/react/*'
   - 'examples/solid/*'

@@ -18,9 +18,6 @@ export default {
     'packages/angular-query-experimental': {
       ignore: ['**/*.test-d.ts'],
     },
-    'integrations/angular-cli-standalone-17': {
-      entry: ['src/main.ts'],
-    },
   },
   compilers: {
     svelte: (text: string) => [...svelteCompiler(text)].join('\n'),

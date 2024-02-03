@@ -1,11 +1,12 @@
 {
   "name": "@tanstack/query-example-react-algolia",
   "private": true,
-  "main": "src/index.tsx",
+  "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:types": "tsc"
   },
   "dependencies": {
     "@algolia/client-search": "4.22.0",
