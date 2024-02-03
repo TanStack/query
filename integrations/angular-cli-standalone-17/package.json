@@ -1,9 +1,8 @@
 {
-  "name": "@tanstack/query-example-angular-cli-standalone-17",
+  "name": "angular-cli-standalone-17",
   "private": true,
   "scripts": {
-    "build": "ng build",
-    "test:types": "tsc"
+    "build": "ng build"
   },
   "dependencies": {
     "@angular/animations": "^17.0.8",

@@ -1,15 +1,15 @@
 {
-  "name": "@tanstack/query-example-react-create-react-app-5",
+  "name": "react-cra4",
   "private": true,
   "scripts": {
-    "build": "cross-env DISABLE_ESLINT_PLUGIN=true react-scripts build"
+    "build": "cross-env DISABLE_ESLINT_PLUGIN=true SKIP_PREFLIGHT_CHECK=true NODE_OPTIONS=--openssl-legacy-provider react-scripts build"
   },
   "dependencies": {
     "@tanstack/react-query": "workspace:*",
     "@tanstack/react-query-devtools": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^4.0.3"
   },
   "devDependencies": {
     "cross-env": "^7.0.3"
