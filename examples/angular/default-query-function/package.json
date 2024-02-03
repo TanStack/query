@@ -3,12 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "preview": "vite preview",
+    "test:types": "tsc"
   },
-  "license": "MIT",
   "dependencies": {
     "@angular/common": "^17.0.8",
     "@angular/compiler": "^17.0.8",

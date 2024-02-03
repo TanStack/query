@@ -1,11 +1,11 @@
 {
   "name": "@tanstack/query-example-nextjs-suspense-streaming",
   "private": true,
-  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test:types": "tsc"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.18.1",
