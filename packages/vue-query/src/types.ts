@@ -28,9 +28,9 @@ export type MaybeRefDeep<T> = MaybeRef<
 
 export type NoUnknown<T> = Equal<unknown, T> extends true ? never : T
 
-export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
-  T,
->() => T extends Y ? 1 : 2
+export type Equal<TTargetA, TTargetB> = (<T>() => T extends TTargetA
+  ? 1
+  : 2) extends <T>() => T extends TTargetB ? 1 : 2
   ? true
   : false
 
@@ -44,6 +44,6 @@ export type DeepUnwrapRef<T> = T extends UnwrapLeaf
         }
       : UnwrapRef<T>
 
-export type DistributiveOmit<T, K extends keyof any> = T extends any
-  ? Omit<T, K>
+export type DistributiveOmit<T, TKeyOfAny extends keyof any> = T extends any
+  ? Omit<T, TKeyOfAny>
   : never

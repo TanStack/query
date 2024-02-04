@@ -4,7 +4,7 @@ const vueCompiler = /<script\b[^>]*>([\s\S]*?)<\/script>/gm
 
 export default {
   $schema: 'https://unpkg.com/knip@2/schema.json',
-  ignoreWorkspaces: ['examples/**'],
+  ignoreWorkspaces: ['examples/**', 'integrations/**'],
   ignore: ['**/react-app-env.d.ts', '**/vite-env.d.ts'],
   workspaces: {
     'packages/codemods': {
@@ -17,9 +17,6 @@ export default {
     },
     'packages/angular-query-experimental': {
       ignore: ['**/*.test-d.ts'],
-    },
-    'integrations/angular-cli-standalone-17': {
-      entry: ['src/main.ts'],
     },
   },
   compilers: {

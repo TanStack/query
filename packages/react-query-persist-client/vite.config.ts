@@ -1,10 +1,11 @@
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
+import packageJson from './package.json'
 
 export default defineConfig({
   plugins: [react()],
   test: {
-    name: 'react-query-persist-client',
+    name: packageJson.name,
     dir: './src',
     watch: false,
     environment: 'jsdom',

@@ -1,11 +1,6 @@
 import React from 'react'
 import axios from 'axios'
-import {
-  useQuery,
-  useQueryClient,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const getCharacters = async () => {
@@ -22,17 +17,7 @@ const getCharacter = async (selectedChar) => {
   return data
 }
 
-const queryClient = new QueryClient()
-
-export default function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Example />
-    </QueryClientProvider>
-  )
-}
-
-function Example() {
+export default function Example() {
   const queryClient = useQueryClient()
   const rerender = React.useState(0)[1]
   const [selectedChar, setSelectedChar] = React.useState(1)

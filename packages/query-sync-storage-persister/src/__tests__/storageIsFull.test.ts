@@ -40,7 +40,7 @@ function getMockStorage(limitSize?: number) {
   } as any as Storage
 }
 
-describe('createpersister ', () => {
+describe('create persister ', () => {
   test('basic store and recover', async () => {
     const queryCache = new QueryCache()
     const mutationCache = new MutationCache()

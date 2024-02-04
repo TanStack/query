@@ -1,23 +1,24 @@
 {
   "name": "@tanstack/query-example-react-basic-typescript",
   "private": true,
-  "main": "src/index.tsx",
+  "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:types": "tsc"
   },
   "dependencies": {
-    "@tanstack/query-sync-storage-persister": "^5.0.0",
-    "@tanstack/react-query": "^5.0.0",
-    "@tanstack/react-query-devtools": "^5.0.0",
-    "@tanstack/react-query-persist-client": "^5.0.0",
+    "@tanstack/query-sync-storage-persister": "^5.18.1",
+    "@tanstack/react-query": "^5.18.1",
+    "@tanstack/react-query-devtools": "^5.18.1",
+    "@tanstack/react-query-persist-client": "^5.18.1",
     "axios": "^1.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.0.0",
+    "@tanstack/eslint-plugin-query": "^5.18.1",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.2.1",

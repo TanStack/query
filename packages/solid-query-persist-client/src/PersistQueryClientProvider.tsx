@@ -15,7 +15,7 @@ export const PersistQueryClientProvider = (
 ): JSX.Element => {
   const [isRestoring, setIsRestoring] = createSignal(true)
 
-  let unsub: undefined | (() => void)
+  let _unsubscribe: undefined | (() => void)
   createComputed<() => void>((cleanup) => {
     cleanup?.()
     let isStale = false
@@ -34,14 +34,14 @@ export const PersistQueryClientProvider = (
       }
     })
 
-    unsub = () => {
+    _unsubscribe = () => {
       isStale = true
       unsubscribe()
     }
-    return unsub
+    return _unsubscribe
   })
 
-  onCleanup(() => unsub?.())
+  onCleanup(() => _unsubscribe?.())
   return (
     <QueryClientProvider client={props.client}>
       <IsRestoringProvider value={isRestoring}>

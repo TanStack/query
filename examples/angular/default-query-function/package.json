@@ -3,22 +3,21 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "preview": "vite preview",
+    "test:types": "tsc"
   },
-  "license": "MIT",
   "dependencies": {
-    "@angular/common": "^17.0.8",
-    "@angular/compiler": "^17.0.8",
-    "@angular/core": "^17.0.8",
-    "@angular/platform-browser": "^17.0.8",
-    "@tanstack/angular-query-devtools-experimental": "^5.13.3",
-    "@tanstack/angular-query-experimental": "^5.13.4",
+    "@angular/common": "^17.1.2",
+    "@angular/compiler": "^17.1.2",
+    "@angular/core": "^17.1.2",
+    "@angular/platform-browser": "^17.1.2",
+    "@tanstack/angular-query-devtools-experimental": "^5.18.2",
+    "@tanstack/angular-query-experimental": "^5.18.2",
     "axios": "^1.6.2",
     "rxjs": "^7.8.1",
-    "zone.js": "^0.14.2"
+    "zone.js": "^0.14.3"
   },
   "devDependencies": {
     "typescript": "5.2.2",

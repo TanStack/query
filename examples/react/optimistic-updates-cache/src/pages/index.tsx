@@ -41,7 +41,7 @@ function Example() {
     // When mutate is called:
     onMutate: async (newTodo: string) => {
       setText('')
-      // Cancel any outgoing refetches
+      // Cancel any outgoing refetch
       // (so they don't overwrite our optimistic update)
       await queryClient.cancelQueries(todoListOptions)
 

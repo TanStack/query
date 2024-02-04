@@ -7,8 +7,8 @@ const noop = () => {
   /* do nothing */
 }
 
-export function asyncThrottle<Args extends ReadonlyArray<unknown>>(
-  func: (...args: Args) => Promise<void>,
+export function asyncThrottle<TArgs extends ReadonlyArray<unknown>>(
+  func: (...args: TArgs) => Promise<void>,
   { interval = 1000, onError = noop }: AsyncThrottleOptions = {},
 ) {
   if (typeof func !== 'function') throw new Error('argument is not function.')
@@ -16,7 +16,7 @@ export function asyncThrottle<Args extends ReadonlyArray<unknown>>(
   let running = false
   let lastTime = 0
   let timeout: ReturnType<typeof setTimeout>
-  let currentArgs: Args | null = null
+  let currentArgs: TArgs | null = null
 
   const execFunc = async () => {
     if (currentArgs) {
@@ -45,7 +45,7 @@ export function asyncThrottle<Args extends ReadonlyArray<unknown>>(
     }, interval)
   }
 
-  return (...args: Args) => {
+  return (...args: TArgs) => {
     currentArgs = args
 
     const tooSoon = Date.now() - lastTime < interval

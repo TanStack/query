@@ -325,16 +325,16 @@ describe('useQuery', () => {
       getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
 
       let afterTimeout = false
-      const isEnabeld = ref(false)
+      const isEnabled = ref(false)
       const query = useQuery({
         queryKey: ['suspense'],
         queryFn: simpleFetcher,
-        enabled: isEnabeld,
+        enabled: isEnabled,
       })
 
       setTimeout(() => {
         afterTimeout = true
-        isEnabeld.value = true
+        isEnabled.value = true
       }, 200)
 
       return query.suspense().then(() => {
@@ -342,7 +342,7 @@ describe('useQuery', () => {
       })
     })
 
-    test('should resolve immidiately when stale without refetching', () => {
+    test('should resolve immediately when stale without refetching', () => {
       const getCurrentInstanceSpy = getCurrentInstance as Mock
       getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
 

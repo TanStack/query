@@ -1,25 +1,23 @@
 {
   "name": "angular-cli-standalone-17",
-  "version": "0.0.0",
+  "private": true,
   "scripts": {
     "build": "ng build"
   },
-  "private": true,
   "dependencies": {
-    "@angular/animations": "^17.0.8",
-    "@angular/common": "^17.0.8",
-    "@angular/core": "^17.0.8",
-    "@angular/platform-browser": "^17.0.8",
+    "@angular/common": "^17.1.2",
+    "@angular/core": "^17.1.2",
+    "@angular/platform-browser": "^17.1.2",
     "@tanstack/angular-query-experimental": "workspace:*",
     "@tanstack/angular-query-devtools-experimental": "workspace:*",
     "rxjs": "^7.8.1",
     "tslib": "^2.6.2",
-    "zone.js": "^0.14.2"
+    "zone.js": "^0.14.3"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^17.0.8",
     "@angular/cli": "^17.0.8",
-    "@angular/compiler-cli": "^17.0.8",
+    "@angular/compiler-cli": "^17.1.2",
     "typescript": "5.2.2"
   }
 }

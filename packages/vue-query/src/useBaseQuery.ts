@@ -23,16 +23,16 @@ import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 export type UseBaseQueryReturnType<
   TData,
   TError,
-  Result = QueryObserverResult<TData, TError>,
+  TResult = QueryObserverResult<TData, TError>,
 > = {
-  [K in keyof Result]: K extends
+  [K in keyof TResult]: K extends
     | 'fetchNextPage'
     | 'fetchPreviousPage'
     | 'refetch'
-    ? Result[K]
-    : ToRef<Readonly<Result>[K]>
+    ? TResult[K]
+    : ToRef<Readonly<TResult>[K]>
 } & {
-  suspense: () => Promise<Result>
+  suspense: () => Promise<TResult>
 }
 
 type UseQueryOptionsGeneric<
@@ -75,7 +75,7 @@ export function useBaseQuery<
   if (process.env.NODE_ENV === 'development') {
     if (!getCurrentScope()) {
       console.warn(
-        'vue-query composables like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+        'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
       )
     }
   }
