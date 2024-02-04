@@ -951,6 +951,10 @@
               "to": "framework/angular/examples/basic"
             },
             {
+              "label": "Infinite query with Max pages",
+              "to": "framework/angular/examples/infinite-query-with-max-pages"
+            },
+            {
               "label": "Default Query Function",
               "to": "framework/angular/examples/default-query-function"
             }
