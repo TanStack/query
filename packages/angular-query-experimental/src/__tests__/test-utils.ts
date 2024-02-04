@@ -30,6 +30,18 @@ export function rejectFetcher(): Promise<Error> {
   })
 }
 
+export function infiniteFetcher({
+  pageParam,
+}: {
+  pageParam?: number
+}): Promise<string> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      return resolve('data on page ' + pageParam)
+    }, 0)
+  })
+}
+
 export function successMutator<T>(param: T): Promise<T> {
   return new Promise((resolve) => {
     setTimeout(() => {
