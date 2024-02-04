@@ -890,6 +890,10 @@
               "to": "framework/angular/guides/paginated-queries"
             },
             {
+              "label": "Infinite Queries",
+              "to": "framework/angular/guides/infinite-queries"
+            },
+            {
               "label": "Initial Query Data",
               "to": "framework/angular/guides/initial-query-data"
             },
