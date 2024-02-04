@@ -13,7 +13,7 @@ We are in the process of getting to a stable API for Angular Query. If you have 
 
 ## Supported Angular Versions
 
-Angular Query is compatible with Angular version 17.
+Angular Query is compatible with Angular version v16 and higher.
 
 TanStack Query (FKA React Query) is often described as the missing data-fetching library for web applications, but in more technical terms, it makes **fetching, caching, synchronizing and updating server state** in your web applications a breeze.
 
