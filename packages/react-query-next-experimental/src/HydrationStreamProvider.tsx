@@ -1,5 +1,6 @@
 'use client'
 
+import { isServer } from '@tanstack/react-query'
 import { useServerInsertedHTML } from 'next/navigation'
 import * as React from 'react'
 
@@ -148,7 +149,7 @@ export function createHydrationStreamProvider<TShape>() {
     // This is important to avoid the client suspending during the initial render
     // if the data has not yet been hydrated.
     // @ts-expect-error window isn't defined on the server
-    if (typeof window !== 'undefined' && !window[id]?.initialized) {
+    if (!isServer && !window[id]?.initialized) {
       const win = window as any;
       // Client: consume cache:
       const onEntries = (...serializedEntries: Array<Serialized<TShape>>) => {
