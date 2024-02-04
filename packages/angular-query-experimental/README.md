@@ -29,7 +29,7 @@ Visit https://tanstack.com/query/latest/docs/angular/overview
 
 # Quick Start
 
-> Angular Query requires Angular 17.
+> Angular Query requires Angular 16.
 
 1. Install `angular-query`
 

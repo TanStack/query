@@ -19,6 +19,7 @@
     "zone.js": "^0.14.3"
   },
   "devDependencies": {
+    "@nitedani/vite-plugin-angular": "^17.0.11",
     "typescript": "5.2.2",
     "vite": "^5.0.10"
   }
