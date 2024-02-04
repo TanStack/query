@@ -13,8 +13,8 @@
     "@angular/compiler": "^17.1.2",
     "@angular/core": "^17.1.2",
     "@angular/platform-browser": "^17.1.2",
-    "@tanstack/angular-query-devtools-experimental": "^5.18.2",
-    "@tanstack/angular-query-experimental": "^5.18.2",
+    "@tanstack/angular-query-devtools-experimental": "^5.19.0",
+    "@tanstack/angular-query-experimental": "^5.19.0",
     "rxjs": "^7.8.1",
     "zone.js": "^0.14.3"
   },
