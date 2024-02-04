@@ -134,10 +134,10 @@ importers:
         specifier: ^17.1.2
         version: 17.1.2(@angular/common@17.1.2)(@angular/core@17.1.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.18.2
+        specifier: ^5.19.0
         version: link:../../../packages/angular-query-devtools-experimental
       '@tanstack/angular-query-experimental':
-        specifier: ^5.18.2
+        specifier: ^5.19.0
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -171,10 +171,10 @@ importers:
         specifier: ^17.1.2
         version: 17.1.2(@angular/common@17.1.2)(@angular/core@17.1.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.18.2
+        specifier: ^5.19.0
         version: link:../../../packages/angular-query-devtools-experimental
       '@tanstack/angular-query-experimental':
-        specifier: ^5.18.2
+        specifier: ^5.19.0
         version: link:../../../packages/angular-query-experimental
       axios:
         specifier: ^1.6.2
@@ -208,10 +208,10 @@ importers:
         specifier: ^17.1.2
         version: 17.1.2(@angular/common@17.1.2)(@angular/core@17.1.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.18.2
+        specifier: ^5.19.0
         version: link:../../../packages/angular-query-devtools-experimental
       '@tanstack/angular-query-experimental':
-        specifier: ^5.18.2
+        specifier: ^5.19.0
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
