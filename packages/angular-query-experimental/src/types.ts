@@ -1,7 +1,8 @@
-import type { Signal } from '@angular/core'
+/* istanbul ignore file */
 
 import type {
   DefaultError,
+  DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
@@ -24,6 +25,25 @@ export interface CreateBaseQueryOptions<
 > extends WithRequired<
     QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
     'queryKey'
+  > {}
+
+export interface CreateQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> extends Omit<
+    WithRequired<
+      CreateBaseQueryOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryFnData,
+        TQueryKey
+      >,
+      'queryKey'
+    >,
+    'suspense'
   > {}
 
 type CreateStatusBasedQueryResult<
@@ -56,6 +76,28 @@ export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
   >
 }
 
+export interface CreateInfiniteQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> extends WithRequired<
+    Omit<
+      InfiniteQueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey,
+        TPageParam
+      >,
+      'suspense'
+    >,
+    'queryKey'
+  > {}
+
 export type CreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
@@ -63,51 +105,10 @@ export type CreateBaseQueryResult<
 > = BaseQueryNarrowing<TData, TError> &
   MapToSignals<Omit<TState, keyof BaseQueryNarrowing>>
 
-export interface CreateQueryOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-> extends Omit<
-    WithRequired<
-      CreateBaseQueryOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryFnData,
-        TQueryKey
-      >,
-      'queryKey'
-    >,
-    'suspense'
-  > {}
-
 export type CreateQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = CreateBaseQueryResult<TData, TError>
-
-/** Options for createInfiniteQuery */
-export type CreateInfiniteQueryOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
-> = InfiniteQueryObserverOptions<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryData,
-  TQueryKey,
-  TPageParam
->
-
-export type CreateInfiniteQueryResult<
-  TData = unknown,
-  TError = DefaultError,
-> = Signal<InfiniteQueryObserverResult<TData, TError>>
 
 export type DefinedCreateQueryResult<
   TData = unknown,
@@ -115,15 +116,29 @@ export type DefinedCreateQueryResult<
   TDefinedQueryObserver = DefinedQueryObserverResult<TData, TError>,
 > = MapToSignals<TDefinedQueryObserver>
 
-export type CreateMutationOptions<
+export type CreateInfiniteQueryResult<
+  TData = unknown,
+  TError = DefaultError,
+> = MapToSignals<InfiniteQueryObserverResult<TData, TError>>
+
+export type DefinedCreateInfiniteQueryResult<
+  TData = unknown,
+  TError = DefaultError,
+  TDefinedInfiniteQueryObserver = DefinedInfiniteQueryObserverResult<
+    TData,
+    TError
+  >,
+> = MapToSignals<TDefinedInfiniteQueryObserver>
+
+export interface CreateMutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> = Omit<
-  MutationObserverOptions<TData, TError, TVariables, TContext>,
-  '_defaulted' | 'variables'
->
+> extends Omit<
+    MutationObserverOptions<TData, TError, TVariables, TContext>,
+    '_defaulted' | 'variables'
+  > {}
 
 export type CreateMutateFunction<
   TData = unknown,
@@ -226,7 +241,6 @@ export interface BaseMutationNarrowing<
   >
 }
 
-/** Result from createMutation */
 export type CreateMutationResult<
   TData = unknown,
   TError = DefaultError,
