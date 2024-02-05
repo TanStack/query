@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-angular-basic",
+  "name": "@tanstack/query-example-angular-infinite-query-with-max-pages",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,6 +8,7 @@
     "preview": "vite preview",
     "test:types": "tsc"
   },
+  "license": "MIT",
   "dependencies": {
     "@angular/common": "^17.1.2",
     "@angular/compiler": "^17.1.2",

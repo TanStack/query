@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-experimental",
-  "version": "5.18.1",
+  "version": "5.19.0",
   "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -46,20 +46,20 @@
     "tslib": "^2.6.2"
   },
   "devDependencies": {
-    "@analogjs/vite-plugin-angular": "^0.2.29",
-    "@angular/common": "^17.0.8",
-    "@angular/compiler": "^17.0.8",
-    "@angular/compiler-cli": "^17.0.8",
-    "@angular/core": "^17.0.8",
-    "@angular/platform-browser": "^17.0.8",
-    "@angular/platform-browser-dynamic": "^17.0.8",
-    "ng-packagr": "^17.0.3",
+    "@analogjs/vite-plugin-angular": "^0.2.30",
+    "@angular/common": "^17.1.2",
+    "@angular/compiler": "^17.1.2",
+    "@angular/compiler-cli": "^17.1.2",
+    "@angular/core": "^17.1.2",
+    "@angular/platform-browser": "^17.1.2",
+    "@angular/platform-browser-dynamic": "^17.1.2",
+    "ng-packagr": "^17.1.2",
     "typescript": "5.2.2",
-    "zone.js": "^0.14.2"
+    "zone.js": "^0.14.3"
   },
   "peerDependencies": {
-    "@angular/core": "^17",
-    "@angular/common": "^17"
+    "@angular/core": ">=16.0.0",
+    "@angular/common": ">=16.0.0"
   },
   "module": "build/fesm2022/tanstack-angular-query-experimental.mjs",
   "types": "build/index.d.ts",
