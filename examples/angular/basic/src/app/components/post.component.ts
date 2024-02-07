@@ -1,19 +1,17 @@
-import { HttpClient } from '@angular/common/http'
 import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  Input,
   Output,
   inject,
-  signal,
+  input,
 } from '@angular/core'
 import {
   injectQuery,
   injectQueryClient,
 } from '@tanstack/angular-query-experimental'
 import { fromEvent, lastValueFrom, takeUntil } from 'rxjs'
-import { PostsService } from './posts-service'
+import { PostsService } from '../services/posts-service'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,15 +24,7 @@ export class PostComponent {
 
   @Output() setPostId = new EventEmitter<number>()
 
-  // This can be replaced with an input signal in Angular v17.1+:
-  // postId = input(0)
-  @Input({ required: true, alias: 'postId' })
-  set _postId(value: number) {
-    this.postId.set(value)
-  }
-  postId = signal(0)
-
-  httpClient = inject(HttpClient)
+  postId = input(0)
 
   postQuery = injectQuery(() => ({
     enabled: this.postId() > 0,
