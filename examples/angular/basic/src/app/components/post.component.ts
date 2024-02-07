@@ -13,7 +13,7 @@ import {
   injectQueryClient,
 } from '@tanstack/angular-query-experimental'
 import { fromEvent, lastValueFrom, takeUntil } from 'rxjs'
-import { PostsService } from './posts-service'
+import { PostsService } from '../services/posts-service'
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
