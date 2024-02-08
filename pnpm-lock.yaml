@@ -114,7 +114,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
       vitest:
         specifier: ^1.1.0
         version: 1.1.0(@types/node@18.19.3)(jsdom@23.0.1)
@@ -191,7 +191,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/angular/infinite-query-with-max-pages:
     dependencies:
@@ -262,7 +262,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/algolia:
     dependencies:
@@ -305,7 +305,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/auto-refetching:
     dependencies:
@@ -357,7 +357,7 @@ importers:
         version: 4.2.1(vite@5.0.10)
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/basic-graphql-request:
     dependencies:
@@ -385,7 +385,7 @@ importers:
         version: 4.2.1(vite@5.0.10)
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/basic-typescript:
     dependencies:
@@ -434,7 +434,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/default-query-function:
     dependencies:
@@ -459,7 +459,7 @@ importers:
         version: 4.2.1(vite@5.0.10)
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/infinite-query-with-max-pages:
     dependencies:
@@ -614,7 +614,7 @@ importers:
         version: 4.2.1(vite@5.0.10)
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/optimistic-updates-cache:
     dependencies:
@@ -734,7 +734,7 @@ importers:
         version: 4.2.1(vite@5.0.10)
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/prefetching:
     dependencies:
@@ -862,7 +862,7 @@ importers:
         version: 4.2.1(vite@5.0.10)
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/rick-morty:
     dependencies:
@@ -902,7 +902,7 @@ importers:
         version: 4.2.1(vite@5.0.10)
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/simple:
     dependencies:
@@ -927,7 +927,7 @@ importers:
         version: 4.2.1(vite@5.0.10)
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/star-wars:
     dependencies:
@@ -967,7 +967,7 @@ importers:
         version: 4.2.1(vite@5.0.10)
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/react/suspense:
     dependencies:
@@ -998,7 +998,7 @@ importers:
         version: 4.2.1(vite@5.0.10)
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/solid/basic-graphql-request:
     dependencies:
@@ -1023,7 +1023,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
       vite-plugin-solid:
         specifier: ^2.8.0
         version: 2.8.0(solid-js@1.8.7)(vite@5.0.10)
@@ -1045,7 +1045,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
       vite-plugin-solid:
         specifier: ^2.8.0
         version: 2.8.0(solid-js@1.8.7)(vite@5.0.10)
@@ -1067,7 +1067,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
       vite-plugin-solid:
         specifier: ^2.8.0
         version: 2.8.0(solid-js@1.8.7)(vite@5.0.10)
@@ -1092,7 +1092,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
       vite-plugin-solid:
         specifier: ^2.8.0
         version: 2.8.0(solid-js@1.8.7)(vite@5.0.10)
@@ -1150,7 +1150,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/svelte/basic:
     dependencies:
@@ -1181,7 +1181,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/svelte/load-more-infinite-scroll:
     dependencies:
@@ -1212,7 +1212,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/svelte/optimistic-updates-typescript:
     dependencies:
@@ -1243,7 +1243,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/svelte/playground:
     dependencies:
@@ -1274,7 +1274,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/svelte/simple:
     dependencies:
@@ -1302,7 +1302,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/svelte/ssr:
     dependencies:
@@ -1333,7 +1333,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/svelte/star-wars:
     dependencies:
@@ -1373,7 +1373,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/vue/basic:
     dependencies:
@@ -1395,7 +1395,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/vue/dependent-queries:
     dependencies:
@@ -1414,7 +1414,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   examples/vue/persister:
     dependencies:
@@ -1445,7 +1445,29 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
+
+  examples/vue/simple:
+    dependencies:
+      '@tanstack/vue-query':
+        specifier: ^5.18.1
+        version: link:../../../packages/vue-query
+      '@tanstack/vue-query-devtools':
+        specifier: ^5.18.1
+        version: link:../../../packages/vue-query-devtools
+      vue:
+        specifier: ^3.3.0
+        version: 3.3.0
+    devDependencies:
+      '@vitejs/plugin-vue':
+        specifier: ^4.5.2
+        version: 4.5.2(vite@5.0.10)(vue@3.3.0)
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+      vite:
+        specifier: ^5.0.10
+        version: 5.0.10(@types/node@18.19.3)
 
   integrations/angular-cli-standalone-17:
     dependencies:
@@ -1581,7 +1603,7 @@ importers:
         version: 18.2.0(react@18.2.0)
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   integrations/solid-vite:
     dependencies:
@@ -1596,7 +1618,7 @@ importers:
         version: 1.8.7
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
       vite-plugin-solid:
         specifier: ^2.8.0
         version: 2.8.0(solid-js@1.8.7)(vite@5.0.10)
@@ -1617,7 +1639,7 @@ importers:
         version: 4.2.8
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
 
   integrations/vue-vite:
     dependencies:
@@ -1636,7 +1658,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
       vue-tsc:
         specifier: ^1.8.26
         version: 1.8.26(typescript@5.2.2)
@@ -2075,7 +2097,7 @@ importers:
         version: 4.5.2(vite@5.0.10)(vue@3.3.0)
       vite:
         specifier: ^5.0.10
-        version: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+        version: 5.0.10(@types/node@18.19.3)
       vue:
         specifier: ^3.3.0
         version: 3.3.0
@@ -2434,7 +2456,7 @@ packages:
       typescript: 5.2.2
       undici: 5.27.2
       vite: 4.5.1(@types/node@18.19.3)(less@4.2.0)(sass@1.69.5)(terser@5.24.0)
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
       webpack-dev-middleware: 6.1.1(webpack@5.89.0)
       webpack-dev-server: 4.15.1(webpack@5.89.0)
       webpack-merge: 5.10.0
@@ -2469,7 +2491,7 @@ packages:
     dependencies:
       '@angular-devkit/architect': 0.1700.8(chokidar@3.5.3)
       rxjs: 7.8.1
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
       webpack-dev-server: 4.15.1(webpack@5.89.0)
     transitivePeerDependencies:
       - chokidar
@@ -6040,6 +6062,7 @@ packages:
     cpu: [arm64]
     os: [android]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/android-arm@0.18.20:
@@ -6064,6 +6087,7 @@ packages:
     cpu: [arm]
     os: [android]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/android-x64@0.18.20:
@@ -6088,6 +6112,7 @@ packages:
     cpu: [x64]
     os: [android]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/darwin-arm64@0.18.20:
@@ -6112,6 +6137,7 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/darwin-x64@0.18.20:
@@ -6136,6 +6162,7 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/freebsd-arm64@0.18.20:
@@ -6160,6 +6187,7 @@ packages:
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/freebsd-x64@0.18.20:
@@ -6184,6 +6212,7 @@ packages:
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/linux-arm64@0.18.20:
@@ -6208,6 +6237,7 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/linux-arm@0.18.20:
@@ -6232,6 +6262,7 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/linux-ia32@0.18.20:
@@ -6256,6 +6287,7 @@ packages:
     cpu: [ia32]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/linux-loong64@0.18.20:
@@ -6280,6 +6312,7 @@ packages:
     cpu: [loong64]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/linux-mips64el@0.18.20:
@@ -6304,6 +6337,7 @@ packages:
     cpu: [mips64el]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/linux-ppc64@0.18.20:
@@ -6328,6 +6362,7 @@ packages:
     cpu: [ppc64]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/linux-riscv64@0.18.20:
@@ -6352,6 +6387,7 @@ packages:
     cpu: [riscv64]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/linux-s390x@0.18.20:
@@ -6376,6 +6412,7 @@ packages:
     cpu: [s390x]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/linux-x64@0.18.20:
@@ -6400,6 +6437,7 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/netbsd-x64@0.18.20:
@@ -6424,6 +6462,7 @@ packages:
     cpu: [x64]
     os: [netbsd]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/openbsd-x64@0.18.20:
@@ -6448,6 +6487,7 @@ packages:
     cpu: [x64]
     os: [openbsd]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/sunos-x64@0.18.20:
@@ -6472,6 +6512,7 @@ packages:
     cpu: [x64]
     os: [sunos]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/win32-arm64@0.18.20:
@@ -6496,6 +6537,7 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/win32-ia32@0.18.20:
@@ -6520,6 +6562,7 @@ packages:
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/win32-x64@0.18.20:
@@ -6544,6 +6587,7 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@eslint-community/eslint-utils@4.4.0(eslint@8.56.0):
@@ -8519,7 +8563,7 @@ packages:
       react-refresh: 0.11.0
       schema-utils: 3.3.0
       source-map: 0.7.4
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
       webpack-dev-server: 4.15.1(webpack@5.89.0)
     dev: false
 
@@ -9688,7 +9732,7 @@ packages:
       sirv: 2.0.4
       svelte: 4.2.8
       tiny-glob: 0.2.9
-      vite: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+      vite: 5.0.10(@types/node@18.19.3)
     dev: true
 
   /@sveltejs/package@2.2.4(svelte@4.2.8)(typescript@5.2.2):
@@ -9719,7 +9763,7 @@ packages:
       '@sveltejs/vite-plugin-svelte': 3.0.1(svelte@4.2.8)(vite@5.0.10)
       debug: 4.3.4(supports-color@6.1.0)
       svelte: 4.2.8
-      vite: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+      vite: 5.0.10(@types/node@18.19.3)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -9738,7 +9782,7 @@ packages:
       magic-string: 0.30.5
       svelte: 4.2.8
       svelte-hmr: 0.15.3(svelte@4.2.8)
-      vite: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+      vite: 5.0.10(@types/node@18.19.3)
       vitefu: 0.2.5(vite@5.0.10)
     transitivePeerDependencies:
       - supports-color
@@ -10959,7 +11003,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.23.3(@babel/core@7.23.6)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.0
-      vite: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+      vite: 5.0.10(@types/node@18.19.3)
     transitivePeerDependencies:
       - supports-color
 
@@ -10970,7 +11014,7 @@ packages:
       vite: ^4.0.0 || ^5.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+      vite: 5.0.10(@types/node@18.19.3)
       vue: 3.3.0
     dev: true
 
@@ -11075,7 +11119,7 @@ packages:
   /@vue/compiler-sfc@3.3.0:
     resolution: {integrity: sha512-g8j35REOBMN0oRnJ4eEO3RMLj8ebEehQk6JkH6Q9df+M1Sb8eLeX0Zb7GBBPrrjfmyKzGvp/TE3fyOLUq/H5ow==}
     dependencies:
-      '@babel/parser': 7.23.0
+      '@babel/parser': 7.23.6
       '@vue/compiler-core': 3.3.0
       '@vue/compiler-dom': 3.3.0
       '@vue/compiler-ssr': 3.3.0
@@ -12318,7 +12362,7 @@ packages:
       loader-utils: 2.0.4
       make-dir: 3.1.0
       schema-utils: 2.7.1
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
     dev: false
 
   /babel-loader@9.1.3(@babel/core@7.23.2)(webpack@5.89.0):
@@ -12331,7 +12375,7 @@ packages:
       '@babel/core': 7.23.2
       find-cache-dir: 4.0.0
       schema-utils: 4.2.0
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
     dev: true
 
   /babel-plugin-add-module-exports@0.2.1:
@@ -14079,7 +14123,7 @@ packages:
       normalize-path: 3.0.0
       schema-utils: 4.2.0
       serialize-javascript: 6.0.1
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
     dev: true
 
   /core-js-compat@3.33.0:
@@ -14506,7 +14550,7 @@ packages:
       postcss-modules-values: 4.0.0(postcss@8.4.32)
       postcss-value-parser: 4.2.0
       semver: 7.5.4
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
 
   /css-minimizer-webpack-plugin@3.4.1(esbuild@0.19.10)(webpack@5.89.0):
     resolution: {integrity: sha512-1u6D71zeIfgngN2XNRJefc/hY7Ybsxd74Jm4qngIXyUEk7fss3VUzuHxLAq/R8NAba4QU9OUSaMZlbpRc7bM4Q==}
@@ -14534,7 +14578,7 @@ packages:
       schema-utils: 4.2.0
       serialize-javascript: 6.0.1
       source-map: 0.6.1
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
     dev: false
 
   /css-prefers-color-scheme@3.1.1:
@@ -15986,6 +16030,7 @@ packages:
       '@esbuild/win32-arm64': 0.19.5
       '@esbuild/win32-ia32': 0.19.5
       '@esbuild/win32-x64': 0.19.5
+    dev: true
 
   /escalade@3.1.1:
     resolution: {integrity: sha512-k0er2gUkLf8O0zKJiAhmkTnJlTvINGv7ygDNPbeIsX/TJjGJZHuh9B2UxbsaEkmlEo9MfhrSzmhIlhRlI2GXnw==}
@@ -16482,7 +16527,7 @@ packages:
       micromatch: 4.0.5
       normalize-path: 3.0.0
       schema-utils: 4.2.0
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
     dev: false
 
   /eslint@8.56.0:
@@ -17142,7 +17187,7 @@ packages:
     dependencies:
       loader-utils: 2.0.4
       schema-utils: 3.3.0
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
     dev: false
 
   /file-uri-to-path@1.0.0:
@@ -17484,7 +17529,7 @@ packages:
       semver: 7.5.4
       tapable: 1.1.3
       typescript: 5.2.2
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
     dev: false
 
   /form-data@3.0.1:
@@ -18415,7 +18460,7 @@ packages:
       lodash: 4.17.21
       pretty-error: 4.0.0
       tapable: 2.2.1
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
     dev: false
 
   /htmlparser2@6.1.0:
@@ -21249,7 +21294,7 @@ packages:
     dependencies:
       klona: 2.0.6
       less: 4.2.0
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
     dev: true
 
   /less@4.2.0:
@@ -21300,7 +21345,7 @@ packages:
       webpack-sources:
         optional: true
     dependencies:
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
       webpack-sources: 3.2.3
     dev: true
 
@@ -22347,7 +22392,7 @@ packages:
       webpack: ^5.0.0
     dependencies:
       schema-utils: 4.2.0
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
 
   /minimalistic-assert@1.0.1:
     resolution: {integrity: sha512-UtJcAD4yEaGtjPezWuO9wC4nwUnVH/8/Im3yEHQP4b67cXlD/Qr9hdITCU1xDbSEXg2XKNaP8jsReV7vQd00/A==}
@@ -24879,7 +24924,7 @@ packages:
       klona: 2.0.6
       postcss: 8.4.32
       semver: 7.5.4
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
     dev: false
 
   /postcss-loader@7.3.3(postcss@8.4.31)(typescript@5.2.2)(webpack@5.89.0):
@@ -24893,7 +24938,7 @@ packages:
       jiti: 1.21.0
       postcss: 8.4.31
       semver: 7.5.4
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
     transitivePeerDependencies:
       - typescript
     dev: true
@@ -26243,7 +26288,7 @@ packages:
       strip-ansi: 6.0.1
       text-table: 0.2.0
       typescript: 5.2.2
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
     transitivePeerDependencies:
       - eslint
       - supports-color
@@ -26674,7 +26719,7 @@ packages:
       tailwindcss: 3.4.0
       terser-webpack-plugin: 5.3.9(esbuild@0.19.10)(webpack@5.89.0)
       typescript: 5.2.2
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
       webpack-dev-server: 4.15.1(webpack@5.89.0)
       webpack-manifest-plugin: 4.1.1(webpack@5.89.0)
       workbox-webpack-plugin: 6.6.0(webpack@5.89.0)
@@ -27602,7 +27647,7 @@ packages:
     dependencies:
       klona: 2.0.6
       neo-async: 2.6.2
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
     dev: false
 
   /sass-loader@13.3.2(sass@1.69.5)(webpack@5.89.0):
@@ -27626,7 +27671,7 @@ packages:
     dependencies:
       neo-async: 2.6.2
       sass: 1.69.5
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
     dev: true
 
   /sass@1.69.5:
@@ -28324,7 +28369,7 @@ packages:
       abab: 2.0.6
       iconv-lite: 0.6.3
       source-map-js: 1.0.2
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
     dev: false
 
   /source-map-loader@4.0.1(webpack@5.89.0):
@@ -28336,7 +28381,7 @@ packages:
       abab: 2.0.6
       iconv-lite: 0.6.3
       source-map-js: 1.0.2
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
     dev: true
 
   /source-map-resolve@0.5.3:
@@ -28897,7 +28942,7 @@ packages:
     peerDependencies:
       webpack: ^5.0.0
     dependencies:
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
     dev: false
 
   /styled-jsx@5.1.1(@babel/core@7.23.6)(react@18.2.0):
@@ -29451,7 +29496,7 @@ packages:
       schema-utils: 3.3.0
       serialize-javascript: 6.0.1
       terser: 5.24.0
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
 
   /terser@4.8.1:
     resolution: {integrity: sha512-4GnLC0x667eJG0ewJTa6z/yXrbLGv80D9Ru6HIpCQmO+Q4PfEtBFi0ObSckqwL6VyQv/7ENJieXHo2ANmdQwgw==}
@@ -30670,7 +30715,7 @@ packages:
       debug: 4.3.4(supports-color@6.1.0)
       pathe: 1.1.1
       picocolors: 1.0.0
-      vite: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+      vite: 5.0.10(@types/node@18.19.3)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -30698,7 +30743,7 @@ packages:
       debug: 4.3.4(supports-color@6.1.0)
       kolorist: 1.8.0
       typescript: 5.2.2
-      vite: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+      vite: 5.0.10(@types/node@18.19.3)
       vue-tsc: 1.8.26(typescript@5.2.2)
     transitivePeerDependencies:
       - '@types/node'
@@ -30711,7 +30756,7 @@ packages:
     peerDependencies:
       vite: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0
     dependencies:
-      vite: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+      vite: 5.0.10(@types/node@18.19.3)
     dev: true
 
   /vite-plugin-inspect@0.7.40(rollup@4.6.0)(vite@4.5.0):
@@ -30794,7 +30839,7 @@ packages:
       merge-anything: 5.1.7
       solid-js: 1.8.7
       solid-refresh: 0.5.3(solid-js@1.8.7)
-      vite: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+      vite: 5.0.10(@types/node@18.19.3)
       vitefu: 0.2.5(vite@5.0.10)
     transitivePeerDependencies:
       - supports-color
@@ -30873,6 +30918,41 @@ packages:
     optionalDependencies:
       fsevents: 2.3.3
 
+  /vite@5.0.10(@types/node@18.19.3):
+    resolution: {integrity: sha512-2P8J7WWgmc355HUMlFrwofacvr98DAjoE52BfdbwQtyLH06XKwaL/FMnmKM2crF0iX4MpmMKoDlNCB1ok7zHCw==}
+    engines: {node: ^18.0.0 || >=20.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': ^18.0.0 || >=20.0.0
+      less: '*'
+      lightningcss: ^1.21.0
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      lightningcss:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      '@types/node': 18.19.3
+      esbuild: 0.19.10
+      postcss: 8.4.32
+      rollup: 4.6.0
+    optionalDependencies:
+      fsevents: 2.3.3
+
   /vite@5.0.10(@types/node@18.19.3)(less@4.2.0):
     resolution: {integrity: sha512-2P8J7WWgmc355HUMlFrwofacvr98DAjoE52BfdbwQtyLH06XKwaL/FMnmKM2crF0iX4MpmMKoDlNCB1ok7zHCw==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -30908,6 +30988,7 @@ packages:
       rollup: 4.6.0
     optionalDependencies:
       fsevents: 2.3.3
+    dev: true
 
   /vitefu@0.2.5(vite@4.5.1):
     resolution: {integrity: sha512-SgHtMLoqaeeGnd2evZ849ZbACbnwQCIwRH57t18FxcXoZop0uQu0uzlIhJBlF/eWVzuce0sHeqPcDo+evVcg8Q==}
@@ -30928,7 +31009,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+      vite: 5.0.10(@types/node@18.19.3)
 
   /vitest@1.1.0(@types/node@18.19.3)(jsdom@23.0.1):
     resolution: {integrity: sha512-oDFiCrw7dd3Jf06HoMtSRARivvyjHJaTxikFxuqJjO76U436PqlVw1uLn7a8OSPrhSfMGVaRakKpA2lePdw79A==}
@@ -30975,7 +31056,7 @@ packages:
       strip-literal: 1.3.0
       tinybench: 2.5.1
       tinypool: 0.8.1
-      vite: 5.0.10(@types/node@18.19.3)(less@4.2.0)
+      vite: 5.0.10(@types/node@18.19.3)
       vite-node: 1.1.0(@types/node@18.19.3)
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
@@ -31190,7 +31271,7 @@ packages:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
 
   /webpack-dev-middleware@6.1.1(webpack@5.89.0):
     resolution: {integrity: sha512-y51HrHaFeeWir0YO4f0g+9GwZawuigzcAdRNon6jErXy/SqV/+O6eaVAzDqE6t3e3NpGeR5CS+cCDaTC+V3yEQ==}
@@ -31206,7 +31287,7 @@ packages:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
     dev: true
 
   /webpack-dev-server@3.11.1(webpack@4.44.2):
@@ -31300,7 +31381,7 @@ packages:
       serve-index: 1.9.1(supports-color@6.1.0)
       sockjs: 0.3.24
       spdy: 4.0.2(supports-color@6.1.0)
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
       webpack-dev-middleware: 5.3.3(webpack@5.89.0)
       ws: 8.14.2
     transitivePeerDependencies:
@@ -31337,7 +31418,7 @@ packages:
       webpack: ^4.44.2 || ^5.47.0
     dependencies:
       tapable: 2.2.1
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
       webpack-sources: 2.3.1
     dev: false
 
@@ -31380,7 +31461,7 @@ packages:
         optional: true
     dependencies:
       typed-assert: 1.0.9
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
     dev: true
 
   /webpack-virtual-modules@0.6.1:
@@ -31507,7 +31588,7 @@ packages:
       - uglify-js
     dev: true
 
-  /webpack@5.89.0(esbuild@0.19.5):
+  /webpack@5.89.0(esbuild@0.19.10):
     resolution: {integrity: sha512-qyfIC10pOr70V+jkmud8tMfajraGCZMBWJtrmuBymQKCrLTRejBI8STDp1MCyZu/QTdZSeacCQYpYNQVOzX5kw==}
     engines: {node: '>=10.13.0'}
     hasBin: true
@@ -32013,7 +32094,7 @@ packages:
       fast-json-stable-stringify: 2.1.0
       pretty-bytes: 5.6.0
       upath: 1.2.0
-      webpack: 5.89.0(esbuild@0.19.5)
+      webpack: 5.89.0(esbuild@0.19.10)
       webpack-sources: 1.4.3
       workbox-build: 6.6.0
     transitivePeerDependencies:
