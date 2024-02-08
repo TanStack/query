@@ -52,10 +52,7 @@ describe('queriesObserver', () => {
     unsubscribe()
     expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
 
-    expect(consoleMock).toHaveBeenCalledTimes(1)
-    expect(consoleMock).toHaveBeenCalledWith(
-      "As of v4, queryKey needs to be an Array. If you are using a string like 'repoData', please change it to an Array, e.g. ['repoData']",
-    )
+    expect(consoleMock).not.toHaveBeenCalled()
     consoleMock.mockRestore()
   })
 
