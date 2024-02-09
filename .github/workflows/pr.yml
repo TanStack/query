@@ -41,7 +41,7 @@ jobs:
         with:
           main-branch-name: 'main'
       - name: Start CI Orchestrator
-        run: npx nx-cloud start-ci-run
+        run: npx nx-cloud start-ci-run --distribute on="3 linux-medium-js"
       - name: Run Tests
         run: pnpm run test:pr
       - name: Stop Agents
@@ -51,30 +51,6 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           directory: packages
-  agents:
-    name: Nx Cloud - Agents
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    strategy:
-      matrix:
-        agent: [1, 2, 3]
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile --prefer-offline
-      - name: Start Nx Agent ${{ matrix.agent }}
-        run: npx nx-cloud start-agent
   format:
     name: Format
     runs-on: ubuntu-latest
