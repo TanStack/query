@@ -41,8 +41,7 @@ jobs:
         with:
           main-branch-name: 'main'
       - name: Start CI Orchestrator
-        run: npx nx-cloud start-ci-run --distribute on="3 linux-medium-js"
-      - name: Run Tests
+        run:npx nx-cloud start-ci-run --distribute-on="3 linux-medium-js"
         run: pnpm run test:pr
       - name: Stop Agents
         if: ${{ always() }}
