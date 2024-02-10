@@ -31,7 +31,6 @@
   "devDependencies": {
     "@babel/core": "^7.23.6",
     "@expo/config": "^8.5.4",
-    "@types/react-native": "^0.72.0",
     "typescript": "5.2.2"
   }
 }
