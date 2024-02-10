@@ -1,7 +1,8 @@
-import { AST_NODE_TYPES } from '@typescript-eslint/utils'
-import { ASTUtils } from '../utils/ast-utils'
-import { createRule } from '../utils/create-rule'
-import { uniqueBy } from '../utils/unique-by'
+import { AST_NODE_TYPES, ESLintUtils } from '@typescript-eslint/utils'
+import { ASTUtils } from '../../utils/ast-utils'
+import { getDocsUrl } from '../../utils/get-docs-url'
+import { uniqueBy } from '../../utils/unique-by'
+import { detectTanstackQueryImports } from '../../utils/detect-react-query-imports'
 import { ExhaustiveDepsUtils } from './exhaustive-deps.utils'
 import type { TSESLint } from '@typescript-eslint/utils'
 
@@ -10,13 +11,15 @@ const QUERY_FN = 'queryFn'
 
 export const name = 'exhaustive-deps'
 
+const createRule = ESLintUtils.RuleCreator(getDocsUrl)
+
 export const rule = createRule({
   name,
   meta: {
     type: 'problem',
     docs: {
       description: 'Exhaustive deps rule for useQuery',
-      recommended: 'error',
+      recommended: 'error' as any,
     },
     messages: {
       missingDeps: `The following dependencies are missing in your queryKey: {{deps}}`,
@@ -28,11 +31,10 @@ export const rule = createRule({
   },
   defaultOptions: [],
 
-  create(context) {
+  create: detectTanstackQueryImports((context) => {
     return {
-      Property(node) {
+      Property: (node) => {
         if (
-          node.parent === undefined ||
           !ASTUtils.isObjectExpression(node.parent) ||
           !ASTUtils.isIdentifierWithName(node.key, QUERY_KEY)
         ) {
@@ -150,5 +152,5 @@ export const rule = createRule({
         }
       },
     }
-  },
+  }),
 })

@@ -3,11 +3,13 @@
 /** @type {import('eslint').Linter.Config} */
 const config = {
   root: true,
+  reportUnusedDisableDirectives: true,
+  ignorePatterns: ['**/build', '**/coverage', '**/dist'],
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'import'],
   extends: [
+    'eslint:recommended',
     'plugin:@cspell/recommended',
-    'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:import/recommended',
     'plugin:import/typescript',
@@ -19,7 +21,7 @@ const config = {
   },
   parserOptions: {
     tsconfigRootDir: __dirname,
-    project: './tsconfig.json',
+    project: true,
     sourceType: 'module',
     ecmaVersion: 2020,
   },
@@ -67,6 +69,7 @@ const config = {
       { prefer: 'type-imports' },
     ],
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/method-signature-style': ['error', 'property'],
     '@typescript-eslint/naming-convention': [
       'error',
       {
@@ -114,8 +117,12 @@ const config = {
         ],
       },
     ],
+    'no-case-declarations': 'off',
+    'no-empty': 'off',
+    'no-prototype-builtins': 'off',
     'no-redeclare': 'off',
     'no-shadow': 'error',
+    'no-undef': 'off',
     'sort-imports': ['error', { ignoreDeclarationSort: true }],
   },
   overrides: [

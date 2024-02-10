@@ -2,10 +2,6 @@
 
 /** @type {import('eslint').Linter.Config} */
 const config = {
-  parserOptions: {
-    tsconfigRootDir: __dirname,
-    project: './tsconfig.json',
-  },
   overrides: [
     {
       files: ['**/__testfixtures__/*'],

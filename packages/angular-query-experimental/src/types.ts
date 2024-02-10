@@ -53,23 +53,23 @@ type CreateStatusBasedQueryResult<
 > = Extract<QueryObserverResult<TData, TError>, { status: TStatus }>
 
 export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
-  isSuccess(
+  isSuccess: (
     this: CreateBaseQueryResult<TData, TError>,
-  ): this is CreateBaseQueryResult<
+  ) => this is CreateBaseQueryResult<
     TData,
     TError,
     CreateStatusBasedQueryResult<'success', TData, TError>
   >
-  isError(
+  isError: (
     this: CreateBaseQueryResult<TData, TError>,
-  ): this is CreateBaseQueryResult<
+  ) => this is CreateBaseQueryResult<
     TData,
     TError,
     CreateStatusBasedQueryResult<'error', TData, TError>
   >
-  isPending(
+  isPending: (
     this: CreateBaseQueryResult<TData, TError>,
-  ): this is CreateBaseQueryResult<
+  ) => this is CreateBaseQueryResult<
     TData,
     TError,
     CreateStatusBasedQueryResult<'pending', TData, TError>
@@ -185,9 +185,9 @@ export interface BaseMutationNarrowing<
   TVariables = unknown,
   TContext = unknown,
 > {
-  isSuccess(
+  isSuccess: (
     this: CreateMutationResult<TData, TError, TVariables, TContext>,
-  ): this is CreateMutationResult<
+  ) => this is CreateMutationResult<
     TData,
     TError,
     TVariables,
@@ -200,9 +200,9 @@ export interface BaseMutationNarrowing<
       TContext
     >
   >
-  isError(
+  isError: (
     this: CreateMutationResult<TData, TError, TVariables, TContext>,
-  ): this is CreateMutationResult<
+  ) => this is CreateMutationResult<
     TData,
     TError,
     TVariables,
@@ -215,9 +215,9 @@ export interface BaseMutationNarrowing<
       TContext
     >
   >
-  isPending(
+  isPending: (
     this: CreateMutationResult<TData, TError, TVariables, TContext>,
-  ): this is CreateMutationResult<
+  ) => this is CreateMutationResult<
     TData,
     TError,
     TVariables,
@@ -230,9 +230,9 @@ export interface BaseMutationNarrowing<
       TContext
     >
   >
-  isIdle(
+  isIdle: (
     this: CreateMutationResult<TData, TError, TVariables, TContext>,
-  ): this is CreateMutationResult<
+  ) => this is CreateMutationResult<
     TData,
     TError,
     TVariables,

@@ -109,5 +109,4 @@ function throttle<TArgs extends Array<any>>(
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 function noop() {}

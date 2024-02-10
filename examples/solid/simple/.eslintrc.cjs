@@ -2,9 +2,7 @@
 
 /** @type {import('eslint').Linter.Config} */
 const config = {
-  parserOptions: {
-    extraFileExtensions: ['.vue'],
-  },
+  extends: ['plugin:@tanstack/eslint-plugin-query/recommended'],
 }
 
 module.exports = config
