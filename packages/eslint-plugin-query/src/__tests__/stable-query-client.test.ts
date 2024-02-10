@@ -1,8 +1,8 @@
-import { ESLintUtils } from '@typescript-eslint/utils'
-import { normalizeIndent } from '../../utils/test-utils'
-import { rule } from './stable-query-client.rule'
+import { RuleTester } from '@typescript-eslint/rule-tester'
+import { rule } from '../rules/stable-query-client/stable-query-client.rule'
+import { normalizeIndent } from './test-utils'
 
-const ruleTester = new ESLintUtils.RuleTester({
+const ruleTester = new RuleTester({
   parser: '@typescript-eslint/parser',
   settings: {},
 })
