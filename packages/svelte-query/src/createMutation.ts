@@ -48,5 +48,4 @@ export function createMutation<
   return { subscribe }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 function noop() {}

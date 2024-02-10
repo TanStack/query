@@ -1567,7 +1567,6 @@ const QueryDetails = () => {
 
   const handleRefetch = () => {
     const promise = activeQuery()?.fetch()
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     promise?.catch(() => {})
   }
 
@@ -1581,7 +1580,6 @@ const QueryDetails = () => {
     activeQuery()!.setState({
       status: 'error',
       error,
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       fetchMeta: {
         ...activeQuery()!.state.fetchMeta,
         __previousQueryOptions,
@@ -1769,7 +1767,6 @@ const QueryDetails = () => {
                 activeQueryVal.setState({
                   data: undefined,
                   status: 'pending',
-                  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
                   fetchMeta: {
                     ...activeQueryVal.state.fetchMeta,
                     __previousQueryOptions,
@@ -2104,7 +2101,6 @@ const createSubscribeToQueryCacheBatcher = <T,>(
   })
 
   onCleanup(() => {
-    // @ts-ignore
     queryCacheMap.delete(callback)
   })
 
@@ -2156,11 +2152,9 @@ const createSubscribeToMutationCacheBatcher = <T,>(
     setValue(callback(mutationCache))
   })
 
-  // @ts-ignore
   mutationCacheMap.set(callback, setValue)
 
   onCleanup(() => {
-    // @ts-ignore
     mutationCacheMap.delete(callback)
   })
 

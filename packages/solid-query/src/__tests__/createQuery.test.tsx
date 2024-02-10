@@ -42,8 +42,7 @@ describe('createQuery', () => {
   it('should return the correct types', () => {
     const key = queryKey()
 
-    // @ts-ignore
-    // eslint-disable-next-line
+    // @ts-expect-error
     function Page() {
       // unspecified query function should default to unknown
       const noQueryFn = createQuery(() => ({ queryKey: key }))
@@ -2511,7 +2510,6 @@ describe('createQuery', () => {
           fallback={(error) => (
             <div>
               <div>error boundary</div>
-              {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
               <div>{error?.message}</div>
             </div>
           )}
@@ -4312,7 +4310,6 @@ describe('createQuery', () => {
       readonly [typeof key, number]
     > = async (ctx) => {
       const [, limit] = ctx.queryKey
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       const value = limit % 2 && ctx.signal ? 'abort' : `data ${limit}`
       await sleep(25)
       return value

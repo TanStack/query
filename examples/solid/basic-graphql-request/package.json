@@ -9,15 +9,15 @@
     "test:types": "tsc"
   },
   "dependencies": {
-    "@tanstack/solid-query": "^5.18.1",
-    "@tanstack/solid-query-devtools": "^5.18.1",
+    "@tanstack/solid-query": "^5.20.1",
+    "@tanstack/solid-query-devtools": "^5.20.1",
     "graphql": "^16.8.1",
     "graphql-request": "^6.1.0",
-    "solid-js": "^1.8.7"
+    "solid-js": "^1.8.14"
   },
   "devDependencies": {
     "typescript": "5.2.2",
-    "vite": "^5.0.10",
-    "vite-plugin-solid": "^2.8.0"
+    "vite": "^5.1.1",
+    "vite-plugin-solid": "^2.9.1"
   }
 }
