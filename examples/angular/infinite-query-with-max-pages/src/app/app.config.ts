@@ -1,13 +1,18 @@
-import { provideHttpClient, withFetch } from '@angular/common/http'
-import { ApplicationConfig } from '@angular/core'
+import {
+  provideHttpClient,
+  withFetch,
+  withInterceptors,
+} from '@angular/common/http'
 import {
   QueryClient,
   provideAngularQuery,
 } from '@tanstack/angular-query-experimental'
+import { projectsMockInterceptor } from './api/projects-mock.interceptor'
+import type { ApplicationConfig } from '@angular/core'
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(withFetch()),
+    provideHttpClient(withInterceptors([projectsMockInterceptor]), withFetch()),
     provideAngularQuery(
       new QueryClient({
         defaultOptions: {
