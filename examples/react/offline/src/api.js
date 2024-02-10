@@ -1,4 +1,5 @@
-import { setupWorker, rest } from 'msw'
+import { delay, HttpResponse, http, passthrough } from 'msw'
+import { setupWorker } from 'msw/browser'
 import ky from 'ky'
 
 const movies = [
@@ -21,34 +22,31 @@ export const updateMovie = (id, comment) =>
 
 export const worker = setupWorker(
   ...[
-    rest.get('/movies', (req, res, ctx) => {
-      return res(
-        ctx.delay(1000),
-        ctx.json({
-          ts: Date.now(),
-          movies: movies.map(({ id, title }) => ({ id, title })),
-        }),
-      )
+    http.get('/movies', async () => {
+      console.log('movies')
+      await delay(1000)
+      return HttpResponse.json({
+        ts: Date.now(),
+        movies: movies.map(({ id, title }) => ({ id, title })),
+      })
     }),
-    rest.get('/movies/:id', (req, res, ctx) => {
-      const { id } = req.params
+    http.get('/movies/:id', async ({ params }) => {
+      const { id } = params
 
       const movie = movies.find((movie) => movie.id === id)
       if (!movie) {
-        return res(ctx.status(404, `Movie with id ${id} not found`))
+        return new HttpResponse(`Movie with id ${id} not found`, {
+          status: 404,
+        })
       }
 
-      return res(
-        ctx.delay(1000),
-        ctx.json({
-          ts: Date.now(),
-          movie,
-        }),
-      )
+      await delay(1000)
+      return HttpResponse.json({ ts: Date.now(), movie })
     }),
-    rest.post('/movies/:id', (req, res, ctx) => {
-      const { id } = req.params
-      const { comment } = req.body
+    http.post('/movies/:id', async ({ request, params }) => {
+      const { id } = params
+      const body = await request.json()
+      const { comment } = body
 
       movies.forEach((movie) => {
         if (movie.id === id) {
@@ -56,12 +54,10 @@ export const worker = setupWorker(
         }
       })
 
-      return res(
-        ctx.delay(1000),
-        ctx.json({
-          message: `Successfully updated movie ${id}`,
-        }),
-      )
+      await delay(1000)
+      return HttpResponse.json({ message: `Successfully updated movie ${id}` })
     }),
+    http.get('*.js', () => passthrough()),
+    http.get('*.svg', () => passthrough()),
   ],
 )

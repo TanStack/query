@@ -1,25 +1,32 @@
 {
   "name": "@tanstack/query-example-angular-basic",
-  "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "test:types": "tsc"
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development"
   },
+  "private": true,
   "dependencies": {
-    "@angular/common": "^17.0.8",
-    "@angular/compiler": "^17.0.8",
-    "@angular/core": "^17.0.8",
-    "@angular/platform-browser": "^17.0.8",
-    "@tanstack/angular-query-devtools-experimental": "^5.18.1",
-    "@tanstack/angular-query-experimental": "^5.18.1",
+    "@angular/animations": "^17.1.2",
+    "@angular/common": "^17.1.2",
+    "@angular/compiler": "^17.1.2",
+    "@angular/core": "^17.1.2",
+    "@angular/forms": "^17.1.2",
+    "@angular/platform-browser": "^17.1.2",
+    "@angular/platform-browser-dynamic": "^17.1.2",
+    "@angular/router": "^17.1.2",
+    "@tanstack/angular-query-experimental": "^5.19.1",
     "rxjs": "^7.8.1",
-    "zone.js": "^0.14.2"
+    "tslib": "^2.6.2",
+    "zone.js": "^0.14.3"
   },
   "devDependencies": {
-    "typescript": "5.2.2",
-    "vite": "^5.0.10"
+    "@angular-devkit/build-angular": "^17.1.2",
+    "@angular/cli": "^17.1.2",
+    "@angular/compiler-cli": "^17.1.2",
+    "@tanstack/angular-query-devtools-experimental": "^5.19.1",
+    "typescript": "5.2.2"
   }
 }

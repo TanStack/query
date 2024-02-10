@@ -67,6 +67,7 @@ const config = {
       { prefer: 'type-imports' },
     ],
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/method-signature-style': ['error', 'property'],
     '@typescript-eslint/naming-convention': [
       'error',
       {

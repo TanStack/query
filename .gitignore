@@ -8,6 +8,7 @@ yarn.lock
 
 # builds
 types
+*/**/.angular
 */**/.svelte-kit
 */**/.tsup
 */**/build

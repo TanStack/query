@@ -13,6 +13,7 @@ export { queryOptions } from './query-options'
 
 export { infiniteQueryOptions } from './infinite-query-options'
 
+export * from './inject-infinite-query'
 export * from './inject-is-fetching'
 export * from './inject-is-mutating'
 export * from './inject-mutation'
