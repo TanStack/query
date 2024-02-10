@@ -1,6 +1,0 @@
-{
-  "extends": ["plugin:@tanstack/eslint-plugin-query/recommended"],
-  "parserOptions": {
-    "project": "./tsconfig.json"
-  }
-}

@@ -4,8 +4,6 @@
 const config = {
   extends: ['plugin:svelte/recommended'],
   parserOptions: {
-    tsconfigRootDir: __dirname,
-    project: true,
     extraFileExtensions: ['.svelte'],
   },
   ignorePatterns: ['*.config.*', '*.setup.*', '**/dist/*'],
