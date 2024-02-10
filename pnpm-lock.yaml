@@ -1748,11 +1748,11 @@ importers:
   packages/codemods:
     devDependencies:
       '@types/jscodeshift':
-        specifier: 0.11.6
-        version: 0.11.6
+        specifier: 0.11.11
+        version: 0.11.11
       jscodeshift:
-        specifier: 0.15.0
-        version: 0.15.0
+        specifier: 0.15.1
+        version: 0.15.1
 
   packages/eslint-plugin-query:
     dependencies:
@@ -3011,6 +3011,7 @@ packages:
       '@babel/core': 7.23.7
       '@babel/helper-create-class-features-plugin': 7.23.6(@babel/core@7.23.7)
       '@babel/helper-plugin-utils': 7.22.5
+    dev: false
 
   /@babel/plugin-proposal-decorators@7.23.2(@babel/core@7.23.7):
     resolution: {integrity: sha512-eR0gJQc830fJVGz37oKLvt9W9uUIQSAovUl0e9sJ3YeO09dlcoBVYD3CLrjCj4qHdXmfiyTyFt8yeQYSN5fxLg==}
@@ -3047,6 +3048,7 @@ packages:
       '@babel/core': 7.23.7
       '@babel/helper-plugin-utils': 7.22.5
       '@babel/plugin-syntax-nullish-coalescing-operator': 7.8.3(@babel/core@7.23.7)
+    dev: false
 
   /@babel/plugin-proposal-numeric-separator@7.18.6(@babel/core@7.23.7):
     resolution: {integrity: sha512-ozlZFogPqoLm8WBr5Z8UckIoE4YQ5KESVcNudyXOR8uqIkliTEgJ3RoketfG6pmzLdeZF0H/wjE9/cCEitBl7Q==}
@@ -3098,6 +3100,7 @@ packages:
       '@babel/helper-plugin-utils': 7.22.5
       '@babel/helper-skip-transparent-expression-wrappers': 7.22.5
       '@babel/plugin-syntax-optional-chaining': 7.8.3(@babel/core@7.23.7)
+    dev: false
 
   /@babel/plugin-proposal-private-methods@7.18.6(@babel/core@7.23.7):
     resolution: {integrity: sha512-nutsvktDItsNn4rpGItSNV2sz1XwS+nfU0Rg8aCx3W3NOKVzdMjJRu0O5OkgDp3ZGICSTbgRpxZoWsxoKRvbeA==}
@@ -9151,8 +9154,8 @@ packages:
       '@types/istanbul-lib-report': 3.0.2
     dev: false
 
-  /@types/jscodeshift@0.11.6:
-    resolution: {integrity: sha512-3lJ4DajWkk4MZ1F7q+1C7jE0z0xOtbu0VU/Kg3wdPq2DUvJjySSlu3B5Q/bICrTxugLhONBO7inRUWsymOID/A==}
+  /@types/jscodeshift@0.11.11:
+    resolution: {integrity: sha512-d7CAfFGOupj5qCDqMODXxNz2/NwCv/Lha78ZFbnr6qpk3K98iSB8I+ig9ERE2+EeYML352VMRsjPyOpeA+04eQ==}
     dependencies:
       ast-types: 0.14.2
       recast: 0.20.5
@@ -19380,8 +19383,8 @@ packages:
       - supports-color
     dev: false
 
-  /jscodeshift@0.15.0:
-    resolution: {integrity: sha512-t337Wx7Vy1ffhas7E1KZUHaR9YPdeCfxPvxz9k6DKwYW88pcs1piR1eR9d+7GQZGSQIZd6a+cfIM3XpMe9rFKQ==}
+  /jscodeshift@0.15.1:
+    resolution: {integrity: sha512-hIJfxUy8Rt4HkJn/zZPU9ChKfKZM1342waJ1QC2e2YsPcWhM+3BJ4dcfQCzArTrk1jJeNLB341H+qOcEHRxJZg==}
     hasBin: true
     peerDependencies:
       '@babel/preset-env': ^7.1.6
@@ -19391,10 +19394,11 @@ packages:
     dependencies:
       '@babel/core': 7.23.7
       '@babel/parser': 7.23.9
-      '@babel/plugin-proposal-class-properties': 7.18.6(@babel/core@7.23.7)
-      '@babel/plugin-proposal-nullish-coalescing-operator': 7.18.6(@babel/core@7.23.7)
-      '@babel/plugin-proposal-optional-chaining': 7.21.0(@babel/core@7.23.7)
+      '@babel/plugin-transform-class-properties': 7.23.3(@babel/core@7.23.7)
       '@babel/plugin-transform-modules-commonjs': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-nullish-coalescing-operator': 7.23.4(@babel/core@7.23.7)
+      '@babel/plugin-transform-optional-chaining': 7.23.4(@babel/core@7.23.7)
+      '@babel/plugin-transform-private-methods': 7.23.3(@babel/core@7.23.7)
       '@babel/preset-flow': 7.22.15(@babel/core@7.23.7)
       '@babel/preset-typescript': 7.23.3(@babel/core@7.23.7)
       '@babel/register': 7.22.15(@babel/core@7.23.7)
