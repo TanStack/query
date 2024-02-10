@@ -3,7 +3,6 @@ import { ASTUtils } from '../../utils/ast-utils'
 import { getDocsUrl } from '../../utils/get-docs-url'
 import { detectTanstackQueryImports } from '../../utils/detect-react-query-imports'
 import type { TSESLint } from '@typescript-eslint/utils'
-import type {} from '@typescript-eslint/utils'
 
 export const name = 'stable-query-client'
 
