@@ -23,11 +23,11 @@ importers:
         specifier: ^0.4.2
         version: 0.4.2(@types/node@18.19.3)(esbuild@0.19.11)(rollup@4.6.0)(typescript@5.2.2)(vite@5.0.12)
       '@testing-library/jest-dom':
-        specifier: ^6.1.5
-        version: 6.1.5(vitest@1.1.0)
+        specifier: ^6.4.2
+        version: 6.4.2(vitest@1.1.0)
       '@testing-library/react':
-        specifier: ^14.1.2
-        version: 14.1.2(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^14.2.1
+        version: 14.2.1(react-dom@18.2.0)(react@18.2.0)
       '@types/eslint':
         specifier: ^8.56.2
         version: 8.56.2
@@ -1062,7 +1062,7 @@ importers:
         version: 5.0.12(@types/node@18.19.3)(less@4.2.0)(sass@1.69.7)(terser@5.26.0)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.1.5)(solid-js@1.8.7)(vite@5.0.12)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.7)(vite@5.0.12)
 
   examples/solid/basic-typescript:
     dependencies:
@@ -1084,7 +1084,7 @@ importers:
         version: 5.0.12(@types/node@18.19.3)(less@4.2.0)(sass@1.69.7)(terser@5.26.0)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.1.5)(solid-js@1.8.7)(vite@5.0.12)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.7)(vite@5.0.12)
 
   examples/solid/default-query-function:
     dependencies:
@@ -1106,7 +1106,7 @@ importers:
         version: 5.0.12(@types/node@18.19.3)(less@4.2.0)(sass@1.69.7)(terser@5.26.0)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.1.5)(solid-js@1.8.7)(vite@5.0.12)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.7)(vite@5.0.12)
 
   examples/solid/simple:
     dependencies:
@@ -1131,7 +1131,7 @@ importers:
         version: 5.0.12(@types/node@18.19.3)(less@4.2.0)(sass@1.69.7)(terser@5.26.0)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.1.5)(solid-js@1.8.7)(vite@5.0.12)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.7)(vite@5.0.12)
 
   examples/solid/solid-start-streaming:
     dependencies:
@@ -1143,7 +1143,7 @@ importers:
         version: 0.10.5(solid-js@1.8.7)
       '@solidjs/start':
         specifier: ^0.4.2
-        version: 0.4.2(@testing-library/jest-dom@6.1.5)(rollup@4.6.0)(solid-js@1.8.7)(vinxi@0.0.54)(vite@4.5.1)
+        version: 0.4.2(@testing-library/jest-dom@6.4.2)(rollup@4.6.0)(solid-js@1.8.7)(vinxi@0.0.54)(vite@4.5.1)
       '@tanstack/solid-query':
         specifier: ^5.20.1
         version: link:../../../packages/solid-query
@@ -1635,7 +1635,7 @@ importers:
         version: 5.0.12(@types/node@18.19.3)(less@4.2.0)(sass@1.69.7)(terser@5.26.0)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.1.5)(solid-js@1.8.7)(vite@5.0.12)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.7)(vite@5.0.12)
 
   integrations/svelte-vite:
     devDependencies:
@@ -1827,7 +1827,7 @@ importers:
         version: 2.2.0(esbuild@0.19.11)(solid-js@1.8.7)(tsup@8.0.1)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.1.5)(solid-js@1.8.7)(vite@5.0.12)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.7)(vite@5.0.12)
 
   packages/query-persist-client-core:
     dependencies:
@@ -1939,7 +1939,7 @@ importers:
         version: 2.2.0(esbuild@0.19.11)(solid-js@1.8.7)(tsup@8.0.1)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.1.5)(solid-js@1.8.7)(vite@5.0.12)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.7)(vite@5.0.12)
 
   packages/solid-query-devtools:
     dependencies:
@@ -1958,7 +1958,7 @@ importers:
         version: 2.2.0(esbuild@0.19.11)(solid-js@1.8.7)(tsup@8.0.1)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.1.5)(solid-js@1.8.7)(vite@5.0.12)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.7)(vite@5.0.12)
 
   packages/solid-query-persist-client:
     dependencies:
@@ -1977,7 +1977,7 @@ importers:
         version: 2.2.0(esbuild@0.19.11)(solid-js@1.8.7)(tsup@8.0.1)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.1.5)(solid-js@1.8.7)(vite@5.0.12)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.7)(vite@5.0.12)
 
   packages/svelte-query:
     dependencies:
@@ -1992,8 +1992,8 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1(svelte@4.2.8)(vite@5.0.12)
       '@testing-library/svelte':
-        specifier: ^4.0.5
-        version: 4.0.5(svelte@4.2.8)
+        specifier: ^4.1.0
+        version: 4.1.0(svelte@4.2.8)
       eslint-plugin-svelte:
         specifier: ^2.35.1
         version: 2.35.1(eslint@8.56.0)(svelte@4.2.8)
@@ -2054,8 +2054,8 @@ importers:
         specifier: workspace:*
         version: link:../svelte-query
       '@testing-library/svelte':
-        specifier: ^4.0.5
-        version: 4.0.5(svelte@4.2.8)
+        specifier: ^4.1.0
+        version: 4.1.0(svelte@4.2.8)
       eslint-plugin-svelte:
         specifier: ^2.35.1
         version: 2.35.1(eslint@8.56.0)(svelte@4.2.8)
@@ -2128,8 +2128,8 @@ packages:
     resolution: {integrity: sha512-1Yjs2SvM8TflER/OD3cOjhWWOZb58A2t7wpE2S9XfBYTiIl+XFhQG2bjy4Pu1I+EAlCNUzRDYDdFwFYUKvXcIA==}
     engines: {node: '>=0.10.0'}
 
-  /@adobe/css-tools@4.3.1:
-    resolution: {integrity: sha512-/62yikz7NLScCGAAST5SHdnjaDJQBDq0M2muyRTpf2VQhw6StBg2ALiu73zSJQ4fMVLA+0uBhBHAle7Wg+2kSg==}
+  /@adobe/css-tools@4.3.3:
+    resolution: {integrity: sha512-rE0Pygv0sEZ4vBWHlAgJLGDU7Pm8xoO6p3wsEceb7GYAjScrOHpEo8KK/eVkAcnSM+slAEtXjA2JpdjLp4fJQQ==}
 
   /@algolia/cache-browser-local-storage@4.22.0:
     resolution: {integrity: sha512-uZ1uZMLDZb4qODLfTSNHxSi4fH9RdrQf7DXEzW01dS8XK7QFtFh29N5NGKa9S+Yudf1vUMIF+/RiL4i/J0pWlQ==}
@@ -8483,7 +8483,7 @@ packages:
     dependencies:
       solid-js: 1.8.7
 
-  /@solidjs/start@0.4.2(@testing-library/jest-dom@6.1.5)(rollup@4.6.0)(solid-js@1.8.7)(vinxi@0.0.54)(vite@4.5.1):
+  /@solidjs/start@0.4.2(@testing-library/jest-dom@6.4.2)(rollup@4.6.0)(solid-js@1.8.7)(vinxi@0.0.54)(vite@4.5.1):
     resolution: {integrity: sha512-Ya7z78E6xzLLyUX5eUTHVum3LTf1SIkss1vHJ/hZ+UNkI2l81W66LkLZKwH3piF0b6+ZF8NoW7WEZ6T5ugW6ng==}
     dependencies:
       '@vinxi/plugin-directives': 0.0.50(vinxi@0.0.54)
@@ -8493,7 +8493,7 @@ packages:
       seroval: 1.0.0
       seroval-plugins: 1.0.1(seroval@1.0.0)
       vite-plugin-inspect: 0.7.40(rollup@4.6.0)(vite@4.5.1)
-      vite-plugin-solid: 2.9.1(@testing-library/jest-dom@6.1.5)(solid-js@1.8.7)(vite@4.5.1)
+      vite-plugin-solid: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.7)(vite@4.5.1)
     transitivePeerDependencies:
       - '@nuxt/kit'
       - '@testing-library/jest-dom'
@@ -8805,16 +8805,19 @@ packages:
       pretty-format: 27.5.1
     dev: true
 
-  /@testing-library/jest-dom@6.1.5(vitest@1.1.0):
-    resolution: {integrity: sha512-3y04JLW+EceVPy2Em3VwNr95dOKqA8DhR0RJHhHKDZNYXcVXnEK7WIrpj4eYU8SVt/qYZ2aRWt/WgQ+grNES8g==}
+  /@testing-library/jest-dom@6.4.2(vitest@1.1.0):
+    resolution: {integrity: sha512-CzqH0AFymEMG48CpzXFriYYkOjk6ZGPCLMhW9e9jg3KMCn5OfJecF8GtGW7yGfR/IgCe3SX8BSwjdzI6BBbZLw==}
     engines: {node: '>=14', npm: '>=6', yarn: '>=1'}
     peerDependencies:
       '@jest/globals': '>= 28'
+      '@types/bun': latest
       '@types/jest': '>= 28'
       jest: '>= 28'
       vitest: '>= 0.32'
     peerDependenciesMeta:
       '@jest/globals':
+        optional: true
+      '@types/bun':
         optional: true
       '@types/jest':
         optional: true
@@ -8823,18 +8826,18 @@ packages:
       vitest:
         optional: true
     dependencies:
-      '@adobe/css-tools': 4.3.1
+      '@adobe/css-tools': 4.3.3
       '@babel/runtime': 7.23.7
       aria-query: 5.3.0
       chalk: 3.0.0
       css.escape: 1.5.1
-      dom-accessibility-api: 0.5.16
+      dom-accessibility-api: 0.6.3
       lodash: 4.17.21
       redent: 3.0.0
       vitest: 1.1.0(@types/node@18.19.3)(jsdom@24.0.0)
 
-  /@testing-library/react@14.1.2(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-z4p7DVBTPjKM5qDZ0t5ZjzkpSNb+fZy1u6bzO7kk8oeGagpPCAtgh4cx1syrfp7a+QWkM021jGqjJaxJJnXAZg==}
+  /@testing-library/react@14.2.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-sGdjws32ai5TLerhvzThYFbpnF9XtL65Cjf+gB0Dhr29BGqK+mAeN7SURSdu+eqgET4ANcWoC7FQpkaiGvBr+A==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^18.0.0
@@ -8847,8 +8850,8 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: true
 
-  /@testing-library/svelte@4.0.5(svelte@4.2.8):
-    resolution: {integrity: sha512-P7X3mpYv/My4hBZfxVxTFV5KcA+EoWfRCguWP7WQdYj6HMdg/L+LiwG4ocvLe+hupedrC7dwcy85JlxKplJp2g==}
+  /@testing-library/svelte@4.1.0(svelte@4.2.8):
+    resolution: {integrity: sha512-MJqe7x9WowkiAVdk9mvazEC2ktFZdmK2OqFVoO557PC37aBemQ4ozqdK3yrG34Zg9kuln3qgTVeLSh08e69AMw==}
     engines: {node: '>= 10'}
     peerDependencies:
       svelte: ^3 || ^4
@@ -13820,6 +13823,10 @@ packages:
 
   /dom-accessibility-api@0.5.16:
     resolution: {integrity: sha512-X7BJ2yElsnOJ30pZF4uIIDfBEVgF4XEBxL9Bxhy6dnrm5hkzqmsWHGTiHqRiITNhMyFLyAiWndIJP7Z1NTteDg==}
+    dev: true
+
+  /dom-accessibility-api@0.6.3:
+    resolution: {integrity: sha512-7ZgogeTnjuHbo+ct10G9Ffp0mif17idi0IyWNVA/wcwcm7NPOD/WEHVP3n7n3MhXqxoIYm8d6MuZohYWIZ4T3w==}
 
   /dom-converter@0.2.0:
     resolution: {integrity: sha512-gd3ypIPfOMr9h5jIKq8E3sHOTCjeirnl0WK5ZdS1AW0Odt0b1PaWaHdJ4Qk4klv+YB9aJBS7mESXjFoDQPu6DA==}
@@ -28668,7 +28675,7 @@ packages:
       - supports-color
     dev: false
 
-  /vite-plugin-solid@2.9.1(@testing-library/jest-dom@6.1.5)(solid-js@1.8.7)(vite@4.5.1):
+  /vite-plugin-solid@2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.7)(vite@4.5.1):
     resolution: {integrity: sha512-RC4hj+lbvljw57BbMGDApvEOPEh14lwrr/GeXRLNQLcR1qnOdzOwwTSFy13Gj/6FNIZpBEl0bWPU+VYFawrqUw==}
     peerDependencies:
       '@testing-library/jest-dom': ^5.16.6 || ^5.17.0 || ^6.*
@@ -28679,7 +28686,7 @@ packages:
         optional: true
     dependencies:
       '@babel/core': 7.23.7
-      '@testing-library/jest-dom': 6.1.5(vitest@1.1.0)
+      '@testing-library/jest-dom': 6.4.2(vitest@1.1.0)
       '@types/babel__core': 7.20.5
       babel-preset-solid: 1.8.6(@babel/core@7.23.7)
       merge-anything: 5.1.7
@@ -28691,7 +28698,7 @@ packages:
       - supports-color
     dev: false
 
-  /vite-plugin-solid@2.9.1(@testing-library/jest-dom@6.1.5)(solid-js@1.8.7)(vite@5.0.12):
+  /vite-plugin-solid@2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.7)(vite@5.0.12):
     resolution: {integrity: sha512-RC4hj+lbvljw57BbMGDApvEOPEh14lwrr/GeXRLNQLcR1qnOdzOwwTSFy13Gj/6FNIZpBEl0bWPU+VYFawrqUw==}
     peerDependencies:
       '@testing-library/jest-dom': ^5.16.6 || ^5.17.0 || ^6.*
@@ -28702,7 +28709,7 @@ packages:
         optional: true
     dependencies:
       '@babel/core': 7.23.7
-      '@testing-library/jest-dom': 6.1.5(vitest@1.1.0)
+      '@testing-library/jest-dom': 6.4.2(vitest@1.1.0)
       '@types/babel__core': 7.20.5
       babel-preset-solid: 1.8.6(@babel/core@7.23.7)
       merge-anything: 5.1.7
