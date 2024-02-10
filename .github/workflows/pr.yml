@@ -21,6 +21,10 @@ jobs:
     name: Nx Cloud - Main Job
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -28,10 +32,6 @@ jobs:
           cache: pnpm
       - name: Start Agents
         run: npx nx-cloud start-ci-run --distribute-on="12 linux-medium-js"
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
