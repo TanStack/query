@@ -1,5 +1,4 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
-import * as React from 'react'
 import ReactDOM from 'react-dom'
 import * as ReactDOMTestUtils from 'react-dom/test-utils'
 import * as ReactDOMServer from 'react-dom/server'
