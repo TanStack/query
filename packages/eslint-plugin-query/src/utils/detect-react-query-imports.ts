@@ -15,7 +15,7 @@ type Helpers = {
   isTanstackQueryImport: (node: TSESTree.Identifier) => boolean
 }
 
-export type EnhancedCreate = (
+type EnhancedCreate = (
   context: Context,
   options: Options,
   helpers: Helpers,
