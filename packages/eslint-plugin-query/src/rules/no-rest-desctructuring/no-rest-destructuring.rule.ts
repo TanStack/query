@@ -27,9 +27,9 @@ export const rule: ESLintUtils.RuleModule<
   },
   defaultOptions: [],
 
-  create(context, _, helpers) {
+  create: (context, _, helpers) => {
     return {
-      CallExpression(node) {
+      CallExpression: (node) => {
         if (
           !ASTUtils.isIdentifierWithOneOfNames(node.callee, queryHooks) ||
           !helpers.isTanstackQueryImport(node.callee) ||

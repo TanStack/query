@@ -32,9 +32,9 @@ export const rule: ESLintUtils.RuleModule<
   },
   defaultOptions: [],
 
-  create(context) {
+  create: (context) => {
     return {
-      Property(node) {
+      Property: (node) => {
         if (
           !ASTUtils.isObjectExpression(node.parent) ||
           !ASTUtils.isIdentifierWithName(node.key, QUERY_KEY)

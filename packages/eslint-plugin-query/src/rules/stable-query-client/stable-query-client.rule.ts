@@ -31,9 +31,9 @@ export const rule: ESLintUtils.RuleModule<
   },
   defaultOptions: [],
 
-  create(context, _, helpers) {
+  create: (context, _, helpers) => {
     return {
-      NewExpression(node) {
+      NewExpression: (node) => {
         if (
           node.callee.type !== AST_NODE_TYPES.Identifier ||
           node.callee.name !== 'QueryClient' ||
