@@ -52,7 +52,7 @@
     "@solid-primitives/keyed": "^1.2.0",
     "@solid-primitives/resize-observer": "^2.0.22",
     "@solid-primitives/storage": "^1.3.11",
-    "@tanstack/match-sorter-utils": "^8.8.4",
+    "@tanstack/match-sorter-utils": "^8.11.8",
     "@tanstack/query-core": "workspace:*",
     "clsx": "^2.0.0",
     "goober": "^2.1.13",
