@@ -9,11 +9,11 @@
   "dependencies": {
     "@tanstack/react-query": "^5.20.1",
     "@tanstack/react-query-devtools": "^5.20.1",
-    "ky": "^1.1.3",
+    "ky": "^1.2.0",
     "next": "^14.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "resolve-from": "^5.0.0",
-    "web-streams-polyfill": "^3.2.1"
+    "web-streams-polyfill": "^3.3.2"
   }
 }
