@@ -146,7 +146,7 @@ importers:
         specifier: ^17.1.2
         version: 17.1.2(@angular/common@17.1.2)(@angular/core@17.1.2)(@angular/platform-browser@17.1.2)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.19.0
+        specifier: ^5.19.1
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -168,7 +168,7 @@ importers:
         specifier: ^17.1.2
         version: 17.1.2(@angular/compiler@17.1.2)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.19.0
+        specifier: ^5.19.1
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
@@ -189,10 +189,10 @@ importers:
         specifier: ^17.1.2
         version: 17.1.2(@angular/animations@17.1.2)(@angular/common@17.1.2)(@angular/core@17.1.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.19.0
+        specifier: ^5.19.1
         version: link:../../../packages/angular-query-devtools-experimental
       '@tanstack/angular-query-experimental':
-        specifier: ^5.19.0
+        specifier: ^5.19.1
         version: link:../../../packages/angular-query-experimental
       axios:
         specifier: ^1.6.2
@@ -238,7 +238,7 @@ importers:
         specifier: ^17.1.2
         version: 17.1.2(@angular/common@17.1.2)(@angular/core@17.1.2)(@angular/platform-browser@17.1.2)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.19.0
+        specifier: ^5.19.1
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -260,7 +260,7 @@ importers:
         specifier: ^17.1.2
         version: 17.1.2(@angular/compiler@17.1.2)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.19.0
+        specifier: ^5.19.1
         version: link:../../../packages/angular-query-devtools-experimental
       msw:
         specifier: ^2.1.7
@@ -284,10 +284,10 @@ importers:
         specifier: ^17.1.2
         version: 17.1.2(@angular/animations@17.1.2)(@angular/common@17.1.2)(@angular/core@17.1.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.19.0
+        specifier: ^5.19.1
         version: link:../../../packages/angular-query-devtools-experimental
       '@tanstack/angular-query-experimental':
-        specifier: ^5.19.0
+        specifier: ^5.19.1
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -429,7 +429,7 @@ importers:
   examples/react/basic-typescript:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.18.1
+        specifier: ^5.19.1
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-query':
         specifier: ^5.18.1
@@ -438,7 +438,7 @@ importers:
         specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.18.1
+        specifier: ^5.19.1
         version: link:../../../packages/react-query-persist-client
       axios:
         specifier: ^1.6.2
@@ -590,7 +590,7 @@ importers:
         specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-next-experimental':
-        specifier: ^5.18.1
+        specifier: ^5.19.1
         version: link:../../../packages/react-query-next-experimental
       next:
         specifier: ^14.0.0
@@ -618,7 +618,7 @@ importers:
   examples/react/offline:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.18.1
+        specifier: ^5.19.1
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-location':
         specifier: ^3.7.4
@@ -630,7 +630,7 @@ importers:
         specifier: ^5.18.1
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.18.1
+        specifier: ^5.19.1
         version: link:../../../packages/react-query-persist-client
       ky:
         specifier: ^1.1.3
@@ -1461,10 +1461,10 @@ importers:
         specifier: ^5.18.1
         version: link:../../../packages/query-core
       '@tanstack/query-persist-client-core':
-        specifier: ^5.18.1
+        specifier: ^5.19.1
         version: link:../../../packages/query-persist-client-core
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.18.1
+        specifier: ^5.19.1
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/vue-query':
         specifier: ^5.18.1
