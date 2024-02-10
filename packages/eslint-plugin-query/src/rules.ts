@@ -5,7 +5,11 @@ import type { ESLintUtils } from '@typescript-eslint/utils'
 
 export const rules: Record<
   string,
-  ESLintUtils.RuleModule<string, any, ESLintUtils.RuleListener>
+  ESLintUtils.RuleModule<
+    string,
+    ReadonlyArray<unknown>,
+    ESLintUtils.RuleListener
+  >
 > = {
   [exhaustiveDeps.name]: exhaustiveDeps.rule,
   [stableQueryClient.name]: stableQueryClient.rule,

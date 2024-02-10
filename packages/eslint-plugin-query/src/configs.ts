@@ -1,8 +1,15 @@
 import { rules } from './rules'
-import type { TSESLint } from '@typescript-eslint/utils'
+import type { ESLintUtils } from '@typescript-eslint/utils'
 
 function generateRecommendedConfig(
-  allRules: Record<string, TSESLint.RuleModule<any, any>>,
+  allRules: Record<
+    string,
+    ESLintUtils.RuleModule<
+      string,
+      ReadonlyArray<unknown>,
+      ESLintUtils.RuleListener
+    >
+  >,
 ) {
   return Object.entries(allRules).reduce(
     // @ts-expect-error

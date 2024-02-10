@@ -1,20 +1,19 @@
-import { AST_NODE_TYPES } from '@typescript-eslint/utils'
+import { AST_NODE_TYPES, ESLintUtils } from '@typescript-eslint/utils'
 import { ASTUtils } from '../utils/ast-utils'
-import { createRule } from '../utils/create-rule'
+import { getDocsUrl } from '../utils/get-docs-url'
 import { uniqueBy } from '../utils/unique-by'
+import { detectTanstackQueryImports } from '../utils/detect-react-query-imports'
 import { ExhaustiveDepsUtils } from './exhaustive-deps.utils'
-import type { ESLintUtils, TSESLint } from '@typescript-eslint/utils'
+import type { TSESLint } from '@typescript-eslint/utils'
 
 const QUERY_KEY = 'queryKey'
 const QUERY_FN = 'queryFn'
 
 export const name = 'exhaustive-deps'
 
-export const rule: ESLintUtils.RuleModule<
-  string,
-  any,
-  ESLintUtils.RuleListener
-> = createRule({
+const createRule = ESLintUtils.RuleCreator(getDocsUrl)
+
+export const rule = createRule({
   name,
   meta: {
     type: 'problem',
@@ -32,7 +31,7 @@ export const rule: ESLintUtils.RuleModule<
   },
   defaultOptions: [],
 
-  create: (context) => {
+  create: detectTanstackQueryImports((context) => {
     return {
       Property: (node) => {
         if (
@@ -153,5 +152,5 @@ export const rule: ESLintUtils.RuleModule<
         }
       },
     }
-  },
+  }),
 })

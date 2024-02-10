@@ -1,16 +1,15 @@
-import { AST_NODE_TYPES } from '@typescript-eslint/utils'
+import { AST_NODE_TYPES, ESLintUtils } from '@typescript-eslint/utils'
 import { ASTUtils } from '../../utils/ast-utils'
-import { createRule } from '../../utils/create-rule'
+import { getDocsUrl } from '../../utils/get-docs-url'
+import { detectTanstackQueryImports } from '../../utils/detect-react-query-imports'
 import type { TSESLint } from '@typescript-eslint/utils'
-import type { ESLintUtils } from '@typescript-eslint/utils'
+import type {} from '@typescript-eslint/utils'
 
 export const name = 'stable-query-client'
 
-export const rule: ESLintUtils.RuleModule<
-  string,
-  any,
-  ESLintUtils.RuleListener
-> = createRule({
+const createRule = ESLintUtils.RuleCreator(getDocsUrl)
+
+export const rule = createRule({
   name,
   meta: {
     type: 'problem',
@@ -31,7 +30,7 @@ export const rule: ESLintUtils.RuleModule<
   },
   defaultOptions: [],
 
-  create: (context, _, helpers) => {
+  create: detectTanstackQueryImports((context, _, helpers) => {
     return {
       NewExpression: (node) => {
         if (
@@ -79,5 +78,5 @@ export const rule: ESLintUtils.RuleModule<
         })
       },
     }
-  },
+  }),
 })

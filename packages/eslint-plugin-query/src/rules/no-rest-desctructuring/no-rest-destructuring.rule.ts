@@ -1,18 +1,16 @@
-import { AST_NODE_TYPES } from '@typescript-eslint/utils'
-import { createRule } from '../../utils/create-rule'
+import { AST_NODE_TYPES, ESLintUtils } from '@typescript-eslint/utils'
+import { getDocsUrl } from '../../utils/get-docs-url'
 import { ASTUtils } from '../../utils/ast-utils'
+import { detectTanstackQueryImports } from '../../utils/detect-react-query-imports'
 import { NoRestDestructuringUtils } from './no-rest-destructuring.utils'
-import type { ESLintUtils } from '@typescript-eslint/utils'
 
 export const name = 'no-rest-destructuring'
 
 const queryHooks = ['useQuery', 'useQueries', 'useInfiniteQuery']
 
-export const rule: ESLintUtils.RuleModule<
-  string,
-  any,
-  ESLintUtils.RuleListener
-> = createRule({
+const createRule = ESLintUtils.RuleCreator(getDocsUrl)
+
+export const rule = createRule({
   name,
   meta: {
     type: 'problem',
@@ -27,7 +25,7 @@ export const rule: ESLintUtils.RuleModule<
   },
   defaultOptions: [],
 
-  create: (context, _, helpers) => {
+  create: detectTanstackQueryImports((context, _, helpers) => {
     return {
       CallExpression: (node) => {
         if (
@@ -65,5 +63,5 @@ export const rule: ESLintUtils.RuleModule<
         })
       },
     }
-  },
+  }),
 })
