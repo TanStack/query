@@ -1,8 +1,8 @@
 import { AST_NODE_TYPES, ESLintUtils } from '@typescript-eslint/utils'
-import { ASTUtils } from '../utils/ast-utils'
-import { getDocsUrl } from '../utils/get-docs-url'
-import { uniqueBy } from '../utils/unique-by'
-import { detectTanstackQueryImports } from '../utils/detect-react-query-imports'
+import { ASTUtils } from '../../utils/ast-utils'
+import { getDocsUrl } from '../../utils/get-docs-url'
+import { uniqueBy } from '../../utils/unique-by'
+import { detectTanstackQueryImports } from '../../utils/detect-react-query-imports'
 import { ExhaustiveDepsUtils } from './exhaustive-deps.utils'
 import type { TSESLint } from '@typescript-eslint/utils'
 

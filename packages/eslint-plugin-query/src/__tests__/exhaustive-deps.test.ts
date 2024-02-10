@@ -1,6 +1,6 @@
 import { RuleTester } from '@typescript-eslint/rule-tester'
-import { normalizeIndent } from '../utils/test-utils'
-import { rule } from '../rules/exhaustive-deps.rule'
+import { rule } from '../rules/exhaustive-deps/exhaustive-deps.rule'
+import { normalizeIndent } from './test-utils'
 
 const ruleTester = new RuleTester({
   parser: '@typescript-eslint/parser',
