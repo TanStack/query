@@ -27,10 +27,6 @@
     "@angular/cli": "^17.1.2",
     "@angular/compiler-cli": "^17.1.2",
     "@tanstack/angular-query-devtools-experimental": "^5.20.1",
-    "msw": "^2.1.7",
     "typescript": "5.2.2"
-  },
-  "msw": {
-    "workerDirectory": "src"
   }
 }
