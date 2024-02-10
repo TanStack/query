@@ -253,7 +253,7 @@ export function createQueries<
 
   const { subscribe } = derived(
     [result, defaultedQueriesStore],
-    // @ts-ignore svelte-check thinks this is unused
+    // @ts-expect-error svelte-check thinks this is unused
     ([$result, $defaultedQueriesStore]) => {
       const [rawResult, combineResult, trackResult] =
         observer.getOptimisticResult(
