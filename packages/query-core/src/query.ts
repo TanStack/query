@@ -644,6 +644,3 @@ function getDefaultState<
     fetchStatus: 'idle',
   }
 }
-
-// breaking cache - to trigger some actual runs
-console.log('bar2')
