@@ -61,7 +61,7 @@
   },
   "devDependencies": {
     "tsup-preset-solid": "^2.2.0",
-    "vite-plugin-solid": "^2.8.0"
+    "vite-plugin-solid": "^2.9.1"
   },
   "peerDependencies": {
     "solid-js": "^1.6.0"

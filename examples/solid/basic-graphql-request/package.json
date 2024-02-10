@@ -18,6 +18,6 @@
   "devDependencies": {
     "typescript": "5.2.2",
     "vite": "^5.0.10",
-    "vite-plugin-solid": "^2.8.0"
+    "vite-plugin-solid": "^2.9.1"
   }
 }

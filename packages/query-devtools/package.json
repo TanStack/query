@@ -60,6 +60,6 @@
     "solid-transition-group": "^0.2.3",
     "superjson": "^1.13.3",
     "tsup-preset-solid": "^2.2.0",
-    "vite-plugin-solid": "^2.8.0"
+    "vite-plugin-solid": "^2.9.1"
   }
 }
