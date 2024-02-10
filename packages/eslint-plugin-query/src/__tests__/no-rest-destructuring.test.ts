@@ -1,8 +1,8 @@
-import { ESLintUtils } from '@typescript-eslint/utils'
-import { normalizeIndent } from '../../utils/test-utils'
-import { rule } from './no-rest-destructuring.rule'
+import { RuleTester } from '@typescript-eslint/rule-tester'
+import { rule } from '../rules/no-rest-destructuring/no-rest-destructuring.rule'
+import { normalizeIndent } from './test-utils'
 
-const ruleTester = new ESLintUtils.RuleTester({
+const ruleTester = new RuleTester({
   parser: '@typescript-eslint/parser',
   settings: {},
 })

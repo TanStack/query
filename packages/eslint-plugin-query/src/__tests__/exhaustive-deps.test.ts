@@ -1,8 +1,8 @@
-import { ESLintUtils } from '@typescript-eslint/utils'
-import { normalizeIndent } from '../utils/test-utils'
-import { rule } from '../rules/exhaustive-deps.rule'
+import { RuleTester } from '@typescript-eslint/rule-tester'
+import { rule } from '../rules/exhaustive-deps/exhaustive-deps.rule'
+import { normalizeIndent } from './test-utils'
 
-const ruleTester = new ESLintUtils.RuleTester({
+const ruleTester = new RuleTester({
   parser: '@typescript-eslint/parser',
   settings: {},
 })
@@ -23,7 +23,6 @@ ruleTester.run('exhaustive-deps', rule, {
     },
     {
       name: 'should pass when deps are passed in template literal',
-      // eslint-disable-next-line no-template-curly-in-string
       code: 'useQuery({ queryKey: [`entity/${id}`], queryFn: () => api.getEntity(id) });',
     },
     {
@@ -464,7 +463,6 @@ ruleTester.run('exhaustive-deps', rule, {
           suggestions: [
             {
               messageId: 'fixTo',
-              // eslint-disable-next-line no-template-curly-in-string
               data: { result: '["entity/${id}", id]' },
               output: normalizeIndent`
                 const id = 1;
@@ -489,7 +487,6 @@ ruleTester.run('exhaustive-deps', rule, {
           suggestions: [
             {
               messageId: 'fixTo',
-              // eslint-disable-next-line no-template-curly-in-string
               data: { result: '[`entity/${a}`, b]' },
               output: normalizeIndent`
                 const a = 1;

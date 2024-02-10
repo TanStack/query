@@ -5,8 +5,8 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@typescript-eslint/eslint-plugin': ^5.62.0
-  '@typescript-eslint/parser': ^5.62.0
+  '@typescript-eslint/eslint-plugin': ^6.20.0
+  '@typescript-eslint/parser': ^6.20.0
   eslint: ^8.56.0
 
 importers:
@@ -41,11 +41,11 @@ importers:
         specifier: ^18.2.18
         version: 18.2.18
       '@typescript-eslint/eslint-plugin':
-        specifier: ^5.62.0
-        version: 5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.56.0)(typescript@5.2.2)
+        specifier: ^6.20.0
+        version: 6.20.0(@typescript-eslint/parser@6.20.0)(eslint@8.56.0)(typescript@5.2.2)
       '@typescript-eslint/parser':
-        specifier: ^5.62.0
-        version: 5.62.0(eslint@8.56.0)(typescript@5.2.2)
+        specifier: ^6.20.0
+        version: 6.20.0(eslint@8.56.0)(typescript@5.2.2)
       '@vitest/coverage-istanbul':
         specifier: ^1.1.0
         version: 1.1.0(vitest@1.1.0)
@@ -63,10 +63,10 @@ importers:
         version: 9.1.0(eslint@8.56.0)
       eslint-import-resolver-typescript:
         specifier: ^3.6.1
-        version: 3.6.1(@typescript-eslint/parser@5.62.0)(eslint-plugin-import@2.29.1)(eslint@8.56.0)
+        version: 3.6.1(@typescript-eslint/parser@6.20.0)(eslint-plugin-import@2.29.1)(eslint@8.56.0)
       eslint-plugin-import:
         specifier: ^2.29.1
-        version: 2.29.1(@typescript-eslint/parser@5.62.0)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)
+        version: 2.29.1(@typescript-eslint/parser@6.20.0)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)
       eslint-plugin-react:
         specifier: ^7.33.2
         version: 7.33.2(eslint@8.56.0)
@@ -146,7 +146,7 @@ importers:
         specifier: ^17.1.2
         version: 17.1.2(@angular/common@17.1.2)(@angular/core@17.1.2)(@angular/platform-browser@17.1.2)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.19.1
+        specifier: ^5.20.1
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -168,7 +168,7 @@ importers:
         specifier: ^17.1.2
         version: 17.1.2(@angular/compiler@17.1.2)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.19.1
+        specifier: ^5.20.1
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
@@ -189,10 +189,10 @@ importers:
         specifier: ^17.1.2
         version: 17.1.2(@angular/animations@17.1.2)(@angular/common@17.1.2)(@angular/core@17.1.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.19.1
+        specifier: ^5.20.1
         version: link:../../../packages/angular-query-devtools-experimental
       '@tanstack/angular-query-experimental':
-        specifier: ^5.19.1
+        specifier: ^5.20.1
         version: link:../../../packages/angular-query-experimental
       axios:
         specifier: ^1.6.2
@@ -238,7 +238,7 @@ importers:
         specifier: ^17.1.2
         version: 17.1.2(@angular/common@17.1.2)(@angular/core@17.1.2)(@angular/platform-browser@17.1.2)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.19.1
+        specifier: ^5.20.1
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -260,7 +260,7 @@ importers:
         specifier: ^17.1.2
         version: 17.1.2(@angular/compiler@17.1.2)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.19.1
+        specifier: ^5.20.1
         version: link:../../../packages/angular-query-devtools-experimental
       msw:
         specifier: ^2.1.7
@@ -284,10 +284,10 @@ importers:
         specifier: ^17.1.2
         version: 17.1.2(@angular/animations@17.1.2)(@angular/common@17.1.2)(@angular/core@17.1.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.19.1
+        specifier: ^5.20.1
         version: link:../../../packages/angular-query-devtools-experimental
       '@tanstack/angular-query-experimental':
-        specifier: ^5.19.1
+        specifier: ^5.20.1
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -312,10 +312,10 @@ importers:
         specifier: 4.22.0
         version: 4.22.0
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       algoliasearch:
         specifier: 4.22.0
@@ -328,7 +328,7 @@ importers:
         version: 18.2.0(react@18.2.0)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^18.2.45
@@ -349,10 +349,10 @@ importers:
   examples/react/auto-refetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -373,10 +373,10 @@ importers:
   examples/react/basic:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -389,7 +389,7 @@ importers:
         version: 18.2.0(react@18.2.0)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-react':
         specifier: ^4.2.1
@@ -401,10 +401,10 @@ importers:
   examples/react/basic-graphql-request:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       graphql:
         specifier: ^16.8.1
@@ -429,16 +429,16 @@ importers:
   examples/react/basic-typescript:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.19.1
+        specifier: ^5.20.1
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.19.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-persist-client
       axios:
         specifier: ^1.6.2
@@ -451,7 +451,7 @@ importers:
         version: 18.2.0(react@18.2.0)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^18.2.45
@@ -478,10 +478,10 @@ importers:
   examples/react/default-query-function:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -503,10 +503,10 @@ importers:
   examples/react/infinite-query-with-max-pages:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -530,10 +530,10 @@ importers:
   examples/react/load-more-infinite-scroll:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -557,10 +557,10 @@ importers:
   examples/react/nextjs:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       ky:
         specifier: ^1.1.3
@@ -584,13 +584,13 @@ importers:
   examples/react/nextjs-suspense-streaming:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-next-experimental':
-        specifier: ^5.19.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-next-experimental
       next:
         specifier: ^14.0.0
@@ -618,19 +618,19 @@ importers:
   examples/react/offline:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.19.1
+        specifier: ^5.20.1
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-location':
         specifier: ^3.7.4
         version: 3.7.4(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.19.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-persist-client
       ky:
         specifier: ^1.1.3
@@ -658,10 +658,10 @@ importers:
   examples/react/optimistic-updates-cache:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -695,10 +695,10 @@ importers:
   examples/react/optimistic-updates-ui:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -732,10 +732,10 @@ importers:
   examples/react/pagination:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -756,10 +756,10 @@ importers:
   examples/react/playground:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -778,10 +778,10 @@ importers:
   examples/react/prefetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -811,10 +811,10 @@ importers:
         specifier: ^6.3.16
         version: 6.3.16(@react-navigation/native@6.1.6)(react-native-gesture-handler@2.12.1)(react-native-safe-area-context@4.6.3)(react-native-screens@3.22.1)(react-native@0.72.6)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       expo:
         specifier: ^49.0.21
@@ -866,10 +866,10 @@ importers:
   examples/react/react-router:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       localforage:
         specifier: ^1.10.0
@@ -918,10 +918,10 @@ importers:
         specifier: ^5.15.2
         version: 5.15.2(@types/react@18.2.45)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -946,10 +946,10 @@ importers:
   examples/react/simple:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -983,10 +983,10 @@ importers:
         specifier: ^5.15.2
         version: 5.15.2(@types/react@18.2.45)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -1011,10 +1011,10 @@ importers:
   examples/react/suspense:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.2
@@ -1042,10 +1042,10 @@ importers:
   examples/solid/basic-graphql-request:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/solid-query-devtools
       graphql:
         specifier: ^16.8.1
@@ -1070,10 +1070,10 @@ importers:
   examples/solid/basic-typescript:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.7
@@ -1092,10 +1092,10 @@ importers:
   examples/solid/default-query-function:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.7
@@ -1114,17 +1114,17 @@ importers:
   examples/solid/simple:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.7
         version: 1.8.7
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.2.2
@@ -1148,10 +1148,10 @@ importers:
         specifier: ^0.4.2
         version: 0.4.2(rollup@4.6.0)(solid-js@1.8.7)(vinxi@0.0.54)(vite@4.5.1)
       '@tanstack/solid-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.7
@@ -1163,10 +1163,10 @@ importers:
   examples/svelte/auto-refetching:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1194,10 +1194,10 @@ importers:
   examples/svelte/basic:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1225,10 +1225,10 @@ importers:
   examples/svelte/load-more-infinite-scroll:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1256,10 +1256,10 @@ importers:
   examples/svelte/optimistic-updates-typescript:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1287,10 +1287,10 @@ importers:
   examples/svelte/playground:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1318,10 +1318,10 @@ importers:
   examples/svelte/simple:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
@@ -1346,10 +1346,10 @@ importers:
   examples/svelte/ssr:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1377,10 +1377,10 @@ importers:
   examples/svelte/star-wars:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1417,10 +1417,10 @@ importers:
   examples/vue/basic:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.3.0
@@ -1439,7 +1439,7 @@ importers:
   examples/vue/dependent-queries:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/vue-query
       vue:
         specifier: ^3.3.0
@@ -1458,16 +1458,16 @@ importers:
   examples/vue/persister:
     dependencies:
       '@tanstack/query-core':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/query-core
       '@tanstack/query-persist-client-core':
-        specifier: ^5.19.1
+        specifier: ^5.20.1
         version: link:../../../packages/query-persist-client-core
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.19.1
+        specifier: ^5.20.1
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/vue-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/vue-query
       idb-keyval:
         specifier: ^6.2.1
@@ -1763,9 +1763,12 @@ importers:
   packages/eslint-plugin-query:
     dependencies:
       '@typescript-eslint/utils':
-        specifier: ^5.62.0
-        version: 5.62.0(eslint@8.56.0)(typescript@5.2.2)
+        specifier: ^6.20.0
+        version: 6.20.0(eslint@8.56.0)(typescript@5.2.2)
     devDependencies:
+      '@typescript-eslint/rule-tester':
+        specifier: ^6.20.0
+        version: 6.20.0(@eslint/eslintrc@2.1.4)(eslint@8.56.0)(typescript@5.2.2)
       eslint:
         specifier: ^8.56.0
         version: 8.56.0
@@ -9844,7 +9847,7 @@ packages:
     hasBin: true
     dependencies:
       commander: 4.1.1
-      ignore: 5.2.4
+      ignore: 5.3.0
       p-map: 4.0.0
     dev: true
 
@@ -10787,11 +10790,11 @@ packages:
     dependencies:
       '@types/yargs-parser': 21.0.2
 
-  /@typescript-eslint/eslint-plugin@5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.56.0)(typescript@5.2.2):
-    resolution: {integrity: sha512-TiZzBSJja/LbhNPvk6yc0JrX9XqhQ0hdh6M2svYfsHGejaKFIAGd9MQ+ERIMzLGlN/kZoYIgdxFV0PuljTKXag==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+  /@typescript-eslint/eslint-plugin@6.20.0(@typescript-eslint/parser@6.20.0)(eslint@8.56.0)(typescript@5.2.2):
+    resolution: {integrity: sha512-fTwGQUnjhoYHeSF6m5pWNkzmDDdsKELYrOBxhjMrofPqCkoC2k3B2wvGHFxa1CTIqkEn88nlW1HVMztjo2K8Hg==}
+    engines: {node: ^16.0.0 || >=18.0.0}
     peerDependencies:
-      '@typescript-eslint/parser': ^5.62.0
+      '@typescript-eslint/parser': ^6.20.0
       eslint: ^8.56.0
       typescript: '*'
     peerDependenciesMeta:
@@ -10799,17 +10802,18 @@ packages:
         optional: true
     dependencies:
       '@eslint-community/regexpp': 4.10.0
-      '@typescript-eslint/parser': 5.62.0(eslint@8.56.0)(typescript@5.2.2)
-      '@typescript-eslint/scope-manager': 5.62.0
-      '@typescript-eslint/type-utils': 5.62.0(eslint@8.56.0)(typescript@5.2.2)
-      '@typescript-eslint/utils': 5.62.0(eslint@8.56.0)(typescript@5.2.2)
+      '@typescript-eslint/parser': 6.20.0(eslint@8.56.0)(typescript@5.2.2)
+      '@typescript-eslint/scope-manager': 6.20.0
+      '@typescript-eslint/type-utils': 6.20.0(eslint@8.56.0)(typescript@5.2.2)
+      '@typescript-eslint/utils': 6.20.0(eslint@8.56.0)(typescript@5.2.2)
+      '@typescript-eslint/visitor-keys': 6.20.0
       debug: 4.3.4(supports-color@6.1.0)
       eslint: 8.56.0
       graphemer: 1.4.0
       ignore: 5.3.0
-      natural-compare-lite: 1.4.0
+      natural-compare: 1.4.0
       semver: 7.5.4
-      tsutils: 3.21.0(typescript@5.2.2)
+      ts-api-utils: 1.0.3(typescript@5.2.2)
       typescript: 5.2.2
     transitivePeerDependencies:
       - supports-color
@@ -10862,9 +10866,9 @@ packages:
       - typescript
     dev: false
 
-  /@typescript-eslint/parser@5.62.0(eslint@8.56.0)(typescript@5.2.2):
-    resolution: {integrity: sha512-VlJEV0fOQ7BExOsHYAGrgbEiZoi8D+Bl2+f6V2RrXerRSylnp+ZBHmPvaIa8cz0Ajx7WO7Z5RqfgYg7ED1nRhA==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+  /@typescript-eslint/parser@6.20.0(eslint@8.56.0)(typescript@5.2.2):
+    resolution: {integrity: sha512-bYerPDF/H5v6V76MdMYhjwmwgMA+jlPVqjSDq2cRqMi8bP5sR3Z+RLOiOMad3nsnmDVmn2gAFCyNgh/dIrfP/w==}
+    engines: {node: ^16.0.0 || >=18.0.0}
     peerDependencies:
       eslint: ^8.56.0
       typescript: '*'
@@ -10872,14 +10876,34 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@typescript-eslint/scope-manager': 5.62.0
-      '@typescript-eslint/types': 5.62.0
-      '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.2.2)
+      '@typescript-eslint/scope-manager': 6.20.0
+      '@typescript-eslint/types': 6.20.0
+      '@typescript-eslint/typescript-estree': 6.20.0(typescript@5.2.2)
+      '@typescript-eslint/visitor-keys': 6.20.0
       debug: 4.3.4(supports-color@6.1.0)
       eslint: 8.56.0
       typescript: 5.2.2
     transitivePeerDependencies:
       - supports-color
+
+  /@typescript-eslint/rule-tester@6.20.0(@eslint/eslintrc@2.1.4)(eslint@8.56.0)(typescript@5.2.2):
+    resolution: {integrity: sha512-NjIhUjwfPMSXrxBGpQ6z4Hu7P6LCxneAmN9uX+ynligV+TyD8d25c/kIQaCa9nSkqVeq8n9houVa4uPC2fgFdQ==}
+    engines: {node: ^16.0.0 || >=18.0.0}
+    peerDependencies:
+      '@eslint/eslintrc': '>=2'
+      eslint: ^8.56.0
+    dependencies:
+      '@eslint/eslintrc': 2.1.4
+      '@typescript-eslint/typescript-estree': 6.20.0(typescript@5.2.2)
+      '@typescript-eslint/utils': 6.20.0(eslint@8.56.0)(typescript@5.2.2)
+      ajv: 6.12.6
+      eslint: 8.56.0
+      lodash.merge: 4.6.2
+      semver: 7.5.4
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+    dev: true
 
   /@typescript-eslint/scope-manager@4.33.0:
     resolution: {integrity: sha512-5IfJHpgTsTZuONKbODctL4kKuQje/bzBRkwHE8UOZ4f89Zeddg+EGZs8PD8NcN4LdM3ygHWYB3ukPAYjvl/qbQ==}
@@ -10895,10 +10919,18 @@ packages:
     dependencies:
       '@typescript-eslint/types': 5.62.0
       '@typescript-eslint/visitor-keys': 5.62.0
+    dev: false
 
-  /@typescript-eslint/type-utils@5.62.0(eslint@8.56.0)(typescript@5.2.2):
-    resolution: {integrity: sha512-xsSQreu+VnfbqQpW5vnCJdq1Z3Q0U31qiWmRhr98ONQmcp/yhiPJFPq8MXiJVLiksmOKSjIldZzkebzHuCGzew==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+  /@typescript-eslint/scope-manager@6.20.0:
+    resolution: {integrity: sha512-p4rvHQRDTI1tGGMDFQm+GtxP1ZHyAh64WANVoyEcNMpaTFn3ox/3CcgtIlELnRfKzSs/DwYlDccJEtr3O6qBvA==}
+    engines: {node: ^16.0.0 || >=18.0.0}
+    dependencies:
+      '@typescript-eslint/types': 6.20.0
+      '@typescript-eslint/visitor-keys': 6.20.0
+
+  /@typescript-eslint/type-utils@6.20.0(eslint@8.56.0)(typescript@5.2.2):
+    resolution: {integrity: sha512-qnSobiJQb1F5JjN0YDRPHruQTrX7ICsmltXhkV536mp4idGAYrIyr47zF/JmkJtEcAVnIz4gUYJ7gOZa6SmN4g==}
+    engines: {node: ^16.0.0 || >=18.0.0}
     peerDependencies:
       eslint: ^8.56.0
       typescript: '*'
@@ -10906,11 +10938,11 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.2.2)
-      '@typescript-eslint/utils': 5.62.0(eslint@8.56.0)(typescript@5.2.2)
+      '@typescript-eslint/typescript-estree': 6.20.0(typescript@5.2.2)
+      '@typescript-eslint/utils': 6.20.0(eslint@8.56.0)(typescript@5.2.2)
       debug: 4.3.4(supports-color@6.1.0)
       eslint: 8.56.0
-      tsutils: 3.21.0(typescript@5.2.2)
+      ts-api-utils: 1.0.3(typescript@5.2.2)
       typescript: 5.2.2
     transitivePeerDependencies:
       - supports-color
@@ -10928,6 +10960,11 @@ packages:
   /@typescript-eslint/types@5.62.0:
     resolution: {integrity: sha512-87NVngcbVXUahrRTqIK27gD2t5Cu1yuCXxbLcFtCzZGlfyVWWh8mLHkoxzjsB6DDNnvdL+fW8MiwPEJyGJQDgQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    dev: false
+
+  /@typescript-eslint/types@6.20.0:
+    resolution: {integrity: sha512-MM9mfZMAhiN4cOEcUOEx+0HmuaW3WBfukBZPCfwSqFnQy0grXYtngKCqpQN339X3RrwtzspWJrpbrupKYUSBXQ==}
+    engines: {node: ^16.0.0 || >=18.0.0}
 
   /@typescript-eslint/typescript-estree@3.10.1(typescript@5.2.2):
     resolution: {integrity: sha512-QbcXOuq6WYvnB3XPsZpIwztBoquEYLXh2MtwVU+kO8jgYCiv4G5xrSP/1wg4tkvrEE+esZVquIPX/dxPlePk1w==}
@@ -10991,6 +11028,28 @@ packages:
       typescript: 5.2.2
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /@typescript-eslint/typescript-estree@6.20.0(typescript@5.2.2):
+    resolution: {integrity: sha512-RnRya9q5m6YYSpBN7IzKu9FmLcYtErkDkc8/dKv81I9QiLLtVBHrjz+Ev/crAqgMNW2FCsoZF4g2QUylMnJz+g==}
+    engines: {node: ^16.0.0 || >=18.0.0}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      '@typescript-eslint/types': 6.20.0
+      '@typescript-eslint/visitor-keys': 6.20.0
+      debug: 4.3.4(supports-color@6.1.0)
+      globby: 11.1.0
+      is-glob: 4.0.3
+      minimatch: 9.0.3
+      semver: 7.5.4
+      ts-api-utils: 1.0.3(typescript@5.2.2)
+      typescript: 5.2.2
+    transitivePeerDependencies:
+      - supports-color
 
   /@typescript-eslint/utils@5.62.0(eslint@8.56.0)(typescript@5.2.2):
     resolution: {integrity: sha512-n8oxjeb5aIbPFEtmQxQYOLI0i9n5ySBEY/ZEHHZqKQSFnxio1rv6dthascc9dLuwrL0RC5mPCxB7vnAVGAYWAQ==}
@@ -11006,6 +11065,25 @@ packages:
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.2.2)
       eslint: 8.56.0
       eslint-scope: 5.1.1
+      semver: 7.5.4
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+    dev: false
+
+  /@typescript-eslint/utils@6.20.0(eslint@8.56.0)(typescript@5.2.2):
+    resolution: {integrity: sha512-/EKuw+kRu2vAqCoDwDCBtDRU6CTKbUmwwI7SH7AashZ+W+7o8eiyy6V2cdOqN49KsTcASWsC5QeghYuRDTyOOg==}
+    engines: {node: ^16.0.0 || >=18.0.0}
+    peerDependencies:
+      eslint: ^8.56.0
+    dependencies:
+      '@eslint-community/eslint-utils': 4.4.0(eslint@8.56.0)
+      '@types/json-schema': 7.0.14
+      '@types/semver': 7.5.6
+      '@typescript-eslint/scope-manager': 6.20.0
+      '@typescript-eslint/types': 6.20.0
+      '@typescript-eslint/typescript-estree': 6.20.0(typescript@5.2.2)
+      eslint: 8.56.0
       semver: 7.5.4
     transitivePeerDependencies:
       - supports-color
@@ -11031,6 +11109,14 @@ packages:
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dependencies:
       '@typescript-eslint/types': 5.62.0
+      eslint-visitor-keys: 3.4.3
+    dev: false
+
+  /@typescript-eslint/visitor-keys@6.20.0:
+    resolution: {integrity: sha512-E8Cp98kRe4gKHjJD4NExXKz/zOJ1A2hhZc+IMVD6i7w4yjIvh6VyuRI0gRtxAsXtoC35uGMaQ9rjI2zJaXDEAw==}
+    engines: {node: ^16.0.0 || >=18.0.0}
+    dependencies:
+      '@typescript-eslint/types': 6.20.0
       eslint-visitor-keys: 3.4.3
 
   /@ungap/structured-clone@1.2.0:
@@ -16203,12 +16289,12 @@ packages:
       eslint: 8.56.0
     dev: true
 
-  /eslint-config-react-app@6.0.0(@typescript-eslint/eslint-plugin@5.62.0)(@typescript-eslint/parser@5.62.0)(babel-eslint@10.1.0)(eslint-plugin-flowtype@5.10.0)(eslint-plugin-import@2.29.1)(eslint-plugin-jest@24.7.0)(eslint-plugin-jsx-a11y@6.7.1)(eslint-plugin-react-hooks@4.6.0)(eslint-plugin-react@7.33.2)(eslint-plugin-testing-library@3.10.2)(eslint@8.56.0)(typescript@5.2.2):
+  /eslint-config-react-app@6.0.0(@typescript-eslint/eslint-plugin@6.20.0)(@typescript-eslint/parser@6.20.0)(babel-eslint@10.1.0)(eslint-plugin-flowtype@5.10.0)(eslint-plugin-import@2.29.1)(eslint-plugin-jest@24.7.0)(eslint-plugin-jsx-a11y@6.7.1)(eslint-plugin-react-hooks@4.6.0)(eslint-plugin-react@7.33.2)(eslint-plugin-testing-library@3.10.2)(eslint@8.56.0)(typescript@5.2.2):
     resolution: {integrity: sha512-bpoAAC+YRfzq0dsTk+6v9aHm/uqnDwayNAXleMypGl6CpxI9oXXscVHo4fk3eJPIn+rsbtNetB4r/ZIidFIE8A==}
     engines: {node: ^10.12.0 || >=12.0.0}
     peerDependencies:
-      '@typescript-eslint/eslint-plugin': ^5.62.0
-      '@typescript-eslint/parser': ^5.62.0
+      '@typescript-eslint/eslint-plugin': ^6.20.0
+      '@typescript-eslint/parser': ^6.20.0
       babel-eslint: ^10.0.0
       eslint: ^8.56.0
       eslint-plugin-flowtype: ^5.2.0
@@ -16227,14 +16313,14 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@typescript-eslint/eslint-plugin': 5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.56.0)(typescript@5.2.2)
-      '@typescript-eslint/parser': 5.62.0(eslint@8.56.0)(typescript@5.2.2)
+      '@typescript-eslint/eslint-plugin': 6.20.0(@typescript-eslint/parser@6.20.0)(eslint@8.56.0)(typescript@5.2.2)
+      '@typescript-eslint/parser': 6.20.0(eslint@8.56.0)(typescript@5.2.2)
       babel-eslint: 10.1.0(eslint@8.56.0)
       confusing-browser-globals: 1.0.11
       eslint: 8.56.0
       eslint-plugin-flowtype: 5.10.0(eslint@8.56.0)
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@5.62.0)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)
-      eslint-plugin-jest: 24.7.0(@typescript-eslint/eslint-plugin@5.62.0)(eslint@8.56.0)(typescript@5.2.2)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@6.20.0)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)
+      eslint-plugin-jest: 24.7.0(@typescript-eslint/eslint-plugin@6.20.0)(eslint@8.56.0)(typescript@5.2.2)
       eslint-plugin-jsx-a11y: 6.7.1(eslint@8.56.0)
       eslint-plugin-react: 7.33.2(eslint@8.56.0)
       eslint-plugin-react-hooks: 4.6.0(eslint@8.56.0)
@@ -16255,14 +16341,14 @@ packages:
       '@babel/core': 7.23.7
       '@babel/eslint-parser': 7.22.15(@babel/core@7.23.7)(eslint@8.56.0)
       '@rushstack/eslint-patch': 1.5.1
-      '@typescript-eslint/eslint-plugin': 5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.56.0)(typescript@5.2.2)
-      '@typescript-eslint/parser': 5.62.0(eslint@8.56.0)(typescript@5.2.2)
+      '@typescript-eslint/eslint-plugin': 6.20.0(@typescript-eslint/parser@6.20.0)(eslint@8.56.0)(typescript@5.2.2)
+      '@typescript-eslint/parser': 6.20.0(eslint@8.56.0)(typescript@5.2.2)
       babel-preset-react-app: 10.0.1
       confusing-browser-globals: 1.0.11
       eslint: 8.56.0
       eslint-plugin-flowtype: 8.0.3(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(eslint@8.56.0)
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@5.62.0)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)
-      eslint-plugin-jest: 25.7.0(@typescript-eslint/eslint-plugin@5.62.0)(eslint@8.56.0)(jest@27.5.1)(typescript@5.2.2)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@6.20.0)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)
+      eslint-plugin-jest: 25.7.0(@typescript-eslint/eslint-plugin@6.20.0)(eslint@8.56.0)(jest@27.5.1)(typescript@5.2.2)
       eslint-plugin-jsx-a11y: 6.7.1(eslint@8.56.0)
       eslint-plugin-react: 7.33.2(eslint@8.56.0)
       eslint-plugin-react-hooks: 4.6.0(eslint@8.56.0)
@@ -16286,7 +16372,7 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@5.62.0)(eslint-plugin-import@2.29.1)(eslint@8.56.0):
+  /eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.20.0)(eslint-plugin-import@2.29.1)(eslint@8.56.0):
     resolution: {integrity: sha512-xgdptdoi5W3niYeuQxKmzVDTATvLYqhpwmykwsh7f6HIOStGWEIL9iqZgQDF9u9OEzrRwR8no5q2VT+bjAujTg==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
@@ -16296,8 +16382,8 @@ packages:
       debug: 4.3.4(supports-color@6.1.0)
       enhanced-resolve: 5.15.0
       eslint: 8.56.0
-      eslint-module-utils: 2.8.0(@typescript-eslint/parser@5.62.0)(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@5.62.0)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)
+      eslint-module-utils: 2.8.0(@typescript-eslint/parser@6.20.0)(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@6.20.0)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)
       fast-glob: 3.3.2
       get-tsconfig: 4.7.2
       is-core-module: 2.13.0
@@ -16308,7 +16394,7 @@ packages:
       - eslint-import-resolver-webpack
       - supports-color
 
-  /eslint-module-utils@2.8.0(@typescript-eslint/parser@5.62.0)(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0):
+  /eslint-module-utils@2.8.0(@typescript-eslint/parser@6.20.0)(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0):
     resolution: {integrity: sha512-aWajIYfsqCKRDgUfjEXNN/JlrzauMuSEy5sbd7WXbtW3EH6A6MpwEh42c7qD+MqQo9QMJ6fWLAeIJynx0g6OAw==}
     engines: {node: '>=4'}
     peerDependencies:
@@ -16329,11 +16415,11 @@ packages:
       eslint-import-resolver-webpack:
         optional: true
     dependencies:
-      '@typescript-eslint/parser': 5.62.0(eslint@8.56.0)(typescript@5.2.2)
+      '@typescript-eslint/parser': 6.20.0(eslint@8.56.0)(typescript@5.2.2)
       debug: 3.2.7(supports-color@6.1.0)
       eslint: 8.56.0
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@5.62.0)(eslint-plugin-import@2.29.1)(eslint@8.56.0)
+      eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@6.20.0)(eslint-plugin-import@2.29.1)(eslint@8.56.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -16363,7 +16449,7 @@ packages:
       string-natural-compare: 3.0.1
     dev: false
 
-  /eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0):
+  /eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.20.0)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0):
     resolution: {integrity: sha512-BbPC0cuExzhiMo4Ff1BTVwHpjjv28C5R+btTOGaCRC7UEz801up0JadwkeSk5Ued6TG34uaczuVuH6qyy5YUxw==}
     engines: {node: '>=4'}
     peerDependencies:
@@ -16373,7 +16459,7 @@ packages:
       '@typescript-eslint/parser':
         optional: true
     dependencies:
-      '@typescript-eslint/parser': 5.62.0(eslint@8.56.0)(typescript@5.2.2)
+      '@typescript-eslint/parser': 6.20.0(eslint@8.56.0)(typescript@5.2.2)
       array-includes: 3.1.7
       array.prototype.findlastindex: 1.2.3
       array.prototype.flat: 1.3.2
@@ -16382,7 +16468,7 @@ packages:
       doctrine: 2.1.0
       eslint: 8.56.0
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.8.0(@typescript-eslint/parser@5.62.0)(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)
+      eslint-module-utils: 2.8.0(@typescript-eslint/parser@6.20.0)(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)
       hasown: 2.0.0
       is-core-module: 2.13.1
       is-glob: 4.0.3
@@ -16397,17 +16483,17 @@ packages:
       - eslint-import-resolver-webpack
       - supports-color
 
-  /eslint-plugin-jest@24.7.0(@typescript-eslint/eslint-plugin@5.62.0)(eslint@8.56.0)(typescript@5.2.2):
+  /eslint-plugin-jest@24.7.0(@typescript-eslint/eslint-plugin@6.20.0)(eslint@8.56.0)(typescript@5.2.2):
     resolution: {integrity: sha512-wUxdF2bAZiYSKBclsUMrYHH6WxiBreNjyDxbRv345TIvPeoCEgPNEn3Sa+ZrSqsf1Dl9SqqSREXMHExlMMu1DA==}
     engines: {node: '>=10'}
     peerDependencies:
-      '@typescript-eslint/eslint-plugin': ^5.62.0
+      '@typescript-eslint/eslint-plugin': ^6.20.0
       eslint: ^8.56.0
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
     dependencies:
-      '@typescript-eslint/eslint-plugin': 5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.56.0)(typescript@5.2.2)
+      '@typescript-eslint/eslint-plugin': 6.20.0(@typescript-eslint/parser@6.20.0)(eslint@8.56.0)(typescript@5.2.2)
       '@typescript-eslint/experimental-utils': 4.33.0(eslint@8.56.0)(typescript@5.2.2)
       eslint: 8.56.0
     transitivePeerDependencies:
@@ -16415,11 +16501,11 @@ packages:
       - typescript
     dev: false
 
-  /eslint-plugin-jest@25.7.0(@typescript-eslint/eslint-plugin@5.62.0)(eslint@8.56.0)(jest@27.5.1)(typescript@5.2.2):
+  /eslint-plugin-jest@25.7.0(@typescript-eslint/eslint-plugin@6.20.0)(eslint@8.56.0)(jest@27.5.1)(typescript@5.2.2):
     resolution: {integrity: sha512-PWLUEXeeF7C9QGKqvdSbzLOiLTx+bno7/HC9eefePfEb257QFHg7ye3dh80AZVkaa/RQsBB1Q/ORQvg2X7F0NQ==}
     engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
     peerDependencies:
-      '@typescript-eslint/eslint-plugin': ^5.62.0
+      '@typescript-eslint/eslint-plugin': ^6.20.0
       eslint: ^8.56.0
       jest: '*'
     peerDependenciesMeta:
@@ -16428,7 +16514,7 @@ packages:
       jest:
         optional: true
     dependencies:
-      '@typescript-eslint/eslint-plugin': 5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.56.0)(typescript@5.2.2)
+      '@typescript-eslint/eslint-plugin': 6.20.0(@typescript-eslint/parser@6.20.0)(eslint@8.56.0)(typescript@5.2.2)
       '@typescript-eslint/experimental-utils': 5.62.0(eslint@8.56.0)(typescript@5.2.2)
       eslint: 8.56.0
       jest: 27.5.1
@@ -18095,7 +18181,7 @@ packages:
     dependencies:
       '@sindresorhus/merge-streams': 1.0.0
       fast-glob: 3.3.2
-      ignore: 5.2.4
+      ignore: 5.3.0
       path-type: 5.0.0
       slash: 5.1.0
       unicorn-magic: 0.1.0
@@ -18746,10 +18832,6 @@ packages:
     dependencies:
       minimatch: 9.0.3
     dev: true
-
-  /ignore@5.2.4:
-    resolution: {integrity: sha512-MAb38BcSbH0eHNBxn7ql2NH/kX33OkB3lZ1BNdh7ENeRChHTYsTvWrMubiIAMNS2llXEEgZ1MUOBtXChP3kaFQ==}
-    engines: {node: '>= 4'}
 
   /ignore@5.3.0:
     resolution: {integrity: sha512-g7dmpshy+gD7mh88OC9NwSGTKoc3kyLAZQRU1mt53Aw/vnvfXnbC+F/7F7QoYVKbV+KNvJx8wArewKy1vXMtlg==}
@@ -21725,11 +21807,6 @@ packages:
     dependencies:
       tslib: 2.6.2
 
-  /lru-cache@10.0.1:
-    resolution: {integrity: sha512-IJ4uwUTi2qCccrioU6g9g/5rvvVl13bsdczUUcqbciD9iLr095yj8DQKdObriEvuNSx325N1rV1O0sJFszx75g==}
-    engines: {node: 14 || >=16.14}
-    dev: true
-
   /lru-cache@10.1.0:
     resolution: {integrity: sha512-/1clY/ui8CzjKFyjdvwPWJUYKiFVXG2I2cY0ssG7h4+hwk+XOIX7ZSG9Q7TW8TW3Kp3BUSqgFWBLgL4PJ+Blag==}
     engines: {node: 14 || >=16.14}
@@ -22478,7 +22555,6 @@ packages:
     engines: {node: '>=16 || 14 >=14.17'}
     dependencies:
       brace-expansion: 2.0.1
-    dev: true
 
   /minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
@@ -22771,9 +22847,6 @@ packages:
     dependencies:
       querystring: 0.2.1
     dev: false
-
-  /natural-compare-lite@1.4.0:
-    resolution: {integrity: sha512-Tj+HTDSJJKaZnfiuw+iaF9skdPpTo2GtEly5JHnWV/hfv2Qj/9RKsGISQtLh2ox3l5EAGw487hnBee0sIJ6v2g==}
 
   /natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
@@ -24230,7 +24303,7 @@ packages:
     resolution: {integrity: sha512-MkhCqzzBEpPvxxQ71Md0b1Kk51W01lrYvlMzSUaIzNsODdd7mqhiimSZlr+VegAz5Z6Vzt9Xg2ttE//XBhH3EQ==}
     engines: {node: '>=16 || 14 >=14.17'}
     dependencies:
-      lru-cache: 10.0.1
+      lru-cache: 10.1.0
       minipass: 7.0.4
     dev: true
 
@@ -26656,8 +26729,8 @@ packages:
       '@babel/core': 7.12.3
       '@pmmmwh/react-refresh-webpack-plugin': 0.4.3(react-refresh@0.8.3)(webpack-dev-server@3.11.1)(webpack@4.44.2)
       '@svgr/webpack': 5.5.0
-      '@typescript-eslint/eslint-plugin': 5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.56.0)(typescript@5.2.2)
-      '@typescript-eslint/parser': 5.62.0(eslint@8.56.0)(typescript@5.2.2)
+      '@typescript-eslint/eslint-plugin': 6.20.0(@typescript-eslint/parser@6.20.0)(eslint@8.56.0)(typescript@5.2.2)
+      '@typescript-eslint/parser': 6.20.0(eslint@8.56.0)(typescript@5.2.2)
       babel-eslint: 10.1.0(eslint@8.56.0)
       babel-jest: 26.6.3(@babel/core@7.12.3)
       babel-loader: 8.1.0(@babel/core@7.12.3)(webpack@4.44.2)
@@ -26670,10 +26743,10 @@ packages:
       dotenv: 8.2.0
       dotenv-expand: 5.1.0
       eslint: 8.56.0
-      eslint-config-react-app: 6.0.0(@typescript-eslint/eslint-plugin@5.62.0)(@typescript-eslint/parser@5.62.0)(babel-eslint@10.1.0)(eslint-plugin-flowtype@5.10.0)(eslint-plugin-import@2.29.1)(eslint-plugin-jest@24.7.0)(eslint-plugin-jsx-a11y@6.7.1)(eslint-plugin-react-hooks@4.6.0)(eslint-plugin-react@7.33.2)(eslint-plugin-testing-library@3.10.2)(eslint@8.56.0)(typescript@5.2.2)
+      eslint-config-react-app: 6.0.0(@typescript-eslint/eslint-plugin@6.20.0)(@typescript-eslint/parser@6.20.0)(babel-eslint@10.1.0)(eslint-plugin-flowtype@5.10.0)(eslint-plugin-import@2.29.1)(eslint-plugin-jest@24.7.0)(eslint-plugin-jsx-a11y@6.7.1)(eslint-plugin-react-hooks@4.6.0)(eslint-plugin-react@7.33.2)(eslint-plugin-testing-library@3.10.2)(eslint@8.56.0)(typescript@5.2.2)
       eslint-plugin-flowtype: 5.10.0(eslint@8.56.0)
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@5.62.0)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)
-      eslint-plugin-jest: 24.7.0(@typescript-eslint/eslint-plugin@5.62.0)(eslint@8.56.0)(typescript@5.2.2)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@6.20.0)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)
+      eslint-plugin-jest: 24.7.0(@typescript-eslint/eslint-plugin@6.20.0)(eslint@8.56.0)(typescript@5.2.2)
       eslint-plugin-jsx-a11y: 6.7.1(eslint@8.56.0)
       eslint-plugin-react: 7.33.2(eslint@8.56.0)
       eslint-plugin-react-hooks: 4.6.0(eslint@8.56.0)
@@ -29736,6 +29809,14 @@ packages:
       typescript: 5.0.4
     dev: false
 
+  /ts-api-utils@1.0.3(typescript@5.2.2):
+    resolution: {integrity: sha512-wNMeqtMz5NtwpT/UZGY5alT+VoKdSsOOP/kqHFcUW1P/VRhH2wJ48+DN2WwUliNbQ976ETwDL0Ifd2VVvgonvg==}
+    engines: {node: '>=16.13.0'}
+    peerDependencies:
+      typescript: '>=4.2.0'
+    dependencies:
+      typescript: 5.2.2
+
   /ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
 
@@ -29777,6 +29858,7 @@ packages:
 
   /tslib@1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
+    dev: false
 
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
@@ -29841,6 +29923,7 @@ packages:
     dependencies:
       tslib: 1.14.1
       typescript: 5.2.2
+    dev: false
 
   /tty-browserify@0.0.0:
     resolution: {integrity: sha512-JVa5ijo+j/sOoHGjw0sxw734b1LhBkQ3bvUGNdxnVXDCX81Yx7TFgnZygxrIIWn23hbfTaMYLwRmAxFyDuFmIw==}

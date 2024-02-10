@@ -29,7 +29,7 @@ export function signalProxy<TInput extends Record<string | symbol, any>>(
       if (typeof targetField === 'function') return targetField
 
       // finally, create a computed field, store it and return it
-      // @ts-ignore
+      // @ts-expect-error
       return (target[prop] = computed(() => inputSignal()[prop]))
     },
     has(_, prop) {
