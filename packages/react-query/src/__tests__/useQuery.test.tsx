@@ -28,7 +28,7 @@ describe('useQuery', () => {
   it('should return the correct types', () => {
     const key = queryKey()
 
-    // @ts-ignore
+    // @ts-expect-error
     function Page() {
       // unspecified query function should default to unknown
       const noQueryFn = useQuery({ queryKey: key })

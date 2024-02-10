@@ -2101,7 +2101,6 @@ const createSubscribeToQueryCacheBatcher = <T,>(
   })
 
   onCleanup(() => {
-    // @ts-ignore
     queryCacheMap.delete(callback)
   })
 
@@ -2153,11 +2152,9 @@ const createSubscribeToMutationCacheBatcher = <T,>(
     setValue(callback(mutationCache))
   })
 
-  // @ts-ignore
   mutationCacheMap.set(callback, setValue)
 
   onCleanup(() => {
-    // @ts-ignore
     mutationCacheMap.delete(callback)
   })
 
