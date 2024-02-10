@@ -30,7 +30,7 @@ export function detectTanstackQueryImports(create: EnhancedCreate): Create {
         return !!tanstackQueryImportSpecifiers.find((specifier) => {
           if (
             specifier.type === TSESTree.AST_NODE_TYPES.ImportSpecifier &&
-            specifier.parent?.type ===
+            specifier.parent.type ===
               TSESTree.AST_NODE_TYPES.ImportDeclaration &&
             specifier.parent.source.value === source
           ) {

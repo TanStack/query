@@ -24,7 +24,7 @@ export const ExhaustiveDepsUtils = {
 
     return (
       reference.identifier.name !== 'undefined' &&
-      reference.identifier.parent?.type !== AST_NODE_TYPES.NewExpression &&
+      reference.identifier.parent.type !== AST_NODE_TYPES.NewExpression &&
       !ExhaustiveDepsUtils.isQueryClientReference(reference)
     )
   },

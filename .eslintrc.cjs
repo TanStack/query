@@ -19,7 +19,7 @@ const config = {
   },
   parserOptions: {
     tsconfigRootDir: __dirname,
-    project: './tsconfig.json',
+    project: true,
     sourceType: 'module',
     ecmaVersion: 2020,
   },

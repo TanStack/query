@@ -2,18 +2,23 @@ import { AST_NODE_TYPES } from '@typescript-eslint/utils'
 import { createRule } from '../../utils/create-rule'
 import { ASTUtils } from '../../utils/ast-utils'
 import { NoRestDestructuringUtils } from './no-rest-destructuring.utils'
+import type { ESLintUtils } from '@typescript-eslint/utils'
 
 export const name = 'no-rest-destructuring'
 
 const queryHooks = ['useQuery', 'useQueries', 'useInfiniteQuery']
 
-export const rule = createRule({
+export const rule: ESLintUtils.RuleModule<
+  string,
+  any,
+  ESLintUtils.RuleListener
+> = createRule({
   name,
   meta: {
     type: 'problem',
     docs: {
       description: 'Disallows rest destructuring in queries',
-      recommended: 'warn',
+      recommended: 'warn' as any,
     },
     messages: {
       objectRestDestructure: `Object rest destructuring on a query will observe all changes to the query, leading to excessive re-renders.`,
@@ -22,13 +27,13 @@ export const rule = createRule({
   },
   defaultOptions: [],
 
-  create(context, _, helpers) {
+  create: (context, _, helpers) => {
     return {
-      CallExpression(node) {
+      CallExpression: (node) => {
         if (
           !ASTUtils.isIdentifierWithOneOfNames(node.callee, queryHooks) ||
           !helpers.isTanstackQueryImport(node.callee) ||
-          node.parent?.type !== AST_NODE_TYPES.VariableDeclarator
+          node.parent.type !== AST_NODE_TYPES.VariableDeclarator
         ) {
           return
         }

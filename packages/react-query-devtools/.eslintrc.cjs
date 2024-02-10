@@ -5,7 +5,7 @@ const config = {
   extends: ['plugin:react/recommended', 'plugin:react-hooks/recommended'],
   parserOptions: {
     tsconfigRootDir: __dirname,
-    project: './tsconfig.json',
+    project: true,
   },
   rules: {
     'react/jsx-key': ['error', { checkFragmentShorthand: true }],

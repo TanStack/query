@@ -3,20 +3,24 @@ import { ASTUtils } from '../utils/ast-utils'
 import { createRule } from '../utils/create-rule'
 import { uniqueBy } from '../utils/unique-by'
 import { ExhaustiveDepsUtils } from './exhaustive-deps.utils'
-import type { TSESLint } from '@typescript-eslint/utils'
+import type { ESLintUtils, TSESLint } from '@typescript-eslint/utils'
 
 const QUERY_KEY = 'queryKey'
 const QUERY_FN = 'queryFn'
 
 export const name = 'exhaustive-deps'
 
-export const rule = createRule({
+export const rule: ESLintUtils.RuleModule<
+  string,
+  any,
+  ESLintUtils.RuleListener
+> = createRule({
   name,
   meta: {
     type: 'problem',
     docs: {
       description: 'Exhaustive deps rule for useQuery',
-      recommended: 'error',
+      recommended: 'error' as any,
     },
     messages: {
       missingDeps: `The following dependencies are missing in your queryKey: {{deps}}`,
@@ -28,11 +32,10 @@ export const rule = createRule({
   },
   defaultOptions: [],
 
-  create(context) {
+  create: (context) => {
     return {
-      Property(node) {
+      Property: (node) => {
         if (
-          node.parent === undefined ||
           !ASTUtils.isObjectExpression(node.parent) ||
           !ASTUtils.isIdentifierWithName(node.key, QUERY_KEY)
         ) {
