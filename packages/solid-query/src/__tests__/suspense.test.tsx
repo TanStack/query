@@ -472,7 +472,6 @@ describe("useQuery's in Suspense mode", () => {
 
       // read state.data to trigger suspense.
       createRenderEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- trigger suspense
         state.data
       })
 
@@ -523,7 +522,6 @@ describe("useQuery's in Suspense mode", () => {
 
       // read state.data to trigger suspense.
       createRenderEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- trigger suspense
         state.data
       })
 
@@ -576,7 +574,6 @@ describe("useQuery's in Suspense mode", () => {
 
       // read state.data to trigger suspense.
       createRenderEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- trigger suspense
         state.data
       })
 
@@ -629,7 +626,6 @@ describe("useQuery's in Suspense mode", () => {
 
       // read state.data to trigger suspense.
       createRenderEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- trigger suspense
         state.data
       })
 

@@ -81,7 +81,6 @@ describe('useQueries', () => {
     const key3 = queryKey()
 
     // @ts-expect-error (Page component is not rendered)
-    // eslint-disable-next-line
     function Page() {
       const result1 = createQueries<
         [[number], [string], [Array<string>, boolean]]
@@ -189,7 +188,6 @@ describe('useQueries', () => {
     const key3 = queryKey()
 
     // @ts-expect-error (Page component is not rendered)
-    // eslint-disable-next-line
     function Page() {
       const result1 = createQueries<
         [
@@ -338,7 +336,6 @@ describe('useQueries', () => {
     const key4 = queryKey()
 
     // @ts-expect-error (Page component is not rendered)
-    // eslint-disable-next-line
     function Page() {
       // Array.map preserves TQueryFnData
       const result1 = createQueries(() => ({
@@ -600,7 +597,6 @@ describe('useQueries', () => {
     }
 
     // @ts-expect-error (Page component is not rendered)
-    // eslint-disable-next-line
     function Page() {
       const result = createQueries(() => ({
         queries: [

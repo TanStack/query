@@ -114,7 +114,6 @@ export function useBaseQuery<
   watch(
     client.isRestoring,
     (isRestoring) => {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (!isRestoring) {
         unsubscribe()
         unsubscribe = observer.subscribe((result) => {
