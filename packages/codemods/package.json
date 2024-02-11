@@ -27,7 +27,7 @@
     "!src/**/__tests__"
   ],
   "devDependencies": {
-    "@types/jscodeshift": "0.11.6",
-    "jscodeshift": "0.15.0"
+    "@types/jscodeshift": "0.11.11",
+    "jscodeshift": "0.15.1"
   }
 }
