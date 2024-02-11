@@ -1,4 +1,4 @@
-# Simple example
+# Angular Query router example
 
 To run this example:
 
