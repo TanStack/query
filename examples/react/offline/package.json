@@ -13,7 +13,7 @@
     "@tanstack/react-query": "^5.20.1",
     "@tanstack/react-query-devtools": "^5.20.1",
     "@tanstack/react-query-persist-client": "^5.20.1",
-    "ky": "^1.1.3",
+    "ky": "^1.2.0",
     "msw": "^2.1.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.0.10"
+    "vite": "^5.1.1"
   },
   "browserslist": {
     "production": [
