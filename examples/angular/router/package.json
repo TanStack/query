@@ -1,6 +1,6 @@
 {
-  "name": "simple",
-  "version": "0.0.0",
+  "name": "@tanstack/query-example-angular-router",
+  "type": "module",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
