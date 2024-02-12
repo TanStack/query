@@ -12,7 +12,6 @@ import type {
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
-  WithRequired,
 } from '@tanstack/query-core'
 import type { MapToSignals } from './signal-proxy'
 
@@ -22,9 +21,12 @@ export interface CreateBaseQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends WithRequired<
-    QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
-    'queryKey'
+> extends QueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
   > {}
 
 export interface CreateQueryOptions<
@@ -33,15 +35,12 @@ export interface CreateQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
-    WithRequired<
-      CreateBaseQueryOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryFnData,
-        TQueryKey
-      >,
-      'queryKey'
+    CreateBaseQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryFnData,
+      TQueryKey
     >,
     'suspense'
   > {}
@@ -83,19 +82,16 @@ export interface CreateInfiniteQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends WithRequired<
-    Omit<
-      InfiniteQueryObserverOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryData,
-        TQueryKey,
-        TPageParam
-      >,
-      'suspense'
+> extends Omit<
+    InfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
     >,
-    'queryKey'
+    'suspense'
   > {}
 
 export type CreateBaseQueryResult<

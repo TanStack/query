@@ -132,7 +132,7 @@ export class QueryObserver<
   }
 
   setOptions(
-    options?: QueryObserverOptions<
+    options: QueryObserverOptions<
       TQueryFnData,
       TError,
       TData,

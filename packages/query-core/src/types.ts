@@ -216,12 +216,9 @@ export interface QueryObserverOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
-> extends QueryOptions<
-    TQueryFnData,
-    TError,
-    TQueryData,
-    TQueryKey,
-    TPageParam
+> extends WithRequired<
+    QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey, TPageParam>,
+    'queryKey'
   > {
   /**
    * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
@@ -338,6 +335,11 @@ export interface QueryObserverOptions<
 export type WithRequired<TTarget, TKey extends keyof TTarget> = TTarget & {
   [_ in TKey]: {}
 }
+export type Optional<TTarget, TKey extends keyof TTarget> = Pick<
+  Partial<TTarget>,
+  TKey
+> &
+  Omit<TTarget, TKey>
 
 export type DefaultedQueryObserverOptions<
   TQueryFnData = unknown,

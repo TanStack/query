@@ -167,7 +167,7 @@ export function matchMutation(
 
 export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
   queryKey: TQueryKey,
-  options?: QueryOptions<any, any, any, TQueryKey>,
+  options?: Pick<QueryOptions<any, any, any, any>, 'queryKeyHashFn'>,
 ): string {
   const hashFn = options?.queryKeyHashFn || hashKey
   return hashFn(queryKey)
