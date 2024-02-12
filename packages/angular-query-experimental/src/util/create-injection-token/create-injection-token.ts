@@ -180,7 +180,6 @@ export function createNoopInjectionToken<
       (options || {}) as CreateProvideFnOptions<() => void, []>,
     ) as CreateInjectionTokenReturn<TReturn, true>[1],
     token,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     () => {},
   ] as CreateInjectionTokenReturn<TReturn, true>
 }

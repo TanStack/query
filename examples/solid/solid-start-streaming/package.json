@@ -5,16 +5,16 @@
   "scripts": {
     "dev": "vinxi dev",
     "build": "vinxi build",
-    "start": "node ./.output/server/index.mjs"
+    "start": "vinxi start"
   },
   "dependencies": {
-    "@solidjs/meta": "^0.29.2",
-    "@solidjs/router": "^0.10.5",
-    "@solidjs/start": "^0.4.2",
-    "@tanstack/solid-query": "^5.18.1",
-    "@tanstack/solid-query-devtools": "^5.18.1",
-    "solid-js": "^1.8.7",
-    "vinxi": "0.0.54"
+    "@solidjs/meta": "^0.29.3",
+    "@solidjs/router": "^0.12.0",
+    "@solidjs/start": "^0.5.4",
+    "@tanstack/solid-query": "^5.20.1",
+    "@tanstack/solid-query-devtools": "^5.20.1",
+    "solid-js": "^1.8.14",
+    "vinxi": "^0.2.1"
   },
   "engines": {
     "node": ">=18"

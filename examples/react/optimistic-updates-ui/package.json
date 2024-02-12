@@ -7,9 +7,9 @@
     "start": "next start"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.18.1",
-    "@tanstack/react-query-devtools": "^5.18.1",
-    "axios": "^1.6.2",
+    "@tanstack/react-query": "^5.20.1",
+    "@tanstack/react-query-devtools": "^5.20.1",
+    "axios": "^1.6.7",
     "isomorphic-unfetch": "4.0.2",
     "next": "^14.0.0",
     "react": "^18.2.0",
@@ -17,8 +17,8 @@
   },
   "devDependencies": {
     "@types/node": "^18.19.3",
-    "@types/react": "^18.2.45",
-    "@types/react-dom": "^18.2.18",
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.19",
     "typescript": "5.2.2"
   }
 }

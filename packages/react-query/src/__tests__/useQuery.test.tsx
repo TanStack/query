@@ -28,8 +28,7 @@ describe('useQuery', () => {
   it('should return the correct types', () => {
     const key = queryKey()
 
-    // @ts-ignore
-    // eslint-disable-next-line
+    // @ts-expect-error
     function Page() {
       // unspecified query function should default to unknown
       const noQueryFn = useQuery({ queryKey: key })
@@ -3002,7 +3001,6 @@ describe('useQuery', () => {
         fallbackRender={({ error }) => (
           <div>
             <div>error boundary</div>
-            {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
             <div>{error?.message}</div>
           </div>
         )}
@@ -4660,7 +4658,6 @@ describe('useQuery', () => {
       ctx,
     ) => {
       const [, limit] = ctx.queryKey
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       const value = limit % 2 && ctx.signal ? 'abort' : `data ${limit}`
       await sleep(25)
       return value

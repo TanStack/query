@@ -9,18 +9,18 @@
     "test:types": "tsc"
   },
   "dependencies": {
-    "@angular/common": "^17.1.2",
-    "@angular/compiler": "^17.1.2",
-    "@angular/core": "^17.1.2",
-    "@angular/platform-browser": "^17.1.2",
-    "@tanstack/angular-query-devtools-experimental": "^5.19.0",
-    "@tanstack/angular-query-experimental": "^5.19.0",
-    "axios": "^1.6.2",
+    "@angular/common": "^17.1.3",
+    "@angular/compiler": "^17.1.3",
+    "@angular/core": "^17.1.3",
+    "@angular/platform-browser": "^17.1.3",
+    "@tanstack/angular-query-devtools-experimental": "^5.20.1",
+    "@tanstack/angular-query-experimental": "^5.20.1",
+    "axios": "^1.6.7",
     "rxjs": "^7.8.1",
     "zone.js": "^0.14.3"
   },
   "devDependencies": {
     "typescript": "5.2.2",
-    "vite": "^5.0.10"
+    "vite": "^5.1.1"
   }
 }

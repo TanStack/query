@@ -1,9 +1,12 @@
-import { AST_NODE_TYPES } from '@typescript-eslint/utils'
+import { AST_NODE_TYPES, ESLintUtils } from '@typescript-eslint/utils'
 import { ASTUtils } from '../../utils/ast-utils'
-import { createRule } from '../../utils/create-rule'
+import { getDocsUrl } from '../../utils/get-docs-url'
+import { detectTanstackQueryImports } from '../../utils/detect-react-query-imports'
 import type { TSESLint } from '@typescript-eslint/utils'
 
 export const name = 'stable-query-client'
+
+const createRule = ESLintUtils.RuleCreator(getDocsUrl)
 
 export const rule = createRule({
   name,
@@ -11,7 +14,7 @@ export const rule = createRule({
     type: 'problem',
     docs: {
       description: 'Makes sure that QueryClient is stable',
-      recommended: 'error',
+      recommended: 'error' as any,
     },
     messages: {
       unstable: [
@@ -26,13 +29,13 @@ export const rule = createRule({
   },
   defaultOptions: [],
 
-  create(context, _, helpers) {
+  create: detectTanstackQueryImports((context, _, helpers) => {
     return {
-      NewExpression(node) {
+      NewExpression: (node) => {
         if (
           node.callee.type !== AST_NODE_TYPES.Identifier ||
           node.callee.name !== 'QueryClient' ||
-          node.parent?.type !== AST_NODE_TYPES.VariableDeclarator ||
+          node.parent.type !== AST_NODE_TYPES.VariableDeclarator ||
           !helpers.isSpecificTanstackQueryImport(
             node.callee,
             '@tanstack/react-query',
@@ -74,5 +77,5 @@ export const rule = createRule({
         })
       },
     }
-  },
+  }),
 })

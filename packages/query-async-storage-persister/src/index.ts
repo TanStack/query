@@ -100,5 +100,4 @@ export const createAsyncStoragePersister = ({
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 function noop() {}

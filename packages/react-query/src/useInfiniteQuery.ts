@@ -76,7 +76,6 @@ export function useInfiniteQuery(
 ) {
   return useBaseQuery(
     options,
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     InfiniteQueryObserver as typeof QueryObserver,
     queryClient,
   )
