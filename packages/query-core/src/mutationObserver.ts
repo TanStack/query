@@ -59,7 +59,7 @@ export class MutationObserver<
       | MutationObserverOptions<TData, TError, TVariables, TContext>
       | undefined
     this.options = this.#client.defaultMutationOptions(options)
-    if (!shallowEqualObjects(prevOptions, this.options)) {
+    if (!shallowEqualObjects(this.options, prevOptions)) {
       this.#client.getMutationCache().notify({
         type: 'observerOptionsUpdated',
         mutation: this.#currentMutation,
