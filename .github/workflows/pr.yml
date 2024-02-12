@@ -33,7 +33,7 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - name: Start Agents
-        run: npx nx-cloud start-ci-run --distribute-on="12 linux-medium-js" --stop-agents-on-failure=false --with-env-vars="auto"
+        run: npx nx-cloud start-ci-run --distribute-on="12 linux-medium-js" --stop-agents-on-failure=false
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
       - name: Get base and head commits for `nx affected`
