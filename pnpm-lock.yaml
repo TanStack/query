@@ -1559,23 +1559,23 @@ importers:
   examples/vue/simple:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^5.18.1
+        specifier: ^5.20.1
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.3.0
         version: 3.3.0
     devDependencies:
       '@vitejs/plugin-vue':
-        specifier: ^4.5.2
-        version: 4.6.2(vite@5.1.1)(vue@3.3.0)
+        specifier: ^5.0.4
+        version: 5.0.4(vite@5.1.1)(vue@3.3.0)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.0.10
+        specifier: ^5.1.1
         version: 5.1.1(@types/node@18.19.3)
 
   integrations/angular-cli-standalone-17:
@@ -7276,6 +7276,7 @@ packages:
     dependencies:
       is-glob: 4.0.3
       micromatch: 4.0.5
+      napi-wasm: 1.1.0
     dev: false
     bundledDependencies:
       - napi-wasm
@@ -9945,17 +9946,6 @@ packages:
       vite: 5.1.1(@types/node@18.19.3)
     transitivePeerDependencies:
       - supports-color
-
-  /@vitejs/plugin-vue@4.6.2(vite@5.1.1)(vue@3.3.0):
-    resolution: {integrity: sha512-kqf7SGFoG+80aZG6Pf+gsZIVvGSCKE98JbiWqcCV9cThtg91Jav0yvYFC9Zb+jKetNGF6ZKeoaxgZfND21fWKw==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    peerDependencies:
-      vite: ^4.0.0 || ^5.0.0
-      vue: ^3.2.25
-    dependencies:
-      vite: 5.1.1(@types/node@18.19.3)
-      vue: 3.3.0
-    dev: true
 
   /@vitejs/plugin-vue@5.0.4(vite@5.1.1)(vue@3.3.0):
     resolution: {integrity: sha512-WS3hevEszI6CEVEx28F8RjTX97k3KsrcY6kvTg7+Whm5y3oYvcqzVeGCU3hxSAn4uY2CLCkeokkGKpoctccilQ==}
@@ -21231,6 +21221,10 @@ packages:
       to-regex: 3.0.2
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /napi-wasm@1.1.0:
+    resolution: {integrity: sha512-lHwIAJbmLSjF9VDRm9GoVOy9AGp3aIvkjv+Kvz9h16QR3uSVYH78PNQUnT2U4X53mhlnV2M7wrhibQ3GHicDmg==}
     dev: false
 
   /native-url@0.2.6:
