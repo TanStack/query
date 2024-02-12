@@ -38,34 +38,44 @@ export interface MutationState<
   submittedAt: number
 }
 
+// eslint-disable-next-line no-shadow
+const enum MUTATION_ACTION_TYPE {
+  FAILED = 'failed',
+  PENDING = 'pending',
+  SUCCESS = 'success',
+  ERROR = 'error',
+  PAUSE = 'pause',
+  CONTINUE = 'continue',
+}
+
 interface FailedAction<TError> {
-  type: 'failed'
+  type: MUTATION_ACTION_TYPE.FAILED
   failureCount: number
   error: TError | null
 }
 
 interface PendingAction<TVariables, TContext> {
-  type: 'pending'
+  type: MUTATION_ACTION_TYPE.PENDING
   variables?: TVariables
   context?: TContext
 }
 
 interface SuccessAction<TData> {
-  type: 'success'
+  type: MUTATION_ACTION_TYPE.SUCCESS
   data: TData
 }
 
 interface ErrorAction<TError> {
-  type: 'error'
+  type: MUTATION_ACTION_TYPE.ERROR
   error: TError
 }
 
 interface PauseAction {
-  type: 'pause'
+  type: MUTATION_ACTION_TYPE.PAUSE
 }
 
 interface ContinueAction {
-  type: 'continue'
+  type: MUTATION_ACTION_TYPE.CONTINUE
 }
 
 export type Action<TData, TError, TVariables, TContext> =
@@ -173,13 +183,17 @@ export class Mutation<
           return this.options.mutationFn(variables)
         },
         onFail: (failureCount, error) => {
-          this.#dispatch({ type: 'failed', failureCount, error })
+          this.#dispatch({
+            type: MUTATION_ACTION_TYPE.FAILED,
+            failureCount,
+            error,
+          })
         },
         onPause: () => {
-          this.#dispatch({ type: 'pause' })
+          this.#dispatch({ type: MUTATION_ACTION_TYPE.PAUSE })
         },
         onContinue: () => {
-          this.#dispatch({ type: 'continue' })
+          this.#dispatch({ type: MUTATION_ACTION_TYPE.CONTINUE })
         },
         retry: this.options.retry ?? 0,
         retryDelay: this.options.retryDelay,
@@ -193,7 +207,7 @@ export class Mutation<
 
     try {
       if (!restored) {
-        this.#dispatch({ type: 'pending', variables })
+        this.#dispatch({ type: MUTATION_ACTION_TYPE.PENDING, variables })
         // Notify cache callback
         await this.#mutationCache.config.onMutate?.(
           variables,
@@ -202,7 +216,7 @@ export class Mutation<
         const context = await this.options.onMutate?.(variables)
         if (context !== this.state.context) {
           this.#dispatch({
-            type: 'pending',
+            type: MUTATION_ACTION_TYPE.PENDING,
             context,
             variables,
           })
@@ -231,7 +245,7 @@ export class Mutation<
 
       await this.options.onSettled?.(data, null, variables, this.state.context)
 
-      this.#dispatch({ type: 'success', data })
+      this.#dispatch({ type: MUTATION_ACTION_TYPE.SUCCESS, data })
       return data
     } catch (error) {
       try {
@@ -266,7 +280,10 @@ export class Mutation<
         )
         throw error
       } finally {
-        this.#dispatch({ type: 'error', error: error as TError })
+        this.#dispatch({
+          type: MUTATION_ACTION_TYPE.ERROR,
+          error: error as TError,
+        })
       }
     }
   }
@@ -276,23 +293,23 @@ export class Mutation<
       state: MutationState<TData, TError, TVariables, TContext>,
     ): MutationState<TData, TError, TVariables, TContext> => {
       switch (action.type) {
-        case 'failed':
+        case MUTATION_ACTION_TYPE.FAILED:
           return {
             ...state,
             failureCount: action.failureCount,
             failureReason: action.error,
           }
-        case 'pause':
+        case MUTATION_ACTION_TYPE.PAUSE:
           return {
             ...state,
             isPaused: true,
           }
-        case 'continue':
+        case MUTATION_ACTION_TYPE.CONTINUE:
           return {
             ...state,
             isPaused: false,
           }
-        case 'pending':
+        case MUTATION_ACTION_TYPE.PENDING:
           return {
             ...state,
             context: action.context,
@@ -305,7 +322,7 @@ export class Mutation<
             variables: action.variables,
             submittedAt: Date.now(),
           }
-        case 'success':
+        case MUTATION_ACTION_TYPE.SUCCESS:
           return {
             ...state,
             data: action.data,
@@ -315,7 +332,7 @@ export class Mutation<
             status: 'success',
             isPaused: false,
           }
-        case 'error':
+        case MUTATION_ACTION_TYPE.ERROR:
           return {
             ...state,
             data: undefined,

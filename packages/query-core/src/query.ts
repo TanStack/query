@@ -2,6 +2,7 @@ import { noop, replaceData, timeUntilStale } from './utils'
 import { notifyManager } from './notifyManager'
 import { canFetch, createRetryer, isCancelledError } from './retryer'
 import { Removable } from './removable'
+import { type QueryCache } from './queryCache'
 import type {
   CancelOptions,
   DefaultError,
@@ -14,7 +15,6 @@ import type {
   QueryStatus,
   SetDataOptions,
 } from './types'
-import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
 import type { Retryer } from './retryer'
 
@@ -86,43 +86,55 @@ export interface FetchOptions {
   meta?: FetchMeta
 }
 
+// eslint-disable-next-line no-shadow
+const enum QUERY_ACTION_TYPE {
+  FAILED,
+  FETCH,
+  SUCCESS,
+  ERROR,
+  INVALIDATE,
+  PAUSE,
+  CONTINUE,
+  SET_STATE,
+}
+
 interface FailedAction<TError> {
-  type: 'failed'
+  type: QUERY_ACTION_TYPE.FAILED
   failureCount: number
   error: TError
 }
 
 interface FetchAction {
-  type: 'fetch'
+  type: QUERY_ACTION_TYPE.FETCH
   meta?: FetchMeta
 }
 
 interface SuccessAction<TData> {
   data: TData | undefined
-  type: 'success'
+  type: QUERY_ACTION_TYPE.SUCCESS
   dataUpdatedAt?: number
   manual?: boolean
 }
 
 interface ErrorAction<TError> {
-  type: 'error'
+  type: QUERY_ACTION_TYPE.ERROR
   error: TError
 }
 
 interface InvalidateAction {
-  type: 'invalidate'
+  type: QUERY_ACTION_TYPE.INVALIDATE
 }
 
 interface PauseAction {
-  type: 'pause'
+  type: QUERY_ACTION_TYPE.PAUSE
 }
 
 interface ContinueAction {
-  type: 'continue'
+  type: QUERY_ACTION_TYPE.CONTINUE
 }
 
 interface SetStateAction<TData, TError> {
-  type: 'setState'
+  type: QUERY_ACTION_TYPE.SET_STATE
   state: Partial<QueryState<TData, TError>>
   setStateOptions?: SetStateOptions
 }
@@ -205,7 +217,7 @@ export class Query<
     // Set data and mark it as cached
     this.#dispatch({
       data,
-      type: 'success',
+      type: QUERY_ACTION_TYPE.SUCCESS,
       dataUpdatedAt: options?.updatedAt,
       manual: options?.manual,
     })
@@ -217,7 +229,11 @@ export class Query<
     state: Partial<QueryState<TData, TError>>,
     setStateOptions?: SetStateOptions,
   ): void {
-    this.#dispatch({ type: 'setState', state, setStateOptions })
+    this.#dispatch({
+      type: QUERY_ACTION_TYPE.SET_STATE,
+      state,
+      setStateOptions,
+    })
   }
 
   cancel(options?: CancelOptions): Promise<void> {
@@ -320,7 +336,7 @@ export class Query<
 
   invalidate(): void {
     if (!this.state.isInvalidated) {
-      this.#dispatch({ type: 'invalidate' })
+      this.#dispatch({ type: QUERY_ACTION_TYPE.INVALIDATE })
     }
   }
 
@@ -433,14 +449,17 @@ export class Query<
       this.state.fetchStatus === 'idle' ||
       this.state.fetchMeta !== context.fetchOptions?.meta
     ) {
-      this.#dispatch({ type: 'fetch', meta: context.fetchOptions?.meta })
+      this.#dispatch({
+        type: QUERY_ACTION_TYPE.FETCH,
+        meta: context.fetchOptions?.meta,
+      })
     }
 
     const onError = (error: TError | { silent?: boolean }) => {
       // Optimistically update state if needed
       if (!(isCancelledError(error) && error.silent)) {
         this.#dispatch({
-          type: 'error',
+          type: QUERY_ACTION_TYPE.ERROR,
           error: error as TError,
         })
       }
@@ -498,13 +517,13 @@ export class Query<
       },
       onError,
       onFail: (failureCount, error) => {
-        this.#dispatch({ type: 'failed', failureCount, error })
+        this.#dispatch({ type: QUERY_ACTION_TYPE.FAILED, failureCount, error })
       },
       onPause: () => {
-        this.#dispatch({ type: 'pause' })
+        this.#dispatch({ type: QUERY_ACTION_TYPE.PAUSE })
       },
       onContinue: () => {
-        this.#dispatch({ type: 'continue' })
+        this.#dispatch({ type: QUERY_ACTION_TYPE.CONTINUE })
       },
       retry: context.options.retry,
       retryDelay: context.options.retryDelay,
@@ -521,23 +540,23 @@ export class Query<
       state: QueryState<TData, TError>,
     ): QueryState<TData, TError> => {
       switch (action.type) {
-        case 'failed':
+        case QUERY_ACTION_TYPE.FAILED:
           return {
             ...state,
             fetchFailureCount: action.failureCount,
             fetchFailureReason: action.error,
           }
-        case 'pause':
+        case QUERY_ACTION_TYPE.PAUSE:
           return {
             ...state,
             fetchStatus: 'paused',
           }
-        case 'continue':
+        case QUERY_ACTION_TYPE.CONTINUE:
           return {
             ...state,
             fetchStatus: 'fetching',
           }
-        case 'fetch':
+        case QUERY_ACTION_TYPE.FETCH:
           return {
             ...state,
             fetchFailureCount: 0,
@@ -551,7 +570,7 @@ export class Query<
               status: 'pending',
             }),
           }
-        case 'success':
+        case QUERY_ACTION_TYPE.SUCCESS:
           return {
             ...state,
             data: action.data,
@@ -566,7 +585,7 @@ export class Query<
               fetchFailureReason: null,
             }),
           }
-        case 'error':
+        case QUERY_ACTION_TYPE.ERROR:
           const error = action.error as unknown
 
           if (isCancelledError(error) && error.revert && this.#revertState) {
@@ -583,12 +602,12 @@ export class Query<
             fetchStatus: 'idle',
             status: 'error',
           }
-        case 'invalidate':
+        case QUERY_ACTION_TYPE.INVALIDATE:
           return {
             ...state,
             isInvalidated: true,
           }
-        case 'setState':
+        case QUERY_ACTION_TYPE.SET_STATE:
           return {
             ...state,
             ...action.state,
