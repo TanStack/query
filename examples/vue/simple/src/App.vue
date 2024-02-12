@@ -10,8 +10,9 @@ export default defineComponent({
     const { data, error, isFetching, isPending } = useQuery({
       queryKey: ['repoData'],
       async queryFn() {
-        return await fetch('https://api.github.com/repos/Tanstack/query')
-          .then((response) => response.json())
+        return await fetch('https://api.github.com/repos/Tanstack/query').then(
+          (response) => response.json(),
+        )
       },
     })
 
@@ -19,18 +20,16 @@ export default defineComponent({
       data,
       error,
       isFetching,
-      isPending
+      isPending,
     }
   },
 })
 </script>
 
 <template>
-  <template v-if="isPending">
-    Loading...
-  </template>
+  <template v-if="isPending"> Loading... </template>
   <template v-else-if="error">
-  'An error has occurred: {{ error.message }}
+    'An error has occurred: {{ error.message }}
   </template>
   <template v-else>
     <h1>{{ data.name }}</h1>
