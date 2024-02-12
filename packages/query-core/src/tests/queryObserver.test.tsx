@@ -459,7 +459,7 @@ describe('queryObserver', () => {
     const unsubscribe = observer.subscribe((x) => {
       results.push(x)
     })
-    observer.setOptions({ enabled: false, staleTime: 10 })
+    observer.setOptions({ queryKey: key, enabled: false, staleTime: 10 })
     await queryClient.fetchQuery({ queryKey: key, queryFn })
     await sleep(100)
     unsubscribe()
@@ -579,7 +579,7 @@ describe('queryObserver', () => {
 
     const firstData = observer.getCurrentResult().data
 
-    observer.setOptions({ placeholderData: {} })
+    observer.setOptions({ queryKey: key, placeholderData: {} })
 
     const secondData = observer.getCurrentResult().data
 
@@ -885,7 +885,7 @@ describe('queryObserver', () => {
 
     const spy = vi.fn()
     const unsubscribe = queryClient.getQueryCache().subscribe(spy)
-    observer.setOptions({ enabled: false })
+    observer.setOptions({ queryKey: key, enabled: false })
 
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toHaveBeenCalledWith(
