@@ -22,7 +22,7 @@ export class ExampleComponent {
 
   query = injectInfiniteQuery(() => ({
     queryKey: ['projects'],
-    queryFn: async ({ pageParam }) => {
+    queryFn: ({ pageParam }) => {
       return lastValueFrom(this.projectsService.getProjects(pageParam))
     },
     initialPageParam: 0,

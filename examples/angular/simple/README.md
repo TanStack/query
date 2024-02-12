@@ -1,4 +1,4 @@
-# Simple example
+# Angular Query simple example
 
 To run this example:
 
