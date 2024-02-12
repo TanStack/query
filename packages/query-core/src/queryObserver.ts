@@ -161,11 +161,6 @@ export class QueryObserver<
       throw new Error('Expected enabled to be a boolean')
     }
 
-    // Keep previous query key if the user does not supply one
-    if (!this.options.queryKey) {
-      this.options.queryKey = prevOptions.queryKey
-    }
-
     this.#updateQuery()
 
     const mounted = this.hasListeners()
