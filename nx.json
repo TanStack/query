@@ -1,4 +1,5 @@
 {
+  "bust": 1,
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "affected": {
     "defaultBase": "main"
