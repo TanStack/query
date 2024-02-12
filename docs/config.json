@@ -959,8 +959,8 @@
               "to": "framework/angular/examples/infinite-query-with-max-pages"
             },
             {
-              "label": "Default Query Function",
-              "to": "framework/angular/examples/default-query-function"
+              "label": "Angular Router",
+              "to": "framework/angular/examples/router"
             }
           ]
         }
