@@ -122,31 +122,31 @@ importers:
   examples/angular/basic:
     dependencies:
       '@angular/animations':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/core@17.1.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/core@17.1.3)
       '@angular/common':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/core@17.1.2)(rxjs@7.8.1)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/core@17.1.3)(rxjs@7.8.1)
       '@angular/compiler':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/core@17.1.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/core@17.1.3)
       '@angular/core':
-        specifier: ^17.1.2
-        version: 17.1.2(rxjs@7.8.1)(zone.js@0.14.3)
+        specifier: ^17.1.3
+        version: 17.1.3(rxjs@7.8.1)(zone.js@0.14.3)
       '@angular/forms':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/common@17.1.2)(@angular/core@17.1.2)(@angular/platform-browser@17.1.2)(rxjs@7.8.1)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/common@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)(rxjs@7.8.1)
       '@angular/platform-browser':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/animations@17.1.2)(@angular/common@17.1.2)(@angular/core@17.1.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/animations@17.1.3)(@angular/common@17.1.3)(@angular/core@17.1.3)
       '@angular/platform-browser-dynamic':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/common@17.1.2)(@angular/compiler@17.1.2)(@angular/core@17.1.2)(@angular/platform-browser@17.1.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/common@17.1.3)(@angular/compiler@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)
       '@angular/router':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/common@17.1.2)(@angular/core@17.1.2)(@angular/platform-browser@17.1.2)(rxjs@7.8.1)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/common@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -159,16 +159,16 @@ importers:
         version: 0.14.3
     devDependencies:
       '@angular-devkit/build-angular':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/compiler-cli@17.1.2)(@types/node@18.19.3)(ng-packagr@17.1.2)(typescript@5.2.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/compiler-cli@17.1.3)(@types/node@18.19.3)(ng-packagr@17.1.2)(typescript@5.2.2)
       '@angular/cli':
-        specifier: ^17.1.2
-        version: 17.1.2
+        specifier: ^17.1.3
+        version: 17.1.3
       '@angular/compiler-cli':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/compiler@17.1.2)(typescript@5.2.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/compiler@17.1.3)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
@@ -177,22 +177,22 @@ importers:
   examples/angular/default-query-function:
     dependencies:
       '@angular/common':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/core@17.1.2)(rxjs@7.8.1)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/core@17.1.3)(rxjs@7.8.1)
       '@angular/compiler':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/core@17.1.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/core@17.1.3)
       '@angular/core':
-        specifier: ^17.1.2
-        version: 17.1.2(rxjs@7.8.1)(zone.js@0.14.3)
+        specifier: ^17.1.3
+        version: 17.1.3(rxjs@7.8.1)(zone.js@0.14.3)
       '@angular/platform-browser':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/animations@17.1.2)(@angular/common@17.1.2)(@angular/core@17.1.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/animations@17.1.3)(@angular/common@17.1.3)(@angular/core@17.1.3)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/angular-query-devtools-experimental
       '@tanstack/angular-query-experimental':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/angular-query-experimental
       axios:
         specifier: ^1.6.7
@@ -214,31 +214,31 @@ importers:
   examples/angular/infinite-query-with-max-pages:
     dependencies:
       '@angular/animations':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/core@17.1.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/core@17.1.3)
       '@angular/common':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/core@17.1.2)(rxjs@7.8.1)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/core@17.1.3)(rxjs@7.8.1)
       '@angular/compiler':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/core@17.1.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/core@17.1.3)
       '@angular/core':
-        specifier: ^17.1.2
-        version: 17.1.2(rxjs@7.8.1)(zone.js@0.14.3)
+        specifier: ^17.1.3
+        version: 17.1.3(rxjs@7.8.1)(zone.js@0.14.3)
       '@angular/forms':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/common@17.1.2)(@angular/core@17.1.2)(@angular/platform-browser@17.1.2)(rxjs@7.8.1)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/common@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)(rxjs@7.8.1)
       '@angular/platform-browser':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/animations@17.1.2)(@angular/common@17.1.2)(@angular/core@17.1.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/animations@17.1.3)(@angular/common@17.1.3)(@angular/core@17.1.3)
       '@angular/platform-browser-dynamic':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/common@17.1.2)(@angular/compiler@17.1.2)(@angular/core@17.1.2)(@angular/platform-browser@17.1.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/common@17.1.3)(@angular/compiler@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)
       '@angular/router':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/common@17.1.2)(@angular/core@17.1.2)(@angular/platform-browser@17.1.2)(rxjs@7.8.1)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/common@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -251,16 +251,71 @@ importers:
         version: 0.14.3
     devDependencies:
       '@angular-devkit/build-angular':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/compiler-cli@17.1.2)(@types/node@18.19.3)(ng-packagr@17.1.2)(typescript@5.2.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/compiler-cli@17.1.3)(@types/node@18.19.3)(ng-packagr@17.1.2)(typescript@5.2.2)
       '@angular/cli':
-        specifier: ^17.1.2
-        version: 17.1.2
+        specifier: ^17.1.3
+        version: 17.1.3
       '@angular/compiler-cli':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/compiler@17.1.2)(typescript@5.2.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/compiler@17.1.3)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
+        version: link:../../../packages/angular-query-devtools-experimental
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+
+  examples/angular/router:
+    dependencies:
+      '@angular/animations':
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/core@17.1.3)
+      '@angular/common':
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/core@17.1.3)(rxjs@7.8.1)
+      '@angular/compiler':
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/core@17.1.3)
+      '@angular/core':
+        specifier: ^17.1.3
+        version: 17.1.3(rxjs@7.8.1)(zone.js@0.14.3)
+      '@angular/forms':
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/common@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)(rxjs@7.8.1)
+      '@angular/platform-browser':
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/animations@17.1.3)(@angular/common@17.1.3)(@angular/core@17.1.3)
+      '@angular/platform-browser-dynamic':
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/common@17.1.3)(@angular/compiler@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)
+      '@angular/router':
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/common@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)(rxjs@7.8.1)
+      '@tanstack/angular-query-experimental':
+        specifier: ^5.20.2
+        version: link:../../../packages/angular-query-experimental
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+      tslib:
+        specifier: ^2.6.2
+        version: 2.6.2
+      zone.js:
+        specifier: ^0.14.3
+        version: 0.14.3
+    devDependencies:
+      '@angular-devkit/build-angular':
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/compiler-cli@17.1.3)(@types/node@18.19.3)(ng-packagr@17.1.2)(typescript@5.2.2)
+      '@angular/cli':
+        specifier: ^17.1.3
+        version: 17.1.3
+      '@angular/compiler-cli':
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/compiler@17.1.3)(typescript@5.2.2)
+      '@tanstack/angular-query-devtools-experimental':
+        specifier: ^5.20.2
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
@@ -268,37 +323,58 @@ importers:
 
   examples/angular/simple:
     dependencies:
+      '@angular/animations':
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/core@17.1.3)
       '@angular/common':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/core@17.1.2)(rxjs@7.8.1)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/core@17.1.3)(rxjs@7.8.1)
       '@angular/compiler':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/core@17.1.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/core@17.1.3)
       '@angular/core':
-        specifier: ^17.1.2
-        version: 17.1.2(rxjs@7.8.1)(zone.js@0.14.3)
+        specifier: ^17.1.3
+        version: 17.1.3(rxjs@7.8.1)(zone.js@0.14.3)
+      '@angular/forms':
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/common@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)(rxjs@7.8.1)
       '@angular/platform-browser':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/animations@17.1.2)(@angular/common@17.1.2)(@angular/core@17.1.2)
-      '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.20.1
-        version: link:../../../packages/angular-query-devtools-experimental
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/animations@17.1.3)(@angular/common@17.1.3)(@angular/core@17.1.3)
+      '@angular/platform-browser-dynamic':
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/common@17.1.3)(@angular/compiler@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)
+      '@angular/router':
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/common@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
+      tslib:
+        specifier: ^2.6.2
+        version: 2.6.2
       zone.js:
         specifier: ^0.14.3
         version: 0.14.3
     devDependencies:
+      '@angular-devkit/build-angular':
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/compiler-cli@17.1.3)(@types/node@18.19.3)(ng-packagr@17.1.2)(typescript@5.2.2)
+      '@angular/cli':
+        specifier: ^17.1.3
+        version: 17.1.3
+      '@angular/compiler-cli':
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/compiler@17.1.3)(typescript@5.2.2)
+      '@tanstack/angular-query-devtools-experimental':
+        specifier: ^5.20.2
+        version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
         version: 5.2.2
-      vite:
-        specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
 
   examples/react/algolia:
     dependencies:
@@ -309,10 +385,10 @@ importers:
         specifier: 4.22.1
         version: 4.22.1
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       algoliasearch:
         specifier: 4.22.1
@@ -346,10 +422,10 @@ importers:
   examples/react/auto-refetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -370,10 +446,10 @@ importers:
   examples/react/basic:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -398,10 +474,10 @@ importers:
   examples/react/basic-graphql-request:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       graphql:
         specifier: ^16.8.1
@@ -426,16 +502,16 @@ importers:
   examples/react/basic-typescript:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-persist-client
       axios:
         specifier: ^1.6.7
@@ -475,10 +551,10 @@ importers:
   examples/react/default-query-function:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -500,10 +576,10 @@ importers:
   examples/react/infinite-query-with-max-pages:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -527,10 +603,10 @@ importers:
   examples/react/load-more-infinite-scroll:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -554,10 +630,10 @@ importers:
   examples/react/nextjs:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       ky:
         specifier: ^1.2.0
@@ -581,13 +657,13 @@ importers:
   examples/react/nextjs-suspense-streaming:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-next-experimental':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-next-experimental
       next:
         specifier: ^14.0.0
@@ -615,19 +691,19 @@ importers:
   examples/react/offline:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-location':
         specifier: ^3.7.4
         version: 3.7.4(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-persist-client
       ky:
         specifier: ^1.2.0
@@ -655,10 +731,10 @@ importers:
   examples/react/optimistic-updates-cache:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -692,10 +768,10 @@ importers:
   examples/react/optimistic-updates-ui:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -729,10 +805,10 @@ importers:
   examples/react/pagination:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -753,10 +829,10 @@ importers:
   examples/react/playground:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -775,10 +851,10 @@ importers:
   examples/react/prefetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -808,10 +884,10 @@ importers:
         specifier: ^6.3.16
         version: 6.3.16(@react-navigation/native@6.1.6)(react-native-gesture-handler@2.15.0)(react-native-safe-area-context@4.9.0)(react-native-screens@3.29.0)(react-native@0.73.4)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       expo:
         specifier: ^50.0.6
@@ -860,10 +936,10 @@ importers:
   examples/react/react-router:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       localforage:
         specifier: ^1.10.0
@@ -924,10 +1000,10 @@ importers:
         specifier: ^5.15.2
         version: 5.15.2(@types/react@18.2.55)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -952,10 +1028,10 @@ importers:
   examples/react/simple:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -989,10 +1065,10 @@ importers:
         specifier: ^5.15.2
         version: 5.15.2(@types/react@18.2.55)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -1017,10 +1093,10 @@ importers:
   examples/react/suspense:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -1048,10 +1124,10 @@ importers:
   examples/solid/basic-graphql-request:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/solid-query-devtools
       graphql:
         specifier: ^16.8.1
@@ -1076,10 +1152,10 @@ importers:
   examples/solid/basic-typescript:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -1098,10 +1174,10 @@ importers:
   examples/solid/default-query-function:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -1120,10 +1196,10 @@ importers:
   examples/solid/simple:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -1154,10 +1230,10 @@ importers:
         specifier: ^0.5.4
         version: 0.5.4(@testing-library/jest-dom@6.4.2)(rollup@4.6.0)(solid-js@1.8.14)(vinxi@0.2.1)(vite@4.5.1)
       '@tanstack/solid-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -1169,10 +1245,10 @@ importers:
   examples/svelte/auto-refetching:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1200,10 +1276,10 @@ importers:
   examples/svelte/basic:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1231,10 +1307,10 @@ importers:
   examples/svelte/load-more-infinite-scroll:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1262,10 +1338,10 @@ importers:
   examples/svelte/optimistic-updates-typescript:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1293,10 +1369,10 @@ importers:
   examples/svelte/playground:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1324,10 +1400,10 @@ importers:
   examples/svelte/simple:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
@@ -1352,10 +1428,10 @@ importers:
   examples/svelte/ssr:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1383,10 +1459,10 @@ importers:
   examples/svelte/star-wars:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1423,10 +1499,10 @@ importers:
   examples/vue/basic:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.3.0
@@ -1445,7 +1521,7 @@ importers:
   examples/vue/dependent-queries:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/vue-query
       vue:
         specifier: ^3.3.0
@@ -1464,16 +1540,16 @@ importers:
   examples/vue/persister:
     dependencies:
       '@tanstack/query-core':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/query-core
       '@tanstack/query-persist-client-core':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/query-persist-client-core
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/vue-query':
-        specifier: ^5.20.1
+        specifier: ^5.20.2
         version: link:../../../packages/vue-query
       idb-keyval:
         specifier: ^6.2.1
@@ -1492,17 +1568,39 @@ importers:
         specifier: ^5.1.1
         version: 5.1.1(@types/node@18.19.3)
 
+  examples/vue/simple:
+    dependencies:
+      '@tanstack/vue-query':
+        specifier: ^5.20.2
+        version: link:../../../packages/vue-query
+      '@tanstack/vue-query-devtools':
+        specifier: ^5.20.2
+        version: link:../../../packages/vue-query-devtools
+      vue:
+        specifier: ^3.3.0
+        version: 3.3.0
+    devDependencies:
+      '@vitejs/plugin-vue':
+        specifier: ^5.0.4
+        version: 5.0.4(vite@5.1.1)(vue@3.3.0)
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+      vite:
+        specifier: ^5.1.1
+        version: 5.1.1(@types/node@18.19.3)
+
   integrations/angular-cli-standalone-17:
     dependencies:
       '@angular/common':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/core@17.1.2)(rxjs@7.8.1)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/core@17.1.3)(rxjs@7.8.1)
       '@angular/core':
-        specifier: ^17.1.2
-        version: 17.1.2(rxjs@7.8.1)(zone.js@0.14.3)
+        specifier: ^17.1.3
+        version: 17.1.3(rxjs@7.8.1)(zone.js@0.14.3)
       '@angular/platform-browser':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/animations@17.1.2)(@angular/common@17.1.2)(@angular/core@17.1.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/animations@17.1.3)(@angular/common@17.1.3)(@angular/core@17.1.3)
       '@tanstack/angular-query-devtools-experimental':
         specifier: workspace:*
         version: link:../../packages/angular-query-devtools-experimental
@@ -1520,14 +1618,14 @@ importers:
         version: 0.14.3
     devDependencies:
       '@angular-devkit/build-angular':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/compiler-cli@17.1.2)(@types/node@18.19.3)(ng-packagr@17.1.2)(typescript@5.2.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/compiler-cli@17.1.3)(@types/node@18.19.3)(ng-packagr@17.1.2)(typescript@5.2.2)
       '@angular/cli':
-        specifier: ^17.1.2
-        version: 17.1.2
+        specifier: ^17.1.3
+        version: 17.1.3
       '@angular/compiler-cli':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/compiler@17.1.2)(typescript@5.2.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/compiler@17.1.3)(typescript@5.2.2)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -1696,20 +1794,20 @@ importers:
         version: 2.6.2
     devDependencies:
       '@angular/common':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/core@17.1.2)(rxjs@7.8.1)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/core@17.1.3)(rxjs@7.8.1)
       '@angular/compiler-cli':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/compiler@17.1.2)(typescript@5.2.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/compiler@17.1.3)(typescript@5.2.2)
       '@angular/core':
-        specifier: ^17.1.2
-        version: 17.1.2(rxjs@7.8.1)(zone.js@0.14.3)
+        specifier: ^17.1.3
+        version: 17.1.3(rxjs@7.8.1)(zone.js@0.14.3)
       '@tanstack/angular-query-experimental':
         specifier: workspace:*
         version: link:../angular-query-experimental
       ng-packagr:
         specifier: ^17.1.2
-        version: 17.1.2(@angular/compiler-cli@17.1.2)(tslib@2.6.2)(typescript@5.2.2)
+        version: 17.1.2(@angular/compiler-cli@17.1.3)(tslib@2.6.2)(typescript@5.2.2)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -1728,28 +1826,28 @@ importers:
     devDependencies:
       '@analogjs/vite-plugin-angular':
         specifier: ^0.2.30
-        version: 0.2.30(@angular-devkit/build-angular@17.1.2)
+        version: 0.2.30(@angular-devkit/build-angular@17.1.3)
       '@angular/common':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/core@17.1.2)(rxjs@7.8.1)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/core@17.1.3)(rxjs@7.8.1)
       '@angular/compiler':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/core@17.1.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/core@17.1.3)
       '@angular/compiler-cli':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/compiler@17.1.2)(typescript@5.2.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/compiler@17.1.3)(typescript@5.2.2)
       '@angular/core':
-        specifier: ^17.1.2
-        version: 17.1.2(rxjs@7.8.1)(zone.js@0.14.3)
+        specifier: ^17.1.3
+        version: 17.1.3(rxjs@7.8.1)(zone.js@0.14.3)
       '@angular/platform-browser':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/animations@17.1.2)(@angular/common@17.1.2)(@angular/core@17.1.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/animations@17.1.3)(@angular/common@17.1.3)(@angular/core@17.1.3)
       '@angular/platform-browser-dynamic':
-        specifier: ^17.1.2
-        version: 17.1.2(@angular/common@17.1.2)(@angular/compiler@17.1.2)(@angular/core@17.1.2)(@angular/platform-browser@17.1.2)
+        specifier: ^17.1.3
+        version: 17.1.3(@angular/common@17.1.3)(@angular/compiler@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)
       ng-packagr:
         specifier: ^17.1.2
-        version: 17.1.2(@angular/compiler-cli@17.1.2)(tslib@2.6.2)(typescript@5.2.2)
+        version: 17.1.2(@angular/compiler-cli@17.1.3)(tslib@2.6.2)(typescript@5.2.2)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -2241,27 +2339,27 @@ packages:
       '@jridgewell/gen-mapping': 0.3.3
       '@jridgewell/trace-mapping': 0.3.20
 
-  /@analogjs/vite-plugin-angular@0.2.30(@angular-devkit/build-angular@17.1.2):
+  /@analogjs/vite-plugin-angular@0.2.30(@angular-devkit/build-angular@17.1.3):
     resolution: {integrity: sha512-XXiXu00DYCBsbW4PLktGFv5VUAB3EHfvywd7bnlXNUXMX6nHSrZcNGAq8VMzibrZ9DMnx2hswd3l4cmBLQaryg==}
     peerDependencies:
       '@angular-devkit/build-angular': ^15.0.0 || >=16.0.0
     dependencies:
-      '@angular-devkit/build-angular': 17.1.2(@angular/compiler-cli@17.1.2)(@types/node@18.19.3)(ng-packagr@17.1.2)(typescript@5.2.2)
+      '@angular-devkit/build-angular': 17.1.3(@angular/compiler-cli@17.1.3)(@types/node@18.19.3)(ng-packagr@17.1.2)(typescript@5.2.2)
       ts-morph: 21.0.1
     dev: true
 
-  /@angular-devkit/architect@0.1701.2:
-    resolution: {integrity: sha512-g3gn5Ht6r9bCeFeAYF+HboZB8IvgvqqdeOnaWNaXJLI0ymEkpbqRdqrHGuVKHJV7JOMNXC7GPJEctBC6SXxOxA==}
+  /@angular-devkit/architect@0.1701.3:
+    resolution: {integrity: sha512-K5rvhslbXNwx04cCLviEJCA27MwoJRMMzALFXySi9BqjZnZUOtZnOBuuCdrTPaRmFaYqGO4Im5GNzpbb/NB8zg==}
     engines: {node: ^18.13.0 || >=20.9.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     dependencies:
-      '@angular-devkit/core': 17.1.2
+      '@angular-devkit/core': 17.1.3
       rxjs: 7.8.1
     transitivePeerDependencies:
       - chokidar
     dev: true
 
-  /@angular-devkit/build-angular@17.1.2(@angular/compiler-cli@17.1.2)(@types/node@18.19.3)(ng-packagr@17.1.2)(typescript@5.2.2):
-    resolution: {integrity: sha512-QIDTP+TjiCKCYRZYb8to4ymvIV1Djcfd5c17VdgMGhRqIQAAK1V4f4A1njdhGYOrgsLajZQAnKvFfk2ZMeI37A==}
+  /@angular-devkit/build-angular@17.1.3(@angular/compiler-cli@17.1.3)(@types/node@18.19.3)(ng-packagr@17.1.2)(typescript@5.2.2):
+    resolution: {integrity: sha512-pusFVSWMnrm2GrF3+Fw19OhA2rNw4WkfTMUruhaKAjW5QIvZ3wHYf+pH//1Ud+tuhFBi9BH7UALP2vnJMu1ehw==}
     engines: {node: ^18.13.0 || >=20.9.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     peerDependencies:
       '@angular/compiler-cli': ^17.0.0
@@ -2302,10 +2400,10 @@ packages:
         optional: true
     dependencies:
       '@ampproject/remapping': 2.2.1
-      '@angular-devkit/architect': 0.1701.2
-      '@angular-devkit/build-webpack': 0.1701.2(webpack-dev-server@4.15.1)(webpack@5.89.0)
-      '@angular-devkit/core': 17.1.2
-      '@angular/compiler-cli': 17.1.2(@angular/compiler@17.1.2)(typescript@5.2.2)
+      '@angular-devkit/architect': 0.1701.3
+      '@angular-devkit/build-webpack': 0.1701.3(webpack-dev-server@4.15.1)(webpack@5.89.0)
+      '@angular-devkit/core': 17.1.3
+      '@angular/compiler-cli': 17.1.3(@angular/compiler@17.1.3)(typescript@5.2.2)
       '@babel/core': 7.23.7
       '@babel/generator': 7.23.6
       '@babel/helper-annotate-as-pure': 7.22.5
@@ -2316,7 +2414,7 @@ packages:
       '@babel/preset-env': 7.23.7(@babel/core@7.23.7)
       '@babel/runtime': 7.23.7
       '@discoveryjs/json-ext': 0.5.7
-      '@ngtools/webpack': 17.1.2(@angular/compiler-cli@17.1.2)(typescript@5.2.2)(webpack@5.89.0)
+      '@ngtools/webpack': 17.1.3(@angular/compiler-cli@17.1.3)(typescript@5.2.2)(webpack@5.89.0)
       '@vitejs/plugin-basic-ssl': 1.0.2(vite@5.0.12)
       ansi-colors: 4.1.3
       autoprefixer: 10.4.16(postcss@8.4.33)
@@ -2340,7 +2438,7 @@ packages:
       magic-string: 0.30.5
       mini-css-extract-plugin: 2.7.6(webpack@5.89.0)
       mrmime: 2.0.0
-      ng-packagr: 17.1.2(@angular/compiler-cli@17.1.2)(tslib@2.6.2)(typescript@5.2.2)
+      ng-packagr: 17.1.2(@angular/compiler-cli@17.1.3)(tslib@2.6.2)(typescript@5.2.2)
       open: 8.4.2
       ora: 5.4.1
       parse5-html-rewriting-stream: 7.0.0
@@ -2390,14 +2488,14 @@ packages:
       - webpack-cli
     dev: true
 
-  /@angular-devkit/build-webpack@0.1701.2(webpack-dev-server@4.15.1)(webpack@5.89.0):
-    resolution: {integrity: sha512-LqfSO5iTbiYByDadUET/8uIun8vSHMEdtoxiil/kdZ5T0NG0p7K8QqUMnWgg6suwO6kFfYJkMiS8Dq3Y/ONUNQ==}
+  /@angular-devkit/build-webpack@0.1701.3(webpack-dev-server@4.15.1)(webpack@5.89.0):
+    resolution: {integrity: sha512-fpZtJf6yvXM7mX1T83caeYpa0e3zPv7sgKmx0ZIJKGL8+DETgNcCCeCTgui7HMBcHGCD8yj72DZ8xMMBWwVBIA==}
     engines: {node: ^18.13.0 || >=20.9.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     peerDependencies:
       webpack: ^5.30.0
       webpack-dev-server: ^4.0.0
     dependencies:
-      '@angular-devkit/architect': 0.1701.2
+      '@angular-devkit/architect': 0.1701.3
       rxjs: 7.8.1
       webpack: 5.89.0(esbuild@0.19.11)
       webpack-dev-server: 4.15.1(webpack@5.89.0)
@@ -2405,8 +2503,8 @@ packages:
       - chokidar
     dev: true
 
-  /@angular-devkit/core@17.1.2:
-    resolution: {integrity: sha512-ku+/W/HMCBacSWFppenr9y6Lx8mDuTuQvn1IkTyBLiJOpWnzgVbx9kHDeaDchGa1PwLlJUBBrv27t3qgJOIDPw==}
+  /@angular-devkit/core@17.1.3:
+    resolution: {integrity: sha512-iuVK4hyW3YhusxIi8zGBvvVA9pWtDT3H6LQbWdVk9D3jXCZBIrEMklvAiJErqficKnUurf6gtFOeA8Fop6GotA==}
     engines: {node: ^18.13.0 || >=20.9.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     peerDependencies:
       chokidar: ^3.5.2
@@ -2422,11 +2520,11 @@ packages:
       source-map: 0.7.4
     dev: true
 
-  /@angular-devkit/schematics@17.1.2:
-    resolution: {integrity: sha512-8S9RuM8olFN/gwN+mjbuF1CwHX61f0i59EGXz9tXLnKRUTjsRR+8vVMTAmX0dvVAT5fJTG/T69X+HX7FeumdqA==}
+  /@angular-devkit/schematics@17.1.3:
+    resolution: {integrity: sha512-zKoWG1hDfvi1vR9Hqoca9hWo9vDg8evmQvGcBW5jXR5ndZi5Oit/uDcGdA8WUKvBd1EG7WMqp0FgcDR9EA9WCw==}
     engines: {node: ^18.13.0 || >=20.9.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     dependencies:
-      '@angular-devkit/core': 17.1.2
+      '@angular-devkit/core': 17.1.3
       jsonc-parser: 3.2.0
       magic-string: 0.30.5
       ora: 5.4.1
@@ -2435,24 +2533,24 @@ packages:
       - chokidar
     dev: true
 
-  /@angular/animations@17.1.2(@angular/core@17.1.2):
-    resolution: {integrity: sha512-ZsHa/zoWBOZdispjcNgXCoF9MAtc6Zyzc/QFUjtOFI9vigOI8tWP6GY1Wfeg4cyL+R3uDGYBgMrdr8l84VfuKg==}
+  /@angular/animations@17.1.3(@angular/core@17.1.3):
+    resolution: {integrity: sha512-AS9CHOjjKqkuAzlKEMJfAkZfkIdSoagB3D8HwvH+ZHo6GVJc9KbtLQn/okNijFK+Fg7QK/hYbQ3lJhjgk0GQDA==}
     engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
-      '@angular/core': 17.1.2
+      '@angular/core': 17.1.3
     dependencies:
-      '@angular/core': 17.1.2(rxjs@7.8.1)(zone.js@0.14.3)
+      '@angular/core': 17.1.3(rxjs@7.8.1)(zone.js@0.14.3)
       tslib: 2.6.2
 
-  /@angular/cli@17.1.2:
-    resolution: {integrity: sha512-U1W6XZNrfeRkXW2fO3AU25rRttqZahVkhzcK3lAtJ8+lSrStCOF7x1gz6tmFZFte1fNHQrXqD0yIDkd8H2/cvw==}
+  /@angular/cli@17.1.3:
+    resolution: {integrity: sha512-ysPWDdqo2cwfeskKVAg8p4C8xuezWcIWyW/ACSjWw6yp4OZvyVd6cGZrc0POVZzAPtTOYJSgWOpF/DCHQFluSg==}
     engines: {node: ^18.13.0 || >=20.9.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     hasBin: true
     dependencies:
-      '@angular-devkit/architect': 0.1701.2
-      '@angular-devkit/core': 17.1.2
-      '@angular-devkit/schematics': 17.1.2
-      '@schematics/angular': 17.1.2
+      '@angular-devkit/architect': 0.1701.3
+      '@angular-devkit/core': 17.1.3
+      '@angular-devkit/schematics': 17.1.3
+      '@schematics/angular': 17.1.3
       '@yarnpkg/lockfile': 1.1.0
       ansi-colors: 4.1.3
       ini: 4.1.1
@@ -2473,26 +2571,26 @@ packages:
       - supports-color
     dev: true
 
-  /@angular/common@17.1.2(@angular/core@17.1.2)(rxjs@7.8.1):
-    resolution: {integrity: sha512-y/wD+zuPaPgK3dB80Q63qBtuu5TuryKuUgjWrOmrguBWV9oiJRhKQrcp1gVw9vVrowmbDBKGtPMS622Q4oxOWQ==}
+  /@angular/common@17.1.3(@angular/core@17.1.3)(rxjs@7.8.1):
+    resolution: {integrity: sha512-AzLzoNSeRSNGBQk0K+iG0XdYG36SDeJqYqE8rfoiWuv1NDFLL05UJM2/fQfaMNg0oX5bHOlHUqHFj3sFR/NVpw==}
     engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
-      '@angular/core': 17.1.2
+      '@angular/core': 17.1.3
       rxjs: ^6.5.3 || ^7.4.0
     dependencies:
-      '@angular/core': 17.1.2(rxjs@7.8.1)(zone.js@0.14.3)
+      '@angular/core': 17.1.3(rxjs@7.8.1)(zone.js@0.14.3)
       rxjs: 7.8.1
       tslib: 2.6.2
 
-  /@angular/compiler-cli@17.1.2(@angular/compiler@17.1.2)(typescript@5.2.2):
-    resolution: {integrity: sha512-4P4ttCe4IF9yq7bxCDxbVW7purN7qV0nqofP5Tth1xCsgIJeGmOMMQJN5RJCZNrAPMkvMv39eV878sgcDjbpOA==}
+  /@angular/compiler-cli@17.1.3(@angular/compiler@17.1.3)(typescript@5.2.2):
+    resolution: {integrity: sha512-bNDHXo3Twub0BZK9OmXly+0REs0RuR1SUXlTAeq+0XubCvnBDvpg9peL7UTTGS5YRo9sUTBnR6faSUA1F5objQ==}
     engines: {node: ^18.13.0 || >=20.9.0}
     hasBin: true
     peerDependencies:
-      '@angular/compiler': 17.1.2
+      '@angular/compiler': 17.1.3
       typescript: '>=5.2 <5.4'
     dependencies:
-      '@angular/compiler': 17.1.2(@angular/core@17.1.2)
+      '@angular/compiler': 17.1.3(@angular/core@17.1.3)
       '@babel/core': 7.23.2
       '@jridgewell/sourcemap-codec': 1.4.15
       chokidar: 3.5.3
@@ -2506,20 +2604,20 @@ packages:
       - supports-color
     dev: true
 
-  /@angular/compiler@17.1.2(@angular/core@17.1.2):
-    resolution: {integrity: sha512-1vJuQRM5V01nC6qsLvBKrHVZXpzbK0YKubwVQUXCSfDNZBcDFak3SQcwU4C2t880rU3ZvFDB1UWfk7CKn5w9Kw==}
+  /@angular/compiler@17.1.3(@angular/core@17.1.3):
+    resolution: {integrity: sha512-k/s21gPPKStxVOLr6l4Y145OIxyBY7BhTPVOl/qEAgE+IcZ9vkiA8dYl8yjL884Kl1ZKPmFA3AofMJjWjZGNag==}
     engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
-      '@angular/core': 17.1.2
+      '@angular/core': 17.1.3
     peerDependenciesMeta:
       '@angular/core':
         optional: true
     dependencies:
-      '@angular/core': 17.1.2(rxjs@7.8.1)(zone.js@0.14.3)
+      '@angular/core': 17.1.3(rxjs@7.8.1)(zone.js@0.14.3)
       tslib: 2.6.2
 
-  /@angular/core@17.1.2(rxjs@7.8.1)(zone.js@0.14.3):
-    resolution: {integrity: sha512-0M787BZVgYSVogHCUzo/dFrT56TgfQoEsOQngHMpyERJZv6dycXZlRdHc6TzvHUa+Uu/MNjn/RclBR8063bdWA==}
+  /@angular/core@17.1.3(rxjs@7.8.1)(zone.js@0.14.3):
+    resolution: {integrity: sha512-2lZ4DRHN8KJ/aQads+YXIcx5Ri9yyeFIlw69m5Pn7wAi/+Rakg7IsclgLaWs7aBtWwMHG7LnqFKxAVq7CjXKtA==}
     engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
       rxjs: ^6.5.3 || ^7.4.0
@@ -2529,65 +2627,65 @@ packages:
       tslib: 2.6.2
       zone.js: 0.14.3
 
-  /@angular/forms@17.1.2(@angular/common@17.1.2)(@angular/core@17.1.2)(@angular/platform-browser@17.1.2)(rxjs@7.8.1):
-    resolution: {integrity: sha512-n1WsZAL2IVOB6ocROKR6CFOR14PIC9RGAB41SwTfPhJeBM1kjW48bXY0sw97TasxM4mWJKGCmFXu0jQwkoeSpQ==}
+  /@angular/forms@17.1.3(@angular/common@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)(rxjs@7.8.1):
+    resolution: {integrity: sha512-aNa0jGLT5d+hnKVrSo8tk3TRo/NLNu1RxLNx8RhIczKAeCK3eD8SvTMy27iJtyXmNG2GWN7QPiDeGepd75nbxQ==}
     engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
-      '@angular/common': 17.1.2
-      '@angular/core': 17.1.2
-      '@angular/platform-browser': 17.1.2
+      '@angular/common': 17.1.3
+      '@angular/core': 17.1.3
+      '@angular/platform-browser': 17.1.3
       rxjs: ^6.5.3 || ^7.4.0
     dependencies:
-      '@angular/common': 17.1.2(@angular/core@17.1.2)(rxjs@7.8.1)
-      '@angular/core': 17.1.2(rxjs@7.8.1)(zone.js@0.14.3)
-      '@angular/platform-browser': 17.1.2(@angular/animations@17.1.2)(@angular/common@17.1.2)(@angular/core@17.1.2)
+      '@angular/common': 17.1.3(@angular/core@17.1.3)(rxjs@7.8.1)
+      '@angular/core': 17.1.3(rxjs@7.8.1)(zone.js@0.14.3)
+      '@angular/platform-browser': 17.1.3(@angular/animations@17.1.3)(@angular/common@17.1.3)(@angular/core@17.1.3)
       rxjs: 7.8.1
       tslib: 2.6.2
     dev: false
 
-  /@angular/platform-browser-dynamic@17.1.2(@angular/common@17.1.2)(@angular/compiler@17.1.2)(@angular/core@17.1.2)(@angular/platform-browser@17.1.2):
-    resolution: {integrity: sha512-xiWVDHbA+owDhKo5SAnzZtawA1ktGthlCl3YTI+vmkJpF6axkYOqR7YL+aEQX/y/5GSK+oR+03SgAnYcpOwKlQ==}
+  /@angular/platform-browser-dynamic@17.1.3(@angular/common@17.1.3)(@angular/compiler@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3):
+    resolution: {integrity: sha512-0lFhcFJfDzCSSVe8l8OY+UgUiwUwcbxwpvLod3XWBpf1iEUlr5720FIMA3VJYwpW3Oj4Uey3nVm13EMtRqpqdA==}
     engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
-      '@angular/common': 17.1.2
-      '@angular/compiler': 17.1.2
-      '@angular/core': 17.1.2
-      '@angular/platform-browser': 17.1.2
+      '@angular/common': 17.1.3
+      '@angular/compiler': 17.1.3
+      '@angular/core': 17.1.3
+      '@angular/platform-browser': 17.1.3
     dependencies:
-      '@angular/common': 17.1.2(@angular/core@17.1.2)(rxjs@7.8.1)
-      '@angular/compiler': 17.1.2(@angular/core@17.1.2)
-      '@angular/core': 17.1.2(rxjs@7.8.1)(zone.js@0.14.3)
-      '@angular/platform-browser': 17.1.2(@angular/animations@17.1.2)(@angular/common@17.1.2)(@angular/core@17.1.2)
+      '@angular/common': 17.1.3(@angular/core@17.1.3)(rxjs@7.8.1)
+      '@angular/compiler': 17.1.3(@angular/core@17.1.3)
+      '@angular/core': 17.1.3(rxjs@7.8.1)(zone.js@0.14.3)
+      '@angular/platform-browser': 17.1.3(@angular/animations@17.1.3)(@angular/common@17.1.3)(@angular/core@17.1.3)
       tslib: 2.6.2
 
-  /@angular/platform-browser@17.1.2(@angular/animations@17.1.2)(@angular/common@17.1.2)(@angular/core@17.1.2):
-    resolution: {integrity: sha512-unfpA5OLnqDmDb/oAQR2t2iROpOg02qwZayxyFg4MUZdDdnghPCfX77L2sr6oVVa7OJfKYFlmwmBXX1H3zjcXA==}
+  /@angular/platform-browser@17.1.3(@angular/animations@17.1.3)(@angular/common@17.1.3)(@angular/core@17.1.3):
+    resolution: {integrity: sha512-onPCvdk9f/6OhOo2zP6nfGKpzLma1QIxpFqD3jymbmIJTcVMOOQDMYW3eLtY+uSX8ribcJ7GQcbDGIM4rliTFg==}
     engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
-      '@angular/animations': 17.1.2
-      '@angular/common': 17.1.2
-      '@angular/core': 17.1.2
+      '@angular/animations': 17.1.3
+      '@angular/common': 17.1.3
+      '@angular/core': 17.1.3
     peerDependenciesMeta:
       '@angular/animations':
         optional: true
     dependencies:
-      '@angular/animations': 17.1.2(@angular/core@17.1.2)
-      '@angular/common': 17.1.2(@angular/core@17.1.2)(rxjs@7.8.1)
-      '@angular/core': 17.1.2(rxjs@7.8.1)(zone.js@0.14.3)
+      '@angular/animations': 17.1.3(@angular/core@17.1.3)
+      '@angular/common': 17.1.3(@angular/core@17.1.3)(rxjs@7.8.1)
+      '@angular/core': 17.1.3(rxjs@7.8.1)(zone.js@0.14.3)
       tslib: 2.6.2
 
-  /@angular/router@17.1.2(@angular/common@17.1.2)(@angular/core@17.1.2)(@angular/platform-browser@17.1.2)(rxjs@7.8.1):
-    resolution: {integrity: sha512-8OexxiiscRdfEiB6jOKlZFyAKZtvIQvh0ugW6U7nAXPV5XsA2UL80sXkc829eH0DnJn2Wj/HS6ZNGgG81PWDHg==}
+  /@angular/router@17.1.3(@angular/common@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)(rxjs@7.8.1):
+    resolution: {integrity: sha512-6HigdtFjm+76UU2hiLGLE2SpOecQhD6TnAVTocDuRitpN5m0dyiffBrqxarfNwoZuMdIiXyqClJR4JRo1rJjoQ==}
     engines: {node: ^18.13.0 || >=20.9.0}
     peerDependencies:
-      '@angular/common': 17.1.2
-      '@angular/core': 17.1.2
-      '@angular/platform-browser': 17.1.2
+      '@angular/common': 17.1.3
+      '@angular/core': 17.1.3
+      '@angular/platform-browser': 17.1.3
       rxjs: ^6.5.3 || ^7.4.0
     dependencies:
-      '@angular/common': 17.1.2(@angular/core@17.1.2)(rxjs@7.8.1)
-      '@angular/core': 17.1.2(rxjs@7.8.1)(zone.js@0.14.3)
-      '@angular/platform-browser': 17.1.2(@angular/animations@17.1.2)(@angular/common@17.1.2)(@angular/core@17.1.2)
+      '@angular/common': 17.1.3(@angular/core@17.1.3)(rxjs@7.8.1)
+      '@angular/core': 17.1.3(rxjs@7.8.1)(zone.js@0.14.3)
+      '@angular/platform-browser': 17.1.3(@angular/animations@17.1.3)(@angular/common@17.1.3)(@angular/core@17.1.3)
       rxjs: 7.8.1
       tslib: 2.6.2
     dev: false
@@ -8179,15 +8277,15 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@ngtools/webpack@17.1.2(@angular/compiler-cli@17.1.2)(typescript@5.2.2)(webpack@5.89.0):
-    resolution: {integrity: sha512-MdNVSIp0x8AK26L+CxMTXH4weq2sNIp4C09RSdk7y6UkfBxMA3O0jTto9tW3ehkBaaGZ4dSiWkXA8L/ydMiQmA==}
+  /@ngtools/webpack@17.1.3(@angular/compiler-cli@17.1.3)(typescript@5.2.2)(webpack@5.89.0):
+    resolution: {integrity: sha512-mszRSb7aMNKHnkh3Jrfo83KVOguX/cUamJJcGIYe9o7tnLGRIoMp4vP0fx6Og4J0/CGDRhSDG4IiJ29aOU7K8A==}
     engines: {node: ^18.13.0 || >=20.9.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     peerDependencies:
       '@angular/compiler-cli': ^17.0.0
       typescript: '>=5.2 <5.4'
       webpack: ^5.54.0
     dependencies:
-      '@angular/compiler-cli': 17.1.2(@angular/compiler@17.1.2)(typescript@5.2.2)
+      '@angular/compiler-cli': 17.1.3(@angular/compiler@17.1.3)(typescript@5.2.2)
       typescript: 5.2.2
       webpack: 5.89.0(esbuild@0.19.11)
     dev: true
@@ -9702,12 +9800,12 @@ packages:
       string-argv: 0.3.2
     dev: true
 
-  /@schematics/angular@17.1.2:
-    resolution: {integrity: sha512-1GlH0POaN7hVDF1sAm90E5SvAqnKK+PbD1oKSpug9l+1AUQ3vOamyGhEAaO+IxUqvNdgqZexxd5o9MyySTT2Zw==}
+  /@schematics/angular@17.1.3:
+    resolution: {integrity: sha512-hmeasOvzmniy6urtzUKhEqGO67iPuLX/dVtkF4nWp2NTtcEKlvcJobNDMc+CTlX4+ZMPVOvmhDMQqrlfekZ+NQ==}
     engines: {node: ^18.13.0 || >=20.9.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     dependencies:
-      '@angular-devkit/core': 17.1.2
-      '@angular-devkit/schematics': 17.1.2
+      '@angular-devkit/core': 17.1.3
+      '@angular-devkit/schematics': 17.1.3
       jsonc-parser: 3.2.0
     transitivePeerDependencies:
       - chokidar
@@ -22868,7 +22966,7 @@ packages:
       - babel-plugin-macros
     dev: false
 
-  /ng-packagr@17.1.2(@angular/compiler-cli@17.1.2)(tslib@2.6.2)(typescript@5.2.2):
+  /ng-packagr@17.1.2(@angular/compiler-cli@17.1.3)(tslib@2.6.2)(typescript@5.2.2):
     resolution: {integrity: sha512-H7WRiqbM91lOItixrKc9XP1ZLpsxwIk3l0JDnhSePvKQlMe1UsNrnYHzBek6iVyMolCuz86YR0Dovbpyi4aOzA==}
     engines: {node: ^18.13.0 || >=20.9.0}
     hasBin: true
@@ -22881,7 +22979,7 @@ packages:
       tailwindcss:
         optional: true
     dependencies:
-      '@angular/compiler-cli': 17.1.2(@angular/compiler@17.1.2)(typescript@5.2.2)
+      '@angular/compiler-cli': 17.1.3(@angular/compiler@17.1.3)(typescript@5.2.2)
       '@rollup/plugin-json': 6.0.1(rollup@4.6.0)
       '@rollup/plugin-node-resolve': 15.2.3(rollup@4.6.0)
       '@rollup/wasm-node': 4.6.0
