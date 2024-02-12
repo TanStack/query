@@ -64,5 +64,4 @@ export function useMutation<
   return { ...result, mutate, mutateAsync: result.mutate }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 function noop() {}

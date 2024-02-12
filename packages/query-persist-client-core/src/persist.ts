@@ -10,9 +10,9 @@ import type {
 export type Promisable<T> = T | PromiseLike<T>
 
 export interface Persister {
-  persistClient(persistClient: PersistedClient): Promisable<void>
-  restoreClient(): Promisable<PersistedClient | undefined>
-  removeClient(): Promisable<void>
+  persistClient: (persistClient: PersistedClient) => Promisable<void>
+  restoreClient: () => Promisable<PersistedClient | undefined>
+  removeClient: () => Promisable<void>
 }
 
 export interface PersistedClient {

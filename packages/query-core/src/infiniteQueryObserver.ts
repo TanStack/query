@@ -49,7 +49,6 @@ export class InfiniteQueryObserver<
     fetchOptions: ObserverFetchOptions,
   ) => Promise<InfiniteQueryObserverResult<TData, TError>>
 
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(
     client: QueryClient,
     options: InfiniteQueryObserverOptions<
