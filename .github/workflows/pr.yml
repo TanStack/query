@@ -13,8 +13,6 @@ concurrency:
 
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-  NX_CLOUD_DISTRIBUTED_EXECUTION: true
-  NX_CLOUD_DISTRIBUTED_EXECUTION_AGENT_COUNT: 3
 
 jobs:
   main:
@@ -35,7 +33,7 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - name: Start Agents
-        run: npx nx-cloud start-ci-run --distribute-on="12 linux-medium-js"
+        run: npx nx-cloud start-ci-run --distribute-on="12 linux-medium-js" --stop-agents-on-failure=false --with-env-vars="auto"
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
       - name: Get base and head commits for `nx affected`
