@@ -871,7 +871,7 @@ export interface QueryClientConfig {
 }
 
 export interface DefaultOptions<TError = DefaultError> {
-  queries?: Omit<QueryObserverOptions<unknown, TError>, 'suspense'>
+  queries?: Omit<QueryObserverOptions<unknown, TError>, 'suspense' | 'queryKey'>
   mutations?: MutationObserverOptions<unknown, TError, unknown, unknown>
 }
 
