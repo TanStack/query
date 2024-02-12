@@ -3,16 +3,16 @@ id: angular-query
 title: Angular Query
 ---
 
-The Angular adapter is available as a community library: [ngneat/query](https://ngneat.github.io/query/). It is based on the TanStack/query-core.
+The Angular adapter is now available for TanStack Query v5.
 
-## Installation
-
-```bash
-$ npm i @ngneat/query
-# or
-$ pnpm add @ngneat/query
-# or
-$ yarn add @ngneat/query
+```ts
+  postQuery = injectQuery(() => ({
+    enabled: this.postId() > 0,
+    queryKey: ['post', this.postId()],
+    queryFn: () => lastValueFrom(this.getPost$(this.postId()))
+  }))
 ```
 
-Check the complete documentation on [GitHub](https://github.com/ngneat/query).
+It's based on Angular signals and compatible with Angular v17+.
+
+Check the complete documentation: [Angular Query overview](https://tanstack.com/query/latest/docs/framework/angular/overview).
