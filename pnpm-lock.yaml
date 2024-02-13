@@ -929,9 +929,21 @@ importers:
         specifier: ^1.2.0
         version: 1.2.0
     devDependencies:
+      '@types/react':
+        specifier: ^18.2.55
+        version: 18.2.55
+      '@types/react-dom':
+        specifier: ^18.2.19
+        version: 18.2.19
+      '@types/sort-by':
+        specifier: ^1.2.3
+        version: 1.2.3
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.1.1)
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
       vite:
         specifier: ^5.1.1
         version: 5.1.1(@types/node@18.19.3)
@@ -9348,6 +9360,10 @@ packages:
     resolution: {integrity: sha512-tIF57KB+ZvOBpAQwSaACfEu7htponHXaFzP7RfKYgsOS0NoYnn+9+jzp7bbq4fWerizI3dTB4NfAZoyeQKWJLw==}
     dependencies:
       '@types/node': 18.19.3
+
+  /@types/sort-by@1.2.3:
+    resolution: {integrity: sha512-Q8Pg7o2iHWFf7pR4jIGb+ntxwwL7a/WWLFNJj8jEN14tPQdfwZLCqK68q6mo1WONqa68OysEPuFvNA3uGm0crw==}
+    dev: true
 
   /@types/source-list-map@0.1.4:
     resolution: {integrity: sha512-Kdfm7Sk5VX8dFW7Vbp18+fmAatBewzBILa1raHYxrGEFXT0jNl9x3LWfuW7bTbjEKFNey9Dfkj/UzT6z/NvRlg==}
