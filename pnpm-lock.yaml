@@ -351,7 +351,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       algoliasearch:
         specifier: 4.22.1
@@ -388,7 +388,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -412,7 +412,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -440,7 +440,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       graphql:
         specifier: ^16.8.1
@@ -471,7 +471,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
         specifier: ^5.20.2
@@ -517,7 +517,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -542,7 +542,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -569,7 +569,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -596,7 +596,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       ky:
         specifier: ^1.2.0
@@ -623,7 +623,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-next-experimental':
         specifier: ^5.20.2
@@ -663,7 +663,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
         specifier: ^5.20.2
@@ -697,7 +697,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -734,7 +734,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -771,7 +771,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -795,7 +795,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -817,7 +817,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -850,7 +850,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       expo:
         specifier: ^50.0.6
@@ -902,7 +902,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       localforage:
         specifier: ^1.10.0
@@ -954,7 +954,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -982,7 +982,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -1019,7 +1019,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -1047,7 +1047,7 @@ importers:
         specifier: ^5.20.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.20.2
+        specifier: ^5.20.3
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -19931,8 +19931,6 @@ packages:
       webpack: '*'
     peerDependenciesMeta:
       webpack:
-        optional: true
-      webpack-sources:
         optional: true
     dependencies:
       webpack: 5.89.0(esbuild@0.19.11)
