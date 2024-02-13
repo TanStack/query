@@ -7,7 +7,7 @@
     "start": "node .output/server/index.mjs"
   },
   "dependencies": {
-    "@tanstack/vue-query": "^5.20.2"
+    "@tanstack/vue-query": "^5.20.5"
   },
   "devDependencies": {
     "nuxt": "^3.5.2"
