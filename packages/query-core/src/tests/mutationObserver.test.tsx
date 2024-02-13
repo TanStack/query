@@ -127,7 +127,7 @@ describe('mutationObserver', () => {
     unsubscribe()
   })
 
-  test.only('changing mutation keys should not affect already existing mutations', async () => {
+  test('changing mutation keys should not affect already existing mutations', async () => {
     const key = queryKey()
     const mutationObserver = new MutationObserver(queryClient, {
       mutationKey: [...key, '1'],
