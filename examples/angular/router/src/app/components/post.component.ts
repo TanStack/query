@@ -1,10 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Output,
   inject,
   input,
+  numberAttribute,
 } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import {
@@ -23,15 +22,16 @@ import { PostsService } from '../services/posts-service'
 })
 export default class PostComponent {
   #postsService = inject(PostsService)
+  queryClient = injectQueryClient()
 
-  postId = input<number, string>(0, {
-    transform: (value: string) => Number(value),
+  postId = input(0, {
+    transform: numberAttribute,
   })
 
   postQuery = injectQuery(() => ({
     enabled: this.postId() > 0,
     queryKey: ['post', this.postId()],
-    queryFn: async () => {
+    queryFn: () => {
       return lastValueFrom(this.#postsService.postById$(this.postId()))
     },
   }))

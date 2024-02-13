@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.20.2",
-    "@tanstack/react-query-devtools": "^5.20.2",
+    "@tanstack/react-query-devtools": "^5.20.3",
     "graphql": "^16.8.1",
     "graphql-request": "^6.1.0",
     "react": "^18.2.0",
