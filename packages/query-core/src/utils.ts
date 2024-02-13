@@ -257,10 +257,13 @@ export function replaceEqualDeep(a: any, b: any): any {
 }
 
 /**
- * Shallow compare objects. Only works with objects that always have the same properties.
+ * Shallow compare objects.
  */
-export function shallowEqualObjects<T>(a: T, b: T): boolean {
-  if ((a && !b) || (b && !a)) {
+export function shallowEqualObjects<T extends Record<string, any>>(
+  a: T,
+  b: T | undefined,
+): boolean {
+  if (!b || Object.keys(a).length !== Object.keys(b).length) {
     return false
   }
 
