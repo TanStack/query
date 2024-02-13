@@ -322,7 +322,7 @@ export function replaceData<
   TOptions extends QueryOptions<any, any, any, any>,
 >(prevData: TData | undefined, data: TData, options: TOptions): TData {
   if (typeof options.structuralSharing === 'function') {
-    return options.structuralSharing(prevData, data)
+    return options.structuralSharing(prevData, data) as TData
   } else if (options.structuralSharing !== false) {
     // Structurally share data between prev and new data if needed
     return replaceEqualDeep(prevData, data)

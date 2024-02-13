@@ -126,4 +126,47 @@ describe('mutationObserver', () => {
 
     unsubscribe()
   })
+
+  test('changing mutation keys should not affect already existing mutations', async () => {
+    const key = queryKey()
+    const mutationObserver = new MutationObserver(queryClient, {
+      mutationKey: [...key, '1'],
+      mutationFn: async (text: string) => {
+        await sleep(5)
+        return text
+      },
+    })
+
+    const subscriptionHandler = vi.fn()
+
+    const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
+
+    await mutationObserver.mutate('input')
+
+    expect(
+      queryClient.getMutationCache().find({ mutationKey: [...key, '1'] }),
+    ).toMatchObject({
+      options: { mutationKey: [...key, '1'] },
+      state: {
+        status: 'success',
+        data: 'input',
+      },
+    })
+
+    mutationObserver.setOptions({
+      mutationKey: [...key, '2'],
+    })
+
+    expect(
+      queryClient.getMutationCache().find({ mutationKey: [...key, '1'] }),
+    ).toMatchObject({
+      options: { mutationKey: [...key, '1'] },
+      state: {
+        status: 'success',
+        data: 'input',
+      },
+    })
+
+    unsubscribe()
+  })
 })

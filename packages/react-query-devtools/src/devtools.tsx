@@ -43,14 +43,13 @@ export interface DevtoolsOptions {
 export function ReactQueryDevtools(
   props: DevtoolsOptions,
 ): React.ReactElement | null {
-  const queryClient = useQueryClient()
-  const client = props.client || queryClient
+  const queryClient = useQueryClient(props.client)
   const ref = React.useRef<HTMLDivElement>(null)
   const { buttonPosition, position, initialIsOpen, errorTypes, styleNonce } =
     props
   const [devtools] = React.useState(
     new TanstackQueryDevtools({
-      client: client,
+      client: queryClient,
       queryFlavor: 'React Query',
       version: '5',
       onlineManager,
@@ -63,8 +62,8 @@ export function ReactQueryDevtools(
   )
 
   React.useEffect(() => {
-    devtools.setClient(client)
-  }, [client, devtools])
+    devtools.setClient(queryClient)
+  }, [queryClient, devtools])
 
   React.useEffect(() => {
     if (buttonPosition) {

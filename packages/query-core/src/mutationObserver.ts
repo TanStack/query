@@ -66,7 +66,6 @@ export class MutationObserver<
         observer: this,
       })
     }
-    this.#currentMutation?.setOptions(this.options)
 
     if (
       prevOptions?.mutationKey &&
@@ -74,6 +73,8 @@ export class MutationObserver<
       hashKey(prevOptions.mutationKey) !== hashKey(this.options.mutationKey)
     ) {
       this.reset()
+    } else {
+      this.#currentMutation?.setOptions(this.options)
     }
   }
 

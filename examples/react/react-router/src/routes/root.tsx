@@ -1,42 +1,42 @@
-import * as React from 'react'
 import {
   Outlet,
   useLoaderData,
-  Form,
+  Link,
   NavLink,
   useNavigation,
   useSubmit,
+  LoaderFunctionArgs,
 } from 'react-router-dom'
 import { useDebounce } from 'rooks'
 
-import { createContact, getContacts } from '../contacts'
-import { useQuery, useIsFetching } from '@tanstack/react-query'
+import { getContacts } from '../contacts'
+import {
+  useSuspenseQuery,
+  useIsFetching,
+  type QueryClient,
+  queryOptions,
+} from '@tanstack/react-query'
 
-const contactListQuery = (q) => ({
-  queryKey: ['contacts', 'list', q ?? 'all'],
-  queryFn: () => getContacts(q),
-})
+const contactListQuery = (q?: string) =>
+  queryOptions({
+    queryKey: ['contacts', 'list', q ?? 'all'],
+    queryFn: () => getContacts(q),
+  })
 
 export const loader =
-  (queryClient) =>
-  async ({ request }) => {
+  (queryClient: QueryClient) =>
+  async ({ request }: LoaderFunctionArgs) => {
     const url = new URL(request.url)
-    const q = url.searchParams.get('q')
-    if (!queryClient.getQueryData(contactListQuery(q).queryKey)) {
-      await queryClient.fetchQuery(contactListQuery(q))
-    }
+    const q = url.searchParams.get('q') ?? ''
+    await queryClient.ensureQueryData(contactListQuery(q))
     return { q }
   }
 
-export const action = (queryClient) => async () => {
-  const contact = await createContact()
-  queryClient.invalidateQueries({ queryKey: ['contacts', 'list'] })
-  return contact
-}
-
 export default function Root() {
-  const { q } = useLoaderData()
-  const { data: contacts } = useQuery(contactListQuery(q))
+  const { q } = useLoaderData() as Awaited<
+    ReturnType<ReturnType<typeof loader>>
+  >
+  const { data: contacts } = useSuspenseQuery(contactListQuery(q))
   const searching = useIsFetching({ queryKey: ['contacts', 'list'] }) > 0
   const navigation = useNavigation()
   const submit = useSubmit()
@@ -66,9 +66,9 @@ export default function Root() {
             <div id="search-spinner" aria-hidden hidden={!searching} />
             <div className="sr-only" aria-live="polite"></div>
           </form>
-          <Form method="post">
-            <button type="submit">New</button>
-          </Form>
+          <Link to="contacts/new" className="button">
+            New
+          </Link>
         </div>
         <nav>
           {contacts.length ? (
