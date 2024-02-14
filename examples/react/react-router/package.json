@@ -5,11 +5,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:types": "tsc"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.20.2",
-    "@tanstack/react-query-devtools": "^5.20.2",
+    "@tanstack/react-query": "^5.20.5",
+    "@tanstack/react-query-devtools": "^5.20.5",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",
     "react": "^18.2.0",
@@ -20,7 +21,11 @@
     "sort-by": "^1.2.0"
   },
   "devDependencies": {
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.19",
+    "@types/sort-by": "^1.2.3",
     "@vitejs/plugin-react": "^4.2.1",
+    "typescript": "5.2.2",
     "vite": "^5.1.1"
   },
   "browserslist": {
