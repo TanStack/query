@@ -18,6 +18,8 @@ jobs:
     env:
       NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
     steps:
+      - name: echo access token length
+        run: echo "length is ${#NX_CLOUD_ACCESS_TOKEN}"
       - name: Checkout
         uses: actions/checkout@v4
         with:
