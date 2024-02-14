@@ -40,6 +40,7 @@ stats.html
 .vscode/settings.json
 
 *.log
+*.tsbuildinfo
 .DS_Store
 .cache
 .idea
