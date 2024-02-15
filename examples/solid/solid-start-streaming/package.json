@@ -14,7 +14,7 @@
     "@tanstack/solid-query": "^5.20.5",
     "@tanstack/solid-query-devtools": "^5.20.5",
     "solid-js": "^1.8.14",
-    "vinxi": "^0.2.1"
+    "vinxi": "^0.3.3"
   },
   "engines": {
     "node": ">=18"
