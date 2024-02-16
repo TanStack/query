@@ -57,15 +57,15 @@
     },
     "test:knip": {
       "cache": true,
-      "inputs": ["**/*"]
+      "inputs": ["{workspaceRoot}/**/*"]
     },
     "test:format": {
       "cache": true,
-      "inputs": ["**/*"]
+      "inputs": ["{workspaceRoot}/**/*"]
     },
     "test:sherif": {
       "cache": true,
-      "inputs": ["**/*"]
+      "inputs": ["{workspaceRoot}/**/*"]
     }
   }
 }
