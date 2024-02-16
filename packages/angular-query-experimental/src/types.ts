@@ -1,7 +1,8 @@
-import type { Signal } from '@angular/core'
+/* istanbul ignore file */
 
 import type {
   DefaultError,
+  DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
@@ -26,43 +27,6 @@ export interface CreateBaseQueryOptions<
     'queryKey'
   > {}
 
-type CreateStatusBasedQueryResult<
-  TStatus extends QueryObserverResult['status'],
-  TData = unknown,
-  TError = DefaultError,
-> = Extract<QueryObserverResult<TData, TError>, { status: TStatus }>
-
-export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
-  isSuccess(
-    this: CreateBaseQueryResult<TData, TError>,
-  ): this is CreateBaseQueryResult<
-    TData,
-    TError,
-    CreateStatusBasedQueryResult<'success', TData, TError>
-  >
-  isError(
-    this: CreateBaseQueryResult<TData, TError>,
-  ): this is CreateBaseQueryResult<
-    TData,
-    TError,
-    CreateStatusBasedQueryResult<'error', TData, TError>
-  >
-  isPending(
-    this: CreateBaseQueryResult<TData, TError>,
-  ): this is CreateBaseQueryResult<
-    TData,
-    TError,
-    CreateStatusBasedQueryResult<'pending', TData, TError>
-  >
-}
-
-export type CreateBaseQueryResult<
-  TData = unknown,
-  TError = DefaultError,
-  TState = QueryObserverResult<TData, TError>,
-> = BaseQueryNarrowing<TData, TError> &
-  MapToSignals<Omit<TState, keyof BaseQueryNarrowing>>
-
 export interface CreateQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -82,32 +46,69 @@ export interface CreateQueryOptions<
     'suspense'
   > {}
 
-export type CreateQueryResult<
+type CreateStatusBasedQueryResult<
+  TStatus extends QueryObserverResult['status'],
   TData = unknown,
   TError = DefaultError,
-> = CreateBaseQueryResult<TData, TError>
+> = Extract<QueryObserverResult<TData, TError>, { status: TStatus }>
 
-/** Options for createInfiniteQuery */
-export type CreateInfiniteQueryOptions<
+export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
+  isSuccess: (
+    this: CreateBaseQueryResult<TData, TError>,
+  ) => this is CreateBaseQueryResult<
+    TData,
+    TError,
+    CreateStatusBasedQueryResult<'success', TData, TError>
+  >
+  isError: (
+    this: CreateBaseQueryResult<TData, TError>,
+  ) => this is CreateBaseQueryResult<
+    TData,
+    TError,
+    CreateStatusBasedQueryResult<'error', TData, TError>
+  >
+  isPending: (
+    this: CreateBaseQueryResult<TData, TError>,
+  ) => this is CreateBaseQueryResult<
+    TData,
+    TError,
+    CreateStatusBasedQueryResult<'pending', TData, TError>
+  >
+}
+
+export interface CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> = InfiniteQueryObserverOptions<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryData,
-  TQueryKey,
-  TPageParam
->
+> extends WithRequired<
+    Omit<
+      InfiniteQueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey,
+        TPageParam
+      >,
+      'suspense'
+    >,
+    'queryKey'
+  > {}
 
-export type CreateInfiniteQueryResult<
+export type CreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = Signal<InfiniteQueryObserverResult<TData, TError>>
+  TState = QueryObserverResult<TData, TError>,
+> = BaseQueryNarrowing<TData, TError> &
+  MapToSignals<Omit<TState, keyof BaseQueryNarrowing>>
+
+export type CreateQueryResult<
+  TData = unknown,
+  TError = DefaultError,
+> = CreateBaseQueryResult<TData, TError>
 
 export type DefinedCreateQueryResult<
   TData = unknown,
@@ -115,15 +116,29 @@ export type DefinedCreateQueryResult<
   TDefinedQueryObserver = DefinedQueryObserverResult<TData, TError>,
 > = MapToSignals<TDefinedQueryObserver>
 
-export type CreateMutationOptions<
+export type CreateInfiniteQueryResult<
+  TData = unknown,
+  TError = DefaultError,
+> = MapToSignals<InfiniteQueryObserverResult<TData, TError>>
+
+export type DefinedCreateInfiniteQueryResult<
+  TData = unknown,
+  TError = DefaultError,
+  TDefinedInfiniteQueryObserver = DefinedInfiniteQueryObserverResult<
+    TData,
+    TError
+  >,
+> = MapToSignals<TDefinedInfiniteQueryObserver>
+
+export interface CreateMutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> = Omit<
-  MutationObserverOptions<TData, TError, TVariables, TContext>,
-  '_defaulted' | 'variables'
->
+> extends Omit<
+    MutationObserverOptions<TData, TError, TVariables, TContext>,
+    '_defaulted' | 'variables'
+  > {}
 
 export type CreateMutateFunction<
   TData = unknown,
@@ -170,9 +185,9 @@ export interface BaseMutationNarrowing<
   TVariables = unknown,
   TContext = unknown,
 > {
-  isSuccess(
+  isSuccess: (
     this: CreateMutationResult<TData, TError, TVariables, TContext>,
-  ): this is CreateMutationResult<
+  ) => this is CreateMutationResult<
     TData,
     TError,
     TVariables,
@@ -185,9 +200,9 @@ export interface BaseMutationNarrowing<
       TContext
     >
   >
-  isError(
+  isError: (
     this: CreateMutationResult<TData, TError, TVariables, TContext>,
-  ): this is CreateMutationResult<
+  ) => this is CreateMutationResult<
     TData,
     TError,
     TVariables,
@@ -200,9 +215,9 @@ export interface BaseMutationNarrowing<
       TContext
     >
   >
-  isPending(
+  isPending: (
     this: CreateMutationResult<TData, TError, TVariables, TContext>,
-  ): this is CreateMutationResult<
+  ) => this is CreateMutationResult<
     TData,
     TError,
     TVariables,
@@ -215,9 +230,9 @@ export interface BaseMutationNarrowing<
       TContext
     >
   >
-  isIdle(
+  isIdle: (
     this: CreateMutationResult<TData, TError, TVariables, TContext>,
-  ): this is CreateMutationResult<
+  ) => this is CreateMutationResult<
     TData,
     TError,
     TVariables,
@@ -226,7 +241,6 @@ export interface BaseMutationNarrowing<
   >
 }
 
-/** Result from createMutation */
 export type CreateMutationResult<
   TData = unknown,
   TError = DefaultError,

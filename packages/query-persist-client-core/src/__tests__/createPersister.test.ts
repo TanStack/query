@@ -28,7 +28,7 @@ function setupPersister(
   const context = {
     meta: { foo: 'bar' },
     queryKey,
-    // @ts-ignore
+    // @ts-expect-error
     signal: undefined as AbortSignal,
   }
   const queryHash = hashKey(queryKey)

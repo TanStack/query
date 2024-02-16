@@ -8,8 +8,8 @@ import { htmlEscapeJsonString } from './htmlescape'
 const serializedSymbol = Symbol('serialized')
 
 interface DataTransformer {
-  serialize(object: any): any
-  deserialize(object: any): any
+  serialize: (object: any) => any
+  deserialize: (object: any) => any
 }
 
 type Serialized<TData> = unknown & {

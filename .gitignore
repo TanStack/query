@@ -8,6 +8,7 @@ yarn.lock
 
 # builds
 types
+*/**/.angular
 */**/.svelte-kit
 */**/.tsup
 */**/build
@@ -39,6 +40,7 @@ stats.html
 .vscode/settings.json
 
 *.log
+*.tsbuildinfo
 .DS_Store
 .cache
 .idea
