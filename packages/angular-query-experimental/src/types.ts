@@ -137,7 +137,7 @@ export interface CreateMutationOptions<
   TContext = unknown,
 > extends Omit<
     MutationObserverOptions<TData, TError, TVariables, TContext>,
-    '_defaulted' | 'variables'
+    '_defaulted'
   > {}
 
 export type CreateMutateFunction<
