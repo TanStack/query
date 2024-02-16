@@ -12,7 +12,7 @@
     "preinstall": "node -e \"if(process.env.CI == 'true') {console.log('Skipping preinstall...'); process.exit(1)}\" || npx -y only-allow pnpm",
     "install:csb": "corepack enable && pnpm install --frozen-lockfile",
     "test": "pnpm run test:ci",
-    "test:pr": "nx affected --targets=test:eslint,test:lib,test:types,test:build,build",
+    "test:pr": "nx affected --targets=test:eslint,test:lib,test:types,test:build,build,test:format,test:sherif,test:knip",
     "test:ci": "nx run-many --targets=test:format,test:sherif,test:eslint,test:lib,test:types,test:build,build",
     "test:eslint": "nx affected --target=test:eslint --exclude=examples/**",
     "test:format": "pnpm run prettier --check",
@@ -21,6 +21,7 @@
     "test:lib:dev": "pnpm run test:lib && nx watch --all -- pnpm run test:lib",
     "test:build": "nx affected --target=test:build --exclude=examples/**",
     "test:types": "nx affected --target=test:types --exclude=examples/**",
+    "test:knip": "knip",
     "build": "nx affected --target=build --exclude=examples/**",
     "build:all": "nx run-many --target=build --exclude=examples/**",
     "watch": "pnpm run build:all && nx watch --all -- pnpm run build:all",
@@ -32,7 +33,8 @@
   "nx": {
     "includedScripts": [
       "test:format",
-      "test:sherif"
+      "test:sherif",
+      "test:knip"
     ]
   },
   "namespace": "@tanstack",
