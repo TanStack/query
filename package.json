@@ -13,7 +13,7 @@
     "install:csb": "corepack enable && pnpm install --frozen-lockfile",
     "test": "pnpm run test:ci",
     "test:pr": "nx affected --targets=test:eslint,test:lib,test:types,test:build,build,test:format,test:sherif,test:knip",
-    "test:ci": "nx run-many --targets=test:format,test:sherif,test:eslint,test:lib,test:types,test:build,build",
+    "test:ci": "nx run-many --targets=test:format,test:sherif,test:eslint,test:lib,test:types,test:build,build --skip-nx-cache",
     "test:eslint": "nx affected --target=test:eslint --exclude=examples/**",
     "test:format": "pnpm run prettier --check",
     "test:sherif": "sherif -i react-scripts",

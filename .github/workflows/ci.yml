@@ -35,10 +35,15 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: pnpm
+      - name: Start Agents
+        run: npx nx-cloud start-ci-run --distribute-on="12 linux-medium-js"
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
       - name: Run Tests
         run: pnpm run test:ci
+      - name: Stop Agents
+        if: ${{ always() }}
+        run: npx nx-cloud stop-all-agents
       - name: Publish
         run: |
           git config --global user.name 'Tanner Linsley'
