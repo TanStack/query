@@ -45,9 +45,10 @@ import { Component } from '@angular/core';
 
 - `initialIsOpen: Boolean`
   - Set this `true` if you want the dev tools to default to being open
-- `buttonPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right"`
+- `buttonPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "relative"`
   - Defaults to `bottom-right`
   - The position of the TanStack logo to open and close the devtools panel
+  - If `relative`, the button is placed in the location that you render the devtools.
 - `position?: "top" | "bottom" | "left" | "right"`
   - Defaults to `bottom`
   - The position of the Angular Query devtools panel
