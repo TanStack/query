@@ -1,15 +1,19 @@
-
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
 # dependencies
 node_modules
+package-lock.json
+yarn.lock
 
 # builds
 types
-build
-dist
-lib
-es
+*/**/.angular
+*/**/.svelte-kit
+*/**/.tsup
+*/**/build
+*/**/dist
+*/**/lib
+*/**/es
 artifacts
 .rpt2_cache
 coverage
@@ -30,7 +34,14 @@ yarn-error.log*
 .history
 size-plugin.json
 stats-hydration.json
-stats-react.json
+stats.json
 stats.html
 .vscode/settings.json
-.idea/
+
+*.log
+*.tsbuildinfo
+.DS_Store
+.cache
+.idea
+
+.nx/cache
