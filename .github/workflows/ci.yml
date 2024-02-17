@@ -35,10 +35,15 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: pnpm
+      - name: Start Nx Agents
+        run: npx nx-cloud start-ci-run --distribute-on=".nx/workflows/dynamic-changesets.yaml"
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
       - name: Run Tests
-        run: pnpm run test:ci
+        run: pnpm run test:ci --parallel=3
+      - name: Stop Nx Agents
+        if: ${{ always() }}
+        run: npx nx-cloud stop-all-agents
       - name: Publish
         run: |
           git config --global user.name 'Tanner Linsley'

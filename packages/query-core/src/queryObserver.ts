@@ -64,7 +64,7 @@ export class QueryObserver<
   #staleTimeoutId?: ReturnType<typeof setTimeout>
   #refetchIntervalId?: ReturnType<typeof setInterval>
   #currentRefetchInterval?: number | false
-  #trackedProps: Set<keyof QueryObserverResult> = new Set()
+  #trackedProps = new Set<keyof QueryObserverResult>()
 
   constructor(
     client: QueryClient,
