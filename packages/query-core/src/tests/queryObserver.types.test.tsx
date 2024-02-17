@@ -31,6 +31,7 @@ describe('placeholderData', () => {
         }
 
         new QueryObserver<boolean, CustomError>(createQueryClient(), {
+          queryKey: ['key'],
           placeholderData: (_, previousQuery) => {
             const error = previousQuery?.state.error
 
@@ -49,6 +50,7 @@ describe('placeholderData', () => {
         type QueryData = typeof queryData
 
         new QueryObserver(createQueryClient(), {
+          queryKey: ['key'],
           queryFn: () => queryData,
           select: (data) => data.foo,
           placeholderData: (previousData) => {

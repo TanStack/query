@@ -132,7 +132,7 @@ export class QueryObserver<
   }
 
   setOptions(
-    options?: QueryObserverOptions<
+    options: QueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
@@ -146,7 +146,7 @@ export class QueryObserver<
 
     this.options = this.#client.defaultQueryOptions(options)
 
-    if (!shallowEqualObjects(prevOptions, this.options)) {
+    if (!shallowEqualObjects(this.options, prevOptions)) {
       this.#client.getQueryCache().notify({
         type: 'observerOptionsUpdated',
         query: this.#currentQuery,
@@ -159,11 +159,6 @@ export class QueryObserver<
       typeof this.options.enabled !== 'boolean'
     ) {
       throw new Error('Expected enabled to be a boolean')
-    }
-
-    // Keep previous query key if the user does not supply one
-    if (!this.options.queryKey) {
-      this.options.queryKey = prevOptions.queryKey
     }
 
     this.#updateQuery()

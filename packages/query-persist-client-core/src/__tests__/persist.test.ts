@@ -46,7 +46,9 @@ describe('persistQueryClientSave', () => {
     const queryFn = vi.fn().mockReturnValue(1)
     const observer = new QueriesObserver(queryClient, [{ queryKey, queryFn }])
     const unsubscribeObserver = observer.subscribe(vi.fn())
-    observer.getObservers()[0]?.setOptions({ refetchOnWindowFocus: false })
+    observer
+      .getObservers()[0]
+      ?.setOptions({ queryKey, refetchOnWindowFocus: false })
     unsubscribeObserver()
 
     queryClient.setQueryData(queryKey, 2)
