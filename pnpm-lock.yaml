@@ -1818,15 +1818,6 @@ importers:
         specifier: ^0.14.3
         version: 0.14.3
 
-  packages/codemods:
-    devDependencies:
-      '@types/jscodeshift':
-        specifier: 0.11.11
-        version: 0.11.11
-      jscodeshift:
-        specifier: 0.15.1
-        version: 0.15.1
-
   packages/eslint-plugin-query:
     dependencies:
       '@typescript-eslint/utils':
@@ -1854,6 +1845,15 @@ importers:
       broadcast-channel:
         specifier: ^7.0.0
         version: 7.0.0
+
+  packages/query-codemods:
+    devDependencies:
+      '@types/jscodeshift':
+        specifier: 0.11.11
+        version: 0.11.11
+      jscodeshift:
+        specifier: 0.15.1
+        version: 0.15.1
 
   packages/query-core: {}
 
@@ -19964,6 +19964,8 @@ packages:
       webpack: '*'
     peerDependenciesMeta:
       webpack:
+        optional: true
+      webpack-sources:
         optional: true
     dependencies:
       webpack: 5.89.0(esbuild@0.19.11)
