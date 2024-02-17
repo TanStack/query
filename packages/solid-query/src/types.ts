@@ -129,7 +129,7 @@ export interface SolidMutationOptions<
   TContext = unknown,
 > extends Omit<
     MutationObserverOptions<TData, TError, TVariables, TContext>,
-    '_defaulted' | 'variables'
+    '_defaulted'
   > {}
 
 export type CreateMutationOptions<
