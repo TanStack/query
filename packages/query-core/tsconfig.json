@@ -5,6 +5,7 @@
     "src/**/*.tsx",
     ".eslintrc.cjs",
     "tsup.config.js",
-    "vite.config.ts"
+    "vite.config.ts",
+    "vite.config.modern.ts"
   ]
 }

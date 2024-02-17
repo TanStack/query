@@ -3,6 +3,9 @@ import { tanstackBuildConfig } from '@tanstack/config/build'
 import packageJson from './package.json'
 
 const config = defineConfig({
+  build: {
+    target: ['chrome91', 'firefox90', 'edge91', 'safari15', 'ios15', 'opera77'],
+  },
   test: {
     name: packageJson.name,
     dir: './src',
@@ -19,6 +22,6 @@ export default mergeConfig(
     entry: './src/index.ts',
     srcDir: './src',
     exclude: ['./src/tests'],
-    outDir: './dist/legacy',
+    outDir: './dist/modern',
   }),
 )
