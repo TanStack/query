@@ -33,7 +33,7 @@ component_management:
     - component_id: query-codemods
       name: '@tanstack/query-codemods'
       paths:
-        - packages/codemods/**
+        - packages/query-codemods/**
     - component_id: query-core
       name: '@tanstack/query-core'
       paths:

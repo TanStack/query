@@ -2,7 +2,7 @@
   "$schema": "https://unpkg.com/knip@4/schema.json",
   "ignoreWorkspaces": ["examples/**", "integrations/**"],
   "workspaces": {
-    "packages/codemods": {
+    "packages/query-codemods": {
       "entry": ["src/v4/*.js", "src/v5/*/*.js"],
       "ignore": ["**/__testfixtures__/**"]
     },
