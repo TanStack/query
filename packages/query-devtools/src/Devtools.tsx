@@ -692,6 +692,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
                   }
                 }}
                 class="tsqd-query-filter-textfield"
+                name="tsqd-query-filter-input"
                 value={
                   selectedView() === 'queries'
                     ? props.localStore.filter || ''
@@ -708,6 +709,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
               <Show when={selectedView() === 'queries'}>
                 <select
                   value={sort()}
+                  name="tsqd-queries-filter-sort"
                   onChange={(e) => {
                     props.setLocalStore('sort', e.currentTarget.value)
                   }}
@@ -720,6 +722,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
               <Show when={selectedView() === 'mutations'}>
                 <select
                   value={mutationSort()}
+                  name="tsqd-mutations-filter-sort"
                   onChange={(e) => {
                     props.setLocalStore('mutationSort', e.currentTarget.value)
                   }}
