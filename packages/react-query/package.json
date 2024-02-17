@@ -41,7 +41,7 @@
     "test:build": "publint --strict",
     "build": "pnpm build:tsup && pnpm build:codemods",
     "build:tsup": "tsup",
-    "build:codemods": "cpy ../codemods/* ./build/codemods"
+    "build:codemods": "cpy ../query-codemods/* ./build/codemods"
   },
   "files": [
     "build",

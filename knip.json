@@ -3,7 +3,7 @@
   "ignoreWorkspaces": ["examples/**", "integrations/**"],
   "ignore": ["**/react-app-env.d.ts", "**/vite-env.d.ts"],
   "workspaces": {
-    "packages/codemods": {
+    "packages/query-codemods": {
       "entry": ["src/v4/*.js", "src/v5/*/*.js"],
       "ignore": ["**/__testfixtures__/**"]
     },
