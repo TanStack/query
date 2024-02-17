@@ -22,6 +22,7 @@ import type { CreateBaseQueryOptions } from './types'
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
+  InfiniteQueryObserverResult,
   Query,
   QueryKey,
   QueryObserver,
@@ -47,7 +48,8 @@ function reconcileFn<TData, TError>(
 }
 
 type HydratableQueryState<TData, TError> = QueryObserverResult<TData, TError> &
-  QueryState<TData, TError>
+  QueryState<TData, TError> &
+  InfiniteQueryObserverResult<TData, TError>
 
 /**
  * Solid's `onHydrated` functionality will silently "fail" (hydrate with an empty object)
@@ -62,7 +64,7 @@ const hydratableObserverResult = <
 >(
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
   result: QueryObserverResult<TDataHydratable, TError>,
-): HydratableQueryState<TDataHydratable, TError> => {
+) => {
   // Including the extra properties is only relevant on the server
   if (!isServer) return result as HydratableQueryState<TDataHydratable, TError>
 
@@ -76,6 +78,18 @@ const hydratableObserverResult = <
       TError
     >['refetch'],
 
+    // cast to fetchNextPage function should be safe, since we only remove it on the server,
+    fetchNextPage: undefined as unknown as HydratableQueryState<
+      TDataHydratable,
+      TError
+    >['fetchNextPage'],
+
+    // cast to fetchPreviousPage function should be safe, since we only remove it on the server,
+    fetchPreviousPage: undefined as unknown as HydratableQueryState<
+      TDataHydratable,
+      TError
+    >['fetchPreviousPage'],
+
     // hydrate() expects a QueryState object, which is similar but not
     // quite the same as a QueryObserverResult object. Thus, for now, we're
     // copying over the missing properties from state in order to support hydration
@@ -86,7 +100,7 @@ const hydratableObserverResult = <
     // Unsetting these properties on the server since they might not be serializable
     fetchFailureReason: null,
     fetchMeta: null,
-  }
+  } as HydratableQueryState<TDataHydratable, TError>
 }
 
 // Base Query Function that is used to create the query.

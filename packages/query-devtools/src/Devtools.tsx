@@ -219,15 +219,19 @@ const Devtools: Component<DevtoolsPanelProps> = (props) => {
             transition:
               opacity 0.3s,
               transform 0.3s;
+            opacity: 1;
           }
 
           & .tsqd-button-transition-exit-to,
           & .tsqd-button-transition-enter {
-            transform: ${buttonPosition() === 'top-left'
-              ? `translateX(-72px);`
-              : buttonPosition() === 'top-right'
-                ? `translateX(72px);`
-                : `translateY(72px);`};
+            transform: ${buttonPosition() === 'relative'
+              ? `none;`
+              : buttonPosition() === 'top-left'
+                ? `translateX(-72px);`
+                : buttonPosition() === 'top-right'
+                  ? `translateX(72px);`
+                  : `translateY(72px);`};
+            opacity: 0;
           }
         `,
         'tsqd-transitions-container',
@@ -688,6 +692,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
                   }
                 }}
                 class="tsqd-query-filter-textfield"
+                name="tsqd-query-filter-input"
                 value={
                   selectedView() === 'queries'
                     ? props.localStore.filter || ''
@@ -704,6 +709,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
               <Show when={selectedView() === 'queries'}>
                 <select
                   value={sort()}
+                  name="tsqd-queries-filter-sort"
                   onChange={(e) => {
                     props.setLocalStore('sort', e.currentTarget.value)
                   }}
@@ -716,6 +722,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
               <Show when={selectedView() === 'mutations'}>
                 <select
                   value={mutationSort()}
+                  name="tsqd-mutations-filter-sort"
                   onChange={(e) => {
                     props.setLocalStore('mutationSort', e.currentTarget.value)
                   }}
@@ -2262,6 +2269,9 @@ const stylesFactory = (theme: 'light' | 'dark') => {
     'devtoolsBtn-position-top-right': css`
       top: 12px;
       right: 12px;
+    `,
+    'devtoolsBtn-position-relative': css`
+      position: relative;
     `,
     'panel-position-top': css`
       top: 0;
