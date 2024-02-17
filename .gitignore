@@ -43,6 +43,7 @@ stats.html
 *.tsbuildinfo
 .DS_Store
 .cache
+.pnpm-store
 .idea
 
 .nx/cache
