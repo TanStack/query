@@ -15,25 +15,25 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "type": "module",
-  "types": "build/legacy/index.d.ts",
-  "main": "build/legacy/index.cjs",
-  "module": "build/legacy/index.js",
+  "types": "dist/legacy/esm/index.d.ts",
+  "main": "dist/legacy/cjs/index.cjs",
+  "module": "dist/legacy/esm/index.js",
   "exports": {
     ".": {
       "import": {
-        "types": "./build/modern/index.d.ts",
-        "default": "./build/modern/index.js"
+        "types": "./dist/modern/esm/index.d.ts",
+        "default": "./dist/modern/esm/index.js"
       },
       "require": {
-        "types": "./build/modern/index.d.cts",
-        "default": "./build/modern/index.cjs"
+        "types": "./dist/modern/cjs/index.d.cts",
+        "default": "./dist/modern/cjs/index.cjs"
       }
     },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "files": [
-    "build",
+    "dist",
     "src"
   ],
   "scripts": {
@@ -43,6 +43,6 @@
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
-    "build": "tsup"
+    "build": "vite build && vite build --config vite.config.modern.ts"
   }
 }
