@@ -220,7 +220,7 @@ describe('React hydration', () => {
           // Never resolve
         })
 
-        // @ts-ignore
+        // @ts-expect-error
         return null
       }
 

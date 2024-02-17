@@ -1,8 +1,9 @@
 import { defineConfig } from 'vitest/config'
+import packageJson from './package.json'
 
 export default defineConfig({
   test: {
-    name: 'query-persist-client-core',
+    name: packageJson.name,
     dir: './src',
     watch: false,
     coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },

@@ -219,15 +219,19 @@ const Devtools: Component<DevtoolsPanelProps> = (props) => {
             transition:
               opacity 0.3s,
               transform 0.3s;
+            opacity: 1;
           }
 
           & .tsqd-button-transition-exit-to,
           & .tsqd-button-transition-enter {
-            transform: ${buttonPosition() === 'top-left'
-              ? `translateX(-72px);`
-              : buttonPosition() === 'top-right'
-                ? `translateX(72px);`
-                : `translateY(72px);`};
+            transform: ${buttonPosition() === 'relative'
+              ? `none;`
+              : buttonPosition() === 'top-left'
+                ? `translateX(-72px);`
+                : buttonPosition() === 'top-right'
+                  ? `translateX(72px);`
+                  : `translateY(72px);`};
+            opacity: 0;
           }
         `,
         'tsqd-transitions-container',
@@ -1570,7 +1574,6 @@ const QueryDetails = () => {
 
   const handleRefetch = () => {
     const promise = activeQuery()?.fetch()
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     promise?.catch(() => {})
   }
 
@@ -1584,7 +1587,6 @@ const QueryDetails = () => {
     activeQuery()!.setState({
       status: 'error',
       error,
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       fetchMeta: {
         ...activeQuery()!.state.fetchMeta,
         __previousQueryOptions,
@@ -1772,7 +1774,6 @@ const QueryDetails = () => {
                 activeQueryVal.setState({
                   data: undefined,
                   status: 'pending',
-                  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
                   fetchMeta: {
                     ...activeQueryVal.state.fetchMeta,
                     __previousQueryOptions,
@@ -2107,7 +2108,6 @@ const createSubscribeToQueryCacheBatcher = <T,>(
   })
 
   onCleanup(() => {
-    // @ts-ignore
     queryCacheMap.delete(callback)
   })
 
@@ -2159,11 +2159,9 @@ const createSubscribeToMutationCacheBatcher = <T,>(
     setValue(callback(mutationCache))
   })
 
-  // @ts-ignore
   mutationCacheMap.set(callback, setValue)
 
   onCleanup(() => {
-    // @ts-ignore
     mutationCacheMap.delete(callback)
   })
 
@@ -2271,6 +2269,9 @@ const stylesFactory = (theme: 'light' | 'dark') => {
     'devtoolsBtn-position-top-right': css`
       top: 12px;
       right: 12px;
+    `,
+    'devtoolsBtn-position-relative': css`
+      position: relative;
     `,
     'panel-position-top': css`
       top: 0;

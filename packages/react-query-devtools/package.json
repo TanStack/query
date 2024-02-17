@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-devtools",
-  "version": "5.17.21",
+  "version": "5.21.2",
   "description": "Developer tools to interact with and visualize the TanStack/react-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -71,7 +71,7 @@
   },
   "devDependencies": {
     "@tanstack/react-query": "workspace:*",
-    "@types/react": "^18.2.45",
+    "@types/react": "^18.2.55",
     "@vitejs/plugin-react": "^4.2.1",
     "react": "^18.2.0"
   },

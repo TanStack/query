@@ -1,12 +1,16 @@
 {
   "name": "@tanstack/query-example-react-optimistic-updates-cache",
   "private": true,
-  "main": "pages/index.tsx",
-  "license": "MIT",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+    "test:types": "tsc"
+  },
   "dependencies": {
-    "@tanstack/react-query": "^5.0.0",
-    "@tanstack/react-query-devtools": "^5.0.0",
-    "axios": "^1.6.2",
+    "@tanstack/react-query": "^5.21.2",
+    "@tanstack/react-query-devtools": "^5.21.2",
+    "axios": "^1.6.7",
     "isomorphic-unfetch": "4.0.2",
     "next": "^14.0.0",
     "react": "^18.2.0",
@@ -14,13 +18,8 @@
   },
   "devDependencies": {
     "@types/node": "^18.19.3",
-    "@types/react": "^18.2.45",
-    "@types/react-dom": "^18.2.18",
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.19",
     "typescript": "5.2.2"
-  },
-  "scripts": {
-    "dev": "next",
-    "start": "next start",
-    "build": "next build"
   }
 }

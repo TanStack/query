@@ -1,0 +1,33 @@
+{
+  "name": "@tanstack/query-codemods",
+  "version": "4.24.3",
+  "description": "Collection of codemods to make the migration easier.",
+  "author": "Balázs Máté Petró",
+  "license": "MIT",
+  "repository": "tanstack/query",
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "type": "commonjs",
+  "exports": {
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "test:eslint": "eslint --ext .ts,.tsx ./src",
+    "test:lib": "vitest",
+    "test:lib:dev": "pnpm run test:lib --watch"
+  },
+  "files": [
+    "src",
+    "!src/jest.config.js",
+    "!src/**/__testfixtures__",
+    "!src/**/__tests__"
+  ],
+  "devDependencies": {
+    "@types/jscodeshift": "0.11.11",
+    "jscodeshift": "0.15.1"
+  }
+}

@@ -12,6 +12,7 @@
     "noEmit": true,
     "types": ["vinxi/client"],
     "isolatedModules": true,
+    "skipLibCheck": true,
     "paths": {
       "~/*": ["./src/*"]
     }

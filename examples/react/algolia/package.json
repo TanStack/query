@@ -1,28 +1,29 @@
 {
   "name": "@tanstack/query-example-react-algolia",
   "private": true,
-  "main": "src/index.tsx",
+  "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:types": "tsc"
   },
   "dependencies": {
-    "@algolia/client-search": "4.22.0",
-    "@algolia/transporter": "4.22.0",
-    "@tanstack/react-query": "^5.0.0",
-    "@tanstack/react-query-devtools": "^5.0.0",
-    "algoliasearch": "4.22.0",
+    "@algolia/client-search": "4.22.1",
+    "@algolia/transporter": "4.22.1",
+    "@tanstack/react-query": "^5.21.2",
+    "@tanstack/react-query-devtools": "^5.21.2",
+    "algoliasearch": "4.22.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.0.0",
-    "@types/react": "^18.2.45",
-    "@types/react-dom": "^18.2.18",
+    "@tanstack/eslint-plugin-query": "^5.20.1",
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.19",
     "@vitejs/plugin-react": "^4.2.1",
     "typescript": "5.2.2",
-    "vite": "^5.0.10"
+    "vite": "^5.1.1"
   },
   "browserslist": {
     "production": [

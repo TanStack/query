@@ -7,17 +7,9 @@ package-lock.json
 yarn.lock
 
 # builds
-types
-*/**/.svelte-kit
-*/**/.tsup
-*/**/build
-*/**/dist
-*/**/lib
-*/**/es
-artifacts
-.rpt2_cache
+build
 coverage
-*.tgz
+dist
 
 # misc
 .DS_Store
@@ -39,8 +31,14 @@ stats.html
 .vscode/settings.json
 
 *.log
-.DS_Store
+*.tsbuildinfo
+.angular
 .cache
 .idea
-
 .nx/cache
+.pnpm-store
+.svelte-kit
+.tsup
+
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*

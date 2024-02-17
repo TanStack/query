@@ -204,8 +204,6 @@ queryClient.setQueryData(['projects'], (data) => ({
 
 Make sure to always keep the same data structure of pages and pageParams!
 
-[//]: # 'Example8'
-
 ## What if I want to limit the number of pages?
 
 In some use cases you may want to limit the number of pages stored in the query data to improve the performance and UX:
@@ -229,6 +227,8 @@ useInfiniteQuery({
   maxPages: 3,
 })
 ```
+
+[//]: # 'Example8'
 
 ## What if my API doesn't return a cursor?
 

@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
 import * as React from 'react'
-// @ts-ignore
 import { renderToString } from 'react-dom/server'
 import { QueryCache, QueryClientProvider, useInfiniteQuery, useQuery } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'

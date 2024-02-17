@@ -1,27 +1,27 @@
 {
   "name": "@tanstack/query-example-react-offline",
   "private": true,
-  "main": "src/index.jsx",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/query-sync-storage-persister": "^5.0.0",
+    "@tanstack/query-sync-storage-persister": "^5.21.2",
     "@tanstack/react-location": "^3.7.4",
-    "@tanstack/react-query": "^5.0.0",
-    "@tanstack/react-query-devtools": "^5.0.0",
-    "@tanstack/react-query-persist-client": "^5.0.0",
-    "ky": "^1.1.3",
-    "msw": "^1.3.2",
+    "@tanstack/react-query": "^5.21.2",
+    "@tanstack/react-query-devtools": "^5.21.2",
+    "@tanstack/react-query-persist-client": "^5.21.2",
+    "ky": "^1.2.0",
+    "msw": "^2.1.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.0.10"
+    "vite": "^5.1.1"
   },
   "browserslist": {
     "production": [
@@ -33,6 +33,11 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
+    ]
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
     ]
   }
 }

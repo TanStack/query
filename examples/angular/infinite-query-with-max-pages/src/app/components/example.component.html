@@ -1,0 +1,37 @@
+<div>
+  <h1>Infinite Query with max pages</h1>
+  <h3>4 projects per page</h3>
+  <h3>3 pages max</h3>
+  @if (query.isPending()) {
+    <p>Loading...</p>
+  } @else if (query.isError()) {
+    <span>Error: {{ query.error()?.message }}</span>
+  } @else {
+    <div>
+      <button
+        (click)="query.fetchPreviousPage()"
+        [disabled]="previousButtonDisabled()"
+      >
+        {{ previousButtonText() }}
+      </button>
+    </div>
+    @for (page of query.data()?.pages; track $index) {
+      @for (project of page.data; track project.id) {
+        <p [projectStyle]="project.id">{{ project.name }} {{ project.id }}</p>
+      }
+    }
+    <div>
+      <button (click)="query.fetchNextPage()" [disabled]="nextButtonDisabled()">
+        {{ nextButtonText() }}
+      </button>
+    </div>
+    <div>
+      {{
+        query.isFetching() && !query.isFetchingNextPage()
+          ? 'Background Updating...'
+          : null
+      }}
+    </div>
+  }
+  <hr />
+</div>

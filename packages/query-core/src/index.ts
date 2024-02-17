@@ -18,6 +18,7 @@ export {
   replaceEqualDeep,
   isServer,
   matchQuery,
+  matchMutation,
   keepPreviousData,
 } from './utils'
 export type { MutationFilters, QueryFilters, Updater } from './utils'
