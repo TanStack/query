@@ -9,8 +9,8 @@
     "test:types": "tsc"
   },
   "dependencies": {
-    "@tanstack/solid-query": "^5.20.5",
-    "@tanstack/solid-query-devtools": "^5.20.5",
+    "@tanstack/solid-query": "^5.21.1",
+    "@tanstack/solid-query-devtools": "^5.21.1",
     "solid-js": "^1.8.14"
   },
   "devDependencies": {
