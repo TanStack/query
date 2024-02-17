@@ -5,7 +5,7 @@ import type { Query, QueryClient, onlineManager } from '@tanstack/query-core'
 type XPosition = 'left' | 'right'
 type YPosition = 'top' | 'bottom'
 export type DevtoolsPosition = XPosition | YPosition
-export type DevtoolsButtonPosition = `${YPosition}-${XPosition}`
+export type DevtoolsButtonPosition = `${YPosition}-${XPosition}` | 'relative'
 
 export interface DevToolsErrorType {
   /**
