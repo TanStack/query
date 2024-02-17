@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.21.2",
-    "@tanstack/react-query-devtools": "^5.21.2",
+    "@tanstack/react-query-devtools": "^5.21.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
