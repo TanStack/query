@@ -7,7 +7,6 @@ import type {
   InfiniteQueryObserverResult,
   QueryKey,
   QueryObserver,
-  WithRequired,
 } from '@tanstack/query-core'
 
 import type { UseBaseQueryReturnType } from './useBaseQuery'
@@ -54,16 +53,13 @@ export type UseInfiniteQueryOptions<
           >[Property]
         >
       : MaybeRefDeep<
-          WithRequired<
-            InfiniteQueryObserverOptions<
-              TQueryFnData,
-              TError,
-              TData,
-              TQueryData,
-              TQueryKey,
-              TPageParam
-            >,
-            'queryKey'
+          InfiniteQueryObserverOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryData,
+            TQueryKey,
+            TPageParam
           >[Property]
         >
 }

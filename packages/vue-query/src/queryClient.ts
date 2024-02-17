@@ -385,7 +385,7 @@ export class QueryClient extends QC {
 
   getQueryDefaults(
     queryKey: MaybeRefDeep<QueryKey>,
-  ): QueryObserverOptions<any, any, any, any, any> {
+  ): Omit<QueryObserverOptions<any, any, any, any, any>, 'queryKey'> {
     return super.getQueryDefaults(cloneDeepUnref(queryKey))
   }
 
