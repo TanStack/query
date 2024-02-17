@@ -140,32 +140,30 @@ export function createHydrationStreamProvider<TShape>() {
     // </server stuff>
 
     // <client stuff>
-    const onEntriesRef = React.useRef(props.onEntries)
-    React.useEffect(() => {
-      onEntriesRef.current = props.onEntries
-    })
-
     // Setup and run the onEntries handler on the client only, but do it during
     // the initial render so children have access to the data immediately
     // This is important to avoid the client suspending during the initial render
     // if the data has not yet been hydrated.
-    // @ts-expect-error window isn't defined on the server
-    if (!isServer && !window[id]?.initialized) {
-      const win = window as any;
-      // Client: consume cache:
-      const onEntries = (...serializedEntries: Array<Serialized<TShape>>) => {
-        const entries = serializedEntries.map((serialized) => transformer.deserialize(serialized));
-        onEntriesRef.current(entries);
-      };
+    if (!isServer) {
+      const win = window as any
+      if (!win[id]?.initialized) {
+        // Client: consume cache:
+        const onEntries = (...serializedEntries: Array<Serialized<TShape>>) => {
+          const entries = serializedEntries.map((serialized) =>
+            transformer.deserialize(serialized),
+          )
+          props.onEntries(entries)
+        }
 
-      const winStream: Array<Serialized<TShape>> = win[id] ?? [];
+        const winStream: Array<Serialized<TShape>> = win[id] ?? []
 
-      onEntries(...winStream);
+        onEntries(...winStream)
 
-      win[id] = {
-        initialized: true,
-        push: onEntries,
-      };
+        win[id] = {
+          initialized: true,
+          push: onEntries,
+        }
+      }
     }
     // </client stuff>
 
