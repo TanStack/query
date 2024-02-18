@@ -5,6 +5,7 @@ import {
   effect,
   inject,
   signal,
+  untracked,
 } from '@angular/core'
 import { notifyManager } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
@@ -62,18 +63,19 @@ export function createBaseQuery<
     observer.getOptimisticResult(defaultedOptionsSignal()),
   )
 
-  effect(
-    () => {
+  effect(() => {
+    const defaultedOptions = defaultedOptionsSignal()
+    observer.setOptions(defaultedOptions, {
       // Do not notify on updates because of changes in the options because
       // these changes should already be reflected in the optimistic result.
-      const defaultedOptions = defaultedOptionsSignal()
-      observer.setOptions(defaultedOptions, {
-        listeners: false,
-      })
-      resultSignal.set(observer.getOptimisticResult(defaultedOptions))
-    },
-    { allowSignalWrites: true },
-  )
+      listeners: false,
+    })
+    untracked(() =>
+      // Set the signal in effect because it's both 'computed' from options()
+      // and needs to be set imperatively in the query observer listener.
+      resultSignal.set(observer.getOptimisticResult(defaultedOptions)),
+    )
+  })
 
   // observer.trackResult is not used as this optimization is not needed for Angular
   const unsubscribe = observer.subscribe(

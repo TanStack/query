@@ -17,6 +17,7 @@ export * from './inject-infinite-query'
 export * from './inject-is-fetching'
 export * from './inject-is-mutating'
 export * from './inject-mutation'
+export * from './inject-mutation-state'
 export * from './inject-queries'
 export * from './inject-query'
 export {
