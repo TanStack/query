@@ -252,6 +252,7 @@ const Devtools: Component<DevtoolsPanelProps> = (props) => {
             class={cx(
               styles().devtoolsBtn,
               styles()[`devtoolsBtn-position-${buttonPosition()}`],
+              'tsqd-open-btn-container',
             )}
           >
             <div aria-hidden="true">
@@ -260,6 +261,7 @@ const Devtools: Component<DevtoolsPanelProps> = (props) => {
             <button
               aria-label="Open Tanstack query devtools"
               onClick={() => props.setLocalStore('open', 'true')}
+              class="tsqd-open-btn"
             >
               <TanstackLogo />
             </button>
