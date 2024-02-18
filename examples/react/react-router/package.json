@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.21.4",
-    "@tanstack/react-query-devtools": "^5.21.4",
+    "@tanstack/react-query-devtools": "^5.21.5",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",
     "react": "^18.2.0",
