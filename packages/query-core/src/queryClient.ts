@@ -41,7 +41,7 @@ import type { MutationFilters, QueryFilters, Updater } from './utils'
 
 interface QueryDefaults {
   queryKey: QueryKey
-  defaultOptions: QueryOptions<any, any, any>
+  defaultOptions: Omit<QueryOptions<any, any, any>, 'queryKey'>
 }
 
 interface MutationDefaults {
@@ -413,10 +413,13 @@ export class QueryClient {
 
   getQueryDefaults(
     queryKey: QueryKey,
-  ): QueryObserverOptions<any, any, any, any, any> {
+  ): Omit<QueryObserverOptions<any, any, any, any, any>, 'queryKey'> {
     const defaults = [...this.#queryDefaults.values()]
 
-    let result: QueryObserverOptions<any, any, any, any, any> = {}
+    let result: Omit<
+      QueryObserverOptions<any, any, any, any, any>,
+      'queryKey'
+    > = {}
 
     defaults.forEach((queryDefault) => {
       if (partialMatchKey(queryKey, queryDefault.queryKey)) {
@@ -460,7 +463,7 @@ export class QueryClient {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
-    options?:
+    options:
       | QueryObserverOptions<
           TQueryFnData,
           TError,
@@ -483,7 +486,7 @@ export class QueryClient {
     TQueryData,
     TQueryKey
   > {
-    if (options?._defaulted) {
+    if (options._defaulted) {
       return options as DefaultedQueryObserverOptions<
         TQueryFnData,
         TError,
@@ -495,7 +498,7 @@ export class QueryClient {
 
     const defaultedOptions = {
       ...this.#defaultOptions.queries,
-      ...(options?.queryKey && this.getQueryDefaults(options.queryKey)),
+      ...this.getQueryDefaults(options.queryKey),
       ...options,
       _defaulted: true,
     }

@@ -9,7 +9,6 @@ import type {
   MutationObserverResult,
   QueryKey,
   QueryObserverResult,
-  WithRequired,
 } from '@tanstack/query-core'
 import type {
   InfiniteQueryObserverOptions,
@@ -24,9 +23,12 @@ export interface CreateBaseQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends WithRequired<
-    QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
-    'queryKey'
+> extends QueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
   > {
   deferStream?: boolean
 }
@@ -36,15 +38,12 @@ export interface SolidQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends WithRequired<
-    CreateBaseQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryFnData,
-      TQueryKey
-    >,
-    'queryKey'
+> extends CreateBaseQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryFnData,
+    TQueryKey
   > {}
 
 export type CreateQueryOptions<
