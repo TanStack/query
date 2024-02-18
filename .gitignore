@@ -39,6 +39,7 @@ stats.html
 .pnpm-store
 .svelte-kit
 .tsup
+.vinxi
 
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
