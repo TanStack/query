@@ -167,7 +167,7 @@ export function matchMutation(
 
 export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
   queryKey: TQueryKey,
-  options?: QueryOptions<any, any, any, TQueryKey>,
+  options?: Pick<QueryOptions<any, any, any, any>, 'queryKeyHashFn'>,
 ): string {
   const hashFn = options?.queryKeyHashFn || hashKey
   return hashFn(queryKey)
@@ -257,10 +257,13 @@ export function replaceEqualDeep(a: any, b: any): any {
 }
 
 /**
- * Shallow compare objects. Only works with objects that always have the same properties.
+ * Shallow compare objects.
  */
-export function shallowEqualObjects<T>(a: T, b: T): boolean {
-  if ((a && !b) || (b && !a)) {
+export function shallowEqualObjects<T extends Record<string, any>>(
+  a: T,
+  b: T | undefined,
+): boolean {
+  if (!b || Object.keys(a).length !== Object.keys(b).length) {
     return false
   }
 

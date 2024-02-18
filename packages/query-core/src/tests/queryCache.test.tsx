@@ -53,10 +53,11 @@ describe('queryCache', () => {
       const unsubScribeObserver = observer.subscribe(vi.fn())
 
       await waitFor(() => {
-        expect(events.length).toBe(8)
+        expect(events.length).toBe(9)
       })
 
       expect(events).toEqual([
+        'observerOptionsUpdated',
         'added', // 1. Query added -> loading
         'observerResultsUpdated', // 2. Observer result updated -> loading
         'observerAdded', // 3. Observer added

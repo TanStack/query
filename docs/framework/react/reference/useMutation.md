@@ -129,7 +129,7 @@ mutate(variables, {
   - see [Network Mode](./guides/network-mode) for more information.
 - `data: undefined | unknown`
   - Defaults to `undefined`
-  - The last successfully resolved data for the query.
+  - The last successfully resolved data for the mutation.
 - `error: null | TError`
   - The error object for the query, if an error was encountered.
 - `reset: () => void`
