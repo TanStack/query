@@ -489,7 +489,8 @@ const stylesFactory = (theme: 'light' | 'dark') => {
     entry: css`
       & * {
         font-size: ${font.size.xs};
-        font-family: 'Menlo', 'Fira Code', monospace;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          'Liberation Mono', 'Courier New', monospace;
       }
       position: relative;
       outline: none;
