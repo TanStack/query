@@ -154,6 +154,7 @@ const PiPProvider = (props: PiPProviderProps) => {
       )
     }
     pip.document.title = 'TanStack Query Devtools'
+    pip.document.body.style.margin = '0'
 
     // Detect when window is closed by user
     pip.addEventListener('pagehide', () => {
