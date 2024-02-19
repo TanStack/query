@@ -146,14 +146,6 @@ export class QueryObserver<
 
     this.options = this.#client.defaultQueryOptions(options)
 
-    if (!shallowEqualObjects(this.options, prevOptions)) {
-      this.#client.getQueryCache().notify({
-        type: 'observerOptionsUpdated',
-        query: this.#currentQuery,
-        observer: this,
-      })
-    }
-
     if (
       typeof this.options.enabled !== 'undefined' &&
       typeof this.options.enabled !== 'boolean'
@@ -162,6 +154,14 @@ export class QueryObserver<
     }
 
     this.#updateQuery()
+
+    if (!shallowEqualObjects(this.options, prevOptions)) {
+      this.#client.getQueryCache().notify({
+        type: 'observerOptionsUpdated',
+        query: this.#currentQuery,
+        observer: this,
+      })
+    }
 
     const mounted = this.hasListeners()
 
