@@ -49,6 +49,7 @@ const config = {
             'Promisable', // Our public interface
             'extralight', // Our public interface
             'codemod', // We support our codemod
+            'typecheck': // Field of vite.config.ts
 
             'TSES', // @typescript-eslint package's interface
             'tsup', // We use tsup as builder
