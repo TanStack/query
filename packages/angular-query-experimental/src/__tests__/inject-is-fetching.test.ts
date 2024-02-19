@@ -1,4 +1,4 @@
-import { TestBed, fakeAsync, flush } from '@angular/core/testing'
+import { TestBed, fakeAsync, flush, tick } from '@angular/core/testing'
 import { QueryClient } from '@tanstack/query-core'
 import { beforeEach, describe, expect } from 'vitest'
 import { injectIsFetching } from '../inject-is-fetching'
@@ -25,6 +25,9 @@ describe('injectIsFetching', () => {
       }))
       return injectIsFetching()
     })
+
+    tick()
+
     expect(isFetching()).toStrictEqual(1)
     flush()
     expect(isFetching()).toStrictEqual(0)
