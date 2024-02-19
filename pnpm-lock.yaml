@@ -146,7 +146,7 @@ importers:
         specifier: ^17.1.3
         version: 17.1.3(@angular/common@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.22.0
+        specifier: ^5.22.1
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -168,7 +168,7 @@ importers:
         specifier: ^17.1.3
         version: 17.1.3(@angular/compiler@17.1.3)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.22.0
+        specifier: ^5.22.1
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
@@ -201,7 +201,7 @@ importers:
         specifier: ^17.1.3
         version: 17.1.3(@angular/common@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.22.0
+        specifier: ^5.22.1
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -223,7 +223,7 @@ importers:
         specifier: ^17.1.3
         version: 17.1.3(@angular/compiler@17.1.3)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.22.0
+        specifier: ^5.22.1
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
@@ -256,7 +256,7 @@ importers:
         specifier: ^17.1.3
         version: 17.1.3(@angular/common@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.22.0
+        specifier: ^5.22.1
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -278,7 +278,7 @@ importers:
         specifier: ^17.1.3
         version: 17.1.3(@angular/compiler@17.1.3)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.22.0
+        specifier: ^5.22.1
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
@@ -311,7 +311,7 @@ importers:
         specifier: ^17.1.3
         version: 17.1.3(@angular/common@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.22.0
+        specifier: ^5.22.1
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -333,7 +333,7 @@ importers:
         specifier: ^17.1.3
         version: 17.1.3(@angular/compiler@17.1.3)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.22.0
+        specifier: ^5.22.1
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
