@@ -12,7 +12,7 @@
     "@solidjs/router": "^0.12.0",
     "@solidjs/start": "^0.5.4",
     "@tanstack/solid-query": "^5.22.2",
-    "@tanstack/solid-query-devtools": "^5.22.2",
+    "@tanstack/solid-query-devtools": "^5.24.0",
     "solid-js": "^1.8.14",
     "vinxi": "^0.3.3"
   },
