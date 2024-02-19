@@ -24,12 +24,11 @@ export default class PostComponent {
   #postsService = inject(PostsService)
   queryClient = injectQueryClient()
 
-  postId = input(0, {
+  postId = input.required({
     transform: numberAttribute,
   })
 
   postQuery = injectQuery(() => ({
-    enabled: this.postId() > 0,
     queryKey: ['post', this.postId()],
     queryFn: () => {
       return lastValueFrom(this.#postsService.postById$(this.postId()))
