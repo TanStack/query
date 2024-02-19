@@ -19,7 +19,7 @@ import { Key } from '@solid-primitives/keyed'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { createResizeObserver } from '@solid-primitives/resize-observer'
 import { DropdownMenu, RadioGroup } from '@kobalte/core'
-import { Portal, delegateEvents } from 'solid-js/web'
+import { Portal, clearDelegatedEvents, delegateEvents } from 'solid-js/web'
 import { tokens } from './theme'
 import {
   convertRemToPixels,
@@ -115,6 +115,8 @@ export type DevtoolsComponentType = Component<QueryDevtoolsProps>
 
 interface PiPProviderProps {
   children: JSX.Element
+  localStore: StorageObject<string>
+  setLocalStore: StorageSetter<string, unknown>
 }
 
 type PiPContextType = {
@@ -147,17 +149,31 @@ const PiPProvider = (props: PiPProviderProps) => {
       return
     }
 
-    const pip = window.open('', '', `width=${width},height=${height},popup`)
+    const pip = window.open(
+      '',
+      'TSQD-Devtools-Panel',
+      `width=${width},height=${height},popup`,
+    )
+
     if (!pip) {
       throw new Error(
         'Failed to open popup. Please allow popups for this site to view the devtools in picture-in-picture mode.',
       )
     }
+
+    // Remove existing styles
+    pip.document.head.innerHTML = ''
+    // Remove existing body
+    pip.document.body.innerHTML = ''
+    // Clear Delegated Events
+    clearDelegatedEvents(pip.document)
+
     pip.document.title = 'TanStack Query Devtools'
     pip.document.body.style.margin = '0'
 
     // Detect when window is closed by user
     pip.addEventListener('pagehide', () => {
+      props.setLocalStore('pip_open', 'false')
       setPipWindow(null)
     })
 
@@ -208,20 +224,31 @@ const PiPProvider = (props: PiPProviderProps) => {
       ],
       pip.document,
     )
+    props.setLocalStore('pip_open', 'true')
     setPipWindow(pip)
   }
 
+  // createEffect(() => {
+  //   // Close pipWindow when the main window is closed
+  //   const closePipWindowOnUnload = () => {
+  //     closePipWindow()
+  //   }
+
+  //   window.addEventListener('beforeunload', closePipWindowOnUnload)
+
+  //   onCleanup(() => {
+  //     window.removeEventListener('beforeunload', closePipWindowOnUnload)
+  //   })
+  // })
+
   createEffect(() => {
-    // Close pipWindow when the main window is closed
-    const closePipWindowOnUnload = () => {
-      closePipWindow()
+    const pip_open = (props.localStore.pip_open ?? 'false') as 'true' | 'false'
+    if (pip_open === 'true') {
+      requestPipWindow(
+        Number(window.innerWidth),
+        Number(props.localStore.height || DEFAULT_HEIGHT),
+      )
     }
-
-    window.addEventListener('beforeunload', closePipWindowOnUnload)
-
-    onCleanup(() => {
-      window.removeEventListener('beforeunload', closePipWindowOnUnload)
-    })
   })
 
   createEffect(() => {
@@ -286,7 +313,7 @@ const DevtoolsComponent: DevtoolsComponentType = (props) => {
 
   return (
     <QueryDevtoolsContext.Provider value={props}>
-      <PiPProvider>
+      <PiPProvider localStore={localStore} setLocalStore={setLocalStore}>
         <ThemeContext.Provider value={theme}>
           <Devtools localStore={localStore} setLocalStore={setLocalStore} />
         </ThemeContext.Provider>
@@ -358,6 +385,10 @@ const Devtools: Component<DevtoolsPanelProps> = (props) => {
     })
   })
 
+  const pip_open = createMemo(
+    () => (props.localStore.pip_open ?? 'false') as 'true' | 'false',
+  )
+
   return (
     <>
       <Show when={pip().pipWindow}>
@@ -413,7 +444,7 @@ const Devtools: Component<DevtoolsPanelProps> = (props) => {
         ref={transitionsContainerRef}
       >
         <TransitionGroup name="tsqd-panel-transition">
-          <Show when={isOpen() && !pip().pipWindow}>
+          <Show when={isOpen() && !pip().pipWindow && pip_open() == 'false'}>
             <DevtoolsPanel
               localStore={props.localStore}
               setLocalStore={props.setLocalStore}
@@ -480,6 +511,7 @@ const PiPPanel: Component<{
     }
     if (win) {
       win.addEventListener('resize', resizeCB)
+      resizeCB()
     }
 
     onCleanup(() => {
