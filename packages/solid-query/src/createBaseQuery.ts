@@ -208,18 +208,26 @@ export function createBaseQuery<
   >(
     () => {
       const obs = observer()
-      return new Promise((resolve, reject) => {
-        if (isServer) unsubscribe = createServerSubscriber(resolve, reject)
-        else if (!unsubscribe && !isRestoring())
-          unsubscribe = createClientSubscriber()
 
-        obs.updateResult()
+      let resolve!: (d: any) => void, reject!: (r?: any) => void
 
-        if (!state.isLoading && !isRestoring()) {
-          const query = obs.getCurrentQuery()
-          resolve(hydratableObserverResult(query, state))
-        }
+      const p = new Promise<ResourceData | undefined>((res, rej) => {
+        resolve = res
+        reject = rej
       })
+
+      if (isServer) unsubscribe = createServerSubscriber(resolve, reject)
+      else if (!unsubscribe && !isRestoring())
+        unsubscribe = createClientSubscriber()
+
+      obs.updateResult()
+
+      if (!state.isLoading && !isRestoring()) {
+        const query = obs.getCurrentQuery()
+        return hydratableObserverResult(query, state)
+      }
+
+      return p
     },
     {
       initialValue: state,
