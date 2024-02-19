@@ -1,13 +1,12 @@
-import { describe, expect, expectTypeOf, it } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
-import { useIsMutating, useMutationState } from '../useMutationState'
+import { describe, expect, expectTypeOf, it } from 'vitest'
 import { useMutation } from '../useMutation'
+import { useIsMutating, useMutationState } from '../useMutationState'
 import {
   createQueryClient,
   doNotExecute,
   renderWithClient,
-  setActTimeout,
   sleep,
 } from './utils'
 import type { MutationState, MutationStatus } from '@tanstack/query-core'
@@ -16,6 +15,11 @@ describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {
     const isMutatingArray: Array<number> = []
     const queryClient = createQueryClient()
+
+    let resolvePromise1: (val: 'data') => void
+    let resolvePromise2: (val: 'data') => void
+    const promise1 = new Promise((res) => (resolvePromise1 = res))
+    const promise2 = new Promise((res) => (resolvePromise2 = res))
 
     function IsMutating() {
       const isMutating = useIsMutating()
@@ -26,24 +30,25 @@ describe('useIsMutating', () => {
     function Mutations() {
       const { mutate: mutate1 } = useMutation({
         mutationKey: ['mutation1'],
-        mutationFn: async () => {
-          await sleep(150)
-          return 'data'
-        },
+        mutationFn: () => promise1,
       })
       const { mutate: mutate2 } = useMutation({
         mutationKey: ['mutation2'],
-        mutationFn: async () => {
-          await sleep(50)
-          return 'data'
-        },
+        mutationFn: () => promise2,
       })
 
       React.useEffect(() => {
-        mutate1()
-        setActTimeout(() => {
+        async function simulateMutations() {
+          mutate1()
+          await sleep(50)
           mutate2()
-        }, 50)
+          await sleep(50)
+          resolvePromise1('data')
+          await sleep(50)
+          resolvePromise2('data')
+        }
+
+        simulateMutations()
       }, [mutate1, mutate2])
 
       return null
