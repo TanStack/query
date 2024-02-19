@@ -378,7 +378,7 @@ const Devtools: Component<DevtoolsPanelProps> = (props) => {
 
   return (
     <>
-      <Show when={pip().pipWindow}>
+      <Show when={pip().pipWindow && pip_open() == 'true'}>
         <Portal mount={pip().pipWindow?.document.body}>
           <PiPPanel>
             <ContentView
@@ -2363,6 +2363,7 @@ const queryCacheMap = new Map<
 >()
 
 const setupQueryCacheSubscription = () => {
+  console.log('setup query cache subscription')
   const queryCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getQueryCache()
