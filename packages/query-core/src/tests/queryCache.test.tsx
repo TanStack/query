@@ -40,8 +40,10 @@ describe('queryCache', () => {
     test('should notify query cache when a query becomes stale', async () => {
       const key = queryKey()
       const events: Array<string> = []
+      const queries: Array<unknown> = []
       const unsubscribe = queryCache.subscribe((event) => {
         events.push(event.type)
+        queries.push(event.query)
       })
 
       const observer = new QueryObserver(queryClient, {
@@ -57,8 +59,8 @@ describe('queryCache', () => {
       })
 
       expect(events).toEqual([
-        'observerOptionsUpdated',
         'added', // 1. Query added -> loading
+        'observerOptionsUpdated',
         'observerResultsUpdated', // 2. Observer result updated -> loading
         'observerAdded', // 3. Observer added
         'observerResultsUpdated', // 4. Observer result updated -> fetching
@@ -67,6 +69,10 @@ describe('queryCache', () => {
         'updated', // 7. Query updated -> success
         'observerResultsUpdated', // 8. Observer result updated -> stale
       ])
+
+      queries.forEach((query) => {
+        expect(query).toBeDefined()
+      })
 
       unsubscribe()
       unsubScribeObserver()
