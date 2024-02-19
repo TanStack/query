@@ -2363,7 +2363,6 @@ const queryCacheMap = new Map<
 >()
 
 const setupQueryCacheSubscription = () => {
-  console.log('setup query cache subscription')
   const queryCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
     return client.getQueryCache()
