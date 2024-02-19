@@ -219,15 +219,19 @@ const Devtools: Component<DevtoolsPanelProps> = (props) => {
             transition:
               opacity 0.3s,
               transform 0.3s;
+            opacity: 1;
           }
 
           & .tsqd-button-transition-exit-to,
           & .tsqd-button-transition-enter {
-            transform: ${buttonPosition() === 'top-left'
-              ? `translateX(-72px);`
-              : buttonPosition() === 'top-right'
-                ? `translateX(72px);`
-                : `translateY(72px);`};
+            transform: ${buttonPosition() === 'relative'
+              ? `none;`
+              : buttonPosition() === 'top-left'
+                ? `translateX(-72px);`
+                : buttonPosition() === 'top-right'
+                  ? `translateX(72px);`
+                  : `translateY(72px);`};
+            opacity: 0;
           }
         `,
         'tsqd-transitions-container',
@@ -248,6 +252,7 @@ const Devtools: Component<DevtoolsPanelProps> = (props) => {
             class={cx(
               styles().devtoolsBtn,
               styles()[`devtoolsBtn-position-${buttonPosition()}`],
+              'tsqd-open-btn-container',
             )}
           >
             <div aria-hidden="true">
@@ -256,6 +261,7 @@ const Devtools: Component<DevtoolsPanelProps> = (props) => {
             <button
               aria-label="Open Tanstack query devtools"
               onClick={() => props.setLocalStore('open', 'true')}
+              class="tsqd-open-btn"
             >
               <TanstackLogo />
             </button>
@@ -688,6 +694,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
                   }
                 }}
                 class="tsqd-query-filter-textfield"
+                name="tsqd-query-filter-input"
                 value={
                   selectedView() === 'queries'
                     ? props.localStore.filter || ''
@@ -704,6 +711,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
               <Show when={selectedView() === 'queries'}>
                 <select
                   value={sort()}
+                  name="tsqd-queries-filter-sort"
                   onChange={(e) => {
                     props.setLocalStore('sort', e.currentTarget.value)
                   }}
@@ -716,6 +724,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
               <Show when={selectedView() === 'mutations'}>
                 <select
                   value={mutationSort()}
+                  name="tsqd-mutations-filter-sort"
                   onChange={(e) => {
                     props.setLocalStore('mutationSort', e.currentTarget.value)
                   }}
@@ -2263,6 +2272,9 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       top: 12px;
       right: 12px;
     `,
+    'devtoolsBtn-position-relative': css`
+      position: relative;
+    `,
     'panel-position-top': css`
       top: 0;
       right: 0;
@@ -2410,7 +2422,7 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       display: flex;
       flex-direction: column;
       & * {
-        font-family: 'Inter', sans-serif;
+        font-family: ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
       }
     `,
     dragHandle: css`
@@ -2775,7 +2787,8 @@ const stylesFactory = (theme: 'light' | 'dark') => {
         min-height: ${tokens.size[6]};
         flex: 1;
         padding: ${tokens.size[1]} ${tokens.size[2]};
-        font-family: 'Menlo', 'Fira Code', monospace;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          'Liberation Mono', 'Courier New', monospace;
         border-bottom: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
         text-align: left;
         text-overflow: clip;
@@ -2800,7 +2813,7 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       flex: 1 1 700px;
       background-color: ${t(colors.gray[50], colors.darkGray[700])};
       color: ${t(colors.gray[700], colors.gray[300])};
-      font-family: 'Inter', sans-serif;
+      font-family: ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
       display: flex;
       flex-direction: column;
       overflow-y: auto;
@@ -2808,7 +2821,7 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       text-align: left;
     `,
     detailsHeader: css`
-      font-family: 'Inter', sans-serif;
+      font-family: ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
       position: sticky;
       top: 0;
       z-index: 2;
@@ -2840,7 +2853,8 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       }
 
       & code {
-        font-family: 'Menlo', 'Fira Code', monospace;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          'Liberation Mono', 'Courier New', monospace;
         margin: 0;
         font-size: ${font.size.xs};
         line-height: ${font.lineHeight.xs};
@@ -2865,7 +2879,7 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       gap: ${tokens.size[2]};
       padding: 0px ${tokens.size[2]};
       & > button {
-        font-family: 'Inter', sans-serif;
+        font-family: ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
         font-size: ${font.size.xs};
         padding: ${tokens.size[1]} ${tokens.size[2]};
         display: flex;
@@ -2950,7 +2964,7 @@ const stylesFactory = (theme: 'light' | 'dark') => {
     settingsMenu: css`
       display: flex;
       & * {
-        font-family: 'Inter', sans-serif;
+        font-family: ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
       }
       flex-direction: column;
       gap: ${size[0.5]};

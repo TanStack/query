@@ -7,11 +7,29 @@ import {
   matchMutation,
   partialMatchKey,
   replaceEqualDeep,
+  shallowEqualObjects,
 } from '../utils'
 import { Mutation } from '../mutation'
 import { createQueryClient } from './utils'
 
 describe('core/utils', () => {
+  describe('shallowEqualObjects', () => {
+    it('should return `true` for shallow equal objects', () => {
+      expect(shallowEqualObjects({ a: 1 }, { a: 1 })).toEqual(true)
+    })
+
+    it('should return `false` for non shallow equal objects', () => {
+      expect(shallowEqualObjects({ a: 1 }, { a: 2 })).toEqual(false)
+    })
+
+    it('should return `false` if lengths are not equal', () => {
+      expect(shallowEqualObjects({ a: 1 }, { a: 1, b: 2 })).toEqual(false)
+    })
+
+    it('should return false if b is undefined', () => {
+      expect(shallowEqualObjects({ a: 1 }, undefined)).toEqual(false)
+    })
+  })
   describe('isPlainObject', () => {
     it('should return `true` for a plain object', () => {
       expect(isPlainObject({})).toEqual(true)

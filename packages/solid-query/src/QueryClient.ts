@@ -70,7 +70,7 @@ export interface InfiniteQueryObserverOptions<
 
 export interface DefaultOptions<TError = DefaultError>
   extends CoreDefaultOptions<TError> {
-  queries?: QueryObserverOptions<unknown, TError>
+  queries?: Omit<QueryObserverOptions<unknown, TError>, 'queryKey'>
 }
 
 export interface QueryClientConfig extends QueryCoreClientConfig {

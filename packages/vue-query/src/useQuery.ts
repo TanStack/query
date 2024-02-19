@@ -5,7 +5,6 @@ import type {
   DefinedQueryObserverResult,
   QueryKey,
   QueryObserverOptions,
-  WithRequired,
 } from '@tanstack/query-core'
 import type { UseBaseQueryReturnType } from './useBaseQuery'
 import type {
@@ -50,15 +49,12 @@ export type UseQueryOptions<
           >[Property]
         >
       : MaybeRefDeep<
-          WithRequired<
-            QueryObserverOptions<
-              TQueryFnData,
-              TError,
-              TData,
-              TQueryData,
-              TQueryKey
-            >,
-            'queryKey'
+          QueryObserverOptions<
+            TQueryFnData,
+            TError,
+            TData,
+            TQueryData,
+            TQueryKey
           >[Property]
         >
 }>

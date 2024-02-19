@@ -88,7 +88,7 @@ export type CreateMutationOptions<
 > = StoreOrVal<
   Omit<
     MutationObserverOptions<TData, TError, TVariables, TContext>,
-    '_defaulted' | 'variables'
+    '_defaulted'
   >
 >
 

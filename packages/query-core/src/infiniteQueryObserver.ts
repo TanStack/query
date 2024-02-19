@@ -70,7 +70,7 @@ export class InfiniteQueryObserver<
   }
 
   setOptions(
-    options?: InfiniteQueryObserverOptions<
+    options: InfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
       TData,

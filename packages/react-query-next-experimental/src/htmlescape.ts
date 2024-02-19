@@ -9,7 +9,7 @@
 // This utility is based on https://github.com/zertosh/htmlescape
 // License: https://github.com/zertosh/htmlescape/blob/0527ca7156a524d256101bb310a9f970f63078ad/LICENSE
 
-const ESCAPE_LOOKUP: { [match: string]: string } = {
+const ESCAPE_LOOKUP: Record<string, string> = {
   '&': '\\u0026',
   '>': '\\u003e',
   '<': '\\u003c',

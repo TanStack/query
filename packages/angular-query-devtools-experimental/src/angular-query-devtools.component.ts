@@ -50,8 +50,9 @@ export class AngularQueryDevtools
 
   /**
    * The position of the TanStack logo to open and close the devtools panel.
-   * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
-   * Defaults to 'bottom-right'.
+   * `top-left` | `top-right` | `bottom-left` | `bottom-right` | `relative`
+   * Defaults to `bottom-right`.
+   * If `relative`, the button is placed in the location that you render the devtools.
    * @example
    * <angular-query-devtools buttonPosition="top-right" />
    */
@@ -59,12 +60,12 @@ export class AngularQueryDevtools
 
   /**
    * The position of the Angular Query devtools panel.
-   * 'top' | 'bottom' | 'left' | 'right'
-   * Defaults to 'bottom'.
+   * `top` | `bottom` | `left` | `right`
+   * Defaults to `bottom`.
    * @example
    * <angular-query-devtools position="bottom" />
    */
-  @Input({ alias: 'position' }) position?: queryDevtools.DevtoolsPosition
+  @Input() position?: queryDevtools.DevtoolsPosition
 
   /**
    * Custom instance of QueryClient
