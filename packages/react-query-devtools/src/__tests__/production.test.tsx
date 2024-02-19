@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ReactQueryDevtools } from '../index'
+import { ReactQueryDevtools } from '..'
 
 describe('ReactQueryDevtools in production mode', () => {
   it('should return null', () => {
