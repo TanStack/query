@@ -228,19 +228,6 @@ const PiPProvider = (props: PiPProviderProps) => {
     setPipWindow(pip)
   }
 
-  // createEffect(() => {
-  //   // Close pipWindow when the main window is closed
-  //   const closePipWindowOnUnload = () => {
-  //     closePipWindow()
-  //   }
-
-  //   window.addEventListener('beforeunload', closePipWindowOnUnload)
-
-  //   onCleanup(() => {
-  //     window.removeEventListener('beforeunload', closePipWindowOnUnload)
-  //   })
-  // })
-
   createEffect(() => {
     const pip_open = (props.localStore.pip_open ?? 'false') as 'true' | 'false'
     if (pip_open === 'true') {
