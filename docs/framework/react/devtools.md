@@ -9,8 +9,11 @@ When you begin your React Query journey, you'll want these devtools by your side
 
 > Please note that for now, the devtools **do not support React Native**. If you would like to help us make the devtools platform agnostic, please let us know!
 
-> However, an external tool is available that enables the use of React Query DevTools with React Native projects. Find out more and contribute on [GitHub](https://github.com/LovesWorking/react-query-external-sync)..
+> Exciting News: We now have a seperate package for React Native React Query DevTools! This new addition brings native support, allowing you to integrate DevTools directly into your React Native projects. Check it out and contribute here: [react-native-react-query-devtools](https://github.com/LovesWorking/react-query-external-sync](https://github.com/LovesWorking/react-native-react-query-devtools))
 
+> an external tool is also available that enables the use of React Query DevTools via an external dashboard. Find out more and contribute on [react-query-external-sync](https://github.com/LovesWorking/react-query-external-sync)..
+
+> 
 > Also note that you can use these devtools to observe queries, but **not mutations**
 
 ## Install and Import the Devtools
