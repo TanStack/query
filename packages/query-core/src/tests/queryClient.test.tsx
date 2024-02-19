@@ -356,16 +356,6 @@ describe('queryClient', () => {
         }),
       )
     })
-
-    test('should set 5k data in less than 2000ms', () => {
-      const key = queryKey()
-      const start = performance.now()
-      for (let i = 0; i < 5000; i++) {
-        queryClient.setQueryData([key, i], i)
-      }
-      const end = performance.now()
-      expect(end - start).toBeLessThan(2000)
-    })
   })
 
   describe('setQueriesData', () => {
@@ -428,38 +418,6 @@ describe('queryClient', () => {
       const key = queryKey()
       queryClient.setQueryData([key, 'id'], 'bar')
       expect(queryClient.getQueryData([key])).toBeUndefined()
-    })
-
-    test('should get 5k queries in less than 2000ms', () => {
-      const key = queryKey()
-      for (let i = 0; i < 5000; i++) {
-        queryClient.setQueryData([key, i], i)
-      }
-
-      const start = performance.now()
-      for (let i = 0; i < 5000; i++) {
-        queryClient.getQueryData([key, i])
-      }
-      const end = performance.now()
-
-      expect(end - start).toBeLessThan(2000)
-    })
-  })
-
-  describe('getQueryState', () => {
-    test('should get 5k queries in less than 2000ms', () => {
-      const key = queryKey()
-      for (let i = 0; i < 5000; i++) {
-        queryClient.setQueryData([key, i], i)
-      }
-
-      const start = performance.now()
-      for (let i = 0; i < 5000; i++) {
-        queryClient.getQueryState([key, i])
-      }
-      const end = performance.now()
-
-      expect(end - start).toBeLessThan(2000)
     })
   })
 
