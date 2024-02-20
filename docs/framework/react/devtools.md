@@ -13,14 +13,16 @@ When you begin your React Query journey, you'll want these devtools by your side
 
 ## Install and Import the Devtools
 
-The devtools are a separate package that you need to install:
+The devtools are a separate package that you need to install.
+
+The major version of all the packages must be in sync.
 
 ```bash
-$ npm i @tanstack/react-query-devtools
+$ npm i @tanstack/react-query-devtools@4
 # or
-$ pnpm add @tanstack/react-query-devtools
+$ pnpm add @tanstack/react-query-devtools@4
 # or
-$ yarn add @tanstack/react-query-devtools
+$ yarn add @tanstack/react-query-devtools@4
 ```
 
 You can import the devtools like this:
