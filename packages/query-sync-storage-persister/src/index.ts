@@ -1,4 +1,3 @@
-import { noop } from '../../query-core/src/utils'
 import type {
   PersistRetryer,
   PersistedClient,
@@ -109,3 +108,5 @@ function throttle<TArgs extends Array<any>>(
     }
   }
 }
+
+function noop() {}

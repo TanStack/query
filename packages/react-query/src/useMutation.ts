@@ -1,7 +1,6 @@
 'use client'
 import * as React from 'react'
 import { MutationObserver, notifyManager } from '@tanstack/query-core'
-import { noop } from '../../query-core/src/utils'
 import { useQueryClient } from './QueryClientProvider'
 import { shouldThrowError } from './utils'
 import type {
@@ -64,3 +63,5 @@ export function useMutation<
 
   return { ...result, mutate, mutateAsync: result.mutate }
 }
+
+function noop() {}

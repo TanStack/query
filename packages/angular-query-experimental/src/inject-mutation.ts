@@ -1,6 +1,5 @@
 import { DestroyRef, computed, effect, inject, signal } from '@angular/core'
 import { MutationObserver, notifyManager } from '@tanstack/query-core'
-import { noop } from '../../query-core/src/utils'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { signalProxy } from './signal-proxy'
 import { injectQueryClient } from './inject-query-client'
@@ -65,3 +64,5 @@ export function injectMutation<
     >
   })
 }
+
+function noop() {}

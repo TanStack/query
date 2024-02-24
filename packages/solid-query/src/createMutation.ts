@@ -1,7 +1,6 @@
 import { MutationObserver } from '@tanstack/query-core'
 import { createComputed, createMemo, on, onCleanup } from 'solid-js'
 import { createStore } from 'solid-js/store'
-import { noop } from '../../query-core/src/utils'
 import { useQueryClient } from './QueryClientProvider'
 import { shouldThrowError } from './utils'
 import type { DefaultError } from '@tanstack/query-core'
@@ -75,3 +74,5 @@ export function createMutation<
 
   return state
 }
+
+function noop() {}
