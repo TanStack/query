@@ -7,9 +7,7 @@ export function lazyInit<T extends object>(initializer: () => T): T {
     }
   }
 
-  Promise.resolve().then(() => {
-    initializeObject()
-  })
+  queueMicrotask(() => initializeObject());
 
   return new Proxy<T>({} as T, {
     get(_, prop, receiver) {
