@@ -1,3 +1,4 @@
+import { noop } from '../../query-core/src/utils'
 import { asyncThrottle } from './asyncThrottle'
 import type {
   AsyncStorage,
@@ -99,5 +100,3 @@ export const createAsyncStoragePersister = ({
     removeClient: noop,
   }
 }
-
-function noop() {}

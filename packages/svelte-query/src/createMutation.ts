@@ -1,5 +1,6 @@
 import { derived, get, readable } from 'svelte/store'
 import { MutationObserver, notifyManager } from '@tanstack/query-core'
+import { noop } from '../../query-core/src/utils'
 import { useQueryClient } from './useQueryClient'
 import { isSvelteStore } from './utils'
 import type {
@@ -47,5 +48,3 @@ export function createMutation<
 
   return { subscribe }
 }
-
-function noop() {}
