@@ -2,7 +2,7 @@ import { MutationObserver } from '@tanstack/query-core'
 import { createComputed, createMemo, on, onCleanup } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
-import { shouldThrowError } from './utils'
+import { noop, shouldThrowError } from './utils'
 import type { DefaultError } from '@tanstack/query-core'
 import type { QueryClient } from './QueryClient'
 import type {
@@ -74,5 +74,3 @@ export function createMutation<
 
   return state
 }
-
-function noop() {}
