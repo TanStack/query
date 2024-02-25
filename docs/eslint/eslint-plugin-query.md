@@ -15,6 +15,8 @@ $ npm i -D @tanstack/eslint-plugin-query
 $ pnpm add -D @tanstack/eslint-plugin-query
 # or
 $ yarn add -D @tanstack/eslint-plugin-query
+# or 
+$ bun add -D @tanstack/eslint-plugin-query
 ```
 
 ## Usage

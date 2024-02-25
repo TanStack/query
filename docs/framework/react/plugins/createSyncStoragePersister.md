@@ -23,6 +23,12 @@ or
 yarn add @tanstack/query-sync-storage-persister @tanstack/react-query-persist-client
 ```
 
+or
+
+```bash
+bun add @tanstack/query-sync-storage-persister @tanstack/react-query-persist-client
+```
+
 ## Usage
 
 - Import the `createSyncStoragePersister` function
