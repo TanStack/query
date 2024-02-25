@@ -13,6 +13,8 @@ $ npm i @tanstack/angular-query-devtools-experimental
 $ pnpm add @tanstack/angular-query-devtools-experimental
 # or
 $ yarn add @tanstack/angular-query-devtools-experimental
+# or
+$ bun add @tanstack/angular-query-devtools-experimental
 ```
 
 You can import the devtools like this:

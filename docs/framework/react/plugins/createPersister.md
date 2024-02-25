@@ -23,6 +23,12 @@ or
 yarn add @tanstack/query-persist-client-core
 ```
 
+or
+
+```bash
+bun add @tanstack/query-persist-client-core
+```
+
 > Note: This util is also included in the `@tanstack/react-query-persist-client` package, so you do not need to install it separately if you are using that package.
 
 ## Usage
