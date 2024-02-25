@@ -67,17 +67,20 @@ export function createBaseQuery<
         observer.getOptimisticResult(defaultedOptionsSignal()),
       )
 
-      effect(() => {
-        const defaultedOptions = defaultedOptionsSignal()
-        observer.setOptions(defaultedOptions, {
-          // Do not notify on updates because of changes in the options because
-          // these changes should already be reflected in the optimistic result.
-          listeners: false,
-        })
-        untracked(() => {
-          resultSignal.set(observer.getOptimisticResult(defaultedOptions))
-        })
-      })
+      // Effects should not be called inside reactive contexts
+      untracked(() =>
+        effect(() => {
+          const defaultedOptions = defaultedOptionsSignal()
+          observer.setOptions(defaultedOptions, {
+            // Do not notify on updates because of changes in the options because
+            // these changes should already be reflected in the optimistic result.
+            listeners: false,
+          })
+          untracked(() => {
+            resultSignal.set(observer.getOptimisticResult(defaultedOptions))
+          })
+        }),
+      )
 
       // observer.trackResult is not used as this optimization is not needed for Angular
       const unsubscribe = observer.subscribe(

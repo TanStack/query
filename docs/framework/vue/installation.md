@@ -15,6 +15,8 @@ $ npm i @tanstack/vue-query
 $ pnpm add @tanstack/vue-query
 # or
 $ yarn add @tanstack/vue-query
+# or
+$ bun add @tanstack/vue-query
 ```
 
 > Wanna give it a spin before you download? Try out the [basic](./examples/basic) example!

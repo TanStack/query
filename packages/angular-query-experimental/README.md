@@ -39,6 +39,8 @@ Visit https://tanstack.com/query/latest/docs/angular/overview
    $ pnpm add @tanstack/angular-query-experimental
    # or
    $ yarn add @tanstack/angular-query-experimental
+   # or
+   $ bun add @tanstack/angular-query-experimental
    ```
 
 2. Initialize **Angular Query** by adding **provideAngularQuery** to your application
