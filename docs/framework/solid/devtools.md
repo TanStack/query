@@ -23,7 +23,6 @@ $ yarn add @tanstack/solid-query-devtools
 $ bun add @tanstack/solid-query-devtools
 ```
 
-
 You can import the devtools like this:
 
 ```tsx
