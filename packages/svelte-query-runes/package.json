@@ -1,0 +1,63 @@
+{
+  "name": "svelte-query",
+  "version": "5.14.2-beta.17",
+  "private": false,
+  "description": "Primitives for managing, caching and syncing asynchronous and remote data in Svelte",
+  "author": "zhiheng",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TanStack/query.git",
+    "directory": "packages/svelte-query"
+  },
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./dev": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "!dist/__tests__",
+    "!src/__tests__"
+  ],
+  "scripts": {
+    "clean": "rimraf ./dist && rimraf ./coverage",
+    "test:types": "svelte-check --tsconfig ./tsconfig.json",
+    "test:eslint": "eslint --ext .svelte,.ts ./src",
+    "test:lib": "vitest run --coverage",
+    "test:lib:dev": "pnpm run test:lib --watch",
+    "test:build": "publint --strict",
+    "build": "svelte-package --input ./src --output ./dist",
+    "package": "svelte-package --input ./src && publint",
+    "pack": "pnpm pack --pack-destination"
+  },
+  "dependencies": {
+    "@tanstack/query-core": "workspace:^",
+    "@types/lodash-es": "^4.17.12",
+    "lodash-es": "^4.17.21"
+  },
+  "devDependencies": {
+    "@sveltejs/package": "^2.2.7",
+    "@sveltejs/vite-plugin-svelte": "^3.0.2",
+    "@testing-library/svelte": "^4.1.0",
+    "eslint-plugin-svelte": "^2.35.1",
+    "svelte": "4.2.12",
+    "svelte-check": "^3.6.5",
+    "svelte-eslint-parser": "^0.33.1"
+  },
+  "peerDependencies": {
+    "svelte": "^5.0.0-next.65"
+  }
+}

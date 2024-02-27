@@ -1,18 +1,20 @@
 import { QueriesObserver, notifyManager } from '@tanstack/query-core'
-import { DestroyRef, computed, effect, inject, signal } from '@angular/core'
-import { assertInjector } from 'ngxtension/assert-injector'
-import { injectQueryClient } from './injectQueryClient'
-import type { Injector, Signal } from '@angular/core'
+import { flushSync, onDestroy, onMount, unstate, untrack } from 'svelte'
+import { useIsRestoring } from './useIsRestoring'
+import { useQueryClient } from './useQueryClient'
+import { createMemo, createResource } from './utils.svelte'
 import type {
   DefaultError,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
+  QueryClient,
   QueryFunction,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
+import type { FnOrVal } from '.'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter
@@ -53,7 +55,7 @@ type GetOptions<T> =
               : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
                 T extends {
                     queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
-                    select: (data: any) => infer TData
+                    select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? QueryObserverOptionsForCreateQueries<
@@ -95,12 +97,12 @@ type GetResults<T> =
               ? QueryObserverResult<TQueryFnData>
               : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
                 T extends {
-                    queryFn?: QueryFunction<unknown, any>
-                    select: (data: any) => infer TData
+                    queryFn?: QueryFunction<infer TQueryFnData, any>
+                    select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? QueryObserverResult<
-                    TData,
+                    unknown extends TData ? TQueryFnData : TData,
                     unknown extends TError ? DefaultError : TError
                   >
                 : T extends {
@@ -193,57 +195,165 @@ export type QueriesResults<
           : // Fallback
             Array<QueryObserverResult>
 
-export function injectQueries<
+export function createQueries<
   T extends Array<any>,
-  TCombinedResult = QueriesResults<T>,
+  TCombinedResult extends QueriesResults<T> = QueriesResults<T>,
 >(
   {
     queries,
     ...options
   }: {
-    queries: Signal<[...QueriesOptions<T>]>
+    queries: FnOrVal<[...QueriesOptions<T>]>
     combine?: (result: QueriesResults<T>) => TCombinedResult
   },
-  injector?: Injector,
-): Signal<TCombinedResult> {
-  return assertInjector(injectQueries, injector, () => {
-    const queryClient = injectQueryClient()
-    const destroyRef = inject(DestroyRef)
+  queryClient?: QueryClient,
+): TCombinedResult {
+  const client = useQueryClient(queryClient)
+  const isRestoring = useIsRestoring()
 
-    const defaultedQueries = computed(() => {
-      return queries().map((opts) => {
-        const defaultedOptions = queryClient.defaultQueryOptions(opts)
-        // Make sure the results are already in fetching state before subscribing or updating options
-        defaultedOptions._optimisticResults = 'optimistic'
+  const queriesStore = $derived(
+    typeof queries != 'function' ? () => queries : queries,
+  )
 
-        return defaultedOptions
-      })
+  const defaultedQueriesStore = createMemo(() => {
+    return queriesStore().map((opts) => {
+      const defaultedOptions = client.defaultQueryOptions(opts)
+      // Make sure the results are already in fetching state before subscribing or updating options
+      defaultedOptions._optimisticResults = isRestoring
+        ? 'isRestoring'
+        : 'optimistic'
+      return defaultedOptions
     })
+  })
+  const observer = new QueriesObserver<TCombinedResult>(
+    client,
+    defaultedQueriesStore(),
+    options as QueriesObserverOptions<TCombinedResult>,
+  )
 
-    const observer = new QueriesObserver<TCombinedResult>(
-      queryClient,
-      defaultedQueries(),
-      options as QueriesObserverOptions<TCombinedResult>,
-    )
-
+  $effect(() => {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
-    effect(() => {
-      observer.setQueries(
-        defaultedQueries(),
-        options as QueriesObserverOptions<TCombinedResult>,
-        { listeners: false },
-      )
-    })
-
-    const [, getCombinedResult] =
-      observer.getOptimisticResult(defaultedQueries())
-
-    const result = signal(getCombinedResult() as any)
-
-    const unsubscribe = observer.subscribe(notifyManager.batchCalls(result.set))
-    destroyRef.onDestroy(unsubscribe)
-
-    return result
+    observer.setQueries(
+      defaultedQueriesStore(),
+      options as QueriesObserverOptions<TCombinedResult>,
+      { listeners: false },
+    )
   })
+
+  let result = $state<TCombinedResult>(
+    observer.getOptimisticResult(defaultedQueriesStore())[1](),
+  )
+
+  /*   $effect.pre(() => {
+    const unsubscribe = isRestoring
+      ? () => undefined
+      : observer.subscribe(
+          notifyManager.batchCalls((v) => {
+            result = v
+          }),
+        )
+
+    return () => unsubscribe()
+  }) */
+
+  //
+  $effect(() => {
+    if (queries.length) {
+      untrack(() => {
+        result = observer.getOptimisticResult(defaultedQueriesStore())[1]()
+      })
+    }
+  })
+  const dataResources = $derived(
+    result.map((queryRes) => {
+      const dataPromise = () =>
+        new Promise((resolve) => {
+          if (queryRes.isFetching && queryRes.isLoading) return
+          resolve(unstate(queryRes.data))
+        })
+      return createResource(dataPromise)
+    }),
+  )
+  flushSync(() => {
+    for (let index = 0; index < dataResources.length; index++) {
+      const dataResource = dataResources[index]!
+      dataResource[1].mutate(() => unstate(result[index]!.data))
+      dataResource[1].refetch()
+    }
+  })
+  let taskQueue: Array<() => void> = []
+
+  const subscribeToObserver = () =>
+    observer.subscribe((result_) => {
+      taskQueue.push(() => {
+        flushSync(() => {
+          const dataResources_ = dataResources
+          for (let index = 0; index < dataResources_.length; index++) {
+            const dataResource = dataResources_[index]!
+            const unwrappedResult = { ...unstate(result_[index]!) }
+
+            result[index] = unstate(unwrappedResult)
+            dataResource[1].mutate(() => unstate(result_[index]!.data))
+            dataResource[1].refetch()
+          }
+        })
+      })
+
+      queueMicrotask(() => {
+        const taskToRun = taskQueue.pop()
+        if (taskToRun) taskToRun()
+        taskQueue = []
+      })
+    })
+  let unsubscribe: () => void = () => undefined
+  $effect.pre(() => {
+    unsubscribe = isRestoring ? () => undefined : subscribeToObserver()
+    // cleanup needs to be scheduled after synchronous effects take place
+    return () => queueMicrotask(unsubscribe)
+  })
+  onDestroy(unsubscribe)
+  onMount(() => {
+    observer.setQueries(defaultedQueriesStore(), undefined, {
+      listeners: false,
+    })
+  })
+  const handler = (index: number) => ({
+    get(target: QueryObserverResult, prop: keyof QueryObserverResult): any {
+      if (prop === 'data') {
+        return dataResources[index]![0]()
+      }
+      return Reflect.get(target, prop)
+    },
+  })
+
+  const getProxies = $derived(() =>
+    result.map((s, index) => {
+      return new Proxy(s, handler(index))
+    }),
+  )
+  const proxifiedState = $state(getProxies())
+
+  /*  $effect(() => {
+    console.log(
+      'result updated',
+      result,
+      JSON.stringify(result),
+      JSON.stringify(proxifiedState),
+    )
+  }) 
+  $effect(() => {
+    console.log(
+      'proxifiedState',
+
+      JSON.stringify(proxifiedState),
+    )
+  })*/
+  $effect.pre(() => {
+    untrack(() => {
+      Object.assign(proxifiedState, getProxies())
+    })
+  })
+  return proxifiedState as TCombinedResult
 }
+7
