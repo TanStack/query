@@ -187,6 +187,7 @@ export function useSuspenseQueries<
         suspense: true,
         throwOnError: defaultThrowOnError,
         enabled: true,
+        placeholderData: undefined,
       })),
     } as any,
     queryClient,
