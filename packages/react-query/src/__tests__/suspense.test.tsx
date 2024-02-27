@@ -779,6 +779,58 @@ describe('useSuspenseQuery', () => {
 
     consoleMock.mockRestore()
   })
+
+  it('should still suspense if queryClient has placeholderData config', async () => {
+    const key = queryKey()
+    const queryClientWithPlaceholder = createQueryClient({
+      defaultOptions: {
+        queries: {
+          placeholderData: (previousData: any) => previousData,
+        },
+      },
+    })
+    const states: Array<UseSuspenseQueryResult<number>> = []
+
+    let count = 0
+    let renders = 0
+
+    function Page() {
+      renders++
+
+      const [stateKey, setStateKey] = React.useState(key)
+
+      const state = useSuspenseQuery({
+        queryKey: stateKey,
+        queryFn: async () => {
+          count++
+          await sleep(100)
+          return count
+        },
+      })
+
+      states.push(state)
+
+      return (
+        <div>
+          <button aria-label="toggle" onClick={() => setStateKey(queryKey())} />
+          data: {String(state.data)}
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClientWithPlaceholder,
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>,
+    )
+    await waitFor(() => rendered.getByText('loading'))
+    await waitFor(() => rendered.getByText('data: 1'))
+    fireEvent.click(rendered.getByLabelText('toggle'))
+
+    await waitFor(() => rendered.getByText('loading'))
+    await waitFor(() => rendered.getByText('data: 2'))
+  })
 })
 
 describe('useSuspenseQueries', () => {
@@ -1089,5 +1141,55 @@ describe('useSuspenseQueries', () => {
     await sleep(20)
 
     expect(queryFnCount).toBe(2)
+  })
+
+  it('should still suspense if queryClient has placeholderData config', async () => {
+    const key = queryKey()
+    const queryClientWithPlaceholder = createQueryClient({
+      defaultOptions: {
+        queries: {
+          placeholderData: (previousData: any) => previousData,
+        },
+      },
+    })
+
+    function Page() {
+      const [count, setCount] = React.useState(0)
+      const [isPending, startTransition] = React.useTransition()
+      const { data } = useSuspenseQuery({
+        queryKey: [key, count],
+        queryFn: async () => {
+          await sleep(10)
+          return 'data' + count
+        },
+      })
+
+      return (
+        <div>
+          <button onClick={() => startTransition(() => setCount(count + 1))}>
+            inc
+          </button>
+
+          <div>{isPending ? 'Pending...' : String(data)}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClientWithPlaceholder,
+      <React.Suspense fallback={'Loading...'}>
+        <Page />
+      </React.Suspense>,
+    )
+
+    await waitFor(() => rendered.getByText('Loading...'))
+
+    await waitFor(() => rendered.getByText('data0'))
+
+    fireEvent.click(rendered.getByText('inc'))
+
+    await waitFor(() => rendered.getByText('Pending...'))
+
+    await waitFor(() => rendered.getByText('data1'))
   })
 })
