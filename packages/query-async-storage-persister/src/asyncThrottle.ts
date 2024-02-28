@@ -1,10 +1,8 @@
+import { noop } from './utils'
+
 export interface AsyncThrottleOptions {
   interval?: number
   onError?: (error: unknown) => void
-}
-
-const noop = () => {
-  /* do nothing */
 }
 
 export function asyncThrottle<TArgs extends ReadonlyArray<unknown>>(

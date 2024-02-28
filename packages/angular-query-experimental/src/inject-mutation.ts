@@ -3,6 +3,7 @@ import { MutationObserver, notifyManager } from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { signalProxy } from './signal-proxy'
 import { injectQueryClient } from './inject-query-client'
+import { noop } from './util'
 import type { DefaultError, QueryClient } from '@tanstack/query-core'
 import type { Injector } from '@angular/core'
 
@@ -64,5 +65,3 @@ export function injectMutation<
     >
   })
 }
-
-function noop() {}
