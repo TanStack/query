@@ -78,14 +78,6 @@ export function setActTimeout(fn: () => void, ms?: number) {
   }, ms)
 }
 
-export type Equal<TTargetA, TTargetB> = (<T>() => T extends TTargetA
-  ? 1
-  : 2) extends <T>() => T extends TTargetB ? 1 : 2
-  ? true
-  : false
-
-export type Expect<T extends true> = T
-
 /**
  * Assert the parameter is not typed as `any`
  */
