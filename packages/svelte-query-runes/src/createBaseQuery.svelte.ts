@@ -1,5 +1,4 @@
 import { notifyManager } from '@tanstack/query-core'
-import { cloneDeep } from 'lodash-es'
 import { unstate, untrack } from 'svelte'
 import { useIsRestoring } from './useIsRestoring'
 import { useQueryClient } from './useQueryClient'
@@ -11,9 +10,6 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 
-function clone(v: any) {
-  return cloneDeep(v)
-}
 export function createBaseQuery<
   TQueryFnData,
   TError,
@@ -90,7 +86,6 @@ export function createBaseQuery<
 
     observer.updateResult()
     return () => {
-      //console.log('batch unsubscribe')
       un()
     }
   })

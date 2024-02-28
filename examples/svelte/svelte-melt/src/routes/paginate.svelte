@@ -6,8 +6,9 @@
 	let b = ['hi', bookFilterStore];
 	const data = createQuery(() => {
 		return {
-			queryKey: ['hi', bookFilterStore],
+			queryKey: ['paginate', bookFilterStore],
 			queryFn: async () => {
+				debugger;
 				const s = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'].map((v) => {
 					return { title: v };
 				});
@@ -16,7 +17,8 @@
 				}
 				return s.slice(5, 6);
 			},
-			staleTime: 5000
+			staleTime: 5000,
+			enabled: bookFilterStore.paginate.page % 2 == 1
 		};
 	});
 	/* 	const querycache = useQueryClient().getQueryCache();
