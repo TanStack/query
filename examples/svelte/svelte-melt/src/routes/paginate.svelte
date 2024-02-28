@@ -2,13 +2,14 @@
 	import { createQuery, useQueryClient } from 'svelte-query/dev';
 	import { bookFilterStore } from './store.svelte';
 	import { unstate } from 'svelte';
+	import { useQuery } from './external';
+	import { useSvelteExtensionQuery } from './external.svelte';
 	let a = { a: 1 };
 	let b = ['hi', bookFilterStore];
 	const data = createQuery(() => {
 		return {
 			queryKey: ['paginate', bookFilterStore],
 			queryFn: async () => {
-				debugger;
 				const s = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'].map((v) => {
 					return { title: v };
 				});
@@ -21,6 +22,8 @@
 			enabled: bookFilterStore.paginate.page % 2 == 1
 		};
 	});
+	const external = useQuery(bookFilterStore);
+	const externalsv = useSvelteExtensionQuery(bookFilterStore);
 	/* 	const querycache = useQueryClient().getQueryCache();
 	$effect(() => {
 		if (data.fetchStatus) {
@@ -53,3 +56,8 @@
 {#each data?.data ?? [] as item}
 	<div>{item.title}</div>
 {/each}
+
+-------------
+{external.data}
+-------------
+{externalsv.data}

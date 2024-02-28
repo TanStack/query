@@ -39,7 +39,11 @@ export function createBaseQuery<
     const defaultedOptions = client.defaultQueryOptions({
       ...optionsStore(),
       //@ts-ignore
-      queryKey: queryKey, // prevent reactive query  in devTools
+      queryKey: queryKey, // prevent reactive query  in devTools,
+      enabled:
+        typeof optionsStore().enabled == 'function'
+          ? optionsStore().enabled()
+          : optionsStore().enabled,
     })
 
     defaultedOptions._optimisticResults == isRestoring
