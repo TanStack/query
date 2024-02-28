@@ -7,7 +7,6 @@ import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 import type {
   QueryFunction,
   QueryKey,
-  QueryObserverResult,
   UseQueryOptions,
   UseQueryResult,
 } from '..'
@@ -134,14 +133,10 @@ describe('useQueries', () => {
           },
         ],
       })
-      expectTypeOf(result1[0]).toEqualTypeOf<
-        QueryObserverResult<number, unknown>
-      >()
-      expectTypeOf(result1[1]).toEqualTypeOf<
-        QueryObserverResult<string, unknown>
-      >()
+      expectTypeOf(result1[0]).toEqualTypeOf<UseQueryResult<number, unknown>>()
+      expectTypeOf(result1[1]).toEqualTypeOf<UseQueryResult<string, unknown>>()
       expectTypeOf(result1[2]).toEqualTypeOf<
-        QueryObserverResult<Array<string>, boolean>
+        UseQueryResult<Array<string>, boolean>
       >()
       expectTypeOf(result1[0].data).toEqualTypeOf<number | undefined>()
       expectTypeOf(result1[1].data).toEqualTypeOf<string | undefined>()
@@ -171,12 +166,8 @@ describe('useQueries', () => {
           },
         ],
       })
-      expectTypeOf(result2[0]).toEqualTypeOf<
-        QueryObserverResult<string, unknown>
-      >()
-      expectTypeOf(result2[1]).toEqualTypeOf<
-        QueryObserverResult<number, unknown>
-      >()
+      expectTypeOf(result2[0]).toEqualTypeOf<UseQueryResult<string, unknown>>()
+      expectTypeOf(result2[1]).toEqualTypeOf<UseQueryResult<number, unknown>>()
       expectTypeOf(result2[0].data).toEqualTypeOf<string | undefined>()
       expectTypeOf(result2[1].data).toEqualTypeOf<number | undefined>()
 
@@ -251,14 +242,10 @@ describe('useQueries', () => {
           },
         ],
       })
-      expectTypeOf(result1[0]).toEqualTypeOf<
-        QueryObserverResult<number, unknown>
-      >()
-      expectTypeOf(result1[1]).toEqualTypeOf<
-        QueryObserverResult<string, unknown>
-      >()
+      expectTypeOf(result1[0]).toEqualTypeOf<UseQueryResult<number, unknown>>()
+      expectTypeOf(result1[1]).toEqualTypeOf<UseQueryResult<string, unknown>>()
       expectTypeOf(result1[2]).toEqualTypeOf<
-        QueryObserverResult<Array<string>, boolean>
+        UseQueryResult<Array<string>, boolean>
       >()
       expectTypeOf(result1[0].data).toEqualTypeOf<number | undefined>()
       expectTypeOf(result1[1].data).toEqualTypeOf<string | undefined>()
@@ -291,12 +278,8 @@ describe('useQueries', () => {
           },
         ],
       })
-      expectTypeOf(result2[0]).toEqualTypeOf<
-        QueryObserverResult<string, unknown>
-      >()
-      expectTypeOf(result2[1]).toEqualTypeOf<
-        QueryObserverResult<number, unknown>
-      >()
+      expectTypeOf(result2[0]).toEqualTypeOf<UseQueryResult<string, unknown>>()
+      expectTypeOf(result2[1]).toEqualTypeOf<UseQueryResult<number, unknown>>()
       expectTypeOf(result2[0].data).toEqualTypeOf<string | undefined>()
       expectTypeOf(result2[1].data).toEqualTypeOf<number | undefined>()
 
@@ -321,12 +304,8 @@ describe('useQueries', () => {
           },
         ],
       })
-      expectTypeOf(result3[0]).toEqualTypeOf<
-        QueryObserverResult<string, unknown>
-      >()
-      expectTypeOf(result3[1]).toEqualTypeOf<
-        QueryObserverResult<number, unknown>
-      >()
+      expectTypeOf(result3[0]).toEqualTypeOf<UseQueryResult<string, unknown>>()
+      expectTypeOf(result3[1]).toEqualTypeOf<UseQueryResult<number, unknown>>()
       expectTypeOf(result3[0].data).toEqualTypeOf<string | undefined>()
       expectTypeOf(result3[1].data).toEqualTypeOf<number | undefined>()
 
@@ -401,12 +380,8 @@ describe('useQueries', () => {
           }),
         ],
       })
-      expectTypeOf(result4[0]).toEqualTypeOf<
-        QueryObserverResult<string, Error>
-      >()
-      expectTypeOf(result4[1]).toEqualTypeOf<
-        QueryObserverResult<number, Error>
-      >()
+      expectTypeOf(result4[0]).toEqualTypeOf<UseQueryResult<string, Error>>()
+      expectTypeOf(result4[1]).toEqualTypeOf<UseQueryResult<number, Error>>()
       expectTypeOf(result4[0].data).toEqualTypeOf<string | undefined>()
       expectTypeOf(result4[1].data).toEqualTypeOf<number | undefined>()
     }
@@ -445,7 +420,7 @@ describe('useQueries', () => {
         })),
       })
       expectTypeOf(result1_err).toEqualTypeOf<
-        Array<QueryObserverResult<number, BizError>>
+        Array<UseQueryResult<number, BizError>>
       >()
       expectTypeOf(result1_err[0]?.data).toEqualTypeOf<number | undefined>()
       expectTypeOf(result1_err[0]?.error).toEqualTypeOf<
