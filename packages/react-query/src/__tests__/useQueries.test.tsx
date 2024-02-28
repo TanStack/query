@@ -409,7 +409,9 @@ describe('useQueries', () => {
       expectTypeOf(result1).toEqualTypeOf<
         Array<UseQueryResult<number, Error>>
       >()
-      expectTypeOf(result1[0]?.data).toEqualTypeOf<number | undefined>()
+      if (result1[0]) {
+        expectTypeOf(result1[0].data).toEqualTypeOf<number | undefined>()
+      }
 
       // Array.map preserves TError
       const result1_err = useQueries({
@@ -422,10 +424,10 @@ describe('useQueries', () => {
       expectTypeOf(result1_err).toEqualTypeOf<
         Array<UseQueryResult<number, BizError>>
       >()
-      expectTypeOf(result1_err[0]?.data).toEqualTypeOf<number | undefined>()
-      expectTypeOf(result1_err[0]?.error).toEqualTypeOf<
-        BizError | null | undefined
-      >()
+      if (result1_err[0]) {
+        expectTypeOf(result1_err[0].data).toEqualTypeOf<number | undefined>()
+        expectTypeOf(result1_err[0].error).toEqualTypeOf<BizError | null>()
+      }
 
       // Array.map preserves TData
       const result2 = useQueries({
