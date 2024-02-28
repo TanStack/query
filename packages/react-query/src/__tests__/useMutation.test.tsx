@@ -1138,6 +1138,8 @@ describe('useMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
-    await rendered.findByText('data: custom client, status: success')
+    await waitFor(() =>
+      rendered.findByText('data: custom client, status: success'),
+    )
   })
 })
