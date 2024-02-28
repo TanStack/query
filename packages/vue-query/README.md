@@ -40,6 +40,8 @@ Visit https://tanstack.com/query/latest/docs/vue/overview
    $ pnpm add @tanstack/vue-query
    # or
    $ yarn add @tanstack/vue-query
+   # or
+   $ bun add @tanstack/vue-query
    ```
 
    > If you are using Vue 2.6, make sure to also setup [@vue/composition-api](https://github.com/vuejs/composition-api)

@@ -19,6 +19,8 @@ $ npm i @tanstack/solid-query-devtools
 $ pnpm add @tanstack/solid-query-devtools
 # or
 $ yarn add @tanstack/solid-query-devtools
+# or
+$ bun add @tanstack/solid-query-devtools
 ```
 
 You can import the devtools like this:
