@@ -1,4 +1,5 @@
 import { asyncThrottle } from './asyncThrottle'
+import { noop } from './utils'
 import type {
   AsyncStorage,
   MaybePromise,
@@ -99,5 +100,3 @@ export const createAsyncStoragePersister = ({
     removeClient: noop,
   }
 }
-
-function noop() {}
