@@ -1,3 +1,4 @@
+import { noop } from './utils'
 import type {
   PersistRetryer,
   PersistedClient,
@@ -108,5 +109,3 @@ function throttle<TArgs extends Array<any>>(
     }
   }
 }
-
-function noop() {}

@@ -2,7 +2,7 @@
 import * as React from 'react'
 import { MutationObserver, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
-import { shouldThrowError } from './utils'
+import { noop, shouldThrowError } from './utils'
 import type {
   UseMutateFunction,
   UseMutationOptions,
@@ -63,5 +63,3 @@ export function useMutation<
 
   return { ...result, mutate, mutateAsync: result.mutate }
 }
-
-function noop() {}
