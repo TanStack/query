@@ -1,4 +1,4 @@
-import { noop, replaceData, timeUntilStale } from './utils'
+import { noop, replaceData, skipToken, timeUntilStale } from './utils'
 import { notifyManager } from './notifyManager'
 import { canFetch, createRetryer, isCancelledError } from './retryer'
 import { Removable } from './removable'
@@ -176,6 +176,7 @@ export class Query<
     this.queryHash = config.queryHash
     this.#initialState = config.state || getDefaultState(this.options)
     this.state = this.#initialState
+
     this.scheduleGc()
   }
   get meta(): QueryMeta | undefined {
@@ -239,7 +240,9 @@ export class Query<
 
   isActive(): boolean {
     return this.#observers.some(
-      (observer) => observer.options.enabled !== false,
+      (observer) =>
+        observer.options.enabled !== false &&
+        observer.options.queryFn !== skipToken,
     )
   }
 
@@ -392,6 +395,11 @@ export class Query<
           new Error(`Missing queryFn: '${this.options.queryHash}'`),
         )
       }
+
+      if (this.options.queryFn === skipToken) {
+        return Promise.resolve(undefined)
+      }
+
       this.#abortSignalConsumed = false
       if (this.options.persister) {
         return this.options.persister(

@@ -5,6 +5,7 @@ import type {
   MutationKey,
   MutationStatus,
   QueryKey,
+  QueryObserverOptions,
   QueryOptions,
 } from './types'
 
@@ -342,3 +343,6 @@ export function addToStart<T>(items: Array<T>, item: T, max = 0): Array<T> {
   const newItems = [item, ...items]
   return max && newItems.length > max ? newItems.slice(0, -1) : newItems
 }
+
+export const skipToken = Symbol.for('TRPC/skipToken')
+export type SkipToken = typeof skipToken

@@ -3,7 +3,7 @@
 import type { MutationState } from './mutation'
 import type { FetchDirection, Query, QueryBehavior } from './query'
 import type { RetryDelayValue, RetryValue } from './retryer'
-import type { QueryFilters, QueryTypeFilter } from './utils'
+import type { QueryFilters, QueryTypeFilter, SkipToken } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
 
@@ -32,7 +32,9 @@ export type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
-> = (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>
+> =
+  | ((context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>)
+  | SkipToken
 
 export type QueryPersister<
   T = unknown,
@@ -153,6 +155,7 @@ export interface QueryOptions<
     NoInfer<TQueryKey>,
     NoInfer<TPageParam>
   >
+
   queryHash?: string
   queryKey?: TQueryKey
   queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>

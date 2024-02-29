@@ -4,6 +4,7 @@ import {
   noop,
   replaceData,
   shallowEqualObjects,
+  skipToken,
   timeUntilStale,
 } from './utils'
 import { notifyManager } from './notifyManager'
@@ -198,6 +199,8 @@ export class QueryObserver<
       mounted &&
       (this.#currentQuery !== prevQuery ||
         this.options.enabled !== prevOptions.enabled ||
+        (this.options.queryFn === skipToken) !==
+          (prevOptions.queryFn === skipToken) ||
         nextRefetchInterval !== this.#currentRefetchInterval)
     ) {
       this.#updateRefetchInterval(nextRefetchInterval)
@@ -369,6 +372,7 @@ export class QueryObserver<
     if (
       isServer ||
       this.options.enabled === false ||
+      this.options.queryFn === skipToken ||
       !isValidTimeout(this.#currentRefetchInterval) ||
       this.#currentRefetchInterval === 0
     ) {
@@ -685,6 +689,8 @@ function shouldLoadOnMount(
   return (
     options.enabled !== false &&
     query.state.data === undefined &&
+    options.queryFn !== skipToken &&
+    !query.state.dataUpdatedAt &&
     !(query.state.status === 'error' && options.retryOnMount === false)
   )
 }
@@ -707,7 +713,7 @@ function shouldFetchOn(
     (typeof options)['refetchOnWindowFocus'] &
     (typeof options)['refetchOnReconnect'],
 ) {
-  if (options.enabled !== false) {
+  if (options.enabled !== false && options.queryFn !== skipToken) {
     const value = typeof field === 'function' ? field(query) : field
 
     return value === 'always' || (value !== false && isStale(query, options))
@@ -722,10 +728,13 @@ function shouldFetchOptionally(
   prevOptions: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
   return (
-    options.enabled !== false &&
-    (query !== prevQuery || prevOptions.enabled === false) &&
-    (!options.suspense || query.state.status !== 'error') &&
-    isStale(query, options)
+    options.enabled !== false ||
+    (prevOptions.queryFn === skipToken &&
+      (query !== prevQuery ||
+        prevOptions.enabled === false ||
+        prevOptions.queryFn === skipToken) &&
+      (!options.suspense || query.state.status !== 'error') &&
+      isStale(query, options))
   )
 }
 
