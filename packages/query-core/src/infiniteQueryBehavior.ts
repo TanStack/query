@@ -1,4 +1,4 @@
-import { addToEnd, addToStart } from './utils'
+import { addToEnd, addToStart, skipToken } from './utils'
 import type { QueryBehavior } from './query'
 import type {
   InfiniteData,
@@ -55,6 +55,10 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           }
 
           if (param == null && data.pages.length) {
+            return Promise.resolve(data)
+          }
+
+          if (queryFn === skipToken) {
             return Promise.resolve(data)
           }
 

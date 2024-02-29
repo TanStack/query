@@ -2,6 +2,7 @@ import { describe, expect, expectTypeOf, it, test, vi } from 'vitest'
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
+import { skipToken } from '@tanstack/query-core'
 import { QueryCache, keepPreviousData, useQuery } from '..'
 import {
   Blink,
@@ -6328,5 +6329,63 @@ describe('useQuery', () => {
 
     expect(() => render(<Page />)).toThrow('Bad argument type')
     consoleMock.mockRestore()
+  })
+
+  it('should respect skipToken and refetch when skipToken is taken away in error state', async () => {
+    const queryFn = vi.fn<Array<unknown>, unknown>()
+    queryFn.mockImplementation(async () => {
+      await sleep(10)
+      return Promise.reject(new Error('Suspense Error Bingo'))
+    })
+
+    function Page({ enabled }: { enabled: boolean }) {
+      const { error, isPending } = useQuery({
+        queryKey: ['key'],
+        queryFn: enabled ? queryFn : skipToken,
+        retry: false,
+        retryOnMount: false,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+      })
+
+      if (isPending) {
+        return <div>status: pending</div>
+      }
+      if (error instanceof Error) {
+        return <div>error</div>
+      }
+      return <div>rendered</div>
+    }
+
+    function App() {
+      const [enabled, toggle] = React.useReducer((x) => !x, true)
+
+      return (
+        <div>
+          <Page enabled={enabled} />
+          <button aria-label="retry" onClick={toggle}>
+            retry {enabled}
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    // initial state check
+    rendered.getByText('status: pending')
+
+    // // render error state component
+    await waitFor(() => rendered.getByText('error'))
+    expect(queryFn).toBeCalledTimes(1)
+
+    // change to enabled to false
+    fireEvent.click(rendered.getByLabelText('retry'))
+    await waitFor(() => rendered.getByText('error'))
+    expect(queryFn).toBeCalledTimes(1)
+
+    // // change to enabled to true
+    fireEvent.click(rendered.getByLabelText('retry'))
+    expect(queryFn).toBeCalledTimes(2)
   })
 })

@@ -41,3 +41,4 @@ export type {
   HydrateOptions,
 } from './hydration'
 export type { QueriesObserverOptions } from './queriesObserver'
+export { skipToken } from './utils'

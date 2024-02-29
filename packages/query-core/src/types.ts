@@ -32,9 +32,7 @@ export type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
-> =
-  | ((context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>)
-  | SkipToken
+> = (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>
 
 export type QueryPersister<
   T = unknown,
@@ -149,7 +147,7 @@ export interface QueryOptions<
    * Setting it to `Infinity` will disable garbage collection.
    */
   gcTime?: number
-  queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam>
+  queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam> | SkipToken
   persister?: QueryPersister<
     NoInfer<TQueryFnData>,
     NoInfer<TQueryKey>,

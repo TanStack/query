@@ -5,7 +5,6 @@ import type {
   MutationKey,
   MutationStatus,
   QueryKey,
-  QueryObserverOptions,
   QueryOptions,
 } from './types'
 
