@@ -49,7 +49,8 @@
     "test:lib": "vitest --retry=3",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
-    "build": "tsup"
+    "build": "tsup",
+    "build:watch": "tsup --watch"
   },
   "files": [
     "build",
