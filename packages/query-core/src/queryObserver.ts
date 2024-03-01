@@ -199,8 +199,6 @@ export class QueryObserver<
       mounted &&
       (this.#currentQuery !== prevQuery ||
         this.options.enabled !== prevOptions.enabled ||
-        (this.options.queryFn === skipToken) !==
-          (prevOptions.queryFn === skipToken) ||
         nextRefetchInterval !== this.#currentRefetchInterval)
     ) {
       this.#updateRefetchInterval(nextRefetchInterval)
@@ -372,7 +370,6 @@ export class QueryObserver<
     if (
       isServer ||
       this.options.enabled === false ||
-      this.options.queryFn === skipToken ||
       !isValidTimeout(this.#currentRefetchInterval) ||
       this.#currentRefetchInterval === 0
     ) {

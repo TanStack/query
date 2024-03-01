@@ -396,8 +396,13 @@ export class Query<
         )
       }
 
+      // Rejects with an error if `queryFn` is set to `skipToken`, indicating that this query should not be executed.
       if (this.options.queryFn === skipToken) {
-        return Promise.resolve(undefined)
+        return Promise.reject(
+          new Error(
+            `Attempted to invoke queryFn when set to skipToken, indicating a configuration error. Query hash: '${this.options.queryHash}'`,
+          ),
+        )
       }
 
       this.#abortSignalConsumed = false
