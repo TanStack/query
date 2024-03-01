@@ -1004,7 +1004,7 @@ importers:
         version: 18.2.0(react@18.2.0)
     devDependencies:
       '@types/react':
-        specifier: ^18.2.56
+        specifier: ^18.2.55
         version: 18.2.61
       '@types/react-dom':
         specifier: ^18.2.19
@@ -1028,10 +1028,10 @@ importers:
         specifier: ^0.4.5
         version: 0.4.5(eslint@8.56.0)
       typescript:
-        specifier: ^5.2.2
+        specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.4
+        specifier: ^5.1.1
         version: 5.1.4(@types/node@18.19.3)
 
   examples/react/simple:
