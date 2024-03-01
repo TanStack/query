@@ -12,6 +12,7 @@ import type {
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
+  SkipToken,
 } from '@tanstack/query-core'
 
 export interface UseBaseQueryOptions<
@@ -45,8 +46,13 @@ export interface UseSuspenseQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'enabled' | 'throwOnError' | 'placeholderData'
-  > {}
+    'enabled' | 'throwOnError' | 'placeholderData' | 'queryFn'
+  > {
+  queryFn: Exclude<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
+    SkipToken
+  >
+}
 
 export interface UseInfiniteQueryOptions<
   TQueryFnData = unknown,
