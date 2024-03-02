@@ -841,6 +841,24 @@ describe('query', () => {
     expect(initialDataUpdatedAtSpy).toHaveBeenCalled()
   })
 
+  test('should work with initialDataUpdatedAt set to zero', async () => {
+    const key = queryKey()
+
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => 'data',
+      staleTime: Infinity,
+      initialData: 'initial',
+      initialDataUpdatedAt: 0,
+    })
+
+    expect(queryCache.find({ queryKey: key })?.state).toMatchObject({
+      data: 'initial',
+      status: 'success',
+      dataUpdatedAt: 0,
+    })
+  })
+
   test('queries should be garbage collected even if they never fetched', async () => {
     const key = queryKey()
 
