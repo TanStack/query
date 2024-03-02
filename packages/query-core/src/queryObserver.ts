@@ -147,7 +147,7 @@ export class QueryObserver<
     this.options = this.#client.defaultQueryOptions(options)
 
     if (
-      typeof this.options.enabled !== 'undefined' &&
+      this.options.enabled !== undefined &&
       typeof this.options.enabled !== 'boolean'
     ) {
       throw new Error('Expected enabled to be a boolean')
@@ -454,7 +454,7 @@ export class QueryObserver<
     }
 
     // Select data if needed
-    if (options.select && typeof state.data !== 'undefined') {
+    if (options.select && state.data !== undefined) {
       // Memoize select result
       if (
         prevResult &&
@@ -481,8 +481,8 @@ export class QueryObserver<
 
     // Show placeholder data if needed
     if (
-      typeof options.placeholderData !== 'undefined' &&
-      typeof data === 'undefined' &&
+      options.placeholderData !== undefined &&
+      data === undefined &&
       status === 'pending'
     ) {
       let placeholderData
@@ -503,7 +503,7 @@ export class QueryObserver<
                 this.#lastQueryWithDefinedData as any,
               )
             : options.placeholderData
-        if (options.select && typeof placeholderData !== 'undefined') {
+        if (options.select && placeholderData !== undefined) {
           try {
             placeholderData = options.select(placeholderData)
             this.#selectError = null
@@ -513,7 +513,7 @@ export class QueryObserver<
         }
       }
 
-      if (typeof placeholderData !== 'undefined') {
+      if (placeholderData !== undefined) {
         status = 'success'
         data = replaceData(
           prevResult?.data,
