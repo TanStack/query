@@ -18,7 +18,7 @@ function getMockStorage(limitSize?: number) {
     },
 
     setItem(key: string, value: string) {
-      if (typeof limitSize !== 'undefined') {
+      if (limitSize !== undefined) {
         const currentSize = Array.from(dataSet.entries()).reduce(
           (n, d) => d[0].length + d[1].length + n,
           0,
