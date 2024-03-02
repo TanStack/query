@@ -130,7 +130,7 @@ function createProvideFn<
   const { deps = [], multi = false, extraProviders = [] } = opts
   return (value?: TValue | (() => TValue), isFunctionValue = false) => {
     let provider: Provider
-    if (typeof value !== 'undefined') {
+    if (value !== undefined) {
       // eslint-disable-next-line no-shadow
       const factory =
         typeof value === 'function'
