@@ -1,6 +1,8 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { useSuspenseQuery } from '../useSuspenseQuery'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
+import { doNotExecute } from './utils'
+import type { UseSuspenseQueryOptions } from '..'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('useSuspenseQuery', () => {
@@ -120,5 +122,17 @@ describe('useSuspenseInfiniteQuery', () => {
 
     // @ts-expect-error TS2339
     query.isPlaceholderData
+  })
+
+  it('should not accept skipToken type for queryFn in useSuspenseQuery', () => {
+    doNotExecute(() => {
+      const query: UseSuspenseQueryOptions = {
+        // @ts-expect-error
+        queryFn: skipToken,
+        queryKey: [1],
+      }
+
+      return query
+    })
   })
 })

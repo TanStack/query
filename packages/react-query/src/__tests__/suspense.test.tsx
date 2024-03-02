@@ -5,15 +5,23 @@ import { ErrorBoundary } from 'react-error-boundary'
 import {
   QueryCache,
   QueryErrorResetBoundary,
+  skipToken,
   useQueryErrorResetBoundary,
   useSuspenseInfiniteQuery,
   useSuspenseQueries,
   useSuspenseQuery,
 } from '..'
-import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import {
+  createQueryClient,
+  doNotExecute,
+  queryKey,
+  renderWithClient,
+  sleep,
+} from './utils'
 import type {
   InfiniteData,
   UseSuspenseInfiniteQueryResult,
+  UseSuspenseQueryOptions,
   UseSuspenseQueryResult,
 } from '..'
 
@@ -1191,5 +1199,48 @@ describe('useSuspenseQueries', () => {
     await waitFor(() => rendered.getByText('Pending...'))
 
     await waitFor(() => rendered.getByText('data1'))
+  })
+
+  it('should throw error to the error boundary when skipToken is passed to queryFn', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      useSuspenseQuery({
+        queryKey: key,
+        // @ts-expect-error
+        queryFn: skipToken,
+      })
+      return <div>rendered</div>
+    }
+
+    function App() {
+      return (
+        <ErrorBoundary
+          fallbackRender={(props) => (
+            <div>
+              <div>{props.error}</div>
+            </div>
+          )}
+        >
+          <React.Suspense fallback="Loading...">
+            <Page />
+          </React.Suspense>
+        </ErrorBoundary>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() =>
+      rendered.getByText(
+        `You have provided a \`skipToken\` to \`queryFn\` which is not allowed in useSuspenseQuery.`,
+      ),
+    )
+
+    consoleMock.mockRestore()
   })
 })
