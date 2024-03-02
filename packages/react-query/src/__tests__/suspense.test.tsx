@@ -11,17 +11,10 @@ import {
   useSuspenseQueries,
   useSuspenseQuery,
 } from '..'
-import {
-  createQueryClient,
-  doNotExecute,
-  queryKey,
-  renderWithClient,
-  sleep,
-} from './utils'
+import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 import type {
   InfiniteData,
   UseSuspenseInfiniteQueryResult,
-  UseSuspenseQueryOptions,
   UseSuspenseQueryResult,
 } from '..'
 
