@@ -1214,7 +1214,7 @@ describe('useSuspenseQueries', () => {
         <ErrorBoundary
           fallbackRender={(props) => (
             <div>
-              <div>{props.error}</div>
+              <div>{props.error.message}</div>
             </div>
           )}
         >
