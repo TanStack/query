@@ -16,7 +16,7 @@ export const defaultThrowOnError = <
 >(
   _error: TError,
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
-) => typeof query.state.data === 'undefined'
+) => query.state.data === undefined
 
 export const ensureStaleTime = (
   defaultedOptions: DefaultedQueryObserverOptions<any, any, any, any, any>,

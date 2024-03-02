@@ -122,10 +122,7 @@ export function matchQuery(
     return false
   }
 
-  if (
-    typeof fetchStatus !== 'undefined' &&
-    fetchStatus !== query.state.fetchStatus
-  ) {
+  if (fetchStatus && fetchStatus !== query.state.fetchStatus) {
     return false
   }
 
@@ -288,7 +285,7 @@ export function isPlainObject(o: any): o is Object {
 
   // If has no constructor
   const ctor = o.constructor
-  if (typeof ctor === 'undefined') {
+  if (ctor === undefined) {
     return true
   }
 
