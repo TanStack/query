@@ -727,9 +727,7 @@ function shouldFetchOptionally(
   return (
     options.enabled !== false ||
     (prevOptions.queryFn === skipToken &&
-      (query !== prevQuery ||
-        prevOptions.enabled === false ||
-        prevOptions.queryFn === skipToken) &&
+      (query !== prevQuery || prevOptions.enabled === false) &&
       (!options.suspense || query.state.status !== 'error') &&
       isStale(query, options))
   )
