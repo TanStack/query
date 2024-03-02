@@ -122,7 +122,7 @@ export function matchQuery(
     return false
   }
 
-  if (fetchStatus !== undefined && fetchStatus !== query.state.fetchStatus) {
+  if (fetchStatus && fetchStatus !== query.state.fetchStatus) {
     return false
   }
 
