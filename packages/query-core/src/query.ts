@@ -470,7 +470,7 @@ export class Query<
       fn: context.fetchFn as () => Promise<TData>,
       abort: abortController.abort.bind(abortController),
       onSuccess: (data) => {
-        if (typeof data === 'undefined') {
+        if (data === undefined) {
           if (process.env.NODE_ENV !== 'production') {
             console.error(
               `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ${this.queryHash}`,
@@ -621,7 +621,7 @@ function getDefaultState<
       ? (options.initialData as InitialDataFunction<TData>)()
       : options.initialData
 
-  const hasData = typeof data !== 'undefined'
+  const hasData = data !== undefined
 
   const initialDataUpdatedAt = hasData
     ? typeof options.initialDataUpdatedAt === 'function'
