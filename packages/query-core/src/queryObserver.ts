@@ -725,11 +725,10 @@ function shouldFetchOptionally(
   prevOptions: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
   return (
-    options.enabled !== false ||
-    (prevOptions.queryFn === skipToken &&
-      (query !== prevQuery || prevOptions.enabled === false) &&
-      (!options.suspense || query.state.status !== 'error') &&
-      isStale(query, options))
+    options.enabled !== false &&
+    (query !== prevQuery || prevOptions.enabled === false) &&
+    (!options.suspense || query.state.status !== 'error') &&
+    isStale(query, options)
   )
 }
 
