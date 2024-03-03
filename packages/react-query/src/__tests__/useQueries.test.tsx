@@ -1185,6 +1185,56 @@ describe('useQueries', () => {
     expect(results.length).toBe(length)
   })
 
+  it('should synchronously track properties of all observer even if a property (isLoading) is only accessed on one observer (#7000)', async () => {
+    const key = queryKey()
+    const ids = [1, 2]
+
+    function Page() {
+      const { isLoading } = useQueries({
+        queries: ids.map((id) => ({
+          queryKey: [key, id],
+          queryFn: () => {
+            return new Promise<{
+              id: number
+              title: string
+            }>((resolve, reject) => {
+              if (id === 2) {
+                setTimeout(() => {
+                  reject(new Error('FAILURE'))
+                }, 10)
+              }
+              setTimeout(() => {
+                resolve({ id, title: `Post ${id}` })
+              }, 10)
+            })
+          },
+          retry: false,
+        })),
+        combine: (results) => {
+          // this tracks data on all observers
+          void results.forEach((result) => result.data)
+          return {
+            // .some aborts early, so `isLoading` might not be accessed (and thus tracked) on all observers
+            // leading to missing re-renders
+            isLoading: results.some((result) => result.isLoading),
+          }
+        },
+      })
+
+      return (
+        <div>
+          <p>Loading Status: {isLoading ? 'Loading...' : 'Loaded'}</p>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('Loading Status: Loading...'))
+
+    await waitFor(() => rendered.getByText('Loading Status: Loaded'))
+  })
+
   it('should not have stale closures with combine (#6648)', async () => {
     const key = queryKey()
 
