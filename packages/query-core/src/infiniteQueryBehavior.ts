@@ -39,17 +39,9 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
         // Get query function
         const queryFn = context.options.queryFn
 
-        if (!queryFn) {
+        if (!queryFn || queryFn === skipToken) {
           return Promise.reject(
             new Error(`Missing queryFn: '${context.options.queryHash}'`),
-          )
-        }
-
-        if (queryFn === skipToken) {
-          return Promise.reject(
-            new Error(
-              `Attempted to invoke queryFn when set to skipToken, indicating a configuration error. Query hash: '${context.options.queryHash}'`,
-            ),
           )
         }
 
