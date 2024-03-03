@@ -343,7 +343,5 @@ export function addToStart<T>(items: Array<T>, item: T, max = 0): Array<T> {
   return max && newItems.length > max ? newItems.slice(0, -1) : newItems
 }
 
-export const skipToken = Symbol.for(
-  'QUERY/skipToken-ea7c3132-6b5b-441e-89d8-4a98dcb5eb23',
-)
+export const skipToken = Symbol()
 export type SkipToken = typeof skipToken
