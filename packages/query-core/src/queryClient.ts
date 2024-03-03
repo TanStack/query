@@ -535,7 +535,10 @@ export class QueryClient {
       defaultedOptions.networkMode = 'offlineFirst'
     }
 
-    if (defaultedOptions.queryFn === skipToken) {
+    if (
+      defaultedOptions.enabled !== true &&
+      defaultedOptions.queryFn === skipToken
+    ) {
       defaultedOptions.enabled = false
     }
 
