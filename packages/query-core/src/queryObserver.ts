@@ -147,7 +147,7 @@ export class QueryObserver<
     this.options = this.#client.defaultQueryOptions(options)
 
     if (
-      typeof this.options.enabled !== 'undefined' &&
+      this.options.enabled !== undefined &&
       typeof this.options.enabled !== 'boolean'
     ) {
       throw new Error('Expected enabled to be a boolean')
@@ -444,7 +444,7 @@ export class QueryObserver<
         fetchStatus = canFetch(query.options.networkMode)
           ? 'fetching'
           : 'paused'
-        if (!state.dataUpdatedAt) {
+        if (state.data === undefined) {
           status = 'pending'
         }
       }
@@ -454,7 +454,7 @@ export class QueryObserver<
     }
 
     // Select data if needed
-    if (options.select && typeof state.data !== 'undefined') {
+    if (options.select && state.data !== undefined) {
       // Memoize select result
       if (
         prevResult &&
@@ -481,8 +481,8 @@ export class QueryObserver<
 
     // Show placeholder data if needed
     if (
-      typeof options.placeholderData !== 'undefined' &&
-      typeof data === 'undefined' &&
+      options.placeholderData !== undefined &&
+      data === undefined &&
       status === 'pending'
     ) {
       let placeholderData
@@ -503,7 +503,7 @@ export class QueryObserver<
                 this.#lastQueryWithDefinedData as any,
               )
             : options.placeholderData
-        if (options.select && typeof placeholderData !== 'undefined') {
+        if (options.select && placeholderData !== undefined) {
           try {
             placeholderData = options.select(placeholderData)
             this.#selectError = null
@@ -513,7 +513,7 @@ export class QueryObserver<
         }
       }
 
-      if (typeof placeholderData !== 'undefined') {
+      if (placeholderData !== undefined) {
         status = 'success'
         data = replaceData(
           prevResult?.data,
@@ -536,6 +536,7 @@ export class QueryObserver<
     const isError = status === 'error'
 
     const isLoading = isPending && isFetching
+    const hasData = state.data !== undefined
 
     const result: QueryObserverBaseResult<TData, TError> = {
       status,
@@ -558,10 +559,10 @@ export class QueryObserver<
         state.errorUpdateCount > queryInitialState.errorUpdateCount,
       isFetching,
       isRefetching: isFetching && !isPending,
-      isLoadingError: isError && state.dataUpdatedAt === 0,
+      isLoadingError: isError && !hasData,
       isPaused: fetchStatus === 'paused',
       isPlaceholderData,
-      isRefetchError: isError && state.dataUpdatedAt !== 0,
+      isRefetchError: isError && hasData,
       isStale: isStale(query, options),
       refetch: this.refetch,
     }
@@ -683,7 +684,7 @@ function shouldLoadOnMount(
 ): boolean {
   return (
     options.enabled !== false &&
-    !query.state.dataUpdatedAt &&
+    query.state.data === undefined &&
     !(query.state.status === 'error' && options.retryOnMount === false)
   )
 }
@@ -694,7 +695,7 @@ function shouldFetchOnMount(
 ): boolean {
   return (
     shouldLoadOnMount(query, options) ||
-    (query.state.dataUpdatedAt > 0 &&
+    (query.state.data !== undefined &&
       shouldFetchOn(query, options, options.refetchOnMount))
   )
 }

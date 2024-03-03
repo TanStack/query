@@ -120,6 +120,11 @@ export function createBaseQuery<
 
   const client = createMemo(() => useQueryClient(queryClient?.()))
   const isRestoring = useIsRestoring()
+  // There are times when we run a query on the server but the resource is never read
+  // This could lead to times when the queryObserver is unsubscribed before the resource has loaded
+  // Causing a time out error. To prevent this we will queue the unsubscribe if the cleanup is called
+  // before the resource has loaded
+  let unsubscribeQueued = false
 
   const defaultedOptions = createMemo(() => {
     const defaultOptions = client().defaultQueryOptions(options())
@@ -155,11 +160,20 @@ export function createBaseQuery<
 
         if (unwrappedResult.isError) {
           reject(unwrappedResult.error)
+          unsubscribeIfQueued()
         } else {
           resolve(unwrappedResult)
+          unsubscribeIfQueued()
         }
       })()
     })
+  }
+
+  const unsubscribeIfQueued = () => {
+    if (unsubscribeQueued) {
+      unsubscribe?.()
+      unsubscribeQueued = false
+    }
   }
 
   const createClientSubscriber = () => {
@@ -289,12 +303,16 @@ export function createBaseQuery<
   )
 
   createComputed(() => {
-    if (!isRestoring()) {
+    if (!isRestoring() && !isServer) {
       refetch()
     }
   })
 
   onCleanup(() => {
+    if (isServer && queryResource.loading) {
+      unsubscribeQueued = true
+      return
+    }
     if (unsubscribe) {
       unsubscribe()
       unsubscribe = null
