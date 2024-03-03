@@ -710,7 +710,7 @@ function shouldFetchOn(
     (typeof options)['refetchOnWindowFocus'] &
     (typeof options)['refetchOnReconnect'],
 ) {
-  if (options.enabled !== false && options.queryFn !== skipToken) {
+  if (options.enabled !== false) {
     const value = typeof field === 'function' ? field(query) : field
 
     return value === 'always' || (value !== false && isStale(query, options))
