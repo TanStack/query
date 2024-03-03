@@ -25,6 +25,8 @@ $ npm i @tanstack/react-query-devtools
 $ pnpm add @tanstack/react-query-devtools
 # or
 $ yarn add @tanstack/react-query-devtools
+# or
+$ bun add @tanstack/react-query-devtools
 ```
 
 For Next 13+ App Dir you must install it as a dev dependency for it to work.

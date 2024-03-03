@@ -180,7 +180,7 @@ export class QueryClient {
     const prevData = query?.state.data
     const data = functionalUpdate(updater, prevData)
 
-    if (typeof data === 'undefined') {
+    if (data === undefined) {
       return undefined
     }
 
@@ -204,11 +204,22 @@ export class QueryClient {
     )
   }
 
-  getQueryState<TQueryFnData = unknown, TError = DefaultError>(
-    queryKey: QueryKey,
-  ): QueryState<TQueryFnData, TError> | undefined {
+  getQueryState<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TTaggedQueryKey extends QueryKey = QueryKey,
+    TInferredQueryFnData = TTaggedQueryKey extends DataTag<
+      unknown,
+      infer TaggedValue
+    >
+      ? TaggedValue
+      : TQueryFnData,
+  >(
+    queryKey: TTaggedQueryKey,
+  ): QueryState<TInferredQueryFnData, TError> | undefined {
     const options = this.defaultQueryOptions({ queryKey })
-    return this.#queryCache.get<TQueryFnData, TError>(options.queryHash)?.state
+    return this.#queryCache.get<TInferredQueryFnData, TError>(options.queryHash)
+      ?.state
   }
 
   removeQueries(filters?: QueryFilters): void {
@@ -315,7 +326,7 @@ export class QueryClient {
     const defaultedOptions = this.defaultQueryOptions(options)
 
     // https://github.com/tannerlinsley/react-query/issues/652
-    if (typeof defaultedOptions.retry === 'undefined') {
+    if (defaultedOptions.retry === undefined) {
       defaultedOptions.retry = false
     }
 
@@ -511,18 +522,15 @@ export class QueryClient {
     }
 
     // dependent default values
-    if (typeof defaultedOptions.refetchOnReconnect === 'undefined') {
+    if (defaultedOptions.refetchOnReconnect === undefined) {
       defaultedOptions.refetchOnReconnect =
         defaultedOptions.networkMode !== 'always'
     }
-    if (typeof defaultedOptions.throwOnError === 'undefined') {
+    if (defaultedOptions.throwOnError === undefined) {
       defaultedOptions.throwOnError = !!defaultedOptions.suspense
     }
 
-    if (
-      typeof defaultedOptions.networkMode === 'undefined' &&
-      defaultedOptions.persister
-    ) {
+    if (!defaultedOptions.networkMode && defaultedOptions.persister) {
       defaultedOptions.networkMode = 'offlineFirst'
     }
 

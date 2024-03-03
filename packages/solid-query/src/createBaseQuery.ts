@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 // Had to disable the lint rule because isServer type is defined as false
 // in solid-js/web package. I'll create a GitHub issue with them to see
 // why that happens.
@@ -9,10 +8,8 @@ import {
   createMemo,
   createResource,
   createSignal,
-  mergeProps,
   on,
   onCleanup,
-  untrack,
 } from 'solid-js'
 import { createStore, reconcile, unwrap } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
@@ -123,26 +120,27 @@ export function createBaseQuery<
 
   const client = createMemo(() => useQueryClient(queryClient?.()))
   const isRestoring = useIsRestoring()
+  // There are times when we run a query on the server but the resource is never read
+  // This could lead to times when the queryObserver is unsubscribed before the resource has loaded
+  // Causing a time out error. To prevent this we will queue the unsubscribe if the cleanup is called
+  // before the resource has loaded
+  let unsubscribeQueued = false
 
-  const defaultedOptions = createMemo(() =>
-    mergeProps(client()?.defaultQueryOptions(options()) || {}, {
-      get _optimisticResults() {
-        return isRestoring() ? 'isRestoring' : 'optimistic'
-      },
-      structuralSharing: false,
-      ...(isServer && { retry: false, throwOnError: true }),
-    }),
-  )
+  const defaultedOptions = createMemo(() => {
+    const defaultOptions = client().defaultQueryOptions(options())
+    defaultOptions._optimisticResults = isRestoring()
+      ? 'isRestoring'
+      : 'optimistic'
+    defaultOptions.structuralSharing = false
+    if (isServer) {
+      defaultOptions.retry = false
+      defaultOptions.throwOnError = true
+    }
+    return defaultOptions
+  })
 
   const [observer, setObserver] = createSignal(
-    new Observer(client(), untrack(defaultedOptions)),
-  )
-  // we set the value in a computed because `createMemo`
-  // returns undefined during transitions
-  createComputed(
-    on(client, (c) => setObserver(new Observer(c, defaultedOptions())), {
-      defer: true,
-    }),
+    new Observer(client(), defaultedOptions()),
   )
 
   const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
@@ -162,11 +160,20 @@ export function createBaseQuery<
 
         if (unwrappedResult.isError) {
           reject(unwrappedResult.error)
+          unsubscribeIfQueued()
         } else {
           resolve(unwrappedResult)
+          unsubscribeIfQueued()
         }
       })()
     })
+  }
+
+  const unsubscribeIfQueued = () => {
+    if (unsubscribeQueued) {
+      unsubscribe?.()
+      unsubscribeQueued = false
+    }
   }
 
   const createClientSubscriber = () => {
@@ -177,23 +184,27 @@ export function createBaseQuery<
         // exist on the query-core QueryObserverResult type
         const reconcileOptions = obs.options.reconcile
 
-        setState((store) => {
-          return reconcileFn(
-            store,
-            result,
-            reconcileOptions === undefined ? false : reconcileOptions,
-          )
-        })
         // If the query has data we don't suspend but instead mutate the resource
         // This could happen when placeholderData/initialData is defined
-        if (
-          queryResource()?.data &&
-          result.data &&
-          !queryResource.loading &&
-          isRestoring()
-        )
+        if (queryResource()?.data && result.data && !queryResource.loading) {
+          setState((store) => {
+            return reconcileFn(
+              store,
+              result,
+              reconcileOptions === undefined ? false : reconcileOptions,
+            )
+          })
           mutate(state)
-        else refetch()
+        } else {
+          setState((store) => {
+            return reconcileFn(
+              store,
+              result,
+              reconcileOptions === undefined ? false : reconcileOptions,
+            )
+          })
+          refetch()
+        }
       })()
     })
   }
@@ -209,13 +220,14 @@ export function createBaseQuery<
     () => {
       const obs = observer()
       return new Promise((resolve, reject) => {
-        if (isServer) unsubscribe = createServerSubscriber(resolve, reject)
-        else if (!unsubscribe && !isRestoring())
+        if (isServer) {
+          unsubscribe = createServerSubscriber(resolve, reject)
+        } else if (!unsubscribe && !isRestoring()) {
           unsubscribe = createClientSubscriber()
-
+        }
         obs.updateResult()
 
-        if (!state.isLoading && !isRestoring()) {
+        if (!state.isLoading) {
           const query = obs.getCurrentQuery()
           resolve(hydratableObserverResult(query, state))
         }
@@ -275,18 +287,32 @@ export function createBaseQuery<
 
   createComputed(
     on(
-      [isRestoring, observer],
-      ([restoring]) => {
-        const _unsubscribe = unsubscribe
-        queueMicrotask(() => _unsubscribe?.())
-        unsubscribe = null
-        if (!restoring) refetch()
+      client,
+      (c) => {
+        if (unsubscribe) {
+          unsubscribe()
+        }
+        const newObserver = new Observer(c, defaultedOptions())
+        unsubscribe = createClientSubscriber()
+        setObserver(newObserver)
       },
-      { defer: true },
+      {
+        defer: true,
+      },
     ),
   )
 
+  createComputed(() => {
+    if (!isRestoring() && !isServer) {
+      refetch()
+    }
+  })
+
   onCleanup(() => {
+    if (isServer && queryResource.loading) {
+      unsubscribeQueued = true
+      return
+    }
     if (unsubscribe) {
       unsubscribe()
       unsubscribe = null
@@ -300,11 +326,7 @@ export function createBaseQuery<
         obs.setOptions(opts)
         setState(obs.getOptimisticResult(opts))
       },
-      {
-        // Defer because we don't need to trigger on first render
-        // This only cares about changes to options after the observer is created
-        defer: true,
-      },
+      { defer: true },
     ),
   )
 
