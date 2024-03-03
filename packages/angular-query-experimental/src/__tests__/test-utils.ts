@@ -1,4 +1,5 @@
-import { isSignal, untracked } from '@angular/core'
+import { type InputSignal, isSignal, untracked } from '@angular/core'
+import { SIGNAL, signalSetFn } from '@angular/core/primitives/signals'
 
 export function simpleFetcher(): Promise<string> {
   return new Promise((resolve) => {
@@ -81,4 +82,34 @@ export const expectSignals = <T extends Record<string, any>>(
   expected: Partial<{ [K in keyof T]: ReturnType<T[K]> }>,
 ): void => {
   expect(evaluateSignals(obj)).toMatchObject(expected)
+}
+
+type ToSignalInputUpdatableMap<T> = {
+  [K in keyof T as T[K] extends InputSignal<any>
+    ? K
+    : never]: T[K] extends InputSignal<infer Value> ? Value : never
+}
+
+function componentHasSignalInputProperty<TProperty extends string>(
+  component: object,
+  property: TProperty,
+): component is { [key in TProperty]: InputSignal<unknown> } {
+  return (
+    component.hasOwnProperty(property) && (component as any)[property][SIGNAL]
+  )
+}
+
+/**
+ * Set required signal input value to component fixture
+ * @see https://github.com/angular/angular/issues/54013
+ */
+export function setSignalInputs<T extends NonNullable<unknown>>(
+  component: T,
+  inputs: ToSignalInputUpdatableMap<T>,
+) {
+  for (const inputKey in inputs) {
+    if (componentHasSignalInputProperty(component, inputKey)) {
+      signalSetFn(component[inputKey][SIGNAL], inputs[inputKey])
+    }
+  }
 }
