@@ -247,7 +247,7 @@ export class QueryObserver<
 
   trackResult(
     result: QueryObserverResult<TData, TError>,
-    onPropertyTracked?: (key: keyof QueryObserverResult) => void,
+    onPropTracked?: (key: keyof QueryObserverResult) => void,
   ): QueryObserverResult<TData, TError> {
     const trackedResult = {} as QueryObserverResult<TData, TError>
 
@@ -256,16 +256,18 @@ export class QueryObserver<
         configurable: false,
         enumerable: true,
         get: () => {
-          if (!this.#trackedProps.has(key as keyof QueryObserverResult)) {
-            this.#trackedProps.add(key as keyof QueryObserverResult)
-            onPropertyTracked?.(key as keyof QueryObserverResult)
-          }
+          this.trackProp(key as keyof QueryObserverResult)
+          onPropTracked?.(key as keyof QueryObserverResult)
           return result[key as keyof QueryObserverResult]
         },
       })
     })
 
     return trackedResult
+  }
+
+  trackProp(key: keyof QueryObserverResult) {
+    this.#trackedProps.add(key)
   }
 
   getCurrentQuery(): Query<TQueryFnData, TError, TQueryData, TQueryKey> {
