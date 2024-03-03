@@ -444,7 +444,7 @@ export class QueryObserver<
         fetchStatus = canFetch(query.options.networkMode)
           ? 'fetching'
           : 'paused'
-        if (!state.dataUpdatedAt) {
+        if (state.data === undefined) {
           status = 'pending'
         }
       }
@@ -536,6 +536,7 @@ export class QueryObserver<
     const isError = status === 'error'
 
     const isLoading = isPending && isFetching
+    const hasData = state.data !== undefined
 
     const result: QueryObserverBaseResult<TData, TError> = {
       status,
@@ -558,10 +559,10 @@ export class QueryObserver<
         state.errorUpdateCount > queryInitialState.errorUpdateCount,
       isFetching,
       isRefetching: isFetching && !isPending,
-      isLoadingError: isError && state.dataUpdatedAt === 0,
+      isLoadingError: isError && !hasData,
       isPaused: fetchStatus === 'paused',
       isPlaceholderData,
-      isRefetchError: isError && state.dataUpdatedAt !== 0,
+      isRefetchError: isError && hasData,
       isStale: isStale(query, options),
       refetch: this.refetch,
     }
@@ -683,7 +684,7 @@ function shouldLoadOnMount(
 ): boolean {
   return (
     options.enabled !== false &&
-    !query.state.dataUpdatedAt &&
+    query.state.data === undefined &&
     !(query.state.status === 'error' && options.retryOnMount === false)
   )
 }
@@ -694,7 +695,7 @@ function shouldFetchOnMount(
 ): boolean {
   return (
     shouldLoadOnMount(query, options) ||
-    (query.state.dataUpdatedAt > 0 &&
+    (query.state.data !== undefined &&
       shouldFetchOn(query, options, options.refetchOnMount))
   )
 }
