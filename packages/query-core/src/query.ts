@@ -250,7 +250,7 @@ export class Query<
   isStale(): boolean {
     return (
       this.state.isInvalidated ||
-      !this.state.dataUpdatedAt ||
+      this.state.data === undefined ||
       this.#observers.some((observer) => observer.getCurrentResult().isStale)
     )
   }
@@ -258,7 +258,7 @@ export class Query<
   isStaleByTime(staleTime = 0): boolean {
     return (
       this.state.isInvalidated ||
-      !this.state.dataUpdatedAt ||
+      this.state.data === undefined ||
       !timeUntilStale(this.state.dataUpdatedAt, staleTime)
     )
   }
@@ -329,7 +329,7 @@ export class Query<
     fetchOptions?: FetchOptions,
   ): Promise<TData> {
     if (this.state.fetchStatus !== 'idle') {
-      if (this.state.dataUpdatedAt && fetchOptions?.cancelRefetch) {
+      if (this.state.data !== undefined && fetchOptions?.cancelRefetch) {
         // Silently cancel current fetch if the user wants to cancel refetch
         this.cancel({ silent: true })
       } else if (this.#promise) {
@@ -546,7 +546,7 @@ export class Query<
             fetchStatus: canFetch(this.options.networkMode)
               ? 'fetching'
               : 'paused',
-            ...(!state.dataUpdatedAt && {
+            ...(state.data === undefined && {
               error: null,
               status: 'pending',
             }),
