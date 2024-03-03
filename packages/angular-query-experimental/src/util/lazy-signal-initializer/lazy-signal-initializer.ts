@@ -1,4 +1,10 @@
-import { Injector, type Signal, computed, inject } from '@angular/core'
+import {
+  Injector,
+  type Signal,
+  computed,
+  inject,
+  untracked,
+} from '@angular/core'
 
 type SignalInitializerFn<T> = (injector: Injector) => Signal<T>
 
@@ -9,19 +15,14 @@ export function lazySignalInitializer<T>(
 
   let source: Signal<T> | null = null
 
-  const initializeObject = () => {
+  const unwrapSignal = () => {
     if (!source) {
-      source = initializerFn(injector)
-    }
-    return source
-  }
-
-  queueMicrotask(() => initializeObject())
-
-  return computed(() => {
-    if (!source) {
-      source = initializeObject()
+      source = untracked(() => initializerFn(injector))
     }
     return source()
-  })
+  }
+
+  queueMicrotask(() => unwrapSignal())
+
+  return computed(unwrapSignal)
 }
