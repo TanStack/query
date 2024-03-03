@@ -30,7 +30,7 @@ Infinite Queries can be prefetched like regular Queries. Per default, only the f
 [//]: # 'ExampleInfiniteQuery'
 
 ```tsx
-const prefetchTodos = async () => {
+const prefetchProjects = async () => {
   // The results of this query will be cached like a normal query
   await queryClient.prefetchInfiniteQuery({
     queryKey: ['projects'],
