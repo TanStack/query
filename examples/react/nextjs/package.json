@@ -7,8 +7,8 @@
     "start": "next start"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.24.2",
-    "@tanstack/react-query-devtools": "^5.24.2",
+    "@tanstack/react-query": "^5.24.6",
+    "@tanstack/react-query-devtools": "^5.24.6",
     "ky": "^1.2.0",
     "next": "^14.0.0",
     "react": "^18.2.0",

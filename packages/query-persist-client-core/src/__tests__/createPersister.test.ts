@@ -207,7 +207,7 @@ describe('createPersister', () => {
     )
 
     await persisterFn(queryFn, context, query)
-    query.state.dataUpdatedAt = 0
+    query.state.data = 'data0'
     query.fetch = vi.fn()
     expect(query.state.dataUpdatedAt).toEqual(0)
 

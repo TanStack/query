@@ -303,7 +303,7 @@ export function createBaseQuery<
   )
 
   createComputed(() => {
-    if (!isRestoring()) {
+    if (!isRestoring() && !isServer) {
       refetch()
     }
   })
