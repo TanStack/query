@@ -168,12 +168,19 @@ export class QueriesObserver<
         return this.#combineResult(r ?? result, combine)
       },
       () => {
-        return matches.map((match, index) => {
+        const trackedMatches = matches.map((match, index) => {
           const observerResult = result[index]!
           return !match.defaultedQueryOptions.notifyOnChangeProps
-            ? match.observer.trackResult(observerResult)
+            ? match.observer.trackResult(observerResult, (accessedKey) => {
+                // invoke getter on all observers to ensure proper (synchronized) tracking (#7000)
+                matches.forEach((_, i) => {
+                  void trackedMatches[i]![accessedKey]
+                })
+              })
             : observerResult
         })
+
+        return trackedMatches
       },
     ]
   }
