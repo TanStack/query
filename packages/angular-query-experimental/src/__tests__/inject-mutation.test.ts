@@ -1,10 +1,15 @@
-import { signal } from '@angular/core'
+import { Component, input, signal } from '@angular/core'
 import { QueryClient } from '@tanstack/query-core'
 import { TestBed } from '@angular/core/testing'
-import { expect, test, vi } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { injectMutation } from '../inject-mutation'
 import { provideAngularQuery } from '../providers'
-import { errorMutator, expectSignals, successMutator } from './test-utils'
+import {
+  errorMutator,
+  expectSignals,
+  setSignalInputs,
+  successMutator,
+} from './test-utils'
 
 const MUTATION_DURATION = 1000
 
@@ -302,5 +307,37 @@ describe('injectMutation', () => {
       expect(onSettled).toHaveBeenCalledTimes(1)
       expect(onSettledOnFunction).toHaveBeenCalledTimes(1)
     })
+  })
+
+  test('should support required signal inputs', async () => {
+    const mutationCache = queryClient.getMutationCache()
+
+    @Component({
+      selector: 'app-fake',
+      template: ``,
+      standalone: true,
+    })
+    class FakeComponent {
+      name = input.required<string>()
+
+      mutation = injectMutation(() => ({
+        mutationKey: ['fake', this.name()],
+        mutationFn: (params: string) => successMutator(params),
+      }))
+    }
+
+    const fixture = TestBed.createComponent(FakeComponent)
+    setSignalInputs(fixture.componentInstance, {
+      name: 'value',
+    })
+    fixture.detectChanges()
+
+    fixture.componentInstance.mutation.mutate('myValue')
+
+    await resolveMutations()
+
+    const mutation = mutationCache.find({ mutationKey: ['fake', 'value'] })
+    expect(mutation).toBeDefined()
+    expect(mutation!.options.mutationKey).toStrictEqual(['fake', 'value'])
   })
 })
