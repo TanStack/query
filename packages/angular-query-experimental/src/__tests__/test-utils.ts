@@ -1,5 +1,6 @@
 import { type InputSignal, isSignal, untracked } from '@angular/core'
 import { SIGNAL, signalSetFn } from '@angular/core/primitives/signals'
+import type { ComponentFixture } from '@angular/core/testing'
 
 export function simpleFetcher(): Promise<string> {
   return new Promise((resolve) => {
@@ -111,5 +112,16 @@ export function setSignalInputs<T extends NonNullable<unknown>>(
     if (componentHasSignalInputProperty(component, inputKey)) {
       signalSetFn(component[inputKey][SIGNAL], inputs[inputKey])
     }
+  }
+}
+
+export function setFixtureSignalInputs<T extends NonNullable<unknown>>(
+  componentFixture: ComponentFixture<T>,
+  inputs: ToSignalInputUpdatableMap<T>,
+  options: { detectChanges: boolean } = { detectChanges: true },
+) {
+  setSignalInputs(componentFixture.componentInstance, inputs)
+  if (options.detectChanges) {
+    componentFixture.detectChanges()
   }
 }
