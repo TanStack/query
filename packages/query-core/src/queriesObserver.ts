@@ -171,7 +171,12 @@ export class QueriesObserver<
         return matches.map((match, index) => {
           const observerResult = result[index]!
           return !match.defaultedQueryOptions.notifyOnChangeProps
-            ? match.observer.trackResult(observerResult)
+            ? match.observer.trackResult(observerResult, (accessedProp) => {
+                // track property on all observers to ensure proper (synchronized) tracking (#7000)
+                matches.forEach((m) => {
+                  m.observer.trackProp(accessedProp)
+                })
+              })
             : observerResult
         })
       },
