@@ -3,23 +3,20 @@ import { waitFor } from '@testing-library/react'
 
 import {
   MutationObserver,
+  QueryClient,
   QueryObserver,
+  dehydrate,
   focusManager,
+  hydrate,
   onlineManager,
 } from '..'
-import { noop } from '../utils'
 import {
   createQueryClient,
   mockOnlineManagerIsOnline,
   queryKey,
   sleep,
 } from './utils'
-import type {
-  QueryCache,
-  QueryClient,
-  QueryFunction,
-  QueryObserverOptions,
-} from '..'
+import type { QueryCache, QueryFunction, QueryObserverOptions } from '..'
 
 describe('queryClient', () => {
   let queryClient: QueryClient
@@ -1458,8 +1455,8 @@ describe('queryClient', () => {
       const observer2 = new MutationObserver(queryClient, {
         mutationFn: async () => 2,
       })
-      void observer1.mutate().catch(noop)
-      void observer2.mutate().catch(noop)
+      void observer1.mutate()
+      void observer2.mutate()
 
       await waitFor(() => {
         expect(observer1.getCurrentResult().isPaused).toBeTruthy()
@@ -1500,8 +1497,8 @@ describe('queryClient', () => {
           return 2
         },
       })
-      void observer1.mutate().catch(noop)
-      void observer2.mutate().catch(noop)
+      void observer1.mutate()
+      void observer2.mutate()
 
       await waitFor(() => {
         expect(observer1.getCurrentResult().isPaused).toBeTruthy()
@@ -1519,6 +1516,76 @@ describe('queryClient', () => {
       })
 
       expect(orders).toEqual(['1start', '1end', '2start', '2end'])
+    })
+
+    test('should resumePausedMutations when coming online after having called resumePausedMutations while offline', async () => {
+      const consoleMock = vi.spyOn(console, 'error')
+      consoleMock.mockImplementation(() => undefined)
+      onlineManager.setOnline(false)
+
+      const observer = new MutationObserver(queryClient, {
+        mutationFn: async () => 1,
+      })
+
+      void observer.mutate()
+
+      expect(observer.getCurrentResult().isPaused).toBeTruthy()
+
+      await queryClient.resumePausedMutations()
+
+      // still paused because we are still offline
+      expect(observer.getCurrentResult().isPaused).toBeTruthy()
+
+      onlineManager.setOnline(true)
+
+      await waitFor(() => {
+        expect(observer.getCurrentResult().status).toBe('success')
+      })
+    })
+
+    test('should resumePausedMutations when coming online after having restored cache (and resumed) while offline', async () => {
+      const consoleMock = vi.spyOn(console, 'error')
+      consoleMock.mockImplementation(() => undefined)
+      onlineManager.setOnline(false)
+
+      const observer = new MutationObserver(queryClient, {
+        mutationFn: async () => 1,
+      })
+
+      void observer.mutate()
+
+      expect(observer.getCurrentResult().isPaused).toBeTruthy()
+
+      const state = dehydrate(queryClient)
+
+      const newQueryClient = new QueryClient({
+        defaultOptions: {
+          mutations: {
+            mutationFn: async () => 1,
+          },
+        },
+      })
+
+      newQueryClient.mount()
+
+      hydrate(newQueryClient, state)
+
+      // still paused because we are still offline
+      expect(
+        newQueryClient.getMutationCache().getAll()[0]?.state.isPaused,
+      ).toBeTruthy()
+
+      await newQueryClient.resumePausedMutations()
+
+      onlineManager.setOnline(true)
+
+      await waitFor(() => {
+        expect(
+          newQueryClient.getMutationCache().getAll()[0]?.state.status,
+        ).toBe('success')
+      })
+
+      newQueryClient.unmount()
     })
 
     test('should notify queryCache and mutationCache after multiple mounts and single unmount', async () => {
