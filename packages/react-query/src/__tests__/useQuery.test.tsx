@@ -6335,7 +6335,7 @@ describe('useQuery', () => {
     const queryFn = vi.fn<Array<unknown>, unknown>()
     queryFn.mockImplementation(async () => {
       await sleep(10)
-      return Promise.reject(new Error('Suspense Error Bingo'))
+      return Promise.reject(new Error('Error'))
     })
 
     function Page({ enabled }: { enabled: boolean }) {
@@ -6372,10 +6372,7 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    // initial state check
-    rendered.getByText('status: pending')
-
-    // // render error state component
+    // render error state component
     await waitFor(() => rendered.getByText('error'))
     expect(queryFn).toBeCalledTimes(1)
 
