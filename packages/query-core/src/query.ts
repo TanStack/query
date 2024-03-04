@@ -390,6 +390,14 @@ export class Query<
 
     // Create fetch function
     const fetchFn = () => {
+      if (process.env.NODE_ENV !== 'production') {
+        if (this.options.queryFn === skipToken) {
+          console.error(
+            `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${this.options.queryHash}'`,
+          )
+        }
+      }
+
       if (!this.options.queryFn || this.options.queryFn === skipToken) {
         return Promise.reject(
           new Error(`Missing queryFn: '${this.options.queryHash}'`),
