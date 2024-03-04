@@ -6,6 +6,7 @@ import type {
   DefaultError,
   QueryClient,
   QueryFunction,
+  SkipToken,
   ThrowOnError,
 } from '@tanstack/query-core'
 
@@ -33,7 +34,9 @@ type GetSuspenseOptions<T> =
               ? UseSuspenseQueryOptions<TQueryFnData>
               : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
                 T extends {
-                    queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
+                    queryFn?:
+                      | QueryFunction<infer TQueryFnData, infer TQueryKey>
+                      | SkipToken
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
@@ -44,10 +47,9 @@ type GetSuspenseOptions<T> =
                     TQueryKey
                   >
                 : T extends {
-                      queryFn?: QueryFunction<
-                        infer TQueryFnData,
-                        infer TQueryKey
-                      >
+                      queryFn?:
+                        | QueryFunction<infer TQueryFnData, infer TQueryKey>
+                        | SkipToken
                       throwOnError?: ThrowOnError<any, infer TError, any, any>
                     }
                   ? UseSuspenseQueryOptions<
