@@ -4,7 +4,6 @@ import {
   noop,
   replaceData,
   shallowEqualObjects,
-  skipToken,
   timeUntilStale,
 } from './utils'
 import { notifyManager } from './notifyManager'
