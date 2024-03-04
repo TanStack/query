@@ -93,22 +93,6 @@ try {
 }
 ```
 
-Add `prefetchWhenStale` when you want to let it behave just like useQuery, Fetch data when no data is cached, get data from cache while data is still in `gcTime` but let it prefetch new data while `staleTime` is over for the next consumer.
-
-```tsx
-try {
-  const data = await queryClient.fetchQuery({
-    queryKey,
-    queryFn,
-    staleTime: 10000,
-    gcTime: 50000,
-    prefetchWhenStale: true
-  })
-} catch (error) {
-  console.log(error)
-}
-```
-
 **Options**
 
 The options for `fetchQuery` are exactly the same as those of [`useQuery`](./framework/react/reference/useQuery), except the following: `enabled, refetchInterval, refetchIntervalInBackground, refetchOnWindowFocus, refetchOnReconnect, refetchOnMount, notifyOnChangeProps, throwOnError, select, suspense, placeholderData`; which are strictly for useQuery and useInfiniteQuery. You can check the [source code](https://github.com/TanStack/query/blob/7cd2d192e6da3df0b08e334ea1cf04cd70478827/packages/query-core/src/types.ts#L119) for more clarity.

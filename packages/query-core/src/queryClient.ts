@@ -320,15 +320,10 @@ export class QueryClient {
     }
 
     const query = this.#queryCache.build(this, defaultedOptions)
-    const isStale = query.isStaleByTime(defaultedOptions.staleTime)
 
-    if (isStale && query.state.data && options.prefetchWhenStale) {
-      query.fetch(defaultedOptions)
-      return Promise.resolve(query.state.data as TData)
-    } else if (isStale) {
-      return query.fetch(defaultedOptions)
-    }
-    return query.fetch(defaultedOptions)
+    return query.isStaleByTime(defaultedOptions.staleTime)
+      ? query.fetch(defaultedOptions)
+      : Promise.resolve(query.state.data as TData)
   }
 
   prefetchQuery<

@@ -405,7 +405,6 @@ export interface FetchQueryOptions<
    * If the data is fresh it will be returned from the cache.
    */
   staleTime?: number
-  prefetchWhenStale?: boolean
 }
 
 type FetchInfiniteQueryPages<TQueryFnData = unknown, TPageParam = unknown> =
