@@ -449,6 +449,24 @@ describe('queryClient', () => {
         queryClient.ensureQueryData({ queryKey: [key], queryFn }),
       ).resolves.toEqual('data')
     })
+
+    test('should return the cached query data if the query is found and preFetchQuery in the background when revalidateIfStale is set', async () => {
+      const TIMEOUT = 10
+      const key = queryKey()
+      queryClient.setQueryData([key, 'id'], 'old')
+
+      const queryFn = () => new Promise((resolve) => {
+        setTimeout(() => resolve('new'), TIMEOUT)
+      })
+
+      await expect(
+        queryClient.ensureQueryData({ queryKey: [key, 'id'], queryFn, revalidateIfStale: true }),
+      ).resolves.toEqual('old')
+      await sleep(TIMEOUT + 10)
+      await expect(
+        queryClient.ensureQueryData({ queryKey: [key, 'id'], queryFn, revalidateIfStale: true }),
+      ).resolves.toEqual('new')
+    })
   })
 
   describe('getQueriesData', () => {
