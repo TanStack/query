@@ -1,5 +1,5 @@
 import { describe, expect, expectTypeOf, it } from 'vitest'
-import { QueryClient, dataTagSymbol } from '@tanstack/query-core'
+import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
 import { useQueries } from '../useQueries'
@@ -146,5 +146,27 @@ describe('queryOptions', () => {
 
     const data = queryClient.setQueryData(queryKey, 5)
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
+  })
+
+  it('should infer even if there is a conditional skipToken', () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+    })
+
+    const queryClient = new QueryClient()
+    const data = queryClient.getQueryData(options.queryKey)
+    expectTypeOf(data).toEqualTypeOf<number | undefined>()
+  })
+
+  it('should infer to unknown if we disable a query with just a skipToken', () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: skipToken,
+    })
+
+    const queryClient = new QueryClient()
+    const data = queryClient.getQueryData(options.queryKey)
+    expectTypeOf(data).toEqualTypeOf<unknown>()
   })
 })
