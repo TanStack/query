@@ -12,7 +12,9 @@ When `enabled` is `false`:
 - The query will not automatically fetch on mount.
 - The query will not automatically refetch in the background.
 - The query will ignore query client `invalidateQueries` and `refetchQueries` calls that would normally result in the query refetching.
-- `refetch` returned from `useQuery` can be used to manually trigger the query to fetch.
+- `refetch` returned from `useQuery` can be used to manually trigger the query to fetch. However, it will not work with `skipToken`.
+
+> Typescript users may prefer to use [skipToken](#typesafe-disabling-of-queries-using-skiptoken) as an alternative to `enabled = false`.
 
 [//]: # 'Example'
 
@@ -92,3 +94,31 @@ If you are using disabled or lazy queries, you can use the `isLoading` flag inst
 `isPending && isFetching`
 
 so it will only be true if the query is currently fetching for the first time.
+
+## Typesafe disabling of queries using `skipToken`
+
+If you are using TypeScript, you can use the `skipToken` to disable a query. This is useful when you want to disable a query based on a condition, but you still want to keep the query to be type safe.
+
+> IMPORTANT: `refetch` from `useQuery` will not work with `skipToken`. Other than that, `skipToken` works the same as `enabled: false`.
+
+[//]: # 'Example3'
+
+```tsx
+function Todos() {
+  const [filter, setFilter] = React.useState<string | undefined>()
+
+  const { data } = useQuery({
+      queryKey: ['todos', filter],
+      // ⬇️ disabled as long as the filter is undefined or empty
+      queryFn: filter ? () => fetchTodos(filter) : skipToken,
+  })
+
+  return (
+      <div>
+        // 🚀 applying the filter will enable and execute the query
+        <FiltersForm onApply={setFilter} />
+        {data && <TodosTable data={data}} />
+      </div>
+  )
+}
+```
