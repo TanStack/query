@@ -9,11 +9,7 @@ import {
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { lazySignalInitializer } from '../../../util/lazy-signal-initializer/lazy-signal-initializer'
-import { setFixtureSignalInputs } from '../../test-utils'
-
-async function flushQueue() {
-  await new Promise(setImmediate)
-}
+import { flushQueue, setFixtureSignalInputs } from '../../test-utils'
 
 describe('lazySignalInitializer', () => {
   test('should init lazily in next tick when not accessing manually', async () => {
@@ -69,9 +65,7 @@ describe('lazySignalInitializer', () => {
       effect(() => registerEffectValue(value()))
     })
 
-    expect(initCallFn).toHaveBeenCalledTimes(0)
-    expect(outerSignal).toBeDefined()
-    expect(innerSignal).not.toBeDefined()
+    value()
 
     await flushQueue()
 

@@ -125,3 +125,7 @@ export function setFixtureSignalInputs<T extends NonNullable<unknown>>(
     componentFixture.detectChanges()
   }
 }
+
+export async function flushQueue() {
+  await new Promise(setImmediate)
+}

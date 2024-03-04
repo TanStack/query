@@ -6,7 +6,6 @@ import {
   inject,
   runInInjectionContext,
   signal,
-  untracked,
 } from '@angular/core'
 import { MutationObserver, notifyManager } from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
@@ -14,7 +13,7 @@ import { signalProxy } from './signal-proxy'
 import { injectQueryClient } from './inject-query-client'
 import { noop } from './util'
 
-import { lazyInit } from './lazy-init'
+import { lazyInit } from './util/lazy-init/lazy-init'
 import type { DefaultError, QueryClient } from '@tanstack/query-core'
 import type {
   CreateMutateFunction,
@@ -55,11 +54,8 @@ export function injectMutation<
           observer.mutate(variables, mutateOptions).catch(noop)
         }
 
-        // Effects should not be called inside reactive contexts
-        untracked(() => {
-          effect(() => {
-            observer.setOptions(options(queryClient))
-          })
+        effect(() => {
+          observer.setOptions(options(queryClient))
         })
 
         const result = signal(observer.getCurrentResult())

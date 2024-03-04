@@ -55,19 +55,17 @@ export function injectMutationState<TResult = MutationState>(
         getResult(mutationCache, mutationStateOptionsFn()),
       )
 
-      untracked(() => {
-        effect(
-          () => {
-            const mutationStateOptions = mutationStateOptionsFn()
-            untracked(() => {
-              // Setting the signal from an effect because it's both 'computed' from options()
-              // and needs to be set imperatively in the mutationCache listener.
-              result.set(getResult(mutationCache, mutationStateOptions))
-            })
-          },
-          { injector },
-        )
-      })
+      effect(
+        () => {
+          const mutationStateOptions = mutationStateOptionsFn()
+          untracked(() => {
+            // Setting the signal from an effect because it's both 'computed' from options()
+            // and needs to be set imperatively in the mutationCache listener.
+            result.set(getResult(mutationCache, mutationStateOptions))
+          })
+        },
+        { injector },
+      )
 
       const unsubscribe = mutationCache.subscribe(
         notifyManager.batchCalls(() => {
