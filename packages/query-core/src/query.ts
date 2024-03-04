@@ -176,7 +176,6 @@ export class Query<
     this.queryHash = config.queryHash
     this.#initialState = config.state || getDefaultState(this.options)
     this.state = this.#initialState
-
     this.scheduleGc()
   }
   get meta(): QueryMeta | undefined {
@@ -240,9 +239,7 @@ export class Query<
 
   isActive(): boolean {
     return this.#observers.some(
-      (observer) =>
-        observer.options.enabled !== false &&
-        observer.options.queryFn !== skipToken,
+      (observer) => observer.options.enabled !== false,
     )
   }
 

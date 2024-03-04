@@ -153,7 +153,6 @@ export interface QueryOptions<
     NoInfer<TQueryKey>,
     NoInfer<TPageParam>
   >
-
   queryHash?: string
   queryKey?: TQueryKey
   queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>

@@ -692,8 +692,6 @@ function shouldLoadOnMount(
   return (
     options.enabled !== false &&
     query.state.data === undefined &&
-    options.queryFn !== skipToken &&
-    !query.state.dataUpdatedAt &&
     !(query.state.status === 'error' && options.retryOnMount === false)
   )
 }
