@@ -38,8 +38,9 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
 
         // Get query function
         const queryFn =
-          !context.options.queryFn || context.options.queryFn === skipToken
-            ? () => {
+          context.options.queryFn && context.options.queryFn !== skipToken
+            ? context.options.queryFn
+            : () => {
                 if (process.env.NODE_ENV !== 'production') {
                   if (context.options.queryFn === skipToken) {
                     console.error(
@@ -51,7 +52,6 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
                   new Error(`Missing queryFn: '${context.options.queryHash}'`),
                 )
               }
-            : context.options.queryFn
 
         // Create function to fetch a page
         const fetchPage = async (
