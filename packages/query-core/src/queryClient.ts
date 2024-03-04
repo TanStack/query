@@ -132,16 +132,20 @@ export class QueryClient {
   >(
     options: EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<TData> {
-    const defaultedOptions = this.defaultQueryOptions(options)
-    const query = this.#queryCache.build(this, defaultedOptions)
+    const cachedData = this.getQueryData<TData>(options.queryKey)
 
-    if (query.state.data !== undefined && query.isStaleByTime(defaultedOptions.staleTime) && options.revalidateIfStale) {
-      query.fetch(defaultedOptions)
+    if (cachedData === undefined) return this.fetchQuery(options)
+    else {
+      const defaultedOptions = this.defaultQueryOptions(options)
+      const query = this.#queryCache.build(this, defaultedOptions)
+
+      if (query.isStaleByTime(defaultedOptions.staleTime) && options.revalidateIfStale) {
+        void this.prefetchQuery(defaultedOptions)
+      }
+
+      return Promise.resolve(cachedData)
     }
 
-    return query.state.data !== undefined
-      ? Promise.resolve(query.state.data)
-      : this.fetchQuery(options)
   }
 
   getQueriesData<TQueryFnData = unknown>(
