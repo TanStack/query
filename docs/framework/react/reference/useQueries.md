@@ -6,11 +6,13 @@ title: useQueries
 The `useQueries` hook can be used to fetch a variable number of queries:
 
 ```tsx
-const ids = [1,2,3]
+const ids = [1, 2, 3]
 const results = useQueries({
-  queries: ids.map(id => (
-    { queryKey: ['post', id], queryFn: () => fetchPost(id), staleTime: Infinity },
-  )),
+  queries: ids.map((id) => ({
+    queryKey: ['post', id],
+    queryFn: () => fetchPost(id),
+    staleTime: Infinity,
+  })),
 })
 ```
 
@@ -38,17 +40,18 @@ The `useQueries` hook returns an array with all the query results. The order ret
 If you want to combine `data` (or other Query information) from the results into a single value, you can use the `combine` option. The result will be structurally shared to be as referentially stable as possible.
 
 ```tsx
-const ids = [1,2,3]
+const ids = [1, 2, 3]
 const combinedQueries = useQueries({
-  queries: ids.map(id => (
-    { queryKey: ['post', id], queryFn: () => fetchPost(id) },
-  )),
+  queries: ids.map((id) => ({
+    queryKey: ['post', id],
+    queryFn: () => fetchPost(id),
+  })),
   combine: (results) => {
-    return ({
-      data: results.map(result => result.data),
-      pending: results.some(result => result.isPending),
-    })
-  }
+    return {
+      data: results.map((result) => result.data),
+      pending: results.some((result) => result.isPending),
+    }
+  },
 })
 ```
 
