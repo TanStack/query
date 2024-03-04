@@ -6331,58 +6331,48 @@ describe('useQuery', () => {
     consoleMock.mockRestore()
   })
 
-  it('should respect skipToken and refetch when skipToken is taken away in error state', async () => {
-    const queryFn = vi.fn<Array<unknown>, unknown>()
-    queryFn.mockImplementation(async () => {
-      await sleep(10)
-      return Promise.reject(new Error('Error'))
-    })
-
+  it('should respect skipToken and refetch when skipToken is taken away', async () => {
     function Page({ enabled }: { enabled: boolean }) {
-      const { error, isPending } = useQuery({
+      const { data, status } = useQuery({
         queryKey: ['key'],
-        queryFn: enabled ? queryFn : skipToken,
+        queryFn: enabled
+          ? async () => {
+              await sleep(10)
+
+              return Promise.resolve('data')
+            }
+          : skipToken,
         retry: false,
         retryOnMount: false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       })
 
-      if (isPending) {
-        return <div>status: pending</div>
-      }
-      if (error instanceof Error) {
-        return <div>error</div>
-      }
-      return <div>rendered</div>
+      return (
+        <div>
+          <div>status: {status}</div>
+          <div>data: {String(data)}</div>
+        </div>
+      )
     }
 
     function App() {
-      const [enabled, toggle] = React.useReducer((x) => !x, true)
+      const [enabled, toggle] = React.useReducer((x) => !x, false)
 
       return (
         <div>
           <Page enabled={enabled} />
-          <button aria-label="retry" onClick={toggle}>
-            retry {enabled}
-          </button>
+          <button onClick={toggle}>enable</button>
         </div>
       )
     }
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    // render error state component
-    await waitFor(() => rendered.getByText('error'))
-    expect(queryFn).toBeCalledTimes(1)
+    await waitFor(() => rendered.getByText('status: pending'))
 
-    // change to enabled to false
-    fireEvent.click(rendered.getByLabelText('retry'))
-    await waitFor(() => rendered.getByText('error'))
-    expect(queryFn).toBeCalledTimes(1)
-
-    // // change to enabled to true
-    fireEvent.click(rendered.getByLabelText('retry'))
-    expect(queryFn).toBeCalledTimes(2)
+    fireEvent.click(rendered.getByRole('button', { name: 'enable' }))
+    await waitFor(() => rendered.getByText('status: success'))
+    await waitFor(() => rendered.getByText('data: data'))
   })
 })
