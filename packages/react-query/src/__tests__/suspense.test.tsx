@@ -5,7 +5,6 @@ import { ErrorBoundary } from 'react-error-boundary'
 import {
   QueryCache,
   QueryErrorResetBoundary,
-  skipToken,
   useQueryErrorResetBoundary,
   useSuspenseInfiniteQuery,
   useSuspenseQueries,
