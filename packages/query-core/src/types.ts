@@ -407,6 +407,23 @@ export interface FetchQueryOptions<
   staleTime?: number
 }
 
+export interface EnsureQueryDataOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = never,
+  > extends FetchQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  > {
+  revalidateIfStale?: boolean
+}
+
+
 type FetchInfiniteQueryPages<TQueryFnData = unknown, TPageParam = unknown> =
   | { pages?: never }
   | {
