@@ -7,7 +7,6 @@ import {
   useQueryClient,
   QueryClient,
   QueryClientProvider,
-  skipToken,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
@@ -104,7 +103,8 @@ const getPostById = async (id) => {
 function usePost(postId) {
   return useQuery({
     queryKey: ['post', postId],
-    queryFn: !!postId ? () => getPostById(postId) : skipToken,
+    queryFn: () => getPostById(postId),
+    enabled: !!postId,
   })
 }
 
