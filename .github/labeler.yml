@@ -1,0 +1,46 @@
+'package: angular-query-devtools-experimental':
+  - 'packages/angular-query-devtools-experimental/**/*'
+'package: angular-query-experimental':
+  - 'packages/angular-query-experimental/**/*'
+'package: eslint-plugin-query':
+  - 'packages/eslint-plugin-query/**/*'
+'package: query-async-storage-persister':
+  - 'packages/query-async-storage-persister/**/*'
+'package: query-broadcast-client-experimental':
+  - 'packages/query-broadcast-client-experimental/**/*'
+'package: query-codemods':
+  - 'packages/query-codemods/**/*'
+'package: query-core':
+  - 'packages/query-core/**/*'
+'package: query-devtools':
+  - 'packages/query-devtools/**/*'
+'package: query-persist-client-core':
+  - 'packages/query-persist-client-core/**/*'
+'package: query-sync-storage-persister':
+  - 'packages/query-sync-storage-persister/**/*'
+'package: react-query':
+  - 'packages/react-query/**/*'
+'package: react-query-devtools':
+  - 'packages/react-query-devtools/**/*'
+'package: react-query-next-experimental':
+  - 'packages/react-query-next-experimental/**/*'
+'package: react-query-persist-client':
+  - 'packages/react-query-persist-client/**/*'
+'package: solid-query':
+  - 'packages/solid-query/**/*'
+'package: solid-query-devtools':
+  - 'packages/solid-query-devtools/**/*'
+'package: solid-query-persist-client':
+  - 'packages/solid-query-persist-client/**/*'
+'package: svelte-query':
+  - 'packages/svelte-query/**/*'
+'package: svelte-query-devtools':
+  - 'packages/svelte-query-devtools/**/*'
+'package: svelte-query-persist-client':
+  - 'packages/svelte-query-persist-client/**/*'
+'package: vue-query':
+  - 'packages/vue-query/**/*'
+'package: vue-query-devtools':
+  - 'packages/vue-query-devtools/**/*'
+'documentation':
+  - 'docs/**/*'
