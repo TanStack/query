@@ -1,6 +1,5 @@
 import { describe, expect, expectTypeOf, it } from 'vitest'
-import { QueryClient } from '@tanstack/query-core'
-import { dataTagSymbol } from '@tanstack/query-core'
+import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
 import { useQueries } from '../useQueries'
@@ -40,6 +39,17 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve(5),
     })
 
+    const { data } = useSuspenseQuery(options)
+    expectTypeOf(data).toEqualTypeOf<number>()
+  })
+
+  it('should type error when having a skipToken and passed to useSuspenseQuery', () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+    })
+
+    // @ts-expect-error this is a good error, because skipToken is not allowed with useSuspenseQuery
     const { data } = useSuspenseQuery(options)
     expectTypeOf(data).toEqualTypeOf<number>()
   })
