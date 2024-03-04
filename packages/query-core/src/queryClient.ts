@@ -81,8 +81,8 @@ export class QueryClient {
         this.#queryCache.onFocus()
       }
     })
-    this.#unsubscribeOnline = onlineManager.subscribe(() => {
-      if (onlineManager.isOnline()) {
+    this.#unsubscribeOnline = onlineManager.subscribe((online) => {
+      if (online) {
         this.resumePausedMutations()
         this.#queryCache.onOnline()
       }
@@ -392,7 +392,10 @@ export class QueryClient {
   }
 
   resumePausedMutations(): Promise<unknown> {
-    return this.#mutationCache.resumePausedMutations()
+    if (onlineManager.isOnline()) {
+      return this.#mutationCache.resumePausedMutations()
+    }
+    return Promise.resolve()
   }
 
   getQueryCache(): QueryCache {
