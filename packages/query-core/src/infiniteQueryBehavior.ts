@@ -37,21 +37,21 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
         }
 
         // Get query function
-        const queryFn = context.options.queryFn
-
-        if (process.env.NODE_ENV !== 'production') {
-          if (queryFn === skipToken) {
-            console.error(
-              `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${context.options.queryHash}'`,
-            )
-          }
-        }
-
-        if (!queryFn || queryFn === skipToken) {
-          return Promise.reject(
-            new Error(`Missing queryFn: '${context.options.queryHash}'`),
-          )
-        }
+        const queryFn =
+          !context.options.queryFn || context.options.queryFn === skipToken
+            ? () => {
+                if (process.env.NODE_ENV !== 'production') {
+                  if (context.options.queryFn === skipToken) {
+                    console.error(
+                      `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${context.options.queryHash}'`,
+                    )
+                  }
+                }
+                return Promise.reject(
+                  new Error(`Missing queryFn: '${context.options.queryHash}'`),
+                )
+              }
+            : context.options.queryFn
 
         // Create function to fetch a page
         const fetchPage = async (
