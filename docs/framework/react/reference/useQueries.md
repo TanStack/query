@@ -9,7 +9,7 @@ The `useQueries` hook can be used to fetch a variable number of queries:
 const ids = [1,2,3]
 const results = useQueries({
   queries: ids.map(id => (
-    { queryKey: ['post', id], queryFn: () => fetchPost(id), staleTime: Infinity },
+    { queryKey: ['post', id], queryFn: () => fetchPost(id), staleTime: Infinity }
   )),
 })
 ```
@@ -41,7 +41,7 @@ If you want to combine `data` (or other Query information) from the results into
 const ids = [1,2,3]
 const combinedQueries = useQueries({
   queries: ids.map(id => (
-    { queryKey: ['post', id], queryFn: () => fetchPost(id) },
+    { queryKey: ['post', id], queryFn: () => fetchPost(id) }
   )),
   combine: (results) => {
     return ({
