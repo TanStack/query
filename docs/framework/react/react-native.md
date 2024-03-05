@@ -138,6 +138,6 @@ function MyComponent() {
     notifyOnChangeProps,
   })
 
-  return <div>DataUpdatedAt: {dataUpdatedAt}</div>
+  return <Text>DataUpdatedAt: {dataUpdatedAt}</Text>
 }
 ```

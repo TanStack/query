@@ -2,7 +2,7 @@ import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { QueryCache, queryOptions, useQueries } from '..'
+import { QueryCache, queryOptions, skipToken, useQueries } from '..'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 import type {
   QueryFunction,
@@ -10,7 +10,7 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from '..'
-import type { QueryFunctionContext } from '@tanstack/query-core'
+import type { QueryFunctionContext, SkipToken } from '@tanstack/query-core'
 
 describe('useQueries', () => {
   const queryCache = new QueryCache()
@@ -702,13 +702,19 @@ describe('useQueries', () => {
           (query) => {
             const { queryFn: fn, queryKey: key } = query
             expectTypeOf(fn).toEqualTypeOf<
-              QueryFunction<TQueryFnData, TQueryKey, never> | undefined
+              | typeof skipToken
+              | QueryFunction<TQueryFnData, TQueryKey, never>
+              | undefined
             >()
             return {
               queryKey: key,
-              queryFn: fn
-                ? (ctx: QueryFunctionContext<TQueryKey>) => fn.call({}, ctx)
-                : undefined,
+              queryFn:
+                fn && fn !== skipToken
+                  ? (ctx: QueryFunctionContext<TQueryKey>) => {
+                      expectTypeOf<TQueryKey>(ctx.queryKey)
+                      return fn.call({}, ctx)
+                    }
+                  : undefined,
             }
           },
         ),
