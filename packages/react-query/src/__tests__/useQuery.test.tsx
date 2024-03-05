@@ -6334,7 +6334,7 @@ describe('useQuery', () => {
   it('should respect skipToken and refetch when skipToken is taken away', async () => {
     function Page({ enabled }: { enabled: boolean }) {
       const { data, status } = useQuery({
-        queryKey: ['key'],
+        queryKey: ['key-skip-token'],
         queryFn: enabled
           ? async () => {
               await sleep(10)
