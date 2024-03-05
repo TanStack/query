@@ -1,9 +1,11 @@
+import { untracked } from '@angular/core'
+
 export function lazyInit<T extends object>(initializer: () => T): T {
   let object: T | null = null
 
   const initializeObject = () => {
     if (!object) {
-      object = initializer()
+      object = untracked(() => initializer())
     }
   }
 
