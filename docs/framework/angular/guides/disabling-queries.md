@@ -67,3 +67,27 @@ export class TodosComponent {
 ```
 
 [//]: # 'Example2'
+[//]: # 'Example3'
+
+```ts
+@Component({
+  selector: 'todos',
+  template: `
+    <div>
+      // 🚀 applying the filter will enable and execute the query
+      <filters-form onApply="filter.set" />
+      <todos-table data="query.data()" />
+    </div>
+  `,
+})
+export class TodosComponent {
+  filter = signal('')
+
+  todosQuery = injectQuery(() => ({
+    queryKey: ['todos', this.filter()],
+    queryFn: this.filter ? () => fetchTodos(this.filter()) : skipToken,
+  }))
+}
+```
+
+[//]: # 'Example3'

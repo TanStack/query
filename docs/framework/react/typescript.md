@@ -227,3 +227,8 @@ For tips and tricks around type inference, have a look at [React Query and TypeS
 the Community Resources. To find out how to get the best possible type-safety, you can read [Type-safe React Query](./community/tkdodos-blog#19-type-safe-react-query).
 
 [//]: # 'Materials'
+
+## Typesafe disabling of queries using `skipToken`
+
+If you are using TypeScript, you can use the `skipToken` to disable a query. This is useful when you want to disable a query based on a condition, but you still want to keep the query to be type safe.
+Read more about it in the [Disabling Queries](./guides/disabling-queries.md) guide.
