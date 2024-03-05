@@ -10,7 +10,11 @@ import {
   createQueries,
 } from '..'
 import { createQueryClient, expectTypeNotAny, queryKey, sleep } from './utils'
-import type { QueryFunctionContext, QueryKey } from '@tanstack/query-core'
+import type {
+  QueryFunctionContext,
+  QueryKey,
+  SkipToken,
+} from '@tanstack/query-core'
 import type {
   CreateQueryResult,
   QueryFunction,
@@ -581,13 +585,18 @@ describe('useQueries', () => {
           // no need to type the mapped query
           (query) => {
             const { queryFn: fn, queryKey: key } = query
-            expectTypeOf<QueryFunction<TQueryFnData, TQueryKey> | undefined>(fn)
+            expectTypeOf<
+              QueryFunction<TQueryFnData, TQueryKey> | SkipToken | undefined
+            >(fn)
             return {
               queryKey: key,
               queryFn: fn
                 ? (ctx: QueryFunctionContext<TQueryKey>) => {
                     expectTypeOf<TQueryKey>(ctx.queryKey)
-                    return fn.call({}, ctx)
+                    return (fn as QueryFunction<TQueryFnData, TQueryKey>).call(
+                      {},
+                      ctx,
+                    )
                   }
                 : undefined,
             }

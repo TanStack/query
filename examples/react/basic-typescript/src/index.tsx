@@ -2,7 +2,12 @@
 import * as React from 'react'
 import ReactDOM from 'react-dom/client'
 import axios from 'axios'
-import { useQuery, useQueryClient, QueryClient } from '@tanstack/react-query'
+import {
+  QueryClient,
+  skipToken,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
@@ -95,8 +100,7 @@ const getPostById = async (id: number): Promise<Post> => {
 function usePost(postId: number) {
   return useQuery({
     queryKey: ['post', postId],
-    queryFn: () => getPostById(postId),
-    enabled: !!postId,
+    queryFn: postId ? () => getPostById(postId) : skipToken,
   })
 }
 
