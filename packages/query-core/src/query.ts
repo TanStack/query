@@ -1,4 +1,4 @@
-import { noop, replaceData, timeUntilStale } from './utils'
+import { noop, replaceData, skipToken, timeUntilStale } from './utils'
 import { notifyManager } from './notifyManager'
 import { canFetch, createRetryer, isCancelledError } from './retryer'
 import { Removable } from './removable'
@@ -387,11 +387,20 @@ export class Query<
 
     // Create fetch function
     const fetchFn = () => {
-      if (!this.options.queryFn) {
+      if (process.env.NODE_ENV !== 'production') {
+        if (this.options.queryFn === skipToken) {
+          console.error(
+            `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${this.options.queryHash}'`,
+          )
+        }
+      }
+
+      if (!this.options.queryFn || this.options.queryFn === skipToken) {
         return Promise.reject(
           new Error(`Missing queryFn: '${this.options.queryHash}'`),
         )
       }
+
       this.#abortSignalConsumed = false
       if (this.options.persister) {
         return this.options.persister(

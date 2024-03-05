@@ -4,6 +4,7 @@ import {
   hashQueryKeyByOptions,
   noop,
   partialMatchKey,
+  skipToken,
 } from './utils'
 import { QueryCache } from './queryCache'
 import { MutationCache } from './mutationCache'
@@ -535,6 +536,13 @@ export class QueryClient {
 
     if (!defaultedOptions.networkMode && defaultedOptions.persister) {
       defaultedOptions.networkMode = 'offlineFirst'
+    }
+
+    if (
+      defaultedOptions.enabled !== true &&
+      defaultedOptions.queryFn === skipToken
+    ) {
+      defaultedOptions.enabled = false
     }
 
     return defaultedOptions as DefaultedQueryObserverOptions<
