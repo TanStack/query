@@ -2,6 +2,7 @@ import { describe, expect, expectTypeOf, it, test, vi } from 'vitest'
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
+import { skipToken } from '@tanstack/query-core'
 import { QueryCache, keepPreviousData, useQuery } from '..'
 import {
   Blink,
@@ -6328,5 +6329,52 @@ describe('useQuery', () => {
 
     expect(() => render(<Page />)).toThrow('Bad argument type')
     consoleMock.mockRestore()
+  })
+
+  it('should respect skipToken and refetch when skipToken is taken away', async () => {
+    const key = queryKey()
+
+    function Page({ enabled }: { enabled: boolean }) {
+      const { data, status } = useQuery({
+        queryKey: [key],
+        queryFn: enabled
+          ? async () => {
+              await sleep(10)
+
+              return Promise.resolve('data')
+            }
+          : skipToken,
+        retry: false,
+        retryOnMount: false,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+      })
+
+      return (
+        <div>
+          <div>status: {status}</div>
+          <div>data: {String(data)}</div>
+        </div>
+      )
+    }
+
+    function App() {
+      const [enabled, toggle] = React.useReducer((x) => !x, false)
+
+      return (
+        <div>
+          <Page enabled={enabled} />
+          <button onClick={toggle}>enable</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() => rendered.getByText('status: pending'))
+
+    fireEvent.click(rendered.getByRole('button', { name: 'enable' }))
+    await waitFor(() => rendered.getByText('status: success'))
+    await waitFor(() => rendered.getByText('data: data'))
   })
 })
