@@ -10,7 +10,7 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from '..'
-import type { QueryFunctionContext, SkipToken } from '@tanstack/query-core'
+import type { QueryFunctionContext } from '@tanstack/query-core'
 
 describe('useQueries', () => {
   const queryCache = new QueryCache()
