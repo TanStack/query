@@ -59,12 +59,3 @@ export function setActTimeout(fn: () => void, ms?: number) {
     fn()
   }, ms)
 }
-
-/**
- * Assert the parameter is not typed as `any`
- */
-export function expectTypeNotAny<T>(_: 0 extends 1 & T ? never : T): void {
-  return undefined
-}
-
-export const doNotExecute = (_func: () => void) => true
