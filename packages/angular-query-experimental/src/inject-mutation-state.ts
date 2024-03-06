@@ -10,6 +10,7 @@ import {
 } from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { injectQueryClient } from './inject-query-client'
+import { lazySignalInitializer } from './util/lazy-signal-initializer/lazy-signal-initializer'
 import type { Injector, Signal } from '@angular/core'
 
 type MutationStateOptions<TResult = MutationState> = {
@@ -49,33 +50,38 @@ export function injectMutationState<TResult = MutationState>(
 
     const mutationCache = queryClient.getMutationCache()
 
-    const result = signal<Array<TResult>>(
-      getResult(mutationCache, mutationStateOptionsFn()),
-    )
+    return lazySignalInitializer((injector) => {
+      const result = signal<Array<TResult>>(
+        getResult(mutationCache, mutationStateOptionsFn()),
+      )
 
-    effect(() => {
-      const mutationStateOptions = mutationStateOptionsFn()
-      untracked(() => {
-        // Setting the signal from an effect because it's both 'computed' from options()
-        // and needs to be set imperatively in the mutationCache listener.
-        result.set(getResult(mutationCache, mutationStateOptions))
-      })
+      effect(
+        () => {
+          const mutationStateOptions = mutationStateOptionsFn()
+          untracked(() => {
+            // Setting the signal from an effect because it's both 'computed' from options()
+            // and needs to be set imperatively in the mutationCache listener.
+            result.set(getResult(mutationCache, mutationStateOptions))
+          })
+        },
+        { injector },
+      )
+
+      const unsubscribe = mutationCache.subscribe(
+        notifyManager.batchCalls(() => {
+          const nextResult = replaceEqualDeep(
+            result(),
+            getResult(mutationCache, mutationStateOptionsFn()),
+          )
+          if (result() !== nextResult) {
+            result.set(nextResult)
+          }
+        }),
+      )
+
+      destroyRef.onDestroy(unsubscribe)
+
+      return result
     })
-
-    const unsubscribe = mutationCache.subscribe(
-      notifyManager.batchCalls(() => {
-        const nextResult = replaceEqualDeep(
-          result(),
-          getResult(mutationCache, mutationStateOptionsFn()),
-        )
-        if (result() !== nextResult) {
-          result.set(nextResult)
-        }
-      }),
-    )
-
-    destroyRef.onDestroy(unsubscribe)
-
-    return result
   })
 }
