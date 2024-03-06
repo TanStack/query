@@ -1,13 +1,14 @@
-import { computed, signal } from '@angular/core'
+import { Component, computed, input, signal } from '@angular/core'
 import { TestBed, fakeAsync, flush, tick } from '@angular/core/testing'
 import { QueryClient } from '@tanstack/query-core'
-import { expect, vi } from 'vitest'
+import { describe, expect, vi } from 'vitest'
 import { injectQuery } from '../inject-query'
 import { provideAngularQuery } from '../providers'
 import {
   delayedFetcher,
   getSimpleFetcherWithReturnData,
   rejectFetcher,
+  setSignalInputs,
   simpleFetcher,
 } from './test-utils'
 
@@ -214,5 +215,33 @@ describe('injectQuery', () => {
     flush()
 
     expect(query.status()).toBe('error')
+  }))
+
+  test('should render with required signal inputs', fakeAsync(async () => {
+    @Component({
+      selector: 'app-fake',
+      template: `{{ query.data() }}`,
+      standalone: true,
+    })
+    class FakeComponent {
+      name = input.required<string>()
+
+      query = injectQuery(() => ({
+        queryKey: ['fake', this.name()],
+        queryFn: () => Promise.resolve(this.name()),
+      }))
+    }
+
+    const fixture = TestBed.createComponent(FakeComponent)
+    setSignalInputs(fixture.componentInstance, {
+      name: 'signal-input-required-test',
+    })
+
+    flush()
+    await fixture.detectChanges()
+
+    expect(fixture.debugElement.nativeElement.textContent).toEqual(
+      'signal-input-required-test',
+    )
   }))
 })
