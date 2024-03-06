@@ -1,6 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { queryOptions } from '../queryOptions'
 import { useQueries } from '../useQueries'
+import { skipToken } from '..'
 import type { UseQueryOptions } from '../types'
 
 describe('UseQueries config object overload', () => {
@@ -122,5 +123,20 @@ describe('UseQueries config object overload', () => {
 
       expectTypeOf(data).toEqualTypeOf<Data | undefined>()
     })
+  })
+
+  it('TData should have correct type when conditional skipToken is passed', () => {
+    const queryResults = useQueries({
+      queries: [
+        {
+          queryKey: ['withSkipToken'],
+          queryFn: Math.random() > 0.5 ? () => 3 : skipToken,
+        },
+      ],
+    })
+
+    const data = queryResults[0].data
+
+    expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
 })
