@@ -1,4 +1,4 @@
-import { describe, expect, expectTypeOf, it } from 'vitest'
+import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
 import type { DataTag, InfiniteData } from '../types'
 
