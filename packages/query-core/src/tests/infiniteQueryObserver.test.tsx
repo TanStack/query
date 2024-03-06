@@ -178,36 +178,31 @@ describe('InfiniteQueryObserver', () => {
 
     const result = observer.getCurrentResult()
 
-    if (result.isPending) {
-      expectTypeOf(result.data).toEqualTypeOf<undefined>()
-      expectTypeOf(result.error).toEqualTypeOf<null>()
-      expectTypeOf(result.isLoading).toEqualTypeOf<boolean>()
-      expectTypeOf(result.status).toEqualTypeOf<'pending'>()
-    }
+    result.isPending &&
+      expectTypeOf<undefined>(result.data) &&
+      expectTypeOf<null>(result.error) &&
+      expectTypeOf<boolean>(result.isLoading) &&
+      expectTypeOf<'pending'>(result.status)
 
-    if (result.isLoading) {
-      expectTypeOf(result.data).toEqualTypeOf<undefined>()
-      expectTypeOf(result.error).toEqualTypeOf<null>()
-      expectTypeOf(result.isPending).toEqualTypeOf<true>()
-      expectTypeOf(result.status).toEqualTypeOf<'pending'>()
-    }
+    result.isLoading &&
+      expectTypeOf<undefined>(result.data) &&
+      expectTypeOf<null>(result.error) &&
+      expectTypeOf<true>(result.isPending) &&
+      expectTypeOf<'pending'>(result.status)
 
-    if (result.isLoadingError) {
-      expectTypeOf(result.data).toEqualTypeOf<undefined>()
-      expectTypeOf(result.error).toEqualTypeOf<Error>()
-      expectTypeOf(result.status).toEqualTypeOf<'error'>()
-    }
+    result.isLoadingError &&
+      expectTypeOf<undefined>(result.data) &&
+      expectTypeOf<Error>(result.error) &&
+      expectTypeOf<'error'>(result.status)
 
-    if (result.isRefetchError) {
-      expectTypeOf(result.data).toEqualTypeOf<InfiniteData<string>>()
-      expectTypeOf(result.error).toEqualTypeOf<Error>()
-      expectTypeOf(result.status).toEqualTypeOf<'error'>()
-    }
+    result.isRefetchError &&
+      expectTypeOf<InfiniteData<string>>(result.data) &&
+      expectTypeOf<Error>(result.error) &&
+      expectTypeOf<'error'>(result.status)
 
-    if (result.isSuccess) {
-      expectTypeOf(result.data).toEqualTypeOf<InfiniteData<string>>()
-      expectTypeOf(result.error).toEqualTypeOf<null>()
-      expectTypeOf(result.status).toEqualTypeOf<'success'>()
-    }
+    result.isSuccess &&
+      expectTypeOf<InfiniteData<string>>(result.data) &&
+      expectTypeOf<null>(result.error) &&
+      expectTypeOf<'success'>(result.status)
   })
 })
