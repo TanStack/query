@@ -10,7 +10,7 @@ import {
 } from '@angular/core'
 import { notifyManager } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
-import { lazyInit } from './lazy-init'
+import { lazyInit } from './util/lazy-init/lazy-init'
 import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
 import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
 
@@ -67,20 +67,17 @@ export function createBaseQuery<
         observer.getOptimisticResult(defaultedOptionsSignal()),
       )
 
-      // Effects should not be called inside reactive contexts
-      untracked(() =>
-        effect(() => {
-          const defaultedOptions = defaultedOptionsSignal()
-          observer.setOptions(defaultedOptions, {
-            // Do not notify on updates because of changes in the options because
-            // these changes should already be reflected in the optimistic result.
-            listeners: false,
-          })
-          untracked(() => {
-            resultSignal.set(observer.getOptimisticResult(defaultedOptions))
-          })
-        }),
-      )
+      effect(() => {
+        const defaultedOptions = defaultedOptionsSignal()
+        observer.setOptions(defaultedOptions, {
+          // Do not notify on updates because of changes in the options because
+          // these changes should already be reflected in the optimistic result.
+          listeners: false,
+        })
+        untracked(() => {
+          resultSignal.set(observer.getOptimisticResult(defaultedOptions))
+        })
+      })
 
       // observer.trackResult is not used as this optimization is not needed for Angular
       const unsubscribe = observer.subscribe(
