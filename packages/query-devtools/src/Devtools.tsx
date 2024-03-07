@@ -2509,7 +2509,10 @@ const createSubscribeToMutationCacheBatcher = <T,>(
   return value
 }
 
-const stylesFactory = (theme: 'light' | 'dark', css) => {
+const stylesFactory = (
+  theme: 'light' | 'dark',
+  css: (typeof goober)['css'],
+) => {
   const { colors, font, size, alpha, shadow, border } = tokens
 
   const t = (light: string, dark: string) => (theme === 'light' ? light : dark)
@@ -3436,5 +3439,5 @@ const stylesFactory = (theme: 'light' | 'dark', css) => {
   }
 }
 
-const lightStyles = (css) => stylesFactory('light', css)
-const darkStyles = (css) => stylesFactory('dark', css)
+const lightStyles = (css: (typeof goober)['css']) => stylesFactory('light', css)
+const darkStyles = (css: (typeof goober)['css']) => stylesFactory('dark', css)
