@@ -1,7 +1,7 @@
 import { Component, input, signal } from '@angular/core'
 import { QueryClient } from '@tanstack/query-core'
 import { TestBed } from '@angular/core/testing'
-import { describe, expect, test, vi } from 'vitest'
+import { describe, expect, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
 import { injectMutation } from '../inject-mutation'
 import { provideAngularQuery } from '../providers'
@@ -401,5 +401,58 @@ describe('injectMutation', () => {
     const [mutation1, mutation2] = mutations
     expect(mutation1!.options.mutationKey).toEqual(['fake', 'value'])
     expect(mutation2!.options.mutationKey).toEqual(['fake', 'updatedValue'])
+  })
+
+  describe('throwOnError', () => {
+    test('should evaluate throwOnError when mutation is expected to throw', async () => {
+      const err = new Error('Expected mock error. All is well!')
+      const boundaryFn = vi.fn()
+      const { mutate } = TestBed.runInInjectionContext(() => {
+        return injectMutation(() => ({
+          mutationKey: ['fake'],
+          mutationFn: () => {
+            return Promise.reject(err)
+          },
+          throwOnError: boundaryFn,
+        }))
+      })
+
+      mutate()
+
+      await resolveMutations()
+
+      expect(boundaryFn).toHaveBeenCalledTimes(1)
+      expect(boundaryFn).toHaveBeenCalledWith(err)
+    })
+  })
+
+  test('should throw when throwOnError is true', async () => {
+    const err = new Error('Expected mock error. All is well!')
+    const { mutateAsync } = TestBed.runInInjectionContext(() => {
+      return injectMutation(() => ({
+        mutationKey: ['fake'],
+        mutationFn: () => {
+          return Promise.reject(err)
+        },
+        throwOnError: true,
+      }))
+    })
+
+    await expect(() => mutateAsync()).rejects.toThrowError(err)
+  })
+
+  test('should throw when throwOnError function returns true', async () => {
+    const err = new Error('Expected mock error. All is well!')
+    const { mutateAsync } = TestBed.runInInjectionContext(() => {
+      return injectMutation(() => ({
+        mutationKey: ['fake'],
+        mutationFn: () => {
+          return Promise.reject(err)
+        },
+        throwOnError: () => true,
+      }))
+    })
+
+    await expect(() => mutateAsync()).rejects.toThrowError(err)
   })
 })
