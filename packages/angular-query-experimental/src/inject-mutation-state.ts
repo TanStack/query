@@ -1,4 +1,11 @@
-import { DestroyRef, effect, inject, signal, untracked } from '@angular/core'
+import {
+  DestroyRef,
+  NgZone,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core'
 import {
   type DefaultError,
   type Mutation,
@@ -47,6 +54,7 @@ export function injectMutationState<TResult = MutationState>(
   return assertInjector(injectMutationState, options?.injector, () => {
     const destroyRef = inject(DestroyRef)
     const queryClient = injectQueryClient()
+    const ngZone = inject(NgZone)
 
     const mutationCache = queryClient.getMutationCache()
 
@@ -74,7 +82,9 @@ export function injectMutationState<TResult = MutationState>(
             getResult(mutationCache, mutationStateOptionsFn()),
           )
           if (result() !== nextResult) {
-            result.set(nextResult)
+            ngZone.run(() => {
+              result.set(nextResult)
+            })
           }
         }),
       )
