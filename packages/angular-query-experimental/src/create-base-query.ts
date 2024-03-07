@@ -1,6 +1,7 @@
 import {
   DestroyRef,
   Injector,
+  NgZone,
   computed,
   effect,
   inject,
@@ -11,7 +12,12 @@ import {
 import { notifyManager } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
 import { lazyInit } from './util/lazy-init/lazy-init'
-import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
+import type {
+  QueryClient,
+  QueryKey,
+  QueryObserver,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
 
 /**
@@ -37,6 +43,7 @@ export function createBaseQuery<
   queryClient: QueryClient,
 ): CreateBaseQueryResult<TData, TError> {
   const injector = inject(Injector)
+  const ngZone = inject(NgZone)
 
   return lazyInit(() => {
     return runInInjectionContext(injector, () => {
@@ -81,7 +88,11 @@ export function createBaseQuery<
 
       // observer.trackResult is not used as this optimization is not needed for Angular
       const unsubscribe = observer.subscribe(
-        notifyManager.batchCalls((val) => resultSignal.set(val)),
+        notifyManager.batchCalls((val: QueryObserverResult<TData, TError>) => {
+          ngZone.run(() => {
+            resultSignal.set(val)
+          })
+        }),
       )
       destroyRef.onDestroy(unsubscribe)
 
