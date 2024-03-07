@@ -1,4 +1,4 @@
-import { DestroyRef, inject, signal } from '@angular/core'
+import { DestroyRef, NgZone, inject, signal } from '@angular/core'
 import { type QueryFilters, notifyManager } from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { injectQueryClient } from './inject-query-client'
@@ -11,6 +11,7 @@ export function injectIsFetching(
   return assertInjector(injectIsFetching, injector, () => {
     const queryClient = injectQueryClient()
     const destroyRef = inject(DestroyRef)
+    const ngZone = inject(NgZone)
 
     const cache = queryClient.getQueryCache()
     // isFetching is the prev value initialized on mount *
@@ -24,7 +25,9 @@ export function injectIsFetching(
         if (isFetching !== newIsFetching) {
           // * and update with each change
           isFetching = newIsFetching
-          result.set(isFetching)
+          ngZone.run(() => {
+            result.set(isFetching)
+          })
         }
       }),
     )
