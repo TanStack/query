@@ -201,11 +201,64 @@ describe('injectQuery', () => {
     flush()
   }))
 
+  describe('throwOnError', () => {
+    test('should evaluate throwOnError when query is expected to throw', fakeAsync(() => {
+      const boundaryFn = vi.fn()
+      TestBed.runInInjectionContext(() => {
+        return injectQuery(() => ({
+          queryKey: ['key12'],
+          queryFn: rejectFetcher,
+          throwOnError: boundaryFn,
+        }))
+      })
+
+      flush()
+
+      expect(boundaryFn).toHaveBeenCalledTimes(1)
+      expect(boundaryFn).toHaveBeenCalledWith(
+        Error('Some error'),
+        expect.objectContaining({
+          state: expect.objectContaining({ status: 'error' }),
+        }),
+      )
+    }))
+
+    test('should throw when throwOnError is true', fakeAsync(() => {
+      TestBed.runInInjectionContext(() => {
+        return injectQuery(() => ({
+          queryKey: ['key13'],
+          queryFn: rejectFetcher,
+          throwOnError: true,
+        }))
+      })
+
+      expect(() => {
+        flush()
+      }).toThrowError('Some error')
+      flush()
+    }))
+
+    test('should throw when throwOnError function returns true', fakeAsync(() => {
+      TestBed.runInInjectionContext(() => {
+        return injectQuery(() => ({
+          queryKey: ['key14'],
+          queryFn: rejectFetcher,
+          throwOnError: () => true,
+        }))
+      })
+
+      expect(() => {
+        flush()
+      }).toThrowError('Some error')
+      flush()
+    }))
+  })
+
   test('should set state to error when queryFn returns reject promise', fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
         retry: false,
-        queryKey: ['key13'],
+        queryKey: ['key15'],
         queryFn: rejectFetcher,
       }))
     })
@@ -238,7 +291,7 @@ describe('injectQuery', () => {
     })
 
     flush()
-    await fixture.detectChanges()
+    fixture.detectChanges()
 
     expect(fixture.debugElement.nativeElement.textContent).toEqual(
       'signal-input-required-test',

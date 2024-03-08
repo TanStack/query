@@ -12,7 +12,7 @@ import { MutationObserver, notifyManager } from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { signalProxy } from './signal-proxy'
 import { injectQueryClient } from './inject-query-client'
-import { noop } from './util'
+import { noop, shouldThrowError } from './util'
 
 import { lazyInit } from './util/lazy-init/lazy-init'
 import type {
@@ -69,10 +69,21 @@ export function injectMutation<
         const unsubscribe = observer.subscribe(
           notifyManager.batchCalls(
             (
-              val: MutationObserverResult<TData, TError, TVariables, TContext>,
+              state: MutationObserverResult<
+                TData,
+                TError,
+                TVariables,
+                TContext
+              >,
             ) => {
               ngZone.run(() => {
-                result.set(val)
+                if (
+                  state.isError &&
+                  shouldThrowError(observer.options.throwOnError, [state.error])
+                ) {
+                  throw state.error
+                }
+                result.set(state)
               })
             },
           ),
