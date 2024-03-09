@@ -581,11 +581,13 @@ describe('useMutation', () => {
 
   it('should be able to retry a mutation when online', async () => {
     const onlineMock = mockOnlineManagerIsOnline(false)
+    const key = queryKey()
 
     let count = 0
 
     function Page() {
       const state = useMutation({
+        mutationKey: key,
         mutationFn: async (_text: string) => {
           await sleep(10)
           count++
@@ -614,8 +616,12 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     await waitFor(() => rendered.getByText('isPaused: true'))
 
-    expect(queryClient.getMutationCache().getAll().length).toBe(1)
-    expect(queryClient.getMutationCache().getAll()[0]?.state).toMatchObject({
+    expect(
+      queryClient.getMutationCache().findAll({ mutationKey: key }).length,
+    ).toBe(1)
+    expect(
+      queryClient.getMutationCache().findAll({ mutationKey: key })[0]?.state,
+    ).toMatchObject({
       status: 'pending',
       isPaused: true,
       failureCount: 1,
@@ -627,7 +633,9 @@ describe('useMutation', () => {
 
     await waitFor(() => rendered.getByText('data: data'))
 
-    expect(queryClient.getMutationCache().getAll()[0]?.state).toMatchObject({
+    expect(
+      queryClient.getMutationCache().findAll({ mutationKey: key })[0]?.state,
+    ).toMatchObject({
       status: 'success',
       isPaused: false,
       failureCount: 0,
