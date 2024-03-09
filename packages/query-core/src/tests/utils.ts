@@ -57,13 +57,3 @@ export function setIsServer(isServer: boolean) {
     })
   }
 }
-
-export const doNotExecute = (_func: () => void) => true
-
-export type Equal<TTargetA, TTargetB> = (<T>() => T extends TTargetA
-  ? 1
-  : 2) extends <T>() => T extends TTargetB ? 1 : 2
-  ? true
-  : false
-
-export type Expect<T extends true> = T

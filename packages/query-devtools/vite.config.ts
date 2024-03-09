@@ -11,5 +11,6 @@ export default defineConfig({
     environment: 'jsdom',
     coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
     typecheck: { enabled: true },
+    restoreMocks: true,
   },
 })
