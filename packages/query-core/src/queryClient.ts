@@ -140,7 +140,7 @@ export class QueryClient {
       const defaultedOptions = this.defaultQueryOptions(options)
       const query = this.#queryCache.build(this, defaultedOptions)
 
-      if (query.isStaleByTime(defaultedOptions.staleTime) && options.revalidateIfStale) {
+      if (options.revalidateIfStale && query.isStaleByTime(defaultedOptions.staleTime)) {
         void this.prefetchQuery(defaultedOptions)
       }
 
