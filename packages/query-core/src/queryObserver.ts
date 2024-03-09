@@ -741,7 +741,7 @@ function isStale(
   query: Query<any, any, any, any>,
   options: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
-  return query.isStaleByTime(options.staleTime)
+  return options.enabled !== false && query.isStaleByTime(options.staleTime)
 }
 
 // this function would decide if we will update the observer's 'current'
