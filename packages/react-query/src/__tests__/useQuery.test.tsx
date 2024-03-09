@@ -1223,7 +1223,7 @@ describe('useQuery', () => {
       data: undefined,
       isFetching: false,
       isSuccess: false,
-      isStale: true,
+      isStale: false,
     })
   })
 
@@ -1248,7 +1248,7 @@ describe('useQuery', () => {
       React.useEffect(() => {
         setActTimeout(() => {
           queryClient.invalidateQueries({ queryKey: key })
-        }, 20)
+        }, 10)
       }, [])
 
       return null
@@ -1256,14 +1256,14 @@ describe('useQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await sleep(50)
 
     expect(states.length).toBe(1)
     expect(states[0]).toMatchObject({
       data: undefined,
       isFetching: false,
       isSuccess: false,
-      isStale: true,
+      isStale: false,
     })
   })
 
@@ -3783,9 +3783,9 @@ describe('useQuery', () => {
         <div>
           <div>FetchStatus: {query.fetchStatus}</div>
           <h2>Data: {query.data || 'no data'}</h2>
-          {query.isStale ? (
+          {shouldFetch ? null : (
             <button onClick={() => setShouldFetch(true)}>fetch</button>
-          ) : null}
+          )}
         </div>
       )
     }
@@ -3956,7 +3956,8 @@ describe('useQuery', () => {
     expect(results.length).toBe(3)
     expect(results[0]).toMatchObject({ data: 'initial', isStale: true })
     expect(results[1]).toMatchObject({ data: 'fetched data', isStale: true })
-    expect(results[2]).toMatchObject({ data: 'fetched data', isStale: true })
+    // disabled observers are not stale
+    expect(results[2]).toMatchObject({ data: 'fetched data', isStale: false })
   })
 
   it('it should support enabled:false in query object syntax', async () => {
@@ -4891,14 +4892,14 @@ describe('useQuery', () => {
       isPending: true,
       isFetching: false,
       isSuccess: false,
-      isStale: true,
+      isStale: false,
     })
     expect(states[1]).toMatchObject({
       data: undefined,
       isPending: true,
       isFetching: true,
       isSuccess: false,
-      isStale: true,
+      isStale: false,
     })
     expect(states[2]).toMatchObject({
       data: 1,
@@ -4912,7 +4913,7 @@ describe('useQuery', () => {
       isPending: true,
       isFetching: false,
       isSuccess: false,
-      isStale: true,
+      isStale: false,
     })
   })
 
