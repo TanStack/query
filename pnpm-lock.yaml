@@ -2151,21 +2151,15 @@ importers:
         specifier: ^6.5.1
         version: 6.5.1
       vue-demi:
-        specifier: ^0.14.6
-        version: 0.14.6(@vue/composition-api@1.7.2)(vue@3.3.0)
+        specifier: ^0.14.7
+        version: 0.14.7(vue@3.3.0)
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
         version: 5.0.4(vite@5.1.1)(vue@3.3.0)
-      '@vue/composition-api':
-        specifier: 1.7.2
-        version: 1.7.2(vue@3.3.0)
       vue:
         specifier: ^3.3.0
         version: 3.3.0
-      vue2.7:
-        specifier: npm:vue@2.7
-        version: /vue@2.7.0
 
   packages/vue-query-devtools:
     dependencies:
@@ -10031,14 +10025,6 @@ packages:
       '@vue/compiler-core': 3.3.0
       '@vue/shared': 3.3.0
 
-  /@vue/compiler-sfc@2.7.0:
-    resolution: {integrity: sha512-hPOI15RsXO1G8aK6FNF93ld9C/D4e/uAJBE59K8NnL8giuKqeVksvamgu4jKhCJ9f9bbUpj5BuSV3sufIx2hmw==}
-    dependencies:
-      '@babel/parser': 7.23.9
-      postcss: 8.4.35
-      source-map: 0.6.1
-    dev: true
-
   /@vue/compiler-sfc@3.3.0:
     resolution: {integrity: sha512-g8j35REOBMN0oRnJ4eEO3RMLj8ebEehQk6JkH6Q9df+M1Sb8eLeX0Zb7GBBPrrjfmyKzGvp/TE3fyOLUq/H5ow==}
     dependencies:
@@ -10058,13 +10044,6 @@ packages:
     dependencies:
       '@vue/compiler-dom': 3.3.0
       '@vue/shared': 3.3.0
-
-  /@vue/composition-api@1.7.2(vue@3.3.0):
-    resolution: {integrity: sha512-M8jm9J/laYrYT02665HkZ5l2fWTK4dcVg3BsDHm/pfz+MjDYwX+9FUaZyGwEyXEDonQYRCo0H7aLgdklcIELjw==}
-    peerDependencies:
-      vue: '>= 2.5 < 2.7'
-    dependencies:
-      vue: 3.3.0
 
   /@vue/devtools-api@6.5.1:
     resolution: {integrity: sha512-+KpckaAQyfbvshdDW5xQylLni1asvNSGme1JFs8I1+/H5pHEhqUKMEQD/qn3Nx5+/nycBq11qAEi8lk+LXI2dA==}
@@ -29393,8 +29372,8 @@ packages:
     resolution: {integrity: sha512-AyFQ0EVmsOZOlAnxoFOGOq1SQDWAB7C6aqMGS23svWAllfOaxbuFvcT8D1i8z3Gyn8fraVeZNNmN6e9bxxXkKw==}
     dev: true
 
-  /vue-demi@0.14.6(@vue/composition-api@1.7.2)(vue@3.3.0):
-    resolution: {integrity: sha512-8QA7wrYSHKaYgUxDA5ZC24w+eHm3sYCbp0EzcDwKqN3p6HqtTCGR/GVsPyZW92unff4UlcSh++lmqDWN3ZIq4w==}
+  /vue-demi@0.14.7(vue@3.3.0):
+    resolution: {integrity: sha512-EOG8KXDQNwkJILkx/gPcoL/7vH+hORoBaKgGe+6W7VFMvCYJfmF2dGbvgDroVnI8LU7/kTu8mbjRZGBU1z9NTA==}
     engines: {node: '>=12'}
     hasBin: true
     requiresBuild: true
@@ -29405,7 +29384,6 @@ packages:
       '@vue/composition-api':
         optional: true
     dependencies:
-      '@vue/composition-api': 1.7.2(vue@3.3.0)
       vue: 3.3.0
     dev: false
 
@@ -29426,14 +29404,6 @@ packages:
       '@vue/language-core': 1.8.26(typescript@5.2.2)
       semver: 7.6.0
       typescript: 5.2.2
-    dev: true
-
-  /vue@2.7.0:
-    resolution: {integrity: sha512-su25f1hocH+QNkVEqk+Oj7B+mkDIWU70l0YY7nYSJFEs3Z64njXxo65RUXnWH46ooEhKmEWyLdW6HcYn8coNrg==}
-    deprecated: Vue 2 has reached EOL and is no longer actively maintained. See https://v2.vuejs.org/eol/ for more details.
-    dependencies:
-      '@vue/compiler-sfc': 2.7.0
-      csstype: 3.1.2
     dev: true
 
   /vue@3.3.0:
