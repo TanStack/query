@@ -1,6 +1,7 @@
 import {
   DestroyRef,
   Injector,
+  NgZone,
   computed,
   effect,
   inject,
@@ -10,8 +11,14 @@ import {
 } from '@angular/core'
 import { notifyManager } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
+import { shouldThrowError } from './util'
 import { lazyInit } from './util/lazy-init/lazy-init'
-import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
+import type {
+  QueryClient,
+  QueryKey,
+  QueryObserver,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
 
 /**
@@ -37,6 +44,7 @@ export function createBaseQuery<
   queryClient: QueryClient,
 ): CreateBaseQueryResult<TData, TError> {
   const injector = inject(Injector)
+  const ngZone = inject(NgZone)
 
   return lazyInit(() => {
     return runInInjectionContext(injector, () => {
@@ -81,7 +89,24 @@ export function createBaseQuery<
 
       // observer.trackResult is not used as this optimization is not needed for Angular
       const unsubscribe = observer.subscribe(
-        notifyManager.batchCalls((val) => resultSignal.set(val)),
+        notifyManager.batchCalls(
+          (state: QueryObserverResult<TData, TError>) => {
+            ngZone.run(() => {
+              if (
+                state.isError &&
+                !state.isFetching &&
+                // !isRestoring() && // todo: enable when client persistence is implemented
+                shouldThrowError(observer.options.throwOnError, [
+                  state.error,
+                  observer.getCurrentQuery(),
+                ])
+              ) {
+                throw state.error
+              }
+              resultSignal.set(state)
+            })
+          },
+        ),
       )
       destroyRef.onDestroy(unsubscribe)
 

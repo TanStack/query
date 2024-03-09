@@ -1,6 +1,7 @@
 import {
   DestroyRef,
   Injector,
+  NgZone,
   computed,
   effect,
   inject,
@@ -11,10 +12,14 @@ import { MutationObserver, notifyManager } from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { signalProxy } from './signal-proxy'
 import { injectQueryClient } from './inject-query-client'
-import { noop } from './util'
+import { noop, shouldThrowError } from './util'
 
 import { lazyInit } from './util/lazy-init/lazy-init'
-import type { DefaultError, QueryClient } from '@tanstack/query-core'
+import type {
+  DefaultError,
+  MutationObserverResult,
+  QueryClient,
+} from '@tanstack/query-core'
 import type {
   CreateMutateFunction,
   CreateMutationOptions,
@@ -36,6 +41,7 @@ export function injectMutation<
     const queryClient = injectQueryClient()
     const currentInjector = inject(Injector)
     const destroyRef = inject(DestroyRef)
+    const ngZone = inject(NgZone)
 
     return lazyInit(() =>
       runInInjectionContext(currentInjector, () => {
@@ -61,7 +67,26 @@ export function injectMutation<
         const result = signal(observer.getCurrentResult())
 
         const unsubscribe = observer.subscribe(
-          notifyManager.batchCalls((val) => result.set(val)),
+          notifyManager.batchCalls(
+            (
+              state: MutationObserverResult<
+                TData,
+                TError,
+                TVariables,
+                TContext
+              >,
+            ) => {
+              ngZone.run(() => {
+                if (
+                  state.isError &&
+                  shouldThrowError(observer.options.throwOnError, [state.error])
+                ) {
+                  throw state.error
+                }
+                result.set(state)
+              })
+            },
+          ),
         )
 
         destroyRef.onDestroy(unsubscribe)
