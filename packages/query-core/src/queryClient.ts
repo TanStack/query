@@ -83,8 +83,7 @@ export class QueryClient {
     })
     this.#unsubscribeOnline = onlineManager.subscribe((online) => {
       if (online) {
-        // we already know that we are online, so we can unconditionally resume
-        this.#mutationCache.resumePausedMutations()
+        this.resumePausedMutations()
         this.#queryCache.onOnline()
       }
     })
