@@ -35,12 +35,10 @@
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "pnpm test:types:2 && pnpm test:types:2.7 && pnpm test:types:3",
-    "test:types:2": "vue-demi-switch 2 && tsc",
+    "test:types": "pnpm test:types:2.7 && pnpm test:types:3",
     "test:types:2.7": "vue-demi-switch 2.7 && tsc",
     "test:types:3": "vue-demi-switch 3 && tsc",
-    "test:lib": "pnpm test:2 && pnpm test:2.7 && pnpm test:3",
-    "test:2": "vue-demi-switch 2 vue2 && vitest",
+    "test:lib": "pnpm test:2.7 && pnpm test:3",
     "test:2.7": "vue-demi-switch 2.7 vue2.7 && vitest",
     "test:3": "vue-demi-switch 3 && vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
@@ -70,12 +68,11 @@
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue/composition-api": "1.7.2",
     "vue": "^3.3.0",
-    "vue2": "npm:vue@2.6",
     "vue2.7": "npm:vue@2.7"
   },
   "peerDependencies": {
     "@vue/composition-api": "^1.1.2",
-    "vue": "^2.6.0 || ^3.3.0"
+    "vue": "^2.7.0 || ^3.3.0"
   },
   "peerDependenciesMeta": {
     "@vue/composition-api": {

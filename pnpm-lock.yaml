@@ -2163,9 +2163,6 @@ importers:
       vue:
         specifier: ^3.3.0
         version: 3.3.0
-      vue2:
-        specifier: npm:vue@2.6
-        version: /vue@2.6.0
       vue2.7:
         specifier: npm:vue@2.7
         version: /vue@2.7.0
@@ -19968,6 +19965,8 @@ packages:
     peerDependenciesMeta:
       webpack:
         optional: true
+      webpack-sources:
+        optional: true
     dependencies:
       webpack: 5.89.0(esbuild@0.19.11)
       webpack-sources: 3.2.3
@@ -29427,11 +29426,6 @@ packages:
       '@vue/language-core': 1.8.26(typescript@5.2.2)
       semver: 7.6.0
       typescript: 5.2.2
-    dev: true
-
-  /vue@2.6.0:
-    resolution: {integrity: sha512-QSKHpmV17wqDmS5jVCc8X9LyTcCCQP4M1RTRpLBO+hRveePduJaGz1FGjVpRVcE6cKYbhsooz6RW7GWLGNjKGg==}
-    deprecated: Vue 2 has reached EOL and is no longer actively maintained. See https://v2.vuejs.org/eol/ for more details.
     dev: true
 
   /vue@2.7.0:
