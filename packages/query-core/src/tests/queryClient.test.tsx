@@ -10,6 +10,7 @@ import {
   hydrate,
   onlineManager,
 } from '..'
+import { skipToken } from '../utils'
 import {
   createQueryClient,
   mockOnlineManagerIsOnline,
@@ -1372,6 +1373,7 @@ describe('queryClient', () => {
     test('should refetch all active queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
+      const key3 = queryKey()
       const queryFn1 = vi.fn<Array<unknown>, string>().mockReturnValue('data1')
       const queryFn2 = vi.fn<Array<unknown>, string>().mockReturnValue('data2')
       const observer1 = new QueryObserver(queryClient, {
@@ -1384,13 +1386,21 @@ describe('queryClient', () => {
         queryFn: queryFn2,
         enabled: false,
       })
+      const observer3 = new QueryObserver(queryClient, {
+        queryKey: key3,
+        queryFn: skipToken,
+      })
+      let didSkipTokenRun = false
       observer1.subscribe(() => undefined)
       observer2.subscribe(() => undefined)
+      observer3.subscribe(() => (didSkipTokenRun = true))
       await queryClient.resetQueries()
+      observer3.destroy()
       observer2.destroy()
       observer1.destroy()
       expect(queryFn1).toHaveBeenCalledTimes(2)
       expect(queryFn2).toHaveBeenCalledTimes(0)
+      expect(didSkipTokenRun).toBe(false)
     })
   })
 

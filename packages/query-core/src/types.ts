@@ -3,7 +3,7 @@
 import type { MutationState } from './mutation'
 import type { FetchDirection, Query, QueryBehavior } from './query'
 import type { RetryDelayValue, RetryValue } from './retryer'
-import type { QueryFilters, QueryTypeFilter } from './utils'
+import type { QueryFilters, QueryTypeFilter, SkipToken } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
 
@@ -147,7 +147,7 @@ export interface QueryOptions<
    * Setting it to `Infinity` will disable garbage collection.
    */
   gcTime?: number
-  queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam>
+  queryFn?: QueryFunction<TQueryFnData, TQueryKey, TPageParam> | SkipToken
   persister?: QueryPersister<
     NoInfer<TQueryFnData>,
     NoInfer<TQueryKey>,

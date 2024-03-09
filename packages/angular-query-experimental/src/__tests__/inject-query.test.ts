@@ -1,13 +1,14 @@
-import { computed, signal } from '@angular/core'
+import { Component, computed, input, signal } from '@angular/core'
 import { TestBed, fakeAsync, flush, tick } from '@angular/core/testing'
 import { QueryClient } from '@tanstack/query-core'
-import { expect, vi } from 'vitest'
+import { describe, expect, vi } from 'vitest'
 import { injectQuery } from '../inject-query'
 import { provideAngularQuery } from '../providers'
 import {
   delayedFetcher,
   getSimpleFetcherWithReturnData,
   rejectFetcher,
+  setSignalInputs,
   simpleFetcher,
 } from './test-utils'
 
@@ -200,11 +201,64 @@ describe('injectQuery', () => {
     flush()
   }))
 
+  describe('throwOnError', () => {
+    test('should evaluate throwOnError when query is expected to throw', fakeAsync(() => {
+      const boundaryFn = vi.fn()
+      TestBed.runInInjectionContext(() => {
+        return injectQuery(() => ({
+          queryKey: ['key12'],
+          queryFn: rejectFetcher,
+          throwOnError: boundaryFn,
+        }))
+      })
+
+      flush()
+
+      expect(boundaryFn).toHaveBeenCalledTimes(1)
+      expect(boundaryFn).toHaveBeenCalledWith(
+        Error('Some error'),
+        expect.objectContaining({
+          state: expect.objectContaining({ status: 'error' }),
+        }),
+      )
+    }))
+
+    test('should throw when throwOnError is true', fakeAsync(() => {
+      TestBed.runInInjectionContext(() => {
+        return injectQuery(() => ({
+          queryKey: ['key13'],
+          queryFn: rejectFetcher,
+          throwOnError: true,
+        }))
+      })
+
+      expect(() => {
+        flush()
+      }).toThrowError('Some error')
+      flush()
+    }))
+
+    test('should throw when throwOnError function returns true', fakeAsync(() => {
+      TestBed.runInInjectionContext(() => {
+        return injectQuery(() => ({
+          queryKey: ['key14'],
+          queryFn: rejectFetcher,
+          throwOnError: () => true,
+        }))
+      })
+
+      expect(() => {
+        flush()
+      }).toThrowError('Some error')
+      flush()
+    }))
+  })
+
   test('should set state to error when queryFn returns reject promise', fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
         retry: false,
-        queryKey: ['key13'],
+        queryKey: ['key15'],
         queryFn: rejectFetcher,
       }))
     })
@@ -214,5 +268,33 @@ describe('injectQuery', () => {
     flush()
 
     expect(query.status()).toBe('error')
+  }))
+
+  test('should render with required signal inputs', fakeAsync(async () => {
+    @Component({
+      selector: 'app-fake',
+      template: `{{ query.data() }}`,
+      standalone: true,
+    })
+    class FakeComponent {
+      name = input.required<string>()
+
+      query = injectQuery(() => ({
+        queryKey: ['fake', this.name()],
+        queryFn: () => Promise.resolve(this.name()),
+      }))
+    }
+
+    const fixture = TestBed.createComponent(FakeComponent)
+    setSignalInputs(fixture.componentInstance, {
+      name: 'signal-input-required-test',
+    })
+
+    flush()
+    fixture.detectChanges()
+
+    expect(fixture.debugElement.nativeElement.textContent).toEqual(
+      'signal-input-required-test',
+    )
   }))
 })
