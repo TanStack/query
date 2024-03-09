@@ -12,6 +12,7 @@ export default defineConfig({
     setupFiles: ['test-setup.ts'],
     coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
     typecheck: { enabled: true },
+    restoreMocks: true,
     onConsoleLog: function (log) {
       if (log.includes('Download the Vue Devtools extension')) {
         return false

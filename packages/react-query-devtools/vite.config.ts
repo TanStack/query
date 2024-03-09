@@ -12,5 +12,6 @@ export default defineConfig({
     setupFiles: ['test-setup.ts'],
     coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
     typecheck: { enabled: true },
+    restoreMocks: true,
   },
 })
