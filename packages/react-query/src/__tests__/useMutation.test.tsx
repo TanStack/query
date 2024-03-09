@@ -453,8 +453,6 @@ describe('useMutation', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    window.dispatchEvent(new Event('offline'))
-
     await waitFor(() => {
       expect(
         rendered.getByText('error: null, status: idle, isPaused: false'),
@@ -471,8 +469,8 @@ describe('useMutation', () => {
 
     expect(count).toBe(0)
 
-    onlineMock.mockRestore()
-    window.dispatchEvent(new Event('online'))
+    onlineMock.mockReturnValue(true)
+    queryClient.getMutationCache().resumePausedMutations()
 
     await sleep(100)
 
@@ -483,6 +481,7 @@ describe('useMutation', () => {
     })
 
     expect(count).toBe(2)
+    onlineMock.mockRestore()
   })
 
   it('should call onMutate even if paused', async () => {
@@ -515,8 +514,6 @@ describe('useMutation', () => {
 
     await rendered.findByText('data: null, status: idle, isPaused: false')
 
-    window.dispatchEvent(new Event('offline'))
-
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
     await rendered.findByText('data: null, status: pending, isPaused: true')
@@ -524,13 +521,15 @@ describe('useMutation', () => {
     expect(onMutate).toHaveBeenCalledTimes(1)
     expect(onMutate).toHaveBeenCalledWith('todo')
 
-    onlineMock.mockRestore()
-    window.dispatchEvent(new Event('online'))
+    onlineMock.mockReturnValue(true)
+    queryClient.getMutationCache().resumePausedMutations()
 
     await rendered.findByText('data: 1, status: success, isPaused: false')
 
     expect(onMutate).toHaveBeenCalledTimes(1)
     expect(count).toBe(1)
+
+    onlineMock.mockRestore()
   })
 
   it('should optimistically go to paused state if offline', async () => {
@@ -564,8 +563,6 @@ describe('useMutation', () => {
 
     await rendered.findByText('data: null, status: idle, isPaused: false')
 
-    window.dispatchEvent(new Event('offline'))
-
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
     await rendered.findByText('data: null, status: pending, isPaused: true')
@@ -574,22 +571,25 @@ describe('useMutation', () => {
     expect(states[0]).toBe('idle, false')
     expect(states[1]).toBe('pending, true')
 
-    onlineMock.mockRestore()
-    window.dispatchEvent(new Event('online'))
+    onlineMock.mockReturnValue(true)
+    queryClient.getMutationCache().resumePausedMutations()
 
     await rendered.findByText('data: 1, status: success, isPaused: false')
+
+    onlineMock.mockRestore()
   })
 
   it('should be able to retry a mutation when online', async () => {
     const onlineMock = mockOnlineManagerIsOnline(false)
+    const key = queryKey()
 
     let count = 0
-    const states: Array<UseMutationResult<any, any, any, any>> = []
 
     function Page() {
       const state = useMutation({
+        mutationKey: key,
         mutationFn: async (_text: string) => {
-          await sleep(1)
+          await sleep(10)
           count++
           return count > 1
             ? Promise.resolve('data')
@@ -600,69 +600,50 @@ describe('useMutation', () => {
         networkMode: 'offlineFirst',
       })
 
-      states.push(state)
-
-      const { mutate } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          window.dispatchEvent(new Event('offline'))
-          mutate('todo')
-        }, 10)
-      }, [mutate])
-
-      return null
+      return (
+        <div>
+          <button onClick={() => state.mutate('todo')}>mutate</button>
+          <div>status: {state.status}</div>
+          <div>isPaused: {String(state.isPaused)}</div>
+          <div>data: {state.data ?? 'null'}</div>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(50)
+    await waitFor(() => rendered.getByText('status: idle'))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await waitFor(() => rendered.getByText('isPaused: true'))
 
-    expect(states.length).toBe(4)
-    expect(states[0]).toMatchObject({
-      isPending: false,
-      isPaused: false,
-      failureCount: 0,
-      failureReason: null,
-    })
-    expect(states[1]).toMatchObject({
-      isPending: true,
-      isPaused: false,
-      failureCount: 0,
-      failureReason: null,
-    })
-    expect(states[2]).toMatchObject({
-      isPending: true,
-      isPaused: false,
-      failureCount: 1,
-      failureReason: new Error('oops'),
-    })
-    expect(states[3]).toMatchObject({
-      isPending: true,
+    expect(
+      queryClient.getMutationCache().findAll({ mutationKey: key }).length,
+    ).toBe(1)
+    expect(
+      queryClient.getMutationCache().findAll({ mutationKey: key })[0]?.state,
+    ).toMatchObject({
+      status: 'pending',
       isPaused: true,
       failureCount: 1,
       failureReason: new Error('oops'),
     })
 
-    onlineMock.mockRestore()
-    window.dispatchEvent(new Event('online'))
+    onlineMock.mockReturnValue(true)
+    queryClient.getMutationCache().resumePausedMutations()
 
-    await sleep(50)
+    await waitFor(() => rendered.getByText('data: data'))
 
-    expect(states.length).toBe(6)
-    expect(states[4]).toMatchObject({
-      isPending: true,
-      isPaused: false,
-      failureCount: 1,
-      failureReason: new Error('oops'),
-    })
-    expect(states[5]).toMatchObject({
-      isPending: false,
+    expect(
+      queryClient.getMutationCache().findAll({ mutationKey: key })[0]?.state,
+    ).toMatchObject({
+      status: 'success',
       isPaused: false,
       failureCount: 0,
       failureReason: null,
       data: 'data',
     })
+
+    onlineMock.mockRestore()
   })
 
   it('should not change state if unmounted', async () => {
