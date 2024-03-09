@@ -1,34 +1,12 @@
-import { describe, expect, expectTypeOf, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import { createEffect } from 'solid-js'
 import { useMutationState } from '../useMutationState'
 import { createMutation } from '../createMutation'
 import { QueryClientProvider } from '../QueryClientProvider'
-import { createQueryClient, doNotExecute, sleep } from './utils'
-import type { MutationState, MutationStatus } from '@tanstack/query-core'
+import { createQueryClient, sleep } from './utils'
 
 describe('useMutationState', () => {
-  describe('types', () => {
-    it('should default to QueryState', () => {
-      doNotExecute(() => {
-        const result = useMutationState(() => ({
-          filters: { status: 'pending' },
-        }))
-
-        expectTypeOf<Array<MutationState>>(result())
-      })
-    })
-    it('should infer with select', () => {
-      doNotExecute(() => {
-        const result = useMutationState(() => ({
-          filters: { status: 'pending' },
-          select: (mutation) => mutation.state.status,
-        }))
-
-        expectTypeOf<Array<MutationStatus>>(result())
-      })
-    })
-  })
   it('should return variables after calling mutate', async () => {
     const queryClient = createQueryClient()
     const variables: Array<Array<unknown>> = []
