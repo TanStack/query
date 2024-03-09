@@ -4,7 +4,7 @@ import { act, render } from '@testing-library/react'
 import * as utils from '@tanstack/query-core'
 import { QueryClient, QueryClientProvider, onlineManager } from '..'
 import type { QueryClientConfig } from '..'
-import type { SpyInstance } from 'vitest'
+import type { MockInstance } from 'vitest'
 
 export function renderWithClient(
   client: QueryClient,
@@ -48,13 +48,13 @@ export function createQueryClient(config?: QueryClientConfig): QueryClient {
 
 export function mockVisibilityState(
   value: DocumentVisibilityState,
-): SpyInstance<[], DocumentVisibilityState> {
+): MockInstance<[], DocumentVisibilityState> {
   return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
 export function mockOnlineManagerIsOnline(
   value: boolean,
-): SpyInstance<[], boolean> {
+): MockInstance<[], boolean> {
   return vi.spyOn(onlineManager, 'isOnline').mockReturnValue(value)
 }
 
