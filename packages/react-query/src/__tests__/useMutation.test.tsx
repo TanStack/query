@@ -582,14 +582,14 @@ describe('useMutation', () => {
 
   it('should be able to retry a mutation when online', async () => {
     const onlineMock = mockOnlineManagerIsOnline(false)
+    window.dispatchEvent(new Event('offline'))
 
     let count = 0
-    const states: Array<UseMutationResult<any, any, any, any>> = []
 
     function Page() {
       const state = useMutation({
         mutationFn: async (_text: string) => {
-          await sleep(1)
+          await sleep(10)
           count++
           return count > 1
             ? Promise.resolve('data')
@@ -600,69 +600,44 @@ describe('useMutation', () => {
         networkMode: 'offlineFirst',
       })
 
-      states.push(state)
-
-      const { mutate } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          window.dispatchEvent(new Event('offline'))
-          mutate('todo')
-        }, 10)
-      }, [mutate])
-
-      return null
+      return (
+        <div>
+          <button onClick={() => state.mutate('todo')}>mutate</button>
+          <div>status: {state.status}</div>
+          <div>isPaused: {String(state.isPaused)}</div>
+          <div>data: {state.data ?? 'null'}</div>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(50)
+    await waitFor(() => rendered.getByText('status: idle'))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await waitFor(() => rendered.getByText('isPaused: true'))
 
-    expect(states.length).toBe(4)
-    expect(states[0]).toMatchObject({
-      isPending: false,
-      isPaused: false,
-      failureCount: 0,
-      failureReason: null,
-    })
-    expect(states[1]).toMatchObject({
-      isPending: true,
-      isPaused: false,
-      failureCount: 0,
-      failureReason: null,
-    })
-    expect(states[2]).toMatchObject({
-      isPending: true,
-      isPaused: false,
-      failureCount: 1,
-      failureReason: new Error('oops'),
-    })
-    expect(states[3]).toMatchObject({
-      isPending: true,
+    expect(queryClient.getMutationCache().getAll().length).toBe(1)
+    expect(queryClient.getMutationCache().getAll()[0]?.state).toMatchObject({
+      status: 'pending',
       isPaused: true,
       failureCount: 1,
       failureReason: new Error('oops'),
     })
 
-    onlineMock.mockRestore()
     window.dispatchEvent(new Event('online'))
+    onlineMock.mockReturnValue(true)
 
-    await sleep(50)
+    await waitFor(() => rendered.getByText('data: data'))
 
-    expect(states.length).toBe(6)
-    expect(states[4]).toMatchObject({
-      isPending: true,
-      isPaused: false,
-      failureCount: 1,
-      failureReason: new Error('oops'),
-    })
-    expect(states[5]).toMatchObject({
-      isPending: false,
+    expect(queryClient.getMutationCache().getAll()[0]?.state).toMatchObject({
+      status: 'success',
       isPaused: false,
       failureCount: 0,
       failureReason: null,
       data: 'data',
     })
+
+    onlineMock.mockRestore()
   })
 
   it('should not change state if unmounted', async () => {
