@@ -231,4 +231,4 @@ the Community Resources. To find out how to get the best possible type-safety, y
 ## Typesafe disabling of queries using `skipToken`
 
 If you are using TypeScript, you can use the `skipToken` to disable a query. This is useful when you want to disable a query based on a condition, but you still want to keep the query to be type safe.
-Read more about it in the [Disabling Queries](./guides/disabling-queries.md) guide.
+Read more about it in the [Disabling Queries](./guides/disabling-queries) guide.

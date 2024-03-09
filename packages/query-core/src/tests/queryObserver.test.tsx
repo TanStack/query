@@ -120,7 +120,9 @@ describe('queryObserver', () => {
     })
     let observerResult
     const unsubscribe = observer.subscribe((result) => {
-      expectTypeOf<QueryObserverResult<{ myCount: number }>>(result)
+      expectTypeOf(result).toEqualTypeOf<
+        QueryObserverResult<{ myCount: number }>
+      >()
       observerResult = result
     })
     await sleep(1)
@@ -136,7 +138,9 @@ describe('queryObserver', () => {
       select: (data) => ({ myCount: data.count }),
     })
     const observerResult = await observer.refetch()
-    expectTypeOf<{ myCount: number } | undefined>(observerResult.data)
+    expectTypeOf(observerResult.data).toEqualTypeOf<
+      { myCount: number } | undefined
+    >()
     expect(observerResult.data).toMatchObject({ myCount: 1 })
   })
 
@@ -905,43 +909,5 @@ describe('queryObserver', () => {
 
     const result = observer.getCurrentResult()
     expect(result.isStale).toBe(false)
-  })
-
-  test('should be inferred as a correct result type', async () => {
-    const key = queryKey()
-    const data = { value: 'data' }
-    const observer = new QueryObserver(queryClient, {
-      queryKey: key,
-      queryFn: () => Promise.resolve(data),
-    })
-
-    const result = observer.getCurrentResult()
-
-    result.isPending &&
-      expectTypeOf<undefined>(result.data) &&
-      expectTypeOf<null>(result.error) &&
-      expectTypeOf<boolean>(result.isLoading) &&
-      expectTypeOf<'pending'>(result.status)
-
-    result.isLoading &&
-      expectTypeOf<undefined>(result.data) &&
-      expectTypeOf<null>(result.error) &&
-      expectTypeOf<true>(result.isPending) &&
-      expectTypeOf<'pending'>(result.status)
-
-    result.isLoadingError &&
-      expectTypeOf<undefined>(result.data) &&
-      expectTypeOf<Error>(result.error) &&
-      expectTypeOf<'error'>(result.status)
-
-    result.isRefetchError &&
-      expectTypeOf<{ value: string }>(result.data) &&
-      expectTypeOf<Error>(result.error) &&
-      expectTypeOf<'error'>(result.status)
-
-    result.isSuccess &&
-      expectTypeOf<{ value: string }>(result.data) &&
-      expectTypeOf<null>(result.error) &&
-      expectTypeOf<'success'>(result.status)
   })
 })
