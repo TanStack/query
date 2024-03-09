@@ -78,13 +78,6 @@ export function setActTimeout(fn: () => void, ms?: number) {
   }, ms)
 }
 
-/**
- * Assert the parameter is not typed as `any`
- */
-export function expectTypeNotAny<T>(_: 0 extends 1 & T ? never : T): void {
-  return undefined
-}
-
 // This monkey-patches the isServer-value from utils,
 // so that we can pretend to be in a server environment
 export function setIsServer(isServer: boolean) {
