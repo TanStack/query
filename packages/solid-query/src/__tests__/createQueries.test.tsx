@@ -1,7 +1,6 @@
 import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 import * as QueryCore from '@tanstack/query-core'
-
 import { createRenderEffect, createSignal } from 'solid-js'
 import {
   QueriesObserver,
@@ -9,18 +8,9 @@ import {
   QueryClientProvider,
   createQueries,
 } from '..'
-import { createQueryClient, expectTypeNotAny, queryKey, sleep } from './utils'
-import type {
-  QueryFunctionContext,
-  QueryKey,
-  SkipToken,
-} from '@tanstack/query-core'
-import type {
-  CreateQueryResult,
-  QueryFunction,
-  QueryObserverResult,
-  SolidQueryOptions,
-} from '..'
+import { createQueryClient, queryKey, sleep } from './utils'
+import type { QueryFunctionContext, QueryKey } from '@tanstack/query-core'
+import type { CreateQueryResult, QueryFunction, SolidQueryOptions } from '..'
 
 describe('useQueries', () => {
   const queryCache = new QueryCache()
@@ -104,13 +94,15 @@ describe('useQueries', () => {
           },
         ],
       }))
-      expectTypeOf<QueryObserverResult<number, unknown>>(result1[0])
-      expectTypeOf<QueryObserverResult<string, unknown>>(result1[1])
-      expectTypeOf<QueryObserverResult<Array<string>, boolean>>(result1[2])
-      expectTypeOf<number | undefined>(result1[0].data)
-      expectTypeOf<string | undefined>(result1[1].data)
-      expectTypeOf<Array<string> | undefined>(result1[2].data)
-      expectTypeOf<boolean | null>(result1[2].error)
+      expectTypeOf(result1[0]).toEqualTypeOf<CreateQueryResult<number>>()
+      expectTypeOf(result1[1]).toEqualTypeOf<CreateQueryResult<string>>()
+      expectTypeOf(result1[2]).toEqualTypeOf<
+        CreateQueryResult<Array<string>, boolean>
+      >()
+      expectTypeOf(result1[0].data).toEqualTypeOf<number | undefined>()
+      expectTypeOf(result1[1].data).toEqualTypeOf<string | undefined>()
+      expectTypeOf(result1[2].data).toEqualTypeOf<Array<string> | undefined>()
+      expectTypeOf(result1[2].error).toEqualTypeOf<boolean | null>()
 
       // TData (3rd element) takes precedence over TQueryFnData (1st element)
       const result2 = createQueries<
@@ -121,8 +113,7 @@ describe('useQueries', () => {
             queryKey: key1,
             queryFn: () => 'string',
             select: (a) => {
-              expectTypeOf<string>(a)
-              expectTypeNotAny(a)
+              expectTypeOf(a).toEqualTypeOf<string>()
               return a.toLowerCase()
             },
           },
@@ -130,17 +121,20 @@ describe('useQueries', () => {
             queryKey: key2,
             queryFn: () => 'string',
             select: (a) => {
-              expectTypeOf<string>(a)
-              expectTypeNotAny(a)
+              expectTypeOf(a).toEqualTypeOf<string>()
               return parseInt(a)
             },
           },
         ],
       }))
-      expectTypeOf<QueryObserverResult<string, unknown>>(result2[0])
-      expectTypeOf<QueryObserverResult<number, unknown>>(result2[1])
-      expectTypeOf<string | undefined>(result2[0].data)
-      expectTypeOf<number | undefined>(result2[1].data)
+      expectTypeOf(result2[0]).toEqualTypeOf<
+        CreateQueryResult<string, unknown>
+      >()
+      expectTypeOf(result2[1]).toEqualTypeOf<
+        CreateQueryResult<number, unknown>
+      >()
+      expectTypeOf(result2[0].data).toEqualTypeOf<string | undefined>()
+      expectTypeOf(result2[1].data).toEqualTypeOf<number | undefined>()
 
       // types should be enforced
       createQueries<[[string, unknown, string], [string, boolean, number]]>(
@@ -150,8 +144,7 @@ describe('useQueries', () => {
               queryKey: key1,
               queryFn: () => 'string',
               select: (a) => {
-                expectTypeOf<string>(a)
-                expectTypeNotAny(a)
+                expectTypeOf(a).toEqualTypeOf<string>()
                 return a.toLowerCase()
               },
               placeholderData: 'string',
@@ -162,8 +155,7 @@ describe('useQueries', () => {
               queryKey: key2,
               queryFn: () => 'string',
               select: (a) => {
-                expectTypeOf<string>(a)
-                expectTypeNotAny(a)
+                expectTypeOf(a).toEqualTypeOf<string>()
                 return parseInt(a)
               },
               placeholderData: 'string',
@@ -215,13 +207,19 @@ describe('useQueries', () => {
           },
         ],
       }))
-      expectTypeOf<QueryObserverResult<number, unknown>>(result1[0])
-      expectTypeOf<QueryObserverResult<string, unknown>>(result1[1])
-      expectTypeOf<QueryObserverResult<Array<string>, boolean>>(result1[2])
-      expectTypeOf<number | undefined>(result1[0].data)
-      expectTypeOf<string | undefined>(result1[1].data)
-      expectTypeOf<Array<string> | undefined>(result1[2].data)
-      expectTypeOf<boolean | null>(result1[2].error)
+      expectTypeOf(result1[0]).toEqualTypeOf<
+        CreateQueryResult<number, unknown>
+      >()
+      expectTypeOf(result1[1]).toEqualTypeOf<
+        CreateQueryResult<string, unknown>
+      >()
+      expectTypeOf(result1[2]).toEqualTypeOf<
+        CreateQueryResult<Array<string>, boolean>
+      >()
+      expectTypeOf(result1[0].data).toEqualTypeOf<number | undefined>()
+      expectTypeOf(result1[1].data).toEqualTypeOf<string | undefined>()
+      expectTypeOf(result1[2].data).toEqualTypeOf<Array<string> | undefined>()
+      expectTypeOf(result1[2].error).toEqualTypeOf<boolean | null>()
 
       // TData (data prop) takes precedence over TQueryFnData (queryFnData prop)
       const result2 = createQueries<
@@ -235,8 +233,7 @@ describe('useQueries', () => {
             queryKey: key1,
             queryFn: () => 'string',
             select: (a) => {
-              expectTypeOf<string>(a)
-              expectTypeNotAny(a)
+              expectTypeOf(a).toEqualTypeOf<string>()
               return a.toLowerCase()
             },
           },
@@ -244,17 +241,20 @@ describe('useQueries', () => {
             queryKey: key2,
             queryFn: () => 'string',
             select: (a) => {
-              expectTypeOf<string>(a)
-              expectTypeNotAny(a)
+              expectTypeOf(a).toEqualTypeOf<string>()
               return parseInt(a)
             },
           },
         ],
       }))
-      expectTypeOf<QueryObserverResult<string, unknown>>(result2[0])
-      expectTypeOf<QueryObserverResult<number, unknown>>(result2[1])
-      expectTypeOf<string | undefined>(result2[0].data)
-      expectTypeOf<number | undefined>(result2[1].data)
+      expectTypeOf(result2[0]).toEqualTypeOf<
+        CreateQueryResult<string, unknown>
+      >()
+      expectTypeOf(result2[1]).toEqualTypeOf<
+        CreateQueryResult<number, unknown>
+      >()
+      expectTypeOf(result2[0].data).toEqualTypeOf<string | undefined>()
+      expectTypeOf(result2[1].data).toEqualTypeOf<number | undefined>()
 
       // can pass only TData (data prop) although TQueryFnData will be left unknown
       const result3 = createQueries<[{ data: string }, { data: number }]>(
@@ -264,8 +264,7 @@ describe('useQueries', () => {
               queryKey: key1,
               queryFn: () => 'string',
               select: (a) => {
-                expectTypeOf<unknown>(a)
-                expectTypeNotAny(a)
+                expectTypeOf(a).toEqualTypeOf<unknown>()
                 return a as string
               },
             },
@@ -273,18 +272,21 @@ describe('useQueries', () => {
               queryKey: key2,
               queryFn: () => 'string',
               select: (a) => {
-                expectTypeOf<unknown>(a)
-                expectTypeNotAny(a)
+                expectTypeOf(a).toEqualTypeOf<unknown>()
                 return a as number
               },
             },
           ],
         }),
       )
-      expectTypeOf<QueryObserverResult<string, unknown>>(result3[0])
-      expectTypeOf<QueryObserverResult<number, unknown>>(result3[1])
-      expectTypeOf<string | undefined>(result3[0].data)
-      expectTypeOf<number | undefined>(result3[1].data)
+      expectTypeOf(result3[0]).toEqualTypeOf<
+        CreateQueryResult<string, unknown>
+      >()
+      expectTypeOf(result3[1]).toEqualTypeOf<
+        CreateQueryResult<number, unknown>
+      >()
+      expectTypeOf(result3[0].data).toEqualTypeOf<string | undefined>()
+      expectTypeOf(result3[1].data).toEqualTypeOf<number | undefined>()
 
       // types should be enforced
       createQueries<
@@ -298,8 +300,7 @@ describe('useQueries', () => {
             queryKey: key1,
             queryFn: () => 'string',
             select: (a) => {
-              expectTypeOf<string>(a)
-              expectTypeNotAny(a)
+              expectTypeOf(a).toEqualTypeOf<string>()
               return a.toLowerCase()
             },
             placeholderData: 'string',
@@ -310,8 +311,7 @@ describe('useQueries', () => {
             queryKey: key2,
             queryFn: () => 'string',
             select: (a) => {
-              expectTypeOf<string>(a)
-              expectTypeNotAny(a)
+              expectTypeOf(a).toEqualTypeOf<string>()
               return parseInt(a)
             },
             placeholderData: 'string',
@@ -348,8 +348,12 @@ describe('useQueries', () => {
           queryFn: () => i + 10,
         })),
       }))
-      expectTypeOf<Array<QueryObserverResult<number, unknown>>>(result1)
-      expectTypeOf<number | undefined>(result1[0]?.data)
+      expectTypeOf(result1).toEqualTypeOf<
+        Array<CreateQueryResult<number, Error>>
+      >()
+      if (result1[0]) {
+        expectTypeOf(result1[0].data).toEqualTypeOf<number | undefined>()
+      }
 
       // Array.map preserves TData
       const result2 = createQueries(() => ({
@@ -359,7 +363,9 @@ describe('useQueries', () => {
           select: (data: number) => data.toString(),
         })),
       }))
-      expectTypeOf<Array<QueryObserverResult<string, unknown>>>(result2)
+      expectTypeOf(result2).toEqualTypeOf<
+        Array<CreateQueryResult<string, Error>>
+      >()
 
       const result3 = createQueries(() => ({
         queries: [
@@ -378,13 +384,13 @@ describe('useQueries', () => {
           },
         ],
       }))
-      expectTypeOf<QueryObserverResult<number, unknown>>(result3[0])
-      expectTypeOf<QueryObserverResult<string, unknown>>(result3[1])
-      expectTypeOf<QueryObserverResult<number, unknown>>(result3[2])
-      expectTypeOf<number | undefined>(result3[0].data)
-      expectTypeOf<string | undefined>(result3[1].data)
+      expectTypeOf(result3[0]).toEqualTypeOf<CreateQueryResult<number, Error>>()
+      expectTypeOf(result3[1]).toEqualTypeOf<CreateQueryResult<string, Error>>()
+      expectTypeOf(result3[2]).toEqualTypeOf<CreateQueryResult<number, Error>>()
+      expectTypeOf(result3[0].data).toEqualTypeOf<number | undefined>()
+      expectTypeOf(result3[1].data).toEqualTypeOf<string | undefined>()
       // select takes precedence over queryFn
-      expectTypeOf<number | undefined>(result3[2].data)
+      expectTypeOf(result3[2].data).toEqualTypeOf<number | undefined>()
 
       // initialData/placeholderData are enforced
       createQueries(() => ({
@@ -467,9 +473,9 @@ describe('useQueries', () => {
           },
         ],
       }))
-      expectTypeOf<QueryObserverResult<string, unknown>>(result4[0])
-      expectTypeOf<QueryObserverResult<string, unknown>>(result4[1])
-      expectTypeOf<QueryObserverResult<number, unknown>>(result4[2])
+      expectTypeOf(result4[0]).toEqualTypeOf<CreateQueryResult<string, Error>>()
+      expectTypeOf(result4[1]).toEqualTypeOf<CreateQueryResult<string, Error>>()
+      expectTypeOf(result4[2]).toEqualTypeOf<CreateQueryResult<number, Error>>()
 
       // handles when queryFn returns a Promise
       const result5 = createQueries(() => ({
@@ -480,7 +486,7 @@ describe('useQueries', () => {
           },
         ],
       }))
-      expectTypeOf<QueryObserverResult<string, unknown>>(result5[0])
+      expectTypeOf(result5[0]).toEqualTypeOf<CreateQueryResult<string, Error>>()
 
       // Array as const does not throw error
       const result6 = createQueries(
@@ -498,8 +504,8 @@ describe('useQueries', () => {
             ],
           }) as const,
       )
-      expectTypeOf<QueryObserverResult<string, unknown>>(result6[0])
-      expectTypeOf<QueryObserverResult<number, unknown>>(result6[1])
+      expectTypeOf(result6[0]).toEqualTypeOf<CreateQueryResult<string, Error>>()
+      expectTypeOf(result6[1]).toEqualTypeOf<CreateQueryResult<number, Error>>()
 
       // field names should be enforced - array literal
       createQueries(() => ({
@@ -585,9 +591,11 @@ describe('useQueries', () => {
           // no need to type the mapped query
           (query) => {
             const { queryFn: fn, queryKey: key } = query
-            expectTypeOf<
-              QueryFunction<TQueryFnData, TQueryKey> | SkipToken | undefined
-            >(fn)
+            expectTypeOf(fn).toEqualTypeOf<
+              | typeof QueryCore.skipToken
+              | QueryCore.QueryFunction<TQueryFnData, TQueryKey, never>
+              | undefined
+            >()
             return {
               queryKey: key,
               queryFn: fn
@@ -619,8 +627,8 @@ describe('useQueries', () => {
           },
         ],
       }))
-      expectTypeOf<QueryObserverResult<number, unknown>>(result[0])
-      expectTypeOf<QueryObserverResult<string, unknown>>(result[1])
+      expectTypeOf(result[0]).toEqualTypeOf<CreateQueryResult<number, Error>>()
+      expectTypeOf(result[1]).toEqualTypeOf<CreateQueryResult<string, Error>>()
 
       const withSelector = createQueries(() => ({
         queries: [
@@ -636,12 +644,12 @@ describe('useQueries', () => {
           },
         ],
       }))
-      expectTypeOf<QueryObserverResult<[number, string], unknown>>(
-        withSelector[0],
-      )
-      expectTypeOf<QueryObserverResult<[string, number], unknown>>(
-        withSelector[1],
-      )
+      expectTypeOf(withSelector[0]).toEqualTypeOf<
+        CreateQueryResult<[number, string], Error>
+      >()
+      expectTypeOf(withSelector[1]).toEqualTypeOf<
+        CreateQueryResult<[string, number], Error>
+      >()
 
       const withWrappedQueries = useWrappedQueries(
         Array(10).map(() => ({
@@ -651,9 +659,9 @@ describe('useQueries', () => {
         })),
       )
 
-      expectTypeOf<Array<QueryObserverResult<number | undefined, unknown>>>(
-        withWrappedQueries,
-      )
+      expectTypeOf(withWrappedQueries).toEqualTypeOf<
+        Array<CreateQueryResult<number, Error>>
+      >()
     }
   })
 
