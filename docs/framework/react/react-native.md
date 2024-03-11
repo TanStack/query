@@ -112,7 +112,7 @@ export function useFocusNotifyOnChangeProps(
       return notifyOnChangeProps()
     }
 
-    return notifyOnChangeProps.current
+    return notifyOnChangeProps
   }
 }
 ```
