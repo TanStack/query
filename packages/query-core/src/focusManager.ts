@@ -1,11 +1,13 @@
 import { Subscribable } from './subscribable'
 import { isServer } from './utils'
 
+type Listener = (focused: boolean) => void
+
 type SetupFn = (
   setFocused: (focused?: boolean) => void,
 ) => (() => void) | undefined
 
-export class FocusManager extends Subscribable {
+export class FocusManager extends Subscribable<Listener> {
   #focused?: boolean
   #cleanup?: () => void
 
@@ -64,8 +66,9 @@ export class FocusManager extends Subscribable {
   }
 
   onFocus(): void {
+    const isFocused = this.isFocused()
     this.listeners.forEach((listener) => {
-      listener()
+      listener(isFocused)
     })
   }
 
