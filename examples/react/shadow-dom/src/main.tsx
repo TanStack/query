@@ -26,7 +26,6 @@ if (appRoot) {
         <ReactQueryDevtools
           initialIsOpen={false}
           buttonPosition="bottom-left"
-          // styleNonce="aifenoainfo"
           shadowDOMTarget={appRoot.shadowRoot!}
         />
       </QueryClientProvider>
