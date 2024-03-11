@@ -1,10 +1,16 @@
-import { signal } from '@angular/core'
+import { Component, input, signal } from '@angular/core'
 import { QueryClient } from '@tanstack/query-core'
 import { TestBed } from '@angular/core/testing'
-import { expect, test, vi } from 'vitest'
+import { describe, expect, vi } from 'vitest'
+import { By } from '@angular/platform-browser'
 import { injectMutation } from '../inject-mutation'
 import { provideAngularQuery } from '../providers'
-import { errorMutator, expectSignals, successMutator } from './test-utils'
+import {
+  errorMutator,
+  expectSignals,
+  setFixtureSignalInputs,
+  successMutator,
+} from './test-utils'
 
 const MUTATION_DURATION = 1000
 
@@ -302,5 +308,151 @@ describe('injectMutation', () => {
       expect(onSettled).toHaveBeenCalledTimes(1)
       expect(onSettledOnFunction).toHaveBeenCalledTimes(1)
     })
+  })
+
+  test('should support required signal inputs', async () => {
+    const mutationCache = queryClient.getMutationCache()
+
+    @Component({
+      selector: 'app-fake',
+      template: `
+        <button (click)="mutate()"></button>
+        <span>{{ mutation.data() }}</span>
+      `,
+      standalone: true,
+    })
+    class FakeComponent {
+      name = input.required<string>()
+
+      mutation = injectMutation(() => ({
+        mutationKey: ['fake', this.name()],
+        mutationFn: () => successMutator(this.name()),
+      }))
+
+      mutate(): void {
+        this.mutation.mutate()
+      }
+    }
+
+    const fixture = TestBed.createComponent(FakeComponent)
+    const { debugElement } = fixture
+    setFixtureSignalInputs(fixture, { name: 'value' })
+
+    const button = debugElement.query(By.css('button'))
+    button.triggerEventHandler('click')
+
+    await resolveMutations()
+    fixture.detectChanges()
+
+    const text = debugElement.query(By.css('span')).nativeElement.textContent
+    expect(text).toEqual('value')
+    const mutation = mutationCache.find({ mutationKey: ['fake', 'value'] })
+    expect(mutation).toBeDefined()
+    expect(mutation!.options.mutationKey).toStrictEqual(['fake', 'value'])
+  })
+
+  test('should update options on required signal input change', async () => {
+    const mutationCache = queryClient.getMutationCache()
+
+    @Component({
+      selector: 'app-fake',
+      template: `
+        <button (click)="mutate()"></button>
+        <span>{{ mutation.data() }}</span>
+      `,
+      standalone: true,
+    })
+    class FakeComponent {
+      name = input.required<string>()
+
+      mutation = injectMutation(() => ({
+        mutationKey: ['fake', this.name()],
+        mutationFn: () => successMutator(this.name()),
+      }))
+
+      mutate(): void {
+        this.mutation.mutate()
+      }
+    }
+
+    const fixture = TestBed.createComponent(FakeComponent)
+    const { debugElement } = fixture
+    setFixtureSignalInputs(fixture, { name: 'value' })
+
+    const button = debugElement.query(By.css('button'))
+    const span = debugElement.query(By.css('span'))
+
+    button.triggerEventHandler('click')
+    await resolveMutations()
+    fixture.detectChanges()
+
+    expect(span.nativeElement.textContent).toEqual('value')
+
+    setFixtureSignalInputs(fixture, { name: 'updatedValue' })
+
+    button.triggerEventHandler('click')
+    await resolveMutations()
+    fixture.detectChanges()
+
+    expect(span.nativeElement.textContent).toEqual('updatedValue')
+
+    const mutations = mutationCache.findAll()
+    expect(mutations.length).toBe(2)
+    const [mutation1, mutation2] = mutations
+    expect(mutation1!.options.mutationKey).toEqual(['fake', 'value'])
+    expect(mutation2!.options.mutationKey).toEqual(['fake', 'updatedValue'])
+  })
+
+  describe('throwOnError', () => {
+    test('should evaluate throwOnError when mutation is expected to throw', async () => {
+      const err = new Error('Expected mock error. All is well!')
+      const boundaryFn = vi.fn()
+      const { mutate } = TestBed.runInInjectionContext(() => {
+        return injectMutation(() => ({
+          mutationKey: ['fake'],
+          mutationFn: () => {
+            return Promise.reject(err)
+          },
+          throwOnError: boundaryFn,
+        }))
+      })
+
+      mutate()
+
+      await resolveMutations()
+
+      expect(boundaryFn).toHaveBeenCalledTimes(1)
+      expect(boundaryFn).toHaveBeenCalledWith(err)
+    })
+  })
+
+  test('should throw when throwOnError is true', async () => {
+    const err = new Error('Expected mock error. All is well!')
+    const { mutateAsync } = TestBed.runInInjectionContext(() => {
+      return injectMutation(() => ({
+        mutationKey: ['fake'],
+        mutationFn: () => {
+          return Promise.reject(err)
+        },
+        throwOnError: true,
+      }))
+    })
+
+    await expect(() => mutateAsync()).rejects.toThrowError(err)
+  })
+
+  test('should throw when throwOnError function returns true', async () => {
+    const err = new Error('Expected mock error. All is well!')
+    const { mutateAsync } = TestBed.runInInjectionContext(() => {
+      return injectMutation(() => ({
+        mutationKey: ['fake'],
+        mutationFn: () => {
+          return Promise.reject(err)
+        },
+        throwOnError: () => true,
+      }))
+    })
+
+    await expect(() => mutateAsync()).rejects.toThrowError(err)
   })
 })

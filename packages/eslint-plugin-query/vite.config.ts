@@ -10,6 +10,7 @@ const config = defineConfig({
     globals: true,
     coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
     typecheck: { enabled: true },
+    restoreMocks: true,
   },
 })
 

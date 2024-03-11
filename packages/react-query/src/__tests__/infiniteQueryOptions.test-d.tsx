@@ -1,9 +1,9 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
+import { type InfiniteData, dataTagSymbol } from '@tanstack/query-core'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
-import type { InfiniteData, dataTagSymbol } from '@tanstack/query-core'
 
 describe('queryOptions', () => {
   it('should not allow excess properties', () => {
@@ -75,9 +75,7 @@ describe('queryOptions', () => {
       initialPageParam: 1,
     })
 
-    expectTypeOf<(typeof queryKey)[typeof dataTagSymbol]>().toEqualTypeOf<
-      InfiniteData<string>
-    >()
+    expectTypeOf(queryKey[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
   })
   it('should tag the queryKey even if no promise is returned', () => {
     const { queryKey } = infiniteQueryOptions({
@@ -87,9 +85,7 @@ describe('queryOptions', () => {
       initialPageParam: 1,
     })
 
-    expectTypeOf<(typeof queryKey)[typeof dataTagSymbol]>().toEqualTypeOf<
-      InfiniteData<string>
-    >()
+    expectTypeOf(queryKey[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
   })
   it('should tag the queryKey with the result type of the QueryFn if select is used', () => {
     const { queryKey } = infiniteQueryOptions({
@@ -100,9 +96,7 @@ describe('queryOptions', () => {
       initialPageParam: 1,
     })
 
-    expectTypeOf<(typeof queryKey)[typeof dataTagSymbol]>().toEqualTypeOf<
-      InfiniteData<string>
-    >()
+    expectTypeOf(queryKey[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
   })
   it('should return the proper type when passed to getQueryData', () => {
     const { queryKey } = infiniteQueryOptions({

@@ -2,6 +2,7 @@ import { describe, expect, expectTypeOf, it, test, vi } from 'vitest'
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
+import { skipToken } from '@tanstack/query-core'
 import { QueryCache, keepPreviousData, useQuery } from '..'
 import {
   Blink,
@@ -32,29 +33,29 @@ describe('useQuery', () => {
     function Page() {
       // unspecified query function should default to unknown
       const noQueryFn = useQuery({ queryKey: key })
-      expectTypeOf<unknown>(noQueryFn.data)
-      expectTypeOf<unknown>(noQueryFn.error)
+      expectTypeOf(noQueryFn.data).toEqualTypeOf<unknown>()
+      expectTypeOf(noQueryFn.error).toEqualTypeOf<Error | null>()
 
       // it should infer the result type from the query function
       const fromQueryFn = useQuery({ queryKey: key, queryFn: () => 'test' })
-      expectTypeOf<string | undefined>(fromQueryFn.data)
-      expectTypeOf<unknown>(fromQueryFn.error)
+      expectTypeOf(fromQueryFn.data).toEqualTypeOf<string | undefined>()
+      expectTypeOf(fromQueryFn.error).toEqualTypeOf<Error | null>()
 
       // it should be possible to specify the result type
       const withResult = useQuery<string>({
         queryKey: key,
         queryFn: () => 'test',
       })
-      expectTypeOf<string | undefined>(withResult.data)
-      expectTypeOf<unknown | null>(withResult.error)
+      expectTypeOf(withResult.data).toEqualTypeOf<string | undefined>()
+      expectTypeOf(withResult.error).toEqualTypeOf<Error | null>()
 
       // it should be possible to specify the error type
       const withError = useQuery<string, Error>({
         queryKey: key,
         queryFn: () => 'test',
       })
-      expectTypeOf<string | undefined>(withError.data)
-      expectTypeOf<Error | null>(withError.error)
+      expectTypeOf(withError.data).toEqualTypeOf<string | undefined>()
+      expectTypeOf(withError.error).toEqualTypeOf<Error | null>()
 
       // it should provide the result type in the configuration
       useQuery({
@@ -65,14 +66,14 @@ describe('useQuery', () => {
       // it should be possible to specify a union type as result type
       const unionTypeSync = useQuery({
         queryKey: key,
-        queryFn: () => (Math.random() > 0.5 ? 'a' : 'b'),
+        queryFn: () => (Math.random() > 0.5 ? ('a' as const) : ('b' as const)),
       })
-      expectTypeOf<'a' | 'b' | undefined>(unionTypeSync.data)
+      expectTypeOf(unionTypeSync.data).toEqualTypeOf<'a' | 'b' | undefined>()
       const unionTypeAsync = useQuery<'a' | 'b'>({
         queryKey: key,
         queryFn: () => Promise.resolve(Math.random() > 0.5 ? 'a' : 'b'),
       })
-      expectTypeOf<'a' | 'b' | undefined>(unionTypeAsync.data)
+      expectTypeOf(unionTypeAsync.data).toEqualTypeOf<'a' | 'b' | undefined>()
 
       // should error when the query function result does not match with the specified type
       // @ts-expect-error
@@ -87,15 +88,19 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn: () => queryFn(),
       })
-      expectTypeOf<string | undefined>(fromGenericQueryFn.data)
-      expectTypeOf<unknown>(fromGenericQueryFn.error)
+      expectTypeOf(fromGenericQueryFn.data).toEqualTypeOf<string | undefined>()
+      expectTypeOf(fromGenericQueryFn.error).toEqualTypeOf<Error | null>()
 
       const fromGenericOptionsQueryFn = useQuery({
         queryKey: key,
         queryFn: () => queryFn(),
       })
-      expectTypeOf<string | undefined>(fromGenericOptionsQueryFn.data)
-      expectTypeOf<unknown>(fromGenericOptionsQueryFn.error)
+      expectTypeOf(fromGenericOptionsQueryFn.data).toEqualTypeOf<
+        string | undefined
+      >()
+      expectTypeOf(
+        fromGenericOptionsQueryFn.error,
+      ).toEqualTypeOf<Error | null>()
 
       type MyData = number
       type MyQueryKey = readonly ['my-data', number]
@@ -114,7 +119,7 @@ describe('useQuery', () => {
       const getMyDataStringKey: QueryFunction<MyData, ['1']> = async (
         context,
       ) => {
-        expectTypeOf<['1']>(context.queryKey)
+        expectTypeOf(context.queryKey).toEqualTypeOf<['1']>()
         return Number(context.queryKey[0]) + 42
       }
 
@@ -153,7 +158,7 @@ describe('useQuery', () => {
           ...options,
         })
       const testQuery = useWrappedQuery([''], async () => '1')
-      expectTypeOf<string | undefined>(testQuery.data)
+      expectTypeOf(testQuery.data).toEqualTypeOf<string | undefined>()
 
       // handles wrapped queries with custom fetcher passed directly to useQuery
       const useWrappedFuncStyleQuery = <
@@ -170,7 +175,7 @@ describe('useQuery', () => {
         >,
       ) => useQuery({ queryKey: qk, queryFn: fetcher, ...options })
       const testFuncStyle = useWrappedFuncStyleQuery([''], async () => true)
-      expectTypeOf<boolean | undefined>(testFuncStyle.data)
+      expectTypeOf(testFuncStyle.data).toEqualTypeOf<boolean | undefined>()
     }
   })
 
@@ -217,19 +222,19 @@ describe('useQuery', () => {
       states.push(state)
 
       if (state.isPending) {
-        expectTypeOf<undefined>(state.data)
-        expectTypeOf<null>(state.error)
+        expectTypeOf(state.data).toEqualTypeOf<undefined>()
+        expectTypeOf(state.error).toEqualTypeOf<null>()
         return <span>pending</span>
       }
 
       if (state.isLoadingError) {
-        expectTypeOf<undefined>(state.data)
-        expectTypeOf<Error>(state.error)
+        expectTypeOf(state.data).toEqualTypeOf<undefined>()
+        expectTypeOf(state.error).toEqualTypeOf<Error>()
         return <span>{state.error.message}</span>
       }
 
-      expectTypeOf<string>(state.data)
-      expectTypeOf<Error | null>(state.error)
+      expectTypeOf(state.data).toEqualTypeOf<string>()
+      expectTypeOf(state.error).toEqualTypeOf<Error | null>()
       return <span>{state.data}</span>
     }
 
@@ -5211,12 +5216,11 @@ describe('useQuery', () => {
       }
 
       const rendered = renderWithClient(queryClient, <Page />)
-      window.dispatchEvent(new Event('offline'))
 
       await waitFor(() => rendered.getByText('status: pending, isPaused: true'))
 
-      onlineMock.mockRestore()
-      window.dispatchEvent(new Event('online'))
+      onlineMock.mockReturnValue(true)
+      queryClient.getQueryCache().onOnline()
 
       await waitFor(() =>
         rendered.getByText('status: success, isPaused: false'),
@@ -5226,6 +5230,7 @@ describe('useQuery', () => {
       })
 
       expect(states).toEqual(['paused', 'fetching', 'idle'])
+      onlineMock.mockRestore()
     })
 
     it('online queries should not refetch if you are offline', async () => {
@@ -5264,7 +5269,6 @@ describe('useQuery', () => {
       await waitFor(() => rendered.getByText('data: data1'))
 
       const onlineMock = mockOnlineManagerIsOnline(false)
-      window.dispatchEvent(new Event('offline'))
 
       fireEvent.click(rendered.getByRole('button', { name: /invalidate/i }))
 
@@ -5275,8 +5279,8 @@ describe('useQuery', () => {
       )
       await waitFor(() => rendered.getByText('failureReason: null'))
 
-      onlineMock.mockRestore()
-      window.dispatchEvent(new Event('online'))
+      onlineMock.mockReturnValue(true)
+      queryClient.getQueryCache().onOnline()
 
       await waitFor(() =>
         rendered.getByText(
@@ -5294,6 +5298,8 @@ describe('useQuery', () => {
       await waitFor(() => {
         expect(rendered.getByText('data: data2')).toBeInTheDocument()
       })
+
+      onlineMock.mockRestore()
     })
 
     it('online queries should not refetch if you are offline and refocus', async () => {
@@ -5483,7 +5489,6 @@ describe('useQuery', () => {
       const onlineMock = mockOnlineManagerIsOnline(false)
 
       const rendered = renderWithClient(queryClient, <Page />)
-      window.dispatchEvent(new Event('offline'))
 
       await waitFor(() =>
         rendered.getByText('status: success, fetchStatus: paused'),
@@ -5506,10 +5511,8 @@ describe('useQuery', () => {
         window.dispatchEvent(new Event('visibilitychange'))
       })
 
-      onlineMock.mockRestore()
-      act(() => {
-        window.dispatchEvent(new Event('online'))
-      })
+      onlineMock.mockReturnValue(true)
+      queryClient.getQueryCache().onOnline()
 
       await waitFor(() =>
         rendered.getByText('status: success, fetchStatus: idle'),
@@ -5519,6 +5522,8 @@ describe('useQuery', () => {
       })
 
       expect(count).toBe(1)
+
+      onlineMock.mockRestore()
     })
 
     it('online queries should pause retries if you are offline', async () => {
@@ -5555,7 +5560,6 @@ describe('useQuery', () => {
       )
 
       const onlineMock = mockOnlineManagerIsOnline(false)
-      window.dispatchEvent(new Event('offline'))
 
       await sleep(20)
 
@@ -5569,7 +5573,7 @@ describe('useQuery', () => {
       expect(count).toBe(1)
 
       onlineMock.mockReturnValue(true)
-      window.dispatchEvent(new Event('online'))
+      queryClient.getQueryCache().onOnline()
 
       await waitFor(() =>
         rendered.getByText('status: error, fetchStatus: idle, failureCount: 3'),
@@ -5620,16 +5624,14 @@ describe('useQuery', () => {
 
       const rendered = renderWithClient(queryClient, <Page />)
 
-      window.dispatchEvent(new Event('offline'))
-
       await waitFor(() =>
         rendered.getByText('status: pending, fetchStatus: paused'),
       )
 
       fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
 
-      onlineMock.mockRestore()
-      window.dispatchEvent(new Event('online'))
+      onlineMock.mockReturnValue(true)
+      queryClient.getQueryCache().onOnline()
 
       await waitFor(() => {
         expect(queryClient.getQueryState(key)).toMatchObject({
@@ -5641,6 +5643,8 @@ describe('useQuery', () => {
       // give it a bit more time to make sure queryFn is not called again
       await sleep(15)
       expect(count).toBe(1)
+
+      onlineMock.mockRestore()
     })
 
     it('online queries should not fetch if paused and we go online when cancelled and no refetchOnReconnect', async () => {
@@ -5690,7 +5694,7 @@ describe('useQuery', () => {
       expect(count).toBe(0)
 
       onlineMock.mockReturnValue(true)
-      window.dispatchEvent(new Event('online'))
+      queryClient.getQueryCache().onOnline()
 
       await sleep(15)
 
@@ -5762,7 +5766,7 @@ describe('useQuery', () => {
       await sleep(15)
 
       onlineMock.mockReturnValue(true)
-      window.dispatchEvent(new Event('online'))
+      queryClient.getQueryCache().onOnline()
 
       await sleep(15)
 
@@ -5896,8 +5900,6 @@ describe('useQuery', () => {
 
       const rendered = renderWithClient(queryClient, <Page />)
 
-      window.dispatchEvent(new Event('offline'))
-
       await waitFor(() =>
         rendered.getByText(
           'status: pending, fetchStatus: paused, failureCount: 1',
@@ -5907,8 +5909,8 @@ describe('useQuery', () => {
 
       expect(count).toBe(1)
 
-      onlineMock.mockRestore()
-      window.dispatchEvent(new Event('online'))
+      onlineMock.mockReturnValue(true)
+      queryClient.getQueryCache().onOnline()
 
       await waitFor(() =>
         rendered.getByText('status: error, fetchStatus: idle, failureCount: 3'),
@@ -5916,6 +5918,7 @@ describe('useQuery', () => {
       await waitFor(() => rendered.getByText('failureReason: failed3'))
 
       expect(count).toBe(3)
+      onlineMock.mockRestore()
     })
   })
 
@@ -6328,5 +6331,52 @@ describe('useQuery', () => {
 
     expect(() => render(<Page />)).toThrow('Bad argument type')
     consoleMock.mockRestore()
+  })
+
+  it('should respect skipToken and refetch when skipToken is taken away', async () => {
+    const key = queryKey()
+
+    function Page({ enabled }: { enabled: boolean }) {
+      const { data, status } = useQuery({
+        queryKey: [key],
+        queryFn: enabled
+          ? async () => {
+              await sleep(10)
+
+              return Promise.resolve('data')
+            }
+          : skipToken,
+        retry: false,
+        retryOnMount: false,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+      })
+
+      return (
+        <div>
+          <div>status: {status}</div>
+          <div>data: {String(data)}</div>
+        </div>
+      )
+    }
+
+    function App() {
+      const [enabled, toggle] = React.useReducer((x) => !x, false)
+
+      return (
+        <div>
+          <Page enabled={enabled} />
+          <button onClick={toggle}>enable</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() => rendered.getByText('status: pending'))
+
+    fireEvent.click(rendered.getByRole('button', { name: 'enable' }))
+    await waitFor(() => rendered.getByText('status: success'))
+    await waitFor(() => rendered.getByText('data: data'))
   })
 })

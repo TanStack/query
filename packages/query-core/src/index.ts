@@ -20,8 +20,9 @@ export {
   matchQuery,
   matchMutation,
   keepPreviousData,
+  skipToken,
 } from './utils'
-export type { MutationFilters, QueryFilters, Updater } from './utils'
+export type { MutationFilters, QueryFilters, Updater, SkipToken } from './utils'
 export { isCancelledError } from './retryer'
 export {
   dehydrate,

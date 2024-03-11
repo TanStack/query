@@ -1,8 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { waitFor } from '@testing-library/react'
-import { QueryObserver, isCancelledError, onlineManager } from '..'
+import { QueryObserver, isCancelledError } from '..'
 import {
   createQueryClient,
+  mockOnlineManagerIsOnline,
   mockVisibilityState,
   queryKey,
   setIsServer,
@@ -100,7 +101,7 @@ describe('query', () => {
   it('should continue retry after reconnect and resolve all promises', async () => {
     const key = queryKey()
 
-    onlineManager.setOnline(false)
+    const onlineMock = mockOnlineManagerIsOnline(false)
 
     let count = 0
     let result
@@ -132,14 +133,19 @@ describe('query', () => {
     expect(result).toBeUndefined()
 
     // Reset navigator to original value
-    onlineManager.setOnline(true)
+    onlineMock.mockReturnValue(true)
+    // trigger online event
+    queryClient.getQueryCache().onOnline()
 
     // There should not be a result yet
     expect(result).toBeUndefined()
 
     // Promise should eventually be resolved
     await promise
+
+    console.log('has finished')
     expect(result).toBe('data3')
+    onlineMock.mockRestore()
   })
 
   it('should throw a CancelledError when a paused query is cancelled', async () => {
