@@ -8,8 +8,8 @@
     "test:types": "tsc"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.25.0",
-    "@tanstack/react-query-devtools": "^5.25.0",
+    "@tanstack/react-query": "^5.26.3",
+    "@tanstack/react-query-devtools": "^5.26.3",
     "axios": "^1.6.7",
     "isomorphic-unfetch": "4.0.2",
     "next": "^14.0.0",
