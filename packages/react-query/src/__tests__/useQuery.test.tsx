@@ -2435,28 +2435,23 @@ describe('useQuery', () => {
     rendered.getByText('Second Status: success')
   })
 
-  it('should not override query configuration on render', async () => {
+  it('should update query options', async () => {
     const key = queryKey()
 
-    const queryFn1 = async () => {
+    const queryFn = async () => {
       await sleep(10)
       return 'data1'
     }
 
-    const queryFn2 = async () => {
-      await sleep(10)
-      return 'data2'
-    }
-
     function Page() {
-      useQuery({ queryKey: key, queryFn: queryFn1 })
-      useQuery({ queryKey: key, queryFn: queryFn2 })
+      useQuery({ queryKey: key, queryFn, retryDelay: 10 })
+      useQuery({ queryKey: key, queryFn, retryDelay: 20 })
       return null
     }
 
     renderWithClient(queryClient, <Page />)
 
-    expect(queryCache.find({ queryKey: key })!.options.queryFn).toBe(queryFn1)
+    expect(queryCache.find({ queryKey: key })!.options.retryDelay).toBe(20)
   })
 
   it('should batch re-renders', async () => {
@@ -3685,10 +3680,10 @@ describe('useQuery', () => {
   it('should reset failureCount on successful fetch', async () => {
     const key = queryKey()
 
-    function Page() {
-      let counter = 0
+    let counter = 0
 
-      const query = useQuery<string, Error>({
+    function Page() {
+      const query = useQuery({
         queryKey: key,
         queryFn: async () => {
           if (counter < 2) {
