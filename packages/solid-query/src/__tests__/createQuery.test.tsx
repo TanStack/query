@@ -1890,22 +1890,17 @@ describe('createQuery', () => {
     rendered.getByText('Second Status: success')
   })
 
-  it('should not override query configuration on render', async () => {
+  it('should update query options', async () => {
     const key = queryKey()
 
-    const queryFn1 = async () => {
+    const queryFn = async () => {
       await sleep(10)
       return 'data1'
     }
 
-    const queryFn2 = async () => {
-      await sleep(10)
-      return 'data2'
-    }
-
     function Page() {
-      createQuery(() => ({ queryKey: key, queryFn: queryFn1 }))
-      createQuery(() => ({ queryKey: key, queryFn: queryFn2 }))
+      createQuery(() => ({ queryKey: key, queryFn, retryDelay: 10 }))
+      createQuery(() => ({ queryKey: key, queryFn, retryDelay: 20 }))
       return null
     }
 
@@ -1915,7 +1910,7 @@ describe('createQuery', () => {
       </QueryClientProvider>
     ))
 
-    expect(queryCache.find({ queryKey: key })!.options.queryFn).toBe(queryFn1)
+    expect(queryCache.find({ queryKey: key })!.options.retryDelay).toBe(20)
   })
 
   it('should batch re-renders', async () => {
