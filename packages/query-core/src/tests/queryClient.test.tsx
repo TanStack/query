@@ -959,11 +959,13 @@ describe('queryClient', () => {
       await queryClient.fetchQuery({ queryKey: key2, queryFn: queryFn2 })
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key1,
+        queryFn: queryFn1,
         staleTime: Infinity,
         initialData: 'initial',
       })
       const observer2 = new QueryObserver(queryClient, {
         queryKey: key1,
+        queryFn: queryFn1,
         staleTime: Infinity,
         initialData: 'initial',
       })

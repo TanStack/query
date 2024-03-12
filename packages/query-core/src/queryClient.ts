@@ -76,8 +76,8 @@ export class QueryClient {
     this.#mountCount++
     if (this.#mountCount !== 1) return
 
-    this.#unsubscribeFocus = focusManager.subscribe(() => {
-      if (focusManager.isFocused()) {
+    this.#unsubscribeFocus = focusManager.subscribe((focused) => {
+      if (focused) {
         this.resumePausedMutations()
         this.#queryCache.onFocus()
       }

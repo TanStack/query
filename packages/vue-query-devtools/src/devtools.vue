@@ -18,6 +18,7 @@ const devtools = new TanstackQueryDevtools({
   initialIsOpen: props.initialIsOpen,
   errorTypes: props.errorTypes,
   styleNonce: props.styleNonce,
+  shadowDOMTarget: props.shadowDOMTarget,
 })
 
 watchEffect(() => {
