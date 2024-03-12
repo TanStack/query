@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import './index.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { DogList } from './DogList'
 
 const appRoot = document.getElementById('root')
 
@@ -16,12 +17,12 @@ if (appRoot) {
       <QueryClientProvider client={queryClient}>
         <div
           style={{
-            display: 'flex',
-            justifyContent: 'center',
             width: '100vw',
+            padding: '30px',
           }}
         >
-          I'm just an app rendered in a shadow dom...
+          <h2>Dog Breeds</h2>
+          <DogList />
         </div>
         <ReactQueryDevtools
           initialIsOpen={false}
