@@ -1415,7 +1415,7 @@ describe('queryClient', () => {
       expect(mutationCacheResumePausedMutationsSpy).not.toHaveBeenCalled()
 
       focusManager.setFocused(true)
-      expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1)
+      await waitFor(() => expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1))
       expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(1)
 
       expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
@@ -1447,7 +1447,10 @@ describe('queryClient', () => {
       expect(mutationCacheResumePausedMutationsSpy).not.toHaveBeenCalled()
 
       onlineManager.setOnline(true)
-      expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1)
+      await waitFor(() =>
+        expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1),
+      )
+
       expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(1)
 
       expect(queryCacheOnFocusSpy).not.toHaveBeenCalled()
@@ -1669,11 +1672,13 @@ describe('queryClient', () => {
 
       onlineManager.setOnline(false)
       onlineManager.setOnline(true)
-      expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1)
+      await waitFor(() =>
+        expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1),
+      )
       expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(1)
 
       focusManager.setFocused(true)
-      expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1)
+      await waitFor(() => expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1))
       expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(2)
 
       queryCacheOnFocusSpy.mockRestore()
