@@ -38,6 +38,10 @@ export interface DevtoolsOptions {
    * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
    */
   styleNonce?: string
+  /**
+   * Use this so you can attach the devtool's styles to specific element in the DOM.
+   */
+  shadowDOMTarget?: ShadowRoot
 }
 
 export function ReactQueryDevtools(
@@ -45,8 +49,14 @@ export function ReactQueryDevtools(
 ): React.ReactElement | null {
   const queryClient = useQueryClient(props.client)
   const ref = React.useRef<HTMLDivElement>(null)
-  const { buttonPosition, position, initialIsOpen, errorTypes, styleNonce } =
-    props
+  const {
+    buttonPosition,
+    position,
+    initialIsOpen,
+    errorTypes,
+    styleNonce,
+    shadowDOMTarget,
+  } = props
   const [devtools] = React.useState(
     new TanstackQueryDevtools({
       client: queryClient,
@@ -58,6 +68,7 @@ export function ReactQueryDevtools(
       initialIsOpen,
       errorTypes,
       styleNonce,
+      shadowDOMTarget,
     }),
   )
 
