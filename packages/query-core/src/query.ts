@@ -158,7 +158,6 @@ export class Query<
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
   #cache: QueryCache
-  #promise?: Promise<TData>
   #retryer?: Retryer<TData>
   #observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
@@ -221,7 +220,7 @@ export class Query<
   }
 
   cancel(options?: CancelOptions): Promise<void> {
-    const promise = this.#promise
+    const promise = this.#retryer?.promise
     this.#retryer?.cancel(options)
     return promise ? promise.then(noop).catch(noop) : Promise.resolve()
   }
@@ -338,11 +337,11 @@ export class Query<
       if (this.state.data !== undefined && fetchOptions?.cancelRefetch) {
         // Silently cancel current fetch if the user wants to cancel refetch
         this.cancel({ silent: true })
-      } else if (this.#promise) {
+      } else if (this.#retryer) {
         // make sure that retries that were potentially cancelled due to unmounts can continue
-        this.#retryer?.continueRetry()
+        this.#retryer.continueRetry()
         // Return current promise if we are already fetching
-        return this.#promise
+        return this.#retryer.promise
       }
     }
 
@@ -526,9 +525,7 @@ export class Query<
       networkMode: context.options.networkMode,
     })
 
-    this.#promise = this.#retryer.promise
-
-    return this.#promise
+    return this.#retryer.promise
   }
 
   #dispatch(action: Action<TData, TError>): void {
