@@ -28,6 +28,7 @@ export interface QueryDevtoolsProps {
   position?: DevtoolsPosition
   initialIsOpen?: boolean
   errorTypes?: Array<DevToolsErrorType>
+  shadowDOMTarget?: ShadowRoot
 }
 
 export const QueryDevtoolsContext = createContext<QueryDevtoolsProps>({
@@ -35,6 +36,7 @@ export const QueryDevtoolsContext = createContext<QueryDevtoolsProps>({
   onlineManager: undefined as unknown as typeof onlineManager,
   queryFlavor: '',
   version: '',
+  shadowDOMTarget: undefined,
 })
 
 export function useQueryDevtoolsContext() {
