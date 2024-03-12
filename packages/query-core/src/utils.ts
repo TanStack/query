@@ -62,7 +62,7 @@ export type QueryTypeFilter = 'all' | 'active' | 'inactive'
 
 // UTILS
 
-export const isServer = typeof window === 'undefined' || 'Deno' in window
+export const isServer = typeof window === 'undefined' || 'Deno' in globalThis
 
 export function noop(): undefined {
   return undefined
