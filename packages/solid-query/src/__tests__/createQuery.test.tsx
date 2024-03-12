@@ -46,32 +46,32 @@ describe('createQuery', () => {
     function Page() {
       // unspecified query function should default to unknown
       const noQueryFn = createQuery(() => ({ queryKey: key }))
-      expectTypeOf<unknown>(noQueryFn.data)
-      expectTypeOf<unknown>(noQueryFn.error)
+      expectTypeOf(noQueryFn.data).toEqualTypeOf<unknown>()
+      expectTypeOf(noQueryFn.error).toEqualTypeOf<Error | null>()
 
       // it should infer the result type from the query function
       const fromQueryFn = createQuery(() => ({
         queryKey: key,
         queryFn: () => 'test',
       }))
-      expectTypeOf<string | undefined>(fromQueryFn.data)
-      expectTypeOf<unknown>(fromQueryFn.error)
+      expectTypeOf(fromQueryFn.data).toEqualTypeOf<string | undefined>()
+      expectTypeOf(fromQueryFn.error).toEqualTypeOf<Error | null>()
 
       // it should be possible to specify the result type
       const withResult = createQuery<string>(() => ({
         queryKey: key,
         queryFn: () => 'test',
       }))
-      expectTypeOf<string | undefined>(withResult.data)
-      expectTypeOf<unknown | null>(withResult.error)
+      expectTypeOf(withResult.data).toEqualTypeOf<string | undefined>()
+      expectTypeOf(withResult.error).toEqualTypeOf<Error | null>()
 
       // it should be possible to specify the error type
       const withError = createQuery<string, Error>(() => ({
         queryKey: key,
         queryFn: () => 'test',
       }))
-      expectTypeOf<string | undefined>(withError.data)
-      expectTypeOf<Error | null>(withError.error)
+      expectTypeOf(withError.data).toEqualTypeOf<string | undefined>()
+      expectTypeOf(withError.error).toEqualTypeOf<Error | null>()
 
       // it should provide the result type in the configuration
       createQuery(() => ({
@@ -82,14 +82,14 @@ describe('createQuery', () => {
       // it should be possible to specify a union type as result type
       const unionTypeSync = createQuery(() => ({
         queryKey: key,
-        queryFn: () => (Math.random() > 0.5 ? 'a' : 'b'),
+        queryFn: () => (Math.random() > 0.5 ? ('a' as const) : ('b' as const)),
       }))
-      expectTypeOf<'a' | 'b' | undefined>(unionTypeSync.data)
+      expectTypeOf(unionTypeSync.data).toEqualTypeOf<'a' | 'b' | undefined>()
       const unionTypeAsync = createQuery<'a' | 'b'>(() => ({
         queryKey: key,
         queryFn: () => Promise.resolve(Math.random() > 0.5 ? 'a' : 'b'),
       }))
-      expectTypeOf<'a' | 'b' | undefined>(unionTypeAsync.data)
+      expectTypeOf(unionTypeAsync.data).toEqualTypeOf<'a' | 'b' | undefined>()
 
       // should error when the query function result does not match with the specified type
       // @ts-expect-error
@@ -104,15 +104,19 @@ describe('createQuery', () => {
         queryKey: key,
         queryFn: () => queryFn(),
       }))
-      expectTypeOf<string | undefined>(fromGenericQueryFn.data)
-      expectTypeOf<unknown>(fromGenericQueryFn.error)
+      expectTypeOf(fromGenericQueryFn.data).toEqualTypeOf<string | undefined>()
+      expectTypeOf(fromGenericQueryFn.error).toEqualTypeOf<Error | null>()
 
       const fromGenericOptionsQueryFn = createQuery(() => ({
         queryKey: key,
         queryFn: () => queryFn(),
       }))
-      expectTypeOf<string | undefined>(fromGenericOptionsQueryFn.data)
-      expectTypeOf<unknown>(fromGenericOptionsQueryFn.error)
+      expectTypeOf(fromGenericOptionsQueryFn.data).toEqualTypeOf<
+        string | undefined
+      >()
+      expectTypeOf(
+        fromGenericOptionsQueryFn.error,
+      ).toEqualTypeOf<Error | null>()
 
       type MyData = number
       type MyQueryKey = readonly ['my-data', number]
@@ -131,7 +135,7 @@ describe('createQuery', () => {
       const getMyDataStringKey: QueryFunction<MyData, ['1']> = async (
         context,
       ) => {
-        expectTypeOf<['1']>(context.queryKey)
+        expectTypeOf(context.queryKey).toEqualTypeOf<['1']>()
         return Number(context.queryKey[0]) + 42
       }
 
@@ -170,7 +174,7 @@ describe('createQuery', () => {
           ...options,
         }))
       const test = useWrappedQuery([''], async () => '1')
-      expectTypeOf<string | undefined>(test.data)
+      expectTypeOf(test.data).toEqualTypeOf<string | undefined>()
 
       // handles wrapped queries with custom fetcher passed directly to createQuery
       const useWrappedFuncStyleQuery = <
@@ -187,7 +191,7 @@ describe('createQuery', () => {
         >,
       ) => createQuery(() => ({ queryKey: qk, queryFn: fetcher, ...options }))
       const testFuncStyle = useWrappedFuncStyleQuery([''], async () => true)
-      expectTypeOf<boolean | undefined>(testFuncStyle.data)
+      expectTypeOf(testFuncStyle.data).toEqualTypeOf<boolean | undefined>()
     }
   })
 
@@ -240,14 +244,14 @@ describe('createQuery', () => {
       })
 
       if (state.isPending) {
-        expectTypeOf<undefined>(state.data)
-        expectTypeOf<null>(state.error)
+        expectTypeOf(state.data).toEqualTypeOf<undefined>()
+        expectTypeOf(state.error).toEqualTypeOf<null>()
       } else if (state.isLoadingError) {
-        expectTypeOf<undefined>(state.data)
-        expectTypeOf<Error>(state.error)
+        expectTypeOf(state.data).toEqualTypeOf<undefined>()
+        expectTypeOf(state.error).toEqualTypeOf<Error>()
       } else {
-        expectTypeOf<string>(state.data)
-        expectTypeOf<Error | null>(state.error)
+        expectTypeOf(state.data).toEqualTypeOf<string>()
+        expectTypeOf(state.error).toEqualTypeOf<Error | null>()
       }
 
       return (
@@ -1255,7 +1259,7 @@ describe('createQuery', () => {
       data: undefined,
       isFetching: false,
       isSuccess: false,
-      isStale: true,
+      isStale: false,
     })
   })
 
@@ -1301,7 +1305,7 @@ describe('createQuery', () => {
       data: undefined,
       isFetching: false,
       isSuccess: false,
-      isStale: true,
+      isStale: false,
     })
   })
 
@@ -1886,22 +1890,17 @@ describe('createQuery', () => {
     rendered.getByText('Second Status: success')
   })
 
-  it('should not override query configuration on render', async () => {
+  it('should update query options', async () => {
     const key = queryKey()
 
-    const queryFn1 = async () => {
+    const queryFn = async () => {
       await sleep(10)
       return 'data1'
     }
 
-    const queryFn2 = async () => {
-      await sleep(10)
-      return 'data2'
-    }
-
     function Page() {
-      createQuery(() => ({ queryKey: key, queryFn: queryFn1 }))
-      createQuery(() => ({ queryKey: key, queryFn: queryFn2 }))
+      createQuery(() => ({ queryKey: key, queryFn, retryDelay: 10 }))
+      createQuery(() => ({ queryKey: key, queryFn, retryDelay: 20 }))
       return null
     }
 
@@ -1911,7 +1910,7 @@ describe('createQuery', () => {
       </QueryClientProvider>
     ))
 
-    expect(queryCache.find({ queryKey: key })!.options.queryFn).toBe(queryFn1)
+    expect(queryCache.find({ queryKey: key })!.options.retryDelay).toBe(20)
   })
 
   it('should batch re-renders', async () => {
@@ -3376,9 +3375,9 @@ describe('createQuery', () => {
         <div>
           <div>FetchStatus: {query.fetchStatus}</div>
           <h2>Data: {query.data || 'no data'}</h2>
-          {query.isStale ? (
+          {shouldFetch() ? null : (
             <button onClick={() => setShouldFetch(true)}>fetch</button>
-          ) : null}
+          )}
         </div>
       )
     }
@@ -3502,10 +3501,11 @@ describe('createQuery', () => {
     ))
 
     await sleep(50)
-    expect(results.length).toBe(2)
+    expect(results.length).toBe(3)
     expect(results[0]).toMatchObject({ data: 'initial', isStale: true })
     expect(results[1]).toMatchObject({ data: 'fetched data', isStale: true })
-    // Wont render 3rd time, because data is still the same
+    // disabled observers are not stale
+    expect(results[2]).toMatchObject({ data: 'fetched data', isStale: false })
   })
 
   it('it should support enabled:false in query object syntax', async () => {
@@ -4550,13 +4550,13 @@ describe('createQuery', () => {
       isPending: true,
       isFetching: false,
       isSuccess: false,
-      isStale: true,
+      isStale: false,
     })
     expect(states[1]).toMatchObject({
       isPending: true,
       isFetching: true,
       isSuccess: false,
-      isStale: true,
+      isStale: false,
     })
     expect(states[2]).toMatchObject({
       data: 1,
@@ -4569,7 +4569,7 @@ describe('createQuery', () => {
       isPending: true,
       isFetching: false,
       isSuccess: false,
-      isStale: true,
+      isStale: false,
     })
   })
 

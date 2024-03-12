@@ -4,6 +4,7 @@ import {
   hashQueryKeyByOptions,
   noop,
   partialMatchKey,
+  skipToken,
 } from './utils'
 import { QueryCache } from './queryCache'
 import { MutationCache } from './mutationCache'
@@ -75,8 +76,8 @@ export class QueryClient {
     this.#mountCount++
     if (this.#mountCount !== 1) return
 
-    this.#unsubscribeFocus = focusManager.subscribe(() => {
-      if (focusManager.isFocused()) {
+    this.#unsubscribeFocus = focusManager.subscribe((focused) => {
+      if (focused) {
         this.resumePausedMutations()
         this.#queryCache.onFocus()
       }
@@ -139,7 +140,7 @@ export class QueryClient {
       const defaultedOptions = this.defaultQueryOptions(options)
       const query = this.#queryCache.build(this, defaultedOptions)
 
-      if (query.isStaleByTime(defaultedOptions.staleTime) && options.revalidateIfStale) {
+      if (options.revalidateIfStale && query.isStaleByTime(defaultedOptions.staleTime)) {
         void this.prefetchQuery(defaultedOptions)
       }
 
@@ -545,6 +546,13 @@ export class QueryClient {
 
     if (!defaultedOptions.networkMode && defaultedOptions.persister) {
       defaultedOptions.networkMode = 'offlineFirst'
+    }
+
+    if (
+      defaultedOptions.enabled !== true &&
+      defaultedOptions.queryFn === skipToken
+    ) {
+      defaultedOptions.enabled = false
     }
 
     return defaultedOptions as DefaultedQueryObserverOptions<

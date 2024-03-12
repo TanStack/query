@@ -112,7 +112,7 @@ export function useFocusNotifyOnChangeProps(
       return notifyOnChangeProps()
     }
 
-    return notifyOnChangeProps.current
+    return notifyOnChangeProps
   }
 }
 ```
@@ -138,6 +138,6 @@ function MyComponent() {
     notifyOnChangeProps,
   })
 
-  return <div>DataUpdatedAt: {dataUpdatedAt}</div>
+  return <Text>DataUpdatedAt: {dataUpdatedAt}</Text>
 }
 ```

@@ -62,3 +62,6 @@ import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
   - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
 - `styleNonce?: string`
   - Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+- `shadowDOMTarget?: ShadowRoot`
+  - Default behavior will apply the devtool's styles to the head tag within the DOM.
+  - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instad of within the head tag in the light DOM.

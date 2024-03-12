@@ -154,8 +154,12 @@ export class QueryObserver<
     }
 
     this.#updateQuery()
+    this.#currentQuery.setOptions(this.options)
 
-    if (!shallowEqualObjects(this.options, prevOptions)) {
+    if (
+      prevOptions._defaulted &&
+      !shallowEqualObjects(this.options, prevOptions)
+    ) {
       this.#client.getQueryCache().notify({
         type: 'observerOptionsUpdated',
         query: this.#currentQuery,
@@ -728,7 +732,6 @@ function shouldFetchOptionally(
   prevOptions: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
   return (
-    options.enabled !== false &&
     (query !== prevQuery || prevOptions.enabled === false) &&
     (!options.suspense || query.state.status !== 'error') &&
     isStale(query, options)
@@ -739,7 +742,7 @@ function isStale(
   query: Query<any, any, any, any>,
   options: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
-  return query.isStaleByTime(options.staleTime)
+  return options.enabled !== false && query.isStaleByTime(options.staleTime)
 }
 
 // this function would decide if we will update the observer's 'current'

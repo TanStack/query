@@ -120,7 +120,9 @@ describe('queryObserver', () => {
     })
     let observerResult
     const unsubscribe = observer.subscribe((result) => {
-      expectTypeOf<QueryObserverResult<{ myCount: number }>>(result)
+      expectTypeOf(result).toEqualTypeOf<
+        QueryObserverResult<{ myCount: number }>
+      >()
       observerResult = result
     })
     await sleep(1)
@@ -136,7 +138,9 @@ describe('queryObserver', () => {
       select: (data) => ({ myCount: data.count }),
     })
     const observerResult = await observer.refetch()
-    expectTypeOf<{ myCount: number } | undefined>(observerResult.data)
+    expectTypeOf(observerResult.data).toEqualTypeOf<
+      { myCount: number } | undefined
+    >()
     expect(observerResult.data).toMatchObject({ myCount: 1 })
   })
 
@@ -461,13 +465,12 @@ describe('queryObserver', () => {
     })
     observer.setOptions({ queryKey: key, enabled: false, staleTime: 10 })
     await queryClient.fetchQuery({ queryKey: key, queryFn })
-    await sleep(100)
+    await sleep(20)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(1)
-    expect(results.length).toBe(3)
-    expect(results[0]).toMatchObject({ isStale: true })
-    expect(results[1]).toMatchObject({ isStale: false })
-    expect(results[2]).toMatchObject({ isStale: true })
+    expect(results.length).toBe(2)
+    expect(results[0]).toMatchObject({ isStale: false, data: undefined })
+    expect(results[1]).toMatchObject({ isStale: false, data: 'data' })
   })
 
   test('should be able to handle multiple subscribers', async () => {
@@ -881,11 +884,12 @@ describe('queryObserver', () => {
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
+      enabled: false,
     })
 
     const spy = vi.fn()
     const unsubscribe = queryClient.getQueryCache().subscribe(spy)
-    observer.setOptions({ queryKey: key, enabled: false })
+    observer.setOptions({ queryKey: key, enabled: false, refetchInterval: 10 })
 
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toHaveBeenCalledWith(
@@ -895,41 +899,15 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  test('should be inferred as a correct result type', async () => {
+  test('disabled observers should not be stale', async () => {
     const key = queryKey()
-    const data = { value: 'data' }
+
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
-      queryFn: () => Promise.resolve(data),
+      enabled: false,
     })
 
     const result = observer.getCurrentResult()
-
-    result.isPending &&
-      expectTypeOf<undefined>(result.data) &&
-      expectTypeOf<null>(result.error) &&
-      expectTypeOf<boolean>(result.isLoading) &&
-      expectTypeOf<'pending'>(result.status)
-
-    result.isLoading &&
-      expectTypeOf<undefined>(result.data) &&
-      expectTypeOf<null>(result.error) &&
-      expectTypeOf<true>(result.isPending) &&
-      expectTypeOf<'pending'>(result.status)
-
-    result.isLoadingError &&
-      expectTypeOf<undefined>(result.data) &&
-      expectTypeOf<Error>(result.error) &&
-      expectTypeOf<'error'>(result.status)
-
-    result.isRefetchError &&
-      expectTypeOf<{ value: string }>(result.data) &&
-      expectTypeOf<Error>(result.error) &&
-      expectTypeOf<'error'>(result.status)
-
-    result.isSuccess &&
-      expectTypeOf<{ value: string }>(result.data) &&
-      expectTypeOf<null>(result.error) &&
-      expectTypeOf<'success'>(result.status)
+    expect(result.isStale).toBe(false)
   })
 })

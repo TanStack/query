@@ -1,6 +1,7 @@
 import {
   DestroyRef,
   Injector,
+  NgZone,
   computed,
   effect,
   inject,
@@ -10,8 +11,14 @@ import {
 } from '@angular/core'
 import { notifyManager } from '@tanstack/query-core'
 import { signalProxy } from './signal-proxy'
-import { lazyInit } from './lazy-init'
-import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
+import { shouldThrowError } from './util'
+import { lazyInit } from './util/lazy-init/lazy-init'
+import type {
+  QueryClient,
+  QueryKey,
+  QueryObserver,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
 
 /**
@@ -37,6 +44,7 @@ export function createBaseQuery<
   queryClient: QueryClient,
 ): CreateBaseQueryResult<TData, TError> {
   const injector = inject(Injector)
+  const ngZone = inject(NgZone)
 
   return lazyInit(() => {
     return runInInjectionContext(injector, () => {
@@ -67,24 +75,38 @@ export function createBaseQuery<
         observer.getOptimisticResult(defaultedOptionsSignal()),
       )
 
-      // Effects should not be called inside reactive contexts
-      untracked(() =>
-        effect(() => {
-          const defaultedOptions = defaultedOptionsSignal()
-          observer.setOptions(defaultedOptions, {
-            // Do not notify on updates because of changes in the options because
-            // these changes should already be reflected in the optimistic result.
-            listeners: false,
-          })
-          untracked(() => {
-            resultSignal.set(observer.getOptimisticResult(defaultedOptions))
-          })
-        }),
-      )
+      effect(() => {
+        const defaultedOptions = defaultedOptionsSignal()
+        observer.setOptions(defaultedOptions, {
+          // Do not notify on updates because of changes in the options because
+          // these changes should already be reflected in the optimistic result.
+          listeners: false,
+        })
+        untracked(() => {
+          resultSignal.set(observer.getOptimisticResult(defaultedOptions))
+        })
+      })
 
       // observer.trackResult is not used as this optimization is not needed for Angular
       const unsubscribe = observer.subscribe(
-        notifyManager.batchCalls((val) => resultSignal.set(val)),
+        notifyManager.batchCalls(
+          (state: QueryObserverResult<TData, TError>) => {
+            ngZone.run(() => {
+              if (
+                state.isError &&
+                !state.isFetching &&
+                // !isRestoring() && // todo: enable when client persistence is implemented
+                shouldThrowError(observer.options.throwOnError, [
+                  state.error,
+                  observer.getCurrentQuery(),
+                ])
+              ) {
+                throw state.error
+              }
+              resultSignal.set(state)
+            })
+          },
+        ),
       )
       destroyRef.onDestroy(unsubscribe)
 

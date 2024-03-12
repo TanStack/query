@@ -1,4 +1,4 @@
-import { noop, replaceData, timeUntilStale } from './utils'
+import { noop, replaceData, skipToken, timeUntilStale } from './utils'
 import { notifyManager } from './notifyManager'
 import { canFetch, createRetryer, isCancelledError } from './retryer'
 import { Removable } from './removable'
@@ -169,7 +169,7 @@ export class Query<
 
     this.#abortSignalConsumed = false
     this.#defaultOptions = config.defaultOptions
-    this.#setOptions(config.options)
+    this.setOptions(config.options)
     this.#observers = []
     this.#cache = config.cache
     this.queryKey = config.queryKey
@@ -182,7 +182,7 @@ export class Query<
     return this.options.meta
   }
 
-  #setOptions(
+  setOptions(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): void {
     this.options = { ...this.#defaultOptions, ...options }
@@ -248,11 +248,17 @@ export class Query<
   }
 
   isStale(): boolean {
-    return (
-      this.state.isInvalidated ||
-      this.state.data === undefined ||
-      this.#observers.some((observer) => observer.getCurrentResult().isStale)
-    )
+    if (this.state.isInvalidated) {
+      return true
+    }
+
+    if (this.getObserversCount() > 0) {
+      return this.#observers.some(
+        (observer) => observer.getCurrentResult().isStale,
+      )
+    }
+
+    return this.state.data === undefined
   }
 
   isStaleByTime(staleTime = 0): boolean {
@@ -342,7 +348,7 @@ export class Query<
 
     // Update config if passed, otherwise the config from the last execution is used
     if (options) {
-      this.#setOptions(options)
+      this.setOptions(options)
     }
 
     // Use the options from the first observer with a query function if no function is found.
@@ -350,7 +356,7 @@ export class Query<
     if (!this.options.queryFn) {
       const observer = this.#observers.find((x) => x.options.queryFn)
       if (observer) {
-        this.#setOptions(observer.options)
+        this.setOptions(observer.options)
       }
     }
 
@@ -387,11 +393,20 @@ export class Query<
 
     // Create fetch function
     const fetchFn = () => {
-      if (!this.options.queryFn) {
+      if (process.env.NODE_ENV !== 'production') {
+        if (this.options.queryFn === skipToken) {
+          console.error(
+            `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${this.options.queryHash}'`,
+          )
+        }
+      }
+
+      if (!this.options.queryFn || this.options.queryFn === skipToken) {
         return Promise.reject(
           new Error(`Missing queryFn: '${this.options.queryHash}'`),
         )
       }
+
       this.#abortSignalConsumed = false
       if (this.options.persister) {
         return this.options.persister(

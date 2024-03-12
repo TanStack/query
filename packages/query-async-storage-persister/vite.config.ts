@@ -8,5 +8,6 @@ export default defineConfig({
     watch: false,
     coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
     typecheck: { enabled: true },
+    restoreMocks: true,
   },
 })

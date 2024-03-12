@@ -49,12 +49,13 @@ const config = {
             'Promisable', // Our public interface
             'extralight', // Our public interface
             'codemod', // We support our codemod
-
+            'typecheck', // Field of vite.config.ts
             'TSES', // @typescript-eslint package's interface
             'tsup', // We use tsup as builder
             'solidjs', // Our target framework
             'tabular-nums', // https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric
             'todos', // Too general word to be caught as error
+            'vue-demi', // dependency of @tanstack/vue-query
           ],
         },
       },
