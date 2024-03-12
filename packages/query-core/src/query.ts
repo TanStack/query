@@ -248,11 +248,17 @@ export class Query<
   }
 
   isStale(): boolean {
-    return (
-      this.state.isInvalidated ||
-      this.state.data === undefined ||
-      this.#observers.some((observer) => observer.getCurrentResult().isStale)
-    )
+    if (this.state.isInvalidated) {
+      return true
+    }
+
+    if (this.getObserversCount() > 0) {
+      return this.#observers.some(
+        (observer) => observer.getCurrentResult().isStale,
+      )
+    }
+
+    return this.state.data === undefined
   }
 
   isStaleByTime(staleTime = 0): boolean {
