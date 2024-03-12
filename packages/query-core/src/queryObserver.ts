@@ -154,6 +154,7 @@ export class QueryObserver<
     }
 
     this.#updateQuery()
+    this.#currentQuery.setOptions(this.options)
 
     if (
       prevOptions._defaulted &&
