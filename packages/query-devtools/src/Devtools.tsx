@@ -110,6 +110,7 @@ const [selectedMutationId, setSelectedMutationId] = createSignal<number | null>(
   null,
 )
 const [panelWidth, setPanelWidth] = createSignal(0)
+const [offline, setOffline] = createSignal(false)
 
 export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
   shadowDOMTarget?: ShadowRoot
@@ -775,8 +776,6 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
   const mutationSortOrder = createMemo(
     () => Number(props.localStore.mutationSortOrder) || DEFAULT_SORT_ORDER,
   ) as () => 1 | -1
-
-  const [offline, setOffline] = createSignal(false)
 
   const sortFn = createMemo(() => sortFns[sort() as string])
   const mutationSortFn = createMemo(

@@ -5,76 +5,13 @@
     "apiKey": "35bc6c51aa322700d1383e17c4f669f4",
     "indexName": "tanstackquery"
   },
-  "menu": [
+  "sections": [
     {
-      "label": "API Reference",
-      "children": [
+      "label": "Getting Started",
+      "children": [],
+      "frameworks": [
         {
-          "label": "QueryClient",
-          "to": "reference/QueryClient"
-        },
-        {
-          "label": "QueryCache",
-          "to": "reference/QueryCache"
-        },
-        {
-          "label": "MutationCache",
-          "to": "reference/MutationCache"
-        },
-        {
-          "label": "QueryObserver",
-          "to": "reference/QueryObserver"
-        },
-        {
-          "label": "InfiniteQueryObserver",
-          "to": "reference/InfiniteQueryObserver"
-        },
-        {
-          "label": "QueriesObserver",
-          "to": "reference/QueriesObserver"
-        },
-        {
-          "label": "focusManager",
-          "to": "reference/focusManager"
-        },
-        {
-          "label": "onlineManager",
-          "to": "reference/onlineManager"
-        },
-        {
-          "label": "notifyManager",
-          "to": "reference/notifyManager"
-        }
-      ]
-    },
-    {
-      "label": "ESLint",
-      "children": [
-        {
-          "label": "ESLint Plugin Query",
-          "to": "eslint/eslint-plugin-query"
-        },
-        {
-          "label": "Exhaustive Deps",
-          "to": "eslint/exhaustive-deps"
-        },
-        {
-          "label": "Stable Query Client",
-          "to": "eslint/stable-query-client"
-        },
-        {
-          "label": "No Rest Destructuring",
-          "to": "eslint/no-rest-destructuring"
-        }
-      ]
-    }
-  ],
-  "frameworkMenus": [
-    {
-      "framework": "react",
-      "menuItems": [
-        {
-          "label": "Getting Started",
+          "label": "react",
           "children": [
             {
               "label": "Overview",
@@ -115,7 +52,97 @@
           ]
         },
         {
-          "label": "Guides & Concepts",
+          "label": "solid",
+          "children": [
+            {
+              "label": "Overview",
+              "to": "framework/solid/overview"
+            },
+            {
+              "label": "Devtools",
+              "to": "framework/solid/devtools"
+            }
+          ]
+        },
+        {
+          "label": "vue",
+          "children": [
+            {
+              "label": "Overview",
+              "to": "framework/vue/overview"
+            },
+            {
+              "label": "Installation",
+              "to": "framework/vue/installation"
+            },
+            {
+              "label": "Quick Start",
+              "to": "framework/vue/quick-start"
+            },
+            {
+              "label": "Devtools",
+              "to": "framework/vue/devtools"
+            },
+            {
+              "label": "TypeScript",
+              "to": "framework/vue/typescript"
+            },
+            {
+              "label": "GraphQL",
+              "to": "framework/vue/graphql"
+            }
+          ]
+        },
+        {
+          "label": "svelte",
+          "children": [
+            {
+              "label": "Overview",
+              "to": "framework/svelte/overview"
+            },
+            {
+              "label": "Installation",
+              "to": "framework/svelte/installation"
+            },
+            {
+              "label": "SSR & SvelteKit",
+              "to": "framework/svelte/ssr"
+            },
+            {
+              "label": "Reactivity",
+              "to": "framework/svelte/reactivity"
+            }
+          ]
+        },
+        {
+          "label": "angular",
+          "children": [
+            {
+              "label": "Overview",
+              "to": "framework/angular/overview"
+            },
+            {
+              "label": "Installation",
+              "to": "framework/angular/installation"
+            },
+            {
+              "label": "Quick Start",
+              "to": "framework/angular/quick-start"
+            },
+            {
+              "label": "Devtools",
+              "to": "framework/angular/devtools"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Guides & Concepts",
+      "children": [],
+      "frameworks": [
+        {
+          "label": "react",
           "children": [
             {
               "label": "Important Defaults",
@@ -264,289 +291,7 @@
           ]
         },
         {
-          "label": "Community Resources",
-          "children": [
-            {
-              "label": "TkDodo's Blog",
-              "to": "framework/react/community/tkdodos-blog"
-            },
-            {
-              "label": "Community Projects",
-              "to": "framework/react/community/community-projects"
-            }
-          ]
-        },
-        {
-          "label": "Examples",
-          "children": [
-            {
-              "label": "Simple",
-              "to": "framework/react/examples/simple"
-            },
-            {
-              "label": "Basic",
-              "to": "framework/react/examples/basic"
-            },
-            {
-              "label": "Basic w/ GraphQL-Request",
-              "to": "framework/react/examples/basic-graphql-request"
-            },
-            {
-              "label": "Auto Refetching / Polling / Realtime",
-              "to": "framework/react/examples/auto-refetching"
-            },
-            {
-              "label": "Optimistic Updates (UI)",
-              "to": "framework/react/examples/optimistic-updates-ui"
-            },
-            {
-              "label": "Optimistic Updates (Cache)",
-              "to": "framework/react/examples/optimistic-updates-cache"
-            },
-            {
-              "label": "Pagination",
-              "to": "framework/react/examples/pagination"
-            },
-            {
-              "label": "Load-More & Infinite Scroll",
-              "to": "framework/react/examples/load-more-infinite-scroll"
-            },
-            {
-              "label": "Infinite query with Max pages",
-              "to": "framework/react/examples/infinite-query-with-max-pages"
-            },
-            {
-              "label": "Suspense",
-              "to": "framework/react/examples/suspense"
-            },
-            {
-              "label": "Default Query Function",
-              "to": "framework/react/examples/default-query-function"
-            },
-            {
-              "label": "Playground",
-              "to": "framework/react/examples/playground"
-            },
-            {
-              "label": "Prefetching",
-              "to": "framework/react/examples/prefetching"
-            },
-            {
-              "label": "Star Wars",
-              "to": "framework/react/examples/star-wars"
-            },
-            {
-              "label": "Rick And Morty",
-              "to": "framework/react/examples/rick-morty"
-            },
-            {
-              "label": "Next.js",
-              "to": "framework/react/examples/nextjs"
-            },
-            {
-              "label": "Next.js app with streaming",
-              "to": "framework/react/examples/nextjs-suspense-streaming"
-            },
-            {
-              "label": "React Native",
-              "to": "framework/react/examples/react-native"
-            },
-            {
-              "label": "React Router",
-              "to": "framework/react/examples/react-router"
-            },
-            {
-              "label": "Offline Queries and Mutations",
-              "to": "framework/react/examples/offline"
-            },
-            {
-              "label": "Algolia",
-              "to": "framework/react/examples/algolia"
-            },
-            {
-              "label": "Shadow DOM",
-              "to": "framework/react/examples/shadow-dom"
-            }
-          ]
-        },
-        {
-          "label": "Plugins",
-          "children": [
-            {
-              "label": "persistQueryClient",
-              "to": "framework/react/plugins/persistQueryClient"
-            },
-            {
-              "label": "createSyncStoragePersister",
-              "to": "framework/react/plugins/createSyncStoragePersister"
-            },
-            {
-              "label": "createAsyncStoragePersister",
-              "to": "framework/react/plugins/createAsyncStoragePersister"
-            },
-            {
-              "label": "broadcastQueryClient (Experimental)",
-              "to": "framework/react/plugins/broadcastQueryClient"
-            },
-            {
-              "label": "createPersister (Experimental)",
-              "to": "framework/react/plugins/createPersister"
-            }
-          ]
-        },
-        {
-          "label": "API Reference",
-          "children": [
-            {
-              "label": "useQuery",
-              "to": "framework/react/reference/useQuery"
-            },
-            {
-              "label": "useQueries",
-              "to": "framework/react/reference/useQueries"
-            },
-            {
-              "label": "useInfiniteQuery",
-              "to": "framework/react/reference/useInfiniteQuery"
-            },
-            {
-              "label": "useMutation",
-              "to": "framework/react/reference/useMutation"
-            },
-            {
-              "label": "useIsFetching",
-              "to": "framework/react/reference/useIsFetching"
-            },
-            {
-              "label": "useIsMutating",
-              "to": "framework/react/reference/useIsMutating"
-            },
-            {
-              "label": "useMutationState",
-              "to": "framework/react/reference/useMutationState"
-            },
-            {
-              "label": "useSuspenseQuery",
-              "to": "framework/react/reference/useSuspenseQuery"
-            },
-            {
-              "label": "useSuspenseInfiniteQuery",
-              "to": "framework/react/reference/useSuspenseInfiniteQuery"
-            },
-            {
-              "label": "useSuspenseQueries",
-              "to": "framework/react/reference/useSuspenseQueries"
-            },
-
-            {
-              "label": "QueryClientProvider",
-              "to": "framework/react/reference/QueryClientProvider"
-            },
-            {
-              "label": "useQueryClient",
-              "to": "framework/react/reference/useQueryClient"
-            },
-            {
-              "label": "queryOptions",
-              "to": "framework/react/reference/queryOptions"
-            },
-            {
-              "label": "infiniteQueryOptions",
-              "to": "framework/react/reference/infiniteQueryOptions"
-            },
-            {
-              "label": "QueryErrorResetBoundary",
-              "to": "framework/react/reference/QueryErrorResetBoundary"
-            },
-            {
-              "label": "useQueryErrorResetBoundary",
-              "to": "framework/react/reference/useQueryErrorResetBoundary"
-            },
-            {
-              "label": "hydration",
-              "to": "framework/react/reference/hydration"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "framework": "solid",
-      "menuItems": [
-        {
-          "label": "Getting Started",
-          "children": [
-            {
-              "label": "Overview",
-              "to": "framework/solid/overview"
-            },
-            {
-              "label": "Devtools",
-              "to": "framework/solid/devtools"
-            }
-          ]
-        },
-        {
-          "label": "Examples",
-          "children": [
-            {
-              "label": "Simple",
-              "to": "framework/solid/examples/simple"
-            },
-            {
-              "label": "Basic",
-              "to": "framework/solid/examples/basic-typescript"
-            },
-            {
-              "label": "Basic w/ GraphQL-Request",
-              "to": "framework/solid/examples/basic-graphql-request"
-            },
-            {
-              "label": "Default Query Function",
-              "to": "framework/solid/examples/default-query-function"
-            },
-            {
-              "label": "Solid Start",
-              "to": "framework/solid/examples/solid-start-streaming"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "framework": "vue",
-      "menuItems": [
-        {
-          "label": "Getting Started",
-          "children": [
-            {
-              "label": "Overview",
-              "to": "framework/vue/overview"
-            },
-            {
-              "label": "Installation",
-              "to": "framework/vue/installation"
-            },
-            {
-              "label": "Quick Start",
-              "to": "framework/vue/quick-start"
-            },
-            {
-              "label": "Devtools",
-              "to": "framework/vue/devtools"
-            },
-            {
-              "label": "TypeScript",
-              "to": "framework/vue/typescript"
-            },
-            {
-              "label": "GraphQL",
-              "to": "framework/vue/graphql"
-            }
-          ]
-        },
-        {
-          "label": "Guides & Concepts",
+          "label": "vue",
           "children": [
             {
               "label": "Important Defaults",
@@ -679,167 +424,7 @@
           ]
         },
         {
-          "label": "Community Resources",
-          "children": [
-            {
-              "label": "TkDodo's Blog",
-              "to": "framework/vue/community/tkdodos-blog"
-            },
-            {
-              "label": "Query Key Factory",
-              "to": "framework/vue/community/lukemorales-query-key-factory"
-            }
-          ]
-        },
-        {
-          "label": "Examples",
-          "children": [
-            {
-              "label": "Basic",
-              "to": "framework/vue/examples/basic"
-            },
-            {
-              "label": "Vue 2.6",
-              "to": "framework/vue/examples/2.6-basic"
-            },
-            {
-              "label": "Nuxt 3",
-              "to": "framework/vue/examples/nuxt3"
-            },
-            {
-              "label": "Persister",
-              "to": "framework/vue/examples/persister"
-            }
-          ]
-        },
-        {
-          "label": "API Reference",
-          "children": [
-            {
-              "label": "useQuery",
-              "to": "framework/vue/reference/useQuery"
-            },
-            {
-              "label": "useQueries",
-              "to": "framework/vue/reference/useQueries"
-            },
-            {
-              "label": "useInfiniteQuery",
-              "to": "framework/vue/reference/useInfiniteQuery"
-            },
-            {
-              "label": "useMutation",
-              "to": "framework/vue/reference/useMutation"
-            },
-            {
-              "label": "useIsFetching",
-              "to": "framework/vue/reference/useIsFetching"
-            },
-            {
-              "label": "useIsMutating",
-              "to": "framework/vue/reference/useIsMutating"
-            },
-            {
-              "label": "useQueryClient",
-              "to": "framework/vue/reference/useQueryClient"
-            },
-            {
-              "label": "hydration",
-              "to": "framework/vue/reference/hydration"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "framework": "svelte",
-      "menuItems": [
-        {
-          "label": "Getting Started",
-          "children": [
-            {
-              "label": "Overview",
-              "to": "framework/svelte/overview"
-            },
-            {
-              "label": "Installation",
-              "to": "framework/svelte/installation"
-            },
-            {
-              "label": "SSR & SvelteKit",
-              "to": "framework/svelte/ssr"
-            },
-            {
-              "label": "Reactivity",
-              "to": "framework/svelte/reactivity"
-            }
-          ]
-        },
-        {
-          "label": "Examples",
-          "children": [
-            {
-              "label": "Simple",
-              "to": "framework/svelte/examples/simple"
-            },
-            {
-              "label": "Basic",
-              "to": "framework/svelte/examples/basic"
-            },
-            {
-              "label": "Auto Refetching / Polling / Realtime",
-              "to": "framework/svelte/examples/auto-refetching"
-            },
-            {
-              "label": "SSR",
-              "to": "framework/svelte/examples/ssr"
-            },
-            {
-              "label": "Optimistic Updates in TypeScript",
-              "to": "framework/svelte/examples/optimistic-updates-typescript"
-            },
-            {
-              "label": "Playground",
-              "to": "framework/svelte/examples/playground"
-            },
-            {
-              "label": "Star Wars",
-              "to": "framework/svelte/examples/star-wars"
-            },
-            {
-              "label": "Infinite Queries",
-              "to": "framework/svelte/examples/load-more-infinite-scroll"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "framework": "angular",
-      "menuItems": [
-        {
-          "label": "Getting Started",
-          "children": [
-            {
-              "label": "Overview",
-              "to": "framework/angular/overview"
-            },
-            {
-              "label": "Installation",
-              "to": "framework/angular/installation"
-            },
-            {
-              "label": "Quick Start",
-              "to": "framework/angular/quick-start"
-            },
-            {
-              "label": "Devtools",
-              "to": "framework/angular/devtools"
-            }
-          ]
-        },
-        {
-          "label": "Guides & Concepts",
+          "label": "angular",
           "children": [
             {
               "label": "Important Defaults",
@@ -946,9 +531,397 @@
               "to": "framework/angular/guides/does-this-replace-client-state"
             }
           ]
+        }
+      ]
+    },
+    {
+      "label": "API Reference",
+      "children": [
+        {
+          "label": "QueryClient",
+          "to": "reference/QueryClient"
         },
         {
-          "label": "Examples",
+          "label": "QueryCache",
+          "to": "reference/QueryCache"
+        },
+        {
+          "label": "MutationCache",
+          "to": "reference/MutationCache"
+        },
+        {
+          "label": "QueryObserver",
+          "to": "reference/QueryObserver"
+        },
+        {
+          "label": "InfiniteQueryObserver",
+          "to": "reference/InfiniteQueryObserver"
+        },
+        {
+          "label": "QueriesObserver",
+          "to": "reference/QueriesObserver"
+        },
+        {
+          "label": "focusManager",
+          "to": "reference/focusManager"
+        },
+        {
+          "label": "onlineManager",
+          "to": "reference/onlineManager"
+        },
+        {
+          "label": "notifyManager",
+          "to": "reference/notifyManager"
+        }
+      ],
+      "frameworks": [
+        {
+          "label": "react",
+          "children": [
+            {
+              "label": "useQuery",
+              "to": "framework/react/reference/useQuery"
+            },
+            {
+              "label": "useQueries",
+              "to": "framework/react/reference/useQueries"
+            },
+            {
+              "label": "useInfiniteQuery",
+              "to": "framework/react/reference/useInfiniteQuery"
+            },
+            {
+              "label": "useMutation",
+              "to": "framework/react/reference/useMutation"
+            },
+            {
+              "label": "useIsFetching",
+              "to": "framework/react/reference/useIsFetching"
+            },
+            {
+              "label": "useIsMutating",
+              "to": "framework/react/reference/useIsMutating"
+            },
+            {
+              "label": "useMutationState",
+              "to": "framework/react/reference/useMutationState"
+            },
+            {
+              "label": "useSuspenseQuery",
+              "to": "framework/react/reference/useSuspenseQuery"
+            },
+            {
+              "label": "useSuspenseInfiniteQuery",
+              "to": "framework/react/reference/useSuspenseInfiniteQuery"
+            },
+            {
+              "label": "useSuspenseQueries",
+              "to": "framework/react/reference/useSuspenseQueries"
+            },
+            {
+              "label": "QueryClientProvider",
+              "to": "framework/react/reference/QueryClientProvider"
+            },
+            {
+              "label": "useQueryClient",
+              "to": "framework/react/reference/useQueryClient"
+            },
+            {
+              "label": "queryOptions",
+              "to": "framework/react/reference/queryOptions"
+            },
+            {
+              "label": "infiniteQueryOptions",
+              "to": "framework/react/reference/infiniteQueryOptions"
+            },
+            {
+              "label": "QueryErrorResetBoundary",
+              "to": "framework/react/reference/QueryErrorResetBoundary"
+            },
+            {
+              "label": "useQueryErrorResetBoundary",
+              "to": "framework/react/reference/useQueryErrorResetBoundary"
+            },
+            {
+              "label": "hydration",
+              "to": "framework/react/reference/hydration"
+            }
+          ]
+        },
+        {
+          "label": "vue",
+          "children": [
+            {
+              "label": "useQuery",
+              "to": "framework/vue/reference/useQuery"
+            },
+            {
+              "label": "useQueries",
+              "to": "framework/vue/reference/useQueries"
+            },
+            {
+              "label": "useInfiniteQuery",
+              "to": "framework/vue/reference/useInfiniteQuery"
+            },
+            {
+              "label": "useMutation",
+              "to": "framework/vue/reference/useMutation"
+            },
+            {
+              "label": "useIsFetching",
+              "to": "framework/vue/reference/useIsFetching"
+            },
+            {
+              "label": "useIsMutating",
+              "to": "framework/vue/reference/useIsMutating"
+            },
+            {
+              "label": "useQueryClient",
+              "to": "framework/vue/reference/useQueryClient"
+            },
+            {
+              "label": "hydration",
+              "to": "framework/vue/reference/hydration"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "ESLint",
+      "children": [
+        {
+          "label": "ESLint Plugin Query",
+          "to": "eslint/eslint-plugin-query"
+        },
+        {
+          "label": "Exhaustive Deps",
+          "to": "eslint/exhaustive-deps"
+        },
+        {
+          "label": "Stable Query Client",
+          "to": "eslint/stable-query-client"
+        },
+        {
+          "label": "No Rest Destructuring",
+          "to": "eslint/no-rest-destructuring"
+        }
+      ]
+    },
+    {
+      "label": "Community Resources",
+      "children": [],
+      "frameworks": [
+        {
+          "label": "react",
+          "children": [
+            {
+              "label": "TkDodo's Blog",
+              "to": "framework/react/community/tkdodos-blog"
+            },
+            {
+              "label": "Community Projects",
+              "to": "framework/react/community/community-projects"
+            }
+          ]
+        },
+        {
+          "label": "vue",
+          "children": [
+            {
+              "label": "TkDodo's Blog",
+              "to": "framework/vue/community/tkdodos-blog"
+            },
+            {
+              "label": "Query Key Factory",
+              "to": "framework/vue/community/lukemorales-query-key-factory"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Examples",
+      "children": [],
+      "frameworks": [
+        {
+          "label": "react",
+          "children": [
+            {
+              "label": "Simple",
+              "to": "framework/react/examples/simple"
+            },
+            {
+              "label": "Basic",
+              "to": "framework/react/examples/basic"
+            },
+            {
+              "label": "Basic w/ GraphQL-Request",
+              "to": "framework/react/examples/basic-graphql-request"
+            },
+            {
+              "label": "Auto Refetching / Polling / Realtime",
+              "to": "framework/react/examples/auto-refetching"
+            },
+            {
+              "label": "Optimistic Updates (UI)",
+              "to": "framework/react/examples/optimistic-updates-ui"
+            },
+            {
+              "label": "Optimistic Updates (Cache)",
+              "to": "framework/react/examples/optimistic-updates-cache"
+            },
+            {
+              "label": "Pagination",
+              "to": "framework/react/examples/pagination"
+            },
+            {
+              "label": "Load-More & Infinite Scroll",
+              "to": "framework/react/examples/load-more-infinite-scroll"
+            },
+            {
+              "label": "Infinite query with Max pages",
+              "to": "framework/react/examples/infinite-query-with-max-pages"
+            },
+            {
+              "label": "Suspense",
+              "to": "framework/react/examples/suspense"
+            },
+            {
+              "label": "Default Query Function",
+              "to": "framework/react/examples/default-query-function"
+            },
+            {
+              "label": "Playground",
+              "to": "framework/react/examples/playground"
+            },
+            {
+              "label": "Prefetching",
+              "to": "framework/react/examples/prefetching"
+            },
+            {
+              "label": "Star Wars",
+              "to": "framework/react/examples/star-wars"
+            },
+            {
+              "label": "Rick And Morty",
+              "to": "framework/react/examples/rick-morty"
+            },
+            {
+              "label": "Next.js",
+              "to": "framework/react/examples/nextjs"
+            },
+            {
+              "label": "Next.js app with streaming",
+              "to": "framework/react/examples/nextjs-suspense-streaming"
+            },
+            {
+              "label": "React Native",
+              "to": "framework/react/examples/react-native"
+            },
+            {
+              "label": "React Router",
+              "to": "framework/react/examples/react-router"
+            },
+            {
+              "label": "Offline Queries and Mutations",
+              "to": "framework/react/examples/offline"
+            },
+            {
+              "label": "Algolia",
+              "to": "framework/react/examples/algolia"
+            },
+            {
+              "label": "Shadow DOM",
+              "to": "framework/react/examples/shadow-dom"
+            }
+          ]
+        },
+        {
+          "label": "solid",
+          "children": [
+            {
+              "label": "Simple",
+              "to": "framework/solid/examples/simple"
+            },
+            {
+              "label": "Basic",
+              "to": "framework/solid/examples/basic-typescript"
+            },
+            {
+              "label": "Basic w/ GraphQL-Request",
+              "to": "framework/solid/examples/basic-graphql-request"
+            },
+            {
+              "label": "Default Query Function",
+              "to": "framework/solid/examples/default-query-function"
+            },
+            {
+              "label": "Solid Start",
+              "to": "framework/solid/examples/solid-start-streaming"
+            }
+          ]
+        },
+        {
+          "label": "vue",
+          "children": [
+            {
+              "label": "Basic",
+              "to": "framework/vue/examples/basic"
+            },
+            {
+              "label": "Vue 2.6",
+              "to": "framework/vue/examples/2.6-basic"
+            },
+            {
+              "label": "Nuxt 3",
+              "to": "framework/vue/examples/nuxt3"
+            },
+            {
+              "label": "Persister",
+              "to": "framework/vue/examples/persister"
+            }
+          ]
+        },
+        {
+          "label": "svelte",
+          "children": [
+            {
+              "label": "Simple",
+              "to": "framework/svelte/examples/simple"
+            },
+            {
+              "label": "Basic",
+              "to": "framework/svelte/examples/basic"
+            },
+            {
+              "label": "Auto Refetching / Polling / Realtime",
+              "to": "framework/svelte/examples/auto-refetching"
+            },
+            {
+              "label": "SSR",
+              "to": "framework/svelte/examples/ssr"
+            },
+            {
+              "label": "Optimistic Updates in TypeScript",
+              "to": "framework/svelte/examples/optimistic-updates-typescript"
+            },
+            {
+              "label": "Playground",
+              "to": "framework/svelte/examples/playground"
+            },
+            {
+              "label": "Star Wars",
+              "to": "framework/svelte/examples/star-wars"
+            },
+            {
+              "label": "Infinite Queries",
+              "to": "framework/svelte/examples/load-more-infinite-scroll"
+            }
+          ]
+        },
+        {
+          "label": "angular",
           "children": [
             {
               "label": "Simple",
@@ -965,6 +938,37 @@
             {
               "label": "Angular Router",
               "to": "framework/angular/examples/router"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Plugins",
+      "children": [],
+      "frameworks": [
+        {
+          "label": "react",
+          "children": [
+            {
+              "label": "persistQueryClient",
+              "to": "framework/react/plugins/persistQueryClient"
+            },
+            {
+              "label": "createSyncStoragePersister",
+              "to": "framework/react/plugins/createSyncStoragePersister"
+            },
+            {
+              "label": "createAsyncStoragePersister",
+              "to": "framework/react/plugins/createAsyncStoragePersister"
+            },
+            {
+              "label": "broadcastQueryClient (Experimental)",
+              "to": "framework/react/plugins/broadcastQueryClient"
+            },
+            {
+              "label": "createPersister (Experimental)",
+              "to": "framework/react/plugins/createPersister"
             }
           ]
         }

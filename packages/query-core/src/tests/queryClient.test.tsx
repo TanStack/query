@@ -1407,6 +1407,10 @@ describe('queryClient', () => {
   })
 
   describe('focusManager and onlineManager', () => {
+    afterEach(() => {
+      onlineManager.setOnline(true)
+      focusManager.setFocused(undefined)
+    })
     test('should notify queryCache and mutationCache if focused', async () => {
       const testClient = createQueryClient()
       testClient.mount()
@@ -1429,7 +1433,7 @@ describe('queryClient', () => {
       expect(mutationCacheResumePausedMutationsSpy).not.toHaveBeenCalled()
 
       focusManager.setFocused(true)
-      expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1)
+      await waitFor(() => expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1))
       expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(1)
 
       expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
@@ -1437,7 +1441,6 @@ describe('queryClient', () => {
       queryCacheOnFocusSpy.mockRestore()
       mutationCacheResumePausedMutationsSpy.mockRestore()
       queryCacheOnOnlineSpy.mockRestore()
-      focusManager.setFocused(undefined)
     })
 
     test('should notify queryCache and mutationCache if online', async () => {
@@ -1462,7 +1465,10 @@ describe('queryClient', () => {
       expect(mutationCacheResumePausedMutationsSpy).not.toHaveBeenCalled()
 
       onlineManager.setOnline(true)
-      expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1)
+      await waitFor(() =>
+        expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1),
+      )
+
       expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(1)
 
       expect(queryCacheOnFocusSpy).not.toHaveBeenCalled()
@@ -1470,7 +1476,6 @@ describe('queryClient', () => {
       queryCacheOnFocusSpy.mockRestore()
       queryCacheOnOnlineSpy.mockRestore()
       mutationCacheResumePausedMutationsSpy.mockRestore()
-      onlineManager.setOnline(true)
     })
 
     test('should resume paused mutations when coming online', async () => {
@@ -1499,8 +1504,6 @@ describe('queryClient', () => {
         expect(observer1.getCurrentResult().status).toBe('success')
         expect(observer1.getCurrentResult().status).toBe('success')
       })
-
-      onlineManager.setOnline(true)
     })
 
     test('should resume paused mutations one after the other when invoked manually at the same time', async () => {
@@ -1618,6 +1621,54 @@ describe('queryClient', () => {
       newQueryClient.unmount()
     })
 
+    test('should notify queryCache after resumePausedMutations has finished when coming online', async () => {
+      const key = queryKey()
+
+      let count = 0
+      const results: Array<string> = []
+
+      const queryObserver = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn: async () => {
+          count++
+          results.push('data' + count)
+          await sleep(10)
+          return 'data' + count
+        },
+      })
+
+      const unsubscribe = queryObserver.subscribe(() => undefined)
+
+      await waitFor(() => {
+        expect(queryClient.getQueryData(key)).toBe('data1')
+      })
+
+      onlineManager.setOnline(false)
+
+      const observer = new MutationObserver(queryClient, {
+        mutationFn: async () => {
+          results.push('mutation')
+          await sleep(50)
+          return 1
+        },
+      })
+
+      void observer.mutate()
+
+      expect(observer.getCurrentResult().isPaused).toBeTruthy()
+
+      onlineManager.setOnline(true)
+
+      await waitFor(() => {
+        expect(queryClient.getQueryData(key)).toBe('data2')
+      })
+
+      // refetch from coming online should happen after mutations have finished
+      expect(results).toStrictEqual(['data1', 'mutation', 'data2'])
+
+      unsubscribe()
+    })
+
     test('should notify queryCache and mutationCache after multiple mounts and single unmount', async () => {
       const testClient = createQueryClient()
       testClient.mount()
@@ -1639,11 +1690,13 @@ describe('queryClient', () => {
 
       onlineManager.setOnline(false)
       onlineManager.setOnline(true)
-      expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1)
+      await waitFor(() =>
+        expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1),
+      )
       expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(1)
 
       focusManager.setFocused(true)
-      expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1)
+      await waitFor(() => expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1))
       expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(2)
 
       queryCacheOnFocusSpy.mockRestore()
