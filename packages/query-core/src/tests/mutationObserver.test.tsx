@@ -169,4 +169,128 @@ describe('mutationObserver', () => {
 
     unsubscribe()
   })
+
+  test('changing mutation meta should not affect successful mutations', async () => {
+    const mutationObserver = new MutationObserver(queryClient, {
+      meta: { count: 1 },
+      mutationFn: async (text: string) => {
+        await sleep(5)
+        return text
+      },
+    })
+
+    const subscriptionHandler = vi.fn()
+
+    const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
+
+    await mutationObserver.mutate('input')
+
+    expect(
+      queryClient.getMutationCache().find({}),
+    ).toMatchObject({
+      options: { meta: { count: 1 } },
+      state: {
+        status: 'success',
+        data: 'input',
+      },
+    })
+
+    mutationObserver.setOptions({
+      meta: { count: 2 },
+    })
+
+    expect(
+      queryClient.getMutationCache().find({}),
+    ).toMatchObject({
+      options: { meta: { count: 1 } },
+      state: {
+        status: 'success',
+        data: 'input',
+      },
+    })
+
+    unsubscribe()
+  })
+
+  test('changing mutation meta should not affect rejected mutations', async () => {
+    const mutationObserver = new MutationObserver(queryClient, {
+      meta: { count: 1 },
+      mutationFn: async (_: string) => {
+        await sleep(5)
+        return Promise.reject(new Error('err'))
+      },
+    })
+
+    const subscriptionHandler = vi.fn()
+
+    const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
+
+    await mutationObserver.mutate('input').catch(() => undefined)
+
+    expect(
+      queryClient.getMutationCache().find({}),
+    ).toMatchObject({
+      options: { meta: { count: 1 } },
+      state: {
+        status: 'error',
+      },
+    })
+
+    mutationObserver.setOptions({
+      meta: { count: 2 },
+    })
+
+    expect(
+      queryClient.getMutationCache().find({}),
+    ).toMatchObject({
+      options: { meta: { count: 1 } },
+      state: {
+        status: 'error',
+      },
+    })
+
+    unsubscribe()
+  })
+
+  test('changing mutation meta should affect pending mutations', async () => {
+    const mutationObserver = new MutationObserver(queryClient, {
+      meta: { count: 1 },
+      mutationFn: async (text: string) => {
+        await sleep(20)
+        return text
+      },
+    })
+
+    const subscriptionHandler = vi.fn()
+
+    const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
+
+    mutationObserver.mutate('input')
+
+    await sleep(0)
+
+    expect(
+      queryClient.getMutationCache().find({}),
+    ).toMatchObject({
+      options: { meta: { count: 1 } },
+      state: {
+        status: 'pending',
+      },
+    })
+
+    mutationObserver.setOptions({
+      meta: { count: 2 },
+    })
+
+    expect(
+      queryClient.getMutationCache().find({}),
+    ).toMatchObject({
+      options: { meta: { count: 2 } },
+      state: {
+        status: 'pending',
+      },
+    })
+
+    unsubscribe()
+  })
 })
