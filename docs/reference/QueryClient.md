@@ -189,7 +189,11 @@ const data = await queryClient.ensureQueryData({ queryKey, queryFn })
 
 **Options**
 
-- The options for `ensureQueryData` are exactly the same as those of [`fetchQuery`](#queryclientfetchquery) except that `queryKey` is required.
+- the same options as [`fetchQuery`](#queryclientfetchquery)
+- `revalidateIfStale: boolean`
+  - Optional
+  - Defaults to `false`
+  - If set to `true`, stale data will be refetched in the background, but cached data will be returned immediately.
 
 **Returns**
 
