@@ -456,16 +456,25 @@ describe('queryClient', () => {
       const key = queryKey()
       queryClient.setQueryData([key, 'id'], 'old')
 
-      const queryFn = () => new Promise((resolve) => {
-        setTimeout(() => resolve('new'), TIMEOUT)
-      })
+      const queryFn = () =>
+        new Promise((resolve) => {
+          setTimeout(() => resolve('new'), TIMEOUT)
+        })
 
       await expect(
-        queryClient.ensureQueryData({ queryKey: [key, 'id'], queryFn, revalidateIfStale: true }),
+        queryClient.ensureQueryData({
+          queryKey: [key, 'id'],
+          queryFn,
+          revalidateIfStale: true,
+        }),
       ).resolves.toEqual('old')
       await sleep(TIMEOUT + 10)
       await expect(
-        queryClient.ensureQueryData({ queryKey: [key, 'id'], queryFn, revalidateIfStale: true }),
+        queryClient.ensureQueryData({
+          queryKey: [key, 'id'],
+          queryFn,
+          revalidateIfStale: true,
+        }),
       ).resolves.toEqual('new')
     })
   })

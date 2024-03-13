@@ -195,7 +195,6 @@ const data = await queryClient.ensureQueryData({ queryKey, queryFn })
   - Defaults to `false`
   - If set to `true`, stale data will be refetched in the background, but cached data will be returned immediately.
 
-
 **Returns**
 
 - `Promise<TData>`
