@@ -21,7 +21,7 @@ importers:
         version: 0.8.6(@solidjs/router@0.12.0)(solid-js@1.8.14)
       '@tanstack/config':
         specifier: ^0.4.4
-        version: 0.4.4(@types/node@18.19.3)(esbuild@0.19.11)(rollup@4.6.0)(typescript@5.2.2)(vite@5.1.1)
+        version: 0.4.4(@types/node@18.19.3)(esbuild@0.19.11)(rollup@4.6.0)(typescript@5.2.2)(vite@5.1.4)
       '@testing-library/jest-dom':
         specifier: ^6.4.2
         version: 6.4.2(vitest@1.3.1)
@@ -36,7 +36,7 @@ importers:
         version: 18.19.3
       '@types/react':
         specifier: ^18.2.55
-        version: 18.2.55
+        version: 18.2.61
       '@types/react-dom':
         specifier: ^18.2.19
         version: 18.2.19
@@ -114,7 +114,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
       vitest:
         specifier: ^1.3.1
         version: 1.3.1(@types/node@18.19.3)(jsdom@24.0.0)
@@ -146,7 +146,7 @@ importers:
         specifier: ^17.1.3
         version: 17.1.3(@angular/common@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.26.2
+        specifier: ^5.27.5
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -168,7 +168,7 @@ importers:
         specifier: ^17.1.3
         version: 17.1.3(@angular/compiler@17.1.3)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.26.2
+        specifier: ^5.27.8
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
@@ -201,7 +201,7 @@ importers:
         specifier: ^17.1.3
         version: 17.1.3(@angular/common@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.26.2
+        specifier: ^5.27.5
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -223,7 +223,7 @@ importers:
         specifier: ^17.1.3
         version: 17.1.3(@angular/compiler@17.1.3)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.26.2
+        specifier: ^5.27.8
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
@@ -256,7 +256,7 @@ importers:
         specifier: ^17.1.3
         version: 17.1.3(@angular/common@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.26.2
+        specifier: ^5.27.5
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -278,7 +278,7 @@ importers:
         specifier: ^17.1.3
         version: 17.1.3(@angular/compiler@17.1.3)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.26.2
+        specifier: ^5.27.8
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
@@ -311,7 +311,7 @@ importers:
         specifier: ^17.1.3
         version: 17.1.3(@angular/common@17.1.3)(@angular/core@17.1.3)(@angular/platform-browser@17.1.3)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.26.2
+        specifier: ^5.27.5
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -333,7 +333,7 @@ importers:
         specifier: ^17.1.3
         version: 17.1.3(@angular/compiler@17.1.3)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.26.2
+        specifier: ^5.27.8
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
@@ -348,10 +348,10 @@ importers:
         specifier: 4.22.1
         version: 4.22.1
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       algoliasearch:
         specifier: 4.22.1
@@ -364,31 +364,31 @@ importers:
         version: 18.2.0(react@18.2.0)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.20.1
+        specifier: ^5.27.7
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^18.2.55
-        version: 18.2.55
+        version: 18.2.61
       '@types/react-dom':
         specifier: ^18.2.19
         version: 18.2.19
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.1)
+        version: 4.2.1(vite@5.1.4)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/react/auto-refetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -409,10 +409,10 @@ importers:
   examples/react/basic:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -425,22 +425,22 @@ importers:
         version: 18.2.0(react@18.2.0)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.20.1
+        specifier: ^5.27.7
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.1)
+        version: 4.2.1(vite@5.1.4)
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/react/basic-graphql-request:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       graphql:
         specifier: ^16.8.1
@@ -457,24 +457,24 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.1)
+        version: 4.2.1(vite@5.1.4)
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/react/basic-typescript:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query-persist-client
       axios:
         specifier: ^1.6.7
@@ -487,17 +487,17 @@ importers:
         version: 18.2.0(react@18.2.0)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.20.1
+        specifier: ^5.27.7
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^18.2.55
-        version: 18.2.55
+        version: 18.2.61
       '@types/react-dom':
         specifier: ^18.2.19
         version: 18.2.19
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.1)
+        version: 4.2.1(vite@5.1.4)
       eslint:
         specifier: ^8.56.0
         version: 8.56.0
@@ -509,15 +509,15 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/react/default-query-function:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -531,18 +531,18 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.1)
+        version: 4.2.1(vite@5.1.4)
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/react/infinite-query-with-max-pages:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -566,10 +566,10 @@ importers:
   examples/react/load-more-infinite-scroll:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -593,10 +593,10 @@ importers:
   examples/react/nextjs:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       ky:
         specifier: ^1.2.0
@@ -620,13 +620,13 @@ importers:
   examples/react/nextjs-suspense-streaming:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-next-experimental':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query-next-experimental
       next:
         specifier: ^14.0.0
@@ -646,7 +646,7 @@ importers:
         version: 18.19.3
       '@types/react':
         specifier: ^18.2.55
-        version: 18.2.55
+        version: 18.2.61
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -654,19 +654,19 @@ importers:
   examples/react/offline:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-location':
         specifier: ^3.7.4
         version: 3.7.4(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query-persist-client
       ky:
         specifier: ^1.2.0
@@ -686,18 +686,18 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.1)
+        version: 4.2.1(vite@5.1.4)
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/react/optimistic-updates-cache:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -720,7 +720,7 @@ importers:
         version: 18.19.3
       '@types/react':
         specifier: ^18.2.55
-        version: 18.2.55
+        version: 18.2.61
       '@types/react-dom':
         specifier: ^18.2.19
         version: 18.2.19
@@ -731,10 +731,10 @@ importers:
   examples/react/optimistic-updates-ui:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -757,7 +757,7 @@ importers:
         version: 18.19.3
       '@types/react':
         specifier: ^18.2.55
-        version: 18.2.55
+        version: 18.2.61
       '@types/react-dom':
         specifier: ^18.2.19
         version: 18.2.19
@@ -768,10 +768,10 @@ importers:
   examples/react/pagination:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -792,10 +792,10 @@ importers:
   examples/react/playground:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -806,18 +806,18 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.1)
+        version: 4.2.1(vite@5.1.4)
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/react/prefetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -847,10 +847,10 @@ importers:
         specifier: ^6.3.16
         version: 6.3.16(@react-navigation/native@6.1.6)(react-native-gesture-handler@2.15.0)(react-native-safe-area-context@4.9.0)(react-native-screens@3.29.0)(react-native@0.73.4)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       expo:
         specifier: ^50.0.6
@@ -899,10 +899,10 @@ importers:
   examples/react/react-router:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       localforage:
         specifier: ^1.10.0
@@ -931,7 +931,7 @@ importers:
     devDependencies:
       '@types/react':
         specifier: ^18.2.55
-        version: 18.2.55
+        version: 18.2.61
       '@types/react-dom':
         specifier: ^18.2.19
         version: 18.2.19
@@ -940,33 +940,33 @@ importers:
         version: 1.2.3
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.1)
+        version: 4.2.1(vite@5.1.4)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/react/rick-morty:
     dependencies:
       '@emotion/react':
         specifier: ^11.11.3
-        version: 11.11.3(@types/react@18.2.55)(react@18.2.0)
+        version: 11.11.3(@types/react@18.2.61)(react@18.2.0)
       '@emotion/styled':
         specifier: ^11.11.0
-        version: 11.11.0(@emotion/react@11.11.3)(@types/react@18.2.55)(react@18.2.0)
+        version: 11.11.0(@emotion/react@11.11.3)(@types/react@18.2.61)(react@18.2.0)
       '@mui/material':
         specifier: ^5.15.2
-        version: 5.15.2(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@types/react@18.2.55)(react-dom@18.2.0)(react@18.2.0)
+        version: 5.15.2(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@types/react@18.2.61)(react-dom@18.2.0)(react@18.2.0)
       '@mui/styles':
         specifier: ^5.15.2
-        version: 5.15.2(@types/react@18.2.55)(react@18.2.0)
+        version: 5.15.2(@types/react@18.2.61)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -983,18 +983,64 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.1)
+        version: 4.2.1(vite@5.1.4)
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
+
+  examples/react/shadow-dom:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.27.5
+        version: link:../../../packages/react-query
+      '@tanstack/react-query-devtools':
+        specifier: ^5.27.8
+        version: link:../../../packages/react-query-devtools
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+    devDependencies:
+      '@types/react':
+        specifier: ^18.2.55
+        version: 18.2.61
+      '@types/react-dom':
+        specifier: ^18.2.19
+        version: 18.2.19
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^6.20.0
+        version: 6.20.0(@typescript-eslint/parser@6.20.0)(eslint@8.56.0)(typescript@5.2.2)
+      '@typescript-eslint/parser':
+        specifier: ^6.20.0
+        version: 6.20.0(eslint@8.56.0)(typescript@5.2.2)
+      '@vitejs/plugin-react':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@5.1.4)
+      eslint:
+        specifier: ^8.56.0
+        version: 8.56.0
+      eslint-plugin-react-hooks:
+        specifier: ^4.6.0
+        version: 4.6.0(eslint@8.56.0)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.5
+        version: 0.4.5(eslint@8.56.0)
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+      vite:
+        specifier: ^5.1.1
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/react/simple:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -1008,30 +1054,30 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.1)
+        version: 4.2.1(vite@5.1.4)
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/react/star-wars:
     dependencies:
       '@emotion/react':
         specifier: ^11.11.3
-        version: 11.11.3(@types/react@18.2.55)(react@18.2.0)
+        version: 11.11.3(@types/react@18.2.61)(react@18.2.0)
       '@emotion/styled':
         specifier: ^11.11.0
-        version: 11.11.0(@emotion/react@11.11.3)(@types/react@18.2.55)(react@18.2.0)
+        version: 11.11.0(@emotion/react@11.11.3)(@types/react@18.2.61)(react@18.2.0)
       '@mui/material':
         specifier: ^5.15.2
-        version: 5.15.2(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@types/react@18.2.55)(react-dom@18.2.0)(react@18.2.0)
+        version: 5.15.2(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@types/react@18.2.61)(react-dom@18.2.0)(react@18.2.0)
       '@mui/styles':
         specifier: ^5.15.2
-        version: 5.15.2(@types/react@18.2.55)(react@18.2.0)
+        version: 5.15.2(@types/react@18.2.61)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -1048,18 +1094,18 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.1)
+        version: 4.2.1(vite@5.1.4)
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/react/suspense:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -1079,18 +1125,18 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.1)
+        version: 4.2.1(vite@5.1.4)
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/solid/basic-graphql-request:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/solid-query-devtools
       graphql:
         specifier: ^16.8.1
@@ -1107,18 +1153,18 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.1)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.4)
 
   examples/solid/basic-typescript:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -1129,18 +1175,18 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.1)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.4)
 
   examples/solid/default-query-function:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -1151,35 +1197,35 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.1)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.4)
 
   examples/solid/simple:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
         version: 1.8.14
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.20.1
+        specifier: ^5.27.7
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.2.2
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.1)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.4)
 
   examples/solid/solid-start-streaming:
     dependencies:
@@ -1193,10 +1239,10 @@ importers:
         specifier: ^0.5.4
         version: 0.5.4(@testing-library/jest-dom@6.4.2)(rollup@4.6.0)(solid-js@1.8.14)(vinxi@0.3.3)(vite@4.5.1)
       '@tanstack/solid-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -1208,10 +1254,10 @@ importers:
   examples/svelte/auto-refetching:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1219,10 +1265,10 @@ importers:
         version: 3.1.1(@sveltejs/kit@2.5.0)
       '@sveltejs/kit':
         specifier: ^2.5.0
-        version: 2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.1)
+        version: 2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.4)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.10)(vite@5.1.1)
+        version: 3.0.2(svelte@4.2.10)(vite@5.1.4)
       svelte:
         specifier: ^4.2.10
         version: 4.2.10
@@ -1234,15 +1280,15 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/svelte/basic:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1250,10 +1296,10 @@ importers:
         version: 3.1.1(@sveltejs/kit@2.5.0)
       '@sveltejs/kit':
         specifier: ^2.5.0
-        version: 2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.1)
+        version: 2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.4)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.10)(vite@5.1.1)
+        version: 3.0.2(svelte@4.2.10)(vite@5.1.4)
       svelte:
         specifier: ^4.2.10
         version: 4.2.10
@@ -1265,15 +1311,15 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/svelte/load-more-infinite-scroll:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1281,10 +1327,10 @@ importers:
         version: 3.1.1(@sveltejs/kit@2.5.0)
       '@sveltejs/kit':
         specifier: ^2.5.0
-        version: 2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.1)
+        version: 2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.4)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.10)(vite@5.1.1)
+        version: 3.0.2(svelte@4.2.10)(vite@5.1.4)
       svelte:
         specifier: ^4.2.10
         version: 4.2.10
@@ -1296,15 +1342,15 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/svelte/optimistic-updates-typescript:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1312,10 +1358,10 @@ importers:
         version: 3.1.1(@sveltejs/kit@2.5.0)
       '@sveltejs/kit':
         specifier: ^2.5.0
-        version: 2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.1)
+        version: 2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.4)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.10)(vite@5.1.1)
+        version: 3.0.2(svelte@4.2.10)(vite@5.1.4)
       svelte:
         specifier: ^4.2.10
         version: 4.2.10
@@ -1327,15 +1373,15 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/svelte/playground:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1343,10 +1389,10 @@ importers:
         version: 3.1.1(@sveltejs/kit@2.5.0)
       '@sveltejs/kit':
         specifier: ^2.5.0
-        version: 2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.1)
+        version: 2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.4)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.10)(vite@5.1.1)
+        version: 3.0.2(svelte@4.2.10)(vite@5.1.4)
       svelte:
         specifier: ^4.2.10
         version: 4.2.10
@@ -1358,20 +1404,20 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/svelte/simple:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.10)(vite@5.1.1)
+        version: 3.0.2(svelte@4.2.10)(vite@5.1.4)
       '@tsconfig/svelte':
         specifier: ^5.0.2
         version: 5.0.2
@@ -1386,15 +1432,15 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/svelte/ssr:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1402,10 +1448,10 @@ importers:
         version: 3.1.1(@sveltejs/kit@2.5.0)
       '@sveltejs/kit':
         specifier: ^2.5.0
-        version: 2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.1)
+        version: 2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.4)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.10)(vite@5.1.1)
+        version: 3.0.2(svelte@4.2.10)(vite@5.1.4)
       svelte:
         specifier: ^4.2.10
         version: 4.2.10
@@ -1417,15 +1463,15 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/svelte/star-wars:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1433,10 +1479,10 @@ importers:
         version: 3.1.1(@sveltejs/kit@2.5.0)
       '@sveltejs/kit':
         specifier: ^2.5.0
-        version: 2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.1)
+        version: 2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.4)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.10)(vite@5.1.1)
+        version: 3.0.2(svelte@4.2.10)(vite@5.1.4)
       autoprefixer:
         specifier: ^10.4.16
         version: 10.4.16(postcss@8.4.35)
@@ -1457,15 +1503,15 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/vue/basic:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.3.0
@@ -1473,18 +1519,18 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
-        version: 5.0.4(vite@5.1.1)(vue@3.3.0)
+        version: 5.0.4(vite@5.1.4)(vue@3.3.0)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/vue/dependent-queries:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/vue-query
       vue:
         specifier: ^3.3.0
@@ -1492,27 +1538,27 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
-        version: 5.0.4(vite@5.1.1)(vue@3.3.0)
+        version: 5.0.4(vite@5.1.4)(vue@3.3.0)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/vue/persister:
     dependencies:
       '@tanstack/query-core':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/query-core
       '@tanstack/query-persist-client-core':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/query-persist-client-core
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/vue-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/vue-query
       idb-keyval:
         specifier: ^6.2.1
@@ -1523,21 +1569,21 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
-        version: 5.0.4(vite@5.1.1)(vue@3.3.0)
+        version: 5.0.4(vite@5.1.4)(vue@3.3.0)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   examples/vue/simple:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.25.0
+        specifier: ^5.27.5
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^5.25.0
+        specifier: ^5.27.8
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.3.0
@@ -1545,13 +1591,13 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
-        version: 5.0.4(vite@5.1.1)(vue@3.3.0)
+        version: 5.0.4(vite@5.1.4)(vue@3.3.0)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   integrations/angular-cli-standalone-17:
     dependencies:
@@ -1660,7 +1706,7 @@ importers:
         version: 18.19.3
       '@types/react':
         specifier: ^18.2.55
-        version: 18.2.55
+        version: 18.2.61
       '@types/react-dom':
         specifier: ^18.2.19
         version: 18.2.19
@@ -1678,7 +1724,7 @@ importers:
         version: link:../../packages/react-query-devtools
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.1)
+        version: 4.2.1(vite@5.1.4)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -1687,7 +1733,7 @@ importers:
         version: 18.2.0(react@18.2.0)
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   integrations/solid-vite:
     dependencies:
@@ -1702,16 +1748,16 @@ importers:
         version: 1.8.14
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.1)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.4)
 
   integrations/svelte-vite:
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.10)(vite@5.1.1)
+        version: 3.0.2(svelte@4.2.10)(vite@5.1.4)
       '@tanstack/svelte-query':
         specifier: workspace:*
         version: link:../../packages/svelte-query
@@ -1723,7 +1769,7 @@ importers:
         version: 4.2.10
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
 
   integrations/vue-vite:
     dependencies:
@@ -1736,13 +1782,13 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
-        version: 5.0.4(vite@5.1.1)(vue@3.3.0)
+        version: 5.0.4(vite@5.1.4)(vue@3.3.0)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
       vue-tsc:
         specifier: ^1.8.26
         version: 1.8.26(typescript@5.2.2)
@@ -1897,7 +1943,7 @@ importers:
         version: 2.2.0(esbuild@0.19.11)(solid-js@1.8.14)(tsup@8.0.1)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.1)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.4)
 
   packages/query-persist-client-core:
     dependencies:
@@ -1922,13 +1968,13 @@ importers:
     devDependencies:
       '@types/react':
         specifier: ^18.2.55
-        version: 18.2.55
+        version: 18.2.61
       '@types/react-dom':
         specifier: ^18.2.19
         version: 18.2.19
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.1)
+        version: 4.2.1(vite@5.1.4)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -1950,10 +1996,10 @@ importers:
         version: link:../react-query
       '@types/react':
         specifier: ^18.2.55
-        version: 18.2.55
+        version: 18.2.61
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.1)
+        version: 4.2.1(vite@5.1.4)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -1965,10 +2011,10 @@ importers:
         version: link:../react-query
       '@types/react':
         specifier: ^18.2.55
-        version: 18.2.55
+        version: 18.2.61
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.1)
+        version: 4.2.1(vite@5.1.4)
       next:
         specifier: ^14.0.0
         version: 14.0.0(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)
@@ -1987,10 +2033,10 @@ importers:
         version: link:../react-query
       '@types/react':
         specifier: ^18.2.55
-        version: 18.2.55
+        version: 18.2.61
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.1)
+        version: 4.2.1(vite@5.1.4)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -2009,7 +2055,7 @@ importers:
         version: 2.2.0(esbuild@0.19.11)(solid-js@1.8.14)(tsup@8.0.1)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.1)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.4)
 
   packages/solid-query-devtools:
     dependencies:
@@ -2028,7 +2074,7 @@ importers:
         version: 2.2.0(esbuild@0.19.11)(solid-js@1.8.14)(tsup@8.0.1)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.1)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.4)
 
   packages/solid-query-persist-client:
     dependencies:
@@ -2047,7 +2093,7 @@ importers:
         version: 2.2.0(esbuild@0.19.11)(solid-js@1.8.14)(tsup@8.0.1)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.1)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.4)
 
   packages/svelte-query:
     dependencies:
@@ -2060,7 +2106,7 @@ importers:
         version: 2.2.6(svelte@4.2.10)(typescript@5.2.2)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.10)(vite@5.1.1)
+        version: 3.0.2(svelte@4.2.10)(vite@5.1.4)
       '@testing-library/svelte':
         specifier: ^4.1.0
         version: 4.1.0(svelte@4.2.10)
@@ -2091,7 +2137,7 @@ importers:
         version: 2.2.6(svelte@4.2.10)(typescript@5.2.2)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.10)(vite@5.1.1)
+        version: 3.0.2(svelte@4.2.10)(vite@5.1.4)
       '@tanstack/svelte-query':
         specifier: workspace:*
         version: link:../svelte-query
@@ -2119,7 +2165,7 @@ importers:
         version: 2.2.6(svelte@4.2.10)(typescript@5.2.2)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.10)(vite@5.1.1)
+        version: 3.0.2(svelte@4.2.10)(vite@5.1.4)
       '@tanstack/svelte-query':
         specifier: workspace:*
         version: link:../svelte-query
@@ -2156,7 +2202,7 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
-        version: 5.0.4(vite@5.1.1)(vue@3.3.0)
+        version: 5.0.4(vite@5.1.4)(vue@3.3.0)
       '@vue/composition-api':
         specifier: 1.7.2
         version: 1.7.2(vue@3.3.0)
@@ -2181,10 +2227,10 @@ importers:
         version: link:../vue-query
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
-        version: 5.0.4(vite@5.1.1)(vue@3.3.0)
+        version: 5.0.4(vite@5.1.4)(vue@3.3.0)
       vite:
         specifier: ^5.1.1
-        version: 5.1.1(@types/node@18.19.3)
+        version: 5.1.4(@types/node@18.19.3)
       vue:
         specifier: ^3.3.0
         version: 3.3.0
@@ -4920,7 +4966,7 @@ packages:
     resolution: {integrity: sha512-W2P2c/VRW1/1tLox0mVUalvnWXxavmv/Oum2aPsRcoDJuob75FC3Y8FbpfLwUegRcxINtGUMPq0tFCvYNTBXNA==}
     dev: false
 
-  /@emotion/react@11.11.3(@types/react@18.2.55)(react@18.2.0):
+  /@emotion/react@11.11.3(@types/react@18.2.61)(react@18.2.0):
     resolution: {integrity: sha512-Cnn0kuq4DoONOMcnoVsTOR8E+AdnKFf//6kUWc4LCdnxj31pZWn7rIULd6Y7/Js1PiPHzn7SKCM9vB/jBni8eA==}
     peerDependencies:
       '@types/react': '*'
@@ -4936,7 +4982,7 @@ packages:
       '@emotion/use-insertion-effect-with-fallbacks': 1.0.1(react@18.2.0)
       '@emotion/utils': 1.2.1
       '@emotion/weak-memoize': 0.3.1
-      '@types/react': 18.2.55
+      '@types/react': 18.2.61
       hoist-non-react-statics: 3.3.2
       react: 18.2.0
     dev: false
@@ -4955,7 +5001,7 @@ packages:
     resolution: {integrity: sha512-0QBtGvaqtWi+nx6doRwDdBIzhNdZrXUppvTM4dtZZWEGTXL/XE/yJxLMGlDT1Gt+UHH5IX1n+jkXyytE/av7OA==}
     dev: false
 
-  /@emotion/styled@11.11.0(@emotion/react@11.11.3)(@types/react@18.2.55)(react@18.2.0):
+  /@emotion/styled@11.11.0(@emotion/react@11.11.3)(@types/react@18.2.61)(react@18.2.0):
     resolution: {integrity: sha512-hM5Nnvu9P3midq5aaXj4I+lnSfNi7Pmd4EWk1fOZ3pxookaQTNew6bp4JaCBYM4HVFZF9g7UjJmsUmC2JlxOng==}
     peerDependencies:
       '@emotion/react': ^11.0.0-rc.0
@@ -4968,11 +5014,11 @@ packages:
       '@babel/runtime': 7.23.9
       '@emotion/babel-plugin': 11.11.0
       '@emotion/is-prop-valid': 1.2.1
-      '@emotion/react': 11.11.3(@types/react@18.2.55)(react@18.2.0)
+      '@emotion/react': 11.11.3(@types/react@18.2.61)(react@18.2.0)
       '@emotion/serialize': 1.1.3
       '@emotion/use-insertion-effect-with-fallbacks': 1.0.1(react@18.2.0)
       '@emotion/utils': 1.2.1
-      '@types/react': 18.2.55
+      '@types/react': 18.2.61
       react: 18.2.0
     dev: false
 
@@ -6596,7 +6642,7 @@ packages:
       strict-event-emitter: 0.5.1
     dev: false
 
-  /@mui/base@5.0.0-beta.29(@types/react@18.2.55)(react-dom@18.2.0)(react@18.2.0):
+  /@mui/base@5.0.0-beta.29(@types/react@18.2.61)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-OXfUssYrB6ch/xpBVHMKAjThPlI9VyGGKdvQLMXef2j39wXfcxPlUVQlwia/lmE3rxWIGvbwkZsDtNYzLMsDUg==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
@@ -6609,10 +6655,10 @@ packages:
     dependencies:
       '@babel/runtime': 7.23.9
       '@floating-ui/react-dom': 2.0.4(react-dom@18.2.0)(react@18.2.0)
-      '@mui/types': 7.2.11(@types/react@18.2.55)
-      '@mui/utils': 5.15.2(@types/react@18.2.55)(react@18.2.0)
+      '@mui/types': 7.2.11(@types/react@18.2.61)
+      '@mui/utils': 5.15.2(@types/react@18.2.61)(react@18.2.0)
       '@popperjs/core': 2.11.8
-      '@types/react': 18.2.55
+      '@types/react': 18.2.61
       clsx: 2.0.0
       prop-types: 15.8.1
       react: 18.2.0
@@ -6623,7 +6669,7 @@ packages:
     resolution: {integrity: sha512-0vk4ckS2w1F5PmkSXSd7F/QuRlNcPqWTJ8CPl+HQRLTIhJVS/VKEI+3dQufOdKfn2wS+ecnvlvXerbugs+xZ8Q==}
     dev: false
 
-  /@mui/material@5.15.2(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@types/react@18.2.55)(react-dom@18.2.0)(react@18.2.0):
+  /@mui/material@5.15.2(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@types/react@18.2.61)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-JnoIrpNmEHG5uC1IyEdgsnDiaiuCZnUIh7f9oeAr87AvBmNiEJPbo7XrD7kBTFWwp+b97rQ12QdSs9CLhT2n/A==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
@@ -6641,14 +6687,14 @@ packages:
         optional: true
     dependencies:
       '@babel/runtime': 7.23.9
-      '@emotion/react': 11.11.3(@types/react@18.2.55)(react@18.2.0)
-      '@emotion/styled': 11.11.0(@emotion/react@11.11.3)(@types/react@18.2.55)(react@18.2.0)
-      '@mui/base': 5.0.0-beta.29(@types/react@18.2.55)(react-dom@18.2.0)(react@18.2.0)
+      '@emotion/react': 11.11.3(@types/react@18.2.61)(react@18.2.0)
+      '@emotion/styled': 11.11.0(@emotion/react@11.11.3)(@types/react@18.2.61)(react@18.2.0)
+      '@mui/base': 5.0.0-beta.29(@types/react@18.2.61)(react-dom@18.2.0)(react@18.2.0)
       '@mui/core-downloads-tracker': 5.15.2
-      '@mui/system': 5.15.2(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@types/react@18.2.55)(react@18.2.0)
-      '@mui/types': 7.2.11(@types/react@18.2.55)
-      '@mui/utils': 5.15.2(@types/react@18.2.55)(react@18.2.0)
-      '@types/react': 18.2.55
+      '@mui/system': 5.15.2(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@types/react@18.2.61)(react@18.2.0)
+      '@mui/types': 7.2.11(@types/react@18.2.61)
+      '@mui/utils': 5.15.2(@types/react@18.2.61)(react@18.2.0)
+      '@types/react': 18.2.61
       '@types/react-transition-group': 4.4.10
       clsx: 2.0.0
       csstype: 3.1.2
@@ -6659,7 +6705,7 @@ packages:
       react-transition-group: 4.4.5(react-dom@18.2.0)(react@18.2.0)
     dev: false
 
-  /@mui/private-theming@5.15.2(@types/react@18.2.55)(react@18.2.0):
+  /@mui/private-theming@5.15.2(@types/react@18.2.61)(react@18.2.0):
     resolution: {integrity: sha512-KlXx5TH1Mw9omSY+Q6rz5TA/P71meSYaAOeopiW8s6o433+fnOxS17rZbmd1RnDZGCo+j24TfCavQuCMBAZnQA==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
@@ -6670,8 +6716,8 @@ packages:
         optional: true
     dependencies:
       '@babel/runtime': 7.23.9
-      '@mui/utils': 5.15.2(@types/react@18.2.55)(react@18.2.0)
-      '@types/react': 18.2.55
+      '@mui/utils': 5.15.2(@types/react@18.2.61)(react@18.2.0)
+      '@types/react': 18.2.61
       prop-types: 15.8.1
       react: 18.2.0
     dev: false
@@ -6691,14 +6737,14 @@ packages:
     dependencies:
       '@babel/runtime': 7.23.9
       '@emotion/cache': 11.11.0
-      '@emotion/react': 11.11.3(@types/react@18.2.55)(react@18.2.0)
-      '@emotion/styled': 11.11.0(@emotion/react@11.11.3)(@types/react@18.2.55)(react@18.2.0)
+      '@emotion/react': 11.11.3(@types/react@18.2.61)(react@18.2.0)
+      '@emotion/styled': 11.11.0(@emotion/react@11.11.3)(@types/react@18.2.61)(react@18.2.0)
       csstype: 3.1.2
       prop-types: 15.8.1
       react: 18.2.0
     dev: false
 
-  /@mui/styles@5.15.2(@types/react@18.2.55)(react@18.2.0):
+  /@mui/styles@5.15.2(@types/react@18.2.61)(react@18.2.0):
     resolution: {integrity: sha512-B8a3IW/HqAaIWr4wd2CafITT/NOO63X0bQF36WsLCQec9vgRLh6CKLLjDY5pvyEpzJJFYwI7kjUMaNeETpYsXg==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
@@ -6710,10 +6756,10 @@ packages:
     dependencies:
       '@babel/runtime': 7.23.9
       '@emotion/hash': 0.9.1
-      '@mui/private-theming': 5.15.2(@types/react@18.2.55)(react@18.2.0)
-      '@mui/types': 7.2.11(@types/react@18.2.55)
-      '@mui/utils': 5.15.2(@types/react@18.2.55)(react@18.2.0)
-      '@types/react': 18.2.55
+      '@mui/private-theming': 5.15.2(@types/react@18.2.61)(react@18.2.0)
+      '@mui/types': 7.2.11(@types/react@18.2.61)
+      '@mui/utils': 5.15.2(@types/react@18.2.61)(react@18.2.0)
+      '@types/react': 18.2.61
       clsx: 2.0.0
       csstype: 3.1.2
       hoist-non-react-statics: 3.3.2
@@ -6729,7 +6775,7 @@ packages:
       react: 18.2.0
     dev: false
 
-  /@mui/system@5.15.2(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@types/react@18.2.55)(react@18.2.0):
+  /@mui/system@5.15.2(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@types/react@18.2.61)(react@18.2.0):
     resolution: {integrity: sha512-I7CzLiHDtU/BTobJgSk+wPGGWG95K8lYfdFEnq//wOgSrLDAdOVvl2gleDxJWO+yAbGz4RKEOnR9KuD+xQZH4A==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
@@ -6746,20 +6792,20 @@ packages:
         optional: true
     dependencies:
       '@babel/runtime': 7.23.9
-      '@emotion/react': 11.11.3(@types/react@18.2.55)(react@18.2.0)
-      '@emotion/styled': 11.11.0(@emotion/react@11.11.3)(@types/react@18.2.55)(react@18.2.0)
-      '@mui/private-theming': 5.15.2(@types/react@18.2.55)(react@18.2.0)
+      '@emotion/react': 11.11.3(@types/react@18.2.61)(react@18.2.0)
+      '@emotion/styled': 11.11.0(@emotion/react@11.11.3)(@types/react@18.2.61)(react@18.2.0)
+      '@mui/private-theming': 5.15.2(@types/react@18.2.61)(react@18.2.0)
       '@mui/styled-engine': 5.15.2(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(react@18.2.0)
-      '@mui/types': 7.2.11(@types/react@18.2.55)
-      '@mui/utils': 5.15.2(@types/react@18.2.55)(react@18.2.0)
-      '@types/react': 18.2.55
+      '@mui/types': 7.2.11(@types/react@18.2.61)
+      '@mui/utils': 5.15.2(@types/react@18.2.61)(react@18.2.0)
+      '@types/react': 18.2.61
       clsx: 2.0.0
       csstype: 3.1.2
       prop-types: 15.8.1
       react: 18.2.0
     dev: false
 
-  /@mui/types@7.2.11(@types/react@18.2.55):
+  /@mui/types@7.2.11(@types/react@18.2.61):
     resolution: {integrity: sha512-KWe/QTEsFFlFSH+qRYf3zoFEj3z67s+qAuSnMMg+gFwbxG7P96Hm6g300inQL1Wy///gSRb8juX7Wafvp93m3w==}
     peerDependencies:
       '@types/react': ^17.0.0 || ^18.0.0
@@ -6767,10 +6813,10 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': 18.2.55
+      '@types/react': 18.2.61
     dev: false
 
-  /@mui/utils@5.15.2(@types/react@18.2.55)(react@18.2.0):
+  /@mui/utils@5.15.2(@types/react@18.2.61)(react@18.2.0):
     resolution: {integrity: sha512-6dGM9/guFKBlFRHA7/mbM+E7wE7CYDy9Ny4JLtD3J+NTyhi8nd8YxlzgAgTaTVqY0BpdQ2zdfB/q6+p2EdGM0w==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
@@ -6782,7 +6828,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.23.9
       '@types/prop-types': 15.7.11
-      '@types/react': 18.2.55
+      '@types/react': 18.2.61
       prop-types: 15.8.1
       react: 18.2.0
       react-is: 18.2.0
@@ -7262,7 +7308,6 @@ packages:
     dependencies:
       is-glob: 4.0.3
       micromatch: 4.0.5
-      napi-wasm: 1.1.0
     dev: false
     bundledDependencies:
       - napi-wasm
@@ -8727,11 +8772,11 @@ packages:
     peerDependencies:
       '@sveltejs/kit': ^2.0.0
     dependencies:
-      '@sveltejs/kit': 2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.1)
+      '@sveltejs/kit': 2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.4)
       import-meta-resolve: 4.0.0
     dev: true
 
-  /@sveltejs/kit@2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.1):
+  /@sveltejs/kit@2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.4):
     resolution: {integrity: sha512-1uyXvzC2Lu1FZa30T4y5jUAC21R309ZMRG0TPt+PPPbNUoDpy8zSmSNVWYaBWxYDqLGQ5oPNWvjvvF2IjJ1jmA==}
     engines: {node: '>=18.13'}
     hasBin: true
@@ -8741,7 +8786,7 @@ packages:
       svelte: ^4.0.0 || ^5.0.0-next.0
       vite: ^5.0.3
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 3.0.2(svelte@4.2.10)(vite@5.1.1)
+      '@sveltejs/vite-plugin-svelte': 3.0.2(svelte@4.2.10)(vite@5.1.4)
       '@types/cookie': 0.6.0
       cookie: 0.6.0
       devalue: 4.3.2
@@ -8755,7 +8800,7 @@ packages:
       sirv: 2.0.4
       svelte: 4.2.10
       tiny-glob: 0.2.9
-      vite: 5.1.1(@types/node@18.19.3)
+      vite: 5.1.4(@types/node@18.19.3)
     dev: true
 
   /@sveltejs/package@2.2.6(svelte@4.2.10)(typescript@5.2.2):
@@ -8775,7 +8820,7 @@ packages:
       - typescript
     dev: true
 
-  /@sveltejs/vite-plugin-svelte-inspector@2.0.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.1):
+  /@sveltejs/vite-plugin-svelte-inspector@2.0.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.4):
     resolution: {integrity: sha512-gjr9ZFg1BSlIpfZ4PRewigrvYmHWbDrq2uvvPB1AmTWKuM+dI1JXQSUu2pIrYLb/QncyiIGkFDFKTwJ0XqQZZg==}
     engines: {node: ^18.0.0 || >=20}
     peerDependencies:
@@ -8783,30 +8828,30 @@ packages:
       svelte: ^4.0.0 || ^5.0.0-next.0
       vite: ^5.0.0
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 3.0.2(svelte@4.2.10)(vite@5.1.1)
+      '@sveltejs/vite-plugin-svelte': 3.0.2(svelte@4.2.10)(vite@5.1.4)
       debug: 4.3.4(supports-color@6.1.0)
       svelte: 4.2.10
-      vite: 5.1.1(@types/node@18.19.3)
+      vite: 5.1.4(@types/node@18.19.3)
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.10)(vite@5.1.1):
+  /@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.10)(vite@5.1.4):
     resolution: {integrity: sha512-MpmF/cju2HqUls50WyTHQBZUV3ovV/Uk8k66AN2gwHogNAG8wnW8xtZDhzNBsFJJuvmq1qnzA5kE7YfMJNFv2Q==}
     engines: {node: ^18.0.0 || >=20}
     peerDependencies:
       svelte: ^4.0.0 || ^5.0.0-next.0
       vite: ^5.0.0
     dependencies:
-      '@sveltejs/vite-plugin-svelte-inspector': 2.0.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.1)
+      '@sveltejs/vite-plugin-svelte-inspector': 2.0.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.4)
       debug: 4.3.4(supports-color@6.1.0)
       deepmerge: 4.3.1
       kleur: 4.1.5
       magic-string: 0.30.5
       svelte: 4.2.10
       svelte-hmr: 0.15.3(svelte@4.2.10)
-      vite: 5.1.1(@types/node@18.19.3)
-      vitefu: 0.2.5(vite@5.1.1)
+      vite: 5.1.4(@types/node@18.19.3)
+      vitefu: 0.2.5(vite@5.1.4)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -8931,7 +8976,7 @@ packages:
       tslib: 2.6.2
     dev: true
 
-  /@tanstack/config@0.4.4(@types/node@18.19.3)(esbuild@0.19.11)(rollup@4.6.0)(typescript@5.2.2)(vite@5.1.1):
+  /@tanstack/config@0.4.4(@types/node@18.19.3)(esbuild@0.19.11)(rollup@4.6.0)(typescript@5.2.2)(vite@5.1.4):
     resolution: {integrity: sha512-8WBvww2SHhN2YAQvvlmL7wwaspFnEwWVeyO7nWYXEp6Ho1WAkvRgzwofz7iGTmRVAAFsM8jAn4oawkHqvZBxeA==}
     engines: {node: '>=18'}
     hasBin: true
@@ -8951,8 +8996,8 @@ packages:
       semver: 7.6.0
       stream-to-array: 2.3.0
       v8flags: 4.0.1
-      vite-plugin-dts: 3.7.2(@types/node@18.19.3)(rollup@4.6.0)(typescript@5.2.2)(vite@5.1.1)
-      vite-plugin-externalize-deps: 0.8.0(vite@5.1.1)
+      vite-plugin-dts: 3.7.2(@types/node@18.19.3)(rollup@4.6.0)(typescript@5.2.2)(vite@5.1.4)
+      vite-plugin-externalize-deps: 0.8.0(vite@5.1.4)
     transitivePeerDependencies:
       - '@types/node'
       - esbuild
@@ -9309,17 +9354,17 @@ packages:
   /@types/react-dom@18.2.19:
     resolution: {integrity: sha512-aZvQL6uUbIJpjZk4U8JZGbau9KDeAwMfmhyWorxgBkqDIEf6ROjRozcmPIicqsUwPUjbkDfHKgGee1Lq65APcA==}
     dependencies:
-      '@types/react': 18.2.55
+      '@types/react': 18.2.61
     dev: true
 
   /@types/react-transition-group@4.4.10:
     resolution: {integrity: sha512-hT/+s0VQs2ojCX823m60m5f0sL5idt9SO6Tj6Dg+rdphGPIeJbJ6CxvBYkgkGKrYeDjvIpKTR38UzmtHJOGW3Q==}
     dependencies:
-      '@types/react': 18.2.55
+      '@types/react': 18.2.61
     dev: false
 
-  /@types/react@18.2.55:
-    resolution: {integrity: sha512-Y2Tz5P4yz23brwm2d7jNon39qoAtMMmalOQv6+fEFt1mT+FcM3D841wDpoUvFXhaYenuROCy3FZYqdTjM7qVyA==}
+  /@types/react@18.2.61:
+    resolution: {integrity: sha512-NURTN0qNnJa7O/k4XUkEW2yfygA+NxS0V5h1+kp9jPwhzZy95q3ADoGMP0+JypMhrZBTTgjKAUlTctde1zzeQA==}
     dependencies:
       '@types/prop-types': 15.7.11
       '@types/scheduler': 0.16.5
@@ -9922,7 +9967,7 @@ packages:
       vite: 5.0.12(@types/node@18.19.3)(less@4.2.0)(sass@1.69.7)(terser@5.26.0)
     dev: true
 
-  /@vitejs/plugin-react@4.2.1(vite@5.1.1):
+  /@vitejs/plugin-react@4.2.1(vite@5.1.4):
     resolution: {integrity: sha512-oojO9IDc4nCUUi8qIR11KoQm0XFFLIwsRBwHRR4d/88IWghn1y6ckz/bJ8GHDCsYEJee8mDzqtJxh15/cisJNQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
@@ -9933,18 +9978,18 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.23.3(@babel/core@7.23.7)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.0
-      vite: 5.1.1(@types/node@18.19.3)
+      vite: 5.1.4(@types/node@18.19.3)
     transitivePeerDependencies:
       - supports-color
 
-  /@vitejs/plugin-vue@5.0.4(vite@5.1.1)(vue@3.3.0):
+  /@vitejs/plugin-vue@5.0.4(vite@5.1.4)(vue@3.3.0):
     resolution: {integrity: sha512-WS3hevEszI6CEVEx28F8RjTX97k3KsrcY6kvTg7+Whm5y3oYvcqzVeGCU3hxSAn4uY2CLCkeokkGKpoctccilQ==}
     engines: {node: ^18.0.0 || >=20.0.0}
     peerDependencies:
       vite: ^5.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 5.1.1(@types/node@18.19.3)
+      vite: 5.1.4(@types/node@18.19.3)
       vue: 3.3.0
     dev: true
 
@@ -15025,6 +15070,14 @@ packages:
       eslint: ^8.56.0
     dependencies:
       eslint: 8.56.0
+
+  /eslint-plugin-react-refresh@0.4.5(eslint@8.56.0):
+    resolution: {integrity: sha512-D53FYKJa+fDmZMtriODxvhwrO+IOqrxoEo21gMA0sjHdU6dPVH4OhyFip9ypl8HOF5RV5KdTo+rBQLvnY2cO8w==}
+    peerDependencies:
+      eslint: ^8.56.0
+    dependencies:
+      eslint: 8.56.0
+    dev: true
 
   /eslint-plugin-react@7.33.2(eslint@8.56.0):
     resolution: {integrity: sha512-73QQMKALArI8/7xGLNI/3LylrEYrlKZSb5C9+q3OtOewTnMQi5cT+aE9E41sLCmli3I9PGGmD1yiZydyo4FEPw==}
@@ -21218,10 +21271,6 @@ packages:
       to-regex: 3.0.2
     transitivePeerDependencies:
       - supports-color
-    dev: false
-
-  /napi-wasm@1.1.0:
-    resolution: {integrity: sha512-lHwIAJbmLSjF9VDRm9GoVOy9AGp3aIvkjv+Kvz9h16QR3uSVYH78PNQUnT2U4X53mhlnV2M7wrhibQ3GHicDmg==}
     dev: false
 
   /native-url@0.2.6:
@@ -29051,7 +29100,7 @@ packages:
       debug: 4.3.4(supports-color@6.1.0)
       pathe: 1.1.2
       picocolors: 1.0.0
-      vite: 5.1.1(@types/node@18.19.3)
+      vite: 5.1.4(@types/node@18.19.3)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -29062,7 +29111,7 @@ packages:
       - supports-color
       - terser
 
-  /vite-plugin-dts@3.7.2(@types/node@18.19.3)(rollup@4.6.0)(typescript@5.2.2)(vite@5.1.1):
+  /vite-plugin-dts@3.7.2(@types/node@18.19.3)(rollup@4.6.0)(typescript@5.2.2)(vite@5.1.4):
     resolution: {integrity: sha512-kg//1nDA01b8rufJf4TsvYN8LMkdwv0oBYpiQi6nRwpHyue+wTlhrBiqgipdFpMnW1oOYv6ywmzE5B0vg6vSEA==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
@@ -29078,7 +29127,7 @@ packages:
       debug: 4.3.4(supports-color@6.1.0)
       kolorist: 1.8.0
       typescript: 5.2.2
-      vite: 5.1.1(@types/node@18.19.3)
+      vite: 5.1.4(@types/node@18.19.3)
       vue-tsc: 1.8.26(typescript@5.2.2)
     transitivePeerDependencies:
       - '@types/node'
@@ -29086,12 +29135,12 @@ packages:
       - supports-color
     dev: true
 
-  /vite-plugin-externalize-deps@0.8.0(vite@5.1.1):
+  /vite-plugin-externalize-deps@0.8.0(vite@5.1.4):
     resolution: {integrity: sha512-MdC8kRNQ1ZjhUicU2HcqGVhL0UUFqv83Zp1JZdHjE82PoPR8wsSWZ3axpot7B6img3sW6g8shYJikE0CKA0chA==}
     peerDependencies:
       vite: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0
     dependencies:
-      vite: 5.1.1(@types/node@18.19.3)
+      vite: 5.1.4(@types/node@18.19.3)
     dev: true
 
   /vite-plugin-inspect@0.7.40(rollup@4.6.0)(vite@4.5.1):
@@ -29184,6 +29233,29 @@ packages:
       solid-refresh: 0.6.3(solid-js@1.8.14)
       vite: 5.1.1(@types/node@18.19.3)
       vitefu: 0.2.5(vite@5.1.1)
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /vite-plugin-solid@2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.4):
+    resolution: {integrity: sha512-RC4hj+lbvljw57BbMGDApvEOPEh14lwrr/GeXRLNQLcR1qnOdzOwwTSFy13Gj/6FNIZpBEl0bWPU+VYFawrqUw==}
+    peerDependencies:
+      '@testing-library/jest-dom': ^5.16.6 || ^5.17.0 || ^6.*
+      solid-js: ^1.7.2
+      vite: ^3.0.0 || ^4.0.0 || ^5.0.0
+    peerDependenciesMeta:
+      '@testing-library/jest-dom':
+        optional: true
+    dependencies:
+      '@babel/core': 7.23.7
+      '@testing-library/jest-dom': 6.4.2(vitest@1.3.1)
+      '@types/babel__core': 7.20.5
+      babel-preset-solid: 1.8.6(@babel/core@7.23.7)
+      merge-anything: 5.1.7
+      solid-js: 1.8.14
+      solid-refresh: 0.6.3(solid-js@1.8.14)
+      vite: 5.1.4(@types/node@18.19.3)
+      vitefu: 0.2.5(vite@5.1.4)
     transitivePeerDependencies:
       - supports-color
 
@@ -29296,6 +29368,42 @@ packages:
       rollup: 4.6.0
     optionalDependencies:
       fsevents: 2.3.3
+    dev: false
+
+  /vite@5.1.4(@types/node@18.19.3):
+    resolution: {integrity: sha512-n+MPqzq+d9nMVTKyewqw6kSt+R3CkvF9QAKY8obiQn8g1fwTscKxyfaYnC632HtBXAQGc1Yjomphwn1dtwGAHg==}
+    engines: {node: ^18.0.0 || >=20.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': ^18.0.0 || >=20.0.0
+      less: '*'
+      lightningcss: ^1.21.0
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      lightningcss:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      '@types/node': 18.19.3
+      esbuild: 0.19.11
+      postcss: 8.4.35
+      rollup: 4.6.0
+    optionalDependencies:
+      fsevents: 2.3.3
 
   /vitefu@0.2.5(vite@4.5.1):
     resolution: {integrity: sha512-SgHtMLoqaeeGnd2evZ849ZbACbnwQCIwRH57t18FxcXoZop0uQu0uzlIhJBlF/eWVzuce0sHeqPcDo+evVcg8Q==}
@@ -29317,6 +29425,17 @@ packages:
         optional: true
     dependencies:
       vite: 5.1.1(@types/node@18.19.3)
+    dev: false
+
+  /vitefu@0.2.5(vite@5.1.4):
+    resolution: {integrity: sha512-SgHtMLoqaeeGnd2evZ849ZbACbnwQCIwRH57t18FxcXoZop0uQu0uzlIhJBlF/eWVzuce0sHeqPcDo+evVcg8Q==}
+    peerDependencies:
+      vite: ^3.0.0 || ^4.0.0 || ^5.0.0
+    peerDependenciesMeta:
+      vite:
+        optional: true
+    dependencies:
+      vite: 5.1.4(@types/node@18.19.3)
 
   /vitest@1.3.1(@types/node@18.19.3)(jsdom@24.0.0):
     resolution: {integrity: sha512-/1QJqXs8YbCrfv/GPQ05wAZf2eakUPLPa18vkJAKE7RXOKfVHqMZZ1WlTjiwl6Gcn65M5vpNUB6EFLnEdRdEXQ==}
@@ -29362,7 +29481,7 @@ packages:
       strip-literal: 2.0.0
       tinybench: 2.5.1
       tinypool: 0.8.2
-      vite: 5.1.1(@types/node@18.19.3)
+      vite: 5.1.4(@types/node@18.19.3)
       vite-node: 1.3.1(@types/node@18.19.3)
       why-is-node-running: 2.2.2
     transitivePeerDependencies:

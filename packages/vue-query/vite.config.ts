@@ -16,6 +16,7 @@ export default defineConfig({
       if (log.includes('Download the Vue Devtools extension')) {
         return false
       }
+      return undefined
     },
   },
 })

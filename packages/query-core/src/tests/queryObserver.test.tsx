@@ -465,13 +465,12 @@ describe('queryObserver', () => {
     })
     observer.setOptions({ queryKey: key, enabled: false, staleTime: 10 })
     await queryClient.fetchQuery({ queryKey: key, queryFn })
-    await sleep(100)
+    await sleep(20)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(1)
-    expect(results.length).toBe(3)
-    expect(results[0]).toMatchObject({ isStale: true })
-    expect(results[1]).toMatchObject({ isStale: false })
-    expect(results[2]).toMatchObject({ isStale: true })
+    expect(results.length).toBe(2)
+    expect(results[0]).toMatchObject({ isStale: false, data: undefined })
+    expect(results[1]).toMatchObject({ isStale: false, data: 'data' })
   })
 
   test('should be able to handle multiple subscribers', async () => {
@@ -885,11 +884,12 @@ describe('queryObserver', () => {
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
+      enabled: false,
     })
 
     const spy = vi.fn()
     const unsubscribe = queryClient.getQueryCache().subscribe(spy)
-    observer.setOptions({ queryKey: key, enabled: false })
+    observer.setOptions({ queryKey: key, enabled: false, refetchInterval: 10 })
 
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toHaveBeenCalledWith(
@@ -897,5 +897,17 @@ describe('queryObserver', () => {
     )
 
     unsubscribe()
+  })
+
+  test('disabled observers should not be stale', async () => {
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      enabled: false,
+    })
+
+    const result = observer.getCurrentResult()
+    expect(result.isStale).toBe(false)
   })
 })

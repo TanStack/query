@@ -79,6 +79,14 @@ export const ASTUtils = {
       })
     }
 
+    if ('left' in node) {
+      identifiers.push(...ASTUtils.getNestedIdentifiers(node.left))
+    }
+
+    if ('right' in node) {
+      identifiers.push(...ASTUtils.getNestedIdentifiers(node.right))
+    }
+
     if (node.type === AST_NODE_TYPES.Property) {
       identifiers.push(...ASTUtils.getNestedIdentifiers(node.value))
     }

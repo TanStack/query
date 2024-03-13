@@ -82,6 +82,11 @@ export class AngularQueryDevtools
   @Input() styleNonce?: string
 
   /**
+   * Use this so you can attach the devtool's styles to specific element in the DOM.
+   */
+  @Input() shadowDOMTarget?: ShadowRoot
+
+  /**
    * Use this so you can define custom errors that can be shown in the devtools.
    */
   @Input() errorTypes?: Array<DevToolsErrorType>
@@ -129,6 +134,7 @@ export class AngularQueryDevtools
       initialIsOpen: this.initialIsOpen,
       errorTypes: this.errorTypes,
       styleNonce: this.styleNonce,
+      shadowDOMTarget: this.shadowDOMTarget,
     })
     devtools.mount(this.ref.nativeElement)
     this.#devtools = devtools

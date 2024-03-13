@@ -75,15 +75,15 @@ export class QueryClient {
     this.#mountCount++
     if (this.#mountCount !== 1) return
 
-    this.#unsubscribeFocus = focusManager.subscribe(() => {
-      if (focusManager.isFocused()) {
-        this.resumePausedMutations()
+    this.#unsubscribeFocus = focusManager.subscribe(async (focused) => {
+      if (focused) {
+        await this.resumePausedMutations()
         this.#queryCache.onFocus()
       }
     })
-    this.#unsubscribeOnline = onlineManager.subscribe((online) => {
+    this.#unsubscribeOnline = onlineManager.subscribe(async (online) => {
       if (online) {
-        this.resumePausedMutations()
+        await this.resumePausedMutations()
         this.#queryCache.onOnline()
       }
     })

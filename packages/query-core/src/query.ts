@@ -158,7 +158,6 @@ export class Query<
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
   #cache: QueryCache
-  #promise?: Promise<TData>
   #retryer?: Retryer<TData>
   #observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
@@ -169,7 +168,7 @@ export class Query<
 
     this.#abortSignalConsumed = false
     this.#defaultOptions = config.defaultOptions
-    this.#setOptions(config.options)
+    this.setOptions(config.options)
     this.#observers = []
     this.#cache = config.cache
     this.queryKey = config.queryKey
@@ -182,7 +181,7 @@ export class Query<
     return this.options.meta
   }
 
-  #setOptions(
+  setOptions(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): void {
     this.options = { ...this.#defaultOptions, ...options }
@@ -221,7 +220,7 @@ export class Query<
   }
 
   cancel(options?: CancelOptions): Promise<void> {
-    const promise = this.#promise
+    const promise = this.#retryer?.promise
     this.#retryer?.cancel(options)
     return promise ? promise.then(noop).catch(noop) : Promise.resolve()
   }
@@ -248,11 +247,17 @@ export class Query<
   }
 
   isStale(): boolean {
-    return (
-      this.state.isInvalidated ||
-      this.state.data === undefined ||
-      this.#observers.some((observer) => observer.getCurrentResult().isStale)
-    )
+    if (this.state.isInvalidated) {
+      return true
+    }
+
+    if (this.getObserversCount() > 0) {
+      return this.#observers.some(
+        (observer) => observer.getCurrentResult().isStale,
+      )
+    }
+
+    return this.state.data === undefined
   }
 
   isStaleByTime(staleTime = 0): boolean {
@@ -332,17 +337,17 @@ export class Query<
       if (this.state.data !== undefined && fetchOptions?.cancelRefetch) {
         // Silently cancel current fetch if the user wants to cancel refetch
         this.cancel({ silent: true })
-      } else if (this.#promise) {
+      } else if (this.#retryer) {
         // make sure that retries that were potentially cancelled due to unmounts can continue
-        this.#retryer?.continueRetry()
+        this.#retryer.continueRetry()
         // Return current promise if we are already fetching
-        return this.#promise
+        return this.#retryer.promise
       }
     }
 
     // Update config if passed, otherwise the config from the last execution is used
     if (options) {
-      this.#setOptions(options)
+      this.setOptions(options)
     }
 
     // Use the options from the first observer with a query function if no function is found.
@@ -350,7 +355,7 @@ export class Query<
     if (!this.options.queryFn) {
       const observer = this.#observers.find((x) => x.options.queryFn)
       if (observer) {
-        this.#setOptions(observer.options)
+        this.setOptions(observer.options)
       }
     }
 
@@ -520,9 +525,7 @@ export class Query<
       networkMode: context.options.networkMode,
     })
 
-    this.#promise = this.#retryer.promise
-
-    return this.#promise
+    return this.#retryer.promise
   }
 
   #dispatch(action: Action<TData, TError>): void {
