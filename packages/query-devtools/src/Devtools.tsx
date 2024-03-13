@@ -2091,7 +2091,7 @@ const QueryDetails = () => {
             )}
             disabled={restoringLoading()}
             onClick={() => {
-              if (activeQuery()?.state.data === undefined) {
+              if (activeQuery()?.state.dataUpdatedAt === undefined) {
                 setRestoringLoading(true)
                 restoreQueryAfterLoadingOrError()
               } else {
