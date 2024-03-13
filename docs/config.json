@@ -5,13 +5,13 @@
     "apiKey": "93e0b83eb0b5af4549b6bf47f90af3f7",
     "indexName": "tanstack-query"
   },
-  "menu": [],
-  "frameworkMenus": [
+  "sections": [
     {
-      "framework": "react",
-      "menuItems": [
+      "label": "Getting Started",
+      "children": [],
+      "frameworks": [
         {
-          "label": "Getting Started",
+          "label": "react",
           "children": [
             {
               "label": "Overview",
@@ -50,9 +50,15 @@
               "to": "framework/react/react-native"
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "label": "Guides & Concepts",
+      "children": [],
+      "frameworks": [
         {
-          "label": "Guides & Concepts",
+          "label": "react",
           "children": [
             {
               "label": "Important Defaults",
@@ -175,18 +181,30 @@
               "to": "framework/react/guides/migrating-to-react-query-3"
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "label": "Community Resources",
+      "children": [],
+      "frameworks": [
         {
-          "label": "Community Resources",
+          "label": "react",
           "children": [
             {
               "label": "TkDodo's Blog",
               "to": "framework/react/community/tkdodos-blog"
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "label": "Examples",
+      "children": [],
+      "frameworks": [
         {
-          "label": "Examples",
+          "label": "react",
           "children": [
             {
               "label": "Simple",
@@ -257,9 +275,15 @@
               "to": "framework/react/examples/offline"
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "label": "Plugins",
+      "children": [],
+      "frameworks": [
         {
-          "label": "Plugins",
+          "label": "react",
           "children": [
             {
               "label": "persistQueryClient (Experimental)",
@@ -278,9 +302,15 @@
               "to": "framework/react/plugins/broadcastQueryClient"
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "label": "API Reference",
+      "children": [],
+      "frameworks": [
         {
-          "label": "API Reference",
+          "label": "react",
           "children": [
             {
               "label": "useQuery",
