@@ -185,9 +185,7 @@ describe('mutationObserver', () => {
 
     await mutationObserver.mutate('input')
 
-    expect(
-      queryClient.getMutationCache().find({}),
-    ).toMatchObject({
+    expect(queryClient.getMutationCache().find({})).toMatchObject({
       options: { meta: { a: 1 } },
       state: {
         status: 'success',
@@ -199,9 +197,7 @@ describe('mutationObserver', () => {
       meta: { a: 2 },
     })
 
-    expect(
-      queryClient.getMutationCache().find({}),
-    ).toMatchObject({
+    expect(queryClient.getMutationCache().find({})).toMatchObject({
       options: { meta: { a: 1 } },
       state: {
         status: 'success',
@@ -236,18 +232,14 @@ describe('mutationObserver', () => {
     await mutationObserver.mutate('input')
 
     const mutations = queryClient.getMutationCache().findAll()
-    expect(
-      mutations[0],
-    ).toMatchObject({
+    expect(mutations[0]).toMatchObject({
       options: { meta: { a: 1 } },
       state: {
         status: 'success',
         data: 'input',
       },
     })
-    expect(
-      mutations[1],
-    ).toMatchObject({
+    expect(mutations[1]).toMatchObject({
       options: { meta: { a: 2 } },
       state: {
         status: 'success',
@@ -273,9 +265,7 @@ describe('mutationObserver', () => {
 
     await mutationObserver.mutate('input').catch(() => undefined)
 
-    expect(
-      queryClient.getMutationCache().find({}),
-    ).toMatchObject({
+    expect(queryClient.getMutationCache().find({})).toMatchObject({
       options: { meta: { a: 1 } },
       state: {
         status: 'error',
@@ -286,9 +276,7 @@ describe('mutationObserver', () => {
       meta: { a: 2 },
     })
 
-    expect(
-      queryClient.getMutationCache().find({}),
-    ).toMatchObject({
+    expect(queryClient.getMutationCache().find({})).toMatchObject({
       options: { meta: { a: 1 } },
       state: {
         status: 'error',
@@ -315,9 +303,7 @@ describe('mutationObserver', () => {
 
     await sleep(0)
 
-    expect(
-      queryClient.getMutationCache().find({}),
-    ).toMatchObject({
+    expect(queryClient.getMutationCache().find({})).toMatchObject({
       options: { meta: { a: 1 } },
       state: {
         status: 'pending',
@@ -328,9 +314,7 @@ describe('mutationObserver', () => {
       meta: { a: 2 },
     })
 
-    expect(
-      queryClient.getMutationCache().find({}),
-    ).toMatchObject({
+    expect(queryClient.getMutationCache().find({})).toMatchObject({
       options: { meta: { a: 2 } },
       state: {
         status: 'pending',
