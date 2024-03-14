@@ -172,7 +172,7 @@ describe('mutationObserver', () => {
 
   test('changing mutation meta should not affect successful mutations', async () => {
     const mutationObserver = new MutationObserver(queryClient, {
-      meta: { count: 1 },
+      meta: { a: 1 },
       mutationFn: async (text: string) => {
         await sleep(5)
         return text
@@ -188,7 +188,7 @@ describe('mutationObserver', () => {
     expect(
       queryClient.getMutationCache().find({}),
     ).toMatchObject({
-      options: { meta: { count: 1 } },
+      options: { meta: { a: 1 } },
       state: {
         status: 'success',
         data: 'input',
@@ -196,13 +196,59 @@ describe('mutationObserver', () => {
     })
 
     mutationObserver.setOptions({
-      meta: { count: 2 },
+      meta: { a: 2 },
     })
 
     expect(
       queryClient.getMutationCache().find({}),
     ).toMatchObject({
-      options: { meta: { count: 1 } },
+      options: { meta: { a: 1 } },
+      state: {
+        status: 'success',
+        data: 'input',
+      },
+    })
+
+    unsubscribe()
+  })
+
+  test('mutation cache should have different meta when updated between mutations', async () => {
+    const mutationFn = async (text: string) => {
+      await sleep(5)
+      return text
+    }
+    const mutationObserver = new MutationObserver(queryClient, {
+      meta: { a: 1 },
+      mutationFn,
+    })
+
+    const subscriptionHandler = vi.fn()
+
+    const unsubscribe = mutationObserver.subscribe(subscriptionHandler)
+
+    await mutationObserver.mutate('input')
+
+    mutationObserver.setOptions({
+      meta: { a: 2 },
+      mutationFn,
+    })
+
+    await mutationObserver.mutate('input')
+
+    const mutations = queryClient.getMutationCache().findAll()
+    expect(
+      mutations[0],
+    ).toMatchObject({
+      options: { meta: { a: 1 } },
+      state: {
+        status: 'success',
+        data: 'input',
+      },
+    })
+    expect(
+      mutations[1],
+    ).toMatchObject({
+      options: { meta: { a: 2 } },
       state: {
         status: 'success',
         data: 'input',
@@ -214,7 +260,7 @@ describe('mutationObserver', () => {
 
   test('changing mutation meta should not affect rejected mutations', async () => {
     const mutationObserver = new MutationObserver(queryClient, {
-      meta: { count: 1 },
+      meta: { a: 1 },
       mutationFn: async (_: string) => {
         await sleep(5)
         return Promise.reject(new Error('err'))
@@ -230,20 +276,20 @@ describe('mutationObserver', () => {
     expect(
       queryClient.getMutationCache().find({}),
     ).toMatchObject({
-      options: { meta: { count: 1 } },
+      options: { meta: { a: 1 } },
       state: {
         status: 'error',
       },
     })
 
     mutationObserver.setOptions({
-      meta: { count: 2 },
+      meta: { a: 2 },
     })
 
     expect(
       queryClient.getMutationCache().find({}),
     ).toMatchObject({
-      options: { meta: { count: 1 } },
+      options: { meta: { a: 1 } },
       state: {
         status: 'error',
       },
@@ -254,7 +300,7 @@ describe('mutationObserver', () => {
 
   test('changing mutation meta should affect pending mutations', async () => {
     const mutationObserver = new MutationObserver(queryClient, {
-      meta: { count: 1 },
+      meta: { a: 1 },
       mutationFn: async (text: string) => {
         await sleep(20)
         return text
@@ -272,20 +318,20 @@ describe('mutationObserver', () => {
     expect(
       queryClient.getMutationCache().find({}),
     ).toMatchObject({
-      options: { meta: { count: 1 } },
+      options: { meta: { a: 1 } },
       state: {
         status: 'pending',
       },
     })
 
     mutationObserver.setOptions({
-      meta: { count: 2 },
+      meta: { a: 2 },
     })
 
     expect(
       queryClient.getMutationCache().find({}),
     ).toMatchObject({
-      options: { meta: { count: 2 } },
+      options: { meta: { a: 2 } },
       state: {
         status: 'pending',
       },
