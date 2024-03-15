@@ -27,7 +27,7 @@ export const DogList = () => {
   return (
     <div>
       {dogs.map((dog) => (
-        <div>{dog}</div>
+        <div key={dog}>{dog}</div>
       ))}
     </div>
   )
