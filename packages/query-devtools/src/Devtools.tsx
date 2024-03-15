@@ -182,7 +182,9 @@ const PiPProvider = (props: PiPProviderProps) => {
 
     // It is important to copy all parent window styles. Otherwise, there would be no CSS available at all
     // https://developer.chrome.com/docs/web-platform/document-picture-in-picture/#copy-style-sheets-to-the-picture-in-picture-window
-    ;[...document.styleSheets].forEach((styleSheet) => {
+    ;[
+      ...(useQueryDevtoolsContext().shadowDOMTarget || document).styleSheets,
+    ].forEach((styleSheet) => {
       try {
         const cssRules = [...styleSheet.cssRules]
           .map((rule) => rule.cssText)
