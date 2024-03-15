@@ -82,13 +82,13 @@ type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
 // CLASS
 
 export class MutationCache extends Subscribable<MutationCacheListener> {
-  #mutations: Array<Mutation<any, any, any, any>>
+  #mutations: Map<string, Array<Mutation<any, any, any, any>>>
   #mutationId: number
   #resuming: Promise<unknown> | undefined
 
   constructor(public config: MutationCacheConfig = {}) {
     super()
-    this.#mutations = []
+    this.#mutations = new Map()
     this.#mutationId = 0
   }
 
@@ -110,25 +110,39 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   add(mutation: Mutation<any, any, any, any>): void {
-    this.#mutations.push(mutation)
+    const scope = mutation.options.scope ?? String(mutation.mutationId)
+    const mutations = this.#mutations.get(scope) ?? []
+    mutations.push(mutation)
+    this.#mutations.set(scope, mutations)
     this.notify({ type: 'added', mutation })
   }
 
   remove(mutation: Mutation<any, any, any, any>): void {
-    this.#mutations = this.#mutations.filter((x) => x !== mutation)
+    const scope = mutation.options.scope ?? String(mutation.mutationId)
+    if (this.#mutations.has(scope)) {
+      const mutations = this.#mutations
+        .get(scope)!
+        .filter((x) => x !== mutation)
+      if (mutations.length === 0) {
+        this.#mutations.delete(scope)
+      } else {
+        this.#mutations.set(scope, mutations)
+      }
+    }
+
     this.notify({ type: 'removed', mutation })
   }
 
   clear(): void {
     notifyManager.batch(() => {
-      this.#mutations.forEach((mutation) => {
+      this.getAll().forEach((mutation) => {
         this.remove(mutation)
       })
     })
   }
 
   getAll(): Array<Mutation> {
-    return this.#mutations
+    return [...this.#mutations.values()].flat()
   }
 
   find<
@@ -141,15 +155,13 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   ): Mutation<TData, TError, TVariables, TContext> | undefined {
     const defaultedFilters = { exact: true, ...filters }
 
-    return this.#mutations.find((mutation) =>
+    return this.getAll().find((mutation) =>
       matchMutation(defaultedFilters, mutation),
-    )
+    ) as Mutation<TData, TError, TVariables, TContext> | undefined
   }
 
   findAll(filters: MutationFilters = {}): Array<Mutation> {
-    return this.#mutations.filter((mutation) =>
-      matchMutation(filters, mutation),
-    )
+    return this.getAll().filter((mutation) => matchMutation(filters, mutation))
   }
 
   notify(event: MutationCacheNotifyEvent) {
@@ -163,7 +175,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   resumePausedMutations(): Promise<unknown> {
     this.#resuming = (this.#resuming ?? Promise.resolve())
       .then(() => {
-        const pausedMutations = this.#mutations.filter((x) => x.state.isPaused)
+        const pausedMutations = this.getAll().filter((x) => x.state.isPaused)
         return notifyManager.batch(() =>
           pausedMutations.reduce(
             (promise, mutation) =>
