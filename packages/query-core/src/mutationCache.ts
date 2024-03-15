@@ -109,8 +109,12 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     return mutation
   }
 
+  #scopeFor(mutation: Mutation<any, any, any, any>) {
+    return mutation.options.scope ?? String(mutation.mutationId)
+  }
+
   add(mutation: Mutation<any, any, any, any>): void {
-    const scope = mutation.options.scope ?? String(mutation.mutationId)
+    const scope = this.#scopeFor(mutation)
     const mutations = this.#mutations.get(scope) ?? []
     mutations.push(mutation)
     this.#mutations.set(scope, mutations)
@@ -118,19 +122,29 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   remove(mutation: Mutation<any, any, any, any>): void {
-    const scope = mutation.options.scope ?? String(mutation.mutationId)
+    const scope = this.#scopeFor(mutation)
     if (this.#mutations.has(scope)) {
       const mutations = this.#mutations
-        .get(scope)!
-        .filter((x) => x !== mutation)
-      if (mutations.length === 0) {
-        this.#mutations.delete(scope)
-      } else {
-        this.#mutations.set(scope, mutations)
+        .get(scope)
+        ?.filter((x) => x !== mutation)
+      if (mutations) {
+        if (mutations.length === 0) {
+          this.#mutations.delete(scope)
+        } else {
+          this.#mutations.set(scope, mutations)
+        }
       }
     }
 
     this.notify({ type: 'removed', mutation })
+  }
+
+  canExecute(mutation: Mutation<any, any, any, any>): boolean {
+    return (
+      this.#mutations
+        .get(this.#scopeFor(mutation))
+        ?.every((m) => m === mutation || m.state.status !== 'pending') ?? true
+    )
   }
 
   clear(): void {

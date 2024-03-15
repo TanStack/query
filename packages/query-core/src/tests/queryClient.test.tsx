@@ -1511,7 +1511,7 @@ describe('queryClient', () => {
 
       await waitFor(() => {
         expect(observer1.getCurrentResult().status).toBe('success')
-        expect(observer1.getCurrentResult().status).toBe('success')
+        expect(observer2.getCurrentResult().status).toBe('success')
       })
     })
 
