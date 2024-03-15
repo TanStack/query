@@ -17,7 +17,6 @@ interface MutationConfig<TData, TError, TVariables, TContext> {
   mutationId: number
   mutationCache: MutationCache
   options: MutationOptions<TData, TError, TVariables, TContext>
-  defaultOptions?: MutationOptions<TData, TError, TVariables, TContext>
   state?: MutationState<TData, TError, TVariables, TContext>
 }
 
@@ -89,7 +88,6 @@ export class Mutation<
   readonly mutationId: number
 
   #observers: Array<MutationObserver<TData, TError, TVariables, TContext>>
-  #defaultOptions?: MutationOptions<TData, TError, TVariables, TContext>
   #mutationCache: MutationCache
   #retryer?: Retryer<TData>
 
@@ -97,7 +95,6 @@ export class Mutation<
     super()
 
     this.mutationId = config.mutationId
-    this.#defaultOptions = config.defaultOptions
     this.#mutationCache = config.mutationCache
     this.#observers = []
     this.state = config.state || getDefaultState()
@@ -107,9 +104,9 @@ export class Mutation<
   }
 
   setOptions(
-    options?: MutationOptions<TData, TError, TVariables, TContext>,
+    options: MutationOptions<TData, TError, TVariables, TContext>,
   ): void {
-    this.options = { ...this.#defaultOptions, ...options }
+    this.options = options
 
     this.updateGcTime(this.options.gcTime)
   }
