@@ -2,6 +2,7 @@ import { notifyManager } from './notifyManager'
 import { Mutation } from './mutation'
 import { matchMutation, noop } from './utils'
 import { Subscribable } from './subscribable'
+import { canFetch } from './retryer'
 import type { MutationObserver } from './mutationObserver'
 import type { DefaultError, MutationOptions, NotifyEvent } from './types'
 import type { QueryClient } from './queryClient'
@@ -139,12 +140,22 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     this.notify({ type: 'removed', mutation })
   }
 
-  canExecute(mutation: Mutation<any, any, any, any>): boolean {
+  canRun(mutation: Mutation<any, any, any, any>): boolean {
     return (
-      this.#mutations
+      canFetch(mutation.options.networkMode) &&
+      (this.#mutations
         .get(this.#scopeFor(mutation))
-        ?.every((m) => m === mutation || m.state.status !== 'pending') ?? true
+        ?.every((m) => m === mutation || m.state.status !== 'pending') ??
+        true)
     )
+  }
+
+  runNext(mutation: Mutation<any, any, any, any>): Promise<unknown> {
+    const foundMutation = this.#mutations
+      .get(this.#scopeFor(mutation))
+      ?.find((m) => m !== mutation && m.state.isPaused)
+
+    return foundMutation?.continue() ?? Promise.resolve()
   }
 
   clear(): void {

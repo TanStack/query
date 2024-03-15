@@ -409,4 +409,66 @@ describe('mutations', () => {
 
     expect(onSuccess).toHaveBeenCalledWith(2)
   })
+
+  describe('scoped mutations', () => {
+    test('mutations in the same scope should run in serial', async () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+
+      const results: Array<string> = []
+
+      const execute1 = executeMutation(
+        queryClient,
+        {
+          mutationKey: key1,
+          scope: 'scope',
+          mutationFn: async () => {
+            results.push('start-A')
+            await sleep(10)
+            results.push('finish-A')
+            return 'a'
+          },
+        },
+        'vars1',
+      )
+
+      expect(
+        queryClient.getMutationCache().find({ mutationKey: key1 })?.state,
+      ).toMatchObject({
+        status: 'pending',
+        isPaused: false,
+      })
+
+      const execute2 = executeMutation(
+        queryClient,
+        {
+          mutationKey: key2,
+          scope: 'scope',
+          mutationFn: async () => {
+            results.push('start-B')
+            await sleep(10)
+            results.push('finish-B')
+            return 'b'
+          },
+        },
+        'vars2',
+      )
+
+      expect(
+        queryClient.getMutationCache().find({ mutationKey: key2 })?.state,
+      ).toMatchObject({
+        status: 'pending',
+        isPaused: true,
+      })
+
+      await Promise.all([execute1, execute2])
+
+      expect(results).toStrictEqual([
+        'start-A',
+        'finish-A',
+        'start-B',
+        'finish-B',
+      ])
+    })
+  })
 })

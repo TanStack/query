@@ -1,6 +1,6 @@
 import { notifyManager } from './notifyManager'
 import { Removable } from './removable'
-import { canFetch, createRetryer } from './retryer'
+import { createRetryer } from './retryer'
 import type {
   DefaultError,
   MutationMeta,
@@ -45,6 +45,7 @@ interface FailedAction<TError> {
 
 interface PendingAction<TVariables, TContext> {
   type: 'pending'
+  isPaused: boolean
   variables?: TVariables
   context?: TContext
 }
@@ -161,9 +162,13 @@ export class Mutation<
   }
 
   async execute(variables: TVariables): Promise<TData> {
+    let initialCanExecute = this.#mutationCache.canRun(this)
+
     const executeMutation = () => {
       this.#retryer = createRetryer({
         fn: () => {
+          // once we get here we need to always re-run the canExecute function
+          initialCanExecute = false
           if (!this.options.mutationFn) {
             return Promise.reject(new Error('No mutationFn found'))
           }
@@ -180,18 +185,20 @@ export class Mutation<
         },
         retry: this.options.retry ?? 0,
         retryDelay: this.options.retryDelay,
-        networkMode: this.options.networkMode,
-        canExecute: () => this.#mutationCache.canExecute(this),
+        canRun: () => {
+          return initialCanExecute || this.#mutationCache.canRun(this)
+        },
       })
 
       return this.#retryer.promise
     }
 
     const restored = this.state.status === 'pending'
+    const isPaused = !initialCanExecute
 
     try {
       if (!restored) {
-        this.#dispatch({ type: 'pending', variables })
+        this.#dispatch({ type: 'pending', variables, isPaused })
         // Notify cache callback
         await this.#mutationCache.config.onMutate?.(
           variables,
@@ -203,6 +210,7 @@ export class Mutation<
             type: 'pending',
             context,
             variables,
+            isPaused,
           })
         }
       }
@@ -266,6 +274,8 @@ export class Mutation<
       } finally {
         this.#dispatch({ type: 'error', error: error as TError })
       }
+    } finally {
+      this.#mutationCache.runNext(this)
     }
   }
 
@@ -298,7 +308,7 @@ export class Mutation<
             failureCount: 0,
             failureReason: null,
             error: null,
-            isPaused: !canFetch(this.options.networkMode),
+            isPaused: action.isPaused,
             status: 'pending',
             variables: action.variables,
             submittedAt: Date.now(),

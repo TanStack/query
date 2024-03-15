@@ -15,8 +15,7 @@ interface RetryerConfig<TData = unknown, TError = DefaultError> {
   onContinue?: () => void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
-  networkMode: NetworkMode | undefined
-  canExecute?: () => boolean
+  canRun: () => boolean
 }
 
 export interface Retryer<TData = unknown> {
@@ -94,10 +93,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
     isRetryCancelled = false
   }
 
-  const canRun = () =>
-    (config.canExecute?.() ?? true) && canFetch(config.networkMode)
-
-  const shouldPause = () => !focusManager.isFocused() || !canRun()
+  const shouldPause = () => !focusManager.isFocused() || !config.canRun()
 
   const resolve = (value: any) => {
     if (!isResolved) {
@@ -202,7 +198,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   }
 
   // Start loop
-  if (canRun()) {
+  if (config.canRun()) {
     run()
   } else {
     pause().then(run)
