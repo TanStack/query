@@ -1515,7 +1515,7 @@ describe('queryClient', () => {
       })
     })
 
-    test('should resume paused mutations one after the other when invoked manually at the same time', async () => {
+    test('should resume paused mutations in parallel when invoked manually at the same time', async () => {
       const consoleMock = vi.spyOn(console, 'error')
       consoleMock.mockImplementation(() => undefined)
       onlineManager.setOnline(false)
@@ -1532,6 +1532,53 @@ describe('queryClient', () => {
       })
 
       const observer2 = new MutationObserver(queryClient, {
+        mutationFn: async () => {
+          orders.push('2start')
+          await sleep(20)
+          orders.push('2end')
+          return 2
+        },
+      })
+      void observer1.mutate()
+      void observer2.mutate()
+
+      await waitFor(() => {
+        expect(observer1.getCurrentResult().isPaused).toBeTruthy()
+        expect(observer2.getCurrentResult().isPaused).toBeTruthy()
+      })
+
+      onlineManager.setOnline(true)
+      void queryClient.resumePausedMutations()
+      await sleep(5)
+      await queryClient.resumePausedMutations()
+
+      await waitFor(() => {
+        expect(observer1.getCurrentResult().status).toBe('success')
+        expect(observer2.getCurrentResult().status).toBe('success')
+      })
+
+      expect(orders).toEqual(['1start', '2start', '2end', '1end'])
+    })
+
+    test('should resume paused mutations one after the other when in the same scope when invoked manually at the same time', async () => {
+      const consoleMock = vi.spyOn(console, 'error')
+      consoleMock.mockImplementation(() => undefined)
+      onlineManager.setOnline(false)
+
+      const orders: Array<string> = []
+
+      const observer1 = new MutationObserver(queryClient, {
+        scope: 'scope',
+        mutationFn: async () => {
+          orders.push('1start')
+          await sleep(50)
+          orders.push('1end')
+          return 1
+        },
+      })
+
+      const observer2 = new MutationObserver(queryClient, {
+        scope: 'scope',
         mutationFn: async () => {
           orders.push('2start')
           await sleep(20)

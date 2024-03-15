@@ -162,39 +162,29 @@ export class Mutation<
   }
 
   async execute(variables: TVariables): Promise<TData> {
-    let initialCanExecute = this.#mutationCache.canRun(this)
-
-    const executeMutation = () => {
-      this.#retryer = createRetryer({
-        fn: () => {
-          // once we get here we need to always re-run the canExecute function
-          initialCanExecute = false
-          if (!this.options.mutationFn) {
-            return Promise.reject(new Error('No mutationFn found'))
-          }
-          return this.options.mutationFn(variables)
-        },
-        onFail: (failureCount, error) => {
-          this.#dispatch({ type: 'failed', failureCount, error })
-        },
-        onPause: () => {
-          this.#dispatch({ type: 'pause' })
-        },
-        onContinue: () => {
-          this.#dispatch({ type: 'continue' })
-        },
-        retry: this.options.retry ?? 0,
-        retryDelay: this.options.retryDelay,
-        canRun: () => {
-          return initialCanExecute || this.#mutationCache.canRun(this)
-        },
-      })
-
-      return this.#retryer.promise
-    }
+    this.#retryer = createRetryer({
+      fn: () => {
+        if (!this.options.mutationFn) {
+          return Promise.reject(new Error('No mutationFn found'))
+        }
+        return this.options.mutationFn(variables)
+      },
+      onFail: (failureCount, error) => {
+        this.#dispatch({ type: 'failed', failureCount, error })
+      },
+      onPause: () => {
+        this.#dispatch({ type: 'pause' })
+      },
+      onContinue: () => {
+        this.#dispatch({ type: 'continue' })
+      },
+      retry: this.options.retry ?? 0,
+      retryDelay: this.options.retryDelay,
+      canRun: () => this.#mutationCache.canRun(this),
+    })
 
     const restored = this.state.status === 'pending'
-    const isPaused = !initialCanExecute
+    const isPaused = !this.#mutationCache.canRun(this)
 
     try {
       if (!restored) {
@@ -214,7 +204,7 @@ export class Mutation<
           })
         }
       }
-      const data = await executeMutation()
+      const data = await this.#retryer.start()
 
       // Notify cache callback
       await this.#mutationCache.config.onSuccess?.(

@@ -525,7 +525,7 @@ export class Query<
       canRun: () => canFetch(context.options.networkMode),
     })
 
-    return this.#retryer.promise
+    return this.#retryer.start()
   }
 
   #dispatch(action: Action<TData, TError>): void {

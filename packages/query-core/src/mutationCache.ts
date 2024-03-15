@@ -85,7 +85,6 @@ type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
 export class MutationCache extends Subscribable<MutationCacheListener> {
   #mutations: Map<string, Array<Mutation<any, any, any, any>>>
   #mutationId: number
-  #resuming: Promise<unknown> | undefined
 
   constructor(public config: MutationCacheConfig = {}) {
     super()
@@ -141,13 +140,16 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   canRun(mutation: Mutation<any, any, any, any>): boolean {
-    return (
-      canFetch(mutation.options.networkMode) &&
-      (this.#mutations
+    if (canFetch(mutation.options.networkMode)) {
+      const firstPendingMutation = this.#mutations
         .get(this.#scopeFor(mutation))
-        ?.every((m) => m === mutation || m.state.status !== 'pending') ??
-        true)
-    )
+        ?.find((m) => m.state.status === 'pending')
+
+      // we can run if there is no current pending mutation (start use-case)
+      // or if WE are the first pending mutation (continue use-case)
+      return !firstPendingMutation || firstPendingMutation === mutation
+    }
+    return false
   }
 
   runNext(mutation: Mutation<any, any, any, any>): Promise<unknown> {
@@ -198,21 +200,14 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   resumePausedMutations(): Promise<unknown> {
-    this.#resuming = (this.#resuming ?? Promise.resolve())
-      .then(() => {
-        const pausedMutations = this.getAll().filter((x) => x.state.isPaused)
-        return notifyManager.batch(() =>
-          pausedMutations.reduce(
-            (promise, mutation) =>
-              promise.then(() => mutation.continue().catch(noop)),
-            Promise.resolve() as Promise<unknown>,
-          ),
-        )
-      })
-      .then(() => {
-        this.#resuming = undefined
-      })
+    const pausedMutations = this.getAll().filter((x) => x.state.isPaused)
 
-    return this.#resuming
+    return notifyManager.batch(() =>
+      pausedMutations.reduce(
+        (promise, mutation) =>
+          promise.then(() => mutation.continue().catch(noop)),
+        Promise.resolve() as Promise<unknown>,
+      ),
+    )
   }
 }

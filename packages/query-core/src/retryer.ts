@@ -24,6 +24,7 @@ export interface Retryer<TData = unknown> {
   continue: () => Promise<unknown>
   cancelRetry: () => void
   continueRetry: () => void
+  start: () => Promise<TData>
 }
 
 export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
@@ -69,7 +70,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   let isRetryCancelled = false
   let failureCount = 0
   let isResolved = false
-  let continueFn: ((value?: unknown) => boolean) | undefined
+  let continueFn: ((value?: unknown) => void) | undefined
   let promiseResolve: (data: TData) => void
   let promiseReject: (error: TError) => void
 
@@ -116,11 +117,9 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   const pause = () => {
     return new Promise((continueResolve) => {
       continueFn = (value) => {
-        const canContinue = isResolved || !shouldPause()
-        if (canContinue) {
+        if (isResolved || !shouldPause()) {
           continueResolve(value)
         }
-        return canContinue
       }
       config.onPause?.()
     }).then(() => {
@@ -197,21 +196,23 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
       })
   }
 
-  // Start loop
-  if (config.canRun()) {
-    run()
-  } else {
-    pause().then(run)
-  }
-
   return {
     promise,
     cancel,
     continue: () => {
-      const didContinue = continueFn?.()
-      return didContinue ? promise : Promise.resolve()
+      continueFn?.()
+      return promise
     },
     cancelRetry,
     continueRetry,
+    start: () => {
+      // Start loop
+      if (config.canRun()) {
+        run()
+      } else {
+        pause().then(run)
+      }
+      return promise
+    },
   }
 }
