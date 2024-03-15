@@ -6375,4 +6375,104 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('status: success'))
     await waitFor(() => rendered.getByText('data: data'))
   })
+
+  it('should return correct optimistic result when fetching after error', async () => {
+    const key = queryKey()
+    const error = new Error('oh no')
+
+    const results: Array<UseQueryResult<string>> = []
+
+    function Page() {
+      const query = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return Promise.reject(error)
+        },
+        retry: false,
+        notifyOnChangeProps: 'all',
+      })
+
+      results.push(query)
+
+      return (
+        <div>
+          <div>
+            status: {query.status}, {query.fetchStatus}
+          </div>
+          <div>error: {query.error?.message}</div>
+        </div>
+      )
+    }
+
+    function App() {
+      const [enabled, setEnabled] = React.useState(true)
+
+      return (
+        <div>
+          <button onClick={() => setEnabled(!enabled)}>toggle</button>
+          {enabled && <Page />}
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() => rendered.getByText('status: error, idle'))
+
+    fireEvent.click(rendered.getByRole('button', { name: 'toggle' }))
+    fireEvent.click(rendered.getByRole('button', { name: 'toggle' }))
+
+    await waitFor(() => rendered.getByText('status: error, idle'))
+
+    expect(results).toHaveLength(4)
+
+    // initial fetch
+    expect(results[0]).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      error: null,
+      errorUpdatedAt: 0,
+      errorUpdateCount: 0,
+      isLoading: true,
+      failureCount: 0,
+      failureReason: null,
+    })
+
+    // error state
+    expect(results[1]).toMatchObject({
+      status: 'error',
+      fetchStatus: 'idle',
+      error,
+      errorUpdateCount: 1,
+      isLoading: false,
+      failureCount: 1,
+      failureReason: error,
+    })
+    expect(results[1]?.errorUpdatedAt).toBeGreaterThan(0)
+
+    // refetch, optimistic state, no errors anymore
+    expect(results[2]).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      error: null,
+      errorUpdateCount: 1,
+      isLoading: true,
+      failureCount: 0,
+      failureReason: null,
+    })
+    expect(results[2]?.errorUpdatedAt).toBeGreaterThan(0)
+
+    // final state
+    expect(results[3]).toMatchObject({
+      status: 'error',
+      fetchStatus: 'idle',
+      error: error,
+      errorUpdateCount: 2,
+      isLoading: false,
+      failureCount: 1,
+      failureReason: error,
+    })
+    expect(results[3]?.errorUpdatedAt).toBeGreaterThan(0)
+  })
 })
