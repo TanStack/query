@@ -1703,15 +1703,42 @@ describe('queryClient', () => {
 
       const observer = new MutationObserver(queryClient, {
         mutationFn: async () => {
-          results.push('mutation')
+          results.push('mutation1-start')
           await sleep(50)
+          results.push('mutation1-end')
           return 1
         },
       })
 
       void observer.mutate()
 
+      const observer2 = new MutationObserver(queryClient, {
+        scope: 'scope',
+        mutationFn: async () => {
+          results.push('mutation2-start')
+          await sleep(50)
+          results.push('mutation2-end')
+          return 2
+        },
+      })
+
+      void observer2.mutate()
+
+      const observer3 = new MutationObserver(queryClient, {
+        scope: 'scope',
+        mutationFn: async () => {
+          results.push('mutation3-start')
+          await sleep(50)
+          results.push('mutation3-end')
+          return 3
+        },
+      })
+
+      void observer3.mutate()
+
       expect(observer.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer2.getCurrentResult().isPaused).toBeTruthy()
+      expect(observer3.getCurrentResult().isPaused).toBeTruthy()
 
       onlineManager.setOnline(true)
 
@@ -1720,7 +1747,16 @@ describe('queryClient', () => {
       })
 
       // refetch from coming online should happen after mutations have finished
-      expect(results).toStrictEqual(['data1', 'mutation', 'data2'])
+      expect(results).toStrictEqual([
+        'data1',
+        'mutation1-start',
+        'mutation2-start',
+        'mutation1-end',
+        'mutation2-end',
+        'mutation3-start', // 3 starts after 2 because they are in the same scope
+        'mutation3-end',
+        'data2',
+      ])
 
       unsubscribe()
     })
