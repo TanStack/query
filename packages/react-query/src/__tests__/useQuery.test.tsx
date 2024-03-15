@@ -6425,7 +6425,7 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('status: error, idle'))
 
-    // expect(results).toHaveLength(4)
+    expect(results).toHaveLength(4)
 
     // initial fetch
     expect(results[0]).toMatchObject({
