@@ -552,16 +552,8 @@ export class Query<
         case 'fetch':
           return {
             ...state,
-            fetchFailureCount: 0,
-            fetchFailureReason: null,
+            ...fetchState(state.data, this.options),
             fetchMeta: action.meta ?? null,
-            fetchStatus: canFetch(this.options.networkMode)
-              ? 'fetching'
-              : 'paused',
-            ...(state.data === undefined && {
-              error: null,
-              status: 'pending',
-            }),
           }
         case 'success':
           return {
@@ -618,6 +610,27 @@ export class Query<
       this.#cache.notify({ query: this, type: 'updated', action })
     })
   }
+}
+
+export function fetchState<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey extends QueryKey,
+>(
+  data: TData | undefined,
+  options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+) {
+  return {
+    fetchFailureCount: 0,
+    fetchFailureReason: null,
+    fetchStatus: canFetch(options.networkMode) ? 'fetching' : 'paused',
+    ...(data === undefined &&
+      ({
+        error: null,
+        status: 'pending',
+      } as const)),
+  } as const
 }
 
 function getDefaultState<
