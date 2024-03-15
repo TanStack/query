@@ -73,8 +73,8 @@ export class MutationObserver<
       hashKey(prevOptions.mutationKey) !== hashKey(this.options.mutationKey)
     ) {
       this.reset()
-    } else {
-      this.#currentMutation?.setOptions(this.options)
+    } else if (this.#currentMutation?.state.status === 'pending') {
+      this.#currentMutation.setOptions(this.options)
     }
   }
 

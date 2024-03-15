@@ -9,6 +9,7 @@ import type {
   DataTag,
   DefaultError,
   DefaultOptions,
+  EnsureQueryDataOptions,
   FetchInfiniteQueryOptions,
   FetchQueryOptions,
   InfiniteData,
@@ -72,7 +73,7 @@ export class QueryClient extends QC {
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
-    options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options: EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<TData>
   ensureQueryData<
     TQueryFnData,
@@ -81,7 +82,7 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
   >(
     options: MaybeRefDeep<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+      EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<TData>
   ensureQueryData<
@@ -91,7 +92,7 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
   >(
     options: MaybeRefDeep<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+      EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<TData> {
     return super.ensureQueryData(cloneDeepUnref(options))

@@ -19,6 +19,7 @@ import type {
   DefaultError,
   DefaultOptions,
   DefaultedQueryObserverOptions,
+  EnsureQueryDataOptions,
   FetchInfiniteQueryOptions,
   FetchQueryOptions,
   InfiniteData,
@@ -130,13 +131,24 @@ export class QueryClient {
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
-    options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options: EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<TData> {
     const cachedData = this.getQueryData<TData>(options.queryKey)
 
-    return cachedData !== undefined
-      ? Promise.resolve(cachedData)
-      : this.fetchQuery(options)
+    if (cachedData === undefined) return this.fetchQuery(options)
+    else {
+      const defaultedOptions = this.defaultQueryOptions(options)
+      const query = this.#queryCache.build(this, defaultedOptions)
+
+      if (
+        options.revalidateIfStale &&
+        query.isStaleByTime(defaultedOptions.staleTime)
+      ) {
+        void this.prefetchQuery(defaultedOptions)
+      }
+
+      return Promise.resolve(cachedData)
+    }
   }
 
   getQueriesData<TQueryFnData = unknown>(
