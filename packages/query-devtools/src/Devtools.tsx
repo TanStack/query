@@ -12,7 +12,7 @@ import {
   useContext,
 } from 'solid-js'
 import { rankItem } from '@tanstack/match-sorter-utils'
-import { css } from 'goober'
+import * as goober from 'goober'
 import { clsx as cx } from 'clsx'
 import { TransitionGroup } from 'solid-transition-group'
 import { Key } from '@solid-primitives/keyed'
@@ -110,8 +110,11 @@ const [selectedMutationId, setSelectedMutationId] = createSignal<number | null>(
   null,
 )
 const [panelWidth, setPanelWidth] = createSignal(0)
+const [offline, setOffline] = createSignal(false)
 
-export type DevtoolsComponentType = Component<QueryDevtoolsProps>
+export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
+  shadowDOMTarget?: ShadowRoot
+}
 
 interface PiPProviderProps {
   children: JSX.Element
@@ -179,7 +182,9 @@ const PiPProvider = (props: PiPProviderProps) => {
 
     // It is important to copy all parent window styles. Otherwise, there would be no CSS available at all
     // https://developer.chrome.com/docs/web-platform/document-picture-in-picture/#copy-style-sheets-to-the-picture-in-picture-window
-    ;[...document.styleSheets].forEach((styleSheet) => {
+    ;[
+      ...(useQueryDevtoolsContext().shadowDOMTarget || document).styleSheets,
+    ].forEach((styleSheet) => {
       try {
         const cssRules = [...styleSheet.cssRules]
           .map((rule) => rule.cssText)
@@ -240,11 +245,15 @@ const PiPProvider = (props: PiPProviderProps) => {
 
   createEffect(() => {
     // Setup mutation observer for goober styles with id `_goober
-    const gooberStyles = document.getElementById('_goober')
+    const gooberStyles = (
+      useQueryDevtoolsContext().shadowDOMTarget || document
+    ).querySelector('#_goober')
     const w = pipWindow()
     if (gooberStyles && w) {
       const observer = new MutationObserver(() => {
-        const pip_style = w.document.getElementById('_goober')
+        const pip_style = (
+          useQueryDevtoolsContext().shadowDOMTarget || w.document
+        ).querySelector('#_goober')
         if (pip_style) {
           pip_style.textContent = gooberStyles.textContent
         }
@@ -313,8 +322,11 @@ export default DevtoolsComponent
 
 const Devtools: Component<DevtoolsPanelProps> = (props) => {
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
   const pip = usePiPWindow()
@@ -470,8 +482,11 @@ const PiPPanel: Component<{
 }> = (props) => {
   const pip = usePiPWindow()
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
   const getPanelDynamicStyles = () => {
@@ -534,8 +549,11 @@ const PiPPanel: Component<{
 
 const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
   const [isResizing, setIsResizing] = createSignal(false)
@@ -736,8 +754,11 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
 
   let containerRef!: HTMLDivElement
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
   const pip = usePiPWindow()
@@ -757,8 +778,6 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
   const mutationSortOrder = createMemo(
     () => Number(props.localStore.mutationSortOrder) || DEFAULT_SORT_ORDER,
   ) as () => 1 | -1
-
-  const [offline, setOffline] = createSignal(false)
 
   const sortFn = createMemo(() => sortFns[sort() as string])
   const mutationSortFn = createMemo(
@@ -1355,8 +1374,11 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
 
 const QueryRow: Component<{ query: Query }> = (props) => {
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
   const { colors, alpha } = tokens
@@ -1463,8 +1485,11 @@ const QueryRow: Component<{ query: Query }> = (props) => {
 
 const MutationRow: Component<{ mutation: Mutation }> = (props) => {
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
   const { colors, alpha } = tokens
@@ -1606,8 +1631,11 @@ const QueryStatusCount: Component = () => {
   )
 
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
   return (
@@ -1677,8 +1705,11 @@ const MutationStatusCount: Component = () => {
   )
 
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
   return (
@@ -1695,8 +1726,11 @@ const MutationStatusCount: Component = () => {
 
 const QueryStatus: Component<QueryStatusProps> = (props) => {
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
   const { colors, alpha } = tokens
@@ -1802,8 +1836,11 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
 
 const QueryDetails = () => {
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
   const { colors } = tokens
@@ -2193,8 +2230,11 @@ const QueryDetails = () => {
 
 const MutationDetails = () => {
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
   const { colors } = tokens
@@ -2470,7 +2510,10 @@ const createSubscribeToMutationCacheBatcher = <T,>(
   return value
 }
 
-const stylesFactory = (theme: 'light' | 'dark') => {
+const stylesFactory = (
+  theme: 'light' | 'dark',
+  css: (typeof goober)['css'],
+) => {
   const { colors, font, size, alpha, shadow, border } = tokens
 
   const t = (light: string, dark: string) => (theme === 'light' ? light : dark)
@@ -3397,5 +3440,5 @@ const stylesFactory = (theme: 'light' | 'dark') => {
   }
 }
 
-const lightStyles = stylesFactory('light')
-const darkStyles = stylesFactory('dark')
+const lightStyles = (css: (typeof goober)['css']) => stylesFactory('light', css)
+const darkStyles = (css: (typeof goober)['css']) => stylesFactory('dark', css)

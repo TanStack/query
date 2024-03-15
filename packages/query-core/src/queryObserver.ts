@@ -9,9 +9,9 @@ import {
 import { notifyManager } from './notifyManager'
 import { focusManager } from './focusManager'
 import { Subscribable } from './subscribable'
-import { canFetch } from './retryer'
-import type { QueryClient } from './queryClient'
+import { fetchState } from './query'
 import type { FetchOptions, Query, QueryState } from './query'
+import type { QueryClient } from './queryClient'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -154,8 +154,12 @@ export class QueryObserver<
     }
 
     this.#updateQuery()
+    this.#currentQuery.setOptions(this.options)
 
-    if (!shallowEqualObjects(this.options, prevOptions)) {
+    if (
+      prevOptions._defaulted &&
+      !shallowEqualObjects(this.options, prevOptions)
+    ) {
       this.#client.getQueryCache().notify({
         type: 'observerOptionsUpdated',
         query: this.#currentQuery,
@@ -433,7 +437,7 @@ export class QueryObserver<
       : this.#currentQueryInitialState
 
     const { state } = query
-    let { error, errorUpdatedAt, fetchStatus, status } = state
+    let newState = { ...state }
     let isPlaceholderData = false
     let data: TData | undefined
 
@@ -447,31 +451,31 @@ export class QueryObserver<
         mounted && shouldFetchOptionally(query, prevQuery, options, prevOptions)
 
       if (fetchOnMount || fetchOptionally) {
-        fetchStatus = canFetch(query.options.networkMode)
-          ? 'fetching'
-          : 'paused'
-        if (state.data === undefined) {
-          status = 'pending'
+        newState = {
+          ...newState,
+          ...fetchState(state.data, query.options),
         }
       }
       if (options._optimisticResults === 'isRestoring') {
-        fetchStatus = 'idle'
+        newState.fetchStatus = 'idle'
       }
     }
 
+    let { error, errorUpdatedAt, status } = newState
+
     // Select data if needed
-    if (options.select && state.data !== undefined) {
+    if (options.select && newState.data !== undefined) {
       // Memoize select result
       if (
         prevResult &&
-        state.data === prevResultState?.data &&
+        newState.data === prevResultState?.data &&
         options.select === this.#selectFn
       ) {
         data = this.#selectResult
       } else {
         try {
           this.#selectFn = options.select
-          data = options.select(state.data)
+          data = options.select(newState.data)
           data = replaceData(prevResult?.data, data, options)
           this.#selectResult = data
           this.#selectError = null
@@ -482,7 +486,7 @@ export class QueryObserver<
     }
     // Use query data
     else {
-      data = state.data as unknown as TData
+      data = newState.data as unknown as TData
     }
 
     // Show placeholder data if needed
@@ -537,36 +541,36 @@ export class QueryObserver<
       status = 'error'
     }
 
-    const isFetching = fetchStatus === 'fetching'
+    const isFetching = newState.fetchStatus === 'fetching'
     const isPending = status === 'pending'
     const isError = status === 'error'
 
     const isLoading = isPending && isFetching
-    const hasData = state.data !== undefined
+    const hasData = data !== undefined
 
     const result: QueryObserverBaseResult<TData, TError> = {
       status,
-      fetchStatus,
+      fetchStatus: newState.fetchStatus,
       isPending,
       isSuccess: status === 'success',
       isError,
       isInitialLoading: isLoading,
       isLoading,
       data,
-      dataUpdatedAt: state.dataUpdatedAt,
+      dataUpdatedAt: newState.dataUpdatedAt,
       error,
       errorUpdatedAt,
-      failureCount: state.fetchFailureCount,
-      failureReason: state.fetchFailureReason,
-      errorUpdateCount: state.errorUpdateCount,
-      isFetched: state.dataUpdateCount > 0 || state.errorUpdateCount > 0,
+      failureCount: newState.fetchFailureCount,
+      failureReason: newState.fetchFailureReason,
+      errorUpdateCount: newState.errorUpdateCount,
+      isFetched: newState.dataUpdateCount > 0 || newState.errorUpdateCount > 0,
       isFetchedAfterMount:
-        state.dataUpdateCount > queryInitialState.dataUpdateCount ||
-        state.errorUpdateCount > queryInitialState.errorUpdateCount,
+        newState.dataUpdateCount > queryInitialState.dataUpdateCount ||
+        newState.errorUpdateCount > queryInitialState.errorUpdateCount,
       isFetching,
       isRefetching: isFetching && !isPending,
       isLoadingError: isError && !hasData,
-      isPaused: fetchStatus === 'paused',
+      isPaused: newState.fetchStatus === 'paused',
       isPlaceholderData,
       isRefetchError: isError && hasData,
       isStale: isStale(query, options),
@@ -728,7 +732,6 @@ function shouldFetchOptionally(
   prevOptions: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
   return (
-    options.enabled !== false &&
     (query !== prevQuery || prevOptions.enabled === false) &&
     (!options.suspense || query.state.status !== 'error') &&
     isStale(query, options)
@@ -739,7 +742,7 @@ function isStale(
   query: Query<any, any, any, any>,
   options: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
-  return query.isStaleByTime(options.staleTime)
+  return options.enabled !== false && query.isStaleByTime(options.staleTime)
 }
 
 // this function would decide if we will update the observer's 'current'

@@ -16,6 +16,7 @@
   export let client: QueryClient = useQueryClient()
   export let errorTypes: Array<DevToolsErrorType> = []
   export let styleNonce: string | undefined = undefined
+  export let shadowDOMTarget: ShadowRoot | undefined = undefined
 
   let ref: HTMLDivElement
   let devtools: TanstackQueryDevtools | undefined
@@ -35,6 +36,7 @@
           initialIsOpen,
           errorTypes,
           styleNonce,
+          shadowDOMTarget,
         })
 
         devtools.mount(ref)

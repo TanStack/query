@@ -1223,7 +1223,7 @@ describe('useQuery', () => {
       data: undefined,
       isFetching: false,
       isSuccess: false,
-      isStale: true,
+      isStale: false,
     })
   })
 
@@ -1248,7 +1248,7 @@ describe('useQuery', () => {
       React.useEffect(() => {
         setActTimeout(() => {
           queryClient.invalidateQueries({ queryKey: key })
-        }, 20)
+        }, 10)
       }, [])
 
       return null
@@ -1256,14 +1256,14 @@ describe('useQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await sleep(50)
 
     expect(states.length).toBe(1)
     expect(states[0]).toMatchObject({
       data: undefined,
       isFetching: false,
       isSuccess: false,
-      isStale: true,
+      isStale: false,
     })
   })
 
@@ -2435,28 +2435,23 @@ describe('useQuery', () => {
     rendered.getByText('Second Status: success')
   })
 
-  it('should not override query configuration on render', async () => {
+  it('should update query options', async () => {
     const key = queryKey()
 
-    const queryFn1 = async () => {
+    const queryFn = async () => {
       await sleep(10)
       return 'data1'
     }
 
-    const queryFn2 = async () => {
-      await sleep(10)
-      return 'data2'
-    }
-
     function Page() {
-      useQuery({ queryKey: key, queryFn: queryFn1 })
-      useQuery({ queryKey: key, queryFn: queryFn2 })
+      useQuery({ queryKey: key, queryFn, retryDelay: 10 })
+      useQuery({ queryKey: key, queryFn, retryDelay: 20 })
       return null
     }
 
     renderWithClient(queryClient, <Page />)
 
-    expect(queryCache.find({ queryKey: key })!.options.queryFn).toBe(queryFn1)
+    expect(queryCache.find({ queryKey: key })!.options.retryDelay).toBe(20)
   })
 
   it('should batch re-renders', async () => {
@@ -3685,10 +3680,10 @@ describe('useQuery', () => {
   it('should reset failureCount on successful fetch', async () => {
     const key = queryKey()
 
-    function Page() {
-      let counter = 0
+    let counter = 0
 
-      const query = useQuery<string, Error>({
+    function Page() {
+      const query = useQuery({
         queryKey: key,
         queryFn: async () => {
           if (counter < 2) {
@@ -3783,9 +3778,9 @@ describe('useQuery', () => {
         <div>
           <div>FetchStatus: {query.fetchStatus}</div>
           <h2>Data: {query.data || 'no data'}</h2>
-          {query.isStale ? (
+          {shouldFetch ? null : (
             <button onClick={() => setShouldFetch(true)}>fetch</button>
-          ) : null}
+          )}
         </div>
       )
     }
@@ -3956,7 +3951,8 @@ describe('useQuery', () => {
     expect(results.length).toBe(3)
     expect(results[0]).toMatchObject({ data: 'initial', isStale: true })
     expect(results[1]).toMatchObject({ data: 'fetched data', isStale: true })
-    expect(results[2]).toMatchObject({ data: 'fetched data', isStale: true })
+    // disabled observers are not stale
+    expect(results[2]).toMatchObject({ data: 'fetched data', isStale: false })
   })
 
   it('it should support enabled:false in query object syntax', async () => {
@@ -4891,14 +4887,14 @@ describe('useQuery', () => {
       isPending: true,
       isFetching: false,
       isSuccess: false,
-      isStale: true,
+      isStale: false,
     })
     expect(states[1]).toMatchObject({
       data: undefined,
       isPending: true,
       isFetching: true,
       isSuccess: false,
-      isStale: true,
+      isStale: false,
     })
     expect(states[2]).toMatchObject({
       data: 1,
@@ -4912,7 +4908,7 @@ describe('useQuery', () => {
       isPending: true,
       isFetching: false,
       isSuccess: false,
-      isStale: true,
+      isStale: false,
     })
   })
 
@@ -6378,5 +6374,105 @@ describe('useQuery', () => {
     fireEvent.click(rendered.getByRole('button', { name: 'enable' }))
     await waitFor(() => rendered.getByText('status: success'))
     await waitFor(() => rendered.getByText('data: data'))
+  })
+
+  it('should return correct optimistic result when fetching after error', async () => {
+    const key = queryKey()
+    const error = new Error('oh no')
+
+    const results: Array<UseQueryResult<string>> = []
+
+    function Page() {
+      const query = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return Promise.reject(error)
+        },
+        retry: false,
+        notifyOnChangeProps: 'all',
+      })
+
+      results.push(query)
+
+      return (
+        <div>
+          <div>
+            status: {query.status}, {query.fetchStatus}
+          </div>
+          <div>error: {query.error?.message}</div>
+        </div>
+      )
+    }
+
+    function App() {
+      const [enabled, setEnabled] = React.useState(true)
+
+      return (
+        <div>
+          <button onClick={() => setEnabled(!enabled)}>toggle</button>
+          {enabled && <Page />}
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() => rendered.getByText('status: error, idle'))
+
+    fireEvent.click(rendered.getByRole('button', { name: 'toggle' }))
+    fireEvent.click(rendered.getByRole('button', { name: 'toggle' }))
+
+    await waitFor(() => rendered.getByText('status: error, idle'))
+
+    expect(results).toHaveLength(4)
+
+    // initial fetch
+    expect(results[0]).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      error: null,
+      errorUpdatedAt: 0,
+      errorUpdateCount: 0,
+      isLoading: true,
+      failureCount: 0,
+      failureReason: null,
+    })
+
+    // error state
+    expect(results[1]).toMatchObject({
+      status: 'error',
+      fetchStatus: 'idle',
+      error,
+      errorUpdateCount: 1,
+      isLoading: false,
+      failureCount: 1,
+      failureReason: error,
+    })
+    expect(results[1]?.errorUpdatedAt).toBeGreaterThan(0)
+
+    // refetch, optimistic state, no errors anymore
+    expect(results[2]).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      error: null,
+      errorUpdateCount: 1,
+      isLoading: true,
+      failureCount: 0,
+      failureReason: null,
+    })
+    expect(results[2]?.errorUpdatedAt).toBeGreaterThan(0)
+
+    // final state
+    expect(results[3]).toMatchObject({
+      status: 'error',
+      fetchStatus: 'idle',
+      error: error,
+      errorUpdateCount: 2,
+      isLoading: false,
+      failureCount: 1,
+      failureReason: error,
+    })
+    expect(results[3]?.errorUpdatedAt).toBeGreaterThan(0)
   })
 })

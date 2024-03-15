@@ -375,6 +375,18 @@ ruleTester.run('exhaustive-deps', rule, {
         }
       `,
     },
+    {
+      name: 'query key with nullish coalescing operator',
+      code: `
+        const factory = (id: number) => ['foo', id];
+        function Component({ id }) {
+          useQuery({
+            queryKey: factory(id ?? -1),
+            queryFn: () => Promise.resolve({ id })
+          });
+        }
+        `,
+    },
   ],
   invalid: [
     {
