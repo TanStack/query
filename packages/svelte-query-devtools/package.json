@@ -31,6 +31,7 @@
     "test:types": "svelte-check --tsconfig ./tsconfig.json",
     "test:eslint": "eslint --ext .svelte,.ts ./src",
     "test:build": "publint --strict",
+    "test:attw": "attw --pack",
     "build": "svelte-package --input ./src --output ./dist"
   },
   "dependencies": {
