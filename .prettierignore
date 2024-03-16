@@ -6,3 +6,4 @@
 **/dist
 **/query-codemods/**/__testfixtures__
 pnpm-lock.yaml
+packages/**/tsup.config.bundled*.mjs
