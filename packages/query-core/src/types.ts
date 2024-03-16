@@ -752,7 +752,9 @@ export interface MutationOptions<
   gcTime?: number
   _defaulted?: boolean
   meta?: MutationMeta
-  scope?: string
+  scope?: {
+    id: string
+  }
 }
 
 export interface MutationObserverOptions<

@@ -1568,7 +1568,9 @@ describe('queryClient', () => {
       const orders: Array<string> = []
 
       const observer1 = new MutationObserver(queryClient, {
-        scope: 'scope',
+        scope: {
+          id: 'scope'
+        },
         mutationFn: async () => {
           orders.push('1start')
           await sleep(50)
@@ -1578,7 +1580,9 @@ describe('queryClient', () => {
       })
 
       const observer2 = new MutationObserver(queryClient, {
-        scope: 'scope',
+        scope: {
+          id: 'scope'
+        },
         mutationFn: async () => {
           orders.push('2start')
           await sleep(20)
@@ -1713,7 +1717,9 @@ describe('queryClient', () => {
       void observer.mutate()
 
       const observer2 = new MutationObserver(queryClient, {
-        scope: 'scope',
+        scope: {
+          id: 'scope'
+        },
         mutationFn: async () => {
           results.push('mutation2-start')
           await sleep(50)
@@ -1725,7 +1731,9 @@ describe('queryClient', () => {
       void observer2.mutate()
 
       const observer3 = new MutationObserver(queryClient, {
-        scope: 'scope',
+        scope: {
+          id: 'scope'
+        },
         mutationFn: async () => {
           results.push('mutation3-start')
           await sleep(50)

@@ -421,7 +421,9 @@ describe('mutations', () => {
         queryClient,
         {
           mutationKey: key1,
-          scope: 'scope',
+          scope: {
+            id: 'scope'
+          },
           mutationFn: async () => {
             results.push('start-A')
             await sleep(10)
@@ -443,7 +445,9 @@ describe('mutations', () => {
         queryClient,
         {
           mutationKey: key2,
-          scope: 'scope',
+          scope: {
+            id: 'scope'
+          },
           mutationFn: async () => {
             results.push('start-B')
             await sleep(10)

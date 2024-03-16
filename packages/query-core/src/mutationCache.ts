@@ -109,7 +109,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   #scopeFor(mutation: Mutation<any, any, any, any>) {
-    return mutation.options.scope ?? String(mutation.mutationId)
+    return mutation.options.scope?.id ?? String(mutation.mutationId)
   }
 
   add(mutation: Mutation<any, any, any, any>): void {
