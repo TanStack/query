@@ -199,10 +199,8 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     const pausedMutations = this.getAll().filter((x) => x.state.isPaused)
 
     return notifyManager.batch(() =>
-      pausedMutations.reduce(
-        (promise, mutation) =>
-          promise.then(() => mutation.continue().catch(noop)),
-        Promise.resolve() as Promise<unknown>,
+      Promise.all(
+        pausedMutations.map((mutation) => mutation.continue().catch(noop)),
       ),
     )
   }
