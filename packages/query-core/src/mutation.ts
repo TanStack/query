@@ -180,11 +180,12 @@ export class Mutation<
       },
       retry: this.options.retry ?? 0,
       retryDelay: this.options.retryDelay,
+      networkMode: this.options.networkMode,
       canRun: () => this.#mutationCache.canRun(this),
     })
 
     const restored = this.state.status === 'pending'
-    const isPaused = !this.#mutationCache.canRun(this)
+    const isPaused = !this.#retryer.canStart()
 
     try {
       if (!restored) {

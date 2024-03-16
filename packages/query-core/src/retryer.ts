@@ -15,6 +15,7 @@ interface RetryerConfig<TData = unknown, TError = DefaultError> {
   onContinue?: () => void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
+  networkMode: NetworkMode | undefined
   canRun: () => boolean
 }
 
@@ -24,6 +25,7 @@ export interface Retryer<TData = unknown> {
   continue: () => Promise<unknown>
   cancelRetry: () => void
   continueRetry: () => void
+  canStart: () => boolean
   start: () => Promise<TData>
 }
 
@@ -94,7 +96,12 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
     isRetryCancelled = false
   }
 
-  const shouldPause = () => !focusManager.isFocused() || !config.canRun()
+  const canContinue = () =>
+    focusManager.isFocused() &&
+    (config.networkMode === 'always' || onlineManager.isOnline()) &&
+    config.canRun()
+
+  const canStart = () => canFetch(config.networkMode) && config.canRun()
 
   const resolve = (value: any) => {
     if (!isResolved) {
@@ -117,7 +124,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   const pause = () => {
     return new Promise((continueResolve) => {
       continueFn = (value) => {
-        if (isResolved || !shouldPause()) {
+        if (isResolved || canContinue()) {
           continueResolve(value)
         }
       }
@@ -181,10 +188,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
         sleep(delay)
           // Pause if the document is not visible or when the device is offline
           .then(() => {
-            if (shouldPause()) {
-              return pause()
-            }
-            return
+            return canContinue() ? undefined : pause()
           })
           .then(() => {
             if (isRetryCancelled) {
@@ -205,9 +209,10 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
     },
     cancelRetry,
     continueRetry,
+    canStart,
     start: () => {
       // Start loop
-      if (config.canRun()) {
+      if (canStart()) {
         run()
       } else {
         pause().then(run)

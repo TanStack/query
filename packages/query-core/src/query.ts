@@ -522,7 +522,8 @@ export class Query<
       },
       retry: context.options.retry,
       retryDelay: context.options.retryDelay,
-      canRun: () => canFetch(context.options.networkMode),
+      networkMode: context.options.networkMode,
+      canRun: () => true,
     })
 
     return this.#retryer.start()

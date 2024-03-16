@@ -2,7 +2,6 @@ import { notifyManager } from './notifyManager'
 import { Mutation } from './mutation'
 import { matchMutation, noop } from './utils'
 import { Subscribable } from './subscribable'
-import { canFetch } from './retryer'
 import type { MutationObserver } from './mutationObserver'
 import type { DefaultError, MutationOptions, NotifyEvent } from './types'
 import type { QueryClient } from './queryClient'
@@ -140,16 +139,13 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   canRun(mutation: Mutation<any, any, any, any>): boolean {
-    if (canFetch(mutation.options.networkMode)) {
-      const firstPendingMutation = this.#mutations
-        .get(this.#scopeFor(mutation))
-        ?.find((m) => m.state.status === 'pending')
+    const firstPendingMutation = this.#mutations
+      .get(this.#scopeFor(mutation))
+      ?.find((m) => m.state.status === 'pending')
 
-      // we can run if there is no current pending mutation (start use-case)
-      // or if WE are the first pending mutation (continue use-case)
-      return !firstPendingMutation || firstPendingMutation === mutation
-    }
-    return false
+    // we can run if there is no current pending mutation (start use-case)
+    // or if WE are the first pending mutation (continue use-case)
+    return !firstPendingMutation || firstPendingMutation === mutation
   }
 
   runNext(mutation: Mutation<any, any, any, any>): Promise<unknown> {
