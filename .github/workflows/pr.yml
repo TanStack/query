@@ -16,6 +16,9 @@ jobs:
   main:
     name: Nx Cloud - Main Job
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test: ['test:format', 'test:sherif', 'test:knip', 'test:eslint', 'test:lib', 'test:types', 'test:build', 'build']
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -39,7 +42,7 @@ jobs:
         with:
           main-branch-name: 'main'
       - name: Run Tests
-        run: pnpm run test:pr --parallel=3
+        run: pnpm run ${{ matrix.test }}
       - name: Stop Nx Agents
         if: ${{ always() }}
         run: npx nx-cloud stop-all-agents
