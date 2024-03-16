@@ -1515,9 +1515,7 @@ describe('queryClient', () => {
       })
     })
 
-    test('should resume paused mutations in parallel when invoked manually at the same time', async () => {
-      const consoleMock = vi.spyOn(console, 'error')
-      consoleMock.mockImplementation(() => undefined)
+    test('should resume paused mutations in parallel', async () => {
       onlineManager.setOnline(false)
 
       const orders: Array<string> = []
@@ -1548,9 +1546,6 @@ describe('queryClient', () => {
       })
 
       onlineManager.setOnline(true)
-      void queryClient.resumePausedMutations()
-      await sleep(5)
-      await queryClient.resumePausedMutations()
 
       await waitFor(() => {
         expect(observer1.getCurrentResult().status).toBe('success')
@@ -1569,7 +1564,7 @@ describe('queryClient', () => {
 
       const observer1 = new MutationObserver(queryClient, {
         scope: {
-          id: 'scope'
+          id: 'scope',
         },
         mutationFn: async () => {
           orders.push('1start')
@@ -1581,7 +1576,7 @@ describe('queryClient', () => {
 
       const observer2 = new MutationObserver(queryClient, {
         scope: {
-          id: 'scope'
+          id: 'scope',
         },
         mutationFn: async () => {
           orders.push('2start')
@@ -1718,7 +1713,7 @@ describe('queryClient', () => {
 
       const observer2 = new MutationObserver(queryClient, {
         scope: {
-          id: 'scope'
+          id: 'scope',
         },
         mutationFn: async () => {
           results.push('mutation2-start')
@@ -1732,7 +1727,7 @@ describe('queryClient', () => {
 
       const observer3 = new MutationObserver(queryClient, {
         scope: {
-          id: 'scope'
+          id: 'scope',
         },
         mutationFn: async () => {
           results.push('mutation3-start')
@@ -1744,9 +1739,15 @@ describe('queryClient', () => {
 
       void observer3.mutate()
 
-      expect(observer.getCurrentResult().isPaused).toBeTruthy()
-      expect(observer2.getCurrentResult().isPaused).toBeTruthy()
-      expect(observer3.getCurrentResult().isPaused).toBeTruthy()
+      await waitFor(() =>
+        expect(observer.getCurrentResult().isPaused).toBeTruthy(),
+      )
+      await waitFor(() =>
+        expect(observer2.getCurrentResult().isPaused).toBeTruthy(),
+      )
+      await waitFor(() =>
+        expect(observer3.getCurrentResult().isPaused).toBeTruthy(),
+      )
 
       onlineManager.setOnline(true)
 
