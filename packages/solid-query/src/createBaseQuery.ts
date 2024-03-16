@@ -302,11 +302,17 @@ export function createBaseQuery<
     ),
   )
 
-  createComputed(() => {
-    if (!isRestoring() && !isServer) {
-      refetch()
-    }
-  })
+  createComputed(
+    on(
+      isRestoring,
+      (restoring) => {
+        if (!restoring && !isServer) {
+          refetch()
+        }
+      },
+      { defer: true },
+    ),
+  )
 
   onCleanup(() => {
     if (isServer && queryResource.loading) {
