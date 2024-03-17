@@ -6,9 +6,10 @@
 	import { useSvelteExtensionQuery } from './external.svelte';
 	let a = { a: 1 };
 	let b = ['hi', bookFilterStore];
-	const data = createQuery(() => {
-		return {
-			queryKey: ['paginate', bookFilterStore],
+	let p = $derived({ derived_state: bookFilterStore.paginate.page + 1 });
+	function query(p) {
+		const data = createQuery({
+			queryKey: () => ['paginate', b],
 			queryFn: async () => {
 				const s = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'].map((v) => {
 					return { title: v };
@@ -20,21 +21,13 @@
 			},
 			staleTime: 5000,
 			enabled: bookFilterStore.paginate.page % 2 == 1
-		};
-	});
-	const external = useQuery(bookFilterStore);
-	const externalsv = useSvelteExtensionQuery(bookFilterStore);
-	/* 	const querycache = useQueryClient().getQueryCache();
-	$effect(() => {
-		if (data.fetchStatus) {
-			console.log(data.fetchStatus);
-		}
-		const ret = querycache.find({ queryKey: b, exact: false });
-		//console.log('find  in query cache', ret);
-	}); */
+		});
+		return data;
+	}
+	let data = query(p);
 </script>
 
-<h2>testing create query with list</h2>
+<h2>testing derived query with list</h2>
 
 {data.fetchStatus}
 {data.isLoading}
@@ -44,22 +37,17 @@
 	onclick={() => {
 		console.log('click +1');
 		bookFilterStore.paginate.page += 1;
+		//	p += 1;
 	}}>next</button
 >
 <button
 	onclick={() => {
 		console.log('click -1');
 		bookFilterStore.paginate.page -= 1;
-		//p += 1;
+		//	p += 1;
 	}}>prev</button
 >
 {bookFilterStore.paginate.page}
 {#each data?.data ?? [] as item}
 	<div>{item.title}</div>
 {/each}
-
-<!-- -------------
-{external.data}
--------------
-{externalsv.data}
- -->

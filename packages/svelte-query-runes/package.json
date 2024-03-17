@@ -1,6 +1,6 @@
 {
-  "name": "svelte-query-runes",
-  "version": "5.14.2-beta.18.1",
+  "name": "svelte-query",
+  "version": "5.14.2-beta.18.4",
   "private": false,
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Svelte",
   "author": "zhiheng",
@@ -19,13 +19,12 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "default": "./src/index",
       "svelte": "./dist/index.js"
     },
     "./dev": {
       "types": "./dist/index.d.ts",
-      "default": "./src/index",
-      "svelte": "./dist/index.js"
+      "default": "./src/index.ts",
+      "svelte": "./src/index.ts"
     }
   },
   "files": [

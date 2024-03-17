@@ -34,7 +34,9 @@ export function createBaseQuery<
 
   /** Creates a store that has the default options applied */
   function updateOptions() {
-    const queryKey = optionsStore().queryKey?.map((v) => unstate(v))
+    const key = optionsStore().queryKey
+    const keyFn = typeof key === 'function' ? key : () => key //alow query-key and enable to be a function
+    const queryKey = JSON.parse(JSON.stringify(keyFn())) // remove proxy
 
     const defaultedOptions = client.defaultQueryOptions({
       ...optionsStore(),
@@ -42,7 +44,8 @@ export function createBaseQuery<
       queryKey: queryKey, // prevent reactive query  in devTools,
       enabled:
         typeof optionsStore().enabled == 'function'
-          ? optionsStore().enabled()
+          ? //@ts-ignore
+            optionsStore().enabled()
           : optionsStore().enabled,
     })
 
