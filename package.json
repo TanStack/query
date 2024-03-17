@@ -10,6 +10,7 @@
   "scripts": {
     "clean": "pnpm --filter \"./packages/**\" run clean",
     "preinstall": "node -e \"if(process.env.CI == 'true') {console.log('Skipping preinstall...'); process.exit(1)}\" || npx -y only-allow pnpm",
+    "prepare": "husky",
     "install:csb": "corepack enable && pnpm install --frozen-lockfile",
     "test": "pnpm run test:ci",
     "test:pr": "nx affected --targets=test:format,test:sherif,test:knip,test:eslint,test:lib,test:types,test:build,build,test:attw",
@@ -61,8 +62,10 @@
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^9.0.11",
     "jsdom": "^24.0.0",
     "knip": "^4.6.0",
+    "lint-staged": "^15.2.2",
     "nx": "17.3.1",
     "prettier": "^4.0.0-alpha.8",
     "prettier-plugin-svelte": "^3.1.2",
