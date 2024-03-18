@@ -422,7 +422,7 @@ describe('mutations', () => {
         {
           mutationKey: key1,
           scope: {
-            id: 'scope'
+            id: 'scope',
           },
           mutationFn: async () => {
             results.push('start-A')
@@ -446,7 +446,7 @@ describe('mutations', () => {
         {
           mutationKey: key2,
           scope: {
-            id: 'scope'
+            id: 'scope',
           },
           mutationFn: async () => {
             results.push('start-B')
@@ -474,5 +474,130 @@ describe('mutations', () => {
         'finish-B',
       ])
     })
+  })
+
+  test('mutations without scope should run in parallel', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const results: Array<string> = []
+
+    const execute1 = executeMutation(
+      queryClient,
+      {
+        mutationKey: key1,
+        mutationFn: async () => {
+          results.push('start-A')
+          await sleep(10)
+          results.push('finish-A')
+          return 'a'
+        },
+      },
+      'vars1',
+    )
+
+    const execute2 = executeMutation(
+      queryClient,
+      {
+        mutationKey: key2,
+        mutationFn: async () => {
+          results.push('start-B')
+          await sleep(10)
+          results.push('finish-B')
+          return 'b'
+        },
+      },
+      'vars2',
+    )
+
+    await Promise.all([execute1, execute2])
+
+    expect(results).toStrictEqual([
+      'start-A',
+      'start-B',
+      'finish-A',
+      'finish-B',
+    ])
+  })
+
+  test('each scope should run should run in parallel, serial within scope', async () => {
+    const results: Array<string> = []
+
+    const execute1 = executeMutation(
+      queryClient,
+      {
+        scope: {
+          id: '1',
+        },
+        mutationFn: async () => {
+          results.push('start-A1')
+          await sleep(10)
+          results.push('finish-A1')
+          return 'a'
+        },
+      },
+      'vars1',
+    )
+
+    const execute2 = executeMutation(
+      queryClient,
+      {
+        scope: {
+          id: '1',
+        },
+        mutationFn: async () => {
+          results.push('start-B1')
+          await sleep(10)
+          results.push('finish-B1')
+          return 'b'
+        },
+      },
+      'vars2',
+    )
+
+    const execute3 = executeMutation(
+      queryClient,
+      {
+        scope: {
+          id: '2',
+        },
+        mutationFn: async () => {
+          results.push('start-A2')
+          await sleep(10)
+          results.push('finish-A2')
+          return 'a'
+        },
+      },
+      'vars1',
+    )
+
+    const execute4 = executeMutation(
+      queryClient,
+      {
+        scope: {
+          id: '2',
+        },
+        mutationFn: async () => {
+          results.push('start-B2')
+          await sleep(10)
+          results.push('finish-B2')
+          return 'b'
+        },
+      },
+      'vars2',
+    )
+
+    await Promise.all([execute1, execute2, execute3, execute4])
+
+    expect(results).toStrictEqual([
+      'start-A1',
+      'start-A2',
+      'finish-A1',
+      'start-B1',
+      'finish-A2',
+      'start-B2',
+      'finish-B1',
+      'finish-B2',
+    ])
   })
 })
