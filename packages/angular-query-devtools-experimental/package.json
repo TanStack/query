@@ -25,6 +25,7 @@
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
     "test:build": "publint --strict",
+    "test:attw": "attw --pack",
     "build": "ng-packagr -p ng-package.json -c tsconfig.build.json && rimraf ./build/package.json"
   },
   "dependencies": {
