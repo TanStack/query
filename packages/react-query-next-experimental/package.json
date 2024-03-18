@@ -37,6 +37,7 @@
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
     "test:build": "publint --strict",
+    "test:attw": "attw --pack",
     "build": "tsup"
   },
   "devDependencies": {

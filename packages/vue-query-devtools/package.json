@@ -43,6 +43,7 @@
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "vue-tsc",
     "test:build": "publint --strict",
+    "test:attw": "attw --pack",
     "build": "vite build"
   },
   "dependencies": {

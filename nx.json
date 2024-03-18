@@ -49,6 +49,11 @@
       "inputs": ["default", "^public"],
       "cache": true
     },
+    "test:attw": {
+      "dependsOn": ["build"],
+      "inputs": ["default", "^public"],
+      "cache": true
+    },
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["default", "^public"],

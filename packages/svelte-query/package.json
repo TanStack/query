@@ -39,6 +39,7 @@
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
+    "test:attw": "attw --pack",
     "build": "svelte-package --input ./src --output ./dist"
   },
   "dependencies": {

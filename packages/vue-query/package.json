@@ -42,6 +42,7 @@
     "test:3": "vue-demi-switch 3 && vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
+    "test:attw": "attw --pack",
     "build": "tsup"
   },
   "nx": {
