@@ -117,7 +117,7 @@ function Todos() {
       <div>
         // 🚀 applying the filter will enable and execute the query
         <FiltersForm onApply={setFilter} />
-        {data && <TodosTable data={data}} />
+        {data && <TodosTable data={data} />}
       </div>
   )
 }
