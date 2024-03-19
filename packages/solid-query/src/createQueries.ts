@@ -18,6 +18,7 @@ import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
   DefaultError,
+  OmitKeyOf,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
   QueryFunction,
@@ -34,7 +35,7 @@ type CreateQueryOptionsForCreateQueries<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = Omit<
+> = OmitKeyOf<
   SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'placeholderData'
 > & {

@@ -9,6 +9,7 @@ import type {
   MutateFunction,
   MutationObserverOptions,
   MutationObserverResult,
+  OmitKeyOf,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
@@ -82,7 +83,7 @@ export interface CreateInfiniteQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends Omit<
+> extends OmitKeyOf<
     InfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
@@ -131,7 +132,7 @@ export interface CreateMutationOptions<
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> extends Omit<
+> extends OmitKeyOf<
     MutationObserverOptions<TData, TError, TVariables, TContext>,
     '_defaulted'
   > {}
