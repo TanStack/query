@@ -181,9 +181,9 @@ With just a little more setup, you can use a `queryClient` to prefetch queries d
 
 ### Full Next.js pages router example
 
-> For app router documentation, see the [**Advanced** Server Rendering guide](./guides/advanced-ssr).
+> For app router documentation, see the [Advanced Server Rendering guide](./guides/advanced-ssr).
 
-Initial setup:****
+Initial setup:
 
 ```tsx
 // _app.tsx
