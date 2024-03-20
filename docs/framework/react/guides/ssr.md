@@ -181,9 +181,9 @@ With just a little more setup, you can use a `queryClient` to prefetch queries d
 
 ### Full Next.js pages router example
 
-> For app router documentation, see the [Advanced Server Rendering guide](./guides/advanced-ssr).
+> For app router documentation, see the [**Advanced** Server Rendering guide](./guides/advanced-ssr).
 
-Initial setup:
+Initial setup:****
 
 ```tsx
 // _app.tsx
@@ -248,7 +248,7 @@ function Posts() {
   // ...
 }
 
-export default PostsRoute({ dehydratedState }) {
+export default function PostsRoute({ dehydratedState }) {
   return (
     <HydrationBoundary state={dehydratedState}>
       <Posts />
@@ -326,7 +326,7 @@ function Posts() {
   // ...
 }
 
-export default PostsRoute() {
+export default function PostsRoute() {
   const { dehydratedState } = useLoaderData<typeof loader>();
   return (
     <HydrationBoundary state={dehydratedState}>
@@ -341,7 +341,7 @@ export default PostsRoute() {
 Having this part in every route might seem like a lot of boilerplate:
 
 ```tsx
-export default PostsRoute({ dehydratedState }) {
+export default function PostsRoute({ dehydratedState }) {
   return (
     <HydrationBoundary state={dehydratedState}>
       <Posts />
