@@ -158,7 +158,18 @@ export function useBaseQuery<
               stopWatch()
               observer
                 .fetchOptimistic(defaultedOptions.value)
-                .then(resolve, reject)
+                .then(resolve, (error: TError) => {
+                  if (
+                    shouldThrowError(defaultedOptions.value.throwOnError, [
+                      error as TError,
+                      observer.getCurrentQuery(),
+                    ])
+                  ) {
+                    reject(error)
+                  } else {
+                    resolve(observer.getCurrentResult())
+                  }
+                })
             } else {
               stopWatch()
               resolve(optimisticResult)
