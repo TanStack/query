@@ -138,7 +138,7 @@ function Posts() {
   // ...
 }
 
-export default PostsRoute({ dehydratedState }) {
+export default function PostsRoute({ dehydratedState }) {
   return (
     <HydrationBoundary state={dehydratedState}>
       <Posts />
