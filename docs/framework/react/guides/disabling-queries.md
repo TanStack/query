@@ -67,18 +67,18 @@ function Todos() {
   const [filter, setFilter] = React.useState('')
 
   const { data } = useQuery({
-      queryKey: ['todos', filter],
-      queryFn: () => fetchTodos(filter),
-      // ⬇️ disabled as long as the filter is empty
-      enabled: !!filter
+    queryKey: ['todos', filter],
+    queryFn: () => fetchTodos(filter),
+    // ⬇️ disabled as long as the filter is empty
+    enabled: !!filter,
   })
 
   return (
-      <div>
-        // 🚀 applying the filter will enable and execute the query
-        <FiltersForm onApply={setFilter} />
-        {data && <TodosTable data={data} />}
-      </div>
+    <div>
+      // 🚀 applying the filter will enable and execute the query
+      <FiltersForm onApply={setFilter} />
+      {data && <TodosTable data={data} />}
+    </div>
   )
 }
 ```
@@ -108,17 +108,17 @@ function Todos() {
   const [filter, setFilter] = React.useState<string | undefined>()
 
   const { data } = useQuery({
-      queryKey: ['todos', filter],
-      // ⬇️ disabled as long as the filter is undefined or empty
-      queryFn: filter ? () => fetchTodos(filter) : skipToken,
+    queryKey: ['todos', filter],
+    // ⬇️ disabled as long as the filter is undefined or empty
+    queryFn: filter ? () => fetchTodos(filter) : skipToken,
   })
 
   return (
-      <div>
-        // 🚀 applying the filter will enable and execute the query
-        <FiltersForm onApply={setFilter} />
-        {data && <TodosTable data={data} />}
-      </div>
+    <div>
+      // 🚀 applying the filter will enable and execute the query
+      <FiltersForm onApply={setFilter} />
+      {data && <TodosTable data={data} />}
+    </div>
   )
 }
 ```
