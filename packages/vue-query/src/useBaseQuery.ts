@@ -161,7 +161,7 @@ export function useBaseQuery<
                 .then(resolve, (error: TError) => {
                   if (
                     shouldThrowError(defaultedOptions.value.throwOnError, [
-                      error as TError,
+                      error,
                       observer.getCurrentQuery(),
                     ])
                   ) {
