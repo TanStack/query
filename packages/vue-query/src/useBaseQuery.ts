@@ -9,7 +9,7 @@ import {
 } from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref, shouldThrowError, updateState } from './utils'
-import type { ToRef } from 'vue-demi'
+import type { Ref } from 'vue-demi'
 import type {
   DefaultedQueryObserverOptions,
   QueryKey,
@@ -30,7 +30,7 @@ export type UseBaseQueryReturnType<
     | 'fetchPreviousPage'
     | 'refetch'
     ? TResult[K]
-    : ToRef<Readonly<TResult>[K]>
+    : Ref<Readonly<TResult>[K]>
 } & {
   suspense: () => Promise<TResult>
 }
