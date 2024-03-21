@@ -327,7 +327,7 @@ describe('useQuery', () => {
       let afterTimeout = false
       const isEnabled = ref(false)
       const query = useQuery({
-        queryKey: ['suspense'],
+        queryKey: ['suspense2'],
         queryFn: simpleFetcher,
         enabled: isEnabled,
       })
@@ -350,7 +350,7 @@ describe('useQuery', () => {
 
       // let afterTimeout = false;
       const query = useQuery({
-        queryKey: ['suspense'],
+        queryKey: ['suspense3'],
         queryFn: simpleFetcher,
         staleTime: 10000,
         initialData: 'foo',
@@ -359,6 +359,55 @@ describe('useQuery', () => {
       return query.suspense().then(() => {
         expect(fetcherSpy).toHaveBeenCalledTimes(0)
       })
+    })
+
+    test('should not throw from suspense by default', async () => {
+      const getCurrentInstanceSpy = getCurrentInstance as Mock
+      getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
+
+      const query = useQuery({
+        queryKey: ['suspense4'],
+        queryFn: rejectFetcher,
+        staleTime: 10000,
+      })
+
+      await flushPromises()
+
+      expect(query).toMatchObject({
+        status: { value: 'error' },
+        isError: { value: true },
+      })
+    })
+
+    test('should throw from suspense when throwOnError is true', async () => {
+      const getCurrentInstanceSpy = getCurrentInstance as Mock
+      getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
+
+      const boundaryFn = vi.fn()
+      const query = useQuery({
+        queryKey: ['suspense5'],
+        queryFn: rejectFetcher,
+        staleTime: 10000,
+        throwOnError: boundaryFn,
+      })
+
+      await query.suspense()
+
+      expect(boundaryFn).toHaveBeenCalledTimes(2)
+      expect(boundaryFn).toHaveBeenNthCalledWith(
+        1,
+        Error('Some error'),
+        expect.objectContaining({
+          state: expect.objectContaining({ status: 'error' }),
+        }),
+      )
+      expect(boundaryFn).toHaveBeenNthCalledWith(
+        2,
+        Error('Some error'),
+        expect.objectContaining({
+          state: expect.objectContaining({ status: 'error' }),
+        }),
+      )
     })
   })
 })

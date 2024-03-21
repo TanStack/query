@@ -1,0 +1,20 @@
+{
+  "name": "@tanstack/query-example-vue-2.6-basic",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:dev": "vite build -m development",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "@tanstack/vue-query": "^5.28.7",
+    "vue": "2.7.16",
+    "vue-template-compiler": "2.7.16"
+  },
+  "devDependencies": {
+    "typescript": "5.2.2",
+    "vite": "^4.5.1",
+    "vite-plugin-vue2": "2.0.3"
+  }
+}
