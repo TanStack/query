@@ -9,6 +9,7 @@ import type { QueryClientConfig } from '@tanstack/query-core'
 type ClientPersister = (client: QueryClient) => [() => void, Promise<void>]
 
 interface CommonOptions {
+  enableDevtoolsV6Plugin?: boolean
   queryClientKey?: string
   clientPersister?: ClientPersister
   clientPersisterOnSuccess?: (client: QueryClient) => void
@@ -85,7 +86,7 @@ export const VueQueryPlugin = {
           this._provided[clientKey] = client
 
           if (process.env.NODE_ENV === 'development') {
-            if (this === this.$root) {
+            if (this === this.$root && options.enableDevtoolsV6Plugin) {
               setupDevtools(this, client)
             }
           }
@@ -95,7 +96,9 @@ export const VueQueryPlugin = {
       app.provide(clientKey, client)
 
       if (process.env.NODE_ENV === 'development') {
-        setupDevtools(app, client)
+        if (options.enableDevtoolsV6Plugin) {
+          setupDevtools(app, client)
+        }
       }
     }
   },
