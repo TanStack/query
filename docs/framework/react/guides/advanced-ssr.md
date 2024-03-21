@@ -99,7 +99,12 @@ Let's next look at how to actually prefetch data and dehydrate and hydrate it. T
 
 ```tsx
 // pages/posts.jsx
-import { dehydrate, HydrationBoundary, QueryClient, useQuery } from '@tanstack/react-query'
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+  useQuery,
+} from '@tanstack/react-query'
 
 // This could also be getServerSideProps
 export async function getStaticProps() {
@@ -138,7 +143,7 @@ function Posts() {
   // ...
 }
 
-export default PostsRoute({ dehydratedState }) {
+export default function PostsRoute({ dehydratedState }) {
   return (
     <HydrationBoundary state={dehydratedState}>
       <Posts />

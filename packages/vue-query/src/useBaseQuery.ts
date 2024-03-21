@@ -9,7 +9,7 @@ import {
 } from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref, shouldThrowError, updateState } from './utils'
-import type { ToRef } from 'vue-demi'
+import type { Ref } from 'vue-demi'
 import type {
   DefaultedQueryObserverOptions,
   QueryKey,
@@ -30,7 +30,7 @@ export type UseBaseQueryReturnType<
     | 'fetchPreviousPage'
     | 'refetch'
     ? TResult[K]
-    : ToRef<Readonly<TResult>[K]>
+    : Ref<Readonly<TResult>[K]>
 } & {
   suspense: () => Promise<TResult>
 }
@@ -158,7 +158,18 @@ export function useBaseQuery<
               stopWatch()
               observer
                 .fetchOptimistic(defaultedOptions.value)
-                .then(resolve, reject)
+                .then(resolve, (error: TError) => {
+                  if (
+                    shouldThrowError(defaultedOptions.value.throwOnError, [
+                      error,
+                      observer.getCurrentQuery(),
+                    ])
+                  ) {
+                    reject(error)
+                  } else {
+                    resolve(observer.getCurrentResult())
+                  }
+                })
             } else {
               stopWatch()
               resolve(optimisticResult)

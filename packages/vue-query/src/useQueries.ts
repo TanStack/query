@@ -10,7 +10,7 @@ import {
 
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
-import type { ShallowRef } from 'vue-demi'
+import type { Ref } from 'vue-demi'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
@@ -258,7 +258,7 @@ export function useQueries<
     combine?: (result: UseQueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,
-): Readonly<ShallowRef<TCombinedResult>> {
+): Readonly<Ref<TCombinedResult>> {
   if (process.env.NODE_ENV === 'development') {
     if (!getCurrentScope()) {
       console.warn(
@@ -342,5 +342,5 @@ export function useQueries<
     unsubscribe()
   })
 
-  return readonly(state) as Readonly<ShallowRef<TCombinedResult>>
+  return readonly(state) as Readonly<Ref<TCombinedResult>>
 }
