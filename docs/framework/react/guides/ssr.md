@@ -248,7 +248,7 @@ function Posts() {
   // ...
 }
 
-export default PostsRoute({ dehydratedState }) {
+export default function PostsRoute({ dehydratedState }) {
   return (
     <HydrationBoundary state={dehydratedState}>
       <Posts />
@@ -326,7 +326,7 @@ function Posts() {
   // ...
 }
 
-export default PostsRoute() {
+export default function PostsRoute() {
   const { dehydratedState } = useLoaderData<typeof loader>();
   return (
     <HydrationBoundary state={dehydratedState}>
@@ -341,7 +341,7 @@ export default PostsRoute() {
 Having this part in every route might seem like a lot of boilerplate:
 
 ```tsx
-export default PostsRoute({ dehydratedState }) {
+export default function PostsRoute({ dehydratedState }) {
   return (
     <HydrationBoundary state={dehydratedState}>
       <Posts />
