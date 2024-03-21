@@ -214,6 +214,10 @@ export function partialMatchKey(a: any, b: any): boolean {
  */
 export function replaceEqualDeep<T>(a: unknown, b: T): T
 export function replaceEqualDeep(a: any, b: any): any {
+  if (a instanceof Date && b instanceof Date) {
+    return a.getTime() === b.getTime() ? a : b;
+  }
+  
   if (a === b) {
     return a
   }
