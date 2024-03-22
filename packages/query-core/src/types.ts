@@ -9,10 +9,10 @@ import type { MutationCache } from './mutationCache'
 
 export type OmitKeyof<
   TObject,
-  TKey extends TOptions extends 'safely'
+  TKey extends TStrictly extends 'safely'
     ? keyof TObject | (string & Record<never, never>)
     : keyof TObject,
-  TOptions extends 'strictly' | 'safely' = 'strictly',
+  TStrictly extends 'strictly' | 'safely' = 'strictly',
 > = Omit<TObject, TKey>
 
 export type NoInfer<T> = [T][T extends any ? 0 : never]
