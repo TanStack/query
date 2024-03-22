@@ -2,6 +2,7 @@ import { describe, expectTypeOf, it } from 'vitest'
 import { skipToken } from '..'
 import { useQueries } from '../useQueries'
 import { queryOptions } from '../queryOptions'
+import type { OmitKeyof } from '..'
 import type { UseQueryOptions } from '../types'
 
 describe('UseQueries config object overload', () => {
