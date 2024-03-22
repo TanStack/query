@@ -1,6 +1,6 @@
 import { describe, it } from 'vitest'
 import { reactive } from 'vue'
-import { useQueries } from '..'
+import { skipToken, useQueries } from '..'
 import { queryOptions } from '../queryOptions'
 import { doNotExecute } from './test-utils'
 import type { OmitKeyof } from '..'
@@ -120,6 +120,24 @@ describe('UseQueries config object overload', () => {
 
       const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
         true
+      return result
+    })
+  })
+
+  it('TData should have correct type when conditional skipToken is passed', () => {
+    doNotExecute(() => {
+      const { value: queriesState } = useQueries({
+        queries: [
+          {
+            queryKey: ['key'],
+            queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+          },
+        ],
+      })
+
+      const data = queriesState[0].data
+
+      const result: Expect<Equal<number | undefined, typeof data>> = true
       return result
     })
   })
