@@ -1,5 +1,5 @@
 import { describe, it } from 'vitest'
-import { UnwrapRef, reactive } from 'vue'
+import { reactive } from 'vue'
 import { OmitKeyOf, useQueries } from '..'
 import { queryOptions } from '../queryOptions'
 import { doNotExecute } from './test-utils'
