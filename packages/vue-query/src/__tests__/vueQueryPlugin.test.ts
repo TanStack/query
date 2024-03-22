@@ -51,7 +51,7 @@ describe('VueQueryPlugin', () => {
       expect(setupDevtoolsMock).toHaveBeenCalledTimes(0)
     })
 
-    testIf(isVue2)('should setup devtools', () => {
+    testIf(isVue2)('should NOT setup devtools by default', () => {
       const envCopy = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
       const setupDevtoolsMock = setupDevtools as Mock
@@ -62,7 +62,32 @@ describe('VueQueryPlugin', () => {
       appMock._mixin.beforeCreate?.call(appMock)
       process.env.NODE_ENV = envCopy
 
+      expect(setupDevtoolsMock).toHaveBeenCalledTimes(0)
+    })
+
+    testIf(isVue2)('should setup devtools', () => {
+      const envCopy = process.env.NODE_ENV
+      process.env.NODE_ENV = 'development'
+      const setupDevtoolsMock = setupDevtools as Mock
+      const appMock = getAppMock()
+      VueQueryPlugin.install(appMock, { enableDevtoolsV6Plugin: true })
+
+      appMock.$root = appMock
+      appMock._mixin.beforeCreate?.call(appMock)
+      process.env.NODE_ENV = envCopy
+
       expect(setupDevtoolsMock).toHaveBeenCalledTimes(1)
+    })
+
+    testIf(isVue3)('should NOT setup devtools by default', () => {
+      const envCopy = process.env.NODE_ENV
+      process.env.NODE_ENV = 'development'
+      const setupDevtoolsMock = setupDevtools as Mock
+      const appMock = getAppMock()
+      VueQueryPlugin.install(appMock)
+      process.env.NODE_ENV = envCopy
+
+      expect(setupDevtoolsMock).toHaveBeenCalledTimes(0)
     })
 
     testIf(isVue3)('should setup devtools', () => {
@@ -70,7 +95,7 @@ describe('VueQueryPlugin', () => {
       process.env.NODE_ENV = 'development'
       const setupDevtoolsMock = setupDevtools as Mock
       const appMock = getAppMock()
-      VueQueryPlugin.install(appMock)
+      VueQueryPlugin.install(appMock, { enableDevtoolsV6Plugin: true })
       process.env.NODE_ENV = envCopy
 
       expect(setupDevtoolsMock).toHaveBeenCalledTimes(1)

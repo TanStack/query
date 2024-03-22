@@ -3,6 +3,7 @@ import { QueryClient as QC } from '@tanstack/query-core'
 import { cloneDeepUnref } from './utils'
 import { QueryCache } from './queryCache'
 import { MutationCache } from './mutationCache'
+import type { Ref } from 'vue-demi'
 import type { MaybeRefDeep, NoUnknown } from './types'
 import type {
   CancelOptions,
@@ -42,7 +43,7 @@ export class QueryClient extends QC {
     super(vueQueryConfig)
   }
 
-  isRestoring = ref(false)
+  isRestoring: Ref<boolean> = ref(false)
 
   isFetching(filters: MaybeRefDeep<QueryFilters> = {}): number {
     return super.isFetching(cloneDeepUnref(filters))

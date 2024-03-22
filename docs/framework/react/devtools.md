@@ -13,7 +13,7 @@ When you begin your React Query journey, you'll want these devtools by your side
 
 > An external tool is also available that enables the use of React Query DevTools via an external dashboard. Find out more and contribute on [react-query-external-sync](https://github.com/LovesWorking/react-query-external-sync)
 
-> Also note that you can use these devtools to observe queries, but **not mutations**
+> Note that since version 5, the dev tools support observing mutations as well.
 
 ## Install and Import the Devtools
 
