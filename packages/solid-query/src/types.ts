@@ -7,6 +7,7 @@ import type {
   MutateFunction,
   MutationObserverOptions,
   MutationObserverResult,
+  OmitKeyof,
   QueryKey,
   QueryObserverResult,
 } from '@tanstack/query-core'
@@ -83,7 +84,7 @@ export interface SolidInfiniteQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends Omit<
+> extends OmitKeyof<
     InfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
@@ -126,7 +127,7 @@ export interface SolidMutationOptions<
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> extends Omit<
+> extends OmitKeyof<
     MutationObserverOptions<TData, TError, TVariables, TContext>,
     '_defaulted'
   > {}

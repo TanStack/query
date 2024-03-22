@@ -27,6 +27,7 @@ import type {
 } from './types'
 import type {
   DefaultError,
+  OmitKeyof,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
   QueryClient,
@@ -43,9 +44,9 @@ type UseQueryOptionsForUseQueries<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = Omit<
+> = OmitKeyof<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'placeholderData' | 'suspense'
+  'placeholderData'
 > & {
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
 }

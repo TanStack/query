@@ -3,6 +3,7 @@ import { reactive } from 'vue-demi'
 import { useQuery } from '../useQuery'
 import { queryOptions } from '../queryOptions'
 import { doNotExecute, simpleFetcher } from './test-utils'
+import type { OmitKeyof } from '..'
 import type { UseQueryOptions } from '../useQuery'
 import type { Equal, Expect } from './test-utils'
 
@@ -159,7 +160,11 @@ describe('initialData', () => {
         type Data = string
 
         const useCustomQuery = (
-          options?: Omit<UseQueryOptions<Data>, 'queryKey' | 'queryFn'>,
+          options?: OmitKeyof<
+            UseQueryOptions<Data>,
+            'queryKey' | 'queryFn',
+            'safely'
+          >,
         ) => {
           return useQuery({
             ...options,

@@ -6,6 +6,7 @@ import type {
   MutateFunction,
   MutationObserverOptions,
   MutationObserverResult,
+  OmitKeyof,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
@@ -86,7 +87,7 @@ export type CreateMutationOptions<
   TVariables = void,
   TContext = unknown,
 > = StoreOrVal<
-  Omit<
+  OmitKeyof<
     MutationObserverOptions<TData, TError, TVariables, TContext>,
     '_defaulted'
   >
