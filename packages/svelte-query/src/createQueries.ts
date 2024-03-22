@@ -7,7 +7,7 @@ import type { Readable } from 'svelte/store'
 import type { StoreOrVal } from './types'
 import type {
   DefaultError,
-  OmitKeyOf,
+  OmitKeyof,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
   QueryClient,
@@ -26,7 +26,7 @@ type QueryObserverOptionsForCreateQueries<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = OmitKeyOf<
+> = OmitKeyof<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
   'placeholderData'
 > & {

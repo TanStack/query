@@ -7,7 +7,7 @@ import type {
   DefaultError,
   FetchStatus,
   InitialDataFunction,
-  OmitKeyOf,
+  OmitKeyof,
   QueryFunctionContext,
   QueryKey,
   QueryMeta,
@@ -371,7 +371,7 @@ export class Query<
     const abortController = new AbortController()
 
     // Create query function context
-    const queryFnContext: OmitKeyOf<
+    const queryFnContext: OmitKeyof<
       QueryFunctionContext<TQueryKey>,
       'signal'
     > = {
@@ -425,7 +425,7 @@ export class Query<
     }
 
     // Trigger behavior hook
-    const context: OmitKeyOf<
+    const context: OmitKeyof<
       FetchContext<TQueryFnData, TError, TData, TQueryKey>,
       'signal'
     > = {

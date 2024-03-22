@@ -5,7 +5,7 @@ import { injectQueryClient } from './inject-query-client'
 import type { Injector, Signal } from '@angular/core'
 import type {
   DefaultError,
-  OmitKeyOf,
+  OmitKeyof,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
   QueryFunction,
@@ -23,7 +23,7 @@ type QueryObserverOptionsForCreateQueries<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = OmitKeyOf<
+> = OmitKeyof<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
   'placeholderData'
 > & {

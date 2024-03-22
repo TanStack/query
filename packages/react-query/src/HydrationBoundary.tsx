@@ -6,14 +6,14 @@ import { useQueryClient } from './QueryClientProvider'
 import type {
   DehydratedState,
   HydrateOptions,
-  OmitKeyOf,
+  OmitKeyof,
   QueryClient,
 } from '@tanstack/query-core'
 
 export interface HydrationBoundaryProps {
   state?: unknown
-  options?: OmitKeyOf<HydrateOptions, 'defaultOptions'> & {
-    defaultOptions?: OmitKeyOf<
+  options?: OmitKeyof<HydrateOptions, 'defaultOptions'> & {
+    defaultOptions?: OmitKeyof<
       Exclude<HydrateOptions['defaultOptions'], undefined>,
       'mutations'
     >

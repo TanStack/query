@@ -1,7 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { queryOptions } from '../queryOptions'
 import { useQueries } from '../useQueries'
-import type { OmitKeyOf } from '..'
+import type { OmitKeyof } from '..'
 import type { UseQueryOptions } from '../types'
 
 describe('UseQueries config object overload', () => {
@@ -105,7 +105,7 @@ describe('UseQueries config object overload', () => {
       type Data = string
 
       const useCustomQueries = (
-        options?: OmitKeyOf<UseQueryOptions<Data>, 'queryKey' | 'queryFn'>,
+        options?: OmitKeyof<UseQueryOptions<Data>, 'queryKey' | 'queryFn'>,
       ) => {
         return useQueries({
           queries: [

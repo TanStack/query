@@ -30,6 +30,7 @@ import type {
   CreateQueryOptions,
   CreateQueryResult,
   DefinedCreateQueryResult,
+  OmitKeyof,
   QueryFunction,
 } from '..'
 import type { Mock } from 'vitest'
@@ -163,9 +164,10 @@ describe('createQuery', () => {
           token: string,
           // return type must be wrapped with TQueryFnReturn
         ) => Promise<TQueryFnData>,
-        options?: Omit<
+        options?: OmitKeyof<
           CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-          'queryKey' | 'queryFn' | 'initialData'
+          'queryKey' | 'queryFn' | 'initialData',
+          'safely'
         >,
       ) =>
         createQuery(() => ({
@@ -185,9 +187,10 @@ describe('createQuery', () => {
       >(
         qk: TQueryKey,
         fetcher: () => Promise<TQueryFnData>,
-        options?: Omit<
+        options?: OmitKeyof<
           CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-          'queryKey' | 'queryFn' | 'initialData'
+          'queryKey' | 'queryFn' | 'initialData',
+          'safely'
         >,
       ) => createQuery(() => ({ queryKey: qk, queryFn: fetcher, ...options }))
       const testFuncStyle = useWrappedFuncStyleQuery([''], async () => true)

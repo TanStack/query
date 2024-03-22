@@ -3,7 +3,7 @@ import type { QueryBehavior } from './query'
 import type {
   InfiniteData,
   InfiniteQueryPageParamsOptions,
-  OmitKeyOf,
+  OmitKeyof,
   QueryFunctionContext,
   QueryKey,
 } from './types'
@@ -68,7 +68,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
             return Promise.resolve(data)
           }
 
-          const queryFnContext: OmitKeyOf<
+          const queryFnContext: OmitKeyof<
             QueryFunctionContext<QueryKey, unknown>,
             'signal'
           > = {

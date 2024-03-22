@@ -9,7 +9,7 @@ import type {
   MutateFunction,
   MutationObserverOptions,
   MutationObserverResult,
-  OmitKeyOf,
+  OmitKeyof,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
@@ -34,7 +34,7 @@ export interface UseQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends OmitKeyOf<
+> extends OmitKeyof<
     UseBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
     'suspense'
   > {}
@@ -44,7 +44,7 @@ export interface UseSuspenseQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends OmitKeyOf<
+> extends OmitKeyof<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'enabled' | 'throwOnError' | 'placeholderData'
   > {}
@@ -56,7 +56,7 @@ export interface UseInfiniteQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends OmitKeyOf<
+> extends OmitKeyof<
     InfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
@@ -75,7 +75,7 @@ export interface UseSuspenseInfiniteQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends OmitKeyOf<
+> extends OmitKeyof<
     UseInfiniteQueryOptions<
       TQueryFnData,
       TError,
@@ -100,7 +100,7 @@ export type UseQueryResult<
 export type UseSuspenseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = OmitKeyOf<DefinedQueryObserverResult<TData, TError>, 'isPlaceholderData'>
+> = OmitKeyof<DefinedQueryObserverResult<TData, TError>, 'isPlaceholderData'>
 
 export type DefinedUseQueryResult<
   TData = unknown,
@@ -120,7 +120,7 @@ export type DefinedUseInfiniteQueryResult<
 export type UseSuspenseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = OmitKeyOf<
+> = OmitKeyof<
   DefinedInfiniteQueryObserverResult<TData, TError>,
   'isPlaceholderData'
 >
@@ -130,7 +130,7 @@ export interface UseMutationOptions<
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> extends OmitKeyOf<
+> extends OmitKeyof<
     MutationObserverOptions<TData, TError, TVariables, TContext>,
     '_defaulted'
   > {}

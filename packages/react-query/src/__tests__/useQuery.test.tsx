@@ -16,7 +16,7 @@ import {
 } from './utils'
 import type {
   DefinedUseQueryResult,
-  OmitKeyOf,
+  OmitKeyof,
   QueryFunction,
   UseQueryOptions,
   UseQueryResult,
@@ -148,7 +148,7 @@ describe('useQuery', () => {
           token: string,
           // return type must be wrapped with TQueryFnReturn
         ) => Promise<TQueryFnData>,
-        options?: OmitKeyOf<
+        options?: OmitKeyof<
           UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
           'queryKey' | 'queryFn' | 'initialData'
         >,
@@ -170,7 +170,7 @@ describe('useQuery', () => {
       >(
         qk: TQueryKey,
         fetcher: () => Promise<TQueryFnData>,
-        options?: OmitKeyOf<
+        options?: OmitKeyof<
           UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
           'queryKey' | 'queryFn' | 'initialData'
         >,
