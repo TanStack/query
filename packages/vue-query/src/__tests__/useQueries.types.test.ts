@@ -1,6 +1,6 @@
 import { describe, it } from 'vitest'
 import { reactive } from 'vue'
-import { OmitKeyOf, useQueries } from '..'
+import { useQueries } from '..'
 import { queryOptions } from '../queryOptions'
 import { doNotExecute } from './test-utils'
 import type { UseQueryOptions } from '../useQuery'
