@@ -3,6 +3,7 @@ import { reactive } from 'vue'
 import { useQueries } from '..'
 import { queryOptions } from '../queryOptions'
 import { doNotExecute } from './test-utils'
+import type { OmitKeyof } from '..'
 import type { UseQueryOptions } from '../useQuery'
 import type { Equal, Expect } from './test-utils'
 
@@ -129,7 +130,11 @@ describe('UseQueries config object overload', () => {
         type Data = string
 
         const useCustomQueries = (
-          options?: Omit<UseQueryOptions<Data>, 'queryKey' | 'queryFn'>,
+          options?: OmitKeyof<
+            UseQueryOptions<Data>,
+            'queryKey' | 'queryFn',
+            'safely'
+          >,
         ) => {
           return useQueries({
             queries: [

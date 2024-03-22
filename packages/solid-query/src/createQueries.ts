@@ -18,6 +18,7 @@ import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
   DefaultError,
+  OmitKeyof,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
   QueryFunction,
@@ -34,7 +35,7 @@ type CreateQueryOptionsForCreateQueries<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = Omit<
+> = OmitKeyof<
   SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'placeholderData'
 > & {
@@ -293,7 +294,7 @@ export function createQueries<
           const dataResources_ = dataResources()
           for (let index = 0; index < dataResources_.length; index++) {
             const dataResource = dataResources_[index]!
-            const unwrappedResult = { ...unwrap(result[index]!) }
+            const unwrappedResult = { ...unwrap(result[index]) }
             // @ts-expect-error typescript pedantry regarding the possible range of index
             setState(index, unwrap(unwrappedResult))
             dataResource[1].mutate(() => unwrap(state[index]!.data))

@@ -215,7 +215,12 @@ In each route:
 
 ```tsx
 // pages/posts.jsx
-import { dehydrate, HydrationBoundary, QueryClient, useQuery } from '@tanstack/react-query'
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+  useQuery,
+} from '@tanstack/react-query'
 
 // This could also be getServerSideProps
 export async function getStaticProps() {
@@ -248,7 +253,7 @@ function Posts() {
   // ...
 }
 
-export default PostsRoute({ dehydratedState }) {
+export default function PostsRoute({ dehydratedState }) {
   return (
     <HydrationBoundary state={dehydratedState}>
       <Posts />
@@ -326,8 +331,8 @@ function Posts() {
   // ...
 }
 
-export default PostsRoute() {
-  const { dehydratedState } = useLoaderData<typeof loader>();
+export default function PostsRoute() {
+  const { dehydratedState } = useLoaderData<typeof loader>()
   return (
     <HydrationBoundary state={dehydratedState}>
       <Posts />
@@ -341,7 +346,7 @@ export default PostsRoute() {
 Having this part in every route might seem like a lot of boilerplate:
 
 ```tsx
-export default PostsRoute({ dehydratedState }) {
+export default function PostsRoute({ dehydratedState }) {
   return (
     <HydrationBoundary state={dehydratedState}>
       <Posts />

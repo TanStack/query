@@ -1,6 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { useQuery } from '../useQuery'
 import { queryOptions } from '../queryOptions'
+import type { OmitKeyof } from '..'
 import type { UseQueryOptions } from '../types'
 
 describe('initialData', () => {
@@ -111,7 +112,7 @@ describe('initialData', () => {
       type Data = string
 
       const useCustomQuery = (
-        options?: Omit<UseQueryOptions<Data>, 'queryKey' | 'queryFn'>,
+        options?: OmitKeyof<UseQueryOptions<Data>, 'queryKey' | 'queryFn'>,
       ) => {
         return useQuery({
           ...options,
