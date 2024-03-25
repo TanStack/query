@@ -7,8 +7,8 @@
     "start": "next start"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.28.6",
-    "@tanstack/react-query-devtools": "^5.28.6",
+    "@tanstack/react-query": "^5.28.8",
+    "@tanstack/react-query-devtools": "^5.28.8",
     "axios": "^1.6.7",
     "isomorphic-unfetch": "4.0.2",
     "next": "^14.0.0",

@@ -9,8 +9,8 @@
     "test:types": "tsc"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.28.6",
-    "@tanstack/react-query-devtools": "^5.28.6",
+    "@tanstack/react-query": "^5.28.8",
+    "@tanstack/react-query-devtools": "^5.28.8",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",
     "react": "^18.2.0",
