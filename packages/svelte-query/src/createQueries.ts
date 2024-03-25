@@ -139,7 +139,7 @@ export type QueriesOptions<
             [...TResult, GetOptions<Head>],
             [...TDepth, 1]
           >
-        : Array<unknown> extends T
+        : Readonly<unknown> extends T
           ? T
           : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
             // use this to infer the param types in the case of Array.map() argument
@@ -221,7 +221,15 @@ export function createQueries<
     [queriesStore, isRestoring],
     ([$queries, $isRestoring]) => {
       return $queries.map((opts) => {
-        const defaultedOptions = client.defaultQueryOptions(opts)
+        const defaultedOptions = client.defaultQueryOptions(
+          opts as QueryObserverOptions<
+            unknown,
+            Error,
+            unknown,
+            unknown,
+            QueryKey
+          >,
+        )
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = $isRestoring
           ? 'isRestoring'

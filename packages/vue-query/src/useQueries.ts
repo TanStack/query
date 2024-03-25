@@ -182,7 +182,7 @@ export type UseQueriesOptions<
             [...TResult, GetOptions<Head>],
             [...TDepth, 1]
           >
-        : Array<unknown> extends T
+        : Readonly<unknown> extends T
           ? T
           : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
             // use this to infer the param types in the case of Array.map() argument
@@ -270,18 +270,20 @@ export function useQueries<
   const client = queryClient || useQueryClient()
 
   const defaultedQueries = computed(() =>
-    cloneDeepUnref(queries).map((queryOptions) => {
-      if (typeof queryOptions.enabled === 'function') {
-        queryOptions.enabled = queryOptions.enabled()
-      }
+    cloneDeepUnref(queries as MaybeRefDeep<UseQueriesOptionsArg<any>>).map(
+      (queryOptions) => {
+        if (typeof queryOptions.enabled === 'function') {
+          queryOptions.enabled = queryOptions.enabled()
+        }
 
-      const defaulted = client.defaultQueryOptions(queryOptions)
-      defaulted._optimisticResults = client.isRestoring.value
-        ? 'isRestoring'
-        : 'optimistic'
+        const defaulted = client.defaultQueryOptions(queryOptions)
+        defaulted._optimisticResults = client.isRestoring.value
+          ? 'isRestoring'
+          : 'optimistic'
 
-      return defaulted
-    }),
+        return defaulted
+      },
+    ),
   )
 
   const observer = new QueriesObserver<TCombinedResult>(
