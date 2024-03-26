@@ -138,6 +138,7 @@ export function createBaseQuery<
     }
     return defaultOptions
   })
+  const initialOptions = defaultedOptions()
 
   const [observer, setObserver] = createSignal(
     new Observer(client(), defaultedOptions()),
@@ -254,13 +255,12 @@ export function createBaseQuery<
        * Note that this is only invoked on the client, for queries that were originally run on the server.
        */
       onHydrated(_k, info) {
-        const defaultOptions = defaultedOptions()
         if (info.value) {
           hydrate(client(), {
             queries: [
               {
-                queryKey: defaultOptions.queryKey,
-                queryHash: defaultOptions.queryHash,
+                queryKey: initialOptions.queryKey,
+                queryHash: initialOptions.queryHash,
                 state: info.value,
               },
             ],
@@ -272,8 +272,8 @@ export function createBaseQuery<
          * Do not refetch query on mount if query was fetched on server,
          * even if `staleTime` is not set.
          */
-        const newOptions = { ...defaultOptions }
-        if (defaultOptions.staleTime || !defaultOptions.initialData) {
+        const newOptions = { ...initialOptions }
+        if (initialOptions.staleTime || !initialOptions.initialData) {
           newOptions.refetchOnMount = false
         }
         // Setting the options as an immutable object to prevent
