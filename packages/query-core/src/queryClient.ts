@@ -154,7 +154,7 @@ export class QueryClient {
   getQueriesData<TQueryFnData = unknown>(
     filters: QueryFilters,
   ): Array<[QueryKey, TQueryFnData | undefined]> {
-    return this.getQueryCache()
+    return this.#queryCache
       .findAll(filters)
       .map(({ queryKey, state }) => {
         const data = state.data as TQueryFnData | undefined
@@ -208,7 +208,7 @@ export class QueryClient {
     options?: SetDataOptions,
   ): Array<[QueryKey, TQueryFnData | undefined]> {
     return notifyManager.batch(() =>
-      this.getQueryCache()
+      this.#queryCache
         .findAll(filters)
         .map(({ queryKey }) => [
           queryKey,
