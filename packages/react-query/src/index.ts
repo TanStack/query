@@ -40,6 +40,7 @@ export {
 } from './QueryErrorResetBoundary'
 export { useIsFetching } from './useIsFetching'
 export { useIsMutating, useMutationState } from './useMutationState'
+export { useQueryState } from './useQueryState'
 export { useMutation } from './useMutation'
 export { useInfiniteQuery } from './useInfiniteQuery'
 export { useIsRestoring, IsRestoringProvider } from './isRestoring'
