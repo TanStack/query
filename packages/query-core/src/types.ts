@@ -723,8 +723,9 @@ export type MutationMeta = Register extends {
     : Record<string, unknown>
   : Record<string, unknown>
 
-export type MutationFunction<TData = unknown, TVariables = unknown> = (
+export type MutationFunction<TData = unknown, TVariables = unknown, TContext = unknown> = (
   variables: TVariables,
+  context?: TContext,
 ) => Promise<TData>
 
 export interface MutationOptions<
@@ -733,7 +734,7 @@ export interface MutationOptions<
   TVariables = void,
   TContext = unknown,
 > {
-  mutationFn?: MutationFunction<TData, TVariables>
+  mutationFn?: MutationFunction<TData, TVariables, TContext>
   mutationKey?: MutationKey
   onMutate?: (
     variables: TVariables,
