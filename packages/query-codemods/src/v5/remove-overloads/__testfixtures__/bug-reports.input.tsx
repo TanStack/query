@@ -25,3 +25,31 @@ export function useWhatever({ thing }: { thing: string }) {
     { enabled: Boolean(thing) },
   );
 }
+
+// From: https://github.com/TanStack/query/issues/6548
+export function useDeleteSomething(): any {
+  return useMutation(({ groupId }: { groupId: string }) => {
+    return fetch(`/api/groups/${groupId}`, {
+      method: 'DELETE',
+    });
+  });
+}
+
+// From: https://github.com/TanStack/query/issues/6548
+export function useDeleteSomethingWithOnError(): any {
+  return useMutation(
+    ({ groupId }: { groupId: string }) => {
+      return fetch(`/api/groups/${groupId}`, {
+        method: 'DELETE',
+      });
+    },
+    {
+      onError: (_error, _variables, context) => {
+        // An error happened!
+        console.log(
+          `rolling back optimistic delete with id ${context.id}`
+        );
+      },
+    }
+  );
+}
