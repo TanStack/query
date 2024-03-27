@@ -1,5 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { skipToken } from '..'
+import { useSuspenseQueries } from '../useSuspenseQueries'
 import { useQueries } from '../useQueries'
 import { queryOptions } from '../queryOptions'
 import type { OmitKeyof } from '..'
@@ -139,5 +140,20 @@ describe('UseQueries config object overload', () => {
     const data = queryResults[0].data
 
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
+  })
+
+  it('useSuspenseQueries should return correct types', () => {
+    const options = queryOptions({
+      queryKey: ['one'],
+      queryFn: async () => {
+        return 'one'
+      },
+    })
+
+    const [suspense] = useSuspenseQueries({
+      queries: [options],
+    })
+
+    expectTypeOf(suspense.data).toEqualTypeOf<string>()
   })
 })

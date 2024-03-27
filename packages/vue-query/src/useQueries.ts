@@ -19,6 +19,7 @@ import type {
   QueryFunction,
   QueryKey,
   QueryObserverResult,
+  SkipToken,
   ThrowOnError,
 } from '@tanstack/query-core'
 import type { UseQueryOptions } from './useQuery'
@@ -66,10 +67,9 @@ type GetOptions<T> =
                 ? UseQueryOptionsForUseQueries<TQueryFnData>
                 : // Part 4: responsible for inferring and enforcing type if no explicit parameter was provided
                   T extends {
-                      queryFn?: QueryFunction<
-                        infer TQueryFnData,
-                        infer TQueryKey
-                      >
+                      queryFn?:
+                        | QueryFunction<infer TQueryFnData, infer TQueryKey>
+                        | SkipToken
                       select?: (data: any) => infer TData
                       throwOnError?: ThrowOnError<any, infer TError, any, any>
                     }
@@ -80,10 +80,9 @@ type GetOptions<T> =
                       TQueryKey
                     >
                   : T extends {
-                        queryFn?: QueryFunction<
-                          infer TQueryFnData,
-                          infer TQueryKey
-                        >
+                        queryFn?:
+                          | QueryFunction<infer TQueryFnData, infer TQueryKey>
+                          | SkipToken
                         throwOnError?: ThrowOnError<any, infer TError, any, any>
                       }
                     ? UseQueryOptionsForUseQueries<
@@ -142,7 +141,9 @@ type GetResults<T> =
                 ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData>
                 : // Part 4: responsible for mapping inferred type to results, if no explicit parameter was provided
                   T extends {
-                      queryFn?: QueryFunction<infer TQueryFnData, any>
+                      queryFn?:
+                        | QueryFunction<infer TQueryFnData, any>
+                        | SkipToken
                       select?: (data: any) => infer TData
                       throwOnError?: ThrowOnError<any, infer TError, any, any>
                     }
@@ -152,7 +153,9 @@ type GetResults<T> =
                       unknown extends TError ? DefaultError : TError
                     >
                   : T extends {
-                        queryFn?: QueryFunction<infer TQueryFnData, any>
+                        queryFn?:
+                          | QueryFunction<infer TQueryFnData, any>
+                          | SkipToken
                         throwOnError?: ThrowOnError<any, infer TError, any, any>
                       }
                     ? GetDefinedOrUndefinedQueryResult<
