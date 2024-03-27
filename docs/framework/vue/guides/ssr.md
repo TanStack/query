@@ -36,13 +36,13 @@ export default defineNuxtPlugin((nuxt) => {
 
   nuxt.vueApp.use(VueQueryPlugin, options)
 
-  if (process.server) {
+  if (import.meta.server) {
     nuxt.hooks.hook('app:rendered', () => {
       vueQueryState.value = dehydrate(queryClient)
     })
   }
 
-  if (process.client) {
+  if (import.meta.client) {
     hydrate(queryClient, vueQueryState.value)
   }
 })
@@ -86,7 +86,7 @@ export default (context) => {
 
   Vue.use(VueQueryPlugin, options)
 
-  if (process.client) {
+  if (import.meta.client) {
     if (context.nuxtState && context.nuxtState.vueQueryState) {
       hydrate(queryClient, context.nuxtState.vueQueryState)
     }
