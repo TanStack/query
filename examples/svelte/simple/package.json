@@ -9,8 +9,8 @@
     "test:types": "svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
-    "@tanstack/svelte-query": "^5.28.8",
-    "@tanstack/svelte-query-devtools": "^5.28.8"
+    "@tanstack/svelte-query": "^5.28.9",
+    "@tanstack/svelte-query-devtools": "^5.28.9"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.0.2",
