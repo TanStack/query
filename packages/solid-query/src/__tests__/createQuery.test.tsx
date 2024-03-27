@@ -1314,7 +1314,11 @@ describe('createQuery', () => {
 
   it('should not fetch when switching to a disabled query', async () => {
     const key = queryKey()
-    const states: Array<CreateQueryResult<number>> = []
+    const states: Array<{
+      data: number | undefined
+      isFetching: boolean
+      isSuccess: boolean
+    }> = []
 
     function Page() {
       const [count, setCount] = createSignal(0)
@@ -1329,7 +1333,11 @@ describe('createQuery', () => {
       }))
 
       createRenderEffect(() => {
-        states.push({ ...state })
+        states.push({
+          data: state.data,
+          isFetching: state.isFetching,
+          isSuccess: state.isSuccess,
+        })
       })
 
       createEffect(() => {
@@ -1348,7 +1356,6 @@ describe('createQuery', () => {
     ))
 
     await sleep(50)
-
     expect(states.length).toBe(3)
 
     // Fetch query

@@ -361,7 +361,11 @@ export function createBaseQuery<
       target: QueryObserverResult<TData, TError>,
       prop: keyof QueryObserverResult<TData, TError>,
     ): any {
-      const val = queryResource()?.[prop]
+      // we should suspend unless user specifically says not to
+      const shouldSuspend = untrack(defaultedOptions)?.suspense !== false
+      const val = shouldSuspend
+        ? queryResource()?.[prop]
+        : queryResource.latest?.[prop]
       return val !== undefined ? val : Reflect.get(target, prop)
     },
   }
