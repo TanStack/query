@@ -51,6 +51,7 @@ mutate(variables, {
 - `gcTime: number | Infinity`
   - The time in milliseconds that unused/inactive cache data remains in memory. When a mutation's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different cache times are specified, the longest one will be used.
   - If set to `Infinity`, will disable garbage collection
+  - Note: the maximum allowed time is about 24 days. See [more](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value).
 - `mutationKey: unknown[]`
   - Optional
   - A mutation key can be set to inherit defaults set with `queryClient.setMutationDefaults`.
