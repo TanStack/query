@@ -17,6 +17,7 @@ module.exports = (file, api) => {
     ...dependencies,
     config: {
       keyName: 'queryKey',
+      fnName: 'queryFn',
       queryClientMethods: [
         'cancelQueries',
         'getQueriesData',
@@ -35,8 +36,9 @@ module.exports = (file, api) => {
     ...dependencies,
     config: {
       keyName: 'mutationKey',
+      fnName: 'mutationFn',
       queryClientMethods: [],
-      hooks: ['useIsMutating'],
+      hooks: ['useIsMutating', 'useMutation'],
     },
   })
 
