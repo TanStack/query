@@ -86,7 +86,7 @@ export default (context) => {
 
   Vue.use(VueQueryPlugin, options)
 
-  if (import.meta.client) {
+  if (process.client) {
     if (context.nuxtState && context.nuxtState.vueQueryState) {
       hydrate(queryClient, context.nuxtState.vueQueryState)
     }
