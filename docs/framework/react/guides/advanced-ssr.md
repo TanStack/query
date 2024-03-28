@@ -26,7 +26,7 @@ One way to think of this is that even though Server Components also _render_, th
 The first step of any React Query setup is always to create a `queryClient` and wrap your application in a `QueryClientProvider`. With Server Components, this looks mostly the same across frameworks, one difference being the filename conventions:
 
 ```tsx
-// In Next.js, this file would be called: app/providers.jsx
+// In Next.js, this file would be called: app/providers.tsx
 'use client'
 
 // We can not useState or useRef in a server component, which is why we are
@@ -76,7 +76,7 @@ export default function Providers({ children }) {
 ```
 
 ```tsx
-// In Next.js, this file would be called: app/layout.jsx
+// In Next.js, this file would be called: app/layout.tsx
 import Providers from './providers'
 
 export default function RootLayout({ children }) {
@@ -98,7 +98,7 @@ This part is pretty similar to what we did in the SSR guide, we just need to spl
 Let's next look at how to actually prefetch data and dehydrate and hydrate it. This is what it looked like using the **Next.js pages router**:
 
 ```tsx
-// pages/posts.jsx
+// pages/posts.tsx
 import {
   dehydrate,
   HydrationBoundary,
@@ -155,7 +155,7 @@ export default function PostsRoute({ dehydratedState }) {
 Converting this to the app router actually looks pretty similar, we just need to move things around a bit. First, we'll create a Server Component to do the prefetching part:
 
 ```tsx
-// app/posts/page.jsx
+// app/posts/page.tsx
 import {
   dehydrate,
   HydrationBoundary,
@@ -184,7 +184,7 @@ export default async function PostsPage() {
 Next, we'll look at what the Client Component part looks like:
 
 ```tsx
-// app/posts/posts.jsx
+// app/posts/posts.tsx
 'use client'
 
 export default function Posts() {
@@ -214,7 +214,7 @@ In the SSR guide, we noted that you could get rid of the boilerplate of having `
 A nice thing about Server Components is that they can be nested and exist on many levels in the React tree, making it possible to prefetch data closer to where it's actually used instead of only at the top of the application (just like Remix loaders). This can be as simple as a Server Component rendering another Server Component (we'll leave the Client Components out in this example for brevity):
 
 ```tsx
-// app/posts/page.jsx
+// app/posts/page.tsx
 import {
   dehydrate,
   HydrationBoundary,
@@ -239,7 +239,7 @@ export default async function PostsPage() {
   )
 }
 
-// app/posts/comments-server.jsx
+// app/posts/comments-server.tsx
 import {
   dehydrate,
   HydrationBoundary,
@@ -283,7 +283,7 @@ As more frameworks start supporting Server Components, they might have other rou
 In the example above, we create a new `queryClient` for each Server Component that fetches data. This is the recommended approach, but if you want to, you can alternatively create a single one that is reused across all Server Components:
 
 ```tsx
-// app/getQueryClient.jsx
+// app/getQueryClient.tsx
 import { QueryClient } from '@tanstack/react-query'
 import { cache } from 'react'
 
@@ -303,7 +303,7 @@ Next.js already dedupes requests that utilize `fetch()`, but if you are using so
 With Server Components, it's important to think about data ownership and revalidation. To explain why, let's look at a modified example from above:
 
 ```tsx
-// app/posts/page.jsx
+// app/posts/page.tsx
 import {
   dehydrate,
   HydrationBoundary,
