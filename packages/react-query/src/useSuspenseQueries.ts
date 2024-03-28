@@ -78,7 +78,7 @@ type GetSuspenseResults<T> =
               ? UseSuspenseQueryResult<TQueryFnData>
               : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
                 T extends {
-                    queryFn?: QueryFunction<infer TQueryFnData, any>
+                    queryFn?: QueryFunction<infer TQueryFnData, any> | SkipToken
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
@@ -87,7 +87,9 @@ type GetSuspenseResults<T> =
                     unknown extends TError ? DefaultError : TError
                   >
                 : T extends {
-                      queryFn?: QueryFunction<infer TQueryFnData, any>
+                      queryFn?:
+                        | QueryFunction<infer TQueryFnData, any>
+                        | SkipToken
                       throwOnError?: ThrowOnError<any, infer TError, any, any>
                     }
                   ? UseSuspenseQueryResult<
