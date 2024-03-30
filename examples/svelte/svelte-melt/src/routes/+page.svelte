@@ -5,11 +5,11 @@
 	import DerivedQuery from './derivedQuery.svelte';
 </script>
 
-<h1>testing list query cache update</h1>
+<!-- <h1>testing list query cache update</h1>
 <Simple />
-<h1>testing DerivedQuery cache update</h1>
+<h1>testing DerivedQuery cache update</h1> -->
 <DerivedQuery />
-<h1>testing pagination with createQuery</h1>
+<!-- <h1>testing pagination with createQuery</h1>
 <Simple />
 <hr />
 
@@ -19,3 +19,4 @@
 -------------
 
 <Simple1 />
+ -->

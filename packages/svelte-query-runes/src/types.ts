@@ -16,6 +16,7 @@ type Replace<T, K extends keyof T, TReplace> = Identity<
     [P in K]: TReplace
   }
 >
+
 export type FnOrVal<T> = (() => T) | T // can be a fn that returns reactive statement or $state or $derived deep states
 
 /** Options for createBaseQuery */
@@ -26,15 +27,10 @@ export type CreateBaseQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = FnOrVal<
-  Replace<
-    Replace<
-      QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
-      'queryKey',
-      FnOrVal<QueryKey>
-    >,
-    'enabled',
-    FnOrVal<boolean>
-  >
+  Omit<
+    QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+    'queryKey' | 'enabled'
+  > & { enabled?: FnOrVal<boolean>; queryKey: FnOrVal<QueryKey> }
 >
 
 /** Result from createBaseQuery */
