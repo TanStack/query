@@ -1934,13 +1934,17 @@ const QueryDetails = () => {
   }
 
   const restoreQueryAfterLoadingOrError = () => {
-    activeQuery()?.fetch(
-      (activeQuery()?.state.fetchMeta as any).__previousQueryOptions,
-      {
-        // Make sure this fetch will cancel the previous one
-        cancelRefetch: true,
-      },
-    )
+    const activeQueryVal = activeQuery()!
+    const previousState = activeQueryVal.state
+    const previousOptions = (activeQueryVal.state.fetchMeta as any)
+      .__previousQueryOptions
+    activeQueryVal.cancel({ silent: true })
+    activeQueryVal.setState({
+      ...previousState,
+      fetchStatus: 'idle',
+      fetchMeta: null,
+    })
+    activeQueryVal.fetch(previousOptions)
   }
 
   createEffect(() => {
