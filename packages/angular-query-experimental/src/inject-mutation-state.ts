@@ -43,22 +43,18 @@ function getResult<TResult = MutationState>(
     )
 }
 
-export interface InjectMutationStateOptions {
-  injector?: Injector
-}
-
 export function injectMutationState<TResult = MutationState>(
   mutationStateOptionsFn: () => MutationStateOptions<TResult> = () => ({}),
-  options?: InjectMutationStateOptions,
+  injector?: Injector,
 ): Signal<Array<TResult>> {
-  return assertInjector(injectMutationState, options?.injector, () => {
+  return assertInjector(injectMutationState, injector, () => {
     const destroyRef = inject(DestroyRef)
     const queryClient = injectQueryClient()
     const ngZone = inject(NgZone)
 
     const mutationCache = queryClient.getMutationCache()
 
-    return lazySignalInitializer((injector) => {
+    return lazySignalInitializer((lazyInitializerInjector) => {
       const result = signal<Array<TResult>>(
         getResult(mutationCache, mutationStateOptionsFn()),
       )
@@ -72,7 +68,7 @@ export function injectMutationState<TResult = MutationState>(
             result.set(getResult(mutationCache, mutationStateOptions))
           })
         },
-        { injector },
+        { injector: lazyInitializerInjector },
       )
 
       const unsubscribe = mutationCache.subscribe(

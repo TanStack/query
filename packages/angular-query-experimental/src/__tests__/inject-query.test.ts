@@ -1,6 +1,7 @@
-import { Component, computed, input, signal } from '@angular/core'
+import { Component, Injector, computed, input, signal } from '@angular/core'
 import { TestBed, fakeAsync, flush, tick } from '@angular/core/testing'
 import { QueryClient } from '@tanstack/query-core'
+// NOTE: do not import test from 'vitest' here - only global test function is patched for Angular zone
 import { describe, expect, vi } from 'vitest'
 import { injectQuery } from '../inject-query'
 import { provideAngularQuery } from '../providers'
@@ -252,6 +253,31 @@ describe('injectQuery', () => {
       }).toThrowError('Some error')
       flush()
     }))
+  })
+
+  describe('injection context', () => {
+    test('throws NG0203 outside injection context', () => {
+      expect(() => {
+        injectQuery(() => ({
+          queryKey: ['injectionContextError'],
+          queryFn: simpleFetcher,
+        }))
+      }).toThrowError(
+        'NG0203: injectQuery() can only be used within an injection context such as a constructor, a factory function, a field initializer, or a function used with `runInInjectionContext`. Find more at https://angular.io/errors/NG0203',
+      )
+    })
+
+    test('can be used outside injection context when passing an injector', () => {
+      const query = injectQuery(
+        () => ({
+          queryKey: ['manualInjector'],
+          queryFn: simpleFetcher,
+        }),
+        TestBed.inject(Injector),
+      )
+
+      expect(query.status()).toBe('pending')
+    })
   })
 
   test('should set state to error when queryFn returns reject promise', fakeAsync(() => {

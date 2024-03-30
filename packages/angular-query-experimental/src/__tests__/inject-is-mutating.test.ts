@@ -1,5 +1,7 @@
+import { Injector } from '@angular/core'
 import { QueryClient } from '@tanstack/query-core'
-import { beforeEach, describe } from 'vitest'
+// NOTE: do not import test from 'vitest' here - only global test function is patched for Angular zone
+import { beforeEach, describe, expect } from 'vitest'
 import { TestBed, fakeAsync, tick } from '@angular/core/testing'
 import { injectIsMutating } from '../inject-is-mutating'
 import { injectMutation } from '../inject-mutation'
@@ -36,4 +38,20 @@ describe('injectIsMutating', () => {
       expect(isMutating()).toBe(1)
     })
   }))
+
+  describe('injection context', () => {
+    test('throws NG0203 outside injection context', () => {
+      expect(() => {
+        injectIsMutating()
+      }).toThrowError(
+        'NG0203: injectIsMutating() can only be used within an injection context such as a constructor, a factory function, a field initializer, or a function used with `runInInjectionContext`. Find more at https://angular.io/errors/NG0203',
+      )
+    })
+
+    test('can be used outside injection context when passing an injector', () => {
+      expect(
+        injectIsMutating(undefined, TestBed.inject(Injector)),
+      ).not.toThrow()
+    })
+  })
 })

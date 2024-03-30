@@ -1,7 +1,8 @@
-import { Component, input, signal } from '@angular/core'
+import { Component, Injector, input, signal } from '@angular/core'
 import { QueryClient } from '@tanstack/query-core'
 import { TestBed } from '@angular/core/testing'
-import { describe, expect, test, vi } from 'vitest'
+// NOTE: do not import test from 'vitest' here - only global test function is patched for Angular zone
+import { describe, expect, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
 import { JsonPipe } from '@angular/common'
 import { injectMutation } from '../inject-mutation'
@@ -172,6 +173,22 @@ describe('injectMutationState', () => {
         .map((span) => span.nativeNode.textContent)
 
       expect(spans).toEqual(['success', 'error'])
+    })
+
+    describe('injection context', () => {
+      test('throws NG0203 outside injection context', () => {
+        expect(() => {
+          injectMutationState()
+        }).toThrowError(
+          'NG0203: injectMutationState() can only be used within an injection context such as a constructor, a factory function, a field initializer, or a function used with `runInInjectionContext`. Find more at https://angular.io/errors/NG0203',
+        )
+      })
+
+      test('can be used outside injection context when passing an injector', () => {
+        expect(
+          injectMutationState(undefined, TestBed.inject(Injector)),
+        ).not.toThrow()
+      })
     })
   })
 })
