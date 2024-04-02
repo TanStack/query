@@ -27,26 +27,6 @@ describe('pageParam', () => {
     })
   })
 
-  it('there should be no pageParam passed to the queryFn of useQuery', () => {
-    useQuery({
-      queryKey: ['key'],
-      // @ts-expect-error there should be no pageParam passed to queryFn of useQuery
-      queryFn: ({ pageParam }) => {
-        return String(pageParam)
-      },
-    })
-  })
-
-  it('there should be no direction passed to the queryFn of useQuery', () => {
-    useQuery({
-      queryKey: ['key'],
-      // @ts-expect-error there should be no pageParam passed to queryFn of useQuery
-      queryFn: ({ direction }) => {
-        return String(direction)
-      },
-    })
-  })
-
   it('initialPageParam should define type of param passed to queryFunctionContext for fetchInfiniteQuery', () => {
     const queryClient = new QueryClient()
     queryClient.fetchInfiniteQuery({
