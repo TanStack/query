@@ -1,7 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { useInfiniteQuery } from '../useInfiniteQuery'
-import { useQuery } from '../useQuery'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('pageParam', () => {
