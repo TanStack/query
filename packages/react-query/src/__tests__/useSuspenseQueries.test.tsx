@@ -10,7 +10,7 @@ import {
 import { act, render } from '@testing-library/react'
 import * as React from 'react'
 import { useSuspenseQueries } from '..'
-import { createQueryClient, sleep } from './utils'
+import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 import type { UseSuspenseQueryOptions } from '..'
 
 type NumberQueryOptions = UseSuspenseQueryOptions<number>
@@ -140,5 +140,46 @@ describe('useSuspenseQueries', () => {
     expect(onSuspend).toHaveBeenCalledTimes(2)
     expect(onQueriesResolution).toHaveBeenCalledTimes(2)
     expect(onQueriesResolution).toHaveBeenLastCalledWith([3, 4, 5, 6])
+  })
+
+  it('should only call combine after resolving', async () => {
+    const spy = vi.fn()
+    const key = queryKey()
+
+    function Page() {
+      const data = useSuspenseQueries({
+        queries: [1, 2, 3].map((value) => ({
+          queryKey: [...key, { value }],
+          queryFn: async () => {
+            await sleep(value * 10)
+            return { value: value * 10 }
+          },
+        })),
+        combine: (result) => {
+          spy(result)
+          return 'data'
+        },
+      })
+
+      return <h1>{data}</h1>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback="loading...">
+        <Page />
+      </React.Suspense>,
+    )
+
+    await act(() => vi.advanceTimersByTimeAsync(10))
+
+    rendered.getByText('loading...')
+
+    expect(spy).not.toHaveBeenCalled()
+
+    await act(() => vi.advanceTimersByTimeAsync(30))
+    rendered.getByText('data')
+
+    expect(spy).toHaveBeenCalled()
   })
 })

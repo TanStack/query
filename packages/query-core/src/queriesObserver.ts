@@ -39,27 +39,21 @@ export class QueriesObserver<
   #result!: Array<QueryObserverResult>
   #queries: Array<QueryObserverOptions>
   #observers: Array<QueryObserver>
-  #options?: QueriesObserverOptions<TCombinedResult>
-  #combinedResult!: TCombinedResult
+  #combinedResult?: TCombinedResult
 
   constructor(
     client: QueryClient,
     queries: Array<QueryObserverOptions>,
-    options?: QueriesObserverOptions<TCombinedResult>,
+    _options?: QueriesObserverOptions<TCombinedResult>,
   ) {
     super()
 
     this.#client = client
     this.#queries = []
     this.#observers = []
+    this.#result = []
 
-    this.#setResult([])
-    this.setQueries(queries, options)
-  }
-
-  #setResult(value: Array<QueryObserverResult>) {
-    this.#result = value
-    this.#combinedResult = this.#combineResult(value, this.#options?.combine)
+    this.setQueries(queries)
   }
 
   protected onSubscribe(): void {
@@ -87,11 +81,10 @@ export class QueriesObserver<
 
   setQueries(
     queries: Array<QueryObserverOptions>,
-    options?: QueriesObserverOptions<TCombinedResult>,
+    _options?: QueriesObserverOptions<TCombinedResult>,
     notifyOptions?: NotifyOptions,
   ): void {
     this.#queries = queries
-    this.#options = options
 
     notifyManager.batch(() => {
       const prevObservers = this.#observers
@@ -117,7 +110,7 @@ export class QueriesObserver<
       }
 
       this.#observers = newObservers
-      this.#setResult(newResult)
+      this.#result = newResult
 
       if (!this.hasListeners()) {
         return
@@ -137,8 +130,8 @@ export class QueriesObserver<
     })
   }
 
-  getCurrentResult(): TCombinedResult {
-    return this.#combinedResult
+  getCurrentResult(): Array<QueryObserverResult> {
+    return this.#result
   }
 
   getQueries() {
@@ -254,7 +247,7 @@ export class QueriesObserver<
   #onUpdate(observer: QueryObserver, result: QueryObserverResult): void {
     const index = this.#observers.indexOf(observer)
     if (index !== -1) {
-      this.#setResult(replaceAt(this.#result, index, result))
+      this.#result = replaceAt(this.#result, index, result)
       this.#notify()
     }
   }
