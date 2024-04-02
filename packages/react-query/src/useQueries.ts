@@ -55,7 +55,7 @@ type UseQueryOptionsForUseQueries<
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
 
-type GetOptions<T> =
+type GetUseQueryOptionsForUseQueries<T> =
   // Part 1: responsible for applying explicit type parameter to function arguments, if object { queryFnData: TQueryFnData, error: TError, data: TData }
   T extends {
     queryFnData: infer TQueryFnData
@@ -120,7 +120,7 @@ type GetDefinedOrUndefinedQueryResult<T, TData, TError = unknown> = T extends {
         : UseQueryResult<TData, TError>
   : UseQueryResult<TData, TError>
 
-type GetResults<T> =
+type GetUseQueryResult<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
   T extends { queryFnData: any; error?: infer TError; data: infer TData }
     ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
@@ -165,18 +165,18 @@ type GetResults<T> =
  */
 export type QueriesOptions<
   T extends Array<any>,
-  TResult extends Array<any> = [],
+  TResults extends Array<any> = [],
   TDepth extends ReadonlyArray<number> = [],
 > = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<UseQueryOptionsForUseQueries>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...TResult, GetOptions<Head>]
-      : T extends [infer Head, ...infer Tail]
+      ? [...TResults, GetUseQueryOptionsForUseQueries<Head>]
+      : T extends [infer Head, ...infer Tails]
         ? QueriesOptions<
-            [...Tail],
-            [...TResult, GetOptions<Head>],
+            [...Tails],
+            [...TResults, GetUseQueryOptionsForUseQueries<Head>],
             [...TDepth, 1]
           >
         : ReadonlyArray<unknown> extends T
@@ -207,18 +207,18 @@ export type QueriesOptions<
  */
 export type QueriesResults<
   T extends Array<any>,
-  TResult extends Array<any> = [],
+  TResults extends Array<any> = [],
   TDepth extends ReadonlyArray<number> = [],
 > = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<UseQueryResult>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...TResult, GetResults<Head>]
-      : T extends [infer Head, ...infer Tail]
+      ? [...TResults, GetUseQueryResult<Head>]
+      : T extends [infer Head, ...infer Tails]
         ? QueriesResults<
-            [...Tail],
-            [...TResult, GetResults<Head>],
+            [...Tails],
+            [...TResults, GetUseQueryResult<Head>],
             [...TDepth, 1]
           >
         : T extends Array<
