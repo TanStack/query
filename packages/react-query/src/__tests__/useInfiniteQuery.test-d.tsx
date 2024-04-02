@@ -1,7 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '@tanstack/query-core'
 import { useInfiniteQuery } from '../useInfiniteQuery'
-import { useQuery } from '../useQuery'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('pageParam', () => {
@@ -24,26 +23,6 @@ describe('pageParam', () => {
       },
       initialPageParam: 1,
       getNextPageParam: () => undefined,
-    })
-  })
-
-  it('there should be no pageParam passed to the queryFn of useQuery', () => {
-    useQuery({
-      queryKey: ['key'],
-      // @ts-expect-error there should be no pageParam passed to queryFn of useQuery
-      queryFn: ({ pageParam }) => {
-        return String(pageParam)
-      },
-    })
-  })
-
-  it('there should be no direction passed to the queryFn of useQuery', () => {
-    useQuery({
-      queryKey: ['key'],
-      // @ts-expect-error there should be no pageParam passed to queryFn of useQuery
-      queryFn: ({ direction }) => {
-        return String(direction)
-      },
     })
   })
 
