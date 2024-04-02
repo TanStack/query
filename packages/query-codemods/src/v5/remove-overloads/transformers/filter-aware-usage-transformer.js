@@ -14,7 +14,7 @@ const createUseQueryLikeTransformer = require('../../../utils/transformers/use-q
  * @param {Object} utils
  * @param {import('jscodeshift').Collection} root
  * @param {string} filePath
- * @param {{keyName: "mutationKey"|"queryKey", queryClientMethods: ReadonlyArray<string>, hooks: ReadonlyArray<string>}} config
+ * @param {{keyName: "mutationKey"|"queryKey", fnName: "mutationFn"|"queryFn", queryClientMethods: ReadonlyArray<string>, hooks: ReadonlyArray<string>}} config
  */
 const transformFilterAwareUsages = ({
   jscodeshift,
@@ -28,15 +28,18 @@ const transformFilterAwareUsages = ({
   /**
    * @param {import('jscodeshift').CallExpression} node
    * @param {"mutationKey"|"queryKey"} keyName
+   * @param {"mutationFn"|"queryFn"} fnName
    * @returns {boolean}
    */
-  const canSkipReplacement = (node, keyName) => {
+  const canSkipReplacement = (node, keyName, fnName) => {
     const callArguments = node.arguments
 
-    const hasKeyProperty = () =>
+    const hasKeyOrFnProperty = () =>
       callArguments[0].properties.some(
         (property) =>
-          utils.isObjectProperty(property) && property.key.name !== keyName,
+          utils.isObjectProperty(property) &&
+          property.key.name !== keyName &&
+          property.key.name !== fnName,
       )
 
     /**
@@ -46,7 +49,7 @@ const transformFilterAwareUsages = ({
     return (
       callArguments.length > 0 &&
       utils.isObjectExpression(callArguments[0]) &&
-      hasKeyProperty()
+      hasKeyOrFnProperty()
     )
   }
 
@@ -92,13 +95,50 @@ const transformFilterAwareUsages = ({
 
     try {
       // If the given method/function call matches certain criteria, the node doesn't need to be replaced, this step can be skipped.
-      if (canSkipReplacement(node, config.keyName)) {
+      if (canSkipReplacement(node, config.keyName, config.fnName)) {
         return node
       }
 
       /**
-       * Here we attempt to determine the first parameter of the function call. If it's an array expression or an
-       * identifier that references an array expression then we create an object property from it.
+       * Here we attempt to determine the first parameter of the function call.
+       * If it's a function definition, we can create an object property from it (the mutation fn).
+       */
+      const firstArgument = node.arguments[0]
+      if (isFunctionDefinition(firstArgument)) {
+        const objectExpression = jscodeshift.objectExpression([
+          jscodeshift.property(
+            'init',
+            jscodeshift.identifier(config.fnName),
+            firstArgument,
+          ),
+        ])
+
+        const secondArgument = node.arguments[1]
+
+        if (secondArgument) {
+          // If it's an object expression, we can copy the properties from it to the newly created object expression.
+          if (utils.isObjectExpression(secondArgument)) {
+            v5Utils.copyPropertiesFromSource(
+              secondArgument,
+              objectExpression,
+              predicate,
+            )
+          } else {
+            // Otherwise, we simply spread the second argument in the newly created object expression.
+            objectExpression.properties.push(
+              jscodeshift.spreadElement(secondArgument),
+            )
+          }
+        }
+
+        return jscodeshift.callExpression(node.original.callee, [
+          objectExpression,
+        ])
+      }
+
+      /**
+       * If, instead, the first parameter is an array expression or an identifier that references
+       * an array expression, then we create an object property from it (the query or mutation key).
        *
        * @type {import('jscodeshift').Property|undefined}
        */
@@ -126,12 +166,12 @@ const transformFilterAwareUsages = ({
           const firstArgument = jscodeshift.objectExpression([
             jscodeshift.property(
               'init',
-              jscodeshift.identifier('queryKey'),
+              jscodeshift.identifier(config.keyName),
               originalArguments[0],
             ),
             jscodeshift.property(
               'init',
-              jscodeshift.identifier('queryFn'),
+              jscodeshift.identifier(config.fnName),
               secondArgument,
             ),
           ])
@@ -153,12 +193,12 @@ const transformFilterAwareUsages = ({
           const objectExpression = jscodeshift.objectExpression([
             jscodeshift.property(
               'init',
-              jscodeshift.identifier('queryKey'),
+              jscodeshift.identifier(config.keyName),
               node.arguments[0],
             ),
             jscodeshift.property(
               'init',
-              jscodeshift.identifier('queryFn'),
+              jscodeshift.identifier(config.fnName),
               secondParameter,
             ),
           ])

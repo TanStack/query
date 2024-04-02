@@ -1,6 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
-import type { DataTag, InfiniteData } from '../types'
+import type { FetchDirection } from '../query'
+import type { DataTag, InfiniteData, QueryKey } from '../types'
 
 describe('getQueryData', () => {
   it('should be typed if key is tagged', () => {
@@ -130,6 +131,27 @@ describe('fetchInfiniteQuery', () => {
       queryFn: () => Promise.resolve('string'),
       initialPageParam: 1,
       pages: 5,
+    })
+  })
+})
+
+describe('defaultOptions', () => {
+  it('should have a typed QueryFunctionContext', () => {
+    new QueryClient({
+      defaultOptions: {
+        queries: {
+          queryFn: (context) => {
+            expectTypeOf(context).toEqualTypeOf<{
+              queryKey: QueryKey
+              meta: Record<string, unknown> | undefined
+              signal: AbortSignal
+              pageParam?: unknown
+              direction?: FetchDirection
+            }>()
+            return Promise.resolve('data')
+          },
+        },
+      },
     })
   })
 })
