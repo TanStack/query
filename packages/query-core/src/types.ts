@@ -67,7 +67,7 @@ export type QueryFunctionContext<
       signal: AbortSignal
       meta: QueryMeta | undefined
       pageParam?: unknown
-      direction?: FetchDirection
+      direction?: 'forward' | 'backward'
     }
   : {
       queryKey: TQueryKey
