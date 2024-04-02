@@ -55,7 +55,10 @@ export const rule = createRule({
           scopeManager === null ||
           queryKey === undefined ||
           queryFn === undefined ||
-          queryFn.value.type !== AST_NODE_TYPES.ArrowFunctionExpression
+          !ASTUtils.isNodeOfOneOf(queryFn.value, [
+            AST_NODE_TYPES.ArrowFunctionExpression,
+            AST_NODE_TYPES.FunctionExpression,
+          ])
         ) {
           return
         }
