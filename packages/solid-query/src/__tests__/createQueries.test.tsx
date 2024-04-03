@@ -94,8 +94,12 @@ describe('useQueries', () => {
           },
         ],
       }))
-      expectTypeOf(result1[0]).toEqualTypeOf<CreateQueryResult<number>>()
-      expectTypeOf(result1[1]).toEqualTypeOf<CreateQueryResult<string>>()
+      expectTypeOf(result1[0]).toEqualTypeOf<
+        CreateQueryResult<number, unknown>
+      >()
+      expectTypeOf(result1[1]).toEqualTypeOf<
+        CreateQueryResult<string, unknown>
+      >()
       expectTypeOf(result1[2]).toEqualTypeOf<
         CreateQueryResult<Array<string>, boolean>
       >()
@@ -554,6 +558,26 @@ describe('useQueries', () => {
           },
         ],
       }))
+    }
+  })
+
+  it('should have correct type when conditional skipToken is passed', () => {
+    // @ts-expect-error (Page component is not rendered)
+    function Page() {
+      const results = createQueries(() => ({
+        queries: [
+          {
+            queryKey: ['withSkipToken'],
+            queryFn:
+              Math.random() > 0.5
+                ? QueryCore.skipToken
+                : () => Promise.resolve(5),
+          },
+        ],
+      }))
+
+      expectTypeOf(results[0]).toEqualTypeOf<CreateQueryResult<number, Error>>()
+      expectTypeOf(results[0].data).toEqualTypeOf<number | undefined>()
     }
   })
 

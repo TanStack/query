@@ -13,7 +13,11 @@ import {
 } from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
-import type { CreateQueryResult, SolidQueryOptions } from './types'
+import type {
+  CreateQueryResult,
+  DefinedCreateBaseQueryResult,
+  SolidQueryOptions,
+} from './types'
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
@@ -23,6 +27,7 @@ import type {
   QueriesPlaceholderDataFunction,
   QueryFunction,
   QueryKey,
+  QueryObserverOptions,
   QueryObserverResult,
   SkipToken,
   ThrowOnError,
@@ -93,36 +98,57 @@ type GetOptions<T> =
                   : // Fallback
                     CreateQueryOptionsForCreateQueries
 
+// A defined initialData setting should return a DefinedCreateBaseQueryResult rather than CreateQueryResult
+type GetDefinedOrUndefinedQueryResult<T, TData, TError = unknown> = T extends {
+  initialData?: infer TInitialData
+}
+  ? unknown extends TInitialData
+    ? CreateQueryResult<TData, TError>
+    : TInitialData extends TData
+      ? DefinedCreateBaseQueryResult<TData, TError>
+      : TInitialData extends () => infer TInitialDataResult
+        ? unknown extends TInitialDataResult
+          ? CreateQueryResult<TData, TError>
+          : TInitialDataResult extends TData
+            ? DefinedCreateBaseQueryResult<TData, TError>
+            : CreateQueryResult<TData, TError>
+        : CreateQueryResult<TData, TError>
+  : CreateQueryResult<TData, TError>
+
 type GetResults<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
   T extends { queryFnData: any; error?: infer TError; data: infer TData }
-    ? CreateQueryResult<TData, TError>
+    ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
     : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
-      ? CreateQueryResult<TQueryFnData, TError>
+      ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData, TError>
       : T extends { data: infer TData; error?: infer TError }
-        ? CreateQueryResult<TData, TError>
+        ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
         : // Part 2: responsible for mapping explicit type parameter to function result, if tuple
           T extends [any, infer TError, infer TData]
-          ? CreateQueryResult<TData, TError>
+          ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
           : T extends [infer TQueryFnData, infer TError]
-            ? CreateQueryResult<TQueryFnData, TError>
+            ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData, TError>
             : T extends [infer TQueryFnData]
-              ? CreateQueryResult<TQueryFnData>
+              ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData>
               : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
                 T extends {
-                    queryFn?: QueryFunction<infer TQueryFnData, any>
+                    queryFn?: QueryFunction<infer TQueryFnData, any> | SkipToken
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
-                ? CreateQueryResult<
+                ? GetDefinedOrUndefinedQueryResult<
+                    T,
                     unknown extends TData ? TQueryFnData : TData,
                     unknown extends TError ? DefaultError : TError
                   >
                 : T extends {
-                      queryFn?: QueryFunction<infer TQueryFnData, any>
+                      queryFn?:
+                        | QueryFunction<infer TQueryFnData, any>
+                        | SkipToken
                       throwOnError?: ThrowOnError<any, infer TError, any, any>
                     }
-                  ? CreateQueryResult<
+                  ? GetDefinedOrUndefinedQueryResult<
+                      T,
                       TQueryFnData,
                       unknown extends TError ? DefaultError : TError
                     >
@@ -221,13 +247,16 @@ export function createQueries<
   const client = createMemo(() => useQueryClient(queryClient?.()))
   const isRestoring = useIsRestoring()
 
-  const defaultedQueries: QueriesOptions<any> = createMemo(() =>
+  const defaultedQueries = createMemo(() =>
     queriesOptions().queries.map((options) =>
-      mergeProps(client().defaultQueryOptions(options), {
-        get _optimisticResults() {
-          return isRestoring() ? 'isRestoring' : 'optimistic'
+      mergeProps(
+        client().defaultQueryOptions(options as QueryObserverOptions),
+        {
+          get _optimisticResults() {
+            return isRestoring() ? 'isRestoring' : 'optimistic'
+          },
         },
-      }),
+      ),
     ),
   )
 
