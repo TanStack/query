@@ -21,7 +21,7 @@ $ bun add @tanstack/react-query
 
 React Query is compatible with React v18+ and works with ReactDOM and React Native.
 
-> Wanna give it a spin before you download? Try out the [simple](./examples/simple) or [basic](./examples/basic) examples!
+> Wanna give it a spin before you download? Try out the [simple](../examples/simple) or [basic](../examples/basic) examples!
 
 ### CDN
 
