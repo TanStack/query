@@ -19,7 +19,7 @@ $ yarn add @tanstack/vue-query
 $ bun add @tanstack/vue-query
 ```
 
-> Wanna give it a spin before you download? Try out the [basic](./examples/basic) example!
+> Wanna give it a spin before you download? Try out the [basic](../examples/basic) example!
 
 Vue Query is compatible with Vue 2.x and 3.x
 
