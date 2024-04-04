@@ -28,10 +28,5 @@
     "@angular/compiler-cli": "^17.3.3",
     "@tanstack/angular-query-devtools-experimental": "^5.28.13",
     "typescript": "5.2.2"
-  },
-  "overrides": {
-    "@angular-devkit/build-angular": {
-      "piscina": "~4.2.0"
-    }
   }
 }
