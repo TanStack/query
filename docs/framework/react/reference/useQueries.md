@@ -56,3 +56,12 @@ const combinedQueries = useQueries({
 ```
 
 In the above example, `combinedQueries` will be an object with a `data` and a `pending` property. Note that all other properties of the Query results will be lost.
+
+### Memoization
+
+The `combine` function will only re-run if:
+
+- it the `combine` function itself changed referentially
+- any of the query results changed
+
+This means that an inlined `combine` function, as shown above, will run on every render. To avoid this, you can wrap the `combine` function in `useCallback`, or extract it so a stable function reference if it doesn't have any dependencies.
