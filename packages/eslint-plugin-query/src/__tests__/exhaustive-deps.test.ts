@@ -726,5 +726,24 @@ ruleTester.run('exhaustive-deps', rule, {
         },
       ],
     },
+    {
+      name: 'should fail if queryFn is invalid while using FunctionExpression syntax',
+      code: normalizeIndent`
+        const id = 1;
+    
+        useQuery({
+            queryKey: [],
+            queryFn() {
+              Promise.resolve(id)
+            }
+        })
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'id' },
+        },
+      ],
+    },
   ],
 })
