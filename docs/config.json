@@ -261,6 +261,10 @@
               "to": "framework/react/guides/caching"
             },
             {
+              "label": "Render Optimizations",
+              "to": "framework/react/guides/render-optimizations"
+            },
+            {
               "label": "Default Query Fn",
               "to": "framework/react/guides/default-query-function"
             },

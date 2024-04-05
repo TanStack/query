@@ -139,6 +139,7 @@ const {
 - `select: (data: TData) => unknown`
   - Optional
   - This option can be used to transform or select a part of the data returned by the query function. It affects the returned `data` value, but does not affect what gets stored in the query cache.
+  - The `select` function will only run if `data` changed, or if the reference to the `select` function itself changes. To optimize, wrap the function in `useCallback`.
 - `initialData: TData | () => TData`
   - Optional
   - If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet)
