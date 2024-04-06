@@ -2,11 +2,13 @@ import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
+import { QueryClient } from '@tanstack/query-core'
 import { QueryCache, queryOptions, skipToken, useQueries } from '..'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 import type {
   QueryFunction,
   QueryKey,
+  QueryObserverResult,
   UseQueryOptions,
   UseQueryResult,
 } from '..'
@@ -975,7 +977,7 @@ describe('useQueries', () => {
     )
   })
 
-  it.skip('should not return new instances when called without queries', async () => {
+  it('should not return new instances when called without queries', async () => {
     const key = queryKey()
     const ids: Array<number> = []
     let resultChanged = 0
@@ -1277,5 +1279,155 @@ describe('useQueries', () => {
     fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
 
     await waitFor(() => rendered.getByText('data: 1 result'))
+  })
+
+  it('should optimize combine if it is a stable reference', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const client = new QueryClient()
+
+    const spy = vi.fn()
+    let value = 0
+
+    function Page() {
+      const [state, setState] = React.useState(0)
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: key1,
+              queryFn: async () => {
+                await sleep(10)
+                return 'first result:' + value
+              },
+            },
+            {
+              queryKey: key2,
+              queryFn: async () => {
+                await sleep(20)
+                return 'second result:' + value
+              },
+            },
+          ],
+          combine: React.useCallback((results: Array<QueryObserverResult>) => {
+            const result = {
+              combined: true,
+              res: results.map((res) => res.data).join(','),
+            }
+            spy(result)
+            return result
+          }, []),
+        },
+        client,
+      )
+
+      return (
+        <div>
+          <div>
+            data: {String(queries.combined)} {queries.res}
+          </div>
+          <button onClick={() => setState(state + 1)}>rerender</button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitFor(() =>
+      rendered.getByText('data: true first result:0,second result:0'),
+    )
+
+    // both pending, one pending, both resolved
+    expect(spy).toHaveBeenCalledTimes(3)
+
+    await client.refetchQueries()
+    // no increase because result hasn't changed
+    expect(spy).toHaveBeenCalledTimes(3)
+
+    fireEvent.click(rendered.getByRole('button', { name: /rerender/i }))
+
+    // no increase because just a re-render
+    expect(spy).toHaveBeenCalledTimes(3)
+
+    value = 1
+
+    await client.refetchQueries()
+
+    await waitFor(() =>
+      rendered.getByText('data: true first result:1,second result:1'),
+    )
+
+    // two value changes = two re-renders
+    expect(spy).toHaveBeenCalledTimes(5)
+  })
+
+  it('should re-run combine if the functional reference changes', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const client = new QueryClient()
+
+    const spy = vi.fn()
+
+    function Page() {
+      const [state, setState] = React.useState(0)
+      const queries = useQueries(
+        {
+          queries: [
+            {
+              queryKey: [key1],
+              queryFn: async () => {
+                await sleep(10)
+                return 'first result'
+              },
+            },
+            {
+              queryKey: [key2],
+              queryFn: async () => {
+                await sleep(20)
+                return 'second result'
+              },
+            },
+          ],
+          combine: React.useCallback(
+            (results: Array<QueryObserverResult>) => {
+              const result = {
+                combined: true,
+                state,
+                res: results.map((res) => res.data).join(','),
+              }
+              spy(result)
+              return result
+            },
+            [state],
+          ),
+        },
+        client,
+      )
+
+      return (
+        <div>
+          <div>
+            data: {String(queries.state)} {queries.res}
+          </div>
+          <button onClick={() => setState(state + 1)}>rerender</button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitFor(() =>
+      rendered.getByText('data: 0 first result,second result'),
+    )
+
+    // both pending, one pending, both resolved
+    expect(spy).toHaveBeenCalledTimes(3)
+
+    fireEvent.click(rendered.getByRole('button', { name: /rerender/i }))
+
+    // state changed, re-run combine
+    expect(spy).toHaveBeenCalledTimes(4)
   })
 })

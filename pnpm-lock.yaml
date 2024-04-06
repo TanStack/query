@@ -24,7 +24,7 @@ importers:
         version: 0.8.6(@solidjs/router@0.12.0)(solid-js@1.8.14)
       '@tanstack/config':
         specifier: ^0.4.4
-        version: 0.4.4(@types/node@18.19.3)(esbuild@0.19.11)(rollup@4.6.0)(typescript@5.2.2)(vite@5.1.4)
+        version: 0.4.4(@types/node@18.19.3)(esbuild@0.20.2)(rollup@4.6.0)(typescript@5.2.2)(vite@5.1.4)
       '@testing-library/jest-dom':
         specifier: ^6.4.2
         version: 6.4.2(vitest@1.3.1)
@@ -155,7 +155,7 @@ importers:
         specifier: ^17.3.3
         version: 17.3.3(@angular/common@17.3.3)(@angular/core@17.3.3)(@angular/platform-browser@17.3.3)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -177,7 +177,7 @@ importers:
         specifier: ^17.3.3
         version: 17.3.3(@angular/compiler@17.3.3)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
@@ -210,7 +210,7 @@ importers:
         specifier: ^17.3.3
         version: 17.3.3(@angular/common@17.3.3)(@angular/core@17.3.3)(@angular/platform-browser@17.3.3)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -232,7 +232,7 @@ importers:
         specifier: ^17.3.3
         version: 17.3.3(@angular/compiler@17.3.3)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
@@ -265,7 +265,7 @@ importers:
         specifier: ^17.3.3
         version: 17.3.3(@angular/common@17.3.3)(@angular/core@17.3.3)(@angular/platform-browser@17.3.3)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -287,7 +287,7 @@ importers:
         specifier: ^17.3.3
         version: 17.3.3(@angular/compiler@17.3.3)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
@@ -320,7 +320,7 @@ importers:
         specifier: ^17.3.3
         version: 17.3.3(@angular/common@17.3.3)(@angular/core@17.3.3)(@angular/platform-browser@17.3.3)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -342,7 +342,7 @@ importers:
         specifier: ^17.3.3
         version: 17.3.3(@angular/compiler@17.3.3)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
@@ -357,10 +357,10 @@ importers:
         specifier: 4.22.1
         version: 4.22.1
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       algoliasearch:
         specifier: 4.22.1
@@ -394,10 +394,10 @@ importers:
   examples/react/auto-refetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -418,10 +418,10 @@ importers:
   examples/react/basic:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -446,10 +446,10 @@ importers:
   examples/react/basic-graphql-request:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       graphql:
         specifier: ^16.8.1
@@ -474,16 +474,16 @@ importers:
   examples/react/basic-typescript:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-persist-client
       axios:
         specifier: ^1.6.7
@@ -523,10 +523,10 @@ importers:
   examples/react/default-query-function:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -548,10 +548,10 @@ importers:
   examples/react/infinite-query-with-max-pages:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -575,10 +575,10 @@ importers:
   examples/react/load-more-infinite-scroll:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -602,10 +602,10 @@ importers:
   examples/react/nextjs:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       ky:
         specifier: ^1.2.0
@@ -629,13 +629,13 @@ importers:
   examples/react/nextjs-suspense-streaming:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-next-experimental':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-next-experimental
       next:
         specifier: ^14.0.0
@@ -663,19 +663,19 @@ importers:
   examples/react/offline:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-location':
         specifier: ^3.7.4
         version: 3.7.4(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-persist-client
       ky:
         specifier: ^1.2.0
@@ -703,10 +703,10 @@ importers:
   examples/react/optimistic-updates-cache:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -740,10 +740,10 @@ importers:
   examples/react/optimistic-updates-ui:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -777,10 +777,10 @@ importers:
   examples/react/pagination:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -801,10 +801,10 @@ importers:
   examples/react/playground:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -823,10 +823,10 @@ importers:
   examples/react/prefetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -856,10 +856,10 @@ importers:
         specifier: ^6.3.16
         version: 6.3.16(@react-navigation/native@6.1.6)(react-native-gesture-handler@2.15.0)(react-native-safe-area-context@4.9.0)(react-native-screens@3.29.0)(react-native@0.73.4)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       expo:
         specifier: ^50.0.6
@@ -875,7 +875,7 @@ importers:
         version: 18.2.0
       react-native:
         specifier: ^0.73.4
-        version: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.23.7)(react@18.2.0)
+        version: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.24.0)(react@18.2.0)
       react-native-gesture-handler:
         specifier: ^2.14.1
         version: 2.15.0(react-native@0.73.4)(react@18.2.0)
@@ -908,10 +908,10 @@ importers:
   examples/react/react-router:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       localforage:
         specifier: ^1.10.0
@@ -972,10 +972,10 @@ importers:
         specifier: ^5.15.2
         version: 5.15.2(@types/react@18.2.61)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -1000,10 +1000,10 @@ importers:
   examples/react/shadow-dom:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -1046,10 +1046,10 @@ importers:
   examples/react/simple:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -1083,10 +1083,10 @@ importers:
         specifier: ^5.15.2
         version: 5.15.2(@types/react@18.2.61)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       react:
         specifier: ^18.2.0
@@ -1111,10 +1111,10 @@ importers:
   examples/react/suspense:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.28.14
+        specifier: ^5.29.0
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.7
@@ -1142,10 +1142,10 @@ importers:
   examples/solid/basic-graphql-request:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/solid-query-devtools
       graphql:
         specifier: ^16.8.1
@@ -1170,10 +1170,10 @@ importers:
   examples/solid/basic-typescript:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -1192,10 +1192,10 @@ importers:
   examples/solid/default-query-function:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -1214,10 +1214,10 @@ importers:
   examples/solid/simple:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -1248,10 +1248,10 @@ importers:
         specifier: ^0.5.4
         version: 0.5.4(@testing-library/jest-dom@6.4.2)(rollup@4.6.0)(solid-js@1.8.14)(vinxi@0.3.3)(vite@4.5.1)
       '@tanstack/solid-query':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -1263,10 +1263,10 @@ importers:
   examples/svelte/auto-refetching:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1294,10 +1294,10 @@ importers:
   examples/svelte/basic:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1325,10 +1325,10 @@ importers:
   examples/svelte/load-more-infinite-scroll:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1356,10 +1356,10 @@ importers:
   examples/svelte/optimistic-updates-typescript:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1387,10 +1387,10 @@ importers:
   examples/svelte/playground:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1418,10 +1418,10 @@ importers:
   examples/svelte/simple:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
@@ -1446,10 +1446,10 @@ importers:
   examples/svelte/ssr:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1477,10 +1477,10 @@ importers:
   examples/svelte/star-wars:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1517,10 +1517,10 @@ importers:
   examples/vue/basic:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.3.0
@@ -1539,7 +1539,7 @@ importers:
   examples/vue/dependent-queries:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/vue-query
       vue:
         specifier: ^3.3.0
@@ -1558,16 +1558,16 @@ importers:
   examples/vue/persister:
     dependencies:
       '@tanstack/query-core':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/query-core
       '@tanstack/query-persist-client-core':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/query-persist-client-core
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/vue-query':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/vue-query
       idb-keyval:
         specifier: ^6.2.1
@@ -1589,10 +1589,10 @@ importers:
   examples/vue/simple:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^5.28.13
+        specifier: ^5.29.0
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.3.0
@@ -1686,7 +1686,7 @@ importers:
         version: 18.2.0(react@18.2.0)
       react-scripts:
         specifier: ^5.0.1
-        version: 5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(esbuild@0.19.11)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(react@18.2.0)(typescript@5.2.2)
+        version: 5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(esbuild@0.20.2)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(react@18.2.0)(typescript@5.2.2)
     devDependencies:
       cross-env:
         specifier: ^7.0.3
@@ -1949,10 +1949,10 @@ importers:
         version: 1.13.3
       tsup-preset-solid:
         specifier: ^2.2.0
-        version: 2.2.0(esbuild@0.19.11)(solid-js@1.8.14)(tsup@8.0.1)
+        version: 2.2.0(esbuild@0.20.2)(solid-js@1.8.14)(tsup@8.0.1)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.4)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.5)
 
   packages/query-persist-client-core:
     dependencies:
@@ -1983,7 +1983,7 @@ importers:
         version: 18.2.19
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.4)
+        version: 4.2.1(vite@5.1.5)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -2008,7 +2008,7 @@ importers:
         version: 18.2.61
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.4)
+        version: 4.2.1(vite@5.1.5)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -2023,7 +2023,7 @@ importers:
         version: 18.2.61
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.4)
+        version: 4.2.1(vite@5.1.5)
       next:
         specifier: ^14.0.0
         version: 14.0.0(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)
@@ -2045,7 +2045,7 @@ importers:
         version: 18.2.61
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.1.4)
+        version: 4.2.1(vite@5.1.5)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -2061,10 +2061,10 @@ importers:
     devDependencies:
       tsup-preset-solid:
         specifier: ^2.2.0
-        version: 2.2.0(esbuild@0.19.11)(solid-js@1.8.14)(tsup@8.0.1)
+        version: 2.2.0(esbuild@0.20.2)(solid-js@1.8.14)(tsup@8.0.1)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.4)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.5)
 
   packages/solid-query-devtools:
     dependencies:
@@ -2080,10 +2080,10 @@ importers:
         version: 1.8.14
       tsup-preset-solid:
         specifier: ^2.2.0
-        version: 2.2.0(esbuild@0.19.11)(solid-js@1.8.14)(tsup@8.0.1)
+        version: 2.2.0(esbuild@0.20.2)(solid-js@1.8.14)(tsup@8.0.1)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.4)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.5)
 
   packages/solid-query-persist-client:
     dependencies:
@@ -2099,10 +2099,10 @@ importers:
         version: 1.8.14
       tsup-preset-solid:
         specifier: ^2.2.0
-        version: 2.2.0(esbuild@0.19.11)(solid-js@1.8.14)(tsup@8.0.1)
+        version: 2.2.0(esbuild@0.20.2)(solid-js@1.8.14)(tsup@8.0.1)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.4)
+        version: 2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.5)
 
   packages/svelte-query:
     dependencies:
@@ -2115,7 +2115,7 @@ importers:
         version: 2.2.6(svelte@4.2.10)(typescript@5.2.2)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.10)(vite@5.1.4)
+        version: 3.0.2(svelte@4.2.10)(vite@5.1.5)
       '@testing-library/svelte':
         specifier: ^4.1.0
         version: 4.1.0(svelte@4.2.10)
@@ -2146,7 +2146,7 @@ importers:
         version: 2.2.6(svelte@4.2.10)(typescript@5.2.2)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.10)(vite@5.1.4)
+        version: 3.0.2(svelte@4.2.10)(vite@5.1.5)
       '@tanstack/svelte-query':
         specifier: workspace:*
         version: link:../svelte-query
@@ -2174,7 +2174,7 @@ importers:
         version: 2.2.6(svelte@4.2.10)(typescript@5.2.2)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.10)(vite@5.1.4)
+        version: 3.0.2(svelte@4.2.10)(vite@5.1.5)
       '@tanstack/svelte-query':
         specifier: workspace:*
         version: link:../svelte-query
@@ -2211,7 +2211,7 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
-        version: 5.0.4(vite@5.1.4)(vue@3.3.0)
+        version: 5.0.4(vite@5.1.5)(vue@3.3.0)
       '@vue/composition-api':
         specifier: 1.7.2
         version: 1.7.2(vue@3.3.0)
@@ -2490,7 +2490,7 @@ packages:
       undici: 6.7.1
       vite: 5.1.5(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
       watchpack: 2.4.0
-      webpack: 5.90.3(esbuild@0.19.11)
+      webpack: 5.90.3(esbuild@0.20.2)
       webpack-dev-middleware: 6.1.2(webpack@5.90.3)
       webpack-dev-server: 4.15.1(webpack@5.90.3)
       webpack-merge: 5.10.0
@@ -2526,7 +2526,7 @@ packages:
     dependencies:
       '@angular-devkit/architect': 0.1703.3
       rxjs: 7.8.1
-      webpack: 5.90.3(esbuild@0.19.11)
+      webpack: 5.90.3(esbuild@0.20.2)
       webpack-dev-server: 4.15.1(webpack@5.90.3)
     transitivePeerDependencies:
       - chokidar
@@ -4038,6 +4038,19 @@ packages:
       '@babel/plugin-syntax-async-generators': 7.8.4(@babel/core@7.23.7)
     dev: false
 
+  /@babel/plugin-transform-async-generator-functions@7.23.9(@babel/core@7.23.7):
+    resolution: {integrity: sha512-8Q3veQEDGe14dTYuwagbRtwxQDnytyg1JFu4/HwEMETeofocrB0U0ejBJIXoeG/t2oXZ8kzCyI0ZZfbT80VFNQ==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.23.7
+      '@babel/helper-environment-visitor': 7.22.20
+      '@babel/helper-plugin-utils': 7.22.5
+      '@babel/helper-remap-async-to-generator': 7.22.20(@babel/core@7.23.7)
+      '@babel/plugin-syntax-async-generators': 7.8.4(@babel/core@7.23.7)
+    dev: false
+
   /@babel/plugin-transform-async-generator-functions@7.23.9(@babel/core@7.24.0):
     resolution: {integrity: sha512-8Q3veQEDGe14dTYuwagbRtwxQDnytyg1JFu4/HwEMETeofocrB0U0ejBJIXoeG/t2oXZ8kzCyI0ZZfbT80VFNQ==}
     engines: {node: '>=6.9.0'}
@@ -4171,7 +4184,7 @@ packages:
       '@babel/helper-compilation-targets': 7.23.6
       '@babel/helper-environment-visitor': 7.22.20
       '@babel/helper-function-name': 7.23.0
-      '@babel/helper-plugin-utils': 7.22.5
+      '@babel/helper-plugin-utils': 7.24.0
       '@babel/helper-replace-supers': 7.22.20(@babel/core@7.23.7)
       '@babel/helper-split-export-declaration': 7.22.6
       globals: 11.12.0
@@ -4686,6 +4699,19 @@ packages:
       '@babel/plugin-transform-parameters': 7.23.3(@babel/core@7.23.7)
     dev: false
 
+  /@babel/plugin-transform-object-rest-spread@7.24.1(@babel/core@7.23.7):
+    resolution: {integrity: sha512-XjD5f0YqOtebto4HGISLNfiNMTTs6tbkFf2TOqJlYKYmbo+mN9Dnpl4SRoofiziuOWMIyq3sZEUqLo3hLITFEA==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.23.7
+      '@babel/helper-compilation-targets': 7.23.6
+      '@babel/helper-plugin-utils': 7.24.0
+      '@babel/plugin-syntax-object-rest-spread': 7.8.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-parameters': 7.24.1(@babel/core@7.23.7)
+    dev: false
+
   /@babel/plugin-transform-object-rest-spread@7.24.1(@babel/core@7.24.0):
     resolution: {integrity: sha512-XjD5f0YqOtebto4HGISLNfiNMTTs6tbkFf2TOqJlYKYmbo+mN9Dnpl4SRoofiziuOWMIyq3sZEUqLo3hLITFEA==}
     engines: {node: '>=6.9.0'}
@@ -4785,6 +4811,16 @@ packages:
       '@babel/core': 7.24.0
       '@babel/helper-plugin-utils': 7.24.0
     dev: true
+
+  /@babel/plugin-transform-parameters@7.24.1(@babel/core@7.23.7):
+    resolution: {integrity: sha512-8Jl6V24g+Uw5OGPeWNKrKqXPDw2YDjLc53ojwfMcKwlEoETKU9rU0mHUtcg9JntWI/QYzGAXNWEcVHZ+fR+XXg==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.23.7
+      '@babel/helper-plugin-utils': 7.24.0
+    dev: false
 
   /@babel/plugin-transform-parameters@7.24.1(@babel/core@7.24.0):
     resolution: {integrity: sha512-8Jl6V24g+Uw5OGPeWNKrKqXPDw2YDjLc53ojwfMcKwlEoETKU9rU0mHUtcg9JntWI/QYzGAXNWEcVHZ+fR+XXg==}
@@ -5296,6 +5332,97 @@ packages:
       '@babel/preset-modules': 0.1.6-no-external-plugins(@babel/core@7.23.7)
       babel-plugin-polyfill-corejs2: 0.4.8(@babel/core@7.23.7)
       babel-plugin-polyfill-corejs3: 0.8.7(@babel/core@7.23.7)
+      babel-plugin-polyfill-regenerator: 0.5.5(@babel/core@7.23.7)
+      core-js-compat: 3.35.1
+      semver: 6.3.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /@babel/preset-env@7.24.0(@babel/core@7.23.7):
+    resolution: {integrity: sha512-ZxPEzV9IgvGn73iK0E6VB9/95Nd7aMFpbE0l8KQFDG70cOV9IxRP7Y2FUPmlK0v6ImlLqYX50iuZ3ZTVhOF2lA==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/compat-data': 7.23.5
+      '@babel/core': 7.23.7
+      '@babel/helper-compilation-targets': 7.23.6
+      '@babel/helper-plugin-utils': 7.24.0
+      '@babel/helper-validator-option': 7.23.5
+      '@babel/plugin-bugfix-safari-id-destructuring-collision-in-function-expression': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-bugfix-v8-spread-parameters-in-optional-chaining': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-bugfix-v8-static-class-fields-redefine-readonly': 7.23.7(@babel/core@7.23.7)
+      '@babel/plugin-proposal-private-property-in-object': 7.21.0-placeholder-for-preset-env.2(@babel/core@7.23.7)
+      '@babel/plugin-syntax-async-generators': 7.8.4(@babel/core@7.23.7)
+      '@babel/plugin-syntax-class-properties': 7.12.13(@babel/core@7.23.7)
+      '@babel/plugin-syntax-class-static-block': 7.14.5(@babel/core@7.23.7)
+      '@babel/plugin-syntax-dynamic-import': 7.8.3(@babel/core@7.23.7)
+      '@babel/plugin-syntax-export-namespace-from': 7.8.3(@babel/core@7.23.7)
+      '@babel/plugin-syntax-import-assertions': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-syntax-import-attributes': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-syntax-import-meta': 7.10.4(@babel/core@7.23.7)
+      '@babel/plugin-syntax-json-strings': 7.8.3(@babel/core@7.23.7)
+      '@babel/plugin-syntax-logical-assignment-operators': 7.10.4(@babel/core@7.23.7)
+      '@babel/plugin-syntax-nullish-coalescing-operator': 7.8.3(@babel/core@7.23.7)
+      '@babel/plugin-syntax-numeric-separator': 7.10.4(@babel/core@7.23.7)
+      '@babel/plugin-syntax-object-rest-spread': 7.8.3(@babel/core@7.23.7)
+      '@babel/plugin-syntax-optional-catch-binding': 7.8.3(@babel/core@7.23.7)
+      '@babel/plugin-syntax-optional-chaining': 7.8.3(@babel/core@7.23.7)
+      '@babel/plugin-syntax-private-property-in-object': 7.14.5(@babel/core@7.23.7)
+      '@babel/plugin-syntax-top-level-await': 7.14.5(@babel/core@7.23.7)
+      '@babel/plugin-syntax-unicode-sets-regex': 7.18.6(@babel/core@7.23.7)
+      '@babel/plugin-transform-arrow-functions': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-async-generator-functions': 7.23.9(@babel/core@7.23.7)
+      '@babel/plugin-transform-async-to-generator': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-block-scoped-functions': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-block-scoping': 7.23.4(@babel/core@7.23.7)
+      '@babel/plugin-transform-class-properties': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-class-static-block': 7.23.4(@babel/core@7.23.7)
+      '@babel/plugin-transform-classes': 7.23.8(@babel/core@7.23.7)
+      '@babel/plugin-transform-computed-properties': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-destructuring': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-dotall-regex': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-duplicate-keys': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-dynamic-import': 7.23.4(@babel/core@7.23.7)
+      '@babel/plugin-transform-exponentiation-operator': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-export-namespace-from': 7.23.4(@babel/core@7.23.7)
+      '@babel/plugin-transform-for-of': 7.23.6(@babel/core@7.23.7)
+      '@babel/plugin-transform-function-name': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-json-strings': 7.23.4(@babel/core@7.23.7)
+      '@babel/plugin-transform-literals': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-logical-assignment-operators': 7.23.4(@babel/core@7.23.7)
+      '@babel/plugin-transform-member-expression-literals': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-modules-amd': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-modules-commonjs': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-modules-systemjs': 7.23.9(@babel/core@7.23.7)
+      '@babel/plugin-transform-modules-umd': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-named-capturing-groups-regex': 7.22.5(@babel/core@7.23.7)
+      '@babel/plugin-transform-new-target': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-nullish-coalescing-operator': 7.23.4(@babel/core@7.23.7)
+      '@babel/plugin-transform-numeric-separator': 7.23.4(@babel/core@7.23.7)
+      '@babel/plugin-transform-object-rest-spread': 7.24.1(@babel/core@7.23.7)
+      '@babel/plugin-transform-object-super': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-optional-catch-binding': 7.23.4(@babel/core@7.23.7)
+      '@babel/plugin-transform-optional-chaining': 7.23.4(@babel/core@7.23.7)
+      '@babel/plugin-transform-parameters': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-private-methods': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-private-property-in-object': 7.23.4(@babel/core@7.23.7)
+      '@babel/plugin-transform-property-literals': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-regenerator': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-reserved-words': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-shorthand-properties': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-spread': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-sticky-regex': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-template-literals': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-typeof-symbol': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-unicode-escapes': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-unicode-property-regex': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-unicode-regex': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-unicode-sets-regex': 7.23.3(@babel/core@7.23.7)
+      '@babel/preset-modules': 0.1.6-no-external-plugins(@babel/core@7.23.7)
+      babel-plugin-polyfill-corejs2: 0.4.8(@babel/core@7.23.7)
+      babel-plugin-polyfill-corejs3: 0.9.0(@babel/core@7.23.7)
       babel-plugin-polyfill-regenerator: 0.5.5(@babel/core@7.23.7)
       core-js-compat: 3.35.1
       semver: 6.3.1
@@ -6272,7 +6399,6 @@ packages:
     cpu: [ppc64]
     os: [aix]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/android-arm64@0.18.20:
@@ -6307,7 +6433,6 @@ packages:
     cpu: [arm64]
     os: [android]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/android-arm@0.18.20:
@@ -6342,7 +6467,6 @@ packages:
     cpu: [arm]
     os: [android]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/android-x64@0.18.20:
@@ -6377,7 +6501,6 @@ packages:
     cpu: [x64]
     os: [android]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/darwin-arm64@0.18.20:
@@ -6412,7 +6535,6 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/darwin-x64@0.18.20:
@@ -6447,7 +6569,6 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/freebsd-arm64@0.18.20:
@@ -6482,7 +6603,6 @@ packages:
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/freebsd-x64@0.18.20:
@@ -6517,7 +6637,6 @@ packages:
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-arm64@0.18.20:
@@ -6552,7 +6671,6 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-arm@0.18.20:
@@ -6587,7 +6705,6 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-ia32@0.18.20:
@@ -6622,7 +6739,6 @@ packages:
     cpu: [ia32]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-loong64@0.18.20:
@@ -6657,7 +6773,6 @@ packages:
     cpu: [loong64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-mips64el@0.18.20:
@@ -6692,7 +6807,6 @@ packages:
     cpu: [mips64el]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-ppc64@0.18.20:
@@ -6727,7 +6841,6 @@ packages:
     cpu: [ppc64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-riscv64@0.18.20:
@@ -6762,7 +6875,6 @@ packages:
     cpu: [riscv64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-s390x@0.18.20:
@@ -6797,7 +6909,6 @@ packages:
     cpu: [s390x]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/linux-x64@0.18.20:
@@ -6832,7 +6943,6 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/netbsd-x64@0.18.20:
@@ -6867,7 +6977,6 @@ packages:
     cpu: [x64]
     os: [netbsd]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/openbsd-x64@0.18.20:
@@ -6902,7 +7011,6 @@ packages:
     cpu: [x64]
     os: [openbsd]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/sunos-x64@0.18.20:
@@ -6937,7 +7045,6 @@ packages:
     cpu: [x64]
     os: [sunos]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/win32-arm64@0.18.20:
@@ -6972,7 +7079,6 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/win32-ia32@0.18.20:
@@ -7007,7 +7113,6 @@ packages:
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@esbuild/win32-x64@0.18.20:
@@ -7042,7 +7147,6 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@eslint-community/eslint-utils@4.4.0(eslint@8.56.0):
@@ -7311,7 +7415,7 @@ packages:
       '@expo/env': 0.2.1
       '@expo/json-file': 8.3.0
       '@expo/spawn-async': 1.7.2
-      '@react-native/babel-preset': 0.73.21(@babel/core@7.23.7)(@babel/preset-env@7.23.7)
+      '@react-native/babel-preset': 0.73.21(@babel/core@7.23.7)(@babel/preset-env@7.24.0)
       babel-preset-fbjs: 3.4.0(@babel/core@7.23.7)
       chalk: 4.1.2
       debug: 4.3.4(supports-color@6.1.0)
@@ -8558,7 +8662,7 @@ packages:
     dependencies:
       '@angular/compiler-cli': 17.3.3(@angular/compiler@17.3.3)(typescript@5.2.2)
       typescript: 5.2.2
-      webpack: 5.90.3(esbuild@0.19.11)
+      webpack: 5.90.3(esbuild@0.20.2)
     dev: true
 
   /@nicolo-ribaudo/eslint-scope-5-internals@5.1.1-v1:
@@ -9065,7 +9169,7 @@ packages:
       react-refresh: 0.11.0
       schema-utils: 3.3.0
       source-map: 0.7.4
-      webpack: 5.89.0(esbuild@0.19.11)
+      webpack: 5.89.0(esbuild@0.20.2)
       webpack-dev-server: 4.15.1(webpack@5.89.0)
     dev: false
 
@@ -9457,7 +9561,7 @@ packages:
     peerDependencies:
       react-native: '>=0.59'
     dependencies:
-      react-native: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.23.7)(react@18.2.0)
+      react-native: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.24.0)(react@18.2.0)
     dev: false
 
   /@react-native/assets-registry@0.73.1:
@@ -9470,6 +9574,16 @@ packages:
     engines: {node: '>=18'}
     dependencies:
       '@react-native/codegen': 0.73.3(@babel/preset-env@7.23.7)
+    transitivePeerDependencies:
+      - '@babel/preset-env'
+      - supports-color
+    dev: false
+
+  /@react-native/babel-plugin-codegen@0.73.4(@babel/preset-env@7.24.0):
+    resolution: {integrity: sha512-XzRd8MJGo4Zc5KsphDHBYJzS1ryOHg8I2gOZDAUCGcwLFhdyGu1zBNDJYH2GFyDrInn9TzAbRIf3d4O+eltXQQ==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@react-native/codegen': 0.73.3(@babel/preset-env@7.24.0)
     transitivePeerDependencies:
       - '@babel/preset-env'
       - supports-color
@@ -9528,6 +9642,59 @@ packages:
       - supports-color
     dev: false
 
+  /@react-native/babel-preset@0.73.21(@babel/core@7.23.7)(@babel/preset-env@7.24.0):
+    resolution: {integrity: sha512-WlFttNnySKQMeujN09fRmrdWqh46QyJluM5jdtDNrkl/2Hx6N4XeDUGhABvConeK95OidVO7sFFf7sNebVXogA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@babel/core': '*'
+    dependencies:
+      '@babel/core': 7.23.7
+      '@babel/plugin-proposal-async-generator-functions': 7.20.7(@babel/core@7.23.7)
+      '@babel/plugin-proposal-class-properties': 7.18.6(@babel/core@7.23.7)
+      '@babel/plugin-proposal-export-default-from': 7.22.17(@babel/core@7.23.7)
+      '@babel/plugin-proposal-nullish-coalescing-operator': 7.18.6(@babel/core@7.23.7)
+      '@babel/plugin-proposal-numeric-separator': 7.18.6(@babel/core@7.23.7)
+      '@babel/plugin-proposal-object-rest-spread': 7.20.7(@babel/core@7.23.7)
+      '@babel/plugin-proposal-optional-catch-binding': 7.18.6(@babel/core@7.23.7)
+      '@babel/plugin-proposal-optional-chaining': 7.21.0(@babel/core@7.23.7)
+      '@babel/plugin-syntax-dynamic-import': 7.8.3(@babel/core@7.23.7)
+      '@babel/plugin-syntax-export-default-from': 7.22.5(@babel/core@7.23.7)
+      '@babel/plugin-syntax-flow': 7.22.5(@babel/core@7.23.7)
+      '@babel/plugin-syntax-nullish-coalescing-operator': 7.8.3(@babel/core@7.23.7)
+      '@babel/plugin-syntax-optional-chaining': 7.8.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-arrow-functions': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-async-to-generator': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-block-scoping': 7.23.4(@babel/core@7.23.7)
+      '@babel/plugin-transform-classes': 7.23.8(@babel/core@7.23.7)
+      '@babel/plugin-transform-computed-properties': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-destructuring': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-flow-strip-types': 7.22.5(@babel/core@7.23.7)
+      '@babel/plugin-transform-function-name': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-literals': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-modules-commonjs': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-named-capturing-groups-regex': 7.22.5(@babel/core@7.23.7)
+      '@babel/plugin-transform-parameters': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-private-methods': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-private-property-in-object': 7.23.4(@babel/core@7.23.7)
+      '@babel/plugin-transform-react-display-name': 7.22.5(@babel/core@7.23.7)
+      '@babel/plugin-transform-react-jsx': 7.22.15(@babel/core@7.23.7)
+      '@babel/plugin-transform-react-jsx-self': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-react-jsx-source': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-runtime': 7.23.7(@babel/core@7.23.7)
+      '@babel/plugin-transform-shorthand-properties': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-spread': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-sticky-regex': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-typescript': 7.23.6(@babel/core@7.23.7)
+      '@babel/plugin-transform-unicode-regex': 7.23.3(@babel/core@7.23.7)
+      '@babel/template': 7.23.9
+      '@react-native/babel-plugin-codegen': 0.73.4(@babel/preset-env@7.24.0)
+      babel-plugin-transform-flow-enums: 0.0.2(@babel/core@7.23.7)
+      react-refresh: 0.14.0
+    transitivePeerDependencies:
+      - '@babel/preset-env'
+      - supports-color
+    dev: false
+
   /@react-native/codegen@0.73.3(@babel/preset-env@7.23.7):
     resolution: {integrity: sha512-sxslCAAb8kM06vGy9Jyh4TtvjhcP36k/rvj2QE2Jdhdm61KvfafCATSIsOfc0QvnduWFcpXUPvAVyYwuv7PYDg==}
     engines: {node: '>=18'}
@@ -9546,14 +9713,32 @@ packages:
       - supports-color
     dev: false
 
-  /@react-native/community-cli-plugin@0.73.16(@babel/core@7.23.7)(@babel/preset-env@7.23.7):
+  /@react-native/codegen@0.73.3(@babel/preset-env@7.24.0):
+    resolution: {integrity: sha512-sxslCAAb8kM06vGy9Jyh4TtvjhcP36k/rvj2QE2Jdhdm61KvfafCATSIsOfc0QvnduWFcpXUPvAVyYwuv7PYDg==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@babel/preset-env': ^7.1.6
+    dependencies:
+      '@babel/parser': 7.23.9
+      '@babel/preset-env': 7.24.0(@babel/core@7.23.7)
+      flow-parser: 0.206.0
+      glob: 7.2.3
+      invariant: 2.2.4
+      jscodeshift: 0.14.0(@babel/preset-env@7.24.0)
+      mkdirp: 0.5.6
+      nullthrows: 1.1.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /@react-native/community-cli-plugin@0.73.16(@babel/core@7.23.7)(@babel/preset-env@7.24.0):
     resolution: {integrity: sha512-eNH3v3qJJF6f0n/Dck90qfC9gVOR4coAXMTdYECO33GfgjTi+73vf/SBqlXw9HICH/RNZYGPM3wca4FRF7TYeQ==}
     engines: {node: '>=18'}
     dependencies:
       '@react-native-community/cli-server-api': 12.3.2
       '@react-native-community/cli-tools': 12.3.2
       '@react-native/dev-middleware': 0.73.7
-      '@react-native/metro-babel-transformer': 0.73.15(@babel/core@7.23.7)(@babel/preset-env@7.23.7)
+      '@react-native/metro-babel-transformer': 0.73.15(@babel/core@7.23.7)(@babel/preset-env@7.24.0)
       chalk: 4.1.2
       execa: 5.1.1
       metro: 0.80.5
@@ -9604,14 +9789,14 @@ packages:
     engines: {node: '>=18'}
     dev: false
 
-  /@react-native/metro-babel-transformer@0.73.15(@babel/core@7.23.7)(@babel/preset-env@7.23.7):
+  /@react-native/metro-babel-transformer@0.73.15(@babel/core@7.23.7)(@babel/preset-env@7.24.0):
     resolution: {integrity: sha512-LlkSGaXCz+xdxc9819plmpsl4P4gZndoFtpjN3GMBIu6f7TBV0GVbyJAU4GE8fuAWPVSVL5ArOcdkWKSbI1klw==}
     engines: {node: '>=18'}
     peerDependencies:
       '@babel/core': '*'
     dependencies:
       '@babel/core': 7.23.7
-      '@react-native/babel-preset': 0.73.21(@babel/core@7.23.7)(@babel/preset-env@7.23.7)
+      '@react-native/babel-preset': 0.73.21(@babel/core@7.23.7)(@babel/preset-env@7.24.0)
       hermes-parser: 0.15.0
       nullthrows: 1.1.1
     transitivePeerDependencies:
@@ -9634,7 +9819,7 @@ packages:
     dependencies:
       invariant: 2.2.4
       nullthrows: 1.1.1
-      react-native: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.23.7)(react@18.2.0)
+      react-native: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.24.0)(react@18.2.0)
     dev: false
 
   /@react-navigation/core@6.4.10(react@18.2.0):
@@ -9661,7 +9846,7 @@ packages:
     dependencies:
       '@react-navigation/native': 6.1.6(react-native@0.73.4)(react@18.2.0)
       react: 18.2.0
-      react-native: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.23.7)(react@18.2.0)
+      react-native: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.24.0)(react@18.2.0)
       react-native-safe-area-context: 4.9.0(react-native@0.73.4)(react@18.2.0)
     dev: false
 
@@ -9676,7 +9861,7 @@ packages:
       fast-deep-equal: 3.1.3
       nanoid: 3.3.7
       react: 18.2.0
-      react-native: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.23.7)(react@18.2.0)
+      react-native: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.24.0)(react@18.2.0)
     dev: false
 
   /@react-navigation/routers@6.1.9:
@@ -9699,7 +9884,7 @@ packages:
       '@react-navigation/native': 6.1.6(react-native@0.73.4)(react@18.2.0)
       color: 4.2.3
       react: 18.2.0
-      react-native: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.23.7)(react@18.2.0)
+      react-native: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.24.0)(react@18.2.0)
       react-native-gesture-handler: 2.15.0(react-native@0.73.4)(react@18.2.0)
       react-native-safe-area-context: 4.9.0(react-native@0.73.4)(react@18.2.0)
       react-native-screens: 3.29.0(react-native@0.73.4)(react@18.2.0)
@@ -10474,6 +10659,22 @@ packages:
       - supports-color
     dev: true
 
+  /@sveltejs/vite-plugin-svelte-inspector@2.0.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.5):
+    resolution: {integrity: sha512-gjr9ZFg1BSlIpfZ4PRewigrvYmHWbDrq2uvvPB1AmTWKuM+dI1JXQSUu2pIrYLb/QncyiIGkFDFKTwJ0XqQZZg==}
+    engines: {node: ^18.0.0 || >=20}
+    peerDependencies:
+      '@sveltejs/vite-plugin-svelte': ^3.0.0
+      svelte: ^4.0.0 || ^5.0.0-next.0
+      vite: ^5.0.0
+    dependencies:
+      '@sveltejs/vite-plugin-svelte': 3.0.2(svelte@4.2.10)(vite@5.1.5)
+      debug: 4.3.4(supports-color@6.1.0)
+      svelte: 4.2.10
+      vite: 5.1.5(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.10)(vite@5.1.4):
     resolution: {integrity: sha512-MpmF/cju2HqUls50WyTHQBZUV3ovV/Uk8k66AN2gwHogNAG8wnW8xtZDhzNBsFJJuvmq1qnzA5kE7YfMJNFv2Q==}
     engines: {node: ^18.0.0 || >=20}
@@ -10490,6 +10691,26 @@ packages:
       svelte-hmr: 0.15.3(svelte@4.2.10)
       vite: 5.1.4(@types/node@18.19.3)
       vitefu: 0.2.5(vite@5.1.4)
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.10)(vite@5.1.5):
+    resolution: {integrity: sha512-MpmF/cju2HqUls50WyTHQBZUV3ovV/Uk8k66AN2gwHogNAG8wnW8xtZDhzNBsFJJuvmq1qnzA5kE7YfMJNFv2Q==}
+    engines: {node: ^18.0.0 || >=20}
+    peerDependencies:
+      svelte: ^4.0.0 || ^5.0.0-next.0
+      vite: ^5.0.0
+    dependencies:
+      '@sveltejs/vite-plugin-svelte-inspector': 2.0.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.1.5)
+      debug: 4.3.4(supports-color@6.1.0)
+      deepmerge: 4.3.1
+      kleur: 4.1.5
+      magic-string: 0.30.5
+      svelte: 4.2.10
+      svelte-hmr: 0.15.3(svelte@4.2.10)
+      vite: 5.1.5(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+      vitefu: 0.2.5(vite@5.1.5)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -10614,7 +10835,7 @@ packages:
       tslib: 2.6.2
     dev: true
 
-  /@tanstack/config@0.4.4(@types/node@18.19.3)(esbuild@0.19.11)(rollup@4.6.0)(typescript@5.2.2)(vite@5.1.4):
+  /@tanstack/config@0.4.4(@types/node@18.19.3)(esbuild@0.20.2)(rollup@4.6.0)(typescript@5.2.2)(vite@5.1.4):
     resolution: {integrity: sha512-8WBvww2SHhN2YAQvvlmL7wwaspFnEwWVeyO7nWYXEp6Ho1WAkvRgzwofz7iGTmRVAAFsM8jAn4oawkHqvZBxeA==}
     engines: {node: '>=18'}
     hasBin: true
@@ -10623,7 +10844,7 @@ packages:
       chalk: 5.3.0
       commander: 11.1.0
       current-git-branch: 1.1.0
-      esbuild-register: 3.5.0(esbuild@0.19.11)
+      esbuild-register: 3.5.0(esbuild@0.20.2)
       git-log-parser: 1.2.0
       interpret: 3.1.1
       jsonfile: 6.1.0
@@ -11624,6 +11845,22 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
+  /@vitejs/plugin-react@4.2.1(vite@5.1.5):
+    resolution: {integrity: sha512-oojO9IDc4nCUUi8qIR11KoQm0XFFLIwsRBwHRR4d/88IWghn1y6ckz/bJ8GHDCsYEJee8mDzqtJxh15/cisJNQ==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    peerDependencies:
+      vite: ^4.2.0 || ^5.0.0
+    dependencies:
+      '@babel/core': 7.23.7
+      '@babel/plugin-transform-react-jsx-self': 7.23.3(@babel/core@7.23.7)
+      '@babel/plugin-transform-react-jsx-source': 7.23.3(@babel/core@7.23.7)
+      '@types/babel__core': 7.20.5
+      react-refresh: 0.14.0
+      vite: 5.1.5(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /@vitejs/plugin-vue@5.0.4(vite@5.1.4)(vue@3.3.0):
     resolution: {integrity: sha512-WS3hevEszI6CEVEx28F8RjTX97k3KsrcY6kvTg7+Whm5y3oYvcqzVeGCU3hxSAn4uY2CLCkeokkGKpoctccilQ==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -11632,6 +11869,17 @@ packages:
       vue: ^3.2.25
     dependencies:
       vite: 5.1.4(@types/node@18.19.3)
+      vue: 3.3.0
+    dev: true
+
+  /@vitejs/plugin-vue@5.0.4(vite@5.1.5)(vue@3.3.0):
+    resolution: {integrity: sha512-WS3hevEszI6CEVEx28F8RjTX97k3KsrcY6kvTg7+Whm5y3oYvcqzVeGCU3hxSAn4uY2CLCkeokkGKpoctccilQ==}
+    engines: {node: ^18.0.0 || >=20.0.0}
+    peerDependencies:
+      vite: ^5.0.0
+      vue: ^3.2.25
+    dependencies:
+      vite: 5.1.5(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
       vue: 3.3.0
     dev: true
 
@@ -12974,7 +13222,7 @@ packages:
       loader-utils: 2.0.4
       make-dir: 3.1.0
       schema-utils: 2.7.1
-      webpack: 5.89.0(esbuild@0.19.11)
+      webpack: 5.89.0(esbuild@0.20.2)
     dev: false
 
   /babel-loader@9.1.3(@babel/core@7.24.0)(webpack@5.90.3):
@@ -12987,7 +13235,7 @@ packages:
       '@babel/core': 7.24.0
       find-cache-dir: 4.0.0
       schema-utils: 4.2.0
-      webpack: 5.90.3(esbuild@0.19.11)
+      webpack: 5.90.3(esbuild@0.20.2)
     dev: true
 
   /babel-plugin-add-module-exports@0.2.1:
@@ -13096,6 +13344,18 @@ packages:
     dependencies:
       '@babel/core': 7.23.7
       '@babel/helper-define-polyfill-provider': 0.4.4(@babel/core@7.23.7)
+      core-js-compat: 3.35.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /babel-plugin-polyfill-corejs3@0.9.0(@babel/core@7.23.7):
+    resolution: {integrity: sha512-7nZPG1uzK2Ymhy/NbaOWTg3uibM2BmGASS4vHS4szRZAIR8R6GwA/xAujpdrXU5iyklrimWnLWU+BLF9suPTqg==}
+    peerDependencies:
+      '@babel/core': ^7.4.0 || ^8.0.0-0 <8.0.0
+    dependencies:
+      '@babel/core': 7.23.7
+      '@babel/helper-define-polyfill-provider': 0.5.0(@babel/core@7.23.7)
       core-js-compat: 3.35.1
     transitivePeerDependencies:
       - supports-color
@@ -14698,7 +14958,7 @@ packages:
       normalize-path: 3.0.0
       schema-utils: 4.2.0
       serialize-javascript: 6.0.1
-      webpack: 5.90.3(esbuild@0.19.11)
+      webpack: 5.90.3(esbuild@0.20.2)
     dev: true
 
   /core-js-compat@3.35.1:
@@ -15124,7 +15384,7 @@ packages:
       postcss-modules-values: 4.0.0(postcss@8.4.35)
       postcss-value-parser: 4.2.0
       semver: 7.6.0
-      webpack: 5.90.3(esbuild@0.19.11)
+      webpack: 5.90.3(esbuild@0.20.2)
     dev: true
 
   /css-loader@6.8.1(webpack@5.89.0):
@@ -15141,10 +15401,10 @@ packages:
       postcss-modules-values: 4.0.0(postcss@8.4.35)
       postcss-value-parser: 4.2.0
       semver: 7.6.0
-      webpack: 5.89.0(esbuild@0.19.11)
+      webpack: 5.89.0(esbuild@0.20.2)
     dev: false
 
-  /css-minimizer-webpack-plugin@3.4.1(esbuild@0.19.11)(webpack@5.89.0):
+  /css-minimizer-webpack-plugin@3.4.1(esbuild@0.20.2)(webpack@5.89.0):
     resolution: {integrity: sha512-1u6D71zeIfgngN2XNRJefc/hY7Ybsxd74Jm4qngIXyUEk7fss3VUzuHxLAq/R8NAba4QU9OUSaMZlbpRc7bM4Q==}
     engines: {node: '>= 12.13.0'}
     peerDependencies:
@@ -15164,13 +15424,13 @@ packages:
         optional: true
     dependencies:
       cssnano: 5.1.15(postcss@8.4.35)
-      esbuild: 0.19.11
+      esbuild: 0.20.2
       jest-worker: 27.5.1
       postcss: 8.4.35
       schema-utils: 4.2.0
       serialize-javascript: 6.0.1
       source-map: 0.6.1
-      webpack: 5.89.0(esbuild@0.19.11)
+      webpack: 5.89.0(esbuild@0.20.2)
     dev: false
 
   /css-prefers-color-scheme@3.1.1:
@@ -16461,7 +16721,7 @@ packages:
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
     dev: true
 
-  /esbuild-plugin-solid@0.5.0(esbuild@0.19.11)(solid-js@1.8.14):
+  /esbuild-plugin-solid@0.5.0(esbuild@0.20.2)(solid-js@1.8.14):
     resolution: {integrity: sha512-ITK6n+0ayGFeDVUZWNMxX+vLsasEN1ILrg4pISsNOQ+mq4ljlJJiuXotInd+HE0MzwTcA9wExT1yzDE2hsqPsg==}
     peerDependencies:
       esbuild: '>=0.12'
@@ -16470,19 +16730,19 @@ packages:
       '@babel/core': 7.23.7
       '@babel/preset-typescript': 7.23.3(@babel/core@7.23.7)
       babel-preset-solid: 1.8.6(@babel/core@7.23.7)
-      esbuild: 0.19.11
+      esbuild: 0.20.2
       solid-js: 1.8.14
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /esbuild-register@3.5.0(esbuild@0.19.11):
+  /esbuild-register@3.5.0(esbuild@0.20.2):
     resolution: {integrity: sha512-+4G/XmakeBAsvJuDugJvtyF1x+XJT4FMocynNpxrvEBViirpfUn2PgNpCHedfWhF4WokNsO/OvMKrmJOIJsI5A==}
     peerDependencies:
       esbuild: '>=0.12 <1'
     dependencies:
       debug: 4.3.4(supports-color@6.1.0)
-      esbuild: 0.19.11
+      esbuild: 0.20.2
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -16620,8 +16880,6 @@ packages:
       '@esbuild/win32-arm64': 0.20.2
       '@esbuild/win32-ia32': 0.20.2
       '@esbuild/win32-x64': 0.20.2
-    dev: true
-    optional: true
 
   /escalade@3.1.1:
     resolution: {integrity: sha512-k0er2gUkLf8O0zKJiAhmkTnJlTvINGv7ygDNPbeIsX/TJjGJZHuh9B2UxbsaEkmlEo9MfhrSzmhIlhRlI2GXnw==}
@@ -17127,7 +17385,7 @@ packages:
       micromatch: 4.0.5
       normalize-path: 3.0.0
       schema-utils: 4.2.0
-      webpack: 5.89.0(esbuild@0.19.11)
+      webpack: 5.89.0(esbuild@0.20.2)
     dev: false
 
   /eslint@8.56.0:
@@ -17759,7 +18017,7 @@ packages:
     dependencies:
       loader-utils: 2.0.4
       schema-utils: 3.3.0
-      webpack: 5.89.0(esbuild@0.19.11)
+      webpack: 5.89.0(esbuild@0.20.2)
     dev: false
 
   /file-uri-to-path@1.0.0:
@@ -18069,7 +18327,7 @@ packages:
       semver: 7.6.0
       tapable: 1.1.3
       typescript: 5.2.2
-      webpack: 5.89.0(esbuild@0.19.11)
+      webpack: 5.89.0(esbuild@0.20.2)
     dev: false
 
   /form-data@3.0.1:
@@ -19011,7 +19269,7 @@ packages:
       lodash: 4.17.21
       pretty-error: 4.0.0
       tapable: 2.2.1
-      webpack: 5.89.0(esbuild@0.19.11)
+      webpack: 5.89.0(esbuild@0.20.2)
     dev: false
 
   /htmlparser2@6.1.0:
@@ -21458,6 +21716,36 @@ packages:
       - supports-color
     dev: false
 
+  /jscodeshift@0.14.0(@babel/preset-env@7.24.0):
+    resolution: {integrity: sha512-7eCC1knD7bLUPuSCwXsMZUH51O8jIcoVyKtI6P0XM0IVzlGjckPy3FIwQlorzbN0Sg79oK+RlohN32Mqf/lrYA==}
+    hasBin: true
+    peerDependencies:
+      '@babel/preset-env': ^7.1.6
+    dependencies:
+      '@babel/core': 7.23.7
+      '@babel/parser': 7.23.9
+      '@babel/plugin-proposal-class-properties': 7.18.6(@babel/core@7.23.7)
+      '@babel/plugin-proposal-nullish-coalescing-operator': 7.18.6(@babel/core@7.23.7)
+      '@babel/plugin-proposal-optional-chaining': 7.21.0(@babel/core@7.23.7)
+      '@babel/plugin-transform-modules-commonjs': 7.23.3(@babel/core@7.23.7)
+      '@babel/preset-env': 7.24.0(@babel/core@7.23.7)
+      '@babel/preset-flow': 7.22.15(@babel/core@7.23.7)
+      '@babel/preset-typescript': 7.23.3(@babel/core@7.23.7)
+      '@babel/register': 7.22.15(@babel/core@7.23.7)
+      babel-core: 7.0.0-bridge.0(@babel/core@7.23.7)
+      chalk: 4.1.2
+      flow-parser: 0.219.2
+      graceful-fs: 4.2.11
+      micromatch: 4.0.5
+      neo-async: 2.6.2
+      node-dir: 0.1.17
+      recast: 0.21.5
+      temp: 0.8.4
+      write-file-atomic: 2.4.3
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /jscodeshift@0.15.1:
     resolution: {integrity: sha512-hIJfxUy8Rt4HkJn/zZPU9ChKfKZM1342waJ1QC2e2YsPcWhM+3BJ4dcfQCzArTrk1jJeNLB341H+qOcEHRxJZg==}
     hasBin: true
@@ -21899,7 +22187,7 @@ packages:
     dependencies:
       klona: 2.0.6
       less: 4.2.0
-      webpack: 5.90.3(esbuild@0.19.11)
+      webpack: 5.90.3(esbuild@0.20.2)
     dev: true
 
   /less@4.2.0:
@@ -21949,10 +22237,8 @@ packages:
     peerDependenciesMeta:
       webpack:
         optional: true
-      webpack-sources:
-        optional: true
     dependencies:
-      webpack: 5.90.3(esbuild@0.19.11)
+      webpack: 5.90.3(esbuild@0.20.2)
       webpack-sources: 3.2.3
     dev: true
 
@@ -22981,7 +23267,7 @@ packages:
       webpack: ^5.0.0
     dependencies:
       schema-utils: 4.2.0
-      webpack: 5.89.0(esbuild@0.19.11)
+      webpack: 5.89.0(esbuild@0.20.2)
     dev: false
 
   /mini-css-extract-plugin@2.8.1(webpack@5.90.3):
@@ -22992,7 +23278,7 @@ packages:
     dependencies:
       schema-utils: 4.2.0
       tapable: 2.2.1
-      webpack: 5.90.3(esbuild@0.19.11)
+      webpack: 5.90.3(esbuild@0.20.2)
     dev: true
 
   /minimalistic-assert@1.0.1:
@@ -25496,7 +25782,7 @@ packages:
       klona: 2.0.6
       postcss: 8.4.35
       semver: 7.6.0
-      webpack: 5.89.0(esbuild@0.19.11)
+      webpack: 5.89.0(esbuild@0.20.2)
     dev: false
 
   /postcss-loader@8.1.1(postcss@8.4.35)(typescript@5.2.2)(webpack@5.90.3):
@@ -25516,7 +25802,7 @@ packages:
       jiti: 1.21.0
       postcss: 8.4.35
       semver: 7.6.0
-      webpack: 5.90.3(esbuild@0.19.11)
+      webpack: 5.90.3(esbuild@0.20.2)
     transitivePeerDependencies:
       - typescript
     dev: true
@@ -26890,7 +27176,7 @@ packages:
       strip-ansi: 6.0.1
       text-table: 0.2.0
       typescript: 5.2.2
-      webpack: 5.89.0(esbuild@0.19.11)
+      webpack: 5.89.0(esbuild@0.20.2)
     transitivePeerDependencies:
       - eslint
       - supports-color
@@ -26980,7 +27266,7 @@ packages:
       lodash: 4.17.21
       prop-types: 15.8.1
       react: 18.2.0
-      react-native: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.23.7)(react@18.2.0)
+      react-native: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.24.0)(react@18.2.0)
     dev: false
 
   /react-native-paper@5.8.0(react-native-safe-area-context@4.9.0)(react-native-vector-icons@10.0.0)(react-native@0.73.4)(react@18.2.0):
@@ -26994,7 +27280,7 @@ packages:
       '@callstack/react-theme-provider': 3.0.9(react@18.2.0)
       color: 3.2.1
       react: 18.2.0
-      react-native: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.23.7)(react@18.2.0)
+      react-native: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.24.0)(react@18.2.0)
       react-native-safe-area-context: 4.9.0(react-native@0.73.4)(react@18.2.0)
       react-native-vector-icons: 10.0.0
       use-latest-callback: 0.1.7(react@18.2.0)
@@ -27023,7 +27309,7 @@ packages:
       convert-source-map: 2.0.0
       invariant: 2.2.4
       react: 18.2.0
-      react-native: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.23.7)(react@18.2.0)
+      react-native: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.24.0)(react@18.2.0)
     dev: false
 
   /react-native-safe-area-context@4.9.0(react-native@0.73.4)(react@18.2.0):
@@ -27033,7 +27319,7 @@ packages:
       react-native: '*'
     dependencies:
       react: 18.2.0
-      react-native: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.23.7)(react@18.2.0)
+      react-native: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.24.0)(react@18.2.0)
     dev: false
 
   /react-native-screens@3.29.0(react-native@0.73.4)(react@18.2.0):
@@ -27044,7 +27330,7 @@ packages:
     dependencies:
       react: 18.2.0
       react-freeze: 1.0.3(react@18.2.0)
-      react-native: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.23.7)(react@18.2.0)
+      react-native: 0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.24.0)(react@18.2.0)
       warn-once: 0.1.1
     dev: false
 
@@ -27076,7 +27362,7 @@ packages:
       - encoding
     dev: false
 
-  /react-native@0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.23.7)(react@18.2.0):
+  /react-native@0.73.4(@babel/core@7.23.7)(@babel/preset-env@7.24.0)(react@18.2.0):
     resolution: {integrity: sha512-VtS+Yr6OOTIuJGDECIYWzNU8QpJjASQYvMtfa/Hvm/2/h5GdB6W9H9TOmh13x07Lj4AOhNMx3XSsz6TdrO4jIg==}
     engines: {node: '>=18'}
     hasBin: true
@@ -27088,8 +27374,8 @@ packages:
       '@react-native-community/cli-platform-android': 12.3.2
       '@react-native-community/cli-platform-ios': 12.3.2
       '@react-native/assets-registry': 0.73.1
-      '@react-native/codegen': 0.73.3(@babel/preset-env@7.23.7)
-      '@react-native/community-cli-plugin': 0.73.16(@babel/core@7.23.7)(@babel/preset-env@7.23.7)
+      '@react-native/codegen': 0.73.3(@babel/preset-env@7.24.0)
+      '@react-native/community-cli-plugin': 0.73.16(@babel/core@7.23.7)(@babel/preset-env@7.24.0)
       '@react-native/gradle-plugin': 0.73.4
       '@react-native/js-polyfills': 0.73.1
       '@react-native/normalize-colors': 0.73.2
@@ -27264,7 +27550,7 @@ packages:
       - webpack-plugin-serve
     dev: false
 
-  /react-scripts@5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(esbuild@0.19.11)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(react@18.2.0)(typescript@5.2.2):
+  /react-scripts@5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(esbuild@0.20.2)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(react@18.2.0)(typescript@5.2.2):
     resolution: {integrity: sha512-8VAmEm/ZAwQzJ+GOMLbBsTdDKOpuZh7RPs0UymvBR2vRk4iZWCskjbFnxqjrzoIvlNNRZ3QJFx6/qDSi6zSnaQ==}
     engines: {node: '>=14.0.0'}
     hasBin: true
@@ -27288,7 +27574,7 @@ packages:
       camelcase: 6.3.0
       case-sensitive-paths-webpack-plugin: 2.4.0
       css-loader: 6.8.1(webpack@5.89.0)
-      css-minimizer-webpack-plugin: 3.4.1(esbuild@0.19.11)(webpack@5.89.0)
+      css-minimizer-webpack-plugin: 3.4.1(esbuild@0.20.2)(webpack@5.89.0)
       dotenv: 10.0.0
       dotenv-expand: 5.1.0
       eslint: 8.56.0
@@ -27319,9 +27605,9 @@ packages:
       source-map-loader: 3.0.2(webpack@5.89.0)
       style-loader: 3.3.3(webpack@5.89.0)
       tailwindcss: 3.4.1
-      terser-webpack-plugin: 5.3.9(esbuild@0.19.11)(webpack@5.89.0)
+      terser-webpack-plugin: 5.3.9(esbuild@0.20.2)(webpack@5.89.0)
       typescript: 5.2.2
-      webpack: 5.89.0(esbuild@0.19.11)
+      webpack: 5.89.0(esbuild@0.20.2)
       webpack-dev-server: 4.15.1(webpack@5.89.0)
       webpack-manifest-plugin: 4.1.1(webpack@5.89.0)
       workbox-webpack-plugin: 6.6.0(webpack@5.89.0)
@@ -28246,7 +28532,7 @@ packages:
     dependencies:
       klona: 2.0.6
       neo-async: 2.6.2
-      webpack: 5.89.0(esbuild@0.19.11)
+      webpack: 5.89.0(esbuild@0.20.2)
     dev: false
 
   /sass-loader@14.1.1(sass@1.71.1)(webpack@5.90.3):
@@ -28272,7 +28558,7 @@ packages:
     dependencies:
       neo-async: 2.6.2
       sass: 1.71.1
-      webpack: 5.90.3(esbuild@0.19.11)
+      webpack: 5.90.3(esbuild@0.20.2)
     dev: true
 
   /sass@1.69.7:
@@ -28946,7 +29232,7 @@ packages:
       abab: 2.0.6
       iconv-lite: 0.6.3
       source-map-js: 1.0.2
-      webpack: 5.89.0(esbuild@0.19.11)
+      webpack: 5.89.0(esbuild@0.20.2)
     dev: false
 
   /source-map-loader@5.0.0(webpack@5.90.3):
@@ -28957,7 +29243,7 @@ packages:
     dependencies:
       iconv-lite: 0.6.3
       source-map-js: 1.0.2
-      webpack: 5.90.3(esbuild@0.19.11)
+      webpack: 5.90.3(esbuild@0.20.2)
     dev: true
 
   /source-map-resolve@0.5.3:
@@ -29508,7 +29794,7 @@ packages:
     peerDependencies:
       webpack: ^5.0.0
     dependencies:
-      webpack: 5.89.0(esbuild@0.19.11)
+      webpack: 5.89.0(esbuild@0.20.2)
     dev: false
 
   /styled-jsx@5.1.1(@babel/core@7.23.7)(react@18.2.0):
@@ -30005,7 +30291,7 @@ packages:
       - bluebird
     dev: false
 
-  /terser-webpack-plugin@5.3.10(esbuild@0.19.11)(webpack@5.90.3):
+  /terser-webpack-plugin@5.3.10(esbuild@0.20.2)(webpack@5.90.3):
     resolution: {integrity: sha512-BKFPWlPDndPs+NGGCr1U59t0XScL5317Y0UReNrHaw9/FwhPENlq6bfgs+4yPfyP51vqC1bQ4rp1EfXW5ZSH9w==}
     engines: {node: '>= 10.13.0'}
     peerDependencies:
@@ -30022,15 +30308,15 @@ packages:
         optional: true
     dependencies:
       '@jridgewell/trace-mapping': 0.3.20
-      esbuild: 0.19.11
+      esbuild: 0.20.2
       jest-worker: 27.5.1
       schema-utils: 3.3.0
       serialize-javascript: 6.0.1
       terser: 5.29.1
-      webpack: 5.90.3(esbuild@0.19.11)
+      webpack: 5.90.3(esbuild@0.20.2)
     dev: true
 
-  /terser-webpack-plugin@5.3.9(esbuild@0.19.11)(webpack@5.89.0):
+  /terser-webpack-plugin@5.3.9(esbuild@0.20.2)(webpack@5.89.0):
     resolution: {integrity: sha512-ZuXsqE07EcggTWQjXUj+Aot/OMcD0bMKGgF63f7UxYcu5/AJF53aIpK1YoP5xR9l6s/Hy2b+t1AM0bLNPRuhwA==}
     engines: {node: '>= 10.13.0'}
     peerDependencies:
@@ -30047,12 +30333,12 @@ packages:
         optional: true
     dependencies:
       '@jridgewell/trace-mapping': 0.3.20
-      esbuild: 0.19.11
+      esbuild: 0.20.2
       jest-worker: 27.5.1
       schema-utils: 3.3.0
       serialize-javascript: 6.0.1
       terser: 5.26.0
-      webpack: 5.89.0(esbuild@0.19.11)
+      webpack: 5.89.0(esbuild@0.20.2)
     dev: false
 
   /terser@4.8.1:
@@ -30444,12 +30730,12 @@ packages:
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
 
-  /tsup-preset-solid@2.2.0(esbuild@0.19.11)(solid-js@1.8.14)(tsup@8.0.1):
+  /tsup-preset-solid@2.2.0(esbuild@0.20.2)(solid-js@1.8.14)(tsup@8.0.1):
     resolution: {integrity: sha512-sPAzeArmYkVAZNRN+m4tkiojdd0GzW/lCwd4+TQDKMENe8wr2uAuro1s0Z59ASmdBbkXoxLgCiNcuQMyiidMZg==}
     peerDependencies:
       tsup: ^8.0.0
     dependencies:
-      esbuild-plugin-solid: 0.5.0(esbuild@0.19.11)(solid-js@1.8.14)
+      esbuild-plugin-solid: 0.5.0(esbuild@0.20.2)(solid-js@1.8.14)
       tsup: 8.0.1(typescript@5.2.2)
     transitivePeerDependencies:
       - esbuild
@@ -31456,6 +31742,29 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
+  /vite-plugin-solid@2.9.1(@testing-library/jest-dom@6.4.2)(solid-js@1.8.14)(vite@5.1.5):
+    resolution: {integrity: sha512-RC4hj+lbvljw57BbMGDApvEOPEh14lwrr/GeXRLNQLcR1qnOdzOwwTSFy13Gj/6FNIZpBEl0bWPU+VYFawrqUw==}
+    peerDependencies:
+      '@testing-library/jest-dom': ^5.16.6 || ^5.17.0 || ^6.*
+      solid-js: ^1.7.2
+      vite: ^3.0.0 || ^4.0.0 || ^5.0.0
+    peerDependenciesMeta:
+      '@testing-library/jest-dom':
+        optional: true
+    dependencies:
+      '@babel/core': 7.23.7
+      '@testing-library/jest-dom': 6.4.2(vitest@1.3.1)
+      '@types/babel__core': 7.20.5
+      babel-preset-solid: 1.8.6(@babel/core@7.23.7)
+      merge-anything: 5.1.7
+      solid-js: 1.8.14
+      solid-refresh: 0.6.3(solid-js@1.8.14)
+      vite: 5.1.5(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+      vitefu: 0.2.5(vite@5.1.5)
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /vite@4.5.1(@types/node@18.19.3):
     resolution: {integrity: sha512-AXXFaAJ8yebyqzoNB9fu2pHoo/nWX+xZlaRwoeYUxEqBO+Zj4msE5G+BhGBll9lYEKv9Hfks52PAF2X7qDYXQA==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -31633,6 +31942,17 @@ packages:
         optional: true
     dependencies:
       vite: 5.1.4(@types/node@18.19.3)
+
+  /vitefu@0.2.5(vite@5.1.5):
+    resolution: {integrity: sha512-SgHtMLoqaeeGnd2evZ849ZbACbnwQCIwRH57t18FxcXoZop0uQu0uzlIhJBlF/eWVzuce0sHeqPcDo+evVcg8Q==}
+    peerDependencies:
+      vite: ^3.0.0 || ^4.0.0 || ^5.0.0
+    peerDependenciesMeta:
+      vite:
+        optional: true
+    dependencies:
+      vite: 5.1.5(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+    dev: true
 
   /vitest@1.3.1(@types/node@18.19.3)(jsdom@24.0.0):
     resolution: {integrity: sha512-/1QJqXs8YbCrfv/GPQ05wAZf2eakUPLPa18vkJAKE7RXOKfVHqMZZ1WlTjiwl6Gcn65M5vpNUB6EFLnEdRdEXQ==}
@@ -31887,7 +32207,7 @@ packages:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.89.0(esbuild@0.19.11)
+      webpack: 5.89.0(esbuild@0.20.2)
     dev: false
 
   /webpack-dev-middleware@5.3.3(webpack@5.90.3):
@@ -31901,7 +32221,7 @@ packages:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.90.3(esbuild@0.19.11)
+      webpack: 5.90.3(esbuild@0.20.2)
     dev: true
 
   /webpack-dev-middleware@6.1.2(webpack@5.90.3):
@@ -31918,7 +32238,7 @@ packages:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.90.3(esbuild@0.19.11)
+      webpack: 5.90.3(esbuild@0.20.2)
     dev: true
 
   /webpack-dev-server@3.11.1(webpack@4.44.2):
@@ -32012,7 +32332,7 @@ packages:
       serve-index: 1.9.1(supports-color@6.1.0)
       sockjs: 0.3.24
       spdy: 4.0.2(supports-color@6.1.0)
-      webpack: 5.89.0(esbuild@0.19.11)
+      webpack: 5.89.0(esbuild@0.20.2)
       webpack-dev-middleware: 5.3.3(webpack@5.89.0)
       ws: 8.16.0
     transitivePeerDependencies:
@@ -32063,7 +32383,7 @@ packages:
       serve-index: 1.9.1(supports-color@6.1.0)
       sockjs: 0.3.24
       spdy: 4.0.2(supports-color@6.1.0)
-      webpack: 5.90.3(esbuild@0.19.11)
+      webpack: 5.90.3(esbuild@0.20.2)
       webpack-dev-middleware: 5.3.3(webpack@5.90.3)
       ws: 8.16.0
     transitivePeerDependencies:
@@ -32101,7 +32421,7 @@ packages:
       webpack: ^4.44.2 || ^5.47.0
     dependencies:
       tapable: 2.2.1
-      webpack: 5.89.0(esbuild@0.19.11)
+      webpack: 5.89.0(esbuild@0.20.2)
       webpack-sources: 2.3.1
     dev: false
 
@@ -32144,7 +32464,7 @@ packages:
         optional: true
     dependencies:
       typed-assert: 1.0.9
-      webpack: 5.90.3(esbuild@0.19.11)
+      webpack: 5.90.3(esbuild@0.20.2)
     dev: true
 
   /webpack-virtual-modules@0.6.1:
@@ -32191,7 +32511,7 @@ packages:
       - supports-color
     dev: false
 
-  /webpack@5.89.0(esbuild@0.19.11):
+  /webpack@5.89.0(esbuild@0.20.2):
     resolution: {integrity: sha512-qyfIC10pOr70V+jkmud8tMfajraGCZMBWJtrmuBymQKCrLTRejBI8STDp1MCyZu/QTdZSeacCQYpYNQVOzX5kw==}
     engines: {node: '>=10.13.0'}
     hasBin: true
@@ -32222,7 +32542,7 @@ packages:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.9(esbuild@0.19.11)(webpack@5.89.0)
+      terser-webpack-plugin: 5.3.9(esbuild@0.20.2)(webpack@5.89.0)
       watchpack: 2.4.0
       webpack-sources: 3.2.3
     transitivePeerDependencies:
@@ -32231,7 +32551,7 @@ packages:
       - uglify-js
     dev: false
 
-  /webpack@5.90.3(esbuild@0.19.11):
+  /webpack@5.90.3(esbuild@0.20.2):
     resolution: {integrity: sha512-h6uDYlWCctQRuXBs1oYpVe6sFcWedl0dpcVaTf/YF67J9bKvwJajFulMVSYKHrksMB3I/pIagRzDxwxkebuzKA==}
     engines: {node: '>=10.13.0'}
     hasBin: true
@@ -32262,7 +32582,7 @@ packages:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(esbuild@0.19.11)(webpack@5.90.3)
+      terser-webpack-plugin: 5.3.10(esbuild@0.20.2)(webpack@5.90.3)
       watchpack: 2.4.0
       webpack-sources: 3.2.3
     transitivePeerDependencies:
@@ -32747,7 +33067,7 @@ packages:
       fast-json-stable-stringify: 2.1.0
       pretty-bytes: 5.6.0
       upath: 1.2.0
-      webpack: 5.89.0(esbuild@0.19.11)
+      webpack: 5.89.0(esbuild@0.20.2)
       webpack-sources: 1.4.3
       workbox-build: 6.6.0
     transitivePeerDependencies:
