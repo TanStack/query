@@ -13,7 +13,7 @@ React Query uses a technique called "structural sharing" to ensure that as many 
 
 ### referential identity
 
-The top level object returned from `useQuery`, `useInfinitQuery`, `useMutation` and the Array returned from `useQueries` is **not referentially stable**. It will be new a new reference on every render. However, the `data` properties returned from these hooks will be as stable as possible.
+The top level object returned from `useQuery`, `useInfiniteQuery`, `useMutation` and the Array returned from `useQueries` is **not referentially stable**. It will be new a new reference on every render. However, the `data` properties returned from these hooks will be as stable as possible.
 
 ## tracked properties
 
