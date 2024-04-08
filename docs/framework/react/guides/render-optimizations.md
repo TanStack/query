@@ -13,7 +13,7 @@ React Query uses a technique called "structural sharing" to ensure that as many 
 
 ### referential identity
 
-The top level object returned from `useQuery`, `useInfiniteQuery`, `useMutation` and the Array returned from `useQueries` is **not referentially stable**. It will be new a new reference on every render. However, the `data` properties returned from these hooks will be as stable as possible.
+The top level object returned from `useQuery`, `useInfiniteQuery`, `useMutation` and the Array returned from `useQueries` is **not referentially stable**. It will be a new reference on every render. However, the `data` properties returned from these hooks will be as stable as possible.
 
 ## tracked properties
 
@@ -50,7 +50,7 @@ The `select` function will only re-run if:
 - the `select` function itself changed referentially
 - `data` changed
 
-This means that an inlined `select` function, as shown above, will run on every render. To avoid this, you can wrap the `select` function in `useCallback`, or extract it so a stable function reference if it doesn't have any dependencies:
+This means that an inlined `select` function, as shown above, will run on every render. To avoid this, you can wrap the `select` function in `useCallback`, or extract it to a stable function reference if it doesn't have any dependencies:
 
 ```js
 // wrapped in useCallback
