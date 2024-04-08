@@ -25,3 +25,31 @@ const { isIdle, data: projects } = useQuery({
 ```
 
 [//]: # 'Example'
+[//]: # 'Example2'
+
+```tsx
+// Get the users ids
+const { data: userIds } = useQuery({
+  queryKey: ['users'],
+  queryFn: getUsersData,
+  select: (users) => users.map((user) => user.id),
+})
+
+const queries = computed(() => {
+  return userIds.value.length
+    ? userIds.value.map((id) => {
+        return {
+          queryKey: ['messages', id],
+          queryFn: () => getMessagesByUsers(id),
+        }
+      })
+    : []
+})
+
+// Then get the users messages
+const usersMessages = useQueries({
+  queries, // if users is undefined, an empty array will be returned
+})
+```
+
+[//]: # 'Example2'
