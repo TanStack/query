@@ -103,7 +103,7 @@ try {
 
 Together, these provide the same experience as before, but with added control to choose which component trees you want to reset. For more information, see:
 
-- [QueryErrorResetBoundary](../QueryErrorResetBoundary)
+- [QueryErrorResetBoundary](../reference/QueryErrorResetBoundary)
 - [useQueryErrorResetBoundary](../useQueryErrorResetBoundary)
 
 ### `QueryCache.getQuery()` has been replaced by `QueryCache.find()`.

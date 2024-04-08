@@ -180,7 +180,7 @@ ReactDOM.createRoot(rootElement).render(<App />)
 
 ### PersistQueryClientProvider
 
-For this use-case, you can use the `PersistQueryClientProvider`. It will make sure to subscribe / unsubscribe correctly according to the React component lifecycle, and it will also make sure that queries will not start fetching while we are still restoring. Queries will still render though, they will just be put into `fetchingState: 'idle'` until data has been restored. Then, they will refetch unless the restored data is _fresh_ enough, and _initialData_ will also be respected. It can be used _instead of_ the normal [QueryClientProvider](../QueryClientProvider):
+For this use-case, you can use the `PersistQueryClientProvider`. It will make sure to subscribe / unsubscribe correctly according to the React component lifecycle, and it will also make sure that queries will not start fetching while we are still restoring. Queries will still render though, they will just be put into `fetchingState: 'idle'` until data has been restored. Then, they will refetch unless the restored data is _fresh_ enough, and _initialData_ will also be respected. It can be used _instead of_ the normal [QueryClientProvider](../reference/QueryClientProvider):
 
 ```tsx
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
@@ -210,14 +210,14 @@ ReactDOM.createRoot(rootElement).render(
 
 #### Props
 
-`PersistQueryClientProvider` takes the same props as [QueryClientProvider](../QueryClientProvider), and additionally:
+`PersistQueryClientProvider` takes the same props as [QueryClientProvider](../reference/QueryClientProvider), and additionally:
 
 - `persistOptions: PersistQueryClientOptions`
   - all [options](#options) you can pass to [persistQueryClient](#persistqueryclient) minus the QueryClient itself
 - `onSuccess?: () => Promise<unknown> | unknown`
   - optional
   - will be called when the initial restore is finished
-  - can be used to [resumePausedMutations](../QueryClient#queryclientresumepausedmutations)
+  - can be used to [resumePausedMutations](../../../reference/QueryClient/#queryclientresumepausedmutations)
   - if a Promise is returned, it will be awaited; restoring is seen as ongoing until then
 
 ### useIsRestoring

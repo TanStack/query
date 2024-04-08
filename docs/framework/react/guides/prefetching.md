@@ -426,7 +426,7 @@ Integration with other routers is also possible, see the [React Router example](
 
 ## Manually Priming a Query
 
-If you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Client's `setQueryData` method](../QueryClient#queryclientsetquerydata) to directly add or update a query's cached result by key.
+If you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Client's `setQueryData` method](../../../reference/QueryClient/#queryclientsetquerydata) to directly add or update a query's cached result by key.
 
 [//]: # 'ExampleManualPriming'
 

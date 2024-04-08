@@ -59,7 +59,7 @@ Beyond those primary states, more information is available depending on the stat
 
 In the example above, you also saw that you can pass variables to your mutations function by calling the `mutate` function with a **single variable or object**.
 
-Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Client's `invalidateQueries` method](../QueryClient#queryclientinvalidatequeries) and the [Query Client's `setQueryData` method](../QueryClient#queryclientsetquerydata), mutations become a very powerful tool.
+Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Client's `invalidateQueries` method](../../../reference/QueryClient/#queryclientinvalidatequeries) and the [Query Client's `setQueryData` method](../../../reference/QueryClient/#queryclientsetquerydata), mutations become a very powerful tool.
 
 [//]: # 'Info1'
 

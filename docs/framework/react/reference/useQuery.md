@@ -66,7 +66,7 @@ const {
   - The query key will be hashed into a stable hash. See [Query Keys](../query-keys) for more information.
   - The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
 - `queryFn: (context: QueryFunctionContext) => Promise<TData>`
-  - **Required, but only if no default query function has been defined** See [Default Query Function](../default-query-function) for more information.
+  - **Required, but only if no default query function has been defined** See [Default Query Function](../../guides/default-query-function) for more information.
   - The function that the query will use to request data.
   - Receives a [QueryFunctionContext](../query-functions#queryfunctioncontext)
   - Must return a promise that will either resolve data or throw an error. The data cannot be `undefined`.
