@@ -172,7 +172,7 @@ const {
 
 **Returns**
 
-- `status: String`
+- `status: QueryStatus`
   - Will be:
     - `pending` if there's no cached data and no query attempt was finished yet.
     - `error` if the query attempt resulted in an error. The corresponding `error` property has the error received from the attempted fetch
