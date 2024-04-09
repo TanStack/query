@@ -3,7 +3,7 @@ id: caching
 title: Caching Examples
 ---
 
-> Please thoroughly read the [Important Defaults](../important-defaults) before reading this guide
+> Please thoroughly read the [Important Defaults](./important-defaults) before reading this guide
 
 ## Basic Example
 

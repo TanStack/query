@@ -31,7 +31,7 @@ The options for `useInfiniteQuery` are identical to the [`useQuery` hook](../use
 - `queryFn: (context: QueryFunctionContext) => Promise<TData>`
   - **Required, but only if no default query function has been defined** [`defaultQueryFn`](../../guides/default-query-function)
   - The function that the query will use to request data.
-  - Receives a [QueryFunctionContext](../query-functions#queryfunctioncontext)
+  - Receives a [QueryFunctionContext](../../guides/query-functions#queryfunctioncontext)
   - Must return a promise that will either resolve data or throw an error.
 - `initialPageParam: TPageParam`
   - **Required**
