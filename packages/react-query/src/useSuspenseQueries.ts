@@ -13,7 +13,7 @@ import type {
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
 
-type GetSuspenseOptions<T> =
+type GetUseSuspenseQueryOptions<T> =
   // Part 1: responsible for applying explicit type parameter to function arguments, if object { queryFnData: TQueryFnData, error: TError, data: TData }
   T extends {
     queryFnData: infer TQueryFnData
@@ -61,7 +61,7 @@ type GetSuspenseOptions<T> =
                   : // Fallback
                     UseSuspenseQueryOptions
 
-type GetSuspenseResults<T> =
+type GetUseSuspenseQueryResult<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
   T extends { queryFnData: any; error?: infer TError; data: infer TData }
     ? UseSuspenseQueryResult<TData, TError>
@@ -104,18 +104,18 @@ type GetSuspenseResults<T> =
  */
 export type SuspenseQueriesOptions<
   T extends Array<any>,
-  TResult extends Array<any> = [],
+  TResults extends Array<any> = [],
   TDepth extends ReadonlyArray<number> = [],
 > = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<UseSuspenseQueryOptions>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...TResult, GetSuspenseOptions<Head>]
-      : T extends [infer Head, ...infer Tail]
+      ? [...TResults, GetUseSuspenseQueryOptions<Head>]
+      : T extends [infer Head, ...infer Tails]
         ? SuspenseQueriesOptions<
-            [...Tail],
-            [...TResult, GetSuspenseOptions<Head>],
+            [...Tails],
+            [...TResults, GetUseSuspenseQueryOptions<Head>],
             [...TDepth, 1]
           >
         : Array<unknown> extends T
@@ -141,18 +141,18 @@ export type SuspenseQueriesOptions<
  */
 export type SuspenseQueriesResults<
   T extends Array<any>,
-  TResult extends Array<any> = [],
+  TResults extends Array<any> = [],
   TDepth extends ReadonlyArray<number> = [],
 > = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<UseSuspenseQueryResult>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...TResult, GetSuspenseResults<Head>]
-      : T extends [infer Head, ...infer Tail]
+      ? [...TResults, GetUseSuspenseQueryResult<Head>]
+      : T extends [infer Head, ...infer Tails]
         ? SuspenseQueriesResults<
-            [...Tail],
-            [...TResult, GetSuspenseResults<Head>],
+            [...Tails],
+            [...TResults, GetUseSuspenseQueryResult<Head>],
             [...TDepth, 1]
           >
         : T extends Array<
