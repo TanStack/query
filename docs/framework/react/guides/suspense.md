@@ -61,7 +61,7 @@ When using the component it will reset any query errors within the boundaries of
 import { QueryErrorResetBoundary } from '@tanstack/react-query'
 import { ErrorBoundary } from 'react-error-boundary'
 
-const App: React.FC = () => (
+const App = () => (
   <QueryErrorResetBoundary>
     {({ reset }) => (
       <ErrorBoundary
@@ -86,7 +86,7 @@ When using the hook it will reset any query errors within the closest `QueryErro
 import { useQueryErrorResetBoundary } from '@tanstack/react-query'
 import { ErrorBoundary } from 'react-error-boundary'
 
-const App: React.FC = () => {
+const App = () => {
   const { reset } = useQueryErrorResetBoundary()
   return (
     <ErrorBoundary
