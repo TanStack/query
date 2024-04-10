@@ -18,7 +18,12 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
         const direction = context.fetchOptions?.meta?.fetchMore?.direction
         const oldPages = context.state.data?.pages || []
         const oldPageParams = context.state.data?.pageParams || []
-        const empty = { pages: [], pageParams: [] }
+        const oldDirections = context.state.data?.directions || []
+        const empty = {
+          pages: [],
+          pageParams: [],
+          directions: [],
+        }
         let cancelled = false
 
         const addSignalProperty = (object: unknown) => {
@@ -68,13 +73,15 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
             return Promise.resolve(data)
           }
 
+          const currentDirection = direction ?? 'forward'
+
           const queryFnContext: OmitKeyof<
             QueryFunctionContext<QueryKey, unknown>,
             'signal'
           > = {
             queryKey: context.queryKey,
             pageParam: param,
-            direction: previous ? 'backward' : 'forward',
+            direction: currentDirection,
             meta: context.options.meta,
           }
 
@@ -90,6 +97,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           return {
             pages: addTo(data.pages, page, maxPages),
             pageParams: addTo(data.pageParams, param, maxPages),
+            directions: addTo(data.directions, currentDirection, maxPages),
           }
         }
 
@@ -102,6 +110,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           const oldData = {
             pages: oldPages,
             pageParams: oldPageParams,
+            directions: oldDirections,
           }
           const param = pageParamFn(options, oldData)
 
@@ -111,6 +120,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           result = await fetchPage(
             empty,
             oldPageParams[0] ?? options.initialPageParam,
+            oldDirections[0] === 'backward',
           )
 
           const remainingPages = pages ?? oldPages.length

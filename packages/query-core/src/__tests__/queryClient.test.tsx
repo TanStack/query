@@ -647,6 +647,7 @@ describe('queryClient', () => {
       const data = {
         pages: ['data'],
         pageParams: [0],
+        directions: ['forward'],
       } as const
 
       const fetchFn: QueryFunction<StrictData, StrictQueryKey, number> = () =>
@@ -675,6 +676,7 @@ describe('queryClient', () => {
       const expected = {
         pages: [10],
         pageParams: [10],
+        directions: ['forward'],
       }
 
       expect(result).toEqual(expected)
@@ -704,6 +706,7 @@ describe('queryClient', () => {
       expect(result).toEqual({
         pages: ['data'],
         pageParams: [0],
+        directions: ['forward'],
       })
     })
 
@@ -721,6 +724,7 @@ describe('queryClient', () => {
       expect(result).toEqual({
         pages: [10],
         pageParams: [10],
+        directions: ['forward'],
       })
     })
 
@@ -741,6 +745,7 @@ describe('queryClient', () => {
       expect(result).toEqual({
         pages: ['10', '15', '20'],
         pageParams: [10, 15, 20],
+        directions: ['forward', 'forward', 'forward'],
       })
     })
 
@@ -761,6 +766,7 @@ describe('queryClient', () => {
       expect(result).toEqual({
         pages: ['10', '15', '20'],
         pageParams: [10, 15, 20],
+        directions: ['forward', 'forward', 'forward'],
       })
     })
   })

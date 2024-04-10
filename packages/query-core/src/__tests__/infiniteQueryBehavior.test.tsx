@@ -77,7 +77,7 @@ describe('InfiniteQueryBehavior', () => {
     await waitFor(() =>
       expect(observerResult).toMatchObject({
         isFetching: false,
-        data: { pages: [1], pageParams: [1] },
+        data: { pages: [1], pageParams: [1], directions: ['forward'] },
       }),
     )
 
@@ -104,7 +104,11 @@ describe('InfiniteQueryBehavior', () => {
 
     expect(observerResult).toMatchObject({
       isFetching: false,
-      data: { pages: [1, 2], pageParams: [1, 2] },
+      data: {
+        pages: [1, 2],
+        pageParams: [1, 2],
+        directions: ['forward', 'forward'],
+      },
     })
 
     queryFnSpy.mockClear()
@@ -123,7 +127,11 @@ describe('InfiniteQueryBehavior', () => {
     // Only first two pages should be in the data
     expect(observerResult).toMatchObject({
       isFetching: false,
-      data: { pages: [0, 1], pageParams: [0, 1] },
+      data: {
+        pages: [0, 1],
+        pageParams: [0, 1],
+        directions: ['backward', 'forward'],
+      },
     })
 
     queryFnSpy.mockClear()
