@@ -73,7 +73,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
             return Promise.resolve(data)
           }
 
-          const currentDirection = direction ?? 'forward'
+          const currentDirection = previous ? 'backward' : 'forward'
 
           const queryFnContext: OmitKeyof<
             QueryFunctionContext<QueryKey, unknown>,
