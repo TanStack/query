@@ -197,6 +197,89 @@ describe('InfiniteQueryBehavior', () => {
     unsubscribe()
   })
 
+  test('InfiniteQueryBehavior should use direction of the first page when refetching', async () => {
+    const key = queryKey()
+
+    const queryFnSpy = vi.fn().mockImplementation(({ pageParam }) => {
+      return pageParam
+    })
+
+    const observer = new InfiniteQueryObserver<number>(queryClient, {
+      queryKey: key,
+      queryFn: queryFnSpy,
+      getNextPageParam: (lastPage) => lastPage + 1,
+      getPreviousPageParam: (firstPage) => firstPage - 1,
+      initialPageParam: 1,
+    })
+
+    let observerResult:
+      | InfiniteQueryObserverResult<unknown, unknown>
+      | undefined
+
+    const unsubscribe = observer.subscribe((result) => {
+      observerResult = result
+    })
+
+    // Wait for the first page to be fetched
+    await waitFor(() =>
+      expect(observerResult).toMatchObject({
+        isFetching: false,
+        data: { pages: [1], pageParams: [1], directions: ['forward'] },
+      }),
+    )
+
+    expect(queryFnSpy).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        direction: 'forward',
+      }),
+    )
+
+    queryFnSpy.mockClear()
+
+    // Fetch the second page
+    await observer.fetchPreviousPage()
+
+    expect(queryFnSpy).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        direction: 'backward',
+      }),
+    )
+
+    expect(observerResult).toMatchObject({
+      isFetching: false,
+      data: {
+        pages: [0, 1],
+        pageParams: [0, 1],
+        directions: ['backward', 'forward'],
+      },
+    })
+
+    queryFnSpy.mockClear()
+
+    // refetch
+    await observer.refetch()
+
+    expect(queryFnSpy).toHaveBeenCalledTimes(2)
+
+    expect(queryFnSpy).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        direction: 'backward',
+      }),
+    )
+
+    expect(queryFnSpy).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        direction: 'forward',
+      }),
+    )
+
+    unsubscribe()
+  })
+
   test('InfiniteQueryBehavior should support query cancellation', async () => {
     const key = queryKey()
     let abortSignal: AbortSignal | null = null
