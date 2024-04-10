@@ -182,7 +182,7 @@ describe('InfiniteQueryBehavior', () => {
       queryKey: key,
       pageParam: 0,
       meta: undefined,
-      direction: 'forward',
+      direction: 'backward',
       signal: abortSignal,
     })
 
