@@ -26,6 +26,7 @@
     "test:knip": "knip",
     "build": "nx affected --target=build --exclude=examples/**",
     "build:all": "nx run-many --target=build --exclude=examples/**",
+    "build:csb": "nx run-many --target=build --exclude=examples/** --exclude=integrations/**",
     "watch": "pnpm run build:all && nx watch --all -- pnpm run build:all",
     "dev": "pnpm run watch",
     "prettier": "prettier --ignore-unknown '**/*'",
