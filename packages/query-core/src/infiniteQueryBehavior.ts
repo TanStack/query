@@ -97,7 +97,11 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           return {
             pages: addTo(data.pages, page, maxPages),
             pageParams: addTo(data.pageParams, param, maxPages),
-            directions: addTo(data.directions, currentDirection, maxPages),
+            directions: addTo(
+              data.directions ?? [],
+              currentDirection,
+              maxPages,
+            ),
           }
         }
 

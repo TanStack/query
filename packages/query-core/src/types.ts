@@ -117,7 +117,7 @@ export type GetNextPageParamFunction<TPageParam, TQueryFnData = unknown> = (
 export interface InfiniteData<TData, TPageParam = unknown> {
   pages: Array<TData>
   pageParams: Array<TPageParam>
-  directions: Array<'forward' | 'backward'>
+  directions?: Array<'forward' | 'backward'>
 }
 
 export type QueryMeta = Register extends {
