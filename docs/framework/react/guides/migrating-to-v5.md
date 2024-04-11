@@ -492,7 +492,7 @@ See the [useQueries docs](../../reference/useQueries#combine) for more details.
 
 ### Experimental `fine grained storage persister`
 
-See the [experimental_createPersister docs](../../plugins/createPersister) for more details.
+See the [experimental_createPersister docs](../../../react/plugins/createPersister) for more details.
 
 [//]: # 'FrameworkSpecificNewFeatures'
 
