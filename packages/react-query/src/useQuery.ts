@@ -18,9 +18,9 @@ export function useQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
-): UseQueryResult<TData, TError>
+): DefinedUseQueryResult<TData, TError>
 
 export function useQuery<
   TQueryFnData = unknown,
@@ -28,9 +28,9 @@ export function useQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError>
+): UseQueryResult<TData, TError>
 
 export function useQuery<
   TQueryFnData = unknown,
