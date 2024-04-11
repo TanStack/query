@@ -18,7 +18,7 @@ const results = useQueries({
 
 **Options**
 
-The `useQueries` hook accepts an options object with a **queries** key whose value is an array with query option objects identical to the [`useQuery` hook](./reference/useQuery) (excluding the `queryClient` option - because the `QueryClient` can be passed in on the top level).
+The `useQueries` hook accepts an options object with a **queries** key whose value is an array with query option objects identical to the [`useQuery` hook](../useQuery) (excluding the `queryClient` option - because the `QueryClient` can be passed in on the top level).
 
 - `queryClient?: QueryClient`
   - Use this to provide a custom QueryClient. Otherwise, the one from the nearest context will be used.
@@ -56,3 +56,12 @@ const combinedQueries = useQueries({
 ```
 
 In the above example, `combinedQueries` will be an object with a `data` and a `pending` property. Note that all other properties of the Query results will be lost.
+
+### Memoization
+
+The `combine` function will only re-run if:
+
+- the `combine` function itself changed referentially
+- any of the query results changed
+
+This means that an inlined `combine` function, as shown above, will run on every render. To avoid this, you can wrap the `combine` function in `useCallback`, or extract it so a stable function reference if it doesn't have any dependencies.

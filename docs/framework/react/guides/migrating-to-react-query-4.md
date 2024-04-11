@@ -58,9 +58,9 @@ Please note in the case of `TypeScript` you need to use `tsx` as the parser; oth
 
 ### Query Keys (and Mutation Keys) need to be an Array
 
-In v3, Query and Mutation Keys could be a String or an Array. Internally, React Query has always worked with Array Keys only, and we've sometimes exposed this to consumers. For example, in the `queryFn`, you would always get the key as an Array to make working with [Default Query Functions](./guides/default-query-function) easier.
+In v3, Query and Mutation Keys could be a String or an Array. Internally, React Query has always worked with Array Keys only, and we've sometimes exposed this to consumers. For example, in the `queryFn`, you would always get the key as an Array to make working with [Default Query Functions](../default-query-function) easier.
 
-However, we have not followed this concept through to all apis. For example, when using the `predicate` function on [Query Filters](./guides/filters) you would get the raw Query Key. This makes it difficult to work with such functions if you use Query Keys that are mixed Arrays and Strings. The same was true when using global callbacks.
+However, we have not followed this concept through to all apis. For example, when using the `predicate` function on [Query Filters](../filters) you would get the raw Query Key. This makes it difficult to work with such functions if you use Query Keys that are mixed Arrays and Strings. The same was true when using global callbacks.
 
 To streamline all apis, we've decided to make all keys Arrays only:
 
@@ -100,7 +100,7 @@ Please note in the case of `TypeScript` you need to use `tsx` as the parser; oth
 
 ### The idle state has been removed
 
-With the introduction of the new [fetchStatus](./guides/queries#fetchstatus) for better offline support, the `idle` state became irrelevant, because `fetchStatus: 'idle'` captures the same state better. For more information, please read [Why two different states](./guides/queries#why-two-different-states).
+With the introduction of the new [fetchStatus](../queries#fetchstatus) for better offline support, the `idle` state became irrelevant, because `fetchStatus: 'idle'` captures the same state better. For more information, please read [Why two different states](../queries#why-two-different-states).
 
 This will mostly affect `disabled` queries that don't have any `data` yet, as those were in `idle` state before:
 
@@ -110,7 +110,7 @@ This will mostly affect `disabled` queries that don't have any `data` yet, as th
 + fetchStatus: 'idle'
 ```
 
-Also, have a look at [the guide on dependent queries](./guides/dependent-queries)
+Also, have a look at [the guide on dependent queries](../dependent-queries)
 
 #### disabled queries
 
@@ -121,7 +121,7 @@ Due to this change, disabled queries (even temporarily disabled ones) will start
 + isInitialLoading
 ```
 
-See also the guide on [disabling queries](./guides/disabling-queries#isInitialLoading)
+See also the guide on [disabling queries](../disabling-queries#isInitialLoading)
 
 ### new API for `useQueries`
 
@@ -148,7 +148,7 @@ This is now disallowed on type level; at runtime, `undefined` will be transforme
 
 ### Queries and mutations, per default, need network connection to run
 
-Please read the [New Features announcement](#proper-offline-support) about online / offline support, and also the dedicated page about [Network mode](./guides/network-mode)
+Please read the [New Features announcement](#proper-offline-support) about online / offline support, and also the dedicated page about [Network mode](../network-mode)
 
 Even though React Query is an Async State Manager that can be used for anything that produces a Promise, it is most often used for data fetching in combination with data fetching libraries. That is why, per default, queries and mutations will be `paused` if there is no network connection. If you want to opt-in to the previous behavior, you can globally set `networkMode: offlineFirst` for both queries and mutations:
 
@@ -209,7 +209,7 @@ queryClient.refetchQueries({ queryKey: ['todos'] }, { cancelRefetch: false })
 
 ### Query Filters
 
-A [query filter](./guides/filters) is an object with certain conditions to match a query. Historically, the filter options have mostly been a combination of boolean flags. However, combining those flags can lead to impossible states. Specifically:
+A [query filter](../filters) is an object with certain conditions to match a query. Historically, the filter options have mostly been a combination of boolean flags. However, combining those flags can lead to impossible states. Specifically:
 
 ```
 active?: boolean
@@ -234,7 +234,7 @@ The filter defaults to `all`, and you can choose to only match `active` or `inac
 
 #### refetchActive / refetchInactive
 
-[queryClient.invalidateQueries](./reference/QueryClient#queryclientinvalidatequeries) had two additional, similar flags:
+[queryClient.invalidateQueries](../QueryClient#queryclientinvalidatequeries) had two additional, similar flags:
 
 ```
 refetchActive: Boolean
@@ -272,7 +272,7 @@ React.useEffect(() => mySideEffectHere(data), [data])
 
 ### `persistQueryClient` and the corresponding persister plugins are no longer experimental and have been renamed
 
-The plugins `createWebStoragePersistor` and `createAsyncStoragePersistor` have been renamed to [`createSyncStoragePersister`](./plugins/createSyncStoragePersister) and [`createAsyncStoragePersister`](./plugins/createAsyncStoragePersister) respectively. The interface `Persistor` in `persistQueryClient` has also been renamed to `Persister`. Checkout [this stackexchange](https://english.stackexchange.com/questions/206893/persister-or-persistor) for the motivation of this change.
+The plugins `createWebStoragePersistor` and `createAsyncStoragePersistor` have been renamed to [`createSyncStoragePersister`](../createSyncStoragePersister) and [`createAsyncStoragePersister`](../createAsyncStoragePersister) respectively. The interface `Persistor` in `persistQueryClient` has also been renamed to `Persister`. Checkout [this stackexchange](https://english.stackexchange.com/questions/206893/persister-or-persistor) for the motivation of this change.
 
 Since these plugins are no longer experimental, their import paths have also been updated:
 
@@ -288,7 +288,7 @@ Since these plugins are no longer experimental, their import paths have also bee
 
 ### The `cancel` method on promises is no longer supported
 
-The [old `cancel` method](./guides/query-cancellation#old-cancel-function) that allowed you to define a `cancel` function on promises, which was then used by the library to support query cancellation, has been removed. We recommend to use the [newer API](./guides/query-cancellation) (introduced with v3.30.0) for query cancellation that uses the [`AbortController` API](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) internally and provides you with an [`AbortSignal` instance](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) for your query function to support query cancellation.
+The [old `cancel` method](../query-cancellation#old-cancel-function) that allowed you to define a `cancel` function on promises, which was then used by the library to support query cancellation, has been removed. We recommend to use the [newer API](../query-cancellation) (introduced with v3.30.0) for query cancellation that uses the [`AbortController` API](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) internally and provides you with an [`AbortSignal` instance](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) for your query function to support query cancellation.
 
 ### TypeScript
 
@@ -411,7 +411,7 @@ In v3, React Query has always fired off queries and mutations, but then taken th
 - You are offline and want to fire off a query that doesn't necessarily need network connection (because you _can_ use React Query for something other than data fetching), but it fails for some other reason. That query will now be paused until you go online again.
 - Window focus refetching didn't do anything at all if you were offline.
 
-With v4, React Query introduces a new `networkMode` to tackle all these issues. Please read the dedicated page about the new [Network mode](./guides/network-mode) for more information.
+With v4, React Query introduces a new `networkMode` to tackle all these issues. Please read the dedicated page about the new [Network mode](../network-mode) for more information.
 
 ### Tracked Queries per default
 
@@ -419,7 +419,7 @@ React Query defaults to "tracking" query properties, which should give you a nic
 
 ### Bailing out of updates with setQueryData
 
-When using the [functional updater form of setQueryData](./reference/QueryClient#queryclientsetquerydata), you can now bail out of the update by returning `undefined`. This is helpful if `undefined` is given to you as `previousValue`, which means that currently, no cached entry exists and you don't want to / cannot create one, like in the example of toggling a todo:
+When using the [functional updater form of setQueryData](../QueryClient#queryclientsetquerydata), you can now bail out of the update by returning `undefined`. This is helpful if `undefined` is given to you as `previousValue`, which means that currently, no cached entry exists and you don't want to / cannot create one, like in the example of toggling a todo:
 
 ```tsx
 queryClient.setQueryData(['todo', id], (previousTodo) =>

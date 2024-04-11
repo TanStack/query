@@ -7,8 +7,8 @@ This is set of utilities for interacting with "persisters" which save your query
 
 ## Build Persisters
 
-- [createSyncStoragePersister](./plugins/createSyncStoragePersister)
-- [createAsyncStoragePersister](./plugins/createAsyncStoragePersister)
+- [createSyncStoragePersister](../createSyncStoragePersister)
+- [createAsyncStoragePersister](../createAsyncStoragePersister)
 - [create a custom persister](#persisters)
 
 ## How It Works
@@ -20,6 +20,8 @@ If it is not set when creating the `QueryClient` instance, it will default to `3
 It should be set as the same value or higher than persistQueryClient's `maxAge` option. E.g. if `maxAge` is 24 hours (the default) then `gcTime` should be 24 hours or higher. If lower than `maxAge`, garbage collection will kick in and discard the stored cache earlier than expected.
 
 You can also pass it `Infinity` to disable garbage collection behavior entirely.
+
+Due to a Javascript limitation, the maximum allowed `gcTime` is about 24 days (see [more](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value)).
 
 ```tsx
 const queryClient = new QueryClient({
@@ -56,7 +58,7 @@ the persister `removeClient()` is called and the cache is immediately discarded.
 
 ### `persistQueryClientSave`
 
-- Your query/mutation are [`dehydrated`](./reference/hydration#dehydrate) and stored by the persister you provided.
+- Your query/mutation are [`dehydrated`](../hydration#dehydrate) and stored by the persister you provided.
 - `createSyncStoragePersister` and `createAsyncStoragePersister` throttle this action to happen at most every 1 second to save on potentially expensive writes. Review their documentation to see how to customize their throttle timing.
 
 You can use this to explicitly persist the cache at the moment(s) you choose.
@@ -88,7 +90,7 @@ persistQueryClientSubscribe({
 
 ### `persistQueryClientRestore`
 
-- Attempts to [`hydrate`](./reference/hydration#hydrate) a previously persisted dehydrated query/mutation cache from the persister back into the query cache of the passed query client.
+- Attempts to [`hydrate`](../hydration#hydrate) a previously persisted dehydrated query/mutation cache from the persister back into the query cache of the passed query client.
 - If a cache is found that is older than the `maxAge` (which by default is 24 hours), it will be discarded. This timing can be customized as you see fit.
 
 You can use this to restore the cache at moment(s) you choose.
@@ -178,7 +180,7 @@ ReactDOM.createRoot(rootElement).render(<App />)
 
 ### PersistQueryClientProvider
 
-For this use-case, you can use the `PersistQueryClientProvider`. It will make sure to subscribe / unsubscribe correctly according to the React component lifecycle, and it will also make sure that queries will not start fetching while we are still restoring. Queries will still render though, they will just be put into `fetchingState: 'idle'` until data has been restored. Then, they will refetch unless the restored data is _fresh_ enough, and _initialData_ will also be respected. It can be used _instead of_ the normal [QueryClientProvider](./reference/QueryClientProvider):
+For this use-case, you can use the `PersistQueryClientProvider`. It will make sure to subscribe / unsubscribe correctly according to the React component lifecycle, and it will also make sure that queries will not start fetching while we are still restoring. Queries will still render though, they will just be put into `fetchingState: 'idle'` until data has been restored. Then, they will refetch unless the restored data is _fresh_ enough, and _initialData_ will also be respected. It can be used _instead of_ the normal [QueryClientProvider](../QueryClientProvider):
 
 ```tsx
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
@@ -208,14 +210,14 @@ ReactDOM.createRoot(rootElement).render(
 
 #### Props
 
-`PersistQueryClientProvider` takes the same props as [QueryClientProvider](./reference/QueryClientProvider), and additionally:
+`PersistQueryClientProvider` takes the same props as [QueryClientProvider](../QueryClientProvider), and additionally:
 
 - `persistOptions: PersistQueryClientOptions`
   - all [options](#options) you can pass to [persistQueryClient](#persistqueryclient) minus the QueryClient itself
 - `onSuccess?: () => Promise<unknown> | unknown`
   - optional
   - will be called when the initial restore is finished
-  - can be used to [resumePausedMutations](./reference/QueryClient#queryclientresumepausedmutations)
+  - can be used to [resumePausedMutations](../QueryClient#queryclientresumepausedmutations)
   - if a Promise is returned, it will be awaited; restoring is seen as ongoing until then
 
 ### useIsRestoring
