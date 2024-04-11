@@ -9,7 +9,7 @@ This hook will reset any query errors within the closest `QueryErrorResetBoundar
 import { useQueryErrorResetBoundary } from '@tanstack/react-query'
 import { ErrorBoundary } from 'react-error-boundary'
 
-const App: React.FC = () => {
+const App = () => {
   const { reset } = useQueryErrorResetBoundary()
   return (
     <ErrorBoundary
