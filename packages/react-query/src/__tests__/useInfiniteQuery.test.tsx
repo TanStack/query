@@ -98,7 +98,7 @@ describe('useInfiniteQuery', () => {
     })
 
     expect(states[1]).toEqual({
-      data: { pages: [0], pageParams: [0] },
+      data: { pages: [0], pageParams: [0], directions: ['forward'] },
       dataUpdatedAt: expect.any(Number),
       error: null,
       errorUpdatedAt: 0,
@@ -627,7 +627,9 @@ describe('useInfiniteQuery', () => {
 
     await waitFor(() => rendered.getByText('status: success, idle'))
     await waitFor(() =>
-      rendered.getByText('data: {"pages":[10],"pageParams":[10]}'),
+      rendered.getByText(
+        'data: {"pages":[10],"pageParams":[10],"directions":["forward"]}',
+      ),
     )
 
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
@@ -636,7 +638,9 @@ describe('useInfiniteQuery', () => {
 
     await waitFor(() => rendered.getByText('status: success, idle'))
     await waitFor(() =>
-      rendered.getByText('data: {"pages":[10,11],"pageParams":[10,11]}'),
+      rendered.getByText(
+        'data: {"pages":[10,11],"pageParams":[10,11],"directions":["forward","forward"]}',
+      ),
     )
   })
 
@@ -923,7 +927,9 @@ describe('useInfiniteQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() =>
-      rendered.getByText('data: {"pages":[0],"pageParams":[0]}'),
+      rendered.getByText(
+        'data: {"pages":[0],"pageParams":[0],"directions":["forward"]}',
+      ),
     )
 
     fireEvent.click(rendered.getByRole('button', { name: /setPages/i }))
@@ -937,7 +943,9 @@ describe('useInfiniteQuery', () => {
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
 
     await waitFor(() =>
-      rendered.getByText('data: {"pages":[14,30],"pageParams":[7,15]}'),
+      rendered.getByText(
+        'data: {"pages":[14,30],"pageParams":[7,15],"directions":["forward","forward"]}',
+      ),
     )
   })
 
