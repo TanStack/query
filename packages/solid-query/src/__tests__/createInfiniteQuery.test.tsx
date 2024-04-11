@@ -120,7 +120,7 @@ describe('useInfiniteQuery', () => {
     })
 
     expect(states[1]).toEqual({
-      data: { pages: [0], pageParams: [0] },
+      data: { pages: [0], pageParams: [0], directions: ['forward'] },
       dataUpdatedAt: expect.any(Number),
       error: null,
       errorUpdatedAt: 0,
