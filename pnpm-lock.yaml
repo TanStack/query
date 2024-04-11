@@ -1142,10 +1142,10 @@ importers:
   examples/solid/basic-graphql-request:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.29.0
+        specifier: ^5.29.3
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.29.0
+        specifier: ^5.29.3
         version: link:../../../packages/solid-query-devtools
       graphql:
         specifier: ^16.8.1
@@ -1170,10 +1170,10 @@ importers:
   examples/solid/basic-typescript:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.29.0
+        specifier: ^5.29.3
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.29.0
+        specifier: ^5.29.3
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -1192,10 +1192,10 @@ importers:
   examples/solid/default-query-function:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.29.0
+        specifier: ^5.29.3
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.29.0
+        specifier: ^5.29.3
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -1214,10 +1214,10 @@ importers:
   examples/solid/simple:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.29.0
+        specifier: ^5.29.3
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.29.0
+        specifier: ^5.29.3
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -1248,10 +1248,10 @@ importers:
         specifier: ^0.5.4
         version: 0.5.4(@testing-library/jest-dom@6.4.2)(rollup@4.14.1)(solid-js@1.8.14)(vinxi@0.3.3)(vite@4.5.1)
       '@tanstack/solid-query':
-        specifier: ^5.29.0
+        specifier: ^5.29.3
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.29.0
+        specifier: ^5.29.3
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
