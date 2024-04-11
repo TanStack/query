@@ -4,7 +4,7 @@ import { flushPromises, infiniteFetcher } from './test-utils'
 
 vi.mock('../useQueryClient')
 
-describe('useQuery', () => {
+describe('useInfiniteQuery', () => {
   test('should properly execute infinite query', async () => {
     const { data, fetchNextPage, status } = useInfiniteQuery({
       queryKey: ['infiniteQuery'],
@@ -21,6 +21,7 @@ describe('useQuery', () => {
     expect(data.value).toStrictEqual({
       pageParams: [0],
       pages: ['data on page 0'],
+      directions: ['forward'],
     })
     expect(status.value).toStrictEqual('success')
 
@@ -31,6 +32,7 @@ describe('useQuery', () => {
     expect(data.value).toStrictEqual({
       pageParams: [0, 12],
       pages: ['data on page 0', 'data on page 12'],
+      directions: ['forward', 'forward'],
     })
     expect(status.value).toStrictEqual('success')
   })
