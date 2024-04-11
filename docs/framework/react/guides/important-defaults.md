@@ -38,7 +38,7 @@ If you see a refetch that you are not expecting, it is likely because you just f
 
 Have a look at the following articles from our Community Resources for further explanations of the defaults:
 
-- [Practical React Query](./community/tkdodos-blog#1-practical-react-query)
-- [React Query as a State Manager](./community/tkdodos-blog#10-react-query-as-a-state-manager)
+- [Practical React Query](https://tkdodo.eu/blog/practical-react-query)
+- [React Query as a State Manager](https://tkdodo.eu/blog/react-query-as-a-state-manager)
 
 [//]: # 'Materials'
