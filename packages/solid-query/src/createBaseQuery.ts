@@ -187,7 +187,12 @@ export function createBaseQuery<
 
         // If the query has data we don't suspend but instead mutate the resource
         // This could happen when placeholderData/initialData is defined
-        if (queryResource()?.data && result.data && !queryResource.loading) {
+        if (
+          !queryResource.error &&
+          queryResource()?.data &&
+          result.data &&
+          !queryResource.loading
+        ) {
           setState((store) => {
             return reconcileFn(
               store,
@@ -273,7 +278,10 @@ export function createBaseQuery<
          * even if `staleTime` is not set.
          */
         const newOptions = { ...initialOptions }
-        if (initialOptions.staleTime || !initialOptions.initialData) {
+        if (
+          (initialOptions.staleTime || !initialOptions.initialData) &&
+          info.value
+        ) {
           newOptions.refetchOnMount = false
         }
         // Setting the options as an immutable object to prevent
