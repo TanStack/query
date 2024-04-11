@@ -1843,8 +1843,8 @@ importers:
         version: 2.6.2
     devDependencies:
       '@analogjs/vite-plugin-angular':
-        specifier: ^0.2.30
-        version: 0.2.30(@angular-devkit/build-angular@17.3.3)
+        specifier: ^1.1.2
+        version: 1.1.2(@angular-devkit/build-angular@17.3.3)
       '@angular/common':
         specifier: ^17.3.3
         version: 17.3.3(@angular/core@17.3.3)(rxjs@7.8.1)
@@ -2365,8 +2365,8 @@ packages:
       '@jridgewell/trace-mapping': 0.3.25
     dev: true
 
-  /@analogjs/vite-plugin-angular@0.2.30(@angular-devkit/build-angular@17.3.3):
-    resolution: {integrity: sha512-XXiXu00DYCBsbW4PLktGFv5VUAB3EHfvywd7bnlXNUXMX6nHSrZcNGAq8VMzibrZ9DMnx2hswd3l4cmBLQaryg==}
+  /@analogjs/vite-plugin-angular@1.1.2(@angular-devkit/build-angular@17.3.3):
+    resolution: {integrity: sha512-ELcnWlaJwOX8LGgwZuDfvKpK8sWPV1hYlt0qGJoUk5fpNHZGG8ww1wmM3f7qeTBXL9/YdMxUDkz93ZdsC7nrpA==}
     peerDependencies:
       '@angular-devkit/build-angular': ^15.0.0 || >=16.0.0
     dependencies:
