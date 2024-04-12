@@ -284,7 +284,6 @@ describe('QueryCache', () => {
       expect(QueryClientOrigin.prototype.fetchInfiniteQuery).toBeCalledWith({
         initialPageParam: 0,
         queryKey: queryKeyUnref,
-        getNextPageParam: () => 12,
       })
     })
   })
