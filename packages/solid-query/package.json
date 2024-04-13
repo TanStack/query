@@ -39,9 +39,6 @@
       "default": "./build/index.cjs"
     }
   },
-  "sideEffects": [
-    "./src/setBatchUpdatesFn.ts"
-  ],
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",

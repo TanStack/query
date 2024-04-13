@@ -16,7 +16,7 @@ import { useQueryClient } from './QueryClientProvider'
 import { shouldThrowError } from './utils'
 import { useIsRestoring } from './isRestoring'
 import type { CreateBaseQueryOptions } from './types'
-import type { Accessor } from 'solid-js'
+import type { Accessor, Signal } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
   InfiniteQueryObserverResult,
@@ -144,9 +144,9 @@ export function createBaseQuery<
     new Observer(client(), defaultedOptions()),
   )
 
-  const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
-    observer().getOptimisticResult(defaultedOptions()),
-  )
+  let observerResult = observer().getOptimisticResult(defaultedOptions())
+  const [state, setState] =
+    createStore<QueryObserverResult<TData, TError>>(observerResult)
 
   const createServerSubscriber = (
     resolve: (
@@ -180,39 +180,35 @@ export function createBaseQuery<
   const createClientSubscriber = () => {
     const obs = observer()
     return obs.subscribe((result) => {
-      notifyManager.batchCalls(() => {
-        // @ts-expect-error - This will error because the reconcile option does not
-        // exist on the query-core QueryObserverResult type
-        const reconcileOptions = obs.options.reconcile
-
-        // If the query has data we don't suspend but instead mutate the resource
-        // This could happen when placeholderData/initialData is defined
-        if (
-          !queryResource.error &&
-          queryResource()?.data &&
-          result.data &&
-          !queryResource.loading
-        ) {
-          setState((store) => {
-            return reconcileFn(
-              store,
-              result,
-              reconcileOptions === undefined ? false : reconcileOptions,
-            )
-          })
-          mutate(state)
-        } else {
-          setState((store) => {
-            return reconcileFn(
-              store,
-              result,
-              reconcileOptions === undefined ? false : reconcileOptions,
-            )
-          })
-          refetch()
-        }
-      })()
+      observerResult = result
+      queueMicrotask(() => refetch())
     })
+  }
+
+  function setStateWithReconciliation(res: typeof observerResult) {
+    // @ts-expect-error - Reconcile option is not correctly typed internally
+    const reconcileOptions = observer().options.reconcile
+
+    setState((store) => {
+      return reconcileFn(
+        store,
+        res,
+        reconcileOptions === undefined ? false : reconcileOptions,
+      )
+    })
+  }
+
+  function createDeepSignal<T>(): Signal<T> {
+    return [
+      () => state,
+      (v: T) => {
+        const unwrapped = unwrap(state)
+        if (typeof v === 'function') {
+          v = v(unwrapped)
+        }
+        setStateWithReconciliation(v as any)
+      },
+    ] as Signal<T>
   }
 
   /**
@@ -220,9 +216,7 @@ export function createBaseQuery<
    */
   let unsubscribe: (() => void) | null = null
 
-  const [queryResource, { refetch, mutate }] = createResource<
-    ResourceData | undefined
-  >(
+  const [queryResource, { refetch }] = createResource<ResourceData | undefined>(
     () => {
       const obs = observer()
       return new Promise((resolve, reject) => {
@@ -233,19 +227,16 @@ export function createBaseQuery<
         }
         obs.updateResult()
 
-        if (!state.isLoading) {
+        if (!observerResult.isLoading) {
           const query = obs.getCurrentQuery()
-          resolve(hydratableObserverResult(query, state))
+          resolve(hydratableObserverResult(query, observerResult))
+        } else {
+          setStateWithReconciliation(observerResult)
         }
       })
     },
     {
-      initialValue: state,
-
-      // If initialData is provided, we resolve the resource immediately
-      get ssrLoadFrom() {
-        return options().initialData ? 'initial' : 'server'
-      },
+      storage: createDeepSignal,
 
       get deferStream() {
         return options().deferStream
@@ -338,7 +329,7 @@ export function createBaseQuery<
       [observer, defaultedOptions],
       ([obs, opts]) => {
         obs.setOptions(opts)
-        setState(obs.getOptimisticResult(opts))
+        setStateWithReconciliation(obs.getOptimisticResult(opts))
       },
       { defer: true },
     ),
@@ -369,8 +360,14 @@ export function createBaseQuery<
       target: QueryObserverResult<TData, TError>,
       prop: keyof QueryObserverResult<TData, TError>,
     ): any {
-      const val = queryResource()?.[prop]
-      return val !== undefined ? val : Reflect.get(target, prop)
+      if (prop === 'data') {
+        const opts = observer().options
+        if (opts.placeholderData) {
+          return queryResource.latest?.data
+        }
+        return queryResource()?.data
+      }
+      return Reflect.get(target, prop)
     },
   }
 
