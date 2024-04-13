@@ -238,11 +238,6 @@ export function createBaseQuery<
     {
       storage: createDeepSignal,
 
-      // If initialData is provided, we resolve the resource immediately
-      get ssrLoadFrom() {
-        return options().initialData ? 'initial' : 'server'
-      },
-
       get deferStream() {
         return options().deferStream
       },
@@ -283,7 +278,6 @@ export function createBaseQuery<
         // Setting the options as an immutable object to prevent
         // wonky behavior with observer subscriptions
         observer().setOptions(newOptions)
-        setStateWithReconciliation(observer().getOptimisticResult(newOptions))
         unsubscribe = createClientSubscriber()
       },
     },
