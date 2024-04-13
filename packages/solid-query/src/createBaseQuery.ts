@@ -227,12 +227,24 @@ export function createBaseQuery<
         }
         obs.updateResult()
 
+        if (
+          observerResult.isError &&
+          !observerResult.isFetching &&
+          !isRestoring() &&
+          shouldThrowError(obs.options.throwOnError, [
+            observerResult.error,
+            obs.getCurrentQuery(),
+          ])
+        ) {
+          setStateWithReconciliation(observerResult)
+          return reject(observerResult.error)
+        }
         if (!observerResult.isLoading) {
           const query = obs.getCurrentQuery()
-          resolve(hydratableObserverResult(query, observerResult))
-        } else {
-          setStateWithReconciliation(observerResult)
+          return resolve(hydratableObserverResult(query, observerResult))
         }
+
+        setStateWithReconciliation(observerResult)
       })
     },
     {
@@ -332,26 +344,6 @@ export function createBaseQuery<
         setStateWithReconciliation(obs.getOptimisticResult(opts))
       },
       { defer: true },
-    ),
-  )
-
-  createComputed(
-    on(
-      () => state.status,
-      () => {
-        const obs = observer()
-        if (
-          state.isError &&
-          !state.isFetching &&
-          !isRestoring() &&
-          shouldThrowError(obs.options.throwOnError, [
-            state.error,
-            obs.getCurrentQuery(),
-          ])
-        ) {
-          throw state.error
-        }
-      },
     ),
   )
 

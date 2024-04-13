@@ -2407,6 +2407,7 @@ describe('createQuery', () => {
 
       return (
         <div>
+          <h1>{state.data}</h1>
           <h1>{state.status}</h1>
           <h2>{state.error?.message}</h2>
         </div>
@@ -2491,7 +2492,7 @@ describe('createQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const state = createQuery<unknown, Error>(() => ({
+      const state = createQuery(() => ({
         queryKey: key,
         queryFn: () => Promise.reject(new Error('Remote Error')),
         retry: false,
@@ -2500,6 +2501,7 @@ describe('createQuery', () => {
 
       return (
         <div>
+          <div>{state.data}</div>
           <h1>{state.status}</h1>
           <h2>{state.error?.message ?? ''}</h2>
         </div>
