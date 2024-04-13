@@ -278,6 +278,7 @@ export function createBaseQuery<
         // Setting the options as an immutable object to prevent
         // wonky behavior with observer subscriptions
         observer().setOptions(newOptions)
+        setState(observer().getOptimisticResult(newOptions))
         unsubscribe = createClientSubscriber()
       },
     },
