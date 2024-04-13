@@ -2427,6 +2427,124 @@ describe('createQuery', () => {
     consoleMock.mockRestore()
   })
 
+  it('should throw error inside the same component if queryFn throws and throwOnError is in use', async () => {
+    const key = queryKey()
+
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    function Page() {
+      const state = createQuery(() => ({
+        queryKey: key,
+        queryFn: () => Promise.reject(new Error('Error test')),
+        retry: false,
+        throwOnError: true,
+      }))
+
+      return (
+        <div>
+          <ErrorBoundary fallback={() => <div>error boundary</div>}>
+            <h1>{state.data}</h1>
+            <h1>{state.status}</h1>
+            <h2>{state.error?.message}</h2>
+          </ErrorBoundary>
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await waitFor(() => rendered.getByText('error boundary'))
+
+    consoleMock.mockRestore()
+  })
+
+  it('should throw error inside the same component if queryFn throws and show the correct error message', async () => {
+    const key = queryKey()
+
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    function Page() {
+      const state = createQuery(() => ({
+        queryKey: key,
+        queryFn: () => Promise.reject(new Error('Error test')),
+        retry: false,
+        throwOnError: true,
+      }))
+
+      return (
+        <div>
+          <ErrorBoundary
+            fallback={(err) => <div>Fallback error: {err.message}</div>}
+          >
+            <h1>{state.data}</h1>
+            <h1>{state.status}</h1>
+            <h2>{state.error?.message}</h2>
+          </ErrorBoundary>
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await waitFor(() => rendered.getByText('Fallback error: Error test'))
+
+    consoleMock.mockRestore()
+  })
+
+  it('should show the correct error message on the error property when accessed outside error boundary', async () => {
+    const key = queryKey()
+
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    function Page() {
+      const state = createQuery(() => ({
+        queryKey: key,
+        queryFn: () => Promise.reject(new Error('Error test')),
+        retry: false,
+        throwOnError: true,
+      }))
+
+      return (
+        <div>
+          <h2>Outside error boundary: {state.error?.message}</h2>
+          <ErrorBoundary
+            fallback={(err) => <div>Fallback error: {err.message}</div>}
+          >
+            <h1>{state.data}</h1>
+            <h1>{state.status}</h1>
+          </ErrorBoundary>
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await waitFor(() =>
+      rendered.getByText('Outside error boundary: Error test'),
+    )
+    await waitFor(() => rendered.getByText('Fallback error: Error test'))
+
+    consoleMock.mockRestore()
+  })
+
   it('should update with data if we observe no properties and throwOnError', async () => {
     const key = queryKey()
 
