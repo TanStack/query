@@ -39,14 +39,11 @@
       "default": "./build/index.cjs"
     }
   },
-  "sideEffects": [
-    "./src/setBatchUpdatesFn.ts"
-  ],
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
-    "test:lib": "vitest --retry=3",
+    "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
     "test:attw": "attw --pack",
