@@ -1,8 +1,5 @@
 /* istanbul ignore file */
 
-// Side Effects
-import './setBatchUpdatesFn'
-
 // Re-export core
 export * from '@tanstack/query-core'
 
