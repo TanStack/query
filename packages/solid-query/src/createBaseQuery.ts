@@ -58,9 +58,6 @@ function reconcileFn<TData, TError>(
       }
     }
   }
-
-  console.log('data', data)
-  console.log('store.data', store.data)
   const newData = reconcile(data, { key: reconcileOption })(store.data)
   return { ...result, data: newData } as typeof result
 }
