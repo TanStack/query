@@ -34,13 +34,31 @@ function reconcileFn<TData, TError>(
     | string
     | false
     | ((oldData: TData | undefined, newData: TData) => TData),
+  queryHash?: string,
 ): QueryObserverResult<TData, TError> {
   if (reconcileOption === false) return result
   if (typeof reconcileOption === 'function') {
     const newData = reconcileOption(store.data, result.data as TData)
     return { ...result, data: newData } as typeof result
   }
-  const newData = reconcile(result.data, { key: reconcileOption })(store.data)
+  let data = result.data
+  if (store.data === undefined) {
+    try {
+      data = structuredClone(data)
+    } catch (error) {
+      if (process.env.NODE_ENV !== 'production') {
+        if (error instanceof Error) {
+          console.warn(
+            `Unable to correctly reconcile data for query key: ${queryHash}. ` +
+              `Possibly because the query data contains data structures that aren't supported ` +
+              `by the 'structuredClone' algorithm. Consider using a callback function instead ` +
+              `to manage the reconciliation manually.\n\n Error Received: ${error.name} - ${error.message}`,
+          )
+        }
+      }
+    }
+  }
+  const newData = reconcile(data, { key: reconcileOption })(store.data)
   return { ...result, data: newData } as typeof result
 }
 
@@ -186,14 +204,16 @@ export function createBaseQuery<
   }
 
   function setStateWithReconciliation(res: typeof observerResult) {
+    const opts = observer().options
     // @ts-expect-error - Reconcile option is not correctly typed internally
-    const reconcileOptions = observer().options.reconcile
+    const reconcileOptions = opts.reconcile
 
     setState((store) => {
       return reconcileFn(
         store,
         res,
         reconcileOptions === undefined ? false : reconcileOptions,
+        opts.queryHash,
       )
     })
   }
@@ -290,7 +310,7 @@ export function createBaseQuery<
         // Setting the options as an immutable object to prevent
         // wonky behavior with observer subscriptions
         observer().setOptions(newOptions)
-        setState(observer().getOptimisticResult(newOptions))
+        setStateWithReconciliation(observer().getOptimisticResult(newOptions))
         unsubscribe = createClientSubscriber()
       },
     },
@@ -353,8 +373,7 @@ export function createBaseQuery<
       prop: keyof QueryObserverResult<TData, TError>,
     ): any {
       if (prop === 'data') {
-        const opts = observer().options
-        if (opts.placeholderData) {
+        if (state.data !== undefined) {
           return queryResource.latest?.data
         }
         return queryResource()?.data
