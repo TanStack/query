@@ -15,6 +15,12 @@ When you begin your React Query journey, you'll want these devtools by your side
 
 > Note that since version 5, the dev tools support observing mutations as well.
 
+> There is a new external tool [@jsmdeleon/react-query-native-devtool](https://github.com/jossydeleon/react-native-query-devtool-monorepo)
+This library provides a component specifically designed for integrating query data in React Native applications running react-query v3, and @tanstack/query v4 and v5. 
+
+> Explore and visualize your query data using the optional standalone app included with this library. Simply follow the instructions in the documentation to get started.
+> Contributions to this library are welcome! If you encounter any issues or have suggestions for improvements, please visit the [GitHub repository](https://github.com/jossydeleon/react-native-query-devtool-monorepo) to contribute.
+
 ## Install and Import the Devtools
 
 The devtools are a separate package that you need to install:
