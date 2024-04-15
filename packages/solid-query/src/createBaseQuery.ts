@@ -236,10 +236,19 @@ export function createBaseQuery<
    */
   let unsubscribe: (() => void) | null = null
 
+  /*
+    Fixes #7275
+    In a few cases, the observer could unmount before the resource is loaded.
+    This leads to Suspense boundaries to be suspended indefinitely.
+    This resolver will be called when the observer is unmounting 
+    but the resource is still in a loading state
+  */
+  let resolver: ((value: ResourceData) => void) | null = null
   const [queryResource, { refetch }] = createResource<ResourceData | undefined>(
     () => {
       const obs = observer()
       return new Promise((resolve, reject) => {
+        resolver = resolve
         if (isServer) {
           unsubscribe = createServerSubscriber(resolve, reject)
         } else if (!unsubscribe && !isRestoring()) {
@@ -261,6 +270,7 @@ export function createBaseQuery<
         }
         if (!observerResult.isLoading) {
           const query = obs.getCurrentQuery()
+          resolver = null
           return resolve(hydratableObserverResult(query, observerResult))
         }
 
@@ -353,6 +363,10 @@ export function createBaseQuery<
     if (unsubscribe) {
       unsubscribe()
       unsubscribe = null
+    }
+    if (resolver && !isServer) {
+      resolver(observerResult)
+      resolver = null
     }
   })
 
