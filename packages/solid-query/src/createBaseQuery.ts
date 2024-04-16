@@ -19,12 +19,10 @@ import type { CreateBaseQueryOptions } from './types'
 import type { Accessor, Signal } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
-  InfiniteQueryObserverResult,
   Query,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
-  QueryState,
 } from '@tanstack/query-core'
 
 function reconcileFn<TData, TError>(
@@ -62,10 +60,6 @@ function reconcileFn<TData, TError>(
   return { ...result, data: newData } as typeof result
 }
 
-type HydratableQueryState<TData, TError> = QueryObserverResult<TData, TError> &
-  QueryState<TData, TError> &
-  InfiniteQueryObserverResult<TData, TError>
-
 /**
  * Solid's `onHydrated` functionality will silently "fail" (hydrate with an empty object)
  * if the resource data is not serializable.
@@ -80,42 +74,29 @@ const hydratableObserverResult = <
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
   result: QueryObserverResult<TDataHydratable, TError>,
 ) => {
-  // Including the extra properties is only relevant on the server
-  if (!isServer) return result as HydratableQueryState<TDataHydratable, TError>
-
-  return {
+  const obj: any = {
     ...unwrap(result),
+    // During SSR, functions cannot be serialized, so we need to remove them
+    // This is safe because we will add these functions back when the query is hydrated
+    refetch: undefined,
+  }
 
-    // cast to refetch function should be safe, since we only remove it on the server,
-    // and refetch is not relevant on the server
-    refetch: undefined as unknown as HydratableQueryState<
-      TDataHydratable,
-      TError
-    >['refetch'],
+  // If the query is an infinite query, we need to remove additional properties
+  if ('fetchNextPage' in result) {
+    obj.fetchNextPage = undefined
+    obj.fetchPreviousPage = undefined
+  }
 
-    // cast to fetchNextPage function should be safe, since we only remove it on the server,
-    fetchNextPage: undefined as unknown as HydratableQueryState<
-      TDataHydratable,
-      TError
-    >['fetchNextPage'],
+  // We will also attach the dehydrated state of the query to the result
+  // This will be removed on client after hydration
+  obj.hydrationData = {
+    state: query.state,
+    queryKey: query.queryKey,
+    queryHash: query.queryHash,
+    ...(query.meta && { meta: query.meta }),
+  }
 
-    // cast to fetchPreviousPage function should be safe, since we only remove it on the server,
-    fetchPreviousPage: undefined as unknown as HydratableQueryState<
-      TDataHydratable,
-      TError
-    >['fetchPreviousPage'],
-
-    // hydrate() expects a QueryState object, which is similar but not
-    // quite the same as a QueryObserverResult object. Thus, for now, we're
-    // copying over the missing properties from state in order to support hydration
-    dataUpdateCount: query.state.dataUpdateCount,
-    fetchFailureCount: query.state.fetchFailureCount,
-    isInvalidated: query.state.isInvalidated,
-
-    // Unsetting these properties on the server since they might not be serializable
-    fetchFailureReason: null,
-    fetchMeta: null,
-  } as HydratableQueryState<TDataHydratable, TError>
+  return obj
 }
 
 // Base Query Function that is used to create the query.
@@ -132,9 +113,7 @@ export function createBaseQuery<
   Observer: typeof QueryObserver,
   queryClient?: Accessor<QueryClient>,
 ) {
-  type ResourceData =
-    | HydratableQueryState<TData, TError>
-    | QueryObserverResult<TData, TError>
+  type ResourceData = QueryObserverResult<TData, TError>
 
   const client = createMemo(() => useQueryClient(queryClient?.()))
   const isRestoring = useIsRestoring()
@@ -221,12 +200,18 @@ export function createBaseQuery<
   function createDeepSignal<T>(): Signal<T> {
     return [
       () => state,
-      (v: T) => {
+      (v: any) => {
         const unwrapped = unwrap(state)
         if (typeof v === 'function') {
           v = v(unwrapped)
         }
-        setStateWithReconciliation(v as any)
+        // Hydration data exists on first load after SSR,
+        // and should be removed from the observer result
+        if (v.hydrationData) {
+          const { hydrationData, ...rest } = v
+          v = rest
+        }
+        setStateWithReconciliation(v)
       },
     ] as Signal<T>
   }
@@ -269,9 +254,8 @@ export function createBaseQuery<
           return reject(observerResult.error)
         }
         if (!observerResult.isLoading) {
-          const query = obs.getCurrentQuery()
           resolver = null
-          return resolve(hydratableObserverResult(query, observerResult))
+          return resolve(observerResult)
         }
 
         setStateWithReconciliation(observerResult)
@@ -293,15 +277,10 @@ export function createBaseQuery<
        * Note that this is only invoked on the client, for queries that were originally run on the server.
        */
       onHydrated(_k, info) {
-        if (info.value) {
+        if (info.value && 'hydrationData' in info.value) {
           hydrate(client(), {
-            queries: [
-              {
-                queryKey: initialOptions.queryKey,
-                queryHash: initialOptions.queryHash,
-                state: info.value,
-              },
-            ],
+            // @ts-expect-error - hydrationData is not correctly typed internally
+            queries: [{ ...info.value.hydrationData }],
           })
         }
 
