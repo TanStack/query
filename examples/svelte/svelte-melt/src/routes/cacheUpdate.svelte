@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { createMutation, createQuery, hashKey, useQueryClient } from 'svelte-query/dev';
 	import { bookFilterStore } from './store.svelte';
-	import { unstate } from 'svelte';
 	let a = { a: 1 };
 	let b = ['cache update tester', bookFilterStore];
 
@@ -26,10 +25,7 @@
 			return ['a new list of items', 'a'];
 		},
 		onSuccess: (v) => {
-			//	console.log(hashKey(b.map((v) => unstate(v))));
-			//	console.log(hashKey(b));
-			//	console.log('test hash', hashKey(b) === hashKey(b.map((v) => unstate(v))));
-			const k = b.map((v) => unstate(v));
+			const k = b.map((v) => $state.snapshot(v));
 			client.setQueryData(k, (v) => {
 				debugger;
 				v[0].title = 'faker';

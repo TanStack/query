@@ -1,5 +1,5 @@
 import { notifyManager } from '@tanstack/query-core'
-import { unstate, untrack } from 'svelte'
+import { untrack } from 'svelte'
 import { useIsRestoring } from './useIsRestoring'
 import { useQueryClient } from './useQueryClient'
 import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'

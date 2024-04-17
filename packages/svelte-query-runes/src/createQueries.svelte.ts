@@ -1,5 +1,5 @@
 import { QueriesObserver, notifyManager } from '@tanstack/query-core'
-import { flushSync, onDestroy, onMount, unstate, untrack } from 'svelte'
+import { flushSync, onDestroy, onMount, untrack } from 'svelte'
 import { useIsRestoring } from './useIsRestoring'
 import { useQueryClient } from './useQueryClient'
 import { createMemo, createResource } from './utils.svelte'
@@ -270,7 +270,7 @@ export function createQueries<
       const dataPromise = () =>
         new Promise((resolve) => {
           if (queryRes.isFetching && queryRes.isLoading) return
-          resolve(unstate(queryRes.data))
+          resolve($state.snapshot(queryRes.data))
         })
       return createResource(dataPromise)
     }),
@@ -278,7 +278,7 @@ export function createQueries<
   flushSync(() => {
     for (let index = 0; index < dataResources.length; index++) {
       const dataResource = dataResources[index]!
-      dataResource[1].mutate(() => unstate(result[index]!.data))
+      dataResource[1].mutate(() => $state.snapshot(result[index]!.data))
       dataResource[1].refetch()
     }
   })
@@ -291,10 +291,10 @@ export function createQueries<
           const dataResources_ = dataResources
           for (let index = 0; index < dataResources_.length; index++) {
             const dataResource = dataResources_[index]!
-            const unwrappedResult = { ...unstate(result_[index]!) }
+            const unwrappedResult = { ...$state.snapshot(result_[index]!) }
 
-            result[index] = unstate(unwrappedResult)
-            dataResource[1].mutate(() => unstate(result_[index]!.data))
+            result[index] = $state.snapshot(unwrappedResult)
+            dataResource[1].mutate(() => $state.snapshot(result_[index]!.data))
             dataResource[1].refetch()
           }
         })

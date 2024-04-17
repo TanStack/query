@@ -1,8 +1,5 @@
 <script lang="ts">
 	import { createMutation, createQuery, createQueries, useQueryClient } from 'svelte-query/dev';
-	import Test1 from './paginate.svelte';
-	import { unstate } from 'svelte';
-	import { bookFilterStore } from './store.svelte';
 
 	let { children } = $props();
 	function isDerivedReactive() {
@@ -685,7 +682,7 @@
 	});
 	// should deduplicate
 	const data1 = createQuery({
-		queryKey: ['hi', unstate(createQueryKeyDeepArr)],
+		queryKey: ['hi', $state.snapshot(createQueryKeyDeepArr)],
 		queryFn: () => fetch('https://pokeapi.co/api/v2/pokemon/ditto')
 	});
 

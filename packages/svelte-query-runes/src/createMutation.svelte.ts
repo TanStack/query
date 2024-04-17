@@ -1,4 +1,4 @@
-import { onDestroy, unstate } from 'svelte'
+import { onDestroy } from 'svelte'
 
 import { MutationObserver, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'

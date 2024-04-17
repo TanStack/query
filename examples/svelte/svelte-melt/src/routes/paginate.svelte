@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { createQuery, useQueryClient } from 'svelte-query/dev';
 	import { bookFilterStore } from './store.svelte';
-	import { unstate } from 'svelte';
 	import { useQuery } from './external';
 	import { useSvelteExtensionQuery } from './external.svelte';
 	let a = { a: 1 };
