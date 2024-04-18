@@ -355,6 +355,7 @@ export function createBaseQuery<
       ([obs, opts]) => {
         obs.setOptions(opts)
         setStateWithReconciliation(obs.getOptimisticResult(opts))
+        refetch()
       },
       { defer: true },
     ),
