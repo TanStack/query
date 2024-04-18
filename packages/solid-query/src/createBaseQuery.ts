@@ -74,6 +74,7 @@ const hydratableObserverResult = <
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
   result: QueryObserverResult<TDataHydratable, TError>,
 ) => {
+  if (!isServer) return result
   const obj: any = {
     ...unwrap(result),
     // During SSR, functions cannot be serialized, so we need to remove them
@@ -255,7 +256,9 @@ export function createBaseQuery<
         }
         if (!observerResult.isLoading) {
           resolver = null
-          return resolve(observerResult)
+          return resolve(
+            hydratableObserverResult(obs.getCurrentQuery(), observerResult),
+          )
         }
 
         setStateWithReconciliation(observerResult)
