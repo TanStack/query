@@ -1157,10 +1157,10 @@ importers:
         specifier: ^7.5.3
         version: 7.5.3(astro@4.6.2)(react@18.2.0)
       '@tanstack/solid-query':
-        specifier: ^5.30.4
+        specifier: ^5.30.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.30.4
+        specifier: ^5.30.5
         version: link:../../../packages/solid-query-devtools
       astro:
         specifier: ^4.6.1
@@ -1178,10 +1178,10 @@ importers:
   examples/solid/basic-graphql-request:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.30.4
+        specifier: ^5.30.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.30.4
+        specifier: ^5.30.5
         version: link:../../../packages/solid-query-devtools
       graphql:
         specifier: ^16.8.1
@@ -1206,10 +1206,10 @@ importers:
   examples/solid/basic-typescript:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.30.4
+        specifier: ^5.30.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.30.4
+        specifier: ^5.30.5
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -1228,10 +1228,10 @@ importers:
   examples/solid/default-query-function:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.30.4
+        specifier: ^5.30.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.30.4
+        specifier: ^5.30.5
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -1250,10 +1250,10 @@ importers:
   examples/solid/simple:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.30.4
+        specifier: ^5.30.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.30.4
+        specifier: ^5.30.5
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -1284,10 +1284,10 @@ importers:
         specifier: ^1.0.0-rc.0
         version: 1.0.0-rc.0(@testing-library/jest-dom@6.4.2)(rollup@4.14.1)(solid-js@1.8.14)(vinxi@0.3.11)(vite@4.5.1)
       '@tanstack/solid-query':
-        specifier: ^5.30.4
+        specifier: ^5.30.5
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.30.4
+        specifier: ^5.30.5
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -23623,8 +23623,6 @@ packages:
     peerDependenciesMeta:
       webpack:
         optional: true
-      webpack-sources:
-        optional: true
     dependencies:
       webpack: 5.90.3(esbuild@0.20.2)
       webpack-sources: 3.2.3
@@ -27683,23 +27681,6 @@ packages:
       lilconfig: 2.1.0
       postcss: 8.4.35
       yaml: 1.10.2
-    dev: true
-
-  /postcss-load-config@4.0.1(postcss@8.4.35):
-    resolution: {integrity: sha512-vEJIc8RdiBRu3oRAI0ymerOn+7rPuMvRXslTvZUKZonDHFIczxztIyJ1urxM1x9JXEikvpWWTUUqal5j/8QgvA==}
-    engines: {node: '>= 14'}
-    peerDependencies:
-      postcss: '>=8.0.9'
-      ts-node: '>=9.0.0'
-    peerDependenciesMeta:
-      postcss:
-        optional: true
-      ts-node:
-        optional: true
-    dependencies:
-      lilconfig: 2.1.0
-      postcss: 8.4.35
-      yaml: 2.3.4
     dev: true
 
   /postcss-load-config@4.0.1(postcss@8.4.38):
@@ -33046,7 +33027,7 @@ packages:
       execa: 5.1.1
       globby: 11.1.0
       joycon: 3.1.1
-      postcss-load-config: 4.0.1(postcss@8.4.35)
+      postcss-load-config: 4.0.1(postcss@8.4.38)
       resolve-from: 5.0.0
       rollup: 4.6.0
       source-map: 0.8.0-beta.0
