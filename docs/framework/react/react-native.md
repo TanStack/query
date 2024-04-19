@@ -20,7 +20,7 @@ import { onlineManager } from 'react-query'
 
 onlineManager.setEventListener(setOnline => {
   return NetInfo.addEventListener(state => {
-    setOnline(state.isConnected)
+    setOnline(state.isInternetReachable)
   })
 })
 ```
