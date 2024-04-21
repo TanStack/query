@@ -108,12 +108,8 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     return mutation
   }
 
-  #scopeFor(mutation: Mutation<any, any, any, any>) {
-    return mutation.options.scope?.id ?? String(mutation.mutationId)
-  }
-
   add(mutation: Mutation<any, any, any, any>): void {
-    const scope = this.#scopeFor(mutation)
+    const scope = scopeFor(mutation)
     const mutations = this.#mutations.get(scope) ?? []
     mutations.push(mutation)
     this.#mutations.set(scope, mutations)
@@ -121,7 +117,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   remove(mutation: Mutation<any, any, any, any>): void {
-    const scope = this.#scopeFor(mutation)
+    const scope = scopeFor(mutation)
     if (this.#mutations.has(scope)) {
       const mutations = this.#mutations
         .get(scope)
@@ -140,7 +136,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 
   canRun(mutation: Mutation<any, any, any, any>): boolean {
     const firstPendingMutation = this.#mutations
-      .get(this.#scopeFor(mutation))
+      .get(scopeFor(mutation))
       ?.find((m) => m.state.status === 'pending')
 
     // we can run if there is no current pending mutation (start use-case)
@@ -150,7 +146,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 
   runNext(mutation: Mutation<any, any, any, any>): Promise<unknown> {
     const foundMutation = this.#mutations
-      .get(this.#scopeFor(mutation))
+      .get(scopeFor(mutation))
       ?.find((m) => m !== mutation && m.state.isPaused)
 
     return foundMutation?.continue() ?? Promise.resolve()
@@ -204,4 +200,8 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
       ),
     )
   }
+}
+
+function scopeFor(mutation: Mutation<any, any, any, any>) {
+  return mutation.options.scope?.id ?? String(mutation.mutationId)
 }
