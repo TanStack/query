@@ -863,6 +863,10 @@
             {
               "label": "Solid Start",
               "to": "framework/solid/examples/solid-start-streaming"
+            },
+            {
+              "label": "Astro",
+              "to": "framework/solid/examples/astro"
             }
           ]
         },
