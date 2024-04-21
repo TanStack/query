@@ -5,6 +5,7 @@ import { injectQueryClient } from './inject-query-client'
 import type { Injector, Signal } from '@angular/core'
 import type {
   DefaultError,
+  OmitKeyof,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
   QueryFunction,
@@ -22,7 +23,7 @@ type QueryObserverOptionsForCreateQueries<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = Omit<
+> = OmitKeyof<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
   'placeholderData'
 > & {
@@ -135,7 +136,7 @@ export type QueriesOptions<
             [...TResult, GetOptions<Head>],
             [...TDepth, 1]
           >
-        : Array<unknown> extends T
+        : ReadonlyArray<unknown> extends T
           ? T
           : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
             // use this to infer the param types in the case of Array.map() argument
@@ -218,7 +219,13 @@ export function injectQueries<
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = 'optimistic'
 
-        return defaultedOptions
+        return defaultedOptions as QueryObserverOptions<
+          unknown,
+          Error,
+          unknown,
+          unknown,
+          QueryKey
+        >
       })
     })
 

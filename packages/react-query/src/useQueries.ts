@@ -27,11 +27,13 @@ import type {
 } from './types'
 import type {
   DefaultError,
+  OmitKeyof,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
+  QueryObserverOptions,
   SkipToken,
   ThrowOnError,
 } from '@tanstack/query-core'
@@ -43,9 +45,9 @@ type UseQueryOptionsForUseQueries<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = Omit<
+> = OmitKeyof<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'placeholderData' | 'suspense'
+  'placeholderData'
 > & {
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
 }
@@ -53,7 +55,7 @@ type UseQueryOptionsForUseQueries<
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
 
-type GetOptions<T> =
+type GetUseQueryOptionsForUseQueries<T> =
   // Part 1: responsible for applying explicit type parameter to function arguments, if object { queryFnData: TQueryFnData, error: TError, data: TData }
   T extends {
     queryFnData: infer TQueryFnData
@@ -118,7 +120,7 @@ type GetDefinedOrUndefinedQueryResult<T, TData, TError = unknown> = T extends {
         : UseQueryResult<TData, TError>
   : UseQueryResult<TData, TError>
 
-type GetResults<T> =
+type GetUseQueryResult<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
   T extends { queryFnData: any; error?: infer TError; data: infer TData }
     ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
@@ -163,21 +165,21 @@ type GetResults<T> =
  */
 export type QueriesOptions<
   T extends Array<any>,
-  TResult extends Array<any> = [],
+  TResults extends Array<any> = [],
   TDepth extends ReadonlyArray<number> = [],
 > = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<UseQueryOptionsForUseQueries>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...TResult, GetOptions<Head>]
-      : T extends [infer Head, ...infer Tail]
+      ? [...TResults, GetUseQueryOptionsForUseQueries<Head>]
+      : T extends [infer Head, ...infer Tails]
         ? QueriesOptions<
-            [...Tail],
-            [...TResult, GetOptions<Head>],
+            [...Tails],
+            [...TResults, GetUseQueryOptionsForUseQueries<Head>],
             [...TDepth, 1]
           >
-        : Array<unknown> extends T
+        : ReadonlyArray<unknown> extends T
           ? T
           : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
             // use this to infer the param types in the case of Array.map() argument
@@ -205,18 +207,18 @@ export type QueriesOptions<
  */
 export type QueriesResults<
   T extends Array<any>,
-  TResult extends Array<any> = [],
+  TResults extends Array<any> = [],
   TDepth extends ReadonlyArray<number> = [],
 > = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<UseQueryResult>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...TResult, GetResults<Head>]
-      : T extends [infer Head, ...infer Tail]
+      ? [...TResults, GetUseQueryResult<Head>]
+      : T extends [infer Head, ...infer Tails]
         ? QueriesResults<
-            [...Tail],
-            [...TResult, GetResults<Head>],
+            [...Tails],
+            [...TResults, GetUseQueryResult<Head>],
             [...TDepth, 1]
           >
         : T extends Array<
@@ -257,7 +259,15 @@ export function useQueries<
   const defaultedQueries = React.useMemo(
     () =>
       queries.map((opts) => {
-        const defaultedOptions = client.defaultQueryOptions(opts)
+        const defaultedOptions = client.defaultQueryOptions(
+          opts as QueryObserverOptions<
+            unknown,
+            Error,
+            unknown,
+            unknown,
+            QueryKey
+          >,
+        )
 
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = isRestoring

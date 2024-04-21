@@ -16,15 +16,13 @@ import { useQueryClient } from './QueryClientProvider'
 import { shouldThrowError } from './utils'
 import { useIsRestoring } from './isRestoring'
 import type { CreateBaseQueryOptions } from './types'
-import type { Accessor } from 'solid-js'
+import type { Accessor, Signal } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
-  InfiniteQueryObserverResult,
   Query,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
-  QueryState,
 } from '@tanstack/query-core'
 
 function reconcileFn<TData, TError>(
@@ -34,19 +32,33 @@ function reconcileFn<TData, TError>(
     | string
     | false
     | ((oldData: TData | undefined, newData: TData) => TData),
+  queryHash?: string,
 ): QueryObserverResult<TData, TError> {
   if (reconcileOption === false) return result
   if (typeof reconcileOption === 'function') {
     const newData = reconcileOption(store.data, result.data as TData)
     return { ...result, data: newData } as typeof result
   }
-  const newData = reconcile(result.data, { key: reconcileOption })(store.data)
+  let data = result.data
+  if (store.data === undefined) {
+    try {
+      data = structuredClone(data)
+    } catch (error) {
+      if (process.env.NODE_ENV !== 'production') {
+        if (error instanceof Error) {
+          console.warn(
+            `Unable to correctly reconcile data for query key: ${queryHash}. ` +
+              `Possibly because the query data contains data structures that aren't supported ` +
+              `by the 'structuredClone' algorithm. Consider using a callback function instead ` +
+              `to manage the reconciliation manually.\n\n Error Received: ${error.name} - ${error.message}`,
+          )
+        }
+      }
+    }
+  }
+  const newData = reconcile(data, { key: reconcileOption })(store.data)
   return { ...result, data: newData } as typeof result
 }
-
-type HydratableQueryState<TData, TError> = QueryObserverResult<TData, TError> &
-  QueryState<TData, TError> &
-  InfiniteQueryObserverResult<TData, TError>
 
 /**
  * Solid's `onHydrated` functionality will silently "fail" (hydrate with an empty object)
@@ -62,42 +74,30 @@ const hydratableObserverResult = <
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
   result: QueryObserverResult<TDataHydratable, TError>,
 ) => {
-  // Including the extra properties is only relevant on the server
-  if (!isServer) return result as HydratableQueryState<TDataHydratable, TError>
-
-  return {
+  if (!isServer) return result
+  const obj: any = {
     ...unwrap(result),
+    // During SSR, functions cannot be serialized, so we need to remove them
+    // This is safe because we will add these functions back when the query is hydrated
+    refetch: undefined,
+  }
 
-    // cast to refetch function should be safe, since we only remove it on the server,
-    // and refetch is not relevant on the server
-    refetch: undefined as unknown as HydratableQueryState<
-      TDataHydratable,
-      TError
-    >['refetch'],
+  // If the query is an infinite query, we need to remove additional properties
+  if ('fetchNextPage' in result) {
+    obj.fetchNextPage = undefined
+    obj.fetchPreviousPage = undefined
+  }
 
-    // cast to fetchNextPage function should be safe, since we only remove it on the server,
-    fetchNextPage: undefined as unknown as HydratableQueryState<
-      TDataHydratable,
-      TError
-    >['fetchNextPage'],
+  // We will also attach the dehydrated state of the query to the result
+  // This will be removed on client after hydration
+  obj.hydrationData = {
+    state: query.state,
+    queryKey: query.queryKey,
+    queryHash: query.queryHash,
+    ...(query.meta && { meta: query.meta }),
+  }
 
-    // cast to fetchPreviousPage function should be safe, since we only remove it on the server,
-    fetchPreviousPage: undefined as unknown as HydratableQueryState<
-      TDataHydratable,
-      TError
-    >['fetchPreviousPage'],
-
-    // hydrate() expects a QueryState object, which is similar but not
-    // quite the same as a QueryObserverResult object. Thus, for now, we're
-    // copying over the missing properties from state in order to support hydration
-    dataUpdateCount: query.state.dataUpdateCount,
-    fetchFailureCount: query.state.fetchFailureCount,
-    isInvalidated: query.state.isInvalidated,
-
-    // Unsetting these properties on the server since they might not be serializable
-    fetchFailureReason: null,
-    fetchMeta: null,
-  } as HydratableQueryState<TDataHydratable, TError>
+  return obj
 }
 
 // Base Query Function that is used to create the query.
@@ -114,9 +114,7 @@ export function createBaseQuery<
   Observer: typeof QueryObserver,
   queryClient?: Accessor<QueryClient>,
 ) {
-  type ResourceData =
-    | HydratableQueryState<TData, TError>
-    | QueryObserverResult<TData, TError>
+  type ResourceData = QueryObserverResult<TData, TError>
 
   const client = createMemo(() => useQueryClient(queryClient?.()))
   const isRestoring = useIsRestoring()
@@ -138,14 +136,15 @@ export function createBaseQuery<
     }
     return defaultOptions
   })
+  const initialOptions = defaultedOptions()
 
   const [observer, setObserver] = createSignal(
     new Observer(client(), defaultedOptions()),
   )
 
-  const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
-    observer().getOptimisticResult(defaultedOptions()),
-  )
+  let observerResult = observer().getOptimisticResult(defaultedOptions())
+  const [state, setState] =
+    createStore<QueryObserverResult<TData, TError>>(observerResult)
 
   const createServerSubscriber = (
     resolve: (
@@ -179,34 +178,43 @@ export function createBaseQuery<
   const createClientSubscriber = () => {
     const obs = observer()
     return obs.subscribe((result) => {
-      notifyManager.batchCalls(() => {
-        // @ts-expect-error - This will error because the reconcile option does not
-        // exist on the query-core QueryObserverResult type
-        const reconcileOptions = obs.options.reconcile
-
-        // If the query has data we don't suspend but instead mutate the resource
-        // This could happen when placeholderData/initialData is defined
-        if (queryResource()?.data && result.data && !queryResource.loading) {
-          setState((store) => {
-            return reconcileFn(
-              store,
-              result,
-              reconcileOptions === undefined ? false : reconcileOptions,
-            )
-          })
-          mutate(state)
-        } else {
-          setState((store) => {
-            return reconcileFn(
-              store,
-              result,
-              reconcileOptions === undefined ? false : reconcileOptions,
-            )
-          })
-          refetch()
-        }
-      })()
+      observerResult = result
+      queueMicrotask(() => refetch())
     })
+  }
+
+  function setStateWithReconciliation(res: typeof observerResult) {
+    const opts = observer().options
+    // @ts-expect-error - Reconcile option is not correctly typed internally
+    const reconcileOptions = opts.reconcile
+
+    setState((store) => {
+      return reconcileFn(
+        store,
+        res,
+        reconcileOptions === undefined ? false : reconcileOptions,
+        opts.queryHash,
+      )
+    })
+  }
+
+  function createDeepSignal<T>(): Signal<T> {
+    return [
+      () => state,
+      (v: any) => {
+        const unwrapped = unwrap(state)
+        if (typeof v === 'function') {
+          v = v(unwrapped)
+        }
+        // Hydration data exists on first load after SSR,
+        // and should be removed from the observer result
+        if (v.hydrationData) {
+          const { hydrationData, ...rest } = v
+          v = rest
+        }
+        setStateWithReconciliation(v)
+      },
+    ] as Signal<T>
   }
 
   /**
@@ -214,12 +222,19 @@ export function createBaseQuery<
    */
   let unsubscribe: (() => void) | null = null
 
-  const [queryResource, { refetch, mutate }] = createResource<
-    ResourceData | undefined
-  >(
+  /*
+    Fixes #7275
+    In a few cases, the observer could unmount before the resource is loaded.
+    This leads to Suspense boundaries to be suspended indefinitely.
+    This resolver will be called when the observer is unmounting 
+    but the resource is still in a loading state
+  */
+  let resolver: ((value: ResourceData) => void) | null = null
+  const [queryResource, { refetch }] = createResource<ResourceData | undefined>(
     () => {
       const obs = observer()
       return new Promise((resolve, reject) => {
+        resolver = resolve
         if (isServer) {
           unsubscribe = createServerSubscriber(resolve, reject)
         } else if (!unsubscribe && !isRestoring()) {
@@ -227,19 +242,30 @@ export function createBaseQuery<
         }
         obs.updateResult()
 
-        if (!state.isLoading) {
-          const query = obs.getCurrentQuery()
-          resolve(hydratableObserverResult(query, state))
+        if (
+          observerResult.isError &&
+          !observerResult.isFetching &&
+          !isRestoring() &&
+          shouldThrowError(obs.options.throwOnError, [
+            observerResult.error,
+            obs.getCurrentQuery(),
+          ])
+        ) {
+          setStateWithReconciliation(observerResult)
+          return reject(observerResult.error)
         }
+        if (!observerResult.isLoading) {
+          resolver = null
+          return resolve(
+            hydratableObserverResult(obs.getCurrentQuery(), observerResult),
+          )
+        }
+
+        setStateWithReconciliation(observerResult)
       })
     },
     {
-      initialValue: state,
-
-      // If initialData is provided, we resolve the resource immediately
-      get ssrLoadFrom() {
-        return options().initialData ? 'initial' : 'server'
-      },
+      storage: createDeepSignal,
 
       get deferStream() {
         return options().deferStream
@@ -254,16 +280,10 @@ export function createBaseQuery<
        * Note that this is only invoked on the client, for queries that were originally run on the server.
        */
       onHydrated(_k, info) {
-        const defaultOptions = defaultedOptions()
-        if (info.value) {
+        if (info.value && 'hydrationData' in info.value) {
           hydrate(client(), {
-            queries: [
-              {
-                queryKey: defaultOptions.queryKey,
-                queryHash: defaultOptions.queryHash,
-                state: info.value,
-              },
-            ],
+            // @ts-expect-error - hydrationData is not correctly typed internally
+            queries: [{ ...info.value.hydrationData }],
           })
         }
 
@@ -272,14 +292,17 @@ export function createBaseQuery<
          * Do not refetch query on mount if query was fetched on server,
          * even if `staleTime` is not set.
          */
-        const newOptions = { ...defaultOptions }
-        if (defaultOptions.staleTime || !defaultOptions.initialData) {
+        const newOptions = { ...initialOptions }
+        if (
+          (initialOptions.staleTime || !initialOptions.initialData) &&
+          info.value
+        ) {
           newOptions.refetchOnMount = false
         }
         // Setting the options as an immutable object to prevent
         // wonky behavior with observer subscriptions
         observer().setOptions(newOptions)
-        setState(observer().getOptimisticResult(newOptions))
+        setStateWithReconciliation(observer().getOptimisticResult(newOptions))
         unsubscribe = createClientSubscriber()
       },
     },
@@ -323,6 +346,10 @@ export function createBaseQuery<
       unsubscribe()
       unsubscribe = null
     }
+    if (resolver && !isServer) {
+      resolver(observerResult)
+      resolver = null
+    }
   })
 
   createComputed(
@@ -330,29 +357,10 @@ export function createBaseQuery<
       [observer, defaultedOptions],
       ([obs, opts]) => {
         obs.setOptions(opts)
-        setState(obs.getOptimisticResult(opts))
+        setStateWithReconciliation(obs.getOptimisticResult(opts))
+        refetch()
       },
       { defer: true },
-    ),
-  )
-
-  createComputed(
-    on(
-      () => state.status,
-      () => {
-        const obs = observer()
-        if (
-          state.isError &&
-          !state.isFetching &&
-          !isRestoring() &&
-          shouldThrowError(obs.options.throwOnError, [
-            state.error,
-            obs.getCurrentQuery(),
-          ])
-        ) {
-          throw state.error
-        }
-      },
     ),
   )
 
@@ -361,8 +369,13 @@ export function createBaseQuery<
       target: QueryObserverResult<TData, TError>,
       prop: keyof QueryObserverResult<TData, TError>,
     ): any {
-      const val = queryResource()?.[prop]
-      return val !== undefined ? val : Reflect.get(target, prop)
+      if (prop === 'data') {
+        if (state.data !== undefined) {
+          return queryResource.latest?.data
+        }
+        return queryResource()?.data
+      }
+      return Reflect.get(target, prop)
     },
   }
 

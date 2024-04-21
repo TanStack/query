@@ -9,7 +9,7 @@ When using **suspense** or **throwOnError** in your queries, you need a way to l
 import { QueryErrorResetBoundary } from '@tanstack/react-query'
 import { ErrorBoundary } from 'react-error-boundary'
 
-const App: React.FC = () => (
+const App = () => (
   <QueryErrorResetBoundary>
     {({ reset }) => (
       <ErrorBoundary

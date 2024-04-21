@@ -30,6 +30,7 @@ import type {
   CreateQueryOptions,
   CreateQueryResult,
   DefinedCreateQueryResult,
+  OmitKeyof,
   QueryFunction,
 } from '..'
 import type { Mock } from 'vitest'
@@ -163,9 +164,10 @@ describe('createQuery', () => {
           token: string,
           // return type must be wrapped with TQueryFnReturn
         ) => Promise<TQueryFnData>,
-        options?: Omit<
+        options?: OmitKeyof<
           CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-          'queryKey' | 'queryFn' | 'initialData'
+          'queryKey' | 'queryFn' | 'initialData',
+          'safely'
         >,
       ) =>
         createQuery(() => ({
@@ -185,9 +187,10 @@ describe('createQuery', () => {
       >(
         qk: TQueryKey,
         fetcher: () => Promise<TQueryFnData>,
-        options?: Omit<
+        options?: OmitKeyof<
           CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-          'queryKey' | 'queryFn' | 'initialData'
+          'queryKey' | 'queryFn' | 'initialData',
+          'safely'
         >,
       ) => createQuery(() => ({ queryKey: qk, queryFn: fetcher, ...options }))
       const testFuncStyle = useWrappedFuncStyleQuery([''], async () => true)
@@ -1048,7 +1051,9 @@ describe('createQuery', () => {
           count++
           return count === 1 ? result1 : result2
         },
-        reconcile: 'id',
+        reconcile: (oldData, newData) => {
+          return reconcile(newData)(oldData)
+        },
       }))
 
       createRenderEffect(() => {
@@ -2404,6 +2409,7 @@ describe('createQuery', () => {
 
       return (
         <div>
+          <h1>{state.data}</h1>
           <h1>{state.status}</h1>
           <h2>{state.error?.message}</h2>
         </div>
@@ -2419,6 +2425,124 @@ describe('createQuery', () => {
     ))
 
     await waitFor(() => rendered.getByText('error boundary'))
+
+    consoleMock.mockRestore()
+  })
+
+  it('should throw error inside the same component if queryFn throws and throwOnError is in use', async () => {
+    const key = queryKey()
+
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    function Page() {
+      const state = createQuery(() => ({
+        queryKey: key,
+        queryFn: () => Promise.reject(new Error('Error test')),
+        retry: false,
+        throwOnError: true,
+      }))
+
+      return (
+        <div>
+          <ErrorBoundary fallback={() => <div>error boundary</div>}>
+            <h1>{state.data}</h1>
+            <h1>{state.status}</h1>
+            <h2>{state.error?.message}</h2>
+          </ErrorBoundary>
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await waitFor(() => rendered.getByText('error boundary'))
+
+    consoleMock.mockRestore()
+  })
+
+  it('should throw error inside the same component if queryFn throws and show the correct error message', async () => {
+    const key = queryKey()
+
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    function Page() {
+      const state = createQuery(() => ({
+        queryKey: key,
+        queryFn: () => Promise.reject(new Error('Error test')),
+        retry: false,
+        throwOnError: true,
+      }))
+
+      return (
+        <div>
+          <ErrorBoundary
+            fallback={(err) => <div>Fallback error: {err.message}</div>}
+          >
+            <h1>{state.data}</h1>
+            <h1>{state.status}</h1>
+            <h2>{state.error?.message}</h2>
+          </ErrorBoundary>
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await waitFor(() => rendered.getByText('Fallback error: Error test'))
+
+    consoleMock.mockRestore()
+  })
+
+  it('should show the correct error message on the error property when accessed outside error boundary', async () => {
+    const key = queryKey()
+
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    function Page() {
+      const state = createQuery(() => ({
+        queryKey: key,
+        queryFn: () => Promise.reject(new Error('Error test')),
+        retry: false,
+        throwOnError: true,
+      }))
+
+      return (
+        <div>
+          <h2>Outside error boundary: {state.error?.message}</h2>
+          <ErrorBoundary
+            fallback={(err) => <div>Fallback error: {err.message}</div>}
+          >
+            <h1>{state.data}</h1>
+            <h1>{state.status}</h1>
+          </ErrorBoundary>
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await waitFor(() =>
+      rendered.getByText('Outside error boundary: Error test'),
+    )
+    await waitFor(() => rendered.getByText('Fallback error: Error test'))
 
     consoleMock.mockRestore()
   })
@@ -2488,7 +2612,7 @@ describe('createQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const state = createQuery<unknown, Error>(() => ({
+      const state = createQuery(() => ({
         queryKey: key,
         queryFn: () => Promise.reject(new Error('Remote Error')),
         retry: false,
@@ -2497,6 +2621,7 @@ describe('createQuery', () => {
 
       return (
         <div>
+          <div>{state.data}</div>
           <h1>{state.status}</h1>
           <h2>{state.error?.message ?? ''}</h2>
         </div>

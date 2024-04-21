@@ -20,6 +20,7 @@ import type {
   MutationKey,
   MutationObserverOptions,
   NoInfer,
+  OmitKeyof,
   QueryClientConfig,
   QueryFilters,
   QueryKey,
@@ -379,7 +380,7 @@ export class QueryClient extends QC {
   setQueryDefaults(
     queryKey: MaybeRefDeep<QueryKey>,
     options: MaybeRefDeep<
-      Omit<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>
+      OmitKeyof<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>
     >,
   ): void {
     super.setQueryDefaults(cloneDeepUnref(queryKey), cloneDeepUnref(options))
@@ -387,7 +388,7 @@ export class QueryClient extends QC {
 
   getQueryDefaults(
     queryKey: MaybeRefDeep<QueryKey>,
-  ): Omit<QueryObserverOptions<any, any, any, any, any>, 'queryKey'> {
+  ): OmitKeyof<QueryObserverOptions<any, any, any, any, any>, 'queryKey'> {
     return super.getQueryDefaults(cloneDeepUnref(queryKey))
   }
 

@@ -12,7 +12,7 @@ import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
-import type { DataTag, NoInfer } from './types'
+import type { DataTag, NoInfer, OmitKeyof } from './types'
 import type { QueryState } from './query'
 import type {
   CancelOptions,
@@ -43,7 +43,7 @@ import type { MutationFilters, QueryFilters, Updater } from './utils'
 
 interface QueryDefaults {
   queryKey: QueryKey
-  defaultOptions: Omit<QueryOptions<any, any, any>, 'queryKey'>
+  defaultOptions: OmitKeyof<QueryOptions<any, any, any>, 'queryKey'>
 }
 
 interface MutationDefaults {
@@ -154,12 +154,10 @@ export class QueryClient {
   getQueriesData<TQueryFnData = unknown>(
     filters: QueryFilters,
   ): Array<[QueryKey, TQueryFnData | undefined]> {
-    return this.getQueryCache()
-      .findAll(filters)
-      .map(({ queryKey, state }) => {
-        const data = state.data as TQueryFnData | undefined
-        return [queryKey, data]
-      })
+    return this.#queryCache.findAll(filters).map(({ queryKey, state }) => {
+      const data = state.data as TQueryFnData | undefined
+      return [queryKey, data]
+    })
   }
 
   setQueryData<
@@ -208,7 +206,7 @@ export class QueryClient {
     options?: SetDataOptions,
   ): Array<[QueryKey, TQueryFnData | undefined]> {
     return notifyManager.batch(() =>
-      this.getQueryCache()
+      this.#queryCache
         .findAll(filters)
         .map(({ queryKey }) => [
           queryKey,
@@ -429,7 +427,7 @@ export class QueryClient {
   setQueryDefaults(
     queryKey: QueryKey,
     options: Partial<
-      Omit<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>
+      OmitKeyof<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>
     >,
   ): void {
     this.#queryDefaults.set(hashKey(queryKey), {
@@ -440,10 +438,10 @@ export class QueryClient {
 
   getQueryDefaults(
     queryKey: QueryKey,
-  ): Omit<QueryObserverOptions<any, any, any, any, any>, 'queryKey'> {
+  ): OmitKeyof<QueryObserverOptions<any, any, any, any, any>, 'queryKey'> {
     const defaults = [...this.#queryDefaults.values()]
 
-    let result: Omit<
+    let result: OmitKeyof<
       QueryObserverOptions<any, any, any, any, any>,
       'queryKey'
     > = {}
@@ -458,7 +456,10 @@ export class QueryClient {
 
   setMutationDefaults(
     mutationKey: MutationKey,
-    options: Omit<MutationObserverOptions<any, any, any, any>, 'mutationKey'>,
+    options: OmitKeyof<
+      MutationObserverOptions<any, any, any, any>,
+      'mutationKey'
+    >,
   ): void {
     this.#mutationDefaults.set(hashKey(mutationKey), {
       mutationKey,

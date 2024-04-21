@@ -34,7 +34,7 @@ export default function SearchResults({ query = '' }: SearchResultsProps) {
   return (
     <div>
       <div className="search-status">
-        Satus: {status} {isFetching && <span>fetching...</span>}
+        Status: {status} {isFetching && <span>fetching...</span>}
       </div>
       <div>
         <div className="search-result">

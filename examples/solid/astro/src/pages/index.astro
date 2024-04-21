@@ -1,0 +1,7 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+
+const id = Astro.url.searchParams.get('id') || '';
+---
+
+<MainLayout id={id} />

@@ -7,6 +7,14 @@ import type { QueryFilters, QueryTypeFilter, SkipToken } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
 
+export type OmitKeyof<
+  TObject,
+  TKey extends TStrictly extends 'safely'
+    ? keyof TObject | (string & Record<never, never>)
+    : keyof TObject,
+  TStrictly extends 'strictly' | 'safely' = 'strictly',
+> = Omit<TObject, TKey>
+
 export type NoInfer<T> = [T][T extends any ? 0 : never]
 
 export interface Register {
@@ -58,6 +66,8 @@ export type QueryFunctionContext<
       queryKey: TQueryKey
       signal: AbortSignal
       meta: QueryMeta | undefined
+      pageParam?: unknown
+      direction?: 'forward' | 'backward'
     }
   : {
       queryKey: TQueryKey
@@ -341,7 +351,7 @@ export type Optional<TTarget, TKey extends keyof TTarget> = Pick<
   Partial<TTarget>,
   TKey
 > &
-  Omit<TTarget, TKey>
+  OmitKeyof<TTarget, TKey>
 
 export type DefaultedQueryObserverOptions<
   TQueryFnData = unknown,
@@ -894,7 +904,10 @@ export interface QueryClientConfig {
 }
 
 export interface DefaultOptions<TError = DefaultError> {
-  queries?: Omit<QueryObserverOptions<unknown, TError>, 'suspense' | 'queryKey'>
+  queries?: OmitKeyof<
+    QueryObserverOptions<unknown, TError>,
+    'suspense' | 'queryKey'
+  >
   mutations?: MutationObserverOptions<unknown, TError, unknown, unknown>
 }
 

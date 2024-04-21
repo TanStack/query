@@ -1,8 +1,9 @@
 import { describe, it } from 'vitest'
 import { reactive } from 'vue'
-import { useQueries } from '..'
+import { skipToken, useQueries } from '..'
 import { queryOptions } from '../queryOptions'
 import { doNotExecute } from './test-utils'
+import type { OmitKeyof } from '..'
 import type { UseQueryOptions } from '../useQuery'
 import type { Equal, Expect } from './test-utils'
 
@@ -123,13 +124,35 @@ describe('UseQueries config object overload', () => {
     })
   })
 
+  it('TData should have correct type when conditional skipToken is passed', () => {
+    doNotExecute(() => {
+      const { value: queriesState } = useQueries({
+        queries: [
+          {
+            queryKey: ['key'],
+            queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+          },
+        ],
+      })
+
+      const data = queriesState[0].data
+
+      const result: Expect<Equal<number | undefined, typeof data>> = true
+      return result
+    })
+  })
+
   describe('custom hook', () => {
     it('should allow custom hooks using UseQueryOptions', () => {
       doNotExecute(() => {
         type Data = string
 
         const useCustomQueries = (
-          options?: Omit<UseQueryOptions<Data>, 'queryKey' | 'queryFn'>,
+          options?: OmitKeyof<
+            UseQueryOptions<Data>,
+            'queryKey' | 'queryFn',
+            'safely'
+          >,
         ) => {
           return useQueries({
             queries: [

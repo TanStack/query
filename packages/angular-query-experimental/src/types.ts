@@ -9,6 +9,7 @@ import type {
   MutateFunction,
   MutationObserverOptions,
   MutationObserverResult,
+  OmitKeyof,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
@@ -34,7 +35,7 @@ export interface CreateQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends Omit<
+> extends OmitKeyof<
     CreateBaseQueryOptions<
       TQueryFnData,
       TError,
@@ -82,7 +83,7 @@ export interface CreateInfiniteQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends Omit<
+> extends OmitKeyof<
     InfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
@@ -99,7 +100,7 @@ export type CreateBaseQueryResult<
   TError = DefaultError,
   TState = QueryObserverResult<TData, TError>,
 > = BaseQueryNarrowing<TData, TError> &
-  MapToSignals<Omit<TState, keyof BaseQueryNarrowing>>
+  MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>>
 
 export type CreateQueryResult<
   TData = unknown,
@@ -131,7 +132,7 @@ export interface CreateMutationOptions<
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> extends Omit<
+> extends OmitKeyof<
     MutationObserverOptions<TData, TError, TVariables, TContext>,
     '_defaulted'
   > {}
@@ -250,7 +251,7 @@ export type CreateMutationResult<
     TContext
   >,
 > = BaseMutationNarrowing<TData, TError, TVariables, TContext> &
-  MapToSignals<Omit<TState, keyof BaseMutationNarrowing>>
+  MapToSignals<OmitKeyof<TState, keyof BaseMutationNarrowing, 'safely'>>
 
 type Override<TTargetA, TTargetB> = {
   [AKey in keyof TTargetA]: AKey extends keyof TTargetB

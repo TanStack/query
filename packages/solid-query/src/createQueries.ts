@@ -18,6 +18,7 @@ import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
 import type {
   DefaultError,
+  OmitKeyof,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
   QueryFunction,
@@ -34,7 +35,7 @@ type CreateQueryOptionsForCreateQueries<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = Omit<
+> = OmitKeyof<
   SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'placeholderData'
 > & {
@@ -147,7 +148,7 @@ type QueriesOptions<
             [...TResult, GetOptions<Head>],
             [...TDepth, 1]
           >
-        : Array<unknown> extends T
+        : ReadonlyArray<unknown> extends T
           ? T
           : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
             // use this to infer the param types in the case of Array.map() argument
@@ -220,7 +221,7 @@ export function createQueries<
   const client = createMemo(() => useQueryClient(queryClient?.()))
   const isRestoring = useIsRestoring()
 
-  const defaultedQueries = createMemo(() =>
+  const defaultedQueries: QueriesOptions<any> = createMemo(() =>
     queriesOptions().queries.map((options) =>
       mergeProps(client().defaultQueryOptions(options), {
         get _optimisticResults() {
@@ -293,7 +294,7 @@ export function createQueries<
           const dataResources_ = dataResources()
           for (let index = 0; index < dataResources_.length; index++) {
             const dataResource = dataResources_[index]!
-            const unwrappedResult = { ...unwrap(result[index]!) }
+            const unwrappedResult = { ...unwrap(result[index]) }
             // @ts-expect-error typescript pedantry regarding the possible range of index
             setState(index, unwrap(unwrappedResult))
             dataResource[1].mutate(() => unwrap(state[index]!.data))
