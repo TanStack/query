@@ -1,0 +1,25 @@
+---
+import { SolidApp } from "../components/SolidApp";
+const { id } = Astro.props;
+
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro</title>
+	</head>
+	<body class="text-zinc-900">
+		<div class="flex h-screen flex-col">
+			<nav class="flex items-center h-12 border-b px-4 flex-shrink-0">
+				<div class="font-semibold text-lg">
+					Solid Query + Astro
+				</div>
+			</nav>
+			<SolidApp pokemon={id} client:load />
+		</div>
+	</body>
+</html>

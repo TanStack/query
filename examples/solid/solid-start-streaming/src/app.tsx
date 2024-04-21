@@ -1,7 +1,7 @@
 // @refresh reload
 import { MetaProvider, Title } from '@solidjs/meta'
-import { Router } from '@solidjs/router'
-import { FileRoutes } from '@solidjs/start'
+import { A, Router } from '@solidjs/router'
+import { FileRoutes } from '@solidjs/start/router'
 import { Suspense } from 'solid-js'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
@@ -30,7 +30,9 @@ export default function App() {
             <a href="/mixed">Mixed</a>
             <a href="/with-error">With Error</a>
             <a href="/hydration">Hydration</a>
-            <a href="/prefetch">Prefetch</a>
+            <A preload={true} href="/prefetch">
+              Prefetch
+            </A>
             <a href="/batch-methods">Batching Methods</a>
             <Suspense>{props.children}</Suspense>
           </MetaProvider>
