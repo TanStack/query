@@ -717,6 +717,10 @@ export type MutationKey = ReadonlyArray<unknown>
 
 export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
 
+export type MutationScope = {
+  id: string
+}
+
 export type MutationMeta = Register extends {
   mutationMeta: infer TMutationMeta
 }
@@ -762,6 +766,7 @@ export interface MutationOptions<
   gcTime?: number
   _defaulted?: boolean
   meta?: MutationMeta
+  scope?: MutationScope
 }
 
 export interface MutationObserverOptions<

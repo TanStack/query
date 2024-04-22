@@ -527,9 +527,10 @@ export class Query<
       retry: context.options.retry,
       retryDelay: context.options.retryDelay,
       networkMode: context.options.networkMode,
+      canRun: () => true,
     })
 
-    return this.#retryer.promise
+    return this.#retryer.start()
   }
 
   #dispatch(action: Action<TData, TError>): void {

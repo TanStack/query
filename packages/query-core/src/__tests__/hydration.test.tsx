@@ -704,4 +704,38 @@ describe('dehydration and rehydration', () => {
       hydrationCache.find({ queryKey: ['string'] })?.state.fetchStatus,
     ).toBe('idle')
   })
+
+  test('should dehydrate and hydrate mutation scopes', async () => {
+    const queryClient = createQueryClient()
+    const onlineMock = mockOnlineManagerIsOnline(false)
+
+    void executeMutation(
+      queryClient,
+      {
+        mutationKey: ['mutation'],
+        mutationFn: async () => {
+          return 'mutation'
+        },
+        scope: {
+          id: 'scope',
+        },
+      },
+      'vars',
+    )
+
+    const dehydrated = dehydrate(queryClient)
+    expect(dehydrated.mutations[0]?.scope?.id).toBe('scope')
+    const stringified = JSON.stringify(dehydrated)
+
+    // ---
+    const parsed = JSON.parse(stringified)
+    const hydrationCache = new MutationCache()
+    const hydrationClient = createQueryClient({ mutationCache: hydrationCache })
+
+    hydrate(hydrationClient, parsed)
+
+    expect(dehydrated.mutations[0]?.scope?.id).toBe('scope')
+
+    onlineMock.mockRestore()
+  })
 })
