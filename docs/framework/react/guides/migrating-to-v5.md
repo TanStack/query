@@ -186,7 +186,7 @@ Custom loggers were already deprecated in 4 and have been removed in this versio
 
 ### Supported Browsers
 
-We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](./installation#requirements).
+We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](../../installation#requirements).
 
 ### Private class fields and methods
 
@@ -235,7 +235,7 @@ useQuery<number, string>({
 })
 ```
 
-For a way to set a different kind of Error globally, see [the TypeScript Guide](./typescript#registering-a-global-error).
+For a way to set a different kind of Error globally, see [the TypeScript Guide](../../typescript#registering-a-global-error).
 
 ### eslint `prefer-query-object-syntax` rule is removed
 
@@ -488,17 +488,17 @@ Infinite Queries can be prefetched like regular Queries. Per default, only the f
 
 ### New `combine` option for `useQueries`
 
-See the [useQueries docs](../useQueries#combine) for more details.
+See the [useQueries docs](../../reference/useQueries#combine) for more details.
 
 ### Experimental `fine grained storage persister`
 
-See the [experimental_createPersister docs](../createPersister) for more details.
+See the [experimental_createPersister docs](../../../react/plugins/createPersister) for more details.
 
 [//]: # 'FrameworkSpecificNewFeatures'
 
 ### Typesafe way to create Query Options
 
-See the [TypeScript docs](./typescript#typing-query-options) for more details.
+See the [TypeScript docs](../../typescript#typing-query-options) for more details.
 
 ### new hooks for suspense
 
