@@ -65,8 +65,8 @@ However, we have not followed this concept through to all apis. For example, whe
 To streamline all apis, we've decided to make all keys Arrays only:
 
 ```tsx
-- useQuery('todos', fetchTodos) // [!code --]
-+ useQuery(['todos'], fetchTodos) // [!code ++]
+;-useQuery('todos', fetchTodos) + // [!code --]
+  useQuery(['todos'], fetchTodos) // [!code ++]
 ```
 
 #### Codemod
@@ -117,8 +117,8 @@ Also, have a look at [the guide on dependent queries](../dependent-queries)
 Due to this change, disabled queries (even temporarily disabled ones) will start in `loading` state. To make migration easier, especially for having a good flag to know when to display a loading spinner, you can check for `isInitialLoading` instead of `isLoading`:
 
 ```tsx
-- isLoading // [!code --]
-+ isInitialLoading // [!code ++]
+;-isLoading + // [!code --]
+  isInitialLoading // [!code ++]
 ```
 
 See also the guide on [disabling queries](../disabling-queries#isInitialLoading)
@@ -128,8 +128,16 @@ See also the guide on [disabling queries](../disabling-queries#isInitialLoading)
 The `useQueries` hook now accepts an object with a `queries` prop as its input. The value of the `queries` prop is an array of queries (this array is identical to what was passed into `useQueries` in v3).
 
 ```tsx
-- useQueries([{ queryKey1, queryFn1, options1 }, { queryKey2, queryFn2, options2 }]) // [!code --]
-+ useQueries({ queries: [{ queryKey1, queryFn1, options1 }, { queryKey2, queryFn2, options2 }] }) // [!code ++]
+;-useQueries([
+  { queryKey1, queryFn1, options1 },
+  { queryKey2, queryFn2, options2 },
+]) + // [!code --]
+  useQueries({
+    queries: [
+      { queryKey1, queryFn1, options1 },
+      { queryKey2, queryFn2, options2 },
+    ],
+  }) // [!code ++]
 ```
 
 ### Undefined is an illegal cache value for successful queries
