@@ -160,7 +160,7 @@ export class Query<
   #revertState?: QueryState<TData, TError>
   #cache: QueryCache
   #retryer?: Retryer<TData>
-  #observers: Array<QueryObserver<any, any, any, any, any>>
+  observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
 
@@ -170,7 +170,7 @@ export class Query<
     this.#abortSignalConsumed = false
     this.#defaultOptions = config.defaultOptions
     this.setOptions(config.options)
-    this.#observers = []
+    this.observers = []
     this.#cache = config.cache
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
@@ -191,7 +191,7 @@ export class Query<
   }
 
   protected optionalRemove() {
-    if (!this.#observers.length && this.state.fetchStatus === 'idle') {
+    if (!this.observers.length && this.state.fetchStatus === 'idle') {
       this.#cache.remove(this)
     }
   }
@@ -238,9 +238,7 @@ export class Query<
   }
 
   isActive(): boolean {
-    return this.#observers.some(
-      (observer) => observer.options.enabled !== false,
-    )
+    return this.observers.some((observer) => observer.options.enabled !== false)
   }
 
   isDisabled(): boolean {
@@ -253,7 +251,7 @@ export class Query<
     }
 
     if (this.getObserversCount() > 0) {
-      return this.#observers.some(
+      return this.observers.some(
         (observer) => observer.getCurrentResult().isStale,
       )
     }
@@ -270,7 +268,7 @@ export class Query<
   }
 
   onFocus(): void {
-    const observer = this.#observers.find((x) => x.shouldFetchOnWindowFocus())
+    const observer = this.observers.find((x) => x.shouldFetchOnWindowFocus())
 
     observer?.refetch({ cancelRefetch: false })
 
@@ -279,7 +277,7 @@ export class Query<
   }
 
   onOnline(): void {
-    const observer = this.#observers.find((x) => x.shouldFetchOnReconnect())
+    const observer = this.observers.find((x) => x.shouldFetchOnReconnect())
 
     observer?.refetch({ cancelRefetch: false })
 
@@ -288,8 +286,8 @@ export class Query<
   }
 
   addObserver(observer: QueryObserver<any, any, any, any, any>): void {
-    if (!this.#observers.includes(observer)) {
-      this.#observers.push(observer)
+    if (!this.observers.includes(observer)) {
+      this.observers.push(observer)
 
       // Stop the query from being garbage collected
       this.clearGcTimeout()
@@ -299,10 +297,10 @@ export class Query<
   }
 
   removeObserver(observer: QueryObserver<any, any, any, any, any>): void {
-    if (this.#observers.includes(observer)) {
-      this.#observers = this.#observers.filter((x) => x !== observer)
+    if (this.observers.includes(observer)) {
+      this.observers = this.observers.filter((x) => x !== observer)
 
-      if (!this.#observers.length) {
+      if (!this.observers.length) {
         // If the transport layer does not support cancellation
         // we'll let the query continue so the result can be cached
         if (this.#retryer) {
@@ -321,7 +319,7 @@ export class Query<
   }
 
   getObserversCount(): number {
-    return this.#observers.length
+    return this.observers.length
   }
 
   invalidate(): void {
@@ -354,7 +352,7 @@ export class Query<
     // Use the options from the first observer with a query function if no function is found.
     // This can happen when the query is hydrated or created with setQueryData.
     if (!this.options.queryFn) {
-      const observer = this.#observers.find((x) => x.options.queryFn)
+      const observer = this.observers.find((x) => x.options.queryFn)
       if (observer) {
         this.setOptions(observer.options)
       }
@@ -527,9 +525,10 @@ export class Query<
       retry: context.options.retry,
       retryDelay: context.options.retryDelay,
       networkMode: context.options.networkMode,
+      canRun: () => true,
     })
 
-    return this.#retryer.promise
+    return this.#retryer.start()
   }
 
   #dispatch(action: Action<TData, TError>): void {
@@ -607,7 +606,7 @@ export class Query<
     this.state = reducer(this.state)
 
     notifyManager.batch(() => {
-      this.#observers.forEach((observer) => {
+      this.observers.forEach((observer) => {
         observer.onQueryUpdate()
       })
 

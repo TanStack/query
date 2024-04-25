@@ -592,7 +592,7 @@ describe('useMutation', () => {
           await sleep(10)
           count++
           return count > 1
-            ? Promise.resolve('data')
+            ? Promise.resolve(`data${count}`)
             : Promise.reject(new Error('oops'))
         },
         retry: 1,
@@ -631,7 +631,7 @@ describe('useMutation', () => {
     onlineMock.mockReturnValue(true)
     queryClient.getMutationCache().resumePausedMutations()
 
-    await waitFor(() => rendered.getByText('data: data'))
+    await waitFor(() => rendered.getByText('data: data2'))
 
     expect(
       queryClient.getMutationCache().findAll({ mutationKey: key })[0]?.state,
@@ -640,7 +640,7 @@ describe('useMutation', () => {
       isPaused: false,
       failureCount: 0,
       failureReason: null,
-      data: 'data',
+      data: 'data2',
     })
 
     onlineMock.mockRestore()

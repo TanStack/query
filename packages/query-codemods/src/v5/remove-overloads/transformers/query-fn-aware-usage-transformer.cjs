@@ -1,9 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const createV5UtilsObject = require('../utils')
+const createV5UtilsObject = require('../utils/index.cjs')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const UnknownUsageError = require('../utils/unknown-usage-error')
+const UnknownUsageError = require('../utils/unknown-usage-error.cjs')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const createQueryClientTransformer = require('../../../utils/transformers/query-client-transformer')
+const createQueryClientTransformer = require('../../../utils/transformers/query-client-transformer.cjs')
 
 /**
  * @param {import('jscodeshift').api} jscodeshift

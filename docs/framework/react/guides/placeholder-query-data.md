@@ -14,7 +14,7 @@ There are a few ways to supply placeholder data for a query to the cache before 
 - Declaratively:
   - Provide `placeholderData` to a query to prepopulate its cache if empty
 - Imperatively:
-  - [Prefetch or fetch the data using `queryClient` and the `placeholderData` option](../prefetching)
+  - [Prefetch or fetch the data using `queryClient` and the `placeholderData` option](../../../react/guides/prefetching)
 
 When we use `placeholderData`, our Query will not be in a `pending` state - it will start out as being in `success` state, because we have `data` to display - even if that data is just "placeholder" data. To distinguish it from "real" data, we will also have the `isPlaceholderData` flag set to `true` on the Query result.
 
@@ -96,6 +96,6 @@ function Todo({ blogPostId }) {
 
 ## Further reading
 
-For a comparison between `Placeholder Data` and `Initial Data`, have a look at the [Community Resources](../tkdodos-blog#9-placeholder-and-initial-data-in-react-query).
+For a comparison between `Placeholder Data` and `Initial Data`, have a look at the [Community Resources](../../community/tkdodos-blog#9-placeholder-and-initial-data-in-react-query).
 
 [//]: # 'Materials'
