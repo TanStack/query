@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { waitFor } from '@testing-library/react'
 import { MutationObserver } from '../mutationObserver'
 import { createQueryClient, executeMutation, queryKey, sleep } from './utils'
-import type { QueryClient } from '..'
+import type { MutationFunctionContext, QueryClient } from '..'
 import type { MutationState } from '../mutation'
 
 describe('mutations', () => {
@@ -49,7 +49,30 @@ describe('mutations', () => {
     )
 
     expect(fn).toHaveBeenCalledTimes(1)
-    expect(fn).toHaveBeenCalledWith('vars')
+    expect(fn).toHaveBeenCalledWith('vars', expect.anything())
+  })
+
+  test('should provide context to mutationFn', async () => {
+    const mutationKey = queryKey()
+    const vars = 'vars' as const
+    const meta = { a: 1 }
+    const mutationFn = vi
+      .fn<[typeof vars, MutationFunctionContext], Promise<'data'>>()
+      .mockResolvedValue('data')
+
+    const mutation = new MutationObserver(queryClient, {
+      mutationKey,
+      mutationFn,
+      meta,
+    })
+
+    await mutation.mutate(vars)
+
+    expect(mutationFn).toHaveBeenCalledTimes(1)
+    const context = mutationFn.mock.calls[0]![1]
+    expect(context).toBeDefined()
+    expect(context.mutationKey).toEqual(mutationKey)
+    expect(context.meta).toEqual(meta)
   })
 
   test('mutation should set correct success states', async () => {
