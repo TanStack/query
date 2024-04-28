@@ -3,6 +3,7 @@ import { Removable } from './removable'
 import { createRetryer } from './retryer'
 import type {
   DefaultError,
+  MutationFunctionContext,
   MutationMeta,
   MutationOptions,
   MutationStatus,
@@ -167,7 +168,11 @@ export class Mutation<
         if (!this.options.mutationFn) {
           return Promise.reject(new Error('No mutationFn found'))
         }
-        return this.options.mutationFn(variables)
+        const mutationFnContext: MutationFunctionContext = {
+          mutationKey: this.options.mutationKey,
+          meta: this.meta,
+        }
+        return this.options.mutationFn(variables, mutationFnContext)
       },
       onFail: (failureCount, error) => {
         this.#dispatch({ type: 'failed', failureCount, error })
