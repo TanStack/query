@@ -1,18 +1,19 @@
-import { QueryObserver } from "@tanstack/query-core";
-import { assertInjector } from "./util/assert-injector/assert-injector";
-import { injectQueryClient } from "./inject-query-client";
-import { createBaseQuery } from "./create-base-query";
-import type { DefaultError, QueryClient, QueryKey } from "@tanstack/query-core";
-import { Injector, runInInjectionContext } from "@angular/core";
+import { QueryObserver } from '@tanstack/query-core'
+import { runInInjectionContext } from '@angular/core'
+import { assertInjector } from './util/assert-injector/assert-injector'
+import { injectQueryClient } from './inject-query-client'
+import { createBaseQuery } from './create-base-query'
+import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
+import type { Injector } from '@angular/core'
 import type {
   CreateQueryOptions,
   CreateQueryResult,
   DefinedCreateQueryResult,
-} from "./types";
+} from './types'
 import type {
   DefinedInitialDataOptions,
   UndefinedInitialDataOptions,
-} from "./query-options";
+} from './query-options'
 
 export function injectQuery<
   TQueryFnData = unknown,
@@ -24,7 +25,7 @@ export function injectQuery<
     client: QueryClient,
   ) => UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   injector?: Injector,
-): CreateQueryResult<TData, TError>;
+): CreateQueryResult<TData, TError>
 
 export function injectQuery<
   TQueryFnData = unknown,
@@ -36,7 +37,7 @@ export function injectQuery<
     client: QueryClient,
   ) => DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   injector?: Injector,
-): DefinedCreateQueryResult<TData, TError>;
+): DefinedCreateQueryResult<TData, TError>
 
 export function injectQuery<
   TQueryFnData = unknown,
@@ -48,20 +49,20 @@ export function injectQuery<
     client: QueryClient,
   ) => CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   injector?: Injector,
-): CreateQueryResult<TData, TError>;
+): CreateQueryResult<TData, TError>
 
 export function injectQuery(
   options: (client: QueryClient) => CreateQueryOptions,
   injector?: Injector,
 ) {
-  const assertedInjector = assertInjector(injectQuery, injector);
+  const assertedInjector = assertInjector(injectQuery, injector)
   return assertInjector(injectQuery, injector, () => {
-    const queryClient = injectQueryClient();
+    const queryClient = injectQueryClient()
     return createBaseQuery(
       (client) =>
         runInInjectionContext(assertedInjector, () => options(client)),
       QueryObserver,
       queryClient,
-    );
-  });
+    )
+  })
 }
