@@ -130,7 +130,7 @@ The default options are:
 #### `serialize` and `deserialize` options
 
 There is a limit to the amount of data which can be stored in `localStorage`.
-If you need to store more data in `localStorage`, you can override the `serialize` and `deserialize` functions to compress and decrompress the data using a library like [lz-string](https://github.com/pieroxy/lz-string/).
+If you need to store more data in `localStorage`, you can override the `serialize` and `deserialize` functions to compress and decompress the data using a library like [lz-string](https://github.com/pieroxy/lz-string/).
 
 ```tsx
 import { QueryClient } from '@tanstack/react-query'
