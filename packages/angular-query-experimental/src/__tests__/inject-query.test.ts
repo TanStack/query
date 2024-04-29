@@ -1,300 +1,349 @@
-import { Component, computed, input, signal } from '@angular/core'
-import { TestBed, fakeAsync, flush, tick } from '@angular/core/testing'
-import { QueryClient } from '@tanstack/query-core'
-import { describe, expect, vi } from 'vitest'
-import { injectQuery } from '../inject-query'
-import { provideAngularQuery } from '../providers'
+import {
+  Component,
+  computed,
+  input,
+  signal,
+  Injectable,
+  inject,
+} from "@angular/core";
+import { TestBed, fakeAsync, flush, tick } from "@angular/core/testing";
+import { QueryClient } from "@tanstack/query-core";
+import { describe, expect, vi } from "vitest";
+import { injectQuery } from "../inject-query";
+import { provideAngularQuery } from "../providers";
 import {
   delayedFetcher,
   getSimpleFetcherWithReturnData,
   rejectFetcher,
   setSignalInputs,
   simpleFetcher,
-} from './test-utils'
+} from "./test-utils";
 
-describe('injectQuery', () => {
+describe("injectQuery", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [provideAngularQuery(new QueryClient())],
-    })
-  })
+    });
+  });
 
-  test('should return pending status initially', fakeAsync(() => {
+  test("should return pending status initially", fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
-        queryKey: ['key1'],
+        queryKey: ["key1"],
         queryFn: simpleFetcher,
-      }))
-    })
+      }));
+    });
 
-    expect(query.status()).toBe('pending')
-    expect(query.isPending()).toBe(true)
-    expect(query.isFetching()).toBe(true)
-    expect(query.isStale()).toBe(true)
-    expect(query.isFetched()).toBe(false)
+    expect(query.status()).toBe("pending");
+    expect(query.isPending()).toBe(true);
+    expect(query.isFetching()).toBe(true);
+    expect(query.isStale()).toBe(true);
+    expect(query.isFetched()).toBe(false);
 
-    flush()
-  }))
+    flush();
+  }));
 
-  test('should resolve to success and update signal: injectQuery()', fakeAsync(() => {
+  test("should resolve to success and update signal: injectQuery()", fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
-        queryKey: ['key2'],
-        queryFn: getSimpleFetcherWithReturnData('result2'),
-      }))
-    })
+        queryKey: ["key2"],
+        queryFn: getSimpleFetcherWithReturnData("result2"),
+      }));
+    });
 
-    flush()
+    flush();
 
-    expect(query.status()).toBe('success')
-    expect(query.data()).toBe('result2')
-    expect(query.isPending()).toBe(false)
-    expect(query.isFetching()).toBe(false)
-    expect(query.isFetched()).toBe(true)
-    expect(query.isSuccess()).toBe(true)
-  }))
+    expect(query.status()).toBe("success");
+    expect(query.data()).toBe("result2");
+    expect(query.isPending()).toBe(false);
+    expect(query.isFetching()).toBe(false);
+    expect(query.isFetched()).toBe(true);
+    expect(query.isSuccess()).toBe(true);
+  }));
 
-  test('should reject and update signal', fakeAsync(() => {
+  test("should reject and update signal", fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
         retry: false,
-        queryKey: ['key3'],
+        queryKey: ["key3"],
         queryFn: rejectFetcher,
-      }))
-    })
+      }));
+    });
 
-    flush()
+    flush();
 
-    expect(query.status()).toBe('error')
-    expect(query.data()).toBe(undefined)
-    expect(query.error()).toMatchObject({ message: 'Some error' })
-    expect(query.isPending()).toBe(false)
-    expect(query.isFetching()).toBe(false)
-    expect(query.isError()).toBe(true)
-    expect(query.failureCount()).toBe(1)
-    expect(query.failureReason()).toMatchObject({ message: 'Some error' })
-  }))
+    expect(query.status()).toBe("error");
+    expect(query.data()).toBe(undefined);
+    expect(query.error()).toMatchObject({ message: "Some error" });
+    expect(query.isPending()).toBe(false);
+    expect(query.isFetching()).toBe(false);
+    expect(query.isError()).toBe(true);
+    expect(query.failureCount()).toBe(1);
+    expect(query.failureReason()).toMatchObject({ message: "Some error" });
+  }));
 
-  test('should update query on options contained signal change', fakeAsync(() => {
-    const key = signal(['key6', 'key7'])
-    const spy = vi.fn(simpleFetcher)
+  test("should update query on options contained signal change", fakeAsync(() => {
+    const key = signal(["key6", "key7"]);
+    const spy = vi.fn(simpleFetcher);
 
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
         queryKey: key(),
         queryFn: spy,
-      }))
-    })
-    flush()
-    expect(spy).toHaveBeenCalledTimes(1)
+      }));
+    });
+    flush();
+    expect(spy).toHaveBeenCalledTimes(1);
 
-    expect(query.status()).toBe('success')
+    expect(query.status()).toBe("success");
 
-    key.set(['key8'])
-    TestBed.flushEffects()
+    key.set(["key8"]);
+    TestBed.flushEffects();
 
-    expect(spy).toHaveBeenCalledTimes(2)
+    expect(spy).toHaveBeenCalledTimes(2);
 
-    flush()
-  }))
+    flush();
+  }));
 
-  test('should only run query once enabled signal is set to true', fakeAsync(() => {
-    const spy = vi.fn(simpleFetcher)
-    const enabled = signal(false)
+  test("should only run query once enabled signal is set to true", fakeAsync(() => {
+    const spy = vi.fn(simpleFetcher);
+    const enabled = signal(false);
 
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
-        queryKey: ['key9'],
+        queryKey: ["key9"],
         queryFn: spy,
         enabled: enabled(),
-      }))
-    })
+      }));
+    });
 
-    expect(spy).not.toHaveBeenCalled()
-    expect(query.status()).toBe('pending')
+    expect(spy).not.toHaveBeenCalled();
+    expect(query.status()).toBe("pending");
 
-    enabled.set(true)
-    TestBed.flushEffects()
-    flush()
-    expect(spy).toHaveBeenCalledTimes(1)
-    expect(query.status()).toBe('success')
-  }))
+    enabled.set(true);
+    TestBed.flushEffects();
+    flush();
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(query.status()).toBe("success");
+  }));
 
-  test('should properly execute dependant queries', fakeAsync(() => {
+  test("should properly execute dependant queries", fakeAsync(() => {
     const query1 = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
-        queryKey: ['dependant1'],
+        queryKey: ["dependant1"],
         queryFn: simpleFetcher,
-      }))
-    })
+      }));
+    });
 
-    const dependentQueryFn = vi.fn().mockImplementation(delayedFetcher(1000))
+    const dependentQueryFn = vi.fn().mockImplementation(delayedFetcher(1000));
 
     const query2 = TestBed.runInInjectionContext(() => {
       return injectQuery(
         computed(() => ({
-          queryKey: ['dependant2'],
+          queryKey: ["dependant2"],
           queryFn: dependentQueryFn,
           enabled: !!query1.data(),
         })),
-      )
-    })
+      );
+    });
 
-    expect(query1.data()).toStrictEqual(undefined)
-    expect(query2.fetchStatus()).toStrictEqual('idle')
-    expect(dependentQueryFn).not.toHaveBeenCalled()
+    expect(query1.data()).toStrictEqual(undefined);
+    expect(query2.fetchStatus()).toStrictEqual("idle");
+    expect(dependentQueryFn).not.toHaveBeenCalled();
 
-    tick()
-    TestBed.flushEffects()
+    tick();
+    TestBed.flushEffects();
 
-    expect(query1.data()).toStrictEqual('Some data')
-    expect(query2.fetchStatus()).toStrictEqual('fetching')
+    expect(query1.data()).toStrictEqual("Some data");
+    expect(query2.fetchStatus()).toStrictEqual("fetching");
 
-    flush()
+    flush();
 
-    expect(query2.fetchStatus()).toStrictEqual('idle')
-    expect(query2.status()).toStrictEqual('success')
-    expect(dependentQueryFn).toHaveBeenCalledTimes(1)
+    expect(query2.fetchStatus()).toStrictEqual("idle");
+    expect(query2.status()).toStrictEqual("success");
+    expect(dependentQueryFn).toHaveBeenCalledTimes(1);
     expect(dependentQueryFn).toHaveBeenCalledWith(
-      expect.objectContaining({ queryKey: ['dependant2'] }),
-    )
-  }))
+      expect.objectContaining({ queryKey: ["dependant2"] }),
+    );
+  }));
 
-  test('should use the current value for the queryKey when refetch is called', fakeAsync(() => {
-    const fetchFn = vi.fn(simpleFetcher)
-    const keySignal = signal('key11')
+  test("should use the current value for the queryKey when refetch is called", fakeAsync(() => {
+    const fetchFn = vi.fn(simpleFetcher);
+    const keySignal = signal("key11");
 
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
-        queryKey: ['key10', keySignal()],
+        queryKey: ["key10", keySignal()],
         queryFn: fetchFn,
         enabled: false,
-      }))
-    })
+      }));
+    });
 
-    expect(fetchFn).not.toHaveBeenCalled()
-
-    query.refetch().then(() => {
-      expect(fetchFn).toHaveBeenCalledTimes(1)
-      expect(fetchFn).toHaveBeenCalledWith(
-        expect.objectContaining({
-          queryKey: ['key10', 'key11'],
-        }),
-      )
-    })
-
-    flush()
-
-    keySignal.set('key12')
-
-    TestBed.flushEffects()
+    expect(fetchFn).not.toHaveBeenCalled();
 
     query.refetch().then(() => {
-      expect(fetchFn).toHaveBeenCalledTimes(2)
+      expect(fetchFn).toHaveBeenCalledTimes(1);
       expect(fetchFn).toHaveBeenCalledWith(
         expect.objectContaining({
-          queryKey: ['key10', 'key12'],
+          queryKey: ["key10", "key11"],
         }),
-      )
-    })
+      );
+    });
 
-    flush()
-  }))
+    flush();
 
-  describe('throwOnError', () => {
-    test('should evaluate throwOnError when query is expected to throw', fakeAsync(() => {
-      const boundaryFn = vi.fn()
+    keySignal.set("key12");
+
+    TestBed.flushEffects();
+
+    query.refetch().then(() => {
+      expect(fetchFn).toHaveBeenCalledTimes(2);
+      expect(fetchFn).toHaveBeenCalledWith(
+        expect.objectContaining({
+          queryKey: ["key10", "key12"],
+        }),
+      );
+    });
+
+    flush();
+  }));
+
+  describe("throwOnError", () => {
+    test("should evaluate throwOnError when query is expected to throw", fakeAsync(() => {
+      const boundaryFn = vi.fn();
       TestBed.runInInjectionContext(() => {
         return injectQuery(() => ({
-          queryKey: ['key12'],
+          queryKey: ["key12"],
           queryFn: rejectFetcher,
           throwOnError: boundaryFn,
-        }))
-      })
+        }));
+      });
 
-      flush()
+      flush();
 
-      expect(boundaryFn).toHaveBeenCalledTimes(1)
+      expect(boundaryFn).toHaveBeenCalledTimes(1);
       expect(boundaryFn).toHaveBeenCalledWith(
-        Error('Some error'),
+        Error("Some error"),
         expect.objectContaining({
-          state: expect.objectContaining({ status: 'error' }),
+          state: expect.objectContaining({ status: "error" }),
         }),
-      )
-    }))
+      );
+    }));
 
-    test('should throw when throwOnError is true', fakeAsync(() => {
+    test("should throw when throwOnError is true", fakeAsync(() => {
       TestBed.runInInjectionContext(() => {
         return injectQuery(() => ({
-          queryKey: ['key13'],
+          queryKey: ["key13"],
           queryFn: rejectFetcher,
           throwOnError: true,
-        }))
-      })
+        }));
+      });
 
       expect(() => {
-        flush()
-      }).toThrowError('Some error')
-      flush()
-    }))
+        flush();
+      }).toThrowError("Some error");
+      flush();
+    }));
 
-    test('should throw when throwOnError function returns true', fakeAsync(() => {
+    test("should throw when throwOnError function returns true", fakeAsync(() => {
       TestBed.runInInjectionContext(() => {
         return injectQuery(() => ({
-          queryKey: ['key14'],
+          queryKey: ["key14"],
           queryFn: rejectFetcher,
           throwOnError: () => true,
-        }))
-      })
+        }));
+      });
 
       expect(() => {
-        flush()
-      }).toThrowError('Some error')
-      flush()
-    }))
-  })
+        flush();
+      }).toThrowError("Some error");
+      flush();
+    }));
+  });
 
-  test('should set state to error when queryFn returns reject promise', fakeAsync(() => {
+  test("should set state to error when queryFn returns reject promise", fakeAsync(() => {
     const query = TestBed.runInInjectionContext(() => {
       return injectQuery(() => ({
         retry: false,
-        queryKey: ['key15'],
+        queryKey: ["key15"],
         queryFn: rejectFetcher,
-      }))
-    })
+      }));
+    });
 
-    expect(query.status()).toBe('pending')
+    expect(query.status()).toBe("pending");
 
-    flush()
+    flush();
 
-    expect(query.status()).toBe('error')
-  }))
+    expect(query.status()).toBe("error");
+  }));
 
-  test('should render with required signal inputs', fakeAsync(async () => {
+  test("should render with required signal inputs", fakeAsync(async () => {
     @Component({
-      selector: 'app-fake',
+      selector: "app-fake",
       template: `{{ query.data() }}`,
       standalone: true,
     })
     class FakeComponent {
-      name = input.required<string>()
+      name = input.required<string>();
 
       query = injectQuery(() => ({
-        queryKey: ['fake', this.name()],
+        queryKey: ["fake", this.name()],
         queryFn: () => Promise.resolve(this.name()),
-      }))
+      }));
     }
 
-    const fixture = TestBed.createComponent(FakeComponent)
+    const fixture = TestBed.createComponent(FakeComponent);
     setSignalInputs(fixture.componentInstance, {
-      name: 'signal-input-required-test',
-    })
+      name: "signal-input-required-test",
+    });
 
-    flush()
-    fixture.detectChanges()
+    flush();
+    fixture.detectChanges();
 
     expect(fixture.debugElement.nativeElement.textContent).toEqual(
-      'signal-input-required-test',
-    )
-  }))
-})
+      "signal-input-required-test",
+    );
+  }));
+
+  test("should run options in injection context", fakeAsync(async () => {
+    @Injectable()
+    class FakeService {
+      getData(name: string) {
+        return Promise.resolve(name);
+      }
+    }
+
+    @Component({
+      selector: "app-fake",
+      template: `{{ query.data() }}`,
+      standalone: true,
+      providers: [FakeService],
+    })
+    class FakeComponent {
+      name = signal<string>("test name");
+
+      query = injectQuery(() => {
+        const service = inject(FakeService);
+
+        return {
+          queryKey: ["fake", this.name()],
+          queryFn: () => {
+            return service.getData(this.name());
+          },
+        };
+      });
+    }
+
+    const fixture = TestBed.createComponent(FakeComponent);
+    flush();
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.query.data()).toEqual("test name");
+
+    fixture.componentInstance.name.set("test name 2");
+    fixture.detectChanges();
+    flush();
+
+    expect(fixture.componentInstance.query.data()).toEqual("test name 2");
+  }));
+});
