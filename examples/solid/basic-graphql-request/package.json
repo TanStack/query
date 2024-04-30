@@ -9,8 +9,8 @@
     "test:types": "tsc"
   },
   "dependencies": {
-    "@tanstack/solid-query": "^5.32.0",
-    "@tanstack/solid-query-devtools": "^5.32.0",
+    "@tanstack/solid-query": "^5.32.1",
+    "@tanstack/solid-query-devtools": "^5.32.1",
     "graphql": "^16.8.1",
     "graphql-request": "^6.1.0",
     "solid-js": "^1.8.14"
