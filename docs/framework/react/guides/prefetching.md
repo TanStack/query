@@ -420,13 +420,13 @@ const articleRoute = new Route({
 })
 ```
 
-Integration with other routers is also possible, see the [React Router example](../examples/react-router) for another demonstration.
+Integration with other routers is also possible, see the [React Router example](../../examples/react-router) for another demonstration.
 
 [//]: # 'Router'
 
 ## Manually Priming a Query
 
-If you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Client's `setQueryData` method](../QueryClient#queryclientsetquerydata) to directly add or update a query's cached result by key.
+If you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Client's `setQueryData` method](../../../../reference/QueryClient/#queryclientsetquerydata) to directly add or update a query's cached result by key.
 
 [//]: # 'ExampleManualPriming'
 
@@ -439,7 +439,7 @@ queryClient.setQueryData(['todos'], todos)
 
 ## Further reading
 
-For a deep-dive on how to get data into your Query Cache before you fetch, have a look at [#17: Seeding the Query Cache](../tkdodos-blog#17-seeding-the-query-cache) from the Community Resources.
+For a deep-dive on how to get data into your Query Cache before you fetch, have a look at [#17: Seeding the Query Cache](../../community/tkdodos-blog#17-seeding-the-query-cache) from the Community Resources.
 
 Integrating with Server Side routers and frameworks is very similar to what we just saw, with the addition that the data has to passed from the server to the client to be hydrated into the cache there. To learn how, continue on to the [Server Rendering & Hydration guide](../ssr).
 

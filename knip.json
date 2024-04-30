@@ -3,7 +3,7 @@
   "ignoreWorkspaces": ["examples/**", "integrations/**"],
   "workspaces": {
     "packages/query-codemods": {
-      "entry": ["src/v4/*.js", "src/v5/*/*.js"],
+      "entry": ["src/v4/**/*.cjs", "src/v5/**/*.cjs"],
       "ignore": ["**/__testfixtures__/**"]
     },
     "packages/vue-query": {

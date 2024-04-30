@@ -1,13 +1,14 @@
-import type { QueryClient } from './queryClient'
-import type { Query, QueryState } from './query'
 import type {
   MutationKey,
   MutationMeta,
   MutationOptions,
+  MutationScope,
   QueryKey,
   QueryMeta,
   QueryOptions,
 } from './types'
+import type { QueryClient } from './queryClient'
+import type { Query, QueryState } from './query'
 import type { Mutation, MutationState } from './mutation'
 
 // TYPES
@@ -28,6 +29,7 @@ interface DehydratedMutation {
   mutationKey?: MutationKey
   state: MutationState
   meta?: MutationMeta
+  scope?: MutationScope
 }
 
 interface DehydratedQuery {
@@ -48,6 +50,7 @@ function dehydrateMutation(mutation: Mutation): DehydratedMutation {
   return {
     mutationKey: mutation.options.mutationKey,
     state: mutation.state,
+    ...(mutation.options.scope && { scope: mutation.options.scope }),
     ...(mutation.meta && { meta: mutation.meta }),
   }
 }
@@ -115,15 +118,14 @@ export function hydrate(
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const queries = (dehydratedState as DehydratedState).queries || []
 
-  mutations.forEach((dehydratedMutation) => {
+  mutations.forEach(({ state, ...mutationOptions }) => {
     mutationCache.build(
       client,
       {
         ...options?.defaultOptions?.mutations,
-        mutationKey: dehydratedMutation.mutationKey,
-        meta: dehydratedMutation.meta,
+        ...mutationOptions,
       },
-      dehydratedMutation.state,
+      state,
     )
   })
 

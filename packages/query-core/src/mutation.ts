@@ -1,6 +1,6 @@
 import { notifyManager } from './notifyManager'
 import { Removable } from './removable'
-import { canFetch, createRetryer } from './retryer'
+import { createRetryer } from './retryer'
 import type {
   DefaultError,
   MutationMeta,
@@ -17,7 +17,6 @@ interface MutationConfig<TData, TError, TVariables, TContext> {
   mutationId: number
   mutationCache: MutationCache
   options: MutationOptions<TData, TError, TVariables, TContext>
-  defaultOptions?: MutationOptions<TData, TError, TVariables, TContext>
   state?: MutationState<TData, TError, TVariables, TContext>
 }
 
@@ -46,6 +45,7 @@ interface FailedAction<TError> {
 
 interface PendingAction<TVariables, TContext> {
   type: 'pending'
+  isPaused: boolean
   variables?: TVariables
   context?: TContext
 }
@@ -89,7 +89,6 @@ export class Mutation<
   readonly mutationId: number
 
   #observers: Array<MutationObserver<TData, TError, TVariables, TContext>>
-  #defaultOptions?: MutationOptions<TData, TError, TVariables, TContext>
   #mutationCache: MutationCache
   #retryer?: Retryer<TData>
 
@@ -97,7 +96,6 @@ export class Mutation<
     super()
 
     this.mutationId = config.mutationId
-    this.#defaultOptions = config.defaultOptions
     this.#mutationCache = config.mutationCache
     this.#observers = []
     this.state = config.state || getDefaultState()
@@ -107,9 +105,9 @@ export class Mutation<
   }
 
   setOptions(
-    options?: MutationOptions<TData, TError, TVariables, TContext>,
+    options: MutationOptions<TData, TError, TVariables, TContext>,
   ): void {
-    this.options = { ...this.#defaultOptions, ...options }
+    this.options = options
 
     this.updateGcTime(this.options.gcTime)
   }
@@ -164,36 +162,34 @@ export class Mutation<
   }
 
   async execute(variables: TVariables): Promise<TData> {
-    const executeMutation = () => {
-      this.#retryer = createRetryer({
-        fn: () => {
-          if (!this.options.mutationFn) {
-            return Promise.reject(new Error('No mutationFn found'))
-          }
-          return this.options.mutationFn(variables)
-        },
-        onFail: (failureCount, error) => {
-          this.#dispatch({ type: 'failed', failureCount, error })
-        },
-        onPause: () => {
-          this.#dispatch({ type: 'pause' })
-        },
-        onContinue: () => {
-          this.#dispatch({ type: 'continue' })
-        },
-        retry: this.options.retry ?? 0,
-        retryDelay: this.options.retryDelay,
-        networkMode: this.options.networkMode,
-      })
-
-      return this.#retryer.promise
-    }
+    this.#retryer = createRetryer({
+      fn: () => {
+        if (!this.options.mutationFn) {
+          return Promise.reject(new Error('No mutationFn found'))
+        }
+        return this.options.mutationFn(variables)
+      },
+      onFail: (failureCount, error) => {
+        this.#dispatch({ type: 'failed', failureCount, error })
+      },
+      onPause: () => {
+        this.#dispatch({ type: 'pause' })
+      },
+      onContinue: () => {
+        this.#dispatch({ type: 'continue' })
+      },
+      retry: this.options.retry ?? 0,
+      retryDelay: this.options.retryDelay,
+      networkMode: this.options.networkMode,
+      canRun: () => this.#mutationCache.canRun(this),
+    })
 
     const restored = this.state.status === 'pending'
+    const isPaused = !this.#retryer.canStart()
 
     try {
       if (!restored) {
-        this.#dispatch({ type: 'pending', variables })
+        this.#dispatch({ type: 'pending', variables, isPaused })
         // Notify cache callback
         await this.#mutationCache.config.onMutate?.(
           variables,
@@ -205,10 +201,11 @@ export class Mutation<
             type: 'pending',
             context,
             variables,
+            isPaused,
           })
         }
       }
-      const data = await executeMutation()
+      const data = await this.#retryer.start()
 
       // Notify cache callback
       await this.#mutationCache.config.onSuccess?.(
@@ -268,6 +265,8 @@ export class Mutation<
       } finally {
         this.#dispatch({ type: 'error', error: error as TError })
       }
+    } finally {
+      this.#mutationCache.runNext(this)
     }
   }
 
@@ -300,7 +299,7 @@ export class Mutation<
             failureCount: 0,
             failureReason: null,
             error: null,
-            isPaused: !canFetch(this.options.networkMode),
+            isPaused: action.isPaused,
             status: 'pending',
             variables: action.variables,
             submittedAt: Date.now(),
