@@ -73,6 +73,14 @@ describe('core/utils', () => {
 
       expect(isPlainObject(Object.create(Graph))).toBeFalsy()
     })
+
+    it('should return `false` for object with custom prototype', () => {
+      const CustomProto = Object.create({ a: 1 })
+      const obj = Object.create(CustomProto)
+      obj.b = 2
+
+      expect(isPlainObject(obj)).toBeFalsy()
+    })
   })
 
   describe('isPlainArray', () => {
