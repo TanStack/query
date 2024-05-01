@@ -1,4 +1,4 @@
-import { Component, input, signal } from '@angular/core'
+import { Component, Injectable, inject, input, signal } from '@angular/core'
 import { QueryClient } from '@tanstack/query-core'
 import { TestBed } from '@angular/core/testing'
 import { describe, expect, vi } from 'vitest'
@@ -454,5 +454,39 @@ describe('injectMutation', () => {
     })
 
     await expect(() => mutateAsync()).rejects.toThrowError(err)
+  })
+
+  test('should execute callback in injection context', async () => {
+    @Injectable()
+    class FakeService {
+      updateData(name: string) {
+        return Promise.resolve(name)
+      }
+    }
+
+    @Component({
+      selector: 'app-fake',
+      template: ``,
+      standalone: true,
+      providers: [FakeService],
+    })
+    class FakeComponent {
+      mutation = injectMutation(() => {
+        const service = inject(FakeService)
+        return {
+          mutationFn: (name: string) => service.updateData(name),
+        }
+      })
+    }
+
+    const fixture = TestBed.createComponent(FakeComponent)
+    fixture.detectChanges()
+
+    // check if injection contexts persist in a different task
+    await new Promise<void>((resolve) => queueMicrotask(() => resolve()))
+
+    expect(
+      await fixture.componentInstance.mutation.mutateAsync('test'),
+    ).toEqual('test')
   })
 })
