@@ -59,8 +59,20 @@
               "to": "framework/solid/overview"
             },
             {
+              "label": "Quick Start",
+              "to": "framework/solid/quick-start"
+            },
+            {
+              "label": "Installation",
+              "to": "framework/solid/installation"
+            },
+            {
               "label": "Devtools",
               "to": "framework/solid/devtools"
+            },
+            {
+              "label": "TypeScript",
+              "to": "framework/solid/typescript"
             }
           ]
         },

@@ -1,231 +1,137 @@
 ---
 id: overview
-title: Solid Query
+title: Overview
 ---
 
-The `@tanstack/solid-query` package provides a 1st-class API for using TanStack Query with SolidJS.
+Solid Query is the official SolidJS adapter of TanStack Query that makes **fetching, caching, synchronizing and updating server state** in your web applications a breeze.
 
-## Example
+## Motivation
+
+SolidJS has been gaining popularity as a fast, reactive, and declarative library for building user interfaces. It comes packed with a lot of features out of the box. Primitives like `createSignal`, `createStore` are great for managing client state. And, unlike other UI libraries, SolidJS has strong opinions about managing asynchronous data. The `createResource` API is a great primitive for handling server state in SolidJS apps. A `resource` is a special kind of signal that can be used to trigger `Suspense` boundaries when the data is in a loading state.
 
 ```tsx
-import {
-  QueryClient,
-  QueryClientProvider,
-  createQuery,
-} from '@tanstack/solid-query'
-import { Switch, Match, For } from 'solid-js'
-
-const queryClient = new QueryClient()
-
-function Example() {
-  const query = createQuery(() => ({
-    queryKey: ['todos'],
-    queryFn: fetchTodos,
-  }))
-
-  return (
-    <div>
-      <Switch>
-        <Match when={query.isPending}>
-          <p>Loading...</p>
-        </Match>
-        <Match when={query.isError}>
-          <p>Error: {query.error.message}</p>
-        </Match>
-        <Match when={query.isSuccess}>
-          <For each={query.data}>{(todo) => <p>{todo.title}</p>}</For>
-        </Match>
-      </Switch>
-    </div>
-  )
-}
+import { createResource, ErrorBoundary, Suspense } from 'solid-js'
 
 function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Example />
-    </QueryClientProvider>
-  )
-}
-```
-
-## Available Functions
-
-Solid Query offers useful primitives and functions that will make managing server state in SolidJS apps easier.
-
-- `createQuery`
-- `createQueries`
-- `createInfiniteQueries`
-- `createMutation`
-- `useIsFetching`
-- `useIsMutating`
-- `useQueryClient`
-- `QueryClient`
-- `QueryClientProvider`
-
-## Important Differences between Solid Query & React Query
-
-Solid Query offers an API similar to React Query, but there are some key differences to be mindful of.
-
-- Arguments to `solid-query` primitives (like `createQuery`, `createMutation`, `useIsFetching`) listed above are functions, so that they can be tracked in a reactive scope.
-
-```tsx
-// ❌ react version
-useQuery({
-  queryKey: ['todos', todo],
-  queryFn: fetchTodos,
-})
-
-// ✅ solid version
-createQuery(() => ({
-  queryKey: ['todos', todo],
-  queryFn: fetchTodos,
-}))
-```
-
-- Suspense works for queries out of the box if you access the query data inside a `<Suspense>` boundary.
-
-```tsx
-import { For, Suspense } from 'solid-js'
-
-function Example() {
-  const query = createQuery(() => ({
-    queryKey: ['todos'],
-    queryFn: fetchTodos,
-  }))
-  return (
-    <div>
-      {/* ✅ Will trigger loading fallback, data accessed in a suspense boundary. */}
-      <Suspense fallback={'Loading...'}>
-        <For each={query.data}>{(todo) => <div>{todo.title}</div>}</For>
-      </Suspense>
-      {/* ❌ Will not trigger loading fallback, data not accessed in a suspense boundary. */}
-      <For each={query.data}>{(todo) => <div>{todo.title}</div>}</For>
-    </div>
-  )
-}
-```
-
-- Solid Query primitives (`createX`) do not support destructuring. The return value from these functions is a store, and their properties are only tracked in a reactive context.
-
-```tsx
-import {
-  QueryClient,
-  QueryClientProvider,
-  createQuery,
-} from '@tanstack/solid-query'
-import { Match, Switch } from 'solid-js'
-
-const queryClient = new QueryClient()
-
-export default function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Example />
-    </QueryClientProvider>
-  )
-}
-
-function Example() {
-  // ❌ react version -- supports destructing outside reactive context
-  // const { isPending, error, data } = useQuery({
-  //   queryKey: ['repoData'],
-  //   queryFn: () =>
-  //     fetch('https://api.github.com/repos/tannerlinsley/react-query').then(
-  //       (res) => res.json()
-  //     ),
-  // })
-
-  // ✅ solid version -- does not support destructuring outside reactive context
-  const query = createQuery(() => ({
-    queryKey: ['repoData'],
-    queryFn: () =>
-      fetch('https://api.github.com/repos/tannerlinsley/react-query').then(
-        (res) => res.json(),
-      ),
-  }))
-
-  // ✅ access query properties in JSX reactive context
-  return (
-    <Switch>
-      <Match when={query.isPending}>Loading...</Match>
-      <Match when={query.isError}>Error: {query.error.message}</Match>
-      <Match when={query.isSuccess}>
-        <div>
-          <h1>{query.data.name}</h1>
-          <p>{query.data.description}</p>
-          <strong>👀 {query.data.subscribers_count}</strong>{' '}
-          <strong>✨ {query.data.stargazers_count}</strong>{' '}
-          <strong>🍴 {query.data.forks_count}</strong>
-        </div>
-      </Match>
-    </Switch>
-  )
-}
-```
-
-- Signals and store values can be passed in directly to function arguments. Solid Query will update the query `store` automatically.
-
-```tsx
-import {
-  QueryClient,
-  QueryClientProvider,
-  createQuery,
-} from '@tanstack/solid-query'
-import { createSignal, For } from 'solid-js'
-
-const queryClient = new QueryClient()
-
-function Example() {
-  const [enabled, setEnabled] = createSignal(false)
-  const [todo, setTodo] = createSignal(0)
-
-  // ✅ passing a signal directly is safe and observers update
-  // automatically when the value of a signal changes
-  const todosQuery = createQuery(() => ({
-    queryKey: ['todos'],
-    queryFn: fetchTodos,
-    enabled: enabled(),
-  }))
-
-  const todoDetailsQuery = createQuery(() => ({
-    queryKey: ['todo', todo()],
-    queryFn: fetchTodo,
-    enabled: todo() > 0,
-  }))
+  const [repository] = createResource(async () => {
+    const result = await fetch('https://api.github.com/repos/TanStack/query')
+    if (!result.ok) throw new Error('Failed to fetch data')
+    return result.json()
+  })
 
   return (
     <div>
-      <Switch>
-        <Match when={query.isPending}>
-          <p>Loading...</p>
-        </Match>
-        <Match when={query.isError}>
-          <p>Error: {query.error.message}</p>
-        </Match>
-        <Match when={query.isSuccess}>
-          <For each={query.data}>
-            {(todo) => (
-              <button onClick={() => setTodo(todo.id)}>{todo.title}</button>
-            )}
-          </For>
-        </Match>
-      </Switch>
-      <button onClick={() => setEnabled(!enabled())}>Toggle enabled</button>
+      <div>Static Content</div>
+      {/* An error while fetching will be caught by the ErrorBoundary */}
+      <ErrorBoundary fallback={<div>Something went wrong!</div>}>
+        {/* Suspense will trigger a loading state while the data is being fetched */}
+        <Suspense fallback={<div>Loading...</div>}>
+          <div>{repository().updated_at}</div>
+        </Suspense>
+      </ErrorBoundary>
     </div>
   )
 }
+
+const root = document.getElementById('root')
+
+render(() => <App />, root!)
+```
+
+This is amazing! In a few lines of code, you can fetch data from an API and handle loading and error states. But, as your application grows in complexity, you will need more features to manage server state effectively. This is because **server state is totally different from client state**. For starters, server state:
+
+- Is persisted remotely in a location you do not control or own
+- Requires asynchronous APIs for fetching and updating
+- Implies shared ownership and can be changed by other people without your knowledge
+- Can potentially become "out of date" in your applications if you're not careful
+
+Once you grasp the nature of server state in your application, **even more challenges will arise** as you go, for example:
+
+- Caching... (possibly the hardest thing to do in programming)
+- Deduping multiple requests for the same data into a single request
+- Updating "out of date" data in the background
+- Knowing when data is "out of date"
+- Reflecting updates to data as quickly as possible
+- Performance optimizations like pagination and lazy loading data
+- Managing memory and garbage collection of server state
+- Memoizing query results with structural sharing
+
+This is where **Solid Query** comes in. The library wraps around `createResource` and provides a set of hooks and utilities to manage server state effectively. It works amazingly well **out-of-the-box, with zero-config, and can be customized** to your liking as your application grows.
+
+On a more technical note, Solid Query will likely:
+
+- Help you remove **many** lines of complicated and misunderstood code from your application and replace with just a handful of lines of Solid Query logic.
+- Make your application more maintainable and easier to build new features without worrying about wiring up new server state data sources
+- Have a direct impact on your end-users by making your application feel faster and more responsive than ever before.
+- Potentially help you save on bandwidth and increase memory performance
+
+## Enough talk, show me some code already!
+
+In the example below, you can see Solid Query in its most basic and simple form being used to fetch the GitHub stats for the TanStack Query GitHub project itself:
+
+```tsx
+import { ErrorBoundary, Suspense } from 'solid-js'
+import {
+  createQuery,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/solid-query'
 
 function App() {
+  const repositoryQuery = createQuery(() => ({
+    queryKey: ['TanStack Query'],
+    queryFn: async () => {
+      const result = await fetch('https://api.github.com/repos/TanStack/query')
+      if (!result.ok) throw new Error('Failed to fetch data')
+      return result.json()
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    throwOnError: true, // Throw an error if the query fails
+  }))
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <Example />
-    </QueryClientProvider>
+    <div>
+      <div>Static Content</div>
+      {/* An error while fetching will be caught by the ErrorBoundary */}
+      <ErrorBoundary fallback={<div>Something went wrong!</div>}>
+        {/* Suspense will trigger a loading state while the data is being fetched */}
+        <Suspense fallback={<div>Loading...</div>}>
+          {/* 
+            The `data` property on a query is a SolidJS resource  
+            so it will work with Suspense and transitions out of the box! 
+          */}
+          <div>{repositoryQuery.data.updated_at}</div>
+        </Suspense>
+      </ErrorBoundary>
+    </div>
   )
 }
+
+const root = document.getElementById('root')
+const client = new QueryClient()
+
+render(
+  () => (
+    <QueryClientProvider client={client}>
+      <App />
+    </QueryClientProvider>
+  ),
+  root!,
+)
 ```
 
-- Errors can be caught and reset using SolidJS' native `ErrorBoundary` component.
-  Set `throwOnError` or the `suspense` option to `true` to make sure errors are thrown to the `ErrorBoundary`
+## Well, that seems like more lines of code to do the same thing?
 
-- Since Property tracking is handled through Solid's fine grained reactivity, options like `notifyOnChangeProps` are not needed
+Yes it is! But, these few lines of code unlock a whole new world of possibilities. In the example above, your query is cached for 5 minutes, meaning that if a new component mounts anywhere in your app that uses the same query within 5 minutes, it will not re-fetch the data but instead use the cached data. This is just one of the many features that Solid Query provides out of the box. Some other features include:
+
+- **Automatic Refetching**: Queries automatically refetch in the background when they become "stale" (out of date according to the `staleTime` option)
+- **Automatic Caching**: Queries are cached by default and shared across your application
+- **Request Deduplication**: Multiple components can share the same query and make one request
+- **Automatic Garbage Collection**: Queries are garbage collected when they are no longer needed
+- **Window Focus Refetching**: Queries automatically refetch when the application comes back into focus
+- **Pagination**: Built-in support for pagination
+- **Request Cancellation**: Automatically cancels outdated or unwanted requests
+- **Polling/Realtime**: It's easy to add polling or realtime updates to your queries with a simple `refetchInterval` option
+- **SSR Support**: Solid Query works great with server-side rendering
+- **Optimistic Updates**: Easily update your cache with optimistic updates
+- **And much more...**
