@@ -10,6 +10,9 @@ import type {
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
+  MutationState,
+  MutationFilters,
+  Mutation,
 } from '@tanstack/query-core'
 import type { Readable } from 'svelte/store'
 
@@ -133,4 +136,12 @@ type Override<TTargetA, TTargetB> = {
   [AKey in keyof TTargetA]: AKey extends keyof TTargetB
     ? TTargetB[AKey]
     : TTargetA[AKey]
+}
+
+/** Options for createMutationState */
+export type MutationStateOptions<TResult = MutationState> = {
+  filters?: MutationFilters
+  select?: (
+    mutation: Mutation<unknown, DefaultError, unknown, unknown>,
+  ) => TResult
 }
