@@ -1,10 +1,4 @@
 {
   "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "paths": {
-      "@tanstack/vue-query": ["../vue-query/src"],
-      "@tanstack/query-devtools": ["../query-devtools/src"]
-    }
-  },
   "include": ["src/**/*.ts", "src/**/*.vue", ".eslintrc.cjs", "vite.config.ts"]
 }
