@@ -376,6 +376,20 @@ describe('core/utils', () => {
 
       expect(current).toBe(next)
     })
+
+    it('should return the previous value when both values are an array of undefined', () => {
+      const current = [undefined]
+      const next = replaceEqualDeep(current, [undefined])
+
+      expect(next).toBe(current)
+    })
+
+    it('should return the previous value when both values are an array that contains undefined', () => {
+      const current = [{ foo: 1 }, undefined]
+      const next = replaceEqualDeep(current, [{ foo: 1 }, undefined])
+
+      expect(next).toBe(current)
+    })
   })
 
   describe('matchMutation', () => {
