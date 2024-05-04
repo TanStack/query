@@ -14,12 +14,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "module": "esnext",
-    "paths": {
-      "@tanstack/angular-query-experimental": [
-        "../angular-query-experimental/src"
-      ]
-    }
+    "module": "esnext"
   },
   "angularCompilerOptions": {
     "allowJs": false,
