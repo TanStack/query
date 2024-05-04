@@ -23,5 +23,3 @@ export const injectQueryClient = tokens[0]
  * @public
  */
 export const provideQueryClient = tokens[1]
-
-export const QUERY_CLIENT = tokens[2]

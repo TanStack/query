@@ -23,7 +23,7 @@ import type {
 /**
  * Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
  * Infinite queries can additively "load more" data onto an existing set of data or "infinite scroll"
- * @param optionsFn - A function that returns infinite query options.n
+ * @param optionsFn - A function that returns infinite query options.
  * @param injector - The Angular injector to use.
  * @returns The infinite query result.
  * @public
