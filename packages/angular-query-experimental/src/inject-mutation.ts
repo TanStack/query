@@ -26,13 +26,22 @@ import type {
   CreateMutationResult,
 } from './types'
 
+/**
+ * Injects a mutation: an imperative function that can be invoked which typically performs server side effects.
+ *
+ * Unlike queries, mutations are not run automatically.
+ * @param optionsFn - A function that returns mutation options.
+ * @param injector - The Angular injector to use.
+ * @returns The mutation.
+ * @public
+ */
 export function injectMutation<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
 >(
-  options: (
+  optionsFn: (
     client: QueryClient,
   ) => CreateMutationOptions<TData, TError, TVariables, TContext>,
   injector?: Injector,
@@ -50,7 +59,7 @@ export function injectMutation<
           TError,
           TVariables,
           TContext
-        >(queryClient, options(queryClient))
+        >(queryClient, optionsFn(queryClient))
         const mutate: CreateMutateFunction<
           TData,
           TError,
@@ -61,7 +70,7 @@ export function injectMutation<
         }
 
         effect(() => {
-          observer.setOptions(options(queryClient))
+          observer.setOptions(optionsFn(queryClient))
         })
 
         const result = signal(observer.getCurrentResult())

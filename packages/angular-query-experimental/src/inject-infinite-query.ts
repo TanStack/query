@@ -20,6 +20,14 @@ import type {
   UndefinedInitialDataInfiniteOptions,
 } from './infinite-query-options'
 
+/**
+ * Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+ * Infinite queries can additively "load more" data onto an existing set of data or "infinite scroll"
+ * @param optionsFn - A function that returns infinite query options.n
+ * @param injector - The Angular injector to use.
+ * @returns The infinite query result.
+ * @public
+ */
 export function injectInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,
@@ -27,7 +35,7 @@ export function injectInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: (
+  optionsFn: (
     client: QueryClient,
   ) => UndefinedInitialDataInfiniteOptions<
     TQueryFnData,
@@ -39,6 +47,14 @@ export function injectInfiniteQuery<
   injector?: Injector,
 ): CreateInfiniteQueryResult<TData, TError>
 
+/**
+ * Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+ * Infinite queries can additively "load more" data onto an existing set of data or "infinite scroll"
+ * @param optionsFn - A function that returns infinite query options.
+ * @param injector - The Angular injector to use.
+ * @returns The infinite query result.
+ * @public
+ */
 export function injectInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,
@@ -46,7 +62,7 @@ export function injectInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: (
+  optionsFn: (
     client: QueryClient,
   ) => DefinedInitialDataInfiniteOptions<
     TQueryFnData,
@@ -58,6 +74,14 @@ export function injectInfiniteQuery<
   injector?: Injector,
 ): DefinedCreateInfiniteQueryResult<TData, TError>
 
+/**
+ * Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+ * Infinite queries can additively "load more" data onto an existing set of data or "infinite scroll"
+ * @param optionsFn - A function that returns infinite query options.
+ * @param injector - The Angular injector to use.
+ * @returns The infinite query result.
+ * @public
+ */
 export function injectInfiniteQuery<
   TQueryFnData,
   TError = DefaultError,
@@ -65,7 +89,7 @@ export function injectInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: (
+  optionsFn: (
     client: QueryClient,
   ) => CreateInfiniteQueryOptions<
     TQueryFnData,
@@ -78,14 +102,22 @@ export function injectInfiniteQuery<
   injector?: Injector,
 ): CreateInfiniteQueryResult<TData, TError>
 
+/**
+ * Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
+ * Infinite queries can additively "load more" data onto an existing set of data or "infinite scroll"
+ * @param optionsFn - A function that returns infinite query options.
+ * @param injector - The Angular injector to use.
+ * @returns The infinite query result.
+ * @public
+ */
 export function injectInfiniteQuery(
-  options: (client: QueryClient) => CreateInfiniteQueryOptions,
+  optionsFn: (client: QueryClient) => CreateInfiniteQueryOptions,
   injector?: Injector,
 ) {
   return assertInjector(injectInfiniteQuery, injector, () => {
     const queryClient = injectQueryClient()
     return createBaseQuery(
-      options,
+      optionsFn,
       InfiniteQueryObserver as typeof QueryObserver,
       queryClient,
     )
