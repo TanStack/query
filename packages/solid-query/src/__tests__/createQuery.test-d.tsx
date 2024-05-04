@@ -14,12 +14,12 @@ describe('initialData', () => {
     })
 
     it('TData should be defined when passed through queryOptions', () => {
-      const options = queryOptions(() => ({
+      const options = queryOptions({
         queryKey: ['key'],
         queryFn: () => ({ wow: true }),
         initialData: { wow: true },
-      }))
-      const { data } = createQuery(options)
+      })
+      const { data } = createQuery(() => options)
 
       expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
     })

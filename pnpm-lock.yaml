@@ -1157,10 +1157,10 @@ importers:
         specifier: ^7.5.3
         version: 7.5.3(astro@4.6.2)(react@18.2.0)
       '@tanstack/solid-query':
-        specifier: ^5.32.1
+        specifier: ^5.34.0
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.32.1
+        specifier: ^5.34.0
         version: link:../../../packages/solid-query-devtools
       astro:
         specifier: ^4.6.1
@@ -1178,10 +1178,10 @@ importers:
   examples/solid/basic-graphql-request:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.32.1
+        specifier: ^5.34.0
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.32.1
+        specifier: ^5.34.0
         version: link:../../../packages/solid-query-devtools
       graphql:
         specifier: ^16.8.1
@@ -1206,10 +1206,10 @@ importers:
   examples/solid/basic-typescript:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.32.1
+        specifier: ^5.34.0
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.32.1
+        specifier: ^5.34.0
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -1228,10 +1228,10 @@ importers:
   examples/solid/default-query-function:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.32.1
+        specifier: ^5.34.0
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.32.1
+        specifier: ^5.34.0
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -1250,10 +1250,10 @@ importers:
   examples/solid/simple:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.32.1
+        specifier: ^5.34.0
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.32.1
+        specifier: ^5.34.0
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
@@ -1284,10 +1284,10 @@ importers:
         specifier: ^1.0.0-rc.0
         version: 1.0.0-rc.0(@testing-library/jest-dom@6.4.2)(rollup@4.14.1)(solid-js@1.8.14)(vinxi@0.3.11)(vite@4.5.1)
       '@tanstack/solid-query':
-        specifier: ^5.32.1
+        specifier: ^5.34.0
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.32.1
+        specifier: ^5.34.0
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.14
