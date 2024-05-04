@@ -1,5 +1,12 @@
 {
   "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@tanstack/query-persist-client-core": [
+        "../query-persist-client-core/src"
+      ]
+    }
+  },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",

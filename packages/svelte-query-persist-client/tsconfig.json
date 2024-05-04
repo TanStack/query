@@ -1,5 +1,13 @@
 {
   "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@tanstack/svelte-query": ["../svelte-query/src"],
+      "@tanstack/query-persist-client-core": [
+        "../query-persist-client-core/src"
+      ]
+    }
+  },
   "include": [
     "src/**/*.js",
     "src/**/*.ts",

@@ -1,5 +1,10 @@
 {
   "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@tanstack/query-core": ["../query-core/src"]
+    }
+  },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",

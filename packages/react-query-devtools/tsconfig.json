@@ -1,7 +1,11 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "@tanstack/react-query": ["../react-query/src"],
+      "@tanstack/query-devtools": ["../query-devtools/src"]
+    }
   },
   "include": [
     "src/**/*.ts",

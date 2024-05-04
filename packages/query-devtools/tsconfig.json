@@ -2,7 +2,10 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "jsx": "preserve",
-    "jsxImportSource": "solid-js"
+    "jsxImportSource": "solid-js",
+    "paths": {
+      "@tanstack/query-core": ["../query-core/src"]
+    }
   },
   "include": [
     "src/**/*.ts",

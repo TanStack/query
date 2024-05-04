@@ -15,7 +15,10 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "module": "ES2022",
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "paths": {
+      "@tanstack/query-core": ["../query-core/src"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
