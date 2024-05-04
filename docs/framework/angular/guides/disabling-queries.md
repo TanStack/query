@@ -85,7 +85,7 @@ export class TodosComponent {
 
   todosQuery = injectQuery(() => ({
     queryKey: ['todos', this.filter()],
-    queryFn: this.filter ? () => fetchTodos(this.filter()) : skipToken,
+    queryFn: this.filter() ? () => fetchTodos(this.filter()) : skipToken,
   }))
 }
 ```
