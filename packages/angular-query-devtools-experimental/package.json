@@ -17,8 +17,7 @@
   "type": "module",
   "sideEffects": false,
   "files": [
-    "build",
-    "src"
+    "build"
   ],
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",

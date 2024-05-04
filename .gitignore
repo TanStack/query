@@ -40,6 +40,7 @@ stats.html
 .svelte-kit
 .tsup
 .vinxi
+temp
 
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
