@@ -4,6 +4,15 @@ import { assertInjector } from './util/assert-injector/assert-injector'
 import { injectQueryClient } from './inject-query-client'
 import type { Injector, Signal } from '@angular/core'
 
+/**
+ * Injects a signal that tracks the number of mutations that your application is fetching.
+ *
+ * Can be used for app-wide loading indicators
+ * @param filters - The filters to apply to the query.
+ * @param injector - The Angular injector to use.
+ * @returns signal with number of fetching mutations.
+ * @public
+ */
 export function injectIsMutating(
   filters?: MutationFilters,
   injector?: Injector,
