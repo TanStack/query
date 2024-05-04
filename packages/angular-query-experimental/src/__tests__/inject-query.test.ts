@@ -1,4 +1,11 @@
-import { Component, computed, input, signal } from '@angular/core'
+import {
+  Component,
+  Injectable,
+  computed,
+  inject,
+  input,
+  signal,
+} from '@angular/core'
 import { TestBed, fakeAsync, flush, tick } from '@angular/core/testing'
 import { QueryClient } from '@tanstack/query-core'
 import { describe, expect, vi } from 'vitest'
@@ -296,5 +303,47 @@ describe('injectQuery', () => {
     expect(fixture.debugElement.nativeElement.textContent).toEqual(
       'signal-input-required-test',
     )
+  }))
+
+  test('should run options in injection context', fakeAsync(async () => {
+    @Injectable()
+    class FakeService {
+      getData(name: string) {
+        return Promise.resolve(name)
+      }
+    }
+
+    @Component({
+      selector: 'app-fake',
+      template: `{{ query.data() }}`,
+      standalone: true,
+      providers: [FakeService],
+    })
+    class FakeComponent {
+      name = signal<string>('test name')
+
+      query = injectQuery(() => {
+        const service = inject(FakeService)
+
+        return {
+          queryKey: ['fake', this.name()],
+          queryFn: () => {
+            return service.getData(this.name())
+          },
+        }
+      })
+    }
+
+    const fixture = TestBed.createComponent(FakeComponent)
+    flush()
+    fixture.detectChanges()
+
+    expect(fixture.componentInstance.query.data()).toEqual('test name')
+
+    fixture.componentInstance.name.set('test name 2')
+    fixture.detectChanges()
+    flush()
+
+    expect(fixture.componentInstance.query.data()).toEqual('test name 2')
   }))
 })

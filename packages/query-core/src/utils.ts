@@ -300,6 +300,11 @@ export function isPlainObject(o: any): o is Object {
     return false
   }
 
+  // Handles Objects created by Object.create(<arbitrary prototype>)
+  if (Object.getPrototypeOf(o) !== Object.prototype) {
+    return false
+  }
+
   // Most likely a plain Object
   return true
 }

@@ -7,8 +7,6 @@ Wave your hands in the air and shout hooray because Solid Query comes with dedic
 
 When you begin your Solid Query journey, you'll want these devtools by your side. They help visualize all of the inner workings of Solid Query and will likely save you hours of debugging if you find yourself in a pinch!
 
-> Also note that you can use these devtools to observe queries, but **not mutations** (yet).
-
 ## Install and Import the Devtools
 
 The devtools are a separate package that you need to install:
@@ -29,7 +27,7 @@ You can import the devtools like this:
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 ```
 
-By default, Solid Query Devtools are only included in bundles when `process.env.NODE_ENV === 'development'`, so you don't need to worry about excluding them during a production build.
+By default, Solid Query Devtools are only included in bundles when `isServer === true` ([`isServer`](https://github.com/solidjs/solid/blob/a72d393a07b22f9b7496e5eb93712188ccce0d28/packages/solid/web/src/index.ts#L37) comes from the `solid-js/web` package), so you don't need to worry about excluding them during a production build.
 
 ## Floating Mode
 
