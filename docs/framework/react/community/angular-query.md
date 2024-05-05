@@ -13,6 +13,6 @@ The Angular adapter is now available for TanStack Query v5.
   }))
 ```
 
-It's based on Angular signals and compatible with Angular v17+.
+It's based on Angular signals and compatible with Angular v16+.
 
 Check the complete documentation: [Angular Query overview](https://tanstack.com/query/latest/docs/framework/angular/overview).
