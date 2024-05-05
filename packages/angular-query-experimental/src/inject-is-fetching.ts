@@ -4,6 +4,16 @@ import { assertInjector } from './util/assert-injector/assert-injector'
 import { injectQueryClient } from './inject-query-client'
 import type { Injector, Signal } from '@angular/core'
 
+/**
+ * Injects a signal that tracks the number of queries that your application is loading or
+ * fetching in the background.
+ *
+ * Can be used for app-wide loading indicators
+ * @param filters - The filters to apply to the query.
+ * @param injector - The Angular injector to use.
+ * @returns signal with number of loading or fetching queries.
+ * @public
+ */
 export function injectIsFetching(
   filters?: QueryFilters,
   injector?: Injector,
