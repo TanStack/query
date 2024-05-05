@@ -16,6 +16,9 @@ import type {
 } from '@tanstack/query-core'
 import type { MapToSignals } from './signal-proxy'
 
+/**
+ * @public
+ */
 export interface CreateBaseQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -30,6 +33,9 @@ export interface CreateBaseQueryOptions<
     TQueryKey
   > {}
 
+/**
+ * @public
+ */
 export interface CreateQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -46,12 +52,18 @@ export interface CreateQueryOptions<
     'suspense'
   > {}
 
+/**
+ * @public
+ */
 type CreateStatusBasedQueryResult<
   TStatus extends QueryObserverResult['status'],
   TData = unknown,
   TError = DefaultError,
 > = Extract<QueryObserverResult<TData, TError>, { status: TStatus }>
 
+/**
+ * @public
+ */
 export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
   isSuccess: (
     this: CreateBaseQueryResult<TData, TError>,
@@ -76,6 +88,9 @@ export interface BaseQueryNarrowing<TData = unknown, TError = DefaultError> {
   >
 }
 
+/**
+ * @public
+ */
 export interface CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -95,6 +110,9 @@ export interface CreateInfiniteQueryOptions<
     'suspense'
   > {}
 
+/**
+ * @public
+ */
 export type CreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
@@ -102,22 +120,34 @@ export type CreateBaseQueryResult<
 > = BaseQueryNarrowing<TData, TError> &
   MapToSignals<OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>>
 
+/**
+ * @public
+ */
 export type CreateQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = CreateBaseQueryResult<TData, TError>
 
+/**
+ * @public
+ */
 export type DefinedCreateQueryResult<
   TData = unknown,
   TError = DefaultError,
   TDefinedQueryObserver = DefinedQueryObserverResult<TData, TError>,
 > = MapToSignals<TDefinedQueryObserver>
 
+/**
+ * @public
+ */
 export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = MapToSignals<InfiniteQueryObserverResult<TData, TError>>
 
+/**
+ * @public
+ */
 export type DefinedCreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
@@ -127,6 +157,9 @@ export type DefinedCreateInfiniteQueryResult<
   >,
 > = MapToSignals<TDefinedInfiniteQueryObserver>
 
+/**
+ * @public
+ */
 export interface CreateMutationOptions<
   TData = unknown,
   TError = DefaultError,
@@ -137,6 +170,9 @@ export interface CreateMutationOptions<
     '_defaulted'
   > {}
 
+/**
+ * @public
+ */
 export type CreateMutateFunction<
   TData = unknown,
   TError = DefaultError,
@@ -146,6 +182,9 @@ export type CreateMutateFunction<
   ...args: Parameters<MutateFunction<TData, TError, TVariables, TContext>>
 ) => void
 
+/**
+ * @public
+ */
 export type CreateMutateAsyncFunction<
   TData = unknown,
   TError = DefaultError,
@@ -153,6 +192,9 @@ export type CreateMutateAsyncFunction<
   TContext = unknown,
 > = MutateFunction<TData, TError, TVariables, TContext>
 
+/**
+ * @public
+ */
 export type CreateBaseMutationResult<
   TData = unknown,
   TError = DefaultError,
@@ -165,6 +207,9 @@ export type CreateBaseMutationResult<
   mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext>
 }
 
+/**
+ * @public
+ */
 type CreateStatusBasedMutationResult<
   TStatus extends CreateBaseMutationResult['status'],
   TData = unknown,
@@ -176,6 +221,9 @@ type CreateStatusBasedMutationResult<
   { status: TStatus }
 >
 
+/**
+ * @public
+ */
 export interface BaseMutationNarrowing<
   TData = unknown,
   TError = DefaultError,
@@ -238,6 +286,9 @@ export interface BaseMutationNarrowing<
   >
 }
 
+/**
+ * @public
+ */
 export type CreateMutationResult<
   TData = unknown,
   TError = DefaultError,

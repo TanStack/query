@@ -39,7 +39,9 @@ export class AngularQueryDevtools
   /*
    * It is intentional that there are no default values on inputs.
    * Core devtools will set defaults when values are undefined.
-   * */
+   *
+   * Signal inputs are not used to remain compatible with previous Angular versions.
+   */
 
   /**
    * Add this attribute if you want the dev tools to default to being open
