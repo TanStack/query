@@ -700,6 +700,15 @@
               "to": "framework/vue/reference/hydration"
             }
           ]
+        },
+        {
+          "label": "solid",
+          "children": [
+            {
+              "label": "createQuery",
+              "to": "framework/solid/reference/createQuery"
+            }
+          ]
         }
       ]
     },
