@@ -32,7 +32,7 @@ app.use(VueQueryPlugin, vueQueryPluginOptions)
 
 ### Custom context key
 
-You can also customize the key under which `QueryClient` will be accessible in Vue context. This can be usefull is you want to avoid name clashing between multiple apps on the same page with Vue2.
+You can also customize the key under which `QueryClient` will be accessible in Vue context. This can be useful is you want to avoid name clashing between multiple apps on the same page with Vue2.
 
 It works both with default, and custom `QueryClient`
 
