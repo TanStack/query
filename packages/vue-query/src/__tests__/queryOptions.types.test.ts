@@ -1,5 +1,5 @@
 import { describe, it } from 'vitest'
-import { reactive } from 'vue-demi'
+import { reactive, ref } from 'vue-demi'
 import { QueryClient } from '../queryClient'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
@@ -146,6 +146,25 @@ describe('queryOptions', () => {
 
       const result: Expect<Equal<typeof data, number | undefined>> = true
       return result
+    })
+  })
+  it('should allow to be passed to QueryClient methods while containing ref in queryKey', () => {
+    doNotExecute(() => {
+      const options = queryOptions({
+        queryKey: ['key', ref(1), { nested: ref(2) }],
+        queryFn: () => Promise.resolve(5),
+      })
+
+      const queryClient = new QueryClient()
+
+      // Should not error
+      const data = queryClient.invalidateQueries(options)
+      // Should not error
+      const data2 = queryClient.fetchQuery(options)
+
+      const result: Expect<Equal<typeof data, Promise<void>>> = true
+      const result2: Expect<Equal<typeof data2, Promise<number>>> = true
+      return result || result2
     })
   })
 })
