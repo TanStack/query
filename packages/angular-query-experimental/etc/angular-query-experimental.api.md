@@ -285,6 +285,26 @@ export type DefinedCreateQueryResult<
 > = MapToSignals<TDefinedQueryObserver>
 
 // @public (undocumented)
+export type DefinedInitialDataInfiniteOptions<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = CreateInfiniteQueryOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryFnData,
+  TQueryKey,
+  TPageParam
+> & {
+  initialData:
+    | NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>
+    | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
+}
+
+// @public (undocumented)
 export type DefinedInitialDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -296,8 +316,6 @@ export type DefinedInitialDataOptions<
     | (() => NonUndefinedGuard<TQueryFnData>)
 }
 
-// Warning: (ae-forgotten-export) The symbol "UndefinedInitialDataInfiniteOptions" needs to be exported by the entry point index.d.ts
-//
 // @public
 export function infiniteQueryOptions<
   TQueryFnData,
@@ -323,8 +341,6 @@ export function infiniteQueryOptions<
   queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>
 }
 
-// Warning: (ae-forgotten-export) The symbol "DefinedInitialDataInfiniteOptions" needs to be exported by the entry point index.d.ts
-//
 // @public
 export function infiniteQueryOptions<
   TQueryFnData,
@@ -521,6 +537,9 @@ export const injectQueryClient: {
   ): QueryClient
 }
 
+// @public (undocumented)
+export type NonUndefinedGuard<T> = T extends undefined ? never : T
+
 // @public
 export function provideAngularQuery(
   queryClient: QueryClient,
@@ -633,6 +652,24 @@ export function queryOptions<
 }
 
 // @public (undocumented)
+export type UndefinedInitialDataInfiniteOptions<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> = CreateInfiniteQueryOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryFnData,
+  TQueryKey,
+  TPageParam
+> & {
+  initialData?: undefined
+}
+
+// @public (undocumented)
 export type UndefinedInitialDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -643,10 +680,6 @@ export type UndefinedInitialDataOptions<
 }
 
 export * from '@tanstack/query-core'
-
-// Warnings were encountered during analysis:
-//
-// src/query-options.ts:27:3 - (ae-forgotten-export) The symbol "NonUndefinedGuard" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 ```
