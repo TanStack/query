@@ -309,3 +309,8 @@ type Override<TTargetA, TTargetB> = {
     ? TTargetB[AKey]
     : TTargetA[AKey]
 }
+
+/**
+ * @public
+ */
+export type NonUndefinedGuard<T> = T extends undefined ? never : T

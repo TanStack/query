@@ -11,6 +11,10 @@ export type {
 } from './query-options'
 export { queryOptions } from './query-options'
 
+export type {
+  DefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
+} from './infinite-query-options'
 export { infiniteQueryOptions } from './infinite-query-options'
 
 export * from './inject-infinite-query'
