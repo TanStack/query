@@ -30,33 +30,25 @@ export type UseQueryOptions<
     TData,
     TQueryData,
     TQueryKey
-  >]: Property extends 'queryFn' | 'select'
-    ? QueryObserverOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryData,
-        DeepUnwrapRef<TQueryKey>
-      >[Property]
-    : Property extends 'enabled'
-      ? MaybeRefOrGetter<
-          QueryObserverOptions<
-            TQueryFnData,
-            TError,
-            TData,
-            TQueryData,
-            TQueryKey
-          >[Property]
-        >
-      : MaybeRefDeep<
-          QueryObserverOptions<
-            TQueryFnData,
-            TError,
-            TData,
-            TQueryData,
-            TQueryKey
-          >[Property]
-        >
+  >]: Property extends 'enabled'
+    ? MaybeRefOrGetter<
+        QueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          DeepUnwrapRef<TQueryKey>
+        >[Property]
+      >
+    : MaybeRefDeep<
+        QueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          DeepUnwrapRef<TQueryKey>
+        >[Property]
+      >
 }>
 
 export type UndefinedInitialQueryOptions<
