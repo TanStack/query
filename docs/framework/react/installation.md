@@ -19,7 +19,7 @@ $ yarn add @tanstack/react-query
 
 React Query is compatible with React v16.8+ and works with ReactDOM and React Native.
 
-> Wanna give it a spin before you download? Try out the [simple](/query/v4/docs/examples/react/simple) or [basic](/query/v4/docs/examples/react/basic) examples!
+> Wanna give it a spin before you download? Try out the [simple](/query/v4/docs/framework/react/examples/simple) or [basic](/query/v4/docs/framework/react/examples/basic) examples!
 
 ### CDN
 
@@ -50,7 +50,7 @@ Opera >= 53
 
 ### Recommendations
 
-It is recommended to also use our [ESLint Plugin Query](./eslint/eslint-plugin-query) to help you catch bugs and inconsistencies while you code. You can install it via:
+It is recommended to also use our [ESLint Plugin Query](../../../eslint/eslint-plugin-query) to help you catch bugs and inconsistencies while you code. You can install it via:
 
 ```bash
 $ npm i -D @tanstack/eslint-plugin-query

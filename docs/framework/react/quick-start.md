@@ -5,13 +5,13 @@ title: Quick Start
 
 This code snippet very briefly illustrates the 3 core concepts of React Query:
 
-- [Queries](./guides/queries)
-- [Mutations](./guides/mutations)
-- [Query Invalidation](./guides/query-invalidation)
+- [Queries](../guides/queries)
+- [Mutations](../guides/mutations)
+- [Query Invalidation](../guides/query-invalidation)
 
 [//]: # 'Example'
 
-If you're looking for a fully functioning example, please have a look at our [simple codesandbox example](./examples/simple)
+If you're looking for a fully functioning example, please have a look at our [simple codesandbox example](../examples/simple)
 
 ```tsx
 import {

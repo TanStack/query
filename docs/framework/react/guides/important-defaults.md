@@ -15,7 +15,7 @@ Out of the box, TanStack Query is configured with **aggressive but sane** defaul
   - The network is reconnected
   - The query is optionally configured with a refetch interval
 
-If you see a refetch that you are not expecting, it is likely because you just focused the window and TanStack Query is doing a [`refetchOnWindowFocus`](./guides/window-focus-refetching). During development, this will probably be triggered more frequently, especially because focusing between the Browser DevTools and your app will also cause a fetch, so be aware of that.
+If you see a refetch that you are not expecting, it is likely because you just focused the window and TanStack Query is doing a [`refetchOnWindowFocus`](../window-focus-refetching). During development, this will probably be triggered more frequently, especially because focusing between the Browser DevTools and your app will also cause a fetch, so be aware of that.
 
 > To change this functionality, you can use options like `refetchOnMount`, `refetchOnWindowFocus`, `refetchOnReconnect` and `refetchInterval`.
 
@@ -38,7 +38,7 @@ If you see a refetch that you are not expecting, it is likely because you just f
 
 Have a look at the following articles from our Community Resources for further explanations of the defaults:
 
-- [Practical React Query](./community/tkdodos-blog#1-practical-react-query)
-- [React Query as a State Manager](./community/tkdodos-blog#10-react-query-as-a-state-manager)
+- [Practical React Query](../community/tkdodos-blog#1-practical-react-query)
+- [React Query as a State Manager](../community/tkdodos-blog#10-react-query-as-a-state-manager)
 
 [//]: # 'Materials'
