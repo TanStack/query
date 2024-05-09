@@ -55,7 +55,7 @@ mutate(variables, {
 - `networkMode: 'online' | 'always' | 'offlineFirst'`
   - optional
   - defaults to `'online'`
-  - see [Network Mode](./guides/network-mode) for more information.
+  - see [Network Mode](../../../../framework/react/guides/network-mode) for more information.
 - `onMutate: (variables: TVariables) => Promise<TContext | void> | TContext | void`
   - Optional
   - This function will fire before the mutation function is fired and is passed the same variables the mutation function would receive
@@ -124,7 +124,7 @@ mutate(variables, {
 - `isIdle`, `isLoading`, `isSuccess`, `isError`: boolean variables derived from `status`
 - `isPaused: boolean`
   - will be `true` if the mutation has been `paused`
-  - see [Network Mode](./guides/network-mode) for more information.
+  - see [Network Mode](../../../../framework/react/guides/network-mode) for more information.
 - `data: undefined | unknown`
   - Defaults to `undefined`
   - The last successfully resolved data for the query.

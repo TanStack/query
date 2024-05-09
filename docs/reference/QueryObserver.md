@@ -18,4 +18,4 @@ const unsubscribe = observer.subscribe((result) => {
 
 **Options**
 
-The options for the `QueryObserver` are exactly the same as those of [`useQuery`](./framework/react/reference/useQuery).
+The options for the `QueryObserver` are exactly the same as those of [`useQuery`](../../framework/react/reference/useQuery).
