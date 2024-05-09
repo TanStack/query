@@ -492,35 +492,124 @@ export interface QueryObserverBaseResult<
   TData = unknown,
   TError = DefaultError,
 > {
+  /**
+   * The last successfully resolved data for the query.
+   * - Defaults to `undefined`.
+   */
   data: TData | undefined
+  /**
+   * The timestamp for when the query most recently returned the `status` as `"success"`.
+   */
   dataUpdatedAt: number
+  /**
+   * The error object for the query, if an error was thrown.
+   * - Defaults to `null`.
+   */
   error: TError | null
+  /**
+   * The timestamp for when the query most recently returned the `status` as `"error"`.
+   */
   errorUpdatedAt: number
+  /**
+   * The failure count for the query.
+   * - Incremented every time the query fails.
+   * - Reset to `0` when the query succeeds.
+   */
   failureCount: number
+  /**
+   * The failure reason for the query retry.
+   * - Reset to `null` when the query succeeds.
+   */
   failureReason: TError | null
+  /**
+   * The sum of all errors.
+   */
   errorUpdateCount: number
+  /**
+   * A derived boolean from the `status` variable, provided for convenience.
+   * - `true` if the query attempt resulted in an error.
+   */
   isError: boolean
+  /**
+   * Will be `true` if the query has been fetched.
+   */
   isFetched: boolean
+  /**
+   * Will be `true` if the query has been fetched after the component mounted.
+   * - This property can be used to not show any previously cached data.
+   */
   isFetchedAfterMount: boolean
+  /**
+   * A derived boolean from the `fetchStatus` variable, provided for convenience.
+   * - `true` whenever the queryFn is executing, which includes initial `pending` as well as background refetch.
+   */
   isFetching: boolean
+  /**
+   * Is `true` whenever the first fetch for a query is in-flight.
+   * - Is the same as `isFetching && isPending`.
+   */
   isLoading: boolean
+  /**
+   * Will be `pending` if there's no cached data and no query attempt was finished yet.
+   */
   isPending: boolean
+  /**
+   * Will be `true` if the query failed while fetching for the first time.
+   */
   isLoadingError: boolean
   /**
    * @deprecated isInitialLoading is being deprecated in favor of isLoading
    * and will be removed in the next major version.
    */
   isInitialLoading: boolean
+  /**
+   * A derived boolean from the `fetchStatus` variable, provided for convenience.
+   * - The query wanted to fetch, but has been `paused`.
+   */
   isPaused: boolean
+  /**
+   * Will be `true` if the data shown is the placeholder data.
+   */
   isPlaceholderData: boolean
+  /**
+   * Will be `true` if the query failed while refetching.
+   */
   isRefetchError: boolean
+  /**
+   * Is `true` whenever a background refetch is in-flight, which _does not_ include initial `pending`.
+   * - Is the same as `isFetching && !isPending`.
+   */
   isRefetching: boolean
+  /**
+   * Will be `true` if the data in the cache is invalidated or if the data is older than the given `staleTime`.
+   */
   isStale: boolean
+  /**
+   * A derived boolean from the `status` variable, provided for convenience.
+   * - `true` if the query has received a response with no errors and is ready to display its data.
+   */
   isSuccess: boolean
+  /**
+   * A function to manually refetch the query.
+   */
   refetch: (
     options?: RefetchOptions,
   ) => Promise<QueryObserverResult<TData, TError>>
+  /**
+   * The status of the query.
+   * - Will be:
+   *   - `pending` if there's no cached data and no query attempt was finished yet.
+   *   - `error` if the query attempt resulted in an error.
+   *   - `success` if the query has received a response with no errors and is ready to display its data.
+   */
   status: QueryStatus
+  /**
+   * The fetch status of the query.
+   * - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `pending` as well as background refetch.
+   * - `paused`: The query wanted to fetch, but has been `paused`.
+   * - `idle`: The query is not fetching.
+   * - See [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information.
+   */
   fetchStatus: FetchStatus
 }
 
@@ -818,11 +907,64 @@ export interface MutationObserverBaseResult<
   TVariables = void,
   TContext = unknown,
 > extends MutationState<TData, TError, TVariables, TContext> {
+  /**
+   * The last successfully resolved data for the mutation.
+   * - Defaults to `undefined`.
+   */
+  data: TData | undefined
+  /**
+   * The variables object passed to the `mutationFn`.
+   * - Defaults to `undefined`.
+   */
+  variables: TVariables | undefined
+  /**
+   * The error object for the mutation, if an error was encountered.
+   * - Defaults to `null`.
+   */
+  error: TError | null
+  /**
+   * A boolean variable derived from `status`.
+   * - `true` if the last mutation attempt resulted in an error.
+   */
   isError: boolean
+  /**
+   * A boolean variable derived from `status`.
+   * - `true` if the mutation is in its initial state prior to executing.
+   */
   isIdle: boolean
+  /**
+   * A boolean variable derived from `status`.
+   * - `true` if the mutation is currently executing.
+   */
   isPending: boolean
+  /**
+   * A boolean variable derived from `status`.
+   * - `true` if the last mutation attempt was successful.
+   */
   isSuccess: boolean
+  /**
+   * The status of the mutation.
+   * - Will be:
+   *   - `idle` initial status prior to the mutation function executing.
+   *   - `pending` if the mutation is currently executing.
+   *   - `error` if the last mutation attempt resulted in an error.
+   *   - `success` if the last mutation attempt was successful.
+   */
+  status: MutationStatus
+  /**
+   * The mutation function you can call with variables to trigger the mutation and optionally hooks on additional callback options.
+   * @param variables - The variables object to pass to the `mutationFn`.
+   * @param options.onSuccess - This function will fire when the mutation is successful and will be passed the mutation's result.
+   * @param options.onError - This function will fire if the mutation encounters an error and will be passed the error.
+   * @param options.onSettled - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error.
+   * @remarks
+   * - If you make multiple requests, `onSuccess` will fire only after the latest call you've made.
+   * - All the callback functions (`onSuccess`, `onError`, `onSettled`) are void functions, and the returned value will be ignored.
+   */
   mutate: MutateFunction<TData, TError, TVariables, TContext>
+  /**
+   * A function to clean the mutation internal state (i.e., it resets the mutation to its initial state).
+   */
   reset: () => void
 }
 
