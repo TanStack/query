@@ -1,7 +1,7 @@
 ---
 id: optimistic-updates
 title: Optimistic Updates
-ref: docs/framework/react/guides/optimistic-updates.md
+ref: docs/framework/vue/guides/optimistic-updates.md
 ---
 
 When you optimistically update your state before performing a mutation, there is a chance that the mutation will fail. In most of these failure cases, you can just trigger a refetch for your optimistic queries to revert them to their true server state. In some circumstances though, refetching may not work correctly and the mutation error could represent some type of server issue that won't make it possible to refetch. In this event, you can instead choose to rollback your update.
