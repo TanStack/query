@@ -541,7 +541,7 @@ export interface QueryObserverBaseResult<
   isFetchedAfterMount: boolean
   /**
    * A derived boolean from the `fetchStatus` variable, provided for convenience.
-   * - `true` whenever the queryFn is executing, which includes initial `pending` as well as background refetch.
+   * - `true` whenever the `queryFn` is executing, which includes initial `pending` as well as background refetch.
    */
   isFetching: boolean
   /**
@@ -558,7 +558,7 @@ export interface QueryObserverBaseResult<
    */
   isLoadingError: boolean
   /**
-   * @deprecated isInitialLoading is being deprecated in favor of isLoading
+   * @deprecated `isInitialLoading` is being deprecated in favor of `isLoading`
    * and will be removed in the next major version.
    */
   isInitialLoading: boolean
