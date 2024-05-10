@@ -64,24 +64,6 @@ function infiniteQueryOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-  // I do not see any sense in this param
-  TOptions extends ReturnType<
-    DefinedInitialDataInfiniteOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >
-  > = ReturnType<
-    DefinedInitialDataInfiniteOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >
-  >,
 >(
   options: ReturnType<
     DefinedInitialDataInfiniteOptions<
@@ -109,24 +91,6 @@ function infiniteQueryOptions<
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-  // I do not see any sense in this param
-  TOptions extends ReturnType<
-    UndefinedInitialDataInfiniteOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >
-  > = ReturnType<
-    UndefinedInitialDataInfiniteOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >
-  >,
 >(
   options: ReturnType<
     UndefinedInitialDataInfiniteOptions<
