@@ -2,6 +2,7 @@
 
 import type {
   DefaultError,
+  DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   InfiniteQueryObserverResult,
   MutateFunction,
@@ -10,13 +11,13 @@ import type {
   OmitKeyof,
   QueryKey,
   QueryObserverResult,
-} from '@tanstack/query-core'
+} from "@tanstack/query-core";
 import type {
   InfiniteQueryObserverOptions,
   QueryObserverOptions,
-} from './QueryClient'
+} from "./QueryClient";
 
-export type FunctionedParams<T> = () => T
+export type FunctionedParams<T> = () => T;
 
 export interface CreateBaseQueryOptions<
   TQueryFnData = unknown,
@@ -26,7 +27,7 @@ export interface CreateBaseQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > extends OmitKeyof<
     QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
-    'suspense'
+    "suspense"
   > {
   /**
    * Only applicable while rendering queries on the server with streaming.
@@ -34,13 +35,13 @@ export interface CreateBaseQueryOptions<
    * This can be useful to avoid sending a loading state to the client before the query has resolved.
    * Defaults to `false`.
    */
-  deferStream?: boolean
+  deferStream?: boolean;
   /**
    * @deprecated The `suspense` option has been deprecated in v5 and will be removed in the next major version.
    * The `data` property on createQuery is a SolidJS resource and will automatically suspend when the data is loading.
    * Setting `suspense` to `false` will be a no-op.
    */
-  suspense?: boolean
+  suspense?: boolean;
 }
 
 export interface SolidQueryOptions<
@@ -61,29 +62,29 @@ export type CreateQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = FunctionedParams<SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>>
+> = FunctionedParams<SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>>;
 
 /* --- Create Query and Create Base Query  Types --- */
 
 export type CreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = QueryObserverResult<TData, TError>
+> = QueryObserverResult<TData, TError>;
 
 export type CreateQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = CreateBaseQueryResult<TData, TError>
+> = CreateBaseQueryResult<TData, TError>;
 
 export type DefinedCreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = DefinedQueryObserverResult<TData, TError>
+> = DefinedQueryObserverResult<TData, TError>;
 
 export type DefinedCreateQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = DefinedCreateBaseQueryResult<TData, TError>
+> = DefinedCreateBaseQueryResult<TData, TError>;
 
 /* --- Create Infinite Queries Types --- */
 export interface SolidInfiniteQueryOptions<
@@ -102,22 +103,22 @@ export interface SolidInfiniteQueryOptions<
       TQueryKey,
       TPageParam
     >,
-    'queryKey' | 'suspense'
+    "queryKey" | "suspense"
   > {
-  queryKey: TQueryKey
+  queryKey: TQueryKey;
   /**
    * Only applicable while rendering queries on the server with streaming.
    * Set `deferStream` to `true` to wait for the query to resolve on the server before flushing the stream.
    * This can be useful to avoid sending a loading state to the client before the query has resolved.
    * Defaults to `false`.
    */
-  deferStream?: boolean
+  deferStream?: boolean;
   /**
    * @deprecated The `suspense` option has been deprecated in v5 and will be removed in the next major version.
    * The `data` property on createInfiniteQuery is a SolidJS resource and will automatically suspend when the data is loading.
    * Setting `suspense` to `false` will be a no-op.
    */
-  suspense?: boolean
+  suspense?: boolean;
 }
 
 export type CreateInfiniteQueryOptions<
@@ -135,12 +136,17 @@ export type CreateInfiniteQueryOptions<
     TQueryKey,
     TPageParam
   >
->
+>;
 
 export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = InfiniteQueryObserverResult<TData, TError>
+> = InfiniteQueryObserverResult<TData, TError>;
+
+export type DefinedCreateInfiniteQueryResult<
+  TData = unknown,
+  TError = DefaultError,
+> = DefinedInfiniteQueryObserverResult<TData, TError>;
 
 /* --- Create Mutation Types --- */
 export interface SolidMutationOptions<
@@ -150,7 +156,7 @@ export interface SolidMutationOptions<
   TContext = unknown,
 > extends OmitKeyof<
     MutationObserverOptions<TData, TError, TVariables, TContext>,
-    '_defaulted'
+    "_defaulted"
   > {}
 
 export type CreateMutationOptions<
@@ -158,7 +164,7 @@ export type CreateMutationOptions<
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> = FunctionedParams<SolidMutationOptions<TData, TError, TVariables, TContext>>
+> = FunctionedParams<SolidMutationOptions<TData, TError, TVariables, TContext>>;
 
 export type CreateMutateFunction<
   TData = unknown,
@@ -167,14 +173,14 @@ export type CreateMutateFunction<
   TContext = unknown,
 > = (
   ...args: Parameters<MutateFunction<TData, TError, TVariables, TContext>>
-) => void
+) => void;
 
 export type CreateMutateAsyncFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> = MutateFunction<TData, TError, TVariables, TContext>
+> = MutateFunction<TData, TError, TVariables, TContext>;
 
 export type CreateBaseMutationResult<
   TData = unknown,
@@ -185,18 +191,18 @@ export type CreateBaseMutationResult<
   MutationObserverResult<TData, TError, TVariables, TContext>,
   { mutate: CreateMutateFunction<TData, TError, TVariables, TContext> }
 > & {
-  mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext>
-}
+  mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext>;
+};
 
 export type CreateMutationResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
   TContext = unknown,
-> = CreateBaseMutationResult<TData, TError, TVariables, TContext>
+> = CreateBaseMutationResult<TData, TError, TVariables, TContext>;
 
 type Override<TTargetA, TTargetB> = {
   [AKey in keyof TTargetA]: AKey extends keyof TTargetB
     ? TTargetB[AKey]
-    : TTargetA[AKey]
-}
+    : TTargetA[AKey];
+};
