@@ -31,6 +31,12 @@ export {
   useQueryClient,
 } from './QueryClientProvider'
 export type { QueryClientProviderProps } from './QueryClientProvider'
+export {
+  QueryDefaultOptionsContext,
+  QueryDefaultOptionsProvider,
+  useQueryDefaultOptions,
+} from './QueryDefaultOptionsProvider'
+export type { QueryDefaultOptionsProviderProps } from './QueryDefaultOptionsProvider'
 export type { QueryErrorResetBoundaryProps } from './QueryErrorResetBoundary'
 export { HydrationBoundary } from './HydrationBoundary'
 export type { HydrationBoundaryProps } from './HydrationBoundary'

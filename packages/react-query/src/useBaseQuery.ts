@@ -11,6 +11,7 @@ import {
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
 import { ensureStaleTime, fetchOptimistic, shouldSuspend } from './suspense'
+import { useQueryDefaultOptions } from './QueryDefaultOptionsProvider'
 import type { UseBaseQueryOptions } from './types'
 import type {
   QueryClient,
@@ -47,7 +48,11 @@ export function useBaseQuery<
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
-  const defaultedOptions = client.defaultQueryOptions(options)
+  const defaultOptions = useQueryDefaultOptions()
+  const defaultedOptions = client.defaultQueryOptions({
+    ...(defaultOptions?.queries as typeof options | undefined),
+    ...options,
+  })
 
   // Make sure results are optimistically set in fetching state before subscribing or updating options
   defaultedOptions._optimisticResults = isRestoring
