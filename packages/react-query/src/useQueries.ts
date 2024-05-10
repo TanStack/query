@@ -7,6 +7,7 @@ import {
   notifyManager,
 } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
+import { useQueryDefaultOptions } from './QueryDefaultOptionsProvider'
 import { useIsRestoring } from './isRestoring'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
@@ -256,18 +257,21 @@ export function useQueries<
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
 
+  const defaultOptions = useQueryDefaultOptions()
+
   const defaultedQueries = React.useMemo(
     () =>
       queries.map((opts) => {
-        const defaultedOptions = client.defaultQueryOptions(
-          opts as QueryObserverOptions<
+        const defaultedOptions = client.defaultQueryOptions({
+          ...defaultOptions?.queries,
+          ...(opts as QueryObserverOptions<
             unknown,
             Error,
             unknown,
             unknown,
             QueryKey
-          >,
-        )
+          >),
+        })
 
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = isRestoring
@@ -276,7 +280,7 @@ export function useQueries<
 
         return defaultedOptions
       }),
-    [queries, client, isRestoring],
+    [queries, client, defaultOptions, isRestoring],
   )
 
   defaultedQueries.forEach((query) => {

@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
 
-import { QueryCache, QueryClientProvider, useQuery } from '..'
+import { QueryCache, QueryClientProvider, useQueries, useQuery } from '..'
 import { QueryDefaultOptionsProvider } from '../QueryDefaultOptionsProvider'
 import { createQueryClient, queryKey, sleep } from './utils'
 
@@ -47,6 +47,65 @@ describe('QueryDefaultOptionsProvider', () => {
 
     expect(queryCache.find({ queryKey: key })).toBeDefined()
     expect(queryCache.find({ queryKey: key })?.options.gcTime).toBe(1000)
+  })
+
+  test('works with useQueries', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const queryCache = new QueryCache()
+    const queryClient = createQueryClient({
+      queryCache,
+      defaultOptions: {
+        queries: {
+          gcTime: Infinity,
+        },
+      },
+    })
+
+    function Page() {
+      const [query1, query2] = useQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: async () => {
+              await sleep(10)
+              return 'test1'
+            },
+          },
+          {
+            queryKey: key2,
+            queryFn: async () => {
+              await sleep(10)
+              return 'test2'
+            },
+          },
+        ],
+      })
+
+      return (
+        <div>
+          <h1>{query1.data}</h1>
+          <h1>{query2.data}</h1>
+        </div>
+      )
+    }
+
+    const rendered = render(
+      <QueryClientProvider client={queryClient}>
+        <QueryDefaultOptionsProvider options={{ queries: { gcTime: 1000 } }}>
+          <Page />
+        </QueryDefaultOptionsProvider>
+      </QueryClientProvider>,
+    )
+
+    await waitFor(() => rendered.getByText('test1'))
+    await waitFor(() => rendered.getByText('test2'))
+
+    expect(queryCache.find({ queryKey: key1 })).toBeDefined()
+    expect(queryCache.find({ queryKey: key1 })?.options.gcTime).toBe(1000)
+    expect(queryCache.find({ queryKey: key2 })).toBeDefined()
+    expect(queryCache.find({ queryKey: key2 })?.options.gcTime).toBe(1000)
   })
 
   test('allows different default options per React subtree', async () => {
