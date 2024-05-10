@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-devtools-experimental",
-  "version": "5.29.0",
+  "version": "5.35.3",
   "description": "Developer tools to interact with and visualize the TanStack/angular-query cache",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -17,8 +17,7 @@
   "type": "module",
   "sideEffects": false,
   "files": [
-    "build",
-    "src"
+    "build"
   ],
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
@@ -37,6 +36,7 @@
     "@angular/core": "^17.3.3",
     "@angular/common": "^17.3.3",
     "@tanstack/angular-query-experimental": "workspace:*",
+    "eslint-plugin-jsdoc": "^48.2.2",
     "ng-packagr": "^17.3.0",
     "typescript": "5.2.2",
     "zone.js": "^0.14.4"

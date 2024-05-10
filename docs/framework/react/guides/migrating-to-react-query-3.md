@@ -103,8 +103,8 @@ try {
 
 Together, these provide the same experience as before, but with added control to choose which component trees you want to reset. For more information, see:
 
-- [QueryErrorResetBoundary](../QueryErrorResetBoundary)
-- [useQueryErrorResetBoundary](../useQueryErrorResetBoundary)
+- [QueryErrorResetBoundary](../../reference/QueryErrorResetBoundary)
+- [useQueryErrorResetBoundary](../../reference/useQueryErrorResetBoundary)
 
 ### `QueryCache.getQuery()` has been replaced by `QueryCache.find()`.
 
@@ -425,19 +425,19 @@ Therefore you have to change the enum properties to their equivalent string lite
 
 Here is an example of the changes you would have to make:
 
-```diff
-- import { useQuery, QueryStatus } from 'react-query';
-+ import { useQuery } from 'react-query';
+```tsx
+- import { useQuery, QueryStatus } from 'react-query'; // [!code --]
++ import { useQuery } from 'react-query'; // [!code ++]
 
 const { data, status } = useQuery(['post', id], () => fetchPost(id))
 
-- if (status === QueryStatus.Loading) {
-+ if (status === 'loading') {
+- if (status === QueryStatus.Loading) { // [!code --]
++ if (status === 'loading') { // [!code ++]
   ...
 }
 
-- if (status === QueryStatus.Error) {
-+ if (status === 'error') {
+- if (status === QueryStatus.Error) { // [!code --]
++ if (status === 'error') { // [!code ++]
   ...
 }
 ```

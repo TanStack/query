@@ -3,7 +3,7 @@ id: quick-start
 title: Quick Start
 ---
 
-> VERY IMPORTANT: This library is currently in an experimental stage. This means that breaking changes will happen in minor AND patch releases. Use at your own risk. If you choose to rely on this in production in an experimental stage, please lock your version to a patch-level version to avoid unexpected breakages.
+> IMPORTANT: This library is currently in an experimental stage. This means that breaking changes will happen in minor AND patch releases. Upgrade carefully. If you use this in production while in experimental stage, please lock your version to a patch-level version to avoid unexpected breaking changes.
 
 [//]: # 'Example'
 
@@ -21,6 +21,24 @@ import {
 bootstrapApplication(AppComponent, {
   providers: [provideHttpClient(), provideAngularQuery(new QueryClient())],
 })
+```
+
+or in a NgModule-based app
+
+```ts
+import { provideHttpClient } from '@angular/common/http'
+import {
+  provideAngularQuery,
+  QueryClient,
+} from '@tanstack/angular-query-experimental'
+
+@NgModule({
+  declarations: [AppComponent],
+  imports: [BrowserModule],
+  providers: [provideAngularQuery(new QueryClient())],
+  bootstrap: [AppComponent],
+})
+export class AppModule {}
 ```
 
 ### Component with query and mutation

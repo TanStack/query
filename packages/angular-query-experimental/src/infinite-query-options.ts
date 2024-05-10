@@ -1,8 +1,11 @@
 import type { DataTag } from '@tanstack/query-core'
 import type { InfiniteData } from '@tanstack/query-core'
-import type { CreateInfiniteQueryOptions } from './types'
+import type { CreateInfiniteQueryOptions, NonUndefinedGuard } from './types'
 import type { DefaultError, QueryKey } from '@tanstack/query-core'
 
+/**
+ * @public
+ */
 export type UndefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -20,8 +23,9 @@ export type UndefinedInitialDataInfiniteOptions<
   initialData?: undefined
 }
 
-type NonUndefinedGuard<T> = T extends undefined ? never : T
-
+/**
+ * @public
+ */
 export type DefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -41,6 +45,14 @@ export type DefinedInitialDataInfiniteOptions<
     | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
 }
 
+/**
+ * Allows to share and re-use infinite query options in a type-safe way.
+ *
+ * The `queryKey` will be tagged with the type from `queryFn`.
+ * @param options - The infinite query options to tag with the type from `queryFn`.
+ * @returns The tagged infinite query options.
+ * @public
+ */
 export function infiniteQueryOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -65,6 +77,14 @@ export function infiniteQueryOptions<
   queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>
 }
 
+/**
+ * Allows to share and re-use infinite query options in a type-safe way.
+ *
+ * The `queryKey` will be tagged with the type from `queryFn`.
+ * @param options - The infinite query options to tag with the type from `queryFn`.
+ * @returns The tagged infinite query options.
+ * @public
+ */
 export function infiniteQueryOptions<
   TQueryFnData,
   TError = DefaultError,
@@ -89,6 +109,14 @@ export function infiniteQueryOptions<
   queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>
 }
 
+/**
+ * Allows to share and re-use infinite query options in a type-safe way.
+ *
+ * The `queryKey` will be tagged with the type from `queryFn`.
+ * @param options - The infinite query options to tag with the type from `queryFn`.
+ * @returns The tagged infinite query options.
+ * @public
+ */
 export function infiniteQueryOptions(options: unknown) {
   return options
 }

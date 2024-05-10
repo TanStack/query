@@ -31,7 +31,7 @@ export function createBaseQuery<
   TQueryData,
   TQueryKey extends QueryKey,
 >(
-  options: (
+  optionsFn: (
     client: QueryClient,
   ) => CreateBaseQueryOptions<
     TQueryFnData,
@@ -57,7 +57,7 @@ export function createBaseQuery<
        */
       const defaultedOptionsSignal = computed(() => {
         const defaultedOptions = queryClient.defaultQueryOptions(
-          options(queryClient),
+          optionsFn(queryClient),
         )
         defaultedOptions._optimisticResults = 'optimistic'
         return defaultedOptions

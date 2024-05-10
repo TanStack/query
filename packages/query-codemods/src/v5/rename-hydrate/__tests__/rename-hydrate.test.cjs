@@ -1,10 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const defineTest = require('jscodeshift/dist/testUtils').defineTest
 
-defineTest(__dirname, 'rename-properties', null, 'rename-cache-time', {
+defineTest(__dirname, 'rename-hydrate.cjs', null, 'default-import', {
   parser: 'tsx',
 })
 
-defineTest(__dirname, 'rename-properties', null, 'rename-use-error-boundary', {
+defineTest(__dirname, 'rename-hydrate.cjs', null, 'named-import', {
   parser: 'tsx',
 })

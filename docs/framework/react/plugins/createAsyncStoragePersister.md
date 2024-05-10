@@ -34,7 +34,7 @@ bun add @tanstack/query-async-storage-persister @tanstack/react-query-persist-cl
 - Import the `createAsyncStoragePersister` function
 - Create a new asyncStoragePersister
   - you can pass any `storage` to it that adheres to the `AsyncStorage` interface - the example below uses the async-storage from React Native
-- Wrap your app by using [`PersistQueryClientProvider`](../persistQueryClient.md#persistqueryclientprovider) component.
+- Wrap your app by using [`PersistQueryClientProvider`](../persistQueryClient#persistqueryclientprovider) component.
 
 ```tsx
 import AsyncStorage from '@react-native-async-storage/async-storage'

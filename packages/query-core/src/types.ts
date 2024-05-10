@@ -10,7 +10,11 @@ import type { MutationCache } from './mutationCache'
 export type OmitKeyof<
   TObject,
   TKey extends TStrictly extends 'safely'
-    ? keyof TObject | (string & Record<never, never>)
+    ?
+        | keyof TObject
+        | (string & Record<never, never>)
+        | (number & Record<never, never>)
+        | (symbol & Record<never, never>)
     : keyof TObject,
   TStrictly extends 'strictly' | 'safely' = 'strictly',
 > = Omit<TObject, TKey>
@@ -718,6 +722,10 @@ export type MutationKey = ReadonlyArray<unknown>
 
 export type MutationStatus = 'idle' | 'pending' | 'success' | 'error'
 
+export type MutationScope = {
+  id: string
+}
+
 export type MutationMeta = Register extends {
   mutationMeta: infer TMutationMeta
 }
@@ -763,6 +771,7 @@ export interface MutationOptions<
   gcTime?: number
   _defaulted?: boolean
   meta?: MutationMeta
+  scope?: MutationScope
 }
 
 export interface MutationObserverOptions<

@@ -59,8 +59,20 @@
               "to": "framework/solid/overview"
             },
             {
+              "label": "Quick Start",
+              "to": "framework/solid/quick-start"
+            },
+            {
+              "label": "Installation",
+              "to": "framework/solid/installation"
+            },
+            {
               "label": "Devtools",
               "to": "framework/solid/devtools"
+            },
+            {
+              "label": "TypeScript",
+              "to": "framework/solid/typescript"
             }
           ]
         },
@@ -688,6 +700,15 @@
               "to": "framework/vue/reference/hydration"
             }
           ]
+        },
+        {
+          "label": "solid",
+          "children": [
+            {
+              "label": "createQuery",
+              "to": "framework/solid/reference/createQuery"
+            }
+          ]
         }
       ]
     },
@@ -863,6 +884,10 @@
             {
               "label": "Solid Start",
               "to": "framework/solid/examples/solid-start-streaming"
+            },
+            {
+              "label": "Astro",
+              "to": "framework/solid/examples/astro"
             }
           ]
         },

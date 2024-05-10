@@ -232,10 +232,9 @@ export function replaceEqualDeep(a: any, b: any): any {
     for (let i = 0; i < bSize; i++) {
       const key = array ? i : bItems[i]
       if (
-        !array &&
+        ((!array && aItems.includes(key)) || array) &&
         a[key] === undefined &&
-        b[key] === undefined &&
-        aItems.includes(key)
+        b[key] === undefined
       ) {
         copy[key] = undefined
         equalItems++
@@ -297,6 +296,11 @@ export function isPlainObject(o: any): o is Object {
 
   // If constructor does not have an Object-specific method
   if (!prot.hasOwnProperty('isPrototypeOf')) {
+    return false
+  }
+
+  // Handles Objects created by Object.create(<arbitrary prototype>)
+  if (Object.getPrototypeOf(o) !== Object.prototype) {
     return false
   }
 

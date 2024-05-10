@@ -23,6 +23,7 @@ const {
 } = useMutation({
   mutationFn,
   gcTime,
+  meta,
   mutationKey,
   networkMode,
   onError,
@@ -31,8 +32,8 @@ const {
   onSuccess,
   retry,
   retryDelay,
+  scope,
   throwOnError,
-  meta,
 })
 
 mutate(variables, {
@@ -58,7 +59,7 @@ mutate(variables, {
 - `networkMode: 'online' | 'always' | 'offlineFirst`
   - Optional
   - defaults to `'online'`
-  - see [Network Mode](../network-mode) for more information.
+  - see [Network Mode](../../guides/network-mode) for more information.
 - `onMutate: (variables: TVariables) => Promise<TContext | void> | TContext | void`
   - Optional
   - This function will fire before the mutation function is fired and is passed the same variables the mutation function would receive
@@ -85,6 +86,10 @@ mutate(variables, {
   - This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the next attempt in milliseconds.
   - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff.
   - A function like `attempt => attempt * 1000` applies linear backoff.
+- `scope: { id: string }`
+  - Optional
+  - Defaults to a unique id (so that all mutations run in parallel)
+  - Mutations with the same scope id will run in serial
 - `throwOnError: undefined | boolean | (error: TError) => boolean`
   - Defaults to the global query config's `throwOnError` value, which is `undefined`
   - Set this to `true` if you want mutation errors to be thrown in the render phase and propagate to the nearest error boundary
@@ -127,7 +132,7 @@ mutate(variables, {
 - `isIdle`, `isPending`, `isSuccess`, `isError`: boolean variables derived from `status`
 - `isPaused: boolean`
   - will be `true` if the mutation has been `paused`
-  - see [Network Mode](../network-mode) for more information.
+  - see [Network Mode](../../guides/network-mode) for more information.
 - `data: undefined | unknown`
   - Defaults to `undefined`
   - The last successfully resolved data for the mutation.
