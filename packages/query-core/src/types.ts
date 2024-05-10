@@ -71,12 +71,20 @@ export type QueryFunctionContext<
       signal: AbortSignal
       meta: QueryMeta | undefined
       pageParam?: unknown
-      direction?: 'forward' | 'backward'
+      /**
+       * @deprecated
+       * if you want access to the direction, you can add it to the pageParam
+       */
+      direction?: unknown
     }
   : {
       queryKey: TQueryKey
       signal: AbortSignal
       pageParam: TPageParam
+      /**
+       * @deprecated
+       * if you want access to the direction, you can add it to the pageParam
+       */
       direction: FetchDirection
       meta: QueryMeta | undefined
     }
