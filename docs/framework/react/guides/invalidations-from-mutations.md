@@ -36,4 +36,4 @@ const mutation = useMutation({
 
 [//]: # 'Example2'
 
-You can wire up your invalidations to happen using any of the callbacks available in the [`useMutation` hook](./guides/mutations)
+You can wire up your invalidations to happen using any of the callbacks available in the [`useMutation` hook](../../../../framework/react/guides/mutations)

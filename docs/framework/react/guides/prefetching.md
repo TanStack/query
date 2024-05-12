@@ -25,7 +25,7 @@ const prefetchTodos = async () => {
 
 ## Manually Priming a Query
 
-Alternatively, if you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Client's `setQueryData` method](./reference/QueryClient#queryclientsetquerydata) to directly add or update a query's cached result by key.
+Alternatively, if you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Client's `setQueryData` method](../../../..//reference/QueryClient#queryclientsetquerydata) to directly add or update a query's cached result by key.
 
 [//]: # 'Example2'
 
@@ -38,6 +38,6 @@ queryClient.setQueryData(['todos'], todos)
 
 ## Further reading
 
-For a deep-dive on how to get data into your Query Cache before you fetch, have a look at [#17: Seeding the Query Cache](./community/tkdodos-blog#17-seeding-the-query-cache) from the Community Resources.
+For a deep-dive on how to get data into your Query Cache before you fetch, have a look at [#17: Seeding the Query Cache](../..//community/tkdodos-blog#17-seeding-the-query-cache) from the Community Resources.
 
 [//]: # 'Materials'

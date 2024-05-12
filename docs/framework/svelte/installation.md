@@ -15,4 +15,4 @@ $ pnpm add @tanstack/svelte-query
 $ yarn add @tanstack/svelte-query
 ```
 
-> Wanna give it a spin before you download? Try out the [basic](./examples/basic) example!
+> Wanna give it a spin before you download? Try out the [basic](../examples/basic) example!

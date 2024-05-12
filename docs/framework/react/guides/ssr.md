@@ -250,7 +250,7 @@ This guide is at-best, a high level overview of how SSR with React Query should 
 - Dehydrate the client
 - Render your app with the client provider and also **using the dehydrated state. This is extremely important! You must render both server and client using the same dehydrated state to ensure hydration on the client produces the exact same markup as the server.**
 - Serialize and embed the dehydrated cache to be sent to the client with the HTML
-- Clear the React Query caches after the dehydrated state has been sent by calling [`queryClient.clear()`](./reference/QueryClient#queryclientclear)
+- Clear the React Query caches after the dehydrated state has been sent by calling [`queryClient.clear()`](../../../../reference/QueryClient#queryclientclear)
 
 > SECURITY NOTE: Serializing data with `JSON.stringify` can put you at risk for XSS-vulnerabilities, [this blog post explains why and how to solve it](https://medium.com/node-security/the-most-common-xss-vulnerability-in-react-js-applications-2bdffbcc1fa0)
 
@@ -521,7 +521,7 @@ async function handleRequest(req, res) {
 
 ### Client
 
-Make sure to [use suspense in your queries](./guides/suspense).
+Make sure to [use suspense in your queries](../../../../framework/react/guides/suspense).
 
 ## Tips, Tricks and Caveats
 
@@ -545,6 +545,6 @@ In case you are creating the `QueryClient` for every request, React Query create
 
 On the server, `cacheTime` defaults to `Infinity` which disables manual garbage collection and will automatically clear memory once a request has finished. If you are explicitly setting a non-Infinity `cacheTime` then you will be responsible for clearing the cache early.
 
-To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](./reference/QueryClient#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
+To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../../../../reference/QueryClient#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
 
 Alternatively, you can set a smaller `cacheTime`.
