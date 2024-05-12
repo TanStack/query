@@ -1,6 +1,6 @@
 import { AST_NODE_TYPES } from '@typescript-eslint/utils'
 import { ASTUtils } from '../../utils/ast-utils'
-import type { TSESLint } from '@typescript-eslint/utils'
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
 
 export const ExhaustiveDepsUtils = {
   isRelevantReference(params: {
@@ -25,7 +25,14 @@ export const ExhaustiveDepsUtils = {
     return (
       reference.identifier.name !== 'undefined' &&
       reference.identifier.parent.type !== AST_NODE_TYPES.NewExpression &&
+      !ExhaustiveDepsUtils.isInstanceOfKind(reference.identifier.parent) &&
       !ExhaustiveDepsUtils.isQueryClientReference(reference)
+    )
+  },
+  isInstanceOfKind(node: TSESTree.Node) {
+    return (
+      node.type === AST_NODE_TYPES.BinaryExpression &&
+      node.operator === 'instanceof'
     )
   },
   isQueryClientReference(reference: TSESLint.Scope.Reference) {
