@@ -473,6 +473,13 @@ export interface ResultOptions {
 }
 
 export interface RefetchOptions extends ResultOptions {
+  /**
+   * If set to `true`, a currently running request will be cancelled before a new request is made
+   *
+   * If set to `false`, no refetch will be made if there is already a request running.
+   *
+   * Defaults to `true`.
+   */
   cancelRefetch?: boolean
 }
 
@@ -486,10 +493,26 @@ export interface InvalidateOptions extends RefetchOptions {}
 export interface ResetOptions extends RefetchOptions {}
 
 export interface FetchNextPageOptions extends ResultOptions {
+  /**
+   * If set to `true`, calling `fetchNextPage` repeatedly will invoke `queryFn` every time,
+   * whether the previous invocation has resolved or not. Also, the result from previous invocations will be ignored.
+   *
+   * If set to `false`, calling `fetchNextPage` repeatedly won't have any effect until the first invocation has resolved.
+   *
+   * Defaults to `true`.
+   */
   cancelRefetch?: boolean
 }
 
 export interface FetchPreviousPageOptions extends ResultOptions {
+  /**
+   * If set to `true`, calling `fetchPreviousPage` repeatedly will invoke `queryFn` every time,
+   * whether the previous invocation has resolved or not. Also, the result from previous invocations will be ignored.
+   *
+   * If set to `false`, calling `fetchPreviousPage` repeatedly won't have any effect until the first invocation has resolved.
+   *
+   * Defaults to `true`.
+   */
   cancelRefetch?: boolean
 }
 
@@ -712,15 +735,41 @@ export interface InfiniteQueryObserverBaseResult<
   TData = unknown,
   TError = DefaultError,
 > extends QueryObserverBaseResult<TData, TError> {
+  /**
+   * This function allows you to fetch the next "page" of results.
+   */
   fetchNextPage: (
     options?: FetchNextPageOptions,
   ) => Promise<InfiniteQueryObserverResult<TData, TError>>
+  /**
+   * This function allows you to fetch the previous "page" of results.
+   */
   fetchPreviousPage: (
     options?: FetchPreviousPageOptions,
   ) => Promise<InfiniteQueryObserverResult<TData, TError>>
+  /**
+   * Will be `true` if there is a next page to be fetched (known via the `getNextPageParam` option).
+   */
   hasNextPage: boolean
+  /**
+   * Will be `true` if there is a previous page to be fetched (known via the `getPreviousPageParam` option).
+   */
   hasPreviousPage: boolean
+  /**
+   * Will be `true` if the query failed while fetching the next page.
+   */
+  isFetchNextPageError: boolean
+  /**
+   * Will be `true` while fetching the next page with `fetchNextPage`.
+   */
   isFetchingNextPage: boolean
+  /**
+   * Will be `true` if the query failed while fetching the previous page.
+   */
+  isFetchPreviousPageError: boolean
+  /**
+   * Will be `true` while fetching the previous page with `fetchPreviousPage`.
+   */
   isFetchingPreviousPage: boolean
 }
 
@@ -734,6 +783,8 @@ export interface InfiniteQueryObserverPendingResult<
   isPending: true
   isLoadingError: false
   isRefetchError: false
+  isFetchNextPageError: false
+  isFetchPreviousPageError: false
   isSuccess: false
   status: 'pending'
 }
@@ -749,6 +800,8 @@ export interface InfiniteQueryObserverLoadingResult<
   isLoading: true
   isLoadingError: false
   isRefetchError: false
+  isFetchNextPageError: false
+  isFetchPreviousPageError: false
   isSuccess: false
   status: 'pending'
 }
@@ -764,6 +817,8 @@ export interface InfiniteQueryObserverLoadingErrorResult<
   isLoading: false
   isLoadingError: true
   isRefetchError: false
+  isFetchNextPageError: false
+  isFetchPreviousPageError: false
   isSuccess: false
   status: 'error'
 }
@@ -779,6 +834,8 @@ export interface InfiniteQueryObserverRefetchErrorResult<
   isLoading: false
   isLoadingError: false
   isRefetchError: true
+  isFetchNextPageError: false
+  isFetchPreviousPageError: false
   isSuccess: false
   status: 'error'
 }
@@ -794,6 +851,8 @@ export interface InfiniteQueryObserverSuccessResult<
   isLoading: false
   isLoadingError: false
   isRefetchError: false
+  isFetchNextPageError: false
+  isFetchPreviousPageError: false
   isSuccess: true
   status: 'success'
 }
