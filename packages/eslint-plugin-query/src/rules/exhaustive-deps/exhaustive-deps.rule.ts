@@ -41,7 +41,7 @@ export const rule = createRule({
           return
         }
 
-        const scopeManager = context.getSourceCode().scopeManager
+        const scopeManager = context.sourceCode.scopeManager
         const queryKey = ASTUtils.findPropertyWithIdentifierKey(
           node.parent.properties,
           QUERY_KEY,
@@ -83,11 +83,10 @@ export const rule = createRule({
           }
         }
 
-        const sourceCode = context.getSourceCode()
         const queryKeyValue = queryKeyNode
         const externalRefs = ASTUtils.getExternalRefs({
           scopeManager,
-          sourceCode,
+          sourceCode: context.sourceCode,
           node: queryFn.value,
         })
 
@@ -100,13 +99,14 @@ export const rule = createRule({
         )
 
         const existingKeys = ASTUtils.getNestedIdentifiers(queryKeyValue).map(
-          (identifier) => ASTUtils.mapKeyNodeToText(identifier, sourceCode),
+          (identifier) =>
+            ASTUtils.mapKeyNodeToText(identifier, context.sourceCode),
         )
 
         const missingRefs = relevantRefs
           .map((ref) => ({
             ref: ref,
-            text: ASTUtils.mapKeyNodeToText(ref.identifier, sourceCode),
+            text: ASTUtils.mapKeyNodeToText(ref.identifier, context.sourceCode),
           }))
           .filter(({ ref, text }) => {
             return (
@@ -125,10 +125,12 @@ export const rule = createRule({
 
         if (uniqueMissingRefs.length > 0) {
           const missingAsText = uniqueMissingRefs
-            .map((ref) => ASTUtils.mapKeyNodeToText(ref.identifier, sourceCode))
+            .map((ref) =>
+              ASTUtils.mapKeyNodeToText(ref.identifier, context.sourceCode),
+            )
             .join(', ')
 
-          const existingWithMissing = sourceCode
+          const existingWithMissing = context.sourceCode
             .getText(queryKeyValue)
             .replace(/\]$/, `, ${missingAsText}]`)
 
