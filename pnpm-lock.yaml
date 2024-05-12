@@ -155,7 +155,7 @@ importers:
         specifier: ^17.3.3
         version: 17.3.3(@angular/common@17.3.3)(@angular/core@17.3.3)(@angular/platform-browser@17.3.3)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -177,7 +177,7 @@ importers:
         specifier: ^17.3.3
         version: 17.3.3(@angular/compiler@17.3.3)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
@@ -210,7 +210,7 @@ importers:
         specifier: ^17.3.3
         version: 17.3.3(@angular/common@17.3.3)(@angular/core@17.3.3)(@angular/platform-browser@17.3.3)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -232,7 +232,7 @@ importers:
         specifier: ^17.3.3
         version: 17.3.3(@angular/compiler@17.3.3)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
@@ -265,7 +265,7 @@ importers:
         specifier: ^17.3.3
         version: 17.3.3(@angular/common@17.3.3)(@angular/core@17.3.3)(@angular/platform-browser@17.3.3)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -287,7 +287,7 @@ importers:
         specifier: ^17.3.3
         version: 17.3.3(@angular/compiler@17.3.3)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
@@ -320,7 +320,7 @@ importers:
         specifier: ^17.3.3
         version: 17.3.3(@angular/common@17.3.3)(@angular/core@17.3.3)(@angular/platform-browser@17.3.3)(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -342,7 +342,7 @@ importers:
         specifier: ^17.3.3
         version: 17.3.3(@angular/compiler@17.3.3)(typescript@5.2.2)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.2.2
@@ -373,7 +373,7 @@ importers:
         version: 18.2.0(react@18.2.0)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.32.1
+        specifier: ^5.35.6
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^18.2.55
@@ -434,7 +434,7 @@ importers:
         version: 18.2.0(react@18.2.0)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.32.1
+        specifier: ^5.35.6
         version: link:../../../packages/eslint-plugin-query
       '@vitejs/plugin-react':
         specifier: ^4.2.1
@@ -496,7 +496,7 @@ importers:
         version: 18.2.0(react@18.2.0)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.32.1
+        specifier: ^5.35.6
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: ^18.2.55
@@ -1260,7 +1260,7 @@ importers:
         version: 1.8.14
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.32.1
+        specifier: ^5.35.6
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.2.2
@@ -1299,10 +1299,10 @@ importers:
   examples/svelte/auto-refetching:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1330,10 +1330,10 @@ importers:
   examples/svelte/basic:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1361,10 +1361,10 @@ importers:
   examples/svelte/load-more-infinite-scroll:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1392,10 +1392,10 @@ importers:
   examples/svelte/optimistic-updates-typescript:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1423,10 +1423,10 @@ importers:
   examples/svelte/playground:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1454,10 +1454,10 @@ importers:
   examples/svelte/simple:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
@@ -1482,10 +1482,10 @@ importers:
   examples/svelte/ssr:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1513,10 +1513,10 @@ importers:
   examples/svelte/star-wars:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.35.5
+        specifier: ^5.35.6
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -22515,8 +22515,6 @@ packages:
       webpack: '*'
     peerDependenciesMeta:
       webpack:
-        optional: true
-      webpack-sources:
         optional: true
     dependencies:
       webpack: 5.90.3(esbuild@0.20.2)
