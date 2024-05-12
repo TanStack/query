@@ -37,7 +37,7 @@ In those situations, the first fetch might succeed because it comes from an offl
 
 ## Devtools
 
-The [TanStack Query Devtools](../../../../framework/react/guides/devtools) will show Queries in a `paused` state if they would be fetching, but there is no network connection. There is also a toggle button to _Mock offline behavior_. Please note that this button will _not_ actually mess with your network connection (you can do that in the browser devtools), but it will set the [OnlineManager](../../../../reference/onlineManager) in an offline state.
+The [TanStack Query Devtools](../../../../framework/react/devtools) will show Queries in a `paused` state if they would be fetching, but there is no network connection. There is also a toggle button to _Mock offline behavior_. Please note that this button will _not_ actually mess with your network connection (you can do that in the browser devtools), but it will set the [OnlineManager](../../../../reference/onlineManager) in an offline state.
 
 ## Signature
 
