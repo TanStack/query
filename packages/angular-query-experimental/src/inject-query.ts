@@ -29,7 +29,11 @@ import type {
  * }
  * ```
  *
- * **The options function can utilize signals**
+ * Similar to `computed` from Angular, the function passed to `injectQuery` will be run in the reactive context.
+ * In the example below, the query will be automatically enabled and executed when the filter signal changes
+ * to a truthy value. When the filter signal changes back to a falsy value, the query will be disabled.
+ *
+ * **Reactive example**
  * ```ts
  * class ServiceOrComponent {
  *   filter = signal('')
@@ -74,7 +78,11 @@ export function injectQuery<
  * }
  * ```
  *
- * **The options function can utilize signals**
+ * Similar to `computed` from Angular, the function passed to `injectQuery` will be run in the reactive context.
+ * In the example below, the query will be automatically enabled and executed when the filter signal changes
+ * to a truthy value. When the filter signal changes back to a falsy value, the query will be disabled.
+ *
+ * **Reactive example**
  * ```ts
  * class ServiceOrComponent {
  *   filter = signal('')
@@ -119,7 +127,11 @@ export function injectQuery<
  * }
  * ```
  *
- * **The options function can utilize signals**
+ * Similar to `computed` from Angular, the function passed to `injectQuery` will be run in the reactive context.
+ * In the example below, the query will be automatically enabled and executed when the filter signal changes
+ * to a truthy value. When the filter signal changes back to a falsy value, the query will be disabled.
+ *
+ * **Reactive example**
  * ```ts
  * class ServiceOrComponent {
  *   filter = signal('')
@@ -164,7 +176,11 @@ export function injectQuery<
  * }
  * ```
  *
- * **The options function can utilize signals**
+ * Similar to `computed` from Angular, the function passed to `injectQuery` will be run in the reactive context.
+ * In the example below, the query will be automatically enabled and executed when the filter signal changes
+ * to a truthy value. When the filter signal changes back to a falsy value, the query will be disabled.
+ *
+ * **Reactive example**
  * ```ts
  * class ServiceOrComponent {
  *   filter = signal('')
