@@ -8,6 +8,7 @@ export * from './types'
 export * from './context'
 
 export { createQuery } from './createQuery'
+export type { QueriesResults, QueriesOptions } from './createQueries'
 export type {
   DefinedInitialDataOptions,
   UndefinedInitialDataOptions,
