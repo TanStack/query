@@ -35,11 +35,7 @@ function getResult<TResult = MutationState>(
     .findAll(options.filters)
     .map(
       (mutation): TResult =>
-        (options.select
-          ? options.select(
-              mutation as Mutation<unknown, DefaultError, unknown, unknown>,
-            )
-          : mutation.state) as TResult,
+        (options.select ? options.select(mutation) : mutation.state) as TResult,
     )
 }
 
