@@ -7,7 +7,6 @@ import {
   untracked,
 } from '@angular/core'
 import {
-  type DefaultError,
   type Mutation,
   type MutationCache,
   type MutationFilters,
@@ -22,9 +21,7 @@ import type { Injector, Signal } from '@angular/core'
 
 type MutationStateOptions<TResult = MutationState> = {
   filters?: MutationFilters
-  select?: (
-    mutation: Mutation<unknown, DefaultError, unknown, unknown>,
-  ) => TResult
+  select?: (mutation: Mutation) => TResult
 }
 
 function getResult<TResult = MutationState>(
@@ -35,11 +32,7 @@ function getResult<TResult = MutationState>(
     .findAll(options.filters)
     .map(
       (mutation): TResult =>
-        (options.select
-          ? options.select(
-              mutation as Mutation<unknown, DefaultError, unknown, unknown>,
-            )
-          : mutation.state) as TResult,
+        (options.select ? options.select(mutation) : mutation.state) as TResult,
     )
 }
 

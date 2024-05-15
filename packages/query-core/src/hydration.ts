@@ -1,4 +1,5 @@
 import type {
+  DefaultError,
   MutationKey,
   MutationMeta,
   MutationOptions,
@@ -21,7 +22,7 @@ export interface DehydrateOptions {
 export interface HydrateOptions {
   defaultOptions?: {
     queries?: QueryOptions
-    mutations?: MutationOptions
+    mutations?: MutationOptions<unknown, DefaultError, unknown, unknown>
   }
 }
 
