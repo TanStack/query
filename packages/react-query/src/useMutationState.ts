@@ -4,7 +4,6 @@ import * as React from 'react'
 import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {
-  DefaultError,
   Mutation,
   MutationCache,
   MutationFilters,
@@ -25,9 +24,7 @@ export function useIsMutating(
 
 type MutationStateOptions<TResult = MutationState> = {
   filters?: MutationFilters
-  select?: (
-    mutation: Mutation<unknown, DefaultError, unknown, unknown>,
-  ) => TResult
+  select?: (mutation: Mutation) => TResult
 }
 
 function getResult<TResult = MutationState>(

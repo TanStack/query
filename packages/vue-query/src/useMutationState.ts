@@ -10,7 +10,6 @@ import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
 import type { DeepReadonly, Ref } from 'vue-demi'
 import type {
-  DefaultError,
   MutationFilters as MF,
   Mutation,
   MutationState,
@@ -51,9 +50,7 @@ export function useIsMutating(
 
 export type MutationStateOptions<TResult = MutationState> = {
   filters?: MutationFilters
-  select?: (
-    mutation: Mutation<unknown, DefaultError, unknown, unknown>,
-  ) => TResult
+  select?: (mutation: Mutation) => TResult
 }
 
 function getResult<TResult = MutationState>(

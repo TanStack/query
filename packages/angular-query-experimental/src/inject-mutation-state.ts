@@ -7,7 +7,6 @@ import {
   untracked,
 } from '@angular/core'
 import {
-  type DefaultError,
   type Mutation,
   type MutationCache,
   type MutationFilters,
@@ -22,9 +21,7 @@ import type { Injector, Signal } from '@angular/core'
 
 type MutationStateOptions<TResult = MutationState> = {
   filters?: MutationFilters
-  select?: (
-    mutation: Mutation<unknown, DefaultError, unknown, unknown>,
-  ) => TResult
+  select?: (mutation: Mutation) => TResult
 }
 
 function getResult<TResult = MutationState>(
