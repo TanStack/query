@@ -110,7 +110,9 @@ type GetResults<T> =
                     unknown extends TError ? DefaultError : TError
                   >
                 : T extends {
-                      queryFn?: QueryFunction<infer TQueryFnData, any> | SkipToken
+                      queryFn?:
+                        | QueryFunction<infer TQueryFnData, any>
+                        | SkipToken
                       throwOnError?: ThrowOnError<any, infer TError, any, any>
                     }
                   ? QueryObserverResult<
