@@ -5,6 +5,8 @@
       "**/.next",
       "**/.nx/cache",
       "**/.svelte-kit",
+      "**/.output",
+      "**/.vinxi",
       "**/build",
       "**/coverage",
       "**/dist",
