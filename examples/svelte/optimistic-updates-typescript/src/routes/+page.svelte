@@ -1,80 +1,80 @@
 <script lang="ts">
-  import '../app.css'
-  import {
-    useQueryClient,
-    createQuery,
-    createMutation,
-  } from '@tanstack/svelte-query'
+import '../app.css'
+import {
+  useQueryClient,
+  createQuery,
+  createMutation,
+} from '@tanstack/svelte-query'
 
-  type Todo = {
-    id: string
-    text: string
-  }
+type Todo = {
+  id: string
+  text: string
+}
 
-  type Todos = {
-    items: readonly Todo[]
-    ts: number
-  }
+type Todos = {
+  items: readonly Todo[]
+  ts: number
+}
 
-  let text: string
+let text: string
 
-  const client = useQueryClient()
+const client = useQueryClient()
 
-  const endpoint = 'http://localhost:5173/api/data'
+const endpoint = 'http://localhost:5173/api/data'
 
-  const fetchTodos = async (): Promise<Todos> =>
-    await fetch(endpoint).then((r) => r.json())
+const fetchTodos = async (): Promise<Todos> =>
+  await fetch(endpoint).then((r) => r.json())
 
-  const createTodo = async (text: string): Promise<Todo> =>
-    await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        text,
-      }),
-    }).then((res) => res.json())
-
-  const todos = createQuery<Todos>({
-    queryKey: ['optimistic'],
-    queryFn: fetchTodos,
-  })
-
-  const addTodoMutation = createMutation({
-    mutationFn: createTodo,
-    onMutate: async (newTodo: string) => {
-      text = ''
-      // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-      await client.cancelQueries({ queryKey: ['optimistic'] })
-
-      // Snapshot the previous value
-      const previousTodos = client.getQueryData<Todos>(['optimistic'])
-
-      // Optimistically update to the new value
-      if (previousTodos) {
-        client.setQueryData<Todos>(['optimistic'], {
-          ...previousTodos,
-          items: [
-            ...previousTodos.items,
-            { id: Math.random().toString(), text: newTodo },
-          ],
-        })
-      }
-
-      return { previousTodos }
+const createTodo = async (text: string): Promise<Todo> =>
+  await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
     },
-    // If the mutation fails, use the context returned from onMutate to roll back
-    onError: (err: any, variables: any, context: any) => {
-      if (context?.previousTodos) {
-        client.setQueryData<Todos>(['optimistic'], context.previousTodos)
-      }
-    },
-    // Always refetch after error or success:
-    onSettled: () => {
-      client.invalidateQueries({ queryKey: ['optimistic'] })
-    },
-  })
+    body: JSON.stringify({
+      text,
+    }),
+  }).then((res) => res.json())
+
+const todos = createQuery<Todos>({
+  queryKey: ['optimistic'],
+  queryFn: fetchTodos,
+})
+
+const addTodoMutation = createMutation({
+  mutationFn: createTodo,
+  onMutate: async (newTodo: string) => {
+    text = ''
+    // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+    await client.cancelQueries({ queryKey: ['optimistic'] })
+
+    // Snapshot the previous value
+    const previousTodos = client.getQueryData<Todos>(['optimistic'])
+
+    // Optimistically update to the new value
+    if (previousTodos) {
+      client.setQueryData<Todos>(['optimistic'], {
+        ...previousTodos,
+        items: [
+          ...previousTodos.items,
+          { id: Math.random().toString(), text: newTodo },
+        ],
+      })
+    }
+
+    return { previousTodos }
+  },
+  // If the mutation fails, use the context returned from onMutate to roll back
+  onError: (err: any, variables: any, context: any) => {
+    if (context?.previousTodos) {
+      client.setQueryData<Todos>(['optimistic'], context.previousTodos)
+    }
+  },
+  // Always refetch after error or success:
+  onSettled: () => {
+    client.invalidateQueries({ queryKey: ['optimistic'] })
+  },
+})
 </script>
 
 <h1>Optimistic Updates</h1>

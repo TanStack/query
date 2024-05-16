@@ -42,10 +42,7 @@
     "build": "tsup",
     "build:dev": "tsup --watch"
   },
-  "files": [
-    "build",
-    "src"
-  ],
+  "files": ["build", "src"],
   "dependencies": {
     "@tanstack/query-devtools": "workspace:*"
   },

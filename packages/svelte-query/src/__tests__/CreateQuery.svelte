@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { createQuery } from '../createQuery'
-  import type { QueryClient } from '@tanstack/query-core'
-  import type { CreateQueryOptions, StoreOrVal } from '../types'
+import { createQuery } from '../createQuery'
+import type { QueryClient } from '@tanstack/query-core'
+import type { CreateQueryOptions, StoreOrVal } from '../types'
 
-  export let options: StoreOrVal<CreateQueryOptions<any>>
-  export let queryClient: QueryClient
+export let options: StoreOrVal<CreateQueryOptions<any>>
+export let queryClient: QueryClient
 
-  const query = createQuery(options, queryClient)
+const query = createQuery(options, queryClient)
 </script>
 
 {#if $query.isPending}

@@ -1,28 +1,28 @@
 <script lang="ts">
-  import { createInfiniteQuery } from '@tanstack/svelte-query'
+import { createInfiniteQuery } from '@tanstack/svelte-query'
 
-  const endPoint = 'https://swapi.dev/api'
+const endPoint = 'https://swapi.dev/api'
 
-  const fetchPlanets = async ({ pageParam = 1 }) =>
-    await fetch(`${endPoint}/planets/?page=${pageParam}`).then((r) => r.json())
+const fetchPlanets = async ({ pageParam = 1 }) =>
+  await fetch(`${endPoint}/planets/?page=${pageParam}`).then((r) => r.json())
 
-  const query = createInfiniteQuery({
-    queryKey: ['planets'],
-    queryFn: ({ pageParam }) => fetchPlanets({ pageParam }),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage) => {
-      if (lastPage.next) {
-        const nextUrl = new URLSearchParams(new URL(lastPage.next).search)
-        const nextCursor = nextUrl.get('page')
-        if (nextCursor) {
-          return +nextCursor
-        }
+const query = createInfiniteQuery({
+  queryKey: ['planets'],
+  queryFn: ({ pageParam }) => fetchPlanets({ pageParam }),
+  initialPageParam: 1,
+  getNextPageParam: (lastPage) => {
+    if (lastPage.next) {
+      const nextUrl = new URLSearchParams(new URL(lastPage.next).search)
+      const nextCursor = nextUrl.get('page')
+      if (nextCursor) {
+        return +nextCursor
       }
-      return undefined
-    },
-  })
+    }
+    return undefined
+  },
+})
 
-  const { error }: { error: any } = $query
+const { error }: { error: any } = $query
 </script>
 
 {#if $query.isPending}

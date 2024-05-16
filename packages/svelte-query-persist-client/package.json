@@ -22,10 +22,7 @@
     },
     "./package.json": "./package.json"
   },
-  "files": [
-    "dist",
-    "src"
-  ],
+  "files": ["dist", "src"],
   "scripts": {
     "clean": "rimraf ./dist && rimraf ./coverage",
     "test:types": "svelte-check --tsconfig ./tsconfig.json",

@@ -39,10 +39,7 @@
     }
   },
   "sideEffects": false,
-  "files": [
-    "build",
-    "src"
-  ],
+  "files": ["build", "src"],
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",

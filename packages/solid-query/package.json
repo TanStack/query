@@ -50,10 +50,7 @@
     "build": "tsup",
     "build:watch": "tsup --watch"
   },
-  "files": [
-    "build",
-    "src"
-  ],
+  "files": ["build", "src"],
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
     "solid-js": "^1.8.14"

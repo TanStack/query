@@ -26,12 +26,7 @@
     },
     "./package.json": "./package.json"
   },
-  "files": [
-    "dist",
-    "src",
-    "!dist/__tests__",
-    "!src/__tests__"
-  ],
+  "files": ["dist", "src", "!dist/__tests__", "!src/__tests__"],
   "scripts": {
     "clean": "rimraf ./dist && rimraf ./coverage",
     "test:types": "svelte-check --tsconfig ./tsconfig.json",

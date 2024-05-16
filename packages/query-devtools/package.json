@@ -44,10 +44,7 @@
     "build": "tsup",
     "build:dev": "tsup --watch"
   },
-  "files": [
-    "build",
-    "src"
-  ],
+  "files": ["build", "src"],
   "devDependencies": {
     "@kobalte/core": "^0.11.2",
     "@solid-primitives/keyed": "^1.2.0",

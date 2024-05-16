@@ -41,10 +41,7 @@
     "test:attw": "attw --pack",
     "build": "vite build"
   },
-  "files": [
-    "dist",
-    "src"
-  ],
+  "files": ["dist", "src"],
   "dependencies": {
     "@typescript-eslint/utils": "^6.20.0"
   },

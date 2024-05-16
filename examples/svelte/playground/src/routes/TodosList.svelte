@@ -1,41 +1,41 @@
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
-  import {
-    errorRate,
-    queryTimeMin,
-    queryTimeMax,
-    list,
-    editingIndex,
-    type Todos,
-  } from '$lib/stores'
-  import { derived, writable } from 'svelte/store'
+import { createQuery } from '@tanstack/svelte-query'
+import {
+  errorRate,
+  queryTimeMin,
+  queryTimeMax,
+  list,
+  editingIndex,
+  type Todos,
+} from '$lib/stores'
+import { derived, writable } from 'svelte/store'
 
-  export let initialFilter: string
+export let initialFilter: string
 
-  let filter = writable(initialFilter)
+let filter = writable(initialFilter)
 
-  const fetchTodos = async ({ filter }: { filter: string }): Promise<Todos> => {
-    return new Promise((resolve, reject) => {
-      setTimeout(
-        () => {
-          if (Math.random() < $errorRate) {
-            return reject(
-              new Error(JSON.stringify({ fetchTodos: { filter } }, null, 2)),
-            )
-          }
-          resolve($list.filter((d) => d.name.includes(filter)))
-        },
-        $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin),
-      )
-    })
-  }
+const fetchTodos = async ({ filter }: { filter: string }): Promise<Todos> => {
+  return new Promise((resolve, reject) => {
+    setTimeout(
+      () => {
+        if (Math.random() < $errorRate) {
+          return reject(
+            new Error(JSON.stringify({ fetchTodos: { filter } }, null, 2)),
+          )
+        }
+        resolve($list.filter((d) => d.name.includes(filter)))
+      },
+      $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin),
+    )
+  })
+}
 
-  const query = createQuery(
-    derived(filter, ($filter) => ({
-      queryKey: ['todos', { filter: $filter }],
-      queryFn: () => fetchTodos({ filter: $filter }),
-    })),
-  )
+const query = createQuery(
+  derived(filter, ($filter) => ({
+    queryKey: ['todos', { filter: $filter }],
+    queryFn: () => fetchTodos({ filter: $filter }),
+  })),
+)
 </script>
 
 <div>

@@ -278,9 +278,9 @@ export class QueryObserver<
     return this.#currentQuery
   }
 
-  refetch({ ...options }: RefetchOptions = {}): Promise<
-    QueryObserverResult<TData, TError>
-  > {
+  refetch({
+    ...options
+  }: RefetchOptions = {}): Promise<QueryObserverResult<TData, TError>> {
     return this.fetch({
       ...options,
     })

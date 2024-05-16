@@ -1,34 +1,34 @@
 <script lang="ts">
-  import {
-    useQueryClient,
-    createQuery,
-    createMutation,
-  } from '@tanstack/svelte-query'
+import {
+  useQueryClient,
+  createQuery,
+  createMutation,
+} from '@tanstack/svelte-query'
 
-  let intervalMs = 1000
-  let value: string
+let intervalMs = 1000
+let value: string
 
-  const client = useQueryClient()
+const client = useQueryClient()
 
-  const endpoint = 'http://localhost:5173/api/data'
+const endpoint = 'http://localhost:5173/api/data'
 
-  $: todos = createQuery<{ items: string[] }>({
-    queryKey: ['refetch'],
-    queryFn: async () => await fetch(endpoint).then((r) => r.json()),
-    // Refetch the data every second
-    refetchInterval: intervalMs,
-  })
+$: todos = createQuery<{ items: string[] }>({
+  queryKey: ['refetch'],
+  queryFn: async () => await fetch(endpoint).then((r) => r.json()),
+  // Refetch the data every second
+  refetchInterval: intervalMs,
+})
 
-  const addMutation = createMutation({
-    mutationFn: (value: string) =>
-      fetch(`${endpoint}?add=${value}`).then((r) => r.json()),
-    onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
-  })
+const addMutation = createMutation({
+  mutationFn: (value: string) =>
+    fetch(`${endpoint}?add=${value}`).then((r) => r.json()),
+  onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
+})
 
-  const clearMutation = createMutation({
-    mutationFn: () => fetch(`${endpoint}?clear=1`).then((r) => r.json()),
-    onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
-  })
+const clearMutation = createMutation({
+  mutationFn: () => fetch(`${endpoint}?clear=1`).then((r) => r.json()),
+  onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
+})
 </script>
 
 <h1>Auto Refetch with stale-time set to 1s</h1>

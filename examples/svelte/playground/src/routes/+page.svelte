@@ -1,22 +1,22 @@
 <script lang="ts">
-  import { useQueryClient } from '@tanstack/svelte-query'
-  import {
-    staleTime,
-    gcTime,
-    errorRate,
-    queryTimeMin,
-    queryTimeMax,
-  } from '../lib/stores'
-  import App from './App.svelte'
+import { useQueryClient } from '@tanstack/svelte-query'
+import {
+  staleTime,
+  gcTime,
+  errorRate,
+  queryTimeMin,
+  queryTimeMax,
+} from '../lib/stores'
+import App from './App.svelte'
 
-  const queryClient = useQueryClient()
+const queryClient = useQueryClient()
 
-  queryClient.setDefaultOptions({
-    queries: {
-      staleTime: $staleTime,
-      gcTime: $gcTime,
-    },
-  })
+queryClient.setDefaultOptions({
+  queries: {
+    staleTime: $staleTime,
+    gcTime: $gcTime,
+  },
+})
 </script>
 
 <p>

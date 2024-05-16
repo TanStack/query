@@ -718,10 +718,7 @@ export interface QueryObserverSuccessResult<
   status: 'success'
 }
 
-export type DefinedQueryObserverResult<
-  TData = unknown,
-  TError = DefaultError,
-> =
+export type DefinedQueryObserverResult<TData = unknown, TError = DefaultError> =
   | QueryObserverRefetchErrorResult<TData, TError>
   | QueryObserverSuccessResult<TData, TError>
 

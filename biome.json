@@ -1,0 +1,48 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.7.3/schema.json",
+  "files": {
+    "ignore": [
+      "**/.next",
+      "**/.nx/cache",
+      "**/.svelte-kit",
+      "**/build",
+      "**/coverage",
+      "**/dist",
+      "**/query-codemods/**/__testfixtures__",
+      "**/pnpm-lock.yaml",
+      "packages/**/tsup.config.bundled*.mjs",
+      "**/tsconfig.vitest-temp.json"
+    ],
+    "ignoreUnknown": true
+  },
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 80,
+    "attributePosition": "auto"
+  },
+  "organizeImports": { "enabled": false },
+  "linter": { "enabled": false },
+  "javascript": {
+    "formatter": {
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "asNeeded",
+      "trailingComma": "all",
+      "semicolons": "asNeeded",
+      "arrowParentheses": "always",
+      "bracketSpacing": true,
+      "bracketSameLine": false,
+      "quoteStyle": "single",
+      "attributePosition": "auto"
+    }
+  },
+  "json": {
+    "parser": {
+      "allowComments": true
+    }
+  },
+  "overrides": [{ "include": ["*.svelte"] }]
+}

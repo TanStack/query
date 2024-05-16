@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
+import { createQuery } from '@tanstack/svelte-query'
 
-  export let filmId: string
+export let filmId: string
 
-  const getFilm = async () => {
-    const res = await fetch(`https://swapi.dev/api/films/${filmId}/`)
-    return await res.json()
-  }
+const getFilm = async () => {
+  const res = await fetch(`https://swapi.dev/api/films/${filmId}/`)
+  return await res.json()
+}
 
-  const query = createQuery({
-    queryKey: ['film', filmId],
-    queryFn: getFilm,
-  })
+const query = createQuery({
+  queryKey: ['film', filmId],
+  queryFn: getFilm,
+})
 </script>
 
 {#if $query.status === 'success'}

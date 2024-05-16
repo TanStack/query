@@ -16,9 +16,7 @@
   },
   "type": "module",
   "sideEffects": false,
-  "files": [
-    "build"
-  ],
+  "files": ["build"],
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",

@@ -34,10 +34,7 @@
     "./package.json": "./package.json"
   },
   "sideEffects": false,
-  "files": [
-    "dist",
-    "src"
-  ],
+  "files": ["dist", "src"],
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",

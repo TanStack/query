@@ -1,99 +1,95 @@
 <script lang="ts">
-  import {
-    useQueryClient,
-    createQuery,
-    createMutation,
-  } from '@tanstack/svelte-query'
-  import {
-    errorRate,
-    queryTimeMin,
-    queryTimeMax,
-    list,
-    editingIndex,
-    type Todo,
-  } from '$lib/stores'
-  import { derived } from 'svelte/store'
+import {
+  useQueryClient,
+  createQuery,
+  createMutation,
+} from '@tanstack/svelte-query'
+import {
+  errorRate,
+  queryTimeMin,
+  queryTimeMax,
+  list,
+  editingIndex,
+  type Todo,
+} from '$lib/stores'
+import { derived } from 'svelte/store'
 
-  const queryClient = useQueryClient()
+const queryClient = useQueryClient()
 
-  const fetchTodoById = async ({ id }: { id: number }): Promise<Todo> => {
-    console.info('fetchTodoById', { id })
-    return new Promise((resolve, reject) => {
-      setTimeout(
-        () => {
-          if (Math.random() < $errorRate) {
-            return reject(
-              new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
-            )
-          }
-          const todo = $list.find((d) => d.id === id)
-          if (!todo) {
-            return reject(
-              new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
-            )
-          }
-          resolve(todo)
-        },
-        $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin),
-      )
-    })
-  }
-
-  function patchTodo(todo?: Todo): Promise<Todo> {
-    console.info('patchTodo', todo)
-    return new Promise((resolve, reject) => {
-      setTimeout(
-        () => {
-          if (Math.random() < $errorRate) {
-            return reject(
-              new Error(JSON.stringify({ patchTodo: todo }, null, 2)),
-            )
-          }
-          if (!todo) {
-            return reject(
-              new Error(JSON.stringify({ patchTodo: todo }, null, 2)),
-            )
-          }
-          list.set(
-            $list.map((d) => {
-              if (d.id === todo.id) {
-                return todo
-              }
-              return d
-            }),
+const fetchTodoById = async ({ id }: { id: number }): Promise<Todo> => {
+  console.info('fetchTodoById', { id })
+  return new Promise((resolve, reject) => {
+    setTimeout(
+      () => {
+        if (Math.random() < $errorRate) {
+          return reject(
+            new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
           )
-          resolve(todo)
-        },
-        $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin),
-      )
-    })
-  }
-
-  const query = createQuery(
-    derived(editingIndex, ($editingIndex) => ({
-      queryKey: ['todo', { id: $editingIndex }],
-      queryFn: () => fetchTodoById({ id: $editingIndex || 0 }),
-      enabled: $editingIndex !== null,
-    })),
-  )
-
-  const saveMutation = createMutation({
-    mutationFn: patchTodo,
-    onSuccess: (data) => {
-      // Update `todos` and the individual todo queries when this mutation succeeds
-      queryClient.invalidateQueries({ queryKey: ['todos'] })
-      queryClient.setQueryData(['todo', { id: editingIndex }], data)
-    },
+        }
+        const todo = $list.find((d) => d.id === id)
+        if (!todo) {
+          return reject(
+            new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
+          )
+        }
+        resolve(todo)
+      },
+      $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin),
+    )
   })
+}
 
-  $: todo = $query.data
+function patchTodo(todo?: Todo): Promise<Todo> {
+  console.info('patchTodo', todo)
+  return new Promise((resolve, reject) => {
+    setTimeout(
+      () => {
+        if (Math.random() < $errorRate) {
+          return reject(new Error(JSON.stringify({ patchTodo: todo }, null, 2)))
+        }
+        if (!todo) {
+          return reject(new Error(JSON.stringify({ patchTodo: todo }, null, 2)))
+        }
+        list.set(
+          $list.map((d) => {
+            if (d.id === todo.id) {
+              return todo
+            }
+            return d
+          }),
+        )
+        resolve(todo)
+      },
+      $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin),
+    )
+  })
+}
 
-  const onSave = () => {
-    $saveMutation.mutate(todo)
-  }
+const query = createQuery(
+  derived(editingIndex, ($editingIndex) => ({
+    queryKey: ['todo', { id: $editingIndex }],
+    queryFn: () => fetchTodoById({ id: $editingIndex || 0 }),
+    enabled: $editingIndex !== null,
+  })),
+)
 
-  $: disableEditSave =
-    $query.status === 'pending' || $saveMutation.status === 'pending'
+const saveMutation = createMutation({
+  mutationFn: patchTodo,
+  onSuccess: (data) => {
+    // Update `todos` and the individual todo queries when this mutation succeeds
+    queryClient.invalidateQueries({ queryKey: ['todos'] })
+    queryClient.setQueryData(['todo', { id: editingIndex }], data)
+  },
+})
+
+$: todo = $query.data
+
+const onSave = () => {
+  $saveMutation.mutate(todo)
+}
+
+$: disableEditSave =
+  $query.status === 'pending' || $saveMutation.status === 'pending'
 </script>
 
 <div>

@@ -1,18 +1,17 @@
 <script lang="ts">
-  import { useQueryClient, createQuery } from '@tanstack/svelte-query'
-  import { getPosts } from './data'
+import { useQueryClient, createQuery } from '@tanstack/svelte-query'
+import { getPosts } from './data'
 
-  const client = useQueryClient()
+const client = useQueryClient()
 
-  let limit = 10
+let limit = 10
 
-  const posts = createQuery<
-    { id: number; title: string; body: string }[],
-    Error
-  >({
+const posts = createQuery<{ id: number; title: string; body: string }[], Error>(
+  {
     queryKey: ['posts', limit],
     queryFn: () => getPosts(limit),
-  })
+  },
+)
 </script>
 
 <div>

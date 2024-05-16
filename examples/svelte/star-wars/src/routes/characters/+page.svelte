@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
+import { createQuery } from '@tanstack/svelte-query'
 
-  const getCharacters = async () => {
-    const res = await fetch('https://swapi.dev/api/people/')
-    return await res.json()
-  }
+const getCharacters = async () => {
+  const res = await fetch('https://swapi.dev/api/people/')
+  return await res.json()
+}
 
-  const query = createQuery({
-    queryKey: ['characters'],
-    queryFn: getCharacters,
-  })
+const query = createQuery({
+  queryKey: ['characters'],
+  queryFn: getCharacters,
+})
 </script>
 
 {#if $query.status === 'pending'}

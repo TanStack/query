@@ -4430,15 +4430,13 @@ describe('createQuery', () => {
     const key = queryKey()
     const states: Array<CreateQueryResult<string>> = []
 
-    const queryFn: QueryFunction<
-      string,
-      readonly [typeof key, number]
-    > = async (ctx) => {
-      const [, limit] = ctx.queryKey
-      const value = limit % 2 && ctx.signal ? 'abort' : `data ${limit}`
-      await sleep(25)
-      return value
-    }
+    const queryFn: QueryFunction<string, readonly [typeof key, number]> =
+      async (ctx) => {
+        const [, limit] = ctx.queryKey
+        const value = limit % 2 && ctx.signal ? 'abort' : `data ${limit}`
+        await sleep(25)
+        return value
+      }
 
     function Page(props: { limit: number }) {
       const state = createQuery(() => ({

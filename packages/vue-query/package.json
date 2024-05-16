@@ -48,16 +48,11 @@
   "nx": {
     "targets": {
       "test:lib": {
-        "dependsOn": [
-          "test:types"
-        ]
+        "dependsOn": ["test:types"]
       }
     }
   },
-  "files": [
-    "build",
-    "src"
-  ],
+  "files": ["build", "src"],
   "dependencies": {
     "@tanstack/match-sorter-utils": "^8.11.8",
     "@tanstack/query-core": "workspace:*",

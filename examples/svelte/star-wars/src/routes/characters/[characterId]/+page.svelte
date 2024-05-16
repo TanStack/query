@@ -1,22 +1,22 @@
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
-  import Homeworld from './Homeworld.svelte'
-  import Film from './Film.svelte'
-  import type { PageData } from './$types'
+import { createQuery } from '@tanstack/svelte-query'
+import Homeworld from './Homeworld.svelte'
+import Film from './Film.svelte'
+import type { PageData } from './$types'
 
-  export let data: PageData
+export let data: PageData
 
-  const getCharacter = async () => {
-    const res = await fetch(
-      `https://swapi.dev/api/people/${data.params.characterId}/`,
-    )
-    return await res.json()
-  }
+const getCharacter = async () => {
+  const res = await fetch(
+    `https://swapi.dev/api/people/${data.params.characterId}/`,
+  )
+  return await res.json()
+}
 
-  const query = createQuery({
-    queryKey: ['character', data.params.characterId],
-    queryFn: getCharacter,
-  })
+const query = createQuery({
+  queryKey: ['character', data.params.characterId],
+  queryFn: getCharacter,
+})
 </script>
 
 {#if $query.status === 'pending'}

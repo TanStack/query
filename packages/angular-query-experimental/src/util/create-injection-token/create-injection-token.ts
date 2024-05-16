@@ -31,7 +31,9 @@ import { assertInjector } from '../assert-injector/assert-injector'
 type CreateInjectionTokenDep<TTokenType> =
   | Type<TTokenType>
   // NOTE: we don't have an AbstractType
-  | (abstract new (...args: Array<any>) => TTokenType)
+  | (abstract new (
+      ...args: Array<any>
+    ) => TTokenType)
   | InjectionToken<TTokenType>
 
 type CreateInjectionTokenDeps<
@@ -49,16 +51,14 @@ type CreateInjectionTokenDeps<
 type CreateInjectionTokenOptions<
   TFactory extends (...args: Array<any>) => any,
   TFactoryDeps extends Parameters<TFactory> = Parameters<TFactory>,
-> =
-  // this means TFunction has no parameters
-  (TFactoryDeps[0] extends undefined
-    ? { deps?: never }
-    : { deps: CreateInjectionTokenDeps<TFactory, TFactoryDeps> }) & {
-    isRoot?: boolean
-    multi?: boolean
-    token?: InjectionToken<ReturnType<TFactory>>
-    extraProviders?: Provider | EnvironmentProviders
-  }
+> = (TFactoryDeps[0] extends undefined // this means TFunction has no parameters
+  ? { deps?: never }
+  : { deps: CreateInjectionTokenDeps<TFactory, TFactoryDeps> }) & {
+  isRoot?: boolean
+  multi?: boolean
+  token?: InjectionToken<ReturnType<TFactory>>
+  extraProviders?: Provider | EnvironmentProviders
+}
 
 type CreateProvideFnOptions<
   TFactory extends (...args: Array<any>) => any,

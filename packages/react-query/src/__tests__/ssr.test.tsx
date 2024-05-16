@@ -133,7 +133,11 @@ describe('Server Side Rendering', () => {
         initialPageParam: 0,
       })
       return (
-        <ul>{query.data?.pages.map((page) => <li key={page}>{page}</li>)}</ul>
+        <ul>
+          {query.data?.pages.map((page) => (
+            <li key={page}>{page}</li>
+          ))}
+        </ul>
       )
     }
 

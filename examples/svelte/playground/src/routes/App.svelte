@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { useQueryClient } from '@tanstack/svelte-query'
-  import TodosList from './TodosList.svelte'
-  import EditTodo from './EditTodo.svelte'
-  import AddTodo from './AddTodo.svelte'
-  import { views, editingIndex } from '../lib/stores'
+import { useQueryClient } from '@tanstack/svelte-query'
+import TodosList from './TodosList.svelte'
+import EditTodo from './EditTodo.svelte'
+import AddTodo from './AddTodo.svelte'
+import { views, editingIndex } from '../lib/stores'
 
-  const queryClient = useQueryClient()
+const queryClient = useQueryClient()
 </script>
 
 <div>

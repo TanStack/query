@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { createQueries } from '../createQueries'
-  import type { QueryClient } from '@tanstack/query-core'
-  import type { QueriesOptions, QueriesResults } from '../createQueries'
+import { createQueries } from '../createQueries'
+import type { QueryClient } from '@tanstack/query-core'
+import type { QueriesOptions, QueriesResults } from '../createQueries'
 
-  export let options: {
-    queries: [...QueriesOptions<any>]
-    combine?: (result: QueriesResults<Array<any>>) => any
-  }
-  export let queryClient: QueryClient
+export let options: {
+  queries: [...QueriesOptions<any>]
+  combine?: (result: QueriesResults<Array<any>>) => any
+}
+export let queryClient: QueryClient
 
-  const queries = createQueries(options, queryClient)
+const queries = createQueries(options, queryClient)
 </script>
 
 {#if Array.isArray($queries)}

@@ -1,21 +1,21 @@
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
+import { createQuery } from '@tanstack/svelte-query'
 
-  type Repo = {
-    name: string
-    description: string
-    subscribers_count: number
-    stargazers_count: number
-    forks_count: number
-  }
+type Repo = {
+  name: string
+  description: string
+  subscribers_count: number
+  stargazers_count: number
+  forks_count: number
+}
 
-  const query = createQuery<Repo>({
-    queryKey: ['repoData'],
-    queryFn: async () =>
-      await fetch('https://api.github.com/repos/SvelteStack/svelte-query').then(
-        (r) => r.json(),
-      ),
-  })
+const query = createQuery<Repo>({
+  queryKey: ['repoData'],
+  queryFn: async () =>
+    await fetch('https://api.github.com/repos/SvelteStack/svelte-query').then(
+      (r) => r.json(),
+    ),
+})
 </script>
 
 <h1>Simple</h1>

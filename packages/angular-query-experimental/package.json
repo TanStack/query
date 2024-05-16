@@ -28,12 +28,7 @@
   },
   "type": "module",
   "sideEffects": false,
-  "files": [
-    "build",
-    "!**/*.d.ts",
-    "!**/*.d.ts.map",
-    "build/rollup.d.ts"
-  ],
+  "files": ["build", "!**/*.d.ts", "!**/*.d.ts.map", "build/rollup.d.ts"],
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",

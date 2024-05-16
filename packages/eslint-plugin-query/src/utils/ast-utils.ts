@@ -249,8 +249,8 @@ export const ASTUtils = {
 
     const resolvedNode = context
       .getScope()
-      .references.find((ref) => ref.identifier === node)?.resolved?.defs[0]
-      ?.node
+      .references.find((ref) => ref.identifier === node)?.resolved
+      ?.defs[0]?.node
 
     if (resolvedNode?.type !== AST_NODE_TYPES.VariableDeclarator) {
       return null
