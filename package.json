@@ -16,7 +16,7 @@
     "test:pr": "nx affected --targets=test:format,test:sherif,test:knip,test:eslint,test:lib,test:types,test:build,build,test:attw",
     "test:ci": "nx run-many --targets=test:format,test:sherif,test:knip,test:eslint,test:lib,test:types,test:build,build,test:attw",
     "test:eslint": "nx affected --target=test:eslint --exclude=examples/**",
-    "test:format": "pnpm run prettier --check",
+    "test:format": "pnpm run format",
     "test:sherif": "sherif -i react-scripts",
     "test:lib": "nx affected --target=test:lib --exclude=examples/**",
     "test:lib:dev": "pnpm run test:lib && nx watch --all -- pnpm run test:lib",
