@@ -13,6 +13,7 @@
       "**/query-codemods/**/__testfixtures__",
       "**/pnpm-lock.yaml",
       "packages/**/tsup.config.bundled*.mjs",
+      "packages/**/vite.config.ts.*.mjs",
       "**/tsconfig.vitest-temp.json"
     ],
     "ignoreUnknown": true
