@@ -29,39 +29,26 @@ export type UseInfiniteQueryOptions<
     TQueryData,
     TQueryKey,
     TPageParam
-  >]: Property extends
-    | 'queryFn'
-    | 'getPreviousPageParam'
-    | 'getNextPageParam'
-    | 'select'
-    ? InfiniteQueryObserverOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryData,
-        DeepUnwrapRef<TQueryKey>,
-        TPageParam
-      >[Property]
-    : Property extends 'enabled'
-      ? MaybeRefOrGetter<
-          InfiniteQueryObserverOptions<
-            TQueryFnData,
-            TError,
-            TData,
-            TQueryData,
-            TQueryKey
-          >[Property]
-        >
-      : MaybeRefDeep<
-          InfiniteQueryObserverOptions<
-            TQueryFnData,
-            TError,
-            TData,
-            TQueryData,
-            TQueryKey,
-            TPageParam
-          >[Property]
-        >
+  >]: Property extends 'enabled'
+    ? MaybeRefOrGetter<
+        InfiniteQueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          DeepUnwrapRef<TQueryKey>
+        >[Property]
+      >
+    : MaybeRefDeep<
+        InfiniteQueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          DeepUnwrapRef<TQueryKey>,
+          TPageParam
+        >[Property]
+      >
 }
 
 export type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<

@@ -3,7 +3,6 @@ import { QueryClient } from '@tanstack/query-core'
 import { TestBed } from '@angular/core/testing'
 import { describe, expect, test, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
-import { JsonPipe } from '@angular/common'
 import { injectMutation } from '../inject-mutation'
 import { injectMutationState } from '../inject-mutation-state'
 import { provideAngularQuery } from '../providers'
@@ -139,7 +138,6 @@ describe('injectMutationState', () => {
           }
         `,
         standalone: true,
-        imports: [JsonPipe],
       })
       class FakeComponent {
         name = input.required<string>()

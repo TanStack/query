@@ -387,6 +387,21 @@ ruleTester.run('exhaustive-deps', rule, {
         }
         `,
     },
+    {
+      name: 'instanceof value should not be in query key',
+      code: `
+        class SomeClass {}
+
+        function Component({ value }) {
+            useQuery({
+                queryKey: ['foo'],
+                queryFn: () => {
+                    return value instanceof SomeClass;
+                }
+            });
+        }
+        `,
+    },
   ],
   invalid: [
     {

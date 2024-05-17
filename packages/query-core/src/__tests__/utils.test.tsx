@@ -73,6 +73,14 @@ describe('core/utils', () => {
 
       expect(isPlainObject(Object.create(Graph))).toBeFalsy()
     })
+
+    it('should return `false` for object with custom prototype', () => {
+      const CustomProto = Object.create({ a: 1 })
+      const obj = Object.create(CustomProto)
+      obj.b = 2
+
+      expect(isPlainObject(obj)).toBeFalsy()
+    })
   })
 
   describe('isPlainArray', () => {
@@ -367,6 +375,20 @@ describe('core/utils', () => {
       ])
 
       expect(current).toBe(next)
+    })
+
+    it('should return the previous value when both values are an array of undefined', () => {
+      const current = [undefined]
+      const next = replaceEqualDeep(current, [undefined])
+
+      expect(next).toBe(current)
+    })
+
+    it('should return the previous value when both values are an array that contains undefined', () => {
+      const current = [{ foo: 1 }, undefined]
+      const next = replaceEqualDeep(current, [{ foo: 1 }, undefined])
+
+      expect(next).toBe(current)
     })
   })
 

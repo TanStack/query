@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-experimental",
-  "version": "5.33.0",
+  "version": "5.36.1",
   "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -30,7 +30,9 @@
   "sideEffects": false,
   "files": [
     "build",
-    "src"
+    "!**/*.d.ts",
+    "!**/*.d.ts.map",
+    "build/rollup.d.ts"
   ],
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
@@ -40,7 +42,7 @@
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
     "test:attw": "attw --pack",
-    "build": "ng-packagr -p ng-package.json -c tsconfig.build.json && rimraf ./build/package.json"
+    "build": "ng-packagr -p ng-package.json -c tsconfig.build.json && rimraf ./build/package.json && api-extractor run --local"
   },
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
@@ -54,6 +56,8 @@
     "@angular/core": "^17.3.3",
     "@angular/platform-browser": "^17.3.3",
     "@angular/platform-browser-dynamic": "^17.3.3",
+    "eslint-plugin-jsdoc": "^48.2.2",
+    "@microsoft/api-extractor": "^7.43.1",
     "ng-packagr": "^17.3.0",
     "typescript": "5.2.2",
     "zone.js": "^0.14.4"
@@ -63,13 +67,13 @@
     "@angular/common": ">=16.0.0"
   },
   "module": "build/fesm2022/tanstack-angular-query-experimental.mjs",
-  "types": "build/index.d.ts",
+  "types": "build/rollup.d.ts",
   "exports": {
     "./package.json": {
       "default": "./package.json"
     },
     ".": {
-      "types": "./build/index.d.ts",
+      "types": "./build/rollup.d.ts",
       "esm2022": "./build/esm2022/tanstack-angular-query-experimental.mjs",
       "esm": "./build/esm2022/tanstack-angular-query-experimental.mjs",
       "default": "./build/fesm2022/tanstack-angular-query-experimental.mjs"

@@ -16,6 +16,9 @@ const config = {
       },
     },
   ],
+  rules: {
+    'svelte/no-svelte-internal': 'error',
+  },
 }
 
 module.exports = config
