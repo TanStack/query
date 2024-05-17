@@ -5,6 +5,8 @@ title: React Native
 
 React Query is designed to work out of the box with React Native, with the exception of the devtools, which are only supported with React DOM at this time.
 
+Exciting News: We now have a seperate package for React Native React Query DevTools! This new addition brings native support, allowing you to integrate DevTools directly into your React Native projects. Check it out and contribute here: [react-native-react-query-devtools](https://github.com/LovesWorking/react-native-react-query-devtools)
+ 
 There is a 3rd party [Flipper](https://fbflipper.com/docs/getting-started/react-native/) plugin which you can try: https://github.com/bgaleotti/react-query-native-devtools
 
 There is a 3rd party [Reactotron](https://github.com/infinitered/reactotron/) plugin which you can try: https://github.com/hsndmr/reactotron-react-query
