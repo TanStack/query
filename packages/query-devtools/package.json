@@ -53,14 +53,14 @@
     "@solid-primitives/keyed": "^1.2.2",
     "@solid-primitives/resize-observer": "^2.0.25",
     "@solid-primitives/storage": "^1.3.11",
-    "@tanstack/match-sorter-utils": "^8.11.8",
+    "@tanstack/match-sorter-utils": "^8.15.1",
     "@tanstack/query-core": "workspace:*",
-    "clsx": "^2.0.0",
+    "clsx": "^2.1.1",
     "goober": "^2.1.14",
     "solid-js": "^1.8.17",
     "solid-transition-group": "^0.2.3",
     "superjson": "^1.13.3",
     "tsup-preset-solid": "^2.2.0",
-    "vite-plugin-solid": "^2.9.1"
+    "vite-plugin-solid": "^2.10.2"
   }
 }

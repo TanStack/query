@@ -9,18 +9,18 @@
     "test:types": "tsc"
   },
   "dependencies": {
-    "@algolia/client-search": "4.22.1",
-    "@algolia/transporter": "4.22.1",
+    "@algolia/client-search": "4.23.3",
+    "@algolia/transporter": "4.23.3",
     "@tanstack/react-query": "^5.36.2",
     "@tanstack/react-query-devtools": "^5.36.2",
-    "algoliasearch": "4.22.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "algoliasearch": "4.23.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.35.6",
-    "@types/react": "^18.2.55",
-    "@types/react-dom": "^18.2.19",
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.2.1",
     "typescript": "5.2.2",
     "vite": "^5.2.11"

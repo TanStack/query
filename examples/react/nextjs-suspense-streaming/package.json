@@ -12,13 +12,13 @@
     "@tanstack/react-query-devtools": "^5.36.2",
     "@tanstack/react-query-next-experimental": "^5.36.2",
     "next": "^14.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "superjson": "^1.13.3"
   },
   "devDependencies": {
     "@types/node": "^18.19.3",
-    "@types/react": "^18.2.55",
+    "@types/react": "^18.3.2",
     "typescript": "5.2.2"
   }
 }

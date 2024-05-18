@@ -53,11 +53,11 @@
     "@tanstack/vue-query": "workspace:*",
     "@vitejs/plugin-vue": "^5.0.4",
     "vite": "^5.2.11",
-    "vue": "^3.3.0",
+    "vue": "^3.4.27",
     "vue-tsc": "^1.8.26"
   },
   "peerDependencies": {
     "@tanstack/vue-query": "workspace:^",
-    "vue": "^3.3.0"
+    "vue": "^3.4.27"
   }
 }
