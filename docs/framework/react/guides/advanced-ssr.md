@@ -29,9 +29,7 @@ The first step of any React Query setup is always to create a `queryClient` and 
 // In Next.js, this file would be called: app/providers.jsx
 'use client'
 
-// We can not useState or useRef in a server component, which is why we are
-// extracting this part out into it's own file with 'use client' on top
-import { useState } from 'react'
+// Since QueryClientProvider relies on useContext under the hood, we have to put 'use client' on top
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 function makeQueryClient() {
