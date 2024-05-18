@@ -13,19 +13,19 @@
     "@tanstack/react-query-devtools": "^5.36.2",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-router": "^6.23.1",
     "react-router-dom": "^6.23.1",
     "rooks": "^7.14.1",
     "sort-by": "^1.2.0"
   },
   "devDependencies": {
-    "@types/react": "^18.3.2",
-    "@types/react-dom": "^18.3.0",
+    "@types/react": "^18.2.79",
+    "@types/react-dom": "^18.2.25",
     "@types/sort-by": "^1.2.3",
     "@vitejs/plugin-react": "^4.2.1",
-    "typescript": "5.2.2",
+    "typescript": "5.3.3",
     "vite": "^5.2.11"
   },
   "browserslist": {

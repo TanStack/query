@@ -20,6 +20,6 @@
     "astro": "^4.8.6",
     "solid-js": "^1.8.17",
     "tailwindcss": "^3.4.3",
-    "typescript": "5.2.2"
+    "typescript": "5.3.3"
   }
 }

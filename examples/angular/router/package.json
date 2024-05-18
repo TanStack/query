@@ -27,6 +27,6 @@
     "@angular/cli": "^17.3.7",
     "@angular/compiler-cli": "^17.3.9",
     "@tanstack/angular-query-devtools-experimental": "^5.36.1",
-    "typescript": "5.2.2"
+    "typescript": "5.3.3"
   }
 }
