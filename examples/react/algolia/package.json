@@ -11,8 +11,8 @@
   "dependencies": {
     "@algolia/client-search": "4.23.3",
     "@algolia/transporter": "4.23.3",
-    "@tanstack/react-query": "^5.36.2",
-    "@tanstack/react-query-devtools": "^5.36.2",
+    "@tanstack/react-query": "^5.37.1",
+    "@tanstack/react-query-devtools": "^5.37.1",
     "algoliasearch": "4.23.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
