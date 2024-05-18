@@ -67,7 +67,7 @@
     "jsdom": "^24.0.0",
     "knip": "^5.16.0",
     "lint-staged": "^15.2.2",
-    "nx": "17.3.1",
+    "nx": "19.0.4",
     "prettier": "^4.0.0-alpha.8",
     "prettier-plugin-svelte": "^3.2.3",
     "publint": "^0.2.7",

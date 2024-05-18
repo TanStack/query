@@ -3,9 +3,9 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "build:dev": "vite build -m development",
-    "serve": "vite preview"
+    "_build": "vite build",
+    "_build:dev": "vite build -m development",
+    "_serve": "vite preview"
   },
   "dependencies": {
     "@tanstack/vue-query": "^5.36.1",
