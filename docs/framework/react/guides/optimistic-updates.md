@@ -12,7 +12,7 @@ This is the simpler variant, as it doesn't interact with the cache directly.
 [//]: # 'ExampleUI1'
 
 ```tsx
-const { isPending, submittedAt, variables, mutate, isError } = useMutation({
+const addTodoMutation = useMutation({
   mutationFn: (newTodo: string) => axios.post('/api/data', { text: newTodo }),
   // make sure to _return_ the Promise from the query invalidation
   // so that the mutation stays in `pending` state until the refetch is finished
@@ -20,11 +20,13 @@ const { isPending, submittedAt, variables, mutate, isError } = useMutation({
     return await queryClient.invalidateQueries({ queryKey: ['todos'] })
   },
 })
+
+const { isPending, submittedAt, variables, mutate, isError } = addTodoMutation
 ```
 
 [//]: # 'ExampleUI1'
 
-you will then have access to `addTodoMutation.variables`, which contain the added todo. In your UI list, where the query is rendered, you can append another item to the list while the mutation is `pending`:
+you will then have access to `addTodoMutation.variables`, which contain the added todo. In your UI list, where the query is rendered, you can append another item to the list while the mutation `isPending`:
 
 [//]: # 'ExampleUI2'
 
