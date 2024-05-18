@@ -13,15 +13,15 @@
     "@tanstack/react-query": "^5.36.2",
     "@tanstack/react-query-devtools": "^5.36.2",
     "@tanstack/react-query-persist-client": "^5.36.2",
-    "ky": "^1.2.0",
-    "msw": "^2.1.7",
+    "ky": "^1.2.4",
+    "msw": "^2.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.1.1"
+    "vite": "^5.2.11"
   },
   "browserslist": {
     "production": [

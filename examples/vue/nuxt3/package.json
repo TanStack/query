@@ -3,8 +3,8 @@
   "private": true,
   "scripts": {
     "dev": "nuxi dev",
-    "build": "nuxi build",
-    "start": "node .output/server/index.mjs"
+    "_build": "nuxi build",
+    "_start": "node .output/server/index.mjs"
   },
   "dependencies": {
     "@tanstack/vue-query": "^5.36.1"

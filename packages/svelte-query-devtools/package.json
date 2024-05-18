@@ -39,13 +39,13 @@
     "esm-env": "^1.0.0"
   },
   "devDependencies": {
-    "@sveltejs/package": "^2.2.6",
-    "@sveltejs/vite-plugin-svelte": "^3.0.2",
+    "@sveltejs/package": "^2.3.1",
+    "@sveltejs/vite-plugin-svelte": "^3.1.0",
     "@tanstack/svelte-query": "workspace:*",
     "eslint-plugin-svelte": "^2.39.0",
-    "svelte": "^4.2.10",
-    "svelte-check": "^3.6.4",
-    "svelte-eslint-parser": "^0.33.1"
+    "svelte": "^4.2.17",
+    "svelte-check": "^3.7.1",
+    "svelte-eslint-parser": "^0.36.0"
   },
   "peerDependencies": {
     "@tanstack/svelte-query": "workspace:^",

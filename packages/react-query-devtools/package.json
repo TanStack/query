@@ -72,7 +72,7 @@
   },
   "devDependencies": {
     "@tanstack/react-query": "workspace:*",
-    "@types/react": "^18.2.55",
+    "@types/react": "^18.2.79",
     "@vitejs/plugin-react": "^4.2.1",
     "react": "^18.2.0"
   },
