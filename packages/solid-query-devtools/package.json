@@ -50,11 +50,11 @@
     "@tanstack/query-devtools": "workspace:*"
   },
   "peerDependencies": {
-    "solid-js": "^1.8.14",
+    "solid-js": "^1.8.17",
     "@tanstack/solid-query": "workspace:^"
   },
   "devDependencies": {
-    "solid-js": "^1.8.14",
+    "solid-js": "^1.8.17",
     "@tanstack/solid-query": "workspace:^",
     "tsup-preset-solid": "^2.2.0",
     "vite-plugin-solid": "^2.9.1"

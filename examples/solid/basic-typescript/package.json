@@ -11,7 +11,7 @@
   "dependencies": {
     "@tanstack/solid-query": "^5.36.1",
     "@tanstack/solid-query-devtools": "^5.36.1",
-    "solid-js": "^1.8.14"
+    "solid-js": "^1.8.17"
   },
   "devDependencies": {
     "typescript": "5.2.2",
