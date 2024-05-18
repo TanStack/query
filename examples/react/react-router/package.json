@@ -26,7 +26,7 @@
     "@types/sort-by": "^1.2.3",
     "@vitejs/plugin-react": "^4.2.1",
     "typescript": "5.2.2",
-    "vite": "^5.1.1"
+    "vite": "^5.2.11"
   },
   "browserslist": {
     "production": [

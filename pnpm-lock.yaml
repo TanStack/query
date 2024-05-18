@@ -24,10 +24,10 @@ importers:
         version: 0.8.6(@solidjs/router@0.13.2(solid-js@1.8.17))(solid-js@1.8.17)
       '@tanstack/config':
         specifier: ^0.4.4
-        version: 0.4.4(@types/node@18.19.3)(esbuild@0.19.11)(rollup@4.14.1)(typescript@5.2.2)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 0.4.4(@types/node@18.19.3)(esbuild@0.19.11)(rollup@4.14.1)(typescript@5.2.2)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@testing-library/jest-dom':
         specifier: ^6.4.5
-        version: 6.4.5(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 6.4.5(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@testing-library/react':
         specifier: ^14.2.1
         version: 14.2.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -51,7 +51,7 @@ importers:
         version: 6.20.0(eslint@8.56.0)(typescript@5.2.2)
       '@vitest/coverage-istanbul':
         specifier: ^1.3.1
-        version: 1.3.1(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 1.3.1(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       cpy-cli:
         specifier: ^5.0.0
         version: 5.0.0
@@ -122,11 +122,11 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.2.8
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
       vitest:
-        specifier: ^1.4.0
-        version: 1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^1.6.0
+        version: 1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/angular/basic:
     dependencies:
@@ -383,13 +383,13 @@ importers:
         version: 18.2.19
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 4.2.1(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       typescript:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/react/auto-refetching:
     dependencies:
@@ -438,10 +438,10 @@ importers:
         version: 5.35.6(eslint@8.56.0)(typescript@5.4.2)
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 4.2.1(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/react/basic-graphql-request:
     dependencies:
@@ -466,10 +466,10 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 4.2.1(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/react/basic-typescript:
     dependencies:
@@ -506,7 +506,7 @@ importers:
         version: 18.2.19
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 4.2.1(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       eslint:
         specifier: ^8.56.0
         version: 8.56.0
@@ -517,8 +517,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/react/default-query-function:
     dependencies:
@@ -540,10 +540,10 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 4.2.1(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/react/infinite-query-with-max-pages:
     dependencies:
@@ -695,10 +695,10 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 4.2.1(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/react/optimistic-updates-cache:
     dependencies:
@@ -815,10 +815,10 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 4.2.1(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/react/prefetching:
     dependencies:
@@ -949,13 +949,13 @@ importers:
         version: 1.2.3
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 4.2.1(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       typescript:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/react/rick-morty:
     dependencies:
@@ -992,10 +992,10 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 4.2.1(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/react/shadow-dom:
     dependencies:
@@ -1026,7 +1026,7 @@ importers:
         version: 6.20.0(eslint@8.56.0)(typescript@5.2.2)
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 4.2.1(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       eslint:
         specifier: ^8.56.0
         version: 8.56.0
@@ -1040,8 +1040,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/react/simple:
     dependencies:
@@ -1063,10 +1063,10 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 4.2.1(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/react/star-wars:
     dependencies:
@@ -1103,10 +1103,10 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 4.2.1(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/react/suspense:
     dependencies:
@@ -1134,10 +1134,10 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 4.2.1(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/solid/astro:
     dependencies:
@@ -1149,7 +1149,7 @@ importers:
         version: 8.2.5(astro@4.6.2(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)(typescript@5.2.2))
       '@astrojs/solid-js':
         specifier: ^4.1.0
-        version: 4.1.0(@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 4.1.0(@testing-library/jest-dom@6.4.5(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@astrojs/tailwind':
         specifier: ^5.1.0
         version: 5.1.0(astro@4.6.2(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)(typescript@5.2.2))(tailwindcss@3.4.3)
@@ -1197,11 +1197,11 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
 
   examples/solid/basic-typescript:
     dependencies:
@@ -1219,11 +1219,11 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
 
   examples/solid/default-query-function:
     dependencies:
@@ -1241,11 +1241,11 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
 
   examples/solid/simple:
     dependencies:
@@ -1266,11 +1266,11 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
 
   examples/solid/solid-start-streaming:
     dependencies:
@@ -1282,7 +1282,7 @@ importers:
         version: 0.13.2(solid-js@1.8.17)
       '@solidjs/start':
         specifier: ^1.0.0-rc.0
-        version: 1.0.0-rc.0(@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(rollup@4.14.1)(solid-js@1.8.17)(vinxi@0.3.11(@types/node@18.19.3)(encoding@0.1.13)(idb-keyval@6.2.1)(ioredis@5.3.2)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 1.0.0-rc.0(@testing-library/jest-dom@6.4.5(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(rollup@4.14.1)(solid-js@1.8.17)(vinxi@0.3.11(@types/node@18.19.3)(encoding@0.1.13)(idb-keyval@6.2.1)(ioredis@5.3.2)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@tanstack/solid-query':
         specifier: ^5.36.1
         version: 5.36.1(solid-js@1.8.17)
@@ -1307,13 +1307,13 @@ importers:
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^3.1.1
-        version: 3.1.1(@sveltejs/kit@2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))
+        version: 3.1.1(@sveltejs/kit@2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))
       '@sveltejs/kit':
         specifier: ^2.5.9
-        version: 2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       svelte:
         specifier: ^4.2.17
         version: 4.2.17
@@ -1324,8 +1324,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/svelte/basic:
     dependencies:
@@ -1338,13 +1338,13 @@ importers:
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^3.1.1
-        version: 3.1.1(@sveltejs/kit@2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))
+        version: 3.1.1(@sveltejs/kit@2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))
       '@sveltejs/kit':
         specifier: ^2.5.9
-        version: 2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       svelte:
         specifier: ^4.2.17
         version: 4.2.17
@@ -1355,8 +1355,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/svelte/load-more-infinite-scroll:
     dependencies:
@@ -1369,13 +1369,13 @@ importers:
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^3.1.1
-        version: 3.1.1(@sveltejs/kit@2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))
+        version: 3.1.1(@sveltejs/kit@2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))
       '@sveltejs/kit':
         specifier: ^2.5.9
-        version: 2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       svelte:
         specifier: ^4.2.17
         version: 4.2.17
@@ -1386,8 +1386,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/svelte/optimistic-updates-typescript:
     dependencies:
@@ -1400,13 +1400,13 @@ importers:
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^3.1.1
-        version: 3.1.1(@sveltejs/kit@2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))
+        version: 3.1.1(@sveltejs/kit@2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))
       '@sveltejs/kit':
         specifier: ^2.5.9
-        version: 2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       svelte:
         specifier: ^4.2.17
         version: 4.2.17
@@ -1417,8 +1417,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/svelte/playground:
     dependencies:
@@ -1431,13 +1431,13 @@ importers:
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^3.1.1
-        version: 3.1.1(@sveltejs/kit@2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))
+        version: 3.1.1(@sveltejs/kit@2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))
       '@sveltejs/kit':
         specifier: ^2.5.9
-        version: 2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       svelte:
         specifier: ^4.2.17
         version: 4.2.17
@@ -1448,8 +1448,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/svelte/simple:
     dependencies:
@@ -1462,7 +1462,7 @@ importers:
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@tsconfig/svelte':
         specifier: ^5.0.4
         version: 5.0.4
@@ -1476,8 +1476,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/svelte/ssr:
     dependencies:
@@ -1490,13 +1490,13 @@ importers:
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^3.1.1
-        version: 3.1.1(@sveltejs/kit@2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))
+        version: 3.1.1(@sveltejs/kit@2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))
       '@sveltejs/kit':
         specifier: ^2.5.9
-        version: 2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       svelte:
         specifier: ^4.2.17
         version: 4.2.17
@@ -1507,8 +1507,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/svelte/star-wars:
     dependencies:
@@ -1521,13 +1521,13 @@ importers:
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^3.1.1
-        version: 3.1.1(@sveltejs/kit@2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))
+        version: 3.1.1(@sveltejs/kit@2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))
       '@sveltejs/kit':
         specifier: ^2.5.9
-        version: 2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.19(postcss@8.4.38)
@@ -1547,8 +1547,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/vue/basic:
     dependencies:
@@ -1564,13 +1564,13 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
-        version: 5.0.4(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vue@3.3.0)
+        version: 5.0.4(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vue@3.3.0)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/vue/dependent-queries:
     dependencies:
@@ -1583,13 +1583,13 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
-        version: 5.0.4(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vue@3.3.0)
+        version: 5.0.4(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vue@3.3.0)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/vue/persister:
     dependencies:
@@ -1614,13 +1614,13 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
-        version: 5.0.4(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vue@3.3.0)
+        version: 5.0.4(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vue@3.3.0)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   examples/vue/simple:
     dependencies:
@@ -1636,13 +1636,13 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
-        version: 5.0.4(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vue@3.3.0)
+        version: 5.0.4(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vue@3.3.0)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   integrations/angular-cli-standalone-17:
     dependencies:
@@ -1769,7 +1769,7 @@ importers:
         version: link:../../packages/react-query-devtools
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 4.2.1(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -1777,8 +1777,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   integrations/solid-vite:
     dependencies:
@@ -1792,17 +1792,17 @@ importers:
         specifier: ^1.8.17
         version: 1.8.17
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
 
   integrations/svelte-vite:
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@tanstack/svelte-query':
         specifier: workspace:*
         version: link:../../packages/svelte-query
@@ -1813,8 +1813,8 @@ importers:
         specifier: ^4.2.17
         version: 4.2.17
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   integrations/vue-vite:
     dependencies:
@@ -1827,13 +1827,13 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
-        version: 5.0.4(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vue@3.3.0)
+        version: 5.0.4(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vue@3.3.0)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
       vue-tsc:
         specifier: ^1.8.26
         version: 1.8.26(typescript@5.2.2)
@@ -1997,7 +1997,7 @@ importers:
         version: 2.2.0(esbuild@0.20.2)(solid-js@1.8.17)(tsup@8.0.2(@microsoft/api-extractor@7.43.7(@types/node@18.19.3))(postcss@8.4.38)(typescript@5.4.2))
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
 
   packages/query-persist-client-core:
     dependencies:
@@ -2028,7 +2028,7 @@ importers:
         version: 18.2.19
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 4.2.1(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -2053,7 +2053,7 @@ importers:
         version: 18.2.61
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 4.2.1(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -2068,7 +2068,7 @@ importers:
         version: 18.2.61
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 4.2.1(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       next:
         specifier: ^14.0.0
         version: 14.0.0(@babel/core@7.24.4)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.71.1)
@@ -2090,7 +2090,7 @@ importers:
         version: 18.2.61
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 4.2.1(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -2109,7 +2109,7 @@ importers:
         version: 2.2.0(esbuild@0.20.2)(solid-js@1.8.17)(tsup@8.0.2(@microsoft/api-extractor@7.43.7(@types/node@18.19.3))(postcss@8.4.38)(typescript@5.4.2))
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
 
   packages/solid-query-devtools:
     dependencies:
@@ -2128,7 +2128,7 @@ importers:
         version: 2.2.0(esbuild@0.20.2)(solid-js@1.8.17)(tsup@8.0.2(@microsoft/api-extractor@7.43.7(@types/node@18.19.3))(postcss@8.4.38)(typescript@5.4.2))
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
 
   packages/solid-query-persist-client:
     dependencies:
@@ -2147,7 +2147,7 @@ importers:
         version: 2.2.0(esbuild@0.20.2)(solid-js@1.8.17)(tsup@8.0.2(@microsoft/api-extractor@7.43.7(@types/node@18.19.3))(postcss@8.4.38)(typescript@5.4.2))
       vite-plugin-solid:
         specifier: ^2.9.1
-        version: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
 
   packages/svelte-query:
     dependencies:
@@ -2160,7 +2160,7 @@ importers:
         version: 2.2.6(svelte@4.2.17)(typescript@5.2.2)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@testing-library/svelte':
         specifier: ^4.1.0
         version: 4.1.0(svelte@4.2.17)
@@ -2191,7 +2191,7 @@ importers:
         version: 2.2.6(svelte@4.2.17)(typescript@5.2.2)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@tanstack/svelte-query':
         specifier: workspace:*
         version: link:../svelte-query
@@ -2219,7 +2219,7 @@ importers:
         version: 2.2.6(svelte@4.2.17)(typescript@5.2.2)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
-        version: 3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        version: 3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@tanstack/svelte-query':
         specifier: workspace:*
         version: link:../svelte-query
@@ -2256,7 +2256,7 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
-        version: 5.0.4(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vue@3.3.0)
+        version: 5.0.4(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vue@3.3.0)
       '@vue/composition-api':
         specifier: 1.7.2
         version: 1.7.2(vue@3.3.0)
@@ -2281,10 +2281,10 @@ importers:
         version: link:../vue-query
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
-        version: 5.0.4(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vue@3.3.0)
+        version: 5.0.4(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vue@3.3.0)
       vite:
-        specifier: ^5.1.1
-        version: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
       vue:
         specifier: ^3.3.0
         version: 3.3.0
@@ -6620,20 +6620,20 @@ packages:
     peerDependencies:
       vitest: 1.3.1
 
-  '@vitest/expect@1.4.0':
-    resolution: {integrity: sha512-Jths0sWCJZ8BxjKe+p+eKsoqev1/T8lYcrjavEaz8auEJ4jAVY0GwW3JKmdVU4mmNPLPHixh4GNXP7GFtAiDHA==}
+  '@vitest/expect@1.6.0':
+    resolution: {integrity: sha512-ixEvFVQjycy/oNgHjqsL6AZCDduC+tflRluaHIzKIsdbzkLn2U/iBnVeJwB6HsIjQBdfMR8Z0tRxKUsvFJEeWQ==}
 
-  '@vitest/runner@1.4.0':
-    resolution: {integrity: sha512-EDYVSmesqlQ4RD2VvWo3hQgTJ7ZrFQ2VSJdfiJiArkCerDAGeyF1i6dHkmySqk573jLp6d/cfqCN+7wUB5tLgg==}
+  '@vitest/runner@1.6.0':
+    resolution: {integrity: sha512-P4xgwPjwesuBiHisAVz/LSSZtDjOTPYZVmNAnpHHSR6ONrf8eCJOFRvUwdHn30F5M1fxhqtl7QZQUk2dprIXAg==}
 
-  '@vitest/snapshot@1.4.0':
-    resolution: {integrity: sha512-saAFnt5pPIA5qDGxOHxJ/XxhMFKkUSBJmVt5VgDsAqPTX6JP326r5C/c9UuCMPoXNzuudTPsYDZCoJ5ilpqG2A==}
+  '@vitest/snapshot@1.6.0':
+    resolution: {integrity: sha512-+Hx43f8Chus+DCmygqqfetcAZrDJwvTj0ymqjQq4CvmpKFSTVteEOBzCusu1x2tt4OJcvBflyHUE0DZSLgEMtQ==}
 
-  '@vitest/spy@1.4.0':
-    resolution: {integrity: sha512-Ywau/Qs1DzM/8Uc+yA77CwSegizMlcgTJuYGAi0jujOteJOUf1ujunHThYo243KG9nAyWT3L9ifPYZ5+As/+6Q==}
+  '@vitest/spy@1.6.0':
+    resolution: {integrity: sha512-leUTap6B/cqi/bQkXUu6bQV5TZPx7pmMBKBQiI0rJA8c3pB56ZsaTbREnF7CJfmvAS4V2cXIBAh/3rVwrrCYgw==}
 
-  '@vitest/utils@1.4.0':
-    resolution: {integrity: sha512-mx3Yd1/6e2Vt/PUC98DcqTirtfxUyAZ32uK82r8rZzbtBeBo+nqgnjx/LvqQdWsrvNtm14VmurNgcf4nqY5gJg==}
+  '@vitest/utils@1.6.0':
+    resolution: {integrity: sha512-21cPiuGMoMZwiOHa2i4LXkMkMkCGzA+MVFV70jRwHo95dL4x/ts5GZhML1QWuy7yfp3WzK3lRvZi3JnXTYqrBw==}
 
   '@volar/kit@2.1.6':
     resolution: {integrity: sha512-dSuXChDGM0nSG/0fxqlNfadjpAeeo1P1SJPBQ+pDf8H1XrqeJq5gIhxRTEbiS+dyNIG69ATq1CArkbCif+oxJw==}
@@ -16558,8 +16558,8 @@ packages:
   tinybench@2.5.1:
     resolution: {integrity: sha512-65NKvSuAVDP/n4CqH+a9w2kTlLReS9vhsAP06MWx+/89nMinJyB2icyl58RIcqCmIggpojIGeuJGhjU1aGMBSg==}
 
-  tinypool@0.8.2:
-    resolution: {integrity: sha512-SUszKYe5wgsxnNOVlBYO6IC+8VGWdVGZWAqUxp3UErNBtptZvWbwyUOyzNL59zigz2rCA92QiL3wvG+JDSdJdQ==}
+  tinypool@0.8.4:
+    resolution: {integrity: sha512-i11VH5gS6IFeLY3gMBQ00/MmLncVP7JLXOw1vlgkytLmJK7QnEr7NXf0LBdxfmNPAeyetukOk0bOYrJrFGjYJQ==}
     engines: {node: '>=14.0.0'}
 
   tinyspy@2.2.0:
@@ -17255,8 +17255,8 @@ packages:
     resolution: {integrity: sha512-ASEpiwldZIsViv2/ZlO6qnRhDAwxr92nKXxMOinA+5nCY7nlaKgekaLDjTyUmFzB8DSiXVZqmHnd6OZVkn4vzw==}
     hasBin: true
 
-  vite-node@1.4.0:
-    resolution: {integrity: sha512-VZDAseqjrHgNd4Kh8icYHWzTKSCZMhia7GyHfhtzLW33fZlG9SwsB6CEhgyVOWkJfJ2pFLrp/Gj1FSfAiqH9Lw==}
+  vite-node@1.6.0:
+    resolution: {integrity: sha512-de6HJgzC+TFzOu0NTC4RAIsyf/DY/ibWDYQUcuEA84EMHhcefTUGkjFHKKEJhQN4A+6I0u++kr3l36ZF2d7XRw==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
 
@@ -17323,8 +17323,8 @@ packages:
       terser:
         optional: true
 
-  vite@5.2.8:
-    resolution: {integrity: sha512-OyZR+c1CE8yeHw5V5t59aXsUPPVTHMDjEZz8MgguLL/Q7NblxhZUlTu9xSPqlsUO/y+X7dlU05jdhvyycD55DA==}
+  vite@5.2.11:
+    resolution: {integrity: sha512-HndV31LWW05i1BLPMUCE1B9E9GFbOu1MbenhS58FuK6owSO5qHm7GiCotrNY1YE5rMeQSFBGmT5ZaLEjFizgiQ==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
     peerDependencies:
@@ -17359,15 +17359,15 @@ packages:
       vite:
         optional: true
 
-  vitest@1.4.0:
-    resolution: {integrity: sha512-gujzn0g7fmwf83/WzrDTnncZt2UiXP41mHuFYFrdwaLRVQ6JYQEiME2IfEjU3vcFL3VKa75XhI3lFgn+hfVsQw==}
+  vitest@1.6.0:
+    resolution: {integrity: sha512-H5r/dN06swuFnzNFhq/dnz37bPXnq8xB2xB5JOVk8K09rUtoeNN+LHWkoQ0A/i3hvbUKKcCei9KpbxqHMLhLLA==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
     peerDependencies:
       '@edge-runtime/vm': '*'
       '@types/node': ^18.0.0 || >=20.0.0
-      '@vitest/browser': 1.4.0
-      '@vitest/ui': 1.4.0
+      '@vitest/browser': 1.6.0
+      '@vitest/ui': 1.6.0
       happy-dom: '*'
       jsdom: '*'
     peerDependenciesMeta:
@@ -18517,10 +18517,10 @@ snapshots:
     dependencies:
       prismjs: 1.29.0
 
-  '@astrojs/solid-js@4.1.0(@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
+  '@astrojs/solid-js@4.1.0(@testing-library/jest-dom@6.4.5(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
     dependencies:
       solid-js: 1.8.17
-      vite-plugin-solid: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      vite-plugin-solid: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
     transitivePeerDependencies:
       - '@testing-library/jest-dom'
       - supports-color
@@ -23232,7 +23232,7 @@ snapshots:
     dependencies:
       solid-js: 1.8.17
 
-  '@solidjs/start@1.0.0-rc.0(@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(rollup@4.14.1)(solid-js@1.8.17)(vinxi@0.3.11(@types/node@18.19.3)(encoding@0.1.13)(idb-keyval@6.2.1)(ioredis@5.3.2)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
+  '@solidjs/start@1.0.0-rc.0(@testing-library/jest-dom@6.4.5(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(rollup@4.14.1)(solid-js@1.8.17)(vinxi@0.3.11(@types/node@18.19.3)(encoding@0.1.13)(idb-keyval@6.2.1)(ioredis@5.3.2)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
     dependencies:
       '@vinxi/plugin-directives': 0.3.1(vinxi@0.3.11(@types/node@18.19.3)(encoding@0.1.13)(idb-keyval@6.2.1)(ioredis@5.3.2)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@vinxi/server-components': 0.3.3(vinxi@0.3.11(@types/node@18.19.3)(encoding@0.1.13)(idb-keyval@6.2.1)(ioredis@5.3.2)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
@@ -23247,8 +23247,8 @@ snapshots:
       shikiji: 0.9.19
       source-map-js: 1.2.0
       terracotta: 1.0.5(solid-js@1.8.17)
-      vite-plugin-inspect: 0.7.40(rollup@4.14.1)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
-      vite-plugin-solid: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      vite-plugin-inspect: 0.7.40(rollup@4.14.1)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      vite-plugin-solid: 2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
     transitivePeerDependencies:
       - '@nuxt/kit'
       - '@testing-library/jest-dom'
@@ -23276,14 +23276,14 @@ snapshots:
       magic-string: 0.25.9
       string.prototype.matchall: 4.0.10
 
-  '@sveltejs/adapter-auto@3.1.1(@sveltejs/kit@2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))':
+  '@sveltejs/adapter-auto@3.1.1(@sveltejs/kit@2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))':
     dependencies:
-      '@sveltejs/kit': 2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      '@sveltejs/kit': 2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       import-meta-resolve: 4.0.0
 
-  '@sveltejs/kit@2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
+  '@sveltejs/kit@2.5.9(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      '@sveltejs/vite-plugin-svelte': 3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@types/cookie': 0.6.0
       cookie: 0.6.0
       devalue: 5.0.0
@@ -23297,7 +23297,7 @@ snapshots:
       sirv: 2.0.4
       svelte: 4.2.17
       tiny-glob: 0.2.9
-      vite: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+      vite: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   '@sveltejs/package@2.2.6(svelte@4.2.17)(typescript@5.2.2)':
     dependencies:
@@ -23310,26 +23310,26 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@sveltejs/vite-plugin-svelte-inspector@2.0.0(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
+  '@sveltejs/vite-plugin-svelte-inspector@2.0.0(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      '@sveltejs/vite-plugin-svelte': 3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       debug: 4.3.4(supports-color@6.1.0)
       svelte: 4.2.17
-      vite: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+      vite: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
     transitivePeerDependencies:
       - supports-color
 
-  '@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
+  '@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte-inspector': 2.0.0(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      '@sveltejs/vite-plugin-svelte-inspector': 2.0.0(@sveltejs/vite-plugin-svelte@3.0.2(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@4.2.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       debug: 4.3.4(supports-color@6.1.0)
       deepmerge: 4.3.1
       kleur: 4.1.5
       magic-string: 0.30.8
       svelte: 4.2.17
       svelte-hmr: 0.15.3(svelte@4.2.17)
-      vite: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
-      vitefu: 0.2.5(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      vite: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+      vitefu: 0.2.5(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -23423,7 +23423,7 @@ snapshots:
       '@tanstack/query-core': 5.36.1
       tslib: 2.6.2
 
-  '@tanstack/config@0.4.4(@types/node@18.19.3)(esbuild@0.19.11)(rollup@4.14.1)(typescript@5.2.2)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
+  '@tanstack/config@0.4.4(@types/node@18.19.3)(esbuild@0.19.11)(rollup@4.14.1)(typescript@5.2.2)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
     dependencies:
       '@commitlint/parse': 18.6.0
       chalk: 5.3.0
@@ -23440,8 +23440,8 @@ snapshots:
       semver: 7.6.0
       stream-to-array: 2.3.0
       v8flags: 4.0.1
-      vite-plugin-dts: 3.7.2(@types/node@18.19.3)(rollup@4.14.1)(typescript@5.2.2)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
-      vite-plugin-externalize-deps: 0.8.0(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      vite-plugin-dts: 3.7.2(@types/node@18.19.3)(rollup@4.14.1)(typescript@5.2.2)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      vite-plugin-externalize-deps: 0.8.0(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
     transitivePeerDependencies:
       - '@types/node'
       - esbuild
@@ -23563,7 +23563,7 @@ snapshots:
       lz-string: 1.5.0
       pretty-format: 27.5.1
 
-  '@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
+  '@testing-library/jest-dom@6.4.5(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
     dependencies:
       '@adobe/css-tools': 4.3.3
       '@babel/runtime': 7.24.0
@@ -23574,7 +23574,7 @@ snapshots:
       lodash: 4.17.21
       redent: 3.0.0
     optionalDependencies:
-      vitest: 1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+      vitest: 1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
   '@testing-library/react@14.2.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
@@ -24281,23 +24281,23 @@ snapshots:
     dependencies:
       vite: 5.1.7(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
-  '@vitejs/plugin-react@4.2.1(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
+  '@vitejs/plugin-react@4.2.1(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
     dependencies:
       '@babel/core': 7.24.4
       '@babel/plugin-transform-react-jsx-self': 7.23.3(@babel/core@7.24.4)
       '@babel/plugin-transform-react-jsx-source': 7.23.3(@babel/core@7.24.4)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.0
-      vite: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+      vite: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-vue@5.0.4(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vue@3.3.0)':
+  '@vitejs/plugin-vue@5.0.4(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vue@3.3.0)':
     dependencies:
-      vite: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+      vite: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
       vue: 3.3.0
 
-  '@vitest/coverage-istanbul@1.3.1(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
+  '@vitest/coverage-istanbul@1.3.1(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
     dependencies:
       debug: 4.3.4(supports-color@6.1.0)
       istanbul-lib-coverage: 3.2.2
@@ -24308,33 +24308,33 @@ snapshots:
       magicast: 0.3.3
       picocolors: 1.0.0
       test-exclude: 6.0.0
-      vitest: 1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+      vitest: 1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/expect@1.4.0':
+  '@vitest/expect@1.6.0':
     dependencies:
-      '@vitest/spy': 1.4.0
-      '@vitest/utils': 1.4.0
+      '@vitest/spy': 1.6.0
+      '@vitest/utils': 1.6.0
       chai: 4.3.10
 
-  '@vitest/runner@1.4.0':
+  '@vitest/runner@1.6.0':
     dependencies:
-      '@vitest/utils': 1.4.0
+      '@vitest/utils': 1.6.0
       p-limit: 5.0.0
       pathe: 1.1.2
 
-  '@vitest/snapshot@1.4.0':
+  '@vitest/snapshot@1.6.0':
     dependencies:
       magic-string: 0.30.8
       pathe: 1.1.2
       pretty-format: 29.7.0
 
-  '@vitest/spy@1.4.0':
+  '@vitest/spy@1.6.0':
     dependencies:
       tinyspy: 2.2.0
 
-  '@vitest/utils@1.4.0':
+  '@vitest/utils@1.6.0':
     dependencies:
       diff-sequences: 29.6.3
       estree-walker: 3.0.3
@@ -25171,8 +25171,8 @@ snapshots:
       tsconfck: 3.0.3(typescript@5.2.2)
       unist-util-visit: 5.0.0
       vfile: 6.0.1
-      vite: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
-      vitefu: 0.2.5(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      vite: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+      vitefu: 0.2.5(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       which-pm: 2.1.1
       yargs-parser: 21.1.1
       zod: 3.22.4
@@ -37437,7 +37437,7 @@ snapshots:
 
   tinybench@2.5.1: {}
 
-  tinypool@0.8.2: {}
+  tinypool@0.8.4: {}
 
   tinyspy@2.2.0: {}
 
@@ -38187,7 +38187,7 @@ snapshots:
       unctx: 2.3.1
       unenv: 1.9.0
       unstorage: 1.10.2(idb-keyval@6.2.1)(ioredis@5.3.2)
-      vite: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+      vite: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
       zod: 3.22.4
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -38219,13 +38219,13 @@ snapshots:
       - uWebSockets.js
       - xml2js
 
-  vite-node@1.4.0(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1):
+  vite-node@1.6.0(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1):
     dependencies:
       cac: 6.7.14
       debug: 4.3.4(supports-color@6.1.0)
       pathe: 1.1.2
       picocolors: 1.0.0
-      vite: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+      vite: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -38236,7 +38236,7 @@ snapshots:
       - supports-color
       - terser
 
-  vite-plugin-dts@3.7.2(@types/node@18.19.3)(rollup@4.14.1)(typescript@5.2.2)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)):
+  vite-plugin-dts@3.7.2(@types/node@18.19.3)(rollup@4.14.1)(typescript@5.2.2)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)):
     dependencies:
       '@microsoft/api-extractor': 7.39.0(@types/node@18.19.3)
       '@rollup/pluginutils': 5.1.0(rollup@4.14.1)
@@ -38246,17 +38246,17 @@ snapshots:
       typescript: 5.2.2
       vue-tsc: 1.8.26(typescript@5.2.2)
     optionalDependencies:
-      vite: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+      vite: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
     transitivePeerDependencies:
       - '@types/node'
       - rollup
       - supports-color
 
-  vite-plugin-externalize-deps@0.8.0(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)):
+  vite-plugin-externalize-deps@0.8.0(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)):
     dependencies:
-      vite: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+      vite: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
-  vite-plugin-inspect@0.7.40(rollup@4.14.1)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)):
+  vite-plugin-inspect@0.7.40(rollup@4.14.1)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)):
     dependencies:
       '@antfu/utils': 0.7.6
       '@rollup/pluginutils': 5.1.0(rollup@4.14.1)
@@ -38266,12 +38266,12 @@ snapshots:
       open: 9.1.0
       picocolors: 1.0.0
       sirv: 2.0.4
-      vite: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+      vite: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
     transitivePeerDependencies:
       - rollup
       - supports-color
 
-  vite-plugin-solid@2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)):
+  vite-plugin-solid@2.9.1(@testing-library/jest-dom@6.4.5(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)):
     dependencies:
       '@babel/core': 7.24.5
       '@types/babel__core': 7.20.5
@@ -38279,10 +38279,10 @@ snapshots:
       merge-anything: 5.1.7
       solid-js: 1.8.17
       solid-refresh: 0.6.3(solid-js@1.8.17)
-      vite: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
-      vitefu: 0.2.5(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      vite: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+      vitefu: 0.2.5(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
     optionalDependencies:
-      '@testing-library/jest-dom': 6.4.5(vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      '@testing-library/jest-dom': 6.4.5(vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -38298,7 +38298,7 @@ snapshots:
       sass: 1.71.1
       terser: 5.29.1
 
-  vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1):
+  vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1):
     dependencies:
       esbuild: 0.20.2
       postcss: 8.4.38
@@ -38310,17 +38310,17 @@ snapshots:
       sass: 1.71.1
       terser: 5.29.1
 
-  vitefu@0.2.5(vite@5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)):
+  vitefu@0.2.5(vite@5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)):
     optionalDependencies:
-      vite: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+      vite: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
-  vitest@1.4.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1):
+  vitest@1.6.0(@types/node@18.19.3)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1):
     dependencies:
-      '@vitest/expect': 1.4.0
-      '@vitest/runner': 1.4.0
-      '@vitest/snapshot': 1.4.0
-      '@vitest/spy': 1.4.0
-      '@vitest/utils': 1.4.0
+      '@vitest/expect': 1.6.0
+      '@vitest/runner': 1.6.0
+      '@vitest/snapshot': 1.6.0
+      '@vitest/spy': 1.6.0
+      '@vitest/utils': 1.6.0
       acorn-walk: 8.3.2
       chai: 4.3.10
       debug: 4.3.4(supports-color@6.1.0)
@@ -38332,9 +38332,9 @@ snapshots:
       std-env: 3.7.0
       strip-literal: 2.0.0
       tinybench: 2.5.1
-      tinypool: 0.8.2
-      vite: 5.2.8(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
-      vite-node: 1.4.0(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+      tinypool: 0.8.4
+      vite: 5.2.11(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+      vite-node: 1.6.0(@types/node@18.19.3)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
       why-is-node-running: 2.2.2
     optionalDependencies:
       '@types/node': 18.19.3
