@@ -59,7 +59,7 @@
     "goober": "^2.1.14",
     "solid-js": "^1.8.17",
     "solid-transition-group": "^0.2.3",
-    "superjson": "^1.13.3",
+    "superjson": "^2.2.1",
     "tsup-preset-solid": "^2.2.0",
     "vite-plugin-solid": "^2.10.2"
   }

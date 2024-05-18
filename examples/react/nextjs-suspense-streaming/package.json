@@ -14,7 +14,7 @@
     "next": "^14.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "superjson": "^1.13.3"
+    "superjson": "^2.2.1"
   },
   "devDependencies": {
     "@types/node": "^20.12.12",

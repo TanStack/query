@@ -623,8 +623,8 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
       web-streams-polyfill:
-        specifier: ^3.3.2
-        version: 3.3.2
+        specifier: ^4.0.0
+        version: 4.0.0
 
   examples/react/nextjs-suspense-streaming:
     dependencies:
@@ -647,8 +647,8 @@ importers:
         specifier: ^18.2.0
         version: 18.3.1(react@18.3.1)
       superjson:
-        specifier: ^1.13.3
-        version: 1.13.3
+        specifier: ^2.2.1
+        version: 2.2.1
     devDependencies:
       '@types/node':
         specifier: ^20.12.12
@@ -1952,8 +1952,8 @@ importers:
         specifier: 0.11.11
         version: 0.11.11
       jscodeshift:
-        specifier: 0.15.1
-        version: 0.15.1(@babel/preset-env@7.24.0(@babel/core@7.24.5))
+        specifier: 0.15.2
+        version: 0.15.2(@babel/preset-env@7.24.0(@babel/core@7.24.5))
 
   packages/query-core: {}
 
@@ -1990,8 +1990,8 @@ importers:
         specifier: ^0.2.3
         version: 0.2.3(solid-js@1.8.17)
       superjson:
-        specifier: ^1.13.3
-        version: 1.13.3
+        specifier: ^2.2.1
+        version: 2.2.1
       tsup-preset-solid:
         specifier: ^2.2.0
         version: 2.2.0(esbuild@0.21.3)(solid-js@1.8.17)(tsup@8.0.2(@microsoft/api-extractor@7.43.7(@types/node@20.12.12))(postcss@8.4.38)(typescript@5.4.2))
@@ -12095,8 +12095,8 @@ packages:
     peerDependencies:
       '@babel/preset-env': ^7.1.6
 
-  jscodeshift@0.15.1:
-    resolution: {integrity: sha512-hIJfxUy8Rt4HkJn/zZPU9ChKfKZM1342waJ1QC2e2YsPcWhM+3BJ4dcfQCzArTrk1jJeNLB341H+qOcEHRxJZg==}
+  jscodeshift@0.15.2:
+    resolution: {integrity: sha512-FquR7Okgmc4Sd0aEDwqho3rEiKR3BdvuG9jfdHjLJ6JQoWSMpavug3AoIfnfWhxFlf+5pzQh8qjqz0DWFrNQzA==}
     hasBin: true
     peerDependencies:
       '@babel/preset-env': ^7.1.6
@@ -16556,9 +16556,9 @@ packages:
   summary@2.1.0:
     resolution: {integrity: sha512-nMIjMrd5Z2nuB2RZCKJfFMjgS3fygbeyGk9PxPPaJR1RIcyN9yn4A63Isovzm3ZtQuEkLBVgMdPup8UeLH7aQw==}
 
-  superjson@1.13.3:
-    resolution: {integrity: sha512-mJiVjfd2vokfDxsQPOwJ/PtanO87LhpYY88ubI5dUB1Ab58Txbyje3+jpm+/83R/fevaq/107NNhtYBLuoTrFg==}
-    engines: {node: '>=10'}
+  superjson@2.2.1:
+    resolution: {integrity: sha512-8iGv75BYOa0xRJHK5vRLEjE2H/i4lulTjzpUXic3Eg8akftYjkmQDa8JARQ42rlczXyFR3IeRoeFCc7RxHsYZA==}
+    engines: {node: '>=16'}
 
   supports-color@5.5.0:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}
@@ -17883,6 +17883,10 @@ packages:
 
   web-streams-polyfill@3.3.2:
     resolution: {integrity: sha512-3pRGuxRF5gpuZc0W+EpwQRmCD7gRqcDOMt688KmdlDAgAyaB1XlN0zq2njfDNm44XVdIouE7pZ6GzbdyH47uIQ==}
+    engines: {node: '>= 8'}
+
+  web-streams-polyfill@4.0.0:
+    resolution: {integrity: sha512-0zJXHRAYEjM2tUfZ2DiSOHAa2aw1tisnnhU3ufD57R8iefL+DcdJyRBRyJpG+NUimDgbTI/lH+gAE1PAvV3Cgw==}
     engines: {node: '>= 8'}
 
   web-vitals@3.5.2:
@@ -19221,6 +19225,15 @@ snapshots:
       '@babel/helper-split-export-declaration': 7.22.6
       '@babel/helper-validator-identifier': 7.22.20
 
+  '@babel/helper-module-transforms@7.24.5(@babel/core@7.24.0)':
+    dependencies:
+      '@babel/core': 7.24.0
+      '@babel/helper-environment-visitor': 7.22.20
+      '@babel/helper-module-imports': 7.24.3
+      '@babel/helper-simple-access': 7.24.5
+      '@babel/helper-split-export-declaration': 7.24.5
+      '@babel/helper-validator-identifier': 7.24.5
+
   '@babel/helper-module-transforms@7.24.5(@babel/core@7.24.5)':
     dependencies:
       '@babel/core': 7.24.5
@@ -20011,9 +20024,9 @@ snapshots:
   '@babel/plugin-transform-modules-commonjs@7.23.3(@babel/core@7.24.0)':
     dependencies:
       '@babel/core': 7.24.0
-      '@babel/helper-module-transforms': 7.23.3(@babel/core@7.24.0)
+      '@babel/helper-module-transforms': 7.24.5(@babel/core@7.24.0)
       '@babel/helper-plugin-utils': 7.24.0
-      '@babel/helper-simple-access': 7.22.5
+      '@babel/helper-simple-access': 7.24.5
 
   '@babel/plugin-transform-modules-commonjs@7.23.3(@babel/core@7.24.5)':
     dependencies:
@@ -24982,7 +24995,7 @@ snapshots:
 
   '@vue/compiler-core@3.3.0':
     dependencies:
-      '@babel/parser': 7.24.4
+      '@babel/parser': 7.24.5
       '@vue/shared': 3.3.0
       estree-walker: 2.0.2
       source-map-js: 1.2.0
@@ -31930,10 +31943,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  jscodeshift@0.15.1(@babel/preset-env@7.24.0(@babel/core@7.24.5)):
+  jscodeshift@0.15.2(@babel/preset-env@7.24.0(@babel/core@7.24.5)):
     dependencies:
       '@babel/core': 7.24.5
-      '@babel/parser': 7.24.4
+      '@babel/parser': 7.24.5
       '@babel/plugin-transform-class-properties': 7.23.3(@babel/core@7.24.5)
       '@babel/plugin-transform-modules-commonjs': 7.23.3(@babel/core@7.24.5)
       '@babel/plugin-transform-nullish-coalescing-operator': 7.23.4(@babel/core@7.24.5)
@@ -37709,7 +37722,7 @@ snapshots:
 
   summary@2.1.0: {}
 
-  superjson@1.13.3:
+  superjson@2.2.1:
     dependencies:
       copy-anything: 3.0.5
 
@@ -39240,6 +39253,8 @@ snapshots:
   web-namespaces@2.0.1: {}
 
   web-streams-polyfill@3.3.2: {}
+
+  web-streams-polyfill@4.0.0: {}
 
   web-vitals@3.5.2: {}
 
