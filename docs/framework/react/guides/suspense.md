@@ -40,9 +40,9 @@ Since you can't change `throwOnError` (because it would allow for `data` to beco
 ```tsx
 import { useSuspenseQuery } from '@tanstack/react-query'
 
-const { data, error } = useSuspenseQuery({ queryKey, queryFn })
+const { data, error, isFetching } = useSuspenseQuery({ queryKey, queryFn })
 
-if (error) {
+if (error && !isFetching) {
   throw error
 }
 
