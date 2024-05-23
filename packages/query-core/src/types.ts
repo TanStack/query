@@ -526,7 +526,6 @@ export interface QueryObserverBaseResult<
 > {
   /**
    * The last successfully resolved data for the query.
-   * - Defaults to `undefined`.
    */
   data: TData | undefined
   /**
@@ -977,12 +976,10 @@ export interface MutationObserverBaseResult<
 > extends MutationState<TData, TError, TVariables, TContext> {
   /**
    * The last successfully resolved data for the mutation.
-   * - Defaults to `undefined`.
    */
   data: TData | undefined
   /**
    * The variables object passed to the `mutationFn`.
-   * - Defaults to `undefined`.
    */
   variables: TVariables | undefined
   /**

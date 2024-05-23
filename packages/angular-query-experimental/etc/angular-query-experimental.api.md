@@ -5,7 +5,7 @@
 ```ts
 
 import type { DataTag } from '@tanstack/query-core';
-import { DefaultError } from '@tanstack/query-core';
+import type { DefaultError } from '@tanstack/query-core';
 import type { DefinedInfiniteQueryObserverResult } from '@tanstack/query-core';
 import type { DefinedQueryObserverResult } from '@tanstack/query-core';
 import type { EnvironmentProviders } from '@angular/core';
