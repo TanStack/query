@@ -715,7 +715,7 @@ describe('useSuspenseQuery', () => {
     )
 
     expect(renders).toBe(2)
-    expect(rendered.queryByText('rendered')).not.toBeNull()
+    await waitFor(() => expect(rendered.queryByText('rendered')).not.toBeNull())
   })
 
   it('should not throw background errors to the error boundary', async () => {
