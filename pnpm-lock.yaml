@@ -8,8 +8,6 @@ overrides:
   '@typescript-eslint/eslint-plugin': ^6.20.0
   '@typescript-eslint/parser': ^6.20.0
   eslint: ^8.56.0
-  react: 19.0.0-rc-4c2e457c7c-20240522
-  react-dom: 19.0.0-rc-4c2e457c7c-20240522
   '@types/react': npm:types-react@rc
   '@types/react-dom': npm:types-react-dom@rc
 
@@ -372,9 +370,6 @@ importers:
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.35.6
@@ -411,13 +406,10 @@ importers:
         version: 4.0.2
       next:
         specifier: ^14.0.0
-        version: 14.0.0(@babel/core@7.24.6)(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)
+        version: 14.0.0(@babel/core@7.24.6)(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
 
   examples/react/basic:
     dependencies:
@@ -433,9 +425,6 @@ importers:
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.35.6
@@ -464,9 +453,6 @@ importers:
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
@@ -495,9 +481,6 @@ importers:
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.35.6
@@ -538,9 +521,6 @@ importers:
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
@@ -565,13 +545,10 @@ importers:
         version: 4.0.2
       next:
         specifier: ^14.0.0
-        version: 14.0.0(@babel/core@7.24.6)(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)
+        version: 14.0.0(@babel/core@7.24.6)(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
       react-intersection-observer:
         specifier: ^8.34.0
         version: 8.34.0(react@19.0.0-rc-4c2e457c7c-20240522)
@@ -592,13 +569,10 @@ importers:
         version: 4.0.2
       next:
         specifier: ^14.0.0
-        version: 14.0.0(@babel/core@7.24.6)(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)
+        version: 14.0.0(@babel/core@7.24.6)(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
       react-intersection-observer:
         specifier: ^8.34.0
         version: 8.34.0(react@19.0.0-rc-4c2e457c7c-20240522)
@@ -616,13 +590,10 @@ importers:
         version: 1.2.4
       next:
         specifier: ^14.0.0
-        version: 14.0.0(@babel/core@7.24.6)(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)
+        version: 14.0.0(@babel/core@7.24.6)(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
       resolve-from:
         specifier: ^5.0.0
         version: 5.0.0
@@ -643,13 +614,10 @@ importers:
         version: link:../../../packages/react-query-next-experimental
       next:
         specifier: ^14.0.0
-        version: 14.0.0(@babel/core@7.24.6)(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)
+        version: 14.0.0(@babel/core@7.24.6)(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
       superjson:
         specifier: ^2.2.1
         version: 2.2.1
@@ -671,7 +639,7 @@ importers:
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-location':
         specifier: ^3.7.4
-        version: 3.7.4(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)
+        version: 3.7.4(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)
       '@tanstack/react-query':
         specifier: ^5.37.1
         version: link:../../../packages/react-query
@@ -690,12 +658,9 @@ importers:
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
       react-hot-toast:
         specifier: ^2.4.1
-        version: 2.4.1(csstype@3.1.3)(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)
+        version: 2.4.1(csstype@3.1.3)(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
@@ -720,13 +685,10 @@ importers:
         version: 4.0.2
       next:
         specifier: ^14.0.0
-        version: 14.0.0(@babel/core@7.24.6)(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)
+        version: 14.0.0(@babel/core@7.24.6)(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@types/node':
         specifier: ^20.12.12
@@ -757,13 +719,10 @@ importers:
         version: 4.0.2
       next:
         specifier: ^14.0.0
-        version: 14.0.0(@babel/core@7.24.6)(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)
+        version: 14.0.0(@babel/core@7.24.6)(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@types/node':
         specifier: ^20.12.12
@@ -794,13 +753,10 @@ importers:
         version: 4.0.2
       next:
         specifier: ^14.0.0
-        version: 14.0.0(@babel/core@7.24.6)(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)
+        version: 14.0.0(@babel/core@7.24.6)(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
 
   examples/react/playground:
     dependencies:
@@ -813,9 +769,6 @@ importers:
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
@@ -840,13 +793,10 @@ importers:
         version: 4.0.2
       next:
         specifier: ^14.0.0
-        version: 14.0.0(@babel/core@7.24.6)(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)
+        version: 14.0.0(@babel/core@7.24.6)(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
 
   examples/react/react-native:
     dependencies:
@@ -897,7 +847,7 @@ importers:
         version: 3.31.1(react-native@0.74.1)(react@19.0.0-rc-4c2e457c7c-20240522)
       react-native-web:
         specifier: ^0.19.11
-        version: 0.19.12(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)
+        version: 0.19.12(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@babel/core':
         specifier: ^7.24.5
@@ -926,18 +876,15 @@ importers:
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
       react-router:
         specifier: ^6.23.1
         version: 6.23.1(react@19.0.0-rc-4c2e457c7c-20240522)
       react-router-dom:
         specifier: ^6.23.1
-        version: 6.23.1(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)
+        version: 6.23.1(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)
       rooks:
         specifier: ^7.14.1
-        version: 7.14.1(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)
+        version: 7.14.1(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)
       sort-by:
         specifier: ^1.2.0
         version: 1.2.0
@@ -971,7 +918,7 @@ importers:
         version: 11.11.5(@emotion/react@11.11.4)(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.0)
       '@mui/material':
         specifier: ^5.15.18
-        version: 5.15.18(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.0)
+        version: 5.15.18(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.0)
       '@mui/styles':
         specifier: ^5.15.18
         version: 5.15.18(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.0)
@@ -984,15 +931,12 @@ importers:
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
       react-router:
         specifier: ^6.23.1
         version: 6.23.1(react@19.0.0-rc-4c2e457c7c-20240522)
       react-router-dom:
         specifier: ^6.23.1
-        version: 6.23.1(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)
+        version: 6.23.1(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
@@ -1012,9 +956,6 @@ importers:
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@types/react':
         specifier: npm:types-react@rc
@@ -1061,9 +1002,6 @@ importers:
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
@@ -1082,7 +1020,7 @@ importers:
         version: 11.11.5(@emotion/react@11.11.4)(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.0)
       '@mui/material':
         specifier: ^5.15.18
-        version: 5.15.18(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.0)
+        version: 5.15.18(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.0)
       '@mui/styles':
         specifier: ^5.15.18
         version: 5.15.18(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.0)
@@ -1095,15 +1033,12 @@ importers:
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
       react-router:
         specifier: ^6.23.1
         version: 6.23.1(react@19.0.0-rc-4c2e457c7c-20240522)
       react-router-dom:
         specifier: ^6.23.1
-        version: 6.23.1(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)
+        version: 6.23.1(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
@@ -1129,9 +1064,6 @@ importers:
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
       react-error-boundary:
         specifier: ^4.0.13
         version: 4.0.13(react@19.0.0-rc-4c2e457c7c-20240522)
@@ -1699,9 +1631,6 @@ importers:
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
       react-scripts:
         specifier: ^4.0.3
         version: 4.0.3(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(react@19.0.0-rc-4c2e457c7c-20240522)(typescript@5.3.3)
@@ -1721,9 +1650,6 @@ importers:
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
       react-scripts:
         specifier: ^5.0.1
         version: 5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.24.6)(esbuild@0.21.3)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(react@19.0.0-rc-4c2e457c7c-20240522)(typescript@5.3.3)
@@ -1742,13 +1668,10 @@ importers:
         version: link:../../packages/react-query-devtools
       next:
         specifier: ^14.0.0
-        version: 14.0.0(@babel/core@7.24.6)(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)
+        version: 14.0.0(@babel/core@7.24.6)(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@types/node':
         specifier: ^20.12.12
@@ -1777,9 +1700,6 @@ importers:
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
       vite:
         specifier: ^5.2.11
         version: 5.2.11(@types/node@20.12.12)
@@ -2075,7 +1995,7 @@ importers:
         version: 4.2.1(vite@5.2.11)
       next:
         specifier: ^14.0.0
-        version: 14.0.0(@babel/core@7.24.4)(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)
+        version: 14.0.0(@babel/core@7.24.4)(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
@@ -5943,7 +5863,7 @@ packages:
   /@callstack/react-theme-provider@3.0.9(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-tTQ0uDSCL0ypeMa8T/E9wAZRGKWj8kXP7+6RYgPTfOPs9N07C9xM8P02GJ3feETap4Ux5S69D9nteq9mEj86NA==}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '>=16.3.0'
     dependencies:
       deepmerge: 3.3.0
       hoist-non-react-statics: 3.3.2
@@ -6659,7 +6579,7 @@ packages:
     resolution: {integrity: sha512-t8AjMlF0gHpvvxk5mAtCqR4vmxiGHCeJBaQO6gncUSdklELOgtwjerNY2yuJNfwnc6vi16U/+uMF+afIawJ9iw==}
     peerDependencies:
       '@types/react': '*'
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '>=16.8.0'
     peerDependenciesMeta:
       '@types/react':
         optional: true
@@ -6705,7 +6625,7 @@ packages:
     peerDependencies:
       '@emotion/react': ^11.0.0-rc.0
       '@types/react': '*'
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '>=16.8.0'
     peerDependenciesMeta:
       '@types/react':
         optional: true
@@ -6728,7 +6648,7 @@ packages:
   /@emotion/use-insertion-effect-with-fallbacks@1.0.1(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-jT/qyKZ9rzLErtrjGgdkMBn2OP8wl0G3sQlBb3YPryvKHsjvINUhVaPFfP+fpBcOkmrVOVEEHQFJ7nbj2TH2gw==}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '>=16.8.0'
     dependencies:
       react: 19.0.0-rc-4c2e457c7c-20240522
     dev: false
@@ -8134,15 +8054,15 @@ packages:
       '@floating-ui/utils': 0.2.2
     dev: true
 
-  /@floating-ui/react-dom@2.1.0(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522):
+  /@floating-ui/react-dom@2.1.0(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-lNzj5EQmEKn5FFKc04+zasr09h/uX8RtJRNj5gUXsSQIXHVWTVh+hVAg1vOMCexkX8EgvemMvIFpQfkosnVNyA==}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
     dependencies:
       '@floating-ui/dom': 1.5.3
       react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
+      react-dom: 18.3.1(react@19.0.0-rc-4c2e457c7c-20240522)
     dev: false
 
   /@floating-ui/utils@0.1.6:
@@ -9181,19 +9101,19 @@ packages:
       strict-event-emitter: 0.5.1
     dev: false
 
-  /@mui/base@5.0.0-beta.40(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.0):
+  /@mui/base@5.0.0-beta.40(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.0):
     resolution: {integrity: sha512-I/lGHztkCzvwlXpjD2+SNmvNQvB4227xBXhISPjEaJUXGImOQ9f3D2Yj/T3KasSI/h0MLWy74X0J6clhPmsRbQ==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
       '@types/react': npm:types-react@rc
-      react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522
+      react: ^17.0.0 || ^18.0.0
+      react-dom: ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
       '@types/react':
         optional: true
     dependencies:
       '@babel/runtime': 7.24.0
-      '@floating-ui/react-dom': 2.1.0(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)
+      '@floating-ui/react-dom': 2.1.0(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)
       '@mui/types': 7.2.14(types-react@19.0.0-rc.0)
       '@mui/utils': 5.15.14(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.0)
       '@popperjs/core': 2.11.8
@@ -9201,22 +9121,22 @@ packages:
       clsx: 2.1.1
       prop-types: 15.8.1
       react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
+      react-dom: 18.3.1(react@19.0.0-rc-4c2e457c7c-20240522)
     dev: false
 
   /@mui/core-downloads-tracker@5.15.18:
     resolution: {integrity: sha512-/9pVk+Al8qxAjwFUADv4BRZgMpZM4m5E+2Q/20qhVPuIJWqKp4Ie4tGExac6zu93rgPTYVQGgu+1vjiT0E+cEw==}
     dev: false
 
-  /@mui/material@5.15.18(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.0):
+  /@mui/material@5.15.18(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.0):
     resolution: {integrity: sha512-n+/dsiqux74fFfcRUJjok+ieNQ7+BEk6/OwX9cLcLvriZrZb+/7Y8+Fd2HlUUbn5N0CDurgAHm0VH1DqyJ9HAw==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
       '@emotion/react': ^11.5.0
       '@emotion/styled': ^11.3.0
       '@types/react': npm:types-react@rc
-      react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522
+      react: ^17.0.0 || ^18.0.0
+      react-dom: ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
       '@emotion/react':
         optional: true
@@ -9228,7 +9148,7 @@ packages:
       '@babel/runtime': 7.24.0
       '@emotion/react': 11.11.4(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.0)
       '@emotion/styled': 11.11.5(@emotion/react@11.11.4)(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.0)
-      '@mui/base': 5.0.0-beta.40(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.0)
+      '@mui/base': 5.0.0-beta.40(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.0)
       '@mui/core-downloads-tracker': 5.15.18
       '@mui/system': 5.15.15(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.0)
       '@mui/types': 7.2.14(types-react@19.0.0-rc.0)
@@ -9239,9 +9159,9 @@ packages:
       csstype: 3.1.3
       prop-types: 15.8.1
       react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
+      react-dom: 18.3.1(react@19.0.0-rc-4c2e457c7c-20240522)
       react-is: 18.2.0
-      react-transition-group: 4.4.5(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522)
+      react-transition-group: 4.4.5(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522)
     dev: false
 
   /@mui/private-theming@5.15.14(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.0):
@@ -9249,7 +9169,7 @@ packages:
     engines: {node: '>=12.0.0'}
     peerDependencies:
       '@types/react': npm:types-react@rc
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
       '@types/react':
         optional: true
@@ -9267,7 +9187,7 @@ packages:
     peerDependencies:
       '@emotion/react': ^11.4.1
       '@emotion/styled': ^11.3.0
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
       '@emotion/react':
         optional: true
@@ -9288,7 +9208,7 @@ packages:
     engines: {node: '>=12.0.0'}
     peerDependencies:
       '@types/react': npm:types-react@rc
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: ^17.0.0
     peerDependenciesMeta:
       '@types/react':
         optional: true
@@ -9321,7 +9241,7 @@ packages:
       '@emotion/react': ^11.5.0
       '@emotion/styled': ^11.3.0
       '@types/react': npm:types-react@rc
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
       '@emotion/react':
         optional: true
@@ -9360,7 +9280,7 @@ packages:
     engines: {node: '>=12.0.0'}
     peerDependencies:
       '@types/react': npm:types-react@rc
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
       '@types/react':
         optional: true
@@ -10356,7 +10276,7 @@ packages:
     engines: {node: '>=18'}
     peerDependencies:
       '@types/react': npm:types-react@rc
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '*'
       react-native: '*'
     peerDependenciesMeta:
       '@types/react':
@@ -10372,7 +10292,7 @@ packages:
   /@react-navigation/core@6.4.10(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-oYhqxETRHNHKsipm/BtGL0LI43Hs2VSFoWMbBdHK9OqgQPjTVUitslgLcPpo4zApCcmBWoOLX2qPxhsBda644A==}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '*'
     dependencies:
       '@react-navigation/routers': 6.1.9
       escape-string-regexp: 4.0.0
@@ -10387,7 +10307,7 @@ packages:
     resolution: {integrity: sha512-/9YT9tp1R4ejXt+5cqcQnShTIv790sAAxeqizF1zLnSldmbHmb2kxxbCW6UhyhqRnTLF3UFpZwwgy4A8AP/MzA==}
     peerDependencies:
       '@react-navigation/native': ^6.0.0
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '*'
       react-native: '*'
       react-native-safe-area-context: '>= 3.0.0'
     dependencies:
@@ -10400,7 +10320,7 @@ packages:
   /@react-navigation/native@6.1.6(react-native@0.74.1)(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-14PmSy4JR8HHEk04QkxQ0ZLuqtiQfb4BV9kkMXD2/jI4TZ+yc43OnO6fQ2o9wm+Bq8pY3DxyerC2AjNUz+oH7Q==}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '*'
       react-native: '*'
     dependencies:
       '@react-navigation/core': 6.4.10(react@19.0.0-rc-4c2e457c7c-20240522)
@@ -10421,7 +10341,7 @@ packages:
     resolution: {integrity: sha512-KTOn9cNuZ6p154Htbl2DiR95Wl+c7niLPRiGs7gjOkyVDGiaGQF9ODNQTYBDE1OxZGHe/EyYc6T2CbmiItLWDg==}
     peerDependencies:
       '@react-navigation/native': ^6.0.0
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '*'
       react-native: '*'
       react-native-gesture-handler: '>= 1.0.0'
       react-native-safe-area-context: '>= 3.0.0'
@@ -11498,17 +11418,17 @@ packages:
     dependencies:
       remove-accents: 0.5.0
 
-  /@tanstack/react-location@3.7.4(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522):
+  /@tanstack/react-location@3.7.4(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-6rH2vNHGr0uyeUz5ZHvWMYjeYKGgIKFzvs5749QtnS9f+FU7t7fQE0hKZAzltBZk82LT7iYbcHBRyUg2lW13VA==}
     engines: {node: '>=12'}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522
+      react: '>=16'
+      react-dom: '>=16'
     dependencies:
       '@babel/runtime': 7.24.0
       history: 5.3.0
       react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
+      react-dom: 18.3.1(react@19.0.0-rc-4c2e457c7c-20240522)
     dev: false
 
   /@testing-library/dom@10.1.0:
@@ -11575,8 +11495,8 @@ packages:
     engines: {node: '>=18'}
     peerDependencies:
       '@types/react': npm:types-react@rc
-      react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522
+      react: ^18.0.0
+      react-dom: ^18.0.0
     peerDependenciesMeta:
       '@types/react':
         optional: true
@@ -12412,7 +12332,7 @@ packages:
     resolution: {integrity: sha512-X0rctVWkQV1e5Y300ehVNqpOfSOufo7ieA5PIdna8yX/U7Vjz0GFsGf4qvAhxV02uQ2CVt7GYcrFfddXXK2Y4A==}
     peerDependencies:
       next: '>= 13'
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: ^18 || ^19
     peerDependenciesMeta:
       next:
         optional: true
@@ -23561,8 +23481,6 @@ packages:
     peerDependenciesMeta:
       webpack:
         optional: true
-      webpack-sources:
-        optional: true
     dependencies:
       webpack: 5.90.3(esbuild@0.21.3)
       webpack-sources: 3.2.3
@@ -25334,14 +25252,14 @@ packages:
     resolution: {integrity: sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ==}
     dev: false
 
-  /next@14.0.0(@babel/core@7.24.4)(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522):
+  /next@14.0.0(@babel/core@7.24.4)(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-J0jHKBJpB9zd4+c153sair0sz44mbaCHxggs8ryVXSFBuBqJ8XdE9/ozoV85xGh2VnSjahwntBZZgsihL9QznA==}
     engines: {node: '>=18.17.0'}
     hasBin: true
     peerDependencies:
       '@opentelemetry/api': ^1.1.0
-      react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522
+      react: ^18.2.0
+      react-dom: ^18.2.0
       sass: ^1.3.0
     peerDependenciesMeta:
       '@opentelemetry/api':
@@ -25355,7 +25273,7 @@ packages:
       caniuse-lite: 1.0.30001605
       postcss: 8.4.31
       react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
+      react-dom: 18.3.1(react@19.0.0-rc-4c2e457c7c-20240522)
       styled-jsx: 5.1.1(@babel/core@7.24.4)(react@19.0.0-rc-4c2e457c7c-20240522)
       watchpack: 2.4.0
     optionalDependencies:
@@ -25373,14 +25291,14 @@ packages:
       - babel-plugin-macros
     dev: true
 
-  /next@14.0.0(@babel/core@7.24.6)(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522):
+  /next@14.0.0(@babel/core@7.24.6)(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-J0jHKBJpB9zd4+c153sair0sz44mbaCHxggs8ryVXSFBuBqJ8XdE9/ozoV85xGh2VnSjahwntBZZgsihL9QznA==}
     engines: {node: '>=18.17.0'}
     hasBin: true
     peerDependencies:
       '@opentelemetry/api': ^1.1.0
-      react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522
+      react: ^18.2.0
+      react-dom: ^18.2.0
       sass: ^1.3.0
     peerDependenciesMeta:
       '@opentelemetry/api':
@@ -25394,7 +25312,7 @@ packages:
       caniuse-lite: 1.0.30001605
       postcss: 8.4.31
       react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
+      react-dom: 18.3.1(react@19.0.0-rc-4c2e457c7c-20240522)
       styled-jsx: 5.1.1(@babel/core@7.24.6)(react@19.0.0-rc-4c2e457c7c-20240522)
       watchpack: 2.4.0
     optionalDependencies:
@@ -28945,6 +28863,15 @@ packages:
       - utf-8-validate
     dev: false
 
+  /react-dom@18.3.1(react@19.0.0-rc-4c2e457c7c-20240522):
+    resolution: {integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==}
+    peerDependencies:
+      react: ^18.3.1
+    dependencies:
+      loose-envify: 1.4.0
+      react: 19.0.0-rc-4c2e457c7c-20240522
+      scheduler: 0.23.2
+
   /react-dom@19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-HXPEwX9ibB3OSzaU03Bh6uw7QFulRzyLJM3x+3WoF2j++D9tl2PoqiN6+ctH5Nrh6X11+oxH7Eq3RqkQhbQqKw==}
     peerDependencies:
@@ -28952,11 +28879,12 @@ packages:
     dependencies:
       react: 19.0.0-rc-4c2e457c7c-20240522
       scheduler: 0.25.0-rc-4c2e457c7c-20240522
+    dev: true
 
   /react-error-boundary@4.0.13(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-b6PwbdSv8XeOSYvjt8LpgpKrZ0yGdtZokYwkwV2wlcZbxgopHX/hgPl5VgpnoVOWd868n1hktM8Qm4b+02MiLQ==}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '>=16.13.1'
     dependencies:
       '@babel/runtime': 7.24.0
       react: 19.0.0-rc-4c2e457c7c-20240522
@@ -28969,21 +28897,21 @@ packages:
     resolution: {integrity: sha512-ZnXwLQnGzrDpHBHiC56TXFXvmolPeMjTn1UOm610M4EXGzbEDR7oOIyS2ZiItgbs6eZc4oU/a0hpk8PrcKvv5g==}
     engines: {node: '>=10'}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '>=17.0.0'
     dependencies:
       react: 19.0.0-rc-4c2e457c7c-20240522
     dev: false
 
-  /react-hot-toast@2.4.1(csstype@3.1.3)(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522):
+  /react-hot-toast@2.4.1(csstype@3.1.3)(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-j8z+cQbWIM5LY37pR6uZR6D4LfseplqnuAO4co4u8917hBUvXlEqyP1ZzqVLcqoyUesZZv/ImreoCeHVDpE5pQ==}
     engines: {node: '>=10'}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522
+      react: '>=16'
+      react-dom: '>=16'
     dependencies:
       goober: 2.1.13(csstype@3.1.3)
       react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
+      react-dom: 18.3.1(react@19.0.0-rc-4c2e457c7c-20240522)
     transitivePeerDependencies:
       - csstype
     dev: false
@@ -28991,7 +28919,7 @@ packages:
   /react-intersection-observer@8.34.0(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-TYKh52Zc0Uptp5/b4N91XydfSGKubEhgZRtcg1rhTKABXijc4Sdr1uTp5lJ8TN27jwUsdXxjHXtHa0kPj704sw==}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: ^15.0.0 || ^16.0.0 || ^17.0.0|| ^18.0.0
     dependencies:
       react: 19.0.0-rc-4c2e457c7c-20240522
     dev: false
@@ -29008,7 +28936,7 @@ packages:
   /react-native-gesture-handler@2.16.2(react-native@0.74.1)(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-vGFlrDKlmyI+BT+FemqVxmvO7nqxU33cgXVsn6IKAFishvlG3oV2Ds67D5nPkHMea8T+s1IcuMm0bF8ntZtAyg==}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '*'
       react-native: '*'
     dependencies:
       '@egjs/hammerjs': 2.0.17
@@ -29023,7 +28951,7 @@ packages:
   /react-native-paper@5.8.0(react-native-safe-area-context@4.10.1)(react-native-vector-icons@10.0.0)(react-native@0.74.1)(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-Mde8KkWt+9VD+KMqGK5VyTskJLZCsF/gAQQxoLgRlC2C8RmVPgyG0xhgu1sD3ED7T7FewE8cKrQm+soB9FAD1Q==}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '*'
       react-native: '*'
       react-native-safe-area-context: '*'
       react-native-vector-icons: '*'
@@ -29041,7 +28969,7 @@ packages:
     resolution: {integrity: sha512-BNw/XDgUfs8UhfY1X6IniU8kWpnotWGyt8qmQviaHisTi5lvwnaOdXQKfN1KGONx6ekdFRHRP5EFwLi0UajwKA==}
     peerDependencies:
       '@babel/core': ^7.0.0-0
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '*'
       react-native: '*'
     dependencies:
       '@babel/core': 7.24.6
@@ -29060,7 +28988,7 @@ packages:
   /react-native-safe-area-context@4.10.1(react-native@0.74.1)(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-w8tCuowDorUkPoWPXmhqosovBr33YsukkwYCDERZFHAxIkx6qBadYxfeoaJ91nCQKjkNzGrK5qhoNOeSIcYSpA==}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '*'
       react-native: '*'
     dependencies:
       react: 19.0.0-rc-4c2e457c7c-20240522
@@ -29070,7 +28998,7 @@ packages:
   /react-native-screens@3.31.1(react-native@0.74.1)(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-8fRW362pfZ9y4rS8KY5P3DFScrmwo/vu1RrRMMx0PNHbeC9TLq0Kw1ubD83591yz64gLNHFLTVkTJmWeWCXKtQ==}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '*'
       react-native: '*'
     dependencies:
       react: 19.0.0-rc-4c2e457c7c-20240522
@@ -29087,11 +29015,11 @@ packages:
       yargs: 16.2.0
     dev: false
 
-  /react-native-web@0.19.12(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522):
+  /react-native-web@0.19.12(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-o2T0oztoVDQjztt4YksO9S1XRjoH/AqcSvifgWLrPJgGVbMWsfhILgl6lfUdEamVZzZSVV/2gqDVMAk/qq7mZw==}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522
+      react: ^18.0.0
+      react-dom: ^18.0.0
     dependencies:
       '@babel/runtime': 7.24.0
       '@react-native/normalize-colors': 0.74.83
@@ -29101,7 +29029,7 @@ packages:
       nullthrows: 1.1.1
       postcss-value-parser: 4.2.0
       react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
+      react-dom: 18.3.1(react@19.0.0-rc-4c2e457c7c-20240522)
       styleq: 0.1.3
     transitivePeerDependencies:
       - encoding
@@ -29113,7 +29041,7 @@ packages:
     hasBin: true
     peerDependencies:
       '@types/react': npm:types-react@rc
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: 18.2.0
     peerDependenciesMeta:
       '@types/react':
         optional: true
@@ -29185,16 +29113,16 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
-  /react-router-dom@6.23.1(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522):
+  /react-router-dom@6.23.1(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-utP+K+aSTtEdbWpC+4gxhdlPFwuEfDKq8ZrPFU65bbRJY+l706qjR7yaidBpo3MSeA/fzwbXWbKBI6ftOnP3OQ==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522
+      react: '>=16.8'
+      react-dom: '>=16.8'
     dependencies:
       '@remix-run/router': 1.16.1
       react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
+      react-dom: 18.3.1(react@19.0.0-rc-4c2e457c7c-20240522)
       react-router: 6.23.1(react@19.0.0-rc-4c2e457c7c-20240522)
     dev: false
 
@@ -29202,7 +29130,7 @@ packages:
     resolution: {integrity: sha512-fzcOaRF69uvqbbM7OhvQyBTFDVrrGlsFdS3AL+1KfIBtGETibHzi3FkoTRyiDJnWNc2VxrfvR+657ROHjaNjqQ==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '>=16.8'
     dependencies:
       '@remix-run/router': 1.16.1
       react: 19.0.0-rc-4c2e457c7c-20240522
@@ -29214,7 +29142,7 @@ packages:
     hasBin: true
     peerDependencies:
       eslint: ^8.56.0
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '>= 16'
       typescript: ^3.2.1 || ^4
     peerDependenciesMeta:
       typescript:
@@ -29310,7 +29238,7 @@ packages:
     hasBin: true
     peerDependencies:
       eslint: ^8.56.0
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '>= 16'
       typescript: ^3.2.1 || ^4
     peerDependenciesMeta:
       typescript:
@@ -29405,25 +29333,25 @@ packages:
   /react-shallow-renderer@16.15.0(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-oScf2FqQ9LFVQgA73vr86xl2NaOIX73rh+YFqcOp68CWj56tSfgtGKrEbyhCj0rSijyG9M1CYprTh39fBi5hzA==}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: ^16.0.0 || ^17.0.0 || ^18.0.0
     dependencies:
       object-assign: 4.1.1
       react: 19.0.0-rc-4c2e457c7c-20240522
       react-is: 18.2.0
     dev: false
 
-  /react-transition-group@4.4.5(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522):
+  /react-transition-group@4.4.5(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g==}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522
+      react: '>=16.6.0'
+      react-dom: '>=16.6.0'
     dependencies:
       '@babel/runtime': 7.24.0
       dom-helpers: 5.2.1
       loose-envify: 1.4.0
       prop-types: 15.8.1
       react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
+      react-dom: 18.3.1(react@19.0.0-rc-4c2e457c7c-20240522)
     dev: false
 
   /react@19.0.0-rc-4c2e457c7c-20240522:
@@ -30251,18 +30179,18 @@ packages:
       '@rollup/rollup-win32-x64-msvc': 4.14.1
       fsevents: 2.3.3
 
-  /rooks@7.14.1(react-dom@19.0.0-rc-4c2e457c7c-20240522)(react@19.0.0-rc-4c2e457c7c-20240522):
+  /rooks@7.14.1(react-dom@18.3.1)(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-oPuLNGm3OaFm3WfZHzmDvJvRit8QrXGm9/Kn49Bz8lJUjkThSBtERWzuQ9wb5DveqrpUZvmNyBXjBE0KWVt13w==}
     engines: {node: '>=v10.24.1'}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522
+      react: ^16.8.0  || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0  || ^17.0.0 || ^18.0.0
     dependencies:
       fast-deep-equal: 3.1.3
       lodash.debounce: 4.0.8
       raf: 3.4.1
       react: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
+      react-dom: 18.3.1(react@19.0.0-rc-4c2e457c7c-20240522)
       use-sync-external-store: 1.2.0(react@19.0.0-rc-4c2e457c7c-20240522)
     dev: false
 
@@ -30503,6 +30431,11 @@ packages:
     dependencies:
       xmlchars: 2.2.0
 
+  /scheduler@0.23.2:
+    resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
+    dependencies:
+      loose-envify: 1.4.0
+
   /scheduler@0.24.0-canary-efb381bbf-20230505:
     resolution: {integrity: sha512-ABvovCDe/k9IluqSh4/ISoq8tIJnW8euVAWYt5j/bg6dRnqwQwiGO1F/V4AyK96NGF/FB04FhOUDuWj8IKfABA==}
     dependencies:
@@ -30511,6 +30444,7 @@ packages:
 
   /scheduler@0.25.0-rc-4c2e457c7c-20240522:
     resolution: {integrity: sha512-Vyzc3lN/cMuxvrMKtToIytTL6P2Xiz0zQlY+0KioteRSSgNORZ5gQX7MYEHpQ0QUm44mcpkZxSdZsI7YYNLpsQ==}
+    dev: true
 
   /schema-utils@1.0.0:
     resolution: {integrity: sha512-i27Mic4KovM/lnGsy8whRCHhc7VicJajAjTrYg11K9zfZXnYIt4k5F+kZkwjnrhKzLic/HLU4j11mjsz2G/75g==}
@@ -31820,7 +31754,7 @@ packages:
     peerDependencies:
       '@babel/core': '*'
       babel-plugin-macros: '*'
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '>= 16.8.0 || 17.x.x || ^18.0.0-0'
     peerDependenciesMeta:
       '@babel/core':
         optional: true
@@ -31838,7 +31772,7 @@ packages:
     peerDependencies:
       '@babel/core': '*'
       babel-plugin-macros: '*'
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '>= 16.8.0 || 17.x.x || ^18.0.0-0'
     peerDependenciesMeta:
       '@babel/core':
         optional: true
@@ -33495,7 +33429,7 @@ packages:
   /use-latest-callback@0.1.7(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-Hlrl0lskgZZpo2vIpZ4rA7qA/rAGn2PcDvDH1M47AogqMPB0qlGEdsa66AVkIUiEEDpfxA9/N6hY6MqtaNoqWA==}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: '>=16.8'
     dependencies:
       react: 19.0.0-rc-4c2e457c7c-20240522
     dev: false
@@ -33503,7 +33437,7 @@ packages:
   /use-sync-external-store@1.2.0(react@19.0.0-rc-4c2e457c7c-20240522):
     resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
     peerDependencies:
-      react: 19.0.0-rc-4c2e457c7c-20240522
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       react: 19.0.0-rc-4c2e457c7c-20240522
     dev: false
