@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query",
-  "version": "5.36.2",
+  "version": "5.37.1",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -56,12 +56,12 @@
     "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
-    "@types/react": "^18.2.55",
-    "@types/react-dom": "^18.2.19",
+    "@types/react": "^18.2.79",
+    "@types/react-dom": "^18.2.25",
     "@vitejs/plugin-react": "^4.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-error-boundary": "^4.0.12"
+    "react-error-boundary": "^4.0.13"
   },
   "peerDependencies": {
     "react": "^18.0.0"
