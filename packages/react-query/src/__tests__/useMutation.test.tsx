@@ -718,15 +718,14 @@ describe('useMutation', () => {
       .mockImplementation(() => undefined)
     let boundary = false
     function Page() {
-      const { mutate, error } = useMutation<string, Error>({
+      const { mutate, error } = useMutation<string>({
         mutationFn: () => {
           const err = new Error('mock error')
           err.stack = ''
           return Promise.reject(err)
         },
         throwOnError: () => {
-          boundary = !boundary
-          return !boundary
+          return boundary
         },
       })
 
@@ -758,6 +757,7 @@ describe('useMutation', () => {
     })
 
     // second error goes to boundary
+    boundary = true
     fireEvent.click(getByText('mutate'))
     await waitFor(() => {
       expect(queryByText('error boundary')).not.toBeNull()
