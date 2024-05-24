@@ -257,8 +257,8 @@ describe('useSuspenseQuery', () => {
 
     await waitFor(() => rendered.getByText('rendered'))
 
-    expect(consoleMock).toHaveBeenCalledWith(
-      expect.objectContaining(new Error('Suspense Error Bingo')),
+    expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
+      new Error('Suspense Error Bingo'),
     )
 
     consoleMock.mockRestore()
@@ -595,8 +595,8 @@ describe('useSuspenseQuery', () => {
     fireEvent.click(rendered.getByLabelText('fail'))
     // render error boundary fallback (error boundary)
     await waitFor(() => rendered.getByText('error boundary'))
-    expect(consoleMock).toHaveBeenCalledWith(
-      expect.objectContaining(new Error('Suspense Error Bingo')),
+    expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
+      new Error('Suspense Error Bingo'),
     )
 
     consoleMock.mockRestore()
@@ -666,8 +666,8 @@ describe('useSuspenseQuery', () => {
     fireEvent.click(rendered.getByLabelText('fail'))
     // render error boundary fallback (error boundary)
     await waitFor(() => rendered.getByText('error boundary'))
-    expect(consoleMock).toHaveBeenCalledWith(
-      expect.objectContaining(new Error('Suspense Error Bingo')),
+    expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
+      new Error('Suspense Error Bingo'),
     )
 
     consoleMock.mockRestore()
@@ -1036,8 +1036,8 @@ describe('useSuspenseQueries', () => {
 
     await waitFor(() => rendered.getByText('error boundary'))
 
-    expect(consoleMock).toHaveBeenCalledWith(
-      expect.objectContaining(new Error('Suspense Error Bingo')),
+    expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
+      new Error('Suspense Error Bingo'),
     )
 
     consoleMock.mockRestore()
