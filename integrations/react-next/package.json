@@ -8,8 +8,8 @@
     "@tanstack/react-query": "workspace:*",
     "@tanstack/react-query-devtools": "workspace:*",
     "next": "^14.0.0",
-    "react": "19.0.0-rc-4c2e457c7c-20240522",
-    "react": "19.0.0-rc-4c2e457c7c-20240522"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/node": "^20.12.12",
