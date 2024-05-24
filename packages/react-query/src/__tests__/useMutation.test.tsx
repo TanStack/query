@@ -667,14 +667,15 @@ describe('useMutation', () => {
   })
 
   it('should be able to throw an error when throwOnError is set to true', async () => {
+    const err = new Error('Expected mock error. All is well!')
+    err.stack = ''
+
     const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     function Page() {
       const { mutate } = useMutation<string, Error>({
         mutationFn: () => {
-          const err = new Error('Expected mock error. All is well!')
-          err.stack = ''
           return Promise.reject(err)
         },
         throwOnError: true,
@@ -706,9 +707,7 @@ describe('useMutation', () => {
       expect(queryByText('error')).not.toBeNull()
     })
 
-    expect(consoleMock).toHaveBeenCalledWith(
-      expect.objectContaining(new Error('Expected mock error. All is well!')),
-    )
+    expect(consoleMock.mock.calls[0]?.[1]).toBe(err)
 
     consoleMock.mockRestore()
   })
