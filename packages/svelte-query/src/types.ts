@@ -138,7 +138,7 @@ type Override<TTargetA, TTargetB> = {
     : TTargetA[AKey]
 }
 
-/** Options for createMutationState */
+/** Options for useMutationState */
 export type MutationStateOptions<TResult = MutationState> = {
   filters?: MutationFilters
   select?: (

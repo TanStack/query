@@ -27,7 +27,7 @@ function getResult<TResult = MutationState>(
     )
 }
 
-export function createMutationState<TResult = MutationState>(
+export function useMutationState<TResult = MutationState>(
   options: MutationStateOptions<TResult> = {},
   queryClient?: QueryClient,
 ): Readable<Array<TResult>> {

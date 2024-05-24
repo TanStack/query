@@ -2,7 +2,7 @@
   import { QueryClient } from '@tanstack/query-core'
   import { setQueryClientContext } from '../context'
   import { createMutation } from '../createMutation'
-  import { createMutationState } from '../createMutationState'
+  import { useMutationState } from '../useMutationState'
 
   import type { CreateMutationOptions, MutationStateOptions } from '../types'
 
@@ -16,7 +16,7 @@
   const successMutation = createMutation(successMutationOpts)
   const errorMutation = createMutation(errorMutationOpts)
 
-  const mutationState = createMutationState(mutationStateOpts)
+  const mutationState = useMutationState(mutationStateOpts)
   $: statuses = $mutationState.map((state) => state.status)
 </script>
 

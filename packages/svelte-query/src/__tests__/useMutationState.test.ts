@@ -1,16 +1,16 @@
 import { describe, expect, it, vi } from 'vitest'
-import CreateMutationState from './CreateMutationState.svelte'
+import UseMutationState from './UseMutationState.svelte'
 import { fireEvent, render, waitFor } from '@testing-library/svelte'
 
-describe('createMutationState', () => {
-  it('run few mutation functions and check from createMutationState ', async () => {
+describe('useMutationState', () => {
+  it('run few mutation functions and check from useMutationState ', async () => {
     const successMutationFn = vi.fn()
 
     const errorMutationFn = vi.fn().mockImplementation(() => {
       throw 'error'
     })
 
-    const rendered = render(CreateMutationState, {
+    const rendered = render(UseMutationState, {
       props: {
         successMutationOpts: {
           mutationKey: ['success'],
@@ -47,7 +47,7 @@ describe('createMutationState', () => {
       throw 'error'
     })
 
-    const rendered = render(CreateMutationState, {
+    const rendered = render(UseMutationState, {
       props: {
         successMutationOpts: {
           mutationKey: ['success'],
@@ -86,7 +86,7 @@ describe('createMutationState', () => {
       throw 'error'
     })
 
-    const rendered = render(CreateMutationState, {
+    const rendered = render(UseMutationState, {
       props: {
         successMutationOpts: {
           mutationKey: ['success'],
