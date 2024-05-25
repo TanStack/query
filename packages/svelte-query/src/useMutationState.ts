@@ -2,8 +2,6 @@ import { readable } from 'svelte/store'
 import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
 import type {
-  DefaultError,
-  Mutation,
   MutationCache,
   MutationState,
   QueryClient,
@@ -19,11 +17,7 @@ function getResult<TResult = MutationState>(
     .findAll(options.filters)
     .map(
       (mutation): TResult =>
-        (options.select
-          ? options.select(
-              mutation as Mutation<unknown, DefaultError, unknown, unknown>,
-            )
-          : mutation.state) as TResult,
+        (options.select ? options.select(mutation) : mutation.state) as TResult,
     )
 }
 

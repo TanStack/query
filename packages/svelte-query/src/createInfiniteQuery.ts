@@ -34,7 +34,7 @@ export function createInfiniteQuery<
 ): CreateInfiniteQueryResult<TData, TError> {
   return createBaseQuery(
     options,
-    InfiniteQueryObserver ,
+    InfiniteQueryObserver as typeof QueryObserver,
     queryClient,
   ) as CreateInfiniteQueryResult<TData, TError>
 }
