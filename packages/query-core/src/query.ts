@@ -406,6 +406,13 @@ export class Query<
         }
       }
 
+      // if we attempt to retry a fetch that was triggered from an initialPromise
+      // when we don't have a queryFn yet, we can't retry, so we just return the already rejected initialPromise
+      // if an observer has already mounted, we will be able to retry with that queryFn
+      if (!this.options.queryFn && fetchOptions?.initialPromise) {
+        return fetchOptions.initialPromise
+      }
+
       if (!this.options.queryFn || this.options.queryFn === skipToken) {
         return Promise.reject(
           new Error(`Missing queryFn: '${this.options.queryHash}'`),
