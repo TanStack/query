@@ -1,11 +1,11 @@
 import React from 'react'
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query'
-import { makeQueryClient } from '@/app/make-query-client'
+import { getQueryClient } from '@/app/get-query-client'
 import { pokemonOptions } from '@/app/pokemon'
 import { PokemonInfo } from './pokemon-info'
 
 export default async function Home() {
-  const queryClient = makeQueryClient()
+  const queryClient = getQueryClient()
 
   void queryClient.prefetchQuery(pokemonOptions)
 

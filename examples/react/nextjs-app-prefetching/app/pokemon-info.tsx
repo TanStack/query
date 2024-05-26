@@ -1,15 +1,11 @@
 'use client'
 
 import React from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { pokemonOptions } from '@/app/pokemon'
 
 export function PokemonInfo() {
-  const { data } = useQuery(pokemonOptions)
-
-  if (!data) {
-    return <div>Loading...</div>
-  }
+  const { data } = useSuspenseQuery(pokemonOptions)
 
   return (
     <div>
