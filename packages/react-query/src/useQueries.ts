@@ -18,6 +18,7 @@ import {
   ensureStaleTime,
   fetchOptimistic,
   shouldSuspend,
+  use,
   willFetch,
 } from './suspense'
 import type {
@@ -346,7 +347,7 @@ export function useQueries<
     : []
 
   if (suspensePromises.length > 0) {
-    throw Promise.all(suspensePromises)
+    use(Promise.all(suspensePromises))
   }
   const firstSingleResultWhichShouldThrow = optimisticResult.find(
     (result, index) => {

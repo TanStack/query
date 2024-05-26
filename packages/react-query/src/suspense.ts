@@ -1,3 +1,4 @@
+import * as React from 'react'
 import type { DefaultError } from '@tanstack/query-core'
 import type {
   DefaultedQueryObserverOptions,
@@ -29,6 +30,40 @@ export const ensureStaleTime = (
     }
   }
 }
+
+export const use =
+  // React18 doesn't have `use`
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  React.use ||
+  (<T>(
+    thenable: Promise<T> & {
+      status?: 'pending' | 'fulfilled' | 'rejected'
+      value?: T
+      reason?: unknown
+    },
+  ): T => {
+    switch (thenable.status) {
+      case 'pending':
+        throw thenable
+      case 'fulfilled':
+        return thenable.value as T
+      case 'rejected':
+        throw thenable.reason
+      default:
+        thenable.status = 'pending'
+        thenable.then(
+          (v) => {
+            thenable.status = 'fulfilled'
+            thenable.value = v
+          },
+          (e) => {
+            thenable.status = 'rejected'
+            thenable.reason = e
+          },
+        )
+        throw thenable
+    }
+  })
 
 export const willFetch = (
   result: QueryObserverResult<any, any>,
