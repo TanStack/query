@@ -1,4 +1,4 @@
-import { addToEnd, addToStart, skipToken } from './utils'
+import { addToEnd, addToStart, ensureQueryFn } from './utils'
 import type { QueryBehavior } from './query'
 import type {
   InfiniteData,
@@ -37,33 +37,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           })
         }
 
-        // Get query function
-        const queryFn =
-          context.options.queryFn && context.options.queryFn !== skipToken
-            ? context.options.queryFn
-            : () => {
-                if (process.env.NODE_ENV !== 'production') {
-                  if (context.options.queryFn === skipToken) {
-                    console.error(
-                      `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${context.options.queryHash}'`,
-                    )
-                  }
-                }
-
-                // if we attempt to retry a fetch that was triggered from an initialPromise
-                // when we don't have a queryFn yet, we can't retry, so we just return the already rejected initialPromise
-                // if an observer has already mounted, we will be able to retry with that queryFn
-                if (
-                  !context.options.queryFn &&
-                  context.fetchOptions?.initialPromise
-                ) {
-                  return context.fetchOptions.initialPromise
-                }
-
-                return Promise.reject(
-                  new Error(`Missing queryFn: '${context.options.queryHash}'`),
-                )
-              }
+        const queryFn = ensureQueryFn(context.options, context.fetchOptions)
 
         // Create function to fetch a page
         const fetchPage = async (

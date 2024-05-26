@@ -1,4 +1,4 @@
-import { noop, replaceData, skipToken, timeUntilStale } from './utils'
+import { ensureQueryFn, noop, replaceData, timeUntilStale } from './utils'
 import { notifyManager } from './notifyManager'
 import { canFetch, createRetryer, isCancelledError } from './retryer'
 import { Removable } from './removable'
@@ -8,6 +8,7 @@ import type {
   FetchStatus,
   InitialDataFunction,
   OmitKeyof,
+  QueryFunction,
   QueryFunctionContext,
   QueryKey,
   QueryMeta,
@@ -335,7 +336,7 @@ export class Query<
 
   fetch(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    fetchOptions?: FetchOptions<TData>,
+    fetchOptions?: FetchOptions<TQueryFnData>,
   ): Promise<TData> {
     if (this.state.fetchStatus !== 'idle') {
       if (this.state.data !== undefined && fetchOptions?.cancelRefetch) {
@@ -388,26 +389,7 @@ export class Query<
 
     // Create fetch function
     const fetchFn = () => {
-      if (process.env.NODE_ENV !== 'production') {
-        if (this.options.queryFn === skipToken) {
-          console.error(
-            `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${this.options.queryHash}'`,
-          )
-        }
-      }
-
-      // if we attempt to retry a fetch that was triggered from an initialPromise
-      // when we don't have a queryFn yet, we can't retry, so we just return the already rejected initialPromise
-      // if an observer has already mounted, we will be able to retry with that queryFn
-      if (!this.options.queryFn && fetchOptions?.initialPromise) {
-        return fetchOptions.initialPromise
-      }
-
-      if (!this.options.queryFn || this.options.queryFn === skipToken) {
-        return Promise.reject(
-          new Error(`Missing queryFn: '${this.options.queryHash}'`),
-        )
-      }
+      const queryFn = ensureQueryFn(this.options, fetchOptions)
 
       // Create query function context
       const queryFnContext: OmitKeyof<
@@ -423,15 +405,13 @@ export class Query<
       this.#abortSignalConsumed = false
       if (this.options.persister) {
         return this.options.persister(
-          this.options.queryFn,
+          queryFn as QueryFunction<any>,
           queryFnContext as QueryFunctionContext<TQueryKey>,
           this as unknown as Query,
         )
       }
 
-      return this.options.queryFn(
-        queryFnContext as QueryFunctionContext<TQueryKey>,
-      )
+      return queryFn(queryFnContext as QueryFunctionContext<TQueryKey>)
     }
 
     // Trigger behavior hook
@@ -495,7 +475,9 @@ export class Query<
 
     // Try to fetch the data
     this.#retryer = createRetryer({
-      initialPromise: fetchOptions?.initialPromise,
+      initialPromise: fetchOptions?.initialPromise as
+        | Promise<TData>
+        | undefined,
       fn: context.fetchFn as () => Promise<TData>,
       abort: abortController.abort.bind(abortController),
       onSuccess: (data) => {
