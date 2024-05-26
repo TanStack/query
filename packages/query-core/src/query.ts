@@ -182,6 +182,10 @@ export class Query<
     return this.options.meta
   }
 
+  get promise(): Promise<TData> | undefined {
+    return this.#retryer?.promise
+  }
+
   setOptions(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): void {
@@ -330,7 +334,7 @@ export class Query<
 
   fetch(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    fetchOptions?: FetchOptions,
+    fetchOptions?: FetchOptions & { initialPromise?: Promise<TData> },
   ): Promise<TData> {
     if (this.state.fetchStatus !== 'idle') {
       if (this.state.data !== undefined && fetchOptions?.cancelRefetch) {
@@ -483,6 +487,7 @@ export class Query<
 
     // Try to fetch the data
     this.#retryer = createRetryer({
+      initialPromise: fetchOptions?.initialPromise,
       fn: context.fetchFn as () => Promise<TData>,
       abort: abortController.abort.bind(abortController),
       onSuccess: (data) => {

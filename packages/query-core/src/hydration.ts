@@ -37,6 +37,7 @@ interface DehydratedQuery {
   queryHash: string
   queryKey: QueryKey
   state: QueryState
+  promise?: Promise<unknown>
   meta?: QueryMeta
 }
 
@@ -65,6 +66,7 @@ function dehydrateQuery(query: Query): DehydratedQuery {
     state: query.state,
     queryKey: query.queryKey,
     queryHash: query.queryHash,
+    promise: query.promise,
     ...(query.meta && { meta: query.meta }),
   }
 }
@@ -130,8 +132,8 @@ export function hydrate(
     )
   })
 
-  queries.forEach(({ queryKey, state, queryHash, meta }) => {
-    const query = queryCache.get(queryHash)
+  queries.forEach(({ queryKey, state, queryHash, meta, promise }) => {
+    let query = queryCache.get(queryHash)
 
     // Do not hydrate if an existing query exists with newer data
     if (query) {
@@ -145,7 +147,7 @@ export function hydrate(
     }
 
     // Restore query
-    queryCache.build(
+    query = queryCache.build(
       client,
       {
         ...options?.defaultOptions?.queries,
@@ -160,5 +162,11 @@ export function hydrate(
         fetchStatus: 'idle',
       },
     )
+
+    if (promise) {
+      // this doesn't actually fetch - it just creates a retryer
+      // which will re-use the passed `initialPromise`
+      void query.fetch(undefined, { initialPromise: promise })
+    }
   })
 }
