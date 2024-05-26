@@ -174,6 +174,84 @@ describe('dehydration and rehydration', () => {
     hydrationClient.clear()
   })
 
+  test('should respect query defaultOptions specified on the QueryClient', async () => {
+    const queryCache = new QueryCache()
+    const queryClient = createQueryClient({
+      queryCache,
+      defaultOptions: {
+        dehydrate: { shouldDehydrateQuery: () => true },
+      },
+    })
+    await queryClient.prefetchQuery({
+      queryKey: ['string'],
+      retry: 0,
+      queryFn: () => Promise.reject(new Error('error')),
+    })
+    const dehydrated = dehydrate(queryClient)
+    expect(dehydrated.queries.length).toBe(1)
+    expect(dehydrated.queries[0]?.state.error).toStrictEqual(new Error('error'))
+    const stringified = JSON.stringify(dehydrated)
+    const parsed = JSON.parse(stringified)
+    const hydrationCache = new QueryCache()
+    const hydrationClient = createQueryClient({
+      queryCache: hydrationCache,
+      defaultOptions: { hydrate: { queries: { retry: 10 } } },
+    })
+    hydrate(hydrationClient, parsed, {
+      defaultOptions: { queries: { gcTime: 10 } },
+    })
+    expect(hydrationCache.find({ queryKey: ['string'] })?.options.retry).toBe(
+      10,
+    )
+    expect(hydrationCache.find({ queryKey: ['string'] })?.options.gcTime).toBe(
+      10,
+    )
+    queryClient.clear()
+    hydrationClient.clear()
+  })
+
+  test('should respect mutation defaultOptions specified on the QueryClient', async () => {
+    const mutationCache = new MutationCache()
+    const queryClient = createQueryClient({
+      mutationCache,
+      defaultOptions: {
+        dehydrate: {
+          shouldDehydrateMutation: (mutation) => mutation.state.data === 'done',
+        },
+      },
+    })
+    await executeMutation(
+      queryClient,
+      {
+        mutationKey: ['string'],
+        mutationFn: () => Promise.resolve('done'),
+      },
+      undefined,
+    )
+
+    const dehydrated = dehydrate(queryClient)
+    expect(dehydrated.mutations.length).toBe(1)
+    expect(dehydrated.mutations[0]?.state.data).toBe('done')
+    const stringified = JSON.stringify(dehydrated)
+    const parsed = JSON.parse(stringified)
+    const hydrationCache = new MutationCache()
+    const hydrationClient = createQueryClient({
+      mutationCache: hydrationCache,
+      defaultOptions: { hydrate: { mutations: { retry: 10 } } },
+    })
+    hydrate(hydrationClient, parsed, {
+      defaultOptions: { mutations: { gcTime: 10 } },
+    })
+    expect(
+      hydrationCache.find({ mutationKey: ['string'] })?.options.retry,
+    ).toBe(10)
+    expect(
+      hydrationCache.find({ mutationKey: ['string'] })?.options.gcTime,
+    ).toBe(10)
+    queryClient.clear()
+    hydrationClient.clear()
+  })
+
   test('should work with complex keys', async () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
