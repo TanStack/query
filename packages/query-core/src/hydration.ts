@@ -66,7 +66,7 @@ function dehydrateQuery(query: Query): DehydratedQuery {
     state: query.state,
     queryKey: query.queryKey,
     queryHash: query.queryHash,
-    promise: query.promise,
+    ...(query.state.status === 'pending' && { promise: query.promise }),
     ...(query.meta && { meta: query.meta }),
   }
 }
