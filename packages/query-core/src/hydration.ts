@@ -84,7 +84,9 @@ export function dehydrate(
   options: DehydrateOptions = {},
 ): DehydratedState {
   const filterMutation =
-    options.shouldDehydrateMutation ?? defaultShouldDehydrateMutation
+    options.shouldDehydrateMutation ??
+    client.getDefaultOptions().dehydrate?.shouldDehydrateMutation ??
+    defaultShouldDehydrateMutation
 
   const mutations = client
     .getMutationCache()
@@ -94,7 +96,9 @@ export function dehydrate(
     )
 
   const filterQuery =
-    options.shouldDehydrateQuery ?? defaultShouldDehydrateQuery
+    options.shouldDehydrateQuery ??
+    client.getDefaultOptions().dehydrate?.shouldDehydrateQuery ??
+    defaultShouldDehydrateQuery
 
   const queries = client
     .getQueryCache()
@@ -125,6 +129,7 @@ export function hydrate(
     mutationCache.build(
       client,
       {
+        ...client.getDefaultOptions().hydrate?.mutations,
         ...options?.defaultOptions?.mutations,
         ...mutationOptions,
       },
@@ -150,6 +155,7 @@ export function hydrate(
     query = queryCache.build(
       client,
       {
+        ...client.getDefaultOptions().hydrate?.queries,
         ...options?.defaultOptions?.queries,
         queryKey,
         queryHash,
