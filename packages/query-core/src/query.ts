@@ -82,9 +82,10 @@ export interface FetchMeta {
   fetchMore?: { direction: FetchDirection }
 }
 
-export interface FetchOptions {
+export interface FetchOptions<TData = unknown> {
   cancelRefetch?: boolean
   meta?: FetchMeta
+  initialPromise?: Promise<TData>
 }
 
 interface FailedAction<TError> {
@@ -334,7 +335,7 @@ export class Query<
 
   fetch(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    fetchOptions?: FetchOptions & { initialPromise?: Promise<TData> },
+    fetchOptions?: FetchOptions<TData>,
   ): Promise<TData> {
     if (this.state.fetchStatus !== 'idle') {
       if (this.state.data !== undefined && fetchOptions?.cancelRefetch) {
@@ -372,15 +373,6 @@ export class Query<
 
     const abortController = new AbortController()
 
-    // Create query function context
-    const queryFnContext: OmitKeyof<
-      QueryFunctionContext<TQueryKey>,
-      'signal'
-    > = {
-      queryKey: this.queryKey,
-      meta: this.meta,
-    }
-
     // Adds an enumerable signal property to the object that
     // which sets abortSignalConsumed to true when the signal
     // is read.
@@ -393,8 +385,6 @@ export class Query<
         },
       })
     }
-
-    addSignalProperty(queryFnContext)
 
     // Create fetch function
     const fetchFn = () => {
@@ -418,6 +408,17 @@ export class Query<
           new Error(`Missing queryFn: '${this.options.queryHash}'`),
         )
       }
+
+      // Create query function context
+      const queryFnContext: OmitKeyof<
+        QueryFunctionContext<TQueryKey>,
+        'signal'
+      > = {
+        queryKey: this.queryKey,
+        meta: this.meta,
+      }
+
+      addSignalProperty(queryFnContext)
 
       this.#abortSignalConsumed = false
       if (this.options.persister) {

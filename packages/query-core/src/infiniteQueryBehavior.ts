@@ -49,6 +49,17 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
                     )
                   }
                 }
+
+                // if we attempt to retry a fetch that was triggered from an initialPromise
+                // when we don't have a queryFn yet, we can't retry, so we just return the already rejected initialPromise
+                // if an observer has already mounted, we will be able to retry with that queryFn
+                if (
+                  !context.options.queryFn &&
+                  context.fetchOptions?.initialPromise
+                ) {
+                  return context.fetchOptions.initialPromise
+                }
+
                 return Promise.reject(
                   new Error(`Missing queryFn: '${context.options.queryHash}'`),
                 )
