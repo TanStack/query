@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 
+import type { DehydrateOptions, HydrateOptions } from './hydration'
 import type { MutationState } from './mutation'
 import type { FetchDirection, Query, QueryBehavior } from './query'
 import type { RetryDelayValue, RetryValue } from './retryer'
@@ -1119,6 +1120,8 @@ export interface DefaultOptions<TError = DefaultError> {
     'suspense' | 'queryKey'
   >
   mutations?: MutationObserverOptions<unknown, TError, unknown, unknown>
+  hydrate?: HydrateOptions['defaultOptions']
+  dehydrate?: DehydrateOptions
 }
 
 export interface CancelOptions {
