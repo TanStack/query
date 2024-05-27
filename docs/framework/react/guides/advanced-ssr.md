@@ -425,7 +425,7 @@ export default function Posts() {
 }
 ```
 
-> Note that you could also `useQuery` instead of `useSuspenseQuery`, and the Promise would still be picked up correctly. However, NextJs won't suspend in that case, so we won't get our component's initial state serialized into HTML.
+> Note that you could also `useQuery` instead of `useSuspenseQuery`, and the Promise would still be picked up correctly. However, NextJs won't suspend in that case and the component will render in the `pending` status.
 
 For more information, check out the [Next.js App with Prefetching Example](../../examples/nextjs-app-prefetching).
 
