@@ -25,7 +25,7 @@
     "@types/react-dom": "^18.2.25",
     "@types/sort-by": "^1.2.3",
     "@vitejs/plugin-react": "^4.2.1",
-    "typescript": "5.3.3",
+    "typescript": "5.4.5",
     "vite": "^5.2.11"
   },
   "browserslist": {

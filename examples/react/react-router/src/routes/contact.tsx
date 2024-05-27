@@ -6,7 +6,7 @@ import {
   useFetcher,
   useLoaderData,
 } from 'react-router-dom'
-import { Contact, getContact, updateContact } from '../contacts'
+import { type Contact, getContact, updateContact } from '../contacts'
 import {
   QueryClient,
   queryOptions,

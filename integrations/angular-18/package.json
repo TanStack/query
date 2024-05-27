@@ -1,11 +1,9 @@
 {
-  "name": "@tanstack/query-example-angular-router",
-  "type": "module",
+  "name": "angular-18",
+  "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development"
+    "build": "ng build"
   },
   "private": true,
   "dependencies": {
@@ -14,16 +12,16 @@
     "@angular/core": "^18.0.2",
     "@angular/platform-browser": "^18.0.2",
     "@angular/platform-browser-dynamic": "^18.0.2",
-    "@angular/router": "^18.0.1",
-    "@tanstack/angular-query-experimental": "^5.40.1",
+    "@tanstack/angular-query-experimental": "workspace:*",
+    "@tanstack/angular-query-devtools-experimental": "workspace:*",
     "rxjs": "^7.8.1",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "zone.js": "^0.14.6"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.0.2",
     "@angular/cli": "^18.0.2",
     "@angular/compiler-cli": "^18.0.2",
-    "@tanstack/angular-query-devtools-experimental": "^5.40.1",
     "typescript": "5.4.5"
   }
 }
