@@ -381,7 +381,7 @@ function makeQueryClient() {
 }
 ```
 
-> Note: This works in NextJs because it can serialize Promises over the wire.
+> Note: This works in NextJs and Server Components because React can serialize Promises over the wire when you pass them down to Client Components.
 
 Then, all we need to do is provide a `HydrationBoundary`, but we don't need to `await` prefetches anymore:
 
