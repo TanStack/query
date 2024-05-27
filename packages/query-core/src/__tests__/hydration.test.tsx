@@ -829,7 +829,7 @@ describe('dehydration and rehydration', () => {
       queryFn: () => fetchData('success'),
     })
 
-    void queryClient.prefetchQuery({
+    const promise = queryClient.prefetchQuery({
       queryKey: ['pending'],
       queryFn: () => fetchData('pending', 10),
     })
@@ -838,6 +838,7 @@ describe('dehydration and rehydration', () => {
     expect(dehydrated.queries[0]?.promise).toBeUndefined()
     expect(dehydrated.queries[1]?.promise).toBeInstanceOf(Promise)
 
+    await promise
     queryClient.clear()
   })
 
