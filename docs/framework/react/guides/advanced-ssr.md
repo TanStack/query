@@ -354,7 +354,7 @@ The Next.js app router automatically streams any part of the application that is
 
 With the prefetching patterns described above, React Query is perfectly compatible with this form of streaming. As the data for each Suspense boundary resolves, Next.js can render and stream the finished content to the browser. This works even if you are using `useQuery` as outlined above because the suspending actually happens when you `await` the prefetch.
 
-As of React Query v5.40.0, you don't have to `await` all prefetches for this to work, as `pending` Queries can also be dehydrated and sent ot the client. This lets you kick off prefetches as early as possible without letting them block an entire Suspense boundary, and streams the _data_ to the client as the query finishes. This can be useful for example if you want to prefetch some content that is only visible after some user interaction, or say if you want to `await` and render the first page of an infinite query, but start prefetching page 2 without blocking rendering.
+As of React Query v5.40.0, you don't have to `await` all prefetches for this to work, as `pending` Queries can also be dehydrated and sent to the client. This lets you kick off prefetches as early as possible without letting them block an entire Suspense boundary, and streams the _data_ to the client as the query finishes. This can be useful for example if you want to prefetch some content that is only visible after some user interaction, or say if you want to `await` and render the first page of an infinite query, but start prefetching page 2 without blocking rendering.
 
 To make this work, we have to instruct the `queryClient` to also `dehydrate` pending Queries. We can do this globally, or by passing that option directly to `hydrate`:
 
