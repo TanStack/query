@@ -6584,7 +6584,7 @@ describe('useQuery', () => {
 
     expect(consoleMock).toHaveBeenCalledTimes(1)
     expect(consoleMock).toHaveBeenCalledWith(
-      `An error occurred while dehydrating pending query [${query?.queryHash}]: Error: server error; The error will be redacted in production builds`,
+      `A query that was dehydrated as pending ended up rejecting. [${query?.queryHash}]: Error: server error; The error will be redacted in production builds`,
     )
 
     consoleMock.mockRestore()
