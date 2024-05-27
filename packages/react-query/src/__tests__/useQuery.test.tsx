@@ -2,7 +2,7 @@ import { describe, expect, expectTypeOf, it, test, vi } from 'vitest'
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { skipToken } from '@tanstack/query-core'
+import { dehydrate, hydrate, skipToken } from '@tanstack/query-core'
 import { QueryCache, keepPreviousData, useQuery } from '..'
 import {
   Blink,
@@ -6475,5 +6475,105 @@ describe('useQuery', () => {
       failureReason: error,
     })
     expect(results[3]?.errorUpdatedAt).toBeGreaterThan(0)
+  })
+
+  it('should pick up an initialPromise', async () => {
+    const key = queryKey()
+
+    const serverQueryClient = createQueryClient({
+      defaultOptions: { dehydrate: { shouldDehydrateQuery: () => true } },
+    })
+
+    void serverQueryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: async () => {
+        await sleep(10)
+        return Promise.resolve('server')
+      },
+    })
+
+    const dehydrated = dehydrate(serverQueryClient)
+
+    let count = 0
+
+    function Page() {
+      const query = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          count++
+          await sleep(10)
+          return Promise.resolve('client')
+        },
+      })
+
+      return (
+        <div>
+          <div>data: {query.data}</div>
+          <button onClick={() => query.refetch()}>refetch</button>
+        </div>
+      )
+    }
+
+    const clientQueryClient = createQueryClient()
+    hydrate(clientQueryClient, dehydrated)
+
+    const rendered = renderWithClient(clientQueryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('data: server'))
+    expect(count).toBe(0)
+
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+
+    await waitFor(() => rendered.getByText('data: client'))
+    expect(count).toBe(1)
+  })
+
+  it('should retry failed initialPromise on the client', async () => {
+    const key = queryKey()
+
+    const serverQueryClient = createQueryClient({
+      defaultOptions: {
+        dehydrate: { shouldDehydrateQuery: () => true },
+      },
+    })
+
+    void serverQueryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: async () => {
+        await sleep(10)
+        return Promise.reject(new Error('server'))
+      },
+    })
+
+    const dehydrated = dehydrate(serverQueryClient)
+
+    let count = 0
+
+    function Page() {
+      const query = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          count++
+          await sleep(10)
+          return Promise.resolve('client')
+        },
+      })
+
+      return (
+        <div>
+          <div>data: {query.data}</div>
+        </div>
+      )
+    }
+
+    const clientQueryClient = createQueryClient({
+      defaultOptions: { hydrate: { queries: { retry: 1, retryDelay: 5 } } },
+    })
+    hydrate(clientQueryClient, dehydrated)
+
+    const rendered = renderWithClient(clientQueryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('data: client'))
+    expect(count).toBe(1)
   })
 })
