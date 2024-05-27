@@ -360,7 +360,6 @@ To make this work, we have to instruct the `queryClient` to also `dehydrate` pen
 
 ```tsx
 // app/get-query-client.ts
-'use client'
 import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query'
 
 function makeQueryClient() {
