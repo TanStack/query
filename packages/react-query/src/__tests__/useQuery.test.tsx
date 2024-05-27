@@ -6529,6 +6529,9 @@ describe('useQuery', () => {
   })
 
   it('should retry failed initialPromise on the client', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
     const key = queryKey()
 
     const serverQueryClient = createQueryClient({
@@ -6541,7 +6544,7 @@ describe('useQuery', () => {
       queryKey: key,
       queryFn: async () => {
         await sleep(10)
-        return Promise.reject(new Error('server'))
+        return Promise.reject(new Error('server error'))
       },
     })
 
@@ -6561,19 +6564,29 @@ describe('useQuery', () => {
 
       return (
         <div>
+          <div>failure: {query.failureReason?.message}</div>
           <div>data: {query.data}</div>
         </div>
       )
     }
 
     const clientQueryClient = createQueryClient({
-      defaultOptions: { hydrate: { queries: { retry: 1, retryDelay: 5 } } },
+      defaultOptions: { hydrate: { queries: { retry: 1, retryDelay: 10 } } },
     })
     hydrate(clientQueryClient, dehydrated)
 
     const rendered = renderWithClient(clientQueryClient, <Page />)
-
+    await waitFor(() => rendered.getByText('failure: redacted'))
     await waitFor(() => rendered.getByText('data: client'))
     expect(count).toBe(1)
+
+    const query = clientQueryClient.getQueryCache().find({ queryKey: key })
+
+    expect(consoleMock).toHaveBeenCalledTimes(1)
+    expect(consoleMock).toHaveBeenCalledWith(
+      `An error occurred while dehydrating pending query [${query?.queryHash}]: Error: server error; The error will be redacted in production builds`,
+    )
+
+    consoleMock.mockRestore()
   })
 })
