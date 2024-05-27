@@ -157,26 +157,25 @@ export function hydrate(
         const { fetchStatus: _ignored, ...dehydratedQueryState } = state
         query.setState(dehydratedQueryState)
       }
-      return
+    } else {
+      // Restore query
+      query = queryCache.build(
+        client,
+        {
+          ...client.getDefaultOptions().hydrate?.queries,
+          ...options?.defaultOptions?.queries,
+          queryKey,
+          queryHash,
+          meta,
+        },
+        // Reset fetch status to idle to avoid
+        // query being stuck in fetching state upon hydration
+        {
+          ...state,
+          fetchStatus: 'idle',
+        },
+      )
     }
-
-    // Restore query
-    query = queryCache.build(
-      client,
-      {
-        ...client.getDefaultOptions().hydrate?.queries,
-        ...options?.defaultOptions?.queries,
-        queryKey,
-        queryHash,
-        meta,
-      },
-      // Reset fetch status to idle to avoid
-      // query being stuck in fetching state upon hydration
-      {
-        ...state,
-        fetchStatus: 'idle',
-      },
-    )
 
     if (promise) {
       // this doesn't actually fetch - it just creates a retryer
