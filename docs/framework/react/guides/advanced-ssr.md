@@ -384,7 +384,7 @@ function makeQueryClient() {
 
 Then, all we need to do is provide a `HydrationBoundary`, but we don't need to `await` prefetches anymore:
 
-````tsx
+```tsx
 // app/posts/page.jsx
 import {
   dehydrate,
@@ -414,8 +414,8 @@ export default function PostsPage() {
 
 On the client, the Promise will be put into the QueryCache for us. That means we can now call `useSuspenseQuery` inside the `Posts` component to "use" that Promise (which was created on the Server):
 
-```
-// app/posts/posts.jsx
+```tsx
+// app/posts/posts.tsx
 'use client'
 
 export default function Posts() {
@@ -488,7 +488,7 @@ export function Providers(props: { children: React.ReactNode }) {
     </QueryClientProvider>
   )
 }
-````
+```
 
 For more information, check out the [NextJs Suspense Streaming Example](../../examples/nextjs-suspense-streaming).
 
