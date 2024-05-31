@@ -126,3 +126,10 @@ Link: https://wagmi.sh/
 End-to-end typesafe REST API toolbox
 
 Link: https://www.zodios.org/
+
+## Rapini
+
+🥬 OpenAPI to React Query (or SWR) & Axios 
+
+Link: https://github.com/rametta/rapini
+
