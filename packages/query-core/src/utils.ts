@@ -1,12 +1,13 @@
-import type { Mutation } from './mutation'
-import type { Query } from './query'
 import type {
   FetchStatus,
   MutationKey,
   MutationStatus,
+  QueryFunction,
   QueryKey,
   QueryOptions,
 } from './types'
+import type { Mutation } from './mutation'
+import type { FetchOptions, Query } from './query'
 
 // TYPES
 
@@ -349,3 +350,36 @@ export function addToStart<T>(items: Array<T>, item: T, max = 0): Array<T> {
 
 export const skipToken = Symbol()
 export type SkipToken = typeof skipToken
+
+export const ensureQueryFn = <
+  TQueryFnData = unknown,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: {
+    queryFn?: QueryFunction<TQueryFnData, TQueryKey> | SkipToken
+    queryHash?: string
+  },
+  fetchOptions?: FetchOptions<TQueryFnData>,
+): QueryFunction<TQueryFnData, TQueryKey> => {
+  if (process.env.NODE_ENV !== 'production') {
+    if (options.queryFn === skipToken) {
+      console.error(
+        `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${options.queryHash}'`,
+      )
+    }
+  }
+
+  // if we attempt to retry a fetch that was triggered from an initialPromise
+  // when we don't have a queryFn yet, we can't retry, so we just return the already rejected initialPromise
+  // if an observer has already mounted, we will be able to retry with that queryFn
+  if (!options.queryFn && fetchOptions?.initialPromise) {
+    return () => fetchOptions.initialPromise!
+  }
+
+  if (!options.queryFn || options.queryFn === skipToken) {
+    return () =>
+      Promise.reject(new Error(`Missing queryFn: '${options.queryHash}'`))
+  }
+
+  return options.queryFn
+}
