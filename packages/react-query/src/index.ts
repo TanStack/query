@@ -9,6 +9,7 @@ export { useQueries } from './useQueries'
 export type { QueriesResults, QueriesOptions } from './useQueries'
 export { useQuery } from './useQuery'
 export { useSuspenseQuery } from './useSuspenseQuery'
+export { SuspenseQuery } from './SuspenseQuery'
 export { useSuspenseInfiniteQuery } from './useSuspenseInfiniteQuery'
 export { useSuspenseQueries } from './useSuspenseQueries'
 export type {
