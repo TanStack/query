@@ -14,7 +14,7 @@ export function useSuspenseQuery<
   options: UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
 ): UseSuspenseQueryResult<TData, TError> {
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV === 'development') {
     if (options.queryFn === skipToken) {
       console.error('skipToken is not allowed for useSuspenseQuery')
     }
