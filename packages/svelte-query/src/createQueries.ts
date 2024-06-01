@@ -205,7 +205,9 @@ export function createQueries<
     [queriesStore, isRestoring],
     ([$queries, $isRestoring]) => {
       return $queries.map((opts) => {
-        const defaultedOptions = client.defaultQueryOptions(opts)
+        const defaultedOptions = client.defaultQueryOptions(
+          opts as QueryObserverOptions,
+        )
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = $isRestoring
           ? 'isRestoring'

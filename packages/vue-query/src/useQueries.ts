@@ -252,18 +252,20 @@ export function useQueries<
   const client = queryClient || useQueryClient()
 
   const defaultedQueries = computed(() =>
-    cloneDeepUnref(queries).map((queryOptions) => {
-      if (typeof queryOptions.enabled === 'function') {
-        queryOptions.enabled = queryOptions.enabled()
-      }
+    cloneDeepUnref(queries as MaybeRefDeep<UseQueriesOptionsArg<any>>).map(
+      (queryOptions) => {
+        if (typeof queryOptions.enabled === 'function') {
+          queryOptions.enabled = queryOptions.enabled()
+        }
 
-      const defaulted = client.defaultQueryOptions(queryOptions)
-      defaulted._optimisticResults = client.isRestoring.value
-        ? 'isRestoring'
-        : 'optimistic'
+        const defaulted = client.defaultQueryOptions(queryOptions)
+        defaulted._optimisticResults = client.isRestoring.value
+          ? 'isRestoring'
+          : 'optimistic'
 
-      return defaulted
-    }),
+        return defaulted
+      },
+    ),
   )
 
   const observer = new QueriesObserver<TCombinedResult>(

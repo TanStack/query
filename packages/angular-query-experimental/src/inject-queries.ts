@@ -208,7 +208,7 @@ export function injectQueries<
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = 'optimistic'
 
-        return defaultedOptions
+        return defaultedOptions as QueryObserverOptions
       })
     })
 
