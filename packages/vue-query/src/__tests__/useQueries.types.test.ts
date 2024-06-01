@@ -6,6 +6,7 @@ import { doNotExecute } from './test-utils'
 import type { OmitKeyof } from '..'
 import type { UseQueryOptions } from '../useQuery'
 import type { Equal, Expect } from './test-utils'
+import type { QueryObserverResult } from '@tanstack/query-core'
 
 describe('UseQueries config object overload', () => {
   it('TData should always be defined when initialData is provided as an object', () => {
@@ -135,10 +136,15 @@ describe('UseQueries config object overload', () => {
         ],
       })
 
-      const data = queriesState[0].data
+      const firstResult = queriesState[0]
 
-      const result: Expect<Equal<number | undefined, typeof data>> = true
-      return result
+      const result1: Expect<
+        Equal<QueryObserverResult<number, Error>, typeof firstResult>
+      > = true
+      const result2: Expect<
+        Equal<number | undefined, typeof firstResult.data>
+      > = true
+      return result1 && result2
     })
   })
 
