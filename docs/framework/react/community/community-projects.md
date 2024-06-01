@@ -87,7 +87,7 @@ Link: https://github.com/lukemorales/query-key-factory
 
 ## Rapini
 
-🥬 OpenAPI to React Query (or SWR) & Axios 
+🥬 OpenAPI to React Query (or SWR) & Axios
 
 Link: https://github.com/rametta/rapini
 
