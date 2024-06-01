@@ -23,6 +23,7 @@ import type {
   QueriesPlaceholderDataFunction,
   QueryFunction,
   QueryKey,
+  QueryObserverOptions,
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
@@ -214,11 +215,14 @@ export function createQueries<
 
   const defaultedQueries = createMemo(() =>
     queriesOptions().queries.map((options) =>
-      mergeProps(client().defaultQueryOptions(options), {
-        get _optimisticResults() {
-          return isRestoring() ? 'isRestoring' : 'optimistic'
+      mergeProps(
+        client().defaultQueryOptions(options as QueryObserverOptions),
+        {
+          get _optimisticResults() {
+            return isRestoring() ? 'isRestoring' : 'optimistic'
+          },
         },
-      }),
+      ),
     ),
   )
 
