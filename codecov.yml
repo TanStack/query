@@ -2,8 +2,8 @@ coverage:
   status:
     project:
       default:
-        target: 90%
-        threshold: 10%
+        target: auto
+        threshold: 1%
 
 comment:
   layout: 'header, reach, diff, flags, components'
