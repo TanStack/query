@@ -326,6 +326,10 @@
               "to": "framework/vue/guides/query-functions"
             },
             {
+              "label": "Query Options",
+              "to": "framework/vue/guides/query-options"
+            },
+            {
               "label": "Network Mode",
               "to": "framework/vue/guides/network-mode"
             },
@@ -370,10 +374,6 @@
               "to": "framework/vue/guides/placeholder-query-data"
             },
             {
-              "label": "Prefetching",
-              "to": "framework/vue/guides/prefetching"
-            },
-            {
               "label": "Mutations",
               "to": "framework/vue/guides/mutations"
             },
@@ -386,7 +386,7 @@
               "to": "framework/vue/guides/invalidations-from-mutations"
             },
             {
-              "label": "Updates from Mutation",
+              "label": "Updates from Mutation Responses",
               "to": "framework/vue/guides/updates-from-mutation-responses"
             },
             {
@@ -404,6 +404,10 @@
             {
               "label": "Filters",
               "to": "framework/vue/guides/filters"
+            },
+            {
+              "label": "Prefetching",
+              "to": "framework/vue/guides/prefetching"
             },
             {
               "label": "SSR & Nuxt",
@@ -692,8 +696,20 @@
               "to": "framework/vue/reference/useIsMutating"
             },
             {
+              "label": "useMutationState",
+              "to": "framework/vue/reference/useMutationState"
+            },
+            {
               "label": "useQueryClient",
               "to": "framework/vue/reference/useQueryClient"
+            },
+            {
+              "label": "queryOptions",
+              "to": "framework/vue/reference/queryOptions"
+            },
+            {
+              "label": "infiniteQueryOptions",
+              "to": "framework/vue/reference/infiniteQueryOptions"
             },
             {
               "label": "hydration",
@@ -758,8 +774,8 @@
               "to": "framework/vue/community/tkdodos-blog"
             },
             {
-              "label": "Query Key Factory",
-              "to": "framework/vue/community/lukemorales-query-key-factory"
+              "label": "Community Projects",
+              "to": "framework/vue/community/community-projects"
             }
           ]
         }
@@ -833,8 +849,12 @@
               "to": "framework/react/examples/rick-morty"
             },
             {
-              "label": "Next.js",
+              "label": "Next.js Pages",
               "to": "framework/react/examples/nextjs"
+            },
+            {
+              "label": "Next.js app with prefetching",
+              "to": "framework/react/examples/nextjs-app-prefetching"
             },
             {
               "label": "Next.js app with streaming",
@@ -998,6 +1018,19 @@
             {
               "label": "createPersister (Experimental)",
               "to": "framework/react/plugins/createPersister"
+            }
+          ]
+        },
+        {
+          "label": "vue",
+          "children": [
+            {
+              "label": "broadcastQueryClient (Experimental)",
+              "to": "framework/vue/plugins/broadcastQueryClient"
+            },
+            {
+              "label": "createPersister (Experimental)",
+              "to": "framework/vue/plugins/createPersister"
             }
           ]
         }

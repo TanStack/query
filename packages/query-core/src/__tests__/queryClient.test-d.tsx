@@ -1,6 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
-import type { FetchDirection } from '../query'
 import type { DataTag, InfiniteData, QueryKey } from '../types'
 
 describe('getQueryData', () => {
@@ -146,7 +145,7 @@ describe('defaultOptions', () => {
               meta: Record<string, unknown> | undefined
               signal: AbortSignal
               pageParam?: unknown
-              direction?: FetchDirection
+              direction?: unknown
             }>()
             return Promise.resolve('data')
           },

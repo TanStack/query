@@ -3,17 +3,17 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "build:dev": "vite build -m development",
-    "serve": "vite preview"
+    "_build": "vite build",
+    "_build:dev": "vite build -m development",
+    "_serve": "vite preview"
   },
   "dependencies": {
-    "@tanstack/vue-query": "^5.35.2",
+    "@tanstack/vue-query": "^5.40.0",
     "vue": "2.7.16",
     "vue-template-compiler": "2.7.16"
   },
   "devDependencies": {
-    "typescript": "5.2.2",
+    "typescript": "5.3.3",
     "vite": "^4.5.1",
     "vite-plugin-vue2": "2.0.3"
   }

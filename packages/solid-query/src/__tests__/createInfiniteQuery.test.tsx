@@ -103,7 +103,9 @@ describe('useInfiniteQuery', () => {
       isFetchedAfterMount: false,
       isFetching: true,
       isPaused: false,
+      isFetchNextPageError: false,
       isFetchingNextPage: false,
+      isFetchPreviousPageError: false,
       isFetchingPreviousPage: false,
       isPending: true,
       isLoading: true,
@@ -136,7 +138,9 @@ describe('useInfiniteQuery', () => {
       isFetchedAfterMount: true,
       isFetching: false,
       isPaused: false,
+      isFetchNextPageError: false,
       isFetchingNextPage: false,
+      isFetchPreviousPageError: false,
       isFetchingPreviousPage: false,
       isPending: false,
       isLoading: false,
@@ -675,6 +679,330 @@ describe('useInfiniteQuery', () => {
       isFetching: false,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
+      isRefetching: false,
+    })
+  })
+
+  it('should return the correct states when refetch fails', async () => {
+    const key = queryKey()
+    const states: Array<
+      Partial<CreateInfiniteQueryResult<InfiniteData<number>>>
+    > = []
+    let isRefetch = false
+
+    function Page() {
+      const state = createInfiniteQuery(() => ({
+        queryKey: key,
+        queryFn: async ({ pageParam }) => {
+          await sleep(10)
+          if (isRefetch) {
+            throw new Error()
+          } else {
+            return Number(pageParam)
+          }
+        },
+        getPreviousPageParam: (firstPage) => firstPage - 1,
+        getNextPageParam: (lastPage) => lastPage + 1,
+        initialPageParam: 10,
+        notifyOnChangeProps: 'all',
+        retry: false,
+      }))
+
+      createRenderEffect(() => {
+        states.push({
+          data: state.data ? JSON.parse(JSON.stringify(state.data)) : undefined,
+          isFetching: state.isFetching,
+          isFetchNextPageError: state.isFetchNextPageError,
+          isFetchingNextPage: state.isFetchingNextPage,
+          isFetchPreviousPageError: state.isFetchPreviousPageError,
+          isFetchingPreviousPage: state.isFetchingPreviousPage,
+          isRefetchError: state.isRefetchError,
+          isRefetching: state.isRefetching,
+        })
+      })
+
+      return (
+        <div>
+          <button
+            onClick={() => {
+              isRefetch = true
+              state.refetch()
+            }}
+          >
+            refetch
+          </button>
+          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
+          <div>isFetching: {String(state.isFetching)}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await waitFor(() => rendered.getByText('data: 10'))
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+
+    await waitFor(() => rendered.getByText('isFetching: false'))
+    await waitFor(() => expect(states.length).toBe(4))
+
+    // Initial fetch
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isFetching: true,
+      isFetchNextPageError: false,
+      isFetchingNextPage: false,
+      isFetchPreviousPageError: false,
+      isFetchingPreviousPage: false,
+      isRefetchError: false,
+      isRefetching: false,
+    })
+    // Initial fetch done
+    expect(states[1]).toMatchObject({
+      data: { pages: [10] },
+      isFetching: false,
+      isFetchNextPageError: false,
+      isFetchingNextPage: false,
+      isFetchPreviousPageError: false,
+      isFetchingPreviousPage: false,
+      isRefetchError: false,
+      isRefetching: false,
+    })
+    // Refetch
+    expect(states[2]).toMatchObject({
+      data: { pages: [10] },
+      isFetching: true,
+      isFetchNextPageError: false,
+      isFetchingNextPage: false,
+      isFetchPreviousPageError: false,
+      isFetchingPreviousPage: false,
+      isRefetchError: false,
+      isRefetching: true,
+    })
+    // Refetch failed
+    expect(states[3]).toMatchObject({
+      data: { pages: [10] },
+      isFetching: false,
+      isFetchNextPageError: false,
+      isFetchingNextPage: false,
+      isFetchPreviousPageError: false,
+      isFetchingPreviousPage: false,
+      isRefetchError: true,
+      isRefetching: false,
+    })
+  })
+
+  it('should return the correct states when fetchNextPage fails', async () => {
+    const key = queryKey()
+    const states: Array<
+      Partial<CreateInfiniteQueryResult<InfiniteData<number>>>
+    > = []
+
+    function Page() {
+      const state = createInfiniteQuery(() => ({
+        queryKey: key,
+        queryFn: async ({ pageParam }) => {
+          await sleep(10)
+          if (pageParam !== 10) {
+            throw new Error()
+          } else {
+            return Number(pageParam)
+          }
+        },
+        getPreviousPageParam: (firstPage) => firstPage - 1,
+        getNextPageParam: (lastPage) => lastPage + 1,
+        initialPageParam: 10,
+        notifyOnChangeProps: 'all',
+        retry: false,
+      }))
+
+      createRenderEffect(() => {
+        states.push({
+          data: state.data ? JSON.parse(JSON.stringify(state.data)) : undefined,
+          isFetching: state.isFetching,
+          isFetchNextPageError: state.isFetchNextPageError,
+          isFetchingNextPage: state.isFetchingNextPage,
+          isFetchPreviousPageError: state.isFetchPreviousPageError,
+          isFetchingPreviousPage: state.isFetchingPreviousPage,
+          isRefetchError: state.isRefetchError,
+          isRefetching: state.isRefetching,
+        })
+      })
+
+      return (
+        <div>
+          <button onClick={() => state.fetchNextPage()}>fetchNextPage</button>
+          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
+          <div>isFetching: {String(state.isFetching)}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await waitFor(() => rendered.getByText('data: 10'))
+    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
+
+    await waitFor(() => rendered.getByText('isFetching: false'))
+    await waitFor(() => expect(states.length).toBe(4))
+
+    // Initial fetch
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isFetching: true,
+      isFetchNextPageError: false,
+      isFetchingNextPage: false,
+      isFetchPreviousPageError: false,
+      isFetchingPreviousPage: false,
+      isRefetchError: false,
+      isRefetching: false,
+    })
+    // Initial fetch done
+    expect(states[1]).toMatchObject({
+      data: { pages: [10] },
+      isFetching: false,
+      isFetchNextPageError: false,
+      isFetchingNextPage: false,
+      isFetchPreviousPageError: false,
+      isFetchingPreviousPage: false,
+      isRefetchError: false,
+      isRefetching: false,
+    })
+    // Fetch next page
+    expect(states[2]).toMatchObject({
+      data: { pages: [10] },
+      isFetching: true,
+      isFetchNextPageError: false,
+      isFetchingNextPage: true,
+      isFetchPreviousPageError: false,
+      isFetchingPreviousPage: false,
+      isRefetchError: false,
+      isRefetching: false,
+    })
+    // Fetch next page failed
+    expect(states[3]).toMatchObject({
+      data: { pages: [10] },
+      isFetching: false,
+      isFetchNextPageError: true,
+      isFetchingNextPage: false,
+      isFetchPreviousPageError: false,
+      isFetchingPreviousPage: false,
+      isRefetchError: false,
+      isRefetching: false,
+    })
+  })
+
+  it('should return the correct states when fetchPreviousPage fails', async () => {
+    const key = queryKey()
+    const states: Array<
+      Partial<CreateInfiniteQueryResult<InfiniteData<number>>>
+    > = []
+
+    function Page() {
+      const state = createInfiniteQuery(() => ({
+        queryKey: key,
+        queryFn: async ({ pageParam }) => {
+          await sleep(10)
+          if (pageParam !== 10) {
+            throw new Error()
+          } else {
+            return Number(pageParam)
+          }
+        },
+        getPreviousPageParam: (firstPage) => firstPage - 1,
+        getNextPageParam: (lastPage) => lastPage + 1,
+        initialPageParam: 10,
+        notifyOnChangeProps: 'all',
+        retry: false,
+      }))
+
+      createRenderEffect(() => {
+        states.push({
+          data: state.data ? JSON.parse(JSON.stringify(state.data)) : undefined,
+          isFetching: state.isFetching,
+          isFetchNextPageError: state.isFetchNextPageError,
+          isFetchingNextPage: state.isFetchingNextPage,
+          isFetchPreviousPageError: state.isFetchPreviousPageError,
+          isFetchingPreviousPage: state.isFetchingPreviousPage,
+          isRefetchError: state.isRefetchError,
+          isRefetching: state.isRefetching,
+        })
+      })
+
+      return (
+        <div>
+          <button onClick={() => state.fetchPreviousPage()}>
+            fetchPreviousPage
+          </button>
+          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
+          <div>isFetching: {String(state.isFetching)}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await waitFor(() => rendered.getByText('data: 10'))
+    fireEvent.click(
+      rendered.getByRole('button', { name: /fetchPreviousPage/i }),
+    )
+
+    await waitFor(() => rendered.getByText('isFetching: false'))
+    await waitFor(() => expect(states.length).toBe(4))
+
+    // Initial fetch
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isFetching: true,
+      isFetchNextPageError: false,
+      isFetchingNextPage: false,
+      isFetchPreviousPageError: false,
+      isFetchingPreviousPage: false,
+      isRefetchError: false,
+      isRefetching: false,
+    })
+    // Initial fetch done
+    expect(states[1]).toMatchObject({
+      data: { pages: [10] },
+      isFetching: false,
+      isFetchNextPageError: false,
+      isFetchingNextPage: false,
+      isFetchPreviousPageError: false,
+      isFetchingPreviousPage: false,
+      isRefetchError: false,
+      isRefetching: false,
+    })
+    // Fetch previous page
+    expect(states[2]).toMatchObject({
+      data: { pages: [10] },
+      isFetching: true,
+      isFetchNextPageError: false,
+      isFetchingNextPage: false,
+      isFetchPreviousPageError: false,
+      isFetchingPreviousPage: true,
+      isRefetchError: false,
+      isRefetching: false,
+    })
+    // Fetch previous page failed
+    expect(states[3]).toMatchObject({
+      data: { pages: [10] },
+      isFetching: false,
+      isFetchNextPageError: false,
+      isFetchingNextPage: false,
+      isFetchPreviousPageError: true,
+      isFetchingPreviousPage: false,
+      isRefetchError: false,
       isRefetching: false,
     })
   })
