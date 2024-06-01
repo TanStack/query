@@ -12,7 +12,6 @@ import type {
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
-  SkipToken,
   ThrowOnError,
 } from '@tanstack/query-core'
 
@@ -32,6 +31,9 @@ type QueryObserverOptionsForCreateQueries<
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
+
+// Widen the type of the symbol to enable type inference even if skipToken is not immutable.
+type SkipTokenForUseQueries = symbol
 
 type GetOptions<T> =
   // Part 1: responsible for applying explicit type parameter to function arguments, if object { queryFnData: TQueryFnData, error: TError, data: TData }
@@ -56,30 +58,18 @@ type GetOptions<T> =
                 T extends {
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, infer TQueryKey>
-                      | SkipToken
+                      | SkipTokenForUseQueries
                     select: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? QueryObserverOptionsForCreateQueries<
                     TQueryFnData,
-                    TError,
-                    TData,
+                    unknown extends TError ? DefaultError : TError,
+                    unknown extends TData ? TQueryFnData : TData,
                     TQueryKey
                   >
-                : T extends {
-                      queryFn?:
-                        | QueryFunction<infer TQueryFnData, infer TQueryKey>
-                        | SkipToken
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
-                    }
-                  ? QueryObserverOptionsForCreateQueries<
-                      TQueryFnData,
-                      TError,
-                      TQueryFnData,
-                      TQueryKey
-                    >
-                  : // Fallback
-                    QueryObserverOptionsForCreateQueries
+                : // Fallback
+                  QueryObserverOptionsForCreateQueries
 
 type GetResults<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
@@ -98,24 +88,18 @@ type GetResults<T> =
               ? QueryObserverResult<TQueryFnData>
               : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
                 T extends {
-                    queryFn?: QueryFunction<unknown, any>
+                    queryFn?:
+                      | QueryFunction<infer TQueryFnData, any>
+                      | SkipTokenForUseQueries
                     select: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? QueryObserverResult<
-                    TData,
+                    unknown extends TData ? TQueryFnData : TData,
                     unknown extends TError ? DefaultError : TError
                   >
-                : T extends {
-                      queryFn?: QueryFunction<infer TQueryFnData, any>
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
-                    }
-                  ? QueryObserverResult<
-                      TQueryFnData,
-                      unknown extends TError ? DefaultError : TError
-                    >
-                  : // Fallback
-                    QueryObserverResult
+                : // Fallback
+                  QueryObserverResult
 
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
@@ -224,13 +208,7 @@ export function injectQueries<
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = 'optimistic'
 
-        return defaultedOptions as QueryObserverOptions<
-          unknown,
-          Error,
-          unknown,
-          unknown,
-          QueryKey
-        >
+        return defaultedOptions
       })
     })
 
