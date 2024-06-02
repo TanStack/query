@@ -113,7 +113,7 @@ type GetResults<T> =
     ? GetDefinedOrUndefinedQueryResult<
         T,
         undefined extends TData ? TQueryFnData : TData,
-        TError
+        unknown extends TError ? DefaultError : TError
       >
     : // Part 2: responsible for mapping explicit type parameter to function result, if object
       T extends { queryFnData: any; error?: infer TError; data: infer TData }
@@ -218,7 +218,7 @@ export type UseQueriesResults<
             Array<
               QueryObserverResult<
                 unknown extends TData ? TQueryFnData : TData,
-                TError
+                unknown extends TError ? DefaultError : TError
               >
             >
           : // Fallback
