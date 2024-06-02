@@ -52,7 +52,7 @@ function getQueryClient() {
     return makeQueryClient()
   } else {
     // Browser: make a new query client if we don't already have one
-    // This is very important so we don't re-make a new client if React
+    // This is very important, so we don't re-make a new client if React
     // suspends during the initial render. This may not be needed if we
     // have a suspense boundary BELOW the creation of the query client
     if (!browserQueryClient) browserQueryClient = makeQueryClient()
@@ -354,9 +354,80 @@ The Next.js app router automatically streams any part of the application that is
 
 With the prefetching patterns described above, React Query is perfectly compatible with this form of streaming. As the data for each Suspense boundary resolves, Next.js can render and stream the finished content to the browser. This works even if you are using `useQuery` as outlined above because the suspending actually happens when you `await` the prefetch.
 
-Note that right now, you have to await all prefetches for this to work. This means all prefetches are considered critical content and will block that Suspense boundary.
+As of React Query v5.40.0, you don't have to `await` all prefetches for this to work, as `pending` Queries can also be dehydrated and sent to the client. This lets you kick off prefetches as early as possible without letting them block an entire Suspense boundary, and streams the _data_ to the client as the query finishes. This can be useful for example if you want to prefetch some content that is only visible after some user interaction, or say if you want to `await` and render the first page of an infinite query, but start prefetching page 2 without blocking rendering.
 
-As an aside, in the future it might be possible to skip the await for "optional" prefetches that are not critical for this Suspense boundary. This would let you kick off prefetches as early as possible without letting them block an entire Suspense boundary, and streaming the _data_ to the client as the query finishes. This could be useful for example if you want to prefetch some content that is only visible after some user interaction, or say if you want to await and render the first page of an infinite query, but start prefetching page 2 without blocking rendering.
+To make this work, we have to instruct the `queryClient` to also `dehydrate` pending Queries. We can do this globally, or by passing that option directly to `hydrate`:
+
+```tsx
+// app/get-query-client.ts
+import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query'
+
+function makeQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000,
+      },
+      dehydrate: {
+        // per default, only successful Queries are included,
+        // this includes pending Queries as well
+        shouldDehydrateQuery: (query) =>
+          defaultShouldDehydrateQuery(query) ||
+          query.state.status === 'pending',
+      },
+    },
+  })
+}
+```
+
+> Note: This works in NextJs and Server Components because React can serialize Promises over the wire when you pass them down to Client Components.
+
+Then, all we need to do is provide a `HydrationBoundary`, but we don't need to `await` prefetches anymore:
+
+```tsx
+// app/posts/page.jsx
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from '@tanstack/react-query'
+import { getQueryClient } from './get-query-client'
+import Posts from './posts'
+
+// the function doesn't need to be `async` because we don't `await` anything
+export default function PostsPage() {
+  const queryClient = getQueryClient()
+
+  // look ma, no await
+  queryClient.prefetchQuery({
+    queryKey: ['posts'],
+    queryFn: getPosts,
+  })
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Posts />
+    </HydrationBoundary>
+  )
+}
+```
+
+On the client, the Promise will be put into the QueryCache for us. That means we can now call `useSuspenseQuery` inside the `Posts` component to "use" that Promise (which was created on the Server):
+
+```tsx
+// app/posts/posts.tsx
+'use client'
+
+export default function Posts() {
+  const { data } = useSuspenseQuery({ queryKey: ['posts'], queryFn: getPosts })
+
+  // ...
+}
+```
+
+> Note that you could also `useQuery` instead of `useSuspenseQuery`, and the Promise would still be picked up correctly. However, NextJs won't suspend in that case and the component will render in the `pending` status, which also opts out of server rendering the content.
+
+For more information, check out the [Next.js App with Prefetching Example](../../examples/nextjs-app-prefetching).
 
 ## Experimental streaming without prefetching in Next.js
 
@@ -394,8 +465,8 @@ function getQueryClient() {
     return makeQueryClient()
   } else {
     // Browser: make a new query client if we don't already have one
-    // This is very important so we don't re-make a new client if React
-    // supsends during the initial render. This may not be needed if we
+    // This is very important, so we don't re-make a new client if React
+    // suspends during the initial render. This may not be needed if we
     // have a suspense boundary BELOW the creation of the query client
     if (!browserQueryClient) browserQueryClient = makeQueryClient()
     return browserQueryClient

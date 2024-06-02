@@ -40,9 +40,9 @@ Since you can't change `throwOnError` (because it would allow for `data` to beco
 ```tsx
 import { useSuspenseQuery } from '@tanstack/react-query'
 
-const { data, error } = useSuspenseQuery({ queryKey, queryFn })
+const { data, error, isFetching } = useSuspenseQuery({ queryKey, queryFn })
 
-if (error) {
+if (error && !isFetching) {
   throw error
 }
 
@@ -142,8 +142,8 @@ function getQueryClient() {
     return makeQueryClient()
   } else {
     // Browser: make a new query client if we don't already have one
-    // This is very important so we don't re-make a new client if React
-    // supsends during the initial render. This may not be needed if we
+    // This is very important, so we don't re-make a new client if React
+    // suspends during the initial render. This may not be needed if we
     // have a suspense boundary BELOW the creation of the query client
     if (!browserQueryClient) browserQueryClient = makeQueryClient()
     return browserQueryClient
