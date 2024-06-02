@@ -136,14 +136,13 @@ describe('UseQueries config object overload', () => {
         ],
       })
 
-      const firstResult = queriesState[0]
+      const result: QueryObserverResult<number, Error> = queriesState[0]
+      const data = queriesState[0].data
 
       const result1: Expect<
-        Equal<QueryObserverResult<number, Error>, typeof firstResult>
+        Equal<QueryObserverResult<number, Error>, typeof result>
       > = true
-      const result2: Expect<
-        Equal<number | undefined, typeof firstResult.data>
-      > = true
+      const result2: Expect<Equal<number | undefined, typeof data>> = true
       return result1 && result2
     })
   })
