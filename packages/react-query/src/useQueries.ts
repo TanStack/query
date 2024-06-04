@@ -34,7 +34,6 @@ import type {
   QueryFunction,
   QueryKey,
   QueryObserverOptions,
-  SkipToken,
   ThrowOnError,
 } from '@tanstack/query-core'
 
@@ -54,6 +53,9 @@ type UseQueryOptionsForUseQueries<
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
+
+// Widen the type of the symbol to enable type inference even if skipToken is not immutable.
+type SkipTokenForUseQueries = symbol
 
 type GetUseQueryOptionsForUseQueries<T> =
   // Part 1: responsible for applying explicit type parameter to function arguments, if object { queryFnData: TQueryFnData, error: TError, data: TData }
@@ -78,30 +80,18 @@ type GetUseQueryOptionsForUseQueries<T> =
                 T extends {
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, infer TQueryKey>
-                      | SkipToken
+                      | SkipTokenForUseQueries
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? UseQueryOptionsForUseQueries<
                     TQueryFnData,
-                    TError,
-                    TData,
+                    unknown extends TError ? DefaultError : TError,
+                    unknown extends TData ? TQueryFnData : TData,
                     TQueryKey
                   >
-                : T extends {
-                      queryFn?:
-                        | QueryFunction<infer TQueryFnData, infer TQueryKey>
-                        | SkipToken
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
-                    }
-                  ? UseQueryOptionsForUseQueries<
-                      TQueryFnData,
-                      TError,
-                      TQueryFnData,
-                      TQueryKey
-                    >
-                  : // Fallback
-                    UseQueryOptionsForUseQueries
+                : // Fallback
+                  UseQueryOptionsForUseQueries
 
 // A defined initialData setting should return a DefinedUseQueryResult rather than UseQueryResult
 type GetDefinedOrUndefinedQueryResult<T, TData, TError = unknown> = T extends {
@@ -137,7 +127,9 @@ type GetUseQueryResult<T> =
               ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData>
               : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
                 T extends {
-                    queryFn?: QueryFunction<infer TQueryFnData, any> | SkipToken
+                    queryFn?:
+                      | QueryFunction<infer TQueryFnData, any>
+                      | SkipTokenForUseQueries
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
@@ -146,19 +138,8 @@ type GetUseQueryResult<T> =
                     unknown extends TData ? TQueryFnData : TData,
                     unknown extends TError ? DefaultError : TError
                   >
-                : T extends {
-                      queryFn?:
-                        | QueryFunction<infer TQueryFnData, any>
-                        | SkipToken
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
-                    }
-                  ? GetDefinedOrUndefinedQueryResult<
-                      T,
-                      TQueryFnData,
-                      unknown extends TError ? DefaultError : TError
-                    >
-                  : // Fallback
-                    UseQueryResult
+                : // Fallback
+                  UseQueryResult
 
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
@@ -260,13 +241,7 @@ export function useQueries<
     () =>
       queries.map((opts) => {
         const defaultedOptions = client.defaultQueryOptions(
-          opts as QueryObserverOptions<
-            unknown,
-            Error,
-            unknown,
-            unknown,
-            QueryKey
-          >,
+          opts as QueryObserverOptions,
         )
 
         // Make sure the results are already in fetching state before subscribing or updating options

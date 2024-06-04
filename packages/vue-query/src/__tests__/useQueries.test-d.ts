@@ -2,7 +2,7 @@ import { describe, expectTypeOf, it } from 'vitest'
 import { reactive } from 'vue'
 import { skipToken, useQueries } from '..'
 import { queryOptions } from '../queryOptions'
-import type { OmitKeyof } from '..'
+import type { OmitKeyof, QueryObserverResult } from '..'
 import type { UseQueryOptions } from '../useQuery'
 
 describe('UseQueries config object overload', () => {
@@ -110,7 +110,12 @@ describe('UseQueries config object overload', () => {
       ],
     })
 
-    expectTypeOf(queriesState[0].data).toEqualTypeOf<number | undefined>()
+    const firstResult = queriesState[0]
+
+    expectTypeOf(firstResult).toEqualTypeOf<
+      QueryObserverResult<number, Error>
+    >()
+    expectTypeOf(firstResult.data).toEqualTypeOf<number | undefined>()
   })
 
   describe('custom hook', () => {
