@@ -3,10 +3,11 @@ import { ASTUtils } from '../../utils/ast-utils'
 import { getDocsUrl } from '../../utils/get-docs-url'
 import { detectTanstackQueryImports } from '../../utils/detect-react-query-imports'
 import type { TSESLint } from '@typescript-eslint/utils'
+import type { RuleDocs } from '../../types'
 
 export const name = 'stable-query-client'
 
-const createRule = ESLintUtils.RuleCreator(getDocsUrl)
+const createRule = ESLintUtils.RuleCreator<RuleDocs>(getDocsUrl)
 
 export const rule = createRule({
   name,
@@ -14,7 +15,7 @@ export const rule = createRule({
     type: 'problem',
     docs: {
       description: 'Makes sure that QueryClient is stable',
-      recommended: 'error' as any,
+      recommended: 'error',
     },
     messages: {
       unstable: [
