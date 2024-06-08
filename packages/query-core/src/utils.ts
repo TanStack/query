@@ -86,6 +86,13 @@ export function timeUntilStale(updatedAt: number, staleTime?: number): number {
   return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0)
 }
 
+export function resolveStaleTime(
+  staleTime: number | undefined | ((q: Query<any, any, any, any>) => number),
+  query: Query<any, any, any, any>,
+): number | undefined {
+  return typeof staleTime === 'function' ? staleTime(query) : staleTime
+}
+
 export function matchQuery(
   filters: QueryFilters,
   query: Query<any, any, any, any>,

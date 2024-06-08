@@ -3,6 +3,7 @@ import {
   isValidTimeout,
   noop,
   replaceData,
+  resolveStaleTime,
   shallowEqualObjects,
   timeUntilStale,
 } from './utils'
@@ -190,7 +191,8 @@ export class QueryObserver<
       mounted &&
       (this.#currentQuery !== prevQuery ||
         this.options.enabled !== prevOptions.enabled ||
-        this.options.staleTime !== prevOptions.staleTime)
+        resolveStaleTime(this.options.staleTime, this.#currentQuery) !==
+          resolveStaleTime(prevOptions.staleTime, this.#currentQuery))
     ) {
       this.#updateStaleTimeout()
     }
@@ -338,19 +340,16 @@ export class QueryObserver<
 
   #updateStaleTimeout(): void {
     this.#clearStaleTimeout()
+    const staleTime = resolveStaleTime(
+      this.options.staleTime,
+      this.#currentQuery,
+    )
 
-    if (
-      isServer ||
-      this.#currentResult.isStale ||
-      !isValidTimeout(this.options.staleTime)
-    ) {
+    if (isServer || this.#currentResult.isStale || !isValidTimeout(staleTime)) {
       return
     }
 
-    const time = timeUntilStale(
-      this.#currentResult.dataUpdatedAt,
-      this.options.staleTime,
-    )
+    const time = timeUntilStale(this.#currentResult.dataUpdatedAt, staleTime)
 
     // The timeout is sometimes triggered 1 ms before the stale time expiration.
     // To mitigate this issue we always add 1 ms to the timeout.
@@ -742,7 +741,10 @@ function isStale(
   query: Query<any, any, any, any>,
   options: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
-  return options.enabled !== false && query.isStaleByTime(options.staleTime)
+  return (
+    options.enabled !== false &&
+    query.isStaleByTime(resolveStaleTime(options.staleTime, query))
+  )
 }
 
 // this function would decide if we will update the observer's 'current'
