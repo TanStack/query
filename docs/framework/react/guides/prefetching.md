@@ -199,14 +199,18 @@ This starts fetching `'article-comments'` immediately and flattens the waterfall
 If you want to prefetch together with Suspense, you will have to do things a bit differently. You can't use `useSuspenseQueries` to prefetch, since the prefetch would block the component from rendering. You also can not use `useQuery` for the prefetch, because that wouldn't start the prefetch until after suspenseful query had resolved. What you can do is add a small `usePrefetchQuery` function (we might add this to the library itself at a later point):
 
 ```tsx
-const usePrefetchQuery = (...args) => {
+function usePrefetchQuery(options) {
   const queryClient = useQueryClient()
 
   // This happens in render, but is safe to do because ensureQueryData
   // only fetches if there is no data in the cache for this query. This
   // means we know no observers are watching the data so the side effect
   // is not observable, which is safe.
-  queryClient.ensureQueryData(...args)
+  if (!queryClient.getQueryState(options.queryKey)) {
+    queryClient.ensureQueryData(options).catch(() => {
+      // Avoid uncaught error
+    })
+  }
 }
 ```
 
@@ -420,13 +424,13 @@ const articleRoute = new Route({
 })
 ```
 
-Integration with other routers is also possible, see the [React Router example](../examples/react-router) for another demonstration.
+Integration with other routers is also possible, see the [React Router example](../../examples/react-router) for another demonstration.
 
 [//]: # 'Router'
 
 ## Manually Priming a Query
 
-If you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Client's `setQueryData` method](../QueryClient#queryclientsetquerydata) to directly add or update a query's cached result by key.
+If you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Client's `setQueryData` method](../../../../reference/QueryClient/#queryclientsetquerydata) to directly add or update a query's cached result by key.
 
 [//]: # 'ExampleManualPriming'
 
@@ -439,7 +443,7 @@ queryClient.setQueryData(['todos'], todos)
 
 ## Further reading
 
-For a deep-dive on how to get data into your Query Cache before you fetch, have a look at [#17: Seeding the Query Cache](../tkdodos-blog#17-seeding-the-query-cache) from the Community Resources.
+For a deep-dive on how to get data into your Query Cache before you fetch, have a look at [#17: Seeding the Query Cache](../../community/tkdodos-blog#17-seeding-the-query-cache) from the Community Resources.
 
 Integrating with Server Side routers and frameworks is very similar to what we just saw, with the addition that the data has to passed from the server to the client to be hydrated into the cache there. To learn how, continue on to the [Server Rendering & Hydration guide](../ssr).
 

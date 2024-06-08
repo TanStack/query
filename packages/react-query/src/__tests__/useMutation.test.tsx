@@ -592,7 +592,7 @@ describe('useMutation', () => {
           await sleep(10)
           count++
           return count > 1
-            ? Promise.resolve('data')
+            ? Promise.resolve(`data${count}`)
             : Promise.reject(new Error('oops'))
         },
         retry: 1,
@@ -631,7 +631,7 @@ describe('useMutation', () => {
     onlineMock.mockReturnValue(true)
     queryClient.getMutationCache().resumePausedMutations()
 
-    await waitFor(() => rendered.getByText('data: data'))
+    await waitFor(() => rendered.getByText('data: data2'))
 
     expect(
       queryClient.getMutationCache().findAll({ mutationKey: key })[0]?.state,
@@ -640,7 +640,7 @@ describe('useMutation', () => {
       isPaused: false,
       failureCount: 0,
       failureReason: null,
-      data: 'data',
+      data: 'data2',
     })
 
     onlineMock.mockRestore()
@@ -667,14 +667,15 @@ describe('useMutation', () => {
   })
 
   it('should be able to throw an error when throwOnError is set to true', async () => {
+    const err = new Error('Expected mock error. All is well!')
+    err.stack = ''
+
     const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
     function Page() {
       const { mutate } = useMutation<string, Error>({
         mutationFn: () => {
-          const err = new Error('Expected mock error. All is well!')
-          err.stack = ''
           return Promise.reject(err)
         },
         throwOnError: true,
@@ -706,9 +707,7 @@ describe('useMutation', () => {
       expect(queryByText('error')).not.toBeNull()
     })
 
-    expect(consoleMock).toHaveBeenCalledWith(
-      expect.objectContaining(new Error('Expected mock error. All is well!')),
-    )
+    expect(consoleMock.mock.calls[0]?.[1]).toBe(err)
 
     consoleMock.mockRestore()
   })
@@ -719,15 +718,14 @@ describe('useMutation', () => {
       .mockImplementation(() => undefined)
     let boundary = false
     function Page() {
-      const { mutate, error } = useMutation<string, Error>({
+      const { mutate, error } = useMutation<string>({
         mutationFn: () => {
           const err = new Error('mock error')
           err.stack = ''
           return Promise.reject(err)
         },
         throwOnError: () => {
-          boundary = !boundary
-          return !boundary
+          return boundary
         },
       })
 
@@ -759,6 +757,7 @@ describe('useMutation', () => {
     })
 
     // second error goes to boundary
+    boundary = true
     fireEvent.click(getByText('mutate'))
     await waitFor(() => {
       expect(queryByText('error boundary')).not.toBeNull()

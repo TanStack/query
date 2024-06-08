@@ -5,9 +5,9 @@ title: Suspense
 
 React Query can also be used with React's Suspense for Data Fetching API's. For this, we have dedicated hooks:
 
-- [useSuspenseQuery](../useSuspenseQuery)
-- [useSuspenseInfiniteQuery](../useSuspenseInfiniteQuery)
-- [useSuspenseQueries](../useSuspenseQueries)
+- [useSuspenseQuery](../../reference/useSuspenseQuery)
+- [useSuspenseInfiniteQuery](../../reference/useSuspenseInfiniteQuery)
+- [useSuspenseQueries](../../reference/useSuspenseQueries)
 
 When using suspense mode, `status` states and `error` objects are not needed and are then replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors). Please read the [Resetting Error Boundaries](#resetting-error-boundaries) and look at the [Suspense Example](https://stackblitz.com/github/TanStack/query/tree/main/examples/react/suspense) for more information on how to set up suspense mode.
 
@@ -40,9 +40,9 @@ Since you can't change `throwOnError` (because it would allow for `data` to beco
 ```tsx
 import { useSuspenseQuery } from '@tanstack/react-query'
 
-const { data, error } = useSuspenseQuery({ queryKey, queryFn })
+const { data, error, isFetching } = useSuspenseQuery({ queryKey, queryFn })
 
-if (error) {
+if (error && !isFetching) {
   throw error
 }
 
@@ -122,8 +122,40 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import * as React from 'react'
 import { ReactQueryStreamedHydration } from '@tanstack/react-query-next-experimental'
 
+function makeQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        // With SSR, we usually want to set some default staleTime
+        // above 0 to avoid refetching immediately on the client
+        staleTime: 60 * 1000,
+      },
+    },
+  })
+}
+
+let browserQueryClient: QueryClient | undefined = undefined
+
+function getQueryClient() {
+  if (typeof window === 'undefined') {
+    // Server: always make a new query client
+    return makeQueryClient()
+  } else {
+    // Browser: make a new query client if we don't already have one
+    // This is very important, so we don't re-make a new client if React
+    // suspends during the initial render. This may not be needed if we
+    // have a suspense boundary BELOW the creation of the query client
+    if (!browserQueryClient) browserQueryClient = makeQueryClient()
+    return browserQueryClient
+  }
+}
+
 export function Providers(props: { children: React.ReactNode }) {
-  const [queryClient] = React.useState(() => new QueryClient())
+  // NOTE: Avoid useState when initializing the query client if you don't
+  //       have a suspense boundary between this and the code that may
+  //       suspend because React will throw away the client on the initial
+  //       render if it suspends and there is no boundary
+  const queryClient = getQueryClient()
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -135,4 +167,4 @@ export function Providers(props: { children: React.ReactNode }) {
 }
 ```
 
-For more information, check out the [NextJs Suspense Streaming Example](../examples/nextjs-suspense-streaming) and the [Advanced Rendering & Hydration](../advanced-ssr) guide.
+For more information, check out the [NextJs Suspense Streaming Example](../../examples/nextjs-suspense-streaming) and the [Advanced Rendering & Hydration](../advanced-ssr) guide.

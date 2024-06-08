@@ -1511,13 +1511,11 @@ describe('queryClient', () => {
 
       await waitFor(() => {
         expect(observer1.getCurrentResult().status).toBe('success')
-        expect(observer1.getCurrentResult().status).toBe('success')
+        expect(observer2.getCurrentResult().status).toBe('success')
       })
     })
 
-    test('should resume paused mutations one after the other when invoked manually at the same time', async () => {
-      const consoleMock = vi.spyOn(console, 'error')
-      consoleMock.mockImplementation(() => undefined)
+    test('should resume paused mutations in parallel', async () => {
       onlineManager.setOnline(false)
 
       const orders: Array<string> = []
@@ -1532,6 +1530,54 @@ describe('queryClient', () => {
       })
 
       const observer2 = new MutationObserver(queryClient, {
+        mutationFn: async () => {
+          orders.push('2start')
+          await sleep(20)
+          orders.push('2end')
+          return 2
+        },
+      })
+      void observer1.mutate()
+      void observer2.mutate()
+
+      await waitFor(() => {
+        expect(observer1.getCurrentResult().isPaused).toBeTruthy()
+        expect(observer2.getCurrentResult().isPaused).toBeTruthy()
+      })
+
+      onlineManager.setOnline(true)
+
+      await waitFor(() => {
+        expect(observer1.getCurrentResult().status).toBe('success')
+        expect(observer2.getCurrentResult().status).toBe('success')
+      })
+
+      expect(orders).toEqual(['1start', '2start', '2end', '1end'])
+    })
+
+    test('should resume paused mutations one after the other when in the same scope when invoked manually at the same time', async () => {
+      const consoleMock = vi.spyOn(console, 'error')
+      consoleMock.mockImplementation(() => undefined)
+      onlineManager.setOnline(false)
+
+      const orders: Array<string> = []
+
+      const observer1 = new MutationObserver(queryClient, {
+        scope: {
+          id: 'scope',
+        },
+        mutationFn: async () => {
+          orders.push('1start')
+          await sleep(50)
+          orders.push('1end')
+          return 1
+        },
+      })
+
+      const observer2 = new MutationObserver(queryClient, {
+        scope: {
+          id: 'scope',
+        },
         mutationFn: async () => {
           orders.push('2start')
           await sleep(20)
@@ -1656,15 +1702,52 @@ describe('queryClient', () => {
 
       const observer = new MutationObserver(queryClient, {
         mutationFn: async () => {
-          results.push('mutation')
+          results.push('mutation1-start')
           await sleep(50)
+          results.push('mutation1-end')
           return 1
         },
       })
 
       void observer.mutate()
 
-      expect(observer.getCurrentResult().isPaused).toBeTruthy()
+      const observer2 = new MutationObserver(queryClient, {
+        scope: {
+          id: 'scope',
+        },
+        mutationFn: async () => {
+          results.push('mutation2-start')
+          await sleep(50)
+          results.push('mutation2-end')
+          return 2
+        },
+      })
+
+      void observer2.mutate()
+
+      const observer3 = new MutationObserver(queryClient, {
+        scope: {
+          id: 'scope',
+        },
+        mutationFn: async () => {
+          results.push('mutation3-start')
+          await sleep(50)
+          results.push('mutation3-end')
+          return 3
+        },
+      })
+
+      void observer3.mutate()
+
+      await waitFor(() =>
+        expect(observer.getCurrentResult().isPaused).toBeTruthy(),
+      )
+      await waitFor(() =>
+        expect(observer2.getCurrentResult().isPaused).toBeTruthy(),
+      )
+      await waitFor(() =>
+        expect(observer3.getCurrentResult().isPaused).toBeTruthy(),
+      )
 
       onlineManager.setOnline(true)
 
@@ -1673,7 +1756,16 @@ describe('queryClient', () => {
       })
 
       // refetch from coming online should happen after mutations have finished
-      expect(results).toStrictEqual(['data1', 'mutation', 'data2'])
+      expect(results).toStrictEqual([
+        'data1',
+        'mutation1-start',
+        'mutation2-start',
+        'mutation1-end',
+        'mutation2-end',
+        'mutation3-start', // 3 starts after 2 because they are in the same scope
+        'mutation3-end',
+        'data2',
+      ])
 
       unsubscribe()
     })

@@ -87,7 +87,6 @@ if (isSuccess) {
 The type for error defaults to `Error`, because that is what most users expect.
 
 [//]: # 'TypingError'
-[//]: # 'TypingError'
 
 ```tsx
 const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
@@ -153,11 +152,9 @@ const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 
 ## Typing meta
 
-[//]: # 'RegisterMetaType'
-
 ### Registering global Meta
 
-Similarly to registering a [global error type](#registering-a-global-error) you can also register a global `Meta` type. This ensures the optional `meta` field on [queries](../useQuery.md) and [mutations](../useMutation.md) stays consistent and is type-safe. Note that the registered type must extend `Record<string, unknown>` so that `meta` remains an object.
+Similarly to registering a [global error type](#registering-a-global-error) you can also register a global `Meta` type. This ensures the optional `meta` field on [queries](../reference/useQuery) and [mutations](../reference/useMutation) stays consistent and is type-safe. Note that the registered type must extend `Record<string, unknown>` so that `meta` remains an object.
 
 ```ts
 import '@tanstack/react-query'
@@ -174,7 +171,6 @@ declare module '@tanstack/react-query' {
 }
 ```
 
-[//]: # 'RegisterMetaType'
 [//]: # 'TypingMeta'
 [//]: # 'TypingQueryOptions'
 
@@ -223,12 +219,12 @@ const data = queryClient.getQueryData<Group[]>(['groups'])
 
 ## Further Reading
 
-For tips and tricks around type inference, have a look at [React Query and TypeScript](../tkdodos-blog#6-react-query-and-typescript) from
-the Community Resources. To find out how to get the best possible type-safety, you can read [Type-safe React Query](../tkdodos-blog#19-type-safe-react-query).
+For tips and tricks around type inference, have a look at [React Query and TypeScript](../community/tkdodos-blog#6-react-query-and-typescript) from
+the Community Resources. To find out how to get the best possible type-safety, you can read [Type-safe React Query](../community/tkdodos-blog#19-type-safe-react-query).
 
 [//]: # 'Materials'
 
 ## Typesafe disabling of queries using `skipToken`
 
 If you are using TypeScript, you can use the `skipToken` to disable a query. This is useful when you want to disable a query based on a condition, but you still want to keep the query to be type safe.
-Read more about it in the [Disabling Queries](../disabling-queries) guide.
+Read more about it in the [Disabling Queries](../guides/disabling-queries) guide.

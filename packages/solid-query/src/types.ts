@@ -24,14 +24,23 @@ export interface CreateBaseQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends QueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
+> extends OmitKeyof<
+    QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+    'suspense'
   > {
+  /**
+   * Only applicable while rendering queries on the server with streaming.
+   * Set `deferStream` to `true` to wait for the query to resolve on the server before flushing the stream.
+   * This can be useful to avoid sending a loading state to the client before the query has resolved.
+   * Defaults to `false`.
+   */
   deferStream?: boolean
+  /**
+   * @deprecated The `suspense` option has been deprecated in v5 and will be removed in the next major version.
+   * The `data` property on createQuery is a SolidJS resource and will automatically suspend when the data is loading.
+   * Setting `suspense` to `false` will be a no-op.
+   */
+  suspense?: boolean
 }
 
 export interface SolidQueryOptions<
@@ -93,10 +102,22 @@ export interface SolidInfiniteQueryOptions<
       TQueryKey,
       TPageParam
     >,
-    'queryKey'
+    'queryKey' | 'suspense'
   > {
   queryKey: TQueryKey
+  /**
+   * Only applicable while rendering queries on the server with streaming.
+   * Set `deferStream` to `true` to wait for the query to resolve on the server before flushing the stream.
+   * This can be useful to avoid sending a loading state to the client before the query has resolved.
+   * Defaults to `false`.
+   */
   deferStream?: boolean
+  /**
+   * @deprecated The `suspense` option has been deprecated in v5 and will be removed in the next major version.
+   * The `data` property on createInfiniteQuery is a SolidJS resource and will automatically suspend when the data is loading.
+   * Setting `suspense` to `false` will be a no-op.
+   */
+  suspense?: boolean
 }
 
 export type CreateInfiniteQueryOptions<

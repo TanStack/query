@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest'
+import { waitFor } from '@testing-library/react'
 import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
 import { MutationCache } from '../mutationCache'
@@ -170,6 +171,84 @@ describe('dehydration and rehydration', () => {
     expect(hydrationCache.find({ queryKey: ['string'] })?.options.retry).toBe(
       10,
     )
+    queryClient.clear()
+    hydrationClient.clear()
+  })
+
+  test('should respect query defaultOptions specified on the QueryClient', async () => {
+    const queryCache = new QueryCache()
+    const queryClient = createQueryClient({
+      queryCache,
+      defaultOptions: {
+        dehydrate: { shouldDehydrateQuery: () => true },
+      },
+    })
+    await queryClient.prefetchQuery({
+      queryKey: ['string'],
+      retry: 0,
+      queryFn: () => Promise.reject(new Error('error')),
+    })
+    const dehydrated = dehydrate(queryClient)
+    expect(dehydrated.queries.length).toBe(1)
+    expect(dehydrated.queries[0]?.state.error).toStrictEqual(new Error('error'))
+    const stringified = JSON.stringify(dehydrated)
+    const parsed = JSON.parse(stringified)
+    const hydrationCache = new QueryCache()
+    const hydrationClient = createQueryClient({
+      queryCache: hydrationCache,
+      defaultOptions: { hydrate: { queries: { retry: 10 } } },
+    })
+    hydrate(hydrationClient, parsed, {
+      defaultOptions: { queries: { gcTime: 10 } },
+    })
+    expect(hydrationCache.find({ queryKey: ['string'] })?.options.retry).toBe(
+      10,
+    )
+    expect(hydrationCache.find({ queryKey: ['string'] })?.options.gcTime).toBe(
+      10,
+    )
+    queryClient.clear()
+    hydrationClient.clear()
+  })
+
+  test('should respect mutation defaultOptions specified on the QueryClient', async () => {
+    const mutationCache = new MutationCache()
+    const queryClient = createQueryClient({
+      mutationCache,
+      defaultOptions: {
+        dehydrate: {
+          shouldDehydrateMutation: (mutation) => mutation.state.data === 'done',
+        },
+      },
+    })
+    await executeMutation(
+      queryClient,
+      {
+        mutationKey: ['string'],
+        mutationFn: () => Promise.resolve('done'),
+      },
+      undefined,
+    )
+
+    const dehydrated = dehydrate(queryClient)
+    expect(dehydrated.mutations.length).toBe(1)
+    expect(dehydrated.mutations[0]?.state.data).toBe('done')
+    const stringified = JSON.stringify(dehydrated)
+    const parsed = JSON.parse(stringified)
+    const hydrationCache = new MutationCache()
+    const hydrationClient = createQueryClient({
+      mutationCache: hydrationCache,
+      defaultOptions: { hydrate: { mutations: { retry: 10 } } },
+    })
+    hydrate(hydrationClient, parsed, {
+      defaultOptions: { mutations: { gcTime: 10 } },
+    })
+    expect(
+      hydrationCache.find({ mutationKey: ['string'] })?.options.retry,
+    ).toBe(10)
+    expect(
+      hydrationCache.find({ mutationKey: ['string'] })?.options.gcTime,
+    ).toBe(10)
     queryClient.clear()
     hydrationClient.clear()
   })
@@ -703,5 +782,130 @@ describe('dehydration and rehydration', () => {
     expect(
       hydrationCache.find({ queryKey: ['string'] })?.state.fetchStatus,
     ).toBe('idle')
+  })
+
+  test('should dehydrate and hydrate mutation scopes', async () => {
+    const queryClient = createQueryClient()
+    const onlineMock = mockOnlineManagerIsOnline(false)
+
+    void executeMutation(
+      queryClient,
+      {
+        mutationKey: ['mutation'],
+        mutationFn: async () => {
+          return 'mutation'
+        },
+        scope: {
+          id: 'scope',
+        },
+      },
+      'vars',
+    )
+
+    const dehydrated = dehydrate(queryClient)
+    expect(dehydrated.mutations[0]?.scope?.id).toBe('scope')
+    const stringified = JSON.stringify(dehydrated)
+
+    // ---
+    const parsed = JSON.parse(stringified)
+    const hydrationCache = new MutationCache()
+    const hydrationClient = createQueryClient({ mutationCache: hydrationCache })
+
+    hydrate(hydrationClient, parsed)
+
+    expect(dehydrated.mutations[0]?.scope?.id).toBe('scope')
+
+    onlineMock.mockRestore()
+  })
+
+  test('should dehydrate promises for pending queries', async () => {
+    const queryCache = new QueryCache()
+    const queryClient = createQueryClient({
+      queryCache,
+      defaultOptions: { dehydrate: { shouldDehydrateQuery: () => true } },
+    })
+    await queryClient.prefetchQuery({
+      queryKey: ['success'],
+      queryFn: () => fetchData('success'),
+    })
+
+    const promise = queryClient.prefetchQuery({
+      queryKey: ['pending'],
+      queryFn: () => fetchData('pending', 10),
+    })
+    const dehydrated = dehydrate(queryClient)
+
+    expect(dehydrated.queries[0]?.promise).toBeUndefined()
+    expect(dehydrated.queries[1]?.promise).toBeInstanceOf(Promise)
+
+    await promise
+    queryClient.clear()
+  })
+
+  test('should hydrate promises even without observers', async () => {
+    const queryCache = new QueryCache()
+    const queryClient = createQueryClient({
+      queryCache,
+      defaultOptions: { dehydrate: { shouldDehydrateQuery: () => true } },
+    })
+    await queryClient.prefetchQuery({
+      queryKey: ['success'],
+      queryFn: () => fetchData('success'),
+    })
+
+    void queryClient.prefetchQuery({
+      queryKey: ['pending'],
+      queryFn: () => fetchData('pending', 20),
+    })
+    const dehydrated = dehydrate(queryClient)
+    // no stringify/parse here because promises can't be serialized to json
+    // but nextJs still can do it
+
+    const hydrationCache = new QueryCache()
+    const hydrationClient = createQueryClient({
+      queryCache: hydrationCache,
+    })
+
+    hydrate(hydrationClient, dehydrated)
+
+    expect(hydrationCache.find({ queryKey: ['success'] })?.state.data).toBe(
+      'success',
+    )
+
+    expect(hydrationCache.find({ queryKey: ['pending'] })?.state).toMatchObject(
+      {
+        data: undefined,
+        dataUpdateCount: 0,
+        dataUpdatedAt: 0,
+        error: null,
+        errorUpdateCount: 0,
+        errorUpdatedAt: 0,
+        fetchFailureCount: 0,
+        fetchFailureReason: null,
+        fetchMeta: null,
+        fetchStatus: 'fetching',
+        isInvalidated: false,
+        status: 'pending',
+      },
+    )
+
+    await waitFor(() =>
+      expect(
+        hydrationCache.find({ queryKey: ['pending'] })?.state,
+      ).toMatchObject({
+        data: 'pending',
+        dataUpdateCount: 1,
+        dataUpdatedAt: expect.any(Number),
+        error: null,
+        errorUpdateCount: 0,
+        errorUpdatedAt: 0,
+        fetchFailureCount: 0,
+        fetchFailureReason: null,
+        fetchMeta: null,
+        fetchStatus: 'idle',
+        isInvalidated: false,
+        status: 'success',
+      }),
+    )
   })
 })

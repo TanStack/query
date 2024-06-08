@@ -1,13 +1,15 @@
-import type { QueryClient } from './queryClient'
-import type { Query, QueryState } from './query'
 import type {
+  DefaultError,
   MutationKey,
   MutationMeta,
   MutationOptions,
+  MutationScope,
   QueryKey,
   QueryMeta,
   QueryOptions,
 } from './types'
+import type { QueryClient } from './queryClient'
+import type { Query, QueryState } from './query'
 import type { Mutation, MutationState } from './mutation'
 
 // TYPES
@@ -20,7 +22,7 @@ export interface DehydrateOptions {
 export interface HydrateOptions {
   defaultOptions?: {
     queries?: QueryOptions
-    mutations?: MutationOptions
+    mutations?: MutationOptions<unknown, DefaultError, unknown, unknown>
   }
 }
 
@@ -28,12 +30,14 @@ interface DehydratedMutation {
   mutationKey?: MutationKey
   state: MutationState
   meta?: MutationMeta
+  scope?: MutationScope
 }
 
 interface DehydratedQuery {
   queryHash: string
   queryKey: QueryKey
   state: QueryState
+  promise?: Promise<unknown>
   meta?: QueryMeta
 }
 
@@ -48,6 +52,7 @@ function dehydrateMutation(mutation: Mutation): DehydratedMutation {
   return {
     mutationKey: mutation.options.mutationKey,
     state: mutation.state,
+    ...(mutation.options.scope && { scope: mutation.options.scope }),
     ...(mutation.meta && { meta: mutation.meta }),
   }
 }
@@ -61,6 +66,16 @@ function dehydrateQuery(query: Query): DehydratedQuery {
     state: query.state,
     queryKey: query.queryKey,
     queryHash: query.queryHash,
+    ...(query.state.status === 'pending' && {
+      promise: query.promise?.catch((error) => {
+        if (process.env.NODE_ENV !== 'production') {
+          console.error(
+            `A query that was dehydrated as pending ended up rejecting. [${query.queryHash}]: ${error}; The error will be redacted in production builds`,
+          )
+        }
+        return Promise.reject(new Error('redacted'))
+      }),
+    }),
     ...(query.meta && { meta: query.meta }),
   }
 }
@@ -78,7 +93,9 @@ export function dehydrate(
   options: DehydrateOptions = {},
 ): DehydratedState {
   const filterMutation =
-    options.shouldDehydrateMutation ?? defaultShouldDehydrateMutation
+    options.shouldDehydrateMutation ??
+    client.getDefaultOptions().dehydrate?.shouldDehydrateMutation ??
+    defaultShouldDehydrateMutation
 
   const mutations = client
     .getMutationCache()
@@ -88,7 +105,9 @@ export function dehydrate(
     )
 
   const filterQuery =
-    options.shouldDehydrateQuery ?? defaultShouldDehydrateQuery
+    options.shouldDehydrateQuery ??
+    client.getDefaultOptions().dehydrate?.shouldDehydrateQuery ??
+    defaultShouldDehydrateQuery
 
   const queries = client
     .getQueryCache()
@@ -115,20 +134,20 @@ export function hydrate(
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const queries = (dehydratedState as DehydratedState).queries || []
 
-  mutations.forEach((dehydratedMutation) => {
+  mutations.forEach(({ state, ...mutationOptions }) => {
     mutationCache.build(
       client,
       {
+        ...client.getDefaultOptions().hydrate?.mutations,
         ...options?.defaultOptions?.mutations,
-        mutationKey: dehydratedMutation.mutationKey,
-        meta: dehydratedMutation.meta,
+        ...mutationOptions,
       },
-      dehydratedMutation.state,
+      state,
     )
   })
 
-  queries.forEach(({ queryKey, state, queryHash, meta }) => {
-    const query = queryCache.get(queryHash)
+  queries.forEach(({ queryKey, state, queryHash, meta, promise }) => {
+    let query = queryCache.get(queryHash)
 
     // Do not hydrate if an existing query exists with newer data
     if (query) {
@@ -138,24 +157,30 @@ export function hydrate(
         const { fetchStatus: _ignored, ...dehydratedQueryState } = state
         query.setState(dehydratedQueryState)
       }
-      return
+    } else {
+      // Restore query
+      query = queryCache.build(
+        client,
+        {
+          ...client.getDefaultOptions().hydrate?.queries,
+          ...options?.defaultOptions?.queries,
+          queryKey,
+          queryHash,
+          meta,
+        },
+        // Reset fetch status to idle to avoid
+        // query being stuck in fetching state upon hydration
+        {
+          ...state,
+          fetchStatus: 'idle',
+        },
+      )
     }
 
-    // Restore query
-    queryCache.build(
-      client,
-      {
-        ...options?.defaultOptions?.queries,
-        queryKey,
-        queryHash,
-        meta,
-      },
-      // Reset fetch status to idle to avoid
-      // query being stuck in fetching state upon hydration
-      {
-        ...state,
-        fetchStatus: 'idle',
-      },
-    )
+    if (promise) {
+      // this doesn't actually fetch - it just creates a retryer
+      // which will re-use the passed `initialPromise`
+      void query.fetch(undefined, { initialPromise: promise })
+    }
   })
 }

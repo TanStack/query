@@ -17,12 +17,12 @@ npm install @tanstack/react-query
 npm install @tanstack/react-query-devtools
 ```
 
-```diff
-- import { useQuery } from 'react-query'
-- import { ReactQueryDevtools } from 'react-query/devtools'
+```tsx
+- import { useQuery } from 'react-query' // [!code --]
+- import { ReactQueryDevtools } from 'react-query/devtools' // [!code --]
 
-+ import { useQuery } from '@tanstack/react-query'
-+ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
++ import { useQuery } from '@tanstack/react-query' // [!code ++]
++ import { ReactQueryDevtools } from '@tanstack/react-query-devtools' // [!code ++]
 ```
 
 #### Codemod
@@ -64,9 +64,9 @@ However, we have not followed this concept through to all apis. For example, whe
 
 To streamline all apis, we've decided to make all keys Arrays only:
 
-```diff
-- useQuery('todos', fetchTodos)
-+ useQuery(['todos'], fetchTodos)
+```tsx
+;-useQuery('todos', fetchTodos) + // [!code --]
+  useQuery(['todos'], fetchTodos) // [!code ++]
 ```
 
 #### Codemod
@@ -104,10 +104,10 @@ With the introduction of the new [fetchStatus](../queries#fetchstatus) for bette
 
 This will mostly affect `disabled` queries that don't have any `data` yet, as those were in `idle` state before:
 
-```diff
-- status: 'idle'
-+ status: 'loading'
-+ fetchStatus: 'idle'
+```tsx
+- status: 'idle' // [!code --]
++ status: 'loading'  // [!code ++]
++ fetchStatus: 'idle' // [!code ++]
 ```
 
 Also, have a look at [the guide on dependent queries](../dependent-queries)
@@ -116,9 +116,9 @@ Also, have a look at [the guide on dependent queries](../dependent-queries)
 
 Due to this change, disabled queries (even temporarily disabled ones) will start in `loading` state. To make migration easier, especially for having a good flag to know when to display a loading spinner, you can check for `isInitialLoading` instead of `isLoading`:
 
-```diff
-- isLoading
-+ isInitialLoading
+```tsx
+;-isLoading + // [!code --]
+  isInitialLoading // [!code ++]
 ```
 
 See also the guide on [disabling queries](../disabling-queries#isInitialLoading)
@@ -127,14 +127,22 @@ See also the guide on [disabling queries](../disabling-queries#isInitialLoading)
 
 The `useQueries` hook now accepts an object with a `queries` prop as its input. The value of the `queries` prop is an array of queries (this array is identical to what was passed into `useQueries` in v3).
 
-```diff
-- useQueries([{ queryKey1, queryFn1, options1 }, { queryKey2, queryFn2, options2 }])
-+ useQueries({ queries: [{ queryKey1, queryFn1, options1 }, { queryKey2, queryFn2, options2 }] })
+```tsx
+;-useQueries([
+  { queryKey1, queryFn1, options1 },
+  { queryKey2, queryFn2, options2 },
+]) + // [!code --]
+  useQueries({
+    queries: [
+      { queryKey1, queryFn1, options1 },
+      { queryKey2, queryFn2, options2 },
+    ],
+  }) // [!code ++]
 ```
 
 ### Undefined is an illegal cache value for successful queries
 
-In order to make bailing out of updates possible by returning `undefined`, we had to make `undefined` an illegal cache value. This is in-line with other concepts of react-query, for example, returning `undefined` from the [initialData function](guides/initial-query-data#initial-data-function) will also _not_ set data.
+In order to make bailing out of updates possible by returning `undefined`, we had to make `undefined` an illegal cache value. This is in-line with other concepts of react-query, for example, returning `undefined` from the [initialData function](../initial-query-data#initial-data-function) will also _not_ set data.
 
 Further, it is an easy bug to produce `Promise<void>` by adding logging in the queryFn:
 
@@ -224,17 +232,17 @@ Those flags don't work well when used together, because they are mutually exclus
 
 With v4, those filters have been combined into a single filter to better show the intent:
 
-```diff
-- active?: boolean
-- inactive?: boolean
-+ type?: 'active' | 'inactive' | 'all'
+```tsx
+- active?: boolean // [!code --]
+- inactive?: boolean // [!code --]
++ type?: 'active' | 'inactive' | 'all' // [!code ++]
 ```
 
 The filter defaults to `all`, and you can choose to only match `active` or `inactive` queries.
 
 #### refetchActive / refetchInactive
 
-[queryClient.invalidateQueries](../QueryClient#queryclientinvalidatequeries) had two additional, similar flags:
+[queryClient.invalidateQueries](../../../../reference/QueryClient/#queryclientinvalidatequeries) had two additional, similar flags:
 
 ```
 refetchActive: Boolean
@@ -249,10 +257,10 @@ refetchInactive: Boolean
 
 For the same reason, those have also been combined:
 
-```diff
-- refetchActive?: boolean
-- refetchInactive?: boolean
-+ refetchType?: 'active' | 'inactive' | 'all' | 'none'
+```tsx
+- refetchActive?: boolean // [!code --]
+- refetchInactive?: boolean // [!code --]
++ refetchType?: 'active' | 'inactive' | 'all' | 'none' // [!code ++]
 ```
 
 This flag defaults to `active` because `refetchActive` defaulted to `true`. This means we also need a way to tell `invalidateQueries` to not refetch at all, which is why a fourth option (`none`) is also allowed here.
@@ -272,18 +280,18 @@ React.useEffect(() => mySideEffectHere(data), [data])
 
 ### `persistQueryClient` and the corresponding persister plugins are no longer experimental and have been renamed
 
-The plugins `createWebStoragePersistor` and `createAsyncStoragePersistor` have been renamed to [`createSyncStoragePersister`](../createSyncStoragePersister) and [`createAsyncStoragePersister`](../createAsyncStoragePersister) respectively. The interface `Persistor` in `persistQueryClient` has also been renamed to `Persister`. Checkout [this stackexchange](https://english.stackexchange.com/questions/206893/persister-or-persistor) for the motivation of this change.
+The plugins `createWebStoragePersistor` and `createAsyncStoragePersistor` have been renamed to [`createSyncStoragePersister`](../../plugins/createSyncStoragePersister) and [`createAsyncStoragePersister`](../../plugins/createAsyncStoragePersister) respectively. The interface `Persistor` in `persistQueryClient` has also been renamed to `Persister`. Checkout [this stackexchange](https://english.stackexchange.com/questions/206893/persister-or-persistor) for the motivation of this change.
 
 Since these plugins are no longer experimental, their import paths have also been updated:
 
-```diff
-- import { persistQueryClient } from 'react-query/persistQueryClient-experimental'
-- import { createWebStoragePersistor } from 'react-query/createWebStoragePersistor-experimental'
-- import { createAsyncStoragePersistor } from 'react-query/createAsyncStoragePersistor-experimental'
+```tsx
+- import { persistQueryClient } from 'react-query/persistQueryClient-experimental' // [!code --]
+- import { createWebStoragePersistor } from 'react-query/createWebStoragePersistor-experimental' // [!code --]
+- import { createAsyncStoragePersistor } from 'react-query/createAsyncStoragePersistor-experimental' // [!code --]
 
-+ import { persistQueryClient } from '@tanstack/react-query-persist-client'
-+ import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
-+ import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
++ import { persistQueryClient } from '@tanstack/react-query-persist-client' // [!code ++]
++ import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister' // [!code ++]
++ import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'  // [!code ++]
 ```
 
 ### The `cancel` method on promises is no longer supported
@@ -296,19 +304,19 @@ Types now require using TypeScript v4.1 or greater
 
 ### Supported Browsers
 
-As of v4, React Query is optimized for modern browsers. We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](./installation#requirements).
+As of v4, React Query is optimized for modern browsers. We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](../../installation#requirements).
 
 ### `setLogger` is removed
 
 It was possible to change the logger globally by calling `setLogger`. In v4, that function is replaced with an optional field when creating a `QueryClient`.
 
-```diff
-- import { QueryClient, setLogger } from 'react-query';
-+ import { QueryClient } from '@tanstack/react-query';
+```tsx
+- import { QueryClient, setLogger } from 'react-query'; // [!code --]
++ import { QueryClient } from '@tanstack/react-query'; // [!code ++]
 
-- setLogger(customLogger)
-- const queryClient = new QueryClient();
-+ const queryClient = new QueryClient({ logger: customLogger })
+- setLogger(customLogger) // [!code --]
+- const queryClient = new QueryClient(); // [!code --]
++ const queryClient = new QueryClient({ logger: customLogger }) // [!code ++]
 ```
 
 ### No _default_ manual Garbage Collection server-side
@@ -334,13 +342,13 @@ Subscribing manually to the `QueryCache` has always given you a `QueryCacheNotif
 
 #### QueryCacheNotifyEvent
 
-```diff
-- type: 'queryAdded'
-+ type: 'added'
-- type: 'queryRemoved'
-+ type: 'removed'
-- type: 'queryUpdated'
-+ type: 'updated'
+```tsx
+- type: 'queryAdded' // [!code --]
++ type: 'added' // [!code ++]
+- type: 'queryRemoved' // [!code --]
++ type: 'removed' // [!code ++]
+- type: 'queryUpdated' // [!code --]
++ type: 'updated' // [!code ++]
 ```
 
 #### MutationCacheNotifyEvent
@@ -353,26 +361,26 @@ The `MutationCacheNotifyEvent` uses the same types as the `QueryCacheNotifyEvent
 
 With version [3.22.0](https://github.com/tannerlinsley/react-query/releases/tag/v3.22.0), hydration utilities moved into the React Query core. With v3, you could still use the old exports from `react-query/hydration`, but these exports have been removed with v4.
 
-```diff
-- import { dehydrate, hydrate, useHydrate, Hydrate } from 'react-query/hydration'
-+ import { dehydrate, hydrate, useHydrate, Hydrate } from '@tanstack/react-query'
+```tsx
+- import { dehydrate, hydrate, useHydrate, Hydrate } from 'react-query/hydration' // [!code --]
++ import { dehydrate, hydrate, useHydrate, Hydrate } from '@tanstack/react-query' // [!code ++]
 ```
 
 ### Removed undocumented methods from the `queryClient`, `query` and `mutation`
 
 The methods `cancelMutatations` and `executeMutation` on the `QueryClient` were undocumented and unused internally, so we removed them. Since it was just a wrapper around a method available on the `mutationCache`, you can still use the functionality of `executeMutation`
 
-```diff
-- executeMutation<
--   TData = unknown,
--   TError = unknown,
--   TVariables = void,
--   TContext = unknown
-- >(
--   options: MutationOptions<TData, TError, TVariables, TContext>
-- ): Promise<TData> {
--   return this.mutationCache.build(this, options).execute()
-- }
+```tsx
+- executeMutation< // [!code --]
+-   TData = unknown, // [!code --]
+-   TError = unknown, // [!code --]
+-   TVariables = void, // [!code --]
+-   TContext = unknown // [!code --]
+- >( // [!code --]
+-   options: MutationOptions<TData, TError, TVariables, TContext> // [!code --]
+- ): Promise<TData> { // [!code --]
+-   return this.mutationCache.build(this, options).execute() // [!code --]
+- } // [!code --]
 ```
 
 Additionally, `query.setDefaultOptions` was removed because it was also unused. `mutation.cancel` was removed because it didn't actually cancel the outgoing request.
@@ -389,9 +397,9 @@ With the renamed directory this no longer is an issue.
 
 If you were importing anything from `'react-query/react'` directly in your project (as opposed to just `'react-query'`), then you need to update your imports:
 
-```diff
-- import { QueryClientProvider } from 'react-query/react';
-+ import { QueryClientProvider } from '@tanstack/react-query/reactjs';
+```tsx
+- import { QueryClientProvider } from 'react-query/react'; // [!code --]
++ import { QueryClientProvider } from '@tanstack/react-query/reactjs'; // [!code ++]
 ```
 
 ## New Features 🚀
@@ -419,7 +427,7 @@ React Query defaults to "tracking" query properties, which should give you a nic
 
 ### Bailing out of updates with setQueryData
 
-When using the [functional updater form of setQueryData](../QueryClient#queryclientsetquerydata), you can now bail out of the update by returning `undefined`. This is helpful if `undefined` is given to you as `previousValue`, which means that currently, no cached entry exists and you don't want to / cannot create one, like in the example of toggling a todo:
+When using the [functional updater form of setQueryData](../../../../reference/QueryClient/#queryclientsetquerydata), you can now bail out of the update by returning `undefined`. This is helpful if `undefined` is given to you as `previousValue`, which means that currently, no cached entry exists and you don't want to / cannot create one, like in the example of toggling a todo:
 
 ```tsx
 queryClient.setQueryData(['todo', id], (previousTodo) =>

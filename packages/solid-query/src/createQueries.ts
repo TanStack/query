@@ -23,8 +23,8 @@ import type {
   QueriesPlaceholderDataFunction,
   QueryFunction,
   QueryKey,
+  QueryObserverOptions,
   QueryObserverResult,
-  SkipToken,
   ThrowOnError,
 } from '@tanstack/query-core'
 
@@ -37,13 +37,23 @@ type CreateQueryOptionsForCreateQueries<
   TQueryKey extends QueryKey = QueryKey,
 > = OmitKeyof<
   SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'placeholderData'
+  'placeholderData' | 'suspense'
 > & {
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+  /**
+   * @deprecated The `suspense` option has been deprecated in v5 and will be removed in the next major version.
+   * The `data` property on createQueries is a plain object and not a SolidJS Resource.
+   * It will not suspend when the data is loading.
+   * Setting `suspense` to `true` will be a no-op.
+   */
+  suspense?: boolean
 }
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
+
+// Widen the type of the symbol to enable type inference even if skipToken is not immutable.
+type SkipTokenForUseQueries = symbol
 
 type GetOptions<T> =
   // Part 1: responsible for applying explicit type parameter to function arguments, if object { queryFnData: TQueryFnData, error: TError, data: TData }
@@ -68,30 +78,18 @@ type GetOptions<T> =
                 T extends {
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, infer TQueryKey>
-                      | SkipToken
+                      | SkipTokenForUseQueries
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? CreateQueryOptionsForCreateQueries<
                     TQueryFnData,
-                    TError,
-                    TData,
+                    unknown extends TError ? DefaultError : TError,
+                    unknown extends TData ? TQueryFnData : TData,
                     TQueryKey
                   >
-                : T extends {
-                      queryFn?:
-                        | QueryFunction<infer TQueryFnData, infer TQueryKey>
-                        | SkipToken
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
-                    }
-                  ? CreateQueryOptionsForCreateQueries<
-                      TQueryFnData,
-                      TError,
-                      TQueryFnData,
-                      TQueryKey
-                    >
-                  : // Fallback
-                    CreateQueryOptionsForCreateQueries
+                : // Fallback
+                  CreateQueryOptionsForCreateQueries
 
 type GetResults<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
@@ -110,7 +108,9 @@ type GetResults<T> =
               ? CreateQueryResult<TQueryFnData>
               : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
                 T extends {
-                    queryFn?: QueryFunction<infer TQueryFnData, any>
+                    queryFn?:
+                      | QueryFunction<infer TQueryFnData, any>
+                      | SkipTokenForUseQueries
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
@@ -118,16 +118,8 @@ type GetResults<T> =
                     unknown extends TData ? TQueryFnData : TData,
                     unknown extends TError ? DefaultError : TError
                   >
-                : T extends {
-                      queryFn?: QueryFunction<infer TQueryFnData, any>
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
-                    }
-                  ? CreateQueryResult<
-                      TQueryFnData,
-                      unknown extends TError ? DefaultError : TError
-                    >
-                  : // Fallback
-                    CreateQueryResult
+                : // Fallback
+                  CreateQueryResult
 
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
@@ -221,13 +213,16 @@ export function createQueries<
   const client = createMemo(() => useQueryClient(queryClient?.()))
   const isRestoring = useIsRestoring()
 
-  const defaultedQueries: QueriesOptions<any> = createMemo(() =>
+  const defaultedQueries = createMemo(() =>
     queriesOptions().queries.map((options) =>
-      mergeProps(client().defaultQueryOptions(options), {
-        get _optimisticResults() {
-          return isRestoring() ? 'isRestoring' : 'optimistic'
+      mergeProps(
+        client().defaultQueryOptions(options as QueryObserverOptions),
+        {
+          get _optimisticResults() {
+            return isRestoring() ? 'isRestoring' : 'optimistic'
+          },
         },
-      }),
+      ),
     ),
   )
 

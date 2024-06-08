@@ -11,7 +11,7 @@ Most core web frameworks **do not** come with an opinionated way of fetching or 
 
 While most traditional state management libraries are great for working with client state, they are **not so great at working with async or server state**. This is because **server state is totally different**. For starters, server state:
 
-- Is persisted remotely in a location you do not control or own
+- Is persisted remotely in a location you may not control or own
 - Requires asynchronous APIs for fetching and updating
 - Implies shared ownership and can be changed by other people without your knowledge
 - Can potentially become "out of date" in your applications if you're not careful
@@ -96,6 +96,6 @@ function Example() {
 ## You talked me into it, so what now?
 
 - Consider taking the official [React Query Course](https://query.gg?s=tanstack) (or buying it for your whole team!)
-- Learn React Query at your own pace with our amazingly thorough [Walkthrough Guide](./installation) and [API Reference](../useQuery)
+- Learn React Query at your own pace with our amazingly thorough [Walkthrough Guide](../installation) and [API Reference](../reference/useQuery)
 
 [//]: # 'Materials'

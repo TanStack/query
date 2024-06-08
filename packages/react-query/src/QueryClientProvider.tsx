@@ -29,7 +29,7 @@ export type QueryClientProviderProps = {
 export const QueryClientProvider = ({
   client,
   children,
-}: QueryClientProviderProps): JSX.Element => {
+}: QueryClientProviderProps): React.JSX.Element => {
   React.useEffect(() => {
     client.mount()
     return () => {

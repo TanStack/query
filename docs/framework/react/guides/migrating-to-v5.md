@@ -13,88 +13,71 @@ useQuery and friends used to have many overloads in TypeScript - different ways 
 
 now we only support the object format.
 
-```diff
-- useQuery(key, fn, options)
-+ useQuery({ queryKey, queryFn, ...options })
-
-- useInfiniteQuery(key, fn, options)
-+ useInfiniteQuery({ queryKey, queryFn, ...options })
-
-- useMutation(fn, options)
-+ useMutation({ mutationFn, ...options })
-
-- useIsFetching(key, filters)
-+ useIsFetching({ queryKey, ...filters })
-
-- useIsMutating(key, filters)
-+ useIsMutating({ mutationKey, ...filters })
+```tsx
+;-useQuery(key, fn, options) + // [!code --]
+  useQuery({ queryKey, queryFn, ...options }) - // [!code ++]
+  useInfiniteQuery(key, fn, options) + // [!code --]
+  useInfiniteQuery({ queryKey, queryFn, ...options }) - // [!code ++]
+  useMutation(fn, options) + // [!code --]
+  useMutation({ mutationFn, ...options }) - // [!code ++]
+  useIsFetching(key, filters) + // [!code --]
+  useIsFetching({ queryKey, ...filters }) - // [!code ++]
+  useIsMutating(key, filters) + // [!code --]
+  useIsMutating({ mutationKey, ...filters }) // [!code ++]
 ```
 
-```diff
-- queryClient.isFetching(key, filters)
-+ queryClient.isFetching({ queryKey, ...filters })
-
-- queryClient.ensureQueryData(key, filters)
-+ queryClient.ensureQueryData({ queryKey, ...filters })
-
-- queryClient.getQueriesData(key, filters)
-+ queryClient.getQueriesData({ queryKey, ...filters })
-
-- queryClient.setQueriesData(key, updater, filters, options)
-+ queryClient.setQueriesData({ queryKey, ...filters }, updater, options)
-
-- queryClient.removeQueries(key, filters)
-+ queryClient.removeQueries({ queryKey, ...filters })
-
-- queryClient.resetQueries(key, filters, options)
-+ queryClient.resetQueries({ queryKey, ...filters }, options)
-
-- queryClient.cancelQueries(key, filters, options)
-+ queryClient.cancelQueries({ queryKey, ...filters }, options)
-
-- queryClient.invalidateQueries(key, filters, options)
-+ queryClient.invalidateQueries({ queryKey, ...filters }, options)
-
-- queryClient.refetchQueries(key, filters, options)
-+ queryClient.refetchQueries({ queryKey, ...filters }, options)
-
-- queryClient.fetchQuery(key, fn, options)
-+ queryClient.fetchQuery({ queryKey, queryFn, ...options })
-
-- queryClient.prefetchQuery(key, fn, options)
-+ queryClient.prefetchQuery({ queryKey, queryFn, ...options })
-
-- queryClient.fetchInfiniteQuery(key, fn, options)
-+ queryClient.fetchInfiniteQuery({ queryKey, queryFn, ...options })
-
-- queryClient.prefetchInfiniteQuery(key, fn, options)
-+ queryClient.prefetchInfiniteQuery({ queryKey, queryFn, ...options })
+```tsx
+;-queryClient.isFetching(key, filters) + // [!code --]
+  queryClient.isFetching({ queryKey, ...filters }) - // [!code ++]
+  queryClient.ensureQueryData(key, filters) + // [!code --]
+  queryClient.ensureQueryData({ queryKey, ...filters }) - // [!code ++]
+  queryClient.getQueriesData(key, filters) + // [!code --]
+  queryClient.getQueriesData({ queryKey, ...filters }) - // [!code ++]
+  queryClient.setQueriesData(key, updater, filters, options) + // [!code --]
+  queryClient.setQueriesData({ queryKey, ...filters }, updater, options) - // [!code ++]
+  queryClient.removeQueries(key, filters) + // [!code --]
+  queryClient.removeQueries({ queryKey, ...filters }) - // [!code ++]
+  queryClient.resetQueries(key, filters, options) + // [!code --]
+  queryClient.resetQueries({ queryKey, ...filters }, options) - // [!code ++]
+  queryClient.cancelQueries(key, filters, options) + // [!code --]
+  queryClient.cancelQueries({ queryKey, ...filters }, options) - // [!code ++]
+  queryClient.invalidateQueries(key, filters, options) + // [!code --]
+  queryClient.invalidateQueries({ queryKey, ...filters }, options) - // [!code ++]
+  queryClient.refetchQueries(key, filters, options) + // [!code --]
+  queryClient.refetchQueries({ queryKey, ...filters }, options) - // [!code ++]
+  queryClient.fetchQuery(key, fn, options) + // [!code --]
+  queryClient.fetchQuery({ queryKey, queryFn, ...options }) - // [!code ++]
+  queryClient.prefetchQuery(key, fn, options) + // [!code --]
+  queryClient.prefetchQuery({ queryKey, queryFn, ...options }) - // [!code ++]
+  queryClient.fetchInfiniteQuery(key, fn, options) + // [!code --]
+  queryClient.fetchInfiniteQuery({ queryKey, queryFn, ...options }) - // [!code ++]
+  queryClient.prefetchInfiniteQuery(key, fn, options) + // [!code --]
+  queryClient.prefetchInfiniteQuery({ queryKey, queryFn, ...options }) // [!code ++]
 ```
 
-```diff
-- queryCache.find(key, filters)
-+ queryCache.find({ queryKey, ...filters })
-
-- queryCache.findAll(key, filters)
-+ queryCache.findAll({ queryKey, ...filters })
+```tsx
+;-queryCache.find(key, filters) + // [!code --]
+  queryCache.find({ queryKey, ...filters }) - // [!code ++]
+  queryCache.findAll(key, filters) + // [!code --]
+  queryCache.findAll({ queryKey, ...filters }) // [!code ++]
 ```
 
 ### `queryClient.getQueryData` now accepts queryKey only as an Argument
 
 `queryClient.getQueryData` argument is changed to accept only a `queryKey`
 
-```diff
-- queryClient.getQueryData(queryKey, filters)
-+ queryClient.getQueryData(queryKey)
+```tsx
+;-queryClient.getQueryData(queryKey, filters) + // [!code --]
+  queryClient.getQueryData(queryKey) // [!code ++]
 ```
 
 ### `queryClient.getQueryState` now accepts queryKey only as an Argument
 
 `queryClient.getQueryState` argument is changed to accept only a `queryKey`
 
-```diff
-- queryClient.getQueryState(queryKey, filters)
-+ queryClient.getQueryState(queryKey)
+```tsx
+;-queryClient.getQueryState(queryKey, filters) + // [!code --]
+  queryClient.getQueryState(queryKey) // [!code ++]
 ```
 
 #### Codemod
@@ -108,7 +91,7 @@ If you want to run it against `.js` or `.jsx` files, please use the command belo
 ```
 npx jscodeshift@latest ./path/to/src/ \
   --extensions=js,jsx \
-  --transform=./node_modules/@tanstack/react-query/build/codemods/src/v5/remove-overloads/remove-overloads.js
+  --transform=./node_modules/@tanstack/react-query/build/codemods/src/v5/remove-overloads/remove-overloads.cjs
 ```
 
 If you want to run it against `.ts` or `.tsx` files, please use the command below:
@@ -117,7 +100,7 @@ If you want to run it against `.ts` or `.tsx` files, please use the command belo
 npx jscodeshift@latest ./path/to/src/ \
   --extensions=ts,tsx \
   --parser=tsx \
-  --transform=./node_modules/@tanstack/react-query/build/codemods/src/v5/remove-overloads/remove-overloads.js
+  --transform=./node_modules/@tanstack/react-query/build/codemods/src/v5/remove-overloads/remove-overloads.cjs
 ```
 
 Please note in the case of `TypeScript` you need to use `tsx` as the parser; otherwise, the codemod won't be applied properly!
@@ -140,9 +123,9 @@ A few notes about how codemod works:
 
 This streamlines how callbacks are invoked (the `refetchOnWindowFocus`, `refetchOnMount` and `refetchOnReconnect` callbacks all only get the query passed as well), and it fixes some typing issues when callbacks get data transformed by `select`.
 
-```diff
-- refetchInterval: number | false | ((data: TData | undefined, query: Query) => number | false | undefined)
-+ refetchInterval: number | false | ((query: Query) => number | false | undefined)
+```tsx
+- refetchInterval: number | false | ((data: TData | undefined, query: Query) => number | false | undefined) // [!code --]
++ refetchInterval: number | false | ((query: Query) => number | false | undefined) // [!code ++]
 ```
 
 You can still access data with `query.state.data`, however, it will not be data that has been transformed by `select`. If you need to access the transformed data, you can call the transformation again on `query.state.data`.
@@ -155,12 +138,12 @@ But It doesn't make much sense to do this while a query is still active, because
 
 if you still need to remove a query, you can use `queryClient.removeQueries({queryKey: key})`
 
-```diff
- const queryClient = useQueryClient();
- const query = useQuery({ queryKey, queryFn });
+```tsx
+const queryClient = useQueryClient()
+const query = useQuery({ queryKey, queryFn })
 
-- query.remove()
-+ queryClient.removeQueries({ queryKey })
+;-query.remove() + // [!code --]
+  queryClient.removeQueries({ queryKey }) // [!code ++]
 ```
 
 ### The minimum required TypeScript version is now 4.7
@@ -173,11 +156,11 @@ Previously, This function was used to indicate whether to use previous `data` (`
 
 You can achieve the same functionality by passing a function to `structuralSharing` instead:
 
-```diff
+```tsx
  import { replaceEqualDeep } from '@tanstack/react-query'
 
-- isDataEqual: (oldData, newData) => customCheck(oldData, newData)
-+ structuralSharing: (oldData, newData) => customCheck(oldData, newData) ? oldData : replaceEqualDeep(oldData, newData)
+- isDataEqual: (oldData, newData) => customCheck(oldData, newData) // [!code --]
++ structuralSharing: (oldData, newData) => customCheck(oldData, newData) ? oldData : replaceEqualDeep(oldData, newData) // [!code ++]
 ```
 
 ### The deprecated custom logger has been removed
@@ -186,7 +169,7 @@ Custom loggers were already deprecated in 4 and have been removed in this versio
 
 ### Supported Browsers
 
-We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](./installation#requirements).
+We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](../../installation#requirements).
 
 ### Private class fields and methods
 
@@ -200,14 +183,14 @@ Almost everyone gets `cacheTime` wrong. It sounds like "the amount of time that 
 
 `gc` is referring to "garbage collect" time. It's a bit more technical, but also a quite [well known abbreviation](<https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)>) in computer science.
 
-```diff
+```tsx
 const MINUTE = 1000 * 60;
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
--      cacheTime: 10 * MINUTE,
-+      gcTime: 10 * MINUTE,
+-      cacheTime: 10 * MINUTE, // [!code --]
++      gcTime: 10 * MINUTE, // [!code ++]
     },
   },
 })
@@ -235,7 +218,7 @@ useQuery<number, string>({
 })
 ```
 
-For a way to set a different kind of Error globally, see [the TypeScript Guide](./typescript#registering-a-global-error).
+For a way to set a different kind of Error globally, see [the TypeScript Guide](../../typescript#registering-a-global-error).
 
 ### eslint `prefer-query-object-syntax` rule is removed
 
@@ -249,21 +232,21 @@ To achieve the same functionality as `keepPreviousData`, we have added previous 
 
 > A note here is that `useQueries` would not receive `previousData` in the `placeholderData` function as argument. This is due to a dynamic nature of queries passed in the array, which may lead to a different shape of result from placeholder and queryFn.
 
-```diff
+```tsx
 import {
    useQuery,
-+  keepPreviousData
++  keepPreviousData // [!code ++]
 } from "@tanstack/react-query";
 
 const {
    data,
--  isPreviousData,
-+  isPlaceholderData,
+-  isPreviousData, // [!code --]
++  isPlaceholderData, // [!code ++]
 } = useQuery({
   queryKey,
   queryFn,
-- keepPreviousData: true,
-+ placeholderData: keepPreviousData
+- keepPreviousData: true, // [!code --]
++ placeholderData: keepPreviousData // [!code ++]
 });
 ```
 
@@ -316,16 +299,16 @@ In v4, we introduced the possibility to pass a custom `context` to all react-que
 However, `context` is a react-only feature. All that `context` does is give us access to the `queryClient`. We could achieve the same isolation by allowing to pass in a custom `queryClient` directly.
 This in turn will enable other frameworks to have the same functionality in a framework-agnostic way.
 
-```diff
+```tsx
 import { queryClient } from './my-client'
 
 const { data } = useQuery(
   {
     queryKey: ['users', id],
     queryFn: () => fetch(...),
--   context: customContext
+-   context: customContext // [!code --]
   },
-+  queryClient,
++  queryClient, // [!code ++]
 )
 ```
 
@@ -341,9 +324,9 @@ The v5 includes a new `maxPages` option for infinite queries to limit the number
 
 The options you can pass to `dehydrate` have been simplified. Queries and Mutations are always dehydrated (according to the default function implementation). To change this behaviour, instead of using the removed boolean options `dehydrateMutations` and `dehydrateQueries` you can implement the function equivalents `shouldDehydrateQuery` or `shouldDehydrateMutation` instead. To get the old behaviour of not hydrating queries/mutations at all, pass in `() => false`.
 
-```diff
-- dehydrateMutations?: boolean
-- dehydrateQueries?: boolean
+```tsx
+- dehydrateMutations?: boolean // [!code --]
+- dehydrateQueries?: boolean // [!code --]
 ```
 
 ### Infinite queries now need a `initialPageParam`
@@ -352,12 +335,12 @@ Previously, we've passed `undefined` to the `queryFn` as `pageParam`, and you co
 
 Instead, you now have to pass an explicit `initialPageParam` to the infinite query options. This will be used as the `pageParam` for the first page:
 
-```diff
+```tsx
 useInfiniteQuery({
    queryKey,
--  queryFn: ({ pageParam = 0 }) => fetchSomething(pageParam),
-+  queryFn: ({ pageParam }) => fetchSomething(pageParam),
-+  initialPageParam: 0,
+-  queryFn: ({ pageParam = 0 }) => fetchSomething(pageParam), // [!code --]
++  queryFn: ({ pageParam }) => fetchSomething(pageParam), // [!code ++]
++  initialPageParam: 0, // [!code ++]
    getNextPageParam: (lastPage) => lastPage.next,
 })
 ```
@@ -425,16 +408,16 @@ Finally, as a technical detail, the timing for when queries are hydrated have ch
 
 This last change is technically a breaking one, and was made so we don't prematurely update content on the _existing_ page before a page transition has been fully committed. No action is required on your part.
 
-```diff
-- import { Hydrate } from '@tanstack/react-query'
-+ import { HydrationBoundary } from '@tanstack/react-query'
+```tsx
+- import { Hydrate } from '@tanstack/react-query' // [!code --]
++ import { HydrationBoundary } from '@tanstack/react-query' // [!code ++]
 
 
-- <Hydrate state={dehydratedState}>
-+ <HydrationBoundary state={dehydratedState}>
+- <Hydrate state={dehydratedState}> // [!code --]
++ <HydrationBoundary state={dehydratedState}> // [!code ++]
   <App />
-- </Hydrate>
-+ </HydrationBoundary>
+- </Hydrate> // [!code --]
++ </HydrationBoundary> // [!code ++]
 ```
 
 [//]: # 'FrameworkSpecificBreakingChanges'
@@ -488,17 +471,17 @@ Infinite Queries can be prefetched like regular Queries. Per default, only the f
 
 ### New `combine` option for `useQueries`
 
-See the [useQueries docs](../useQueries#combine) for more details.
+See the [useQueries docs](../../reference/useQueries#combine) for more details.
 
 ### Experimental `fine grained storage persister`
 
-See the [experimental_createPersister docs](../createPersister) for more details.
+See the [experimental_createPersister docs](../../../react/plugins/createPersister) for more details.
 
 [//]: # 'FrameworkSpecificNewFeatures'
 
 ### Typesafe way to create Query Options
 
-See the [TypeScript docs](./typescript#typing-query-options) for more details.
+See the [TypeScript docs](../../typescript#typing-query-options) for more details.
 
 ### new hooks for suspense
 
