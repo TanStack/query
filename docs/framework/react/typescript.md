@@ -87,7 +87,6 @@ if (isSuccess) {
 The type for error defaults to `Error`, because that is what most users expect.
 
 [//]: # 'TypingError'
-[//]: # 'TypingError'
 
 ```tsx
 const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
@@ -153,8 +152,6 @@ const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 
 ## Typing meta
 
-[//]: # 'RegisterMetaType'
-
 ### Registering global Meta
 
 Similarly to registering a [global error type](#registering-a-global-error) you can also register a global `Meta` type. This ensures the optional `meta` field on [queries](../reference/useQuery) and [mutations](../reference/useMutation) stays consistent and is type-safe. Note that the registered type must extend `Record<string, unknown>` so that `meta` remains an object.
@@ -174,7 +171,6 @@ declare module '@tanstack/react-query' {
 }
 ```
 
-[//]: # 'RegisterMetaType'
 [//]: # 'TypingMeta'
 [//]: # 'TypingQueryOptions'
 

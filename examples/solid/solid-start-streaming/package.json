@@ -8,12 +8,12 @@
     "version": "vinxi version"
   },
   "dependencies": {
-    "@solidjs/meta": "^0.29.2",
-    "@solidjs/router": "^0.13.2",
-    "@solidjs/start": "^1.0.0-rc.0",
-    "@tanstack/solid-query": "^5.35.1",
-    "@tanstack/solid-query-devtools": "^5.35.1",
-    "solid-js": "^1.8.14",
+    "@solidjs/meta": "^0.29.4",
+    "@solidjs/router": "^0.13.3",
+    "@solidjs/start": "^1.0.0-rc.1",
+    "@tanstack/solid-query": "^5.40.2",
+    "@tanstack/solid-query-devtools": "^5.40.2",
+    "solid-js": "^1.8.17",
     "vinxi": "^0.3.10"
   },
   "engines": {

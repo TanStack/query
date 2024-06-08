@@ -22,9 +22,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
+        uses: pnpm/action-setup@v4
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -45,5 +43,5 @@ jobs:
         run: npx nx-cloud stop-all-agents
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
-        with:
-          directory: packages
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
