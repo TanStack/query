@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 
+import type { DehydrateOptions, HydrateOptions } from './hydration'
 import type { MutationState } from './mutation'
 import type { FetchDirection, Query, QueryBehavior } from './query'
 import type { RetryDelayValue, RetryValue } from './retryer'
@@ -525,7 +526,6 @@ export interface QueryObserverBaseResult<
 > {
   /**
    * The last successfully resolved data for the query.
-   * - Defaults to `undefined`.
    */
   data: TData | undefined
   /**
@@ -976,12 +976,10 @@ export interface MutationObserverBaseResult<
 > extends MutationState<TData, TError, TVariables, TContext> {
   /**
    * The last successfully resolved data for the mutation.
-   * - Defaults to `undefined`.
    */
   data: TData | undefined
   /**
    * The variables object passed to the `mutationFn`.
-   * - Defaults to `undefined`.
    */
   variables: TVariables | undefined
   /**
@@ -1122,6 +1120,8 @@ export interface DefaultOptions<TError = DefaultError> {
     'suspense' | 'queryKey'
   >
   mutations?: MutationObserverOptions<unknown, TError, unknown, unknown>
+  hydrate?: HydrateOptions['defaultOptions']
+  dehydrate?: DehydrateOptions
 }
 
 export interface CancelOptions {
