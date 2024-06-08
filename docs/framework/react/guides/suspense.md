@@ -118,7 +118,11 @@ To achieve this, wrap your app in the `ReactQueryStreamedHydration` component:
 // app/providers.tsx
 'use client'
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import {
+  QueryClient,
+  QueryClientProvider,
+  isServer,
+} from '@tanstack/react-query'
 import * as React from 'react'
 import { ReactQueryStreamedHydration } from '@tanstack/react-query-next-experimental'
 
@@ -137,7 +141,7 @@ function makeQueryClient() {
 let browserQueryClient: QueryClient | undefined = undefined
 
 function getQueryClient() {
-  if (typeof window === 'undefined') {
+  if (isServer) {
     // Server: always make a new query client
     return makeQueryClient()
   } else {
