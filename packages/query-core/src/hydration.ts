@@ -21,6 +21,7 @@ export interface DehydrateOptions {
 
 export interface HydrateOptions {
   defaultOptions?: {
+    deserialize?: (data: any) => any
     queries?: QueryOptions
     mutations?: MutationOptions<unknown, DefaultError, unknown, unknown>
   }
@@ -86,6 +87,10 @@ export function defaultShouldDehydrateMutation(mutation: Mutation) {
 
 export function defaultShouldDehydrateQuery(query: Query) {
   return query.state.status === 'success'
+}
+
+export function defaultDeserialize(data: unknown) {
+  return data
 }
 
 export function dehydrate(
@@ -178,9 +183,20 @@ export function hydrate(
     }
 
     if (promise) {
+      const deserialize =
+        client.getDefaultOptions().hydrate?.deserialize ?? defaultDeserialize
+
+      const initialPromise = (async () => {
+        const result = await promise
+        console.log('hydrated', result)
+        const deserialized = deserialize(result)
+        console.log('dehydrated', deserialized)
+        return deserialized
+      })()
+
       // this doesn't actually fetch - it just creates a retryer
       // which will re-use the passed `initialPromise`
-      void query.fetch(undefined, { initialPromise: promise })
+      void query.fetch(undefined, { initialPromise })
     }
   })
 }
