@@ -15,7 +15,6 @@ import type {
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
-  SkipToken,
   ThrowOnError,
 } from '@tanstack/query-core'
 
@@ -35,6 +34,9 @@ type QueryObserverOptionsForCreateQueries<
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
+
+// Widen the type of the symbol to enable type inference even if skipToken is not immutable.
+type SkipTokenForUseQueries = symbol
 
 type GetOptions<T> =
   // Part 1: responsible for applying explicit type parameter to function arguments, if object { queryFnData: TQueryFnData, error: TError, data: TData }
@@ -59,30 +61,18 @@ type GetOptions<T> =
                 T extends {
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, infer TQueryKey>
-                      | SkipToken
+                      | SkipTokenForUseQueries
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? QueryObserverOptionsForCreateQueries<
                     TQueryFnData,
-                    TError,
-                    TData,
+                    unknown extends TError ? DefaultError : TError,
+                    unknown extends TData ? TQueryFnData : TData,
                     TQueryKey
                   >
-                : T extends {
-                      queryFn?:
-                        | QueryFunction<infer TQueryFnData, infer TQueryKey>
-                        | SkipToken
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
-                    }
-                  ? QueryObserverOptionsForCreateQueries<
-                      TQueryFnData,
-                      TError,
-                      TQueryFnData,
-                      TQueryKey
-                    >
-                  : // Fallback
-                    QueryObserverOptionsForCreateQueries
+                : // Fallback
+                  QueryObserverOptionsForCreateQueries
 
 type GetResults<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
@@ -101,7 +91,9 @@ type GetResults<T> =
               ? QueryObserverResult<TQueryFnData>
               : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
                 T extends {
-                    queryFn?: QueryFunction<infer TQueryFnData, any> | SkipToken
+                    queryFn?:
+                      | QueryFunction<infer TQueryFnData, any>
+                      | SkipTokenForUseQueries
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
@@ -109,18 +101,8 @@ type GetResults<T> =
                     unknown extends TData ? TQueryFnData : TData,
                     unknown extends TError ? DefaultError : TError
                   >
-                : T extends {
-                      queryFn?:
-                        | QueryFunction<infer TQueryFnData, any>
-                        | SkipToken
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
-                    }
-                  ? QueryObserverResult<
-                      TQueryFnData,
-                      unknown extends TError ? DefaultError : TError
-                    >
-                  : // Fallback
-                    QueryObserverResult
+                : // Fallback
+                  QueryObserverResult
 
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
@@ -141,7 +123,7 @@ export type QueriesOptions<
             [...TResult, GetOptions<Head>],
             [...TDepth, 1]
           >
-        : Readonly<unknown> extends T
+        : ReadonlyArray<unknown> extends T
           ? T
           : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
             // use this to infer the param types in the case of Array.map() argument
@@ -224,13 +206,7 @@ export function createQueries<
     ([$queries, $isRestoring]) => {
       return $queries.map((opts) => {
         const defaultedOptions = client.defaultQueryOptions(
-          opts as QueryObserverOptions<
-            unknown,
-            Error,
-            unknown,
-            unknown,
-            QueryKey
-          >,
+          opts as QueryObserverOptions,
         )
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = $isRestoring

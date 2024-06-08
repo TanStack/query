@@ -318,7 +318,7 @@ export class QueryObserver<
   }
 
   #executeFetch(
-    fetchOptions?: ObserverFetchOptions,
+    fetchOptions?: Omit<ObserverFetchOptions, 'initialPromise'>,
   ): Promise<TQueryData | undefined> {
     // Make sure we reference the latest query as the current one might have been removed
     this.#updateQuery()

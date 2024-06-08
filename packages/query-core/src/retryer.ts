@@ -7,6 +7,7 @@ import type { CancelOptions, DefaultError, NetworkMode } from './types'
 
 interface RetryerConfig<TData = unknown, TError = DefaultError> {
   fn: () => TData | Promise<TData>
+  initialPromise?: Promise<TData>
   abort?: () => void
   onError?: (error: TError) => void
   onSuccess?: (data: TData) => void
@@ -146,9 +147,13 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
 
     let promiseOrValue: any
 
+    // we can re-use config.initialPromise on the first call of run()
+    const initialPromise =
+      failureCount === 0 ? config.initialPromise : undefined
+
     // Execute query
     try {
-      promiseOrValue = config.fn()
+      promiseOrValue = initialPromise ?? config.fn()
     } catch (error) {
       promiseOrValue = Promise.reject(error)
     }

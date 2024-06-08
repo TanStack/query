@@ -4,6 +4,7 @@ import {
   defaultShouldDehydrateQuery,
   dehydrate,
   hydrate,
+  isServer,
   useQueryClient,
 } from '@tanstack/react-query'
 import * as React from 'react'
@@ -40,7 +41,7 @@ export function ReactQueryStreamedHydration(props: {
   const [trackedKeys] = React.useState(() => new Set<string>())
 
   // <server only>
-  if (typeof window === 'undefined') {
+  if (isServer) {
     // Do we need to care about unsubscribing? I don't think so to be honest
     queryClient.getQueryCache().subscribe((event) => {
       switch (event.type) {

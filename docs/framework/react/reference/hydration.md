@@ -45,7 +45,7 @@ const dehydratedState = dehydrate(queryClient, {
   - You **should not** rely on the exact format of this response, it is not part of the public API and can change at any time
   - This result is not in serialized form, you need to do that yourself if desired
 
-### limitations
+### Limitations
 
 Some storage systems (such as browser [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API)) require values to be JSON serializable. If you need to dehydrate values that are not automatically serializable to JSON (like `Error` or `undefined`), you have to serialize them for yourself. Since only successful queries are included per default, to also include `Errors`, you have to provide `shouldDehydrateQuery`, e.g.:
 
@@ -88,7 +88,7 @@ hydrate(queryClient, dehydratedState, options)
 
 ### Limitations
 
-If the queries included in dehydration already exist in the queryCache, `hydrate` does not overwrite them and they will be **silently** discarded.
+If the queries you're trying to hydrate already exist in the queryCache, `hydrate` will only overwrite them if the data is newer than the data present in the cache. Otherwise, it will **not** get applied.
 
 [//]: # 'HydrationBoundary'
 
@@ -103,6 +103,8 @@ function App() {
   return <HydrationBoundary state={dehydratedState}>...</HydrationBoundary>
 }
 ```
+
+> Note: Only `queries` can be dehydrated with an `HydrationBoundary`.
 
 **Options**
 

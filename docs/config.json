@@ -849,8 +849,12 @@
               "to": "framework/react/examples/rick-morty"
             },
             {
-              "label": "Next.js",
+              "label": "Next.js Pages",
               "to": "framework/react/examples/nextjs"
+            },
+            {
+              "label": "Next.js app with prefetching",
+              "to": "framework/react/examples/nextjs-app-prefetching"
             },
             {
               "label": "Next.js app with streaming",
