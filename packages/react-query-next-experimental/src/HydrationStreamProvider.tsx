@@ -98,7 +98,7 @@ export function createHydrationStreamProvider<TShape>() {
 
     // <server stuff>
     const [stream] = React.useState<Array<TShape>>(() => {
-      if (typeof window !== 'undefined') {
+      if (!isServer) {
         return {
           push() {
             // no-op on the client
