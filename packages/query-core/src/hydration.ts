@@ -188,9 +188,7 @@ export function hydrate(
 
       const initialPromise = (async () => {
         const result = await promise
-        console.log('hydrated', result)
         const deserialized = deserialize(result)
-        console.log('dehydrated', deserialized)
         return deserialized
       })()
 
