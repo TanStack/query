@@ -31,9 +31,9 @@ The first step of any React Query setup is always to create a `queryClient` and 
 
 // Since QueryClientProvider relies on useContext under the hood, we have to put 'use client' on top
 import {
+  isServer,
   QueryClient,
   QueryClientProvider,
-  isServer,
 } from '@tanstack/react-query'
 
 function makeQueryClient() {
@@ -446,9 +446,9 @@ To achieve this, wrap your app in the `ReactQueryStreamedHydration` component:
 'use client'
 
 import {
+  isServer,
   QueryClient,
   QueryClientProvider,
-  isServer,
 } from '@tanstack/react-query'
 import * as React from 'react'
 import { ReactQueryStreamedHydration } from '@tanstack/react-query-next-experimental'

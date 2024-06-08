@@ -119,9 +119,9 @@ To achieve this, wrap your app in the `ReactQueryStreamedHydration` component:
 'use client'
 
 import {
+  isServer,
   QueryClient,
   QueryClientProvider,
-  isServer,
 } from '@tanstack/react-query'
 import * as React from 'react'
 import { ReactQueryStreamedHydration } from '@tanstack/react-query-next-experimental'
