@@ -47,6 +47,13 @@ export type QueryFunction<
   TPageParam = never,
 > = (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>
 
+export type StaleTime<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = number | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => number)
+
 export type QueryPersister<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
@@ -255,9 +262,7 @@ export interface QueryObserverOptions<
    * The time in milliseconds after data is considered stale.
    * If set to `Infinity`, the data will never be considered stale.
    */
-  staleTime?:
-    | number
-    | ((query: Query<TQueryFnData, TError, TQueryData, TQueryKey>) => number)
+  staleTime?: StaleTime<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * If set to a number, the query will continuously refetch at this frequency in milliseconds.
    * If set to a function, the function will be executed with the latest data and query to compute a frequency
@@ -429,9 +434,7 @@ export interface FetchQueryOptions<
    * The time in milliseconds after data is considered stale.
    * If the data is fresh it will be returned from the cache.
    */
-  staleTime?:
-    | number
-    | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => number)
+  staleTime?: StaleTime<TQueryFnData, TError, TData, TQueryKey>
 }
 
 export interface EnsureQueryDataOptions<
