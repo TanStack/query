@@ -381,7 +381,7 @@ React Query v5 requires React 18.0 or later. This is because we are using the ne
 
 You could previously use the `contextSharing` property to share the first (and at least one) instance of the query client context across the window. This ensured that if TanStack Query was used across different bundles or microfrontends then they will all use the same instance of the context, regardless of module scoping.
 
-With the removal of the custom context prop in v5, refer to the section on [Removed custom context prop in favor of custom queryClient instance](#removed-custom-context-prop-in-favor-of-custom-queryclient-instance). If you wish to share the same `queryClient` across multiple packages of an application, you can directly pass a shared custom `queryClient` instance.
+With the removal of the custom context prop in v5, refer to the section on [Removed custom context prop in favor of custom queryClient instance](#removed-custom-context-prop-in-favor-of-custom-queryclient-instance). If you wish to share the same query client across multiple packages of an application, you can directly pass a shared custom `queryClient` instance.
 
 ### No longer using `unstable_batchedUpdates` as the batching function in React and React Native
 
