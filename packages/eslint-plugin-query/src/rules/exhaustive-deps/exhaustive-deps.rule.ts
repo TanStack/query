@@ -5,13 +5,14 @@ import { uniqueBy } from '../../utils/unique-by'
 import { detectTanstackQueryImports } from '../../utils/detect-react-query-imports'
 import { ExhaustiveDepsUtils } from './exhaustive-deps.utils'
 import type { TSESLint } from '@typescript-eslint/utils'
+import type { ExtraRuleDocs } from '../../types'
 
 const QUERY_KEY = 'queryKey'
 const QUERY_FN = 'queryFn'
 
 export const name = 'exhaustive-deps'
 
-const createRule = ESLintUtils.RuleCreator(getDocsUrl)
+const createRule = ESLintUtils.RuleCreator<ExtraRuleDocs>(getDocsUrl)
 
 export const rule = createRule({
   name,
@@ -19,7 +20,7 @@ export const rule = createRule({
     type: 'problem',
     docs: {
       description: 'Exhaustive deps rule for useQuery',
-      recommended: 'error' as any,
+      recommended: 'error',
     },
     messages: {
       missingDeps: `The following dependencies are missing in your queryKey: {{deps}}`,
@@ -92,9 +93,10 @@ export const rule = createRule({
 
         const relevantRefs = externalRefs.filter((reference) =>
           ExhaustiveDepsUtils.isRelevantReference({
-            context,
+            sourceCode: context.sourceCode,
             reference,
             scopeManager,
+            node: queryFn.value,
           }),
         )
 
