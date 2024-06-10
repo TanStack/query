@@ -910,9 +910,7 @@ describe('dehydration and rehydration', () => {
   })
 
   test('should transform promise result', async () => {
-    const queryCache = new QueryCache()
     const queryClient = createQueryClient({
-      queryCache,
       defaultOptions: {
         dehydrate: {
           shouldDehydrateQuery: () => true,
