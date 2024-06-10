@@ -188,7 +188,6 @@ export function hydrate(
         defaultTransformPromise
 
       const initialPromise = (async () => {
-        // const result = await promise
         const deserialized = await transformPromise(promise)
         return deserialized
       })()

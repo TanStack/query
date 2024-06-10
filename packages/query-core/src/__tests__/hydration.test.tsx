@@ -921,7 +921,7 @@ describe('dehydration and rehydration', () => {
     })
 
     const promise = queryClient.prefetchQuery({
-      queryKey: ['transformed'],
+      queryKey: ['transformedStringToDate'],
       queryFn: () => fetchData('2024-01-01T00:00:00.000Z', 20),
     })
     const dehydrated = dehydrate(queryClient)
@@ -930,7 +930,10 @@ describe('dehydration and rehydration', () => {
     const hydrationClient = createQueryClient({
       defaultOptions: {
         hydrate: {
-          transformPromise: (p) => p.then((data) => new Date(data)), // revive the Date
+          transformPromise: async (p) => {
+            const str = await p
+            return new Date(str)
+          },
         },
       },
     })
@@ -938,9 +941,9 @@ describe('dehydration and rehydration', () => {
     hydrate(hydrationClient, dehydrated)
     await promise
     await waitFor(() =>
-      expect(hydrationClient.getQueryData(['transformed'])).toBeInstanceOf(
-        Date,
-      ),
+      expect(
+        hydrationClient.getQueryData(['transformedStringToDate']),
+      ).toBeInstanceOf(Date),
     )
 
     queryClient.clear()
