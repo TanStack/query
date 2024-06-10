@@ -1,8 +1,10 @@
 'use client'
 
-import React from 'react'
+import React, { use } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Temporal } from '@js-temporal/polyfill'
+import { TsonSerialized } from 'tupleson'
+import { tson } from './make-query-client'
 
 export function ClientComponent() {
   const query = useQuery({
@@ -15,6 +17,8 @@ export function ClientComponent() {
       }
     },
   })
+
+  console.log('client component render', query.data)
 
   if (query.isPending) {
     return <div>Loading...</div>
@@ -29,4 +33,19 @@ export function ClientComponent() {
       {query.data.text} - {query.data.date.toJSON()}
     </div>
   )
+}
+
+export function ClientComponent2({
+  promise,
+}: {
+  promise: Promise<TsonSerialized<Date>>
+}) {
+  const promiseWithTransform = promise.then(tson.deserialize)
+  console.log('client component 2 promise', promise)
+  console.log('client component 2 promiseWithTransform', promiseWithTransform)
+  const date = use(promiseWithTransform)
+
+  console.log('client component 2 render', date)
+
+  return <div>{date.toJSON()}</div>
 }

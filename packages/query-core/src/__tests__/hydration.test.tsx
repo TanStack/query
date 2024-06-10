@@ -930,7 +930,7 @@ describe('dehydration and rehydration', () => {
     const hydrationClient = createQueryClient({
       defaultOptions: {
         hydrate: {
-          deserialize: (data) => new Date(data), // revive the Date
+          transformPromise: (p) => p.then((data) => new Date(data)), // revive the Date
         },
       },
     })
