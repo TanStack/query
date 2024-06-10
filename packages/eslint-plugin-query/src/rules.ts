@@ -2,14 +2,14 @@ import * as exhaustiveDeps from './rules/exhaustive-deps/exhaustive-deps.rule'
 import * as stableQueryClient from './rules/stable-query-client/stable-query-client.rule'
 import * as noRestDestructuring from './rules/no-rest-destructuring/no-rest-destructuring.rule'
 import type { ESLintUtils } from '@typescript-eslint/utils'
-import type { RuleDocs } from './types'
+import type { ExtraRuleDocs } from './types'
 
 export const rules: Record<
   string,
   ESLintUtils.RuleModule<
     string,
     ReadonlyArray<unknown>,
-    RuleDocs,
+    ExtraRuleDocs,
     ESLintUtils.RuleListener
   >
 > = {

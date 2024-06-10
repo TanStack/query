@@ -1,3 +1,3 @@
-export type RuleDocs = {
+export type ExtraRuleDocs = {
   recommended: 'strict' | 'error' | 'warn'
 }

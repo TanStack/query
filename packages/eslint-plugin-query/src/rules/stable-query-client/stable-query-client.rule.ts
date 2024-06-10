@@ -3,11 +3,11 @@ import { ASTUtils } from '../../utils/ast-utils'
 import { getDocsUrl } from '../../utils/get-docs-url'
 import { detectTanstackQueryImports } from '../../utils/detect-react-query-imports'
 import type { TSESLint } from '@typescript-eslint/utils'
-import type { RuleDocs } from '../../types'
+import type { ExtraRuleDocs } from '../../types'
 
 export const name = 'stable-query-client'
 
-const createRule = ESLintUtils.RuleCreator<RuleDocs>(getDocsUrl)
+const createRule = ESLintUtils.RuleCreator<ExtraRuleDocs>(getDocsUrl)
 
 export const rule = createRule({
   name,

@@ -5,14 +5,14 @@ import { uniqueBy } from '../../utils/unique-by'
 import { detectTanstackQueryImports } from '../../utils/detect-react-query-imports'
 import { ExhaustiveDepsUtils } from './exhaustive-deps.utils'
 import type { TSESLint } from '@typescript-eslint/utils'
-import type { RuleDocs } from '../../types'
+import type { ExtraRuleDocs } from '../../types'
 
 const QUERY_KEY = 'queryKey'
 const QUERY_FN = 'queryFn'
 
 export const name = 'exhaustive-deps'
 
-const createRule = ESLintUtils.RuleCreator<RuleDocs>(getDocsUrl)
+const createRule = ESLintUtils.RuleCreator<ExtraRuleDocs>(getDocsUrl)
 
 export const rule = createRule({
   name,

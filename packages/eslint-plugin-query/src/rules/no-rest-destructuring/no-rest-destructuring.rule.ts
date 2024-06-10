@@ -3,13 +3,13 @@ import { getDocsUrl } from '../../utils/get-docs-url'
 import { ASTUtils } from '../../utils/ast-utils'
 import { detectTanstackQueryImports } from '../../utils/detect-react-query-imports'
 import { NoRestDestructuringUtils } from './no-rest-destructuring.utils'
-import type { RuleDocs } from '../../types'
+import type { ExtraRuleDocs } from '../../types'
 
 export const name = 'no-rest-destructuring'
 
 const queryHooks = ['useQuery', 'useQueries', 'useInfiniteQuery']
 
-const createRule = ESLintUtils.RuleCreator<RuleDocs>(getDocsUrl)
+const createRule = ESLintUtils.RuleCreator<ExtraRuleDocs>(getDocsUrl)
 
 export const rule = createRule({
   name,
