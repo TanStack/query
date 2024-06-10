@@ -93,9 +93,10 @@ export const rule = createRule({
 
         const relevantRefs = externalRefs.filter((reference) =>
           ExhaustiveDepsUtils.isRelevantReference({
-            context,
+            sourceCode: context.sourceCode,
             reference,
             scopeManager,
+            node: queryFn.value,
           }),
         )
 
