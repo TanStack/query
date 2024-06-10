@@ -186,11 +186,13 @@ export function hydrate(
       const deserialize =
         client.getDefaultOptions().hydrate?.deserialize ?? defaultDeserialize
 
-      const initialPromise = (async () => {
-        const result = await promise
-        const deserialized = deserialize(result)
-        return deserialized
-      })()
+      // const initialPromise = (async () => {
+      //   const result = await promise
+      //   const deserialized = deserialize(result)
+      //   return deserialized
+      // })()
+
+      const initialPromise = promise.then((result) => deserialize(result))
 
       // this doesn't actually fetch - it just creates a retryer
       // which will re-use the passed `initialPromise`
