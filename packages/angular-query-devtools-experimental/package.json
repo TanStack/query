@@ -29,16 +29,16 @@
   },
   "dependencies": {
     "@tanstack/query-devtools": "workspace:*",
-    "tslib": "^2.6.2"
+    "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@angular/compiler-cli": "^17.3.10",
-    "@angular/core": "^17.3.10",
-    "@angular/common": "^17.3.10",
+    "@angular/compiler-cli": "^18.0.2",
+    "@angular/core": "^18.0.2",
+    "@angular/common": "^18.0.2",
     "@tanstack/angular-query-experimental": "workspace:*",
-    "eslint-plugin-jsdoc": "^48.2.7",
-    "ng-packagr": "^17.3.0",
-    "typescript": "5.3.3",
+    "eslint-plugin-jsdoc": "^48.2.9",
+    "ng-packagr": "^18.0.0",
+    "typescript": "5.4.5",
     "zone.js": "^0.14.6"
   },
   "peerDependencies": {

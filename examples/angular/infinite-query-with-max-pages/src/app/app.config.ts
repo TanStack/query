@@ -7,11 +7,13 @@ import {
   QueryClient,
   provideAngularQuery,
 } from '@tanstack/angular-query-experimental'
+import { provideExperimentalZonelessChangeDetection } from '@angular/core'
 import { projectsMockInterceptor } from './api/projects-mock.interceptor'
 import type { ApplicationConfig } from '@angular/core'
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideExperimentalZonelessChangeDetection(),
     provideHttpClient(withInterceptors([projectsMockInterceptor]), withFetch()),
     provideAngularQuery(
       new QueryClient({
