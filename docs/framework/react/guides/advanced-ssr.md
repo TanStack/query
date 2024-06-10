@@ -393,7 +393,6 @@ Then, all we need to do is provide a `HydrationBoundary`, but we don't need to `
 import {
   dehydrate,
   HydrationBoundary,
-  QueryClient,
 } from '@tanstack/react-query'
 import { getQueryClient } from './get-query-client'
 import Posts from './posts'
