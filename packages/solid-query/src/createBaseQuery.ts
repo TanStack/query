@@ -208,7 +208,7 @@ export function createBaseQuery<
         }
         // Hydration data exists on first load after SSR,
         // and should be removed from the observer result
-        if (v.hydrationData) {
+        if (v?.hydrationData) {
           const { hydrationData, ...rest } = v
           v = rest
         }

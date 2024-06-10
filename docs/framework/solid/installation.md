@@ -10,13 +10,13 @@ or a good ol' `<script>` via
 ### NPM
 
 ```bash
-$ npm i @tanstack/solid-query
+npm i @tanstack/solid-query
 # or
-$ pnpm add @tanstack/solid-query
+pnpm add @tanstack/solid-query
 # or
-$ yarn add @tanstack/solid-query
+yarn add @tanstack/solid-query
 # or
-$ bun add @tanstack/solid-query
+bun add @tanstack/solid-query
 ```
 
 > Wanna give it a spin before you download? Try out the [simple](../examples/simple) or [basic](../examples/basic) examples!
