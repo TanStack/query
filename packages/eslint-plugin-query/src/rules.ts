@@ -17,5 +17,3 @@ export const rules: Record<
   [stableQueryClient.name]: stableQueryClient.rule,
   [noRestDestructuring.name]: noRestDestructuring.rule,
 }
-
-export const rules2 = {}
