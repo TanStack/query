@@ -187,12 +187,9 @@ export function hydrate(
         client.getDefaultOptions().hydrate?.transformPromise ??
         defaultTransformPromise
 
-      const initialPromise = (async () => {
-        const deserialized = await transformPromise(promise)
-        return deserialized
-      })()
-
-      // const initialPromise = promise.then((result) => deserialize(result))
+      // Note: `Promise.resolve` required cause
+      // RSC transformed promises are not thenable
+      const initialPromise = transformPromise(Promise.resolve(promise))
 
       // this doesn't actually fetch - it just creates a retryer
       // which will re-use the passed `initialPromise`

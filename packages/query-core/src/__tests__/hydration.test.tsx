@@ -928,10 +928,7 @@ describe('dehydration and rehydration', () => {
     const hydrationClient = createQueryClient({
       defaultOptions: {
         hydrate: {
-          transformPromise: async (p) => {
-            const str = await p
-            return new Date(str)
-          },
+          transformPromise: (p) => p.then((d) => new Date(d)),
         },
       },
     })

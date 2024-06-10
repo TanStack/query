@@ -18,10 +18,7 @@ export function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       hydrate: {
-        transformPromise: async (promise) => {
-          const result = await promise
-          return tson.deserialize(result)
-        },
+        transformPromise: (promise) => promise.then(tson.deserialize),
       },
       queries: {
         staleTime: 60 * 1000,
