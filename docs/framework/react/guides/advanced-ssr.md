@@ -452,7 +452,9 @@ export function makeQueryClient() {
     },
   })
 }
+```
 
+```ts
 // app/posts/page.tsx
 import {
   dehydrate,
@@ -468,7 +470,7 @@ export default function PostsPage() {
   // look ma, no await
   queryClient.prefetchQuery({
     queryKey: ['posts'],
-    queryFn: getPosts.then(serialize), // <-- serilize the data on the server
+    queryFn: () => getPosts().then(serialize), // <-- serilize the data on the server
   })
 
   return (
@@ -477,9 +479,11 @@ export default function PostsPage() {
     </HydrationBoundary>
   )
 }
+```
 
+```ts
 // app/posts/posts.tsx
-;('use client')
+'use client'
 
 export default function Posts() {
   const { data } = useSuspenseQuery({ queryKey: ['posts'], queryFn: getPosts })
