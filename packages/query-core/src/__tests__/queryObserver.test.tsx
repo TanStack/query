@@ -910,4 +910,30 @@ describe('queryObserver', () => {
     const result = observer.getCurrentResult()
     expect(result.isStale).toBe(false)
   })
+
+  test('should allow staleTime as a function', async () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: async () => {
+        await sleep(5)
+        return {
+          data: 'data',
+          staleTime: 20,
+        }
+      },
+      staleTime: (query) => query.state.data?.staleTime ?? 0,
+    })
+    const results: Array<QueryObserverResult<unknown>> = []
+    const unsubscribe = observer.subscribe((x) => {
+      if (x.data) {
+        results.push(x)
+      }
+    })
+
+    await waitFor(() => expect(results[0]?.isStale).toBe(false))
+    await waitFor(() => expect(results[1]?.isStale).toBe(true))
+
+    unsubscribe()
+  })
 })

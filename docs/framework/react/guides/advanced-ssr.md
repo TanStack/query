@@ -390,11 +390,7 @@ Then, all we need to do is provide a `HydrationBoundary`, but we don't need to `
 
 ```tsx
 // app/posts/page.jsx
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from '@tanstack/react-query'
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from './get-query-client'
 import Posts from './posts'
 
