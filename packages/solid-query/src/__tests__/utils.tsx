@@ -16,7 +16,7 @@ export function Blink(
   props: {
     duration: number
   } & ParentProps,
-){
+) {
   const [shouldShow, setShouldShow] = createSignal<boolean>(true)
 
   createEffect(() => {
