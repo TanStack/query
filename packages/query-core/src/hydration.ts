@@ -179,13 +179,13 @@ export function hydrate(
     }
 
     if (promise) {
-      const { transformPromise } = client.getDefaultOptions().hydrate ?? {}
+      const transformPromise =
+        client.getDefaultOptions().hydrate?.transformPromise
 
       // Note: `Promise.resolve` required cause
       // RSC transformed promises are not thenable
-      const initialPromise = transformPromise
-        ? transformPromise(Promise.resolve(promise))
-        : promise
+      const initialPromise =
+        transformPromise?.(Promise.resolve(promise)) ?? promise
 
       // this doesn't actually fetch - it just creates a retryer
       // which will re-use the passed `initialPromise`
