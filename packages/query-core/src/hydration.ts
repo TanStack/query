@@ -89,10 +89,6 @@ export function defaultShouldDehydrateQuery(query: Query) {
   return query.state.status === 'success'
 }
 
-export function defaultTransformPromise(promise: Promise<unknown>) {
-  return promise
-}
-
 export function dehydrate(
   client: QueryClient,
   options: DehydrateOptions = {},
@@ -183,13 +179,13 @@ export function hydrate(
     }
 
     if (promise) {
-      const transformPromise =
-        client.getDefaultOptions().hydrate?.transformPromise ??
-        defaultTransformPromise
+      const { transformPromise } = client.getDefaultOptions().hydrate ?? {}
 
       // Note: `Promise.resolve` required cause
       // RSC transformed promises are not thenable
-      const initialPromise = transformPromise(Promise.resolve(promise))
+      const initialPromise = transformPromise
+        ? transformPromise(Promise.resolve(promise))
+        : promise
 
       // this doesn't actually fetch - it just creates a retryer
       // which will re-use the passed `initialPromise`
