@@ -454,7 +454,7 @@ export function makeQueryClient() {
 }
 ```
 
-```ts
+```tsx
 // app/posts/page.tsx
 import {
   dehydrate,
@@ -481,7 +481,7 @@ export default function PostsPage() {
 }
 ```
 
-```ts
+```tsx
 // app/posts/posts.tsx
 'use client'
 
