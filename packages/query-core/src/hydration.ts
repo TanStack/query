@@ -21,6 +21,7 @@ export interface DehydrateOptions {
 
 export interface HydrateOptions {
   defaultOptions?: {
+    transformPromise?: (promise: Promise<any>) => Promise<any>
     queries?: QueryOptions
     mutations?: MutationOptions<unknown, DefaultError, unknown, unknown>
   }
@@ -178,9 +179,17 @@ export function hydrate(
     }
 
     if (promise) {
+      const transformPromise =
+        client.getDefaultOptions().hydrate?.transformPromise
+
+      // Note: `Promise.resolve` required cause
+      // RSC transformed promises are not thenable
+      const initialPromise =
+        transformPromise?.(Promise.resolve(promise)) ?? promise
+
       // this doesn't actually fetch - it just creates a retryer
       // which will re-use the passed `initialPromise`
-      void query.fetch(undefined, { initialPromise: promise })
+      void query.fetch(undefined, { initialPromise })
     }
   })
 }

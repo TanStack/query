@@ -427,6 +427,69 @@ export default function Posts() {
 
 > Note that you could also `useQuery` instead of `useSuspenseQuery`, and the Promise would still be picked up correctly. However, NextJs won't suspend in that case and the component will render in the `pending` status, which also opts out of server rendering the content.
 
+If you're using non-JSON data types and serialize the query results on the server, you can specify the `hydrate.transformPromise` option to deserialize the data on the client after the promise is resolved, before the data is put into the cache:
+
+```tsx
+// app/get-query-client.ts
+import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query'
+import { deserialize } from './transformer'
+
+export function makeQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      hydrate: {
+        /**
+         * Called when the query is rebuilt from a prefetched
+         * promise, before the query data is put into the cache.
+         */
+        transformPromise: (promise) => promise.then(deserialize),
+      },
+      // ...
+    },
+  })
+}
+```
+
+```tsx
+// app/posts/page.tsx
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from '@tanstack/react-query'
+import { serialize } from './transformer'
+import Posts from './posts'
+
+export default function PostsPage() {
+  const queryClient = new QueryClient()
+
+  // look ma, no await
+  queryClient.prefetchQuery({
+    queryKey: ['posts'],
+    queryFn: () => getPosts().then(serialize), // <-- serilize the data on the server
+  })
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Posts />
+    </HydrationBoundary>
+  )
+}
+```
+
+```tsx
+// app/posts/posts.tsx
+'use client'
+
+export default function Posts() {
+  const { data } = useSuspenseQuery({ queryKey: ['posts'], queryFn: getPosts })
+
+  // ...
+}
+```
+
+Now, your `getPosts` function can return e.g. `Temporal` datetime objects and the data will be serialized and deserialized on the client, assuming your transformer can serialize and deserialize those data types.
+
 For more information, check out the [Next.js App with Prefetching Example](../../examples/nextjs-app-prefetching).
 
 ## Experimental streaming without prefetching in Next.js
