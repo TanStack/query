@@ -580,7 +580,7 @@ export class QueryClient {
       ...this.#defaultOptions.mutations,
       ...(options?.mutationKey &&
         this.getMutationDefaults(options.mutationKey)),
-      ...options,
+      ...extractOverrideMutationOptions(options),
       _defaulted: true,
     } as T
   }
@@ -589,4 +589,35 @@ export class QueryClient {
     this.#queryCache.clear()
     this.#mutationCache.clear()
   }
+}
+
+/**
+ * if side effects are `undefined`, the side effects in the default options will be retained.
+ */
+function extractOverrideMutationOptions(
+  options: MutationOptions<any, any, any, any> = {},
+): MutationOptions<any, any, any, any> {
+  const { onError, onSuccess, onSettled, onMutate, ...restOptions } = options
+
+  const overrideOptions: MutationOptions<any, any, any, any> = {
+    ...restOptions,
+  }
+
+  if (onSuccess !== undefined) {
+    overrideOptions.onSuccess = onSuccess
+  }
+
+  if (onError !== undefined) {
+    overrideOptions.onError = onError
+  }
+
+  if (onSettled !== undefined) {
+    overrideOptions.onSettled = onSettled
+  }
+
+  if (onMutate !== undefined) {
+    overrideOptions.onMutate = onMutate
+  }
+
+  return overrideOptions
 }
