@@ -71,7 +71,7 @@ const { data: userIds } = useQuery({
 // Then get the users messages
 const usersMessages = useQueries({
   queries: userIds
-    ? usersId.map(id => {
+    ? userIds.map(id => {
         return {
           queryKey: ['messages', id],
           queryFn: () => getMessagesByUsers(id),
