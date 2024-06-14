@@ -255,9 +255,10 @@ export interface QueryObserverOptions<
   /**
    * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
+   * You can also pass a callback that returns a boolean to check this condition dynamically.
    * Defaults to `true`.
    */
-  enabled?: boolean
+  enabled?: (() => boolean) | boolean
   /**
    * The time in milliseconds after data is considered stale.
    * If set to `Infinity`, the data will never be considered stale.

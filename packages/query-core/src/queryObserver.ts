@@ -149,9 +149,12 @@ export class QueryObserver<
 
     if (
       this.options.enabled !== undefined &&
-      typeof this.options.enabled !== 'boolean'
+      typeof this.options.enabled !== 'boolean' &&
+      typeof this.options.enabled !== 'function'
     ) {
-      throw new Error('Expected enabled to be a boolean')
+      throw new Error(
+        'Expected enabled to be a boolean or a callback that returns a boolean',
+      )
     }
 
     this.#updateQuery()
@@ -190,7 +193,12 @@ export class QueryObserver<
     if (
       mounted &&
       (this.#currentQuery !== prevQuery ||
-        this.options.enabled !== prevOptions.enabled ||
+        (typeof this.options.enabled === 'function'
+          ? this.options.enabled()
+          : this.options.enabled) !==
+          (typeof prevOptions.enabled === 'function'
+            ? prevOptions.enabled()
+            : prevOptions.enabled) ||
         resolveStaleTime(this.options.staleTime, this.#currentQuery) !==
           resolveStaleTime(prevOptions.staleTime, this.#currentQuery))
     ) {
@@ -203,7 +211,12 @@ export class QueryObserver<
     if (
       mounted &&
       (this.#currentQuery !== prevQuery ||
-        this.options.enabled !== prevOptions.enabled ||
+        (typeof this.options.enabled === 'function'
+          ? this.options.enabled()
+          : this.options.enabled) !==
+          (typeof prevOptions.enabled === 'function'
+            ? prevOptions.enabled()
+            : prevOptions.enabled) ||
         nextRefetchInterval !== this.#currentRefetchInterval)
     ) {
       this.#updateRefetchInterval(nextRefetchInterval)
@@ -377,7 +390,9 @@ export class QueryObserver<
 
     if (
       isServer ||
-      this.options.enabled === false ||
+      (typeof this.options.enabled === 'function'
+        ? this.options.enabled()
+        : this.options.enabled) === false ||
       !isValidTimeout(this.#currentRefetchInterval) ||
       this.#currentRefetchInterval === 0
     ) {
@@ -692,7 +707,9 @@ function shouldLoadOnMount(
   options: QueryObserverOptions<any, any, any, any>,
 ): boolean {
   return (
-    options.enabled !== false &&
+    (typeof options.enabled === 'function'
+      ? options.enabled()
+      : options.enabled) !== false &&
     query.state.data === undefined &&
     !(query.state.status === 'error' && options.retryOnMount === false)
   )
@@ -716,7 +733,11 @@ function shouldFetchOn(
     (typeof options)['refetchOnWindowFocus'] &
     (typeof options)['refetchOnReconnect'],
 ) {
-  if (options.enabled !== false) {
+  if (
+    (typeof options.enabled === 'function'
+      ? options.enabled()
+      : options.enabled) !== false
+  ) {
     const value = typeof field === 'function' ? field(query) : field
 
     return value === 'always' || (value !== false && isStale(query, options))
@@ -731,7 +752,10 @@ function shouldFetchOptionally(
   prevOptions: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
   return (
-    (query !== prevQuery || prevOptions.enabled === false) &&
+    (query !== prevQuery ||
+      (typeof prevOptions.enabled === 'function'
+        ? prevOptions.enabled()
+        : prevOptions.enabled) === false) &&
     (!options.suspense || query.state.status !== 'error') &&
     isStale(query, options)
   )
@@ -742,7 +766,9 @@ function isStale(
   options: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
   return (
-    options.enabled !== false &&
+    (typeof options.enabled === 'function'
+      ? options.enabled()
+      : options.enabled) !== false &&
     query.isStaleByTime(resolveStaleTime(options.staleTime, query))
   )
 }

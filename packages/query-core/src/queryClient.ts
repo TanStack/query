@@ -555,7 +555,9 @@ export class QueryClient {
     }
 
     if (
-      defaultedOptions.enabled !== true &&
+      (typeof defaultedOptions.enabled === 'function'
+        ? defaultedOptions.enabled() !== true
+        : defaultedOptions.enabled !== true) &&
       defaultedOptions.queryFn === skipToken
     ) {
       defaultedOptions.enabled = false

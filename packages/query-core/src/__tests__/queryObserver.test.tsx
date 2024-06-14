@@ -52,6 +52,51 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
+  test('Should not refetch when enabled is a callback and returns false', async () => {
+    const key = queryKey()
+    let count = 0
+    let enabled = true
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      staleTime: Infinity,
+      enabled: () => enabled,
+      queryFn: async () => {
+        await sleep(10)
+        count++
+        return 'data'
+      },
+    })
+
+    let unsubscribe = observer.subscribe(vi.fn())
+
+    // unsubscribe before data comes in
+    unsubscribe()
+    expect(count).toBe(0)
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'pending',
+      fetchStatus: 'fetching',
+      data: undefined,
+    })
+
+    await waitFor(() => expect(count).toBe(1))
+
+    // re-subscribe after data comes in
+    unsubscribe = observer.subscribe(vi.fn())
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: 'data',
+    })
+
+    enabled = false
+
+    queryClient.invalidateQueries({ queryKey: key, refetchType: 'all' })
+
+    expect(count).toBe(1)
+
+    unsubscribe()
+  })
+
   test('should be able to read latest data when re-subscribing (but not re-fetching)', async () => {
     const key = queryKey()
     let count = 0
@@ -422,6 +467,20 @@ describe('queryObserver', () => {
       queryKey: key,
       queryFn,
       enabled: false,
+    })
+    const unsubscribe = observer.subscribe(() => undefined)
+    await sleep(1)
+    unsubscribe()
+    expect(queryFn).toHaveBeenCalledTimes(0)
+  })
+
+  test('should not trigger a fetch when subscribed and disabled by callback', async () => {
+    const key = queryKey()
+    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      enabled: () => false,
     })
     const unsubscribe = observer.subscribe(() => undefined)
     await sleep(1)
