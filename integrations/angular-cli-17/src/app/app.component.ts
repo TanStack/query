@@ -1,21 +1,25 @@
-import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
 import { ChangeDetectionStrategy, Component } from '@angular/core'
-import { CommonModule } from '@angular/common'
+import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
 import { injectQuery } from '@tanstack/angular-query-experimental'
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-root',
-  standalone: true,
   template: `
-    <div *ngIf="query.isPending()">Loading...</div>
-    <div *ngIf="query.error()">An error has occurred!</div>
-    <div *ngIf="query.data()">
+    @if (query.isPending()) {
+      <div>Loading...</div>
+    }
+    @if (query.isError()) {
+      An error has occurred!
+    }
+    @if (query.data()) {
       {{ query.data() }}
-    </div>
+    }
     <angular-query-devtools initialIsOpen />
   `,
-  imports: [AngularQueryDevtools, CommonModule],
+  styles: [],
+  standalone: true,
+  imports: [AngularQueryDevtools],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
   /**
@@ -25,7 +29,7 @@ export class AppComponent {
     queryKey: ['test'],
     queryFn: async () => {
       await new Promise((r) => setTimeout(r, 1000))
-      return 'Success'
+      return 'Data'
     },
   }))
 }
