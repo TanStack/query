@@ -12,6 +12,20 @@ The only thing you need to do is to install the official **[Vue Devtools](https:
 Vue Query will seamlessly integrate with the official devtools, adding custom inspector and timeline events.
 Devtool code will be treeshaken from production bundles by default.
 
+
+For devtools v6, you'll need to manually enable integration:
+
+```ts
+app.use(VueQueryPlugin, {
+  enableDevtoolsV6Plugin: true
+})
+```
+
+For [devtools v7 (next)](https://github.com/vuejs/devtools-next), you can take advantage of the built-in [Component based Devtools](#component-based-devtools-vue-3) support.
+
+For more information on [nuxt-devtools](https://github.com/nuxt/devtools), check out [issue #676](https://github.com/nuxt/devtools/issues/676).
+
+
 ## Component based Devtools (Vue 3)
 
 You can embeed devtools component into your page by using dedicated package.  
