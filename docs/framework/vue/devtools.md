@@ -7,9 +7,9 @@ Wave your hands in the air and shout hooray because Vue Query comes with dedicat
 
 ## Component based Devtools (Vue 3)
 
-For advanced features and future updates, consider transitioning to [devtools v7 (next)](https://github.com/vuejs/devtools-next) and explore integration with [nuxt-devtools](https://github.com/nuxt/devtools). For more information, refer to [issue #676](https://github.com/nuxt/devtools/issues/676).
+For advanced features and future updates, consider transitioning to [devtools v7 (next)](https://github.com/vuejs/devtools-next). Integration with [nuxt-devtools](https://github.com/nuxt/devtools) is currently in development and planned for future releases. For more information, refer to [issue #676](https://github.com/nuxt/devtools/issues/676).
 
-You can embed devtools component into your page by using a dedicated package.  
+You can directly integrate the devtools component into your page using a dedicated package.
 Component-based devtools use a framework-agnostic implementation, have more features, and are updated more frequently.
 
 The devtools component is a separate package that you need to install:
