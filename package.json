@@ -68,7 +68,7 @@
     "knip": "^5.16.0",
     "lint-staged": "^15.2.2",
     "nx": "^19.3.0",
-    "prettier": "^3.3.2",
+    "prettier": "^4.0.0-alpha.8",
     "prettier-plugin-svelte": "^3.2.3",
     "publint": "^0.2.7",
     "react": "19.0.0-rc-4c2e457c7c-20240522",
