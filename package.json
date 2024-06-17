@@ -5,7 +5,7 @@
     "type": "git",
     "url": "https://github.com/TanStack/query.git"
   },
-  "packageManager": "pnpm@9.1.1",
+  "packageManager": "pnpm@9.3.0",
   "type": "module",
   "scripts": {
     "clean": "pnpm --filter \"./packages/**\" run clean",
@@ -45,7 +45,7 @@
     "@arethetypeswrong/cli": "^0.15.3",
     "@cspell/eslint-plugin": "^8.8.1",
     "@solidjs/testing-library": "^0.8.8",
-    "@tanstack/config": "^0.7.5",
+    "@tanstack/config": "^0.7.11",
     "@testing-library/jest-dom": "^6.4.5",
     "@testing-library/react": "^15.0.7",
     "@types/eslint": "^8.56.10",
@@ -67,7 +67,7 @@
     "jsdom": "^24.0.0",
     "knip": "^5.16.0",
     "lint-staged": "^15.2.2",
-    "nx": "19.0.4",
+    "nx": "^19.3.0",
     "prettier": "^4.0.0-alpha.8",
     "prettier-plugin-svelte": "^3.2.3",
     "publint": "^0.2.7",
