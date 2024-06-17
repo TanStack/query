@@ -13,7 +13,12 @@ import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
-import type { DataTag, NoInfer, OmitKeyof } from './types'
+import type {
+  DataTag,
+  EnsureInfiniteQueryDataOptions,
+  NoInfer,
+  OmitKeyof,
+} from './types'
 import type { QueryState } from './query'
 import type {
   CancelOptions,
@@ -402,6 +407,41 @@ export class QueryClient {
     >,
   ): Promise<void> {
     return this.fetchInfiniteQuery(options).then(noop).catch(noop)
+  }
+
+  ensureInfiniteQueryData<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: EnsureInfiniteQueryDataOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<InfiniteData<TData, TPageParam>> {
+    const cachedData = this.getQueryData<InfiniteData<TData, TPageParam>>(
+      options.queryKey,
+    )
+
+    if (cachedData === undefined) return this.fetchInfiniteQuery(options)
+    else {
+      const defaultedOptions = this.defaultQueryOptions(options)
+      const query = this.#queryCache.build(this, defaultedOptions)
+
+      if (
+        options.revalidateIfStale &&
+        query.isStaleByTime(resolveStaleTime(defaultedOptions.staleTime, query))
+      ) {
+        void this.prefetchInfiniteQuery(options)
+      }
+
+      return Promise.resolve(cachedData)
+    }
   }
 
   resumePausedMutations(): Promise<unknown> {
