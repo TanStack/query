@@ -11,7 +11,7 @@ export function usePrefetchQuery<
   const queryClient = useQueryClient()
 
   if (!queryClient.getQueryState(options.queryKey)) {
-    queryClient.ensureQueryData(options).catch(() => {})
+    queryClient.prefetchQuery(options)
   }
 }
 
@@ -34,6 +34,6 @@ export function usePrefetchInfiniteQuery<
   const queryClient = useQueryClient()
 
   if (!queryClient.getQueryState(options.queryKey)) {
-    queryClient.ensureInfiniteQueryData(options).catch(() => {})
+    queryClient.prefetchInfiniteQuery(options)
   }
 }
