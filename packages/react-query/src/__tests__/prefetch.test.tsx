@@ -1,10 +1,12 @@
 import { describe, expect, it, vi } from 'vitest'
 import React from 'react'
 import { fireEvent, waitFor } from '@testing-library/react'
+import { ErrorBoundary } from 'react-error-boundary'
 import {
   QueryCache,
   usePrefetchInfiniteQuery,
   usePrefetchQuery,
+  useQueryErrorResetBoundary,
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from '..'
@@ -24,10 +26,13 @@ describe('usePrefetchQuery', () => {
       }),
     }
 
-    const anotherSpy = vi.fn()
+    const suspendedQueryFn = vi.fn()
 
     function Suspended() {
-      const state = useSuspenseQuery({ ...queryOpts, queryFn: anotherSpy })
+      const state = useSuspenseQuery({
+        ...queryOpts,
+        queryFn: suspendedQueryFn,
+      })
 
       return (
         <div>
@@ -52,7 +57,7 @@ describe('usePrefetchQuery', () => {
     await waitFor(() => rendered.getByText('data: Prefetch is nice!'))
     expect(rendered.queryByText('fetching: true')).not.toBeInTheDocument()
     expect(queryOpts.queryFn).toHaveBeenCalledTimes(1)
-    expect(anotherSpy).not.toHaveBeenCalled()
+    expect(suspendedQueryFn).not.toHaveBeenCalled()
   })
 
   it('should not prefetch query if query state exists', async () => {
@@ -65,10 +70,13 @@ describe('usePrefetchQuery', () => {
       }),
     }
 
-    const anotherSpy = vi.fn()
+    const suspendedQueryFn = vi.fn()
 
     function Suspended() {
-      const state = useSuspenseQuery({ ...queryOpts, queryFn: anotherSpy })
+      const state = useSuspenseQuery({
+        ...queryOpts,
+        queryFn: suspendedQueryFn,
+      })
 
       return (
         <div>
@@ -79,7 +87,7 @@ describe('usePrefetchQuery', () => {
     }
 
     function App() {
-      usePrefetchQuery({ ...queryOpts, queryFn: anotherSpy })
+      usePrefetchQuery({ ...queryOpts, queryFn: suspendedQueryFn })
 
       return (
         <React.Suspense fallback="Loading...">
@@ -95,7 +103,121 @@ describe('usePrefetchQuery', () => {
     expect(
       rendered.getByText('data: Prefetch is really nice!'),
     ).toBeInTheDocument()
-    expect(anotherSpy).not.toHaveBeenCalled()
+    expect(suspendedQueryFn).not.toHaveBeenCalled()
+  })
+
+  it('should display an error boundary if query cache is populated with an error', async () => {
+    const queryFn = vi.fn()
+
+    const queryOpts = {
+      queryKey: queryKey(),
+      queryFn,
+    }
+
+    const suspendedQueryFn = vi.fn()
+
+    function Suspended() {
+      const state = useSuspenseQuery({
+        ...queryOpts,
+        queryFn: suspendedQueryFn,
+      })
+
+      return (
+        <div>
+          <div>data: {String(state.data)}</div>
+        </div>
+      )
+    }
+
+    function App() {
+      usePrefetchQuery({ ...queryOpts })
+
+      return (
+        <ErrorBoundary fallbackRender={() => <div>Oops!</div>}>
+          <React.Suspense fallback="Loading...">
+            <Suspended />
+          </React.Suspense>
+        </ErrorBoundary>
+      )
+    }
+
+    queryFn.mockImplementationOnce(async () => {
+      await sleep(10)
+
+      throw new Error('Oops! Server error!')
+    })
+
+    await queryClient.prefetchQuery(queryOpts)
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() => rendered.getByText('Oops!'))
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(suspendedQueryFn).not.toHaveBeenCalled()
+  })
+
+  it.only('should be able to recover from errors and try fetching again', async () => {
+    const queryFn = vi.fn()
+
+    const queryOpts = {
+      queryKey: queryKey(),
+      queryFn,
+    }
+
+    const suspendedQueryFn = vi.fn()
+
+    function Suspended() {
+      const state = useSuspenseQuery({
+        ...queryOpts,
+        queryFn: suspendedQueryFn.mockImplementationOnce(async () => {
+          await sleep(10)
+
+          return 'This is fine :dog: :fire:'
+        }),
+      })
+
+      return (
+        <div>
+          <div>data: {String(state.data)}</div>
+        </div>
+      )
+    }
+
+    function App() {
+      const { reset } = useQueryErrorResetBoundary()
+      usePrefetchQuery(queryOpts)
+
+      return (
+        <ErrorBoundary
+          onReset={reset}
+          fallbackRender={({ resetErrorBoundary }) => (
+            <div>
+              <div>Oops!</div>
+              <button onClick={resetErrorBoundary}>Try again</button>
+            </div>
+          )}
+        >
+          <React.Suspense fallback="Loading...">
+            <Suspended />
+          </React.Suspense>
+        </ErrorBoundary>
+      )
+    }
+
+    queryFn.mockImplementationOnce(async () => {
+      await sleep(10)
+
+      throw new Error('Oops! Server error!')
+    })
+
+    await queryClient.prefetchQuery(queryOpts)
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() => rendered.getByText('Oops!'))
+    fireEvent.click(rendered.getByText('Try again'))
+    await waitFor(() => rendered.getByText('data: This is fine :dog: :fire:'))
+    expect(suspendedQueryFn).toHaveBeenCalledTimes(1)
   })
 
   it('should not create a suspense waterfall if prefetch is fired', async () => {
@@ -126,8 +248,13 @@ describe('usePrefetchQuery', () => {
       }),
     }
 
+    const suspendedQueryFn = vi.fn()
+
     function FirstSuspended() {
-      const state = useSuspenseQuery(firstQueryOpts)
+      const state = useSuspenseQuery({
+        ...firstQueryOpts,
+        queryFn: suspendedQueryFn,
+      })
 
       return (
         <div>
@@ -137,7 +264,10 @@ describe('usePrefetchQuery', () => {
     }
 
     function SecondSuspended() {
-      const state = useSuspenseQuery(secondQueryOpts)
+      const state = useSuspenseQuery({
+        ...secondQueryOpts,
+        queryFn: suspendedQueryFn,
+      })
 
       return (
         <div>
@@ -147,7 +277,10 @@ describe('usePrefetchQuery', () => {
     }
 
     function ThirdSuspended() {
-      const state = useSuspenseQuery(thirdQueryOpts)
+      const state = useSuspenseQuery({
+        ...thirdQueryOpts,
+        queryFn: suspendedQueryFn,
+      })
 
       return (
         <div>
@@ -187,6 +320,7 @@ describe('usePrefetchQuery', () => {
     await waitFor(() =>
       rendered.getByText('data: Prefetch does not create waterfalls!!'),
     )
+    expect(suspendedQueryFn).not.toHaveBeenCalled()
   })
 })
 
@@ -228,12 +362,12 @@ describe('usePrefetchInfiniteQuery', () => {
       pages: 3,
     }
 
-    const anotherSpy = vi.fn()
+    const suspendedQueryFn = vi.fn()
 
     function Suspended() {
       const state = useSuspenseInfiniteQuery({
         ...queryOpts,
-        queryFn: anotherSpy,
+        queryFn: suspendedQueryFn,
       })
 
       return (
@@ -271,7 +405,7 @@ describe('usePrefetchInfiniteQuery', () => {
       rendered.getByText('data: Either way, Tanstack Query helps you!'),
     )
     expect(queryOpts.queryFn).toHaveBeenCalledTimes(3)
-    expect(anotherSpy).not.toHaveBeenCalled()
+    expect(suspendedQueryFn).not.toHaveBeenCalled()
   })
 
   it('should not prefetch an infinite query if query state already exists', async () => {
@@ -283,7 +417,7 @@ describe('usePrefetchInfiniteQuery', () => {
 
     let queryPage = 0
 
-    const anotherSpy = vi.fn()
+    const suspendedQueryFn = vi.fn()
 
     const queryOpts = {
       queryKey: queryKey(),
@@ -313,7 +447,7 @@ describe('usePrefetchInfiniteQuery', () => {
     function Suspended() {
       const state = useSuspenseInfiniteQuery({
         ...queryOpts,
-        queryFn: anotherSpy,
+        queryFn: suspendedQueryFn,
       })
 
       return (
@@ -329,7 +463,7 @@ describe('usePrefetchInfiniteQuery', () => {
     await queryClient.prefetchInfiniteQuery(queryOpts)
 
     function App() {
-      usePrefetchInfiniteQuery({ ...queryOpts, queryFn: anotherSpy })
+      usePrefetchInfiniteQuery({ ...queryOpts, queryFn: suspendedQueryFn })
 
       return (
         <React.Suspense fallback="Loading...">
@@ -348,6 +482,6 @@ describe('usePrefetchInfiniteQuery', () => {
     fireEvent.click(rendered.getByText('Next Page'))
     expect(rendered.queryByText('Loading...')).not.toBeInTheDocument()
     await waitFor(() => rendered.getByText('data: Tanstack Query #ftw'))
-    expect(anotherSpy).not.toHaveBeenCalled()
+    expect(suspendedQueryFn).not.toHaveBeenCalled()
   })
 })
