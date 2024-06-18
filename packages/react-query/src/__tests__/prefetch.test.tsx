@@ -291,21 +291,18 @@ describe('usePrefetchQuery', () => {
       )
     }
 
+    const Fallback = vi.fn().mockImplementation(() => <div>Loading...</div>)
+
     function App() {
       usePrefetchQuery(firstQueryOpts)
       usePrefetchQuery(secondQueryOpts)
       usePrefetchQuery(thirdQueryOpts)
 
-      const [showSecond, setShowSecond] = React.useState(false)
-      const [showThird, setShowThird] = React.useState(false)
-
       return (
-        <React.Suspense fallback="Loading...">
+        <React.Suspense fallback={<Fallback />}>
           <FirstSuspended />
-          <button onClick={() => setShowSecond(true)}>showSecond</button>
-          {showSecond ? <SecondSuspended /> : null}
-          <button onClick={() => setShowThird(true)}>showThird</button>
-          {showThird ? <ThirdSuspended /> : null}
+          <SecondSuspended />
+          <ThirdSuspended />
         </React.Suspense>
       )
     }
@@ -314,14 +311,11 @@ describe('usePrefetchQuery', () => {
 
     await waitFor(() => rendered.getByText('Loading...'))
     await waitFor(() => rendered.getByText('data: Prefetch is nice!'))
-    fireEvent.click(rendered.getByText('showSecond'))
-    expect(rendered.queryByText('Loading...')).not.toBeInTheDocument()
     await waitFor(() => rendered.getByText('data: Prefetch is really nice!!'))
-    fireEvent.click(rendered.getByText('showThird'))
-    expect(rendered.queryByText('Loading...')).not.toBeInTheDocument()
     await waitFor(() =>
       rendered.getByText('data: Prefetch does not create waterfalls!!'),
     )
+    expect(Fallback).toHaveBeenCalledTimes(1)
     expect(suspendedQueryFn).not.toHaveBeenCalled()
   })
 })
