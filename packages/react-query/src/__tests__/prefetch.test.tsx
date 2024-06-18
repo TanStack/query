@@ -100,10 +100,9 @@ describe('usePrefetchQuery', () => {
     const rendered = renderWithClient(queryClient, <App />)
 
     expect(rendered.queryByText('fetching: true')).not.toBeInTheDocument()
-    expect(
-      rendered.getByText('data: Prefetch is really nice!'),
-    ).toBeInTheDocument()
+    await waitFor(() => rendered.getByText('data: Prefetch is really nice!'))
     expect(suspendedQueryFn).not.toHaveBeenCalled()
+    expect(queryOpts.queryFn).toHaveBeenCalledTimes(1)
   })
 
   it('should display an error boundary if query cache is populated with an error', async () => {
@@ -130,7 +129,7 @@ describe('usePrefetchQuery', () => {
     }
 
     function App() {
-      usePrefetchQuery({ ...queryOpts })
+      usePrefetchQuery(queryOpts)
 
       return (
         <ErrorBoundary fallbackRender={() => <div>Oops!</div>}>
@@ -156,7 +155,7 @@ describe('usePrefetchQuery', () => {
     expect(suspendedQueryFn).not.toHaveBeenCalled()
   })
 
-  it.only('should be able to recover from errors and try fetching again', async () => {
+  it('should be able to recover from errors and try fetching again', async () => {
     const queryFn = vi.fn()
 
     const queryOpts = {
