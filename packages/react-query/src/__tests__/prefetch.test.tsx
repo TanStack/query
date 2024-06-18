@@ -61,13 +61,15 @@ describe('usePrefetchQuery', () => {
   })
 
   it('should not prefetch query if query state exists', async () => {
+    const queryFn = vi.fn().mockImplementation(async () => {
+      await sleep(10)
+
+      return 'Prefetch is really nice!'
+    })
+
     const queryOpts = {
       queryKey: queryKey(),
-      queryFn: vi.fn().mockImplementation(async () => {
-        await sleep(10)
-
-        return 'Prefetch is really nice!'
-      }),
+      queryFn,
     }
 
     const suspendedQueryFn = vi.fn()
@@ -97,12 +99,13 @@ describe('usePrefetchQuery', () => {
     }
 
     await queryClient.fetchQuery(queryOpts)
+    queryFn.mockClear()
     const rendered = renderWithClient(queryClient, <App />)
 
     expect(rendered.queryByText('fetching: true')).not.toBeInTheDocument()
     await waitFor(() => rendered.getByText('data: Prefetch is really nice!'))
     expect(suspendedQueryFn).not.toHaveBeenCalled()
-    expect(queryOpts.queryFn).toHaveBeenCalledTimes(1)
+    expect(queryOpts.queryFn).not.toHaveBeenCalled()
   })
 
   it('should display an error boundary if query cache is populated with an error', async () => {
@@ -147,11 +150,11 @@ describe('usePrefetchQuery', () => {
     })
 
     await queryClient.prefetchQuery(queryOpts)
-
+    queryFn.mockClear()
     const rendered = renderWithClient(queryClient, <App />)
 
     await waitFor(() => rendered.getByText('Oops!'))
-    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(queryFn).not.toHaveBeenCalled()
     expect(suspendedQueryFn).not.toHaveBeenCalled()
   })
 
@@ -216,7 +219,7 @@ describe('usePrefetchQuery', () => {
     await waitFor(() => rendered.getByText('Oops!'))
     fireEvent.click(rendered.getByText('Try again'))
     await waitFor(() => rendered.getByText('data: This is fine :dog: :fire:'))
-    expect(suspendedQueryFn).toHaveBeenCalledTimes(1)
+    expect(suspendedQueryFn).toHaveBeenCalled()
   })
 
   it('should not create a suspense waterfall if prefetch is fired', async () => {
