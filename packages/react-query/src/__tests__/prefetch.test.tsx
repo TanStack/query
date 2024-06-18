@@ -14,13 +14,18 @@ import {
 } from '..'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 
-import type { UseQueryOptions } from '..'
+import type {
+  GetNextPageParamFunction,
+  InfiniteData,
+  UseInfiniteQueryOptions,
+  UseQueryOptions,
+} from '..'
 import type { Mock } from 'vitest'
 
 function createQueryOptions<T>(params: { sleepInterval?: number; data: T }) {
   const { sleepInterval = 10, data } = params
 
-  const queryFn = vi.fn().mockImplementation(async () => {
+  const queryFn = vi.fn<any, Promise<T>>().mockImplementation(async () => {
     await sleep(sleepInterval)
 
     return data
@@ -32,35 +37,36 @@ function createQueryOptions<T>(params: { sleepInterval?: number; data: T }) {
   })
 }
 
-function createInfiniteQueryOptions(params: {
+function createInfiniteQueryOptions<TData = unknown>(params: {
   sleepInterval?: number
-  pages: Array<string>
+  pages: Array<TData>
+  initialPageParam?: number
+  getNextPageParam: GetNextPageParamFunction<any, TData>
 }) {
-  const { sleepInterval = 10, pages } = params
+  const {
+    sleepInterval = 10,
+    pages,
+    initialPageParam = 1,
+    getNextPageParam,
+  } = params
 
   let currentPage = 0
 
   return infiniteQueryOptions({
     queryKey: queryKey(),
-    queryFn: vi.fn().mockImplementation(async () => {
-      const data = pages[currentPage] || undefined
+    queryFn: vi.fn<any, Promise<TData>>().mockImplementation(async () => {
+      const data = pages[currentPage]
+      if (!data) {
+        throw new Error('No data defined for page ' + currentPage)
+      }
+
       await sleep(sleepInterval)
       currentPage++
 
-      return {
-        page: currentPage,
-        totalPages: pages.length,
-        data,
-      }
+      return data
     }),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage) => {
-      if (lastPage.page === lastPage.totalPages) {
-        return undefined
-      }
-
-      return lastPage.page + 1
-    },
+    initialPageParam,
+    getNextPageParam,
   })
 }
 
@@ -68,8 +74,8 @@ describe('usePrefetchQuery', () => {
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({ queryCache })
 
-  function Suspended(props: {
-    queryOpts: UseQueryOptions<any, Error, any, Array<string>>
+  function Suspended<T = unknown>(props: {
+    queryOpts: UseQueryOptions<T, Error, T, Array<string>>
   }) {
     const state = useSuspenseQuery(props.queryOpts)
 
@@ -240,28 +246,44 @@ describe('usePrefetchInfiniteQuery', () => {
 
   const Fallback = vi.fn().mockImplementation(() => <div>Loading...</div>)
 
-  function Suspended(props: { queryOpts: any }) {
+  function Suspended<T = unknown>(props: {
+    queryOpts: UseInfiniteQueryOptions<
+      T,
+      Error,
+      InfiniteData<T>,
+      any,
+      Array<string>,
+      any
+    >
+    renderPage: (page: T) => React.JSX.Element
+  }) {
     const state = useSuspenseInfiniteQuery(props.queryOpts)
 
     return (
       <div>
-        {(state.data.pages as Array<{ page: number; data: string }>).map(
-          (page) => (
-            <div key={page.page}>data: {page.data}</div>
-          ),
-        )}
+        {state.data.pages.map((page) => props.renderPage(page))}
         <button onClick={() => state.fetchNextPage()}>Next Page</button>
       </div>
     )
   }
 
   it('should prefetch an infinite query if query state does not exist', async () => {
+    const pages = [
+      { data: 'Do you fetch on render?', currentPage: 1, totalPages: 3 },
+      { data: 'Or do you render as you fetch?', currentPage: 1, totalPages: 3 },
+      {
+        data: 'Either way, Tanstack Query helps you!',
+        currentPage: 1,
+        totalPages: 3,
+      },
+    ]
+
     const queryOpts = createInfiniteQueryOptions({
-      pages: [
-        'Do you fetch on render?',
-        'Or do you render as you fetch?',
-        'Either way, Tanstack Query helps you!',
-      ],
+      pages,
+      getNextPageParam: (lastPage) =>
+        lastPage.currentPage === lastPage.totalPages
+          ? undefined
+          : lastPage.currentPage + 1,
     })
 
     function App() {
@@ -269,7 +291,10 @@ describe('usePrefetchInfiniteQuery', () => {
 
       return (
         <React.Suspense fallback={<Fallback />}>
-          <Suspended queryOpts={queryOpts} />
+          <Suspended
+            queryOpts={queryOpts}
+            renderPage={(page) => <div>data: {page.data}</div>}
+          />
         </React.Suspense>
       )
     }
@@ -291,7 +316,15 @@ describe('usePrefetchInfiniteQuery', () => {
 
   it('should not display fallback if the query cache is already populated', async () => {
     const queryOpts = createInfiniteQueryOptions({
-      pages: ['Prefetch rocks!', 'No waterfalls, boy!', 'Tanstack Query #ftw'],
+      pages: [
+        { data: 'Prefetch rocks!', currentPage: 1, totalPages: 3 },
+        { data: 'No waterfalls, boy!', currentPage: 2, totalPages: 3 },
+        { data: 'Tanstack Query #ftw', currentPage: 3, totalPages: 3 },
+      ],
+      getNextPageParam: (lastPage) =>
+        lastPage.currentPage === lastPage.totalPages
+          ? undefined
+          : lastPage.currentPage + 1,
     })
 
     await queryClient.prefetchInfiniteQuery({ ...queryOpts, pages: 3 })
@@ -302,7 +335,10 @@ describe('usePrefetchInfiniteQuery', () => {
 
       return (
         <React.Suspense fallback={<Fallback />}>
-          <Suspended queryOpts={queryOpts} />
+          <Suspended
+            queryOpts={queryOpts}
+            renderPage={(page) => <div>data: {page.data}</div>}
+          />
         </React.Suspense>
       )
     }
