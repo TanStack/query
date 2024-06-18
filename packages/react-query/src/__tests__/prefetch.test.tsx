@@ -58,17 +58,17 @@ describe('usePrefetchQuery', () => {
   it('should not prefetch query if query state exists', async () => {
     const queryOpts = {
       queryKey: queryKey(),
-      queryFn: vi.fn(),
+      queryFn: vi.fn().mockImplementation(async () => {
+        await sleep(10)
+
+        return 'Prefetch is really nice!'
+      }),
     }
 
-    queryOpts.queryFn.mockImplementation(async () => {
-      await sleep(10)
-
-      return 'Prefetch is really nice!'
-    })
+    const anotherSpy = vi.fn()
 
     function Suspended() {
-      const state = useSuspenseQuery({ ...queryOpts, queryFn: vi.fn() })
+      const state = useSuspenseQuery({ ...queryOpts, queryFn: anotherSpy })
 
       return (
         <div>
@@ -79,7 +79,7 @@ describe('usePrefetchQuery', () => {
     }
 
     function App() {
-      usePrefetchQuery({ ...queryOpts, queryFn: vi.fn() })
+      usePrefetchQuery({ ...queryOpts, queryFn: anotherSpy })
 
       return (
         <React.Suspense fallback="Loading...">
@@ -95,7 +95,7 @@ describe('usePrefetchQuery', () => {
     expect(
       rendered.getByText('data: Prefetch is really nice!'),
     ).toBeInTheDocument()
-    expect(queryOpts.queryFn).toHaveBeenCalledTimes(1)
+    expect(anotherSpy).not.toHaveBeenCalled()
   })
 
   it('should not create a suspense waterfall if prefetch is fired', async () => {
@@ -228,8 +228,13 @@ describe('usePrefetchInfiniteQuery', () => {
       pages: 3,
     }
 
+    const anotherSpy = vi.fn()
+
     function Suspended() {
-      const state = useSuspenseInfiniteQuery(queryOpts)
+      const state = useSuspenseInfiniteQuery({
+        ...queryOpts,
+        queryFn: anotherSpy,
+      })
 
       return (
         <div>
@@ -266,6 +271,7 @@ describe('usePrefetchInfiniteQuery', () => {
       rendered.getByText('data: Either way, Tanstack Query helps you!'),
     )
     expect(queryOpts.queryFn).toHaveBeenCalledTimes(3)
+    expect(anotherSpy).not.toHaveBeenCalled()
   })
 
   it('should not prefetch an infinite query if query state already exists', async () => {
@@ -276,6 +282,8 @@ describe('usePrefetchInfiniteQuery', () => {
     ]
 
     let queryPage = 0
+
+    const anotherSpy = vi.fn()
 
     const queryOpts = {
       queryKey: queryKey(),
@@ -303,7 +311,10 @@ describe('usePrefetchInfiniteQuery', () => {
     }
 
     function Suspended() {
-      const state = useSuspenseInfiniteQuery(queryOpts)
+      const state = useSuspenseInfiniteQuery({
+        ...queryOpts,
+        queryFn: anotherSpy,
+      })
 
       return (
         <div>
@@ -318,7 +329,7 @@ describe('usePrefetchInfiniteQuery', () => {
     await queryClient.prefetchInfiniteQuery(queryOpts)
 
     function App() {
-      usePrefetchInfiniteQuery(queryOpts)
+      usePrefetchInfiniteQuery({ ...queryOpts, queryFn: anotherSpy })
 
       return (
         <React.Suspense fallback="Loading...">
@@ -337,6 +348,6 @@ describe('usePrefetchInfiniteQuery', () => {
     fireEvent.click(rendered.getByText('Next Page'))
     expect(rendered.queryByText('Loading...')).not.toBeInTheDocument()
     await waitFor(() => rendered.getByText('data: Tanstack Query #ftw'))
-    expect(queryOpts.queryFn).toHaveBeenCalledTimes(3)
+    expect(anotherSpy).not.toHaveBeenCalled()
   })
 })
