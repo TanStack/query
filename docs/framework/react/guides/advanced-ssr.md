@@ -194,7 +194,7 @@ export default function Posts() {
   // child to <Posts>, data will be available immediately either way
   const { data } = useQuery({
     queryKey: ['posts'],
-    queryFn: () => getPosts()
+    queryFn: () => getPosts(),
   })
 
   // This query was not prefetched on the server and will not start
