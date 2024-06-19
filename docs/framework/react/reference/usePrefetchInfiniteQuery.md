@@ -9,7 +9,7 @@ const result = usePrefetchInfiniteQuery(options)
 
 **Options**
 
-You can pass everything to `usePrefetchInfiniteQuery` that you can pass to [`infiniteQueryOptions`](../infiniteQueryOptions) or [`useInfiniteQuery`](../useInfiniteQuery). Some options will have no effect because, under the hood, `usePrefetchInfiniteQuery` uses `queryClient.prefetchInfiniteQuery`. Since the options are general, TypeScript will not warn you about any excess properties.
+You can pass everything to `usePrefetchInfiniteQuery` that you can pass to [`queryClient.prefetchInfiniteQuery`](../../../reference/QueryClient#queryclientprefetchinfinitequery). Remember that some of them are required as below:
 
 - `queryKey: QueryKey`
 
@@ -34,4 +34,4 @@ You can pass everything to `usePrefetchInfiniteQuery` that you can pass to [`inf
 
 - **Returns**
 
-The `usePrefetchInfiniteQuery` does not return nothing, it should be used just to fire a prefetch during render, before any suspense boundaries.
+The `usePrefetchInfiniteQuery` does not return nothing, it should be used just to fire a prefetch during render, before a suspense boundary that wraps a component that uses [`useSuspenseInfiniteQuery`](../reference/useSuspenseInfiniteQuery)

@@ -9,7 +9,7 @@ const result = usePrefetchQuery(options)
 
 **Options**
 
-You can pass everything to `usePrefetchQuery` that you can pass to [`queryOptions`](../queryOptions) or [`useQuery`](../useQuery). Some options will have no effect because, under the hood, `usePrefetchQuery` uses `queryClient.prefetchQuery`. Since the options are general, TypeScript will not warn you about any excess properties.
+You can pass everything to `usePrefetchQuery` that you can pass to [`queryClient.prefetchQuery`](../../../reference/QueryClient#queryclientprefetchquery). Remember that some of them are required as below:
 
 - `queryKey: QueryKey`
 
@@ -21,4 +21,4 @@ You can pass everything to `usePrefetchQuery` that you can pass to [`queryOption
 
 **Returns**
 
-The `usePrefetchQuery` does not return nothing, it should be used just to fire a prefetch during render, before any suspense boundaries.
+The `usePrefetchQuery` does not return nothing, it should be used just to fire a prefetch during render, before a suspense boundary that wraps a component that uses [`useSuspenseQuery`](../reference/useSuspenseQuery).
