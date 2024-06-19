@@ -20,7 +20,7 @@ export function usePrefetchQuery<
 }
 
 export function usePrefetchInfiniteQuery<
-  TQueryFnData,
+  TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
