@@ -490,8 +490,12 @@ export class Query<
           onError(new Error(`${this.queryHash} data is undefined`) as any)
           return
         }
-
-        this.setData(data)
+        try {
+          this.setData(data)
+        } catch (error) {
+          onError(error as TError)
+          return
+        }
 
         // Notify cache callback
         this.#cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
