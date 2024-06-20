@@ -1,17 +1,22 @@
 <script lang="ts">
-	import { createMutation, createQuery, createQueries, useQueryClient } from 'svelte-query/dev'
+	import {
+		createMutation,
+		createQuery,
+		createQueries,
+		useQueryClient
+	} from '@tanstack/svelte-query-runes/dev';
 
-	let { children } = $props()
+	let { children } = $props();
 	function isDerivedReactive() {
-		let host = $state({ a: 1 })
-		const b = $derived({ a: host })
-		const DeriWithHostVal = $derived({ a: host.a })
-		const stateWithHostVal = $state({ a: host.a })
-		const c = $state({ a: host })
-		const d = { a: host }
+		let host = $state({ a: 1 });
+		const b = $derived({ a: host });
+		const DeriWithHostVal = $derived({ a: host.a });
+		const stateWithHostVal = $state({ a: host.a });
+		const c = $state({ a: host });
+		const d = { a: host };
 		const objFn = () => {
-			return { a: host }
-		}
+			return { a: host };
+		};
 		return {
 			host,
 			DeriWithHostVal,
@@ -21,37 +26,37 @@
 			objectWithHost: d,
 			hostProxy: new Proxy(host, {
 				get(target, prop) {
-					if (prop == 'value') return target
-					return target[prop]
+					if (prop == 'value') return target;
+					return target[prop];
 				}
 			}),
 			updateHost: (v) => {
-				host.a = v
+				host.a = v;
 			},
 			immutableUpHost: () => {
-				host = { a: 'complete new ' }
+				host = { a: 'complete new ' };
 			},
 			accessHostWithFn: () => {
-				return host
+				return host;
 			}
-		} as const
+		} as const;
 	}
 
-	export { isDerivedReactive }
+	export { isDerivedReactive };
 	//create query
 
-	let createQueryKey = $state('string props')
-	let createQueryKeyDeep = $state(['deep create query props'])
-	let createQueryKeyDeepArr = $state({ test: ['deep create query props'] })
-	let deepDerived = $derived({ derived_deep_key: createQueryKeyDeepArr.test[0] })
-	const stateSample = isDerivedReactive()
+	let createQueryKey = $state('string props');
+	let createQueryKeyDeep = $state(['deep create query props']);
+	let createQueryKeyDeepArr = $state({ test: ['deep create query props'] });
+	let deepDerived = $derived({ derived_deep_key: createQueryKeyDeepArr.test[0] });
+	const stateSample = isDerivedReactive();
 
 	const data = createQuery({
 		queryKey: ['hi', createQueryKeyDeepArr],
 		queryFn: async () => {
-			const data = await fetch('https://pokeapi.co/api/v2/pokemon/ditto')
+			const data = await fetch('https://pokeapi.co/api/v2/pokemon/ditto');
 
-			const b = (await data.json()) as typeof sample
+			const b = (await data.json()) as typeof sample;
 			const s = [
 				{
 					title: 'XX',
@@ -664,84 +669,84 @@
 					is_crawled: false,
 					extra: null
 				}
-			]
+			];
 			if (createQueryKeyDeepArr.test.length > 2) {
 				s.forEach((v) => {
-					v.title = new Date().toISOString()
-				})
-				return [new Date().toJSON()]
+					v.title = new Date().toISOString();
+				});
+				return [new Date().toJSON()];
 			}
-			return [new Date().toJSON()]
+			return [new Date().toJSON()];
 		},
 		staleTime: 50000
-	})
+	});
 
 	const ddata = createQuery({
 		queryKey: ['deep derive', deepDerived],
 		queryFn: () => Date.now()
-	})
+	});
 	// should deduplicate
 	const data1 = createQuery({
 		queryKey: ['hi', $state.snapshot(createQueryKeyDeepArr)],
 		queryFn: () => fetch('https://pokeapi.co/api/v2/pokemon/ditto')
-	})
+	});
 
 	function updateCreateQueryKey() {
-		createQueryKey = 'a new string'
+		createQueryKey = 'a new string';
 
-		createQueryKeyDeep.push(Date.now())
+		createQueryKeyDeep.push(Date.now());
 		if (createQueryKeyDeepArr.test.length > 2) {
-			createQueryKeyDeepArr.test.pop()
-			return
+			createQueryKeyDeepArr.test.pop();
+			return;
 		}
 		if (createQueryKeyDeepArr.test.length <= 2) {
-			createQueryKeyDeepArr.test.push('a new date')
+			createQueryKeyDeepArr.test.push('a new date');
 		}
 	}
 
 	// create queries
-	let keys = $state(['123', '123'])
+	let keys = $state(['123', '123']);
 	const dat1 = createQueries({
 		queries: [
 			{ queryFn: () => 1, queryKey: keys },
 			{ queryFn: () => 2, queryKey: ['aa'] }
 		]
-	})
+	});
 	const mutate = createMutation({
 		mutationKey: ['1'],
 		mutationFn: () => {
-			return new Promise((a) => setTimeout(a('12312'), 1000))
+			return new Promise((a) => setTimeout(a('12312'), 1000));
 		},
 		onSuccess: () => {
 			client.setQueryData([createQueryKey], (v) => {
-				return ['mutated']
-			})
+				return ['mutated'];
+			});
 		}
-	})
-	const client = useQueryClient()
+	});
+	const client = useQueryClient();
 
-	console.log('data', dat1, client)
-	let show = $state(false)
-	let newState = $state({ bbb: '12312312' })
-	let cache = $state({})
+	console.log('data', dat1, client);
+	let show = $state(false);
+	let newState = $state({ bbb: '12312312' });
+	let cache = $state({});
 	setInterval(() => {
-		cache = JSON.stringify(client.getQueryCache().getAll(), null, 2)
-	}, 1000)
+		cache = JSON.stringify(client.getQueryCache().getAll(), null, 2);
+	}, 1000);
 
-	let isFnReactive = $state({ a: 1 })
+	let isFnReactive = $state({ a: 1 });
 	let obFn = () => {
-		return { c: isFnReactive.a }
-	}
-	let ob = { c: isFnReactive.a }
+		return { c: isFnReactive.a };
+	};
+	let ob = { c: isFnReactive.a };
 
 	let fn = $derived(() => {
-		obFn()
-		return new Date().toISOString()
-	})
+		obFn();
+		return new Date().toISOString();
+	});
 	let fn1 = $derived(() => {
-		isFnReactive
-		return new Date().toISOString()
-	})
+		isFnReactive;
+		return new Date().toISOString();
+	});
 </script>
 
 <hr />
@@ -771,7 +776,7 @@
 	<div>fetchStatus: {data.fetchStatus}</div>
 	<button
 		onclick={() => {
-			createQueryKeyDeepArr.test.push('what is this')
+			createQueryKeyDeepArr.test.push('what is this');
 		}}
 	>
 		update query key : should deduplicate</button
