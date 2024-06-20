@@ -28,7 +28,7 @@ function setupPersister(
   const context = {
     meta: { foo: 'bar' },
     queryKey,
-    // @ts-ignore
+    // @ts-expect-error
     signal: undefined as AbortSignal,
   }
   const queryHash = hashKey(queryKey)
@@ -207,7 +207,7 @@ describe('createPersister', () => {
     )
 
     await persisterFn(queryFn, context, query)
-    query.state.dataUpdatedAt = 0
+    query.state.data = 'data0'
     query.fetch = vi.fn()
     expect(query.state.dataUpdatedAt).toEqual(0)
 
@@ -245,7 +245,7 @@ describe('createPersister', () => {
     expect(query.fetch).toHaveBeenCalledTimes(1)
   })
 
-  test('should store item after successfull fetch', async () => {
+  test('should store item after successful fetch', async () => {
     const storage = getFreshStorage()
     const {
       context,
@@ -339,7 +339,7 @@ describe('createPersister', () => {
     expect(query.fetch).toHaveBeenCalledTimes(1)
   })
 
-  test('should store item after successfull fetch with async serializer', async () => {
+  test('should store item after successful fetch with async serializer', async () => {
     const storage = getFreshStorage()
     const {
       context,

@@ -3,13 +3,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:bundle": "vite build"
+    "build": "vite build"
   },
   "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^3.1.0",
     "@tanstack/svelte-query": "workspace:*",
     "@tanstack/svelte-query-devtools": "workspace:*",
-    "@sveltejs/vite-plugin-svelte": "^2.4.6",
-    "svelte": "^4.0.0",
-    "vite": "^4.5.0"
+    "svelte": "^4.2.17",
+    "vite": "^5.2.11"
   }
 }

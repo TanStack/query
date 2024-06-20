@@ -18,7 +18,7 @@ function getMockStorage(limitSize?: number) {
     },
 
     setItem(key: string, value: string) {
-      if (typeof limitSize !== 'undefined') {
+      if (limitSize !== undefined) {
         const currentSize = Array.from(dataSet.entries()).reduce(
           (n, d) => d[0].length + d[1].length + n,
           0,
@@ -40,7 +40,7 @@ function getMockStorage(limitSize?: number) {
   } as any as Storage
 }
 
-describe('createpersister ', () => {
+describe('create persister ', () => {
   test('basic store and recover', async () => {
     const queryCache = new QueryCache()
     const mutationCache = new MutationCache()

@@ -3,11 +3,11 @@
   "private": true,
   "scripts": {
     "dev": "nuxi dev",
-    "build": "nuxi build",
-    "start": "node .output/server/index.mjs"
+    "_build": "nuxi build",
+    "_start": "node .output/server/index.mjs"
   },
   "dependencies": {
-    "@tanstack/vue-query": "^5.0.0"
+    "@tanstack/vue-query": "^5.45.0"
   },
   "devDependencies": {
     "nuxt": "^3.5.2"

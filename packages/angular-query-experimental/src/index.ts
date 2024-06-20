@@ -8,19 +8,21 @@ export * from './types'
 export type {
   DefinedInitialDataOptions,
   UndefinedInitialDataOptions,
-} from './queryOptions'
-export { queryOptions } from './queryOptions'
+} from './query-options'
+export { queryOptions } from './query-options'
 
-export { infiniteQueryOptions } from './infiniteQueryOptions'
+export type {
+  DefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
+} from './infinite-query-options'
+export { infiniteQueryOptions } from './infinite-query-options'
 
-export * from './injectIsFetching'
-export * from './injectIsMutating'
-export * from './injectMutation'
-export * from './injectQueries'
-export * from './injectQuery'
-export {
-  injectQueryClient,
-  provideQueryClient,
-  QUERY_CLIENT,
-} from './injectQueryClient'
+export * from './inject-infinite-query'
+export * from './inject-is-fetching'
+export * from './inject-is-mutating'
+export * from './inject-mutation'
+export * from './inject-mutation-state'
+export * from './inject-queries'
+export * from './inject-query'
+export { injectQueryClient, provideQueryClient } from './inject-query-client'
 export { provideAngularQuery } from './providers'

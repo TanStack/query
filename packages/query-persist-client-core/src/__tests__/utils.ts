@@ -30,7 +30,7 @@ export const createMockPersister = (): Persister => {
   }
 }
 
-export const createSpyablePersister = (): Persister => {
+export const createSpyPersister = (): Persister => {
   return {
     persistClient: vi.fn(),
     restoreClient: vi.fn(),

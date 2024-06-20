@@ -1,5 +1,3 @@
-import { scheduleMicrotask } from './utils'
-
 // TYPES
 
 type NotifyCallback = () => void
@@ -10,6 +8,8 @@ type BatchNotifyFunction = (callback: () => void) => void
 
 type BatchCallsCallback<T extends Array<unknown>> = (...args: T) => void
 
+type ScheduleFunction = (callback: () => void) => void
+
 export function createNotifyManager() {
   let queue: Array<NotifyCallback> = []
   let transactions = 0
@@ -18,6 +18,11 @@ export function createNotifyManager() {
   }
   let batchNotifyFn: BatchNotifyFunction = (callback: () => void) => {
     callback()
+  }
+  let scheduleFn: ScheduleFunction = (cb) => setTimeout(cb, 0)
+
+  const setScheduler = (fn: ScheduleFunction) => {
+    scheduleFn = fn
   }
 
   const batch = <T>(callback: () => T): T => {
@@ -38,7 +43,7 @@ export function createNotifyManager() {
     if (transactions) {
       queue.push(callback)
     } else {
-      scheduleMicrotask(() => {
+      scheduleFn(() => {
         notifyFn(callback)
       })
     }
@@ -61,7 +66,7 @@ export function createNotifyManager() {
     const originalQueue = queue
     queue = []
     if (originalQueue.length) {
-      scheduleMicrotask(() => {
+      scheduleFn(() => {
         batchNotifyFn(() => {
           originalQueue.forEach((callback) => {
             notifyFn(callback)
@@ -93,6 +98,7 @@ export function createNotifyManager() {
     schedule,
     setNotifyFunction,
     setBatchNotifyFunction,
+    setScheduler,
   } as const
 }
 

@@ -1,8 +1,8 @@
 import { stringify } from 'superjson'
-import { css } from 'goober'
 import { clsx as cx } from 'clsx'
 import { Index, Match, Show, Switch, createMemo, createSignal } from 'solid-js'
 import { Key } from '@solid-primitives/keyed'
+import * as goober from 'goober'
 import { tokens } from './theme'
 import {
   deleteNestedDataByPath,
@@ -38,8 +38,11 @@ function chunkArray<T extends { label: string; value: unknown }>(
 
 const Expander = (props: { expanded: boolean }) => {
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
   return (
@@ -78,8 +81,11 @@ const Expander = (props: { expanded: boolean }) => {
 type CopyState = 'NoCopy' | 'SuccessCopy' | 'ErrorCopy'
 const CopyButton = (props: { value: unknown }) => {
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
   const [copyState, setCopyState] = createSignal<CopyState>('NoCopy')
 
@@ -136,8 +142,11 @@ const ClearArrayButton = (props: {
   activeQuery: Query
 }) => {
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
   const queryClient = useQueryDevtoolsContext().client
 
@@ -162,8 +171,11 @@ const DeleteItemButton = (props: {
   activeQuery: Query
 }) => {
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
   const queryClient = useQueryDevtoolsContext().client
 
@@ -189,8 +201,11 @@ const ToggleValueButton = (props: {
   value: boolean
 }) => {
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
   const queryClient = useQueryDevtoolsContext().client
 
@@ -236,8 +251,11 @@ function isIterable(x: any): x is Iterable<unknown> {
 
 export default function Explorer(props: ExplorerProps) {
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
   const queryClient = useQueryDevtoolsContext().client
 
@@ -482,14 +500,18 @@ export default function Explorer(props: ExplorerProps) {
   )
 }
 
-const stylesFactory = (theme: 'light' | 'dark') => {
+const stylesFactory = (
+  theme: 'light' | 'dark',
+  css: (typeof goober)['css'],
+) => {
   const { colors, font, size, border } = tokens
   const t = (light: string, dark: string) => (theme === 'light' ? light : dark)
   return {
     entry: css`
       & * {
         font-size: ${font.size.xs};
-        font-family: 'Menlo', 'Fira Code', monospace;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          'Liberation Mono', 'Courier New', monospace;
       }
       position: relative;
       outline: none;
@@ -611,5 +633,5 @@ const stylesFactory = (theme: 'light' | 'dark') => {
   }
 }
 
-const lightStyles = stylesFactory('light')
-const darkStyles = stylesFactory('dark')
+const lightStyles = (css: (typeof goober)['css']) => stylesFactory('light', css)
+const darkStyles = (css: (typeof goober)['css']) => stylesFactory('dark', css)

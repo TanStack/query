@@ -1,30 +1,22 @@
 {
-  "name": "@tanstack/query-example-solid-solid-start-streaming",
-  "private": true,
-  "scripts": {
-    "dev": "solid-start dev",
-    "build": "solid-start build",
-    "start": "solid-start start"
-  },
+  "name": "example-basic",
   "type": "module",
-  "dependencies": {
-    "@solidjs/meta": "^0.28.6",
-    "@solidjs/router": "^0.8.3",
-    "@tanstack/solid-query": "^5.0.0",
-    "@tanstack/solid-query-devtools": "^5.0.0",
-    "solid-js": "^1.8.1",
-    "solid-start": "^0.3.7",
-    "undici": "^5.26.3"
+  "scripts": {
+    "dev": "vinxi dev",
+    "build": "vinxi build",
+    "start": "vinxi start",
+    "version": "vinxi version"
   },
-  "devDependencies": {
-    "@types/node": "^18.18.0",
-    "esbuild": "^0.19.5",
-    "postcss": "^8.4.31",
-    "solid-start-node": "^0.3.7",
-    "typescript": "5.1.6",
-    "vite": "^4.5.0"
+  "dependencies": {
+    "@solidjs/meta": "^0.29.4",
+    "@solidjs/router": "^0.13.3",
+    "@solidjs/start": "^1.0.0-rc.1",
+    "@tanstack/solid-query": "^5.45.0",
+    "@tanstack/solid-query-devtools": "^5.45.0",
+    "solid-js": "^1.8.17",
+    "vinxi": "^0.3.10"
   },
   "engines": {
-    "node": ">=16.8"
+    "node": ">=18"
   }
 }

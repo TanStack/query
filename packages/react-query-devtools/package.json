@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-devtools",
-  "version": "5.14.2",
+  "version": "5.45.1",
   "description": "Developer tools to interact with and visualize the TanStack/react-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -60,9 +60,10 @@
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
-    "test:lib": "vitest run --coverage",
+    "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
+    "test:attw": "attw --pack",
     "build": "tsup",
     "build:dev": "tsup --watch"
   },
@@ -71,11 +72,12 @@
   },
   "devDependencies": {
     "@tanstack/react-query": "workspace:*",
-    "@types/react": "^18.2.31",
-    "react": "^18.2.0"
+    "@types/react": "npm:types-react@rc",
+    "@vitejs/plugin-react": "^4.2.1",
+    "react": "19.0.0-rc-4c2e457c7c-20240522"
   },
   "peerDependencies": {
     "@tanstack/react-query": "workspace:^",
-    "react": "^18.0.0"
+    "react": "^18 || ^19"
   }
 }

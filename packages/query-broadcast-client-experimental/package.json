@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-broadcast-client-experimental",
-  "version": "5.14.2",
+  "version": "5.45.0",
   "description": "An experimental plugin to for broadcasting the state of your queryClient between browser tabs/windows",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -41,10 +41,11 @@
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
     "test:build": "publint --strict",
+    "test:attw": "attw --pack",
     "build": "tsup"
   },
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
-    "broadcast-channel": "^5.5.0"
+    "broadcast-channel": "^7.0.0"
   }
 }

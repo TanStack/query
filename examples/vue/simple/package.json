@@ -1,0 +1,20 @@
+{
+  "name": "@tanstack/query-example-vue-simple",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tanstack/vue-query": "^5.45.0",
+    "@tanstack/vue-query-devtools": "^5.45.0",
+    "vue": "^3.4.27"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "typescript": "5.3.3",
+    "vite": "^5.2.11"
+  }
+}

@@ -1,8 +1,8 @@
-import { ESLintUtils } from '@typescript-eslint/utils'
-import { normalizeIndent } from '../utils/test-utils'
-import { rule } from '../rules/exhaustive-deps.rule'
+import { RuleTester } from '@typescript-eslint/rule-tester'
+import { rule } from '../rules/exhaustive-deps/exhaustive-deps.rule'
+import { normalizeIndent } from './test-utils'
 
-const ruleTester = new ESLintUtils.RuleTester({
+const ruleTester = new RuleTester({
   parser: '@typescript-eslint/parser',
   settings: {},
 })
@@ -23,7 +23,6 @@ ruleTester.run('exhaustive-deps', rule, {
     },
     {
       name: 'should pass when deps are passed in template literal',
-      // eslint-disable-next-line no-template-curly-in-string
       code: 'useQuery({ queryKey: [`entity/${id}`], queryFn: () => api.getEntity(id) });',
     },
     {
@@ -364,17 +363,44 @@ ruleTester.run('exhaustive-deps', rule, {
         const CONST_VAL = 1
         function useHook() {
           const queryClient = useQueryClient()
-          const kueryKlient = useQueryClient()
+          const queryClient2 = useQueryClient()
           useQuery({
             queryKey: ["foo"],
             queryFn: () => {
                 doSomething(queryClient)
                 queryClient.invalidateQueries()
-                doSomethingSus(kueryKlient)
+                doSomethingSus(queryClient2)
             }
           });
         }
       `,
+    },
+    {
+      name: 'query key with nullish coalescing operator',
+      code: `
+        const factory = (id: number) => ['foo', id];
+        function Component({ id }) {
+          useQuery({
+            queryKey: factory(id ?? -1),
+            queryFn: () => Promise.resolve({ id })
+          });
+        }
+        `,
+    },
+    {
+      name: 'instanceof value should not be in query key',
+      code: `
+        class SomeClass {}
+
+        function Component({ value }) {
+            useQuery({
+                queryKey: ['foo'],
+                queryFn: () => {
+                    return value instanceof SomeClass;
+                }
+            });
+        }
+        `,
     },
   ],
   invalid: [
@@ -464,7 +490,6 @@ ruleTester.run('exhaustive-deps', rule, {
           suggestions: [
             {
               messageId: 'fixTo',
-              // eslint-disable-next-line no-template-curly-in-string
               data: { result: '["entity/${id}", id]' },
               output: normalizeIndent`
                 const id = 1;
@@ -489,7 +514,6 @@ ruleTester.run('exhaustive-deps', rule, {
           suggestions: [
             {
               messageId: 'fixTo',
-              // eslint-disable-next-line no-template-curly-in-string
               data: { result: '[`entity/${a}`, b]' },
               output: normalizeIndent`
                 const a = 1;
@@ -656,33 +680,6 @@ ruleTester.run('exhaustive-deps', rule, {
       ],
     },
     {
-      name: 'should fail when a queryKey is a reference of an array expression with a missing dep',
-      code: normalizeIndent`
-        const x = 5;
-        const queryKey = ['foo']
-        useQuery({ queryKey, queryFn: () => x })
-      `,
-      errors: [
-        {
-          messageId: 'missingDeps',
-          data: { deps: 'x' },
-          suggestions: [
-            {
-              messageId: 'fixTo',
-              data: {
-                result: "['foo', x]",
-              },
-              output: normalizeIndent`
-                const x = 5;
-                const queryKey = ['foo', x]
-                useQuery({ queryKey, queryFn: () => x })
-              `,
-            },
-          ],
-        },
-      ],
-    },
-    {
       name: 'should fail when queryKey is a queryKeyFactory while having missing dep',
       code: normalizeIndent`
         const fooQueryKeyFactory = { foo: () => ['foo'] as const }
@@ -714,6 +711,25 @@ ruleTester.run('exhaustive-deps', rule, {
         {
           messageId: 'missingDeps',
           data: { deps: 'state.bar' },
+        },
+      ],
+    },
+    {
+      name: 'should fail if queryFn is invalid while using FunctionExpression syntax',
+      code: normalizeIndent`
+        const id = 1;
+    
+        useQuery({
+            queryKey: [],
+            queryFn() {
+              Promise.resolve(id)
+            }
+        })
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'id' },
         },
       ],
     },

@@ -4,8 +4,6 @@
 const config = {
   extends: ['plugin:svelte/recommended'],
   parserOptions: {
-    tsconfigRootDir: __dirname,
-    project: './tsconfig.json',
     extraFileExtensions: ['.svelte'],
   },
   ignorePatterns: ['*.config.*', '*.setup.*', '**/dist/*'],
@@ -18,6 +16,9 @@ const config = {
       },
     },
   ],
+  rules: {
+    'svelte/no-svelte-internal': 'error',
+  },
 }
 
 module.exports = config

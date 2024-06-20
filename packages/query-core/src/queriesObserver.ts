@@ -22,10 +22,14 @@ function replaceAt<T>(array: Array<T>, index: number, value: T): Array<T> {
 
 type QueriesObserverListener = (result: Array<QueryObserverResult>) => void
 
+type CombineFn<TCombinedResult> = (
+  result: Array<QueryObserverResult>,
+) => TCombinedResult
+
 export interface QueriesObserverOptions<
   TCombinedResult = Array<QueryObserverResult>,
 > {
-  combine?: (result: Array<QueryObserverResult>) => TCombinedResult
+  combine?: CombineFn<TCombinedResult>
 }
 
 export class QueriesObserver<
@@ -35,28 +39,23 @@ export class QueriesObserver<
   #result!: Array<QueryObserverResult>
   #queries: Array<QueryObserverOptions>
   #observers: Array<QueryObserver>
-  #options?: QueriesObserverOptions<TCombinedResult>
-  #combinedResult!: TCombinedResult
+  #combinedResult?: TCombinedResult
+  #lastCombine?: CombineFn<TCombinedResult>
+  #lastResult?: Array<QueryObserverResult>
 
   constructor(
     client: QueryClient,
     queries: Array<QueryObserverOptions>,
-    options?: QueriesObserverOptions<TCombinedResult>,
+    _options?: QueriesObserverOptions<TCombinedResult>,
   ) {
     super()
 
     this.#client = client
-    this.#queries = queries
-    this.#options = options
+    this.#queries = []
     this.#observers = []
+    this.#result = []
 
-    this.#setResult([])
-    this.setQueries(queries, options)
-  }
-
-  #setResult(value: Array<QueryObserverResult>) {
-    this.#result = value
-    this.#combinedResult = this.#combineResult(value)
+    this.setQueries(queries)
   }
 
   protected onSubscribe(): void {
@@ -84,11 +83,10 @@ export class QueriesObserver<
 
   setQueries(
     queries: Array<QueryObserverOptions>,
-    options?: QueriesObserverOptions<TCombinedResult>,
+    _options?: QueriesObserverOptions<TCombinedResult>,
     notifyOptions?: NotifyOptions,
   ): void {
     this.#queries = queries
-    this.#options = options
 
     notifyManager.batch(() => {
       const prevObservers = this.#observers
@@ -108,12 +106,13 @@ export class QueriesObserver<
       const hasIndexChange = newObservers.some(
         (observer, index) => observer !== prevObservers[index],
       )
+
       if (prevObservers.length === newObservers.length && !hasIndexChange) {
         return
       }
 
       this.#observers = newObservers
-      this.#setResult(newResult)
+      this.#result = newResult
 
       if (!this.hasListeners()) {
         return
@@ -133,8 +132,8 @@ export class QueriesObserver<
     })
   }
 
-  getCurrentResult(): TCombinedResult {
-    return this.#combinedResult
+  getCurrentResult(): Array<QueryObserverResult> {
+    return this.#result
   }
 
   getQueries() {
@@ -147,6 +146,7 @@ export class QueriesObserver<
 
   getOptimisticResult(
     queries: Array<QueryObserverOptions>,
+    combine: CombineFn<TCombinedResult> | undefined,
   ): [
     rawResult: Array<QueryObserverResult>,
     combineResult: (r?: Array<QueryObserverResult>) => TCombinedResult,
@@ -160,23 +160,43 @@ export class QueriesObserver<
     return [
       result,
       (r?: Array<QueryObserverResult>) => {
-        return this.#combineResult(r ?? result)
+        return this.#combineResult(r ?? result, combine)
       },
       () => {
         return matches.map((match, index) => {
           const observerResult = result[index]!
           return !match.defaultedQueryOptions.notifyOnChangeProps
-            ? match.observer.trackResult(observerResult)
+            ? match.observer.trackResult(observerResult, (accessedProp) => {
+                // track property on all observers to ensure proper (synchronized) tracking (#7000)
+                matches.forEach((m) => {
+                  m.observer.trackProp(accessedProp)
+                })
+              })
             : observerResult
         })
       },
     ]
   }
 
-  #combineResult(input: Array<QueryObserverResult>): TCombinedResult {
-    const combine = this.#options?.combine
+  #combineResult(
+    input: Array<QueryObserverResult>,
+    combine: CombineFn<TCombinedResult> | undefined,
+  ): TCombinedResult {
     if (combine) {
-      return replaceEqualDeep(this.#combinedResult, combine(input))
+      if (
+        !this.#combinedResult ||
+        this.#result !== this.#lastResult ||
+        combine !== this.#lastCombine
+      ) {
+        this.#lastCombine = combine
+        this.#lastResult = this.#result
+        this.#combinedResult = replaceEqualDeep(
+          this.#combinedResult,
+          combine(input),
+        )
+      }
+
+      return this.#combinedResult
     }
     return input as any
   }
@@ -242,7 +262,7 @@ export class QueriesObserver<
   #onUpdate(observer: QueryObserver, result: QueryObserverResult): void {
     const index = this.#observers.indexOf(observer)
     if (index !== -1) {
-      this.#setResult(replaceAt(this.#result, index, result))
+      this.#result = replaceAt(this.#result, index, result)
       this.#notify()
     }
   }

@@ -2,7 +2,7 @@
   "name": "react-next",
   "private": true,
   "scripts": {
-    "test:bundle": "next build"
+    "build": "next build"
   },
   "dependencies": {
     "@tanstack/react-query": "workspace:*",
@@ -12,9 +12,9 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/node": "^18.18.0",
-    "@types/react": "^18.2.31",
-    "@types/react-dom": "^18.2.14",
-    "typescript": "5.1.6"
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.2.79",
+    "@types/react-dom": "^18.2.25",
+    "typescript": "5.3.3"
   }
 }

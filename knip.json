@@ -1,0 +1,14 @@
+{
+  "$schema": "https://unpkg.com/knip@4/schema.json",
+  "ignoreWorkspaces": ["examples/**", "integrations/**"],
+  "workspaces": {
+    "packages/query-codemods": {
+      "entry": ["src/v4/**/*.cjs", "src/v5/**/*.cjs"],
+      "ignore": ["**/__testfixtures__/**"]
+    },
+    "packages/vue-query": {
+      "ignore": ["**/__mocks__/**"],
+      "ignoreDependencies": ["vue2", "vue2.7"]
+    }
+  }
+}

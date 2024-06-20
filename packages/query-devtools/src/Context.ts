@@ -5,7 +5,7 @@ import type { Query, QueryClient, onlineManager } from '@tanstack/query-core'
 type XPosition = 'left' | 'right'
 type YPosition = 'top' | 'bottom'
 export type DevtoolsPosition = XPosition | YPosition
-export type DevtoolsButtonPosition = `${YPosition}-${XPosition}`
+export type DevtoolsButtonPosition = `${YPosition}-${XPosition}` | 'relative'
 
 export interface DevToolsErrorType {
   /**
@@ -28,6 +28,7 @@ export interface QueryDevtoolsProps {
   position?: DevtoolsPosition
   initialIsOpen?: boolean
   errorTypes?: Array<DevToolsErrorType>
+  shadowDOMTarget?: ShadowRoot
 }
 
 export const QueryDevtoolsContext = createContext<QueryDevtoolsProps>({
@@ -35,6 +36,7 @@ export const QueryDevtoolsContext = createContext<QueryDevtoolsProps>({
   onlineManager: undefined as unknown as typeof onlineManager,
   queryFlavor: '',
   version: '',
+  shadowDOMTarget: undefined,
 })
 
 export function useQueryDevtoolsContext() {

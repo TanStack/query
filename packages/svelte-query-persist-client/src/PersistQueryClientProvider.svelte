@@ -7,11 +7,11 @@
   } from '@tanstack/svelte-query'
   import { writable } from 'svelte/store'
   import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
-  import type { QueryClient } from '@tanstack/svelte-query'
+  import type { OmitKeyof, QueryClient } from '@tanstack/svelte-query'
 
   export let client: QueryClient
   export let onSuccess: () => Promise<unknown> | unknown = () => undefined
-  export let persistOptions: Omit<PersistQueryClientOptions, 'queryClient'>
+  export let persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
 
   const isRestoring = writable(true)
   setIsRestoringContext(isRestoring)

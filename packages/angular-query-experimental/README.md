@@ -7,13 +7,13 @@
 
 # Angular Query
 
-> This library is currently in an experimental stage. This means that breaking changes will happen in minor AND patch releases. Use at your own risk. If you choose to rely on this in production in an experimental stage, please lock your version to a patch-level version to avoid unexpected breakages.
+> IMPORTANT: This library is currently in an experimental stage. This means that breaking changes will happen in minor AND patch releases. Upgrade carefully. If you use this in production while in experimental stage, please lock your version to a patch-level version to avoid unexpected breaking changes.
 
 Functions for fetching, caching and updating asynchronous data in Angular
 
 # Documentation
 
-Visit https://tanstack.com/query/latest/docs/angular/overview
+Visit https://tanstack.com/query/latest/docs/framework/angular/overview
 
 ## Quick Features
 
@@ -29,7 +29,7 @@ Visit https://tanstack.com/query/latest/docs/angular/overview
 
 # Quick Start
 
-> Angular Query requires Angular 17.
+> Angular Query requires Angular 16.
 
 1. Install `angular-query`
 
@@ -39,6 +39,8 @@ Visit https://tanstack.com/query/latest/docs/angular/overview
    $ pnpm add @tanstack/angular-query-experimental
    # or
    $ yarn add @tanstack/angular-query-experimental
+   # or
+   $ bun add @tanstack/angular-query-experimental
    ```
 
 2. Initialize **Angular Query** by adding **provideAngularQuery** to your application
@@ -49,6 +51,23 @@ Visit https://tanstack.com/query/latest/docs/angular/overview
 
    bootstrapApplication(AppComponent, {
      providers: [provideAngularQuery(new QueryClient())],
+   })
+   ```
+
+   or in a NgModule-based app
+
+   ```ts
+   import { provideHttpClient } from '@angular/common/http'
+   import {
+   provideAngularQuery,
+   QueryClient,
+   } from '@tanstack/angular-query-experimental'
+
+   @NgModule({
+     declarations: [AppComponent],
+     imports: [BrowserModule],
+     providers: [provideAngularQuery(new QueryClient())],
+     bootstrap: [AppComponent],
    })
    ```
 

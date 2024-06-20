@@ -1,20 +1,18 @@
 {
-  "name": "@tanstack/query-example-react-refetch-interval",
+  "name": "@tanstack/query-example-react-auto-refetching",
   "private": true,
-  "main": "index.js",
-  "license": "MIT",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
   "dependencies": {
-    "@tanstack/react-query": "^5.0.0",
-    "@tanstack/react-query-devtools": "^5.0.0",
-    "axios": "^1.5.1",
+    "@tanstack/react-query": "^5.45.1",
+    "@tanstack/react-query-devtools": "^5.45.1",
+    "axios": "^1.6.8",
     "isomorphic-unfetch": "4.0.2",
     "next": "^14.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
-  },
-  "scripts": {
-    "dev": "next",
-    "start": "next start",
-    "build": "next build"
   }
 }

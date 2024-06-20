@@ -9,10 +9,10 @@ import type {
   MutateFunction,
   MutationObserverOptions,
   MutationObserverResult,
+  OmitKeyof,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
-  WithRequired,
 } from '@tanstack/query-core'
 
 export interface UseBaseQueryOptions<
@@ -21,9 +21,12 @@ export interface UseBaseQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends WithRequired<
-    QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
-    'queryKey'
+> extends QueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
   > {}
 
 export interface UseQueryOptions<
@@ -31,11 +34,8 @@ export interface UseQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends Omit<
-    WithRequired<
-      UseBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
-      'queryKey'
-    >,
+> extends OmitKeyof<
+    UseBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
     'suspense'
   > {}
 
@@ -44,7 +44,7 @@ export interface UseSuspenseQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends Omit<
+> extends OmitKeyof<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'enabled' | 'throwOnError' | 'placeholderData'
   > {}
@@ -56,19 +56,16 @@ export interface UseInfiniteQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends WithRequired<
-    Omit<
-      InfiniteQueryObserverOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryData,
-        TQueryKey,
-        TPageParam
-      >,
-      'suspense'
+> extends OmitKeyof<
+    InfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
     >,
-    'queryKey'
+    'suspense'
   > {}
 
 export interface UseSuspenseInfiniteQueryOptions<
@@ -78,7 +75,7 @@ export interface UseSuspenseInfiniteQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends Omit<
+> extends OmitKeyof<
     UseInfiniteQueryOptions<
       TQueryFnData,
       TError,
@@ -103,7 +100,7 @@ export type UseQueryResult<
 export type UseSuspenseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = Omit<DefinedQueryObserverResult<TData, TError>, 'isPlaceholderData'>
+> = OmitKeyof<DefinedQueryObserverResult<TData, TError>, 'isPlaceholderData'>
 
 export type DefinedUseQueryResult<
   TData = unknown,
@@ -123,16 +120,19 @@ export type DefinedUseInfiniteQueryResult<
 export type UseSuspenseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = Omit<DefinedInfiniteQueryObserverResult<TData, TError>, 'isPlaceholderData'>
+> = OmitKeyof<
+  DefinedInfiniteQueryObserverResult<TData, TError>,
+  'isPlaceholderData'
+>
 
 export interface UseMutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> extends Omit<
+> extends OmitKeyof<
     MutationObserverOptions<TData, TError, TVariables, TContext>,
-    '_defaulted' | 'variables'
+    '_defaulted'
   > {}
 
 export type UseMutateFunction<
@@ -168,4 +168,8 @@ export type UseMutationResult<
   TContext = unknown,
 > = UseBaseMutationResult<TData, TError, TVariables, TContext>
 
-type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }
+type Override<TTargetA, TTargetB> = {
+  [AKey in keyof TTargetA]: AKey extends keyof TTargetB
+    ? TTargetB[AKey]
+    : TTargetA[AKey]
+}

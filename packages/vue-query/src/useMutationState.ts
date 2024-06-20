@@ -10,7 +10,6 @@ import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
 import type { DeepReadonly, Ref } from 'vue-demi'
 import type {
-  DefaultError,
   MutationFilters as MF,
   Mutation,
   MutationState,
@@ -28,18 +27,22 @@ export function useIsMutating(
   if (process.env.NODE_ENV === 'development') {
     if (!getCurrentScope()) {
       console.warn(
-        'vue-query composables like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+        'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
       )
     }
   }
 
   const client = queryClient || useQueryClient()
-  const unreffedFilters = computed(() => ({
-    ...cloneDeepUnref(filters),
-    status: 'pending' as const,
-  }))
 
-  const mutationState = useMutationState({ filters: unreffedFilters }, client)
+  const mutationState = useMutationState(
+    {
+      filters: computed(() => ({
+        ...cloneDeepUnref(filters),
+        status: 'pending' as const,
+      })),
+    },
+    client,
+  )
   const length = computed(() => mutationState.value.length)
 
   return length
@@ -47,9 +50,7 @@ export function useIsMutating(
 
 export type MutationStateOptions<TResult = MutationState> = {
   filters?: MutationFilters
-  select?: (
-    mutation: Mutation<unknown, DefaultError, unknown, unknown>,
-  ) => TResult
+  select?: (mutation: Mutation) => TResult
 }
 
 function getResult<TResult = MutationState>(
@@ -60,11 +61,7 @@ function getResult<TResult = MutationState>(
     .findAll(options.filters)
     .map(
       (mutation): TResult =>
-        (options.select
-          ? options.select(
-              mutation as Mutation<unknown, DefaultError, unknown, unknown>,
-            )
-          : mutation.state) as TResult,
+        (options.select ? options.select(mutation) : mutation.state) as TResult,
     )
 }
 

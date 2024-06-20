@@ -13,7 +13,7 @@ export interface DevtoolsOptions {
   /**
    * The position of the React Query logo to open and close the devtools panel.
    * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
-   * Defaults to 'bottom-left'.
+   * Defaults to 'bottom-right'.
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
@@ -34,4 +34,8 @@ export interface DevtoolsOptions {
    * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
    */
   styleNonce?: string
+  /**
+   * Use this so you can attach the devtool's styles to specific element in the DOM.
+   */
+  shadowDOMTarget?: ShadowRoot
 }

@@ -2,7 +2,7 @@
 
 import type { CreateQueryResult } from '@tanstack/solid-query'
 import type { JSX } from 'solid-js'
-import { Match, Suspense, Switch } from 'solid-js'
+import { ErrorBoundary, Match, Suspense, Switch, children } from 'solid-js'
 
 export interface QueryBoundaryProps<T = unknown> {
   query: CreateQueryResult<T, Error>
@@ -20,7 +20,7 @@ export interface QueryBoundaryProps<T = unknown> {
   /**
    * Triggered when the query results in an error.
    */
-  errorFallback?: JSX.Element
+  errorFallback?: (err: Error, retry: () => void) => JSX.Element
 
   /**
    * Triggered when fetching is complete, and the returned data is not falsey.
@@ -35,38 +35,61 @@ export interface QueryBoundaryProps<T = unknown> {
 export function QueryBoundary<T>(props: QueryBoundaryProps<T>) {
   return (
     <Suspense fallback={props.loadingFallback}>
-      <Switch>
-        <Match when={props.query.isError}>
-          {props.errorFallback ? (
-            props.errorFallback
+      <ErrorBoundary
+        fallback={(err: Error, reset) =>
+          props.errorFallback ? (
+            props.errorFallback(err, async () => {
+              await props.query.refetch()
+              reset()
+            })
           ) : (
             <div>
-              <div class="error">{props.query.error?.message}</div>
+              <div class="error">{err.message}</div>
               <button
-                onClick={() => {
-                  props.query.refetch()
+                onClick={async () => {
+                  await props.query.refetch()
+                  reset()
                 }}
               >
                 retry
               </button>
             </div>
-          )}
-        </Match>
+          )
+        }
+      >
+        <Switch>
+          {/* <Match when={props.query.isError}>
+            {props.errorFallback ? (
+              props.errorFallback
+            ) : (
+              <div>
+                <div class="error">{props.query.error?.message}</div>
+                <button
+                  onClick={() => {
+                    props.query.refetch();
+                  }}
+                >
+                  retry
+                </button>
+              </div>
+            )}
+          </Match> */}
 
-        <Match when={!props.query.isFetching && !props.query.data}>
-          {props.notFoundFallback ? (
-            props.notFoundFallback
-          ) : (
-            <div>not found</div>
-          )}
-        </Match>
+          <Match when={!props.query.isFetching && !props.query.data}>
+            {props.notFoundFallback ? (
+              props.notFoundFallback
+            ) : (
+              <div>not found</div>
+            )}
+          </Match>
 
-        <Match when={props.query.data}>
-          {props.children(
-            props.query.data as Exclude<T, null | false | undefined>,
-          )}
-        </Match>
-      </Switch>
+          <Match when={props.query.data}>
+            {props.children(
+              props.query.data as Exclude<T, null | false | undefined>,
+            )}
+          </Match>
+        </Switch>
+      </ErrorBoundary>
     </Suspense>
   )
 }

@@ -27,6 +27,7 @@ export const PostViewer: Component<PostViewerProps> = (props) => {
           simulateError() || (simulateError() !== false && postId() === 5),
       }),
     deferStream: props.deferStream,
+    throwOnError: true,
   }))
 
   return (
@@ -59,19 +60,19 @@ export const PostViewer: Component<PostViewerProps> = (props) => {
         <QueryBoundary
           query={query}
           loadingFallback={<div class="loader">loading post...</div>}
-          errorFallback={
+          errorFallback={(err, retry) => (
             <div>
-              <div class="error">{query.error?.message}</div>
+              <div class="error">{err.message}</div>
               <button
                 onClick={() => {
                   setSimulateError(false)
-                  query.refetch()
+                  retry()
                 }}
               >
                 retry
               </button>
             </div>
-          }
+          )}
         >
           {(posts) => (
             <For each={posts}>

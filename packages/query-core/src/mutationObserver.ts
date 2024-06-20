@@ -59,14 +59,13 @@ export class MutationObserver<
       | MutationObserverOptions<TData, TError, TVariables, TContext>
       | undefined
     this.options = this.#client.defaultMutationOptions(options)
-    if (!shallowEqualObjects(prevOptions, this.options)) {
+    if (!shallowEqualObjects(this.options, prevOptions)) {
       this.#client.getMutationCache().notify({
         type: 'observerOptionsUpdated',
         mutation: this.#currentMutation,
         observer: this,
       })
     }
-    this.#currentMutation?.setOptions(this.options)
 
     if (
       prevOptions?.mutationKey &&
@@ -74,6 +73,8 @@ export class MutationObserver<
       hashKey(prevOptions.mutationKey) !== hashKey(this.options.mutationKey)
     ) {
       this.reset()
+    } else if (this.#currentMutation?.state.status === 'pending') {
+      this.#currentMutation.setOptions(this.options)
     }
   }
 

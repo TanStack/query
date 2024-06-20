@@ -27,9 +27,11 @@ body {
   line-height: 1.5;
   color: #121212;
 }
-textarea,
-input,
-button {
+
+form textarea,
+form input,
+form button,
+a.button {
   font-size: 1rem;
   font-family: inherit;
   border: none;
@@ -42,20 +44,26 @@ button {
   line-height: 1.5;
   margin: 0;
 }
-button {
+
+form button,
+a.button {
   color: #3992ff;
   font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
 }
 
-textarea:hover,
-input:hover,
-button:hover {
+form textarea:hover,
+form input:hover,
+form button:hover,
+a.button:hover {
   box-shadow:
     0 0px 1px hsla(0, 0%, 0%, 0.6),
     0 1px 2px hsla(0, 0%, 0%, 0.2);
 }
 
-button:active {
+form button:active,
+a.button:active {
   box-shadow: 0 0px 1px hsla(0, 0%, 0%, 0.4);
   transform: translateY(1px);
 }

@@ -4,7 +4,7 @@ import { persistQueryClientSubscribe } from '../persist'
 import {
   createMockPersister,
   createQueryClient,
-  createSpyablePersister,
+  createSpyPersister,
 } from './utils'
 
 describe('persistQueryClientSubscribe', () => {
@@ -35,7 +35,7 @@ describe('persistQueryClientSave', () => {
   test('should not be triggered on observer type events', async () => {
     const queryClient = createQueryClient()
 
-    const persister = createSpyablePersister()
+    const persister = createSpyPersister()
 
     const unsubscribe = persistQueryClientSubscribe({
       queryClient,
@@ -46,7 +46,9 @@ describe('persistQueryClientSave', () => {
     const queryFn = vi.fn().mockReturnValue(1)
     const observer = new QueriesObserver(queryClient, [{ queryKey, queryFn }])
     const unsubscribeObserver = observer.subscribe(vi.fn())
-    observer.getObservers()[0]?.setOptions({ refetchOnWindowFocus: false })
+    observer
+      .getObservers()[0]
+      ?.setOptions({ queryKey, refetchOnWindowFocus: false })
     unsubscribeObserver()
 
     queryClient.setQueryData(queryKey, 2)

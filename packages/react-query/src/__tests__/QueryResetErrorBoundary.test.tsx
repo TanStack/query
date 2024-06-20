@@ -14,13 +14,6 @@ import {
 } from '..'
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 
-// TODO: This should be removed with the types for react-error-boundary get updated.
-declare module 'react-error-boundary' {
-  interface ErrorBoundaryPropsWithFallback {
-    children: any
-  }
-}
-
 describe('QueryErrorResetBoundary', () => {
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({ queryCache })
@@ -214,7 +207,7 @@ describe('QueryErrorResetBoundary', () => {
       consoleMock.mockRestore()
     })
 
-    it('should throw error if query is disabled and manually refetched', async () => {
+    it('should throw error if query is disabled and manually refetch', async () => {
       const consoleMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => undefined)

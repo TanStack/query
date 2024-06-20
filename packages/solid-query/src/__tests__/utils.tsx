@@ -2,7 +2,7 @@ import { vi } from 'vitest'
 import { Show, createEffect, createSignal, onCleanup } from 'solid-js'
 import { onlineManager } from '@tanstack/query-core'
 import { QueryClient } from '../QueryClient'
-import type { QueryClientConfig } from '@tanstack/query-core'
+import type { QueryClientConfig } from '..'
 import type { ParentProps } from 'solid-js'
 import type { SpyInstance } from 'vitest'
 
@@ -59,12 +59,3 @@ export function setActTimeout(fn: () => void, ms?: number) {
     fn()
   }, ms)
 }
-
-/**
- * Assert the parameter is not typed as `any`
- */
-export function expectTypeNotAny<T>(_: 0 extends 1 & T ? never : T): void {
-  return undefined
-}
-
-export const doNotExecute = (_func: () => void) => true

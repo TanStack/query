@@ -80,10 +80,10 @@ export type QueryCacheNotifyEvent =
 type QueryCacheListener = (event: QueryCacheNotifyEvent) => void
 
 export interface QueryStore {
-  has: (queryKey: string) => boolean
-  set: (queryKey: string, query: Query) => void
-  get: (queryKey: string) => Query | undefined
-  delete: (queryKey: string) => void
+  has: (queryHash: string) => boolean
+  set: (queryHash: string, query: Query) => void
+  get: (queryHash: string) => Query | undefined
+  delete: (queryHash: string) => void
   values: () => IterableIterator<Query>
 }
 
@@ -97,12 +97,20 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     this.#queries = new Map<string, Query>()
   }
 
-  build<TQueryFnData, TError, TData, TQueryKey extends QueryKey>(
+  build<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
     client: QueryClient,
-    options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options: WithRequired<
+      QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'queryKey'
+    >,
     state?: QueryState<TData, TError>,
   ): Query<TQueryFnData, TError, TData, TQueryKey> {
-    const queryKey = options.queryKey!
+    const queryKey = options.queryKey
     const queryHash =
       options.queryHash ?? hashQueryKeyByOptions(queryKey, options)
     let query = this.get<TQueryFnData, TError, TData, TQueryKey>(queryHash)

@@ -1,7 +1,6 @@
 import { AST_NODE_TYPES } from '@typescript-eslint/utils'
 import { uniqueBy } from './unique-by'
 import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
-import type { RuleContext } from '@typescript-eslint/utils/dist/ts-eslint'
 
 export const ASTUtils = {
   isNodeOfOneOf<T extends AST_NODE_TYPES>(
@@ -78,6 +77,14 @@ export const ASTUtils = {
       node.expressions.forEach((x) => {
         identifiers.push(...ASTUtils.getNestedIdentifiers(x))
       })
+    }
+
+    if ('left' in node) {
+      identifiers.push(...ASTUtils.getNestedIdentifiers(node.left))
+    }
+
+    if ('right' in node) {
+      identifiers.push(...ASTUtils.getNestedIdentifiers(node.right))
     }
 
     if (node.type === AST_NODE_TYPES.Property) {
@@ -212,9 +219,10 @@ export const ASTUtils = {
     )
   },
   getFunctionAncestor(
-    context: Readonly<RuleContext<string, ReadonlyArray<unknown>>>,
+    sourceCode: Readonly<TSESLint.SourceCode>,
+    node: TSESTree.Node,
   ) {
-    for (const ancestor of context.getAncestors()) {
+    for (const ancestor of sourceCode.getAncestors(node)) {
       if (ancestor.type === AST_NODE_TYPES.FunctionDeclaration) {
         return ancestor
       }
@@ -236,7 +244,7 @@ export const ASTUtils = {
   },
   getReferencedExpressionByIdentifier(params: {
     node: TSESTree.Node
-    context: Readonly<RuleContext<string, ReadonlyArray<unknown>>>
+    context: Readonly<TSESLint.RuleContext<string, ReadonlyArray<unknown>>>
   }) {
     const { node, context } = params
 
@@ -254,10 +262,7 @@ export const ASTUtils = {
   getClosestVariableDeclarator(node: TSESTree.Node) {
     let currentNode: TSESTree.Node | undefined = node
 
-    while (
-      currentNode !== undefined &&
-      currentNode.type !== AST_NODE_TYPES.Program
-    ) {
+    while (currentNode.type !== AST_NODE_TYPES.Program) {
       if (currentNode.type === AST_NODE_TYPES.VariableDeclarator) {
         return currentNode
       }

@@ -3,15 +3,16 @@ import {
   isValidTimeout,
   noop,
   replaceData,
+  resolveStaleTime,
   shallowEqualObjects,
   timeUntilStale,
 } from './utils'
 import { notifyManager } from './notifyManager'
 import { focusManager } from './focusManager'
 import { Subscribable } from './subscribable'
-import { canFetch } from './retryer'
-import type { QueryClient } from './queryClient'
+import { fetchState } from './query'
 import type { FetchOptions, Query, QueryState } from './query'
+import type { QueryClient } from './queryClient'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -43,14 +44,6 @@ export class QueryObserver<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends Subscribable<QueryObserverListener<TData, TError>> {
-  options: QueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >
-
   #client: QueryClient
   #currentQuery: Query<TQueryFnData, TError, TQueryData, TQueryKey> = undefined!
   #currentQueryInitialState: QueryState<TQueryData, TError> = undefined!
@@ -72,11 +65,11 @@ export class QueryObserver<
   #staleTimeoutId?: ReturnType<typeof setTimeout>
   #refetchIntervalId?: ReturnType<typeof setInterval>
   #currentRefetchInterval?: number | false
-  #trackedProps: Set<keyof QueryObserverResult> = new Set()
+  #trackedProps = new Set<keyof QueryObserverResult>()
 
   constructor(
     client: QueryClient,
-    options: QueryObserverOptions<
+    public options: QueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
@@ -87,7 +80,6 @@ export class QueryObserver<
     super()
 
     this.#client = client
-    this.options = options
     this.#selectError = null
     this.bindMethods()
     this.setOptions(options)
@@ -141,7 +133,7 @@ export class QueryObserver<
   }
 
   setOptions(
-    options?: QueryObserverOptions<
+    options: QueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
@@ -155,27 +147,26 @@ export class QueryObserver<
 
     this.options = this.#client.defaultQueryOptions(options)
 
-    if (!shallowEqualObjects(prevOptions, this.options)) {
+    if (
+      this.options.enabled !== undefined &&
+      typeof this.options.enabled !== 'boolean'
+    ) {
+      throw new Error('Expected enabled to be a boolean')
+    }
+
+    this.#updateQuery()
+    this.#currentQuery.setOptions(this.options)
+
+    if (
+      prevOptions._defaulted &&
+      !shallowEqualObjects(this.options, prevOptions)
+    ) {
       this.#client.getQueryCache().notify({
         type: 'observerOptionsUpdated',
         query: this.#currentQuery,
         observer: this,
       })
     }
-
-    if (
-      typeof this.options.enabled !== 'undefined' &&
-      typeof this.options.enabled !== 'boolean'
-    ) {
-      throw new Error('Expected enabled to be a boolean')
-    }
-
-    // Keep previous query key if the user does not supply one
-    if (!this.options.queryKey) {
-      this.options.queryKey = prevOptions.queryKey
-    }
-
-    this.#updateQuery()
 
     const mounted = this.hasListeners()
 
@@ -200,7 +191,8 @@ export class QueryObserver<
       mounted &&
       (this.#currentQuery !== prevQuery ||
         this.options.enabled !== prevOptions.enabled ||
-        this.options.staleTime !== prevOptions.staleTime)
+        resolveStaleTime(this.options.staleTime, this.#currentQuery) !==
+          resolveStaleTime(prevOptions.staleTime, this.#currentQuery))
     ) {
       this.#updateStaleTimeout()
     }
@@ -243,7 +235,7 @@ export class QueryObserver<
       // arrives, it finds the old `observer.currentResult` which is related
       // to the old QueryKey. Which means that currentResult and selectData are
       // out of sync already.
-      // To solve this, we move the cursor of the currentResult everytime
+      // To solve this, we move the cursor of the currentResult every time
       // an observer reads an optimistic value.
 
       // When keeping the previous data, the result doesn't change until new
@@ -261,6 +253,7 @@ export class QueryObserver<
 
   trackResult(
     result: QueryObserverResult<TData, TError>,
+    onPropTracked?: (key: keyof QueryObserverResult) => void,
   ): QueryObserverResult<TData, TError> {
     const trackedResult = {} as QueryObserverResult<TData, TError>
 
@@ -269,13 +262,18 @@ export class QueryObserver<
         configurable: false,
         enumerable: true,
         get: () => {
-          this.#trackedProps.add(key as keyof QueryObserverResult)
+          this.trackProp(key as keyof QueryObserverResult)
+          onPropTracked?.(key as keyof QueryObserverResult)
           return result[key as keyof QueryObserverResult]
         },
       })
     })
 
     return trackedResult
+  }
+
+  trackProp(key: keyof QueryObserverResult) {
+    this.#trackedProps.add(key)
   }
 
   getCurrentQuery(): Query<TQueryFnData, TError, TQueryData, TQueryKey> {
@@ -322,7 +320,7 @@ export class QueryObserver<
   }
 
   #executeFetch(
-    fetchOptions?: ObserverFetchOptions,
+    fetchOptions?: Omit<ObserverFetchOptions, 'initialPromise'>,
   ): Promise<TQueryData | undefined> {
     // Make sure we reference the latest query as the current one might have been removed
     this.#updateQuery()
@@ -342,19 +340,16 @@ export class QueryObserver<
 
   #updateStaleTimeout(): void {
     this.#clearStaleTimeout()
+    const staleTime = resolveStaleTime(
+      this.options.staleTime,
+      this.#currentQuery,
+    )
 
-    if (
-      isServer ||
-      this.#currentResult.isStale ||
-      !isValidTimeout(this.options.staleTime)
-    ) {
+    if (isServer || this.#currentResult.isStale || !isValidTimeout(staleTime)) {
       return
     }
 
-    const time = timeUntilStale(
-      this.#currentResult.dataUpdatedAt,
-      this.options.staleTime,
-    )
+    const time = timeUntilStale(this.#currentResult.dataUpdatedAt, staleTime)
 
     // The timeout is sometimes triggered 1 ms before the stale time expiration.
     // To mitigate this issue we always add 1 ms to the timeout.
@@ -441,7 +436,7 @@ export class QueryObserver<
       : this.#currentQueryInitialState
 
     const { state } = query
-    let { error, errorUpdatedAt, fetchStatus, status } = state
+    let newState = { ...state }
     let isPlaceholderData = false
     let data: TData | undefined
 
@@ -455,31 +450,31 @@ export class QueryObserver<
         mounted && shouldFetchOptionally(query, prevQuery, options, prevOptions)
 
       if (fetchOnMount || fetchOptionally) {
-        fetchStatus = canFetch(query.options.networkMode)
-          ? 'fetching'
-          : 'paused'
-        if (!state.dataUpdatedAt) {
-          status = 'pending'
+        newState = {
+          ...newState,
+          ...fetchState(state.data, query.options),
         }
       }
       if (options._optimisticResults === 'isRestoring') {
-        fetchStatus = 'idle'
+        newState.fetchStatus = 'idle'
       }
     }
 
+    let { error, errorUpdatedAt, status } = newState
+
     // Select data if needed
-    if (options.select && typeof state.data !== 'undefined') {
+    if (options.select && newState.data !== undefined) {
       // Memoize select result
       if (
         prevResult &&
-        state.data === prevResultState?.data &&
+        newState.data === prevResultState?.data &&
         options.select === this.#selectFn
       ) {
         data = this.#selectResult
       } else {
         try {
           this.#selectFn = options.select
-          data = options.select(state.data)
+          data = options.select(newState.data)
           data = replaceData(prevResult?.data, data, options)
           this.#selectResult = data
           this.#selectError = null
@@ -490,13 +485,13 @@ export class QueryObserver<
     }
     // Use query data
     else {
-      data = state.data as unknown as TData
+      data = newState.data as unknown as TData
     }
 
     // Show placeholder data if needed
     if (
-      typeof options.placeholderData !== 'undefined' &&
-      typeof data === 'undefined' &&
+      options.placeholderData !== undefined &&
+      data === undefined &&
       status === 'pending'
     ) {
       let placeholderData
@@ -517,7 +512,7 @@ export class QueryObserver<
                 this.#lastQueryWithDefinedData as any,
               )
             : options.placeholderData
-        if (options.select && typeof placeholderData !== 'undefined') {
+        if (options.select && placeholderData !== undefined) {
           try {
             placeholderData = options.select(placeholderData)
             this.#selectError = null
@@ -527,7 +522,7 @@ export class QueryObserver<
         }
       }
 
-      if (typeof placeholderData !== 'undefined') {
+      if (placeholderData !== undefined) {
         status = 'success'
         data = replaceData(
           prevResult?.data,
@@ -545,37 +540,38 @@ export class QueryObserver<
       status = 'error'
     }
 
-    const isFetching = fetchStatus === 'fetching'
+    const isFetching = newState.fetchStatus === 'fetching'
     const isPending = status === 'pending'
     const isError = status === 'error'
 
     const isLoading = isPending && isFetching
+    const hasData = data !== undefined
 
     const result: QueryObserverBaseResult<TData, TError> = {
       status,
-      fetchStatus,
+      fetchStatus: newState.fetchStatus,
       isPending,
       isSuccess: status === 'success',
       isError,
       isInitialLoading: isLoading,
       isLoading,
       data,
-      dataUpdatedAt: state.dataUpdatedAt,
+      dataUpdatedAt: newState.dataUpdatedAt,
       error,
       errorUpdatedAt,
-      failureCount: state.fetchFailureCount,
-      failureReason: state.fetchFailureReason,
-      errorUpdateCount: state.errorUpdateCount,
-      isFetched: state.dataUpdateCount > 0 || state.errorUpdateCount > 0,
+      failureCount: newState.fetchFailureCount,
+      failureReason: newState.fetchFailureReason,
+      errorUpdateCount: newState.errorUpdateCount,
+      isFetched: newState.dataUpdateCount > 0 || newState.errorUpdateCount > 0,
       isFetchedAfterMount:
-        state.dataUpdateCount > queryInitialState.dataUpdateCount ||
-        state.errorUpdateCount > queryInitialState.errorUpdateCount,
+        newState.dataUpdateCount > queryInitialState.dataUpdateCount ||
+        newState.errorUpdateCount > queryInitialState.errorUpdateCount,
       isFetching,
       isRefetching: isFetching && !isPending,
-      isLoadingError: isError && state.dataUpdatedAt === 0,
-      isPaused: fetchStatus === 'paused',
+      isLoadingError: isError && !hasData,
+      isPaused: newState.fetchStatus === 'paused',
       isPlaceholderData,
-      isRefetchError: isError && state.dataUpdatedAt !== 0,
+      isRefetchError: isError && hasData,
       isStale: isStale(query, options),
       refetch: this.refetch,
     }
@@ -697,7 +693,7 @@ function shouldLoadOnMount(
 ): boolean {
   return (
     options.enabled !== false &&
-    !query.state.dataUpdatedAt &&
+    query.state.data === undefined &&
     !(query.state.status === 'error' && options.retryOnMount === false)
   )
 }
@@ -708,7 +704,7 @@ function shouldFetchOnMount(
 ): boolean {
   return (
     shouldLoadOnMount(query, options) ||
-    (query.state.dataUpdatedAt > 0 &&
+    (query.state.data !== undefined &&
       shouldFetchOn(query, options, options.refetchOnMount))
   )
 }
@@ -735,7 +731,6 @@ function shouldFetchOptionally(
   prevOptions: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
   return (
-    options.enabled !== false &&
     (query !== prevQuery || prevOptions.enabled === false) &&
     (!options.suspense || query.state.status !== 'error') &&
     isStale(query, options)
@@ -746,7 +741,10 @@ function isStale(
   query: Query<any, any, any, any>,
   options: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
-  return query.isStaleByTime(options.staleTime)
+  return (
+    options.enabled !== false &&
+    query.isStaleByTime(resolveStaleTime(options.staleTime, query))
+  )
 }
 
 // this function would decide if we will update the observer's 'current'

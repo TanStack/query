@@ -9,12 +9,17 @@ export interface UserInfoProps {
   deferStream?: boolean
   sleep?: number
   simulateError?: boolean
+  staleTime?: number
+  gcTime?: number
 }
 
 export const userInfoQueryOpts = (props?: UserInfoProps) => ({
   queryKey: ['user'],
   queryFn: () => fetchUser(props),
   deferStream: props?.deferStream,
+  staleTime: props?.staleTime,
+  gcTime: props?.gcTime,
+  throwOnError: true,
 })
 
 export const UserInfo: Component<UserInfoProps> = (props) => {
@@ -33,19 +38,19 @@ export const UserInfo: Component<UserInfoProps> = (props) => {
       <QueryBoundary
         query={query}
         loadingFallback={<div class="loader">loading user...</div>}
-        errorFallback={
+        errorFallback={(err, retry) => (
           <div>
-            <div class="error">{query.error?.message}</div>
+            <div class="error">{err.message}</div>
             <button
               onClick={() => {
                 setSimulateError(false)
-                query.refetch()
+                retry()
               }}
             >
               retry
             </button>
           </div>
-        }
+        )}
       >
         {(user) => (
           <>

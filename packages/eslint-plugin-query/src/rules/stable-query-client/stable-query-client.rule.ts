@@ -1,9 +1,13 @@
-import { AST_NODE_TYPES } from '@typescript-eslint/utils'
+import { AST_NODE_TYPES, ESLintUtils } from '@typescript-eslint/utils'
 import { ASTUtils } from '../../utils/ast-utils'
-import { createRule } from '../../utils/create-rule'
+import { getDocsUrl } from '../../utils/get-docs-url'
+import { detectTanstackQueryImports } from '../../utils/detect-react-query-imports'
 import type { TSESLint } from '@typescript-eslint/utils'
+import type { ExtraRuleDocs } from '../../types'
 
 export const name = 'stable-query-client'
+
+const createRule = ESLintUtils.RuleCreator<ExtraRuleDocs>(getDocsUrl)
 
 export const rule = createRule({
   name,
@@ -26,13 +30,13 @@ export const rule = createRule({
   },
   defaultOptions: [],
 
-  create(context, _, helpers) {
+  create: detectTanstackQueryImports((context, _, helpers) => {
     return {
-      NewExpression(node) {
+      NewExpression: (node) => {
         if (
           node.callee.type !== AST_NODE_TYPES.Identifier ||
           node.callee.name !== 'QueryClient' ||
-          node.parent?.type !== AST_NODE_TYPES.VariableDeclarator ||
+          node.parent.type !== AST_NODE_TYPES.VariableDeclarator ||
           !helpers.isSpecificTanstackQueryImport(
             node.callee,
             '@tanstack/react-query',
@@ -41,7 +45,10 @@ export const rule = createRule({
           return
         }
 
-        const fnAncestor = ASTUtils.getFunctionAncestor(context)
+        const fnAncestor = ASTUtils.getFunctionAncestor(
+          context.sourceCode,
+          node,
+        )
         const isReactServerComponent = fnAncestor?.async === true
 
         if (
@@ -74,5 +81,5 @@ export const rule = createRule({
         })
       },
     }
-  },
+  }),
 })

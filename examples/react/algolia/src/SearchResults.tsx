@@ -25,7 +25,6 @@ export default function SearchResults({ query = '' }: SearchResultsProps) {
     hitsPerPage: 5,
     staleTime: 1000 * 30, // 30s
     gcTime: 1000 * 60 * 15, // 15m
-    enabled: !!query,
   })
 
   if (!query) return null
@@ -35,7 +34,7 @@ export default function SearchResults({ query = '' }: SearchResultsProps) {
   return (
     <div>
       <div className="search-status">
-        Satus: {status} {isFetching && <span>fetching...</span>}
+        Status: {status} {isFetching && <span>fetching...</span>}
       </div>
       <div>
         <div className="search-result">

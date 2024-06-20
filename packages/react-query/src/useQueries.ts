@@ -27,11 +27,13 @@ import type {
 } from './types'
 import type {
   DefaultError,
+  OmitKeyof,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
+  QueryObserverOptions,
   ThrowOnError,
 } from '@tanstack/query-core'
 
@@ -42,9 +44,9 @@ type UseQueryOptionsForUseQueries<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = Omit<
+> = OmitKeyof<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'placeholderData' | 'suspense'
+  'placeholderData'
 > & {
   placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
 }
@@ -52,7 +54,10 @@ type UseQueryOptionsForUseQueries<
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
 
-type GetOptions<T> =
+// Widen the type of the symbol to enable type inference even if skipToken is not immutable.
+type SkipTokenForUseQueries = symbol
+
+type GetUseQueryOptionsForUseQueries<T> =
   // Part 1: responsible for applying explicit type parameter to function arguments, if object { queryFnData: TQueryFnData, error: TError, data: TData }
   T extends {
     queryFnData: infer TQueryFnData
@@ -73,31 +78,20 @@ type GetOptions<T> =
               ? UseQueryOptionsForUseQueries<TQueryFnData>
               : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
                 T extends {
-                    queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
+                    queryFn?:
+                      | QueryFunction<infer TQueryFnData, infer TQueryKey>
+                      | SkipTokenForUseQueries
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? UseQueryOptionsForUseQueries<
                     TQueryFnData,
-                    TError,
-                    TData,
+                    unknown extends TError ? DefaultError : TError,
+                    unknown extends TData ? TQueryFnData : TData,
                     TQueryKey
                   >
-                : T extends {
-                      queryFn?: QueryFunction<
-                        infer TQueryFnData,
-                        infer TQueryKey
-                      >
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
-                    }
-                  ? UseQueryOptionsForUseQueries<
-                      TQueryFnData,
-                      TError,
-                      TQueryFnData,
-                      TQueryKey
-                    >
-                  : // Fallback
-                    UseQueryOptionsForUseQueries
+                : // Fallback
+                  UseQueryOptionsForUseQueries
 
 // A defined initialData setting should return a DefinedUseQueryResult rather than UseQueryResult
 type GetDefinedOrUndefinedQueryResult<T, TData, TError = unknown> = T extends {
@@ -116,7 +110,7 @@ type GetDefinedOrUndefinedQueryResult<T, TData, TError = unknown> = T extends {
         : UseQueryResult<TData, TError>
   : UseQueryResult<TData, TError>
 
-type GetResults<T> =
+type GetUseQueryResult<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
   T extends { queryFnData: any; error?: infer TError; data: infer TData }
     ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
@@ -133,7 +127,9 @@ type GetResults<T> =
               ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData>
               : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
                 T extends {
-                    queryFn?: QueryFunction<infer TQueryFnData, any>
+                    queryFn?:
+                      | QueryFunction<infer TQueryFnData, any>
+                      | SkipTokenForUseQueries
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
@@ -142,38 +138,29 @@ type GetResults<T> =
                     unknown extends TData ? TQueryFnData : TData,
                     unknown extends TError ? DefaultError : TError
                   >
-                : T extends {
-                      queryFn?: QueryFunction<infer TQueryFnData, any>
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
-                    }
-                  ? GetDefinedOrUndefinedQueryResult<
-                      T,
-                      TQueryFnData,
-                      unknown extends TError ? DefaultError : TError
-                    >
-                  : // Fallback
-                    UseQueryResult
+                : // Fallback
+                  UseQueryResult
 
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
  */
 export type QueriesOptions<
   T extends Array<any>,
-  Result extends Array<any> = [],
-  Depth extends ReadonlyArray<number> = [],
-> = Depth['length'] extends MAXIMUM_DEPTH
+  TResults extends Array<any> = [],
+  TDepth extends ReadonlyArray<number> = [],
+> = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<UseQueryOptionsForUseQueries>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...Result, GetOptions<Head>]
-      : T extends [infer Head, ...infer Tail]
+      ? [...TResults, GetUseQueryOptionsForUseQueries<Head>]
+      : T extends [infer Head, ...infer Tails]
         ? QueriesOptions<
-            [...Tail],
-            [...Result, GetOptions<Head>],
-            [...Depth, 1]
+            [...Tails],
+            [...TResults, GetUseQueryOptionsForUseQueries<Head>],
+            [...TDepth, 1]
           >
-        : Array<unknown> extends T
+        : ReadonlyArray<unknown> extends T
           ? T
           : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
             // use this to infer the param types in the case of Array.map() argument
@@ -201,19 +188,19 @@ export type QueriesOptions<
  */
 export type QueriesResults<
   T extends Array<any>,
-  Result extends Array<any> = [],
-  Depth extends ReadonlyArray<number> = [],
-> = Depth['length'] extends MAXIMUM_DEPTH
+  TResults extends Array<any> = [],
+  TDepth extends ReadonlyArray<number> = [],
+> = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<UseQueryResult>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...Result, GetResults<Head>]
-      : T extends [infer Head, ...infer Tail]
+      ? [...TResults, GetUseQueryResult<Head>]
+      : T extends [infer Head, ...infer Tails]
         ? QueriesResults<
-            [...Tail],
-            [...Result, GetResults<Head>],
-            [...Depth, 1]
+            [...Tails],
+            [...TResults, GetUseQueryResult<Head>],
+            [...TDepth, 1]
           >
         : T extends Array<
               UseQueryOptionsForUseQueries<
@@ -253,7 +240,9 @@ export function useQueries<
   const defaultedQueries = React.useMemo(
     () =>
       queries.map((opts) => {
-        const defaultedOptions = client.defaultQueryOptions(opts)
+        const defaultedOptions = client.defaultQueryOptions(
+          opts as QueryObserverOptions,
+        )
 
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = isRestoring
@@ -282,7 +271,10 @@ export function useQueries<
   )
 
   const [optimisticResult, getCombinedResult, trackResult] =
-    observer.getOptimisticResult(defaultedQueries)
+    observer.getOptimisticResult(
+      defaultedQueries,
+      (options as QueriesObserverOptions<TCombinedResult>).combine,
+    )
 
   React.useSyncExternalStore(
     React.useCallback(
@@ -329,24 +321,21 @@ export function useQueries<
     : []
 
   if (suspensePromises.length > 0) {
-    observer.setQueries(
-      defaultedQueries,
-      options as QueriesObserverOptions<TCombinedResult>,
-      {
-        listeners: false,
-      },
-    )
     throw Promise.all(suspensePromises)
   }
-  const observerQueries = observer.getQueries()
   const firstSingleResultWhichShouldThrow = optimisticResult.find(
-    (result, index) =>
-      getHasError({
-        result,
-        errorResetBoundary,
-        throwOnError: defaultedQueries[index]?.throwOnError ?? false,
-        query: observerQueries[index]!,
-      }),
+    (result, index) => {
+      const query = defaultedQueries[index]
+      return (
+        query &&
+        getHasError({
+          result,
+          errorResetBoundary,
+          throwOnError: query.throwOnError,
+          query: client.getQueryCache().get(query.queryHash),
+        })
+      )
+    },
   )
 
   if (firstSingleResultWhichShouldThrow?.error) {

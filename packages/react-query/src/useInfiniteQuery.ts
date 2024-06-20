@@ -25,23 +25,6 @@ export function useInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: UndefinedInitialDataInfiniteOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey,
-    TPageParam
-  >,
-  queryClient?: QueryClient,
-): UseInfiniteQueryResult<TData, TError>
-
-export function useInfiniteQuery<
-  TQueryFnData,
-  TError = DefaultError,
-  TData = InfiniteData<TQueryFnData>,
-  TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
->(
   options: DefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
@@ -51,6 +34,23 @@ export function useInfiniteQuery<
   >,
   queryClient?: QueryClient,
 ): DefinedUseInfiniteQueryResult<TData, TError>
+
+export function useInfiniteQuery<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: UndefinedInitialDataInfiniteOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError>
 
 export function useInfiniteQuery<
   TQueryFnData,
@@ -76,7 +76,6 @@ export function useInfiniteQuery(
 ) {
   return useBaseQuery(
     options,
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     InfiniteQueryObserver as typeof QueryObserver,
     queryClient,
   )

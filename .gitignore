@@ -5,19 +5,11 @@
 node_modules
 package-lock.json
 yarn.lock
-pnpm-lock.yaml
 
 # builds
-types
-*/**/.svelte-kit
-*/**/build
-*/**/dist
-*/**/lib
-*/**/es
-artifacts
-.rpt2_cache
+build
 coverage
-*.tgz
+dist
 
 # misc
 .DS_Store
@@ -39,8 +31,17 @@ stats.html
 .vscode/settings.json
 
 *.log
-.DS_Store
+*.tsbuildinfo
+.angular
 .cache
 .idea
+.nx/cache
+.nx/workspace-data
+.pnpm-store
+.svelte-kit
+.tsup
+.vinxi
+temp
 
-nx-cloud.env
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*

@@ -9,7 +9,7 @@ import {
 } from 'vue-demi'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref, shouldThrowError, updateState } from './utils'
-import type { ToRef } from 'vue-demi'
+import type { Ref } from 'vue-demi'
 import type {
   DefaultedQueryObserverOptions,
   QueryKey,
@@ -23,16 +23,16 @@ import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 export type UseBaseQueryReturnType<
   TData,
   TError,
-  Result = QueryObserverResult<TData, TError>,
+  TResult = QueryObserverResult<TData, TError>,
 > = {
-  [K in keyof Result]: K extends
+  [K in keyof TResult]: K extends
     | 'fetchNextPage'
     | 'fetchPreviousPage'
     | 'refetch'
-    ? Result[K]
-    : ToRef<Readonly<Result>[K]>
+    ? TResult[K]
+    : Ref<Readonly<TResult>[K]>
 } & {
-  suspense: () => Promise<Result>
+  suspense: () => Promise<TResult>
 }
 
 type UseQueryOptionsGeneric<
@@ -75,7 +75,7 @@ export function useBaseQuery<
   if (process.env.NODE_ENV === 'development') {
     if (!getCurrentScope()) {
       console.warn(
-        'vue-query composables like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
+        'vue-query composable like "useQuery()" should only be used inside a "setup()" function or a running effect scope. They might otherwise lead to memory leaks.',
       )
     }
   }
@@ -114,7 +114,6 @@ export function useBaseQuery<
   watch(
     client.isRestoring,
     (isRestoring) => {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (!isRestoring) {
         unsubscribe()
         unsubscribe = observer.subscribe((result) => {
@@ -159,7 +158,18 @@ export function useBaseQuery<
               stopWatch()
               observer
                 .fetchOptimistic(defaultedOptions.value)
-                .then(resolve, reject)
+                .then(resolve, (error: TError) => {
+                  if (
+                    shouldThrowError(defaultedOptions.value.throwOnError, [
+                      error,
+                      observer.getCurrentQuery(),
+                    ])
+                  ) {
+                    reject(error)
+                  } else {
+                    resolve(observer.getCurrentResult())
+                  }
+                })
             } else {
               stopWatch()
               resolve(optimisticResult)

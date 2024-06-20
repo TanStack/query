@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
+import { fireEvent, render, waitFor } from '@solidjs/testing-library'
 
 import {
   ErrorBoundary,
@@ -63,7 +63,7 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Suspense fallback="loading">
           <Page />
@@ -71,10 +71,10 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('data: 1'))
-    fireEvent.click(screen.getByLabelText('toggle'))
+    await waitFor(() => rendered.getByText('data: 1'))
+    fireEvent.click(rendered.getByLabelText('toggle'))
 
-    await waitFor(() => screen.getByText('data: 2'))
+    await waitFor(() => rendered.getByText('data: 2'))
 
     expect(renders).toBe(4)
     expect(states.length).toBe(4)
@@ -111,7 +111,7 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Suspense fallback="loading">
           <Page />
@@ -119,8 +119,9 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('data: 1'))
+    await waitFor(() => rendered.getByText('data: 1'))
 
+    // eslint-disable-next-line @cspell/spellchecker
     // TODO(lukemurray): in react this is 1 in solid this is 2 because suspense
     // occurs on read.
     expect(states.length).toBe(2)
@@ -129,9 +130,10 @@ describe("useQuery's in Suspense mode", () => {
       status: 'success',
     })
 
-    fireEvent.click(screen.getByText('next'))
-    await waitFor(() => screen.getByText('data: 2'))
+    fireEvent.click(rendered.getByText('next'))
+    await waitFor(() => rendered.getByText('data: 2'))
 
+    // eslint-disable-next-line @cspell/spellchecker
     // TODO(lukemurray): in react this is 2 and in solid it is 4
     expect(states.length).toBe(4)
     expect(states[3]).toMatchObject({
@@ -155,7 +157,7 @@ describe("useQuery's in Suspense mode", () => {
       return <>rendered</>
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Suspense fallback="loading">
           <Page />
@@ -163,7 +165,7 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('rendered'))
+    await waitFor(() => rendered.getByText('rendered'))
 
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
@@ -197,23 +199,23 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>
     ))
 
-    expect(screen.queryByText('rendered')).toBeNull()
+    expect(rendered.queryByText('rendered')).toBeNull()
     expect(queryCache.find({ queryKey: key })).toBeFalsy()
 
-    fireEvent.click(screen.getByLabelText('toggle'))
-    await waitFor(() => screen.getByText('rendered'))
+    fireEvent.click(rendered.getByLabelText('toggle'))
+    await waitFor(() => rendered.getByText('rendered'))
 
     expect(queryCache.find({ queryKey: key })?.getObserversCount()).toBe(1)
 
-    fireEvent.click(screen.getByLabelText('toggle'))
+    fireEvent.click(rendered.getByLabelText('toggle'))
 
-    expect(screen.queryByText('rendered')).toBeNull()
+    expect(rendered.queryByText('rendered')).toBeNull()
     expect(queryCache.find({ queryKey: key })?.getObserversCount()).toBe(0)
   })
 
@@ -246,7 +248,7 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <ErrorBoundary
           fallback={(_err, resetSolid) => (
@@ -270,15 +272,15 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('Loading...'))
 
-    await waitFor(() => screen.getByText('error boundary'))
+    await waitFor(() => rendered.getByText('error boundary'))
 
-    await waitFor(() => screen.getByText('retry'))
+    await waitFor(() => rendered.getByText('retry'))
 
-    fireEvent.click(screen.getByText('retry'))
+    fireEvent.click(rendered.getByText('retry'))
 
-    await waitFor(() => screen.getByText('rendered'))
+    await waitFor(() => rendered.getByText('rendered'))
   })
 
   it('should retry fetch if the reset error boundary has been reset', async () => {
@@ -309,7 +311,7 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <ErrorBoundary
           fallback={(_err, resetSolid) => (
@@ -332,15 +334,15 @@ describe("useQuery's in Suspense mode", () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('Loading...'))
-    await waitFor(() => screen.getByText('error boundary'))
-    await waitFor(() => screen.getByText('retry'))
-    fireEvent.click(screen.getByText('retry'))
-    await waitFor(() => screen.getByText('error boundary'))
-    await waitFor(() => screen.getByText('retry'))
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('error boundary'))
+    await waitFor(() => rendered.getByText('retry'))
+    fireEvent.click(rendered.getByText('retry'))
+    await waitFor(() => rendered.getByText('error boundary'))
+    await waitFor(() => rendered.getByText('retry'))
     succeed = true
-    fireEvent.click(screen.getByText('retry'))
-    await waitFor(() => screen.getByText('rendered'))
+    fireEvent.click(rendered.getByText('retry'))
+    await waitFor(() => rendered.getByText('rendered'))
   })
 
   it('should refetch when re-mounting', async () => {
@@ -384,22 +386,22 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('Loading...'))
-    await waitFor(() => screen.getByText('data: 1'))
-    await waitFor(() => screen.getByText('fetching: false'))
-    await waitFor(() => screen.getByText('hide'))
-    fireEvent.click(screen.getByText('hide'))
-    await waitFor(() => screen.getByText('show'))
-    fireEvent.click(screen.getByText('show'))
-    await waitFor(() => screen.getByText('fetching: true'))
-    await waitFor(() => screen.getByText('data: 2'))
-    await waitFor(() => screen.getByText('fetching: false'))
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('data: 1'))
+    await waitFor(() => rendered.getByText('fetching: false'))
+    await waitFor(() => rendered.getByText('hide'))
+    fireEvent.click(rendered.getByText('hide'))
+    await waitFor(() => rendered.getByText('show'))
+    fireEvent.click(rendered.getByText('show'))
+    await waitFor(() => rendered.getByText('fetching: true'))
+    await waitFor(() => rendered.getByText('data: 2'))
+    await waitFor(() => rendered.getByText('fetching: false'))
   })
 
   it('should suspend when switching to a new query', async () => {
@@ -437,17 +439,17 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('Loading...'))
-    await waitFor(() => screen.getByText(`data: ${key1}`))
-    fireEvent.click(screen.getByText('switch'))
-    await waitFor(() => screen.getByText('Loading...'))
-    await waitFor(() => screen.getByText(`data: ${key2}`))
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText(`data: ${key1}`))
+    fireEvent.click(rendered.getByText('switch'))
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText(`data: ${key2}`))
   })
 
   it('should throw errors to the error boundary by default', async () => {
@@ -470,7 +472,6 @@ describe("useQuery's in Suspense mode", () => {
 
       // read state.data to trigger suspense.
       createRenderEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- trigger suspense
         state.data
       })
 
@@ -493,14 +494,14 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('Loading...'))
-    await waitFor(() => screen.getByText('error boundary'))
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('error boundary'))
 
     consoleMock.mockRestore()
   })
@@ -521,7 +522,6 @@ describe("useQuery's in Suspense mode", () => {
 
       // read state.data to trigger suspense.
       createRenderEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- trigger suspense
         state.data
       })
 
@@ -544,14 +544,14 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('Loading...'))
-    await waitFor(() => screen.getByText('rendered'))
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('rendered'))
   })
 
   it('should throw errors to the error boundary when a throwOnError function returns true', async () => {
@@ -574,7 +574,6 @@ describe("useQuery's in Suspense mode", () => {
 
       // read state.data to trigger suspense.
       createRenderEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- trigger suspense
         state.data
       })
 
@@ -597,14 +596,14 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('Loading...'))
-    await waitFor(() => screen.getByText('error boundary'))
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('error boundary'))
 
     consoleMock.mockRestore()
   })
@@ -627,7 +626,6 @@ describe("useQuery's in Suspense mode", () => {
 
       // read state.data to trigger suspense.
       createRenderEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- trigger suspense
         state.data
       })
 
@@ -650,14 +648,14 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('Loading...'))
-    await waitFor(() => screen.getByText('rendered'))
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('rendered'))
   })
 
   it('should not call the queryFn when not enabled', async () => {
@@ -686,7 +684,7 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Suspense fallback="loading">
           <Page />
@@ -696,16 +694,16 @@ describe("useQuery's in Suspense mode", () => {
 
     expect(queryFn).toHaveBeenCalledTimes(0)
     await sleep(5)
-    fireEvent.click(screen.getByRole('button', { name: /fire/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /fire/i }))
 
     await waitFor(() => {
-      expect(screen.getByRole('heading').textContent).toBe('23')
+      expect(rendered.getByRole('heading').textContent).toBe('23')
     })
 
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
-  it('should error catched in error boundary without infinite loop', async () => {
+  it('should error caught in error boundary without infinite loop', async () => {
     const key = queryKey()
 
     const consoleMock = vi
@@ -755,28 +753,28 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>
     ))
 
     // render suspense fallback (Loading...)
-    await waitFor(() => screen.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('Loading...'))
     // resolve promise -> render Page (rendered)
-    await waitFor(() => screen.getByText('rendered'))
+    await waitFor(() => rendered.getByText('rendered'))
 
     // change query key
     succeed = false
     // reset query -> and throw error
-    fireEvent.click(screen.getByLabelText('fail'))
+    fireEvent.click(rendered.getByLabelText('fail'))
     // render error boundary fallback (error boundary)
-    await waitFor(() => screen.getByText('error boundary'))
+    await waitFor(() => rendered.getByText('error boundary'))
 
     consoleMock.mockRestore()
   })
 
-  it('should error catched in error boundary without infinite loop when query keys changed', async () => {
+  it('should error caught in error boundary without infinite loop when query keys changed', async () => {
     let succeed = true
 
     const consoleMock = vi
@@ -819,28 +817,28 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>
     ))
 
     // render suspense fallback (Loading...)
-    await waitFor(() => screen.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('Loading...'))
     // resolve promise -> render Page (rendered)
-    await waitFor(() => screen.getByText('rendered'))
+    await waitFor(() => rendered.getByText('rendered'))
 
     // change promise result to error
     succeed = false
     // change query key
-    fireEvent.click(screen.getByLabelText('fail'))
+    fireEvent.click(rendered.getByLabelText('fail'))
     // render error boundary fallback (error boundary)
-    await waitFor(() => screen.getByText('error boundary'))
+    await waitFor(() => rendered.getByText('error boundary'))
 
     consoleMock.mockRestore()
   })
 
-  it('should error catched in error boundary without infinite loop when enabled changed', async () => {
+  it('should error caught in error boundary without infinite loop when enabled changed', async () => {
     const consoleMock = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined)
@@ -885,23 +883,23 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>
     ))
 
     // render empty data with 'rendered' when enabled is false
-    await waitFor(() => screen.getByText('rendered'))
+    await waitFor(() => rendered.getByText('rendered'))
 
     // change enabled to true
-    fireEvent.click(screen.getByLabelText('fail'))
+    fireEvent.click(rendered.getByLabelText('fail'))
 
     // render pending fallback
-    await waitFor(() => screen.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('Loading...'))
 
     // render error boundary fallback (error boundary)
-    await waitFor(() => screen.getByText('error boundary'))
+    await waitFor(() => rendered.getByText('error boundary'))
 
     consoleMock.mockRestore()
   })
@@ -937,7 +935,7 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    render(() => (
+    const rendered = render(() => (
       <QueryClientProvider client={queryClient}>
         <Suspense fallback="loading">
           <Page />
@@ -953,6 +951,6 @@ describe("useQuery's in Suspense mode", () => {
     )
 
     expect(renders).toBe(2)
-    expect(screen.queryByText('rendered')).not.toBeNull()
+    expect(rendered.queryByText('rendered')).not.toBeNull()
   })
 })

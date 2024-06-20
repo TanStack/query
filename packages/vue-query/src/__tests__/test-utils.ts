@@ -50,13 +50,3 @@ export function successMutator<T>(param: T): Promise<T> {
 export function errorMutator<T>(_: T): Promise<Error> {
   return rejectFetcher()
 }
-
-export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
-  T,
->() => T extends Y ? 1 : 2
-  ? true
-  : false
-
-export type Expect<T extends true> = T
-
-export const doNotExecute = (_func: () => void) => true

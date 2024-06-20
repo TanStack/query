@@ -2,21 +2,24 @@ import {
   For,
   Show,
   batch,
+  createContext,
   createEffect,
   createMemo,
   createSignal,
   on,
   onCleanup,
   onMount,
+  useContext,
 } from 'solid-js'
 import { rankItem } from '@tanstack/match-sorter-utils'
-import { css } from 'goober'
+import * as goober from 'goober'
 import { clsx as cx } from 'clsx'
 import { TransitionGroup } from 'solid-transition-group'
 import { Key } from '@solid-primitives/keyed'
 import { createLocalStorage } from '@solid-primitives/storage'
 import { createResizeObserver } from '@solid-primitives/resize-observer'
 import { DropdownMenu, RadioGroup } from '@kobalte/core'
+import { Portal, clearDelegatedEvents, delegateEvents } from 'solid-js/web'
 import { tokens } from './theme'
 import {
   convertRemToPixels,
@@ -42,6 +45,7 @@ import {
   Moon,
   Offline,
   PauseCircle,
+  PiPIcon,
   Search,
   Settings,
   Sun,
@@ -57,7 +61,6 @@ import {
   useQueryDevtoolsContext,
   useTheme,
 } from './Context'
-import { loadFonts } from './fonts'
 import type {
   DevToolsErrorType,
   DevtoolsButtonPosition,
@@ -107,8 +110,186 @@ const [selectedMutationId, setSelectedMutationId] = createSignal<number | null>(
   null,
 )
 const [panelWidth, setPanelWidth] = createSignal(0)
+const [offline, setOffline] = createSignal(false)
 
-export type DevtoolsComponentType = Component<QueryDevtoolsProps>
+export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
+  shadowDOMTarget?: ShadowRoot
+}
+
+interface PiPProviderProps {
+  children: JSX.Element
+  localStore: StorageObject<string>
+  setLocalStore: StorageSetter<string, unknown>
+}
+
+type PiPContextType = {
+  pipWindow: Window | null
+  requestPipWindow: (width: number, height: number) => Promise<void>
+  closePipWindow: () => void
+}
+
+const PiPContext = createContext<Accessor<PiPContextType> | undefined>(
+  undefined,
+)
+
+const PiPProvider = (props: PiPProviderProps) => {
+  // Expose pipWindow that is currently active
+  const [pipWindow, setPipWindow] = createSignal<Window | null>(null)
+
+  // Close pipWindow programmatically
+  const closePipWindow = () => {
+    const w = pipWindow()
+    if (w != null) {
+      w.close()
+      setPipWindow(null)
+    }
+  }
+
+  // Open new pipWindow
+  const requestPipWindow = async (width: number, height: number) => {
+    // We don't want to allow multiple requests.
+    if (pipWindow() != null) {
+      return
+    }
+
+    const pip = window.open(
+      '',
+      'TSQD-Devtools-Panel',
+      `width=${width},height=${height},popup`,
+    )
+
+    if (!pip) {
+      throw new Error(
+        'Failed to open popup. Please allow popups for this site to view the devtools in picture-in-picture mode.',
+      )
+    }
+
+    // Remove existing styles
+    pip.document.head.innerHTML = ''
+    // Remove existing body
+    pip.document.body.innerHTML = ''
+    // Clear Delegated Events
+    clearDelegatedEvents(pip.document)
+
+    pip.document.title = 'TanStack Query Devtools'
+    pip.document.body.style.margin = '0'
+
+    // Detect when window is closed by user
+    pip.addEventListener('pagehide', () => {
+      props.setLocalStore('pip_open', 'false')
+      setPipWindow(null)
+    })
+
+    // It is important to copy all parent window styles. Otherwise, there would be no CSS available at all
+    // https://developer.chrome.com/docs/web-platform/document-picture-in-picture/#copy-style-sheets-to-the-picture-in-picture-window
+    ;[
+      ...(useQueryDevtoolsContext().shadowDOMTarget || document).styleSheets,
+    ].forEach((styleSheet) => {
+      try {
+        const cssRules = [...styleSheet.cssRules]
+          .map((rule) => rule.cssText)
+          .join('')
+        const style = document.createElement('style')
+        const style_node = styleSheet.ownerNode
+        let style_id = ''
+
+        if (style_node && 'id' in style_node) {
+          style_id = style_node.id
+        }
+
+        if (style_id) {
+          style.setAttribute('id', style_id)
+        }
+        style.textContent = cssRules
+        pip.document.head.appendChild(style)
+      } catch (e) {
+        const link = document.createElement('link')
+        if (styleSheet.href == null) {
+          return
+        }
+
+        link.rel = 'stylesheet'
+        link.type = styleSheet.type
+        link.media = styleSheet.media.toString()
+        link.href = styleSheet.href
+        pip.document.head.appendChild(link)
+      }
+    })
+    delegateEvents(
+      [
+        'focusin',
+        'focusout',
+        'pointermove',
+        'keydown',
+        'pointerdown',
+        'pointerup',
+        'click',
+        'mousedown',
+        'input',
+      ],
+      pip.document,
+    )
+    props.setLocalStore('pip_open', 'true')
+    setPipWindow(pip)
+  }
+
+  createEffect(() => {
+    const pip_open = (props.localStore.pip_open ?? 'false') as 'true' | 'false'
+    if (pip_open === 'true') {
+      requestPipWindow(
+        Number(window.innerWidth),
+        Number(props.localStore.height || DEFAULT_HEIGHT),
+      )
+    }
+  })
+
+  createEffect(() => {
+    // Setup mutation observer for goober styles with id `_goober
+    const gooberStyles = (
+      useQueryDevtoolsContext().shadowDOMTarget || document
+    ).querySelector('#_goober')
+    const w = pipWindow()
+    if (gooberStyles && w) {
+      const observer = new MutationObserver(() => {
+        const pip_style = (
+          useQueryDevtoolsContext().shadowDOMTarget || w.document
+        ).querySelector('#_goober')
+        if (pip_style) {
+          pip_style.textContent = gooberStyles.textContent
+        }
+      })
+      observer.observe(gooberStyles, {
+        childList: true, // observe direct children
+        subtree: true, // and lower descendants too
+        characterDataOldValue: true, // pass old data to callback
+      })
+      onCleanup(() => {
+        observer.disconnect()
+      })
+    }
+  })
+
+  const value = createMemo(() => ({
+    pipWindow: pipWindow(),
+    requestPipWindow,
+    closePipWindow,
+  }))
+
+  return (
+    <PiPContext.Provider value={value}>{props.children}</PiPContext.Provider>
+  )
+}
+
+const usePiPWindow = () => {
+  const context = createMemo(() => {
+    const ctx = useContext(PiPContext)
+    if (!ctx) {
+      throw new Error('usePiPWindow must be used within a PiPProvider')
+    }
+    return ctx()
+  })
+  return context
+}
 
 const DevtoolsComponent: DevtoolsComponentType = (props) => {
   const [localStore, setLocalStore] = createLocalStorage({
@@ -128,9 +309,11 @@ const DevtoolsComponent: DevtoolsComponentType = (props) => {
 
   return (
     <QueryDevtoolsContext.Provider value={props}>
-      <ThemeContext.Provider value={theme}>
-        <Devtools localStore={localStore} setLocalStore={setLocalStore} />
-      </ThemeContext.Provider>
+      <PiPProvider localStore={localStore} setLocalStore={setLocalStore}>
+        <ThemeContext.Provider value={theme}>
+          <Devtools localStore={localStore} setLocalStore={setLocalStore} />
+        </ThemeContext.Provider>
+      </PiPProvider>
     </QueryDevtoolsContext.Provider>
   )
 }
@@ -138,12 +321,15 @@ const DevtoolsComponent: DevtoolsComponentType = (props) => {
 export default DevtoolsComponent
 
 const Devtools: Component<DevtoolsPanelProps> = (props) => {
-  loadFonts()
-
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
+
+  const pip = usePiPWindow()
 
   const buttonPosition = createMemo(() => {
     return useQueryDevtoolsContext().buttonPosition || BUTTON_POSITION
@@ -198,81 +384,176 @@ const Devtools: Component<DevtoolsPanelProps> = (props) => {
     })
   })
 
+  const pip_open = createMemo(
+    () => (props.localStore.pip_open ?? 'false') as 'true' | 'false',
+  )
+
+  return (
+    <>
+      <Show when={pip().pipWindow && pip_open() == 'true'}>
+        <Portal mount={pip().pipWindow?.document.body}>
+          <PiPPanel>
+            <ContentView
+              localStore={props.localStore}
+              setLocalStore={props.setLocalStore}
+            />
+          </PiPPanel>
+        </Portal>
+      </Show>
+      <div
+        // styles for animating the panel in and out
+        class={cx(
+          css`
+            & .tsqd-panel-transition-exit-active,
+            & .tsqd-panel-transition-enter-active {
+              transition:
+                opacity 0.3s,
+                transform 0.3s;
+            }
+
+            & .tsqd-panel-transition-exit-to,
+            & .tsqd-panel-transition-enter {
+              ${position() === 'top' || position() === 'bottom'
+                ? `transform: translateY(var(--tsqd-panel-height));`
+                : `transform: translateX(var(--tsqd-panel-width));`}
+            }
+
+            & .tsqd-button-transition-exit-active,
+            & .tsqd-button-transition-enter-active {
+              transition:
+                opacity 0.3s,
+                transform 0.3s;
+              opacity: 1;
+            }
+
+            & .tsqd-button-transition-exit-to,
+            & .tsqd-button-transition-enter {
+              transform: ${buttonPosition() === 'relative'
+                ? `none;`
+                : buttonPosition() === 'top-left'
+                  ? `translateX(-72px);`
+                  : buttonPosition() === 'top-right'
+                    ? `translateX(72px);`
+                    : `translateY(72px);`};
+              opacity: 0;
+            }
+          `,
+          'tsqd-transitions-container',
+        )}
+        ref={transitionsContainerRef}
+      >
+        <TransitionGroup name="tsqd-panel-transition">
+          <Show when={isOpen() && !pip().pipWindow && pip_open() == 'false'}>
+            <DevtoolsPanel
+              localStore={props.localStore}
+              setLocalStore={props.setLocalStore}
+            />
+          </Show>
+        </TransitionGroup>
+        <TransitionGroup name="tsqd-button-transition">
+          <Show when={!isOpen()}>
+            <div
+              class={cx(
+                styles().devtoolsBtn,
+                styles()[`devtoolsBtn-position-${buttonPosition()}`],
+                'tsqd-open-btn-container',
+              )}
+            >
+              <div aria-hidden="true">
+                <TanstackLogo />
+              </div>
+              <button
+                aria-label="Open Tanstack query devtools"
+                onClick={() => props.setLocalStore('open', 'true')}
+                class="tsqd-open-btn"
+              >
+                <TanstackLogo />
+              </button>
+            </div>
+          </Show>
+        </TransitionGroup>
+      </div>
+    </>
+  )
+}
+
+const PiPPanel: Component<{
+  children: JSX.Element
+}> = (props) => {
+  const pip = usePiPWindow()
+  const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
+  })
+
+  const getPanelDynamicStyles = () => {
+    const { colors } = tokens
+    const t = (light: string, dark: string) =>
+      theme() === 'dark' ? dark : light
+    if (panelWidth() < secondBreakpoint) {
+      return css`
+        flex-direction: column;
+        background-color: ${t(colors.gray[300], colors.gray[600])};
+      `
+    }
+    return css`
+      flex-direction: row;
+      background-color: ${t(colors.gray[200], colors.darkGray[900])};
+    `
+  }
+
+  createEffect(() => {
+    const win = pip().pipWindow
+    const resizeCB = () => {
+      if (!win) return
+      setPanelWidth(win.innerWidth)
+    }
+    if (win) {
+      win.addEventListener('resize', resizeCB)
+      resizeCB()
+    }
+
+    onCleanup(() => {
+      if (win) {
+        win.removeEventListener('resize', resizeCB)
+      }
+    })
+  })
+
   return (
     <div
-      // styles for animating the panel in and out
+      style={{
+        '--tsqd-font-size': '16px',
+        'max-height': '100vh',
+        height: '100vh',
+        width: '100vw',
+      }}
       class={cx(
-        css`
-          & .tsqd-panel-transition-exit-active,
-          & .tsqd-panel-transition-enter-active {
-            transition:
-              opacity 0.3s,
-              transform 0.3s;
-          }
-
-          & .tsqd-panel-transition-exit-to,
-          & .tsqd-panel-transition-enter {
-            ${position() === 'top' || position() === 'bottom'
-              ? `transform: translateY(var(--tsqd-panel-height));`
-              : `transform: translateX(var(--tsqd-panel-width));`}
-          }
-
-          & .tsqd-button-transition-exit-active,
-          & .tsqd-button-transition-enter-active {
-            transition:
-              opacity 0.3s,
-              transform 0.3s;
-          }
-
-          & .tsqd-button-transition-exit-to,
-          & .tsqd-button-transition-enter {
-            transform: ${buttonPosition() === 'top-left'
-              ? `translateX(-72px);`
-              : buttonPosition() === 'top-right'
-                ? `translateX(72px);`
-                : `translateY(72px);`};
-          }
-        `,
-        'tsqd-transitions-container',
+        styles().panel,
+        getPanelDynamicStyles(),
+        {
+          [css`
+            min-width: min-content;
+          `]: panelWidth() < thirdBreakpoint,
+        },
+        'tsqd-main-panel',
       )}
-      ref={transitionsContainerRef}
     >
-      <TransitionGroup name="tsqd-panel-transition">
-        <Show when={isOpen()}>
-          <DevtoolsPanel
-            localStore={props.localStore}
-            setLocalStore={props.setLocalStore}
-          />
-        </Show>
-      </TransitionGroup>
-      <TransitionGroup name="tsqd-button-transition">
-        <Show when={!isOpen()}>
-          <div
-            class={cx(
-              styles().devtoolsBtn,
-              styles()[`devtoolsBtn-position-${buttonPosition()}`],
-            )}
-          >
-            <div aria-hidden="true">
-              <TanstackLogo />
-            </div>
-            <button
-              aria-label="Open Tanstack query devtools"
-              onClick={() => props.setLocalStore('open', 'true')}
-            >
-              <TanstackLogo />
-            </button>
-          </div>
-        </Show>
-      </TransitionGroup>
+      {props.children}
     </div>
   )
 }
 
 const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
   const [isResizing, setIsResizing] = createSignal(false)
@@ -333,16 +614,16 @@ const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
       }
     }
 
-    const unsub = () => {
+    const unsubscribe = () => {
       if (isResizing()) {
         setIsResizing(false)
       }
       document.removeEventListener('mousemove', runDrag, false)
-      document.removeEventListener('mouseUp', unsub, false)
+      document.removeEventListener('mouseUp', unsubscribe, false)
     }
 
     document.addEventListener('mousemove', runDrag, false)
-    document.addEventListener('mouseup', unsub, false)
+    document.addEventListener('mouseup', unsubscribe, false)
   }
 
   let panelRef!: HTMLDivElement
@@ -473,9 +754,14 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
 
   let containerRef!: HTMLDivElement
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
+
+  const pip = usePiPWindow()
 
   const [selectedView, setSelectedView] = createSignal<'queries' | 'mutations'>(
     'queries',
@@ -492,8 +778,6 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
   const mutationSortOrder = createMemo(
     () => Number(props.localStore.mutationSortOrder) || DEFAULT_SORT_ORDER,
   ) as () => 1 | -1
-
-  const [offline, setOffline] = createSignal(false)
 
   const sortFn = createMemo(() => sortFns[sort() as string])
   const mutationSortFn = createMemo(
@@ -615,7 +899,11 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
           <div class={styles().logoAndToggleContainer}>
             <button
               class={cx(styles().logo, 'tsqd-text-logo-container')}
-              onClick={() => props.setLocalStore('open', 'false')}
+              onClick={() => {
+                if (!pip().pipWindow) {
+                  props.setLocalStore('open', 'false')
+                }
+              }}
               aria-label="Close Tanstack query devtools"
             >
               <span
@@ -690,7 +978,8 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
                     props.setLocalStore('mutationFilter', e.currentTarget.value)
                   }
                 }}
-                class="tsqd-query-filter-textfield"
+                class={cx('tsqd-query-filter-textfield')}
+                name="tsqd-query-filter-input"
                 value={
                   selectedView() === 'queries'
                     ? props.localStore.filter || ''
@@ -707,6 +996,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
               <Show when={selectedView() === 'queries'}>
                 <select
                   value={sort()}
+                  name="tsqd-queries-filter-sort"
                   onChange={(e) => {
                     props.setLocalStore('sort', e.currentTarget.value)
                   }}
@@ -719,6 +1009,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
               <Show when={selectedView() === 'mutations'}>
                 <select
                   value={mutationSort()}
+                  name="tsqd-mutations-filter-sort"
                   onChange={(e) => {
                     props.setLocalStore('mutationSort', e.currentTarget.value)
                   }}
@@ -827,6 +1118,25 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
             >
               {offline() ? <Offline /> : <Wifi />}
             </button>
+            <Show when={!pip().pipWindow}>
+              <button
+                onClick={() => {
+                  pip().requestPipWindow(
+                    Number(window.innerWidth),
+                    Number(props.localStore.height ?? 500),
+                  )
+                }}
+                class={cx(
+                  styles().actionsBtn,
+                  'tsqd-actions-btn',
+                  'tsqd-action-open-pip',
+                )}
+                aria-label="Open in picture-in-picture mode"
+                title={`Open in picture-in-picture mode`}
+              >
+                <PiPIcon />
+              </button>
+            </Show>
 
             <DropdownMenu.Root gutter={4}>
               <DropdownMenu.Trigger
@@ -840,6 +1150,11 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
               </DropdownMenu.Trigger>
               <DropdownMenu.Portal
                 ref={(el) => setComputedVariables(el as HTMLDivElement)}
+                mount={
+                  pip().pipWindow
+                    ? pip().pipWindow!.document.body
+                    : document.body
+                }
               >
                 <DropdownMenu.Content
                   class={cx(styles().settingsMenu, 'tsqd-settings-menu')}
@@ -865,6 +1180,11 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
                     </DropdownMenu.SubTrigger>
                     <DropdownMenu.Portal
                       ref={(el) => setComputedVariables(el as HTMLDivElement)}
+                      mount={
+                        pip().pipWindow
+                          ? pip().pipWindow!.document.body
+                          : document.body
+                      }
                     >
                       <DropdownMenu.SubContent
                         class={cx(
@@ -944,6 +1264,11 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
                     </DropdownMenu.SubTrigger>
                     <DropdownMenu.Portal
                       ref={(el) => setComputedVariables(el as HTMLDivElement)}
+                      mount={
+                        pip().pipWindow
+                          ? pip().pipWindow!.document.body
+                          : document.body
+                      }
                     >
                       <DropdownMenu.SubContent
                         class={cx(
@@ -1049,8 +1374,11 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
 
 const QueryRow: Component<{ query: Query }> = (props) => {
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
   const { colors, alpha } = tokens
@@ -1157,8 +1485,11 @@ const QueryRow: Component<{ query: Query }> = (props) => {
 
 const MutationRow: Component<{ mutation: Mutation }> = (props) => {
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
   const { colors, alpha } = tokens
@@ -1300,8 +1631,11 @@ const QueryStatusCount: Component = () => {
   )
 
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
   return (
@@ -1371,8 +1705,11 @@ const MutationStatusCount: Component = () => {
   )
 
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
   return (
@@ -1389,8 +1726,11 @@ const MutationStatusCount: Component = () => {
 
 const QueryStatus: Component<QueryStatusProps> = (props) => {
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
   const { colors, alpha } = tokens
@@ -1496,8 +1836,11 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
 
 const QueryDetails = () => {
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
   const { colors } = tokens
@@ -1570,7 +1913,6 @@ const QueryDetails = () => {
 
   const handleRefetch = () => {
     const promise = activeQuery()?.fetch()
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     promise?.catch(() => {})
   }
 
@@ -1584,7 +1926,6 @@ const QueryDetails = () => {
     activeQuery()!.setState({
       status: 'error',
       error,
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       fetchMeta: {
         ...activeQuery()!.state.fetchMeta,
         __previousQueryOptions,
@@ -1593,13 +1934,17 @@ const QueryDetails = () => {
   }
 
   const restoreQueryAfterLoadingOrError = () => {
-    activeQuery()?.fetch(
-      (activeQuery()?.state.fetchMeta as any).__previousQueryOptions,
-      {
-        // Make sure this fetch will cancel the previous one
-        cancelRefetch: true,
-      },
-    )
+    const activeQueryVal = activeQuery()!
+    const previousState = activeQueryVal.state
+    const previousOptions = (activeQueryVal.state.fetchMeta as any)
+      .__previousQueryOptions
+    activeQueryVal.cancel({ silent: true })
+    activeQueryVal.setState({
+      ...previousState,
+      fetchStatus: 'idle',
+      fetchMeta: null,
+    })
+    activeQueryVal.fetch(previousOptions)
   }
 
   createEffect(() => {
@@ -1772,7 +2117,6 @@ const QueryDetails = () => {
                 activeQueryVal.setState({
                   data: undefined,
                   status: 'pending',
-                  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
                   fetchMeta: {
                     ...activeQueryVal.state.fetchMeta,
                     __previousQueryOptions,
@@ -1890,8 +2234,11 @@ const QueryDetails = () => {
 
 const MutationDetails = () => {
   const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
   const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles : lightStyles
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
   })
 
   const { colors } = tokens
@@ -2065,7 +2412,7 @@ const setupQueryCacheSubscription = () => {
     return client.getQueryCache()
   })
 
-  const unsub = queryCache().subscribe((q) => {
+  const unsubscribe = queryCache().subscribe((q) => {
     batch(() => {
       for (const [callback, value] of queryCacheMap.entries()) {
         if (!value.shouldUpdate(q)) continue
@@ -2076,10 +2423,10 @@ const setupQueryCacheSubscription = () => {
 
   onCleanup(() => {
     queryCacheMap.clear()
-    unsub()
+    unsubscribe()
   })
 
-  return unsub
+  return unsubscribe
 }
 
 const createSubscribeToQueryCacheBatcher = <T,>(
@@ -2107,7 +2454,6 @@ const createSubscribeToQueryCacheBatcher = <T,>(
   })
 
   onCleanup(() => {
-    // @ts-ignore
     queryCacheMap.delete(callback)
   })
 
@@ -2125,7 +2471,7 @@ const setupMutationCacheSubscription = () => {
     return client.getMutationCache()
   })
 
-  const unsub = mutationCache().subscribe(() => {
+  const unsubscribe = mutationCache().subscribe(() => {
     for (const [callback, setter] of mutationCacheMap.entries()) {
       queueMicrotask(() => {
         setter(callback(mutationCache))
@@ -2135,10 +2481,10 @@ const setupMutationCacheSubscription = () => {
 
   onCleanup(() => {
     mutationCacheMap.clear()
-    unsub()
+    unsubscribe()
   })
 
-  return unsub
+  return unsubscribe
 }
 
 const createSubscribeToMutationCacheBatcher = <T,>(
@@ -2159,18 +2505,19 @@ const createSubscribeToMutationCacheBatcher = <T,>(
     setValue(callback(mutationCache))
   })
 
-  // @ts-ignore
   mutationCacheMap.set(callback, setValue)
 
   onCleanup(() => {
-    // @ts-ignore
     mutationCacheMap.delete(callback)
   })
 
   return value
 }
 
-const stylesFactory = (theme: 'light' | 'dark') => {
+const stylesFactory = (
+  theme: 'light' | 'dark',
+  css: (typeof goober)['css'],
+) => {
   const { colors, font, size, alpha, shadow, border } = tokens
 
   const t = (light: string, dark: string) => (theme === 'light' ? light : dark)
@@ -2271,6 +2618,9 @@ const stylesFactory = (theme: 'light' | 'dark') => {
     'devtoolsBtn-position-top-right': css`
       top: 12px;
       right: 12px;
+    `,
+    'devtoolsBtn-position-relative': css`
+      position: relative;
     `,
     'panel-position-top': css`
       top: 0;
@@ -2419,7 +2769,7 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       display: flex;
       flex-direction: column;
       & * {
-        font-family: 'Inter', sans-serif;
+        font-family: ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
       }
     `,
     dragHandle: css`
@@ -2599,8 +2949,8 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       gap: ${tokens.size[2]};
       & > button {
         cursor: pointer;
-        padding: ${tokens.size[0.5]} ${tokens.size[2]};
-        padding-right: ${tokens.size[1.5]};
+        padding: ${tokens.size[0.5]} ${tokens.size[1.5]} ${tokens.size[0.5]}
+          ${tokens.size[2]};
         border-radius: ${tokens.border.radius.sm};
         background-color: ${t(colors.gray[100], colors.darkGray[400])};
         border: 1px solid ${t(colors.gray[300], colors.darkGray[200])};
@@ -2784,7 +3134,8 @@ const stylesFactory = (theme: 'light' | 'dark') => {
         min-height: ${tokens.size[6]};
         flex: 1;
         padding: ${tokens.size[1]} ${tokens.size[2]};
-        font-family: 'Menlo', 'Fira Code', monospace;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          'Liberation Mono', 'Courier New', monospace;
         border-bottom: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
         text-align: left;
         text-overflow: clip;
@@ -2809,7 +3160,7 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       flex: 1 1 700px;
       background-color: ${t(colors.gray[50], colors.darkGray[700])};
       color: ${t(colors.gray[700], colors.gray[300])};
-      font-family: 'Inter', sans-serif;
+      font-family: ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
       display: flex;
       flex-direction: column;
       overflow-y: auto;
@@ -2817,7 +3168,7 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       text-align: left;
     `,
     detailsHeader: css`
-      font-family: 'Inter', sans-serif;
+      font-family: ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
       position: sticky;
       top: 0;
       z-index: 2;
@@ -2849,7 +3200,8 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       }
 
       & code {
-        font-family: 'Menlo', 'Fira Code', monospace;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          'Liberation Mono', 'Courier New', monospace;
         margin: 0;
         font-size: ${font.size.xs};
         line-height: ${font.lineHeight.xs};
@@ -2874,7 +3226,7 @@ const stylesFactory = (theme: 'light' | 'dark') => {
       gap: ${tokens.size[2]};
       padding: 0px ${tokens.size[2]};
       & > button {
-        font-family: 'Inter', sans-serif;
+        font-family: ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
         font-size: ${font.size.xs};
         padding: ${tokens.size[1]} ${tokens.size[2]};
         display: flex;
@@ -2959,7 +3311,7 @@ const stylesFactory = (theme: 'light' | 'dark') => {
     settingsMenu: css`
       display: flex;
       & * {
-        font-family: 'Inter', sans-serif;
+        font-family: ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
       }
       flex-direction: column;
       gap: ${size[0.5]};
@@ -3092,5 +3444,5 @@ const stylesFactory = (theme: 'light' | 'dark') => {
   }
 }
 
-const lightStyles = stylesFactory('light')
-const darkStyles = stylesFactory('dark')
+const lightStyles = (css: (typeof goober)['css']) => stylesFactory('light', css)
+const darkStyles = (css: (typeof goober)['css']) => stylesFactory('dark', css)

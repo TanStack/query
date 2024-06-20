@@ -1,12 +1,15 @@
-import type { Mutation } from './mutation'
-import type { Query } from './query'
 import type {
+  DefaultError,
   FetchStatus,
   MutationKey,
   MutationStatus,
+  QueryFunction,
   QueryKey,
   QueryOptions,
+  StaleTime,
 } from './types'
+import type { Mutation } from './mutation'
+import type { FetchOptions, Query } from './query'
 
 // TYPES
 
@@ -62,7 +65,7 @@ export type QueryTypeFilter = 'all' | 'active' | 'inactive'
 
 // UTILS
 
-export const isServer = typeof window === 'undefined' || 'Deno' in window
+export const isServer = typeof window === 'undefined' || 'Deno' in globalThis
 
 export function noop(): undefined {
   return undefined
@@ -83,6 +86,18 @@ export function isValidTimeout(value: unknown): value is number {
 
 export function timeUntilStale(updatedAt: number, staleTime?: number): number {
   return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0)
+}
+
+export function resolveStaleTime<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  staleTime: undefined | StaleTime<TQueryFnData, TError, TData, TQueryKey>,
+  query: Query<TQueryFnData, TError, TData, TQueryKey>,
+): number | undefined {
+  return typeof staleTime === 'function' ? staleTime(query) : staleTime
 }
 
 export function matchQuery(
@@ -122,10 +137,7 @@ export function matchQuery(
     return false
   }
 
-  if (
-    typeof fetchStatus !== 'undefined' &&
-    fetchStatus !== query.state.fetchStatus
-  ) {
+  if (fetchStatus && fetchStatus !== query.state.fetchStatus) {
     return false
   }
 
@@ -167,7 +179,7 @@ export function matchMutation(
 
 export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
   queryKey: TQueryKey,
-  options?: QueryOptions<any, any, any, TQueryKey>,
+  options?: Pick<QueryOptions<any, any, any, any>, 'queryKeyHashFn'>,
 ): string {
   const hashFn = options?.queryKeyHashFn || hashKey
   return hashFn(queryKey)
@@ -224,7 +236,8 @@ export function replaceEqualDeep(a: any, b: any): any {
   const array = isPlainArray(a) && isPlainArray(b)
 
   if (array || (isPlainObject(a) && isPlainObject(b))) {
-    const aSize = array ? a.length : Object.keys(a).length
+    const aItems = array ? a : Object.keys(a)
+    const aSize = aItems.length
     const bItems = array ? b : Object.keys(b)
     const bSize = bItems.length
     const copy: any = array ? [] : {}
@@ -233,9 +246,18 @@ export function replaceEqualDeep(a: any, b: any): any {
 
     for (let i = 0; i < bSize; i++) {
       const key = array ? i : bItems[i]
-      copy[key] = replaceEqualDeep(a[key], b[key])
-      if (copy[key] === a[key]) {
+      if (
+        ((!array && aItems.includes(key)) || array) &&
+        a[key] === undefined &&
+        b[key] === undefined
+      ) {
+        copy[key] = undefined
         equalItems++
+      } else {
+        copy[key] = replaceEqualDeep(a[key], b[key])
+        if (copy[key] === a[key] && a[key] !== undefined) {
+          equalItems++
+        }
       }
     }
 
@@ -246,10 +268,13 @@ export function replaceEqualDeep(a: any, b: any): any {
 }
 
 /**
- * Shallow compare objects. Only works with objects that always have the same properties.
+ * Shallow compare objects.
  */
-export function shallowEqualObjects<T>(a: T, b: T): boolean {
-  if ((a && !b) || (b && !a)) {
+export function shallowEqualObjects<T extends Record<string, any>>(
+  a: T,
+  b: T | undefined,
+): boolean {
+  if (!b || Object.keys(a).length !== Object.keys(b).length) {
     return false
   }
 
@@ -274,7 +299,7 @@ export function isPlainObject(o: any): o is Object {
 
   // If has no constructor
   const ctor = o.constructor
-  if (typeof ctor === 'undefined') {
+  if (ctor === undefined) {
     return true
   }
 
@@ -286,6 +311,11 @@ export function isPlainObject(o: any): o is Object {
 
   // If constructor does not have an Object-specific method
   if (!prot.hasOwnProperty('isPrototypeOf')) {
+    return false
+  }
+
+  // Handles Objects created by Object.create(<arbitrary prototype>)
+  if (Object.getPrototypeOf(o) !== Object.prototype) {
     return false
   }
 
@@ -303,20 +333,12 @@ export function sleep(ms: number): Promise<void> {
   })
 }
 
-/**
- * Schedules a microtask.
- * This can be useful to schedule state updates after rendering.
- */
-export function scheduleMicrotask(callback: () => void) {
-  sleep(0).then(callback)
-}
-
 export function replaceData<
   TData,
   TOptions extends QueryOptions<any, any, any, any>,
 >(prevData: TData | undefined, data: TData, options: TOptions): TData {
   if (typeof options.structuralSharing === 'function') {
-    return options.structuralSharing(prevData, data)
+    return options.structuralSharing(prevData, data) as TData
   } else if (options.structuralSharing !== false) {
     // Structurally share data between prev and new data if needed
     return replaceEqualDeep(prevData, data)
@@ -338,4 +360,40 @@ export function addToEnd<T>(items: Array<T>, item: T, max = 0): Array<T> {
 export function addToStart<T>(items: Array<T>, item: T, max = 0): Array<T> {
   const newItems = [item, ...items]
   return max && newItems.length > max ? newItems.slice(0, -1) : newItems
+}
+
+export const skipToken = Symbol()
+export type SkipToken = typeof skipToken
+
+export const ensureQueryFn = <
+  TQueryFnData = unknown,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: {
+    queryFn?: QueryFunction<TQueryFnData, TQueryKey> | SkipToken
+    queryHash?: string
+  },
+  fetchOptions?: FetchOptions<TQueryFnData>,
+): QueryFunction<TQueryFnData, TQueryKey> => {
+  if (process.env.NODE_ENV !== 'production') {
+    if (options.queryFn === skipToken) {
+      console.error(
+        `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${options.queryHash}'`,
+      )
+    }
+  }
+
+  // if we attempt to retry a fetch that was triggered from an initialPromise
+  // when we don't have a queryFn yet, we can't retry, so we just return the already rejected initialPromise
+  // if an observer has already mounted, we will be able to retry with that queryFn
+  if (!options.queryFn && fetchOptions?.initialPromise) {
+    return () => fetchOptions.initialPromise!
+  }
+
+  if (!options.queryFn || options.queryFn === skipToken) {
+    return () =>
+      Promise.reject(new Error(`Missing queryFn: '${options.queryHash}'`))
+  }
+
+  return options.queryFn
 }

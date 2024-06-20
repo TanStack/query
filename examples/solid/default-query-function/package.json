@@ -1,21 +1,21 @@
 {
   "name": "@tanstack/query-example-solid-default-query-function",
   "private": true,
+  "type": "module",
   "scripts": {
-    "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "preview": "vite preview",
+    "test:types": "tsc"
   },
-  "license": "MIT",
   "dependencies": {
-    "@tanstack/solid-query": "^5.0.0",
-    "@tanstack/solid-query-devtools": "^5.0.0",
-    "solid-js": "^1.8.1"
+    "@tanstack/solid-query": "^5.45.0",
+    "@tanstack/solid-query-devtools": "^5.45.0",
+    "solid-js": "^1.8.17"
   },
   "devDependencies": {
-    "typescript": "5.1.6",
-    "vite": "^4.5.0",
-    "vite-plugin-solid": "^2.7.2"
+    "typescript": "5.3.3",
+    "vite": "^5.2.11",
+    "vite-plugin-solid": "^2.10.2"
   }
 }

@@ -1,11 +1,11 @@
 'use client'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { isServer, useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense } from 'react'
 
 export const runtime = 'edge' // 'nodejs' (default) | 'edge'
 
 function getBaseURL() {
-  if (typeof window !== 'undefined') {
+  if (!isServer) {
     return ''
   }
   if (process.env.VERCEL_URL) {

@@ -5,7 +5,6 @@ import type {
   DefinedQueryObserverResult,
   QueryKey,
   QueryObserverOptions,
-  WithRequired,
 } from '@tanstack/query-core'
 import type { UseBaseQueryReturnType } from './useBaseQuery'
 import type {
@@ -31,36 +30,25 @@ export type UseQueryOptions<
     TData,
     TQueryData,
     TQueryKey
-  >]: Property extends 'queryFn' | 'select'
-    ? QueryObserverOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryData,
-        DeepUnwrapRef<TQueryKey>
-      >[Property]
-    : Property extends 'enabled'
-      ? MaybeRefOrGetter<
-          QueryObserverOptions<
-            TQueryFnData,
-            TError,
-            TData,
-            TQueryData,
-            TQueryKey
-          >[Property]
-        >
-      : MaybeRefDeep<
-          WithRequired<
-            QueryObserverOptions<
-              TQueryFnData,
-              TError,
-              TData,
-              TQueryData,
-              TQueryKey
-            >,
-            'queryKey'
-          >[Property]
-        >
+  >]: Property extends 'enabled'
+    ? MaybeRefOrGetter<
+        QueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          DeepUnwrapRef<TQueryKey>
+        >[Property]
+      >
+    : MaybeRefDeep<
+        QueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          DeepUnwrapRef<TQueryKey>
+        >[Property]
+      >
 }>
 
 export type UndefinedInitialQueryOptions<

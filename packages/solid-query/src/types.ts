@@ -2,14 +2,15 @@
 
 import type {
   DefaultError,
+  DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   InfiniteQueryObserverResult,
   MutateFunction,
   MutationObserverOptions,
   MutationObserverResult,
+  OmitKeyof,
   QueryKey,
   QueryObserverResult,
-  WithRequired,
 } from '@tanstack/query-core'
 import type {
   InfiniteQueryObserverOptions,
@@ -24,11 +25,23 @@ export interface CreateBaseQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends WithRequired<
+> extends OmitKeyof<
     QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
-    'queryKey'
+    'suspense'
   > {
+  /**
+   * Only applicable while rendering queries on the server with streaming.
+   * Set `deferStream` to `true` to wait for the query to resolve on the server before flushing the stream.
+   * This can be useful to avoid sending a loading state to the client before the query has resolved.
+   * Defaults to `false`.
+   */
   deferStream?: boolean
+  /**
+   * @deprecated The `suspense` option has been deprecated in v5 and will be removed in the next major version.
+   * The `data` property on createQuery is a SolidJS resource and will automatically suspend when the data is loading.
+   * Setting `suspense` to `false` will be a no-op.
+   */
+  suspense?: boolean
 }
 
 export interface SolidQueryOptions<
@@ -36,15 +49,12 @@ export interface SolidQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends WithRequired<
-    CreateBaseQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryFnData,
-      TQueryKey
-    >,
-    'queryKey'
+> extends CreateBaseQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryFnData,
+    TQueryKey
   > {}
 
 export type CreateQueryOptions<
@@ -84,7 +94,7 @@ export interface SolidInfiniteQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends Omit<
+> extends OmitKeyof<
     InfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
@@ -93,10 +103,22 @@ export interface SolidInfiniteQueryOptions<
       TQueryKey,
       TPageParam
     >,
-    'queryKey'
+    'queryKey' | 'suspense'
   > {
   queryKey: TQueryKey
+  /**
+   * Only applicable while rendering queries on the server with streaming.
+   * Set `deferStream` to `true` to wait for the query to resolve on the server before flushing the stream.
+   * This can be useful to avoid sending a loading state to the client before the query has resolved.
+   * Defaults to `false`.
+   */
   deferStream?: boolean
+  /**
+   * @deprecated The `suspense` option has been deprecated in v5 and will be removed in the next major version.
+   * The `data` property on createInfiniteQuery is a SolidJS resource and will automatically suspend when the data is loading.
+   * Setting `suspense` to `false` will be a no-op.
+   */
+  suspense?: boolean
 }
 
 export type CreateInfiniteQueryOptions<
@@ -121,15 +143,20 @@ export type CreateInfiniteQueryResult<
   TError = DefaultError,
 > = InfiniteQueryObserverResult<TData, TError>
 
+export type DefinedCreateInfiniteQueryResult<
+  TData = unknown,
+  TError = DefaultError,
+> = DefinedInfiniteQueryObserverResult<TData, TError>
+
 /* --- Create Mutation Types --- */
 export interface SolidMutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> extends Omit<
+> extends OmitKeyof<
     MutationObserverOptions<TData, TError, TVariables, TContext>,
-    '_defaulted' | 'variables'
+    '_defaulted'
   > {}
 
 export type CreateMutationOptions<
@@ -174,4 +201,8 @@ export type CreateMutationResult<
   TContext = unknown,
 > = CreateBaseMutationResult<TData, TError, TVariables, TContext>
 
-type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }
+type Override<TTargetA, TTargetB> = {
+  [AKey in keyof TTargetA]: AKey extends keyof TTargetB
+    ? TTargetB[AKey]
+    : TTargetA[AKey]
+}

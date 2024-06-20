@@ -7,6 +7,7 @@ import type { Readable } from 'svelte/store'
 import type { StoreOrVal } from './types'
 import type {
   DefaultError,
+  OmitKeyof,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
   QueryClient,
@@ -24,7 +25,7 @@ type QueryObserverOptionsForCreateQueries<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = Omit<
+> = OmitKeyof<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
   'placeholderData'
 > & {
@@ -33,6 +34,9 @@ type QueryObserverOptionsForCreateQueries<
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
+
+// Widen the type of the symbol to enable type inference even if skipToken is not immutable.
+type SkipTokenForUseQueries = symbol
 
 type GetOptions<T> =
   // Part 1: responsible for applying explicit type parameter to function arguments, if object { queryFnData: TQueryFnData, error: TError, data: TData }
@@ -55,31 +59,20 @@ type GetOptions<T> =
               ? QueryObserverOptionsForCreateQueries<TQueryFnData>
               : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
                 T extends {
-                    queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
+                    queryFn?:
+                      | QueryFunction<infer TQueryFnData, infer TQueryKey>
+                      | SkipTokenForUseQueries
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? QueryObserverOptionsForCreateQueries<
                     TQueryFnData,
-                    TError,
-                    TData,
+                    unknown extends TError ? DefaultError : TError,
+                    unknown extends TData ? TQueryFnData : TData,
                     TQueryKey
                   >
-                : T extends {
-                      queryFn?: QueryFunction<
-                        infer TQueryFnData,
-                        infer TQueryKey
-                      >
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
-                    }
-                  ? QueryObserverOptionsForCreateQueries<
-                      TQueryFnData,
-                      TError,
-                      TQueryFnData,
-                      TQueryKey
-                    >
-                  : // Fallback
-                    QueryObserverOptionsForCreateQueries
+                : // Fallback
+                  QueryObserverOptionsForCreateQueries
 
 type GetResults<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
@@ -98,7 +91,9 @@ type GetResults<T> =
               ? QueryObserverResult<TQueryFnData>
               : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
                 T extends {
-                    queryFn?: QueryFunction<infer TQueryFnData, any>
+                    queryFn?:
+                      | QueryFunction<infer TQueryFnData, any>
+                      | SkipTokenForUseQueries
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
@@ -106,37 +101,29 @@ type GetResults<T> =
                     unknown extends TData ? TQueryFnData : TData,
                     unknown extends TError ? DefaultError : TError
                   >
-                : T extends {
-                      queryFn?: QueryFunction<infer TQueryFnData, any>
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
-                    }
-                  ? QueryObserverResult<
-                      TQueryFnData,
-                      unknown extends TError ? DefaultError : TError
-                    >
-                  : // Fallback
-                    QueryObserverResult
+                : // Fallback
+                  QueryObserverResult
 
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
  */
 export type QueriesOptions<
   T extends Array<any>,
-  Result extends Array<any> = [],
-  Depth extends ReadonlyArray<number> = [],
-> = Depth['length'] extends MAXIMUM_DEPTH
+  TResult extends Array<any> = [],
+  TDepth extends ReadonlyArray<number> = [],
+> = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<QueryObserverOptionsForCreateQueries>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...Result, GetOptions<Head>]
+      ? [...TResult, GetOptions<Head>]
       : T extends [infer Head, ...infer Tail]
         ? QueriesOptions<
             [...Tail],
-            [...Result, GetOptions<Head>],
-            [...Depth, 1]
+            [...TResult, GetOptions<Head>],
+            [...TDepth, 1]
           >
-        : Array<unknown> extends T
+        : ReadonlyArray<unknown> extends T
           ? T
           : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
             // use this to infer the param types in the case of Array.map() argument
@@ -164,19 +151,19 @@ export type QueriesOptions<
  */
 export type QueriesResults<
   T extends Array<any>,
-  Result extends Array<any> = [],
-  Depth extends ReadonlyArray<number> = [],
-> = Depth['length'] extends MAXIMUM_DEPTH
+  TResult extends Array<any> = [],
+  TDepth extends ReadonlyArray<number> = [],
+> = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<QueryObserverResult>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...Result, GetResults<Head>]
+      ? [...TResult, GetResults<Head>]
       : T extends [infer Head, ...infer Tail]
         ? QueriesResults<
             [...Tail],
-            [...Result, GetResults<Head>],
-            [...Depth, 1]
+            [...TResult, GetResults<Head>],
+            [...TDepth, 1]
           >
         : T extends Array<
               QueryObserverOptionsForCreateQueries<
@@ -218,7 +205,9 @@ export function createQueries<
     [queriesStore, isRestoring],
     ([$queries, $isRestoring]) => {
       return $queries.map((opts) => {
-        const defaultedOptions = client.defaultQueryOptions(opts)
+        const defaultedOptions = client.defaultQueryOptions(
+          opts as QueryObserverOptions,
+        )
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = $isRestoring
           ? 'isRestoring'
@@ -253,10 +242,13 @@ export function createQueries<
 
   const { subscribe } = derived(
     [result, defaultedQueriesStore],
-    // @ts-ignore svelte-check thinks this is unused
+    // @ts-expect-error svelte-check thinks this is unused
     ([$result, $defaultedQueriesStore]) => {
       const [rawResult, combineResult, trackResult] =
-        observer.getOptimisticResult($defaultedQueriesStore)
+        observer.getOptimisticResult(
+          $defaultedQueriesStore,
+          (options as QueriesObserverOptions<TCombinedResult>).combine,
+        )
       $result = rawResult
       return combineResult(trackResult())
     },

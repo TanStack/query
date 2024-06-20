@@ -1,13 +1,15 @@
 'use client'
 
+import { isServer } from '@tanstack/react-query'
 import { useServerInsertedHTML } from 'next/navigation'
 import * as React from 'react'
+import { htmlEscapeJsonString } from './htmlescape'
 
 const serializedSymbol = Symbol('serialized')
 
 interface DataTransformer {
-  serialize(object: any): any
-  deserialize(object: any): any
+  serialize: (object: any) => any
+  deserialize: (object: any) => any
 }
 
 type Serialized<TData> = unknown & {
@@ -83,7 +85,7 @@ export function createHydrationStreamProvider<TShape>() {
   }) {
     // unique id for the cache provider
     const id = `__RQ${React.useId()}`
-    const idJSON = JSON.stringify(id)
+    const idJSON = htmlEscapeJsonString(JSON.stringify(id))
 
     const [transformer] = React.useState(
       () =>
@@ -96,7 +98,7 @@ export function createHydrationStreamProvider<TShape>() {
 
     // <server stuff>
     const [stream] = React.useState<Array<TShape>>(() => {
-      if (typeof window !== 'undefined') {
+      if (!isServer) {
         return {
           push() {
             // no-op on the client
@@ -124,7 +126,7 @@ export function createHydrationStreamProvider<TShape>() {
 
       const html: Array<string> = [
         `window[${idJSON}] = window[${idJSON}] || [];`,
-        `window[${idJSON}].push(${serializedCacheArgs});`,
+        `window[${idJSON}].push(${htmlEscapeJsonString(serializedCacheArgs)});`,
       ]
       return (
         <script
@@ -138,36 +140,31 @@ export function createHydrationStreamProvider<TShape>() {
     // </server stuff>
 
     // <client stuff>
-    const onEntriesRef = React.useRef(props.onEntries)
-    React.useEffect(() => {
-      onEntriesRef.current = props.onEntries
-    })
-
-    React.useEffect(() => {
-      // Client: consume cache:
-      const onEntries = (...serializedEntries: Array<Serialized<TShape>>) => {
-        const entries = serializedEntries.map((serialized) =>
-          transformer.deserialize(serialized),
-        )
-        onEntriesRef.current(entries)
-      }
-
+    // Setup and run the onEntries handler on the client only, but do it during
+    // the initial render so children have access to the data immediately
+    // This is important to avoid the client suspending during the initial render
+    // if the data has not yet been hydrated.
+    if (!isServer) {
       const win = window as any
-      // Register cache consumer
-      const winStream: Array<Serialized<TShape>> = win[id] ?? []
+      if (!win[id]?.initialized) {
+        // Client: consume cache:
+        const onEntries = (...serializedEntries: Array<Serialized<TShape>>) => {
+          const entries = serializedEntries.map((serialized) =>
+            transformer.deserialize(serialized),
+          )
+          props.onEntries(entries)
+        }
 
-      onEntries(...winStream)
+        const winStream: Array<Serialized<TShape>> = win[id] ?? []
 
-      // Register our own consumer
-      win[id] = {
-        push: onEntries,
+        onEntries(...winStream)
+
+        win[id] = {
+          initialized: true,
+          push: onEntries,
+        }
       }
-
-      return () => {
-        // Cleanup after unmount
-        win[id] = []
-      }
-    }, [id, transformer])
+    }
     // </client stuff>
 
     return (

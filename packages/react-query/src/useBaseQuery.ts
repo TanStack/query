@@ -12,7 +12,12 @@ import {
 } from './errorBoundaryUtils'
 import { ensureStaleTime, fetchOptimistic, shouldSuspend } from './suspense'
 import type { UseBaseQueryOptions } from './types'
-import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
+import type {
+  QueryClient,
+  QueryKey,
+  QueryObserver,
+  QueryObserverResult,
+} from '@tanstack/query-core'
 
 export function useBaseQuery<
   TQueryFnData,
@@ -30,7 +35,7 @@ export function useBaseQuery<
   >,
   Observer: typeof QueryObserver,
   queryClient?: QueryClient,
-) {
+): QueryObserverResult<TData, TError> {
   if (process.env.NODE_ENV !== 'production') {
     if (typeof options !== 'object' || Array.isArray(options)) {
       throw new Error(
@@ -94,7 +99,6 @@ export function useBaseQuery<
     // Do the same thing as the effect right above because the effect won't run
     // when we suspend but also, the component won't re-mount so our observer would
     // be out of date.
-    observer.setOptions(defaultedOptions, { listeners: false })
     throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
   }
 
@@ -104,7 +108,14 @@ export function useBaseQuery<
       result,
       errorResetBoundary,
       throwOnError: defaultedOptions.throwOnError,
-      query: observer.getCurrentQuery(),
+      query: client
+        .getQueryCache()
+        .get<
+          TQueryFnData,
+          TError,
+          TQueryData,
+          TQueryKey
+        >(defaultedOptions.queryHash),
     })
   ) {
     throw result.error

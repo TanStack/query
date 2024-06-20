@@ -3,12 +3,14 @@ import { QueryClient as QC } from '@tanstack/query-core'
 import { cloneDeepUnref } from './utils'
 import { QueryCache } from './queryCache'
 import { MutationCache } from './mutationCache'
+import type { Ref } from 'vue-demi'
 import type { MaybeRefDeep, NoUnknown } from './types'
 import type {
   CancelOptions,
   DataTag,
   DefaultError,
   DefaultOptions,
+  EnsureQueryDataOptions,
   FetchInfiniteQueryOptions,
   FetchQueryOptions,
   InfiniteData,
@@ -18,6 +20,7 @@ import type {
   MutationKey,
   MutationObserverOptions,
   NoInfer,
+  OmitKeyof,
   QueryClientConfig,
   QueryFilters,
   QueryKey,
@@ -40,7 +43,7 @@ export class QueryClient extends QC {
     super(vueQueryConfig)
   }
 
-  isRestoring = ref(false)
+  isRestoring: Ref<boolean> = ref(false)
 
   isFetching(filters: MaybeRefDeep<QueryFilters> = {}): number {
     return super.isFetching(cloneDeepUnref(filters))
@@ -50,10 +53,10 @@ export class QueryClient extends QC {
     return super.isMutating(cloneDeepUnref(filters))
   }
 
-  getQueryData<TData = unknown, TaggedQueryKey extends QueryKey = QueryKey>(
-    queryKey: MaybeRefDeep<TaggedQueryKey>,
+  getQueryData<TData = unknown, TTaggedQueryKey extends QueryKey = QueryKey>(
+    queryKey: TTaggedQueryKey,
   ):
-    | (TaggedQueryKey extends DataTag<unknown, infer TaggedValue>
+    | (TTaggedQueryKey extends DataTag<unknown, infer TaggedValue>
         ? TaggedValue
         : TData)
     | undefined
@@ -72,7 +75,7 @@ export class QueryClient extends QC {
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
-    options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options: EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<TData>
   ensureQueryData<
     TQueryFnData,
@@ -81,7 +84,7 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
   >(
     options: MaybeRefDeep<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+      EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<TData>
   ensureQueryData<
@@ -91,7 +94,7 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
   >(
     options: MaybeRefDeep<
-      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+      EnsureQueryDataOptions<TQueryFnData, TError, TData, TQueryKey>
     >,
   ): Promise<TData> {
     return super.ensureQueryData(cloneDeepUnref(options))
@@ -105,12 +108,12 @@ export class QueryClient extends QC {
 
   setQueryData<
     TQueryFnData,
-    TaggedQueryKey extends QueryKey,
-    TData = TaggedQueryKey extends DataTag<unknown, infer TaggedValue>
+    TTaggedQueryKey extends QueryKey,
+    TData = TTaggedQueryKey extends DataTag<unknown, infer TaggedValue>
       ? TaggedValue
       : TQueryFnData,
   >(
-    queryKey: MaybeRefDeep<TaggedQueryKey>,
+    queryKey: TTaggedQueryKey,
     updater: Updater<NoInfer<TData> | undefined, NoInfer<TData> | undefined>,
     options?: MaybeRefDeep<SetDataOptions>,
   ): TData | undefined
@@ -171,6 +174,7 @@ export class QueryClient extends QC {
     filters: MaybeRefDeep<InvalidateQueryFilters> = {},
     options: MaybeRefDeep<InvalidateOptions> = {},
   ): Promise<void> {
+    // eslint-disable-next-line @cspell/spellchecker
     // (dosipiuk): We need to delay `invalidate` execution to next macro task for all reactive values to be updated.
     // This ensures that `context` in `queryFn` while `invalidating` along reactive variable change has correct value.
     return new Promise((resolve) => {
@@ -376,7 +380,7 @@ export class QueryClient extends QC {
   setQueryDefaults(
     queryKey: MaybeRefDeep<QueryKey>,
     options: MaybeRefDeep<
-      Omit<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>
+      OmitKeyof<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>
     >,
   ): void {
     super.setQueryDefaults(cloneDeepUnref(queryKey), cloneDeepUnref(options))
@@ -384,7 +388,7 @@ export class QueryClient extends QC {
 
   getQueryDefaults(
     queryKey: MaybeRefDeep<QueryKey>,
-  ): QueryObserverOptions<any, any, any, any, any> {
+  ): OmitKeyof<QueryObserverOptions<any, any, any, any, any>, 'queryKey'> {
     return super.getQueryDefaults(cloneDeepUnref(queryKey))
   }
 

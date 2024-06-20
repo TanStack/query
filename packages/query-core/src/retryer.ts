@@ -7,6 +7,7 @@ import type { CancelOptions, DefaultError, NetworkMode } from './types'
 
 interface RetryerConfig<TData = unknown, TError = DefaultError> {
   fn: () => TData | Promise<TData>
+  initialPromise?: Promise<TData>
   abort?: () => void
   onError?: (error: TError) => void
   onSuccess?: (data: TData) => void
@@ -16,6 +17,7 @@ interface RetryerConfig<TData = unknown, TError = DefaultError> {
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   networkMode: NetworkMode | undefined
+  canRun: () => boolean
 }
 
 export interface Retryer<TData = unknown> {
@@ -24,6 +26,8 @@ export interface Retryer<TData = unknown> {
   continue: () => Promise<unknown>
   cancelRetry: () => void
   continueRetry: () => void
+  canStart: () => boolean
+  start: () => Promise<TData>
 }
 
 export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
@@ -69,7 +73,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   let isRetryCancelled = false
   let failureCount = 0
   let isResolved = false
-  let continueFn: ((value?: unknown) => boolean) | undefined
+  let continueFn: ((value?: unknown) => void) | undefined
   let promiseResolve: (data: TData) => void
   let promiseReject: (error: TError) => void
 
@@ -93,9 +97,12 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
     isRetryCancelled = false
   }
 
-  const shouldPause = () =>
-    !focusManager.isFocused() ||
-    (config.networkMode !== 'always' && !onlineManager.isOnline())
+  const canContinue = () =>
+    focusManager.isFocused() &&
+    (config.networkMode === 'always' || onlineManager.isOnline()) &&
+    config.canRun()
+
+  const canStart = () => canFetch(config.networkMode) && config.canRun()
 
   const resolve = (value: any) => {
     if (!isResolved) {
@@ -118,11 +125,9 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   const pause = () => {
     return new Promise((continueResolve) => {
       continueFn = (value) => {
-        const canContinue = isResolved || !shouldPause()
-        if (canContinue) {
+        if (isResolved || canContinue()) {
           continueResolve(value)
         }
-        return canContinue
       }
       config.onPause?.()
     }).then(() => {
@@ -142,9 +147,13 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
 
     let promiseOrValue: any
 
+    // we can re-use config.initialPromise on the first call of run()
+    const initialPromise =
+      failureCount === 0 ? config.initialPromise : undefined
+
     // Execute query
     try {
-      promiseOrValue = config.fn()
+      promiseOrValue = initialPromise ?? config.fn()
     } catch (error) {
       promiseOrValue = Promise.reject(error)
     }
@@ -184,10 +193,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
         sleep(delay)
           // Pause if the document is not visible or when the device is offline
           .then(() => {
-            if (shouldPause()) {
-              return pause()
-            }
-            return
+            return canContinue() ? undefined : pause()
           })
           .then(() => {
             if (isRetryCancelled) {
@@ -199,21 +205,24 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
       })
   }
 
-  // Start loop
-  if (canFetch(config.networkMode)) {
-    run()
-  } else {
-    pause().then(run)
-  }
-
   return {
     promise,
     cancel,
     continue: () => {
-      const didContinue = continueFn?.()
-      return didContinue ? promise : Promise.resolve()
+      continueFn?.()
+      return promise
     },
     cancelRetry,
     continueRetry,
+    canStart,
+    start: () => {
+      // Start loop
+      if (canStart()) {
+        run()
+      } else {
+        pause().then(run)
+      }
+      return promise
+    },
   }
 }

@@ -12,7 +12,10 @@ import type {
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
 
-type GetSuspenseOptions<T> =
+// Widen the type of the symbol to enable type inference even if skipToken is not immutable.
+type SkipTokenForUseQueries = symbol
+
+type GetUseSuspenseQueryOptions<T> =
   // Part 1: responsible for applying explicit type parameter to function arguments, if object { queryFnData: TQueryFnData, error: TError, data: TData }
   T extends {
     queryFnData: infer TQueryFnData
@@ -33,7 +36,9 @@ type GetSuspenseOptions<T> =
               ? UseSuspenseQueryOptions<TQueryFnData>
               : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
                 T extends {
-                    queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
+                    queryFn?:
+                      | QueryFunction<infer TQueryFnData, infer TQueryKey>
+                      | SkipTokenForUseQueries
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
@@ -44,10 +49,9 @@ type GetSuspenseOptions<T> =
                     TQueryKey
                   >
                 : T extends {
-                      queryFn?: QueryFunction<
-                        infer TQueryFnData,
-                        infer TQueryKey
-                      >
+                      queryFn?:
+                        | QueryFunction<infer TQueryFnData, infer TQueryKey>
+                        | SkipTokenForUseQueries
                       throwOnError?: ThrowOnError<any, infer TError, any, any>
                     }
                   ? UseSuspenseQueryOptions<
@@ -59,7 +63,7 @@ type GetSuspenseOptions<T> =
                   : // Fallback
                     UseSuspenseQueryOptions
 
-type GetSuspenseResults<T> =
+type GetUseSuspenseQueryResult<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
   T extends { queryFnData: any; error?: infer TError; data: infer TData }
     ? UseSuspenseQueryResult<TData, TError>
@@ -76,7 +80,9 @@ type GetSuspenseResults<T> =
               ? UseSuspenseQueryResult<TQueryFnData>
               : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
                 T extends {
-                    queryFn?: QueryFunction<infer TQueryFnData, any>
+                    queryFn?:
+                      | QueryFunction<infer TQueryFnData, any>
+                      | SkipTokenForUseQueries
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
@@ -85,7 +91,9 @@ type GetSuspenseResults<T> =
                     unknown extends TError ? DefaultError : TError
                   >
                 : T extends {
-                      queryFn?: QueryFunction<infer TQueryFnData, any>
+                      queryFn?:
+                        | QueryFunction<infer TQueryFnData, any>
+                        | SkipTokenForUseQueries
                       throwOnError?: ThrowOnError<any, infer TError, any, any>
                     }
                   ? UseSuspenseQueryResult<
@@ -100,19 +108,19 @@ type GetSuspenseResults<T> =
  */
 export type SuspenseQueriesOptions<
   T extends Array<any>,
-  Result extends Array<any> = [],
-  Depth extends ReadonlyArray<number> = [],
-> = Depth['length'] extends MAXIMUM_DEPTH
+  TResults extends Array<any> = [],
+  TDepth extends ReadonlyArray<number> = [],
+> = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<UseSuspenseQueryOptions>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...Result, GetSuspenseOptions<Head>]
-      : T extends [infer Head, ...infer Tail]
+      ? [...TResults, GetUseSuspenseQueryOptions<Head>]
+      : T extends [infer Head, ...infer Tails]
         ? SuspenseQueriesOptions<
-            [...Tail],
-            [...Result, GetSuspenseOptions<Head>],
-            [...Depth, 1]
+            [...Tails],
+            [...TResults, GetUseSuspenseQueryOptions<Head>],
+            [...TDepth, 1]
           >
         : Array<unknown> extends T
           ? T
@@ -137,19 +145,19 @@ export type SuspenseQueriesOptions<
  */
 export type SuspenseQueriesResults<
   T extends Array<any>,
-  Result extends Array<any> = [],
-  Depth extends ReadonlyArray<number> = [],
-> = Depth['length'] extends MAXIMUM_DEPTH
+  TResults extends Array<any> = [],
+  TDepth extends ReadonlyArray<number> = [],
+> = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<UseSuspenseQueryResult>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...Result, GetSuspenseResults<Head>]
-      : T extends [infer Head, ...infer Tail]
+      ? [...TResults, GetUseSuspenseQueryResult<Head>]
+      : T extends [infer Head, ...infer Tails]
         ? SuspenseQueriesResults<
-            [...Tail],
-            [...Result, GetSuspenseResults<Head>],
-            [...Depth, 1]
+            [...Tails],
+            [...TResults, GetUseSuspenseQueryResult<Head>],
+            [...TDepth, 1]
           >
         : T extends Array<
               UseSuspenseQueryOptions<
@@ -187,6 +195,7 @@ export function useSuspenseQueries<
         suspense: true,
         throwOnError: defaultThrowOnError,
         enabled: true,
+        placeholderData: undefined,
       })),
     } as any,
     queryClient,

@@ -11,11 +11,12 @@
   } from '@tanstack/query-devtools'
 
   export let initialIsOpen = false
-  export let buttonPosition: DevtoolsButtonPosition = 'bottom-left'
+  export let buttonPosition: DevtoolsButtonPosition = 'bottom-right'
   export let position: DevtoolsPosition = 'bottom'
   export let client: QueryClient = useQueryClient()
   export let errorTypes: Array<DevToolsErrorType> = []
   export let styleNonce: string | undefined = undefined
+  export let shadowDOMTarget: ShadowRoot | undefined = undefined
 
   let ref: HTMLDivElement
   let devtools: TanstackQueryDevtools | undefined
@@ -35,6 +36,7 @@
           initialIsOpen,
           errorTypes,
           styleNonce,
+          shadowDOMTarget,
         })
 
         devtools.mount(ref)
@@ -56,4 +58,4 @@
   }
 </script>
 
-<div class="tsqd-parent-container" bind:this={ref} />
+<div class="tsqd-parent-container" bind:this={ref}></div>

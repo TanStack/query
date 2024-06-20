@@ -17,7 +17,7 @@ export interface DevtoolsOptions {
   /**
    * The position of the React Query logo to open and close the devtools panel.
    * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
-   * Defaults to 'bottom-left'.
+   * Defaults to 'bottom-right'.
    */
   buttonPosition?: DevtoolsButtonPosition
   /**
@@ -38,19 +38,28 @@ export interface DevtoolsOptions {
    * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
    */
   styleNonce?: string
+  /**
+   * Use this so you can attach the devtool's styles to specific element in the DOM.
+   */
+  shadowDOMTarget?: ShadowRoot
 }
 
 export function ReactQueryDevtools(
   props: DevtoolsOptions,
 ): React.ReactElement | null {
-  const queryClient = useQueryClient()
-  const client = props.client || queryClient
+  const queryClient = useQueryClient(props.client)
   const ref = React.useRef<HTMLDivElement>(null)
-  const { buttonPosition, position, initialIsOpen, errorTypes, styleNonce } =
-    props
+  const {
+    buttonPosition,
+    position,
+    initialIsOpen,
+    errorTypes,
+    styleNonce,
+    shadowDOMTarget,
+  } = props
   const [devtools] = React.useState(
     new TanstackQueryDevtools({
-      client: client,
+      client: queryClient,
       queryFlavor: 'React Query',
       version: '5',
       onlineManager,
@@ -59,12 +68,13 @@ export function ReactQueryDevtools(
       initialIsOpen,
       errorTypes,
       styleNonce,
+      shadowDOMTarget,
     }),
   )
 
   React.useEffect(() => {
-    devtools.setClient(client)
-  }, [client, devtools])
+    devtools.setClient(queryClient)
+  }, [queryClient, devtools])
 
   React.useEffect(() => {
     if (buttonPosition) {

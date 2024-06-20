@@ -1,26 +1,30 @@
 {
   "name": "@tanstack/query-example-angular-simple",
-  "private": true,
   "type": "module",
   "scripts": {
-    "start": "vite",
-    "dev": "vite",
-    "build": "vite build",
-    "serve": "vite preview"
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development"
   },
-  "license": "MIT",
+  "private": true,
   "dependencies": {
-    "@angular/common": "^17.0.2",
-    "@angular/compiler": "^17.0.2",
-    "@angular/core": "^17.0.2",
-    "@angular/platform-browser": "^17.0.2",
-    "@tanstack/angular-query-experimental": "^5.13.4",
-    "@tanstack/angular-query-devtools-experimental": "^5.13.3",
+    "@angular/common": "^17.3.10",
+    "@angular/compiler": "^17.3.10",
+    "@angular/core": "^17.3.10",
+    "@angular/platform-browser": "^17.3.10",
+    "@angular/platform-browser-dynamic": "^17.3.10",
+    "@angular/router": "^17.3.10",
+    "@tanstack/angular-query-experimental": "^5.45.0",
     "rxjs": "^7.8.1",
-    "zone.js": "^0.14.2"
+    "tslib": "^2.6.2",
+    "zone.js": "^0.14.6"
   },
   "devDependencies": {
-    "typescript": "^5.2.2",
-    "vite": "^4.5.0"
+    "@angular-devkit/build-angular": "^17.3.8",
+    "@angular/cli": "^17.3.8",
+    "@angular/compiler-cli": "^17.3.10",
+    "@tanstack/angular-query-devtools-experimental": "^5.45.0",
+    "typescript": "5.3.3"
   }
 }

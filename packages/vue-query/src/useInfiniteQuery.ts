@@ -7,7 +7,6 @@ import type {
   InfiniteQueryObserverResult,
   QueryKey,
   QueryObserver,
-  WithRequired,
 } from '@tanstack/query-core'
 
 import type { UseBaseQueryReturnType } from './useBaseQuery'
@@ -30,42 +29,26 @@ export type UseInfiniteQueryOptions<
     TQueryData,
     TQueryKey,
     TPageParam
-  >]: Property extends
-    | 'queryFn'
-    | 'getPreviousPageParam'
-    | 'getNextPageParam'
-    | 'select'
-    ? InfiniteQueryObserverOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryData,
-        DeepUnwrapRef<TQueryKey>,
-        TPageParam
-      >[Property]
-    : Property extends 'enabled'
-      ? MaybeRefOrGetter<
-          InfiniteQueryObserverOptions<
-            TQueryFnData,
-            TError,
-            TData,
-            TQueryData,
-            TQueryKey
-          >[Property]
-        >
-      : MaybeRefDeep<
-          WithRequired<
-            InfiniteQueryObserverOptions<
-              TQueryFnData,
-              TError,
-              TData,
-              TQueryData,
-              TQueryKey,
-              TPageParam
-            >,
-            'queryKey'
-          >[Property]
-        >
+  >]: Property extends 'enabled'
+    ? MaybeRefOrGetter<
+        InfiniteQueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          DeepUnwrapRef<TQueryKey>
+        >[Property]
+      >
+    : MaybeRefDeep<
+        InfiniteQueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          DeepUnwrapRef<TQueryKey>,
+          TPageParam
+        >[Property]
+      >
 }
 
 export type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<

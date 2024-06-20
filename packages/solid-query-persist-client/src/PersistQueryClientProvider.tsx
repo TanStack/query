@@ -1,12 +1,15 @@
-import { persistQueryClient } from '@tanstack/query-persist-client-core'
-import { createComputed, createSignal, onCleanup } from 'solid-js'
+import {
+  persistQueryClientRestore,
+  persistQueryClientSubscribe,
+} from '@tanstack/query-persist-client-core'
+import { createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
 import { IsRestoringProvider, QueryClientProvider } from '@tanstack/solid-query'
 import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
-import type { QueryClientProviderProps } from '@tanstack/solid-query'
+import type { OmitKeyof, QueryClientProviderProps } from '@tanstack/solid-query'
 import type { JSX } from 'solid-js'
 
 export type PersistQueryClientProviderProps = QueryClientProviderProps & {
-  persistOptions: Omit<PersistQueryClientOptions, 'queryClient'>
+  persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
   onSuccess?: () => void
 }
 
@@ -15,33 +18,30 @@ export const PersistQueryClientProvider = (
 ): JSX.Element => {
   const [isRestoring, setIsRestoring] = createSignal(true)
 
-  let unsub: undefined | (() => void)
-  createComputed<() => void>((cleanup) => {
-    cleanup?.()
-    let isStale = false
-    setIsRestoring(true)
-    const [unsubscribe, promise] = persistQueryClient({
-      ...props.persistOptions,
-      queryClient: props.client,
-    })
+  const options = createMemo(() => ({
+    ...props.persistOptions,
+    queryClient: props.client,
+  }))
 
-    promise.then(async () => {
-      if (isStale) return
+  createEffect(() => {
+    setIsRestoring(true)
+    persistQueryClientRestore(options()).then(async () => {
       try {
         await props.onSuccess?.()
       } finally {
         setIsRestoring(false)
       }
     })
-
-    unsub = () => {
-      isStale = true
-      unsubscribe()
-    }
-    return unsub
   })
 
-  onCleanup(() => unsub?.())
+  createEffect(() => {
+    let unsubscribe = () => {}
+    if (!isRestoring()) {
+      unsubscribe = persistQueryClientSubscribe(options())
+    }
+    onCleanup(() => unsubscribe())
+  })
+
   return (
     <QueryClientProvider client={props.client}>
       <IsRestoringProvider value={isRestoring}>

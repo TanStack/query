@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-core",
-  "version": "5.14.2",
+  "version": "5.45.0",
   "description": "The framework agnostic core that powers TanStack Query",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -40,9 +40,10 @@
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:types": "tsc",
-    "test:lib": "vitest run --coverage",
+    "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
+    "test:attw": "attw --pack",
     "build": "tsup"
   }
 }

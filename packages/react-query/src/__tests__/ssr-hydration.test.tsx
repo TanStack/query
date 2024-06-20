@@ -1,7 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
-import * as React from 'react'
-import ReactDOM from 'react-dom'
-import * as ReactDOMTestUtils from 'react-dom/test-utils'
+import { hydrateRoot } from 'react-dom/client'
+import { act } from 'react'
 import * as ReactDOMServer from 'react-dom/server'
 
 import {
@@ -15,9 +14,8 @@ import { createQueryClient, setIsServer, sleep } from './utils'
 
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
   let root: any
-  ReactDOMTestUtils.act(() => {
-    // @ts-expect-error
-    root = ReactDOM.hydrateRoot(container, element)
+  act(() => {
+    root = hydrateRoot(container, element)
   })
   return () => {
     root.unmount()
@@ -112,11 +110,8 @@ describe('Server side rendering with de/rehydration', () => {
     )
 
     // Check that we have no React hydration mismatches
-    // this should be zero calls and can be changed once we drop react17 support
-    expect(consoleMock).toHaveBeenNthCalledWith(
-      1,
-      'Warning: You are importing hydrateRoot from "react-dom" which is not supported. You should instead import it from "react-dom/client".',
-    )
+    expect(consoleMock).toHaveBeenCalledTimes(0)
+
     expect(fetchDataSuccess).toHaveBeenCalledTimes(2)
     expect(el.innerHTML).toBe(expectedMarkup)
 
@@ -190,8 +185,7 @@ describe('Server side rendering with de/rehydration', () => {
       el,
     )
 
-    // We expect exactly one console.error here, which is from the
-    expect(consoleMock).toHaveBeenCalledTimes(1)
+    expect(consoleMock).toHaveBeenCalledTimes(0)
     expect(fetchDataError).toHaveBeenCalledTimes(2)
     expect(el.innerHTML).toBe(expectedMarkup)
     await sleep(50)
@@ -262,11 +256,7 @@ describe('Server side rendering with de/rehydration', () => {
     )
 
     // Check that we have no React hydration mismatches
-    // this should be zero calls and can be changed once we drop react17 support
-    expect(consoleMock).toHaveBeenNthCalledWith(
-      1,
-      'Warning: You are importing hydrateRoot from "react-dom" which is not supported. You should instead import it from "react-dom/client".',
-    )
+    expect(consoleMock).toHaveBeenCalledTimes(0)
     expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
     expect(el.innerHTML).toBe(expectedMarkup)
     await sleep(50)

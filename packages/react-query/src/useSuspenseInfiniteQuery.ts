@@ -41,7 +41,6 @@ export function useSuspenseInfiniteQuery<
       suspense: true,
       throwOnError: defaultThrowOnError,
     },
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     InfiniteQueryObserver as typeof QueryObserver,
     queryClient,
   ) as InfiniteQueryObserverSuccessResult<TData, TError>

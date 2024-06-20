@@ -1,23 +1,23 @@
 {
   "name": "@tanstack/query-example-vue-persister",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:dev": "vite build -m development",
-    "serve": "vite preview"
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/query-core": "^5.0.0",
-    "@tanstack/query-persist-client-core": "^5.0.0",
-    "@tanstack/query-sync-storage-persister": "^5.0.0",
-    "@tanstack/vue-query": "^5.0.0",
-    "vue": "^3.3.0",
-    "idb-keyval": "^6.2.0"
+    "@tanstack/query-core": "^5.45.0",
+    "@tanstack/query-persist-client-core": "^5.45.0",
+    "@tanstack/query-sync-storage-persister": "^5.45.0",
+    "@tanstack/vue-query": "^5.45.0",
+    "idb-keyval": "^6.2.1",
+    "vue": "^3.4.27"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.4.0",
-    "typescript": "5.1.6",
-    "vite": "^4.5.0"
+    "@vitejs/plugin-vue": "^5.0.4",
+    "typescript": "5.3.3",
+    "vite": "^5.2.11"
   }
 }

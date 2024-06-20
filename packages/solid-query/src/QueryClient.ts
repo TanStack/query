@@ -2,6 +2,7 @@ import { QueryClient as QueryCoreClient } from '@tanstack/query-core'
 import type {
   DefaultOptions as CoreDefaultOptions,
   DefaultError,
+  OmitKeyof,
   QueryClientConfig as QueryCoreClientConfig,
   InfiniteQueryObserverOptions as QueryCoreInfiniteQueryObserverOptions,
   QueryObserverOptions as QueryCoreObserverOptions,
@@ -15,7 +16,7 @@ export interface QueryObserverOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
-> extends Omit<
+> extends OmitKeyof<
     QueryCoreObserverOptions<
       TQueryFnData,
       TError,
@@ -45,7 +46,7 @@ export interface InfiniteQueryObserverOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> extends Omit<
+> extends OmitKeyof<
     QueryCoreInfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
@@ -70,7 +71,7 @@ export interface InfiniteQueryObserverOptions<
 
 export interface DefaultOptions<TError = DefaultError>
   extends CoreDefaultOptions<TError> {
-  queries?: QueryObserverOptions<unknown, TError>
+  queries?: OmitKeyof<QueryObserverOptions<unknown, TError>, 'queryKey'>
 }
 
 export interface QueryClientConfig extends QueryCoreClientConfig {

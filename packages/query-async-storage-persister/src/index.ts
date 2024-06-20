@@ -1,4 +1,5 @@
 import { asyncThrottle } from './asyncThrottle'
+import { noop } from './utils'
 import type {
   AsyncStorage,
   MaybePromise,
@@ -99,6 +100,3 @@ export const createAsyncStoragePersister = ({
     removeClient: noop,
   }
 }
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-function noop() {}

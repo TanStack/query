@@ -1,8 +1,9 @@
-import { addToEnd, addToStart } from './utils'
+import { addToEnd, addToStart, ensureQueryFn } from './utils'
 import type { QueryBehavior } from './query'
 import type {
   InfiniteData,
   InfiniteQueryPageParamsOptions,
+  OmitKeyof,
   QueryFunctionContext,
   QueryKey,
 } from './types'
@@ -36,13 +37,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           })
         }
 
-        // Get query function
-        const queryFn =
-          context.options.queryFn ||
-          (() =>
-            Promise.reject(
-              new Error(`Missing queryFn: '${context.options.queryHash}'`),
-            ))
+        const queryFn = ensureQueryFn(context.options, context.fetchOptions)
 
         // Create function to fetch a page
         const fetchPage = async (
@@ -58,7 +53,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
             return Promise.resolve(data)
           }
 
-          const queryFnContext: Omit<
+          const queryFnContext: OmitKeyof<
             QueryFunctionContext<QueryKey, unknown>,
             'signal'
           > = {

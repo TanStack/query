@@ -1,7 +1,7 @@
 import { QueryObserver } from '@tanstack/query-core'
 import { createMemo } from 'solid-js'
 import { createBaseQuery } from './createBaseQuery'
-import type { DefaultError, QueryKey } from '@tanstack/query-core'
+import type { DataTag, DefaultError, QueryKey } from '@tanstack/query-core'
 import type { QueryClient } from './QueryClient'
 import type { Accessor } from 'solid-js'
 import type {
@@ -39,26 +39,40 @@ export function queryOptions<
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-  TOptions extends UndefinedInitialDataOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey
-  > = UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
->(options: TOptions): TOptions
+  TOptions extends ReturnType<
+    UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  > = ReturnType<
+    UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  >,
+>(
+  options: ReturnType<
+    UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  >,
+): ReturnType<
+  UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+> & {
+  queryKey: DataTag<TQueryKey, TQueryFnData>
+}
 
 export function queryOptions<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-  TOptions extends DefinedInitialDataOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey
-  > = DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
->(options: TOptions): TOptions
+  TOptions extends ReturnType<
+    DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  > = ReturnType<
+    DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  >,
+>(
+  options: ReturnType<
+    DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  >,
+): ReturnType<
+  DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+> & {
+  queryKey: DataTag<TQueryKey, TQueryFnData>
+}
 
 export function queryOptions(options: unknown) {
   return options

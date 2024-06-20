@@ -3,7 +3,7 @@ import { createSignal, lazy } from 'solid-js'
 import { setupStyleSheet } from './utils'
 import type {
   QueryClient,
-  onlineManager as TonlineManager,
+  onlineManager as TOnlineManager,
 } from '@tanstack/query-core'
 import type { DevtoolsComponentType } from './Devtools'
 import type {
@@ -17,15 +17,17 @@ import type { Signal } from 'solid-js'
 export type { DevtoolsButtonPosition, DevtoolsPosition, DevToolsErrorType }
 export interface TanstackQueryDevtoolsConfig extends QueryDevtoolsProps {
   styleNonce?: string
+  shadowDOMTarget?: ShadowRoot
 }
 
 class TanstackQueryDevtools {
   #client: Signal<QueryClient>
-  #onlineManager: typeof TonlineManager
+  #onlineManager: typeof TOnlineManager
   #queryFlavor: string
   #version: string
   #isMounted = false
   #styleNonce?: string
+  #shadowDOMTarget?: ShadowRoot
   #buttonPosition: Signal<DevtoolsButtonPosition | undefined>
   #position: Signal<DevtoolsPosition | undefined>
   #initialIsOpen: Signal<boolean | undefined>
@@ -44,12 +46,14 @@ class TanstackQueryDevtools {
       initialIsOpen,
       errorTypes,
       styleNonce,
+      shadowDOMTarget,
     } = config
     this.#client = createSignal(client)
     this.#queryFlavor = queryFlavor
     this.#version = version
     this.#onlineManager = onlineManager
     this.#styleNonce = styleNonce
+    this.#shadowDOMTarget = shadowDOMTarget
     this.#buttonPosition = createSignal(buttonPosition)
     this.#position = createSignal(position)
     this.#initialIsOpen = createSignal(initialIsOpen)
@@ -95,12 +99,13 @@ class TanstackQueryDevtools {
         this.#Component = Devtools
       }
 
-      setupStyleSheet(this.#styleNonce)
+      setupStyleSheet(this.#styleNonce, this.#shadowDOMTarget)
       return (
         <Devtools
           queryFlavor={this.#queryFlavor}
           version={this.#version}
           onlineManager={this.#onlineManager}
+          shadowDOMTarget={this.#shadowDOMTarget}
           {...{
             get client() {
               return queryClient()

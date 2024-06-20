@@ -1,4 +1,4 @@
-import { noop, replaceData, timeUntilStale } from './utils'
+import { ensureQueryFn, noop, replaceData, timeUntilStale } from './utils'
 import { notifyManager } from './notifyManager'
 import { canFetch, createRetryer, isCancelledError } from './retryer'
 import { Removable } from './removable'
@@ -7,6 +7,8 @@ import type {
   DefaultError,
   FetchStatus,
   InitialDataFunction,
+  OmitKeyof,
+  QueryFunction,
   QueryFunctionContext,
   QueryKey,
   QueryMeta,
@@ -81,9 +83,10 @@ export interface FetchMeta {
   fetchMore?: { direction: FetchDirection }
 }
 
-export interface FetchOptions {
+export interface FetchOptions<TData = unknown> {
   cancelRefetch?: boolean
   meta?: FetchMeta
+  initialPromise?: Promise<TData>
 }
 
 interface FailedAction<TError> {
@@ -158,9 +161,8 @@ export class Query<
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
   #cache: QueryCache
-  #promise?: Promise<TData>
   #retryer?: Retryer<TData>
-  #observers: Array<QueryObserver<any, any, any, any, any>>
+  observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   #abortSignalConsumed: boolean
 
@@ -169,8 +171,8 @@ export class Query<
 
     this.#abortSignalConsumed = false
     this.#defaultOptions = config.defaultOptions
-    this.#setOptions(config.options)
-    this.#observers = []
+    this.setOptions(config.options)
+    this.observers = []
     this.#cache = config.cache
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
@@ -182,7 +184,11 @@ export class Query<
     return this.options.meta
   }
 
-  #setOptions(
+  get promise(): Promise<TData> | undefined {
+    return this.#retryer?.promise
+  }
+
+  setOptions(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): void {
     this.options = { ...this.#defaultOptions, ...options }
@@ -191,7 +197,7 @@ export class Query<
   }
 
   protected optionalRemove() {
-    if (!this.#observers.length && this.state.fetchStatus === 'idle') {
+    if (!this.observers.length && this.state.fetchStatus === 'idle') {
       this.#cache.remove(this)
     }
   }
@@ -221,7 +227,7 @@ export class Query<
   }
 
   cancel(options?: CancelOptions): Promise<void> {
-    const promise = this.#promise
+    const promise = this.#retryer?.promise
     this.#retryer?.cancel(options)
     return promise ? promise.then(noop).catch(noop) : Promise.resolve()
   }
@@ -238,9 +244,7 @@ export class Query<
   }
 
   isActive(): boolean {
-    return this.#observers.some(
-      (observer) => observer.options.enabled !== false,
-    )
+    return this.observers.some((observer) => observer.options.enabled !== false)
   }
 
   isDisabled(): boolean {
@@ -248,23 +252,29 @@ export class Query<
   }
 
   isStale(): boolean {
-    return (
-      this.state.isInvalidated ||
-      !this.state.dataUpdatedAt ||
-      this.#observers.some((observer) => observer.getCurrentResult().isStale)
-    )
+    if (this.state.isInvalidated) {
+      return true
+    }
+
+    if (this.getObserversCount() > 0) {
+      return this.observers.some(
+        (observer) => observer.getCurrentResult().isStale,
+      )
+    }
+
+    return this.state.data === undefined
   }
 
   isStaleByTime(staleTime = 0): boolean {
     return (
       this.state.isInvalidated ||
-      !this.state.dataUpdatedAt ||
+      this.state.data === undefined ||
       !timeUntilStale(this.state.dataUpdatedAt, staleTime)
     )
   }
 
   onFocus(): void {
-    const observer = this.#observers.find((x) => x.shouldFetchOnWindowFocus())
+    const observer = this.observers.find((x) => x.shouldFetchOnWindowFocus())
 
     observer?.refetch({ cancelRefetch: false })
 
@@ -273,7 +283,7 @@ export class Query<
   }
 
   onOnline(): void {
-    const observer = this.#observers.find((x) => x.shouldFetchOnReconnect())
+    const observer = this.observers.find((x) => x.shouldFetchOnReconnect())
 
     observer?.refetch({ cancelRefetch: false })
 
@@ -282,8 +292,8 @@ export class Query<
   }
 
   addObserver(observer: QueryObserver<any, any, any, any, any>): void {
-    if (!this.#observers.includes(observer)) {
-      this.#observers.push(observer)
+    if (!this.observers.includes(observer)) {
+      this.observers.push(observer)
 
       // Stop the query from being garbage collected
       this.clearGcTimeout()
@@ -293,10 +303,10 @@ export class Query<
   }
 
   removeObserver(observer: QueryObserver<any, any, any, any, any>): void {
-    if (this.#observers.includes(observer)) {
-      this.#observers = this.#observers.filter((x) => x !== observer)
+    if (this.observers.includes(observer)) {
+      this.observers = this.observers.filter((x) => x !== observer)
 
-      if (!this.#observers.length) {
+      if (!this.observers.length) {
         // If the transport layer does not support cancellation
         // we'll let the query continue so the result can be cached
         if (this.#retryer) {
@@ -315,7 +325,7 @@ export class Query<
   }
 
   getObserversCount(): number {
-    return this.#observers.length
+    return this.observers.length
   }
 
   invalidate(): void {
@@ -326,31 +336,31 @@ export class Query<
 
   fetch(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    fetchOptions?: FetchOptions,
+    fetchOptions?: FetchOptions<TQueryFnData>,
   ): Promise<TData> {
     if (this.state.fetchStatus !== 'idle') {
-      if (this.state.dataUpdatedAt && fetchOptions?.cancelRefetch) {
-        // Silently cancel current fetch if the user wants to cancel refetches
+      if (this.state.data !== undefined && fetchOptions?.cancelRefetch) {
+        // Silently cancel current fetch if the user wants to cancel refetch
         this.cancel({ silent: true })
-      } else if (this.#promise) {
+      } else if (this.#retryer) {
         // make sure that retries that were potentially cancelled due to unmounts can continue
-        this.#retryer?.continueRetry()
+        this.#retryer.continueRetry()
         // Return current promise if we are already fetching
-        return this.#promise
+        return this.#retryer.promise
       }
     }
 
     // Update config if passed, otherwise the config from the last execution is used
     if (options) {
-      this.#setOptions(options)
+      this.setOptions(options)
     }
 
     // Use the options from the first observer with a query function if no function is found.
     // This can happen when the query is hydrated or created with setQueryData.
     if (!this.options.queryFn) {
-      const observer = this.#observers.find((x) => x.options.queryFn)
+      const observer = this.observers.find((x) => x.options.queryFn)
       if (observer) {
-        this.#setOptions(observer.options)
+        this.setOptions(observer.options)
       }
     }
 
@@ -363,12 +373,6 @@ export class Query<
     }
 
     const abortController = new AbortController()
-
-    // Create query function context
-    const queryFnContext: Omit<QueryFunctionContext<TQueryKey>, 'signal'> = {
-      queryKey: this.queryKey,
-      meta: this.meta,
-    }
 
     // Adds an enumerable signal property to the object that
     // which sets abortSignalConsumed to true when the signal
@@ -383,31 +387,35 @@ export class Query<
       })
     }
 
-    addSignalProperty(queryFnContext)
-
     // Create fetch function
     const fetchFn = () => {
-      if (!this.options.queryFn) {
-        return Promise.reject(
-          new Error(`Missing queryFn: '${this.options.queryHash}'`),
-        )
+      const queryFn = ensureQueryFn(this.options, fetchOptions)
+
+      // Create query function context
+      const queryFnContext: OmitKeyof<
+        QueryFunctionContext<TQueryKey>,
+        'signal'
+      > = {
+        queryKey: this.queryKey,
+        meta: this.meta,
       }
+
+      addSignalProperty(queryFnContext)
+
       this.#abortSignalConsumed = false
       if (this.options.persister) {
         return this.options.persister(
-          this.options.queryFn,
+          queryFn as QueryFunction<any>,
           queryFnContext as QueryFunctionContext<TQueryKey>,
           this as unknown as Query,
         )
       }
 
-      return this.options.queryFn(
-        queryFnContext as QueryFunctionContext<TQueryKey>,
-      )
+      return queryFn(queryFnContext as QueryFunctionContext<TQueryKey>)
     }
 
     // Trigger behavior hook
-    const context: Omit<
+    const context: OmitKeyof<
       FetchContext<TQueryFnData, TError, TData, TQueryKey>,
       'signal'
     > = {
@@ -467,10 +475,13 @@ export class Query<
 
     // Try to fetch the data
     this.#retryer = createRetryer({
+      initialPromise: fetchOptions?.initialPromise as
+        | Promise<TData>
+        | undefined,
       fn: context.fetchFn as () => Promise<TData>,
       abort: abortController.abort.bind(abortController),
       onSuccess: (data) => {
-        if (typeof data === 'undefined') {
+        if (data === undefined) {
           if (process.env.NODE_ENV !== 'production') {
             console.error(
               `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ${this.queryHash}`,
@@ -509,11 +520,10 @@ export class Query<
       retry: context.options.retry,
       retryDelay: context.options.retryDelay,
       networkMode: context.options.networkMode,
+      canRun: () => true,
     })
 
-    this.#promise = this.#retryer.promise
-
-    return this.#promise
+    return this.#retryer.start()
   }
 
   #dispatch(action: Action<TData, TError>): void {
@@ -540,16 +550,8 @@ export class Query<
         case 'fetch':
           return {
             ...state,
-            fetchFailureCount: 0,
-            fetchFailureReason: null,
+            ...fetchState(state.data, this.options),
             fetchMeta: action.meta ?? null,
-            fetchStatus: canFetch(this.options.networkMode)
-              ? 'fetching'
-              : 'paused',
-            ...(!state.dataUpdatedAt && {
-              error: null,
-              status: 'pending',
-            }),
           }
         case 'success':
           return {
@@ -599,13 +601,34 @@ export class Query<
     this.state = reducer(this.state)
 
     notifyManager.batch(() => {
-      this.#observers.forEach((observer) => {
+      this.observers.forEach((observer) => {
         observer.onQueryUpdate()
       })
 
       this.#cache.notify({ query: this, type: 'updated', action })
     })
   }
+}
+
+export function fetchState<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey extends QueryKey,
+>(
+  data: TData | undefined,
+  options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+) {
+  return {
+    fetchFailureCount: 0,
+    fetchFailureReason: null,
+    fetchStatus: canFetch(options.networkMode) ? 'fetching' : 'paused',
+    ...(data === undefined &&
+      ({
+        error: null,
+        status: 'pending',
+      } as const)),
+  } as const
 }
 
 function getDefaultState<
@@ -621,7 +644,7 @@ function getDefaultState<
       ? (options.initialData as InitialDataFunction<TData>)()
       : options.initialData
 
-  const hasData = typeof data !== 'undefined'
+  const hasData = data !== undefined
 
   const initialDataUpdatedAt = hasData
     ? typeof options.initialDataUpdatedAt === 'function'

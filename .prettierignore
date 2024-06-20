@@ -1,6 +1,10 @@
 **/.next
+**/.nx/cache
 **/.svelte-kit
 **/build
 **/coverage
 **/dist
-**/codemods/**/__testfixtures__
+**/query-codemods/**/__testfixtures__
+pnpm-lock.yaml
+packages/**/tsup.config.bundled*.mjs
+**/tsconfig.vitest-temp.json
