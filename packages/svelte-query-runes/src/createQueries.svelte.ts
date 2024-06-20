@@ -1,18 +1,10 @@
 import { QueriesObserver, notifyManager } from '@tanstack/query-core'
-<<<<<<<< HEAD:packages/svelte-query-runes/src/createQueries.svelte.ts
 import { flushSync, onDestroy, onMount, untrack } from 'svelte'
 import { useIsRestoring } from './useIsRestoring'
 import { useQueryClient } from './useQueryClient'
 import { createMemo, createResource } from './utils.svelte'
-========
-import { DestroyRef, computed, effect, inject, signal } from '@angular/core'
-import { assertInjector } from './util/assert-injector/assert-injector'
-import { injectQueryClient } from './inject-query-client'
-import type { Injector, Signal } from '@angular/core'
->>>>>>>> main:packages/angular-query-experimental/src/inject-queries.ts
 import type {
   DefaultError,
-  OmitKeyof,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
   QueryClient,
@@ -31,7 +23,7 @@ type QueryObserverOptionsForCreateQueries<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = OmitKeyof<
+> = Omit<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
   'placeholderData'
 > & {
@@ -40,9 +32,6 @@ type QueryObserverOptionsForCreateQueries<
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
-
-// Widen the type of the symbol to enable type inference even if skipToken is not immutable.
-type SkipTokenForUseQueries = symbol
 
 type GetOptions<T> =
   // Part 1: responsible for applying explicit type parameter to function arguments, if object { queryFnData: TQueryFnData, error: TError, data: TData }
@@ -65,25 +54,31 @@ type GetOptions<T> =
               ? QueryObserverOptionsForCreateQueries<TQueryFnData>
               : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
                 T extends {
-<<<<<<<< HEAD:packages/svelte-query-runes/src/createQueries.svelte.ts
                     queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
                     select?: (data: any) => infer TData
-========
-                    queryFn?:
-                      | QueryFunction<infer TQueryFnData, infer TQueryKey>
-                      | SkipTokenForUseQueries
-                    select: (data: any) => infer TData
->>>>>>>> main:packages/angular-query-experimental/src/inject-queries.ts
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? QueryObserverOptionsForCreateQueries<
                     TQueryFnData,
-                    unknown extends TError ? DefaultError : TError,
-                    unknown extends TData ? TQueryFnData : TData,
+                    TError,
+                    TData,
                     TQueryKey
                   >
-                : // Fallback
-                  QueryObserverOptionsForCreateQueries
+                : T extends {
+                      queryFn?: QueryFunction<
+                        infer TQueryFnData,
+                        infer TQueryKey
+                      >
+                      throwOnError?: ThrowOnError<any, infer TError, any, any>
+                    }
+                  ? QueryObserverOptionsForCreateQueries<
+                      TQueryFnData,
+                      TError,
+                      TQueryFnData,
+                      TQueryKey
+                    >
+                  : // Fallback
+                    QueryObserverOptionsForCreateQueries
 
 type GetResults<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
@@ -102,45 +97,45 @@ type GetResults<T> =
               ? QueryObserverResult<TQueryFnData>
               : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
                 T extends {
-<<<<<<<< HEAD:packages/svelte-query-runes/src/createQueries.svelte.ts
                     queryFn?: QueryFunction<infer TQueryFnData, any>
                     select?: (data: any) => infer TData
-========
-                    queryFn?:
-                      | QueryFunction<infer TQueryFnData, any>
-                      | SkipTokenForUseQueries
-                    select: (data: any) => infer TData
->>>>>>>> main:packages/angular-query-experimental/src/inject-queries.ts
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? QueryObserverResult<
                     unknown extends TData ? TQueryFnData : TData,
                     unknown extends TError ? DefaultError : TError
                   >
-                : // Fallback
-                  QueryObserverResult
+                : T extends {
+                      queryFn?: QueryFunction<infer TQueryFnData, any>
+                      throwOnError?: ThrowOnError<any, infer TError, any, any>
+                    }
+                  ? QueryObserverResult<
+                      TQueryFnData,
+                      unknown extends TError ? DefaultError : TError
+                    >
+                  : // Fallback
+                    QueryObserverResult
 
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
- * @public
  */
 export type QueriesOptions<
   T extends Array<any>,
-  TResult extends Array<any> = [],
-  TDepth extends ReadonlyArray<number> = [],
-> = TDepth['length'] extends MAXIMUM_DEPTH
+  Result extends Array<any> = [],
+  Depth extends ReadonlyArray<number> = [],
+> = Depth['length'] extends MAXIMUM_DEPTH
   ? Array<QueryObserverOptionsForCreateQueries>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...TResult, GetOptions<Head>]
+      ? [...Result, GetOptions<Head>]
       : T extends [infer Head, ...infer Tail]
         ? QueriesOptions<
             [...Tail],
-            [...TResult, GetOptions<Head>],
-            [...TDepth, 1]
+            [...Result, GetOptions<Head>],
+            [...Depth, 1]
           >
-        : ReadonlyArray<unknown> extends T
+        : Array<unknown> extends T
           ? T
           : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
             // use this to infer the param types in the case of Array.map() argument
@@ -165,23 +160,22 @@ export type QueriesOptions<
 
 /**
  * QueriesResults reducer recursively maps type param to results
- * @public
  */
 export type QueriesResults<
   T extends Array<any>,
-  TResult extends Array<any> = [],
-  TDepth extends ReadonlyArray<number> = [],
-> = TDepth['length'] extends MAXIMUM_DEPTH
+  Result extends Array<any> = [],
+  Depth extends ReadonlyArray<number> = [],
+> = Depth['length'] extends MAXIMUM_DEPTH
   ? Array<QueryObserverResult>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...TResult, GetResults<Head>]
+      ? [...Result, GetResults<Head>]
       : T extends [infer Head, ...infer Tail]
         ? QueriesResults<
             [...Tail],
-            [...TResult, GetResults<Head>],
-            [...TDepth, 1]
+            [...Result, GetResults<Head>],
+            [...Depth, 1]
           >
         : T extends Array<
               QueryObserverOptionsForCreateQueries<
@@ -201,14 +195,7 @@ export type QueriesResults<
           : // Fallback
             Array<QueryObserverResult>
 
-<<<<<<<< HEAD:packages/svelte-query-runes/src/createQueries.svelte.ts
 export function createQueries<
-========
-/**
- * @public
- */
-export function injectQueries<
->>>>>>>> main:packages/angular-query-experimental/src/inject-queries.ts
   T extends Array<any>,
   TCombinedResult extends QueriesResults<T> = QueriesResults<T>,
 >(
@@ -228,7 +215,6 @@ export function injectQueries<
     typeof queries != 'function' ? () => queries : queries,
   )
 
-<<<<<<<< HEAD:packages/svelte-query-runes/src/createQueries.svelte.ts
   const defaultedQueriesStore = createMemo(() => {
     return queriesStore().map((opts) => {
       const defaultedOptions = client.defaultQueryOptions(opts)
@@ -237,10 +223,6 @@ export function injectQueries<
         ? 'isRestoring'
         : 'optimistic'
       return defaultedOptions
-========
-        return defaultedOptions as QueryObserverOptions
-      })
->>>>>>>> main:packages/angular-query-experimental/src/inject-queries.ts
     })
   })
   const observer = new QueriesObserver<TCombinedResult>(
@@ -252,33 +234,11 @@ export function injectQueries<
   $effect(() => {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
-<<<<<<<< HEAD:packages/svelte-query-runes/src/createQueries.svelte.ts
     observer.setQueries(
       defaultedQueriesStore(),
       options as QueriesObserverOptions<TCombinedResult>,
       { listeners: false },
     )
-========
-    effect(() => {
-      observer.setQueries(
-        defaultedQueries(),
-        options as QueriesObserverOptions<TCombinedResult>,
-        { listeners: false },
-      )
-    })
-
-    const [, getCombinedResult] = observer.getOptimisticResult(
-      defaultedQueries(),
-      (options as QueriesObserverOptions<TCombinedResult>).combine,
-    )
-
-    const result = signal(getCombinedResult() as any)
-
-    const unsubscribe = observer.subscribe(notifyManager.batchCalls(result.set))
-    destroyRef.onDestroy(unsubscribe)
-
-    return result
->>>>>>>> main:packages/angular-query-experimental/src/inject-queries.ts
   })
 
   let result = $state<TCombinedResult>(
@@ -396,4 +356,3 @@ export function injectQueries<
   })
   return proxifiedState as TCombinedResult
 }
-7
