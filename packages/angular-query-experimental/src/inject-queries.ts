@@ -1,28 +1,19 @@
 import { QueriesObserver, notifyManager } from '@tanstack/query-core'
-<<<<<<<< HEAD:packages/svelte-query-runes/src/createQueries.svelte.ts
-import { flushSync, onDestroy, onMount, untrack } from 'svelte'
-import { useIsRestoring } from './useIsRestoring'
-import { useQueryClient } from './useQueryClient'
-import { createMemo, createResource } from './utils.svelte'
-========
 import { DestroyRef, computed, effect, inject, signal } from '@angular/core'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { injectQueryClient } from './inject-query-client'
 import type { Injector, Signal } from '@angular/core'
->>>>>>>> main:packages/angular-query-experimental/src/inject-queries.ts
 import type {
   DefaultError,
   OmitKeyof,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
-  QueryClient,
   QueryFunction,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
-import type { FnOrVal } from '.'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter
@@ -65,15 +56,10 @@ type GetOptions<T> =
               ? QueryObserverOptionsForCreateQueries<TQueryFnData>
               : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
                 T extends {
-<<<<<<<< HEAD:packages/svelte-query-runes/src/createQueries.svelte.ts
-                    queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
-                    select?: (data: any) => infer TData
-========
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, infer TQueryKey>
                       | SkipTokenForUseQueries
                     select: (data: any) => infer TData
->>>>>>>> main:packages/angular-query-experimental/src/inject-queries.ts
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? QueryObserverOptionsForCreateQueries<
@@ -102,15 +88,10 @@ type GetResults<T> =
               ? QueryObserverResult<TQueryFnData>
               : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
                 T extends {
-<<<<<<<< HEAD:packages/svelte-query-runes/src/createQueries.svelte.ts
-                    queryFn?: QueryFunction<infer TQueryFnData, any>
-                    select?: (data: any) => infer TData
-========
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, any>
                       | SkipTokenForUseQueries
                     select: (data: any) => infer TData
->>>>>>>> main:packages/angular-query-experimental/src/inject-queries.ts
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? QueryObserverResult<
@@ -201,64 +182,44 @@ export type QueriesResults<
           : // Fallback
             Array<QueryObserverResult>
 
-<<<<<<<< HEAD:packages/svelte-query-runes/src/createQueries.svelte.ts
-export function createQueries<
-========
 /**
  * @public
  */
 export function injectQueries<
->>>>>>>> main:packages/angular-query-experimental/src/inject-queries.ts
   T extends Array<any>,
-  TCombinedResult extends QueriesResults<T> = QueriesResults<T>,
+  TCombinedResult = QueriesResults<T>,
 >(
   {
     queries,
     ...options
   }: {
-    queries: FnOrVal<[...QueriesOptions<T>]>
+    queries: Signal<[...QueriesOptions<T>]>
     combine?: (result: QueriesResults<T>) => TCombinedResult
   },
-  queryClient?: QueryClient,
-): TCombinedResult {
-  const client = useQueryClient(queryClient)
-  const isRestoring = useIsRestoring()
+  injector?: Injector,
+): Signal<TCombinedResult> {
+  return assertInjector(injectQueries, injector, () => {
+    const queryClient = injectQueryClient()
+    const destroyRef = inject(DestroyRef)
 
-  const queriesStore = $derived(
-    typeof queries != 'function' ? () => queries : queries,
-  )
+    const defaultedQueries = computed(() => {
+      return queries().map((opts) => {
+        const defaultedOptions = queryClient.defaultQueryOptions(opts)
+        // Make sure the results are already in fetching state before subscribing or updating options
+        defaultedOptions._optimisticResults = 'optimistic'
 
-<<<<<<<< HEAD:packages/svelte-query-runes/src/createQueries.svelte.ts
-  const defaultedQueriesStore = createMemo(() => {
-    return queriesStore().map((opts) => {
-      const defaultedOptions = client.defaultQueryOptions(opts)
-      // Make sure the results are already in fetching state before subscribing or updating options
-      defaultedOptions._optimisticResults = isRestoring
-        ? 'isRestoring'
-        : 'optimistic'
-      return defaultedOptions
-========
         return defaultedOptions as QueryObserverOptions
       })
->>>>>>>> main:packages/angular-query-experimental/src/inject-queries.ts
     })
-  })
-  const observer = new QueriesObserver<TCombinedResult>(
-    client,
-    defaultedQueriesStore(),
-    options as QueriesObserverOptions<TCombinedResult>,
-  )
 
-  $effect(() => {
+    const observer = new QueriesObserver<TCombinedResult>(
+      queryClient,
+      defaultedQueries(),
+      options as QueriesObserverOptions<TCombinedResult>,
+    )
+
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
-<<<<<<<< HEAD:packages/svelte-query-runes/src/createQueries.svelte.ts
-    observer.setQueries(
-      defaultedQueriesStore(),
-      options as QueriesObserverOptions<TCombinedResult>,
-      { listeners: false },
-    )
-========
     effect(() => {
       observer.setQueries(
         defaultedQueries(),
@@ -278,122 +239,5 @@ export function injectQueries<
     destroyRef.onDestroy(unsubscribe)
 
     return result
->>>>>>>> main:packages/angular-query-experimental/src/inject-queries.ts
   })
-
-  let result = $state<TCombinedResult>(
-    observer.getOptimisticResult(defaultedQueriesStore())[1](),
-  )
-
-  /*   $effect.pre(() => {
-    const unsubscribe = isRestoring
-      ? () => undefined
-      : observer.subscribe(
-          notifyManager.batchCalls((v) => {
-            result = v
-          }),
-        )
-
-    return () => unsubscribe()
-  }) */
-
-  //
-  $effect(() => {
-    if (queries.length) {
-      untrack(() => {
-        result = observer.getOptimisticResult(defaultedQueriesStore())[1]()
-      })
-    }
-  })
-  const dataResources = $derived(
-    result.map((queryRes) => {
-      const dataPromise = () =>
-        new Promise((resolve) => {
-          if (queryRes.isFetching && queryRes.isLoading) return
-          resolve($state.snapshot(queryRes.data))
-        })
-      return createResource(dataPromise)
-    }),
-  )
-  flushSync(() => {
-    for (let index = 0; index < dataResources.length; index++) {
-      const dataResource = dataResources[index]!
-      dataResource[1].mutate(() => $state.snapshot(result[index]!.data))
-      dataResource[1].refetch()
-    }
-  })
-  let taskQueue: Array<() => void> = []
-
-  const subscribeToObserver = () =>
-    observer.subscribe((result_) => {
-      taskQueue.push(() => {
-        flushSync(() => {
-          const dataResources_ = dataResources
-          for (let index = 0; index < dataResources_.length; index++) {
-            const dataResource = dataResources_[index]!
-            const unwrappedResult = { ...$state.snapshot(result_[index]!) }
-
-            result[index] = $state.snapshot(unwrappedResult)
-            dataResource[1].mutate(() => $state.snapshot(result_[index]!.data))
-            dataResource[1].refetch()
-          }
-        })
-      })
-
-      queueMicrotask(() => {
-        const taskToRun = taskQueue.pop()
-        if (taskToRun) taskToRun()
-        taskQueue = []
-      })
-    })
-  let unsubscribe: () => void = () => undefined
-  $effect.pre(() => {
-    unsubscribe = isRestoring ? () => undefined : subscribeToObserver()
-    // cleanup needs to be scheduled after synchronous effects take place
-    return () => queueMicrotask(unsubscribe)
-  })
-  onDestroy(unsubscribe)
-  onMount(() => {
-    observer.setQueries(defaultedQueriesStore(), undefined, {
-      listeners: false,
-    })
-  })
-  const handler = (index: number) => ({
-    get(target: QueryObserverResult, prop: keyof QueryObserverResult): any {
-      if (prop === 'data') {
-        return dataResources[index]![0]()
-      }
-      return Reflect.get(target, prop)
-    },
-  })
-
-  const getProxies = $derived(() =>
-    result.map((s, index) => {
-      return new Proxy(s, handler(index))
-    }),
-  )
-  const proxifiedState = $state(getProxies())
-
-  /*  $effect(() => {
-    console.log(
-      'result updated',
-      result,
-      JSON.stringify(result),
-      JSON.stringify(proxifiedState),
-    )
-  }) 
-  $effect(() => {
-    console.log(
-      'proxifiedState',
-
-      JSON.stringify(proxifiedState),
-    )
-  })*/
-  $effect.pre(() => {
-    untrack(() => {
-      Object.assign(proxifiedState, getProxies())
-    })
-  })
-  return proxifiedState as TCombinedResult
 }
-7

@@ -1,7 +1,7 @@
 {
 	"name": "svelte-melt",
-	"version": "0.0.1",
 	"private": true,
+	"type": "module",
 	"scripts": {
 		"dev": "vite dev --port 3000",
 		"build": "vite build",
@@ -10,6 +10,10 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write ."
+	},
+	"dependencies": {
+		"@tanstack/svelte-query-devtools": "workspace:^",
+		"@tanstack/svelte-query-runes": "workspace:*"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.1.1",
@@ -28,10 +32,5 @@
 		"tslib": "^2.6.2",
 		"typescript": "^5.3.3",
 		"vite": "^5.1.5"
-	},
-	"type": "module",
-	"dependencies": {
-		"@tanstack/svelte-query-devtools": "workspace:^",
-		"svelte-query": "workspace:*"
 	}
 }
