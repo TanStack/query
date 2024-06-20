@@ -1,38 +1,38 @@
 <script lang="ts">
-	import { createMutation, createQuery, hashKey, useQueryClient } from 'svelte-query/dev';
-	import { bookFilterStore } from './store.svelte';
-	let a = { a: 1 };
-	let b = ['cache update tester', bookFilterStore];
+	import { createMutation, createQuery, hashKey, useQueryClient } from 'svelte-query/dev'
+	import { bookFilterStore } from './store.svelte'
+	let a = { a: 1 }
+	let b = ['cache update tester', bookFilterStore]
 
 	const data = createQuery(() => {
 		return {
 			queryKey: b,
 			queryFn: async () => {
 				const s = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'].map((v) => {
-					return { title: v };
-				});
+					return { title: v }
+				})
 				if (Math.abs(bookFilterStore.paginate.page % 2) == 1) {
-					return s.slice(0, 5);
+					return s.slice(0, 5)
 				}
-				return s.slice(5, 6);
+				return s.slice(5, 6)
 			},
 			staleTime: 5000000
-		};
-	});
-	const client = useQueryClient();
+		}
+	})
+	const client = useQueryClient()
 	const update = createMutation({
 		mutationFn: () => {
-			return ['a new list of items', 'a'];
+			return ['a new list of items', 'a']
 		},
 		onSuccess: (v) => {
-			const k = b.map((v) => $state.snapshot(v));
+			const k = b.map((v) => $state.snapshot(v))
 			client.setQueryData(k, (v) => {
-				debugger;
-				v[0].title = 'faker';
-				return v;
-			});
+				debugger
+				v[0].title = 'faker'
+				return v
+			})
 		}
-	});
+	})
 	/* 	const querycache = useQueryClient().getQueryCache();
 	$effect(() => {
 		if (data.fetchStatus) {
@@ -45,7 +45,7 @@
 
 <button
 	onclick={() => {
-		update.mutate();
+		update.mutate()
 	}}>update cache</button
 >
 
@@ -55,14 +55,14 @@
 {data.isRefetching}
 <button
 	onclick={() => {
-		console.log('click +1');
-		bookFilterStore.paginate.page += 1;
+		console.log('click +1')
+		bookFilterStore.paginate.page += 1
 	}}>next</button
 >
 <button
 	onclick={() => {
-		console.log('click -1');
-		bookFilterStore.paginate.page -= 1;
+		console.log('click -1')
+		bookFilterStore.paginate.page -= 1
 	}}>prev</button
 >
 {bookFilterStore.paginate.page}

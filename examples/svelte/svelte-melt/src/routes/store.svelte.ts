@@ -15,5 +15,5 @@ const init = {
 		created_at: 'last 300 days'
 	},
 	search: {}
-};
-export const bookFilterStore = $state({ ...init });
+}
+export const bookFilterStore = $state({ ...init })

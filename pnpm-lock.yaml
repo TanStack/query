@@ -1587,7 +1587,7 @@ importers:
         specifier: ^9.1.0
         version: 9.1.0(eslint@8.56.0)
       eslint-plugin-svelte:
-        specifier: ^2.35.1
+        specifier: ^2.39.0
         version: 2.39.0(eslint@8.56.0)(svelte@5.0.0-next.80)
       prettier:
         specifier: ^3.2.5
@@ -1599,7 +1599,7 @@ importers:
         specifier: 5.0.0-next.80
         version: 5.0.0-next.80
       svelte-check:
-        specifier: ^3.6.6
+        specifier: ^3.7.1
         version: 3.7.1(@babel/core@7.24.6)(less@4.2.0)(postcss-load-config@4.0.2(postcss@8.4.38))(postcss@8.4.38)(sass@1.71.1)(svelte@5.0.0-next.80)
       tslib:
         specifier: ^2.6.2
@@ -2347,26 +2347,26 @@ importers:
         version: link:../query-core
     devDependencies:
       '@sveltejs/package':
-        specifier: ^2.2.7
+        specifier: ^2.3.1
         version: 2.3.1(svelte@5.0.0-next.105)(typescript@5.4.2)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^4.0.0-next.3
         version: 4.0.0-next.3(svelte@5.0.0-next.105)(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@testing-library/svelte':
-        specifier: ^4.1.0
-        version: 4.2.3(svelte@5.0.0-next.105)
+        specifier: ^5.1.0
+        version: 5.1.0(svelte@5.0.0-next.105)(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vitest@1.6.0(@types/node@20.12.12)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       eslint-plugin-svelte:
-        specifier: ^2.35.1
+        specifier: ^2.39.0
         version: 2.39.0(eslint@9.4.0)(svelte@5.0.0-next.105)
       svelte:
         specifier: 5.0.0-next.105
         version: 5.0.0-next.105
       svelte-check:
-        specifier: ^3.6.5
+        specifier: ^3.7.1
         version: 3.7.1(@babel/core@7.24.6)(less@4.2.0)(postcss-load-config@4.0.2(postcss@8.4.38))(postcss@8.4.38)(sass@1.71.1)(svelte@5.0.0-next.105)
       svelte-eslint-parser:
-        specifier: ^0.33.1
-        version: 0.33.1(svelte@5.0.0-next.105)
+        specifier: ^0.36.0
+        version: 0.36.0(svelte@5.0.0-next.105)
 
   packages/vue-query:
     dependencies:
@@ -6482,12 +6482,6 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
-
-  '@testing-library/svelte@4.2.3':
-    resolution: {integrity: sha512-8vM2+JSPc6wZWkO9ICPmHvzacjy8jBw+iVjmNs+0VsPV3AO3v4P8qCLWTaQ9nYW/e+IR1BCy3MM3Uqg21dlBkw==}
-    engines: {node: '>= 10'}
-    peerDependencies:
-      svelte: ^3 || ^4 || ^5
 
   '@testing-library/svelte@5.1.0':
     resolution: {integrity: sha512-8GW+rBR72U7Qql0Glxl4CtVTr6GPotYf/MB7MamIH6ZpV45i7IJIOm3oHWH4Wr6ZULdUs37F9recegQygLbC0g==}
@@ -16671,15 +16665,6 @@ packages:
     peerDependencies:
       svelte: ^3.55.0 || ^4.0.0-next.0 || ^4.0.0 || ^5.0.0-next.0
 
-  svelte-eslint-parser@0.33.1:
-    resolution: {integrity: sha512-vo7xPGTlKBGdLH8T5L64FipvTrqv3OQRx9d2z5X05KKZDlF4rQk8KViZO4flKERY+5BiVdOh7zZ7JGJWo5P0uA==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    peerDependencies:
-      svelte: ^3.37.0 || ^4.0.0
-    peerDependenciesMeta:
-      svelte:
-        optional: true
-
   svelte-eslint-parser@0.36.0:
     resolution: {integrity: sha512-/6YmUSr0FAVxW8dXNdIMydBnddPMHzaHirAZ7RrT21XYdgGGZMh0LQG6CZsvAFS4r2Y4ItUuCQc8TQ3urB30mQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
@@ -24183,15 +24168,18 @@ snapshots:
     optionalDependencies:
       '@types/react': types-react@19.0.0-rc.1
 
-  '@testing-library/svelte@4.2.3(svelte@5.0.0-next.105)':
-    dependencies:
-      '@testing-library/dom': 9.3.4
-      svelte: 5.0.0-next.105
-
   '@testing-library/svelte@5.1.0(svelte@4.2.17)(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vitest@1.6.0(@types/node@20.12.12)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
     dependencies:
       '@testing-library/dom': 9.3.4
       svelte: 4.2.17
+    optionalDependencies:
+      vite: 5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+      vitest: 1.6.0(@types/node@20.12.12)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+
+  '@testing-library/svelte@5.1.0(svelte@5.0.0-next.105)(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vitest@1.6.0(@types/node@20.12.12)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
+    dependencies:
+      '@testing-library/dom': 9.3.4
+      svelte: 5.0.0-next.105
     optionalDependencies:
       vite: 5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
       vitest: 1.6.0(@types/node@20.12.12)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
@@ -37873,16 +37861,6 @@ snapshots:
       - sass
       - stylus
       - sugarss
-
-  svelte-eslint-parser@0.33.1(svelte@5.0.0-next.105):
-    dependencies:
-      eslint-scope: 7.2.2
-      eslint-visitor-keys: 3.4.3
-      espree: 9.6.1
-      postcss: 8.4.38
-      postcss-scss: 4.0.9(postcss@8.4.38)
-    optionalDependencies:
-      svelte: 5.0.0-next.105
 
   svelte-eslint-parser@0.36.0(svelte@4.2.17):
     dependencies:

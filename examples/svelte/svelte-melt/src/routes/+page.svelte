@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Simple from './paginate.svelte';
-	import Cache from './cacheUpdate.svelte';
-	import Simple1 from './test.svelte';
-	import DerivedQuery from './derivedQuery.svelte';
+	import Simple from './paginate.svelte'
+	import Cache from './cacheUpdate.svelte'
+	import Simple1 from './test.svelte'
+	import DerivedQuery from './derivedQuery.svelte'
 </script>
 
 <!-- <h1>testing list query cache update</h1>

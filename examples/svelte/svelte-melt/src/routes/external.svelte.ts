@@ -1,11 +1,11 @@
-import { createQuery } from 'svelte-query/dev';
+import { createQuery } from 'svelte-query/dev'
 export function useSvelteExtensionQuery(props) {
 	const enabled = $derived({
 		queryKey: ['sv-externel', props],
 		queryFn: () => {
-			return Date.now();
+			return Date.now()
 		},
 		enabled: () => props.paginate.page > 0
-	});
-	return createQuery(enabled);
+	})
+	return createQuery(enabled)
 }

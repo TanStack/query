@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createQuery } from '../createQuery.svelte'
+  import { createQuery } from '../createQuery'
   import type { QueryClient } from '@tanstack/query-core'
   import type { CreateQueryOptions } from '../types'
 
