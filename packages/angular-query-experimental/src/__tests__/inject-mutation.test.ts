@@ -457,6 +457,7 @@ describe('injectMutation', () => {
   })
 
   test('should execute callback in injection context', async () => {
+    const errorSpy = vi.fn()
     @Injectable()
     class FakeService {
       updateData(name: string) {
@@ -472,9 +473,14 @@ describe('injectMutation', () => {
     })
     class FakeComponent {
       mutation = injectMutation(() => {
-        const service = inject(FakeService)
-        return {
-          mutationFn: (name: string) => service.updateData(name),
+        try {
+          const service = inject(FakeService)
+          return {
+            mutationFn: (name: string) => service.updateData(name),
+          }
+        } catch (e) {
+          errorSpy(e)
+          throw e
         }
       })
     }
@@ -488,5 +494,6 @@ describe('injectMutation', () => {
     expect(
       await fixture.componentInstance.mutation.mutateAsync('test'),
     ).toEqual('test')
+    expect(errorSpy).not.toHaveBeenCalled()
   })
 })
