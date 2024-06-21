@@ -45,3 +45,41 @@ jobs:
         uses: codecov/codecov-action@v4
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  type-test-matrix:
+    name: Type Test Matrix
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        typescript-version:
+          - '~5.5.0'
+          - '~5.4.0'
+          - '~5.3.0'
+          - '~5.2.0'
+          - '~5.1.0'
+          - '~5.0.0'
+          - '~4.9.0'
+          - '~4.8.0'
+          - '~4.7.0'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --prefer-offline
+      - name: Get base and head commits for `nx affected`
+        uses: nrwl/nx-set-shas@v4
+        with:
+          main-branch-name: 'main'
+      - name: install other ts versions
+        run: pnpm add -Dw typescript@${{ matrix.typescript-version }}
+      - name: Start Type Test
+        run: TS_VERSION=${{ matrix.typescript-version }} pnpm run test:types
