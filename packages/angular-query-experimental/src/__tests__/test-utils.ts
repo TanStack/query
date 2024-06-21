@@ -2,6 +2,12 @@ import { type InputSignal, isSignal, untracked } from '@angular/core'
 import { SIGNAL, signalSetFn } from '@angular/core/primitives/signals'
 import type { ComponentFixture } from '@angular/core/testing'
 
+let queryKeyCount = 0
+export function queryKey() {
+  queryKeyCount++
+  return [`query_${queryKeyCount}`]
+}
+
 export function simpleFetcher(): Promise<string> {
   return new Promise((resolve) => {
     setTimeout(() => {
