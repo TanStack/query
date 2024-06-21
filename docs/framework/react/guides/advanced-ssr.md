@@ -192,7 +192,10 @@ Next, we'll look at what the Client Component part looks like:
 export default function Posts() {
   // This useQuery could just as well happen in some deeper
   // child to <Posts>, data will be available immediately either way
-  const { data } = useQuery({ queryKey: ['posts'], queryFn: getPosts })
+  const { data } = useQuery({
+    queryKey: ['posts'],
+    queryFn: () => getPosts(),
+  })
 
   // This query was not prefetched on the server and will not start
   // fetching until on the client, both patterns are fine to mix.
@@ -210,6 +213,8 @@ One neat thing about the examples above is that the only thing that is Next.js-s
 In the SSR guide, we noted that you could get rid of the boilerplate of having `<HydrationBoundary>` in every route. This is not possible with Server Components.
 
 > NOTE: If you encounter a type error while using async Server Components with TypeScript versions lower than `5.1.3` and `@types/react` versions lower than `18.2.8`, it is recommended to update to the latest versions of both. Alternatively, you can use the temporary workaround of adding `{/* @ts-expect-error Server Component */}` when calling this component inside another. For more information, see [Async Server Component TypeScript Error](https://nextjs.org/docs/app/building-your-application/configuring/typescript#async-server-component-typescript-error) in the Next.js 13 docs.
+
+> NOTE: If you encounter an error `Only plain objects, and a few built-ins, can be passed to Server Actions. Classes or null prototypes are not supported.` make sure that you're **not** passing to queryFn a function reference, instead call the function because queryFn args has a bunch of properties and not all of it would be serializable. see [Server Action only works when queryFn isn't a reference](https://github.com/TanStack/query/issues/6264).
 
 ### Nesting Server Components
 
