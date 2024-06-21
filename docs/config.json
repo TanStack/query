@@ -144,6 +144,10 @@
             {
               "label": "Devtools",
               "to": "framework/angular/devtools"
+            },
+            {
+              "label": "Zoneless",
+              "to": "framework/angular/zoneless"
             }
           ]
         }
