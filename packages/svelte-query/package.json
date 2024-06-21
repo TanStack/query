@@ -28,9 +28,7 @@
   },
   "files": [
     "dist",
-    "src",
-    "!dist/__tests__",
-    "!src/__tests__"
+    "src"
   ],
   "scripts": {
     "clean": "rimraf ./dist && rimraf ./coverage",
