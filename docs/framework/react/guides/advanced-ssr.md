@@ -30,7 +30,11 @@ The first step of any React Query setup is always to create a `queryClient` and 
 'use client'
 
 // Since QueryClientProvider relies on useContext under the hood, we have to put 'use client' on top
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import {
+  isServer,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 
 function makeQueryClient() {
   return new QueryClient({
@@ -47,7 +51,7 @@ function makeQueryClient() {
 let browserQueryClient: QueryClient | undefined = undefined
 
 function getQueryClient() {
-  if (typeof window === 'undefined') {
+  if (isServer) {
     // Server: always make a new query client
     return makeQueryClient()
   } else {
@@ -188,7 +192,10 @@ Next, we'll look at what the Client Component part looks like:
 export default function Posts() {
   // This useQuery could just as well happen in some deeper
   // child to <Posts>, data will be available immediately either way
-  const { data } = useQuery({ queryKey: ['posts'], queryFn: getPosts })
+  const { data } = useQuery({
+    queryKey: ['posts'],
+    queryFn: () => getPosts(),
+  })
 
   // This query was not prefetched on the server and will not start
   // fetching until on the client, both patterns are fine to mix.
@@ -206,6 +213,8 @@ One neat thing about the examples above is that the only thing that is Next.js-s
 In the SSR guide, we noted that you could get rid of the boilerplate of having `<HydrationBoundary>` in every route. This is not possible with Server Components.
 
 > NOTE: If you encounter a type error while using async Server Components with TypeScript versions lower than `5.1.3` and `@types/react` versions lower than `18.2.8`, it is recommended to update to the latest versions of both. Alternatively, you can use the temporary workaround of adding `{/* @ts-expect-error Server Component */}` when calling this component inside another. For more information, see [Async Server Component TypeScript Error](https://nextjs.org/docs/app/building-your-application/configuring/typescript#async-server-component-typescript-error) in the Next.js 13 docs.
+
+> NOTE: If you encounter an error `Only plain objects, and a few built-ins, can be passed to Server Actions. Classes or null prototypes are not supported.` make sure that you're **not** passing to queryFn a function reference, instead call the function because queryFn args has a bunch of properties and not all of it would be serializable. see [Server Action only works when queryFn isn't a reference](https://github.com/TanStack/query/issues/6264).
 
 ### Nesting Server Components
 
@@ -386,11 +395,7 @@ Then, all we need to do is provide a `HydrationBoundary`, but we don't need to `
 
 ```tsx
 // app/posts/page.jsx
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from '@tanstack/react-query'
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { getQueryClient } from './get-query-client'
 import Posts from './posts'
 
@@ -427,6 +432,69 @@ export default function Posts() {
 
 > Note that you could also `useQuery` instead of `useSuspenseQuery`, and the Promise would still be picked up correctly. However, NextJs won't suspend in that case and the component will render in the `pending` status, which also opts out of server rendering the content.
 
+If you're using non-JSON data types and serialize the query results on the server, you can specify the `hydrate.transformPromise` option to deserialize the data on the client after the promise is resolved, before the data is put into the cache:
+
+```tsx
+// app/get-query-client.ts
+import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query'
+import { deserialize } from './transformer'
+
+export function makeQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      hydrate: {
+        /**
+         * Called when the query is rebuilt from a prefetched
+         * promise, before the query data is put into the cache.
+         */
+        transformPromise: (promise) => promise.then(deserialize),
+      },
+      // ...
+    },
+  })
+}
+```
+
+```tsx
+// app/posts/page.tsx
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from '@tanstack/react-query'
+import { serialize } from './transformer'
+import Posts from './posts'
+
+export default function PostsPage() {
+  const queryClient = new QueryClient()
+
+  // look ma, no await
+  queryClient.prefetchQuery({
+    queryKey: ['posts'],
+    queryFn: () => getPosts().then(serialize), // <-- serilize the data on the server
+  })
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Posts />
+    </HydrationBoundary>
+  )
+}
+```
+
+```tsx
+// app/posts/posts.tsx
+'use client'
+
+export default function Posts() {
+  const { data } = useSuspenseQuery({ queryKey: ['posts'], queryFn: getPosts })
+
+  // ...
+}
+```
+
+Now, your `getPosts` function can return e.g. `Temporal` datetime objects and the data will be serialized and deserialized on the client, assuming your transformer can serialize and deserialize those data types.
+
 For more information, check out the [Next.js App with Prefetching Example](../../examples/nextjs-app-prefetching).
 
 ## Experimental streaming without prefetching in Next.js
@@ -441,7 +509,11 @@ To achieve this, wrap your app in the `ReactQueryStreamedHydration` component:
 // app/providers.tsx
 'use client'
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import {
+  isServer,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 import * as React from 'react'
 import { ReactQueryStreamedHydration } from '@tanstack/react-query-next-experimental'
 
@@ -460,7 +532,7 @@ function makeQueryClient() {
 let browserQueryClient: QueryClient | undefined = undefined
 
 function getQueryClient() {
-  if (typeof window === 'undefined') {
+  if (isServer) {
     // Server: always make a new query client
     return makeQueryClient()
   } else {

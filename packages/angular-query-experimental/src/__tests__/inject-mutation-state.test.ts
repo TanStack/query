@@ -1,11 +1,13 @@
 import { Component, input, signal } from '@angular/core'
-import { QueryClient } from '@tanstack/query-core'
 import { TestBed } from '@angular/core/testing'
 import { describe, expect, test, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
-import { injectMutation } from '../inject-mutation'
-import { injectMutationState } from '../inject-mutation-state'
-import { provideAngularQuery } from '../providers'
+import {
+  QueryClient,
+  injectMutation,
+  injectMutationState,
+  provideAngularQuery,
+} from '..'
 import { setFixtureSignalInputs, successMutator } from './test-utils'
 
 const MUTATION_DURATION = 1000

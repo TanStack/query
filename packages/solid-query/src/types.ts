@@ -2,6 +2,7 @@
 
 import type {
   DefaultError,
+  DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   InfiniteQueryObserverResult,
   MutateFunction,
@@ -141,6 +142,11 @@ export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
 > = InfiniteQueryObserverResult<TData, TError>
+
+export type DefinedCreateInfiniteQueryResult<
+  TData = unknown,
+  TError = DefaultError,
+> = DefinedInfiniteQueryObserverResult<TData, TError>
 
 /* --- Create Mutation Types --- */
 export interface SolidMutationOptions<

@@ -1,5 +1,6 @@
 import { rules } from './rules'
 import type { ESLintUtils } from '@typescript-eslint/utils'
+import type { ExtraRuleDocs } from './types'
 
 function generateRecommendedConfig(
   allRules: Record<
@@ -7,12 +8,12 @@ function generateRecommendedConfig(
     ESLintUtils.RuleModule<
       string,
       ReadonlyArray<unknown>,
+      ExtraRuleDocs,
       ESLintUtils.RuleListener
     >
   >,
 ) {
   return Object.entries(allRules).reduce(
-    // @ts-expect-error
     (memo, [name, rule]) => {
       const { recommended } = rule.meta.docs || {}
 
@@ -21,7 +22,7 @@ function generateRecommendedConfig(
         ...(recommended ? { [`@tanstack/query/${name}`]: recommended } : {}),
       }
     },
-    {} as Record<string, 'strict' | 'error' | 'warn'>,
+    {} as Record<string, ExtraRuleDocs['recommended']>,
   )
 }
 

@@ -1,10 +1,8 @@
 import { Component, Injectable, inject, input, signal } from '@angular/core'
-import { QueryClient } from '@tanstack/query-core'
 import { TestBed } from '@angular/core/testing'
 import { describe, expect, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
-import { injectMutation } from '../inject-mutation'
-import { provideAngularQuery } from '../providers'
+import { QueryClient, injectMutation, provideAngularQuery } from '..'
 import {
   errorMutator,
   expectSignals,

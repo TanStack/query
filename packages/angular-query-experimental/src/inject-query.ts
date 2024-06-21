@@ -1,10 +1,8 @@
 import { QueryObserver } from '@tanstack/query-core'
-import { runInInjectionContext } from '@angular/core'
 import { assertInjector } from './util/assert-injector/assert-injector'
-import { injectQueryClient } from './inject-query-client'
 import { createBaseQuery } from './create-base-query'
-import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
 import type { Injector } from '@angular/core'
+import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
 import type {
   CreateQueryOptions,
   CreateQueryResult,
@@ -203,14 +201,7 @@ export function injectQuery(
   optionsFn: (client: QueryClient) => CreateQueryOptions,
   injector?: Injector,
 ) {
-  const assertedInjector = assertInjector(injectQuery, injector)
-  return assertInjector(injectQuery, injector, () => {
-    const queryClient = injectQueryClient()
-    return createBaseQuery(
-      (client) =>
-        runInInjectionContext(assertedInjector, () => optionsFn(client)),
-      QueryObserver,
-      queryClient,
-    )
-  })
+  return assertInjector(injectQuery, injector, () =>
+    createBaseQuery(optionsFn, QueryObserver),
+  )
 }
