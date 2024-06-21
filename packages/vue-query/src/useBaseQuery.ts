@@ -89,6 +89,10 @@ export function useBaseQuery<
       clonedOptions.enabled = clonedOptions.enabled()
     }
 
+    clonedOptions.queryKey = clonedOptions.queryKey.map((key: any) =>
+      typeof key === 'function' ? key() : key,
+    )
+
     const defaulted: DefaultedQueryObserverOptions<
       TQueryFnData,
       TError,

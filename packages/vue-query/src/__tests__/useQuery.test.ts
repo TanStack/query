@@ -287,6 +287,31 @@ describe('useQuery', () => {
     expect(fetchFn).toHaveBeenCalled()
   })
 
+  test('should allow getters for query keys', async () => {
+    const fetchFn = vi.fn()
+    const key1 = ref('key1')
+    const key2 = ref('key2')
+
+    useQuery({
+      queryKey: ['key', () => key1.value, () => key2.value],
+      queryFn: fetchFn,
+    })
+
+    expect(fetchFn).toHaveBeenCalledTimes(1)
+
+    key1.value = 'key3'
+
+    await flushPromises()
+
+    expect(fetchFn).toHaveBeenCalledTimes(2)
+
+    key2.value = 'key4'
+
+    await flushPromises()
+
+    expect(fetchFn).toHaveBeenCalledTimes(3)
+  })
+
   describe('throwOnError', () => {
     test('should evaluate throwOnError when query is expected to throw', async () => {
       const boundaryFn = vi.fn()

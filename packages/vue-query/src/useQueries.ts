@@ -258,6 +258,10 @@ export function useQueries<
           queryOptions.enabled = queryOptions.enabled()
         }
 
+        queryOptions.queryKey = queryOptions.queryKey.map((key: any) =>
+          typeof key === 'function' ? key() : key,
+        )
+
         const defaulted = client.defaultQueryOptions(queryOptions)
         defaulted._optimisticResults = client.isRestoring.value
           ? 'isRestoring'
