@@ -39,7 +39,7 @@
     "@angular/core": "^17.3.10",
     "@angular/common": "^17.3.10",
     "@tanstack/angular-query-experimental": "workspace:*",
-    "eslint-plugin-jsdoc": "^48.2.7",
+    "eslint-plugin-jsdoc": "^48.2.13",
     "ng-packagr": "^17.3.0",
     "typescript": "5.3.3",
     "zone.js": "^0.14.6"
