@@ -4,11 +4,6 @@
     "jsx": "preserve",
     "jsxImportSource": "solid-js"
   },
-  "include": [
-    "src",
-    ".eslintrc.cjs",
-    "test-setup.ts",
-    "tsup.config.js",
-    "vite.config.ts"
-  ]
+  "include": ["src"],
+  "exclude": ["src/__tests__"]
 }
