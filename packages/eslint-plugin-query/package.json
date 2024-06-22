@@ -46,11 +46,11 @@
     "src"
   ],
   "dependencies": {
-    "@typescript-eslint/utils": "8.0.0-alpha.28"
+    "@typescript-eslint/utils": "8.0.0-alpha.30"
   },
   "devDependencies": {
-    "@typescript-eslint/rule-tester": "8.0.0-alpha.28",
-    "eslint": "^9.4.0"
+    "@typescript-eslint/rule-tester": "8.0.0-alpha.30",
+    "eslint": "^9.5.0"
   },
   "peerDependencies": {
     "eslint": "^8 || ^9"
