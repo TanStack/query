@@ -50,6 +50,10 @@ export interface HydrationStreamProviderProps<TShape> {
    * onFlush is called on the server when the cache is flushed
    */
   onFlush?: () => Array<TShape>
+  /**
+   * A nonce that'll allow the inline script to be executed when Content Security Policy is enforced
+   */
+  nonce?: string
 }
 
 export function createHydrationStreamProvider<TShape>() {
@@ -82,6 +86,10 @@ export function createHydrationStreamProvider<TShape>() {
      * onFlush is called on the server when the cache is flushed
      */
     onFlush?: () => Array<TShape>
+    /**
+     * A nonce that'll allow the inline script to be executed when Content Security Policy is enforced
+     */
+    nonce?: string
   }) {
     // unique id for the cache provider
     const id = `__RQ${React.useId()}`
@@ -131,6 +139,7 @@ export function createHydrationStreamProvider<TShape>() {
       return (
         <script
           key={count.current++}
+          nonce={props.nonce}
           dangerouslySetInnerHTML={{
             __html: html.join(''),
           }}

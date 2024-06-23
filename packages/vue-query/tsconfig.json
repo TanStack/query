@@ -1,8 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
+    "src",
     ".eslintrc.cjs",
     "test-setup.ts",
     "tsup.config.js",
