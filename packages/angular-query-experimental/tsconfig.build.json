@@ -11,5 +11,5 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true
   },
-  "include": ["src/**/*.ts", ".eslintrc.cjs"]
+  "include": ["src"]
 }

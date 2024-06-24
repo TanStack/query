@@ -27,6 +27,7 @@ const stream = createHydrationStreamProvider<DehydratedState>()
 export function ReactQueryStreamedHydration(props: {
   children: React.ReactNode
   queryClient?: QueryClient
+  nonce?: string
   options?: {
     hydrate?: HydrateOptions
     dehydrate?: DehydrateOptions
@@ -87,6 +88,7 @@ export function ReactQueryStreamedHydration(props: {
       }}
       // Handle BigInts etc using superjson
       transformer={props.transformer}
+      nonce={props.nonce}
     >
       {props.children}
     </stream.Provider>
