@@ -52,7 +52,7 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  describe('enabled is a callback that initially returns false and', () => {
+  describe('enabled is a callback that initially returns false', () => {
     let observer: QueryObserver<string, Error, string, string, string[]>
     let enabled: boolean
     let count: number
