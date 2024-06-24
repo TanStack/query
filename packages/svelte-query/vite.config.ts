@@ -6,10 +6,10 @@ export default defineConfig({
   plugins: [svelte()],
   test: {
     name: packageJson.name,
-    dir: './src',
+    dir: './tests',
     watch: false,
     environment: 'jsdom',
-    setupFiles: ['test-setup.ts'],
+    setupFiles: ['./tests/test-setup.ts'],
     coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
     typecheck: { enabled: true },
     restoreMocks: true,

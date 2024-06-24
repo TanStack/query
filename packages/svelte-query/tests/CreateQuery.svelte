@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { createQuery } from '../createQuery'
+  import { createQuery } from '../src/createQuery'
   import type { QueryClient } from '@tanstack/query-core'
-  import type { CreateQueryOptions, StoreOrVal } from '../types'
+  import type { CreateQueryOptions, StoreOrVal } from '../src/types'
 
   export let options: StoreOrVal<CreateQueryOptions<any>>
   export let queryClient: QueryClient
