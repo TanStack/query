@@ -943,4 +943,41 @@ describe('dehydration and rehydration', () => {
 
     queryClient.clear()
   })
+
+  test('should transform query data if promise is already resolved', async () => {
+    const queryClient = createQueryClient({
+      defaultOptions: {
+        dehydrate: {
+          shouldDehydrateQuery: () => true,
+        },
+      },
+    })
+
+    const promise = queryClient.prefetchQuery({
+      queryKey: ['transformedStringToDate'],
+      queryFn: () => fetchData('2024-01-01T00:00:00.000Z', 0),
+    })
+    await sleep(20)
+    const dehydrated = dehydrate(queryClient)
+    console.log('de', dehydrated)
+
+    const hydrationClient = createQueryClient({
+      defaultOptions: {
+        hydrate: {
+          // transformData: (d) => new Date(d),
+          transformPromise: (p) => p.then((d) => new Date(d)),
+        },
+      },
+    })
+
+    hydrate(hydrationClient, dehydrated)
+    await promise
+    await waitFor(() =>
+      expect(
+        hydrationClient.getQueryData(['transformedStringToDate']),
+      ).toBeInstanceOf(Date),
+    )
+
+    queryClient.clear()
+  })
 })
