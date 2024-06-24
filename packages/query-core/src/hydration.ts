@@ -21,6 +21,7 @@ export interface DehydrateOptions {
 
 export interface HydrateOptions {
   defaultOptions?: {
+    transformData?: (data: any) => any
     transformPromise?: (promise: Promise<any>) => Promise<any>
     queries?: QueryOptions
     mutations?: MutationOptions<unknown, DefaultError, unknown, unknown>
@@ -160,6 +161,7 @@ export function hydrate(
       }
     } else {
       // Restore query
+      const transformData = client.getDefaultOptions().hydrate?.transformData
       query = queryCache.build(
         client,
         {
@@ -173,6 +175,9 @@ export function hydrate(
         // query being stuck in fetching state upon hydration
         {
           ...state,
+          ...('data' in state && {
+            data: transformData?.(state.data) ?? state.data,
+          }),
           fetchStatus: 'idle',
         },
       )
