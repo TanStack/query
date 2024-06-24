@@ -54,6 +54,15 @@ export type StaleTime<
   TQueryKey extends QueryKey = QueryKey,
 > = number | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => number)
 
+export type Enabled<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> =
+  | boolean
+  | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean)
+
 export type QueryPersister<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
@@ -258,7 +267,7 @@ export interface QueryObserverOptions<
    * You can also pass a callback that returns a boolean to check this condition dynamically.
    * Defaults to `true`.
    */
-  enabled?: (() => boolean) | boolean
+  enabled?: Enabled<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * The time in milliseconds after data is considered stale.
    * If set to `Infinity`, the data will never be considered stale.

@@ -1,4 +1,10 @@
-import { ensureQueryFn, noop, replaceData, timeUntilStale } from './utils'
+import {
+  ensureQueryFn,
+  noop,
+  replaceData,
+  resolveEnabled,
+  timeUntilStale,
+} from './utils'
 import { notifyManager } from './notifyManager'
 import { canFetch, createRetryer, isCancelledError } from './retryer'
 import { Removable } from './removable'
@@ -244,10 +250,8 @@ export class Query<
   }
 
   isActive(): boolean {
-    return this.observers.some((observer) =>
-      typeof observer.options.enabled === 'function'
-        ? observer.options.enabled() !== false
-        : observer.options.enabled !== false,
+    return this.observers.some(
+      (observer) => resolveEnabled(observer.options.enabled, this) !== false,
     )
   }
 
