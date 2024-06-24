@@ -70,7 +70,12 @@ describe('usePrefetchQuery', () => {
   it('should prefetch query if query state does not exist', async () => {
     const queryOpts = {
       queryKey: queryKey(),
-      queryFn: generateQueryFn('Prefetch is nice!'),
+      queryFn: generateQueryFn('prefetchQuery'),
+    }
+
+    const componentQueryOpts = {
+      ...queryOpts,
+      queryFn: generateQueryFn('useSuspenseQuery'),
     }
 
     function App() {
@@ -78,14 +83,14 @@ describe('usePrefetchQuery', () => {
 
       return (
         <React.Suspense fallback="Loading...">
-          <Suspended queryOpts={queryOpts} />
+          <Suspended queryOpts={componentQueryOpts} />
         </React.Suspense>
       )
     }
 
     const rendered = renderWithClient(queryClient, <App />)
 
-    await waitFor(() => rendered.getByText('data: Prefetch is nice!'))
+    await waitFor(() => rendered.getByText('data: prefetchQuery'))
     expect(queryOpts.queryFn).toHaveBeenCalledTimes(1)
   })
 
@@ -106,7 +111,7 @@ describe('usePrefetchQuery', () => {
     }
 
     await queryClient.fetchQuery(queryOpts)
-    ;(queryOpts.queryFn as Mock).mockClear()
+    queryOpts.queryFn.mockClear()
     const rendered = renderWithClient(queryClient, <App />)
 
     expect(rendered.queryByText('fetching: true')).not.toBeInTheDocument()
@@ -149,6 +154,34 @@ describe('usePrefetchQuery', () => {
     await waitFor(() => rendered.getByText('Oops!'))
     expect(rendered.queryByText('data: Not an error')).not.toBeInTheDocument()
     expect(queryOpts.queryFn).not.toHaveBeenCalled()
+  })
+
+  it('should not create a endless loop when using inside a suspense boundary', async () => {
+    const queryFn = generateQueryFn('prefetchedQuery')
+
+    const queryOpts = {
+      queryKey: queryKey(),
+      queryFn,
+    }
+
+    function Prefetch({ children }: { children: React.ReactNode }) {
+      usePrefetchQuery(queryOpts)
+      return <>{children}</>
+    }
+
+    function App() {
+      return (
+        <React.Suspense>
+          <Prefetch>
+            <Suspended queryOpts={queryOpts} />
+          </Prefetch>
+        </React.Suspense>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+    await waitFor(() => rendered.getByText('data: prefetchedQuery'))
+    expect(queryOpts.queryFn).toHaveBeenCalledTimes(1)
   })
 
   it('should be able to recover from errors and try fetching again', async () => {
@@ -232,7 +265,15 @@ describe('usePrefetchQuery', () => {
     }
 
     const rendered = renderWithClient(queryClient, <App />)
-
+    expect(
+      queryClient.getQueryState(firstQueryOpts.queryKey)?.fetchStatus,
+    ).toBe('fetching')
+    expect(
+      queryClient.getQueryState(secondQueryOpts.queryKey)?.fetchStatus,
+    ).toBe('fetching')
+    expect(
+      queryClient.getQueryState(thirdQueryOpts.queryKey)?.fetchStatus,
+    ).toBe('fetching')
     await waitFor(() => rendered.getByText('Loading...'))
     await waitFor(() => rendered.getByText('data: Prefetch is nice!'))
     await waitFor(() => rendered.getByText('data: Prefetch is really nice!!'))
@@ -352,5 +393,42 @@ describe('usePrefetchInfiniteQuery', () => {
     await waitFor(() => rendered.getByText('data: Tanstack Query #ftw'))
     expect(queryOpts.queryFn).not.toHaveBeenCalled()
     expect(Fallback).not.toHaveBeenCalled()
+  })
+
+  it('should not create a endless loop when using inside a suspense boundary', async () => {
+    const queryOpts = {
+      queryKey: queryKey(),
+      ...generateInfiniteQueryOptions([
+        { data: 'Infinite Page 1', currentPage: 1, totalPages: 3 },
+        { data: 'Infinite Page 2', currentPage: 1, totalPages: 3 },
+        { data: 'Infinite Page 3', currentPage: 1, totalPages: 3 },
+      ]),
+    }
+
+    function Prefetch({ children }: { children: React.ReactNode }) {
+      usePrefetchInfiniteQuery(queryOpts)
+      return <>{children}</>
+    }
+
+    function App() {
+      return (
+        <React.Suspense>
+          <Prefetch>
+            <Suspended
+              queryOpts={queryOpts}
+              renderPage={(page) => <div>data: {page.data}</div>}
+            />
+          </Prefetch>
+        </React.Suspense>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+    await waitFor(() => rendered.getByText('data: Infinite Page 1'))
+    fireEvent.click(rendered.getByText('Next Page'))
+    await waitFor(() => rendered.getByText('data: Infinite Page 2'))
+    fireEvent.click(rendered.getByText('Next Page'))
+    await waitFor(() => rendered.getByText('data: Infinite Page 3'))
+    expect(queryOpts.queryFn).toHaveBeenCalledTimes(3)
   })
 })
