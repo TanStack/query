@@ -114,7 +114,7 @@ describe('usePrefetchQuery', () => {
     expect(queryOpts.queryFn).not.toHaveBeenCalled()
   })
 
-  it('should display an error boundary if query cache is populated with an error', async () => {
+  it('should let errors fall through and not refetch failed queries', async () => {
     const queryFn = generateQueryFn('Not an error')
 
     const queryOpts = {
@@ -220,9 +220,11 @@ describe('usePrefetchQuery', () => {
 
       return (
         <React.Suspense fallback={<Fallback />}>
-          <Suspended queryOpts={firstQueryOpts} />
-          <Suspended queryOpts={secondQueryOpts} />
-          <Suspended queryOpts={thirdQueryOpts} />
+          <Suspended queryOpts={firstQueryOpts}>
+            <Suspended queryOpts={secondQueryOpts}>
+              <Suspended queryOpts={thirdQueryOpts} />
+            </Suspended>
+          </Suspended>
         </React.Suspense>
       )
     }
