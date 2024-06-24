@@ -3,5 +3,6 @@
   "compilerOptions": {
     "jsx": "react-jsx"
   },
-  "include": ["src", ".eslintrc.cjs", "tsup.config.js", "vite.config.ts"]
+  "include": ["src"],
+  "exclude": ["src/__tests__"]
 }
