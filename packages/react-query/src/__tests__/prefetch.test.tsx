@@ -55,12 +55,14 @@ describe('usePrefetchQuery', () => {
 
   function Suspended<TData = unknown>(props: {
     queryOpts: UseQueryOptions<TData, Error, TData, Array<string>>
+    children?: React.ReactNode
   }) {
     const state = useSuspenseQuery(props.queryOpts)
 
     return (
       <div>
         <div>data: {String(state.data)}</div>
+        {props.children}
       </div>
     )
   }
