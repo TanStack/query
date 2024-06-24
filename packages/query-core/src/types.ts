@@ -262,9 +262,9 @@ export interface QueryObserverOptions<
     'queryKey'
   > {
   /**
-   * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
+   * Set this to `false` or a function that returns `false` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
-   * You can also pass a callback that returns a boolean to check this condition dynamically.
+   * Accepts a boolean or function that returns a boolean.
    * Defaults to `true`.
    */
   enabled?: Enabled<TQueryFnData, TError, TQueryData, TQueryKey>
