@@ -14,7 +14,7 @@
     "@angular/core": "^17.3.10",
     "@angular/platform-browser": "^17.3.10",
     "@angular/platform-browser-dynamic": "^17.3.10",
-    "@tanstack/angular-query-experimental": "^5.47.0",
+    "@tanstack/angular-query-experimental": "^5.48.0",
     "rxjs": "^7.8.1",
     "tslib": "^2.6.2",
     "zone.js": "^0.14.6"
@@ -23,7 +23,7 @@
     "@angular-devkit/build-angular": "^17.3.8",
     "@angular/cli": "^17.3.8",
     "@angular/compiler-cli": "^17.3.10",
-    "@tanstack/angular-query-devtools-experimental": "^5.47.0",
+    "@tanstack/angular-query-devtools-experimental": "^5.48.0",
     "typescript": "5.3.3"
   }
 }

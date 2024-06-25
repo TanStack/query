@@ -9,10 +9,10 @@
     "test:types": "tsc"
   },
   "dependencies": {
-    "@tanstack/query-sync-storage-persister": "^5.47.0",
-    "@tanstack/react-query": "^5.47.0",
-    "@tanstack/react-query-devtools": "^5.47.0",
-    "@tanstack/react-query-persist-client": "^5.47.0",
+    "@tanstack/query-sync-storage-persister": "^5.48.0",
+    "@tanstack/react-query": "^5.48.0",
+    "@tanstack/react-query-devtools": "^5.48.0",
+    "@tanstack/react-query-persist-client": "^5.48.0",
     "axios": "^1.6.8",
     "react": "19.0.0-rc-4c2e457c7c-20240522",
     "react-dom": "19.0.0-rc-4c2e457c7c-20240522"
