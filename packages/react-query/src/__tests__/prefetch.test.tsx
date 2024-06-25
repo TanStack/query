@@ -156,7 +156,7 @@ describe('usePrefetchQuery', () => {
     expect(queryOpts.queryFn).not.toHaveBeenCalled()
   })
 
-  it('should not create a endless loop when using inside a suspense boundary', async () => {
+  it('should not create an endless loop when using inside a suspense boundary', async () => {
     const queryFn = generateQueryFn('prefetchedQuery')
 
     const queryOpts = {
@@ -395,7 +395,7 @@ describe('usePrefetchInfiniteQuery', () => {
     expect(Fallback).not.toHaveBeenCalled()
   })
 
-  it('should not create a endless loop when using inside a suspense boundary', async () => {
+  it('should not create an endless loop when using inside a suspense boundary', async () => {
     const queryOpts = {
       queryKey: queryKey(),
       ...generateInfiniteQueryOptions([
