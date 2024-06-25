@@ -53,10 +53,10 @@ describe('queryObserver', () => {
   })
 
   describe('enabled is a callback that initially returns false', () => {
-    let observer: QueryObserver<string, Error, string, string, string[]>
+    let observer: QueryObserver<string, Error, string, string, Array<string>>
     let enabled: boolean
     let count: number
-    let key: string[]
+    let key: Array<string>
 
     beforeEach(() => {
       key = queryKey()
@@ -76,7 +76,7 @@ describe('queryObserver', () => {
     })
 
     test('should not fetch on mount', () => {
-      let unsubscribe = observer.subscribe(vi.fn())
+      const unsubscribe = observer.subscribe(vi.fn())
 
       // Has not fetched and is not fetching since its disabled
       expect(count).toBe(0)
@@ -89,8 +89,8 @@ describe('queryObserver', () => {
       unsubscribe()
     })
 
-    test('should not be refetched when invalidated with refetchType: all', async () => {
-      let unsubscribe = observer.subscribe(vi.fn())
+    test('should not be re-fetched when invalidated with refetchType: all', async () => {
+      const unsubscribe = observer.subscribe(vi.fn())
 
       queryClient.invalidateQueries({ queryKey: key, refetchType: 'all' })
 
@@ -107,7 +107,7 @@ describe('queryObserver', () => {
     })
 
     test('should still trigger a fetch when refetch is called', async () => {
-      let unsubscribe = observer.subscribe(vi.fn())
+      const unsubscribe = observer.subscribe(vi.fn())
 
       expect(enabled).toBe(false)
 
@@ -130,7 +130,7 @@ describe('queryObserver', () => {
       unsubscribe()
     })
 
-    test('should fetch if unsubcribed, then enabled returns true, and then re-suscribed', async () => {
+    test('should fetch if unsubscribed, then enabled returns true, and then re-subscribed', async () => {
       let unsubscribe = observer.subscribe(vi.fn())
       expect(observer.getCurrentResult()).toMatchObject({
         status: 'pending',
@@ -155,8 +155,8 @@ describe('queryObserver', () => {
       unsubscribe()
     })
 
-    test('should not be refetched if not subscribed to after enabled was toggled to true', async () => {
-      let unsubscribe = observer.subscribe(vi.fn())
+    test('should not be re-fetched if not subscribed to after enabled was toggled to true', async () => {
+      const unsubscribe = observer.subscribe(vi.fn())
 
       // Toggle enabled
       enabled = true
@@ -173,8 +173,8 @@ describe('queryObserver', () => {
       expect(count).toBe(0)
     })
 
-    test('should not be refetched if not subscribed to after enabled was toggled to true', async () => {
-      let unsubscribe = observer.subscribe(vi.fn())
+    test('should not be re-fetched if not subscribed to after enabled was toggled to true', async () => {
+      const unsubscribe = observer.subscribe(vi.fn())
 
       // Toggle enabled
       enabled = true
@@ -192,7 +192,7 @@ describe('queryObserver', () => {
     })
 
     test('should handle that the enabled callback updates the return value', async () => {
-      let unsubscribe = observer.subscribe(vi.fn())
+      const unsubscribe = observer.subscribe(vi.fn())
 
       // Toggle enabled
       enabled = true
