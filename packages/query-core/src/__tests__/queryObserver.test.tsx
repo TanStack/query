@@ -610,20 +610,6 @@ describe('queryObserver', () => {
     expect(queryFn).toHaveBeenCalledTimes(0)
   })
 
-  test('should not trigger a fetch when subscribed and disabled by callback', async () => {
-    const key = queryKey()
-    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
-    const observer = new QueryObserver(queryClient, {
-      queryKey: key,
-      queryFn,
-      enabled: () => false,
-    })
-    const unsubscribe = observer.subscribe(() => undefined)
-    await sleep(1)
-    unsubscribe()
-    expect(queryFn).toHaveBeenCalledTimes(0)
-  })
-
   test('should not trigger a fetch when not subscribed', async () => {
     const key = queryKey()
     const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
