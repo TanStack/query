@@ -4,7 +4,7 @@
     "allowJs": true,
     "module": "ESNext",
     "moduleDetection": "force",
-    "moduleResolution": "bundler"
+    "moduleResolution": "Bundler"
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
