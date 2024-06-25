@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "jsx": "preserve",
-    "jsxImportSource": "solid-js"
+    "jsxImportSource": "solid-js",
+    "moduleResolution": "Bundler"
   },
   "include": ["src", ".eslintrc.cjs", "tsup.config.js", "vite.config.ts"]
 }
