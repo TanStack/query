@@ -5,12 +5,12 @@ title: Devtools
 
 Wave your hands in the air and shout hooray because Vue Query comes with dedicated devtools! 🥳
 
+When you begin your Vue Query journey, you'll want these devtools by your side. They help visualize all of the inner workings of Vue Query and will likely save you hours of debugging if you find yourself in a pinch!
+
 ## Component based Devtools (Vue 3)
 
-It's already integrated, so simply use [devtools v7 (next)](https://github.com/vuejs/devtools-next) for simplicity and convenience. Integration with [nuxt-devtools](https://github.com/nuxt/devtools) is in progress and planned for future updates. More details can be found in [issue #676](https://github.com/nuxt/devtools/issues/676).
-
 You can directly integrate the devtools component into your page using a dedicated package.
-Component-based devtools use a framework-agnostic implementation, have more features, and are updated more frequently.
+Component-based devtools use a framework-agnostic implementation and are always up-to-date.
 
 The devtools component is a separate package that you need to install:
 
@@ -63,14 +63,10 @@ import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
 ## Traditional Devtools
 
-When you begin your Vue Query journey, you'll want these devtools by your side. They help visualize all of the inner workings of Vue Query and will likely save you hours of debugging if you find yourself in a pinch!
-
-The only thing you need to do is to install the official **[Vue Devtools](https://devtools.vuejs.org/guide/installation.html)**.
-
-Vue Query will seamlessly integrate with the official devtools, adding custom inspector and timeline events.
+Vue Query will seamlessly integrate with the [Official Vue devtools](https://github.com/vuejs/devtools-next), adding custom inspector and timeline events.
 Devtool code will be treeshaken from production bundles by default.
 
-For devtools v6, you'll need to manually enable integration:
+To make it work, you only need to enable it in the plugin options:
 
 ```ts
 app.use(VueQueryPlugin, {
@@ -78,3 +74,4 @@ app.use(VueQueryPlugin, {
 })
 ```
 
+Both v6 and v7 versions of devtools are supported.
