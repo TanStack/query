@@ -4,7 +4,7 @@ title: usePrefetchQuery
 ---
 
 ```tsx
-const result = usePrefetchQuery(options)
+usePrefetchQuery(options)
 ```
 
 **Options**
