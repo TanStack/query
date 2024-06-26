@@ -70,7 +70,7 @@ To make it work, you only need to enable it in the plugin options:
 
 ```ts
 app.use(VueQueryPlugin, {
-  enableDevtoolsV6Plugin: true
+  enableDevtoolsV6Plugin: true,
 })
 ```
 
