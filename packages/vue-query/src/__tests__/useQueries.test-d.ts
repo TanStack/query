@@ -142,4 +142,81 @@ describe('UseQueries config object overload', () => {
       expectTypeOf(queriesState[0].data).toEqualTypeOf<string | undefined>()
     })
   })
+
+  // Fix #7270
+  it('should have proper type inference with different options provided', () => {
+    const numbers = [1, 2, 3]
+    const queryKey = (n: number) => [n]
+    const queryFn = (n: number) => () => Promise.resolve(n)
+    const select = (data: number) => data.toString()
+
+    const queries = numbers.map((n) => ({
+      queryKey: [n],
+      queryFn: () => Promise.resolve(n),
+      select: (data: number) => data.toString(),
+    }))
+
+    const queriesWithoutSelect = numbers.map((n) => ({
+      queryKey: queryKey(n),
+      queryFn: queryFn(n),
+    }))
+
+    const queriesWithQueryOptions = numbers.map((n) =>
+      queryOptions({
+        queryKey: queryKey(n),
+        queryFn: queryFn(n),
+        select,
+      }),
+    )
+
+    const queriesWithQueryOptionsWithoutSelect = numbers.map((n) =>
+      queryOptions({
+        queryKey: queryKey(n),
+        queryFn: queryFn(n),
+      }),
+    )
+
+    const query1 = useQueries({ queries: queries })
+    expectTypeOf(query1.value).toEqualTypeOf<
+      Array<QueryObserverResult<string, Error>>
+    >()
+
+    const query2 = useQueries({ queries: queriesWithoutSelect })
+    expectTypeOf(query2.value).toEqualTypeOf<
+      Array<QueryObserverResult<number, Error>>
+    >()
+
+    const query3 = useQueries({ queries: queriesWithQueryOptions })
+    expectTypeOf(query3.value).toEqualTypeOf<
+      Array<QueryObserverResult<string, Error>>
+    >()
+
+    const query4 = useQueries({ queries: queriesWithQueryOptionsWithoutSelect })
+    expectTypeOf(query4.value).toEqualTypeOf<
+      Array<QueryObserverResult<number, Error>>
+    >()
+
+    const queryCombine = useQueries({
+      queries: queries,
+      combine: (data) => {
+        return data.reduce((acc, i) => {
+          acc.push(i.data ?? '')
+          return acc
+        }, [] as Array<string>)
+      },
+    })
+    expectTypeOf(queryCombine.value).toEqualTypeOf<Array<string>>()
+
+    const queryCombineWithoutSelect = useQueries({
+      queries: queriesWithoutSelect,
+      combine: (data) => {
+        return data.reduce((acc, i) => {
+          acc.push(i.data ?? 0)
+          return acc
+        }, [] as Array<number>)
+      },
+    })
+
+    expectTypeOf(queryCombineWithoutSelect.value).toEqualTypeOf<Array<number>>()
+  })
 })
