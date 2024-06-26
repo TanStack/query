@@ -1574,10 +1574,10 @@ importers:
   examples/vue/basic:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.48.0
+        specifier: ^5.48.1
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^5.48.0
+        specifier: ^5.48.1
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.4.27
@@ -1596,7 +1596,7 @@ importers:
   examples/vue/dependent-queries:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.48.0
+        specifier: ^5.48.1
         version: link:../../../packages/vue-query
       vue:
         specifier: ^3.4.27
@@ -1624,7 +1624,7 @@ importers:
         specifier: ^5.48.0
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/vue-query':
-        specifier: ^5.48.0
+        specifier: ^5.48.1
         version: link:../../../packages/vue-query
       idb-keyval:
         specifier: ^6.2.1
@@ -1646,10 +1646,10 @@ importers:
   examples/vue/simple:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.48.0
+        specifier: ^5.48.1
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^5.48.0
+        specifier: ^5.48.1
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.4.27
