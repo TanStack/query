@@ -1,6 +1,7 @@
 // @ts-check
 
 import tseslint from 'typescript-eslint'
+// @ts-expect-error
 import pluginVue from 'eslint-plugin-vue'
 import rootConfig from '../../eslint.config.js'
 
