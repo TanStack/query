@@ -157,7 +157,8 @@ export function hydrate(
         // omit fetchStatus from dehydrated state
         // so that query stays in its current fetchStatus
         const { fetchStatus: _ignored, data, ...serializedState } = state
-        const transformedData = data ? transformData?.(data) : data
+        const transformedData =
+          data && transformData ? transformData(data) : data
         query.setState({ ...serializedState, data: transformedData })
       }
     } else {
