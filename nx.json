@@ -6,8 +6,8 @@
   "parallel": 5,
   "namedInputs": {
     "sharedGlobals": [
-      "{workspaceRoot}/.eslintrc.cjs",
       "{workspaceRoot}/.nvmrc",
+      "{workspaceRoot}/eslint.config.js",
       "{workspaceRoot}/package.json",
       "{workspaceRoot}/scripts/getTsupConfig.js",
       "{workspaceRoot}/tsconfig.json"
@@ -21,8 +21,7 @@
       "default",
       "{projectRoot}/build",
       "{projectRoot}/dist",
-      "!{projectRoot}/.eslintrc.cjs",
-      "!{projectRoot}/tsconfig.eslint.json"
+      "!{projectRoot}/eslint.config.js"
     ]
   },
   "targetDefaults": {
