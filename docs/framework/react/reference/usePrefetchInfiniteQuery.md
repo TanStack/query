@@ -4,7 +4,7 @@ title: usePrefetchInfiniteQuery
 ---
 
 ```tsx
-const result = usePrefetchInfiniteQuery(options)
+usePrefetchInfiniteQuery(options)
 ```
 
 **Options**
