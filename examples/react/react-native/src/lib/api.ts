@@ -25,7 +25,7 @@ export async function fetchMovies(): Promise<Movie[]> {
 
   return Promise.resolve(
     movies
-      .slice(0, 10)
+      .slice(0, 100)
       .map((movie) => ({ title: movie.title, year: movie.year })),
   )
 }
