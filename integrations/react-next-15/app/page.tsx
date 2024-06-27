@@ -12,7 +12,7 @@ export default async function Home() {
   void queryClient.prefetchQuery({
     queryKey: ['data'],
     queryFn: async () => {
-      // await sleep(1)
+      await sleep(2000)
       return tson.serialize({
         text: 'data from server',
         date: Temporal.PlainDate.from('2024-01-01'),
@@ -20,14 +20,9 @@ export default async function Home() {
     },
   })
 
-  await sleep(10)
-
-  const dehydratedState = dehydrate(queryClient)
-  console.log('dehydratedState', JSON.stringify(dehydratedState, null, 4))
-
   return (
     <main>
-      <HydrationBoundary state={dehydratedState}>
+      <HydrationBoundary state={dehydrate(queryClient)}>
         <ClientComponent />
       </HydrationBoundary>
     </main>
