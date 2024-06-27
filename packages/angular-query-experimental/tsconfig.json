@@ -1,17 +1,16 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "declarationMap": true,
-    "useDefineForClassFields": false,
-    "target": "es2022",
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noFallthroughCasesInSwitch": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "module": "ES2022",
+    "moduleResolution": "Bundler",
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noFallthroughCasesInSwitch": true,
+    "useDefineForClassFields": false,
+    "target": "ES2022",
     "types": ["vitest/globals"]
   },
-  "include": ["src", ".eslintrc.cjs", "vite.config.ts"]
+  "include": ["src", "eslint.config.js", "vite.config.ts"]
 }

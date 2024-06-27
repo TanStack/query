@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query",
-  "version": "5.45.0",
+  "version": "5.48.0",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Solid",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -41,8 +41,9 @@
   },
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
-    "test:eslint": "eslint --ext .ts,.tsx ./src",
+    "test:eslint": "eslint ./src",
     "test:types": "pnpm run \"/^test:types:ts[0-9]{2}$/\"",
+    "test:types:ts49": "node ../../node_modules/typescript49/lib/tsc.js -p tsconfig.legacy.json",
     "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js -p tsconfig.legacy.json",
     "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js -p tsconfig.legacy.json",
     "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js -p tsconfig.legacy.json",
