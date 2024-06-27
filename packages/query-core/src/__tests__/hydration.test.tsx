@@ -959,7 +959,6 @@ describe('dehydration and rehydration', () => {
     })
     await sleep(20)
     const dehydrated = dehydrate(queryClient)
-    console.log('de', dehydrated)
 
     const hydrationClient = createQueryClient({
       defaultOptions: {
