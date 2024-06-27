@@ -16,18 +16,19 @@ export default [
         {
           cspell: {
             words: [
-              'tanstack', // Our package scope
-              'tsqd', // Our public interface (TanStack Query Devtools shorthand)
-              'retryer', // Our public interface
-              'Promisable', // Our public interface
-              'extralight', // Our public interface
               'codemod', // We support our codemod
-              'typecheck', // Field of vite.config.ts
-              'TSES', // @typescript-eslint package's interface
-              'tsup', // We use tsup as builder
+              'extralight', // Our public interface
+              'jscodeshift',
+              'Promisable', // Our public interface
+              'retryer', // Our public interface
               'solidjs', // Our target framework
               'tabular-nums', // https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric
+              'tanstack', // Our package scope
               'todos', // Too general word to be caught as error
+              'TSES', // @typescript-eslint package's interface
+              'tsqd', // Our public interface (TanStack Query Devtools shorthand)
+              'tsup', // We use tsup as builder
+              'typecheck', // Field of vite.config.ts
               'vue-demi', // dependency of @tanstack/vue-query
             ],
           },
