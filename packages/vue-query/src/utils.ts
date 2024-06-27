@@ -82,7 +82,9 @@ export function cloneDeepUnref<T>(
 
     // Resolve getters to values if specified.
     if (unrefGetters && isFunction(val)) {
-      return cloneDeepUnref(val(), unrefGetters)
+      // Cast due to older TS versions not allowing calling
+      // on certain intersection types.
+      return cloneDeepUnref((val as Function)(), unrefGetters)
     }
 
     // Unref refs and continue to recurse into the value.
