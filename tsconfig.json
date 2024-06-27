@@ -12,7 +12,7 @@
     "isolatedModules": true,
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "module": "ES2022",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "Node",
     "noEmit": true,
     "noImplicitReturns": true,
     "noUncheckedIndexedAccess": true,
@@ -23,5 +23,5 @@
     "strict": true,
     "target": "ES2020"
   },
-  "include": [".eslintrc.cjs", "prettier.config.js", "scripts"]
+  "include": [".eslintrc.cjs", "prettier.config.js"]
 }

@@ -1,5 +1,8 @@
 {
   "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "moduleResolution": "Bundler"
+  },
   "include": [
     "src/**/*.js",
     "src/**/*.ts",

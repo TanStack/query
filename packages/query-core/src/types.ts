@@ -54,6 +54,15 @@ export type StaleTime<
   TQueryKey extends QueryKey = QueryKey,
 > = number | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => number)
 
+export type Enabled<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> =
+  | boolean
+  | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean)
+
 export type QueryPersister<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
@@ -253,11 +262,12 @@ export interface QueryObserverOptions<
     'queryKey'
   > {
   /**
-   * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
+   * Set this to `false` or a function that returns `false` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
+   * Accepts a boolean or function that returns a boolean.
    * Defaults to `true`.
    */
-  enabled?: boolean
+  enabled?: Enabled<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * The time in milliseconds after data is considered stale.
    * If set to `Infinity`, the data will never be considered stale.

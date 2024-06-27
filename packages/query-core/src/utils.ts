@@ -1,5 +1,6 @@
 import type {
   DefaultError,
+  Enabled,
   FetchStatus,
   MutationKey,
   MutationStatus,
@@ -98,6 +99,18 @@ export function resolveStaleTime<
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
 ): number | undefined {
   return typeof staleTime === 'function' ? staleTime(query) : staleTime
+}
+
+export function resolveEnabled<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  enabled: undefined | Enabled<TQueryFnData, TError, TData, TQueryKey>,
+  query: Query<TQueryFnData, TError, TData, TQueryKey>,
+): boolean | undefined {
+  return typeof enabled === 'function' ? enabled(query) : enabled
 }
 
 export function matchQuery(
