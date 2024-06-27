@@ -432,7 +432,7 @@ export default function Posts() {
 
 > Note that you could also `useQuery` instead of `useSuspenseQuery`, and the Promise would still be picked up correctly. However, NextJs won't suspend in that case and the component will render in the `pending` status, which also opts out of server rendering the content.
 
-If you're using non-JSON data types and serialize the query results on the server, you can specify the `hydrate.transformPromise` option to deserialize the data on the client after the promise is resolved, before the data is put into the cache:
+If you're using non-JSON data types and serialize the query results on the server, you can specify the `hydrate.transformData` option to deserialize the data on the client after the promise is resolved, before the data is put into the cache:
 
 ```tsx
 // app/get-query-client.ts
@@ -447,7 +447,7 @@ export function makeQueryClient() {
          * Called when the query is rebuilt from a prefetched
          * promise, before the query data is put into the cache.
          */
-        transformPromise: (promise) => promise.then(deserialize),
+        transformData: (data) => deserialize(data),
       },
       // ...
     },

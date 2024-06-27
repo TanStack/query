@@ -928,7 +928,7 @@ describe('dehydration and rehydration', () => {
     const hydrationClient = createQueryClient({
       defaultOptions: {
         hydrate: {
-          transformPromise: (p) => p.then((d) => new Date(d)),
+          transformData: (data) => new Date(data),
         },
       },
     })
@@ -965,7 +965,6 @@ describe('dehydration and rehydration', () => {
       defaultOptions: {
         hydrate: {
           transformData: (d) => new Date(d),
-          transformPromise: (p) => p.then((d) => new Date(d)),
         },
       },
     })
