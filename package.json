@@ -52,15 +52,10 @@
     "@types/node": "^20.12.12",
     "@types/react": "npm:types-react@rc",
     "@types/react-dom": "npm:types-react-dom@rc",
-    "@typescript-eslint/eslint-plugin": "^7.13.1",
-    "@typescript-eslint/parser": "^7.13.1",
     "@vitest/coverage-istanbul": "^1.6.0",
     "cpy-cli": "^5.0.0",
     "esbuild-plugin-file-path-extensions": "^2.1.0",
     "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-import-resolver-typescript": "^3.6.1",
-    "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-react": "^7.34.3",
     "eslint-plugin-react-hooks": "^4.6.2",
     "husky": "^9.0.11",
@@ -78,6 +73,7 @@
     "solid-js": "^1.8.17",
     "tsup": "^8.0.2",
     "typescript": "5.3.3",
+    "typescript-eslint": "^7.14.1",
     "typescript47": "npm:typescript@4.7",
     "typescript48": "npm:typescript@4.8",
     "typescript49": "npm:typescript@4.9",
@@ -89,11 +85,9 @@
   },
   "pnpm": {
     "overrides": {
-      "@typescript-eslint/eslint-plugin": "$@typescript-eslint/eslint-plugin",
-      "@typescript-eslint/parser": "$@typescript-eslint/parser",
-      "eslint": "$eslint",
       "@types/react": "npm:types-react@rc",
-      "@types/react-dom": "npm:types-react-dom@rc"
+      "@types/react-dom": "npm:types-react-dom@rc",
+      "eslint": "$eslint"
     }
   }
 }

@@ -1,8 +1,8 @@
 // @ts-check
 
-// @ts-expect-error
+// @ts-ignore
 import { rootConfig } from '@tanstack/config/eslint'
-// @ts-expect-error
+// @ts-ignore
 import cspellConfigs from '@cspell/eslint-plugin/configs'
 
 export default [
