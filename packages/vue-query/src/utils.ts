@@ -17,13 +17,20 @@ export function updateState(
   })
 }
 
-export function cloneDeep<T>(
+// Helper function for cloning deep objects where
+// the level and key is provided to the callback function.
+export function _cloneDeep<T>(
   value: MaybeRefDeep<T>,
-  customize?: (val: MaybeRefDeep<T>) => T | undefined,
+  customize?: (
+    val: MaybeRefDeep<T>,
+    key: string,
+    level: number,
+  ) => T | undefined,
+  currentKey: string = '',
+  currentLevel: number = 0,
 ): T {
   if (customize) {
-    const result = customize(value)
-    // If it's a ref of undefined, return undefined
+    const result = customize(value, currentKey, currentLevel)
     if (result === undefined && isRef(value)) {
       return result as T
     }
@@ -33,13 +40,15 @@ export function cloneDeep<T>(
   }
 
   if (Array.isArray(value)) {
-    return value.map((val) => cloneDeep(val, customize)) as unknown as T
+    return value.map((val, index) =>
+      _cloneDeep(val, customize, String(index), currentLevel + 1),
+    ) as unknown as T
   }
 
   if (typeof value === 'object' && isPlainObject(value)) {
     const entries = Object.entries(value).map(([key, val]) => [
       key,
-      cloneDeep(val, customize),
+      _cloneDeep(val, customize, key, currentLevel + 1),
     ])
     return Object.fromEntries(entries)
   }
@@ -47,10 +56,38 @@ export function cloneDeep<T>(
   return value as T
 }
 
-export function cloneDeepUnref<T>(obj: MaybeRefDeep<T>): T {
-  return cloneDeep(obj, (val) => {
+export function cloneDeep<T>(
+  value: MaybeRefDeep<T>,
+  customize?: (
+    val: MaybeRefDeep<T>,
+    key: string,
+    level: number,
+  ) => T | undefined,
+): T {
+  return _cloneDeep(value, customize)
+}
+
+export function cloneDeepUnref<T>(
+  obj: MaybeRefDeep<T>,
+  unrefGetters = false,
+): T {
+  return cloneDeep(obj, (val, key, level) => {
+    // Check if we're at the top level and the key is 'queryKey'
+    //
+    // If so, take the recursive descent where we resolve
+    // getters to values as well as refs.
+    if (level === 1 && key === 'queryKey') {
+      return cloneDeepUnref(val, true)
+    }
+
+    // Resolve getters to values if specified.
+    if (unrefGetters && isFunction(val)) {
+      return cloneDeepUnref(val(), unrefGetters)
+    }
+
+    // Unref refs and continue to recurse into the value.
     if (isRef(val)) {
-      return cloneDeepUnref(unref(val))
+      return cloneDeepUnref(unref(val), unrefGetters)
     }
 
     return undefined
@@ -64,6 +101,10 @@ function isPlainObject(value: unknown): value is Object {
 
   const prototype = Object.getPrototypeOf(value)
   return prototype === null || prototype === Object.prototype
+}
+
+function isFunction(value: unknown): value is Function {
+  return typeof value === 'function'
 }
 
 export function shouldThrowError<T extends (...args: Array<any>) => boolean>(

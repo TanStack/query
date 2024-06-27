@@ -312,6 +312,65 @@ describe('useQuery', () => {
     expect(fetchFn).toHaveBeenCalledTimes(3)
   })
 
+  test('should allow arbitrarily nested getters for query keys', async () => {
+    const fetchFn = vi.fn()
+    const key1 = ref('key1')
+    const key2 = ref('key2')
+    const key3 = ref('key3')
+    const key4 = ref('key4')
+    const key5 = ref('key5')
+
+    useQuery({
+      queryKey: [
+        'key',
+        key1,
+        () => key2.value,
+        { key: () => key3.value },
+        [{ foo: { bar: () => key4.value } }],
+        () => ({
+          foo: {
+            bar: {
+              baz: () => key5.value,
+            },
+          },
+        }),
+      ],
+      queryFn: fetchFn,
+    })
+
+    expect(fetchFn).toHaveBeenCalledTimes(1)
+
+    key1.value = 'key1-updated'
+
+    await flushPromises()
+
+    expect(fetchFn).toHaveBeenCalledTimes(2)
+
+    key2.value = 'key2-updated'
+
+    await flushPromises()
+
+    expect(fetchFn).toHaveBeenCalledTimes(3)
+
+    key3.value = 'key3-updated'
+
+    await flushPromises()
+
+    expect(fetchFn).toHaveBeenCalledTimes(4)
+
+    key4.value = 'key4-updated'
+
+    await flushPromises()
+
+    expect(fetchFn).toHaveBeenCalledTimes(5)
+
+    key5.value = 'key5-updated'
+
+    await flushPromises()
+
+    expect(fetchFn).toHaveBeenCalledTimes(6)
+  })
+
   describe('throwOnError', () => {
     test('should evaluate throwOnError when query is expected to throw', async () => {
       const boundaryFn = vi.fn()

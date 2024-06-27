@@ -5,6 +5,7 @@ import {
   onScopeDispose,
   readonly,
   shallowRef,
+  unref,
   watch,
 } from 'vue-demi'
 
@@ -252,17 +253,17 @@ export function useQueries<
   const client = queryClient || useQueryClient()
 
   const defaultedQueries = computed(() =>
-    cloneDeepUnref(queries as MaybeRefDeep<UseQueriesOptionsArg<any>>).map(
+    // Only unref the top level array.
+    unref(queries as MaybeRefDeep<UseQueriesOptionsArg<any>>).map(
+      // Unref the rest for each element in the top level array.
       (queryOptions) => {
-        if (typeof queryOptions.enabled === 'function') {
-          queryOptions.enabled = queryOptions.enabled()
+        const clonedOptions = cloneDeepUnref(queryOptions)
+
+        if (typeof clonedOptions.enabled === 'function') {
+          clonedOptions.enabled = queryOptions.enabled()
         }
 
-        queryOptions.queryKey = queryOptions.queryKey.map((key: any) =>
-          typeof key === 'function' ? key() : key,
-        )
-
-        const defaulted = client.defaultQueryOptions(queryOptions)
+        const defaulted = client.defaultQueryOptions(clonedOptions)
         defaulted._optimisticResults = client.isRestoring.value
           ? 'isRestoring'
           : 'optimistic'
