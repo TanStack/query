@@ -19,7 +19,7 @@ export function updateState(
 
 // Helper function for cloning deep objects where
 // the level and key is provided to the callback function.
-export function _cloneDeep<T>(
+function _cloneDeep<T>(
   value: MaybeRefDeep<T>,
   customize?: (
     val: MaybeRefDeep<T>,
