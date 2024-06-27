@@ -18,12 +18,11 @@ export function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       hydrate: {
-        transformData: (data) => tson.deserialize(data),
         /**
          * Called when the query is rebuilt from a prefetched
          * promise, before the query data is put into the cache.
          */
-        transformPromise: (promise) => promise.then(tson.deserialize),
+        transformData: tson.deserialize,
       },
       queries: {
         staleTime: 60 * 1000,

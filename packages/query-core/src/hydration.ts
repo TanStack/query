@@ -22,7 +22,6 @@ export interface DehydrateOptions {
 export interface HydrateOptions {
   defaultOptions?: {
     transformData?: (data: any) => any
-    transformPromise?: (promise: Promise<any>) => Promise<any>
     queries?: QueryOptions
     mutations?: MutationOptions<unknown, DefaultError, unknown, unknown>
   }
@@ -130,6 +129,7 @@ export function hydrate(
 
   const mutationCache = client.getMutationCache()
   const queryCache = client.getQueryCache()
+  const transformData = client.getDefaultOptions().hydrate?.transformData
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const mutations = (dehydratedState as DehydratedState).mutations || []
@@ -156,12 +156,12 @@ export function hydrate(
       if (query.state.dataUpdatedAt < state.dataUpdatedAt) {
         // omit fetchStatus from dehydrated state
         // so that query stays in its current fetchStatus
-        const { fetchStatus: _ignored, ...dehydratedQueryState } = state
-        query.setState(dehydratedQueryState)
+        const { fetchStatus: _ignored, data, ...serializedState } = state
+        const transformedData = data ? transformData?.(data) : data
+        query.setState({ ...serializedState, data: transformedData })
       }
     } else {
       // Restore query
-      const transformData = client.getDefaultOptions().hydrate?.transformData
       query = queryCache.build(
         client,
         {
@@ -184,13 +184,9 @@ export function hydrate(
     }
 
     if (promise) {
-      const transformPromise =
-        client.getDefaultOptions().hydrate?.transformPromise
-
       // Note: `Promise.resolve` required cause
       // RSC transformed promises are not thenable
-      const initialPromise =
-        transformPromise?.(Promise.resolve(promise)) ?? promise
+      const initialPromise = Promise.resolve(promise).then(transformData)
 
       // this doesn't actually fetch - it just creates a retryer
       // which will re-use the passed `initialPromise`
