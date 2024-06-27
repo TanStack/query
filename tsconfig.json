@@ -23,5 +23,5 @@
     "strict": true,
     "target": "ES2020"
   },
-  "include": [".eslintrc.cjs", "prettier.config.js"]
+  "include": ["eslint.config.js", "prettier.config.js"]
 }

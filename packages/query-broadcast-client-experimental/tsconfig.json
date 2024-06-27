@@ -3,5 +3,5 @@
   "compilerOptions": {
     "moduleResolution": "Bundler"
   },
-  "include": ["src", ".eslintrc.cjs", "tsup.config.js"]
+  "include": ["src", "eslint.config.js", "tsup.config.js"]
 }

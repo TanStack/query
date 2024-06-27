@@ -7,7 +7,7 @@
     "src/**/*.js",
     "src/**/*.ts",
     "src/**/*.svelte",
-    ".eslintrc.cjs",
+    "eslint.config.js",
     "test-setup.ts",
     "vite.config.ts"
   ]

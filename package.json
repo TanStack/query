@@ -45,7 +45,7 @@
     "@arethetypeswrong/cli": "^0.15.3",
     "@cspell/eslint-plugin": "^8.9.1",
     "@solidjs/testing-library": "^0.8.8",
-    "@tanstack/config": "^0.7.11",
+    "@tanstack/config": "^0.8.1",
     "@testing-library/jest-dom": "^6.4.5",
     "@testing-library/react": "^15.0.7",
     "@types/eslint": "^8.56.10",

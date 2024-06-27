@@ -4,5 +4,5 @@
     "jsx": "react-jsx",
     "moduleResolution": "Bundler"
   },
-  "include": ["src", ".eslintrc.cjs", "tsup.config.js", "vite.config.ts"]
+  "include": ["src", "eslint.config.js", "tsup.config.js", "vite.config.ts"]
 }
