@@ -29,7 +29,7 @@
   "scripts": {
     "clean": "rimraf ./dist && rimraf ./coverage",
     "test:types": "svelte-check --tsconfig ./tsconfig.json",
-    "test:eslint": "eslint --ext .svelte,.ts ./src",
+    "test:eslint": "eslint ./src",
     "test:build": "publint --strict",
     "test:attw": "attw --pack",
     "build": "svelte-package --input ./src --output ./dist"
