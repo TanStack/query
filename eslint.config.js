@@ -34,6 +34,7 @@ export default [
           },
         },
       ],
+      '@typescript-eslint/no-empty-function': 'off',
       'no-case-declarations': 'off',
       'no-prototype-builtins': 'off',
     },
