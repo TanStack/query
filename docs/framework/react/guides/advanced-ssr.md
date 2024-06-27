@@ -471,7 +471,7 @@ export default function PostsPage() {
   // look ma, no await
   queryClient.prefetchQuery({
     queryKey: ['posts'],
-    queryFn: () => getPosts().then(serialize), // <-- serilize the data on the server
+    queryFn: () => getPosts().then(serialize), // <-- serialize the data on the server
   })
 
   return (
