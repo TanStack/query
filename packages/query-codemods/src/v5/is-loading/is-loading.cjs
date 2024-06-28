@@ -1,8 +1,8 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line ts/no-var-requires
 const createUtilsObject = require('../../utils/index.cjs')
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line ts/no-var-requires
 const createUseQueryLikeTransformer = require('../../utils/transformers/use-query-like-transformer.cjs')
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line ts/no-var-requires
 const createQueryClientTransformer = require('../../utils/transformers/query-client-transformer.cjs')
 
 const originalName = 'isLoading'

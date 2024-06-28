@@ -1,18 +1,20 @@
 // @ts-check
 
 // @ts-ignore
-import { rootConfig } from '@tanstack/config/eslint'
+import { tanstackConfig } from '@tanstack/config/eslint'
 // @ts-ignore
-import cspellConfigs from '@cspell/eslint-plugin/configs'
+import pluginCspell from '@cspell/eslint-plugin'
 
 export default [
-  ...rootConfig,
-  cspellConfigs.recommended,
+  ...tanstackConfig,
   {
     name: 'tanstack/temp',
+    plugins: {
+      cspell: pluginCspell,
+    },
     rules: {
-      '@cspell/spellchecker': [
-        'error',
+      'cspell/spellchecker': [
+        'warn',
         {
           cspell: {
             words: [
@@ -34,7 +36,7 @@ export default [
           },
         },
       ],
-      '@typescript-eslint/no-empty-function': 'off',
+      'ts/no-empty-function': 'off',
       'no-case-declarations': 'off',
       'no-prototype-builtins': 'off',
     },

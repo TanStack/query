@@ -26,8 +26,8 @@ importers:
         specifier: ^0.8.8
         version: 0.8.8(@solidjs/router@0.13.3(solid-js@1.8.17))(solid-js@1.8.17)
       '@tanstack/config':
-        specifier: ^0.8.1
-        version: 0.8.1(@types/node@20.12.12)(esbuild@0.19.11)(eslint@8.57.0)(rollup@4.14.1)(typescript@5.3.3)(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        specifier: ^0.8.6
+        version: 0.8.6(@types/node@20.12.12)(esbuild@0.19.11)(eslint@8.57.0)(rollup@4.14.1)(typescript@5.3.3)(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@testing-library/jest-dom':
         specifier: ^6.4.5
         version: 6.4.5(vitest@1.6.0(@types/node@20.12.12)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
@@ -6369,8 +6369,8 @@ packages:
   '@swc/helpers@0.5.2':
     resolution: {integrity: sha512-E4KcWTpoLHqwPHLxidpOqQbcrZVgi0rsmmZXUle1jXmJfuIf/UWpczUJ7MZZ5tlxytgJXyp0w4PGkkeLiuIdZw==}
 
-  '@tanstack/config@0.8.1':
-    resolution: {integrity: sha512-d+4A38/PokW/ljv8Q/EOeStpN9EvUwoj1SQORzBbQe7T/YcEMdMWuNp30A/S3DCYQvV4iDFwILSzqle+fxA+ag==}
+  '@tanstack/config@0.8.6':
+    resolution: {integrity: sha512-SrvXII1DM3izYsrCoFfS4i+H/rGT30IOhG96De3J0/mbkCicB8rWSgV0FfrLoIlQc4FUyULNCw7/Pn3iZCGM7g==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -24226,7 +24226,7 @@ snapshots:
     dependencies:
       tslib: 2.6.2
 
-  '@tanstack/config@0.8.1(@types/node@20.12.12)(esbuild@0.19.11)(eslint@8.57.0)(rollup@4.14.1)(typescript@5.3.3)(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
+  '@tanstack/config@0.8.6(@types/node@20.12.12)(esbuild@0.19.11)(eslint@8.57.0)(rollup@4.14.1)(typescript@5.3.3)(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
     dependencies:
       '@commitlint/parse': 19.0.3
       '@eslint/js': 9.5.0

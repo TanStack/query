@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line ts/no-var-requires
 const UnknownUsageError = require('./unknown-usage-error.cjs')
 
 module.exports = ({ jscodeshift, utils }) => {

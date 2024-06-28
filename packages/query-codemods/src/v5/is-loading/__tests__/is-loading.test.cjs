@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line ts/no-var-requires
 const defineTest = require('jscodeshift/dist/testUtils').defineTest
 
 defineTest(__dirname, 'is-loading.cjs', null, 'default-import', {

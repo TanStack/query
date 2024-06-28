@@ -1,8 +1,8 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line ts/no-var-requires
 const createUtilsObject = require('../../utils/index.cjs')
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line ts/no-var-requires
 const transformFilterAwareUsages = require('./transformers/filter-aware-usage-transformer.cjs')
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line ts/no-var-requires
 const transformQueryFnAwareUsages = require('./transformers/query-fn-aware-usage-transformer.cjs')
 
 module.exports = (file, api) => {
