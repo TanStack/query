@@ -1,7 +1,7 @@
 import { matchQuery } from '@tanstack/query-core'
-import type { QueryFilters } from '@tanstack/query-core'
 import type {
   Query,
+  QueryFilters,
   QueryFunctionContext,
   QueryKey,
   QueryState,

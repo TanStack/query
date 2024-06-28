@@ -1,8 +1,7 @@
 // @ts-check
 
-// @ts-ignore
+// @ts-ignore Needed due to moduleResolution Node vs Bundler
 import { tanstackConfig } from '@tanstack/config/eslint'
-// @ts-ignore
 import pluginCspell from '@cspell/eslint-plugin'
 
 export default [
@@ -36,8 +35,11 @@ export default [
           },
         },
       ],
+      'ts/ban-types': 'off',
       'ts/no-empty-function': 'off',
+      'ts/require-await': 'off',
       'no-case-declarations': 'off',
+      'no-empty': 'off',
       'no-prototype-builtins': 'off',
     },
   },

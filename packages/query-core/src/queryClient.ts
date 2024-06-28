@@ -13,10 +13,10 @@ import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
-import type { DataTag, NoInfer, OmitKeyof } from './types'
 import type { QueryState } from './query'
 import type {
   CancelOptions,
+  DataTag,
   DefaultError,
   DefaultOptions,
   DefaultedQueryObserverOptions,
@@ -29,6 +29,8 @@ import type {
   MutationKey,
   MutationObserverOptions,
   MutationOptions,
+  NoInfer,
+  OmitKeyof,
   QueryClientConfig,
   QueryKey,
   QueryObserverOptions,
