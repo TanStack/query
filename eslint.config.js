@@ -1,18 +1,19 @@
 // @ts-check
 
-// @ts-ignore
-import { rootConfig } from '@tanstack/config/eslint'
-// @ts-ignore
-import cspellConfigs from '@cspell/eslint-plugin/configs'
+// @ts-ignore Needed due to moduleResolution Node vs Bundler
+import { tanstackConfig } from '@tanstack/config/eslint'
+import pluginCspell from '@cspell/eslint-plugin'
 
 export default [
-  ...rootConfig,
-  cspellConfigs.recommended,
+  ...tanstackConfig,
   {
     name: 'tanstack/temp',
+    plugins: {
+      cspell: pluginCspell,
+    },
     rules: {
-      '@cspell/spellchecker': [
-        'error',
+      'cspell/spellchecker': [
+        'warn',
         {
           cspell: {
             words: [
@@ -34,8 +35,11 @@ export default [
           },
         },
       ],
-      '@typescript-eslint/no-empty-function': 'off',
+      'ts/ban-types': 'off',
+      'ts/no-empty-function': 'off',
+      'ts/require-await': 'off',
       'no-case-declarations': 'off',
+      'no-empty': 'off',
       'no-prototype-builtins': 'off',
     },
   },
