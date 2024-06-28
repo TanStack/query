@@ -13,15 +13,20 @@ import type { Query, QueryState } from './query'
 import type { Mutation, MutationState } from './mutation'
 
 // TYPES
+type TransformerFn = (data: any) => any
+function defaultTransformerFn(data: any): any {
+  return data
+}
 
 export interface DehydrateOptions {
+  serializeData?: TransformerFn
   shouldDehydrateMutation?: (mutation: Mutation) => boolean
   shouldDehydrateQuery?: (query: Query) => boolean
 }
 
 export interface HydrateOptions {
   defaultOptions?: {
-    transformData?: (data: any) => any
+    deserializeData?: TransformerFn
     queries?: QueryOptions
     mutations?: MutationOptions<unknown, DefaultError, unknown, unknown>
   }
@@ -62,13 +67,21 @@ function dehydrateMutation(mutation: Mutation): DehydratedMutation {
 // consuming the de/rehydrated data, typically with useQuery on the client.
 // Sometimes it might make sense to prefetch data on the server and include
 // in the html-payload, but not consume it on the initial render.
-function dehydrateQuery(query: Query): DehydratedQuery {
+function dehydrateQuery(
+  query: Query,
+  serializeData: TransformerFn,
+): DehydratedQuery {
   return {
-    state: query.state,
+    state: {
+      ...query.state,
+      ...(query.state.data !== undefined && {
+        data: serializeData(query.state.data),
+      }),
+    },
     queryKey: query.queryKey,
     queryHash: query.queryHash,
     ...(query.state.status === 'pending' && {
-      promise: query.promise?.catch((error) => {
+      promise: query.promise?.then(serializeData).catch((error) => {
         if (process.env.NODE_ENV !== 'production') {
           console.error(
             `A query that was dehydrated as pending ended up rejecting. [${query.queryHash}]: ${error}; The error will be redacted in production builds`,
@@ -110,10 +123,17 @@ export function dehydrate(
     client.getDefaultOptions().dehydrate?.shouldDehydrateQuery ??
     defaultShouldDehydrateQuery
 
+  const serializeData =
+    options.serializeData ??
+    client.getDefaultOptions().dehydrate?.serializeData ??
+    defaultTransformerFn
+
   const queries = client
     .getQueryCache()
     .getAll()
-    .flatMap((query) => (filterQuery(query) ? [dehydrateQuery(query)] : []))
+    .flatMap((query) =>
+      filterQuery(query) ? [dehydrateQuery(query, serializeData)] : [],
+    )
 
   return { mutations, queries }
 }
@@ -129,7 +149,10 @@ export function hydrate(
 
   const mutationCache = client.getMutationCache()
   const queryCache = client.getQueryCache()
-  const transformData = client.getDefaultOptions().hydrate?.transformData
+  const deserializeData =
+    options?.defaultOptions?.deserializeData ??
+    client.getDefaultOptions().hydrate?.deserializeData ??
+    defaultTransformerFn
 
   // eslint-disable-next-line ts/no-unnecessary-condition
   const mutations = (dehydratedState as DehydratedState).mutations || []
@@ -156,10 +179,13 @@ export function hydrate(
       if (query.state.dataUpdatedAt < state.dataUpdatedAt) {
         // omit fetchStatus from dehydrated state
         // so that query stays in its current fetchStatus
-        const { fetchStatus: _ignored, data, ...serializedState } = state
-        const transformedData =
-          data && transformData ? transformData(data) : data
-        query.setState({ ...serializedState, data: transformedData })
+        const { fetchStatus: _ignored, ...serializedState } = state
+        query.setState({
+          ...serializedState,
+          ...(query.state.data !== undefined && {
+            data: deserializeData(state.data),
+          }),
+        })
       }
     } else {
       // Restore query
@@ -176,8 +202,8 @@ export function hydrate(
         // query being stuck in fetching state upon hydration
         {
           ...state,
-          ...('data' in state && {
-            data: transformData?.(state.data) ?? state.data,
+          ...(state.data !== undefined && {
+            data: deserializeData(state.data),
           }),
           fetchStatus: 'idle',
         },
@@ -187,7 +213,7 @@ export function hydrate(
     if (promise) {
       // Note: `Promise.resolve` required cause
       // RSC transformed promises are not thenable
-      const initialPromise = Promise.resolve(promise).then(transformData)
+      const initialPromise = Promise.resolve(promise).then(deserializeData)
 
       // this doesn't actually fetch - it just creates a retryer
       // which will re-use the passed `initialPromise`

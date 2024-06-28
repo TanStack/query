@@ -22,12 +22,13 @@ export function makeQueryClient() {
          * Called when the query is rebuilt from a prefetched
          * promise, before the query data is put into the cache.
          */
-        transformData: tson.deserialize,
+        deserializeData: tson.deserialize,
       },
       queries: {
         staleTime: 60 * 1000,
       },
       dehydrate: {
+        serializeData: tson.serialize,
         shouldDehydrateQuery: (query) =>
           defaultShouldDehydrateQuery(query) ||
           query.state.status === 'pending',

@@ -13,10 +13,10 @@ export default async function Home() {
     queryKey: ['data'],
     queryFn: async () => {
       await sleep(2000)
-      return tson.serialize({
+      return {
         text: 'data from server',
         date: Temporal.PlainDate.from('2024-01-01'),
-      })
+      }
     },
   })
 
