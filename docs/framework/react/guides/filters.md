@@ -70,3 +70,28 @@ A mutation filter object supports the following properties:
   - Allows for filtering mutations according to their status.
 - `predicate?: (mutation: Mutation) => boolean`
   - This predicate function will be used as a final filter on all matching mutations. If no other filters are specified, this function will be evaluated against every mutation in the cache.
+
+## Utils
+
+### `matchQuery`
+
+```tsx
+const isMatching = matchQuery(
+  filters,
+  query
+)
+```
+
+Returns a boolean that indicates whether a query matches the provided set of filters. 
+
+
+### `matchMutation`
+
+```tsx
+const isMatching = matchMutation(
+  filters,
+  mutation
+)
+```
+
+Returns a boolean that indicates whether a mutation matches the provided set of filters. 
