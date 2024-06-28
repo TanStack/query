@@ -37,7 +37,7 @@ const dehydratedState = dehydrate(queryClient, {
       - Return `true` to include this query in dehydration, or `false` otherwise
     - Defaults to only including successful queries
     - If you would like to extend the function while retaining the default behavior, import and execute `defaultShouldDehydrateQuery` as part of the return statement
-    - `serializeData?: (data: any) => any` A function to transform (serialize) data during dehydration.
+  - `serializeData?: (data: any) => any` A function to transform (serialize) data during dehydration.
 
 **Returns**
 
