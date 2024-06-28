@@ -29,7 +29,7 @@
   "scripts": {
     "clean": "rimraf ./dist && rimraf ./coverage",
     "test:types": "svelte-check --tsconfig ./tsconfig.json",
-    "test:eslint": "eslint --ext .svelte,.ts ./src",
+    "test:eslint": "eslint ./src",
     "test:build": "publint --strict",
     "test:attw": "attw --pack",
     "build": "svelte-package --input ./src --output ./dist"
@@ -44,8 +44,7 @@
     "@tanstack/svelte-query": "workspace:*",
     "eslint-plugin-svelte": "^2.40.0",
     "svelte": "^4.2.17",
-    "svelte-check": "^3.7.1",
-    "svelte-eslint-parser": "^0.39.1"
+    "svelte-check": "^3.7.1"
   },
   "peerDependencies": {
     "@tanstack/svelte-query": "workspace:^",

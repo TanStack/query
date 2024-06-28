@@ -34,7 +34,7 @@
   "sideEffects": false,
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
-    "test:eslint": "eslint --ext .ts,.tsx ./src",
+    "test:eslint": "eslint ./src",
     "test:types": "vue-demi-switch 3 && pnpm run \"/^test:types:ts[0-9]{2}$/\"",
     "test:types:ts47": "node ../../node_modules/typescript47/lib/tsc.js -p tsconfig.legacy.json",
     "test:types:ts48": "node ../../node_modules/typescript48/lib/tsc.js -p tsconfig.legacy.json",
@@ -74,6 +74,7 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue/composition-api": "1.7.2",
+    "eslint-plugin-vue": "^9.26.0",
     "vue": "^3.4.27",
     "vue2": "npm:vue@2.6",
     "vue2.7": "npm:vue@2.7"

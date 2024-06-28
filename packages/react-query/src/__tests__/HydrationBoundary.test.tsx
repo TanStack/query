@@ -1,9 +1,8 @@
-import { beforeAll, describe, expect, test } from 'vitest'
+import { beforeAll, describe, expect, test, vi } from 'vitest'
 import * as React from 'react'
 import { render } from '@testing-library/react'
 
 import * as coreModule from '@tanstack/query-core'
-import { vi } from 'vitest'
 import {
   HydrationBoundary,
   QueryCache,

@@ -131,9 +131,9 @@ export function hydrate(
   const queryCache = client.getQueryCache()
   const transformData = client.getDefaultOptions().hydrate?.transformData
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  // eslint-disable-next-line ts/no-unnecessary-condition
   const mutations = (dehydratedState as DehydratedState).mutations || []
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  // eslint-disable-next-line ts/no-unnecessary-condition
   const queries = (dehydratedState as DehydratedState).queries || []
 
   mutations.forEach(({ state, ...mutationOptions }) => {
