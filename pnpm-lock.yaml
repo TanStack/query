@@ -103,9 +103,6 @@ importers:
       typescript:
         specifier: 5.3.3
         version: 5.3.3
-      typescript-eslint:
-        specifier: ^7.14.1
-        version: 7.14.1(eslint@8.57.0)(typescript@5.3.3)
       typescript47:
         specifier: npm:typescript@4.7
         version: typescript@4.7.4
