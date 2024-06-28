@@ -174,7 +174,8 @@ export function hydrate(
   queries.forEach(({ queryKey, state, queryHash, meta, promise }) => {
     let query = queryCache.get(queryHash)
 
-    const data = state.data === undefined ? state.data : deserializeData(state.data)
+    const data =
+      state.data === undefined ? state.data : deserializeData(state.data)
 
     // Do not hydrate if an existing query exists with newer data
     if (query) {
