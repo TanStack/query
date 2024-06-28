@@ -1,12 +1,7 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const createUtilsObject = require('../utils/index.cjs')
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const createKeyReplacer = require('./utils/replacers/key-replacer.cjs')
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const createUseQueryLikeTransformer = require('../utils/transformers/use-query-like-transformer.cjs')
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const createQueryClientTransformer = require('../utils/transformers/query-client-transformer.cjs')
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const createQueryCacheTransformer = require('../utils/transformers/query-cache-transformer.cjs')
 
 const transformQueryClientUsages = ({

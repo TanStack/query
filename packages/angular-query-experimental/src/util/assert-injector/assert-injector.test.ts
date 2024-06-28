@@ -1,4 +1,4 @@
-/* eslint-disable @cspell/spellchecker */
+/* eslint-disable cspell/spellchecker */
 /**
  * The code in this file is adapted from NG Extension Platform at https://ngxtension.netlify.app.
  *
