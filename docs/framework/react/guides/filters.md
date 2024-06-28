@@ -82,7 +82,7 @@ const isMatching = matchQuery(
 )
 ```
 
-Returns a boolean that indicates whether a query matches the provided set of filters. 
+Returns a boolean that indicates whether a query matches the provided set of query filters. 
 
 
 ### `matchMutation`
@@ -94,4 +94,4 @@ const isMatching = matchMutation(
 )
 ```
 
-Returns a boolean that indicates whether a mutation matches the provided set of filters. 
+Returns a boolean that indicates whether a mutation matches the provided set of mutation filters. 
