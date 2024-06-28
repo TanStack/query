@@ -978,4 +978,44 @@ describe('dehydration and rehydration', () => {
 
     queryClient.clear()
   })
+
+  test('should overwrite query in cache if hydrated query is newer (with transformation)', async () => {
+    const hydrationClient = createQueryClient({
+      defaultOptions: {
+        hydrate: {
+          transformData: (d) => new Date(d),
+        },
+      },
+    })
+    await hydrationClient.prefetchQuery({
+      queryKey: ['date'],
+      queryFn: () => fetchData('2024-01-01T00:00:00.000Z', 5),
+    })
+
+    // ---
+
+    const queryClient = createQueryClient({
+      defaultOptions: {
+        hydrate: {
+          transformData: (d) => new Date(d),
+        },
+      },
+    })
+    await queryClient.prefetchQuery({
+      queryKey: ['date'],
+      queryFn: () => fetchData('2024-01-02T00:00:00.000Z', 10),
+    })
+    const dehydrated = dehydrate(queryClient)
+
+    // ---
+
+    hydrate(hydrationClient, dehydrated)
+
+    expect(hydrationClient.getQueryData(['date'])).toStrictEqual(
+      new Date('2024-01-02T00:00:00.000Z'),
+    )
+
+    queryClient.clear()
+    hydrationClient.clear()
+  })
 })
