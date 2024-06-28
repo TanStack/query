@@ -174,6 +174,8 @@ export function hydrate(
   queries.forEach(({ queryKey, state, queryHash, meta, promise }) => {
     let query = queryCache.get(queryHash)
 
+    const data = state.data === undefined ? state.data : deserializeData(state.data)
+
     // Do not hydrate if an existing query exists with newer data
     if (query) {
       if (query.state.dataUpdatedAt < state.dataUpdatedAt) {
@@ -182,9 +184,7 @@ export function hydrate(
         const { fetchStatus: _ignored, ...serializedState } = state
         query.setState({
           ...serializedState,
-          ...(query.state.data !== undefined && {
-            data: deserializeData(state.data),
-          }),
+          data,
         })
       }
     } else {
@@ -202,9 +202,7 @@ export function hydrate(
         // query being stuck in fetching state upon hydration
         {
           ...state,
-          ...(state.data !== undefined && {
-            data: deserializeData(state.data),
-          }),
+          data,
           fetchStatus: 'idle',
         },
       )
