@@ -1,17 +1,17 @@
 <script lang="ts">
-  import PersistQueryClientProvider from '../../PersistQueryClientProvider.svelte'
-  import AwaitOnSuccess from './AwaitOnSuccess.svelte'
+  import PersistQueryClientProvider from '../../src/PersistQueryClientProvider.svelte'
+  import InitialData from './InitialData.svelte'
   import type { OmitKeyof, QueryClient } from '@tanstack/svelte-query'
   import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
   import type { Writable } from 'svelte/store'
+  import type { StatusResult } from '../utils'
 
   export let queryClient: QueryClient
   export let persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
   export let key: Array<string>
-  export let onSuccess: () => Promise<void>
-  export let states: Writable<Array<string>>
+  export let states: Writable<Array<StatusResult<string>>>
 </script>
 
-<PersistQueryClientProvider client={queryClient} {persistOptions} {onSuccess}>
-  <AwaitOnSuccess {key} {states} />
+<PersistQueryClientProvider client={queryClient} {persistOptions}>
+  <InitialData {key} {states} />
 </PersistQueryClientProvider>
