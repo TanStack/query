@@ -1,5 +1,4 @@
 {
-  "installCommand": "install:csb",
   "buildCommand": "build:csb",
   "sandboxes": [
     "/examples/angular/basic",
