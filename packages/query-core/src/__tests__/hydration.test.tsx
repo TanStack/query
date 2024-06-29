@@ -15,6 +15,11 @@ async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
   return value
 }
 
+async function fetchDate(value: string, ms?: number): Promise<Date> {
+  await sleep(ms || 0)
+  return new Date(value)
+}
+
 describe('dehydration and rehydration', () => {
   test('should work with serializable values', async () => {
     const queryCache = new QueryCache()
@@ -914,13 +919,14 @@ describe('dehydration and rehydration', () => {
       defaultOptions: {
         dehydrate: {
           shouldDehydrateQuery: () => true,
+          serializeData: (data) => data.toISOString(),
         },
       },
     })
 
     const promise = queryClient.prefetchQuery({
       queryKey: ['transformedStringToDate'],
-      queryFn: () => fetchData('2024-01-01T00:00:00.000Z', 20),
+      queryFn: () => fetchDate('2024-01-01T00:00:00.000Z', 20),
     })
     const dehydrated = dehydrate(queryClient)
     expect(dehydrated.queries[0]?.promise).toBeInstanceOf(Promise)
@@ -928,7 +934,7 @@ describe('dehydration and rehydration', () => {
     const hydrationClient = createQueryClient({
       defaultOptions: {
         hydrate: {
-          transformPromise: (p) => p.then((d) => new Date(d)),
+          deserializeData: (data) => new Date(data),
         },
       },
     })
@@ -942,5 +948,82 @@ describe('dehydration and rehydration', () => {
     )
 
     queryClient.clear()
+  })
+
+  test('should transform query data if promise is already resolved', async () => {
+    const queryClient = createQueryClient({
+      defaultOptions: {
+        dehydrate: {
+          shouldDehydrateQuery: () => true,
+          serializeData: (data) => data.toISOString(),
+        },
+      },
+    })
+
+    const promise = queryClient.prefetchQuery({
+      queryKey: ['transformedStringToDate'],
+      queryFn: () => fetchDate('2024-01-01T00:00:00.000Z', 0),
+    })
+    await sleep(20)
+    const dehydrated = dehydrate(queryClient)
+
+    const hydrationClient = createQueryClient({
+      defaultOptions: {
+        hydrate: {
+          deserializeData: (data) => new Date(data),
+        },
+      },
+    })
+
+    hydrate(hydrationClient, dehydrated)
+    await promise
+    await waitFor(() =>
+      expect(
+        hydrationClient.getQueryData(['transformedStringToDate']),
+      ).toBeInstanceOf(Date),
+    )
+
+    queryClient.clear()
+  })
+
+  test('should overwrite query in cache if hydrated query is newer (with transformation)', async () => {
+    const hydrationClient = createQueryClient({
+      defaultOptions: {
+        hydrate: {
+          deserializeData: (data) => new Date(data),
+        },
+      },
+    })
+    await hydrationClient.prefetchQuery({
+      queryKey: ['date'],
+      queryFn: () => fetchDate('2024-01-01T00:00:00.000Z', 5),
+    })
+
+    // ---
+
+    const queryClient = createQueryClient({
+      defaultOptions: {
+        dehydrate: {
+          shouldDehydrateQuery: () => true,
+          serializeData: (data) => data.toISOString(),
+        },
+      },
+    })
+    await queryClient.prefetchQuery({
+      queryKey: ['date'],
+      queryFn: () => fetchDate('2024-01-02T00:00:00.000Z', 10),
+    })
+    const dehydrated = dehydrate(queryClient)
+
+    // ---
+
+    hydrate(hydrationClient, dehydrated)
+
+    expect(hydrationClient.getQueryData(['date'])).toStrictEqual(
+      new Date('2024-01-02T00:00:00.000Z'),
+    )
+
+    queryClient.clear()
+    hydrationClient.clear()
   })
 })
