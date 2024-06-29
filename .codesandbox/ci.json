@@ -1,5 +1,6 @@
 {
-  "buildCommand": "nx run-many --target=build --exclude=examples/** --exclude=integrations/**",
+  "installCommand": "install:csb",
+  "buildCommand": "build:csb",
   "sandboxes": [
     "/examples/angular/basic",
     "/examples/react/basic-typescript",
