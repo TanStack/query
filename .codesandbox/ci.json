@@ -9,5 +9,5 @@
     "/examples/vue/basic"
   ],
   "packages": ["packages/**"],
-  "node": "18"
+  "node": "20"
 }
