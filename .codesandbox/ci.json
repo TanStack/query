@@ -1,5 +1,5 @@
 {
-  "installCommand": "pnpm install --frozen-lockfile",
+  "installCommand": "install --frozen-lockfile",
   "buildCommand": "nx run-many --target=build --exclude=examples/** --exclude=integrations/**",
   "sandboxes": [
     "/examples/angular/basic",
