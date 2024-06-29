@@ -37,10 +37,7 @@ export default [
       ],
       'ts/ban-types': 'off',
       'ts/no-empty-function': 'off',
-      'ts/require-await': 'off',
       'no-case-declarations': 'off',
-      'no-empty': 'off',
-      'no-prototype-builtins': 'off',
     },
   },
 ]

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import PersistQueryClientProvider from '../../PersistQueryClientProvider.svelte'
+  import PersistQueryClientProvider from '../../src/PersistQueryClientProvider.svelte'
   import UseQueries from './UseQueries.svelte'
   import type { OmitKeyof, QueryClient } from '@tanstack/svelte-query'
   import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
