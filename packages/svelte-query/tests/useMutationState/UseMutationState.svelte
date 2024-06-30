@@ -1,12 +1,12 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
-  import { setQueryClientContext } from '../src/context'
-  import { createMutation } from '../src/createMutation'
-  import { useMutationState } from '../src/useMutationState'
+  import { setQueryClientContext } from '../../src/context'
+  import { createMutation } from '../../src/createMutation'
+  import { useMutationState } from '../../src/useMutationState'
   import type {
     CreateMutationOptions,
     MutationStateOptions,
-  } from '../src/types'
+  } from '../../src/types'
 
   export let successMutationOpts: CreateMutationOptions
   export let errorMutationOpts: CreateMutationOptions

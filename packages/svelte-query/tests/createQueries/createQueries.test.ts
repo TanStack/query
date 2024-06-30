@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { render, waitFor } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
+import { sleep } from '../utils'
 import CreateQueries from './CreateQueries.svelte'
-import { sleep } from './utils'
 
 describe('createQueries', () => {
   it('Render and wait for success', async () => {
