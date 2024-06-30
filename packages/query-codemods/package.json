@@ -10,13 +10,13 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "type": "commonjs",
+  "type": "module",
   "exports": {
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "scripts": {
-    "test:eslint": "eslint --ext .ts,.tsx ./src",
+    "test:eslint": "eslint ./src",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch"
   },

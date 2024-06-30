@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@tanstack/react-query": "^5.45.1",
-    "@tanstack/react-query-devtools": "^5.45.1",
+    "@tanstack/react-query": "^5.49.2",
+    "@tanstack/react-query-devtools": "^5.49.2",
     "axios": "^1.6.8",
     "font-awesome": "^4.7.0",
     "react": "19.0.0-rc-4c2e457c7c-20240522",

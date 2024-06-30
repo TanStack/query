@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-devtools-experimental",
-  "version": "5.45.0",
+  "version": "5.49.1",
   "description": "Developer tools to interact with and visualize the TanStack/angular-query cache",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -21,10 +21,12 @@
   ],
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
-    "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "test:types": "tsc",
-    "test:build": "publint --strict",
-    "test:attw": "attw --pack",
+    "test:eslint": "eslint ./src",
+    "test:types": "pnpm run \"/^test:types:ts[0-9]{2}$/\"",
+    "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js",
+    "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js",
+    "test:types:ts53": "tsc",
+    "test:build": "publint --strict && attw --pack",
     "build": "ng-packagr -p ng-package.json -c tsconfig.build.json && rimraf ./build/package.json"
   },
   "dependencies": {
@@ -36,7 +38,7 @@
     "@angular/core": "^17.3.10",
     "@angular/common": "^17.3.10",
     "@tanstack/angular-query-experimental": "workspace:*",
-    "eslint-plugin-jsdoc": "^48.2.7",
+    "eslint-plugin-jsdoc": "^48.2.13",
     "ng-packagr": "^17.3.0",
     "typescript": "5.3.3",
     "zone.js": "^0.14.6"

@@ -1,12 +1,17 @@
 {
   "extends": "../../tsconfig.json",
-  "compilerOptions": { "verbatimModuleSyntax": true },
+  "compilerOptions": {
+    "moduleResolution": "Bundler"
+  },
   "include": [
     "src/**/*.js",
     "src/**/*.ts",
     "src/**/*.svelte",
-    ".eslintrc.cjs",
-    "test-setup.ts",
+    "tests/**/*.js",
+    "tests/**/*.ts",
+    "tests/**/*.svelte",
+    "eslint.config.js",
+    "svelte.config.js",
     "vite.config.ts"
   ]
 }

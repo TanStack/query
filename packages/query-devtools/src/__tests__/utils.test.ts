@@ -91,7 +91,7 @@ describe('Utils tests', () => {
           ['fr', 'bonjour'],
         ])
 
-        /* eslint-disable @cspell/spellchecker */
+        /* eslint-disable cspell/spellchecker */
         const newData = updateNestedDataByPath(oldData, ['fr'], 'salut')
 
         expect(newData).not.toBe(oldData) // should not be the same reference
@@ -114,7 +114,7 @@ describe('Utils tests', () => {
 
     describe('nested data', () => {
       it('should update data correctly', async () => {
-        /* eslint-disable @cspell/spellchecker */
+        /* eslint-disable cspell/spellchecker */
         const oldData = new Map([
           [
             'pumpkin-pie',
@@ -473,7 +473,7 @@ describe('Utils tests', () => {
 
     describe('nested data', () => {
       it('should delete nested items correctly', async () => {
-        /* eslint-disable @cspell/spellchecker */
+        /* eslint-disable cspell/spellchecker */
         const oldData = new Map([
           [
             'pumpkin-pie',

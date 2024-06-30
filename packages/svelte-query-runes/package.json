@@ -36,16 +36,14 @@
   "scripts": {
     "clean": "rimraf ./dist && rimraf ./coverage",
     "test:types": "svelte-check --tsconfig ./tsconfig.json",
-    "test:eslint": "eslint --ext .svelte,.ts ./src",
-    "test:lib": "vitest run --coverage",
+    "test:eslint": "eslint ./src",
+    "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict",
-    "build": "svelte-package --input ./src --output ./dist",
-    "package": "svelte-package --input ./src && publint",
-    "pack": "pnpm pack --pack-destination"
+    "build": "svelte-package --input ./src --output ./dist"
   },
   "dependencies": {
-    "@tanstack/query-core": "latest"
+    "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
     "@sveltejs/package": "^2.3.1",
@@ -53,8 +51,7 @@
     "@testing-library/svelte": "^5.1.0",
     "eslint-plugin-svelte": "^2.39.0",
     "svelte": "5.0.0-next.105",
-    "svelte-check": "^3.7.1",
-    "svelte-eslint-parser": "^0.36.0"
+    "svelte-check": "^3.7.1"
   },
   "peerDependencies": {
     "svelte": "^5.0.0-next.105"

@@ -1,17 +1,18 @@
 {
   "name": "@tanstack/query-example-react-prefetching",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next",
     "build": "next build",
     "start": "next start"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.45.1",
-    "@tanstack/react-query-devtools": "^5.45.1",
+    "@tanstack/react-query": "^5.49.2",
+    "@tanstack/react-query-devtools": "^5.49.2",
     "axios": "^1.6.8",
     "isomorphic-unfetch": "4.0.2",
-    "next": "^14.0.0",
+    "next": "^14.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   }

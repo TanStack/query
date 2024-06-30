@@ -432,24 +432,23 @@ export default function Posts() {
 
 > Note that you could also `useQuery` instead of `useSuspenseQuery`, and the Promise would still be picked up correctly. However, NextJs won't suspend in that case and the component will render in the `pending` status, which also opts out of server rendering the content.
 
-If you're using non-JSON data types and serialize the query results on the server, you can specify the `hydrate.transformPromise` option to deserialize the data on the client after the promise is resolved, before the data is put into the cache:
+If you're using non-JSON data types and serialize the query results on the server, you can specify the `dehydrate.serializeData` and `hydrate.deserializeData` options to serialize and deserialize the data on each side of the boundary to ensure the data in the cache is the same format both on the server and the client:
 
 ```tsx
 // app/get-query-client.ts
 import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query'
-import { deserialize } from './transformer'
+import { deserialize, serialize } from './transformer'
 
 export function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
-      hydrate: {
-        /**
-         * Called when the query is rebuilt from a prefetched
-         * promise, before the query data is put into the cache.
-         */
-        transformPromise: (promise) => promise.then(deserialize),
-      },
       // ...
+      hydrate: {
+        deserializeData: deserialize,
+      },
+      dehydrate: {
+        serializeData: serialize,
+      },
     },
   })
 }
@@ -471,7 +470,7 @@ export default function PostsPage() {
   // look ma, no await
   queryClient.prefetchQuery({
     queryKey: ['posts'],
-    queryFn: () => getPosts().then(serialize), // <-- serilize the data on the server
+    queryFn: () => getPosts().then(serialize), // <-- serialize the data on the server
   })
 
   return (
