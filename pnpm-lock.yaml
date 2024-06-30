@@ -327,10 +327,10 @@ importers:
         specifier: 4.23.3
         version: 4.23.3
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       algoliasearch:
         specifier: 4.23.3
@@ -364,10 +364,10 @@ importers:
   examples/react/auto-refetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.8
@@ -388,10 +388,10 @@ importers:
   examples/react/basic:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.8
@@ -416,10 +416,10 @@ importers:
   examples/react/basic-graphql-request:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       graphql:
         specifier: ^16.8.1
@@ -447,13 +447,13 @@ importers:
         specifier: ^5.49.1
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-persist-client
       axios:
         specifier: ^1.6.8
@@ -493,10 +493,10 @@ importers:
   examples/react/default-query-function:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.8
@@ -518,10 +518,10 @@ importers:
   examples/react/infinite-query-with-max-pages:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.8
@@ -545,10 +545,10 @@ importers:
   examples/react/load-more-infinite-scroll:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.8
@@ -572,10 +572,10 @@ importers:
   examples/react/nextjs:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       ky:
         specifier: ^1.2.4
@@ -599,10 +599,10 @@ importers:
   examples/react/nextjs-app-prefetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^15.0.0-rc.0
@@ -630,13 +630,13 @@ importers:
   examples/react/nextjs-suspense-streaming:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-next-experimental':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-next-experimental
       next:
         specifier: ^14.2.4
@@ -670,13 +670,13 @@ importers:
         specifier: ^3.7.4
         version: 3.7.4(react-dom@19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522))(react@19.0.0-rc-4c2e457c7c-20240522)
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-persist-client
       ky:
         specifier: ^1.2.4
@@ -704,10 +704,10 @@ importers:
   examples/react/optimistic-updates-cache:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.8
@@ -741,10 +741,10 @@ importers:
   examples/react/optimistic-updates-ui:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.8
@@ -778,10 +778,10 @@ importers:
   examples/react/pagination:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.8
@@ -802,10 +802,10 @@ importers:
   examples/react/playground:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
@@ -824,10 +824,10 @@ importers:
   examples/react/prefetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.8
@@ -857,10 +857,10 @@ importers:
         specifier: ^6.3.16
         version: 6.3.16(yri22tnekttmcucjv33ecr33bu)
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       expo:
         specifier: ^51.0.8
@@ -909,10 +909,10 @@ importers:
   examples/react/react-router:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       localforage:
         specifier: ^1.10.0
@@ -973,10 +973,10 @@ importers:
         specifier: ^5.15.18
         version: 5.15.18(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
@@ -1001,10 +1001,10 @@ importers:
   examples/react/shadow-dom:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
@@ -1047,10 +1047,10 @@ importers:
   examples/react/simple:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.8
@@ -1084,10 +1084,10 @@ importers:
         specifier: ^5.15.18
         version: 5.15.18(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
@@ -1112,10 +1112,10 @@ importers:
   examples/react/suspense:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.49.1
+        specifier: ^5.49.2
         version: link:../../../packages/react-query-devtools
       axios:
         specifier: ^1.6.8
@@ -22601,7 +22601,11 @@ snapshots:
       jest-runner: 26.6.3
       jest-runtime: 26.6.3
     transitivePeerDependencies:
+      - bufferutil
+      - canvas
       - supports-color
+      - ts-node
+      - utf-8-validate
 
   '@jest/test-sequencer@27.5.1':
     dependencies:
@@ -31269,7 +31273,11 @@ snapshots:
       stack-utils: 2.0.6
       throat: 5.0.0
     transitivePeerDependencies:
+      - bufferutil
+      - canvas
       - supports-color
+      - ts-node
+      - utf-8-validate
 
   jest-circus@27.5.1:
     dependencies:
