@@ -111,7 +111,7 @@ export function createBaseQuery<
   //update result
   $effect(() => {
     // svelte does not need this with it is proxy state and fine-grained reactivity?
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    // eslint-disable-next-line ts/no-unnecessary-condition
     if (result !== null)
       untrack(() => {
         const v = !defaultedOptionsStore().notifyOnChangeProps

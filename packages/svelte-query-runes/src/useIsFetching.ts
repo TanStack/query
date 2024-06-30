@@ -3,7 +3,6 @@ import {
   type QueryFilters,
   notifyManager,
 } from '@tanstack/query-core'
-import { readable } from 'svelte/store'
 import { useQueryClient } from './useQueryClient'
 
 export function useIsFetching(

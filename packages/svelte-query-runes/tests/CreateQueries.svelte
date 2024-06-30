@@ -1,7 +1,10 @@
 <script lang="ts">
-  import { createQueries } from '../createQueries.svelte'
+  import { createQueries } from '../src/createQueries.svelte'
   import type { QueryClient } from '@tanstack/query-core'
-  import type { QueriesOptions, QueriesResults } from '../createQueries.svelte'
+  import type {
+    QueriesOptions,
+    QueriesResults,
+  } from '../src/createQueries.svelte'
 
   export let options: {
     queries: [...QueriesOptions<any>]
