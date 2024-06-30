@@ -42,8 +42,7 @@
     "clean": "rimraf ./build && rimraf ./coverage",
     "test:eslint": "eslint ./src",
     "test:types": "vue-tsc",
-    "test:build": "publint --strict",
-    "test:attw": "attw --pack",
+    "test:build": "publint --strict && attw --pack",
     "build": "vite build"
   },
   "dependencies": {
