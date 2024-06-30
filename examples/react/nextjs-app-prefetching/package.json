@@ -1,6 +1,7 @@
 {
   "name": "nextjs-app-prefetching",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
