@@ -49,7 +49,7 @@ export function useBaseQuery<
   const errorResetBoundary = useQueryErrorResetBoundary()
   const defaultedOptions = client.defaultQueryOptions(options)
 
-  ;(client.getDefaultOptions().queries as any)._experimental_beforeQuery?.(
+  ;(client.getDefaultOptions().queries as any)?._experimental_beforeQuery?.(
     defaultedOptions,
   )
 
@@ -125,7 +125,7 @@ export function useBaseQuery<
     throw result.error
   }
 
-  ;(client.getDefaultOptions().queries as any)._experimental_afterQuery?.(
+  ;(client.getDefaultOptions().queries as any)?._experimental_afterQuery?.(
     defaultedOptions,
     result,
   )
