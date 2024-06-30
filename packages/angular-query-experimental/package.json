@@ -44,8 +44,7 @@
     "test:types:ts53": "tsc",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict",
-    "test:attw": "attw --pack",
+    "test:build": "publint --strict && attw --pack",
     "build": "ng-packagr -p ng-package.json -c tsconfig.build.json && rimraf ./build/package.json && api-extractor run --local"
   },
   "dependencies": {
