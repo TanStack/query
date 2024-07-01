@@ -12,3 +12,9 @@ There are lots of community projects that build on top of Vue Query and use it t
 A library for creating typesafe standardized query keys, useful for cache management in `@tanstack/query`
 
 Link: https://github.com/lukemorales/query-key-factory
+
+## Model: Unified Data Source
+
+Zova provides the Model mechanism based on Vue Query in the MVC architecture, encapsulating unified data sources through Model, thereby standardizing the use of data, simplifying the code structure, and improving the maintainability of the code
+
+Link: https://github.com/cabloy/zova
