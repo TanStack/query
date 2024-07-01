@@ -269,31 +269,26 @@ export function useQueries<
 
   const client = queryClient || useQueryClient()
 
-  const defaultedQueries = computed(() =>
+  const defaultedQueries = computed(() => {
     // Only unref the top level array.
-    (
-      unref(
-        queries as MaybeRefDeep<UseQueriesOptionsArg<any>>,
-      ) as ReadonlyArray<any>
-    ) // Can only be an array here after unref.
-      .map(
-        // Unref the rest for each element in the top level array.
-        (queryOptions) => {
-          const clonedOptions = cloneDeepUnref(queryOptions)
+    const queriesRaw = unref(queries) as ReadonlyArray<any>
 
-          if (typeof clonedOptions.enabled === 'function') {
-            clonedOptions.enabled = queryOptions.enabled()
-          }
+    // Unref the rest for each element in the top level array.
+    return queriesRaw.map((queryOptions) => {
+      const clonedOptions = cloneDeepUnref(queryOptions)
 
-          const defaulted = client.defaultQueryOptions(clonedOptions)
-          defaulted._optimisticResults = client.isRestoring.value
-            ? 'isRestoring'
-            : 'optimistic'
+      if (typeof clonedOptions.enabled === 'function') {
+        clonedOptions.enabled = queryOptions.enabled()
+      }
 
-          return defaulted
-        },
-      ),
-  )
+      const defaulted = client.defaultQueryOptions(clonedOptions)
+      defaulted._optimisticResults = client.isRestoring.value
+        ? 'isRestoring'
+        : 'optimistic'
+
+      return defaulted
+    })
+  })
 
   const observer = new QueriesObserver<TCombinedResult>(
     client,
