@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-core",
-  "version": "5.48.0",
+  "version": "5.49.1",
   "description": "The framework agnostic core that powers TanStack Query",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -49,8 +49,7 @@
     "test:types:ts53": "tsc",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict",
-    "test:attw": "attw --pack",
+    "test:build": "publint --strict && attw --pack",
     "build": "tsup"
   }
 }

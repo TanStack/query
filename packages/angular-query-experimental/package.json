@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-experimental",
-  "version": "5.48.0",
+  "version": "5.49.1",
   "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -44,8 +44,7 @@
     "test:types:ts53": "tsc",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict",
-    "test:attw": "attw --pack",
+    "test:build": "publint --strict && attw --pack",
     "build": "ng-packagr -p ng-package.json -c tsconfig.build.json && rimraf ./build/package.json && api-extractor run --local"
   },
   "dependencies": {

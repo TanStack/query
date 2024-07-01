@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-broadcast-client-experimental",
-  "version": "5.48.0",
+  "version": "5.49.1",
   "description": "An experimental plugin to for broadcasting the state of your queryClient between browser tabs/windows",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -44,8 +44,7 @@
     "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js",
     "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js",
     "test:types:ts53": "tsc",
-    "test:build": "publint --strict",
-    "test:attw": "attw --pack",
+    "test:build": "publint --strict && attw --pack",
     "build": "tsup"
   },
   "dependencies": {

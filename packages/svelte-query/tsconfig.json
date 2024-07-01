@@ -11,6 +11,7 @@
     "tests/**/*.ts",
     "tests/**/*.svelte",
     "eslint.config.js",
+    "svelte.config.js",
     "vite.config.ts"
   ]
 }

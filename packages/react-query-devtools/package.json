@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-devtools",
-  "version": "5.48.0",
+  "version": "5.49.2",
   "description": "Developer tools to interact with and visualize the TanStack/react-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -66,8 +66,7 @@
     "test:types:ts53": "tsc",
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict",
-    "test:attw": "attw --pack",
+    "test:build": "publint --strict && attw --pack",
     "build": "tsup",
     "build:dev": "tsup --watch"
   },

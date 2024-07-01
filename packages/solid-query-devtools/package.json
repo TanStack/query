@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query-devtools",
-  "version": "5.48.0",
+  "version": "5.49.1",
   "description": "Developer tools to interact with and visualize the TanStack/solid-query Query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -41,8 +41,7 @@
     "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js",
     "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js",
     "test:types:ts53": "tsc",
-    "test:build": "publint --strict",
-    "test:attw": "attw --pack",
+    "test:build": "publint --strict && attw --pack",
     "build": "tsup",
     "build:dev": "tsup --watch"
   },
