@@ -1,13 +1,14 @@
 import { describe, expect, test } from 'vitest'
-import { render, waitFor } from '@testing-library/svelte'
+import { fireEvent, render, waitFor } from '@testing-library/svelte'
 import { derived, writable } from 'svelte/store'
 import { QueryClient } from '@tanstack/query-core'
 import { sleep } from '../utils'
-import CreateQuery from './CreateQuery.svelte'
+import BaseExample from './BaseExample.svelte'
+import DisabledExample from './DisabledExample.svelte'
 
 describe('createQuery', () => {
   test('Render and wait for success', async () => {
-    const rendered = render(CreateQuery, {
+    const rendered = render(BaseExample, {
       props: {
         options: {
           queryKey: ['test'],
@@ -38,7 +39,7 @@ describe('createQuery', () => {
       },
     })
 
-    const rendered = render(CreateQuery, {
+    const rendered = render(BaseExample, {
       props: {
         options: optionsStore,
         queryClient: new QueryClient(),
@@ -61,7 +62,7 @@ describe('createQuery', () => {
       },
     }))
 
-    const rendered = render(CreateQuery, {
+    const rendered = render(BaseExample, {
       props: {
         options: derivedStore,
         queryClient: new QueryClient(),
@@ -84,7 +85,7 @@ describe('createQuery', () => {
       },
     }))
 
-    const rendered = render(CreateQuery, {
+    const rendered = render(BaseExample, {
       props: {
         options: derivedStore,
         queryClient: new QueryClient({
@@ -125,7 +126,7 @@ describe('createQuery', () => {
       placeholderData: (previousData: string) => previousData,
     }))
 
-    const rendered = render(CreateQuery, {
+    const rendered = render(BaseExample, {
       props: {
         options: derivedStore,
         queryClient: new QueryClient(),
@@ -152,6 +153,19 @@ describe('createQuery', () => {
     await waitFor(() => {
       expect(rendered.queryByText('Success 1')).toBeInTheDocument()
       expect(rendered.queryByText('Success 2')).toBeInTheDocument()
+    })
+  })
+
+  test('Should not fetch when switching to a disabled query', async () => {
+    const rendered = render(DisabledExample)
+
+    await waitFor(() => rendered.getByText('Data: 0'))
+
+    fireEvent.click(rendered.getByRole('button', { name: /Increment/i }))
+
+    await waitFor(() => {
+      rendered.getByText('Count: 1')
+      rendered.getByText('Data: undefined')
     })
   })
 })
