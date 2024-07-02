@@ -56,7 +56,7 @@ function usePosts() {
               }
             }
           }
-        `,
+        `
       )
       return data
     },
@@ -108,9 +108,9 @@ function Posts({ setPostId }) {
 }
 
 function usePost(postId) {
-  return useQuery(
-    ['post', postId],
-    async () => {
+  return useQuery({
+    queryKey: ['post', postId],
+    queryFn: async () => {
       const { post } = await request(
         endpoint,
         gql`
@@ -121,15 +121,12 @@ function usePost(postId) {
             body
           }
         }
-        `,
+        `
       )
-
       return post
     },
-    {
-      enabled: !!postId,
-    },
-  )
+    enabled: postId > -1,
+  })
 }
 
 function Post({ postId, setPostId }) {
