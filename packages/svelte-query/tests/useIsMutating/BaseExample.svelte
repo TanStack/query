@@ -17,8 +17,6 @@
     },
     queryClient,
   )
-
-  $: console.log(isMutating)
 </script>
 
 <button on:click={() => $mutation.mutate()}>Trigger</button>
