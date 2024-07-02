@@ -89,11 +89,9 @@ export type CreateMutationOptions<
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> = StoreOrVal<
-  OmitKeyof<
-    MutationObserverOptions<TData, TError, TVariables, TContext>,
-    '_defaulted'
-  >
+> = OmitKeyof<
+  MutationObserverOptions<TData, TError, TVariables, TContext>,
+  '_defaulted'
 >
 
 export type CreateMutateFunction<

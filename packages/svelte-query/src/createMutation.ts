@@ -6,6 +6,7 @@ import type {
   CreateMutateFunction,
   CreateMutationOptions,
   CreateMutationResult,
+  StoreOrVal,
 } from './types'
 import type { DefaultError, QueryClient } from '@tanstack/query-core'
 
@@ -15,7 +16,9 @@ export function createMutation<
   TVariables = void,
   TContext = unknown,
 >(
-  options: CreateMutationOptions<TData, TError, TVariables, TContext>,
+  options: StoreOrVal<
+    CreateMutationOptions<TData, TError, TVariables, TContext>
+  >,
   queryClient?: QueryClient,
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
   const client = useQueryClient(queryClient)
