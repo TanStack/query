@@ -22,13 +22,13 @@ export function renderWithClient(
   } as any
 }
 
-export const Blink = ({
+export function Blink({
   duration,
   children,
 }: {
   duration: number
   children: React.ReactNode
-}) => {
+}) {
   const [shouldShow, setShouldShow] = React.useState<boolean>(true)
 
   React.useEffect(() => {

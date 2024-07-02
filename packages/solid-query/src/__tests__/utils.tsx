@@ -12,11 +12,11 @@ export function queryKey() {
   return [`query_${queryKeyCount}`]
 }
 
-export const Blink = (
+export function Blink(
   props: {
     duration: number
   } & ParentProps,
-) => {
+) {
   const [shouldShow, setShouldShow] = createSignal<boolean>(true)
 
   createEffect(() => {
