@@ -939,4 +939,39 @@ describe('query', () => {
     await sleep(60) // let it resolve
     expect(spy).toHaveBeenCalledWith('1 - 2')
   })
+
+  it('should call onError when setData throws', async () => {
+    const key = queryKey()
+
+    const queryFn = vi.fn<Array<unknown>, unknown>()
+
+    queryFn.mockImplementation(async () => {
+      await sleep(50)
+      const data: Array<{
+        id: number
+        name: string
+        link: null | { id: number; name: string; link: unknown }
+      }> = Array.from({ length: 5 })
+        .fill(null)
+        .map((_, index) => ({
+          id: index,
+          name: `name-${index}`,
+          link: null,
+        }))
+
+      if (data[0] && data[1]) {
+        data[0].link = data[1]
+        data[1].link = data[0]
+      }
+
+      return data
+    })
+
+    queryClient.prefetchQuery({ queryKey: key, queryFn })
+    const query = queryCache.find({ queryKey: key })!
+    await sleep(100)
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    await query.fetch()
+    expect(query.state.status).toBe('error')
+  })
 })
