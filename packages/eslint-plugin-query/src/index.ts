@@ -10,7 +10,7 @@ interface Plugin extends Omit<ESLint.Plugin, 'rules'> {
   rules: Record<RuleKey, RuleModule<any, any, any>>
 }
 
-const plugin: Plugin = {
+const plugin = {
   meta: {
     name: '@tanstack/eslint-plugin-query',
   },
@@ -19,6 +19,6 @@ const plugin: Plugin = {
     'flat/recommended': flatRecommended,
   },
   rules,
-}
+} satisfies Plugin
 
 export default plugin

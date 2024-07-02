@@ -1,6 +1,6 @@
 import type { Linter } from 'eslint'
 
-export const flatRecommended: Array<Linter.FlatConfig> = [
+export const flatRecommended = [
   {
     rules: {
       '@tanstack/query/exhaustive-deps': 'error',
@@ -8,4 +8,4 @@ export const flatRecommended: Array<Linter.FlatConfig> = [
       '@tanstack/query/stable-query-client': 'error',
     },
   },
-]
+] satisfies Array<Linter.FlatConfig>
