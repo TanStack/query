@@ -1,9 +1,9 @@
 import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
-import { describe, expectTypeOf, it } from 'vitest'
+import { describe, expectTypeOf, test } from 'vitest'
 import { queryOptions } from '../../src/queryOptions'
 
 describe('queryOptions', () => {
-  it('should not allow excess properties', () => {
+  test('Should not allow excess properties', () => {
     queryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
@@ -12,7 +12,7 @@ describe('queryOptions', () => {
     })
   })
 
-  it('should infer types for callbacks', () => {
+  test('Should infer types for callbacks', () => {
     queryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
@@ -23,7 +23,7 @@ describe('queryOptions', () => {
     })
   })
 
-  it('should work when passed to fetchQuery', async () => {
+  test('Should work when passed to fetchQuery', async () => {
     const options = queryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
@@ -33,7 +33,7 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<number>()
   })
 
-  it('should tag the queryKey with the result type of the QueryFn', () => {
+  test('Should tag the queryKey with the result type of the QueryFn', () => {
     const { queryKey } = queryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
@@ -42,7 +42,7 @@ describe('queryOptions', () => {
     expectTypeOf(queryKey[dataTagSymbol]).toEqualTypeOf<number>()
   })
 
-  it('should tag the queryKey even if no promise is returned', () => {
+  test('Should tag the queryKey even if no promise is returned', () => {
     const { queryKey } = queryOptions({
       queryKey: ['key'],
       queryFn: () => 5,
@@ -51,7 +51,7 @@ describe('queryOptions', () => {
     expectTypeOf(queryKey[dataTagSymbol]).toEqualTypeOf<number>()
   })
 
-  it('should tag the queryKey with unknown if there is no queryFn', () => {
+  test('Should tag the queryKey with unknown if there is no queryFn', () => {
     const { queryKey } = queryOptions({
       queryKey: ['key'],
     })
@@ -59,7 +59,7 @@ describe('queryOptions', () => {
     expectTypeOf(queryKey[dataTagSymbol]).toEqualTypeOf<unknown>()
   })
 
-  it('should tag the queryKey with the result type of the QueryFn if select is used', () => {
+  test('Should tag the queryKey with the result type of the QueryFn if select is used', () => {
     const { queryKey } = queryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
@@ -69,7 +69,7 @@ describe('queryOptions', () => {
     expectTypeOf(queryKey[dataTagSymbol]).toEqualTypeOf<number>()
   })
 
-  it('should return the proper type when passed to getQueryData', () => {
+  test('Should return the proper type when passed to getQueryData', () => {
     const { queryKey } = queryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
@@ -80,7 +80,7 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
 
-  it('should return the proper type when passed to getQueryState', () => {
+  test('Should return the proper type when passed to getQueryState', () => {
     const { queryKey } = queryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
@@ -91,7 +91,7 @@ describe('queryOptions', () => {
     expectTypeOf(state?.data).toEqualTypeOf<number | undefined>()
   })
 
-  it('should properly type updaterFn when passed to setQueryData', () => {
+  test('Should properly type updaterFn when passed to setQueryData', () => {
     const { queryKey } = queryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
@@ -105,7 +105,7 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
 
-  it('should properly type value when passed to setQueryData', () => {
+  test('Should properly type value when passed to setQueryData', () => {
     const { queryKey } = queryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
@@ -122,7 +122,7 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
 
-  it('should infer even if there is a conditional skipToken', () => {
+  test('Should infer even if there is a conditional skipToken', () => {
     const options = queryOptions({
       queryKey: ['key'],
       queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
@@ -133,7 +133,7 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
 
-  it('should infer to unknown if we disable a query with just a skipToken', () => {
+  test('Should infer to unknown if we disable a query with just a skipToken', () => {
     const options = queryOptions({
       queryKey: ['key'],
       queryFn: skipToken,
