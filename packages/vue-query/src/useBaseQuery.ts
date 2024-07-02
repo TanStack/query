@@ -85,10 +85,6 @@ export function useBaseQuery<
   const defaultedOptions = computed(() => {
     const clonedOptions = cloneDeepUnref(options as any)
 
-    if (typeof clonedOptions.enabled === 'function') {
-      clonedOptions.enabled = clonedOptions.enabled()
-    }
-
     const defaulted: DefaultedQueryObserverOptions<
       TQueryFnData,
       TError,
