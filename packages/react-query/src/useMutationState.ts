@@ -57,19 +57,20 @@ export function useMutationState<TResult = MutationState>(
   return React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
-        mutationCache.subscribe(() => {
-          const nextResult = replaceEqualDeep(
-            result.current,
-            getResult(mutationCache, optionsRef.current),
-          )
-          if (result.current !== nextResult) {
-            result.current = nextResult
-            notifyManager.schedule(onStoreChange)
-          }
-        }),
+        mutationCache.subscribe(notifyManager.batchCalls(onStoreChange)),
       [mutationCache],
     ),
-    () => result.current,
+    () => {
+      const nextResult = replaceEqualDeep(
+        result.current,
+        getResult(mutationCache, optionsRef.current),
+      )
+      if (result.current !== nextResult) {
+        result.current = nextResult
+      }
+
+      return result.current
+    },
     () => result.current,
   )!
 }
