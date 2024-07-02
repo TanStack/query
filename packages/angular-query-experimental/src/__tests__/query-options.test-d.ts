@@ -22,6 +22,25 @@ describe('queryOptions', () => {
       },
     })
   })
+
+  test('should allow undefined response in initialData', () => {
+    return (id: string | null) =>
+      queryOptions({
+        queryKey: ['todo', id],
+        queryFn: () =>
+          Promise.resolve({
+            id: '1',
+            title: 'Do Laundry',
+          }),
+        initialData: () =>
+          !id
+            ? undefined
+            : {
+                id,
+                title: 'Initial Data',
+              },
+      })
+  })
 })
 
 test('should work when passed to injectQuery', () => {
