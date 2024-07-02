@@ -1,12 +1,4 @@
 import pluginQuery from '@tanstack/eslint-plugin-query'
 import rootConfig from '../../../eslint.config.js'
 
-export default [
-  ...rootConfig,
-  ...pluginQuery.configs['flat/recommended'],
-  {
-    plugins: {
-      '@tanstack/query': pluginQuery,
-    },
-  },
-]
+export default [...rootConfig, ...pluginQuery.configs['flat/recommended']]
