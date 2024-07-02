@@ -1,4 +1,5 @@
 import { recommended } from './configs/recommended'
+import { flatRecommended } from './configs/flatRecommended'
 import { rules } from './rules'
 import type { ESLint } from 'eslint'
 import type { RuleModule } from '@typescript-eslint/utils/ts-eslint'
@@ -14,7 +15,8 @@ const plugin: Plugin = {
     name: '@tanstack/eslint-plugin-query',
   },
   configs: {
-    recommended,
+    recommended: recommended,
+    'flat/recommended': flatRecommended,
   },
   rules,
 }
