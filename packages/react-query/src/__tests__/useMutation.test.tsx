@@ -11,7 +11,7 @@ import {
   setActTimeout,
   sleep,
 } from './utils'
-import type { UseMutationResult } from '../types'
+import type { UseMutationOptions, UseMutationResult } from '../types'
 
 describe('useMutation', () => {
   const queryCache = new QueryCache()
@@ -355,6 +355,137 @@ describe('useMutation', () => {
       'mutateAsync.onSettled',
       'mutateAsync.error:oops',
     ])
+  })
+
+  it('should not be able to override side effects when callbacks are `undefined`', async () => {
+    const callbacks: Array<string> = []
+
+    const initialDefaultOptions = queryClient.getDefaultOptions()
+
+    queryClient.setDefaultOptions({
+      mutations: {
+        onMutate() {
+          callbacks.push('defaultOptions.onMutate')
+        },
+        onSettled() {
+          callbacks.push('defaultOptions.onSettled')
+        },
+        onSuccess() {
+          callbacks.push('defaultOptions.onSuccess')
+        },
+        onError() {
+          callbacks.push('defaultOptions.onError')
+        },
+      },
+    })
+
+    function Page() {
+      const { mutate: mutateForSuccess } = useMutation({
+        mutationFn: async (text: string) => text,
+        onMutate: undefined,
+        onSuccess: undefined,
+        onSettled: undefined,
+      })
+
+      const { mutate: mutateForError } = useMutation<string, Error>({
+        mutationFn: () => {
+          const err = new Error('useMutation.onError')
+          err.stack = ''
+          return Promise.reject(err)
+        },
+        onMutate: undefined,
+        onError: undefined,
+        onSettled: undefined,
+      })
+
+      React.useEffect(() => {
+        setActTimeout(async () => {
+          mutateForSuccess('success')
+        }, 10)
+        setActTimeout(async () => {
+          mutateForError()
+        }, 10)
+      }, [mutateForSuccess, mutateForError])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(100)
+
+    expect(callbacks).toEqual([
+      'defaultOptions.onMutate',
+      'defaultOptions.onSuccess',
+      'defaultOptions.onSettled',
+      'defaultOptions.onMutate',
+      'defaultOptions.onError',
+      'defaultOptions.onSettled',
+    ])
+
+    queryClient.setDefaultOptions(initialDefaultOptions)
+  })
+
+  it('should not be able to invoke default side effects when callbacks are null`', async () => {
+    const callbacks: Array<string> = []
+
+    const initialDefaultOptions = queryClient.getDefaultOptions()
+
+    queryClient.setDefaultOptions({
+      mutations: {
+        onMutate() {
+          callbacks.push('defaultOptions.onMutate')
+        },
+        onSettled() {
+          callbacks.push('defaultOptions.onSettled')
+        },
+        onSuccess() {
+          callbacks.push('defaultOptions.onSuccess')
+        },
+        onError() {
+          callbacks.push('defaultOptions.onError')
+        },
+      },
+    })
+
+    function Page() {
+      const { mutate: mutateForSuccess } = useMutation({
+        mutationFn: async (text: string) => text,
+        onMutate: null,
+        onSuccess: null,
+        onSettled: null,
+      })
+
+      const { mutate: mutateForError } = useMutation<string, Error>({
+        mutationFn: () => {
+          const err = new Error('useMutation.onError')
+          err.stack = ''
+          return Promise.reject(err)
+        },
+        onMutate: null,
+        onError: null,
+        onSettled: null,
+      })
+
+      React.useEffect(() => {
+        setActTimeout(async () => {
+          mutateForSuccess('success')
+        }, 10)
+        setActTimeout(async () => {
+          mutateForError()
+        }, 10)
+      }, [mutateForSuccess, mutateForError])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(100)
+
+    expect(callbacks).toEqual([])
+
+    queryClient.setDefaultOptions(initialDefaultOptions)
   })
 
   it('should be able to use mutation defaults', async () => {
