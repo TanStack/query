@@ -14,8 +14,8 @@ importers:
   .:
     devDependencies:
       '@arethetypeswrong/cli':
-        specifier: ^0.15.3
-        version: 0.15.3
+        specifier: ^0.16.0
+        version: 0.16.0
       '@cspell/eslint-plugin':
         specifier: ^8.9.1
         version: 8.9.1(eslint@8.57.0)
@@ -2546,8 +2546,8 @@ packages:
     peerDependencies:
       ajv: '>=8'
 
-  '@arethetypeswrong/cli@0.15.3':
-    resolution: {integrity: sha512-sIMA9ZJBWDEg1+xt5RkAEflZuf8+PO8SdKj17x6PtETuUho+qlZJg4DgmKc3q+QwQ9zOB5VLK6jVRbFdNLdUIA==}
+  '@arethetypeswrong/cli@0.16.0':
+    resolution: {integrity: sha512-Vn3ihwlhueIvyJ6V3PKS8zwll9TId5Radvl3GS58ITimafJNoYRribKCoymYFiFS3jH6TspM30KhhiMvnMGvNQ==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -19053,7 +19053,7 @@ snapshots:
       jsonpointer: 5.0.1
       leven: 3.1.0
 
-  '@arethetypeswrong/cli@0.15.3':
+  '@arethetypeswrong/cli@0.16.0':
     dependencies:
       '@arethetypeswrong/core': 0.15.1
       chalk: 4.1.2
@@ -19062,6 +19062,7 @@ snapshots:
       marked: 9.1.6
       marked-terminal: 6.2.0(marked@9.1.6)
       semver: 7.6.2
+      which-pm-runs: 1.1.0
 
   '@arethetypeswrong/core@0.15.1':
     dependencies:
