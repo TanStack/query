@@ -9,7 +9,7 @@ overrides:
   '@types/react-dom': npm:types-react-dom@rc
   eslint: ^8.57.0
 
-pnpmfileChecksum: ysu54onzar63hydpig3x7dh7na
+pnpmfileChecksum: v3qcqgoj5vx7vmpss52sj2dzia
 
 importers:
 
@@ -6351,6 +6351,9 @@ packages:
   '@types/eslint-scope@3.7.6':
     resolution: {integrity: sha512-zfM4ipmxVKWdxtDaJ3MP3pBurDXOCoyjvlpE3u6Qzrmw4BPbfm4/ambIeTk/r/J0iq/+2/xp0Fmt+gFvXJY2PQ==}
 
+  '@types/eslint@7.29.0':
+    resolution: {integrity: sha512-VNcvioYDH8/FxaeTKkM4/TiTwt6pBV9E3OfGmvaw8tPl0rrHCJ4Ll15HRT+pMiFAf/MLQvAzC+6RzUMEL9Ceng==}
+
   '@types/eslint@8.56.10':
     resolution: {integrity: sha512-Shavhk87gCtY2fhXDctcfS3e6FdxWkCx1iUZ9eEUbh7rTqlZT0/IzOkCOVt0fCjcFuZ9FPYfuezTBImfHCDBGQ==}
 
@@ -7277,6 +7280,10 @@ packages:
   arraybuffer.prototype.slice@1.0.3:
     resolution: {integrity: sha512-bMxMKAjg13EBSVscxTaYA4mRc5t1UAXa2kXiGTNfZ079HIWXEkKmkgFrh/nJqamaLSrXO5H4WFFkPEaLJWbs3A==}
     engines: {node: '>= 0.4'}
+
+  arrify@2.0.1:
+    resolution: {integrity: sha512-3duEwti880xqi4eAMN8AyR4a0ByT90zoYdLlevfrvU43vb0YZwZVfxOgxWrLXXXpyugL0hNZc9G6BiB5B3nUug==}
+    engines: {node: '>=8'}
 
   arrify@3.0.0:
     resolution: {integrity: sha512-tLkvA81vQG/XqE2mjDkGQHoOINtMHtysSnemrmoGe6PydDPMRbVugqyk4A6V/WDWEfm3l+0d8anA9r8cv/5Jaw==}
@@ -9333,6 +9340,20 @@ packages:
     resolution: {integrity: sha512-OtIRv/2GyiF6o/d8K7MYKKbXrOUBIK6SfkIRM4Z0dY3w+LiQ0vy3F57m0Z71bjbyeiWFiHJ8brqnmE6H6/jEuw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
+  eslint-webpack-plugin@2.7.0:
+    resolution: {integrity: sha512-bNaVVUvU4srexGhVcayn/F4pJAz19CWBkKoMx7aSQ4wtTbZQCnG5O9LHCE42mM+JSKOUp7n6vd5CIwzj7lOVGA==}
+    engines: {node: '>= 10.13.0'}
+    peerDependencies:
+      eslint: ^8.57.0
+      webpack: ^4.0.0 || ^5.0.0
+
+  eslint-webpack-plugin@3.2.0:
+    resolution: {integrity: sha512-avrKcGncpPbPSUHX6B3stNGzkKFto3eL+DKM4+VyMrVnhPc3vRczVlCq3uhuFOdRvDHTVXuzwk1ZKUrqDQHQ9w==}
+    engines: {node: '>= 12.13.0'}
+    peerDependencies:
+      eslint: ^8.57.0
+      webpack: ^5.0.0
+
   eslint@8.57.0:
     resolution: {integrity: sha512-dZ6+mexnaTIbSBZWgou51U6OmzIhYM2VcNdtiTtI7qPNZm35Akpr0f6vtw3w1Kmn5PYo+tZVfh13WrhpS6oLqQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
@@ -11129,6 +11150,10 @@ packages:
   jest-worker@27.5.1:
     resolution: {integrity: sha512-7vuh85V5cdDofPyxn58nrPjBktZo0u9x1g8WtjQol+jZDaE+fhN+cIvTj11GndBnMnyfrUOG1sZQxCdjKh+DKg==}
     engines: {node: '>= 10.13.0'}
+
+  jest-worker@28.1.3:
+    resolution: {integrity: sha512-CqRA220YV/6jCo8VWvAt1KKx6eek1VIHMPeLEbpcfSfkEeWyBNppynM/o6q+Wmw+sOhos2ml34wZbSX3G13//g==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
 
   jest-worker@29.7.0:
     resolution: {integrity: sha512-eIz2msL/EzL9UFTFFx7jBTkeZfku0yUAyZZZmJ93H2TYEiroIx2PQjEXcwYtYl8zXCxb+PAmA2hLIt/6ZEkPHw==}
@@ -22834,6 +22859,11 @@ snapshots:
       '@types/eslint': 8.56.10
       '@types/estree': 1.0.5
 
+  '@types/eslint@7.29.0':
+    dependencies:
+      '@types/estree': 1.0.5
+      '@types/json-schema': 7.0.14
+
   '@types/eslint@8.56.10':
     dependencies:
       '@types/estree': 1.0.5
@@ -24028,6 +24058,8 @@ snapshots:
       get-intrinsic: 1.2.4
       is-array-buffer: 3.0.4
       is-shared-array-buffer: 1.0.3
+
+  arrify@2.0.1: {}
 
   arrify@3.0.0: {}
 
@@ -26771,6 +26803,27 @@ snapshots:
 
   eslint-visitor-keys@4.0.0: {}
 
+  eslint-webpack-plugin@2.7.0(eslint@9.4.0)(webpack@4.44.2):
+    dependencies:
+      '@types/eslint': 7.29.0
+      arrify: 2.0.1
+      eslint: 9.4.0
+      jest-worker: 27.5.1
+      micromatch: 4.0.7
+      normalize-path: 3.0.0
+      schema-utils: 3.3.0
+      webpack: 4.44.2
+
+  eslint-webpack-plugin@3.2.0(eslint@9.4.0)(webpack@5.90.3(esbuild@0.19.11)):
+    dependencies:
+      '@types/eslint': 8.56.10
+      eslint: 9.4.0
+      jest-worker: 28.1.3
+      micromatch: 4.0.7
+      normalize-path: 3.0.0
+      schema-utils: 4.2.0
+      webpack: 5.90.3(esbuild@0.19.11)
+
   eslint@8.57.0:
     dependencies:
       '@eslint-community/eslint-utils': 4.4.0(eslint@8.57.0)
@@ -28871,6 +28924,12 @@ snapshots:
       supports-color: 7.2.0
 
   jest-worker@27.5.1:
+    dependencies:
+      '@types/node': 20.12.12
+      merge-stream: 2.0.0
+      supports-color: 8.1.1
+
+  jest-worker@28.1.3:
     dependencies:
       '@types/node': 20.12.12
       merge-stream: 2.0.0
@@ -32939,6 +32998,7 @@ snapshots:
       dotenv: 8.2.0
       dotenv-expand: 5.1.0
       eslint: 9.4.0
+      eslint-webpack-plugin: 2.7.0(eslint@9.4.0)(webpack@4.44.2)
       file-loader: 6.1.1(webpack@4.44.2)
       fs-extra: 9.1.0
       html-webpack-plugin: 4.5.0(webpack@4.44.2)
@@ -33005,6 +33065,7 @@ snapshots:
       dotenv: 10.0.0
       dotenv-expand: 5.1.0
       eslint: 9.4.0
+      eslint-webpack-plugin: 3.2.0(eslint@9.4.0)(webpack@5.90.3(esbuild@0.19.11))
       file-loader: 6.2.0(webpack@5.90.3(esbuild@0.19.11))
       fs-extra: 10.1.0
       html-webpack-plugin: 5.5.3(webpack@5.90.3(esbuild@0.19.11))
