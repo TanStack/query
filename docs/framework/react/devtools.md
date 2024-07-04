@@ -91,6 +91,45 @@ function App() {
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
   - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
 
+## Embedded Mode
+
+Embedded mode will show the development tools as a fixed element in your application, so you can use our panel in your own development tools.
+
+Place the following code as high in your React app as you can. The closer it is to the root of the page, the better it will work!
+
+```tsx
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+
+function App() {
+  const [isOpen, setIsOpen] = React.useState(false)
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      {/* The rest of your application */}
+      <button onClick={() => setIsOpen(!isOpen)}>{`${isOpen ? 'Close' : 'Open'} the devtools panel`}</button>
+      <ReactQueryDevtoolsPanel isOpen={isOpen} />
+    </QueryClientProvider>
+  )
+}
+```
+
+### Options
+
+- `isOpen: Boolean`
+  - Defaults to `false`
+- `position?: "top" | "bottom" | "left" | "right"`
+  - Defaults to `bottom`
+  - The position of the React Query devtools panel
+- `client?: QueryClient`,
+  - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
+- `errorTypes?: { name: string; initializer: (query: Query) => TError}`
+  - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
+- `styleNonce?: string`
+  - Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
+- `shadowDOMTarget?: ShadowRoot`
+  - Default behavior will apply the devtool's styles to the head tag within the DOM.
+  - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.
+
 ## Devtools in production
 
 Devtools are excluded in production builds. However, it might be desirable to lazy load the devtools in production:
