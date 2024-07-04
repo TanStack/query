@@ -16,7 +16,6 @@ import * as goober from 'goober'
 import { clsx as cx } from 'clsx'
 import { TransitionGroup } from 'solid-transition-group'
 import { Key } from '@solid-primitives/keyed'
-import { createLocalStorage } from '@solid-primitives/storage'
 import { createResizeObserver } from '@solid-primitives/resize-observer'
 import { DropdownMenu, RadioGroup } from '@kobalte/core'
 import { Portal, clearDelegatedEvents, delegateEvents } from 'solid-js/web'
@@ -25,7 +24,6 @@ import {
   convertRemToPixels,
   displayValue,
   getMutationStatusColor,
-  getPreferredColorScheme,
   getQueryStatusColor,
   getQueryStatusColorByLabel,
   getQueryStatusLabel,
@@ -95,7 +93,7 @@ const thirdBreakpoint = 700
 
 const BUTTON_POSITION: DevtoolsButtonPosition = 'bottom-right'
 const POSITION: DevtoolsPosition = 'bottom'
-const THEME_PREFERENCE = 'system'
+export const THEME_PREFERENCE = 'system'
 const INITIAL_IS_OPEN = false
 const DEFAULT_HEIGHT = 500
 const DEFAULT_WIDTH = 500
@@ -111,10 +109,6 @@ const [selectedMutationId, setSelectedMutationId] = createSignal<number | null>(
 )
 const [panelWidth, setPanelWidth] = createSignal(0)
 const [offline, setOffline] = createSignal(false)
-
-export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
-  shadowDOMTarget?: ShadowRoot
-}
 
 interface PiPProviderProps {
   children: JSX.Element
@@ -132,7 +126,7 @@ const PiPContext = createContext<Accessor<PiPContextType> | undefined>(
   undefined,
 )
 
-const PiPProvider = (props: PiPProviderProps) => {
+export const PiPProvider = (props: PiPProviderProps) => {
   // Expose pipWindow that is currently active
   const [pipWindow, setPipWindow] = createSignal<Window | null>(null)
 
@@ -291,36 +285,7 @@ const usePiPWindow = () => {
   return context
 }
 
-const DevtoolsComponent: DevtoolsComponentType = (props) => {
-  const [localStore, setLocalStore] = createLocalStorage({
-    prefix: 'TanstackQueryDevtools',
-  })
-
-  const colorScheme = getPreferredColorScheme()
-
-  const theme = createMemo(() => {
-    const preference = (localStore.theme_preference || THEME_PREFERENCE) as
-      | 'system'
-      | 'dark'
-      | 'light'
-    if (preference !== 'system') return preference
-    return colorScheme()
-  })
-
-  return (
-    <QueryDevtoolsContext.Provider value={props}>
-      <PiPProvider localStore={localStore} setLocalStore={setLocalStore}>
-        <ThemeContext.Provider value={theme}>
-          <Devtools localStore={localStore} setLocalStore={setLocalStore} />
-        </ThemeContext.Provider>
-      </PiPProvider>
-    </QueryDevtoolsContext.Provider>
-  )
-}
-
-export default DevtoolsComponent
-
-const Devtools: Component<DevtoolsPanelProps> = (props) => {
+export const Devtools: Component<DevtoolsPanelProps> = (props) => {
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })

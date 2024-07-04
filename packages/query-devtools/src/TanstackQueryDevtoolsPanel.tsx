@@ -5,7 +5,7 @@ import type {
   QueryClient,
   onlineManager as TOnlineManager,
 } from '@tanstack/query-core'
-import type { DevtoolsComponentType } from './Devtools'
+import type { DevtoolsComponentType } from './DevtoolsComponent'
 import type {
   DevToolsErrorType,
   DevtoolsButtonPosition,
@@ -14,13 +14,12 @@ import type {
 } from './Context'
 import type { Signal } from 'solid-js'
 
-export type { DevtoolsButtonPosition, DevtoolsPosition, DevToolsErrorType }
-export interface TanstackQueryDevtoolsConfig extends QueryDevtoolsProps {
+export interface TanstackQueryDevtoolsPanelConfig extends QueryDevtoolsProps {
   styleNonce?: string
   shadowDOMTarget?: ShadowRoot
 }
 
-class TanstackQueryDevtools {
+class TanstackQueryDevtoolsPanel {
   #client: Signal<QueryClient>
   #onlineManager: typeof TOnlineManager
   #queryFlavor: string
@@ -35,7 +34,7 @@ class TanstackQueryDevtools {
   #Component: DevtoolsComponentType | undefined
   #dispose?: () => void
 
-  constructor(config: TanstackQueryDevtoolsConfig) {
+  constructor(config: TanstackQueryDevtoolsPanelConfig) {
     const {
       client,
       queryFlavor,
@@ -82,7 +81,7 @@ class TanstackQueryDevtools {
 
   mount<T extends HTMLElement>(el: T) {
     if (this.#isMounted) {
-      throw new Error('Devtools is already mounted')
+      throw new Error('DevtoolsPanel is already mounted')
     }
     const dispose = render(() => {
       const [btnPosition] = this.#buttonPosition
@@ -95,7 +94,7 @@ class TanstackQueryDevtools {
       if (this.#Component) {
         Devtools = this.#Component
       } else {
-        Devtools = lazy(() => import('./Devtools'))
+        Devtools = lazy(() => import('./DevtoolsPanelComponent'))
         this.#Component = Devtools
       }
 
@@ -132,11 +131,11 @@ class TanstackQueryDevtools {
 
   unmount() {
     if (!this.#isMounted) {
-      throw new Error('Devtools is not mounted')
+      throw new Error('DevtoolsPanel is not mounted')
     }
     this.#dispose?.()
     this.#isMounted = false
   }
 }
 
-export { TanstackQueryDevtools }
+export { TanstackQueryDevtoolsPanel }
