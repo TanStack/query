@@ -7,6 +7,21 @@
     "/examples/svelte/basic",
     "/examples/vue/basic"
   ],
-  "packages": ["packages/**", "!packages/query-codemods"],
+  "packages": [
+    "packages/angular-query-devtools-experimental",
+    "packages/angular-query-experimental",
+    "packages/query-core",
+    "packages/query-devtools",
+    "packages/query-sync-storage-persister",
+    "packages/react-query",
+    "packages/react-query-devtools",
+    "packages/react-query-persist-client",
+    "packages/solid-query",
+    "packages/solid-query-devtools",
+    "packages/svelte-query",
+    "packages/svelte-query-devtools",
+    "packages/vue-query",
+    "packages/vue-query-devtools"
+  ],
   "node": "20"
 }
