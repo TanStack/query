@@ -13,7 +13,6 @@ env:
 jobs:
   preview:
     name: Preview
-    if: github.event.review.state == 'APPROVED'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
