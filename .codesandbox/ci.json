@@ -7,6 +7,6 @@
     "/examples/svelte/basic",
     "/examples/vue/basic"
   ],
-  "packages": ["packages/**"],
+  "packages": ["packages/**", "!packages/query-codemods"],
   "node": "20"
 }
