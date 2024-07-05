@@ -1,8 +1,7 @@
 name: preview
 
 on:
-  pull_request_review:
-    types: [submitted]
+  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -26,4 +25,4 @@ jobs:
       - name: Build Packages
         run: pnpm run build:all
       - name: Publish Previews
-        run: pnpx pkg-pr-new publish --no-template --compact ./packages/*
+        run: pnpx pkg-pr-new publish --compact ./packages/* --template ./examples/**/*
