@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-codemods",
-  "version": "4.24.3",
+  "private": true,
   "description": "Collection of codemods to make the migration easier.",
   "author": "Balázs Máté Petró",
   "license": "MIT",

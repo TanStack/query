@@ -1,5 +1,6 @@
 {
-  "name": "example-basic",
+  "name": "solid-start-streaming-example",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vinxi dev",
