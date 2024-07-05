@@ -4,11 +4,22 @@
   "description": "Developer tools to interact with and visualize the TanStack/svelte-query cache",
   "author": "Lachlan Collins",
   "license": "MIT",
-  "repository": "tanstack/query",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TanStack/query.git",
+    "directory": "packages/svelte-query-devtools"
+  },
   "homepage": "https://tanstack.com/query",
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "scripts": {
+    "clean": "rimraf ./dist && rimraf ./coverage",
+    "test:types": "svelte-check --tsconfig ./tsconfig.json",
+    "test:eslint": "eslint ./src",
+    "test:build": "publint --strict && attw --pack",
+    "build": "svelte-package --input ./src --output ./dist"
   },
   "type": "module",
   "types": "dist/index.d.ts",
@@ -26,13 +37,6 @@
     "dist",
     "src"
   ],
-  "scripts": {
-    "clean": "rimraf ./dist && rimraf ./coverage",
-    "test:types": "svelte-check --tsconfig ./tsconfig.json",
-    "test:eslint": "eslint ./src",
-    "test:build": "publint --strict && attw --pack",
-    "build": "svelte-package --input ./src --output ./dist"
-  },
   "dependencies": {
     "@tanstack/query-devtools": "workspace:*",
     "esm-env": "^1.0.0"
