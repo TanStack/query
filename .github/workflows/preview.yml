@@ -25,4 +25,4 @@ jobs:
       - name: Build Packages
         run: pnpm run build:all
       - name: Publish Previews
-        run: pnpx pkg-pr-new publish --no-template --compact ./packages/*
+        run: pnpx pkg-pr-new publish --compact --template ./examples/* ./packages/*
