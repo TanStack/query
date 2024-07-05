@@ -14,6 +14,7 @@ env:
 jobs:
   preview:
     name: Preview
+    if: github.event.review.state == 'APPROVED'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,4 +26,4 @@ jobs:
       - name: Build Packages
         run: pnpm run build:all
       - name: Publish Previews
-        run: pnpx pkg-pr-new publish --compact ./packages/* --template ./examples/react/basic-typescript
+        run: pnpx pkg-pr-new publish --no-template --compact ./packages/*

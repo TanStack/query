@@ -1,5 +1,6 @@
 {
   "name": "@tanstack/query-example-react-basic-typescript",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
