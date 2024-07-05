@@ -10,6 +10,10 @@
     "directory": "packages/angular-query-experimental"
   },
   "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
   "keywords": [
     "angular query",
     "angular",
@@ -21,18 +25,6 @@
     "state management",
     "state",
     "tanstack"
-  ],
-  "funding": {
-    "type": "github",
-    "url": "https://github.com/sponsors/tannerlinsley"
-  },
-  "type": "module",
-  "sideEffects": false,
-  "files": [
-    "build",
-    "!**/*.d.ts",
-    "!**/*.d.ts.map",
-    "build/rollup.d.ts"
   ],
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
@@ -47,6 +39,27 @@
     "test:build": "publint --strict && attw --pack",
     "build": "ng-packagr -p ng-package.json -c tsconfig.build.json && rimraf ./build/package.json && api-extractor run --local"
   },
+  "type": "module",
+  "types": "build/rollup.d.ts",
+  "module": "build/fesm2022/tanstack-angular-query-experimental.mjs",
+  "exports": {
+    ".": {
+      "types": "./build/rollup.d.ts",
+      "esm2022": "./build/esm2022/tanstack-angular-query-experimental.mjs",
+      "esm": "./build/esm2022/tanstack-angular-query-experimental.mjs",
+      "default": "./build/fesm2022/tanstack-angular-query-experimental.mjs"
+    },
+    "./package.json": {
+      "default": "./package.json"
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "build",
+    "!**/*.d.ts",
+    "!**/*.d.ts.map",
+    "build/rollup.d.ts"
+  ],
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
     "tslib": "^2.6.2"
@@ -68,18 +81,5 @@
   "peerDependencies": {
     "@angular/core": ">=16.0.0",
     "@angular/common": ">=16.0.0"
-  },
-  "module": "build/fesm2022/tanstack-angular-query-experimental.mjs",
-  "types": "build/rollup.d.ts",
-  "exports": {
-    "./package.json": {
-      "default": "./package.json"
-    },
-    ".": {
-      "types": "./build/rollup.d.ts",
-      "esm2022": "./build/esm2022/tanstack-angular-query-experimental.mjs",
-      "esm": "./build/esm2022/tanstack-angular-query-experimental.mjs",
-      "default": "./build/fesm2022/tanstack-angular-query-experimental.mjs"
-    }
   }
 }
