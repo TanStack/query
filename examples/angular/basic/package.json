@@ -14,6 +14,7 @@
     "@angular/core": "^17.3.10",
     "@angular/platform-browser": "^17.3.10",
     "@angular/platform-browser-dynamic": "^17.3.10",
+    "@tanstack/angular-query-devtools-experimental": "^5.50.1",
     "@tanstack/angular-query-experimental": "^5.50.1",
     "rxjs": "^7.8.1",
     "tslib": "^2.6.2",
@@ -23,7 +24,6 @@
     "@angular-devkit/build-angular": "^17.3.8",
     "@angular/cli": "^17.3.8",
     "@angular/compiler-cli": "^17.3.10",
-    "@tanstack/angular-query-devtools-experimental": "^5.50.1",
     "typescript": "5.3.3"
   }
 }
