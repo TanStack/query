@@ -78,35 +78,31 @@ Tkdodo, The maintainer of TanStack Query explains well why this interface is nee
 You can also use queryOptions in TanStack Query v4.
 
 1. QueryKey management becomes easier by processing queryKey and queryFn together.
-2. You can remove unnecessary custom query hooks. This is because they can all be used directly in `useQuery`, `useQueries` of TanStack Query v4, and `useSuspenseQuery`, `useSuspenseQueries`, and `SuspenseQuery` of Suspensive React Query.
+2. You can remove unnecessary custom query hooks. This is because they can all be used directly in `useQuery`, `useQueries` of TanStack Query v4.
 3. TanStack Query v5 already supports queryOptions. This Suspensive React Query's `queryOptions` will make migration from TanStack Query v4 to TanStack Query v5 easier.
 
 ```tsx
-import { queryOptions, useSuspenseQuery, useSuspenseQueries, SuspenseQuery } from '@suspensive/react-query'
+import { queryOptions } from '@suspensive/react-query'
 import { useQuery, useQueries, useQueryClient } from '@tanstack/react-query'
 
 const postQueryOptions = (postId) =>
-   queryOptions({
-     queryKey: ['posts', postId] as const,
-     queryFn: ({
-       queryKey: [, postId], // You can use queryKey.
-     }) => fetch(`https://example.com/posts/${postId}`),
-   })
+  queryOptions({
+    queryKey: ['posts', postId] as const,
+    queryFn: ({
+      queryKey: [, postId], // You can use queryKey.
+    }) => fetch(`https://example.com/posts/${postId}`),
+  })
 
 // No need to create custom query hooks.
-// You can use queryOptions directly in useQuery, useQueries, useSuspenseQuery, useSuspenseQueries, SuspenseQuery.
+// You can use queryOptions directly in useQuery, useQueries.
 const post1Query = useQuery(postQueryOptions(1))
-const { data: post1 } = useSuspenseQuery({
-   ...postQueryOptions(1);
-   refetchInterval: 2000, // Extensibility is clearly expressed in usage.
-})
+
 const [post1Query, post2Query] = useQueries({
-   queries: [postQueryOptions(1), { ...postQueryOptions(2), refetchInterval: 2000 }],
+  queries: [
+    postQueryOptions(1),
+    { ...postQueryOptions(2), refetchInterval: 2000 },
+  ],
 })
-const [{ data: post1 }, { data: post2 }] = useSuspenseQueries({
-   queries: [postQueryOptions(1), { ...postQueryOptions(2), refetchInterval: 2000 }],
-})
-const Example = () => <SuspenseQuery {...postQueryOptions(1)}>{({ data: post1 }) => <>{post1.text}</>}</SuspenseQuery>
 
 // You can easily use queryKey and queryFn in queryClient's methods.
 const queryClient = useQueryClient()
