@@ -5,8 +5,10 @@ on:
 
 jobs:
   triage:
+    name: Triage
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/labeler@v4
+      - name: Run Labeler
+        uses: actions/labeler@v5
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
