@@ -145,9 +145,6 @@ importers:
       '@angular/platform-browser-dynamic':
         specifier: ^17.3.10
         version: 17.3.10(@angular/common@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6))(rxjs@7.8.1))(@angular/compiler@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6)))(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6))(@angular/platform-browser@17.3.10(@angular/animations@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6)))(@angular/common@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6))(rxjs@7.8.1))(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6)))
-      '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.50.1
-        version: link:../../../packages/angular-query-devtools-experimental
       '@tanstack/angular-query-experimental':
         specifier: ^5.50.1
         version: link:../../../packages/angular-query-experimental
@@ -170,6 +167,9 @@ importers:
       '@angular/compiler-cli':
         specifier: ^17.3.10
         version: 17.3.10(@angular/compiler@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6)))(typescript@5.3.3)
+      '@tanstack/angular-query-devtools-experimental':
+        specifier: ^5.50.1
+        version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.3.3
         version: 5.3.3
