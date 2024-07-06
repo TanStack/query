@@ -116,7 +116,7 @@ queryClient.cancelQueries(postQueryOptions(1))
 
 ### Using queryOptions in TanStack Query v4
 
-> "One of the best ways to share queryKey and queryFn between multiple places, yet keep them co-located to one another, is to use the queryOptions helper." For more details, you can refer to the [TanStack Query v5 Official Docs - Query Options](https://tanstack.com/query/latest/docs/framework/react/guides/query-options).
+> "One of the best ways to share queryKey and queryFn between multiple places, yet keep them co-located to one another, is to use the queryOptions helper." For more details, you can refer to the [TanStack Query v5 Official Docs - Query Options](https://tanstack.com/query/v5/docs/framework/react/guides/query-options).
 
 You can use queryOptions in TanStack Query v4 just like in TanStack Query v5, and it is fully compatible with the TanStack Query v4 API.
 
