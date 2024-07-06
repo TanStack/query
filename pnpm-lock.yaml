@@ -2141,10 +2141,10 @@ importers:
       '@tanstack/query-core':
         specifier: workspace:*
         version: link:../query-core
+    devDependencies:
       solid-js:
         specifier: ^1.8.17
         version: 1.8.17
-    devDependencies:
       tsup-preset-solid:
         specifier: ^2.2.0
         version: 2.2.0(esbuild@0.21.3)(solid-js@1.8.17)(tsup@8.0.2(@microsoft/api-extractor@7.46.2(@types/node@20.12.12))(postcss@8.4.38)(typescript@5.4.2))
@@ -2159,7 +2159,7 @@ importers:
         version: link:../query-devtools
     devDependencies:
       '@tanstack/solid-query':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../solid-query
       solid-js:
         specifier: ^1.8.17
@@ -2176,10 +2176,10 @@ importers:
       '@tanstack/query-persist-client-core':
         specifier: workspace:*
         version: link:../query-persist-client-core
+    devDependencies:
       '@tanstack/solid-query':
         specifier: workspace:*
         version: link:../solid-query
-    devDependencies:
       solid-js:
         specifier: ^1.8.17
         version: 1.8.17
@@ -22657,11 +22657,7 @@ snapshots:
       jest-runner: 26.6.3
       jest-runtime: 26.6.3
     transitivePeerDependencies:
-      - bufferutil
-      - canvas
       - supports-color
-      - ts-node
-      - utf-8-validate
 
   '@jest/test-sequencer@27.5.1':
     dependencies:
@@ -31413,11 +31409,7 @@ snapshots:
       stack-utils: 2.0.6
       throat: 5.0.0
     transitivePeerDependencies:
-      - bufferutil
-      - canvas
       - supports-color
-      - ts-node
-      - utf-8-validate
 
   jest-circus@27.5.1:
     dependencies:

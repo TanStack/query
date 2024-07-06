@@ -47,9 +47,9 @@
     "tslib": "^2.6.2"
   },
   "devDependencies": {
+    "@angular/common": "^17.3.10",
     "@angular/compiler-cli": "^17.3.10",
     "@angular/core": "^17.3.10",
-    "@angular/common": "^17.3.10",
     "@tanstack/angular-query-experimental": "workspace:*",
     "eslint-plugin-jsdoc": "^48.2.13",
     "ng-packagr": "^17.3.0",

@@ -59,11 +59,11 @@
     "src"
   ],
   "dependencies": {
-    "@tanstack/query-core": "workspace:*",
-    "solid-js": "^1.8.17"
+    "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
     "tsup-preset-solid": "^2.2.0",
+    "solid-js": "^1.8.17",
     "vite-plugin-solid": "^2.10.2"
   },
   "peerDependencies": {
