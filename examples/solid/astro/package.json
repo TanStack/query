@@ -1,5 +1,5 @@
 {
-  "name": "solid-query-astro-example",
+  "name": "@tanstack/query-example-solid-astro",
   "private": true,
   "type": "module",
   "scripts": {

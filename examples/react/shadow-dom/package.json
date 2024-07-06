@@ -1,5 +1,5 @@
 {
-  "name": "shadow-dom",
+  "name": "@tanstack/query-example-react-shadow-dom",
   "private": true,
   "version": "0.0.0",
   "type": "module",
