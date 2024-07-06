@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-vue-2.6-basic",
+  "name": "@tanstack/query-example-vue-2.7-basic",
   "private": true,
   "scripts": {
     "dev": "vite",
