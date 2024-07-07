@@ -1,12 +1,12 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { render, waitFor } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
-import CreateQueries from './CreateQueries.svelte'
-import { sleep } from './utils'
+import { sleep } from '../utils'
+import BaseExample from './BaseExample.svelte'
 
 describe('createQueries', () => {
-  it('Render and wait for success', async () => {
-    const rendered = render(CreateQueries, {
+  test('Render and wait for success', async () => {
+    const rendered = render(BaseExample, {
       props: {
         options: {
           queries: [
@@ -41,10 +41,10 @@ describe('createQueries', () => {
     })
   })
 
-  it('should combine queries', async () => {
+  test('Combine queries', async () => {
     const ids = [1, 2, 3]
 
-    const rendered = render(CreateQueries, {
+    const rendered = render(BaseExample, {
       props: {
         options: {
           queries: ids.map((id) => ({
