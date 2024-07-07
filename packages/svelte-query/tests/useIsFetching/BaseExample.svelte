@@ -14,15 +14,13 @@
   const options = derived(ready, ($ready) => ({
     queryKey: [key],
     queryFn: async () => {
-      await sleep(50)
+      await sleep(20)
       return 'test'
     },
     enabled: $ready,
   }))
 
   const query = createQuery(options, queryClient)
-
-  $: console.log($isFetching)
 </script>
 
 <button on:click={() => ($ready = true)}>setReady</button>

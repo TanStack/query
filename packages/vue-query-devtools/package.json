@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/vue-query-devtools",
-  "version": "5.49.1",
+  "version": "5.50.1",
   "description": "Developer tools to interact with and visualize the TanStack/vue-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -13,6 +13,13 @@
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "scripts": {
+    "clean": "rimraf ./build && rimraf ./coverage",
+    "test:eslint": "eslint ./src",
+    "test:types": "vue-tsc",
+    "test:build": "publint --strict && attw --pack",
+    "build": "vite build"
   },
   "type": "module",
   "types": "dist/esm/index.d.ts",
@@ -38,13 +45,6 @@
     "dist",
     "src"
   ],
-  "scripts": {
-    "clean": "rimraf ./build && rimraf ./coverage",
-    "test:eslint": "eslint ./src",
-    "test:types": "vue-tsc",
-    "test:build": "publint --strict && attw --pack",
-    "build": "vite build"
-  },
   "dependencies": {
     "@tanstack/query-devtools": "workspace:*"
   },

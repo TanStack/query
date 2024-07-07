@@ -1,11 +1,11 @@
 {
-  "name": "query",
+  "name": "root",
   "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/TanStack/query.git"
   },
-  "packageManager": "pnpm@9.3.0",
+  "packageManager": "pnpm@9.4.0",
   "type": "module",
   "scripts": {
     "clean": "pnpm --filter \"./packages/**\" run clean",
@@ -22,9 +22,8 @@
     "test:build": "nx affected --target=test:build --exclude=examples/**",
     "test:types": "nx affected --target=test:types --exclude=examples/**",
     "test:knip": "knip",
-    "build": "nx affected --target=build --exclude=examples/**",
-    "build:all": "nx run-many --target=build --exclude=examples/**",
-    "build:csb": "nx run-many --target=build --exclude=examples/** --exclude=integrations/**",
+    "build": "nx affected --target=build --exclude=examples/** --exclude=integrations/**",
+    "build:all": "nx run-many --target=build --exclude=examples/** --exclude=integrations/**",
     "watch": "pnpm run build:all && nx watch --all -- pnpm run build:all",
     "dev": "pnpm run watch",
     "prettier": "prettier --ignore-unknown '**/*'",
@@ -38,7 +37,6 @@
       "test:knip"
     ]
   },
-  "namespace": "@tanstack",
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.3",
     "@cspell/eslint-plugin": "^8.9.1",
