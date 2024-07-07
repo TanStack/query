@@ -1,10 +1,12 @@
 <script lang="ts">
-  import { onDestroy, onMount } from 'svelte'
+  import { onDestroy, onMount, type Snippet } from 'svelte'
   import { QueryClient } from '@tanstack/query-core'
   import { setQueryClientContext } from './context'
 
-  export let client = new QueryClient()
-
+  let { client = new QueryClient(), children } = $props<{
+    client: QueryClient
+    children: Snippet
+  }>()
   onMount(() => {
     client.mount()
   })
@@ -16,4 +18,4 @@
   })
 </script>
 
-<slot />
+{@render children()}

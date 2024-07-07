@@ -1,7 +1,7 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
   import { setQueryClientContext } from '../src/context'
-  import { createMutation } from '../src/createMutation'
+  import { createMutation } from '../src/createMutation.svelte'
   import type { CreateMutationOptions } from '../src/types'
 
   export let options: CreateMutationOptions
@@ -12,4 +12,4 @@
   const mutation = createMutation(options)
 </script>
 
-<button on:click={() => $mutation.mutate()}>Click</button>
+<button on:click={() => mutation.mutate()}>Click</button>

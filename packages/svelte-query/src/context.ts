@@ -1,7 +1,5 @@
 import { getContext, setContext } from 'svelte'
-import { readable } from 'svelte/store'
 import type { QueryClient } from '@tanstack/query-core'
-import type { Readable } from 'svelte/store'
 
 const _contextKey = '$$_queryClient'
 
@@ -25,18 +23,16 @@ export const setQueryClientContext = (client: QueryClient): void => {
 const _isRestoringContextKey = '$$_isRestoring'
 
 /** Retrieves a `isRestoring` from Svelte's context */
-export const getIsRestoringContext = (): Readable<boolean> => {
+export const getIsRestoringContext = (): boolean => {
   try {
-    const isRestoring = getContext<Readable<boolean> | undefined>(
-      _isRestoringContextKey,
-    )
-    return isRestoring ? isRestoring : readable(false)
+    const isRestoring = getContext<boolean>(_isRestoringContextKey)
+    return isRestoring
   } catch (error) {
-    return readable(false)
+    return false
   }
 }
 
 /** Sets a `isRestoring` on Svelte's context */
-export const setIsRestoringContext = (isRestoring: Readable<boolean>): void => {
+export const setIsRestoringContext = (isRestoring: boolean): void => {
   setContext(_isRestoringContextKey, isRestoring)
 }

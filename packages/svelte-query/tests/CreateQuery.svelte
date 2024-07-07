@@ -1,24 +1,24 @@
 <script lang="ts">
   import { createQuery } from '../src/createQuery'
   import type { QueryClient } from '@tanstack/query-core'
-  import type { CreateQueryOptions, StoreOrVal } from '../src/types'
+  import type { CreateQueryOptions } from '../src/types'
 
-  export let options: StoreOrVal<CreateQueryOptions<any>>
+  export let options: CreateQueryOptions<any>
   export let queryClient: QueryClient
 
   const query = createQuery(options, queryClient)
 </script>
 
-{#if $query.isPending}
+{#if query.isPending}
   <p>Loading</p>
-{:else if $query.isError}
+{:else if query.isError}
   <p>Error</p>
-{:else if $query.isSuccess}
-  {#if Array.isArray($query.data)}
-    {#each $query.data as item}
+{:else if query.isSuccess}
+  {#if Array.isArray(query.data)}
+    {#each query.data as item}
       <p>{item}</p>
     {/each}
   {:else}
-    <p>{$query.data}</p>
+    <p>{query.data}</p>
   {/if}
 {/if}

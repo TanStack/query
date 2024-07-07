@@ -1,6 +1,5 @@
 import { describe, expect, test } from 'vitest'
 import { render, waitFor } from '@testing-library/svelte'
-import { derived, writable } from 'svelte/store'
 import { QueryClient } from '@tanstack/query-core'
 import CreateQuery from './CreateQuery.svelte'
 import { sleep } from './utils'
@@ -30,13 +29,13 @@ describe('createQuery', () => {
   })
 
   test('Accept a writable store for options', async () => {
-    const optionsStore = writable({
+    const optionsStore = {
       queryKey: ['test'],
       queryFn: async () => {
         await sleep(10)
         return 'Success'
       },
-    })
+    }
 
     const rendered = render(CreateQuery, {
       props: {
@@ -51,15 +50,15 @@ describe('createQuery', () => {
   })
 
   test('Accept a derived store for options', async () => {
-    const writableStore = writable('test')
-
-    const derivedStore = derived(writableStore, ($store) => ({
-      queryKey: [$store],
-      queryFn: async () => {
-        await sleep(10)
-        return 'Success'
-      },
-    }))
+    const derivedStore = $state(
+      ((store) => ({
+        queryKey: [store],
+        queryFn: async () => {
+          await sleep(10)
+          return 'Success'
+        },
+      }))(),
+    )
 
     const rendered = render(CreateQuery, {
       props: {
@@ -74,15 +73,15 @@ describe('createQuery', () => {
   })
 
   test('Ensure reactivity when queryClient defaults are set', async () => {
-    const writableStore = writable(1)
+    let writableStore = $state(1)
 
-    const derivedStore = derived(writableStore, ($store) => ({
-      queryKey: [$store],
+    const derivedStore = $derived({
+      queryKey: [writableStore],
       queryFn: async () => {
         await sleep(10)
-        return `Success ${$store}`
+        return `Success ${writableStore}`
       },
-    }))
+    })
 
     const rendered = render(CreateQuery, {
       props: {
@@ -98,7 +97,7 @@ describe('createQuery', () => {
       expect(rendered.queryByText('Success 2')).not.toBeInTheDocument()
     })
 
-    writableStore.set(2)
+    writableStore = 2
 
     await waitFor(() => {
       expect(rendered.queryByText('Success 1')).not.toBeInTheDocument()
