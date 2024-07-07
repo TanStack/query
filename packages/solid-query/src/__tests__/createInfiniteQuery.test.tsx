@@ -15,6 +15,7 @@ import {
   QueryCache,
   QueryClientProvider,
   createInfiniteQuery,
+  infiniteQueryOptions,
   keepPreviousData,
 } from '..'
 import {
@@ -165,7 +166,7 @@ describe('useInfiniteQuery', () => {
       const start = 1
       const state = createInfiniteQuery(() => ({
         queryKey: key,
-        queryFn: async ({ pageParam }) => {
+        queryFn: ({ pageParam }) => {
           if (pageParam === 2) {
             throw new Error('error')
           }
@@ -2055,5 +2056,31 @@ describe('useInfiniteQuery', () => {
     const rendered = render(() => <Page />)
 
     await waitFor(() => rendered.getByText('Status: custom client'))
+  })
+
+  it('should work with infiniteQueryOptions', async () => {
+    const key = queryKey()
+    const options = infiniteQueryOptions({
+      getNextPageParam: () => undefined,
+      queryKey: key,
+      initialPageParam: 0,
+      queryFn: () => Promise.resolve(220),
+    })
+
+    function Page() {
+      const state = createInfiniteQuery(
+        () => options,
+        () => queryClient,
+      )
+      return (
+        <div>
+          <h1>Status: {state.data?.pages[0]}</h1>
+        </div>
+      )
+    }
+
+    const rendered = render(() => <Page />)
+
+    await waitFor(() => rendered.getByText('Status: 220'))
   })
 })

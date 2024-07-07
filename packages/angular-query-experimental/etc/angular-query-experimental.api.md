@@ -5,7 +5,7 @@
 ```ts
 
 import type { DataTag } from '@tanstack/query-core';
-import { DefaultError } from '@tanstack/query-core';
+import type { DefaultError } from '@tanstack/query-core';
 import type { DefinedInfiniteQueryObserverResult } from '@tanstack/query-core';
 import type { DefinedQueryObserverResult } from '@tanstack/query-core';
 import type { EnvironmentProviders } from '@angular/core';
@@ -30,7 +30,6 @@ import type { QueryKey } from '@tanstack/query-core';
 import type { QueryObserverOptions } from '@tanstack/query-core';
 import type { QueryObserverResult } from '@tanstack/query-core';
 import type { Signal } from '@angular/core';
-import type { SkipToken } from '@tanstack/query-core';
 import type { ThrowOnError } from '@tanstack/query-core';
 
 // @public (undocumented)

@@ -1,7 +1,7 @@
 import { matchQuery } from '@tanstack/query-core'
-import type { QueryFilters } from '@tanstack/query-core'
 import type {
   Query,
+  QueryFilters,
   QueryFunctionContext,
   QueryKey,
   QueryState,
@@ -65,7 +65,7 @@ export const PERSISTER_KEY_PREFIX = 'tanstack-query'
 
 /**
  * Warning: experimental feature.
- * This utility function enables fine-grained query persistance.
+ * This utility function enables fine-grained query persistence.
  * Simple add it as a `persister` parameter to `useQuery` or `defaultOptions` on `queryClient`.
  *
  * ```

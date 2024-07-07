@@ -2,6 +2,7 @@ import { describe, expect, test, vi } from 'vitest'
 import { ref } from 'vue-demi'
 import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
 import { QueryClient } from '../queryClient'
+import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { flushPromises } from './test-utils'
 
 vi.mock('@tanstack/query-core')
@@ -263,6 +264,22 @@ describe('QueryCache', () => {
         queryKey: queryKeyRef,
         initialPageParam: 0,
       })
+
+      expect(QueryClientOrigin.prototype.fetchInfiniteQuery).toBeCalledWith({
+        initialPageParam: 0,
+        queryKey: queryKeyUnref,
+      })
+    })
+    test('should properly unwrap parameter using infiniteQueryOptions with unref', async () => {
+      const queryClient = new QueryClient()
+
+      const options = infiniteQueryOptions({
+        queryKey: queryKeyUnref,
+        initialPageParam: 0,
+        getNextPageParam: () => 12,
+      })
+
+      queryClient.fetchInfiniteQuery(options)
 
       expect(QueryClientOrigin.prototype.fetchInfiniteQuery).toBeCalledWith({
         initialPageParam: 0,

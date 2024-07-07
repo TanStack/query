@@ -144,6 +144,10 @@
             {
               "label": "Devtools",
               "to": "framework/angular/devtools"
+            },
+            {
+              "label": "Zoneless",
+              "to": "framework/angular/zoneless"
             }
           ]
         }
@@ -655,6 +659,14 @@
               "to": "framework/react/reference/infiniteQueryOptions"
             },
             {
+              "label": "usePrefetchQuery",
+              "to": "framework/react/reference/usePrefetchQuery"
+            },
+            {
+              "label": "usePrefetchInfiniteQuery",
+              "to": "framework/react/reference/usePrefetchInfiniteQuery"
+            },
+            {
               "label": "QueryErrorResetBoundary",
               "to": "framework/react/reference/QueryErrorResetBoundary"
             },
@@ -849,8 +861,12 @@
               "to": "framework/react/examples/rick-morty"
             },
             {
-              "label": "Next.js",
+              "label": "Next.js Pages",
               "to": "framework/react/examples/nextjs"
+            },
+            {
+              "label": "Next.js app with prefetching",
+              "to": "framework/react/examples/nextjs-app-prefetching"
             },
             {
               "label": "Next.js app with streaming",

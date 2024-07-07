@@ -15,7 +15,6 @@ import type {
   DefaultError,
   DefinedQueryObserverResult,
   QueriesObserverOptions,
-  QueriesPlaceholderDataFunction,
   QueryFunction,
   QueryKey,
   QueryObserverResult,
@@ -23,7 +22,7 @@ import type {
 } from '@tanstack/query-core'
 import type { UseQueryOptions } from './useQuery'
 import type { QueryClient } from './queryClient'
-import type { DeepUnwrapRef, DistributiveOmit, MaybeRefDeep } from './types'
+import type { DeepUnwrapRef, MaybeRefDeep } from './types'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter
@@ -32,17 +31,15 @@ type UseQueryOptionsForUseQueries<
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = DistributiveOmit<
-  UseQueryOptions<TQueryFnData, TError, TData, unknown, TQueryKey>,
-  'placeholderData'
-> & {
-  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
-}
+> = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
 
-type GetOptions<T> =
+// Widen the type of the symbol to enable type inference even if skipToken is not immutable.
+type SkipTokenForUseQueries = symbol
+
+type GetUseQueryOptionsForUseQueries<T> =
   // Part 1: if UseQueryOptions are already being sent through, then just return T
   T extends UseQueryOptions
     ? DeepUnwrapRef<T>
@@ -66,24 +63,22 @@ type GetOptions<T> =
                 ? UseQueryOptionsForUseQueries<TQueryFnData>
                 : // Part 4: responsible for inferring and enforcing type if no explicit parameter was provided
                   T extends {
-                      queryFn?: QueryFunction<
-                        infer TQueryFnData,
-                        infer TQueryKey
-                      >
+                      queryFn?:
+                        | QueryFunction<infer TQueryFnData, infer TQueryKey>
+                        | SkipTokenForUseQueries
                       select?: (data: any) => infer TData
                       throwOnError?: ThrowOnError<any, infer TError, any, any>
                     }
                   ? UseQueryOptionsForUseQueries<
                       TQueryFnData,
-                      TError,
-                      TData,
+                      unknown extends TError ? DefaultError : TError,
+                      unknown extends TData ? TQueryFnData : TData,
                       TQueryKey
                     >
                   : T extends {
-                        queryFn?: QueryFunction<
-                          infer TQueryFnData,
-                          infer TQueryKey
-                        >
+                        queryFn?:
+                          | QueryFunction<infer TQueryFnData, infer TQueryKey>
+                          | SkipTokenForUseQueries
                         throwOnError?: ThrowOnError<any, infer TError, any, any>
                       }
                     ? UseQueryOptionsForUseQueries<
@@ -112,7 +107,7 @@ type GetDefinedOrUndefinedQueryResult<T, TData, TError = unknown> = T extends {
         : QueryObserverResult<TData, TError>
   : QueryObserverResult<TData, TError>
 
-type GetResults<T> =
+type GetUseQueryResult<T> =
   // Part 1: if using UseQueryOptions then the types are already set
   T extends UseQueryOptions<
     infer TQueryFnData,
@@ -124,7 +119,7 @@ type GetResults<T> =
     ? GetDefinedOrUndefinedQueryResult<
         T,
         undefined extends TData ? TQueryFnData : TData,
-        TError
+        unknown extends TError ? DefaultError : TError
       >
     : // Part 2: responsible for mapping explicit type parameter to function result, if object
       T extends { queryFnData: any; error?: infer TError; data: infer TData }
@@ -142,7 +137,9 @@ type GetResults<T> =
                 ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData>
                 : // Part 4: responsible for mapping inferred type to results, if no explicit parameter was provided
                   T extends {
-                      queryFn?: QueryFunction<infer TQueryFnData, any>
+                      queryFn?:
+                        | QueryFunction<infer TQueryFnData, any>
+                        | SkipTokenForUseQueries
                       select?: (data: any) => infer TData
                       throwOnError?: ThrowOnError<any, infer TError, any, any>
                     }
@@ -152,7 +149,9 @@ type GetResults<T> =
                       unknown extends TError ? DefaultError : TError
                     >
                   : T extends {
-                        queryFn?: QueryFunction<infer TQueryFnData, any>
+                        queryFn?:
+                          | QueryFunction<infer TQueryFnData, any>
+                          | SkipTokenForUseQueries
                         throwOnError?: ThrowOnError<any, infer TError, any, any>
                       }
                     ? GetDefinedOrUndefinedQueryResult<
@@ -168,21 +167,21 @@ type GetResults<T> =
  */
 export type UseQueriesOptions<
   T extends Array<any>,
-  TResult extends Array<any> = [],
+  TResults extends Array<any> = [],
   TDepth extends ReadonlyArray<number> = [],
 > = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<UseQueryOptionsForUseQueries>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...TResult, GetOptions<Head>]
-      : T extends [infer Head, ...infer Tail]
+      ? [...TResults, GetUseQueryOptionsForUseQueries<Head>]
+      : T extends [infer Head, ...infer Tails]
         ? UseQueriesOptions<
-            [...Tail],
-            [...TResult, GetOptions<Head>],
+            [...Tails],
+            [...TResults, GetUseQueryOptionsForUseQueries<Head>],
             [...TDepth, 1]
           >
-        : Readonly<unknown> extends T
+        : ReadonlyArray<unknown> extends T
           ? T
           : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
             // use this to infer the param types in the case of Array.map() argument
@@ -210,18 +209,18 @@ export type UseQueriesOptions<
  */
 export type UseQueriesResults<
   T extends Array<any>,
-  TResult extends Array<any> = [],
+  TResults extends Array<any> = [],
   TDepth extends ReadonlyArray<number> = [],
 > = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<QueryObserverResult>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...TResult, GetResults<Head>]
-      : T extends [infer Head, ...infer Tail]
+      ? [...TResults, GetUseQueryResult<Head>]
+      : T extends [infer Head, ...infer Tails]
         ? UseQueriesResults<
-            [...Tail],
-            [...TResult, GetResults<Head>],
+            [...Tails],
+            [...TResults, GetUseQueryResult<Head>],
             [...TDepth, 1]
           >
         : T extends Array<
@@ -236,7 +235,7 @@ export type UseQueriesResults<
             Array<
               QueryObserverResult<
                 unknown extends TData ? TQueryFnData : TData,
-                TError
+                unknown extends TError ? DefaultError : TError
               >
             >
           : // Fallback

@@ -5,6 +5,8 @@ title: React Native
 
 React Query is designed to work out of the box with React Native, with the exception of the devtools, which are only supported with React DOM at this time.
 
+There is a 3rd party [Expo](https://docs.expo.dev/) plugin which you can try: https://github.com/expo/dev-plugins/tree/main/packages/react-query
+
 There is a 3rd party [Flipper](https://fbflipper.com/docs/getting-started/react-native/) plugin which you can try: https://github.com/bgaleotti/react-query-native-devtools
 
 There is a 3rd party [Reactotron](https://github.com/infinitered/reactotron/) plugin which you can try: https://github.com/hsndmr/reactotron-react-query
@@ -139,5 +141,36 @@ function MyComponent() {
   })
 
   return <Text>DataUpdatedAt: {dataUpdatedAt}</Text>
+}
+```
+
+## Disable queries on out of focus screens
+
+Enabled can also be set to a callback to support disabling queries on out of focus screens without state and re-rendering on navigation, similar to how notifyOnChangeProps works but in addition it wont trigger refetching when invalidating queries with refetchType active.
+
+```tsx
+import React from 'react'
+import { useFocusEffect } from '@react-navigation/native'
+
+export function useQueryFocusAware(notifyOnChangeProps?: NotifyOnChangeProps) {
+  const focusedRef = React.useRef(true)
+
+  useFocusEffect(
+    React.useCallback(() => {
+      focusedRef.current = true
+
+      return () => {
+        focusedRef.current = false
+      }
+    }, []),
+  )
+
+  return () => focusRef.current
+
+  useQuery({
+    queryKey: ['key'],
+    queryFn: () => fetch(...),
+    enabled: () => focusedRef.current,
+  })
 }
 ```

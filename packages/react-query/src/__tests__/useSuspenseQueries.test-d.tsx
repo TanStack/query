@@ -1,8 +1,8 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { useSuspenseQueries } from '..'
+import { skipToken, useSuspenseQueries } from '..'
 import { queryOptions } from '../queryOptions'
 import type { OmitKeyof } from '..'
-import type { UseQueryOptions } from '../types'
+import type { UseQueryOptions, UseSuspenseQueryResult } from '../types'
 
 describe('UseSuspenseQueries config object overload', () => {
   it('TData should always be defined', () => {
@@ -112,5 +112,23 @@ describe('UseSuspenseQueries config object overload', () => {
 
       expectTypeOf(data).toEqualTypeOf<Data>()
     })
+  })
+
+  it('TData should have correct type when conditional skipToken is passed', () => {
+    const queryResults = useSuspenseQueries({
+      queries: [
+        {
+          queryKey: ['withSkipToken'],
+          queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+        },
+      ],
+    })
+
+    const firstResult = queryResults[0]
+
+    expectTypeOf(firstResult).toEqualTypeOf<
+      UseSuspenseQueryResult<number, Error>
+    >()
+    expectTypeOf(firstResult.data).toEqualTypeOf<number>()
   })
 })

@@ -20,7 +20,14 @@ export {
 } from './QueryClientProvider'
 export type { QueryClientProviderProps } from './QueryClientProvider'
 export { useIsFetching } from './useIsFetching'
-export { createInfiniteQuery } from './createInfiniteQuery'
+export {
+  createInfiniteQuery,
+  infiniteQueryOptions,
+} from './createInfiniteQuery'
+export type {
+  DefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
+} from './createInfiniteQuery'
 export { createMutation } from './createMutation'
 export { useIsMutating } from './useIsMutating'
 export { useMutationState } from './useMutationState'

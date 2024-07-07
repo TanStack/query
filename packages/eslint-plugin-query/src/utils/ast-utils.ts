@@ -219,9 +219,10 @@ export const ASTUtils = {
     )
   },
   getFunctionAncestor(
-    context: Readonly<TSESLint.RuleContext<string, ReadonlyArray<unknown>>>,
+    sourceCode: Readonly<TSESLint.SourceCode>,
+    node: TSESTree.Node,
   ) {
-    for (const ancestor of context.getAncestors()) {
+    for (const ancestor of sourceCode.getAncestors(node)) {
       if (ancestor.type === AST_NODE_TYPES.FunctionDeclaration) {
         return ancestor
       }

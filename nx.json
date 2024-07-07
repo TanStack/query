@@ -1,15 +1,13 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "affected": {
-    "defaultBase": "main"
-  },
   "defaultBase": "main",
   "nxCloudAccessToken": "ZDdkNDA4MGEtYjNmYi00MWI4LWE1N2QtYTdlNmYxMGJlZWM2fHJlYWQ=",
+  "useInferencePlugins": false,
   "parallel": 5,
   "namedInputs": {
     "sharedGlobals": [
-      "{workspaceRoot}/.eslintrc.cjs",
       "{workspaceRoot}/.nvmrc",
+      "{workspaceRoot}/eslint.config.js",
       "{workspaceRoot}/package.json",
       "{workspaceRoot}/scripts/getTsupConfig.js",
       "{workspaceRoot}/tsconfig.json"
@@ -23,8 +21,7 @@
       "default",
       "{projectRoot}/build",
       "{projectRoot}/dist",
-      "!{projectRoot}/.eslintrc.cjs",
-      "!{projectRoot}/tsconfig.eslint.json"
+      "!{projectRoot}/eslint.config.js"
     ]
   },
   "targetDefaults": {
@@ -45,11 +42,6 @@
       "cache": true
     },
     "test:build": {
-      "dependsOn": ["build"],
-      "inputs": ["default", "^public"],
-      "cache": true
-    },
-    "test:attw": {
       "dependsOn": ["build"],
       "inputs": ["default", "^public"],
       "cache": true

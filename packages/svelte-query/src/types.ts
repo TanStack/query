@@ -4,8 +4,11 @@ import type {
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
+  Mutation,
+  MutationFilters,
   MutationObserverOptions,
   MutationObserverResult,
+  MutationState,
   OmitKeyof,
   QueryKey,
   QueryObserverOptions,
@@ -131,4 +134,12 @@ type Override<TTargetA, TTargetB> = {
   [AKey in keyof TTargetA]: AKey extends keyof TTargetB
     ? TTargetB[AKey]
     : TTargetA[AKey]
+}
+
+/** Options for useMutationState */
+export type MutationStateOptions<TResult = MutationState> = {
+  filters?: MutationFilters
+  select?: (
+    mutation: Mutation<unknown, DefaultError, unknown, unknown>,
+  ) => TResult
 }

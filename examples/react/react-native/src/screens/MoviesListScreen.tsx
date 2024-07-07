@@ -9,7 +9,7 @@ import { Divider } from '../components/Divider'
 import { ListItem } from '../components/ListItem'
 import { useRefreshByUser } from '../hooks/useRefreshByUser'
 import { useRefreshOnFocus } from '../hooks/useRefreshOnFocus'
-import { fetchMovies, Movie } from '../lib/api'
+import { fetchMovies, Movie, MovieDetails } from '../lib/api'
 import { MoviesStackNavigator } from '../navigation/types'
 
 type MoviesListScreenNavigationProp = StackNavigationProp<
@@ -30,7 +30,7 @@ export function MoviesListScreen({ navigation }: Props) {
   useRefreshOnFocus(refetch)
 
   const onListItemPress = React.useCallback(
-    (movie) => {
+    (movie: MovieDetails) => {
       navigation.navigate('MovieDetails', {
         movie,
       })
@@ -39,7 +39,7 @@ export function MoviesListScreen({ navigation }: Props) {
   )
 
   const renderItem = React.useCallback(
-    ({ item }) => {
+    ({ item }: { item: MovieDetails }) => {
       return <ListItem item={item} onPress={onListItemPress} />
     },
     [onListItemPress],
@@ -48,7 +48,6 @@ export function MoviesListScreen({ navigation }: Props) {
   if (isPending) return <LoadingIndicator />
 
   if (error) return <ErrorMessage message={error.message}></ErrorMessage>
-
   return (
     <FlatList
       data={data}

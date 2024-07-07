@@ -19,7 +19,44 @@ $ yarn add -D @tanstack/eslint-plugin-query
 $ bun add -D @tanstack/eslint-plugin-query
 ```
 
-## Usage
+## Flat Config (`eslint.config.js`)
+
+### Recommended setup
+
+To enable all of the recommended rules for our plugin, add the following config:
+
+```js
+import pluginQuery from '@tanstack/eslint-plugin-query'
+
+export default [
+  ...pluginQuery.configs['flat/recommended'],
+  // Any other config...
+]
+```
+
+### Custom setup
+
+Alternatively, you can load the plugin and configure only the rules you want to use:
+
+```js
+import pluginQuery from '@tanstack/eslint-plugin-query'
+
+export default [
+  {
+    plugins: {
+      '@tanstack/query': pluginQuery,
+    },
+    rules: {
+      '@tanstack/query/exhaustive-deps': 'error',
+    },
+  },
+  // Any other config...
+]
+```
+
+## Legacy Config (`.eslintrc`)
+
+### Recommended setup
 
 To enable all of the recommended rules for our plugin, add `plugin:@tanstack/eslint-plugin-query/recommended` in extends:
 
@@ -29,24 +66,21 @@ To enable all of the recommended rules for our plugin, add `plugin:@tanstack/esl
 }
 ```
 
-### Alternative config
+### Custom setup
 
-Alternatively, add `@tanstack/eslint-plugin-query` to the plugins section of your `.eslintrc` configuration file:
-
-```json
-{
-  "plugins": ["@tanstack/query"]
-}
-```
-
-Then configure the rules you want to use under the rules section:
+Alternatively, add `@tanstack/eslint-plugin-query` to the plugins section, and configure the rules you want to use:
 
 ```json
 {
+  "plugins": ["@tanstack/query"],
   "rules": {
-    "@tanstack/query/exhaustive-deps": "error",
-    "@tanstack/query/no-rest-destructuring": "warn",
-    "@tanstack/query/stable-query-client": "error"
+    "@tanstack/query/exhaustive-deps": "error"
   }
 }
 ```
+
+## Rules
+
+- [@tanstack/query/exhaustive-deps](../exhaustive-deps)
+- [@tanstack/query/no-rest-destructuring](../exhaustive-deps)
+- [@tanstack/query/stable-query-client](../exhaustive-deps)

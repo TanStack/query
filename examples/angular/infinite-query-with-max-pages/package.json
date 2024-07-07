@@ -9,24 +9,21 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^17.3.3",
-    "@angular/common": "^17.3.3",
-    "@angular/compiler": "^17.3.3",
-    "@angular/core": "^17.3.3",
-    "@angular/forms": "^17.3.3",
-    "@angular/platform-browser": "^17.3.3",
-    "@angular/platform-browser-dynamic": "^17.3.3",
-    "@angular/router": "^17.3.3",
-    "@tanstack/angular-query-experimental": "^5.36.0",
+    "@angular/common": "^17.3.10",
+    "@angular/compiler": "^17.3.10",
+    "@angular/core": "^17.3.10",
+    "@angular/platform-browser": "^17.3.10",
+    "@angular/platform-browser-dynamic": "^17.3.10",
+    "@tanstack/angular-query-experimental": "^5.50.2",
     "rxjs": "^7.8.1",
     "tslib": "^2.6.2",
-    "zone.js": "^0.14.4"
+    "zone.js": "^0.14.6"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^17.3.3",
-    "@angular/cli": "^17.3.3",
-    "@angular/compiler-cli": "^17.3.3",
-    "@tanstack/angular-query-devtools-experimental": "^5.36.0",
-    "typescript": "5.2.2"
+    "@angular-devkit/build-angular": "^17.3.8",
+    "@angular/cli": "^17.3.8",
+    "@angular/compiler-cli": "^17.3.10",
+    "@tanstack/angular-query-devtools-experimental": "^5.50.2",
+    "typescript": "5.3.3"
   }
 }

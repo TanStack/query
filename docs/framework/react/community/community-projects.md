@@ -85,11 +85,23 @@ A library for creating typesafe standardized query keys, useful for cache manage
 
 Link: https://github.com/lukemorales/query-key-factory
 
+## Rapini
+
+🥬 OpenAPI to React Query (or SWR) & Axios
+
+Link: https://github.com/rametta/rapini
+
 ## React Query Kit
 
 🕊️ A toolkit for ReactQuery that makes ReactQuery hooks reusable and typesafe
 
 Link: https://github.com/liaoliao666/react-query-kit
+
+## React Query Rewind
+
+Time travel and visualize state during development
+
+Link: https://reactqueryrewind.com/
 
 ## React Query Swagger
 
