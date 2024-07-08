@@ -72,12 +72,56 @@ const Example = () => {
 
 Now, we can concentrate component as any fetching will be always success in component.
 
+## queryOptions
+
+Tkdodo, The maintainer of TanStack Query explains well why this interface is needed in [video explaining queryOptions in TanStack Query v5](https://youtu.be/bhE3wuB_TuA?feature=shared&t=1697).
+You can also use queryOptions in TanStack Query v4.
+
+1. QueryKey management becomes easier by processing queryKey and queryFn together.
+2. You can remove unnecessary custom query hooks. This is because they can all be used directly in `useQuery`, `useQueries` of TanStack Query v4.
+3. TanStack Query v5 already supports queryOptions. This Suspensive React Query's `queryOptions` will make migration from TanStack Query v4 to TanStack Query v5 easier.
+
+```tsx
+import { queryOptions } from '@suspensive/react-query'
+import { useQuery, useQueries, useQueryClient } from '@tanstack/react-query'
+
+const postQueryOptions = (postId) =>
+  queryOptions({
+    queryKey: ['posts', postId] as const,
+    queryFn: ({
+      queryKey: [, postId], // You can use queryKey.
+    }) => fetch(`https://example.com/posts/${postId}`),
+  })
+
+// No need to create custom query hooks.
+// You can use queryOptions directly in useQuery, useQueries.
+const post1Query = useQuery(postQueryOptions(1))
+
+const [post1Query, post2Query] = useQueries({
+  queries: [
+    postQueryOptions(1),
+    { ...postQueryOptions(2), refetchInterval: 2000 },
+  ],
+})
+
+// You can easily use queryKey and queryFn in queryClient's methods.
+const queryClient = useQueryClient()
+queryClient.refetchQueries(postQueryOptions(1))
+queryClient.prefetchQuery(postQueryOptions(1))
+queryClient.invalidateQueries(postQueryOptions(1))
+queryClient.fetchQuery(postQueryOptions(1))
+queryClient.resetQueries(postQueryOptions(1))
+queryClient.cancelQueries(postQueryOptions(1))
+```
+
+### Using queryOptions in TanStack Query v4
+
+> "One of the best ways to share queryKey and queryFn between multiple places, yet keep them co-located to one another, is to use the queryOptions helper." For more details, you can refer to the [TanStack Query v5 Official Docs - Query Options](https://tanstack.com/query/v5/docs/framework/react/guides/query-options).
+
+You can use queryOptions in TanStack Query v4 just like in TanStack Query v5, and it is fully compatible with the TanStack Query v4 API.
+
 ### useSuspenseQuery is Official API now! (from v5)
 
 @suspensive/react-query provides not only [useSuspenseQuery](https://suspensive.org/docs/react-query/useSuspenseQuery), also [useSuspenseQueries](https://suspensive.org/docs/react-query/useSuspenseQueries), [useSuspenseInfiniteQuery](https://suspensive.org/docs/react-query/useSuspenseInfiniteQuery). From @tanstack/react-query v5 provides [official public hook apis for suspense](https://tanstack.com/query/v5/docs/react/guides/suspense) like @suspensive/react-query's hooks. If want to use them early in v4, use this @suspensive/react-query first.
 
 Check the complete documentation on [Suspensive Official Docs Site](https://suspensive.org/) and also welcome Pull Request on [Suspensive GitHub](https://github.com/suspensive/react)
-
-
-
-
