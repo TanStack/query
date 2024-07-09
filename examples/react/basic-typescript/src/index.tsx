@@ -1,12 +1,6 @@
 import * as React from 'react'
 import ReactDOM from 'react-dom/client'
-import axios from 'axios'
-import {
-  QueryClient,
-  skipToken,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query'
+import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
@@ -33,10 +27,8 @@ function usePosts() {
   return useQuery({
     queryKey: ['posts'],
     queryFn: async (): Promise<Array<Post>> => {
-      const { data } = await axios.get(
-        'https://jsonplaceholder.typicode.com/posts',
-      )
-      return data
+      const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+      return await response.json()
     },
   })
 }
@@ -55,12 +47,12 @@ function Posts({
       <div>
         {status === 'pending' ? (
           'Loading...'
-        ) : error instanceof Error ? (
+        ) : status === 'error' ? (
           <span>Error: {error.message}</span>
         ) : (
           <>
             <div>
-              {data?.map((post) => (
+              {data.map((post) => (
                 <p key={post.id}>
                   <a
                     onClick={() => setPostId(post.id)}
@@ -90,16 +82,17 @@ function Posts({
 }
 
 const getPostById = async (id: number): Promise<Post> => {
-  const { data } = await axios.get(
+  const response = await fetch(
     `https://jsonplaceholder.typicode.com/posts/${id}`,
   )
-  return data
+  return await response.json()
 }
 
 function usePost(postId: number) {
   return useQuery({
     queryKey: ['post', postId],
-    queryFn: postId ? () => getPostById(postId) : skipToken,
+    queryFn: () => getPostById(postId),
+    enabled: !!postId,
   })
 }
 
@@ -121,13 +114,13 @@ function Post({
       </div>
       {!postId || status === 'pending' ? (
         'Loading...'
-      ) : error instanceof Error ? (
+      ) : status === 'error' ? (
         <span>Error: {error.message}</span>
       ) : (
         <>
-          <h1>{data?.title}</h1>
+          <h1>{data.title}</h1>
           <div>
-            <p>{data?.body}</p>
+            <p>{data.body}</p>
           </div>
           <div>{isFetching ? 'Background Updating...' : ' '}</div>
         </>
