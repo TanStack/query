@@ -179,7 +179,7 @@ TanStack Query has always had private fields and methods on classes, but they we
 
 Almost everyone gets `cacheTime` wrong. It sounds like "the amount of time that data is cached for", but that is not correct.
 
-`cacheTime` does nothing as long as a query is still in used. It only kicks in as soon as the query becomes unused. After the time has passed, data will be "garbage collected" to avoid the cache from growing.
+`cacheTime` does nothing as long as a query is still in use. It only kicks in as soon as the query becomes unused. After the time has passed, data will be "garbage collected" to avoid the cache from growing.
 
 `gc` is referring to "garbage collect" time. It's a bit more technical, but also a quite [well known abbreviation](<https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)>) in computer science.
 
@@ -365,7 +365,7 @@ For mutations as well the `status` has been changed from `loading` to `pending` 
 
 Lastly, a new derived `isLoading` flag has been added to the queries that is implemented as `isPending && isFetching`. This means that `isLoading` and `isInitialLoading` have the same thing, but `isInitialLoading` is deprecated now and will be removed in the next major version.
 
-To understand the reasoning behing this change checkout the [v5 roadmap discussion](https://github.com/TanStack/query/discussions/4252).
+To understand the reasoning behind this change checkout the [v5 roadmap discussion](https://github.com/TanStack/query/discussions/4252).
 
 ### `hashQueryKey` has been renamed to `hashKey`
 

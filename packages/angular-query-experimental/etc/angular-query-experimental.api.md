@@ -31,6 +31,34 @@ import type { QueryObserverResult } from '@tanstack/query-core'
 import type { Signal } from '@angular/core'
 import type { ThrowOnError } from '@tanstack/query-core'
 
+import type { DataTag } from '@tanstack/query-core';
+import type { DefaultError } from '@tanstack/query-core';
+import type { DefinedInfiniteQueryObserverResult } from '@tanstack/query-core';
+import type { DefinedQueryObserverResult } from '@tanstack/query-core';
+import type { EnvironmentProviders } from '@angular/core';
+import type { InfiniteData } from '@tanstack/query-core';
+import type { InfiniteQueryObserverOptions } from '@tanstack/query-core';
+import type { InfiniteQueryObserverResult } from '@tanstack/query-core';
+import { InjectOptions } from '@angular/core';
+import { Injector } from '@angular/core';
+import type { MutateFunction } from '@tanstack/query-core';
+import { Mutation } from '@tanstack/query-core';
+import { MutationFilters } from '@tanstack/query-core';
+import type { MutationObserverOptions } from '@tanstack/query-core';
+import type { MutationObserverResult } from '@tanstack/query-core';
+import { MutationState } from '@tanstack/query-core';
+import type { OmitKeyof } from '@tanstack/query-core';
+import { Provider } from '@angular/core';
+import type { QueriesPlaceholderDataFunction } from '@tanstack/query-core';
+import type { QueryClient } from '@tanstack/query-core';
+import { QueryFilters } from '@tanstack/query-core';
+import type { QueryFunction } from '@tanstack/query-core';
+import type { QueryKey } from '@tanstack/query-core';
+import type { QueryObserverOptions } from '@tanstack/query-core';
+import type { QueryObserverResult } from '@tanstack/query-core';
+import type { Signal } from '@angular/core';
+import type { ThrowOnError } from '@tanstack/query-core';
+
 // @public (undocumented)
 export interface BaseMutationNarrowing<
   TData = unknown,
