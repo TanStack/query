@@ -12,3 +12,9 @@ There are lots of community projects that build on top of Vue Query and use it t
 A library for creating typesafe standardized query keys, useful for cache management in `@tanstack/query`
 
 Link: https://github.com/lukemorales/query-key-factory
+
+## Query Rewind
+
+Time travel and visualize state during development
+
+Link: https://reactqueryrewind.com/
