@@ -387,62 +387,6 @@ importers:
 
   examples/react/basic:
     dependencies:
-      '@tanstack/react-query':
-        specifier: ^5.50.1
-        version: link:../../../packages/react-query
-      '@tanstack/react-query-devtools':
-        specifier: ^5.50.1
-        version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
-      react:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
-    devDependencies:
-      '@tanstack/eslint-plugin-query':
-        specifier: ^5.50.1
-        version: link:../../../packages/eslint-plugin-query
-      '@vitejs/plugin-react':
-        specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
-      vite:
-        specifier: ^5.2.11
-        version: 5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
-
-  examples/react/basic-graphql-request:
-    dependencies:
-      '@tanstack/react-query':
-        specifier: ^5.50.1
-        version: link:../../../packages/react-query
-      '@tanstack/react-query-devtools':
-        specifier: ^5.50.1
-        version: link:../../../packages/react-query-devtools
-      graphql:
-        specifier: ^16.8.1
-        version: 16.8.1
-      graphql-request:
-        specifier: ^7.0.1
-        version: 7.0.1(graphql@16.8.1)
-      react:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
-    devDependencies:
-      '@vitejs/plugin-react':
-        specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
-      vite:
-        specifier: ^5.2.11
-        version: 5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
-
-  examples/react/basic-typescript:
-    dependencies:
       '@tanstack/query-sync-storage-persister':
         specifier: ^5.50.1
         version: link:../../../packages/query-sync-storage-persister
@@ -480,12 +424,37 @@ importers:
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
-      eslint-config-prettier:
-        specifier: ^9.1.0
-        version: 9.1.0(eslint@8.57.0)
       typescript:
         specifier: 5.3.3
         version: 5.3.3
+      vite:
+        specifier: ^5.2.11
+        version: 5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
+
+  examples/react/basic-graphql-request:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.50.1
+        version: link:../../../packages/react-query
+      '@tanstack/react-query-devtools':
+        specifier: ^5.50.1
+        version: link:../../../packages/react-query-devtools
+      graphql:
+        specifier: ^16.8.1
+        version: 16.8.1
+      graphql-request:
+        specifier: ^7.0.1
+        version: 7.0.1(graphql@16.8.1)
+      react:
+        specifier: 19.0.0-rc-4c2e457c7c-20240522
+        version: 19.0.0-rc-4c2e457c7c-20240522
+      react-dom:
+        specifier: 19.0.0-rc-4c2e457c7c-20240522
+        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
+    devDependencies:
+      '@vitejs/plugin-react':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       vite:
         specifier: ^5.2.11
         version: 5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
@@ -9755,12 +9724,6 @@ packages:
   eslint-compat-utils@0.5.1:
     resolution: {integrity: sha512-3z3vFexKIEnjHE3zCMRo6fn/e44U7T1khUjg+Hp0ZQMCigh28rALD0nPFBcGZuiLC5rLZa2ubQHDRln09JfU2Q==}
     engines: {node: '>=12'}
-    peerDependencies:
-      eslint: ^8.57.0
-
-  eslint-config-prettier@9.1.0:
-    resolution: {integrity: sha512-NSWl5BFQWEPi1j4TjVNItzYV7dZXZ+wP6I6ZhrBGpChQhZRUaElihE9uRRkcbRnNb76UMKDF3r+WTmNcGPKsqw==}
-    hasBin: true
     peerDependencies:
       eslint: ^8.57.0
 
@@ -28766,10 +28729,6 @@ snapshots:
     dependencies:
       eslint: 9.4.0
       semver: 7.6.2
-
-  eslint-config-prettier@9.1.0(eslint@8.57.0):
-    dependencies:
-      eslint: 8.57.0
 
   eslint-config-react-app@6.0.0(@typescript-eslint/eslint-plugin@4.33.0(@typescript-eslint/parser@4.33.0(eslint@9.4.0)(typescript@5.4.2))(eslint@9.4.0)(typescript@5.4.2))(@typescript-eslint/parser@4.33.0(eslint@9.4.0)(typescript@5.4.2))(babel-eslint@10.1.0(eslint@9.4.0))(eslint-plugin-flowtype@5.10.0(eslint@9.4.0))(eslint-plugin-import@2.29.1(@typescript-eslint/parser@4.33.0(eslint@9.4.0)(typescript@5.4.2))(eslint@9.4.0))(eslint-plugin-jest@24.7.0(@typescript-eslint/eslint-plugin@4.33.0(@typescript-eslint/parser@4.33.0(eslint@9.4.0)(typescript@5.4.2))(eslint@9.4.0)(typescript@5.4.2))(eslint@9.4.0)(typescript@5.4.2))(eslint-plugin-jsx-a11y@6.7.1(eslint@9.4.0))(eslint-plugin-react-hooks@4.6.2(eslint@9.4.0))(eslint-plugin-react@7.34.3(eslint@9.4.0))(eslint-plugin-testing-library@3.10.2(eslint@9.4.0)(typescript@5.4.2))(eslint@9.4.0)(typescript@5.4.2):
     dependencies:
