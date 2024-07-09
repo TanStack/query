@@ -2,12 +2,15 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
+    "analytics": false,
     "packageManager": "pnpm",
-    "analytics": false
+    "cache": {
+      "enabled": false
+    }
   },
   "newProjectRoot": "projects",
   "projects": {
-    "angular-cli-standalone-17": {
+    "angular-cli-18": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -44,12 +47,17 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/angular-cli-standalone-17",
+            "outputPath": "dist/angular-cli-18",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
             "styles": ["src/styles.css"],
             "scripts": []
           },
@@ -58,13 +66,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "2kB",
+                  "maximumError": "4kB"
                 }
               ],
               "outputHashing": "all"
@@ -81,19 +89,16 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "angular-cli-standalone-17:build:production"
+              "buildTarget": "angular-cli-18:build:production"
             },
             "development": {
-              "buildTarget": "angular-cli-standalone-17:build:development"
+              "buildTarget": "angular-cli-18:build:development"
             }
           },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "buildTarget": "angular-cli-standalone-17:build"
-          }
+          "builder": "@angular-devkit/build-angular:extract-i18n"
         }
       }
     }
