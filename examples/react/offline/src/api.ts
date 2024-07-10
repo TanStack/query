@@ -36,6 +36,7 @@ export const updateMovie = async (id: string, comment: string) => {
   const response = await fetch(`/movies/${id}`, {
     method: 'POST',
     body: JSON.stringify({ comment }),
+    headers: { 'Content-Type': 'application/json' },
   })
   return await response.json()
 }

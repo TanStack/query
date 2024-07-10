@@ -7,7 +7,7 @@ import {
   useQuery,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import toast, { Toaster } from 'react-hot-toast'
+import { Toaster, toast } from 'react-hot-toast'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import {
