@@ -1,16 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-
 import {
   QueryClient,
   QueryClientProvider,
+  useMutation,
   useQuery,
   useQueryClient,
-  useMutation,
 } from '@tanstack/react-query'
-
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-
 import './styles.css'
 
 let id = 0
@@ -23,6 +20,9 @@ let list = [
   'grapes',
 ].map((d) => ({ id: id++, name: d, notes: 'These are some notes' }))
 
+type Todos = typeof list
+type Todo = Todos[0]
+
 let errorRate = 0.05
 let queryTimeMin = 1000
 let queryTimeMax = 2000
@@ -31,7 +31,7 @@ const queryClient = new QueryClient()
 
 function Root() {
   const [staleTime, setStaleTime] = React.useState(1000)
-  const [gcTime, setgcTime] = React.useState(3000)
+  const [gcTime, setGcTime] = React.useState(3000)
   const [localErrorRate, setErrorRate] = React.useState(errorRate)
   const [localFetchTimeMin, setLocalFetchTimeMin] = React.useState(queryTimeMin)
   const [localFetchTimeMax, setLocalFetchTimeMax] = React.useState(queryTimeMax)
@@ -64,7 +64,7 @@ function Root() {
           min="0"
           step="1000"
           value={staleTime}
-          onChange={(e) => setStaleTime(parseFloat(e.target.value, 10))}
+          onChange={(e) => setStaleTime(parseFloat(e.target.value))}
           style={{ width: '100px' }}
         />
       </div>
@@ -75,7 +75,7 @@ function Root() {
           min="0"
           step="1000"
           value={gcTime}
-          onChange={(e) => setgcTime(parseFloat(e.target.value, 10))}
+          onChange={(e) => setGcTime(parseFloat(e.target.value))}
           style={{ width: '100px' }}
         />
       </div>
@@ -88,7 +88,7 @@ function Root() {
           max="1"
           step=".05"
           value={localErrorRate}
-          onChange={(e) => setErrorRate(parseFloat(e.target.value, 10))}
+          onChange={(e) => setErrorRate(parseFloat(e.target.value))}
           style={{ width: '100px' }}
         />
       </div>
@@ -99,7 +99,7 @@ function Root() {
           min="1"
           step="500"
           value={localFetchTimeMin}
-          onChange={(e) => setLocalFetchTimeMin(parseFloat(e.target.value, 10))}
+          onChange={(e) => setLocalFetchTimeMin(parseFloat(e.target.value))}
           style={{ width: '60px' }}
         />{' '}
       </div>
@@ -110,7 +110,7 @@ function Root() {
           min="1"
           step="500"
           value={localFetchTimeMax}
-          onChange={(e) => setLocalFetchTimeMax(parseFloat(e.target.value, 10))}
+          onChange={(e) => setLocalFetchTimeMax(parseFloat(e.target.value))}
           style={{ width: '60px' }}
         />
       </div>
@@ -124,7 +124,7 @@ function Root() {
 
 function App() {
   const queryClient = useQueryClient()
-  const [editingIndex, setEditingIndex] = React.useState(null)
+  const [editingIndex, setEditingIndex] = React.useState<number | null>(null)
   const [views, setViews] = React.useState(['', 'fruit', 'grape'])
   // const [views, setViews] = React.useState([""]);
 
@@ -171,7 +171,13 @@ function App() {
   )
 }
 
-function Todos({ initialFilter = '', setEditingIndex }) {
+function Todos({
+  initialFilter = '',
+  setEditingIndex,
+}: {
+  initialFilter: string
+  setEditingIndex: React.Dispatch<React.SetStateAction<number | null>>
+}) {
   const [filter, setFilter] = React.useState(initialFilter)
 
   const { status, data, isFetching, error, failureCount, refetch } = useQuery({
@@ -224,14 +230,19 @@ function Todos({ initialFilter = '', setEditingIndex }) {
   )
 }
 
-function EditTodo({ editingIndex, setEditingIndex }) {
+function EditTodo({
+  editingIndex,
+  setEditingIndex,
+}: {
+  editingIndex: number
+  setEditingIndex: React.Dispatch<React.SetStateAction<number | null>>
+}) {
   const queryClient = useQueryClient()
 
   // Don't attempt to query until editingIndex is truthy
   const { status, data, isFetching, error, failureCount, refetch } = useQuery({
     queryKey: ['todo', { id: editingIndex }],
     queryFn: () => fetchTodoById({ id: editingIndex }),
-    enabled: editingIndex !== null,
   })
 
   const [todo, setTodo] = React.useState(data || {})
@@ -348,7 +359,7 @@ function AddTodo() {
       />
       <button
         onClick={() => {
-          addMutation.mutate({ name })
+          addMutation.mutate({ name, notes: 'These are some notes' })
         }}
         disabled={addMutation.status === 'pending' || !name}
       >
@@ -365,7 +376,7 @@ function AddTodo() {
   )
 }
 
-function fetchTodos({ signal, queryKey: [, { filter }] }) {
+function fetchTodos({ signal, queryKey: [, { filter }] }): Promise<Todos> {
   console.info('fetchTodos', { filter })
 
   if (signal) {
@@ -389,7 +400,7 @@ function fetchTodos({ signal, queryKey: [, { filter }] }) {
   })
 }
 
-function fetchTodoById({ id }) {
+function fetchTodoById({ id }: { id: number }): Promise<Todo> {
   console.info('fetchTodoById', { id })
   return new Promise((resolve, reject) => {
     setTimeout(
@@ -406,7 +417,7 @@ function fetchTodoById({ id }) {
   })
 }
 
-function postTodo({ name, notes }) {
+function postTodo({ name, notes }: Omit<Todo, 'id'>) {
   console.info('postTodo', { name, notes })
   return new Promise((resolve, reject) => {
     setTimeout(
@@ -425,7 +436,7 @@ function postTodo({ name, notes }) {
   })
 }
 
-function patchTodo(todo) {
+function patchTodo(todo?: Todo): Promise<Todo> {
   console.info('patchTodo', todo)
   return new Promise((resolve, reject) => {
     setTimeout(
@@ -446,5 +457,5 @@ function patchTodo(todo) {
   })
 }
 
-const rootElement = document.getElementById('root')
+const rootElement = document.getElementById('root') as HTMLElement
 ReactDOM.createRoot(rootElement).render(<Root />)
