@@ -1,13 +1,11 @@
 import React from 'react'
 
-//
-
 import {
-  useQuery,
-  useQueryClient,
-  useMutation,
   QueryClient,
   QueryClientProvider,
+  useMutation,
+  useQuery,
+  useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
@@ -28,7 +26,7 @@ function Example() {
 
   const { status, data, error, isFetching } = useQuery({
     queryKey: ['todos'],
-    queryFn: async () => {
+    queryFn: async (): Promise<Array<string>> => {
       const response = await fetch('/api/data')
       return await response.json()
     },
@@ -37,7 +35,7 @@ function Example() {
   })
 
   const addMutation = useMutation({
-    mutationFn: (add) => fetch(`/api/data?add=${add}`),
+    mutationFn: (add: string) => fetch(`/api/data?add=${add}`),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   })
 
@@ -51,7 +49,7 @@ function Example() {
 
   return (
     <div>
-      <h1>Auto Refetch with stale-time set to 1s)</h1>
+      <h1>Auto Refetch with stale-time set to {intervalMs}ms</h1>
       <p>
         This example is best experienced on your own machine, where you can open
         multiple tabs to the same localhost server and see your changes

@@ -1,7 +1,12 @@
+import type { NextApiRequest, NextApiResponse } from 'next'
+
 // an simple endpoint for getting current list
 let list = ['Item 1', 'Item 2', 'Item 3']
 
-export default async (req, res) => {
+export default async (
+  req: NextApiRequest,
+  res: NextApiResponse<typeof list>,
+) => {
   if (req.query.add) {
     if (!list.includes(req.query.add)) {
       list.push(req.query.add)
