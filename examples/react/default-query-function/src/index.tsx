@@ -2,15 +2,22 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import axios from 'axios'
 import {
-  useQuery,
-  useQueryClient,
   QueryClient,
   QueryClientProvider,
+  useQuery,
+  useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import type { QueryKey } from '@tanstack/react-query'
+
+type Post = {
+  id: number
+  title: string
+  body: string
+}
 
 // Define a default query function that will receive the query key
-const defaultQueryFn = async ({ queryKey }) => {
+const defaultQueryFn = async ({ queryKey }: { queryKey: QueryKey }) => {
   const { data } = await axios.get(
     `https://jsonplaceholder.typicode.com${queryKey[0]}`,
   )
@@ -51,11 +58,15 @@ function App() {
   )
 }
 
-function Posts({ setPostId }) {
+function Posts({
+  setPostId,
+}: {
+  setPostId: React.Dispatch<React.SetStateAction<number>>
+}) {
   const queryClient = useQueryClient()
 
   // All you have to do now is pass a key!
-  const { status, data, error, isFetching } = useQuery({
+  const { status, data, error, isFetching } = useQuery<Array<Post>>({
     queryKey: ['/posts'],
   })
 
@@ -99,9 +110,15 @@ function Posts({ setPostId }) {
   )
 }
 
-function Post({ postId, setPostId }) {
+function Post({
+  postId,
+  setPostId,
+}: {
+  postId: number
+  setPostId: React.Dispatch<React.SetStateAction<number>>
+}) {
   // You can even leave out the queryFn and just go straight into options
-  const { status, data, error, isFetching } = useQuery({
+  const { status, data, error, isFetching } = useQuery<Post>({
     queryKey: [`/posts/${postId}`],
     enabled: !!postId,
   })
@@ -130,5 +147,5 @@ function Post({ postId, setPostId }) {
   )
 }
 
-const rootElement = document.getElementById('root')
+const rootElement = document.getElementById('root') as HTMLElement
 ReactDOM.createRoot(rootElement).render(<App />)
