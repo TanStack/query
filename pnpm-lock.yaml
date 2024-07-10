@@ -649,7 +649,7 @@ importers:
         version: 1.2.4
       msw:
         specifier: ^2.3.0
-        version: 2.3.0(typescript@5.4.2)
+        version: 2.3.0(typescript@5.3.3)
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
@@ -663,6 +663,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      typescript:
+        specifier: 5.3.3
+        version: 5.3.3
       vite:
         specifier: ^5.2.11
         version: 5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
@@ -22617,11 +22620,7 @@ snapshots:
       jest-runner: 26.6.3
       jest-runtime: 26.6.3
     transitivePeerDependencies:
-      - bufferutil
-      - canvas
       - supports-color
-      - ts-node
-      - utf-8-validate
 
   '@jest/test-sequencer@27.5.1':
     dependencies:
@@ -31369,11 +31368,7 @@ snapshots:
       stack-utils: 2.0.6
       throat: 5.0.0
     transitivePeerDependencies:
-      - bufferutil
-      - canvas
       - supports-color
-      - ts-node
-      - utf-8-validate
 
   jest-circus@27.5.1:
     dependencies:
@@ -33700,7 +33695,7 @@ snapshots:
 
   ms@2.1.3: {}
 
-  msw@2.3.0(typescript@5.4.2):
+  msw@2.3.0(typescript@5.3.3):
     dependencies:
       '@bundled-es-modules/cookie': 2.0.0
       '@bundled-es-modules/statuses': 1.0.1
@@ -33720,7 +33715,7 @@ snapshots:
       type-fest: 4.10.2
       yargs: 17.7.2
     optionalDependencies:
-      typescript: 5.4.2
+      typescript: 5.3.3
 
   muggle-string@0.3.1: {}
 

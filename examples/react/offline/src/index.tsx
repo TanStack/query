@@ -5,7 +5,7 @@ import { worker } from './api'
 
 worker.start()
 
-const rootElement = document.getElementById('root')
+const rootElement = document.getElementById('root') as HTMLElement
 ReactDOM.createRoot(rootElement).render(
   <div style={{ padding: '16px' }}>
     <App />
