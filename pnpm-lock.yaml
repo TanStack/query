@@ -399,9 +399,6 @@ importers:
       '@tanstack/react-query-persist-client':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-persist-client
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
@@ -1021,9 +1018,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
@@ -1034,6 +1028,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      typescript:
+        specifier: 5.3.3
+        version: 5.3.3
       vite:
         specifier: ^5.2.11
         version: 5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
@@ -1086,9 +1083,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       font-awesome:
         specifier: ^4.7.0
         version: 4.7.0
