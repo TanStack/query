@@ -1118,7 +1118,7 @@ importers:
         specifier: 5.3.3
         version: 5.3.3
 
-  examples/solid/basic-graphql-request:
+  examples/solid/basic:
     dependencies:
       '@tanstack/solid-query':
         specifier: ^5.50.2
@@ -1126,12 +1126,6 @@ importers:
       '@tanstack/solid-query-devtools':
         specifier: ^5.50.2
         version: link:../../../packages/solid-query-devtools
-      graphql:
-        specifier: ^16.8.1
-        version: 16.8.1
-      graphql-request:
-        specifier: ^7.0.1
-        version: 7.0.1(graphql@16.8.1)
       solid-js:
         specifier: ^1.8.17
         version: 1.8.17
@@ -1146,7 +1140,7 @@ importers:
         specifier: ^2.10.2
         version: 2.10.2(@testing-library/jest-dom@6.4.5(vitest@1.6.0(@types/node@20.12.12)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
 
-  examples/solid/basic-typescript:
+  examples/solid/basic-graphql-request:
     dependencies:
       '@tanstack/solid-query':
         specifier: ^5.50.2
@@ -1154,6 +1148,12 @@ importers:
       '@tanstack/solid-query-devtools':
         specifier: ^5.50.2
         version: link:../../../packages/solid-query-devtools
+      graphql:
+        specifier: ^16.8.1
+        version: 16.8.1
+      graphql-request:
+        specifier: ^7.0.1
+        version: 7.0.1(graphql@16.8.1)
       solid-js:
         specifier: ^1.8.17
         version: 1.8.17
@@ -22589,11 +22589,7 @@ snapshots:
       jest-runner: 26.6.3
       jest-runtime: 26.6.3
     transitivePeerDependencies:
-      - bufferutil
-      - canvas
       - supports-color
-      - ts-node
-      - utf-8-validate
 
   '@jest/test-sequencer@27.5.1':
     dependencies:
@@ -31341,11 +31337,7 @@ snapshots:
       stack-utils: 2.0.6
       throat: 5.0.0
     transitivePeerDependencies:
-      - bufferutil
-      - canvas
       - supports-color
-      - ts-node
-      - utf-8-validate
 
   jest-circus@27.5.1:
     dependencies:
