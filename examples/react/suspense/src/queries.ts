@@ -1,25 +1,19 @@
-import axios from 'axios'
-
-// let count = 0;
-
-export async function fetchProjects(key) {
+export async function fetchProjects() {
   console.info('fetch projects')
-  // if (count < 4) {
-  //   count++;
-  //   throw new Error("testing");
-  // }
-  let { data } = await axios.get(
+
+  const response = await fetch(
     `https://api.github.com/users/tannerlinsley/repos?sort=updated`,
   )
   await new Promise((r) => setTimeout(r, 1000))
-  return data
+  return await response.json()
 }
 
-export async function fetchProject(id) {
+export async function fetchProject(id: string) {
   console.info('fetch project id', id)
-  let { data } = await axios.get(
+
+  const response = await fetch(
     `https://api.github.com/repos/tannerlinsley/${id}`,
   )
   await new Promise((r) => setTimeout(r, 1000))
-  return data
+  return await response.json()
 }

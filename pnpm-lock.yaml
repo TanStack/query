@@ -1105,6 +1105,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      typescript:
+        specifier: 5.3.3
+        version: 5.3.3
       vite:
         specifier: ^5.2.11
         version: 5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
