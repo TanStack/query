@@ -1,5 +1,4 @@
 import React from 'react'
-import axios from 'axios'
 
 //
 
@@ -30,8 +29,8 @@ function Example() {
   const { status, data, error, isFetching } = useQuery({
     queryKey: ['todos'],
     queryFn: async () => {
-      const res = await axios.get('/api/data')
-      return res.data
+      const response = await fetch('/api/data')
+      return await response.json()
     },
     // Refetch the data every second
     refetchInterval: intervalMs,

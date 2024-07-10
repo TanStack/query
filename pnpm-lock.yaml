@@ -369,9 +369,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       isomorphic-unfetch:
         specifier: 4.0.2
         version: 4.0.2
@@ -489,9 +486,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       isomorphic-unfetch:
         specifier: 4.0.2
         version: 4.0.2
@@ -516,9 +510,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       isomorphic-unfetch:
         specifier: 4.0.2
         version: 4.0.2
@@ -672,9 +663,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       isomorphic-unfetch:
         specifier: 4.0.2
         version: 4.0.2
@@ -709,9 +697,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       isomorphic-unfetch:
         specifier: 4.0.2
         version: 4.0.2
@@ -746,9 +731,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       isomorphic-unfetch:
         specifier: 4.0.2
         version: 4.0.2
@@ -792,9 +774,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       isomorphic-unfetch:
         specifier: 4.0.2
         version: 4.0.2

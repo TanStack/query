@@ -1,5 +1,4 @@
 import React from 'react'
-import axios from 'axios'
 import {
   useInfiniteQuery,
   QueryClient,
@@ -32,8 +31,8 @@ function Example() {
   } = useInfiniteQuery({
     queryKey: ['projects'],
     queryFn: async ({ pageParam }) => {
-      const res = await axios.get('/api/projects?cursor=' + pageParam)
-      return res.data
+      const response = await fetch(`/api/projects?cursor=${pageParam}`)
+      return await response.json()
     },
     initialPageParam: 0,
     getPreviousPageParam: (firstPage) => firstPage.previousId ?? undefined,

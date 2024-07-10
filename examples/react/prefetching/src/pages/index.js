@@ -1,20 +1,19 @@
 import React from 'react'
-import axios from 'axios'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const getCharacters = async () => {
   await new Promise((r) => setTimeout(r, 500))
-  const { data } = await axios.get('https://rickandmortyapi.com/api/character/')
-  return data
+  const response = await fetch('https://rickandmortyapi.com/api/character/')
+  return await response.json()
 }
 
 const getCharacter = async (selectedChar) => {
   await new Promise((r) => setTimeout(r, 500))
-  const { data } = await axios.get(
+  const response = await fetch(
     `https://rickandmortyapi.com/api/character/${selectedChar}`,
   )
-  return data
+  return await response.json()
 }
 
 export default function Example() {
