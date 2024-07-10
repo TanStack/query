@@ -2,10 +2,10 @@ import 'font-awesome/css/font-awesome.min.css'
 import React, { lazy } from 'react'
 import ReactDOM from 'react-dom/client'
 import {
-  useQueryClient,
   QueryClient,
   QueryClientProvider,
   QueryErrorResetBoundary,
+  useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -36,7 +36,7 @@ function App() {
 function Example() {
   const queryClient = useQueryClient()
   const [showProjects, setShowProjects] = React.useState(false)
-  const [activeProject, setActiveProject] = React.useState(null)
+  const [activeProject, setActiveProject] = React.useState<string | null>(null)
 
   return (
     <>
@@ -90,5 +90,5 @@ function Example() {
   )
 }
 
-const rootElement = document.getElementById('root')
+const rootElement = document.getElementById('root') as HTMLElement
 ReactDOM.createRoot(rootElement).render(<App />)

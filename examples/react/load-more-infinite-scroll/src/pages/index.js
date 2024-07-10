@@ -1,6 +1,5 @@
 import React from 'react'
 import Link from 'next/link'
-import axios from 'axios'
 import { useInView } from 'react-intersection-observer'
 import {
   useInfiniteQuery,
@@ -36,8 +35,8 @@ function Example() {
   } = useInfiniteQuery({
     queryKey: ['projects'],
     queryFn: async ({ pageParam }) => {
-      const res = await axios.get('/api/projects?cursor=' + pageParam)
-      return res.data
+      const response = await fetch(`/api/projects?cursor=${pageParam}`)
+      return await response.json()
     },
     initialPageParam: 0,
     getPreviousPageParam: (firstPage) => firstPage.previousId ?? undefined,

@@ -371,9 +371,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       isomorphic-unfetch:
         specifier: 4.0.2
         version: 4.0.2
@@ -389,15 +386,18 @@ importers:
 
   examples/react/basic:
     dependencies:
+      '@tanstack/query-sync-storage-persister':
+        specifier: ^5.50.1
+        version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-query':
         specifier: ^5.50.1
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
+      '@tanstack/react-query-persist-client':
+        specifier: ^5.50.1
+        version: link:../../../packages/react-query-persist-client
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
@@ -408,9 +408,21 @@ importers:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.50.1
         version: link:../../../packages/eslint-plugin-query
+      '@types/react':
+        specifier: npm:types-react@rc
+        version: types-react@19.0.0-rc.1
+      '@types/react-dom':
+        specifier: npm:types-react-dom@rc
+        version: types-react-dom@19.0.0-rc.1
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.0
+      typescript:
+        specifier: 5.3.3
+        version: 5.3.3
       vite:
         specifier: ^5.2.11
         version: 5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
@@ -443,55 +455,6 @@ importers:
         specifier: ^5.2.11
         version: 5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
-  examples/react/basic-typescript:
-    dependencies:
-      '@tanstack/query-sync-storage-persister':
-        specifier: ^5.50.1
-        version: link:../../../packages/query-sync-storage-persister
-      '@tanstack/react-query':
-        specifier: ^5.50.1
-        version: link:../../../packages/react-query
-      '@tanstack/react-query-devtools':
-        specifier: ^5.50.1
-        version: link:../../../packages/react-query-devtools
-      '@tanstack/react-query-persist-client':
-        specifier: ^5.50.1
-        version: link:../../../packages/react-query-persist-client
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
-      react:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522
-      react-dom:
-        specifier: 19.0.0-rc-4c2e457c7c-20240522
-        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
-    devDependencies:
-      '@tanstack/eslint-plugin-query':
-        specifier: ^5.50.1
-        version: link:../../../packages/eslint-plugin-query
-      '@types/react':
-        specifier: npm:types-react@rc
-        version: types-react@19.0.0-rc.1
-      '@types/react-dom':
-        specifier: npm:types-react-dom@rc
-        version: types-react-dom@19.0.0-rc.1
-      '@vitejs/plugin-react':
-        specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
-      eslint:
-        specifier: ^8.57.0
-        version: 8.57.0
-      eslint-config-prettier:
-        specifier: ^9.1.0
-        version: 9.1.0(eslint@8.57.0)
-      typescript:
-        specifier: 5.3.3
-        version: 5.3.3
-      vite:
-        specifier: ^5.2.11
-        version: 5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
-
   examples/react/default-query-function:
     dependencies:
       '@tanstack/react-query':
@@ -500,9 +463,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
@@ -513,6 +473,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      typescript:
+        specifier: 5.3.3
+        version: 5.3.3
       vite:
         specifier: ^5.2.11
         version: 5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
@@ -525,9 +488,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       isomorphic-unfetch:
         specifier: 4.0.2
         version: 4.0.2
@@ -552,9 +512,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       isomorphic-unfetch:
         specifier: 4.0.2
         version: 4.0.2
@@ -579,9 +536,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      ky:
-        specifier: ^1.2.4
-        version: 1.2.4
       next:
         specifier: ^14.2.4
         version: 14.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.71.1)
@@ -680,12 +634,9 @@ importers:
       '@tanstack/react-query-persist-client':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-persist-client
-      ky:
-        specifier: ^1.2.4
-        version: 1.2.4
       msw:
         specifier: ^2.3.0
-        version: 2.3.0(typescript@5.4.2)
+        version: 2.3.0(typescript@5.3.3)
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
@@ -699,6 +650,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      typescript:
+        specifier: 5.3.3
+        version: 5.3.3
       vite:
         specifier: ^5.2.11
         version: 5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
@@ -711,9 +665,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       isomorphic-unfetch:
         specifier: 4.0.2
         version: 4.0.2
@@ -748,9 +699,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       isomorphic-unfetch:
         specifier: 4.0.2
         version: 4.0.2
@@ -785,9 +733,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       isomorphic-unfetch:
         specifier: 4.0.2
         version: 4.0.2
@@ -831,9 +776,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       isomorphic-unfetch:
         specifier: 4.0.2
         version: 4.0.2
@@ -1054,9 +996,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
@@ -1067,6 +1006,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      typescript:
+        specifier: 5.3.3
+        version: 5.3.3
       vite:
         specifier: ^5.2.11
         version: 5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
@@ -1119,9 +1061,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       font-awesome:
         specifier: ^4.7.0
         version: 4.7.0
@@ -1138,6 +1077,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+      typescript:
+        specifier: 5.3.3
+        version: 5.3.3
       vite:
         specifier: ^5.2.11
         version: 5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
@@ -1178,7 +1120,7 @@ importers:
         specifier: 5.3.3
         version: 5.3.3
 
-  examples/solid/basic-graphql-request:
+  examples/solid/basic:
     dependencies:
       '@tanstack/solid-query':
         specifier: ^5.50.2
@@ -1186,12 +1128,6 @@ importers:
       '@tanstack/solid-query-devtools':
         specifier: ^5.50.2
         version: link:../../../packages/solid-query-devtools
-      graphql:
-        specifier: ^16.8.1
-        version: 16.8.1
-      graphql-request:
-        specifier: ^7.0.1
-        version: 7.0.1(graphql@16.8.1)
       solid-js:
         specifier: ^1.8.17
         version: 1.8.17
@@ -1206,7 +1142,7 @@ importers:
         specifier: ^2.10.2
         version: 2.10.2(@testing-library/jest-dom@6.4.5(vitest@1.6.0(@types/node@20.12.12)(jsdom@24.0.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(solid-js@1.8.17)(vite@5.2.11(@types/node@20.12.12)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
 
-  examples/solid/basic-typescript:
+  examples/solid/basic-graphql-request:
     dependencies:
       '@tanstack/solid-query':
         specifier: ^5.50.2
@@ -1214,6 +1150,12 @@ importers:
       '@tanstack/solid-query-devtools':
         specifier: ^5.50.2
         version: link:../../../packages/solid-query-devtools
+      graphql:
+        specifier: ^16.8.1
+        version: 16.8.1
+      graphql-request:
+        specifier: ^7.0.1
+        version: 7.0.1(graphql@16.8.1)
       solid-js:
         specifier: ^1.8.17
         version: 1.8.17
@@ -9275,12 +9217,6 @@ packages:
     peerDependencies:
       eslint: ^8.57.0
 
-  eslint-config-prettier@9.1.0:
-    resolution: {integrity: sha512-NSWl5BFQWEPi1j4TjVNItzYV7dZXZ+wP6I6ZhrBGpChQhZRUaElihE9uRRkcbRnNb76UMKDF3r+WTmNcGPKsqw==}
-    hasBin: true
-    peerDependencies:
-      eslint: ^8.57.0
-
   eslint-import-resolver-node@0.3.9:
     resolution: {integrity: sha512-WFj2isz22JahUv+B788TlO3N6zL3nNJGU8CcZbPZvVEkBPaJdCV4vy5wyghty5ROFbCRnm132v8BScu5/1BQ8g==}
 
@@ -11452,10 +11388,6 @@ packages:
 
   kolorist@1.8.0:
     resolution: {integrity: sha512-Y+60/zizpJ3HRH8DCss+q95yr6145JXZo46OTpFvDZWLfRCE4qChOyk1b26nMaNpfHHgxagk9dXT5OP0Tfe+dQ==}
-
-  ky@1.2.4:
-    resolution: {integrity: sha512-CfSrf4a0yj1n6WgPT6kQNQOopIGLkQzqSAXo05oKByaH7G3SiqW4a8jGox0p9whMXqO49H7ljgigivrMyycAVA==}
-    engines: {node: '>=18'}
 
   last-call-webpack-plugin@3.0.0:
     resolution: {integrity: sha512-7KI2l2GIZa9p2spzPIVZBYyNKkN+e/SQPpnjlTiPhdbDW3F86tdKKELxKpzJ5sgU19wQWsACULZmpTPYHeWO5w==}
@@ -26689,10 +26621,6 @@ snapshots:
       eslint: 9.4.0
       semver: 7.6.2
 
-  eslint-config-prettier@9.1.0(eslint@8.57.0):
-    dependencies:
-      eslint: 8.57.0
-
   eslint-import-resolver-node@0.3.9:
     dependencies:
       debug: 3.2.7(supports-color@6.1.0)
@@ -29343,8 +29271,6 @@ snapshots:
 
   kolorist@1.8.0: {}
 
-  ky@1.2.4: {}
-
   last-call-webpack-plugin@3.0.0:
     dependencies:
       lodash: 4.17.21
@@ -30505,7 +30431,7 @@ snapshots:
 
   ms@2.1.3: {}
 
-  msw@2.3.0(typescript@5.4.2):
+  msw@2.3.0(typescript@5.3.3):
     dependencies:
       '@bundled-es-modules/cookie': 2.0.0
       '@bundled-es-modules/statuses': 1.0.1
@@ -30525,7 +30451,7 @@ snapshots:
       type-fest: 4.10.2
       yargs: 17.7.2
     optionalDependencies:
-      typescript: 5.4.2
+      typescript: 5.3.3
 
   muggle-string@0.3.1: {}
 
