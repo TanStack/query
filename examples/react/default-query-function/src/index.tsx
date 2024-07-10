@@ -1,20 +1,26 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import axios from 'axios'
 import {
-  useQuery,
-  useQueryClient,
   QueryClient,
   QueryClientProvider,
+  useQuery,
+  useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import type { QueryKey } from '@tanstack/react-query'
+
+type Post = {
+  id: number
+  title: string
+  body: string
+}
 
 // Define a default query function that will receive the query key
-const defaultQueryFn = async ({ queryKey }) => {
-  const { data } = await axios.get(
+const defaultQueryFn = async ({ queryKey }: { queryKey: QueryKey }) => {
+  const response = await fetch(
     `https://jsonplaceholder.typicode.com${queryKey[0]}`,
   )
-  return data
+  return await response.json()
 }
 
 // provide the default query function to your app via the query client
@@ -51,11 +57,15 @@ function App() {
   )
 }
 
-function Posts({ setPostId }) {
+function Posts({
+  setPostId,
+}: {
+  setPostId: React.Dispatch<React.SetStateAction<number>>
+}) {
   const queryClient = useQueryClient()
 
   // All you have to do now is pass a key!
-  const { status, data, error, isFetching } = useQuery({
+  const { status, data, error, isFetching } = useQuery<Array<Post>>({
     queryKey: ['/posts'],
   })
 
@@ -78,7 +88,7 @@ function Posts({ setPostId }) {
                     style={
                       // We can use the queryCache here to show bold links for
                       // ones that are cached
-                      queryClient.getQueryData(['post', post.id])
+                      queryClient.getQueryData([`/posts/${post.id}`])
                         ? {
                             fontWeight: 'bold',
                             color: 'green',
@@ -99,9 +109,15 @@ function Posts({ setPostId }) {
   )
 }
 
-function Post({ postId, setPostId }) {
+function Post({
+  postId,
+  setPostId,
+}: {
+  postId: number
+  setPostId: React.Dispatch<React.SetStateAction<number>>
+}) {
   // You can even leave out the queryFn and just go straight into options
-  const { status, data, error, isFetching } = useQuery({
+  const { status, data, error, isFetching } = useQuery<Post>({
     queryKey: [`/posts/${postId}`],
     enabled: !!postId,
   })
@@ -130,5 +146,5 @@ function Post({ postId, setPostId }) {
   )
 }
 
-const rootElement = document.getElementById('root')
+const rootElement = document.getElementById('root') as HTMLElement
 ReactDOM.createRoot(rootElement).render(<App />)

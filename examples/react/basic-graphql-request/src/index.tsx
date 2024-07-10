@@ -1,17 +1,23 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import {
-  useQuery,
-  useQueryClient,
   QueryClient,
   QueryClientProvider,
+  useQuery,
+  useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { request, gql } from 'graphql-request'
+import { gql, request } from 'graphql-request'
 
 const endpoint = 'https://graphqlzero.almansi.me/api'
 
 const queryClient = new QueryClient()
+
+type Post = {
+  id: number
+  title: string
+  body: string
+}
 
 function App() {
   const [postId, setPostId] = React.useState(-1)
@@ -44,7 +50,7 @@ function usePosts() {
     queryFn: async () => {
       const {
         posts: { data },
-      } = await request(
+      } = await request<{ posts: { data: Array<Post> } }>(
         endpoint,
         gql`
           query {
@@ -62,7 +68,11 @@ function usePosts() {
   })
 }
 
-function Posts({ setPostId }) {
+function Posts({
+  setPostId,
+}: {
+  setPostId: React.Dispatch<React.SetStateAction<number>>
+}) {
   const queryClient = useQueryClient()
   const { status, data, error, isFetching } = usePosts()
 
@@ -106,11 +116,11 @@ function Posts({ setPostId }) {
   )
 }
 
-function usePost(postId) {
-  return useQuery(
-    ['post', postId],
-    async () => {
-      const { post } = await request(
+function usePost(postId: number) {
+  return useQuery({
+    queryKey: ['post', postId],
+    queryFn: async () => {
+      const { post } = await request<{ post: Post }>(
         endpoint,
         gql`
         query {
@@ -125,13 +135,17 @@ function usePost(postId) {
 
       return post
     },
-    {
-      enabled: !!postId,
-    },
-  )
+    enabled: !!postId,
+  })
 }
 
-function Post({ postId, setPostId }) {
+function Post({
+  postId,
+  setPostId,
+}: {
+  postId: number
+  setPostId: React.Dispatch<React.SetStateAction<number>>
+}) {
   const { status, data, error, isFetching } = usePost(postId)
 
   return (
@@ -158,5 +172,5 @@ function Post({ postId, setPostId }) {
   )
 }
 
-const rootElement = document.getElementById('root')
+const rootElement = document.getElementById('root') as HTMLElement
 ReactDOM.createRoot(rootElement).render(<App />)

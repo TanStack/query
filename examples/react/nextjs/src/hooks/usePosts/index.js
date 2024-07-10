@@ -1,9 +1,9 @@
-import ky from 'ky'
 import { useQuery } from '@tanstack/react-query'
 
 const fetchPosts = async (limit = 10) => {
-  const parsed = await ky('https://jsonplaceholder.typicode.com/posts').json()
-  return parsed.filter((x) => x.id <= limit)
+  const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+  const data = await response.json()
+  return data.filter((x) => x.id <= limit)
 }
 
 const usePosts = (limit) => {

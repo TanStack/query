@@ -1,12 +1,10 @@
 import * as React from 'react'
-import axios from 'axios'
-
 import {
-  useQuery,
-  useQueryClient,
-  useMutation,
   QueryClient,
   QueryClientProvider,
+  useMutation,
+  useQuery,
+  useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
@@ -21,8 +19,8 @@ type Todos = {
 }
 
 async function fetchTodos(): Promise<Todos> {
-  const res = await axios.get('/api/data')
-  return res.data
+  const response = await fetch('/api/data')
+  return await response.json()
 }
 
 function useTodos() {
@@ -35,7 +33,13 @@ function Example() {
   const todoQuery = useTodos()
 
   const addTodoMutation = useMutation({
-    mutationFn: (newTodo: string) => axios.post('/api/data', { text: newTodo }),
+    mutationFn: async (newTodo: string) => {
+      const response = await fetch('/api/data', {
+        method: 'POST',
+        body: JSON.stringify({ text: newTodo }),
+      })
+      return await response.json()
+    },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   })
 

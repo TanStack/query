@@ -1,15 +1,15 @@
+import * as React from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import * as api from './api'
-import * as React from 'react'
 
 export const movieKeys = {
   all: () => ['movies'],
   list: () => [...movieKeys.all(), 'list'],
   details: () => [...movieKeys.all(), 'detail'],
-  detail: (id) => [...movieKeys.details(), id],
+  detail: (id: string) => [...movieKeys.details(), id],
 }
 
-export const useMovie = (movieId) => {
+export const useMovie = (movieId: string) => {
   const queryClient = useQueryClient()
 
   const movieQuery = useQuery({
@@ -17,7 +17,7 @@ export const useMovie = (movieId) => {
     queryFn: () => api.fetchMovie(movieId),
   })
 
-  const [comment, setComment] = React.useState()
+  const [comment, setComment] = React.useState<string | undefined>()
 
   const updateMovie = useMutation({
     mutationKey: movieKeys.detail(movieId),

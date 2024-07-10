@@ -1,5 +1,4 @@
 import React from 'react'
-import axios from 'axios'
 import {
   useQuery,
   useQueryClient,
@@ -20,8 +19,8 @@ export default function App() {
 }
 
 async function fetchProjects(page = 0) {
-  const { data } = await axios.get('/api/projects?page=' + page)
-  return data
+  const response = await fetch(`/api/projects?page=${page}`)
+  return await response.json()
 }
 
 function Example() {

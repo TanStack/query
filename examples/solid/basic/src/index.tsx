@@ -1,13 +1,13 @@
 /* @refresh reload */
 import {
-  createQuery,
   QueryClient,
   QueryClientProvider,
+  createQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
-import type { Component, Setter } from 'solid-js'
-import { createSignal, For, Match, Switch } from 'solid-js'
+import { For, Match, Switch, createSignal } from 'solid-js'
 import { render } from 'solid-js/web'
+import type { Component, Setter } from 'solid-js'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,13 +27,8 @@ function createPosts() {
   return createQuery(() => ({
     queryKey: ['posts'],
     queryFn: async (): Promise<Array<Post>> => {
-      const response = await fetch(
-        'https://jsonplaceholder.typicode.com/posts',
-        {
-          method: 'GET',
-        },
-      )
-      return response.json()
+      const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+      return await response.json()
     },
   }))
 }
@@ -47,13 +42,13 @@ function Posts(props: { setPostId: Setter<number> }) {
       <div>
         <Switch>
           <Match when={state.status === 'pending'}>Loading...</Match>
-          <Match when={state.error instanceof Error}>
+          <Match when={state.status === 'error'}>
             <span>Error: {(state.error as Error).message}</span>
           </Match>
           <Match when={state.data !== undefined}>
             <>
               <div>
-                <For each={state.data!}>
+                <For each={state.data}>
                   {(post) => (
                     <p>
                       <a
@@ -88,9 +83,6 @@ function Posts(props: { setPostId: Setter<number> }) {
 const getPostById = async (id: number): Promise<Post> => {
   const response = await fetch(
     `https://jsonplaceholder.typicode.com/posts/${id}`,
-    {
-      method: 'GET',
-    },
   )
   return await response.json()
 }
@@ -117,7 +109,7 @@ function Post(props: { postId: number; setPostId: Setter<number> }) {
         <Match when={!props.postId || state.status === 'pending'}>
           Loading...
         </Match>
-        <Match when={state.error instanceof Error}>
+        <Match when={state.status === 'error'}>
           <span>Error: {(state.error as Error).message}</span>
         </Match>
         <Match when={state.data !== undefined}>
