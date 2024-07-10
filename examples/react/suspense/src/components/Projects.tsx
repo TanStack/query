@@ -17,17 +17,17 @@ export default function Projects({
 
   return (
     <div>
-      <h1>Projects {isFetching ? <Spinner /> : null}</h1>
+      <h1>TanStack Repositories {isFetching ? <Spinner /> : null}</h1>
       {data.map((project) => (
-        <p key={project.name}>
+        <p key={project.full_name}>
           <Button
             onClick={() => {
               // Prefetch the project query
               queryClient.prefetchQuery({
-                queryKey: ['project', project.name],
-                queryFn: () => fetchProject(project.name),
+                queryKey: ['project', project.full_name],
+                queryFn: () => fetchProject(project.full_name),
               })
-              setActiveProject(project.name)
+              setActiveProject(project.full_name)
             }}
           >
             Load

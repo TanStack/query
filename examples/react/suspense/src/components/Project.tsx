@@ -8,11 +8,9 @@ export default function Project({
   activeProject,
   setActiveProject,
 }: {
-  activeProject: string | null
+  activeProject: string
   setActiveProject: React.Dispatch<React.SetStateAction<string | null>>
 }) {
-  console.log(activeProject)
-
   const { data, isFetching } = useSuspenseQuery({
     queryKey: ['project', activeProject],
     queryFn: () => fetchProject(activeProject),
@@ -28,7 +26,7 @@ export default function Project({
         <div>
           <p>forks: {data.forks_count}</p>
           <p>stars: {data.stargazers_count}</p>
-          <p>watchers: {data.watchers}</p>
+          <p>watchers: {data.watchers_count}</p>
         </div>
       ) : null}
       <br />
