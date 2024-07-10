@@ -1,10 +1,14 @@
-const items = []
+import type { NextApiRequest, NextApiResponse } from 'next'
 
-export default async (req, res) => {
+type Todo = { id: string; text: string }
+
+const items: Array<Todo> = []
+
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   await new Promise((r) => setTimeout(r, 1000))
 
   if (req.method === 'POST') {
-    const { text } = req.body
+    const text: string = req.body.text
 
     // sometimes it will fail, this will cause a regression on the UI
 

@@ -16,7 +16,6 @@
     "react-dom": "^19.0.0-rc-4c2e457c7c-20240522"
   },
   "devDependencies": {
-    "@types/node": "^20.12.12",
     "@types/react": "npm:types-react@rc",
     "@types/react-dom": "npm:types-react-dom@rc",
     "typescript": "5.3.3"

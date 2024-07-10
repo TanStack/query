@@ -1,10 +1,10 @@
 import React from 'react'
 import {
-  useQuery,
-  useQueryClient,
   QueryClient,
   QueryClientProvider,
   keepPreviousData,
+  useQuery,
+  useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
@@ -18,7 +18,12 @@ export default function App() {
   )
 }
 
-async function fetchProjects(page = 0) {
+const fetchProjects = async (
+  page = 0,
+): Promise<{
+  projects: Array<{ name: string; id: number }>
+  hasMore: boolean
+}> => {
   const response = await fetch(`/api/projects?page=${page}`)
   return await response.json()
 }

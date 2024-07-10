@@ -1,22 +1,22 @@
 import * as React from 'react'
 
 import {
-  queryOptions,
-  useQuery,
-  useQueryClient,
-  useMutation,
   QueryClient,
   QueryClientProvider,
+  queryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const client = new QueryClient()
 
 type Todos = {
-  items: readonly {
+  items: ReadonlyArray<{
     id: string
     text: string
-  }[]
+  }>
   ts: number
 }
 
@@ -40,6 +40,7 @@ function Example() {
       const response = await fetch('/api/data', {
         method: 'POST',
         body: JSON.stringify({ text: newTodo }),
+        headers: { 'Content-Type': 'application/json' },
       })
       return await response.json()
     },
