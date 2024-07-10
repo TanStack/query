@@ -1,14 +1,17 @@
 import React from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { usePathname } from 'next/navigation'
 
-const getCharacters = async () => {
+const getCharacters = async (): Promise<{
+  results: Array<{ id: number; name: string }>
+}> => {
   await new Promise((r) => setTimeout(r, 500))
   const response = await fetch('https://rickandmortyapi.com/api/character/')
   return await response.json()
 }
 
-const getCharacter = async (selectedChar) => {
+const getCharacter = async (selectedChar: number) => {
   await new Promise((r) => setTimeout(r, 500))
   const response = await fetch(
     `https://rickandmortyapi.com/api/character/${selectedChar}`,
@@ -17,6 +20,8 @@ const getCharacter = async (selectedChar) => {
 }
 
 export default function Example() {
+  const pathname = usePathname()
+  console.log(pathname)
   const queryClient = useQueryClient()
   const rerender = React.useState(0)[1]
   const [selectedChar, setSelectedChar] = React.useState(1)

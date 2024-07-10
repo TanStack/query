@@ -1,16 +1,27 @@
 import React from 'react'
 import Link from 'next/link'
-import fetch from '../../../libs/fetch'
-
 import { useQuery } from '@tanstack/react-query'
+import { usePathname } from 'next/navigation'
 
-export default () => {
-  const id =
-    typeof window !== 'undefined' ? window.location.pathname.slice(1) : ''
+async function fetchProject(id: string): Promise<{
+  forks_count: number
+  stargazers_count: number
+  watchers_count: number
+}> {
+  console.info('Fetching project:', id)
+
+  const response = await fetch(`https://api.github.com/repos/${id}`)
+  await new Promise((r) => setTimeout(r, 1000))
+  return await response.json()
+}
+
+export default function Repo() {
+  const pathname = usePathname()
+  const id = pathname.substring(1)
 
   const { status, data, error, isFetching } = useQuery({
     queryKey: ['team', id],
-    queryFn: () => fetch('/api/data?id=' + id),
+    queryFn: () => fetchProject(id),
   })
 
   return (
@@ -25,7 +36,7 @@ export default () => {
           <div>
             <p>forks: {data.forks_count}</p>
             <p>stars: {data.stargazers_count}</p>
-            <p>watchers: {data.watchers}</p>
+            <p>watchers: {data.watchers_count}</p>
           </div>
           <div>{isFetching ? 'Background Updating...' : ' '}</div>
         </>
