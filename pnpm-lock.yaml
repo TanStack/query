@@ -566,19 +566,29 @@ importers:
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.4
-        version: 14.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.71.1)
+        version: 14.2.4(react-dom@19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522))(react@19.0.0-rc-4c2e457c7c-20240522)(sass@1.71.1)
       react:
-        specifier: ^18.2.0
-        version: 18.3.1
+        specifier: ^19.0.0-rc-4c2e457c7c-20240522
+        version: 19.0.0-rc-4c2e457c7c-20240522
       react-dom:
-        specifier: ^18.2.0
-        version: 18.3.1(react@18.3.1)
+        specifier: ^19.0.0-rc-4c2e457c7c-20240522
+        version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
       resolve-from:
         specifier: ^5.0.0
         version: 5.0.0
       web-streams-polyfill:
         specifier: ^4.0.0
         version: 4.0.0
+    devDependencies:
+      '@types/react':
+        specifier: npm:types-react@rc
+        version: types-react@19.0.0-rc.1
+      '@types/react-dom':
+        specifier: npm:types-react-dom@rc
+        version: types-react-dom@19.0.0-rc.1
+      typescript:
+        specifier: 5.3.3
+        version: 5.3.3
 
   examples/react/nextjs-app-prefetching:
     dependencies:
@@ -22619,7 +22629,11 @@ snapshots:
       jest-runner: 26.6.3
       jest-runtime: 26.6.3
     transitivePeerDependencies:
+      - bufferutil
+      - canvas
       - supports-color
+      - ts-node
+      - utf-8-validate
 
   '@jest/test-sequencer@27.5.1':
     dependencies:
@@ -31367,7 +31381,11 @@ snapshots:
       stack-utils: 2.0.6
       throat: 5.0.0
     transitivePeerDependencies:
+      - bufferutil
+      - canvas
       - supports-color
+      - ts-node
+      - utf-8-validate
 
   jest-circus@27.5.1:
     dependencies:

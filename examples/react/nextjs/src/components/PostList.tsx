@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { usePosts } from '../../hooks/usePosts'
+import { usePosts } from '../hooks/usePosts'
 
 export const PostList = () => {
   const [postCount, setPostCount] = useState(10)
@@ -12,10 +12,7 @@ export const PostList = () => {
       <ul>
         {data?.map((post, index) => (
           <li key={post.id}>
-            <div>
-              <span>{index + 1}. </span>
-              <a href="#">{post.title}</a>
-            </div>
+            {index + 1}. {post.title}
           </li>
         ))}
       </ul>

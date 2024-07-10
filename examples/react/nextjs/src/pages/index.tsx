@@ -1,7 +1,7 @@
 import React from 'react'
-import { dehydrate, QueryClient } from '@tanstack/react-query'
-import { Layout, Header, InfoBox, PostList } from '../components'
-import { fetchPosts } from '../hooks'
+import { QueryClient, dehydrate } from '@tanstack/react-query'
+import { Header, InfoBox, Layout, PostList } from '../components'
+import { fetchPosts } from '../hooks/usePosts'
 
 const Home = () => {
   return (
