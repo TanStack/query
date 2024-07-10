@@ -34,13 +34,19 @@ function Example() {
     hasPreviousPage,
   } = useInfiniteQuery({
     queryKey: ['projects'],
-    queryFn: async ({ pageParam }) => {
+    queryFn: async ({
+      pageParam,
+    }): Promise<{
+      data: Array<{ name: string; id: number }>
+      previousId: number
+      nextId: number
+    }> => {
       const response = await fetch(`/api/projects?cursor=${pageParam}`)
       return await response.json()
     },
     initialPageParam: 0,
-    getPreviousPageParam: (firstPage) => firstPage.previousId ?? undefined,
-    getNextPageParam: (lastPage) => lastPage.nextId ?? undefined,
+    getPreviousPageParam: (firstPage) => firstPage.previousId,
+    getNextPageParam: (lastPage) => lastPage.nextId,
   })
 
   React.useEffect(() => {

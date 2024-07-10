@@ -79,8 +79,8 @@
   },
   "pnpm": {
     "overrides": {
-      "@types/react": "^18.2.79",
-      "@types/react-dom": "^18.2.25",
+      "@types/react": "npm:types-react@rc",
+      "@types/react-dom": "npm:types-react-dom@rc",
       "eslint": "$eslint"
     }
   }
