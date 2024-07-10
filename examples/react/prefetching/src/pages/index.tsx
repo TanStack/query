@@ -1,7 +1,6 @@
 import React from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { usePathname } from 'next/navigation'
 
 const getCharacters = async (): Promise<{
   results: Array<{ id: number; name: string }>
@@ -20,8 +19,6 @@ const getCharacter = async (selectedChar: number) => {
 }
 
 export default function Example() {
-  const pathname = usePathname()
-  console.log(pathname)
   const queryClient = useQueryClient()
   const rerender = React.useState(0)[1]
   const [selectedChar, setSelectedChar] = React.useState(1)

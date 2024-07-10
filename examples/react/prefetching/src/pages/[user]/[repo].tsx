@@ -16,8 +16,7 @@ async function fetchProject(id: string): Promise<{
 }
 
 export default function Repo() {
-  const pathname = usePathname()
-  const id = pathname.substring(1)
+  const id = usePathname()
 
   const { status, data, error, isFetching } = useQuery({
     queryKey: ['team', id],
