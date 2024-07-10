@@ -464,9 +464,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      axios:
-        specifier: ^1.6.8
-        version: 1.7.2
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
@@ -546,9 +543,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-devtools
-      ky:
-        specifier: ^1.2.4
-        version: 1.2.4
       next:
         specifier: ^14.2.4
         version: 14.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.71.1)
@@ -647,9 +641,6 @@ importers:
       '@tanstack/react-query-persist-client':
         specifier: ^5.50.1
         version: link:../../../packages/react-query-persist-client
-      ky:
-        specifier: ^1.2.4
-        version: 1.2.4
       msw:
         specifier: ^2.3.0
         version: 2.3.0(typescript@5.3.3)
@@ -12418,10 +12409,6 @@ packages:
 
   kolorist@1.8.0:
     resolution: {integrity: sha512-Y+60/zizpJ3HRH8DCss+q95yr6145JXZo46OTpFvDZWLfRCE4qChOyk1b26nMaNpfHHgxagk9dXT5OP0Tfe+dQ==}
-
-  ky@1.2.4:
-    resolution: {integrity: sha512-CfSrf4a0yj1n6WgPT6kQNQOopIGLkQzqSAXo05oKByaH7G3SiqW4a8jGox0p9whMXqO49H7ljgigivrMyycAVA==}
-    engines: {node: '>=18'}
 
   language-subtag-registry@0.3.22:
     resolution: {integrity: sha512-tN0MCzyWnoz/4nHS6uxdlFWoUZT7ABptwKPQ52Ea7URk6vll88bWBVhodtnlfEuCcKWNGoc+uGbw1cwa9IKh/w==}
@@ -32537,8 +32524,6 @@ snapshots:
   known-css-properties@0.32.0: {}
 
   kolorist@1.8.0: {}
-
-  ky@1.2.4: {}
 
   language-subtag-registry@0.3.22: {}
 

@@ -1,6 +1,5 @@
 import { HttpResponse, delay, http, passthrough } from 'msw'
 import { setupWorker } from 'msw/browser'
-import ky from 'ky'
 
 const movies = [
   {
@@ -33,8 +32,13 @@ export const fetchMovies = async (): Promise<{
   return await response.json()
 }
 
-export const updateMovie = (id: string, comment: string) =>
-  ky.post(`/movies/${id}`, { json: { comment } }).json()
+export const updateMovie = async (id: string, comment: string) => {
+  const response = await fetch(`/movies/${id}`, {
+    method: 'POST',
+    body: JSON.stringify({ comment }),
+  })
+  return await response.json()
+}
 
 export const worker = setupWorker(
   http.get('/movies', async () => {
@@ -64,8 +68,6 @@ export const worker = setupWorker(
     const { id } = params
     const body = await request.json()
     const { comment } = body
-
-    console.log(comment)
 
     movies.forEach((movie) => {
       if (movie.id === id) {

@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import axios from 'axios'
 import {
   QueryClient,
   QueryClientProvider,
@@ -18,10 +17,10 @@ type Post = {
 
 // Define a default query function that will receive the query key
 const defaultQueryFn = async ({ queryKey }: { queryKey: QueryKey }) => {
-  const { data } = await axios.get(
+  const response = await fetch(
     `https://jsonplaceholder.typicode.com${queryKey[0]}`,
   )
-  return data
+  return await response.json()
 }
 
 // provide the default query function to your app via the query client
@@ -89,7 +88,7 @@ function Posts({
                     style={
                       // We can use the queryCache here to show bold links for
                       // ones that are cached
-                      queryClient.getQueryData(['post', post.id])
+                      queryClient.getQueryData([`/posts/${post.id}`])
                         ? {
                             fontWeight: 'bold',
                             color: 'green',
