@@ -1,0 +1,53 @@
+{
+  "name": "@tanstack/lit-query",
+  "version": "5.50.3",
+  "description": "Primitives for managing, caching and syncing asynchronous and remote data in lit",
+  "author": "Gabriel Legault",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TanStack/query.git",
+    "directory": "packages/lit-query"
+  },
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "scripts": {
+    "clean": "rimraf ./dist && rimraf ./coverage",
+    "test:eslint": "eslint ./src",
+    "test:lib": "vitest",
+    "test:lib:dev": "pnpm run test:lib --watch",
+    "test:build": "publint --strict && attw --pack",
+    "build": "svelte-package --input ./src --output ./dist"
+  },
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "src"
+  ],
+  "dependencies": {
+    "@tanstack/query-core": "workspace:*"
+  },
+  "devDependencies": {
+    "@open-wc/testing-helpers": "3.0.1",
+    "@types/jest-when": "3.5.5",
+    "jest-when": "3.6.0",
+    "lit": "3.1.4"
+  },
+  "peerDependencies": {
+    "lit": "^2.7.0 || ^3.0.0"
+  }
+}
