@@ -371,7 +371,7 @@ To make this work, we have to instruct the `queryClient` to also `dehydrate` pen
 // app/get-query-client.ts
 import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query'
 
-function makeQueryClient() {
+export function getQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
@@ -439,7 +439,7 @@ If you're using non-JSON data types and serialize the query results on the serve
 import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query'
 import { deserialize, serialize } from './transformer'
 
-export function makeQueryClient() {
+export function getQueryClient() {
   return new QueryClient({
     defaultOptions: {
       // ...
@@ -461,11 +461,12 @@ import {
   HydrationBoundary,
   QueryClient,
 } from '@tanstack/react-query'
+import { getQueryClient } from './get-query-client'
 import { serialize } from './transformer'
 import Posts from './posts'
 
 export default function PostsPage() {
-  const queryClient = new QueryClient()
+  const queryClient = getQueryClient();
 
   // look ma, no await
   queryClient.prefetchQuery({
