@@ -1,13 +1,13 @@
 {
   "name": "@tanstack/query-example-angular-infinite-query-with-max-pages",
-  "version": "0.0.0",
+  "private": true,
+  "type": "module",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development"
   },
-  "private": true,
   "dependencies": {
     "@angular/common": "^17.3.10",
     "@angular/compiler": "^17.3.10",
