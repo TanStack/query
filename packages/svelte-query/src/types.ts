@@ -55,13 +55,18 @@ export type CreateInfiniteQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> = InfiniteQueryObserverOptions<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryData,
-  TQueryKey,
-  TPageParam
+> = FnOrVal<
+  Omit<
+    InfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
+    >,
+    'queryKey' | 'enabled'
+  > & { enabled?: FnOrVal<boolean>; queryKey: FnOrVal<QueryKey> }
 >
 
 /** Result from createInfiniteQuery */

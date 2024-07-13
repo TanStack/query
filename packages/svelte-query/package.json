@@ -30,7 +30,12 @@
       "svelte": "./dist/index.js",
       "import": "./dist/index.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./dev": {
+      "default": "./src/index.ts",
+      "svelte": "./src/index.ts",
+      "import": "./src/index.ts"
+    }
   },
   "sideEffects": false,
   "files": [

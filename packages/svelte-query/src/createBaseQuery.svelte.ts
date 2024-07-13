@@ -49,7 +49,7 @@ export function createBaseQuery<
           : optionsStore().enabled,
     })
 
-    defaultedOptions._optimisticResults == isRestoring
+    defaultedOptions._optimisticResults = isRestoring
       ? 'isRestoring'
       : 'optimistic'
 
@@ -124,10 +124,6 @@ export function createBaseQuery<
   })
   //@ts-ignore
   return new Proxy(final_, {
-    set() {
-      console.log('Please do not update query state!')
-      return false
-    },
     get(target, p) {
       if (p == 'value') {
         return target.value
