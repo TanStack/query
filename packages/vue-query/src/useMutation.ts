@@ -2,8 +2,8 @@ import {
   computed,
   getCurrentScope,
   onScopeDispose,
-  reactive,
-  readonly,
+  shallowReactive,
+  shallowReadonly,
   toRefs,
   watch,
 } from 'vue-demi'
@@ -78,7 +78,7 @@ export function useMutation<
     return client.defaultMutationOptions(cloneDeepUnref(mutationOptions))
   })
   const observer = new MutationObserver(client, options.value)
-  const state = reactive(observer.getCurrentResult())
+  const state = shallowReactive(observer.getCurrentResult())
 
   const unsubscribe = observer.subscribe((result) => {
     updateState(state, result)
@@ -101,7 +101,7 @@ export function useMutation<
     unsubscribe()
   })
 
-  const resultRefs = toRefs(readonly(state)) as unknown as ToRefs<
+  const resultRefs = toRefs(shallowReadonly(state)) as unknown as ToRefs<
     Readonly<MutationResult<TData, TError, TVariables, TContext>>
   >
 

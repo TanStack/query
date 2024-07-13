@@ -9,7 +9,7 @@ export function getClientKey(key?: string) {
 }
 
 export function updateState(
-  state: Record<string, unknown>,
+  state: Record<string, any>,
   update: Record<string, any>,
 ): void {
   Object.keys(state).forEach((key) => {

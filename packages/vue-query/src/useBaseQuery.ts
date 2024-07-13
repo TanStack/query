@@ -2,8 +2,8 @@ import {
   computed,
   getCurrentScope,
   onScopeDispose,
-  reactive,
-  readonly,
+  shallowReactive,
+  shallowReadonly,
   toRefs,
   watch,
 } from 'vue-demi'
@@ -105,7 +105,7 @@ export function useBaseQuery<
   })
 
   const observer = new Observer(client, defaultedOptions.value)
-  const state = reactive(observer.getCurrentResult())
+  const state = shallowReactive(observer.getCurrentResult())
 
   let unsubscribe = () => {
     // noop
@@ -201,7 +201,7 @@ export function useBaseQuery<
     },
   )
 
-  const object: any = toRefs(readonly(state))
+  const object: any = toRefs(shallowReadonly(state))
   for (const key in state) {
     if (typeof state[key as keyof typeof state] === 'function') {
       object[key] = state[key as keyof typeof state]
