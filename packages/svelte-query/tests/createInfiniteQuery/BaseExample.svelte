@@ -7,8 +7,8 @@
   const query = createInfiniteQuery(
     {
       queryKey: ['test'],
-      queryFn: ({ pageParam }) => {
-        sleep(100)
+      queryFn: async ({ pageParam }) => {
+        await sleep(600)
         return Number(pageParam)
       },
       getNextPageParam: (lastPage) => lastPage + 1,
@@ -18,5 +18,5 @@
   )
 </script>
 
-<div>Data: {JSON.stringify(query.data)}</div>
+<div>Data: {JSON.stringify(query.data) || 'undefined'}</div>
 <div>Status: {query.status}</div>
