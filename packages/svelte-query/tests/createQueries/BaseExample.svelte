@@ -1,7 +1,10 @@
 <script lang="ts">
-  import { createQueries } from '../../src/createQueries'
+  import { createQueries } from '../../src/createQueries.svelte'
   import type { QueryClient } from '@tanstack/query-core'
-  import type { QueriesOptions, QueriesResults } from '../../src/createQueries'
+  import type {
+    QueriesOptions,
+    QueriesResults,
+  } from '../../src/createQueries.svelte'
 
   export let options: {
     queries: [...QueriesOptions<any>]
@@ -12,7 +15,7 @@
   const queries = createQueries(options, queryClient)
 </script>
 
-{#if Array.isArray($queries)}
+{#if Array.isArray(queries)}
   {#each queries as query, index}
     {#if query.isPending}
       <p>Loading {index + 1}</p>

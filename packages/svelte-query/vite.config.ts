@@ -10,6 +10,7 @@ export default defineConfig({
     dir: './tests',
     watch: false,
     environment: 'jsdom',
+    include: ['**/*.test.ts', '**/*.svelte.ts'],
     setupFiles: ['./tests/test-setup.ts'],
     coverage: { enabled: false, provider: 'istanbul', include: ['src/**/*'] },
     typecheck: { enabled: true },

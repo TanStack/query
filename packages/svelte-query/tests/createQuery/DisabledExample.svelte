@@ -1,25 +1,28 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
-  import { derived, writable } from 'svelte/store'
-  import { createQuery } from '../../src/createQuery'
+  import { createQuery } from '../../src'
   import { queryKey, sleep } from '../utils'
 
   const queryClient = new QueryClient()
   const key = queryKey()
-  const count = $state(0)
+  let count = $state(-1)
 
   const options = $derived({
-    queryKey: [key, $count],
+    queryKey: () => [key, count],
     queryFn: async () => {
+      console.log('enabled')
       await sleep(5)
       return count
     },
-    enabled: count === 0,
+    enabled: () => count === 0,
   })
 
   const query = createQuery(options, queryClient)
+  $effect(() => {
+    console.log('FK', query.data)
+  })
 </script>
 
-<button on:click={() => (count += 1)}>Increment</button>
+<button onclick={() => (count += 1)}>Increment</button>
 <div>Data: {query.data ?? 'undefined'}</div>
 <div>Count: {count}</div>

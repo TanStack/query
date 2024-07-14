@@ -7,15 +7,17 @@ export function useIsFetching(
   queryClient?: QueryClient,
 ): () => number {
   const client = useQueryClient(queryClient)
-  const queryCache = $state(client.getQueryCache())
+  const queryCache = client.getQueryCache()
 
   const init = client.isFetching(filters)
   let isFetching = $state(init)
-  const unsubscribe = queryCache.subscribe(() => {
-    isFetching = client.isFetching(filters)
-  })
+  $effect(() => {
+    const unsubscribe = queryCache.subscribe(() => {
+      isFetching = client.isFetching(filters)
+    })
 
-  onDestroy(unsubscribe)
+    onDestroy(unsubscribe)
+  })
 
   return () => isFetching
 }

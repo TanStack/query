@@ -1,6 +1,5 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
-  import { derived, writable } from 'svelte/store'
   import { createQuery } from '../../src/'
   import { useIsFetching } from '../../src/useIsFetching.svelte'
   import { queryKey, sleep } from '../utils'

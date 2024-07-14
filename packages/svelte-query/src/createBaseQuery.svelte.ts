@@ -133,7 +133,7 @@ export function createBaseQuery<
       if (p == 'JSON') {
         return target.value
       }
-      console.log('target value', p, target.value, target.value[p])
+      //  console.log('target value', p, target.value, target.value[p])
       //@ts-expect-error
       return target.value[p]
     },

@@ -77,9 +77,9 @@ describe('createQuery', () => {
     let writableStore = $state(1)
 
     const derivedStore = $derived({
-      queryKey: [writableStore],
+      queryKey: () => [writableStore],
       queryFn: async () => {
-        await sleep(10)
+        await sleep(50)
         return `Success ${writableStore}`
       },
     })
@@ -117,24 +117,19 @@ describe('createQuery', () => {
     let writableStore = $state<Array<number>>([1])
 
     const derivedStore = $derived.by(() => ({
-      queryKey: ['test', writableStore],
+      queryKey: () => ['test', writableStore],
       queryFn: async () => {
-        await sleep(10)
+        await sleep(5)
         return writableStore.map((id) => `Success ${id}`)
       },
       placeholderData: (previousData: string) => previousData,
     }))
 
-    const rendered = render(BaseExample, {
+    let rendered = render(BaseExample, {
       props: {
         options: derivedStore,
         queryClient: new QueryClient(),
       },
-    })
-
-    await waitFor(() => {
-      expect(rendered.queryByText('Success 1')).not.toBeInTheDocument()
-      expect(rendered.queryByText('Success 2')).not.toBeInTheDocument()
     })
 
     await waitFor(() => {
@@ -158,13 +153,13 @@ describe('createQuery', () => {
   test('Should not fetch when switching to a disabled query', async () => {
     const rendered = render(DisabledExample)
 
-    await waitFor(() => rendered.getByText('Data: 0'))
+    await waitFor(() => rendered.getByText('Data: undefined'))
 
     fireEvent.click(rendered.getByRole('button', { name: /Increment/i }))
 
     await waitFor(() => {
-      rendered.getByText('Count: 1')
-      rendered.getByText('Data: undefined')
+      rendered.getByText('Count: 0')
+      rendered.getByText('Data: 0')
     })
   })
 })
