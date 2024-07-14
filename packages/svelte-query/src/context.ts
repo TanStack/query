@@ -23,16 +23,17 @@ export const setQueryClientContext = (client: QueryClient): void => {
 const _isRestoringContextKey = '$$_isRestoring'
 
 /** Retrieves a `isRestoring` from Svelte's context */
-export const getIsRestoringContext = (): boolean => {
+export const getIsRestoringContext = (): (() => boolean) => {
   try {
-    const isRestoring = getContext<boolean>(_isRestoringContextKey)
-    return isRestoring
+    const isRestoring = getContext<() => boolean>(_isRestoringContextKey)
+    return isRestoring ?? (() => false)
   } catch (error) {
-    return false
+    console.log('error state', error)
+    return () => false
   }
 }
 
 /** Sets a `isRestoring` on Svelte's context */
-export const setIsRestoringContext = (isRestoring: boolean): void => {
+export const setIsRestoringContext = (isRestoring: () => boolean): void => {
   setContext(_isRestoringContextKey, isRestoring)
 }

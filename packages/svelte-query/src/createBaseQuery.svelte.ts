@@ -36,7 +36,9 @@ export function createBaseQuery<
   function updateOptions() {
     const key = optionsStore().queryKey
     const keyFn = typeof key === 'function' ? key : () => key //alow query-key and enable to be a function
-    const queryKey = JSON.parse(JSON.stringify(keyFn())) // remove proxy
+    const queryKey = JSON.parse(
+      JSON.stringify(keyFn() ?? '') ?? JSON.stringify({}),
+    ) // remove proxy
 
     const defaultedOptions = client.defaultQueryOptions({
       ...optionsStore(),
@@ -48,10 +50,10 @@ export function createBaseQuery<
             optionsStore().enabled()
           : optionsStore().enabled,
     })
-
-    defaultedOptions._optimisticResults = isRestoring
-      ? 'isRestoring'
-      : 'optimistic'
+    defaultedOptions._optimisticResults = 'optimistic'
+    if (isRestoring?.()) {
+      defaultedOptions._optimisticResults = 'isRestoring'
+    }
 
     defaultedOptions.structuralSharing = false
     // console.log('default option update', defaultedOptions)
@@ -75,14 +77,14 @@ export function createBaseQuery<
   function upResult(r: QueryObserverResult<TData, TError>) {
     Object.assign(result, r)
   }
+
   $effect(() => {
     let un = () => undefined
-    //console.log('batch:calling $effect subscribe observer')
-    if (!isRestoring) {
+    if (!isRestoring?.()) {
       {
         //@ts-expect-error
         un = observer.subscribe((v) => {
-          // console.log('subscribed result', v.data)
+          console.log('subscribed result', v.data)
           notifyManager.batchCalls(() => {
             const temp = observer.getOptimisticResult(defaultedOptionsStore())
             upResult(temp)
@@ -100,7 +102,7 @@ export function createBaseQuery<
   /** Subscribe to changes in result and defaultedOptionsStore */
   $effect.pre(() => {
     observer.setOptions(defaultedOptionsStore(), { listeners: false })
-
+    console.log('batch:calling $effect subscribe observer', isRestoring())
     upResult(observer.getOptimisticResult(defaultedOptionsStore()))
     //   result = observer.getOptimisticResult(defaultedOptionsStore()) //prevent lag , somehow observer.subscribe does not return
     // console.log('option updated', defaultedOptionsStore())
@@ -131,6 +133,7 @@ export function createBaseQuery<
       if (p == 'JSON') {
         return target.value
       }
+      console.log('target value', p, target.value, target.value[p])
       //@ts-expect-error
       return target.value[p]
     },

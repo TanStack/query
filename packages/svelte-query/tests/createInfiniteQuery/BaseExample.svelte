@@ -13,7 +13,8 @@
     },
     queryClient,
   )
+  console.log('INFITE', query.data, query.data)
 </script>
 
-<div>Data: {JSON.stringify($query.data)}</div>
-<div>Status: {$query.status}</div>
+<div>Data: {JSON.stringify(query.data)}</div>
+<div>Status: {query.status}</div>

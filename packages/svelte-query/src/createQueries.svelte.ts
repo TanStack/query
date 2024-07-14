@@ -219,16 +219,18 @@ export function createQueries<
       opts.queryKey = JSON.parse(JSON.stringify(opts.queryKey))
       const defaultedOptions = client.defaultQueryOptions(opts)
       // Make sure the results are already in fetching state before subscribing or updating options
-      defaultedOptions._optimisticResults = isRestoring
+      defaultedOptions._optimisticResults = isRestoring()
         ? 'isRestoring'
         : 'optimistic'
       return defaultedOptions
     })
   })
-  const observer = new QueriesObserver<TCombinedResult>(
-    client,
-    defaultedQueriesStore(),
-    options as QueriesObserverOptions<TCombinedResult>,
+  const observer = $derived(
+    new QueriesObserver<TCombinedResult>(
+      client,
+      defaultedQueriesStore(),
+      options as QueriesObserverOptions<TCombinedResult>,
+    ),
   )
   const [optimisticResult, getCombinedResult, trackResult] = $derived(
     observer.getOptimisticResult(
@@ -247,17 +249,20 @@ export function createQueries<
   })
 
   let result = $state(getCombinedResult(trackResult()))
+  console.log(result)
   $effect(() => {
-    if (isRestoring) {
-      return
+    if (isRestoring()) {
+      return () => null
     }
+    Object.assign(result, getCombinedResult(trackResult()))
     return observer.subscribe((result_) => {
+      console.log(result_)
       notifyManager.batchCalls(() => {
         const res = observer.getOptimisticResult(
           defaultedQueriesStore(),
           (options as QueriesObserverOptions<TCombinedResult>).combine,
         )
-        // console.log('batching', res[1](res[2]()))
+        console.log('batching', res[1](res[2]()))
 
         Object.assign(result, res[1](res[2]()))
       })()

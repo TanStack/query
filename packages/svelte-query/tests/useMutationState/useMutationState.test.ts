@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/svelte'
-import UseMutationState from './UseMutationState.svelte'
+import UseMutationState from './BaseExample.svelte'
 
 describe('useMutationState', () => {
   it('run few mutation functions and check from useMutationState ', async () => {

@@ -1,5 +1,5 @@
 import { getIsRestoringContext } from './context'
 
-export function useIsRestoring(): boolean {
+export function useIsRestoring(): () => boolean {
   return getIsRestoringContext()
 }

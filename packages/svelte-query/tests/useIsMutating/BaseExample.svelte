@@ -1,6 +1,6 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
-  import { createMutation } from '../../src/createMutation'
+  import { createMutation } from '../../src/createMutation.svelte'
   import { sleep } from '../utils'
   import { useIsMutating } from '../../src/useIsMutating.svelte'
 
@@ -19,6 +19,6 @@
   )
 </script>
 
-<button on:click={() => $mutation.mutate()}>Trigger</button>
+<button on:click={() => mutation.mutate()}>Trigger</button>
 
-<div>isMutating: {$isMutating}</div>
+<div>isMutating: {isMutating()}</div>

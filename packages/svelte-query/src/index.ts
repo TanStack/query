@@ -1,5 +1,9 @@
 /* istanbul ignore file */
 
+import { QueryClient } from '@tanstack/query-core'
+import { Snippet } from 'svelte'
+import { useIsRestoring } from './../../solid-query/src/isRestoring'
+
 // Re-export core
 export * from '@tanstack/query-core'
 
@@ -20,9 +24,12 @@ export { createMutation } from './createMutation.svelte'
 export { useQueryClient } from './useQueryClient'
 export { useIsFetching } from './useIsFetching.svelte'
 export { useIsMutating } from './useIsMutating.svelte'
-/* export { useIsFetching } from './useIsFetching'
-export { useIsMutating } from './useIsMutating'
 export { useIsRestoring } from './useIsRestoring'
-export { useHydrate } from './useHydrate' */
+export { useHydrate } from './useHydrate'
+
 export { default as HydrationBoundary } from './HydrationBoundary.svelte'
 export { default as QueryClientProvider } from './QueryClientProvider.svelte'
+export type QueryClientProviderProps = {
+  client: QueryClient
+  children?: Snippet
+}

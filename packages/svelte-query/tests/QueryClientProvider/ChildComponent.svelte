@@ -11,4 +11,4 @@
   })
 </script>
 
-<div>{$query.data}</div>
+<div>{query.data}</div>

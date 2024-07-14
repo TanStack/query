@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { render, waitFor } from '@testing-library/svelte'
+import { fireEvent, render, waitFor } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
 import { sleep } from '../utils'
 import BaseExample from './BaseExample.svelte'
@@ -61,7 +61,7 @@ describe('createQuery', () => {
       }))(),
     )
 
-    const rendered = render(CreateQuery, {
+    const rendered = render(BaseExample, {
       props: {
         options: derivedStore,
         queryClient: new QueryClient(),
@@ -105,7 +105,7 @@ describe('createQuery', () => {
       expect(rendered.queryByText('Success 2')).toBeInTheDocument()
     })
 
-    writableStore.set(1)
+    writableStore = 1
 
     await waitFor(() => {
       expect(rendered.queryByText('Success 1')).toBeInTheDocument()
@@ -114,13 +114,13 @@ describe('createQuery', () => {
   })
 
   test('Keep previous data when returned as placeholder data', async () => {
-    const writableStore = writable<Array<number>>([1])
+    let writableStore = $state<Array<number>>([1])
 
-    const derivedStore = derived(writableStore, ($store) => ({
-      queryKey: ['test', $store],
+    const derivedStore = $derived.by(() => ({
+      queryKey: ['test', writableStore],
       queryFn: async () => {
         await sleep(10)
-        return $store.map((id) => `Success ${id}`)
+        return writableStore.map((id) => `Success ${id}`)
       },
       placeholderData: (previousData: string) => previousData,
     }))
@@ -142,7 +142,7 @@ describe('createQuery', () => {
       expect(rendered.queryByText('Success 2')).not.toBeInTheDocument()
     })
 
-    writableStore.set([1, 2])
+    writableStore = [1, 2]
 
     await waitFor(() => {
       expect(rendered.queryByText('Success 1')).toBeInTheDocument()

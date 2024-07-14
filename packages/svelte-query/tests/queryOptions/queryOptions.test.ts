@@ -1,6 +1,6 @@
 import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { describe, expectTypeOf, it } from 'vitest'
-import { queryOptions } from '../src/queryOptions'
+import { queryOptions } from '../../src/queryOptions'
 
 describe('queryOptions', () => {
   it('should not allow excess properties', () => {

@@ -6,20 +6,20 @@
 
   const queryClient = new QueryClient()
   const key = queryKey()
-  const count = writable(0)
+  const count = $state(0)
 
-  const options = derived(count, ($count) => ({
+  const options = $derived({
     queryKey: [key, $count],
     queryFn: async () => {
       await sleep(5)
-      return $count
+      return count
     },
-    enabled: $count === 0,
-  }))
+    enabled: count === 0,
+  })
 
   const query = createQuery(options, queryClient)
 </script>
 
-<button on:click={() => ($count += 1)}>Increment</button>
-<div>Data: {$query.data ?? 'undefined'}</div>
-<div>Count: {$count}</div>
+<button on:click={() => (count += 1)}>Increment</button>
+<div>Data: {query.data ?? 'undefined'}</div>
+<div>Count: {count}</div>

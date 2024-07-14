@@ -5,12 +5,19 @@
 	import DerivedQuery from './derivedQuery.svelte';
 	import Queries from './queries.svelte';
 	import CQueries from './CreateQueries.svelte';
+	import { useIsRestoring } from '@tanstack/svelte-query/dev';
+	const isRes = useIsRestoring();
+
+	$effect(() => {
+		console.log('is rest', isRes());
+	});
 </script>
 
+isReTORING:{isRes()}
 <!-- <h1>testing list query cache update</h1>
 <Simple />
 <h1>testing DerivedQuery cache update</h1> -->
-<CQueries />
+<Simple1 />
 <!-- <h1>testing pagination with createQuery</h1>
 <Simple />
 <hr />

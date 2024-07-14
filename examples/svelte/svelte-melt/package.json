@@ -12,8 +12,10 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@tanstack/query-sync-storage-persister": "workspace:^5.50.1",
     "@tanstack/svelte-query": "workspace:*",
-    "@tanstack/svelte-query-devtools": "workspace:^"
+    "@tanstack/svelte-query-devtools": "workspace:^",
+    "@tanstack/svelte-query-persist-client": "workspace:^"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.2.2",
