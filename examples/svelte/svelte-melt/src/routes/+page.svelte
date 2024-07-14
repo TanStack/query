@@ -1,19 +1,31 @@
 <script lang="ts">
-	import { createQuery, QueryClient } from '@tanstack/svelte-query';
+	import Simple from './paginate.svelte';
+	import Cache from './cacheUpdate.svelte';
+	import Simple1 from './test.svelte';
+	import DerivedQuery from './derivedQuery.svelte';
+	import Queries from './queries.svelte';
+	import CQueries from './CreateQueries.svelte';
+	import { useIsRestoring } from '@tanstack/svelte-query/dev';
+	const isRes = useIsRestoring();
 
-	let count = $state(-1);
-
-	const options = $derived({
-		queryKey: () => [count, 'count'],
-		queryFn: async () => {
-			return count;
-		},
-		enabled: () => count === 0
+	$effect(() => {
+		console.log('is rest', isRes());
 	});
-
-	const query = createQuery(options);
 </script>
 
-<button onclick={() => (count += 1)}>Increment</button>
-<div>Data: {query.data ?? 'undefined'}</div>
-<div>Count: {count}</div>
+isReTORING:{isRes()}
+<!-- <h1>testing list query cache update</h1>
+<Simple />
+<h1>testing DerivedQuery cache update</h1> -->
+<Simple1 />
+<!-- <h1>testing pagination with createQuery</h1>
+<Simple />
+<hr />
+
+<h1>testing cache update</h1>
+<Cache />
+<hr />
+-------------
+
+<Simple1 />
+ -->

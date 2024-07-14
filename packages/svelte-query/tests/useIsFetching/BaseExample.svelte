@@ -13,7 +13,7 @@
   const options = $derived({
     queryKey: [key],
     queryFn: async () => {
-      await sleep(20)
+      await sleep(1000)
       return 'test'
     },
     enabled: ready,
@@ -22,9 +22,9 @@
   const query = createQuery(options, queryClient)
 </script>
 
-<button on:click={() => (ready = true)}>setReady</button>
+<button onclick={() => (ready = true)}>setReady</button>
 <div>isFetching: {isFetching()}</div>
-
+{ready}
 {#if query.isSuccess}
   {query.data}
 {/if}

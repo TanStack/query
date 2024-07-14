@@ -102,7 +102,7 @@ export function createBaseQuery<
   /** Subscribe to changes in result and defaultedOptionsStore */
   $effect.pre(() => {
     observer.setOptions(defaultedOptionsStore(), { listeners: false })
-    console.log('batch:calling $effect subscribe observer', isRestoring())
+    //console.log('batch:calling $effect subscribe observer', isRestoring())
     upResult(observer.getOptimisticResult(defaultedOptionsStore()))
     //   result = observer.getOptimisticResult(defaultedOptionsStore()) //prevent lag , somehow observer.subscribe does not return
     // console.log('option updated', defaultedOptionsStore())

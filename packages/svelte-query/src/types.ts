@@ -10,7 +10,7 @@ import type {
   QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
-
+export { type MutationStateOptions } from './useMutationState.svelte'
 export type FnOrVal<T> = (() => T) | T // can be a fn that returns reactive statement or $state or $derived deep states
 
 /** Options for createBaseQuery */

@@ -8,7 +8,7 @@ import {
 } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
 
-type MutationStateOptions<TResult = MutationState> = {
+export type MutationStateOptions<TResult = MutationState> = {
   filters?: MutationFilters
   select?: (mutation: Mutation) => TResult
 }
