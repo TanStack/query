@@ -48,13 +48,13 @@ export function createQueryClient(config?: QueryClientConfig): QueryClient {
 
 export function mockVisibilityState(
   value: DocumentVisibilityState,
-): MockInstance<[], DocumentVisibilityState> {
+): MockInstance<() => DocumentVisibilityState> {
   return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
 export function mockOnlineManagerIsOnline(
   value: boolean,
-): MockInstance<[], boolean> {
+): MockInstance<() => boolean> {
   return vi.spyOn(onlineManager, 'isOnline').mockReturnValue(value)
 }
 
