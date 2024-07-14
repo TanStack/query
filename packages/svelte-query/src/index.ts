@@ -2,7 +2,6 @@
 
 import { QueryClient } from '@tanstack/query-core'
 import { Snippet } from 'svelte'
-import { useIsRestoring } from './../../solid-query/src/isRestoring'
 
 // Re-export core
 export * from '@tanstack/query-core'

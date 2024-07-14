@@ -5,7 +5,6 @@ import type {
   CreateQueryOptions,
   CreateQueryResult,
   DefinedCreateQueryResult,
-  FnOrVal,
 } from './types'
 import type {
   DefinedInitialDataOptions,

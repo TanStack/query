@@ -4,6 +4,7 @@ import { svelteTesting } from '@testing-library/svelte/vite'
 import packageJson from './package.json'
 
 export default defineConfig({
+  //@ts-ignore
   plugins: [svelte(), svelteTesting()],
   test: {
     name: packageJson.name,

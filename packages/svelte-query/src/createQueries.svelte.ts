@@ -225,14 +225,12 @@ export function createQueries<
       return defaultedOptions
     })
   })
-  const observer = $derived(
-    new QueriesObserver<TCombinedResult>(
-      client,
-      defaultedQueriesStore(),
-      options as QueriesObserverOptions<TCombinedResult>,
-    ),
+  const observer = new QueriesObserver<TCombinedResult>(
+    client,
+    defaultedQueriesStore(),
+    options as QueriesObserverOptions<TCombinedResult>,
   )
-  const [optimisticResult, getCombinedResult, trackResult] = $derived(
+  const [_, getCombinedResult, trackResult] = $derived(
     observer.getOptimisticResult(
       defaultedQueriesStore(),
       (options as QueriesObserverOptions<TCombinedResult>).combine,

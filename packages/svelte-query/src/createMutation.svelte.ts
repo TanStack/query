@@ -48,19 +48,6 @@ export function createMutation<
     un()
   })
 
-  /* let data = $derived({
-    ...result,
-    mutate,
-    mutateAsync: result.mutate,
-  })
-  $effect.pre(() => {
-    Object.assign(data, {
-      ...result,
-      mutate,
-      mutateAsync: result.mutate,
-    })
-  }) */
-
   return new Proxy(result, {
     get: (_, prop) => {
       const r = {

@@ -56,7 +56,6 @@ export function useMutationState<TResult = MutationState>(
   queryClient?: QueryClient,
 ): Array<TResult> {
   const mutationCache = useQueryClient(queryClient).getMutationCache()
-  const optionsRef = options
   const result = $state(getResult(mutationCache, options))
 
   $effect(() => {

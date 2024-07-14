@@ -15,7 +15,7 @@
   }: {
     successMutationOpts: CreateMutationOptions
     errorMutationOpts: CreateMutationOptions
-    mutationStateOpts: MutationStateOptions | undefined
+    mutationStateOpts?: MutationStateOptions | undefined
   } = $props()
 
   const queryClient = new QueryClient()
@@ -32,9 +32,9 @@
   {JSON.stringify(statuses)}
 </div>
 
-<button data-testid="success" on:click={() => successMutation.mutate()}>
+<button data-testid="success" onclick={() => successMutation.mutate()}>
   Click
 </button>
-<button data-testid="error" on:click={() => errorMutation.mutate()}>
+<button data-testid="error" onclick={() => errorMutation.mutate()}>
   Click
 </button>
