@@ -1,29 +1,29 @@
 {
-	"name": "svelte-melt",
-	"private": true,
-	"type": "module",
-	"scripts": {
-		"dev": "vite dev --port 3000",
-		"build": "vite build",
-		"preview": "vite preview",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write ."
-	},
-	"dependencies": {
-		"@tanstack/query-sync-storage-persister": "workspace:^5.50.1",
-		"@tanstack/svelte-query": "workspace:*",
-		"@tanstack/svelte-query-devtools": "workspace:^",
-		"@tanstack/svelte-query-persist-client": "workspace:^"
-	},
-	"devDependencies": {
-		"@sveltejs/adapter-auto": "^3.2.0",
-		"@sveltejs/kit": "^2.5.9",
-		"@sveltejs/vite-plugin-svelte": "^4.0.0-next.3",
-		"svelte": "5.0.0-next.183",
-		"svelte-check": "^3.7.1",
-		"typescript": "5.5.3",
-		"vite": "^5.2.11"
-	}
+  "name": "svelte-melt",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev --port 3000",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "lint": "prettier --check . && eslint .",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@tanstack/query-sync-storage-persister": "workspace:^5.50.1",
+    "@tanstack/svelte-query": "workspace:*",
+    "@tanstack/svelte-query-devtools": "workspace:^",
+    "@tanstack/svelte-query-persist-client": "workspace:^"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "^3.2.0",
+    "@sveltejs/kit": "^2.5.9",
+    "@sveltejs/vite-plugin-svelte": "^4.0.0-next.3",
+    "svelte": "5.0.0-next.183",
+    "svelte-check": "^3.7.1",
+    "typescript": "5.5.3",
+    "vite": "^5.2.11"
+  }
 }
