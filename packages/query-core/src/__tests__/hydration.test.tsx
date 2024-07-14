@@ -75,7 +75,8 @@ describe('dehydration and rehydration', () => {
       key: [{ nestedKey: 1 }],
     })
 
-    const fetchDataAfterHydration = vi.fn<Array<unknown>, unknown>()
+    const fetchDataAfterHydration =
+      vi.fn<(...args: Array<unknown>) => unknown>()
     await hydrationClient.prefetchQuery({
       queryKey: ['string'],
       queryFn: fetchDataAfterHydration,
@@ -280,7 +281,8 @@ describe('dehydration and rehydration', () => {
       })?.state.data,
     ).toBe('string')
 
-    const fetchDataAfterHydration = vi.fn<Array<unknown>, unknown>()
+    const fetchDataAfterHydration =
+      vi.fn<(...args: Array<unknown>) => unknown>()
     await hydrationClient.prefetchQuery({
       queryKey: ['string', { key: ['string'], key2: 0 }],
       queryFn: fetchDataAfterHydration,
