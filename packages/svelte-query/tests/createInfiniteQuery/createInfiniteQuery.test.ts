@@ -9,6 +9,8 @@ describe('createQuery', () => {
     const rendered = render(BaseExample)
     waitFor(async () => {
       await rendered.findByText('Data: undefined')
+    })
+    waitFor(async () => {
       await rendered.findByText('Status: pending')
     })
 

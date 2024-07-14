@@ -2,13 +2,13 @@
   import { QueryClient } from '@tanstack/query-core'
   import { createInfiniteQuery } from '../../src/createInfiniteQuery'
   import { sleep } from '../utils'
-
   const queryClient = new QueryClient()
 
   const query = createInfiniteQuery(
     {
       queryKey: ['test'],
       queryFn: ({ pageParam }) => {
+        await sleep(100)
         return Number(pageParam)
       },
       getNextPageParam: (lastPage) => lastPage + 1,
