@@ -8,7 +8,7 @@
     {
       queryKey: ['test'],
       queryFn: ({ pageParam }) => {
-        await sleep(100)
+        sleep(100)
         return Number(pageParam)
       },
       getNextPageParam: (lastPage) => lastPage + 1,
