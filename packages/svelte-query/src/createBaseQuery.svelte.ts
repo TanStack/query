@@ -61,14 +61,15 @@ export function createBaseQuery<
     return defaultedOptions
   }
 
-  const defaultedOptionsStore = $derived(updateOptions)
+  const defaultedOptionsStore = updateOptions
   /** Creates the observer */
-  const observer = $derived(
-    new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
-      client,
-      defaultedOptionsStore(),
-    ),
-  )
+  const observer = new Observer<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  >(client, defaultedOptionsStore())
 
   let result = $state<QueryObserverResult<TData, TError>>(
     observer.getOptimisticResult(defaultedOptionsStore()),
