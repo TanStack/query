@@ -903,7 +903,7 @@
             },
             {
               "label": "Basic",
-              "to": "framework/solid/examples/basic-typescript"
+              "to": "framework/solid/examples/basic"
             },
             {
               "label": "Basic w/ GraphQL-Request",

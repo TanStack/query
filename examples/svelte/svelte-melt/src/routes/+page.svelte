@@ -1,16 +1,16 @@
 <script lang="ts">
-	import Simple from './paginate.svelte';
-	import Cache from './cacheUpdate.svelte';
-	import Simple1 from './test.svelte';
-	import DerivedQuery from './derivedQuery.svelte';
-	import Queries from './queries.svelte';
-	import CQueries from './CreateQueries.svelte';
-	import { useIsRestoring } from '@tanstack/svelte-query/dev';
-	const isRes = useIsRestoring();
+  import Simple from './paginate.svelte'
+  import Cache from './cacheUpdate.svelte'
+  import Simple1 from './test.svelte'
+  import DerivedQuery from './derivedQuery.svelte'
+  import Queries from './queries.svelte'
+  import CQueries from './CreateQueries.svelte'
+  import { useIsRestoring } from '@tanstack/svelte-query/dev'
+  const isRes = useIsRestoring()
 
-	$effect(() => {
-		console.log('is rest', isRes());
-	});
+  $effect(() => {
+    console.log('is rest', isRes())
+  })
 </script>
 
 isReTORING:{isRes()}

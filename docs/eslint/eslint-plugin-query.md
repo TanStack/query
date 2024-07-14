@@ -82,5 +82,5 @@ Alternatively, add `@tanstack/eslint-plugin-query` to the plugins section, and c
 ## Rules
 
 - [@tanstack/query/exhaustive-deps](../exhaustive-deps)
-- [@tanstack/query/no-rest-destructuring](../exhaustive-deps)
-- [@tanstack/query/stable-query-client](../exhaustive-deps)
+- [@tanstack/query/no-rest-destructuring](../no-rest-destructuring)
+- [@tanstack/query/stable-query-client](../stable-query-client)
