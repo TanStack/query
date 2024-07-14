@@ -12,7 +12,7 @@ import type {
   SolidQueryOptions,
 } from './types'
 
-type UndefinedInitialDataOptions<
+export type UndefinedInitialDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -23,7 +23,7 @@ type UndefinedInitialDataOptions<
   }
 >
 
-type DefinedInitialDataOptions<
+export type DefinedInitialDataOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,

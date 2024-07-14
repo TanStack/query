@@ -1,5 +1,6 @@
 {
   "$schema": "https://unpkg.com/knip@4/schema.json",
+  "ignore": [".pnpmfile.cjs"],
   "ignoreWorkspaces": ["examples/**", "integrations/**"],
   "workspaces": {
     "packages/query-codemods": {

@@ -7,7 +7,7 @@ on:
         description: override release tag
         required: false
   push:
-    branches: ['main', 'alpha', 'beta', 'rc', 'v4']
+    branches: [main, alpha, beta, rc, v4]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -15,6 +15,10 @@ concurrency:
 
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+
+permissions:
+  contents: write
+  id-token: write
 
 jobs:
   test-and-publish:
@@ -42,7 +46,7 @@ jobs:
           npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
           pnpm run cipublish
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           TAG: ${{ inputs.tag }}
       - name: Upload coverage to Codecov
