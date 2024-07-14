@@ -1,7 +1,6 @@
 import { render, waitFor } from '@testing-library/svelte'
 import { describe, expect, test, vi } from 'vitest'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
-import { get, writable } from 'svelte/store'
 import AwaitOnSuccess from './AwaitOnSuccess/Provider.svelte'
 import FreshData from './FreshData/Provider.svelte'
 import OnSuccess from './OnSuccess/Provider.svelte'
@@ -15,7 +14,6 @@ import type {
   PersistedClient,
   Persister,
 } from '@tanstack/query-persist-client-core'
-import type { Writable } from 'svelte/store'
 import type { StatusResult } from './utils'
 
 const createMockPersister = (): Persister => {
@@ -57,7 +55,7 @@ const createMockErrorPersister = (
 describe('PersistQueryClientProvider', () => {
   test('restores cache from persister', async () => {
     const key = queryKey()
-    const states: Writable<Array<StatusResult<string>>> = writable([])
+    const states: Array<StatusResult<string>> = $state([])
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
