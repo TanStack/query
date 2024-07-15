@@ -36,7 +36,6 @@ const data = useMutationState({
   filters: { mutationKey },
   select: (mutation) => mutation.state.data,
 })
-
 ```
 
 **Example 3: Access the latest mutation data via the `mutationKey`**
