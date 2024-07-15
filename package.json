@@ -48,7 +48,7 @@
     "@types/node": "^20.12.12",
     "@types/react": "npm:types-react@rc",
     "@types/react-dom": "npm:types-react-dom@rc",
-    "@vitest/coverage-istanbul": "^1.6.0",
+    "@vitest/coverage-istanbul": "^2.0.2",
     "cpy-cli": "^5.0.0",
     "esbuild-plugin-file-path-extensions": "^2.1.0",
     "eslint": "^8.57.0",
@@ -75,7 +75,7 @@
     "typescript51": "npm:typescript@5.1",
     "typescript52": "npm:typescript@5.2",
     "vite": "^5.2.11",
-    "vitest": "^1.6.0"
+    "vitest": "^2.0.2"
   },
   "pnpm": {
     "overrides": {

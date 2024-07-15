@@ -150,7 +150,7 @@ describe('useMutation', () => {
     let count = 0
     type Value = { count: number }
 
-    const mutateFn = vi.fn<[value: Value], Promise<Value>>()
+    const mutateFn = vi.fn<(value: Value) => Promise<Value>>()
 
     mutateFn.mockImplementationOnce(() => {
       return Promise.reject(new Error('Error test Jonas'))

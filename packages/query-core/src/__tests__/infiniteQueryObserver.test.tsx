@@ -106,7 +106,9 @@ describe('InfiniteQueryObserver', () => {
   test('should stop refetching if undefined is returned from getNextPageParam', async () => {
     const key = queryKey()
     let next: number | undefined = 2
-    const queryFn = vi.fn<any, any>(({ pageParam }) => String(pageParam))
+    const queryFn = vi.fn<(...args: Array<any>) => any>(({ pageParam }) =>
+      String(pageParam),
+    )
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       queryFn,
@@ -133,7 +135,9 @@ describe('InfiniteQueryObserver', () => {
   test('should stop refetching if null is returned from getNextPageParam', async () => {
     const key = queryKey()
     let next: number | null = 2
-    const queryFn = vi.fn<any, any>(({ pageParam }) => String(pageParam))
+    const queryFn = vi.fn<(...args: Array<any>) => any>(({ pageParam }) =>
+      String(pageParam),
+    )
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       queryFn,
