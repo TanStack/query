@@ -36,6 +36,35 @@ const data = useMutationState({
   filters: { mutationKey },
   select: (mutation) => mutation.state.data,
 })
+
+```
+
+**Example 3: Access the latest mutation data via the `mutationKey`**
+Each invocation of `mutate` adds a new entry to the mutation cache for `gcTime` milliseconds.
+
+To access the latest invocation, you can check for the last item that `useMutationState` returns.
+
+```tsx
+import { useMutation, useMutationState } from '@tanstack/react-query'
+
+const mutationKey = ['posts']
+
+// Some mutation that we want to get the state for
+const mutation = useMutation({
+  mutationKey,
+  mutationFn: (newPost) => {
+    return axios.post('/posts', newPost)
+  },
+})
+
+const data = useMutationState({
+  // this mutation key needs to match the mutation key of the given mutation (see above)
+  filters: { mutationKey },
+  select: (mutation) => mutation.state.data,
+})
+
+// Latest mutation data
+const latest = data[data.length - 1]
 ```
 
 **Options**
