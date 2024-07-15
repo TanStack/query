@@ -8,7 +8,7 @@ import type { CancelOptions, DefaultError, NetworkMode } from './types'
 interface RetryerConfig<TData = unknown, TError = DefaultError> {
   fn: () => TData | Promise<TData>
   initialPromise?: Promise<TData>
-  abort?: () => void
+  abort?: (reason?: unknown) => void
   onError?: (error: TError) => void
   onSuccess?: (data: TData) => void
   onFail?: (failureCount: number, error: TError) => void
@@ -119,6 +119,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
       config.onError?.(value)
       continueFn?.()
       promiseReject(value)
+      config.abort?.(value)
     }
   }
 

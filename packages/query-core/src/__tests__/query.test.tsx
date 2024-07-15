@@ -327,6 +327,30 @@ describe('query', () => {
     expect(isCancelledError(error)).toBe(true)
   })
 
+  test("should fire the `AbortSignal's` `abort` event when `queryFn` rejects", async () => {
+    const mockAbortHandler = vi.fn()
+    const queryFn = vi.fn(async function queryFn({ signal }) {
+      signal.addEventListener('abort', mockAbortHandler)
+      return Promise.reject('queryFn rejected')
+    })
+
+    queryClient
+      .fetchQuery({
+        queryKey: queryKey(),
+        queryFn,
+        retry: false,
+      })
+      .catch(() => {})
+
+    await sleep(100)
+
+    expect(mockAbortHandler).toHaveBeenCalledOnce()
+
+    const signal = queryFn.mock.lastCall![0].signal
+    expect(signal.aborted).toBe(true)
+    expect(signal.reason).toBe('queryFn rejected')
+  })
+
   test('should not continue if explicitly cancelled', async () => {
     const key = queryKey()
 
