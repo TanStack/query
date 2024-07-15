@@ -471,7 +471,6 @@ function makeQueryClient() {
 }
 
 // ...
-
 ```
 
 ```tsx
@@ -486,7 +485,7 @@ import { serialize } from './transformer'
 import Posts from './posts'
 
 export default function PostsPage() {
-  const queryClient = getQueryClient();
+  const queryClient = getQueryClient()
 
   // look ma, no await
   queryClient.prefetchQuery({
