@@ -1,3 +1,4 @@
+import type { Snippet } from 'svelte'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
@@ -6,6 +7,7 @@ import type {
   MutateFunction,
   MutationObserverOptions,
   MutationObserverResult,
+  QueryClient,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
@@ -136,3 +138,8 @@ export type CreateMutationResult<
 > = CreateBaseMutationResult<TData, TError, TVariables, TContext>
 
 type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }
+
+export type QueryClientProviderProps = {
+  client: QueryClient
+  children: Snippet
+}

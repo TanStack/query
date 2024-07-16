@@ -1,8 +1,5 @@
 /* istanbul ignore file */
 
-import type { QueryClient } from '@tanstack/query-core'
-import type { Snippet } from 'svelte'
-
 // Re-export core
 export * from '@tanstack/query-core'
 
@@ -11,6 +8,7 @@ export * from './types'
 export * from './context'
 
 export { createQuery } from './createQuery'
+export type { QueriesResults, QueriesOptions } from './createQueries.svelte'
 export type {
   DefinedInitialDataOptions,
   UndefinedInitialDataOptions,
@@ -20,15 +18,11 @@ export { createQueries } from './createQueries.svelte'
 export { createInfiniteQuery } from './createInfiniteQuery'
 export { infiniteQueryOptions } from './infiniteQueryOptions'
 export { createMutation } from './createMutation.svelte'
+export { useMutationState } from './useMutationState.svelte'
 export { useQueryClient } from './useQueryClient'
 export { useIsFetching } from './useIsFetching.svelte'
 export { useIsMutating } from './useIsMutating.svelte'
 export { useIsRestoring } from './useIsRestoring'
 export { useHydrate } from './useHydrate'
-
 export { default as HydrationBoundary } from './HydrationBoundary.svelte'
 export { default as QueryClientProvider } from './QueryClientProvider.svelte'
-export type QueryClientProviderProps = {
-  client: QueryClient
-  children?: Snippet
-}
