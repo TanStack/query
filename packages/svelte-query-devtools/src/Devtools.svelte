@@ -2,13 +2,13 @@
   import { onMount } from 'svelte'
   import { DEV } from 'esm-env'
   import { onlineManager, useQueryClient } from '@tanstack/svelte-query'
+  import { TanstackQueryDevtools } from '@tanstack/query-devtools'
   import type { QueryClient } from '@tanstack/svelte-query'
   import type {
     DevToolsErrorType,
     DevtoolsButtonPosition,
     DevtoolsPosition,
   } from '@tanstack/query-devtools'
-  import { TanstackQueryDevtools } from '@tanstack/query-devtools'
 
   interface DevtoolsOptions {
     /**
