@@ -33,7 +33,7 @@ describe('createQuery', () => {
 
     const states = get(statesStore)
 
-    expect(states.length).toEqual(2)
+    expect(states).toHaveLength(2)
 
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -112,7 +112,7 @@ describe('createQuery', () => {
 
     const states = get(statesStore)
 
-    expect(states.length).toEqual(3)
+    expect(states).toHaveLength(3)
 
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -307,7 +307,7 @@ describe('createQuery', () => {
 
     const states = get(statesStore)
 
-    expect(states.length).toEqual(4)
+    expect(states).toHaveLength(4)
 
     // Initial
     expect(states[0]).toMatchObject({
