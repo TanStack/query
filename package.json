@@ -45,6 +45,7 @@
     "@tanstack/config": "^0.9.8",
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.0",
+    "@types/eslint": "^8.56.10",
     "@types/node": "^20.14.10",
     "@types/react": "npm:types-react@rc",
     "@types/react-dom": "npm:types-react-dom@rc",
