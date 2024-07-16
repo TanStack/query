@@ -46,7 +46,7 @@ describe('lazySignalInitializer', () => {
 
   test('should init lazily and only once', async () => {
     const initCallFn = vi.fn()
-    const registerEffectValue = vi.fn<[number]>()
+    const registerEffectValue = vi.fn<(arg: number) => any>()
 
     let value!: Signal<number>
     const outerSignal = signal(0)
