@@ -1,3 +1,7 @@
+import { QueriesObserver, notifyManager } from '@tanstack/query-core'
+import { useIsRestoring } from './useIsRestoring'
+import { useQueryClient } from './useQueryClient'
+import type { FnOrVal } from '.'
 import type {
   DefaultError,
   QueriesObserverOptions,
@@ -9,10 +13,6 @@ import type {
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
-import { QueriesObserver, notifyManager } from '@tanstack/query-core'
-import type { FnOrVal } from '.'
-import { useIsRestoring } from './useIsRestoring'
-import { useQueryClient } from './useQueryClient'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter
@@ -246,7 +246,7 @@ export function createQueries<
     )
   })
 
-  let result = $state(getCombinedResult(trackResult()))
+  const result = $state(getCombinedResult(trackResult()))
   console.log(result)
   $effect(() => {
     if (isRestoring()) {
@@ -270,6 +270,5 @@ export function createQueries<
   /*  $effect(() => {
     console.log('result', result)
   }) */
-  //@ts-ignore
-  return result as TCombinedResult
+  return result
 }

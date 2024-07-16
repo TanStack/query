@@ -61,5 +61,4 @@ export function createMutation<
   })
 }
 
-// eslint-disable-next-line ts/no-empty-function
 function noop() {}

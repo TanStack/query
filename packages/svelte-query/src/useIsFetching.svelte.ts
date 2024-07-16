@@ -1,6 +1,6 @@
-import type { QueryClient, QueryFilters } from '@tanstack/query-core'
-import { useQueryClient } from './useQueryClient'
 import { onDestroy } from 'svelte'
+import { useQueryClient } from './useQueryClient'
+import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 
 export function useIsFetching(
   filters?: QueryFilters,

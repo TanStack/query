@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { onDestroy, onMount, type Snippet } from 'svelte'
+  import { type Snippet, onDestroy, onMount } from 'svelte'
   import { QueryClient } from '@tanstack/query-core'
   import { setQueryClientContext } from './context'
 
-  let { client = new QueryClient(), children } = $props<{
+  const { client = new QueryClient(), children } = $props<{
     client: QueryClient
     children: Snippet
   }>()

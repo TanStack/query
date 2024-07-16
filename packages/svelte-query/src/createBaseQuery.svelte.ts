@@ -42,16 +42,15 @@ export function createBaseQuery<
 
     const defaultedOptions = client.defaultQueryOptions({
       ...optionsStore(),
-      //@ts-ignore
       queryKey: queryKey, // prevent reactive query  in devTools,
       enabled:
         typeof optionsStore().enabled == 'function'
-          ? //@ts-ignore
+          ? //@ts-expect-error
             optionsStore().enabled()
           : optionsStore().enabled,
     })
     defaultedOptions._optimisticResults = 'optimistic'
-    if (isRestoring?.()) {
+    if (isRestoring()) {
       defaultedOptions._optimisticResults = 'isRestoring'
     }
 
@@ -71,7 +70,7 @@ export function createBaseQuery<
     TQueryKey
   >(client, defaultedOptionsStore())
 
-  let result = $state<QueryObserverResult<TData, TError>>(
+  const result = $state<QueryObserverResult<TData, TError>>(
     observer.getOptimisticResult(defaultedOptionsStore()),
   )
 
@@ -81,7 +80,7 @@ export function createBaseQuery<
 
   $effect(() => {
     let un = () => undefined
-    if (!isRestoring?.()) {
+    if (!isRestoring()) {
       {
         //@ts-expect-error
         un = observer.subscribe((v) => {
@@ -125,7 +124,7 @@ export function createBaseQuery<
         //console.log('result effect', final_.value.data)
       })
   })
-  //@ts-ignore
+  //@ts-expect-error
   return new Proxy(final_, {
     get(target, p) {
       if (p == 'value') {

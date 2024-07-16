@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 
-import { QueryClient } from '@tanstack/query-core'
-import { Snippet } from 'svelte'
+import type { QueryClient } from '@tanstack/query-core'
+import type { Snippet } from 'svelte'
 
 // Re-export core
 export * from '@tanstack/query-core'

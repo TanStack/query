@@ -1,13 +1,12 @@
-import {
+import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
+import { useQueryClient } from './useQueryClient'
+import type {
   Mutation,
   MutationCache,
-  type MutationFilters,
+  MutationFilters,
   MutationState,
-  type QueryClient,
-  notifyManager,
-  replaceEqualDeep,
+  QueryClient,
 } from '@tanstack/query-core'
-import { useQueryClient } from './useQueryClient'
 
 export function useIsMutating(
   filters?: MutationFilters,
@@ -18,7 +17,7 @@ export function useIsMutating(
   // isMutating is the prev value initialized on mount *
   let isMutating = client.isMutating(filters)
 
-  let num = $state({ isMutating })
+  const num = $state({ isMutating })
   $effect(() => {
     return cache.subscribe(
       notifyManager.batchCalls(() => {
