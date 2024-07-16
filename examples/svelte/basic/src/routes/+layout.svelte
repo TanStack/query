@@ -4,7 +4,7 @@
   import { QueryClientProvider, QueryClient } from '@tanstack/svelte-query'
   import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
 
-  const { children }  = $props();
+  const { children } = $props()
 
   const queryClient = new QueryClient({
     defaultOptions: {

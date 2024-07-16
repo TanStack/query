@@ -51,7 +51,7 @@
     "@testing-library/svelte": "^5.2.0",
     "eslint-plugin-svelte": "^2.40.0",
     "svelte": "5.0.0-next.183",
-    "svelte-check": "^3.7.1"
+    "svelte-check": "^3.8.4"
   },
   "peerDependencies": {
     "svelte": "^5.0.0-next.105"
