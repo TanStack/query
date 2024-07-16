@@ -15,13 +15,13 @@
 {#if Array.isArray($queries)}
   {#each $queries as query, index}
     {#if query.isPending}
-      <p>Loading {index + 1}</p>
+      <div>Loading {index + 1}</div>
     {:else if query.isSuccess}
-      <p>{query.data}</p>
+      <div>{query.data}</div>
     {/if}
   {/each}
 {:else if $queries.isPending}
-  <p>Loading</p>
+  <div>Loading</div>
 {:else if $queries.isSuccess}
-  <p>{$queries.data}</p>
+  <div>{$queries.data}</div>
 {/if}

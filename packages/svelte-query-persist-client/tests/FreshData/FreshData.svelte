@@ -19,12 +19,7 @@
     staleTime: Infinity,
   })
 
-  state.subscribe((s) => {
-    states.update((prev) => [
-      ...prev,
-      { status: s.status, data: s.data, fetchStatus: s.fetchStatus },
-    ])
-  })
+  $: states.update((prev) => [...prev, $state])
 </script>
 
 <div>
