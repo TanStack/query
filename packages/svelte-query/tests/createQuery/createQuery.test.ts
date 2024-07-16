@@ -6,10 +6,12 @@ import { sleep } from '../utils'
 import BaseExample from './BaseExample.svelte'
 import DisabledExample from './DisabledExample.svelte'
 import PlaceholderData from './PlaceholderData.svelte'
+import type { Writable } from 'svelte/store'
+import type { QueryObserverResult } from '@tanstack/query-core'
 
 describe('createQuery', () => {
   test('Return the correct states for a successful query', async () => {
-    const statesStore = writable([])
+    const statesStore: Writable<Array<QueryObserverResult>> = writable([])
 
     const options = {
       queryKey: ['test'],
@@ -91,7 +93,7 @@ describe('createQuery', () => {
   })
 
   test('Return the correct states for an unsuccessful query', async () => {
-    const statesStore = writable([])
+    const statesStore: Writable<Array<QueryObserverResult>> = writable([])
 
     const options = {
       queryKey: ['test'],
@@ -197,7 +199,7 @@ describe('createQuery', () => {
   })
 
   test('Accept a writable store for options', async () => {
-    const statesStore = writable([])
+    const statesStore: Writable<Array<QueryObserverResult>> = writable([])
 
     const optionsStore = writable({
       queryKey: ['test'],
@@ -221,7 +223,7 @@ describe('createQuery', () => {
   })
 
   test('Accept a derived store for options', async () => {
-    const statesStore = writable([])
+    const statesStore: Writable<Array<QueryObserverResult>> = writable([])
 
     const writableStore = writable('test')
 
@@ -247,7 +249,7 @@ describe('createQuery', () => {
   })
 
   test('Ensure reactivity when queryClient defaults are set', async () => {
-    const statesStore = writable([])
+    const statesStore: Writable<Array<QueryObserverResult>> = writable([])
 
     const writableStore = writable(1)
 
@@ -290,7 +292,7 @@ describe('createQuery', () => {
   })
 
   test('Keep previous data when placeholderData is set', async () => {
-    const statesStore = writable([])
+    const statesStore: Writable<Array<QueryObserverResult>> = writable([])
 
     const rendered = render(PlaceholderData, {
       props: {

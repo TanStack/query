@@ -2,11 +2,11 @@
   import { derived, writable } from 'svelte/store'
   import { createQuery, keepPreviousData } from '../../src/index'
   import { sleep } from '../utils'
-  import type { QueryClient } from '@tanstack/query-core'
+  import type { QueryClient, QueryObserverResult } from '@tanstack/query-core'
   import type { Writable } from 'svelte/store'
 
   export let queryClient: QueryClient
-  export let states: Writable<Array<any>>
+  export let states: Writable<Array<QueryObserverResult>>
 
   const count = writable(0)
 
