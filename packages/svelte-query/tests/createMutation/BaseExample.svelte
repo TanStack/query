@@ -4,7 +4,9 @@
   import { createMutation } from '../../src'
   import type { CreateMutationOptions } from '../../src/types'
 
-  export let options: CreateMutationOptions
+  const { options } = $props<{
+    options: CreateMutationOptions
+  }>()
 
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
@@ -12,4 +14,4 @@
   const mutation = createMutation(options)
 </script>
 
-<button on:click={() => mutation.mutate()}>Click</button>
+<button onclick={() => mutation.mutate()}>Click</button>

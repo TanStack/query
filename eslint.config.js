@@ -38,6 +38,7 @@ export default [
       'ts/ban-types': 'off',
       'ts/no-empty-function': 'off',
       'no-case-declarations': 'off',
+      'prefer-const': 'off',
     },
   },
 ]

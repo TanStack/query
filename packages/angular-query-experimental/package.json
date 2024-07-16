@@ -73,7 +73,7 @@
     "@angular/platform-browser": "^17.3.10",
     "@angular/platform-browser-dynamic": "^17.3.10",
     "@microsoft/api-extractor": "^7.46.2",
-    "eslint-plugin-jsdoc": "^48.2.13",
+    "eslint-plugin-jsdoc": "^48.7.0",
     "ng-packagr": "^17.3.0",
     "typescript": "5.3.3",
     "zone.js": "^0.14.6"

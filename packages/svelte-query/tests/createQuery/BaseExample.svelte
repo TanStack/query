@@ -1,24 +1,32 @@
 <script lang="ts">
   import { createQuery } from '../../src'
-  import type { QueryClient } from '@tanstack/query-core'
+  import type { QueryClient, QueryObserverResult } from '@tanstack/query-core'
   import type { CreateQueryOptions } from '../../src/types'
 
-  export let options: CreateQueryOptions<any>
-  export let queryClient: QueryClient
+  let {
+    options,
+    queryClient,
+    states = $bindable(),
+  } = $props<{
+    options: CreateQueryOptions<any>
+    queryClient: QueryClient
+    states: Array<QueryObserverResult>
+  }>()
 
   const query = createQuery(options, queryClient)
+
+  $effect(() => {
+    states = [...states, query]
+  })
 </script>
 
+<div>Status: {query.status}</div>
+<div>Failure Count: {query.failureCount}</div>
+
 {#if query.isPending}
-  <p>Loading</p>
+  <div>Loading</div>
 {:else if query.isError}
-  <p>Error</p>
+  <div>Error</div>
 {:else if query.isSuccess}
-  {#if Array.isArray(query.data)}
-    {#each query.data as item}
-      <p>{item}</p>
-    {/each}
-  {:else}
-    <p>{query.data}</p>
-  {/if}
+  <div>{query.data}</div>
 {/if}
