@@ -16,8 +16,8 @@
     "react-error-boundary": "^4.0.13"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-react": "^4.3.1",
     "typescript": "5.3.3",
-    "vite": "^5.2.11"
+    "vite": "^5.3.3"
   }
 }

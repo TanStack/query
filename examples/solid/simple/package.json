@@ -16,7 +16,7 @@
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.51.1",
     "typescript": "5.3.3",
-    "vite": "^5.2.11",
+    "vite": "^5.3.3",
     "vite-plugin-solid": "^2.10.2"
   }
 }
