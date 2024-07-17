@@ -1,10 +1,15 @@
 import { describe, expect, expectTypeOf, it } from 'vitest'
-import { QueriesObserver, QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
+import {
+  QueriesObserver,
+  QueryClient,
+  dataTagSymbol,
+  skipToken,
+} from '@tanstack/query-core'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
 import { useQueries } from '../useQueries'
 import { useSuspenseQuery } from '../useSuspenseQuery'
-import type { QueryObserverResult } from '@tanstack/query-core';
+import type { QueryObserverResult } from '@tanstack/query-core'
 
 describe('queryOptions', () => {
   it('should not allow excess properties', () => {
@@ -179,6 +184,8 @@ describe('queryOptions', () => {
 
     const queryClient = new QueryClient()
     const queriesObserver = new QueriesObserver(queryClient, [options])
-    expectTypeOf(queriesObserver).toEqualTypeOf<QueriesObserver<Array<QueryObserverResult>>>()
+    expectTypeOf(queriesObserver).toEqualTypeOf<
+      QueriesObserver<Array<QueryObserverResult>>
+    >()
   })
 })
