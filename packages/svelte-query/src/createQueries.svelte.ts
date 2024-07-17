@@ -13,6 +13,7 @@ import type {
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
+import { untrack } from 'svelte'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter
@@ -252,7 +253,10 @@ export function createQueries<
     if (isRestoring()) {
       return () => null
     }
-    Object.assign(result, getCombinedResult(trackResult()))
+    untrack(() => {
+      Object.assign(result, getCombinedResult(trackResult()))
+    })
+
     return observer.subscribe((result_) => {
       console.log(result_)
       notifyManager.batchCalls(() => {
