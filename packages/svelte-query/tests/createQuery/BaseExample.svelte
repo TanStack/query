@@ -2,6 +2,7 @@
   import { createQuery } from '../../src'
   import type { QueryClient, QueryObserverResult } from '@tanstack/query-core'
   import type { CreateQueryOptions } from '../../src/types'
+  import { untrack } from 'svelte'
 
   let {
     options,
@@ -16,7 +17,11 @@
   const query = createQuery(options, queryClient)
 
   $effect(() => {
-    states = [...states, query]
+    console.log('initial data', query)
+    JSON.stringify(query)
+    untrack(() => {
+      states.push($state.snapshot(query))
+    })
   })
 </script>
 

@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { untrack } from 'svelte'
   import { createQuery, keepPreviousData } from '../../src/index'
   import { sleep } from '../utils'
   import type { QueryClient, QueryObserverResult } from '@tanstack/query-core'
+  import { unlink } from 'fs'
 
   let { queryClient, states } = $props<{
     queryClient: QueryClient
@@ -22,7 +24,10 @@
   const query = createQuery(options, queryClient)
 
   $effect(() => {
-    states = [...states, query]
+    JSON.stringify(query)
+    untrack(() => {
+      states.push($state.snapshot(query))
+    })
   })
 </script>
 
