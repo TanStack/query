@@ -1,6 +1,5 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-  import { get } from 'svelte/store'
   import { sleep } from '../utils'
   import type { Writable } from 'svelte/store'
 
@@ -16,16 +15,9 @@
       return 'fetched'
     },
   })
-
-  let data = get(state).data
-  let fetchStatus = get(state).fetchStatus
-  state.subscribe((s) => {
-    data = s.data
-    fetchStatus = s.fetchStatus
-  })
 </script>
 
 <div>
-  <h1>{data}</h1>
-  <h2>fetchStatus: {fetchStatus}</h2>
+  <h1>{$state.data}</h1>
+  <h2>fetchStatus: {$state.fetchStatus}</h2>
 </div>
