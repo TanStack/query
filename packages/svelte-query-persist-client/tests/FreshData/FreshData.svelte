@@ -5,10 +5,8 @@
   import type { StatusResult } from '../utils.svelte'
 
   let {
-    key,
     states,
   }: {
-    key: Array<string>
     states: { value: Array<StatusResult<string>> }
     fetched: boolean
   } = $props()
@@ -29,5 +27,5 @@
   })
 </script>
 
-<div>data: {$query.data ?? 'null'}</div>
-<div>fetchStatus: {$query.fetchStatus}</div>
+<div>data: {query.data ?? 'undefined'}</div>
+<div>fetchStatus: {query.fetchStatus}</div>

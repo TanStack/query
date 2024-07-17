@@ -4,13 +4,7 @@
   import { sleep } from '../utils.svelte'
   import type { StatusResult } from '../utils.svelte'
 
-  let {
-    key,
-    states,
-  }: {
-    key: Array<string>
-    states: { value: Array<StatusResult<string>> }
-  } = $props()
+  let { states }: { states: { value: Array<StatusResult<string>> } } = $props()
 
   const query = createQuery({
     queryKey: ['test'],
@@ -30,5 +24,5 @@
   })
 </script>
 
-<div>{$query.data}</div>
-<div>fetchStatus: {$query.fetchStatus}</div>
+<div>{query.data}</div>
+<div>fetchStatus: {query.fetchStatus}</div>

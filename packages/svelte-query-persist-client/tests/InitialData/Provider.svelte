@@ -8,11 +8,10 @@
   interface Props {
     queryClient: QueryClient
     persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
-    key: Array<string>
     states: { value: Array<StatusResult<string>> }
   }
 
-  let { queryClient, persistOptions, key, states }: Props = $props()
+  let { queryClient, persistOptions, states }: Props = $props()
 </script>
 
 <PersistQueryClientProvider client={queryClient} {persistOptions}>

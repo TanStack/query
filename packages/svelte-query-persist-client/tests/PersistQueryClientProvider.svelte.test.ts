@@ -8,7 +8,7 @@ import InitialData from './InitialData/Provider.svelte'
 import RemoveCache from './RemoveCache/Provider.svelte'
 import RestoreCache from './RestoreCache/Provider.svelte'
 import UseQueries from './UseQueries/Provider.svelte'
-import { createQueryClient, queryKey, ref, sleep } from './utils.svelte'
+import { createQueryClient, ref, sleep } from './utils.svelte'
 
 import type {
   PersistedClient,
@@ -235,7 +235,7 @@ describe('PersistQueryClientProvider', () => {
       },
     })
 
-    await waitFor(() => rendered.getByText('data: null'))
+    await waitFor(() => rendered.getByText('data: undefined'))
     await waitFor(() => rendered.getByText('data: hydrated'))
 
     expect(fetched).toBe(false)

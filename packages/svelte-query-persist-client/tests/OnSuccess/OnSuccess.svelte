@@ -11,5 +11,5 @@
   })
 </script>
 
-<div>{$query.data}</div>
-<div>fetchStatus: {$query.fetchStatus}</div>
+<div>{query.data}</div>
+<div>fetchStatus: {query.fetchStatus}</div>

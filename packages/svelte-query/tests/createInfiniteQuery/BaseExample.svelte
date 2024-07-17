@@ -13,7 +13,7 @@
     {
       queryKey: ['test'],
       queryFn: async ({ pageParam }) => {
-        await sleep(500)
+        await sleep(5)
         return Number(pageParam)
       },
       getNextPageParam: (lastPage) => lastPage + 1,
