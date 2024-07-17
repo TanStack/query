@@ -32,11 +32,11 @@ export function sleep(timeout: number): Promise<void> {
   })
 }
 
-export const executeMutation = <TVariables>(
+export function executeMutation<TVariables>(
   queryClient: QueryClient,
   options: MutationOptions<any, any, TVariables, any>,
   variables: TVariables,
-) => {
+) {
   return queryClient
     .getMutationCache()
     .build(queryClient, options)

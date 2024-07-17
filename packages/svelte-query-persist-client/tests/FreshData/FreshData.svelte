@@ -14,7 +14,7 @@
   } = $props()
 
   const query = createQuery({
-    queryKey: key,
+    queryKey: ['test'],
     queryFn: async () => {
       states.value.push('fetched')
       await sleep(10)
@@ -23,12 +23,11 @@
 
     staleTime: Infinity,
   })
+
   $effect(() => {
     states.value = [...untrack(() => states.value), $state.snapshot(query)]
   })
 </script>
 
-<div>
-  <h1>data: {query.data ?? 'null'}</h1>
-  <h2>fetchStatus: {query.fetchStatus}</h2>
-</div>
+<div>data: {$query.data ?? 'null'}</div>
+<div>fetchStatus: {$query.fetchStatus}</div>

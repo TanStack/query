@@ -14,5 +14,5 @@
 </script>
 
 <PersistQueryClientProvider client={queryClient} {persistOptions}>
-  <RemoveCache {key} />
+  <RemoveCache />
 </PersistQueryClientProvider>

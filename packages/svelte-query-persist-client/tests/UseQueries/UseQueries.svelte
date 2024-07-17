@@ -12,10 +12,10 @@
     states: { value: Array<StatusResult<string>> }
   } = $props()
 
-  const s = createQueries({
+  const queries = createQueries({
     queries: [
       {
-        queryKey: key,
+        queryKey: ['test'],
         queryFn: async (): Promise<string> => {
           await sleep(10)
           return 'fetched'
@@ -29,7 +29,5 @@
   })
 </script>
 
-<div>
-  <h1>{s[0].data}</h1>
-  <h2>fetchStatus: {s[0].fetchStatus}</h2>
-</div>
+<div>{$queries[0].data}</div>
+<div>fetchStatus: {$queries[0].fetchStatus}</div>

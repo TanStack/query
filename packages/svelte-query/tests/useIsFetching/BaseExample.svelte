@@ -1,19 +1,18 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
-  import { createQuery } from '../../src/'
+  import { createQuery } from '../../src/createQuery'
   import { useIsFetching } from '../../src/useIsFetching.svelte'
-  import { queryKey, sleep } from '../utils.svelte'
+  import { sleep } from '../utils.svelte'
 
   const queryClient = new QueryClient()
-  const key = queryKey()
   let ready = $state(false)
 
   const isFetching = useIsFetching(undefined, queryClient)
 
   const options = $derived({
-    queryKey: [key],
+    queryKey: ['test'],
     queryFn: async () => {
-      await sleep(1000)
+      await sleep(5)
       return 'test'
     },
     enabled: ready,
@@ -23,8 +22,6 @@
 </script>
 
 <button onclick={() => (ready = true)}>setReady</button>
+
 <div>isFetching: {isFetching()}</div>
-{ready}
-{#if query.isSuccess}
-  {query.data}
-{/if}
+<div>Data: {query.data ?? 'undefined'}</div>

@@ -1,7 +1,11 @@
 <script lang="ts">
+  import { untrack } from 'svelte'
   import { QueryClient } from '@tanstack/query-core'
   import { createInfiniteQuery } from '../../src/createInfiniteQuery'
   import { sleep } from '../utils.svelte'
+  import type { QueryObserverResult } from '@tanstack/query-core'
+
+  let { states }: { states: { value: Array<QueryObserverResult> } } = $props()
 
   const queryClient = new QueryClient()
 
@@ -9,7 +13,7 @@
     {
       queryKey: ['test'],
       queryFn: async ({ pageParam }) => {
-        await sleep(600)
+        await sleep(500)
         return Number(pageParam)
       },
       getNextPageParam: (lastPage) => lastPage + 1,
@@ -17,7 +21,10 @@
     },
     queryClient,
   )
+
+  $effect(() => {
+    states.value = [...untrack(() => states.value), $state.snapshot(query)]
+  })
 </script>
 
-<div>Data: {JSON.stringify(query.data) || 'undefined'}</div>
 <div>Status: {query.status}</div>

@@ -23,11 +23,4 @@
 
 <div>Status: {query.status}</div>
 <div>Failure Count: {query.failureCount}</div>
-
-{#if query.isPending}
-  <div>Loading</div>
-{:else if query.isError}
-  <div>Error</div>
-{:else if query.isSuccess}
-  <div>{query.data}</div>
-{/if}
+<div>Data: {query.data ?? 'undefined'}</div>

@@ -20,16 +20,7 @@
   const queries = createQueries(options, queryClient)
 </script>
 
-{#if Array.isArray(queries)}
-  {#each queries as query, index}
-    {#if query.isPending}
-      <div>Loading {index + 1}</div>
-    {:else if query.isSuccess}
-      <div>{query.data}</div>
-    {/if}
-  {/each}
-{:else if queries.isPending}
-  <div>Loading</div>
-{:else if queries.isSuccess}
-  <div>{queries.data}</div>
-{/if}
+{#each queries as query, index}
+  <div>Status {index + 1}: {query.status}</div>
+  <div>Data {index + 1}: {query.data}</div>
+{/each}

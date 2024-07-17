@@ -54,12 +54,11 @@ const createMockErrorPersister = (
 
 describe('PersistQueryClientProvider', () => {
   test('restores cache from persister', async () => {
-    const key = queryKey()
     let states = ref<Array<StatusResult<string>>>([])
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
-      queryKey: key,
+      queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
     })
 
@@ -73,7 +72,6 @@ describe('PersistQueryClientProvider', () => {
       props: {
         queryClient,
         persistOptions: { persister },
-        key,
         states,
       },
     })
@@ -110,12 +108,11 @@ describe('PersistQueryClientProvider', () => {
   })
 
   test('should also put useQueries into idle state', async () => {
-    const key = queryKey()
     let states = ref<Array<StatusResult<string>>>([])
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
-      queryKey: key,
+      queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
     })
 
@@ -129,7 +126,6 @@ describe('PersistQueryClientProvider', () => {
       props: {
         queryClient,
         persistOptions: { persister },
-        key,
         states,
       },
     })
@@ -160,12 +156,11 @@ describe('PersistQueryClientProvider', () => {
   })
 
   test('should show initialData while restoring', async () => {
-    const key = queryKey()
     let states = ref<Array<StatusResult<string>>>([])
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
-      queryKey: key,
+      queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
     })
 
@@ -179,7 +174,6 @@ describe('PersistQueryClientProvider', () => {
       props: {
         queryClient,
         persistOptions: { persister },
-        key,
         states,
       },
     })
@@ -216,12 +210,11 @@ describe('PersistQueryClientProvider', () => {
   })
 
   test('should not refetch after restoring when data is fresh', async () => {
-    const key = queryKey()
     let states = ref<Array<StatusResult<string>>>([])
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
-      queryKey: key,
+      queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
     })
 
@@ -237,7 +230,6 @@ describe('PersistQueryClientProvider', () => {
       props: {
         queryClient,
         persistOptions: { persister },
-        key,
         states,
         fetched,
       },
@@ -264,11 +256,9 @@ describe('PersistQueryClientProvider', () => {
   })
 
   test('should call onSuccess after successful restoring', async () => {
-    const key = queryKey()
-
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
-      queryKey: key,
+      queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
     })
 
@@ -284,7 +274,6 @@ describe('PersistQueryClientProvider', () => {
       props: {
         queryClient,
         persistOptions: { persister },
-        key,
         onSuccess,
       },
     })
@@ -297,11 +286,9 @@ describe('PersistQueryClientProvider', () => {
   })
 
   test('should await onSuccess after successful restoring', async () => {
-    const key = queryKey()
-
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
-      queryKey: key,
+      queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
     })
 
@@ -317,7 +304,6 @@ describe('PersistQueryClientProvider', () => {
       props: {
         queryClient,
         persistOptions: { persister },
-        key,
         states,
         onSuccess: async () => {
           states.push('onSuccess')
@@ -339,7 +325,6 @@ describe('PersistQueryClientProvider', () => {
   })
 
   test('should remove cache after non-successful restoring', async () => {
-    const key = queryKey()
     const consoleMock = vi.spyOn(console, 'error')
     const consoleWarn = vi
       .spyOn(console, 'warn')
@@ -352,7 +337,7 @@ describe('PersistQueryClientProvider', () => {
     const [error, persister] = createMockErrorPersister(removeClient)
 
     const rendered = render(RemoveCache, {
-      props: { queryClient, persistOptions: { persister }, key },
+      props: { queryClient, persistOptions: { persister } },
     })
 
     await waitFor(() => rendered.getByText('fetched'))

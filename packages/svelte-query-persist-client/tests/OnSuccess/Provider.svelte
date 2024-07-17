@@ -15,5 +15,5 @@
 </script>
 
 <PersistQueryClientProvider client={queryClient} {persistOptions} {onSuccess}>
-  <OnSuccess {key} />
+  <OnSuccess />
 </PersistQueryClientProvider>

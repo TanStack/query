@@ -14,7 +14,7 @@ describe('createQuery', () => {
     const options = {
       queryKey: ['test'],
       queryFn: async () => {
-        await sleep(10)
+        await sleep(5)
         return 'Success'
       },
     }
@@ -28,7 +28,7 @@ describe('createQuery', () => {
     })
 
     await waitFor(() => {
-      expect(rendered.queryByText('Success')).toBeInTheDocument()
+      expect(rendered.queryByText('Status: success')).toBeInTheDocument()
     })
 
     expect(states.value).toHaveLength(2)
@@ -198,7 +198,7 @@ describe('createQuery', () => {
     const optionsStore = $state({
       queryKey: ['test'],
       queryFn: async () => {
-        await sleep(10)
+        await sleep(5)
         return 'Success'
       },
     })
@@ -212,7 +212,7 @@ describe('createQuery', () => {
     })
 
     await waitFor(() => {
-      expect(rendered.queryByText('Success')).toBeInTheDocument()
+      expect(rendered.queryByText('Status: success')).toBeInTheDocument()
     })
   })
 
@@ -224,7 +224,7 @@ describe('createQuery', () => {
     const derivedStore = $derived(() => ({
       queryKey: [writableStore],
       queryFn: async () => {
-        await sleep(10)
+        await sleep(5)
         return 'Success'
       },
     }))
@@ -238,7 +238,7 @@ describe('createQuery', () => {
     })
 
     await waitFor(() => {
-      expect(rendered.queryByText('Success')).toBeInTheDocument()
+      expect(rendered.queryByText('Status: success')).toBeInTheDocument()
     })
   })
 
@@ -250,8 +250,8 @@ describe('createQuery', () => {
     const derivedStore = $derived({
       queryKey: () => [writableStore],
       queryFn: async () => {
-        await sleep(50)
-        return `Success ${writableStore}`
+        await sleep(5)
+        return writableStore
       },
     })
 
@@ -266,22 +266,22 @@ describe('createQuery', () => {
     })
 
     await waitFor(() => {
-      expect(rendered.queryByText('Success 1')).toBeInTheDocument()
-      expect(rendered.queryByText('Success 2')).not.toBeInTheDocument()
+      expect(rendered.queryByText('Data: 1')).toBeInTheDocument()
+      expect(rendered.queryByText('Data: 2')).not.toBeInTheDocument()
     })
 
     writableStore = 2
 
     await waitFor(() => {
-      expect(rendered.queryByText('Success 1')).not.toBeInTheDocument()
-      expect(rendered.queryByText('Success 2')).toBeInTheDocument()
+      expect(rendered.queryByText('Data: 1')).not.toBeInTheDocument()
+      expect(rendered.queryByText('Data: 2')).toBeInTheDocument()
     })
 
     writableStore = 1
 
     await waitFor(() => {
-      expect(rendered.queryByText('Success 1')).toBeInTheDocument()
-      expect(rendered.queryByText('Success 2')).not.toBeInTheDocument()
+      expect(rendered.queryByText('Data: 1')).toBeInTheDocument()
+      expect(rendered.queryByText('Data: 2')).not.toBeInTheDocument()
     })
   })
 
@@ -310,6 +310,7 @@ describe('createQuery', () => {
       isSuccess: false,
       isPlaceholderData: false,
     })
+
     // Fetched
     expect(states.value[1]).toMatchObject({
       data: 0,
@@ -317,6 +318,7 @@ describe('createQuery', () => {
       isSuccess: true,
       isPlaceholderData: false,
     })
+
     // Set state
     expect(states.value[2]).toMatchObject({
       data: 0,
@@ -324,6 +326,7 @@ describe('createQuery', () => {
       isSuccess: true,
       isPlaceholderData: true,
     })
+
     // New data
     expect(states.value[3]).toMatchObject({
       data: 1,
@@ -334,15 +337,44 @@ describe('createQuery', () => {
   })
 
   test('Should not fetch when switching to a disabled query', async () => {
-    const rendered = render(DisabledExample)
+    let states = ref<Array<QueryObserverResult>>([])
 
-    await waitFor(() => rendered.getByText('Data: undefined'))
+    const rendered = render(DisabledExample, {
+      props: {
+        states,
+      },
+    })
+
+    await waitFor(() => rendered.getByText('Data: 0'))
 
     fireEvent.click(rendered.getByRole('button', { name: /Increment/i }))
 
     await waitFor(() => {
       rendered.getByText('Count: 0')
       rendered.getByText('Data: 0')
+    })
+
+    expect(states.value).toHaveLength(3)
+
+    // Fetch query
+    expect(states.value[0]).toMatchObject({
+      data: undefined,
+      isFetching: true,
+      isSuccess: false,
+    })
+
+    // Fetched query
+    expect(states.value[1]).toMatchObject({
+      data: 0,
+      isFetching: false,
+      isSuccess: true,
+    })
+
+    // Switch to disabled query
+    expect(states.value[2]).toMatchObject({
+      data: undefined,
+      isFetching: false,
+      isSuccess: false,
     })
   })
 })

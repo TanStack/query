@@ -103,6 +103,41 @@ describe('InfiniteQueryObserver', () => {
     expect(all).toEqual(['next0', 'next0,1', 'prev0,1'])
   })
 
+  test('should not invoke getNextPageParam and getPreviousPageParam on empty pages', async () => {
+    const key = queryKey()
+
+    const getNextPageParam = vi.fn()
+    const getPreviousPageParam = vi.fn()
+
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: ({ pageParam }) => String(pageParam),
+      initialPageParam: 1,
+      getNextPageParam: getNextPageParam.mockImplementation(
+        (_, __, lastPageParam) => {
+          return lastPageParam + 1
+        },
+      ),
+      getPreviousPageParam: getPreviousPageParam.mockImplementation(
+        (_, __, firstPageParam) => {
+          return firstPageParam - 1
+        },
+      ),
+    })
+
+    const unsubscribe = observer.subscribe(() => {})
+
+    getNextPageParam.mockClear()
+    getPreviousPageParam.mockClear()
+
+    queryClient.setQueryData(key, { pages: [], pageParams: [] })
+
+    expect(getNextPageParam).toHaveBeenCalledTimes(0)
+    expect(getPreviousPageParam).toHaveBeenCalledTimes(0)
+
+    unsubscribe()
+  })
+
   test('should stop refetching if undefined is returned from getNextPageParam', async () => {
     const key = queryKey()
     let next: number | undefined = 2

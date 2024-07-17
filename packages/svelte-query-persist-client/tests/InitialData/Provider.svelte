@@ -16,5 +16,5 @@
 </script>
 
 <PersistQueryClientProvider client={queryClient} {persistOptions}>
-  <InitialData {key} {states} />
+  <InitialData {states} />
 </PersistQueryClientProvider>

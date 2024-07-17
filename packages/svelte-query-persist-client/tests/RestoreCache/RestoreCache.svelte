@@ -13,7 +13,7 @@
   } = $props()
 
   const query = createQuery({
-    queryKey: key,
+    queryKey: ['test'],
     queryFn: async () => {
       await sleep(10)
       return 'fetched'
@@ -25,7 +25,5 @@
   })
 </script>
 
-<div>
-  <h1>{query.data}</h1>
-  <h2>fetchStatus: {query.fetchStatus}</h2>
-</div>
+<div>{$query.data}</div>
+<div>fetchStatus: {$query.fetchStatus}</div>

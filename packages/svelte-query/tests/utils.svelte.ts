@@ -4,13 +4,6 @@ export function sleep(timeout: number): Promise<void> {
   })
 }
 
-let queryKeyCount = 0
-
-export function queryKey(): string {
-  queryKeyCount += 1
-  return `query_${queryKeyCount}`
-}
-
 export function ref<T>(initial: T) {
   let value = $state(initial)
 

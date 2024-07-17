@@ -9,9 +9,9 @@
 
   const mutation = createMutation(
     {
-      mutationKey: ['mutation1'],
+      mutationKey: ['mutation-1'],
       mutationFn: async () => {
-        await sleep(20)
+        await sleep(5)
         return 'data'
       },
     },

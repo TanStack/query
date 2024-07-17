@@ -1,18 +1,93 @@
-import { describe, test } from 'vitest'
-import { render } from '@testing-library/svelte'
-
-import { sleep } from '../utils.svelte'
+import { describe, expect, test } from 'vitest'
+import { render, waitFor } from '@testing-library/svelte'
+import { ref } from '../utils.svelte'
 import BaseExample from './BaseExample.svelte'
+import type { QueryObserverResult } from '@tanstack/query-core'
 
-describe('createQuery', () => {
-  test('Render and wait for success', async () => {
-    const rendered = render(BaseExample)
+describe('createInfiniteQuery', () => {
+  test('Return the correct states for a successful query', async () => {
+    let states = ref<Array<QueryObserverResult>>([])
 
-    await rendered.findByText('Data: undefined')
-    await rendered.findByText('Status: pending')
-    await sleep(20)
+    const rendered = render(BaseExample, {
+      props: {
+        states,
+      },
+    })
 
-    await rendered.findByText('Data: {"pages":[0],"pageParams":[0]}')
-    await rendered.findByText('Status: success')
+    await waitFor(() => {
+      expect(rendered.queryByText('Status: success')).toBeInTheDocument()
+    })
+
+    expect(states.value).toHaveLength(2)
+
+    expect(states.value[0]).toEqual({
+      data: undefined,
+      dataUpdatedAt: 0,
+      error: null,
+      errorUpdatedAt: 0,
+      failureCount: 0,
+      failureReason: null,
+      errorUpdateCount: 0,
+      fetchNextPage: expect.any(Function),
+      fetchPreviousPage: expect.any(Function),
+      hasNextPage: false,
+      hasPreviousPage: false,
+      isError: false,
+      isFetched: false,
+      isFetchedAfterMount: false,
+      isFetching: true,
+      isPaused: false,
+      isFetchNextPageError: false,
+      isFetchingNextPage: false,
+      isFetchPreviousPageError: false,
+      isFetchingPreviousPage: false,
+      isLoading: true,
+      isPending: true,
+      isInitialLoading: true,
+      isLoadingError: false,
+      isPlaceholderData: false,
+      isRefetchError: false,
+      isRefetching: false,
+      isStale: true,
+      isSuccess: false,
+      refetch: expect.any(Function),
+      status: 'pending',
+      fetchStatus: 'fetching',
+    })
+
+    expect(states.value[1]).toEqual({
+      data: { pages: [0], pageParams: [0] },
+      dataUpdatedAt: expect.any(Number),
+      error: null,
+      errorUpdatedAt: 0,
+      failureCount: 0,
+      failureReason: null,
+      errorUpdateCount: 0,
+      fetchNextPage: expect.any(Function),
+      fetchPreviousPage: expect.any(Function),
+      hasNextPage: true,
+      hasPreviousPage: false,
+      isError: false,
+      isFetched: true,
+      isFetchedAfterMount: true,
+      isFetching: false,
+      isPaused: false,
+      isFetchNextPageError: false,
+      isFetchingNextPage: false,
+      isFetchPreviousPageError: false,
+      isFetchingPreviousPage: false,
+      isLoading: false,
+      isPending: false,
+      isInitialLoading: false,
+      isLoadingError: false,
+      isPlaceholderData: false,
+      isRefetchError: false,
+      isRefetching: false,
+      isStale: true,
+      isSuccess: true,
+      refetch: expect.any(Function),
+      status: 'success',
+      fetchStatus: 'idle',
+    })
   })
 })
