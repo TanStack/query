@@ -45,7 +45,7 @@ export class QueriesObserver<
 
   constructor(
     client: QueryClient,
-    queries: Array<QueryObserverOptions<any, any, any, any>>,
+    queries: Array<QueryObserverOptions<any, any, any, any, any>>,
     _options?: QueriesObserverOptions<TCombinedResult>,
   ) {
     super()
