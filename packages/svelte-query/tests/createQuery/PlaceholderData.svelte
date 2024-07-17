@@ -13,7 +13,7 @@
   const options = derived(count, ($count) => ({
     queryKey: ['test', $count],
     queryFn: async () => {
-      await sleep(10)
+      await sleep(5)
       return $count
     },
     placeholderData: keepPreviousData,
@@ -27,4 +27,4 @@
 <button on:click={() => ($count += 1)}>setCount</button>
 
 <div>Status: {$query.status}</div>
-<div>Data: {$query.data}</div>
+<div>Data: {$query.data ?? 'undefined'}</div>

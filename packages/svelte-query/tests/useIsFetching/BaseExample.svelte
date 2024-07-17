@@ -3,18 +3,17 @@
   import { derived, writable } from 'svelte/store'
   import { createQuery } from '../../src/createQuery'
   import { useIsFetching } from '../../src/useIsFetching'
-  import { queryKey, sleep } from '../utils'
+  import { sleep } from '../utils'
 
   const queryClient = new QueryClient()
-  const key = queryKey()
   const ready = writable(false)
 
   const isFetching = useIsFetching(undefined, queryClient)
 
   const options = derived(ready, ($ready) => ({
-    queryKey: [key],
+    queryKey: ['test'],
     queryFn: async () => {
-      await sleep(20)
+      await sleep(5)
       return 'test'
     },
     enabled: $ready,
@@ -24,8 +23,6 @@
 </script>
 
 <button on:click={() => ($ready = true)}>setReady</button>
-<div>isFetching: {$isFetching}</div>
 
-{#if $query.isSuccess}
-  {$query.data}
-{/if}
+<div>isFetching: {$isFetching}</div>
+<div>Data: {$query.data ?? 'undefined'}</div>
