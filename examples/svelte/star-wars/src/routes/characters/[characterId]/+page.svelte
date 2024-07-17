@@ -19,19 +19,19 @@
   })
 </script>
 
-{#if $query.status === 'pending'}
+{#if query.status === 'pending'}
   <p>Loading...</p>
 {/if}
 
-{#if $query.status === 'error'}
+{#if query.status === 'error'}
   <p>Error :(</p>
 {/if}
 
-{#if $query.status === 'success'}
-  {@const homeworldUrlParts = $query.data.homeworld.split('/').filter(Boolean)}
+{#if query.status === 'success'}
+  {@const homeworldUrlParts = query.data.homeworld.split('/').filter(Boolean)}
   {@const homeworldId = homeworldUrlParts[homeworldUrlParts.length - 1]}
   <div>
-    <h2 class="text-4xl">{$query.data.name}</h2>
+    <h2 class="text-4xl">{query.data.name}</h2>
     <table>
       <thead>
         <tr>
@@ -42,23 +42,23 @@
       <tbody>
         <tr>
           <td>Born</td>
-          <td>{$query.data.birth_year}</td>
+          <td>{query.data.birth_year}</td>
         </tr>
         <tr>
           <td>Eyes</td>
-          <td>{$query.data.eye_color}</td>
+          <td>{query.data.eye_color}</td>
         </tr>
         <tr>
           <td>Hair</td>
-          <td>{$query.data.hair_color}</td>
+          <td>{query.data.hair_color}</td>
         </tr>
         <tr>
           <td>Height</td>
-          <td>{$query.data.height}</td>
+          <td>{query.data.height}</td>
         </tr>
         <tr>
           <td>Mass</td>
-          <td>{$query.data.mass}</td>
+          <td>{query.data.mass}</td>
         </tr>
         <tr>
           <td>Homeworld</td>
@@ -68,7 +68,7 @@
     </table>
     <br />
     <h4 class="text-2xl">Films</h4>
-    {#each $query.data.films as film}
+    {#each query.data.films as film}
       {@const filmUrlParts = film.split('/').filter(Boolean)}
       {@const filmId = filmUrlParts[filmUrlParts.length - 1]}
       <Film {filmId} />

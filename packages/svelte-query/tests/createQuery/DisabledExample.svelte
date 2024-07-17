@@ -1,6 +1,6 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
-  import { createQuery } from '../../src'
+  import { createQuery } from '../../src/index'
   import { queryKey, sleep } from '../utils'
 
   const queryClient = new QueryClient()
@@ -17,10 +17,7 @@
     enabled: () => count === 0,
   })
 
-  const query = createQuery(options, queryClient)
-  $effect(() => {
-    console.log('FK', query.data)
-  })
+  const query = createQuery(() => options, queryClient)
 </script>
 
 <button onclick={() => (count += 1)}>Increment</button>

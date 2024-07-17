@@ -3,7 +3,7 @@
   import { getPostById } from './data'
   import type { Post } from './types'
 
-  const { postId } = $props<{ postId: number }>()
+  const { postId }: { postId: number } = $props()
 
   const post = createQuery<Post>({
     queryKey: ['post', postId],

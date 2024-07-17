@@ -10,7 +10,7 @@
 
 <div>
   <div>
-    <button on:click={() => queryClient.invalidateQueries()}>
+    <button onclick={() => queryClient.invalidateQueries()}>
       Force Refetch All
     </button>
   </div>
@@ -25,7 +25,7 @@
   {/each}
 
   <button
-    on:click={() => {
+    onclick={() => {
       views.set([...$views, ''])
     }}
   >

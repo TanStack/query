@@ -1,9 +1,5 @@
 <script lang="ts">
-  import {
-    QueryClientProvider,
-    QueryClient,
-    useIsRestoring,
-  } from '@tanstack/svelte-query/dev'
+  import { QueryClient, useIsRestoring } from '@tanstack/svelte-query/dev'
   import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
   import {
     persistQueryClient,
@@ -11,6 +7,8 @@
   } from '@tanstack/svelte-query-persist-client'
   import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
   import { browser } from '$app/environment'
+
+  const { children } = $props()
 
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -36,6 +34,6 @@
 >
   <SvelteQueryDevtools />
   <main>
-    <slot />
+    {@render children()}
   </main>
 </PersistQueryClientProvider>

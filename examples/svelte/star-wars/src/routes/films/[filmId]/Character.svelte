@@ -14,10 +14,10 @@
   })
 </script>
 
-{#if $query.status === 'success'}
+{#if query.status === 'success'}
   <article>
     <a href={`/characters/${characterId}`}>
-      <h6 class="text-lg">{$query.data.name}</h6>
+      <h6 class="text-lg">{query.data.name}</h6>
     </a>
   </article>
 {/if}

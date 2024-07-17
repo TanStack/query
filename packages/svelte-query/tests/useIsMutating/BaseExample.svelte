@@ -19,6 +19,6 @@
   )
 </script>
 
-<button on:click={() => mutation.mutate()}>Trigger</button>
+<button onclick={() => mutation.mutate()}>Trigger</button>
 
 <div>isMutating: {isMutating()}</div>

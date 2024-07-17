@@ -1,13 +1,16 @@
 <script lang="ts">
+  import { untrack } from 'svelte'
   import { createQuery } from '@tanstack/svelte-query'
   import { sleep } from '../utils'
   import type { StatusResult } from '../utils'
-  import { untrack } from 'svelte'
 
-  let { key, states } = $props<{
+  let {
+    key,
+    states,
+  }: {
     key: Array<string>
     states: Array<StatusResult<string>>
-  }>()
+  } = $props()
 
   const ss = createQuery({
     queryKey: key,

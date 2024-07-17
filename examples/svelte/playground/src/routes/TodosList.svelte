@@ -51,7 +51,7 @@
   <span>
     Error: {$query.error.message}
     <br />
-    <button on:click={() => $query.refetch()}>Retry</button>
+    <button onclick={() => $query.refetch()}>Retry</button>
   </span>
 {:else}
   <ul>
@@ -59,7 +59,7 @@
       {#each $query.data as todo}
         <li>
           {todo.name}{' '}
-          <button on:click={() => editingIndex.set(todo.id)}> Edit </button>
+          <button onclick={() => editingIndex.set(todo.id)}> Edit </button>
         </li>
       {/each}
     {/if}

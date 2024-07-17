@@ -14,8 +14,8 @@
   })
 </script>
 
-{#if $query.status === 'success'}
+{#if query.status === 'success'}
   <span>
-    {$query.data.name}
+    {query.data.name}
   </span>
 {/if}

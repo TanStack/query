@@ -45,7 +45,7 @@
   <input bind:value={name} disabled={$addMutation.status === 'pending'} />
 
   <button
-    on:click={() => $addMutation.mutate({ name, notes: name })}
+    onclick={() => $addMutation.mutate({ name, notes: name })}
     disabled={$addMutation.status === 'pending' || !name}
   >
     Add Todo

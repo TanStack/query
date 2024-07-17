@@ -4,9 +4,7 @@
   import { createMutation } from '../../src'
   import type { CreateMutationOptions } from '../../src/types'
 
-  const { options } = $props<{
-    options: CreateMutationOptions
-  }>()
+  const { options }: { options: CreateMutationOptions } = $props()
 
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)

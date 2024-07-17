@@ -6,13 +6,16 @@
     QueriesResults,
   } from '../../src/createQueries.svelte'
 
-  let { options, queryClient } = $props<{
+  let {
+    options,
+    queryClient,
+  }: {
     options: {
       queries: [...QueriesOptions<any>]
       combine?: (result: QueriesResults<Array<any>>) => any
     }
     queryClient: QueryClient
-  }>()
+  } = $props()
 
   const queries = createQueries(options, queryClient)
 </script>

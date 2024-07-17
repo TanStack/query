@@ -3,12 +3,14 @@
   import { createQuery, keepPreviousData } from '../../src/index'
   import { sleep } from '../utils'
   import type { QueryClient, QueryObserverResult } from '@tanstack/query-core'
-  import { unlink } from 'fs'
 
-  let { queryClient, states } = $props<{
+  let {
+    queryClient,
+    states,
+  }: {
     queryClient: QueryClient
     states: Array<QueryObserverResult>
-  }>()
+  } = $props()
 
   let count = $state(0)
 

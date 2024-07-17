@@ -1,23 +1,22 @@
 <script lang="ts">
+  import { untrack } from 'svelte'
   import { createQuery } from '../../src'
   import type { QueryClient, QueryObserverResult } from '@tanstack/query-core'
   import type { CreateQueryOptions } from '../../src/types'
-  import { untrack } from 'svelte'
 
   let {
     options,
     queryClient,
     states = $bindable(),
-  } = $props<{
+  }: {
     options: CreateQueryOptions<any>
     queryClient: QueryClient
     states: Array<QueryObserverResult>
-  }>()
+  } = $props()
 
   const query = createQuery(options, queryClient)
 
   $effect(() => {
-    console.log('initial data', query)
     JSON.stringify(query)
     untrack(() => {
       states.push($state.snapshot(query))
