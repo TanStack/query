@@ -97,7 +97,12 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     this.#queries = new Map<string, Query>()
   }
 
-  build<TQueryFnData, TError, TData, TQueryKey extends QueryKey>(
+  build<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
     client: QueryClient,
     options: WithRequired<
       QueryOptions<TQueryFnData, TError, TData, TQueryKey>,

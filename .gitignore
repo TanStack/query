@@ -36,6 +36,7 @@ stats.html
 .cache
 .idea
 .nx/cache
+.nx/workspace-data
 .pnpm-store
 .svelte-kit
 .tsup

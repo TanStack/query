@@ -9,8 +9,8 @@
     "test:types": "tsc"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.40.0",
-    "@tanstack/react-query-devtools": "^5.40.0",
+    "@tanstack/react-query": "^5.51.4",
+    "@tanstack/react-query-devtools": "^5.51.4",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",
     "react": "19.0.0-rc-4c2e457c7c-20240522",
@@ -24,20 +24,8 @@
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
     "@types/sort-by": "^1.2.3",
-    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-react": "^4.3.1",
     "typescript": "5.3.3",
-    "vite": "^5.2.11"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "vite": "^5.3.3"
   }
 }

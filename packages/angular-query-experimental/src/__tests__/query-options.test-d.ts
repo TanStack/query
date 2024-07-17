@@ -1,8 +1,5 @@
 import { assertType, describe, expectTypeOf } from 'vitest'
-import { QueryClient } from '@tanstack/query-core'
-import { dataTagSymbol } from '@tanstack/query-core'
-import { queryOptions } from '../query-options'
-import { injectQuery } from '../inject-query'
+import { QueryClient, dataTagSymbol, injectQuery, queryOptions } from '..'
 import type { Signal } from '@angular/core'
 
 describe('queryOptions', () => {

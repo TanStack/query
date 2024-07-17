@@ -2,11 +2,17 @@ coverage:
   status:
     project:
       default:
-        target: 90%
+        target: auto
         threshold: 1%
+        base: auto
 
 comment:
   layout: 'header, reach, diff, flags, components'
+  behavior: default
+  require_changes: false
+  require_base: false
+  require_head: true
+  hide_project_coverage: false
 
 component_management:
   individual_components:

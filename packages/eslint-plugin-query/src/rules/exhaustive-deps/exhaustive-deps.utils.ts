@@ -4,12 +4,13 @@ import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
 
 export const ExhaustiveDepsUtils = {
   isRelevantReference(params: {
-    context: Readonly<TSESLint.RuleContext<string, ReadonlyArray<unknown>>>
+    sourceCode: Readonly<TSESLint.SourceCode>
     reference: TSESLint.Scope.Reference
     scopeManager: TSESLint.Scope.ScopeManager
+    node: TSESTree.Node
   }) {
-    const { reference, scopeManager, context } = params
-    const component = ASTUtils.getFunctionAncestor(context)
+    const { sourceCode, reference, scopeManager, node } = params
+    const component = ASTUtils.getFunctionAncestor(sourceCode, node)
 
     if (
       component !== undefined &&

@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/svelte-query",
-  "version": "5.40.0",
+  "version": "5.51.4",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Svelte",
   "author": "Lachlan Collins",
   "license": "MIT",
@@ -14,6 +14,15 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
+  "scripts": {
+    "clean": "rimraf ./dist && rimraf ./coverage",
+    "test:types": "svelte-check --tsconfig ./tsconfig.json",
+    "test:eslint": "eslint ./src",
+    "test:lib": "vitest",
+    "test:lib:dev": "pnpm run test:lib --watch",
+    "test:build": "publint --strict && attw --pack",
+    "build": "svelte-package --input ./src --output ./dist"
+  },
   "type": "module",
   "types": "dist/index.d.ts",
   "module": "dist/index.js",
@@ -26,22 +35,11 @@
     },
     "./package.json": "./package.json"
   },
+  "sideEffects": false,
   "files": [
     "dist",
-    "src",
-    "!dist/__tests__",
-    "!src/__tests__"
+    "src"
   ],
-  "scripts": {
-    "clean": "rimraf ./dist && rimraf ./coverage",
-    "test:types": "svelte-check --tsconfig ./tsconfig.json",
-    "test:eslint": "eslint --ext .svelte,.ts ./src",
-    "test:lib": "vitest",
-    "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict",
-    "test:attw": "attw --pack",
-    "build": "svelte-package --input ./src --output ./dist"
-  },
   "dependencies": {
     "@tanstack/query-core": "workspace:*"
   },
@@ -49,10 +47,9 @@
     "@sveltejs/package": "^2.3.1",
     "@sveltejs/vite-plugin-svelte": "^3.1.0",
     "@testing-library/svelte": "^5.1.0",
-    "eslint-plugin-svelte": "^2.39.0",
-    "svelte": "^4.2.17",
-    "svelte-check": "^3.7.1",
-    "svelte-eslint-parser": "^0.36.0"
+    "eslint-plugin-svelte": "^2.42.0",
+    "svelte": "^4.2.18",
+    "svelte-check": "^3.8.4"
   },
   "peerDependencies": {
     "svelte": "^3.54.0 || ^4.0.0 || ^5.0.0-next.0"

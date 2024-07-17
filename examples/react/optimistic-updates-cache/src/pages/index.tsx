@@ -1,29 +1,28 @@
 import * as React from 'react'
-import axios from 'axios'
 
 import {
-  queryOptions,
-  useQuery,
-  useQueryClient,
-  useMutation,
   QueryClient,
   QueryClientProvider,
+  queryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const client = new QueryClient()
 
 type Todos = {
-  items: readonly {
+  items: ReadonlyArray<{
     id: string
     text: string
-  }[]
+  }>
   ts: number
 }
 
 async function fetchTodos(): Promise<Todos> {
-  const res = await axios.get('/api/data')
-  return res.data
+  const response = await fetch('/api/data')
+  return await response.json()
 }
 
 const todoListOptions = queryOptions({
@@ -37,7 +36,14 @@ function Example() {
   const { isFetching, ...queryInfo } = useQuery(todoListOptions)
 
   const addTodoMutation = useMutation({
-    mutationFn: (newTodo) => axios.post('/api/data', { text: newTodo }),
+    mutationFn: async (newTodo: string) => {
+      const response = await fetch('/api/data', {
+        method: 'POST',
+        body: JSON.stringify({ text: newTodo }),
+        headers: { 'Content-Type': 'application/json' },
+      })
+      return await response.json()
+    },
     // When mutate is called:
     onMutate: async (newTodo: string) => {
       setText('')

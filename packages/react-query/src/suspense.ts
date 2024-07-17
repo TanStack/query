@@ -1,5 +1,5 @@
-import type { DefaultError } from '@tanstack/query-core'
 import type {
+  DefaultError,
   DefaultedQueryObserverOptions,
   Query,
   QueryKey,

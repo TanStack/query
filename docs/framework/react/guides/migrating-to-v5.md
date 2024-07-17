@@ -179,7 +179,7 @@ TanStack Query has always had private fields and methods on classes, but they we
 
 Almost everyone gets `cacheTime` wrong. It sounds like "the amount of time that data is cached for", but that is not correct.
 
-`cacheTime` does nothing as long as a query is still in used. It only kicks in as soon as the query becomes unused. After the time has passed, data will be "garbage collected" to avoid the cache from growing.
+`cacheTime` does nothing as long as a query is still in use. It only kicks in as soon as the query becomes unused. After the time has passed, data will be "garbage collected" to avoid the cache from growing.
 
 `gc` is referring to "garbage collect" time. It's a bit more technical, but also a quite [well known abbreviation](<https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)>) in computer science.
 
@@ -365,7 +365,7 @@ For mutations as well the `status` has been changed from `loading` to `pending` 
 
 Lastly, a new derived `isLoading` flag has been added to the queries that is implemented as `isPending && isFetching`. This means that `isLoading` and `isInitialLoading` have the same thing, but `isInitialLoading` is deprecated now and will be removed in the next major version.
 
-To understand the reasoning behing this change checkout the [v5 roadmap discussion](https://github.com/TanStack/query/discussions/4252).
+To understand the reasoning behind this change checkout the [v5 roadmap discussion](https://github.com/TanStack/query/discussions/4252).
 
 ### `hashQueryKey` has been renamed to `hashKey`
 
@@ -381,7 +381,7 @@ React Query v5 requires React 18.0 or later. This is because we are using the ne
 
 You could previously use the `contextSharing` property to share the first (and at least one) instance of the query client context across the window. This ensured that if TanStack Query was used across different bundles or microfrontends then they will all use the same instance of the context, regardless of module scoping.
 
-However, isolation is often preferred for microfrontends. In v4 the option to pass a custom context to the `QueryClientProvider` was added, which allows exactly this. If you wish to use the same query client across multiple packages of an application, you can create a `QueryClient` in your application and then let the bundles share this through the `context` property of the `QueryClientProvider`.
+With the removal of the custom context prop in v5, refer to the section on [Removed custom context prop in favor of custom queryClient instance](#removed-custom-context-prop-in-favor-of-custom-queryclient-instance). If you wish to share the same query client across multiple packages of an application, you can directly pass a shared custom `queryClient` instance.
 
 ### No longer using `unstable_batchedUpdates` as the batching function in React and React Native
 

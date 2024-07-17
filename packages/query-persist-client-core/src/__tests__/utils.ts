@@ -13,7 +13,7 @@ export function sleep(timeout: number): Promise<void> {
   })
 }
 
-export const createMockPersister = (): Persister => {
+export function createMockPersister(): Persister {
   let storedState: PersistedClient | undefined
 
   return {
@@ -30,7 +30,7 @@ export const createMockPersister = (): Persister => {
   }
 }
 
-export const createSpyPersister = (): Persister => {
+export function createSpyPersister(): Persister {
   return {
     persistClient: vi.fn(),
     restoreClient: vi.fn(),
