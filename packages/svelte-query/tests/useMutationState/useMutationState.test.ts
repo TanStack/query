@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/svelte'
-import UseMutationState from './BaseExample.svelte'
+import BaseExample from './BaseExample.svelte'
 
 describe('useMutationState', () => {
   test('run few mutation functions and check from useMutationState ', async () => {
@@ -10,7 +10,7 @@ describe('useMutationState', () => {
       throw 'error'
     })
 
-    const rendered = render(UseMutationState, {
+    const rendered = render(BaseExample, {
       props: {
         successMutationOpts: {
           mutationKey: ['success'],
@@ -47,7 +47,7 @@ describe('useMutationState', () => {
       throw 'error'
     })
 
-    const rendered = render(UseMutationState, {
+    const rendered = render(BaseExample, {
       props: {
         successMutationOpts: {
           mutationKey: ['success'],
@@ -86,7 +86,7 @@ describe('useMutationState', () => {
       throw 'error'
     })
 
-    const rendered = render(UseMutationState, {
+    const rendered = render(BaseExample, {
       props: {
         successMutationOpts: {
           mutationKey: ['success'],

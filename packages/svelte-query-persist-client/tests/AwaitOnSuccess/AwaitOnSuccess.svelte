@@ -8,7 +8,7 @@
     queryKey: ['test'],
     queryFn: async () => {
       states.push('fetching')
-      await sleep(10)
+      await sleep(5)
       states.push('fetched')
       return 'fetched'
     },

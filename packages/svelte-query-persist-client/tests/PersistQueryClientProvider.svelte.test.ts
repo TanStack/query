@@ -24,7 +24,7 @@ const createMockPersister = (): Persister => {
       storedState = persistClient
     },
     async restoreClient() {
-      await sleep(10)
+      await sleep(5)
       return storedState
     },
     removeClient() {
@@ -44,7 +44,7 @@ const createMockErrorPersister = (
         // noop
       },
       async restoreClient() {
-        await sleep(10)
+        await sleep(5)
         throw error
       },
       removeClient,
@@ -307,6 +307,7 @@ describe('PersistQueryClientProvider', () => {
         states,
         onSuccess: async () => {
           states.push('onSuccess')
+          await sleep(5)
           states.push('onSuccess done')
         },
       },
@@ -315,7 +316,6 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('hydrated'))
     await waitFor(() => rendered.getByText('fetched'))
 
-    await sleep(400)
     expect(states).toEqual([
       'onSuccess',
       'onSuccess done',

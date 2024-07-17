@@ -6,6 +6,7 @@
 
   let {
     states,
+    fetched,
   }: {
     states: { value: Array<StatusResult<string>> }
     fetched: boolean
@@ -14,8 +15,8 @@
   const query = createQuery({
     queryKey: ['test'],
     queryFn: async () => {
-      states.value.push('fetched')
-      await sleep(10)
+      fetched = true
+      await sleep(5)
       return 'fetched'
     },
 
