@@ -1,8 +1,8 @@
 /* @refresh reload */
 import {
-  createQuery,
   QueryClient,
   QueryClientProvider,
+  createQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { Match, Switch } from 'solid-js'
@@ -24,12 +24,9 @@ function Example() {
     queryKey: ['repoData'],
     queryFn: async () => {
       const response = await fetch(
-        'https://api.github.com/repos/tannerlinsley/react-query',
-        {
-          method: 'GET',
-        },
+        'https://api.github.com/repos/TanStack/query',
       )
-      return response.json()
+      return await response.json()
     },
   }))
 

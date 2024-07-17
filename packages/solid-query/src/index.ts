@@ -13,6 +13,10 @@ export type {
   InfiniteQueryObserverOptions,
 } from './QueryClient'
 export { createQuery, queryOptions } from './createQuery'
+export type {
+  DefinedInitialDataOptions,
+  UndefinedInitialDataOptions,
+} from './createQuery'
 export {
   QueryClientContext,
   QueryClientProvider,

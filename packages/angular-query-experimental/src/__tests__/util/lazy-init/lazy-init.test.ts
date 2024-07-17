@@ -53,7 +53,7 @@ describe('lazyInit', () => {
 
   test('should init lazily and only once', async () => {
     const initCallFn = vi.fn()
-    const registerDataValue = vi.fn<[number]>()
+    const registerDataValue = vi.fn<(arg: number) => any>()
 
     let value!: { data: WritableSignal<number> }
     const outerSignal = signal(0)

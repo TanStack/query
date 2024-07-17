@@ -144,6 +144,10 @@
             {
               "label": "Devtools",
               "to": "framework/angular/devtools"
+            },
+            {
+              "label": "Zoneless",
+              "to": "framework/angular/zoneless"
             }
           ]
         }
@@ -655,6 +659,14 @@
               "to": "framework/react/reference/infiniteQueryOptions"
             },
             {
+              "label": "usePrefetchQuery",
+              "to": "framework/react/reference/usePrefetchQuery"
+            },
+            {
+              "label": "usePrefetchInfiniteQuery",
+              "to": "framework/react/reference/usePrefetchInfiniteQuery"
+            },
+            {
               "label": "QueryErrorResetBoundary",
               "to": "framework/react/reference/QueryErrorResetBoundary"
             },
@@ -891,7 +903,7 @@
             },
             {
               "label": "Basic",
-              "to": "framework/solid/examples/basic-typescript"
+              "to": "framework/solid/examples/basic"
             },
             {
               "label": "Basic w/ GraphQL-Request",

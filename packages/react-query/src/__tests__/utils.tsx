@@ -22,13 +22,13 @@ export function renderWithClient(
   } as any
 }
 
-export const Blink = ({
+export function Blink({
   duration,
   children,
 }: {
   duration: number
   children: React.ReactNode
-}) => {
+}) {
   const [shouldShow, setShouldShow] = React.useState<boolean>(true)
 
   React.useEffect(() => {
@@ -48,13 +48,13 @@ export function createQueryClient(config?: QueryClientConfig): QueryClient {
 
 export function mockVisibilityState(
   value: DocumentVisibilityState,
-): MockInstance<[], DocumentVisibilityState> {
+): MockInstance<() => DocumentVisibilityState> {
   return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
 export function mockOnlineManagerIsOnline(
   value: boolean,
-): MockInstance<[], boolean> {
+): MockInstance<() => boolean> {
   return vi.spyOn(onlineManager, 'isOnline').mockReturnValue(value)
 }
 

@@ -8,4 +8,4 @@ const queryClient = new QueryClient({
   },
 })
 
-export const useQueryClient: Mock<[], QueryClient> = vi.fn(() => queryClient)
+export const useQueryClient: Mock<() => QueryClient> = vi.fn(() => queryClient)
