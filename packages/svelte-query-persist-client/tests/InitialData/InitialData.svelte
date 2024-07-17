@@ -4,11 +4,10 @@
   import type { Writable } from 'svelte/store'
   import type { StatusResult } from '../utils'
 
-  export let key: Array<string>
   export let states: Writable<Array<StatusResult<string>>>
 
-  const state = createQuery({
-    queryKey: key,
+  const query = createQuery({
+    queryKey: ['test'],
     queryFn: async () => {
       await sleep(10)
       return 'fetched'
@@ -20,10 +19,8 @@
     initialDataUpdatedAt: 1,
   })
 
-  $: states.update((prev) => [...prev, $state])
+  $: states.update((prev) => [...prev, $query])
 </script>
 
-<div>
-  <h1>{$state.data}</h1>
-  <h2>fetchStatus: {$state.fetchStatus}</h2>
-</div>
+<div>{$query.data}</div>
+<div>fetchStatus: {$query.fetchStatus}</div>

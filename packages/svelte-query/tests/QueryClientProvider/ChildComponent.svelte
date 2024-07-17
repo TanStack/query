@@ -5,10 +5,10 @@
   const query = createQuery({
     queryKey: ['hello'],
     queryFn: async () => {
-      await sleep(10)
+      await sleep(5)
       return 'test'
     },
   })
 </script>
 
-<div>{$query.data}</div>
+<div>Data: {$query.data ?? 'undefined'}</div>

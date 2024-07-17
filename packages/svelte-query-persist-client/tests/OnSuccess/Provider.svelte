@@ -6,10 +6,9 @@
 
   export let queryClient: QueryClient
   export let persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
-  export let key: Array<string>
   export let onSuccess: () => void
 </script>
 
 <PersistQueryClientProvider client={queryClient} {persistOptions} {onSuccess}>
-  <OnSuccess {key} />
+  <OnSuccess />
 </PersistQueryClientProvider>

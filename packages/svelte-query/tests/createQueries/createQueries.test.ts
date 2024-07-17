@@ -13,14 +13,14 @@ describe('createQueries', () => {
             {
               queryKey: ['key-1'],
               queryFn: async () => {
-                await sleep(10)
+                await sleep(5)
                 return 'Success 1'
               },
             },
             {
               queryKey: ['key-2'],
               queryFn: async () => {
-                await sleep(10)
+                await sleep(5)
                 return 'Success 2'
               },
             },
@@ -50,7 +50,7 @@ describe('createQueries', () => {
           queries: ids.map((id) => ({
             queryKey: [id],
             queryFn: async () => {
-              await sleep(10)
+              await sleep(5)
               return id
             },
           })),
