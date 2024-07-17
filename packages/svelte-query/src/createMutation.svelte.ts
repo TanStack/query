@@ -38,7 +38,6 @@ export function createMutation<
 
   const un = observer.subscribe((val) => {
     notifyManager.batchCalls(() => {
-      //console.log('result updated', val)
       Object.assign(result, val)
 
       //result = val

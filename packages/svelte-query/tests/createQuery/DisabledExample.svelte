@@ -17,7 +17,6 @@
   const options = $derived({
     queryKey: () => ['test', count],
     queryFn: async () => {
-      console.log('enabled')
       await sleep(5)
       return count
     },

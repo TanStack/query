@@ -45,7 +45,7 @@ export function createBaseQuery<
       queryKey: queryKey, // prevent reactive query  in devTools,
       enabled:
         typeof optionsStore().enabled == 'function'
-          ? //@ts-expect-error
+          ? // @ts-expect-error
             optionsStore().enabled()
           : optionsStore().enabled,
     })
@@ -55,7 +55,6 @@ export function createBaseQuery<
     }
 
     defaultedOptions.structuralSharing = false
-    // console.log('default option update', defaultedOptions)
 
     return defaultedOptions
   }
@@ -82,9 +81,8 @@ export function createBaseQuery<
     let un = () => undefined
     if (!isRestoring()) {
       {
-        //@ts-expect-error
+        // @ts-expect-error
         un = observer.subscribe((v) => {
-          console.log('subscribed result', v.data)
           notifyManager.batchCalls(() => {
             const temp = observer.getOptimisticResult(defaultedOptionsStore())
             upResult(temp)
@@ -102,10 +100,8 @@ export function createBaseQuery<
   /** Subscribe to changes in result and defaultedOptionsStore */
   $effect.pre(() => {
     observer.setOptions(defaultedOptionsStore(), { listeners: false })
-    //console.log('batch:calling $effect subscribe observer', isRestoring())
     upResult(observer.getOptimisticResult(defaultedOptionsStore()))
-    //   result = observer.getOptimisticResult(defaultedOptionsStore()) //prevent lag , somehow observer.subscribe does not return
-    // console.log('option updated', defaultedOptionsStore())
+    // result = observer.getOptimisticResult(defaultedOptionsStore()) //prevent lag , somehow observer.subscribe does not return
   })
 
   const final_ = $state({ value: result })
@@ -121,7 +117,6 @@ export function createBaseQuery<
           : result
 
         final_.value = Object.assign(final_.value, v)
-        //console.log('result effect', final_.value.data)
       })
   })
   return final_.value

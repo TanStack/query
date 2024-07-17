@@ -28,7 +28,6 @@ export const getIsRestoringContext = (): (() => boolean) => {
     const isRestoring = getContext<() => boolean>(_isRestoringContextKey)
     return isRestoring ?? (() => false)
   } catch (error) {
-    console.log('error state', error)
     return () => false
   }
 }

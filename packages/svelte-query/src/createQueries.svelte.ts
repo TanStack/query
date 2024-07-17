@@ -1,3 +1,4 @@
+import { untrack } from 'svelte'
 import { QueriesObserver, notifyManager } from '@tanstack/query-core'
 import { useIsRestoring } from './useIsRestoring'
 import { useQueryClient } from './useQueryClient'
@@ -13,7 +14,6 @@ import type {
   QueryObserverResult,
   ThrowOnError,
 } from '@tanstack/query-core'
-import { untrack } from 'svelte'
 
 // This defines the `CreateQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter
@@ -120,19 +120,19 @@ type GetResults<T> =
  */
 export type QueriesOptions<
   T extends Array<any>,
-  Result extends Array<any> = [],
-  Depth extends ReadonlyArray<number> = [],
-> = Depth['length'] extends MAXIMUM_DEPTH
+  TResult extends Array<any> = [],
+  TDepth extends ReadonlyArray<number> = [],
+> = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<QueryObserverOptionsForCreateQueries>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...Result, GetOptions<Head>]
+      ? [...TResult, GetOptions<Head>]
       : T extends [infer Head, ...infer Tail]
         ? QueriesOptions<
             [...Tail],
-            [...Result, GetOptions<Head>],
-            [...Depth, 1]
+            [...TResult, GetOptions<Head>],
+            [...TDepth, 1]
           >
         : Array<unknown> extends T
           ? T
@@ -162,19 +162,19 @@ export type QueriesOptions<
  */
 export type QueriesResults<
   T extends Array<any>,
-  Result extends Array<any> = [],
-  Depth extends ReadonlyArray<number> = [],
-> = Depth['length'] extends MAXIMUM_DEPTH
+  TResult extends Array<any> = [],
+  TDepth extends ReadonlyArray<number> = [],
+> = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<QueryObserverResult>
   : T extends []
     ? []
     : T extends [infer Head]
-      ? [...Result, GetResults<Head>]
+      ? [...TResult, GetResults<Head>]
       : T extends [infer Head, ...infer Tail]
         ? QueriesResults<
             [...Tail],
-            [...Result, GetResults<Head>],
-            [...Depth, 1]
+            [...TResult, GetResults<Head>],
+            [...TDepth, 1]
           >
         : T extends Array<
               QueryObserverOptionsForCreateQueries<
@@ -196,7 +196,6 @@ export type QueriesResults<
 
 export function createQueries<
   T extends Array<any>,
-  CombinedResult,
   TCombinedResult extends QueriesResults<T> = QueriesResults<T>,
 >(
   {
@@ -204,7 +203,7 @@ export function createQueries<
     ...options
   }: {
     queries: FnOrVal<[...QueriesOptions<T>]>
-    combine?: (result: QueriesResults<T>) => CombinedResult
+    combine?: (result: QueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,
 ): TCombinedResult {
@@ -217,7 +216,6 @@ export function createQueries<
 
   const defaultedQueriesStore = $derived(() => {
     return queriesStore().map((opts: QueryObserverOptions) => {
-      opts.queryKey = JSON.parse(JSON.stringify(opts.queryKey))
       const defaultedOptions = client.defaultQueryOptions(opts)
       // Make sure the results are already in fetching state before subscribing or updating options
       defaultedOptions._optimisticResults = isRestoring()
@@ -248,7 +246,7 @@ export function createQueries<
   })
 
   const result = $state(getCombinedResult(trackResult()))
-  console.log(result)
+
   $effect(() => {
     if (isRestoring()) {
       return () => null
@@ -257,22 +255,17 @@ export function createQueries<
       Object.assign(result, getCombinedResult(trackResult()))
     })
 
-    return observer.subscribe((result_) => {
-      console.log(result_)
+    return observer.subscribe((_result) => {
       notifyManager.batchCalls(() => {
         const res = observer.getOptimisticResult(
           defaultedQueriesStore(),
           (options as QueriesObserverOptions<TCombinedResult>).combine,
         )
-        console.log('batching', res[1](res[2]()))
 
         Object.assign(result, res[1](res[2]()))
       })()
     })
   })
 
-  /*  $effect(() => {
-    console.log('result', result)
-  }) */
   return result
 }
