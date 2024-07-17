@@ -12,15 +12,9 @@
     states: Array<string>
   }
 
-  let {
-    queryClient,
-    persistOptions,
-    key,
-    onSuccess,
-    states = $bindable(),
-  }: Props = $props()
+  let { queryClient, persistOptions, key, onSuccess, states }: Props = $props()
 </script>
 
 <PersistQueryClientProvider client={queryClient} {persistOptions} {onSuccess}>
-  <AwaitOnSuccess {key} bind:states />
+  <AwaitOnSuccess {key} {states} />
 </PersistQueryClientProvider>

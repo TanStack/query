@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-  import { sleep } from '../utils'
+  import { sleep } from '../utils.svelte'
 
   interface Props {
     key: Array<string>

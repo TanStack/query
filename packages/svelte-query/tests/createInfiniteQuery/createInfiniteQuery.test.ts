@@ -1,7 +1,7 @@
-import { describe, expect, test } from 'vitest'
-import { render, waitFor, screen } from '@testing-library/svelte'
+import { describe, test } from 'vitest'
+import { render } from '@testing-library/svelte'
 
-import { sleep } from '../utils'
+import { sleep } from '../utils.svelte'
 import BaseExample from './BaseExample.svelte'
 
 describe('createQuery', () => {

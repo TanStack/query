@@ -1,22 +1,22 @@
 <script lang="ts">
   import { untrack } from 'svelte'
   import { createQuery } from '@tanstack/svelte-query'
-  import { sleep } from '../utils'
-  import type { StatusResult } from '../utils'
+  import { sleep } from '../utils.svelte'
+  import type { StatusResult } from '../utils.svelte'
 
   let {
     key,
-    states = $bindable(),
+    states,
   }: {
     key: Array<string>
-    states: Array<StatusResult<string>>
+    states: { value: Array<StatusResult<string>> }
     fetched: boolean
   } = $props()
 
   const query = createQuery({
     queryKey: key,
     queryFn: async () => {
-      states.push('fetched')
+      states.value.push('fetched')
       await sleep(10)
       return 'fetched'
     },
@@ -24,10 +24,7 @@
     staleTime: Infinity,
   })
   $effect(() => {
-    JSON.stringify(query.data)
-    untrack(() => {
-      states.push($state.snapshot(query))
-    })
+    states.value = [...untrack(() => states.value), $state.snapshot(query)]
   })
 </script>
 

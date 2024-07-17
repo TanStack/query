@@ -2,7 +2,7 @@
   import { QueryClient } from '@tanstack/query-core'
   import { createQuery } from '../../src/'
   import { useIsFetching } from '../../src/useIsFetching.svelte'
-  import { queryKey, sleep } from '../utils'
+  import { queryKey, sleep } from '../utils.svelte'
 
   const queryClient = new QueryClient()
   const key = queryKey()

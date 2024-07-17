@@ -8,13 +8,13 @@ import InitialData from './InitialData/Provider.svelte'
 import RemoveCache from './RemoveCache/Provider.svelte'
 import RestoreCache from './RestoreCache/Provider.svelte'
 import UseQueries from './UseQueries/Provider.svelte'
-import { createQueryClient, queryKey, sleep } from './utils'
+import { createQueryClient, queryKey, ref, sleep } from './utils.svelte'
 
 import type {
   PersistedClient,
   Persister,
 } from '@tanstack/query-persist-client-core'
-import type { StatusResult } from './utils'
+import type { StatusResult } from './utils.svelte'
 
 const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined
@@ -55,7 +55,7 @@ const createMockErrorPersister = (
 describe('PersistQueryClientProvider', () => {
   test('restores cache from persister', async () => {
     const key = queryKey()
-    const states: Array<StatusResult<string>> = $state([])
+    let states = ref<Array<StatusResult<string>>>([])
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
@@ -82,21 +82,21 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('hydrated'))
     await waitFor(() => rendered.getByText('fetched'))
 
-    expect(states).toHaveLength(3)
+    expect(states.value).toHaveLength(3)
 
-    expect(states[0]).toMatchObject({
+    expect(states.value[0]).toMatchObject({
       status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
 
-    expect(states[1]).toMatchObject({
+    expect(states.value[1]).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
       data: 'hydrated',
     })
 
-    expect(states[2]).toMatchObject({
+    expect(states.value[2]).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -111,7 +111,7 @@ describe('PersistQueryClientProvider', () => {
 
   test('should also put useQueries into idle state', async () => {
     const key = queryKey()
-    const states: Array<StatusResult<string>> = $state([])
+    let states = ref<Array<StatusResult<string>>>([])
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
@@ -138,21 +138,21 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('hydrated'))
     await waitFor(() => rendered.getByText('fetched'))
 
-    expect(states).toHaveLength(3)
+    expect(states.value).toHaveLength(3)
 
-    expect(states[0]).toMatchObject({
+    expect(states.value[0]).toMatchObject({
       status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
 
-    expect(states[1]).toMatchObject({
+    expect(states.value[1]).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
       data: 'hydrated',
     })
 
-    expect(states[2]).toMatchObject({
+    expect(states.value[2]).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -161,7 +161,7 @@ describe('PersistQueryClientProvider', () => {
 
   test('should show initialData while restoring', async () => {
     const key = queryKey()
-    const states: Array<StatusResult<string>> = $state([])
+    let states = ref<Array<StatusResult<string>>>([])
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
@@ -188,15 +188,15 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('hydrated'))
     await waitFor(() => rendered.getByText('fetched'))
 
-    expect(states).toHaveLength(3)
+    expect(states.value).toHaveLength(3)
 
-    expect(states[0]).toMatchObject({
+    expect(states.value[0]).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
       data: 'initial',
     })
 
-    expect(states[1]).toMatchObject({
+    expect(states.value[1]).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
       data: 'hydrated',
@@ -208,7 +208,7 @@ describe('PersistQueryClientProvider', () => {
       data: 'hydrated',
     }) */
 
-    expect(states[2]).toMatchObject({
+    expect(states.value[2]).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
       data: 'fetched',
@@ -217,7 +217,7 @@ describe('PersistQueryClientProvider', () => {
 
   test('should not refetch after restoring when data is fresh', async () => {
     const key = queryKey()
-    const states: Array<StatusResult<string>> = $state([])
+    let states = ref<Array<StatusResult<string>>>([])
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
@@ -248,15 +248,15 @@ describe('PersistQueryClientProvider', () => {
 
     expect(fetched).toBe(false)
 
-    expect(states).toHaveLength(2)
-    console.log('statesa', states)
-    expect(states[0]).toMatchObject({
+    expect(states.value).toHaveLength(2)
+
+    expect(states.value[0]).toMatchObject({
       status: 'pending',
       fetchStatus: 'idle',
       data: undefined,
     })
 
-    expect(states[1]).toMatchObject({
+    expect(states.value[1]).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
       data: 'hydrated',

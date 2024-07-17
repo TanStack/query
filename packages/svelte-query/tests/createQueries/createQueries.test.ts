@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { render, waitFor } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
-import { sleep } from '../utils'
+import { sleep } from '../utils.svelte'
 import BaseExample from './BaseExample.svelte'
 
 describe('createQueries', () => {

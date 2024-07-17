@@ -1,15 +1,15 @@
 <script lang="ts">
   import { untrack } from 'svelte'
   import { createQueries } from '@tanstack/svelte-query'
-  import { sleep } from '../utils'
-  import type { StatusResult } from '../utils'
+  import { sleep } from '../utils.svelte'
+  import type { StatusResult } from '../utils.svelte'
 
   let {
     key,
-    states = $bindable(),
+    states,
   }: {
     key: Array<string>
-    states: Array<StatusResult<string>>
+    states: { value: Array<StatusResult<string>> }
   } = $props()
 
   const s = createQueries({
@@ -25,10 +25,7 @@
   })
 
   $effect(() => {
-    JSON.stringify(s)
-    untrack(() => {
-      states.push($state.snapshot(s[0]))
-    })
+    states.value = [...untrack(() => states.value), $state.snapshot(s[0])]
   })
 </script>
 

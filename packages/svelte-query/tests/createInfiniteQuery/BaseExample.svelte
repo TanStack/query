@@ -1,7 +1,8 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
   import { createInfiniteQuery } from '../../src/createInfiniteQuery'
-  import { sleep } from '../utils'
+  import { sleep } from '../utils.svelte'
+
   const queryClient = new QueryClient()
 
   const query = createInfiniteQuery(

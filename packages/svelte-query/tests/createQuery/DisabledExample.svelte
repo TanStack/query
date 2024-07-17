@@ -1,7 +1,7 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
   import { createQuery } from '../../src/index'
-  import { queryKey, sleep } from '../utils'
+  import { queryKey, sleep } from '../utils.svelte'
 
   const queryClient = new QueryClient()
   const key = queryKey()

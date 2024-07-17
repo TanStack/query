@@ -3,13 +3,13 @@
   import FreshData from './FreshData.svelte'
   import type { OmitKeyof, QueryClient } from '@tanstack/svelte-query'
   import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
-  import type { StatusResult } from '../utils'
+  import type { StatusResult } from '../utils.svelte'
 
   interface Props {
     queryClient: QueryClient
     persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
     key: Array<string>
-    states: Array<StatusResult<string>>
+    states: { value: Array<StatusResult<string>> }
     fetched: boolean
   }
 

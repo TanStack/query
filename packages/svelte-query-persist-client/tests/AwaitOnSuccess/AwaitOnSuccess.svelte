@@ -1,9 +1,8 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-  import { sleep } from '../utils'
+  import { sleep } from '../utils.svelte'
 
-  let { key, states = $bindable() }: { key: string[]; states: string[] } =
-    $props()
+  let { key, states }: { key: Array<string>; states: Array<string> } = $props()
 
   const state = createQuery({
     queryKey: key,

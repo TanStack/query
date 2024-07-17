@@ -10,3 +10,16 @@ export function queryKey(): string {
   queryKeyCount += 1
   return `query_${queryKeyCount}`
 }
+
+export function ref<T>(initial: T) {
+  let value = $state(initial)
+
+  return {
+    get value() {
+      return value
+    },
+    set value(newValue) {
+      value = newValue
+    },
+  }
+}

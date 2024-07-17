@@ -7,20 +7,17 @@
   let {
     options,
     queryClient,
-    states = $bindable(),
+    states,
   }: {
     options: CreateQueryOptions<any>
     queryClient: QueryClient
-    states: Array<QueryObserverResult>
+    states: { value: Array<QueryObserverResult> }
   } = $props()
 
   const query = createQuery(options, queryClient)
 
   $effect(() => {
-    JSON.stringify(query)
-    untrack(() => {
-      states.push($state.snapshot(query))
-    })
+    states.value = [...untrack(() => states.value), $state.snapshot(query)]
   })
 </script>
 

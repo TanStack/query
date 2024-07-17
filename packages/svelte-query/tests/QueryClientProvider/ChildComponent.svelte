@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createQuery } from '../../src/createQuery'
-  import { sleep } from '../utils'
+  import { sleep } from '../utils.svelte'
 
   const query = createQuery({
     queryKey: ['hello'],

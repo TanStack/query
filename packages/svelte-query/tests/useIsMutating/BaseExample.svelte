@@ -1,7 +1,7 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
   import { createMutation } from '../../src/createMutation.svelte'
-  import { sleep } from '../utils'
+  import { sleep } from '../utils.svelte'
   import { useIsMutating } from '../../src/useIsMutating.svelte'
 
   const queryClient = new QueryClient()

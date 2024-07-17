@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
-import { sleep } from '../utils'
+import { ref, sleep } from '../utils.svelte'
 import BaseExample from './BaseExample.svelte'
 import DisabledExample from './DisabledExample.svelte'
 import PlaceholderData from './PlaceholderData.svelte'
@@ -9,7 +9,7 @@ import type { QueryObserverResult } from '@tanstack/query-core'
 
 describe('createQuery', () => {
   test('Return the correct states for a successful query', async () => {
-    let states: Array<QueryObserverResult> = $state([])
+    let states = ref<Array<QueryObserverResult>>([])
 
     const options = {
       queryKey: ['test'],
@@ -31,9 +31,9 @@ describe('createQuery', () => {
       expect(rendered.queryByText('Success')).toBeInTheDocument()
     })
 
-    expect(states).toHaveLength(2)
+    expect(states.value).toHaveLength(2)
 
-    expect(states[0]).toMatchObject({
+    expect(states.value[0]).toMatchObject({
       data: undefined,
       dataUpdatedAt: 0,
       error: null,
@@ -60,7 +60,7 @@ describe('createQuery', () => {
       fetchStatus: 'fetching',
     })
 
-    expect(states[1]).toMatchObject({
+    expect(states.value[1]).toMatchObject({
       data: 'Success',
       dataUpdatedAt: expect.any(Number),
       error: null,
@@ -89,7 +89,7 @@ describe('createQuery', () => {
   })
 
   test('Return the correct states for an unsuccessful query', async () => {
-    const states: Array<QueryObserverResult> = $state([])
+    let states = ref<Array<QueryObserverResult>>([])
 
     const options = {
       queryKey: ['test'],
@@ -108,9 +108,9 @@ describe('createQuery', () => {
 
     await waitFor(() => rendered.getByText('Status: error'))
 
-    expect(states).toHaveLength(3)
+    expect(states.value).toHaveLength(3)
 
-    expect(states[0]).toMatchObject({
+    expect(states.value[0]).toMatchObject({
       data: undefined,
       dataUpdatedAt: 0,
       error: null,
@@ -137,7 +137,7 @@ describe('createQuery', () => {
       fetchStatus: 'fetching',
     })
 
-    expect(states[1]).toMatchObject({
+    expect(states.value[1]).toMatchObject({
       data: undefined,
       dataUpdatedAt: 0,
       error: null,
@@ -164,7 +164,7 @@ describe('createQuery', () => {
       fetchStatus: 'fetching',
     })
 
-    expect(states[2]).toMatchObject({
+    expect(states.value[2]).toMatchObject({
       data: undefined,
       dataUpdatedAt: 0,
       error: new Error('Rejected'),
@@ -193,7 +193,7 @@ describe('createQuery', () => {
   })
 
   test('Accept a writable store for options', async () => {
-    const statesStore: Array<QueryObserverResult> = $state([])
+    let states = ref<Array<QueryObserverResult>>([])
 
     const optionsStore = $state({
       queryKey: ['test'],
@@ -207,7 +207,7 @@ describe('createQuery', () => {
       props: {
         options: optionsStore,
         queryClient: new QueryClient(),
-        states: statesStore,
+        states,
       },
     })
 
@@ -217,7 +217,7 @@ describe('createQuery', () => {
   })
 
   test('Accept a derived store for options', async () => {
-    const states: Array<QueryObserverResult> = $state([])
+    let states = ref<Array<QueryObserverResult>>([])
 
     const writableStore = $state('test')
 
@@ -243,7 +243,7 @@ describe('createQuery', () => {
   })
 
   test('Ensure reactivity when queryClient defaults are set', async () => {
-    const states: Array<QueryObserverResult> = $state([])
+    let states = ref<Array<QueryObserverResult>>([])
 
     let writableStore = $state(1)
 
@@ -286,7 +286,7 @@ describe('createQuery', () => {
   })
 
   test('Keep previous data when placeholderData is set', async () => {
-    const states: Array<QueryObserverResult> = $state([])
+    let states = ref<Array<QueryObserverResult>>([])
 
     const rendered = render(PlaceholderData, {
       props: {
@@ -301,31 +301,31 @@ describe('createQuery', () => {
 
     await waitFor(() => rendered.getByText('Data: 1'))
 
-    expect(states).toHaveLength(4)
+    expect(states.value).toHaveLength(4)
 
     // Initial
-    expect(states[0]).toMatchObject({
+    expect(states.value[0]).toMatchObject({
       data: undefined,
       isFetching: true,
       isSuccess: false,
       isPlaceholderData: false,
     })
     // Fetched
-    expect(states[1]).toMatchObject({
+    expect(states.value[1]).toMatchObject({
       data: 0,
       isFetching: false,
       isSuccess: true,
       isPlaceholderData: false,
     })
     // Set state
-    expect(states[2]).toMatchObject({
+    expect(states.value[2]).toMatchObject({
       data: 0,
       isFetching: true,
       isSuccess: true,
       isPlaceholderData: true,
     })
     // New data
-    expect(states[3]).toMatchObject({
+    expect(states.value[3]).toMatchObject({
       data: 1,
       isFetching: false,
       isSuccess: true,
