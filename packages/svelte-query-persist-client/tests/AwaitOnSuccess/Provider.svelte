@@ -4,13 +4,23 @@
   import type { OmitKeyof, QueryClient } from '@tanstack/svelte-query'
   import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
 
-  export let queryClient: QueryClient
-  export let persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
-  export let key: Array<string>
-  export let onSuccess: () => Promise<void>
-  export let states: Array<string>
+  interface Props {
+    queryClient: QueryClient
+    persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
+    key: Array<string>
+    onSuccess: () => Promise<void>
+    states: Array<string>
+  }
+
+  let {
+    queryClient,
+    persistOptions,
+    key,
+    onSuccess,
+    states = $bindable(),
+  }: Props = $props()
 </script>
 
 <PersistQueryClientProvider client={queryClient} {persistOptions} {onSuccess}>
-  <AwaitOnSuccess {key} {states} />
+  <AwaitOnSuccess {key} bind:states />
 </PersistQueryClientProvider>

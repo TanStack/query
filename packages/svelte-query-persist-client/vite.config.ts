@@ -9,6 +9,7 @@ export default defineConfig({
     name: packageJson.name,
     dir: './tests',
     watch: false,
+    include: ['**/*.test.svelte.ts'],
     environment: 'jsdom',
     setupFiles: ['./tests/test-setup.ts'],
     coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },

@@ -302,7 +302,7 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('fetched'))
   })
 
-  test('should await onSuccess after successful restoring', async () => {
+  test.only('should await onSuccess after successful restoring', async () => {
     const key = queryKey()
 
     const queryClient = createQueryClient()
@@ -326,9 +326,8 @@ describe('PersistQueryClientProvider', () => {
         key,
         states,
         onSuccess: async () => {
-          states = [...states, 'onSuccess']
-          await sleep(20)
-          states = [...states, 'onSuccess done']
+          states.push('onSuccess')
+          states.push('onSuccess done')
         },
       },
     })

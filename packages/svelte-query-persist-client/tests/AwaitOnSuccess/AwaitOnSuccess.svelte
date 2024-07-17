@@ -2,15 +2,15 @@
   import { createQuery } from '@tanstack/svelte-query'
   import { sleep } from '../utils'
 
-  export let key: Array<string>
-  export let states: Array<string>
+  let { key, states = $bindable() }: { key: string[]; states: string[] } =
+    $props()
 
   const state = createQuery({
     queryKey: key,
     queryFn: async () => {
-      states = [...states, 'fetching']
+      states.push('fetching')
       await sleep(10)
-      states = [...states, 'fetched']
+      states.push('fetched')
       return 'fetched'
     },
   })
