@@ -2,13 +2,14 @@
   import { createQuery } from '@tanstack/svelte-query'
   import { sleep } from '../utils'
   import type { StatusResult } from '../utils'
+  import { untrack } from 'svelte'
 
   let { key, states } = $props<{
     key: Array<string>
     states: Array<StatusResult<string>>
   }>()
 
-  const state = createQuery({
+  const ss = createQuery({
     queryKey: key,
     queryFn: async () => {
       await sleep(10)
@@ -17,11 +18,15 @@
   })
 
   $effect(() => {
-    states = [...states, state]
+    console.log('initial data', ss)
+    JSON.stringify(ss)
+    untrack(() => {
+      states.push($state.snapshot(ss))
+    })
   })
 </script>
 
 <div>
-  <h1>{state.data}</h1>
-  <h2>fetchStatus: {state.fetchStatus}</h2>
+  <h1>{ss.data}</h1>
+  <h2>fetchStatus: {ss.fetchStatus}</h2>
 </div>

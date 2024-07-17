@@ -2,7 +2,11 @@
   import { createQuery } from '@tanstack/svelte-query'
   import { sleep } from '../utils'
 
-  export let key: Array<string>
+  interface Props {
+    key: Array<string>
+  }
+
+  let { key }: Props = $props()
 
   const state = createQuery({
     queryKey: key,

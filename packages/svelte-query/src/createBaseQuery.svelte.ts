@@ -124,18 +124,5 @@ export function createBaseQuery<
         //console.log('result effect', final_.value.data)
       })
   })
-  //@ts-expect-error
-  return new Proxy(final_, {
-    get(target, p) {
-      if (p == 'value') {
-        return target.value
-      }
-      if (p == 'JSON') {
-        return target.value
-      }
-      //  console.log('target value', p, target.value, target.value[p])
-      //@ts-expect-error
-      return target.value[p]
-    },
-  })
+  return final_.value
 }

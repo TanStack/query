@@ -21,7 +21,6 @@
     client,
     children,
     persistOptions,
-    onSuccess,
     ...props
   }: PersistQueryClientProviderProps = $props()
 
@@ -39,12 +38,10 @@
   })
   $effect(() => {
     isRestoring = true
-    persistQueryClientRestore(options).then(() => {
+    persistQueryClientRestore(options).then(async () => {
       try {
-        console.log('restoring !', typeof isRestoring)
-        onSuccess?.()
+        await props.onSuccess?.()
       } finally {
-        console.log('restored')
         isRestoring = false
       }
     })
