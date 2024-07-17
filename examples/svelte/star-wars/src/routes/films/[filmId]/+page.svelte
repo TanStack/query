@@ -1,9 +1,8 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
   import Character from './Character.svelte'
-  import type { PageData } from './$types'
 
-  export let data: PageData
+  let { data } = $props()
 
   const getFilm = async () => {
     const res = await fetch(

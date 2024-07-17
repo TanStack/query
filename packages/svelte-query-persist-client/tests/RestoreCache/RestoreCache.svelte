@@ -6,7 +6,7 @@
 
   let {
     key,
-    states,
+    states = $bindable(),
   }: {
     key: Array<string>
     states: Array<StatusResult<string>>

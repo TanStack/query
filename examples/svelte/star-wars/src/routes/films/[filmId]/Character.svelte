@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
 
-  export let characterId: string
+  let { characterId }: { characterId: string } = $props()
 
   const getCharacter = async () => {
     const res = await fetch(`https://swapi.dev/api/people/${characterId}/`)

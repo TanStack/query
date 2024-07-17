@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
 
-  export let filmId: string
+  let { filmId }: { filmId: string } = $props()
 
   const getFilm = async () => {
     const res = await fetch(`https://swapi.dev/api/films/${filmId}/`)

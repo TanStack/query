@@ -5,10 +5,19 @@
   import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
   import type { StatusResult } from '../utils'
 
-  export let queryClient: QueryClient
-  export let persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
-  export let key: Array<string>
-  export let states: Array<StatusResult<string>>
+  interface Props {
+    queryClient: QueryClient
+    persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
+    key: Array<string>
+    states: Array<StatusResult<string>>
+  }
+
+  let {
+    queryClient,
+    persistOptions,
+    key,
+    states = $bindable(),
+  }: Props = $props()
 </script>
 
 <PersistQueryClientProvider client={queryClient} {persistOptions}>
