@@ -8,11 +8,10 @@
 
   export let queryClient: QueryClient
   export let persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
-  export let key: Array<string>
   export let states: Writable<Array<StatusResult<string>>>
   export let fetched: Writable<boolean>
 </script>
 
 <PersistQueryClientProvider client={queryClient} {persistOptions}>
-  <FreshData {key} {states} {fetched} />
+  <FreshData {states} {fetched} />
 </PersistQueryClientProvider>

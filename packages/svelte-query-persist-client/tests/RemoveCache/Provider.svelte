@@ -6,9 +6,8 @@
 
   export let queryClient: QueryClient
   export let persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
-  export let key: Array<string>
 </script>
 
 <PersistQueryClientProvider client={queryClient} {persistOptions}>
-  <RemoveCache {key} />
+  <RemoveCache />
 </PersistQueryClientProvider>

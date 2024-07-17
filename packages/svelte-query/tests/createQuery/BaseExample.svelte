@@ -1,24 +1,18 @@
 <script lang="ts">
   import { createQuery } from '../../src/createQuery'
-  import type { QueryClient } from '@tanstack/query-core'
+  import type { QueryClient, QueryObserverResult } from '@tanstack/query-core'
+  import type { Writable } from 'svelte/store'
   import type { CreateQueryOptions, StoreOrVal } from '../../src/types'
 
   export let options: StoreOrVal<CreateQueryOptions<any>>
   export let queryClient: QueryClient
+  export let states: Writable<Array<QueryObserverResult>>
 
   const query = createQuery(options, queryClient)
+
+  $: states.update((prev) => [...prev, $query])
 </script>
 
-{#if $query.isPending}
-  <p>Loading</p>
-{:else if $query.isError}
-  <p>Error</p>
-{:else if $query.isSuccess}
-  {#if Array.isArray($query.data)}
-    {#each $query.data as item}
-      <p>{item}</p>
-    {/each}
-  {:else}
-    <p>{$query.data}</p>
-  {/if}
-{/if}
+<div>Status: {$query.status}</div>
+<div>Failure Count: {$query.failureCount}</div>
+<div>Data: {$query.data ?? 'undefined'}</div>

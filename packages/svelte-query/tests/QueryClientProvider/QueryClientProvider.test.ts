@@ -13,7 +13,7 @@ describe('QueryClientProvider', () => {
       },
     })
 
-    await waitFor(() => rendered.getByText('test'))
+    await waitFor(() => rendered.getByText('Data: test'))
 
     expect(queryCache.find({ queryKey: ['hello'] })).toBeDefined()
   })
