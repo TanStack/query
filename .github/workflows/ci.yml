@@ -33,7 +33,7 @@ jobs:
       - name: Start Nx Agents
         run: npx nx-cloud start-ci-run --distribute-on=".nx/workflows/dynamic-changesets.yaml"
       - name: Setup Tools
-        uses: tanstack/config/.github/setup@main
+        uses: tanstack/config/.github/setup@629cd3152485cbe985f5a7e66d370c858132c517
       - name: Run Tests
         run: pnpm run test:ci --parallel=3
       - name: Stop Nx Agents
