@@ -39,6 +39,9 @@ function Example() {
         body: JSON.stringify({ text: newTodo }),
         headers: { 'Content-Type': 'application/json' },
       })
+      if(!response.ok){
+        throw new Error('Something went wrong.')
+      }
       return await response.json()
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
