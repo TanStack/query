@@ -3528,6 +3528,124 @@ describe('createQuery', () => {
     ])
   })
 
+  // See https://github.com/TanStack/query/issues/7711
+  it('race condition: should cleanup observers after component that created the query is unmounted #1', async () => {
+    const key = queryKey()
+
+    function Component() {
+      let val = 1
+      const dataQuery = createQuery(() => ({
+        queryKey: [key],
+        queryFn: () => {
+          return val++
+        },
+      }))
+
+      return (
+        <div>
+          <p>component</p>
+          <p>data: {String(dataQuery.data)}</p>
+        </div>
+      )
+    }
+
+    const Outer = () => {
+      const [showComp, setShowComp] = createSignal(true)
+      return (
+        <div>
+          <button
+            onClick={() => {
+              queryClient.invalidateQueries()
+              setShowComp(!showComp())
+            }}
+          >
+            toggle
+          </button>
+          {showComp() ? <Component /> : <div>not showing</div>}
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Outer />
+      </QueryClientProvider>
+    ))
+
+    await waitFor(() => rendered.getByText('component'))
+    fireEvent.click(rendered.getByText('toggle'))
+    await waitFor(() => rendered.getByText('not showing'))
+    fireEvent.click(rendered.getByText('toggle'))
+    await waitFor(() => rendered.getByText('component'))
+    fireEvent.click(rendered.getByText('toggle'))
+    await waitFor(() => rendered.getByText('not showing'))
+
+    const entry = queryClient.getQueryCache().find({
+      queryKey: [key],
+    })!
+
+    expect(entry.getObserversCount()).toBe(0)
+  })
+
+  // See https://github.com/TanStack/query/issues/7711
+  it('race condition: should cleanup observers after component that created the query is unmounted #2', async () => {
+    const key = queryKey()
+
+    function Component() {
+      let val = 1
+      const dataQuery = createQuery(() => ({
+        queryKey: [key],
+        queryFn: () => {
+          return val++
+        },
+      }))
+
+      return (
+        <div>
+          <p>component</p>
+          <p>data: {String(dataQuery.data)}</p>
+        </div>
+      )
+    }
+
+    const Outer = () => {
+      const [showComp, setShowComp] = createSignal(true)
+      return (
+        <div>
+          <button
+            onClick={() => {
+              queueMicrotask(() => setShowComp(!showComp()))
+              queryClient.invalidateQueries()
+            }}
+          >
+            toggle
+          </button>
+          {showComp() ? <Component /> : <div>not showing</div>}
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Outer />
+      </QueryClientProvider>
+    ))
+
+    await waitFor(() => rendered.getByText('component'))
+    fireEvent.click(rendered.getByText('toggle'))
+    await waitFor(() => rendered.getByText('not showing'))
+    fireEvent.click(rendered.getByText('toggle'))
+    await waitFor(() => rendered.getByText('component'))
+    fireEvent.click(rendered.getByText('toggle'))
+    await waitFor(() => rendered.getByText('not showing'))
+
+    const entry = queryClient.getQueryCache().find({
+      queryKey: [key],
+    })!
+
+    expect(entry.getObserversCount()).toBe(0)
+  })
+
   it('should mark query as fetching, when using initialData', async () => {
     const key = queryKey()
     const results: Array<DefinedCreateQueryResult<string>> = []

@@ -737,6 +737,23 @@
               "to": "framework/solid/reference/createQuery"
             }
           ]
+        },
+        {
+          "label": "svelte",
+          "children": [
+            {
+              "label": "Svelte Reference",
+              "to": "framework/svelte/reference/index"
+            },
+            {
+              "label": "Functions / createQuery",
+              "to": "framework/svelte/reference/createquery"
+            },
+            {
+              "label": "Functions / createMutation",
+              "to": "framework/svelte/reference/createmutation"
+            }
+          ]
         }
       ]
     },

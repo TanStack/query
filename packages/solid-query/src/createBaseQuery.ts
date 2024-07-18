@@ -179,7 +179,11 @@ export function createBaseQuery<
     const obs = observer()
     return obs.subscribe((result) => {
       observerResult = result
-      queueMicrotask(() => refetch())
+      queueMicrotask(() => {
+        if (unsubscribe) {
+          refetch()
+        }
+      })
     })
   }
 
