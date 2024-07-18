@@ -3,10 +3,9 @@
   "defaultBase": "main",
   "nxCloudAccessToken": "ZDdkNDA4MGEtYjNmYi00MWI4LWE1N2QtYTdlNmYxMGJlZWM2fHJlYWQ=",
   "useInferencePlugins": false,
-  "parallel": 5,
+  "parallel":5,
   "namedInputs": {
-    "sharedGlobals": [
-      "{workspaceRoot}/.nvmrc",
+    "sharedGlobals": [  "{workspaceRoot}/.nvmrc",
       "{workspaceRoot}/package.json",
       "{workspaceRoot}/scripts/getTsupConfig.js",
       "{workspaceRoot}/tsconfig.json"
