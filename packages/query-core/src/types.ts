@@ -161,7 +161,8 @@ export type NetworkMode = 'online' | 'always' | 'offlineFirst'
 export type NotifyOnChangeProps =
   | Array<keyof InfiniteQueryObserverResult>
   | 'all'
-  | (() => Array<keyof InfiniteQueryObserverResult> | 'all')
+  | undefined
+  | (() => Array<keyof InfiniteQueryObserverResult> | 'all' | undefined)
 
 export interface QueryOptions<
   TQueryFnData = unknown,
