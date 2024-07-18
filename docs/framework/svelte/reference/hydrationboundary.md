@@ -1,3 +1,8 @@
+---
+id: HydrationBoundary
+title: HydrationBoundary
+---
+
 # Class: HydrationBoundary\<Props, Events, Slots\>
 
 Base class for Svelte components with some minor dev-enhancements. Used when dev=true.

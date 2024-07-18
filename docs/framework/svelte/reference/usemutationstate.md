@@ -1,3 +1,8 @@
+---
+id: useMutationState
+title: useMutationState
+---
+
 # Function: useMutationState()
 
 ```ts
@@ -20,4 +25,4 @@ function useMutationState<TResult>(options, queryClient?): Readable<TResult[]>
 
 ## Defined in
 
-[packages/svelte-query/src/useMutationState.ts:24](https://github.com/TanStack/query/blob/81ca3332486f7b98502d4f5ea50588d88a80f59b/packages/svelte-query/src/useMutationState.ts#L24)
+[packages/svelte-query/src/useMutationState.ts:24](https://github.com/TanStack/query/blob/13817e953743537ffb9aab4da174583055be4d81/packages/svelte-query/src/useMutationState.ts#L24)

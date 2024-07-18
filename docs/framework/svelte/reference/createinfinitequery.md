@@ -1,3 +1,8 @@
+---
+id: createInfiniteQuery
+title: createInfiniteQuery
+---
+
 # Function: createInfiniteQuery()
 
 ```ts
@@ -34,4 +39,4 @@ function createInfiniteQuery<
 
 ## Defined in
 
-[packages/svelte-query/src/createInfiniteQuery.ts:16](https://github.com/TanStack/query/blob/81ca3332486f7b98502d4f5ea50588d88a80f59b/packages/svelte-query/src/createInfiniteQuery.ts#L16)
+[packages/svelte-query/src/createInfiniteQuery.ts:16](https://github.com/TanStack/query/blob/13817e953743537ffb9aab4da174583055be4d81/packages/svelte-query/src/createInfiniteQuery.ts#L16)

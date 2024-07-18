@@ -1,3 +1,8 @@
+---
+id: createQuery
+title: createQuery
+---
+
 # Function: createQuery()
 
 ## createQuery(options, queryClient)
@@ -31,7 +36,7 @@ function createQuery<TQueryFnData, TError, TData, TQueryKey>(
 
 ### Defined in
 
-[packages/svelte-query/src/createQuery.ts:15](https://github.com/TanStack/query/blob/81ca3332486f7b98502d4f5ea50588d88a80f59b/packages/svelte-query/src/createQuery.ts#L15)
+[packages/svelte-query/src/createQuery.ts:15](https://github.com/TanStack/query/blob/13817e953743537ffb9aab4da174583055be4d81/packages/svelte-query/src/createQuery.ts#L15)
 
 ## createQuery(options, queryClient)
 
@@ -64,4 +69,4 @@ function createQuery<TQueryFnData, TError, TData, TQueryKey>(
 
 ### Defined in
 
-[packages/svelte-query/src/createQuery.ts:27](https://github.com/TanStack/query/blob/81ca3332486f7b98502d4f5ea50588d88a80f59b/packages/svelte-query/src/createQuery.ts#L27)
+[packages/svelte-query/src/createQuery.ts:27](https://github.com/TanStack/query/blob/13817e953743537ffb9aab4da174583055be4d81/packages/svelte-query/src/createQuery.ts#L27)

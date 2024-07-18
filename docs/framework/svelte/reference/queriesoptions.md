@@ -1,3 +1,8 @@
+---
+id: QueriesOptions
+title: QueriesOptions
+---
+
 # Type Alias: QueriesOptions\<T, TResult, TDepth\>
 
 ```ts
@@ -16,4 +21,4 @@ QueriesOptions reducer recursively unwraps function arguments to infer/enforce t
 
 ## Defined in
 
-[packages/svelte-query/src/createQueries.ts:110](https://github.com/TanStack/query/blob/81ca3332486f7b98502d4f5ea50588d88a80f59b/packages/svelte-query/src/createQueries.ts#L110)
+[packages/svelte-query/src/createQueries.ts:110](https://github.com/TanStack/query/blob/13817e953743537ffb9aab4da174583055be4d81/packages/svelte-query/src/createQueries.ts#L110)

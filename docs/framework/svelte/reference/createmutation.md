@@ -1,3 +1,8 @@
+---
+id: createMutation
+title: createMutation
+---
+
 # Function: createMutation()
 
 ```ts
@@ -29,4 +34,4 @@ function createMutation<TData, TError, TVariables, TContext>(
 
 ## Defined in
 
-[packages/svelte-query/src/createMutation.ts:13](https://github.com/TanStack/query/blob/81ca3332486f7b98502d4f5ea50588d88a80f59b/packages/svelte-query/src/createMutation.ts#L13)
+[packages/svelte-query/src/createMutation.ts:13](https://github.com/TanStack/query/blob/13817e953743537ffb9aab4da174583055be4d81/packages/svelte-query/src/createMutation.ts#L13)

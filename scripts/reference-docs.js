@@ -11,6 +11,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const options = {
   plugin: [
     'typedoc-plugin-markdown',
+    'typedoc-plugin-frontmatter',
     resolve(__dirname, './typedoc-remove-prefix.js'),
   ],
   hideGenerator: true,

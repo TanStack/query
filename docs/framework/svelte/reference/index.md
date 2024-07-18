@@ -1,3 +1,8 @@
+---
+id: '@tanstack/svelte-query'
+title: '@tanstack/svelte-query'
+---
+
 # @tanstack/svelte-query
 
 ## References
