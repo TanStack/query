@@ -76,22 +76,15 @@ A mutation filter object supports the following properties:
 ### `matchQuery`
 
 ```tsx
-const isMatching = matchQuery(
-  filters,
-  query
-)
+const isMatching = matchQuery(filters, query)
 ```
 
-Returns a boolean that indicates whether a query matches the provided set of query filters. 
-
+Returns a boolean that indicates whether a query matches the provided set of query filters.
 
 ### `matchMutation`
 
 ```tsx
-const isMatching = matchMutation(
-  filters,
-  mutation
-)
+const isMatching = matchMutation(filters, mutation)
 ```
 
-Returns a boolean that indicates whether a mutation matches the provided set of mutation filters. 
+Returns a boolean that indicates whether a mutation matches the provided set of mutation filters.
