@@ -10,7 +10,6 @@
   "scripts": {
     "clean": "pnpm --filter \"./packages/**\" run clean",
     "preinstall": "node -e \"if(process.env.CI == 'true') {console.log('Skipping preinstall...')} else {process.exit(1)}\" || npx -y only-allow pnpm",
-    "prepare": "husky",
     "test": "pnpm run test:ci",
     "test:pr": "nx affected --targets=test:format,test:sherif,test:knip,test:eslint,test:lib,test:types,test:build,build",
     "test:ci": "nx run-many --targets=test:format,test:sherif,test:knip,test:eslint,test:lib,test:types,test:build,build",
@@ -55,10 +54,8 @@
     "esbuild-plugin-file-path-extensions": "^2.1.0",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.2",
-    "husky": "^9.0.11",
     "jsdom": "^24.1.0",
     "knip": "^5.26.0",
-    "lint-staged": "^15.2.2",
     "nx": "^19.4.3",
     "prettier": "^4.0.0-alpha.8",
     "prettier-plugin-svelte": "^3.2.3",
