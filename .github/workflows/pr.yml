@@ -27,7 +27,7 @@ jobs:
       - name: Start Nx Agents
         run: npx nx-cloud start-ci-run --distribute-on=".nx/workflows/dynamic-changesets.yaml"
       - name: Setup Tools
-        uses: tanstack/config/.github/setup@main
+        uses: tanstack/config/.github/setup@629cd3152485cbe985f5a7e66d370c858132c517
       - name: Get base and head commits for `nx affected`
         uses: nrwl/nx-set-shas@v4
         with:
@@ -52,7 +52,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup Tools
-        uses: tanstack/config/.github/setup@main
+        uses: tanstack/config/.github/setup@629cd3152485cbe985f5a7e66d370c858132c517
       - name: Build Packages
         run: pnpm run build:all
       - name: Publish Previews
