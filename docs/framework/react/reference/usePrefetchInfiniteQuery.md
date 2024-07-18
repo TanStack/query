@@ -4,12 +4,12 @@ title: usePrefetchInfiniteQuery
 ---
 
 ```tsx
-const result = usePrefetchInfiniteQuery(options)
+usePrefetchInfiniteQuery(options)
 ```
 
 **Options**
 
-You can pass everything to `usePrefetchInfiniteQuery` that you can pass to [`queryClient.prefetchInfiniteQuery`](../../../reference/QueryClient#queryclientprefetchinfinitequery). Remember that some of them are required as below:
+You can pass everything to `usePrefetchInfiniteQuery` that you can pass to [`queryClient.prefetchInfiniteQuery`](../../../../reference/QueryClient#queryclientprefetchinfinitequery). Remember that some of them are required as below:
 
 - `queryKey: QueryKey`
 
@@ -34,4 +34,4 @@ You can pass everything to `usePrefetchInfiniteQuery` that you can pass to [`que
 
 - **Returns**
 
-The `usePrefetchInfiniteQuery` does not return anything, it should be used just to fire a prefetch during render, before a suspense boundary that wraps a component that uses [`useSuspenseInfiniteQuery`](../reference/useSuspenseInfiniteQuery)
+The `usePrefetchInfiniteQuery` does not return anything, it should be used just to fire a prefetch during render, before a suspense boundary that wraps a component that uses [`useSuspenseInfiniteQuery`](../useSuspenseInfiniteQuery)

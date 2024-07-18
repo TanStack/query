@@ -1,0 +1,21 @@
+{
+  "name": "@tanstack/query-example-solid-basic",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:types": "tsc"
+  },
+  "dependencies": {
+    "@tanstack/solid-query": "^5.51.6",
+    "@tanstack/solid-query-devtools": "^5.51.6",
+    "solid-js": "^1.8.17"
+  },
+  "devDependencies": {
+    "typescript": "5.3.3",
+    "vite": "^5.3.3",
+    "vite-plugin-solid": "^2.10.2"
+  }
+}

@@ -3,5 +3,10 @@
   "compilerOptions": {
     "moduleResolution": "Bundler"
   },
-  "include": ["src/**/*.ts", "src/**/*.vue", ".eslintrc.cjs", "vite.config.ts"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.vue",
+    "eslint.config.js",
+    "vite.config.ts"
+  ]
 }

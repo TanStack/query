@@ -1,10 +1,6 @@
 import { isPlatformBrowser } from '@angular/common'
 import * as queryDevtools from '@tanstack/query-devtools'
 import {
-  injectQueryClient,
-  onlineManager,
-} from '@tanstack/angular-query-experimental'
-import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
@@ -14,7 +10,11 @@ import {
   booleanAttribute,
   inject,
 } from '@angular/core'
-import { QueryClient } from '@tanstack/angular-query-experimental'
+import {
+  QueryClient,
+  injectQueryClient,
+  onlineManager,
+} from '@tanstack/angular-query-experimental'
 import type {
   AfterViewInit,
   OnChanges,

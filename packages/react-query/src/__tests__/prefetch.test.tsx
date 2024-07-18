@@ -16,11 +16,13 @@ import type { InfiniteData, UseInfiniteQueryOptions, UseQueryOptions } from '..'
 import type { Mock } from 'vitest'
 
 const generateQueryFn = (data: string) =>
-  vi.fn<any, Promise<string>>().mockImplementation(async () => {
-    await sleep(10)
+  vi
+    .fn<(...args: Array<any>) => Promise<string>>()
+    .mockImplementation(async () => {
+      await sleep(10)
 
-    return data
-  })
+      return data
+    })
 
 const generateInfiniteQueryOptions = (
   data: Array<{ data: string; currentPage: number; totalPages: number }>,
@@ -29,7 +31,7 @@ const generateInfiniteQueryOptions = (
 
   return {
     queryFn: vi
-      .fn<any, Promise<(typeof data)[number]>>()
+      .fn<(...args: Array<any>) => Promise<(typeof data)[number]>>()
       .mockImplementation(async () => {
         const currentPageData = data[currentPage]
         if (!currentPageData) {

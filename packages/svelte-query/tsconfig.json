@@ -10,7 +10,8 @@
     "tests/**/*.js",
     "tests/**/*.ts",
     "tests/**/*.svelte",
-    ".eslintrc.cjs",
+    "eslint.config.js",
+    "svelte.config.js",
     "vite.config.ts"
   ]
 }

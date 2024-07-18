@@ -1,4 +1,4 @@
-/* eslint-disable @cspell/spellchecker */
+/* eslint-disable cspell/spellchecker */
 /**
  * The code in this file is adapted from NG Extension Platform at https://ngxtension.netlify.app.
  *
@@ -169,7 +169,7 @@ export function createNoopInjectionToken<
   type TReturn = TMulti extends true ? Array<TValue> : TValue
 
   const token =
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    // eslint-disable-next-line ts/no-unnecessary-condition
     (options as CreateInjectionTokenOptions<() => void, []>)?.token ||
     new InjectionToken<TReturn>(description)
   return [
