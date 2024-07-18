@@ -23,17 +23,14 @@ const options = {
   excludePrivate: true,
 }
 
-/** @type {Array<{name: string, entryPoints: Array<string>, tsconfig: string, outputDir: string, exclude: Array<string>}>} */
+/** @type {Array<{name: string, entryPoints: Array<string>, tsconfig: string, outputDir: string, exclude?: Array<string>}>} */
 const packages = [
   {
     name: 'svelte-query',
     entryPoints: [resolve(__dirname, '../packages/svelte-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/svelte-query/tsconfig.json'),
     outputDir: resolve(__dirname, '../docs/framework/svelte/reference'),
-    exclude: [
-      './packages/query-core/**/*',
-      './packages/svelte-query/src/HydrationBoundary.svelte',
-    ],
+    exclude: ['./packages/query-core/**/*'],
   },
 ]
 
