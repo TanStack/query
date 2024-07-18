@@ -1,6 +1,7 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "ignore": [".pnpmfile.cjs"],
+  "ignore": [".pnpmfile.cjs", "scripts/typedoc-remove-prefix.js"],
+  "ignoreDependencies": ["typedoc-plugin-frontmatter"],
   "ignoreWorkspaces": ["examples/**", "integrations/**"],
   "workspaces": {
     "packages/query-codemods": {
