@@ -402,6 +402,20 @@ ruleTester.run('exhaustive-deps', rule, {
         }
         `,
     },
+    {
+      name: 'queryFn as a ternary expression with dep and a skipToken',
+      code: normalizeIndent`
+        import { useQuery, skipToken } from "@tanstack/react-query";
+        const fetch = true
+        
+        function Component({ id }) {
+          useQuery({
+              queryKey: [id],
+              queryFn: fetch ? () => Promise.resolve(id) : skipToken
+          })
+        }
+      `,
+    },
   ],
   invalid: [
     {
@@ -725,6 +739,26 @@ ruleTester.run('exhaustive-deps', rule, {
               Promise.resolve(id)
             }
         })
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'id' },
+        },
+      ],
+    },
+    {
+      name: 'should fail if queryFn is a ternary expression with missing dep and a skipToken',
+      code: normalizeIndent`
+        import { useQuery, skipToken } from "@tanstack/react-query";
+        const fetch = true
+        
+        function Component({ id }) {
+          useQuery({
+              queryKey: [],
+              queryFn: fetch ? () => Promise.resolve(id) : skipToken
+          })
+        }
       `,
       errors: [
         {
