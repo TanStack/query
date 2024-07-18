@@ -70,6 +70,7 @@
     "solid-js": "^1.8.17",
     "tsup": "^8.0.2",
     "typedoc": "^0.26.4",
+    "typedoc-plugin-frontmatter": "^1.0.0",
     "typedoc-plugin-markdown": "^4.2.1",
     "typescript": "5.3.3",
     "typescript47": "npm:typescript@4.7",
