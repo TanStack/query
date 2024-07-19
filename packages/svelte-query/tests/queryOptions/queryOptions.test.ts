@@ -88,6 +88,7 @@ describe('queryOptions', () => {
 
     const queryClient = new QueryClient()
     const state = queryClient.getQueryState(queryKey)
+    // @ts-expect-error
     expectTypeOf(state?.data).toEqualTypeOf<number | undefined>()
   })
 
@@ -130,6 +131,7 @@ describe('queryOptions', () => {
 
     const queryClient = new QueryClient()
     const data = queryClient.getQueryData(options.queryKey)
+    // @ts-expect-error
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
 

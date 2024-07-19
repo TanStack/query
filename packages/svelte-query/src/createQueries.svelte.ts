@@ -196,7 +196,7 @@ export type QueriesResults<
 
 export function createQueries<
   T extends Array<any>,
-  TCombinedResult extends QueriesResults<T> = QueriesResults<T>,
+  TCombinedResult = QueriesResults<T>,
 >(
   {
     queries,
@@ -245,13 +245,14 @@ export function createQueries<
     )
   })
 
-  const result = $state(getCombinedResult(trackResult()))
+  let result = $state(getCombinedResult(trackResult()))
 
   $effect(() => {
     if (isRestoring()) {
       return () => null
     }
     untrack(() => {
+      //@ts-expect-error
       Object.assign(result, getCombinedResult(trackResult()))
     })
 
@@ -261,7 +262,7 @@ export function createQueries<
           defaultedQueriesStore(),
           (options as QueriesObserverOptions<TCombinedResult>).combine,
         )
-
+        //@ts-expect-error
         Object.assign(result, res[1](res[2]()))
       })()
     })

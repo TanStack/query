@@ -26,8 +26,6 @@
 
   let isRestoring = $state(true)
   setIsRestoringContext(() => isRestoring)
-  const refs = $derived({ persistOptions, onSuccess })
-  let didRestore = $state(false)
   const options = $derived({
     ...persistOptions,
     queryClient: client,

@@ -26,7 +26,10 @@
   const query = createQuery(options, queryClient)
 
   $effect(() => {
-    states.value = [...untrack(() => states.value), $state.snapshot(query)]
+    states.value = [
+      ...untrack(() => states.value),
+      $state.snapshot(query) as unknown as QueryObserverResult,
+    ]
   })
 </script>
 
