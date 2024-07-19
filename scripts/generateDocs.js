@@ -4,7 +4,7 @@ import { generateReferenceDocs } from '@tanstack/config/typedoc'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
-/** @type {import('@tanstack/config/typedoc').Packages} */
+/** @type {import('@tanstack/config/typedoc').Package[]} */
 const packages = [
   {
     name: 'angular-query-experimental',
