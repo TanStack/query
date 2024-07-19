@@ -29,7 +29,7 @@ export function load(app) {
         if (name[0] !== 'index') {
           name.splice(0, 1)
         }
-        const newBasename = name.join('.').toLowerCase()
+        const newBasename = name.join('.')
         urlMapping.url = newBasename
         urlMapping.model.url = newBasename
         return urlMapping
