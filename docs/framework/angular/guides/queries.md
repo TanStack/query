@@ -33,7 +33,7 @@ result = injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchTodoList }))
 [//]: # 'Example2'
 [//]: # 'Example3'
 
-```ts
+```angular-ts
 @Component({
   selector: 'todos',
   standalone: true,
@@ -66,7 +66,7 @@ If booleans aren't your thing, you can always use the `status` state as well:
 
 [//]: # 'Example4'
 
-```ts
+```angular-ts
 @Component({
   selector: 'todos',
   standalone: true,

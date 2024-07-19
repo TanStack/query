@@ -60,7 +60,7 @@ In the example below, you can see Angular Query in its most basic and simple for
 
 [Open in CodeSandbox](https://codesandbox.io/s/github/tanstack/query/tree/main/examples/angular/simple)
 
-```ts
+```angular-ts
 import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
