@@ -7,7 +7,7 @@ type RuleKey = keyof typeof rules
 interface Plugin extends Omit<ESLint.Plugin, 'rules'> {
   rules: Record<RuleKey, RuleModule<any, any, any>>
   configs: Record<
-    string,
+    "recommended" | "flat/recommended",
     ESLint.ConfigData | Linter.FlatConfig | Array<Linter.FlatConfig>
   >
 }
@@ -16,7 +16,7 @@ const plugin: Plugin = {
   meta: {
     name: '@tanstack/eslint-plugin-query',
   },
-  configs: {},
+  configs: {} as Plugin['configs'],
   rules,
 }
 
