@@ -8,7 +8,10 @@ title: createQuery
 ## createQuery(options, queryClient)
 
 ```ts
-function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): CreateQueryResult<TData, TError>
+function createQuery<TQueryFnData, TError, TData, TQueryKey>(
+  options,
+  queryClient?,
+): CreateQueryResult<TData, TError>
 ```
 
 ### Type Parameters
@@ -19,7 +22,7 @@ function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClien
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** *extends* `QueryKey` = `QueryKey`
+• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
 
 ### Parameters
 
@@ -38,7 +41,10 @@ function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClien
 ## createQuery(options, queryClient)
 
 ```ts
-function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClient?): DefinedCreateQueryResult<TData, TError>
+function createQuery<TQueryFnData, TError, TData, TQueryKey>(
+  options,
+  queryClient?,
+): DefinedCreateQueryResult<TData, TError>
 ```
 
 ### Type Parameters
@@ -49,7 +55,7 @@ function createQuery<TQueryFnData, TError, TData, TQueryKey>(options, queryClien
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** *extends* `QueryKey` = `QueryKey`
+• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
 
 ### Parameters
 

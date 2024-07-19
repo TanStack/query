@@ -8,6 +8,7 @@ title: injectQuery
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
 **Basic example**
+
 ```ts
 class ServiceOrComponent {
   query = injectQuery(() => ({
@@ -23,6 +24,7 @@ In the example below, the query will be automatically enabled and executed when 
 to a truthy value. When the filter signal changes back to a falsy value, the query will be disabled.
 
 **Reactive example**
+
 ```ts
 class ServiceOrComponent {
   filter = signal('')
@@ -51,12 +53,16 @@ https://tanstack.com/query/latest/docs/framework/angular/guides/queries
 ## injectQuery(optionsFn, injector)
 
 ```ts
-function injectQuery<TQueryFnData, TError, TData, TQueryKey>(optionsFn, injector?): DefinedCreateQueryResult<TData, TError>
+function injectQuery<TQueryFnData, TError, TData, TQueryKey>(
+  optionsFn,
+  injector?,
+): DefinedCreateQueryResult<TData, TError>
 ```
 
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
 **Basic example**
+
 ```ts
 class ServiceOrComponent {
   query = injectQuery(() => ({
@@ -72,6 +78,7 @@ In the example below, the query will be automatically enabled and executed when 
 to a truthy value. When the filter signal changes back to a falsy value, the query will be disabled.
 
 **Reactive example**
+
 ```ts
 class ServiceOrComponent {
   filter = signal('')
@@ -93,7 +100,7 @@ class ServiceOrComponent {
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** *extends* `QueryKey` = `QueryKey`
+• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
 
 ### Parameters
 
@@ -122,12 +129,16 @@ https://tanstack.com/query/latest/docs/framework/angular/guides/queries
 ## injectQuery(optionsFn, injector)
 
 ```ts
-function injectQuery<TQueryFnData, TError, TData, TQueryKey>(optionsFn, injector?): CreateQueryResult<TData, TError>
+function injectQuery<TQueryFnData, TError, TData, TQueryKey>(
+  optionsFn,
+  injector?,
+): CreateQueryResult<TData, TError>
 ```
 
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
 **Basic example**
+
 ```ts
 class ServiceOrComponent {
   query = injectQuery(() => ({
@@ -143,6 +154,7 @@ In the example below, the query will be automatically enabled and executed when 
 to a truthy value. When the filter signal changes back to a falsy value, the query will be disabled.
 
 **Reactive example**
+
 ```ts
 class ServiceOrComponent {
   filter = signal('')
@@ -164,7 +176,7 @@ class ServiceOrComponent {
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** *extends* `QueryKey` = `QueryKey`
+• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
 
 ### Parameters
 
@@ -193,12 +205,16 @@ https://tanstack.com/query/latest/docs/framework/angular/guides/queries
 ## injectQuery(optionsFn, injector)
 
 ```ts
-function injectQuery<TQueryFnData, TError, TData, TQueryKey>(optionsFn, injector?): CreateQueryResult<TData, TError>
+function injectQuery<TQueryFnData, TError, TData, TQueryKey>(
+  optionsFn,
+  injector?,
+): CreateQueryResult<TData, TError>
 ```
 
 Injects a query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
 
 **Basic example**
+
 ```ts
 class ServiceOrComponent {
   query = injectQuery(() => ({
@@ -214,6 +230,7 @@ In the example below, the query will be automatically enabled and executed when 
 to a truthy value. When the filter signal changes back to a falsy value, the query will be disabled.
 
 **Reactive example**
+
 ```ts
 class ServiceOrComponent {
   filter = signal('')
@@ -235,7 +252,7 @@ class ServiceOrComponent {
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** *extends* `QueryKey` = `QueryKey`
+• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
 
 ### Parameters
 

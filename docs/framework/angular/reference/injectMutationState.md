@@ -6,7 +6,10 @@ title: injectMutationState
 # Function: injectMutationState()
 
 ```ts
-function injectMutationState<TResult>(mutationStateOptionsFn, options?): Signal<TResult[]>
+function injectMutationState<TResult>(
+  mutationStateOptionsFn,
+  options?,
+): Signal<TResult[]>
 ```
 
 Injects a signal that tracks the state of all mutations.

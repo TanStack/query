@@ -6,14 +6,17 @@ title: injectQueries
 # Function: injectQueries()
 
 ```ts
-function injectQueries<T, TCombinedResult>(__namedParameters, injector?): Signal<TCombinedResult>
+function injectQueries<T, TCombinedResult>(
+  __namedParameters,
+  injector?,
+): Signal<TCombinedResult>
 ```
 
 ## Type Parameters
 
-• **T** *extends* `any`[]
+• **T** _extends_ `any`[]
 
-• **TCombinedResult** = `T` *extends* [] ? [] : `T` *extends* [`Head`] ? [`GetResults`\<`Head`\>] : `T` *extends* [`Head`, `...Tail[]`] ? [`...Tail[]`] *extends* [] ? [] : [`...Tail[]`] *extends* [`Head`] ? [`GetResults`\<`Head`\>, `GetResults`\<`Head`\>] : [`...Tail[]`] *extends* [`Head`, `...Tail[]`] ? [`...Tail[]`] *extends* [] ? [] : [`...Tail[]`] *extends* [`Head`] ? [`GetResults`\<`Head`\>, `GetResults`\<`Head`\>, `GetResults`\<`Head`\>] : [`...Tail[]`] *extends* [`Head`, `...Tail[]`] ? [`...(...)[]`] *extends* [] ? [] : ... *extends* ... ? ... : ... : [`...(...)[]`] *extends* ...[] ? ...[] : ...[] : [`...Tail[]`] *extends* `QueryObserverOptionsForCreateQueries`\<`TQueryFnData`, `TError`, `TData`, `any`\>[] ? `QueryObserverResult`\<`unknown` *extends* `TData` ? `TQueryFnData` : `TData`, `unknown` *extends* `TError` ? `Error` : `TError`\>[] : `QueryObserverResult`[] : `T` *extends* `QueryObserverOptionsForCreateQueries`\<`TQueryFnData`, `TError`, `TData`, `any`\>[] ? `QueryObserverResult`\<`unknown` *extends* `TData` ? `TQueryFnData` : `TData`, `unknown` *extends* `TError` ? `Error` : `TError`\>[] : `QueryObserverResult`[]
+• **TCombinedResult** = `T` _extends_ [] ? [] : `T` _extends_ [`Head`] ? [`GetResults`\<`Head`\>] : `T` _extends_ [`Head`, `...Tail[]`] ? [`...Tail[]`] _extends_ [] ? [] : [`...Tail[]`] _extends_ [`Head`] ? [`GetResults`\<`Head`\>, `GetResults`\<`Head`\>] : [`...Tail[]`] _extends_ [`Head`, `...Tail[]`] ? [`...Tail[]`] _extends_ [] ? [] : [`...Tail[]`] _extends_ [`Head`] ? [`GetResults`\<`Head`\>, `GetResults`\<`Head`\>, `GetResults`\<`Head`\>] : [`...Tail[]`] _extends_ [`Head`, `...Tail[]`] ? [`...(...)[]`] _extends_ [] ? [] : ... _extends_ ... ? ... : ... : [`...(...)[]`] _extends_ ...[] ? ...[] : ...[] : [`...Tail[]`] _extends_ `QueryObserverOptionsForCreateQueries`\<`TQueryFnData`, `TError`, `TData`, `any`\>[] ? `QueryObserverResult`\<`unknown` _extends_ `TData` ? `TQueryFnData` : `TData`, `unknown` _extends_ `TError` ? `Error` : `TError`\>[] : `QueryObserverResult`[] : `T` _extends_ `QueryObserverOptionsForCreateQueries`\<`TQueryFnData`, `TError`, `TData`, `any`\>[] ? `QueryObserverResult`\<`unknown` _extends_ `TData` ? `TQueryFnData` : `TData`, `unknown` _extends_ `TError` ? `Error` : `TError`\>[] : `QueryObserverResult`[]
 
 ## Parameters
 

@@ -14,7 +14,7 @@ type CreateBaseMutationResult<TData, TError, TVariables, TContext>: Override<Mut
 ### mutateAsync
 
 ```ts
-mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext>;
+mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext>
 ```
 
 ## Type Parameters

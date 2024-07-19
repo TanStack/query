@@ -14,17 +14,21 @@ Can be used to create strongly typed Svelte components.
 You have component library on npm called `component-library`, from which
 you export a component called `MyComponent`. For Svelte+TypeScript users,
 you want to provide typings. Therefore you create a `index.d.ts`:
+
 ```ts
-import { SvelteComponent } from "svelte";
-export class MyComponent extends SvelteComponent<{foo: string}> {}
+import { SvelteComponent } from 'svelte'
+export class MyComponent extends SvelteComponent<{ foo: string }> {}
 ```
+
 Typing this makes it possible for IDEs like VS Code with the Svelte extension
 to provide intellisense and to use the component like this in a Svelte file
 with TypeScript:
+
 ```svelte
 <script lang="ts">
-	import { MyComponent } from "component-library";
+  import { MyComponent } from 'component-library'
 </script>
+
 <MyComponent foo={'bar'} />
 ```
 
@@ -34,15 +38,15 @@ with TypeScript:
 
 ## Type Parameters
 
-• **Props** *extends* `Record`\<`string`, `any`\> = `any`
+• **Props** _extends_ `Record`\<`string`, `any`\> = `any`
 
-• **Events** *extends* `Record`\<`string`, `any`\> = `any`
+• **Events** _extends_ `Record`\<`string`, `any`\> = `any`
 
-• **Slots** *extends* `Record`\<`string`, `any`\> = `any`
+• **Slots** _extends_ `Record`\<`string`, `any`\> = `any`
 
 ## Indexable
 
- \[`prop`: `string`\]: `any`
+\[`prop`: `string`\]: `any`
 
 ## Constructors
 
@@ -66,14 +70,14 @@ new HydrationBoundary<Props, Events, Slots>(options): HydrationBoundary<Props, E
 
 #### Defined in
 
-node\_modules/.pnpm/svelte@4.2.18/node\_modules/svelte/types/index.d.ts:144
+node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:144
 
 ## Properties
 
 ### $$
 
 ```ts
-$$: any;
+$$: any
 ```
 
 ### PRIVATE API
@@ -86,46 +90,48 @@ Do not use, may change at any time
 
 #### Defined in
 
-node\_modules/.pnpm/svelte@4.2.18/node\_modules/svelte/types/index.d.ts:102
+node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:102
 
-***
+---
 
-### $$events\_def
+### $$events_def
 
 ```ts
-$$events_def: Events;
+$$events_def: Events
 ```
 
 For type checking capabilities only.
 Does not exist at runtime.
+
 ### DO NOT USE!
 
 #### Defined in
 
-node\_modules/.pnpm/svelte@4.2.18/node\_modules/svelte/types/index.d.ts:158
+node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:158
 
-***
+---
 
-### $$prop\_def
+### $$prop_def
 
 ```ts
-$$prop_def: Props;
+$$prop_def: Props
 ```
 
 For type checking capabilities only.
 Does not exist at runtime.
+
 ### DO NOT USE!
 
 #### Defined in
 
-node\_modules/.pnpm/svelte@4.2.18/node\_modules/svelte/types/index.d.ts:151
+node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:151
 
-***
+---
 
 ### $$set
 
 ```ts
-$$set: any;
+$$set: any
 ```
 
 ### PRIVATE API
@@ -138,27 +144,28 @@ Do not use, may change at any time
 
 #### Defined in
 
-node\_modules/.pnpm/svelte@4.2.18/node\_modules/svelte/types/index.d.ts:109
+node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:109
 
-***
+---
 
-### $$slot\_def
+### $$slot_def
 
 ```ts
-$$slot_def: Slots;
+$$slot_def: Slots
 ```
 
 For type checking capabilities only.
 Does not exist at runtime.
+
 ### DO NOT USE!
 
 #### Defined in
 
-node\_modules/.pnpm/svelte@4.2.18/node\_modules/svelte/types/index.d.ts:165
+node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:165
 
 ## Methods
 
-### $capture\_state()
+### $capture_state()
 
 ```ts
 $capture_state(): void
@@ -170,9 +177,9 @@ $capture_state(): void
 
 #### Defined in
 
-node\_modules/.pnpm/svelte@4.2.18/node\_modules/svelte/types/index.d.ts:167
+node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:167
 
-***
+---
 
 ### $destroy()
 
@@ -190,11 +197,11 @@ $destroy(): void
 
 #### Defined in
 
-node\_modules/.pnpm/svelte@4.2.18/node\_modules/svelte/types/index.d.ts:111
+node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:111
 
-***
+---
 
-### $inject\_state()
+### $inject_state()
 
 ```ts
 $inject_state(): void
@@ -206,9 +213,9 @@ $inject_state(): void
 
 #### Defined in
 
-node\_modules/.pnpm/svelte@4.2.18/node\_modules/svelte/types/index.d.ts:169
+node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:169
 
-***
+---
 
 ### $on()
 
@@ -218,7 +225,7 @@ $on<K>(type, callback): () => void
 
 #### Type Parameters
 
-• **K** *extends* `string`
+• **K** _extends_ `string`
 
 #### Parameters
 
@@ -240,9 +247,9 @@ $on<K>(type, callback): () => void
 
 #### Defined in
 
-node\_modules/.pnpm/svelte@4.2.18/node\_modules/svelte/types/index.d.ts:113
+node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:113
 
-***
+---
 
 ### $set()
 
@@ -264,4 +271,4 @@ $set(props): void
 
 #### Defined in
 
-node\_modules/.pnpm/svelte@4.2.18/node\_modules/svelte/types/index.d.ts:115
+node_modules/.pnpm/svelte@4.2.18/node_modules/svelte/types/index.d.ts:115

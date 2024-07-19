@@ -6,7 +6,13 @@ title: createInfiniteQuery
 # Function: createInfiniteQuery()
 
 ```ts
-function createInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options, queryClient?): CreateInfiniteQueryResult<TData, TError>
+function createInfiniteQuery<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+>(options, queryClient?): CreateInfiniteQueryResult<TData, TError>
 ```
 
 ## Type Parameters
@@ -17,7 +23,7 @@ function createInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>
 
 • **TData** = `InfiniteData`\<`TQueryFnData`, `unknown`\>
 
-• **TQueryKey** *extends* `QueryKey` = `QueryKey`
+• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
 
 • **TPageParam** = `unknown`
 

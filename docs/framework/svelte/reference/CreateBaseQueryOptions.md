@@ -21,7 +21,7 @@ Options for createBaseQuery
 
 • **TQueryData** = `TQueryFnData`
 
-• **TQueryKey** *extends* `QueryKey` = `QueryKey`
+• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
 
 ## Defined in
 

@@ -13,11 +13,11 @@ QueriesOptions reducer recursively unwraps function arguments to infer/enforce t
 
 ## Type Parameters
 
-• **T** *extends* `any`[]
+• **T** _extends_ `any`[]
 
-• **TResult** *extends* `any`[] = []
+• **TResult** _extends_ `any`[] = []
 
-• **TDepth** *extends* `ReadonlyArray`\<`number`\> = []
+• **TDepth** _extends_ `ReadonlyArray`\<`number`\> = []
 
 ## Defined in
 

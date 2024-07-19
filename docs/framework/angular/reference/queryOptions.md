@@ -12,15 +12,15 @@ The `queryKey` will be tagged with the type from `queryFn`.
 **Example**
 
 ```ts
- const { queryKey } = queryOptions({
-    queryKey: ['key'],
-    queryFn: () => Promise.resolve(5),
-    //  ^?  Promise<number>
-  })
+const { queryKey } = queryOptions({
+  queryKey: ['key'],
+  queryFn: () => Promise.resolve(5),
+  //  ^?  Promise<number>
+})
 
-  const queryClient = new QueryClient()
-  const data = queryClient.getQueryData(queryKey)
-  //    ^?  number | undefined
+const queryClient = new QueryClient()
+const data = queryClient.getQueryData(queryKey)
+//    ^?  number | undefined
 ```
 
 ## Param
@@ -30,7 +30,9 @@ The query options to tag with the type from `queryFn`.
 ## queryOptions(options)
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & object
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(
+  options,
+): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & object
 ```
 
 Allows to share and re-use query options in a type-safe way.
@@ -40,15 +42,15 @@ The `queryKey` will be tagged with the type from `queryFn`.
 **Example**
 
 ```ts
- const { queryKey } = queryOptions({
-    queryKey: ['key'],
-    queryFn: () => Promise.resolve(5),
-    //  ^?  Promise<number>
-  })
+const { queryKey } = queryOptions({
+  queryKey: ['key'],
+  queryFn: () => Promise.resolve(5),
+  //  ^?  Promise<number>
+})
 
-  const queryClient = new QueryClient()
-  const data = queryClient.getQueryData(queryKey)
-  //    ^?  number | undefined
+const queryClient = new QueryClient()
+const data = queryClient.getQueryData(queryKey)
+//    ^?  number | undefined
 ```
 
 ### Type Parameters
@@ -59,7 +61,7 @@ The `queryKey` will be tagged with the type from `queryFn`.
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** *extends* `QueryKey` = `QueryKey`
+• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
 
 ### Parameters
 
@@ -80,7 +82,9 @@ The tagged query options.
 ## queryOptions(options)
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & object
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(
+  options,
+): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & object
 ```
 
 Allows to share and re-use query options in a type-safe way.
@@ -90,15 +94,15 @@ The `queryKey` will be tagged with the type from `queryFn`.
 **Example**
 
 ```ts
- const { queryKey } = queryOptions({
-    queryKey: ['key'],
-    queryFn: () => Promise.resolve(5),
-    //  ^?  Promise<number>
-  })
+const { queryKey } = queryOptions({
+  queryKey: ['key'],
+  queryFn: () => Promise.resolve(5),
+  //  ^?  Promise<number>
+})
 
-  const queryClient = new QueryClient()
-  const data = queryClient.getQueryData(queryKey)
-  //    ^?  number | undefined
+const queryClient = new QueryClient()
+const data = queryClient.getQueryData(queryKey)
+//    ^?  number | undefined
 ```
 
 ### Type Parameters
@@ -109,7 +113,7 @@ The `queryKey` will be tagged with the type from `queryFn`.
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** *extends* `QueryKey` = `QueryKey`
+• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
 
 ### Parameters
 

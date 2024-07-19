@@ -6,7 +6,22 @@ title: infiniteQueryOptions
 # Function: infiniteQueryOptions()
 
 ```ts
-function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey, TPageParam>
+function infiniteQueryOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+>(
+  options,
+): CreateInfiniteQueryOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryFnData,
+  TQueryKey,
+  TPageParam
+>
 ```
 
 ## Type Parameters
@@ -17,7 +32,7 @@ function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam
 
 • **TData** = `InfiniteData`\<`TQueryFnData`, `unknown`\>
 
-• **TQueryKey** *extends* `QueryKey` = `QueryKey`
+• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
 
 • **TPageParam** = `unknown`
 

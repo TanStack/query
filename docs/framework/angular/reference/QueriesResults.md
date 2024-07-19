@@ -13,11 +13,11 @@ QueriesResults reducer recursively maps type param to results
 
 ## Type Parameters
 
-• **T** *extends* `any`[]
+• **T** _extends_ `any`[]
 
-• **TResult** *extends* `any`[] = []
+• **TResult** _extends_ `any`[] = []
 
-• **TDepth** *extends* `ReadonlyArray`\<`number`\> = []
+• **TDepth** _extends_ `ReadonlyArray`\<`number`\> = []
 
 ## Defined in
 

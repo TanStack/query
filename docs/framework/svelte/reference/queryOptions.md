@@ -8,7 +8,9 @@ title: queryOptions
 ## queryOptions(options)
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & object
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(
+  options,
+): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & object
 ```
 
 ### Type Parameters
@@ -19,7 +21,7 @@ function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): Undefine
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** *extends* `QueryKey` = `QueryKey`
+• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
 
 ### Parameters
 
@@ -36,7 +38,9 @@ function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): Undefine
 ## queryOptions(options)
 
 ```ts
-function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & object
+function queryOptions<TQueryFnData, TError, TData, TQueryKey>(
+  options,
+): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & object
 ```
 
 ### Type Parameters
@@ -47,7 +51,7 @@ function queryOptions<TQueryFnData, TError, TData, TQueryKey>(options): DefinedI
 
 • **TData** = `TQueryFnData`
 
-• **TQueryKey** *extends* `QueryKey` = `QueryKey`
+• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
 
 ### Parameters
 

@@ -8,8 +8,9 @@ title: injectQueryClient
 Injects the `QueryClient` instance into the component or service.
 
 **Example**
+
 ```ts
-const queryClient = injectQueryClient();
+const queryClient = injectQueryClient()
 ```
 
 ## injectQueryClient()
@@ -21,8 +22,9 @@ function injectQueryClient(): QueryClient
 Injects the `QueryClient` instance into the component or service.
 
 **Example**
+
 ```ts
-const queryClient = injectQueryClient();
+const queryClient = injectQueryClient()
 ```
 
 ### Returns
@@ -42,8 +44,9 @@ function injectQueryClient(injectOptions): QueryClient
 Injects the `QueryClient` instance into the component or service.
 
 **Example**
+
 ```ts
-const queryClient = injectQueryClient();
+const queryClient = injectQueryClient()
 ```
 
 ### Parameters
@@ -67,8 +70,9 @@ function injectQueryClient(injectOptions): null | QueryClient
 Injects the `QueryClient` instance into the component or service.
 
 **Example**
+
 ```ts
-const queryClient = injectQueryClient();
+const queryClient = injectQueryClient()
 ```
 
 ### Parameters

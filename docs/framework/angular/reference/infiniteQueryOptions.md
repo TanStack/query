@@ -16,7 +16,22 @@ The infinite query options to tag with the type from `queryFn`.
 ## infiniteQueryOptions(options)
 
 ```ts
-function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object
+function infiniteQueryOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+>(
+  options,
+): UndefinedInitialDataInfiniteOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam
+> &
+  object
 ```
 
 Allows to share and re-use infinite query options in a type-safe way.
@@ -31,7 +46,7 @@ The `queryKey` will be tagged with the type from `queryFn`.
 
 • **TData** = `InfiniteData`\<`TQueryFnData`, `unknown`\>
 
-• **TQueryKey** *extends* `QueryKey` = `QueryKey`
+• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
 
 • **TPageParam** = `unknown`
 
@@ -54,7 +69,22 @@ The tagged infinite query options.
 ## infiniteQueryOptions(options)
 
 ```ts
-function infiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>(options): DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & object
+function infiniteQueryOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam,
+>(
+  options,
+): DefinedInitialDataInfiniteOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam
+> &
+  object
 ```
 
 Allows to share and re-use infinite query options in a type-safe way.
@@ -69,7 +99,7 @@ The `queryKey` will be tagged with the type from `queryFn`.
 
 • **TData** = `InfiniteData`\<`TQueryFnData`, `unknown`\>
 
-• **TQueryKey** *extends* `QueryKey` = `QueryKey`
+• **TQueryKey** _extends_ `QueryKey` = `QueryKey`
 
 • **TPageParam** = `unknown`
 

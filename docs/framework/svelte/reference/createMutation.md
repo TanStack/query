@@ -6,7 +6,10 @@ title: createMutation
 # Function: createMutation()
 
 ```ts
-function createMutation<TData, TError, TVariables, TContext>(options, queryClient?): CreateMutationResult<TData, TError, TVariables, TContext>
+function createMutation<TData, TError, TVariables, TContext>(
+  options,
+  queryClient?,
+): CreateMutationResult<TData, TError, TVariables, TContext>
 ```
 
 ## Type Parameters

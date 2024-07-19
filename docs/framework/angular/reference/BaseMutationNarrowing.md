@@ -35,7 +35,7 @@ isError: (this) => this is CreateMutationResult<TData, TError, TVariables, TCont
 
 [types.ts:248](https://github.com/TanStack/query/blob/27861961bbb36e9bc25fcd45cff21b5645f02f9b/packages/angular-query-experimental/src/types.ts#L248)
 
-***
+---
 
 ### isIdle()
 
@@ -55,7 +55,7 @@ isIdle: (this) => this is CreateMutationResult<TData, TError, TVariables, TConte
 
 [types.ts:278](https://github.com/TanStack/query/blob/27861961bbb36e9bc25fcd45cff21b5645f02f9b/packages/angular-query-experimental/src/types.ts#L278)
 
-***
+---
 
 ### isPending()
 
@@ -75,7 +75,7 @@ isPending: (this) => this is CreateMutationResult<TData, TError, TVariables, TCo
 
 [types.ts:263](https://github.com/TanStack/query/blob/27861961bbb36e9bc25fcd45cff21b5645f02f9b/packages/angular-query-experimental/src/types.ts#L263)
 
-***
+---
 
 ### isSuccess()
 
