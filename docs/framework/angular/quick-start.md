@@ -43,7 +43,7 @@ export class AppModule {}
 
 ### Component with query and mutation
 
-```ts
+```angular-ts
 import { Component, Injectable, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { lastValueFrom } from 'rxjs'

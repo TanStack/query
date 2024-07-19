@@ -22,7 +22,7 @@ const result = injectQuery(() => ({
 [//]: # 'Example'
 [//]: # 'Example2'
 
-```ts
+```angular-ts
 @Component({
   selector: 'pagination-example',
   template: `
