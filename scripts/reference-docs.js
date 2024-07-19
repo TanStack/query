@@ -27,6 +27,18 @@ const options = {
 /** @type {Array<{name: string, entryPoints: Array<string>, tsconfig: string, outputDir: string, exclude?: Array<string>}>} */
 const packages = [
   {
+    name: 'angular-query-experimental',
+    entryPoints: [
+      resolve(__dirname, '../packages/angular-query-experimental/src/index.ts'),
+    ],
+    tsconfig: resolve(
+      __dirname,
+      '../packages/angular-query-experimental/tsconfig.json',
+    ),
+    outputDir: resolve(__dirname, '../docs/framework/angular/reference'),
+    exclude: ['./packages/query-core/**/*'],
+  },
+  {
     name: 'svelte-query',
     entryPoints: [resolve(__dirname, '../packages/svelte-query/src/index.ts')],
     tsconfig: resolve(__dirname, '../packages/svelte-query/tsconfig.json'),

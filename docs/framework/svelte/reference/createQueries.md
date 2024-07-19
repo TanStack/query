@@ -1,0 +1,34 @@
+---
+id: createQueries
+title: createQueries
+---
+
+# Function: createQueries()
+
+```ts
+function createQueries<T, TCombinedResult>(__namedParameters, queryClient?): Readable<TCombinedResult>
+```
+
+## Type Parameters
+
+• **T** *extends* `any`[]
+
+• **TCombinedResult** = `T` *extends* [] ? [] : `T` *extends* [`Head`] ? [`GetResults`\<`Head`\>] : `T` *extends* [`Head`, `...Tail[]`] ? [`...Tail[]`] *extends* [] ? [] : [`...Tail[]`] *extends* [`Head`] ? [`GetResults`\<`Head`\>, `GetResults`\<`Head`\>] : [`...Tail[]`] *extends* [`Head`, `...Tail[]`] ? [`...Tail[]`] *extends* [] ? [] : [`...Tail[]`] *extends* [`Head`] ? [`GetResults`\<`Head`\>, `GetResults`\<`Head`\>, `GetResults`\<`Head`\>] : [`...Tail[]`] *extends* [`Head`, `...Tail[]`] ? [`...(...)[]`] *extends* [] ? [] : ... *extends* ... ? ... : ... : [`...(...)[]`] *extends* ...[] ? ...[] : ...[] : [`...Tail[]`] *extends* `QueryObserverOptionsForCreateQueries`\<`TQueryFnData`, `TError`, `TData`, `any`\>[] ? `QueryObserverResult`\<`unknown` *extends* `TData` ? `TQueryFnData` : `TData`, `unknown` *extends* `TError` ? `Error` : `TError`\>[] : `QueryObserverResult`[] : `T` *extends* `QueryObserverOptionsForCreateQueries`\<`TQueryFnData`, `TError`, `TData`, `any`\>[] ? `QueryObserverResult`\<`unknown` *extends* `TData` ? `TQueryFnData` : `TData`, `unknown` *extends* `TError` ? `Error` : `TError`\>[] : `QueryObserverResult`[]
+
+## Parameters
+
+• **\_\_namedParameters**
+
+• **\_\_namedParameters.combine?**
+
+• **\_\_namedParameters.queries?**: [`StoreOrVal`](StoreOrVal.md)\<[`...(T extends [] ? [] : T extends [Head] ? [GetOptions<Head>] : T extends [Head, ...Tail[]] ? [...Tail[]] extends [] ? [] : [...Tail[]] extends [Head] ? [GetOptions<Head>, GetOptions<Head>] : [...Tail[]] extends [Head, ...Tail[]] ? [...(...)[]] extends [] ? [] : (...) extends (...) ? (...) : (...) : readonly (...)[] extends [...(...)[]] ? [...(...)[]] : (...) extends (...) ? (...) : (...) : readonly unknown[] extends T ? T : T extends QueryObserverOptionsForCreateQueries<TQueryFnData, TError, TData, TQueryKey>[] ? QueryObserverOptionsForCreateQueries<TQueryFnData, TError, TData, TQueryKey>[] : QueryObserverOptionsForCreateQueries<unknown, Error, unknown, QueryKey>[])[]`]\>
+
+• **queryClient?**: `QueryClient`
+
+## Returns
+
+`Readable`\<`TCombinedResult`\>
+
+## Defined in
+
+[packages/svelte-query/src/createQueries.ts:186](https://github.com/TanStack/query/blob/27861961bbb36e9bc25fcd45cff21b5645f02f9b/packages/svelte-query/src/createQueries.ts#L186)
