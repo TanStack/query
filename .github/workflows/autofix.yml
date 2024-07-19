@@ -2,6 +2,8 @@ name: autofix.ci # needed to securely identify the workflow
 
 on:
   pull_request:
+  push:
+    branches: [main, alpha, beta, rc, v4]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
