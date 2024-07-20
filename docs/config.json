@@ -747,11 +747,20 @@
             },
             {
               "label": "Functions / createQuery",
-              "to": "framework/svelte/reference/createquery"
+              "to": "framework/svelte/reference/createQuery"
             },
             {
               "label": "Functions / createMutation",
-              "to": "framework/svelte/reference/createmutation"
+              "to": "framework/svelte/reference/createMutation"
+            }
+          ]
+        },
+        {
+          "label": "angular",
+          "children": [
+            {
+              "label": "Angular Reference",
+              "to": "framework/angular/reference/index"
             }
           ]
         }

@@ -97,13 +97,10 @@ await publish({
     main: {
       prerelease: false,
     },
-    next: {
+    alpha: {
       prerelease: true,
     },
     beta: {
-      prerelease: true,
-    },
-    alpha: {
       prerelease: true,
     },
     rc: {

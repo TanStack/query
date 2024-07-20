@@ -7,7 +7,7 @@ replace: { 'useQuery': 'injectQuery' }
 
 [//]: # 'Example'
 
-```ts
+```angular-ts
 @Component({
   selector: 'todos',
   template: `<div>
@@ -44,7 +44,7 @@ export class TodosComponent {
 [//]: # 'Example'
 [//]: # 'Example2'
 
-```ts
+```angular-ts
 @Component({
   selector: 'todos',
   template: `
@@ -69,7 +69,7 @@ export class TodosComponent {
 [//]: # 'Example2'
 [//]: # 'Example3'
 
-```ts
+```angular-ts
 @Component({
   selector: 'todos',
   template: `
