@@ -1,6 +1,13 @@
-import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { describe, expectTypeOf, test } from 'vitest'
-import { queryOptions } from '../../src/queryOptions'
+import { get } from 'svelte/store'
+import {
+  QueriesObserver,
+  QueryClient,
+  dataTagSymbol,
+  skipToken,
+} from '@tanstack/query-core'
+import { createQueries, queryOptions } from '../../src/index'
+import type { QueryObserverResult } from '@tanstack/query-core'
 
 describe('queryOptions', () => {
   test('Should not allow excess properties', () => {
@@ -31,6 +38,19 @@ describe('queryOptions', () => {
 
     const data = await new QueryClient().fetchQuery(options)
     expectTypeOf(data).toEqualTypeOf<number>()
+  })
+
+  test('Should work when passed to createQueries', () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
+    })
+
+    const queries = createQueries({
+      queries: [options],
+    })
+
+    expectTypeOf(get(queries)[0].data).toEqualTypeOf<number | undefined>()
   })
 
   test('Should tag the queryKey with the result type of the QueryFn', () => {
@@ -142,5 +162,18 @@ describe('queryOptions', () => {
     const queryClient = new QueryClient()
     const data = queryClient.getQueryData(options.queryKey)
     expectTypeOf(data).toEqualTypeOf<unknown>()
+  })
+
+  test('Should return the proper type when passed to QueriesObserver', () => {
+    const options = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
+    })
+
+    const queryClient = new QueryClient()
+    const queriesObserver = new QueriesObserver(queryClient, [options])
+    expectTypeOf(queriesObserver).toEqualTypeOf<
+      QueriesObserver<Array<QueryObserverResult>>
+    >()
   })
 })
