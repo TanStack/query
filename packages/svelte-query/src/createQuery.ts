@@ -17,9 +17,7 @@ export function createQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: StoreOrVal<
-    DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
-  >,
+  options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
 ): DefinedCreateQueryResult<TData, TError>
 
@@ -29,9 +27,7 @@ export function createQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: StoreOrVal<
-    UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
-  >,
+  options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
 ): CreateQueryResult<TData, TError>
 
@@ -46,7 +42,7 @@ export function createQuery<
 ): CreateQueryResult<TData, TError>
 
 export function createQuery(
-  options: StoreOrVal<CreateQueryOptions>,
+  options: CreateQueryOptions,
   queryClient?: QueryClient,
 ) {
   return createBaseQuery(options, QueryObserver, queryClient)

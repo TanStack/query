@@ -1,5 +1,4 @@
 import { describe, expectTypeOf, test } from 'vitest'
-import { get } from 'svelte/store'
 import { skipToken } from '@tanstack/query-core'
 import { createQueries, queryOptions } from '../../src/index'
 import type { OmitKeyof, QueryObserverResult } from '@tanstack/query-core'
@@ -20,7 +19,7 @@ describe('createQueries', () => {
     })
     const queryResults = createQueries({ queries: [options] })
 
-    const data = get(queryResults)[0].data
+    const data = queryResults[0].data
 
     expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
   })
@@ -43,7 +42,7 @@ describe('createQueries', () => {
     }
 
     const query = useCustomQueries()
-    const data = get(query)[0].data
+    const data = query[0].data
 
     expectTypeOf(data).toEqualTypeOf<Data | undefined>()
   })
@@ -58,7 +57,7 @@ describe('createQueries', () => {
       ],
     })
 
-    const firstResult = get(queryResults)[0]
+    const firstResult = queryResults[0]
 
     expectTypeOf(firstResult).toEqualTypeOf<
       QueryObserverResult<number, Error>

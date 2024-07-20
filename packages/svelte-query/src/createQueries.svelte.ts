@@ -24,7 +24,7 @@ type QueryObserverOptionsForCreateQueries<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = Omit<
+> = OmitKeyof<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
   'placeholderData'
 > & {
@@ -58,31 +58,20 @@ type GetQueryObserverOptionsForCreateQueries<T> =
               ? QueryObserverOptionsForCreateQueries<TQueryFnData>
               : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
                 T extends {
-                    queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
+                    queryFn?:
+                      | QueryFunction<infer TQueryFnData, infer TQueryKey>
+                      | SkipTokenForUseQueries
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? QueryObserverOptionsForCreateQueries<
                     TQueryFnData,
-                    TError,
-                    TData,
+                    unknown extends TError ? DefaultError : TError,
+                    unknown extends TData ? TQueryFnData : TData,
                     TQueryKey
                   >
-                : T extends {
-                      queryFn?: QueryFunction<
-                        infer TQueryFnData,
-                        infer TQueryKey
-                      >
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
-                    }
-                  ? QueryObserverOptionsForCreateQueries<
-                      TQueryFnData,
-                      TError,
-                      TQueryFnData,
-                      TQueryKey
-                    >
-                  : // Fallback
-                    QueryObserverOptionsForCreateQueries
+                : // Fallback
+                  QueryObserverOptionsForCreateQueries
 
 // A defined initialData setting should return a DefinedQueryObserverResult rather than CreateQueryResult
 type GetDefinedOrUndefinedQueryResult<T, TData, TError = unknown> = T extends {
@@ -118,7 +107,9 @@ type GetCreateQueryResult<T> =
               ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData>
               : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
                 T extends {
-                    queryFn?: QueryFunction<infer TQueryFnData, any>
+                    queryFn?:
+                      | QueryFunction<infer TQueryFnData, any>
+                      | SkipTokenForUseQueries
                     select?: (data: any) => infer TData
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
@@ -127,16 +118,8 @@ type GetCreateQueryResult<T> =
                     unknown extends TData ? TQueryFnData : TData,
                     unknown extends TError ? DefaultError : TError
                   >
-                : T extends {
-                      queryFn?: QueryFunction<infer TQueryFnData, any>
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
-                    }
-                  ? QueryObserverResult<
-                      TQueryFnData,
-                      unknown extends TError ? DefaultError : TError
-                    >
-                  : // Fallback
-                    QueryObserverResult
+                : // Fallback
+                  QueryObserverResult
 
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
@@ -157,7 +140,7 @@ export type QueriesOptions<
             [...TResults, GetQueryObserverOptionsForCreateQueries<Head>],
             [...TDepth, 1]
           >
-        : Array<unknown> extends T
+        : ReadonlyArray<unknown> extends T
           ? T
           : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
             // use this to infer the param types in the case of Array.map() argument
