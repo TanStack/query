@@ -27,7 +27,7 @@ export type CreateBaseQueryOptions<
   Omit<
     QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
     'queryKey' | 'enabled'
-  > & { enabled?: FnOrVal<boolean>; queryKey: FnOrVal<QueryKey> }
+  > & { enabled?: FnOrVal<boolean>; queryKey: FnOrVal<TQueryKey> }
 >
 
 /** Result from createBaseQuery */
@@ -69,7 +69,7 @@ export type CreateInfiniteQueryOptions<
       TPageParam
     >,
     'queryKey' | 'enabled'
-  > & { enabled?: FnOrVal<boolean>; queryKey: FnOrVal<QueryKey> }
+  > & { enabled?: FnOrVal<boolean>; queryKey: FnOrVal<TQueryKey> }
 >
 
 /** Result from createInfiniteQuery */

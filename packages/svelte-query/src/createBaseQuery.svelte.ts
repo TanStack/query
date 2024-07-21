@@ -35,19 +35,14 @@ export function createBaseQuery<
   /** Creates a store that has the default options applied */
   function updateOptions() {
     const key = optionsStore().queryKey
-    const keyFn = typeof key === 'function' ? key : () => key //alow query-key and enable to be a function
-    const queryKey = JSON.parse(
-      JSON.stringify(keyFn() ?? '') ?? JSON.stringify({}),
-    ) // remove proxy
-
+    const keyFn = typeof key === 'function' ? key : () => key //allow query-key and enable to be a function
+    const queryKey = $state.snapshot(keyFn()) //remove proxy prevent reactive query  in devTools
+    let tempEnable = optionsStore().enabled
     const defaultedOptions = client.defaultQueryOptions({
       ...optionsStore(),
-      queryKey: queryKey, // prevent reactive query  in devTools,
-      enabled:
-        typeof optionsStore().enabled == 'function'
-          ? // @ts-expect-error
-            optionsStore().enabled()
-          : optionsStore().enabled,
+      //@ts-expect-error $state.Snapshot<TQuery>
+      queryKey: queryKey,
+      enabled: typeof tempEnable == 'function' ? tempEnable() : tempEnable,
     })
     defaultedOptions._optimisticResults = 'optimistic'
     if (isRestoring()) {
