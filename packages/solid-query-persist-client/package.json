@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query-persist-client",
-  "version": "5.48.0",
+  "version": "5.51.9",
   "description": "Solid.js bindings to work with persisters in TanStack/solid-query",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -13,6 +13,19 @@
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "scripts": {
+    "clean": "rimraf ./build && rimraf ./coverage",
+    "test:eslint": "eslint ./src",
+    "test:types": "pnpm run \"/^test:types:ts[0-9]{2}$/\"",
+    "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js",
+    "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js",
+    "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js",
+    "test:types:ts53": "tsc",
+    "test:lib": "vitest",
+    "test:lib:dev": "pnpm run test:lib --watch",
+    "test:build": "publint --strict && attw --pack",
+    "build": "tsup"
   },
   "type": "module",
   "types": "./build/index.d.ts",
@@ -43,30 +56,17 @@
     "build",
     "src"
   ],
-  "scripts": {
-    "clean": "rimraf ./build && rimraf ./coverage",
-    "test:eslint": "eslint ./src",
-    "test:types": "pnpm run \"/^test:types:ts[0-9]{2}$/\"",
-    "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js",
-    "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js",
-    "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js",
-    "test:types:ts53": "tsc",
-    "test:lib": "vitest",
-    "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict",
-    "test:attw": "attw --pack",
-    "build": "tsup"
-  },
   "dependencies": {
     "@tanstack/query-persist-client-core": "workspace:*"
   },
   "devDependencies": {
+    "@tanstack/solid-query": "workspace:*",
+    "solid-js": "^1.8.17",
     "tsup-preset-solid": "^2.2.0",
-    "vite-plugin-solid": "^2.10.2",
-    "solid-js": "^1.8.17"
+    "vite-plugin-solid": "^2.10.2"
   },
   "peerDependencies": {
-    "@tanstack/solid-query": "workspace:*",
+    "@tanstack/solid-query": "workspace:^",
     "solid-js": "^1.6.0"
   }
 }

@@ -737,6 +737,32 @@
               "to": "framework/solid/reference/createQuery"
             }
           ]
+        },
+        {
+          "label": "svelte",
+          "children": [
+            {
+              "label": "Svelte Reference",
+              "to": "framework/svelte/reference/index"
+            },
+            {
+              "label": "Functions / createQuery",
+              "to": "framework/svelte/reference/createQuery"
+            },
+            {
+              "label": "Functions / createMutation",
+              "to": "framework/svelte/reference/createMutation"
+            }
+          ]
+        },
+        {
+          "label": "angular",
+          "children": [
+            {
+              "label": "Angular Reference",
+              "to": "framework/angular/reference/index"
+            }
+          ]
         }
       ]
     },
@@ -903,7 +929,7 @@
             },
             {
               "label": "Basic",
-              "to": "framework/solid/examples/basic-typescript"
+              "to": "framework/solid/examples/basic"
             },
             {
               "label": "Basic w/ GraphQL-Request",

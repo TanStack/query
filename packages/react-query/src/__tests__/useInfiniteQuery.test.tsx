@@ -920,11 +920,10 @@ describe('useInfiniteQuery', () => {
   it('should silently cancel an ongoing fetchNextPage request when another fetchNextPage is invoked', async () => {
     const key = queryKey()
     const start = 10
-    const onAborts: Array<Mock<any, any>> = []
-    const abortListeners: Array<Mock<any, any>> = []
+    const onAborts: Array<Mock<(...args: Array<any>) => any>> = []
+    const abortListeners: Array<Mock<(...args: Array<any>) => any>> = []
     const fetchPage = vi.fn<
-      [QueryFunctionContext<typeof key, number>],
-      Promise<number>
+      (context: QueryFunctionContext<typeof key, number>) => Promise<number>
     >(async ({ pageParam, signal }) => {
       const onAbort = vi.fn()
       const abortListener = vi.fn()
@@ -996,11 +995,10 @@ describe('useInfiniteQuery', () => {
   it('should not cancel an ongoing fetchNextPage request when another fetchNextPage is invoked if `cancelRefetch: false` is used ', async () => {
     const key = queryKey()
     const start = 10
-    const onAborts: Array<Mock<any, any>> = []
-    const abortListeners: Array<Mock<any, any>> = []
+    const onAborts: Array<Mock<(...args: Array<any>) => any>> = []
+    const abortListeners: Array<Mock<(...args: Array<any>) => any>> = []
     const fetchPage = vi.fn<
-      [QueryFunctionContext<typeof key, number>],
-      Promise<number>
+      (context: QueryFunctionContext<typeof key, number>) => Promise<number>
     >(async ({ pageParam, signal }) => {
       const onAbort = vi.fn()
       const abortListener = vi.fn()

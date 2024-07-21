@@ -8,7 +8,7 @@ replace:
 
 [//]: # 'Example'
 
-```ts
+```angular-ts
 import { Component, computed, inject } from '@angular/core'
 import { injectInfiniteQuery } from '@tanstack/angular-query-experimental'
 import { lastValueFrom } from 'rxjs'
@@ -48,7 +48,7 @@ export class Example {
 }
 ```
 
-```html
+```angular-html
 <div>
   @if (query.isPending()) {
   <p>Loading...</p>
@@ -70,7 +70,7 @@ export class Example {
 [//]: # 'Example'
 [//]: # 'Example1'
 
-```ts
+```angular-ts
 @Component({
   template: ` <list-component (endReached)="fetchNextPage()" /> `,
 })

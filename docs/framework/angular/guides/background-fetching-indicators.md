@@ -6,7 +6,7 @@ ref: docs/framework/react/guides/background-fetching-indicators.md
 
 [//]: # 'Example'
 
-```ts
+```angular-ts
 @Component({
   selector: 'posts',
   template: `
@@ -39,7 +39,7 @@ export class TodosComponent {
 [//]: # 'Example'
 [//]: # 'Example2'
 
-```ts
+```angular-ts
 import { injectIsFetching } from '@tanstack/angular-query-experimental'
 
 @Component({

@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query",
-  "version": "5.48.0",
+  "version": "5.51.11",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -13,6 +13,24 @@
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "scripts": {
+    "clean": "rimraf ./build && rimraf ./coverage",
+    "test:eslint": "eslint ./src",
+    "test:types": "pnpm run \"/^test:types:ts[0-9]{2}$/\"",
+    "test:types:ts47": "node ../../node_modules/typescript47/lib/tsc.js -p tsconfig.legacy.json",
+    "test:types:ts48": "node ../../node_modules/typescript48/lib/tsc.js -p tsconfig.legacy.json",
+    "test:types:ts49": "node ../../node_modules/typescript49/lib/tsc.js -p tsconfig.legacy.json",
+    "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js -p tsconfig.legacy.json",
+    "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js -p tsconfig.legacy.json",
+    "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js -p tsconfig.legacy.json",
+    "test:types:ts53": "tsc",
+    "test:lib": "vitest --retry=3",
+    "test:lib:dev": "pnpm run test:lib --watch",
+    "test:build": "publint --strict && attw --pack",
+    "build": "pnpm build:tsup && pnpm build:codemods",
+    "build:tsup": "tsup",
+    "build:codemods": "cpy ../query-codemods/* ./build/codemods"
   },
   "type": "module",
   "types": "build/legacy/index.d.ts",
@@ -32,25 +50,6 @@
     "./package.json": "./package.json"
   },
   "sideEffects": false,
-  "scripts": {
-    "clean": "rimraf ./build && rimraf ./coverage",
-    "test:eslint": "eslint ./src",
-    "test:types": "pnpm run \"/^test:types:ts[0-9]{2}$/\"",
-    "test:types:ts47": "node ../../node_modules/typescript47/lib/tsc.js -p tsconfig.legacy.json",
-    "test:types:ts48": "node ../../node_modules/typescript48/lib/tsc.js -p tsconfig.legacy.json",
-    "test:types:ts49": "node ../../node_modules/typescript49/lib/tsc.js -p tsconfig.legacy.json",
-    "test:types:ts50": "node ../../node_modules/typescript50/lib/tsc.js -p tsconfig.legacy.json",
-    "test:types:ts51": "node ../../node_modules/typescript51/lib/tsc.js -p tsconfig.legacy.json",
-    "test:types:ts52": "node ../../node_modules/typescript52/lib/tsc.js -p tsconfig.legacy.json",
-    "test:types:ts53": "tsc",
-    "test:lib": "vitest --retry=3",
-    "test:lib:dev": "pnpm run test:lib --watch",
-    "test:build": "publint --strict",
-    "test:attw": "attw --pack",
-    "build": "pnpm build:tsup && pnpm build:codemods",
-    "build:tsup": "tsup",
-    "build:codemods": "cpy ../query-codemods/* ./build/codemods"
-  },
   "files": [
     "build",
     "src",
@@ -65,7 +64,7 @@
   "devDependencies": {
     "@types/react": "npm:types-react@rc",
     "@types/react-dom": "npm:types-react-dom@rc",
-    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-react": "^4.3.1",
     "eslint-plugin-react-compiler": "^0.0.0-experimental-c8b3f72-20240517",
     "react": "19.0.0-rc-4c2e457c7c-20240522",
     "react-dom": "19.0.0-rc-4c2e457c7c-20240522",

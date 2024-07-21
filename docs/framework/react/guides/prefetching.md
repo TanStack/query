@@ -196,7 +196,7 @@ This starts fetching `'article-comments'` immediately and flattens the waterfall
 
 [//]: # 'Suspense'
 
-If you want to prefetch together with Suspense, you will have to do things a bit differently. You can't use `useSuspenseQueries` to prefetch, since the prefetch would block the component from rendering. You also can not use `useQuery` for the prefetch, because that wouldn't start the prefetch until after suspenseful query had resolved. For this scenario, you can use the [`usePrefetchQuery`](../reference/usePrefetchQuery) or the [`usePrefetchInfiniteQuery`](../reference/usePrefetchInfiniteQuery) hooks available in the library.
+If you want to prefetch together with Suspense, you will have to do things a bit differently. You can't use `useSuspenseQueries` to prefetch, since the prefetch would block the component from rendering. You also can not use `useQuery` for the prefetch, because that wouldn't start the prefetch until after suspenseful query had resolved. For this scenario, you can use the [`usePrefetchQuery`](../../reference/usePrefetchQuery) or the [`usePrefetchInfiniteQuery`](../../reference/usePrefetchInfiniteQuery) hooks available in the library.
 
 You can now use `useSuspenseQuery` in the component that actually needs the data. You _might_ want to wrap this later component in its own `<Suspense>` boundary so the "secondary" query we are prefetching does not block rendering of the "primary" data.
 
@@ -378,7 +378,7 @@ Because data fetching in the component tree itself can easily lead to request wa
 
 In this approach, you explicitly declare for each _route_ what data is going to be needed for that component tree, ahead of time. Because Server Rendering has traditionally needed all data to be loaded before rendering starts, this has been the dominating approach for SSR'd apps for a long time. This is still a common approach and you can read more about it in the [Server Rendering & Hydration guide](../ssr).
 
-For now, let's focus on the client side case and look at an example of how you can make this work with [Tanstack Router](https://tanstack.com/router). These examples leave out a lot of setup and boilerplate to stay concise, you can check out a [full React Query example](https://tanstack.com/router/v1/docs/examples/react/with-react-query?file=src%2Fmain.tsx) over in the [Tanstack Router docs](https://tanstack.com/router/v1/docs).
+For now, let's focus on the client side case and look at an example of how you can make this work with [Tanstack Router](https://tanstack.com/router). These examples leave out a lot of setup and boilerplate to stay concise, you can check out a [full React Query example](https://tanstack.com/router/v1/docs/framework/react/examples/basic-react-query-file-based) over in the [Tanstack Router docs](https://tanstack.com/router/v1/docs).
 
 When integrating at the router level, you can choose to either _block_ rendering of that route until all data is present, or you can start a prefetch but not await the result. That way, you can start rendering the route as soon as possible. You can also mix these two approaches and await some critical data, but start rendering before all the secondary data has finished loading. In this example, we'll configure an `/article` route to not render until the article data has finished loading, as well as start prefetching comments as soon as possible, but not block rendering the route if comments haven't finished loading yet.
 

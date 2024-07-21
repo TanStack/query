@@ -365,7 +365,9 @@ With the prefetching patterns described above, React Query is perfectly compatib
 
 As of React Query v5.40.0, you don't have to `await` all prefetches for this to work, as `pending` Queries can also be dehydrated and sent to the client. This lets you kick off prefetches as early as possible without letting them block an entire Suspense boundary, and streams the _data_ to the client as the query finishes. This can be useful for example if you want to prefetch some content that is only visible after some user interaction, or say if you want to `await` and render the first page of an infinite query, but start prefetching page 2 without blocking rendering.
 
-To make this work, we have to instruct the `queryClient` to also `dehydrate` pending Queries. We can do this globally, or by passing that option directly to `hydrate`:
+To make this work, we have to instruct the `queryClient` to also `dehydrate` pending Queries. We can do this globally, or by passing that option directly to `hydrate`.
+
+We will also need to move the `getQueryClient()` function out of our `app/providers.jsx` file as we want to use it in our server component and our client provider.
 
 ```tsx
 // app/get-query-client.ts
@@ -378,14 +380,29 @@ function makeQueryClient() {
         staleTime: 60 * 1000,
       },
       dehydrate: {
-        // per default, only successful Queries are included,
-        // this includes pending Queries as well
+        // include pending queries in dehydration
         shouldDehydrateQuery: (query) =>
           defaultShouldDehydrateQuery(query) ||
           query.state.status === 'pending',
       },
     },
   })
+}
+
+let browserQueryClient: QueryClient | undefined = undefined
+
+export function getQueryClient() {
+  if (isServer) {
+    // Server: always make a new query client
+    return makeQueryClient()
+  } else {
+    // Browser: make a new query client if we don't already have one
+    // This is very important, so we don't re-make a new client if React
+    // suspends during the initial render. This may not be needed if we
+    // have a suspense boundary BELOW the creation of the query client
+    if (!browserQueryClient) browserQueryClient = makeQueryClient()
+    return browserQueryClient
+  }
 }
 ```
 
@@ -432,27 +449,28 @@ export default function Posts() {
 
 > Note that you could also `useQuery` instead of `useSuspenseQuery`, and the Promise would still be picked up correctly. However, NextJs won't suspend in that case and the component will render in the `pending` status, which also opts out of server rendering the content.
 
-If you're using non-JSON data types and serialize the query results on the server, you can specify the `hydrate.transformPromise` option to deserialize the data on the client after the promise is resolved, before the data is put into the cache:
+If you're using non-JSON data types and serialize the query results on the server, you can specify the `dehydrate.serializeData` and `hydrate.deserializeData` options to serialize and deserialize the data on each side of the boundary to ensure the data in the cache is the same format both on the server and the client:
 
 ```tsx
 // app/get-query-client.ts
 import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query'
-import { deserialize } from './transformer'
+import { deserialize, serialize } from './transformer'
 
-export function makeQueryClient() {
+function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
-      hydrate: {
-        /**
-         * Called when the query is rebuilt from a prefetched
-         * promise, before the query data is put into the cache.
-         */
-        transformPromise: (promise) => promise.then(deserialize),
-      },
       // ...
+      hydrate: {
+        deserializeData: deserialize,
+      },
+      dehydrate: {
+        serializeData: serialize,
+      },
     },
   })
 }
+
+// ...
 ```
 
 ```tsx
@@ -462,11 +480,12 @@ import {
   HydrationBoundary,
   QueryClient,
 } from '@tanstack/react-query'
+import { getQueryClient } from './get-query-client'
 import { serialize } from './transformer'
 import Posts from './posts'
 
 export default function PostsPage() {
-  const queryClient = new QueryClient()
+  const queryClient = getQueryClient()
 
   // look ma, no await
   queryClient.prefetchQuery({
