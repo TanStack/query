@@ -36,11 +36,10 @@ export function createBaseQuery<
   function updateOptions() {
     const key = optionsStore().queryKey
     const keyFn = typeof key === 'function' ? key : () => key //allow query-key and enable to be a function
-    const queryKey = $state.snapshot(keyFn()) //remove proxy prevent reactive query  in devTools
+    const queryKey: TQueryKey = $state.snapshot(keyFn()) as any //remove proxy prevent reactive query  in devTools
     let tempEnable = optionsStore().enabled
     const defaultedOptions = client.defaultQueryOptions({
       ...optionsStore(),
-      //@ts-expect-error $state.Snapshot<TQuery>
       queryKey: queryKey,
       enabled: typeof tempEnable == 'function' ? tempEnable() : tempEnable,
     })
