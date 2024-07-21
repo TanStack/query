@@ -1,6 +1,6 @@
 import { describe, expectTypeOf } from 'vitest'
-import { injectMutationState } from '../inject-mutation-state'
-import type { MutationState, MutationStatus } from '@tanstack/query-core'
+import { injectMutationState } from '..'
+import type { MutationState, MutationStatus } from '..'
 
 describe('injectMutationState', () => {
   it('should default to QueryState', () => {

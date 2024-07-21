@@ -29,7 +29,7 @@ Floating Mode will mount the devtools as a fixed, floating element in your app a
 
 Place the following code as high in your Angular app as you can. The closer it is to the root of the page, the better it will work!
 
-```ts
+```angular-ts
 import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
 import { Component } from '@angular/core';
 

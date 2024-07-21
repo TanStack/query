@@ -53,7 +53,7 @@
           transition:: {!$todos.isFetching ? 'all .3s ease' : 'none'};
           border-radius: 100%;
           transform: 'scale(2)"
-    />
+    ></span>
   </div>
 </label>
 <h2>Todo List</h2>

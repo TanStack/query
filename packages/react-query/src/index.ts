@@ -15,6 +15,7 @@ export type {
   SuspenseQueriesResults,
   SuspenseQueriesOptions,
 } from './useSuspenseQueries'
+export { usePrefetchQuery, usePrefetchInfiniteQuery } from './prefetch'
 export { queryOptions } from './queryOptions'
 export type {
   DefinedInitialDataOptions,

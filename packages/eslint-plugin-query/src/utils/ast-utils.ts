@@ -219,9 +219,10 @@ export const ASTUtils = {
     )
   },
   getFunctionAncestor(
-    context: Readonly<TSESLint.RuleContext<string, ReadonlyArray<unknown>>>,
+    sourceCode: Readonly<TSESLint.SourceCode>,
+    node: TSESTree.Node,
   ) {
-    for (const ancestor of context.getAncestors()) {
+    for (const ancestor of sourceCode.getAncestors(node)) {
       if (ancestor.type === AST_NODE_TYPES.FunctionDeclaration) {
         return ancestor
       }
@@ -247,10 +248,16 @@ export const ASTUtils = {
   }) {
     const { node, context } = params
 
-    const resolvedNode = context
-      .getScope()
-      .references.find((ref) => ref.identifier === node)?.resolved?.defs[0]
-      ?.node
+    // we need the fallbacks for backwards compat with eslint < 8.37.0
+    // eslint-disable-next-line ts/no-unnecessary-condition
+    const sourceCode = context.sourceCode ?? context.getSourceCode()
+    // eslint-disable-next-line ts/no-unnecessary-condition
+    const scope = context.sourceCode.getScope(node)
+      ? sourceCode.getScope(node)
+      : context.getScope()
+
+    const resolvedNode = scope.references.find((ref) => ref.identifier === node)
+      ?.resolved?.defs[0]?.node
 
     if (resolvedNode?.type !== AST_NODE_TYPES.VariableDeclarator) {
       return null

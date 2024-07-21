@@ -1,4 +1,7 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src/**/*.ts", "src/**/*.tsx", ".eslintrc.cjs", "tsup.config.js"]
+  "compilerOptions": {
+    "moduleResolution": "Bundler"
+  },
+  "include": ["src", "eslint.config.js", "tsup.config.js"]
 }

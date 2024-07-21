@@ -47,6 +47,22 @@ export type QueryFunction<
   TPageParam = never,
 > = (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>
 
+export type StaleTime<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = number | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => number)
+
+export type Enabled<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> =
+  | boolean
+  | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean)
+
 export type QueryPersister<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
@@ -145,7 +161,8 @@ export type NetworkMode = 'online' | 'always' | 'offlineFirst'
 export type NotifyOnChangeProps =
   | Array<keyof InfiniteQueryObserverResult>
   | 'all'
-  | (() => Array<keyof InfiniteQueryObserverResult> | 'all')
+  | undefined
+  | (() => Array<keyof InfiniteQueryObserverResult> | 'all' | undefined)
 
 export interface QueryOptions<
   TQueryFnData = unknown,
@@ -246,16 +263,18 @@ export interface QueryObserverOptions<
     'queryKey'
   > {
   /**
-   * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
+   * Set this to `false` or a function that returns `false` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
+   * Accepts a boolean or function that returns a boolean.
    * Defaults to `true`.
    */
-  enabled?: boolean
+  enabled?: Enabled<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * The time in milliseconds after data is considered stale.
    * If set to `Infinity`, the data will never be considered stale.
+   * If set to a function, the function will be executed with the query to compute a `staleTime`.
    */
-  staleTime?: number
+  staleTime?: StaleTime<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * If set to a number, the query will continuously refetch at this frequency in milliseconds.
    * If set to a function, the function will be executed with the latest data and query to compute a frequency
@@ -427,7 +446,7 @@ export interface FetchQueryOptions<
    * The time in milliseconds after data is considered stale.
    * If the data is fresh it will be returned from the cache.
    */
-  staleTime?: number
+  staleTime?: StaleTime<TQueryFnData, TError, TData, TQueryKey>
 }
 
 export interface EnsureQueryDataOptions<

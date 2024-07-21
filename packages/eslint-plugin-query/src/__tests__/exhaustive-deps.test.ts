@@ -402,6 +402,20 @@ ruleTester.run('exhaustive-deps', rule, {
         }
         `,
     },
+    {
+      name: 'queryFn as a ternary expression with dep and a skipToken',
+      code: normalizeIndent`
+        import { useQuery, skipToken } from "@tanstack/react-query";
+        const fetch = true
+        
+        function Component({ id }) {
+          useQuery({
+              queryKey: [id],
+              queryFn: fetch ? () => Promise.resolve(id) : skipToken
+          })
+        }
+      `,
+    },
   ],
   invalid: [
     {
@@ -680,33 +694,6 @@ ruleTester.run('exhaustive-deps', rule, {
       ],
     },
     {
-      name: 'should fail when a queryKey is a reference of an array expression with a missing dep',
-      code: normalizeIndent`
-        const x = 5;
-        const queryKey = ['foo']
-        useQuery({ queryKey, queryFn: () => x })
-      `,
-      errors: [
-        {
-          messageId: 'missingDeps',
-          data: { deps: 'x' },
-          suggestions: [
-            {
-              messageId: 'fixTo',
-              data: {
-                result: "['foo', x]",
-              },
-              output: normalizeIndent`
-                const x = 5;
-                const queryKey = ['foo', x]
-                useQuery({ queryKey, queryFn: () => x })
-              `,
-            },
-          ],
-        },
-      ],
-    },
-    {
       name: 'should fail when queryKey is a queryKeyFactory while having missing dep',
       code: normalizeIndent`
         const fooQueryKeyFactory = { foo: () => ['foo'] as const }
@@ -752,6 +739,26 @@ ruleTester.run('exhaustive-deps', rule, {
               Promise.resolve(id)
             }
         })
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'id' },
+        },
+      ],
+    },
+    {
+      name: 'should fail if queryFn is a ternary expression with missing dep and a skipToken',
+      code: normalizeIndent`
+        import { useQuery, skipToken } from "@tanstack/react-query";
+        const fetch = true
+        
+        function Component({ id }) {
+          useQuery({
+              queryKey: [],
+              queryFn: fetch ? () => Promise.resolve(id) : skipToken
+          })
+        }
       `,
       errors: [
         {

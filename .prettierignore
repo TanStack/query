@@ -8,3 +8,6 @@
 pnpm-lock.yaml
 packages/**/tsup.config.bundled*.mjs
 **/tsconfig.vitest-temp.json
+
+# API Extractor report
+packages/angular-query-experimental/etc/*.md
