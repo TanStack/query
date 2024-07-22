@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { render, waitFor } from '@testing-library/svelte'
 import { ref } from '../utils.svelte'
 import BaseExample from './BaseExample.svelte'
+import SelectExample from './SelectExample.svelte'
 import type { QueryObserverResult } from '@tanstack/query-core'
 
 describe('createInfiniteQuery', () => {
@@ -88,6 +89,32 @@ describe('createInfiniteQuery', () => {
       refetch: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
+    })
+  })
+
+  test('Select a part of the data', async () => {
+    let states = ref<Array<QueryObserverResult>>([])
+
+    const rendered = render(SelectExample, {
+      props: {
+        states,
+      },
+    })
+
+    await waitFor(() => {
+      expect(rendered.queryByText('count: 1')).toBeInTheDocument()
+    })
+
+    expect(states.value).toHaveLength(2)
+
+    expect(states.value[0]).toMatchObject({
+      data: undefined,
+      isSuccess: false,
+    })
+
+    expect(states.value[1]).toMatchObject({
+      data: { pages: ['count: 1'] },
+      isSuccess: true,
     })
   })
 })
