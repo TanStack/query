@@ -7,7 +7,7 @@ type RuleKey = keyof typeof rules
 interface Plugin extends Omit<ESLint.Plugin, 'rules'> {
   rules: Record<RuleKey, RuleModule<any, any, any>>
   configs: {
-    recommended: ESLint.ConfigData | Linter.FlatConfig
+    recommended: ESLint.ConfigData
     'flat/recommended': Array<Linter.FlatConfig>
   }
 }
