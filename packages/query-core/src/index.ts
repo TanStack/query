@@ -36,7 +36,7 @@ export * from './types'
 export type { QueryState } from './query'
 export { Query } from './query'
 export type { MutationState } from './mutation'
-export { Mutation } from "./mutation"
+export { Mutation } from './mutation'
 export type {
   DehydrateOptions,
   DehydratedState,
