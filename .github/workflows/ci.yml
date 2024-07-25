@@ -23,17 +23,17 @@ permissions:
 jobs:
   test-and-publish:
     name: Test & Publish
-    if: github.repository == 'TanStack/query'
+    if: github.repository_owner == 'TanStack'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.7
         with:
           fetch-depth: 0
       - name: Start Nx Agents
         run: npx nx-cloud start-ci-run --distribute-on=".nx/workflows/dynamic-changesets.yaml"
       - name: Setup Tools
-        uses: tanstack/config/.github/setup@629cd3152485cbe985f5a7e66d370c858132c517
+        uses: tanstack/config/.github/setup@main
       - name: Run Tests
         run: pnpm run test:ci --parallel=3
       - name: Stop Nx Agents
@@ -50,7 +50,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           TAG: ${{ inputs.tag }}
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v4.5.0
         with:
           directory: packages
         env:

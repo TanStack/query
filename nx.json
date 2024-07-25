@@ -23,10 +23,6 @@
     ]
   },
   "targetDefaults": {
-    "test:format": {
-      "cache": true,
-      "inputs": ["{workspaceRoot}/**/*"]
-    },
     "test:knip": {
       "cache": true,
       "inputs": ["{workspaceRoot}/**/*"]
