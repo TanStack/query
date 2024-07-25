@@ -25,7 +25,9 @@ const _isRestoringContextKey = '$$_isRestoring'
 /** Retrieves a `isRestoring` from Svelte's context */
 export const getIsRestoringContext = (): (() => boolean) => {
   try {
-    const isRestoring = getContext<() => boolean>(_isRestoringContextKey)
+    const isRestoring = getContext<(() => boolean) | undefined>(
+      _isRestoringContextKey,
+    )
     return isRestoring ?? (() => false)
   } catch (error) {
     return () => false

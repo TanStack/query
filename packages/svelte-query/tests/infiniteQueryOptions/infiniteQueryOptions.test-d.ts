@@ -45,12 +45,12 @@ describe('queryOptions', () => {
   })
 
   test('Should work when passed to fetchInfiniteQuery', async () => {
-    const options = infiniteQueryOptions({
+    const options = {
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
-    })
+    }
 
     const data = await new QueryClient().fetchInfiniteQuery(options)
 

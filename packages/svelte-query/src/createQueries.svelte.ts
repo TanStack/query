@@ -119,7 +119,7 @@ type GetCreateQueryResult<T> =
                     unknown extends TError ? DefaultError : TError
                   >
                 : // Fallback
-                  QueryObserverResult
+                  never
 
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
@@ -221,13 +221,13 @@ export function createQueries<
   )
 
   const defaultedQueriesStore = $derived(() => {
-    return queriesStore().map((opts: QueryObserverOptions) => {
+    return queriesStore().map((opts) => {
       const defaultedOptions = client.defaultQueryOptions(opts)
       // Make sure the results are already in fetching state before subscribing or updating options
       defaultedOptions._optimisticResults = isRestoring()
         ? 'isRestoring'
         : 'optimistic'
-      return defaultedOptions
+      return defaultedOptions as QueryObserverOptions
     })
   })
   const observer = new QueriesObserver<TCombinedResult>(

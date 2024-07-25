@@ -1,6 +1,5 @@
 import { describe, expectTypeOf, test } from 'vitest'
 import { createQuery, queryOptions } from '../../src/index'
-import type { OmitKeyof } from '@tanstack/query-core'
 import type { CreateQueryOptions } from '../../src/index'
 
 describe('createQuery', () => {
@@ -47,9 +46,7 @@ describe('createQuery', () => {
   test('Allow custom hooks using CreateQueryOptions', () => {
     type Data = string
 
-    const useCustomQuery = (
-      options?: OmitKeyof<CreateQueryOptions<Data>, 'queryKey' | 'queryFn'>,
-    ) => {
+    const useCustomQuery = (options?: CreateQueryOptions<Data>) => {
       return createQuery({
         ...options,
         queryKey: ['todos-key'],

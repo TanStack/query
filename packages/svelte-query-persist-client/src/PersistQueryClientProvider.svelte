@@ -12,6 +12,7 @@
     OmitKeyof,
     QueryClientProviderProps,
   } from '@tanstack/svelte-query'
+
   type PersistQueryClientProviderProps = QueryClientProviderProps & {
     persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
     onSuccess?: () => void

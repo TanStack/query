@@ -1,7 +1,7 @@
 import { describe, expectTypeOf, test } from 'vitest'
 import { skipToken } from '@tanstack/query-core'
 import { createQueries, queryOptions } from '../../src/index'
-import type { OmitKeyof, QueryObserverResult } from '@tanstack/query-core'
+import type { QueryObserverResult } from '@tanstack/query-core'
 import type { CreateQueryOptions } from '../../src/index'
 
 describe('createQueries', () => {
@@ -27,9 +27,7 @@ describe('createQueries', () => {
   test('Allow custom hooks using UseQueryOptions', () => {
     type Data = string
 
-    const useCustomQueries = (
-      options?: OmitKeyof<CreateQueryOptions<Data>, 'queryKey' | 'queryFn'>,
-    ) => {
+    const useCustomQueries = (options?: CreateQueryOptions<Data>) => {
       return createQueries({
         queries: [
           {
