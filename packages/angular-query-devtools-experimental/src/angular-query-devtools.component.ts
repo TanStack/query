@@ -1,10 +1,6 @@
 import { isPlatformBrowser } from '@angular/common'
 import * as queryDevtools from '@tanstack/query-devtools'
 import {
-  injectQueryClient,
-  onlineManager,
-} from '@tanstack/angular-query-experimental'
-import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
@@ -14,7 +10,11 @@ import {
   booleanAttribute,
   inject,
 } from '@angular/core'
-import { QueryClient } from '@tanstack/angular-query-experimental'
+import {
+  QueryClient,
+  injectQueryClient,
+  onlineManager,
+} from '@tanstack/angular-query-experimental'
 import type {
   AfterViewInit,
   OnChanges,
@@ -39,7 +39,9 @@ export class AngularQueryDevtools
   /*
    * It is intentional that there are no default values on inputs.
    * Core devtools will set defaults when values are undefined.
-   * */
+   *
+   * Signal inputs are not used to remain compatible with previous Angular versions.
+   */
 
   /**
    * Add this attribute if you want the dev tools to default to being open

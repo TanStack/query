@@ -2,15 +2,10 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "jsx": "react-jsx",
+    "moduleResolution": "Bundler"
     "paths": {
       "@tanstack/react-query": ["../react-query/src"]
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    ".eslintrc.cjs",
-    "tsup.config.js",
-    "vite.config.ts"
-  ]
+  "include": ["src", "eslint.config.js", "tsup.config.js", "vite.config.ts"]
 }

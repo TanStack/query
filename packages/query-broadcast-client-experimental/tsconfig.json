@@ -1,9 +1,10 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "moduleResolution": "Bundler"
     "paths": {
       "@tanstack/query-core": ["../query-core/src"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", ".eslintrc.cjs", "tsup.config.js"]
+  "include": ["src", "eslint.config.js", "tsup.config.js"]
 }

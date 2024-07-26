@@ -60,11 +60,13 @@ const { data } = useQuery({
 import { useQuery, skipToken } from '@tanstack/vue-query'
 
 const filter = ref('')
-const isEnabled = computed(() => !!filter.value)
+const queryFn = computed(() =>
+  !!filter.value ? () => fetchTodos(filter) : skipToken,
+)
 const { data } = useQuery({
   queryKey: ['todos', filter],
   // ⬇️ disabled as long as the filter is undefined or empty
-  queryFn: filter ? () => fetchTodos(filter) : skipToken,
+  queryFn: queryFn,
 })
 </script>
 

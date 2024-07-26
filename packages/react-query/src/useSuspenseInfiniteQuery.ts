@@ -3,14 +3,12 @@ import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import { defaultThrowOnError } from './suspense'
 import type {
-  InfiniteQueryObserverSuccessResult,
-  QueryObserver,
-} from '@tanstack/query-core'
-import type {
   DefaultError,
   InfiniteData,
+  InfiniteQueryObserverSuccessResult,
   QueryClient,
   QueryKey,
+  QueryObserver,
 } from '@tanstack/query-core'
 import type {
   UseSuspenseInfiniteQueryOptions,

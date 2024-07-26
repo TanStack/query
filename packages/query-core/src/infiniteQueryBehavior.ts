@@ -1,4 +1,4 @@
-import { addToEnd, addToStart, skipToken } from './utils'
+import { addToEnd, addToStart, ensureQueryFn } from './utils'
 import type { QueryBehavior } from './query'
 import type {
   InfiniteData,
@@ -37,22 +37,7 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           })
         }
 
-        // Get query function
-        const queryFn =
-          context.options.queryFn && context.options.queryFn !== skipToken
-            ? context.options.queryFn
-            : () => {
-                if (process.env.NODE_ENV !== 'production') {
-                  if (context.options.queryFn === skipToken) {
-                    console.error(
-                      `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${context.options.queryHash}'`,
-                    )
-                  }
-                }
-                return Promise.reject(
-                  new Error(`Missing queryFn: '${context.options.queryHash}'`),
-                )
-              }
+        const queryFn = ensureQueryFn(context.options, context.fetchOptions)
 
         // Create function to fetch a page
         const fetchPage = async (
@@ -148,24 +133,23 @@ function getNextPageParam(
   { pages, pageParams }: InfiniteData<unknown>,
 ): unknown | undefined {
   const lastIndex = pages.length - 1
-  return options.getNextPageParam(
-    pages[lastIndex],
-    pages,
-    pageParams[lastIndex],
-    pageParams,
-  )
+  return pages.length > 0
+    ? options.getNextPageParam(
+        pages[lastIndex],
+        pages,
+        pageParams[lastIndex],
+        pageParams,
+      )
+    : undefined
 }
 
 function getPreviousPageParam(
   options: InfiniteQueryPageParamsOptions<any>,
   { pages, pageParams }: InfiniteData<unknown>,
 ): unknown | undefined {
-  return options.getPreviousPageParam?.(
-    pages[0],
-    pages,
-    pageParams[0],
-    pageParams,
-  )
+  return pages.length > 0
+    ? options.getPreviousPageParam?.(pages[0], pages, pageParams[0], pageParams)
+    : undefined
 }
 
 /**

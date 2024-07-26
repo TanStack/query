@@ -21,15 +21,13 @@
       return undefined
     },
   })
-
-  const { error }: { error: any } = $query
 </script>
 
 {#if $query.isPending}
   Loading...
 {/if}
 {#if $query.error}
-  <span>Error: {error.message}</span>
+  <span>Error: {$query.error.message}</span>
 {/if}
 {#if $query.isSuccess}
   <div>

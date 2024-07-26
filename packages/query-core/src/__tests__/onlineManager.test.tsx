@@ -12,7 +12,7 @@ describe('onlineManager', () => {
     const navigatorSpy = vi.spyOn(globalThis, 'navigator', 'get')
 
     // Force navigator to be undefined
-    //@ts-expect-error
+    // @ts-expect-error
     navigatorSpy.mockImplementation(() => undefined)
     expect(onlineManager.isOnline()).toBeTruthy()
 

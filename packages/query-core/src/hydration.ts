@@ -1,4 +1,5 @@
 import type {
+  DefaultError,
   MutationKey,
   MutationMeta,
   MutationOptions,
@@ -12,16 +13,22 @@ import type { Query, QueryState } from './query'
 import type { Mutation, MutationState } from './mutation'
 
 // TYPES
+type TransformerFn = (data: any) => any
+function defaultTransformerFn(data: any): any {
+  return data
+}
 
 export interface DehydrateOptions {
+  serializeData?: TransformerFn
   shouldDehydrateMutation?: (mutation: Mutation) => boolean
   shouldDehydrateQuery?: (query: Query) => boolean
 }
 
 export interface HydrateOptions {
   defaultOptions?: {
+    deserializeData?: TransformerFn
     queries?: QueryOptions
-    mutations?: MutationOptions
+    mutations?: MutationOptions<unknown, DefaultError, unknown, unknown>
   }
 }
 
@@ -36,6 +43,7 @@ interface DehydratedQuery {
   queryHash: string
   queryKey: QueryKey
   state: QueryState
+  promise?: Promise<unknown>
   meta?: QueryMeta
 }
 
@@ -59,11 +67,29 @@ function dehydrateMutation(mutation: Mutation): DehydratedMutation {
 // consuming the de/rehydrated data, typically with useQuery on the client.
 // Sometimes it might make sense to prefetch data on the server and include
 // in the html-payload, but not consume it on the initial render.
-function dehydrateQuery(query: Query): DehydratedQuery {
+function dehydrateQuery(
+  query: Query,
+  serializeData: TransformerFn,
+): DehydratedQuery {
   return {
-    state: query.state,
+    state: {
+      ...query.state,
+      ...(query.state.data !== undefined && {
+        data: serializeData(query.state.data),
+      }),
+    },
     queryKey: query.queryKey,
     queryHash: query.queryHash,
+    ...(query.state.status === 'pending' && {
+      promise: query.promise?.then(serializeData).catch((error) => {
+        if (process.env.NODE_ENV !== 'production') {
+          console.error(
+            `A query that was dehydrated as pending ended up rejecting. [${query.queryHash}]: ${error}; The error will be redacted in production builds`,
+          )
+        }
+        return Promise.reject(new Error('redacted'))
+      }),
+    }),
     ...(query.meta && { meta: query.meta }),
   }
 }
@@ -81,7 +107,9 @@ export function dehydrate(
   options: DehydrateOptions = {},
 ): DehydratedState {
   const filterMutation =
-    options.shouldDehydrateMutation ?? defaultShouldDehydrateMutation
+    options.shouldDehydrateMutation ??
+    client.getDefaultOptions().dehydrate?.shouldDehydrateMutation ??
+    defaultShouldDehydrateMutation
 
   const mutations = client
     .getMutationCache()
@@ -91,12 +119,21 @@ export function dehydrate(
     )
 
   const filterQuery =
-    options.shouldDehydrateQuery ?? defaultShouldDehydrateQuery
+    options.shouldDehydrateQuery ??
+    client.getDefaultOptions().dehydrate?.shouldDehydrateQuery ??
+    defaultShouldDehydrateQuery
+
+  const serializeData =
+    options.serializeData ??
+    client.getDefaultOptions().dehydrate?.serializeData ??
+    defaultTransformerFn
 
   const queries = client
     .getQueryCache()
     .getAll()
-    .flatMap((query) => (filterQuery(query) ? [dehydrateQuery(query)] : []))
+    .flatMap((query) =>
+      filterQuery(query) ? [dehydrateQuery(query, serializeData)] : [],
+    )
 
   return { mutations, queries }
 }
@@ -112,6 +149,10 @@ export function hydrate(
 
   const mutationCache = client.getMutationCache()
   const queryCache = client.getQueryCache()
+  const deserializeData =
+    options?.defaultOptions?.deserializeData ??
+    client.getDefaultOptions().hydrate?.deserializeData ??
+    defaultTransformerFn
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const mutations = (dehydratedState as DehydratedState).mutations || []
@@ -122,6 +163,7 @@ export function hydrate(
     mutationCache.build(
       client,
       {
+        ...client.getDefaultOptions().hydrate?.mutations,
         ...options?.defaultOptions?.mutations,
         ...mutationOptions,
       },
@@ -129,35 +171,52 @@ export function hydrate(
     )
   })
 
-  queries.forEach(({ queryKey, state, queryHash, meta }) => {
-    const query = queryCache.get(queryHash)
+  queries.forEach(({ queryKey, state, queryHash, meta, promise }) => {
+    let query = queryCache.get(queryHash)
+
+    const data =
+      state.data === undefined ? state.data : deserializeData(state.data)
 
     // Do not hydrate if an existing query exists with newer data
     if (query) {
       if (query.state.dataUpdatedAt < state.dataUpdatedAt) {
         // omit fetchStatus from dehydrated state
         // so that query stays in its current fetchStatus
-        const { fetchStatus: _ignored, ...dehydratedQueryState } = state
-        query.setState(dehydratedQueryState)
+        const { fetchStatus: _ignored, ...serializedState } = state
+        query.setState({
+          ...serializedState,
+          data,
+        })
       }
-      return
+    } else {
+      // Restore query
+      query = queryCache.build(
+        client,
+        {
+          ...client.getDefaultOptions().hydrate?.queries,
+          ...options?.defaultOptions?.queries,
+          queryKey,
+          queryHash,
+          meta,
+        },
+        // Reset fetch status to idle to avoid
+        // query being stuck in fetching state upon hydration
+        {
+          ...state,
+          data,
+          fetchStatus: 'idle',
+        },
+      )
     }
 
-    // Restore query
-    queryCache.build(
-      client,
-      {
-        ...options?.defaultOptions?.queries,
-        queryKey,
-        queryHash,
-        meta,
-      },
-      // Reset fetch status to idle to avoid
-      // query being stuck in fetching state upon hydration
-      {
-        ...state,
-        fetchStatus: 'idle',
-      },
-    )
+    if (promise) {
+      // Note: `Promise.resolve` required cause
+      // RSC transformed promises are not thenable
+      const initialPromise = Promise.resolve(promise).then(deserializeData)
+
+      // this doesn't actually fetch - it just creates a retryer
+      // which will re-use the passed `initialPromise`
+      void query.fetch(undefined, { initialPromise })
+    }
   })
 }

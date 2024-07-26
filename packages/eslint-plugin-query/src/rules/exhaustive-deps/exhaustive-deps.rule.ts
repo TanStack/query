@@ -4,14 +4,15 @@ import { getDocsUrl } from '../../utils/get-docs-url'
 import { uniqueBy } from '../../utils/unique-by'
 import { detectTanstackQueryImports } from '../../utils/detect-react-query-imports'
 import { ExhaustiveDepsUtils } from './exhaustive-deps.utils'
-import type { TSESLint } from '@typescript-eslint/utils'
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
+import type { ExtraRuleDocs } from '../../types'
 
 const QUERY_KEY = 'queryKey'
 const QUERY_FN = 'queryFn'
 
 export const name = 'exhaustive-deps'
 
-const createRule = ESLintUtils.RuleCreator(getDocsUrl)
+const createRule = ESLintUtils.RuleCreator<ExtraRuleDocs>(getDocsUrl)
 
 export const rule = createRule({
   name,
@@ -19,7 +20,7 @@ export const rule = createRule({
     type: 'problem',
     docs: {
       description: 'Exhaustive deps rule for useQuery',
-      recommended: 'error' as any,
+      recommended: 'error',
     },
     messages: {
       missingDeps: `The following dependencies are missing in your queryKey: {{deps}}`,
@@ -41,7 +42,7 @@ export const rule = createRule({
           return
         }
 
-        const scopeManager = context.getSourceCode().scopeManager
+        const scopeManager = context.sourceCode.scopeManager
         const queryKey = ASTUtils.findPropertyWithIdentifierKey(
           node.parent.properties,
           QUERY_KEY,
@@ -58,6 +59,7 @@ export const rule = createRule({
           !ASTUtils.isNodeOfOneOf(queryFn.value, [
             AST_NODE_TYPES.ArrowFunctionExpression,
             AST_NODE_TYPES.FunctionExpression,
+            AST_NODE_TYPES.ConditionalExpression,
           ])
         ) {
           return
@@ -83,30 +85,31 @@ export const rule = createRule({
           }
         }
 
-        const sourceCode = context.getSourceCode()
         const queryKeyValue = queryKeyNode
         const externalRefs = ASTUtils.getExternalRefs({
           scopeManager,
-          sourceCode,
-          node: queryFn.value,
+          sourceCode: context.sourceCode,
+          node: getQueryFnRelevantNode(queryFn),
         })
 
         const relevantRefs = externalRefs.filter((reference) =>
           ExhaustiveDepsUtils.isRelevantReference({
-            context,
+            sourceCode: context.sourceCode,
             reference,
             scopeManager,
+            node: getQueryFnRelevantNode(queryFn),
           }),
         )
 
         const existingKeys = ASTUtils.getNestedIdentifiers(queryKeyValue).map(
-          (identifier) => ASTUtils.mapKeyNodeToText(identifier, sourceCode),
+          (identifier) =>
+            ASTUtils.mapKeyNodeToText(identifier, context.sourceCode),
         )
 
         const missingRefs = relevantRefs
           .map((ref) => ({
             ref: ref,
-            text: ASTUtils.mapKeyNodeToText(ref.identifier, sourceCode),
+            text: ASTUtils.mapKeyNodeToText(ref.identifier, context.sourceCode),
           }))
           .filter(({ ref, text }) => {
             return (
@@ -125,10 +128,12 @@ export const rule = createRule({
 
         if (uniqueMissingRefs.length > 0) {
           const missingAsText = uniqueMissingRefs
-            .map((ref) => ASTUtils.mapKeyNodeToText(ref.identifier, sourceCode))
+            .map((ref) =>
+              ASTUtils.mapKeyNodeToText(ref.identifier, context.sourceCode),
+            )
             .join(', ')
 
-          const existingWithMissing = sourceCode
+          const existingWithMissing = context.sourceCode
             .getText(queryKeyValue)
             .replace(/\]$/, `, ${missingAsText}]`)
 
@@ -157,3 +162,18 @@ export const rule = createRule({
     }
   }),
 })
+
+function getQueryFnRelevantNode(queryFn: TSESTree.Property) {
+  if (queryFn.value.type !== AST_NODE_TYPES.ConditionalExpression) {
+    return queryFn.value
+  }
+
+  if (
+    queryFn.value.consequent.type === AST_NODE_TYPES.Identifier &&
+    queryFn.value.consequent.name === 'skipToken'
+  ) {
+    return queryFn.value.alternate
+  }
+
+  return queryFn.value.consequent
+}

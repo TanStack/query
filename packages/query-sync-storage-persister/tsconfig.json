@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "moduleResolution": "Bundler"
     "paths": {
       "@tanstack/query-core": ["../query-core/src"],
       "@tanstack/query-persist-client-core": [
@@ -8,11 +9,5 @@
       ]
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    ".eslintrc.cjs",
-    "tsup.config.js",
-    "vite.config.ts"
-  ]
+  "include": ["src", "eslint.config.js", "tsup.config.js", "vite.config.ts"]
 }

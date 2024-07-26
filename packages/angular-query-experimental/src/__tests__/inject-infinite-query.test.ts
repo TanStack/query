@@ -1,8 +1,6 @@
 import { TestBed } from '@angular/core/testing'
-import { QueryClient } from '@tanstack/query-core'
 import { afterEach } from 'vitest'
-import { injectInfiniteQuery } from '../inject-infinite-query'
-import { provideAngularQuery } from '../providers'
+import { QueryClient, injectInfiniteQuery, provideAngularQuery } from '..'
 import { expectSignals, infiniteFetcher } from './test-utils'
 
 const QUERY_DURATION = 1000

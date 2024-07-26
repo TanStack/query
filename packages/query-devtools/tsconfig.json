@@ -3,15 +3,10 @@
   "compilerOptions": {
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
+    "moduleResolution": "Bundler"
     "paths": {
       "@tanstack/query-core": ["../query-core/src"]
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    ".eslintrc.cjs",
-    "tsup.config.js",
-    "vite.config.ts"
-  ]
+  "include": ["src", "eslint.config.js", "tsup.config.js", "vite.config.ts"]
 }

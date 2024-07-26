@@ -8,9 +8,7 @@ describe('useMutationState', () => {
       filters: { status: 'pending' },
     }))
 
-    expectTypeOf(result()).toEqualTypeOf<
-      Array<MutationState<unknown, Error, void, unknown>>
-    >()
+    expectTypeOf(result()).toEqualTypeOf<Array<MutationState>>()
   })
   it('should infer with select', () => {
     const result = useMutationState(() => ({

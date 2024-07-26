@@ -1,7 +1,5 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
-
-import { vi } from 'vitest'
 import { QueryCache, QueryClientProvider, useQuery, useQueryClient } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
 

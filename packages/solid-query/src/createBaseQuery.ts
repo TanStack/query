@@ -179,7 +179,11 @@ export function createBaseQuery<
     const obs = observer()
     return obs.subscribe((result) => {
       observerResult = result
-      queueMicrotask(() => refetch())
+      queueMicrotask(() => {
+        if (unsubscribe) {
+          refetch()
+        }
+      })
     })
   }
 
@@ -208,7 +212,7 @@ export function createBaseQuery<
         }
         // Hydration data exists on first load after SSR,
         // and should be removed from the observer result
-        if (v.hydrationData) {
+        if (v?.hydrationData) {
           const { hydrationData, ...rest } = v
           v = rest
         }

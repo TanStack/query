@@ -10,6 +10,7 @@ import type {
   FetchNextPageOptions,
   FetchPreviousPageOptions,
   InfiniteData,
+  InfiniteQueryObserverBaseResult,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   QueryKey,
@@ -145,26 +146,33 @@ export class InfiniteQueryObserver<
     >,
   ): InfiniteQueryObserverResult<TData, TError> {
     const { state } = query
-    const result = super.createResult(query, options)
+    const parentResult = super.createResult(query, options)
 
-    const { isFetching, isRefetching } = result
+    const { isFetching, isRefetching, isError, isRefetchError } = parentResult
+    const fetchDirection = state.fetchMeta?.fetchMore?.direction
 
-    const isFetchingNextPage =
-      isFetching && state.fetchMeta?.fetchMore?.direction === 'forward'
+    const isFetchNextPageError = isError && fetchDirection === 'forward'
+    const isFetchingNextPage = isFetching && fetchDirection === 'forward'
 
-    const isFetchingPreviousPage =
-      isFetching && state.fetchMeta?.fetchMore?.direction === 'backward'
+    const isFetchPreviousPageError = isError && fetchDirection === 'backward'
+    const isFetchingPreviousPage = isFetching && fetchDirection === 'backward'
 
-    return {
-      ...result,
+    const result: InfiniteQueryObserverBaseResult<TData, TError> = {
+      ...parentResult,
       fetchNextPage: this.fetchNextPage,
       fetchPreviousPage: this.fetchPreviousPage,
       hasNextPage: hasNextPage(options, state.data),
       hasPreviousPage: hasPreviousPage(options, state.data),
+      isFetchNextPageError,
       isFetchingNextPage,
+      isFetchPreviousPageError,
       isFetchingPreviousPage,
+      isRefetchError:
+        isRefetchError && !isFetchNextPageError && !isFetchPreviousPageError,
       isRefetching:
         isRefetching && !isFetchingNextPage && !isFetchingPreviousPage,
     }
+
+    return result as InfiniteQueryObserverResult<TData, TError>
   }
 }

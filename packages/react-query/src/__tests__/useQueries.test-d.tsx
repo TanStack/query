@@ -3,7 +3,7 @@ import { skipToken } from '..'
 import { useQueries } from '../useQueries'
 import { queryOptions } from '../queryOptions'
 import type { OmitKeyof } from '..'
-import type { UseQueryOptions } from '../types'
+import type { UseQueryOptions, UseQueryResult } from '../types'
 
 describe('UseQueries config object overload', () => {
   it('TData should always be defined when initialData is provided as an object', () => {
@@ -136,8 +136,9 @@ describe('UseQueries config object overload', () => {
       ],
     })
 
-    const data = queryResults[0].data
+    const firstResult = queryResults[0]
 
-    expectTypeOf(data).toEqualTypeOf<number | undefined>()
+    expectTypeOf(firstResult).toEqualTypeOf<UseQueryResult<number, Error>>()
+    expectTypeOf(firstResult.data).toEqualTypeOf<number | undefined>()
   })
 })

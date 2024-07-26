@@ -123,7 +123,7 @@ describe('useSuspenseQuery', () => {
   it('should not call the queryFn twice when used in Suspense mode', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<Array<unknown>, string>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => string>()
     queryFn.mockImplementation(() => {
       sleep(10)
       return 'data'
@@ -257,8 +257,8 @@ describe('useSuspenseQuery', () => {
 
     await waitFor(() => rendered.getByText('rendered'))
 
-    expect(consoleMock).toHaveBeenCalledWith(
-      expect.objectContaining(new Error('Suspense Error Bingo')),
+    expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
+      new Error('Suspense Error Bingo'),
     )
 
     consoleMock.mockRestore()
@@ -595,8 +595,8 @@ describe('useSuspenseQuery', () => {
     fireEvent.click(rendered.getByLabelText('fail'))
     // render error boundary fallback (error boundary)
     await waitFor(() => rendered.getByText('error boundary'))
-    expect(consoleMock).toHaveBeenCalledWith(
-      expect.objectContaining(new Error('Suspense Error Bingo')),
+    expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
+      new Error('Suspense Error Bingo'),
     )
 
     consoleMock.mockRestore()
@@ -666,8 +666,8 @@ describe('useSuspenseQuery', () => {
     fireEvent.click(rendered.getByLabelText('fail'))
     // render error boundary fallback (error boundary)
     await waitFor(() => rendered.getByText('error boundary'))
-    expect(consoleMock).toHaveBeenCalledWith(
-      expect.objectContaining(new Error('Suspense Error Bingo')),
+    expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
+      new Error('Suspense Error Bingo'),
     )
 
     consoleMock.mockRestore()
@@ -715,7 +715,7 @@ describe('useSuspenseQuery', () => {
     )
 
     expect(renders).toBe(2)
-    expect(rendered.queryByText('rendered')).not.toBeNull()
+    await waitFor(() => expect(rendered.queryByText('rendered')).not.toBeNull())
   })
 
   it('should not throw background errors to the error boundary', async () => {
@@ -1036,8 +1036,8 @@ describe('useSuspenseQueries', () => {
 
     await waitFor(() => rendered.getByText('error boundary'))
 
-    expect(consoleMock).toHaveBeenCalledWith(
-      expect.objectContaining(new Error('Suspense Error Bingo')),
+    expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
+      new Error('Suspense Error Bingo'),
     )
 
     consoleMock.mockRestore()

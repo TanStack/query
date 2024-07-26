@@ -241,7 +241,7 @@ describe('VueQueryPlugin', () => {
           queryClientConfig: config,
         })
 
-        const client = (appMock.provide as Mock).mock.calls[0][1]
+        const client = (appMock.provide as Mock).mock.calls[0]?.[1]
         const defaultOptions = client.getDefaultOptions()
 
         expect(defaultOptions).toEqual(config.defaultOptions)

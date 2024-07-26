@@ -1,4 +1,10 @@
-import { noop, replaceData, skipToken, timeUntilStale } from './utils'
+import {
+  ensureQueryFn,
+  noop,
+  replaceData,
+  resolveEnabled,
+  timeUntilStale,
+} from './utils'
 import { notifyManager } from './notifyManager'
 import { canFetch, createRetryer, isCancelledError } from './retryer'
 import { Removable } from './removable'
@@ -8,6 +14,7 @@ import type {
   FetchStatus,
   InitialDataFunction,
   OmitKeyof,
+  QueryFunction,
   QueryFunctionContext,
   QueryKey,
   QueryMeta,
@@ -82,9 +89,10 @@ export interface FetchMeta {
   fetchMore?: { direction: FetchDirection }
 }
 
-export interface FetchOptions {
+export interface FetchOptions<TData = unknown> {
   cancelRefetch?: boolean
   meta?: FetchMeta
+  initialPromise?: Promise<TData>
 }
 
 interface FailedAction<TError> {
@@ -182,6 +190,10 @@ export class Query<
     return this.options.meta
   }
 
+  get promise(): Promise<TData> | undefined {
+    return this.#retryer?.promise
+  }
+
   setOptions(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): void {
@@ -238,7 +250,9 @@ export class Query<
   }
 
   isActive(): boolean {
-    return this.observers.some((observer) => observer.options.enabled !== false)
+    return this.observers.some(
+      (observer) => resolveEnabled(observer.options.enabled, this) !== false,
+    )
   }
 
   isDisabled(): boolean {
@@ -330,7 +344,7 @@ export class Query<
 
   fetch(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    fetchOptions?: FetchOptions,
+    fetchOptions?: FetchOptions<TQueryFnData>,
   ): Promise<TData> {
     if (this.state.fetchStatus !== 'idle') {
       if (this.state.data !== undefined && fetchOptions?.cancelRefetch) {
@@ -368,15 +382,6 @@ export class Query<
 
     const abortController = new AbortController()
 
-    // Create query function context
-    const queryFnContext: OmitKeyof<
-      QueryFunctionContext<TQueryKey>,
-      'signal'
-    > = {
-      queryKey: this.queryKey,
-      meta: this.meta,
-    }
-
     // Adds an enumerable signal property to the object that
     // which sets abortSignalConsumed to true when the signal
     // is read.
@@ -390,36 +395,31 @@ export class Query<
       })
     }
 
-    addSignalProperty(queryFnContext)
-
     // Create fetch function
     const fetchFn = () => {
-      if (process.env.NODE_ENV !== 'production') {
-        if (this.options.queryFn === skipToken) {
-          console.error(
-            `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${this.options.queryHash}'`,
-          )
-        }
+      const queryFn = ensureQueryFn(this.options, fetchOptions)
+
+      // Create query function context
+      const queryFnContext: OmitKeyof<
+        QueryFunctionContext<TQueryKey>,
+        'signal'
+      > = {
+        queryKey: this.queryKey,
+        meta: this.meta,
       }
 
-      if (!this.options.queryFn || this.options.queryFn === skipToken) {
-        return Promise.reject(
-          new Error(`Missing queryFn: '${this.options.queryHash}'`),
-        )
-      }
+      addSignalProperty(queryFnContext)
 
       this.#abortSignalConsumed = false
       if (this.options.persister) {
         return this.options.persister(
-          this.options.queryFn,
+          queryFn as QueryFunction<any>,
           queryFnContext as QueryFunctionContext<TQueryKey>,
           this as unknown as Query,
         )
       }
 
-      return this.options.queryFn(
-        queryFnContext as QueryFunctionContext<TQueryKey>,
-      )
+      return queryFn(queryFnContext as QueryFunctionContext<TQueryKey>)
     }
 
     // Trigger behavior hook
@@ -483,6 +483,9 @@ export class Query<
 
     // Try to fetch the data
     this.#retryer = createRetryer({
+      initialPromise: fetchOptions?.initialPromise as
+        | Promise<TData>
+        | undefined,
       fn: context.fetchFn as () => Promise<TData>,
       abort: abortController.abort.bind(abortController),
       onSuccess: (data) => {

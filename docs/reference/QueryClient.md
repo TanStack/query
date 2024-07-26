@@ -62,6 +62,7 @@ Its available methods are:
 - `defaultOptions?: DefaultOptions`
   - Optional
   - Define defaults for all queries and mutations using this queryClient.
+  - You can also define defaults to be used for [hydration](../../framework/react/reference/hydration)
 
 ## `queryClient.fetchQuery`
 

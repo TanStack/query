@@ -28,7 +28,7 @@ addTodo = injectMutation(() => ({
 [//]: # 'ExampleUI1'
 [//]: # 'ExampleUI2'
 
-```ts
+```angular-ts
 @Component({
   template: `
     @for (todo of todos.data(); track todo.id) {
@@ -45,7 +45,7 @@ class TodosComponent {}
 [//]: # 'ExampleUI2'
 [//]: # 'ExampleUI3'
 
-```ts
+```angular-ts
 @Component({
   template: `
     @if (addTodo.isError()) {

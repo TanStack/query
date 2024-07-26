@@ -111,4 +111,6 @@ Additionally, [Infinite Queries](../infinite-queries) get the following options 
 - `pageParam: TPageParam`
   - the page parameter used to fetch the current page
 - `direction: 'forward' | 'backward'`
+  - **deprecated**
   - the direction of the current page fetch
+  - To get access to the direction of the current page fetch, please add a direction to `pageParam` from `getNextPageParam` and `getPreviousPageParam`.

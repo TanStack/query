@@ -8,6 +8,7 @@ export * from './types'
 export * from './context'
 
 export { createQuery } from './createQuery'
+export type { QueriesResults, QueriesOptions } from './createQueries'
 export type {
   DefinedInitialDataOptions,
   UndefinedInitialDataOptions,
@@ -17,6 +18,7 @@ export { createQueries } from './createQueries'
 export { createInfiniteQuery } from './createInfiniteQuery'
 export { infiniteQueryOptions } from './infiniteQueryOptions'
 export { createMutation } from './createMutation'
+export { useMutationState } from './useMutationState'
 export { useQueryClient } from './useQueryClient'
 export { useIsFetching } from './useIsFetching'
 export { useIsMutating } from './useIsMutating'
