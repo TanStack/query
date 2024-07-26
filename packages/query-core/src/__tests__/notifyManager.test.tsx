@@ -74,12 +74,12 @@ describe('notifyManager', () => {
     // we define some fn with its signature:
     const fn: (a: string, b: number) => string = (a, b) => a + b
 
-    //now someFn expect to be called with args [a: string, b: number]
+    // now someFn expect to be called with args [a: string, b: number]
     const someFn = notifyManagerTest.batchCalls(fn)
 
     someFn('im happy', 4)
 
-    //@ts-expect-error
+    // @ts-expect-error
     someFn('im not happy', false)
   })
 })

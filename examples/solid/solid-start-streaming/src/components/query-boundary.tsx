@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import type { CreateQueryResult } from '@tanstack/solid-query'
 import type { JSX } from 'solid-js'
 import { ErrorBoundary, Match, Suspense, Switch, children } from 'solid-js'
