@@ -17,7 +17,7 @@ export class FocusManager extends Subscribable<Listener> {
     super()
     this.#setup = (onFocus) => {
       // addEventListener does not exist in React Native, but window does
-      // eslint-disable-next-line ts/no-unnecessary-condition
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (!isServer && window.addEventListener) {
         const listener = () => onFocus()
         // Listen to visibilitychange
@@ -78,7 +78,7 @@ export class FocusManager extends Subscribable<Listener> {
     }
 
     // document global can be unavailable in react native
-    // eslint-disable-next-line ts/no-unnecessary-condition
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     return globalThis.document?.visibilityState !== 'hidden'
   }
 }

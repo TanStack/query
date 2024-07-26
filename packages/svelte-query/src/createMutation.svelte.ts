@@ -40,13 +40,13 @@ export function createMutation<
     notifyManager.batchCalls(() => {
       Object.assign(result, val)
 
-      //result = val
+      // result = val
     })()
   })
   onDestroy(() => {
     un()
   })
-  //@ts-expect-error
+  // @ts-expect-error
   return new Proxy(result, {
     get: (_, prop) => {
       const r = {
@@ -55,7 +55,7 @@ export function createMutation<
         mutateAsync: result.mutate,
       }
       if (prop == 'value') return r
-      //@ts-expect-error
+      // @ts-expect-error
       return r[prop]
     },
   })

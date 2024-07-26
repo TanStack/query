@@ -47,5 +47,5 @@
 </script>
 
 <QueryClientProvider {client} {...props}>
-  {@render children?.()}
+  {@render children()}
 </QueryClientProvider>

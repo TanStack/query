@@ -35,8 +35,8 @@ export function createBaseQuery<
   /** Creates a store that has the default options applied */
   function updateOptions() {
     const key = optionsStore().queryKey
-    const keyFn = typeof key === 'function' ? key : () => key //allow query-key and enable to be a function
-    const queryKey: TQueryKey = $state.snapshot(keyFn()) as any //remove proxy prevent reactive query  in devTools
+    const keyFn = typeof key === 'function' ? key : () => key // allow query-key and enable to be a function
+    const queryKey: TQueryKey = $state.snapshot(keyFn()) as any // remove proxy prevent reactive query  in devTools
     let tempEnable = optionsStore().enabled
     const defaultedOptions = client.defaultQueryOptions({
       ...optionsStore(),
@@ -100,10 +100,10 @@ export function createBaseQuery<
 
   const final_ = $state({ value: result })
 
-  //update result
+  // update result
   $effect(() => {
     // svelte does not need this with it is proxy state and fine-grained reactivity?
-    // eslint-disable-next-line ts/no-unnecessary-condition
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (result !== null)
       untrack(() => {
         const v = !defaultedOptionsStore().notifyOnChangeProps

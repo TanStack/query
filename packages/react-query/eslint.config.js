@@ -28,7 +28,7 @@ export default [
   {
     files: ['**/__tests__/**'],
     rules: {
-      'ts/no-unnecessary-condition': 'off',
+      '@typescript-eslint/no-unnecessary-condition': 'off',
       'react-compiler/react-compiler': 'off',
     },
   },

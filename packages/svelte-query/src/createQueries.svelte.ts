@@ -258,7 +258,7 @@ export function createQueries<
       return () => null
     }
     untrack(() => {
-      //@ts-expect-error
+      // @ts-expect-error
       Object.assign(result, getCombinedResult(trackResult()))
     })
 
@@ -268,7 +268,7 @@ export function createQueries<
           defaultedQueriesStore(),
           (options as QueriesObserverOptions<TCombinedResult>).combine,
         )
-        //@ts-expect-error
+        // @ts-expect-error
         Object.assign(result, res[1](res[2]()))
       })()
     })

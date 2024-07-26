@@ -7,7 +7,7 @@ export default [
   {
     rules: {
       'cspell/spellchecker': 'off',
-      'ts/no-unnecessary-condition': 'off',
+      '@typescript-eslint/no-unnecessary-condition': 'off',
       'import/no-duplicates': 'off',
       'import/no-unresolved': 'off',
       'import/order': 'off',
