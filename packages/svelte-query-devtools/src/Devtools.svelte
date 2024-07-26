@@ -1,8 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { DEV } from 'esm-env'
+  import { BROWSER, DEV } from 'esm-env'
   import { onlineManager, useQueryClient } from '@tanstack/svelte-query'
-  import { TanstackQueryDevtools } from '@tanstack/query-devtools'
   import type { QueryClient } from '@tanstack/svelte-query'
   import type {
     DevToolsErrorType,
@@ -16,13 +15,13 @@
      */
     initialIsOpen?: boolean
     /**
-     * The position of the React Query logo to open and close the devtools panel.
+     * The position of the TanStack Query logo to open and close the devtools panel.
      * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
      * Defaults to 'bottom-right'.
      */
     buttonPosition?: DevtoolsButtonPosition
     /**
-     * The position of the React Query devtools panel.
+     * The position of the TanStack Query devtools panel.
      * 'top' | 'bottom' | 'left' | 'right'
      * Defaults to 'bottom'.
      */
@@ -39,61 +38,41 @@
      * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
      */
     styleNonce?: string
-    /**
-     * Use this so you can attach the devtool's styles to specific element in the DOM.
-     */
-    shadowDOMTarget?: ShadowRoot
   }
-  let props: DevtoolsOptions = $props()
+
+  let {
+    initialIsOpen = false,
+    buttonPosition = 'bottom-right',
+    position = 'bottom',
+    client = useQueryClient(),
+    errorTypes = [],
+    styleNonce = undefined,
+  }: DevtoolsOptions = $props()
+
   let ref: HTMLDivElement
-  const queryClient = useQueryClient()
-  const devtools = new TanstackQueryDevtools({
-    client: props.client ?? queryClient,
-    queryFlavor: 'Svelte Query',
-    version: '5',
-    onlineManager,
-    buttonPosition: props.buttonPosition,
-    position: props.position,
-    initialIsOpen: props.initialIsOpen,
-    errorTypes: props.errorTypes,
-    styleNonce: props.styleNonce,
-    // shadowDOMTarget: props.shadowDOMTarget,
-  })
 
-  if (!DEV) {
-    console.log('devtool disabled')
-    throw ''
+  if (DEV && BROWSER) {
+    onMount(() => {
+      import('@tanstack/query-devtools').then((m) => {
+        const QueryDevtools = m.TanstackQueryDevtools
+
+        const devtools = new QueryDevtools({
+          client,
+          queryFlavor: 'Svelte Query',
+          version: '5',
+          onlineManager,
+          buttonPosition,
+          position,
+          initialIsOpen,
+          errorTypes,
+          styleNonce,
+        })
+
+        devtools.mount(ref)
+        return () => devtools.unmount()
+      })
+    })
   }
-  $effect(() => {
-    devtools.setClient(props.client || queryClient)
-  })
-
-  $effect(() => {
-    const buttonPos = props.buttonPosition
-    if (buttonPos) {
-      devtools.setButtonPosition(buttonPos)
-    }
-  })
-
-  $effect(() => {
-    const pos = props.position
-    if (pos) {
-      devtools.setPosition(pos)
-    }
-  })
-
-  $effect(() => {
-    devtools.setInitialIsOpen(props.initialIsOpen || false)
-  })
-
-  $effect(() => {
-    devtools.setErrorTypes(props.errorTypes || [])
-  })
-
-  onMount(() => {
-    devtools.mount(ref)
-    return () => devtools.unmount()
-  })
 </script>
 
 <div class="tsqd-parent-container" bind:this={ref}></div>

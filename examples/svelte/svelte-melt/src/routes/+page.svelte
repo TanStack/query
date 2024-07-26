@@ -5,7 +5,7 @@
   import DerivedQuery from './derivedQuery.svelte'
   import Queries from './queries.svelte'
   import CQueries from './CreateQueries.svelte'
-  import { useIsRestoring } from '@tanstack/svelte-query/dev'
+  import { useIsRestoring } from '@tanstack/svelte-query'
   const isRes = useIsRestoring()
 
   $effect(() => {

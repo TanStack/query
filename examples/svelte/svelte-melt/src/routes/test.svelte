@@ -4,7 +4,7 @@
     createQuery,
     createQueries,
     useQueryClient,
-  } from '@tanstack/svelte-query/dev'
+  } from '@tanstack/svelte-query'
 
   let { children } = $props()
   function isDerivedReactive() {

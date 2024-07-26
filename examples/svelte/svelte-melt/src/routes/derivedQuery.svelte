@@ -4,7 +4,7 @@
     useIsFetching,
     useIsMutating,
     useQueryClient,
-  } from '@tanstack/svelte-query/dev'
+  } from '@tanstack/svelte-query'
   import { bookFilterStore } from './store.svelte'
   import { useQuery } from './external'
   import { useSvelteExtensionQuery } from './external.svelte'

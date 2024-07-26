@@ -23,10 +23,7 @@
   )
 
   $effect(() => {
-    states.value = [
-      ...untrack(() => states.value),
-      $state.snapshot(query) as unknown as QueryObserverResult,
-    ]
+    states.value = [...untrack(() => states.value), $state.snapshot(query)]
   })
 </script>
 

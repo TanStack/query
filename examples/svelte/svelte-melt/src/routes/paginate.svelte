@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createQuery, useQueryClient } from '@tanstack/svelte-query/dev'
+  import { createQuery, useQueryClient } from '@tanstack/svelte-query'
   import { bookFilterStore } from './store.svelte'
   import { useQuery } from './external'
   import { useSvelteExtensionQuery } from './external.svelte'

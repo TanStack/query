@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createQueries } from '@tanstack/svelte-query/dev'
+  import { createQueries } from '@tanstack/svelte-query'
   function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms))
   }

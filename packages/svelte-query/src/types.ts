@@ -5,15 +5,17 @@ import type {
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutateFunction,
+  Mutation,
+  MutationFilters,
   MutationObserverOptions,
   MutationObserverResult,
+  MutationState,
   QueryClient,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
 
-export { type MutationStateOptions } from './useMutationState.svelte'
 export type FnOrVal<T> = (() => T) | T // can be a fn that returns reactive statement or $state or $derived deep states
 
 /** Options for createBaseQuery */
@@ -137,7 +139,18 @@ export type CreateMutationResult<
   TContext = unknown,
 > = CreateBaseMutationResult<TData, TError, TVariables, TContext>
 
-type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }
+type Override<TTargetA, TTargetB> = {
+  [AKey in keyof TTargetA]: AKey extends keyof TTargetB
+    ? TTargetB[AKey]
+    : TTargetA[AKey]
+}
+
+export type MutationStateOptions<TResult = MutationState> = {
+  filters?: MutationFilters
+  select?: (
+    mutation: Mutation<unknown, DefaultError, unknown, unknown>,
+  ) => TResult
+}
 
 export type QueryClientProviderProps = {
   client: QueryClient

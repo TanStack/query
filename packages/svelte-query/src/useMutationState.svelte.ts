@@ -1,17 +1,11 @@
 import { replaceEqualDeep } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
 import type {
-  Mutation,
   MutationCache,
-  MutationFilters,
   MutationState,
   QueryClient,
 } from '@tanstack/query-core'
-
-export type MutationStateOptions<TResult = MutationState> = {
-  filters?: MutationFilters
-  select?: (mutation: Mutation) => TResult
-}
+import type { MutationStateOptions } from './types'
 
 function getResult<TResult = MutationState>(
   mutationCache: MutationCache,

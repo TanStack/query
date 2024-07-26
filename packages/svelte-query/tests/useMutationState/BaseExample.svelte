@@ -6,7 +6,7 @@
   import type {
     CreateMutationOptions,
     MutationStateOptions,
-  } from '../../src/types'
+  } from '../../src/index'
 
   let {
     successMutationOpts,

@@ -1,4 +1,4 @@
-import { createQuery } from '@tanstack/svelte-query/dev'
+import { createQuery } from '@tanstack/svelte-query'
 
 export function useQuery(props) {
   return createQuery({

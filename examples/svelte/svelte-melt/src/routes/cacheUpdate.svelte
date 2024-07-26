@@ -4,7 +4,7 @@
     createQuery,
     hashKey,
     useQueryClient,
-  } from '@tanstack/svelte-query/dev'
+  } from '@tanstack/svelte-query'
   import { bookFilterStore } from './store.svelte'
   let a = { a: 1 }
   let b = ['cache update tester', bookFilterStore]

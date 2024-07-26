@@ -1,4 +1,4 @@
-import { createQuery } from '@tanstack/svelte-query/dev'
+import { createQuery } from '@tanstack/svelte-query'
 export function useSvelteExtensionQuery(props) {
   const enabled = $derived({
     queryKey: ['sv-externel', props],

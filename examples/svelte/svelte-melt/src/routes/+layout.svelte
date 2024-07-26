@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { QueryClient, useIsRestoring } from '@tanstack/svelte-query/dev'
+  import { QueryClient, useIsRestoring } from '@tanstack/svelte-query'
   import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
   import {
     persistQueryClient,
