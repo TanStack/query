@@ -39,6 +39,10 @@
      * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
      */
     styleNonce?: string
+    /**
+     * Use this so you can attach the devtool's styles to specific element in the DOM.
+     */
+    shadowDOMTarget?: ShadowRoot
   }
 
   let {
@@ -48,6 +52,7 @@
     client = useQueryClient(),
     errorTypes = [],
     styleNonce = undefined,
+    shadowDOMTarget = undefined,
   }: DevtoolsOptions = $props()
 
   let ref: HTMLDivElement
@@ -68,6 +73,7 @@
           initialIsOpen,
           errorTypes,
           styleNonce,
+          shadowDOMTarget,
         })
 
         devtools.mount(ref)
