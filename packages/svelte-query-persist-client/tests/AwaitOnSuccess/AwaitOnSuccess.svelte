@@ -9,7 +9,7 @@
     queryKey: ['test'],
     queryFn: async () => {
       states.update((s) => [...s, 'fetching'])
-      await sleep(10)
+      await sleep(5)
       states.update((s) => [...s, 'fetched'])
       return 'fetched'
     },
