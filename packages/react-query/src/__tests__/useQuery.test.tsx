@@ -4034,7 +4034,7 @@ describe('useQuery', () => {
       const query = useQuery({
         queryKey: key,
         queryFn: () => 'fetched data',
-        gcTime: 1000 * 60 * 10, //10 Minutes
+        gcTime: 1000 * 60 * 10, // 10 Minutes
       })
       return <div>{query.data}</div>
     }
@@ -4216,7 +4216,7 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('count: 1'))
 
-    await sleep(10) //extra sleep to make sure we're not re-fetching
+    await sleep(10) // extra sleep to make sure we're not re-fetching
 
     expect(states.length).toEqual(2)
 

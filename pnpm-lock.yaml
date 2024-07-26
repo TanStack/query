@@ -28,8 +28,8 @@ importers:
         specifier: ^0.8.8
         version: 0.8.8(@solidjs/router@0.13.3(solid-js@1.8.17))(solid-js@1.8.17)
       '@tanstack/config':
-        specifier: ^0.10.0
-        version: 0.10.0(@types/node@20.14.10)(esbuild@0.19.11)(eslint@8.57.0)(rollup@4.14.1)(typescript@5.3.3)(vite@5.3.3(@types/node@20.14.10)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
+        specifier: ^0.11.0
+        version: 0.11.0(@types/node@20.14.10)(esbuild@0.19.11)(eslint@8.57.0)(rollup@4.14.1)(typescript@5.3.3)(vite@5.3.3(@types/node@20.14.10)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@testing-library/jest-dom':
         specifier: ^6.4.6
         version: 6.4.6(vitest@2.0.3(@types/node@20.14.10)(jsdom@24.1.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
@@ -145,7 +145,7 @@ importers:
         specifier: ^17.3.10
         version: 17.3.10(@angular/common@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6))(rxjs@7.8.1))(@angular/compiler@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6)))(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6))(@angular/platform-browser@17.3.10(@angular/animations@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6)))(@angular/common@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6))(rxjs@7.8.1))(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6)))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -167,7 +167,7 @@ importers:
         specifier: ^17.3.10
         version: 17.3.10(@angular/compiler@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6)))(typescript@5.3.3)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.3.3
@@ -191,7 +191,7 @@ importers:
         specifier: ^17.3.10
         version: 17.3.10(@angular/common@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6))(rxjs@7.8.1))(@angular/compiler@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6)))(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6))(@angular/platform-browser@17.3.10(@angular/animations@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6)))(@angular/common@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6))(rxjs@7.8.1))(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6)))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -213,7 +213,7 @@ importers:
         specifier: ^17.3.10
         version: 17.3.10(@angular/compiler@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6)))(typescript@5.3.3)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.3.3
@@ -240,7 +240,7 @@ importers:
         specifier: ^17.3.10
         version: 17.3.10(@angular/common@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6))(rxjs@7.8.1))(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6))(@angular/platform-browser@17.3.10(@angular/animations@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6)))(@angular/common@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6))(rxjs@7.8.1))(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6)))(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -262,7 +262,7 @@ importers:
         specifier: ^17.3.10
         version: 17.3.10(@angular/compiler@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6)))(typescript@5.3.3)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.3.3
@@ -289,7 +289,7 @@ importers:
         specifier: ^17.3.10
         version: 17.3.10(@angular/common@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6))(rxjs@7.8.1))(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6))(@angular/platform-browser@17.3.10(@angular/animations@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6)))(@angular/common@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6))(rxjs@7.8.1))(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6)))(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -311,7 +311,7 @@ importers:
         specifier: ^17.3.10
         version: 17.3.10(@angular/compiler@17.3.10(@angular/core@17.3.10(rxjs@7.8.1)(zone.js@0.14.6)))(typescript@5.3.3)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.3.3
@@ -326,10 +326,10 @@ importers:
         specifier: 4.23.3
         version: 4.23.3
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       algoliasearch:
         specifier: 4.23.3
@@ -342,7 +342,7 @@ importers:
         version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.51.12
+        specifier: ^5.51.14
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: npm:types-react@rc
@@ -363,10 +363,10 @@ importers:
   examples/react/auto-refetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.4
@@ -391,16 +391,16 @@ importers:
   examples/react/basic:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-persist-client
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
@@ -410,7 +410,7 @@ importers:
         version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.51.12
+        specifier: ^5.51.14
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: npm:types-react@rc
@@ -434,10 +434,10 @@ importers:
   examples/react/basic-graphql-request:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       graphql:
         specifier: ^16.8.1
@@ -462,10 +462,10 @@ importers:
   examples/react/default-query-function:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
@@ -487,10 +487,10 @@ importers:
   examples/react/infinite-query-with-max-pages:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.4
@@ -515,10 +515,10 @@ importers:
   examples/react/load-more-infinite-scroll:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.4
@@ -546,10 +546,10 @@ importers:
   examples/react/nextjs:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.4
@@ -574,10 +574,10 @@ importers:
   examples/react/nextjs-app-prefetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^15.0.0-rc.0
@@ -602,13 +602,13 @@ importers:
   examples/react/nextjs-suspense-streaming:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-next-experimental':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-next-experimental
       next:
         specifier: ^14.2.4
@@ -630,19 +630,19 @@ importers:
   examples/react/offline:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-location':
         specifier: ^3.7.4
         version: 3.7.4(react-dom@19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522))(react@19.0.0-rc-4c2e457c7c-20240522)
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-persist-client
       msw:
         specifier: ^2.3.0
@@ -670,10 +670,10 @@ importers:
   examples/react/optimistic-updates-cache:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.4
@@ -698,10 +698,10 @@ importers:
   examples/react/optimistic-updates-ui:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.4
@@ -726,10 +726,10 @@ importers:
   examples/react/pagination:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.4
@@ -754,10 +754,10 @@ importers:
   examples/react/playground:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
@@ -779,10 +779,10 @@ importers:
   examples/react/prefetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.4
@@ -816,10 +816,10 @@ importers:
         specifier: ^6.3.16
         version: 6.3.16(yri22tnekttmcucjv33ecr33bu)
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       expo:
         specifier: ^51.0.8
@@ -868,10 +868,10 @@ importers:
   examples/react/react-router:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       localforage:
         specifier: ^1.10.0
@@ -932,10 +932,10 @@ importers:
         specifier: ^5.15.18
         version: 5.15.18(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
@@ -963,10 +963,10 @@ importers:
   examples/react/shadow-dom:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
@@ -1009,10 +1009,10 @@ importers:
   examples/react/simple:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
@@ -1046,10 +1046,10 @@ importers:
         specifier: ^5.15.18
         version: 5.15.18(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
@@ -1077,10 +1077,10 @@ importers:
   examples/react/suspense:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/react-query-devtools
       font-awesome:
         specifier: ^4.7.0
@@ -1123,10 +1123,10 @@ importers:
         specifier: ^7.6.0
         version: 7.6.0(astro@4.9.1(@types/node@20.14.10)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)(typescript@5.3.3))(encoding@0.1.13)(next@14.2.4(@babel/core@7.24.6)(react-dom@19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522))(react@18.3.1)(sass@1.71.1))(react@18.3.1)
       '@tanstack/solid-query':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/solid-query-devtools
       astro:
         specifier: ^4.8.6
@@ -1144,10 +1144,10 @@ importers:
   examples/solid/basic:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.17
@@ -1166,10 +1166,10 @@ importers:
   examples/solid/basic-graphql-request:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/solid-query-devtools
       graphql:
         specifier: ^16.8.1
@@ -1194,10 +1194,10 @@ importers:
   examples/solid/default-query-function:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.17
@@ -1216,17 +1216,17 @@ importers:
   examples/solid/simple:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.17
         version: 1.8.17
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.51.12
+        specifier: ^5.51.14
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.3.3
@@ -1250,10 +1250,10 @@ importers:
         specifier: ^1.0.0-rc.1
         version: 1.0.0(@testing-library/jest-dom@6.4.6(vitest@2.0.3(@types/node@20.14.10)(jsdom@24.1.0)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(rollup@4.14.1)(solid-js@1.8.17)(vinxi@0.3.11(@types/node@20.14.10)(idb-keyval@6.2.1)(ioredis@5.3.2)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))(vite@5.3.3(@types/node@20.14.10)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       '@tanstack/solid-query':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.17
@@ -1265,10 +1265,10 @@ importers:
   examples/svelte/auto-refetching:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1296,10 +1296,10 @@ importers:
   examples/svelte/basic:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1327,10 +1327,10 @@ importers:
   examples/svelte/load-more-infinite-scroll:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1358,10 +1358,10 @@ importers:
   examples/svelte/optimistic-updates-typescript:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1389,10 +1389,10 @@ importers:
   examples/svelte/playground:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1420,10 +1420,10 @@ importers:
   examples/svelte/simple:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
@@ -1448,10 +1448,10 @@ importers:
   examples/svelte/ssr:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1479,10 +1479,10 @@ importers:
   examples/svelte/star-wars:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.51.11
+        specifier: ^5.51.14
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1519,10 +1519,10 @@ importers:
   examples/vue/basic:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.4.27
@@ -1541,7 +1541,7 @@ importers:
   examples/vue/dependent-queries:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/vue-query
       vue:
         specifier: ^3.4.27
@@ -1560,16 +1560,16 @@ importers:
   examples/vue/persister:
     dependencies:
       '@tanstack/query-core':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/query-core
       '@tanstack/query-persist-client-core':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/query-persist-client-core
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/vue-query':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/vue-query
       idb-keyval:
         specifier: ^6.2.1
@@ -1591,10 +1591,10 @@ importers:
   examples/vue/simple:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^5.51.9
+        specifier: ^5.51.14
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.4.27
@@ -6053,6 +6053,12 @@ packages:
       '@solidjs/router':
         optional: true
 
+  '@stylistic/eslint-plugin-js@2.3.0':
+    resolution: {integrity: sha512-lQwoiYb0Fs6Yc5QS3uT8+T9CPKK2Eoxc3H8EnYJgM26v/DgtW+1lvy2WNgyBflU+ThShZaHm3a6CdD9QeKx23w==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      eslint: ^8.57.0
+
   '@surma/rollup-plugin-off-main-thread@1.4.2':
     resolution: {integrity: sha512-yBMPqmd1yEJo/280PAMkychuaALyQ9Lkb5q1ck3mjJrFuEobIfhnQ4J3mbvBoISmR3SWMWV+cGB/I0lCQee79A==}
 
@@ -6160,8 +6166,8 @@ packages:
   '@swc/helpers@0.5.5':
     resolution: {integrity: sha512-KGYxvIOXcceOAbEk4bi/dVLEK9z8sZ0uBB3Il5b1rhfClSpcX0yfRO0KmTkqR2cnQDymwLB+25ZyMzICg/cm/A==}
 
-  '@tanstack/config@0.10.0':
-    resolution: {integrity: sha512-Yz+7cWxuDo8onU2nm4+kwA9B2GSp+l1k8oSrqiERNkmRu6dKtiiW8ENFqLuXi0p5fi0sBdLeUcEhfMxTifzmtA==}
+  '@tanstack/config@0.11.0':
+    resolution: {integrity: sha512-NKm06kFaIr+DErIjWhJLhG1DhaCOzpe85FztxtdK29Spp95DwXqp+6oEWYVfJgenweWfzK87kjahh5Za/i4Pfw==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -6487,8 +6493,29 @@ packages:
       typescript:
         optional: true
 
+  '@typescript-eslint/eslint-plugin@7.17.0':
+    resolution: {integrity: sha512-pyiDhEuLM3PuANxH7uNYan1AaFs5XE0zw1hq69JBvGvE7gSuEoQl1ydtEe/XQeoC3GQxLXyOVa5kNOATgM638A==}
+    engines: {node: ^18.18.0 || >=20.0.0}
+    peerDependencies:
+      '@typescript-eslint/parser': ^7.0.0
+      eslint: ^8.57.0
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   '@typescript-eslint/parser@7.16.1':
     resolution: {integrity: sha512-u+1Qx86jfGQ5i4JjK33/FnawZRpsLxRnKzGE6EABZ40KxVT/vWsiZFEBBHjFOljmmV3MBYOHEKi0Jm9hbAOClA==}
+    engines: {node: ^18.18.0 || >=20.0.0}
+    peerDependencies:
+      eslint: ^8.57.0
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
+  '@typescript-eslint/parser@7.17.0':
+    resolution: {integrity: sha512-puiYfGeg5Ydop8eusb/Hy1k7QmOU6X3nvsqCgzrB2K4qMavK//21+PzNE8qeECgNOIoertJPUC1SpegHDI515A==}
     engines: {node: ^18.18.0 || >=20.0.0}
     peerDependencies:
       eslint: ^8.57.0
@@ -6508,6 +6535,10 @@ packages:
     resolution: {integrity: sha512-nYpyv6ALte18gbMz323RM+vpFpTjfNdyakbf3nsLvF43uF9KeNC289SUEW3QLZ1xPtyINJ1dIsZOuWuSRIWygw==}
     engines: {node: ^18.18.0 || >=20.0.0}
 
+  '@typescript-eslint/scope-manager@7.17.0':
+    resolution: {integrity: sha512-0P2jTTqyxWp9HiKLu/Vemr2Rg1Xb5B7uHItdVZ6iAenXmPo4SZ86yOPCJwMqpCyaMiEHTNqizHfsbmCFT1x9SA==}
+    engines: {node: ^18.18.0 || >=20.0.0}
+
   '@typescript-eslint/scope-manager@8.0.0-alpha.30':
     resolution: {integrity: sha512-FGW/iPWGyPFamAVZ60oCAthMqQrqafUGebF8UKuq/ha+e9SVG6YhJoRzurlQXOVf8dHfOhJ0ADMXyFnMc53clg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -6522,8 +6553,22 @@ packages:
       typescript:
         optional: true
 
+  '@typescript-eslint/type-utils@7.17.0':
+    resolution: {integrity: sha512-XD3aaBt+orgkM/7Cei0XNEm1vwUxQ958AOLALzPlbPqb8C1G8PZK85tND7Jpe69Wualri81PLU+Zc48GVKIMMA==}
+    engines: {node: ^18.18.0 || >=20.0.0}
+    peerDependencies:
+      eslint: ^8.57.0
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   '@typescript-eslint/types@7.16.1':
     resolution: {integrity: sha512-AQn9XqCzUXd4bAVEsAXM/Izk11Wx2u4H3BAfQVhSfzfDOm/wAON9nP7J5rpkCxts7E5TELmN845xTUCQrD1xIQ==}
+    engines: {node: ^18.18.0 || >=20.0.0}
+
+  '@typescript-eslint/types@7.17.0':
+    resolution: {integrity: sha512-a29Ir0EbyKTKHnZWbNsrc/gqfIBqYPwj3F2M+jWE/9bqfEHg0AMtXzkbUkOG6QgEScxh2+Pz9OXe11jHDnHR7A==}
     engines: {node: ^18.18.0 || >=20.0.0}
 
   '@typescript-eslint/types@8.0.0-alpha.30':
@@ -6532,6 +6577,15 @@ packages:
 
   '@typescript-eslint/typescript-estree@7.16.1':
     resolution: {integrity: sha512-0vFPk8tMjj6apaAZ1HlwM8w7jbghC8jc1aRNJG5vN8Ym5miyhTQGMqU++kuBFDNKe9NcPeZ6x0zfSzV8xC1UlQ==}
+    engines: {node: ^18.18.0 || >=20.0.0}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
+  '@typescript-eslint/typescript-estree@7.17.0':
+    resolution: {integrity: sha512-72I3TGq93t2GoSBWI093wmKo0n6/b7O4j9o8U+f65TVD0FS6bI2180X5eGEr8MA8PhKMvYe9myZJquUT2JkCZw==}
     engines: {node: ^18.18.0 || >=20.0.0}
     peerDependencies:
       typescript: '*'
@@ -6554,6 +6608,12 @@ packages:
     peerDependencies:
       eslint: ^8.57.0
 
+  '@typescript-eslint/utils@7.17.0':
+    resolution: {integrity: sha512-r+JFlm5NdB+JXc7aWWZ3fKSm1gn0pkswEwIYsrGPdsT2GjsRATAKXiNtp3vgAAO1xZhX8alIOEQnNMl3kbTgJw==}
+    engines: {node: ^18.18.0 || >=20.0.0}
+    peerDependencies:
+      eslint: ^8.57.0
+
   '@typescript-eslint/utils@8.0.0-alpha.30':
     resolution: {integrity: sha512-rfhqfLqFyXhHNDwMnHiVGxl/Z2q/3guQ1jLlGQ0hi9Rb7inmwz42crM+NnLPR+2vEnwyw1P/g7fnQgQ3qvFx4g==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -6562,6 +6622,10 @@ packages:
 
   '@typescript-eslint/visitor-keys@7.16.1':
     resolution: {integrity: sha512-Qlzzx4sE4u3FsHTPQAAQFJFNOuqtuY0LFrZHwQ8IHK705XxBiWOFkfKRWu6niB7hwfgnwIpO4jTC75ozW1PHWg==}
+    engines: {node: ^18.18.0 || >=20.0.0}
+
+  '@typescript-eslint/visitor-keys@7.17.0':
+    resolution: {integrity: sha512-RVGC9UhPOCsfCdI9pU++K4nD7to+jTcMIbXTSOcrLqUEW6gF2pU1UUbYJKc9cvcRSK1UDeMJ7pdMxf4bhMpV/A==}
     engines: {node: ^18.18.0 || >=20.0.0}
 
   '@typescript-eslint/visitor-keys@8.0.0-alpha.30':
@@ -15973,8 +16037,8 @@ packages:
     peerDependencies:
       typedoc-plugin-markdown: '>=4.0.0'
 
-  typedoc-plugin-markdown@4.2.1:
-    resolution: {integrity: sha512-7hQt/1WaW/VI4+x3sxwcCGsEylP1E1GvF6OTTELK5sfTEp6AeK+83jkCOgZGp1pI2DiOammMYQMnxxOny9TKsQ==}
+  typedoc-plugin-markdown@4.2.3:
+    resolution: {integrity: sha512-esucQj79SFYOv0f5XVha7QWdLUH5C5HRlDf7Z8CXzHedmVPn7jox6Gt7FdoBXN8AFxyHpa3Lbuxu65Dobwt+4Q==}
     engines: {node: '>= 18'}
     peerDependencies:
       typedoc: 0.26.x
@@ -15998,8 +16062,8 @@ packages:
   typescript-auto-import-cache@0.3.3:
     resolution: {integrity: sha512-ojEC7+Ci1ij9eE6hp8Jl9VUNnsEKzztktP5gtYNRMrTmfXVwA1PITYYAkpxCvvupdSYa/Re51B6KMcv1CTZEUA==}
 
-  typescript-eslint@7.16.1:
-    resolution: {integrity: sha512-889oE5qELj65q/tGeOSvlreNKhimitFwZqQ0o7PcWC7/lgRkAMknznsCsV8J8mZGTP/Z+cIbX8accf2DE33hrA==}
+  typescript-eslint@7.17.0:
+    resolution: {integrity: sha512-spQxsQvPguduCUfyUvLItvKqK3l8KJ/kqs5Pb/URtzQ5AC53Z6us32St37rpmlt2uESG23lOFpV4UErrmy4dZQ==}
     engines: {node: ^18.18.0 || >=20.0.0}
     peerDependencies:
       eslint: ^8.57.0
@@ -22279,6 +22343,14 @@ snapshots:
     optionalDependencies:
       '@solidjs/router': 0.13.3(solid-js@1.8.17)
 
+  '@stylistic/eslint-plugin-js@2.3.0(eslint@8.57.0)':
+    dependencies:
+      '@types/eslint': 8.56.10
+      acorn: 8.11.3
+      eslint: 8.57.0
+      eslint-visitor-keys: 4.0.0
+      espree: 10.0.1
+
   '@surma/rollup-plugin-off-main-thread@1.4.2':
     dependencies:
       ejs: 2.7.4
@@ -22426,10 +22498,11 @@ snapshots:
       '@swc/counter': 0.1.3
       tslib: 2.6.2
 
-  '@tanstack/config@0.10.0(@types/node@20.14.10)(esbuild@0.19.11)(eslint@8.57.0)(rollup@4.14.1)(typescript@5.3.3)(vite@5.3.3(@types/node@20.14.10)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
+  '@tanstack/config@0.11.0(@types/node@20.14.10)(esbuild@0.19.11)(eslint@8.57.0)(rollup@4.14.1)(typescript@5.3.3)(vite@5.3.3(@types/node@20.14.10)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))':
     dependencies:
       '@commitlint/parse': 19.0.3
       '@eslint/js': 8.57.0
+      '@stylistic/eslint-plugin-js': 2.3.0(eslint@8.57.0)
       commander: 12.1.0
       current-git-branch: 1.1.0
       esbuild-register: 3.5.0(esbuild@0.19.11)
@@ -22444,9 +22517,9 @@ snapshots:
       semver: 7.6.3
       simple-git: 3.25.0
       typedoc: 0.26.4(typescript@5.3.3)
-      typedoc-plugin-frontmatter: 1.0.0(typedoc-plugin-markdown@4.2.1(typedoc@0.26.4(typescript@5.3.3)))
-      typedoc-plugin-markdown: 4.2.1(typedoc@0.26.4(typescript@5.3.3))
-      typescript-eslint: 7.16.1(eslint@8.57.0)(typescript@5.3.3)
+      typedoc-plugin-frontmatter: 1.0.0(typedoc-plugin-markdown@4.2.3(typedoc@0.26.4(typescript@5.3.3)))
+      typedoc-plugin-markdown: 4.2.3(typedoc@0.26.4(typescript@5.3.3))
+      typescript-eslint: 7.17.0(eslint@8.57.0)(typescript@5.3.3)
       v8flags: 4.0.1
       vite-plugin-dts: 3.9.1(@types/node@20.14.10)(rollup@4.14.1)(typescript@5.3.3)(vite@5.3.3(@types/node@20.14.10)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       vite-plugin-externalize-deps: 0.8.0(vite@5.3.3(@types/node@20.14.10)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
@@ -22820,12 +22893,43 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@typescript-eslint/eslint-plugin@7.17.0(@typescript-eslint/parser@7.17.0(eslint@8.57.0)(typescript@5.3.3))(eslint@8.57.0)(typescript@5.3.3)':
+    dependencies:
+      '@eslint-community/regexpp': 4.11.0
+      '@typescript-eslint/parser': 7.17.0(eslint@8.57.0)(typescript@5.3.3)
+      '@typescript-eslint/scope-manager': 7.17.0
+      '@typescript-eslint/type-utils': 7.17.0(eslint@8.57.0)(typescript@5.3.3)
+      '@typescript-eslint/utils': 7.17.0(eslint@8.57.0)(typescript@5.3.3)
+      '@typescript-eslint/visitor-keys': 7.17.0
+      eslint: 8.57.0
+      graphemer: 1.4.0
+      ignore: 5.3.1
+      natural-compare: 1.4.0
+      ts-api-utils: 1.3.0(typescript@5.3.3)
+    optionalDependencies:
+      typescript: 5.3.3
+    transitivePeerDependencies:
+      - supports-color
+
   '@typescript-eslint/parser@7.16.1(eslint@8.57.0)(typescript@5.3.3)':
     dependencies:
       '@typescript-eslint/scope-manager': 7.16.1
       '@typescript-eslint/types': 7.16.1
       '@typescript-eslint/typescript-estree': 7.16.1(typescript@5.3.3)
       '@typescript-eslint/visitor-keys': 7.16.1
+      debug: 4.3.5(supports-color@6.1.0)
+      eslint: 8.57.0
+    optionalDependencies:
+      typescript: 5.3.3
+    transitivePeerDependencies:
+      - supports-color
+
+  '@typescript-eslint/parser@7.17.0(eslint@8.57.0)(typescript@5.3.3)':
+    dependencies:
+      '@typescript-eslint/scope-manager': 7.17.0
+      '@typescript-eslint/types': 7.17.0
+      '@typescript-eslint/typescript-estree': 7.17.0(typescript@5.3.3)
+      '@typescript-eslint/visitor-keys': 7.17.0
       debug: 4.3.5(supports-color@6.1.0)
       eslint: 8.57.0
     optionalDependencies:
@@ -22852,6 +22956,11 @@ snapshots:
       '@typescript-eslint/types': 7.16.1
       '@typescript-eslint/visitor-keys': 7.16.1
 
+  '@typescript-eslint/scope-manager@7.17.0':
+    dependencies:
+      '@typescript-eslint/types': 7.17.0
+      '@typescript-eslint/visitor-keys': 7.17.0
+
   '@typescript-eslint/scope-manager@8.0.0-alpha.30':
     dependencies:
       '@typescript-eslint/types': 8.0.0-alpha.30
@@ -22869,7 +22978,21 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@typescript-eslint/type-utils@7.17.0(eslint@8.57.0)(typescript@5.3.3)':
+    dependencies:
+      '@typescript-eslint/typescript-estree': 7.17.0(typescript@5.3.3)
+      '@typescript-eslint/utils': 7.17.0(eslint@8.57.0)(typescript@5.3.3)
+      debug: 4.3.5(supports-color@6.1.0)
+      eslint: 8.57.0
+      ts-api-utils: 1.3.0(typescript@5.3.3)
+    optionalDependencies:
+      typescript: 5.3.3
+    transitivePeerDependencies:
+      - supports-color
+
   '@typescript-eslint/types@7.16.1': {}
+
+  '@typescript-eslint/types@7.17.0': {}
 
   '@typescript-eslint/types@8.0.0-alpha.30': {}
 
@@ -22877,6 +23000,21 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 7.16.1
       '@typescript-eslint/visitor-keys': 7.16.1
+      debug: 4.3.5(supports-color@6.1.0)
+      globby: 11.1.0
+      is-glob: 4.0.3
+      minimatch: 9.0.5
+      semver: 7.6.3
+      ts-api-utils: 1.3.0(typescript@5.3.3)
+    optionalDependencies:
+      typescript: 5.3.3
+    transitivePeerDependencies:
+      - supports-color
+
+  '@typescript-eslint/typescript-estree@7.17.0(typescript@5.3.3)':
+    dependencies:
+      '@typescript-eslint/types': 7.17.0
+      '@typescript-eslint/visitor-keys': 7.17.0
       debug: 4.3.5(supports-color@6.1.0)
       globby: 11.1.0
       is-glob: 4.0.3
@@ -22914,6 +23052,17 @@ snapshots:
       - supports-color
       - typescript
 
+  '@typescript-eslint/utils@7.17.0(eslint@8.57.0)(typescript@5.3.3)':
+    dependencies:
+      '@eslint-community/eslint-utils': 4.4.0(eslint@8.57.0)
+      '@typescript-eslint/scope-manager': 7.17.0
+      '@typescript-eslint/types': 7.17.0
+      '@typescript-eslint/typescript-estree': 7.17.0(typescript@5.3.3)
+      eslint: 8.57.0
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+
   '@typescript-eslint/utils@8.0.0-alpha.30(eslint@8.57.0)(typescript@5.4.2)':
     dependencies:
       '@eslint-community/eslint-utils': 4.4.0(eslint@8.57.0)
@@ -22928,6 +23077,11 @@ snapshots:
   '@typescript-eslint/visitor-keys@7.16.1':
     dependencies:
       '@typescript-eslint/types': 7.16.1
+      eslint-visitor-keys: 3.4.3
+
+  '@typescript-eslint/visitor-keys@7.17.0':
+    dependencies:
+      '@typescript-eslint/types': 7.17.0
       eslint-visitor-keys: 3.4.3
 
   '@typescript-eslint/visitor-keys@8.0.0-alpha.30':
@@ -34881,12 +35035,12 @@ snapshots:
 
   typedarray@0.0.6: {}
 
-  typedoc-plugin-frontmatter@1.0.0(typedoc-plugin-markdown@4.2.1(typedoc@0.26.4(typescript@5.3.3))):
+  typedoc-plugin-frontmatter@1.0.0(typedoc-plugin-markdown@4.2.3(typedoc@0.26.4(typescript@5.3.3))):
     dependencies:
-      typedoc-plugin-markdown: 4.2.1(typedoc@0.26.4(typescript@5.3.3))
+      typedoc-plugin-markdown: 4.2.3(typedoc@0.26.4(typescript@5.3.3))
       yaml: 2.4.5
 
-  typedoc-plugin-markdown@4.2.1(typedoc@0.26.4(typescript@5.3.3)):
+  typedoc-plugin-markdown@4.2.3(typedoc@0.26.4(typescript@5.3.3)):
     dependencies:
       typedoc: 0.26.4(typescript@5.3.3)
 
@@ -34913,11 +35067,11 @@ snapshots:
     dependencies:
       semver: 7.6.3
 
-  typescript-eslint@7.16.1(eslint@8.57.0)(typescript@5.3.3):
+  typescript-eslint@7.17.0(eslint@8.57.0)(typescript@5.3.3):
     dependencies:
-      '@typescript-eslint/eslint-plugin': 7.16.1(@typescript-eslint/parser@7.16.1(eslint@8.57.0)(typescript@5.3.3))(eslint@8.57.0)(typescript@5.3.3)
-      '@typescript-eslint/parser': 7.16.1(eslint@8.57.0)(typescript@5.3.3)
-      '@typescript-eslint/utils': 7.16.1(eslint@8.57.0)(typescript@5.3.3)
+      '@typescript-eslint/eslint-plugin': 7.17.0(@typescript-eslint/parser@7.17.0(eslint@8.57.0)(typescript@5.3.3))(eslint@8.57.0)(typescript@5.3.3)
+      '@typescript-eslint/parser': 7.17.0(eslint@8.57.0)(typescript@5.3.3)
+      '@typescript-eslint/utils': 7.17.0(eslint@8.57.0)(typescript@5.3.3)
       eslint: 8.57.0
     optionalDependencies:
       typescript: 5.3.3
