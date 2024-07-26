@@ -746,12 +746,15 @@ describe('queryClient', () => {
 
     test('should stop prefetching if getNextPageParam returns undefined', async () => {
       const key = queryKey()
+      let count = 0
 
       await queryClient.prefetchInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) => String(pageParam),
-        getNextPageParam: (_lastPage, _pages, lastPageParam) =>
-          lastPageParam >= 20 ? undefined : lastPageParam + 5,
+        getNextPageParam: (_lastPage, _pages, lastPageParam) => {
+          count++
+          return lastPageParam >= 20 ? undefined : lastPageParam + 5
+        },
         initialPageParam: 10,
         pages: 5,
       })
@@ -762,6 +765,9 @@ describe('queryClient', () => {
         pages: ['10', '15', '20'],
         pageParams: [10, 15, 20],
       })
+
+      // this check ensures we're exiting the fetch loop early
+      expect(count).toBe(3)
     })
   })
 
