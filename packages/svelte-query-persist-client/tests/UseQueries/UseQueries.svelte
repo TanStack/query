@@ -1,10 +1,10 @@
 <script lang="ts">
+  import { untrack } from 'svelte'
   import { createQueries } from '@tanstack/svelte-query'
-  import { sleep } from '../utils'
-  import type { Writable } from 'svelte/store'
-  import type { StatusResult } from '../utils'
+  import { sleep } from '../utils.svelte'
+  import type { StatusResult } from '../utils.svelte'
 
-  export let states: Writable<Array<StatusResult<string>>>
+  let { states }: { states: { value: Array<StatusResult<string>> } } = $props()
 
   const queries = createQueries({
     queries: [
@@ -18,8 +18,10 @@
     ],
   })
 
-  $: states.update((prev) => [...prev, $queries[0]])
+  $effect(() => {
+    states.value = [...untrack(() => states.value), $state.snapshot(queries[0])]
+  })
 </script>
 
-<div>{$queries[0].data}</div>
-<div>fetchStatus: {$queries[0].fetchStatus}</div>
+<div>{queries[0].data}</div>
+<div>fetchStatus: {queries[0].fetchStatus}</div>

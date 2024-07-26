@@ -1,7 +1,6 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
-  import { setQueryClientContext } from '../../src/context'
-  import { createMutation } from '../../src/createMutation'
+  import { createMutation, setQueryClientContext } from '../../src/index'
 
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
@@ -15,7 +14,7 @@
   })
 </script>
 
-<button on:click={() => $mutation.reset()}>Reset</button>
-<button on:click={() => $mutation.mutate()}>Mutate</button>
+<button onclick={() => mutation.reset()}>Reset</button>
+<button onclick={() => mutation.mutate()}>Mutate</button>
 
-<div>Error: {$mutation.error?.message}</div>
+<div>Error: {mutation.error?.message ?? 'undefined'}</div>

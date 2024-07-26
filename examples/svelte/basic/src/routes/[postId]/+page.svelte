@@ -1,8 +1,7 @@
 <script lang="ts">
   import Post from '$lib/Post.svelte'
-  import type { PageData } from './$types'
 
-  export let data: PageData
+  const { data } = $props()
 </script>
 
 <Post postId={data.postId} />

@@ -1,8 +1,7 @@
 <script lang="ts">
   import { writable } from 'svelte/store'
   import { QueryClient } from '@tanstack/query-core'
-  import { setQueryClientContext } from '../../src/context'
-  import { createMutation } from '../../src/createMutation'
+  import { createMutation, setQueryClientContext } from '../../src/index'
 
   export let onSuccessMock: any
   export let onSettledMock: any
@@ -23,6 +22,6 @@
   })
 </script>
 
-<button on:click={() => $mutation.mutate({ count: ++$count })}>Mutate</button>
+<button onclick={() => mutation.mutate({ count: ++$count })}>Mutate</button>
 
 <div>Count: {$count}</div>

@@ -99,7 +99,7 @@
 <div>
   <div>
     {#if $query.data}
-      <button on:click={() => editingIndex.set(null)}>Back</button> Editing Todo
+      <button onclick={() => editingIndex.set(null)}>Back</button> Editing Todo
       "{$query.data.name}" (#{$editingIndex})
     {/if}
   </div>
@@ -107,7 +107,7 @@
     <span>Loading... (Attempt: {$query.failureCount + 1})</span>
   {:else if $query.error}
     <span>
-      Error! <button on:click={() => $query.refetch()}>Retry</button>
+      Error! <button onclick={() => $query.refetch()}>Retry</button>
     </span>
   {:else if todo}
     <label>
@@ -119,7 +119,7 @@
       <input bind:value={todo.notes} disabled={disableEditSave} />
     </label>
     <div>
-      <button on:click={onSave} disabled={disableEditSave}> Save </button>
+      <button onclick={onSave} disabled={disableEditSave}> Save </button>
     </div>
     <div>
       {$saveMutation.status === 'pending'

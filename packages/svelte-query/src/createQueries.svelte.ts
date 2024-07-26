@@ -1,10 +1,8 @@
+import { untrack } from 'svelte'
 import { QueriesObserver, notifyManager } from '@tanstack/query-core'
-import { derived, get, readable } from 'svelte/store'
 import { useIsRestoring } from './useIsRestoring'
 import { useQueryClient } from './useQueryClient'
-import { isSvelteStore } from './utils'
-import type { Readable } from 'svelte/store'
-import type { StoreOrVal } from './types'
+import type { FnOrVal } from '.'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
@@ -121,7 +119,7 @@ type GetCreateQueryResult<T> =
                     unknown extends TError ? DefaultError : TError
                   >
                 : // Fallback
-                  QueryObserverResult
+                  never
 
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
@@ -210,68 +208,71 @@ export function createQueries<
     queries,
     ...options
   }: {
-    queries: StoreOrVal<[...QueriesOptions<T>]>
+    queries: FnOrVal<[...QueriesOptions<T>]>
     combine?: (result: QueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,
-): Readable<TCombinedResult> {
+): TCombinedResult {
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
 
-  const queriesStore = isSvelteStore(queries) ? queries : readable(queries)
-
-  const defaultedQueriesStore = derived(
-    [queriesStore, isRestoring],
-    ([$queries, $isRestoring]) => {
-      return $queries.map((opts) => {
-        const defaultedOptions = client.defaultQueryOptions(
-          opts as QueryObserverOptions,
-        )
-        // Make sure the results are already in fetching state before subscribing or updating options
-        defaultedOptions._optimisticResults = $isRestoring
-          ? 'isRestoring'
-          : 'optimistic'
-        return defaultedOptions
-      })
-    },
+  const queriesStore = $derived(
+    typeof queries != 'function' ? () => queries : queries,
   )
+
+  const defaultedQueriesStore = $derived(() => {
+    return queriesStore().map((opts) => {
+      const defaultedOptions = client.defaultQueryOptions(opts)
+      // Make sure the results are already in fetching state before subscribing or updating options
+      defaultedOptions._optimisticResults = isRestoring()
+        ? 'isRestoring'
+        : 'optimistic'
+      return defaultedOptions as QueryObserverOptions
+    })
+  })
   const observer = new QueriesObserver<TCombinedResult>(
     client,
-    get(defaultedQueriesStore),
+    defaultedQueriesStore(),
     options as QueriesObserverOptions<TCombinedResult>,
   )
-
-  defaultedQueriesStore.subscribe(($defaultedQueries) => {
+  const [_, getCombinedResult, trackResult] = $derived(
+    observer.getOptimisticResult(
+      defaultedQueriesStore(),
+      (options as QueriesObserverOptions<TCombinedResult>).combine,
+    ),
+  )
+  $effect(() => {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
     observer.setQueries(
-      $defaultedQueries,
+      defaultedQueriesStore(),
       options as QueriesObserverOptions<TCombinedResult>,
       { listeners: false },
     )
   })
 
-  const result = derived([isRestoring], ([$isRestoring], set) => {
-    const unsubscribe = $isRestoring
-      ? () => undefined
-      : observer.subscribe(notifyManager.batchCalls(set))
+  let result = $state(getCombinedResult(trackResult()))
 
-    return () => unsubscribe()
-  })
+  $effect(() => {
+    if (isRestoring()) {
+      return () => null
+    }
+    untrack(() => {
+      // @ts-expect-error
+      Object.assign(result, getCombinedResult(trackResult()))
+    })
 
-  const { subscribe } = derived(
-    [result, defaultedQueriesStore],
-    // @ts-expect-error svelte-check thinks this is unused
-    ([$result, $defaultedQueriesStore]) => {
-      const [rawResult, combineResult, trackResult] =
-        observer.getOptimisticResult(
-          $defaultedQueriesStore,
+    return observer.subscribe((_result) => {
+      notifyManager.batchCalls(() => {
+        const res = observer.getOptimisticResult(
+          defaultedQueriesStore(),
           (options as QueriesObserverOptions<TCombinedResult>).combine,
         )
-      $result = rawResult
-      return combineResult(trackResult())
-    },
-  )
+        // @ts-expect-error
+        Object.assign(result, res[1](res[2]()))
+      })()
+    })
+  })
 
-  return { subscribe }
+  return result
 }
