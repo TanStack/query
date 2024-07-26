@@ -5,7 +5,7 @@
   const query = createQuery({
     queryKey: ['test'],
     queryFn: async () => {
-      await sleep(10)
+      await sleep(5)
       return 'fetched'
     },
   })

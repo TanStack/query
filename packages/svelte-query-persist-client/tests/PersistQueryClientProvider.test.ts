@@ -26,7 +26,7 @@ const createMockPersister = (): Persister => {
       storedState = persistClient
     },
     async restoreClient() {
-      await sleep(10)
+      await sleep(5)
       return storedState
     },
     removeClient() {
@@ -46,7 +46,7 @@ const createMockErrorPersister = (
         // noop
       },
       async restoreClient() {
-        await sleep(10)
+        await sleep(5)
         throw error
       },
       removeClient,
@@ -247,7 +247,7 @@ describe('PersistQueryClientProvider', () => {
       },
     })
 
-    await waitFor(() => rendered.getByText('data: null'))
+    await waitFor(() => rendered.getByText('data: undefined'))
     await waitFor(() => rendered.getByText('data: hydrated'))
 
     const states = get(statesStore)
