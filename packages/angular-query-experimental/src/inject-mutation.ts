@@ -8,11 +8,11 @@ import {
   runInInjectionContext,
   signal,
 } from '@angular/core'
-import { MutationObserver, notifyManager } from '@tanstack/query-core'
+import { MutationObserver, noop, notifyManager } from '@tanstack/query-core'
 import { assertInjector } from './util/assert-injector/assert-injector'
 import { signalProxy } from './signal-proxy'
 import { injectQueryClient } from './inject-query-client'
-import { noop, shouldThrowError } from './util'
+import { shouldThrowError } from './util'
 
 import { lazyInit } from './util/lazy-init/lazy-init'
 import type {

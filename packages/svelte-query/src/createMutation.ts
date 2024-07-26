@@ -1,7 +1,7 @@
 import { derived, get, readable } from 'svelte/store'
-import { MutationObserver, notifyManager } from '@tanstack/query-core'
+import { MutationObserver, noop, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
-import { isSvelteStore, noop } from './utils'
+import { isSvelteStore } from './utils'
 import type {
   CreateMutateFunction,
   CreateMutationOptions,

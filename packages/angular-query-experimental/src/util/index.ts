@@ -1,3 +1,8 @@
+/**
+ *
+ * @param throwError
+ * @param params
+ */
 export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
   throwError: boolean | T | undefined,
   params: Parameters<T>,
@@ -9,5 +14,3 @@ export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
 
   return !!throwError
 }
-
-export function noop() {}
