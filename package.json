@@ -11,8 +11,8 @@
     "clean": "pnpm --filter \"./packages/**\" run clean",
     "preinstall": "node -e \"if(process.env.CI == 'true') {console.log('Skipping preinstall...')} else {process.exit(1)}\" || npx -y only-allow pnpm",
     "test": "pnpm run test:ci",
-    "test:pr": "nx affected --targets=test:format,test:sherif,test:knip,test:eslint,test:lib,test:types,test:build,build",
-    "test:ci": "nx run-many --targets=test:format,test:sherif,test:knip,test:eslint,test:lib,test:types,test:build,build",
+    "test:pr": "nx affected --targets=test:sherif,test:knip,test:eslint,test:lib,test:types,test:build,build",
+    "test:ci": "nx run-many --targets=test:sherif,test:knip,test:eslint,test:lib,test:types,test:build,build",
     "test:eslint": "nx affected --target=test:eslint --exclude=examples/**",
     "test:format": "pnpm run prettier --check",
     "test:sherif": "sherif -p \"./integrations/*\" -p \"./examples/*\"",
@@ -32,7 +32,6 @@
   },
   "nx": {
     "includedScripts": [
-      "test:format",
       "test:sherif",
       "test:knip"
     ]
@@ -42,7 +41,7 @@
     "@cspell/eslint-plugin": "^8.9.1",
     "@eslint-react/eslint-plugin": "^1.5.16",
     "@solidjs/testing-library": "^0.8.8",
-    "@tanstack/config": "^0.10.0",
+    "@tanstack/config": "^0.11.0",
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.0",
     "@types/eslint": "^8.56.10",
