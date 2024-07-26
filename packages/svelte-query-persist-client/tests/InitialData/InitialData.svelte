@@ -1,12 +1,12 @@
 <script lang="ts">
+  import { untrack } from 'svelte'
   import { createQuery } from '@tanstack/svelte-query'
-  import { sleep } from '../utils.js'
-  import type { Writable } from 'svelte/store'
-  import type { StatusResult } from '../utils.js'
+  import { sleep } from '../utils.svelte.js'
+  import type { StatusResult } from '../utils.svelte.js'
 
-  export let states: Writable<Array<StatusResult<string>>>
+  let { states }: { states: { value: Array<StatusResult<string>> } } = $props()
 
-  const query = createQuery({
+  const query = createQuery(() => ({
     queryKey: ['test'],
     queryFn: async () => {
       await sleep(5)
@@ -17,10 +17,13 @@
     // make sure that initial data is older than the hydration data
     // otherwise initialData would be newer and takes precedence
     initialDataUpdatedAt: 1,
-  })
+  }))
 
-  $: states.update((prev) => [...prev, $query])
+  $effect(() => {
+    // svelte-ignore state_snapshot_uncloneable
+    states.value = [...untrack(() => states.value), $state.snapshot(query)]
+  })
 </script>
 
-<div>{$query.data}</div>
-<div>fetchStatus: {$query.fetchStatus}</div>
+<div>{query.data}</div>
+<div>fetchStatus: {query.fetchStatus}</div>

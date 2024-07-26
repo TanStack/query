@@ -1,5 +1,4 @@
 import { describe, expectTypeOf, test } from 'vitest'
-import { get } from 'svelte/store'
 import { QueryClient } from '@tanstack/query-core'
 import { createInfiniteQuery, infiniteQueryOptions } from '../../src/index.js'
 import type { InfiniteData } from '@tanstack/query-core'
@@ -37,10 +36,10 @@ describe('queryOptions', () => {
       initialPageParam: 1,
     })
 
-    const query = createInfiniteQuery(options)
+    const query = createInfiniteQuery(() => options)
 
     // known issue: type of pageParams is unknown when returned from useInfiniteQuery
-    expectTypeOf(get(query).data).toEqualTypeOf<
+    expectTypeOf(query.data).toEqualTypeOf<
       InfiniteData<string, unknown> | undefined
     >()
   })

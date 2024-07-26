@@ -1,43 +1,55 @@
 <script lang="ts">
-  import { onDestroy } from 'svelte'
-  import { persistQueryClient } from '@tanstack/query-persist-client-core'
+  import {
+    persistQueryClientRestore,
+    persistQueryClientSubscribe,
+  } from '@tanstack/query-persist-client-core'
   import {
     QueryClientProvider,
     setIsRestoringContext,
   } from '@tanstack/svelte-query'
-  import { writable } from 'svelte/store'
   import type { PersistQueryClientOptions } from '@tanstack/query-persist-client-core'
-  import type { OmitKeyof, QueryClient } from '@tanstack/svelte-query'
+  import type {
+    OmitKeyof,
+    QueryClientProviderProps,
+  } from '@tanstack/svelte-query'
 
-  export let client: QueryClient
-  export let onSuccess: () => Promise<unknown> | unknown = () => undefined
-  export let persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
+  type PersistQueryClientProviderProps = QueryClientProviderProps & {
+    persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
+    onSuccess?: () => void
+  }
 
-  const isRestoring = writable(true)
-  setIsRestoringContext(isRestoring)
-  $: {
-    let isStale = false
-    isRestoring.set(true)
-    const [unsubscribe, promise] = persistQueryClient({
-      ...persistOptions,
-      queryClient: client,
-    })
-    promise.then(async () => {
-      if (!isStale) {
-        try {
-          await onSuccess()
-        } finally {
-          isRestoring.set(false)
-        }
+  let {
+    client,
+    children,
+    persistOptions,
+    ...props
+  }: PersistQueryClientProviderProps = $props()
+
+  let isRestoring = $state(true)
+
+  setIsRestoringContext(() => isRestoring)
+
+  const options = $derived({
+    ...persistOptions,
+    queryClient: client,
+  })
+
+  $effect(() => {
+    return isRestoring ? () => {} : persistQueryClientSubscribe(options)
+  })
+
+  $effect(() => {
+    isRestoring = true
+    persistQueryClientRestore(options).then(async () => {
+      try {
+        await props.onSuccess?.()
+      } finally {
+        isRestoring = false
       }
     })
-    onDestroy(() => {
-      isStale = true
-      unsubscribe()
-    })
-  }
+  })
 </script>
 
-<QueryClientProvider {client}>
-  <slot />
+<QueryClientProvider {client} {...props}>
+  {@render children()}
 </QueryClientProvider>

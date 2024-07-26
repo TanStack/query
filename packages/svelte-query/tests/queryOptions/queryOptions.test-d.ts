@@ -1,5 +1,4 @@
 import { describe, expectTypeOf, test } from 'vitest'
-import { get } from 'svelte/store'
 import {
   QueriesObserver,
   QueryClient,
@@ -47,10 +46,10 @@ describe('queryOptions', () => {
     })
 
     const queries = createQueries({
-      queries: [options],
+      queries: () => [options],
     })
 
-    expectTypeOf(get(queries)[0].data).toEqualTypeOf<number | undefined>()
+    expectTypeOf(queries[0].data).toEqualTypeOf<number | undefined>()
   })
 
   test('Should tag the queryKey with the result type of the QueryFn', () => {

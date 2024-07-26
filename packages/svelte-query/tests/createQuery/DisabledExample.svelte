@@ -1,31 +1,39 @@
 <script lang="ts">
+  import { untrack } from 'svelte'
   import { QueryClient } from '@tanstack/query-core'
-  import { derived, writable } from 'svelte/store'
   import { createQuery } from '../../src/index.js'
-  import { sleep } from '../utils.js'
+  import { sleep } from '../utils.svelte.js'
   import type { QueryObserverResult } from '@tanstack/query-core'
-  import type { Writable } from 'svelte/store'
 
-  export let states: Writable<Array<QueryObserverResult>>
+  let {
+    states,
+  }: {
+    states: { value: Array<QueryObserverResult> }
+  } = $props()
 
   const queryClient = new QueryClient()
-  const count = writable(0)
+  let count = $state(0)
 
-  const options = derived(count, ($count) => ({
-    queryKey: ['test', $count],
-    queryFn: async () => {
-      await sleep(5)
-      return $count
-    },
-    enabled: $count === 0,
-  }))
+  const query = createQuery(
+    () => ({
+      queryKey: ['test', count],
+      queryFn: async () => {
+        await sleep(5)
+        return count
+      },
+      enabled: count === 0,
+    }),
+    queryClient,
+  )
 
-  const query = createQuery(options, queryClient)
-
-  $: states.update((prev) => [...prev, $query])
+  $effect(() => {
+    // @ts-expect-error
+    // svelte-ignore state_snapshot_uncloneable
+    states.value = [...untrack(() => states.value), $state.snapshot(query)]
+  })
 </script>
 
-<button on:click={() => ($count += 1)}>Increment</button>
+<button onclick={() => (count += 1)}>Increment</button>
 
-<div>Data: {$query.data ?? 'undefined'}</div>
-<div>Count: {$count}</div>
+<div>Data: {query.data ?? 'undefined'}</div>
+<div>Count: {count}</div>
