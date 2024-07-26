@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createQueries } from '../../src/index.js'
-  import { sleep } from '../utils.js'
+  import { sleep } from '../utils.svelte.js'
   import type { QueryClient } from '@tanstack/query-core'
 
   export let queryClient: QueryClient
@@ -9,13 +9,14 @@
 
   const queries = createQueries(
     {
-      queries: ids.map((id) => ({
-        queryKey: [id],
-        queryFn: async () => {
-          await sleep(5)
-          return id
-        },
-      })),
+      queries: () =>
+        ids.map((id) => ({
+          queryKey: [id],
+          queryFn: async () => {
+            await sleep(5)
+            return id
+          },
+        })),
       combine: (results) => {
         return {
           isPending: results.some((result) => result.isPending),
@@ -28,5 +29,5 @@
   )
 </script>
 
-<div>isPending: {$queries.isPending}</div>
-<div>Data: {$queries.data ?? 'undefined'}</div>
+<div>isPending: {queries.isPending}</div>
+<div>Data: {queries.data}</div>

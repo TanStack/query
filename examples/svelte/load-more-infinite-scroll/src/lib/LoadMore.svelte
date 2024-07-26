@@ -6,7 +6,7 @@
   const fetchPlanets = async ({ pageParam = 1 }) =>
     await fetch(`${endPoint}/planets/?page=${pageParam}`).then((r) => r.json())
 
-  const query = createInfiniteQuery({
+  const query = createInfiniteQuery(() => ({
     queryKey: ['planets'],
     queryFn: ({ pageParam }) => fetchPlanets({ pageParam }),
     initialPageParam: 1,
@@ -20,18 +20,18 @@
       }
       return undefined
     },
-  })
+  }))
 </script>
 
-{#if $query.isPending}
+{#if query.isPending}
   Loading...
 {/if}
-{#if $query.error}
-  <span>Error: {$query.error.message}</span>
+{#if query.error}
+  <span>Error: {query.error.message}</span>
 {/if}
-{#if $query.isSuccess}
+{#if query.isSuccess}
   <div>
-    {#each $query.data.pages as { results }}
+    {#each query.data.pages as { results }}
       {#each results as planet}
         <div class="card">
           <div class="card-body">
@@ -44,12 +44,12 @@
   </div>
   <div>
     <button
-      on:click={() => $query.fetchNextPage()}
-      disabled={!$query.hasNextPage || $query.isFetchingNextPage}
+      onclick={() => query.fetchNextPage()}
+      disabled={!query.hasNextPage || query.isFetchingNextPage}
     >
-      {#if $query.isFetching}
+      {#if query.isFetching}
         Loading more...
-      {:else if $query.hasNextPage}
+      {:else if query.hasNextPage}
         Load More
       {:else}Nothing more to load{/if}
     </button>

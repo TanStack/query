@@ -1,14 +1,14 @@
 <script lang="ts">
   import { createQuery } from '../../src/index.js'
-  import { sleep } from '../utils.js'
+  import { sleep } from '../utils.svelte.js'
 
-  const query = createQuery({
+  const query = createQuery(() => ({
     queryKey: ['hello'],
     queryFn: async () => {
       await sleep(5)
       return 'test'
     },
-  })
+  }))
 </script>
 
-<div>Data: {$query.data ?? 'undefined'}</div>
+<div>Data: {query.data ?? 'undefined'}</div>

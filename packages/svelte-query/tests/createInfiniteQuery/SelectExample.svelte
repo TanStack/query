@@ -1,15 +1,15 @@
 <script lang="ts">
+  import { untrack } from 'svelte'
   import { QueryClient } from '@tanstack/query-core'
   import { createInfiniteQuery } from '../../src/index.js'
   import type { QueryObserverResult } from '@tanstack/query-core'
-  import type { Writable } from 'svelte/store'
 
-  export let states: Writable<Array<QueryObserverResult>>
+  let { states }: { states: { value: Array<QueryObserverResult> } } = $props()
 
   const queryClient = new QueryClient()
 
   const query = createInfiniteQuery(
-    {
+    () => ({
       queryKey: ['test'],
       queryFn: () => Promise.resolve({ count: 1 }),
       select: (data) => ({
@@ -18,11 +18,15 @@
       }),
       getNextPageParam: () => undefined,
       initialPageParam: 0,
-    },
+    }),
     queryClient,
   )
 
-  $: states.update((prev) => [...prev, $query])
+  $effect(() => {
+    // @ts-expect-error
+    // svelte-ignore state_snapshot_uncloneable
+    states.value = [...untrack(() => states.value), $state.snapshot(query)]
+  })
 </script>
 
-<div>{$query.data?.pages.join(',')}</div>
+<div>{query.data?.pages.join(',')}</div>

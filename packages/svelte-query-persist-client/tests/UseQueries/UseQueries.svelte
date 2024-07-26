@@ -1,13 +1,13 @@
 <script lang="ts">
+  import { untrack } from 'svelte'
   import { createQueries } from '@tanstack/svelte-query'
-  import { sleep } from '../utils.js'
-  import type { Writable } from 'svelte/store'
-  import type { StatusResult } from '../utils.js'
+  import { sleep } from '../utils.svelte.js'
+  import type { StatusResult } from '../utils.svelte.js'
 
-  export let states: Writable<Array<StatusResult<string>>>
+  let { states }: { states: { value: Array<StatusResult<string>> } } = $props()
 
   const queries = createQueries({
-    queries: [
+    queries: () => [
       {
         queryKey: ['test'],
         queryFn: async (): Promise<string> => {
@@ -18,8 +18,11 @@
     ],
   })
 
-  $: states.update((prev) => [...prev, $queries[0]])
+  $effect(() => {
+    // svelte-ignore state_snapshot_uncloneable
+    states.value = [...untrack(() => states.value), $state.snapshot(queries[0])]
+  })
 </script>
 
-<div>{$queries[0].data}</div>
-<div>fetchStatus: {$queries[0].fetchStatus}</div>
+<div>{queries[0].data}</div>
+<div>fetchStatus: {queries[0].fetchStatus}</div>

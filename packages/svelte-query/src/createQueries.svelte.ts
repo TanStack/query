@@ -1,10 +1,8 @@
+import { untrack } from 'svelte'
 import { QueriesObserver, notifyManager } from '@tanstack/query-core'
-import { derived, get, readable } from 'svelte/store'
 import { useIsRestoring } from './useIsRestoring.js'
 import { useQueryClient } from './useQueryClient.js'
-import { isSvelteStore, noop } from './utils.js'
-import type { Readable } from 'svelte/store'
-import type { StoreOrVal } from './types.js'
+import type { FunctionedParams } from './types.js'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
@@ -195,70 +193,72 @@ export function createQueries<
     ...options
   }: {
     queries:
-      | StoreOrVal<[...QueriesOptions<T>]>
-      | StoreOrVal<
+      | FunctionedParams<[...QueriesOptions<T>]>
+      | FunctionedParams<
           [...{ [K in keyof T]: GetQueryObserverOptionsForCreateQueries<T[K]> }]
         >
     combine?: (result: QueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,
-): Readable<TCombinedResult> {
+): TCombinedResult {
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
 
-  const queriesStore = isSvelteStore(queries) ? queries : readable(queries)
+  const defaultedQueries = $derived(() => {
+    return queries().map((opts) => {
+      const defaultedOptions = client.defaultQueryOptions(opts)
+      // Make sure the results are already in fetching state before subscribing or updating options
+      defaultedOptions._optimisticResults = isRestoring()
+        ? 'isRestoring'
+        : 'optimistic'
+      return defaultedOptions as QueryObserverOptions
+    })
+  })
 
-  const defaultedQueriesStore = derived(
-    [queriesStore, isRestoring],
-    ([$queries, $isRestoring]) => {
-      return $queries.map((opts) => {
-        const defaultedOptions = client.defaultQueryOptions(
-          opts as QueryObserverOptions,
-        )
-        // Make sure the results are already in fetching state before subscribing or updating options
-        defaultedOptions._optimisticResults = $isRestoring
-          ? 'isRestoring'
-          : 'optimistic'
-        return defaultedOptions
-      })
-    },
-  )
   const observer = new QueriesObserver<TCombinedResult>(
     client,
-    get(defaultedQueriesStore),
+    defaultedQueries(),
     options as QueriesObserverOptions<TCombinedResult>,
   )
 
-  defaultedQueriesStore.subscribe(($defaultedQueries) => {
+  const [_, getCombinedResult, trackResult] = $derived(
+    observer.getOptimisticResult(
+      defaultedQueries(),
+      (options as QueriesObserverOptions<TCombinedResult>).combine,
+    ),
+  )
+
+  $effect(() => {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
     observer.setQueries(
-      $defaultedQueries,
+      defaultedQueries(),
       options as QueriesObserverOptions<TCombinedResult>,
     )
   })
 
-  const result = derived([isRestoring], ([$isRestoring], set) => {
-    const unsubscribe = $isRestoring
-      ? noop
-      : observer.subscribe(notifyManager.batchCalls(set))
+  let result = $state(getCombinedResult(trackResult()))
 
-    return () => unsubscribe()
-  })
+  $effect(() => {
+    if (isRestoring()) {
+      return () => null
+    }
+    untrack(() => {
+      // @ts-expect-error
+      Object.assign(result, getCombinedResult(trackResult()))
+    })
 
-  const { subscribe } = derived(
-    [result, defaultedQueriesStore],
-    // @ts-expect-error svelte-check thinks this is unused
-    ([$result, $defaultedQueriesStore]) => {
-      const [rawResult, combineResult, trackResult] =
-        observer.getOptimisticResult(
-          $defaultedQueriesStore,
+    return observer.subscribe((_result) => {
+      notifyManager.batchCalls(() => {
+        const res = observer.getOptimisticResult(
+          defaultedQueries(),
           (options as QueriesObserverOptions<TCombinedResult>).combine,
         )
-      $result = rawResult
-      return combineResult(trackResult())
-    },
-  )
+        // @ts-expect-error
+        Object.assign(result, res[1](res[2]()))
+      })()
+    })
+  })
 
-  return { subscribe }
+  return result
 }

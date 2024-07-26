@@ -5,30 +5,30 @@
     createMutation,
   } from '@tanstack/svelte-query'
 
-  let intervalMs = 1000
-  let value = ''
+  let intervalMs = $state(1000)
+  let value = $state<string>('')
 
   const client = useQueryClient()
 
   const endpoint = 'http://localhost:5173/api/data'
 
-  $: todos = createQuery<{ items: string[] }>({
+  const todos = createQuery<{ items: string[] }>(() => ({
     queryKey: ['refetch'],
     queryFn: async () => await fetch(endpoint).then((r) => r.json()),
     // Refetch the data every second
     refetchInterval: intervalMs,
-  })
+  }))
 
-  const addMutation = createMutation({
+  const addMutation = createMutation(() => ({
     mutationFn: (value: string) =>
       fetch(`${endpoint}?add=${value}`).then((r) => r.json()),
     onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
-  })
+  }))
 
-  const clearMutation = createMutation({
+  const clearMutation = createMutation(() => ({
     mutationFn: () => fetch(`${endpoint}?clear=1`).then((r) => r.json()),
     onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
-  })
+  }))
 </script>
 
 <h1>Auto Refetch with stale-time set to 1s</h1>
@@ -49,8 +49,8 @@
           margin-left:.5rem;
           width:.75rem;
           height:.75rem; 
-          background: {$todos.isFetching ? 'green' : 'transparent'};
-          transition: {!$todos.isFetching ? 'all .3s ease' : 'none'};
+          background: {todos.isFetching ? 'green' : 'transparent'};
+          transition: {!todos.isFetching ? 'all .3s ease' : 'none'};
           border-radius: 100%;
           transform: scale(1.5)"
     ></span>
@@ -58,10 +58,10 @@
 </label>
 <h2>Todo List</h2>
 <form
-  on:submit={(e) => {
+  onsubmit={(e) => {
     e.preventDefault()
     e.stopPropagation()
-    $addMutation.mutate(value, {
+    addMutation.mutate(value, {
       onSuccess: () => (value = ''),
     })
   }}
@@ -69,26 +69,24 @@
   <input placeholder="enter something" bind:value />
 </form>
 
-{#if $todos.isPending}
+{#if todos.isPending}
   Loading...
 {/if}
-{#if $todos.error}
+{#if todos.error}
   An error has occurred:
-  {$todos.error.message}
+  {todos.error.message}
 {/if}
-{#if $todos.isSuccess}
+{#if todos.isSuccess}
   <ul>
-    {#each $todos.data.items as item}
+    {#each todos.data.items as item}
       <li>{item}</li>
     {/each}
   </ul>
   <div>
-    <button on:click={() => $clearMutation.mutate(undefined)}>
-      Clear All
-    </button>
+    <button onclick={() => clearMutation.mutate(undefined)}> Clear All </button>
   </div>
 {/if}
-{#if $todos.isFetching}
+{#if todos.isFetching}
   <div style="color:darkgreen; font-weight:700">
     'Background Updating...' : ' '
   </div>

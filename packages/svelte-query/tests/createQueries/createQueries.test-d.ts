@@ -1,9 +1,7 @@
 import { describe, expectTypeOf, test } from 'vitest'
-import { get } from 'svelte/store'
 import { skipToken } from '@tanstack/query-core'
 import { createQueries, queryOptions } from '../../src/index.js'
-import type { Readable } from 'svelte/store'
-import type { OmitKeyof, QueryObserverResult } from '@tanstack/query-core'
+import type { QueryObserverResult } from '@tanstack/query-core'
 import type { CreateQueryOptions } from '../../src/index.js'
 
 describe('createQueries', () => {
@@ -19,9 +17,9 @@ describe('createQueries', () => {
         wow: true,
       },
     })
-    const queryResults = createQueries({ queries: [options] })
+    const queryResults = createQueries({ queries: () => [options] })
 
-    const data = get(queryResults)[0].data
+    const data = queryResults[0].data
 
     expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
   })
@@ -29,11 +27,9 @@ describe('createQueries', () => {
   test('Allow custom hooks using UseQueryOptions', () => {
     type Data = string
 
-    const useCustomQueries = (
-      options?: OmitKeyof<CreateQueryOptions<Data>, 'queryKey' | 'queryFn'>,
-    ) => {
+    const useCustomQueries = (options?: CreateQueryOptions<Data>) => {
       return createQueries({
-        queries: [
+        queries: () => [
           {
             ...options,
             queryKey: ['todos-key'],
@@ -44,14 +40,14 @@ describe('createQueries', () => {
     }
 
     const query = useCustomQueries()
-    const data = get(query)[0].data
+    const data = query[0].data
 
     expectTypeOf(data).toEqualTypeOf<Data | undefined>()
   })
 
   test('TData should have correct type when conditional skipToken is passed', () => {
     const queryResults = createQueries({
-      queries: [
+      queries: () => [
         {
           queryKey: ['withSkipToken'],
           queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
@@ -59,7 +55,7 @@ describe('createQueries', () => {
       ],
     })
 
-    const firstResult = get(queryResults)[0]
+    const firstResult = queryResults[0]
 
     expectTypeOf(firstResult).toEqualTypeOf<
       QueryObserverResult<number, Error>
@@ -85,20 +81,16 @@ describe('createQueries', () => {
 
     const queries1List = [1, 2, 3].map(() => ({ ...Queries1.get() }))
     const result = createQueries({
-      queries: [...queries1List, { ...Queries2.get() }],
+      queries: () => [...queries1List, { ...Queries2.get() }],
     })
 
     expectTypeOf(result).toEqualTypeOf<
-      Readable<
-        [
-          ...Array<QueryObserverResult<number, Error>>,
-          QueryObserverResult<boolean, Error>,
-        ]
-      >
+      [
+        ...Array<QueryObserverResult<number, Error>>,
+        QueryObserverResult<boolean, Error>,
+      ]
     >()
 
-    expectTypeOf(get(result)[0].data).toEqualTypeOf<
-      number | boolean | undefined
-    >()
+    expectTypeOf(result[0].data).toEqualTypeOf<number | boolean | undefined>()
   })
 })

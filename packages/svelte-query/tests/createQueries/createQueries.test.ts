@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { render, waitFor } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
-import { sleep } from '../utils.js'
+import { sleep } from '../utils.svelte.js'
 import BaseExample from './BaseExample.svelte'
 import CombineExample from './CombineExample.svelte'
 
@@ -10,7 +10,7 @@ describe('createQueries', () => {
     const rendered = render(BaseExample, {
       props: {
         options: {
-          queries: [
+          queries: () => [
             {
               queryKey: ['key-1'],
               queryFn: async () => {
