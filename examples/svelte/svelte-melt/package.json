@@ -1,0 +1,29 @@
+{
+  "name": "svelte-melt",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev --port 3000",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "lint": "prettier --check . && eslint .",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@tanstack/query-sync-storage-persister": "^5.51.1",
+    "@tanstack/svelte-query": "^5.51.1",
+    "@tanstack/svelte-query-devtools": "^5.51.1",
+    "@tanstack/svelte-query-persist-client": "^5.51.1"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "^3.2.2",
+    "@sveltejs/kit": "^2.5.18",
+    "@sveltejs/vite-plugin-svelte": "^4.0.0-next.4",
+    "svelte": "5.0.0-next.192",
+    "svelte-check": "^3.8.4",
+    "typescript": "5.3.3",
+    "vite": "^5.3.3"
+  }
+}

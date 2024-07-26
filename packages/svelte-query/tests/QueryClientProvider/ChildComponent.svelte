@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createQuery } from '../../src/createQuery'
-  import { sleep } from '../utils'
+  import { sleep } from '../utils.svelte'
 
   const query = createQuery({
     queryKey: ['hello'],
@@ -11,4 +11,4 @@
   })
 </script>
 
-<div>Data: {$query.data ?? 'undefined'}</div>
+<div>Data: {query.data ?? 'undefined'}</div>

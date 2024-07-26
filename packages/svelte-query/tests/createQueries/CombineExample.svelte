@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { createQueries } from '../../src/createQueries'
-  import { sleep } from '../utils'
+  import { createQueries } from '../../src/createQueries.svelte'
+  import { sleep } from '../utils.svelte'
   import type { QueryClient } from '@tanstack/query-core'
 
   export let queryClient: QueryClient
@@ -28,5 +28,5 @@
   )
 </script>
 
-<div>isPending: {$queries.isPending}</div>
-<div>Data: {$queries.data ?? 'undefined'}</div>
+<div>isPending: {queries.isPending}</div>
+<div>Data: {queries.data ?? 'undefined'}</div>

@@ -12,18 +12,18 @@
   })
 </script>
 
-{#if $query.status === 'pending'}
+{#if query.status === 'pending'}
   <p>Loading...</p>
 {/if}
 
-{#if $query.status === 'error'}
+{#if query.status === 'error'}
   <p>Error :(</p>
 {/if}
 
-{#if $query.status === 'success'}
+{#if query.status === 'success'}
   <div>
     <h2 class="text-4xl">Films</h2>
-    {#each $query.data.results as film}
+    {#each query.data.results as film}
       {@const filmUrlParts = film.url.split('/').filter(Boolean)}
       {@const filmId = filmUrlParts[filmUrlParts.length - 1]}
       <article>

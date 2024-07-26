@@ -38,6 +38,7 @@ export default [
       '@typescript-eslint/ban-types': 'off',
       '@typescript-eslint/no-empty-function': 'off',
       'no-case-declarations': 'off',
+      'prefer-const': 'off',
     },
   },
 ]

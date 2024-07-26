@@ -1,24 +1,30 @@
 <script lang="ts">
+  import { untrack } from 'svelte'
   import { QueryClient } from '@tanstack/query-core'
   import { createInfiniteQuery } from '../../src/createInfiniteQuery'
+  import { sleep } from '../utils.svelte'
   import type { QueryObserverResult } from '@tanstack/query-core'
-  import type { Writable } from 'svelte/store'
 
-  export let states: Writable<Array<QueryObserverResult>>
+  let { states }: { states: { value: Array<QueryObserverResult> } } = $props()
 
   const queryClient = new QueryClient()
 
   const query = createInfiniteQuery(
     {
       queryKey: ['test'],
-      queryFn: ({ pageParam }) => Number(pageParam),
+      queryFn: async ({ pageParam }) => {
+        await sleep(5)
+        return Number(pageParam)
+      },
       getNextPageParam: (lastPage) => lastPage + 1,
       initialPageParam: 0,
     },
     queryClient,
   )
 
-  $: states.update((prev) => [...prev, $query])
+  $effect(() => {
+    states.value = [...untrack(() => states.value), $state.snapshot(query)]
+  })
 </script>
 
-<div>Status: {$query.status}</div>
+<div>Status: {query.status}</div>

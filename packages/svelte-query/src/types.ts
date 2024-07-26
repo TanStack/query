@@ -1,3 +1,4 @@
+import type { Snippet } from 'svelte'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
@@ -9,15 +10,13 @@ import type {
   MutationObserverOptions,
   MutationObserverResult,
   MutationState,
-  OmitKeyof,
+  QueryClient,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
-import type { Readable } from 'svelte/store'
 
-/** Allows a type to be either the base object or a store of that object */
-export type StoreOrVal<T> = T | Readable<T>
+export type FnOrVal<T> = (() => T) | T // can be a fn that returns reactive statement or $state or $derived deep states
 
 /** Options for createBaseQuery */
 export type CreateBaseQueryOptions<
@@ -26,13 +25,18 @@ export type CreateBaseQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+> = FnOrVal<
+  Omit<
+    QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+    'queryKey' | 'enabled'
+  > & { enabled?: FnOrVal<boolean>; queryKey: FnOrVal<TQueryKey> }
+>
 
 /** Result from createBaseQuery */
 export type CreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = Readable<QueryObserverResult<TData, TError>>
+> = QueryObserverResult<TData, TError>
 
 /** Options for createQuery */
 export type CreateQueryOptions<
@@ -56,26 +60,31 @@ export type CreateInfiniteQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> = InfiniteQueryObserverOptions<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryData,
-  TQueryKey,
-  TPageParam
+> = FnOrVal<
+  Omit<
+    InfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
+    >,
+    'queryKey' | 'enabled'
+  > & { enabled?: FnOrVal<boolean>; queryKey: FnOrVal<TQueryKey> }
 >
 
 /** Result from createInfiniteQuery */
 export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = Readable<InfiniteQueryObserverResult<TData, TError>>
+> = InfiniteQueryObserverResult<TData, TError>
 
 /** Options for createBaseQuery with initialData */
 export type DefinedCreateBaseQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = Readable<DefinedQueryObserverResult<TData, TError>>
+> = DefinedQueryObserverResult<TData, TError>
 
 /** Options for createQuery with initialData */
 export type DefinedCreateQueryResult<
@@ -89,9 +98,9 @@ export type CreateMutationOptions<
   TError = DefaultError,
   TVariables = void,
   TContext = unknown,
-> = OmitKeyof<
+> = Omit<
   MutationObserverOptions<TData, TError, TVariables, TContext>,
-  '_defaulted'
+  '_defaulted' | 'variables'
 >
 
 export type CreateMutateFunction<
@@ -128,7 +137,7 @@ export type CreateMutationResult<
   TError = DefaultError,
   TVariables = unknown,
   TContext = unknown,
-> = Readable<CreateBaseMutationResult<TData, TError, TVariables, TContext>>
+> = CreateBaseMutationResult<TData, TError, TVariables, TContext>
 
 type Override<TTargetA, TTargetB> = {
   [AKey in keyof TTargetA]: AKey extends keyof TTargetB
@@ -142,4 +151,9 @@ export type MutationStateOptions<TResult = MutationState> = {
   select?: (
     mutation: Mutation<unknown, DefaultError, unknown, unknown>,
   ) => TResult
+}
+
+export type QueryClientProviderProps = {
+  client: QueryClient
+  children: Snippet
 }

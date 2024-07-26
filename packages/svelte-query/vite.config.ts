@@ -11,8 +11,12 @@ export default defineConfig({
     watch: false,
     environment: 'jsdom',
     setupFiles: ['./tests/test-setup.ts'],
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
+    coverage: { enabled: false, provider: 'istanbul', include: ['src/**/*'] },
     typecheck: { enabled: true },
-    restoreMocks: true,
+    alias: {
+      // This is needed for svelte-5 support
+      // https://github.com/testing-library/svelte-testing-library?tab=readme-ov-file#svelte-5-support
+      '@testing-library/svelte': '@testing-library/svelte/svelte5',
+    },
   },
 })

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
 
-  export let homeworldId: string
+  let { homeworldId }: { homeworldId: string } = $props()
 
   const getHomeworld = async () => {
     const res = await fetch(`https://swapi.dev/api/planets/${homeworldId}/`)
@@ -14,8 +14,8 @@
   })
 </script>
 
-{#if $query.status === 'success'}
+{#if query.status === 'success'}
   <span>
-    {$query.data.name}
+    {query.data.name}
   </span>
 {/if}
