@@ -1,18 +1,17 @@
 import { describe, expect, test } from 'vitest'
 import { render, waitFor } from '@testing-library/svelte'
-import { get, writable } from 'svelte/store'
+import { ref } from '../utils.svelte.js'
 import BaseExample from './BaseExample.svelte'
 import SelectExample from './SelectExample.svelte'
-import type { Writable } from 'svelte/store'
 import type { QueryObserverResult } from '@tanstack/query-core'
 
 describe('createInfiniteQuery', () => {
   test('Return the correct states for a successful query', async () => {
-    const statesStore: Writable<Array<QueryObserverResult>> = writable([])
+    let states = ref<Array<QueryObserverResult>>([])
 
     const rendered = render(BaseExample, {
       props: {
-        states: statesStore,
+        states,
       },
     })
 
@@ -20,11 +19,9 @@ describe('createInfiniteQuery', () => {
       expect(rendered.queryByText('Status: success')).toBeInTheDocument()
     })
 
-    const states = get(statesStore)
+    expect(states.value).toHaveLength(2)
 
-    expect(states).toHaveLength(2)
-
-    expect(states[0]).toEqual({
+    expect(states.value[0]).toEqual({
       data: undefined,
       dataUpdatedAt: 0,
       error: null,
@@ -60,7 +57,7 @@ describe('createInfiniteQuery', () => {
       promise: expect.any(Promise),
     })
 
-    expect(states[1]).toEqual({
+    expect(states.value[1]).toEqual({
       data: { pages: [0], pageParams: [0] },
       dataUpdatedAt: expect.any(Number),
       error: null,
@@ -98,11 +95,11 @@ describe('createInfiniteQuery', () => {
   })
 
   test('Select a part of the data', async () => {
-    const statesStore: Writable<Array<QueryObserverResult>> = writable([])
+    let states = ref<Array<QueryObserverResult>>([])
 
     const rendered = render(SelectExample, {
       props: {
-        states: statesStore,
+        states,
       },
     })
 
@@ -110,16 +107,14 @@ describe('createInfiniteQuery', () => {
       expect(rendered.queryByText('count: 1')).toBeInTheDocument()
     })
 
-    const states = get(statesStore)
+    expect(states.value).toHaveLength(2)
 
-    expect(states).toHaveLength(2)
-
-    expect(states[0]).toMatchObject({
+    expect(states.value[0]).toMatchObject({
       data: undefined,
       isSuccess: false,
     })
 
-    expect(states[1]).toMatchObject({
+    expect(states.value[1]).toMatchObject({
       data: { pages: ['count: 1'] },
       isSuccess: true,
     })

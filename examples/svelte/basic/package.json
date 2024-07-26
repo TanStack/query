@@ -17,8 +17,8 @@
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.2.3",
     "@sveltejs/kit": "^2.8.2",
-    "@sveltejs/vite-plugin-svelte": "^3.1.2",
-    "svelte": "^4.2.18",
+    "@sveltejs/vite-plugin-svelte": "^4.0.0",
+    "svelte": "^5.0.0",
     "svelte-check": "^4.0.0",
     "typescript": "5.7.2",
     "vite": "^5.3.5"

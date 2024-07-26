@@ -10,6 +10,7 @@ export default [
     rules: {
       'svelte/block-lang': ['error', { script: ['ts'] }],
       'svelte/no-svelte-internal': 'error',
+      'svelte/no-unused-svelte-ignore': 'off',
       'svelte/valid-compile': 'off',
     },
   },

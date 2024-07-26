@@ -4,7 +4,7 @@
   import ChildComponent from './ChildComponent.svelte'
   import type { QueryCache } from '@tanstack/query-core'
 
-  export let queryCache: QueryCache
+  let { queryCache }: { queryCache: QueryCache } = $props()
 
   const queryClient = new QueryClient({ queryCache })
 </script>

@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/svelte'
-import { sleep } from '../utils.js'
+import { sleep } from '../utils.svelte.js'
 import ResetExample from './ResetExample.svelte'
 import OnSuccessExample from './OnSuccessExample.svelte'
 import FailureExample from './FailureExample.svelte'
@@ -103,6 +103,6 @@ describe('createMutation', () => {
     await waitFor(() => rendered.getByText('Status: success'))
     await waitFor(() => rendered.getByText('Data: 2'))
     await waitFor(() => rendered.getByText('Failure Count: 0'))
-    await waitFor(() => rendered.getByText('Failure Reason: null'))
+    await waitFor(() => rendered.getByText('Failure Reason: undefined'))
   })
 })

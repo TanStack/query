@@ -5,16 +5,16 @@
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
 
-  const mutation = createMutation({
+  const mutation = createMutation(() => ({
     mutationFn: () => {
       const err = new Error('Expected mock error')
       err.stack = ''
       return Promise.reject(err)
     },
-  })
+  }))
 </script>
 
-<button on:click={() => $mutation.reset()}>Reset</button>
-<button on:click={() => $mutation.mutate()}>Mutate</button>
+<button onclick={() => mutation.reset()}>Reset</button>
+<button onclick={() => mutation.mutate()}>Mutate</button>
 
-<div>Error: {$mutation.error?.message}</div>
+<div>Error: {mutation.error?.message ?? 'undefined'}</div>

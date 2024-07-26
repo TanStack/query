@@ -16,7 +16,7 @@
     ts: number
   }
 
-  let text = ''
+  let text = $state<string>('')
 
   const client = useQueryClient()
 
@@ -36,12 +36,12 @@
       }),
     }).then((res) => res.json())
 
-  const todos = createQuery<Todos>({
+  const todos = createQuery<Todos>(() => ({
     queryKey: ['optimistic'],
     queryFn: fetchTodos,
-  })
+  }))
 
-  const addTodoMutation = createMutation({
+  const addTodoMutation = createMutation(() => ({
     mutationFn: createTodo,
     onMutate: async (newTodo: string) => {
       text = ''
@@ -74,7 +74,7 @@
     onSettled: () => {
       client.invalidateQueries({ queryKey: ['optimistic'] })
     },
-  })
+  }))
 </script>
 
 <h1>Optimistic Updates</h1>
@@ -87,36 +87,36 @@
 </p>
 
 <form
-  on:submit={(e) => {
+  onsubmit={(e) => {
     e.preventDefault()
     e.stopPropagation()
-    $addTodoMutation.mutate(text)
+    addTodoMutation.mutate(text)
   }}
 >
   <div>
     <input type="text" bind:value={text} />
-    <button disabled={$addTodoMutation.isPending}>Create</button>
+    <button disabled={addTodoMutation.isPending}>Create</button>
   </div>
 </form>
 
-{#if $todos.isPending}
+{#if todos.isPending}
   Loading...
 {/if}
-{#if $todos.error}
+{#if todos.error}
   An error has occurred:
-  {$todos.error.message}
+  {todos.error.message}
 {/if}
-{#if $todos.isSuccess}
+{#if todos.isSuccess}
   <div class="mb-4">
-    Updated At: {new Date($todos.data.ts).toLocaleTimeString()}
+    Updated At: {new Date(todos.data.ts).toLocaleTimeString()}
   </div>
   <ul>
-    {#each $todos.data.items as todo}
+    {#each todos.data.items as todo}
       <li>{todo.text}</li>
     {/each}
   </ul>
 {/if}
-{#if $todos.isFetching}
+{#if todos.isFetching}
   <div style="color:darkgreen; font-weight:700">
     'Background Updating...' : ' '
   </div>
