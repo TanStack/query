@@ -1,16 +1,21 @@
 <script lang="ts">
+  import { untrack } from 'svelte'
   import { createQuery } from '@tanstack/svelte-query'
-  import { sleep } from '../utils'
-  import type { Writable } from 'svelte/store'
-  import type { StatusResult } from '../utils'
+  import { sleep } from '../utils.svelte'
+  import type { StatusResult } from '../utils.svelte'
 
-  export let states: Writable<Array<StatusResult<string>>>
-  export let fetched: Writable<boolean>
+  let {
+    states,
+    fetched,
+  }: {
+    states: { value: Array<StatusResult<string>> }
+    fetched: boolean
+  } = $props()
 
   const query = createQuery({
     queryKey: ['test'],
     queryFn: async () => {
-      fetched.set(true)
+      fetched = true
       await sleep(5)
       return 'fetched'
     },
@@ -18,8 +23,10 @@
     staleTime: Infinity,
   })
 
-  $: states.update((prev) => [...prev, $query])
+  $effect(() => {
+    states.value = [...untrack(() => states.value), $state.snapshot(query)]
+  })
 </script>
 
-<div>data: {$query.data ?? 'undefined'}</div>
-<div>fetchStatus: {$query.fetchStatus}</div>
+<div>data: {query.data ?? 'undefined'}</div>
+<div>fetchStatus: {query.fetchStatus}</div>

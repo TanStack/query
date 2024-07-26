@@ -1,18 +1,29 @@
 <script lang="ts">
-  import { createQuery } from '../../src/createQuery'
+  import { untrack } from 'svelte'
+  import { createQuery } from '../../src'
   import type { QueryClient, QueryObserverResult } from '@tanstack/query-core'
-  import type { Writable } from 'svelte/store'
-  import type { CreateQueryOptions, StoreOrVal } from '../../src/types'
+  import type { CreateQueryOptions } from '../../src/types'
 
-  export let options: StoreOrVal<CreateQueryOptions<any>>
-  export let queryClient: QueryClient
-  export let states: Writable<Array<QueryObserverResult>>
+  let {
+    options,
+    queryClient,
+    states,
+  }: {
+    options: CreateQueryOptions<any>
+    queryClient: QueryClient
+    states: { value: Array<QueryObserverResult> }
+  } = $props()
 
   const query = createQuery(options, queryClient)
 
-  $: states.update((prev) => [...prev, $query])
+  $effect(() => {
+    states.value = [
+      ...untrack(() => states.value),
+      $state.snapshot(query) as QueryObserverResult,
+    ]
+  })
 </script>
 
-<div>Status: {$query.status}</div>
-<div>Failure Count: {$query.failureCount}</div>
-<div>Data: {$query.data ?? 'undefined'}</div>
+<div>Status: {query.status}</div>
+<div>Failure Count: {query.failureCount}</div>
+<div>Data: {query.data ?? 'undefined'}</div>

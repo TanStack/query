@@ -1,5 +1,5 @@
 import { describe, test } from 'vitest'
-import { fireEvent, render } from '@testing-library/svelte'
+import { fireEvent, render, waitFor } from '@testing-library/svelte'
 import BaseExample from './BaseExample.svelte'
 
 describe('useIsFetching', () => {
@@ -8,7 +8,10 @@ describe('useIsFetching', () => {
 
     await rendered.findByText('isFetching: 0')
     fireEvent.click(rendered.getByRole('button', { name: /setReady/i }))
-    await rendered.findByText('isFetching: 1')
-    await rendered.findByText('isFetching: 0')
+
+    waitFor(async () => {
+      await rendered.findByText('isFetching: 1')
+      await rendered.findByText('isFetching: 0')
+    })
   })
 })

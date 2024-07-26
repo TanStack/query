@@ -1,7 +1,5 @@
 import { describe, expectTypeOf, test } from 'vitest'
-import { get } from 'svelte/store'
 import { createQuery, queryOptions } from '../../src/index'
-import type { OmitKeyof } from '@tanstack/query-core'
 import type { CreateQueryOptions } from '../../src/index'
 
 describe('createQuery', () => {
@@ -12,7 +10,7 @@ describe('createQuery', () => {
       initialData: { wow: true },
     })
 
-    expectTypeOf(get(query).data).toEqualTypeOf<{ wow: boolean }>()
+    expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean }>()
   })
 
   test('TData should be defined when passed through queryOptions', () => {
@@ -29,7 +27,7 @@ describe('createQuery', () => {
     })
     const query = createQuery(options)
 
-    expectTypeOf(get(query).data).toEqualTypeOf<{ wow: boolean }>()
+    expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean }>()
   })
 
   test('TData should have undefined in the union when initialData is NOT provided', () => {
@@ -42,15 +40,13 @@ describe('createQuery', () => {
       },
     })
 
-    expectTypeOf(get(query).data).toEqualTypeOf<{ wow: boolean } | undefined>()
+    expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean } | undefined>()
   })
 
   test('Allow custom hooks using CreateQueryOptions', () => {
     type Data = string
 
-    const useCustomQuery = (
-      options?: OmitKeyof<CreateQueryOptions<Data>, 'queryKey' | 'queryFn'>,
-    ) => {
+    const useCustomQuery = (options?: CreateQueryOptions<Data>) => {
       return createQuery({
         ...options,
         queryKey: ['todos-key'],
@@ -60,6 +56,6 @@ describe('createQuery', () => {
 
     const query = useCustomQuery()
 
-    expectTypeOf(get(query).data).toEqualTypeOf<Data | undefined>()
+    expectTypeOf(query.data).toEqualTypeOf<Data | undefined>()
   })
 })
