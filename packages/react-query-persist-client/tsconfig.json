@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "moduleResolution": "Bundler"
+    "moduleResolution": "Bundler",
     "paths": {
       "@tanstack/react-query": ["../react-query/src"],
       "@tanstack/query-persist-client-core": [

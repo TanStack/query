@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "moduleResolution": "Bundler"
+    "moduleResolution": "Bundler",
     "paths": {
       "@tanstack/query-core": ["../query-core/src"]
     }

@@ -3,7 +3,7 @@
   "compilerOptions": {
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "moduleResolution": "Bundler"
+    "moduleResolution": "Bundler",
     "paths": {
       "@tanstack/solid-query": ["../solid-query/src"],
       "@tanstack/query-persist-client-core": [
