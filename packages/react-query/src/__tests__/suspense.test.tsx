@@ -90,7 +90,7 @@ describe('useSuspenseQuery', () => {
       return (
         <div>
           <button onClick={() => setMultiplier(2)}>next</button>
-          data: {state.data?.pages.join(',')}
+          data: {state.data.pages.join(',')}
         </div>
       )
     }
@@ -260,6 +260,49 @@ describe('useSuspenseQuery', () => {
     expect(consoleMock.mock.calls[0]?.[1]).toStrictEqual(
       new Error('Suspense Error Bingo'),
     )
+
+    consoleMock.mockRestore()
+  })
+
+  it('should throw to an ErrorBoundary if select throws an error', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    function Page() {
+      useSuspenseQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 'data'
+        },
+        select: () => {
+          throw new Error('oh on')
+        },
+      })
+
+      return <div>rendered</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary
+        fallbackRender={() => (
+          <div>
+            <div>error boundary</div>
+          </div>
+        )}
+      >
+        <React.Suspense fallback={'Loading...'}>
+          <Page />
+        </React.Suspense>
+      </ErrorBoundary>,
+    )
+
+    await waitFor(() => rendered.getByText('Loading...'))
+
+    await waitFor(() => rendered.getByText('error boundary'))
 
     consoleMock.mockRestore()
   })

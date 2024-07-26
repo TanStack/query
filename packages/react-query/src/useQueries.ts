@@ -332,6 +332,7 @@ export function useQueries<
           result,
           errorResetBoundary,
           throwOnError: query.throwOnError,
+          suspense: query.suspense,
           query: client.getQueryCache().get(query.queryHash),
         })
       )

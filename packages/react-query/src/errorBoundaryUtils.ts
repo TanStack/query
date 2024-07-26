@@ -52,13 +52,18 @@ export const getHasError = <
   result,
   errorResetBoundary,
   throwOnError,
+  suspense,
   query,
 }: {
   result: QueryObserverResult<TData, TError>
   errorResetBoundary: QueryErrorResetBoundaryValue
   throwOnError: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
+  suspense: boolean | undefined
   query: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined
 }) => {
+  if (suspense && result.data === undefined) {
+    return true
+  }
   return (
     result.isError &&
     !errorResetBoundary.isReset() &&

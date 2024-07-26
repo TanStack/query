@@ -112,6 +112,7 @@ export function useBaseQuery<
       result,
       errorResetBoundary,
       throwOnError: defaultedOptions.throwOnError,
+      suspense: defaultedOptions.suspense,
       query: client
         .getQueryCache()
         .get<
