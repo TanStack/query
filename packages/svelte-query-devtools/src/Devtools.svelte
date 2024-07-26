@@ -7,6 +7,7 @@
     DevToolsErrorType,
     DevtoolsButtonPosition,
     DevtoolsPosition,
+    TanstackQueryDevtools,
   } from '@tanstack/query-devtools'
 
   interface DevtoolsOptions {
@@ -50,13 +51,14 @@
   }: DevtoolsOptions = $props()
 
   let ref: HTMLDivElement
+  let devtools: TanstackQueryDevtools | undefined
 
   if (DEV && BROWSER) {
     onMount(() => {
       import('@tanstack/query-devtools').then((m) => {
         const QueryDevtools = m.TanstackQueryDevtools
 
-        const devtools = new QueryDevtools({
+        devtools = new QueryDevtools({
           client,
           queryFlavor: 'Svelte Query',
           version: '5',
@@ -69,8 +71,24 @@
         })
 
         devtools.mount(ref)
-        return () => devtools.unmount()
       })
+      return () => devtools?.unmount()
+    })
+
+    $effect(() => {
+      devtools?.setButtonPosition(buttonPosition)
+    })
+
+    $effect(() => {
+      devtools?.setPosition(position)
+    })
+
+    $effect(() => {
+      devtools?.setInitialIsOpen(initialIsOpen)
+    })
+
+    $effect(() => {
+      devtools?.setErrorTypes(errorTypes)
     })
   }
 </script>
