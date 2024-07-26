@@ -249,9 +249,9 @@ export const ASTUtils = {
     const { node, context } = params
 
     // we need the fallbacks for backwards compat with eslint < 8.37.0
-    // eslint-disable-next-line ts/no-unnecessary-condition
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const sourceCode = context.sourceCode ?? context.getSourceCode()
-    // eslint-disable-next-line ts/no-unnecessary-condition
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const scope = context.sourceCode.getScope(node)
       ? sourceCode.getScope(node)
       : context.getScope()

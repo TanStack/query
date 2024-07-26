@@ -103,6 +103,9 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           // Fetch remaining pages
           for (let i = 1; i < remainingPages; i++) {
             const param = getNextPageParam(options, result)
+            if (param == null) {
+              break
+            }
             result = await fetchPage(result, param)
           }
         }

@@ -11,7 +11,7 @@
       {
         queryKey: ['test'],
         queryFn: async (): Promise<string> => {
-          await sleep(10)
+          await sleep(5)
           return 'fetched'
         },
       },

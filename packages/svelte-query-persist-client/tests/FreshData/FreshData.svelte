@@ -11,7 +11,7 @@
     queryKey: ['test'],
     queryFn: async () => {
       fetched.set(true)
-      await sleep(10)
+      await sleep(5)
       return 'fetched'
     },
 
@@ -21,5 +21,5 @@
   $: states.update((prev) => [...prev, $query])
 </script>
 
-<div>data: {$query.data ?? 'null'}</div>
+<div>data: {$query.data ?? 'undefined'}</div>
 <div>fetchStatus: {$query.fetchStatus}</div>

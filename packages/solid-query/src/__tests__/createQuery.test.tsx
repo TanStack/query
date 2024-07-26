@@ -3842,7 +3842,7 @@ describe('createQuery', () => {
       const query = createQuery(() => ({
         queryKey: key,
         queryFn: () => 'fetched data',
-        gcTime: 1000 * 60 * 10, //10 Minutes
+        gcTime: 1000 * 60 * 10, // 10 Minutes
       }))
       return <div>{query.data}</div>
     }
@@ -4047,7 +4047,7 @@ describe('createQuery', () => {
 
     await waitFor(() => rendered.getByText('count: 1'))
 
-    await sleep(10) //extra sleep to make sure we're not re-fetching
+    await sleep(10) // extra sleep to make sure we're not re-fetching
 
     expect(states.length).toEqual(2)
 
@@ -4560,7 +4560,7 @@ describe('createQuery', () => {
       readonly [typeof key, number]
     > = async (ctx) => {
       const [, limit] = ctx.queryKey
-      // eslint-disable-next-line ts/no-unnecessary-condition
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       const value = limit % 2 && ctx.signal ? 'abort' : `data ${limit}`
       await sleep(25)
       return value

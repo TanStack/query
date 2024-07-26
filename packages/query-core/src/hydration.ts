@@ -154,9 +154,9 @@ export function hydrate(
     client.getDefaultOptions().hydrate?.deserializeData ??
     defaultTransformerFn
 
-  // eslint-disable-next-line ts/no-unnecessary-condition
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const mutations = (dehydratedState as DehydratedState).mutations || []
-  // eslint-disable-next-line ts/no-unnecessary-condition
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const queries = (dehydratedState as DehydratedState).queries || []
 
   mutations.forEach(({ state, ...mutationOptions }) => {
