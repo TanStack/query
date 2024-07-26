@@ -1,6 +1,5 @@
 'use client'
 import * as React from 'react'
-import { shouldThrowError } from './utils'
 import type {
   DefaultedQueryObserverOptions,
   Query,
@@ -40,6 +39,18 @@ export const useClearResetErrorBoundary = (
   React.useEffect(() => {
     errorResetBoundary.clearReset()
   }, [errorResetBoundary])
+}
+
+export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
+  throwError: boolean | T | undefined,
+  params: Parameters<T>,
+): boolean {
+  // Allow throwError function to override throwing behavior on a per-error basis
+  if (typeof throwError === 'function') {
+    return throwError(...params)
+  }
+
+  return !!throwError
 }
 
 export const getHasError = <

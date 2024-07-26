@@ -2,7 +2,7 @@
 import * as React from 'react'
 import { MutationObserver, noop, notifyManager } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
-import { shouldThrowError } from './utils'
+import { shouldThrowError } from './errorBoundaryUtils'
 import type {
   UseMutateFunction,
   UseMutationOptions,
