@@ -73,14 +73,14 @@
     enabled: editingIndex.value !== null,
   }))
 
-  const saveMutation = createMutation({
+  const saveMutation = createMutation(() => ({
     mutationFn: patchTodo,
     onSuccess: (data) => {
       // Update `todos` and the individual todo queries when this mutation succeeds
       queryClient.invalidateQueries({ queryKey: ['todos'] })
       queryClient.setQueryData(['todo', { id: editingIndex }], data)
     },
-  })
+  }))
 
   const todo = $derived(query.data)
 

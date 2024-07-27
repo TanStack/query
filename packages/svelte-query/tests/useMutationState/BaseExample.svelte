@@ -5,6 +5,7 @@
   import { useMutationState } from '../../src/useMutationState.svelte'
   import type {
     CreateMutationOptions,
+    FunctionedParams,
     MutationStateOptions,
   } from '../../src/index'
 
@@ -13,8 +14,8 @@
     errorMutationOpts,
     mutationStateOpts,
   }: {
-    successMutationOpts: CreateMutationOptions
-    errorMutationOpts: CreateMutationOptions
+    successMutationOpts: FunctionedParams<CreateMutationOptions>
+    errorMutationOpts: FunctionedParams<CreateMutationOptions>
     mutationStateOpts?: MutationStateOptions | undefined
   } = $props()
 

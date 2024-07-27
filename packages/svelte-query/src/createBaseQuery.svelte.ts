@@ -33,7 +33,7 @@ export function createBaseQuery<
 
   /** Creates a store that has the default options applied */
   function updateOptions() {
-    const queryKey: TQueryKey = $state.snapshot(options().queryKey) as any // remove proxy prevent reactive query  in devTools
+    const queryKey: TQueryKey = $state.snapshot(options().queryKey) as any // remove proxy prevent reactive query in DevTools
     const defaultedOptions = client.defaultQueryOptions({
       ...options(),
       queryKey: queryKey,

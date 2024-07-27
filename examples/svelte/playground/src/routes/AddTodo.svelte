@@ -40,12 +40,12 @@
     })
   }
 
-  const addMutation = createMutation({
+  const addMutation = createMutation(() => ({
     mutationFn: postTodo,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] })
     },
-  })
+  }))
 </script>
 
 <div>

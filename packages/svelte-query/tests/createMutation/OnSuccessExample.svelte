@@ -11,7 +11,7 @@
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
 
-  const mutation = createMutation({
+  const mutation = createMutation(() => ({
     mutationFn: (vars: { count: number }) => Promise.resolve(vars.count),
     onSuccess: (data) => {
       onSuccessMock(data)
@@ -19,7 +19,7 @@
     onSettled: (data) => {
       onSettledMock(data)
     },
-  })
+  }))
 </script>
 
 <button onclick={() => mutation.mutate({ count: ++$count })}>Mutate</button>
