@@ -9,8 +9,8 @@ describe('createQueries', () => {
   test('Render and wait for success', async () => {
     const rendered = render(BaseExample, {
       props: {
-        options: () => ({
-          queries: [
+        options: {
+          queries: () => [
             {
               queryKey: ['key-1'],
               queryFn: async () => {
@@ -26,7 +26,7 @@ describe('createQueries', () => {
               },
             },
           ],
-        }),
+        },
         queryClient: new QueryClient(),
       },
     })

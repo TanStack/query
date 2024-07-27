@@ -9,7 +9,7 @@
   const queryClient = new QueryClient()
 
   const query = createInfiniteQuery(
-    {
+    () => ({
       queryKey: ['test'],
       queryFn: () => Promise.resolve({ count: 1 }),
       select: (data) => ({
@@ -18,7 +18,7 @@
       }),
       getNextPageParam: () => undefined,
       initialPageParam: 0,
-    },
+    }),
     queryClient,
   )
 

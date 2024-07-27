@@ -17,7 +17,7 @@ describe('createQueries', () => {
         wow: true,
       },
     })
-    const queryResults = createQueries(() => ({ queries: [options] }))
+    const queryResults = createQueries({ queries: () => [options] })
 
     const data = queryResults[0].data
 
@@ -29,7 +29,7 @@ describe('createQueries', () => {
 
     const useCustomQueries = (options?: CreateQueryOptions<Data>) => {
       return createQueries({
-        queries: [
+        queries: () => [
           {
             ...options,
             queryKey: ['todos-key'],
@@ -47,7 +47,7 @@ describe('createQueries', () => {
 
   test('TData should have correct type when conditional skipToken is passed', () => {
     const queryResults = createQueries({
-      queries: [
+      queries: () => [
         {
           queryKey: ['withSkipToken'],
           queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
