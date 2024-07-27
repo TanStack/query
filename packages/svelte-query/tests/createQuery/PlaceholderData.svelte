@@ -14,16 +14,17 @@
 
   let count = $state(0)
 
-  const options = $derived(() => ({
-    queryKey: ['test', count],
-    queryFn: async () => {
-      await sleep(5)
-      return count
-    },
-    placeholderData: keepPreviousData,
-  }))
-
-  const query = createQuery(options, queryClient)
+  const query = createQuery(
+    () => ({
+      queryKey: ['test', count],
+      queryFn: async () => {
+        await sleep(5)
+        return count
+      },
+      placeholderData: keepPreviousData,
+    }),
+    queryClient,
+  )
 
   $effect(() => {
     states.value = [...untrack(() => states.value), $state.snapshot(query)]

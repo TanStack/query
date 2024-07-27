@@ -1516,43 +1516,6 @@ importers:
         specifier: ^5.3.3
         version: 5.3.3(@types/node@20.14.10)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
-  examples/svelte/svelte-melt:
-    dependencies:
-      '@tanstack/query-sync-storage-persister':
-        specifier: ^5.51.1
-        version: link:../../../packages/query-sync-storage-persister
-      '@tanstack/svelte-query':
-        specifier: ^5.51.1
-        version: link:../../../packages/svelte-query
-      '@tanstack/svelte-query-devtools':
-        specifier: ^5.51.1
-        version: link:../../../packages/svelte-query-devtools
-      '@tanstack/svelte-query-persist-client':
-        specifier: ^5.51.1
-        version: link:../../../packages/svelte-query-persist-client
-    devDependencies:
-      '@sveltejs/adapter-auto':
-        specifier: ^3.2.2
-        version: 3.2.2(@sveltejs/kit@2.5.18(@sveltejs/vite-plugin-svelte@4.0.0-next.4(svelte@5.0.0-next.192)(vite@5.3.3(@types/node@20.14.10)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@5.0.0-next.192)(vite@5.3.3(@types/node@20.14.10)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))
-      '@sveltejs/kit':
-        specifier: ^2.5.18
-        version: 2.5.18(@sveltejs/vite-plugin-svelte@4.0.0-next.4(svelte@5.0.0-next.192)(vite@5.3.3(@types/node@20.14.10)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)))(svelte@5.0.0-next.192)(vite@5.3.3(@types/node@20.14.10)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
-      '@sveltejs/vite-plugin-svelte':
-        specifier: ^4.0.0-next.4
-        version: 4.0.0-next.4(svelte@5.0.0-next.192)(vite@5.3.3(@types/node@20.14.10)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
-      svelte:
-        specifier: 5.0.0-next.192
-        version: 5.0.0-next.192
-      svelte-check:
-        specifier: ^3.8.4
-        version: 3.8.4(@babel/core@7.24.6)(less@4.2.0)(postcss-load-config@4.0.2(postcss@8.4.39))(postcss@8.4.39)(sass@1.71.1)(svelte@5.0.0-next.192)
-      typescript:
-        specifier: 5.3.3
-        version: 5.3.3
-      vite:
-        specifier: ^5.3.3
-        version: 5.3.3(@types/node@20.14.10)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
-
   examples/vue/basic:
     dependencies:
       '@tanstack/vue-query':

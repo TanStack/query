@@ -8,10 +8,10 @@
     return await res.json()
   }
 
-  const query = createQuery({
+  const query = createQuery(() => ({
     queryKey: ['film', filmId],
     queryFn: getFilm,
-  })
+  }))
 </script>
 
 {#if query.status === 'success'}

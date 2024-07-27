@@ -2,7 +2,11 @@ import { notifyManager } from '@tanstack/query-core'
 import { untrack } from 'svelte'
 import { useIsRestoring } from './useIsRestoring'
 import { useQueryClient } from './useQueryClient'
-import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
+import type {
+  CreateBaseQueryOptions,
+  CreateBaseQueryResult,
+  FunctionedParams,
+} from './types'
 import type {
   QueryClient,
   QueryKey,
@@ -17,12 +21,8 @@ export function createBaseQuery<
   TQueryData,
   TQueryKey extends QueryKey,
 >(
-  options: CreateBaseQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
+  options: FunctionedParams<
+    CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
   >,
   Observer: typeof QueryObserver,
   queryClient?: QueryClient,
@@ -30,18 +30,13 @@ export function createBaseQuery<
   /** Load query client */
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
-  const optionsStore = typeof options !== 'function' ? () => options : options
 
   /** Creates a store that has the default options applied */
   function updateOptions() {
-    const key = optionsStore().queryKey
-    const keyFn = typeof key === 'function' ? key : () => key // allow query-key and enable to be a function
-    const queryKey: TQueryKey = $state.snapshot(keyFn()) as any // remove proxy prevent reactive query  in devTools
-    let tempEnable = optionsStore().enabled
+    const queryKey: TQueryKey = $state.snapshot(options().queryKey) as any // remove proxy prevent reactive query  in devTools
     const defaultedOptions = client.defaultQueryOptions({
-      ...optionsStore(),
+      ...options(),
       queryKey: queryKey,
-      enabled: typeof tempEnable == 'function' ? tempEnable() : tempEnable,
     })
     defaultedOptions._optimisticResults = 'optimistic'
     if (isRestoring()) {

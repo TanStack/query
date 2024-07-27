@@ -4,7 +4,7 @@
 
   let { states }: { states: Array<string> } = $props()
 
-  const query = createQuery({
+  const query = createQuery(() => ({
     queryKey: ['test'],
     queryFn: async () => {
       states.push('fetching')
@@ -12,7 +12,7 @@
       states.push('fetched')
       return 'fetched'
     },
-  })
+  }))
 </script>
 
 <div>{query.data}</div>

@@ -2,14 +2,14 @@
   import { untrack } from 'svelte'
   import { createQuery } from '../../src'
   import type { QueryClient, QueryObserverResult } from '@tanstack/query-core'
-  import type { CreateQueryOptions } from '../../src/types'
+  import type { CreateQueryOptions, FunctionedParams } from '../../src/types'
 
   let {
     options,
     queryClient,
     states,
   }: {
-    options: CreateQueryOptions<any>
+    options: FunctionedParams<CreateQueryOptions<any>>
     queryClient: QueryClient
     states: { value: Array<QueryObserverResult> }
   } = $props()

@@ -2,7 +2,7 @@ import { untrack } from 'svelte'
 import { QueriesObserver, notifyManager } from '@tanstack/query-core'
 import { useIsRestoring } from './useIsRestoring'
 import { useQueryClient } from './useQueryClient'
-import type { FnOrVal } from '.'
+import type { FunctionedParams } from './types'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
@@ -208,7 +208,7 @@ export function createQueries<
     queries,
     ...options
   }: {
-    queries: FnOrVal<[...QueriesOptions<T>]>
+    queries: FunctionedParams<[...QueriesOptions<T>]>
     combine?: (result: QueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,
@@ -216,12 +216,8 @@ export function createQueries<
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
 
-  const queriesStore = $derived(
-    typeof queries != 'function' ? () => queries : queries,
-  )
-
   const defaultedQueriesStore = $derived(() => {
-    return queriesStore().map((opts) => {
+    return queries().map((opts) => {
       const defaultedOptions = client.defaultQueryOptions(opts)
       // Make sure the results are already in fetching state before subscribing or updating options
       defaultedOptions._optimisticResults = isRestoring()

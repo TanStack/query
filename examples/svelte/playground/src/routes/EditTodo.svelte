@@ -55,7 +55,7 @@
           }
           list.value = list.value.map((d) => {
             if (d.id === todo.id) {
-              return todo
+              return $state.snapshot(todo)
             }
             return d
           })
@@ -67,11 +67,11 @@
     })
   }
 
-  const query = createQuery({
+  const query = createQuery(() => ({
     queryKey: ['todo', { id: editingIndex.value }],
     queryFn: () => fetchTodoById({ id: editingIndex.value || 0 }),
     enabled: editingIndex.value !== null,
-  })
+  }))
 
   const saveMutation = createMutation({
     mutationFn: patchTodo,

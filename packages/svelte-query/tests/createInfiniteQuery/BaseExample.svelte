@@ -10,7 +10,7 @@
   const queryClient = new QueryClient()
 
   const query = createInfiniteQuery(
-    {
+    () => ({
       queryKey: ['test'],
       queryFn: async ({ pageParam }) => {
         await sleep(5)
@@ -18,7 +18,7 @@
       },
       getNextPageParam: (lastPage) => lastPage + 1,
       initialPageParam: 0,
-    },
+    }),
     queryClient,
   )
 

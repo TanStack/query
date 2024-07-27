@@ -46,7 +46,7 @@ describe('queryOptions', () => {
     })
 
     const queries = createQueries({
-      queries: [options],
+      queries: () => [options],
     })
 
     expectTypeOf(queries[0].data).toEqualTypeOf<number | undefined>()

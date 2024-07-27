@@ -11,7 +11,7 @@
     queryClient,
   }: {
     options: {
-      queries: [...QueriesOptions<any>]
+      queries: () => [...QueriesOptions<any>]
       combine?: (result: QueriesResults<Array<any>>) => any
     }
     queryClient: QueryClient

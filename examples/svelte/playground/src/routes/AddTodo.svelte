@@ -20,7 +20,13 @@
         () => {
           if (Math.random() < errorRate.value) {
             return reject(
-              new Error(JSON.stringify({ postTodo: { name, notes } }, null, 2)),
+              new Error(
+                JSON.stringify(
+                  { postTodo: { name: $state.snapshot(name), notes } },
+                  null,
+                  2,
+                ),
+              ),
             )
           }
           const todo = { name, notes, id: id.value }

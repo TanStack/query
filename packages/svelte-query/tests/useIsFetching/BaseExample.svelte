@@ -9,16 +9,17 @@
 
   const isFetching = useIsFetching(undefined, queryClient)
 
-  const options = $derived({
-    queryKey: ['test'],
-    queryFn: async () => {
-      await sleep(5)
-      return 'test'
-    },
-    enabled: ready,
-  })
-
-  const query = createQuery(options, queryClient)
+  const query = createQuery(
+    () => ({
+      queryKey: ['test'],
+      queryFn: async () => {
+        await sleep(5)
+        return 'test'
+      },
+      enabled: ready,
+    }),
+    queryClient,
+  )
 </script>
 
 <button onclick={() => (ready = true)}>setReady</button>

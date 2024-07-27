@@ -7,7 +7,7 @@
   let { states }: { states: { value: Array<StatusResult<string>> } } = $props()
 
   const queries = createQueries({
-    queries: [
+    queries: () => [
       {
         queryKey: ['test'],
         queryFn: async (): Promise<string> => {

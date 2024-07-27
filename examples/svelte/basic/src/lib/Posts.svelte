@@ -9,10 +9,10 @@
   const posts = createQuery<
     { id: number; title: string; body: string }[],
     Error
-  >({
+  >(() => ({
     queryKey: ['posts', limit],
     queryFn: () => getPosts(limit),
-  })
+  }))
 </script>
 
 <div>
