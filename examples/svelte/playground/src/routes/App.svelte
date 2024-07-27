@@ -3,7 +3,7 @@
   import TodosList from './TodosList.svelte'
   import EditTodo from './EditTodo.svelte'
   import AddTodo from './AddTodo.svelte'
-  import { views, editingIndex } from '../lib/stores'
+  import { views, editingIndex } from '../lib/stores.svelte'
 
   const queryClient = useQueryClient()
 </script>
@@ -17,7 +17,7 @@
   <br />
   <hr />
 
-  {#each $views as view}
+  {#each views.value as view}
     <div>
       <TodosList initialFilter={view} />
       <br />
@@ -26,14 +26,14 @@
 
   <button
     onclick={() => {
-      views.set([...$views, ''])
+      views.value = [...views.value, '']
     }}
   >
     Add Filter List
   </button>
   <hr />
 
-  {#if $editingIndex !== null}
+  {#if editingIndex.value !== null}
     <EditTodo />
     <hr />
   {/if}
