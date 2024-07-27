@@ -27,6 +27,7 @@
   )
 
   $effect(() => {
+    // @ts-expect-error
     states.value = [...untrack(() => states.value), $state.snapshot(query)]
   })
 </script>
