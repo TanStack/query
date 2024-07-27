@@ -12,15 +12,15 @@ describe('useMutationState', () => {
 
     const rendered = render(BaseExample, {
       props: {
-        successMutationOpts: {
+        successMutationOpts: () => ({
           mutationKey: ['success'],
           mutationFn: successMutationFn,
-        },
+        }),
 
-        errorMutationOpts: {
+        errorMutationOpts: () => ({
           mutationKey: ['error'],
           mutationFn: errorMutationFn,
-        },
+        }),
       },
     })
 
@@ -49,15 +49,15 @@ describe('useMutationState', () => {
 
     const rendered = render(BaseExample, {
       props: {
-        successMutationOpts: {
+        successMutationOpts: () => ({
           mutationKey: ['success'],
           mutationFn: successMutationFn,
-        },
+        }),
 
-        errorMutationOpts: {
+        errorMutationOpts: () => ({
           mutationKey: ['error'],
           mutationFn: errorMutationFn,
-        },
+        }),
 
         mutationStateOpts: {
           filters: { status: 'error' },
@@ -88,15 +88,15 @@ describe('useMutationState', () => {
 
     const rendered = render(BaseExample, {
       props: {
-        successMutationOpts: {
+        successMutationOpts: () => ({
           mutationKey: ['success'],
           mutationFn: successMutationFn,
-        },
+        }),
 
-        errorMutationOpts: {
+        errorMutationOpts: () => ({
           mutationKey: ['error'],
           mutationFn: errorMutationFn,
-        },
+        }),
 
         mutationStateOpts: {
           filters: { mutationKey: ['success'] },

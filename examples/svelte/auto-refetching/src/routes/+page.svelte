@@ -19,16 +19,16 @@
     refetchInterval: intervalMs,
   }))
 
-  const addMutation = createMutation({
+  const addMutation = createMutation(() => ({
     mutationFn: (value: string) =>
       fetch(`${endpoint}?add=${value}`).then((r) => r.json()),
     onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
-  })
+  }))
 
-  const clearMutation = createMutation({
+  const clearMutation = createMutation(() => ({
     mutationFn: () => fetch(`${endpoint}?clear=1`).then((r) => r.json()),
     onSuccess: () => client.invalidateQueries({ queryKey: ['refetch'] }),
-  })
+  }))
 </script>
 
 <h1>Auto Refetch with stale-time set to 1s</h1>

@@ -5,13 +5,13 @@
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
 
-  const mutation = createMutation({
+  const mutation = createMutation(() => ({
     mutationFn: () => {
       const err = new Error('Expected mock error')
       err.stack = ''
       return Promise.reject(err)
     },
-  })
+  }))
 </script>
 
 <button onclick={() => mutation.reset()}>Reset</button>

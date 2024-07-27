@@ -41,7 +41,7 @@
     queryFn: fetchTodos,
   }))
 
-  const addTodoMutation = createMutation({
+  const addTodoMutation = createMutation(() => ({
     mutationFn: createTodo,
     onMutate: async (newTodo: string) => {
       text = ''
@@ -74,7 +74,7 @@
     onSettled: () => {
       client.invalidateQueries({ queryKey: ['optimistic'] })
     },
-  })
+  }))
 </script>
 
 <h1>Optimistic Updates</h1>

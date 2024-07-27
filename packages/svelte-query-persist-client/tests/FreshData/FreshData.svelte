@@ -30,3 +30,4 @@
 
 <div>data: {query.data ?? 'undefined'}</div>
 <div>fetchStatus: {query.fetchStatus}</div>
+<div>fetched: {fetched}</div>
