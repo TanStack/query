@@ -9,13 +9,13 @@
     forks_count: number
   }
 
-  const query = createQuery<Repo>({
+  const query = createQuery<Repo>(() => ({
     queryKey: ['repoData'],
     queryFn: async () =>
       await fetch('https://api.github.com/repos/TanStack/query').then((r) =>
         r.json(),
       ),
-  })
+  }))
 </script>
 
 <h1>Simple</h1>

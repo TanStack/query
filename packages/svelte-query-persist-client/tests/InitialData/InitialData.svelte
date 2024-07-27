@@ -6,7 +6,7 @@
 
   let { states }: { states: { value: Array<StatusResult<string>> } } = $props()
 
-  const query = createQuery({
+  const query = createQuery(() => ({
     queryKey: ['test'],
     queryFn: async () => {
       await sleep(5)
@@ -17,7 +17,7 @@
     // make sure that initial data is older than the hydration data
     // otherwise initialData would be newer and takes precedence
     initialDataUpdatedAt: 1,
-  })
+  }))
 
   $effect(() => {
     states.value = [...untrack(() => states.value), $state.snapshot(query)]

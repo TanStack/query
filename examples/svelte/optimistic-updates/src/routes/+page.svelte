@@ -36,10 +36,10 @@
       }),
     }).then((res) => res.json())
 
-  const todos = createQuery<Todos>({
+  const todos = createQuery<Todos>(() => ({
     queryKey: ['optimistic'],
     queryFn: fetchTodos,
-  })
+  }))
 
   const addTodoMutation = createMutation({
     mutationFn: createTodo,

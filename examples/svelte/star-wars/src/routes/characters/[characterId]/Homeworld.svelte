@@ -8,10 +8,10 @@
     return await res.json()
   }
 
-  const query = createQuery({
+  const query = createQuery(() => ({
     queryKey: ['homeworld', homeworldId],
     queryFn: getHomeworld,
-  })
+  }))
 </script>
 
 {#if query.status === 'success'}
