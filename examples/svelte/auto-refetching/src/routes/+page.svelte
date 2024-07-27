@@ -5,19 +5,19 @@
     createMutation,
   } from '@tanstack/svelte-query'
 
-  let intervalMs = 1000
-  let value = ''
+  let intervalMs = $state(1000)
+  let value = $state<string>('')
 
   const client = useQueryClient()
 
   const endpoint = 'http://localhost:5173/api/data'
 
-  const todos = createQuery<{ items: string[] }>({
+  const todos = createQuery<{ items: string[] }>(() => ({
     queryKey: ['refetch'],
     queryFn: async () => await fetch(endpoint).then((r) => r.json()),
     // Refetch the data every second
     refetchInterval: intervalMs,
-  })
+  }))
 
   const addMutation = createMutation({
     mutationFn: (value: string) =>

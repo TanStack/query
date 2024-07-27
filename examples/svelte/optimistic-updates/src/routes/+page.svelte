@@ -16,7 +16,7 @@
     ts: number
   }
 
-  let text = ''
+  let text = $state<string>('')
 
   const client = useQueryClient()
 

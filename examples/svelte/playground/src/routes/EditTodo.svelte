@@ -11,22 +11,20 @@
     list,
     editingIndex,
     type Todo,
-  } from '$lib/stores'
-  import { derived } from 'svelte/store'
+  } from '$lib/stores.svelte'
 
   const queryClient = useQueryClient()
 
   const fetchTodoById = async ({ id }: { id: number }): Promise<Todo> => {
-    console.info('fetchTodoById', { id })
     return new Promise((resolve, reject) => {
       setTimeout(
         () => {
-          if (Math.random() < $errorRate) {
+          if (Math.random() < errorRate.value) {
             return reject(
               new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
             )
           }
-          const todo = $list.find((d) => d.id === id)
+          const todo = $state.snapshot(list.value.find((d) => d.id === id))
           if (!todo) {
             return reject(
               new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2)),
@@ -34,7 +32,8 @@
           }
           resolve(todo)
         },
-        $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin),
+        queryTimeMin.value +
+          Math.random() * (queryTimeMax.value - queryTimeMin.value),
       )
     })
   }
@@ -44,7 +43,7 @@
     return new Promise((resolve, reject) => {
       setTimeout(
         () => {
-          if (Math.random() < $errorRate) {
+          if (Math.random() < errorRate.value) {
             return reject(
               new Error(JSON.stringify({ patchTodo: todo }, null, 2)),
             )
@@ -54,28 +53,25 @@
               new Error(JSON.stringify({ patchTodo: todo }, null, 2)),
             )
           }
-          list.set(
-            $list.map((d) => {
-              if (d.id === todo.id) {
-                return todo
-              }
-              return d
-            }),
-          )
+          list.value = list.value.map((d) => {
+            if (d.id === todo.id) {
+              return todo
+            }
+            return d
+          })
           resolve(todo)
         },
-        $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin),
+        queryTimeMin.value +
+          Math.random() * (queryTimeMax.value - queryTimeMin.value),
       )
     })
   }
 
-  const query = createQuery(
-    derived(editingIndex, ($editingIndex) => ({
-      queryKey: ['todo', { id: $editingIndex }],
-      queryFn: () => fetchTodoById({ id: $editingIndex || 0 }),
-      enabled: $editingIndex !== null,
-    })),
-  )
+  const query = createQuery({
+    queryKey: ['todo', { id: editingIndex.value }],
+    queryFn: () => fetchTodoById({ id: editingIndex.value || 0 }),
+    enabled: editingIndex.value !== null,
+  })
 
   const saveMutation = createMutation({
     mutationFn: patchTodo,
@@ -86,28 +82,29 @@
     },
   })
 
-  $: todo = $query.data
+  const todo = $derived(query.data)
 
   const onSave = () => {
-    $saveMutation.mutate(todo)
+    saveMutation.mutate(todo)
   }
 
-  $: disableEditSave =
-    $query.status === 'pending' || $saveMutation.status === 'pending'
+  const disableEditSave = $derived(
+    query.status === 'pending' || saveMutation.status === 'pending',
+  )
 </script>
 
 <div>
   <div>
-    {#if $query.data}
-      <button onclick={() => editingIndex.set(null)}>Back</button> Editing Todo
-      "{$query.data.name}" (#{$editingIndex})
+    {#if query.data}
+      <button onclick={() => (editingIndex.value = null)}>Back</button> Editing
+      Todo "{query.data.name}" (#{editingIndex.value})
     {/if}
   </div>
-  {#if $query.status === 'pending'}
-    <span>Loading... (Attempt: {$query.failureCount + 1})</span>
-  {:else if $query.error}
+  {#if query.status === 'pending'}
+    <span>Loading... (Attempt: {query.failureCount + 1})</span>
+  {:else if query.error}
     <span>
-      Error! <button onclick={() => $query.refetch()}>Retry</button>
+      Error! <button onclick={() => query.refetch()}>Retry</button>
     </span>
   {:else if todo}
     <label>
@@ -122,16 +119,16 @@
       <button onclick={onSave} disabled={disableEditSave}> Save </button>
     </div>
     <div>
-      {$saveMutation.status === 'pending'
+      {saveMutation.status === 'pending'
         ? 'Saving...'
-        : $saveMutation.status === 'error'
-          ? $saveMutation.error.message
+        : saveMutation.status === 'error'
+          ? saveMutation.error.message
           : 'Saved!'}
     </div>
     <div>
-      {#if $query.isFetching}
+      {#if query.isFetching}
         <span>
-          Background Refreshing... (Attempt: {$query.failureCount + 1})
+          Background Refreshing... (Attempt: {query.failureCount + 1})
         </span>
       {:else}
         <span>&nbsp;</span>
