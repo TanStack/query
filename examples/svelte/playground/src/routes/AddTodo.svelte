@@ -7,28 +7,29 @@
     list,
     id,
     type Todo,
-  } from '../lib/stores'
+  } from '../lib/stores.svelte'
 
   const queryClient = useQueryClient()
 
-  let name = ''
+  let name = $state('')
 
   const postTodo = async ({ name, notes }: Omit<Todo, 'id'>) => {
     console.info('postTodo', { name, notes })
     return new Promise((resolve, reject) => {
       setTimeout(
         () => {
-          if (Math.random() < $errorRate) {
+          if (Math.random() < errorRate.value) {
             return reject(
               new Error(JSON.stringify({ postTodo: { name, notes } }, null, 2)),
             )
           }
-          const todo = { name, notes, id: $id }
-          id.set($id + 1)
-          list.set([...$list, todo])
+          const todo = { name, notes, id: id.value }
+          id.value = id.value + 1
+          list.value = [...list.value, todo]
           resolve(todo)
         },
-        $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin),
+        queryTimeMin.value +
+          Math.random() * (queryTimeMax.value - queryTimeMin.value),
       )
     })
   }
@@ -42,20 +43,20 @@
 </script>
 
 <div>
-  <input bind:value={name} disabled={$addMutation.status === 'pending'} />
+  <input bind:value={name} disabled={addMutation.status === 'pending'} />
 
   <button
-    onclick={() => $addMutation.mutate({ name, notes: name })}
-    disabled={$addMutation.status === 'pending' || !name}
+    onclick={() => addMutation.mutate({ name, notes: name })}
+    disabled={addMutation.status === 'pending' || !name}
   >
     Add Todo
   </button>
 
   <div>
-    {$addMutation.status === 'pending'
+    {addMutation.status === 'pending'
       ? 'Saving...'
-      : $addMutation.status === 'error'
-        ? $addMutation.error.message
+      : addMutation.status === 'error'
+        ? addMutation.error.message
         : 'Saved!'}
   </div>
 </div>
