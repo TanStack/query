@@ -1355,7 +1355,7 @@ importers:
         specifier: ^5.3.3
         version: 5.3.3(@types/node@20.14.10)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
-  examples/svelte/optimistic-updates-typescript:
+  examples/svelte/optimistic-updates:
     dependencies:
       '@tanstack/svelte-query':
         specifier: ^5.51.15
