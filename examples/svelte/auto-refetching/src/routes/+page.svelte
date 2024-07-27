@@ -6,7 +6,7 @@
   } from '@tanstack/svelte-query'
 
   let intervalMs = $state(1000)
-  let value = $state<string>()
+  let value = $state<string>('')
 
   const client = useQueryClient()
 
