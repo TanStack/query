@@ -10,7 +10,7 @@ describe('createQueries', () => {
     const rendered = render(BaseExample, {
       props: {
         options: {
-          queries: [
+          queries: () => [
             {
               queryKey: ['key-1'],
               queryFn: async () => {

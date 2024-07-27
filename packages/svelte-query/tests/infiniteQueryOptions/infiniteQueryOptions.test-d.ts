@@ -36,7 +36,7 @@ describe('queryOptions', () => {
       initialPageParam: 1,
     })
 
-    const query = createInfiniteQuery(options)
+    const query = createInfiniteQuery(() => options)
 
     // known issue: type of pageParams is unknown when returned from useInfiniteQuery
     expectTypeOf(query.data).toEqualTypeOf<

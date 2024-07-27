@@ -9,13 +9,14 @@
 
   const queries = createQueries(
     {
-      queries: ids.map((id) => ({
-        queryKey: [id],
-        queryFn: async () => {
-          await sleep(5)
-          return id
-        },
-      })),
+      queries: () =>
+        ids.map((id) => ({
+          queryKey: [id],
+          queryFn: async () => {
+            await sleep(5)
+            return id
+          },
+        })),
       combine: (results) => {
         return {
           isPending: results.some((result) => result.isPending),
@@ -29,4 +30,4 @@
 </script>
 
 <div>isPending: {queries.isPending}</div>
-<div>Data: {queries.data ?? 'undefined'}</div>
+<div>Data: {queries.data}</div>

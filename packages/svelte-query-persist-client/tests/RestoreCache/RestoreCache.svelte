@@ -6,13 +6,13 @@
 
   let { states }: { states: { value: Array<StatusResult<string>> } } = $props()
 
-  const query = createQuery({
+  const query = createQuery(() => ({
     queryKey: ['test'],
     queryFn: async () => {
       await sleep(5)
       return 'fetched'
     },
-  })
+  }))
 
   $effect(() => {
     states.value = [...untrack(() => states.value), $state.snapshot(query)]

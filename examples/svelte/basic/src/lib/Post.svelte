@@ -5,10 +5,10 @@
 
   const { postId }: { postId: number } = $props()
 
-  const post = createQuery<Post>({
+  const post = createQuery<Post>(() => ({
     queryKey: ['post', postId],
     queryFn: () => getPostById(postId),
-  })
+  }))
 </script>
 
 <div>

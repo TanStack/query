@@ -11,10 +11,10 @@
     return await res.json()
   }
 
-  const query = createQuery({
+  const query = createQuery(() => ({
     queryKey: ['film', data.params.filmId],
     queryFn: getFilm,
-  })
+  }))
 </script>
 
 {#if query.status === 'pending'}

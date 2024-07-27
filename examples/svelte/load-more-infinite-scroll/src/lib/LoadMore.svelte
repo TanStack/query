@@ -6,7 +6,7 @@
   const fetchPlanets = async ({ pageParam = 1 }) =>
     await fetch(`${endPoint}/planets/?page=${pageParam}`).then((r) => r.json())
 
-  const query = createInfiniteQuery({
+  const query = createInfiniteQuery(() => ({
     queryKey: ['planets'],
     queryFn: ({ pageParam }) => fetchPlanets({ pageParam }),
     initialPageParam: 1,
@@ -20,7 +20,7 @@
       }
       return undefined
     },
-  })
+  }))
 </script>
 
 {#if query.isPending}

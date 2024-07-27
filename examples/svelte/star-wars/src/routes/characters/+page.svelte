@@ -6,10 +6,10 @@
     return await res.json()
   }
 
-  const query = createQuery({
+  const query = createQuery(() => ({
     queryKey: ['characters'],
     queryFn: getCharacters,
-  })
+  }))
 </script>
 
 {#if query.status === 'pending'}

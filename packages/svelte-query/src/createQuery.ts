@@ -5,6 +5,7 @@ import type {
   CreateQueryOptions,
   CreateQueryResult,
   DefinedCreateQueryResult,
+  FunctionedParams,
 } from './types'
 import type {
   DefinedInitialDataOptions,
@@ -17,7 +18,9 @@ export function createQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: FunctionedParams<
+    DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  >,
   queryClient?: QueryClient,
 ): DefinedCreateQueryResult<TData, TError>
 
@@ -27,7 +30,9 @@ export function createQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: FunctionedParams<
+    UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  >,
   queryClient?: QueryClient,
 ): CreateQueryResult<TData, TError>
 
@@ -37,12 +42,14 @@ export function createQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: FunctionedParams<
+    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+  >,
   queryClient?: QueryClient,
 ): CreateQueryResult<TData, TError>
 
 export function createQuery(
-  options: CreateQueryOptions,
+  options: FunctionedParams<CreateQueryOptions>,
   queryClient?: QueryClient,
 ) {
   return createBaseQuery(options, QueryObserver, queryClient)
