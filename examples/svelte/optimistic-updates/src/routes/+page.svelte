@@ -16,7 +16,7 @@
     ts: number
   }
 
-  let text: string
+  let text = ''
 
   const client = useQueryClient()
 

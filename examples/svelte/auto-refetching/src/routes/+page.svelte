@@ -6,7 +6,7 @@
   } from '@tanstack/svelte-query'
 
   let intervalMs = 1000
-  let value: string
+  let value = ''
 
   const client = useQueryClient()
 

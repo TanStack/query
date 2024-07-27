@@ -990,8 +990,8 @@
               "to": "framework/svelte/examples/ssr"
             },
             {
-              "label": "Optimistic Updates in TypeScript",
-              "to": "framework/svelte/examples/optimistic-updates-typescript"
+              "label": "Optimistic Updates",
+              "to": "framework/svelte/examples/optimistic-updates"
             },
             {
               "label": "Playground",
