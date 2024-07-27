@@ -197,14 +197,14 @@ function Example() {
   return (
     <div>
       <Switch>
-        <Match when={query.isPending}>
+        <Match when={todosQuery.isPending}>
           <p>Loading...</p>
         </Match>
-        <Match when={query.isError}>
-          <p>Error: {query.error.message}</p>
+        <Match when={todosQuery.isError}>
+          <p>Error: {todosQuery.error.message}</p>
         </Match>
-        <Match when={query.isSuccess}>
-          <For each={query.data}>
+        <Match when={todosQuery.isSuccess}>
+          <For each={todosQuery.data}>
             {(todo) => (
               <button onClick={() => setTodo(todo.id)}>{todo.title}</button>
             )}
