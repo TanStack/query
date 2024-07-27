@@ -4,11 +4,11 @@ import type { CreateQueryOptions } from '../../src/index'
 
 describe('createQuery', () => {
   test('TData should always be defined when initialData is provided as an object', () => {
-    const query = createQuery({
+    const query = createQuery(() => ({
       queryKey: ['key'],
       queryFn: () => ({ wow: true }),
       initialData: { wow: true },
-    })
+    }))
 
     expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean }>()
   })
@@ -25,20 +25,20 @@ describe('createQuery', () => {
         wow: true,
       },
     })
-    const query = createQuery(options)
+    const query = createQuery(() => options)
 
     expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean }>()
   })
 
   test('TData should have undefined in the union when initialData is NOT provided', () => {
-    const query = createQuery({
+    const query = createQuery(() => ({
       queryKey: ['key'],
       queryFn: () => {
         return {
           wow: true,
         }
       },
-    })
+    }))
 
     expectTypeOf(query.data).toEqualTypeOf<{ wow: boolean } | undefined>()
   })
@@ -47,11 +47,11 @@ describe('createQuery', () => {
     type Data = string
 
     const useCustomQuery = (options?: CreateQueryOptions<Data>) => {
-      return createQuery({
+      return createQuery(() => ({
         ...options,
         queryKey: ['todos-key'],
         queryFn: () => Promise.resolve('data'),
-      })
+      }))
     }
 
     const query = useCustomQuery()

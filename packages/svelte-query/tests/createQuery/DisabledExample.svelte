@@ -14,16 +14,17 @@
   const queryClient = new QueryClient()
   let count = $state(0)
 
-  const options = $derived({
-    queryKey: () => ['test', count],
-    queryFn: async () => {
-      await sleep(5)
-      return count
-    },
-    enabled: () => count === 0,
-  })
-
-  const query = createQuery(options, queryClient)
+  const query = createQuery(
+    () => ({
+      queryKey: ['test', count],
+      queryFn: async () => {
+        await sleep(5)
+        return count
+      },
+      enabled: count === 0,
+    }),
+    queryClient,
+  )
 
   $effect(() => {
     states.value = [

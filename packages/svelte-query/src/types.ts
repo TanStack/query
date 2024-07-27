@@ -16,7 +16,7 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 
-export type FnOrVal<T> = (() => T) | T // can be a fn that returns reactive statement or $state or $derived deep states
+export type FunctionedParams<T> = () => T
 
 /** Options for createBaseQuery */
 export type CreateBaseQueryOptions<
@@ -25,12 +25,7 @@ export type CreateBaseQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = FnOrVal<
-  Omit<
-    QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
-    'queryKey' | 'enabled'
-  > & { enabled?: FnOrVal<boolean>; queryKey: FnOrVal<TQueryKey> }
->
+> = QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
 
 /** Result from createBaseQuery */
 export type CreateBaseQueryResult<
@@ -60,18 +55,13 @@ export type CreateInfiniteQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> = FnOrVal<
-  Omit<
-    InfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey,
-      TPageParam
-    >,
-    'queryKey' | 'enabled'
-  > & { enabled?: FnOrVal<boolean>; queryKey: FnOrVal<TQueryKey> }
+> = InfiniteQueryObserverOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryData,
+  TQueryKey,
+  TPageParam
 >
 
 /** Result from createInfiniteQuery */

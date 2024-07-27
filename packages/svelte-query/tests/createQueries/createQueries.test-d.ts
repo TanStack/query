@@ -17,7 +17,7 @@ describe('createQueries', () => {
         wow: true,
       },
     })
-    const queryResults = createQueries({ queries: [options] })
+    const queryResults = createQueries(() => ({ queries: [options] }))
 
     const data = queryResults[0].data
 

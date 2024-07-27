@@ -21,7 +21,7 @@ describe('createQuery', () => {
 
     const rendered = render(BaseExample, {
       props: {
-        options,
+        options: () => options,
         queryClient: new QueryClient(),
         states,
       },
@@ -100,7 +100,7 @@ describe('createQuery', () => {
 
     const rendered = render(BaseExample, {
       props: {
-        options,
+        options: () => options,
         queryClient: new QueryClient(),
         states,
       },
@@ -195,13 +195,13 @@ describe('createQuery', () => {
   test('Accept a writable store for options', async () => {
     let states = ref<Array<QueryObserverResult>>([])
 
-    const optionsStore = $state({
+    const optionsStore = $state(() => ({
       queryKey: ['test'],
       queryFn: async () => {
         await sleep(5)
         return 'Success'
       },
-    })
+    }))
 
     const rendered = render(BaseExample, {
       props: {
@@ -247,13 +247,13 @@ describe('createQuery', () => {
 
     let writableStore = $state(1)
 
-    const derivedStore = $derived({
-      queryKey: () => [writableStore],
+    const derivedStore = $derived(() => ({
+      queryKey: [writableStore],
       queryFn: async () => {
         await sleep(5)
         return writableStore
       },
-    })
+    }))
 
     const rendered = render(BaseExample, {
       props: {

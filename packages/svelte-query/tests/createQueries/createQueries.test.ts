@@ -9,7 +9,7 @@ describe('createQueries', () => {
   test('Render and wait for success', async () => {
     const rendered = render(BaseExample, {
       props: {
-        options: {
+        options: () => ({
           queries: [
             {
               queryKey: ['key-1'],
@@ -26,7 +26,7 @@ describe('createQueries', () => {
               },
             },
           ],
-        },
+        }),
         queryClient: new QueryClient(),
       },
     })
