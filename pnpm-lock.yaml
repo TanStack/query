@@ -1295,12 +1295,18 @@ importers:
 
   examples/svelte/basic:
     dependencies:
+      '@tanstack/query-sync-storage-persister':
+        specifier: ^5.51.15
+        version: link:../../../packages/query-sync-storage-persister
       '@tanstack/svelte-query':
         specifier: ^5.51.15
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
         specifier: ^5.51.15
         version: link:../../../packages/svelte-query-devtools
+      '@tanstack/svelte-query-persist-client':
+        specifier: ^5.51.15
+        version: link:../../../packages/svelte-query-persist-client
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^3.2.2
