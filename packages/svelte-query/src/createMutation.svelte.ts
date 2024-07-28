@@ -30,6 +30,7 @@ export function createMutation<
       options(),
     ),
   )
+
   const mutate = $state<
     CreateMutateFunction<TData, TError, TVariables, TContext>
   >((variables, mutateOptions) => {
@@ -42,16 +43,16 @@ export function createMutation<
 
   const result = $state(observer.getCurrentResult())
 
-  const un = observer.subscribe((val) => {
+  const unsubscribe = observer.subscribe((val) => {
     notifyManager.batchCalls(() => {
       Object.assign(result, val)
-
-      // result = val
     })()
   })
+
   onDestroy(() => {
-    un()
+    unsubscribe()
   })
+
   // @ts-expect-error
   return new Proxy(result, {
     get: (_, prop) => {

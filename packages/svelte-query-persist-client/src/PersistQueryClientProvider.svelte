@@ -17,28 +17,32 @@
     persistOptions: OmitKeyof<PersistQueryClientOptions, 'queryClient'>
     onSuccess?: () => void
   }
+
   let {
     client,
     children,
     persistOptions,
-    ...props
+    onSuccess,
   }: PersistQueryClientProviderProps = $props()
 
   let isRestoring = $state(true)
+
   setIsRestoringContext(() => isRestoring)
+
   const options = $derived({
     ...persistOptions,
     queryClient: client,
   })
 
   $effect(() => {
-    return isRestoring ? () => 1 : persistQueryClientSubscribe(options)
+    return isRestoring ? () => {} : persistQueryClientSubscribe(options)
   })
+
   $effect(() => {
     isRestoring = true
     persistQueryClientRestore(options).then(async () => {
       try {
-        await props.onSuccess?.()
+        await onSuccess?.()
       } finally {
         isRestoring = false
       }
@@ -46,6 +50,6 @@
   })
 </script>
 
-<QueryClientProvider {client} {...props}>
+<QueryClientProvider {client}>
   {@render children()}
 </QueryClientProvider>
