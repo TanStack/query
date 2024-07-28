@@ -223,7 +223,7 @@ export function createQueries<
       defaultedOptions._optimisticResults = isRestoring()
         ? 'isRestoring'
         : 'optimistic'
-      return defaultedOptions
+      return defaultedOptions as QueryObserverOptions
     })
   })
 

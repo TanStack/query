@@ -22,7 +22,7 @@
     client,
     children,
     persistOptions,
-    onSuccess,
+    ...props
   }: PersistQueryClientProviderProps = $props()
 
   let isRestoring = $state(true)
@@ -42,7 +42,7 @@
     isRestoring = true
     persistQueryClientRestore(options).then(async () => {
       try {
-        await onSuccess?.()
+        await props.onSuccess?.()
       } finally {
         isRestoring = false
       }
@@ -50,6 +50,6 @@
   })
 </script>
 
-<QueryClientProvider {client}>
+<QueryClientProvider {client} {...props}>
   {@render children()}
 </QueryClientProvider>
