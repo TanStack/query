@@ -17,10 +17,8 @@
   const query = createQuery(options, queryClient)
 
   $effect(() => {
-    states.value = [
-      ...untrack(() => states.value),
-      $state.snapshot(query) as QueryObserverResult,
-    ]
+    // @ts-expect-error
+    states.value = [...untrack(() => states.value), $state.snapshot(query)]
   })
 </script>
 

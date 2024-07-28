@@ -32,11 +32,7 @@ export function createBaseQuery<
 
   /** Creates a store that has the default options applied */
   const defaultedOptions = $derived(() => {
-    const queryKey: TQueryKey = $state.snapshot(options().queryKey) as any // remove proxy prevent reactive query in DevTools
-    const defaultOptions = client.defaultQueryOptions({
-      ...options(),
-      queryKey: queryKey,
-    })
+    const defaultOptions = client.defaultQueryOptions(options())
     defaultOptions._optimisticResults = isRestoring()
       ? 'isRestoring'
       : 'optimistic'
