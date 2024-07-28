@@ -1,5 +1,4 @@
 import { notifyManager } from '@tanstack/query-core'
-import { untrack } from 'svelte'
 import { useIsRestoring } from './useIsRestoring'
 import { useQueryClient } from './useQueryClient'
 import type {
@@ -32,23 +31,19 @@ export function createBaseQuery<
   const isRestoring = useIsRestoring()
 
   /** Creates a store that has the default options applied */
-  function updateOptions() {
+  const defaultedOptions = $derived(() => {
     const queryKey: TQueryKey = $state.snapshot(options().queryKey) as any // remove proxy prevent reactive query in DevTools
-    const defaultedOptions = client.defaultQueryOptions({
+    const defaultOptions = client.defaultQueryOptions({
       ...options(),
       queryKey: queryKey,
     })
-    defaultedOptions._optimisticResults = 'optimistic'
-    if (isRestoring()) {
-      defaultedOptions._optimisticResults = 'isRestoring'
-    }
+    defaultOptions._optimisticResults = isRestoring()
+      ? 'isRestoring'
+      : 'optimistic'
+    defaultOptions.structuralSharing = false
+    return defaultOptions
+  })
 
-    defaultedOptions.structuralSharing = false
-
-    return defaultedOptions
-  }
-
-  const defaultedOptionsStore = updateOptions
   /** Creates the observer */
   const observer = new Observer<
     TQueryFnData,
@@ -56,57 +51,37 @@ export function createBaseQuery<
     TData,
     TQueryData,
     TQueryKey
-  >(client, defaultedOptionsStore())
+  >(client, defaultedOptions())
 
   const result = $state<QueryObserverResult<TData, TError>>(
-    observer.getOptimisticResult(defaultedOptionsStore()),
+    observer.getOptimisticResult(defaultedOptions()),
   )
 
-  function upResult(r: QueryObserverResult<TData, TError>) {
+  function updateResult(r: QueryObserverResult<TData, TError>) {
     Object.assign(result, r)
   }
 
   $effect(() => {
-    let un = () => undefined
-    if (!isRestoring()) {
-      {
-        // @ts-expect-error
-        un = observer.subscribe((v) => {
+    const unsubscribe = isRestoring()
+      ? () => undefined
+      : observer.subscribe(() => {
           notifyManager.batchCalls(() => {
-            const temp = observer.getOptimisticResult(defaultedOptionsStore())
-            upResult(temp)
+            updateResult(observer.getOptimisticResult(defaultedOptions()))
           })()
         })
-      }
-    }
 
     observer.updateResult()
-    return () => {
-      un()
-    }
+    return () => unsubscribe()
   })
 
   /** Subscribe to changes in result and defaultedOptionsStore */
   $effect.pre(() => {
-    observer.setOptions(defaultedOptionsStore(), { listeners: false })
-    upResult(observer.getOptimisticResult(defaultedOptionsStore()))
-    // result = observer.getOptimisticResult(defaultedOptionsStore()) //prevent lag , somehow observer.subscribe does not return
+    observer.setOptions(defaultedOptions(), { listeners: false })
+    updateResult(observer.getOptimisticResult(defaultedOptions()))
   })
 
-  const final_ = $state({ value: result })
-
-  // update result
-  $effect(() => {
-    // svelte does not need this with it is proxy state and fine-grained reactivity?
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (result !== null)
-      untrack(() => {
-        const v = !defaultedOptionsStore().notifyOnChangeProps
-          ? observer.trackResult(result)
-          : result
-
-        final_.value = Object.assign(final_.value, v)
-      })
-  })
-  return final_.value
+  // Handle result property usage tracking
+  return !defaultedOptions().notifyOnChangeProps
+    ? observer.trackResult(result)
+    : result
 }
