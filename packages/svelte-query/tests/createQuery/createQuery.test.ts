@@ -6,6 +6,7 @@ import { sleep } from '../utils'
 import BaseExample from './BaseExample.svelte'
 import DisabledExample from './DisabledExample.svelte'
 import PlaceholderData from './PlaceholderData.svelte'
+import RefetchExample from './RefetchExample.svelte'
 import type { Writable } from 'svelte/store'
 import type { QueryObserverResult } from '@tanstack/query-core'
 
@@ -386,5 +387,35 @@ describe('createQuery', () => {
       isFetching: false,
       isSuccess: false,
     })
+  })
+
+  test('Create a new query when refetching a removed query', async () => {
+    const statesStore: Writable<Array<QueryObserverResult>> = writable([])
+
+    const rendered = render(RefetchExample, {
+      props: {
+        states: statesStore,
+      },
+    })
+
+    await waitFor(() => rendered.getByText('Data: 1'))
+    fireEvent.click(rendered.getByRole('button', { name: /Remove/i }))
+
+    await sleep(5)
+
+    fireEvent.click(rendered.getByRole('button', { name: /Refetch/i }))
+    await waitFor(() => rendered.getByText('Data: 2'))
+
+    const states = get(statesStore)
+
+    expect(states.length).toBe(4)
+    // Initial
+    expect(states[0]).toMatchObject({ data: undefined, dataUpdatedAt: 0 })
+    // Fetched
+    expect(states[1]).toMatchObject({ data: 1 })
+    // Switch
+    expect(states[2]).toMatchObject({ data: undefined, dataUpdatedAt: 0 })
+    // Fetched
+    expect(states[3]).toMatchObject({ data: 2 })
   })
 })
