@@ -18,6 +18,7 @@ Link: https://github.com/lukemorales/query-key-factory
 Zova provides the Model mechanism based on Vue Query in the MVC architecture, encapsulating unified data sources through Model, thereby standardizing the use of data, simplifying the code structure, and improving the maintainability of the code
 
 Link: https://github.com/cabloy/zova
+Docs: https://zova.js.org/guide/techniques/model/introduction.html
 
 ## Query Rewind
 
