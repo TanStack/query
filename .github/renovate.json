@@ -1,0 +1,37 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "configMigration": true,
+  "extends": [
+    "config:recommended",
+    "group:allNonMajor",
+    "schedule:weekly",
+    ":approveMajorUpdates",
+    ":automergeMinor",
+    ":disablePeerDependencies",
+    ":maintainLockFilesMonthly",
+    ":semanticCommits",
+    ":semanticCommitTypeAll(chore)"
+  ],
+  "ignorePresets": [":ignoreModulesAndTests"],
+  "labels": ["dependencies"],
+  "rangeStrategy": "bump",
+  "postUpdateOptions": ["pnpmDedupe"],
+  "ignoreDeps": [
+    "@types/node",
+    "@types/react",
+    "@types/react-dom",
+    "node",
+    "react",
+    "react-dom",
+    "react-scripts",
+    "typescript",
+    "typescript47",
+    "typescript48",
+    "typescript49",
+    "typescript50",
+    "typescript51",
+    "typescript52",
+    "vue",
+    "vue-tsc"
+  ]
+}
