@@ -64,7 +64,7 @@
     "rimraf": "^5.0.9",
     "sherif": "^0.10.0",
     "solid-js": "^1.8.19",
-    "tsup": "^8.0.2",
+    "tsup": "8.0.2",
     "typescript": "5.3.3",
     "typescript47": "npm:typescript@4.7",
     "typescript48": "npm:typescript@4.8",
