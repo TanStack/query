@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query-experimental",
-  "version": "5.49.1",
+  "version": "5.51.15",
   "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -10,6 +10,10 @@
     "directory": "packages/angular-query-experimental"
   },
   "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
   "keywords": [
     "angular query",
     "angular",
@@ -21,18 +25,6 @@
     "state management",
     "state",
     "tanstack"
-  ],
-  "funding": {
-    "type": "github",
-    "url": "https://github.com/sponsors/tannerlinsley"
-  },
-  "type": "module",
-  "sideEffects": false,
-  "files": [
-    "build",
-    "!**/*.d.ts",
-    "!**/*.d.ts.map",
-    "build/rollup.d.ts"
   ],
   "scripts": {
     "clean": "rimraf ./build && rimraf ./coverage",
@@ -47,39 +39,47 @@
     "test:build": "publint --strict && attw --pack",
     "build": "ng-packagr -p ng-package.json -c tsconfig.build.json && rimraf ./build/package.json && api-extractor run --local"
   },
-  "dependencies": {
-    "@tanstack/query-core": "workspace:*",
-    "tslib": "^2.6.2"
-  },
-  "devDependencies": {
-    "@analogjs/vite-plugin-angular": "^1.3.1",
-    "@angular/common": "^17.3.10",
-    "@angular/compiler": "^17.3.10",
-    "@angular/compiler-cli": "^17.3.10",
-    "@angular/core": "^17.3.10",
-    "@angular/platform-browser": "^17.3.10",
-    "@angular/platform-browser-dynamic": "^17.3.10",
-    "eslint-plugin-jsdoc": "^48.2.13",
-    "@microsoft/api-extractor": "^7.46.2",
-    "ng-packagr": "^17.3.0",
-    "typescript": "5.3.3",
-    "zone.js": "^0.14.6"
-  },
-  "peerDependencies": {
-    "@angular/core": ">=16.0.0",
-    "@angular/common": ">=16.0.0"
-  },
-  "module": "build/fesm2022/tanstack-angular-query-experimental.mjs",
+  "type": "module",
   "types": "build/rollup.d.ts",
+  "module": "build/fesm2022/tanstack-angular-query-experimental.mjs",
   "exports": {
-    "./package.json": {
-      "default": "./package.json"
-    },
     ".": {
       "types": "./build/rollup.d.ts",
       "esm2022": "./build/esm2022/tanstack-angular-query-experimental.mjs",
       "esm": "./build/esm2022/tanstack-angular-query-experimental.mjs",
       "default": "./build/fesm2022/tanstack-angular-query-experimental.mjs"
+    },
+    "./package.json": {
+      "default": "./package.json"
     }
+  },
+  "sideEffects": false,
+  "files": [
+    "build",
+    "!**/*.d.ts",
+    "!**/*.d.ts.map",
+    "build/rollup.d.ts"
+  ],
+  "dependencies": {
+    "@tanstack/query-core": "workspace:*",
+    "tslib": "^2.6.3"
+  },
+  "devDependencies": {
+    "@analogjs/vite-plugin-angular": "^1.6.4",
+    "@angular/common": "^17.3.12",
+    "@angular/compiler": "^17.3.12",
+    "@angular/compiler-cli": "^17.3.12",
+    "@angular/core": "^17.3.12",
+    "@angular/platform-browser": "^17.3.12",
+    "@angular/platform-browser-dynamic": "^17.3.12",
+    "@microsoft/api-extractor": "^7.47.4",
+    "eslint-plugin-jsdoc": "^48.8.3",
+    "ng-packagr": "^17.3.0",
+    "typescript": "5.3.3",
+    "zone.js": "^0.14.8"
+  },
+  "peerDependencies": {
+    "@angular/common": ">=16.0.0",
+    "@angular/core": ">=16.0.0"
   }
 }

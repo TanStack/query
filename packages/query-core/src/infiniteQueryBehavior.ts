@@ -103,6 +103,9 @@ export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
           // Fetch remaining pages
           for (let i = 1; i < remainingPages; i++) {
             const param = getNextPageParam(options, result)
+            if (param == null) {
+              break
+            }
             result = await fetchPage(result, param)
           }
         }
@@ -133,24 +136,23 @@ function getNextPageParam(
   { pages, pageParams }: InfiniteData<unknown>,
 ): unknown | undefined {
   const lastIndex = pages.length - 1
-  return options.getNextPageParam(
-    pages[lastIndex],
-    pages,
-    pageParams[lastIndex],
-    pageParams,
-  )
+  return pages.length > 0
+    ? options.getNextPageParam(
+        pages[lastIndex],
+        pages,
+        pageParams[lastIndex],
+        pageParams,
+      )
+    : undefined
 }
 
 function getPreviousPageParam(
   options: InfiniteQueryPageParamsOptions<any>,
   { pages, pageParams }: InfiniteData<unknown>,
 ): unknown | undefined {
-  return options.getPreviousPageParam?.(
-    pages[0],
-    pages,
-    pageParams[0],
-    pageParams,
-  )
+  return pages.length > 0
+    ? options.getPreviousPageParam?.(pages[0], pages, pageParams[0], pageParams)
+    : undefined
 }
 
 /**

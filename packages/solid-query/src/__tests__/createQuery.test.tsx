@@ -2044,7 +2044,9 @@ describe('createQuery', () => {
 
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
+    const queryFn = vi
+      .fn<(...args: Array<unknown>) => string>()
+      .mockReturnValue('data')
 
     function Page() {
       const { data = 'default' } = createQuery(() => ({
@@ -3021,7 +3023,7 @@ describe('createQuery', () => {
   it('should retry specified number of times', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<Array<unknown>, unknown>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
     queryFn.mockImplementation(() => {
       return Promise.reject(new Error('Error test Barrett'))
     })
@@ -3062,7 +3064,7 @@ describe('createQuery', () => {
   it('should not retry if retry function `false`', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<Array<unknown>, unknown>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
 
     queryFn.mockImplementationOnce(() => {
       return Promise.reject(new Error('Error test Tanner'))
@@ -3110,7 +3112,7 @@ describe('createQuery', () => {
 
     type DelayError = { delay: number }
 
-    const queryFn = vi.fn<Array<unknown>, unknown>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
     queryFn.mockImplementation(() => {
       return Promise.reject({ delay: 50 })
     })
@@ -3321,10 +3323,10 @@ describe('createQuery', () => {
     const key = queryKey()
     const states: Array<CreateQueryResult<string>> = []
 
-    const queryFn = vi.fn<Array<unknown>, string>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => string>()
     queryFn.mockImplementation(() => 'data')
 
-    const prefetchQueryFn = vi.fn<Array<unknown>, string>()
+    const prefetchQueryFn = vi.fn<(...args: Array<unknown>) => string>()
     prefetchQueryFn.mockImplementation(() => 'not yet...')
 
     await queryClient.prefetchQuery({
@@ -3358,10 +3360,11 @@ describe('createQuery', () => {
   it('should not refetch if not stale after a prefetch', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<Array<unknown>, string>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => string>()
     queryFn.mockImplementation(() => 'data')
 
-    const prefetchQueryFn = vi.fn<Array<unknown>, Promise<string>>()
+    const prefetchQueryFn =
+      vi.fn<(...args: Array<unknown>) => Promise<string>>()
     prefetchQueryFn.mockImplementation(async () => {
       await sleep(10)
       return 'not yet...'
@@ -3525,6 +3528,124 @@ describe('createQuery', () => {
     ])
   })
 
+  // See https://github.com/TanStack/query/issues/7711
+  it('race condition: should cleanup observers after component that created the query is unmounted #1', async () => {
+    const key = queryKey()
+
+    function Component() {
+      let val = 1
+      const dataQuery = createQuery(() => ({
+        queryKey: [key],
+        queryFn: () => {
+          return val++
+        },
+      }))
+
+      return (
+        <div>
+          <p>component</p>
+          <p>data: {String(dataQuery.data)}</p>
+        </div>
+      )
+    }
+
+    const Outer = () => {
+      const [showComp, setShowComp] = createSignal(true)
+      return (
+        <div>
+          <button
+            onClick={() => {
+              queryClient.invalidateQueries()
+              setShowComp(!showComp())
+            }}
+          >
+            toggle
+          </button>
+          {showComp() ? <Component /> : <div>not showing</div>}
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Outer />
+      </QueryClientProvider>
+    ))
+
+    await waitFor(() => rendered.getByText('component'))
+    fireEvent.click(rendered.getByText('toggle'))
+    await waitFor(() => rendered.getByText('not showing'))
+    fireEvent.click(rendered.getByText('toggle'))
+    await waitFor(() => rendered.getByText('component'))
+    fireEvent.click(rendered.getByText('toggle'))
+    await waitFor(() => rendered.getByText('not showing'))
+
+    const entry = queryClient.getQueryCache().find({
+      queryKey: [key],
+    })!
+
+    expect(entry.getObserversCount()).toBe(0)
+  })
+
+  // See https://github.com/TanStack/query/issues/7711
+  it('race condition: should cleanup observers after component that created the query is unmounted #2', async () => {
+    const key = queryKey()
+
+    function Component() {
+      let val = 1
+      const dataQuery = createQuery(() => ({
+        queryKey: [key],
+        queryFn: () => {
+          return val++
+        },
+      }))
+
+      return (
+        <div>
+          <p>component</p>
+          <p>data: {String(dataQuery.data)}</p>
+        </div>
+      )
+    }
+
+    const Outer = () => {
+      const [showComp, setShowComp] = createSignal(true)
+      return (
+        <div>
+          <button
+            onClick={() => {
+              queueMicrotask(() => setShowComp(!showComp()))
+              queryClient.invalidateQueries()
+            }}
+          >
+            toggle
+          </button>
+          {showComp() ? <Component /> : <div>not showing</div>}
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Outer />
+      </QueryClientProvider>
+    ))
+
+    await waitFor(() => rendered.getByText('component'))
+    fireEvent.click(rendered.getByText('toggle'))
+    await waitFor(() => rendered.getByText('not showing'))
+    fireEvent.click(rendered.getByText('toggle'))
+    await waitFor(() => rendered.getByText('component'))
+    fireEvent.click(rendered.getByText('toggle'))
+    await waitFor(() => rendered.getByText('not showing'))
+
+    const entry = queryClient.getQueryCache().find({
+      queryKey: [key],
+    })!
+
+    expect(entry.getObserversCount()).toBe(0)
+  })
+
   it('should mark query as fetching, when using initialData', async () => {
     const key = queryKey()
     const results: Array<DefinedCreateQueryResult<string>> = []
@@ -3635,7 +3756,7 @@ describe('createQuery', () => {
 
   it('it should support enabled:false in query object syntax', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<Array<unknown>, string>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => string>()
     queryFn.mockImplementation(() => 'data')
 
     function Page() {
@@ -3721,7 +3842,7 @@ describe('createQuery', () => {
       const query = createQuery(() => ({
         queryKey: key,
         queryFn: () => 'fetched data',
-        gcTime: 1000 * 60 * 10, //10 Minutes
+        gcTime: 1000 * 60 * 10, // 10 Minutes
       }))
       return <div>{query.data}</div>
     }
@@ -3745,7 +3866,9 @@ describe('createQuery', () => {
 
   it('should not cause memo churn when data does not change', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
+    const queryFn = vi
+      .fn<(...args: Array<unknown>) => string>()
+      .mockReturnValue('data')
     const memoFn = vi.fn()
 
     function Page() {
@@ -3924,7 +4047,7 @@ describe('createQuery', () => {
 
     await waitFor(() => rendered.getByText('count: 1'))
 
-    await sleep(10) //extra sleep to make sure we're not re-fetching
+    await sleep(10) // extra sleep to make sure we're not re-fetching
 
     expect(states.length).toEqual(2)
 
@@ -3981,7 +4104,9 @@ describe('createQuery', () => {
   it('should refetch if any query instance becomes enabled', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
+    const queryFn = vi
+      .fn<(...args: Array<unknown>) => string>()
+      .mockReturnValue('data')
 
     function Disabled() {
       createQuery(() => ({ queryKey: key, queryFn, enabled: false }))
@@ -4435,7 +4560,7 @@ describe('createQuery', () => {
       readonly [typeof key, number]
     > = async (ctx) => {
       const [, limit] = ctx.queryKey
-      // eslint-disable-next-line ts/no-unnecessary-condition
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       const value = limit % 2 && ctx.signal ? 'abort' : `data ${limit}`
       await sleep(25)
       return value
@@ -4730,7 +4855,7 @@ describe('createQuery', () => {
   })
 
   it('should refetch when changed enabled to true in error state', async () => {
-    const queryFn = vi.fn<Array<unknown>, unknown>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
     queryFn.mockImplementation(async () => {
       await sleep(10)
       return Promise.reject(new Error('Suspense Error Bingo'))

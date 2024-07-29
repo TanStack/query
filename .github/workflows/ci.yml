@@ -7,7 +7,7 @@ on:
         description: override release tag
         required: false
   push:
-    branches: ['main', 'alpha', 'beta', 'rc', 'v4']
+    branches: [main, alpha, beta, rc, v4]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -16,14 +16,18 @@ concurrency:
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   test-and-publish:
     name: Test & Publish
-    if: github.repository == 'TanStack/query'
+    if: github.repository_owner == 'TanStack'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.7
         with:
           fetch-depth: 0
       - name: Start Nx Agents
@@ -42,11 +46,11 @@ jobs:
           npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
           pnpm run cipublish
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           TAG: ${{ inputs.tag }}
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v4.5.0
         with:
           directory: packages
         env:

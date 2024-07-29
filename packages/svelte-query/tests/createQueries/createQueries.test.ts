@@ -1,11 +1,12 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { render, waitFor } from '@testing-library/svelte'
 import { QueryClient } from '@tanstack/query-core'
 import { sleep } from '../utils'
 import BaseExample from './BaseExample.svelte'
+import CombineExample from './CombineExample.svelte'
 
 describe('createQueries', () => {
-  it('Render and wait for success', async () => {
+  test('Render and wait for success', async () => {
     const rendered = render(BaseExample, {
       props: {
         options: {
@@ -13,14 +14,14 @@ describe('createQueries', () => {
             {
               queryKey: ['key-1'],
               queryFn: async () => {
-                await sleep(10)
+                await sleep(5)
                 return 'Success 1'
               },
             },
             {
               queryKey: ['key-2'],
               queryFn: async () => {
-                await sleep(10)
+                await sleep(5)
                 return 'Success 2'
               },
             },
@@ -31,47 +32,29 @@ describe('createQueries', () => {
     })
 
     await waitFor(() => {
-      expect(rendered.getByText('Loading 1')).toBeInTheDocument()
-      expect(rendered.getByText('Loading 2')).toBeInTheDocument()
+      expect(rendered.getByText('Status 1: pending')).toBeInTheDocument()
+      expect(rendered.getByText('Status 2: pending')).toBeInTheDocument()
     })
 
     await waitFor(() => {
-      expect(rendered.getByText('Success 1')).toBeInTheDocument()
-      expect(rendered.getByText('Success 2')).toBeInTheDocument()
+      expect(rendered.getByText('Status 1: success')).toBeInTheDocument()
+      expect(rendered.getByText('Status 2: success')).toBeInTheDocument()
     })
   })
 
-  it('should combine queries', async () => {
-    const ids = [1, 2, 3]
-
-    const rendered = render(BaseExample, {
+  test('Combine queries', async () => {
+    const rendered = render(CombineExample, {
       props: {
-        options: {
-          queries: ids.map((id) => ({
-            queryKey: [id],
-            queryFn: async () => {
-              await sleep(10)
-              return id
-            },
-          })),
-          combine: (results) => {
-            return {
-              isPending: results.some((result) => result.isPending),
-              isSuccess: results.every((result) => result.isSuccess),
-              data: results.map((res) => res.data).join(','),
-            }
-          },
-        },
         queryClient: new QueryClient(),
       },
     })
 
     await waitFor(() => {
-      expect(rendered.getByText('Loading')).toBeInTheDocument()
+      expect(rendered.getByText('isPending: true')).toBeInTheDocument()
     })
 
     await waitFor(() => {
-      expect(rendered.getByText('1,2,3')).toBeInTheDocument()
+      expect(rendered.getByText('Data: 1,2,3')).toBeInTheDocument()
     })
   })
 })

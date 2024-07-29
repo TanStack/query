@@ -14,7 +14,7 @@ replace:
 
 [//]: # 'Example'
 
-```ts
+```angular-ts
 @Component({
   template: `
     <div>
@@ -45,7 +45,7 @@ export class TodosComponent {
 [//]: # 'Example2'
 [//]: # 'Example3'
 
-```ts
+```angular-ts
 @Component({
   standalone: true,
   selector: 'todo-item',

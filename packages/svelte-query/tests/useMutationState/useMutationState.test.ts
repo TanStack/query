@@ -1,9 +1,9 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/svelte'
 import BaseExample from './BaseExample.svelte'
 
 describe('useMutationState', () => {
-  it('run few mutation functions and check from useMutationState ', async () => {
+  test('Run few mutation functions and check from useMutationState ', async () => {
     const successMutationFn = vi.fn()
 
     const errorMutationFn = vi.fn().mockImplementation(() => {
@@ -41,7 +41,7 @@ describe('useMutationState', () => {
     })
   })
 
-  it('can select specific type of mutation ( i.e: error only )', async () => {
+  test('Can select specific type of mutation ( i.e: error only )', async () => {
     const successMutationFn = vi.fn()
     const errorMutationFn = vi.fn().mockImplementation(() => {
       throw 'error'
@@ -80,7 +80,7 @@ describe('useMutationState', () => {
     })
   })
 
-  it('can select specific mutation using mutation key', async () => {
+  test('Can select specific mutation using mutation key', async () => {
     const successMutationFn = vi.fn()
     const errorMutationFn = vi.fn().mockImplementation(() => {
       throw 'error'

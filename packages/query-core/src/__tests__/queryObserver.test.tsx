@@ -26,7 +26,9 @@ describe('queryObserver', () => {
 
   test('should trigger a fetch when subscribed', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
+    const queryFn = vi
+      .fn<(...args: Array<unknown>) => string>()
+      .mockReturnValue('data')
     const observer = new QueryObserver(queryClient, { queryKey: key, queryFn })
     const unsubscribe = observer.subscribe(() => undefined)
     await sleep(1)
@@ -94,7 +96,7 @@ describe('queryObserver', () => {
 
       queryClient.invalidateQueries({ queryKey: key, refetchType: 'all' })
 
-      //So we still expect it to not have fetched and not be fetching
+      // So we still expect it to not have fetched and not be fetching
       expect(count).toBe(0)
       expect(observer.getCurrentResult()).toMatchObject({
         status: 'pending',
@@ -111,7 +113,7 @@ describe('queryObserver', () => {
 
       expect(enabled).toBe(false)
 
-      //Not the same with explicit refetch, this will override enabled and trigger a fetch anyway
+      // Not the same with explicit refetch, this will override enabled and trigger a fetch anyway
       observer.refetch()
 
       expect(observer.getCurrentResult()).toMatchObject({
@@ -199,18 +201,18 @@ describe('queryObserver', () => {
 
       queryClient.invalidateQueries({ queryKey: key, refetchType: 'inactive' })
 
-      //should not refetch since it was active and we only refetch inactive
+      // should not refetch since it was active and we only refetch inactive
       await waitFor(() => expect(count).toBe(0))
 
       queryClient.invalidateQueries({ queryKey: key, refetchType: 'active' })
 
-      //should refetch since it was active and we refetch active
+      // should refetch since it was active and we refetch active
       await waitFor(() => expect(count).toBe(1))
 
       // Toggle enabled
       enabled = false
 
-      //should not refetch since it is not active and we only refetch active
+      // should not refetch since it is not active and we only refetch active
       queryClient.invalidateQueries({ queryKey: key, refetchType: 'active' })
 
       await waitFor(() => expect(count).toBe(1))
@@ -584,7 +586,9 @@ describe('queryObserver', () => {
 
   test('should not trigger a fetch when subscribed and disabled', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
+    const queryFn = vi
+      .fn<(...args: Array<unknown>) => string>()
+      .mockReturnValue('data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
@@ -598,7 +602,9 @@ describe('queryObserver', () => {
 
   test('should not trigger a fetch when subscribed and disabled by callback', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
+    const queryFn = vi
+      .fn<(...args: Array<unknown>) => string>()
+      .mockReturnValue('data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
@@ -612,7 +618,9 @@ describe('queryObserver', () => {
 
   test('should not trigger a fetch when not subscribed', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
+    const queryFn = vi
+      .fn<(...args: Array<unknown>) => string>()
+      .mockReturnValue('data')
     new QueryObserver(queryClient, { queryKey: key, queryFn })
     await sleep(1)
     expect(queryFn).toHaveBeenCalledTimes(0)
@@ -620,7 +628,9 @@ describe('queryObserver', () => {
 
   test('should be able to watch a query without defining a query function', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
+    const queryFn = vi
+      .fn<(...args: Array<unknown>) => string>()
+      .mockReturnValue('data')
     const callback = vi.fn()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -635,7 +645,9 @@ describe('queryObserver', () => {
 
   test('should accept unresolved query config in update function', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
+    const queryFn = vi
+      .fn<(...args: Array<unknown>) => string>()
+      .mockReturnValue('data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       enabled: false,
@@ -656,7 +668,9 @@ describe('queryObserver', () => {
 
   test('should be able to handle multiple subscribers', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
+    const queryFn = vi
+      .fn<(...args: Array<unknown>) => string>()
+      .mockReturnValue('data')
     const observer = new QueryObserver<string>(queryClient, {
       queryKey: key,
       enabled: false,
@@ -778,7 +792,7 @@ describe('queryObserver', () => {
         new QueryObserver(queryClient, {
           queryKey: key,
           queryFn: () => 'data',
-          //@ts-expect-error
+          // @ts-expect-error
           enabled: null,
         }),
     ).toThrowError('Expected enabled to be a boolean')
@@ -816,7 +830,9 @@ describe('queryObserver', () => {
 
   test('should not refetch in background if refetchIntervalInBackground is false', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
+    const queryFn = vi
+      .fn<(...args: Array<unknown>) => string>()
+      .mockReturnValue('data')
 
     focusManager.setFocused(false)
     const observer = new QueryObserver(queryClient, {
@@ -931,7 +947,7 @@ describe('queryObserver', () => {
     observer.setOptions({
       queryKey: key,
       queryFn: () => data,
-      //@ts-expect-error
+      // @ts-expect-error
       select: () => undefined,
       placeholderData: placeholderData2,
     })

@@ -6,7 +6,7 @@
   } from '@tanstack/svelte-query'
 
   let intervalMs = 1000
-  let value: string
+  let value = ''
 
   const client = useQueryClient()
 
@@ -53,7 +53,7 @@
           transition:: {!$todos.isFetching ? 'all .3s ease' : 'none'};
           border-radius: 100%;
           transform: 'scale(2)"
-    />
+    ></span>
   </div>
 </label>
 <h2>Todo List</h2>

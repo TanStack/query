@@ -1,13 +1,14 @@
 'use client'
+import {
+  type DefaultError,
+  type QueryClient,
+  type QueryFunction,
+  type ThrowOnError,
+  skipToken,
+} from '@tanstack/query-core'
 import { useQueries } from './useQueries'
 import { defaultThrowOnError } from './suspense'
 import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
-import type {
-  DefaultError,
-  QueryClient,
-  QueryFunction,
-  ThrowOnError,
-} from '@tanstack/query-core'
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
@@ -190,13 +191,21 @@ export function useSuspenseQueries<
   return useQueries(
     {
       ...options,
-      queries: options.queries.map((query) => ({
-        ...query,
-        suspense: true,
-        throwOnError: defaultThrowOnError,
-        enabled: true,
-        placeholderData: undefined,
-      })),
+      queries: options.queries.map((query) => {
+        if (process.env.NODE_ENV !== 'production') {
+          if (query.queryFn === skipToken) {
+            console.error('skipToken is not allowed for useSuspenseQueries')
+          }
+        }
+
+        return {
+          ...query,
+          suspense: true,
+          throwOnError: defaultThrowOnError,
+          enabled: true,
+          placeholderData: undefined,
+        }
+      }),
     } as any,
     queryClient,
   )

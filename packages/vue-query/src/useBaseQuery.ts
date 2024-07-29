@@ -145,7 +145,7 @@ export function useBaseQuery<
     return new Promise<QueryObserverResult<TData, TError>>(
       (resolve, reject) => {
         let stopWatch = () => {
-          //noop
+          // noop
         }
         const run = () => {
           if (defaultedOptions.value.enabled !== false) {
