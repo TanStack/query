@@ -42,10 +42,10 @@
     "esm-env": "^1.0.0"
   },
   "devDependencies": {
-    "@sveltejs/package": "^2.3.1",
-    "@sveltejs/vite-plugin-svelte": "^3.1.0",
+    "@sveltejs/package": "^2.3.2",
+    "@sveltejs/vite-plugin-svelte": "^3.1.1",
     "@tanstack/svelte-query": "workspace:*",
-    "eslint-plugin-svelte": "^2.42.0",
+    "eslint-plugin-svelte": "^2.43.0",
     "svelte": "^4.2.18",
     "svelte-check": "^3.8.4"
   },
