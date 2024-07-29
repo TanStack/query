@@ -56,7 +56,7 @@
     "jsdom": "^24.1.0",
     "knip": "^5.26.0",
     "nx": "^19.4.3",
-    "prettier": "^4.0.0-alpha.8",
+    "prettier": "^3.3.3",
     "prettier-plugin-svelte": "^3.2.3",
     "publint": "^0.2.8",
     "react": "19.0.0-rc-4c2e457c7c-20240522",
