@@ -32,6 +32,8 @@
     "typescript51",
     "typescript52",
     "vue",
-    "vue-tsc"
+    "vue-tsc",
+    "vue2",
+    "vue2.7"
   ]
 }
