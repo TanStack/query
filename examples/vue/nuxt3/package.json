@@ -10,6 +10,6 @@
     "@tanstack/vue-query": "^5.51.15"
   },
   "devDependencies": {
-    "nuxt": "^3.5.2"
+    "nuxt": "^3.12.4"
   }
 }
