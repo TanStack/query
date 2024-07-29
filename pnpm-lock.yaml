@@ -2033,8 +2033,8 @@ importers:
         specifier: ^4.3.1
         version: 4.3.1(vite@5.3.5(@types/node@20.14.13)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
       eslint-plugin-react-compiler:
-        specifier: ^0.0.0-experimental-c8b3f72-20240517
-        version: 0.0.0
+        specifier: 0.0.0-experimental-c8b3f72-20240517
+        version: 0.0.0-experimental-c8b3f72-20240517(eslint@8.57.0)
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
@@ -8986,8 +8986,11 @@ packages:
     peerDependencies:
       eslint: ^8.57.0
 
-  eslint-plugin-react-compiler@0.0.0:
-    resolution: {integrity: sha512-ICamVGuuHqQRBOkfjhUBzyzkLGfGiVHaZdSvAtTkHMMBwkdHjNYyp0ngoBI732mvuhkRI1V2tmoG8092oj2VwQ==}
+  eslint-plugin-react-compiler@0.0.0-experimental-c8b3f72-20240517:
+    resolution: {integrity: sha512-cxUTFNMEKiLX6uFaRfrr2GHnB7KUHDMYLjEGzDec82ka6WyBCHg906nGSf3JvVnQKHaBDfUk7Mmv/JMvdgQB8Q==}
+    engines: {node: ^14.17.0 || ^16.0.0 || >= 18.0.0}
+    peerDependencies:
+      eslint: ^8.57.0
 
   eslint-plugin-react-debug@1.6.0:
     resolution: {integrity: sha512-xJEJlhOjyYSsC9lxJHJ+Z3Pew30I8mPU+tw/Pg99JGlsNj8twNOfQ/AAD50eFC9vumDah4ck0VH63oG8rf8mPw==}
@@ -26138,7 +26141,17 @@ snapshots:
       minimatch: 9.0.5
       semver: 7.6.3
 
-  eslint-plugin-react-compiler@0.0.0: {}
+  eslint-plugin-react-compiler@0.0.0-experimental-c8b3f72-20240517(eslint@8.57.0):
+    dependencies:
+      '@babel/core': 7.24.9
+      '@babel/parser': 7.25.0
+      '@babel/plugin-proposal-private-methods': 7.18.6(@babel/core@7.24.9)
+      eslint: 8.57.0
+      hermes-parser: 0.20.1
+      zod: 3.23.8
+      zod-validation-error: 3.3.0(zod@3.23.8)
+    transitivePeerDependencies:
+      - supports-color
 
   eslint-plugin-react-debug@1.6.0(eslint@8.57.0)(typescript@5.3.3):
     dependencies:
