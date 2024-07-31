@@ -1,8 +1,8 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
   import { derived, writable } from 'svelte/store'
-  import { createQuery } from '../../src/createQuery'
-  import { sleep } from '../utils'
+  import { createQuery } from '../../src/index.js'
+  import { sleep } from '../utils.js'
   import type { QueryObserverResult } from '@tanstack/query-core'
   import type { Writable } from 'svelte/store'
 

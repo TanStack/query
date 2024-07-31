@@ -1,8 +1,7 @@
 <script lang="ts">
   import { writable } from 'svelte/store'
   import { QueryClient } from '@tanstack/query-core'
-  import { setQueryClientContext } from '../../src/context'
-  import { createMutation } from '../../src/createMutation'
+  import { createMutation, setQueryClientContext } from '../../src/index.js'
 
   export let mutationFn: (value: {
     count: number

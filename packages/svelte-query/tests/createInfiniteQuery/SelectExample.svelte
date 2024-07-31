@@ -1,6 +1,6 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
-  import { createInfiniteQuery } from '../../src/index'
+  import { createInfiniteQuery } from '../../src/index.js'
   import type { QueryObserverResult } from '@tanstack/query-core'
   import type { Writable } from 'svelte/store'
 

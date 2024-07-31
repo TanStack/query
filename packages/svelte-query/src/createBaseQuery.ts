@@ -1,8 +1,8 @@
 import { derived, get, readable } from 'svelte/store'
 import { notifyManager } from '@tanstack/query-core'
-import { useIsRestoring } from './useIsRestoring'
-import { useQueryClient } from './useQueryClient'
-import { isSvelteStore } from './utils'
+import { useIsRestoring } from './useIsRestoring.js'
+import { useQueryClient } from './useQueryClient.js'
+import { isSvelteStore } from './utils.js'
 import type {
   QueryClient,
   QueryKey,
@@ -13,7 +13,7 @@ import type {
   CreateBaseQueryOptions,
   CreateBaseQueryResult,
   StoreOrVal,
-} from './types'
+} from './types.js'
 
 export function createBaseQuery<
   TQueryFnData,

@@ -1,9 +1,9 @@
 import { describe, expectTypeOf, test } from 'vitest'
 import { get } from 'svelte/store'
 import { skipToken } from '@tanstack/query-core'
-import { createQueries, queryOptions } from '../../src/index'
+import { createQueries, queryOptions } from '../../src/index.js'
 import type { OmitKeyof, QueryObserverResult } from '@tanstack/query-core'
-import type { CreateQueryOptions } from '../../src/index'
+import type { CreateQueryOptions } from '../../src/index.js'
 
 describe('createQueries', () => {
   test('TData should be defined when passed through queryOptions', () => {

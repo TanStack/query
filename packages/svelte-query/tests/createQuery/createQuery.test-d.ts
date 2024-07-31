@@ -1,8 +1,8 @@
 import { describe, expectTypeOf, test } from 'vitest'
 import { get } from 'svelte/store'
-import { createQuery, queryOptions } from '../../src/index'
+import { createQuery, queryOptions } from '../../src/index.js'
 import type { OmitKeyof } from '@tanstack/query-core'
-import type { CreateQueryOptions } from '../../src/index'
+import type { CreateQueryOptions } from '../../src/index.js'
 
 describe('createQuery', () => {
   test('TData should always be defined when initialData is provided as an object', () => {
