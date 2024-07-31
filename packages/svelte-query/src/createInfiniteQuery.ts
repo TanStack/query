@@ -1,5 +1,5 @@
 import { InfiniteQueryObserver } from '@tanstack/query-core'
-import { createBaseQuery } from './createBaseQuery'
+import { createBaseQuery } from './createBaseQuery.js'
 import type {
   DefaultError,
   InfiniteData,
@@ -11,7 +11,7 @@ import type {
   CreateInfiniteQueryOptions,
   CreateInfiniteQueryResult,
   StoreOrVal,
-} from './types'
+} from './types.js'
 
 export function createInfiniteQuery<
   TQueryFnData,

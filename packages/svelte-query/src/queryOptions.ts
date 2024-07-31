@@ -1,5 +1,5 @@
 import type { DataTag, DefaultError, QueryKey } from '@tanstack/query-core'
-import type { CreateQueryOptions } from './types'
+import type { CreateQueryOptions } from './types.js'
 
 export type UndefinedInitialDataOptions<
   TQueryFnData = unknown,

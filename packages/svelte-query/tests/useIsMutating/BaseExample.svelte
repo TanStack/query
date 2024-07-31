@@ -1,8 +1,7 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
-  import { createMutation } from '../../src/createMutation'
-  import { sleep } from '../utils'
-  import { useIsMutating } from '../../src/useIsMutating'
+  import { createMutation, useIsMutating } from '../../src/index.js'
+  import { sleep } from '../utils.js'
 
   const queryClient = new QueryClient()
   const isMutating = useIsMutating(undefined, queryClient)

@@ -1,8 +1,8 @@
 <script lang="ts">
   import { createQueries } from '@tanstack/svelte-query'
-  import { sleep } from '../utils'
+  import { sleep } from '../utils.js'
   import type { Writable } from 'svelte/store'
-  import type { StatusResult } from '../utils'
+  import type { StatusResult } from '../utils.js'
 
   export let states: Writable<Array<StatusResult<string>>>
 

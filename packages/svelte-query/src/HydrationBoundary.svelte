@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useHydrate } from './useHydrate'
+  import { useHydrate } from './useHydrate.js'
   import type {
     DehydratedState,
     HydrateOptions,

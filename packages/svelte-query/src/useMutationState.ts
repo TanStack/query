@@ -1,13 +1,13 @@
 import { readable } from 'svelte/store'
 import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
-import { useQueryClient } from './useQueryClient'
+import { useQueryClient } from './useQueryClient.js'
 import type {
   MutationCache,
   MutationState,
   QueryClient,
 } from '@tanstack/query-core'
 import type { Readable } from 'svelte/store'
-import type { MutationStateOptions } from './types'
+import type { MutationStateOptions } from './types.js'
 
 function getResult<TResult = MutationState>(
   mutationCache: MutationCache,

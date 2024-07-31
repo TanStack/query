@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/svelte'
-import { sleep } from '../utils'
+import { sleep } from '../utils.js'
 import ResetExample from './ResetExample.svelte'
 import OnSuccessExample from './OnSuccessExample.svelte'
 import FailureExample from './FailureExample.svelte'
