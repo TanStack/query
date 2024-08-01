@@ -200,9 +200,9 @@ describe('queryOptions', () => {
           !id
             ? undefined
             : {
-              id,
-              title: 'Initial Data',
-            },
+                id,
+                title: 'Initial Data',
+              },
       })
   })
 })
