@@ -1123,10 +1123,10 @@ importers:
         specifier: ^7.7.2
         version: 7.7.2(astro@4.12.3(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)(typescript@5.3.3))(encoding@0.1.13)(next@14.2.5(@babel/core@7.25.2)(react-dom@19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522))(react@18.3.1)(sass@1.77.8))(react@18.3.1)
       '@tanstack/solid-query':
-        specifier: ^5.51.17
+        specifier: ^5.51.19
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.51.17
+        specifier: ^5.51.19
         version: link:../../../packages/solid-query-devtools
       astro:
         specifier: ^4.12.2
@@ -1144,10 +1144,10 @@ importers:
   examples/solid/basic:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.51.17
+        specifier: ^5.51.19
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.51.17
+        specifier: ^5.51.19
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.19
@@ -1166,10 +1166,10 @@ importers:
   examples/solid/basic-graphql-request:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.51.17
+        specifier: ^5.51.19
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.51.17
+        specifier: ^5.51.19
         version: link:../../../packages/solid-query-devtools
       graphql:
         specifier: ^16.9.0
@@ -1194,10 +1194,10 @@ importers:
   examples/solid/default-query-function:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.51.17
+        specifier: ^5.51.19
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.51.17
+        specifier: ^5.51.19
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.19
@@ -1216,10 +1216,10 @@ importers:
   examples/solid/simple:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.51.17
+        specifier: ^5.51.19
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.51.17
+        specifier: ^5.51.19
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.19
@@ -1250,10 +1250,10 @@ importers:
         specifier: ^1.0.6
         version: 1.0.6(@testing-library/jest-dom@6.4.8)(rollup@4.19.1)(solid-js@1.8.19)(vinxi@0.4.1(@types/node@22.0.2)(idb-keyval@6.2.1)(ioredis@5.4.1)(less@4.2.0)(magicast@0.3.4)(sass@1.77.8)(terser@5.31.3))(vite@5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
       '@tanstack/solid-query':
-        specifier: ^5.51.17
+        specifier: ^5.51.19
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.51.17
+        specifier: ^5.51.19
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.19
