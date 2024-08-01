@@ -182,8 +182,8 @@ export class Query<
     this.#cache = config.cache
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
-    this.#initialState = config.state || getDefaultState(this.options)
-    this.state = this.#initialState
+    this.#initialState = getDefaultState(this.options)
+    this.state = config.state ?? this.#initialState
     this.scheduleGc()
   }
   get meta(): QueryMeta | undefined {

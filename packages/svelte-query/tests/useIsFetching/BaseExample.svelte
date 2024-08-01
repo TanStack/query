@@ -1,9 +1,8 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
   import { derived, writable } from 'svelte/store'
-  import { createQuery } from '../../src/createQuery'
-  import { useIsFetching } from '../../src/useIsFetching'
-  import { sleep } from '../utils'
+  import { createQuery, useIsFetching } from '../../src/index.js'
+  import { sleep } from '../utils.js'
 
   const queryClient = new QueryClient()
   const ready = writable(false)

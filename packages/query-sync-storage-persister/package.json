@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-sync-storage-persister",
-  "version": "5.51.15",
+  "version": "5.51.17",
   "description": "A persister for synchronous storages, to be used with TanStack/Query",
   "author": "tannerlinsley",
   "license": "MIT",

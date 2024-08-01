@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { createQueries } from '../../src/createQueries'
-  import { sleep } from '../utils'
+  import { createQueries } from '../../src/index.js'
+  import { sleep } from '../utils.js'
   import type { QueryClient } from '@tanstack/query-core'
 
   export let queryClient: QueryClient

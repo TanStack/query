@@ -1,5 +1,5 @@
 import type { Readable } from 'svelte/store'
-import type { StoreOrVal } from './types'
+import type { StoreOrVal } from './types.js'
 
 export function isSvelteStore<T extends object>(
   obj: StoreOrVal<T>,

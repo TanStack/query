@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-  import { sleep } from '../utils'
+  import { sleep } from '../utils.js'
   import type { Writable } from 'svelte/store'
 
   export let states: Writable<Array<string>>

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { createQuery } from '../../src/createQuery'
+  import { createQuery } from '../../src/index.js'
   import type { QueryClient, QueryObserverResult } from '@tanstack/query-core'
   import type { Writable } from 'svelte/store'
-  import type { CreateQueryOptions, StoreOrVal } from '../../src/types'
+  import type { CreateQueryOptions, StoreOrVal } from '../../src/index.js'
 
   export let options: StoreOrVal<CreateQueryOptions<any>>
   export let queryClient: QueryClient
