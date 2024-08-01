@@ -1,12 +1,16 @@
-import type { Mutation } from './mutation'
-import type { Query } from './query'
 import type {
+  DefaultError,
+  Enabled,
   FetchStatus,
   MutationKey,
   MutationStatus,
+  QueryFunction,
   QueryKey,
   QueryOptions,
+  StaleTime,
 } from './types'
+import type { Mutation } from './mutation'
+import type { FetchOptions, Query } from './query'
 
 // TYPES
 
@@ -83,6 +87,30 @@ export function isValidTimeout(value: unknown): value is number {
 
 export function timeUntilStale(updatedAt: number, staleTime?: number): number {
   return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0)
+}
+
+export function resolveStaleTime<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  staleTime: undefined | StaleTime<TQueryFnData, TError, TData, TQueryKey>,
+  query: Query<TQueryFnData, TError, TData, TQueryKey>,
+): number | undefined {
+  return typeof staleTime === 'function' ? staleTime(query) : staleTime
+}
+
+export function resolveEnabled<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  enabled: undefined | Enabled<TQueryFnData, TError, TData, TQueryKey>,
+  query: Query<TQueryFnData, TError, TData, TQueryKey>,
+): boolean | undefined {
+  return typeof enabled === 'function' ? enabled(query) : enabled
 }
 
 export function matchQuery(
@@ -312,9 +340,9 @@ function hasObjectPrototype(o: any): boolean {
   return Object.prototype.toString.call(o) === '[object Object]'
 }
 
-export function sleep(ms: number): Promise<void> {
+export function sleep(timeout: number): Promise<void> {
   return new Promise((resolve) => {
-    setTimeout(resolve, ms)
+    setTimeout(resolve, timeout)
   })
 }
 
@@ -349,3 +377,36 @@ export function addToStart<T>(items: Array<T>, item: T, max = 0): Array<T> {
 
 export const skipToken = Symbol()
 export type SkipToken = typeof skipToken
+
+export function ensureQueryFn<
+  TQueryFnData = unknown,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: {
+    queryFn?: QueryFunction<TQueryFnData, TQueryKey> | SkipToken
+    queryHash?: string
+  },
+  fetchOptions?: FetchOptions<TQueryFnData>,
+): QueryFunction<TQueryFnData, TQueryKey> {
+  if (process.env.NODE_ENV !== 'production') {
+    if (options.queryFn === skipToken) {
+      console.error(
+        `Attempted to invoke queryFn when set to skipToken. This is likely a configuration error. Query hash: '${options.queryHash}'`,
+      )
+    }
+  }
+
+  // if we attempt to retry a fetch that was triggered from an initialPromise
+  // when we don't have a queryFn yet, we can't retry, so we just return the already rejected initialPromise
+  // if an observer has already mounted, we will be able to retry with that queryFn
+  if (!options.queryFn && fetchOptions?.initialPromise) {
+    return () => fetchOptions.initialPromise!
+  }
+
+  if (!options.queryFn || options.queryFn === skipToken) {
+    return () =>
+      Promise.reject(new Error(`Missing queryFn: '${options.queryHash}'`))
+  }
+
+  return options.queryFn
+}

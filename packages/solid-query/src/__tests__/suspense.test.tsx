@@ -121,7 +121,7 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('data: 1'))
 
-    // eslint-disable-next-line @cspell/spellchecker
+    // eslint-disable-next-line cspell/spellchecker
     // TODO(lukemurray): in react this is 1 in solid this is 2 because suspense
     // occurs on read.
     expect(states.length).toBe(2)
@@ -133,7 +133,7 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(rendered.getByText('next'))
     await waitFor(() => rendered.getByText('data: 2'))
 
-    // eslint-disable-next-line @cspell/spellchecker
+    // eslint-disable-next-line cspell/spellchecker
     // TODO(lukemurray): in react this is 2 and in solid it is 4
     expect(states.length).toBe(4)
     expect(states[3]).toMatchObject({
@@ -145,7 +145,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn twice when used in Suspense mode', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<Array<unknown>, string>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => string>()
     queryFn.mockImplementation(() => {
       sleep(10)
       return 'data'
@@ -661,7 +661,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn when not enabled', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<Array<unknown>, Promise<string>>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => Promise<string>>()
     queryFn.mockImplementation(async () => {
       await sleep(10)
       return '23'

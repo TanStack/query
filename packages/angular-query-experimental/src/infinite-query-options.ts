@@ -1,7 +1,10 @@
-import type { DataTag } from '@tanstack/query-core'
-import type { InfiniteData } from '@tanstack/query-core'
+import type {
+  DataTag,
+  DefaultError,
+  InfiniteData,
+  QueryKey,
+} from '@tanstack/query-core'
 import type { CreateInfiniteQueryOptions, NonUndefinedGuard } from './types'
-import type { DefaultError, QueryKey } from '@tanstack/query-core'
 
 /**
  * @public

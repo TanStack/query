@@ -1,11 +1,18 @@
 {
   "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
+  },
   "include": [
     "src/**/*.js",
     "src/**/*.ts",
     "src/**/*.svelte",
-    ".eslintrc.cjs",
-    "test-setup.ts",
+    "tests/**/*.js",
+    "tests/**/*.ts",
+    "tests/**/*.svelte",
+    "eslint.config.js",
+    "svelte.config.js",
     "vite.config.ts"
   ]
 }

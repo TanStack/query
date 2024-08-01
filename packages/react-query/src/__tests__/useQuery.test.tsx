@@ -2,7 +2,7 @@ import { describe, expect, expectTypeOf, it, test, vi } from 'vitest'
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { skipToken } from '@tanstack/query-core'
+import { dehydrate, hydrate, skipToken } from '@tanstack/query-core'
 import { QueryCache, keepPreviousData, useQuery } from '..'
 import {
   Blink,
@@ -2565,7 +2565,9 @@ describe('useQuery', () => {
 
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
+    const queryFn = vi
+      .fn<(...args: Array<unknown>) => string>()
+      .mockReturnValue('data')
 
     function Page() {
       const { data = 'default' } = useQuery({
@@ -3340,7 +3342,7 @@ describe('useQuery', () => {
   it('should retry specified number of times', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<Array<unknown>, unknown>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
     queryFn.mockImplementation(() => {
       return Promise.reject(new Error('Error test Barrett'))
     })
@@ -3377,7 +3379,7 @@ describe('useQuery', () => {
   it('should not retry if retry function `false`', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<Array<unknown>, unknown>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
 
     queryFn.mockImplementationOnce(() => {
       return Promise.reject(new Error('Error test Tanner'))
@@ -3423,7 +3425,7 @@ describe('useQuery', () => {
 
     type DelayError = { delay: number }
 
-    const queryFn = vi.fn<Array<unknown>, unknown>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
     queryFn.mockImplementation(() => {
       return Promise.reject({ delay: 50 })
     })
@@ -3616,10 +3618,10 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: Array<UseQueryResult<string>> = []
 
-    const queryFn = vi.fn<Array<unknown>, string>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => string>()
     queryFn.mockImplementation(() => 'data')
 
-    const prefetchQueryFn = vi.fn<Array<unknown>, string>()
+    const prefetchQueryFn = vi.fn<(...args: Array<unknown>) => string>()
     prefetchQueryFn.mockImplementation(() => 'not yet...')
 
     await queryClient.prefetchQuery({
@@ -3647,10 +3649,11 @@ describe('useQuery', () => {
   it('should not refetch if not stale after a prefetch', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<Array<unknown>, string>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => string>()
     queryFn.mockImplementation(() => 'data')
 
-    const prefetchQueryFn = vi.fn<Array<unknown>, Promise<string>>()
+    const prefetchQueryFn =
+      vi.fn<(...args: Array<unknown>) => Promise<string>>()
     prefetchQueryFn.mockImplementation(async () => {
       await sleep(10)
       return 'not yet...'
@@ -3958,7 +3961,7 @@ describe('useQuery', () => {
 
   it('it should support enabled:false in query object syntax', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<Array<unknown>, string>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => string>()
     queryFn.mockImplementation(() => 'data')
 
     function Page() {
@@ -4031,7 +4034,7 @@ describe('useQuery', () => {
       const query = useQuery({
         queryKey: key,
         queryFn: () => 'fetched data',
-        gcTime: 1000 * 60 * 10, //10 Minutes
+        gcTime: 1000 * 60 * 10, // 10 Minutes
       })
       return <div>{query.data}</div>
     }
@@ -4052,7 +4055,9 @@ describe('useQuery', () => {
 
   it('should not cause memo churn when data does not change', async () => {
     const key = queryKey()
-    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
+    const queryFn = vi
+      .fn<(...args: Array<unknown>) => string>()
+      .mockReturnValue('data')
     const memoFn = vi.fn()
 
     function Page() {
@@ -4211,7 +4216,7 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('count: 1'))
 
-    await sleep(10) //extra sleep to make sure we're not re-fetching
+    await sleep(10) // extra sleep to make sure we're not re-fetching
 
     expect(states.length).toEqual(2)
 
@@ -4260,7 +4265,9 @@ describe('useQuery', () => {
   it('should refetch if any query instance becomes enabled', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<Array<unknown>, string>().mockReturnValue('data')
+    const queryFn = vi
+      .fn<(...args: Array<unknown>) => string>()
+      .mockReturnValue('data')
 
     function Disabled() {
       useQuery({ queryKey: key, queryFn, enabled: false })
@@ -4941,7 +4948,7 @@ describe('useQuery', () => {
   })
 
   it('should refetch when changed enabled to true in error state', async () => {
-    const queryFn = vi.fn<Array<unknown>, unknown>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
     queryFn.mockImplementation(async () => {
       await sleep(10)
       return Promise.reject(new Error('Suspense Error Bingo'))
@@ -6475,5 +6482,118 @@ describe('useQuery', () => {
       failureReason: error,
     })
     expect(results[3]?.errorUpdatedAt).toBeGreaterThan(0)
+  })
+
+  it('should pick up an initialPromise', async () => {
+    const key = queryKey()
+
+    const serverQueryClient = createQueryClient({
+      defaultOptions: { dehydrate: { shouldDehydrateQuery: () => true } },
+    })
+
+    void serverQueryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: async () => {
+        await sleep(10)
+        return Promise.resolve('server')
+      },
+    })
+
+    const dehydrated = dehydrate(serverQueryClient)
+
+    let count = 0
+
+    function Page() {
+      const query = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          count++
+          await sleep(10)
+          return Promise.resolve('client')
+        },
+      })
+
+      return (
+        <div>
+          <div>data: {query.data}</div>
+          <button onClick={() => query.refetch()}>refetch</button>
+        </div>
+      )
+    }
+
+    const clientQueryClient = createQueryClient()
+    hydrate(clientQueryClient, dehydrated)
+
+    const rendered = renderWithClient(clientQueryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('data: server'))
+    expect(count).toBe(0)
+
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+
+    await waitFor(() => rendered.getByText('data: client'))
+    expect(count).toBe(1)
+  })
+
+  it('should retry failed initialPromise on the client', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+
+    const serverQueryClient = createQueryClient({
+      defaultOptions: {
+        dehydrate: { shouldDehydrateQuery: () => true },
+      },
+    })
+
+    void serverQueryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: async () => {
+        await sleep(10)
+        return Promise.reject(new Error('server error'))
+      },
+    })
+
+    const dehydrated = dehydrate(serverQueryClient)
+
+    let count = 0
+
+    function Page() {
+      const query = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          count++
+          await sleep(10)
+          return Promise.resolve('client')
+        },
+      })
+
+      return (
+        <div>
+          <div>failure: {query.failureReason?.message}</div>
+          <div>data: {query.data}</div>
+        </div>
+      )
+    }
+
+    const clientQueryClient = createQueryClient({
+      defaultOptions: { hydrate: { queries: { retry: 1, retryDelay: 10 } } },
+    })
+    hydrate(clientQueryClient, dehydrated)
+
+    const rendered = renderWithClient(clientQueryClient, <Page />)
+    await waitFor(() => rendered.getByText('failure: redacted'))
+    await waitFor(() => rendered.getByText('data: client'))
+    expect(count).toBe(1)
+
+    const query = clientQueryClient.getQueryCache().find({ queryKey: key })
+
+    expect(consoleMock).toHaveBeenCalledTimes(1)
+    expect(consoleMock).toHaveBeenCalledWith(
+      `A query that was dehydrated as pending ended up rejecting. [${query?.queryHash}]: Error: server error; The error will be redacted in production builds`,
+    )
+
+    consoleMock.mockRestore()
   })
 })

@@ -1,10 +1,8 @@
 import { QueryObserver } from '@tanstack/query-core'
-import { runInInjectionContext } from '@angular/core'
 import { assertInjector } from './util/assert-injector/assert-injector'
-import { injectQueryClient } from './inject-query-client'
 import { createBaseQuery } from './create-base-query'
-import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
 import type { Injector } from '@angular/core'
+import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
 import type {
   CreateQueryOptions,
   CreateQueryResult,
@@ -29,7 +27,11 @@ import type {
  * }
  * ```
  *
- * **The options function can utilize signals**
+ * Similar to `computed` from Angular, the function passed to `injectQuery` will be run in the reactive context.
+ * In the example below, the query will be automatically enabled and executed when the filter signal changes
+ * to a truthy value. When the filter signal changes back to a falsy value, the query will be disabled.
+ *
+ * **Reactive example**
  * ```ts
  * class ServiceOrComponent {
  *   filter = signal('')
@@ -74,7 +76,11 @@ export function injectQuery<
  * }
  * ```
  *
- * **The options function can utilize signals**
+ * Similar to `computed` from Angular, the function passed to `injectQuery` will be run in the reactive context.
+ * In the example below, the query will be automatically enabled and executed when the filter signal changes
+ * to a truthy value. When the filter signal changes back to a falsy value, the query will be disabled.
+ *
+ * **Reactive example**
  * ```ts
  * class ServiceOrComponent {
  *   filter = signal('')
@@ -119,7 +125,11 @@ export function injectQuery<
  * }
  * ```
  *
- * **The options function can utilize signals**
+ * Similar to `computed` from Angular, the function passed to `injectQuery` will be run in the reactive context.
+ * In the example below, the query will be automatically enabled and executed when the filter signal changes
+ * to a truthy value. When the filter signal changes back to a falsy value, the query will be disabled.
+ *
+ * **Reactive example**
  * ```ts
  * class ServiceOrComponent {
  *   filter = signal('')
@@ -164,7 +174,11 @@ export function injectQuery<
  * }
  * ```
  *
- * **The options function can utilize signals**
+ * Similar to `computed` from Angular, the function passed to `injectQuery` will be run in the reactive context.
+ * In the example below, the query will be automatically enabled and executed when the filter signal changes
+ * to a truthy value. When the filter signal changes back to a falsy value, the query will be disabled.
+ *
+ * **Reactive example**
  * ```ts
  * class ServiceOrComponent {
  *   filter = signal('')
@@ -187,14 +201,7 @@ export function injectQuery(
   optionsFn: (client: QueryClient) => CreateQueryOptions,
   injector?: Injector,
 ) {
-  const assertedInjector = assertInjector(injectQuery, injector)
-  return assertInjector(injectQuery, injector, () => {
-    const queryClient = injectQueryClient()
-    return createBaseQuery(
-      (client) =>
-        runInInjectionContext(assertedInjector, () => optionsFn(client)),
-      QueryObserver,
-      queryClient,
-    )
-  })
+  return assertInjector(injectQuery, injector, () =>
+    createBaseQuery(optionsFn, QueryObserver),
+  )
 }

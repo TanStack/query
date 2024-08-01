@@ -1,9 +1,11 @@
 import { TestBed, fakeAsync, flush, tick } from '@angular/core/testing'
-import { QueryClient } from '@tanstack/query-core'
 import { beforeEach, describe, expect } from 'vitest'
-import { injectIsFetching } from '../inject-is-fetching'
-import { injectQuery } from '../inject-query'
-import { provideAngularQuery } from '../providers'
+import {
+  QueryClient,
+  injectIsFetching,
+  injectQuery,
+  provideAngularQuery,
+} from '..'
 import { delayedFetcher } from './test-utils'
 
 describe('injectIsFetching', () => {

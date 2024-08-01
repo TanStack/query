@@ -1,7 +1,12 @@
+// @ts-check
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
   },
   webpack: (config) => {
     if (config.name === 'server') config.optimization.concatenateModules = false
@@ -10,4 +15,4 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig
+export default nextConfig

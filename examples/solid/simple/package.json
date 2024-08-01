@@ -9,14 +9,14 @@
     "test:types": "tsc"
   },
   "dependencies": {
-    "@tanstack/solid-query": "^5.35.1",
-    "@tanstack/solid-query-devtools": "^5.35.1",
-    "solid-js": "^1.8.14"
+    "@tanstack/solid-query": "^5.51.17",
+    "@tanstack/solid-query-devtools": "^5.51.17",
+    "solid-js": "^1.8.19"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.32.1",
-    "typescript": "5.2.2",
-    "vite": "^5.1.1",
-    "vite-plugin-solid": "^2.9.1"
+    "@tanstack/eslint-plugin-query": "^5.51.15",
+    "typescript": "5.3.3",
+    "vite": "^5.3.5",
+    "vite-plugin-solid": "^2.10.2"
   }
 }

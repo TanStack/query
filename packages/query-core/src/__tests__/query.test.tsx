@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { waitFor } from '@testing-library/react'
-import { QueryObserver, isCancelledError } from '..'
+import { QueryObserver, dehydrate, hydrate, isCancelledError } from '..'
 import {
   createQueryClient,
   mockOnlineManagerIsOnline,
@@ -196,8 +196,9 @@ describe('query', () => {
 
     const queryFn = vi
       .fn<
-        [QueryFunctionContext<ReturnType<typeof queryKey>>],
-        Promise<'data'>
+        (
+          context: QueryFunctionContext<ReturnType<typeof queryKey>>,
+        ) => Promise<'data'>
       >()
       .mockResolvedValue('data')
 
@@ -280,10 +281,12 @@ describe('query', () => {
   test('should provide an AbortSignal to the queryFn that provides info about the cancellation state', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<
-      [QueryFunctionContext<ReturnType<typeof queryKey>>],
-      Promise<unknown>
-    >()
+    const queryFn =
+      vi.fn<
+        (
+          context: QueryFunctionContext<ReturnType<typeof queryKey>>,
+        ) => Promise<unknown>
+      >()
     const onAbort = vi.fn()
     const abortListener = vi.fn()
     let error
@@ -330,7 +333,7 @@ describe('query', () => {
   test('should not continue if explicitly cancelled', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<Array<unknown>, unknown>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
 
     queryFn.mockImplementation(async () => {
       await sleep(10)
@@ -362,7 +365,7 @@ describe('query', () => {
   test('should not error if reset while pending', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<Array<unknown>, unknown>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
 
     queryFn.mockImplementation(async () => {
       await sleep(10)
@@ -386,10 +389,30 @@ describe('query', () => {
     expect(query.state.fetchStatus).toBe('idle') // not be loading any longer
   })
 
+  test('should reset to default state when created from hydration', async () => {
+    const client = createQueryClient()
+    await client.prefetchQuery({
+      queryKey: ['string'],
+      queryFn: () => Promise.resolve('string'),
+    })
+
+    const dehydrated = dehydrate(client)
+
+    const hydrationClient = createQueryClient()
+    hydrate(hydrationClient, dehydrated)
+
+    expect(hydrationClient.getQueryData(['string'])).toBe('string')
+
+    const query = hydrationClient.getQueryCache().find({ queryKey: ['string'] })
+    query?.reset()
+
+    expect(hydrationClient.getQueryData(['string'])).toBe(undefined)
+  })
+
   test('should be able to refetch a cancelled query', async () => {
     const key = queryKey()
 
-    const queryFn = vi.fn<Array<unknown>, unknown>()
+    const queryFn = vi.fn<(...args: Array<unknown>) => unknown>()
 
     queryFn.mockImplementation(async () => {
       await sleep(50)
@@ -895,8 +918,9 @@ describe('query', () => {
 
     const queryFn = vi
       .fn<
-        [QueryFunctionContext<ReturnType<typeof queryKey>>],
-        Promise<unknown>
+        (
+          context: QueryFunctionContext<ReturnType<typeof queryKey>>,
+        ) => Promise<unknown>
       >()
       .mockImplementation(({ signal }) => {
         return new Promise((resolve, reject) => {

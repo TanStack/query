@@ -1,6 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
-import type { FetchDirection } from '../query'
 import type { DataTag, InfiniteData, QueryKey } from '../types'
 
 describe('getQueryData', () => {
@@ -29,7 +28,7 @@ describe('getQueryData', () => {
   })
 
   it('should only allow Arrays to be passed', () => {
-    const queryKey = 'key' as const
+    const queryKey = 'key'
     const queryClient = new QueryClient()
     // @ts-expect-error TS2345: Argument of type 'string' is not assignable to parameter of type 'QueryKey'
     return queryClient.getQueryData(queryKey)
@@ -146,7 +145,7 @@ describe('defaultOptions', () => {
               meta: Record<string, unknown> | undefined
               signal: AbortSignal
               pageParam?: unknown
-              direction?: FetchDirection
+              direction?: unknown
             }>()
             return Promise.resolve('data')
           },

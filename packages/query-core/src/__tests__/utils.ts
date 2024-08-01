@@ -10,13 +10,13 @@ export function createQueryClient(config?: QueryClientConfig): QueryClient {
 
 export function mockVisibilityState(
   value: DocumentVisibilityState,
-): MockInstance<[], DocumentVisibilityState> {
+): MockInstance<() => DocumentVisibilityState> {
   return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
 export function mockOnlineManagerIsOnline(
   value: boolean,
-): MockInstance<[], boolean> {
+): MockInstance<() => boolean> {
   return vi.spyOn(onlineManager, 'isOnline').mockReturnValue(value)
 }
 
@@ -32,11 +32,11 @@ export function sleep(timeout: number): Promise<void> {
   })
 }
 
-export const executeMutation = <TVariables>(
+export function executeMutation<TVariables>(
   queryClient: QueryClient,
   options: MutationOptions<any, any, TVariables, any>,
   variables: TVariables,
-) => {
+) {
   return queryClient
     .getMutationCache()
     .build(queryClient, options)

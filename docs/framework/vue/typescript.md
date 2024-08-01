@@ -3,7 +3,11 @@ id: typescript
 title: TypeScript
 ref: docs/framework/react/typescript.md
 replace:
-  { 'React': 'Vue', 'react-query package version': 'vue-query package version' }
+  {
+    'React': 'Vue',
+    '@tanstack/react-query': '@tanstack/vue-query',
+    'react-query package version': 'vue-query package version',
+  }
 ---
 
 [//]: # 'TypeInference1'
@@ -86,6 +90,8 @@ if (error.value instanceof Error) {
 [//]: # 'TypingError3'
 [//]: # 'RegisterErrorType'
 [//]: # 'RegisterErrorType'
+[//]: # 'TypingMeta'
+[//]: # 'TypingMeta'
 [//]: # 'TypingQueryOptions'
 [//]: # 'TypingQueryOptions'
 [//]: # 'Materials'

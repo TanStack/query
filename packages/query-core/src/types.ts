@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 
+import type { DehydrateOptions, HydrateOptions } from './hydration'
 import type { MutationState } from './mutation'
 import type { FetchDirection, Query, QueryBehavior } from './query'
 import type { RetryDelayValue, RetryValue } from './retryer'
@@ -46,6 +47,22 @@ export type QueryFunction<
   TPageParam = never,
 > = (context: QueryFunctionContext<TQueryKey, TPageParam>) => T | Promise<T>
 
+export type StaleTime<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = number | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => number)
+
+export type Enabled<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> =
+  | boolean
+  | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => boolean)
+
 export type QueryPersister<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
@@ -71,12 +88,20 @@ export type QueryFunctionContext<
       signal: AbortSignal
       meta: QueryMeta | undefined
       pageParam?: unknown
-      direction?: 'forward' | 'backward'
+      /**
+       * @deprecated
+       * if you want access to the direction, you can add it to the pageParam
+       */
+      direction?: unknown
     }
   : {
       queryKey: TQueryKey
       signal: AbortSignal
       pageParam: TPageParam
+      /**
+       * @deprecated
+       * if you want access to the direction, you can add it to the pageParam
+       */
       direction: FetchDirection
       meta: QueryMeta | undefined
     }
@@ -136,7 +161,8 @@ export type NetworkMode = 'online' | 'always' | 'offlineFirst'
 export type NotifyOnChangeProps =
   | Array<keyof InfiniteQueryObserverResult>
   | 'all'
-  | (() => Array<keyof InfiniteQueryObserverResult> | 'all')
+  | undefined
+  | (() => Array<keyof InfiniteQueryObserverResult> | 'all' | undefined)
 
 export interface QueryOptions<
   TQueryFnData = unknown,
@@ -237,16 +263,18 @@ export interface QueryObserverOptions<
     'queryKey'
   > {
   /**
-   * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
+   * Set this to `false` or a function that returns `false` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
+   * Accepts a boolean or function that returns a boolean.
    * Defaults to `true`.
    */
-  enabled?: boolean
+  enabled?: Enabled<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * The time in milliseconds after data is considered stale.
    * If set to `Infinity`, the data will never be considered stale.
+   * If set to a function, the function will be executed with the query to compute a `staleTime`.
    */
-  staleTime?: number
+  staleTime?: StaleTime<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * If set to a number, the query will continuously refetch at this frequency in milliseconds.
    * If set to a function, the function will be executed with the latest data and query to compute a frequency
@@ -418,7 +446,7 @@ export interface FetchQueryOptions<
    * The time in milliseconds after data is considered stale.
    * If the data is fresh it will be returned from the cache.
    */
-  staleTime?: number
+  staleTime?: StaleTime<TQueryFnData, TError, TData, TQueryKey>
 }
 
 export interface EnsureQueryDataOptions<
@@ -465,6 +493,13 @@ export interface ResultOptions {
 }
 
 export interface RefetchOptions extends ResultOptions {
+  /**
+   * If set to `true`, a currently running request will be cancelled before a new request is made
+   *
+   * If set to `false`, no refetch will be made if there is already a request running.
+   *
+   * Defaults to `true`.
+   */
   cancelRefetch?: boolean
 }
 
@@ -478,10 +513,26 @@ export interface InvalidateOptions extends RefetchOptions {}
 export interface ResetOptions extends RefetchOptions {}
 
 export interface FetchNextPageOptions extends ResultOptions {
+  /**
+   * If set to `true`, calling `fetchNextPage` repeatedly will invoke `queryFn` every time,
+   * whether the previous invocation has resolved or not. Also, the result from previous invocations will be ignored.
+   *
+   * If set to `false`, calling `fetchNextPage` repeatedly won't have any effect until the first invocation has resolved.
+   *
+   * Defaults to `true`.
+   */
   cancelRefetch?: boolean
 }
 
 export interface FetchPreviousPageOptions extends ResultOptions {
+  /**
+   * If set to `true`, calling `fetchPreviousPage` repeatedly will invoke `queryFn` every time,
+   * whether the previous invocation has resolved or not. Also, the result from previous invocations will be ignored.
+   *
+   * If set to `false`, calling `fetchPreviousPage` repeatedly won't have any effect until the first invocation has resolved.
+   *
+   * Defaults to `true`.
+   */
   cancelRefetch?: boolean
 }
 
@@ -492,35 +543,123 @@ export interface QueryObserverBaseResult<
   TData = unknown,
   TError = DefaultError,
 > {
+  /**
+   * The last successfully resolved data for the query.
+   */
   data: TData | undefined
+  /**
+   * The timestamp for when the query most recently returned the `status` as `"success"`.
+   */
   dataUpdatedAt: number
+  /**
+   * The error object for the query, if an error was thrown.
+   * - Defaults to `null`.
+   */
   error: TError | null
+  /**
+   * The timestamp for when the query most recently returned the `status` as `"error"`.
+   */
   errorUpdatedAt: number
+  /**
+   * The failure count for the query.
+   * - Incremented every time the query fails.
+   * - Reset to `0` when the query succeeds.
+   */
   failureCount: number
+  /**
+   * The failure reason for the query retry.
+   * - Reset to `null` when the query succeeds.
+   */
   failureReason: TError | null
+  /**
+   * The sum of all errors.
+   */
   errorUpdateCount: number
+  /**
+   * A derived boolean from the `status` variable, provided for convenience.
+   * - `true` if the query attempt resulted in an error.
+   */
   isError: boolean
+  /**
+   * Will be `true` if the query has been fetched.
+   */
   isFetched: boolean
+  /**
+   * Will be `true` if the query has been fetched after the component mounted.
+   * - This property can be used to not show any previously cached data.
+   */
   isFetchedAfterMount: boolean
+  /**
+   * A derived boolean from the `fetchStatus` variable, provided for convenience.
+   * - `true` whenever the `queryFn` is executing, which includes initial `pending` as well as background refetch.
+   */
   isFetching: boolean
+  /**
+   * Is `true` whenever the first fetch for a query is in-flight.
+   * - Is the same as `isFetching && isPending`.
+   */
   isLoading: boolean
+  /**
+   * Will be `pending` if there's no cached data and no query attempt was finished yet.
+   */
   isPending: boolean
+  /**
+   * Will be `true` if the query failed while fetching for the first time.
+   */
   isLoadingError: boolean
   /**
-   * @deprecated isInitialLoading is being deprecated in favor of isLoading
+   * @deprecated `isInitialLoading` is being deprecated in favor of `isLoading`
    * and will be removed in the next major version.
    */
   isInitialLoading: boolean
+  /**
+   * A derived boolean from the `fetchStatus` variable, provided for convenience.
+   * - The query wanted to fetch, but has been `paused`.
+   */
   isPaused: boolean
+  /**
+   * Will be `true` if the data shown is the placeholder data.
+   */
   isPlaceholderData: boolean
+  /**
+   * Will be `true` if the query failed while refetching.
+   */
   isRefetchError: boolean
+  /**
+   * Is `true` whenever a background refetch is in-flight, which _does not_ include initial `pending`.
+   * - Is the same as `isFetching && !isPending`.
+   */
   isRefetching: boolean
+  /**
+   * Will be `true` if the data in the cache is invalidated or if the data is older than the given `staleTime`.
+   */
   isStale: boolean
+  /**
+   * A derived boolean from the `status` variable, provided for convenience.
+   * - `true` if the query has received a response with no errors and is ready to display its data.
+   */
   isSuccess: boolean
+  /**
+   * A function to manually refetch the query.
+   */
   refetch: (
     options?: RefetchOptions,
   ) => Promise<QueryObserverResult<TData, TError>>
+  /**
+   * The status of the query.
+   * - Will be:
+   *   - `pending` if there's no cached data and no query attempt was finished yet.
+   *   - `error` if the query attempt resulted in an error.
+   *   - `success` if the query has received a response with no errors and is ready to display its data.
+   */
   status: QueryStatus
+  /**
+   * The fetch status of the query.
+   * - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `pending` as well as background refetch.
+   * - `paused`: The query wanted to fetch, but has been `paused`.
+   * - `idle`: The query is not fetching.
+   * - See [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information.
+   */
   fetchStatus: FetchStatus
 }
 
@@ -615,15 +754,41 @@ export interface InfiniteQueryObserverBaseResult<
   TData = unknown,
   TError = DefaultError,
 > extends QueryObserverBaseResult<TData, TError> {
+  /**
+   * This function allows you to fetch the next "page" of results.
+   */
   fetchNextPage: (
     options?: FetchNextPageOptions,
   ) => Promise<InfiniteQueryObserverResult<TData, TError>>
+  /**
+   * This function allows you to fetch the previous "page" of results.
+   */
   fetchPreviousPage: (
     options?: FetchPreviousPageOptions,
   ) => Promise<InfiniteQueryObserverResult<TData, TError>>
+  /**
+   * Will be `true` if there is a next page to be fetched (known via the `getNextPageParam` option).
+   */
   hasNextPage: boolean
+  /**
+   * Will be `true` if there is a previous page to be fetched (known via the `getPreviousPageParam` option).
+   */
   hasPreviousPage: boolean
+  /**
+   * Will be `true` if the query failed while fetching the next page.
+   */
+  isFetchNextPageError: boolean
+  /**
+   * Will be `true` while fetching the next page with `fetchNextPage`.
+   */
   isFetchingNextPage: boolean
+  /**
+   * Will be `true` if the query failed while fetching the previous page.
+   */
+  isFetchPreviousPageError: boolean
+  /**
+   * Will be `true` while fetching the previous page with `fetchPreviousPage`.
+   */
   isFetchingPreviousPage: boolean
 }
 
@@ -637,6 +802,8 @@ export interface InfiniteQueryObserverPendingResult<
   isPending: true
   isLoadingError: false
   isRefetchError: false
+  isFetchNextPageError: false
+  isFetchPreviousPageError: false
   isSuccess: false
   status: 'pending'
 }
@@ -652,6 +819,8 @@ export interface InfiniteQueryObserverLoadingResult<
   isLoading: true
   isLoadingError: false
   isRefetchError: false
+  isFetchNextPageError: false
+  isFetchPreviousPageError: false
   isSuccess: false
   status: 'pending'
 }
@@ -667,6 +836,8 @@ export interface InfiniteQueryObserverLoadingErrorResult<
   isLoading: false
   isLoadingError: true
   isRefetchError: false
+  isFetchNextPageError: false
+  isFetchPreviousPageError: false
   isSuccess: false
   status: 'error'
 }
@@ -682,6 +853,8 @@ export interface InfiniteQueryObserverRefetchErrorResult<
   isLoading: false
   isLoadingError: false
   isRefetchError: true
+  isFetchNextPageError: false
+  isFetchPreviousPageError: false
   isSuccess: false
   status: 'error'
 }
@@ -697,6 +870,8 @@ export interface InfiniteQueryObserverSuccessResult<
   isLoading: false
   isLoadingError: false
   isRefetchError: false
+  isFetchNextPageError: false
+  isFetchPreviousPageError: false
   isSuccess: true
   status: 'success'
 }
@@ -818,11 +993,62 @@ export interface MutationObserverBaseResult<
   TVariables = void,
   TContext = unknown,
 > extends MutationState<TData, TError, TVariables, TContext> {
+  /**
+   * The last successfully resolved data for the mutation.
+   */
+  data: TData | undefined
+  /**
+   * The variables object passed to the `mutationFn`.
+   */
+  variables: TVariables | undefined
+  /**
+   * The error object for the mutation, if an error was encountered.
+   * - Defaults to `null`.
+   */
+  error: TError | null
+  /**
+   * A boolean variable derived from `status`.
+   * - `true` if the last mutation attempt resulted in an error.
+   */
   isError: boolean
+  /**
+   * A boolean variable derived from `status`.
+   * - `true` if the mutation is in its initial state prior to executing.
+   */
   isIdle: boolean
+  /**
+   * A boolean variable derived from `status`.
+   * - `true` if the mutation is currently executing.
+   */
   isPending: boolean
+  /**
+   * A boolean variable derived from `status`.
+   * - `true` if the last mutation attempt was successful.
+   */
   isSuccess: boolean
+  /**
+   * The status of the mutation.
+   * - Will be:
+   *   - `idle` initial status prior to the mutation function executing.
+   *   - `pending` if the mutation is currently executing.
+   *   - `error` if the last mutation attempt resulted in an error.
+   *   - `success` if the last mutation attempt was successful.
+   */
+  status: MutationStatus
+  /**
+   * The mutation function you can call with variables to trigger the mutation and optionally hooks on additional callback options.
+   * @param variables - The variables object to pass to the `mutationFn`.
+   * @param options.onSuccess - This function will fire when the mutation is successful and will be passed the mutation's result.
+   * @param options.onError - This function will fire if the mutation encounters an error and will be passed the error.
+   * @param options.onSettled - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error.
+   * @remarks
+   * - If you make multiple requests, `onSuccess` will fire only after the latest call you've made.
+   * - All the callback functions (`onSuccess`, `onError`, `onSettled`) are void functions, and the returned value will be ignored.
+   */
   mutate: MutateFunction<TData, TError, TVariables, TContext>
+  /**
+   * A function to clean the mutation internal state (i.e., it resets the mutation to its initial state).
+   */
   reset: () => void
 }
 
@@ -913,6 +1139,8 @@ export interface DefaultOptions<TError = DefaultError> {
     'suspense' | 'queryKey'
   >
   mutations?: MutationObserverOptions<unknown, TError, unknown, unknown>
+  hydrate?: HydrateOptions['defaultOptions']
+  dehydrate?: DehydrateOptions
 }
 
 export interface CancelOptions {

@@ -11,7 +11,7 @@ Most core web frameworks **do not** come with an opinionated way of fetching or 
 
 While most traditional state management libraries are great for working with client state, they are **not so great at working with async or server state**. This is because **server state is totally different**. For starters, server state:
 
-- Is persisted remotely in a location you do not control or own
+- Is persisted remotely in a location you may not control or own
 - Requires asynchronous APIs for fetching and updating
 - Implies shared ownership and can be changed by other people without your knowledge
 - Can potentially become "out of date" in your applications if you're not careful

@@ -1,5 +1,5 @@
-import type { DefaultError, QueryKey } from '@tanstack/query-core'
-import type { CreateQueryOptions } from './types'
+import type { DataTag, DefaultError, QueryKey } from '@tanstack/query-core'
+import type { CreateQueryOptions } from './types.js'
 
 export type UndefinedInitialDataOptions<
   TQueryFnData = unknown,
@@ -29,8 +29,10 @@ export function queryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  queryKey: DataTag<TQueryKey, TQueryFnData>
+}
 
 export function queryOptions<
   TQueryFnData = unknown,
@@ -38,8 +40,10 @@ export function queryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>
+  options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  queryKey: DataTag<TQueryKey, TQueryFnData>
+}
 
 export function queryOptions(options: unknown) {
   return options

@@ -388,8 +388,6 @@ export default function App() {
 
 We also have an extensive [offline example](../../examples/offline) that covers both queries and mutations.
 
-[//]: # 'Materials'
-
 ## Mutation Scopes
 
 Per default, all mutations run in parallel - even if you invoke `.mutate()` of the same mutation multiple times. Mutations can be given a `scope` with an `id` to avoid that. All mutations with the same `scope.id` will run in serial, which means when they are triggered, they will start in `isPaused: true` state if there is already a mutation for that scope in progress. They will be put into a queue and will automatically resume once their time in the queue has come.
@@ -406,6 +404,7 @@ const mutation = useMutation({
 ```
 
 [//]: # 'ExampleScopes'
+[//]: # 'Materials'
 
 ## Further reading
 

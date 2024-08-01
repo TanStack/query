@@ -1,5 +1,6 @@
 {
-  "name": "example-basic",
+  "name": "@tanstack/query-example-solid-start-streaming",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vinxi dev",
@@ -8,13 +9,13 @@
     "version": "vinxi version"
   },
   "dependencies": {
-    "@solidjs/meta": "^0.29.2",
-    "@solidjs/router": "^0.13.2",
-    "@solidjs/start": "^1.0.0-rc.0",
-    "@tanstack/solid-query": "^5.35.1",
-    "@tanstack/solid-query-devtools": "^5.35.1",
-    "solid-js": "^1.8.14",
-    "vinxi": "^0.3.10"
+    "@solidjs/meta": "^0.29.4",
+    "@solidjs/router": "^0.14.1",
+    "@solidjs/start": "^1.0.6",
+    "@tanstack/solid-query": "^5.51.17",
+    "@tanstack/solid-query-devtools": "^5.51.17",
+    "solid-js": "^1.8.19",
+    "vinxi": "^0.4.1"
   },
   "engines": {
     "node": ">=18"
