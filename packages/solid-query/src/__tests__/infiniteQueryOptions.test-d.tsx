@@ -1,14 +1,12 @@
 import { describe } from 'node:test'
 import { expectTypeOf, it } from 'vitest'
 import { type InfiniteData, dataTagSymbol } from '@tanstack/query-core'
-import {
-  createInfiniteQuery,
-  infiniteQueryOptions,
-} from '../createInfiniteQuery'
+import { createInfiniteQuery } from '../createInfiniteQuery'
+import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import type {
   DefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
-} from '../createInfiniteQuery'
+} from '../infiniteQueryOptions'
 
 const doNotRun = (_callback: () => void) => {}
 
