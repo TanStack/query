@@ -186,4 +186,23 @@ describe('queryOptions', () => {
       QueriesObserver<Array<QueryObserverResult>>
     >()
   })
+
+  it('should allow undefined response in initialData', () => {
+    return (id: string | null) =>
+      queryOptions({
+        queryKey: ['todo', id],
+        queryFn: () =>
+          Promise.resolve({
+            id: '1',
+            title: 'Do Laundry',
+          }),
+        initialData: () =>
+          !id
+            ? undefined
+            : {
+                id,
+                title: 'Initial Data',
+              },
+      })
+  })
 })
