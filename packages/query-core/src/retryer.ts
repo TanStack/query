@@ -54,10 +54,11 @@ export function canFetch(networkMode: NetworkMode | undefined): boolean {
     : true
 }
 
-export class CancelledError {
+export class CancelledError extends Error {
   revert?: boolean
   silent?: boolean
   constructor(options?: CancelOptions) {
+    super('CancelledError')
     this.revert = options?.revert
     this.silent = options?.silent
   }
