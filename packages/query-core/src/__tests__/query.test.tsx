@@ -155,7 +155,7 @@ describe('query', () => {
     const visibilityMock = mockVisibilityState('hidden')
 
     let count = 0
-    let result
+    let result: unknown
 
     const promise = queryClient.fetchQuery({
       queryKey: key,
@@ -183,8 +183,10 @@ describe('query', () => {
     // Check if the error is set to the cancelled error
     try {
       await promise
+      expect.unreachable()
     } catch {
       expect(isCancelledError(result)).toBe(true)
+      expect(result instanceof Error).toBe(true)
     } finally {
       // Reset visibilityState to original value
       visibilityMock.mockRestore()
