@@ -1,6 +1,6 @@
-import { render } from 'solid-js/web'
+import type { Signal } from 'solid-js'
 import { createSignal, lazy } from 'solid-js'
-import { setupStyleSheet } from './utils'
+import { render } from 'solid-js/web'
 import type {
   QueryClient,
   onlineManager as TOnlineManager,
@@ -8,13 +8,12 @@ import type {
 import type { DevtoolsComponentType } from './DevtoolsComponent'
 import type {
   DevToolsErrorType,
-  DevtoolsButtonPosition,
   DevtoolsPosition,
   QueryDevtoolsProps,
 } from './contexts'
-import type { Signal } from 'solid-js'
+import { setupStyleSheet } from './utils'
 
-export interface TanstackQueryDevtoolsPanelConfig extends QueryDevtoolsProps {
+export interface TanstackQueryDevtoolsPanelConfig extends Omit<QueryDevtoolsProps, 'buttonPosition'> {
   styleNonce?: string
   shadowDOMTarget?: ShadowRoot
 }
@@ -27,7 +26,6 @@ class TanstackQueryDevtoolsPanel {
   #isMounted = false
   #styleNonce?: string
   #shadowDOMTarget?: ShadowRoot
-  #buttonPosition: Signal<DevtoolsButtonPosition | undefined>
   #position: Signal<DevtoolsPosition | undefined>
   #initialIsOpen: Signal<boolean | undefined>
   #errorTypes: Signal<Array<DevToolsErrorType> | undefined>
@@ -40,7 +38,6 @@ class TanstackQueryDevtoolsPanel {
       queryFlavor,
       version,
       onlineManager,
-      buttonPosition,
       position,
       initialIsOpen,
       errorTypes,
@@ -53,14 +50,9 @@ class TanstackQueryDevtoolsPanel {
     this.#onlineManager = onlineManager
     this.#styleNonce = styleNonce
     this.#shadowDOMTarget = shadowDOMTarget
-    this.#buttonPosition = createSignal(buttonPosition)
     this.#position = createSignal(position)
     this.#initialIsOpen = createSignal(initialIsOpen)
     this.#errorTypes = createSignal(errorTypes)
-  }
-
-  setButtonPosition(position: DevtoolsButtonPosition) {
-    this.#buttonPosition[1](position)
   }
 
   setPosition(position: DevtoolsPosition) {
@@ -84,7 +76,6 @@ class TanstackQueryDevtoolsPanel {
       throw new Error('DevtoolsPanel is already mounted')
     }
     const dispose = render(() => {
-      const [btnPosition] = this.#buttonPosition
       const [pos] = this.#position
       const [isOpen] = this.#initialIsOpen
       const [errors] = this.#errorTypes
@@ -108,9 +99,6 @@ class TanstackQueryDevtoolsPanel {
           {...{
             get client() {
               return queryClient()
-            },
-            get buttonPosition() {
-              return btnPosition()
             },
             get position() {
               return pos()

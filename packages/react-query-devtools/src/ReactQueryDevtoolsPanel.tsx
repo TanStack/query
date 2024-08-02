@@ -2,11 +2,7 @@
 import * as React from 'react'
 import { onlineManager, useQueryClient } from '@tanstack/react-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
-import type {
-  DevToolsErrorType,
-  DevtoolsButtonPosition,
-  DevtoolsPosition,
-} from '@tanstack/query-devtools'
+import type { DevToolsErrorType, DevtoolsPosition } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/react-query'
 
 export interface DevtoolsPanelOptions {
@@ -14,12 +10,6 @@ export interface DevtoolsPanelOptions {
    * Set this true if you want the dev tools to default to being open
    */
   initialIsOpen?: boolean
-  /**
-   * The position of the React Query logo to open and close the devtools panel.
-   * 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
-   * Defaults to 'bottom-right'.
-   */
-  buttonPosition?: DevtoolsButtonPosition
   /**
    * The position of the React Query devtools panel.
    * 'top' | 'bottom' | 'left' | 'right'
@@ -50,7 +40,6 @@ export function ReactQueryDevtoolsPanel(
   const queryClient = useQueryClient(props.client)
   const ref = React.useRef<HTMLDivElement>(null)
   const {
-    buttonPosition,
     position,
     initialIsOpen,
     errorTypes,
@@ -63,7 +52,6 @@ export function ReactQueryDevtoolsPanel(
       queryFlavor: 'React Query',
       version: '5',
       onlineManager,
-      buttonPosition,
       position,
       initialIsOpen,
       errorTypes,
@@ -75,12 +63,6 @@ export function ReactQueryDevtoolsPanel(
   React.useEffect(() => {
     devtools.setClient(queryClient)
   }, [queryClient, devtools])
-
-  React.useEffect(() => {
-    if (buttonPosition) {
-      devtools.setButtonPosition(buttonPosition)
-    }
-  }, [buttonPosition, devtools])
 
   React.useEffect(() => {
     if (position) {

@@ -10,7 +10,7 @@ import {
 import { Devtools, THEME_PREFERENCE } from './Devtools'
 import type { Component } from 'solid-js'
 
-export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
+export type DevtoolsComponentType = Component<Omit<QueryDevtoolsProps, 'buttonPosition'>> & {
   shadowDOMTarget?: ShadowRoot
 }
 
