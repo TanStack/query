@@ -18,16 +18,20 @@ describe('createQuery', () => {
   test('TData should be defined when passed through queryOptions', () => {
     const options = queryOptions({
       queryKey: ['key'],
-      queryFn: () => {
-        return {
-          wow: true,
-        }
-      },
-      initialData: {
-        wow: true,
-      },
+      queryFn: () => ({ wow: true }),
+      initialData: { wow: true },
     })
     const query = createQuery(options)
+
+    expectTypeOf(get(query).data).toEqualTypeOf<{ wow: boolean }>()
+  })
+
+  test('TData should always be defined when initialData is provided as a function which ALWAYS returns the data', () => {
+    const query = createQuery({
+      queryKey: ['key'],
+      queryFn: () => ({ wow: true }),
+      initialData: () => ({ wow: true }),
+    })
 
     expectTypeOf(get(query).data).toEqualTypeOf<{ wow: boolean }>()
   })
