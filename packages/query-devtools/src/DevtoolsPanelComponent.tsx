@@ -2,11 +2,12 @@ import { createLocalStorage } from '@solid-primitives/storage'
 import { createMemo } from 'solid-js'
 import { getPreferredColorScheme } from './utils'
 import {
+  PiPProvider,
   QueryDevtoolsContext,
   QueryDevtoolsProps,
   ThemeContext,
-} from './Context'
-import { Devtools, PiPProvider, THEME_PREFERENCE } from './Devtools'
+} from './contexts'
+import { Devtools, THEME_PREFERENCE } from './Devtools'
 import type { Component } from 'solid-js'
 
 export type DevtoolsPanelComponentType = Component<QueryDevtoolsProps> & {

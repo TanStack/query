@@ -11,7 +11,7 @@ import type {
   DevtoolsButtonPosition,
   DevtoolsPosition,
   QueryDevtoolsProps,
-} from './Context'
+} from './contexts'
 import type { Signal } from 'solid-js'
 
 export interface TanstackQueryDevtoolsConfig extends QueryDevtoolsProps {
