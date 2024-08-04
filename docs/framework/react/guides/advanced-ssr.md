@@ -371,7 +371,11 @@ We will also need to move the `getQueryClient()` function out of our `app/provid
 
 ```tsx
 // app/get-query-client.ts
-import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query'
+import {
+  isServer,
+  QueryClient,
+  defaultShouldDehydrateQuery,
+} from '@tanstack/react-query'
 
 function makeQueryClient() {
   return new QueryClient({
