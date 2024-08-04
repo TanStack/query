@@ -113,7 +113,7 @@ Link: https://github.com/Shaddix/react-query-swagger
 
 Enhances React Query with Suspense support, allowing for simpler and more declarative data fetching
 
-Link: https://github.com/toss/suspensive
+Link: https://suspensive.org/docs/react-query/motivation
 
 ## tRPC
 
