@@ -207,7 +207,7 @@ export function createQueries<
     queries,
     ...options
   }: {
-    queries: StoreOrVal<[...QueriesOptions<T>]>
+    queries: StoreOrVal<readonly [...QueriesOptions<T>]>
     combine?: (result: QueriesResults<T>) => TCombinedResult
   },
   queryClient?: QueryClient,
