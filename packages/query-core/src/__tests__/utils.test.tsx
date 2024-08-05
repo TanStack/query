@@ -12,27 +12,38 @@ import {
 import { Mutation } from '../mutation'
 import { createQueryClient } from './utils'
 
+const s = Symbol('s')
+const t = Symbol('t')
+
 describe('core/utils', () => {
   describe('shallowEqualObjects', () => {
     it('should return `true` for shallow equal objects', () => {
       expect(shallowEqualObjects({ a: 1 }, { a: 1 })).toEqual(true)
+      expect(shallowEqualObjects({ [s]: 1 }, { [s]: 1 })).toEqual(true)
     })
 
     it('should return `false` for non shallow equal objects', () => {
       expect(shallowEqualObjects({ a: 1 }, { a: 2 })).toEqual(false)
+      expect(shallowEqualObjects({ [s]: 1 }, { [s]: 2 })).toEqual(false)
     })
 
     it('should return `false` if lengths are not equal', () => {
       expect(shallowEqualObjects({ a: 1 }, { a: 1, b: 2 })).toEqual(false)
+      expect(shallowEqualObjects({ a: 1 }, { a: 1, [s]: 2 })).toEqual(false)
     })
 
     it('should return false if b is undefined', () => {
       expect(shallowEqualObjects({ a: 1 }, undefined)).toEqual(false)
+      expect(shallowEqualObjects({ [s]: 1 }, undefined)).toEqual(false)
     })
   })
   describe('isPlainObject', () => {
     it('should return `true` for a plain object', () => {
       expect(isPlainObject({})).toEqual(true)
+    })
+
+    it('should return `true` for a object containing a symbol', () => {
+      expect(isPlainObject({ [s]: 1 })).toEqual(true)
     })
 
     it('should return `false` for an array', () => {
@@ -214,14 +225,21 @@ describe('core/utils', () => {
       expect(replaceEqualDeep(prev, next)).toBe(prev)
     })
 
+    it('should return the previous value when the next value is an equal object with symbols', () => {
+      const prev = { [s]: 's' }
+      const next = { [s]: 's' }
+      expect(replaceEqualDeep(prev, next)).toBe(prev)
+    })
+
     it('should replace different values in objects', () => {
-      const prev = { a: { b: 'b' }, c: 'c' }
-      const next = { a: { b: 'b' }, c: 'd' }
+      const prev = { a: { b: 'b' }, c: 'c', [s]: 's', [t]: 't' }
+      const next = { a: { b: 'b' }, c: 'd', [s]: 's', [t]: 'u' }
       const result = replaceEqualDeep(prev, next)
       expect(result).toEqual(next)
       expect(result).not.toBe(prev)
       expect(result).not.toBe(next)
       expect(result.a).toBe(prev.a)
+      expect(result[s]).toBe(prev[s])
       expect(result.c).toBe(next.c)
     })
 

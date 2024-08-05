@@ -347,4 +347,28 @@ describe('queryCache', () => {
       expect(queryCache.getAll().length).toEqual(1)
     })
   })
+
+  describe('Symbol', () => {
+    test('should allow setting in the cache', () => {
+      const key = queryKey()
+
+      const s = Symbol('s')
+
+      queryClient.setQueryData(key, { [s]: 1 })
+      expect(queryClient.getQueryData(key)).toEqual({ [s]: 1 })
+    })
+
+    test('should allow setting multiple in the cache', () => {
+      const key = queryKey()
+
+      const s = Symbol('s')
+
+      queryClient.setQueryData(key, { [s]: 1, a: 1 })
+      expect(queryClient.getQueryData(key)).toEqual({ [s]: 1, a: 1 })
+      queryClient.setQueryData(key, { [s]: 1, a: 2 })
+      expect(queryClient.getQueryData(key)).toEqual({ [s]: 1, a: 2 })
+      queryClient.setQueryData(key, { [s]: 2, a: 2 })
+      expect(queryClient.getQueryData(key)).toEqual({ [s]: 2, a: 2 })
+    })
+  })
 })

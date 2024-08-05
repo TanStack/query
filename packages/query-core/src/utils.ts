@@ -113,6 +113,10 @@ export function resolveEnabled<
   return typeof enabled === 'function' ? enabled(query) : enabled
 }
 
+function objectKeys(obj: object) {
+  return [...Object.keys(obj), ...Object.getOwnPropertySymbols(obj)]
+}
+
 export function matchQuery(
   filters: QueryFilters,
   query: Query<any, any, any, any>,
@@ -249,9 +253,9 @@ export function replaceEqualDeep(a: any, b: any): any {
   const array = isPlainArray(a) && isPlainArray(b)
 
   if (array || (isPlainObject(a) && isPlainObject(b))) {
-    const aItems = array ? a : Object.keys(a)
+    const aItems = array ? a : objectKeys(a)
     const aSize = aItems.length
-    const bItems = array ? b : Object.keys(b)
+    const bItems = array ? b : objectKeys(b)
     const bSize = bItems.length
     const copy: any = array ? [] : {}
 
@@ -283,11 +287,11 @@ export function replaceEqualDeep(a: any, b: any): any {
 /**
  * Shallow compare objects.
  */
-export function shallowEqualObjects<T extends Record<string, any>>(
+export function shallowEqualObjects<T extends Record<string | symbol, any>>(
   a: T,
   b: T | undefined,
 ): boolean {
-  if (!b || Object.keys(a).length !== Object.keys(b).length) {
+  if (!b || objectKeys(a).length !== objectKeys(b).length) {
     return false
   }
 
@@ -297,11 +301,17 @@ export function shallowEqualObjects<T extends Record<string, any>>(
     }
   }
 
+  for (const key of Object.getOwnPropertySymbols(a)) {
+    if (a[key] !== b[key]) {
+      return false
+    }
+  }
+
   return true
 }
 
 export function isPlainArray(value: unknown) {
-  return Array.isArray(value) && value.length === Object.keys(value).length
+  return Array.isArray(value) && value.length === objectKeys(value).length
 }
 
 // Copied from: https://github.com/jonschlinkert/is-plain-object
