@@ -51,7 +51,7 @@
     "@angular/compiler-cli": "^17.3.12",
     "@angular/core": "^17.3.12",
     "@tanstack/angular-query-experimental": "workspace:*",
-    "eslint-plugin-jsdoc": "^48.8.3",
+    "eslint-plugin-jsdoc": "^48.11.0",
     "ng-packagr": "^17.3.0",
     "typescript": "5.3.3",
     "zone.js": "^0.14.8"
