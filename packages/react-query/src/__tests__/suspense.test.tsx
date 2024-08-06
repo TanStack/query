@@ -1192,4 +1192,48 @@ describe('useSuspenseQueries', () => {
 
     await waitFor(() => rendered.getByText('data1'))
   })
+
+  it('should show error boundary even with gcTime:0 (#7853)', async () => {
+    const consoleMock = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    const key = queryKey()
+    let count = 0
+
+    function Page() {
+      useSuspenseQuery({
+        queryKey: key,
+        queryFn: async () => {
+          count++
+          console.log('queryFn')
+          throw new Error('Query failed')
+        },
+        gcTime: 0,
+        retry: false,
+      })
+
+      return null
+    }
+
+    function App() {
+      return (
+        <React.Suspense fallback="loading">
+          <ErrorBoundary
+            fallbackRender={() => {
+              console.log('fallback renders')
+              return <div>There was an error!</div>
+            }}
+          >
+            <Page />
+          </ErrorBoundary>
+        </React.Suspense>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() => rendered.getByText('There was an error!'))
+    expect(count).toBe(1)
+    consoleMock.mockRestore()
+  })
 })

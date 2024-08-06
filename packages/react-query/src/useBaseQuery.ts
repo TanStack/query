@@ -10,7 +10,11 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
-import { ensureStaleTime, fetchOptimistic, shouldSuspend } from './suspense'
+import {
+  ensureSuspenseTimers,
+  fetchOptimistic,
+  shouldSuspend,
+} from './suspense'
 import type { UseBaseQueryOptions } from './types'
 import type {
   QueryClient,
@@ -58,7 +62,7 @@ export function useBaseQuery<
     ? 'isRestoring'
     : 'optimistic'
 
-  ensureStaleTime(defaultedOptions)
+  ensureSuspenseTimers(defaultedOptions)
   ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary)
 
   useClearResetErrorBoundary(errorResetBoundary)

@@ -4198,16 +4198,14 @@ describe('useQuery', () => {
 
   it('should not interval fetch with a refetchInterval of 0', async () => {
     const key = queryKey()
-    const states: Array<UseQueryResult<number>> = []
+    const queryFn = vi.fn(() => 1)
 
     function Page() {
       const queryInfo = useQuery({
         queryKey: key,
-        queryFn: () => 1,
+        queryFn,
         refetchInterval: 0,
       })
-
-      states.push(queryInfo)
 
       return <div>count: {queryInfo.data}</div>
     }
@@ -4218,20 +4216,7 @@ describe('useQuery', () => {
 
     await sleep(10) // extra sleep to make sure we're not re-fetching
 
-    expect(states.length).toEqual(2)
-
-    expect(states).toMatchObject([
-      {
-        status: 'pending',
-        isFetching: true,
-        data: undefined,
-      },
-      {
-        status: 'success',
-        isFetching: false,
-        data: 1,
-      },
-    ])
+    expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
   it('should accept an empty string as query key', async () => {
