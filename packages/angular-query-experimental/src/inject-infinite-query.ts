@@ -36,7 +36,7 @@ export function injectInfiniteQuery<
 >(
   optionsFn: (
     client: QueryClient,
-  ) => UndefinedInitialDataInfiniteOptions<
+  ) => DefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
@@ -44,7 +44,7 @@ export function injectInfiniteQuery<
     TPageParam
   >,
   injector?: Injector,
-): CreateInfiniteQueryResult<TData, TError>
+): DefinedCreateInfiniteQueryResult<TData, TError>
 
 /**
  * Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
@@ -63,7 +63,7 @@ export function injectInfiniteQuery<
 >(
   optionsFn: (
     client: QueryClient,
-  ) => DefinedInitialDataInfiniteOptions<
+  ) => UndefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
@@ -71,7 +71,7 @@ export function injectInfiniteQuery<
     TPageParam
   >,
   injector?: Injector,
-): DefinedCreateInfiniteQueryResult<TData, TError>
+): CreateInfiniteQueryResult<TData, TError>
 
 /**
  * Injects an infinite query: a declarative dependency on an asynchronous source of data that is tied to a unique key.
