@@ -3,19 +3,31 @@ id: installation
 title: Installation
 ---
 
-You can install React Query via [NPM](https://npmjs.com/),
+You can install React Query via different package managers,
 or a good ol' `<script>` via
 [ESM.sh](https://esm.sh/).
 
-### NPM
+### npm
 
 ```bash
 npm i @tanstack/react-query
-# or
+```
+
+### pnpm
+
+```bash
 pnpm add @tanstack/react-query
-# or
+```
+
+### Yarn
+
+```bash
 yarn add @tanstack/react-query
-# or
+```
+
+### Bun
+
+```bash
 bun add @tanstack/react-query
 ```
 
