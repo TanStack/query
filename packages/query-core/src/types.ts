@@ -32,7 +32,7 @@ export type DefaultError = Register extends {
   defaultError: infer TError
 }
   ? TError
-  : Error
+  : unknown
 
 export type QueryKey = ReadonlyArray<unknown>
 
