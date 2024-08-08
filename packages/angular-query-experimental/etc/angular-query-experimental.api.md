@@ -12,6 +12,7 @@ import type { EnvironmentProviders } from '@angular/core';
 import type { InfiniteData } from '@tanstack/query-core';
 import type { InfiniteQueryObserverOptions } from '@tanstack/query-core';
 import type { InfiniteQueryObserverResult } from '@tanstack/query-core';
+import type { InitialDataFunction } from '@tanstack/query-core';
 import { InjectOptions } from '@angular/core';
 import { Injector } from '@angular/core';
 import type { MutateFunction } from '@tanstack/query-core';
@@ -120,20 +121,20 @@ export type DefinedInitialDataOptions<TQueryFnData = unknown, TError = DefaultEr
 };
 
 // @public
-export function infiniteQueryOptions<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
-    queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>;
-};
-
-// @public
 export function infiniteQueryOptions<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown>(options: DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
     queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>;
 };
 
 // @public
-export function injectInfiniteQuery<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown>(optionsFn: (client: QueryClient) => UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, injector?: Injector): CreateInfiniteQueryResult<TData, TError>;
+export function infiniteQueryOptions<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown>(options: UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>): UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam> & {
+    queryKey: DataTag<TQueryKey, InfiniteData<TQueryFnData>>;
+};
 
 // @public
 export function injectInfiniteQuery<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown>(optionsFn: (client: QueryClient) => DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, injector?: Injector): DefinedCreateInfiniteQueryResult<TData, TError>;
+
+// @public
+export function injectInfiniteQuery<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown>(optionsFn: (client: QueryClient) => UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>, injector?: Injector): CreateInfiniteQueryResult<TData, TError>;
 
 // @public
 export function injectInfiniteQuery<TQueryFnData, TError = DefaultError, TData = InfiniteData<TQueryFnData>, TQueryKey extends QueryKey = QueryKey, TPageParam = unknown>(optionsFn: (client: QueryClient) => CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey, TPageParam>, injector?: Injector): CreateInfiniteQueryResult<TData, TError>;
@@ -224,12 +225,12 @@ GetResults<Head>
 ]> : T extends Array<QueryObserverOptionsForCreateQueries<infer TQueryFnData, infer TError, infer TData, any>> ? Array<QueryObserverResult<unknown extends TData ? TQueryFnData : TData, unknown extends TError ? DefaultError : TError>> : Array<QueryObserverResult>;
 
 // @public
-export function queryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
+export function queryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
     queryKey: DataTag<TQueryKey, TQueryFnData>;
 };
 
 // @public
-export function queryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
+export function queryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey>(options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
     queryKey: DataTag<TQueryKey, TQueryFnData>;
 };
 
@@ -240,7 +241,7 @@ export type UndefinedInitialDataInfiniteOptions<TQueryFnData, TError = DefaultEr
 
 // @public (undocumented)
 export type UndefinedInitialDataOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
-    initialData?: undefined;
+    initialData?: undefined | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>;
 };
 
 

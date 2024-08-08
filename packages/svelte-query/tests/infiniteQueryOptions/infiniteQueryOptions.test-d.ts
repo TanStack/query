@@ -1,7 +1,7 @@
 import { describe, expectTypeOf, test } from 'vitest'
 import { get } from 'svelte/store'
 import { QueryClient } from '@tanstack/query-core'
-import { createInfiniteQuery, infiniteQueryOptions } from '../../src/index'
+import { createInfiniteQuery, infiniteQueryOptions } from '../../src/index.js'
 import type { InfiniteData } from '@tanstack/query-core'
 
 describe('queryOptions', () => {

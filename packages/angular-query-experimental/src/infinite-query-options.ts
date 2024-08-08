@@ -63,14 +63,14 @@ export function infiniteQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: UndefinedInitialDataInfiniteOptions<
+  options: DefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
     TPageParam
   >,
-): UndefinedInitialDataInfiniteOptions<
+): DefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError,
   TData,
@@ -95,14 +95,14 @@ export function infiniteQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
 >(
-  options: DefinedInitialDataInfiniteOptions<
+  options: UndefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryKey,
     TPageParam
   >,
-): DefinedInitialDataInfiniteOptions<
+): UndefinedInitialDataInfiniteOptions<
   TQueryFnData,
   TError,
   TData,

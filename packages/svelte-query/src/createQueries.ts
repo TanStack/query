@@ -1,10 +1,10 @@
 import { QueriesObserver, notifyManager } from '@tanstack/query-core'
 import { derived, get, readable } from 'svelte/store'
-import { useIsRestoring } from './useIsRestoring'
-import { useQueryClient } from './useQueryClient'
-import { isSvelteStore } from './utils'
+import { useIsRestoring } from './useIsRestoring.js'
+import { useQueryClient } from './useQueryClient.js'
+import { isSvelteStore } from './utils.js'
 import type { Readable } from 'svelte/store'
-import type { StoreOrVal } from './types'
+import type { StoreOrVal } from './types.js'
 import type {
   DefaultError,
   DefinedQueryObserverResult,

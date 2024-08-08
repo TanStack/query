@@ -109,6 +109,12 @@ Generate React Query hooks based on Swagger API definitions
 
 Link: https://github.com/Shaddix/react-query-swagger
 
+## Suspensive React Query
+
+Enhances React Query with Suspense support, allowing for simpler and more declarative data fetching
+
+Link: https://suspensive.org/docs/react-query/motivation
+
 ## tRPC
 
 End-to-end typesafe APIs made easy

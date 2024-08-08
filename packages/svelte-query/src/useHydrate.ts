@@ -3,7 +3,7 @@ import {
   type QueryClient,
   hydrate,
 } from '@tanstack/query-core'
-import { useQueryClient } from './useQueryClient'
+import { useQueryClient } from './useQueryClient.js'
 
 export function useHydrate(
   state?: unknown,

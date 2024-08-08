@@ -9,14 +9,14 @@ import InitialData from './InitialData/Provider.svelte'
 import RemoveCache from './RemoveCache/Provider.svelte'
 import RestoreCache from './RestoreCache/Provider.svelte'
 import UseQueries from './UseQueries/Provider.svelte'
-import { createQueryClient, sleep } from './utils'
+import { createQueryClient, sleep } from './utils.js'
 
 import type {
   PersistedClient,
   Persister,
 } from '@tanstack/query-persist-client-core'
 import type { Writable } from 'svelte/store'
-import type { StatusResult } from './utils'
+import type { StatusResult } from './utils.js'
 
 const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined

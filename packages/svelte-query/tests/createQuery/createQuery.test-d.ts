@@ -1,8 +1,8 @@
 import { describe, expectTypeOf, test } from 'vitest'
 import { get } from 'svelte/store'
-import { createQuery, queryOptions } from '../../src/index'
+import { createQuery, queryOptions } from '../../src/index.js'
 import type { OmitKeyof } from '@tanstack/query-core'
-import type { CreateQueryOptions } from '../../src/index'
+import type { CreateQueryOptions } from '../../src/index.js'
 
 describe('createQuery', () => {
   test('TData should always be defined when initialData is provided as an object', () => {
@@ -18,16 +18,20 @@ describe('createQuery', () => {
   test('TData should be defined when passed through queryOptions', () => {
     const options = queryOptions({
       queryKey: ['key'],
-      queryFn: () => {
-        return {
-          wow: true,
-        }
-      },
-      initialData: {
-        wow: true,
-      },
+      queryFn: () => ({ wow: true }),
+      initialData: { wow: true },
     })
     const query = createQuery(options)
+
+    expectTypeOf(get(query).data).toEqualTypeOf<{ wow: boolean }>()
+  })
+
+  test('TData should always be defined when initialData is provided as a function which ALWAYS returns the data', () => {
+    const query = createQuery({
+      queryKey: ['key'],
+      queryFn: () => ({ wow: true }),
+      initialData: () => ({ wow: true }),
+    })
 
     expectTypeOf(get(query).data).toEqualTypeOf<{ wow: boolean }>()
   })
