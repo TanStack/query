@@ -1616,7 +1616,7 @@ importers:
         specifier: ^5.3.5
         version: 5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
 
-  integrations/angular-cli-standalone-17:
+  integrations/angular-cli-17:
     dependencies:
       '@angular/common':
         specifier: ^17.3.12
@@ -1700,7 +1700,7 @@ importers:
         specifier: ^7.0.3
         version: 7.0.3
 
-  integrations/react-next:
+  integrations/react-next-14:
     dependencies:
       '@tanstack/react-query':
         specifier: workspace:*
