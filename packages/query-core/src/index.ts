@@ -18,6 +18,7 @@ export {
   replaceEqualDeep,
   isServer,
   matchQuery,
+  partialMatchKey,
   matchMutation,
   keepPreviousData,
   skipToken,

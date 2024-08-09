@@ -88,3 +88,16 @@ const isMatching = matchMutation(filters, mutation)
 ```
 
 Returns a boolean that indicates whether a mutation matches the provided set of mutation filters.
+
+### `partialMatchKey`
+
+```tsx
+const isPartialMatch = partialMatchKey(keyA, keyB)
+```
+
+Determines whether the query key `keyB` partially matches the query key `keyA` and returns a boolean.
+
+Use Cases:
+
+- Filtering queries based on partial match of query keys.
+- Checking if a query key is a subset of another query key, to perform the required logic.
