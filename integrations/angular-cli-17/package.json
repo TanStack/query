@@ -1,5 +1,5 @@
 {
-  "name": "angular-cli-standalone-17",
+  "name": "angular-cli-17",
   "private": true,
   "scripts": {
     "build": "ng build"

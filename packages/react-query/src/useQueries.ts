@@ -15,7 +15,7 @@ import {
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
 import {
-  ensureStaleTime,
+  ensureSuspenseTimers,
   fetchOptimistic,
   shouldSuspend,
   willFetch,
@@ -255,7 +255,7 @@ export function useQueries<
   )
 
   defaultedQueries.forEach((query) => {
-    ensureStaleTime(query)
+    ensureSuspenseTimers(query)
     ensurePreventErrorBoundaryRetry(query, errorResetBoundary)
   })
 
