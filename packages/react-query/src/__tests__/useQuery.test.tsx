@@ -6566,6 +6566,7 @@ describe('useQuery', () => {
       defaultOptions: { hydrate: { queries: { retry: 1, retryDelay: 10 } } },
     })
     hydrate(clientQueryClient, dehydrated)
+    await sleep(400)
 
     const rendered = renderWithClient(clientQueryClient, <Page />)
     await waitFor(() => rendered.getByText('failure: redacted'))
