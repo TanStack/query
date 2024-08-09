@@ -115,7 +115,7 @@ body:
       description: |
         Please let us know the exact version of TanStack Query you were using when the issue occurred. Please don't just put in "latest", as this is subject to change.
       placeholder: |
-        e.g. v3.30.1
+        e.g. v5.51.9
     validations:
       required: true
   - type: input
@@ -125,7 +125,7 @@ body:
       description: |
         If you are using TypeScript, please let us know the exact version of TypeScript you were using when the issue occurred.
       placeholder: |
-        e.g. v4.5.4
+        e.g. v5.5.4
   - type: textarea
     id: additional
     attributes:
