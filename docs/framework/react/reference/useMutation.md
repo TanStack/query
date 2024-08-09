@@ -45,10 +45,11 @@ mutate(variables, {
 
 **Options**
 
-- `mutationFn: (variables: TVariables) => Promise<TData>`
+- `mutationFn: (variables: TVariables, context: MutationFunctionContext) => Promise<TData>`
   - **Required, but only if no default mutation function has been defined**
   - A function that performs an asynchronous task and returns a promise.
   - `variables` is an object that `mutate` will pass to your `mutationFn`
+  - `context` is an object containing the `mutationKey` and the mutation's `meta`
 - `gcTime: number | Infinity`
   - The time in milliseconds that unused/inactive cache data remains in memory. When a mutation's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different cache times are specified, the longest one will be used.
   - If set to `Infinity`, will disable garbage collection
