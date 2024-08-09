@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -152,7 +152,7 @@ function App() {
       ) : (
         <Posts setPostId={setPostId} />
       )}
-      <ReactQueryDevtools initialIsOpen />
+      <ReactQueryDevtoolsPanel initialIsOpen />
     </PersistQueryClientProvider>
   )
 }

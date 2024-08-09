@@ -10,7 +10,7 @@ import {
   updateNestedDataByPath,
 } from './utils'
 import { Check, CopiedCopier, Copier, ErrorCopier, List, Trash } from './icons'
-import { useQueryDevtoolsContext, useTheme } from './Context'
+import { useQueryDevtoolsContext, useTheme } from './contexts'
 import type { Query } from '@tanstack/query-core'
 
 /**
