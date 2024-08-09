@@ -34,7 +34,7 @@ body:
         - To create a shareable code example for web, you can use CodeSandbox (https://codesandbox.io/s/new) or Stackblitz (https://stackblitz.com/).
         - Please make sure the example is complete and runnable - e.g. avoid localhost URLs.
         - To stub out real api requests - Promise.resolve and Promise.reject are good options for easy reproduction
-        - Feel free to fork any of the official CodeSandbox examples to reproduce your issue: https://tanstack.com/query/v4/docs/examples/react/simple
+        - Feel free to fork any of the official examples to reproduce your issue: https://tanstack.com/query/latest/docs/framework/react/examples/simple
         - For React Native, you can use: https://snack.expo.dev/
         - For TypeScript related issues only, a TypeScript Playground link might be sufficient: https://www.typescriptlang.org/play
         - Please read these tips for providing a minimal example: https://stackoverflow.com/help/mcve.
