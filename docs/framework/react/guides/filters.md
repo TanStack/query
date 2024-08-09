@@ -88,3 +88,39 @@ const isMatching = matchMutation(filters, mutation)
 ```
 
 Returns a boolean that indicates whether a mutation matches the provided set of mutation filters.
+
+### `partialMatchKey`
+
+```tsx
+const isKeysToKeep = partialMatchKey(queryKeyA, queryKeyB)
+```
+
+Determines whether the query key `queryKeyB` partially matches the query key `queryKeyA` and returns a boolean.
+
+Example usage:
+
+```ts
+const keysToKeep = [
+  ['projects'],
+  ['project'],
+];
+
+const resetQueryCache = () => {
+  queryClient.cancelQueries();
+
+  return queryClient.invalidateQueries({
+    predicate: ({ queryKey }) => {
+      // Skip queries with keys that are included in keysToKeep
+      return !keysToKeep.some(key => partialMatchKey(key, queryKey));
+    },
+  });
+};
+
+// usage
+const handleProjectChange = () => {
+  resetQueryCache();
+  // other logic
+};
+```
+
+In this example, `resetQueryCache` cancels all current queries, excluding keys that have been transferred
