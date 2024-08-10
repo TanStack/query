@@ -1,5 +1,5 @@
 {
-  "name": "react-next",
+  "name": "react-next-14",
   "private": true,
   "scripts": {
     "build": "next build"
