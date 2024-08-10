@@ -9,11 +9,23 @@ The devtools are a separate package that you need to install:
 
 ```bash
 $ npm i @tanstack/angular-query-devtools-experimental
-# or
+```
+
+or
+
+```bash
 $ pnpm add @tanstack/angular-query-devtools-experimental
-# or
+```
+
+or
+
+```bash
 $ yarn add @tanstack/angular-query-devtools-experimental
-# or
+```
+
+or
+
+```bash
 $ bun add @tanstack/angular-query-devtools-experimental
 ```
 
