@@ -15,7 +15,7 @@
     "test:ci": "nx run-many --targets=test:sherif,test:knip,test:eslint,test:lib,test:types,test:build,build",
     "test:eslint": "nx affected --target=test:eslint --exclude=examples/**",
     "test:format": "pnpm run prettier --check",
-    "test:sherif": "sherif -p \"./integrations/*\" -p \"./examples/*\"",
+    "test:sherif": "sherif -i eslint -p \"./integrations/*\" -p \"./examples/*\"",
     "test:lib": "nx affected --target=test:lib --exclude=examples/**",
     "test:lib:dev": "pnpm run test:lib && nx watch --all -- pnpm run test:lib",
     "test:build": "nx affected --target=test:build --exclude=examples/**",
