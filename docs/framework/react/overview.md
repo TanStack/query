@@ -69,8 +69,12 @@ function Example() {
   const { isPending, error, data } = useQuery({
     queryKey: ['repoData'],
     queryFn: () =>
-      fetch('https://api.github.com/repos/TanStack/query').then((res) =>
+      fetch('https://api.github.com/repos/TanStack/query').then((res) => {
+        if (!res.ok) {
+          throw new Error();
+        }
         res.json(),
+      }
       ),
   })
 
