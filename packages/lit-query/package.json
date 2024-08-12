@@ -20,28 +20,35 @@
     "test:lib": "vitest",
     "test:lib:dev": "pnpm run test:lib --watch",
     "test:build": "publint --strict && attw --pack",
-    "build": "svelte-package --input ./src --output ./dist"
+    "build": "tsup"
   },
   "type": "module",
-  "types": "dist/index.d.ts",
-  "module": "dist/index.js",
+  "types": "build/legacy/index.d.ts",
+  "main": "build/legacy/index.cjs",
+  "module": "build/legacy/index.js",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "svelte": "./dist/index.js",
-      "import": "./dist/index.js"
+      "import": {
+        "types": "./build/modern/index.d.ts",
+        "default": "./build/modern/index.js"
+      },
+      "require": {
+        "types": "./build/modern/index.d.cts",
+        "default": "./build/modern/index.cjs"
+      }
     },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "files": [
-    "dist",
+    "build",
     "src"
   ],
   "dependencies": {
     "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
+    "@lit/context": "^1.1.2",
     "@open-wc/testing-helpers": "3.0.1",
     "@types/jest-when": "3.5.5",
     "jest-when": "3.6.0",
