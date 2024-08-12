@@ -44,12 +44,12 @@
     "@tanstack/query-core": "workspace:*"
   },
   "devDependencies": {
-    "@sveltejs/package": "^2.3.2",
+    "@sveltejs/package": "^2.3.3",
     "@sveltejs/vite-plugin-svelte": "^3.1.1",
     "@testing-library/svelte": "^5.2.1",
     "eslint-plugin-svelte": "^2.43.0",
     "svelte": "^4.2.18",
-    "svelte-check": "^3.8.4"
+    "svelte-check": "^3.8.5"
   },
   "peerDependencies": {
     "svelte": "^3.54.0 || ^4.0.0 || ^5.0.0-next.0"
