@@ -274,7 +274,8 @@ By default, TanStack Query will not retry a mutation on error, but it is possibl
 ```tsx
 const mutation = useMutation({
   mutationFn: addTodo,
-  retry: 3,
+  retry: 3, // Number of attempts, set to true to never give up
+  retryDelay: 3000, // Milliseconds in retry delays
 })
 ```
 
