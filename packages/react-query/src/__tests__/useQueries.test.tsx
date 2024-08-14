@@ -358,7 +358,7 @@ describe('useQueries', () => {
     }
   })
 
-  it('correctly returns types when passing through queryOptions ', () => {
+  it('correctly returns types when passing through queryOptions', () => {
     // @ts-expect-error (Page component is not rendered)
     function Page() {
       // data and results types are correct when using queryOptions
@@ -713,6 +713,7 @@ describe('useQueries', () => {
               queryFn:
                 fn && fn !== skipToken
                   ? (ctx: QueryFunctionContext<TQueryKey>) => {
+                      // eslint-disable-next-line vitest/valid-expect
                       expectTypeOf<TQueryKey>(ctx.queryKey)
                       return fn.call({}, ctx)
                     }

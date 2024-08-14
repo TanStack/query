@@ -30,7 +30,7 @@ describe('injectMutationState', () => {
   })
 
   describe('injectMutationState', () => {
-    test('should return variables after calling mutate', async () => {
+    test('should return variables after calling mutate 1', async () => {
       const mutationKey = ['mutation']
       const variables = 'foo123'
 
@@ -91,7 +91,7 @@ describe('injectMutationState', () => {
       expect(mutationState()).toEqual([variables2])
     })
 
-    test('should return variables after calling mutate', async () => {
+    test('should return variables after calling mutate 2', async () => {
       queryClient.clear()
       const mutationKey = ['mutation']
       const variables = 'bar234'
