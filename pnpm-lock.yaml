@@ -1944,6 +1944,9 @@ importers:
       '@types/jest-when':
         specifier: 3.5.5
         version: 3.5.5
+      eslint-plugin-lit:
+        specifier: ^1.14.0
+        version: 1.14.0(eslint@8.57.0)
       jest-when:
         specifier: 3.6.0
         version: 3.6.0(jest@27.5.1(node-notifier@8.0.2))
@@ -10160,6 +10163,12 @@ packages:
     peerDependencies:
       eslint: ^8.57.0
 
+  eslint-plugin-lit@1.14.0:
+    resolution: {integrity: sha512-J4w+CgO31621GreLFCdTUbTr5yeV2/RJ/M0myw0dykD5p9FGGIRLityQiNa6SG+JpVbmeQTQPJy4pNFmiurJ/w==}
+    engines: {node: '>= 12'}
+    peerDependencies:
+      eslint: ^8.57.0
+
   eslint-plugin-react-compiler@0.0.0-experimental-c8b3f72-20240517:
     resolution: {integrity: sha512-cxUTFNMEKiLX6uFaRfrr2GHnB7KUHDMYLjEGzDec82ka6WyBCHg906nGSf3JvVnQKHaBDfUk7Mmv/JMvdgQB8Q==}
     engines: {node: ^14.17.0 || ^16.0.0 || >= 18.0.0}
@@ -14296,6 +14305,9 @@ packages:
   parse5-html-rewriting-stream@7.0.0:
     resolution: {integrity: sha512-mazCyGWkmCRWDI15Zp+UiCqMp/0dgEmkZRvhlsqqKYr4SsVm/TvnSpD9fCvqCA2zoWJcfRym846ejWBBHRiYEg==}
 
+  parse5-htmlparser2-tree-adapter@6.0.1:
+    resolution: {integrity: sha512-qPuWvbLgvDGilKc5BoicRovlT4MtYT6JfJyBOMDsKoiT+GiuP5qyrPCnR9HcPECIJJmZh5jRndyNThnhhb/vlA==}
+
   parse5-sax-parser@7.0.0:
     resolution: {integrity: sha512-5A+v2SNsq8T6/mG3ahcz8ZtQ0OUFTatxPbeidoMB7tkJSGDY3tdfl4MHovtLQHkEn5CGxijNWRQHhRQ6IRpXKg==}
 
@@ -15929,6 +15941,10 @@ packages:
   requireg@0.2.2:
     resolution: {integrity: sha512-nYzyjnFcPNGR3lx9lwPPPnuQxv6JWEZd2Ci0u9opN7N5zUEPIhY/GbL3vMGOr2UXwEg9WwSyV9X9Y/kLFgPsOg==}
     engines: {node: '>= 4.0.0'}
+
+  requireindex@1.2.0:
+    resolution: {integrity: sha512-L9jEkOi3ASd9PYit2cwRfyppc9NoABujTP8/5gFcbERmo5jUoAKovIC3fsF17pkTnGsrByysqX+Kxd2OTNI1ww==}
+    engines: {node: '>=0.10.5'}
 
   requires-port@1.0.0:
     resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
@@ -30853,6 +30869,13 @@ snapshots:
       safe-regex-test: 1.0.3
       string.prototype.includes: 2.0.0
 
+  eslint-plugin-lit@1.14.0(eslint@8.57.0):
+    dependencies:
+      eslint: 8.57.0
+      parse5: 6.0.1
+      parse5-htmlparser2-tree-adapter: 6.0.1
+      requireindex: 1.2.0
+
   eslint-plugin-react-compiler@0.0.0-experimental-c8b3f72-20240517(eslint@8.57.0):
     dependencies:
       '@babel/core': 7.24.7
@@ -36705,6 +36728,10 @@ snapshots:
       parse5: 7.1.2
       parse5-sax-parser: 7.0.0
 
+  parse5-htmlparser2-tree-adapter@6.0.1:
+    dependencies:
+      parse5: 6.0.1
+
   parse5-sax-parser@7.0.0:
     dependencies:
       parse5: 7.1.2
@@ -38811,6 +38838,8 @@ snapshots:
       nested-error-stacks: 2.0.1
       rc: 1.2.8
       resolve: 1.7.1
+
+  requireindex@1.2.0: {}
 
   requires-port@1.0.0: {}
 
