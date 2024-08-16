@@ -20,6 +20,8 @@ export interface QueryContextProps {
 export type Constructor<T = object> = new (...args: Array<any>) => T
 
 /**
+ * Query Client Context as mixin class.
+ * Extend this mixin class to make any LitElement class a context provider.
  *
  * @param Base - The base class to extend. Must be or inherit LitElement.
  * @returns Class extended with query client context provider property.
