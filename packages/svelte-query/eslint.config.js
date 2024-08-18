@@ -3,6 +3,7 @@
 import pluginSvelte from 'eslint-plugin-svelte'
 import rootConfig from '../../eslint.config.js'
 
+/** @type {import('eslint').Linter.FlatConfig[]} */
 export default [
   ...rootConfig,
   ...pluginSvelte.configs['flat/recommended'],

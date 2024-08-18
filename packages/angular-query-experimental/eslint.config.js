@@ -3,6 +3,7 @@
 import pluginJsdoc from 'eslint-plugin-jsdoc'
 import rootConfig from '../../eslint.config.js'
 
+/** @type {import('eslint').Linter.FlatConfig[]} */
 export default [
   ...rootConfig,
   pluginJsdoc.configs['flat/recommended-typescript'],

@@ -7,6 +7,7 @@ import pluginReactCompiler from 'eslint-plugin-react-compiler'
 import pluginReactHooks from 'eslint-plugin-react-hooks'
 import rootConfig from '../../eslint.config.js'
 
+/** @type {import('eslint').Linter.FlatConfig[]} */
 export default [
   ...rootConfig,
   {

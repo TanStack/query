@@ -4,6 +4,7 @@
 import { tanstackConfig } from '@tanstack/config/eslint'
 import pluginCspell from '@cspell/eslint-plugin'
 
+/** @type {import('eslint').Linter.FlatConfig[]} */
 export default [
   ...tanstackConfig,
   {
