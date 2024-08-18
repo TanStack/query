@@ -1,10 +1,7 @@
-type Listener = () => void
-
-export class Subscribable<TListener extends Function = Listener> {
-  protected listeners: Set<TListener>
+export class Subscribable<TListener extends Function> {
+  protected listeners = new Set<TListener>()
 
   constructor() {
-    this.listeners = new Set()
     this.subscribe = this.subscribe.bind(this)
   }
 
