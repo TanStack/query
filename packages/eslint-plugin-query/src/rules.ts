@@ -1,6 +1,7 @@
 import * as exhaustiveDeps from './rules/exhaustive-deps/exhaustive-deps.rule'
 import * as stableQueryClient from './rules/stable-query-client/stable-query-client.rule'
 import * as noRestDestructuring from './rules/no-rest-destructuring/no-rest-destructuring.rule'
+import * as noMutationInDeps from './rules/no-mutation-in-deps/no-mutation-in-deps.rule'
 import type { ESLintUtils } from '@typescript-eslint/utils'
 import type { ExtraRuleDocs } from './types'
 
@@ -16,4 +17,5 @@ export const rules: Record<
   [exhaustiveDeps.name]: exhaustiveDeps.rule,
   [stableQueryClient.name]: stableQueryClient.rule,
   [noRestDestructuring.name]: noRestDestructuring.rule,
+  [noMutationInDeps.name]: noMutationInDeps.rule,
 }
