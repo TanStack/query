@@ -156,10 +156,13 @@ export type UseBaseMutationResult<
   TError = DefaultError,
   TVariables = unknown,
   TContext = unknown,
-> = Override<
+> = OmitKeyof<
   MutationObserverResult<TData, TError, TVariables, TContext>,
-  { mutate: UseMutateFunction<TData, TError, TVariables, TContext> }
-> & { mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext> }
+  'mutate'
+> & {
+  mutate: UseMutateFunction<TData, TError, TVariables, TContext>
+  mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext>
+}
 
 export type UseMutationResult<
   TData = unknown,
@@ -167,9 +170,3 @@ export type UseMutationResult<
   TVariables = unknown,
   TContext = unknown,
 > = UseBaseMutationResult<TData, TError, TVariables, TContext>
-
-type Override<TTargetA, TTargetB> = {
-  [AKey in keyof TTargetA]: AKey extends keyof TTargetB
-    ? TTargetB[AKey]
-    : TTargetA[AKey]
-}
