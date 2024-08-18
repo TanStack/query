@@ -4,6 +4,7 @@ import {
   hasPreviousPage,
   infiniteQueryBehavior,
 } from './infiniteQueryBehavior'
+import type { Subscribable } from './subscribable'
 import type {
   DefaultError,
   DefaultedInfiniteQueryObserverOptions,
@@ -38,9 +39,9 @@ export class InfiniteQueryObserver<
   TQueryKey
 > {
   // Type override
-  subscribe!: (
-    listener?: InfiniteQueryObserverListener<TData, TError>,
-  ) => () => void
+  subscribe!: Subscribable<
+    InfiniteQueryObserverListener<TData, TError>
+  >['subscribe']
 
   // Type override
   getCurrentResult!: () => InfiniteQueryObserverResult<TData, TError>
