@@ -792,6 +792,10 @@
         {
           "label": "No Rest Destructuring",
           "to": "eslint/no-rest-destructuring"
+        },
+        {
+          "label": "No Mutation in Deps",
+          "to": "eslint/no-mutation-in-deps"
         }
       ]
     },
