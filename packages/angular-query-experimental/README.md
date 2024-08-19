@@ -35,11 +35,23 @@ Visit https://tanstack.com/query/latest/docs/framework/angular/overview
 
    ```bash
    $ npm i @tanstack/angular-query-experimental
-   # or
+   ```
+
+   or
+
+   ```bash
    $ pnpm add @tanstack/angular-query-experimental
-   # or
+   ```
+
+   or
+
+   ```bash
    $ yarn add @tanstack/angular-query-experimental
-   # or
+   ```
+
+   or
+
+   ```bash
    $ bun add @tanstack/angular-query-experimental
    ```
 

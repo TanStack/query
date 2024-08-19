@@ -49,6 +49,7 @@
     "@types/react": "npm:types-react@rc",
     "@types/react-dom": "npm:types-react-dom@rc",
     "@vitest/coverage-istanbul": "^2.0.4",
+    "@vitest/eslint-plugin": "^1.0.2",
     "cpy-cli": "^5.0.0",
     "esbuild-plugin-file-path-extensions": "^2.1.2",
     "eslint": "^8.57.0",

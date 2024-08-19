@@ -992,7 +992,7 @@ describe('useInfiniteQuery', () => {
     expect(abortListeners[callIndex]).not.toHaveBeenCalled()
   })
 
-  it('should not cancel an ongoing fetchNextPage request when another fetchNextPage is invoked if `cancelRefetch: false` is used ', async () => {
+  it('should not cancel an ongoing fetchNextPage request when another fetchNextPage is invoked if `cancelRefetch: false` is used', async () => {
     const key = queryKey()
     const start = 10
     const onAborts: Array<Mock<(...args: Array<any>) => any>> = []
