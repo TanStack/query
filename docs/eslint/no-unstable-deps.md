@@ -1,5 +1,5 @@
 ---
-id: no-unstable-query-mutation-in-deps
+id: no-unstable-deps
 title: Disallow putting the result of query hooks directly in a React hook dependency array
 ---
 
@@ -21,7 +21,7 @@ Instead, destructure the return value of the query hook and pass the destructure
 Examples of **incorrect** code for this rule:
 
 ```tsx
-/* eslint "@tanstack/query/no-unstable-query-mutation-in-deps": "warn" */
+/* eslint "@tanstack/query/no-unstable-deps": "warn" */
 import { useCallback } from 'React'
 import { useMutation } from '@tanstack/react-query'
 
@@ -37,7 +37,7 @@ function Component() {
 Examples of **correct** code for this rule:
 
 ```tsx
-/* eslint "@tanstack/query/no-unstable-query-mutation-in-deps": "warn" */
+/* eslint "@tanstack/query/no-unstable-deps": "warn" */
 import { useCallback } from 'React'
 import { useMutation } from '@tanstack/react-query'
 

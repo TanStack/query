@@ -4,7 +4,7 @@ import { detectTanstackQueryImports } from '../../utils/detect-react-query-impor
 import type { TSESTree } from '@typescript-eslint/utils'
 import type { ExtraRuleDocs } from '../../types'
 
-export const name = 'no-unstable-query-mutation-in-deps'
+export const name = 'no-unstable-deps'
 
 export const reactHookNames = ['useEffect', 'useCallback', 'useMemo']
 export const useQueryHookNames = [
@@ -28,7 +28,7 @@ export const rule = createRule({
       recommended: 'error',
     },
     messages: {
-      noUnstableQueryMutationInDeps: `The result of {{queryHook}} is not referentially stable, so don't pass it directly into the dependencies array of {{reactHook}}. Instead, destructure the return value of {{queryHook}} and pass the destructured values into the dependency array of {{reactHook}}.`,
+      noUnstableDeps: `The result of {{queryHook}} is not referentially stable, so don't pass it directly into the dependencies array of {{reactHook}}. Instead, destructure the return value of {{queryHook}} and pass the destructured values into the dependency array of {{reactHook}}.`,
     },
     schema: [],
   },
@@ -113,7 +113,7 @@ export const rule = createRule({
               const queryHook = trackedVariables[dep.name]
               context.report({
                 node: dep,
-                messageId: 'noUnstableQueryMutationInDeps',
+                messageId: 'noUnstableDeps',
                 data: {
                   queryHook,
                   reactHook,

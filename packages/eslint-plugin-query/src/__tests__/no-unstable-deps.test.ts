@@ -3,7 +3,7 @@ import {
   reactHookNames,
   rule,
   useQueryHookNames,
-} from '../rules/no-unstable-query-mutation-in-deps/no-unstable-query-mutation-in-deps.rule'
+} from '../rules/no-unstable-deps/no-unstable-deps.rule'
 
 const ruleTester = new RuleTester({
   parser: '@typescript-eslint/parser',
@@ -46,7 +46,11 @@ const baseTestCases = {
           `,
       })),
     ),
-  invalid: ({ reactHookImport, reactHookInvocation, reactHookAlias }: TestCase) =>
+  invalid: ({
+    reactHookImport,
+    reactHookInvocation,
+    reactHookAlias,
+  }: TestCase) =>
     [
       {
         name: `result of useMutation is passed to ${reactHookInvocation} as dependency `,
@@ -62,7 +66,7 @@ const baseTestCases = {
           `,
         errors: [
           {
-            messageId: 'noUnstableQueryMutationInDeps',
+            messageId: 'noUnstableDeps',
             data: { reactHook: reactHookAlias, queryHook: 'useMutation' },
           },
         ],
@@ -82,7 +86,7 @@ const baseTestCases = {
           `,
         errors: [
           {
-            messageId: 'noUnstableQueryMutationInDeps',
+            messageId: 'noUnstableDeps',
             data: { reactHook: reactHookAlias, queryHook },
           },
         ],
@@ -111,7 +115,7 @@ const testCases = (reactHookName: string) => [
 reactHookNames.forEach((reactHookName) => {
   testCases(reactHookName).forEach(
     ({ reactHookInvocation, reactHookAlias, reactHookImport }) => {
-      ruleTester.run('no-unstable-query-mutation-in-deps', rule, {
+      ruleTester.run('no-unstable-deps', rule, {
         valid: baseTestCases.valid({
           reactHookImport,
           reactHookInvocation,
