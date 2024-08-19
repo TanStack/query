@@ -118,7 +118,7 @@ const [usersQuery, teamsQuery, projectsQuery] = useSuspenseQueries({
     { queryKey: ['users'], queryFn: fetchUsers },
     { queryKey: ['teams'], queryFn: fetchTeams },
     { queryKey: ['projects'], queryFn: fetchProjects },
-  ]
+  ],
 })
 ```
 
