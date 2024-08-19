@@ -11,11 +11,23 @@ You can install Svelte Query via [NPM](https://npmjs.com).
 
 ```bash
 npm i @tanstack/svelte-query
-# or
+```
+
+or
+
+```bash
 pnpm add @tanstack/svelte-query
-# or
+```
+
+or
+
+```bash
 yarn add @tanstack/svelte-query
-# or
+```
+
+or
+
+```bash
 bun add @tanstack/svelte-query
 ```
 
