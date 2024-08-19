@@ -20,7 +20,7 @@ import {
 import { TestBed } from '@angular/core/testing'
 import { assertInjector } from './assert-injector'
 
-describe(assertInjector.name, () => {
+describe('assertInjector', () => {
   const token = new InjectionToken('token', {
     factory: () => 1,
   })
