@@ -802,7 +802,7 @@ describe('createQuery', () => {
     expect(states[1]).toMatchObject({ data: 'test' })
   })
 
-  it('should be able to select a part of the data with select in object syntax', async () => {
+  it('should be able to select a part of the data with select in object syntax 2', async () => {
     const key = queryKey()
     const states: Array<CreateQueryResult<string>> = []
 
@@ -831,7 +831,7 @@ describe('createQuery', () => {
     expect(states[1]).toMatchObject({ data: 'test' })
   })
 
-  it('should be able to select a part of the data with select in object syntax', async () => {
+  it('should be able to select a part of the data with select in object syntax 1', async () => {
     const key = queryKey()
     const states: Array<CreateQueryResult<string>> = []
 
@@ -3754,7 +3754,7 @@ describe('createQuery', () => {
     expect(results[2]).toMatchObject({ data: 'fetched data', isStale: false })
   })
 
-  it('it should support enabled:false in query object syntax', async () => {
+  it('should support enabled:false in query object syntax', async () => {
     const key = queryKey()
     const queryFn = vi.fn<(...args: Array<unknown>) => string>()
     queryFn.mockImplementation(() => 'data')
@@ -5913,7 +5913,7 @@ describe('createQuery', () => {
     })
   })
 
-  it('it should have status=error on mount when a query has failed', async () => {
+  it('should have status=error on mount when a query has failed', async () => {
     const key = queryKey()
     const states: Array<CreateQueryResult<unknown>> = []
     const error = new Error('oops')

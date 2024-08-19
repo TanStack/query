@@ -11,11 +11,23 @@ The plugin is a separate package that you need to install:
 
 ```bash
 $ npm i -D @tanstack/eslint-plugin-query
-# or
+```
+
+or
+
+```bash
 $ pnpm add -D @tanstack/eslint-plugin-query
-# or
+```
+
+or
+
+```bash
 $ yarn add -D @tanstack/eslint-plugin-query
-# or
+```
+
+or
+
+```bash
 $ bun add -D @tanstack/eslint-plugin-query
 ```
 
