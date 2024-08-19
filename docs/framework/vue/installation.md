@@ -9,11 +9,23 @@ You can install Vue Query via [NPM](https://npmjs.com).
 
 ```bash
 npm i @tanstack/vue-query
-# or
+```
+
+or
+
+```bash
 pnpm add @tanstack/vue-query
-# or
+```
+
+or
+
+```bash
 yarn add @tanstack/vue-query
-# or
+```
+
+or
+
+```bash
 bun add @tanstack/vue-query
 ```
 
