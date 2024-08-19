@@ -157,7 +157,7 @@ describe('queryObserver', () => {
       unsubscribe()
     })
 
-    test('should not be re-fetched if not subscribed to after enabled was toggled to true', async () => {
+    test('should not be re-fetched if not subscribed to after enabled was toggled to true (fetchStatus: "idle")', async () => {
       const unsubscribe = observer.subscribe(vi.fn())
 
       // Toggle enabled
@@ -175,7 +175,7 @@ describe('queryObserver', () => {
       expect(count).toBe(0)
     })
 
-    test('should not be re-fetched if not subscribed to after enabled was toggled to true', async () => {
+    test('should not be re-fetched if not subscribed to after enabled was toggled to true (fetchStatus: "fetching")', async () => {
       const unsubscribe = observer.subscribe(vi.fn())
 
       // Toggle enabled

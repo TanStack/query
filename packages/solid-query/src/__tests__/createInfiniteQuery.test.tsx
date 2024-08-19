@@ -1178,7 +1178,7 @@ describe('useInfiniteQuery', () => {
     expect(abortListeners[callIndex]).not.toHaveBeenCalled()
   })
 
-  it('should not cancel an ongoing fetchNextPage request when another fetchNextPage is invoked if `cancelRefetch: false` is used ', async () => {
+  it('should not cancel an ongoing fetchNextPage request when another fetchNextPage is invoked if `cancelRefetch: false` is used', async () => {
     const key = queryKey()
     const start = 10
     const onAborts: Array<Mock<(...args: Array<any>) => any>> = []
@@ -2053,7 +2053,10 @@ describe('useInfiniteQuery', () => {
 
     const rendered = render(() => <Page />)
 
-    await waitFor(() => rendered.getByText('Status: custom client'))
+    await waitFor(() => {
+      const statusElement = rendered.getByText('Status: custom client')
+      expect(statusElement).toBeInTheDocument()
+    })
   })
 
   it('should work with infiniteQueryOptions', async () => {
@@ -2079,6 +2082,9 @@ describe('useInfiniteQuery', () => {
 
     const rendered = render(() => <Page />)
 
-    await waitFor(() => rendered.getByText('Status: 220'))
+    await waitFor(() => {
+      const statusElement = rendered.getByText('Status: 220')
+      expect(statusElement).toBeInTheDocument()
+    })
   })
 })
