@@ -794,8 +794,8 @@
           "to": "eslint/no-rest-destructuring"
         },
         {
-          "label": "No Mutation in Deps",
-          "to": "eslint/no-mutation-in-deps"
+          "label": "No Unstable Query/Mutation in Deps",
+          "to": "eslint/no-unstable-query-mutation-in-deps"
         }
       ]
     },

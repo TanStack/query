@@ -4,10 +4,18 @@ import { detectTanstackQueryImports } from '../../utils/detect-react-query-impor
 import type { TSESTree } from '@typescript-eslint/utils'
 import type { ExtraRuleDocs } from '../../types'
 
-export const name = 'no-mutation-in-deps'
+export const name = 'no-unstable-query-mutation-in-deps'
 
 export const reactHookNames = ['useEffect', 'useCallback', 'useMemo']
-
+export const useQueryHookNames = [
+  'useQuery',
+  'useSuspenseQuery',
+  'useQueries',
+  'useSuspenseQueries',
+  'useInfiniteQuery',
+  'useSuspenseInfiniteQuery',
+]
+const allHookNames = ['useMutation', ...useQueryHookNames]
 const createRule = ESLintUtils.RuleCreator<ExtraRuleDocs>(getDocsUrl)
 
 export const rule = createRule({
@@ -20,21 +28,23 @@ export const rule = createRule({
       recommended: 'error',
     },
     messages: {
-      mutationInDeps: `The result of useMutation is not referentially stable, so don't pass it directly into the dependencies array of a hook like useEffect, useMemo, or useCallback. Instead, destructure the return value of useMutation and pass the destructured values into the dependency array.`,
+      noUnstableQueryMutationInDeps: `The result of {{queryHook}} is not referentially stable, so don't pass it directly into the dependencies array of {{reactHook}}. Instead, destructure the return value of {{queryHook}} and pass the destructured values into the dependency array of {{reactHook}}.`,
     },
     schema: [],
   },
   defaultOptions: [],
 
   create: detectTanstackQueryImports((context) => {
-    const trackedVariables = new Set<string>()
+    const trackedVariables: Record<string, string> = {}
     const hookAliasMap: Record<string, string> = {}
 
-    function isReactHook(node: TSESTree.CallExpression): boolean {
+    function getReactHook(node: TSESTree.CallExpression): string | undefined {
       if (node.callee.type === 'Identifier') {
         const calleeName = node.callee.name
         // Check if the identifier is a known React hook or an alias
-        return reactHookNames.includes(calleeName) || calleeName in hookAliasMap
+        if (reactHookNames.includes(calleeName) || calleeName in hookAliasMap) {
+          return calleeName
+        }
       } else if (
         node.callee.type === 'MemberExpression' &&
         node.callee.object.type === 'Identifier' &&
@@ -43,14 +53,17 @@ export const rule = createRule({
         reactHookNames.includes(node.callee.property.name)
       ) {
         // Member expression case: `React.useCallback`
-        return true
+        return node.callee.property.name
       }
-      return false
+      return undefined
     }
 
-    function collectVariableNames(pattern: TSESTree.BindingName) {
+    function collectVariableNames(
+      pattern: TSESTree.BindingName,
+      queryHook: string,
+    ) {
       if (pattern.type === AST_NODE_TYPES.Identifier) {
-        trackedVariables.add(pattern.name)
+        trackedVariables[pattern.name] = queryHook
       }
     }
 
@@ -78,14 +91,15 @@ export const rule = createRule({
           node.init !== null &&
           node.init.type === AST_NODE_TYPES.CallExpression &&
           node.init.callee.type === AST_NODE_TYPES.Identifier &&
-          node.init.callee.name === 'useMutation'
+          allHookNames.includes(node.init.callee.name)
         ) {
-          collectVariableNames(node.id)
+          collectVariableNames(node.id, node.init.callee.name)
         }
       },
       CallExpression: (node) => {
+        const reactHook = getReactHook(node)
         if (
-          isReactHook(node) &&
+          reactHook !== undefined &&
           node.arguments.length > 1 &&
           node.arguments[1]?.type === AST_NODE_TYPES.ArrayExpression
         ) {
@@ -94,11 +108,16 @@ export const rule = createRule({
             if (
               dep !== null &&
               dep.type === AST_NODE_TYPES.Identifier &&
-              trackedVariables.has(dep.name)
+              trackedVariables[dep.name] !== undefined
             ) {
+              const queryHook = trackedVariables[dep.name]
               context.report({
                 node: dep,
-                messageId: 'mutationInDeps',
+                messageId: 'noUnstableQueryMutationInDeps',
+                data: {
+                  queryHook,
+                  reactHook,
+                },
               })
             }
           })
