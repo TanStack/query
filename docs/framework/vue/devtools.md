@@ -16,11 +16,23 @@ The devtools component is a separate package that you need to install:
 
 ```bash
 $ npm i @tanstack/vue-query-devtools
-# or
+```
+
+or
+
+```bash
 $ pnpm add @tanstack/vue-query-devtools
-# or
+```
+
+or
+
+```bash
 $ yarn add @tanstack/vue-query-devtools
-# or
+```
+
+or
+
+```bash
 $ bun add @tanstack/vue-query-devtools
 ```
 

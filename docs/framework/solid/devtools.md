@@ -13,11 +13,23 @@ The devtools are a separate package that you need to install:
 
 ```bash
 $ npm i @tanstack/solid-query-devtools
-# or
+```
+
+or
+
+```bash
 $ pnpm add @tanstack/solid-query-devtools
-# or
+```
+
+or
+
+```bash
 $ yarn add @tanstack/solid-query-devtools
-# or
+```
+
+or
+
+```bash
 $ bun add @tanstack/solid-query-devtools
 ```
 

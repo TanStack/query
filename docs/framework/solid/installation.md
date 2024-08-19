@@ -11,11 +11,23 @@ or a good ol' `<script>` via
 
 ```bash
 npm i @tanstack/solid-query
-# or
+```
+
+or
+
+```bash
 pnpm add @tanstack/solid-query
-# or
+```
+
+or
+
+```bash
 yarn add @tanstack/solid-query
-# or
+```
+
+or
+
+```bash
 bun add @tanstack/solid-query
 ```
 

@@ -1,4 +1,4 @@
-import { describe, expect, expectTypeOf, it } from 'vitest'
+import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { createQuery } from '../createQuery'
 import { queryOptions } from '../queryOptions'
@@ -41,14 +41,12 @@ describe('queryOptions', () => {
     expectTypeOf(data).toEqualTypeOf<number>()
   })
   it('should tag the queryKey with the result type of the QueryFn', () => {
-    expect(() => {
-      const { queryKey } = queryOptions({
-        queryKey: ['key'],
-        queryFn: () => Promise.resolve(5),
-      })
-
-      expectTypeOf(queryKey[dataTagSymbol]).toEqualTypeOf<number>()
+    const { queryKey } = queryOptions({
+      queryKey: ['key'],
+      queryFn: () => Promise.resolve(5),
     })
+
+    expectTypeOf(queryKey[dataTagSymbol]).toEqualTypeOf<number>()
   })
   it('should tag the queryKey even if no promise is returned', () => {
     const { queryKey } = queryOptions({
