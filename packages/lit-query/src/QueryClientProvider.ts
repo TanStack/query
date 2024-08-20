@@ -37,9 +37,19 @@ export const QueryClientMixin = <T extends Constructor<LitElement>>(
     @provide({ context: queryContext })
     @state()
     queryClient = new QueryClient()
+
+    connectedCallback(): void {
+      super.connectedCallback()
+      this.queryClient.mount()
+    }
+
+    disconnectedCallback(): void {
+      super.disconnectedCallback()
+      this.queryClient.unmount()
+    }
   }
 
-  // Cast return type to your mixin's interface intersected with the Base type
+  // Cast return type to the mixin's interface intersected with the Base type
   return QueryClientContextProvider as Constructor<QueryContextProps> & T
 }
 
