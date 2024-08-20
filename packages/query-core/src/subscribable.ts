@@ -16,7 +16,7 @@ export class Subscribable<TListener extends Function> {
     }
   }
 
-  hasListeners(): boolean {
+  protected hasListeners(): boolean {
     return this.listeners.size > 0
   }
 
