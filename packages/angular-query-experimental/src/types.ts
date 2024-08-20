@@ -14,6 +14,7 @@ import type {
   QueryObserverOptions,
   QueryObserverResult,
 } from '@tanstack/query-core'
+import type { Signal } from '@angular/core'
 import type { MapToSignals } from './signal-proxy'
 
 /**
@@ -221,6 +222,8 @@ type CreateStatusBasedMutationResult<
   { status: TStatus }
 >
 
+type SignalFunction<T extends () => any> = T & Signal<ReturnType<T>>;
+
 /**
  * @public
  */
@@ -230,7 +233,7 @@ export interface BaseMutationNarrowing<
   TVariables = unknown,
   TContext = unknown,
 > {
-  isSuccess: (
+  isSuccess: SignalFunction<(
     this: CreateMutationResult<TData, TError, TVariables, TContext>,
   ) => this is CreateMutationResult<
     TData,
@@ -244,8 +247,8 @@ export interface BaseMutationNarrowing<
       TVariables,
       TContext
     >
-  >
-  isError: (
+  >>
+  isError: SignalFunction<(
     this: CreateMutationResult<TData, TError, TVariables, TContext>,
   ) => this is CreateMutationResult<
     TData,
@@ -259,8 +262,8 @@ export interface BaseMutationNarrowing<
       TVariables,
       TContext
     >
-  >
-  isPending: (
+  >>
+  isPending: SignalFunction<(
     this: CreateMutationResult<TData, TError, TVariables, TContext>,
   ) => this is CreateMutationResult<
     TData,
@@ -274,8 +277,8 @@ export interface BaseMutationNarrowing<
       TVariables,
       TContext
     >
-  >
-  isIdle: (
+  >>
+  isIdle: SignalFunction<(
     this: CreateMutationResult<TData, TError, TVariables, TContext>,
   ) => this is CreateMutationResult<
     TData,
@@ -283,7 +286,7 @@ export interface BaseMutationNarrowing<
     TVariables,
     TContext,
     CreateStatusBasedMutationResult<'idle', TData, TError, TVariables, TContext>
-  >
+  >>
 }
 
 /**
