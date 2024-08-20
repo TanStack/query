@@ -20,25 +20,25 @@ When you begin your React Query journey, you'll want these devtools by your side
 The devtools are a separate package that you need to install:
 
 ```bash
-$ npm i @tanstack/react-query-devtools
+npm i @tanstack/react-query-devtools
 ```
 
 or
 
 ```bash
-$ pnpm add @tanstack/react-query-devtools
+pnpm add @tanstack/react-query-devtools
 ```
 
 or
 
 ```bash
-$ yarn add @tanstack/react-query-devtools
+yarn add @tanstack/react-query-devtools
 ```
 
 or
 
 ```bash
-$ bun add @tanstack/react-query-devtools
+bun add @tanstack/react-query-devtools
 ```
 
 For Next 13+ App Dir you must install it as a dev dependency for it to work.
