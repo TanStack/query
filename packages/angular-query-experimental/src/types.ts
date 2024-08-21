@@ -222,7 +222,7 @@ type CreateStatusBasedMutationResult<
   { status: TStatus }
 >
 
-type SignalFunction<T extends () => any> = T & Signal<ReturnType<T>>;
+type SignalFunction<T extends () => any> = T & Signal<ReturnType<T>>
 
 /**
  * @public
@@ -233,60 +233,74 @@ export interface BaseMutationNarrowing<
   TVariables = unknown,
   TContext = unknown,
 > {
-  isSuccess: SignalFunction<(
-    this: CreateMutationResult<TData, TError, TVariables, TContext>,
-  ) => this is CreateMutationResult<
-    TData,
-    TError,
-    TVariables,
-    TContext,
-    CreateStatusBasedMutationResult<
-      'success',
+  isSuccess: SignalFunction<
+    (
+      this: CreateMutationResult<TData, TError, TVariables, TContext>,
+    ) => this is CreateMutationResult<
       TData,
       TError,
       TVariables,
-      TContext
+      TContext,
+      CreateStatusBasedMutationResult<
+        'success',
+        TData,
+        TError,
+        TVariables,
+        TContext
+      >
     >
-  >>
-  isError: SignalFunction<(
-    this: CreateMutationResult<TData, TError, TVariables, TContext>,
-  ) => this is CreateMutationResult<
-    TData,
-    TError,
-    TVariables,
-    TContext,
-    CreateStatusBasedMutationResult<
-      'error',
+  >
+  isError: SignalFunction<
+    (
+      this: CreateMutationResult<TData, TError, TVariables, TContext>,
+    ) => this is CreateMutationResult<
       TData,
       TError,
       TVariables,
-      TContext
+      TContext,
+      CreateStatusBasedMutationResult<
+        'error',
+        TData,
+        TError,
+        TVariables,
+        TContext
+      >
     >
-  >>
-  isPending: SignalFunction<(
-    this: CreateMutationResult<TData, TError, TVariables, TContext>,
-  ) => this is CreateMutationResult<
-    TData,
-    TError,
-    TVariables,
-    TContext,
-    CreateStatusBasedMutationResult<
-      'pending',
+  >
+  isPending: SignalFunction<
+    (
+      this: CreateMutationResult<TData, TError, TVariables, TContext>,
+    ) => this is CreateMutationResult<
       TData,
       TError,
       TVariables,
-      TContext
+      TContext,
+      CreateStatusBasedMutationResult<
+        'pending',
+        TData,
+        TError,
+        TVariables,
+        TContext
+      >
     >
-  >>
-  isIdle: SignalFunction<(
-    this: CreateMutationResult<TData, TError, TVariables, TContext>,
-  ) => this is CreateMutationResult<
-    TData,
-    TError,
-    TVariables,
-    TContext,
-    CreateStatusBasedMutationResult<'idle', TData, TError, TVariables, TContext>
-  >>
+  >
+  isIdle: SignalFunction<
+    (
+      this: CreateMutationResult<TData, TError, TVariables, TContext>,
+    ) => this is CreateMutationResult<
+      TData,
+      TError,
+      TVariables,
+      TContext,
+      CreateStatusBasedMutationResult<
+        'idle',
+        TData,
+        TError,
+        TVariables,
+        TContext
+      >
+    >
+  >
 }
 
 /**
