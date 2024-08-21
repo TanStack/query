@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
-import { createNotifyManager } from '../notifyManager'
+import { NotifyManager } from '../notifyManager'
 import { sleep } from './utils'
 
 describe('notifyManager', () => {
   it('should use default notifyFn', async () => {
-    const notifyManagerTest = createNotifyManager()
+    const notifyManagerTest = new NotifyManager()
     const callbackSpy = vi.fn()
     notifyManagerTest.schedule(callbackSpy)
     await sleep(1)
@@ -12,7 +12,7 @@ describe('notifyManager', () => {
   })
 
   it('should use default batchNotifyFn', async () => {
-    const notifyManagerTest = createNotifyManager()
+    const notifyManagerTest = new NotifyManager()
     const callbackScheduleSpy = vi
       .fn()
       .mockImplementation(async () => await sleep(20))
@@ -34,7 +34,7 @@ describe('notifyManager', () => {
   it('should use a custom scheduler when configured', async () => {
     const customCallback = vi.fn((cb) => queueMicrotask(cb))
 
-    const notifyManagerTest = createNotifyManager()
+    const notifyManagerTest = new NotifyManager()
     const notifySpy = vi.fn()
     notifyManagerTest.setScheduler(customCallback)
     notifyManagerTest.setNotifyFunction(notifySpy)
@@ -50,7 +50,7 @@ describe('notifyManager', () => {
   })
 
   it('should notify if error is thrown', async () => {
-    const notifyManagerTest = createNotifyManager()
+    const notifyManagerTest = new NotifyManager()
     const notifySpy = vi.fn()
 
     notifyManagerTest.setNotifyFunction(notifySpy)
@@ -69,7 +69,7 @@ describe('notifyManager', () => {
   })
 
   it('typeDefs should catch proper signatures', async () => {
-    const notifyManagerTest = createNotifyManager()
+    const notifyManagerTest = new NotifyManager()
 
     // we define some fn with its signature:
     const fn: (a: string, b: number) => string = (a, b) => a + b
