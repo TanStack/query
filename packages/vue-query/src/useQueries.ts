@@ -341,7 +341,7 @@ export function useQueries<
       )
       state.value = getCombinedResultPersisted()
     },
-    { flush: 'sync' },
+    { flush: 'post' },
   )
 
   onScopeDispose(() => {
