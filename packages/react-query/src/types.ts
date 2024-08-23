@@ -160,9 +160,7 @@ export type UseBaseMutationResult<
 > = Override<
   MutationObserverResult<TData, TError, TVariables, TContext>,
   { mutate: UseMutateFunction<TData, TError, TVariables, TContext> }
-> & {
-  mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext>
-}
+> & { mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext> }
 
 export type UseMutationResult<
   TData = unknown,
