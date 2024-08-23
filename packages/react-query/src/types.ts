@@ -10,6 +10,7 @@ import type {
   MutationObserverOptions,
   MutationObserverResult,
   OmitKeyof,
+  Override,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
@@ -156,11 +157,10 @@ export type UseBaseMutationResult<
   TError = DefaultError,
   TVariables = unknown,
   TContext = unknown,
-> = OmitKeyof<
+> = Override<
   MutationObserverResult<TData, TError, TVariables, TContext>,
-  'mutate'
+  { mutate: UseMutateFunction<TData, TError, TVariables, TContext> }
 > & {
-  mutate: UseMutateFunction<TData, TError, TVariables, TContext>
   mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext>
 }
 

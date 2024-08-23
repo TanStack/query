@@ -20,10 +20,7 @@ export type OmitKeyof<
   TStrictly extends 'strictly' | 'safely' = 'strictly',
 > = Omit<TObject, TKey>
 
-export type Override<
-  TTargetA,
-  TTargetB extends Partial<{ [x in keyof TTargetA]: unknown }>,
-> = {
+export type Override<TTargetA, TTargetB> = {
   [AKey in keyof TTargetA]: AKey extends keyof TTargetB
     ? TTargetB[AKey]
     : TTargetA[AKey]
