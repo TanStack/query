@@ -50,9 +50,9 @@
           width:.75rem;
           height:.75rem; 
           background: {$todos.isFetching ? 'green' : 'transparent'};
-          transition:: {!$todos.isFetching ? 'all .3s ease' : 'none'};
+          transition: {!$todos.isFetching ? 'all .3s ease' : 'none'};
           border-radius: 100%;
-          transform: 'scale(2)"
+          transform: scale(1.5)"
     ></span>
   </div>
 </label>
