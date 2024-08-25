@@ -131,8 +131,7 @@ export function createBaseQuery<
       : 'optimistic'
     defaultOptions.structuralSharing = false
     if (isServer) {
-      defaultOptions.retry = false
-      defaultOptions.throwOnError = true
+      defaultOptions.retry = false      
     }
     return defaultOptions
   })
