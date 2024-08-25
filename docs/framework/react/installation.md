@@ -11,11 +11,23 @@ or a good ol' `<script>` via
 
 ```bash
 npm i @tanstack/react-query
-# or
+```
+
+or
+
+```bash
 pnpm add @tanstack/react-query
-# or
+```
+
+or
+
+```bash
 yarn add @tanstack/react-query
-# or
+```
+
+or
+
+```bash
 bun add @tanstack/react-query
 ```
 
@@ -58,10 +70,22 @@ It is recommended to also use our [ESLint Plugin Query](../../../eslint/eslint-p
 
 ```bash
 npm i -D @tanstack/eslint-plugin-query
-# or
+```
+
+or
+
+```bash
 pnpm add -D @tanstack/eslint-plugin-query
-# or
+```
+
+or
+
+```bash
 yarn add -D @tanstack/eslint-plugin-query
-# or
+```
+
+or
+
+```bash
 bun add -D @tanstack/eslint-plugin-query
 ```

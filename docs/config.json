@@ -792,6 +792,10 @@
         {
           "label": "No Rest Destructuring",
           "to": "eslint/no-rest-destructuring"
+        },
+        {
+          "label": "No Unstable Deps",
+          "to": "eslint/no-unstable-deps"
         }
       ]
     },

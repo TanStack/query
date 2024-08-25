@@ -348,7 +348,7 @@ describe('mutations', () => {
     expect(error).toEqual(new Error('No mutationFn found'))
   })
 
-  test('mutate update the mutation state even without an active subscription', async () => {
+  test('mutate update the mutation state even without an active subscription 1', async () => {
     const onSuccess = vi.fn()
     const onSettled = vi.fn()
 
@@ -364,7 +364,7 @@ describe('mutations', () => {
     expect(onSettled).not.toHaveBeenCalled()
   })
 
-  test('mutate update the mutation state even without an active subscription', async () => {
+  test('mutate update the mutation state even without an active subscription 2', async () => {
     const onSuccess = vi.fn()
     const onSettled = vi.fn()
 
