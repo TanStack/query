@@ -191,6 +191,8 @@ export class QueryClient extends QC {
       type: filtersCloned.refetchType ?? filtersCloned.type ?? 'active',
     }
 
+    // (dosipiuk): We need to delay `refetchQueries` execution to next macro task for all reactive values to be updated.
+    // This ensures that `context` in `queryFn` while `invalidating` along reactive variable change has correct
     return nextTick().then(() => {
       return super.refetchQueries(refetchFilters, optionsCloned)
     })
