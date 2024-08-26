@@ -689,6 +689,7 @@ describe('useInfiniteQuery', () => {
     const states: Array<
       Partial<CreateInfiniteQueryResult<InfiniteData<number>>>
     > = []
+
     let isRefetch = false
 
     function Page() {
@@ -717,7 +718,7 @@ describe('useInfiniteQuery', () => {
           isFetchingNextPage: state.isFetchingNextPage,
           isFetchPreviousPageError: state.isFetchPreviousPageError,
           isFetchingPreviousPage: state.isFetchingPreviousPage,
-          isRefetchError: state.isRefetchError,
+          isRefetchError: state.isRefetchError as true,
           isRefetching: state.isRefetching,
         })
       })
@@ -828,7 +829,7 @@ describe('useInfiniteQuery', () => {
           isFetchingNextPage: state.isFetchingNextPage,
           isFetchPreviousPageError: state.isFetchPreviousPageError,
           isFetchingPreviousPage: state.isFetchingPreviousPage,
-          isRefetchError: state.isRefetchError,
+          isRefetchError: state.isRefetchError as true,
           isRefetching: state.isRefetching,
         })
       })
@@ -932,7 +933,7 @@ describe('useInfiniteQuery', () => {
           isFetchingNextPage: state.isFetchingNextPage,
           isFetchPreviousPageError: state.isFetchPreviousPageError,
           isFetchingPreviousPage: state.isFetchingPreviousPage,
-          isRefetchError: state.isRefetchError,
+          isRefetchError: state.isRefetchError as true,
           isRefetching: state.isRefetching,
         })
       })

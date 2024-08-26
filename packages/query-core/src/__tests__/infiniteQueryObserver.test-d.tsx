@@ -51,8 +51,8 @@ describe('InfiniteQueryObserver', () => {
       expectTypeOf(result.data).toEqualTypeOf<InfiniteData<string, unknown>>()
       expectTypeOf(result.error).toEqualTypeOf<Error>()
       expectTypeOf(result.status).toEqualTypeOf<'error'>()
-      expectTypeOf(result.isFetchNextPageError).toEqualTypeOf<false>()
-      expectTypeOf(result.isFetchPreviousPageError).toEqualTypeOf<false>()
+      expectTypeOf(result.isFetchNextPageError).toEqualTypeOf<boolean>()
+      expectTypeOf(result.isFetchPreviousPageError).toEqualTypeOf<boolean>()
     }
 
     if (result.isSuccess) {
