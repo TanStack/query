@@ -156,10 +156,13 @@ export function createBaseQuery<
         const query = observer().getCurrentQuery()
         const unwrappedResult = hydratableObserverResult(query, result)
 
-        if (unwrappedResult.isError && shouldThrowError(initialOptions.throwOnError, [
-          observerResult.error,
-          query
-        ])) {
+        if (
+          unwrappedResult.isError &&
+          shouldThrowError(initialOptions.throwOnError, [
+            observerResult.error,
+            query,
+          ])
+        ) {
           reject(unwrappedResult.error)
           unsubscribeIfQueued()
         } else {
