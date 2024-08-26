@@ -159,7 +159,7 @@ export function createBaseQuery<
         if (
           unwrappedResult.isError &&
           shouldThrowError(initialOptions.throwOnError, [
-            observerResult.error!,
+            unwrappedResult.error,
             query,
           ])
         ) {
