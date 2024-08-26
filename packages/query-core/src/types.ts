@@ -853,8 +853,6 @@ export interface InfiniteQueryObserverRefetchErrorResult<
   isLoading: false
   isLoadingError: false
   isRefetchError: true
-  isFetchNextPageError: false
-  isFetchPreviousPageError: false
   isSuccess: false
   status: 'error'
 }
