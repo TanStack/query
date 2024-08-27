@@ -503,6 +503,7 @@ export class Query<
           this.setData(data)
         } catch (error) {
           onError(error as TError)
+          return
         }
 
         // Notify cache callback
