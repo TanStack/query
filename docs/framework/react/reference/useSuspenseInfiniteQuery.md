@@ -28,4 +28,3 @@ Same object as [useInfiniteQuery](../useInfiniteQuery), except that:
 **Caveat**
 
 [Cancelation](../guides/query-cancellation.md) does not work.
-

@@ -27,4 +27,3 @@ Same object as [useQuery](../useQuery), except that:
 **Caveat**
 
 [Cancelation](../guides/query-cancellation.md) does not work.
-

@@ -191,4 +191,3 @@ return (
 ## Limitations
 
 Cancelation does not work when working with `Suspense` hooks: `useSuspenseQuery`, `useSuspenseQueries` and `useSuspenseInfiniteQuery`.
-
