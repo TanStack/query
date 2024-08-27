@@ -972,7 +972,7 @@ describe('query', () => {
     const queryFn = vi.fn()
 
     queryFn.mockImplementation(async () => {
-      await sleep(1000)
+      await sleep(10)
 
       const data: Array<{
         id: number
