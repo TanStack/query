@@ -965,4 +965,44 @@ describe('query', () => {
     await sleep(60) // let it resolve
     expect(spy).toHaveBeenCalledWith('1 - 2')
   })
+
+  it('should have an error status when queryFn data is not serializable', async () => {
+    const key = queryKey()
+
+    const queryFn = vi.fn()
+
+    queryFn.mockImplementation(async () => {
+      await sleep(1000)
+
+      const data: Array<{
+        id: number
+        name: string
+        link: null | { id: number; name: string; link: unknown }
+      }> = Array.from({ length: 5 })
+        .fill(null)
+        .map((_, index) => ({
+          id: index,
+          name: `name-${index}`,
+          link: null,
+        }))
+
+      if (data[0] && data[1]) {
+        data[0].link = data[1]
+        data[1].link = data[0]
+      }
+
+      return data
+    })
+
+    await queryClient.prefetchQuery({ queryKey: key, queryFn })
+
+    const query = queryCache.find({ queryKey: key })!
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    // NOTE: need second query fetch, cause for first fetch 'prevData' for structural sharing is 'undefined'
+    await query.fetch()
+
+    expect(query.state.status).toBe('error')
+  })
 })
