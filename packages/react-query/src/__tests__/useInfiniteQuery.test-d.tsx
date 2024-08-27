@@ -117,3 +117,26 @@ describe('getNextPageParam / getPreviousPageParam', () => {
     >()
   })
 })
+
+describe('error booleans', () => {
+  it('should not be permanently `false`', () => {
+    const {
+      isFetchNextPageError,
+      isFetchPreviousPageError,
+      isLoadingError,
+      isRefetchError,
+    } = useInfiniteQuery({
+      queryKey: ['key'],
+      queryFn: ({ pageParam }) => {
+        return pageParam * 5
+      },
+      initialPageParam: 1,
+      getNextPageParam: () => undefined,
+    })
+
+    expectTypeOf(isFetchNextPageError).toEqualTypeOf<boolean>()
+    expectTypeOf(isFetchPreviousPageError).toEqualTypeOf<boolean>()
+    expectTypeOf(isLoadingError).toEqualTypeOf<boolean>()
+    expectTypeOf(isRefetchError).toEqualTypeOf<boolean>()
+  })
+})
