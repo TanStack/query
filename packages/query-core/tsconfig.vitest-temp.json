@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "checkJs": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2022"
+    ],
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ES2020",
+    "emitDeclarationOnly": false,
+    "incremental": true,
+    "tsBuildInfoFile": "/Users/bohdanyefimenko/projects/query/node_modules/.pnpm/vitest@2.0.5_@types+node@20.14.13_jsdom@24.1.1_less@4.2.0_sass@1.77.8_terser@5.31.3/node_modules/vitest/dist/chunks/tsconfig.tmp.tsbuildinfo"
+  },
+  "include": [
+    "src",
+    "eslint.config.js",
+    "tsup.config.js",
+    "vite.config.ts"
+  ]
+}

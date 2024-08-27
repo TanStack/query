@@ -1000,9 +1000,6 @@ describe('query', () => {
 
     expect(queryFn).toHaveBeenCalledTimes(1)
 
-    // NOTE: need second query fetch, cause for first fetch 'prevData' for structural sharing is 'undefined'
-    await query.fetch()
-
     expect(query.state.status).toBe('error')
   })
 })

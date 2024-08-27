@@ -246,6 +246,15 @@ export function replaceEqualDeep(a: any, b: any): any {
     return a
   }
 
+  if (process.env.NODE_ENV !== 'production') {
+    try {
+      JSON.stringify(a)
+      JSON.stringify(b)
+    } catch {
+      throw new Error('Values are not serializable')
+    }
+  }
+
   const array = isPlainArray(a) && isPlainArray(b)
 
   if (array || (isPlainObject(a) && isPlainObject(b))) {
