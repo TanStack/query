@@ -130,7 +130,7 @@ const {
   - If set to `false`, the query will not refetch on reconnect.
   - If set to `"always"`, the query will always refetch on reconnect.
   - If set to a function, the function will be executed with the query to compute the value
-- `notifyOnChangeProps: string[] | "all" | (() => string[] | "all")`
+- `notifyOnChangeProps: string[] | "all" | (() => string[] | "all" | undefined)`
   - Optional
   - If set, the component will only re-render if any of the listed properties change.
   - If set to `['data', 'error']` for example, the component will only re-render when the `data` or `error` properties change.

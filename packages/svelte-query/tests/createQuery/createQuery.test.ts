@@ -2,10 +2,11 @@ import { describe, expect, test } from 'vitest'
 import { fireEvent, render, waitFor } from '@testing-library/svelte'
 import { derived, get, writable } from 'svelte/store'
 import { QueryClient } from '@tanstack/query-core'
-import { sleep } from '../utils'
+import { sleep } from '../utils.js'
 import BaseExample from './BaseExample.svelte'
 import DisabledExample from './DisabledExample.svelte'
 import PlaceholderData from './PlaceholderData.svelte'
+import RefetchExample from './RefetchExample.svelte'
 import type { Writable } from 'svelte/store'
 import type { QueryObserverResult } from '@tanstack/query-core'
 
@@ -16,7 +17,7 @@ describe('createQuery', () => {
     const options = {
       queryKey: ['test'],
       queryFn: async () => {
-        await sleep(10)
+        await sleep(5)
         return 'Success'
       },
     }
@@ -30,7 +31,7 @@ describe('createQuery', () => {
     })
 
     await waitFor(() => {
-      expect(rendered.queryByText('Success')).toBeInTheDocument()
+      expect(rendered.queryByText('Status: success')).toBeInTheDocument()
     })
 
     const states = get(statesStore)
@@ -204,7 +205,7 @@ describe('createQuery', () => {
     const optionsStore = writable({
       queryKey: ['test'],
       queryFn: async () => {
-        await sleep(10)
+        await sleep(5)
         return 'Success'
       },
     })
@@ -218,7 +219,7 @@ describe('createQuery', () => {
     })
 
     await waitFor(() => {
-      expect(rendered.queryByText('Success')).toBeInTheDocument()
+      expect(rendered.queryByText('Status: success')).toBeInTheDocument()
     })
   })
 
@@ -230,7 +231,7 @@ describe('createQuery', () => {
     const derivedStore = derived(writableStore, ($store) => ({
       queryKey: [$store],
       queryFn: async () => {
-        await sleep(10)
+        await sleep(5)
         return 'Success'
       },
     }))
@@ -244,7 +245,7 @@ describe('createQuery', () => {
     })
 
     await waitFor(() => {
-      expect(rendered.queryByText('Success')).toBeInTheDocument()
+      expect(rendered.queryByText('Status: success')).toBeInTheDocument()
     })
   })
 
@@ -256,8 +257,8 @@ describe('createQuery', () => {
     const derivedStore = derived(writableStore, ($store) => ({
       queryKey: [$store],
       queryFn: async () => {
-        await sleep(10)
-        return `Success ${$store}`
+        await sleep(5)
+        return $store
       },
     }))
 
@@ -272,22 +273,22 @@ describe('createQuery', () => {
     })
 
     await waitFor(() => {
-      expect(rendered.queryByText('Success 1')).toBeInTheDocument()
-      expect(rendered.queryByText('Success 2')).not.toBeInTheDocument()
+      expect(rendered.queryByText('Data: 1')).toBeInTheDocument()
+      expect(rendered.queryByText('Data: 2')).not.toBeInTheDocument()
     })
 
     writableStore.set(2)
 
     await waitFor(() => {
-      expect(rendered.queryByText('Success 1')).not.toBeInTheDocument()
-      expect(rendered.queryByText('Success 2')).toBeInTheDocument()
+      expect(rendered.queryByText('Data: 1')).not.toBeInTheDocument()
+      expect(rendered.queryByText('Data: 2')).toBeInTheDocument()
     })
 
     writableStore.set(1)
 
     await waitFor(() => {
-      expect(rendered.queryByText('Success 1')).toBeInTheDocument()
-      expect(rendered.queryByText('Success 2')).not.toBeInTheDocument()
+      expect(rendered.queryByText('Data: 1')).toBeInTheDocument()
+      expect(rendered.queryByText('Data: 2')).not.toBeInTheDocument()
     })
   })
 
@@ -318,6 +319,7 @@ describe('createQuery', () => {
       isSuccess: false,
       isPlaceholderData: false,
     })
+
     // Fetched
     expect(states[1]).toMatchObject({
       data: 0,
@@ -325,6 +327,7 @@ describe('createQuery', () => {
       isSuccess: true,
       isPlaceholderData: false,
     })
+
     // Set state
     expect(states[2]).toMatchObject({
       data: 0,
@@ -332,6 +335,7 @@ describe('createQuery', () => {
       isSuccess: true,
       isPlaceholderData: true,
     })
+
     // New data
     expect(states[3]).toMatchObject({
       data: 1,
@@ -342,7 +346,13 @@ describe('createQuery', () => {
   })
 
   test('Should not fetch when switching to a disabled query', async () => {
-    const rendered = render(DisabledExample)
+    const statesStore: Writable<Array<QueryObserverResult>> = writable([])
+
+    const rendered = render(DisabledExample, {
+      props: {
+        states: statesStore,
+      },
+    })
 
     await waitFor(() => rendered.getByText('Data: 0'))
 
@@ -352,5 +362,60 @@ describe('createQuery', () => {
       rendered.getByText('Count: 1')
       rendered.getByText('Data: undefined')
     })
+
+    const states = get(statesStore)
+
+    expect(states).toHaveLength(3)
+
+    // Fetch query
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isFetching: true,
+      isSuccess: false,
+    })
+
+    // Fetched query
+    expect(states[1]).toMatchObject({
+      data: 0,
+      isFetching: false,
+      isSuccess: true,
+    })
+
+    // Switch to disabled query
+    expect(states[2]).toMatchObject({
+      data: undefined,
+      isFetching: false,
+      isSuccess: false,
+    })
+  })
+
+  test('Create a new query when refetching a removed query', async () => {
+    const statesStore: Writable<Array<QueryObserverResult>> = writable([])
+
+    const rendered = render(RefetchExample, {
+      props: {
+        states: statesStore,
+      },
+    })
+
+    await waitFor(() => rendered.getByText('Data: 1'))
+    fireEvent.click(rendered.getByRole('button', { name: /Remove/i }))
+
+    await sleep(5)
+
+    fireEvent.click(rendered.getByRole('button', { name: /Refetch/i }))
+    await waitFor(() => rendered.getByText('Data: 2'))
+
+    const states = get(statesStore)
+
+    expect(states.length).toBe(4)
+    // Initial
+    expect(states[0]).toMatchObject({ data: undefined, dataUpdatedAt: 0 })
+    // Fetched
+    expect(states[1]).toMatchObject({ data: 1 })
+    // Switch
+    expect(states[2]).toMatchObject({ data: undefined, dataUpdatedAt: 0 })
+    // Fetched
+    expect(states[3]).toMatchObject({ data: 2 })
   })
 })

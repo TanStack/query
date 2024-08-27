@@ -1,6 +1,10 @@
 <script lang="ts">
   import { QueryClient } from '@tanstack/query-core'
-  import { createInfiniteQuery } from '../../src/createInfiniteQuery'
+  import { createInfiniteQuery } from '../../src/index.js'
+  import type { QueryObserverResult } from '@tanstack/query-core'
+  import type { Writable } from 'svelte/store'
+
+  export let states: Writable<Array<QueryObserverResult>>
 
   const queryClient = new QueryClient()
 
@@ -13,7 +17,8 @@
     },
     queryClient,
   )
+
+  $: states.update((prev) => [...prev, $query])
 </script>
 
-<div>Data: {JSON.stringify($query.data)}</div>
 <div>Status: {$query.status}</div>

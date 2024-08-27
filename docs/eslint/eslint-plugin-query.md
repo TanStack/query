@@ -11,11 +11,23 @@ The plugin is a separate package that you need to install:
 
 ```bash
 $ npm i -D @tanstack/eslint-plugin-query
-# or
+```
+
+or
+
+```bash
 $ pnpm add -D @tanstack/eslint-plugin-query
-# or
+```
+
+or
+
+```bash
 $ yarn add -D @tanstack/eslint-plugin-query
-# or
+```
+
+or
+
+```bash
 $ bun add -D @tanstack/eslint-plugin-query
 ```
 
@@ -84,3 +96,4 @@ Alternatively, add `@tanstack/eslint-plugin-query` to the plugins section, and c
 - [@tanstack/query/exhaustive-deps](../exhaustive-deps)
 - [@tanstack/query/no-rest-destructuring](../no-rest-destructuring)
 - [@tanstack/query/stable-query-client](../stable-query-client)
+- [@tanstack/query/no-unstable-deps](../no-unstable-deps.md)

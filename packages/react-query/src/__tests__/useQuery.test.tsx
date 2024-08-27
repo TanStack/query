@@ -3959,7 +3959,7 @@ describe('useQuery', () => {
     expect(results[2]).toMatchObject({ data: 'fetched data', isStale: false })
   })
 
-  it('it should support enabled:false in query object syntax', async () => {
+  it('should support enabled:false in query object syntax', async () => {
     const key = queryKey()
     const queryFn = vi.fn<(...args: Array<unknown>) => string>()
     queryFn.mockImplementation(() => 'data')
@@ -4034,7 +4034,7 @@ describe('useQuery', () => {
       const query = useQuery({
         queryKey: key,
         queryFn: () => 'fetched data',
-        gcTime: 1000 * 60 * 10, //10 Minutes
+        gcTime: 1000 * 60 * 10, // 10 Minutes
       })
       return <div>{query.data}</div>
     }
@@ -4198,16 +4198,14 @@ describe('useQuery', () => {
 
   it('should not interval fetch with a refetchInterval of 0', async () => {
     const key = queryKey()
-    const states: Array<UseQueryResult<number>> = []
+    const queryFn = vi.fn(() => 1)
 
     function Page() {
       const queryInfo = useQuery({
         queryKey: key,
-        queryFn: () => 1,
+        queryFn,
         refetchInterval: 0,
       })
-
-      states.push(queryInfo)
 
       return <div>count: {queryInfo.data}</div>
     }
@@ -4216,22 +4214,9 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('count: 1'))
 
-    await sleep(10) //extra sleep to make sure we're not re-fetching
+    await sleep(10) // extra sleep to make sure we're not re-fetching
 
-    expect(states.length).toEqual(2)
-
-    expect(states).toMatchObject([
-      {
-        status: 'pending',
-        isFetching: true,
-        data: undefined,
-      },
-      {
-        status: 'success',
-        isFetching: false,
-        data: 1,
-      },
-    ])
+    expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
   it('should accept an empty string as query key', async () => {
@@ -5926,7 +5911,7 @@ describe('useQuery', () => {
     })
   })
 
-  it('it should have status=error on mount when a query has failed', async () => {
+  it('should have status=error on mount when a query has failed', async () => {
     const key = queryKey()
     const states: Array<UseQueryResult<unknown>> = []
     const error = new Error('oops')

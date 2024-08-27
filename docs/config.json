@@ -737,6 +737,40 @@
               "to": "framework/solid/reference/createQuery"
             }
           ]
+        },
+        {
+          "label": "svelte",
+          "children": [
+            {
+              "label": "Svelte Reference",
+              "to": "framework/svelte/reference/index"
+            },
+            {
+              "label": "Functions / createQuery",
+              "to": "framework/svelte/reference/functions/createquery"
+            },
+            {
+              "label": "Functions / createMutation",
+              "to": "framework/svelte/reference/functions/createmutation"
+            }
+          ]
+        },
+        {
+          "label": "angular",
+          "children": [
+            {
+              "label": "Angular Reference",
+              "to": "framework/angular/reference/index"
+            },
+            {
+              "label": "Functions / injectQuery",
+              "to": "framework/angular/reference/functions/injectquery"
+            },
+            {
+              "label": "Functions / injectMutation",
+              "to": "framework/angular/reference/functions/injectmutation"
+            }
+          ]
         }
       ]
     },
@@ -758,6 +792,10 @@
         {
           "label": "No Rest Destructuring",
           "to": "eslint/no-rest-destructuring"
+        },
+        {
+          "label": "No Unstable Deps",
+          "to": "eslint/no-unstable-deps"
         }
       ]
     },
@@ -964,8 +1002,8 @@
               "to": "framework/svelte/examples/ssr"
             },
             {
-              "label": "Optimistic Updates in TypeScript",
-              "to": "framework/svelte/examples/optimistic-updates-typescript"
+              "label": "Optimistic Updates",
+              "to": "framework/svelte/examples/optimistic-updates"
             },
             {
               "label": "Playground",

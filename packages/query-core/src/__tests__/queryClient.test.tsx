@@ -218,13 +218,13 @@ describe('queryClient', () => {
       expect(testCache.find({ queryKey: key })).toBe(testCache.get('someKey'))
     })
 
-    test('should create a new query if query was not found', () => {
+    test('should create a new query if query was not found 1', () => {
       const key = queryKey()
       queryClient.setQueryData(key, 'bar')
       expect(queryClient.getQueryData(key)).toBe('bar')
     })
 
-    test('should create a new query if query was not found', () => {
+    test('should create a new query if query was not found 2', () => {
       const key = queryKey()
       queryClient.setQueryData(key, 'qux')
       expect(queryClient.getQueryData(key)).toBe('qux')
@@ -746,12 +746,15 @@ describe('queryClient', () => {
 
     test('should stop prefetching if getNextPageParam returns undefined', async () => {
       const key = queryKey()
+      let count = 0
 
       await queryClient.prefetchInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) => String(pageParam),
-        getNextPageParam: (_lastPage, _pages, lastPageParam) =>
-          lastPageParam >= 20 ? undefined : lastPageParam + 5,
+        getNextPageParam: (_lastPage, _pages, lastPageParam) => {
+          count++
+          return lastPageParam >= 20 ? undefined : lastPageParam + 5
+        },
         initialPageParam: 10,
         pages: 5,
       })
@@ -762,6 +765,9 @@ describe('queryClient', () => {
         pages: ['10', '15', '20'],
         pageParams: [10, 15, 20],
       })
+
+      // this check ensures we're exiting the fetch loop early
+      expect(count).toBe(3)
     })
   })
 
@@ -1068,7 +1074,7 @@ describe('queryClient', () => {
       expect(queryFn2).toHaveBeenCalledTimes(1)
     })
 
-    test('should be able to refetch all active and inactive queries', async () => {
+    test('should be able to refetch all active and inactive queries (queryClient.refetchQueries()', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
       const queryFn1 = vi
@@ -1091,7 +1097,7 @@ describe('queryClient', () => {
       expect(queryFn2).toHaveBeenCalledTimes(2)
     })
 
-    test('should be able to refetch all active and inactive queries', async () => {
+    test('should be able to refetch all active and inactive queries (queryClient.refetchQueries({ type: "all" }))', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
       const queryFn1 = vi

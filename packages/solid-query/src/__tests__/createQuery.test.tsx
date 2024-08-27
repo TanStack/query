@@ -802,7 +802,7 @@ describe('createQuery', () => {
     expect(states[1]).toMatchObject({ data: 'test' })
   })
 
-  it('should be able to select a part of the data with select in object syntax', async () => {
+  it('should be able to select a part of the data with select in object syntax 2', async () => {
     const key = queryKey()
     const states: Array<CreateQueryResult<string>> = []
 
@@ -831,7 +831,7 @@ describe('createQuery', () => {
     expect(states[1]).toMatchObject({ data: 'test' })
   })
 
-  it('should be able to select a part of the data with select in object syntax', async () => {
+  it('should be able to select a part of the data with select in object syntax 1', async () => {
     const key = queryKey()
     const states: Array<CreateQueryResult<string>> = []
 
@@ -3528,6 +3528,124 @@ describe('createQuery', () => {
     ])
   })
 
+  // See https://github.com/TanStack/query/issues/7711
+  it('race condition: should cleanup observers after component that created the query is unmounted #1', async () => {
+    const key = queryKey()
+
+    function Component() {
+      let val = 1
+      const dataQuery = createQuery(() => ({
+        queryKey: [key],
+        queryFn: () => {
+          return val++
+        },
+      }))
+
+      return (
+        <div>
+          <p>component</p>
+          <p>data: {String(dataQuery.data)}</p>
+        </div>
+      )
+    }
+
+    const Outer = () => {
+      const [showComp, setShowComp] = createSignal(true)
+      return (
+        <div>
+          <button
+            onClick={() => {
+              queryClient.invalidateQueries()
+              setShowComp(!showComp())
+            }}
+          >
+            toggle
+          </button>
+          {showComp() ? <Component /> : <div>not showing</div>}
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Outer />
+      </QueryClientProvider>
+    ))
+
+    await waitFor(() => rendered.getByText('component'))
+    fireEvent.click(rendered.getByText('toggle'))
+    await waitFor(() => rendered.getByText('not showing'))
+    fireEvent.click(rendered.getByText('toggle'))
+    await waitFor(() => rendered.getByText('component'))
+    fireEvent.click(rendered.getByText('toggle'))
+    await waitFor(() => rendered.getByText('not showing'))
+
+    const entry = queryClient.getQueryCache().find({
+      queryKey: [key],
+    })!
+
+    expect(entry.getObserversCount()).toBe(0)
+  })
+
+  // See https://github.com/TanStack/query/issues/7711
+  it('race condition: should cleanup observers after component that created the query is unmounted #2', async () => {
+    const key = queryKey()
+
+    function Component() {
+      let val = 1
+      const dataQuery = createQuery(() => ({
+        queryKey: [key],
+        queryFn: () => {
+          return val++
+        },
+      }))
+
+      return (
+        <div>
+          <p>component</p>
+          <p>data: {String(dataQuery.data)}</p>
+        </div>
+      )
+    }
+
+    const Outer = () => {
+      const [showComp, setShowComp] = createSignal(true)
+      return (
+        <div>
+          <button
+            onClick={() => {
+              queueMicrotask(() => setShowComp(!showComp()))
+              queryClient.invalidateQueries()
+            }}
+          >
+            toggle
+          </button>
+          {showComp() ? <Component /> : <div>not showing</div>}
+        </div>
+      )
+    }
+
+    const rendered = render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Outer />
+      </QueryClientProvider>
+    ))
+
+    await waitFor(() => rendered.getByText('component'))
+    fireEvent.click(rendered.getByText('toggle'))
+    await waitFor(() => rendered.getByText('not showing'))
+    fireEvent.click(rendered.getByText('toggle'))
+    await waitFor(() => rendered.getByText('component'))
+    fireEvent.click(rendered.getByText('toggle'))
+    await waitFor(() => rendered.getByText('not showing'))
+
+    const entry = queryClient.getQueryCache().find({
+      queryKey: [key],
+    })!
+
+    expect(entry.getObserversCount()).toBe(0)
+  })
+
   it('should mark query as fetching, when using initialData', async () => {
     const key = queryKey()
     const results: Array<DefinedCreateQueryResult<string>> = []
@@ -3636,7 +3754,7 @@ describe('createQuery', () => {
     expect(results[2]).toMatchObject({ data: 'fetched data', isStale: false })
   })
 
-  it('it should support enabled:false in query object syntax', async () => {
+  it('should support enabled:false in query object syntax', async () => {
     const key = queryKey()
     const queryFn = vi.fn<(...args: Array<unknown>) => string>()
     queryFn.mockImplementation(() => 'data')
@@ -3724,7 +3842,7 @@ describe('createQuery', () => {
       const query = createQuery(() => ({
         queryKey: key,
         queryFn: () => 'fetched data',
-        gcTime: 1000 * 60 * 10, //10 Minutes
+        gcTime: 1000 * 60 * 10, // 10 Minutes
       }))
       return <div>{query.data}</div>
     }
@@ -3929,7 +4047,7 @@ describe('createQuery', () => {
 
     await waitFor(() => rendered.getByText('count: 1'))
 
-    await sleep(10) //extra sleep to make sure we're not re-fetching
+    await sleep(10) // extra sleep to make sure we're not re-fetching
 
     expect(states.length).toEqual(2)
 
@@ -4442,7 +4560,7 @@ describe('createQuery', () => {
       readonly [typeof key, number]
     > = async (ctx) => {
       const [, limit] = ctx.queryKey
-      // eslint-disable-next-line ts/no-unnecessary-condition
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       const value = limit % 2 && ctx.signal ? 'abort' : `data ${limit}`
       await sleep(25)
       return value
@@ -5795,7 +5913,7 @@ describe('createQuery', () => {
     })
   })
 
-  it('it should have status=error on mount when a query has failed', async () => {
+  it('should have status=error on mount when a query has failed', async () => {
     const key = queryKey()
     const states: Array<CreateQueryResult<unknown>> = []
     const error = new Error('oops')

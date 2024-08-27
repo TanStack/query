@@ -5,7 +5,7 @@ export const api = (customFetch = fetch) => ({
     const response = await customFetch(
       'https://jsonplaceholder.typicode.com/posts',
     )
-    const data = (await response.json()) as Post[]
+    const data = (await response.json()) as Array<Post>
     return data.filter((x) => x.id <= limit)
   },
   getPostById: async (id: number): Promise<Post> => {

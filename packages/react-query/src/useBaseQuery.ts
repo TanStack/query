@@ -10,7 +10,11 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
-import { ensureStaleTime, fetchOptimistic, shouldSuspend } from './suspense'
+import {
+  ensureSuspenseTimers,
+  fetchOptimistic,
+  shouldSuspend,
+} from './suspense'
 import type { UseBaseQueryOptions } from './types'
 import type {
   QueryClient,
@@ -58,7 +62,7 @@ export function useBaseQuery<
     ? 'isRestoring'
     : 'optimistic'
 
-  ensureStaleTime(defaultedOptions)
+  ensureSuspenseTimers(defaultedOptions)
   ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary)
 
   useClearResetErrorBoundary(errorResetBoundary)
@@ -100,9 +104,6 @@ export function useBaseQuery<
 
   // Handle suspense
   if (shouldSuspend(defaultedOptions, result)) {
-    // Do the same thing as the effect right above because the effect won't run
-    // when we suspend but also, the component won't re-mount so our observer would
-    // be out of date.
     throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
   }
 

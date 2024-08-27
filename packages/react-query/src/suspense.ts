@@ -18,7 +18,7 @@ export const defaultThrowOnError = <
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
 ) => query.state.data === undefined
 
-export const ensureStaleTime = (
+export const ensureSuspenseTimers = (
   defaultedOptions: DefaultedQueryObserverOptions<any, any, any, any, any>,
 ) => {
   if (defaultedOptions.suspense) {
@@ -26,6 +26,9 @@ export const ensureStaleTime = (
     // fetching again when directly mounting after suspending
     if (typeof defaultedOptions.staleTime !== 'number') {
       defaultedOptions.staleTime = 1000
+    }
+    if (typeof defaultedOptions.gcTime === 'number') {
+      defaultedOptions.gcTime = Math.max(defaultedOptions.gcTime, 1000)
     }
   }
 }

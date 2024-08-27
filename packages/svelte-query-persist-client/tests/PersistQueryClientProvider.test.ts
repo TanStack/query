@@ -9,14 +9,14 @@ import InitialData from './InitialData/Provider.svelte'
 import RemoveCache from './RemoveCache/Provider.svelte'
 import RestoreCache from './RestoreCache/Provider.svelte'
 import UseQueries from './UseQueries/Provider.svelte'
-import { createQueryClient, queryKey, sleep } from './utils'
+import { createQueryClient, sleep } from './utils.js'
 
 import type {
   PersistedClient,
   Persister,
 } from '@tanstack/query-persist-client-core'
 import type { Writable } from 'svelte/store'
-import type { StatusResult } from './utils'
+import type { StatusResult } from './utils.js'
 
 const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined
@@ -26,7 +26,7 @@ const createMockPersister = (): Persister => {
       storedState = persistClient
     },
     async restoreClient() {
-      await sleep(10)
+      await sleep(5)
       return storedState
     },
     removeClient() {
@@ -46,7 +46,7 @@ const createMockErrorPersister = (
         // noop
       },
       async restoreClient() {
-        await sleep(10)
+        await sleep(5)
         throw error
       },
       removeClient,
@@ -56,12 +56,11 @@ const createMockErrorPersister = (
 
 describe('PersistQueryClientProvider', () => {
   test('restores cache from persister', async () => {
-    const key = queryKey()
     const statesStore: Writable<Array<StatusResult<string>>> = writable([])
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
-      queryKey: key,
+      queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
     })
 
@@ -75,7 +74,6 @@ describe('PersistQueryClientProvider', () => {
       props: {
         queryClient,
         persistOptions: { persister },
-        key,
         states: statesStore,
       },
     })
@@ -113,12 +111,11 @@ describe('PersistQueryClientProvider', () => {
   })
 
   test('should also put useQueries into idle state', async () => {
-    const key = queryKey()
     const statesStore: Writable<Array<StatusResult<string>>> = writable([])
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
-      queryKey: key,
+      queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
     })
 
@@ -132,7 +129,6 @@ describe('PersistQueryClientProvider', () => {
       props: {
         queryClient,
         persistOptions: { persister },
-        key,
         states: statesStore,
       },
     })
@@ -171,12 +167,11 @@ describe('PersistQueryClientProvider', () => {
   })
 
   test('should show initialData while restoring', async () => {
-    const key = queryKey()
     const statesStore: Writable<Array<StatusResult<string>>> = writable([])
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
-      queryKey: key,
+      queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
     })
 
@@ -190,7 +185,6 @@ describe('PersistQueryClientProvider', () => {
       props: {
         queryClient,
         persistOptions: { persister },
-        key,
         states: statesStore,
       },
     })
@@ -228,12 +222,11 @@ describe('PersistQueryClientProvider', () => {
   })
 
   test('should not refetch after restoring when data is fresh', async () => {
-    const key = queryKey()
     const statesStore: Writable<Array<StatusResult<string>>> = writable([])
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
-      queryKey: key,
+      queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
     })
 
@@ -249,13 +242,12 @@ describe('PersistQueryClientProvider', () => {
       props: {
         queryClient,
         persistOptions: { persister },
-        key,
         states: statesStore,
         fetched,
       },
     })
 
-    await waitFor(() => rendered.getByText('data: null'))
+    await waitFor(() => rendered.getByText('data: undefined'))
     await waitFor(() => rendered.getByText('data: hydrated'))
 
     const states = get(statesStore)
@@ -277,11 +269,9 @@ describe('PersistQueryClientProvider', () => {
   })
 
   test('should call onSuccess after successful restoring', async () => {
-    const key = queryKey()
-
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
-      queryKey: key,
+      queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
     })
 
@@ -297,7 +287,6 @@ describe('PersistQueryClientProvider', () => {
       props: {
         queryClient,
         persistOptions: { persister },
-        key,
         onSuccess,
       },
     })
@@ -310,11 +299,9 @@ describe('PersistQueryClientProvider', () => {
   })
 
   test('should await onSuccess after successful restoring', async () => {
-    const key = queryKey()
-
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery({
-      queryKey: key,
+      queryKey: ['test'],
       queryFn: () => Promise.resolve('hydrated'),
     })
 
@@ -330,7 +317,6 @@ describe('PersistQueryClientProvider', () => {
       props: {
         queryClient,
         persistOptions: { persister },
-        key,
         states: statesStore,
         onSuccess: async () => {
           statesStore.update((s) => [...s, 'onSuccess'])
@@ -354,7 +340,6 @@ describe('PersistQueryClientProvider', () => {
   })
 
   test('should remove cache after non-successful restoring', async () => {
-    const key = queryKey()
     const consoleMock = vi.spyOn(console, 'error')
     const consoleWarn = vi
       .spyOn(console, 'warn')
@@ -367,7 +352,7 @@ describe('PersistQueryClientProvider', () => {
     const [error, persister] = createMockErrorPersister(removeClient)
 
     const rendered = render(RemoveCache, {
-      props: { queryClient, persistOptions: { persister }, key },
+      props: { queryClient, persistOptions: { persister } },
     })
 
     await waitFor(() => rendered.getByText('fetched'))

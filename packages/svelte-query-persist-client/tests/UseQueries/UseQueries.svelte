@@ -1,28 +1,25 @@
 <script lang="ts">
   import { createQueries } from '@tanstack/svelte-query'
-  import { sleep } from '../utils'
+  import { sleep } from '../utils.js'
   import type { Writable } from 'svelte/store'
-  import type { StatusResult } from '../utils'
+  import type { StatusResult } from '../utils.js'
 
-  export let key: Array<string>
   export let states: Writable<Array<StatusResult<string>>>
 
-  const state = createQueries({
+  const queries = createQueries({
     queries: [
       {
-        queryKey: key,
+        queryKey: ['test'],
         queryFn: async (): Promise<string> => {
-          await sleep(10)
+          await sleep(5)
           return 'fetched'
         },
       },
     ],
   })
 
-  $: states.update((prev) => [...prev, $state[0]])
+  $: states.update((prev) => [...prev, $queries[0]])
 </script>
 
-<div>
-  <h1>{$state[0].data}</h1>
-  <h2>fetchStatus: {$state[0].fetchStatus}</h2>
-</div>
+<div>{$queries[0].data}</div>
+<div>fetchStatus: {$queries[0].fetchStatus}</div>

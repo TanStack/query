@@ -11,11 +11,23 @@ _Angular Query is compatible with Angular v16 and higher_
 
 ```bash
 npm i @tanstack/angular-query-experimental
-# or
+```
+
+or
+
+```bash
 pnpm add @tanstack/angular-query-experimental
-# or
+```
+
+or
+
+```bash
 yarn add @tanstack/angular-query-experimental
-# or
+```
+
+or
+
+```bash
 bun add @tanstack/angular-query-experimental
 ```
 

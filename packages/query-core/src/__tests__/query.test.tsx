@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { waitFor } from '@testing-library/react'
-import { QueryObserver, isCancelledError } from '..'
+import { QueryObserver, dehydrate, hydrate, isCancelledError } from '..'
 import {
   createQueryClient,
   mockOnlineManagerIsOnline,
@@ -155,7 +155,7 @@ describe('query', () => {
     const visibilityMock = mockVisibilityState('hidden')
 
     let count = 0
-    let result
+    let result: unknown
 
     const promise = queryClient.fetchQuery({
       queryKey: key,
@@ -183,8 +183,10 @@ describe('query', () => {
     // Check if the error is set to the cancelled error
     try {
       await promise
+      expect.unreachable()
     } catch {
       expect(isCancelledError(result)).toBe(true)
+      expect(result instanceof Error).toBe(true)
     } finally {
       // Reset visibilityState to original value
       visibilityMock.mockRestore()
@@ -387,6 +389,26 @@ describe('query', () => {
     expect(queryFn).toHaveBeenCalledTimes(1) // have been called,
     expect(query.state.error).toBe(null) // not have an error, and
     expect(query.state.fetchStatus).toBe('idle') // not be loading any longer
+  })
+
+  test('should reset to default state when created from hydration', async () => {
+    const client = createQueryClient()
+    await client.prefetchQuery({
+      queryKey: ['string'],
+      queryFn: () => Promise.resolve('string'),
+    })
+
+    const dehydrated = dehydrate(client)
+
+    const hydrationClient = createQueryClient()
+    hydrate(hydrationClient, dehydrated)
+
+    expect(hydrationClient.getQueryData(['string'])).toBe('string')
+
+    const query = hydrationClient.getQueryCache().find({ queryKey: ['string'] })
+    query?.reset()
+
+    expect(hydrationClient.getQueryData(['string'])).toBe(undefined)
   })
 
   test('should be able to refetch a cancelled query', async () => {

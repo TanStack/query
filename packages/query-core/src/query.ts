@@ -182,8 +182,8 @@ export class Query<
     this.#cache = config.cache
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
-    this.#initialState = config.state || getDefaultState(this.options)
-    this.state = this.#initialState
+    this.#initialState = getDefaultState(this.options)
+    this.state = config.state ?? this.#initialState
     this.scheduleGc()
   }
   get meta(): QueryMeta | undefined {
@@ -577,7 +577,7 @@ export class Query<
             }),
           }
         case 'error':
-          const error = action.error as unknown
+          const error = action.error
 
           if (isCancelledError(error) && error.revert && this.#revertState) {
             return { ...this.#revertState, fetchStatus: 'idle' }
@@ -585,11 +585,11 @@ export class Query<
 
           return {
             ...state,
-            error: error as TError,
+            error,
             errorUpdateCount: state.errorUpdateCount + 1,
             errorUpdatedAt: Date.now(),
             fetchFailureCount: state.fetchFailureCount + 1,
-            fetchFailureReason: error as TError,
+            fetchFailureReason: error,
             fetchStatus: 'idle',
             status: 'error',
           }
@@ -663,7 +663,7 @@ function getDefaultState<
   return {
     data,
     dataUpdateCount: 0,
-    dataUpdatedAt: hasData ? initialDataUpdatedAt ?? Date.now() : 0,
+    dataUpdatedAt: hasData ? (initialDataUpdatedAt ?? Date.now()) : 0,
     error: null,
     errorUpdateCount: 0,
     errorUpdatedAt: 0,

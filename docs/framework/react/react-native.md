@@ -165,7 +165,7 @@ export function useQueryFocusAware(notifyOnChangeProps?: NotifyOnChangeProps) {
     }, []),
   )
 
-  return () => focusRef.current
+  return () => focusedRef.current
 
   useQuery({
     queryKey: ['key'],

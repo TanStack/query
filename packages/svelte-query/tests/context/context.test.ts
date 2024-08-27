@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import { render } from '@testing-library/svelte'
-import { getIsRestoringContext } from '../../src/context'
+import { getIsRestoringContext } from '../../src/index.js'
 import BaseExample from './BaseExample.svelte'
 
 describe('getQueryClientContext', () => {

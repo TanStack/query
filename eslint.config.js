@@ -3,6 +3,7 @@
 // @ts-ignore Needed due to moduleResolution Node vs Bundler
 import { tanstackConfig } from '@tanstack/config/eslint'
 import pluginCspell from '@cspell/eslint-plugin'
+import vitest from '@vitest/eslint-plugin'
 
 export default [
   ...tanstackConfig,
@@ -35,9 +36,18 @@ export default [
           },
         },
       ],
-      'ts/ban-types': 'off',
-      'ts/no-empty-function': 'off',
+      '@typescript-eslint/ban-types': 'off',
+      '@typescript-eslint/no-empty-function': 'off',
       'no-case-declarations': 'off',
     },
+  },
+  {
+    files: ['**/*.spec.ts*', '**/*.test.ts*', '**/*.test-d.ts*'],
+    plugins: { vitest },
+    rules: {
+      ...vitest.configs.recommended.rules,
+      'vitest/expect-expect': 'warn',
+    },
+    settings: { vitest: { typecheck: true } },
   },
 ]

@@ -8,13 +8,25 @@ title: Devtools
 The devtools are a separate package that you need to install:
 
 ```bash
-$ npm i @tanstack/angular-query-devtools-experimental
-# or
-$ pnpm add @tanstack/angular-query-devtools-experimental
-# or
-$ yarn add @tanstack/angular-query-devtools-experimental
-# or
-$ bun add @tanstack/angular-query-devtools-experimental
+npm i @tanstack/angular-query-devtools-experimental
+```
+
+or
+
+```bash
+pnpm add @tanstack/angular-query-devtools-experimental
+```
+
+or
+
+```bash
+yarn add @tanstack/angular-query-devtools-experimental
+```
+
+or
+
+```bash
+bun add @tanstack/angular-query-devtools-experimental
 ```
 
 You can import the devtools like this:
@@ -29,7 +41,7 @@ Floating Mode will mount the devtools as a fixed, floating element in your app a
 
 Place the following code as high in your Angular app as you can. The closer it is to the root of the page, the better it will work!
 
-```ts
+```angular-ts
 import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
 import { Component } from '@angular/core';
 
@@ -62,4 +74,4 @@ import { Component } from '@angular/core';
   - Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
 - `shadowDOMTarget?: ShadowRoot`
   - Default behavior will apply the devtool's styles to the head tag within the DOM.
-  - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instad of within the head tag in the light DOM.
+  - Use this to pass a shadow DOM target to the devtools so that the styles will be applied within the shadow DOM instead of within the head tag in the light DOM.

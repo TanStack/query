@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { createQuery } from '../../src/createQuery'
+  import { createQuery } from '../../src/index.js'
   import type { QueryClient, QueryObserverResult } from '@tanstack/query-core'
   import type { Writable } from 'svelte/store'
-  import type { CreateQueryOptions, StoreOrVal } from '../../src/types'
+  import type { CreateQueryOptions, StoreOrVal } from '../../src/index.js'
 
   export let options: StoreOrVal<CreateQueryOptions<any>>
   export let queryClient: QueryClient
@@ -15,11 +15,4 @@
 
 <div>Status: {$query.status}</div>
 <div>Failure Count: {$query.failureCount}</div>
-
-{#if $query.isPending}
-  <div>Loading</div>
-{:else if $query.isError}
-  <div>Error</div>
-{:else if $query.isSuccess}
-  <div>{$query.data}</div>
-{/if}
+<div>Data: {$query.data ?? 'undefined'}</div>

@@ -34,7 +34,7 @@ export interface NotifyOptions {
   listeners?: boolean
 }
 
-export interface ObserverFetchOptions extends FetchOptions {
+interface ObserverFetchOptions extends FetchOptions {
   throwOnError?: boolean
 }
 
