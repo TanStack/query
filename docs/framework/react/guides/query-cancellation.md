@@ -187,3 +187,8 @@ return (
 ```
 
 [//]: # 'Example7'
+
+## Limitations
+
+Cancelation does not work when working with `Suspense` hooks: `useSuspenseQuery`, `useSuspenseQueries` and `useSuspenseInfiniteQuery`.
+

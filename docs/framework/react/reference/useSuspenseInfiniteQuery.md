@@ -24,3 +24,8 @@ Same object as [useInfiniteQuery](../useInfiniteQuery), except that:
 - `isPlaceholderData` is missing
 - `status` is always `success`
   - the derived flags are set accordingly.
+
+**Caveat**
+
+[Cancelation](../guides/query-cancellation.md) does not work.
+
