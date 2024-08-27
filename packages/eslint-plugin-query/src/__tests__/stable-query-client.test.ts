@@ -1,10 +1,12 @@
 import { RuleTester } from '@typescript-eslint/rule-tester'
+import * as parser from '@typescript-eslint/parser'
 import { rule } from '../rules/stable-query-client/stable-query-client.rule'
 import { normalizeIndent } from './test-utils'
 
 const ruleTester = new RuleTester({
-  parser: '@typescript-eslint/parser',
-  settings: {},
+  settings: {
+    parser,
+  },
 })
 
 ruleTester.run('stable-query-client', rule, {
@@ -35,7 +37,7 @@ ruleTester.run('stable-query-client', rule, {
       name: 'QueryClient is stable when wrapped in React.useMemo',
       code: normalizeIndent`
           import { QueryClient } from "@tanstack/react-query";
-  
+
           function Component() {
             const [queryClient] = React.useMemo(() => new QueryClient(), []);
             return;
@@ -46,7 +48,7 @@ ruleTester.run('stable-query-client', rule, {
       name: 'QueryClient is stable when wrapped in useAnything',
       code: normalizeIndent`
           import { QueryClient } from "@tanstack/react-query";
-  
+
           function Component() {
             const [queryClient] = useAnything(() => new QueryClient());
             return;

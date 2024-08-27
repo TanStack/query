@@ -1,10 +1,12 @@
 import { RuleTester } from '@typescript-eslint/rule-tester'
+import * as parser from '@typescript-eslint/parser'
 import { rule } from '../rules/no-rest-destructuring/no-rest-destructuring.rule'
 import { normalizeIndent } from './test-utils'
 
 const ruleTester = new RuleTester({
-  parser: '@typescript-eslint/parser',
-  settings: {},
+  settings: {
+    parser,
+  },
 })
 
 ruleTester.run('no-rest-destructuring', rule, {
