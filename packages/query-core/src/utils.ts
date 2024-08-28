@@ -246,15 +246,6 @@ export function replaceEqualDeep(a: any, b: any): any {
     return a
   }
 
-  if (process.env.NODE_ENV !== 'production') {
-    try {
-      JSON.stringify(a)
-      JSON.stringify(b)
-    } catch {
-      throw new Error('Values are not serializable')
-    }
-  }
-
   const array = isPlainArray(a) && isPlainArray(b)
 
   if (array || (isPlainObject(a) && isPlainObject(b))) {
@@ -362,6 +353,19 @@ export function replaceData<
   if (typeof options.structuralSharing === 'function') {
     return options.structuralSharing(prevData, data) as TData
   } else if (options.structuralSharing !== false) {
+    if (process.env.NODE_ENV !== 'production') {
+      try {
+        JSON.stringify(prevData)
+        JSON.stringify(data)
+      } catch (error) {
+        console.error(
+          `Data is not serializable. [${options.queryHash}]: ${error}; The error will be redacted in production builds`,
+        )
+
+        throw new Error('Data is not serializable')
+      }
+    }
+
     // Structurally share data between prev and new data if needed
     return replaceEqualDeep(prevData, data)
   }

@@ -967,6 +967,10 @@ describe('query', () => {
   })
 
   it('should have an error status when queryFn data is not serializable', async () => {
+    const consoleMock = vi.spyOn(console, 'error')
+
+    consoleMock.mockImplementation(() => undefined)
+
     const key = queryKey()
 
     const queryFn = vi.fn()
@@ -1000,6 +1004,12 @@ describe('query', () => {
 
     expect(queryFn).toHaveBeenCalledTimes(1)
 
+    expect(consoleMock).toHaveBeenCalledWith(
+      expect.stringContaining('Data is not serializable'),
+    )
+
     expect(query.state.status).toBe('error')
+
+    consoleMock.mockRestore()
   })
 })
