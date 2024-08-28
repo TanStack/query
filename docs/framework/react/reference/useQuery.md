@@ -70,6 +70,7 @@ const {
   - The function that the query will use to request data.
   - Receives a [QueryFunctionContext](../../guides/query-functions#queryfunctioncontext)
   - Must return a promise that will either resolve data or throw an error. The data cannot be `undefined`.
+  - Note: It is not recommended to use server actions in `queryFn`. Server actions are intended for mutations, run serially, and can't execute in parallel, which can lead to unexpected behavior when used in `queryFn`. For fetching data, consider using API routes instead.
 - `enabled: boolean | (query: Query) => boolean`
   - Set this to `false` to disable this query from automatically running.
   - Can be used for [Dependent Queries](../../guides/dependent-queries).
