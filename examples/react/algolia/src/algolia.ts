@@ -1,4 +1,4 @@
-import { algoliasearch } from 'algoliasearch'
+import { searchClient } from '@algolia/client-search'
 import type { Hit } from '@algolia/client-search'
 
 // From Algolia example
@@ -22,15 +22,13 @@ export async function search<TData>({
   hits: Array<Hit<TData>>
   nextPage: number | undefined
 }> {
-  const client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_SEARCH_API_KEY)
+  const client = searchClient(ALGOLIA_APP_ID, ALGOLIA_SEARCH_API_KEY)
 
   console.log('algolia:search', { indexName, query, pageParam, hitsPerPage })
 
   const { hits, page, nbPages } = await client.searchSingleIndex<TData>({
     indexName,
-    searchParams: { query },
-    page: pageParam,
-    hitsPerPage,
+    searchParams: { query, page: pageParam, hitsPerPage },
   })
 
   const nextPage = page + 1 < nbPages ? page + 1 : undefined
