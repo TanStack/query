@@ -1,15 +1,15 @@
 import * as React from 'react'
-import { View, RefreshControl, StyleSheet, ScrollView } from 'react-native'
-import { Title, Paragraph } from 'react-native-paper'
-import { StackNavigationProp } from '@react-navigation/stack'
-import { RouteProp } from '@react-navigation/native'
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native'
+import { Paragraph, Title } from 'react-native-paper'
 import { useQuery } from '@tanstack/react-query'
-
 import { LoadingIndicator } from '../components/LoadingIndicator'
 import { ErrorMessage } from '../components/ErrorMessage'
 import { useRefreshByUser } from '../hooks/useRefreshByUser'
-import { fetchMovie, MovieDetails } from '../lib/api'
+import { fetchMovie } from '../lib/api'
+import type { MovieDetails } from '../lib/api'
 import type { MoviesStackNavigator } from '../navigation/types'
+import type { StackNavigationProp } from '@react-navigation/stack'
+import type { RouteProp } from '@react-navigation/native'
 
 type MoviesDetailsScreenNavigationProp = StackNavigationProp<
   MoviesStackNavigator,
