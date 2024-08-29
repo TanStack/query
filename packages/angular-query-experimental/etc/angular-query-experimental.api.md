@@ -36,15 +36,16 @@ import type { ThrowOnError } from '@tanstack/query-core';
 // @public (undocumented)
 export interface BaseMutationNarrowing<TData = unknown, TError = DefaultError, TVariables = unknown, TContext = unknown> {
     // (undocumented)
-    isError: (this: CreateMutationResult<TData, TError, TVariables, TContext>) => this is CreateMutationResult<TData, TError, TVariables, TContext, CreateStatusBasedMutationResult<'error', TData, TError, TVariables, TContext>>;
+    isError: SignalFunction<(this: CreateMutationResult<TData, TError, TVariables, TContext>) => this is CreateMutationResult<TData, TError, TVariables, TContext, CreateStatusBasedMutationResult<'error', TData, TError, TVariables, TContext>>>;
     // (undocumented)
-    isIdle: (this: CreateMutationResult<TData, TError, TVariables, TContext>) => this is CreateMutationResult<TData, TError, TVariables, TContext, CreateStatusBasedMutationResult<'idle', TData, TError, TVariables, TContext>>;
+    isIdle: SignalFunction<(this: CreateMutationResult<TData, TError, TVariables, TContext>) => this is CreateMutationResult<TData, TError, TVariables, TContext, CreateStatusBasedMutationResult<'idle', TData, TError, TVariables, TContext>>>;
     // (undocumented)
-    isPending: (this: CreateMutationResult<TData, TError, TVariables, TContext>) => this is CreateMutationResult<TData, TError, TVariables, TContext, CreateStatusBasedMutationResult<'pending', TData, TError, TVariables, TContext>>;
+    isPending: SignalFunction<(this: CreateMutationResult<TData, TError, TVariables, TContext>) => this is CreateMutationResult<TData, TError, TVariables, TContext, CreateStatusBasedMutationResult<'pending', TData, TError, TVariables, TContext>>>;
+    // Warning: (ae-forgotten-export) The symbol "SignalFunction" needs to be exported by the entry point index.d.ts
     // Warning: (ae-forgotten-export) The symbol "CreateStatusBasedMutationResult" needs to be exported by the entry point index.d.ts
     //
     // (undocumented)
-    isSuccess: (this: CreateMutationResult<TData, TError, TVariables, TContext>) => this is CreateMutationResult<TData, TError, TVariables, TContext, CreateStatusBasedMutationResult<'success', TData, TError, TVariables, TContext>>;
+    isSuccess: SignalFunction<(this: CreateMutationResult<TData, TError, TVariables, TContext>) => this is CreateMutationResult<TData, TError, TVariables, TContext, CreateStatusBasedMutationResult<'success', TData, TError, TVariables, TContext>>>;
 }
 
 // @public (undocumented)
