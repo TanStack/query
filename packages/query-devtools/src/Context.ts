@@ -7,7 +7,7 @@ type YPosition = 'top' | 'bottom'
 export type DevtoolsPosition = XPosition | YPosition
 export type DevtoolsButtonPosition = `${YPosition}-${XPosition}` | 'relative'
 
-export interface DevToolsErrorType {
+export interface DevtoolsErrorType {
   /**
    * The name of the error.
    */
@@ -27,7 +27,7 @@ export interface QueryDevtoolsProps {
   buttonPosition?: DevtoolsButtonPosition
   position?: DevtoolsPosition
   initialIsOpen?: boolean
-  errorTypes?: Array<DevToolsErrorType>
+  errorTypes?: Array<DevtoolsErrorType>
   shadowDOMTarget?: ShadowRoot
 }
 

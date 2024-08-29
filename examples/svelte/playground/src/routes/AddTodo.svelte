@@ -1,13 +1,7 @@
 <script lang="ts">
   import { createMutation, useQueryClient } from '@tanstack/svelte-query'
-  import {
-    errorRate,
-    queryTimeMin,
-    queryTimeMax,
-    list,
-    id,
-    type Todo,
-  } from '../lib/stores'
+  import { errorRate, queryTimeMin, queryTimeMax, list, id } from '$lib/stores'
+  import type { Todo } from '$lib/stores'
 
   const queryClient = useQueryClient()
 

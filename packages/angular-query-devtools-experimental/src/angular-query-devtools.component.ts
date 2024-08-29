@@ -22,7 +22,7 @@ import type {
   SimpleChanges,
 } from '@angular/core'
 import type {
-  DevToolsErrorType,
+  DevtoolsErrorType,
   TanstackQueryDevtools,
 } from '@tanstack/query-devtools'
 
@@ -91,7 +91,7 @@ export class AngularQueryDevtools
   /**
    * Use this so you can define custom errors that can be shown in the devtools.
    */
-  @Input() errorTypes?: Array<DevToolsErrorType>
+  @Input() errorTypes?: Array<DevtoolsErrorType>
 
   @ViewChild('ref') ref!: ElementRef
 
