@@ -62,8 +62,8 @@ import {
   useTheme,
 } from './Context'
 import type {
-  DevToolsErrorType,
   DevtoolsButtonPosition,
+  DevtoolsErrorType,
   DevtoolsPosition,
   QueryDevtoolsProps,
 } from './Context'
@@ -1916,7 +1916,7 @@ const QueryDetails = () => {
     promise?.catch(() => {})
   }
 
-  const triggerError = (errorType?: DevToolsErrorType) => {
+  const triggerError = (errorType?: DevtoolsErrorType) => {
     const error =
       errorType?.initializer(activeQuery()!) ??
       new Error('Unknown error from devtools')
