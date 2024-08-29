@@ -7,14 +7,14 @@ import type {
 } from '@tanstack/query-core'
 import type { DevtoolsComponentType } from './Devtools'
 import type {
-  DevToolsErrorType,
   DevtoolsButtonPosition,
+  DevtoolsErrorType,
   DevtoolsPosition,
   QueryDevtoolsProps,
 } from './Context'
 import type { Signal } from 'solid-js'
 
-export type { DevtoolsButtonPosition, DevtoolsPosition, DevToolsErrorType }
+export type { DevtoolsButtonPosition, DevtoolsPosition, DevtoolsErrorType }
 export interface TanstackQueryDevtoolsConfig extends QueryDevtoolsProps {
   styleNonce?: string
   shadowDOMTarget?: ShadowRoot
@@ -31,7 +31,7 @@ class TanstackQueryDevtools {
   #buttonPosition: Signal<DevtoolsButtonPosition | undefined>
   #position: Signal<DevtoolsPosition | undefined>
   #initialIsOpen: Signal<boolean | undefined>
-  #errorTypes: Signal<Array<DevToolsErrorType> | undefined>
+  #errorTypes: Signal<Array<DevtoolsErrorType> | undefined>
   #Component: DevtoolsComponentType | undefined
   #dispose?: () => void
 
@@ -72,7 +72,7 @@ class TanstackQueryDevtools {
     this.#initialIsOpen[1](isOpen)
   }
 
-  setErrorTypes(errorTypes: Array<DevToolsErrorType>) {
+  setErrorTypes(errorTypes: Array<DevtoolsErrorType>) {
     this.#errorTypes[1](errorTypes)
   }
 

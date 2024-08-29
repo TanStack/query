@@ -54,7 +54,7 @@
     "esbuild-plugin-file-path-extensions": "^2.1.2",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.2",
-    "jsdom": "^24.1.1",
+    "jsdom": "^25.0.0",
     "knip": "^5.27.0",
     "nx": "^19.5.3",
     "prettier": "^3.3.3",

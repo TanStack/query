@@ -1,11 +1,8 @@
-import {
-  type MutationFilters,
-  type QueryClient,
-  notifyManager,
-} from '@tanstack/query-core'
+import { notifyManager } from '@tanstack/query-core'
 import { readable } from 'svelte/store'
 import { useQueryClient } from './useQueryClient.js'
 import type { Readable } from 'svelte/store'
+import type { MutationFilters, QueryClient } from '@tanstack/query-core'
 
 export function useIsMutating(
   filters?: MutationFilters,
