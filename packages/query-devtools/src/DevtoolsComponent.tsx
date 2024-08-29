@@ -1,18 +1,10 @@
 import { createLocalStorage } from '@solid-primitives/storage'
 import { createMemo } from 'solid-js'
+import { Devtools } from './Devtools'
 import { getPreferredColorScheme } from './utils'
-import {
-  PiPProvider,
-  QueryDevtoolsContext,
-  QueryDevtoolsProps,
-  ThemeContext,
-} from './contexts'
-import { Devtools, THEME_PREFERENCE } from './Devtools'
-import type { Component } from 'solid-js'
-
-export type DevtoolsComponentType = Component<Omit<QueryDevtoolsProps, 'isOpen'>> & {
-  shadowDOMTarget?: ShadowRoot
-}
+import { THEME_PREFERENCE } from './constants'
+import { PiPProvider, QueryDevtoolsContext, ThemeContext } from './contexts'
+import type { DevtoolsComponentType } from './Devtools'
 
 const DevtoolsComponent: DevtoolsComponentType = (props) => {
   const [localStore, setLocalStore] = createLocalStorage({
@@ -40,4 +32,5 @@ const DevtoolsComponent: DevtoolsComponentType = (props) => {
     </QueryDevtoolsContext.Provider>
   )
 }
+
 export default DevtoolsComponent

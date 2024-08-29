@@ -1,21 +1,29 @@
+import {
+  createContext,
+  createEffect,
+  createMemo,
+  createSignal,
+  onCleanup,
+  useContext,
+} from 'solid-js'
+import { clearDelegatedEvents, delegateEvents } from 'solid-js/web'
+import { PIP_DEFAULT_HEIGHT } from '../constants'
+import { useQueryDevtoolsContext } from './QueryDevtoolsContext'
+import type { Accessor, JSX } from 'solid-js'
 import type { StorageObject, StorageSetter } from '@solid-primitives/storage'
-import type {Accessor, JSX} from 'solid-js';
-import {createContext, createEffect, createMemo, createSignal, onCleanup, useContext} from 'solid-js';
-import {clearDelegatedEvents, delegateEvents} from 'solid-js/web';
-import {useQueryDevtoolsContext} from './QueryDevtoolsContext';
-
-const DEFAULT_HEIGHT = 500
 
 interface PiPProviderProps {
   children: JSX.Element
   localStore: StorageObject<string>
   setLocalStore: StorageSetter<string, unknown>
+  disabled?: boolean
 }
 
 type PiPContextType = {
   pipWindow: Window | null
-  requestPipWindow: (width: number, height: number) => Promise<void>
+  requestPipWindow: (width: number, height: number) => void
   closePipWindow: () => void
+  disabled: boolean
 }
 
 const PiPContext = createContext<Accessor<PiPContextType> | undefined>(
@@ -36,7 +44,7 @@ export const PiPProvider = (props: PiPProviderProps) => {
   }
 
   // Open new pipWindow
-  const requestPipWindow = async (width: number, height: number) => {
+  const requestPipWindow = (width: number, height: number) => {
     // We don't want to allow multiple requests.
     if (pipWindow() != null) {
       return
@@ -125,10 +133,10 @@ export const PiPProvider = (props: PiPProviderProps) => {
 
   createEffect(() => {
     const pip_open = (props.localStore.pip_open ?? 'false') as 'true' | 'false'
-    if (pip_open === 'true') {
+    if (pip_open === 'true' && !props.disabled) {
       requestPipWindow(
         Number(window.innerWidth),
-        Number(props.localStore.height || DEFAULT_HEIGHT),
+        Number(props.localStore.height || PIP_DEFAULT_HEIGHT),
       )
     }
   })
@@ -163,6 +171,7 @@ export const PiPProvider = (props: PiPProviderProps) => {
     pipWindow: pipWindow(),
     requestPipWindow,
     closePipWindow,
+    disabled: props.disabled ?? false,
   }))
 
   return (

@@ -1,17 +1,23 @@
-import type { Signal } from 'solid-js'
-import { createSignal, lazy } from 'solid-js'
 import { render } from 'solid-js/web'
+import { createSignal, lazy } from 'solid-js'
+import { setupStyleSheet } from './utils'
 import type {
   QueryClient,
   onlineManager as TOnlineManager,
 } from '@tanstack/query-core'
-import type { DevtoolsErrorType, DevtoolsPosition, QueryDevtoolsProps } from './contexts'
-import type { DevtoolsPanelComponentType } from './DevtoolsPanelComponent'
-import { setupStyleSheet } from './utils'
+import type { DevtoolsComponentType } from './Devtools'
+import type {
+  DevtoolsButtonPosition,
+  DevtoolsErrorType,
+  DevtoolsPosition,
+  QueryDevtoolsProps,
+} from './contexts'
+import type { Signal } from 'solid-js'
 
-export interface TanstackQueryDevtoolsPanelConfig extends Omit<QueryDevtoolsProps, 'buttonPosition'> {
+export interface TanstackQueryDevtoolsPanelConfig extends QueryDevtoolsProps {
   styleNonce?: string
   shadowDOMTarget?: ShadowRoot
+  onClose?: () => unknown
 }
 
 class TanstackQueryDevtoolsPanel {
@@ -22,10 +28,12 @@ class TanstackQueryDevtoolsPanel {
   #isMounted = false
   #styleNonce?: string
   #shadowDOMTarget?: ShadowRoot
+  #buttonPosition: Signal<DevtoolsButtonPosition | undefined>
   #position: Signal<DevtoolsPosition | undefined>
-  #isOpen: Signal<boolean | undefined>
+  #initialIsOpen: Signal<boolean | undefined>
   #errorTypes: Signal<Array<DevtoolsErrorType> | undefined>
-  #Component: DevtoolsPanelComponentType | undefined
+  #onClose: Signal<(() => unknown) | undefined>
+  #Component: DevtoolsComponentType | undefined
   #dispose?: () => void
 
   constructor(config: TanstackQueryDevtoolsPanelConfig) {
@@ -34,11 +42,13 @@ class TanstackQueryDevtoolsPanel {
       queryFlavor,
       version,
       onlineManager,
+      buttonPosition,
       position,
-      isOpen,
+      initialIsOpen,
       errorTypes,
       styleNonce,
       shadowDOMTarget,
+      onClose,
     } = config
     this.#client = createSignal(client)
     this.#queryFlavor = queryFlavor
@@ -46,17 +56,23 @@ class TanstackQueryDevtoolsPanel {
     this.#onlineManager = onlineManager
     this.#styleNonce = styleNonce
     this.#shadowDOMTarget = shadowDOMTarget
+    this.#buttonPosition = createSignal(buttonPosition)
     this.#position = createSignal(position)
-    this.#isOpen = createSignal(isOpen)
+    this.#initialIsOpen = createSignal(initialIsOpen)
     this.#errorTypes = createSignal(errorTypes)
+    this.#onClose = createSignal(onClose)
+  }
+
+  setButtonPosition(position: DevtoolsButtonPosition) {
+    this.#buttonPosition[1](position)
   }
 
   setPosition(position: DevtoolsPosition) {
     this.#position[1](position)
   }
 
-  setIsOpen(isOpen: boolean) {
-    this.#isOpen[1](isOpen)
+  setInitialIsOpen(isOpen: boolean) {
+    this.#initialIsOpen[1](isOpen)
   }
 
   setErrorTypes(errorTypes: Array<DevtoolsErrorType>) {
@@ -67,16 +83,22 @@ class TanstackQueryDevtoolsPanel {
     this.#client[1](client)
   }
 
+  setOnClose(onClose: () => unknown) {
+    this.#onClose[1](() => onClose)
+  }
+
   mount<T extends HTMLElement>(el: T) {
     if (this.#isMounted) {
-      throw new Error('DevtoolsPanel is already mounted')
+      throw new Error('Devtools is already mounted')
     }
     const dispose = render(() => {
+      const [btnPosition] = this.#buttonPosition
       const [pos] = this.#position
-      const [isOpen] = this.#isOpen
+      const [isOpen] = this.#initialIsOpen
       const [errors] = this.#errorTypes
       const [queryClient] = this.#client
-      let Devtools: DevtoolsPanelComponentType
+      const [onClose] = this.#onClose
+      let Devtools: DevtoolsComponentType
 
       if (this.#Component) {
         Devtools = this.#Component
@@ -96,14 +118,20 @@ class TanstackQueryDevtoolsPanel {
             get client() {
               return queryClient()
             },
+            get buttonPosition() {
+              return btnPosition()
+            },
             get position() {
               return pos()
             },
-            get isOpen() {
+            get initialIsOpen() {
               return isOpen()
             },
             get errorTypes() {
               return errors()
+            },
+            get onClose() {
+              return onClose()
             },
           }}
         />
@@ -115,7 +143,7 @@ class TanstackQueryDevtoolsPanel {
 
   unmount() {
     if (!this.#isMounted) {
-      throw new Error('DevtoolsPanel is not mounted')
+      throw new Error('Devtools is not mounted')
     }
     this.#dispose?.()
     this.#isMounted = false

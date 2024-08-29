@@ -14,15 +14,17 @@ export default function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <button onClick={() => setIsOpen(!isOpen)}>{`${isOpen ? 'Close' : 'Open'} the devtools panel`}</button>
-      <ReactQueryDevtoolsPanel isOpen={isOpen} />
-      <Example />
+      <Example/>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+      >{`${isOpen ? 'Close' : 'Open'} the devtools panel`}</button>
+      {isOpen && <ReactQueryDevtoolsPanel onClose={() => setIsOpen(false)}/>}
     </QueryClientProvider>
   )
 }
 
 function Example() {
-  const { isPending, error, data, isFetching } = useQuery({
+  const {isPending, error, data, isFetching} = useQuery({
     queryKey: ['repoData'],
     queryFn: async () => {
       const response = await fetch(
@@ -37,7 +39,11 @@ function Example() {
   if (error) return 'An error has occurred: ' + error.message
 
   return (
-    <div>
+    <div
+      style={{
+        paddingBottom: 20,
+      }}
+    >
       <h1>{data.full_name}</h1>
       <p>{data.description}</p>
       <strong>👀 {data.subscribers_count}</strong>{' '}

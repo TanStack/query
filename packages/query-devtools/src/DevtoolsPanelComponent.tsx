@@ -1,20 +1,12 @@
 import { createLocalStorage } from '@solid-primitives/storage'
 import { createMemo } from 'solid-js'
+import { ContentView, ParentPanel } from './Devtools'
 import { getPreferredColorScheme } from './utils'
-import {
-  PiPProvider,
-  QueryDevtoolsContext,
-  QueryDevtoolsProps,
-  ThemeContext,
-} from './contexts'
-import { Devtools, THEME_PREFERENCE } from './Devtools'
-import type { Component } from 'solid-js'
+import { THEME_PREFERENCE } from './constants'
+import { PiPProvider, QueryDevtoolsContext, ThemeContext } from './contexts'
+import type { DevtoolsComponentType } from './Devtools'
 
-export type DevtoolsPanelComponentType = Component<Omit<QueryDevtoolsProps, 'buttonPosition'>> & {
-  shadowDOMTarget?: ShadowRoot
-}
-
-const DevtoolsPanelComponent: DevtoolsPanelComponentType = (props) => {
+const DevtoolsPanelComponent: DevtoolsComponentType = (props) => {
   const [localStore, setLocalStore] = createLocalStorage({
     prefix: 'TanstackQueryDevtools',
   })
@@ -32,20 +24,24 @@ const DevtoolsPanelComponent: DevtoolsPanelComponentType = (props) => {
 
   return (
     <QueryDevtoolsContext.Provider value={props}>
-      <PiPProvider localStore={localStore} setLocalStore={setLocalStore}>
+      <PiPProvider
+        disabled
+        localStore={localStore}
+        setLocalStore={setLocalStore}
+      >
         <ThemeContext.Provider value={theme}>
-          <Devtools
-            localStore={localStore}
-            setLocalStore={setLocalStore}
-            withCloseButton={false}
-            withOpenButton={false}
-            withDragPositionPanel={false}
-            withPIPButton={false}
-            withPositionButton={false}
-          />
+          <ParentPanel>
+            <ContentView
+              localStore={localStore}
+              setLocalStore={setLocalStore}
+              onClose={props.onClose}
+              showPanelViewOnly
+            />
+          </ParentPanel>
         </ThemeContext.Provider>
       </PiPProvider>
     </QueryDevtoolsContext.Provider>
   )
 }
+
 export default DevtoolsPanelComponent

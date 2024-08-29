@@ -5,7 +5,7 @@ import type {
   QueryClient,
   onlineManager as TOnlineManager,
 } from '@tanstack/query-core'
-import type { DevtoolsComponentType } from './DevtoolsComponent'
+import type { DevtoolsComponentType } from './Devtools'
 import type {
   DevtoolsButtonPosition,
   DevtoolsErrorType,

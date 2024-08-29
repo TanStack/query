@@ -2,20 +2,10 @@
 import * as React from 'react'
 import { onlineManager, useQueryClient } from '@tanstack/react-query'
 import { TanstackQueryDevtoolsPanel } from '@tanstack/query-devtools'
-import type { DevtoolsErrorType, DevtoolsPosition } from '@tanstack/query-devtools'
+import type { DevtoolsErrorType } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/react-query'
 
 export interface DevtoolsPanelOptions {
-  /**
-   * Set this true if you want the dev tools to be open
-   */
-  isOpen?: boolean
-  /**
-   * The position of the React Query devtools panel.
-   * 'top' | 'bottom' | 'left' | 'right'
-   * Defaults to 'bottom'.
-   */
-  position?: DevtoolsPosition
   /**
    * Custom instance of QueryClient
    */
@@ -32,6 +22,19 @@ export interface DevtoolsPanelOptions {
    * Use this so you can attach the devtool's styles to specific element in the DOM.
    */
   shadowDOMTarget?: ShadowRoot
+
+  /**
+   * Custom styles for the devtools panel
+   * @default { height: '500px' }
+   * @example { height: '100%' }
+   * @example { height: '100%', width: '100%' }
+   */
+  style?: React.CSSProperties
+
+  /**
+   * Callback function that is called when the devtools panel is closed
+   */
+  onClose?: () => unknown
 }
 
 export function ReactQueryDevtoolsPanel(
@@ -39,24 +42,20 @@ export function ReactQueryDevtoolsPanel(
 ): React.ReactElement | null {
   const queryClient = useQueryClient(props.client)
   const ref = React.useRef<HTMLDivElement>(null)
-  const {
-    position,
-    isOpen,
-    errorTypes,
-    styleNonce,
-    shadowDOMTarget,
-  } = props
+  const { errorTypes, styleNonce, shadowDOMTarget } = props
   const [devtools] = React.useState(
     new TanstackQueryDevtoolsPanel({
       client: queryClient,
       queryFlavor: 'React Query',
       version: '5',
       onlineManager,
-      position,
-      isOpen,
+      buttonPosition: 'bottom-left',
+      position: 'bottom',
+      initialIsOpen: true,
       errorTypes,
       styleNonce,
       shadowDOMTarget,
+      onClose: props.onClose,
     }),
   )
 
@@ -65,14 +64,8 @@ export function ReactQueryDevtoolsPanel(
   }, [queryClient, devtools])
 
   React.useEffect(() => {
-    if (position) {
-      devtools.setPosition(position)
-    }
-  }, [position, devtools])
-
-  React.useEffect(() => {
-    devtools.setIsOpen(isOpen || false)
-  }, [isOpen, devtools])
+    devtools.setOnClose(props.onClose ?? (() => {}))
+  }, [props.onClose, devtools])
 
   React.useEffect(() => {
     devtools.setErrorTypes(errorTypes || [])
@@ -88,5 +81,11 @@ export function ReactQueryDevtoolsPanel(
     }
   }, [devtools])
 
-  return <div className="tsqd-parent-container" ref={ref}></div>
+  return (
+    <div
+      style={{ height: '500px', ...props.style }}
+      className="tsqd-parent-container"
+      ref={ref}
+    ></div>
+  )
 }

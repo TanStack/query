@@ -83,7 +83,7 @@ function App() {
   - The position of the React Query devtools panel
 - `client?: QueryClient`,
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
-- `errorTypes?: { name: string; initializer: (query: Query) => TError}`
+- `errorTypes?: { name: string; initializer: (query: Query) => TError}[]`
   - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
 - `styleNonce?: string`
   - Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
@@ -106,8 +106,10 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* The rest of your application */}
-      <button onClick={() => setIsOpen(!isOpen)}>{`${isOpen ? 'Close' : 'Open'} the devtools panel`}</button>
-      <ReactQueryDevtoolsPanel isOpen={isOpen} />
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+      >{`${isOpen ? 'Close' : 'Open'} the devtools panel`}</button>
+      {isOpen && <ReactQueryDevtoolsPanel onClose={() => setIsOpen(false)}/>}
     </QueryClientProvider>
   )
 }
@@ -115,14 +117,16 @@ function App() {
 
 ### Options
 
-- `isOpen: Boolean`
-  - Defaults to `false`
-- `position?: "top" | "bottom" | "left" | "right"`
-  - Defaults to `bottom`
-  - The position of the React Query devtools panel
+- `style?: React.CSSProperties`
+  - Custom styles for the devtools panel
+  - Default: `{ height: '500px' }`
+  - Example: `{ height: '100%' }`
+  - Example: `{ height: '100%', width: '100%' }`
+- `onClose?: () => unknown`
+  - Callback function that is called when the devtools panel is closed
 - `client?: QueryClient`,
   - Use this to use a custom QueryClient. Otherwise, the one from the nearest context will be used.
-- `errorTypes?: { name: string; initializer: (query: Query) => TError}`
+- `errorTypes?: { name: string; initializer: (query: Query) => TError}[]`
   - Use this to predefine some errors that can be triggered on your queries. Initializer will be called (with the specific query) when that error is toggled on from the UI. It must return an Error.
 - `styleNonce?: string`
   - Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.

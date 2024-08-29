@@ -29,6 +29,7 @@ export interface QueryDevtoolsProps {
   isOpen?: boolean
   errorTypes?: Array<DevtoolsErrorType>
   shadowDOMTarget?: ShadowRoot
+  onClose?: () => unknown
 }
 
 export const QueryDevtoolsContext = createContext<QueryDevtoolsProps>({

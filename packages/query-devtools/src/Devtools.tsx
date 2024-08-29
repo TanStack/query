@@ -5,7 +5,6 @@ import {
   createEffect,
   createMemo,
   createSignal,
-  mergeProps,
   on,
   onCleanup,
   onMount,
@@ -52,15 +51,24 @@ import {
   XCircle,
 } from './icons'
 import Explorer from './Explorer'
+import { usePiPWindow, useQueryDevtoolsContext, useTheme } from './contexts'
 import {
-  usePiPWindow,
-  useQueryDevtoolsContext,
-  useTheme,
-} from './contexts'
+  BUTTON_POSITION,
+  DEFAULT_HEIGHT,
+  DEFAULT_MUTATION_SORT_FN_NAME,
+  DEFAULT_SORT_FN_NAME,
+  DEFAULT_SORT_ORDER,
+  DEFAULT_WIDTH,
+  INITIAL_IS_OPEN,
+  POSITION,
+  firstBreakpoint,
+  secondBreakpoint,
+  thirdBreakpoint,
+} from './constants'
 import type {
-  DevtoolsButtonPosition,
   DevtoolsErrorType,
   DevtoolsPosition,
+  QueryDevtoolsProps,
 } from './contexts'
 import type {
   Mutation,
@@ -76,11 +84,13 @@ import type { Accessor, Component, JSX, Setter } from 'solid-js'
 interface DevtoolsPanelProps {
   localStore: StorageObject<string>
   setLocalStore: StorageSetter<string, unknown>
-  withCloseButton?: boolean
-  withOpenButton?: boolean
-  withDragPositionPanel?: boolean
-  withPIPButton?: boolean
-  withPositionButton?: boolean
+}
+
+interface ContentViewProps {
+  localStore: StorageObject<string>
+  setLocalStore: StorageSetter<string, unknown>
+  showPanelViewOnly?: boolean
+  onClose?: () => unknown
 }
 
 interface QueryStatusProps {
@@ -88,20 +98,6 @@ interface QueryStatusProps {
   color: 'green' | 'yellow' | 'gray' | 'blue' | 'purple' | 'red'
   count: number
 }
-
-const firstBreakpoint = 1024
-const secondBreakpoint = 796
-const thirdBreakpoint = 700
-
-const BUTTON_POSITION: DevtoolsButtonPosition = 'bottom-right'
-const POSITION: DevtoolsPosition = 'bottom'
-export const THEME_PREFERENCE = 'system'
-const INITIAL_IS_OPEN = false
-const DEFAULT_HEIGHT = 500
-const DEFAULT_WIDTH = 500
-const DEFAULT_SORT_FN_NAME = Object.keys(sortFns)[0]
-const DEFAULT_SORT_ORDER = 1
-const DEFAULT_MUTATION_SORT_FN_NAME = Object.keys(mutationSortFns)[0]
 
 const [selectedQueryHash, setSelectedQueryHash] = createSignal<string | null>(
   null,
@@ -112,14 +108,11 @@ const [selectedMutationId, setSelectedMutationId] = createSignal<number | null>(
 const [panelWidth, setPanelWidth] = createSignal(0)
 const [offline, setOffline] = createSignal(false)
 
-export const Devtools: Component<DevtoolsPanelProps> = (_props) => {
-  const props = mergeProps({
-    withCloseButton: true,
-    withOpenButton: true,
-    withDragPositionPanel: true,
-    withPIPButton: true,
-    withPositionButton: true
-  }, _props)
+export type DevtoolsComponentType = Component<QueryDevtoolsProps> & {
+  shadowDOMTarget?: ShadowRoot
+}
+
+export const Devtools: Component<DevtoolsPanelProps> = (props) => {
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -245,11 +238,14 @@ export const Devtools: Component<DevtoolsPanelProps> = (_props) => {
       >
         <TransitionGroup name="tsqd-panel-transition">
           <Show when={isOpen() && !pip().pipWindow && pip_open() == 'false'}>
-            <DevtoolsPanel {...props} />
+            <DraggablePanel
+              localStore={props.localStore}
+              setLocalStore={props.setLocalStore}
+            />
           </Show>
         </TransitionGroup>
         <TransitionGroup name="tsqd-button-transition">
-          <Show when={props.withOpenButton && !isOpen()}>
+          <Show when={!isOpen()}>
             <div
               class={cx(
                 styles().devtoolsBtn,
@@ -345,7 +341,66 @@ const PiPPanel: Component<{
   )
 }
 
-const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
+export const ParentPanel: Component<{
+  children: JSX.Element
+}> = (props) => {
+  const theme = useTheme()
+  const css = useQueryDevtoolsContext().shadowDOMTarget
+    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
+    : goober.css
+  const styles = createMemo(() => {
+    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
+  })
+
+  let panelRef!: HTMLDivElement
+
+  onMount(() => {
+    createResizeObserver(panelRef, ({ width }, el) => {
+      if (el === panelRef) {
+        setPanelWidth(width)
+      }
+    })
+  })
+
+  const getPanelDynamicStyles = () => {
+    const { colors } = tokens
+    const t = (light: string, dark: string) =>
+      theme() === 'dark' ? dark : light
+    if (panelWidth() < secondBreakpoint) {
+      return css`
+        flex-direction: column;
+        background-color: ${t(colors.gray[300], colors.gray[600])};
+      `
+    }
+    return css`
+      flex-direction: row;
+      background-color: ${t(colors.gray[200], colors.darkGray[900])};
+    `
+  }
+
+  return (
+    <div
+      style={{
+        '--tsqd-font-size': '16px',
+      }}
+      ref={panelRef}
+      class={cx(
+        styles().parentPanel,
+        getPanelDynamicStyles(),
+        {
+          [css`
+            min-width: min-content;
+          `]: panelWidth() < thirdBreakpoint,
+        },
+        'tsqd-main-panel',
+      )}
+    >
+      {props.children}
+    </div>
+  )
+}
+
+const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
   const theme = useTheme()
   const css = useQueryDevtoolsContext().shadowDOMTarget
     ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
@@ -519,35 +574,31 @@ const DevtoolsPanel: Component<DevtoolsPanelProps> = (props) => {
       ref={panelRef}
       aria-label="Tanstack query devtools"
     >
-      <Show when={props.withDragPositionPanel}>
-        <div
-          className={cx(
-            styles().dragHandle,
-            styles()[`dragHandle-position-${position()}`],
-            'tsqd-drag-handle',
-          )}
-          onMouseDown={handleDragStart}
-        ></div>
-      </Show>
-      <Show when={props.withCloseButton}>
-        <button
-          aria-label="Close tanstack query devtools"
-          className={cx(
-            styles().closeBtn,
-            styles()[`closeBtn-position-${position()}`],
-            'tsqd-minimize-btn',
-          )}
-          onClick={() => props.setLocalStore('open', 'false')}
-        >
-          <ChevronDown/>
-        </button>
-      </Show>
+      <div
+        className={cx(
+          styles().dragHandle,
+          styles()[`dragHandle-position-${position()}`],
+          'tsqd-drag-handle',
+        )}
+        onMouseDown={handleDragStart}
+      ></div>
+      <button
+        aria-label="Close tanstack query devtools"
+        className={cx(
+          styles().closeBtn,
+          styles()[`closeBtn-position-${position()}`],
+          'tsqd-minimize-btn',
+        )}
+        onClick={() => props.setLocalStore('open', 'false')}
+      >
+        <ChevronDown/>
+      </button>
       <ContentView {...props} />
     </aside>
   )
 }
 
-const ContentView: Component<DevtoolsPanelProps> = (props) => {
+export const ContentView: Component<ContentViewProps> = (props) => {
   setupQueryCacheSubscription()
   setupMutationCacheSubscription()
   let containerRef!: HTMLDivElement
@@ -698,8 +749,12 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
             <button
               class={cx(styles().logo, 'tsqd-text-logo-container')}
               onClick={() => {
-                if (!pip().pipWindow) {
+                if (!pip().pipWindow && !props.showPanelViewOnly) {
                   props.setLocalStore('open', 'false')
+                  return
+                }
+                if (props.onClose) {
+                  props.onClose()
                 }
               }}
               aria-label="Close Tanstack query devtools"
@@ -916,7 +971,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
             >
               {offline() ? <Offline /> : <Wifi />}
             </button>
-            <Show when={props.withPIPButton && !pip().pipWindow}>
+            <Show when={!pip().pipWindow && !pip().disabled}>
               <button
                 onClick={() => {
                   pip().requestPipWindow(
@@ -965,7 +1020,7 @@ const ContentView: Component<DevtoolsPanelProps> = (props) => {
                   >
                     Settings
                   </div>
-                  <Show when={props.withPositionButton}>
+                  <Show when={!props.showPanelViewOnly}>
                     <DropdownMenu.Sub overlap gutter={8} shift={-4}>
                       <DropdownMenu.SubTrigger
                         class={cx(
@@ -1547,7 +1602,7 @@ const QueryStatus: Component<QueryStatusProps> = (props) => {
         return false
       }
     }
-    if (panelWidth() < thirdBreakpoint) {
+    if (panelWidth() < secondBreakpoint) {
       return false
     }
 
@@ -2381,6 +2436,32 @@ const stylesFactory = (
       position: fixed;
       z-index: 9999;
       display: flex;
+      gap: ${tokens.size[0.5]};
+      & * {
+        box-sizing: border-box;
+        text-transform: none;
+      }
+
+      & *::-webkit-scrollbar {
+        width: 7px;
+      }
+
+      & *::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      & *::-webkit-scrollbar-thumb {
+        background: ${t(colors.gray[300], colors.darkGray[200])};
+      }
+
+      & *::-webkit-scrollbar-thumb:hover {
+        background: ${t(colors.gray[400], colors.darkGray[300])};
+      }
+    `,
+    parentPanel: css`
+      z-index: 9999;
+      display: flex;
+      height: 100%;
       gap: ${tokens.size[0.5]};
       & * {
         box-sizing: border-box;
