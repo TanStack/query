@@ -15,7 +15,7 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "scripts": {
-    "clean": "rimraf ./build && rimraf ./coverage",
+    "clean": "rimraf ./build ./coverage",
     "test:eslint": "eslint ./src",
     "test:types": "vue-tsc",
     "test:build": "publint --strict && attw --pack",
