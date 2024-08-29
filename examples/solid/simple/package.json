@@ -9,12 +9,12 @@
     "test:types": "tsc"
   },
   "dependencies": {
-    "@tanstack/solid-query": "^5.52.2",
-    "@tanstack/solid-query-devtools": "^5.52.2",
+    "@tanstack/solid-query": "^5.52.3",
+    "@tanstack/solid-query-devtools": "^5.52.3",
     "solid-js": "^1.8.19"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.52.0",
+    "@tanstack/eslint-plugin-query": "^5.52.3",
     "typescript": "5.3.3",
     "vite": "^5.3.5",
     "vite-plugin-solid": "^2.10.2"
