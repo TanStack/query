@@ -50,10 +50,10 @@ importers:
         version: types-react-dom@19.0.0-rc.1
       '@vitest/coverage-istanbul':
         specifier: ^2.0.4
-        version: 2.0.5(vitest@2.0.5(@types/node@20.14.13)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
+        version: 2.0.5(vitest@2.0.5(@types/node@20.14.13)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
       '@vitest/eslint-plugin':
         specifier: ^1.0.2
-        version: 1.0.2(eslint@8.57.0)(typescript@5.3.3)(vitest@2.0.5(@types/node@20.14.13)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
+        version: 1.0.2(eslint@8.57.0)(typescript@5.3.3)(vitest@2.0.5(@types/node@20.14.13)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
       cpy-cli:
         specifier: ^5.0.0
         version: 5.0.0
@@ -67,8 +67,8 @@ importers:
         specifier: ^4.6.2
         version: 4.6.2(eslint@8.57.0)
       jsdom:
-        specifier: ^24.1.1
-        version: 24.1.1
+        specifier: ^25.0.0
+        version: 25.0.0
       knip:
         specifier: ^5.27.0
         version: 5.27.0(@types/node@20.14.13)(typescript@5.3.3)
@@ -128,7 +128,7 @@ importers:
         version: 5.3.5(@types/node@20.14.13)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
       vitest:
         specifier: ^2.0.4
-        version: 2.0.5(@types/node@20.14.13)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
+        version: 2.0.5(@types/node@20.14.13)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
 
   examples/angular/basic:
     dependencies:
@@ -2172,7 +2172,7 @@ importers:
         version: 3.1.1(svelte@4.2.18)(vite@5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
       '@testing-library/svelte':
         specifier: ^5.2.1
-        version: 5.2.1(svelte@4.2.18)(vite@5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))(vitest@2.0.5(@types/node@22.0.2)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
+        version: 5.2.1(svelte@4.2.18)(vite@5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))(vitest@2.0.5(@types/node@22.0.2)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
       eslint-plugin-svelte:
         specifier: ^2.43.0
         version: 2.43.0(eslint@8.57.0)(svelte@4.2.18)
@@ -2228,7 +2228,7 @@ importers:
         version: link:../svelte-query
       '@testing-library/svelte':
         specifier: ^5.2.1
-        version: 5.2.1(svelte@4.2.18)(vite@5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))(vitest@2.0.5(@types/node@22.0.2)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
+        version: 5.2.1(svelte@4.2.18)(vite@5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))(vitest@2.0.5(@types/node@22.0.2)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
       eslint-plugin-svelte:
         specifier: ^2.43.0
         version: 2.43.0(eslint@8.57.0)(svelte@4.2.18)
@@ -10934,8 +10934,8 @@ packages:
     resolution: {integrity: sha512-YtOli5Cmzy3q4dP26GraSOeAhqecewG04hoO8DY56CH4KJ9Fvv5qKWUCCo3HZob7esJQHCv6/+bnTy72xZZaVQ==}
     engines: {node: '>=12.0.0'}
 
-  jsdom@24.1.1:
-    resolution: {integrity: sha512-5O1wWV99Jhq4DV7rCLIoZ/UIhyQeDR7wHVyZAHAshbrvZsLs+Xzz7gtwnlJTJDjleiTKh54F4dXrX70vJQTyJQ==}
+  jsdom@25.0.0:
+    resolution: {integrity: sha512-OhoFVT59T7aEq75TVw9xxEfkXgacpqAhQaYgP9y/fDqWQCMB/b1H66RfmPm/MaeaAIU9nDwMOVTlPN51+ao6CQ==}
     engines: {node: '>=18'}
     peerDependencies:
       canvas: ^2.11.2
@@ -22572,13 +22572,13 @@ snapshots:
       '@types/react': types-react@19.0.0-rc.1
       '@types/react-dom': types-react-dom@19.0.0-rc.1
 
-  '@testing-library/svelte@5.2.1(svelte@4.2.18)(vite@5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))(vitest@2.0.5(@types/node@22.0.2)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))':
+  '@testing-library/svelte@5.2.1(svelte@4.2.18)(vite@5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))(vitest@2.0.5(@types/node@22.0.2)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))':
     dependencies:
       '@testing-library/dom': 10.4.0
       svelte: 4.2.18
     optionalDependencies:
       vite: 5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
-      vitest: 2.0.5(@types/node@22.0.2)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
+      vitest: 2.0.5(@types/node@22.0.2)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
 
   '@trysound/sax@0.2.0': {}
 
@@ -23143,7 +23143,7 @@ snapshots:
       vite: 5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
       vue: 3.4.35(typescript@5.4.2)
 
-  '@vitest/coverage-istanbul@2.0.5(vitest@2.0.5(@types/node@20.14.13)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))':
+  '@vitest/coverage-istanbul@2.0.5(vitest@2.0.5(@types/node@20.14.13)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))':
     dependencies:
       '@istanbuljs/schema': 0.1.3
       debug: 4.3.6(supports-color@6.1.0)
@@ -23155,16 +23155,16 @@ snapshots:
       magicast: 0.3.4
       test-exclude: 7.0.1
       tinyrainbow: 1.2.0
-      vitest: 2.0.5(@types/node@20.14.13)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
+      vitest: 2.0.5(@types/node@20.14.13)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/eslint-plugin@1.0.2(eslint@8.57.0)(typescript@5.3.3)(vitest@2.0.5(@types/node@20.14.13)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))':
+  '@vitest/eslint-plugin@1.0.2(eslint@8.57.0)(typescript@5.3.3)(vitest@2.0.5(@types/node@20.14.13)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))':
     dependencies:
       eslint: 8.57.0
     optionalDependencies:
       typescript: 5.3.3
-      vitest: 2.0.5(@types/node@20.14.13)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
+      vitest: 2.0.5(@types/node@20.14.13)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
 
   '@vitest/expect@2.0.5':
     dependencies:
@@ -28702,7 +28702,7 @@ snapshots:
 
   jsdoc-type-pratt-parser@4.0.0: {}
 
-  jsdom@24.1.1:
+  jsdom@25.0.0:
     dependencies:
       cssstyle: 4.0.1
       data-urls: 5.0.0
@@ -35502,7 +35502,7 @@ snapshots:
     optionalDependencies:
       vite: 5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
 
-  vitest@2.0.5(@types/node@20.14.13)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3):
+  vitest@2.0.5(@types/node@20.14.13)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3):
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@vitest/expect': 2.0.5
@@ -35525,7 +35525,7 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 20.14.13
-      jsdom: 24.1.1
+      jsdom: 25.0.0
     transitivePeerDependencies:
       - less
       - lightningcss
@@ -35535,7 +35535,7 @@ snapshots:
       - supports-color
       - terser
 
-  vitest@2.0.5(@types/node@22.0.2)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3):
+  vitest@2.0.5(@types/node@22.0.2)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3):
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@vitest/expect': 2.0.5
@@ -35558,7 +35558,7 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 22.0.2
-      jsdom: 24.1.1
+      jsdom: 25.0.0
     transitivePeerDependencies:
       - less
       - lightningcss
