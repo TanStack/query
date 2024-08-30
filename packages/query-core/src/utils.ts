@@ -305,7 +305,8 @@ export function isPlainArray(value: unknown) {
 }
 
 // Copied from: https://github.com/jonschlinkert/is-plain-object
-export function isPlainObject(o: any): o is object {
+// eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
+export function isPlainObject(o: any): o is Object {
   if (!hasObjectPrototype(o)) {
     return false
   }
