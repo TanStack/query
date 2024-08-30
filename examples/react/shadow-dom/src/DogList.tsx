@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 
 type DogsResp = {
   message: {
-    [dog: string]: string[]
+    [dog: string]: Array<string>
   }
 }
 
@@ -22,7 +22,7 @@ export const DogList = () => {
 
   if (status === 'error') return 'Error!'
 
-  const dogs = Object.keys(data?.message)
+  const dogs = Object.keys(data.message)
 
   return (
     <div>

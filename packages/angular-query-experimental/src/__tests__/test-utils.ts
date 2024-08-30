@@ -1,10 +1,6 @@
-import {
-  type InputSignal,
-  type Signal,
-  isSignal,
-  untracked,
-} from '@angular/core'
+import { isSignal, untracked } from '@angular/core'
 import { SIGNAL, signalSetFn } from '@angular/core/primitives/signals'
+import type { InputSignal, Signal } from '@angular/core'
 import type { ComponentFixture } from '@angular/core/testing'
 
 let queryKeyCount = 0
