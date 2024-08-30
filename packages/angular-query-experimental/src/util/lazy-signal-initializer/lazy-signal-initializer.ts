@@ -1,10 +1,5 @@
-import {
-  Injector,
-  type Signal,
-  computed,
-  inject,
-  untracked,
-} from '@angular/core'
+import { Injector, computed, inject, untracked } from '@angular/core'
+import type { Signal } from '@angular/core'
 
 type SignalInitializerFn<T> = (injector: Injector) => Signal<T>
 

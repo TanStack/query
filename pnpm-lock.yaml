@@ -50,10 +50,10 @@ importers:
         version: types-react-dom@19.0.0-rc.1
       '@vitest/coverage-istanbul':
         specifier: ^2.0.4
-        version: 2.0.5(vitest@2.0.5(@types/node@20.14.13)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
+        version: 2.0.5(vitest@2.0.5(@types/node@20.14.13)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
       '@vitest/eslint-plugin':
         specifier: ^1.0.2
-        version: 1.0.2(@typescript-eslint/utils@8.3.0(eslint@8.57.0)(typescript@5.3.3))(eslint@8.57.0)(typescript@5.3.3)(vitest@2.0.5(@types/node@20.14.13)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
+        version: 1.0.2(eslint@8.57.0)(typescript@5.3.3)(vitest@2.0.5(@types/node@20.14.13)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
       cpy-cli:
         specifier: ^5.0.0
         version: 5.0.0
@@ -67,8 +67,8 @@ importers:
         specifier: ^4.6.2
         version: 4.6.2(eslint@8.57.0)
       jsdom:
-        specifier: ^24.1.1
-        version: 24.1.1
+        specifier: ^25.0.0
+        version: 25.0.0
       knip:
         specifier: ^5.27.0
         version: 5.27.0(@types/node@20.14.13)(typescript@5.3.3)
@@ -128,7 +128,7 @@ importers:
         version: 5.3.5(@types/node@20.14.13)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
       vitest:
         specifier: ^2.0.4
-        version: 2.0.5(@types/node@20.14.13)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
+        version: 2.0.5(@types/node@20.14.13)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
 
   examples/angular/basic:
     dependencies:
@@ -148,7 +148,7 @@ importers:
         specifier: ^17.3.12
         version: 17.3.12(@angular/common@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8)))(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8))(@angular/platform-browser@17.3.12(@angular/common@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8)))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -170,7 +170,7 @@ importers:
         specifier: ^17.3.12
         version: 17.3.12(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8)))(typescript@5.3.3)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.3.3
@@ -194,7 +194,7 @@ importers:
         specifier: ^17.3.12
         version: 17.3.12(@angular/common@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8)))(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8))(@angular/platform-browser@17.3.12(@angular/common@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8)))
       '@tanstack/angular-query-experimental':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -216,7 +216,7 @@ importers:
         specifier: ^17.3.12
         version: 17.3.12(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8)))(typescript@5.3.3)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.3.3
@@ -243,7 +243,7 @@ importers:
         specifier: ^17.3.12
         version: 17.3.12(@angular/common@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8))(@angular/platform-browser@17.3.12(@angular/common@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8)))(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -265,7 +265,7 @@ importers:
         specifier: ^17.3.12
         version: 17.3.12(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8)))(typescript@5.3.3)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.3.3
@@ -292,7 +292,7 @@ importers:
         specifier: ^17.3.12
         version: 17.3.12(@angular/common@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8))(@angular/platform-browser@17.3.12(@angular/common@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8)))(rxjs@7.8.1)
       '@tanstack/angular-query-experimental':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/angular-query-experimental
       rxjs:
         specifier: ^7.8.1
@@ -314,7 +314,7 @@ importers:
         specifier: ^17.3.12
         version: 17.3.12(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8)))(typescript@5.3.3)
       '@tanstack/angular-query-devtools-experimental':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/angular-query-devtools-experimental
       typescript:
         specifier: 5.3.3
@@ -323,20 +323,14 @@ importers:
   examples/react/algolia:
     dependencies:
       '@algolia/client-search':
-        specifier: 4.24.0
-        version: 4.24.0
-      '@algolia/transporter':
-        specifier: 4.24.0
-        version: 4.24.0
+        specifier: 5.2.1
+        version: 5.2.1
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
-      algoliasearch:
-        specifier: 4.24.0
-        version: 4.24.0
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
         version: 19.0.0-rc-4c2e457c7c-20240522
@@ -345,7 +339,7 @@ importers:
         version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.52.0
+        specifier: ^5.52.3
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: npm:types-react@rc
@@ -366,10 +360,10 @@ importers:
   examples/react/auto-refetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.5
@@ -394,16 +388,16 @@ importers:
   examples/react/basic:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-persist-client
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
@@ -413,7 +407,7 @@ importers:
         version: 19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.52.0
+        specifier: ^5.52.3
         version: link:../../../packages/eslint-plugin-query
       '@types/react':
         specifier: npm:types-react@rc
@@ -437,10 +431,10 @@ importers:
   examples/react/basic-graphql-request:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       graphql:
         specifier: ^16.9.0
@@ -465,10 +459,10 @@ importers:
   examples/react/default-query-function:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
@@ -490,10 +484,10 @@ importers:
   examples/react/infinite-query-with-max-pages:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.5
@@ -518,10 +512,10 @@ importers:
   examples/react/load-more-infinite-scroll:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.5
@@ -549,10 +543,10 @@ importers:
   examples/react/nextjs:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.5
@@ -577,10 +571,10 @@ importers:
   examples/react/nextjs-app-prefetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^15.0.0-rc.0
@@ -605,13 +599,13 @@ importers:
   examples/react/nextjs-suspense-streaming:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-next-experimental':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-next-experimental
       next:
         specifier: ^14.2.5
@@ -633,19 +627,19 @@ importers:
   examples/react/offline:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/react-location':
         specifier: ^3.7.4
         version: 3.7.4(react-dom@19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522))(react@19.0.0-rc-4c2e457c7c-20240522)
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-persist-client
       msw:
         specifier: ^2.3.4
@@ -673,10 +667,10 @@ importers:
   examples/react/optimistic-updates-cache:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.5
@@ -701,10 +695,10 @@ importers:
   examples/react/optimistic-updates-ui:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.5
@@ -729,10 +723,10 @@ importers:
   examples/react/pagination:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.5
@@ -757,10 +751,10 @@ importers:
   examples/react/playground:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
@@ -782,10 +776,10 @@ importers:
   examples/react/prefetching:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       next:
         specifier: ^14.2.5
@@ -819,10 +813,10 @@ importers:
         specifier: ^6.4.1
         version: 6.4.1(hz73ogopnnbu7tdkoevhdncb4q)
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       expo:
         specifier: ^51.0.22
@@ -871,10 +865,10 @@ importers:
   examples/react/react-router:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       localforage:
         specifier: ^1.10.0
@@ -929,16 +923,16 @@ importers:
         specifier: ^11.13.0
         version: 11.13.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
       '@mui/material':
-        specifier: ^5.16.5
-        version: 5.16.6(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(@emotion/styled@11.13.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react-dom@19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
+        specifier: ^6.0.0
+        version: 6.0.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(@emotion/styled@11.13.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react-dom@19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
       '@mui/styles':
-        specifier: ^5.16.5
-        version: 5.16.6(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
+        specifier: ^6.0.0
+        version: 6.0.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
@@ -966,10 +960,10 @@ importers:
   examples/react/shadow-dom:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
@@ -1012,10 +1006,10 @@ importers:
   examples/react/simple:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
@@ -1043,16 +1037,16 @@ importers:
         specifier: ^11.13.0
         version: 11.13.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
       '@mui/material':
-        specifier: ^5.16.5
-        version: 5.16.6(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(@emotion/styled@11.13.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react-dom@19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
+        specifier: ^6.0.0
+        version: 6.0.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(@emotion/styled@11.13.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react-dom@19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
       '@mui/styles':
-        specifier: ^5.16.5
-        version: 5.16.6(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
+        specifier: ^6.0.0
+        version: 6.0.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       react:
         specifier: 19.0.0-rc-4c2e457c7c-20240522
@@ -1080,10 +1074,10 @@ importers:
   examples/react/suspense:
     dependencies:
       '@tanstack/react-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/react-query-devtools
       font-awesome:
         specifier: ^4.7.0
@@ -1126,10 +1120,10 @@ importers:
         specifier: ^7.7.2
         version: 7.7.2(astro@4.12.3(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)(typescript@5.3.3))(encoding@0.1.13)(next@14.2.5(@babel/core@7.25.2)(react-dom@19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522))(react@18.3.1)(sass@1.77.8))(react@18.3.1)
       '@tanstack/solid-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/solid-query-devtools
       astro:
         specifier: ^4.12.2
@@ -1147,10 +1141,10 @@ importers:
   examples/solid/basic:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.19
@@ -1169,10 +1163,10 @@ importers:
   examples/solid/basic-graphql-request:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/solid-query-devtools
       graphql:
         specifier: ^16.9.0
@@ -1197,10 +1191,10 @@ importers:
   examples/solid/default-query-function:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.19
@@ -1219,17 +1213,17 @@ importers:
   examples/solid/simple:
     dependencies:
       '@tanstack/solid-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.19
         version: 1.8.19
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.52.0
+        specifier: ^5.52.3
         version: link:../../../packages/eslint-plugin-query
       typescript:
         specifier: 5.3.3
@@ -1253,10 +1247,10 @@ importers:
         specifier: ^1.0.6
         version: 1.0.6(@testing-library/jest-dom@6.4.8)(rollup@4.19.1)(solid-js@1.8.19)(vinxi@0.4.1(@types/node@22.0.2)(idb-keyval@6.2.1)(ioredis@5.4.1)(less@4.2.0)(magicast@0.3.4)(sass@1.77.8)(terser@5.31.3))(vite@5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
       '@tanstack/solid-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/solid-query
       '@tanstack/solid-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/solid-query-devtools
       solid-js:
         specifier: ^1.8.19
@@ -1268,10 +1262,10 @@ importers:
   examples/svelte/auto-refetching:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1299,16 +1293,16 @@ importers:
   examples/svelte/basic:
     dependencies:
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/svelte-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/svelte-query-devtools
       '@tanstack/svelte-query-persist-client':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/svelte-query-persist-client
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1336,10 +1330,10 @@ importers:
   examples/svelte/load-more-infinite-scroll:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1367,10 +1361,10 @@ importers:
   examples/svelte/optimistic-updates:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1398,10 +1392,10 @@ importers:
   examples/svelte/playground:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1429,10 +1423,10 @@ importers:
   examples/svelte/simple:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
@@ -1457,10 +1451,10 @@ importers:
   examples/svelte/ssr:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1488,10 +1482,10 @@ importers:
   examples/svelte/star-wars:
     dependencies:
       '@tanstack/svelte-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/svelte-query
       '@tanstack/svelte-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/svelte-query-devtools
     devDependencies:
       '@sveltejs/adapter-auto':
@@ -1528,10 +1522,10 @@ importers:
   examples/vue/basic:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.4.27
@@ -1550,7 +1544,7 @@ importers:
   examples/vue/dependent-queries:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/vue-query
       vue:
         specifier: ^3.4.27
@@ -1569,16 +1563,16 @@ importers:
   examples/vue/persister:
     dependencies:
       '@tanstack/query-core':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/query-core
       '@tanstack/query-persist-client-core':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/query-persist-client-core
       '@tanstack/query-sync-storage-persister':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/query-sync-storage-persister
       '@tanstack/vue-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/vue-query
       idb-keyval:
         specifier: ^6.2.1
@@ -1600,10 +1594,10 @@ importers:
   examples/vue/simple:
     dependencies:
       '@tanstack/vue-query':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/vue-query
       '@tanstack/vue-query-devtools':
-        specifier: ^5.52.2
+        specifier: ^5.52.3
         version: link:../../../packages/vue-query-devtools
       vue:
         specifier: ^3.4.27
@@ -1866,8 +1860,8 @@ importers:
         specifier: workspace:*
         version: link:../angular-query-experimental
       eslint-plugin-jsdoc:
-        specifier: ^48.8.3
-        version: 48.10.2(eslint@8.57.0)
+        specifier: ^50.2.2
+        version: 50.2.2(eslint@8.57.0)
       ng-packagr:
         specifier: ^17.3.0
         version: 17.3.0(@angular/compiler-cli@17.3.12(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8)))(typescript@5.3.3))(tailwindcss@3.4.7)(tslib@2.6.3)(typescript@5.3.3)
@@ -1912,8 +1906,8 @@ importers:
         specifier: ^7.47.4
         version: 7.47.4(@types/node@22.0.2)
       eslint-plugin-jsdoc:
-        specifier: ^48.8.3
-        version: 48.10.2(eslint@8.57.0)
+        specifier: ^50.2.2
+        version: 50.2.2(eslint@8.57.0)
       ng-packagr:
         specifier: ^17.3.0
         version: 17.3.0(@angular/compiler-cli@17.3.12(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.1)(zone.js@0.14.8)))(typescript@5.3.3))(tailwindcss@3.4.7)(tslib@2.6.3)(typescript@5.3.3)
@@ -1961,8 +1955,8 @@ importers:
         specifier: 0.11.11
         version: 0.11.11
       jscodeshift:
-        specifier: 0.16.1
-        version: 0.16.1(@babel/preset-env@7.25.3(@babel/core@7.25.2))
+        specifier: 17.0.0
+        version: 17.0.0(@babel/preset-env@7.25.3(@babel/core@7.25.2))
 
   packages/query-core: {}
 
@@ -2175,7 +2169,7 @@ importers:
         version: 3.1.1(svelte@4.2.18)(vite@5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
       '@testing-library/svelte':
         specifier: ^5.2.1
-        version: 5.2.1(svelte@4.2.18)(vite@5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))(vitest@2.0.5(@types/node@22.0.2)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
+        version: 5.2.1(svelte@4.2.18)(vite@5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))(vitest@2.0.5(@types/node@22.0.2)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
       eslint-plugin-svelte:
         specifier: ^2.43.0
         version: 2.43.0(eslint@8.57.0)(svelte@4.2.18)
@@ -2231,7 +2225,7 @@ importers:
         version: link:../svelte-query
       '@testing-library/svelte':
         specifier: ^5.2.1
-        version: 5.2.1(svelte@4.2.18)(vite@5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))(vitest@2.0.5(@types/node@22.0.2)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
+        version: 5.2.1(svelte@4.2.18)(vite@5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))(vitest@2.0.5(@types/node@22.0.2)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
       eslint-plugin-svelte:
         specifier: ^2.43.0
         version: 2.43.0(eslint@8.57.0)(svelte@4.2.18)
@@ -2306,50 +2300,21 @@ packages:
   '@adobe/css-tools@4.4.0':
     resolution: {integrity: sha512-Ff9+ksdQQB3rMncgqDK78uLznstjyfIf2Arnh22pW8kBpLs6rpKDwgnZT46hin5Hl1WzazzK64DOrhSwYpS7bQ==}
 
-  '@algolia/cache-browser-local-storage@4.24.0':
-    resolution: {integrity: sha512-t63W9BnoXVrGy9iYHBgObNXqYXM3tYXCjDSHeNwnsc324r4o5UiVKUiAB4THQ5z9U5hTj6qUvwg/Ez43ZD85ww==}
+  '@algolia/client-common@5.2.1':
+    resolution: {integrity: sha512-f4u3TdqU8310ffGhcCjYtTBXXnVVQ9U38Gnltayxm5Hh63BxgzJzvELUcEuOaZh31CvC1FqttKx127gF90aaQg==}
+    engines: {node: '>= 14.0.0'}
 
-  '@algolia/cache-common@4.24.0':
-    resolution: {integrity: sha512-emi+v+DmVLpMGhp0V9q9h5CdkURsNmFC+cOS6uK9ndeJm9J4TiqSvPYVu+THUP8P/S08rxf5x2P+p3CfID0Y4g==}
+  '@algolia/client-search@5.2.1':
+    resolution: {integrity: sha512-9os21w5CmC84FZZujufLcZPnYKuTVJ3J6LF4i1/i1BKJzy1Cbb9bTWXn+e9PGdRJBzo4DRZt0D0Pd2X5dvUucg==}
+    engines: {node: '>= 14.0.0'}
 
-  '@algolia/cache-in-memory@4.24.0':
-    resolution: {integrity: sha512-gDrt2so19jW26jY3/MkFg5mEypFIPbPoXsQGQWAi6TrCPsNOSEYepBMPlucqWigsmEy/prp5ug2jy/N3PVG/8w==}
+  '@algolia/requester-browser-xhr@5.2.1':
+    resolution: {integrity: sha512-KRDJRPEdIcej/KgqDqhUs/vhLwVh2oKYa+GaKIFGiyRaWusjwaUYdrWgiLxcHAWNKIeIpwjKnteU/dwCz+Nykg==}
+    engines: {node: '>= 14.0.0'}
 
-  '@algolia/client-account@4.24.0':
-    resolution: {integrity: sha512-adcvyJ3KjPZFDybxlqnf+5KgxJtBjwTPTeyG2aOyoJvx0Y8dUQAEOEVOJ/GBxX0WWNbmaSrhDURMhc+QeevDsA==}
-
-  '@algolia/client-analytics@4.24.0':
-    resolution: {integrity: sha512-y8jOZt1OjwWU4N2qr8G4AxXAzaa8DBvyHTWlHzX/7Me1LX8OayfgHexqrsL4vSBcoMmVw2XnVW9MhL+Y2ZDJXg==}
-
-  '@algolia/client-common@4.24.0':
-    resolution: {integrity: sha512-bc2ROsNL6w6rqpl5jj/UywlIYC21TwSSoFHKl01lYirGMW+9Eek6r02Tocg4gZ8HAw3iBvu6XQiM3BEbmEMoiA==}
-
-  '@algolia/client-personalization@4.24.0':
-    resolution: {integrity: sha512-l5FRFm/yngztweU0HdUzz1rC4yoWCFo3IF+dVIVTfEPg906eZg5BOd1k0K6rZx5JzyyoP4LdmOikfkfGsKVE9w==}
-
-  '@algolia/client-search@4.24.0':
-    resolution: {integrity: sha512-uRW6EpNapmLAD0mW47OXqTP8eiIx5F6qN9/x/7HHO6owL3N1IXqydGwW5nhDFBrV+ldouro2W1VX3XlcUXEFCA==}
-
-  '@algolia/logger-common@4.24.0':
-    resolution: {integrity: sha512-LLUNjkahj9KtKYrQhFKCzMx0BY3RnNP4FEtO+sBybCjJ73E8jNdaKJ/Dd8A/VA4imVHP5tADZ8pn5B8Ga/wTMA==}
-
-  '@algolia/logger-console@4.24.0':
-    resolution: {integrity: sha512-X4C8IoHgHfiUROfoRCV+lzSy+LHMgkoEEU1BbKcsfnV0i0S20zyy0NLww9dwVHUWNfPPxdMU+/wKmLGYf96yTg==}
-
-  '@algolia/recommend@4.24.0':
-    resolution: {integrity: sha512-P9kcgerfVBpfYHDfVZDvvdJv0lEoCvzNlOy2nykyt5bK8TyieYyiD0lguIJdRZZYGre03WIAFf14pgE+V+IBlw==}
-
-  '@algolia/requester-browser-xhr@4.24.0':
-    resolution: {integrity: sha512-Z2NxZMb6+nVXSjF13YpjYTdvV3032YTBSGm2vnYvYPA6mMxzM3v5rsCiSspndn9rzIW4Qp1lPHBvuoKJV6jnAA==}
-
-  '@algolia/requester-common@4.24.0':
-    resolution: {integrity: sha512-k3CXJ2OVnvgE3HMwcojpvY6d9kgKMPRxs/kVohrwF5WMr2fnqojnycZkxPoEg+bXm8fi5BBfFmOqgYztRtHsQA==}
-
-  '@algolia/requester-node-http@4.24.0':
-    resolution: {integrity: sha512-JF18yTjNOVYvU/L3UosRcvbPMGT9B+/GQWNWnenIImglzNVGpyzChkXLnrSf6uxwVNO6ESGu6oN8MqcGQcjQJw==}
-
-  '@algolia/transporter@4.24.0':
-    resolution: {integrity: sha512-86nI7w6NzWxd1Zp9q3413dRshDqAzSbsQjhcDhPIatEFiZrL1/TjnHL8S7jVKFePlIMzDsZWXAXwXzcok9c5oA==}
+  '@algolia/requester-node-http@5.2.1':
+    resolution: {integrity: sha512-Q9LE92zL8EZhe9+H7pwG6mMdU7RNtVrGtheM7lMfZoejpkR/DBTr2/5FCB5OsUk7iLSIwP43AKWX+2rTv0cLaA==}
+    engines: {node: '>= 14.0.0'}
 
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
@@ -3847,8 +3812,8 @@ packages:
   '@emotion/weak-memoize@0.4.0':
     resolution: {integrity: sha512-snKqtPW01tN0ui7yu9rGv69aJXr/a/Ywvl11sUjNtEcRc+ng/mQriFL0wLXMef74iHa/EkftbDzU9F8iFbH+zg==}
 
-  '@es-joy/jsdoccomment@0.46.0':
-    resolution: {integrity: sha512-C3Axuq1xd/9VqFZpW4YAzOx5O9q/LP46uIQy/iNDpHG3fmPa6TBtvfglMCs3RBiBxAIi0Go97r8+jvTt55XMyQ==}
+  '@es-joy/jsdoccomment@0.48.0':
+    resolution: {integrity: sha512-G6QUWIcC+KvSwXNsJyDTHvqUdNoAVJPPgkc3+Uk4WBKqZvoXhlvazOgm9aL0HwihJLQf0l+tOE2UFzXBqCqgDw==}
     engines: {node: '>=16'}
 
   '@esbuild/aix-ppc64@0.19.12':
@@ -4846,67 +4811,70 @@ packages:
     resolution: {integrity: sha512-3rDakgJZ77+RiQUuSK69t1F0m8BQKA8Vh5DCS5V0DWvNY67zob2JhhQrhCO0AKLGINTRSFd1tBaHcJTkhefoSw==}
     engines: {node: '>=18'}
 
-  '@mui/core-downloads-tracker@5.16.6':
-    resolution: {integrity: sha512-kytg6LheUG42V8H/o/Ptz3olSO5kUXW9zF0ox18VnblX6bO2yif1FPItgc3ey1t5ansb1+gbe7SatntqusQupg==}
+  '@mui/core-downloads-tracker@6.0.0':
+    resolution: {integrity: sha512-x5qg4ndVmSY5jzp1AgSQSh/iI3H3oN30JwSQAKCIopH6iHGyqEzLx5/gZVbpWzlzt5xoeX8eubqPzEiUo8ClYg==}
 
-  '@mui/material@5.16.6':
-    resolution: {integrity: sha512-0LUIKBOIjiFfzzFNxXZBRAyr9UQfmTAFzbt6ziOU2FDXhorNN2o3N9/32mNJbCA8zJo2FqFU6d3dtoqUDyIEfA==}
-    engines: {node: '>=12.0.0'}
+  '@mui/material@6.0.0':
+    resolution: {integrity: sha512-pU8L/bvoK3bBYM0MUCr8EHgdFbYwB3LIZ1yr1FWI2dZBA/751oy2qr7UgMnZznGCq+C9pTp1EOugF9FhW0G6xg==}
+    engines: {node: '>=14.0.0'}
     peerDependencies:
       '@emotion/react': ^11.5.0
       '@emotion/styled': ^11.3.0
+      '@mui/material-pigment-css': ^6.0.0
       '@types/react': npm:types-react@rc
-      react: ^17.0.0 || ^18.0.0
-      react-dom: ^17.0.0 || ^18.0.0
+      react: ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
     peerDependenciesMeta:
       '@emotion/react':
         optional: true
       '@emotion/styled':
         optional: true
+      '@mui/material-pigment-css':
+        optional: true
       '@types/react':
         optional: true
 
-  '@mui/private-theming@5.16.6':
-    resolution: {integrity: sha512-rAk+Rh8Clg7Cd7shZhyt2HGTTE5wYKNSJ5sspf28Fqm/PZ69Er9o6KX25g03/FG2dfpg5GCwZh/xOojiTfm3hw==}
-    engines: {node: '>=12.0.0'}
+  '@mui/private-theming@6.0.0':
+    resolution: {integrity: sha512-GaURgp4wl/E4X/v2wF7joYYR8Skzf+LBtBHi/Vb6FlwrMGiZGW9gatPPpK89aB64NZ25UPwPsXupWPoOdbmSMg==}
+    engines: {node: '>=14.0.0'}
     peerDependencies:
       '@types/react': npm:types-react@rc
-      react: ^17.0.0 || ^18.0.0
+      react: ^17.0.0 || ^18.0.0 || ^19.0.0
     peerDependenciesMeta:
       '@types/react':
         optional: true
 
-  '@mui/styled-engine@5.16.6':
-    resolution: {integrity: sha512-zaThmS67ZmtHSWToTiHslbI8jwrmITcN93LQaR2lKArbvS7Z3iLkwRoiikNWutx9MBs8Q6okKvbZq1RQYB3v7g==}
-    engines: {node: '>=12.0.0'}
+  '@mui/styled-engine@6.0.0':
+    resolution: {integrity: sha512-V/i+XixLUzulE1tSwlf9iJXipuD1J9XBV1Z1Yezfc0p42wAvoB9dIJImfUNMjvAsjdgw1CoRoebROQlLLy8HsQ==}
+    engines: {node: '>=14.0.0'}
     peerDependencies:
       '@emotion/react': ^11.4.1
       '@emotion/styled': ^11.3.0
-      react: ^17.0.0 || ^18.0.0
+      react: ^17.0.0 || ^18.0.0 || ^19.0.0
     peerDependenciesMeta:
       '@emotion/react':
         optional: true
       '@emotion/styled':
         optional: true
 
-  '@mui/styles@5.16.6':
-    resolution: {integrity: sha512-l6TWbVZxwx7+fBdNsXTX0W11wXY1zHXrPmxrEgkFMSt17+ciyZkKhfmjObBC5oFhihqBSWpGoFI1IJPHFqpW1w==}
-    engines: {node: '>=12.0.0'}
+  '@mui/styles@6.0.0':
+    resolution: {integrity: sha512-SXYenTHxSoKXigtGTKmbrmT85Dbogn9nIShLv8bznCnalFH5dBbXHUsSyCAlNJCfPtv2G8fLN2dGjgPMJEUHug==}
+    engines: {node: '>=14.0.0'}
     peerDependencies:
       '@types/react': npm:types-react@rc
-      react: ^17.0.0
+      react: ^17.0.0 || ^18.0.0 || ^19.0.0
     peerDependenciesMeta:
       '@types/react':
         optional: true
 
-  '@mui/system@5.16.6':
-    resolution: {integrity: sha512-5xgyJjBIMPw8HIaZpfbGAaFYPwImQn7Nyh+wwKWhvkoIeDosQ1ZMVrbTclefi7G8hNmqhip04duYwYpbBFnBgw==}
-    engines: {node: '>=12.0.0'}
+  '@mui/system@6.0.0':
+    resolution: {integrity: sha512-Y1Luj5aApIN+FnrdZTwd/UvL3QC53nHHweaWco27vO9WLC/s/bLYFR6sO9hdib2wIGLr3WCQJGUafeGpz5OWzw==}
+    engines: {node: '>=14.0.0'}
     peerDependencies:
       '@emotion/react': ^11.5.0
       '@emotion/styled': ^11.3.0
       '@types/react': npm:types-react@rc
-      react: ^17.0.0 || ^18.0.0
+      react: ^17.0.0 || ^18.0.0 || ^19.0.0
     peerDependenciesMeta:
       '@emotion/react':
         optional: true
@@ -4915,20 +4883,20 @@ packages:
       '@types/react':
         optional: true
 
-  '@mui/types@7.2.15':
-    resolution: {integrity: sha512-nbo7yPhtKJkdf9kcVOF8JZHPZTmqXjJ/tI0bdWgHg5tp9AnIN4Y7f7wm9T+0SyGYJk76+GYZ8Q5XaTYAsUHN0Q==}
+  '@mui/types@7.2.16':
+    resolution: {integrity: sha512-qI8TV3M7ShITEEc8Ih15A2vLzZGLhD+/UPNwck/hcls2gwg7dyRjNGXcQYHKLB5Q7PuTRfrTkAoPa2VV1s67Ag==}
     peerDependencies:
       '@types/react': npm:types-react@rc
     peerDependenciesMeta:
       '@types/react':
         optional: true
 
-  '@mui/utils@5.16.6':
-    resolution: {integrity: sha512-tWiQqlhxAt3KENNiSRL+DIn9H5xNVK6Jjf70x3PnfQPz1MPBdh7yyIcAyVBT9xiw7hP3SomRhPR7hzBMBCjqEA==}
-    engines: {node: '>=12.0.0'}
+  '@mui/utils@6.0.0':
+    resolution: {integrity: sha512-6MlZc3Kv/KctTkq6EQyi5p1UKtJpBxcmTyqxM3HucbdhAZuUMRTYYipLVQRqvDqiUisqQcev3QDFKx1b7DMCwg==}
+    engines: {node: '>=14.0.0'}
     peerDependencies:
       '@types/react': npm:types-react@rc
-      react: ^17.0.0 || ^18.0.0
+      react: ^17.0.0 || ^18.0.0 || ^19.0.0
     peerDependenciesMeta:
       '@types/react':
         optional: true
@@ -6258,8 +6226,8 @@ packages:
   '@types/range-parser@1.2.7':
     resolution: {integrity: sha512-hKormJbkJqzQGhziax5PItDUTMAM9uE2XXQmM37dyd4hVM+5aVl7oVxMVUiVQn2oCQFN/LKCZdvSM0pFRqbSmQ==}
 
-  '@types/react-transition-group@4.4.10':
-    resolution: {integrity: sha512-hT/+s0VQs2ojCX823m60m5f0sL5idt9SO6Tj6Dg+rdphGPIeJbJ6CxvBYkgkGKrYeDjvIpKTR38UzmtHJOGW3Q==}
+  '@types/react-transition-group@4.4.11':
+    resolution: {integrity: sha512-RM05tAniPZ5DZPzzNFP+DmrcOdD0efDUxMy3145oljWSl3x9ZV5vhme98gTxFrj2lhXvmGNnUiuDyJgY9IKkNA==}
 
   '@types/resolve@0.0.8':
     resolution: {integrity: sha512-auApPaJf3NPfe18hSoJkp8EbZzer2ISk7o8mCC3M9he/a04+gbMF97NkpD2S8riMGvm4BMRI59/SZQSaLTKpsQ==}
@@ -6915,9 +6883,6 @@ packages:
 
   alge@0.8.1:
     resolution: {integrity: sha512-kiV9nTt+XIauAXsowVygDxMZLplZxDWt0W8plE/nB32/V2ziM/P/TxDbSVK7FYIUt2Xo16h3/htDh199LNPCKQ==}
-
-  algoliasearch@4.24.0:
-    resolution: {integrity: sha512-bf0QV/9jVejssFBmz2HQLxUadxk574t4iwjCKp5E7NBzwKkrDEhKPISIIjAU/p6K5qDx3qoeh4+26zWN1jmw3g==}
 
   alphanum-sort@1.0.2:
     resolution: {integrity: sha512-0FcBfdcmaumGPQ0qPn7Q5qTgz/ooXgIyp1rf8ik5bGX8mpE2YHjC0P/eyQvxu1GURYQgq9ozf2mteQ5ZD9YiyQ==}
@@ -9034,8 +8999,8 @@ packages:
     peerDependencies:
       eslint: ^8.57.0
 
-  eslint-plugin-jsdoc@48.10.2:
-    resolution: {integrity: sha512-xTkf/MmEeVrTbezc6kDqCJmK9RcseIKo8X4oyoDCMvV4LY8dqrQi8kmfRrv9n0gNBkCclevaOh2Lkmu6Fs8SLg==}
+  eslint-plugin-jsdoc@50.2.2:
+    resolution: {integrity: sha512-i0ZMWA199DG7sjxlzXn5AeYZxpRfMJjDPUl7lL9eJJX8TPRoIaxJU4ys/joP5faM5AXE1eqW/dslCj3uj4Nqpg==}
     engines: {node: '>=18'}
     peerDependencies:
       eslint: ^8.57.0
@@ -10933,8 +10898,9 @@ packages:
     peerDependencies:
       '@babel/preset-env': ^7.1.6
 
-  jscodeshift@0.16.1:
-    resolution: {integrity: sha512-oMQXySazy63awNBzMpXbbVv73u3irdxTeX2L5ueRyFRxi32qb9uzdZdOY5fTBYADBG19l5M/wnGknZSV1dzCdA==}
+  jscodeshift@17.0.0:
+    resolution: {integrity: sha512-Af+MFsNwLSVO+t4kKjJdJKh6iNbNHfDfFGdyltJ2wUFN3furgbvHguJmB85iou+fY7wbHgI8eiEKpp6doGgtKg==}
+    engines: {node: '>=16'}
     hasBin: true
     peerDependencies:
       '@babel/preset-env': ^7.1.6
@@ -10942,12 +10908,12 @@ packages:
       '@babel/preset-env':
         optional: true
 
-  jsdoc-type-pratt-parser@4.0.0:
-    resolution: {integrity: sha512-YtOli5Cmzy3q4dP26GraSOeAhqecewG04hoO8DY56CH4KJ9Fvv5qKWUCCo3HZob7esJQHCv6/+bnTy72xZZaVQ==}
+  jsdoc-type-pratt-parser@4.1.0:
+    resolution: {integrity: sha512-Hicd6JK5Njt2QB6XYFS7ok9e37O8AYk3jTcppG4YVQnYjOemymvTcmc7OWsmq/Qqj5TdRFO5/x/tIPmBeRtGHg==}
     engines: {node: '>=12.0.0'}
 
-  jsdom@24.1.1:
-    resolution: {integrity: sha512-5O1wWV99Jhq4DV7rCLIoZ/UIhyQeDR7wHVyZAHAshbrvZsLs+Xzz7gtwnlJTJDjleiTKh54F4dXrX70vJQTyJQ==}
+  jsdom@25.0.0:
+    resolution: {integrity: sha512-OhoFVT59T7aEq75TVw9xxEfkXgacpqAhQaYgP9y/fDqWQCMB/b1H66RfmPm/MaeaAIU9nDwMOVTlPN51+ao6CQ==}
     engines: {node: '>=18'}
     peerDependencies:
       canvas: ^2.11.2
@@ -17160,81 +17126,21 @@ snapshots:
 
   '@adobe/css-tools@4.4.0': {}
 
-  '@algolia/cache-browser-local-storage@4.24.0':
+  '@algolia/client-common@5.2.1': {}
+
+  '@algolia/client-search@5.2.1':
     dependencies:
-      '@algolia/cache-common': 4.24.0
+      '@algolia/client-common': 5.2.1
+      '@algolia/requester-browser-xhr': 5.2.1
+      '@algolia/requester-node-http': 5.2.1
 
-  '@algolia/cache-common@4.24.0': {}
-
-  '@algolia/cache-in-memory@4.24.0':
+  '@algolia/requester-browser-xhr@5.2.1':
     dependencies:
-      '@algolia/cache-common': 4.24.0
+      '@algolia/client-common': 5.2.1
 
-  '@algolia/client-account@4.24.0':
+  '@algolia/requester-node-http@5.2.1':
     dependencies:
-      '@algolia/client-common': 4.24.0
-      '@algolia/client-search': 4.24.0
-      '@algolia/transporter': 4.24.0
-
-  '@algolia/client-analytics@4.24.0':
-    dependencies:
-      '@algolia/client-common': 4.24.0
-      '@algolia/client-search': 4.24.0
-      '@algolia/requester-common': 4.24.0
-      '@algolia/transporter': 4.24.0
-
-  '@algolia/client-common@4.24.0':
-    dependencies:
-      '@algolia/requester-common': 4.24.0
-      '@algolia/transporter': 4.24.0
-
-  '@algolia/client-personalization@4.24.0':
-    dependencies:
-      '@algolia/client-common': 4.24.0
-      '@algolia/requester-common': 4.24.0
-      '@algolia/transporter': 4.24.0
-
-  '@algolia/client-search@4.24.0':
-    dependencies:
-      '@algolia/client-common': 4.24.0
-      '@algolia/requester-common': 4.24.0
-      '@algolia/transporter': 4.24.0
-
-  '@algolia/logger-common@4.24.0': {}
-
-  '@algolia/logger-console@4.24.0':
-    dependencies:
-      '@algolia/logger-common': 4.24.0
-
-  '@algolia/recommend@4.24.0':
-    dependencies:
-      '@algolia/cache-browser-local-storage': 4.24.0
-      '@algolia/cache-common': 4.24.0
-      '@algolia/cache-in-memory': 4.24.0
-      '@algolia/client-common': 4.24.0
-      '@algolia/client-search': 4.24.0
-      '@algolia/logger-common': 4.24.0
-      '@algolia/logger-console': 4.24.0
-      '@algolia/requester-browser-xhr': 4.24.0
-      '@algolia/requester-common': 4.24.0
-      '@algolia/requester-node-http': 4.24.0
-      '@algolia/transporter': 4.24.0
-
-  '@algolia/requester-browser-xhr@4.24.0':
-    dependencies:
-      '@algolia/requester-common': 4.24.0
-
-  '@algolia/requester-common@4.24.0': {}
-
-  '@algolia/requester-node-http@4.24.0':
-    dependencies:
-      '@algolia/requester-common': 4.24.0
-
-  '@algolia/transporter@4.24.0':
-    dependencies:
-      '@algolia/cache-common': 4.24.0
-      '@algolia/logger-common': 4.24.0
-      '@algolia/requester-common': 4.24.0
+      '@algolia/client-common': 5.2.1
 
   '@alloc/quick-lru@5.2.0': {}
 
@@ -19887,11 +19793,11 @@ snapshots:
 
   '@emotion/weak-memoize@0.4.0': {}
 
-  '@es-joy/jsdoccomment@0.46.0':
+  '@es-joy/jsdoccomment@0.48.0':
     dependencies:
       comment-parser: 1.4.1
       esquery: 1.6.0
-      jsdoc-type-pratt-parser: 4.0.0
+      jsdoc-type-pratt-parser: 4.1.0
 
   '@esbuild/aix-ppc64@0.19.12':
     optional: true
@@ -21016,17 +20922,17 @@ snapshots:
       outvariant: 1.4.3
       strict-event-emitter: 0.5.1
 
-  '@mui/core-downloads-tracker@5.16.6': {}
+  '@mui/core-downloads-tracker@6.0.0': {}
 
-  '@mui/material@5.16.6(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(@emotion/styled@11.13.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react-dom@19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)':
+  '@mui/material@6.0.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(@emotion/styled@11.13.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react-dom@19.0.0-rc-4c2e457c7c-20240522(react@19.0.0-rc-4c2e457c7c-20240522))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)':
     dependencies:
       '@babel/runtime': 7.25.0
-      '@mui/core-downloads-tracker': 5.16.6
-      '@mui/system': 5.16.6(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(@emotion/styled@11.13.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
-      '@mui/types': 7.2.15(types-react@19.0.0-rc.1)
-      '@mui/utils': 5.16.6(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
+      '@mui/core-downloads-tracker': 6.0.0
+      '@mui/system': 6.0.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(@emotion/styled@11.13.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
+      '@mui/types': 7.2.16(types-react@19.0.0-rc.1)
+      '@mui/utils': 6.0.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
       '@popperjs/core': 2.11.8
-      '@types/react-transition-group': 4.4.10
+      '@types/react-transition-group': 4.4.11
       clsx: 2.1.1
       csstype: 3.1.3
       prop-types: 15.8.1
@@ -21039,16 +20945,16 @@ snapshots:
       '@emotion/styled': 11.13.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
       '@types/react': types-react@19.0.0-rc.1
 
-  '@mui/private-theming@5.16.6(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)':
+  '@mui/private-theming@6.0.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)':
     dependencies:
       '@babel/runtime': 7.25.0
-      '@mui/utils': 5.16.6(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
+      '@mui/utils': 6.0.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
       prop-types: 15.8.1
       react: 19.0.0-rc-4c2e457c7c-20240522
     optionalDependencies:
       '@types/react': types-react@19.0.0-rc.1
 
-  '@mui/styled-engine@5.16.6(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(@emotion/styled@11.13.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)':
+  '@mui/styled-engine@6.0.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(@emotion/styled@11.13.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)':
     dependencies:
       '@babel/runtime': 7.25.0
       '@emotion/cache': 11.13.1
@@ -21059,13 +20965,13 @@ snapshots:
       '@emotion/react': 11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
       '@emotion/styled': 11.13.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
 
-  '@mui/styles@5.16.6(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)':
+  '@mui/styles@6.0.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)':
     dependencies:
       '@babel/runtime': 7.25.0
       '@emotion/hash': 0.9.2
-      '@mui/private-theming': 5.16.6(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
-      '@mui/types': 7.2.15(types-react@19.0.0-rc.1)
-      '@mui/utils': 5.16.6(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
+      '@mui/private-theming': 6.0.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
+      '@mui/types': 7.2.16(types-react@19.0.0-rc.1)
+      '@mui/utils': 6.0.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
       clsx: 2.1.1
       csstype: 3.1.3
       hoist-non-react-statics: 3.3.2
@@ -21082,13 +20988,13 @@ snapshots:
     optionalDependencies:
       '@types/react': types-react@19.0.0-rc.1
 
-  '@mui/system@5.16.6(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(@emotion/styled@11.13.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)':
+  '@mui/system@6.0.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(@emotion/styled@11.13.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)':
     dependencies:
       '@babel/runtime': 7.25.0
-      '@mui/private-theming': 5.16.6(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
-      '@mui/styled-engine': 5.16.6(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(@emotion/styled@11.13.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)
-      '@mui/types': 7.2.15(types-react@19.0.0-rc.1)
-      '@mui/utils': 5.16.6(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
+      '@mui/private-theming': 6.0.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
+      '@mui/styled-engine': 6.0.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(@emotion/styled@11.13.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)
+      '@mui/types': 7.2.16(types-react@19.0.0-rc.1)
+      '@mui/utils': 6.0.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
       clsx: 2.1.1
       csstype: 3.1.3
       prop-types: 15.8.1
@@ -21098,14 +21004,14 @@ snapshots:
       '@emotion/styled': 11.13.0(@emotion/react@11.13.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1))(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)
       '@types/react': types-react@19.0.0-rc.1
 
-  '@mui/types@7.2.15(types-react@19.0.0-rc.1)':
+  '@mui/types@7.2.16(types-react@19.0.0-rc.1)':
     optionalDependencies:
       '@types/react': types-react@19.0.0-rc.1
 
-  '@mui/utils@5.16.6(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)':
+  '@mui/utils@6.0.0(react@19.0.0-rc-4c2e457c7c-20240522)(types-react@19.0.0-rc.1)':
     dependencies:
       '@babel/runtime': 7.25.0
-      '@mui/types': 7.2.15(types-react@19.0.0-rc.1)
+      '@mui/types': 7.2.16(types-react@19.0.0-rc.1)
       '@types/prop-types': 15.7.12
       clsx: 2.1.1
       prop-types: 15.8.1
@@ -22584,13 +22490,13 @@ snapshots:
       '@types/react': types-react@19.0.0-rc.1
       '@types/react-dom': types-react-dom@19.0.0-rc.1
 
-  '@testing-library/svelte@5.2.1(svelte@4.2.18)(vite@5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))(vitest@2.0.5(@types/node@22.0.2)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))':
+  '@testing-library/svelte@5.2.1(svelte@4.2.18)(vite@5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))(vitest@2.0.5(@types/node@22.0.2)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))':
     dependencies:
       '@testing-library/dom': 10.4.0
       svelte: 4.2.18
     optionalDependencies:
       vite: 5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
-      vitest: 2.0.5(@types/node@22.0.2)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
+      vitest: 2.0.5(@types/node@22.0.2)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
 
   '@trysound/sax@0.2.0': {}
 
@@ -22795,7 +22701,7 @@ snapshots:
 
   '@types/range-parser@1.2.7': {}
 
-  '@types/react-transition-group@4.4.10':
+  '@types/react-transition-group@4.4.11':
     dependencies:
       '@types/react': types-react@19.0.0-rc.1
 
@@ -23195,7 +23101,7 @@ snapshots:
       vite: 5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
       vue: 3.4.35(typescript@5.4.2)
 
-  '@vitest/coverage-istanbul@2.0.5(vitest@2.0.5(@types/node@20.14.13)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))':
+  '@vitest/coverage-istanbul@2.0.5(vitest@2.0.5(@types/node@20.14.13)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))':
     dependencies:
       '@istanbuljs/schema': 0.1.3
       debug: 4.3.6(supports-color@6.1.0)
@@ -23207,17 +23113,17 @@ snapshots:
       magicast: 0.3.4
       test-exclude: 7.0.1
       tinyrainbow: 1.2.0
-      vitest: 2.0.5(@types/node@20.14.13)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
+      vitest: 2.0.5(@types/node@20.14.13)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/eslint-plugin@1.0.2(@typescript-eslint/utils@8.3.0(eslint@8.57.0)(typescript@5.3.3))(eslint@8.57.0)(typescript@5.3.3)(vitest@2.0.5(@types/node@20.14.13)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))':
+  '@vitest/eslint-plugin@1.0.2(eslint@8.57.0)(typescript@5.3.3)(vitest@2.0.5(@types/node@20.14.13)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))':
     dependencies:
       eslint: 8.57.0
     optionalDependencies:
       '@typescript-eslint/utils': 8.3.0(eslint@8.57.0)(typescript@5.3.3)
       typescript: 5.3.3
-      vitest: 2.0.5(@types/node@20.14.13)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
+      vitest: 2.0.5(@types/node@20.14.13)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
 
   '@vitest/expect@2.0.5':
     dependencies:
@@ -23771,24 +23677,6 @@ snapshots:
       remeda: 1.61.0
       ts-toolbelt: 9.6.0
       zod: 3.23.8
-
-  algoliasearch@4.24.0:
-    dependencies:
-      '@algolia/cache-browser-local-storage': 4.24.0
-      '@algolia/cache-common': 4.24.0
-      '@algolia/cache-in-memory': 4.24.0
-      '@algolia/client-account': 4.24.0
-      '@algolia/client-analytics': 4.24.0
-      '@algolia/client-common': 4.24.0
-      '@algolia/client-personalization': 4.24.0
-      '@algolia/client-search': 4.24.0
-      '@algolia/logger-common': 4.24.0
-      '@algolia/logger-console': 4.24.0
-      '@algolia/recommend': 4.24.0
-      '@algolia/requester-browser-xhr': 4.24.0
-      '@algolia/requester-common': 4.24.0
-      '@algolia/requester-node-http': 4.24.0
-      '@algolia/transporter': 4.24.0
 
   alphanum-sort@1.0.2: {}
 
@@ -26408,9 +26296,9 @@ snapshots:
       - supports-color
       - typescript
 
-  eslint-plugin-jsdoc@48.10.2(eslint@8.57.0):
+  eslint-plugin-jsdoc@50.2.2(eslint@8.57.0):
     dependencies:
-      '@es-joy/jsdoccomment': 0.46.0
+      '@es-joy/jsdoccomment': 0.48.0
       are-docs-informative: 0.0.2
       comment-parser: 1.4.1
       debug: 4.3.6(supports-color@6.1.0)
@@ -28727,7 +28615,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  jscodeshift@0.16.1(@babel/preset-env@7.25.3(@babel/core@7.25.2)):
+  jscodeshift@17.0.0(@babel/preset-env@7.25.3(@babel/core@7.25.2)):
     dependencies:
       '@babel/core': 7.25.2
       '@babel/parser': 7.25.3
@@ -28739,12 +28627,11 @@ snapshots:
       '@babel/preset-flow': 7.24.7(@babel/core@7.25.2)
       '@babel/preset-typescript': 7.24.7(@babel/core@7.25.2)
       '@babel/register': 7.24.6(@babel/core@7.25.2)
-      chalk: 4.1.2
       flow-parser: 0.242.1
       graceful-fs: 4.2.11
       micromatch: 4.0.7
       neo-async: 2.6.2
-      node-dir: 0.1.17
+      picocolors: 1.0.1
       recast: 0.23.9
       temp: 0.9.4
       write-file-atomic: 5.0.1
@@ -28753,9 +28640,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  jsdoc-type-pratt-parser@4.0.0: {}
+  jsdoc-type-pratt-parser@4.1.0: {}
 
-  jsdom@24.1.1:
+  jsdom@25.0.0:
     dependencies:
       cssstyle: 4.0.1
       data-urls: 5.0.0
@@ -35555,7 +35442,7 @@ snapshots:
     optionalDependencies:
       vite: 5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3)
 
-  vitest@2.0.5(@types/node@20.14.13)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3):
+  vitest@2.0.5(@types/node@20.14.13)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3):
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@vitest/expect': 2.0.5
@@ -35578,7 +35465,7 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 20.14.13
-      jsdom: 24.1.1
+      jsdom: 25.0.0
     transitivePeerDependencies:
       - less
       - lightningcss
@@ -35588,7 +35475,7 @@ snapshots:
       - supports-color
       - terser
 
-  vitest@2.0.5(@types/node@22.0.2)(jsdom@24.1.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.3):
+  vitest@2.0.5(@types/node@22.0.2)(jsdom@25.0.0)(less@4.2.0)(sass@1.77.8)(terser@5.31.3):
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@vitest/expect': 2.0.5
@@ -35611,7 +35498,7 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 22.0.2
-      jsdom: 24.1.1
+      jsdom: 25.0.0
     transitivePeerDependencies:
       - less
       - lightningcss

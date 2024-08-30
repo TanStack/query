@@ -1,4 +1,9 @@
-import { type InputSignal, isSignal, untracked } from '@angular/core'
+import {
+  type InputSignal,
+  type Signal,
+  isSignal,
+  untracked,
+} from '@angular/core'
 import { SIGNAL, signalSetFn } from '@angular/core/primitives/signals'
 import type { ComponentFixture } from '@angular/core/testing'
 
@@ -86,7 +91,9 @@ function evaluateSignals<T extends Record<string, any>>(
 
 export const expectSignals = <T extends Record<string, any>>(
   obj: T,
-  expected: Partial<{ [K in keyof T]: ReturnType<T[K]> }>,
+  expected: Partial<{
+    [K in keyof T]: T[K] extends Signal<any> ? ReturnType<T[K]> : never
+  }>,
 ): void => {
   expect(evaluateSignals(obj)).toMatchObject(expected)
 }
