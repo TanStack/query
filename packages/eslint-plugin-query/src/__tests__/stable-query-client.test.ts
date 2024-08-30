@@ -1,13 +1,8 @@
 import { RuleTester } from '@typescript-eslint/rule-tester'
-import * as parser from '@typescript-eslint/parser'
 import { rule } from '../rules/stable-query-client/stable-query-client.rule'
 import { normalizeIndent } from './test-utils'
 
-const ruleTester = new RuleTester({
-  settings: {
-    parser,
-  },
-})
+const ruleTester = new RuleTester()
 
 ruleTester.run('stable-query-client', rule, {
   valid: [

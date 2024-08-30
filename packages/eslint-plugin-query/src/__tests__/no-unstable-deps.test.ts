@@ -1,16 +1,11 @@
 import { RuleTester } from '@typescript-eslint/rule-tester'
-import * as parser from '@typescript-eslint/parser'
 import {
   reactHookNames,
   rule,
   useQueryHookNames,
 } from '../rules/no-unstable-deps/no-unstable-deps.rule'
 
-const ruleTester = new RuleTester({
-  settings: {
-    parser,
-  },
-})
+const ruleTester = new RuleTester()
 
 interface TestCase {
   reactHookImport: string

@@ -53,7 +53,6 @@
     "@typescript-eslint/utils": "^8.3.0"
   },
   "devDependencies": {
-    "@typescript-eslint/parser": "^8.3.0",
     "@typescript-eslint/rule-tester": "^8.3.0",
     "eslint": "^9.9.1"
   },
