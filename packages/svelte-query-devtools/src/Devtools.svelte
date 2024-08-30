@@ -4,8 +4,8 @@
   import { onlineManager, useQueryClient } from '@tanstack/svelte-query'
   import type { QueryClient } from '@tanstack/svelte-query'
   import type {
-    DevToolsErrorType,
     DevtoolsButtonPosition,
+    DevtoolsErrorType,
     DevtoolsPosition,
     TanstackQueryDevtools,
   } from '@tanstack/query-devtools'
@@ -14,7 +14,7 @@
   export let buttonPosition: DevtoolsButtonPosition = 'bottom-right'
   export let position: DevtoolsPosition = 'bottom'
   export let client: QueryClient = useQueryClient()
-  export let errorTypes: Array<DevToolsErrorType> = []
+  export let errorTypes: Array<DevtoolsErrorType> = []
   export let styleNonce: string | undefined = undefined
   export let shadowDOMTarget: ShadowRoot | undefined = undefined
 
