@@ -2,10 +2,7 @@ import { RuleTester } from '@typescript-eslint/rule-tester'
 import { rule } from '../rules/exhaustive-deps/exhaustive-deps.rule'
 import { normalizeIndent } from './test-utils'
 
-const ruleTester = new RuleTester({
-  parser: '@typescript-eslint/parser',
-  settings: {},
-})
+const ruleTester = new RuleTester()
 
 ruleTester.run('exhaustive-deps', rule, {
   valid: [
@@ -146,7 +143,7 @@ ruleTester.run('exhaustive-deps', rule, {
           foo: () => ['foo'] as const,
           num: (num: number) => [...fooQueryKeyFactory.foo(), num] as const,
         }
-        
+
         const useFoo = (num: number) =>
           useQuery({
             queryKey: fooQueryKeyFactory.foo(num),
@@ -161,7 +158,7 @@ ruleTester.run('exhaustive-deps', rule, {
           foo: () => ['foo'] as const,
           num: (num: number) => [...fooQueryKeyFactory.foo(), num] as const,
         }
-        
+
         const useFoo = (num: number) =>
           useQuery({
             queryKey: fooQueryKeyFactory.foo({ x: num }),
@@ -176,7 +173,7 @@ ruleTester.run('exhaustive-deps', rule, {
           foo: () => ['foo'] as const,
           num: (num: number) => [...fooQueryKeyFactory.foo(), num] as const,
         }
-        
+
         const useFoo = (num: number) =>
           useQuery({
             queryKey: fooQueryKeyFactory.foo({ num }),
@@ -191,7 +188,7 @@ ruleTester.run('exhaustive-deps', rule, {
           foo: () => ['foo'] as const,
           num: (num: number) => [...fooQueryKeyFactory.foo(), num] as const,
         }
-        
+
         const useFoo = (num: number) =>
           useQuery({
               queryKey: fooQueryKeyFactory.foo([num]),
@@ -206,7 +203,7 @@ ruleTester.run('exhaustive-deps', rule, {
           foo: () => ['foo'] as const,
           num: (num: number) => [...fooQueryKeyFactory.foo(), num] as const,
         }
-        
+
         const useFoo = (num: number) =>
           useQuery({
               queryKey: fooQueryKeyFactory.foo(1, num),
@@ -221,7 +218,7 @@ ruleTester.run('exhaustive-deps', rule, {
           foo: () => ['foo'] as const,
           num: (num: number) => [...fooQueryKeyFactory.foo(), num] as const,
         }
-        
+
         const useFoo = (obj: { num: number }) =>
           useQuery({
               queryKey: fooQueryKeyFactory.foo(obj.num),
@@ -253,7 +250,7 @@ ruleTester.run('exhaustive-deps', rule, {
       name: 'should not fail if queryKey is having the whole object while queryFn uses some props of it',
       code: normalizeIndent`
         const state = { foo: 'foo', bar: 'bar' }
-    
+
         useQuery({
             queryKey: ['state', state],
             queryFn: () => Promise.resolve({ foo: state.foo, bar: state.bar })
@@ -407,7 +404,7 @@ ruleTester.run('exhaustive-deps', rule, {
       code: normalizeIndent`
         import { useQuery, skipToken } from "@tanstack/react-query";
         const fetch = true
-        
+
         function Component({ id }) {
           useQuery({
               queryKey: [id],
@@ -715,7 +712,7 @@ ruleTester.run('exhaustive-deps', rule, {
       name: 'should fail if queryFn is using multiple object props when only one of them is in the queryKey',
       code: normalizeIndent`
         const state = { foo: 'foo', bar: 'bar' }
-    
+
         useQuery({
             queryKey: ['state', state.foo],
             queryFn: () => Promise.resolve({ foo: state.foo, bar: state.bar })
@@ -723,6 +720,19 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
       errors: [
         {
+          suggestions: [
+            {
+              messageId: 'fixTo',
+              output: normalizeIndent`
+              const state = { foo: 'foo', bar: 'bar' }
+
+              useQuery({
+                  queryKey: ['state', state.foo, state.bar],
+                  queryFn: () => Promise.resolve({ foo: state.foo, bar: state.bar })
+              })
+            `,
+            },
+          ],
           messageId: 'missingDeps',
           data: { deps: 'state.bar' },
         },
@@ -732,7 +742,7 @@ ruleTester.run('exhaustive-deps', rule, {
       name: 'should fail if queryFn is invalid while using FunctionExpression syntax',
       code: normalizeIndent`
         const id = 1;
-    
+
         useQuery({
             queryKey: [],
             queryFn() {
@@ -742,6 +752,21 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
       errors: [
         {
+          suggestions: [
+            {
+              messageId: 'fixTo',
+              output: normalizeIndent`
+                const id = 1;
+
+                useQuery({
+                    queryKey: [id],
+                    queryFn() {
+                      Promise.resolve(id)
+                    }
+                })
+              `,
+            },
+          ],
           messageId: 'missingDeps',
           data: { deps: 'id' },
         },
@@ -752,7 +777,7 @@ ruleTester.run('exhaustive-deps', rule, {
       code: normalizeIndent`
         import { useQuery, skipToken } from "@tanstack/react-query";
         const fetch = true
-        
+
         function Component({ id }) {
           useQuery({
               queryKey: [],
@@ -762,6 +787,22 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
       errors: [
         {
+          suggestions: [
+            {
+              messageId: 'fixTo',
+              output: normalizeIndent`
+                import { useQuery, skipToken } from "@tanstack/react-query";
+                const fetch = true
+
+                function Component({ id }) {
+                  useQuery({
+                      queryKey: [id],
+                      queryFn: fetch ? () => Promise.resolve(id) : skipToken
+                  })
+                }
+              `,
+            },
+          ],
           messageId: 'missingDeps',
           data: { deps: 'id' },
         },
