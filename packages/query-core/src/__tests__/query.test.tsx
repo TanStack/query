@@ -1005,7 +1005,9 @@ describe('query', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     expect(consoleMock).toHaveBeenCalledWith(
-      expect.stringContaining('Data is not serializable'),
+      expect.stringContaining(
+        'StructuralSharing requires data to be JSON serializable',
+      ),
     )
 
     expect(query.state.status).toBe('error')

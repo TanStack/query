@@ -359,7 +359,7 @@ export function replaceData<
         JSON.stringify(data)
       } catch (error) {
         console.error(
-          `Data is not serializable. [${options.queryHash}]: ${error}; The error will be redacted in production builds`,
+          `StructuralSharing requires data to be JSON serializable. To fix this, turn off structuralSharing or return JSON-serializable data from your queryFn. [${options.queryHash}]: ${error}`,
         )
 
         throw new Error('Data is not serializable')
