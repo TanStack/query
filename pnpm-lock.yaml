@@ -418,9 +418,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.3.1
         version: 4.3.1(vite@5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
-      eslint:
-        specifier: ^8.57.0
-        version: 8.57.0
       typescript:
         specifier: 5.3.3
         version: 5.3.3
@@ -978,24 +975,9 @@ importers:
       '@types/react-dom':
         specifier: npm:types-react-dom@rc
         version: types-react-dom@19.0.0-rc.1
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^7.17.0
-        version: 7.18.0(@typescript-eslint/parser@7.18.0(eslint@8.57.0)(typescript@5.3.3))(eslint@8.57.0)(typescript@5.3.3)
-      '@typescript-eslint/parser':
-        specifier: ^7.17.0
-        version: 7.18.0(eslint@8.57.0)(typescript@5.3.3)
       '@vitejs/plugin-react':
         specifier: ^4.3.1
         version: 4.3.1(vite@5.3.5(@types/node@22.0.2)(less@4.2.0)(sass@1.77.8)(terser@5.31.3))
-      eslint:
-        specifier: ^8.57.0
-        version: 8.57.0
-      eslint-plugin-react-hooks:
-        specifier: ^5.1.0-rc-a19a8ab4-20240829
-        version: 5.1.0-rc-fb9a90fa48-20240614(eslint@8.57.0)
-      eslint-plugin-react-refresh:
-        specifier: ^0.4.9
-        version: 0.4.9(eslint@8.57.0)
       typescript:
         specifier: 5.3.3
         version: 5.3.3
@@ -9065,11 +9047,6 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
-
-  eslint-plugin-react-refresh@0.4.9:
-    resolution: {integrity: sha512-QK49YrBAo5CLNLseZ7sZgvgTy21E6NEw22eZqc4teZfH8pxV3yXc9XXOYfUI6JNpw7mfHNkAeWtBxrTyykB6HA==}
-    peerDependencies:
-      eslint: ^8.57.0
 
   eslint-plugin-react-web-api@1.12.3:
     resolution: {integrity: sha512-I5UgttFfAUYQ4lSWoHs02pHb0Pp2ou3xJ4L3xRv7Uce2s8sRPKazYOt7frxqfvBMxdzStS4/g0Gu7k5/PtPypA==}
@@ -26434,10 +26411,6 @@ snapshots:
       typescript: 5.3.3
     transitivePeerDependencies:
       - supports-color
-
-  eslint-plugin-react-refresh@0.4.9(eslint@8.57.0):
-    dependencies:
-      eslint: 8.57.0
 
   eslint-plugin-react-web-api@1.12.3(eslint@8.57.0)(typescript@5.3.3):
     dependencies:
