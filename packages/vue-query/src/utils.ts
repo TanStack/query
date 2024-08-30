@@ -96,7 +96,7 @@ export function cloneDeepUnref<T>(
   })
 }
 
-function isPlainObject(value: unknown): value is Object {
+function isPlainObject(value: unknown): value is object {
   if (Object.prototype.toString.call(value) !== '[object Object]') {
     return false
   }
