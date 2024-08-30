@@ -1,3 +1,5 @@
+/* eslint-disable react-compiler/react-compiler */
+
 'use client'
 import * as React from 'react'
 
