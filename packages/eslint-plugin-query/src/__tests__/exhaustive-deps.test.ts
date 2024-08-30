@@ -759,7 +759,7 @@ ruleTester.run('exhaustive-deps', rule, {
                 const id = 1;
 
                 useQuery({
-                    queryKey: [, id],
+                    queryKey: [id],
                     queryFn() {
                       Promise.resolve(id)
                     }
@@ -796,7 +796,7 @@ ruleTester.run('exhaustive-deps', rule, {
 
                 function Component({ id }) {
                   useQuery({
-                      queryKey: [, id],
+                      queryKey: [id],
                       queryFn: fetch ? () => Promise.resolve(id) : skipToken
                   })
                 }
