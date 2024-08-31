@@ -7,7 +7,7 @@
 
 # Angular Query
 
-> IMPORTANT: This library is currently in an experimental stage. This means that breaking changes will happen in minor AND patch releases. Upgrade carefully. If you use this in production while in experimental stage, please lock your version to a patch-level version to avoid unexpected breaking changes.
+> IMPORTANT: This library is currently in an experimental stage. This means that breaking changes may happen in minor AND patch releases. Upgrade carefully. If you use this in production while in experimental stage, please lock your version to a patch-level version to avoid unexpected breaking changes.
 
 Functions for fetching, caching and updating asynchronous data in Angular
 
@@ -29,87 +29,105 @@ Visit https://tanstack.com/query/latest/docs/framework/angular/overview
 
 # Quick Start
 
-> Angular Query requires Angular 16.
+> Angular Query requires Angular 16 or higher.
 
 1. Install `angular-query`
 
-   ```bash
-   $ npm i @tanstack/angular-query-experimental
-   ```
+```bash
+$ npm i @tanstack/angular-query-experimental
+```
 
-   or
+or
 
-   ```bash
-   $ pnpm add @tanstack/angular-query-experimental
-   ```
+```bash
+$ pnpm add @tanstack/angular-query-experimental
+```
 
-   or
+or
 
-   ```bash
-   $ yarn add @tanstack/angular-query-experimental
-   ```
+```bash
+$ yarn add @tanstack/angular-query-experimental
+```
 
-   or
+or
 
-   ```bash
-   $ bun add @tanstack/angular-query-experimental
-   ```
+```bash
+$ bun add @tanstack/angular-query-experimental
+```
 
 2. Initialize **Angular Query** by adding **provideAngularQuery** to your application
 
-   ```ts
-   import { provideAngularQuery } from '@tanstack/angular-query-experimental'
-   import { QueryClient } from '@tanstack/angular-query-experimental'
+```ts
+import { provideAngularQuery } from '@tanstack/angular-query-experimental'
+import { QueryClient } from '@tanstack/angular-query-experimental'
 
-   bootstrapApplication(AppComponent, {
-     providers: [provideAngularQuery(new QueryClient())],
-   })
-   ```
+bootstrapApplication(AppComponent, {
+  providers: [provideAngularQuery(new QueryClient())],
+})
+```
 
-   or in a NgModule-based app
+or in a NgModule-based app
 
-   ```ts
-   import { provideHttpClient } from '@angular/common/http'
-   import {
-   provideAngularQuery,
-   QueryClient,
-   } from '@tanstack/angular-query-experimental'
+```ts
+import { provideHttpClient } from '@angular/common/http'
+import {
+  provideAngularQuery,
+  QueryClient,
+} from '@tanstack/angular-query-experimental'
 
-   @NgModule({
-     declarations: [AppComponent],
-     imports: [BrowserModule],
-     providers: [provideAngularQuery(new QueryClient())],
-     bootstrap: [AppComponent],
-   })
-   ```
+@NgModule({
+  declarations: [AppComponent],
+  imports: [BrowserModule],
+  providers: [provideAngularQuery(new QueryClient())],
+  bootstrap: [AppComponent],
+})
+```
 
 3. Inject query
 
-   ```ts
-   import { injectQuery } from '@tanstack/angular-query-experimental'
-   import { Component } from '@angular/core'
+```ts
+import { injectQuery } from '@tanstack/angular-query-experimental'
+import { Component } from '@angular/core'
 
-   @Component({...})
-   export class TodosComponent {
-     info = injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchTodoList }))
-   }
-   ```
+@Component({...})
+export class TodosComponent {
+  info = injectQuery(() => ({ queryKey: ['todos'], queryFn: fetchTodoList }))
+}
+```
 
-4. If you need to update options on your query dynamically, make sure to pass them as signals
+4. If you need to update options on your query dynamically, make sure to pass them as signals. The query will refetch automatically if data for an updated query key is stale or not present.
 
-   ```ts
-   import { injectQuery } from '@tanstack/angular-query-experimental'
-   import { signal, Component } from '@angular/core'
+[Open in StackBlitz](https://stackblitz.com/github/TanStack/query/tree/main/examples/angular/router)
 
-   @Component({...})
-   export class TodosComponent {
-     id = signal(1)
-     enabled = signal(false)
+```ts
+@Component({})
+export class PostComponent {
+  #postsService = inject(PostsService)
+  postId = input.required({
+    transform: numberAttribute,
+  })
 
-     info = injectQuery(() => ({
-       queryKey: ['todos', this.id()],
-       queryFn: fetchTodoList,
-       enabled: this.enabled(),
-     }))
-   }
-   ```
+  postQuery = injectQuery(() => ({
+    queryKey: ['post', this.postId()],
+    queryFn: () => {
+      return lastValueFrom(this.#postsService.postById$(this.postId()))
+    },
+  }))
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PostsService {
+  #http = inject(HttpClient)
+
+  postById$ = (postId: number) =>
+    this.#http.get<Post>(`https://jsonplaceholder.typicode.com/posts/${postId}`)
+}
+
+export interface Post {
+  id: number
+  title: string
+  body: string
+}
+```

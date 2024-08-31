@@ -1,4 +1,11 @@
-import { Component, Injectable, inject, input, signal } from '@angular/core'
+import {
+  Component,
+  Injectable,
+  Injector,
+  inject,
+  input,
+  signal,
+} from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { describe, expect, vi } from 'vitest'
 import { By } from '@angular/platform-browser'
@@ -493,5 +500,28 @@ describe('injectMutation', () => {
       await fixture.componentInstance.mutation.mutateAsync('test'),
     ).toEqual('test')
     expect(errorSpy).not.toHaveBeenCalled()
+  })
+
+  describe('injection context', () => {
+    test('throws NG0203 with descriptive error outside injection context', () => {
+      expect(() => {
+        injectMutation(() => ({
+          mutationKey: ['injectionContextError'],
+          mutationFn: () => Promise.resolve(),
+        }))
+      }).toThrowError(/NG0203(.*?)injectMutation/)
+    })
+
+    test('can be used outside injection context when passing an injector', () => {
+      expect(() => {
+        injectMutation(
+          () => ({
+            mutationKey: ['injectionContextError'],
+            mutationFn: () => Promise.resolve(),
+          }),
+          TestBed.inject(Injector),
+        )
+      }).not.toThrow()
+    })
   })
 })
