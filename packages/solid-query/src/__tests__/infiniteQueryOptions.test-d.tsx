@@ -1,7 +1,8 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { type InfiniteData, dataTagSymbol } from '@tanstack/query-core'
+import { dataTagSymbol } from '@tanstack/query-core'
 import { createInfiniteQuery } from '../createInfiniteQuery'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
+import type { InfiniteData } from '@tanstack/query-core'
 import type {
   DefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,

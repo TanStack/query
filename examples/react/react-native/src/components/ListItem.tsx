@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { View, StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { Paragraph, TouchableRipple } from 'react-native-paper'
-import { MovieDetails } from '../lib/api'
+import type { MovieDetails } from '../lib/api'
 
 type Props = {
   item: MovieDetails

@@ -9,10 +9,10 @@
     "test:types": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
-    "@tanstack/query-sync-storage-persister": "^5.52.0",
-    "@tanstack/svelte-query": "^5.52.0",
-    "@tanstack/svelte-query-devtools": "^5.52.0",
-    "@tanstack/svelte-query-persist-client": "^5.52.0"
+    "@tanstack/query-sync-storage-persister": "^5.53.1",
+    "@tanstack/svelte-query": "^5.53.1",
+    "@tanstack/svelte-query-devtools": "^5.53.1",
+    "@tanstack/svelte-query-persist-client": "^5.53.1"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.2.2",

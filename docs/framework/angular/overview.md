@@ -23,7 +23,7 @@ Most core web frameworks **do not** come with an opinionated way of fetching or 
 
 While most traditional state management libraries are great for working with client state, they are **not so great at working with async or server state**. This is because **server state is totally different**. For starters, server state:
 
-- Is persisted remotely in a location you do not control or own
+- Is persisted remotely in a location you may not control or own
 - Requires asynchronous APIs for fetching and updating
 - Implies shared ownership and can be changed by other people without your knowledge
 - Can potentially become "out of date" in your applications if you're not careful
@@ -58,7 +58,7 @@ On a more technical note, Angular Query will likely:
 
 In the example below, you can see Angular Query in its most basic and simple form being used to fetch the GitHub stats for the TanStack Query GitHub project itself:
 
-[Open in CodeSandbox](https://codesandbox.io/s/github/tanstack/query/tree/main/examples/angular/simple)
+[Open in StackBlitz](https://stackblitz.com/github/TanStack/query/tree/main/examples/angular/simple)
 
 ```angular-ts
 import { AngularQueryDevtools } from '@tanstack/angular-query-devtools-experimental'
@@ -114,4 +114,4 @@ type Response = {
 
 ## You talked me into it, so what now?
 
-- Learn Angular Query at your own pace with our amazingly thorough [Walkthrough Guide](../installation) and [API Reference](../reference/injectQuery)
+- Learn Angular Query at your own pace with our amazingly thorough [Walkthrough Guide](../installation) and [API Reference](../reference/functions/injectquery)

@@ -618,4 +618,27 @@ describe('injectQuery', () => {
 
     expect(fixture.componentInstance.query.data()).toEqual('test name 2')
   }))
+
+  describe('injection context', () => {
+    test('throws NG0203 with descriptive error outside injection context', () => {
+      expect(() => {
+        injectQuery(() => ({
+          queryKey: ['injectionContextError'],
+          queryFn: simpleFetcher,
+        }))
+      }).toThrowError(/NG0203(.*?)injectQuery/)
+    })
+
+    test('can be used outside injection context when passing an injector', () => {
+      const query = injectQuery(
+        () => ({
+          queryKey: ['manualInjector'],
+          queryFn: simpleFetcher,
+        }),
+        TestBed.inject(Injector),
+      )
+
+      expect(query.status()).toBe('pending')
+    })
+  })
 })

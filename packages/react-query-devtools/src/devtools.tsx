@@ -3,8 +3,8 @@ import * as React from 'react'
 import { onlineManager, useQueryClient } from '@tanstack/react-query'
 import { TanstackQueryDevtools } from '@tanstack/query-devtools'
 import type {
-  DevToolsErrorType,
   DevtoolsButtonPosition,
+  DevtoolsErrorType,
   DevtoolsPosition,
 } from '@tanstack/query-devtools'
 import type { QueryClient } from '@tanstack/react-query'
@@ -33,7 +33,7 @@ export interface DevtoolsOptions {
   /**
    * Use this so you can define custom errors that can be shown in the devtools.
    */
-  errorTypes?: Array<DevToolsErrorType>
+  errorTypes?: Array<DevtoolsErrorType>
   /**
    * Use this to pass a nonce to the style tag that is added to the document head. This is useful if you are using a Content Security Policy (CSP) nonce to allow inline styles.
    */
