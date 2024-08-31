@@ -6,10 +6,7 @@ import {
   numberAttribute,
 } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import {
-  injectQuery,
-  injectQueryClient,
-} from '@tanstack/angular-query-experimental'
+import { injectQuery } from '@tanstack/angular-query-experimental'
 import { lastValueFrom } from 'rxjs'
 import { PostsService } from '../services/posts-service'
 
@@ -22,7 +19,6 @@ import { PostsService } from '../services/posts-service'
 })
 export default class PostComponent {
   #postsService = inject(PostsService)
-  queryClient = injectQueryClient()
 
   postId = input.required({
     transform: numberAttribute,
