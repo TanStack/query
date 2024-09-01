@@ -127,26 +127,33 @@ import {
   defineComponent,
   onServerPrefetch,
   useContext,
-} from "@nuxtjs/composition-api";
-import { useQuery, useQueryClient, dehydrate } from "@tanstack/vue-query";
+} from '@nuxtjs/composition-api'
+import { useQuery, useQueryClient, dehydrate } from '@tanstack/vue-query'
 
 export default defineComponent({
   setup() {
     // Get QueryClient either from SSR context, or Vue context
     const { ssrContext } = useContext()
     // Make sure to provide `queryClient` as a second parameter to `useQuery` calls
-    const queryClient = (ssrContext != null && ssrContext.VueQuery) || useQueryClient()
+    const queryClient =
+      (ssrContext != null && ssrContext.VueQuery) || useQueryClient()
 
     // This will be prefetched and sent from the server
-    const { data, refetch, suspense } = useQuery({
-      queryKey: ['todos'],
-      queryFn: getTodos,
-    }, queryClient)
+    const { data, refetch, suspense } = useQuery(
+      {
+        queryKey: ['todos'],
+        queryFn: getTodos,
+      },
+      queryClient,
+    )
     // This won't be prefetched, it will start fetching on client side
-    const { data2 } = useQuery({
-      queryKey: "todos2",
-      queryFn: getTodos,
-    }, queryClient)
+    const { data2 } = useQuery(
+      {
+        queryKey: 'todos2',
+        queryFn: getTodos,
+      },
+      queryClient,
+    )
 
     onServerPrefetch(async () => {
       await suspense()
@@ -156,9 +163,9 @@ export default defineComponent({
     return {
       refetch,
       data,
-    };
+    }
   },
-});
+})
 </script>
 ```
 
