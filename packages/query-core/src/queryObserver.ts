@@ -582,11 +582,11 @@ export class QueryObserver<
       isRefetchError: isError && hasData,
       isStale: isStale(query, options),
       refetch: this.refetch,
-      promise: (prevQuery.promise ??
-        query.promise ??
-        new Promise(() => {
-          // never resolves? 🤷‍♂️
-        })) as any,
+      promise: hasData
+        ? Promise.resolve(data as TData)
+        : new Promise<TData>(() => {
+            // we probably never actually need to resolve this since the full tree will be invalidated
+          }),
     }
 
     return result as QueryObserverResult<TData, TError>
