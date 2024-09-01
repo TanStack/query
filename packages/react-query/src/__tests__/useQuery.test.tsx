@@ -6663,7 +6663,7 @@ describe('useQuery', () => {
       await waitFor(() => rendered.getByText('initial'))
       await waitFor(() => rendered.getByText('test'))
 
-      // expect(suspenseRenderCount).toBe(0)
+      expect(suspenseRenderCount).toBe(0)
     })
   })
 })

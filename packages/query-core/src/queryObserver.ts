@@ -12,6 +12,11 @@ import { notifyManager } from './notifyManager'
 import { focusManager } from './focusManager'
 import { Subscribable } from './subscribable'
 import { fetchState } from './query'
+import {
+  fulfilledThenable,
+  pendingThenable,
+  rejectedThenable,
+} from './thenable'
 import type { FetchOptions, Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
 import type {
@@ -583,10 +588,11 @@ export class QueryObserver<
       isStale: isStale(query, options),
       refetch: this.refetch,
       promise: hasData
-        ? Promise.resolve(data as TData)
-        : new Promise<TData>(() => {
-            // we probably never actually need to resolve this since the full tree will be invalidated
-          }),
+        ? fulfilledThenable(data as TData)
+        : status === 'error'
+          ? rejectedThenable(error)
+          : // never resolves, which is fine(?) since the full tree resolves
+            pendingThenable(),
     }
 
     return result as QueryObserverResult<TData, TError>
