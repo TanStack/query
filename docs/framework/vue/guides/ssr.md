@@ -82,11 +82,14 @@ export default (context) => {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { staleTime: 5000 } },
   })
-  const options = { queryClient }
 
-  Vue.use(VueQueryPlugin, options)
+  if (process.server) {
+    context.ssrContext.VueQuery = queryClient
+  }
 
   if (process.client) {
+    Vue.use(VueQueryPlugin, { queryClient })
+
     if (context.nuxtState && context.nuxtState.vueQueryState) {
       hydrate(queryClient, context.nuxtState.vueQueryState)
     }
@@ -100,7 +103,7 @@ Add this plugin to your `nuxt.config.js`
 module.exports = {
   ...
   plugins: ['~/plugins/vue-query.js'],
-};
+}
 ```
 
 Now you are ready to prefetch some data in your pages with `onServerPrefetch`.
@@ -110,7 +113,7 @@ Now you are ready to prefetch some data in your pages with `onServerPrefetch`.
 - Prefetch all the queries that you need with `queryClient.prefetchQuery` or `suspense`
 - Dehydrate `queryClient` to the `nuxtContext`
 
-```js
+```vue
 // pages/todos.vue
 <template>
   <div>
@@ -129,18 +132,26 @@ import { useQuery, useQueryClient, dehydrate } from "@tanstack/vue-query";
 
 export default defineComponent({
   setup() {
-    // This will be prefetched and sent from the server
-    const { refetch, data, suspense } = useQuery("todos", getTodos);
-    // This won't be prefetched, it will start fetching on client side
-    const { data2 } = useQuery("todos2", getTodos);
+    // Get QueryClient either from SSR context, or Vue context
+    const { ssrContext } = useContext()
+    // Make sure to provide `queryClient` as a second parameter to `useQuery` calls
+    const queryClient = (ssrContext != null && ssrContext.VueQuery) || useQueryClient()
 
-    const { ssrContext } = useContext();
-    const queryClient = useQueryClient();
+    // This will be prefetched and sent from the server
+    const { data, refetch, suspense } = useQuery({
+      queryKey: ['todos'],
+      queryFn: getTodos,
+    }, queryClient)
+    // This won't be prefetched, it will start fetching on client side
+    const { data2 } = useQuery({
+      queryKey: "todos2",
+      queryFn: getTodos,
+    }, queryClient)
 
     onServerPrefetch(async () => {
-      await suspense();
-      ssrContext.nuxt.vueQueryState = dehydrate(queryClient);
-    });
+      await suspense()
+      ssrContext.nuxt.vueQueryState = dehydrate(queryClient)
+    })
 
     return {
       refetch,
