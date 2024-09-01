@@ -6657,5 +6657,44 @@ describe('useQuery', () => {
 
       expect(suspenseRenderCount).toBe(0)
     })
+
+    it('should be possible to select a part of the data with select', async () => {
+      const key = queryKey()
+      let suspenseRenderCount = 0
+
+      function MyComponent(props: { promise: Promise<string> }) {
+        const data = React.use(props.promise)
+        return <>{data}</>
+      }
+
+      function Loading() {
+        suspenseRenderCount++
+        return <>loading..</>
+      }
+
+      function Page() {
+        const query = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(1)
+            return { name: 'test' }
+          },
+          select: (data) => data.name,
+        })
+
+        return (
+          <React.Suspense fallback={<Loading />}>
+            <MyComponent promise={query.promise} />
+          </React.Suspense>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() => {
+        rendered.getByText('test')
+      })
+      expect(suspenseRenderCount).toBe(1)
+    })
   })
 })
