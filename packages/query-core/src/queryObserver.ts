@@ -43,6 +43,11 @@ interface ObserverFetchOptions extends FetchOptions {
   throwOnError?: boolean
 }
 
+/**
+ * A pending promise that **never resolves** but is stable
+ */
+const neverResolvedPromise = pendingThenable<any>()
+
 export class QueryObserver<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -591,8 +596,7 @@ export class QueryObserver<
         ? fulfilledThenable(data as TData)
         : status === 'error'
           ? rejectedThenable(error)
-          : // never resolves, which is fine(?) since the full tree resolves
-            pendingThenable(),
+          : neverResolvedPromise,
     }
 
     return result as QueryObserverResult<TData, TError>

@@ -6616,8 +6616,8 @@ describe('useQuery', () => {
       await waitFor(() => rendered.getByText('loading..'))
       await waitFor(() => rendered.getByText('test'))
 
-      // This should probably be 1 since `.promise` is the only "watched" property
-      // expect(suspenseRenderCount).toBe(1)
+      // This should probably be 1 since `.promise` is the only watched property
+      expect(suspenseRenderCount).toBe(1)
     })
 
     it('should work with initial data', async () => {

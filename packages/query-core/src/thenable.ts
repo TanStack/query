@@ -1,6 +1,10 @@
 /**
  * Thenable types which matches React's types for promises
+ *
+ * React seemingly uses `.status`, `.value` and `.reason` properties on a promises to optimistically unwrap data from promises
+ *
  * @see https://github.com/facebook/react/blob/main/packages/shared/ReactTypes.js#L112-L138
+ * @see https://github.com/facebook/react/blob/4f604941569d2e8947ce1460a0b2997e835f37b9/packages/react-debug-tools/src/ReactDebugHooks.js#L224-L227
  */
 
 type FulfilledThenable<T> = Promise<T> & { status: 'fulfilled'; value: T }
