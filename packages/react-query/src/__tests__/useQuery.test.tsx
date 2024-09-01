@@ -6626,12 +6626,12 @@ describe('useQuery', () => {
 
       function MyComponent(props: { promise: Promise<string> }) {
         const data = React.use(props.promise)
-        console.log('--------data', data)
+
         return <>{data}</>
       }
       function Loading() {
         suspenseRenderCount++
-        console.log({ suspenseRenderCount })
+
         return <>loading..</>
       }
       function Page() {
@@ -6643,14 +6643,6 @@ describe('useQuery', () => {
           },
           initialData: 'initial',
         })
-        const lastPromise = React.useRef(query.promise)
-
-        if (query.promise !== lastPromise.current) {
-          console.log('promise change')
-          lastPromise.current = query.promise
-        } else {
-          console.log('nah promise change')
-        }
 
         return (
           <React.Suspense fallback={<Loading />}>
