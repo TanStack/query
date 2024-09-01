@@ -661,6 +661,10 @@ export interface QueryObserverBaseResult<
    * - See [Network Mode](https://tanstack.com/query/latest/docs/framework/react/guides/network-mode) for more information.
    */
   fetchStatus: FetchStatus
+  /**
+   * A stable promise that will be resolved with the data of the query.
+   */
+  promise: Promise<TData>
 }
 
 export interface QueryObserverPendingResult<

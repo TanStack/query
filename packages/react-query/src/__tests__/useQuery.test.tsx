@@ -41,6 +41,7 @@ describe('useQuery', () => {
       const fromQueryFn = useQuery({ queryKey: key, queryFn: () => 'test' })
       expectTypeOf(fromQueryFn.data).toEqualTypeOf<string | undefined>()
       expectTypeOf(fromQueryFn.error).toEqualTypeOf<Error | null>()
+      expectTypeOf(fromQueryFn.promise).toEqualTypeOf<Promise<string>>()
 
       // it should be possible to specify the result type
       const withResult = useQuery<string>({
@@ -6580,5 +6581,78 @@ describe('useQuery', () => {
     )
 
     consoleMock.mockRestore()
+  })
+
+  describe('useQuery().promise', () => {
+    it('should work with a basic test', async () => {
+      const key = queryKey()
+      let suspenseRenderCount = 0
+
+      function MyComponent(props: { promise: Promise<string> }) {
+        return <div>{React.use(props.promise)}</div>
+      }
+
+      function Loading() {
+        suspenseRenderCount++
+        return <>loading..</>
+      }
+      function Page() {
+        const query = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(10)
+            return 'test'
+          },
+        })
+
+        return (
+          <React.Suspense fallback={<Loading />}>
+            <MyComponent promise={query.promise} />
+          </React.Suspense>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      await waitFor(() => rendered.getByText('loading..'))
+      await waitFor(() => rendered.getByText('test'))
+
+      // This should probably be 1 since `.promise` is the only "watched" property
+      // expect(suspenseRenderCount).toBe(1)
+    })
+  })
+
+  it('should work with initial data', async () => {
+    const key = queryKey()
+    let suspenseRenderCount = 0
+
+    function MyComponent(props: { promise: Promise<string> }) {
+      return <div>{React.use(props.promise)}</div>
+    }
+    function Loading() {
+      suspenseRenderCount++
+      return <>loading..</>
+    }
+    function Page() {
+      const query = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 'test'
+        },
+        initialData: 'initial',
+      })
+
+      return (
+        <React.Suspense fallback={<Loading />}>
+          <MyComponent promise={query.promise} />
+        </React.Suspense>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() => rendered.getByText('initialData'))
+    await waitFor(() => rendered.getByText('test'))
+
+    expect(suspenseRenderCount).toBe(0)
   })
 })

@@ -582,6 +582,11 @@ export class QueryObserver<
       isRefetchError: isError && hasData,
       isStale: isStale(query, options),
       refetch: this.refetch,
+      promise: (prevQuery.promise ??
+        query.promise ??
+        new Promise(() => {
+          // never resolves? 🤷‍♂️
+        })) as any,
     }
 
     return result as QueryObserverResult<TData, TError>
