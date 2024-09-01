@@ -6619,40 +6619,40 @@ describe('useQuery', () => {
       // This should probably be 1 since `.promise` is the only "watched" property
       // expect(suspenseRenderCount).toBe(1)
     })
-  })
 
-  it('should work with initial data', async () => {
-    const key = queryKey()
-    let suspenseRenderCount = 0
+    it('should work with initial data', async () => {
+      const key = queryKey()
+      let suspenseRenderCount = 0
 
-    function MyComponent(props: { promise: Promise<string> }) {
-      return <div>{React.use(props.promise)}</div>
-    }
-    function Loading() {
-      suspenseRenderCount++
-      return <>loading..</>
-    }
-    function Page() {
-      const query = useQuery({
-        queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          return 'test'
-        },
-        initialData: 'initial',
-      })
+      function MyComponent(props: { promise: Promise<string> }) {
+        return <div>{React.use(props.promise)}</div>
+      }
+      function Loading() {
+        suspenseRenderCount++
+        return <>loading..</>
+      }
+      function Page() {
+        const query = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(10)
+            return 'test'
+          },
+          initialData: 'initial',
+        })
 
-      return (
-        <React.Suspense fallback={<Loading />}>
-          <MyComponent promise={query.promise} />
-        </React.Suspense>
-      )
-    }
+        return (
+          <React.Suspense fallback={<Loading />}>
+            <MyComponent promise={query.promise} />
+          </React.Suspense>
+        )
+      }
 
-    const rendered = renderWithClient(queryClient, <Page />)
-    await waitFor(() => rendered.getByText('initialData'))
-    await waitFor(() => rendered.getByText('test'))
+      const rendered = renderWithClient(queryClient, <Page />)
+      await waitFor(() => rendered.getByText('initial'))
+      await waitFor(() => rendered.getByText('test'))
 
-    expect(suspenseRenderCount).toBe(0)
+      expect(suspenseRenderCount).toBe(0)
+    })
   })
 })
