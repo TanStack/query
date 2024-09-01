@@ -6696,5 +6696,54 @@ describe('useQuery', () => {
       })
       expect(suspenseRenderCount).toBe(1)
     })
+
+    // This works but has vitest gives a false-positive due to the thrown error somehow
+    it.skip('should throw error if the promise fails', async () => {
+      let suspenseRenderCount = 0
+      const consoleMock = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined)
+
+      const key = queryKey()
+      function MyComponent(props: { promise: Promise<unknown> }) {
+        const data = React.use(props.promise)
+
+        return <>{data}</>
+      }
+
+      function Loading() {
+        suspenseRenderCount++
+        return <>loading..</>
+      }
+
+      function Page() {
+        const query = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(10)
+            throw new Error('Error test')
+          },
+          retry: false,
+        })
+
+        return (
+          <React.Suspense fallback={<Loading />}>
+            <MyComponent promise={query.promise} />
+          </React.Suspense>
+        )
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <ErrorBoundary fallbackRender={() => <>error boundary</>}>
+          <Page />
+        </ErrorBoundary>,
+      )
+
+      await waitFor(() => rendered.getByText('loading..'))
+      await waitFor(() => rendered.getByText('error boundary'))
+
+      consoleMock.mockRestore()
+    })
   })
 })
