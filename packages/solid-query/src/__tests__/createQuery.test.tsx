@@ -395,6 +395,7 @@ describe('createQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
+      promise: expect.any(Promise),
     })
 
     expect(states[1]).toEqual({
@@ -422,6 +423,7 @@ describe('createQuery', () => {
       refetch: expect.any(Function),
       status: 'pending',
       fetchStatus: 'fetching',
+      promise: expect.any(Promise),
     })
 
     expect(states[2]).toEqual({
@@ -449,6 +451,7 @@ describe('createQuery', () => {
       refetch: expect.any(Function),
       status: 'error',
       fetchStatus: 'idle',
+      promise: expect.any(Promise),
     })
   })
 
