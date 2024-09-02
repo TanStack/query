@@ -47,6 +47,10 @@ export function pendingThenable<T>(): PendingThenable<T> {
     reject = _reject
   }) as PendingThenable<T>
 
+  thenable.catch(() => {
+    // prevent unhandled rejection errors
+  })
+
   thenable.status = 'pending'
   thenable.resolve = (value) => {
     deletePendingProps()

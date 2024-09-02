@@ -602,9 +602,6 @@ export class QueryObserver<
 
     const completeThenableIfPossible = (thenable: PendingThenable<TData>) => {
       if (nextResult.status === 'error') {
-        thenable.catch(() => {
-          // prevent unhandled rejection errors
-        })
         thenable.reject(nextResult.error)
       } else if (nextResult.data !== undefined) {
         thenable.resolve(nextResult.data)
