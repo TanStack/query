@@ -1780,4 +1780,69 @@ describe('useInfiniteQuery', () => {
 
     await waitFor(() => rendered.getByText('data: custom client'))
   })
+
+  it('should work with React.use()', async () => {
+    const key = queryKey()
+
+    let suspenseRenderCount = 0
+    function useMyQuery() {
+      const fetchCountRef = React.useRef(0)
+      return useInfiniteQuery({
+        queryFn: ({ pageParam }) =>
+          fetchItems(pageParam, fetchCountRef.current++),
+        getNextPageParam: (lastPage) => lastPage.nextId,
+        initialPageParam: 0,
+        queryKey: key,
+      })
+    }
+    function Loading() {
+      suspenseRenderCount++
+      return <>loading...</>
+    }
+    function MyComponent(props: { query: ReturnType<typeof useMyQuery> }) {
+      const data = React.use(props.query.promise)
+      return (
+        <>
+          {data.pages.map((page, index) => (
+            <React.Fragment key={page.ts}>
+              <div>
+                <div>Page: {index + 1}</div>
+              </div>
+              {page.items.map((item) => (
+                <p key={item}>Item: {item}</p>
+              ))}
+            </React.Fragment>
+          ))}
+          <button onClick={() => props.query.fetchNextPage()}>
+            fetchNextPage
+          </button>
+        </>
+      )
+    }
+    function Page() {
+      const query = useMyQuery()
+      return (
+        <React.Suspense fallback={<Loading />}>
+          <MyComponent query={query} />
+        </React.Suspense>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() => rendered.getByText('loading...'))
+
+    await waitFor(() => rendered.getByText('Page: 1'))
+    await waitFor(() => rendered.getByText('Item: 1'))
+
+    expect(suspenseRenderCount).toBe(1)
+
+    // click button
+    fireEvent.click(rendered.getByRole('button', { name: 'fetchNextPage' }))
+
+    await waitFor(() => rendered.getByText('Page: 2'))
+    await waitFor(() => rendered.getByText('Item: 11'))
+
+    // Suspense doesn't trigger when fetching next page
+    expect(suspenseRenderCount).toBe(1)
+  })
 })
