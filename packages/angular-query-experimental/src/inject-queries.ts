@@ -56,82 +56,82 @@ type GetCreateQueryOptionsForInjectQueries<T> =
     error?: infer TError
     data: infer TData
   }
-  ? CreateQueryOptionsForInjectQueries<TQueryFnData, TError, TData>
-  : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
-  ? CreateQueryOptionsForInjectQueries<TQueryFnData, TError>
-  : T extends { data: infer TData; error?: infer TError }
-  ? CreateQueryOptionsForInjectQueries<unknown, TError, TData>
-  : // Part 2: responsible for applying explicit type parameter to function arguments, if tuple [TQueryFnData, TError, TData]
-  T extends [infer TQueryFnData, infer TError, infer TData]
-  ? CreateQueryOptionsForInjectQueries<TQueryFnData, TError, TData>
-  : T extends [infer TQueryFnData, infer TError]
-  ? CreateQueryOptionsForInjectQueries<TQueryFnData, TError>
-  : T extends [infer TQueryFnData]
-  ? CreateQueryOptionsForInjectQueries<TQueryFnData>
-  : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
-  T extends {
-    queryFn?:
-    | QueryFunction<infer TQueryFnData, infer TQueryKey>
-    | SkipTokenForInjectQueries
-    select?: (data: any) => infer TData
-    throwOnError?: ThrowOnError<any, infer TError, any, any>
-  }
-  ? CreateQueryOptionsForInjectQueries<
-    TQueryFnData,
-    unknown extends TError ? DefaultError : TError,
-    unknown extends TData ? TQueryFnData : TData,
-    TQueryKey
-  >
-  : // Fallback
-  CreateQueryOptionsForInjectQueries
+    ? CreateQueryOptionsForInjectQueries<TQueryFnData, TError, TData>
+    : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
+      ? CreateQueryOptionsForInjectQueries<TQueryFnData, TError>
+      : T extends { data: infer TData; error?: infer TError }
+        ? CreateQueryOptionsForInjectQueries<unknown, TError, TData>
+        : // Part 2: responsible for applying explicit type parameter to function arguments, if tuple [TQueryFnData, TError, TData]
+          T extends [infer TQueryFnData, infer TError, infer TData]
+          ? CreateQueryOptionsForInjectQueries<TQueryFnData, TError, TData>
+          : T extends [infer TQueryFnData, infer TError]
+            ? CreateQueryOptionsForInjectQueries<TQueryFnData, TError>
+            : T extends [infer TQueryFnData]
+              ? CreateQueryOptionsForInjectQueries<TQueryFnData>
+              : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
+                T extends {
+                    queryFn?:
+                      | QueryFunction<infer TQueryFnData, infer TQueryKey>
+                      | SkipTokenForInjectQueries
+                    select?: (data: any) => infer TData
+                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                  }
+                ? CreateQueryOptionsForInjectQueries<
+                    TQueryFnData,
+                    unknown extends TError ? DefaultError : TError,
+                    unknown extends TData ? TQueryFnData : TData,
+                    TQueryKey
+                  >
+                : // Fallback
+                  CreateQueryOptionsForInjectQueries
 
 // A defined initialData setting should return a DefinedQueryObserverResult rather than QueryObserverResult
 type GetDefinedOrUndefinedQueryResult<T, TData, TError = unknown> = T extends {
   initialData?: infer TInitialData
 }
   ? unknown extends TInitialData
-  ? QueryObserverResult<TData, TError>
-  : TInitialData extends TData
-  ? DefinedQueryObserverResult<TData, TError>
-  : TInitialData extends () => infer TInitialDataResult
-  ? unknown extends TInitialDataResult
-  ? QueryObserverResult<TData, TError>
-  : TInitialDataResult extends TData
-  ? DefinedQueryObserverResult<TData, TError>
-  : QueryObserverResult<TData, TError>
-  : QueryObserverResult<TData, TError>
+    ? QueryObserverResult<TData, TError>
+    : TInitialData extends TData
+      ? DefinedQueryObserverResult<TData, TError>
+      : TInitialData extends () => infer TInitialDataResult
+        ? unknown extends TInitialDataResult
+          ? QueryObserverResult<TData, TError>
+          : TInitialDataResult extends TData
+            ? DefinedQueryObserverResult<TData, TError>
+            : QueryObserverResult<TData, TError>
+        : QueryObserverResult<TData, TError>
   : QueryObserverResult<TData, TError>
 
 type GetCreateQueryResult<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
   T extends { queryFnData: any; error?: infer TError; data: infer TData }
-  ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
-  : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
-  ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData, TError>
-  : T extends { data: infer TData; error?: infer TError }
-  ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
-  : // Part 2: responsible for mapping explicit type parameter to function result, if tuple
-  T extends [any, infer TError, infer TData]
-  ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
-  : T extends [infer TQueryFnData, infer TError]
-  ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData, TError>
-  : T extends [infer TQueryFnData]
-  ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData>
-  : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
-  T extends {
-    queryFn?:
-    | QueryFunction<infer TQueryFnData, any>
-    | SkipTokenForInjectQueries
-    select?: (data: any) => infer TData
-    throwOnError?: ThrowOnError<any, infer TError, any, any>
-  }
-  ? GetDefinedOrUndefinedQueryResult<
-    T,
-    unknown extends TData ? TQueryFnData : TData,
-    unknown extends TError ? DefaultError : TError
-  >
-  : // Fallback
-  QueryObserverResult
+    ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
+    : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
+      ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData, TError>
+      : T extends { data: infer TData; error?: infer TError }
+        ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
+        : // Part 2: responsible for mapping explicit type parameter to function result, if tuple
+          T extends [any, infer TError, infer TData]
+          ? GetDefinedOrUndefinedQueryResult<T, TData, TError>
+          : T extends [infer TQueryFnData, infer TError]
+            ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData, TError>
+            : T extends [infer TQueryFnData]
+              ? GetDefinedOrUndefinedQueryResult<T, TQueryFnData>
+              : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
+                T extends {
+                    queryFn?:
+                      | QueryFunction<infer TQueryFnData, any>
+                      | SkipTokenForInjectQueries
+                    select?: (data: any) => infer TData
+                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                  }
+                ? GetDefinedOrUndefinedQueryResult<
+                    T,
+                    unknown extends TData ? TQueryFnData : TData,
+                    unknown extends TError ? DefaultError : TError
+                  >
+                : // Fallback
+                  QueryObserverResult
 
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
@@ -144,37 +144,37 @@ export type QueriesOptions<
 > = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<CreateQueryOptionsForInjectQueries>
   : T extends []
-  ? []
-  : T extends [infer Head]
-  ? [...TResults, GetCreateQueryOptionsForInjectQueries<Head>]
-  : T extends [infer Head, ...infer Tails]
-  ? QueriesOptions<
-    [...Tails],
-    [...TResults, GetCreateQueryOptionsForInjectQueries<Head>],
-    [...TDepth, 1]
-  >
-  : ReadonlyArray<unknown> extends T
-  ? T
-  : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
-  // use this to infer the param types in the case of Array.map() argument
-  T extends Array<
-    CreateQueryOptionsForInjectQueries<
-      infer TQueryFnData,
-      infer TError,
-      infer TData,
-      infer TQueryKey
-    >
-  >
-  ? Array<
-    CreateQueryOptionsForInjectQueries<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey
-    >
-  >
-  : // Fallback
-  Array<CreateQueryOptionsForInjectQueries>
+    ? []
+    : T extends [infer Head]
+      ? [...TResults, GetCreateQueryOptionsForInjectQueries<Head>]
+      : T extends [infer Head, ...infer Tails]
+        ? QueriesOptions<
+            [...Tails],
+            [...TResults, GetCreateQueryOptionsForInjectQueries<Head>],
+            [...TDepth, 1]
+          >
+        : ReadonlyArray<unknown> extends T
+          ? T
+          : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
+            // use this to infer the param types in the case of Array.map() argument
+            T extends Array<
+                CreateQueryOptionsForInjectQueries<
+                  infer TQueryFnData,
+                  infer TError,
+                  infer TData,
+                  infer TQueryKey
+                >
+              >
+            ? Array<
+                CreateQueryOptionsForInjectQueries<
+                  TQueryFnData,
+                  TError,
+                  TData,
+                  TQueryKey
+                >
+              >
+            : // Fallback
+              Array<CreateQueryOptionsForInjectQueries>
 
 /**
  * QueriesResults reducer recursively maps type param to results
@@ -187,32 +187,32 @@ export type QueriesResults<
 > = TDepth['length'] extends MAXIMUM_DEPTH
   ? Array<QueryObserverResult>
   : T extends []
-  ? []
-  : T extends [infer Head]
-  ? [...TResults, GetCreateQueryResult<Head>]
-  : T extends [infer Head, ...infer Tails]
-  ? QueriesResults<
-    [...Tails],
-    [...TResults, GetCreateQueryResult<Head>],
-    [...TDepth, 1]
-  >
-  : T extends Array<
-    CreateQueryOptionsForInjectQueries<
-      infer TQueryFnData,
-      infer TError,
-      infer TData,
-      any
-    >
-  >
-  ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-  Array<
-    QueryObserverResult<
-      unknown extends TData ? TQueryFnData : TData,
-      unknown extends TError ? DefaultError : TError
-    >
-  >
-  : // Fallback
-  Array<QueryObserverResult>
+    ? []
+    : T extends [infer Head]
+      ? [...TResults, GetCreateQueryResult<Head>]
+      : T extends [infer Head, ...infer Tails]
+        ? QueriesResults<
+            [...Tails],
+            [...TResults, GetCreateQueryResult<Head>],
+            [...TDepth, 1]
+          >
+        : T extends Array<
+              CreateQueryOptionsForInjectQueries<
+                infer TQueryFnData,
+                infer TError,
+                infer TData,
+                any
+              >
+            >
+          ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
+            Array<
+              QueryObserverResult<
+                unknown extends TData ? TQueryFnData : TData,
+                unknown extends TError ? DefaultError : TError
+              >
+            >
+          : // Fallback
+            Array<QueryObserverResult>
 
 /**
  * @public

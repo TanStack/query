@@ -23,6 +23,7 @@ import type { MutationObserverResult } from '@tanstack/query-core';
 import type { MutationState } from '@tanstack/query-core';
 import type { OmitKeyof } from '@tanstack/query-core';
 import { Provider } from '@angular/core';
+import type { QueriesObserverOptions } from '@tanstack/query-core';
 import type { QueriesPlaceholderDataFunction } from '@tanstack/query-core';
 import type { QueryClient } from '@tanstack/query-core';
 import type { QueryFilters } from '@tanstack/query-core';
@@ -161,10 +162,9 @@ export interface InjectMutationStateOptions {
 }
 
 // @public (undocumented)
-export function injectQueries<T extends Array<any>, TCombinedResult = QueriesResults<T>>({ queries, ...options }: {
-    queries: Signal<[...QueriesOptions<T>]>;
-    combine?: (result: QueriesResults<T>) => TCombinedResult;
-}, injector?: Injector): Signal<TCombinedResult>;
+export function injectQueries<T extends Array<any>, TCombinedResult = QueriesResults<T>>({ queriesFn, ...options }: {
+    queriesFn: (client: QueryClient) => readonly [...QueriesOptions<T>];
+} & QueriesObserverOptions<TCombinedResult>, injector?: Injector): Signal<TCombinedResult>;
 
 // @public
 export function injectQuery<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey>(optionsFn: (client: QueryClient) => DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>, injector?: Injector): DefinedCreateQueryResult<TData, TError>;
@@ -198,32 +198,32 @@ export function provideAngularQuery(queryClient: QueryClient): EnvironmentProvid
 export const provideQueryClient: ((value: QueryClient | (() => QueryClient)) => Provider) & ((value: QueryClient | (() => QueryClient)) => Provider);
 
 // Warning: (ae-forgotten-export) The symbol "MAXIMUM_DEPTH" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "QueryObserverOptionsForCreateQueries" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "GetOptions" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "CreateQueryOptionsForInjectQueries" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "GetCreateQueryOptionsForInjectQueries" needs to be exported by the entry point index.d.ts
 //
 // @public
-export type QueriesOptions<T extends Array<any>, TResult extends Array<any> = [], TDepth extends ReadonlyArray<number> = []> = TDepth['length'] extends MAXIMUM_DEPTH ? Array<QueryObserverOptionsForCreateQueries> : T extends [] ? [] : T extends [infer Head] ? [...TResult, GetOptions<Head>] : T extends [infer Head, ...infer Tail] ? QueriesOptions<[
-...Tail
+export type QueriesOptions<T extends Array<any>, TResults extends Array<any> = [], TDepth extends ReadonlyArray<number> = []> = TDepth['length'] extends MAXIMUM_DEPTH ? Array<CreateQueryOptionsForInjectQueries> : T extends [] ? [] : T extends [infer Head] ? [...TResults, GetCreateQueryOptionsForInjectQueries<Head>] : T extends [infer Head, ...infer Tails] ? QueriesOptions<[
+...Tails
 ], [
-...TResult,
-GetOptions<Head>
+...TResults,
+GetCreateQueryOptionsForInjectQueries<Head>
 ], [
 ...TDepth,
 1
-]> : ReadonlyArray<unknown> extends T ? T : T extends Array<QueryObserverOptionsForCreateQueries<infer TQueryFnData, infer TError, infer TData, infer TQueryKey>> ? Array<QueryObserverOptionsForCreateQueries<TQueryFnData, TError, TData, TQueryKey>> : Array<QueryObserverOptionsForCreateQueries>;
+]> : ReadonlyArray<unknown> extends T ? T : T extends Array<CreateQueryOptionsForInjectQueries<infer TQueryFnData, infer TError, infer TData, infer TQueryKey>> ? Array<CreateQueryOptionsForInjectQueries<TQueryFnData, TError, TData, TQueryKey>> : Array<CreateQueryOptionsForInjectQueries>;
 
-// Warning: (ae-forgotten-export) The symbol "GetResults" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "GetCreateQueryResult" needs to be exported by the entry point index.d.ts
 //
 // @public
-export type QueriesResults<T extends Array<any>, TResult extends Array<any> = [], TDepth extends ReadonlyArray<number> = []> = TDepth['length'] extends MAXIMUM_DEPTH ? Array<QueryObserverResult> : T extends [] ? [] : T extends [infer Head] ? [...TResult, GetResults<Head>] : T extends [infer Head, ...infer Tail] ? QueriesResults<[
-...Tail
+export type QueriesResults<T extends Array<any>, TResults extends Array<any> = [], TDepth extends ReadonlyArray<number> = []> = TDepth['length'] extends MAXIMUM_DEPTH ? Array<QueryObserverResult> : T extends [] ? [] : T extends [infer Head] ? [...TResults, GetCreateQueryResult<Head>] : T extends [infer Head, ...infer Tails] ? QueriesResults<[
+...Tails
 ], [
-...TResult,
-GetResults<Head>
+...TResults,
+GetCreateQueryResult<Head>
 ], [
 ...TDepth,
 1
-]> : T extends Array<QueryObserverOptionsForCreateQueries<infer TQueryFnData, infer TError, infer TData, any>> ? Array<QueryObserverResult<unknown extends TData ? TQueryFnData : TData, unknown extends TError ? DefaultError : TError>> : Array<QueryObserverResult>;
+]> : T extends Array<CreateQueryOptionsForInjectQueries<infer TQueryFnData, infer TError, infer TData, any>> ? Array<QueryObserverResult<unknown extends TData ? TQueryFnData : TData, unknown extends TError ? DefaultError : TError>> : Array<QueryObserverResult>;
 
 // @public
 export function queryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey>(options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> & {
