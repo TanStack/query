@@ -6618,10 +6618,10 @@ describe('useQuery', () => {
       await waitFor(() => rendered.getByText('loading..'))
       await waitFor(() => rendered.getByText('test'))
 
-      // This should probably be 1 since `.promise` is the only watched property
+      // Suspense should rendered once since `.promise` is the only watched property
       expect(suspenseRenderCount).toBe(1)
 
-      // page should only be rendered once since - promise will stay the same
+      // Page should be rendered rendered once since since the promise do not change
       expect(pageRenderCount).toBe(1)
     })
 
@@ -6662,8 +6662,9 @@ describe('useQuery', () => {
       await waitFor(() => rendered.getByText('initial'))
       await waitFor(() => rendered.getByText('test'))
 
+      // Suspense boundary should never be rendered since it has data immediately
       expect(suspenseRenderCount).toBe(0)
-      // page should only be rendered 2 times - promise will get swapped out when result comes in
+      // Page should only be rendered twice since, the promise will get swapped out when new result comes in
       expect(pageRenderCount).toBe(2)
     })
 
