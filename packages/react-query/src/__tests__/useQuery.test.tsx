@@ -301,17 +301,20 @@ describe('useQuery', () => {
       fetchStatus: 'idle',
       promise: expect.any(Promise),
     })
+
+    expect(states[0]!.promise).toEqual(states[1]!.promise)
   })
 
   it('should return the correct states for an unsuccessful query', async () => {
     const key = queryKey()
 
     const states: Array<UseQueryResult> = []
+    let index = 0
 
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: () => Promise.reject(new Error('rejected')),
+        queryFn: () => Promise.reject(new Error(`rejected #${++index}`)),
 
         retry: 1,
         retryDelay: 1,
@@ -366,7 +369,7 @@ describe('useQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 1,
-      failureReason: new Error('rejected'),
+      failureReason: new Error('rejected #1'),
       errorUpdateCount: 0,
       isError: false,
       isFetched: false,
@@ -391,10 +394,10 @@ describe('useQuery', () => {
     expect(states[2]).toEqual({
       data: undefined,
       dataUpdatedAt: 0,
-      error: new Error('rejected'),
+      error: new Error('rejected #2'),
       errorUpdatedAt: expect.any(Number),
       failureCount: 2,
-      failureReason: new Error('rejected'),
+      failureReason: new Error('rejected #2'),
       errorUpdateCount: 1,
       isError: true,
       isFetched: true,
@@ -415,6 +418,9 @@ describe('useQuery', () => {
       fetchStatus: 'idle',
       promise: expect.any(Promise),
     })
+
+    expect(states[0]!.promise).toEqual(states[1]!.promise)
+    expect(states[1]!.promise).toEqual(states[2]!.promise)
   })
 
   it('should set isFetchedAfterMount to true after a query has been fetched', async () => {
