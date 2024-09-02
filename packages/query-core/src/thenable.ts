@@ -22,9 +22,16 @@ type PendingThenable<T> = Promise<T> & {
   value?: never
   reason?: never
 
-  // allow a pending thenable to be resolved from the outside
-  resolve: (value: T | PromiseLike<T>) => void
-  reject: (reason?: any) => void
+  /**
+   * Resolve the promise with a value.
+   * Will remove the `resolve` and `reject` properties from the promise.
+   */
+  resolve: (value: T) => void
+  /**
+   * Reject the promise with a reason.
+   * Will remove the `resolve` and `reject` properties from the promise.
+   */
+  reject: (reason: unknown) => void
 }
 
 export type Thenable<T> =
@@ -42,23 +49,26 @@ export function pendingThenable<T>(): PendingThenable<T> {
 
   thenable.status = 'pending'
   thenable.resolve = (value) => {
-    const nextThenable = thenable as unknown as FulfilledThenable<T>
-    nextThenable.status = 'fulfilled'
-    nextThenable.value = value as T
+    deletePendingProps()
 
-    reset()
+    Object.assign(thenable, {
+      status: 'fulfilled',
+      value,
+    })
 
     resolve(value)
   }
   thenable.reject = (reason) => {
-    const nextThenable = thenable as unknown as RejectedThenable<T>
-    nextThenable.status = 'rejected'
-    nextThenable.reason = reason
-    reset()
+    deletePendingProps()
+
+    Object.assign(thenable, {
+      status: 'rejected',
+      reason,
+    })
 
     reject(reason)
   }
-  function reset() {
+  function deletePendingProps() {
     delete (thenable as Partial<PendingThenable<T>>).resolve
     delete (thenable as Partial<PendingThenable<T>>).reject
   }
