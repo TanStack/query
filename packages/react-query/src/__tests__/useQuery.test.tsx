@@ -6663,7 +6663,7 @@ describe('useQuery', () => {
       await waitFor(() => rendered.getByText('test'))
 
       expect(suspenseRenderCount).toBe(0)
-      // page should only be rendered twice since - promise will get swapped out when result comes in
+      // page should only be rendered 2 times - promise will get swapped out when result comes in
       expect(pageRenderCount).toBe(2)
     })
 
