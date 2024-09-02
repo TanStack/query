@@ -109,7 +109,7 @@ function App() {
       <button
         onClick={() => setIsOpen(!isOpen)}
       >{`${isOpen ? 'Close' : 'Open'} the devtools panel`}</button>
-      {isOpen && <ReactQueryDevtoolsPanel onClose={() => setIsOpen(false)}/>}
+      {isOpen && <ReactQueryDevtoolsPanel onClose={() => setIsOpen(false)} />}
     </QueryClientProvider>
   )
 }

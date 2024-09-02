@@ -128,11 +128,6 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
   })
 
   const isOpen = createMemo(() => {
-    const isDevtoolsPanelOpen = useQueryDevtoolsContext().isOpen
-    if (isDevtoolsPanelOpen !== undefined) {
-      return isDevtoolsPanelOpen || INITIAL_IS_OPEN
-    }
-
     return props.localStore.open === 'true'
       ? true
       : props.localStore.open === 'false'
@@ -591,7 +586,7 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
         )}
         onClick={() => props.setLocalStore('open', 'false')}
       >
-        <ChevronDown/>
+        <ChevronDown />
       </button>
       <ContentView {...props} />
     </aside>
