@@ -6762,10 +6762,8 @@ describe('useQuery', () => {
         const query = useQuery({
           queryKey: key,
           queryFn: async () => {
-            queryCount++
-
             await sleep(1)
-            if (queryCount > 1) {
+            if (++queryCount > 1) {
               // second time this query mounts, it should not throw
               return 'data'
             }
@@ -6809,6 +6807,8 @@ describe('useQuery', () => {
       fireEvent.click(rendered.getByText('resetErrorBoundary'))
 
       await waitFor(() => rendered.getByText('data'))
+
+      expect(queryCount).toBe(2)
     })
 
     it('should recreate promise with data changes', async () => {
