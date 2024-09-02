@@ -44,20 +44,19 @@ export type Thenable<T> =
   | PendingThenable<T>
 
 export function pendingThenable<T>(): PendingThenable<T> {
-  let resolve: PendingThenable<T>['resolve']
-  let reject: PendingThenable<T>['reject']
-  const thenable = new Promise<T>((_resolve, _reject) => {
+  let resolve: Pending<T>['resolve']
+  let reject: Pending<T>['reject']
+  const thenable = new Promise((_resolve, _reject) => {
     resolve = _resolve
     reject = _reject
   }) as PendingThenable<T>
 
+  thenable.status = 'pending'
   thenable.catch(() => {
     // prevent unhandled rejection errors
   })
 
-  thenable.status = 'pending'
-
-  function completeThenable(data: Fulfilled<T> | Rejected) {
+  function finalize(data: Fulfilled<T> | Rejected) {
     Object.assign(thenable, data)
 
     // clear pending props props to avoid calling them twice
@@ -66,7 +65,7 @@ export function pendingThenable<T>(): PendingThenable<T> {
   }
 
   thenable.resolve = (value) => {
-    completeThenable({
+    finalize({
       status: 'fulfilled',
       value,
     })
@@ -74,7 +73,7 @@ export function pendingThenable<T>(): PendingThenable<T> {
     resolve(value)
   }
   thenable.reject = (reason) => {
-    completeThenable({
+    finalize({
       status: 'rejected',
       reason,
     })
