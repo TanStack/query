@@ -607,27 +607,36 @@ export class QueryObserver<
         thenable.resolve(nextResult.data)
       }
     }
+    const recreateThenable = () => {
+      const pending =
+        (this.#currentThenable =
+        nextResult.promise =
+          pendingThenable())
+
+      completeThenableIfPossible(pending)
+    }
     switch (prevThenable.status) {
       case 'pending':
         completeThenableIfPossible(prevThenable)
         break
-      case 'fulfilled':
-      case 'rejected':
+      case 'fulfilled': {
         if (
-          nextResult.data !== prevResult?.data ||
-          (nextResult.status === 'error' &&
-            nextResult.error !== prevResult?.error)
+          nextResult.data !== prevThenable.value ||
+          nextResult.status === 'error'
         ) {
-          // recreate the thenable if the result has changed
-          const pending =
-            (this.#currentThenable =
-            nextResult.promise =
-              pendingThenable())
-
-          completeThenableIfPossible(pending)
-
-          break
+          recreateThenable()
         }
+        break
+      }
+      case 'rejected': {
+        if (
+          nextResult.status !== 'error' ||
+          nextResult.error !== prevThenable.reason
+        ) {
+          recreateThenable()
+        }
+        break
+      }
     }
     this.#currentResultState = this.#currentQuery.state
     this.#currentResultOptions = this.options
