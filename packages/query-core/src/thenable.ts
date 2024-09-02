@@ -7,29 +7,60 @@
  * @see https://github.com/facebook/react/blob/4f604941569d2e8947ce1460a0b2997e835f37b9/packages/react-debug-tools/src/ReactDebugHooks.js#L224-L227
  */
 
-type FulfilledThenable<T> = Promise<T> & { status: 'fulfilled'; value: T }
-type RejectedThenable<T> = Promise<T> & { status: 'rejected'; reason: unknown }
-type PendingThenable<T> = Promise<T> & { status: 'pending' }
+type FulfilledThenable<T> = Promise<T> & {
+  status: 'fulfilled'
+  value: T
+  reason?: never
+}
+type RejectedThenable<T> = Promise<T> & {
+  status: 'rejected'
+  reason: unknown
+  value?: never
+}
+type PendingThenable<T> = Promise<T> & {
+  status: 'pending'
+  value?: never
+  reason?: never
+
+  resolve: (value: T | PromiseLike<T>) => void
+  reject: (reason?: any) => void
+}
 
 export type Thenable<T> =
   | FulfilledThenable<T>
   | RejectedThenable<T>
   | PendingThenable<T>
 
-export function fulfilledThenable<T>(value: T): FulfilledThenable<T> {
-  const thenable = Promise.resolve(value) as FulfilledThenable<T>
-  thenable.status = 'fulfilled'
-  thenable.value = value
-  return thenable
-}
-
-export function rejectedThenable<T>(reason: unknown): RejectedThenable<T> {
-  const thenable = Promise.reject(reason) as RejectedThenable<T>
-  return thenable
-}
-
 export function pendingThenable<T>(): PendingThenable<T> {
-  const thenable = Promise.resolve() as PendingThenable<T>
+  let resolve: PendingThenable<T>['resolve']
+  let reject: PendingThenable<T>['reject']
+  const thenable = new Promise<T>((_resolve, _reject) => {
+    resolve = _resolve
+    reject = _reject
+  }) as PendingThenable<T>
+
   thenable.status = 'pending'
+  thenable.resolve = (value) => {
+    const nextThenable = thenable as unknown as FulfilledThenable<T>
+    nextThenable.status = 'fulfilled'
+    nextThenable.value = value as T
+
+    reset()
+
+    resolve(value)
+  }
+  thenable.reject = (reason) => {
+    const nextThenable = thenable as unknown as RejectedThenable<T>
+    nextThenable.status = 'rejected'
+    nextThenable.reason = reason
+    reset()
+
+    reject(reason)
+  }
+  function reset() {
+    delete (thenable as Partial<PendingThenable<T>>).resolve
+    delete (thenable as Partial<PendingThenable<T>>).reject
+  }
+
   return thenable
 }

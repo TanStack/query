@@ -12,11 +12,8 @@ import { notifyManager } from './notifyManager'
 import { focusManager } from './focusManager'
 import { Subscribable } from './subscribable'
 import { fetchState } from './query'
-import {
-  fulfilledThenable,
-  pendingThenable,
-  rejectedThenable,
-} from './thenable'
+import { pendingThenable } from './thenable'
+import type { Thenable } from './thenable'
 import type { FetchOptions, Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
 import type {
@@ -43,11 +40,6 @@ interface ObserverFetchOptions extends FetchOptions {
   throwOnError?: boolean
 }
 
-/**
- * A pending promise that **never resolves** but is stable
- */
-const neverResolvedPromise = pendingThenable<any>()
-
 export class QueryObserver<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -67,6 +59,7 @@ export class QueryObserver<
     TQueryData,
     TQueryKey
   >
+  #currentThenable: Thenable<TData>
   #selectError: TError | null
   #selectFn?: (data: TQueryData) => TData
   #selectResult?: TData
@@ -92,6 +85,7 @@ export class QueryObserver<
 
     this.#client = client
     this.#selectError = null
+    this.#currentThenable = pendingThenable()
     this.bindMethods()
     this.setOptions(options)
   }
@@ -592,11 +586,7 @@ export class QueryObserver<
       isRefetchError: isError && hasData,
       isStale: isStale(query, options),
       refetch: this.refetch,
-      promise: hasData
-        ? fulfilledThenable(data as TData)
-        : status === 'error'
-          ? rejectedThenable(error)
-          : neverResolvedPromise,
+      promise: this.#currentThenable,
     }
 
     return result as QueryObserverResult<TData, TError>
@@ -607,7 +597,33 @@ export class QueryObserver<
       | QueryObserverResult<TData, TError>
       | undefined
 
+    const prevThenable = prevResult?.promise as Thenable<TData> | undefined
+
     const nextResult = this.createResult(this.#currentQuery, this.options)
+    if (prevThenable?.status === 'pending') {
+      if (nextResult.data !== undefined) {
+        prevThenable.resolve(nextResult.data)
+      } else if (nextResult.status === 'error') {
+        prevThenable.reject(nextResult.error)
+      }
+    } else {
+      // thenable is either fulfilled or rejected
+      if (
+        nextResult.data !== prevResult?.data ||
+        (nextResult.status === 'error' &&
+          nextResult.error !== prevResult?.error)
+      ) {
+        this.#currentThenable = nextResult.promise = pendingThenable()
+        console.log('resetting thenable')
+
+        if (nextResult.data !== undefined) {
+          this.#currentThenable.resolve(nextResult.data)
+        } else if (nextResult.status === 'error') {
+          this.#currentThenable.reject(nextResult.error)
+        }
+      }
+    }
+
     this.#currentResultState = this.#currentQuery.state
     this.#currentResultOptions = this.options
 
@@ -619,7 +635,6 @@ export class QueryObserver<
     if (shallowEqualObjects(nextResult, prevResult)) {
       return
     }
-
     this.#currentResult = nextResult
 
     // Determine which callbacks to trigger

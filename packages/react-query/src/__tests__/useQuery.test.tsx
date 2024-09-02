@@ -6587,6 +6587,7 @@ describe('useQuery', () => {
     it('should work with a basic test', async () => {
       const key = queryKey()
       let suspenseRenderCount = 0
+      let pageRenderCount = 0
 
       function MyComponent(props: { promise: Promise<string> }) {
         return <>{React.use(props.promise)}</>
@@ -6605,6 +6606,7 @@ describe('useQuery', () => {
           },
         })
 
+        pageRenderCount++
         return (
           <React.Suspense fallback={<Loading />}>
             <MyComponent promise={query.promise} />
@@ -6618,11 +6620,15 @@ describe('useQuery', () => {
 
       // This should probably be 1 since `.promise` is the only watched property
       expect(suspenseRenderCount).toBe(1)
+
+      // page should only be rendered once since - promise will stay the same
+      expect(pageRenderCount).toBe(1)
     })
 
     it('should work with initial data', async () => {
       const key = queryKey()
       let suspenseRenderCount = 0
+      let pageRenderCount = 0
 
       function MyComponent(props: { promise: Promise<string> }) {
         const data = React.use(props.promise)
@@ -6643,6 +6649,7 @@ describe('useQuery', () => {
           },
           initialData: 'initial',
         })
+        pageRenderCount++
 
         return (
           <React.Suspense fallback={<Loading />}>
@@ -6656,11 +6663,14 @@ describe('useQuery', () => {
       await waitFor(() => rendered.getByText('test'))
 
       expect(suspenseRenderCount).toBe(0)
+      // page should only be rendered twice since - promise will get swapped out when result comes in
+      expect(pageRenderCount).toBe(2)
     })
 
     it('should be possible to select a part of the data with select', async () => {
       const key = queryKey()
       let suspenseRenderCount = 0
+      let pageRenderCount = 0
 
       function MyComponent(props: { promise: Promise<string> }) {
         const data = React.use(props.promise)
@@ -6682,6 +6692,7 @@ describe('useQuery', () => {
           select: (data) => data.name,
         })
 
+        pageRenderCount++
         return (
           <React.Suspense fallback={<Loading />}>
             <MyComponent promise={query.promise} />
@@ -6695,6 +6706,7 @@ describe('useQuery', () => {
         rendered.getByText('test')
       })
       expect(suspenseRenderCount).toBe(1)
+      expect(pageRenderCount).toBe(1)
     })
 
     // This works but has vitest gives a false-positive due to the thrown error somehow
