@@ -596,34 +596,40 @@ export class QueryObserver<
     const prevResult = this.#currentResult as
       | QueryObserverResult<TData, TError>
       | undefined
-
-    const prevThenable = prevResult?.promise as Thenable<TData> | undefined
+    const prevThenable = this.#currentThenable
 
     const nextResult = this.createResult(this.#currentQuery, this.options)
-    if (prevThenable?.status === 'pending') {
-      if (nextResult.data !== undefined) {
-        prevThenable.resolve(nextResult.data)
-      } else if (nextResult.status === 'error') {
-        prevThenable.reject(nextResult.error)
-      }
-    } else {
-      // thenable is either fulfilled or rejected
-      if (
-        nextResult.data !== prevResult?.data ||
-        (nextResult.status === 'error' &&
-          nextResult.error !== prevResult?.error)
-      ) {
-        this.#currentThenable = nextResult.promise = pendingThenable()
-        console.log('resetting thenable')
-
+    switch (prevThenable.status) {
+      case 'pending':
         if (nextResult.data !== undefined) {
-          this.#currentThenable.resolve(nextResult.data)
+          prevThenable.resolve(nextResult.data)
         } else if (nextResult.status === 'error') {
-          this.#currentThenable.reject(nextResult.error)
+          prevThenable.reject(nextResult.error)
         }
-      }
-    }
 
+        break
+      case 'fulfilled':
+      case 'rejected':
+        if (
+          nextResult.data !== prevResult?.data ||
+          (nextResult.status === 'error' &&
+            nextResult.error !== prevResult?.error)
+        ) {
+          // reset the thenable if the result has changed
+          const pending =
+            (this.#currentThenable =
+            nextResult.promise =
+              pendingThenable())
+
+          if (nextResult.data !== undefined) {
+            pending.resolve(nextResult.data)
+          } else if (nextResult.status === 'error') {
+            pending.reject(nextResult.error)
+          }
+
+          break
+        }
+    }
     this.#currentResultState = this.#currentQuery.state
     this.#currentResultOptions = this.options
 

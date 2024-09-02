@@ -22,6 +22,7 @@ type PendingThenable<T> = Promise<T> & {
   value?: never
   reason?: never
 
+  // allow a pending thenable to be resolved from the outside
   resolve: (value: T | PromiseLike<T>) => void
   reject: (reason?: any) => void
 }
