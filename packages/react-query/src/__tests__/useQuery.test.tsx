@@ -6806,6 +6806,7 @@ describe('useQuery', () => {
 
       fireEvent.click(rendered.getByText('resetErrorBoundary'))
 
+      await waitFor(() => rendered.getByText('loading..'))
       await waitFor(() => rendered.getByText('data'))
 
       expect(queryCount).toBe(2)
