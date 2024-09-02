@@ -575,7 +575,7 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
       aria-label="Tanstack query devtools"
     >
       <div
-        className={cx(
+        class={cx(
           styles().dragHandle,
           styles()[`dragHandle-position-${position()}`],
           'tsqd-drag-handle',
@@ -584,7 +584,7 @@ const DraggablePanel: Component<DevtoolsPanelProps> = (props) => {
       ></div>
       <button
         aria-label="Close tanstack query devtools"
-        className={cx(
+        class={cx(
           styles().closeBtn,
           styles()[`closeBtn-position-${position()}`],
           'tsqd-minimize-btn',
