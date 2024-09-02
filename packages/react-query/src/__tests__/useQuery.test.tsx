@@ -6824,6 +6824,7 @@ describe('useQuery', () => {
       await waitFor(() => rendered.getByText('loading..'))
       await waitFor(() => rendered.getByText('test1'))
 
+      // Suspense should rendered once since `.promise` is the only watched property
       expect(pageRenderCount).toBe(1)
 
       queryClient.setQueryData(key, 'test2')

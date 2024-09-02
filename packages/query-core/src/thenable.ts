@@ -7,17 +7,17 @@
  * @see https://github.com/facebook/react/blob/4f604941569d2e8947ce1460a0b2997e835f37b9/packages/react-debug-tools/src/ReactDebugHooks.js#L224-L227
  */
 
-export type FulfilledThenable<T> = Promise<T> & {
+interface Fulfilled<T> {
   status: 'fulfilled'
   value: T
   reason?: never
 }
-export type RejectedThenable<T> = Promise<T> & {
+interface Rejected {
   status: 'rejected'
   reason: unknown
   value?: never
 }
-export type PendingThenable<T> = Promise<T> & {
+interface Pending<T> {
   status: 'pending'
   value?: never
   reason?: never
@@ -33,6 +33,10 @@ export type PendingThenable<T> = Promise<T> & {
    */
   reject: (reason: unknown) => void
 }
+
+export type FulfilledThenable<T> = Promise<T> & Fulfilled<T>
+export type RejectedThenable<T> = Promise<T> & Rejected
+export type PendingThenable<T> = Promise<T> & Pending<T>
 
 export type Thenable<T> =
   | FulfilledThenable<T>
@@ -52,10 +56,17 @@ export function pendingThenable<T>(): PendingThenable<T> {
   })
 
   thenable.status = 'pending'
-  thenable.resolve = (value) => {
-    deletePendingProps()
 
-    Object.assign(thenable, {
+  function completeThenable(data: Fulfilled<T> | Rejected) {
+    Object.assign(thenable, data)
+
+    // clear pending props props to avoid calling them twice
+    delete (thenable as Partial<PendingThenable<T>>).resolve
+    delete (thenable as Partial<PendingThenable<T>>).reject
+  }
+
+  thenable.resolve = (value) => {
+    completeThenable({
       status: 'fulfilled',
       value,
     })
@@ -63,18 +74,12 @@ export function pendingThenable<T>(): PendingThenable<T> {
     resolve(value)
   }
   thenable.reject = (reason) => {
-    deletePendingProps()
-
-    Object.assign(thenable, {
+    completeThenable({
       status: 'rejected',
       reason,
     })
 
     reject(reason)
-  }
-  function deletePendingProps() {
-    delete (thenable as Partial<PendingThenable<T>>).resolve
-    delete (thenable as Partial<PendingThenable<T>>).reject
   }
 
   return thenable
