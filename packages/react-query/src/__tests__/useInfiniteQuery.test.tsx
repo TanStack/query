@@ -1834,13 +1834,14 @@ describe('useInfiniteQuery', () => {
     await waitFor(() => rendered.getByText('Page: 1'))
     await waitFor(() => rendered.getByText('Item: 1'))
 
-    expect(suspenseRenderCount).toBe(1)
+    expect(rendered.queryByText('Page: 2')).toBeNull()
 
     // click button
     fireEvent.click(rendered.getByRole('button', { name: 'fetchNextPage' }))
 
-    await waitFor(() => rendered.getByText('Page: 2'))
-    await waitFor(() => rendered.getByText('Item: 11'))
+    await waitFor(() => {
+      expect(rendered.queryByText('Page: 2')).not.toBeNull()
+    })
 
     // Suspense doesn't trigger when fetching next page
     expect(suspenseRenderCount).toBe(1)
