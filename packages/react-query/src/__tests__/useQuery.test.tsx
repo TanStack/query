@@ -6650,7 +6650,7 @@ describe('useQuery', () => {
       // Suspense should rendered once since `.promise` is the only watched property
       expect(suspenseRenderCount).toBe(1)
 
-      // Page should be rendered rendered once since since the promise do not change
+      // Page should be rendered once since since the promise do not change
       expect(pageRenderCount).toBe(1)
     })
 
@@ -6786,6 +6786,55 @@ describe('useQuery', () => {
       await waitFor(() => rendered.getByText('error boundary'))
 
       consoleMock.mockRestore()
+    })
+
+    it('should recreate promise with data changes', async () => {
+      const key = queryKey()
+      let suspenseRenderCount = 0
+      let pageRenderCount = 0
+
+      function MyComponent(props: { promise: Promise<string> }) {
+        const data = React.use(props.promise)
+
+        return <>{data}</>
+      }
+
+      function Loading() {
+        suspenseRenderCount++
+        return <>loading..</>
+      }
+      function Page() {
+        const query = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(1)
+            return 'test1'
+          },
+        })
+
+        pageRenderCount++
+        return (
+          <React.Suspense fallback={<Loading />}>
+            <MyComponent promise={query.promise} />
+          </React.Suspense>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      await waitFor(() => rendered.getByText('loading..'))
+      await waitFor(() => rendered.getByText('test1'))
+
+      expect(pageRenderCount).toBe(1)
+
+      queryClient.setQueryData(key, 'test2')
+
+      await waitFor(() => rendered.getByText('test2'))
+
+      // Suspense should rendered once since `.promise` is the only watched property
+      expect(suspenseRenderCount).toBe(1)
+
+      // Page should be rendered once since since the promise changed once
+      expect(pageRenderCount).toBe(2)
     })
   })
 })
