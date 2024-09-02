@@ -506,7 +506,7 @@ describe('injectQuery', () => {
     expect(query.status()).toBe('error')
   }))
 
-  test('should render with required signal inputs', fakeAsync(async () => {
+  test('should render with required signal inputs', fakeAsync(() => {
     @Component({
       selector: 'app-fake',
       template: `{{ query.data() }}`,
@@ -534,7 +534,7 @@ describe('injectQuery', () => {
     )
   }))
 
-  test('should run optionsFn in injection context', fakeAsync(async () => {
+  test('should run optionsFn in injection context', fakeAsync(() => {
     @Injectable()
     class FakeService {
       getData(name: string) {
@@ -576,7 +576,7 @@ describe('injectQuery', () => {
     expect(fixture.componentInstance.query.data()).toEqual('test name 2')
   }))
 
-  test('should run optionsFn in injection context and allow passing injector to queryFn', fakeAsync(async () => {
+  test('should run optionsFn in injection context and allow passing injector to queryFn', fakeAsync(() => {
     @Injectable()
     class FakeService {
       getData(name: string) {

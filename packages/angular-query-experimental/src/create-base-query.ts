@@ -14,12 +14,7 @@ import { signalProxy } from './signal-proxy'
 import { shouldThrowError } from './util'
 import { lazyInit } from './util/lazy-init/lazy-init'
 import { injectQueryClient } from './inject-query-client'
-import type {
-  QueryClient,
-  QueryKey,
-  QueryObserver,
-  QueryObserverResult,
-} from '@tanstack/query-core'
+import type { QueryClient, QueryKey, QueryObserver } from '@tanstack/query-core'
 import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
 
 /**
@@ -95,7 +90,7 @@ export function createBaseQuery<
 
     // observer.trackResult is not used as this optimization is not needed for Angular
     const unsubscribe = observer.subscribe(
-      notifyManager.batchCalls((state: QueryObserverResult<TData, TError>) => {
+      notifyManager.batchCalls((state) => {
         ngZone.run(() => {
           if (
             state.isError &&
