@@ -6590,7 +6590,9 @@ describe('useQuery', () => {
       let pageRenderCount = 0
 
       function MyComponent(props: { promise: Promise<string> }) {
-        return <>{React.use(props.promise)}</>
+        const data = React.use(props.promise)
+
+        return <>{data}</>
       }
 
       function Loading() {
@@ -6601,7 +6603,7 @@ describe('useQuery', () => {
         const query = useQuery({
           queryKey: key,
           queryFn: async () => {
-            await sleep(10)
+            await sleep(1)
             return 'test'
           },
         })
@@ -6644,7 +6646,7 @@ describe('useQuery', () => {
         const query = useQuery({
           queryKey: key,
           queryFn: async () => {
-            await sleep(500)
+            await sleep(1)
             return 'test'
           },
           initialData: 'initial',
