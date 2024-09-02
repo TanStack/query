@@ -680,9 +680,6 @@ export class QueryObserver<
       if (this.options.throwOnError) {
         includedProps.add('error')
       }
-      if (includedProps.has('promise')) {
-        includedProps.add('data')
-      }
 
       return Object.keys(this.#currentResult).some((key) => {
         const typedKey = key as keyof QueryObserverResult
