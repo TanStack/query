@@ -649,6 +649,7 @@ export class QueryObserver<
     if (shallowEqualObjects(nextResult, prevResult)) {
       return
     }
+
     this.#currentResult = nextResult
 
     // Determine which callbacks to trigger
