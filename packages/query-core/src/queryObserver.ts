@@ -601,10 +601,10 @@ export class QueryObserver<
     const nextResult = this.createResult(this.#currentQuery, this.options)
 
     const completeThenableIfPossible = (thenable: PendingThenable<TData>) => {
-      if (nextResult.data !== undefined) {
-        thenable.resolve(nextResult.data)
-      } else if (nextResult.status === 'error') {
+      if (nextResult.status === 'error') {
         thenable.reject(nextResult.error)
+      } else if (nextResult.data !== undefined) {
+        thenable.resolve(nextResult.data)
       }
     }
     switch (prevThenable.status) {
