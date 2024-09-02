@@ -1784,7 +1784,9 @@ describe('useInfiniteQuery', () => {
   it('should work with React.use()', async () => {
     const key = queryKey()
 
+    let pageRenderCount = 0
     let suspenseRenderCount = 0
+
     function useMyQuery() {
       const fetchCountRef = React.useRef(0)
       return useInfiniteQuery({
@@ -1821,6 +1823,7 @@ describe('useInfiniteQuery', () => {
     }
     function Page() {
       const query = useMyQuery()
+      pageRenderCount++
       return (
         <React.Suspense fallback={<Loading />}>
           <MyComponent query={query} />
@@ -1835,6 +1838,7 @@ describe('useInfiniteQuery', () => {
     await waitFor(() => rendered.getByText('Item: 1'))
 
     expect(rendered.queryByText('Page: 2')).toBeNull()
+    expect(pageRenderCount).toBe(1)
 
     // click button
     fireEvent.click(rendered.getByRole('button', { name: 'fetchNextPage' }))
@@ -1845,5 +1849,7 @@ describe('useInfiniteQuery', () => {
 
     // Suspense doesn't trigger when fetching next page
     expect(suspenseRenderCount).toBe(1)
+    // page renders twice since the promise will change
+    expect(pageRenderCount).toBe(2)
   })
 })
