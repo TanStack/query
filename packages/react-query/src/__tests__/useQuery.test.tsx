@@ -665,7 +665,7 @@ describe('useQuery', () => {
         },
 
         gcTime: 0,
-        notifyOnChangeProps: 'all',
+        notifyOnChangeProps: ['isPending', 'isSuccess', 'data'],
       })
 
       states.push(state)
@@ -703,13 +703,29 @@ describe('useQuery', () => {
 
     expect(states.length).toBe(4)
     // First load
-    expect(states[0]).toMatchObject({ isPending: true, isSuccess: false })
+    expect(states[0]).toMatchObject({
+      isPending: true,
+      isSuccess: false,
+      data: undefined,
+    })
     // First success
-    expect(states[1]).toMatchObject({ isPending: false, isSuccess: true })
+    expect(states[1]).toMatchObject({
+      isPending: false,
+      isSuccess: true,
+      data: 'data',
+    })
     // Remove
-    expect(states[2]).toMatchObject({ isPending: true, isSuccess: false })
+    expect(states[2]).toMatchObject({
+      isPending: true,
+      isSuccess: false,
+      data: undefined,
+    })
     // Second success
-    expect(states[3]).toMatchObject({ isPending: false, isSuccess: true })
+    expect(states[3]).toMatchObject({
+      isPending: false,
+      isSuccess: true,
+      data: 'data',
+    })
   })
 
   it('should fetch when refetchOnMount is false and nothing has been fetched yet', async () => {
