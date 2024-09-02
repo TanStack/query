@@ -6746,7 +6746,7 @@ describe('useQuery', () => {
         .mockImplementation(() => undefined)
 
       const key = queryKey()
-      function MyComponent(props: { promise: Promise<unknown> }) {
+      function MyComponent(props: { promise: Promise<string> }) {
         const data = React.use(props.promise)
 
         return <>{data}</>
@@ -6757,11 +6757,18 @@ describe('useQuery', () => {
         return <>loading..</>
       }
 
+      let queryCount = 0
       function Page() {
         const query = useQuery({
           queryKey: key,
           queryFn: async () => {
+            queryCount++
+
             await sleep(1)
+            if (queryCount > 1) {
+              // second time this query mounts, it should not throw
+              return 'data'
+            }
             throw new Error('Error test')
           },
           retry: false,
@@ -6782,11 +6789,10 @@ describe('useQuery', () => {
               error boundary{' '}
               <button
                 onClick={() => {
-                  queryClient.setQueryData(key, 'data')
                   props.resetErrorBoundary()
                 }}
               >
-                resetErrorBoundaryAndSetData
+                resetErrorBoundary
               </button>
             </>
           )}
@@ -6800,7 +6806,7 @@ describe('useQuery', () => {
 
       consoleMock.mockRestore()
 
-      fireEvent.click(rendered.getByText('resetErrorBoundaryAndSetData'))
+      fireEvent.click(rendered.getByText('resetErrorBoundary'))
 
       await waitFor(() => rendered.getByText('data'))
     })
