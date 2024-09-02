@@ -6739,7 +6739,6 @@ describe('useQuery', () => {
       expect(pageRenderCount).toBe(1)
     })
 
-    // This works but has vitest gives a false-positive due to the thrown error somehow
     it('should throw error if the promise fails', async () => {
       let suspenseRenderCount = 0
       const consoleMock = vi
