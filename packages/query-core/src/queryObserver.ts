@@ -13,7 +13,7 @@ import { focusManager } from './focusManager'
 import { Subscribable } from './subscribable'
 import { fetchState } from './query'
 import { pendingThenable } from './thenable'
-import type { Thenable } from './thenable'
+import type { PendingThenable, Thenable } from './thenable'
 import type { FetchOptions, Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
 import type {
@@ -599,14 +599,17 @@ export class QueryObserver<
     const prevThenable = this.#currentThenable
 
     const nextResult = this.createResult(this.#currentQuery, this.options)
+
+    const completeThenableIfPossible = (thenable: PendingThenable<TData>) => {
+      if (nextResult.data !== undefined) {
+        thenable.resolve(nextResult.data)
+      } else if (nextResult.status === 'error') {
+        thenable.reject(nextResult.error)
+      }
+    }
     switch (prevThenable.status) {
       case 'pending':
-        if (nextResult.data !== undefined) {
-          prevThenable.resolve(nextResult.data)
-        } else if (nextResult.status === 'error') {
-          prevThenable.reject(nextResult.error)
-        }
-
+        completeThenableIfPossible(prevThenable)
         break
       case 'fulfilled':
       case 'rejected':
@@ -615,17 +618,13 @@ export class QueryObserver<
           (nextResult.status === 'error' &&
             nextResult.error !== prevResult?.error)
         ) {
-          // reset the thenable if the result has changed
+          // recreate the thenable if the result has changed
           const pending =
             (this.#currentThenable =
             nextResult.promise =
               pendingThenable())
 
-          if (nextResult.data !== undefined) {
-            pending.resolve(nextResult.data)
-          } else if (nextResult.status === 'error') {
-            pending.reject(nextResult.error)
-          }
+          completeThenableIfPossible(pending)
 
           break
         }

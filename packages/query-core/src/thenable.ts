@@ -7,17 +7,17 @@
  * @see https://github.com/facebook/react/blob/4f604941569d2e8947ce1460a0b2997e835f37b9/packages/react-debug-tools/src/ReactDebugHooks.js#L224-L227
  */
 
-type FulfilledThenable<T> = Promise<T> & {
+export type FulfilledThenable<T> = Promise<T> & {
   status: 'fulfilled'
   value: T
   reason?: never
 }
-type RejectedThenable<T> = Promise<T> & {
+export type RejectedThenable<T> = Promise<T> & {
   status: 'rejected'
   reason: unknown
   value?: never
 }
-type PendingThenable<T> = Promise<T> & {
+export type PendingThenable<T> = Promise<T> & {
   status: 'pending'
   value?: never
   reason?: never
