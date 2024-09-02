@@ -6713,7 +6713,7 @@ describe('useQuery', () => {
     })
 
     // This works but has vitest gives a false-positive due to the thrown error somehow
-    it.skip('should throw error if the promise fails', async () => {
+    it('should throw error if the promise fails', async () => {
       let suspenseRenderCount = 0
       const consoleMock = vi
         .spyOn(console, 'error')
@@ -6735,7 +6735,7 @@ describe('useQuery', () => {
         const query = useQuery({
           queryKey: key,
           queryFn: async () => {
-            await sleep(10)
+            await sleep(1)
             throw new Error('Error test')
           },
           retry: false,
