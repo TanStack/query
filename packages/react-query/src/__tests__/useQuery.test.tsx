@@ -6776,7 +6776,21 @@ describe('useQuery', () => {
 
       const rendered = renderWithClient(
         queryClient,
-        <ErrorBoundary fallbackRender={() => <>error boundary</>}>
+        <ErrorBoundary
+          fallbackRender={(props) => (
+            <>
+              error boundary{' '}
+              <button
+                onClick={() => {
+                  queryClient.setQueryData(key, 'data')
+                  props.resetErrorBoundary()
+                }}
+              >
+                resetErrorBoundaryAndSetData
+              </button>
+            </>
+          )}
+        >
           <Page />
         </ErrorBoundary>,
       )
@@ -6785,6 +6799,10 @@ describe('useQuery', () => {
       await waitFor(() => rendered.getByText('error boundary'))
 
       consoleMock.mockRestore()
+
+      fireEvent.click(rendered.getByText('resetErrorBoundaryAndSetData'))
+
+      await waitFor(() => rendered.getByText('data'))
     })
 
     it('should recreate promise with data changes', async () => {
