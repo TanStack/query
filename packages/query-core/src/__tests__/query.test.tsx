@@ -966,7 +966,7 @@ describe('query', () => {
     expect(spy).toHaveBeenCalledWith('1 - 2')
   })
 
-  it('should have an error status when queryFn data is not serializable', async () => {
+  it('should have an error log when queryFn data is not serializable', async () => {
     const consoleMock = vi.spyOn(console, 'error')
 
     consoleMock.mockImplementation(() => undefined)
@@ -1000,8 +1000,6 @@ describe('query', () => {
 
     await queryClient.prefetchQuery({ queryKey: key, queryFn })
 
-    const query = queryCache.find({ queryKey: key })!
-
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     expect(consoleMock).toHaveBeenCalledWith(
@@ -1010,8 +1008,32 @@ describe('query', () => {
       ),
     )
 
-    expect(query.state.status).toBe('error')
-
     consoleMock.mockRestore()
+  })
+
+  it('should have an error status when setData has any error inside', async () => {
+    const key = queryKey()
+
+    const queryFn = vi.fn()
+
+    queryFn.mockImplementation(async () => {
+      await sleep(10)
+
+      return 'data'
+    })
+
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn,
+      structuralSharing: () => {
+        throw Error('Any error')
+      },
+    })
+
+    const query = queryCache.find({ queryKey: key })!
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    expect(query.state.status).toBe('error')
   })
 })
