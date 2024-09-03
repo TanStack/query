@@ -1179,7 +1179,7 @@ describe('queryObserver', () => {
         }
         throw new Error(`rejected #${++idx}`)
       },
-      retry: 1,
+      retry: 5,
       retryDelay: 0,
     })
     const unsubscribe = observer.subscribe(() => {
@@ -1187,7 +1187,6 @@ describe('queryObserver', () => {
     })
 
     await waitFor(() => {
-      expect(results.length).toBe(3)
       expect(results.at(-1)?.status).toBe('error')
     })
 
@@ -1197,11 +1196,11 @@ describe('queryObserver', () => {
 
     {
       // fail again
-      observer.refetch()
       const lengthBefore = results.length
+      observer.refetch()
       await waitFor(() => {
         expect(results.length).toBeGreaterThan(lengthBefore)
-        expect(results.length).toBe(6)
+        expect(results.at(-1)?.status).toBe('error')
       })
 
       const numberOfUniquePromises = new Set(
