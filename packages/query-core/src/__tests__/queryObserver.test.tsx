@@ -1224,8 +1224,8 @@ describe('queryObserver', () => {
       ).size
 
       expect(numberOfUniquePromises).toBe(3)
-
-      unsubscribe()
     }
+
+    unsubscribe()
   })
 })
