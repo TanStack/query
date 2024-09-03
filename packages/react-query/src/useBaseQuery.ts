@@ -67,7 +67,10 @@ export function useBaseQuery<
 
   useClearResetErrorBoundary(errorResetBoundary)
 
-  if (!client.getQueryState(options.queryKey)) {
+  if (
+    !client.getQueryState(options.queryKey) &&
+    defaultedOptions.enabled !== false
+  ) {
     client.prefetchQuery(defaultedOptions)
   }
 
